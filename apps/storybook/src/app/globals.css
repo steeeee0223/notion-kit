@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* text color */
+    --primary: 55 53 47;
+    /* background color */
+    --bg-main: 255 255 255;
+    --bg-input: 242 241 238;
+    --bg-sidebar: 247 247 245;
+    --bg-modal: 255 255 255;
+    --bg-popover: 255 255 255;
+    --bg-tooltip: 15 15 15;
+    /* border color */
+    --border-cell: 233 233 231;
+
+    /* Geneated by Shadcn */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* text color */
+    --primary: 255 255 255;
+    /* background color */
+    --bg-main: 25 25 25;
+    --bg-input: 255 255 255;
+    --bg-sidebar: 32 32 32;
+    --bg-modal: 32 32 32;
+    --bg-popover: 37 37 37;
+    --bg-tooltip: 47 47 47;
+    /* border color */
+    --border-cell: 47 47 47;
+
+    /* Geneated by Shadcn */
+    --background: 0 0% 12.5%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-main text-primary dark:text-primary/80;
+  }
+}

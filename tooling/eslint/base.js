@@ -40,7 +40,17 @@ export const restrictEnvAccess = tseslint.config(
 export default tseslint.config(
   // Ignore files not tracked by VCS and any config files
   includeIgnoreFile(path.join(import.meta.dirname, "../../.gitignore")),
-  { ignores: ["**/*.config.*"] },
+  {
+    ignores: [
+      "**/*.config.*",
+      ".next",
+      "dist",
+      "coverage",
+      ".storybook",
+      "storybook-static",
+      "pnpm-lock.yaml",
+    ],
+  },
   {
     files: ["**/*.js", "**/*.ts", "**/*.tsx"],
     plugins: {
@@ -59,10 +69,7 @@ export default tseslint.config(
         "error",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
-      "@typescript-eslint/consistent-type-imports": [
-        "warn",
-        { prefer: "type-imports", fixStyle: "separate-type-imports" },
-      ],
+      "@typescript-eslint/consistent-type-imports": ["off"],
       "@typescript-eslint/no-misused-promises": [
         2,
         { checksVoidReturn: { attributes: false } },

@@ -1,0 +1,58 @@
+{
+  "name": "@notion-kit/storybook",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "storybook build",
+    "clean": "git clean -xdf .next .turbo node_modules",
+    "dev": "storybook dev -p 6006",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "start": "pnpx http-server storybook-static",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@notion-kit/cn": "workspace:*",
+    "@notion-kit/shadcn": "workspace:*",
+    "lucide-react": "catalog:ui",
+    "next": "catalog:next14",
+    "next-themes": "catalog:ui",
+    "react": "catalog:react18",
+    "react-dom": "catalog:react18",
+    "usehooks-ts": "catalog:ui",
+    "uuid": "catalog:uuid",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@notion-kit/eslint-config": "workspace:*",
+    "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tailwind-config": "workspace:*",
+    "@notion-kit/tsconfig": "workspace:*",
+    "@storybook/addon-essentials": "^8.6.2",
+    "@storybook/addon-interactions": "^8.6.2",
+    "@storybook/addon-links": "^8.6.2",
+    "@storybook/addon-themes": "^8.6.2",
+    "@storybook/blocks": "^8.6.2",
+    "@storybook/nextjs": "^8.6.2",
+    "@storybook/react": "^8.6.2",
+    "@storybook/test": "^8.6.2",
+    "@types/node": "catalog:node22",
+    "@types/react": "catalog:react18",
+    "@types/react-dom": "catalog:react18",
+    "eslint": "catalog:",
+    "msw": "^2.7.3",
+    "msw-storybook-addon": "^2.0.3",
+    "prettier": "catalog:",
+    "sonner": "catalog:ui",
+    "storybook": "^8.6.2",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:"
+  },
+  "prettier": "@notion-kit/prettier-config",
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  }
+}
