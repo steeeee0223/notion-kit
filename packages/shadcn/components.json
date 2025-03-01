@@ -1,16 +1,16 @@
 {
   "$schema": "https://ui.shadcn.com/schema.json",
-  "style": "new-york",
+  "style": "default",
   "rsc": true,
   "tsx": true,
   "tailwind": {
     "config": "../../tooling/tailwind/web.ts",
     "css": "unused.css",
-    "baseColor": "zinc",
+    "baseColor": "slate",
     "cssVariables": true
   },
   "aliases": {
-    "utils": "@notion-kit/ui",
+    "utils": "@notion-kit/cn",
     "components": "src/",
     "ui": "src/"
   }

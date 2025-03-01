@@ -1,0 +1,13 @@
+{
+  "extends": "@notion-kit/tsconfig/base.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": { "@/*": ["./src/*"] },
+    "plugins": [{ "name": "next" }]
+  },
+  "include": ["src", ".storybook"],
+  "exclude": ["node_modules", "next-env.d.ts"]
+}

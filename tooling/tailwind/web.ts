@@ -2,6 +2,7 @@ import type { Config } from "tailwindcss";
 import animate from "tailwindcss-animate";
 
 import base from "./base";
+import { notionPlugin } from "./plugins";
 
 export default {
   content: base.content,
@@ -33,8 +34,10 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "bg-in": "background 20ms ease-in",
+        "bg-out": "background 200ms ease-out",
       },
     },
   },
-  plugins: [animate],
+  plugins: [animate, notionPlugin],
 } satisfies Config;
