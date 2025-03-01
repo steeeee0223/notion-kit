@@ -11,6 +11,9 @@ runs:
         cache: "pnpm"
 
     - shell: bash
+      run: pnpm self-update
+
+    - shell: bash
       run: pnpm add -g turbo
 
     - shell: bash
