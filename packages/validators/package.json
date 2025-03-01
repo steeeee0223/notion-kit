@@ -1,5 +1,5 @@
 {
-  "name": "@acme/validators",
+  "name": "@notion-kit/validators",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -22,12 +22,12 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@acme/eslint-config": "workspace:*",
-    "@acme/prettier-config": "workspace:*",
-    "@acme/tsconfig": "workspace:*",
+    "@notion-kit/eslint-config": "workspace:*",
+    "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tsconfig": "workspace:*",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
   },
-  "prettier": "@acme/prettier-config"
+  "prettier": "@notion-kit/prettier-config"
 }

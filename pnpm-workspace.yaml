@@ -4,10 +4,6 @@ packages:
   - tooling/*
 
 catalog:
-  "@tanstack/react-query": ^5.66.5
-  "@trpc/client": ^11.0.0-rc.772
-  "@trpc/tanstack-react-query": ^11.0.0-rc.772
-  "@trpc/server": ^11.0.0-rc.772
   eslint: ^9.19.0
   prettier: ^3.4.2
   tailwindcss: ^3.4.14
@@ -15,8 +11,34 @@ catalog:
   zod: ^3.24.1
 
 catalogs:
+  node22:
+    "@types/node": ^22.10.0
   react18:
     react: 18.3.1
     react-dom: 18.3.1
     "@types/react": ^18.3.11
     "@types/react-dom": ^18.3.1
+  next14:
+    next: ^14.2.15
+  vitest:
+    "vitest": ^2.1.8
+    "@vitejs/plugin-react": ^4.3.4
+    "@vitest/coverage-v8": ^2.1.8
+    "@vitest/ui": ^2.1.8
+  rtl:
+    jsdom: ^25.0.1
+    "@testing-library/jest-dom": ^6.6.3
+    "@testing-library/react": ^16.1.0
+    "@testing-library/user-event": ^14.5.2
+  turbo:
+    turbo: ^2.3.4
+    "@turbo/gen": ^2.3.4
+  ui:
+    lucide-react: ^0.456.0
+    next-themes: ^0.4.4
+    react-hook-form: ^7.54.2
+    sonner: ^1.7.2
+    "@hookform/resolvers": ^3.10.0
+    "@tanstack/react-table": ^8.20.6
+  uuid:
+    uuid: ^11.1.0

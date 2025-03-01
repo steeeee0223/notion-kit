@@ -1,7 +1,7 @@
 {
-  "name": "@acme/eslint-config",
+  "name": "@notion-kit/eslint-config",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.1.0",
   "type": "module",
   "exports": {
     "./base": "./base.js",
@@ -24,12 +24,12 @@
     "typescript-eslint": "^8.21.0"
   },
   "devDependencies": {
-    "@acme/prettier-config": "workspace:*",
-    "@acme/tsconfig": "workspace:*",
+    "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tsconfig": "workspace:*",
     "@types/eslint__js": "8.42.3",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
   },
-  "prettier": "@acme/prettier-config"
+  "prettier": "@notion-kit/prettier-config"
 }
