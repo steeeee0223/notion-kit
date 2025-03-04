@@ -27,9 +27,9 @@ jobs:
       - name: Setup
         uses: ./tooling/github/setup
 
-      - name: Copy env
-        shell: bash
-        run: cp .env.example .env
+      # - name: Copy env
+      #   shell: bash
+      #   run: cp .env.example .env
 
       - name: Lint
         run: pnpm lint && pnpm lint:ws
