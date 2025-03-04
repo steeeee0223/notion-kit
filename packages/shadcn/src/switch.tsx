@@ -8,7 +8,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "@notion-kit/cn";
 
 const switchVariants = cva(
-  "peer inline-flex shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-blue data-[state=unchecked]:bg-primary/15",
+  "peer focus-visible:ring-ring focus-visible:ring-offset-background data-[state=checked]:bg-blue data-[state=unchecked]:bg-primary/15 inline-flex shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
       size: {
@@ -33,23 +33,17 @@ const thumbVariants = cva(
   },
 );
 
-export type SwitchProps = React.ComponentPropsWithoutRef<
-  typeof SwitchPrimitives.Root
-> &
+export type SwitchProps = React.ComponentProps<typeof SwitchPrimitives.Root> &
   VariantProps<typeof switchVariants>;
 
-const Switch = React.forwardRef<
-  React.ElementRef<typeof SwitchPrimitives.Root>,
-  SwitchProps
->(({ className, size, ...props }, ref) => (
+const Switch = ({ className, size, ...props }: SwitchProps) => (
   <SwitchPrimitives.Root
     className={cn(switchVariants({ className, size }))}
     {...props}
-    ref={ref}
   >
     <SwitchPrimitives.Thumb className={cn(thumbVariants({ size }))} />
   </SwitchPrimitives.Root>
-));
+);
 Switch.displayName = SwitchPrimitives.Root.displayName;
 
 export { Switch };

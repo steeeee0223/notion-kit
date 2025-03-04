@@ -19,28 +19,24 @@ const sizeVariants = cva("", {
   defaultVariants: { size: "md" },
 });
 const checkboxVariants = cva(
-  "peer shrink-0 border focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+  "peer shrink-0 border focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
       variant: {
         default:
-          "border-border-button shadow-sm hover:bg-primary/5 data-[state=checked]:border-none data-[state=checked]:bg-blue data-[state=checked]:text-white",
+          "border-border-button hover:bg-primary/5 data-[state=checked]:bg-blue shadow-xs data-[state=checked]:border-none data-[state=checked]:text-white",
       },
     },
     defaultVariants: { variant: "default" },
   },
 );
 export interface CheckboxProps
-  extends React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>,
+  extends React.ComponentProps<typeof CheckboxPrimitive.Root>,
     VariantProps<typeof checkboxVariants>,
     VariantProps<typeof sizeVariants> {}
 
-const Checkbox = React.forwardRef<
-  React.ElementRef<typeof CheckboxPrimitive.Root>,
-  CheckboxProps
->(({ className, variant, size, ...props }, ref) => (
+const Checkbox = ({ className, variant, size, ...props }: CheckboxProps) => (
   <CheckboxPrimitive.Root
-    ref={ref}
     className={cn(
       checkboxVariants({ variant }),
       sizeVariants({ size }),
@@ -52,7 +48,7 @@ const Checkbox = React.forwardRef<
       <Check className={cn(sizeVariants({ size }))} />
     </CheckboxPrimitive.Indicator>
   </CheckboxPrimitive.Root>
-));
+);
 Checkbox.displayName = CheckboxPrimitive.Root.displayName;
 
 export { Checkbox };

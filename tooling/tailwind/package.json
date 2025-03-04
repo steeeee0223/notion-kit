@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./base.css": "./base.css",
     "./native": "./native.ts",
     "./web": "./web.ts"
   },
@@ -15,8 +16,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "postcss": "^8.5.1",
-    "tailwindcss": "catalog:",
+    "@tailwindcss/postcss": "catalog:tailwind-v4",
+    "tailwindcss": "catalog:tailwind-v4",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {

@@ -26,14 +26,9 @@
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
-    "@types/react": "catalog:react18",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
-  },
-  "peerDependencies": {
-    "react": "catalog:react18",
-    "zod": "catalog:"
   },
   "prettier": "@notion-kit/prettier-config"
 }

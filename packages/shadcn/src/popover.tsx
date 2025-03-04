@@ -13,33 +13,30 @@ const PopoverTrigger = PopoverPrimitive.Trigger;
 
 const PopoverClose = PopoverPrimitive.Close;
 
-type PopoverContentProps = React.ComponentPropsWithoutRef<
+type PopoverContentProps = React.ComponentProps<
   typeof PopoverPrimitive.Content
 > & {
   container?: Element | DocumentFragment | null;
 };
-const PopoverContent = React.forwardRef<
-  React.ElementRef<typeof PopoverPrimitive.Content>,
-  PopoverContentProps
->(
-  (
-    { className, align = "center", sideOffset = 4, container, ...props },
-    ref,
-  ) => (
-    <PopoverPrimitive.Portal container={container}>
-      <PopoverPrimitive.Content
-        ref={ref}
-        align={align}
-        sideOffset={sideOffset}
-        className={cn(
-          "w-72 p-0 outline-none",
-          contentVariants({ variant: "popover" }),
-          className,
-        )}
-        {...props}
-      />
-    </PopoverPrimitive.Portal>
-  ),
+const PopoverContent = ({
+  className,
+  align = "center",
+  sideOffset = 4,
+  container,
+  ...props
+}: PopoverContentProps) => (
+  <PopoverPrimitive.Portal container={container}>
+    <PopoverPrimitive.Content
+      align={align}
+      sideOffset={sideOffset}
+      className={cn(
+        "w-72 p-0 outline-hidden",
+        contentVariants({ variant: "popover" }),
+        className,
+      )}
+      {...props}
+    />
+  </PopoverPrimitive.Portal>
 );
 PopoverContent.displayName = PopoverPrimitive.Content.displayName;
 
