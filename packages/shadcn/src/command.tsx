@@ -9,20 +9,16 @@ import { cn } from "@notion-kit/cn";
 import { Dialog, DialogContent } from "./dialog";
 import { inputVariants, menuItemVariants, separatorVariants } from "./variants";
 
-type CommandProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive>;
-const Command = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive>,
-  CommandProps
->(({ className, ...props }, ref) => (
+type CommandProps = React.ComponentProps<typeof CommandPrimitive>;
+const Command = ({ className, ...props }: CommandProps) => (
   <CommandPrimitive
-    ref={ref}
     className={cn(
-      "text-popover-foreground flex h-full w-full flex-col overflow-hidden rounded-md bg-modal",
+      "text-popover-foreground bg-modal flex h-full w-full flex-col overflow-hidden rounded-md",
       className,
     )}
     {...props}
   />
-));
+);
 Command.displayName = CommandPrimitive.displayName;
 
 interface CommandDialogProps
@@ -30,7 +26,6 @@ interface CommandDialogProps
     Pick<CommandProps, "shouldFilter"> {
   className?: string;
 }
-/** @version 1.5 */
 const CommandDialog = ({
   className,
   shouldFilter,
@@ -46,7 +41,7 @@ const CommandDialog = ({
       >
         <Command
           shouldFilter={shouldFilter}
-          className="focus-visible:outline-none dark:text-muted-dark [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12"
+          className="dark:text-muted-dark [&_[cmdk-group-heading]]:text-muted focus-visible:outline-hidden [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12"
           // [&_[cmdk-group]]:px-2 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5
         >
           {children}
@@ -56,14 +51,8 @@ const CommandDialog = ({
   );
 };
 
-type CommandInputProps = React.ComponentPropsWithoutRef<
-  typeof CommandPrimitive.Input
->;
-/** @version 1.5 */
-const CommandInput = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.Input>,
-  CommandInputProps
->(({ className, ...props }, ref) => (
+type CommandInputProps = React.ComponentProps<typeof CommandPrimitive.Input>;
+const CommandInput = ({ className, ...props }: CommandInputProps) => (
   <div
     className={cn(
       inputVariants({ variant: "flat" }),
@@ -72,89 +61,75 @@ const CommandInput = React.forwardRef<
     )}
     cmdk-input-wrapper=""
   >
-    <CommandPrimitive.Input ref={ref} {...props} />
+    <CommandPrimitive.Input {...props} />
   </div>
-));
+);
 
 CommandInput.displayName = CommandPrimitive.Input.displayName;
 
-const CommandList = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.List>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.List>
->(({ className, ...props }, ref) => (
+const CommandList = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof CommandPrimitive.List>) => (
   <CommandPrimitive.List
-    ref={ref}
-    className={cn("overflow-y-auto overflow-x-hidden", className)}
+    className={cn("overflow-x-hidden overflow-y-auto", className)}
     {...props}
   />
-));
+);
 
 CommandList.displayName = CommandPrimitive.List.displayName;
 
-const CommandEmpty = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.Empty>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
->(({ className, ...props }, ref) => (
+const CommandEmpty = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof CommandPrimitive.Empty>) => (
   <CommandPrimitive.Empty
-    ref={ref}
     className={cn("py-6 text-center text-sm", className)}
     {...props}
   />
-));
+);
 
 CommandEmpty.displayName = CommandPrimitive.Empty.displayName;
 
-const CommandGroup = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.Group>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Group>
->(({ className, ...props }, ref) => (
+const CommandGroup = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof CommandPrimitive.Group>) => (
   <CommandPrimitive.Group
-    ref={ref}
     className={cn(
-      "overflow-hidden py-1 text-muted dark:text-muted-dark [&_[cmdk-group-heading]]:px-3.5 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted",
+      "text-muted dark:text-muted-dark [&_[cmdk-group-heading]]:text-muted overflow-hidden py-1 [&_[cmdk-group-heading]]:px-3.5 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium",
       className,
     )}
     {...props}
   />
-));
+);
 
 CommandGroup.displayName = CommandPrimitive.Group.displayName;
 
-type CommandSeparatorProps = React.ComponentPropsWithoutRef<
+type CommandSeparatorProps = React.ComponentProps<
   typeof CommandPrimitive.Separator
 >;
-const CommandSeparator = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.Separator>,
-  CommandSeparatorProps
->(({ className, ...props }, ref) => (
+const CommandSeparator = ({ className, ...props }: CommandSeparatorProps) => (
   <CommandPrimitive.Separator
-    ref={ref}
     className={cn(separatorVariants({ variant: "default", className }))}
     {...props}
   />
-));
+);
 CommandSeparator.displayName = CommandPrimitive.Separator.displayName;
 
-type CommandItemProps = React.ComponentPropsWithoutRef<
-  typeof CommandPrimitive.Item
->;
-/** @version 1.5 */
-const CommandItem = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.Item>,
-  CommandItemProps
->(({ className, disabled, ...props }, ref) => (
+type CommandItemProps = React.ComponentProps<typeof CommandPrimitive.Item>;
+const CommandItem = ({ className, disabled, ...props }: CommandItemProps) => (
   <CommandPrimitive.Item
-    ref={ref}
     className={cn(
       menuItemVariants({ disabled }),
       "aria-selected:bg-primary/5 aria-selected:text-primary dark:aria-selected:text-primary/80",
-      "data-[disabled=true]:text-muted data-[disabled=true]:dark:text-muted-dark",
+      "data-[disabled=true]:text-muted dark:data-[disabled=true]:text-muted-dark",
       className,
     )}
     disabled={disabled}
     {...props}
   />
-));
+);
 
 CommandItem.displayName = CommandPrimitive.Item.displayName;
 
@@ -165,7 +140,7 @@ const CommandShortcut = ({
   return (
     <span
       className={cn(
-        "ml-auto text-xs tracking-widest text-muted dark:text-muted-dark",
+        "text-muted dark:text-muted-dark ml-auto text-xs tracking-widest",
         className,
       )}
       {...props}

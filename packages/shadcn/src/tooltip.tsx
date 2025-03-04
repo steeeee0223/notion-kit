@@ -16,7 +16,7 @@ const Tooltip = TooltipPrimitive.Root;
 
 const TooltipTrigger = TooltipPrimitive.Trigger;
 
-const tooltipVariants = cva("max-w-[220px] break-words font-medium", {
+const tooltipVariants = cva("max-w-[220px] font-medium break-words", {
   variants: {
     size: {
       sm: "rounded-sm px-2 py-1 text-xs/[1.4]",
@@ -26,17 +26,18 @@ const tooltipVariants = cva("max-w-[220px] break-words font-medium", {
   defaultVariants: { size: "sm" },
 });
 
-type TooltipContentProps = React.ComponentPropsWithoutRef<
+type TooltipContentProps = React.ComponentProps<
   typeof TooltipPrimitive.Content
 > &
   VariantProps<typeof tooltipVariants>;
 
-const TooltipContent = React.forwardRef<
-  React.ElementRef<typeof TooltipPrimitive.Content>,
-  TooltipContentProps
->(({ className, size, sideOffset = 4, ...props }, ref) => (
+const TooltipContent = ({
+  className,
+  size,
+  sideOffset = 4,
+  ...props
+}: TooltipContentProps) => (
   <TooltipPrimitive.Content
-    ref={ref}
     sideOffset={sideOffset}
     className={cn(
       contentVariants({ variant: "tooltip" }),
@@ -45,7 +46,7 @@ const TooltipContent = React.forwardRef<
     )}
     {...props}
   />
-));
+);
 TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };
