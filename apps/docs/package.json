@@ -1,0 +1,39 @@
+{
+  "name": "@notion-kit/docs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "clean": "git clean -xdf .next .turbo node_modules",
+    "dev": "next dev",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "start": "next start",
+    "postinstall": "fumadocs-mdx",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@notion-kit/cn": "workspace:*",
+    "@notion-kit/shadcn": "workspace:*",
+    "fumadocs-core": "15.0.14",
+    "fumadocs-mdx": "11.5.6",
+    "fumadocs-ui": "15.0.14",
+    "next": "catalog:next15",
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19"
+  },
+  "devDependencies": {
+    "@notion-kit/eslint-config": "workspace:*",
+    "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tailwind-config": "workspace:*",
+    "@notion-kit/tsconfig": "workspace:*",
+    "@tailwindcss/postcss": "catalog:tailwind-v4",
+    "@types/mdx": "^2.0.13",
+    "@types/node": "catalog:node22",
+    "@types/react": "catalog:react19",
+    "@types/react-dom": "catalog:react19",
+    "tailwindcss": "catalog:tailwind-v4",
+    "typescript": "catalog:"
+  },
+  "prettier": "@notion-kit/prettier-config"
+}
