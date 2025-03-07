@@ -1,0 +1,12 @@
+{
+  "title": "Docs",
+  "root": true,
+  "pages": [
+    "---Getting Started---",
+    "index",
+    "test",
+    "...getting-started",
+    "---Components---",
+    "...components"
+  ]
+}
