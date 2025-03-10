@@ -1,0 +1,175 @@
+"use client";
+
+import type { ScrollAreaProps } from "@/components/core/scroll-area";
+import React from "react";
+import { ScrollArea } from "@/components/core/scroll-area";
+import { CheckIcon, CopyIcon } from "lucide-react";
+import { tv } from "tailwind-variants";
+
+import type { ButtonProps } from "@notion-kit/shadcn";
+import { cn } from "@notion-kit/cn";
+import {
+  Button,
+  TabsTrigger as Tab,
+  Tabs,
+  TabsContent,
+  TabsList,
+} from "@notion-kit/shadcn";
+
+const codeBlockStyles = tv({
+  slots: {
+    root: "block w-fit max-w-full rounded-md border",
+    header:
+      "bg-bg-muted flex h-10 items-center justify-between rounded-t-[inherit] border-b pr-2",
+    body: "bg-bg-muted/30 p-4 text-xs",
+    code: "text-xs",
+  },
+});
+
+interface CodeBlockClientProps {
+  files: {
+    fileName: string;
+    code: React.ReactNode;
+    codeStr: string;
+    lang: string;
+  }[];
+  preview?: React.ReactNode;
+  previewStr?: string;
+  expandable?: boolean;
+}
+const CodeBlockClient = ({
+  files,
+  preview,
+  previewStr,
+  expandable = false,
+  ...props
+}: CodeBlockClientProps) => {
+  // @ts-expect-error fix later
+  const [activeTab, setActiveTab] = React.useState(files[0].fileName);
+  const [isExpanded, setExpanded] = React.useState(false);
+  const handleExpand = () => {
+    const prevState = isExpanded;
+    if (prevState) {
+      // @ts-expect-error fix later
+      setActiveTab(files[0].fileName);
+    }
+    setExpanded(!prevState);
+  };
+  return (
+    <CodeBlockRoot value={activeTab} onValueChange={setActiveTab} {...props}>
+      <CodeBlockHeader>
+        <div className="flex h-full w-[100px] flex-1 shrink-1 basis-0 items-end gap-2">
+          {files.length > 0 && (
+            <TabsList>
+              {files
+                .slice(0, preview && !isExpanded ? 1 : files.length)
+                .map(({ fileName }, index) => (
+                  <Tab key={index} value={fileName}>
+                    {fileName}
+                  </Tab>
+                ))}
+            </TabsList>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          {(preview ?? expandable) && (
+            <Button
+              size="sm"
+              className="bg-bg-inverse/5 h-7 text-xs"
+              onClick={handleExpand}
+            >
+              {isExpanded ? "Collapse" : "Expand"} code
+            </Button>
+          )}
+          <CodeBlockCopyButton
+            code={
+              (previewStr && !isExpanded
+                ? previewStr
+                : files.find(({ fileName }) => fileName === activeTab)
+                    ?.codeStr)!
+            }
+          />
+        </div>
+      </CodeBlockHeader>
+      <CodeBlockBody
+        className={cn(isExpanded ? "max-h-[400px]" : "max-h-[200px]")}
+      >
+        {preview && !isExpanded ? (
+          // @ts-expect-error fix later
+          <TabsContent id={files[0].fileName} className="mt-0!">
+            {preview}
+          </TabsContent>
+        ) : (
+          files.map(({ fileName, code }, index) => (
+            <TabsContent key={index} value={fileName} className="mt-0!">
+              {code}
+            </TabsContent>
+          ))
+        )}
+      </CodeBlockBody>
+    </CodeBlockRoot>
+  );
+};
+
+type CodeBlockRootProps = React.ComponentProps<typeof Tabs>;
+const CodeBlockRoot = ({ className, ...props }: CodeBlockRootProps) => {
+  const { root } = codeBlockStyles();
+  return <Tabs className={root({ className })} {...props} />;
+};
+
+type CodeBlockHeaderProps = React.HTMLAttributes<HTMLDivElement>;
+const CodeBlockHeader = ({ className, ...props }: CodeBlockHeaderProps) => {
+  const { header } = codeBlockStyles();
+  return <div className={header({ className })} {...props} />;
+};
+
+type CodeBlockBodyProps = ScrollAreaProps;
+const CodeBlockBody = ({ className, ...props }: CodeBlockBodyProps) => {
+  const { body } = codeBlockStyles();
+  return (
+    <ScrollArea scrollbars="both" className={body({ className })} {...props} />
+  );
+};
+
+interface CodeBlockCopyButtonProps extends ButtonProps {
+  code: string;
+}
+const CodeBlockCopyButton = ({ code, ...props }: CodeBlockCopyButtonProps) => {
+  const [copied, setCopied] = React.useState(false);
+  const handleCopy = () => {
+    void navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1000);
+  };
+  return (
+    <Button
+      size="icon-sm"
+      onClick={handleCopy}
+      className="bg-bg-inverse/5 size-7 [&_svg]:size-3"
+      {...props}
+    >
+      {copied ? (
+        <CheckIcon className="animate-in fade-in" />
+      ) : (
+        <CopyIcon className="animate-in fade-in" />
+      )}
+    </Button>
+  );
+};
+
+export type {
+  CodeBlockClientProps,
+  CodeBlockRootProps,
+  CodeBlockHeaderProps,
+  CodeBlockBodyProps,
+  CodeBlockCopyButtonProps,
+};
+
+export {
+  CodeBlockClient,
+  CodeBlockRoot,
+  CodeBlockHeader,
+  CodeBlockBody,
+  CodeBlockCopyButton,
+  codeBlockStyles,
+};
