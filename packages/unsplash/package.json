@@ -1,5 +1,5 @@
 {
-  "name": "@notion-kit/shadcn",
+  "name": "@notion-kit/unsplash",
   "version": "0.1.0",
   "type": "module",
   "bugs": {
@@ -8,7 +8,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/steeeee0223/notion-kit.git",
-    "directory": "packages/shadcn"
+    "directory": "packages/unsplash"
   },
   "exports": {
     ".": {
@@ -26,22 +26,13 @@
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "ui-add": "pnpm dlx shadcn@latest add && prettier src --write --list-different"
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@hookform/resolvers": "catalog:ui",
     "@notion-kit/cn": "workspace:*",
-    "@radix-ui/react-icons": "^1.3.2",
-    "class-variance-authority": "catalog:ui",
-    "cmdk": "^1.0.4",
-    "lucide-react": "catalog:ui",
-    "next-themes": "catalog:ui",
-    "radix-ui": "^1.1.2",
-    "react-hook-form": "catalog:ui",
-    "react-resizable-panels": "^2.1.7",
-    "sonner": "catalog:ui",
-    "vaul": "^1.1.2"
+    "@notion-kit/shadcn": "workspace:*",
+    "@notion-kit/spinner": "workspace:*",
+    "unsplash-js": "^7.0.19"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",
@@ -52,12 +43,10 @@
     "prettier": "catalog:",
     "react": "catalog:react19",
     "tsup": "catalog:",
-    "typescript": "catalog:",
-    "zod": "catalog:"
+    "typescript": "catalog:"
   },
   "peerDependencies": {
-    "react": "catalog:react19",
-    "zod": "catalog:"
+    "react": "catalog:react19"
   },
   "prettier": "@notion-kit/prettier-config"
 }

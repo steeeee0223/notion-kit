@@ -1,15 +1,8 @@
 {
-  "name": "@notion-kit/shadcn",
+  "name": "@notion-kit/common",
   "version": "0.1.0",
+  "private": true,
   "type": "module",
-  "bugs": {
-    "url": "https://github.com/steeeee0223/notion-kit/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/steeeee0223/notion-kit.git",
-    "directory": "packages/shadcn"
-  },
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
@@ -26,22 +19,13 @@
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "ui-add": "pnpm dlx shadcn@latest add && prettier src --write --list-different"
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
     "@hookform/resolvers": "catalog:ui",
     "@notion-kit/cn": "workspace:*",
-    "@radix-ui/react-icons": "^1.3.2",
-    "class-variance-authority": "catalog:ui",
-    "cmdk": "^1.0.4",
-    "lucide-react": "catalog:ui",
-    "next-themes": "catalog:ui",
-    "radix-ui": "^1.1.2",
-    "react-hook-form": "catalog:ui",
-    "react-resizable-panels": "^2.1.7",
-    "sonner": "catalog:ui",
-    "vaul": "^1.1.2"
+    "@notion-kit/shadcn": "workspace:*",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",
@@ -52,8 +36,7 @@
     "prettier": "catalog:",
     "react": "catalog:react19",
     "tsup": "catalog:",
-    "typescript": "catalog:",
-    "zod": "catalog:"
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:react19",
