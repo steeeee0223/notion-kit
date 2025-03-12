@@ -1,5 +1,5 @@
 {
-  "name": "@notion-kit/cn",
+  "name": "@notion-kit/tree",
   "version": "0.1.0",
   "type": "module",
   "bugs": {
@@ -8,7 +8,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/steeeee0223/notion-kit.git",
-    "directory": "packages/cn"
+    "directory": "packages/tree"
   },
   "exports": {
     ".": {
@@ -29,17 +29,27 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "class-variance-authority": "catalog:ui",
-    "tailwind-merge": "^3.0.2"
+    "@notion-kit/cn": "workspace:*",
+    "@notion-kit/common": "workspace:*",
+    "@notion-kit/icon-block": "workspace:*",
+    "@notion-kit/shadcn": "workspace:*",
+    "@notion-kit/spinner": "workspace:*",
+    "lucide-react": "catalog:ui",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "@types/react": "catalog:react19",
     "eslint": "catalog:",
     "prettier": "catalog:",
+    "react": "catalog:react19",
     "tsup": "catalog:",
     "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:react19"
   },
   "prettier": "@notion-kit/prettier-config"
 }
