@@ -1,8 +1,13 @@
- 
 "use client";
 
-import React, { createContext, useContext, useState, useLayoutEffect, useMemo, useRef } from "react";
-
+import React, {
+  createContext,
+  useContext,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 export interface ModalContextInterface {
   isOpen: boolean;
@@ -14,36 +19,38 @@ export const ModalContext = createContext<ModalContextInterface | null>(null);
 
 export function useModal(): ModalContextInterface {
   const object = useContext(ModalContext);
-  if (!object) throw new Error("`useModal` must be used within `ModalProvider`");
+  if (!object)
+    throw new Error("`useModal` must be used within `ModalProvider`");
   return object;
 }
 
 export type ModalProviderProps = React.PropsWithChildren;
 
-export function ModalProvider({
-  children,
-}: ModalProviderProps) {
+export function ModalProvider({ children }: ModalProviderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showingModal, setShowingModal] = useState<React.ReactNode>(null);
   const [isMounted, setIsMounted] = useState(false);
 
   useLayoutEffect(() => {
     setIsMounted(true);
-    return () => setIsMounted(false)
+    return () => setIsMounted(false);
   }, []);
 
   const openModalFn = useRef((modal: React.ReactNode) => {
     if (!modal) return;
     setShowingModal(modal);
     setIsOpen(true);
-  })
-  const closeModalFn = useRef(() => setIsOpen(false))
+  });
+  const closeModalFn = useRef(() => setIsOpen(false));
 
-  const contextValue = useMemo<ModalContextInterface>(() => ({
+  const contextValue = useMemo<ModalContextInterface>(
+    () => ({
       isOpen,
       openModal: openModalFn.current,
       closeModal: closeModalFn.current,
-    }),[isOpen]);
+    }),
+    [isOpen],
+  );
 
   if (!isMounted) return null;
   return (
