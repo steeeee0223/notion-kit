@@ -387,6 +387,37 @@ importers:
         specifier: 'catalog:'
         version: 3.24.2
 
+  packages/modal:
+    dependencies:
+      react:
+        specifier: catalog:react19
+        version: 19.0.0
+    devDependencies:
+      '@notion-kit/eslint-config':
+        specifier: workspace:*
+        version: link:../../tooling/eslint
+      '@notion-kit/prettier-config':
+        specifier: workspace:*
+        version: link:../../tooling/prettier
+      '@notion-kit/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
+      '@types/react':
+        specifier: catalog:react19
+        version: 19.0.10
+      eslint:
+        specifier: 'catalog:'
+        version: 9.21.0(jiti@2.4.2)
+      prettier:
+        specifier: 'catalog:'
+        version: 3.5.3
+      tsup:
+        specifier: 'catalog:'
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(typescript@5.8.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.2
+
   packages/select:
     dependencies:
       '@notion-kit/cn':
