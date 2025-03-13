@@ -1,11 +1,6 @@
 "use client";
 
 import type { Emoji } from "@emoji-mart/data";
-import type {
-  EmojiCategoryList,
-  EmojiSettingsType,
-} from "@udecode/plate-emoji";
-import type { SetFocusedAndVisibleSectionsType } from "@udecode/plate-emoji/react";
 import {
   createRef,
   useCallback,
@@ -24,6 +19,11 @@ import {
 
 import { randomItem } from "@notion-kit/utils";
 
+import type {
+  EmojiCategoryList,
+  EmojiSettingsType,
+  SetFocusedAndVisibleSectionsType,
+} from "../lib";
 import type { Skin } from "./types";
 import { getNativeEmoji } from "./utils";
 

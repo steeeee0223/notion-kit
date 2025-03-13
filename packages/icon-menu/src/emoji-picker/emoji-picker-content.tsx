@@ -1,10 +1,10 @@
 "use client";
 
-import type { EmojiCategoryList } from "@udecode/plate-emoji";
 import React, { useCallback } from "react";
 
 import { HintProvider } from "@notion-kit/common";
 
+import type { EmojiCategoryList } from "../lib";
 import type { UseEmojiPickerType } from "./types";
 import { MenuSectionTitle } from "../_components";
 import { EmojiButton, EmojiPickerRow } from "./emoji-picker-row";

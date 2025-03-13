@@ -1,8 +1,8 @@
 "use client";
 
-import type { EmojiSettingsType } from "@udecode/plate-emoji";
 import React from "react";
 
+import type { EmojiSettingsType } from "../lib";
 import { MenuSearchBar } from "../_components";
 import { EmojiSettings, SkinPalette } from "./constants";
 import { EmojiPickerContent } from "./emoji-picker-content";

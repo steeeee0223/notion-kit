@@ -1,13 +1,13 @@
 "use client";
 
-import type { EmojiCategoryList } from "@udecode/plate-emoji";
-import type { UseEmojiPickerType } from "@udecode/plate-emoji/react";
 import React from "react";
 
 import { cn } from "@notion-kit/cn";
 import { Hint, HintProvider } from "@notion-kit/common";
 import { Button } from "@notion-kit/shadcn";
 
+import type { EmojiCategoryList } from "../lib";
+import type { UseEmojiPickerType } from "./types";
 import { CirclePlus, emojiCategoryIcons } from "./emoji-icons";
 
 export type EmojiPickerNavigationProps = {

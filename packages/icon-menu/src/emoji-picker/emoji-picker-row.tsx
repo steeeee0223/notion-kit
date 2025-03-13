@@ -1,11 +1,12 @@
 "use client";
 
-import type { Emoji, GridRow } from "@udecode/plate-emoji";
+import type { Emoji } from "@emoji-mart/data";
 import React, { memo } from "react";
 
 import { Hint } from "@notion-kit/common";
 import { Button } from "@notion-kit/shadcn";
 
+import type { GridRow } from "../lib";
 import type { Skin, UseEmojiPickerType } from "./types";
 import { getNativeEmoji } from "./utils";
 
