@@ -9,8 +9,3 @@ export interface TreeItemData {
 }
 
 export type TreeNode<T extends TreeItemData> = T & { children: TreeNode<T>[] };
-
-export function fromNode<T extends TreeItemData>(node: TreeNode<T>) {
-  const { children: _unused, ...item } = node;
-  return item as unknown as T;
-}

@@ -34,8 +34,7 @@
     "@notion-kit/icon-block": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/spinner": "workspace:*",
-    "lucide-react": "catalog:ui",
-    "zustand": "^5.0.3"
+    "lucide-react": "catalog:ui"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",

@@ -8,7 +8,7 @@ import { cn } from "@notion-kit/cn";
 import type { TreeItemProps } from "./tree-item";
 import type { TreeItemData, TreeNode } from "./types";
 import { TreeItem } from "./tree-item";
-import { fromNode } from "./types";
+import { fromNode } from "./utils";
 
 interface TreeListProps<T extends TreeItemData> {
   nodes: TreeNode<T>[];
