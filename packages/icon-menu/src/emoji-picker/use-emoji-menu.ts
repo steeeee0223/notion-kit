@@ -1,6 +1,5 @@
 "use client";
 
-import type { Emoji } from "@emoji-mart/data";
 import {
   createRef,
   useCallback,
@@ -20,6 +19,7 @@ import {
 import { randomItem } from "@notion-kit/utils";
 
 import type {
+  Emoji,
   EmojiCategoryList,
   EmojiSettingsType,
   SetFocusedAndVisibleSectionsType,

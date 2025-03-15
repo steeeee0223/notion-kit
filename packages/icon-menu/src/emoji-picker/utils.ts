@@ -1,5 +1,4 @@
-import type { Emoji } from "@udecode/plate-emoji";
-
+import type { Emoji } from "../lib";
 import type { Skin } from "./types";
 
 export const getNativeEmoji = (emoji: Emoji, skin: Skin) =>

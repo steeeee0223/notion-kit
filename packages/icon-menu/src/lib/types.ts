@@ -1,3 +1,5 @@
+export type { Emoji } from "@emoji-mart/data";
+
 type ReverseMap<T> = T[keyof T];
 
 /** @deprecated */

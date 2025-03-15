@@ -1,8 +1,8 @@
 import type { IEmojiFloatingLibrary } from "@udecode/plate-emoji/react";
 import React from "react";
-import { Emoji } from "@emoji-mart/data";
 
 import type {
+  Emoji,
   EmojiCategoryList,
   EmojiSettingsType,
   i18nProps,
