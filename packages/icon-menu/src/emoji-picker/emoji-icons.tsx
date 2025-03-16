@@ -1,4 +1,3 @@
-import type { EmojiCategoryList } from "@udecode/plate-emoji";
 import React from "react";
 import {
   AppleIcon,
@@ -11,6 +10,8 @@ import {
   SmileIcon,
   StarIcon,
 } from "lucide-react";
+
+import { EmojiCategoryList } from "./types";
 
 export const emojiCategoryIcons: Record<EmojiCategoryList, React.ReactElement> =
   {

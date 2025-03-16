@@ -37,7 +37,6 @@
     "@notion-kit/single-image-dropzone": "workspace:*",
     "@notion-kit/spinner": "workspace:*",
     "@notion-kit/utils": "workspace:*",
-    "@udecode/plate-emoji": "^44.0.0",
     "lucide-react": "catalog:ui",
     "react-infinite-scroll-component": "^6.1.0"
   },

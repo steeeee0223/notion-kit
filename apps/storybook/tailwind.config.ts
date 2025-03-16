@@ -5,7 +5,7 @@ import baseConfig from "@notion-kit/tailwind-config/web";
 
 const config = {
   darkMode: "class",
-  content: [...baseConfig.content, "../../packages/shadcn/src/**/*.{ts,tsx}"],
+  content: [...baseConfig.content, "../../packages/**/src/**/*.{ts,tsx}"],
   presets: [baseConfig],
   theme: {
     extend: {

@@ -1,11 +1,5 @@
 "use client";
 
-import type { Emoji } from "@emoji-mart/data";
-import type {
-  EmojiCategoryList,
-  EmojiSettingsType,
-} from "@udecode/plate-emoji";
-import type { SetFocusedAndVisibleSectionsType } from "@udecode/plate-emoji/react";
 import {
   createRef,
   useCallback,
@@ -14,39 +8,49 @@ import {
   useRef,
   useState,
 } from "react";
-import { EmojiFloatingIndexSearch, i18n } from "@udecode/plate-emoji";
-import {
-  EmojiFloatingLibrary,
-  EmojiPickerState,
-  FrequentEmojiStorage,
-  observeCategories,
-} from "@udecode/plate-emoji/react";
+import emojiMartData, { Emoji, EmojiMartData } from "@emoji-mart/data";
 
 import { randomItem } from "@notion-kit/utils";
 
-import type { Skin } from "./types";
-import { getNativeEmoji } from "./utils";
+import type {
+  EmojiCategoryList,
+  SetFocusedAndVisibleSectionsType,
+  Skin,
+} from "./types";
+import { useIconMenuState } from "../hooks";
+import {
+  FrequentIconStorage,
+  IconIndexSearch,
+  IconLibrary,
+  IconSettingsType,
+} from "../lib";
+import { i18n } from "./constants";
+import { getNativeEmoji, observeCategories, toLibraryData } from "./utils";
 
 interface UseEmojiMenuOptions {
-  settings: EmojiSettingsType;
+  settings: IconSettingsType<EmojiCategoryList>;
   onSelect: (emoji: string) => void;
 }
 
 export function useEmojiMenu({ settings, onSelect }: UseEmojiMenuOptions) {
   const [emojiLibrary, indexSearch] = useMemo(() => {
-    const frequentEmojiStorage = new FrequentEmojiStorage({
+    const frequentEmojiStorage = new FrequentIconStorage({
       limit: settings.showFrequent.limit,
     });
-    const emojiLibrary = EmojiFloatingLibrary.getInstance(
+    const emojiLibrary = IconLibrary.getInstance(
       settings,
       frequentEmojiStorage,
+      toLibraryData(emojiMartData as EmojiMartData),
     );
-    const indexSearch = EmojiFloatingIndexSearch.getInstance(emojiLibrary);
+    const indexSearch = IconIndexSearch.getInstance(
+      emojiLibrary,
+      settings.maxSearchResult,
+    );
     return [emojiLibrary, indexSearch] as const;
   }, [settings]);
 
   const [skin, setSkin] = useState<Skin>("1");
-  const [state, dispatch] = EmojiPickerState();
+  const [state, dispatch] = useIconMenuState<Emoji, EmojiCategoryList>();
   const refs = useRef({
     content: createRef<HTMLDivElement>(),
     contentRoot: createRef<HTMLDivElement>(),
@@ -56,11 +60,11 @@ export function useEmojiMenu({ settings, onSelect }: UseEmojiMenuOptions) {
     useCallback<SetFocusedAndVisibleSectionsType>(
       (visibleCategories, categoryId) =>
         dispatch({
+          type: "SET_FOCUSED_AND_VISIBLE_CATEGORIES",
           payload: {
             focusedCategory: categoryId,
             visibleCategories,
           },
-          type: "SET_FOCUSED_AND_VISIBLE_CATEGORIES",
         }),
       [dispatch],
     );
@@ -75,12 +79,12 @@ export function useEmojiMenu({ settings, onSelect }: UseEmojiMenuOptions) {
 
       const hasFound = indexSearch.search(value).hasFound();
       dispatch({
+        type: "UPDATE_SEARCH_RESULT",
         payload: {
           hasFound,
           searchResult: indexSearch.get(),
           searchValue: value,
         },
-        type: "UPDATE_SEARCH_RESULT",
       });
     },
     [dispatch, indexSearch],
@@ -91,36 +95,24 @@ export function useEmojiMenu({ settings, onSelect }: UseEmojiMenuOptions) {
     [dispatch],
   );
 
-  /** @deprecated */
-  const onMouseOver = useCallback(
-    (emoji?: Emoji) => dispatch({ payload: { emoji }, type: "SET_EMOJI" }),
-    [dispatch],
-  );
-
   const selectEmoji = useCallback(
     (emoji: Emoji) => {
       onSelect(getNativeEmoji(emoji, skin));
       emojiLibrary.updateFrequentCategory(emoji.id);
-      dispatch({
-        payload: { frequentEmoji: emoji.id, isOpen: true },
-        type: "UPDATE_FREQUENT_EMOJIS",
-      });
+      dispatch({ type: "UPDATE_FREQUENT_EMOJIS", payload: emoji.id });
     },
     [dispatch, onSelect, skin, emojiLibrary],
   );
 
   const getRandomEmoji = useCallback(() => {
-    const id = emojiLibrary.getEmojiId(randomItem(emojiLibrary.keys));
-    const emoji = getNativeEmoji(emojiLibrary.getEmoji(id), skin);
+    const id = emojiLibrary.getIconId(randomItem(emojiLibrary.keys));
+    const emoji = getNativeEmoji(emojiLibrary.getIcon(id), skin);
     onSelect(emoji);
   }, [emojiLibrary, onSelect, skin]);
 
   const selectCategory = useCallback(
     (categoryId: EmojiCategoryList) => {
-      dispatch({
-        payload: { focusedCategory: categoryId },
-        type: "SET_FOCUSED_CATEGORY",
-      });
+      dispatch({ type: "SET_FOCUSED_CATEGORY", payload: categoryId });
 
       const getSectionPositionToScrollIntoView = () => {
         const threshold = 1;
@@ -173,7 +165,6 @@ export function useEmojiMenu({ settings, onSelect }: UseEmojiMenuOptions) {
     getRandomEmoji,
     selectCategory,
     selectEmoji,
-    onMouseOver,
     ...state,
   };
 }

@@ -14,6 +14,8 @@
   },
   "dependencies": {
     "@notion-kit/cn": "workspace:*",
+    "@notion-kit/icon-block": "workspace:*",
+    "@notion-kit/icon-menu": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "lucide-react": "catalog:ui",
     "next": "catalog:next15",

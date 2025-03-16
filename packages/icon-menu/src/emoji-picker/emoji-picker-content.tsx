@@ -1,11 +1,10 @@
 "use client";
 
-import type { EmojiCategoryList } from "@udecode/plate-emoji";
 import React, { useCallback } from "react";
 
 import { HintProvider } from "@notion-kit/common";
 
-import type { UseEmojiPickerType } from "./types";
+import type { EmojiCategoryList, UseEmojiPickerType } from "./types";
 import { MenuSectionTitle } from "../_components";
 import { EmojiButton, EmojiPickerRow } from "./emoji-picker-row";
 
@@ -33,8 +32,6 @@ export const EmojiPickerContent: React.FC<EmojiPickerContentProps> = ({
   visibleCategories,
   onSelectEmoji,
 }) => {
-  // const getRowWidth = settings.perLine.value * settings.buttonSize.value;
-
   const isCategoryVisible = useCallback(
     (categoryId: EmojiCategoryList) =>
       visibleCategories.has(categoryId)
@@ -49,7 +46,7 @@ export const EmojiPickerContent: React.FC<EmojiPickerContentProps> = ({
       .sections()
       .map(({ id: categoryId }) => {
         const section = emojiLibrary.getGrid().section(categoryId);
-        const { buttonSize } = settings;
+
         return (
           <div
             key={categoryId}
@@ -63,7 +60,7 @@ export const EmojiPickerContent: React.FC<EmojiPickerContentProps> = ({
             />
             <div
               className="relative flex flex-wrap"
-              style={{ height: section.getRows().length * buttonSize.value }}
+              style={{ height: section.getRows().length * settings.buttonSize }}
             >
               {isCategoryVisible(categoryId) &&
                 section
@@ -102,7 +99,7 @@ export const EmojiPickerContent: React.FC<EmojiPickerContentProps> = ({
             <EmojiButton
               key={emoji.id}
               index={index}
-              emoji={emojiLibrary.getEmoji(emoji.id)}
+              emoji={emojiLibrary.getIcon(emoji.id)}
               skin={skin}
               onSelect={onSelectEmoji}
             />

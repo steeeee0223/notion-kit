@@ -1,11 +1,12 @@
 "use client";
 
-import type { Emoji, GridRow } from "@udecode/plate-emoji";
 import React, { memo } from "react";
+import { Emoji } from "@emoji-mart/data";
 
 import { Hint } from "@notion-kit/common";
 import { Button } from "@notion-kit/shadcn";
 
+import type { GridRow } from "../lib";
 import type { Skin, UseEmojiPickerType } from "./types";
 import { getNativeEmoji } from "./utils";
 
@@ -53,7 +54,7 @@ export const EmojiPickerRow: React.FC<EmojiPickerRow> = memo(
       {row.elements.map((emojiId, index) => (
         <EmojiButton
           key={emojiId}
-          emoji={emojiLibrary.getEmoji(emojiId)}
+          emoji={emojiLibrary.getIcon(emojiId)}
           skin={skin}
           index={index}
           onSelect={onSelectEmoji}

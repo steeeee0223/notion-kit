@@ -1,17 +1,18 @@
 "use client";
 
-import type { EmojiSettingsType } from "@udecode/plate-emoji";
 import React from "react";
 
+import type { IconSettingsType } from "../lib";
 import { MenuSearchBar } from "../_components";
 import { EmojiSettings, SkinPalette } from "./constants";
 import { EmojiPickerContent } from "./emoji-picker-content";
 import { EmojiPickerNavigation } from "./emoji-picker-navigation";
 import { SkinPicker } from "./skin-picker";
+import { EmojiCategoryList } from "./types";
 import { useEmojiMenu } from "./use-emoji-menu";
 
 interface EmojiPickerProps {
-  settings?: EmojiSettingsType;
+  settings?: IconSettingsType<EmojiCategoryList>;
   onSelect: (emoji: string) => void;
 }
 
