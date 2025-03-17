@@ -113,6 +113,6 @@ const TagsInput: React.FC<TagsInputProps> = ({
   );
 };
 
-TagsInput.displayName = "TagInput";
+TagsInput.displayName = "TagsInput";
 
-export { TagsInput as TagInput };
+export { TagsInput };

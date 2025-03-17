@@ -15,7 +15,7 @@ export interface Option {
   description?: string;
 }
 
-export interface CustomSelectProps<T extends string = string>
+export interface SelectProps<T extends string = string>
   extends Pick<SelectContentProps, "side" | "align"> {
   className?: string;
   /**
@@ -41,7 +41,7 @@ function CustomSelect<T extends string = string>({
   hideCheck,
   onChange,
   renderOption: OptionValue,
-}: CustomSelectProps<T>) {
+}: SelectProps<T>) {
   return (
     <Select value={value} onValueChange={onChange} disabled={disabled}>
       <SelectTrigger className={className}>

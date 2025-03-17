@@ -11,33 +11,35 @@ import { TreeItem } from "./tree-item";
 import { fromNode } from "./utils";
 
 interface TreeListProps<T extends TreeItemData> {
-  nodes: TreeNode<T>[];
   level?: number;
+  nodes: TreeNode<T>[];
   defaultIcon?: IconInfo;
   showEmptyChild?: boolean;
-  Item?: React.FC<TreeItemProps<T>>;
   selectedId?: string | null;
   onSelect?: (id: string) => void;
+  Item?: (props: TreeItemProps<T>) => React.ReactNode;
 }
+
+type TreeProps<T extends TreeItemData> = TreeListProps<T> & {
+  expanded: Record<string, boolean>;
+};
 
 function TreeList<T extends TreeItemData>(props: TreeListProps<T>) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const onExpand = (itemId: string) =>
     setExpanded((prev) => ({ ...prev, [itemId]: !prev[itemId] }));
 
-  const renderTree = useCallback(
-    (
-      {
-        nodes,
-        level = 0,
-        defaultIcon,
-        showEmptyChild,
-        Item = TreeItem,
-        selectedId,
-        onSelect,
-      }: TreeListProps<T>,
-      expanded: Record<string, boolean>,
-    ) => {
+  const Tree = useCallback(
+    ({
+      level = 0,
+      nodes,
+      defaultIcon,
+      showEmptyChild,
+      expanded,
+      selectedId,
+      onSelect,
+      Item = TreeItem,
+    }: TreeProps<T>) => {
       return (
         <>
           {showEmptyChild && (
@@ -56,33 +58,26 @@ function TreeList<T extends TreeItemData>(props: TreeListProps<T>) {
           )}
           {nodes.map((node) => (
             <div key={node.id}>
-              {
-                void Item({
-                  node: fromNode({ ...node, icon: node.icon ?? defaultIcon }),
-                  isSelected: selectedId === node.id,
-                  onSelect: () => onSelect?.(node.id),
-                  level,
-                  expandable: true,
-                  expanded: expanded[node.id],
-                  onExpand: () => onExpand(node.id),
-                })
-              }
-              {expanded[node.id] && (
-                <>
-                  {renderTree(
-                    {
-                      nodes: node.children,
-                      level: level + 1,
-                      showEmptyChild,
-                      defaultIcon,
-                      Item,
-                      selectedId,
-                      onSelect,
-                    },
-                    expanded,
-                  )}
-                </>
-              )}
+              {Item({
+                level,
+                node: fromNode({ ...node, icon: node.icon ?? defaultIcon }),
+                isSelected: selectedId === node.id,
+                onSelect: () => onSelect?.(node.id),
+                expandable: true,
+                expanded: expanded[node.id],
+                onExpand: () => onExpand(node.id),
+              })}
+              {expanded[node.id] &&
+                Tree({
+                  level: level + 1,
+                  nodes: node.children,
+                  showEmptyChild,
+                  defaultIcon,
+                  expanded,
+                  selectedId,
+                  onSelect,
+                  Item,
+                })}
             </div>
           ))}
         </>
@@ -91,7 +86,7 @@ function TreeList<T extends TreeItemData>(props: TreeListProps<T>) {
     [],
   );
 
-  return <>{renderTree(props, expanded)}</>;
+  return <Tree {...props} expanded={expanded} />;
 }
 
 export { TreeList };
