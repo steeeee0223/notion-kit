@@ -1,0 +1,11 @@
+{
+  "name": "button",
+  "type": "core",
+  "files": [
+    {
+      "type": "core",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Slot } from \"@radix-ui/react-slot\";\n\nimport { cn } from \"@notion-kit/cn\";\n\nimport type { ButtonVariants } from \"./variants\";\nimport { buttonVariants } from \"./variants\";\n\nexport interface ButtonProps\n  extends React.ComponentProps<\"button\">,\n    ButtonVariants {\n  asChild?: boolean;\n}\n\nconst Button = ({\n  className,\n  variant,\n  size,\n  asChild = false,\n  ...props\n}: ButtonProps) => {\n  const Comp = asChild ? Slot : \"button\";\n  return (\n    <Comp\n      className={cn(buttonVariants({ variant, size, className }))}\n      {...props}\n    />\n  );\n};\nButton.displayName = \"Button\";\n\nexport { Button };\n",
+      "path": "core/button.tsx"
+    }
+  ]
+}
