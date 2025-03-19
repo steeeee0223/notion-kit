@@ -2,7 +2,7 @@
   {
     "name": "base",
     "type": "base",
-    "deps": [],
+    "deps": ["@notion-kit/cn"],
     "registryDeps": ["utils"]
   },
   {

@@ -6,11 +6,23 @@ export const Index: Record<
   string,
   {
     files: string[];
-    component: React.LazyExoticComponent<React.ComponentType<object>>;
+    component: React.LazyExoticComponent<React.ComponentType>;
   }
 > = {
-  "button/primary": {
-    files: ["components/demos/button/primary.tsx"],
-    component: React.lazy(() => import("@/components/demos/button/primary")),
+  "button/default": {
+    files: ["components/demos/button/default.tsx"],
+    component: React.lazy(() => import("@/components/demos/button/default")),
+  },
+  "button/secondary": {
+    files: ["components/demos/button/secondary.tsx"],
+    component: React.lazy(() => import("@/components/demos/button/secondary")),
+  },
+  "button/sizes": {
+    files: ["components/demos/button/sizes.tsx"],
+    component: React.lazy(() => import("@/components/demos/button/sizes")),
+  },
+  "button/variants": {
+    files: ["components/demos/button/variants.tsx"],
+    component: React.lazy(() => import("@/components/demos/button/variants")),
   },
 };

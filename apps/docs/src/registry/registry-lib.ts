@@ -11,7 +11,7 @@ export const lib: InternalRegistry = [
       {
         type: "lib",
         source: "../../../../packages/cn/src/index.ts",
-        target: "lib/utils.tsx",
+        target: "lib/utils.ts",
       },
     ],
   },

@@ -6,7 +6,7 @@
     {
       "type": "lib",
       "content": "import { cx } from \"class-variance-authority\";\nimport { twMerge } from \"tailwind-merge\";\n\nconst cn = (...inputs: Parameters<typeof cx>) => twMerge(cx(inputs));\n\nexport { cn };\n",
-      "path": "lib/utils.tsx"
+      "path": "lib/utils.ts"
     }
   ]
 }
