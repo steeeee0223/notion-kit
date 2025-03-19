@@ -1,7 +1,7 @@
 "use client";
 
 import type { ScrollAreaProps } from "@/components/core/scroll-area";
-import React from "react";
+import React, { useState } from "react";
 import { ScrollArea } from "@/components/core/scroll-area";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { tv } from "tailwind-variants";
@@ -18,9 +18,8 @@ import {
 
 const codeBlockStyles = tv({
   slots: {
-    root: "block w-fit max-w-full rounded-md border",
     header:
-      "bg-bg-muted flex h-10 items-center justify-between rounded-t-[inherit] border-b pr-2",
+      "bg-bg-muted flex h-10 items-center justify-between rounded-t-[inherit]",
     body: "bg-bg-muted/30 p-4 text-xs",
     code: "text-xs",
   },
@@ -37,30 +36,33 @@ interface CodeBlockClientProps {
   previewStr?: string;
   expandable?: boolean;
 }
+
 const CodeBlockClient = ({
   files,
   preview,
   previewStr,
   expandable = false,
-  ...props
 }: CodeBlockClientProps) => {
-  // @ts-expect-error fix later
-  const [activeTab, setActiveTab] = React.useState(files[0].fileName);
-  const [isExpanded, setExpanded] = React.useState(false);
+  const [activeTab, setActiveTab] = useState(files[0]?.fileName ?? "");
+  const [isExpanded, setExpanded] = useState(false);
   const handleExpand = () => {
     const prevState = isExpanded;
     if (prevState) {
-      // @ts-expect-error fix later
-      setActiveTab(files[0].fileName);
+      setActiveTab(files[0]?.fileName ?? "");
     }
     setExpanded(!prevState);
   };
+
   return (
-    <CodeBlockRoot value={activeTab} onValueChange={setActiveTab} {...props}>
+    <Tabs
+      className="relative my-0.5 w-full border-t"
+      value={activeTab}
+      onValueChange={setActiveTab}
+    >
       <CodeBlockHeader>
-        <div className="flex h-full w-[100px] flex-1 shrink-1 basis-0 items-end gap-2">
-          {files.length > 0 && (
-            <TabsList>
+        {files.length > 0 && (
+          <TabsList>
+            <div className="flex grow">
               {files
                 .slice(0, preview && !isExpanded ? 1 : files.length)
                 .map(({ fileName }, index) => (
@@ -68,53 +70,45 @@ const CodeBlockClient = ({
                     {fileName}
                   </Tab>
                 ))}
-            </TabsList>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          {(preview ?? expandable) && (
-            <Button
-              size="sm"
-              className="bg-bg-inverse/5 h-7 text-xs"
-              onClick={handleExpand}
-            >
-              {isExpanded ? "Collapse" : "Expand"} code
-            </Button>
-          )}
-          <CodeBlockCopyButton
-            code={
-              (previewStr && !isExpanded
-                ? previewStr
-                : files.find(({ fileName }) => fileName === activeTab)
-                    ?.codeStr)!
-            }
-          />
-        </div>
+            </div>
+            <div className="flex grow-0 items-center gap-2">
+              {(preview ?? expandable) && (
+                <Button
+                  variant="hint"
+                  size="sm"
+                  className="h-7"
+                  onClick={handleExpand}
+                >
+                  {isExpanded ? "Collapse" : "Expand"} code
+                </Button>
+              )}
+              <CodeBlockCopyButton
+                code={
+                  (previewStr && !isExpanded
+                    ? previewStr
+                    : files.find(({ fileName }) => fileName === activeTab)
+                        ?.codeStr)!
+                }
+              />
+            </div>
+          </TabsList>
+        )}
       </CodeBlockHeader>
       <CodeBlockBody
         className={cn(isExpanded ? "max-h-[400px]" : "max-h-[200px]")}
       >
         {preview && !isExpanded ? (
-          // @ts-expect-error fix later
-          <TabsContent id={files[0].fileName} className="mt-0!">
-            {preview}
-          </TabsContent>
+          <TabsContent value={files[0]?.fileName ?? ""}>{preview}</TabsContent>
         ) : (
           files.map(({ fileName, code }, index) => (
-            <TabsContent key={index} value={fileName} className="mt-0!">
+            <TabsContent key={index} value={fileName}>
               {code}
             </TabsContent>
           ))
         )}
       </CodeBlockBody>
-    </CodeBlockRoot>
+    </Tabs>
   );
-};
-
-type CodeBlockRootProps = React.ComponentProps<typeof Tabs>;
-const CodeBlockRoot = ({ className, ...props }: CodeBlockRootProps) => {
-  const { root } = codeBlockStyles();
-  return <Tabs className={root({ className })} {...props} />;
 };
 
 type CodeBlockHeaderProps = React.HTMLAttributes<HTMLDivElement>;
@@ -135,17 +129,18 @@ interface CodeBlockCopyButtonProps extends ButtonProps {
   code: string;
 }
 const CodeBlockCopyButton = ({ code, ...props }: CodeBlockCopyButtonProps) => {
-  const [copied, setCopied] = React.useState(false);
+  const [copied, setCopied] = useState(false);
   const handleCopy = () => {
     void navigator.clipboard.writeText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 1000);
   };
+
   return (
     <Button
       size="icon-sm"
       onClick={handleCopy}
-      className="bg-bg-inverse/5 size-7 [&_svg]:size-3"
+      className="size-7 [&_svg]:size-4"
       {...props}
     >
       {copied ? (
@@ -157,19 +152,4 @@ const CodeBlockCopyButton = ({ code, ...props }: CodeBlockCopyButtonProps) => {
   );
 };
 
-export type {
-  CodeBlockClientProps,
-  CodeBlockRootProps,
-  CodeBlockHeaderProps,
-  CodeBlockBodyProps,
-  CodeBlockCopyButtonProps,
-};
-
-export {
-  CodeBlockClient,
-  CodeBlockRoot,
-  CodeBlockHeader,
-  CodeBlockBody,
-  CodeBlockCopyButton,
-  codeBlockStyles,
-};
+export { CodeBlockClient };

@@ -4,17 +4,7 @@ import React from "react";
 import { useHorizontalResize } from "@/hooks/use-horizontal-resize";
 import { DemosProvider } from "@/lib/create-dynamic-component";
 
-import { cn } from "@notion-kit/cn";
 import { Skeleton } from "@notion-kit/shadcn";
-
-export const Loader = ({ children }: { children: React.ReactNode }) => {
-  const [isMounted, setIsMounted] = React.useState(false);
-  React.useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  return <Skeleton className={cn(isMounted && "hidden")}>{children}</Skeleton>;
-};
 
 export const ComponentWrapper = ({
   suspense,

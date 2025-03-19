@@ -1,10 +1,9 @@
 import type { BundledLanguage } from "shiki";
 import { codeToHtml } from "shiki";
 
-import type { CodeBlockRootProps } from "./code-block-client";
 import { CodeBlockClient } from "./code-block-client";
 
-interface CodeBlockProps extends CodeBlockRootProps {
+interface CodeBlockProps {
   files: {
     fileName: string;
     code: string;
