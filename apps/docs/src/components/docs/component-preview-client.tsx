@@ -2,31 +2,32 @@
 
 import React from "react";
 import { useHorizontalResize } from "@/hooks/use-horizontal-resize";
-import { DemosProvider } from "@/lib/create-dynamic-component";
 
 import { Skeleton } from "@notion-kit/shadcn";
 
-export const ComponentWrapper = ({
+interface ComponentWrapperProps extends React.PropsWithChildren {
+  suspense?: boolean;
+  fallback?: React.ReactNode;
+}
+
+export const ComponentWrapper: React.FC<ComponentWrapperProps> = ({
   suspense,
   fallback = <Skeleton className="h-40" />,
   children,
-}: {
-  suspense?: boolean;
-  fallback?: React.ReactNode;
-  children: React.ReactNode;
 }) => {
   if (suspense) {
     return <React.Suspense fallback={fallback}>{children}</React.Suspense>;
   }
-  return <DemosProvider>{children}</DemosProvider>;
+  return children;
 };
 
-export const ResizableContainer = ({
+interface ResizableContainerProps extends React.PropsWithChildren {
+  resizable?: boolean;
+}
+
+export const ResizableContainer: React.FC<ResizableContainerProps> = ({
   children,
   resizable,
-}: {
-  children: React.ReactNode;
-  resizable?: boolean;
 }) => {
   const { containerRef, width, handleMouseDown } = useHorizontalResize({
     // minWidth: 100, // Optional custom minimum width
@@ -43,7 +44,7 @@ export const ResizableContainer = ({
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div
         onMouseDown={handleMouseDown}
-        className="bg-bg-neutral hover:bg-bg-neutral-hover active:bg-bg-neutral-active absolute top-1/2 right-2 z-20 h-15 w-2 -translate-y-1/2 cursor-col-resize rounded-full shadow-sm"
+        className="bg-muted dark:bg-muted-dark absolute top-1/2 right-2 z-20 h-15 w-2 -translate-y-1/2 cursor-col-resize rounded-full shadow-sm"
       />
       {children}
     </div>

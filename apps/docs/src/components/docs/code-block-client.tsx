@@ -1,13 +1,10 @@
 "use client";
 
-import type { ScrollAreaProps } from "@/components/core/scroll-area";
 import React, { useState } from "react";
 import { ScrollArea } from "@/components/core/scroll-area";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { tv } from "tailwind-variants";
 
-import type { ButtonProps } from "@notion-kit/shadcn";
-import { cn } from "@notion-kit/cn";
 import {
   Button,
   TabsTrigger as Tab,
@@ -18,10 +15,8 @@ import {
 
 const codeBlockStyles = tv({
   slots: {
-    header:
-      "bg-bg-muted flex h-10 items-center justify-between rounded-t-[inherit]",
-    body: "bg-bg-muted/30 p-4 text-xs",
-    code: "text-xs",
+    header: "flex h-10 items-center justify-between rounded-t-[inherit]",
+    body: "p-4 text-xs",
   },
 });
 
@@ -37,12 +32,14 @@ interface CodeBlockClientProps {
   expandable?: boolean;
 }
 
-const CodeBlockClient = ({
+const CodeBlockClient: React.FC<CodeBlockClientProps> = ({
   files,
   preview,
   previewStr,
   expandable = false,
-}: CodeBlockClientProps) => {
+}) => {
+  const { header, body } = codeBlockStyles();
+
   const [activeTab, setActiveTab] = useState(files[0]?.fileName ?? "");
   const [isExpanded, setExpanded] = useState(false);
   const handleExpand = () => {
@@ -59,14 +56,14 @@ const CodeBlockClient = ({
       value={activeTab}
       onValueChange={setActiveTab}
     >
-      <CodeBlockHeader>
+      <div className={header()}>
         {files.length > 0 && (
           <TabsList>
             <div className="flex grow">
               {files
                 .slice(0, preview && !isExpanded ? 1 : files.length)
                 .map(({ fileName }, index) => (
-                  <Tab key={index} value={fileName}>
+                  <Tab key={index} value={fileName} className="font-normal">
                     {fileName}
                   </Tab>
                 ))}
@@ -76,13 +73,13 @@ const CodeBlockClient = ({
                 <Button
                   variant="hint"
                   size="sm"
-                  className="h-7"
+                  className="h-7 font-normal"
                   onClick={handleExpand}
                 >
                   {isExpanded ? "Collapse" : "Expand"} code
                 </Button>
               )}
-              <CodeBlockCopyButton
+              <CopyButton
                 code={
                   (previewStr && !isExpanded
                     ? previewStr
@@ -93,9 +90,12 @@ const CodeBlockClient = ({
             </div>
           </TabsList>
         )}
-      </CodeBlockHeader>
-      <CodeBlockBody
-        className={cn(isExpanded ? "max-h-[400px]" : "max-h-[200px]")}
+      </div>
+      <ScrollArea
+        scrollbars="both"
+        className={body({
+          className: isExpanded ? "max-h-[400px]" : "max-h-[200px]",
+        })}
       >
         {preview && !isExpanded ? (
           <TabsContent value={files[0]?.fileName ?? ""}>{preview}</TabsContent>
@@ -106,48 +106,29 @@ const CodeBlockClient = ({
             </TabsContent>
           ))
         )}
-      </CodeBlockBody>
+      </ScrollArea>
     </Tabs>
   );
 };
 
-type CodeBlockHeaderProps = React.HTMLAttributes<HTMLDivElement>;
-const CodeBlockHeader = ({ className, ...props }: CodeBlockHeaderProps) => {
-  const { header } = codeBlockStyles();
-  return <div className={header({ className })} {...props} />;
-};
-
-type CodeBlockBodyProps = ScrollAreaProps;
-const CodeBlockBody = ({ className, ...props }: CodeBlockBodyProps) => {
-  const { body } = codeBlockStyles();
-  return (
-    <ScrollArea scrollbars="both" className={body({ className })} {...props} />
-  );
-};
-
-interface CodeBlockCopyButtonProps extends ButtonProps {
+interface CopyButtonProps {
   code: string;
 }
-const CodeBlockCopyButton = ({ code, ...props }: CodeBlockCopyButtonProps) => {
+const CopyButton: React.FC<CopyButtonProps> = ({ code }: CopyButtonProps) => {
   const [copied, setCopied] = useState(false);
-  const handleCopy = () => {
-    void navigator.clipboard.writeText(code);
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 1000);
   };
 
   return (
     <Button
-      size="icon-sm"
+      size="icon-md"
       onClick={handleCopy}
-      className="size-7 [&_svg]:size-4"
-      {...props}
+      className="[&_svg]:animate-in [&_svg]:fade-in [&_svg]:size-4"
     >
-      {copied ? (
-        <CheckIcon className="animate-in fade-in" />
-      ) : (
-        <CopyIcon className="animate-in fade-in" />
-      )}
+      {copied ? <CheckIcon /> : <CopyIcon />}
     </Button>
   );
 };
