@@ -65,6 +65,7 @@ export default tseslint.config(
     ],
     rules: {
       ...turboPlugin.configs.recommended.rules,
+      "no-useless-rename": ["error"],
       "@typescript-eslint/no-unused-vars": [
         "error",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
@@ -78,7 +79,6 @@ export default tseslint.config(
         "error",
         { allowConstantLoopConditions: true },
       ],
-      "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
     },
   },
   {

@@ -1,7 +1,7 @@
 "use client";
 
-import type { DialogProps } from "@radix-ui/react-dialog";
 import * as React from "react";
+import type { DialogProps } from "@radix-ui/react-dialog";
 import { Command as CommandPrimitive } from "cmdk";
 
 import { cn } from "@notion-kit/cn";

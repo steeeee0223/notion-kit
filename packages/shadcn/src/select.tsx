@@ -1,7 +1,7 @@
 "use client";
 
-import type { SelectProps } from "@radix-ui/react-select";
 import * as React from "react";
+import type { SelectProps } from "@radix-ui/react-select";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
