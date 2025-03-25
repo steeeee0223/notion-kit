@@ -8,6 +8,11 @@ node_modules
 # testing
 coverage
 
+# generated content
+.contentlayer
+.content-collections
+.source
+
 # next.js
 .next/
 out/
