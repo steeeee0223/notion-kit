@@ -1,0 +1,63 @@
+{
+  "name": "@notion-kit/cli",
+  "version": "0.1.0",
+  "description": "Add components, blocks, hooks, themes and icons to your app.",
+  "type": "module",
+  "author": {
+    "name": "steeeee0223",
+    "url": "https://github.com/steeeee0223"
+  },
+  "bugs": {
+    "url": "https://github.com/steeeee0223/notion-kit/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/steeeee0223/notion-kit.git",
+    "directory": "packages/cli"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": "./dist/index.js",
+  "bin": "./dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "clean": "rimraf dist && rimraf components",
+    "start:dev": "cross-env REGISTRY_URL=http://localhost:3000/registry node dist/index.js",
+    "start": "node dist/index.js",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "release": "changeset version",
+    "pub:beta": "pnpm build && pnpm publish --no-git-checks --access public --tag beta",
+    "pub:next": "pnpm build && pnpm publish --no-git-checks --access public --tag next",
+    "pub:release": "pnpm build && pnpm publish --access public"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.10.0",
+    "@notion-kit/validators": "workspace:*",
+    "@types/fs-extra": "^11.0.4",
+    "commander": "^13.1.0",
+    "cosmiconfig": "^9.0.0",
+    "deepmerge": "^4.3.1",
+    "execa": "^9.5.2",
+    "fast-glob": "^3.3.3",
+    "fs-extra": "^11.3.0",
+    "package-manager-detector": "^1.1.0",
+    "picocolors": "^1.1.0",
+    "ts-morph": "^25.0.0",
+    "tsconfig-paths": "^4.2.0",
+    "type-fest": "^4.37.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@notion-kit/eslint-config": "workspace:*",
+    "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tsconfig": "workspace:*",
+    "@types/node": "catalog:node22",
+    "tsup": "catalog:",
+    "typescript": "catalog:"
+  }
+}
