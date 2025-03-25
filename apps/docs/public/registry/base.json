@@ -1,0 +1,7 @@
+{
+  "name": "base",
+  "type": "base",
+  "deps": ["@notion-kit/cn"],
+  "registryDeps": ["utils"],
+  "files": []
+}

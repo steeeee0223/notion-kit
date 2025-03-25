@@ -1,0 +1,29 @@
+[
+  {
+    "name": "base",
+    "type": "base",
+    "deps": ["@notion-kit/cn"],
+    "registryDeps": ["utils"]
+  },
+  {
+    "name": "button",
+    "type": "core"
+  },
+  {
+    "name": "use-is-mobile",
+    "type": "hook"
+  },
+  {
+    "name": "utils",
+    "type": "lib",
+    "deps": ["clsx", "tailwind-merge"]
+  },
+  {
+    "name": "lucide-icons",
+    "type": "icon-library"
+  },
+  {
+    "name": "remix-icons",
+    "type": "icon-library"
+  }
+]
