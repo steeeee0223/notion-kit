@@ -1,15 +1,8 @@
 {
-  "name": "@notion-kit/cn",
+  "name": "@notion-kit/common",
   "version": "0.1.0",
+  "private": true,
   "type": "module",
-  "bugs": {
-    "url": "https://github.com/steeeee0223/notion-kit/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/steeeee0223/notion-kit.git",
-    "directory": "packages/cn"
-  },
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
@@ -29,17 +22,25 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "class-variance-authority": "catalog:ui",
-    "tailwind-merge": "^3.0.2"
+    "@hookform/resolvers": "catalog:ui",
+    "@notion-kit/cn": "workspace:*",
+    "@notion-kit/shadcn": "workspace:*",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "@types/react": "catalog:react19",
     "eslint": "catalog:",
     "prettier": "catalog:",
+    "react": "catalog:react19",
     "tsup": "catalog:",
     "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:react19",
+    "zod": "catalog:"
   },
   "prettier": "@notion-kit/prettier-config"
 }
