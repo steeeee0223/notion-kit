@@ -285,6 +285,27 @@ importers:
         specifier: 'catalog:'
         version: 5.8.2
 
+  packages/cli:
+    devDependencies:
+      '@notion-kit/eslint-config':
+        specifier: workspace:*
+        version: link:../../tooling/eslint
+      '@notion-kit/prettier-config':
+        specifier: workspace:*
+        version: link:../../tooling/prettier
+      '@notion-kit/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
+      '@types/node':
+        specifier: catalog:node22
+        version: 22.13.9
+      tsup:
+        specifier: 'catalog:'
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.2
+
   packages/cn:
     dependencies:
       class-variance-authority:

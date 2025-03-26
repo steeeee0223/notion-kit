@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "notion-ui",
+  "homepage": "",
+  "items": [
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "button",
+      "title": "Button",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/packages/shadcn/src/button.tsx",
+          "type": "registry:component",
+          "target": "core/button.tsx"
+        }
+      ]
+    }
+  ]
+}
