@@ -15,3 +15,7 @@ export const getFileSource = (filePath: string) => {
     lang: segments.length > 0 ? segments.at(-1)! : "tsx",
   };
 };
+
+export const getFilePath = (filePath: string) => {
+  return path.join(process.cwd(), "../../packages", filePath);
+};
