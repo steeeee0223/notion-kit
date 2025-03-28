@@ -8,7 +8,7 @@ import { contentVariants, ContentVariants } from "./variants";
 const cardVariants = cva("rounded-lg shadow-xs", {
   variants: {
     asButton: {
-      true: "hover:bg-primary/5 cursor-pointer select-none",
+      true: "cursor-pointer select-none hover:bg-primary/5",
     },
   },
   defaultVariants: { asButton: false },
@@ -64,10 +64,7 @@ const CardDescription = ({
   className,
   ...props
 }: React.ComponentProps<"p">) => (
-  <p
-    className={cn("text-muted dark:text-muted-dark text-sm", className)}
-    {...props}
-  />
+  <p className={cn("text-sm text-muted", className)} {...props} />
 );
 CardDescription.displayName = "CardDescription";
 

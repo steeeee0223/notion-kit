@@ -6,7 +6,7 @@ const Table = ({ className, ...props }: React.ComponentProps<"table">) => (
   <div className="relative w-full overflow-auto">
     <table
       className={cn(
-        "border-y-primary/10 w-full border-y text-[13px]",
+        "w-full border-y border-y-primary/10 text-[13px]",
         className,
       )}
       {...props}
@@ -36,7 +36,7 @@ const TableFooter = ({
 }: React.ComponentProps<"tfoot">) => (
   <tfoot
     className={cn(
-      "bg-muted/50 border-t font-medium last:[&>tr]:border-b-0",
+      "border-t bg-muted/50 font-medium last:[&>tr]:border-b-0",
       className,
     )}
     {...props}
@@ -45,7 +45,7 @@ const TableFooter = ({
 TableFooter.displayName = "TableFooter";
 
 const TableRow = ({ className, ...props }: React.ComponentProps<"tr">) => (
-  <tr className={cn("border-t-primary/10 border-t", className)} {...props} />
+  <tr className={cn("border-t border-t-primary/10", className)} {...props} />
 );
 TableRow.displayName = "TableRow";
 
@@ -63,10 +63,7 @@ const TableCaption = ({
   className,
   ...props
 }: React.ComponentProps<"caption">) => (
-  <caption
-    className={cn("text-muted dark:text-muted-dark mt-4 text-sm", className)}
-    {...props}
-  />
+  <caption className={cn("mt-4 text-sm text-muted", className)} {...props} />
 );
 TableCaption.displayName = "TableCaption";
 

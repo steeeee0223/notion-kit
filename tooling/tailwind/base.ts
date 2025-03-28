@@ -7,14 +7,9 @@ export default {
     extend: {
       colors: {
         primary: "rgb(var(--primary) / <alpha-value>)",
-        secondary: {
-          DEFAULT: "rgba(var(--primary) / 0.65)",
-          dark: "rgba(var(--primary) / 0.45)",
-        },
-        muted: {
-          DEFAULT: "rgba(var(--primary) / 0.50)",
-          dark: "rgba(var(--primary) / 0.30)",
-        },
+        secondary: "rgba(var(--secondary))",
+        muted: "rgba(var(--muted))",
+        icon: "rgba(var(--icon))",
         main: "rgb(var(--bg-main) / <alpha-value>)",
         input: "rgb(var(--bg-input) / <alpha-value>)",
         sidebar: "rgb(var(--bg-sidebar) / <alpha-value>)",
@@ -26,14 +21,7 @@ export default {
           button: "rgba(var(--primary) / 0.15)",
           cell: "rgb(var(--border-cell) / <alpha-value>)",
         },
-        ring: {
-          DEFAULT: "rgba(15, 15, 15, 0.10)",
-          dark: "rgba(255, 255, 255, 0.075)",
-        },
-        icon: {
-          DEFAULT: "rgba(var(--primary) / 0.85)",
-          dark: "rgba(var(--primary) / 0.80)",
-        },
+        ring: "rgba(var(--ring))",
         blue: {
           DEFAULT: "rgb(35, 131, 226)",
           hover: "rgb(0, 119, 212)",

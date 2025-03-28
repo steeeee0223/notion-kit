@@ -14,7 +14,7 @@ const TabsList = ({ className, ...props }: TabsListProps) => (
   <TabsPrimitive.List
     className={cn(
       "flex h-10 w-full items-center justify-start rounded-none border-b px-2",
-      "text-muted dark:text-primary/45 bg-transparent",
+      "bg-transparent text-muted dark:text-primary/45",
       className,
     )}
     {...props}
@@ -36,7 +36,7 @@ const TabsTrigger = ({ className, children, ...props }: TabsTriggerProps) => (
     )}
     {...props}
   >
-    <p className="hover:bg-primary/5 rounded-sm px-2 py-1">{children}</p>
+    <p className="rounded-sm px-2 py-1 hover:bg-primary/5">{children}</p>
   </TabsPrimitive.Trigger>
 );
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
