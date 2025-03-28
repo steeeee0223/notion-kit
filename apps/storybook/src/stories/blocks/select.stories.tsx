@@ -31,7 +31,7 @@ export const Default: Story = {
 };
 
 const Custom: SelectProps["renderOption"] = ({ option }) => (
-  <div className="dark:text-secondary-dark truncate text-secondary">
+  <div className="truncate text-secondary">
     {typeof option === "string" ? option : option?.label}
   </div>
 );

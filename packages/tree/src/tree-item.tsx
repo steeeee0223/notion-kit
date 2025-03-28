@@ -43,7 +43,7 @@ function TreeItem<T extends TreeItemData>({
       style={{ paddingLeft: `${(level + 1) * 12}px` }}
       className={cn(
         buttonVariants({ variant: null }),
-        "dark:text-secondary-dark relative flex h-[27px] w-full justify-normal py-1 pr-3 font-medium text-secondary",
+        "relative flex h-[27px] w-full justify-normal py-1 pr-3 font-medium text-secondary",
         isSelected && "bg-primary/10 text-primary dark:text-primary/80",
         className,
       )}

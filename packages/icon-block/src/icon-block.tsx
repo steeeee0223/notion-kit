@@ -80,10 +80,7 @@ const Icon: React.FC<Omit<IconBlockProps, "size">> = ({
       const letter = getLetter(icon, fallback);
       return (
         <div
-          className={cn(
-            "dark:text-secondary-dark bg-primary/10 text-center text-secondary",
-            className,
-          )}
+          className={cn("bg-primary/10 text-center text-secondary", className)}
         >
           {letter}
         </div>

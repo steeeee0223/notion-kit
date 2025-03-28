@@ -87,7 +87,7 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
           style={{ paddingLeft: `${(level + 1) * 12}px` }}
           className={cn(
             buttonVariants({ variant: null }),
-            "dark:text-secondary-dark relative flex h-[27px] w-full justify-normal py-1 pr-3 font-medium text-secondary",
+            "relative flex h-[27px] w-full justify-normal py-1 pr-3 font-medium text-secondary",
             active && "bg-primary/10 text-primary dark:text-primary/80",
             className,
           )}
@@ -148,7 +148,7 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
-                  <div className="dark:text-muted-dark flex flex-col items-center px-2 py-1 text-xs text-muted">
+                  <div className="flex flex-col items-center px-2 py-1 text-xs text-muted">
                     <div className="w-full">Last edited by: {lastEditedBy}</div>
                     <div className="w-full">{lastEditedAt}</div>
                   </div>
