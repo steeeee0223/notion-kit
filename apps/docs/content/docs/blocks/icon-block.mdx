@@ -60,3 +60,19 @@ Use the `size` prop to control the size of the button.
   name="icon-block/text"
   preview={`<IconBlock size="md" icon={{ type: "text", text: "John" }} />`}
 />
+
+## API Reference
+
+| Prop       | Type                           | Default | Description                                                     |
+| ---------- | ------------------------------ | ------- | --------------------------------------------------------------- |
+| `icon`\*   | `IconInfo`                     | -       | The icon data.                                                  |
+| `size`     | `"sm" \| "md" \| "lg" \| "xl"` | `"sm"`  | The size of the block.                                          |
+| `fallback` | `string`                       | -       | The fallback string to display when an image can not be loaded. |
+
+```ts
+type IconInfo =
+  | { type: "emoji"; emoji: string }
+  | { type: "lucide"; name: LucideName; color?: string }
+  | { type: "file"; url: string }
+  | { type: "text"; text: string };
+```

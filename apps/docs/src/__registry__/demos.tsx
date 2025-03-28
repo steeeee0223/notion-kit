@@ -63,6 +63,10 @@ export const Index: Record<
     files: ["components/demos/icon-block/url.tsx"],
     component: React.lazy(() => import("@/components/demos/icon-block/url")),
   },
+  "icon-menu/default": {
+    files: ["components/demos/icon-menu/default.tsx"],
+    component: React.lazy(() => import("@/components/demos/icon-menu/default")),
+  },
   "input/default": {
     files: ["components/demos/input/default.tsx"],
     component: React.lazy(() => import("@/components/demos/input/default")),
