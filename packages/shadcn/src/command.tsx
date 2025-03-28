@@ -13,7 +13,7 @@ type CommandProps = React.ComponentProps<typeof CommandPrimitive>;
 const Command = ({ className, ...props }: CommandProps) => (
   <CommandPrimitive
     className={cn(
-      "text-popover-foreground bg-modal flex h-full w-full flex-col overflow-hidden rounded-md",
+      "text-popover-foreground flex h-full w-full flex-col overflow-hidden rounded-md bg-modal",
       className,
     )}
     {...props}
@@ -41,7 +41,7 @@ const CommandDialog = ({
       >
         <Command
           shouldFilter={shouldFilter}
-          className="dark:text-muted-dark [&_[cmdk-group-heading]]:text-muted focus-visible:outline-hidden [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12"
+          className="focus-visible:outline-hidden [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12"
           // [&_[cmdk-group]]:px-2 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5
         >
           {children}
@@ -97,7 +97,7 @@ const CommandGroup = ({
 }: React.ComponentProps<typeof CommandPrimitive.Group>) => (
   <CommandPrimitive.Group
     className={cn(
-      "text-muted dark:text-muted-dark [&_[cmdk-group-heading]]:text-muted overflow-hidden py-1 [&_[cmdk-group-heading]]:px-3.5 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium",
+      "overflow-hidden py-1 text-muted [&_[cmdk-group-heading]]:px-3.5 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted",
       className,
     )}
     {...props}
@@ -123,7 +123,7 @@ const CommandItem = ({ className, disabled, ...props }: CommandItemProps) => (
     className={cn(
       menuItemVariants({ disabled }),
       "aria-selected:bg-primary/5 aria-selected:text-primary dark:aria-selected:text-primary/80",
-      "data-[disabled=true]:text-muted dark:data-[disabled=true]:text-muted-dark",
+      "data-[disabled=true]:text-muted",
       className,
     )}
     disabled={disabled}
@@ -139,10 +139,7 @@ const CommandShortcut = ({
 }: React.HTMLAttributes<HTMLSpanElement>) => {
   return (
     <span
-      className={cn(
-        "text-muted dark:text-muted-dark ml-auto text-xs tracking-widest",
-        className,
-      )}
+      className={cn("ml-auto text-xs tracking-widest text-muted", className)}
       {...props}
     />
   );
