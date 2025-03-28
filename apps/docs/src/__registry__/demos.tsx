@@ -43,6 +43,10 @@ export const Index: Record<
     files: ["components/demos/button/warning.tsx"],
     component: React.lazy(() => import("@/components/demos/button/warning")),
   },
+  "cover/default": {
+    files: ["components/demos/cover/default.tsx"],
+    component: React.lazy(() => import("@/components/demos/cover/default")),
+  },
   "icon-block/emoji": {
     files: ["components/demos/icon-block/emoji.tsx"],
     component: React.lazy(() => import("@/components/demos/icon-block/emoji")),
@@ -78,5 +82,49 @@ export const Index: Record<
   "input/search": {
     files: ["components/demos/input/search.tsx"],
     component: React.lazy(() => import("@/components/demos/input/search")),
+  },
+  "modal/basic": {
+    files: [
+      "components/demos/modal/basic/index.tsx",
+      "components/demos/modal/basic/modal.tsx",
+      "components/demos/modal/basic/trigger.tsx",
+    ],
+    component: React.lazy(() => import("@/components/demos/modal/basic")),
+  },
+  "select/custom": {
+    files: ["components/demos/select/custom.tsx"],
+    component: React.lazy(() => import("@/components/demos/select/custom")),
+  },
+  "select/default": {
+    files: ["components/demos/select/default.tsx"],
+    component: React.lazy(() => import("@/components/demos/select/default")),
+  },
+  "single-image-dropzone/default": {
+    files: ["components/demos/single-image-dropzone/default.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/single-image-dropzone/default"),
+    ),
+  },
+  "spinner/dashed": {
+    files: ["components/demos/spinner/dashed.tsx"],
+    component: React.lazy(() => import("@/components/demos/spinner/dashed")),
+  },
+  "spinner/default": {
+    files: ["components/demos/spinner/default.tsx"],
+    component: React.lazy(() => import("@/components/demos/spinner/default")),
+  },
+  "spinner/sizes": {
+    files: ["components/demos/spinner/sizes.tsx"],
+    component: React.lazy(() => import("@/components/demos/spinner/sizes")),
+  },
+  "tags-input/default": {
+    files: ["components/demos/tags-input/default.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/tags-input/default"),
+    ),
+  },
+  "unsplash/default": {
+    files: ["components/demos/unsplash/default.tsx"],
+    component: React.lazy(() => import("@/components/demos/unsplash/default")),
   },
 };

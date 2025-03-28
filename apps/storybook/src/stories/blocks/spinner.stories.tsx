@@ -14,5 +14,5 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 export const Dashed: Story = {
-  args: { variants: "dashed" },
+  args: { variant: "dashed" },
 };

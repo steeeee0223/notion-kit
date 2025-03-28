@@ -111,9 +111,6 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../../packages/cn
-      '@notion-kit/common':
-        specifier: workspace:*
-        version: link:../../packages/common
       '@notion-kit/cover':
         specifier: workspace:*
         version: link:../../packages/cover

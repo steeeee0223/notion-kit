@@ -20,15 +20,15 @@ const spinnerVariants = cva("animate-spin text-muted", {
 
 export interface SpinnerProps extends VariantProps<typeof spinnerVariants> {
   className?: string;
-  variants?: "solid" | "dashed";
+  variant?: "solid" | "dashed";
 }
 
 export const Spinner: React.FC<SpinnerProps> = ({
   className,
   size,
-  variants,
+  variant,
 }) => {
-  const Icon = variants === "dashed" ? Loader : LoaderCircle;
+  const Icon = variant === "dashed" ? Loader : LoaderCircle;
   return (
     <Icon
       className={cn(spinnerVariants({ size, className }))}

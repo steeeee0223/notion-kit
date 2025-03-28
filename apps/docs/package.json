@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "build:internal-registry": "tsx ./scripts/build-internal-registry.ts && pnpm format -w",
+    "build:demos": "tsx ./scripts/build-internal-registry.ts && pnpm format -w",
     "build:registry": "tsx ./scripts/build-registry.ts && pnpm format -w",
     "clean": "git clean -xdf .next .turbo node_modules",
     "dev": "next dev",
@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@notion-kit/cn": "workspace:*",
-    "@notion-kit/common": "workspace:*",
     "@notion-kit/cover": "workspace:*",
     "@notion-kit/icon-block": "workspace:*",
     "@notion-kit/icon-menu": "workspace:*",
