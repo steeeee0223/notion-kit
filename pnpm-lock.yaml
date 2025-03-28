@@ -111,9 +111,42 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../../packages/cn
+      '@notion-kit/common':
+        specifier: workspace:*
+        version: link:../../packages/common
+      '@notion-kit/cover':
+        specifier: workspace:*
+        version: link:../../packages/cover
+      '@notion-kit/icon-block':
+        specifier: workspace:*
+        version: link:../../packages/icon-block
+      '@notion-kit/icon-menu':
+        specifier: workspace:*
+        version: link:../../packages/icon-menu
+      '@notion-kit/modal':
+        specifier: workspace:*
+        version: link:../../packages/modal
+      '@notion-kit/select':
+        specifier: workspace:*
+        version: link:../../packages/select
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../../packages/shadcn
+      '@notion-kit/single-image-dropzone':
+        specifier: workspace:*
+        version: link:../../packages/single-image-dropzone
+      '@notion-kit/spinner':
+        specifier: workspace:*
+        version: link:../../packages/spinner
+      '@notion-kit/tags-input':
+        specifier: workspace:*
+        version: link:../../packages/tags-input
+      '@notion-kit/tree':
+        specifier: workspace:*
+        version: link:../../packages/tree
+      '@notion-kit/unsplash':
+        specifier: workspace:*
+        version: link:../../packages/unsplash
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1

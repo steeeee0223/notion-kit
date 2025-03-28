@@ -43,6 +43,26 @@ export const Index: Record<
     files: ["components/demos/button/warning.tsx"],
     component: React.lazy(() => import("@/components/demos/button/warning")),
   },
+  "icon-block/emoji": {
+    files: ["components/demos/icon-block/emoji.tsx"],
+    component: React.lazy(() => import("@/components/demos/icon-block/emoji")),
+  },
+  "icon-block/lucide": {
+    files: ["components/demos/icon-block/lucide.tsx"],
+    component: React.lazy(() => import("@/components/demos/icon-block/lucide")),
+  },
+  "icon-block/sizes": {
+    files: ["components/demos/icon-block/sizes.tsx"],
+    component: React.lazy(() => import("@/components/demos/icon-block/sizes")),
+  },
+  "icon-block/text": {
+    files: ["components/demos/icon-block/text.tsx"],
+    component: React.lazy(() => import("@/components/demos/icon-block/text")),
+  },
+  "icon-block/url": {
+    files: ["components/demos/icon-block/url.tsx"],
+    component: React.lazy(() => import("@/components/demos/icon-block/url")),
+  },
   "input/default": {
     files: ["components/demos/input/default.tsx"],
     component: React.lazy(() => import("@/components/demos/input/default")),

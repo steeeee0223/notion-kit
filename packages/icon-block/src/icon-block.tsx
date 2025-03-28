@@ -12,7 +12,7 @@ import { createLucideIcon } from "./create-lucide-icon";
 import type { IconInfo } from "./types";
 import { getLetter, isEmoji } from "./utils";
 
-const iconBlockVariants = cva("shrink-0", {
+const iconBlockVariants = cva("shrink-0 select-none", {
   variants: {
     size: {
       sm: "size-5 rounded-sm p-0.5 text-sm/4",
@@ -57,7 +57,8 @@ const Icon: React.FC<Omit<IconBlockProps, "size">> = ({
     }
     case "file":
       return (
-        <Avatar className={className}>
+        /** @note Add `[&_img]:m-0` to prevent override by fumadocs */
+        <Avatar className={cn("[&_img]:m-0", className)}>
           <AvatarFallback className="bg-transparent">
             <Spinner className={className} />
           </AvatarFallback>

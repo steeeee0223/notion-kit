@@ -1,0 +1,62 @@
+---
+title: Icon Block
+description: A block for icon, emoji, or image display.
+---
+
+<ComponentPreview
+  name="icon-block/emoji"
+  preview={`<IconBlock size="md" icon={{ type: "emoji", emoji: "🚀" }} />`}
+/>
+
+## Installation
+
+```package-install
+pnpm add @notion-kit/icon-block
+```
+
+## Options
+
+---
+
+### Size
+
+Use the `size` prop to control the size of the button.
+
+<ComponentPreview
+  name="icon-block/sizes"
+  preview={`<IconBlock size="sm" icon={icon} />
+  <IconBlock size="md" icon={icon} />
+  <IconBlock size="lg" icon={icon} />
+  <IconBlock size="xl" icon={icon} />`}
+/>
+
+## Examples
+
+---
+
+### Lucide Icon
+
+<ComponentPreview
+  name="icon-block/lucide"
+  preview={`<IconBlock
+    size="md"
+    icon={{ type: "lucide", name: "badge-euro", color: "#3e9392" }}
+  />`}
+/>
+
+### Image Url
+
+<ComponentPreview
+  name="icon-block/url"
+  preview={`<IconBlock
+    size="md"
+    icon={{ type: "file", url: "https://github.com/shadcn.png" }}
+  />`}
+/>
+
+### Text
+
+<ComponentPreview
+  name="icon-block/text"
+  preview={`<IconBlock size="md" icon={{ type: "text", text: "John" }} />`}
+/>
