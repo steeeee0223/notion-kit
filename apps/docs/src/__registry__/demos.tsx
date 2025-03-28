@@ -43,4 +43,16 @@ export const Index: Record<
     files: ["components/demos/button/warning.tsx"],
     component: React.lazy(() => import("@/components/demos/button/warning")),
   },
+  "input/default": {
+    files: ["components/demos/input/default.tsx"],
+    component: React.lazy(() => import("@/components/demos/input/default")),
+  },
+  "input/flat": {
+    files: ["components/demos/input/flat.tsx"],
+    component: React.lazy(() => import("@/components/demos/input/flat")),
+  },
+  "input/search": {
+    files: ["components/demos/input/search.tsx"],
+    component: React.lazy(() => import("@/components/demos/input/search")),
+  },
 };

@@ -1,0 +1,45 @@
+---
+title: Input
+description: Displays a form input field or a component that looks like an input field.
+links:
+  - label: Shadcn UI
+    href: https://ui.shadcn.com/docs/components/input
+---
+
+<ComponentPreview name="input/default" preview={`<Input className="w-80" />`} />
+
+## Installation
+
+```package-install
+pnpm add @notion-kit/shadcn
+```
+
+## Examples
+
+---
+
+### Without Border
+
+<ComponentPreview
+  name="input/flat"
+  preview={`<Input
+    variant="flat"
+    className="w-80"
+    placeholder="Enter something..."
+  />`}
+/>
+
+### Search Input
+
+<ComponentPreview
+  name="input/search"
+  preview={`<Input
+    className="w-80"
+    value={value}
+    onChange={(e) => setValue(e.target.value)}
+    onCancel={() => setValue("")}
+    placeholder="Enter something..."
+    search
+    clear
+  />`}
+/>
