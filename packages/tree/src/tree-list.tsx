@@ -48,7 +48,7 @@ function TreeList<T extends TreeItemData>(props: TreeListProps<T>) {
                 paddingLeft: level ? `${level * 12 + 25}px` : undefined,
               }}
               className={cn(
-                "text-muted dark:text-muted-dark hidden pl-4 text-sm font-medium",
+                "dark:text-muted-dark hidden pl-4 text-sm font-medium text-muted",
                 !Object.is(expanded, {}) && "last:block",
                 level === 0 && "hidden",
               )}

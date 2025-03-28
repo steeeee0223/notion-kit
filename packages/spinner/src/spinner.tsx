@@ -5,7 +5,7 @@ import { Loader, LoaderCircle } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
 
-const spinnerVariants = cva("text-muted dark:text-muted-dark animate-spin", {
+const spinnerVariants = cva("dark:text-muted-dark animate-spin text-muted", {
   variants: {
     size: {
       sm: "h-2 w-2",

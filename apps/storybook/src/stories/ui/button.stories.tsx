@@ -8,6 +8,9 @@ const meta = {
   component: Button,
   parameters: { layout: "centered" },
   tags: ["autodocs"],
+  args: {
+    size: "md",
+  },
   argTypes: {
     disabled: { type: "boolean" },
   },
@@ -32,7 +35,7 @@ export const Hint: Story = {
     size: "xs",
     children: (
       <>
-        <CircleHelp className="mr-1.5 h-3.5 w-3.5" />
+        <CircleHelp className="mr-1.5 size-3.5" />
         Learn more about this feature
       </>
     ),
@@ -43,8 +46,8 @@ export const Link: Story = {
 };
 export const Nav: Story = {
   args: {
-    variant: "nav",
-    size: "icon",
+    variant: "nav-icon",
+    size: null,
     children: <ChevronRight className="size-4" />,
   },
 };

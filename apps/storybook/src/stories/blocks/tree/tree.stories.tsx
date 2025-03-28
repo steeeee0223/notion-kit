@@ -29,7 +29,7 @@ const RenderWithGroup: Story["render"] = (props) => {
   const [activeFile, setActiveFile] = useState<string | null>(null);
   return (
     <TreeGroup
-      className="bg-sidebar w-60 p-2"
+      className="w-60 bg-sidebar p-2"
       title="Workspace"
       description="Add a file"
     >

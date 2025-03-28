@@ -42,8 +42,8 @@ function TreeItem<T extends TreeItemData>({
       onKeyDown={onSelect}
       style={{ paddingLeft: `${(level + 1) * 12}px` }}
       className={cn(
-        buttonVariants({ variant: "subitem" }),
-        "h-[27px] w-full justify-normal py-1 pr-3 font-medium",
+        buttonVariants({ variant: null }),
+        "dark:text-secondary-dark relative flex h-[27px] w-full justify-normal py-1 pr-3 font-medium text-secondary",
         isSelected && "bg-primary/10 text-primary dark:text-primary/80",
         className,
       )}
@@ -51,9 +51,8 @@ function TreeItem<T extends TreeItemData>({
       <div className="group/icon">
         <Button
           variant="hint"
-          size="icon-sm"
           className={cn(
-            "relative hidden shrink-0 p-0.5",
+            "relative hidden size-5 shrink-0 p-0.5",
             expandable && "group-hover/icon:flex",
           )}
           onClick={(e) => {

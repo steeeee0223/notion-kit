@@ -134,7 +134,7 @@ const SingleImageDropzone: React.FC<SingleImageDropzoneProps> = ({
   return (
     <div className="relative">
       {disabled && (
-        <div className="bg-background/80 absolute inset-y-0 z-50 flex h-full w-full items-center justify-center">
+        <div className="absolute inset-y-0 z-50 flex h-full w-full items-center justify-center bg-background/80">
           <Spinner size="lg" />
         </div>
       )}
@@ -200,7 +200,7 @@ const Button = React.forwardRef<
     <button
       className={twMerge(
         // base
-        "focus-visible:ring-ring inline-flex cursor-pointer items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex cursor-pointer items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
         // color
         "border border-gray-400 text-gray-400 shadow hover:bg-gray-100 hover:text-gray-500 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700",
         // size

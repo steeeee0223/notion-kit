@@ -69,7 +69,7 @@ const Icon: React.FC<Omit<IconBlockProps, "size">> = ({
         return (
           <div
             className={cn(
-              "text-primary dark:text-primary/80 text-center",
+              "text-center text-primary dark:text-primary/80",
               className,
             )}
           >
@@ -81,7 +81,7 @@ const Icon: React.FC<Omit<IconBlockProps, "size">> = ({
       return (
         <div
           className={cn(
-            "bg-primary/10 text-secondary dark:text-secondary-dark text-center",
+            "dark:text-secondary-dark bg-primary/10 text-center text-secondary",
             className,
           )}
         >

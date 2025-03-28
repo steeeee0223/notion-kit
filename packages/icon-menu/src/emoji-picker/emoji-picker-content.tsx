@@ -56,7 +56,7 @@ export const EmojiPickerContent: React.FC<EmojiPickerContentProps> = ({
           >
             <MenuSectionTitle
               title={i18n.categories[categoryId]}
-              className="bg-popover sticky -top-px z-[1]"
+              className="sticky -top-px z-[1] bg-popover"
             />
             <div
               className="relative flex flex-wrap"
@@ -92,7 +92,7 @@ export const EmojiPickerContent: React.FC<EmojiPickerContentProps> = ({
       <div className="mr-3 w-full" data-id="search">
         <MenuSectionTitle
           title={searchResult.length > 0 ? i18n.searchResult : "No results"}
-          className="bg-popover sticky -top-px z-[1]"
+          className="sticky -top-px z-[1] bg-popover"
         />
         <div className="relative flex flex-wrap">
           {searchResult.map((emoji, index) => (
@@ -113,7 +113,7 @@ export const EmojiPickerContent: React.FC<EmojiPickerContentProps> = ({
     <HintProvider delayDuration={500}>
       <div
         ref={refs.current.contentRoot}
-        className="notion-scrollbar dark:notion-scrollbar-dark -mr-3 h-[214px] overflow-x-hidden overflow-y-auto"
+        className="-mr-3 notion-scrollbar h-[214px] overflow-x-hidden overflow-y-auto dark:notion-scrollbar-dark"
         data-id="scroll"
       >
         <div ref={refs.current.content} className="h-full">

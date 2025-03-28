@@ -87,13 +87,13 @@ const CoverPicker: React.FC<CoverPickerProps> = ({
               value={file}
               onChange={handleUpload}
             />
-            <p className="text-muted dark:text-muted-dark p-4 text-center text-xs">
+            <p className="dark:text-muted-dark p-4 text-center text-xs text-muted">
               Images wider than 1500 pixels work best.
             </p>
           </TabsContent>
           <TabsContent value="link" className={styles.tabContent}>
             <UrlForm disabled={isSubmitting} onUrlSubmit={onUrlSubmit} />
-            <p className="text-muted dark:text-muted-dark p-4 text-center text-xs">
+            <p className="dark:text-muted-dark p-4 text-center text-xs text-muted">
               Works with any image form the web.
             </p>
           </TabsContent>

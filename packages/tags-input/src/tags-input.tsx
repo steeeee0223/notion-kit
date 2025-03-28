@@ -71,9 +71,9 @@ const TagsInput: React.FC<TagsInputProps> = ({
     <div
       className={cn(
         // caveat: :has() variant requires tailwind v3.4 or above: https://tailwindcss.com/blog/tailwindcss-v3-4#new-has-variant
-        "border-border bg-primary/5 flex min-h-10 w-full flex-wrap gap-2 rounded-sm border px-3 py-2 text-sm",
+        "flex min-h-10 w-full flex-wrap gap-2 rounded-sm border border-border bg-primary/5 px-3 py-2 text-sm",
         "disabled:cursor-not-allowed disabled:opacity-50",
-        "placeholder:text-muted dark:placeholder:text-muted-dark",
+        "dark:placeholder:text-muted-dark placeholder:text-muted",
         "has-[:focus-visible]:outline-none",
         className,
       )}
@@ -90,8 +90,7 @@ const TagsInput: React.FC<TagsInputProps> = ({
           <span className="truncate">{item}</span>
           <Button
             variant="hint"
-            size="icon-sm"
-            className="hover:text-icon flex-shrink-0 hover:bg-transparent"
+            className="size-5 flex-shrink-0 hover:bg-transparent hover:text-icon"
             tabIndex={0}
             onClick={() => onDeleteTag(item)}
           >

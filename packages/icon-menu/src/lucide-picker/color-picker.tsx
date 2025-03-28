@@ -33,7 +33,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
       <Popover open={open} onOpenChange={setOpen}>
         <Hint description="Select icon color">
           <PopoverTrigger asChild>
-            <Button variant="secondary" size="icon-md">
+            <Button variant="icon" className="size-7">
               <Circle size={16} color={value} fill={value} />
             </Button>
           </PopoverTrigger>

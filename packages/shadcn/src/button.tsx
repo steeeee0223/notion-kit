@@ -5,8 +5,7 @@ import { Slot } from "@radix-ui/react-slot";
 
 import { cn } from "@notion-kit/cn";
 
-import type { ButtonVariants } from "./variants";
-import { buttonVariants } from "./variants";
+import { buttonVariants, type ButtonVariants } from "./variants";
 
 export interface ButtonProps
   extends React.ComponentProps<"button">,

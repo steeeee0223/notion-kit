@@ -86,8 +86,8 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
           role="button"
           style={{ paddingLeft: `${(level + 1) * 12}px` }}
           className={cn(
-            buttonVariants({ variant: "subitem" }),
-            "group h-[27px] w-full justify-normal py-1 pr-3 font-medium",
+            buttonVariants({ variant: null }),
+            "dark:text-secondary-dark relative flex h-[27px] w-full justify-normal py-1 pr-3 font-medium text-secondary",
             active && "bg-primary/10 text-primary dark:text-primary/80",
             className,
           )}
@@ -95,9 +95,8 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
           <div className="group/icon">
             <Button
               variant="hint"
-              size="icon-sm"
               className={cn(
-                "relative hidden shrink-0 p-0.5",
+                "relative hidden size-5 shrink-0 p-0.5",
                 expandable && "group-hover/icon:flex",
               )}
               onClick={handleExpand}
@@ -149,7 +148,7 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
-                  <div className="text-muted dark:text-muted-dark flex flex-col items-center px-2 py-1 text-xs">
+                  <div className="dark:text-muted-dark flex flex-col items-center px-2 py-1 text-xs text-muted">
                     <div className="w-full">Last edited by: {lastEditedBy}</div>
                     <div className="w-full">{lastEditedAt}</div>
                   </div>

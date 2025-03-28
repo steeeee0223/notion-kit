@@ -31,7 +31,7 @@ const Cover = ({ url, preview, ...props }: CoverProps) => {
       )}
       {url && !preview && (
         <div className="absolute right-5 bottom-5 flex items-center gap-x-2 opacity-0 group-hover:opacity-100">
-          <div className="bg-popover rounded-sm">
+          <div className="rounded-sm bg-popover">
             <CoverPicker {...props}>
               <Button size="sm">
                 <ImageIcon className="mr-2 size-4" />
@@ -39,7 +39,7 @@ const Cover = ({ url, preview, ...props }: CoverProps) => {
               </Button>
             </CoverPicker>
           </div>
-          <div className="bg-popover rounded-sm">
+          <div className="rounded-sm bg-popover">
             <Button onClick={props.onRemove} size="sm">
               <X className="mr-2 size-4" />
               Remove

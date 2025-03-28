@@ -64,7 +64,7 @@ function CustomSelect<T extends string = string>({
                 {typeof option === "string" ? option : option.label}
               </div>
               {typeof option !== "string" && option.description && (
-                <div className="text-secondary dark:text-secondary-dark mt-0.5 overflow-hidden text-xs text-ellipsis whitespace-normal">
+                <div className="dark:text-secondary-dark mt-0.5 overflow-hidden text-xs text-ellipsis whitespace-normal text-secondary">
                   {option.description}
                 </div>
               )}

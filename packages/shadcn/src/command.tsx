@@ -111,7 +111,7 @@ type CommandSeparatorProps = React.ComponentProps<
 >;
 const CommandSeparator = ({ className, ...props }: CommandSeparatorProps) => (
   <CommandPrimitive.Separator
-    className={cn(separatorVariants({ variant: "default", className }))}
+    className={cn(separatorVariants({ className }))}
     {...props}
   />
 );

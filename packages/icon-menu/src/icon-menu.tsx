@@ -61,8 +61,11 @@ export const IconMenu: React.FC<IconMemuProps> = ({
     <Popover>
       <PopoverTrigger asChild disabled={disabled}>
         <Button
-          variant="subitem"
-          className={cn("size-fit p-0 disabled:opacity-100", className)}
+          variant={null}
+          className={cn(
+            "dark:text-secondary-dark size-fit rounded-md border p-0 text-secondary disabled:opacity-100",
+            className,
+          )}
         >
           {children}
         </Button>
@@ -100,7 +103,7 @@ export const IconMenu: React.FC<IconMemuProps> = ({
               value={file}
               onChange={handleUpload}
             />
-            <p className="text-muted dark:text-muted-dark p-4 text-center text-xs">
+            <p className="dark:text-muted-dark p-4 text-center text-xs text-muted">
               Recommended size is 280 × 280 pixels
             </p>
           </TabsContent>

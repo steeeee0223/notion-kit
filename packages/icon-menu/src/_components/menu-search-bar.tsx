@@ -31,7 +31,7 @@ export const MenuSearchBar: React.FC<MenuSearchBarProps> = ({
           />
         </div>
         <Hint description="Random">
-          <Button variant="secondary" size="icon-md" onClick={onRandomSelect}>
+          <Button variant="icon" className="size-7" onClick={onRandomSelect}>
             <Shuffle size={16} />
           </Button>
         </Hint>

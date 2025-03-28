@@ -40,7 +40,7 @@ export const EmojiPickerNavigation: React.FC<EmojiPickerNavigationProps> = ({
                   onClick={() => onClick(id)}
                   aria-label={i18n.categories[id]}
                 >
-                  <span className="dark:text-primary/45 inline-flex size-5 items-center justify-center text-[#91918e]">
+                  <span className="inline-flex size-5 items-center justify-center text-[#91918e] dark:text-primary/45">
                     {emojiCategoryIcons[id]}
                   </span>
                 </Button>
@@ -49,7 +49,7 @@ export const EmojiPickerNavigation: React.FC<EmojiPickerNavigationProps> = ({
           <Hint align="start" description="Add emoji">
             <Button variant="hint" className="size-8 p-0" aria-label="add">
               <span className="inline-flex size-5 items-center justify-center">
-                <CirclePlus className="dark:fill-primary/45 block size-7 flex-shrink-0 scale-110 fill-[#91918e]" />
+                <CirclePlus className="block size-7 flex-shrink-0 scale-110 fill-[#91918e] dark:fill-primary/45" />
               </span>
             </Button>
           </Hint>

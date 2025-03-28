@@ -27,7 +27,11 @@ const Modal = () => {
 const Trigger = () => {
   const { openModal } = useModal();
   const handleClick = () => openModal(<Modal />);
-  return <Button onClick={handleClick}>Open</Button>;
+  return (
+    <Button size="md" onClick={handleClick}>
+      Open
+    </Button>
+  );
 };
 
 export const Default: Story = {

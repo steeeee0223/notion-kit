@@ -67,12 +67,11 @@ const Input = ({
         className="block resize-none border-none outline-hidden file:bg-inherit file:font-medium placeholder:text-primary/45 disabled:cursor-not-allowed disabled:opacity-50 [&::-webkit-search-cancel-button]:appearance-none"
         {...props}
       />
-      {/* transition: background 20ms ease-in; */}
       {showClear && (
         <div
           role="button"
           tabIndex={0}
-          className="ml-1 shrink-0 grow-0 cursor-pointer rounded-[20px] select-none"
+          className="ml-1 shrink-0 grow-0 animate-bg-in cursor-pointer rounded-[20px] select-none"
           onClick={onCancel}
           onKeyDown={onCancel}
         >

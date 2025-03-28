@@ -15,7 +15,13 @@ export const core = [
         path: getFilePath("shadcn/src/button.tsx"),
         target: "core/button.tsx",
       },
+      {
+        type: RegistryItemTypeSchema.Enum["registry:component"],
+        path: getFilePath("shadcn/src/variants.ts"),
+        target: "core/variants.ts",
+      },
     ],
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
   },
 ].map<RegistryItem>((item) => ({
   $schema: "https://ui.shadcn.com/schema/registry-item.json",

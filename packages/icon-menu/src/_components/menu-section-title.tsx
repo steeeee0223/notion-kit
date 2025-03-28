@@ -13,7 +13,7 @@ export const MenuSectionTitle: React.FC<MenuSectionTitleProps> = ({
 }) => (
   <div
     className={cn(
-      "text-secondary dark:text-secondary-dark truncate py-2 text-xs/[1.2] font-medium",
+      "dark:text-secondary-dark truncate py-2 text-xs/[1.2] font-medium text-secondary",
       className,
     )}
   >
