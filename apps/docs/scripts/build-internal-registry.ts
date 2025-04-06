@@ -19,6 +19,34 @@ async function setup() {
   );
 }
 
+async function getDemoInfo(
+  folderPath: string,
+  demoPath: string,
+  primitiveName: string,
+) {
+  const filePath = `${primitiveName}/${demoPath}`;
+  const realPath = `${folderPath}/${demoPath}`;
+  const stat = await fs.lstat(realPath);
+  const isFile = stat.isFile();
+
+  const name = filePath.replace(".tsx", "");
+  const importPath = `@/${DEMOS_PATH}/${name}`;
+  if (isFile) {
+    return {
+      name,
+      importPath,
+      files: [`${DEMOS_PATH}/${filePath}`],
+    };
+  }
+
+  const folder = await fs.readdir(realPath);
+  return {
+    name,
+    importPath,
+    files: folder.map((file) => `${DEMOS_PATH}/${filePath}/${file}`),
+  };
+}
+
 async function buildDemos() {
   const targetPath = INTERNAL_REGISTRY_PATH;
 
@@ -43,12 +71,17 @@ async function buildDemos() {
     const primitiveName = folder.replace(".tsx", "");
     const demos = await fs.readdir(folderPath);
     for (const demo of demos) {
-      const demoName = `${primitiveName}/${demo.replace(".tsx", "")}`;
-      const demoPath = `@/${DEMOS_PATH}/${primitiveName}/${demo.replace(".tsx", "")}`;
+      const { name, importPath, files } = await getDemoInfo(
+        folderPath,
+        demo,
+        primitiveName,
+      );
+      const filesStr = files.map((file) => `"${file}"`).join(", ");
+
       index += `
-      "${demoName}": {
-        files: ["${DEMOS_PATH}/${primitiveName}/${demo}"],
-        component: React.lazy(() => import("${demoPath}")),
+      "${name}": {
+        files: [${filesStr}],
+        component: React.lazy(() => import("${importPath}")),
       },`;
     }
   }

@@ -1,0 +1,31 @@
+---
+title: Tags Input
+description: A dynamic input field for adding and managing multiple tags.
+---
+
+<ComponentPreview
+  name="tags-input/default"
+  preview={`<TagsInput
+    placeholder="Search name or emails"
+    value={{ tags, input }}
+    onTagsChange={setTags}
+    onInputChange={setInput}
+  />`}
+/>
+
+## Installation
+
+```package-install
+pnpm add @notion-kit/tags-input
+```
+
+## API Reference
+
+### TagsInput
+
+| Prop            | Type                                | Default | Description                                                       |
+| --------------- | ----------------------------------- | ------- | ----------------------------------------------------------------- |
+| `value`\*       | `{ tags: string[]; input: string }` | -       | The current input value and current tags (controlled).            |
+| `inputSchema`   | `z.Schema`                          | -       | Whether to validate the input tag with the provided `zod` schema. |
+| `onTagsChange`  | `(value: string[]) => void`         | -       | Handler that is called when the tags are updated.                 |
+| `onInputChange` | `(value: string) => void`           | -       | Handler that is called when the input value changes.              |

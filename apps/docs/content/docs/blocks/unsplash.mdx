@@ -1,0 +1,35 @@
+---
+title: Unsplash
+description: A search-enabled menu for Unsplash images.
+---
+
+<ComponentPreview
+  name="unsplash/default"
+  preivew={`<Unsplash
+    className="w-[540px]"
+    apiKey={UNSPLASH_ACCESS_KEY}
+  />`}
+/>
+
+## Installation
+
+```package-install
+pnpm add @notion-kit/unsplash
+```
+
+## Examples
+
+---
+
+### Basic
+
+<ComponentPreview name="unsplash/search" />
+
+## API Reference
+
+### Unsplash
+
+| Prop       | Type                    | Default | Description                                                                          |
+| ---------- | ----------------------- | ------- | ------------------------------------------------------------------------------------ |
+| `apiKey`\* | `string`                | -       | The Unsplash access key from [Unsplash Developers](https://unsplash.com/developers). |
+| `onSelect` | `(url: string) => void` | -       | Handler that is called when an Unsplash image is selected.                           |

@@ -17,30 +17,18 @@ const sizeVariants = cva("", {
   },
   defaultVariants: { size: "md" },
 });
+
 const checkboxVariants = cva(
-  "peer shrink-0 border focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
-  {
-    variants: {
-      variant: {
-        default:
-          "border-border-button shadow-xs hover:bg-primary/5 data-[state=checked]:border-none data-[state=checked]:bg-blue data-[state=checked]:text-white",
-      },
-    },
-    defaultVariants: { variant: "default" },
-  },
+  "peer shrink-0 border border-border-button shadow-xs hover:bg-primary/5 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-none data-[state=checked]:bg-blue data-[state=checked]:text-white",
 );
+
 export interface CheckboxProps
   extends React.ComponentProps<typeof CheckboxPrimitive.Root>,
-    VariantProps<typeof checkboxVariants>,
     VariantProps<typeof sizeVariants> {}
 
-const Checkbox = ({ className, variant, size, ...props }: CheckboxProps) => (
+const Checkbox = ({ className, size, ...props }: CheckboxProps) => (
   <CheckboxPrimitive.Root
-    className={cn(
-      checkboxVariants({ variant }),
-      sizeVariants({ size }),
-      className,
-    )}
+    className={cn(checkboxVariants(), sizeVariants({ size }), className)}
     {...props}
   >
     <CheckboxPrimitive.Indicator className="flex items-center justify-center">

@@ -1,0 +1,79 @@
+---
+title: Modal
+---
+
+<ComponentPreview name="modal/basic" hideCode />
+
+## Installation
+
+```package-install
+pnpm add @notion-kit/modal
+```
+
+## Usage
+
+---
+
+<Steps>
+<Step>
+
+#### Create your modal
+
+```tsx
+// modal.tsx
+export function Modal() {
+  return <div>Modal</div>;
+}
+```
+
+</Step>
+<Step>
+
+#### Define your trigger component
+
+```tsx
+// trigger.tsx
+import { useModal } from "@notion-kit/modal";
+import { Button } from "@notion-kit/shadcn";
+
+import { Modal } from "./modal";
+
+export const Trigger = () => {
+  const { openModal } = useModal();
+  const handleClick = () => openModal(<Modal />);
+
+  return <Button onClick={handleClick}>Open</Button>;
+};
+```
+
+</Step>
+<Step>
+
+#### Wrap your app with `ModalProvider`
+
+```tsx
+// index.tsx
+import { ModalProvider } from "@notion-kit/modal";
+
+import { Trigger } from "./trigger";
+
+export default function App() {
+  return (
+    <ModalProvider>
+      <Trigger />
+      {...}
+    </ModalProvider>
+  );
+}
+```
+
+</Step>
+</Steps>
+
+## Examples
+
+---
+
+### Basic
+
+<ComponentPreview name="modal/basic" />

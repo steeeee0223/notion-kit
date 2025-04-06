@@ -1,0 +1,40 @@
+---
+title: Checkbox
+description: A control that allows the user to toggle between checked and not checked.
+links:
+  - label: Shadcn UI
+    href: https://ui.shadcn.com/docs/components/checkbox
+---
+
+<ComponentPreview name="checkbox/default" preview={`<Checkbox />`} />
+
+## Installation
+
+```package-install
+pnpm add @notion-kit/shadcn
+```
+
+## Options
+
+---
+
+### Size
+
+Use the `size` prop to control the size of the checkbox.
+The default size is `"md"`.
+
+<ComponentPreview
+  name="checkbox/sizes"
+  preview={`<Checkbox size="xs"/>
+  <Checkbox size="sm"/>
+  <Checkbox size="md"/>
+  `}
+/>
+
+## API Reference
+
+### Checkbox
+
+| Prop   | Type                   | Default | Description               |
+| ------ | ---------------------- | ------- | ------------------------- |
+| `size` | `"xs" \| "sm" \| "md"` | `"md"`  | The size of the checkbox. |

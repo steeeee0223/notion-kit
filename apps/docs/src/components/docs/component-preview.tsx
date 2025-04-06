@@ -16,6 +16,7 @@ interface ComponentPreviewProps {
   name: string;
   preview?: string;
   expandable?: boolean;
+  hideCode?: boolean;
   /**
    * @deprecated currently not used
    */
@@ -30,6 +31,7 @@ export const ComponentPreview = async ({
   name,
   preview,
   expandable = true,
+  hideCode = false,
   resizable = false,
   suspense = false,
   // eslint-disable-next-line @typescript-eslint/require-await
@@ -47,14 +49,16 @@ export const ComponentPreview = async ({
     <div className="overflow-hidden rounded-md border not-first:mt-4">
       <ResizableContainer resizable={resizable}>
         <ThemeProvider>
-          <ScrollArea className="flex items-center justify-center px-4 py-10">
+          <ScrollArea className="prose-no-margin prose-img:my-0 prose-p:my-0 flex items-center justify-center px-4 py-10">
             <ComponentWrapper suspense={suspense}>
               <Component />
             </ComponentWrapper>
           </ScrollArea>
         </ThemeProvider>
       </ResizableContainer>
-      <CodeBlock files={files} preview={preview} expandable={expandable} />
+      {!hideCode && (
+        <CodeBlock files={files} preview={preview} expandable={expandable} />
+      )}
     </div>
   );
 };
