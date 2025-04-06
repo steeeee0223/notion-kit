@@ -18,7 +18,7 @@
   "dependencies": {
     "@tailwindcss/postcss": "catalog:tailwind-v4",
     "tailwindcss": "catalog:tailwind-v4",
-    "tailwindcss-animate": "^1.0.7"
+    "tw-animate-css": "^1.2.5"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",

@@ -45,7 +45,7 @@ export const ResizableContainer: React.FC<ResizableContainerProps> = ({
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div
         onMouseDown={handleMouseDown}
-        className="bg-muted dark:bg-muted-dark absolute top-1/2 right-2 z-20 h-15 w-2 -translate-y-1/2 cursor-col-resize rounded-full shadow-sm"
+        className="absolute top-1/2 right-2 z-20 h-15 w-2 -translate-y-1/2 cursor-col-resize rounded-full bg-muted shadow-sm"
       />
       {children}
     </div>

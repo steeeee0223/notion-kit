@@ -60,7 +60,7 @@ const DrawerContent = ({
       {...(noTitle && { "aria-describedby": undefined })}
     >
       {showBar && (
-        <div className="bg-muted mx-auto mt-4 h-2 w-[100px] rounded-full" />
+        <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
       )}
       {noTitle && (
         <VisuallyHidden asChild>
@@ -114,7 +114,7 @@ const DrawerDescription = ({
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Description>) => (
   <DrawerPrimitive.Description
-    className={cn("text-muted dark:text-muted-dark text-sm", className)}
+    className={cn("text-sm text-muted", className)}
     {...props}
   />
 );

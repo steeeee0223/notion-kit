@@ -142,7 +142,7 @@ const FormDescription = ({
   return (
     <p
       id={formDescriptionId}
-      className={cn("text-muted dark:text-muted-dark text-[0.8rem]", className)}
+      className={cn("text-[0.8rem] text-muted", className)}
       {...props}
     />
   );
@@ -164,7 +164,7 @@ const FormMessage = ({
   return (
     <p
       id={formMessageId}
-      className={cn("text-destructive text-[0.8rem] font-medium", className)}
+      className={cn("text-[0.8rem] font-medium text-destructive", className)}
       {...props}
     >
       {body}

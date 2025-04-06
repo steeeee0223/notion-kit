@@ -48,7 +48,7 @@ const DropdownMenuSubTrigger = ({
 }: DropdownMenuSubTriggerProps) => (
   <DropdownMenuPrimitive.SubTrigger
     className={cn(
-      "focus:bg-accent data-[state=open]:bg-accent flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-hidden select-none",
+      "flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent data-[state=open]:bg-accent",
       inset && "pl-8",
       className,
     )}
@@ -129,7 +129,7 @@ const DropdownMenuCheckboxItem = ({
 }: React.ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem>) => (
   <DropdownMenuPrimitive.CheckboxItem
     className={cn(
-      "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden transition-colors select-none data-disabled:pointer-events-none data-disabled:opacity-50",
+      "relative flex cursor-default items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden transition-colors select-none focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
       className,
     )}
     checked={checked}
@@ -153,7 +153,7 @@ const DropdownMenuRadioItem = ({
 }: React.ComponentProps<typeof DropdownMenuPrimitive.RadioItem>) => (
   <DropdownMenuPrimitive.RadioItem
     className={cn(
-      "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden transition-colors select-none data-disabled:pointer-events-none data-disabled:opacity-50",
+      "relative flex cursor-default items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden transition-colors select-none focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
       className,
     )}
     {...props}
