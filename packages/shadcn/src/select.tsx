@@ -32,7 +32,7 @@ const SelectTrigger = ({
     className={cn(
       buttonVariants({ variant: "item", size: "sm" }),
       "mt-3 mb-1 h-7 w-full min-w-0 shrink-0 justify-between p-2",
-      "placeholder:text-secondary data-placeholder:text-secondary dark:placeholder:text-secondary-dark dark:data-placeholder:text-secondary-dark",
+      "placeholder:text-secondary data-placeholder:text-secondary",
       "[&>span]:line-clamp-1",
       className,
     )}
@@ -139,7 +139,7 @@ const SelectItem = ({
 }: SelectItemProps) => (
   <SelectPrimitive.Item
     className={cn(
-      menuItemVariants({ disabled, className: "focus:bg-primary/5 py-1" }),
+      menuItemVariants({ disabled, className: "py-1 focus:bg-primary/5" }),
       className,
     )}
     disabled={disabled}

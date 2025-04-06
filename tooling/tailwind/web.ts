@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-import animate from "tailwindcss-animate";
 
 import base from "./base";
 import { notionPlugin } from "./plugins";
@@ -39,5 +38,5 @@ export default {
       },
     },
   },
-  plugins: [animate, notionPlugin],
+  plugins: [notionPlugin],
 } satisfies Config;

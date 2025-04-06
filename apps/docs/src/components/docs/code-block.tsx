@@ -17,7 +17,7 @@ import { ScrollArea } from "./scroll-area";
 
 const codeblockStyles = tv({
   slots: {
-    content: "text-xs [&_figure]:border-none [&_figure]:rounded-none",
+    content: "text-xs [&_figure]:rounded-none [&_figure]:border-none",
   },
 });
 

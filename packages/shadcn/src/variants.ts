@@ -2,29 +2,29 @@ import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
 
 export const buttonVariants = cva(
-  "animate-bg-in hover:bg-primary/5 inline-flex cursor-pointer items-center justify-center rounded-sm text-sm font-normal whitespace-nowrap select-none focus-visible:outline-hidden disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-50",
+  "inline-flex animate-bg-in cursor-pointer items-center justify-center rounded-sm text-sm font-normal whitespace-nowrap select-none hover:bg-primary/5 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-50",
   {
     variants: {
       variant: {
-        primary: "border-border-button border",
-        secondary: "border-border-button text-icon dark:text-icon-dark border",
-        nav: "text-icon dark:text-icon-dark",
-        item: "text-primary dark:text-primary/80 relative flex justify-normal data-disabled:pointer-events-none data-disabled:opacity-50",
-        subitem: "text-secondary dark:text-secondary-dark relative flex",
-        link: "text-primary dark:text-icon-dark dark:text-primary/80 underline-offset-4 hover:bg-transparent hover:underline",
-        blue: "border-border bg-blue hover:bg-blue-hover disabled:bg-blue border font-medium text-white shadow-xs hover:text-white",
+        primary: "border border-border-button",
+        secondary: "border border-border-button text-icon",
+        nav: "text-icon",
+        item: "relative flex justify-normal text-primary data-disabled:pointer-events-none data-disabled:opacity-50 dark:text-primary/80",
+        subitem: "relative flex text-secondary",
+        link: "text-primary underline-offset-4 hover:bg-transparent hover:underline dark:text-primary/80",
+        blue: "border border-border bg-blue font-medium text-white shadow-xs hover:bg-blue-hover hover:text-white disabled:bg-blue",
         "soft-blue":
-          "bg-blue/5 text-blue hover:bg-blue/15 disabled:bg-blue/5 shadow-xs",
-        hint: "text-muted dark:text-muted-dark font-medium",
-        red: "border-red/50 text-red hover:bg-red/10 focus:bg-red/10 border",
+          "bg-blue/5 text-blue shadow-xs hover:bg-blue/15 disabled:bg-blue/5",
+        hint: "font-medium text-muted",
+        red: "border border-red/50 text-red hover:bg-red/10 focus:bg-red/10",
         "red:fill":
-          "bg-red hover:bg-red/65 disabled:bg-red dark:hover:bg-red/35 text-white",
+          "bg-red text-white hover:bg-red/65 disabled:bg-red dark:hover:bg-red/35",
         white: "border border-white text-white",
         /**
          * For close icon only
          */
         close:
-          "bg-primary/5 hover:bg-primary/15 dark:hover:bg-primary/0 flex size-[18px] shrink-0 rounded-full",
+          "flex size-[18px] shrink-0 rounded-full bg-primary/5 hover:bg-primary/15 dark:hover:bg-primary/0",
       },
       size: {
         xs: "h-6 px-1.5 text-xs",
@@ -48,13 +48,13 @@ export type ButtonVariants = VariantProps<typeof buttonVariants>;
 /** @version 1.5 */
 export const menuItemVariants = cva(
   [
-    "animate-bg-in text-primary hover:bg-primary/5 dark:text-primary/80 mx-1 flex min-h-7 w-[calc(100%-8px)] cursor-pointer items-center rounded-md px-2 text-sm/[1.2] select-none focus-visible:outline-hidden",
+    "mx-1 flex min-h-7 w-[calc(100%-8px)] animate-bg-in cursor-pointer items-center rounded-md px-2 text-sm/[1.2] text-primary select-none hover:bg-primary/5 focus-visible:outline-hidden dark:text-primary/80",
     "[&_svg]:block [&_svg]:shrink-0",
   ],
   {
     variants: {
       variant: {
-        secondary: "text-secondary dark:text-secondary-dark",
+        secondary: "text-secondary",
         warning: "hover:text-red",
         error: "text-red",
       },
@@ -70,16 +70,15 @@ export type MenuItemVariants = VariantProps<typeof menuItemVariants>;
 
 /** @version 1.5 */
 export const inputVariants = cva(
-  "bg-input/60 text-primary dark:bg-input/5 dark:text-primary/80 relative flex h-7 w-full cursor-text items-center rounded-md px-1.5 py-[3px] text-sm transition-colors [&_input]:block [&_input]:w-full [&_input]:bg-transparent [&_input]:p-0 [&_input]:text-inherit",
+  "relative flex h-7 w-full cursor-text items-center rounded-md bg-input/60 px-1.5 py-[3px] text-sm text-primary transition-colors dark:bg-input/5 dark:text-primary/80 [&_input]:block [&_input]:w-full [&_input]:bg-transparent [&_input]:p-0 [&_input]:text-inherit",
   {
     variants: {
       variant: {
-        default:
-          "ring-ring focus-within:notion-focus-within dark:ring-ring-dark ring-1 ring-inset",
+        default: "ring-1 ring-ring ring-inset focus-within:notion-focus-within",
         /**
          * default style but not focusable
          */
-        plain: "ring-ring dark:ring-ring-dark ring-1 ring-inset",
+        plain: "ring-1 ring-ring ring-inset",
         /**
          * transparent and without border
          */
@@ -92,18 +91,18 @@ export const inputVariants = cva(
 export type InputVariants = VariantProps<typeof inputVariants>;
 
 export const contentVariants = cva(
-  "border-border border focus-visible:outline-hidden",
+  "border border-border focus-visible:outline-hidden",
   {
     variants: {
       variant: {
         default: "bg-transparent",
         modal:
-          "bg-modal data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 p-6 shadow-lg duration-200",
+          "fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 bg-modal p-6 shadow-lg duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] data-[state=open]:zoom-in-95",
         popover:
-          "bg-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 rounded-md shadow-md",
-        tab: "bg-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 border-none",
+          "z-50 rounded-md bg-popover shadow-md data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
+        tab: "border-none bg-popover data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
         tooltip:
-          "bg-tooltip animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 dark:text-primary/80 relative z-50 overflow-hidden border-none font-medium text-white/90 shadow-md backdrop-filter-none",
+          "relative z-50 animate-in overflow-hidden border-none bg-tooltip font-medium text-white/90 shadow-md backdrop-filter-none fade-in-0 zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 dark:text-primary/80",
         shadcn: "text-popover-foreground bg-popover shadow-md",
       },
     },
