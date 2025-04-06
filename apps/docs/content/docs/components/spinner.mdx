@@ -1,0 +1,48 @@
+---
+title: Spinner
+description: An animated loader to indicate background activity or pending operations.
+---
+
+<ComponentPreview name="spinner/default" preview={`<Spinner />`} />
+
+## Installation
+
+```package-install
+pnpm add @notion-kit/spinner
+```
+
+## Options
+
+---
+
+### Variant
+
+Use the `variant` prop to control the visual style of the spinner.<br/>
+The default variant is `"solid"`.
+
+<ComponentPreview
+  name="spinner/variants"
+  preview={`<Spinner variant="solid" />
+  <Spinner variant="dashed" />`}
+/>
+
+### Size
+
+Use the `size` prop to control the size of the spinner.
+The default size is `"md"`.
+
+<ComponentPreview
+  name="spinner/sizes"
+  preview={`<Spinner size="sm" />
+  <Spinner size="md" />
+  <Spinner size="lg" />`}
+/>
+
+## API Reference
+
+### Spinner
+
+| Prop      | Type                   | Default   | Description                      |
+| --------- | ---------------------- | --------- | -------------------------------- |
+| `variant` | `"solid" \| "dashed"`  | `"solid"` | The visual style of the spinner. |
+| `size`    | `"sm" \| "md" \| "lg"` | `"md"`    | The size of the spinner.         |

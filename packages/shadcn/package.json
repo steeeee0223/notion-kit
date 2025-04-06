@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/shadcn",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -33,8 +33,9 @@
     "@hookform/resolvers": "catalog:ui",
     "@notion-kit/cn": "workspace:*",
     "@radix-ui/react-icons": "^1.3.2",
-    "class-variance-authority": "^0.7.1",
+    "class-variance-authority": "catalog:ui",
     "cmdk": "^1.0.4",
+    "lucide-react": "catalog:ui",
     "next-themes": "catalog:ui",
     "radix-ui": "^1.1.2",
     "react-hook-form": "catalog:ui",
@@ -45,7 +46,6 @@
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
-    "@notion-kit/tailwind-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "@types/react": "catalog:react19",
     "eslint": "catalog:",

@@ -194,10 +194,7 @@ const DropdownMenuSeparator = ({
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Separator>) => (
   <DropdownMenuPrimitive.Separator
-    className={cn(
-      separatorVariants({ variant: "default", className: "m-0" }),
-      className,
-    )}
+    className={cn(separatorVariants({ className: "m-0" }), className)}
     {...props}
   />
 );

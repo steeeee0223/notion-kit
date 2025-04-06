@@ -2,14 +2,8 @@
 title: Button
 description: A button allows a user to perform an action, with mouse, touch, and keyboard interactions.
 links:
-  - label: Aria docs
-    href: https://react-spectrum.adobe.com/react-aria/Button.html
-  - label: Aria API Reference
-    href: https://react-spectrum.adobe.com/react-aria/Button.html#props
-  - label: Report an issue
-    href: https://github.com/mehdibha/dotUI/issues/new/choose
-  - label: Edit this page
-    href: https://github.com/mehdibha/dotUI/tree/main/content/components/buttons/button.mdx?plain=1
+  - label: Shadcn UI
+    href: https://ui.shadcn.com/docs/components/button
 ---
 
 <ComponentPreview name="button/default" preview={`<Button>button</Button>`} />
@@ -17,35 +11,33 @@ links:
 ## Installation
 
 ```package-install
-pnpx notion-ui add button
+pnpm add @notion-kit/shadcn
 ```
 
-## Usage
-
-Button allow users to initiate an action or command with mouse, touch or keyboard interaction.<br/>
-The button's label indicates the purpose of the action to the user. You may also include an icon for additional context.
-
 ## Options
+
+---
 
 ### Variant
 
 Use the `variant` prop to control the visual style of the button.<br/>
-The default variant is `"default"`.
+The default variant is `"primary"`.
 
 <ComponentPreview
   name="button/variants"
-  preview={`<Button variant="primary">Button</Button>
-  <Button variant="secondary">Button</Button>
-  <Button variant="hint">Button</Button>
-  <Button variant="blue">Button</Button>
-  <Button variant="red">Button</Button>
+  preview={`<Button variant="primary" size="md">Button</Button>
+  <Button variant="hint" size="md">Button</Button>
+  <Button variant="blue" size="md">Button</Button>
+  <Button variant="soft-blue" size="md">Button</Button>
+  <Button variant="red" size="md">Button</Button>
+  <Button variant="red-fill" size="md">Button</Button>
+  <Button variant="link" size="md">Button</Button>
   `}
 />
 
 ### Size
 
-Use the `size` prop to control the size of the button.<br/>
-The default size is `"md"`.
+Use the `size` prop to control the size of the button.
 
 <ComponentPreview
   name="button/sizes"
@@ -55,62 +47,61 @@ The default size is `"md"`.
 <Button size="lg">Button</Button>`}
 />
 
+## Examples
+
+---
+
+### Hint
+
+<ComponentPreview
+  name="button/hint"
+  preview={`<Button variant="hint" size="xs">
+    <CircleHelp className="mr-1.5 size-3.5" />
+    Learn more about this feature
+  </Button>`}
+/>
+
+### Warning
+
+<ComponentPreview
+  name="button/warning"
+  preview={`<Button variant="red" size="md">Delete this project</Button>`}
+/>
+
+### Nav Icon
+
+<ComponentPreview
+  name="button/nav-icon"
+  preview={`<Button variant="nav-icon">
+    <MessageSquareIcon />
+  </Button>`}
+/>
+
+### Icon Button
+
+<ComponentPreview
+  name="button/icon-button"
+  preview={`<Button variant="icon">
+    <BoldIcon />
+  </Button>`}
+/>
+
+### Disabled
+
+<ComponentPreview
+  name="button/disabled"
+  preview={`<Button disabled size="md">
+    <RefreshCw /> Please wait
+  </Button>`}
+/>
+
 ## API Reference
 
-| Prop             | Type                                                                                                | Default       | Description                                                                                                 |
-| ---------------- | --------------------------------------------------------------------------------------------------- | ------------- | ----------------------------------------------------------------------------------------------------------- |
-| `variant`        | `"default" \| "primary" \| "quiet" \| "outline" \| "accent" \| "danger" \| "success" \| "warning"`  | `"default"`   | The visual style of the button.                                                                             |
-| `size`           | `"sm" \| "md" \| "lg"`                                                                              | `"md"`        | The size of the button.                                                                                     |
-| `shape`          | `"rectangle" \| "square" \| "circle"`                                                               | `"rectangle"` | The visual shape of the button.                                                                             |
-| `prefix`         | `React.ReactNode`                                                                                   | -             | A visual to display before the button text.                                                                 |
-| `suffix`         | `React.ReactNode`                                                                                   | -             | A visual to display after the button text.                                                                  |
-| `isLoading`      | `boolean`                                                                                           | -             | Whether the button is in a loading state.                                                                   |
-| `isDisabled`     | `boolean`                                                                                           | -             | Whether the button is disabled.                                                                             |
-| `name`           | `string`                                                                                            | -             | Submitted as a pair with the button's value as part of the form data.                                       |
-| `value`          | `string`                                                                                            | -             | The value associated with the button's name when it's submitted with the form data.                         |
-| `autoFocus`      | `boolean`                                                                                           | -             | Whether the element should receive focus on render.                                                         |
-| `type`           | `'button' \| 'submit' \| 'reset'`                                                                   | -             | The behavior of the button when used in an HTML form.                                                       |
-| `href`           | `string`                                                                                            | -             | A URL to link to.                                                                                           |
-| `rel`            | `HTMLAttributeAnchorTarget`                                                                         | -             | The relationship between the linked resource and the current page.                                          |
-| `target`         | `HTMLAttributeAnchorTarget`                                                                         | -             | The target window for the link.                                                                             |
-| `rel`            | `string`                                                                                            | -             | The relationship between the linked resource and the current page.                                          |
-| `download`       | `boolean \| string`                                                                                 | -             | Causes the browser to download the linked URL. A string may be provided to suggest a file name.             |
-| `ping`           | `string`                                                                                            | -             | A space-separated list of URLs to ping when the link is followed.                                           |
-| `referrerPolicy` | `HTMLAttributeReferrerPolicy`                                                                       | -             | How much of the referrer to send when following the link.                                                   |
-| `routerOptions`  | `RouterOptions`                                                                                     | -             | Options for the configured client side router.                                                              |
-| `children`       | `ReactNode \| (values: ButtonRenderProps & {defaultChildren: ReactNode \| undefined}) => ReactNode` | -             | The children of the component. A function may be provided to alter the children based on component state.   |
-| `className`      | `string`                                                                                            | -             | The CSS className for the element.                                                                          |
-| `style`          | `CSSProperties \| (values: ButtonRenderProps & {defaultStyle: CSSProperties}) => CSSProperties`     | -             | The inline style for the element. A function may be provided to compute the style based on component state. |
+### Button
 
-| Event           | Type                              | Description                                                                                                             |
-| --------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `onPress`       | `(e: PressEvent) => void`         | Handler that is called when the press is released over the target.                                                      |
-| `onPressStart`  | `(e: PressEvent) => void`         | Handler that is called when a press interaction starts.                                                                 |
-| `onPressEnd`    | `(e: PressEvent) => void`         | Handler that is called when a press interaction ends, either over the target or when the pointer leaves the target.     |
-| `onPressChange` | `(isPressed: boolean) => void`    | Handler that is called when the press state changes.                                                                    |
-| `onPressUp`     | `(e: PressEvent) => void`         | Handler that is called when a press is released over the target, regardless of whether it started on the target or not. |
-| `onFocus`       | `(e: FocusEvent<Target>) => void` | Handler that is called when the element receives focus.                                                                 |
-| `onBlur`        | `(e: FocusEvent<Target>) => void` | Handler that is called when the element loses focus.                                                                    |
-| `onFocusChange` | `(isFocused: boolean) => void`    | Handler that is called when the element's focus status changes.                                                         |
-| `onKeyDown`     | `(e: KeyboardEvent) => void`      | Handler that is called when a key is pressed.                                                                           |
-| `onKeyUp`       | `(e: KeyboardEvent) => void`      | Handler that is called when a key is released.                                                                          |
-| `onHoverStart`  | `(e: HoverEvent) => void`         | Handler that is called when a hover interaction starts.                                                                 |
-| `onHoverEnd`    | `(e: HoverEvent) => void`         | Handler that is called when a hover interaction ends.                                                                   |
-| `onHoverChange` | `(isHovering: boolean) => void`   | Handler that is called when the hover state changes.                                                                    |
+An `Button` extends the HTML `<button>` component. We list the extended properties only.
 
-| Data attribute         | Description                                                    |
-| ---------------------- | -------------------------------------------------------------- |
-| `[data-hovered]`       | Whether the button is currently hovered with a mouse.          |
-| `[data-pressed]`       | Whether the button is currently in a pressed state.            |
-| `[data-focused]`       | Whether the button is focused, either via a mouse or keyboard. |
-| `[data-focus-visible]` | Whether the button is keyboard focused.                        |
-| `[data-disabled]`      | Whether the button is disabled.                                |
-
-## Accessibility
-
-### Keyboard interactions
-
-| Key     | Description           |
-| ------- | --------------------- |
-| `Space` | Activates the button. |
-| `Enter` | Activates the button. |
+| Prop      | Type                                                                                                                   | Default     | Description                     |
+| --------- | ---------------------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------- |
+| `variant` | `"primary" \| "icon" \| "link \| "blue" \| "soft-blue" \| "hint" \| "red" \| "red-fill" \| "white" \| "close" \| null` | `"primary"` | The visual style of the button. |
+| `size`    | `"xs" \| "sm" \| "md" \| "lg" \| "circle" \| null`                                                                     | `null`      | The size of the button.         |

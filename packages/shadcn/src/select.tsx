@@ -30,8 +30,8 @@ const SelectTrigger = ({
 }: React.ComponentProps<typeof SelectPrimitive.Trigger>) => (
   <SelectPrimitive.Trigger
     className={cn(
-      buttonVariants({ variant: "item", size: "sm" }),
-      "mt-3 mb-1 h-7 w-full min-w-0 shrink-0 justify-between p-2",
+      buttonVariants({ variant: null }),
+      "relative mt-3 mb-1 flex h-7 w-full min-w-0 shrink-0 justify-between justify-normal p-2 text-primary dark:text-primary/80",
       "placeholder:text-secondary data-placeholder:text-secondary",
       "[&>span]:line-clamp-1",
       className,
@@ -164,7 +164,7 @@ type SelectSeparatorProps = React.ComponentProps<
 >;
 const SelectSeparator = ({ className, ...props }: SelectSeparatorProps) => (
   <SelectPrimitive.Separator
-    className={cn(separatorVariants({ variant: "default", className }))}
+    className={cn(separatorVariants({ className }))}
     {...props}
   />
 );

@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/cn",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -29,8 +29,8 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "class-variance-authority": "^0.7.1",
-    "tailwind-merge": "^2.6.0"
+    "class-variance-authority": "catalog:ui",
+    "tailwind-merge": "^3.0.2"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",

@@ -1,0 +1,59 @@
+---
+title: Input
+description: Displays a form input field or a component that looks like an input field.
+links:
+  - label: Shadcn UI
+    href: https://ui.shadcn.com/docs/components/input
+---
+
+<ComponentPreview name="input/default" preview={`<Input className="w-80" />`} />
+
+## Installation
+
+```package-install
+pnpm add @notion-kit/shadcn
+```
+
+## Examples
+
+---
+
+### Without Border
+
+<ComponentPreview
+  name="input/flat"
+  preview={`<Input
+    variant="flat"
+    className="w-80"
+    placeholder="Enter something..."
+  />`}
+/>
+
+### Search Input
+
+<ComponentPreview
+  name="input/search"
+  preview={`<Input
+    className="w-80"
+    value={value}
+    onChange={(e) => setValue(e.target.value)}
+    onCancel={() => setValue("")}
+    placeholder="Enter something..."
+    search
+    clear
+  />`}
+/>
+
+## API Reference
+
+### Input
+
+An `Input` extends the HTML `<input>` component. We list the extended properties only.
+
+| Prop       | Type                             | Default     | Description                                              |
+| ---------- | -------------------------------- | ----------- | -------------------------------------------------------- |
+| `variant`  | `"default" \| "plain" \| "flat"` | `"default"` | The visual style of the input.                           |
+| `search`   | `boolean`                        | -           | Whether the search icon is shown.                        |
+| `clear`    | `boolean`                        | -           | Whether the clear button is shown.                       |
+| `endIcon`  | `React.ReactNode`                | -           | An icon at the end of the input.                         |
+| `onCancel` | `() => void`                     | -           | Handler that is called when the clear button is clicked. |

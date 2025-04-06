@@ -1,0 +1,39 @@
+---
+title: Switch
+description: A control that allows the user to toggle between checked and not checked.
+links:
+  - label: Shadcn UI
+    href: https://ui.shadcn.com/docs/components/switch
+---
+
+<ComponentPreview name="switch/default" preview={`<Switch />`} />
+
+## Installation
+
+```package-install
+pnpm add @notion-kit/shadcn
+```
+
+## Options
+
+---
+
+### Size
+
+Use the `size` prop to control the size of the switch.
+The default size is `"md"`.
+
+<ComponentPreview
+  name="switch/sizes"
+  preview={`<Switch size="sm"/>
+  <Switch size="md"/>
+  `}
+/>
+
+## API Reference
+
+### Switch
+
+| Prop   | Type           | Default | Description             |
+| ------ | -------------- | ------- | ----------------------- |
+| `size` | `"sm" \| "md"` | `"md"`  | The size of the switch. |

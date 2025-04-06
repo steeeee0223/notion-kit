@@ -1,0 +1,28 @@
+---
+title: Single Image Dropzone
+description: A drag-and-drop area for uploading a single image with file validation support.
+---
+
+<ComponentPreview
+  name="single-image-dropzone/default"
+  preview={`<SingleImageDropzone />`}
+/>
+
+## Installation
+
+```package-install
+pnpm add @notion-kit/single-image-dropzone
+```
+
+## API Reference
+
+### SingleImageDropzone
+
+| Prop              | Type                                     | Default | Description                                                |
+| ----------------- | ---------------------------------------- | ------- | ---------------------------------------------------------- |
+| `width`           | `number`                                 | -       | The width of the dropzone.                                 |
+| `height`          | `number`                                 | -       | The height of the dropzone.                                |
+| `disabled`        | `boolean`                                | -       | Whether the dropzone is disabled.                          |
+| `value`           | `string \| File`                         | -       | The dropped image file.                                    |
+| `dropzoneOptions` | `Omit<DropzoneOptions, "disabled">`      | -       | The dropzone options from `react-dropzone`.                |
+| `onChange`        | `(file?: File) => void \| Promise<void>` | -       | Handler that is called when a file is dropped or selected. |

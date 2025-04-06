@@ -1,0 +1,56 @@
+---
+title: Badge
+description: Displays a badge or a component that looks like a badge.
+links:
+  - label: Shadcn UI
+    href: https://ui.shadcn.com/docs/components/badge
+---
+
+<ComponentPreview name="badge/default" preview={`<Badge>badge</Badge>`} />
+
+## Installation
+
+```package-install
+pnpm add @notion-kit/shadcn
+```
+
+## Options
+
+---
+
+### Variant
+
+Use the `variant` prop to control the visual style of the badge.<br/>
+The default variant is `"default"`.
+
+<ComponentPreview
+  name="badge/variants"
+  preview={`<Badge variant="default">default</Badge>
+  <Badge variant="gray">gray</Badge>
+  <Badge variant="blue">blue</Badge>
+  <Badge variant="orange">orange</Badge>
+  <Badge variant="tag">tag</Badge>
+  `}
+/>
+
+### Size
+
+Use the `size` prop to control the text size of the badge.
+The default size is `"md"`.
+
+<ComponentPreview
+  name="badge/sizes"
+  preview={`<Badge size="sm">badge</Badge>
+<Badge size="md">badge</Badge>`}
+/>
+
+## API Reference
+
+### Badge
+
+An `Badge` extends the HTML `<div>` component. We list the extended properties only.
+
+| Prop      | Type                                                        | Default     | Description                    |
+| --------- | ----------------------------------------------------------- | ----------- | ------------------------------ |
+| `variant` | `"default" \| "gray" \| "blue \| "orange" \| "tag" \| null` | `"default"` | The visual style of the badge. |
+| `size`    | `"sm" \| "md"`                                              | `"md"`      | The size of the badge.         |

@@ -7,17 +7,15 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         primary: "border border-border-button",
-        secondary: "border border-border-button text-icon",
-        nav: "text-icon",
-        item: "relative flex justify-normal text-primary data-disabled:pointer-events-none data-disabled:opacity-50 dark:text-primary/80",
-        subitem: "relative flex text-secondary",
+        icon: "size-9 rounded-md border border-border-button text-icon",
+        "nav-icon": "size-7 text-icon",
         link: "text-primary underline-offset-4 hover:bg-transparent hover:underline dark:text-primary/80",
         blue: "border border-border bg-blue font-medium text-white shadow-xs hover:bg-blue-hover hover:text-white disabled:bg-blue",
         "soft-blue":
           "bg-blue/5 text-blue shadow-xs hover:bg-blue/15 disabled:bg-blue/5",
         hint: "font-medium text-muted",
         red: "border border-red/50 text-red hover:bg-red/10 focus:bg-red/10",
-        "red:fill":
+        "red-fill":
           "bg-red text-white hover:bg-red/65 disabled:bg-red dark:hover:bg-red/35",
         white: "border border-white text-white",
         /**
@@ -31,21 +29,16 @@ export const buttonVariants = cva(
         sm: "h-8 px-3",
         md: "h-9 px-4 py-2",
         lg: "h-10 rounded-md px-8",
-        icon: "size-9 rounded-md",
-        "icon-sm": "size-5",
-        "icon-md": "size-7",
         circle: "rounded-full",
       },
     },
     defaultVariants: {
       variant: "primary",
-      size: "md",
     },
   },
 );
 export type ButtonVariants = VariantProps<typeof buttonVariants>;
 
-/** @version 1.5 */
 export const menuItemVariants = cva(
   [
     "mx-1 flex min-h-7 w-[calc(100%-8px)] animate-bg-in cursor-pointer items-center rounded-md px-2 text-sm/[1.2] text-primary select-none hover:bg-primary/5 focus-visible:outline-hidden dark:text-primary/80",
@@ -68,7 +61,6 @@ export const menuItemVariants = cva(
 );
 export type MenuItemVariants = VariantProps<typeof menuItemVariants>;
 
-/** @version 1.5 */
 export const inputVariants = cva(
   "relative flex h-7 w-full cursor-text items-center rounded-md bg-input/60 px-1.5 py-[3px] text-sm text-primary transition-colors dark:bg-input/5 dark:text-primary/80 [&_input]:block [&_input]:w-full [&_input]:bg-transparent [&_input]:p-0 [&_input]:text-inherit",
   {
@@ -111,15 +103,7 @@ export const contentVariants = cva(
 );
 export type ContentVariants = VariantProps<typeof contentVariants>;
 
-export const separatorVariants = cva("-mx-1 my-1 h-px", {
-  variants: {
-    variant: {
-      default: "bg-primary/10",
-      shadcn: "bg-muted",
-    },
-  },
-  defaultVariants: { variant: "default" },
-});
+export const separatorVariants = cva("-mx-1 my-1 h-px bg-primary/10");
 export type SeparatorVariants = VariantProps<typeof separatorVariants>;
 
 export const groupVariants = cva("flex flex-col gap-px py-1");

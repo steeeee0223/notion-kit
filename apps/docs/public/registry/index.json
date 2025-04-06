@@ -8,11 +8,17 @@
       "name": "button",
       "title": "Button",
       "type": "registry:component",
+      "dependencies": ["@radix-ui/react-slot", "class-variance-authority"],
       "files": [
         {
           "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/packages/shadcn/src/button.tsx",
           "type": "registry:component",
           "target": "core/button.tsx"
+        },
+        {
+          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/packages/shadcn/src/variants.ts",
+          "type": "registry:component",
+          "target": "core/variants.ts"
         }
       ]
     }
