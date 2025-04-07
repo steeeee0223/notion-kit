@@ -1,11 +1,8 @@
 "use client";
 
-import { useMounted } from "./use-mounted";
+import { useIsClient } from "./use-is-client";
 
 export function useOrigin() {
-  const mounted = useMounted();
-  const isClient = typeof window !== "undefined";
-
-  if (!isClient || !mounted) return "";
-  return window.location.origin;
+  const isClient = useIsClient();
+  return isClient ? window.location.origin : "";
 }
