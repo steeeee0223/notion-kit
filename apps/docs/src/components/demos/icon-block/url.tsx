@@ -4,7 +4,7 @@ export default function Url() {
   return (
     <IconBlock
       size="md"
-      icon={{ type: "file", url: "https://github.com/shadcn.png" }}
+      icon={{ type: "url", src: "https://github.com/shadcn.png" }}
     />
   );
 }

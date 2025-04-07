@@ -6,11 +6,7 @@ export default function Demo() {
   return (
     <div className="grid grid-cols-4 gap-2">
       {sizes.map((size) => (
-        <IconBlock
-          key={size}
-          size={size}
-          icon={{ type: "emoji", emoji: "🚀" }}
-        />
+        <IconBlock key={size} size={size} icon={{ type: "emoji", src: "🚀" }} />
       ))}
     </div>
   );

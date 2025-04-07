@@ -4,7 +4,7 @@ export default function Lucide() {
   return (
     <IconBlock
       size="md"
-      icon={{ type: "lucide", name: "badge-euro", color: "#3e9392" }}
+      icon={{ type: "lucide", src: "badge-euro", color: "#3e9392" }}
     />
   );
 }

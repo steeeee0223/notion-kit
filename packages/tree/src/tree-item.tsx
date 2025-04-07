@@ -65,7 +65,7 @@ function TreeItem<T extends TreeItemData>({
         </Button>
         <IconBlock
           className={cn(expandable && "group-hover/icon:hidden")}
-          icon={node.icon ?? { type: "text", text: node.title }}
+          icon={node.icon ?? { type: "text", src: node.title }}
         />
       </div>
       <span className="ml-1 truncate">{node.title}</span>

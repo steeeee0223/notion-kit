@@ -14,24 +14,24 @@ type Story = StoryObj<typeof meta>;
 export const Emoji: Story = {
   args: {
     size: "md",
-    icon: { type: "emoji", emoji: "🚀" },
+    icon: { type: "emoji", src: "🚀" },
   },
 };
 export const Lucide: Story = {
   args: {
     size: "md",
-    icon: { type: "lucide", name: "badge-euro", color: "#3e9392" },
+    icon: { type: "lucide", src: "badge-euro", color: "#3e9392" },
   },
 };
 export const ImageUrl: Story = {
   args: {
     size: "md",
-    icon: { type: "file", url: "https://github.com/shadcn.png" },
+    icon: { type: "url", src: "https://github.com/shadcn.png" },
   },
 };
 export const Text: Story = {
   args: {
     size: "md",
-    icon: { type: "text", text: "John" },
+    icon: { type: "text", src: "John" },
   },
 };

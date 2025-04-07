@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 
-import { IconBlock, type IconInfo } from "@notion-kit/icon-block";
+import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import { IconMenu } from "@notion-kit/icon-menu";
 
-const defaultIcon: IconInfo = { type: "text", text: "S" };
+const defaultIcon: IconData = { type: "text", src: "S" };
 
 export default function Default() {
-  const [icon, setIcon] = useState<IconInfo>(defaultIcon);
+  const [icon, setIcon] = useState<IconData>(defaultIcon);
 
   return (
     <IconMenu
@@ -16,8 +16,8 @@ export default function Default() {
       onRemove={() => setIcon(defaultIcon)}
       onUpload={(file) =>
         setIcon({
-          type: "file",
-          url: URL.createObjectURL(file),
+          type: "url",
+          src: URL.createObjectURL(file),
         })
       }
     >

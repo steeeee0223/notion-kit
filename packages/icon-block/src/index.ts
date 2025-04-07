@@ -1,3 +1,3 @@
-export * from "./create-lucide-icon";
 export * from "./icon-block";
+export { createLucideIcon } from "./lib";
 export type * from "./types";

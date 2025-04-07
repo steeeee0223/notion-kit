@@ -18,7 +18,7 @@ export default function Custom() {
     >
       <TreeList
         nodes={folderNodes}
-        defaultIcon={{ type: "lucide", name: "file-text" }}
+        defaultIcon={{ type: "lucide", src: "file-text" }}
         selectedId={activeFile}
         onSelect={setActiveFile}
         showEmptyChild
