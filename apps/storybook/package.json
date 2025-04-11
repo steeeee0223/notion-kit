@@ -21,6 +21,7 @@
     "@notion-kit/modal": "workspace:*",
     "@notion-kit/select": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
+    "@notion-kit/sidebar": "workspace:*",
     "@notion-kit/single-image-dropzone": "workspace:*",
     "@notion-kit/spinner": "workspace:*",
     "@notion-kit/tags-input": "workspace:*",
