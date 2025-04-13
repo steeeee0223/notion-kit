@@ -28,7 +28,7 @@ const TreeGroup: React.FC<TreeGroupProps> = ({
   return (
     <HintProvider>
       <div className={className}>
-        <div className="group flex items-center px-3 py-1">
+        <div className="group/tree flex items-center px-3 py-1">
           <div className="grow">
             <Hint side="top" description="Click to hide section">
               <Button
@@ -47,7 +47,7 @@ const TreeGroup: React.FC<TreeGroupProps> = ({
                 variant="hint"
                 size="xs"
                 onClick={onCreate}
-                className="ml-auto size-auto p-0.5 opacity-0 group-hover:opacity-100"
+                className="ml-auto size-auto p-0.5 opacity-0 group-hover/tree:opacity-100"
               >
                 <Plus className="size-4" />
               </Button>

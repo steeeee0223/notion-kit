@@ -28,6 +28,9 @@
     --secondary: 55, 53, 47, 0.65;
     --muted: 55, 53, 47, 0.5;
     --icon: 55, 53, 47, 0.85;
+    --tooltip-primary: 255, 255, 255, 0.9;
+    --tooltip-secondary: 206, 205, 202, 0.6;
+    --sidebar-primary: 95 94 91;
     /* background color */
     --bg-main: 255 255 255;
     --bg-input: 242 241 238;
@@ -61,6 +64,9 @@
     --secondary: 255, 255, 255, 0.45;
     --muted: 255, 255, 255, 0.3;
     --icon: 255, 255, 255, 0.8;
+    --tooltip-primary: 211, 211, 211, 1;
+    --tooltip-secondary: 127, 127, 127, 1;
+    --sidebar-primary: 155 155 155;
     /* background color */
     --bg-main: 25 25 25;
     --bg-input: 255 255 255;

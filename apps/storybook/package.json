@@ -19,8 +19,10 @@
     "@notion-kit/icon-block": "workspace:*",
     "@notion-kit/icon-menu": "workspace:*",
     "@notion-kit/modal": "workspace:*",
+    "@notion-kit/schemas": "workspace:*",
     "@notion-kit/select": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
+    "@notion-kit/sidebar": "workspace:*",
     "@notion-kit/single-image-dropzone": "workspace:*",
     "@notion-kit/spinner": "workspace:*",
     "@notion-kit/tags-input": "workspace:*",
@@ -31,6 +33,7 @@
     "next-themes": "catalog:ui",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
+    "react-hotkeys-hook": "catalog:ui",
     "usehooks-ts": "catalog:ui",
     "uuid": "catalog:uuid",
     "zod": "catalog:"

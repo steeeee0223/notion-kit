@@ -14,7 +14,7 @@ const iconBlockVariants = cva("shrink-0 select-none", {
   variants: {
     size: {
       sm: "size-5 rounded-sm p-0.5 text-sm/4",
-      md: "size-10 rounded-md p-1 text-3xl/8",
+      md: "size-9 rounded-md p-1 text-3xl/8",
       lg: "size-16 rounded-md p-1 text-5xl/tight",
       xl: "size-[78px] rounded-lg p-1 text-7xl",
     },
