@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo } from "react";
 import { ChevronsLeft, MenuIcon } from "lucide-react";
 

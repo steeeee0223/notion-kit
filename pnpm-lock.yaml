@@ -132,15 +132,27 @@ importers:
       '@notion-kit/icon-menu':
         specifier: workspace:*
         version: link:../../packages/icon-menu
+      '@notion-kit/icons':
+        specifier: workspace:*
+        version: link:../../packages/icons
       '@notion-kit/modal':
         specifier: workspace:*
         version: link:../../packages/modal
+      '@notion-kit/navbar':
+        specifier: workspace:*
+        version: link:../../packages/navbar
+      '@notion-kit/schemas':
+        specifier: workspace:*
+        version: link:../../packages/schemas
       '@notion-kit/select':
         specifier: workspace:*
         version: link:../../packages/select
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../../packages/shadcn
+      '@notion-kit/sidebar':
+        specifier: workspace:*
+        version: link:../../packages/sidebar
       '@notion-kit/single-image-dropzone':
         specifier: workspace:*
         version: link:../../packages/single-image-dropzone
@@ -156,6 +168,9 @@ importers:
       '@notion-kit/unsplash':
         specifier: workspace:*
         version: link:../../packages/unsplash
+      '@notion-kit/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1

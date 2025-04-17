@@ -80,7 +80,6 @@ export const TrashBox: React.FC<TrashBoxProps> = ({
     <Popover open={isOpen} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
         <SidebarMenuItem
-          className="mt-4"
           label="Trash"
           icon={Trash}
           hint="Restore deleted pages"

@@ -34,17 +34,16 @@ const DrawerOverlay = ({
     {...props}
   />
 );
-DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName;
 
 interface DrawerContentProps
   extends React.ComponentProps<typeof DrawerPrimitive.Content> {
-  showBar?: boolean;
+  side?: "bottom" | "right";
   noTitle?: boolean;
 }
 const DrawerContent = ({
   className,
   children,
-  showBar = true,
+  side = "bottom",
   noTitle = false,
   ...props
 }: DrawerContentProps) => (
@@ -54,14 +53,13 @@ const DrawerContent = ({
       className={cn(
         "fixed inset-x-0 bottom-0 z-50 mt-24 flex flex-col rounded-t-[10px]",
         contentVariants({ variant: "default" }),
+        side === "right" &&
+          "inset-y-0 right-0 left-auto mt-0 h-screen rounded-none border-t-0 border-r-0",
         className,
       )}
       {...props}
       {...(noTitle && { "aria-describedby": undefined })}
     >
-      {showBar && (
-        <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
-      )}
       {noTitle && (
         <VisuallyHidden asChild>
           <DrawerTitle />
@@ -71,7 +69,6 @@ const DrawerContent = ({
     </DrawerPrimitive.Content>
   </DrawerPortal>
 );
-DrawerContent.displayName = "DrawerContent";
 
 const DrawerHeader = ({
   className,
@@ -82,7 +79,6 @@ const DrawerHeader = ({
     {...props}
   />
 );
-DrawerHeader.displayName = "DrawerHeader";
 
 const DrawerFooter = ({
   className,
@@ -93,7 +89,6 @@ const DrawerFooter = ({
     {...props}
   />
 );
-DrawerFooter.displayName = "DrawerFooter";
 
 const DrawerTitle = ({
   className,
@@ -107,7 +102,6 @@ const DrawerTitle = ({
     {...props}
   />
 );
-DrawerTitle.displayName = DrawerPrimitive.Title.displayName;
 
 const DrawerDescription = ({
   className,
@@ -118,7 +112,6 @@ const DrawerDescription = ({
     {...props}
   />
 );
-DrawerDescription.displayName = DrawerPrimitive.Description.displayName;
 
 export {
   Drawer,

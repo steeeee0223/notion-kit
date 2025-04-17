@@ -23,6 +23,7 @@ export const PageObject = z.object({
   isPublished: z.boolean(),
   isFavorite: z.boolean(),
   url: z.string().optional(),
+  publicUrl: z.string().optional(),
   createdAt: z.number(),
   lastEditedAt: z.number(),
   createdBy: z.string(),

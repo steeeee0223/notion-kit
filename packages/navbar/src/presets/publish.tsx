@@ -30,7 +30,7 @@ export const Publish = ({ page, onUpdate }: PublishProps) => {
 
   /** Url */
   const origin = useOrigin();
-  const url = `${origin}/preview/d/${page.id}`;
+  const url = `${origin}/${page.publicUrl ?? ""}`;
   /** Copy */
   const [, copy] = useCopyToClipboard();
   const [isCopied, setIsCopied] = useState(false);
@@ -111,9 +111,9 @@ export const Publish = ({ page, onUpdate }: PublishProps) => {
             ) : (
               <div className="flex flex-col items-center justify-center gap-2">
                 <Globe className="size-8 text-icon" />
-                <p className="text-sm font-medium">Publish this note</p>
+                <p className="text-sm font-medium">Publish to web</p>
                 <span className="text-xs text-muted">
-                  Share your work with others.
+                  Create a website with Notion
                 </span>
                 <Button
                   variant="blue"

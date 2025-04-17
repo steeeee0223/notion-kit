@@ -5,8 +5,7 @@ import { CirclePlus, Home, SearchIcon, SettingsIcon } from "lucide-react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { useModal } from "@notion-kit/modal";
-import { Plan, Role } from "@notion-kit/schemas";
-import type { Page, User, Workspace } from "@notion-kit/schemas";
+import type { Page } from "@notion-kit/schemas";
 import {
   DocList,
   FavoriteList,
@@ -26,54 +25,11 @@ import {
   WorkspaceSwitcher,
 } from "@notion-kit/sidebar";
 
-const GROUPS = {
-  document: "Document",
-  private: "Private",
-  shared: "Shared",
-} as const;
+import { GROUPS, pages, SHORTCUT_OPTIONS, user, workspaces } from "./data";
 
-const SHORTCUT_OPTIONS = { preventDefault: true };
-
-const user: User = {
-  id: "u1",
-  name: "Admin",
-  email: "admin@email.com",
-  avatarUrl: "",
-};
-const workspaces: Workspace[] = [
-  {
-    id: "w1",
-    name: "Workspace",
-    role: Role.OWNER,
-    memberCount: 5,
-    plan: Plan.FREE,
-  },
-  {
-    id: "w2",
-    name: "Workspace 2",
-    role: Role.GUEST,
-    memberCount: 2,
-    plan: Plan.EDUCATION,
-  },
-  {
-    id: "w3",
-    name: "Workspace 3",
-    role: Role.OWNER,
-    memberCount: 10,
-    plan: Plan.ENTERPRISE,
-  },
-  {
-    id: "w4",
-    name: "Workspace 4",
-    role: Role.MEMBER,
-    memberCount: 12,
-    plan: Plan.PLUS,
-  },
-];
-
-export const SidebarDemo = () => {
+export default function NotionLayout() {
   return (
-    <SidebarProvider>
+    <SidebarProvider className="h-full min-h-full">
       <AppSidebar />
       <SidebarInset>
         <header className="flex h-11 shrink-0 items-center gap-2 border-b px-4">
@@ -83,10 +39,9 @@ export const SidebarDemo = () => {
       </SidebarInset>
     </SidebarProvider>
   );
-};
+}
 
 const AppSidebar = () => {
-  const pages: Page[] = [];
   const [activePage, setActivePage] = useState<string | null>(null);
   const selectPage = (page: Page) => setActivePage(page.id);
   /** Modals */
@@ -105,7 +60,7 @@ const AppSidebar = () => {
   useHotkeys(["meta+k", "shift+meta+k"], onOpenSearch, SHORTCUT_OPTIONS);
 
   return (
-    <Sidebar>
+    <Sidebar className="absolute z-0 h-full">
       <SidebarClose />
       <SidebarHeader>
         <div className="flex h-11 w-full shrink-0 grow-0 items-center justify-between">
@@ -142,7 +97,7 @@ const AppSidebar = () => {
           />
         </SidebarGroup>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="mt-2 px-1">
         <FavoriteList
           pages={pages}
           activePage={activePage}
@@ -153,13 +108,15 @@ const AppSidebar = () => {
             key={group}
             group={group}
             title={title}
-            pages={pages}
+            pages={pages.filter(
+              (page) => page.type === group && !page.isArchived,
+            )}
             activePage={activePage}
             onSelect={selectPage}
           />
         ))}
       </SidebarContent>
-      <SidebarFooter className="mb-10">
+      <SidebarFooter>
         <TrashBox
           isOpen={trashOpen}
           pages={pages}

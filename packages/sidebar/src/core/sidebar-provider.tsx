@@ -145,8 +145,8 @@ const SidebarProvider: React.FC<SidebarProviderProps> = ({
 
   return (
     <SidebarContext.Provider value={contextValue}>
-      <ModalProvider>
-        <HintProvider>
+      <HintProvider>
+        <ModalProvider>
           <div
             data-slot="sidebar-wrapper"
             style={
@@ -163,8 +163,8 @@ const SidebarProvider: React.FC<SidebarProviderProps> = ({
           >
             {children}
           </div>
-        </HintProvider>
-      </ModalProvider>
+        </ModalProvider>
+      </HintProvider>
     </SidebarContext.Provider>
   );
 };

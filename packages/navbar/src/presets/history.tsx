@@ -29,6 +29,9 @@ interface HistoryProps {
   fetchLogs?: (pageId: string) => Promise<Log[]>;
 }
 
+/**
+ * @deprecated
+ */
 export const History = ({ pageId, fetchLogs }: HistoryProps) => {
   const [open, setOpen] = useState(false);
   const [logs, setLogs] = useState<Log[]>([]);
@@ -49,11 +52,7 @@ export const History = ({ pageId, fetchLogs }: HistoryProps) => {
           <HistoryIcon className="size-5" />
         </NavbarItem>
       </DrawerTrigger>
-      <DrawerContent
-        showBar={false}
-        className="inset-y-0 right-0 left-auto mt-0 h-screen w-[360px] rounded-none border-t-0 border-r-0"
-        noTitle
-      >
+      <DrawerContent side="right" noTitle className="w-[360px]">
         <div className="absolute top-0 left-0 ml-2.5 flex h-12 items-center">
           <Hint description="Close panel">
             <Button
@@ -80,9 +79,6 @@ export const History = ({ pageId, fetchLogs }: HistoryProps) => {
                   {logs.map((log) => (
                     <div key={log.id} className="p-4 hover:bg-primary/5">
                       {log.msg}
-                      {/* // TODO
-                       * <ActivityItem data={log} />
-                       */}
                     </div>
                   ))}
                 </div>

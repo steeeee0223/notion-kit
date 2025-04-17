@@ -115,6 +115,13 @@ export const Index: Record<
     ],
     component: React.lazy(() => import("@/components/demos/modal/basic")),
   },
+  "navbar/notion": {
+    files: [
+      "components/demos/navbar/notion/data.ts",
+      "components/demos/navbar/notion/index.tsx",
+    ],
+    component: React.lazy(() => import("@/components/demos/navbar/notion")),
+  },
   "resizable/demo": {
     files: ["components/demos/resizable/demo.tsx"],
     component: React.lazy(() => import("@/components/demos/resizable/demo")),
@@ -130,6 +137,17 @@ export const Index: Record<
   "separator/demo": {
     files: ["components/demos/separator/demo.tsx"],
     component: React.lazy(() => import("@/components/demos/separator/demo")),
+  },
+  "sidebar/basic": {
+    files: ["components/demos/sidebar/basic.tsx"],
+    component: React.lazy(() => import("@/components/demos/sidebar/basic")),
+  },
+  "sidebar/notion": {
+    files: [
+      "components/demos/sidebar/notion/data.ts",
+      "components/demos/sidebar/notion/index.tsx",
+    ],
+    component: React.lazy(() => import("@/components/demos/sidebar/notion")),
   },
   "single-image-dropzone/default": {
     files: ["components/demos/single-image-dropzone/default.tsx"],
