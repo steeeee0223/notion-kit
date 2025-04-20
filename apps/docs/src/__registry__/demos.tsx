@@ -115,6 +115,31 @@ export const Index: Record<
     ],
     component: React.lazy(() => import("@/components/demos/modal/basic")),
   },
+  "navbar/menu": {
+    files: ["components/demos/navbar/menu.tsx"],
+    component: React.lazy(() => import("@/components/demos/navbar/menu")),
+  },
+  "navbar/notion": {
+    files: [
+      "components/demos/navbar/notion/data.ts",
+      "components/demos/navbar/notion/index.tsx",
+    ],
+    component: React.lazy(() => import("@/components/demos/navbar/notion")),
+  },
+  "navbar/participants": {
+    files: ["components/demos/navbar/participants.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/navbar/participants"),
+    ),
+  },
+  "navbar/sharing": {
+    files: ["components/demos/navbar/sharing.tsx"],
+    component: React.lazy(() => import("@/components/demos/navbar/sharing")),
+  },
+  "navbar/title": {
+    files: ["components/demos/navbar/title.tsx"],
+    component: React.lazy(() => import("@/components/demos/navbar/title")),
+  },
   "resizable/demo": {
     files: ["components/demos/resizable/demo.tsx"],
     component: React.lazy(() => import("@/components/demos/resizable/demo")),
@@ -130,6 +155,43 @@ export const Index: Record<
   "separator/demo": {
     files: ["components/demos/separator/demo.tsx"],
     component: React.lazy(() => import("@/components/demos/separator/demo")),
+  },
+  "sidebar/basic": {
+    files: ["components/demos/sidebar/basic.tsx"],
+    component: React.lazy(() => import("@/components/demos/sidebar/basic")),
+  },
+  "sidebar/favorite-list": {
+    files: ["components/demos/sidebar/favorite-list.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/sidebar/favorite-list"),
+    ),
+  },
+  "sidebar/notion": {
+    files: [
+      "components/demos/sidebar/notion/data.ts",
+      "components/demos/sidebar/notion/index.tsx",
+    ],
+    component: React.lazy(() => import("@/components/demos/sidebar/notion")),
+  },
+  "sidebar/page-list": {
+    files: ["components/demos/sidebar/page-list.tsx"],
+    component: React.lazy(() => import("@/components/demos/sidebar/page-list")),
+  },
+  "sidebar/search-command": {
+    files: ["components/demos/sidebar/search-command.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/sidebar/search-command"),
+    ),
+  },
+  "sidebar/trash-box": {
+    files: ["components/demos/sidebar/trash-box.tsx"],
+    component: React.lazy(() => import("@/components/demos/sidebar/trash-box")),
+  },
+  "sidebar/workspace-switcher": {
+    files: ["components/demos/sidebar/workspace-switcher.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/sidebar/workspace-switcher"),
+    ),
   },
   "single-image-dropzone/default": {
     files: ["components/demos/single-image-dropzone/default.tsx"],

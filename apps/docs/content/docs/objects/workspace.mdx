@@ -1,0 +1,50 @@
+---
+title: Workspace
+description: The Workspace object represents a Notion workspace.
+---
+
+## Properties
+
+| Prop            | Type                             | Description                             |
+| --------------- | -------------------------------- | --------------------------------------- |
+| `id`\*          | `string`                         | Unique identifier of the workspace.     |
+| `name`\*        | `string`                         | Workspace's name.                       |
+| `memberCount`\* | `number`                         | The number of members in the workspace. |
+| `plan`\*        | [`Plan`](#plan)                  | Plan of the workspace.                  |
+| `icon`          | [`IconData`](/docs/objects/icon) | Workspace icon.                         |
+| `role`\*        | [`Role`](#role)                  | Role of the user in this workspace.     |
+
+## Example
+
+```ts
+{
+  id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
+  name: "My Workspace",
+  icon: { type: "lucide", src: "badge-check" },
+  memberCount: 5,
+  plan: "free",
+  role: "owner"
+}
+```
+
+## Plan
+
+<Callout>
+  See all [pricing plans in Notion](https://www.notion.com/pricing/)
+</Callout>
+
+There are 5 possible plans in Notion
+
+- `free`
+- `education`
+- `plus`
+- `business`
+- `enterprise`
+
+## Role
+
+There are 3 possible roles in Notion
+
+- `owner`
+- `member`
+- `guest`

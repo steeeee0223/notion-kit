@@ -41,13 +41,15 @@ export type ButtonVariants = VariantProps<typeof buttonVariants>;
 
 export const menuItemVariants = cva(
   [
-    "mx-1 flex min-h-7 w-[calc(100%-8px)] animate-bg-in cursor-pointer items-center rounded-md px-2 text-sm/[1.2] text-primary select-none hover:bg-primary/5 focus-visible:outline-hidden dark:text-primary/80",
+    "mx-1 flex min-h-7 w-[calc(100%-8px)] animate-bg-in cursor-pointer items-center rounded-md px-2 text-sm/[1.2] select-none hover:bg-primary/5 focus-visible:outline-hidden",
     "[&_svg]:block [&_svg]:shrink-0",
   ],
   {
     variants: {
       variant: {
+        default: "text-primary dark:text-primary/80",
         secondary: "text-secondary",
+        sidebar: "text-sidebar-primary",
         warning: "hover:text-red",
         error: "text-red",
       },
@@ -56,7 +58,9 @@ export const menuItemVariants = cva(
         true: "pointer-events-none cursor-not-allowed opacity-50 hover:bg-transparent",
       },
     },
-    defaultVariants: {},
+    defaultVariants: {
+      variant: "default",
+    },
   },
 );
 export type MenuItemVariants = VariantProps<typeof menuItemVariants>;
@@ -94,8 +98,7 @@ export const contentVariants = cva(
           "z-50 rounded-md bg-popover shadow-md data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
         tab: "border-none bg-popover data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
         tooltip:
-          "relative z-50 animate-in overflow-hidden border-none bg-tooltip font-medium text-white/90 shadow-md backdrop-filter-none fade-in-0 zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 dark:text-primary/80",
-        shadcn: "text-popover-foreground bg-popover shadow-md",
+          "relative z-50 animate-in overflow-hidden border-none bg-tooltip font-medium text-tooltip-primary shadow-md backdrop-filter-none fade-in-0 zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
       },
     },
     defaultVariants: { variant: "default" },

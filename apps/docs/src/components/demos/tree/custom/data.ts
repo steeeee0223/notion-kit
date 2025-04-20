@@ -5,14 +5,14 @@ export const folderNodes: TreeNode<TreeItemData>[] = [
     id: "1",
     title: "Folder 1",
     group: "default",
-    icon: { type: "lucide", name: "folder" },
+    icon: { type: "lucide", src: "folder" },
     children: [
       {
         parentId: "1",
         id: "1.a",
         title: "Folder A",
         group: "default",
-        icon: { type: "lucide", name: "folder" },
+        icon: { type: "lucide", src: "folder" },
         children: [
           {
             parentId: "1.a",
@@ -36,7 +36,7 @@ export const folderNodes: TreeNode<TreeItemData>[] = [
     id: "2",
     title: "Folder 2",
     group: "default",
-    icon: { type: "lucide", name: "folder" },
+    icon: { type: "lucide", src: "folder" },
     children: [
       {
         parentId: "2",
@@ -58,7 +58,7 @@ export const folderNodes: TreeNode<TreeItemData>[] = [
     id: "3",
     title: "Folder 3",
     group: "default",
-    icon: { type: "lucide", name: "folder" },
+    icon: { type: "lucide", src: "folder" },
     children: [],
   },
 ];

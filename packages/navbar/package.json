@@ -1,0 +1,60 @@
+{
+  "name": "@notion-kit/navbar",
+  "version": "0.2.0",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/steeeee0223/notion-kit/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/steeeee0223/notion-kit.git",
+    "directory": "packages/navbar"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@notion-kit/cn": "workspace:*",
+    "@notion-kit/common": "workspace:*",
+    "@notion-kit/hooks": "workspace:*",
+    "@notion-kit/icon-block": "workspace:*",
+    "@notion-kit/icon-menu": "workspace:*",
+    "@notion-kit/icons": "workspace:*",
+    "@notion-kit/modal": "workspace:*",
+    "@notion-kit/schemas": "workspace:*",
+    "@notion-kit/shadcn": "workspace:*",
+    "@notion-kit/spinner": "workspace:*",
+    "@notion-kit/utils": "workspace:*",
+    "lucide-react": "catalog:ui"
+  },
+  "devDependencies": {
+    "@notion-kit/eslint-config": "workspace:*",
+    "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tsconfig": "workspace:*",
+    "@types/react": "catalog:react19",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "react": "catalog:react19",
+    "tsup": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:react19"
+  },
+  "prettier": "@notion-kit/prettier-config"
+}

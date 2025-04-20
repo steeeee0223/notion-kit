@@ -1,0 +1,39 @@
+---
+title: Navbar
+description: A composable, themeable and customizable navbar component.
+---
+
+<ComponentPreview name="navbar/notion" hideCode className="p-0 pb-10" />
+
+## Installation
+
+```package-install
+pnpm add @notion-kit/navbar
+```
+
+## Examples
+
+---
+
+### Notion Navbar
+
+<ComponentPreview name="navbar/notion" className="p-0 pb-10" />
+
+## API Reference
+
+### Navbar
+
+A `Navbar` extends the HTML `<nav>` element.
+
+### NavbarItem
+
+A `NavbarItem` extends the `<Button>` component. We list the extended properties only.
+
+<Callout title="Note">
+  - It must be used within `<TooltipProvider>`.
+  - It uses `nav-icon` variant by default. See more about [Button variants](/docs/components/button#button).
+</Callout>
+
+| Prop     | Type     | Description                 |
+| -------- | -------- | --------------------------- |
+| `hint`\* | `string` | The displayed tooltip hint. |

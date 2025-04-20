@@ -43,7 +43,7 @@ function TreeItem<T extends TreeItemData>({
       style={{ paddingLeft: `${(level + 1) * 12}px` }}
       className={cn(
         buttonVariants({ variant: null }),
-        "relative flex h-[27px] w-full justify-normal py-1 pr-3 font-medium text-secondary",
+        "relative flex h-[30px] w-full justify-normal py-1 pr-3 font-medium text-secondary",
         isSelected && "bg-primary/10 text-primary dark:text-primary/80",
         className,
       )}
@@ -65,7 +65,7 @@ function TreeItem<T extends TreeItemData>({
         </Button>
         <IconBlock
           className={cn(expandable && "group-hover/icon:hidden")}
-          icon={node.icon ?? { type: "text", text: node.title }}
+          icon={node.icon ?? { type: "text", src: node.title }}
         />
       </div>
       <span className="ml-1 truncate">{node.title}</span>

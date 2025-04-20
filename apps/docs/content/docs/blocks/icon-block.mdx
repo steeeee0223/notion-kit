@@ -67,16 +67,21 @@ Use the `size` prop to control the size of the button.
 
 | Prop       | Type                           | Default | Description                                                     |
 | ---------- | ------------------------------ | ------- | --------------------------------------------------------------- |
-| `icon`\*   | `IconInfo`                     | -       | The icon data.                                                  |
+| `icon`\*   | `IconData`                     | -       | The icon data.                                                  |
 | `size`     | `"sm" \| "md" \| "lg" \| "xl"` | `"sm"`  | The size of the block.                                          |
 | `fallback` | `string`                       | -       | The fallback string to display when an image can not be loaded. |
 
-### `type` IconInfo
+### `type` IconData
 
-```ts
-type IconInfo =
-  | { type: "emoji"; emoji: string }
-  | { type: "lucide"; name: LucideName; color?: string }
-  | { type: "file"; url: string }
-  | { type: "text"; text: string };
-```
+There are 4 types of icons:
+
+1. `emoji`: An emoji icon, whose `src` is simply the emoji string. See [Emoji Cheat Sheet](https://emojipedia.org/).
+2. `lucide`: A Lucide icon, whose `src` is the name of the icon. See [Lucide Icons](https://lucide.dev/icons).
+3. `url`: An image URL. The image will be displayed in the block.
+4. `text`: A text string. Only the first letter of `src` will be displayed in the block.
+
+| Prop     | Type                                     | Description                     |
+| -------- | ---------------------------------------- | ------------------------------- |
+| `type`\* | `"emoji" \| "lucide" \| "url" \| "text"` | The icon type.                  |
+| `src`\*  | `string`                                 | The source of the icon.         |
+| `color`  | `string`                                 | The color of the `lucide` icon. |

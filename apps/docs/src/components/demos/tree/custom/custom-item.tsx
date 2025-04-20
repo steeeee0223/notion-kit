@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
-import { IconBlock, IconInfo } from "@notion-kit/icon-block";
+import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import {
   Button,
   buttonVariants,
@@ -31,7 +31,7 @@ import {
 export interface CustomItemProps {
   className?: string;
   label: string;
-  icon?: IconInfo | null;
+  icon?: IconData | null;
   lastEditedBy?: string;
   lastEditedAt?: string;
   id?: string;
@@ -51,7 +51,7 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
       className,
       id,
       label,
-      icon = { type: "lucide", name: "file" },
+      icon = { type: "lucide", src: "file" },
       active,
       lastEditedBy = "admin",
       lastEditedAt = "now",
@@ -107,7 +107,7 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
             </Button>
             <IconBlock
               className={cn(expandable && "group-hover/icon:hidden")}
-              icon={icon ?? { type: "text", text: label }}
+              icon={icon ?? { type: "text", src: label }}
             />
           </div>
           <span className="ml-1 truncate">{label}</span>

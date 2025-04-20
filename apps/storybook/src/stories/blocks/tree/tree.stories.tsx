@@ -23,7 +23,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     nodes: folderNodes,
-    defaultIcon: { type: "lucide", name: "file-text" },
+    defaultIcon: { type: "lucide", src: "file-text" },
     showEmptyChild: true,
   },
 };
@@ -44,7 +44,7 @@ const RenderWithGroup: Story["render"] = (props) => {
 export const WithGroup: Story = {
   args: {
     nodes: folderNodes,
-    defaultIcon: { type: "lucide", name: "file-text" },
+    defaultIcon: { type: "lucide", src: "file-text" },
     showEmptyChild: true,
   },
   render: RenderWithGroup,
@@ -53,7 +53,7 @@ export const WithGroup: Story = {
 export const WithCustomItem: Story = {
   args: {
     nodes: folderNodes,
-    defaultIcon: { type: "lucide", name: "file-text" },
+    defaultIcon: { type: "lucide", src: "file-text" },
     showEmptyChild: true,
     renderItem: ({ node, isSelected, onSelect, ...props }) => (
       <CustomItem
