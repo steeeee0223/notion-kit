@@ -10,7 +10,7 @@ export interface TitleProps {
   onUpdate?: (page: Pick<UpdatePageParams, "title" | "icon">) => void;
 }
 
-export const Title = ({ page, readOnly, onUpdate }: TitleProps) => {
+export const Title: React.FC<TitleProps> = ({ page, readOnly, onUpdate }) => {
   const icon = page.icon ?? { type: "lucide", src: "file" };
 
   return (

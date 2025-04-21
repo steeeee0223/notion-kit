@@ -21,7 +21,7 @@ interface MenuProps {
   onChangeState?: StateChangeEvent;
 }
 
-export const Menu = ({ page, onChangeState }: MenuProps) => {
+export const Menu: React.FC<MenuProps> = ({ page, onChangeState }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

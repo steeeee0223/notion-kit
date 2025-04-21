@@ -25,7 +25,7 @@ interface PublishProps {
   onUpdate?: (id: string, isPublished: boolean) => void;
 }
 
-export const Publish = ({ page, onUpdate }: PublishProps) => {
+export const Publish: React.FC<PublishProps> = ({ page, onUpdate }) => {
   const [isPublished, setIsPublished] = useState(page.isPublished);
 
   /** Url */

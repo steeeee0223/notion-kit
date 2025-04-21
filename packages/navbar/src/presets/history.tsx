@@ -32,7 +32,7 @@ interface HistoryProps {
 /**
  * @deprecated
  */
-export const History = ({ pageId, fetchLogs }: HistoryProps) => {
+export const History: React.FC<HistoryProps> = ({ pageId, fetchLogs }) => {
   const [open, setOpen] = useState(false);
   const [logs, setLogs] = useState<Log[]>([]);
   const [isLoading, startTransition] = useTransition();
