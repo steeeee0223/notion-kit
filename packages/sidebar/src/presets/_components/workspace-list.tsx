@@ -66,7 +66,6 @@ export const WorkspaceList: React.FC<WorkspaceListProps> = ({
     setOrder((prev) => {
       const oldIndex = prev.indexOf(active.id as string);
       const newIndex = prev.indexOf(over.id as string);
-      console.log("change order to", arrayMove(prev, oldIndex, newIndex));
       return arrayMove(prev, oldIndex, newIndex); //this is just a splice util
     });
   };
@@ -81,7 +80,7 @@ export const WorkspaceList: React.FC<WorkspaceListProps> = ({
 
   return (
     <HintProvider>
-      <div className="transition: opacity 150ms; mx-3 mt-2 flex h-5 items-center justify-between text-secondary">
+      <div className="mx-3 mt-2 flex h-5 items-center justify-between text-secondary transition-opacity">
         <div className="mr-1.5 truncate text-xs font-medium">{user.email}</div>
         <HeaderDropdown
           onCreateWorkspace={onCreateWorkspace}

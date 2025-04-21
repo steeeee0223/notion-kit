@@ -10,7 +10,6 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  Skeleton,
 } from "@notion-kit/shadcn";
 import { toDateString } from "@notion-kit/utils";
 
@@ -53,8 +52,4 @@ export const Menu = ({ page, onChangeState }: MenuProps) => {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-};
-
-Menu.Skeleton = function MenuSkeleton() {
-  return <Skeleton className="size-10" />;
 };

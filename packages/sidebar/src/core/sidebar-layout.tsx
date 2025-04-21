@@ -1,7 +1,7 @@
 import React from "react";
 
 import { cn } from "@notion-kit/cn";
-import { groupVariants } from "@notion-kit/shadcn";
+import { MenuGroup } from "@notion-kit/common";
 
 const SidebarHeader = ({
   className,
@@ -39,12 +39,8 @@ const SidebarFooter = ({
   />
 );
 
-const SidebarGroup = ({ className, ...props }: React.ComponentProps<"div">) => (
-  <div
-    data-slot="sidebar-group"
-    className={cn(groupVariants({ className }))}
-    {...props}
-  />
+const SidebarGroup = (props: React.ComponentProps<"div">) => (
+  <MenuGroup data-slot="sidebar-group" {...props} />
 );
 
 const SidebarInset = ({

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 
 interface UseSidebarResizeProps {
   enableDrag?: boolean;
@@ -61,7 +61,7 @@ export function useSidebarResize({
     [enableDrag, isCollapsed, currentWidth],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isInteractingWithRail.current || isCollapsed) return;
 

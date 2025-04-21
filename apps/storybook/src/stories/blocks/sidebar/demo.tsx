@@ -108,7 +108,9 @@ const AppSidebar = () => {
             key={group}
             group={group}
             title={title}
-            pages={pages}
+            pages={pages.filter(
+              (page) => page.type === group && !page.isArchived,
+            )}
             activePage={activePage}
             onSelect={selectPage}
           />
