@@ -2,23 +2,28 @@
 
 import { useCallback, useState } from "react";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Action<T, Args extends any[]> =
-  | ((...args: Args) => T)
-  | ((...args: Args) => Promise<T>);
+type Action<T, Args extends unknown[]> =
+  | ((...args: Args) => T | undefined)
+  | ((...args: Args) => Promise<T | undefined>);
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function useTransition<T, Args extends any[]>(fn: Action<T, Args>) {
+type UseTransitionReturn<T, Args extends unknown[]> = readonly [
+  Action<T, Args>,
+  boolean,
+  Error | undefined,
+];
+
+export function useTransition<T, Args extends unknown[]>(
+  fn: Action<T, Args>,
+): UseTransitionReturn<T, Args> {
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<Error>();
 
-  const action = useCallback<Action<T | undefined, Args>>(
+  const action = useCallback<Action<T, Args>>(
     async (...args) => {
       try {
         setIsPending(true);
-        const response = fn(...args);
-        if (response instanceof Promise) return await response;
-        return response;
+        const result = await Promise.resolve(fn(...args));
+        return result;
       } catch (error) {
         setError(error as Error);
       } finally {

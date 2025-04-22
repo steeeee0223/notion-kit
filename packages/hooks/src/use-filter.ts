@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 
 interface UseFilterOptions {
   default?: "all" | "empty";
@@ -12,32 +12,19 @@ export function useFilter<T>(
   options: UseFilterOptions = { default: "all" },
 ) {
   const [search, setSearch] = useState("");
-  const [results, setResults] = useState<T[] | null>(null);
-  const updateFilteredItems = (input: string) => {
-    const value = input.trim().toLowerCase();
-    const filtered = data.filter((item) => predicate(item, value));
-    setResults(
-      value.length > 0
-        ? filtered.length > 0
-          ? filtered
-          : null
-        : options.default === "all"
-          ? data
-          : null,
-    );
-  };
-  const updateSearch = (input: string) => {
-    setSearch(input);
-    updateFilteredItems(input);
-  };
+  const deferredSearch = useDeferredValue(search.trim().toLowerCase());
 
-  useEffect(() => {
-    setResults(options.default === "all" ? data : null);
-  }, [options.default, data]);
+  const results = useMemo(() => {
+    if (deferredSearch.length > 0) {
+      const filtered = data.filter((item) => predicate(item, deferredSearch));
+      return filtered.length > 0 ? filtered : null;
+    }
+    return options.default === "all" ? data : null;
+  }, [data, deferredSearch, predicate, options.default]);
 
   return {
     search,
     results,
-    updateSearch,
+    updateSearch: setSearch,
   };
 }
