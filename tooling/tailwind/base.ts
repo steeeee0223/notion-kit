@@ -12,10 +12,17 @@ export default {
         icon: "rgba(var(--icon))",
         main: "rgb(var(--bg-main) / <alpha-value>)",
         input: "rgb(var(--bg-input) / <alpha-value>)",
-        sidebar: "rgb(var(--bg-sidebar) / <alpha-value>)",
+        sidebar: {
+          DEFAULT: "rgb(var(--bg-sidebar) / <alpha-value>)",
+          primary: "rgb(var(--sidebar-primary) / <alpha-value>)",
+        },
         modal: "rgb(var(--bg-modal) / <alpha-value>)",
         popover: "rgb(var(--bg-popover) / <alpha-value>)",
-        tooltip: "rgb(var(--bg-tooltip) / <alpha-value>)",
+        tooltip: {
+          DEFAULT: "rgb(var(--bg-tooltip) / <alpha-value>)",
+          primary: "rgba(var(--tooltip-primary))",
+          secondary: "rgba(var(--tooltip-secondary))",
+        },
         border: {
           DEFAULT: "rgba(var(--primary) / 0.10)",
           button: "rgba(var(--primary) / 0.15)",

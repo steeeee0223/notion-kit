@@ -1,22 +1,20 @@
 "use client";
 
 import React from "react";
-import type { VariantProps } from "class-variance-authority";
-import { cva } from "class-variance-authority";
+import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@notion-kit/cn";
 import { Avatar, AvatarFallback, AvatarImage } from "@notion-kit/shadcn";
 import { Spinner } from "@notion-kit/spinner";
 
-import { createLucideIcon } from "./create-lucide-icon";
-import type { IconInfo } from "./types";
-import { getLetter, isEmoji } from "./utils";
+import { createLucideIcon, getLetter, isEmoji, isLucideIcon } from "./lib";
+import type { IconData, LucideName } from "./types";
 
 const iconBlockVariants = cva("shrink-0 select-none", {
   variants: {
     size: {
       sm: "size-5 rounded-sm p-0.5 text-sm/4",
-      md: "size-10 rounded-md p-1 text-3xl/8",
+      md: "size-9 rounded-md p-1 text-3xl/8",
       lg: "size-16 rounded-md p-1 text-5xl/tight",
       xl: "size-[78px] rounded-lg p-1 text-7xl",
     },
@@ -26,7 +24,7 @@ const iconBlockVariants = cva("shrink-0 select-none", {
 
 export interface IconBlockProps extends VariantProps<typeof iconBlockVariants> {
   className?: string;
-  icon: IconInfo;
+  icon: IconData;
   fallback?: string;
 }
 
@@ -50,23 +48,32 @@ const Icon: React.FC<Omit<IconBlockProps, "size">> = ({
 }) => {
   switch (icon.type) {
     case "lucide": {
-      const Icon = createLucideIcon(icon.name);
+      const isLucide = isLucideIcon(icon.src);
+      if (isLucide) {
+        const Icon = createLucideIcon(icon.src as LucideName);
+        return (
+          <Icon
+            color={icon.color}
+            className={className}
+            aria-label={icon.src}
+          />
+        );
+      }
       return (
-        <Icon color={icon.color} className={className} aria-label={icon.name} />
+        <Letter className={className} letter={getLetter(icon.src, fallback)} />
       );
     }
-    case "file":
+    case "url":
       return (
-        /** @note Add `[&_img]:m-0` to prevent override by fumadocs */
-        <Avatar className={cn("[&_img]:m-0", className)}>
+        <Avatar className={className}>
           <AvatarFallback className="bg-transparent">
             <Spinner className={className} />
           </AvatarFallback>
-          <AvatarImage src={icon.url} alt="icon" />
+          <AvatarImage src={icon.src} alt="icon" />
         </Avatar>
       );
     default: {
-      if (icon.type === "emoji" && isEmoji(icon.emoji)) {
+      if (icon.type === "emoji" && isEmoji(icon.src)) {
         return (
           <div
             className={cn(
@@ -74,18 +81,24 @@ const Icon: React.FC<Omit<IconBlockProps, "size">> = ({
               className,
             )}
           >
-            {icon.emoji}
+            {icon.src}
           </div>
         );
       }
-      const letter = getLetter(icon, fallback);
       return (
-        <div
-          className={cn("bg-primary/10 text-center text-secondary", className)}
-        >
-          {letter}
-        </div>
+        <Letter className={className} letter={getLetter(icon.src, fallback)} />
       );
     }
   }
 };
+
+interface LetterProps {
+  className?: string;
+  letter: string;
+}
+
+const Letter: React.FC<LetterProps> = ({ className, letter }) => (
+  <div className={cn("bg-primary/10 text-center text-secondary", className)}>
+    {letter}
+  </div>
+);

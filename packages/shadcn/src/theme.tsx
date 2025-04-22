@@ -27,15 +27,9 @@ function ThemeToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => setTheme("light")}>
-            Light
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme("dark")}>
-            Dark
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme("system")}>
-            System
-          </DropdownMenuItem>
+          <DropdownMenuItem Body="Light" onSelect={() => setTheme("light")} />
+          <DropdownMenuItem Body="Dark" onSelect={() => setTheme("dark")} />
+          <DropdownMenuItem Body="System" onSelect={() => setTheme("system")} />
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -1,0 +1,20 @@
+---
+title: CoverImage
+description: A CoverImage object contains information about the cover image. It is used to represent a cover that is rendered as a page cover in the Notion UI.
+---
+
+## Properties
+
+| Prop     | Type              | Description                   |
+| -------- | ----------------- | ----------------------------- |
+| `type`\* | `"file" \| "url"` | The type of the cover object. |
+| `url`\*  | `string`          | The URL of the cover image.   |
+
+## Example
+
+```ts
+{
+  type: "url",
+  url: "https://www.notion.so/images/page-cover/met_gerome_1890.jpg"
+}
+```

@@ -1,0 +1,88 @@
+---
+title: IconData
+description: An IconData object contains information about an icon. It is most often used to represent an icon that is rendered as a page icon in the Notion UI.
+---
+
+## Properties
+
+| Prop     | Type                                     | Description                                                         |
+| -------- | ---------------------------------------- | ------------------------------------------------------------------- |
+| `type`\* | `"emoji" \| "lucide" \| "url" \| "text"` | The type of the icon object.                                        |
+| `src`\*  | `string`                                 | The source of the icon.                                             |
+| `color`  | `string`                                 | The color of the icon. This value is used only in `"lucide"` icons. |
+
+## Icon Type Objects
+
+### Emoji
+
+#### Properties
+
+| Prop     | Type      | Description |
+| -------- | --------- | ----------- |
+| `type`\* | `"emoji"` | -           |
+| `src`\*  | `string`  | The emoji.  |
+
+#### Example
+
+```ts
+{
+  type: "emoji",
+  src: "🚀"
+}
+```
+
+### Lucide Icon
+
+#### Properties
+
+| Prop     | Type                                      | Description                   |
+| -------- | ----------------------------------------- | ----------------------------- |
+| `type`\* | `"emoji"`                                 | -                             |
+| `src`\*  | [`LucideName`](https://lucide.dev/icons/) | The name of the Lucide icon.  |
+| `color`  | `string`                                  | The color of the Lucide icon. |
+
+#### Example
+
+```ts
+{
+  type: "lucide",
+  src: "file"
+  color: "#7d7d7d"
+}
+```
+
+### Custom Icon
+
+#### Properties
+
+| Prop     | Type     | Description           |
+| -------- | -------- | --------------------- |
+| `type`\* | `"url"`  | -                     |
+| `src`\*  | `string` | The URL of the image. |
+
+#### Example
+
+```ts
+{
+  type: "url",
+  src: "https://github.com/shadcn.png"
+}
+```
+
+### Text-like Icon
+
+#### Properties
+
+| Prop     | Type     | Description           |
+| -------- | -------- | --------------------- |
+| `type`\* | `"text"` | -                     |
+| `src`\*  | `string` | The displayed letter. |
+
+#### Example
+
+```ts
+{
+  type: "text",
+  src: "A"
+}
+```

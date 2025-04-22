@@ -4,7 +4,7 @@ import React, { useState, useTransition } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { UrlForm } from "@notion-kit/common";
-import type { IconInfo, LucideName } from "@notion-kit/icon-block";
+import type { IconData, LucideName } from "@notion-kit/icon-block";
 import {
   Button,
   Popover,
@@ -23,7 +23,7 @@ import { LucidePicker } from "./lucide-picker";
 export interface IconMemuProps extends React.PropsWithChildren {
   className?: string;
   disabled?: boolean;
-  onSelect?: (iconInfo: IconInfo) => void;
+  onSelect?: (iconData: IconData) => void;
   onRemove?: () => void;
   onUpload?: (file: File) => void;
 }
@@ -39,11 +39,10 @@ export const IconMenu: React.FC<IconMemuProps> = ({
   onRemove,
   onUpload,
 }) => {
-  /** Icon Info */
-  const selectEmoji = (emoji: string) => onSelect?.({ type: "emoji", emoji });
-  const selectLucideIcon = (name: LucideName, color?: string) =>
-    onSelect?.({ type: "lucide", name, color });
-  const submitUrl = (url: string) => onSelect?.({ type: "file", url });
+  const selectEmoji = (src: string) => onSelect?.({ type: "emoji", src });
+  const selectLucideIcon = (src: LucideName, color?: string) =>
+    onSelect?.({ type: "lucide", src, color });
+  const submitUrl = (src: string) => onSelect?.({ type: "url", src });
   /** Upload */
   const [isPending, startTransition] = useTransition();
   const [file, setFile] = useState<File>();

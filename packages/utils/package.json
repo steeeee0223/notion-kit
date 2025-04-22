@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/utils",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "exports": {
@@ -20,6 +20,9 @@
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "date-fns": "4.1.0"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",

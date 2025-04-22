@@ -2,21 +2,12 @@
 
 import * as React from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
-import {
-  CheckIcon,
-  ChevronRightIcon,
-  DotFilledIcon,
-} from "@radix-ui/react-icons";
+import { ChevronRightIcon, DotFilledIcon } from "@radix-ui/react-icons";
 
 import { cn } from "@notion-kit/cn";
 
-import type { MenuItemVariants } from "./variants";
-import {
-  contentVariants,
-  groupVariants,
-  menuItemVariants,
-  separatorVariants,
-} from "./variants";
+import { MenuGroup, MenuItem, MenuItemCheck } from "./menu";
+import { contentVariants, separatorVariants } from "./variants";
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
@@ -24,16 +15,11 @@ const DropdownMenuPortal = DropdownMenuPrimitive.Portal;
 const DropdownMenuSub = DropdownMenuPrimitive.Sub;
 const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
 
-const DropdownMenuGroup = ({
-  className,
-  ...props
-}: React.ComponentProps<"div">) => (
-  <DropdownMenuPrimitive.Group
-    className={cn(groupVariants({ className }))}
-    {...props}
-  />
+const DropdownMenuGroup = (props: React.ComponentProps<typeof MenuGroup>) => (
+  <DropdownMenuPrimitive.Group asChild>
+    <MenuGroup {...props} />
+  </DropdownMenuPrimitive.Group>
 );
-DropdownMenuGroup.displayName = "DropdownMenuGroup";
 
 type DropdownMenuSubTriggerProps = React.ComponentProps<
   typeof DropdownMenuPrimitive.SubTrigger
@@ -58,8 +44,6 @@ const DropdownMenuSubTrigger = ({
     <ChevronRightIcon className="ml-auto size-4" />
   </DropdownMenuPrimitive.SubTrigger>
 );
-DropdownMenuSubTrigger.displayName =
-  DropdownMenuPrimitive.SubTrigger.displayName;
 
 type DropdownMenuSubContentProps = React.ComponentProps<
   typeof DropdownMenuPrimitive.SubContent
@@ -77,8 +61,6 @@ const DropdownMenuSubContent = ({
     {...props}
   />
 );
-DropdownMenuSubContent.displayName =
-  DropdownMenuPrimitive.SubContent.displayName;
 
 export type DropdownMenuContentProps = React.ComponentProps<
   typeof DropdownMenuPrimitive.Content
@@ -100,51 +82,37 @@ const DropdownMenuContent = ({
     />
   </DropdownMenuPrimitive.Portal>
 );
-DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName;
 
-type DropdownMenuItemProps = React.ComponentProps<
-  typeof DropdownMenuPrimitive.Item
-> &
-  Omit<MenuItemVariants, "disabled">;
-const DropdownMenuItem = ({
-  className,
-  variant,
-  inset,
-  disabled,
-  ...props
-}: DropdownMenuItemProps) => (
-  <DropdownMenuPrimitive.Item
-    className={cn(menuItemVariants({ variant, inset, disabled, className }))}
-    disabled={disabled}
-    {...props}
-  />
+type DropdownMenuItemProps = React.ComponentProps<typeof MenuItem>;
+const DropdownMenuItem = (props: DropdownMenuItemProps) => (
+  <DropdownMenuPrimitive.Item asChild>
+    <MenuItem {...props} />
+  </DropdownMenuPrimitive.Item>
 );
-DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
+
+type DropdownMenuCheckboxItemProps = React.ComponentProps<typeof MenuItem> &
+  Pick<
+    DropdownMenuPrimitive.DropdownMenuCheckboxItemProps,
+    "checked" | "onCheckedChange"
+  >;
 
 const DropdownMenuCheckboxItem = ({
-  className,
-  children,
   checked,
+  onCheckedChange,
   ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem>) => (
+}: DropdownMenuCheckboxItemProps) => (
   <DropdownMenuPrimitive.CheckboxItem
-    className={cn(
-      "relative flex cursor-default items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden transition-colors select-none focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
-      className,
-    )}
+    asChild
     checked={checked}
-    {...props}
+    onCheckedChange={onCheckedChange}
   >
-    <span className="absolute left-2 flex size-3.5 items-center justify-center">
+    <MenuItem {...props}>
       <DropdownMenuPrimitive.ItemIndicator>
-        <CheckIcon className="size-4" />
+        <MenuItemCheck />
       </DropdownMenuPrimitive.ItemIndicator>
-    </span>
-    {children}
+    </MenuItem>
   </DropdownMenuPrimitive.CheckboxItem>
 );
-DropdownMenuCheckboxItem.displayName =
-  DropdownMenuPrimitive.CheckboxItem.displayName;
 
 const DropdownMenuRadioItem = ({
   className,
@@ -166,7 +134,6 @@ const DropdownMenuRadioItem = ({
     {children}
   </DropdownMenuPrimitive.RadioItem>
 );
-DropdownMenuRadioItem.displayName = DropdownMenuPrimitive.RadioItem.displayName;
 
 type DropdownMenuLabelProps = React.ComponentProps<
   typeof DropdownMenuPrimitive.Label
@@ -187,7 +154,6 @@ const DropdownMenuLabel = ({
     {...props}
   />
 );
-DropdownMenuLabel.displayName = DropdownMenuPrimitive.Label.displayName;
 
 const DropdownMenuSeparator = ({
   className,
@@ -198,7 +164,6 @@ const DropdownMenuSeparator = ({
     {...props}
   />
 );
-DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName;
 
 const DropdownMenuShortcut = ({
   className,
@@ -211,7 +176,6 @@ const DropdownMenuShortcut = ({
     />
   );
 };
-DropdownMenuShortcut.displayName = "DropdownMenuShortcut";
 
 export {
   DropdownMenu,

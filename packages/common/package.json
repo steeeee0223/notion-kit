@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/common",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "exports": {
@@ -24,7 +24,12 @@
   "dependencies": {
     "@hookform/resolvers": "catalog:ui",
     "@notion-kit/cn": "workspace:*",
+    "@notion-kit/hooks": "workspace:*",
+    "@notion-kit/icon-block": "workspace:*",
+    "@notion-kit/modal": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
+    "@notion-kit/spinner": "workspace:*",
+    "react-hook-form": "catalog:ui",
     "zod": "catalog:"
   },
   "devDependencies": {
