@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
-import { IconBlock, IconInfo } from "@notion-kit/icon-block";
+import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import {
   Button,
   buttonVariants,
@@ -31,7 +31,7 @@ import {
 export interface CustomItemProps {
   className?: string;
   label: string;
-  icon?: IconInfo | null;
+  icon?: IconData | null;
   lastEditedBy?: string;
   lastEditedAt?: string;
   id?: string;
@@ -51,7 +51,7 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
       className,
       id,
       label,
-      icon = { type: "lucide", name: "file" },
+      icon = { type: "lucide", src: "file" },
       active,
       lastEditedBy = "admin",
       lastEditedAt = "now",
@@ -89,7 +89,7 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
           style={{ paddingLeft: `${(level + 1) * 12}px` }}
           className={cn(
             buttonVariants({ variant: null }),
-            "group relative flex h-[27px] w-full justify-normal py-1 pr-3 font-medium text-secondary",
+            "group/item relative flex h-[27px] w-full justify-normal py-1 pr-3 font-medium text-secondary",
             active && "bg-primary/10 text-primary dark:text-primary/80",
             className,
           )}
@@ -107,7 +107,7 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
             </Button>
             <IconBlock
               className={cn(expandable && "group-hover/icon:hidden")}
-              icon={icon ?? { type: "text", text: label }}
+              icon={icon ?? { type: "text", src: label }}
             />
           </div>
           <span className="ml-1 truncate">{label}</span>
@@ -126,7 +126,7 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
                           buttonVariants({
                             variant: "hint",
                             className:
-                              "ml-auto size-auto p-0.5 opacity-0 group-hover:opacity-100",
+                              "ml-auto size-auto p-0.5 opacity-0 group-hover/item:opacity-100",
                           }),
                         )}
                       >
@@ -145,10 +145,12 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
                   forceMount
                 >
                   <DropdownMenuGroup>
-                    <DropdownMenuItem variant="warning" onClick={handleDelete}>
-                      <Trash className="mr-2 size-4" />
-                      Delete
-                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      variant="warning"
+                      Icon={<Trash className="size-4" />}
+                      Body="Delete"
+                      onSelect={handleDelete}
+                    />
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <div className="flex flex-col items-center px-2 py-1 text-xs text-muted">
@@ -167,7 +169,7 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
                         buttonVariants({
                           variant: "hint",
                           className:
-                            "ml-auto size-auto rounded-sm p-0.5 opacity-0 group-hover:opacity-100",
+                            "ml-auto size-auto rounded-sm p-0.5 opacity-0 group-hover/item:opacity-100",
                         }),
                       )}
                     >

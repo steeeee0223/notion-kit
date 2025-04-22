@@ -3,7 +3,7 @@
 import React, { useCallback, useState } from "react";
 
 import { cn } from "@notion-kit/cn";
-import type { IconInfo } from "@notion-kit/icon-block";
+import type { IconData } from "@notion-kit/icon-block";
 
 import type { TreeItemProps } from "./tree-item";
 import { TreeItem } from "./tree-item";
@@ -12,7 +12,7 @@ import { fromNode } from "./utils";
 
 interface TreeListProps<T extends TreeItemData> {
   nodes: TreeNode<T>[];
-  defaultIcon?: IconInfo;
+  defaultIcon?: IconData;
   showEmptyChild?: boolean;
   selectedId?: string | null;
   onSelect?: (id: string) => void;

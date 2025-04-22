@@ -1,0 +1,127 @@
+---
+title: Sidebar
+description: A composable, themeable and customizable sidebar component.
+links:
+  - label: Shadcn UI
+    href: https://ui.shadcn.com/docs/components/sidebar
+---
+
+<ComponentPreview name="sidebar/basic" className="h-96 p-0" />
+
+## Installation
+
+```package-install
+pnpm add @notion-kit/sidebar
+```
+
+## Anatomy
+
+```tsx
+<SidebarProvider>
+  <Sidebar>
+    <SidebarClose />
+    <SidebarHeader>{/* Your sidebar header */}</SidebarHeader>
+    <SidebarContent>{/* Your sidebar content */}</SidebarContent>
+    <SidebarFooter>{/* Your sidebar footer */}</SidebarFooter>
+    <SidebarRail />
+  </Sidebar>
+  <SidebarInset>{/* Your main content */}</SidebarInset>
+</SidebarProvider>
+```
+
+## Examples
+
+---
+
+### Notion Sidebar
+
+<ComponentPreview name="sidebar/notion" className="h-96 p-0" />
+
+## API Reference
+
+### SidebarProvider
+
+| Prop           | Type                      | Default | Description                                                                                                      |
+| -------------- | ------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------- |
+| `config`       | `Partial<SidebarConfig>`  | -       | The configuration object of the sidebar.                                                                         |
+| `defaultOpen`  | `boolean`                 | -       | The open state of the sidebar when it is initially rendered. Use when you do not need to control its open state. |
+| `open`         | `boolean`                 | -       | The (controlled) open state of the sidebar. Must be used in conjunction with `onOpenChange`.                     |
+| `onOpenChange` | `(open: boolean) => void` | -       | Handler that is called when the open state of the sidebar changes.                                               |
+
+<Callout title="Note">
+  All the layout components below must be used within `<SidebarProvider>`.
+</Callout>
+
+### Sidebar
+
+A `Sidebar` extends the HTML `<div>` element. We list the extended properties only.
+
+| Prop          | Type                      | Default       | Description                       |
+| ------------- | ------------------------- | ------------- | --------------------------------- |
+| `side`        | `"left" \| "right"`       | `"left"`      | The side of the sidebar.          |
+| `variant`     | `"sidebar" \| "floating"` | `"sidebar"`   | The variant of the sidebar.       |
+| `collapsible` | `"offcanvas" \| "none"`   | `"offcanvas"` | Collapsible state of the sidebar. |
+
+### SidebarHeader
+
+A `SidebarHeader` extends the HTML `<div>` element.
+
+### SidebarContent
+
+A `SidebarContent` extends the HTML `<div>` element.
+
+### SidebarFooter
+
+A `SidebarFooter` extends the HTML `<div>` element.
+
+### SidebarGroup
+
+A `SidebarGroup` extends the HTML `<div>` element.
+
+### SidebarInset
+
+A `SidebarInset` extends the HTML `<main>` element.
+
+### SidebarRail
+
+The `SidebarRail` is used to render a rail within a `<Sidebar>`. This rail can be used to **toggle and resize** the sidebar.
+It extends the HTML `<div>` element. We list the extended properties only.
+
+| Prop         | Type      | Default | Description                       |
+| ------------ | --------- | ------- | --------------------------------- |
+| `enableDrag` | `boolean` | `true`  | Whether the sidebar is draggable. |
+
+### SidebarClose
+
+The `SidebarClose` is used to close the sidebar. It can be triggered by keyboard shortcut.
+It extends the `<Button>` component.
+
+### SidebarOpen
+
+The `SidebarOpen` is used to open the sidebar. It can be triggered by keyboard shortcut.
+It extends the `<Button>` component.
+
+### SidebarMenuItem
+
+A `SidebarMenuItem` extends the HTML `<div>` element. We list the extended properties only.
+
+| Prop       | Type         | Default | Description                        |
+| ---------- | ------------ | ------- | ---------------------------------- |
+| `label`\*  | `string`     | -       | The title of the item.             |
+| `hint`\*   | `string`     | -       | The tooltip of the item.           |
+| `icon`\*   | `LucideIcon` | -       | The displayed icon of the item.    |
+| `shortcut` | `string`     | -       | The keyboard shortcut of the item. |
+
+### `type` SidebarConfig
+
+The configuration object of the sidebar.
+
+| Prop                   | Type                               | Default                                              | Description                                               |
+| ---------------------- | ---------------------------------- | ---------------------------------------------------- | --------------------------------------------------------- |
+| `defaultWidth`\*       | `string`                           | `248px`                                              | Default width of the sidebar.                             |
+| `defaultModileWidth`\* | `string`                           | `248px`                                              | Default width of the sidebar on mobile.                   |
+| `minWidth`\*           | `string`                           | `248px`                                              | Minimum draggable width of the sidebar.                   |
+| `maxWidth`\*           | `string`                           | `400px`                                              | Maximum draggable width of the sidebar.                   |
+| `shortcut`\*           | `string`                           | `\`                                                  | Keyboard shortcut `⌘ + <shortcut>` to toggle the sidebar. |
+| `cookieName`\*         | `{ state: string, width: string }` | `{ state: "sidebar:state", width: "sidebar:width" }` | Cookie names for sidebar state and sidebar width.         |
+| `cookieMaxAge`\*       | `number`                           | `7d`                                                 | Cookie's maximum lifetime (in seconds).                   |

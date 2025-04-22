@@ -4,8 +4,8 @@ import { Icon } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
 
+import type { LucideName } from "../types";
 import { iconNodes } from "./data";
-import type { LucideName } from "./types";
 import { toPascalCase } from "./utils";
 
 /**

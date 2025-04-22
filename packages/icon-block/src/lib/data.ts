@@ -1,6 +1,6 @@
 import type { IconNode } from "lucide-react";
 
-import type { LucideName } from "./types";
+import type { LucideName } from "../types";
 
 export const iconNodes: Record<LucideName, IconNode> = {
   "a-arrow-down": [

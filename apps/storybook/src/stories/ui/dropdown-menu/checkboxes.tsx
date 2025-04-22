@@ -28,22 +28,19 @@ export function DropdownMenuCheckboxes() {
           <DropdownMenuCheckboxItem
             checked={showStatusBar}
             onCheckedChange={setShowStatusBar}
-          >
-            Status Bar
-          </DropdownMenuCheckboxItem>
+            Body="Status Bar"
+          />
           <DropdownMenuCheckboxItem
             checked={showActivityBar}
             onCheckedChange={setShowActivityBar}
             disabled
-          >
-            Activity Bar
-          </DropdownMenuCheckboxItem>
+            Body="Activity Bar"
+          />
           <DropdownMenuCheckboxItem
             checked={showPanel}
             onCheckedChange={setShowPanel}
-          >
-            Panel
-          </DropdownMenuCheckboxItem>
+            Body="Panel"
+          />
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

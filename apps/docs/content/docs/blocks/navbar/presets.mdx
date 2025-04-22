@@ -1,0 +1,74 @@
+---
+title: Navbar Presets
+description: A collection of preset components in Notion navbar.
+---
+
+## Installation
+
+```package-install
+pnpm add @notion-kit/navbar
+```
+
+## Components
+
+---
+
+### Title
+
+<ComponentPreview name="navbar/title" preview={`<Title page={page} />`} />
+
+#### API Reference
+
+| Prop       | Type                                            | Default | Description                                                 |
+| ---------- | ----------------------------------------------- | ------- | ----------------------------------------------------------- |
+| `page`\*   | [`Page`](/docs/objects/page)                    | -       | Current page data.                                          |
+| `readOnly` | `boolean`                                       | -       | Whether the title is editable.                              |
+| `onUpdate` | `({ title?: string, icon?: IconData }) => void` | -       | Handler that is called when new title or icon is submitted. |
+
+### Sharing
+
+<ComponentPreview
+  name="navbar/sharing"
+  preview={`<TooltipProvider>
+    <Publish page={page} />
+  </TooltipProvider>`}
+/>
+
+#### API Reference
+
+| Prop       | Type                                         | Default | Description                                                          |
+| ---------- | -------------------------------------------- | ------- | -------------------------------------------------------------------- |
+| `page`\*   | [`Page`](/docs/objects/page)                 | -       | Current page data.                                                   |
+| `onUpdate` | `(id: string, isPublished: boolean) => void` | -       | Handler that is called when the public state of the page is changed. |
+
+### Menu
+
+<ComponentPreview
+  name="navbar/menu"
+  preview={`<TooltipProvider>
+    <Menu page={page} />
+  </TooltipProvider>`}
+/>
+
+#### API Reference
+
+| Prop       | Type                                                                   | Default | Description                                                         |
+| ---------- | ---------------------------------------------------------------------- | ------- | ------------------------------------------------------------------- |
+| `page`\*   | [`Page`](/docs/objects/page)                                           | -       | Current page data.                                                  |
+| `onUpdate` | `(pageId: string, action: "archive" \| "restore" \| "delete") => void` | -       | Handler that is called when an action is triggered from a menuitem. |
+
+### Participants
+
+<ComponentPreview
+  name="navbar/participants"
+  preview={`<TooltipProvider>
+    <Participants currentUser={currentUser} otherUsers={otherUsers} />
+  </TooltipProvider>`}
+/>
+
+#### API Reference
+
+| Prop          | Type                         | Default | Description                  |
+| ------------- | ---------------------------- | ------- | ---------------------------- |
+| `currentUser` | [`User`](/docs/objects/user) | -       | Current user, i.e. yourself. |
+| `otherUsers`  | `User[]`                     | `[]`    | Other users on the page.     |

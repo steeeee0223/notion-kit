@@ -1,6 +1,6 @@
 /** Variants */
 export * from "./variants";
-/** UI */
+/** Shadcn UI */
 export * from "./avatar";
 export * from "./badge";
 export * from "./button";
@@ -17,6 +17,7 @@ export * from "./popover";
 export * from "./resizable";
 export * from "./select";
 export * from "./separator";
+export * from "./sheet";
 export * from "./skeleton";
 export * from "./switch";
 export * from "./table";
@@ -26,3 +27,5 @@ export * from "./theme";
 export * from "./toast";
 export * from "./tooltip";
 export * from "./visually-hidden";
+/** Presets */
+export * from "./menu";

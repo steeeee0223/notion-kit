@@ -1,0 +1,47 @@
+---
+title: Page
+description: The Page object contains the page states of a single Notion page.
+---
+
+## Properties
+
+| Prop             | Type                                      | Description                                                            |
+| ---------------- | ----------------------------------------- | ---------------------------------------------------------------------- |
+| `id`\*           | `string`                                  | Unique identifier of the page.                                         |
+| `title`\*        | `string`                                  | Title of the page.                                                     |
+| `parentId`\*     | `string \| null`                          | Information about the page's parent.                                   |
+| `type`\*         | `string`                                  | Type of the page. Could be useful for grouping.                        |
+| `isArchived`\*   | `boolean`                                 | Whether the page is in Trash.                                          |
+| `isPublished`\*  | `boolean`                                 | Whether the page is publised to Web.                                   |
+| `isFavorite`\*   | `boolean`                                 | Whether the page is in your favorite list.                             |
+| `icon`           | [`IconData`](/docs/objects/icon)          | Page icon.                                                             |
+| `coverImage`     | [`CoverImage`](/docs/objects/cover-image) | Page icon.                                                             |
+| `url`            | `string`                                  | The URL of the Notion page.                                            |
+| `publicUrl`      | `string`                                  | The public page URL if the page has been published to the web.         |
+| `createdBy`\*    | `string`                                  | User who created the page. The value is the user's ID.                 |
+| `lastEditedBy`\* | `string`                                  | User who last edited the page. The value is the user's ID.             |
+| `createdAt`\*    | `number`                                  | Date and time when this page was created. Formatted as timestamp (ms). |
+| `lastEditedAt`\* | `number`                                  | Date and time when this page was updated. Formatted as timestamp (ms). |
+
+## Example
+
+```ts
+{
+  id: "be633bf1-dfa0-436d-b259-571129a590e5",
+  title: "New Page",
+  parentId: "a1d8501e-1ac1-43e9-a6bd-ea9fe6c8822b",
+  type: "page",
+  isArchived: false,
+  isPublished: false,
+  isFavorite: false,
+  icon: { type: "emoji", src: "🚀" },
+  coverImage: {
+    type: "url",
+    url: "https://www.notion.so/images/page-cover/met_gerome_1890.jpg"
+  },
+  createdBy: "c2f20311-9e54-4d11-8c79-7398424ae41e",
+  lastEditedBy: "9188c6a5-7381-452f-b3dc-d4865aa89bdf",
+  createdAt: 1738368000000,
+  lastEditedAt: 1738369000000,
+}
+```

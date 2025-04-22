@@ -1,6 +1,7 @@
 import React from "react";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 
+import { cn } from "@notion-kit/cn";
 import { ThemeProvider } from "@notion-kit/shadcn";
 
 import { Index } from "@/__registry__/demos";
@@ -13,6 +14,7 @@ import {
 } from "./component-preview-client";
 
 interface ComponentPreviewProps {
+  className?: string;
   name: string;
   preview?: string;
   expandable?: boolean;
@@ -28,6 +30,7 @@ interface ComponentPreviewProps {
 }
 
 export const ComponentPreview = async ({
+  className,
   name,
   preview,
   expandable = true,
@@ -49,7 +52,12 @@ export const ComponentPreview = async ({
     <div className="overflow-hidden rounded-md border not-first:mt-4">
       <ResizableContainer resizable={resizable}>
         <ThemeProvider>
-          <ScrollArea className="prose-no-margin prose-img:my-0 prose-p:my-0 flex items-center justify-center px-4 py-10">
+          <ScrollArea
+            className={cn(
+              "prose-no-margin prose-img:my-0 prose-p:my-0 flex items-center justify-center px-4 py-10",
+              className,
+            )}
+          >
             <ComponentWrapper suspense={suspense}>
               <Component />
             </ComponentWrapper>

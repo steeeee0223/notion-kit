@@ -26,6 +26,8 @@ pnpm add @notion-kit/icon-menu
 | Prop       | Type                       | Default | Description                                                                          |
 | ---------- | -------------------------- | ------- | ------------------------------------------------------------------------------------ |
 | `disabled` | `boolean`                  | -       | Whether the menu is disabled.                                                        |
-| `onSelect` | `(icon: IconInfo) => void` | -       | Handler that is called when an icon or emoji is selected or when a URL is submitted. |
+| `onSelect` | `(icon: IconData) => void` | -       | Handler that is called when an icon or emoji is selected or when a URL is submitted. |
 | `onUpload` | `(file: File) => void`     | -       | Handler that is called when an image file is submitted.                              |
 | `onRemove` | `() => void`               | -       | Handler that is called when the remove button is clicked.                            |
+
+- See [`IconData`](/docs/blocks/icon-block#type-icondata)
