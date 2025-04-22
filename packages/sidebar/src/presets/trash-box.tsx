@@ -3,7 +3,6 @@
 import React, { useMemo } from "react";
 import { HelpCircle, Trash, Undo } from "lucide-react";
 
-import { cn } from "@notion-kit/cn";
 import { BaseModal, Hint, HintProvider } from "@notion-kit/common";
 import { useFilter } from "@notion-kit/hooks";
 import { IconBlock } from "@notion-kit/icon-block";
@@ -12,7 +11,8 @@ import type { Page } from "@notion-kit/schemas";
 import {
   Button,
   Input,
-  menuItemVariants,
+  MenuItem,
+  MenuItemAction,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -113,24 +113,20 @@ export const TrashBox: React.FC<TrashBoxProps> = ({
             ) : (
               <div className="mt-2 flex w-full flex-col px-1 pb-1 text-sm">
                 {results.map((page) => (
-                  <div
+                  <MenuItem
                     key={page.id}
                     id={page.id}
                     tabIndex={-1}
                     role="menuitem"
-                    onClick={() => handleSelect(page)}
-                    onKeyDown={() => handleSelect(page)}
-                    className={cn(menuItemVariants())}
-                  >
-                    <div className="mr-2.5 flex items-center justify-center">
+                    Icon={
                       <IconBlock
                         icon={page.icon ?? { type: "text", src: page.title }}
                       />
-                    </div>
-                    <div className="mr-1.5 min-w-0 flex-auto truncate">
-                      {page.title}
-                    </div>
-                    <div className="flex min-w-0 flex-none gap-1">
+                    }
+                    Body={page.title}
+                    onClick={() => handleSelect(page)}
+                  >
+                    <MenuItemAction className="flex gap-1">
                       <Hint description="Restore">
                         <Button
                           variant="hint"
@@ -149,8 +145,8 @@ export const TrashBox: React.FC<TrashBoxProps> = ({
                           <Trash className="size-4" />
                         </Button>
                       </Hint>
-                    </div>
-                  </div>
+                    </MenuItemAction>
+                  </MenuItem>
                 ))}
               </div>
             )}

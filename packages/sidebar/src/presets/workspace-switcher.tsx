@@ -60,7 +60,7 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-80"
+        className="w-[300px]"
         align="start"
         alignOffset={11}
         forceMount
@@ -111,27 +111,24 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
           <DropdownMenuItem
             variant="secondary"
             className="text-xs"
-            onClick={onCreateAccount}
-          >
-            Add another account
-          </DropdownMenuItem>
+            Body="Add another account"
+            onSelect={onCreateAccount}
+          />
           <DropdownMenuItem
             variant="secondary"
             className="text-xs"
-            onClick={onLogout}
-          >
-            Log out
-          </DropdownMenuItem>
+            Body="Log out"
+            onSelect={onLogout}
+          />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem
             variant="secondary"
             className="text-xs"
-            onClick={handleGetMac}
-          >
-            Get Mac App
-          </DropdownMenuItem>
+            Body="Get Mac App"
+            onSelect={handleGetMac}
+          />
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

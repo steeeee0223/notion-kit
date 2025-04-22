@@ -2,7 +2,8 @@ import React from "react";
 import type { LucideIcon } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
-import { Hint, MenuItem } from "@notion-kit/common";
+import { Hint } from "@notion-kit/common";
+import { MenuItem } from "@notion-kit/shadcn";
 
 interface SidebarMenuItemProps extends React.ComponentProps<"div"> {
   label: string;

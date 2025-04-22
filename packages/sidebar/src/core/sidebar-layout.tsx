@@ -1,7 +1,7 @@
 import React from "react";
 
 import { cn } from "@notion-kit/cn";
-import { MenuGroup } from "@notion-kit/common";
+import { MenuGroup } from "@notion-kit/shadcn";
 
 const SidebarHeader = ({
   className,

@@ -38,11 +38,10 @@ export const Menu: React.FC<MenuProps> = ({ page, onChangeState }) => {
         <DropdownMenuGroup>
           <DropdownMenuItem
             variant="warning"
-            onClick={() => onChangeState?.(page.id, "archive")}
-          >
-            <Trash className="mr-2 size-4" />
-            Delete
-          </DropdownMenuItem>
+            Icon={<Trash className="size-4" />}
+            Body="Delete"
+            onSelect={() => onChangeState?.(page.id, "archive")}
+          />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <div className="flex flex-col items-center p-2 text-xs text-muted">

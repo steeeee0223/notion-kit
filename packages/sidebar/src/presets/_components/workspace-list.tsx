@@ -20,17 +20,16 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-import {
-  Hint,
-  HintProvider,
-  MenuGroup,
-  MenuItem,
-  MenuItemCheck,
-} from "@notion-kit/common";
+import { Hint, HintProvider } from "@notion-kit/common";
 import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import { Role, User, Workspace } from "@notion-kit/schemas";
-import { Badge, Button, DropdownMenuItem } from "@notion-kit/shadcn";
+import {
+  Badge,
+  Button,
+  DropdownMenuCheckboxItem,
+  MenuGroup,
+} from "@notion-kit/shadcn";
 
 import { planTitle } from "./constant";
 import { HeaderDropdown } from "./header-dropdown";
@@ -53,9 +52,7 @@ export const WorkspaceList: React.FC<WorkspaceListProps> = ({
   onLogout,
 }) => {
   const sensor = useSensor(PointerSensor, {
-    activationConstraint: {
-      distance: 5,
-    },
+    activationConstraint: { distance: 5 },
   });
 
   const [order, setOrder] = useState(workspaces.map((w) => w.id));
@@ -156,34 +153,31 @@ const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
         ]}
         disabled={role === Role.GUEST}
       >
-        <DropdownMenuItem asChild>
-          <MenuItem
-            ref={setActivatorNodeRef}
-            role="menuitem"
-            tabIndex={-1}
-            id={id}
-            className="group h-8"
-            Icon={
-              <div>
-                <Button
-                  variant="hint"
-                  className="relative hidden size-5 shrink-0 cursor-grab p-0.5 group-hover:flex"
-                >
-                  <Icon.DragHandle className="size-3 fill-primary/45" />
-                </Button>
-                <IconBlock
-                  className="group-hover:hidden"
-                  icon={icon ?? { type: "text", src: name }}
-                />
-              </div>
-            }
-            Body={<WorkspaceTitle role={role} name={name} />}
-            {...listeners}
-            onSelect={() => onSelect?.(id)}
-          >
-            <MenuItemCheck checked={id === activeWorkspace} />
-          </MenuItem>
-        </DropdownMenuItem>
+        <DropdownMenuCheckboxItem
+          ref={setActivatorNodeRef}
+          role="menuitem"
+          tabIndex={-1}
+          id={id}
+          className="group h-8"
+          Icon={
+            <div>
+              <Button
+                variant="hint"
+                className="relative hidden size-5 shrink-0 cursor-grab p-0.5 group-hover:flex"
+              >
+                <Icon.DragHandle className="size-3 fill-primary/45" />
+              </Button>
+              <IconBlock
+                className="group-hover:hidden"
+                icon={icon ?? { type: "text", src: name }}
+              />
+            </div>
+          }
+          checked={id === activeWorkspace}
+          Body={<WorkspaceTitle role={role} name={name} />}
+          {...listeners}
+          onSelect={() => onSelect?.(id)}
+        />
       </Hint>
     </div>
   );

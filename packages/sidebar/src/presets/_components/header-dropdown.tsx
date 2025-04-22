@@ -28,14 +28,16 @@ export const HeaderDropdown: React.FC<HeaderDropdownProps> = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={onCreateWorkspace}>
-            <PlusSquare className="mr-2 size-4 text-icon" />
-            Join or create workspace
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={onLogout}>
-            <XCircle className="mr-2 size-4 text-icon" />
-            Log out
-          </DropdownMenuItem>
+          <DropdownMenuItem
+            Icon={<PlusSquare className="size-4 text-icon" />}
+            Body="Join or create workspace"
+            onSelect={onCreateWorkspace}
+          />
+          <DropdownMenuItem
+            Icon={<XCircle className="size-4 text-icon" />}
+            Body="Log out"
+            onSelect={onLogout}
+          />
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

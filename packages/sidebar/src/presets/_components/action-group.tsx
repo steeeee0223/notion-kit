@@ -79,52 +79,55 @@ export const ActionGroup: React.FC<ActionGroupProps> = ({
           <DropdownMenuGroup>
             {isFavorite ? (
               <DropdownMenuItem
+                Icon={<Icon.Unstar className="size-4 fill-icon" />}
+                Body="Remove from Favorites"
                 onSelect={() => onUpdate({ isFavorite: false })}
-              >
-                <Icon.Unstar className="dark:fill-icon-dark mr-2 size-4 fill-icon" />
-                Remove from Favorites
-              </DropdownMenuItem>
+              />
             ) : (
-              <DropdownMenuItem onSelect={() => onUpdate({ isFavorite: true })}>
-                <Icon.Star className="dark:fill-icon-dark mr-2 size-4 fill-icon" />
-                Add to Favorites
-              </DropdownMenuItem>
+              <DropdownMenuItem
+                Icon={<Icon.Star className="size-4 fill-icon" />}
+                Body="Add to Favorites"
+                onSelect={() => onUpdate({ isFavorite: true })}
+              />
             )}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem onSelect={() => void copy(pageLink)}>
-              <Link className="mr-2 size-4" />
-              Copy link
-            </DropdownMenuItem>
+            <DropdownMenuItem
+              Icon={<Link className="size-4" />}
+              Body="Copy link"
+              onSelect={() => void copy(pageLink)}
+            />
             {type === "normal" && (
-              <DropdownMenuItem onSelect={onDuplicate}>
-                <Copy className="mr-2 size-4" />
-                Duplicate
-              </DropdownMenuItem>
+              <DropdownMenuItem
+                Icon={<Copy className="size-4" />}
+                Body="Duplicate"
+                onSelect={onDuplicate}
+              />
             )}
             <RenamePopover title={title} icon={icon} onChange={onUpdate}>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                <SquarePen className="mr-2 size-4" />
-                Rename
-              </DropdownMenuItem>
+              <DropdownMenuItem
+                Icon={<SquarePen className="size-4" />}
+                Body="Rename"
+                onSelect={(e) => e.preventDefault()}
+              />
             </RenamePopover>
             {type === "normal" && (
               <DropdownMenuItem
                 variant="warning"
+                Icon={<Trash className="size-4" />}
+                Body="Move to Trash"
                 onSelect={() => onUpdate({ isArchived: true })}
-              >
-                <Trash className="mr-2 size-4" />
-                Move to Trash
-              </DropdownMenuItem>
+              />
             )}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem onSelect={() => window.open(pageLink)}>
-              <ArrowUpRight className="mr-2 size-4" />
-              Open in new tab
-            </DropdownMenuItem>
+            <DropdownMenuItem
+              Icon={<ArrowUpRight className="size-4" />}
+              Body="Open in new tab"
+              onSelect={() => window.open(pageLink)}
+            />
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <div className="flex flex-col items-center p-2 text-xs text-muted">
