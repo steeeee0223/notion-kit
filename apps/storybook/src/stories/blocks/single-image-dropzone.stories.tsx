@@ -6,7 +6,6 @@ const meta = {
   title: "blocks/Single Image Dropzone",
   component: SingleImageDropzone,
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
 } satisfies Meta<typeof SingleImageDropzone>;
 export default meta;
 

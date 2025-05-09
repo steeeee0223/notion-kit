@@ -10,7 +10,6 @@ const meta = {
   title: "Shadcn/Dropdown Menu",
   component: DropdownMenu,
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
 } satisfies Meta<typeof DropdownMenu>;
 export default meta;
 

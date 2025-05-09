@@ -7,7 +7,6 @@ import { Button } from "@notion-kit/shadcn";
 const meta = {
   title: "blocks/Modal",
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
 } satisfies Meta;
 export default meta;
 

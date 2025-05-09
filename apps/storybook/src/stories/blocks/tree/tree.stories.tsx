@@ -14,7 +14,6 @@ const meta = {
     renderItem: { control: false },
     selectedId: { type: "string" },
   },
-  tags: ["autodocs"],
 } satisfies Meta<typeof TreeList>;
 export default meta;
 

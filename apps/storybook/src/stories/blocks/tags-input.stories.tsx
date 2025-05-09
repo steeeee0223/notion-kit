@@ -6,7 +6,6 @@ import { TagsInput } from "@notion-kit/tags-input";
 const meta = {
   title: "blocks/Tags Input",
   component: TagsInput,
-  tags: ["autodocs"],
 } satisfies Meta<typeof TagsInput>;
 export default meta;
 

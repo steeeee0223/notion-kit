@@ -8,7 +8,6 @@ const meta = {
   title: "blocks/Select",
   component: Select,
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
 } satisfies Meta<typeof Select>;
 export default meta;
 

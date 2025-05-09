@@ -7,7 +7,7 @@ const meta = {
   title: "Shadcn/Button",
   component: Button,
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
+
   args: {
     size: "md",
   },
