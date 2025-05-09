@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/storybook",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -23,6 +23,7 @@
     "@notion-kit/navbar": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/select": "workspace:*",
+    "@notion-kit/settings-panel": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/sidebar": "workspace:*",
     "@notion-kit/single-image-dropzone": "workspace:*",
@@ -37,7 +38,6 @@
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
     "react-hotkeys-hook": "catalog:ui",
-    "usehooks-ts": "catalog:ui",
     "uuid": "catalog:uuid",
     "zod": "catalog:"
   },

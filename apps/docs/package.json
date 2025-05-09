@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/docs",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "scripts": {
     "build": "next build",
@@ -24,6 +24,7 @@
     "@notion-kit/navbar": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/select": "workspace:*",
+    "@notion-kit/settings-panel": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/sidebar": "workspace:*",
     "@notion-kit/single-image-dropzone": "workspace:*",

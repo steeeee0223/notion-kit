@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
+import { BaseModal } from "@notion-kit/common";
 import { ModalProvider, useModal } from "@notion-kit/modal";
-import { Button, Dialog, DialogClose, DialogContent } from "@notion-kit/shadcn";
+import { Button } from "@notion-kit/shadcn";
 
 const meta = {
   title: "blocks/Modal",
@@ -12,21 +13,17 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const Modal = () => {
-  const { isOpen, closeModal } = useModal();
-  return (
-    <Dialog open={isOpen} onOpenChange={closeModal}>
-      <DialogContent noTitle className="flex items-center text-2xl font-bold">
-        Modal
-        <DialogClose />
-      </DialogContent>
-    </Dialog>
-  );
-};
-
 const Trigger = () => {
-  const { openModal } = useModal();
-  const handleClick = () => openModal(<Modal />);
+  const { openModal, closeModal } = useModal();
+  const handleClick = () =>
+    openModal(
+      <BaseModal
+        title="This action cannot be undone. This will permanently delete your account and remove your data from our servers."
+        primary="Continue"
+        secondary="Cancel"
+        onTrigger={closeModal}
+      />,
+    );
   return (
     <Button size="md" onClick={handleClick}>
       Open

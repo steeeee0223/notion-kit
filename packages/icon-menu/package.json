@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/icon-menu",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -38,7 +38,8 @@
     "@notion-kit/spinner": "workspace:*",
     "@notion-kit/utils": "workspace:*",
     "lucide-react": "catalog:ui",
-    "react-infinite-scroll-component": "^6.1.0"
+    "react-infinite-scroll-component": "^6.1.0",
+    "usehooks-ts": "catalog:ui"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",

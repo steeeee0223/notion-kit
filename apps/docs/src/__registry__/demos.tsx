@@ -156,6 +156,39 @@ export const Index: Record<
     files: ["components/demos/separator/demo.tsx"],
     component: React.lazy(() => import("@/components/demos/separator/demo")),
   },
+  "settings-panel/connections-table": {
+    files: ["components/demos/settings-panel/connections-table.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/settings-panel/connections-table"),
+    ),
+  },
+  "settings-panel/guests-table": {
+    files: ["components/demos/settings-panel/guests-table.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/settings-panel/guests-table"),
+    ),
+  },
+  "settings-panel/members-table": {
+    files: ["components/demos/settings-panel/members-table.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/settings-panel/members-table"),
+    ),
+  },
+  "settings-panel/notion": {
+    files: [
+      "components/demos/settings-panel/notion/data.ts",
+      "components/demos/settings-panel/notion/index.tsx",
+    ],
+    component: React.lazy(
+      () => import("@/components/demos/settings-panel/notion"),
+    ),
+  },
+  "settings-panel/plans-table": {
+    files: ["components/demos/settings-panel/plans-table.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/settings-panel/plans-table"),
+    ),
+  },
   "sidebar/basic": {
     files: ["components/demos/sidebar/basic.tsx"],
     component: React.lazy(() => import("@/components/demos/sidebar/basic")),
