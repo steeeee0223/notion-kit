@@ -13,22 +13,14 @@ const Table = ({ className, ...props }: React.ComponentProps<"table">) => (
     />
   </div>
 );
-Table.displayName = "Table";
 
-type TableHeaderProps = React.HTMLAttributes<HTMLTableSectionElement>;
-const TableHeader = ({
-  ref,
-  className,
-  ...props
-}: TableHeaderProps & {
-  ref: React.RefObject<HTMLTableSectionElement | null>;
-}) => <thead ref={ref} className={className} {...props} />;
-TableHeader.displayName = "TableHeader";
-
-const TableBody = ({ className, ...props }: React.ComponentProps<"tbody">) => (
-  <tbody className={className} {...props} />
+const TableHeader = (props: React.ComponentProps<"thead">) => (
+  <thead {...props} />
 );
-TableBody.displayName = "TableBody";
+
+const TableBody = (props: React.ComponentProps<"tbody">) => (
+  <tbody {...props} />
+);
 
 const TableFooter = ({
   className,
@@ -42,22 +34,18 @@ const TableFooter = ({
     {...props}
   />
 );
-TableFooter.displayName = "TableFooter";
 
 const TableRow = ({ className, ...props }: React.ComponentProps<"tr">) => (
   <tr className={cn("border-t border-t-primary/10", className)} {...props} />
 );
-TableRow.displayName = "TableRow";
 
 const TableHead = ({ className, ...props }: React.ComponentProps<"th">) => (
   <th className={cn("py-2 text-start", className)} {...props} />
 );
-TableHead.displayName = "TableHead";
 
 const TableCell = ({ className, ...props }: React.ComponentProps<"td">) => (
   <td className={cn("py-2", className)} {...props} />
 );
-TableCell.displayName = "TableCell";
 
 const TableCaption = ({
   className,
@@ -65,7 +53,6 @@ const TableCaption = ({
 }: React.ComponentProps<"caption">) => (
   <caption className={cn("mt-4 text-sm text-muted", className)} {...props} />
 );
-TableCaption.displayName = "TableCaption";
 
 export {
   Table,

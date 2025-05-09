@@ -1,0 +1,276 @@
+---
+title: Settings Objects
+---
+
+## Settings Store
+
+The core object for settings panel.
+
+### Properties
+
+| Prop            | Type                                        | Description                       |
+| --------------- | ------------------------------------------- | --------------------------------- |
+| `account`\*     | [`AccountStore`](#account-store)            | User account.                     |
+| `workspace`\*   | [`WorkspaceStore`](#workspace-store)        | Current workspace.                |
+| `memberships`\* | [`Record<string, Membership>`](#membership) | Memberships in current workspace. |
+
+## Account Store
+
+### Properties
+
+| Prop              | Type                   | Description                    |
+| ----------------- | ---------------------- | ------------------------------ |
+| `id`\*            | `string`               | Unique identifier of the user. |
+| `name`\*          | `string`               | User's name.                   |
+| `email`\*         | `string`               | User's email.                  |
+| `avatarUrl`\*     | `string`               | Chosen avatar image.           |
+| `preferredName`\* | `string`               | Preferred name of the user.    |
+| `hasPassword`     | `boolean`              | Whether user has set password. |
+| `language`        | `"en" \| "de" \| "es"` | Preferred language.            |
+
+### Example
+
+```ts
+{
+  id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
+  name: "Steve",
+  email: "steve@example.com",
+  avatarUrl: "https://secure.notion-static.com/e6a352a8-8381-44d0-a1dc-9ed80e62b53d.jpg"
+  preferredName: "Steeeee",
+  language: "de"
+}
+```
+
+## Workspace Store
+
+### Properties
+
+| Prop           | Type                                   | Description                         |
+| -------------- | -------------------------------------- | ----------------------------------- |
+| `id`\*         | `string`                               | Unique identifier of the workspace. |
+| `name`\*       | `string`                               | Name of the workspace.              |
+| `icon`\*       | [`IconData`](/docs/objects/icon)       | Icon of the workspace.              |
+| `domain`\*     | `string`                               | Public domain.                      |
+| `inviteLink`\* | `string`                               | Invite link for the workspace.      |
+| `plan`\*       | [`Plan`](/docs/objects/workspace#plan) | Plan of the workspace.              |
+| `role`\*       | [`Role`](/docs/objects/workspace#role) | Role of the user in this workspace. |
+
+### Example
+
+```ts
+{
+  id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
+  name: "Workspace",
+  icon: { type: "text", src: "W" },
+  domain: "notion.so",
+  inviteLink: "notion.so/e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
+  plan: "free",
+  role: "owner"
+}
+```
+
+## Membersip
+
+There are 2 types of membership.
+
+1. Workspace owner or member
+2. Guest
+
+### Properties
+
+The properties is defined by
+
+```ts
+type Membership =
+  | ({ role: Role.OWNER | Role.MEMBER } & MemberRow)
+  | ({ role: Role.GUEST } & GuestRow);
+```
+
+See schema definitions for:
+
+- [`MemberRow`](#member-row)
+- [`GuestRow`](#guest-row)
+
+## Connection
+
+The row data of the connections table.
+
+### Properties
+
+| Prop           | Type                                | Description                          |
+| -------------- | ----------------------------------- | ------------------------------------ |
+| `id`\*         | `string`                            | Unique identifier of the connection. |
+| `connection`\* | `{ type: string, account: string }` | The connection type and account.     |
+| `scopes`       | `string[]`                          | Available scopes of the connection.  |
+
+### Example
+
+```ts
+{
+  id: "be633bf1-dfa0-436d-b259-571129a590e5",
+  connection: { type: "github", account: "steeeee0223" },
+  scopes: ["can view"]
+}
+```
+
+## Member Row
+
+The row data of the members table.
+
+### Properties
+
+| Prop           | Type                       | Description                |
+| -------------- | -------------------------- | -------------------------- |
+| `user`\*       | `User`                     | Information of the member. |
+| `role`\*       | `Role`                     | Role of the member.        |
+| `teamspaces`\* | `CellOptions<GroupOption>` | Available teamspaces.      |
+| `groups`\*     | `CellOptions<GroupOption>` | Available groups.          |
+
+See schema definitions for:
+
+- [`User`](/docs/objects/user)
+- [`CellOptions`](#cell-options)
+- [`GroupOption`](#group-option)
+- [`Role`](/docs/objects/user)
+
+### Example
+
+```ts
+{
+  user: {
+    id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
+    name: "Steve",
+    email: "steve@example.com",
+    avatarUrl: "https://secure.notion-static.com/e6a352a8-8381-44d0-a1dc-9ed80e62b53d.jpg"
+  },
+  role: "owner",
+  teamspaces: {
+    current: "t1",
+    options: [
+      { id: "t1", name: "Teamspace 1", memberCount: 25 },
+      { id: "t2", name: "Teamspace 2", memberCount: 10 },
+      { id: "t3", name: "Teamspace 3", memberCount: 32 },
+    ]
+  },
+  groups: {
+    current: "g1",
+    options: [
+      { id: "g1", name: "Group 1", memberCount: 2 },
+      { id: "g2", name: "Group 2", memberCount: 1 },
+      { id: "g3", name: "Group 3", memberCount: 3 },
+    ]
+  }
+}
+```
+
+## Guest Row
+
+The row data of the guests table.
+
+### Properties
+
+| Prop       | Type           | Description                    |
+| ---------- | -------------- | ------------------------------ |
+| `user`\*   | `User`         | Information of the guest.      |
+| `access`\* | `PageAccess[]` | Available pages for the guest. |
+
+See schema definitions for:
+
+- [`User`](/docs/objects/user)
+- [`PageAccess`](#page-access)
+
+### Example
+
+```ts
+{
+  user: {
+    id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
+    name: "Steve",
+    email: "steve@example.com",
+    avatarUrl: "https://secure.notion-static.com/e6a352a8-8381-44d0-a1dc-9ed80e62b53d.jpg"
+  },
+  role: "owner",
+  teamspaces: {
+    current: "t1",
+    options: [
+      { id: "t1", name: "Teamspace 1", memberCount: 25 },
+      { id: "t2", name: "Teamspace 2", memberCount: 10 },
+      { id: "t3", name: "Teamspace 3", memberCount: 32 },
+    ]
+  },
+  groups: {
+    current: "g1",
+    options: [
+      { id: "g1", name: "Group 1", memberCount: 2 },
+      { id: "g2", name: "Group 2", memberCount: 1 },
+      { id: "g3", name: "Group 3", memberCount: 3 },
+    ]
+  }
+}
+```
+
+## Group Option
+
+### Properties
+
+| Prop            | Type     | Description                         |
+| --------------- | -------- | ----------------------------------- |
+| `id`\*          | `string` | The unique identifier of the group. |
+| `name`\*        | `string` | Name of the group.                  |
+| `memberCount`\* | `number` | The number of members in the group. |
+
+### Example
+
+```ts
+{
+  id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
+  name: "Group name",
+  memberCount: 3
+}
+```
+
+## Cell Options
+
+A `CellOptions` is a generic type `CellOptions<T>`, where `T` extends `{ id: string }`.
+
+### Properties
+
+| Prop        | Type             | Description                                                   |
+| ----------- | ---------------- | ------------------------------------------------------------- |
+| `current`\* | `string \| null` | The unique identifier of current option, i.e. `options[i].id` |
+| `options`\* | `T[]`            | Available options.                                            |
+
+### Example
+
+An example for `CellOptions<{ id: string, title: string }>`
+
+```ts
+{
+  current: "a",
+  options: [
+    { id: "a", title: "A" },
+    { id: "b", title: "B" },
+    { id: "c", title: "C" },
+  ]
+}
+```
+
+## Page Access
+
+### Properties
+
+| Prop      | Type     | Description                        |
+| --------- | -------- | ---------------------------------- |
+| `id`\*    | `string` | The unique identifier of the page. |
+| `name`\*  | `string` | Name of the page.                  |
+| `scope`\* | `string` | The user scope of the page.        |
+
+### Example
+
+```ts
+{
+  id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
+  name: "Page 1",
+  scope: 'can edit'
+}
+```

@@ -1,0 +1,37 @@
+{
+  "name": "@notion-kit/i18n",
+  "private": true,
+  "version": "0.4.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build:types": "i18next-resources-for-ts interface -i ./src/resources/en -o ./src/resources/types.ts && pnpm format -w",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "i18next": "^25.0.1",
+    "react-i18next": "^15.4.1"
+  },
+  "devDependencies": {
+    "@notion-kit/eslint-config": "workspace:*",
+    "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "i18next-resources-for-ts": "^1.6.0",
+    "prettier": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:"
+  },
+  "prettier": "@notion-kit/prettier-config"
+}

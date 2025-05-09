@@ -54,7 +54,7 @@ export const ComponentPreview = async ({
         <ThemeProvider>
           <ScrollArea
             className={cn(
-              "prose-no-margin prose-img:my-0 prose-p:my-0 flex items-center justify-center px-4 py-10",
+              "not-prose flex items-center justify-center px-4 py-10",
               className,
             )}
           >

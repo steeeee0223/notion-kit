@@ -1,0 +1,492 @@
+{
+  "settings": "Configuración",
+  "common": {
+    "account": "Cuenta",
+    "workspace": "Espacio de trabajo",
+    "upgrade": "Mejorar plan",
+    "more": "Más información"
+  },
+  "account": {
+    "account": {
+      "title": "Cuenta",
+      "preferred-name": "Nombre",
+      "remove-photo": "Eliminar foto",
+      "replace-photo": "Reemplazar foto"
+    },
+    "account-security": {
+      "title": "Seguridad de la cuenta",
+      "email": {
+        "title": "Correo electrónico",
+        "button": "Cambiar correo electrónico"
+      },
+      "password": {
+        "title": "Contraseña",
+        "description": "Si dejas de tener acceso a la dirección de correo electrónico de tu centro educativo, aún podrás iniciar sesión con tu contraseña.",
+        "button": "Cambiar contraseña"
+      },
+      "verification": {
+        "title": "Verificación en dos pasos",
+        "description": "Añade una capa de seguridad a tu cuenta durante el inicio de sesión.",
+        "button": "Añadir un método de verificación"
+      },
+      "passkeys": {
+        "title": "Passkeys",
+        "description": "Inicia sesión de forma segura con la autenticación biométrica en el dispositivo.",
+        "button": "Añadir passkey"
+      }
+    },
+    "support": {
+      "title": "Soporte",
+      "support": {
+        "title": "Accesso de Soporte",
+        "description": "Nuestro equipo de Soporte tendrá acceso temporal a tu cuenta para que podamos solucionar problemas o recuperar contenido en tu nombre. Puedes revocar el acceso en cualquier momento."
+      },
+      "delete": {
+        "title": "Eliminar mi cuenta",
+        "description": "Elimina la cuenta de forma permanente y cancela el acceso a todos los espacios de trabajo."
+      }
+    },
+    "devices": {
+      "title": "Dispositivos",
+      "logout": {
+        "title": "Cerrar sesión en todos los dispositivos",
+        "description": "Se cerrará la sesión en todos los demás dispositivos además de este.",
+        "button": "Cerrar sesión en todos los dispositivos"
+      }
+    }
+  },
+  "preferences": {
+    "title": "Preferencias",
+    "preferences": {
+      "appearance": {
+        "title": "Apariencia",
+        "description": "Personaliza el aspecto de Notion en tu dispositivo.",
+        "options": {
+          "system": "Usar la configuración del sistema",
+          "light": "Claro",
+          "dark": "Oscuro"
+        }
+      }
+    },
+    "region": {
+      "title": "Idioma y hora",
+      "language": {
+        "title": "Idioma",
+        "description": "Elige el idioma que te gustaría usar en Notion.",
+        "options": {
+          "en": { "label": "English", "description": "Inglés" },
+          "de": { "label": "Deutsch", "description": "Alemán" },
+          "es": { "label": "Español", "description": "Español" }
+        }
+      },
+      "start-week": {
+        "title": "Comenzar la semana el lunes",
+        "description": "Esto cambiará el aspecto de todos los calendarios."
+      },
+      "set-timezone": {
+        "title": "Establecer automáticamente la zona horaria según mi ubicación",
+        "description": "Los recordatorios, las notificaciones y correos electrónicos se enviarán teniendo en cuenta tu zona horaria."
+      },
+      "timezone": {
+        "title": "Zona horaria",
+        "description": "Configuración de zona horaria actual."
+      }
+    },
+    "desktop": {
+      "title": "Desktop App",
+      "open-links": {
+        "title": "Abrir enlaces en la app de escritorio",
+        "description": "Debes tener instalada la <0>app de macOS</0>."
+      },
+      "open-on-start": {
+        "title": "Open on start",
+        "description": "Elige qué mostrar cuando Notion se inicie o cuando cambies de espacio de trabajo.",
+        "options": {
+          "last": "Última página visitada",
+          "home": "Inicio",
+          "top": "Página superior de la barra lateral"
+        }
+      }
+    },
+    "privacy": {
+      "title": "Privacidad",
+      "cookie": {
+        "title": "Configuración de cookies",
+        "description": "Personaliza las cookies. Consulta más detalles en el <0>Aviso sobre Cookies</0>."
+      },
+      "view-history": {
+        "title": "Mostrar mi historial de visitas",
+        "description": "Las personas con acceso completo o de edición podrán ver cuándo has visitado una página. <0>Más información</0>.",
+        "options": {
+          "yes": "Registrar",
+          "no": "No registrar"
+        }
+      },
+      "discover-profile": {
+        "title": "Visibilidad del perfil",
+        "description": "Los usuarios que tengan tu correo electrónico pueden ver tu nombre y foto del perfil cuando te inviten a un nuevo espacio de trabajo. <0>Más información</0>."
+      }
+    },
+    "modals": {
+      "language": {
+        "title": "¿Seguro que quieres actualizar el idioma a {{language}}?",
+        "primary": "Actualizar",
+        "secondary": "Cancelar"
+      }
+    }
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "notifications": {
+      "mobile": {
+        "title": "Notificaciones push en el móvil",
+        "description": "Recibe notificaciones emergentes de menciones y comentarios a través de la aplicación móvil."
+      }
+    },
+    "slack": {
+      "title": "Notificaciones de Slack",
+      "slack": {
+        "title": "Notificaciones de Slack",
+        "description": "Recibe notificaciones en tu espacio de trabajo de Slack cuando te mencionen en una página, propiedad de base de datos o comentario.",
+        "options": { "off": "Desactivadas" }
+      }
+    },
+    "email": {
+      "title": "Notificaciones por correo electrónico",
+      "activity": {
+        "title": "Actividad en tu espacio de trabajo",
+        "description": "Recibe mensajes de correo electrónico para notificarte sobre comentarios, menciones, invitaciones a páginas, recordatorios, solicitudes de acceso y cambios en las propiedades"
+      },
+      "digests": {
+        "title": "Resumen por correo electrónico",
+        "description": "Recibe resúmenes por correo electrónico cada 8 horas sobre los cambios producidos en las páginas a las que te hayas suscrito."
+      },
+      "announcements": {
+        "title": "Correos sobre novedades y actualizaciones",
+        "description": "Recibe de vez en cuando mensajes de correo electrónico sobre lanzamientos de productos y nuevas funciones de Notion",
+        "button": "Gestionar configuración"
+      }
+    },
+    "buttons": {
+      "more": "Más información sobre las notificaciones"
+    }
+  },
+  "my-connections": {
+    "title": "Conexiones",
+    "discover": {
+      "title": "Descubre nuevas conexiones",
+      "buttons": {
+        "connect": "Conectar",
+        "more": "Ver todo",
+        "less": "Mostrar menos"
+      }
+    },
+    "buttons": {
+      "browse": "Examinar conexiones en la Galería",
+      "integrations": "Desarrollar o gestionar las integraciones",
+      "more": "Más información sobre las conexiones"
+    }
+  },
+  "general": {
+    "title": "General",
+    "workspace": {
+      "title": "Configuración del espacio de trabajo",
+      "name": {
+        "title": "Nombre",
+        "description": "Puedes usar el nombre de tu empresa u organización. No te compliques."
+      },
+      "icon": {
+        "title": "Icono",
+        "description": "Sube una imagen o selecciona un emoji, aparecerá en tu barra lateral y en las notificaciones."
+      }
+    },
+    "public": {
+      "title": "Configuración pública",
+      "domain": {
+        "title": "Domain",
+        "description": "Pages shared to web will be under <0>{{site}}</0>. Anyone with an allowed email domain can join this workspace via <0>{{link}}</0>."
+      },
+      "public": {
+        "title": "Public home page",
+        "description": "Access your public home page via <0>{{site}}</0>."
+      }
+    },
+    "export": {
+      "title": "Exportar",
+      "content": {
+        "title": "Exportar contenido",
+        "hint": "Más información sobre cómo exportar espacios de trabajo.",
+        "button": "Exportar todo el contenido del espacio de trabajo"
+      },
+      "members": {
+        "title": "Exportar miembros",
+        "hint": "Más información sobre cómo exportar miembros.",
+        "button": "Exportar miembros como CSV"
+      }
+    },
+    "analytics": {
+      "title": "Estadísticas",
+      "analytics": {
+        "head": "Estadísticas",
+        "title": "Guardar y mostrar las estadísticas del número de visitas a páginas",
+        "description": "Las personas con acceso de edición o acceso completo podrán ver el número de visitas de una página. Si desactivas esta opción, el número de visitas no se guardará para las páginas de {{workspace}}.",
+        "hint": "Más información sobre las estadísticas del espacios de trabajo."
+      }
+    },
+    "danger": {
+      "title": "Zona de riesgo",
+      "hint": "Más información sobre cómo eliminar espacios de trabajo.",
+      "delete": "Eliminar todo el espacio de trabajo",
+      "leave": "Abandonar el espacio de trabajo"
+    },
+    "modals": {
+      "leave": {
+        "title": "¿Seguro que quieres salir de este espacio de trabajo?",
+        "primary": "Salir",
+        "secondary": "Cancelar"
+      }
+    }
+  },
+  "people": {
+    "title": "Personas",
+    "invite": {
+      "title": "Enlace de invitación para añadir miembros",
+      "description": "Solo quienes tengan permiso para invitar miembros podrán ver esto. También puedes <0>generar un nuevo enlace</0>",
+      "button": "Copiar enlace"
+    },
+    "tabs": {
+      "members": "Miembros",
+      "guests": "Invitados",
+      "groups": "Grupos",
+      "search": "Escribe para buscar...",
+      "add-members": "Añadir miembros"
+    },
+    "upgrade": {
+      "title": "Mejora tu plan para crear grupos",
+      "description": "Mejora al plan Plus para configurar los grupos y controlar los permisos desde el menú «Compartir»."
+    },
+    "modals": {
+      "reset-link": {
+        "title": "¿Seguro que quieres restablecer el enlace de invitación para todos los miembros del espacio? Ya no podrás utilizar el anterior.",
+        "primary": "Restablecer",
+        "secondary": "Cancelar"
+      }
+    }
+  },
+  "teamspaces": { "title": "Espacios de equipo" },
+  "plans": {
+    "title": "Descubre los planes",
+    "active": {
+      "title": "Plan activo",
+      "plan": {
+        "free": {
+          "title": "Gratuito",
+          "description": "Para organizar cada aspecto de tu vida personal y profesional",
+          "comment": "0 US$ por miembro al mes"
+        },
+        "education": {
+          "title": "Educación Plus",
+          "description": "Para estudiantes y docentes",
+          "comment": "0 US$ por miembro al mes"
+        },
+        "plus": {
+          "title": "Plus",
+          "description": "Un lugar para que los grupos pequeños hagan planes y se organicen",
+          "comment": "0 US$ por miembro al mes"
+        },
+        "business": {
+          "title": "Business",
+          "description": "",
+          "comment": ""
+        },
+        "enterprise": {
+          "title": "Enterprise",
+          "description": "",
+          "comment": ""
+        }
+      },
+      "ai": {
+        "title": "IA de Notion",
+        "description": "Uso ilimitado de la IA para funciones como Q&A, Autocompletado, Escritor y más",
+        "button": "Añadir al plan"
+      }
+    },
+    "all-plans": {
+      "title": "Todos los planes",
+      "description": "¿Tienes preguntas sobre nuestros planes? <0>Contacta con el equipo comercial</0>"
+    },
+    "education": {
+      "title": "Estudiantes y docentes",
+      "description": "Los estudiantes y docentes pueden acceder de forma gratuita a las funciones del plan Plus (con un límite de 1 miembro). Solo tienes que registrarte con tu dirección de correo electrónico de la institución educativa o cambiar tu correo electrónico actual en la pestaña «Mi cuenta». <0>Para obtener más información, visita notion.com/students.</0>",
+      "button": "Obtener el plan Education"
+    },
+    "faq": {
+      "title": "Preguntas frecuentes",
+      "description": "<0>Planes, facturación y pago</0>",
+      "button": "Escribir a Soporte técnico"
+    }
+  },
+  "billing": { "title": "Facturación" },
+  "notion-ai": {
+    "title": "IA de Notion",
+    "notion-ai": {
+      "share": {
+        "title": "Compartir datos para mejorar la IA de Notion",
+        "description": "Para ayudar a mejorar los modelos de la IA de Notion, debes permitir que se compartan con Notion los datos de todo este espacio de trabajo. Al habilitar el LEAP (Learning and Early Access Program, programa de aprendizaje y acceso temprano) de la IA aceptas los <0>Términos complementarios de LEAP de la IA de Notion</0>. <1>Más información</1>."
+      }
+    }
+  },
+  "sites": { "title": "Sitios" },
+  "emoji": { "title": "Emoji personalizado" },
+  "security": {
+    "title": "Seguridad",
+    "cards": {
+      "sso": {
+        "title": "Mejora tu plan para acceder al inicio de sesión único (SSO) de SAML y otras herramientas de administración",
+        "description": "El plan Business incluye inicio de sesión único (SSO) para gestionar el acceso de los empleados en bloque, espacios de equipo privados para colaborar en documentos confidenciales y mucho más.",
+        "action": "Mejorar al plan Business",
+        "more": "Más información"
+      },
+      "scim": {
+        "title": "Mejora tu plan para contar con SCIM, seguridad avanzada y mucho más.",
+        "description": "El plan Enterprise te permite aprovisionar automáticamente usuarios y grupos, y obtener más visibilidad y controles en todo el espacio de trabajo.",
+        "action": "Mejorar al plan Enterprise",
+        "more": "Más información"
+      }
+    },
+    "general": {
+      "title": "General",
+      "publish": {
+        "title": "Deshabilitar la publicación de sitios, formularios y enlaces públicos",
+        "description": "Deshabilita las opciones «Publicar sitio» y «Cualquier usuario de la web que tenga el enlace» del menú Compartir en todas las páginas y los formularios de este espacio de trabajo."
+      },
+      "duplicate": {
+        "title": "Desactivar la función de duplicar páginas a otros espacios de trabajo",
+        "description": "Impide que se dupliquen páginas a otros espacios de trabajo mediante las opciones «Mover a» o «Duplicar en»."
+      },
+      "export": {
+        "title": "Desactivar la función de exportar",
+        "description": "Impide que se pueda exportar como Markdown, CSV o PDF."
+      }
+    },
+    "invite": {
+      "title": "Añadir miembros e invitados",
+      "access": {
+        "title": "Permitir solicitudes de acceso a la página de quienes no sean miembros",
+        "description": "Esto permite que cualquiera que tenga el enlace a una página solicite acceso. Los miembros del espacio de trabajo siempre pueden solicitar acceso."
+      },
+      "invite": {
+        "title": "Permitir que los miembros añadan invitados a las páginas",
+        "description_one": "Tu espacio de trabajo tiene actualmente <0>{{count}} invitado</0>.",
+        "description_other": "Tu espacio de trabajo tiene actualmente <0>{{count}} invitados</0>."
+      },
+      "guest": {
+        "title": "Permitir que los miembros soliciten que se añadan invitados",
+        "description": "Un propietario del espacio de trabajo debe aprobar las solicitudes"
+      },
+      "member": {
+        "title": "Permitir que los miembros soliciten añadir a otros miembros",
+        "description": "Los miembros pueden enviar solicitudes a los administradores para añadir a más miembros"
+      },
+      "user": {
+        "title": "Permitir que cualquier usuario solicite ser añadido como miembro del espacio de trabajo",
+        "description": "Si se habilita, los usuarios con enlaces de invitación a espacios de equipo pueden enviar solicitudes a los administradores para que se les añada como miembros."
+      }
+    }
+  },
+  "identity": {
+    "title": "Identidad y aprovisionamiento",
+    "domain": {
+      "title": "Gestión de dominios",
+      "domains": {
+        "title": "Dominios verificados",
+        "description": "Verifica la titularidad de un dominio de correo electrónico para acceder a funciones de seguridad avanzada como el inicio de sesión único."
+      },
+      "creation": {
+        "title": "Creación de espacios de trabajo",
+        "description": "Elige quién puede crear nuevos espacios de trabajo."
+      },
+      "claim": {
+        "title": "Reclamar espacios de trabajo",
+        "description": "Reclama espacios de trabajo creados por usuarios con dominio verificado o exige a los propietarios que usen un dominio externo."
+      }
+    },
+    "user": {
+      "title": "Gestión de usuarios",
+      "description": "Esta configuración se aplica a todos los usuarios con un dominio verificado, incluso aunque no sean miembros de este espacio de trabajo.",
+      "buttons": {
+        "hint": "Más información sobre los usuarios gestionados"
+      },
+      "dashboard": {
+        "title": "Panel de control de usuarios gestionados",
+        "description": "Gestiona y visualiza los usuarios que utilizan tus dominios verificados."
+      },
+      "profile": {
+        "title": "Permitir a los usuarios gestionados cambiar su información del perfil",
+        "description": "Controla si los usuarios gestionados pueden cambiar su nombre, dirección de correo electrónico y foto del perfil."
+      },
+      "external": {
+        "title": "Acceso a espacios de trabajo externos",
+        "description": "Controla si los usuarios gestionados pueden unirse a espacios de trabajo que no sean propiedad de tu organización."
+      },
+      "support": {
+        "title": "Impedir a los usuarios gestionados acceso a Soporte",
+        "description": "Controla si los usuarios gestionados pueden otorgar acceso al soporte técnico a sus cuentas."
+      },
+      "session": {
+        "title": "Duración de la sesión",
+        "description": "Controla el tiempo que los usuarios administrados pueden mantener la sesión iniciada hasta que se les pida volver a autenticarse."
+      },
+      "logout": {
+        "title": "Cerrar sesión de todos los usuarios",
+        "description": "Fuerza el cierre de sesión de todos los usuarios gestionados y los obliga a volver a autenticarse."
+      },
+      "password": {
+        "title": "Restablecer contraseñas de todos los usuarios",
+        "description": "Restablece la contraseña de todos los usuarios gestionados y haz que creen una nueva la próxima vez que inicien sesión."
+      },
+      "mail": {
+        "title": "Notion Mail",
+        "description": "Habilita Notion Mail para todos los miembros de los dominios de tu empresa. Al utilizar Notion Mail, aceptas los Términos complementarios de Notion Mail y la IA de Notion."
+      }
+    },
+    "saml": {
+      "title": "Inicio de sesión único (SSO) de SAML",
+      "buttons": {
+        "hint": "Más información sobre el SSO de SAML"
+      },
+      "saml": {
+        "title": "Activar inicio de sesión único (SSO) de SAML",
+        "description": "Los miembros de un espacio de trabajo pueden iniciar sesión con SSO de SAML si su dirección de correo electrónico utiliza un dominio verificado."
+      },
+      "login": {
+        "title": "Método de inicio de sesión",
+        "description": "Define cómo acceden los usuarios a los espacios de trabajo que tienen SSO de SAML habilitado. Los propietarios de espacios de trabajo siempre pueden iniciar sesión con una contraseña."
+      },
+      "creation": {
+        "title": "Creación automática de cuentas",
+        "description": "Crea automáticamente cuentas de Notion para nuevos usuarios que inicien sesión mediante el SSO de SAML."
+      },
+      "linked": {
+        "title": "Espacios de trabajo enlazados",
+        "description": "Esta configuración del SSO de SAML se aplica también a los siguientes espacios de trabajo. Contacta con atención al cliente para añadir o eliminar un espacio de trabajo."
+      }
+    },
+    "scim": {
+      "title": "Aprovisionamiento de SCIM",
+      "scim": {
+        "title": "Tokens de SCIM",
+        "description": "Genera un token para configurar SCIM."
+      }
+    },
+    "setup": {
+      "title": "Información de configuración",
+      "workspace-id": {
+        "description": "ID del espacio de trabajo",
+        "tooltip": "Haz clic para copiar el ID"
+      }
+    }
+  },
+  "connections": { "title": "Conexiones" },
+  "import": { "title": "Importar" }
+}

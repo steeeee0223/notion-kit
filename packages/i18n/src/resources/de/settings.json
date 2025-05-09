@@ -1,0 +1,488 @@
+{
+  "settings": "Einstellungen",
+  "common": {
+    "account": "Konto",
+    "workspace": "Workspace",
+    "upgrade": "Upgraden",
+    "more": "Weitere Informationen"
+  },
+  "account": {
+    "account": {
+      "title": "Konto",
+      "preferred-name": "Bevorzugter Name",
+      "remove-photo": "Foto entfernen",
+      "replace-photo": "Foto ersetzen"
+    },
+    "account-security": {
+      "title": "Kontosicherheit",
+      "email": { "title": "E-Mail", "button": "E-Mail-Addresse ändern" },
+      "password": {
+        "title": "Passwort",
+        "description": "Wenn du den Zugriff auf deine Hochschul-E-Mail-Adresse verlierst, kannst du dich mit deinem Passwort anmelden.",
+        "button": "Passwort ändern"
+      },
+      "verification": {
+        "title": "2-stufige Verifizierung",
+        "description": "Sichere dein Konto zusätzlich, indem du deine Identität mit einem einmaligen Code verifizierst.",
+        "button": "Verifizierungsmethode hinzufügen"
+      },
+      "passkeys": {
+        "title": "Passkeys",
+        "description": "Sichere Anmeldung mit biometrischer Authentifizierung auf dem Gerät.",
+        "button": "Passkey hinzufügen"
+      }
+    },
+    "support": {
+      "title": "Support",
+      "support": {
+        "title": "Support-Zugriff",
+        "description": "Gewähre dem Notion-Support temporären Zugriff auf dein Konto, damit wir Probleme beheben oder Inhalte in deinem Namen wiederherstellen können. Du kannst den Zugriff jederzeit widerrufen."
+      },
+      "delete": {
+        "title": "Mein Konto löschen",
+        "description": "Konto dauerhaft löschen und den Zugriff auf alle Workspaces entfernen."
+      }
+    },
+    "device": {
+      "title": "Geräte",
+      "logout": {
+        "title": "Von allen Geräten abmelden",
+        "description": "Du wirst von allen anderen aktiven Sitzungen auf anderen Geräten abgemeldet.",
+        "button": "Von allen Geräten abmelden"
+      }
+    }
+  },
+  "preferences": {
+    "title": "Präferenzen",
+    "preferences": {
+      "appearance": {
+        "title": "Darstellung",
+        "description": "Passe an, wie Notion auf deinem Gerät dargestellt wird.",
+        "options": {
+          "system": "Systemeinstellung verwenden",
+          "light": "Hell",
+          "dark": "Dunkel"
+        }
+      }
+    },
+    "region": {
+      "title": "Sprache und Uhrzeit",
+      "language": {
+        "title": "Sprache",
+        "description": "Ändere die in der Benutzeroberfläche verwendete Sprache.",
+        "options": {
+          "en": { "label": "English", "description": "Englisch" },
+          "de": { "label": "Deutsch", "description": "Deutsch" },
+          "es": { "label": "Español", "description": "Spanisch" }
+        }
+      },
+      "start-week": {
+        "title": "Montag als Wochenanfang festlegen",
+        "description": "Diese Änderung bezieht sich auf alle Kalender in deiner App."
+      },
+      "set-timezone": {
+        "title": "Zeitzone automatisch anhand deines Standorts einstellen",
+        "description": "Du erhältst Erinnerungen, Benachrichtigungen und E-Mails abgestimmt auf deine Zeitzone."
+      },
+      "timezone": {
+        "title": "Zeitzone",
+        "description": "Aktuelle Zeitzoneneinstellung."
+      }
+    },
+    "desktop": {
+      "title": "Desktop App",
+      "open-links": {
+        "title": "Links in Desktop-App öffnen",
+        "description": "Du musst die <0>macOS-App</0> installiert haben."
+      },
+      "open-on-start": {
+        "title": "Open on start",
+        "description": "Wähle aus, was angezeigt werden soll, wenn Notion startet oder wenn du den Workspace wechselst.",
+        "options": {
+          "last": "Zuletzt besuchte Seite",
+          "home": "Startseite",
+          "top": "Oberste Seite in der Seitenleiste"
+        }
+      }
+    },
+    "privacy": {
+      "title": "Datenschutz",
+      "cookie": {
+        "title": "Cookie-Einstellungen",
+        "description": "Passe Cookies an. Weitere Informationen findest du unter <0>Hinweis zu Cookies</0>."
+      },
+      "view-history": {
+        "title": "Meine Ansichtshistorie anzeigen",
+        "description": "Benutzer/-innen mit Bearbeitungs- oder Vollzugriff können sehen, wann du eine Seite angesehen hast. <0>Mehr erfahren</0>.",
+        "options": {
+          "yes": "Aufzeichnen",
+          "no": "Nicht aufzeichnen"
+        }
+      },
+      "discover-profile": {
+        "title": "Auffindbarkeit des Profils",
+        "description": "Mitglieder mit deiner E-Mail-Adresse können deinen Namen und dein Profilbild sehen, wenn sie dich zu einem neuen Workspace einladen. <0>Weitere Informationen</0>."
+      }
+    },
+    "modals": {
+      "language": {
+        "title": "Möchtest du die Sprache wirklich zu {{language}} ändern?",
+        "primary": "Aktualisieren",
+        "secondary": "Abbrechen"
+      }
+    }
+  },
+  "notifications": {
+    "title": "Benachrichtigungen",
+    "notifications": {
+      "mobile": {
+        "title": "Mobile Push-Benachrichtigungen",
+        "description": "Erhalte Push-Benachrichtigungen zu Erwähnungen und Kommentaren über deine mobile App"
+      }
+    },
+    "slack": {
+      "title": "Slack-Benachrichtigungen",
+      "slack": {
+        "title": "Slack-Benachrichtigungen",
+        "description": "Erhalte Benachrichtigungen in deinem Slack-Workspace, wenn du auf einer Seite, in einer Datenbankeigenschaft oder in einem Kommentar erwähnt wirst",
+        "options": { "off": "Aus" }
+      }
+    },
+    "email": {
+      "title": "E-Mail-Benachrichtigungen",
+      "activity": {
+        "title": "Aktivität in deinem Workspace",
+        "description": "Erhalte E-Mails zu Kommentaren, Erwähnungen, Seiteneinladungen, Erinnerungen, Zugriffsanfragen und Eigenschaftsänderungen"
+      },
+      "digests": {
+        "title": "Benachrichtigungen mit Zusammenfassungen per E-Mail",
+        "description": "Erhalte per E-Mail alle 8 Stunden Zusammenfassungen über Änderungen an Seiten, die du abonniert hast"
+      },
+      "announcements": {
+        "title": "Ankündigungen und E-Mails zu Updates",
+        "description": "Gelegentliche E-Mails zu Produkteinführungen und neuen Funktionen von Notion erhalten",
+        "button": "Einstellungen verwalten"
+      }
+    },
+    "buttons": {
+      "more": "Mehr zu Benachrichtigungen"
+    }
+  },
+  "my-connections": {
+    "title": "Verbindungen",
+    "discover": {
+      "title": "Neue Verbindungen entdecken",
+      "buttons": {
+        "connect": "Verbinden",
+        "more": "Alle anzeigen",
+        "less": "Weniger anzeigen"
+      }
+    },
+    "buttons": {
+      "browse": "Verbindungen in der Galerie durchsuchen",
+      "integrations": "Eigene Einbindungen entwickeln oder verwalten",
+      "more": "Weitere Informationen zu Verbindungen"
+    }
+  },
+  "general": {
+    "title": "General",
+    "workspace": {
+      "title": "Workspace-Einstellungen",
+      "name": {
+        "title": "Name",
+        "description": "Du kannst den Namen deiner Organisation bzw., deines Unternehmens verwenden. Keep it simple."
+      },
+      "icon": {
+        "title": "Icon",
+        "description": "Lade ein Bild hoch oder wähle ein Emoji aus. Es wird in der Seitenleiste und in deinen Benachrichtigungen angezeigt."
+      }
+    },
+    "public": {
+      "title": "Öffentliche Einstellungen",
+      "domain": {
+        "title": "Domain",
+        "description": "Pages shared to web will be under <0>{{site}}</0>. Anyone with an allowed email domain can join this workspace via <0>{{link}}</0>."
+      },
+      "public": {
+        "title": "Public home page",
+        "description": "Access your public home page via <0>{{site}}</0>."
+      }
+    },
+    "export": {
+      "title": "Exportieren",
+      "content": {
+        "title": "Inhalt exportieren",
+        "hint": "Informationen zum Exportieren von Workspaces",
+        "button": "Gesamten Workspace-Inhalt exportieren"
+      },
+      "members": {
+        "title": "Mitglieder exportieren",
+        "hint": "Informationen zum Exportieren von Mitgliedern",
+        "button": "Mitglieder in CSV exportieren"
+      }
+    },
+    "analytics": {
+      "title": "Analysen",
+      "analytics": {
+        "title": "Seitenaufruf-Analysen speichern und anzeigen",
+        "description": "Personen mit Bearbeitungs- oder Vollzugriff können sehen, wie viele Aufrufe eine Seite hat. Ist diese Funktion deaktiviert, werden die Seitenaufrufe nicht für alle Seiten in {{workspace}} gespeichert.",
+        "hint": "Erfahre mehr über Workspace-Analysen."
+      }
+    },
+    "danger": {
+      "title": "Achtung, Gefahrenzone!",
+      "hint": "Informationen zum Löschen von Workspaces",
+      "delete": "Gesamten Workspace löschen",
+      "leave": "Workspace verlassen"
+    },
+    "modals": {
+      "leave": {
+        "title": "Möchtest du diesen Workspace wirklich verlassen?",
+        "primary": "Verlassen",
+        "secondary": "Abbrechen"
+      }
+    }
+  },
+  "people": {
+    "title": "Personen",
+    "invite": {
+      "title": "Einladungslink zum Hinzufügen von Mitgliedern",
+      "description": "Nur Personen, die Mitglieder einladen können, sehen den Link. Du kannst auch <0>einen neuen Link generieren</0>",
+      "button": "Link kopieren"
+    },
+    "tabs": {
+      "members": "Mitglieder",
+      "guests": "Gäste",
+      "groups": "Gruppen",
+      "search": "Schribe zum Suchen...",
+      "add-members": "Mitglieder hinzuzufügen"
+    },
+    "upgrade": {
+      "title": "Upgrade, um Gruppen zu erstellen",
+      "description": "Führe ein Upgrade auf den Plus Plan durch, um Gruppen einzurichten und Berechtigungen über das Menü „Teilen“ zu steuern."
+    },
+    "modals": {
+      "reset-link": {
+        "title": "Möchtest du den Einladungslink für alle Workspace-Mitglieder wirklich zurücksetzen? Der alte kann dann nicht mehr verwendet werden.",
+        "primary": "Zurücksetzen",
+        "secondary": "Abbrechen"
+      }
+    }
+  },
+  "teamspaces": { "title": "Teamspaces" },
+  "plans": {
+    "title": "Tarife anzeigen",
+    "active": {
+      "title": "Aktiver Plan",
+      "plan": {
+        "free": {
+          "title": "Free",
+          "description": "Für die Organisation aller Bereiche deines Lebens – ob Arbeit oder Freizeit",
+          "comment": "0 $ pro Mitglied und Monat"
+        },
+        "education": {
+          "title": "Education Plus",
+          "description": "Für Studierende und Lehrpersonen",
+          "comment": "0 $ pro Mitglied und Monat"
+        },
+        "plus": {
+          "title": "Plus",
+          "description": "Ein Ort zum Planen und Organisieren für kleine Gruppen",
+          "comment": "0 $ pro Mitglied und Monat"
+        },
+        "business": {
+          "title": "Business",
+          "description": "",
+          "comment": ""
+        },
+        "enterprise": {
+          "title": "Enterprise",
+          "description": "",
+          "comment": ""
+        }
+      },
+      "ai": {
+        "title": "Notion-KI",
+        "description": "Unbegrenzte KI-Nutzung für Q&A, Autofill, Writer und mehr",
+        "button": "Zum plan hinzuzufügen"
+      }
+    },
+    "all-plans": {
+      "title": "Planauswahl",
+      "description": "Du hast Fragen zu unseren Tarifen? <0>Kontaktiere das Vertriebsteam</0>"
+    },
+    "education": {
+      "title": "Studierende und Lehrkräfte",
+      "description": "Studierende und Lehrer/-innen können kostenlos auf die Funktionen des Plus Plans zugreifen (begrenzt auf 1 Mitglied). Melde dich einfach mit der E-Mail-Adresse der Hochschule an oder ändere deine bestehende E-Mail-Adresse im „Mein Konto“-Tab. <0>Weitere Informationen findest du unter notion.com/students.</0>",
+      "button": "Abonniere den Education Plan"
+    },
+    "faq": {
+      "title": "FAQ",
+      "description": "<0>Pläne, Abrechnung und Zahlung</0>",
+      "button": "Frag unseren Support"
+    }
+  },
+  "billing": { "title": "Abrechnung" },
+  "notion-ai": {
+    "title": "Notion KI",
+    "notion-ai": {
+      "share": {
+        "title": "Daten zur Verbesserung der Notion-KI freigeben",
+        "description": "Trage zur Verbesserung der KI-Modelle von Notion bei und gib die Daten aus diesem Workspace für Notion frei. Durch die Aktivierung des KI-LEAP (Learning and Early Access Program) erklärst du dich mit den <0>ergänzenden Bestimmungen zum Notion-KI-LEAP einverstanden</0>. <1>Mehr erfahren</1>."
+      }
+    }
+  },
+  "sites": { "title": "Websites" },
+  "emoji": { "title": "Emoji" },
+  "security": {
+    "title": "Sicherheit",
+    "cards": {
+      "sso": {
+        "title": "Upgrade für SAML SSO und weitere Admin-Tools",
+        "description": "Der Business Plan umfasst Single Sign-On zur Massen-Zugriffsverwaltung der Mitarbeitenden, private Teamspaces für die gemeinsame Arbeit an vertraulichen Dokumenten und vieles mehr.",
+        "action": "Upgrade auf Business Plan",
+        "more": "Weitere Informationen"
+      },
+      "scim": {
+        "title": "Upgrade für SCIM, erweiterte Sicherheit und mehr",
+        "description": "Mit dem Enterprise Plan kannst du Benutzer/-innen und Gruppen automatisch bereitstellen und mehr Transparenz und Kontrolle über den gesamten Workspace erhalten.",
+        "action": "Upgrade auf Enterprise Plan",
+        "more": "Weitere Informationen"
+      }
+    },
+    "general": {
+      "title": "Allgemein",
+      "publish": {
+        "title": "Deaktiviere das Veröffentlichen von Websites, Formularen und öffentlichen Links",
+        "description": "Deaktiviere die Optionen „Seite veröffentlichen“ und „Jeder im Web mit Link“ im Freigabemenü jeder Seite und jedes Formulars in diesem Workspace."
+      },
+      "duplicate": {
+        "title": "Duplizieren von Seiten in andere Workspaces deaktivieren",
+        "description": "Verhindere das Duplizieren von Seiten in andere Workspaces über die Aktion „Verschieben nach“ oder „Duplizieren in“."
+      },
+      "export": {
+        "title": "Export deaktivieren",
+        "description": "Markdown-, CSV- oder PDF-Exporte verhindern."
+      }
+    },
+    "invite": {
+      "title": "Mitglieder und Gäste einladen",
+      "access": {
+        "title": "Seitenzugriffsanfragen von Nicht-Mitgliedern zulassen",
+        "description": "Dadurch kann jede Person, die über den Link zu einer Seite verfügt, Zugriff anfordern. Workspace-Mitglieder können jederzeit Zugriff anfordern."
+      },
+      "invite": {
+        "title": "Mitgliedern erlauben, Gäste auf Seiten einzuladen",
+        "description_one": "Aktuell befindet sich <0>{{count}} Gast</0> in deinem Workspace.",
+        "description_other": "Aktuell befindet sich <0>{{count}} Gäste</0> in deinem Workspace."
+      },
+      "guest": {
+        "title": "Mitglieder können die Aufnahme von Gästen anfragen",
+        "description": "Anfragen müssen durch Workspace-Besitzer/-innen genehmigt werden."
+      },
+      "member": {
+        "title": "Erlaubt Mitgliedern, die Aufnahme anderer Mitglieder zu beantragen",
+        "description": "Mitglieder können Anfragen an Admins senden, weitere Mitglieder hinzuzufügen."
+      },
+      "user": {
+        "title": "Anfragen auf Aufnahme in den Workspace für alle Benutzer/-innen zulassen",
+        "description": "Ist diese Option aktiviert, können Personen, die einen Einladungslink zu einem Teamspace besitzen, Aufnahmeanfragen an Admins senden."
+      }
+    }
+  },
+  "identity": {
+    "title": "Identität & Bereitstellung",
+    "domain": {
+      "title": "Domain-Verwaltung",
+      "domains": {
+        "title": "Verifizierte Domains",
+        "description": "Bestätige den Besitz einer E-Mail-Domain, um auf erweiterte Sicherheitsfunktionen wie Single-Sign-On zuzugreifen."
+      },
+      "creation": {
+        "title": "Workspace-Erstellung",
+        "description": "Passe an, wer neue Workspaces erstellen kann."
+      },
+      "claim": {
+        "title": "Workspaces beanspruchen",
+        "description": "Beanspruche mit einer verifizierten Domain erstellte Workspaces oder fordere von Besitzer/-innen die Verwendung externer Domains"
+      }
+    },
+    "user": {
+      "title": "Verwaltung der Benutzer/-innen",
+      "description": "Diese Einstellungen gelten für alle Personen mit einer verifizierten Domain, selbst wenn sie kein Mitglied dieses Workspaces sind.",
+      "buttons": {
+        "hint": "Informationen zu verwalteten Benutzer/-innen"
+      },
+      "dashboard": {
+        "title": "Dashboard für verwaltete Benutzer/-innen",
+        "description": "Verwalte und zeige Mitglieder an, die deine verifizierten Domains verwenden"
+      },
+      "profile": {
+        "title": "Verwalteten Benutzer/-innen erlauben, Profilinformationen zu ändern",
+        "description": "Lege fest, ob verwaltete Benutzer/-innen ihren bevorzugten Namen, ihre E-Mail-Adresse und das Profilfoto ändern können."
+      },
+      "external": {
+        "title": "Zugriff auf externe Workspaces",
+        "description": "Lege fest, ob verwaltete Benutzer/-innen Workspaces beitreten können, die nicht deiner Organisation gehören."
+      },
+      "support": {
+        "title": "Verhindere, dass verwaltete Benutzer/-innen Support-Zugriff gewähren können",
+        "description": "Steuer, ob verwaltete Benutzer/-innen Support-Zugriff für ihre Konten aktivieren können."
+      },
+      "session": {
+        "title": "Sitzungsdauer",
+        "description": "Lege fest, wir lange von dir verwaltete Benutzer/-innen angemeldet sein können, ehe sie sich neu authentifizieren müssen."
+      },
+      "logout": {
+        "title": "Alle Benutzer/-innen abmelden",
+        "description": "Alle verwalteten Benutzer/-innen zur Abmeldung zwingen und eine erneute Authentifizierung verlangen."
+      },
+      "password": {
+        "title": "Passwörter von allen Benutzer/-innen zurücksetzen",
+        "description": "Setze die Passwörter aller verwalteten Benutzer/-innen zurück und fordere sie bei der nächsten Anmeldung zur Eingabe eines neuen Passworts auf."
+      },
+      "mail": {
+        "title": "Notion Mail",
+        "description": "Aktiviere Notion Mail für alle Mitglieder unter deinen Unternehmensdomains. Durch die Verwendung von Notion Mail erklärst du dich mit den ergänzenden Bedingungen zu Notion Mail und Notion-KI einverstanden."
+      }
+    },
+    "saml": {
+      "title": "SAML Single Sign-On (SSO)",
+      "buttons": {
+        "hint": "Informationen zu SAML SSO"
+      },
+      "saml": {
+        "title": "SAML SSO aktivieren",
+        "description": "Workspace-Mitglieder können sich über SAML SSO anmelden, wenn ihre E-Mail-Adresse eine verifizierte Domain verwendet."
+      },
+      "login": {
+        "title": "Anmelde-Methode",
+        "description": "Stelle individuell ein, wie Nutzer/-innen auf Workspaces zugreifen, bei denen SAML SSO aktiviert ist. Workspace-Besitzer/-innen können sich jederzeit mit einem Passwort anmelden."
+      },
+      "creation": {
+        "title": "Automatische Kontoerstellung",
+        "description": "Automatisch erstellte Notion-Konten für neue Benutzer/-innen, die sich über SSO anmelden."
+      },
+      "linked": {
+        "title": "Verknüpfte Workspaces",
+        "description": "Diese SSO-Konfiguration gilt für die folgenden anderen Workspaces. Wenn dich an den Support, um einen Workspace hinzuzufügen oder zu entfernen."
+      }
+    },
+    "scim": {
+      "title": "SCIM-Bereitstellung",
+      "scim": {
+        "title": "SCIM-Token",
+        "description": "Generiere ein Token, um SCIM zu konfigurieren."
+      }
+    },
+    "setup": {
+      "title": "Informationen zur Einrichtung",
+      "workspace-id": {
+        "description": "Workspace-ID",
+        "tooltip": "Zum Kopieren der ID klicken"
+      }
+    }
+  },
+  "connections": { "title": "Verbindungen" },
+  "import": { "title": "Importieren" }
+}

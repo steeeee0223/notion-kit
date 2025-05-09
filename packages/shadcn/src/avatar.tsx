@@ -17,7 +17,6 @@ const Avatar = ({
     {...props}
   />
 );
-Avatar.displayName = AvatarPrimitive.Root.displayName;
 
 const AvatarImage = ({
   className,
@@ -28,7 +27,6 @@ const AvatarImage = ({
     {...props}
   />
 );
-AvatarImage.displayName = AvatarPrimitive.Image.displayName;
 
 const AvatarFallback = ({
   className,
@@ -36,12 +34,11 @@ const AvatarFallback = ({
 }: React.ComponentProps<typeof AvatarPrimitive.Fallback>) => (
   <AvatarPrimitive.Fallback
     className={cn(
-      "flex h-full w-full items-center justify-center rounded-full bg-muted",
+      "flex h-full w-full items-center justify-center rounded-full select-none",
       className,
     )}
     {...props}
   />
 );
-AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
 export { Avatar, AvatarImage, AvatarFallback };

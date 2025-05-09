@@ -69,6 +69,9 @@ catalogs:
     '@hookform/resolvers':
       specifier: ^3.10.0
       version: 3.10.0
+    '@tanstack/react-table':
+      specifier: ^8.20.6
+      version: 8.21.3
     class-variance-authority:
       specifier: ^0.7.1
       version: 0.7.1
@@ -147,6 +150,9 @@ importers:
       '@notion-kit/select':
         specifier: workspace:*
         version: link:../../packages/select
+      '@notion-kit/settings-panel':
+        specifier: workspace:*
+        version: link:../../packages/settings-panel
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../../packages/shadcn
@@ -277,6 +283,9 @@ importers:
       '@notion-kit/select':
         specifier: workspace:*
         version: link:../../packages/select
+      '@notion-kit/settings-panel':
+        specifier: workspace:*
+        version: link:../../packages/settings-panel
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../../packages/shadcn
@@ -319,9 +328,6 @@ importers:
       react-hotkeys-hook:
         specifier: catalog:ui
         version: 4.6.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      usehooks-ts:
-        specifier: catalog:ui
-        version: 3.1.1(react@19.0.0)
       uuid:
         specifier: catalog:uuid
         version: 11.1.0
@@ -418,7 +424,7 @@ importers:
         version: 22.13.9
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -449,7 +455,7 @@ importers:
         version: 3.5.3
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -507,7 +513,7 @@ importers:
         version: 19.0.0
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -559,7 +565,7 @@ importers:
         version: 19.0.0
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -589,7 +595,41 @@ importers:
         version: 19.0.0
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.2
+
+  packages/i18n:
+    dependencies:
+      i18next:
+        specifier: ^25.0.1
+        version: 25.0.1(typescript@5.8.2)
+      react-i18next:
+        specifier: ^15.4.1
+        version: 15.4.1(i18next@25.0.1(typescript@5.8.2))(react@19.0.0)
+    devDependencies:
+      '@notion-kit/eslint-config':
+        specifier: workspace:*
+        version: link:../../tooling/eslint
+      '@notion-kit/prettier-config':
+        specifier: workspace:*
+        version: link:../../tooling/prettier
+      '@notion-kit/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
+      eslint:
+        specifier: 'catalog:'
+        version: 9.23.0(jiti@2.4.2)
+      i18next-resources-for-ts:
+        specifier: ^1.6.0
+        version: 1.6.0
+      prettier:
+        specifier: 'catalog:'
+        version: 3.5.3
+      tsup:
+        specifier: 'catalog:'
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -635,7 +675,7 @@ importers:
         version: 19.0.0
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -675,6 +715,9 @@ importers:
       react-infinite-scroll-component:
         specifier: ^6.1.0
         version: 6.1.0(react@19.0.0)
+      usehooks-ts:
+        specifier: catalog:ui
+        version: 3.1.1(react@19.0.0)
     devDependencies:
       '@notion-kit/eslint-config':
         specifier: workspace:*
@@ -699,7 +742,7 @@ importers:
         version: 19.0.0
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -733,7 +776,7 @@ importers:
         version: 19.0.0
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -764,7 +807,7 @@ importers:
         version: 3.5.3
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -831,7 +874,7 @@ importers:
         version: 19.0.0
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -893,7 +936,92 @@ importers:
         version: 19.0.0
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.2
+
+  packages/settings-panel:
+    dependencies:
+      '@notion-kit/cn':
+        specifier: workspace:*
+        version: link:../cn
+      '@notion-kit/common':
+        specifier: workspace:*
+        version: link:../common
+      '@notion-kit/hooks':
+        specifier: workspace:*
+        version: link:../hooks
+      '@notion-kit/i18n':
+        specifier: workspace:*
+        version: link:../i18n
+      '@notion-kit/icon-block':
+        specifier: workspace:*
+        version: link:../icon-block
+      '@notion-kit/icon-menu':
+        specifier: workspace:*
+        version: link:../icon-menu
+      '@notion-kit/icons':
+        specifier: workspace:*
+        version: link:../icons
+      '@notion-kit/modal':
+        specifier: workspace:*
+        version: link:../modal
+      '@notion-kit/schemas':
+        specifier: workspace:*
+        version: link:../schemas
+      '@notion-kit/select':
+        specifier: workspace:*
+        version: link:../select
+      '@notion-kit/shadcn':
+        specifier: workspace:*
+        version: link:../shadcn
+      '@notion-kit/spinner':
+        specifier: workspace:*
+        version: link:../spinner
+      '@notion-kit/tags-input':
+        specifier: workspace:*
+        version: link:../tags-input
+      '@tanstack/react-table':
+        specifier: catalog:ui
+        version: 8.21.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      file-saver:
+        specifier: ^2.0.5
+        version: 2.0.5
+      lucide-react:
+        specifier: catalog:ui
+        version: 0.456.0(react@19.0.0)
+      usehooks-ts:
+        specifier: catalog:ui
+        version: 3.1.1(react@19.0.0)
+    devDependencies:
+      '@notion-kit/eslint-config':
+        specifier: workspace:*
+        version: link:../../tooling/eslint
+      '@notion-kit/prettier-config':
+        specifier: workspace:*
+        version: link:../../tooling/prettier
+      '@notion-kit/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
+      '@types/file-saver':
+        specifier: ^2.0.7
+        version: 2.0.7
+      '@types/react':
+        specifier: catalog:react19
+        version: 19.0.10
+      eslint:
+        specifier: 'catalog:'
+        version: 9.23.0(jiti@2.4.2)
+      prettier:
+        specifier: 'catalog:'
+        version: 3.5.3
+      react:
+        specifier: catalog:react19
+        version: 19.0.0
+      tsup:
+        specifier: 'catalog:'
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -960,7 +1088,7 @@ importers:
         version: 19.0.0
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -1039,7 +1167,7 @@ importers:
         version: 19.0.0
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -1085,7 +1213,7 @@ importers:
         version: 19.0.0
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -1125,7 +1253,7 @@ importers:
         version: 19.0.0
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -1171,7 +1299,7 @@ importers:
         version: 19.0.0
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -1220,7 +1348,7 @@ importers:
         version: 19.0.0
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -1263,7 +1391,7 @@ importers:
         version: 19.0.0
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -1291,7 +1419,7 @@ importers:
         version: 3.5.3
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -1982,6 +2110,10 @@ packages:
 
   '@babel/runtime@7.26.9':
     resolution: {integrity: sha512-aA63XwOkcl4xxQa3HjPMqOP6LiK0ZDv3mUPYEFXkpHbaFjtGggE1A61FjFzJnB+p7/oy2gA8E+rcBNl/zC1tMg==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/runtime@7.27.0':
+    resolution: {integrity: sha512-VtPOkrdPHZsKc/clNqyi9WUA8TINkZ4cGk63UUE3u4pmB2k+ZMQRDuIOagv8UVd6j7k0T3+RRIb7beKTebNbcw==}
     engines: {node: '>=6.9.0'}
 
   '@babel/template@7.26.9':
@@ -3707,6 +3839,17 @@ packages:
   '@tailwindcss/postcss@4.1.0':
     resolution: {integrity: sha512-b2NWFAFfLXY7960jLY5QkKbuYKrQUULx60XU3BCzyaUQpU/7lLf3n2CiHibZPdBq5CIXrUp10wdxhV0EI0Js2g==}
 
+  '@tanstack/react-table@8.21.3':
+    resolution: {integrity: sha512-5nNMTSETP4ykGegmVkhjcS8tTLW6Vl4axfEGQN3v0zdHYbK4UfoqfPChclTrJ4EoK9QynqAu9oUf8VEmrpZ5Ww==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '>=16.8'
+      react-dom: '>=16.8'
+
+  '@tanstack/table-core@8.21.3':
+    resolution: {integrity: sha512-ldZXEhOBb8Is7xLs01fR3YEc3DERiz5silj8tnGkFZytt1abEvl/GhUmCE0PMLaMPTa3Jk4HbKmRlHmu+gCftg==}
+    engines: {node: '>=12'}
+
   '@testing-library/dom@10.4.0':
     resolution: {integrity: sha512-pemlzrSESWbdAloYml3bAJMEfNh1Z7EduzqPKprCH5S341frlpYnUEW0H72dLxa6IsYr+mPno20GiSm+h9dEdQ==}
     engines: {node: '>=18'}
@@ -3785,6 +3928,9 @@ packages:
 
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
+
+  '@types/file-saver@2.0.7':
+    resolution: {integrity: sha512-dNKVfHd/jk0SkR/exKGj2ggkB45MAkzvWCaqLUUgkyjITkGNzH8H+yUwr+BLJUBjZOe9w8X3wgmXhZDRg1ED6A==}
 
   '@types/glob@7.2.0':
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
@@ -5133,6 +5279,9 @@ packages:
     resolution: {integrity: sha512-XXTUwCvisa5oacNGRP9SfNtYBNAMi+RPwBFmblZEF7N7swHYQS6/Zfk7SRwx4D5j3CH211YNRco1DEMNVfZCnQ==}
     engines: {node: '>=16.0.0'}
 
+  file-saver@2.0.5:
+    resolution: {integrity: sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==}
+
   file-selector@2.1.2:
     resolution: {integrity: sha512-QgXo+mXTe8ljeqUFaX3QVHc5osSItJ/Km+xpocx0aSqWGMSCf6qYs/VnzZgS864Pjn5iceMRFigeAV7AfTlaig==}
     engines: {node: '>= 12'}
@@ -5453,6 +5602,9 @@ packages:
     engines: {node: '>=12'}
     hasBin: true
 
+  html-parse-stringify@3.0.1:
+    resolution: {integrity: sha512-KknJ50kTInJ7qIScF3jeaFRpMpE8/lfiTdzf/twXyPBLAGrLRTmkz3AdTnKeh40X8k9L2fdYwEp/42WGXIRGcg==}
+
   html-void-elements@3.0.0:
     resolution: {integrity: sha512-bEqo66MRXsUGxWHV5IP0PUiAWwoEjba4VCzg0LjFJBpchPaTfyfCKTG6bc5F8ucKec3q5y6qOdGyYTSBEvhCrg==}
 
@@ -5489,6 +5641,18 @@ packages:
   human-signals@2.1.0:
     resolution: {integrity: sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==}
     engines: {node: '>=10.17.0'}
+
+  i18next-resources-for-ts@1.6.0:
+    resolution: {integrity: sha512-iDBax3MO5ajNS3lDC1aSsdWgwGyUYxHX1LCd6XsnHrb2cpLOwJTDsSDucyVGy/zHMQHYu3tsjkTZzdZIwQ8Y5A==}
+    hasBin: true
+
+  i18next@25.0.1:
+    resolution: {integrity: sha512-8S8PyZbrymJZn3DaN70/34JYWNhsqrU6yA4MuzcygJBv+41dgNMocEA8h+kV1P7MCc1ll03lOTOIXE7mpNCicw==}
+    peerDependencies:
+      typescript: ^5
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
@@ -6906,6 +7070,19 @@ packages:
       react: '>=16.8.1'
       react-dom: '>=16.8.1'
 
+  react-i18next@15.4.1:
+    resolution: {integrity: sha512-ahGab+IaSgZmNPYXdV1n+OYky95TGpFwnKRflX/16dY04DsYYKHtVLjeny7sBSCREEcoMbAgSkFiGLF5g5Oofw==}
+    peerDependencies:
+      i18next: '>= 23.2.3'
+      react: '>= 16.8.0'
+      react-dom: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+
   react-infinite-scroll-component@6.1.0:
     resolution: {integrity: sha512-SQu5nCqy8DxQWpnUVLx7V7b7LcA37aM7tvoWjTLZp1dk6EJibM5/4EJKzOnl07/BsM1Y40sKLuqjCwwH/xV0TQ==}
     peerDependencies:
@@ -7950,6 +8127,10 @@ packages:
   vm-browserify@1.1.2:
     resolution: {integrity: sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==}
 
+  void-elements@3.1.0:
+    resolution: {integrity: sha512-Dhxzh5HZuiHQhbvTW9AMetFfBHDMYpo23Uo9btPXgdYP+3T5S+p+jgNy7spra+veYhBP2dCSgxR/i2Y02h5/6w==}
+    engines: {node: '>=0.10.0'}
+
   watchpack@2.4.2:
     resolution: {integrity: sha512-TnbFSbcOCcDgjZ4piURLCbJ3nJhznVh9kw6F6iokjiFPl8ONxe9A6nMDVXDiNbrSfLILs6vB07F7wLBrwPYzJw==}
     engines: {node: '>=10.13.0'}
@@ -8061,6 +8242,11 @@ packages:
   yaml@1.10.2:
     resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}
     engines: {node: '>= 6'}
+
+  yaml@2.7.1:
+    resolution: {integrity: sha512-10ULxpnOCQXxJvBgxsn9ptjq6uviG/htZKk9veJGhlqn3w/DxQ631zFF+nlQXLwmImeS5amR2dl2U8sg6U9jsQ==}
+    engines: {node: '>= 14'}
+    hasBin: true
 
   yargs-parser@21.1.1:
     resolution: {integrity: sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==}
@@ -8816,6 +9002,10 @@ snapshots:
       regenerator-runtime: 0.14.1
 
   '@babel/runtime@7.26.9':
+    dependencies:
+      regenerator-runtime: 0.14.1
+
+  '@babel/runtime@7.27.0':
     dependencies:
       regenerator-runtime: 0.14.1
 
@@ -10702,6 +10892,14 @@ snapshots:
       postcss: 8.5.3
       tailwindcss: 4.1.0
 
+  '@tanstack/react-table@8.21.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+    dependencies:
+      '@tanstack/table-core': 8.21.3
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+
+  '@tanstack/table-core@8.21.3': {}
+
   '@testing-library/dom@10.4.0':
     dependencies:
       '@babel/code-frame': 7.26.2
@@ -10825,6 +11023,8 @@ snapshots:
       '@types/estree': 1.0.6
 
   '@types/estree@1.0.6': {}
+
+  '@types/file-saver@2.0.7': {}
 
   '@types/glob@7.2.0':
     dependencies:
@@ -12500,6 +12700,8 @@ snapshots:
     dependencies:
       flat-cache: 4.0.1
 
+  file-saver@2.0.5: {}
+
   file-selector@2.1.2:
     dependencies:
       tslib: 2.8.1
@@ -12949,6 +13151,10 @@ snapshots:
       relateurl: 0.2.7
       terser: 5.39.0
 
+  html-parse-stringify@3.0.1:
+    dependencies:
+      void-elements: 3.1.0
+
   html-void-elements@3.0.0: {}
 
   html-webpack-plugin@5.6.3(webpack@5.98.0(esbuild@0.25.0)):
@@ -12987,6 +13193,17 @@ snapshots:
   human-id@4.1.1: {}
 
   human-signals@2.1.0: {}
+
+  i18next-resources-for-ts@1.6.0:
+    dependencies:
+      '@babel/runtime': 7.27.0
+      yaml: 2.7.1
+
+  i18next@25.0.1(typescript@5.8.2):
+    dependencies:
+      '@babel/runtime': 7.27.0
+    optionalDependencies:
+      typescript: 5.8.2
 
   iconv-lite@0.4.24:
     dependencies:
@@ -14440,13 +14657,14 @@ snapshots:
 
   possible-typed-array-names@1.1.0: {}
 
-  postcss-load-config@6.0.1(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3):
+  postcss-load-config@6.0.1(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(yaml@2.7.1):
     dependencies:
       lilconfig: 3.1.3
     optionalDependencies:
       jiti: 2.4.2
       postcss: 8.5.3
       tsx: 4.19.3
+      yaml: 2.7.1
 
   postcss-loader@8.1.1(postcss@8.5.3)(typescript@5.8.2)(webpack@5.98.0(esbuild@0.25.0)):
     dependencies:
@@ -14697,6 +14915,13 @@ snapshots:
     dependencies:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
+
+  react-i18next@15.4.1(i18next@25.0.1(typescript@5.8.2))(react@19.0.0):
+    dependencies:
+      '@babel/runtime': 7.26.9
+      html-parse-stringify: 3.0.1
+      i18next: 25.0.1(typescript@5.8.2)
+      react: 19.0.0
 
   react-infinite-scroll-component@6.1.0(react@19.0.0):
     dependencies:
@@ -15618,7 +15843,7 @@ snapshots:
 
   tslib@2.8.1: {}
 
-  tsup@8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2):
+  tsup@8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1):
     dependencies:
       bundle-require: 5.1.0(esbuild@0.25.0)
       cac: 6.7.14
@@ -15628,7 +15853,7 @@ snapshots:
       esbuild: 0.25.0
       joycon: 3.1.1
       picocolors: 1.1.1
-      postcss-load-config: 6.0.1(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)
+      postcss-load-config: 6.0.1(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(yaml@2.7.1)
       resolve-from: 5.0.0
       rollup: 4.34.9
       source-map: 0.8.0-beta.0
@@ -15907,6 +16132,8 @@ snapshots:
 
   vm-browserify@1.1.2: {}
 
+  void-elements@3.1.0: {}
+
   watchpack@2.4.2:
     dependencies:
       glob-to-regexp: 0.4.1
@@ -16051,6 +16278,8 @@ snapshots:
   yallist@3.1.1: {}
 
   yaml@1.10.2: {}
+
+  yaml@2.7.1: {}
 
   yargs-parser@21.1.1: {}
 

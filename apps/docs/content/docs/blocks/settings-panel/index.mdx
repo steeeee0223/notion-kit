@@ -1,0 +1,147 @@
+---
+title: Settings Panel
+description: A composable, themeable and customizable settings panel.
+---
+
+<ComponentPreview name="settings-panel/notion" hideCode />
+
+## Supported Features
+
+- Theme select
+- Localization support for `EN`, `DE`, `ES`
+- Members & scopes management
+
+## Installation
+
+```package-install
+pnpm add @notion-kit/settings-panel
+```
+
+## Anatomy
+
+```tsx
+<SettingsProvider>
+  <SettingsSidebar>
+    <SettingsSidebarGroup>
+      <SettingsSidebarTitle>{/* Your sidebar title */}</SettingsSidebarTitle>
+      <SettingsTab />
+      <SettingsTab />
+      <SettingsTab />
+    </SettingsSidebarGroup>
+  </SettingsSidebar>
+  <SettingsContent>
+    <SettingsSection>
+      <SettingsRule>{/* Your settings rule 1 */}</SettingsRule>
+      <SettingsRule>{/* Your settings rule 2 */}</SettingsRule>
+      <SettingsRule>{/* Your settings rule 3 */}</SettingsRule>
+    </SettingsSection>
+    <SettingsSection>
+      <SettingsRule>{/* Your settings rule 4 */}</SettingsRule>
+      <SettingsRule>{/* Your settings rule 5 */}</SettingsRule>
+    </SettingsSection>
+  </SettingsContent>
+</SettingsProvider>
+```
+
+## Examples
+
+---
+
+### Notion Settings Panel
+
+<ComponentPreview
+  name="settings-panel/notion"
+  preview={`<SettingsProvider settings={settings}>
+    <SettingsPanel>
+      <SettingsSidebar>
+        <SettingsSidebarPreset tab={tab} onTabChange={setTab} />
+      </SettingsSidebar>
+      <SettingsContent>
+        <SettingsBodyPreset tab={tab} onTabChange={setTab} />
+      </SettingsContent>
+    </SettingsPanel>
+  </SettingsProvider>
+  `}
+/>
+
+## API Reference
+
+### SettingsProvider
+
+A provider that provides settings data and actions within a workspace.
+
+| Prop                  | Type                                                            | Description                                                     |
+| --------------------- | --------------------------------------------------------------- | --------------------------------------------------------------- |
+| `settings`\*          | `SettingsStore`                                                 | Settings data.                                                  |
+| `updateSettings`      | `(data: Partial<SettingsStore>) => Promise<void>`               | Handler that is called when settings data is updated.           |
+| `updateFile`          | `(file: File) => Promise<void>`                                 | Handler that is called when a file is uploaded.                 |
+| `account.delete`      | `(data: { accountId: string, email: string }) => Promise<void>` | Handler that is called when an account is deleted.              |
+| `workspace.delete`    | `(workspaceId: string) => Promise<void>`                        | Handler that is called when a workspace is deleted.             |
+| `workspace.resetLink` | `() => Promise<void>`                                           | Handler that is called when the workspace invite link is reset. |
+| `connections.load`    | `() => Promise<Connection[]>`                                   | Handler that is called when loading user's connection data.     |
+| `connections.add`     | `(strategy: ConnectionStrategy) => Promise<void>`               | Handler that is called when creating a new connection.          |
+| `connections.delete`  | `(connectionId: string) => Promise<void>`                       | Handler that is called when a connection is removed.            |
+| `people.add`          | `(emails: string[], role: Role) => Promise<void>`               | Handler that is called when adding new members to workspace.    |
+| `people.update`       | `(id: string, role: Role) => Promise<void>`                     | Handler that is called when a member's role is updated.         |
+| `people.delete`       | `(id: string) => Promise<void>`                                 | Handler that is called when a member is removed.                |
+
+See schema definitions for:
+
+- [`SettingsStore`](/docs/blocks/settings-panel/objects#settings-store)
+- [`Connection`](/docs/blocks/settings-panel/objects#connection)
+- [`Role`](/docs/objects/workspace#role)
+
+### SettingsPanel
+
+The portal of the entire settings panel.
+A `SettingsPanel` extends the `<div>` element.
+
+### SettingsSidebar
+
+A `SettingsSidebar` extends the `<div>` element.
+
+We offer some components for layout in sidebar:
+
+#### SettingsSidebarGroup
+
+A `SettingsSidebarGroup` extends the `<div>` element.
+
+#### SettingsSidebarTitle
+
+A `SettingsSidebarTitle` extends the `<div>` element.
+
+#### SettingsSidebarTitle
+
+A `SettingsSidebarTitle` extends the `<div>` element.
+
+#### SettingsTab
+
+| Prop         | Type              | Description                                     |
+| ------------ | ----------------- | ----------------------------------------------- |
+| `name`\*     | `string`          | Name of the tab.                                |
+| `Icon`\*     | `React.ReactNode` | Icon of the tab.                                |
+| `isActive`\* | `boolean`         | Whether the tab is active.                      |
+| `onClick`    | `() => void`      | Handler that is called when the tab is clicked. |
+
+### SettingsContent
+
+A `SettingsContent` extends the `<div>` element.
+
+We offer some components for layout in settings content:
+
+#### SettingsSection
+
+| Prop            | Type              | Default | Description                                             |
+| --------------- | ----------------- | ------- | ------------------------------------------------------- |
+| `title`\*       | `string`          | -       | Name of the section.                                    |
+| `children`      | `React.ReactNode` | -       | Section content.                                        |
+| `hideSeparator` | `boolean`         | `false` | Whether the separator below the title should be hidden. |
+
+#### SettingsRule
+
+| Prop            | Type              | Default | Description                    |
+| --------------- | ----------------- | ------- | ------------------------------ |
+| `title`\*       | `string`          | -       | Name of the rule.              |
+| `description`\  | `React.ReactNode` | -       | Description of the rule.       |
+| `children`      | `React.ReactNode` | -       | Section content.               |
+| `plan`          | `string`          | -       | Plan information for the rule. |

@@ -1,7 +1,7 @@
 {
   "name": "@notion-kit/prettier-config",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "exports": {
     ".": "./index.js"
