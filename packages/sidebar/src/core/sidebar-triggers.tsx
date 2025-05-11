@@ -51,7 +51,7 @@ const SidebarRail: React.FC<SidebarRailProps> = ({
       aria-label="Toggle Sidebar"
       tabIndex={-1}
       className={cn(
-        "absolute top-0 right-0 h-full w-0.5 cursor-ew-resize bg-primary/10 opacity-0 transition group-hover:opacity-100",
+        "absolute top-0 right-0 h-full w-0.5 cursor-ew-resize bg-default/10 opacity-0 transition group-hover:opacity-100",
         className,
       )}
       //* For sidebar resizing

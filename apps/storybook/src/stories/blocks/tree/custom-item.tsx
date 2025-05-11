@@ -87,7 +87,7 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
           className={cn(
             buttonVariants({ variant: null }),
             "group/item relative flex h-[27px] w-full justify-normal py-1 pr-3 font-medium text-secondary",
-            active && "bg-primary/10 text-primary dark:text-primary/80",
+            active && "bg-default/10 text-primary",
             className,
           )}
         >

@@ -71,7 +71,7 @@ const TagsInput: React.FC<TagsInputProps> = ({
     <div
       className={cn(
         // caveat: :has() variant requires tailwind v3.4 or above: https://tailwindcss.com/blog/tailwindcss-v3-4#new-has-variant
-        "flex min-h-10 w-full flex-wrap gap-2 rounded-sm border border-border bg-primary/5 px-3 py-2 text-sm",
+        "flex min-h-10 w-full flex-wrap gap-2 rounded-sm border border-border bg-default/5 px-3 py-2 text-sm",
         "placeholder:text-muted disabled:cursor-not-allowed disabled:opacity-50",
         "has-[:focus-visible]:outline-none",
         className,

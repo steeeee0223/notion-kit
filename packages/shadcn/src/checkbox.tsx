@@ -19,7 +19,7 @@ const sizeVariants = cva("", {
 });
 
 const checkboxVariants = cva(
-  "peer shrink-0 border border-border-button shadow-xs hover:bg-primary/5 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-none data-[state=checked]:bg-blue data-[state=checked]:text-white",
+  "peer shrink-0 border border-border-button shadow-xs hover:bg-default/5 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-none data-[state=checked]:bg-blue data-[state=checked]:text-white",
 );
 
 export interface CheckboxProps

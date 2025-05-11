@@ -7,7 +7,7 @@ export default [
   {
     files: ["**/*.ts", "**/*.tsx"],
     settings: {
-      react: { version: "^19.0.0" },
+      react: { version: "^19.1.0" },
     },
     plugins: {
       react: reactPlugin,

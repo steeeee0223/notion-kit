@@ -1,12 +1,12 @@
 {
   "name": "@notion-kit/docs",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "scripts": {
     "build": "next build",
     "build:demos": "tsx ./scripts/build-internal-registry.ts && pnpm format -w",
     "build:registry": "tsx ./scripts/build-registry.ts && pnpm format -w",
-    "clean": "git clean -xdf .next .turbo node_modules",
+    "clean": "git clean -xdf .cache .next .turbo node_modules",
     "dev": "next dev --turbopack",
     "format": "prettier --check . \"!**/*.{md,mdx}\" --ignore-path ../../.gitignore",
     "lint": "eslint",

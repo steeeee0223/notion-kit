@@ -44,7 +44,7 @@ function TreeItem<T extends TreeItemData>({
       className={cn(
         buttonVariants({ variant: null }),
         "relative flex h-[30px] w-full justify-normal py-1 pr-3 font-medium text-secondary",
-        isSelected && "bg-primary/10 text-primary dark:text-primary/80",
+        isSelected && "bg-default/10 text-primary",
         className,
       )}
     >

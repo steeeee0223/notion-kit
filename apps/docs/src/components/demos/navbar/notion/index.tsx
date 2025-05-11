@@ -35,7 +35,7 @@ export default function Notion() {
           />
           <History pageId={page.id} />
           <NavbarItem hint="View all comments">
-            <Icon.CommentFilled className="size-5 fill-[#32302c] dark:fill-primary/80" />
+            <Icon.CommentFilled className="size-5 fill-[#32302c] dark:fill-primary" />
           </NavbarItem>
           <NavbarItem
             hint={`${page.isFavorite ? "Remove from" : "Add to"} your favorites`}
@@ -46,7 +46,7 @@ export default function Notion() {
             {page.isFavorite ? (
               <Icon.StarFill className="size-5 fill-[#f6c050]" />
             ) : (
-              <Icon.Star className="size-5 fill-[#32302c] dark:fill-primary/80" />
+              <Icon.Star className="size-5 fill-[#32302c] dark:fill-primary" />
             )}
           </NavbarItem>
           <Menu page={page} />

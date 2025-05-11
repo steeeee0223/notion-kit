@@ -29,7 +29,7 @@ export const EmojiButton: React.FC<EmojiButtonProps> = memo(
         tabIndex={-1}
       >
         <span
-          className="relative text-primary dark:text-primary/80"
+          className="relative text-primary"
           style={{
             fontFamily:
               '"Apple Color Emoji", "Segoe UI Emoji", NotoColorEmoji, "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", EmojiSymbols',

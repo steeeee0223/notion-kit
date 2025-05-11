@@ -26,13 +26,11 @@ export class IconLibrary<Data extends IconData, Cat extends string = string>
     localStorage: IFrequentIconStorage,
     library: IconLibraryData<Data>,
   ) {
-    if (!IconLibrary.instance) {
-      IconLibrary.instance = new IconLibrary<Data, Cat>(
-        settings,
-        localStorage,
-        library,
-      ) as unknown as IconLibrary<Data>;
-    }
+    IconLibrary.instance ??= new IconLibrary<Data, Cat>(
+      settings,
+      localStorage,
+      library,
+    ) as unknown as IconLibrary<Data>;
 
     return IconLibrary.instance as unknown as IconLibrary<Data, Cat>;
   }

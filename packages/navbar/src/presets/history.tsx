@@ -77,7 +77,7 @@ export const History: React.FC<HistoryProps> = ({ pageId, fetchLogs }) => {
               ) : (
                 <div className="flex flex-col gap-y-0 overflow-x-auto">
                   {logs.map((log) => (
-                    <div key={log.id} className="p-4 hover:bg-primary/5">
+                    <div key={log.id} className="p-4 hover:bg-default/5">
                       {log.msg}
                     </div>
                   ))}

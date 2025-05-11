@@ -37,7 +37,7 @@ export const PlansTable: React.FC<PlansTableProps> = ({ canUpgrade }) => {
       <Button
         variant="hint"
         size="sm"
-        className="h-7 font-semibold text-primary dark:text-primary/80"
+        className="h-7 font-semibold text-primary"
         onClick={() => setToggle((prev) => !prev)}
       >
         {toggle ? "Compare all features" : "Collapse"}

@@ -51,7 +51,7 @@ export const RenamePopover: React.FC<RenamePopoverProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <IconMenu
-          className="size-7 shrink-0 border border-border-button hover:bg-primary/5"
+          className="size-7 shrink-0 border border-border-button hover:bg-default/5"
           onSelect={(icon) => onChange({ title, icon })}
           onRemove={() =>
             onChange({ title, icon: { type: "lucide", src: "file" } })

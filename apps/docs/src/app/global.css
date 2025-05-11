@@ -4,6 +4,6 @@
 
 @import "@notion-kit/tailwind-config/base.css";
 
-@source '../../../../node_modules/fumadocs-ui/dist/**/*.js';
+@source "../../../../node_modules/fumadocs-ui/dist/**/*.js";
 
-@config '../../tailwind.config.ts';
+@source "../../../../packages/**/src/**/*.{ts,tsx}";

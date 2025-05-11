@@ -75,12 +75,7 @@ const Icon: React.FC<Omit<IconBlockProps, "size">> = ({
     default: {
       if (icon.type === "emoji" && isEmoji(icon.src)) {
         return (
-          <div
-            className={cn(
-              "text-center text-primary dark:text-primary/80",
-              className,
-            )}
-          >
+          <div className={cn("text-center text-primary", className)}>
             {icon.src}
           </div>
         );
@@ -98,7 +93,7 @@ interface LetterProps {
 }
 
 const Letter: React.FC<LetterProps> = ({ className, letter }) => (
-  <div className={cn("bg-primary/10 text-center text-secondary", className)}>
+  <div className={cn("bg-default/10 text-center text-secondary", className)}>
     {letter}
   </div>
 );

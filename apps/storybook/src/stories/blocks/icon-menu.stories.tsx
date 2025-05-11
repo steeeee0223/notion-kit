@@ -7,7 +7,6 @@ import { IconMenu } from "@notion-kit/icon-menu";
 const meta = {
   title: "blocks/Icon Menu",
   component: IconMenu,
-  tags: ["autodocs"],
 } satisfies Meta<typeof IconMenu>;
 export default meta;
 

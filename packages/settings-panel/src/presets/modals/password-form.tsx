@@ -79,7 +79,7 @@ export const PasswordForm = ({ hasPassword, onSubmit }: PasswordFormProps) => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(submit)} className="relative">
             <div className="my-4 flex justify-center">
-              <Icon.Password className="size-[27px] flex-shrink-0 fill-primary/85" />
+              <Icon.Password className="size-[27px] flex-shrink-0 fill-icon" />
             </div>
             <h2 className="mb-1 px-2.5 text-center text-sm/tight font-medium">
               {hasPassword ? "Change password" : "Set a password"}

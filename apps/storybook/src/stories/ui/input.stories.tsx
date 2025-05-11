@@ -7,7 +7,6 @@ const meta = {
   title: "Shadcn/Input",
   component: Input,
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
 } satisfies Meta<typeof Input>;
 export default meta;
 

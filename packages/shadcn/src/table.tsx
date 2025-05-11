@@ -6,7 +6,7 @@ const Table = ({ className, ...props }: React.ComponentProps<"table">) => (
   <div className="relative w-full overflow-auto">
     <table
       className={cn(
-        "w-full border-y border-y-primary/10 text-[13px]",
+        "w-full border-y border-y-default/10 text-[13px]",
         className,
       )}
       {...props}
@@ -36,7 +36,7 @@ const TableFooter = ({
 );
 
 const TableRow = ({ className, ...props }: React.ComponentProps<"tr">) => (
-  <tr className={cn("border-t border-t-primary/10", className)} {...props} />
+  <tr className={cn("border-t border-t-default/10", className)} {...props} />
 );
 
 const TableHead = ({ className, ...props }: React.ComponentProps<"th">) => (

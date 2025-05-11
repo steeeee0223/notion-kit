@@ -13,7 +13,7 @@ type CommandProps = React.ComponentProps<typeof CommandPrimitive>;
 const Command = ({ className, ...props }: CommandProps) => (
   <CommandPrimitive
     className={cn(
-      "text-popover-foreground flex h-full w-full flex-col overflow-hidden rounded-md bg-modal",
+      "flex h-full w-full flex-col overflow-hidden rounded-md bg-modal text-primary",
       className,
     )}
     {...props}
@@ -122,7 +122,7 @@ const CommandItem = ({ className, disabled, ...props }: CommandItemProps) => (
   <CommandPrimitive.Item
     className={cn(
       menuItemVariants({ disabled }),
-      "aria-selected:bg-primary/5 aria-selected:text-primary dark:aria-selected:text-primary/80",
+      "aria-selected:bg-default/5 aria-selected:text-primary",
       "data-[disabled=true]:text-muted",
       className,
     )}

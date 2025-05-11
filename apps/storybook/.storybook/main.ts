@@ -7,15 +7,10 @@ const config: StorybookConfig = {
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
-    "@storybook/addon-themes",
-    "@storybook/theming",
   ],
   framework: {
     name: "@storybook/nextjs",
     options: {},
-  },
-  docs: {
-    autodocs: "tag",
   },
 };
 export default config;

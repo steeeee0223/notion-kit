@@ -5,9 +5,7 @@ import storybookConfig from "@notion-kit/eslint-config/storybook";
 
 /** @type {import('typescript-eslint').Config} */
 export default [
-  {
-    ignores: [".next/**", "next-env.d.ts", "public/**", "storybook-static/**"],
-  },
+  { ignores: ["public/**"] },
   ...baseConfig,
   ...reactConfig,
   ...nextjsConfig,

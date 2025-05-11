@@ -6,7 +6,6 @@ import { Cover } from "@notion-kit/cover";
 const meta = {
   title: "blocks/Cover",
   component: Cover,
-  tags: ["autodocs"],
 } satisfies Meta<typeof Cover>;
 export default meta;
 

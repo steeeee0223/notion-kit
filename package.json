@@ -9,7 +9,7 @@
   "scripts": {
     "build": "turbo run build",
     "build:packages": "turbo run build lint --filter=./packages/*",
-    "clean": "git clean -xdf node_modules",
+    "clean": "git clean -xdf .turbo node_modules",
     "clean:workspaces": "turbo run clean",
     "dev": "turbo watch dev --continue",
     "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",

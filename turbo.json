@@ -7,7 +7,7 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".cache/tsbuildinfo.json", "dist/**", "storybook-static/**"]
+      "outputs": [".next/**", "dist/**", "storybook-static/**"]
     },
     "dev": {
       "dependsOn": ["^dev"],

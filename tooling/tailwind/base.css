@@ -1,96 +1,100 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@config './web.ts';
+@custom-variant dark (&:is(.dark *));
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+@custom-variant radix-popper-wrapper (& [data-radix-popper-content-wrapper]);
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
-  }
+@theme inline {
+  /* General color */
+  --color-blue: var(--blue);
+  --color-blue-hover: var(--blue-hover);
+  --color-red: var(--red);
+  --color-orange: var(--orange);
+  /* Text color */
+  --color-default: var(--default);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-muted: var(--muted);
+  --color-icon: var(--icon);
+  --color-tooltip-primary: var(--tooltip-primary);
+  --color-tooltip-secondary: var(--tooltip-secondary);
+  --color-sidebar-primary: var(--sidebar-primary);
+  /* Background color */
+  --color-main: var(--bg-main);
+  --color-sidebar: var(--bg-sidebar);
+  --color-modal: var(--bg-modal);
+  --color-popover: var(--bg-popover);
+  --color-tooltip: var(--bg-tooltip);
+  --color-input: var(--bg-input);
+  /* Border color */
+  --color-border: var(--border);
+  --color-border-button: var(--border-button);
+  --color-border-cell: var(--border-cell);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  /* Animate */
+  --animate-bg-in: background 20ms ease-in;
+  --animate-bg-out: background 200ms ease-out;
+  /* Unused */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
 
-@layer base {
-  :root {
-    /* text color */
-    --primary: 55 53 47;
-    --secondary: 55, 53, 47, 0.65;
-    --muted: 55, 53, 47, 0.5;
-    --icon: 55, 53, 47, 0.85;
-    --tooltip-primary: 255, 255, 255, 0.9;
-    --tooltip-secondary: 206, 205, 202, 0.6;
-    --sidebar-primary: 95 94 91;
-    /* background color */
-    --bg-main: 255 255 255;
-    --bg-input: 242 241 238;
-    --bg-sidebar: 247 247 245;
-    --bg-modal: 255 255 255;
-    --bg-popover: 255 255 255;
-    --bg-tooltip: 15 15 15;
-    /* border color */
-    --border-cell: 233 233 231;
-    --ring: 15, 15, 15, 0.1;
+:root {
+  --base: 55 53 47;
+  --blue: rgb(35, 131, 226);
+  --blue-hover: rgb(0, 119, 212);
+  --red: rgb(235, 87, 87);
+  --orange: rgb(218, 163, 64);
+  /* Text color */
+  --default: rgb(var(--base));
+  --primary: rgb(var(--base));
+  --secondary: rgba(var(--base) / 0.65);
+  --muted: rgba(var(--base) / 0.5);
+  --icon: rgba(var(--base) / 0.85);
+  --tooltip-primary: rgba(255, 255, 255, 0.9);
+  --tooltip-secondary: rgba(206, 205, 202, 0.6);
+  --sidebar-primary: rgb(95, 94, 91);
+  /* Background color */
+  --bg-main: rgb(255, 255, 255);
+  --bg-sidebar: rgb(247, 247, 245);
+  --bg-modal: rgb(255, 255, 255);
+  --bg-popover: rgb(255, 255, 255);
+  --bg-tooltip: rgb(15, 15, 15);
+  --bg-input: rgb(242, 241, 238);
+  /* Border color */
+  --border: rgba(var(--base) / 0.1);
+  --border-button: rgba(var(--base) / 0.15);
+  --border-cell: rgb(233, 233, 231);
+  --ring: rgba(15, 15, 15, 0.1);
+  --radius: 0.5rem;
+}
 
-    /* Geneated by Shadcn */
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    /* text color */
-    --primary: 255 255 255;
-    --secondary: 255, 255, 255, 0.45;
-    --muted: 255, 255, 255, 0.3;
-    --icon: 255, 255, 255, 0.8;
-    --tooltip-primary: 211, 211, 211, 1;
-    --tooltip-secondary: 127, 127, 127, 1;
-    --sidebar-primary: 155 155 155;
-    /* background color */
-    --bg-main: 25 25 25;
-    --bg-input: 255 255 255;
-    --bg-sidebar: 32 32 32;
-    --bg-modal: 32 32 32;
-    --bg-popover: 37 37 37;
-    --bg-tooltip: 47 47 47;
-    /* border color */
-    --border-cell: 47 47 47;
-    --ring: 255, 255, 255, 0.075;
-
-    /* Geneated by Shadcn */
-    --background: 0 0% 12.5%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-  }
+.dark {
+  --base: 255 255 255;
+  /* Text color */
+  --default: rgb(var(--base));
+  --primary: rgba(var(--base) / 0.8);
+  --secondary: rgba(var(--base) / 0.45);
+  --muted: rgba(var(--base) / 0.3);
+  --icon: rgba(var(--base) / 0.8);
+  --tooltip-primary: rgba(211, 211, 211, 1);
+  --tooltip-secondary: rgba(127, 127, 127, 1);
+  --sidebar-primary: rgb(155, 155, 155);
+  /* Background color */
+  --bg-main: rgb(25, 25, 25);
+  --bg-sidebar: rgb(32, 32, 32);
+  --bg-modal: rgb(32, 32, 32);
+  --bg-popover: rgb(37, 37, 37);
+  --bg-tooltip: rgb(47, 47, 47);
+  --bg-input: rgb(255, 255, 255);
+  /* Border color */
+  --border-cell: rgb(233 233 231);
+  --ring: rgba(255, 255, 255, 0.075);
 }
 
 @layer base {
@@ -98,6 +102,27 @@
     @apply border-border;
   }
   body {
-    @apply bg-main text-primary dark:text-primary/80;
+    @apply bg-main text-primary;
+  }
+}
+
+@utility notion-focus-within {
+  box-shadow:
+    inset 0 0 0 1px #2383e291,
+    0 0 0 2px #2383e259 !important;
+}
+
+@utility notion-scrollbar {
+  &::-webkit-scrollbar {
+    @apply w-2.5;
+  }
+  &::-webkit-scrollbar-button {
+    @apply hidden;
+  }
+  &::-webkit-scrollbar-thumb {
+    @apply min-h-11 rounded-full border-solid border-popover bg-muted bg-clip-padding;
+    @variant dark {
+      @apply bg-main;
+    }
   }
 }

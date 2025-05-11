@@ -137,7 +137,7 @@ export const AddMembers: React.FC<AddMembersProps> = ({
       </div>
       <CommandList className="max-h-[300px] min-h-0 flex-grow transform overflow-auto overflow-x-hidden">
         <CommandGroup className="min-h-[200px]">
-          <div className="my-1.5 flex fill-current px-2 text-xs leading-5 font-medium text-primary/45 select-none">
+          <div className="my-1.5 flex fill-current px-2 text-xs leading-5 font-medium text-default/45 select-none">
             <div className="self-center overflow-hidden overflow-ellipsis whitespace-nowrap">
               {heading}
             </div>

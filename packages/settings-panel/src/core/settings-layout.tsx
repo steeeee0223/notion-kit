@@ -21,7 +21,7 @@ const SettingsSidebar = ({
 }: React.ComponentProps<"div">) => (
   <div
     className={cn(
-      "w-[240px] shrink-0 grow-0 overflow-y-auto rounded-l-lg bg-[#fbfbfa] py-1 dark:bg-primary/5",
+      "w-[240px] shrink-0 grow-0 overflow-y-auto rounded-l-lg bg-[#fbfbfa] py-1 dark:bg-default/5",
       className,
     )}
     {...props}

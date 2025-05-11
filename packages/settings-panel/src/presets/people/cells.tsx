@@ -55,9 +55,9 @@ export const SortingToggle = ({
     <Header title={title} className="text-sm" />
     {isSorted &&
       (isSorted === "asc" ? (
-        <Icon.ArrowUp className="ml-1 size-3 flex-shrink-0 fill-primary/65" />
+        <Icon.ArrowUp className="ml-1 size-3 flex-shrink-0 fill-secondary" />
       ) : (
-        <Icon.ArrowDown className="ml-1 size-3 flex-shrink-0 fill-primary/65" />
+        <Icon.ArrowDown className="ml-1 size-3 flex-shrink-0 fill-secondary" />
       ))}
   </Button>
 );
@@ -77,9 +77,7 @@ export const UserCell = ({ user }: UserCellProps) => {
           />
         </div>
         <div className="max-w-[164px]">
-          <div className="truncate text-sm text-primary dark:text-primary/80">
-            {user.name}
-          </div>
+          <div className="truncate text-sm text-primary">{user.name}</div>
           <div className="truncate text-xs text-secondary">{user.email}</div>
         </div>
       </div>

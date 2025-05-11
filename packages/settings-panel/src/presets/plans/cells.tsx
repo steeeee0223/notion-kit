@@ -69,7 +69,7 @@ export const ContentCell = (props: ContentCellProps) => {
       )}
       {props.type === "check" &&
         (props.checked ? (
-          <Icon.Check className="size-[14px] flex-shrink-0 fill-primary/85" />
+          <Icon.Check className="size-[14px] flex-shrink-0 fill-icon" />
         ) : (
           <div className="text-muted">&ndash;</div>
         ))}
