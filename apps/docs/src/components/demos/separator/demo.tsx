@@ -5,7 +5,7 @@ export default function Demo() {
     <div>
       <div className="space-y-1">
         <h4 className="text-sm leading-none font-medium">Radix Primitives</h4>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted">
           An open-source UI component library.
         </p>
       </div>

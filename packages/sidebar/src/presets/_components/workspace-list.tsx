@@ -165,7 +165,7 @@ const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
                 variant="hint"
                 className="relative hidden size-5 shrink-0 cursor-grab p-0.5 group-hover:flex"
               >
-                <Icon.DragHandle className="size-3 fill-primary/45" />
+                <Icon.DragHandle className="size-3 fill-default/45" />
               </Button>
               <IconBlock
                 className="group-hover:hidden"

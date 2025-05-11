@@ -92,11 +92,11 @@ export const Account = () => {
                 <div>
                   <Avatar
                     ref={avatarRef}
-                    className="size-[60px] border border-primary/20 select-none"
+                    className="size-[60px] border border-default/20 select-none"
                     onClick={updateAvatar}
                   >
                     <AvatarImage src={account.avatarUrl} />
-                    <AvatarFallback className="bg-primary/5 text-2xl">
+                    <AvatarFallback className="bg-default/5 text-2xl">
                       {account.name[0]}
                     </AvatarFallback>
                   </Avatar>
@@ -176,7 +176,7 @@ export const Account = () => {
         </SettingsRule>
         <SettingsRule {...supportTexts.delete} titleProps="text-[#eb5757]">
           <Button variant="hint" className="size-5" onClick={deleteAccount}>
-            <ChevronRight className="size-4 text-primary/35" />
+            <ChevronRight className="size-4 text-default/35" />
           </Button>
         </SettingsRule>
       </SettingsSection>

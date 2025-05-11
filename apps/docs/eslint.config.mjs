@@ -4,9 +4,7 @@ import reactConfig from "@notion-kit/eslint-config/react";
 
 /** @type {import('typescript-eslint').Config} */
 export default [
-  {
-    ignores: [".next/**", "next-env.d.ts", "public/**"],
-  },
+  { ignores: ["public/**"] },
   ...baseConfig,
   ...reactConfig,
   ...nextjsConfig,

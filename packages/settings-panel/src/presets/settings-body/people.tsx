@@ -213,7 +213,7 @@ export const People = () => {
               workspace.plan === Plan.EDUCATION) && (
               <>
                 <section className="max-w-[300px] text-sm">
-                  <Icon.Group className="mb-2 h-auto w-8 flex-shrink-0 fill-primary/45" />
+                  <Icon.Group className="mb-2 h-auto w-8 flex-shrink-0 fill-default/45" />
                   <header className="font-semibold">{upgrade.title}</header>
                   <p className="mt-1 mb-4 text-secondary">
                     {upgrade.description}

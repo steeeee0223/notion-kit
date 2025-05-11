@@ -113,7 +113,7 @@ export const EmojiPickerContent: React.FC<EmojiPickerContentProps> = ({
     <HintProvider delayDuration={500}>
       <div
         ref={refs.current.contentRoot}
-        className="-mr-3 notion-scrollbar h-[214px] overflow-x-hidden overflow-y-auto dark:notion-scrollbar-dark"
+        className="-mr-3 notion-scrollbar h-[214px] overflow-x-hidden overflow-y-auto"
         data-id="scroll"
       >
         <div ref={refs.current.content} className="h-full">

@@ -41,15 +41,7 @@ export default tseslint.config(
   // Ignore files not tracked by VCS and any config files
   includeIgnoreFile(path.join(import.meta.dirname, "../../.gitignore")),
   {
-    ignores: [
-      "**/*.config.*",
-      ".next",
-      "dist",
-      "coverage",
-      ".storybook",
-      "storybook-static",
-      "pnpm-lock.yaml",
-    ],
+    ignores: ["**/*.config.*"],
   },
   {
     files: ["**/*.js", "**/*.ts", "**/*.tsx"],

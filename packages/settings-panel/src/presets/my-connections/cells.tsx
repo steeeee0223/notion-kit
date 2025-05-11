@@ -32,9 +32,7 @@ export const ConnectionCell = ({ type, account }: ConnectionCellProps) => {
         className="block size-7 shrink-0"
       />
       <div className="ml-[15px]">
-        <div className="truncate text-sm text-primary dark:text-primary/80">
-          {connection.title}
-        </div>
+        <div className="truncate text-sm text-primary">{connection.title}</div>
         <div className="truncate text-xs text-secondary">{account}</div>
       </div>
     </div>

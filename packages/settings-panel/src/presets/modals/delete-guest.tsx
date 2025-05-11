@@ -39,7 +39,7 @@ export const DeleteGuest = ({ name, onDelete }: DeleteGuestProps) => {
       >
         <DialogHeader>
           <div className="flex items-center justify-center">
-            <Icon.UserX className="size-9 flex-shrink-0 fill-primary/45 p-1" />
+            <Icon.UserX className="size-9 flex-shrink-0 fill-default/45 p-1" />
           </div>
           <DialogTitle className="text-lg/[22px]">
             Remove {name} from the workspace?

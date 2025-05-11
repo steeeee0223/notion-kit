@@ -33,10 +33,7 @@ export const SkinPicker: React.FC<SkinPickerProps> = ({
       <Popover open={open} onOpenChange={setOpen}>
         <Hint description="Select skin tone">
           <PopoverTrigger asChild>
-            <Button
-              variant="hint"
-              className="size-7 text-xl/6 text-primary dark:text-primary/80"
-            >
+            <Button variant="hint" className="size-7 text-xl/6 text-primary">
               {palette[value].emoji}
             </Button>
           </PopoverTrigger>
@@ -46,7 +43,7 @@ export const SkinPicker: React.FC<SkinPickerProps> = ({
             <Hint key={id} sideOffset={8} description={name}>
               <Button
                 variant="hint"
-                className="size-8 p-0 text-2xl text-primary dark:text-primary/80"
+                className="size-8 p-0 text-2xl text-primary"
                 onClick={() => selectSkin(id as Skin)}
               >
                 {emoji}

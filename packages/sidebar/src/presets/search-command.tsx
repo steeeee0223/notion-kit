@@ -105,7 +105,7 @@ export const SearchCommand: React.FC<SearchCommandProps> = ({
                     {toDateString(page.lastEditedAt)}
                   </span>
                   <span className="hidden size-3 group-aria-selected:block">
-                    <Icon.Enter className="shrink-0 fill-primary/45" />
+                    <Icon.Enter className="shrink-0 fill-default/45" />
                   </span>
                 </div>
               </CommandItem>
@@ -140,11 +140,11 @@ export const SearchCommand: React.FC<SearchCommandProps> = ({
         <div className="mx-3 min-w-0 flex-auto">
           <ul className="m-0 inline-flex list-none items-center gap-5 truncate p-0">
             <li className="flex h-max items-center gap-1.5">
-              <ArrowUpDown className="inline size-3 flex-shrink-0 text-primary/45" />
+              <ArrowUpDown className="inline size-3 flex-shrink-0 text-default/45" />
               Select
             </li>
             <li className="flex h-max items-center gap-1.5">
-              <Icon.Enter className="inline size-3 flex-shrink-0 fill-primary/45" />
+              <Icon.Enter className="inline size-3 flex-shrink-0 fill-default/45" />
               Open
             </li>
           </ul>

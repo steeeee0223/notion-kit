@@ -5,7 +5,6 @@ import { IconBlock } from "@notion-kit/icon-block";
 const meta = {
   title: "blocks/Icon Block",
   component: IconBlock,
-  tags: ["autodocs"],
 } satisfies Meta<typeof IconBlock>;
 export default meta;
 

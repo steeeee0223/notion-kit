@@ -61,7 +61,7 @@ const DialogContent = ({
       )}
       {children}
       {!hideClose && (
-        <DialogPrimitive.Close className="absolute top-4 right-4 rounded-full bg-primary/5 p-0.5 text-primary/45 transition-opacity hover:bg-primary/10 focus:outline-hidden focus-visible:outline-hidden disabled:pointer-events-none data-[state=open]:bg-primary">
+        <DialogPrimitive.Close className="absolute top-4 right-4 rounded-full bg-default/5 p-0.5 text-default/45 transition-opacity hover:bg-default/10 focus:outline-hidden focus-visible:outline-hidden disabled:pointer-events-none data-[state=open]:bg-primary">
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>
         </DialogPrimitive.Close>
@@ -102,7 +102,7 @@ const DialogTitle = ({
 }: React.ComponentProps<typeof DialogPrimitive.Title>) => (
   <DialogPrimitive.Title
     className={cn(
-      "text-center text-lg leading-none font-semibold tracking-tight break-words text-primary dark:text-primary/80",
+      "text-center text-lg leading-none font-semibold tracking-tight break-words text-primary",
       className,
     )}
     style={{ marginTop: 0 }}

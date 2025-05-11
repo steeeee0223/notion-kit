@@ -1,10 +1,11 @@
-import React from "react";
-import { withThemeByClassName } from "@storybook/addon-themes";
-import type { Preview, ReactRenderer } from "@storybook/react";
+import type { Preview } from "@storybook/react";
 import { initialize, mswLoader } from "msw-storybook-addon";
-import { Toaster } from "sonner";
 
-import "../src/app/globals.css";
+import "@/app/globals.css";
+
+import { locales } from "@notion-kit/i18n";
+
+import { withI18next, withTheme, withToast } from "./decorators";
 
 // Initialize MSW
 initialize({ onUnhandledRequest: "bypass" });
@@ -18,26 +19,35 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
-    docs: { toc: true },
+    backgrounds: { disable: true },
   },
   loaders: [mswLoader],
-  decorators: [
-    (Story) => (
-      <>
-        <Toaster />
-        <Story />
-      </>
-    ),
-    // this should be placed at the end, otherwise
-    // CANNOT RENDER HOOKS in STORIES
-    withThemeByClassName<ReactRenderer>({
-      themes: {
-        light: "light",
-        dark: "dark",
+  decorators: [withTheme, withI18next, withToast],
+  globalTypes: {
+    // Reference https://storybook.js.org/docs/essentials/toolbars-and-globals
+    theme: {
+      description: "Global theme for components",
+      toolbar: {
+        title: "Theme",
+        icon: "paintbrush",
+        items: ["light", "dark"],
+        dynamicTitle: true,
       },
-      defaultTheme: "light",
-    }),
-  ],
+    },
+    locale: {
+      description: "Internationalization locale",
+      toolbar: {
+        title: "Locale",
+        icon: "globe",
+        items: locales,
+        dynamicTitle: true,
+      },
+    },
+    initialGlobals: {
+      theme: "light",
+      locale: "en",
+    },
+  },
 };
 
 export default preview;

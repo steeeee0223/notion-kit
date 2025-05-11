@@ -113,7 +113,7 @@ export const TextLinks = ({
 
 export const NotImplemented = () => {
   return (
-    <div className="inline-flex w-full items-center rounded-sm bg-primary/5 p-4 text-sm font-medium">
+    <div className="inline-flex w-full items-center rounded-sm bg-default/5 p-4 text-sm font-medium">
       <Construction color="#b9aa4b" className="mr-2 size-5" />
       Under construction
     </div>

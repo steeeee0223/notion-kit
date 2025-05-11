@@ -46,7 +46,7 @@ const ActivePlan: React.FC<ActivePlanProps> = ({ activePlan, canUpgrade }) => {
             {active.plan[activePlan].title}{" "}
             {activePlan === Plan.EDUCATION && <Icon.Help />}
           </CardTitle>
-          <CardDescription className="text-sm text-primary dark:text-primary/80">
+          <CardDescription className="text-sm text-primary">
             {active.plan[activePlan].description}
           </CardDescription>
           <div className="text-xs text-[#787774]">

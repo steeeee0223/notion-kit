@@ -2,4 +2,4 @@
 
 @import "@notion-kit/tailwind-config/base.css";
 
-@config "../../tailwind.config.ts";
+@source "../../../../packages/**/src/**/*.{ts,tsx}";

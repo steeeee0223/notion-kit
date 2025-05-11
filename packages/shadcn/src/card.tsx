@@ -8,7 +8,7 @@ import { contentVariants, ContentVariants } from "./variants";
 const cardVariants = cva("rounded-lg shadow-xs", {
   variants: {
     asButton: {
-      true: "cursor-pointer select-none hover:bg-primary/5",
+      true: "cursor-pointer select-none hover:bg-default/5",
     },
   },
   defaultVariants: { asButton: false },

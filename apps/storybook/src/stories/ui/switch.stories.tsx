@@ -6,7 +6,6 @@ const meta = {
   title: "Shadcn/Switch",
   component: Switch,
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
 } satisfies Meta<typeof Switch>;
 
 export default meta;

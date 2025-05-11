@@ -73,7 +73,7 @@ export const LucidePicker: React.FC<LucidePickerProps> = memo(
                 hasMore={false}
                 height={240}
                 loader={null}
-                className="-mr-3 notion-scrollbar dark:notion-scrollbar-dark"
+                className="-mr-3 notion-scrollbar"
               >
                 {search === "" && recentIcons.length > 0 && (
                   <>

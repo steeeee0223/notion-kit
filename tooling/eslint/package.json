@@ -1,7 +1,7 @@
 {
   "name": "@notion-kit/eslint-config",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "module",
   "exports": {
     "./base": "./base.js",
@@ -15,20 +15,19 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@eslint/compat": "^1.2.7",
-    "@next/eslint-plugin-next": "^15.2.0",
+    "@eslint/compat": "^1.2.9",
+    "@next/eslint-plugin-next": "catalog:next15",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
-    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-storybook": "^0.11.3",
-    "eslint-plugin-turbo": "^2.3.4",
-    "typescript-eslint": "^8.27.0"
+    "eslint-plugin-storybook": "^0.12.0",
+    "eslint-plugin-turbo": "catalog:turbo",
+    "typescript-eslint": "^8.32.0"
   },
   "devDependencies": {
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
-    "@types/eslint__js": "8.42.3",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"

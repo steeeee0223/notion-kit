@@ -17,7 +17,7 @@ export const PasswordSuccess = () => {
         noTitle
       >
         <div className="my-4 flex justify-center">
-          <Icon.Check className="size-[27px] flex-shrink-0 fill-primary/85" />
+          <Icon.Check className="size-[27px] flex-shrink-0 fill-icon" />
         </div>
         <h2 className="mb-1 px-2.5 text-center text-sm/tight font-medium">
           Your password has been saved

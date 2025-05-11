@@ -20,12 +20,10 @@ export class IconIndexSearch<Data extends IconData, Category extends string>
     library: IIconLibrary<Data, Category>,
     maxResult: number,
   ) {
-    if (!IconIndexSearch.instance) {
-      IconIndexSearch.instance = new IconIndexSearch(
-        library,
-        maxResult,
-      ) as unknown as IconIndexSearch<Data, string>;
-    }
+    IconIndexSearch.instance ??= new IconIndexSearch(
+      library,
+      maxResult,
+    ) as unknown as IconIndexSearch<Data, string>;
 
     return IconIndexSearch.instance as unknown as IconIndexSearch<
       Data,
@@ -45,9 +43,7 @@ export class IconIndexSearch<Data extends IconData, Category extends string>
       const iconId = this.library.getIconId(key);
       this.result.push(iconId);
 
-      if (!this.scores[iconId]) {
-        this.scores[iconId] = 0;
-      }
+      this.scores[iconId] ??= 0;
       this.scores[iconId] += iconId === value ? 0 : score + 1;
     }
   }

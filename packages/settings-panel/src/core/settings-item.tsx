@@ -20,9 +20,9 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
       tabIndex={-1}
       role="tab"
       className={cn(
-        "px-3 hover:bg-primary/10",
+        "px-3 hover:bg-default/10",
         "[&_svg]:block [&_svg]:size-5 [&_svg]:shrink-0 [&_svg]:fill-icon",
-        isActive && "bg-primary/10 font-semibold",
+        isActive && "bg-default/10 font-semibold",
         className,
       )}
       Body={name}

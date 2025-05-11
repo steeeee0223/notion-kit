@@ -52,11 +52,11 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
         >
           <div className="flex max-w-[150px] items-center gap-x-2">
             <IconBlock size="sm" icon={icon} />
-            <span className="overflow-hidden text-start font-medium text-ellipsis text-primary dark:text-primary/80">
+            <span className="overflow-hidden text-start font-medium text-ellipsis text-primary">
               {activeWorkspace.name}
             </span>
           </div>
-          <ChevronsUpDown className="ml-2 size-4 text-primary/45" />
+          <ChevronsUpDown className="ml-2 size-4 text-default/45" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -71,7 +71,7 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
               <IconBlock size="md" icon={icon} />
             </div>
             <div className="flex flex-col truncate">
-              <div className="truncate text-sm font-medium text-primary dark:text-primary/80">
+              <div className="truncate text-sm font-medium text-primary">
                 {activeWorkspace.name}
               </div>
               <div className="truncate text-xs text-secondary">
