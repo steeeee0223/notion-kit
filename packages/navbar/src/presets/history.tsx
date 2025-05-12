@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from "react";
 import { ChevronsRight, HistoryIcon } from "lucide-react";
-import { toast } from "sonner";
 
 import { Hint } from "@notion-kit/common";
 import {
@@ -14,6 +13,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  toast,
 } from "@notion-kit/shadcn";
 import { Spinner } from "@notion-kit/spinner";
 

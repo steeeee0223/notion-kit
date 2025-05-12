@@ -3,7 +3,6 @@
 import { useCallback, useRef, useState } from "react";
 import { saveAs } from "file-saver";
 import { ChevronDown } from "lucide-react";
-import { toast } from "sonner";
 import { useOnClickOutside } from "usehooks-ts";
 
 import { cn } from "@notion-kit/cn";
@@ -22,6 +21,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  toast,
 } from "@notion-kit/shadcn";
 
 import { TextLinks } from "../_components";

@@ -1,13 +1,12 @@
 "use client";
 
 import React, { createContext, useContext, useMemo, useRef } from "react";
-import type { UseThemeProps } from "next-themes";
 
 import { HintProvider } from "@notion-kit/common";
 import { I18nProvider } from "@notion-kit/i18n";
 import { ModalProvider } from "@notion-kit/modal";
 import { Role } from "@notion-kit/schemas";
-import { useTheme } from "@notion-kit/shadcn";
+import { useTheme, type UseThemeProps } from "@notion-kit/shadcn";
 
 import type {
   Connection,

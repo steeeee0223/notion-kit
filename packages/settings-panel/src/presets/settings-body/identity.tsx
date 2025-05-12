@@ -4,12 +4,11 @@
 "use client";
 
 import { CircleHelp } from "lucide-react";
-import { toast } from "sonner";
 
 import { Hint } from "@notion-kit/common";
 import { useCopyToClipboard } from "@notion-kit/hooks";
 import { useTranslation } from "@notion-kit/i18n";
-import { Switch } from "@notion-kit/shadcn";
+import { Switch, toast } from "@notion-kit/shadcn";
 
 import { HintButton } from "../_components";
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
