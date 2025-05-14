@@ -55,7 +55,7 @@ const DropdownMenuSubContent = ({
   <DropdownMenuPrimitive.SubContent
     className={cn(
       "min-w-[8rem] overflow-hidden p-1",
-      contentVariants({ variant: "popover" }),
+      contentVariants({ variant: "popover", sideAnimation: true }),
       className,
     )}
     {...props}
@@ -75,7 +75,7 @@ const DropdownMenuContent = ({
       sideOffset={sideOffset}
       className={cn(
         "min-w-[8rem] overflow-hidden",
-        contentVariants({ variant: "popover" }),
+        contentVariants({ variant: "popover", sideAnimation: true }),
         className,
       )}
       {...props}

@@ -55,7 +55,7 @@ function TooltipContent({
         data-slot="tooltip-content"
         sideOffset={sideOffset}
         className={cn(
-          contentVariants({ variant: "tooltip" }),
+          contentVariants({ variant: "tooltip", sideAnimation: true }),
           tooltipVariants({ size }),
           className,
         )}
