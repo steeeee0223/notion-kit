@@ -2,13 +2,7 @@
 
 import React from "react";
 
-import {
-  MenuGroup,
-  MenuItem,
-  MenuItemAction,
-  Separator,
-  Switch,
-} from "@notion-kit/shadcn";
+import { MenuGroup, MenuItem, Separator } from "@notion-kit/shadcn";
 
 import "../view.css";
 
@@ -28,13 +22,15 @@ interface PropMenuProps {
  * @summary The definition of the property
  *
  * 1. ✅ Edit property: opens `EditPropMenu`
- * 2. 🚧 Sorting
- * 3. 🚧 Filter
- * 4. ✅ Hide in view
- * 5. ✅ Freeze up to column
- * 6. ✅ Duplicate property
- * 7. ✅ Delete property
- * 8. ✅ Wrap column
+ * ---
+ * 2. 🚧 Filter
+ * 3. 🚧 Sorting
+ * 4. ✅ Freeze up to column
+ * 5. ✅ Hide in view
+ * 6. ✅ Wrap column
+ * ---
+ * 7. ✅ Duplicate property
+ * 8. ✅ Delete property
  */
 export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
   const { table, properties, isPropertyUnique, canFreezeProperty } =
@@ -51,31 +47,31 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
       y: rect?.bottom,
     });
   };
-  // 4. Hide in view
-  const hideProp = () => {
-    updateColumn(property.id, { hidden: true });
-    closePopover();
-  };
-  // 5. Pin columns
+  // 4. Pin columns
   const canFreeze = canFreezeProperty(property.id);
   const canUnfreeze = table.getColumn(property.id)?.getIsLastColumn("left");
   const pinColumns = () => {
     freezeColumns(canUnfreeze ? null : property.id);
     closePopover();
   };
-  // 6. Duplicate property
+  // 5. Hide in view
+  const hideProp = () => {
+    updateColumn(property.id, { hidden: true });
+    closePopover();
+  };
+  // 6. Wrap in view
+  const wrapProp = () =>
+    updateColumn(property.id, { wrapped: !property.wrapped });
+  // 7. Duplicate property
   const duplicateProp = () => {
     duplicateColumn(property.id);
     closePopover();
   };
-  // 7. Delete property
+  // 8. Delete property
   const deleteProp = () => {
     updateColumn(property.id, { isDeleted: true });
     closePopover();
   };
-  // 8. Wrap in view
-  const wrapProp = () =>
-    updateColumn(property.id, { wrapped: !property.wrapped });
 
   return (
     <>
@@ -89,12 +85,20 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
         <MenuItem
           className="px-3"
           onClick={openEditPropMenu}
-          Icon={<Icon.Options className="mr-1 h-full w-4 fill-inherit" />}
+          Icon={<Icon.Sliders className="size-5 fill-inherit" />}
           Body="Edit property"
         />
       </MenuGroup>
       <Separator />
       <MenuGroup>
+        <MenuItem
+          disabled={!canFreeze}
+          onClick={pinColumns}
+          {...(canUnfreeze
+            ? { Icon: <Icon.PinStrikeThrough />, Body: "Unfreeze columns" }
+            : { Icon: <Icon.Pin />, Body: "Freeze up to column" })}
+          className="[&_svg]:mx-1.5 [&_svg]:h-full [&_svg]:w-3 [&_svg]:fill-icon"
+        />
         {property.type !== "title" && (
           <MenuItem
             onClick={hideProp}
@@ -103,22 +107,18 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
           />
         )}
         <MenuItem
-          disabled={!canFreeze}
-          onClick={pinColumns}
-          {...(canUnfreeze
-            ? {
-                Icon: (
-                  <Icon.PinStrikeThrough className="mx-1.5 h-full w-3 fill-icon" />
-                ),
-                Body: "Unfreeze columns",
-              }
-            : {
-                Icon: <Icon.Pin className="mx-1.5 h-full w-3 fill-icon" />,
-                Body: "Freeze up to column",
-              })}
+          onClick={wrapProp}
+          {...(property.wrapped
+            ? { Icon: <Icon.ArrowLineRight />, Body: "Unwrap text" }
+            : { Icon: <Icon.ArrowUTurnDownLeft />, Body: "Wrap text" })}
+          Body="Wrap column"
+          className="[&_svg]:mx-0.5 [&_svg]:size-5"
         />
-        {property.type !== "title" && (
-          <>
+      </MenuGroup>
+      {property.type !== "title" && (
+        <>
+          <Separator />
+          <MenuGroup>
             <MenuItem
               onClick={duplicateProp}
               Icon={<Icon.Duplicate className="h-4 w-6 fill-icon" />}
@@ -134,17 +134,9 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
               }
               Body="Delete property"
             />
-          </>
-        )}
-      </MenuGroup>
-      <Separator />
-      <MenuGroup>
-        <MenuItem onClick={wrapProp} Body="Wrap column">
-          <MenuItemAction className="flex items-center">
-            <Switch size="sm" checked={property.wrapped} />
-          </MenuItemAction>
-        </MenuItem>
-      </MenuGroup>
+          </MenuGroup>
+        </>
+      )}
     </>
   );
 };

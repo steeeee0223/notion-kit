@@ -32,6 +32,7 @@ interface EditPropMenuProps {
  *
  * 1. ✅ Type selection
  * 2. 🚧 Type config
+ * ---
  * 3. ✅ Wrap in view
  * 4. ✅ Hide in view
  * 5. ✅ Duplicate property
@@ -84,7 +85,11 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
             sideOffset={6}
             description="This property's type cannot be changed."
           >
-            <MenuItem disabled Body="Type">
+            <MenuItem
+              disabled
+              Icon={<Icon.ArrowSquarePathUpDown className="ml-1 size-5" />}
+              Body="Type"
+            >
               <MenuItemAction className="flex items-center fill-default/35 text-muted">
                 <div className="flex truncate">
                   <Icon.LockedFilled className="h-full w-3.5 fill-icon" />
@@ -97,7 +102,11 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
           </TooltipPreset>
         ) : (
           <>
-            <MenuItem onClick={openTypesMenu} Body="Type">
+            <MenuItem
+              onClick={openTypesMenu}
+              Icon={<Icon.ArrowSquarePathUpDown className="ml-1 size-5" />}
+              Body="Type"
+            >
               <MenuItemAction className="flex items-center fill-default/35 text-muted">
                 <div className="flex truncate">
                   <DefaultIcon
@@ -111,6 +120,7 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
               </MenuItemAction>
             </MenuItem>
             <MenuItem
+              Icon={<Icon.PencilLine className="ml-1 size-5" />}
               Body={
                 <div className="flex items-center">
                   AI Autofill

@@ -1,10 +1,6 @@
 "use client";
 
 import React, { forwardRef, useRef } from "react";
-import {
-  DraggableAttributes,
-  DraggableSyntheticListeners,
-} from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -67,6 +63,7 @@ export const TableHeaderCell: React.FC<TableHeaderCellProps> = ({
     isDragging,
     listeners,
     setNodeRef,
+    setActivatorNodeRef,
     transform,
     transition,
   } = useSortable({ id });
@@ -83,6 +80,7 @@ export const TableHeaderCell: React.FC<TableHeaderCellProps> = ({
     <div
       className="relative flex cursor-grab flex-row whitespace-nowrap"
       ref={setNodeRef}
+      {...attributes}
       style={style}
     >
       <div className="relative flex">
@@ -98,12 +96,14 @@ export const TableHeaderCell: React.FC<TableHeaderCellProps> = ({
             className="z-[990]"
           >
             <div
+              ref={setActivatorNodeRef}
               role="button"
               tabIndex={0}
               className={cn(
                 "flex h-full w-full animate-bg-in cursor-pointer items-center px-2 select-none hover:bg-default/5",
                 isResizing && "bg-transparent",
               )}
+              {...listeners}
               onClick={openPropMenu}
               onKeyDown={openPropMenu}
             >
@@ -122,8 +122,6 @@ export const TableHeaderCell: React.FC<TableHeaderCellProps> = ({
                       />
                     )}
                   </div>
-                  {/* Use this to sort columns */}
-                  <DragHandle attributes={attributes} listeners={listeners} />
                 </div>
                 <div className="truncate">{property.name}</div>
                 {property.description && (
@@ -146,25 +144,6 @@ export const TableHeaderCell: React.FC<TableHeaderCellProps> = ({
             {...resizeHandle}
           />
         </div>
-      </div>
-    </div>
-  );
-};
-
-interface DragHandleProps {
-  attributes: DraggableAttributes;
-  listeners: DraggableSyntheticListeners;
-}
-
-const DragHandle: React.FC<DragHandleProps> = ({ attributes, listeners }) => {
-  return (
-    <div
-      className="col-start-1 row-start-1 opacity-0 transition-opacity duration-150"
-      {...attributes}
-      {...listeners}
-    >
-      <div className="flex h-6 w-[18px] shrink-0 animate-bg-in items-center justify-center">
-        <Icon.DragHandle className="block size-3 shrink-0 fill-[#91918e]" />
       </div>
     </div>
   );
