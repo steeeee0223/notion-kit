@@ -26,17 +26,19 @@ const switchVariants = cva(
 export type SwitchProps = React.ComponentProps<typeof SwitchPrimitives.Root> &
   VariantProps<typeof switchVariants>;
 
-const Switch = ({ className, size, ...props }: SwitchProps) => (
-  <SwitchPrimitives.Root
-    data-slot="switch"
-    className={cn(switchVariants({ className, size }))}
-    {...props}
-  >
-    <SwitchPrimitives.Thumb
-      data-slot="switch-thumb"
-      className="pointer-events-none block rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-full data-[state=unchecked]:translate-x-0"
-    />
-  </SwitchPrimitives.Root>
-);
+function Switch({ className, size, ...props }: SwitchProps) {
+  return (
+    <SwitchPrimitives.Root
+      data-slot="switch"
+      className={cn(switchVariants({ className, size }))}
+      {...props}
+    >
+      <SwitchPrimitives.Thumb
+        data-slot="switch-thumb"
+        className="pointer-events-none block rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-full data-[state=unchecked]:translate-x-0"
+      />
+    </SwitchPrimitives.Root>
+  );
+}
 
 export { Switch };

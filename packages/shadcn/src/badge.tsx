@@ -33,6 +33,7 @@ export interface BadgeProps
 function Badge({ className, variant, size, ...props }: BadgeProps) {
   return (
     <div
+      data-slot="badge"
       className={cn(badgeVariants({ variant, size, className }))}
       {...props}
     />

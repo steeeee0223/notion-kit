@@ -29,19 +29,21 @@ export interface CheckboxProps
   extends React.ComponentProps<typeof CheckboxPrimitive.Root>,
     VariantProps<typeof checkboxVariants> {}
 
-const Checkbox = ({ className, size, ...props }: CheckboxProps) => (
-  <CheckboxPrimitive.Root
-    data-slot="checkbox"
-    className={cn(checkboxVariants({ size, className }))}
-    {...props}
-  >
-    <CheckboxPrimitive.Indicator
-      data-slot="checkbox-indicator"
-      className="flex items-center justify-center"
+function Checkbox({ className, size, ...props }: CheckboxProps) {
+  return (
+    <CheckboxPrimitive.Root
+      data-slot="checkbox"
+      className={cn(checkboxVariants({ size, className }))}
+      {...props}
     >
-      <Check className="size-full" />
-    </CheckboxPrimitive.Indicator>
-  </CheckboxPrimitive.Root>
-);
+      <CheckboxPrimitive.Indicator
+        data-slot="checkbox-indicator"
+        className="flex items-center justify-center"
+      >
+        <Check className="size-full" />
+      </CheckboxPrimitive.Indicator>
+    </CheckboxPrimitive.Root>
+  );
+}
 
 export { Checkbox };
