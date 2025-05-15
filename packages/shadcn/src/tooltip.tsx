@@ -86,7 +86,9 @@ function TooltipPreset({
   const body =
     typeof description === "string"
       ? description
-      : description.map((desc, i) => <TooltipDescription key={i} {...desc} />);
+      : description.map((desc, i) => (
+          <TooltipDescription key={i} id={i} {...desc} />
+        ));
 
   return (
     <Tooltip>
@@ -100,14 +102,30 @@ function TooltipPreset({
   );
 }
 
-const TooltipDescription: React.FC<Description> = ({ type, text }) => {
+interface TooltipDescriptionProps extends Description {
+  id: number;
+}
+
+function TooltipDescription({ id, type, text }: TooltipDescriptionProps) {
   switch (type) {
     case "secondary":
-      return <span className="text-tooltip-secondary">{text}</span>;
+      return (
+        <span
+          data-slot="tooltip-desc-2"
+          data-tooltip-desc={id}
+          className="text-tooltip-secondary"
+        >
+          {text}
+        </span>
+      );
     default:
-      return <div>{text}</div>;
+      return (
+        <div data-slot="tooltip-desc-1" data-tooltip-desc={id}>
+          {text}
+        </div>
+      );
   }
-};
+}
 
 export {
   Tooltip,
