@@ -6,7 +6,7 @@ import { ChevronDown } from "lucide-react";
 import { useOnClickOutside } from "usehooks-ts";
 
 import { cn } from "@notion-kit/cn";
-import { BaseModal, Hint } from "@notion-kit/common";
+import { BaseModal } from "@notion-kit/common";
 import { useCopyToClipboard, useTransition } from "@notion-kit/hooks";
 import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
@@ -22,6 +22,7 @@ import {
   TabsList,
   TabsTrigger,
   toast,
+  TooltipPreset,
 } from "@notion-kit/shadcn";
 
 import { TextLinks } from "../_components";
@@ -170,11 +171,11 @@ export const People = () => {
                 onCancel={() => setSearch("")}
               />
             </div>
-            <Hint description="Export guests as CSV" side="top">
+            <TooltipPreset description="Export guests as CSV" side="top">
               <Button variant="hint" className="size-7" onClick={downloadCsv}>
                 <Icon.ArrowDownPage className="block size-5 shrink-0 fill-[#787774]" />
               </Button>
-            </Hint>
+            </TooltipPreset>
             <Button
               variant="blue"
               size="sm"

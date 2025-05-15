@@ -1,8 +1,12 @@
 import React from "react";
 import { Shuffle } from "lucide-react";
 
-import { Hint, HintProvider } from "@notion-kit/common";
-import { Button, Input } from "@notion-kit/shadcn";
+import {
+  Button,
+  Input,
+  TooltipPreset,
+  TooltipProvider,
+} from "@notion-kit/shadcn";
 
 interface MenuSearchBarProps {
   search: string;
@@ -18,7 +22,7 @@ export const MenuSearchBar: React.FC<MenuSearchBarProps> = ({
   Palette,
 }) => {
   return (
-    <HintProvider delayDuration={500}>
+    <TooltipProvider delayDuration={500}>
       <div className="mb-1.5 flex w-full items-center gap-x-1.5">
         <div className="flex-1">
           <Input
@@ -30,13 +34,13 @@ export const MenuSearchBar: React.FC<MenuSearchBarProps> = ({
             placeholder="Filter..."
           />
         </div>
-        <Hint description="Random">
+        <TooltipPreset description="Random">
           <Button variant="icon" className="size-7" onClick={onRandomSelect}>
             <Shuffle size={16} />
           </Button>
-        </Hint>
+        </TooltipPreset>
         {Palette}
       </div>
-    </HintProvider>
+    </TooltipProvider>
   );
 };

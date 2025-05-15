@@ -465,9 +465,6 @@ importers:
       '@notion-kit/hooks':
         specifier: workspace:*
         version: link:../hooks
-      '@notion-kit/icon-block':
-        specifier: workspace:*
-        version: link:../icon-block
       '@notion-kit/modal':
         specifier: workspace:*
         version: link:../modal
@@ -811,9 +808,6 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../cn
-      '@notion-kit/common':
-        specifier: workspace:*
-        version: link:../common
       '@notion-kit/hooks':
         specifier: workspace:*
         version: link:../hooks
@@ -1303,9 +1297,6 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../cn
-      '@notion-kit/common':
-        specifier: workspace:*
-        version: link:../common
       '@notion-kit/icon-block':
         specifier: workspace:*
         version: link:../icon-block

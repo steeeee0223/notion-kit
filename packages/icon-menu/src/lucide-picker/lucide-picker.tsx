@@ -3,10 +3,10 @@
 import React, { memo, useMemo } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-import { COLOR, Hint, HintProvider } from "@notion-kit/common";
+import { COLOR } from "@notion-kit/common";
 import type { LucideName } from "@notion-kit/icon-block";
 import { createLucideIcon } from "@notion-kit/icon-block";
-import { Button } from "@notion-kit/shadcn";
+import { Button, TooltipPreset, TooltipProvider } from "@notion-kit/shadcn";
 import { Spinner } from "@notion-kit/spinner";
 
 import { MenuSearchBar, MenuSectionTitle } from "../_components";
@@ -22,7 +22,7 @@ interface IconProps {
 const Icon: React.FC<IconProps> = ({ name, color, onClick }) => {
   const LucideIcon = useMemo(() => createLucideIcon(name), [name]);
   return (
-    <Hint side="top" description={name}>
+    <TooltipPreset side="top" description={name}>
       <Button
         variant="hint"
         onClick={() => onClick(name)}
@@ -30,7 +30,7 @@ const Icon: React.FC<IconProps> = ({ name, color, onClick }) => {
       >
         <LucideIcon color={color} size={20} strokeWidth={2.2} />
       </Button>
-    </Hint>
+    </TooltipPreset>
   );
 };
 
@@ -62,7 +62,7 @@ export const LucidePicker: React.FC<LucidePickerProps> = memo(
             <ColorPicker palette={COLOR} value={color} onSelect={setColor} />
           }
         />
-        <HintProvider delayDuration={500}>
+        <TooltipProvider delayDuration={500}>
           <div className="mt-0 py-1.5">
             {isLoading ? (
               <Spinner className="mx-1 my-2" />
@@ -106,7 +106,7 @@ export const LucidePicker: React.FC<LucidePickerProps> = memo(
               <MenuSectionTitle title="No results" />
             )}
           </div>
-        </HintProvider>
+        </TooltipProvider>
       </div>
     );
   },

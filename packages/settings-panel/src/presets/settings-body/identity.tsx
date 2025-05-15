@@ -5,10 +5,9 @@
 
 import { CircleHelp } from "lucide-react";
 
-import { Hint } from "@notion-kit/common";
 import { useCopyToClipboard } from "@notion-kit/hooks";
 import { useTranslation } from "@notion-kit/i18n";
-import { Switch, toast } from "@notion-kit/shadcn";
+import { Switch, toast, TooltipPreset } from "@notion-kit/shadcn";
 
 import { HintButton } from "../_components";
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
@@ -72,7 +71,7 @@ export const Identity = () => {
       </SettingsSection>
       <SettingsSection title={setup.title}>
         <SettingsRule title="" description={setup["workspace-id"].description}>
-          <Hint
+          <TooltipPreset
             description={setup["workspace-id"].tooltip}
             side="top"
             sideOffset={15}
@@ -87,7 +86,7 @@ export const Identity = () => {
                 {workspace.id}
               </a>
             </div>
-          </Hint>
+          </TooltipPreset>
         </SettingsRule>
       </SettingsSection>
     </div>

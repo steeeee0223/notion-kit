@@ -2,11 +2,14 @@
 
 import React, { createContext, useContext, useMemo, useRef } from "react";
 
-import { HintProvider } from "@notion-kit/common";
 import { I18nProvider } from "@notion-kit/i18n";
 import { ModalProvider } from "@notion-kit/modal";
 import { Role } from "@notion-kit/schemas";
-import { useTheme, type UseThemeProps } from "@notion-kit/shadcn";
+import {
+  TooltipProvider,
+  useTheme,
+  type UseThemeProps,
+} from "@notion-kit/shadcn";
 
 import type {
   Connection,
@@ -84,11 +87,11 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   );
   return (
     <I18nProvider language={settings.account.language} defaultNS="settings">
-      <HintProvider delayDuration={500}>
+      <TooltipProvider delayDuration={500}>
         <SettingsContext.Provider value={contextValue}>
           <ModalProvider>{children}</ModalProvider>
         </SettingsContext.Provider>
-      </HintProvider>
+      </TooltipProvider>
     </I18nProvider>
   );
 };

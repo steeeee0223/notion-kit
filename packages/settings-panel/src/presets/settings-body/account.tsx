@@ -5,7 +5,6 @@ import { ChevronRight, X } from "lucide-react";
 import { useHover } from "usehooks-ts";
 
 import { cn } from "@notion-kit/cn";
-import { Hint } from "@notion-kit/common";
 import { useTransition } from "@notion-kit/hooks";
 import { useTranslation } from "@notion-kit/i18n";
 import { useModal } from "@notion-kit/modal";
@@ -17,6 +16,7 @@ import {
   Input,
   Label,
   Switch,
+  TooltipPreset,
 } from "@notion-kit/shadcn";
 
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
@@ -81,7 +81,7 @@ export const Account = () => {
         <div className="flex flex-col">
           <div className="flex items-center">
             <div className="relative">
-              <Hint
+              <TooltipPreset
                 description={
                   accountTexts[
                     avatarCancelIsHover ? "remove-photo" : "replace-photo"
@@ -114,7 +114,7 @@ export const Account = () => {
                     <X size={8} strokeWidth={2} />
                   </Button>
                 </div>
-              </Hint>
+              </TooltipPreset>
               <Input
                 type="file"
                 ref={avatarInputRef}

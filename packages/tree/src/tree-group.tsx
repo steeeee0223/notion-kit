@@ -3,8 +3,12 @@
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
 
-import { Hint, HintProvider } from "@notion-kit/common";
-import { Button, Skeleton } from "@notion-kit/shadcn";
+import {
+  Button,
+  Skeleton,
+  TooltipPreset,
+  TooltipProvider,
+} from "@notion-kit/shadcn";
 
 interface TreeGroupProps extends React.PropsWithChildren {
   title: string;
@@ -26,11 +30,11 @@ const TreeGroup: React.FC<TreeGroupProps> = ({
   const toggle = () => setOpenGroup((prev) => !prev);
 
   return (
-    <HintProvider>
+    <TooltipProvider>
       <div className={className}>
         <div className="group/tree flex items-center px-3 py-1">
           <div className="grow">
-            <Hint side="top" description="Click to hide section">
+            <TooltipPreset side="top" description="Click to hide section">
               <Button
                 variant="hint"
                 size="xs"
@@ -39,10 +43,10 @@ const TreeGroup: React.FC<TreeGroupProps> = ({
               >
                 {title}
               </Button>
-            </Hint>
+            </TooltipPreset>
           </div>
           {description && (
-            <Hint side="right" description={description}>
+            <TooltipPreset side="right" description={description}>
               <Button
                 variant="hint"
                 size="xs"
@@ -51,7 +55,7 @@ const TreeGroup: React.FC<TreeGroupProps> = ({
               >
                 <Plus className="size-4" />
               </Button>
-            </Hint>
+            </TooltipPreset>
           )}
         </div>
         {isLoading ? (
@@ -64,7 +68,7 @@ const TreeGroup: React.FC<TreeGroupProps> = ({
           openGroup && <>{children}</>
         )}
       </div>
-    </HintProvider>
+    </TooltipProvider>
   );
 };
 

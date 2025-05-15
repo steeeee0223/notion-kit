@@ -1,8 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
-import { Hint, HintProvider } from "@notion-kit/common";
 import { Plan } from "@notion-kit/schemas";
-import { Button } from "@notion-kit/shadcn";
+import { Button, TooltipPreset, TooltipProvider } from "@notion-kit/shadcn";
 
 import { ListCell, PlanHeader } from "../cells";
 
@@ -31,35 +30,35 @@ export const getHighlightColumns = (
   {
     accessorKey: Plan.PLUS,
     header: () => (
-      <HintProvider>
+      <TooltipProvider>
         <PlanHeader
           title={"Plus"}
           description={"$10 per member / month billed annually"}
           subtext="$12 billed monthly"
         >
-          <Hint
+          <TooltipPreset
             description="Only workspace owners can perform this action."
             className={canUpgrade ? "hidden" : "w-[174px]"}
           >
             <Button size="sm" className="h-7" disabled={!canUpgrade}>
               Upgrade
             </Button>
-          </Hint>
+          </TooltipPreset>
         </PlanHeader>
-      </HintProvider>
+      </TooltipProvider>
     ),
     cell: ({ row }) => <ListCell items={row.getValue("plus")} />,
   },
   {
     accessorKey: Plan.BUSINESS,
     header: () => (
-      <HintProvider>
+      <TooltipProvider>
         <PlanHeader
           title={"Business"}
           description={"$15 per member / month billed annually"}
           subtext="$18 billed monthly"
         >
-          <Hint
+          <TooltipPreset
             description="Only workspace owners can perform this action."
             className={canUpgrade ? "hidden" : "w-[174px]"}
           >
@@ -71,30 +70,30 @@ export const getHighlightColumns = (
             >
               Upgrade
             </Button>
-          </Hint>
+          </TooltipPreset>
         </PlanHeader>
-      </HintProvider>
+      </TooltipProvider>
     ),
     cell: ({ row }) => <ListCell items={row.getValue("business")} />,
   },
   {
     accessorKey: Plan.ENTERPRISE,
     header: () => (
-      <HintProvider>
+      <TooltipProvider>
         <PlanHeader
           title={"Enterprise"}
           description={"Contact Sales for pricing"}
         >
-          <Hint
+          <TooltipPreset
             description="Only workspace owners can perform this action."
             className={canUpgrade ? "hidden" : "w-[174px]"}
           >
             <Button size="sm" className="h-7" disabled={!canUpgrade}>
               Contact sales
             </Button>
-          </Hint>
+          </TooltipPreset>
         </PlanHeader>
-      </HintProvider>
+      </TooltipProvider>
     ),
     cell: ({ row }) => <ListCell items={row.getValue("enterprise")} />,
   },
