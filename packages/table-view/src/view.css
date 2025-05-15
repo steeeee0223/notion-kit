@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* undefined */
+  --sticky-horizontal-offset: 0px;
+}
+
+@layer utilities {
+  .cursor-webkit-grab {
+    cursor: -webkit-grab;
+  }
+  .word-break {
+    word-break: break-word;
+  }
+  /* used in specific component */
+  .shadow-header-row {
+    box-shadow:
+      white -3px 0px 0px,
+      rgb(233, 233, 231) 0px -1px 0px inset;
+  }
+  .shadow-header-row-dark {
+    box-shadow:
+      rgb(25, 25, 25) -3px 0px 0px,
+      rgb(47, 47, 47) 0px -1px 0px inset;
+  }
+  /* made by myself */
+  .shadow-header-sticky {
+    box-shadow:
+      white -3px 0px 0px,
+      rgb(233, 233, 231) -1px -1px 0px inset;
+  }
+  /* made by myself */
+  .shadow-header-sticky-dark {
+    box-shadow:
+      rgb(25, 25, 25) -3px 0px 0px,
+      rgb(47, 47, 47) -1px -1px 0px inset;
+  }
+  .shadow-cell {
+    box-shadow:
+      rgba(35, 131, 226, 0.57) 0px 0px 0px 2px inset,
+      rgba(35, 131, 226, 0.35) 0px 0px 0px 1px inset;
+  }
+  .cell-open {
+    font-family:
+      ui-sans-serif,
+      -apple-system,
+      BlinkMacSystemFont,
+      Segoe UI Variable Display,
+      Segoe UI,
+      Helvetica,
+      Apple Color Emoji,
+      Arial,
+      sans-serif,
+      Segoe UI Emoji,
+      Segoe UI Symbol;
+    box-shadow:
+      rgba(15, 15, 15, 0.1) 0px 0px 0px 1px,
+      rgba(15, 15, 15, 0.1) 0px 2px 4px;
+  }
+  .title-cell-bg-img {
+    background-image: linear-gradient(
+      right,
+      rgba(55, 53, 47, 0.16) 0%,
+      rgba(55, 53, 47, 0.16) 100%
+    );
+    background-repeat: repeat-x;
+    background-position: 0px 100%;
+    background-size: 100% 1px;
+  }
+}

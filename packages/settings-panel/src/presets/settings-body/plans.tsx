@@ -44,7 +44,7 @@ const ActivePlan: React.FC<ActivePlanProps> = ({ activePlan, canUpgrade }) => {
         <CardContent className="flex flex-col gap-1.5">
           <CardTitle className="relative flex items-center gap-1 self-stretch text-[22px]/[26px] tracking-[-0.1px]">
             {active.plan[activePlan].title}{" "}
-            {activePlan === Plan.EDUCATION && <Icon.Help />}
+            {activePlan === Plan.EDUCATION && <Icon.QuestionMarkCircled />}
           </CardTitle>
           <CardDescription className="text-sm text-primary">
             {active.plan[activePlan].description}

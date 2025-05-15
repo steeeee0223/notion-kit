@@ -56,6 +56,6 @@ catalogs:
     "@dnd-kit/modifiers": ^9.0.0
     "@dnd-kit/sortable": ^10.0.0
     "@hookform/resolvers": ^5.0.1
-    "@tanstack/react-table": ^8.20.6
+    "@tanstack/react-table": ^8.21.3
   uuid:
     uuid: ^11.1.0
