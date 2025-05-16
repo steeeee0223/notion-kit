@@ -44,6 +44,7 @@ export interface TableActions {
   duplicateColumn: (id: string) => void;
   freezeColumns: (id: string | null) => void;
   deleteColumn: (id: string) => void;
+  addRow: () => void;
 }
 
 export const TableActionsContext = createContext<TableActions | null>(null);

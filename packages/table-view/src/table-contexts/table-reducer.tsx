@@ -45,7 +45,7 @@ export type TableViewAction =
       type: "update:cell";
       payload: { rowId: string; colId: string; data: CellDataType };
     }
-  | { type: "reset" };
+  | { type: "add:row" | "reset" };
 
 export const tableViewReducer = (
   v: TableViewAtom,
@@ -171,6 +171,16 @@ export const tableViewReducer = (
           return { ...row, properties: rest };
         }),
       };
+    }
+    case "add:row": {
+      const row: RowDataType = {
+        id: v4(),
+        properties: {},
+      };
+      v.propertiesOrder.forEach((colId) => {
+        row.properties[colId] = getDefaultCell(v.properties[colId]!.type);
+      });
+      return { ...v, data: [...v.data, row] };
     }
     case "update:cell":
       return {

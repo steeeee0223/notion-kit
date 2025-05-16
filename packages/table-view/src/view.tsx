@@ -41,7 +41,7 @@ export const TableView: React.FC<TableViewProps> = ({
 
 const TableViewContent = () => {
   const { table, columnSizeVars, columnSensors } = useTableViewCtx();
-  const { reorderColumns } = useTableActions();
+  const { reorderColumns, addRow } = useTableActions();
 
   const leftPinnedHeaders = table.getLeftLeafHeaders();
   const headers = table.getCenterLeafHeaders();
@@ -132,6 +132,7 @@ const TableViewContent = () => {
           tabIndex={0}
           id="notion-table-view-add-row"
           className="flex h-[33px] w-full animate-bg-in cursor-pointer items-center bg-main pl-2 leading-5 select-none hover:bg-default/5"
+          onPointerDown={addRow}
         >
           <span className="sticky left-10 inline-flex items-center text-sm text-muted opacity-100 transition-opacity duration-200">
             <Icon.Plus className="mr-[7px] ml-px block size-3.5 shrink-0 fill-default/35" />

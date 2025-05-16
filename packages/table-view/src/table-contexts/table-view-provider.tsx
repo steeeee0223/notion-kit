@@ -66,6 +66,7 @@ export const TableViewProvider: React.FC<TableViewProviderProps> = ({
         dispatch({ type: "duplicate:col", payload: { id } }),
       freezeColumns: (id) => dispatch({ type: "freeze:col", payload: { id } }),
       deleteColumn: (id) => dispatch({ type: "delete:col", payload: { id } }),
+      addRow: () => dispatch({ type: "add:row" }),
     }),
     [dispatch],
   );
