@@ -1,6 +1,3 @@
-@import "tailwindcss";
-@import "@notion-kit/tailwind-config/base.css";
-
 @theme inline {
   /* undefined */
   --sticky-horizontal-offset: 0px;
