@@ -17,6 +17,7 @@ import {
   type ColumnDef,
 } from "@tanstack/react-table";
 
+import { TableFooterCell } from "../table-footer-cell";
 import { TableHeaderCell } from "../table-header-cells";
 import { TableRowCell } from "../table-row-cells";
 import type { DatabaseProperty, RowDataType } from "../types";
@@ -99,6 +100,12 @@ export const useTableView = (initial: {
               />
             );
           },
+          footer: ({ column }) => (
+            <TableFooterCell
+              colId={column.getIndex()}
+              width={`calc(var(--col-${id}-size) * 1px)`}
+            />
+          ),
         }),
       ),
     [properties],

@@ -18,6 +18,7 @@ import {
   useTableActions,
   useTableViewCtx,
 } from "./table-contexts";
+import { TableFooter } from "./table-footer";
 import { TableHeaderRow } from "./table-header-row";
 import type { DatabaseProperty, RowDataType } from "./types";
 
@@ -49,9 +50,9 @@ const TableViewContent = () => {
   return (
     <div
       id="notion-table-view"
-      // No need: pl-[96px] pr-[96px]
       className="relative float-left min-w-full pb-0 lining-nums tabular-nums select-none"
-      style={{ paddingLeft: `${paddingX}px`, paddingRight: `${paddingX}px` }}
+      // No need: pl-[96px] pr-[96px]
+      style={{ paddingLeft: paddingX, paddingRight: paddingX }}
     >
       <div className="absolute z-[9990] w-full" />
       <div className="pointer-events-none mt-0 h-0" />
@@ -140,39 +141,13 @@ const TableViewContent = () => {
           </span>
         </div>
         {/* Table footer */}
-        <div
-          // contentEditable="false"
-          key="pseudoSelection"
-          data-content-editable-void="true"
-          className="--pseudoSelection--background: transparent; clip-path: polygon(0% -20%, 100% -20%, 100% 100%, 0% 100%); left-0 z-[850] box-border flex h-8 min-w-full border-t border-t-border-cell bg-main text-sm select-none"
-        >
-          <div className="flex pr-8">
-            <div className="flex">
-              <div className="left-[calc(32px + -1 * var(--sticky-horizontal-offset, 0px))] sticky z-[830] flex bg-main" />
-              <div className="flex w-[216px]">
-                <div
-                  role="button"
-                  tabIndex={0}
-                  className="transition: background 0.2s; flex h-8 w-full cursor-pointer items-center justify-end overflow-hidden pr-2 whitespace-nowrap select-auto"
-                ></div>
-              </div>
-              <div className="flex w-[100px]">
-                <div
-                  role="button"
-                  tabIndex={0}
-                  className="transition: background 0.2s; flex h-8 w-full cursor-pointer items-center justify-end overflow-hidden pr-2 whitespace-nowrap select-auto"
-                ></div>
-              </div>
-              <div className="flex w-[90px]">
-                <div
-                  role="button"
-                  tabIndex={0}
-                  className="transition: background 0.2s; flex h-8 w-full cursor-pointer items-center justify-end overflow-hidden pr-2 whitespace-nowrap select-auto"
-                ></div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {table.getHeaderGroups().map((footerGroup) => (
+          <TableFooter
+            key={footerGroup.id}
+            leftPinnedHeaders={leftPinnedHeaders}
+            headers={headers}
+          />
+        ))}
       </div>
       <div className="pointer-events-none clear-both mt-0 h-0 translate-y-0" />
       <div className="absolute z-[9990] w-full translate-y-[-34px]" />

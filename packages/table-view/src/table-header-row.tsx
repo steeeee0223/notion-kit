@@ -18,7 +18,7 @@ import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 
 import { PropsMenu, TypesMenu, useMenuControl } from "./menus";
-import { ActionCell } from "./table-header-cells";
+import { TableHeaderActionCell } from "./table-header-cells";
 import type { RowDataType } from "./types";
 
 interface TableHeaderRowProps {
@@ -51,9 +51,9 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({
       id="notion-table-view-header-row"
       dir="ltr"
       className="shadow-header-row relative right-0 left-0 box-border flex h-[34px] min-w-[708px] bg-main text-default/65"
-      // TODO check if remove `z-[870]` causes any issue
+      // TODO check if remove `z-870` causes any issue
     >
-      <div className="sticky left-8 z-[830] flex">
+      <div className="sticky left-8 z-830 flex">
         <div className="absolute -left-8">
           <div className="h-full border-b-border-cell bg-main">
             <div className="h-full">
@@ -66,7 +66,7 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({
                   <input
                     id="row-select"
                     type="checkbox"
-                    className="relative right-0.5 size-[14px] cursor-pointer accent-blue"
+                    className="relative right-0.5 size-3.5 cursor-pointer accent-blue"
                   />
                 </div>
               </label>
@@ -108,19 +108,12 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({
           </div>
         </SortableContext>
       </div>
-      <ActionCell
+      <TableHeaderActionCell
         ref={plusButtonRef}
-        icon={
-          <Icon.Plus className="block h-full w-3 shrink-0 fill-default/45" />
-        }
+        icon={<Icon.Plus />}
         onClick={openTypesMenu}
       />
-      <ActionCell
-        icon={
-          <Icon.Dots className="block h-full w-3 shrink-0 fill-default/45" />
-        }
-        onClick={openPropsMenu}
-      />
+      <TableHeaderActionCell icon={<Icon.Dots />} onClick={openPropsMenu} />
     </div>
   );
 };

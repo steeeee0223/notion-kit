@@ -154,11 +154,14 @@ export const TableHeaderCell: React.FC<TableHeaderCellProps> = ({
   );
 };
 
-interface ActionCellProps extends React.ComponentProps<"div"> {
+interface TableHeaderActionCellProps extends React.ComponentProps<"div"> {
   icon: React.ReactNode;
 }
 
-export function ActionCell({ icon, ...props }: ActionCellProps) {
+export function TableHeaderActionCell({
+  icon,
+  ...props
+}: TableHeaderActionCellProps) {
   return (
     <div
       role="button"
@@ -167,7 +170,14 @@ export function ActionCell({ icon, ...props }: ActionCellProps) {
       className="flex w-8 cursor-pointer justify-start opacity-100 transition-opacity duration-200 select-none hover:bg-default/5 focus-visible:outline-none"
       {...props}
     >
-      <div className="flex h-full w-8 items-center justify-center">{icon}</div>
+      <div
+        className={cn(
+          "flex h-full w-8 items-center justify-center",
+          "[&_svg]:block [&_svg]:h-full [&_svg]:w-3 [&_svg]:shrink-0 [&_svg]:fill-default/45",
+        )}
+      >
+        {icon}
+      </div>
     </div>
   );
 }
