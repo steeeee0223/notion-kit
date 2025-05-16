@@ -91,17 +91,49 @@ export const contentVariants = cva(
   {
     variants: {
       variant: {
+        /**
+         * @prop default
+         * @note Used by: Drawer
+         */
         default: "bg-transparent",
+        /**
+         * @prop modal
+         * @note Used by: Dialog
+         * @note Used with: `openAnimation`
+         */
         modal:
-          "fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 bg-modal p-6 shadow-lg duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] data-[state=open]:zoom-in-95",
-        popover:
-          "z-50 rounded-md bg-popover shadow-md data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
-        tab: "border-none bg-popover data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
+          "fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 bg-modal p-6 shadow-lg duration-200",
+        /**
+         * @prop popover
+         * @note Used by: DropdownMenu, Popover, Select
+         * @note Used with: `openAnimation`, `sideAnimation`
+         */
+        popover: "z-50 rounded-md bg-popover shadow-md",
+        /**
+         * @prop tab
+         * @note Used by: Tabs
+         * @note Used with: `openAnimation`, `sideAnimation`
+         */
+        tab: "border-none bg-popover",
+        /**
+         * @prop tooltip
+         * @note Used by: Tooltip
+         * @note Used with: `openAnimation`, `sideAnimation`
+         */
         tooltip:
-          "relative z-50 animate-in overflow-hidden border-none bg-tooltip font-medium text-tooltip-primary shadow-md backdrop-filter-none fade-in-0 zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
+          "relative z-50 animate-in overflow-hidden border-none bg-tooltip font-medium text-tooltip-primary shadow-md backdrop-filter-none fade-in-0 zoom-in-95",
+      },
+      openAnimation: {
+        true: [
+          "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
+          "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
+        ],
+      },
+      sideAnimation: {
+        true: "data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
       },
     },
-    defaultVariants: { variant: "default" },
+    defaultVariants: { variant: "default", openAnimation: true },
   },
 );
 export type ContentVariants = VariantProps<typeof contentVariants>;

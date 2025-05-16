@@ -2,7 +2,7 @@
 
 import React, { useCallback } from "react";
 
-import { HintProvider } from "@notion-kit/common";
+import { TooltipProvider } from "@notion-kit/shadcn";
 
 import { MenuSectionTitle } from "../_components";
 import { EmojiButton, EmojiPickerRow } from "./emoji-picker-row";
@@ -110,7 +110,7 @@ export const EmojiPickerContent: React.FC<EmojiPickerContentProps> = ({
   }, [emojiLibrary, skin, i18n.searchResult, searchResult, onSelectEmoji]);
 
   return (
-    <HintProvider delayDuration={500}>
+    <TooltipProvider delayDuration={500}>
       <div
         ref={refs.current.contentRoot}
         className="-mr-3 notion-scrollbar h-[214px] overflow-x-hidden overflow-y-auto"
@@ -120,6 +120,6 @@ export const EmojiPickerContent: React.FC<EmojiPickerContentProps> = ({
           {isSearching ? SearchList() : EmojiList()}
         </div>
       </div>
-    </HintProvider>
+    </TooltipProvider>
   );
 };

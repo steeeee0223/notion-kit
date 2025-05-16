@@ -3,7 +3,6 @@
 import { useMediaQuery } from "usehooks-ts";
 
 import { cn } from "@notion-kit/cn";
-import { Hint } from "@notion-kit/common";
 import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import { Plan } from "@notion-kit/schemas";
@@ -14,6 +13,7 @@ import {
   CardDescription,
   CardTitle,
   Separator,
+  TooltipPreset,
 } from "@notion-kit/shadcn";
 
 import { TextLinks } from "../_components";
@@ -44,7 +44,7 @@ const ActivePlan: React.FC<ActivePlanProps> = ({ activePlan, canUpgrade }) => {
         <CardContent className="flex flex-col gap-1.5">
           <CardTitle className="relative flex items-center gap-1 self-stretch text-[22px]/[26px] tracking-[-0.1px]">
             {active.plan[activePlan].title}{" "}
-            {activePlan === Plan.EDUCATION && <Icon.Help />}
+            {activePlan === Plan.EDUCATION && <Icon.QuestionMarkCircled />}
           </CardTitle>
           <CardDescription className="text-sm text-primary">
             {active.plan[activePlan].description}
@@ -69,7 +69,7 @@ const ActivePlan: React.FC<ActivePlanProps> = ({ activePlan, canUpgrade }) => {
               </div>
             </div>
             <div className="flex items-center">
-              <Hint
+              <TooltipPreset
                 description="Only workspace owners can perform this action."
                 className={canUpgrade ? "hidden" : "w-[174px]"}
               >
@@ -81,7 +81,7 @@ const ActivePlan: React.FC<ActivePlanProps> = ({ activePlan, canUpgrade }) => {
                 >
                   {active.ai.button}
                 </Button>
-              </Hint>
+              </TooltipPreset>
             </div>
           </CardContent>
         </Card>

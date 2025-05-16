@@ -3,8 +3,7 @@
 import React from "react";
 
 import { cn } from "@notion-kit/cn";
-import { Hint, HintProvider } from "@notion-kit/common";
-import { Button } from "@notion-kit/shadcn";
+import { Button, TooltipPreset, TooltipProvider } from "@notion-kit/shadcn";
 
 import { CirclePlus, emojiCategoryIcons } from "./emoji-icons";
 import type { EmojiCategoryList, UseEmojiPickerType } from "./types";
@@ -20,7 +19,7 @@ export const EmojiPickerNavigation: React.FC<EmojiPickerNavigationProps> = ({
   onClick,
 }) => {
   return (
-    <HintProvider delayDuration={500}>
+    <TooltipProvider delayDuration={500}>
       <nav
         id="emoji-nav"
         className="-mx-3 h-12 border-t bg-transparent px-3 py-2"
@@ -30,7 +29,11 @@ export const EmojiPickerNavigation: React.FC<EmojiPickerNavigationProps> = ({
             .getGrid()
             .sections()
             .map(({ id }) => (
-              <Hint key={id} align="start" description={i18n.categories[id]}>
+              <TooltipPreset
+                key={id}
+                align="start"
+                description={i18n.categories[id]}
+              >
                 <Button
                   variant="hint"
                   className={cn(
@@ -44,17 +47,17 @@ export const EmojiPickerNavigation: React.FC<EmojiPickerNavigationProps> = ({
                     {emojiCategoryIcons[id]}
                   </span>
                 </Button>
-              </Hint>
+              </TooltipPreset>
             ))}
-          <Hint align="start" description="Add emoji">
+          <TooltipPreset align="start" description="Add emoji">
             <Button variant="hint" className="size-8 p-0" aria-label="add">
               <span className="inline-flex size-5 items-center justify-center">
                 <CirclePlus className="block size-7 flex-shrink-0 scale-110 fill-[#91918e] dark:fill-default/45" />
               </span>
             </Button>
-          </Hint>
+          </TooltipPreset>
         </div>
       </nav>
-    </HintProvider>
+    </TooltipProvider>
   );
 };
