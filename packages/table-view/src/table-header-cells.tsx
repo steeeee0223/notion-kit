@@ -1,6 +1,6 @@
 "use client";
 
-import React, { forwardRef, useRef } from "react";
+import React, { useRef } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -85,7 +85,7 @@ export const TableHeaderCell: React.FC<TableHeaderCellProps> = ({
     >
       <div
         ref={cellRef}
-        // key="notion-table-view-header-cell"
+        id="notion-table-view-header-cell"
         className="flex shrink-0 overflow-hidden p-0 text-sm"
         style={{ width }}
       >
@@ -144,7 +144,7 @@ export const TableHeaderCell: React.FC<TableHeaderCellProps> = ({
         <div
           tabIndex={-1}
           className={cn(
-            "-mt-[1px] -ml-[3px] h-[34px] w-[5px] animate-bg-out cursor-col-resize bg-transparent hover:bg-blue/80",
+            "-mt-px -ml-[3px] h-[34px] w-[5px] animate-bg-out cursor-col-resize bg-transparent hover:bg-blue/80",
             isResizing && "bg-blue/80",
           )}
           {...resizeHandle}
@@ -154,29 +154,20 @@ export const TableHeaderCell: React.FC<TableHeaderCellProps> = ({
   );
 };
 
-interface ActionCellProps {
+interface ActionCellProps extends React.ComponentProps<"div"> {
   icon: React.ReactNode;
-  onClick?: () => void;
 }
 
-export const ActionCell = forwardRef<HTMLDivElement, ActionCellProps>(
-  ({ icon, onClick }, ref) => {
-    return (
-      <div
-        ref={ref}
-        role="button"
-        tabIndex={0}
-        id="notion-table-view-add-column"
-        className="flex w-8 cursor-pointer justify-start opacity-100 transition-opacity duration-200 select-none hover:bg-default/5 focus-visible:outline-none"
-        onClick={onClick}
-        onKeyDown={onClick}
-      >
-        <div className="flex h-full w-8 items-center justify-center">
-          {icon}
-        </div>
-      </div>
-    );
-  },
-);
-
-ActionCell.displayName = "ActionCell";
+export function ActionCell({ icon, ...props }: ActionCellProps) {
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      id="notion-table-view-add-column"
+      className="flex w-8 cursor-pointer justify-start opacity-100 transition-opacity duration-200 select-none hover:bg-default/5 focus-visible:outline-none"
+      {...props}
+    >
+      <div className="flex h-full w-8 items-center justify-center">{icon}</div>
+    </div>
+  );
+}

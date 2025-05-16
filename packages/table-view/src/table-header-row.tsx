@@ -50,7 +50,7 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({
     <div
       id="notion-table-view-header-row"
       dir="ltr"
-      className="shadow-header-row dark:shadow-header-row-dark relative right-0 left-0 box-border flex h-[34px] min-w-[708px] bg-main text-default/65"
+      className="shadow-header-row relative right-0 left-0 box-border flex h-[34px] min-w-[708px] bg-main text-default/65"
       // TODO check if remove `z-[870]` causes any issue
     >
       <div className="sticky left-8 z-[830] flex">
@@ -83,7 +83,7 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({
           {isLeftPinned && (
             <div
               id="draggable-ghost-section-left"
-              className="shadow-header-sticky dark:shadow-header-sticky-dark sticky left-8 z-[830] flex bg-main"
+              className="shadow-header-sticky sticky left-8 z-[830] flex bg-main"
             >
               {leftPinnedHeaders.map((header) => (
                 <React.Fragment key={header.id}>

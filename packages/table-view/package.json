@@ -44,11 +44,13 @@
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tailwind-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "@types/react": "catalog:react19",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "react": "catalog:react19",
+    "tailwindcss": "catalog:tailwind-v4",
     "tsup": "catalog:",
     "typescript": "catalog:"
   },

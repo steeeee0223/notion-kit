@@ -48,7 +48,7 @@ const TableViewContent = () => {
 
   return (
     <div
-      key="notion-table-view"
+      id="notion-table-view"
       // No need: pl-[96px] pr-[96px]
       className="relative float-left min-w-full pb-0 lining-nums tabular-nums select-none"
       style={{ paddingLeft: `${paddingX}px`, paddingRight: `${paddingX}px` }}
@@ -98,12 +98,12 @@ const TableViewContent = () => {
         <div className="relative isolation-auto min-w-[708px]">
           {/* Drag and Fill handle */}
           <div
-            key="notion-table-view-drag-and-fill-handle"
+            id="notion-table-view-drag-and-fill-handle"
             className="relative z-[850] flex"
           >
             <div className="flex w-[calc(100%-64px)]">
               {/* The blue circle */}
-              {/* <div className="left-[32px]">
+              {/* <div className="left-8">
                 <div className="absolute left-[210px]">
                   <div className="pointer-events-auto absolute left-0 top-[26px] h-[15px] w-[10px] cursor-ns-resize" />
                   <div className="absolute left-0 top-7 size-[9px] transform cursor-ns-resize rounded-full border-2 border-blue/60 bg-main duration-200" />
@@ -130,21 +130,22 @@ const TableViewContent = () => {
         <div
           role="button"
           tabIndex={0}
-          key="notion-table-view-add-row"
+          id="notion-table-view-add-row"
           className="flex h-[33px] w-full animate-bg-in cursor-pointer items-center bg-main pl-2 leading-5 select-none hover:bg-default/5"
         >
           <span className="sticky left-10 inline-flex items-center text-sm text-muted opacity-100 transition-opacity duration-200">
-            <Icon.Plus className="mr-[7px] ml-[1px] block size-[14px] shrink-0 fill-default/35" />
+            <Icon.Plus className="mr-[7px] ml-px block size-3.5 shrink-0 fill-default/35" />
             New page
           </span>
         </div>
+        {/* Table footer */}
         <div
           // contentEditable="false"
           key="pseudoSelection"
           data-content-editable-void="true"
-          className="--pseudoSelection--background: transparent; clip-path: polygon(0% -20%, 100% -20%, 100% 100%, 0% 100%); left-0 z-[850] box-border flex h-[32px] min-w-full border-t border-t-border-cell bg-main text-sm select-none"
+          className="--pseudoSelection--background: transparent; clip-path: polygon(0% -20%, 100% -20%, 100% 100%, 0% 100%); left-0 z-[850] box-border flex h-8 min-w-full border-t border-t-border-cell bg-main text-sm select-none"
         >
-          <div className="flex pr-[32px]">
+          <div className="flex pr-8">
             <div className="flex">
               <div className="left-[calc(32px + -1 * var(--sticky-horizontal-offset, 0px))] sticky z-[830] flex bg-main" />
               <div className="flex w-[216px]">

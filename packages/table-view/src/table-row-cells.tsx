@@ -37,7 +37,7 @@ export const TableRowCell: React.FC<TableRowCellProps> = ({
 
   return (
     <div
-      key="notion-table-view-cell"
+      id="notion-table-view-cell"
       data-row-index={rowId}
       data-col-index={colId}
       className="relative flex h-full border-r border-r-border-cell"

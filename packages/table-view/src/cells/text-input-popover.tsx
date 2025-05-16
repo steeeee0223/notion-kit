@@ -32,7 +32,7 @@ export const TextInputPopover: React.FC<TextInputPopoverProps> = ({
         side="bottom"
         sideOffset={-(position.top ?? 0)}
         align="start"
-        className="z-[990] flex max-h-[773px] min-h-[34px] w-[240px] flex-col overflow-visible backdrop-filter-none"
+        className="z-[990] flex max-h-[773px] min-h-[34px] w-60 flex-col overflow-visible backdrop-filter-none"
         onBlur={() => onChange?.(value)}
       >
         <Input
@@ -46,7 +46,7 @@ export const TextInputPopover: React.FC<TextInputPopoverProps> = ({
           onKeyDown={(e) => {
             if (e.key === "Enter") onChange?.(value);
           }}
-          className="word-break max-h-[771px] min-h-8 border-none bg-transparent whitespace-pre-wrap caret-primary"
+          className="max-h-[771px] min-h-8 border-none bg-transparent word-break whitespace-pre-wrap caret-primary"
         />
         {/* <div className="flex flex-col overflow-y-auto grow h-full px-2 py-1.5 min-h-[34px] justify-between text-sm font-medium">
             <div spellCheck contentEditable data-content-editable-leaf className="w-full max-w-full whitespace-pre-wrap word-break caret-primary">{value}</div>
