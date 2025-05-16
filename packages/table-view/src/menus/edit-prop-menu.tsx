@@ -87,7 +87,9 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
           >
             <MenuItem
               disabled
-              Icon={<Icon.ArrowSquarePathUpDown className="ml-1 size-5" />}
+              Icon={
+                <Icon.ArrowSquarePathUpDown className="ml-1 size-5 fill-icon" />
+              }
               Body="Type"
             >
               <MenuItemAction className="flex items-center fill-default/35 text-muted">
@@ -104,7 +106,9 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
           <>
             <MenuItem
               onClick={openTypesMenu}
-              Icon={<Icon.ArrowSquarePathUpDown className="ml-1 size-5" />}
+              Icon={
+                <Icon.ArrowSquarePathUpDown className="ml-1 size-5 fill-icon" />
+              }
               Body="Type"
             >
               <MenuItemAction className="flex items-center fill-default/35 text-muted">
@@ -120,7 +124,7 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
               </MenuItemAction>
             </MenuItem>
             <MenuItem
-              Icon={<Icon.PencilLine className="ml-1 size-5" />}
+              Icon={<Icon.PencilLine className="ml-1 size-5 fill-icon" />}
               Body={
                 <div className="flex items-center">
                   AI Autofill

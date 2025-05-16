@@ -85,7 +85,7 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
         <MenuItem
           className="px-3"
           onClick={openEditPropMenu}
-          Icon={<Icon.Sliders className="size-5 fill-inherit" />}
+          Icon={<Icon.Sliders className="size-5 fill-icon" />}
           Body="Edit property"
         />
       </MenuGroup>
@@ -112,7 +112,7 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
             ? { Icon: <Icon.ArrowLineRight />, Body: "Unwrap text" }
             : { Icon: <Icon.ArrowUTurnDownLeft />, Body: "Wrap text" })}
           Body="Wrap column"
-          className="[&_svg]:mx-0.5 [&_svg]:size-5"
+          className="[&_svg]:mx-0.5 [&_svg]:size-5 [&_svg]:fill-icon"
         />
       </MenuGroup>
       {property.type !== "title" && (
@@ -124,7 +124,6 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
               Icon={<Icon.Duplicate className="h-4 w-6 fill-icon" />}
               Body="Duplicate property"
             />
-
             <MenuItem
               variant="warning"
               className="group/trash"

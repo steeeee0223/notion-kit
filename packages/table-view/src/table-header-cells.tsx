@@ -83,67 +83,72 @@ export const TableHeaderCell: React.FC<TableHeaderCellProps> = ({
       {...attributes}
       style={style}
     >
-      <div className="relative flex">
-        <div
-          ref={cellRef}
-          // key="notion-table-view-header-cell"
-          className="flex shrink-0 overflow-hidden p-0 text-sm"
-          style={{ width }}
+      <div
+        ref={cellRef}
+        // key="notion-table-view-header-cell"
+        className="flex shrink-0 overflow-hidden p-0 text-sm"
+        style={{ width }}
+      >
+        <TooltipPreset
+          description={
+            property.description
+              ? [
+                  { type: "default", text: property.name },
+                  { type: "secondary", text: property.description },
+                ]
+              : property.name
+          }
+          side="right"
+          className="z-[990]"
         >
-          <TooltipPreset
-            description={property.name}
-            side="right"
-            className="z-[990]"
-          >
-            <div
-              ref={setActivatorNodeRef}
-              role="button"
-              tabIndex={0}
-              className={cn(
-                "flex h-full w-full animate-bg-in cursor-pointer items-center px-2 select-none hover:bg-default/5",
-                isResizing && "bg-transparent",
-              )}
-              {...listeners}
-              onClick={openPropMenu}
-              onKeyDown={openPropMenu}
-            >
-              <div className="flex min-w-0 flex-auto items-center text-sm/[1.2]">
-                <div className="mr-1 grid items-center justify-center">
-                  <div className="col-start-1 row-start-1 opacity-100 transition-opacity duration-150">
-                    {property.icon ? (
-                      <IconBlock
-                        icon={property.icon}
-                        className="size-4 p-0 opacity-60 dark:opacity-45"
-                      />
-                    ) : (
-                      <DefaultIcon
-                        type={property.type}
-                        className="fill-default/45"
-                      />
-                    )}
-                  </div>
-                </div>
-                <div className="truncate">{property.name}</div>
-                {property.description && (
-                  <div className="inline-flex items-center">
-                    <Icon.Info className="mt-px ml-1 block h-full w-3.5 shrink-0 fill-default/35" />
-                  </div>
-                )}
-              </div>
-            </div>
-          </TooltipPreset>
-        </div>
-        {/* Resize handle */}
-        <div className="absolute right-0 z-10 w-0 grow-0">
           <div
-            tabIndex={-1}
+            ref={setActivatorNodeRef}
+            role="button"
+            tabIndex={0}
             className={cn(
-              "-mt-[1px] -ml-[3px] h-[34px] w-[5px] animate-bg-out cursor-col-resize bg-blue/0 hover:bg-blue/80",
-              isResizing && "bg-blue/80",
+              "flex h-full w-full animate-bg-in cursor-pointer items-center px-2 select-none hover:bg-default/5",
+              isResizing && "bg-transparent",
             )}
-            {...resizeHandle}
-          />
-        </div>
+            {...listeners}
+            onClick={openPropMenu}
+            onKeyDown={openPropMenu}
+          >
+            <div className="flex min-w-0 flex-auto items-center text-sm/[1.2]">
+              <div className="mr-1 grid items-center justify-center">
+                <div className="col-start-1 row-start-1 opacity-100 transition-opacity duration-150">
+                  {property.icon ? (
+                    <IconBlock
+                      icon={property.icon}
+                      className="size-4 p-0 opacity-60 dark:opacity-45"
+                    />
+                  ) : (
+                    <DefaultIcon
+                      type={property.type}
+                      className="fill-default/45"
+                    />
+                  )}
+                </div>
+              </div>
+              <div className="truncate">{property.name}</div>
+              {property.description && (
+                <div className="inline-flex items-center">
+                  <Icon.Info className="mt-px ml-1 block h-full w-3.5 shrink-0 fill-default/35" />
+                </div>
+              )}
+            </div>
+          </div>
+        </TooltipPreset>
+      </div>
+      {/* Resize handle */}
+      <div className="absolute right-0 z-10 w-0 grow-0">
+        <div
+          tabIndex={-1}
+          className={cn(
+            "-mt-[1px] -ml-[3px] h-[34px] w-[5px] animate-bg-out cursor-col-resize bg-transparent hover:bg-blue/80",
+            isResizing && "bg-blue/80",
+          )}
+          {...resizeHandle}
+        />
       </div>
     </div>
   );
