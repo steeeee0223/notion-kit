@@ -1281,6 +1281,9 @@ importers:
       '@tanstack/react-table':
         specifier: catalog:ui
         version: 8.21.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react-hotkeys-hook:
+        specifier: catalog:ui
+        version: 4.6.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       uuid:
         specifier: catalog:uuid
         version: 11.1.0

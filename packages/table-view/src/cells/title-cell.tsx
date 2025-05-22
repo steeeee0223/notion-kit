@@ -3,6 +3,7 @@
 import React from "react";
 
 import { cn } from "@notion-kit/cn";
+import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import { Button, TooltipPreset } from "@notion-kit/shadcn";
 
@@ -12,12 +13,14 @@ import { useTextInputPopover } from "./use-text-input-popover";
 import "../view.css";
 
 interface TitleCellProps {
+  icon?: IconData;
   value: string;
   wrapped?: boolean;
   onUpdate?: (value: string) => void;
 }
 
 export const TitleCell: React.FC<TitleCellProps> = ({
+  icon,
   value,
   wrapped,
   onUpdate,
@@ -54,16 +57,19 @@ export const TitleCell: React.FC<TitleCellProps> = ({
           </TooltipPreset>
         </div>
       </div>
-      <span
-        className={cn(
-          "title-cell-bg-img mr-[5px] inline leading-[1.5] font-medium",
-          wrapped
-            ? "break-words whitespace-pre-wrap"
-            : "break-normal whitespace-nowrap",
-        )}
-      >
-        {value}
-      </span>
+      <div className="flex h-5 items-center">
+        {icon && <IconBlock icon={icon} />}
+        <span
+          className={cn(
+            "title-cell-bg-img mr-[5px] inline leading-[1.5] font-medium underline",
+            wrapped
+              ? "break-words whitespace-pre-wrap"
+              : "break-normal whitespace-nowrap",
+          )}
+        >
+          {value}
+        </span>
+      </div>
     </CellTrigger>
   );
 };

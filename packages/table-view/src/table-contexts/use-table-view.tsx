@@ -102,6 +102,7 @@ export const useTableView = (initial: {
                 colId={column.getIndex()}
                 // width={property.width}
                 width={`calc(var(--col-${id}-size) * 1px)`}
+                icon={cell.type === "title" ? row.original.icon : undefined}
                 wrapped={property.wrapped}
                 onChange={(data) =>
                   dispatch({

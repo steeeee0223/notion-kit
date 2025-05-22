@@ -1,6 +1,8 @@
 import type { Updater } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
+import type { IconData } from "@notion-kit/icon-block";
+
 import type {
   CellDataType,
   DatabaseProperty,
@@ -58,6 +60,7 @@ export type TableViewAction =
       payload: { id: string; updater: Updater<boolean> };
     }
   | { type: "add:row"; payload?: { id: string; at: "prev" | "next" } }
+  | { type: "update:row:icon"; payload: { id: string; icon: IconData | null } }
   | {
       type: "update:cell";
       payload: { rowId: string; colId: string; data: CellDataType };
@@ -232,6 +235,11 @@ export const tableViewReducer = (
         : a.updater(v.dataOrder);
       // TODO select row after reorder
       return { ...v, dataOrder };
+    }
+    case "update:row:icon": {
+      const data = { ...v.data };
+      data[a.payload.id]!.icon = a.payload.icon ?? undefined;
+      return { ...v, data };
     }
     case "delete:row": {
       const { [a.payload.id]: _, ...data } = v.data;

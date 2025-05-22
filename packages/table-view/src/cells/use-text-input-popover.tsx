@@ -54,7 +54,7 @@ interface TextInputPopoverProps {
   onUpdate?: (value: string) => void;
 }
 
-export function TextInputPopover({
+function TextInputPopover({
   value: initialValue,
   onUpdate,
 }: TextInputPopoverProps) {

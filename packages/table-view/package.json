@@ -39,6 +39,7 @@
     "@notion-kit/icons": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@tanstack/react-table": "catalog:ui",
+    "react-hotkeys-hook": "catalog:ui",
     "uuid": "catalog:uuid"
   },
   "devDependencies": {

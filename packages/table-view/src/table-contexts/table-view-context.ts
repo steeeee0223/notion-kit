@@ -8,6 +8,8 @@ import type {
 } from "@dnd-kit/core";
 import type { Table } from "@tanstack/react-table";
 
+import type { IconData } from "@notion-kit/icon-block";
+
 import type { DatabaseProperty, PropertyType, RowDataType } from "../lib/types";
 import { CountMethod } from "../lib/types";
 import type { TableViewAction } from "./table-reducer";
@@ -49,6 +51,7 @@ export interface TableActions {
   freezeColumns: (id: string | null) => void;
   toggleCountCap: (id: string) => void;
   addRow: (src?: { id: string; at: "prev" | "next" }) => void;
+  updateRowIcon: (id: string, icon: IconData | null) => void;
   reorder: (e: DragEndEvent, type: ActionType) => void;
   duplicate: (id: string, type: ActionType) => void;
   remove: (id: string, type: ActionType) => void;
