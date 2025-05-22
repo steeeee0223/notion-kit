@@ -14,6 +14,7 @@ import {
   MenuItem,
   MenuItemCheck,
   TooltipPreset,
+  useMenu,
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader } from "../common";
@@ -21,7 +22,6 @@ import type { PropertyType } from "../lib/types";
 import { getUniqueName } from "../lib/utils";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { EditPropMenu } from "./edit-prop-menu";
-import { useMenuControl } from "./menu-control-context";
 import { propOptions } from "./types-menu-options";
 
 interface TypesMenuProps {
@@ -35,7 +35,7 @@ interface TypesMenuProps {
 export const TypesMenu: React.FC<TypesMenuProps> = ({ propId }) => {
   const { properties } = useTableViewCtx();
   const { addColumn, updateColumnType } = useTableActions();
-  const { openPopover } = useMenuControl();
+  const { openMenu } = useMenu();
 
   const property = propId ? properties[propId]! : null;
 
@@ -55,7 +55,7 @@ export const TypesMenu: React.FC<TypesMenuProps> = ({ propId }) => {
       updateColumnType(colId, type);
     }
 
-    openPopover(<EditPropMenu propId={colId} />, { x: -12, y: -12 });
+    openMenu(<EditPropMenu propId={colId} />, { x: -12, y: -12 });
   };
 
   return (

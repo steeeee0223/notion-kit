@@ -5,11 +5,16 @@ import { useLayoutEffect, useRef } from "react";
 import { useFilter } from "@notion-kit/hooks";
 import { IconMenu } from "@notion-kit/icon-menu";
 import { Icon } from "@notion-kit/icons";
-import { Input, MenuGroup, MenuItem, Separator } from "@notion-kit/shadcn";
+import {
+  Input,
+  MenuGroup,
+  MenuItem,
+  Separator,
+  useMenu,
+} from "@notion-kit/shadcn";
 
 import { MenuGroupHeader } from "../common";
 import { useTableActions } from "../table-contexts";
-import { useMenuControl } from "./menu-control-context";
 
 interface RowActionMenuProps {
   rowId: string;
@@ -31,17 +36,17 @@ interface RowActionMenuProps {
  * 8. 🚧 Comment
  */
 export function RowActionMenu({ rowId }: RowActionMenuProps) {
-  const { closePopover } = useMenuControl();
+  const { closeMenu } = useMenu();
   const { duplicate, remove } = useTableActions();
   // 5. Duplicate
   const duplicateRow = () => {
     duplicate(rowId, "row");
-    closePopover();
+    closeMenu();
   };
   // 7. Delete
   const deleteRow = () => {
     remove(rowId, "row");
-    closePopover();
+    closeMenu();
   };
 
   /** Search */

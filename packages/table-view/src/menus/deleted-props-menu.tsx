@@ -9,20 +9,20 @@ import {
   MenuGroup,
   MenuItem,
   MenuItemAction,
+  useMenu,
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader } from "../common";
 import type { DatabaseProperty } from "../lib/types";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
-import { useMenuControl } from "./menu-control-context";
 import { PropsMenu } from "./props-menu";
 
 export const DeletedPropsMenu = () => {
   const { properties } = useTableViewCtx();
   const { updateColumn, remove } = useTableActions();
-  const { openPopover } = useMenuControl();
+  const { openMenu } = useMenu();
 
-  const openPropsMenu = () => openPopover(<PropsMenu />, { x: -12, y: -12 });
+  const openPropsMenu = () => openMenu(<PropsMenu />, { x: -12, y: -12 });
 
   const deletedProps = useMemo(
     () => Object.values(properties).filter((prop) => prop.isDeleted),

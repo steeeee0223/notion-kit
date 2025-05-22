@@ -7,10 +7,10 @@ import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@notion-kit/cn";
 import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
-import { Button, TooltipPreset } from "@notion-kit/shadcn";
+import { Button, TooltipPreset, useMenu } from "@notion-kit/shadcn";
 
 import { DefaultIcon } from "../common";
-import { PropMenu, useMenuControl } from "../menus";
+import { PropMenu } from "../menus";
 import { useTableViewCtx } from "../table-contexts";
 
 interface TableHeaderCellProps {
@@ -43,14 +43,14 @@ export function TableHeaderCell({
   resizeHandle,
 }: TableHeaderCellProps) {
   const { properties } = useTableViewCtx();
-  const { openPopover } = useMenuControl();
+  const { openMenu } = useMenu();
 
   const property = properties[id]!;
 
   const cellRef = useRef<HTMLDivElement>(null);
   const openPropMenu = () => {
     const rect = cellRef.current?.getBoundingClientRect();
-    openPopover(<PropMenu propId={id} rect={rect} />, {
+    openMenu(<PropMenu propId={id} rect={rect} />, {
       x: rect?.x,
       y: rect?.bottom,
       className: "h-full max-h-[70vh] w-[220px]",

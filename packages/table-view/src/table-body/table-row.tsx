@@ -7,10 +7,10 @@ import { flexRender, Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
-import { Button, Checkbox, TooltipPreset } from "@notion-kit/shadcn";
+import { Button, Checkbox, TooltipPreset, useMenu } from "@notion-kit/shadcn";
 
 import type { RowDataType } from "../lib/types";
-import { RowActionMenu, useMenuControl } from "../menus";
+import { RowActionMenu } from "../menus";
 import { useTableActions } from "../table-contexts";
 
 interface TableRowProps {
@@ -29,10 +29,10 @@ export function TableRow({ row }: TableRowProps) {
   };
   /** Open row menu */
   const dragHandleRef = useRef<HTMLButtonElement>(null);
-  const { openPopover } = useMenuControl();
+  const { openMenu } = useMenu();
   const openActionMenu = () => {
     const rect = dragHandleRef.current?.getBoundingClientRect();
-    openPopover(<RowActionMenu rowId={row.id} />, {
+    openMenu(<RowActionMenu rowId={row.id} />, {
       x: rect?.right,
       y: (rect?.y ?? 0) - 40,
       className: "w-[265px]",

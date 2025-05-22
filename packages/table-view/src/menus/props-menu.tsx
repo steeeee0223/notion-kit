@@ -22,6 +22,7 @@ import {
   MenuItem,
   MenuItemAction,
   Separator,
+  useMenu,
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuGroupHeader, MenuHeader } from "../common";
@@ -29,7 +30,6 @@ import type { DatabaseProperty } from "../lib/types";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { DeletedPropsMenu } from "./deleted-props-menu";
 import { EditPropMenu } from "./edit-prop-menu";
-import { useMenuControl } from "./menu-control-context";
 import { TypesMenu } from "./types-menu";
 
 /**
@@ -38,7 +38,7 @@ import { TypesMenu } from "./types-menu";
 export const PropsMenu = () => {
   const { table, properties } = useTableViewCtx();
   const { reorder, updateColumn, toggleAllColumns } = useTableActions();
-  const { openPopover } = useMenuControl();
+  const { openMenu } = useMenu();
 
   const { columnOrder, columnVisibility } = table.getState();
   const noShownProps = (() => {
@@ -74,13 +74,13 @@ export const PropsMenu = () => {
   );
   // Menu actions
   const openTypesMenu = () =>
-    openPopover(<TypesMenu propId={null} />, { x: -12, y: -12 });
+    openMenu(<TypesMenu propId={null} />, { x: -12, y: -12 });
   const openEditPropMenu = (propId: string) =>
-    openPopover(<EditPropMenu propId={propId} />, { x: -12, y: -12 });
+    openMenu(<EditPropMenu propId={propId} />, { x: -12, y: -12 });
   const toggleVisibility = (propId: string, hidden: boolean) =>
     updateColumn(propId, { hidden });
   const openDeletedPropsMenu = () =>
-    openPopover(<DeletedPropsMenu />, { x: -12, y: -12 });
+    openMenu(<DeletedPropsMenu />, { x: -12, y: -12 });
 
   useLayoutEffect(() => {
     inputRef.current?.focus();

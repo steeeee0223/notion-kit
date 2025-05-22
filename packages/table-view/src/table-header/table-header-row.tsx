@@ -13,10 +13,10 @@ import {
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
-import { Checkbox } from "@notion-kit/shadcn";
+import { Checkbox, useMenu } from "@notion-kit/shadcn";
 
 import type { RowDataType } from "../lib/types";
-import { PropsMenu, TypesMenu, useMenuControl } from "../menus";
+import { PropsMenu, TypesMenu } from "../menus";
 import { TableHeaderActionCell } from "./table-header-action-cell";
 
 interface TableHeaderRowProps {
@@ -30,19 +30,19 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({
   headers,
   columnOrder,
 }) => {
-  const { openPopover } = useMenuControl();
+  const { openMenu } = useMenu();
 
   const isLeftPinned = leftPinnedHeaders.length > 0;
 
   const plusButtonRef = useRef<HTMLButtonElement>(null);
   const openTypesMenu = () => {
     const rect = plusButtonRef.current?.getBoundingClientRect();
-    openPopover(<TypesMenu propId={null} />, {
+    openMenu(<TypesMenu propId={null} />, {
       x: rect?.left,
       y: rect ? rect.top + rect.height : 0,
     });
   };
-  const openPropsMenu = () => openPopover(<PropsMenu />, { x: -12, y: -12 });
+  const openPropsMenu = () => openMenu(<PropsMenu />, { x: -12, y: -12 });
 
   return (
     <div

@@ -3,12 +3,11 @@
 import React from "react";
 
 import { Icon } from "@notion-kit/icons";
-import { MenuGroup, MenuItem, Separator } from "@notion-kit/shadcn";
+import { MenuGroup, MenuItem, Separator, useMenu } from "@notion-kit/shadcn";
 
 import { PropMeta } from "../common";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { EditPropMenu } from "./edit-prop-menu";
-import { useMenuControl } from "./menu-control-context";
 
 interface PropMenuProps {
   propId: string;
@@ -33,13 +32,13 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
   const { table, properties, isPropertyUnique, canFreezeProperty } =
     useTableViewCtx();
   const { updateColumn, duplicate, freezeColumns } = useTableActions();
-  const { openPopover, closePopover } = useMenuControl();
+  const { openMenu, closeMenu } = useMenu();
 
   const property = properties[propId]!;
 
   // 1. Edit property
   const openEditPropMenu = () => {
-    openPopover(<EditPropMenu propId={propId} />, {
+    openMenu(<EditPropMenu propId={propId} />, {
       x: rect?.x,
       y: rect?.bottom,
     });
@@ -49,12 +48,12 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
   const canUnfreeze = table.getColumn(property.id)?.getIsLastColumn("left");
   const pinColumns = () => {
     freezeColumns(canUnfreeze ? null : property.id);
-    closePopover();
+    closeMenu();
   };
   // 5. Hide in view
   const hideProp = () => {
     updateColumn(property.id, { hidden: true });
-    closePopover();
+    closeMenu();
   };
   // 6. Wrap in view
   const wrapProp = () =>
@@ -62,12 +61,12 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
   // 7. Duplicate property
   const duplicateProp = () => {
     duplicate(property.id, "col");
-    closePopover();
+    closeMenu();
   };
   // 8. Delete property
   const deleteProp = () => {
     updateColumn(property.id, { isDeleted: true });
-    closePopover();
+    closeMenu();
   };
 
   return (
@@ -76,7 +75,7 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
         property={property}
         validateName={isPropertyUnique}
         onUpdate={(data) => updateColumn(property.id, data)}
-        onKeyDownUpdate={closePopover}
+        onKeyDownUpdate={closeMenu}
       />
       <MenuGroup>
         <MenuItem

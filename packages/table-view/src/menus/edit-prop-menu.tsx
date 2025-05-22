@@ -10,11 +10,11 @@ import {
   Separator,
   Switch,
   TooltipPreset,
+  useMenu,
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader, PropMeta } from "../common";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
-import { useMenuControl } from "./menu-control-context";
 import { PropsMenu } from "./props-menu";
 import { TypesMenu } from "./types-menu";
 import { propertyTypes } from "./types-menu-options";
@@ -37,32 +37,32 @@ interface EditPropMenuProps {
 export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
   const { properties, isPropertyUnique } = useTableViewCtx();
   const { updateColumn, duplicate } = useTableActions();
-  const { openPopover, closePopover } = useMenuControl();
+  const { openMenu, closeMenu } = useMenu();
 
   const property = properties[propId]!;
 
-  const openPropsMenu = () => openPopover(<PropsMenu />, { x: -12, y: -12 });
+  const openPropsMenu = () => openMenu(<PropsMenu />, { x: -12, y: -12 });
 
   // 1. Type selection
   const openTypesMenu = () =>
-    openPopover(<TypesMenu propId={property.id} />, { x: -12, y: -12 });
+    openMenu(<TypesMenu propId={property.id} />, { x: -12, y: -12 });
   // 3. Wrap in view
   const wrapProp = () =>
     updateColumn(property.id, { wrapped: !property.wrapped });
   // 4. Hide in view
   const hideProp = () => {
     updateColumn(property.id, { hidden: true });
-    closePopover();
+    closeMenu();
   };
   // 5. Duplicate property
   const duplicateProp = () => {
     duplicate(property.id, "col");
-    closePopover();
+    closeMenu();
   };
   // 6. Delete property
   const deleteProp = () => {
     updateColumn(property.id, { isDeleted: true });
-    closePopover();
+    closeMenu();
   };
 
   return (
@@ -72,7 +72,7 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
         property={property}
         validateName={isPropertyUnique}
         onUpdate={(data) => updateColumn(property.id, data)}
-        onKeyDownUpdate={closePopover}
+        onKeyDownUpdate={closeMenu}
       />
       <MenuGroup>
         {property.type === "title" ? (
