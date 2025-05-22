@@ -15,160 +15,189 @@ import {
   separatorVariants,
 } from "./variants";
 
-const Select = SelectPrimitive.Root;
+function Select({
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Root>) {
+  return <SelectPrimitive.Root data-slot="select" {...props} />;
+}
 
-const SelectGroup = SelectPrimitive.Group;
+function SelectGroup({
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Group>) {
+  return <SelectPrimitive.Group data-slot="select-group" {...props} />;
+}
 
-const SelectValue = SelectPrimitive.Value;
+function SelectValue({
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Value>) {
+  return <SelectPrimitive.Value data-slot="select-value" {...props} />;
+}
 
-const SelectIcon = SelectPrimitive.Icon;
+function SelectIcon({
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Icon>) {
+  return <SelectPrimitive.Icon data-slot="select-icon" {...props} />;
+}
 
-const SelectTrigger = ({
+function SelectTrigger({
   className,
   children,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.Trigger>) => (
-  <SelectPrimitive.Trigger
-    className={cn(
-      buttonVariants({ variant: null }),
-      "relative mt-3 mb-1 flex h-7 w-full min-w-0 shrink-0 justify-between justify-normal p-2 text-primary",
-      "placeholder:text-secondary data-placeholder:text-secondary",
-      "[&>span]:line-clamp-1",
-      className,
-    )}
-    {...props}
-  >
-    {children}
-    <SelectPrimitive.Icon asChild>
-      <ChevronDown className="ml-1 h-4 w-4 opacity-45" />
-    </SelectPrimitive.Icon>
-  </SelectPrimitive.Trigger>
-);
-SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
+}: React.ComponentProps<typeof SelectPrimitive.Trigger>) {
+  return (
+    <SelectPrimitive.Trigger
+      data-slot="select-trigger"
+      className={cn(
+        buttonVariants({ variant: null }),
+        "relative mt-3 mb-1 flex h-7 w-full min-w-0 shrink-0 justify-between justify-normal p-2 text-primary",
+        "placeholder:text-secondary data-placeholder:text-secondary",
+        "[&>span]:line-clamp-1",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+      <SelectPrimitive.Icon asChild>
+        <ChevronDown className="ml-1 h-4 w-4 opacity-45" />
+      </SelectPrimitive.Icon>
+    </SelectPrimitive.Trigger>
+  );
+}
 
-const SelectScrollUpButton = ({
+function SelectScrollUpButton({
   className,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.ScrollUpButton>) => (
-  <SelectPrimitive.ScrollUpButton
-    className={cn(
-      "flex cursor-default items-center justify-center py-1",
-      className,
-    )}
-    {...props}
-  >
-    <ChevronUp className="h-4 w-4" />
-  </SelectPrimitive.ScrollUpButton>
-);
-SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
+}: React.ComponentProps<typeof SelectPrimitive.ScrollUpButton>) {
+  return (
+    <SelectPrimitive.ScrollUpButton
+      data-slot="select-scroll-up-button"
+      className={cn(
+        "flex cursor-default items-center justify-center py-1",
+        className,
+      )}
+      {...props}
+    >
+      <ChevronUp className="size-4" />
+    </SelectPrimitive.ScrollUpButton>
+  );
+}
 
-const SelectScrollDownButton = ({
+function SelectScrollDownButton({
   className,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.ScrollDownButton>) => (
-  <SelectPrimitive.ScrollDownButton
-    className={cn(
-      "flex cursor-default items-center justify-center py-1",
-      className,
-    )}
-    {...props}
-  >
-    <ChevronDown className="h-4 w-4" />
-  </SelectPrimitive.ScrollDownButton>
-);
-SelectScrollDownButton.displayName =
-  SelectPrimitive.ScrollDownButton.displayName;
+}: React.ComponentProps<typeof SelectPrimitive.ScrollDownButton>) {
+  return (
+    <SelectPrimitive.ScrollDownButton
+      data-slot="select-scroll-down-button"
+      className={cn(
+        "flex cursor-default items-center justify-center py-1",
+        className,
+      )}
+      {...props}
+    >
+      <ChevronDown className="size-4" />
+    </SelectPrimitive.ScrollDownButton>
+  );
+}
 
 type SelectContentProps = React.ComponentProps<typeof SelectPrimitive.Content>;
-const SelectContent = ({
+function SelectContent({
   className,
   children,
   position = "popper",
   ...props
-}: SelectContentProps) => (
-  <SelectPrimitive.Portal>
-    <SelectPrimitive.Content
-      className={cn(
-        "relative max-h-96 min-w-[8rem] overflow-hidden",
-        position === "popper" &&
-          "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
-        contentVariants({ variant: "popover" }),
-        className,
-      )}
-      position={position}
-      {...props}
-    >
-      <SelectScrollUpButton />
-      <SelectPrimitive.Viewport
+}: SelectContentProps) {
+  return (
+    <SelectPrimitive.Portal>
+      <SelectPrimitive.Content
+        data-slot="select-content"
         className={cn(
-          "py-1",
+          "relative max-h-96 min-w-[8rem] overflow-hidden",
           position === "popper" &&
-            "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]",
+            "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
+          contentVariants({ variant: "popover", sideAnimation: true }),
+          className,
         )}
+        position={position}
+        {...props}
       >
-        {children}
-      </SelectPrimitive.Viewport>
-      <SelectScrollDownButton />
-    </SelectPrimitive.Content>
-  </SelectPrimitive.Portal>
-);
-SelectContent.displayName = SelectPrimitive.Content.displayName;
+        <SelectScrollUpButton />
+        <SelectPrimitive.Viewport
+          className={cn(
+            "py-1",
+            position === "popper" &&
+              "h-(--radix-select-trigger-height) w-full min-w-(--radix-select-trigger-width)",
+          )}
+        >
+          {children}
+        </SelectPrimitive.Viewport>
+        <SelectScrollDownButton />
+      </SelectPrimitive.Content>
+    </SelectPrimitive.Portal>
+  );
+}
 
-const SelectLabel = ({
+function SelectLabel({
   className,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.Label>) => (
-  <SelectPrimitive.Label
-    className={cn("py-1.5 pr-2 pl-8 text-sm font-semibold", className)}
-    {...props}
-  />
-);
-SelectLabel.displayName = SelectPrimitive.Label.displayName;
+}: React.ComponentProps<typeof SelectPrimitive.Label>) {
+  return (
+    <SelectPrimitive.Label
+      data-slot="select-label"
+      className={cn("py-1.5 pr-2 pl-8 text-sm font-semibold", className)}
+      {...props}
+    />
+  );
+}
 
 interface SelectItemProps
   extends React.ComponentProps<typeof SelectPrimitive.Item>,
     ButtonVariants {
   hideCheck?: boolean;
 }
-const SelectItem = ({
+function SelectItem({
   className,
   children,
   hideCheck = false,
   disabled,
   ...props
-}: SelectItemProps) => (
-  <SelectPrimitive.Item
-    className={cn(
-      menuItemVariants({ disabled, className: "py-1 focus:bg-default/5" }),
-      className,
-    )}
-    disabled={disabled}
-    {...props}
-  >
-    <SelectPrimitive.ItemText asChild>
-      <div className="mr-1.5 block min-w-0 flex-auto">{children}</div>
-    </SelectPrimitive.ItemText>
-    {!hideCheck && (
-      <SelectPrimitive.ItemIndicator asChild>
-        <div className="ml-auto block min-w-0 shrink-0">
-          <Check className="block size-3.5 shrink-0" />
-        </div>
-      </SelectPrimitive.ItemIndicator>
-    )}
-  </SelectPrimitive.Item>
-);
-SelectItem.displayName = SelectPrimitive.Item.displayName;
+}: SelectItemProps) {
+  return (
+    <SelectPrimitive.Item
+      data-slot="select-item"
+      className={cn(
+        menuItemVariants({ disabled, className: "py-1 focus:bg-default/5" }),
+        className,
+      )}
+      disabled={disabled}
+      {...props}
+    >
+      <SelectPrimitive.ItemText asChild>
+        <div className="mr-1.5 block min-w-0 flex-auto">{children}</div>
+      </SelectPrimitive.ItemText>
+      {!hideCheck && (
+        <SelectPrimitive.ItemIndicator asChild>
+          <div className="ml-auto block min-w-0 shrink-0">
+            <Check className="block size-3.5 shrink-0" />
+          </div>
+        </SelectPrimitive.ItemIndicator>
+      )}
+    </SelectPrimitive.Item>
+  );
+}
 
-type SelectSeparatorProps = React.ComponentProps<
-  typeof SelectPrimitive.Separator
->;
-const SelectSeparator = ({ className, ...props }: SelectSeparatorProps) => (
-  <SelectPrimitive.Separator
-    className={cn(separatorVariants({ className }))}
-    {...props}
-  />
-);
-SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
+function SelectSeparator({
+  className,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Separator>) {
+  return (
+    <SelectPrimitive.Separator
+      data-slot="select-separator"
+      className={cn(separatorVariants({ className }))}
+      {...props}
+    />
+  );
+}
 
 export {
   Select,

@@ -75,7 +75,7 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
       onCreate?.();
       if (!expanded) onExpand?.();
     };
-    const handleDelete = (e: React.MouseEvent<HTMLDivElement>) => {
+    const handleDelete = (e: Event | React.SyntheticEvent) => {
       e.stopPropagation();
       if (id) onDelete?.(id);
     };

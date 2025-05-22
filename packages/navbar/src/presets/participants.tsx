@@ -1,7 +1,7 @@
 "use client";
 
-import { Hint } from "@notion-kit/common";
 import { User } from "@notion-kit/schemas";
+import { TooltipPreset } from "@notion-kit/shadcn";
 import { idToColor } from "@notion-kit/utils";
 
 import { UserAvatar } from "./_components";
@@ -37,12 +37,12 @@ export const Participants: React.FC<ParticipantsProps> = ({
         />
       ))}
       {hasMoreUsers && (
-        <Hint
+        <TooltipPreset
           description={`Viewed by ${otherUsers.length - MAX_SHOWN_USERS} more people`}
           sideOffset={10}
         >
           <div className="ml-2 text-sm whitespace-nowrap text-secondary select-none">{`+${otherUsers.length - MAX_SHOWN_USERS}`}</div>
-        </Hint>
+        </TooltipPreset>
       )}
     </div>
   );
