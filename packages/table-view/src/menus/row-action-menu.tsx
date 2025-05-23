@@ -1,8 +1,10 @@
 "use client";
 
 import { useLayoutEffect, useRef } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 
 import { useFilter } from "@notion-kit/hooks";
+import type { IconData } from "@notion-kit/icon-block";
 import { IconMenu } from "@notion-kit/icon-menu";
 import { Icon } from "@notion-kit/icons";
 import {
@@ -37,7 +39,23 @@ interface RowActionMenuProps {
  */
 export function RowActionMenu({ rowId }: RowActionMenuProps) {
   const { closeMenu } = useMenu();
-  const { duplicate, remove } = useTableActions();
+  const { duplicate, remove, updateRowIcon } = useTableActions();
+  // 1. Edit icon
+  const selectIcon = (icon: IconData) => {
+    updateRowIcon(rowId, icon);
+    closeMenu();
+  };
+  const removeIcon = () => {
+    updateRowIcon(rowId, null);
+    closeMenu();
+  };
+  const uploadIcon = (file: File) => {
+    updateRowIcon(rowId, {
+      type: "url",
+      src: URL.createObjectURL(file),
+    });
+    closeMenu();
+  };
   // 5. Duplicate
   const duplicateRow = () => {
     duplicate(rowId, "row");
@@ -61,6 +79,10 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
     inputRef.current?.focus();
   }, []);
 
+  /** Keyboard shortcut */
+  useHotkeys("meta+d", duplicateRow, { preventDefault: true });
+  useHotkeys("backspace", deleteRow);
+
   return (
     <>
       <div className="flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2">
@@ -74,15 +96,16 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
       <MenuGroup>
         <MenuGroupHeader title="Page" />
         <IconMenu
-          disabled
           className="w-full border-none text-start hover:bg-transparent"
+          onSelect={selectIcon}
+          onRemove={removeIcon}
+          onUpload={uploadIcon}
         >
           <MenuItem
             Icon={
               <Icon.EmojiFace className="size-5 fill-[#32302c] dark:fill-icon" />
             }
             Body="Edit icon"
-            disabled
           />
         </IconMenu>
       </MenuGroup>

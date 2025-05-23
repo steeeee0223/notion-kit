@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import type { IconData } from "@notion-kit/icon-block";
+
 import type { CellType } from "../lib/types";
 import { CheckboxCell } from "./checkbox-cell";
 import { TextCell } from "./text-cell";
@@ -11,12 +13,6 @@ enum CellMode {
   Normal = "normal",
   Edit = "edit",
   Select = "select",
-}
-
-interface DataCellProps {
-  data: CellType;
-  wrapped?: boolean;
-  onChange?: (data: CellType) => void;
 }
 
 interface TableRowCellProps extends DataCellProps {
@@ -30,8 +26,7 @@ export function TableRowCell({
   rowId,
   colId,
   width,
-  wrapped,
-  onChange,
+  ...cellProps
 }: TableRowCellProps) {
   const [mode] = useState<CellMode>(CellMode.Normal);
 
@@ -44,7 +39,7 @@ export function TableRowCell({
       style={{ width }}
     >
       <div className="flex h-full overflow-x-clip" style={{ width }}>
-        <DataCell data={data} wrapped={wrapped} onChange={onChange} />
+        <DataCell data={data} {...cellProps} />
       </div>
       {mode === CellMode.Select && (
         <div className="pointer-events-none absolute top-0 left-0 z-[840] h-full w-full rounded-[3px] bg-blue/5 shadow-cell-focus" />
@@ -53,12 +48,20 @@ export function TableRowCell({
   );
 }
 
-function DataCell({ data, wrapped, onChange }: DataCellProps) {
+interface DataCellProps {
+  data: CellType;
+  icon?: IconData;
+  wrapped?: boolean;
+  onChange?: (data: CellType) => void;
+}
+
+function DataCell({ data, icon, wrapped, onChange }: DataCellProps) {
   switch (data.type) {
     case "title":
       return (
         <TitleCell
           value={data.value}
+          icon={icon}
           wrapped={wrapped}
           onUpdate={(value) => onChange?.({ type: "title", value })}
         />

@@ -59,6 +59,8 @@ export const TableViewProvider: React.FC<TableViewProviderProps> = ({
           payload: { id, updater: (prev) => !prev },
         }),
       addRow: (src) => dispatch({ type: "add:row", payload: src }),
+      updateRowIcon: (id, icon) =>
+        dispatch({ type: "update:row:icon", payload: { id, icon } }),
       reorder: (e, type) => {
         // reorder after drag & drop
         const { active, over } = e;
