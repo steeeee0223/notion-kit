@@ -81,10 +81,10 @@ export const TableViewProvider: React.FC<TableViewProviderProps> = ({
   );
 
   return (
-    <TableViewContext.Provider value={tableViewCtx}>
-      <TableActionsContext.Provider value={actions}>
+    <TableViewContext value={tableViewCtx}>
+      <TableActionsContext value={actions}>
         <TooltipProvider delayDuration={500}>{children}</TooltipProvider>
-      </TableActionsContext.Provider>
-    </TableViewContext.Provider>
+      </TableActionsContext>
+    </TableViewContext>
   );
 };

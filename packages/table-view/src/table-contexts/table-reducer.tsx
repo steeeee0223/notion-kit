@@ -90,7 +90,7 @@ export const tableViewReducer = (
     }
     case "update:col": {
       const prop = v.properties[a.payload.id];
-      if (!prop) return v;
+      if (!prop) return v as never;
       return {
         ...v,
         properties: {
@@ -101,7 +101,7 @@ export const tableViewReducer = (
     }
     case "update:col:type": {
       const prop = v.properties[a.payload.id];
-      if (!prop) return v;
+      if (!prop) return v as never;
       return {
         ...v,
         properties: {
@@ -241,17 +241,11 @@ export const tableViewReducer = (
         data,
       };
     }
-    case "update:cell":
-      return {
-        ...v,
-        get data() {
-          const data = { ...v.data };
-          v.dataOrder.forEach((rowId) => {
-            data[rowId]!.properties[a.payload.colId] = a.payload.data;
-          });
-          return data;
-        },
-      };
+    case "update:cell": {
+      const data = { ...v.data };
+      data[a.payload.rowId]!.properties[a.payload.colId] = a.payload.data;
+      return { ...v, data };
+    }
     case "reset":
       return {
         properties: {},

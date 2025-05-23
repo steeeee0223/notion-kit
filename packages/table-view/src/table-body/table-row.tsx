@@ -6,11 +6,12 @@ import { CSS } from "@dnd-kit/utilities";
 import { flexRender, Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
+import { useIsMobile } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
-import { Button, Checkbox, TooltipPreset } from "@notion-kit/shadcn";
+import { Button, Checkbox, TooltipPreset, useMenu } from "@notion-kit/shadcn";
 
 import type { RowDataType } from "../lib/types";
-import { RowActionMenu, useMenuControl } from "../menus";
+import { RowActionMenu } from "../menus";
 import { useTableActions } from "../table-contexts";
 
 interface TableRowProps {
@@ -18,6 +19,7 @@ interface TableRowProps {
 }
 
 export function TableRow({ row }: TableRowProps) {
+  const isMobile = useIsMobile();
   /** Add row */
   const { addRow } = useTableActions();
   const addNextRow = (e: React.MouseEvent) => {
@@ -29,10 +31,10 @@ export function TableRow({ row }: TableRowProps) {
   };
   /** Open row menu */
   const dragHandleRef = useRef<HTMLButtonElement>(null);
-  const { openPopover } = useMenuControl();
+  const { openMenu } = useMenu();
   const openActionMenu = () => {
     const rect = dragHandleRef.current?.getBoundingClientRect();
-    openPopover(<RowActionMenu rowId={row.id} />, {
+    openMenu(<RowActionMenu rowId={row.id} />, {
       x: rect?.right,
       y: (rect?.y ?? 0) - 40,
       className: "w-[265px]",
@@ -74,8 +76,9 @@ export function TableRow({ row }: TableRowProps) {
             <div className="absolute -left-20 bg-main">
               <div
                 className={cn(
-                  "flex h-full items-center opacity-0 transition-opacity delay-0 duration-200 group-hover/row:opacity-60 group-hover/row:hover:opacity-100",
-                  isDragging && "opacity-100",
+                  "flex h-full items-center opacity-0 transition-opacity delay-0 duration-200",
+                  "group-hover/row:opacity-100 has-data-[state=checked]:opacity-100",
+                  (isDragging || isMobile) && "opacity-100",
                 )}
               >
                 <TooltipPreset
@@ -114,7 +117,7 @@ export function TableRow({ row }: TableRowProps) {
                 </TooltipPreset>
                 <label
                   htmlFor="row-select"
-                  className="z-10 flex h-full cursor-pointer items-start justify-center group-hover/row:opacity-60 group-hover/row:hover:opacity-100"
+                  className="z-10 flex h-full cursor-pointer items-start justify-center"
                 >
                   <div className="flex h-[31px] w-8 items-center justify-center">
                     <Checkbox

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext } from "react";
+import React, { createContext, use } from "react";
 import type {
   DragEndEvent,
   SensorDescriptor,
@@ -30,7 +30,7 @@ export interface TableViewCtx {
 export const TableViewContext = createContext<TableViewCtx | null>(null);
 
 export const useTableViewCtx = () => {
-  const ctx = useContext(TableViewContext);
+  const ctx = use(TableViewContext);
   if (!ctx)
     throw new Error(
       "`useTableViewCtx` must be used within `TableViewProvider`",
@@ -57,7 +57,7 @@ export interface TableActions {
 export const TableActionsContext = createContext<TableActions | null>(null);
 
 export const useTableActions = () => {
-  const ctx = useContext(TableActionsContext);
+  const ctx = use(TableActionsContext);
   if (!ctx)
     throw new Error(
       "`useTableActions` must be used within `TableActionsProvider`",

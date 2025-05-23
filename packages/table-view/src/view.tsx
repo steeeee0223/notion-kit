@@ -9,12 +9,11 @@ import {
 } from "@dnd-kit/modifiers";
 
 import { Icon } from "@notion-kit/icons";
-import { Button } from "@notion-kit/shadcn";
+import { Button, MenuProvider } from "@notion-kit/shadcn";
 
 import { cols, mockData } from "./__mock__";
 import { paddingX } from "./constant";
 import type { DatabaseProperty, RowDataType } from "./lib/types";
-import { MenuControlProvider } from "./menus";
 import { MemoizedTableBody, TableBody } from "./table-body";
 import {
   TableViewProvider,
@@ -35,9 +34,9 @@ export const TableView: React.FC<TableViewProps> = ({
 }) => {
   return (
     <TableViewProvider initialData={{ properties, data }}>
-      <MenuControlProvider>
+      <MenuProvider>
         <TableViewContent />
-      </MenuControlProvider>
+      </MenuProvider>
     </TableViewProvider>
   );
 };
