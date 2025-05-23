@@ -41,7 +41,7 @@ function MenuProvider({ children }: React.PropsWithChildren) {
       setPopover(
         <PopoverContent
           container={containerRef.current}
-          className={cn("z-[990] flex w-[290px] flex-col", className)}
+          className={cn("z-990 flex w-[290px] flex-col", className)}
           align="start"
           alignOffset={0}
           side="bottom"

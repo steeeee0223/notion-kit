@@ -60,15 +60,15 @@ function DataCell({ data, wrapped, onChange }: DataCellProps) {
         <TitleCell
           value={data.value}
           wrapped={wrapped}
-          onChange={(value) => onChange?.({ type: "title", value })}
+          onUpdate={(value) => onChange?.({ type: "title", value })}
         />
       );
     case "text":
       return (
         <TextCell
           value={data.value}
-          wrap={wrapped}
-          onChange={(value) => onChange?.({ type: "text", value })}
+          wrapped={wrapped}
+          onUpdate={(value) => onChange?.({ type: "text", value })}
         />
       );
     case "checkbox":

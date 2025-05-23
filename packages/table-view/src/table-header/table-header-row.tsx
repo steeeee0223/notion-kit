@@ -12,6 +12,7 @@ import {
 } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
+import { useIsMobile } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { Checkbox, useMenu } from "@notion-kit/shadcn";
 
@@ -30,6 +31,7 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({
   headers,
   columnOrder,
 }) => {
+  const isMobile = useIsMobile();
   const { openMenu } = useMenu();
 
   const isLeftPinned = leftPinnedHeaders.length > 0;
@@ -51,24 +53,25 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({
       className="relative right-0 left-0 box-border flex h-[34px] min-w-[708px] bg-main text-default/65 shadow-header-row"
       // TODO check if remove `z-870` causes any issue
     >
-      <div className="sticky left-8 z-830 flex">
-        <div className="absolute -left-8">
-          <div className="h-full border-b-border-cell bg-main">
-            <div className="h-full">
-              <label
-                htmlFor="row-select"
-                aria-label="row-select"
-                className="z-10 flex h-full cursor-pointer items-start justify-center opacity-0 hover:opacity-100"
-              >
-                <div className="flex h-[31px] w-8 items-center justify-center">
-                  <Checkbox
-                    id="row-select"
-                    size="sm"
-                    className="relative right-0.5 cursor-pointer rounded-[2px] accent-blue"
-                  />
-                </div>
-              </label>
-            </div>
+      <div className="sticky left-20 z-830 flex">
+        <div className="absolute -left-20">
+          <div className="flex h-full w-[74px] justify-end border-b-border-cell bg-main">
+            <label
+              htmlFor="row-select"
+              aria-label="row-select"
+              className={cn(
+                "z-10 flex h-full cursor-pointer items-start justify-center opacity-0 hover:opacity-100 has-data-[state=checked]:opacity-100",
+                isMobile && "opacity-100",
+              )}
+            >
+              <div className="flex h-[31px] w-8 items-center justify-center">
+                <Checkbox
+                  id="row-select"
+                  size="sm"
+                  className="relative right-0.5 cursor-pointer rounded-[2px] accent-blue"
+                />
+              </div>
+            </label>
           </div>
         </div>
       </div>
