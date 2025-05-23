@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 import { HelpCircle, Trash, Undo } from "lucide-react";
 
-import { BaseModal, Hint, HintProvider } from "@notion-kit/common";
+import { BaseModal } from "@notion-kit/common";
 import { useFilter } from "@notion-kit/hooks";
 import { IconBlock } from "@notion-kit/icon-block";
 import { useModal } from "@notion-kit/modal";
@@ -16,6 +16,8 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  TooltipPreset,
+  TooltipProvider,
 } from "@notion-kit/shadcn";
 
 import { SidebarMenuItem } from "../core";
@@ -77,7 +79,7 @@ export const TrashBox: React.FC<TrashBoxProps> = ({
   };
 
   return (
-    <HintProvider>
+    <TooltipProvider>
       <Popover open={isOpen} onOpenChange={onOpenChange}>
         <PopoverTrigger asChild>
           <SidebarMenuItem
@@ -127,7 +129,7 @@ export const TrashBox: React.FC<TrashBoxProps> = ({
                     onClick={() => handleSelect(page)}
                   >
                     <MenuItemAction className="flex gap-1">
-                      <Hint description="Restore">
+                      <TooltipPreset description="Restore">
                         <Button
                           variant="hint"
                           className="size-5"
@@ -135,8 +137,8 @@ export const TrashBox: React.FC<TrashBoxProps> = ({
                         >
                           <Undo className="size-4" />
                         </Button>
-                      </Hint>
-                      <Hint description="Delete from Trash">
+                      </TooltipPreset>
+                      <TooltipPreset description="Delete from Trash">
                         <Button
                           variant="hint"
                           className="size-5"
@@ -144,7 +146,7 @@ export const TrashBox: React.FC<TrashBoxProps> = ({
                         >
                           <Trash className="size-4" />
                         </Button>
-                      </Hint>
+                      </TooltipPreset>
                     </MenuItemAction>
                   </MenuItem>
                 ))}
@@ -170,6 +172,6 @@ export const TrashBox: React.FC<TrashBoxProps> = ({
           </footer>
         </PopoverContent>
       </Popover>
-    </HintProvider>
+    </TooltipProvider>
   );
 };

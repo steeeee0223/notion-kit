@@ -2,8 +2,7 @@ import React from "react";
 import type { LucideIcon } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
-import { Hint } from "@notion-kit/common";
-import { MenuItem } from "@notion-kit/shadcn";
+import { MenuItem, TooltipPreset } from "@notion-kit/shadcn";
 
 interface SidebarMenuItemProps extends React.ComponentProps<"div"> {
   label: string;
@@ -21,7 +20,7 @@ export const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({
   ...props
 }) => {
   return (
-    <Hint
+    <TooltipPreset
       description={
         shortcut
           ? [
@@ -37,10 +36,10 @@ export const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({
         data-slot="sidebar-menuitem"
         variant="sidebar"
         className={cn("h-[27px] font-medium", className)}
-        Icon={<Icon className="size-5 rounded-sm p-0.5 text-muted" />}
+        Icon={<Icon className="size-5 text-muted" />}
         Body={label}
         {...props}
       />
-    </Hint>
+    </TooltipPreset>
   );
 };

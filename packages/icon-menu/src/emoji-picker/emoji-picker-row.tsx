@@ -3,8 +3,7 @@
 import React, { memo } from "react";
 import { Emoji } from "@emoji-mart/data";
 
-import { Hint } from "@notion-kit/common";
-import { Button } from "@notion-kit/shadcn";
+import { Button, TooltipPreset } from "@notion-kit/shadcn";
 
 import type { GridRow } from "../lib";
 import type { Skin, UseEmojiPickerType } from "./types";
@@ -19,7 +18,7 @@ interface EmojiButtonProps {
 
 export const EmojiButton: React.FC<EmojiButtonProps> = memo(
   ({ emoji, skin, index, onSelect }) => (
-    <Hint align="center" side="top" description={emoji.name}>
+    <TooltipPreset align="center" side="top" description={emoji.name}>
       <Button
         variant="hint"
         className="size-8 p-0 text-2xl/none"
@@ -39,7 +38,7 @@ export const EmojiButton: React.FC<EmojiButtonProps> = memo(
           {getNativeEmoji(emoji, skin)}
         </span>
       </Button>
-    </Hint>
+    </TooltipPreset>
   ),
 );
 EmojiButton.displayName = "EmojiButton";

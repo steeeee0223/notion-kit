@@ -60,10 +60,9 @@ export const ActionCell = ({
           <DropdownMenuItem
             // TODO impl. this
             disabled
+            Body="Connect another account"
             onSelect={onCreateConnection}
-          >
-            Connect another account
-          </DropdownMenuItem>
+          />
           <DropdownMenuItem
             variant="error"
             Body="Disconnect account"

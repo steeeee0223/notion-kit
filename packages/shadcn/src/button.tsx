@@ -13,21 +13,21 @@ export interface ButtonProps
   asChild?: boolean;
 }
 
-const Button = ({
+function Button({
   className,
   variant,
   size,
   asChild = false,
   ...props
-}: ButtonProps) => {
+}: ButtonProps) {
   const Comp = asChild ? Slot : "button";
   return (
     <Comp
+      data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />
   );
-};
-Button.displayName = "Button";
+}
 
 export { Button };

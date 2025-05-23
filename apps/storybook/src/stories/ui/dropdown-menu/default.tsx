@@ -41,7 +41,7 @@ export function DropdownMenuDemo() {
         <DropdownMenuGroup>
           <DropdownMenuItem Body="Team" />
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
+            <DropdownMenuSubTrigger Body="Invite users" />
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
                 <DropdownMenuItem Body="Email" />

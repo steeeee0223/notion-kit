@@ -7,37 +7,57 @@ import { cn } from "@notion-kit/cn";
 
 import { contentVariants } from "./variants";
 
-const Popover = PopoverPrimitive.Root;
+function Popover({
+  ...props
+}: React.ComponentProps<typeof PopoverPrimitive.Root>) {
+  return <PopoverPrimitive.Root data-slot="popover" {...props} />;
+}
 
-const PopoverTrigger = PopoverPrimitive.Trigger;
+function PopoverTrigger({
+  ...props
+}: React.ComponentProps<typeof PopoverPrimitive.Trigger>) {
+  return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />;
+}
 
-const PopoverClose = PopoverPrimitive.Close;
+function PopoverClose({
+  ...props
+}: React.ComponentProps<typeof PopoverPrimitive.Close>) {
+  return <PopoverPrimitive.Close data-slot="popover-close" {...props} />;
+}
 
 type PopoverContentProps = React.ComponentProps<
   typeof PopoverPrimitive.Content
 > & {
   container?: Element | DocumentFragment | null;
 };
-const PopoverContent = ({
+function PopoverContent({
   className,
   align = "center",
   sideOffset = 4,
   container,
   ...props
-}: PopoverContentProps) => (
-  <PopoverPrimitive.Portal container={container}>
-    <PopoverPrimitive.Content
-      align={align}
-      sideOffset={sideOffset}
-      className={cn(
-        "w-72 p-0 outline-hidden",
-        contentVariants({ variant: "popover" }),
-        className,
-      )}
-      {...props}
-    />
-  </PopoverPrimitive.Portal>
-);
-PopoverContent.displayName = PopoverPrimitive.Content.displayName;
+}: PopoverContentProps) {
+  return (
+    <PopoverPrimitive.Portal container={container}>
+      <PopoverPrimitive.Content
+        data-slot="popover-content"
+        align={align}
+        sideOffset={sideOffset}
+        className={cn(
+          "w-72 p-0 outline-hidden",
+          contentVariants({ variant: "popover", sideAnimation: true }),
+          className,
+        )}
+        {...props}
+      />
+    </PopoverPrimitive.Portal>
+  );
+}
 
-export { Popover, PopoverTrigger, PopoverClose, PopoverContent };
+function PopoverAnchor({
+  ...props
+}: React.ComponentProps<typeof PopoverPrimitive.Anchor>) {
+  return <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />;
+}
+
+export { Popover, PopoverTrigger, PopoverClose, PopoverContent, PopoverAnchor };

@@ -83,14 +83,14 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
           <div className="inline-flex gap-2">
             <Button
               tabIndex={0}
-              className="h-7 px-2 text-xs/[1.2] font-medium text-secondary focus-within:notion-focus-within"
+              className="h-7 px-2 text-xs/[1.2] font-medium text-secondary focus-within:shadow-notion"
             >
               <Icon.Settings className="mr-1.5 size-3.5 fill-secondary" />
               Settings
             </Button>
             <Button
               tabIndex={0}
-              className="h-7 px-2 text-xs/[1.2] font-medium text-secondary focus-within:notion-focus-within"
+              className="h-7 px-2 text-xs/[1.2] font-medium text-secondary focus-within:shadow-notion"
             >
               <Icon.InviteMemberSmall className="mr-1.5 size-3.5 fill-secondary" />
               Invite members

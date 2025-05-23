@@ -1,8 +1,7 @@
 import React from "react";
 
 import { cn } from "@notion-kit/cn";
-import { Hint } from "@notion-kit/common";
-import { Badge, Button, Separator } from "@notion-kit/shadcn";
+import { Badge, Button, Separator, TooltipPreset } from "@notion-kit/shadcn";
 
 interface SettingsSectionProps extends React.PropsWithChildren {
   title: string;
@@ -27,7 +26,7 @@ interface SettingsPlanProps {
   onClick?: () => void;
 }
 const SettingsPlan: React.FC<SettingsPlanProps> = ({ plan, onClick }) => (
-  <Hint
+  <TooltipPreset
     description="Upgrade to use this feature. Click to learn more."
     className="w-[174px]"
   >
@@ -41,7 +40,7 @@ const SettingsPlan: React.FC<SettingsPlanProps> = ({ plan, onClick }) => (
         {plan} ↗
       </Badge>
     </Button>
-  </Hint>
+  </TooltipPreset>
 );
 
 interface SettingsRuleProps extends React.PropsWithChildren {

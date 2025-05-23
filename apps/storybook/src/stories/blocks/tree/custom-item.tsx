@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
-import { Hint, HintProvider } from "@notion-kit/common";
 import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import {
   Button,
@@ -23,6 +22,8 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  TooltipPreset,
+  TooltipProvider,
 } from "@notion-kit/shadcn";
 
 export interface CustomItemProps {
@@ -78,7 +79,7 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
     };
 
     return (
-      <HintProvider>
+      <TooltipProvider>
         <div
           ref={ref}
           onClick={onClick}
@@ -111,7 +112,7 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
           {!!id && (
             <div className="ml-auto flex items-center p-0.5">
               <DropdownMenu>
-                <Hint
+                <TooltipPreset
                   asChild
                   side="bottom"
                   description="Delete, duplicate, and more..."
@@ -133,7 +134,7 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
                       <MoreHorizontal className="size-4" />
                     </div>
                   </DropdownMenuTrigger>
-                </Hint>
+                </TooltipPreset>
                 <DropdownMenuContent
                   className="w-60"
                   align="start"
@@ -156,7 +157,11 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
                 </DropdownMenuContent>
               </DropdownMenu>
               {expandable && (
-                <Hint asChild side="bottom" description="Add a page inside">
+                <TooltipPreset
+                  asChild
+                  side="bottom"
+                  description="Add a page inside"
+                >
                   <div
                     role="button"
                     onClick={handleCreate}
@@ -170,12 +175,12 @@ export const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
                   >
                     <Plus className="size-4" />
                   </div>
-                </Hint>
+                </TooltipPreset>
               )}
             </div>
           )}
         </div>
-      </HintProvider>
+      </TooltipProvider>
     );
   },
 );

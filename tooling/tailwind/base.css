@@ -36,7 +36,20 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  /* Shadow styles */
+  --shadow-notion:
+    --alpha(var(--blue) / 57%) 0 0 0 1px inset,
+    --alpha(var(--blue) / 35%) 0 0 0 2px;
+  /* for table view only */
+  --shadow-header-row:
+    var(--bg-main) -3px 0px 0px, var(--border-cell) 0px -1px 0px inset;
+  --shadow-header-sticky:
+    var(--bg-main) -3px 0px 0px, var(--border-cell) -1px -1px 0px inset;
+  --shadow-cell-focus:
+    --alpha(var(--blue) / 57%) 0px 0px 0px 2px inset,
+    --alpha(var(--blue) / 35%) 0px 0px 0px 1px inset;
   /* Animate */
+  --animate-bg: background 200ms ease;
   --animate-bg-in: background 20ms ease-in;
   --animate-bg-out: background 200ms ease-out;
   /* Unused */
@@ -93,7 +106,7 @@
   --bg-tooltip: rgb(47, 47, 47);
   --bg-input: rgb(255, 255, 255);
   /* Border color */
-  --border-cell: rgb(233 233 231);
+  --border-cell: rgb(47, 47, 47);
   --ring: rgba(255, 255, 255, 0.075);
 }
 
@@ -104,12 +117,6 @@
   body {
     @apply bg-main text-primary;
   }
-}
-
-@utility notion-focus-within {
-  box-shadow:
-    inset 0 0 0 1px #2383e291,
-    0 0 0 2px #2383e259 !important;
 }
 
 @utility notion-scrollbar {
@@ -125,4 +132,12 @@
       @apply bg-main;
     }
   }
+}
+
+@utility cursor-webkit-grab {
+  cursor: -webkit-grab;
+}
+
+@utility word-break {
+  word-break: break-word;
 }
