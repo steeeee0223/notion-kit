@@ -83,7 +83,7 @@ function MenuItemAction({ className, children }: MenuItemActionProps) {
 
 function MenuItemCheck() {
   return (
-    <MenuItemAction className="w-3.5">
+    <MenuItemAction data-slot="menu-item-check" className="w-3.5">
       <svg
         aria-hidden="true"
         role="graphics-symbol"
@@ -97,4 +97,15 @@ function MenuItemCheck() {
   );
 }
 
-export { MenuGroup, MenuItem, MenuItemAction, MenuItemCheck };
+function MenuItemShortcut({
+  children,
+  ...props
+}: React.ComponentProps<"span">) {
+  return (
+    <MenuItemAction data-slot="menu-item-shortcut" {...props}>
+      <span className="text-xs whitespace-nowrap text-muted">{children}</span>
+    </MenuItemAction>
+  );
+}
+
+export { MenuGroup, MenuItem, MenuItemAction, MenuItemCheck, MenuItemShortcut };

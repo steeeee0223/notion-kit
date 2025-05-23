@@ -6,7 +6,13 @@ import { ChevronRightIcon, DotFilledIcon } from "@radix-ui/react-icons";
 
 import { cn } from "@notion-kit/cn";
 
-import { MenuGroup, MenuItem, MenuItemAction, MenuItemCheck } from "./menu";
+import {
+  MenuGroup,
+  MenuItem,
+  MenuItemAction,
+  MenuItemCheck,
+  MenuItemShortcut,
+} from "./menu";
 import { contentVariants, separatorVariants } from "./variants";
 
 function DropdownMenu({
@@ -215,16 +221,9 @@ function DropdownMenuSeparator({
 }
 
 function DropdownMenuShortcut({
-  className,
   ...props
-}: React.HTMLAttributes<HTMLSpanElement>) {
-  return (
-    <span
-      data-slot="dropdown-menu-shortcut"
-      className={cn("ml-auto text-xs tracking-widest opacity-60", className)}
-      {...props}
-    />
-  );
+}: React.ComponentProps<typeof MenuItemShortcut>) {
+  return <MenuItemShortcut data-slot="dropdown-menu-shortcut" {...props} />;
 }
 
 export {

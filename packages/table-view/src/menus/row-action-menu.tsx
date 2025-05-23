@@ -11,6 +11,7 @@ import {
   Input,
   MenuGroup,
   MenuItem,
+  MenuItemShortcut,
   Separator,
   useMenu,
 } from "@notion-kit/shadcn";
@@ -117,7 +118,9 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
           }
           Body="Duplicate"
           onClick={duplicateRow}
-        />
+        >
+          <MenuItemShortcut>⌘D</MenuItemShortcut>
+        </MenuItem>
         <MenuItem
           className="group/trash"
           Icon={
@@ -126,7 +129,9 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
           Body="Delete"
           variant="warning"
           onClick={deleteRow}
-        />
+        >
+          <MenuItemShortcut>Del</MenuItemShortcut>
+        </MenuItem>
       </MenuGroup>
     </>
   );
