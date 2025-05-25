@@ -76,6 +76,7 @@ function TextInputPopover({
       onKeyDown={(e) => {
         if (e.key === "Enter") onUpdate?.(value);
       }}
+      onBlur={() => onUpdate?.(value)}
       className="max-h-[771px] min-h-8 border-none bg-transparent word-break whitespace-pre-wrap caret-primary"
     />
   );

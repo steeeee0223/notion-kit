@@ -7,3 +7,7 @@
 @source "../../../../node_modules/fumadocs-ui/dist/**/*.js";
 
 @source "../../../../packages/**/src/**/*.{ts,tsx}";
+
+:root {
+  --font-mono-ibm: var(--font-ibm-plex-mono), monospace;
+}

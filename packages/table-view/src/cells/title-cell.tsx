@@ -57,11 +57,11 @@ export const TitleCell: React.FC<TitleCellProps> = ({
           </TooltipPreset>
         </div>
       </div>
-      <div className="flex h-5 items-center">
-        {icon && <IconBlock icon={icon} />}
+      <div className="contents h-5 items-center">
+        {icon && <IconBlock icon={icon} className="contents" />}
         <span
           className={cn(
-            "title-cell-bg-img mr-[5px] inline leading-[1.5] font-medium underline",
+            "title-cell-bg-img mr-[5px] ml-1 inline leading-[1.5] font-medium underline",
             wrapped
               ? "break-words whitespace-pre-wrap"
               : "break-normal whitespace-nowrap",

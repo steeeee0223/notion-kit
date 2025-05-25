@@ -11,9 +11,8 @@ import {
 import { Icon } from "@notion-kit/icons";
 import { Button, MenuProvider } from "@notion-kit/shadcn";
 
-import { cols, mockData } from "./__mock__";
-import { paddingX } from "./constant";
 import type { DatabaseProperty, RowDataType } from "./lib/types";
+import { createInitialTable } from "./lib/utils";
 import { MemoizedTableBody, TableBody } from "./table-body";
 import {
   TableViewProvider,
@@ -28,12 +27,10 @@ interface TableViewProps {
   data?: RowDataType[];
 }
 
-export const TableView: React.FC<TableViewProps> = ({
-  properties = cols,
-  data = mockData,
-}) => {
+export const TableView: React.FC<TableViewProps> = (props) => {
+  const initial = createInitialTable();
   return (
-    <TableViewProvider initialData={{ properties, data }}>
+    <TableViewProvider initialData={{ ...initial, ...props }}>
       <MenuProvider>
         <TableViewContent />
       </MenuProvider>
@@ -52,9 +49,7 @@ const TableViewContent = () => {
   return (
     <div
       id="notion-table-view"
-      className="relative float-left min-w-full pb-0 lining-nums tabular-nums select-none"
-      // No need: pl-[96px] pr-[96px]
-      style={{ paddingLeft: paddingX, paddingRight: paddingX }}
+      className="relative float-left min-w-full px-24 pb-0 lining-nums tabular-nums select-none"
     >
       <div className="absolute z-[9990] w-full" />
       <div className="pointer-events-none mt-0 h-0" />

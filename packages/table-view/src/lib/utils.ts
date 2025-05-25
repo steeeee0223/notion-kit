@@ -1,8 +1,38 @@
 import { v4 } from "uuid";
 
 import type { TableViewCtx } from "../table-contexts";
-import type { CellDataType, CellType, Option, PropertyType } from "./types";
+import type {
+  CellDataType,
+  CellType,
+  DatabaseProperty,
+  Option,
+  PropertyType,
+  RowDataType,
+} from "./types";
 import { CountMethod } from "./types";
+
+export function createInitialTable() {
+  const titleId = v4();
+  const properties: DatabaseProperty[] = [
+    { id: titleId, type: "title", name: "Name" },
+  ];
+  const data: RowDataType[] = [
+    {
+      id: v4(),
+      properties: { [titleId]: { id: v4(), type: "title", value: "" } },
+    },
+    {
+      id: v4(),
+      properties: { [titleId]: { id: v4(), type: "title", value: "" } },
+    },
+    {
+      id: v4(),
+      properties: { [titleId]: { id: v4(), type: "title", value: "" } },
+    },
+  ];
+
+  return { properties, data };
+}
 
 export function insertAt<T>(array: T[], item: T, index: number) {
   return [...array.slice(0, index), item, ...array.slice(index)];
