@@ -1,37 +1,23 @@
 import { v4 } from "uuid";
 
 import type { TableViewCtx } from "../table-contexts";
-import type {
-  CellDataType,
-  CellType,
-  DatabaseProperty,
-  Option,
-  PropertyType,
-  RowDataType,
-} from "./types";
+import type { CellDataType, CellType, Option, PropertyType } from "./types";
 import { CountMethod } from "./types";
 
-export function createInitialTable() {
-  const titleId = v4();
-  const properties: DatabaseProperty[] = [
-    { id: titleId, type: "title", name: "Name" },
-  ];
-  const data: RowDataType[] = [
-    {
-      id: v4(),
-      properties: { [titleId]: { id: v4(), type: "title", value: "" } },
-    },
-    {
-      id: v4(),
-      properties: { [titleId]: { id: v4(), type: "title", value: "" } },
-    },
-    {
-      id: v4(),
-      properties: { [titleId]: { id: v4(), type: "title", value: "" } },
-    },
-  ];
+interface Entity<T extends { id: string }> {
+  ids: string[];
+  items: Record<string, T>;
+}
 
-  return { properties, data };
+export function arrayToEntity<T extends { id: string }>(array: T[]) {
+  return array.reduce<Entity<T>>(
+    (acc, item) => {
+      acc.ids.push(item.id);
+      acc.items[item.id] = item;
+      return acc;
+    },
+    { ids: [], items: {} },
+  );
 }
 
 export function insertAt<T>(array: T[], item: T, index: number) {
@@ -78,6 +64,7 @@ export function transferPropertyValues(
 
 function toTextValue(src: CellType): string {
   switch (src.type) {
+    case "title":
     case "text":
       return src.value;
     case "select":

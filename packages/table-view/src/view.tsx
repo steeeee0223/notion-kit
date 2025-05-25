@@ -11,26 +11,19 @@ import {
 import { Icon } from "@notion-kit/icons";
 import { Button, MenuProvider } from "@notion-kit/shadcn";
 
-import type { DatabaseProperty, RowDataType } from "./lib/types";
-import { createInitialTable } from "./lib/utils";
 import { MemoizedTableBody, TableBody } from "./table-body";
 import {
   TableViewProvider,
   useTableActions,
   useTableViewCtx,
+  type ControlledTableProps,
 } from "./table-contexts";
 import { TableFooter } from "./table-footer";
 import { TableHeaderRow } from "./table-header";
 
-interface TableViewProps {
-  properties?: DatabaseProperty[];
-  data?: RowDataType[];
-}
-
-export const TableView: React.FC<TableViewProps> = (props) => {
-  const initial = createInitialTable();
+export const TableView: React.FC<ControlledTableProps> = (props) => {
   return (
-    <TableViewProvider initialData={{ ...initial, ...props }}>
+    <TableViewProvider {...props}>
       <MenuProvider>
         <TableViewContent />
       </MenuProvider>
