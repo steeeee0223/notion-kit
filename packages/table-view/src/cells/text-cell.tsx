@@ -48,7 +48,7 @@ export const TextCell: React.FC<TextCellProps> = ({
               tabIndex={0}
               aria-label="Copy to Clipboard"
               size="xs"
-              className="dark:bg-poopover rounded-md bg-main fill-secondary leading-[1.2] font-medium tracking-[0.5px] text-secondary uppercase shadow-sm"
+              className="rounded-md bg-main fill-secondary leading-[1.2] font-medium tracking-[0.5px] text-secondary uppercase shadow-sm"
               onClick={(e) => {
                 e.stopPropagation();
                 void copy(value);

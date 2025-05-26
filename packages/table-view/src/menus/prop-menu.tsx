@@ -106,7 +106,6 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
           {...(property.wrapped
             ? { Icon: <Icon.ArrowLineRight />, Body: "Unwrap text" }
             : { Icon: <Icon.ArrowUTurnDownLeft />, Body: "Wrap text" })}
-          Body="Wrap column"
           className="[&_svg]:fill-icon"
         />
       </MenuGroup>

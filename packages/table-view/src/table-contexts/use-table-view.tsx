@@ -18,44 +18,22 @@ import {
 } from "@tanstack/react-table";
 
 import { TableRowCell } from "../cells";
-import {
-  CountMethod,
-  type DatabaseProperty,
-  type RowDataType,
-} from "../lib/types";
+import { CountMethod, type RowDataType } from "../lib/types";
 import { TableFooterCell } from "../table-footer";
 import { TableHeaderCell } from "../table-header";
-import { TableViewAtom, tableViewReducer } from "./table-reducer";
+import { tableViewReducer } from "./table-reducer";
+import type { ControlledTableState } from "./types";
+import { getTableViewAtom } from "./utils";
 
-export const useTableView = (initial: {
-  properties: DatabaseProperty[];
-  data: RowDataType[];
-}) => {
+/**
+ * useTableView
+ * @returns Uncontrolled table states
+ */
+export const useTableView = (initialState: ControlledTableState) => {
   const [
     { properties, propertiesOrder, freezedIndex, data, dataOrder },
     dispatch,
-  ] = useReducer(tableViewReducer, {
-    ...initial.properties.reduce<
-      Pick<TableViewAtom, "properties" | "propertiesOrder">
-    >(
-      (acc, col) => ({
-        properties: { ...acc.properties, [col.id]: col },
-        propertiesOrder: [...acc.propertiesOrder, col.id],
-      }),
-      { properties: {}, propertiesOrder: [] },
-    ),
-    ...initial.data.reduce<Pick<TableViewAtom, "data" | "dataOrder">>(
-      (acc, row) => ({
-        data: { ...acc.data, [row.id]: row },
-        dataOrder: [...acc.dataOrder, row.id],
-      }),
-      {
-        data: {},
-        dataOrder: [],
-      },
-    ),
-    freezedIndex: -1,
-  });
+  ] = useReducer(tableViewReducer, getTableViewAtom(initialState));
   const tableData = useMemo(() => Object.values(data), [data]);
 
   const columns = useMemo(

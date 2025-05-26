@@ -4,6 +4,22 @@ import type { TableViewCtx } from "../table-contexts";
 import type { CellDataType, CellType, Option, PropertyType } from "./types";
 import { CountMethod } from "./types";
 
+interface Entity<T extends { id: string }> {
+  ids: string[];
+  items: Record<string, T>;
+}
+
+export function arrayToEntity<T extends { id: string }>(array: T[]) {
+  return array.reduce<Entity<T>>(
+    (acc, item) => {
+      acc.ids.push(item.id);
+      acc.items[item.id] = item;
+      return acc;
+    },
+    { ids: [], items: {} },
+  );
+}
+
 export function insertAt<T>(array: T[], item: T, index: number) {
   return [...array.slice(0, index), item, ...array.slice(index)];
 }
@@ -48,6 +64,7 @@ export function transferPropertyValues(
 
 function toTextValue(src: CellType): string {
   switch (src.type) {
+    case "title":
     case "text":
       return src.value;
     case "select":

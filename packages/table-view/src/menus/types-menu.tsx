@@ -81,23 +81,19 @@ export const TypesMenu: React.FC<TypesMenuProps> = ({ propId }) => {
               heading="Type"
             >
               {results.map(({ type, title, description, icon }) => (
-                <CommandItem
-                  key={type}
-                  value={`default-${type}`}
-                  onSelect={() => select(type, title)}
-                  asChild
-                >
+                <CommandItem key={type} value={`default-${type}`} asChild>
                   <TooltipPreset
                     side="left"
                     sideOffset={6}
                     description={description}
-                    // TODO adding `text-xs/[1.4] to prevent style overriding by `CommandItem`
+                    // WARNING adding `text-xs/[1.4] to prevent style overriding by `CommandItem`
                     className="max-w-[282px] text-xs/[1.4]"
                   >
                     <MenuItem
                       disabled={type === "title"}
                       Icon={icon}
                       Body={title}
+                      onClick={() => select(type, title)}
                     >
                       {property?.type === type && <MenuItemCheck />}
                     </MenuItem>

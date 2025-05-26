@@ -1,32 +1,48 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
 
 import { TooltipProvider } from "@notion-kit/shadcn";
 
-import type { DatabaseProperty, RowDataType } from "../lib/types";
 import { getCount, isCountMethodSet } from "../lib/utils";
+import { tableViewReducer, type TableViewAction } from "./table-reducer";
 import {
   TableActionsContext,
   TableViewContext,
   type TableActions,
   type TableViewCtx,
 } from "./table-view-context";
+import type { ControlledTableProps } from "./types";
 import { useTableView } from "./use-table-view";
+import {
+  createInitialTable,
+  getTableViewAtom,
+  toControlledState,
+} from "./utils";
 
-interface TableViewProviderProps extends React.PropsWithChildren {
-  initialData: {
-    properties: DatabaseProperty[];
-    data: RowDataType[];
-  };
-}
+interface TableViewProviderProps
+  extends React.PropsWithChildren,
+    ControlledTableProps {}
 
 export const TableViewProvider: React.FC<TableViewProviderProps> = ({
   children,
-  initialData,
+  ...props
 }) => {
-  const { dispatch, ...ctx } = useTableView(initialData);
+  const { dispatch: _dispatch, ...ctx } = useTableView(
+    props.state ?? { ...createInitialTable(), freezedIndex: -1 },
+  );
+
+  const dispatch = useCallback(
+    (action: TableViewAction) => {
+      if (!props.state) return _dispatch(action);
+
+      const nextState = tableViewReducer(getTableViewAtom(props.state), action);
+      props.onStateChange?.(toControlledState(nextState), action.type);
+      props.dispatch?.(action);
+    },
+    [_dispatch, props],
+  );
 
   const tableViewCtx = useMemo<TableViewCtx>(
     () => ({

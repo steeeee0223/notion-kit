@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { tv } from "tailwind-variants";
 
@@ -12,6 +12,8 @@ import {
   TabsContent,
   TabsList,
 } from "@notion-kit/shadcn";
+
+import { ibm_plex_mono } from "@/lib/fonts";
 
 import { ScrollArea } from "./scroll-area";
 
@@ -48,6 +50,14 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
     setExpanded(!prevState);
   };
 
+  const { showPreview, displayedFiles } = useMemo(() => {
+    const showPreview = !!preview && !isExpanded;
+    return {
+      showPreview,
+      displayedFiles: files.slice(0, showPreview ? 1 : files.length),
+    };
+  }, [files, isExpanded, preview]);
+
   return (
     <Tabs
       className="relative w-full border-t"
@@ -58,13 +68,15 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
         {files.length > 0 && (
           <TabsList>
             <div className="flex grow">
-              {files
-                .slice(0, preview && !isExpanded ? 1 : files.length)
-                .map(({ fileName }) => (
-                  <Tab key={fileName} value={fileName} className="font-normal">
-                    {fileName}
-                  </Tab>
-                ))}
+              {displayedFiles.map(({ fileName }) => (
+                <Tab
+                  key={fileName}
+                  value={fileName}
+                  className={cn(ibm_plex_mono.className, "font-normal")}
+                >
+                  {fileName}
+                </Tab>
+              ))}
             </div>
             <div className="flex grow-0">
               {(preview ?? expandable) && (
@@ -85,17 +97,14 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
         scrollbars="both"
         className={cn(isExpanded ? "max-h-[400px]" : "max-h-[200px]")}
       >
-        {preview && !isExpanded ? (
-          <TabsContent value={files[0]?.fileName ?? ""} className={content()}>
-            <DynamicCodeBlock lang="tsx" code={preview} />
+        {files.map(({ fileName, code, lang }) => (
+          <TabsContent key={fileName} value={fileName} className={content()}>
+            <DynamicCodeBlock
+              lang={lang}
+              code={showPreview ? preview! : code}
+            />
           </TabsContent>
-        ) : (
-          files.map(({ fileName, code, lang }) => (
-            <TabsContent key={fileName} value={fileName} className={content()}>
-              <DynamicCodeBlock lang={lang} code={code} />
-            </TabsContent>
-          ))
-        )}
+        ))}
       </ScrollArea>
     </Tabs>
   );

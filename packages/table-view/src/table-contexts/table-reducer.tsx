@@ -74,6 +74,10 @@ export const tableViewReducer = (
   switch (a.type) {
     case "add:col": {
       const { id: colId, type, name } = a.payload;
+      const data = { ...v.data };
+      v.dataOrder.forEach((rowId) => {
+        data[rowId]!.properties[colId] = getDefaultCell(type);
+      });
       return {
         properties: {
           ...v.properties,
@@ -82,13 +86,7 @@ export const tableViewReducer = (
         propertiesOrder: [...v.propertiesOrder, colId],
         freezedIndex: v.freezedIndex,
         dataOrder: v.dataOrder,
-        get data() {
-          const data = { ...v.data };
-          v.dataOrder.forEach((rowId) => {
-            data[rowId]!.properties[colId] = getDefaultCell(type);
-          });
-          return data;
-        },
+        data,
       };
     }
     case "update:col": {
@@ -105,22 +103,20 @@ export const tableViewReducer = (
     case "update:col:type": {
       const prop = v.properties[a.payload.id];
       if (!prop) return v as never;
+      const data = { ...v.data };
+      v.dataOrder.forEach((rowId) => {
+        data[rowId]!.properties[a.payload.id] = transferPropertyValues(
+          data[rowId]!.properties[a.payload.id]!,
+          a.payload.type,
+        );
+      });
       return {
         ...v,
         properties: {
           ...v.properties,
           [a.payload.id]: { ...prop, type: a.payload.type },
         },
-        get data() {
-          const data = { ...v.data };
-          v.dataOrder.forEach((rowId) => {
-            data[rowId]!.properties[a.payload.id] = transferPropertyValues(
-              data[rowId]!.properties[a.payload.id]!,
-              a.payload.type,
-            );
-          });
-          return data;
-        },
+        data,
       };
     }
     case "update:col:visibility": {
@@ -149,18 +145,16 @@ export const tableViewReducer = (
           Object.values(v.properties).map((col) => col.name),
         ),
       };
+      const data = { ...v.data };
+      v.dataOrder.forEach((rowId) => {
+        data[rowId]!.properties[prop.id] = getDefaultCell(src.type);
+      });
       return {
         properties: { ...v.properties, [prop.id]: prop },
         propertiesOrder: insertAt(v.propertiesOrder, prop.id, idx + 1),
         freezedIndex: v.freezedIndex + Number(idx <= v.freezedIndex),
         dataOrder: v.dataOrder,
-        get data() {
-          const data = { ...v.data };
-          v.dataOrder.forEach((rowId) => {
-            data[rowId]!.properties[prop.id] = getDefaultCell(src.type);
-          });
-          return data;
-        },
+        data,
       };
     }
     case "freeze:col": {
@@ -171,24 +165,20 @@ export const tableViewReducer = (
     case "delete:col": {
       const idx = v.propertiesOrder.indexOf(a.payload.id);
       if (idx < 0) return v as never;
+      const { [a.payload.id]: _, ...properties } = v.properties;
+      const data = { ...v.data };
+      v.dataOrder.forEach((rowId) => {
+        delete data[rowId]!.properties[a.payload.id];
+      });
 
       return {
-        get properties() {
-          const { [a.payload.id]: _, ...properties } = v.properties;
-          return properties;
-        },
+        properties,
         propertiesOrder: v.propertiesOrder.filter(
           (colId) => colId !== a.payload.id,
         ),
         freezedIndex: v.freezedIndex - Number(idx <= v.freezedIndex),
         dataOrder: v.dataOrder,
-        get data() {
-          const data = { ...v.data };
-          v.dataOrder.forEach((rowId) => {
-            delete data[rowId]!.properties[a.payload.id];
-          });
-          return data;
-        },
+        data,
       };
     }
     case "update:count:cap": {
