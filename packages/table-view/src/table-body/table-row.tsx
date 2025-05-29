@@ -68,67 +68,61 @@ export function TableRow({ row }: TableRowProps) {
         className="flex w-full border-b border-b-border-cell"
       >
         <div className="flex">
-          {/* Left pinned columns */}
-          <div className="sticky left-20 z-850 flex bg-main">
-            {/* pinned: wrap another div (is this needed?) */}
-            {/* div: flex opacity-100 duration-200 transition-opacity */}
-            {/* Hovered actions */}
-            <div className="absolute -left-20 bg-main">
-              <div
-                className={cn(
-                  "flex h-full items-center opacity-0 transition-opacity delay-0 duration-200",
-                  "group-hover/row:opacity-100 has-data-[state=checked]:opacity-100",
-                  (isDragging || isMobile) && "opacity-100",
-                )}
+          <div className="sticky left-8 z-850 flex items-center bg-main">
+            {/* Row actions */}
+            <TableRowActionGroup
+              className="absolute -left-20"
+              isDragging={isDragging}
+              isMobile={isMobile}
+            >
+              <TooltipPreset
+                description={[
+                  { type: "default", text: "Click to add below" },
+                  { type: "secondary", text: "Option-click to add above" },
+                ]}
+                className="z-999 text-center"
               >
-                <TooltipPreset
-                  description={[
-                    { type: "default", text: "Click to add below" },
-                    { type: "secondary", text: "Option-click to add above" },
-                  ]}
-                  className="z-999 text-center"
+                <Button variant="hint" className="size-6" onClick={addNextRow}>
+                  <Icon.Plus className="size-3.5 fill-[#51493c]/30 dark:fill-default/30" />
+                </Button>
+              </TooltipPreset>
+              <TooltipPreset
+                description={[
+                  { type: "default", text: "Drag to move" },
+                  { type: "default", text: "Click to open menu" },
+                ]}
+                disabled={isDragging}
+                className="z-999 text-center"
+              >
+                <Button
+                  ref={dragHandleRef}
+                  variant="hint"
+                  className="h-6 w-4.5"
+                  {...attributes}
+                  {...listeners}
+                  onClick={openActionMenu}
                 >
-                  <Button
-                    variant="hint"
-                    className="size-6"
-                    onClick={addNextRow}
-                  >
-                    <Icon.Plus className="size-3.5 fill-[#51493c]/30 dark:fill-default/30" />
-                  </Button>
-                </TooltipPreset>
-                <TooltipPreset
-                  description={[
-                    { type: "default", text: "Drag to move" },
-                    { type: "default", text: "Click to open menu" },
-                  ]}
-                  disabled={isDragging}
-                  className="z-999 text-center"
-                >
-                  <Button
-                    ref={dragHandleRef}
-                    variant="hint"
-                    className="h-6 w-4.5"
-                    {...attributes}
-                    {...listeners}
-                    onClick={openActionMenu}
-                  >
-                    <Icon.DragHandle className="size-3.5 fill-[#51493c]/30 dark:fill-default/30" />
-                  </Button>
-                </TooltipPreset>
-                <label
-                  htmlFor="row-select"
-                  className="z-10 flex h-full cursor-pointer items-start justify-center"
-                >
-                  <div className="flex h-[31px] w-8 items-center justify-center">
-                    <Checkbox
-                      id="row-select"
-                      size="sm"
-                      className="relative right-0.5 cursor-pointer rounded-[2px] accent-blue"
-                    />
-                  </div>
-                </label>
-              </div>
-            </div>
+                  <Icon.DragHandle className="size-3.5 fill-[#51493c]/30 dark:fill-default/30" />
+                </Button>
+              </TooltipPreset>
+            </TableRowActionGroup>
+            {/* Row selection */}
+            <TableRowActionGroup
+              className="absolute -left-8 *:has-data-[state=checked]:opacity-100"
+              isDragging={isDragging}
+              isMobile={isMobile}
+            >
+              <label
+                htmlFor="row-select"
+                className="z-10 flex size-8 cursor-pointer items-center justify-center"
+              >
+                <Checkbox
+                  id="row-select"
+                  size="sm"
+                  className="cursor-pointer rounded-[2px] accent-blue"
+                />
+              </label>
+            </TableRowActionGroup>
             {/* Left pinned columns */}
             {row.getLeftVisibleCells().map((cell) => (
               <React.Fragment key={cell.id}>
@@ -146,6 +140,33 @@ export function TableRow({ row }: TableRowProps) {
       </div>
       {/* Bottom line at row end */}
       <div className="flex w-16 grow justify-start border-b border-b-border-cell" />
+    </div>
+  );
+}
+
+interface TableRowActionGroupProps extends React.ComponentProps<"div"> {
+  isDragging?: boolean;
+  isMobile?: boolean;
+}
+
+function TableRowActionGroup({
+  className,
+  isDragging,
+  isMobile,
+  ...props
+}: TableRowActionGroupProps) {
+  return (
+    <div className={cn("bg-main", className)}>
+      <div
+        data-slot="table-row-action-group"
+        className={cn(
+          "flex h-full items-center opacity-0 transition-opacity delay-0 duration-200",
+          "group-hover/row:opacity-100",
+          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+          (isMobile || isDragging) && "opacity-100",
+        )}
+        {...props}
+      />
     </div>
   );
 }
