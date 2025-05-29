@@ -156,7 +156,7 @@ function CountDisplay({ id, type, countMethod }: CountDisplayProps) {
         <span className="text-muted">
           {type === "checkbox" ? "∑" : "Calculate"}
         </span>
-        <Icon.ChevronDown className="mt-px ml-1 block h-full w-2.5 shrink-0 fill-muted" />
+        <Icon.ChevronDown className="mt-px ml-1 block size-2.5 shrink-0 fill-muted" />
       </div>
     </div>
   ) : (

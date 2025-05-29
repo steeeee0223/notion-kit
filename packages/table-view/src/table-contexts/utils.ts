@@ -1,11 +1,20 @@
 import { v4 } from "uuid";
 
-import type { DatabaseProperty, RowDataType } from "../lib/types";
+import type { DatabaseProperty, PropertyType, RowDataType } from "../lib/types";
 import { arrayToEntity } from "../lib/utils";
 import type { TableViewAtom } from "./table-reducer";
 import type { TableState } from "./types";
 
 export const DEFAULT_FREEZED_INDEX = -1;
+
+export function getMinWidth(type: PropertyType) {
+  switch (type) {
+    case "checkbox":
+      return 32;
+    default:
+      return 100;
+  }
+}
 
 export function createInitialTable(): TableState {
   const titleId = v4();

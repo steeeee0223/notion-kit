@@ -3,7 +3,7 @@ title: Table View
 description: An composable, editable data table.
 ---
 
-<ComponentPreview name="table-view/uncontrolled" className="left-20" />
+<ComponentPreview name="table-view/uncontrolled" />
 
 ## Supported Features
 
@@ -37,9 +37,8 @@ pnpm add @notion-kit/table-view
 
 <ComponentPreview
   name="table-view/uncontrolled"
-  className="left-20"
   preview={`<TableView
-    state={{ properties: mockProps, data: mockData, freezedIndex: -1 }}
+    state={{ properties: mockProps, data: mockData }}
   />
   `}
 />
@@ -48,7 +47,7 @@ pnpm add @notion-kit/table-view
 
 <ComponentPreview
   name="table-view/controlled"
-  preview={`<TableView state={state} dispatch={dispatch} />`}
+  preview={`<TableView state={state} onStateChange={setState} />`}
 />
 
 ## API Reference

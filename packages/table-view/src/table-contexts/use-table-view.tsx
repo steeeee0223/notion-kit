@@ -28,6 +28,7 @@ import type { TableProps } from "./types";
 import {
   createInitialTable,
   DEFAULT_FREEZED_INDEX,
+  getMinWidth,
   getTableViewAtom,
   toControlledState,
 } from "./utils";
@@ -71,7 +72,7 @@ export function useTableView(props: TableProps) {
       properties.map<ColumnDef<RowDataType>>(({ id, ...property }) => ({
         id,
         accessorKey: property.name,
-        minSize: property.type === "checkbox" ? 32 : 100,
+        minSize: getMinWidth(property.type),
         header: ({ header }) => (
           <TableHeaderCell
             id={id}
@@ -199,6 +200,8 @@ export function useTableView(props: TableProps) {
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      table.getFlatHeaders(),
       // eslint-disable-next-line react-hooks/exhaustive-deps
       table.getState().columnSizingInfo,
       // eslint-disable-next-line react-hooks/exhaustive-deps

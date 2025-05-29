@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducer } from "react";
+import { useState } from "react";
 
 import { TableView } from "@notion-kit/table-view";
 import type { DatabaseProperty, RowDataType } from "@notion-kit/table-view";
@@ -70,11 +70,10 @@ export const mockData: RowDataType[] = [
 ];
 
 export default function Demo() {
-  const [state, dispatch] = useReducer((s) => ({ ...s }), {
+  const [state, setState] = useState({
     properties: mockProps,
     data: mockData,
-    freezedIndex: -1,
   });
 
-  return <TableView state={state} dispatch={dispatch} />;
+  return <TableView state={state} onStateChange={setState} />;
 }

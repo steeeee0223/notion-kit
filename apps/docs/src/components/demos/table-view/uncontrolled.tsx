@@ -66,9 +66,5 @@ const mockData: RowDataType[] = [
 ];
 
 export default function Demo() {
-  return (
-    <TableView
-    // state={{ properties: mockProps, data: mockData, freezedIndex: -1 }}
-    />
-  );
+  return <TableView defaultState={{ properties: mockProps, data: mockData }} />;
 }
