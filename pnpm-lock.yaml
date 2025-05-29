@@ -165,6 +165,9 @@ importers:
       '@notion-kit/spinner':
         specifier: workspace:*
         version: link:../../packages/spinner
+      '@notion-kit/table-view':
+        specifier: workspace:*
+        version: link:../../packages/table-view
       '@notion-kit/tags-input':
         specifier: workspace:*
         version: link:../../packages/tags-input

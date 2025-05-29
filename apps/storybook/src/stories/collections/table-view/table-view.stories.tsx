@@ -1,21 +1,40 @@
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { Database } from "./database";
+import { TableView } from "@notion-kit/table-view";
+
+import { Database, mockData, mockProps } from "./database";
 
 const meta = {
   title: "collections/Table View",
-  component: Database,
-} satisfies Meta<typeof Database>;
+} satisfies Meta;
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const DatabaseView: Story = {
   decorators: [
-    (Story) => (
+    () => (
       <div className="p-24">
-        <Story />
+        <Database />
       </div>
     ),
+  ],
+};
+
+export const Controlled: Story = {
+  decorators: [
+    () => {
+      const [state, setState] = useState({
+        properties: mockProps,
+        data: mockData,
+      });
+
+      return (
+        <div className="p-24">
+          <TableView state={state} onStateChange={setState} />
+        </div>
+      );
+    },
   ],
 };

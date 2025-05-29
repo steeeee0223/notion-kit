@@ -51,26 +51,24 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({
       id="notion-table-view-header-row"
       dir="ltr"
       className="relative right-0 left-0 box-border flex h-[34px] min-w-[708px] bg-main text-default/65 shadow-header-row"
-      // TODO check if remove `z-870` causes any issue
     >
-      <div className="sticky left-20 z-830 flex">
-        <div className="absolute -left-20">
-          <div className="flex h-full w-[74px] justify-end border-b-border-cell bg-main">
+      <div className="sticky left-8 z-830 flex">
+        {/* Hovered actions */}
+        <div className="absolute -left-8">
+          <div className="flex h-full justify-end border-b-border-cell bg-main">
             <label
               htmlFor="row-select"
               aria-label="row-select"
               className={cn(
-                "z-10 flex h-full cursor-pointer items-start justify-center opacity-0 hover:opacity-100 has-data-[state=checked]:opacity-100",
+                "z-10 flex size-8 cursor-pointer items-center justify-center opacity-0 hover:opacity-100 has-data-[state=checked]:opacity-100",
                 isMobile && "opacity-100",
               )}
             >
-              <div className="flex h-[31px] w-8 items-center justify-center">
-                <Checkbox
-                  id="row-select"
-                  size="sm"
-                  className="relative right-0.5 cursor-pointer rounded-[2px] accent-blue"
-                />
-              </div>
+              <Checkbox
+                id="row-select"
+                size="sm"
+                className="cursor-pointer rounded-[2px] accent-blue"
+              />
             </label>
           </div>
         </div>
@@ -80,7 +78,7 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({
           items={columnOrder}
           strategy={horizontalListSortingStrategy}
         >
-          {/* Pinned Columns */}
+          {/* Left pinned Columns */}
           {isLeftPinned && (
             <div
               id="draggable-ghost-section-left"
@@ -96,7 +94,7 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({
               ))}
             </div>
           )}
-          {/* Unpinned Columns */}
+          {/* Center unpinned Columns */}
           <div id="draggable-ghost-section-center" className="flex">
             {headers.map((header) => (
               <React.Fragment key={header.id}>

@@ -3,9 +3,11 @@ import { v4 } from "uuid";
 import type { DatabaseProperty, RowDataType } from "../lib/types";
 import { arrayToEntity } from "../lib/utils";
 import type { TableViewAtom } from "./table-reducer";
-import type { ControlledTableState } from "./types";
+import type { TableState } from "./types";
 
-export function createInitialTable() {
+export const DEFAULT_FREEZED_INDEX = -1;
+
+export function createInitialTable(): TableState {
   const titleId = v4();
   const properties: DatabaseProperty[] = [
     { id: titleId, type: "title", name: "Name" },
@@ -25,10 +27,10 @@ export function createInitialTable() {
     },
   ];
 
-  return { properties, data };
+  return { properties, data, freezedIndex: DEFAULT_FREEZED_INDEX };
 }
 
-export function getTableViewAtom(state: ControlledTableState): TableViewAtom {
+export function getTableViewAtom(state: TableState): TableViewAtom {
   const columnData = arrayToEntity(state.properties);
   const rowData = arrayToEntity(state.data);
   return {
@@ -36,11 +38,11 @@ export function getTableViewAtom(state: ControlledTableState): TableViewAtom {
     propertiesOrder: columnData.ids,
     data: rowData.items,
     dataOrder: rowData.ids,
-    freezedIndex: state.freezedIndex,
+    freezedIndex: state.freezedIndex ?? DEFAULT_FREEZED_INDEX,
   };
 }
 
-export function toControlledState(atom: TableViewAtom): ControlledTableState {
+export function toControlledState(atom: TableViewAtom): TableState {
   return {
     properties: atom.propertiesOrder.map((id) => atom.properties[id]!),
     data: atom.dataOrder.map((id) => atom.data[id]!),

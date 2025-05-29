@@ -17,17 +17,15 @@ export type UpdateColumnPayload = Partial<
   >
 >;
 
-export interface ControlledTableState {
+export interface TableState {
   properties: DatabaseProperty[];
   data: RowDataType[];
-  freezedIndex: number;
+  freezedIndex?: number;
 }
 
-export interface ControlledTableProps {
-  state?: ControlledTableState;
+export interface TableProps {
+  defaultState?: TableState;
+  state?: TableState;
+  onStateChange?: (newState: TableState, type: TableViewAction["type"]) => void;
   dispatch?: React.Dispatch<TableViewAction>;
-  onStateChange?: (
-    newState: ControlledTableState,
-    type: TableViewAction["type"],
-  ) => void;
 }

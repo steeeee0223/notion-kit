@@ -1,0 +1,61 @@
+---
+title: Table View
+description: An composable, editable data table.
+---
+
+<ComponentPreview name="table-view/uncontrolled" className="left-20" />
+
+## Supported Features
+
+- Controlled/Uncontrolled state management
+
+- Column & row CRUD
+
+- Column & row DND
+
+- Column & row duplicating
+
+- Column wrapping
+
+- Column pinning
+
+- Column type changing
+
+- Cells types: title, text, checkbox
+
+## Installation
+
+```package-install
+pnpm add @notion-kit/table-view
+```
+
+## Examples
+
+---
+
+### Uncontrolled Table
+
+<ComponentPreview
+  name="table-view/uncontrolled"
+  className="left-20"
+  preview={`<TableView
+    state={{ properties: mockProps, data: mockData, freezedIndex: -1 }}
+  />
+  `}
+/>
+
+### Controlled Table
+
+<ComponentPreview
+  name="table-view/controlled"
+  preview={`<TableView state={state} dispatch={dispatch} />`}
+/>
+
+## API Reference
+
+### TableView
+
+| Prop       | Type                    | Default | Description                                                                          |
+| ---------- | ----------------------- | ------- | ------------------------------------------------------------------------------------ |
+| `apiKey`\* | `string`                | -       | The Unsplash access key from [Unsplash Developers](https://unsplash.com/developers). |
+| `onSelect` | `(url: string) => void` | -       | Handler that is called when an Unsplash image is selected.                           |

@@ -29,6 +29,7 @@
     "@notion-kit/sidebar": "workspace:*",
     "@notion-kit/single-image-dropzone": "workspace:*",
     "@notion-kit/spinner": "workspace:*",
+    "@notion-kit/table-view": "workspace:*",
     "@notion-kit/tags-input": "workspace:*",
     "@notion-kit/tree": "workspace:*",
     "@notion-kit/unsplash": "workspace:*",

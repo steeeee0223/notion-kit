@@ -16,12 +16,12 @@ import {
   TableViewProvider,
   useTableActions,
   useTableViewCtx,
-  type ControlledTableProps,
+  type TableProps,
 } from "./table-contexts";
 import { TableFooter } from "./table-footer";
 import { TableHeaderRow } from "./table-header";
 
-export const TableView: React.FC<ControlledTableProps> = (props) => {
+export function TableView(props: TableProps) {
   return (
     <TableViewProvider {...props}>
       <MenuProvider>
@@ -29,9 +29,9 @@ export const TableView: React.FC<ControlledTableProps> = (props) => {
       </MenuProvider>
     </TableViewProvider>
   );
-};
+}
 
-const TableViewContent = () => {
+export function TableViewContent() {
   const { table, columnSizeVars, columnSensors, rowSensors, dataOrder } =
     useTableViewCtx();
   const { reorder, addRow } = useTableActions();
@@ -151,4 +151,4 @@ const TableViewContent = () => {
       <div className="absolute z-[9990] w-full translate-y-[-34px]" />
     </div>
   );
-};
+}

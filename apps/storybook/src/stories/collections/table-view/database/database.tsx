@@ -10,6 +10,7 @@ import {
 import { TableView } from "@notion-kit/table-view";
 
 import { ButtonGroup } from "./button-group";
+import { mockData, mockProps } from "./data";
 import { ViewWrapper } from "./view-wrapper";
 
 export const Database = () => {
@@ -25,28 +26,28 @@ export const Database = () => {
             variant="nav-icon"
             className="size-6 opacity-0 group-hover/database:opacity-100"
           >
-            <Plus className="size-3.5 flex-shrink-0 text-default/45 dark:text-default/45" />
+            <Plus className="size-3.5 shrink-0 text-default/45" />
           </Button>
         </div>
         <ButtonGroup className="opacity-0 group-hover/database:opacity-100" />
       </TabsList>
       <div className="flex w-full items-center justify-between pt-2">
         <div className="mx-1 flex items-center gap-1">
-          <DatabaseIcon className="relative size-6 flex-shrink-0" />
+          <DatabaseIcon className="relative size-6 shrink-0" />
           <div className="w-full max-w-full text-[22px] font-bold break-words whitespace-pre-wrap caret-primary">
             Title
           </div>
           <Button
             variant="nav-icon"
-            className="size-6 flex-shrink-0 opacity-0 group-hover/database:opacity-100"
+            className="size-6 shrink-0 opacity-0 group-hover/database:opacity-100"
           >
-            <Ellipsis className="size-3.5 flex-shrink-0 text-default/45 dark:text-default/45" />
+            <Ellipsis className="size-3.5 shrink-0 text-default/45" />
           </Button>
         </div>
       </div>
       <TabsContent value="members" className="mt-0 bg-main">
         <ViewWrapper>
-          <TableView />
+          <TableView defaultState={{ properties: mockProps, data: mockData }} />
         </ViewWrapper>
       </TabsContent>
     </Tabs>

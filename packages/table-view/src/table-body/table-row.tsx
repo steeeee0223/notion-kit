@@ -129,14 +129,14 @@ export function TableRow({ row }: TableRowProps) {
                 </label>
               </div>
             </div>
-            {/* TODO: pinned columns in the wrapped div */}
+            {/* Left pinned columns */}
             {row.getLeftVisibleCells().map((cell) => (
               <React.Fragment key={cell.id}>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </React.Fragment>
             ))}
           </div>
-          {/* Center columns */}
+          {/* Center unpinned columns */}
           {row.getCenterVisibleCells().map((cell) => (
             <React.Fragment key={cell.id}>
               {flexRender(cell.column.columnDef.cell, cell.getContext())}

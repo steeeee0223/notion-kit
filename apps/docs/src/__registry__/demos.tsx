@@ -256,6 +256,18 @@ export const Index: Record<
     files: ["components/demos/switch/sizes.tsx"],
     component: React.lazy(() => import("@/components/demos/switch/sizes")),
   },
+  "table-view/controlled": {
+    files: ["components/demos/table-view/controlled.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/table-view/controlled"),
+    ),
+  },
+  "table-view/uncontrolled": {
+    files: ["components/demos/table-view/uncontrolled.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/table-view/uncontrolled"),
+    ),
+  },
   "tabs/demo": {
     files: ["components/demos/tabs/demo.tsx"],
     component: React.lazy(() => import("@/components/demos/tabs/demo")),

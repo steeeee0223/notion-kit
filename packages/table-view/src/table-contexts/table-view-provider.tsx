@@ -1,62 +1,25 @@
 "use client";
 
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
 
 import { TooltipProvider } from "@notion-kit/shadcn";
 
-import { getCount, isCountMethodSet } from "../lib/utils";
-import { tableViewReducer, type TableViewAction } from "./table-reducer";
 import {
   TableActionsContext,
   TableViewContext,
   type TableActions,
-  type TableViewCtx,
 } from "./table-view-context";
-import type { ControlledTableProps } from "./types";
+import type { TableProps } from "./types";
 import { useTableView } from "./use-table-view";
-import {
-  createInitialTable,
-  getTableViewAtom,
-  toControlledState,
-} from "./utils";
 
-interface TableViewProviderProps
-  extends React.PropsWithChildren,
-    ControlledTableProps {}
+type TableViewProviderProps = React.PropsWithChildren<TableProps>;
 
-export const TableViewProvider: React.FC<TableViewProviderProps> = ({
+export function TableViewProvider({
   children,
   ...props
-}) => {
-  const { dispatch: _dispatch, ...ctx } = useTableView(
-    props.state ?? { ...createInitialTable(), freezedIndex: -1 },
-  );
-
-  const dispatch = useCallback(
-    (action: TableViewAction) => {
-      if (!props.state) return _dispatch(action);
-
-      const nextState = tableViewReducer(getTableViewAtom(props.state), action);
-      props.onStateChange?.(toControlledState(nextState), action.type);
-      props.dispatch?.(action);
-    },
-    [_dispatch, props],
-  );
-
-  const tableViewCtx = useMemo<TableViewCtx>(
-    () => ({
-      ...ctx,
-      getColumn: (id: string) => ctx.properties[id] ?? null,
-      isPropertyUnique: (name: string) =>
-        Object.values(ctx.properties).every((p) => p.name !== name),
-      canFreezeProperty: (id: string) =>
-        ctx.table.getState().columnOrder.at(-1) !== id,
-      isSomeCountMethodSet: isCountMethodSet(ctx.properties),
-      getColumnCount: (...params) => getCount(ctx, ...params),
-    }),
-    [ctx],
-  );
+}: TableViewProviderProps) {
+  const [tableViewCtx, dispatch] = useTableView(props);
 
   const actions = useMemo<TableActions>(
     () => ({
@@ -105,4 +68,4 @@ export const TableViewProvider: React.FC<TableViewProviderProps> = ({
       </TableActionsContext>
     </TableViewContext>
   );
-};
+}
