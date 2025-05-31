@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/navbar",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "@notion-kit/cn": "workspace:*",
-    "@notion-kit/common": "workspace:*",
     "@notion-kit/hooks": "workspace:*",
     "@notion-kit/icon-block": "workspace:*",
     "@notion-kit/icon-menu": "workspace:*",

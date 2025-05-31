@@ -2,9 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { ChevronsRight, HistoryIcon } from "lucide-react";
-import { toast } from "sonner";
 
-import { Hint } from "@notion-kit/common";
 import {
   Button,
   Drawer,
@@ -14,6 +12,8 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  toast,
+  TooltipPreset,
 } from "@notion-kit/shadcn";
 import { Spinner } from "@notion-kit/spinner";
 
@@ -54,7 +54,7 @@ export const History: React.FC<HistoryProps> = ({ pageId, fetchLogs }) => {
       </DrawerTrigger>
       <DrawerContent side="right" noTitle className="w-[360px]">
         <div className="absolute top-0 left-0 ml-2.5 flex h-12 items-center">
-          <Hint description="Close panel">
+          <TooltipPreset description="Close panel">
             <Button
               variant="hint"
               onClick={() => setOpen(false)}
@@ -62,7 +62,7 @@ export const History: React.FC<HistoryProps> = ({ pageId, fetchLogs }) => {
             >
               <ChevronsRight className="size-4" />
             </Button>
-          </Hint>
+          </TooltipPreset>
         </div>
         <div className="relative top-12 flex-1 bg-main">
           <Tabs defaultValue="updates" className="relative my-0.5 w-full">

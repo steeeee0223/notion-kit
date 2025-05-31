@@ -10,9 +10,9 @@ import React, {
 } from "react";
 
 import { cn } from "@notion-kit/cn";
-import { HintProvider } from "@notion-kit/common";
 import { useIsMobile } from "@notion-kit/hooks";
 import { ModalProvider } from "@notion-kit/modal";
+import { TooltipProvider } from "@notion-kit/shadcn";
 
 import { DEFAULT_CONFIG, type SidebarConfig } from "./constants";
 
@@ -145,7 +145,7 @@ const SidebarProvider: React.FC<SidebarProviderProps> = ({
 
   return (
     <SidebarContext.Provider value={contextValue}>
-      <HintProvider>
+      <TooltipProvider>
         <ModalProvider>
           <div
             data-slot="sidebar-wrapper"
@@ -164,7 +164,7 @@ const SidebarProvider: React.FC<SidebarProviderProps> = ({
             {children}
           </div>
         </ModalProvider>
-      </HintProvider>
+      </TooltipProvider>
     </SidebarContext.Provider>
   );
 };

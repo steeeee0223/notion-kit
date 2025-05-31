@@ -1,0 +1,15 @@
+@theme inline {
+  /* undefined */
+  --sticky-horizontal-offset: 0px;
+}
+
+.title-cell-bg-img {
+  background-image: linear-gradient(
+    right,
+    rgba(55, 53, 47, 0.16) 0%,
+    rgba(55, 53, 47, 0.16) 100%
+  );
+  background-repeat: repeat-x;
+  background-position: 0px 100%;
+  background-size: 100% 1px;
+}

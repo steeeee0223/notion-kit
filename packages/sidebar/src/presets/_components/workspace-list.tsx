@@ -20,7 +20,6 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-import { Hint, HintProvider } from "@notion-kit/common";
 import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import { Role, User, Workspace } from "@notion-kit/schemas";
@@ -29,6 +28,8 @@ import {
   Button,
   DropdownMenuCheckboxItem,
   MenuGroup,
+  TooltipPreset,
+  TooltipProvider,
 } from "@notion-kit/shadcn";
 
 import { planTitle } from "./constant";
@@ -76,7 +77,7 @@ export const WorkspaceList: React.FC<WorkspaceListProps> = ({
   }, [workspaces, order]);
 
   return (
-    <HintProvider>
+    <TooltipProvider>
       <div className="mx-3 mt-2 flex h-5 items-center justify-between text-secondary transition-opacity">
         <div className="mr-1.5 truncate text-xs font-medium">{user.email}</div>
         <HeaderDropdown
@@ -103,7 +104,7 @@ export const WorkspaceList: React.FC<WorkspaceListProps> = ({
           </SortableContext>
         </DndContext>
       </MenuGroup>
-    </HintProvider>
+    </TooltipProvider>
   );
 };
 
@@ -144,7 +145,7 @@ const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
       style={style}
       className="flex cursor-grab flex-col"
     >
-      <Hint
+      <TooltipPreset
         side="right"
         sideOffset={8}
         description={[
@@ -178,7 +179,7 @@ const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
           {...listeners}
           onSelect={() => onSelect?.(id)}
         />
-      </Hint>
+      </TooltipPreset>
     </div>
   );
 };

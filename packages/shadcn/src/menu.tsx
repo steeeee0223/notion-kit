@@ -7,60 +7,105 @@ import {
   type MenuItemVariants,
 } from "@notion-kit/shadcn";
 
-const MenuGroup = ({ className, ...props }: React.ComponentProps<"div">) => (
-  <div role="group" className={cn(groupVariants({ className }))} {...props} />
-);
+function MenuGroup({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="menu-group"
+      role="group"
+      className={cn(groupVariants({ className }))}
+      {...props}
+    />
+  );
+}
 
 interface MenuItemProps extends React.ComponentProps<"div">, MenuItemVariants {
+  inset?: boolean;
   Icon?: React.ReactNode;
   Body?: React.ReactNode;
 }
 
-const MenuItem = ({
+function MenuItem({
   variant,
   disabled,
   className,
+  inset,
   Icon,
   Body,
   children,
   ...props
-}: MenuItemProps) => (
-  <div
-    className={cn(menuItemVariants({ variant, disabled, className }))}
-    {...props}
-    data-disabled={disabled}
-    aria-disabled={Boolean(disabled)}
-  >
-    <div className="peer mr-1 flex items-center justify-center empty:hidden">
-      {Icon}
+}: MenuItemProps) {
+  const iconChildren = React.Children.toArray(Icon);
+  return (
+    <div
+      data-slot="menu-item"
+      className={cn(menuItemVariants({ variant, disabled, inset, className }))}
+      {...props}
+      data-disabled={disabled}
+      aria-disabled={Boolean(disabled)}
+    >
+      <div
+        data-slot="menu-item-icon"
+        className={cn(
+          "peer mr-1 flex items-center justify-center empty:hidden",
+          iconChildren.length === 1 && "size-5",
+        )}
+      >
+        {Icon}
+      </div>
+      <div
+        data-slot="menu-item-body"
+        className="mx-1.5 min-w-0 flex-auto truncate peer-empty:mx-0"
+      >
+        {Body}
+      </div>
+      {children}
     </div>
-    <div className="mx-1.5 min-w-0 flex-auto truncate peer-empty:mx-0">
-      {Body}
-    </div>
-    {children}
-  </div>
-);
+  );
+}
 
 interface MenuItemActionProps extends React.PropsWithChildren {
   className?: string;
 }
 
-const MenuItemAction = ({ className, children }: MenuItemActionProps) => (
-  <div className={cn("ml-auto min-w-0 shrink-0", className)}>{children}</div>
-);
-
-const MenuItemCheck = () => (
-  <MenuItemAction className="w-3.5">
-    <svg
-      aria-hidden="true"
-      role="graphics-symbol"
-      viewBox="0 0 16 16"
-      key="thinCheck"
-      className="size-full fill-primary"
+function MenuItemAction({ className, children }: MenuItemActionProps) {
+  return (
+    <div
+      data-slot="menu-item-action"
+      className={cn(
+        "ml-auto min-w-0 shrink-0 [&_svg]:block [&_svg]:shrink-0",
+        className,
+      )}
     >
-      <path d="M6.385 14.162c.362 0 .642-.15.84-.444L13.652 3.71c.144-.226.205-.417.205-.602 0-.485-.341-.82-.833-.82-.335 0-.54.123-.746.444l-5.926 9.4-3.042-3.903c-.205-.267-.417-.376-.718-.376-.492 0-.848.348-.848.827 0 .212.075.417.253.629l3.541 4.416c.24.3.492.437.848.437z" />
-    </svg>
-  </MenuItemAction>
-);
+      {children}
+    </div>
+  );
+}
 
-export { MenuGroup, MenuItem, MenuItemAction, MenuItemCheck };
+function MenuItemCheck() {
+  return (
+    <MenuItemAction data-slot="menu-item-check" className="w-3.5">
+      <svg
+        aria-hidden="true"
+        role="graphics-symbol"
+        viewBox="0 0 16 16"
+        key="thinCheck"
+        className="size-full fill-primary"
+      >
+        <path d="M6.385 14.162c.362 0 .642-.15.84-.444L13.652 3.71c.144-.226.205-.417.205-.602 0-.485-.341-.82-.833-.82-.335 0-.54.123-.746.444l-5.926 9.4-3.042-3.903c-.205-.267-.417-.376-.718-.376-.492 0-.848.348-.848.827 0 .212.075.417.253.629l3.541 4.416c.24.3.492.437.848.437z" />
+      </svg>
+    </MenuItemAction>
+  );
+}
+
+function MenuItemShortcut({
+  children,
+  ...props
+}: React.ComponentProps<"span">) {
+  return (
+    <MenuItemAction data-slot="menu-item-shortcut" {...props}>
+      <span className="text-xs whitespace-nowrap text-muted">{children}</span>
+    </MenuItemAction>
+  );
+}
+
+export { MenuGroup, MenuItem, MenuItemAction, MenuItemCheck, MenuItemShortcut };

@@ -177,10 +177,12 @@ export const MemberActionCell = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuGroup>
-          <DropdownMenuItem variant="error" onClick={remove}>
-            <Icon.Bye className="mr-2 size-4 fill-red" />
-            {isSelf ? "Leave workspace" : "Remove from workspace"}
-          </DropdownMenuItem>
+          <DropdownMenuItem
+            variant="error"
+            onClick={remove}
+            Icon={<Icon.Bye className="size-4 fill-red" />}
+            Body={isSelf ? "Leave workspace" : "Remove from workspace"}
+          />
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

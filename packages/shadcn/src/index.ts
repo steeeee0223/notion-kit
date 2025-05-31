@@ -27,5 +27,6 @@ export * from "./theme";
 export * from "./toast";
 export * from "./tooltip";
 export * from "./visually-hidden";
-/** Presets */
+/** Custom */
 export * from "./menu";
+export * from "./menu-provider";

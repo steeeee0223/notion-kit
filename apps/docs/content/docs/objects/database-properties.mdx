@@ -1,0 +1,104 @@
+---
+title: Database Properties
+description: Database property objects are rendered in the Notion UI as database columns.
+---
+
+## Database Property
+
+### Properties
+
+A database property object consists of the following data:
+
+| Prop            | Type                                                | Description                                        |
+| --------------- | --------------------------------------------------- | -------------------------------------------------- |
+| `id`\*          | `string`                                            | Unique identifier of the column.                   |
+| `type`\*        | `PropertyType`                                      | Type of the column.                                |
+| `name`\*        | `string`                                            | Name of the column.                                |
+| `icon`          | [`IconData`](/docs/blocks/icon-block#type-icondata) | Displayed icon of the column.                      |
+| `width`         | `string`                                            | Width of the column.                               |
+| `description`   | `string`                                            | Description of the column.                         |
+| `wrapped`       | `boolean`                                           | Whether each cell in the column should be wrapped. |
+| `hidden`        | `boolean`                                           | Whether the column is hidden.                      |
+| `isDeleted`     | `boolean`                                           | Whether the column is deleted.                     |
+| `isCountCapped` | `boolean`                                           | Whether the count of the column should be capped.  |
+| `countMethod`   | `CountMethod`                                       | The count method of the column.                    |
+
+## Row Data Type
+
+The data of a row.
+
+### Properties
+
+| Prop           | Type                                                | Description                                                                   |
+| -------------- | --------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `id`\*         | `string`                                            | Unique identifier of the row.                                                 |
+| `properties`\* | `Record<string, CellDataType>`                      | The row data where the key-value is given by the column ID and the cell data. |
+| `icon`         | [`IconData`](/docs/blocks/icon-block#type-icondata) | Displayed icon of the column.                                                 |
+
+## Cell Data Type
+
+There are various type of cells, where each cell consists of:
+
+1. the common properties
+2. the value corresponding to it property type
+
+### Common Properties
+
+| Prop     | Type           | Description                    |
+| -------- | -------------- | ------------------------------ |
+| `type`\* | `PropertyType` | The property type.             |
+| `id`\*   | `string`       | Unique identifier of the cell. |
+
+### Title Cell
+
+| Prop      | Type      | Description                    |
+| --------- | --------- | ------------------------------ |
+| `type`\*  | `"title"` | -                              |
+| `id`\*    | `string`  | Unique identifier of the cell. |
+| `value`\* | `string`  | The title value.               |
+
+#### Example
+
+```ts
+{
+  type: "title",
+  id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
+  value: "New title"
+}
+```
+
+### Text Cell
+
+| Prop      | Type     | Description                    |
+| --------- | -------- | ------------------------------ |
+| `type`\*  | `"text"` | -                              |
+| `id`\*    | `string` | Unique identifier of the cell. |
+| `value`\* | `string` | The text value.                |
+
+#### Example
+
+```ts
+{
+  type: "text",
+  id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
+  value: "Some description..."
+}
+```
+
+### Checkbox Cell
+
+| Prop        | Type         | Description                      |
+| ----------- | ------------ | -------------------------------- |
+| `type`\*    | `"checkbox"` | -                                |
+| `id`\*      | `string`     | Unique identifier of the cell.   |
+| `checked`\* | `boolean`    | Whether the checkbox is checked. |
+
+#### Example
+
+```ts
+{
+  type: "checkbox",
+  id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
+  checked: true,
+}
+```
