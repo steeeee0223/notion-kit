@@ -69,7 +69,7 @@ export const IconMenu: React.FC<IconMemuProps> = ({
           {children}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="h-[356px] w-[408px]">
+      <PopoverContent className="z-999 h-[356px] w-[408px]">
         <Tabs defaultValue="emoji" className="relative my-0.5 w-full">
           <TabsList>
             <div className="flex grow">

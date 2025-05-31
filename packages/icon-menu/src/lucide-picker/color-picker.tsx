@@ -3,12 +3,13 @@
 import React, { useState } from "react";
 import { Circle } from "lucide-react";
 
-import { Hint, HintProvider } from "@notion-kit/common";
 import {
   Button,
   Popover,
   PopoverContent,
   PopoverTrigger,
+  TooltipPreset,
+  TooltipProvider,
 } from "@notion-kit/shadcn";
 
 import type { PaletteProps } from "../_components";
@@ -29,18 +30,18 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   };
 
   return (
-    <HintProvider delayDuration={500}>
+    <TooltipProvider delayDuration={500}>
       <Popover open={open} onOpenChange={setOpen}>
-        <Hint description="Select icon color">
+        <TooltipPreset description="Select icon color">
           <PopoverTrigger asChild>
             <Button variant="icon" className="size-7">
               <Circle size={16} color={value} fill={value} />
             </Button>
           </PopoverTrigger>
-        </Hint>
+        </TooltipPreset>
         <PopoverContent className="grid w-[180px] grid-cols-5 gap-0 p-2">
           {Object.entries(palette).map(([name, color]) => (
-            <Hint key={name} description={name}>
+            <TooltipPreset key={name} description={name}>
               <Button
                 variant="hint"
                 className="size-[30px] p-0"
@@ -48,11 +49,11 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
               >
                 <Circle color={color} fill={color} size={16} />
               </Button>
-            </Hint>
+            </TooltipPreset>
           ))}
         </PopoverContent>
       </Popover>
-    </HintProvider>
+    </TooltipProvider>
   );
 };
 

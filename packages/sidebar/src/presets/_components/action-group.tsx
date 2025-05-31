@@ -11,7 +11,6 @@ import {
   Trash,
 } from "lucide-react";
 
-import { Hint } from "@notion-kit/common";
 import { useCopyToClipboard } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import type { IconData, UpdatePageParams } from "@notion-kit/schemas";
@@ -23,6 +22,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  TooltipPreset,
 } from "@notion-kit/shadcn";
 import { toDateString } from "@notion-kit/utils";
 
@@ -58,7 +58,7 @@ export const ActionGroup: React.FC<ActionGroupProps> = ({
   return (
     <div className="ml-auto flex items-center p-0.5">
       <DropdownMenu>
-        <Hint description="Delete, duplicate, and more...">
+        <TooltipPreset description="Delete, duplicate, and more...">
           <DropdownMenuTrigger asChild>
             <Button
               variant="hint"
@@ -68,7 +68,7 @@ export const ActionGroup: React.FC<ActionGroupProps> = ({
               <MoreHorizontal className="size-4" />
             </Button>
           </DropdownMenuTrigger>
-        </Hint>
+        </TooltipPreset>
         <DropdownMenuContent
           className="w-60"
           align="start"
@@ -136,7 +136,7 @@ export const ActionGroup: React.FC<ActionGroupProps> = ({
           </div>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Hint description="Add a page inside">
+      <TooltipPreset description="Add a page inside">
         <Button
           variant="hint"
           className="ml-auto size-auto rounded-sm p-0.5 opacity-0 group-hover:opacity-100"
@@ -144,7 +144,7 @@ export const ActionGroup: React.FC<ActionGroupProps> = ({
         >
           <Plus className="size-4" />
         </Button>
-      </Hint>
+      </TooltipPreset>
     </div>
   );
 };

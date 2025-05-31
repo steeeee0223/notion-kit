@@ -2,12 +2,13 @@
 
 import React, { useState } from "react";
 
-import { Hint, HintProvider } from "@notion-kit/common";
 import {
   Button,
   Popover,
   PopoverContent,
   PopoverTrigger,
+  TooltipPreset,
+  TooltipProvider,
 } from "@notion-kit/shadcn";
 
 import type { PaletteProps } from "../_components";
@@ -29,18 +30,18 @@ export const SkinPicker: React.FC<SkinPickerProps> = ({
   };
 
   return (
-    <HintProvider delayDuration={500}>
+    <TooltipProvider delayDuration={500}>
       <Popover open={open} onOpenChange={setOpen}>
-        <Hint description="Select skin tone">
+        <TooltipPreset description="Select skin tone">
           <PopoverTrigger asChild>
             <Button variant="hint" className="size-7 text-xl/6 text-primary">
               {palette[value].emoji}
             </Button>
           </PopoverTrigger>
-        </Hint>
+        </TooltipPreset>
         <PopoverContent className="grid w-[200px] grid-cols-6 gap-0 p-1">
           {Object.entries(palette).map(([id, { emoji, name }]) => (
-            <Hint key={id} sideOffset={8} description={name}>
+            <TooltipPreset key={id} sideOffset={8} description={name}>
               <Button
                 variant="hint"
                 className="size-8 p-0 text-2xl text-primary"
@@ -48,11 +49,11 @@ export const SkinPicker: React.FC<SkinPickerProps> = ({
               >
                 {emoji}
               </Button>
-            </Hint>
+            </TooltipPreset>
           ))}
         </PopoverContent>
       </Popover>
-    </HintProvider>
+    </TooltipProvider>
   );
 };
 

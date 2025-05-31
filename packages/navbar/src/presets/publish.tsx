@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from "react";
 import { Check, Copy, Globe } from "lucide-react";
-import { toast } from "sonner";
 
 import { useCopyToClipboard, useOrigin } from "@notion-kit/hooks";
 import type { Page } from "@notion-kit/schemas";
@@ -16,6 +15,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  toast,
 } from "@notion-kit/shadcn";
 
 import { NavbarItem } from "../core";

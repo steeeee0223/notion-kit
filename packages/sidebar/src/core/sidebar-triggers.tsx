@@ -4,8 +4,7 @@ import { useMemo } from "react";
 import { ChevronsLeft, MenuIcon } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
-import { Hint } from "@notion-kit/common";
-import { Button } from "@notion-kit/shadcn";
+import { Button, TooltipPreset } from "@notion-kit/shadcn";
 
 import { mergeRefs } from "./merge-refs";
 import { useSidebar } from "./sidebar-provider";
@@ -70,7 +69,7 @@ const SidebarClose = ({
   const { config, isMobile, toggleSidebar } = useSidebar();
 
   return (
-    <Hint
+    <TooltipPreset
       description={[
         { type: "default", text: "Close sidebar" },
         { type: "secondary", text: `⌘${config.shortcut}` },
@@ -92,7 +91,7 @@ const SidebarClose = ({
       >
         <ChevronsLeft className="size-4" />
       </Button>
-    </Hint>
+    </TooltipPreset>
   );
 };
 
@@ -104,7 +103,7 @@ const SidebarOpen = ({
   const { config, toggleSidebar } = useSidebar();
 
   return (
-    <Hint
+    <TooltipPreset
       description={[
         { type: "default", text: "Close sidebar" },
         { type: "secondary", text: `⌘${config.shortcut}` },
@@ -123,7 +122,7 @@ const SidebarOpen = ({
       >
         <MenuIcon className="size-4" />
       </Button>
-    </Hint>
+    </TooltipPreset>
   );
 };
 

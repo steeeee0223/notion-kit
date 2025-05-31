@@ -13,9 +13,6 @@ const config = {
   tailwindStylesheet: fileURLToPath(
     new URL("../../tooling/tailwind/base.css", import.meta.url),
   ),
-  tailwindConfig: fileURLToPath(
-    new URL("../../tooling/tailwind/web.ts", import.meta.url),
-  ),
   tailwindFunctions: ["cn", "cva", "tv"],
   importOrder: [
     "^(react/(.*)$)|^(react$)|^(react-native(.*)$)",

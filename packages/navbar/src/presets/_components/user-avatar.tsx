@@ -4,10 +4,8 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-  Tooltip,
-  TooltipContent,
+  TooltipPreset,
   TooltipProvider,
-  TooltipTrigger,
 } from "@notion-kit/shadcn";
 
 interface UserAvatarProps {
@@ -22,27 +20,25 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
   className,
 }) => {
   return (
-    <TooltipProvider>
-      <Tooltip delayDuration={0}>
-        <TooltipTrigger asChild>
-          <Avatar
-            className={cn("size-6 border-2 select-none", className)}
-            style={{ borderColor }}
-          >
-            <AvatarImage src={user.avatarUrl} />
-            <AvatarFallback className="bg-main text-xs font-semibold">
-              {user.name[0]}
-            </AvatarFallback>
-          </Avatar>
-        </TooltipTrigger>
-        <TooltipContent sideOffset={8}>
-          <div>{user.name}</div>
-          <div className="font-normal">{user.email}</div>
-          {/* <div className="min-w-[150px] py-0.5 leading-tight text-[rgba(206,205,202)]/60">
-            Last viewed 1 day ago
-          </div> */}
-        </TooltipContent>
-      </Tooltip>
+    <TooltipProvider delayDuration={0}>
+      <TooltipPreset
+        sideOffset={8}
+        description={[
+          { type: "default", text: user.name },
+          { type: "default", text: user.email },
+        ]}
+        className="*:data-[tooltip-desc=1]:font-normal"
+      >
+        <Avatar
+          className={cn("size-6 border-2 select-none", className)}
+          style={{ borderColor }}
+        >
+          <AvatarImage src={user.avatarUrl} />
+          <AvatarFallback className="bg-main text-xs font-semibold">
+            {user.name[0]}
+          </AvatarFallback>
+        </Avatar>
+      </TooltipPreset>
     </TooltipProvider>
   );
 };
