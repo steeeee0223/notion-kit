@@ -29,6 +29,10 @@ description: An composable, editable data table.
 pnpm add @notion-kit/table-view
 ```
 
+## Note
+
+<Callout>Every table should have exactly one `title` property.</Callout>
+
 ## Examples
 
 ---
@@ -54,7 +58,40 @@ pnpm add @notion-kit/table-view
 
 ### TableView
 
-| Prop       | Type                    | Default | Description                                                                          |
-| ---------- | ----------------------- | ------- | ------------------------------------------------------------------------------------ |
-| `apiKey`\* | `string`                | -       | The Unsplash access key from [Unsplash Developers](https://unsplash.com/developers). |
-| `onSelect` | `(url: string) => void` | -       | Handler that is called when an Unsplash image is selected.                           |
+| Prop            | Type                                                            | Description                                                                                                        |
+| --------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `defaultState`  | `TableState`                                                    | The (uncontrolled) table state, consisting of column definitions and row data.                                     |
+| `state`         | `TableState`                                                    | The (controlled) table state, consisting of column definitions and row data.                                       |
+| `onStateChange` | `(newState: TableState, type: TableViewAction["type"]) => void` | Handler that is called when the table data is updated.                                                             |
+| `dispatch`      | `(action: TableViewAction) => void`                             | Handler that is called when the table data is updated. This is useful when you want to customize the table action. |
+
+### `type` TableState
+
+| Prop           | Type                                                                        | Default | Description                                                                 |
+| -------------- | --------------------------------------------------------------------------- | ------- | --------------------------------------------------------------------------- |
+| `properties`   | [`DatabaseProperty[]`](/docs/objects/database-properties#database-property) | -       | The column definitions of the table.                                        |
+| `data`         | [`RowDataType[]`](/docs/objects/database-properties#row-data-type)          | -       | The rows of the table.                                                      |
+| `freezedIndex` | `number`                                                                    | `-1`    | The index of the last freezed column. It is `-1` if no columns are freezed. |
+
+### `type` TableViewAction
+
+Possible actions of the `<TableView />`.
+
+| Action type             | Payload                                                | Description                                                              |
+| ----------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------ |
+| `add:col`               | `{ id: string, name: string, type: PropertyType }`     | The action to create a new column.                                       |
+| `update:col`            | `{ id: string, data: UpdateColumnPayload }`            | The action to update the column definition.                              |
+| `update:col:type`       | `{ id: string, type: PropertyType }`                   | The action to change the column type.                                    |
+| `update:col:visibility` | `{ id: string, hidden: boolean }`                      | The action to toggle the visibility of all columns.                      |
+| `freeze:col`            | `{ id: string \| null }`                               | The action to freeze or unfreeze up to a column.                         |
+| `duplicate:col`         | `{ id: string }`                                       | The action to duplicate a column.                                        |
+| `delete:col`            | `{ id: string }`                                       | The action to delete a column.                                           |
+| `reorder:col`           | `Updater<string>`                                      | The action to reorder the columns (by DND).                              |
+| `add:row`               | `{ id: string, at: "prev" \| "next" } \| undefined`    | The action to add a new row at bottom or add below/above of a given row. |
+| `update:row:icon`       | `{ id: string, icon: IconData \| null }`               | The action to update the icon of the row title.                          |
+| `duplicate:row`         | `{ id: string }`                                       | The action to duplicate a row.                                           |
+| `delete:row`            | `{ id: string }`                                       | The action to delete a row.                                              |
+| `reorder:row`           | `Updater<string>`                                      | The action to reorder the rows (by DND).                                 |
+| `update:count:cap`      | `{ id: string, updater: Updater<boolean> }`            | The action to set whether to cap the value when counting rows.           |
+| `update:cell`           | `{ rowId: string, colId: string, data: CellDataType }` | The action to update the data of the cell.                               |
+| `reset`                 | -                                                      | The action to reset the table.                                           |
