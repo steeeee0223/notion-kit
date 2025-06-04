@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import type { SelectProps } from "@radix-ui/react-select";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
@@ -49,7 +48,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       className={cn(
         buttonVariants({ variant: null }),
-        "relative mt-3 mb-1 flex h-7 w-full min-w-0 shrink-0 justify-between justify-normal p-2 text-primary",
+        "relative mt-3 mb-1 flex h-7 w-full min-w-0 shrink-0 justify-normal p-2 text-primary",
         "placeholder:text-secondary data-placeholder:text-secondary",
         "[&>span]:line-clamp-1",
         className,
@@ -58,7 +57,7 @@ function SelectTrigger({
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDown className="ml-1 h-4 w-4 opacity-45" />
+        <ChevronDown className="ml-1 size-4 opacity-45" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );
@@ -199,6 +198,72 @@ function SelectSeparator({
   );
 }
 
+interface Option {
+  label: string;
+  description?: string;
+}
+
+interface SelectPresetProps<T extends string = string>
+  extends Pick<SelectContentProps, "side" | "align"> {
+  className?: string;
+  /**
+   * @prop `options` maps `value` to `Option.value`
+   */
+  options: Record<T, string | Option>;
+  onChange?: (value: T) => void;
+  value?: T;
+  placeholder?: string;
+  disabled?: boolean;
+  hideCheck?: boolean;
+  renderOption?: React.FC<{ option?: Option | string }>;
+}
+
+function SelectPreset<T extends string = string>({
+  className,
+  options,
+  value,
+  placeholder,
+  side = "bottom",
+  align = "end",
+  disabled,
+  hideCheck,
+  onChange,
+  renderOption: OptionValue,
+}: SelectPresetProps<T>) {
+  return (
+    <Select value={value} onValueChange={onChange} disabled={disabled}>
+      <SelectTrigger className={className}>
+        <SelectValue
+          aria-disabled={disabled}
+          placeholder={placeholder}
+          {...(OptionValue && {
+            "aira-label": value,
+            children: (
+              <OptionValue option={value ? options[value] : undefined} />
+            ),
+          })}
+        />
+      </SelectTrigger>
+      <SelectContent position="popper" side={side} align={align}>
+        <SelectGroup>
+          {Object.entries<string | Option>(options).map(([key, option]) => (
+            <SelectItem value={key} key={key} hideCheck={hideCheck}>
+              <div className="flex items-center truncate">
+                {typeof option === "string" ? option : option.label}
+              </div>
+              {typeof option !== "string" && option.description && (
+                <div className="mt-0.5 overflow-hidden text-xs text-ellipsis whitespace-normal text-secondary">
+                  {option.description}
+                </div>
+              )}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+}
+
 export {
   Select,
   SelectGroup,
@@ -211,6 +276,7 @@ export {
   SelectSeparator,
   SelectScrollUpButton,
   SelectScrollDownButton,
-  type SelectProps,
-  type SelectContentProps,
+  SelectPreset,
 };
+
+export type { Option, SelectPresetProps };

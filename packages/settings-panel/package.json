@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/settings-panel",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -38,7 +38,6 @@
     "@notion-kit/icons": "workspace:*",
     "@notion-kit/modal": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
-    "@notion-kit/select": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/spinner": "workspace:*",
     "@notion-kit/tags-input": "workspace:*",
@@ -62,5 +61,9 @@
   "peerDependencies": {
     "react": "catalog:react19"
   },
+  "bundleDependencies": [
+    "@notion-kit/common",
+    "@notion-kit/i18n"
+  ],
   "prettier": "@notion-kit/prettier-config"
 }

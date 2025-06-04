@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons",
+  "type": "registry:component",
+  "title": "Icons",
+  "dependencies": ["@notion-kit/icons"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/icons.tsx",
+      "content": "export { Icon } from \"@notion-kit/icons\";\n",
+      "type": "registry:component",
+      "target": "components/core/icons.tsx"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/storybook",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -23,7 +23,6 @@
     "@notion-kit/modal": "workspace:*",
     "@notion-kit/navbar": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
-    "@notion-kit/select": "workspace:*",
     "@notion-kit/settings-panel": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/sidebar": "workspace:*",

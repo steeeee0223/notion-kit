@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "settings-panel",
+  "type": "registry:component",
+  "title": "Settings Panel",
+  "dependencies": [
+    "@notion-kit/settings-panel",
+    "@notion-kit/icons",
+    "@notion-kit/shadcn"
+  ],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/settings-panel.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { Icon } from \"@notion-kit/icons\";\nimport {\n  SettingsContent,\n  SettingsPanel,\n  SettingsProvider,\n  SettingsRule,\n  SettingsSection,\n  SettingsSidebar,\n  SettingsSidebarGroup,\n  SettingsSidebarTitle,\n  SettingsTab,\n  type SettingsStore,\n} from \"@notion-kit/settings-panel\";\nimport { Button, Switch } from \"@notion-kit/shadcn\";\n\nconst mockSettings = {\n  account: {\n    id: \"user1\",\n    name: \"John Wick\",\n    avatarUrl: \"\",\n    email: \"john-wick@example.com\",\n    preferredName: \"Jonathan\",\n    language: \"en\",\n  },\n  workspace: {},\n  memberships: {},\n} as SettingsStore;\n\nconst settingsTabs = [\n  { Icon: <Icon.UserX />, value: \"account\", name: \"Account\" },\n  { Icon: <Icon.Bell />, value: \"notifications\", name: \"Notifications\" },\n] as const;\n\nexport function SettingsPage() {\n  const [tab, setTab] = useState(\"account\");\n\n  return (\n    <SettingsProvider settings={mockSettings}>\n      <SettingsPanel className=\"w-[calc(100%-20px)]\">\n        <SettingsSidebar>\n          <SettingsSidebarGroup>\n            <SettingsSidebarTitle>Account</SettingsSidebarTitle>\n            {settingsTabs.map(({ value, ...props }) => (\n              <SettingsTab\n                {...props}\n                isActive={tab === value}\n                onClick={() => setTab(value)}\n              />\n            ))}\n          </SettingsSidebarGroup>\n        </SettingsSidebar>\n        <SettingsContent>\n          {tab === \"account\" ? (\n            <SettingsSection title=\"Account\">\n              <SettingsRule\n                title={mockSettings.account.preferredName}\n                description={mockSettings.account.email}\n              />\n              <SettingsRule\n                title=\"Set something\"\n                description=\"you can set something here\"\n              >\n                <Switch size=\"sm\" />\n              </SettingsRule>\n              <SettingsRule\n                title=\"Set something 2\"\n                description=\"you can set another here\"\n              >\n                <Button size=\"sm\">Apply Settings</Button>\n              </SettingsRule>\n            </SettingsSection>\n          ) : (\n            <SettingsSection title=\"Notifications\">\n              <SettingsRule\n                title=\"Turn on notifications\"\n                description=\"you can set something here\"\n              >\n                <Switch size=\"sm\" />\n              </SettingsRule>\n            </SettingsSection>\n          )}\n        </SettingsContent>\n      </SettingsPanel>\n    </SettingsProvider>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/core/settings-panel.tsx"
+    }
+  ]
+}

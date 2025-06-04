@@ -42,12 +42,15 @@ function TabsTrigger({
         "border-b-2 border-b-transparent",
         "focus-visible:outline-hidden",
         "disabled:pointer-events-none disabled:opacity-50",
-        "data-[state=active]:border-b-primary data-[state=active]:text-primary",
+        "data-[state=active]:border-b-primary data-[state=active]:text-primary dark:data-[state=active]:text-primary",
+        "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
     >
-      <p className="rounded-sm px-2 py-1 hover:bg-default/5">{children}</p>
+      <p className="inline-flex items-center rounded-sm px-2 py-1 hover:bg-default/5">
+        {children}
+      </p>
     </TabsPrimitive.Trigger>
   );
 }

@@ -1,4 +1,36 @@
 ---
 title: Installation
-description: Everything you need
+description: How to install Notion UIs and structure your app.
 ---
+
+## Create Project
+
+Run the `shadcn init` command to create a new Next.js project or to setup an existing one:
+
+```bash
+pnpm dlx shadcn@latest init
+```
+
+Choose between a Next.js project or a Monorepo.
+
+## Add Notion Components
+
+You can now start adding Notion components (or blocks) to your project.
+
+```bash
+pnpm dlx shadcn@latest https://notion-ui.vercel.app/registry/notion-ui.json
+```
+
+The command above will add the Notion primitive UIs to your project. You can then import it like this:
+
+```tsx
+import { Button } from "@/components/core/notion-ui";
+
+export default function Home() {
+  return (
+    <div>
+      <Button>Click me</Button>
+    </div>
+  );
+}
+```

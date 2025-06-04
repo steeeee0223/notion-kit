@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/docs",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "scripts": {
     "build": "next build",
@@ -23,7 +23,6 @@
     "@notion-kit/modal": "workspace:*",
     "@notion-kit/navbar": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
-    "@notion-kit/select": "workspace:*",
     "@notion-kit/settings-panel": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/sidebar": "workspace:*",
@@ -34,7 +33,6 @@
     "@notion-kit/tree": "workspace:*",
     "@notion-kit/unsplash": "workspace:*",
     "@notion-kit/utils": "workspace:*",
-    "class-variance-authority": "^0.7.1",
     "fumadocs-core": "15.0.14",
     "fumadocs-mdx": "11.5.6",
     "fumadocs-ui": "15.0.14",

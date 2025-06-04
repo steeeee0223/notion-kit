@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { Select } from "@notion-kit/select";
+import { SelectPreset as Select } from "@notion-kit/shadcn";
 
 export default function Default() {
   const options = { light: "Light", dark: "Dark" };

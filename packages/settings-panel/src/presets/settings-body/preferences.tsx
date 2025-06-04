@@ -3,8 +3,7 @@
 import { BaseModal } from "@notion-kit/common";
 import { LOCALE, useTranslation } from "@notion-kit/i18n";
 import { useModal } from "@notion-kit/modal";
-import { Select } from "@notion-kit/select";
-import { Switch } from "@notion-kit/shadcn";
+import { SelectPreset as Select, Switch } from "@notion-kit/shadcn";
 
 import { TextLinks } from "../_components";
 import { SettingsRule, SettingsSection, useSettings } from "../../core";

@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/navbar",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -55,5 +55,8 @@
   "peerDependencies": {
     "react": "catalog:react19"
   },
+  "bundleDependencies": [
+    "@notion-kit/utils"
+  ],
   "prettier": "@notion-kit/prettier-config"
 }

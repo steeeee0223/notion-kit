@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import type { SelectProps } from "@notion-kit/select";
-import { Select } from "@notion-kit/select";
+import type { SelectPresetProps } from "@notion-kit/shadcn";
+import { SelectPreset as Select } from "@notion-kit/shadcn";
 
 const meta = {
   title: "blocks/Select",
@@ -29,7 +29,7 @@ export const Default: Story = {
   render: Template,
 };
 
-const Custom: SelectProps["renderOption"] = ({ option }) => (
+const Custom: SelectPresetProps["renderOption"] = ({ option }) => (
   <div className="truncate text-secondary">
     {typeof option === "string" ? option : option?.label}
   </div>
