@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/cover",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -51,5 +51,8 @@
   "peerDependencies": {
     "react": "catalog:react19"
   },
+  "bundleDependencies": [
+    "@notion-kit/common"
+  ],
   "prettier": "@notion-kit/prettier-config"
 }

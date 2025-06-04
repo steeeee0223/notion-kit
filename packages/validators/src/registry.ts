@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+/**
+ * @see https://ui.shadcn.com/docs/registry/registry-item-json#type
+ */
 export const RegistryItemTypeSchema = z.enum([
   "registry:block",
   "registry:component",
@@ -8,24 +11,24 @@ export const RegistryItemTypeSchema = z.enum([
   "registry:ui",
   "registry:page",
   "registry:file",
+  "registry:style",
+  "registry:theme",
 ]);
 export type RegistryItemType = z.infer<typeof RegistryItemTypeSchema>;
 
-export const RegistryItemTailwindSchema = z.object({
-  config: z.object({
-    content: z.array(z.string()).optional(),
-    theme: z.record(z.any()),
-    plugins: z.array(z.string()).optional(),
-  }),
-});
-export type RegistryItemTailwind = z.infer<typeof RegistryItemTailwindSchema>;
-
+/**
+ * @see https://ui.shadcn.com/docs/registry/registry-item-json#cssvars
+ */
 export const RegistryItemCssVarsSchema = z.object({
+  theme: z.record(z.string()).optional(),
   light: z.record(z.string()).optional(),
   dark: z.record(z.string()).optional(),
 });
 export type RegistryItemCssVars = z.infer<typeof RegistryItemCssVarsSchema>;
 
+/**
+ * @see https://ui.shadcn.com/docs/registry/registry-item-json
+ */
 export const RegistryItemSchema = z.object({
   $schema: z.literal("https://ui.shadcn.com/schema/registry-item.json"),
   name: z.string(),
@@ -42,11 +45,12 @@ export const RegistryItemSchema = z.object({
       target: z.string().optional(),
     }),
   ),
-  tailwind: RegistryItemTailwindSchema.optional(),
   cssVars: RegistryItemCssVarsSchema.optional(),
+  css: z.record(z.any()).optional(),
   meta: z.record(z.any()).optional(),
   docs: z.string().optional(),
   categories: z.array(z.string()).optional(),
+  extends: z.literal("none").optional(),
 });
 export type RegistryItem = z.infer<typeof RegistryItemSchema>;
 

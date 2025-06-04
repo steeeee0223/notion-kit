@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "table-view",
+  "type": "registry:component",
+  "title": "Settings Panel",
+  "dependencies": ["@notion-kit/table-view"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/table-view.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { TableView as Table } from \"@notion-kit/table-view\";\nimport type { DatabaseProperty, RowDataType } from \"@notion-kit/table-view\";\n\nconst mockProps: DatabaseProperty[] = [\n  {\n    id: \"prop-1\",\n    type: \"title\",\n    name: \"Name\",\n    width: \"216px\",\n  },\n  {\n    id: \"prop-2\",\n    type: \"text\",\n    name: \"Desc.\",\n    width: \"100px\",\n  },\n  {\n    id: \"prop-3\",\n    type: \"checkbox\",\n    name: \"Done\",\n    width: \"90px\",\n  },\n];\n\nconst mockData: RowDataType[] = [\n  {\n    id: \"row-1\",\n    properties: {\n      \"prop-1\": { id: \"prop-1-1\", type: \"title\", value: \"page 1\" },\n      \"prop-2\": { id: \"prop-1-2\", type: \"text\", value: \"desc1\" },\n      \"prop-3\": { id: \"prop-1-3\", type: \"checkbox\", checked: true },\n    },\n  },\n  {\n    id: \"row-2\",\n    properties: {\n      \"prop-1\": { id: \"prop-2-1\", type: \"title\", value: \"page 2\" },\n      \"prop-2\": { id: \"prop-2-2\", type: \"text\", value: \"desc2\" },\n      \"prop-3\": { id: \"prop-2-3\", type: \"checkbox\", checked: false },\n    },\n  },\n];\n\nexport function TableView() {\n  const [state, setState] = useState({\n    properties: mockProps,\n    data: mockData,\n  });\n\n  return <Table state={state} onStateChange={setState} />;\n}\n",
+      "type": "registry:component",
+      "target": "components/core/table-view.tsx"
+    }
+  ]
+}

@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 
-import { Select, type SelectProps } from "@notion-kit/select";
+import { SelectPreset, type SelectPresetProps } from "@notion-kit/shadcn";
 
-const Option: SelectProps["renderOption"] = ({ option }) => (
+const Option: SelectPresetProps["renderOption"] = ({ option }) => (
   <div className="truncate text-secondary">
     {typeof option === "string" ? option : option?.label}
   </div>
@@ -18,7 +18,7 @@ export default function Custom() {
   const [value, setValue] = useState<keyof typeof options>("on");
 
   return (
-    <Select
+    <SelectPreset
       className="w-fit"
       options={options}
       value={value}

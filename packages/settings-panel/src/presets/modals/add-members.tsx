@@ -7,7 +7,6 @@ import { z } from "zod";
 import { useFilter, useTransition } from "@notion-kit/hooks";
 import { useModal } from "@notion-kit/modal";
 import { Role, type User } from "@notion-kit/schemas";
-import { Select } from "@notion-kit/select";
 import {
   Badge,
   Button,
@@ -17,6 +16,7 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
+  SelectPreset as Select,
 } from "@notion-kit/shadcn";
 import { Spinner } from "@notion-kit/spinner";
 import { TagsInput } from "@notion-kit/tags-input";

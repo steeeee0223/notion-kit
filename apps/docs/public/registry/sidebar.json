@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "sidebar",
+  "type": "registry:component",
+  "title": "Sidebar",
+  "dependencies": ["@notion-kit/sidebar"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/sidebar.tsx",
+      "content": "import {\n  Sidebar,\n  SidebarClose,\n  SidebarHeader,\n  SidebarInset,\n  SidebarOpen,\n  SidebarProvider,\n  SidebarRail,\n} from \"@notion-kit/sidebar\";\n\nexport function AppSidebar() {\n  return (\n    <SidebarProvider className=\"h-full min-h-full\">\n      <Sidebar className=\"absolute z-0 h-full\">\n        <SidebarClose />\n        <SidebarHeader className=\"p-3 font-semibold\">My App</SidebarHeader>\n        <SidebarRail />\n      </Sidebar>\n      <SidebarInset>\n        <header className=\"flex h-11 shrink-0 items-center gap-2 border-b px-4\">\n          <SidebarOpen />\n          Navbar\n        </header>\n      </SidebarInset>\n    </SidebarProvider>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/core/sidebar.tsx"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "navbar",
+  "type": "registry:component",
+  "title": "Navbar",
+  "dependencies": [
+    "@notion-kit/icons",
+    "@notion-kit/navbar",
+    "@notion-kit/schemas"
+  ],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/navbar.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { Icon } from \"@notion-kit/icons\";\nimport {\n  Menu,\n  Navbar,\n  NavbarItem,\n  Participants,\n  Publish,\n  Title,\n} from \"@notion-kit/navbar\";\nimport type { Page, User } from \"@notion-kit/schemas\";\n\nconst defaultPage: Page = {\n  type: \"page\",\n  id: \"12\",\n  title: \"Title\",\n  isArchived: false,\n  parentId: null,\n  isPublished: false,\n  isFavorite: true,\n  createdAt: 0,\n  lastEditedAt: 0,\n  createdBy: \"admin\",\n  lastEditedBy: \"admin\",\n};\n\nconst currentUser: User = {\n  id: \"u1\",\n  name: \"Steve Yu\",\n  email: \"steve@example.com\",\n  avatarUrl: \"\",\n};\n\nconst otherUsers: User[] = [\n  {\n    id: \"u2\",\n    name: \"Pong\",\n    email: \"pong@example.com\",\n    avatarUrl: \"\",\n  },\n  {\n    id: \"u3\",\n    name: \"Ming\",\n    email: \"ming@example.com\",\n    avatarUrl: \"\",\n  },\n];\n\nexport function NotionNavbar() {\n  const [page, setPage] = useState(defaultPage);\n\n  return (\n    <Navbar>\n      <div className=\"flex w-full items-center justify-between gap-6\">\n        <Title\n          page={page}\n          onUpdate={(data) => setPage((prev) => ({ ...prev, ...data }))}\n        />\n        <div className=\"z-30 flex items-center gap-x-1\">\n          <Participants currentUser={currentUser} otherUsers={otherUsers} />\n          <Publish\n            page={page}\n            onUpdate={(_, isPublished) =>\n              setPage((prev) => ({ ...prev, isPublished }))\n            }\n          />\n          <NavbarItem hint=\"View all comments\">\n            <Icon.CommentFilled className=\"size-5 fill-[#32302c] dark:fill-primary\" />\n          </NavbarItem>\n          <NavbarItem\n            hint={`${page.isFavorite ? \"Remove from\" : \"Add to\"} your favorites`}\n            onClick={() =>\n              setPage((prev) => ({ ...prev, isFavorite: !prev.isFavorite }))\n            }\n          >\n            {page.isFavorite ? (\n              <Icon.StarFill className=\"size-5 fill-[#f6c050]\" />\n            ) : (\n              <Icon.Star className=\"size-5 fill-[#32302c] dark:fill-primary\" />\n            )}\n          </NavbarItem>\n          <Menu page={page} />\n        </div>\n      </div>\n    </Navbar>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/core/navbar.tsx"
+    }
+  ]
+}

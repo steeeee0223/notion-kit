@@ -1,0 +1,76 @@
+import { RegistryItem } from "@notion-kit/validators";
+
+export const theme: RegistryItem = {
+  $schema: "https://ui.shadcn.com/schema/registry-item.json",
+  extends: "none",
+  title: "Notion Theme",
+  name: "notion-theme",
+  type: "registry:style",
+  dependencies: ["tailwind-merge", "clsx"],
+  registryDependencies: ["utils"],
+  cssVars: {
+    theme: {
+      /* Shadow styles */
+      "shadow-notion":
+        "--alpha(var(--blue) / 57%) 0 0 0 1px inset, --alpha(var(--blue) / 35%) 0 0 0 2px",
+      /* Animation */
+      "animate-bg": "background 200ms ease",
+      "animate-bg-in": "background 20ms ease-in",
+      "animate-bg-out": "background 200ms ease-out",
+    },
+    light: {
+      base: "55 53 47",
+      /* General color */
+      blue: "rgb(35, 131, 226)",
+      "blue-hover": "rgb(0, 119, 212)",
+      red: "rgb(235, 87, 87)",
+      orange: "rgb(218, 163, 64)",
+      /* Text color */
+      default: "rgb(var(--base))",
+      primary: "rgb(var(--base))",
+      secondary: "rgba(var(--base) / 0.65)",
+      muted: "rgba(var(--base) / 0.5)",
+      icon: "rgba(var(--base) / 0.85)",
+      "tooltip-primary": "rgba(255, 255, 255, 0.9)",
+      "tooltip-secondary": "rgba(206, 205, 202, 0.6)",
+      "sidebar-primary": "rgb(95, 94, 91)",
+      /* Background color */
+      "bg-main": "rgb(255, 255, 255)",
+      "bg-sidebar": "rgb(247, 247, 245)",
+      "bg-modal": "rgb(255, 255, 255)",
+      "bg-popover": "rgb(255, 255, 255)",
+      "bg-tooltip": "rgb(15, 15, 15)",
+      "bg-input": "rgb(242, 241, 238)",
+      /* Border color */
+      border: "rgba(var(--base) / 0.1)",
+      "border-button": "rgba(var(--base) / 0.15)",
+      "border-cell": "rgb(233, 233, 231)",
+      ring: "rgba(15, 15, 15, 0.1)",
+      /** Radius */
+      radius: "0.5rem",
+    },
+    dark: {
+      base: "255 255 255",
+      /* Text color */
+      default: "rgb(var(--base))",
+      primary: "rgba(var(--base) / 0.8)",
+      secondary: "rgba(var(--base) / 0.45)",
+      muted: "rgba(var(--base) / 0.3)",
+      icon: "rgba(var(--base) / 0.8)",
+      "tooltip-primary": "rgba(211, 211, 211, 1)",
+      "tooltip-secondary": "rgba(127, 127, 127, 1)",
+      "sidebar-primary": "rgb(155, 155, 155)",
+      /* Background color */
+      "bg-main": "rgb(25, 25, 25)",
+      "bg-sidebar": "rgb(32, 32, 32)",
+      "bg-modal": "rgb(32, 32, 32)",
+      "bg-popover": "rgb(37, 37, 37)",
+      "bg-tooltip": "rgb(47, 47, 47)",
+      "bg-input": "rgb(255, 255, 255)",
+      /* Border color */
+      "border-cell": "rgb(47, 47, 47)",
+      ring: "rgba(255, 255, 255, 0.075)",
+    },
+  },
+  files: [],
+};

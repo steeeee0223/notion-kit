@@ -3,8 +3,7 @@
 import { ArrowUpRight, CircleHelp } from "lucide-react";
 
 import { useTranslation } from "@notion-kit/i18n";
-import { Select } from "@notion-kit/select";
-import { Button, Switch } from "@notion-kit/shadcn";
+import { Button, SelectPreset as Select, Switch } from "@notion-kit/shadcn";
 
 import { HintButton } from "../_components";
 import { SettingsRule, SettingsSection } from "../../core";

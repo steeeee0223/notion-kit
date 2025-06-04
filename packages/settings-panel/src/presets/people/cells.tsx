@@ -6,7 +6,6 @@ import { CircleArrowUp, MoreHorizontalIcon } from "lucide-react";
 import { cn } from "@notion-kit/cn";
 import { useTransition } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
-import { Select, type SelectProps } from "@notion-kit/select";
 import {
   Button,
   DropdownMenu,
@@ -15,6 +14,8 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  SelectPreset as Select,
+  type SelectPresetProps,
 } from "@notion-kit/shadcn";
 
 import { Scope } from "../../lib";
@@ -90,7 +91,7 @@ interface TeamspacesCellProps {
 }
 export const TeamspacesCell = ({ teamspaces }: TeamspacesCellProps) => {
   const { options, current } = teamspaces;
-  const $options = options.reduce<SelectProps["options"]>(
+  const $options = options.reduce<SelectPresetProps["options"]>(
     (acc, { id, name, memberCount: members }) => ({
       ...acc,
       [id]: {
@@ -151,7 +152,7 @@ export const RoleCell = ({ role, scopes, onSelect }: RoleCellProps) => {
   );
 };
 
-const Custom: SelectProps["renderOption"] = ({ option }) => (
+const Custom: SelectPresetProps["renderOption"] = ({ option }) => (
   <div className="min-w-0 truncate text-secondary">
     {typeof option === "string" ? option : option?.label}
   </div>
@@ -193,7 +194,7 @@ interface AccessCellProps {
   access: GuestRow["access"];
 }
 export const AccessCell = ({ access }: AccessCellProps) => {
-  const options = access.reduce<SelectProps["options"]>(
+  const options = access.reduce<SelectPresetProps["options"]>(
     (acc, { id, name, scope }) => ({
       ...acc,
       [id]: { label: name, description: scope },
