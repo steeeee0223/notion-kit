@@ -136,6 +136,12 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../../packages/cn
+      '@notion-kit/schemas':
+        specifier: workspace:*
+        version: link:../../packages/schemas
+      '@notion-kit/settings-panel':
+        specifier: workspace:*
+        version: link:../../packages/settings-panel
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../../packages/shadcn
