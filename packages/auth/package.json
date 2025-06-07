@@ -23,7 +23,8 @@
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "db:push": "pnpm with-env drizzle-kit push",
+    "dev": "pnpm with-env drizzle-kit studio",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
@@ -31,13 +32,17 @@
   },
   "dependencies": {
     "@t3-oss/env-nextjs": "catalog:env",
-    "better-auth": "^1.2.8"
+    "@vercel/postgres": "^0.10.0",
+    "better-auth": "^1.2.8",
+    "drizzle-orm": "^0.44.2",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "dotenv-cli": "catalog:env",
+    "drizzle-kit": "^0.31.1",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
