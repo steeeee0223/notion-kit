@@ -466,6 +466,9 @@ importers:
 
   packages/auth:
     dependencies:
+      '@t3-oss/env-nextjs':
+        specifier: catalog:env
+        version: 0.13.6(typescript@5.8.2)(zod@3.24.2)
       better-auth:
         specifier: ^1.2.8
         version: 1.2.8
@@ -479,6 +482,9 @@ importers:
       '@notion-kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
+      dotenv-cli:
+        specifier: catalog:env
+        version: 8.0.0
       eslint:
         specifier: 'catalog:'
         version: 9.26.0(jiti@2.4.2)

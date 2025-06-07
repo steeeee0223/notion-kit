@@ -2,10 +2,10 @@ import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { IBM_Plex_Mono } from "next/font/google";
 
-import "./global.css";
-
 import { cn } from "@notion-kit/cn";
 import { Toaster } from "@notion-kit/shadcn";
+
+import "./global.css";
 
 export const ibm_plex_mono = IBM_Plex_Mono({
   subsets: ["latin"],

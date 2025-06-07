@@ -26,15 +26,18 @@
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
+    "@t3-oss/env-nextjs": "catalog:env",
     "better-auth": "^1.2.8"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "dotenv-cli": "catalog:env",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
