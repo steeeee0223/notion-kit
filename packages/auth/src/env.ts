@@ -4,6 +4,7 @@ import { z } from "zod";
 export function createAuthEnv() {
   return createEnv({
     server: {
+      POSTGRES_URL: z.string(),
       BETTER_AUTH_URL: z.string(),
       BETTER_AUTH_SECRET: z.string(),
       GITHUB_CLIENT_ID: z.string(),
