@@ -36,6 +36,7 @@ const passwordSchema = z
         path: ["confirmPassword"],
       });
   });
+type PasswordSchema = z.infer<typeof passwordSchema>;
 
 interface PasswordFormProps {
   hasPassword?: boolean;
@@ -44,28 +45,30 @@ interface PasswordFormProps {
 
 export const PasswordForm = ({ hasPassword, onSubmit }: PasswordFormProps) => {
   const { isOpen, closeModal, openModal } = useModal();
-  const form = useForm<z.infer<typeof passwordSchema>>({
+
+  const form = useForm<PasswordSchema>({
     resolver: zodResolver(passwordSchema),
-    defaultValues: { password: "", confirmPassword: "" },
+    defaultValues: { password: "", confirmPassword: "", currentPassword: "" },
   });
-  const newPassword = form.watch("password");
-  const confirmPassword = form.watch("confirmPassword");
+  const { formState, handleSubmit, reset, trigger, watch } = form;
+
   const onClose = () => {
     closeModal();
-    form.reset();
+    reset();
   };
-  const submit = async ({
-    password,
-    currentPassword,
-  }: z.infer<typeof passwordSchema>) => {
-    await onSubmit?.(password, currentPassword);
+  const submit = handleSubmit(({ password, currentPassword }) => {
+    void onSubmit?.(password, currentPassword);
     onClose();
     openModal(<PasswordSuccess />);
-  };
+  });
 
   useEffect(() => {
-    void form.trigger("confirmPassword");
-  }, [newPassword, confirmPassword, form]);
+    const sub = watch((_data, info) => {
+      if (info.type !== "change" || info.name === "currentPassword") return;
+      void trigger("confirmPassword");
+    });
+    return () => sub.unsubscribe();
+  }, [trigger, watch]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -77,7 +80,7 @@ export const PasswordForm = ({ hasPassword, onSubmit }: PasswordFormProps) => {
         noTitle
       >
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(submit)} className="relative">
+          <form onSubmit={submit} className="relative">
             <div className="my-4 flex justify-center">
               <Icon.Password className="size-[27px] flex-shrink-0 fill-icon" />
             </div>
@@ -141,14 +144,14 @@ export const PasswordForm = ({ hasPassword, onSubmit }: PasswordFormProps) => {
               )}
             />
             <div className="mt-2.5 text-center text-xs/5 text-[#eb5757]">
-              {Object.values(form.formState.errors).at(0)?.message}
+              {Object.values(formState.errors).at(0)?.message}
             </div>
             <Button
               type="submit"
               variant="blue"
               size="sm"
               className="mt-4 w-full"
-              disabled={form.formState.isSubmitting}
+              disabled={formState.isSubmitting}
             >
               {hasPassword ? "Change password" : "Set a password"}
             </Button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { redirect, useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 
 import { Button, toast } from "@notion-kit/shadcn";
 
@@ -8,7 +8,6 @@ import { authClient, useSession } from "@/lib/auth-client";
 
 export function LoginFormClient() {
   const { data } = useSession();
-  const router = useRouter();
 
   if (data) return redirect("/protected");
 
@@ -22,15 +21,17 @@ export function LoginFormClient() {
             {
               email: "mr.steven7@gapp.nthu.edu.tw",
               name: "test user",
-              password: "Test_user_12##",
+              password: "aaaaaaaa",
+              callbackURL: "/protected",
             },
             {
               onSuccess: ({ data }) => {
                 toast(`Sign up success: ${data.user.name}`);
-                router.push("/protected");
               },
-              onError: ({ error }) =>
-                void toast(`Sign up error: ${error.message}`),
+              onError: ({ error }) => {
+                toast.error("Sign up error", { description: error.message });
+                console.log("Sign up error", error);
+              },
             },
           );
         }}
@@ -44,15 +45,17 @@ export function LoginFormClient() {
           await authClient.signIn.email(
             {
               email: "mr.steven7@gapp.nthu.edu.tw",
-              password: "Test_user_12##",
+              password: "aaaaaaaa",
+              callbackURL: "/protected",
             },
             {
               onSuccess: ({ data }) => {
-                toast(`Sign up success: ${data.user.name}`);
-                router.push("/protected");
+                toast(`Sign in success: ${data.user.name}`);
               },
-              onError: ({ error }) =>
-                void toast(`Sign up error: ${error.message}`),
+              onError: ({ error }) => {
+                toast.error("Sign in error", { description: error.message });
+                console.log("Sign in error", error);
+              },
             },
           );
         }}

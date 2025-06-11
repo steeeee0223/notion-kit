@@ -1,11 +1,18 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
-import { TabType, UpdateSettings } from "@notion-kit/settings-panel";
+import {
+  SettingsActions,
+  TabType,
+  UpdateSettings,
+} from "@notion-kit/settings-panel";
+import { toast } from "@notion-kit/shadcn";
 
-import { useSession } from "@/lib/auth-client";
+import { authClient, useSession } from "@/lib/auth-client";
 import { mockSettings } from "@/lib/data";
 
 export function useSettings() {
+  const router = useRouter();
   const { data } = useSession();
 
   const [tab, setTab] = useState<TabType>("preferences");
@@ -27,7 +34,10 @@ export function useSettings() {
   }, [data]);
 
   const updateSettings = useCallback<UpdateSettings>(async (data) => {
-    await Promise.resolve();
+    await authClient.updateUser({
+      name: data.account?.name,
+      image: data.account?.avatarUrl,
+    });
     setSettings((prev) => ({
       account: { ...prev.account, ...data.account },
       workspace: { ...prev.workspace, ...data.workspace },
@@ -35,10 +45,73 @@ export function useSettings() {
     }));
   }, []);
 
+  const signOut = useCallback(async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => router.push("/"),
+        onError: ({ error }) => {
+          console.error("Sign out error", error);
+          toast.error("Sign out error", { description: error.message });
+        },
+      },
+    });
+  }, [router]);
+
+  const actions = useMemo<SettingsActions>(() => {
+    return {
+      account: {
+        delete: async () => {
+          await authClient.deleteUser(
+            { callbackURL: "/" },
+            {
+              onSuccess: () => {
+                toast.success("Account deleted successfully");
+              },
+              onError: ({ error }) => {
+                console.error("Delete account error", error);
+                toast.error("Delete account error", {
+                  description: error.message,
+                });
+              },
+            },
+          );
+        },
+        sendEmailVerification: async (email) => {
+          await authClient.sendVerificationEmail(
+            { email },
+            {
+              onSuccess: () => void toast.success("Verification email sent"),
+              onError: ({ error }) => {
+                console.error("Send verification email error", error);
+                toast.error("Send verification email error", {
+                  description: error.message,
+                });
+              },
+            },
+          );
+        },
+        changePassword: async (data) => {
+          await authClient.changePassword(data, {
+            onSuccess: () =>
+              void toast.success("Password changed successfully"),
+            onError: ({ error }) => {
+              console.error("Change password error", error);
+              toast.error("Change password error", {
+                description: error.message,
+              });
+            },
+          });
+        },
+      },
+    };
+  }, []);
+
   return {
     tab,
     setTab,
     settings,
     updateSettings,
+    actions,
+    signOut,
   };
 }

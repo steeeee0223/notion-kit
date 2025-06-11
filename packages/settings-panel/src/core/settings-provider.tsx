@@ -19,12 +19,18 @@ import type {
 } from "../lib";
 import { getScopes, Scope } from "../lib";
 
-interface SettingsActions {
+export interface SettingsActions {
   updateSettings?: UpdateSettings;
   uploadFile?: (file: File) => Promise<void>;
   /** Account */
   account?: {
     delete?: (data: { accountId: string; email: string }) => Promise<void>;
+    sendEmailVerification?: (email: string) => Promise<void>;
+    changePassword?: (data: {
+      newPassword: string;
+      currentPassword: string;
+    }) => Promise<void>;
+    setPassword?: (newPassword: string) => Promise<void>;
   };
   /** Workspace */
   workspace?: {
