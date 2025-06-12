@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono } from "next/font/google";
 
 import { cn } from "@notion-kit/cn";
-import { Toaster } from "@notion-kit/shadcn";
+import { ThemeProvider, Toaster } from "@notion-kit/shadcn";
 
 import "./global.css";
 
@@ -27,8 +27,10 @@ export default function Layout({ children }: { children: ReactNode }) {
       suppressHydrationWarning
     >
       <body className="flex min-h-screen flex-col">
-        {children}
-        <Toaster className="font-mono" />
+        <ThemeProvider attribute="class" disableTransitionOnChange>
+          {children}
+          <Toaster className="font-mono" />
+        </ThemeProvider>
       </body>
     </html>
   );
