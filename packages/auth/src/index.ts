@@ -14,3 +14,4 @@ export function createAuthClient(baseURL?: string) {
     baseURL,
   });
 }
+export type AuthClient = ReturnType<typeof createAuthClient>;

@@ -1,40 +1,21 @@
-/* eslint-disable react/jsx-no-constructed-context-values */
 "use client";
 
 import * as React from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import type * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
-import type {
-  ControllerProps,
-  FieldPath,
-  FieldValues,
-  UseFormProps,
-} from "react-hook-form";
+import type { ControllerProps, FieldPath, FieldValues } from "react-hook-form";
 import {
   useForm as __useForm,
   Controller,
   FormProvider,
   useFormContext,
+  useFormState,
 } from "react-hook-form";
-import type { ZodType } from "zod";
 
 import { cn } from "@notion-kit/cn";
 
 import { Label } from "./label";
-
-function useForm<TSchema extends ZodType>(
-  props: Omit<UseFormProps<TSchema["_input"]>, "resolver"> & {
-    schema: TSchema;
-  },
-) {
-  const form = __useForm<TSchema["_input"]>({
-    ...props,
-    resolver: zodResolver(props.schema, undefined),
-  });
-
-  return form;
-}
+import { typography } from "./variants";
 
 const Form = FormProvider;
 
@@ -55,18 +36,23 @@ const FormField = <
 >({
   ...props
 }: ControllerProps<TFieldValues, TName>) => {
+  const contextValue = React.useMemo(
+    () => ({ name: props.name }),
+    [props.name],
+  );
+
   return (
-    <FormFieldContext.Provider value={{ name: props.name }}>
+    <FormFieldContext value={contextValue}>
       <Controller {...props} />
-    </FormFieldContext.Provider>
+    </FormFieldContext>
   );
 };
 
 const useFormField = () => {
-  const fieldContext = React.useContext(FormFieldContext);
-  const itemContext = React.useContext(FormItemContext);
-  const { getFieldState, formState } = useFormContext();
-
+  const fieldContext = React.use(FormFieldContext);
+  const itemContext = React.use(FormItemContext);
+  const { getFieldState } = useFormContext();
+  const formState = useFormState({ name: fieldContext.name });
   const fieldState = getFieldState(fieldContext.name, formState);
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -94,32 +80,43 @@ const FormItemContext = React.createContext<FormItemContextValue>(
   {} as FormItemContextValue,
 );
 
-const FormItem = ({ className, ...props }: React.ComponentProps<"div">) => {
+function FormItem({ className, ...props }: React.ComponentProps<"div">) {
   const id = React.useId();
+  const contextValue = React.useMemo(() => ({ id }), [id]);
 
   return (
-    <FormItemContext.Provider value={{ id }}>
-      <div className={cn("space-y-2", className)} {...props} />
+    <FormItemContext.Provider value={contextValue}>
+      <div
+        data-slot="form-item"
+        className={cn("space-y-2", className)}
+        {...props}
+      />
     </FormItemContext.Provider>
   );
-};
-FormItem.displayName = "FormItem";
+}
 
-const FormLabel = ({
+function FormLabel({
   ...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) => {
-  const { formItemId } = useFormField();
+}: React.ComponentProps<typeof LabelPrimitive.Root>) {
+  const { error, formItemId } = useFormField();
 
-  return <Label htmlFor={formItemId} {...props} />;
-};
-FormLabel.displayName = "FormLabel";
+  return (
+    <Label
+      data-slot="form-label"
+      data-error={!!error}
+      htmlFor={formItemId}
+      {...props}
+    />
+  );
+}
 
-const FormControl = ({ ...props }: React.ComponentProps<typeof Slot>) => {
+function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
   const { error, formItemId, formDescriptionId, formMessageId } =
     useFormField();
 
   return (
     <Slot
+      data-slot="form-control"
       id={formItemId}
       aria-describedby={
         !error
@@ -130,51 +127,40 @@ const FormControl = ({ ...props }: React.ComponentProps<typeof Slot>) => {
       {...props}
     />
   );
-};
-FormControl.displayName = "FormControl";
+}
 
-const FormDescription = ({
-  className,
-  ...props
-}: React.ComponentProps<"p">) => {
+function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
   const { formDescriptionId } = useFormField();
 
   return (
     <p
+      data-slot="form-description"
       id={formDescriptionId}
-      className={cn("text-[0.8rem] text-muted", className)}
+      className={cn("text-muted", typography("desc"), className)}
       {...props}
     />
   );
-};
-FormDescription.displayName = "FormDescription";
+}
 
-const FormMessage = ({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<"p">) => {
+function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
   const { error, formMessageId } = useFormField();
-  const body = error ? String(error.message) : children;
+  const body = error?.message ?? props.children;
 
-  if (!body) {
-    return null;
-  }
+  if (!body) return null;
 
   return (
     <p
+      data-slot="form-message"
       id={formMessageId}
-      className={cn("text-[0.8rem] font-medium text-red", className)}
+      className={cn("text-center text-xs text-red", className)}
       {...props}
     >
       {body}
     </p>
   );
-};
-FormMessage.displayName = "FormMessage";
+}
 
 export {
-  useForm,
   useFormField,
   Form,
   FormItem,
@@ -184,5 +170,3 @@ export {
   FormMessage,
   FormField,
 };
-
-export { useFieldArray } from "react-hook-form";

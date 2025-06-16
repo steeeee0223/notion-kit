@@ -58,7 +58,7 @@
 }
 
 :root {
-  --base: 55 53 47;
+  --base: 50 48 44;
   --blue: rgb(35, 131, 226);
   --blue-hover: rgb(0, 119, 212);
   --red: rgb(235, 87, 87);
@@ -66,8 +66,8 @@
   /* Text color */
   --default: rgb(var(--base));
   --primary: rgb(var(--base));
-  --secondary: rgba(var(--base) / 0.65);
-  --muted: rgba(var(--base) / 0.5);
+  --secondary: rgb(115, 114, 110);
+  --muted: rgba(70, 68, 64, 0.45);
   --icon: rgba(var(--base) / 0.85);
   --tooltip-primary: rgba(255, 255, 255, 0.9);
   --tooltip-secondary: rgba(206, 205, 202, 0.6);

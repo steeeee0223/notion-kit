@@ -2,10 +2,13 @@ import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { IBM_Plex_Mono } from "next/font/google";
 
+import { AuthProvider } from "@notion-kit/auth-ui";
 import { cn } from "@notion-kit/cn";
 import { ThemeProvider, Toaster } from "@notion-kit/shadcn";
 
 import "./global.css";
+
+import { env } from "@/env";
 
 export const ibm_plex_mono = IBM_Plex_Mono({
   subsets: ["latin"],
@@ -27,10 +30,12 @@ export default function Layout({ children }: { children: ReactNode }) {
       suppressHydrationWarning
     >
       <body className="flex min-h-screen flex-col">
-        <ThemeProvider attribute="class" disableTransitionOnChange>
-          {children}
-          <Toaster className="font-mono" />
-        </ThemeProvider>
+        <AuthProvider baseURL={env.NEXT_PUBLIC_AUTH_URL}>
+          <ThemeProvider attribute="class" disableTransitionOnChange>
+            {children}
+            <Toaster className="font-mono" />
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -6,8 +6,10 @@ import { cva } from "class-variance-authority";
 
 import { cn } from "@notion-kit/cn";
 
+import { typography } from "./variants";
+
 const labelVariants = cva(
-  "text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+  "text-secondary peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
 );
 
 function Label({
@@ -17,7 +19,7 @@ function Label({
   return (
     <LabelPrimitive.Root
       data-slot="label"
-      className={cn(labelVariants(), className)}
+      className={cn(typography("label"), labelVariants(), className)}
       {...props}
     />
   );
