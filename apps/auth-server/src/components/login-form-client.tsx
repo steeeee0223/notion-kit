@@ -25,8 +25,8 @@ export function LoginFormClient() {
               callbackURL: "/protected",
             },
             {
-              onSuccess: ({ data }) => {
-                toast(`Sign up success: ${data.user.name}`);
+              onSuccess: () => {
+                toast("Sign up success");
               },
               onError: ({ error }) => {
                 toast.error("Sign up error", { description: error.message });
@@ -49,8 +49,8 @@ export function LoginFormClient() {
               callbackURL: "/protected",
             },
             {
-              onSuccess: ({ data }) => {
-                toast(`Sign in success: ${data.user.name}`);
+              onSuccess: () => {
+                toast("Sign in success");
               },
               onError: ({ error }) => {
                 toast.error("Sign in error", { description: error.message });
