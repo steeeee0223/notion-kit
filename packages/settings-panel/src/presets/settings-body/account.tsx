@@ -57,12 +57,27 @@ export const Account = () => {
     update?.({ account: { preferredName: e.target.value } });
   /** Modals */
   const { openModal } = useModal();
-  const setEmail = () => openModal(<EmailSettings email={account.email} />);
+  const setEmail = () =>
+    openModal(
+      <EmailSettings
+        email={account.email}
+        onSendVerification={() =>
+          actions?.sendEmailVerification?.(account.email)
+        }
+      />,
+    );
   const setPassword = () =>
     openModal(
       <PasswordForm
         hasPassword={account.hasPassword}
-        onSubmit={() => update?.({ account: { hasPassword: true } })}
+        onSubmit={async (newPassword, currentPassword) => {
+          await update?.({ account: { hasPassword: true } });
+          if (currentPassword) {
+            await actions?.changePassword?.({ newPassword, currentPassword });
+          } else {
+            await actions?.setPassword?.(newPassword);
+          }
+        }}
       />,
     );
   const deleteAccount = () =>
@@ -106,7 +121,7 @@ export const Account = () => {
                     variant={null}
                     size="circle"
                     className={cn(
-                      "absolute -top-0.5 -right-0.5 z-10 flex hidden size-auto border border-border-button bg-main p-1 text-secondary",
+                      "absolute -top-0.5 -right-0.5 z-10 hidden size-auto border border-border-button bg-main p-1 text-secondary",
                       (avatarIsHover || avatarCancelIsHover) && "block",
                     )}
                     aria-disabled={isRemoving || isUploading}
