@@ -16,6 +16,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
   Input,
 } from "@notion-kit/shadcn";
 
@@ -56,8 +57,8 @@ export const PasswordForm = ({ hasPassword, onSubmit }: PasswordFormProps) => {
     closeModal();
     reset();
   };
-  const submit = handleSubmit(({ password, currentPassword }) => {
-    void onSubmit?.(password, currentPassword);
+  const submit = handleSubmit(async ({ password, currentPassword }) => {
+    await onSubmit?.(password, currentPassword);
     onClose();
     openModal(<PasswordSuccess />);
   });
@@ -98,7 +99,7 @@ export const PasswordForm = ({ hasPassword, onSubmit }: PasswordFormProps) => {
                 control={form.control}
                 name="currentPassword"
                 render={({ field }) => (
-                  <FormItem className="mb-2 space-y-[1px]">
+                  <FormItem>
                     <FormLabel>Enter your current password</FormLabel>
                     <FormControl>
                       <Input
@@ -115,7 +116,7 @@ export const PasswordForm = ({ hasPassword, onSubmit }: PasswordFormProps) => {
               control={form.control}
               name="password"
               render={({ field }) => (
-                <FormItem className="mb-2 space-y-[1px]">
+                <FormItem>
                   <FormLabel>Enter a new password</FormLabel>
                   <FormControl>
                     <Input
@@ -131,7 +132,7 @@ export const PasswordForm = ({ hasPassword, onSubmit }: PasswordFormProps) => {
               control={form.control}
               name="confirmPassword"
               render={({ field }) => (
-                <FormItem className="space-y-[1px]">
+                <FormItem>
                   <FormLabel>Confirm your new password</FormLabel>
                   <FormControl>
                     <Input
@@ -143,9 +144,9 @@ export const PasswordForm = ({ hasPassword, onSubmit }: PasswordFormProps) => {
                 </FormItem>
               )}
             />
-            <div className="mt-2.5 text-center text-xs/5 text-[#eb5757]">
+            <FormMessage className="mt-2.5">
               {Object.values(formState.errors).at(0)?.message}
-            </div>
+            </FormMessage>
             <Button
               type="submit"
               variant="blue"

@@ -1,22 +1,37 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { Plan, Role } from "@notion-kit/schemas";
 import {
   SettingsActions,
   TabType,
   UpdateSettings,
 } from "@notion-kit/settings-panel";
+import type { SettingsStore } from "@notion-kit/settings-panel";
 import { toast } from "@notion-kit/shadcn";
 
 import { authClient, useSession } from "@/lib/auth-client";
-import { mockSettings } from "@/lib/data";
+
+export const mockWorkspace: SettingsStore["workspace"] = {
+  id: "workspace-0",
+  name: "John's Private",
+  icon: { type: "lucide", src: "activity", color: "#CB912F" },
+  role: Role.OWNER,
+  plan: Plan.FREE,
+  domain: "fake-domain",
+  inviteLink: "#",
+};
 
 export function useSettings() {
   const router = useRouter();
   const { data } = useSession();
 
   const [tab, setTab] = useState<TabType>("preferences");
-  const [settings, setSettings] = useState({ ...mockSettings });
+  const [settings, setSettings] = useState({
+    account: {},
+    workspace: mockWorkspace,
+    memberships: {},
+  } as SettingsStore);
 
   useEffect(() => {
     if (!data) return;
@@ -29,6 +44,7 @@ export function useSettings() {
         name: data.user.name,
         email: data.user.email,
         avatarUrl: data.user.image ?? "",
+        language: "en",
       },
     }));
   }, [data]);
