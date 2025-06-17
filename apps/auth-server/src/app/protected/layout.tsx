@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 import { useSession } from "@notion-kit/auth-ui";
 
@@ -13,5 +13,6 @@ export default function Layout({ children }: React.PropsWithChildren) {
     router.push("/");
   }, [data, isPending, router]);
 
+  if (!data) redirect("/");
   return children;
 }
