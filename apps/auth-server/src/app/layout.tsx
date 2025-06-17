@@ -6,9 +6,9 @@ import { AuthProvider } from "@notion-kit/auth-ui";
 import { cn } from "@notion-kit/cn";
 import { ThemeProvider, Toaster } from "@notion-kit/shadcn";
 
-import "./global.css";
-
 import { env } from "@/env";
+
+import "./global.css";
 
 export const ibm_plex_mono = IBM_Plex_Mono({
   subsets: ["latin"],

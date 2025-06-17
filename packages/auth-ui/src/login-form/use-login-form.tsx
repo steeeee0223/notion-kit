@@ -27,7 +27,7 @@ export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
     defaultValues: { email: "", password: "" },
     resolver: zodResolver(loginSchema),
   });
-  const { formState, handleSubmit } = form;
+  const { formState, handleSubmit, setError } = form;
 
   const submit = handleSubmit(async (data) => {
     if (mode === "sign_up") {
@@ -39,7 +39,7 @@ export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
             toast("Sign up success");
           },
           onError: ({ error }) => {
-            toast.error("Sign up error", { description: error.message });
+            setError("root", { message: error.message });
             console.log("Sign up error", error);
           },
         },
@@ -52,7 +52,7 @@ export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
             toast("Sign in success");
           },
           onError: ({ error }) => {
-            toast.error("Sign in error", { description: error.message });
+            setError("root", { message: error.message });
             console.log("Sign in error", error);
           },
         },
@@ -61,7 +61,9 @@ export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
   });
 
   const errorMessage =
-    formState.errors.email?.message ?? formState.errors.password?.message;
+    formState.errors.root?.message ??
+    formState.errors.email?.message ??
+    formState.errors.password?.message;
 
   return { form, errorMessage, submit };
 }
