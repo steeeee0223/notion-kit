@@ -1,29 +1,33 @@
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { Resend } from "resend";
 
 import { db } from "./db";
+import { sendChangeEmailVerification } from "./email";
 import { AuthEnv } from "./env";
 
 export function createAuth(env: AuthEnv) {
+  const resend = new Resend(env.RESEND_API_KEY);
+
   const config = {
     database: drizzleAdapter(db, { provider: "pg" }),
     user: {
       changeEmail: {
         enabled: true,
-        // sendChangeEmailVerification: async ({ user, newEmail, url, token }, request) => {
-        //     await ({
-        //         to: user.email, // verification email must be sent to the current user email to approve the change
-        //         subject: 'Approve email change',
-        //         text: `Click the link to approve the change: ${url}`
-        //     })
-        // }
+        sendChangeEmailVerification: ({ user, url }) =>
+          sendChangeEmailVerification(resend, user.email, url),
       },
       deleteUser: { enabled: true },
     },
-    emailVerification: {},
+    emailVerification: {
+      sendOnSignUp: true,
+      autoSignInAfterVerification: true,
+      sendVerificationEmail: ({ user, url }) =>
+        sendChangeEmailVerification(resend, user.email, url),
+    },
     emailAndPassword: {
       enabled: true,
-      requireEmailVerification: true, // default: true
+      requireEmailVerification: true,
     },
     socialProviders: {
       github: {

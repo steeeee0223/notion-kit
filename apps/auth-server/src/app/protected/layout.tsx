@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-import { useSession } from "@/lib/auth-client";
+import { useSession } from "@notion-kit/auth-ui";
 
 export default function Layout({ children }: React.PropsWithChildren) {
   const { data, isPending } = useSession();

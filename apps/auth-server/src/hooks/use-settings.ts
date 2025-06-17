@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { useAuth, useSession } from "@notion-kit/auth-ui";
 import { Plan, Role } from "@notion-kit/schemas";
 import {
   SettingsActions,
@@ -9,8 +10,6 @@ import {
 } from "@notion-kit/settings-panel";
 import type { SettingsStore } from "@notion-kit/settings-panel";
 import { toast } from "@notion-kit/shadcn";
-
-import { authClient, useSession } from "@/lib/auth-client";
 
 export const mockWorkspace: SettingsStore["workspace"] = {
   id: "workspace-0",
@@ -23,10 +22,11 @@ export const mockWorkspace: SettingsStore["workspace"] = {
 };
 
 export function useSettings() {
-  const router = useRouter();
+  const auth = useAuth();
   const { data } = useSession();
+  const router = useRouter();
 
-  const [tab, setTab] = useState<TabType>("preferences");
+  const [tab, setTab] = useState<TabType>("account");
   const [settings, setSettings] = useState({
     account: {},
     workspace: mockWorkspace,
@@ -49,20 +49,23 @@ export function useSettings() {
     }));
   }, [data]);
 
-  const updateSettings = useCallback<UpdateSettings>(async (data) => {
-    await authClient.updateUser({
-      name: data.account?.name,
-      image: data.account?.avatarUrl,
-    });
-    setSettings((prev) => ({
-      account: { ...prev.account, ...data.account },
-      workspace: { ...prev.workspace, ...data.workspace },
-      memberships: { ...prev.memberships, ...data.memberships },
-    }));
-  }, []);
+  const updateSettings = useCallback<UpdateSettings>(
+    async (data) => {
+      await auth.updateUser({
+        name: data.account?.name,
+        image: data.account?.avatarUrl,
+      });
+      setSettings((prev) => ({
+        account: { ...prev.account, ...data.account },
+        workspace: { ...prev.workspace, ...data.workspace },
+        memberships: { ...prev.memberships, ...data.memberships },
+      }));
+    },
+    [auth],
+  );
 
   const signOut = useCallback(async () => {
-    await authClient.signOut({
+    await auth.signOut({
       fetchOptions: {
         onSuccess: () => router.push("/"),
         onError: ({ error }) => {
@@ -71,13 +74,13 @@ export function useSettings() {
         },
       },
     });
-  }, [router]);
+  }, [auth, router]);
 
   const actions = useMemo<SettingsActions>(() => {
     return {
       account: {
         delete: async () => {
-          await authClient.deleteUser(
+          await auth.deleteUser(
             { callbackURL: "/" },
             {
               onSuccess: () => {
@@ -93,7 +96,7 @@ export function useSettings() {
           );
         },
         sendEmailVerification: async (email) => {
-          await authClient.sendVerificationEmail(
+          await auth.sendVerificationEmail(
             { email },
             {
               onSuccess: () => void toast.success("Verification email sent"),
@@ -107,7 +110,7 @@ export function useSettings() {
           );
         },
         changePassword: async (data) => {
-          await authClient.changePassword(data, {
+          await auth.changePassword(data, {
             onSuccess: () =>
               void toast.success("Password changed successfully"),
             onError: ({ error }) => {
@@ -120,7 +123,7 @@ export function useSettings() {
         },
       },
     };
-  }, []);
+  }, [auth]);
 
   return {
     tab,

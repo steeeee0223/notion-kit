@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@notion-kit/auth": "workspace:*",
+    "@notion-kit/auth-ui": "workspace:*",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/settings-panel": "workspace:*",

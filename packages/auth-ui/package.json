@@ -1,5 +1,5 @@
 {
-  "name": "@notion-kit/auth",
+  "name": "@notion-kit/auth-ui",
   "version": "0.7.0",
   "type": "module",
   "bugs": {
@@ -8,7 +8,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/steeeee0223/notion-kit.git",
-    "directory": "packages/auth"
+    "directory": "packages/auth-ui"
   },
   "exports": {
     ".": {
@@ -23,30 +23,34 @@
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "db:push": "pnpm with-env drizzle-kit push",
-    "dev": "pnpm with-env drizzle-kit studio",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "with-env": "dotenv -e ../../.env --"
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@t3-oss/env-nextjs": "catalog:env",
-    "@vercel/postgres": "^0.10.0",
-    "better-auth": "^1.2.8",
-    "drizzle-orm": "^0.44.2",
-    "resend": "^4.5.2",
+    "@hookform/resolvers": "catalog:ui",
+    "@notion-kit/auth": "workspace:*",
+    "@notion-kit/cn": "workspace:*",
+    "@notion-kit/icons": "workspace:*",
+    "@notion-kit/shadcn": "workspace:*",
+    "@types/react": "catalog:react19",
+    "react-hook-form": "catalog:ui",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
-    "dotenv-cli": "catalog:env",
-    "drizzle-kit": "^0.31.1",
+    "@types/react": "catalog:react19",
     "eslint": "catalog:",
     "prettier": "catalog:",
+    "react": "catalog:react19",
+    "tsup": "catalog:",
     "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:react19"
   },
   "prettier": "@notion-kit/prettier-config"
 }

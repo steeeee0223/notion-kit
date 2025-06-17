@@ -13,6 +13,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@notion-kit/auth": "workspace:*",
+    "@notion-kit/auth-ui": "workspace:*",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/common": "workspace:*",
     "@notion-kit/cover": "workspace:*",
