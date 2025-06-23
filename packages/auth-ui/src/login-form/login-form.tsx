@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import {
@@ -13,8 +15,10 @@ import {
   FormMessage,
   Input,
   Separator,
+  toast,
 } from "@notion-kit/shadcn";
 
+import { useAuth } from "../auth-provider";
 import type { LoginMode } from "./types";
 import { useLoginForm } from "./use-login-form";
 
@@ -31,7 +35,30 @@ export function LoginForm({
   callbackURL,
   onModeChange,
 }: LoginFormProps) {
+  const auth = useAuth();
   const { form, errorMessage, submit } = useLoginForm({ mode, callbackURL });
+
+  const [loading, setLoading] = useState(false);
+  const disabled = form.formState.disabled || loading;
+
+  const loginWithOauth = async (provider: "google" | "github") => {
+    await auth.signIn.social(
+      { provider, callbackURL },
+      {
+        onRequest: () => setLoading(true),
+        onResponse: () => setLoading(false),
+        onSuccess: () => {
+          toast(`Logged in with ${provider}`);
+        },
+        onError: ({ error }) => {
+          toast.error(`Failed to login with ${provider}`, {
+            description: error.message,
+          });
+          console.error(`Failed to login with ${provider}`, error.message);
+        },
+      },
+    );
+  };
 
   return (
     <div
@@ -42,13 +69,39 @@ export function LoginForm({
     >
       <div className="flex flex-col gap-4">
         <div className="space-y-2">
-          <Button size="md" className="relative w-full">
-            <Icon.AppleLogo className="absolute left-2.5 fill-inherit" />
-            Login with Apple
-          </Button>
-          <Button size="md" className="relative w-full">
+          <Button
+            size="md"
+            className="relative w-full"
+            disabled={disabled}
+            onClick={() => loginWithOauth("google")}
+          >
             <Icon.GoogleLogo className="absolute left-2.5 fill-inherit" />
-            Login with Google
+            Continue with Google
+          </Button>
+          <Button
+            size="md"
+            className="relative w-full"
+            disabled={disabled}
+            onClick={() => loginWithOauth("github")}
+          >
+            <Icon.GithubLogo className="absolute left-2.5 fill-inherit" />
+            Continue with Github
+          </Button>
+          <Button size="md" className="relative w-full" disabled>
+            <Icon.AppleLogo className="absolute left-2.5 fill-inherit" />
+            Continue with Apple
+          </Button>
+          <Button size="md" className="relative w-full" disabled>
+            <Icon.MicrosoftLogo className="absolute left-2.5 fill-inherit" />
+            Continue with Microsoft
+          </Button>
+          <Button size="md" className="relative w-full" disabled>
+            <Icon.PersonWithKey className="absolute left-2.5 fill-inherit" />
+            Login with passkey
+          </Button>
+          <Button size="md" className="relative w-full" disabled>
+            <Icon.Buildings className="absolute left-2.5 fill-inherit" />
+            Single sign-on (SSO)
           </Button>
         </div>
         <Separator />
@@ -95,6 +148,7 @@ export function LoginForm({
                   {mode === "sign_in" && (
                     <div className="text-xs font-semibold text-blue hover:text-red">
                       <a
+                        // TODO: Update this link to the actual password reset page
                         href="/"
                         rel="noopener noreferrer"
                         className="inline cursor-pointer text-inherit select-none"
@@ -106,7 +160,13 @@ export function LoginForm({
                 </FormItem>
               )}
             />
-            <Button variant="blue" size="md" type="submit" className="w-full">
+            <Button
+              variant="blue"
+              size="md"
+              type="submit"
+              className="w-full"
+              disabled={disabled}
+            >
               Continue
             </Button>
             <FormMessage>{errorMessage}</FormMessage>

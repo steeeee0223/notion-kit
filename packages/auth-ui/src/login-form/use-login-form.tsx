@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -23,8 +24,10 @@ interface UseLoginFormOptions {
 export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
   const authClient = useAuth();
 
+  const [loading, setLoading] = useState(false);
   const form = useForm<LoginSchema>({
     defaultValues: { email: "", password: "" },
+    disabled: loading,
     resolver: zodResolver(loginSchema),
   });
   const { formState, handleSubmit, setError } = form;
@@ -35,6 +38,8 @@ export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
       await authClient.signUp.email(
         { name, ...data, callbackURL },
         {
+          onRequest: () => setLoading(true),
+          onResponse: () => setLoading(false),
           onSuccess: () => {
             toast("Sign up success");
           },
@@ -48,6 +53,8 @@ export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
       await authClient.signIn.email(
         { ...data, callbackURL },
         {
+          onRequest: () => setLoading(true),
+          onResponse: () => setLoading(false),
           onSuccess: () => {
             toast("Sign in success");
           },
