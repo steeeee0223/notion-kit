@@ -70,12 +70,10 @@ export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
         {
           onRequest: () => setLoading(true),
           onResponse: () => setLoading(false),
-          onSuccess: () => {
-            toast("Sign up success");
-          },
+          onSuccess: () => void toast("Sign up success"),
           onError: ({ error }) => {
             setError("root", { message: error.message });
-            console.log("Sign up error", error);
+            console.error("Sign up error", error);
           },
         },
       );
@@ -85,12 +83,10 @@ export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
         {
           onRequest: () => setLoading(true),
           onResponse: () => setLoading(false),
-          onSuccess: () => {
-            toast("Sign in success");
-          },
+          onSuccess: () => void toast("Sign in success"),
           onError: ({ error }) => {
             setError("root", { message: error.message });
-            console.log("Sign in error", error);
+            console.error("Sign in error", error);
           },
         },
       );
@@ -98,7 +94,6 @@ export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
   });
 
   const handlePasswordForgot = useCallback(() => {
-    console.log("changed to forgot password", z.NEVER);
     setForgotPasswordStage("email");
     setValue("forgotPassword", true);
     setValue("password", "");
