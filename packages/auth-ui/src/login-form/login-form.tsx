@@ -36,7 +36,14 @@ export function LoginForm({
   onModeChange,
 }: LoginFormProps) {
   const auth = useAuth();
-  const { form, errorMessage, submit } = useLoginForm({ mode, callbackURL });
+  const {
+    form,
+    forgotPasswordStage,
+    errorMessage,
+    handlePasswordForgot,
+    resetForm,
+    submit,
+  } = useLoginForm({ mode, callbackURL });
 
   const [loading, setLoading] = useState(false);
   const disabled = form.formState.disabled || loading;
@@ -105,73 +112,82 @@ export function LoginForm({
           </Button>
         </div>
         <Separator />
-        <Form {...form}>
-          <form onSubmit={submit} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="bg-transparent"
-                      data-size="lg"
-                      placeholder="Enter your email address..."
-                      clear
-                      onCancel={() => field.onChange("")}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Use an organization email to easily collaborate with
-                    teammates
-                  </FormDescription>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      className="bg-transparent"
-                      data-size="lg"
-                      placeholder="Enter your email password..."
-                      {...field}
-                    />
-                  </FormControl>
-                  {mode === "sign_in" && (
-                    <div className="text-xs font-semibold text-blue hover:text-red">
-                      <a
-                        // TODO: Update this link to the actual password reset page
-                        href="/"
-                        rel="noopener noreferrer"
-                        className="inline cursor-pointer text-inherit select-none"
-                      >
-                        Forgot your password?
-                      </a>
-                    </div>
+        {forgotPasswordStage === "link_sent" ? (
+          <div className="text-center text-sm text-secondary">
+            Check your inbox for the link to reset your password.
+          </div>
+        ) : (
+          <Form {...form}>
+            <form onSubmit={submit} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="bg-transparent"
+                        data-size="lg"
+                        placeholder="Enter your email address..."
+                        clear
+                        onCancel={() => field.onChange("")}
+                        {...field}
+                      />
+                    </FormControl>
+                    {forgotPasswordStage === "none" && (
+                      <FormDescription>
+                        Use an organization email to easily collaborate with
+                        teammates
+                      </FormDescription>
+                    )}
+                  </FormItem>
+                )}
+              />
+              {forgotPasswordStage === "none" && (
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          className="bg-transparent"
+                          data-size="lg"
+                          placeholder="Enter your email password..."
+                          {...field}
+                        />
+                      </FormControl>
+                      {mode === "sign_in" && (
+                        <div
+                          role="button"
+                          className="inline cursor-pointer text-xs font-semibold text-blue select-none hover:text-red"
+                          onPointerDown={handlePasswordForgot}
+                        >
+                          Forgot your password?
+                        </div>
+                      )}
+                    </FormItem>
                   )}
-                </FormItem>
+                />
               )}
-            />
-            <Button
-              variant="blue"
-              size="md"
-              type="submit"
-              className="w-full"
-              disabled={disabled}
-            >
-              Continue
-            </Button>
-            <FormMessage>{errorMessage}</FormMessage>
-          </form>
-        </Form>
+              <Button
+                variant="blue"
+                size="md"
+                type="submit"
+                className="w-full"
+                disabled={disabled}
+              >
+                {forgotPasswordStage === "none"
+                  ? "Continue"
+                  : "Send reset link"}
+              </Button>
+              <FormMessage>{errorMessage}</FormMessage>
+            </form>
+          </Form>
+        )}
       </div>
       {/* Footer */}
       <div className="text-center text-xs text-balance text-secondary *:[a]:text-muted *:[a]:underline *:[a]:underline-offset-2 *:[a]:hover:text-blue">
@@ -181,9 +197,10 @@ export function LoginForm({
       <div
         role="button"
         className="cursor-pointer text-xs font-semibold text-blue select-none hover:text-red"
-        onPointerDown={() =>
-          onModeChange?.(mode === "sign_in" ? "sign_up" : "sign_in")
-        }
+        onPointerDown={() => {
+          resetForm();
+          onModeChange?.(mode === "sign_in" ? "sign_up" : "sign_in");
+        }}
       >
         {mode === "sign_up"
           ? "Already have an account?"
