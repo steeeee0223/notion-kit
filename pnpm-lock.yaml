@@ -1105,6 +1105,9 @@ importers:
       '@notion-kit/tags-input':
         specifier: workspace:*
         version: link:../tags-input
+      '@notion-kit/utils':
+        specifier: workspace:*
+        version: link:../utils
       '@tanstack/react-table':
         specifier: catalog:ui
         version: 8.21.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)

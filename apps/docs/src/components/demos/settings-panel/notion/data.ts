@@ -131,7 +131,12 @@ export const mockSettings: SettingsStore = {
     domain: "fake-domain",
     inviteLink: "#",
   },
-  account: { ...mockUsers[0]!, preferredName: "Jonathan", language: "en" },
+  account: {
+    ...mockUsers[0]!,
+    preferredName: "Jonathan",
+    language: "en",
+    sessions: [],
+  },
   memberships: mockUsers.reduce(
     (acc, user, i) => ({
       ...acc,

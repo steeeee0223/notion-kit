@@ -34,6 +34,20 @@ export function useSettings() {
   } as SettingsStore);
 
   useEffect(() => {
+    void auth.listSessions({
+      fetchOptions: {
+        onSuccess: (sessions) => {
+          console.log("sessions", sessions);
+        },
+        onError: ({ error }) => {
+          console.error("List sessions error", error);
+          toast.error("List sessions error", { description: error.message });
+        },
+      },
+    });
+  }, [auth]);
+
+  useEffect(() => {
     if (!data) return;
     setSettings((prev) => ({
       ...prev,
@@ -45,6 +59,7 @@ export function useSettings() {
         email: data.user.email,
         avatarUrl: data.user.image ?? "",
         language: "en",
+        sessions: [],
       },
     }));
   }, [data]);

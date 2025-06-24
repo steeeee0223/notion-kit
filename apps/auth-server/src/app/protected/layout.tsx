@@ -13,6 +13,6 @@ export default function Layout({ children }: React.PropsWithChildren) {
     router.push("/");
   }, [data, isPending, router]);
 
-  if (!data) redirect("/");
+  if (!isPending && !data) redirect("/");
   return children;
 }

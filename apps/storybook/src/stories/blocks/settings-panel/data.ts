@@ -1,6 +1,7 @@
 import { Plan, Role, type User, type Workspace } from "@notion-kit/schemas";
 import type {
   Connection,
+  SessionRow,
   SettingsStore,
   WorkspaceMemberships,
 } from "@notion-kit/settings-panel";
@@ -127,6 +128,37 @@ const pageAccesses = [
   [],
 ];
 
+export const mockSessions: SessionRow[] = [
+  {
+    id: "session-1",
+    type: "laptop",
+    device: "MacBook Pro",
+    lastActive: Date.UTC(2023, 9, 1, 12, 0, 0),
+    location: "New York, USA",
+  },
+  {
+    id: "session-2",
+    device: "iPhone 14",
+    type: "mobile",
+    lastActive: Date.UTC(2023, 9, 2, 14, 30, 0),
+    location: "San Francisco, USA",
+  },
+  {
+    id: "session-3",
+    device: "iPad Pro",
+    type: "mobile",
+    lastActive: Date.UTC(2023, 9, 3, 9, 15, 0),
+    location: "Los Angeles, USA",
+  },
+  {
+    id: "session-4",
+    device: "Windows PC",
+    type: "unknown",
+    lastActive: Date.UTC(2023, 9, 4, 18, 45, 0),
+    location: "Chicago, USA",
+  },
+];
+
 export const mockSettings: SettingsStore = {
   workspace: {
     ...mockWorkspaces[0]!,
@@ -138,7 +170,13 @@ export const mockSettings: SettingsStore = {
     domain: "fake-domain",
     inviteLink: "#",
   },
-  account: { ...mockUsers[0]!, preferredName: "Jonathan", language: "en" },
+  account: {
+    ...mockUsers[0]!,
+    preferredName: "Jonathan",
+    language: "en",
+    sessions: mockSessions,
+    currentSessionId: mockSessions[0]!.id,
+  },
   memberships: mockUsers.reduce(
     (acc, user, i) => ({
       ...acc,

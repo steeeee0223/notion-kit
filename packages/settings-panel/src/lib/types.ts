@@ -35,6 +35,8 @@ export interface AccountStore extends User {
   /** My Account */
   preferredName: string;
   hasPassword?: boolean;
+  currentSessionId?: string;
+  sessions: SessionRow[];
   /** Region */
   language?: LOCALE;
 }
@@ -49,6 +51,14 @@ export type ConnectionStrategy =
   | "jira";
 
 /** Table Data */
+export interface SessionRow {
+  id: string;
+  device: string;
+  type: "laptop" | "mobile" | "unknown";
+  lastActive: number; // ts in seconds
+  location: string;
+}
+
 export interface Connection {
   id: string;
   connection: { type: string; account: string };
