@@ -32,7 +32,7 @@ export interface SettingsActions {
     }) => Promise<void>;
     setPassword?: (newPassword: string) => Promise<void>;
     logoutAll?: () => Promise<void>;
-    logoutSession?: (sessionId: string) => Promise<void>;
+    logoutSession?: (token: string) => Promise<void>;
   };
   /** Workspace */
   workspace?: {

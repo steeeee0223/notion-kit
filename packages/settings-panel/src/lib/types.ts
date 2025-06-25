@@ -53,6 +53,7 @@ export type ConnectionStrategy =
 /** Table Data */
 export interface SessionRow {
   id: string;
+  token: string;
   device: string;
   type: "laptop" | "mobile" | "unknown";
   lastActive: number; // ts in seconds

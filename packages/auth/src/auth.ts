@@ -18,6 +18,10 @@ export function createAuth(env: AuthEnv) {
           sendChangeEmailVerification(resend, user.email, url),
       },
       deleteUser: { enabled: true },
+      additionalFields: {
+        preferredName: { type: "string", required: false },
+        lang: { type: "string", required: false, defaultValue: "en" },
+      },
     },
     emailVerification: {
       sendOnSignUp: true,

@@ -25,7 +25,7 @@ export interface DataTableProps<TData, TValue> {
   className?: string;
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  search?: string;
+  search?: { colId: string; value: string };
   emptyResult?: string;
 }
 
@@ -50,8 +50,12 @@ export function DataTable<TData, TValue>({
     state: { sorting, columnFilters },
   });
 
+  /**
+   * @see people (extended)
+   */
   useEffect(() => {
-    table.getColumn("user")?.setFilterValue(search);
+    if (!search) return;
+    table.getColumn(search.colId)?.setFilterValue(search.value);
   }, [table, search]);
 
   return (

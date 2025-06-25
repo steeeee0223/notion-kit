@@ -17,8 +17,8 @@ export function DevicesSection() {
   const [logoutAll, isLoggingOutAll] = useTransition(() =>
     actions?.logoutAll?.(),
   );
-  const [logoutSession] = useTransition((sessionId: string) =>
-    actions?.logoutSession?.(sessionId),
+  const [logoutSession] = useTransition((token: string) =>
+    actions?.logoutSession?.(token),
   );
 
   return (

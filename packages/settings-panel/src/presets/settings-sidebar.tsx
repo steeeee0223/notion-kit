@@ -55,7 +55,7 @@ export const SettingsSidebarPreset: React.FC<SettingsSidebarPresetProps> = ({
             <Avatar className="size-5 border">
               <AvatarImage src={account.avatarUrl} alt="" />
               <AvatarFallback className="bg-default/5">
-                {account.preferredName[0]}
+                {account.preferredName.at(0) ?? ""}
               </AvatarFallback>
             </Avatar>
           }

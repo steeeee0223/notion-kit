@@ -60,7 +60,7 @@ export function DeviceCell({ device, type, isCurrent }: DeviceCellProps) {
     <div className="ml-1 flex items-center gap-2">
       <DeviceIcon
         type={type}
-        className="block size-6 shrink-0 fill-[rgba(81,73,60,0.32)]"
+        className="block size-6 shrink-0 fill-[rgba(81,73,60,0.32)] dark:fill-primary/30"
       />
       <div className="flex flex-col items-start justify-center">
         <div

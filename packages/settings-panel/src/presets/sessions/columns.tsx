@@ -8,7 +8,7 @@ import { DeviceCell, SortingToggle, TextCell } from "./cells";
 
 interface CreateSessionColumnsOptions {
   currentSessionId?: string;
-  onLogout?: (sessionId: string) => void;
+  onLogout?: (token: string) => void;
 }
 
 export function createSessionColumns({
@@ -23,7 +23,7 @@ export function createSessionColumns({
         return (
           <div className="flex w-3/10 min-w-50 items-center">
             <SortingToggle
-              title="Device"
+              title="Device Name"
               isSorted={isSorted}
               toggle={() => column.toggleSorting(isSorted === "asc")}
             />
@@ -86,7 +86,7 @@ export function createSessionColumns({
           <Button
             size="xs"
             className="h-7 px-2 text-secondary"
-            onClick={() => onLogout?.(row.original.id)}
+            onClick={() => onLogout?.(row.original.token)}
           >
             Logout
           </Button>
