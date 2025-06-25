@@ -26,6 +26,7 @@
     "db:push": "pnpm with-env drizzle-kit push",
     "dev": "pnpm with-env drizzle-kit studio",
     "format": "prettier --check . --ignore-path ../../.gitignore",
+    "generate": "pnpm with-env pnpx @better-auth/cli generate --config src/auth.ts --output src/db/schemas.ts -y",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "with-env": "dotenv -e ../../.env --"
