@@ -2,29 +2,10 @@
 
 import type { SortDirection } from "@tanstack/react-table";
 
-import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import { Button } from "@notion-kit/shadcn";
 
-import { SessionRow } from "../../lib";
-
-interface HeaderProps {
-  title: string;
-  className?: string;
-}
-
-/**
- * @see people (same component)
- */
-export function Header({ title, className }: HeaderProps) {
-  return (
-    <div
-      className={cn("truncate text-xs font-normal text-secondary", className)}
-    >
-      {title}
-    </div>
-  );
-}
+import type { SessionRow } from "../../lib";
 
 interface SortingToggleProps {
   title: string;
@@ -38,7 +19,7 @@ interface SortingToggleProps {
 export function SortingToggle({ title, isSorted, toggle }: SortingToggleProps) {
   return (
     <Button variant="hint" size="xs" onClick={toggle} className="px-1">
-      <Header title={title} />
+      <TextCell value={title} />
       {isSorted &&
         (isSorted === "asc" ? (
           <Icon.ArrowUp className="ml-1 size-3 flex-shrink-0 fill-secondary" />
@@ -63,10 +44,7 @@ export function DeviceCell({ device, type, isCurrent }: DeviceCellProps) {
         className="block size-6 shrink-0 fill-[rgba(81,73,60,0.32)] dark:fill-primary/30"
       />
       <div className="flex flex-col items-start justify-center">
-        <div
-          key="notranslate"
-          className="truncate text-xs leading-5 font-normal text-primary"
-        >
+        <div className="truncate text-xs leading-5 font-normal text-primary">
           {device}
         </div>
         {isCurrent && (
@@ -96,5 +74,7 @@ interface TextCellProps {
 }
 
 export function TextCell({ value }: TextCellProps) {
-  return <div className="truncate text-xs text-secondary">{value}</div>;
+  return (
+    <div className="truncate text-xs font-normal text-secondary">{value}</div>
+  );
 }
