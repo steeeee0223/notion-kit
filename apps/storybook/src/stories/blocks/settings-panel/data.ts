@@ -135,6 +135,7 @@ export const mockSessions: SessionRow[] = [
     device: "MacBook Pro",
     lastActive: Date.UTC(2023, 9, 1, 12, 0, 0),
     location: "New York, USA",
+    token: "token-1",
   },
   {
     id: "session-2",
@@ -142,6 +143,7 @@ export const mockSessions: SessionRow[] = [
     type: "mobile",
     lastActive: Date.UTC(2023, 9, 2, 14, 30, 0),
     location: "San Francisco, USA",
+    token: "token-2",
   },
   {
     id: "session-3",
@@ -149,6 +151,7 @@ export const mockSessions: SessionRow[] = [
     type: "mobile",
     lastActive: Date.UTC(2023, 9, 3, 9, 15, 0),
     location: "Los Angeles, USA",
+    token: "token-3",
   },
   {
     id: "session-4",
@@ -156,6 +159,7 @@ export const mockSessions: SessionRow[] = [
     type: "unknown",
     lastActive: Date.UTC(2023, 9, 4, 18, 45, 0),
     location: "Chicago, USA",
+    token: "token-4",
   },
 ];
 
