@@ -4,14 +4,28 @@ import { cva } from "class-variance-authority";
 const typographyVariants = cva("", {
   variants: {
     type: {
+      /**
+       * @prop h2
+       * @note tx-heading-17-semi
+       */
+      h2: "text-lg/[22px] font-semibold",
+      /**
+       * @prop h3
+       * @note tx-uiregular-14-semi
+       */
+      h3: "text-sm/5 font-semibold",
+      /**
+       * @prop body
+       * @note tx-body-14-reg
+       */
+      body: "text-sm/5 font-normal",
       label: "text-xs/4.5 font-medium",
       desc: "text-xs/4",
     },
   },
 });
-type TypographyVariants = VariantProps<typeof typographyVariants>;
-export const typography = (type: TypographyVariants["type"]) =>
-  typographyVariants({ type });
+export type Typography = VariantProps<typeof typographyVariants>["type"];
+export const typography = (type: Typography) => typographyVariants({ type });
 
 export const buttonVariants = cva(
   [

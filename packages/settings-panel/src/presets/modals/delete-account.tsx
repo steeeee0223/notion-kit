@@ -10,11 +10,17 @@ import {
   Button,
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogIcon,
+  DialogTitle,
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
   Input,
 } from "@notion-kit/shadcn";
 
@@ -51,72 +57,64 @@ export const DeleteAccount = ({ email, onSubmit }: DeleteAccountProps) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
         forceMount
-        className="w-[420px] space-y-6 p-5"
+        className="w-[420px] p-5"
         onClick={(e) => e.stopPropagation()}
-        hideClose
-        noTitle
       >
-        <div className="relative flex w-full flex-col items-center gap-2 self-stretch">
-          <div className="flex items-center">
-            <CircleAlert className="size-9 flex-shrink-0 p-1 text-red" />
-          </div>
-          <div className="text-center text-lg/[22px] font-semibold">
+        <DialogHeader>
+          <DialogIcon>
+            <CircleAlert className="size-9 text-red" />
+          </DialogIcon>
+          <DialogTitle typography="h2">
             Delete your entire account permanently?
-          </div>
-          <div className="text-center text-xs/4 text-wrap text-secondary">
+          </DialogTitle>
+          <DialogDescription>
             This action cannot be undone. This will permanently delete your
             entire account. All private workspaces will be deleted, and you will
             be removed from all shared workspaces.
-          </div>
-        </div>
+          </DialogDescription>
+        </DialogHeader>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(submit)}
-            className="flex w-full flex-col"
-            style={{ marginTop: 0 }}
-          >
+          <form onSubmit={form.handleSubmit(submit)} className="space-y-4">
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
-                <FormItem className="space-y-3">
+                <FormItem>
                   <FormLabel>Please type in your email to confirm.</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
+                      data-size="lg"
                       placeholder={email}
                       {...field}
-                      className="h-9"
                     />
                   </FormControl>
                 </FormItem>
               )}
             />
             {form.formState.errors.email && (
-              <div className="mt-1 text-xs/5 text-red">
-                {`Please type "${email}" to continue`}
-              </div>
+              <FormMessage>{`Please type "${email}" to continue`}</FormMessage>
             )}
-            <Button
-              type="submit"
-              variant="red-fill"
-              size="sm"
-              className="mt-6 w-full"
-              disabled={form.formState.isSubmitting}
-            >
-              Permanently delete account
-            </Button>
-            <div className="flex justify-center">
+            <DialogFooter>
+              <Button
+                type="submit"
+                variant="red-fill"
+                size="sm"
+                className="w-full"
+                disabled={form.formState.isSubmitting}
+              >
+                Permanently delete account
+              </Button>
               <Button
                 onClick={onClose}
                 variant="hint"
                 size="sm"
-                className="mt-3 h-7 w-fit"
+                className="h-7 w-fit"
                 disabled={form.formState.isSubmitting}
               >
                 Cancel
               </Button>
-            </div>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>
