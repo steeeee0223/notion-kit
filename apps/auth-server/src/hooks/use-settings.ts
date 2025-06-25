@@ -8,10 +8,12 @@ import {
   TabType,
   UpdateSettings,
 } from "@notion-kit/settings-panel";
-import type { SettingsStore } from "@notion-kit/settings-panel";
+import type { AccountStore, SettingsStore } from "@notion-kit/settings-panel";
 import { toast } from "@notion-kit/shadcn";
 
-export const mockWorkspace: SettingsStore["workspace"] = {
+import { listSessions } from "@/lib/session";
+
+const mockWorkspace: SettingsStore["workspace"] = {
   id: "workspace-0",
   name: "John's Private",
   icon: { type: "lucide", src: "activity", color: "#CB912F" },
@@ -21,32 +23,43 @@ export const mockWorkspace: SettingsStore["workspace"] = {
   inviteLink: "#",
 };
 
+const initialAccountStore: AccountStore = {
+  hasPassword: false,
+  id: "",
+  name: "",
+  preferredName: "",
+  email: "",
+  avatarUrl: "",
+  language: "en",
+  currentSessionId: "",
+  sessions: [],
+};
+
 export function useSettings() {
   const auth = useAuth();
   const { data } = useSession();
   const router = useRouter();
 
   const [tab, setTab] = useState<TabType>("account");
-  const [settings, setSettings] = useState({
-    account: {},
-    workspace: mockWorkspace,
-    memberships: {},
-  } as SettingsStore);
+  const [accountStore, setAccountStore] = useState(initialAccountStore);
 
   useEffect(() => {
     if (!data) return;
-    setSettings((prev) => ({
-      ...prev,
-      account: {
-        hasPassword: true,
-        preferredName: data.user.name,
-        id: data.user.id,
-        name: data.user.name,
-        email: data.user.email,
-        avatarUrl: data.user.image ?? "",
-        language: "en",
-      },
-    }));
+    setAccountStore({
+      hasPassword: true,
+      id: data.user.id,
+      name: data.user.name,
+      preferredName: data.user.preferredName ?? data.user.name,
+      email: data.user.email,
+      avatarUrl: data.user.image ?? "",
+      language: data.user.lang as AccountStore["language"],
+      currentSessionId: data.session.id,
+      sessions: [],
+    });
+
+    void listSessions().then((sessions) =>
+      setAccountStore((prev) => ({ ...prev, sessions })),
+    );
   }, [data]);
 
   const updateSettings = useCallback<UpdateSettings>(
@@ -54,12 +67,9 @@ export function useSettings() {
       await auth.updateUser({
         name: data.account?.name,
         image: data.account?.avatarUrl,
+        preferredName: data.account?.preferredName,
+        lang: data.account?.language,
       });
-      setSettings((prev) => ({
-        account: { ...prev.account, ...data.account },
-        workspace: { ...prev.workspace, ...data.workspace },
-        memberships: { ...prev.memberships, ...data.memberships },
-      }));
     },
     [auth],
   );
@@ -110,20 +120,60 @@ export function useSettings() {
           );
         },
         changePassword: async (data) => {
-          await auth.changePassword(data, {
-            onSuccess: () =>
-              void toast.success("Password changed successfully"),
+          await auth.changePassword(
+            { ...data, revokeOtherSessions: true },
+            {
+              onSuccess: () =>
+                void toast.success("Password changed successfully"),
+              onError: ({ error }) => {
+                console.error("Change password error", error);
+                toast.error("Change password error", {
+                  description: error.message,
+                });
+              },
+            },
+          );
+        },
+        logoutAll: async () => {
+          await auth.revokeSessions(undefined, {
+            onSuccess: () => {
+              toast.success("All sessions logged out successfully");
+              router.push("/");
+            },
             onError: ({ error }) => {
-              console.error("Change password error", error);
-              toast.error("Change password error", {
+              console.error("Revoke sessions error", error);
+              toast.error("Revoke sessions error", {
                 description: error.message,
               });
             },
           });
         },
+        logoutSession: async (token) => {
+          await auth.revokeSession(
+            { token },
+            {
+              onSuccess: () =>
+                void toast.success("Session logged out successfully"),
+              onError: ({ error }) => {
+                console.error("Revoke session error", error);
+                toast.error("Revoke session error", {
+                  description: error.message,
+                });
+              },
+            },
+          );
+        },
       },
     };
-  }, [auth]);
+  }, [auth, router]);
+
+  const settings = useMemo<SettingsStore>(() => {
+    return {
+      workspace: mockWorkspace,
+      account: accountStore,
+      memberships: {},
+    };
+  }, [accountStore]);
 
   return {
     tab,

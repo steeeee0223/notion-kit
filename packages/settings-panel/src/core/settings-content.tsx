@@ -46,21 +46,29 @@ const SettingsPlan: React.FC<SettingsPlanProps> = ({ plan, onClick }) => (
 interface SettingsRuleProps extends React.PropsWithChildren {
   title: string;
   description: React.ReactNode;
-  titleProps?: string;
+  className?: string;
   plan?: string;
 }
 const SettingsRule: React.FC<SettingsRuleProps> = ({
   children,
   title,
   description,
-  titleProps,
+  className,
   plan,
 }) => {
   return (
-    <div className="flex cursor-default items-center justify-between">
+    <div
+      className={cn(
+        "flex cursor-default items-center justify-between",
+        className,
+      )}
+    >
       <div className="mr-[10%] flex w-full flex-col">
         <div className="flex items-center">
-          <h3 className={cn("mb-0.5 flex p-0 text-sm font-normal", titleProps)}>
+          <h3
+            data-slot="settings-rule-title"
+            className="mb-0.5 flex p-0 text-sm font-normal"
+          >
             {title}
           </h3>
           {!!plan && <SettingsPlan plan={plan} />}

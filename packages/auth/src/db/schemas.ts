@@ -14,6 +14,8 @@ export const user = pgTable("user", {
   updatedAt: timestamp("updated_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
+  preferredName: text("preferred_name"),
+  lang: text("lang").default("en"),
 });
 
 export const session = pgTable("session", {

@@ -40,7 +40,7 @@ export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
 
   const [loading, setLoading] = useState(false);
   const form = useForm<LoginFormSchema>({
-    defaultValues: { email: "", password: "" },
+    defaultValues: { forgotPassword: false, email: "", password: "" },
     disabled: loading,
     resolver: zodResolver(formSchema),
   });
@@ -59,14 +59,14 @@ export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
     setForgotPasswordStage("link_sent");
   };
 
-  const submit = handleSubmit(async (data) => {
-    if (data.forgotPassword) {
+  const submit = handleSubmit(async ({ email, password, forgotPassword }) => {
+    if (forgotPassword) {
       return await sendResetLink();
     }
     if (mode === "sign_up") {
-      const name = data.email.split("@")[0]!;
+      const name = email.split("@")[0]!;
       await authClient.signUp.email(
-        { name, ...data, callbackURL },
+        { name, email, password, preferredName: name, callbackURL },
         {
           onRequest: () => setLoading(true),
           onResponse: () => setLoading(false),
@@ -79,7 +79,7 @@ export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
       );
     } else {
       await authClient.signIn.email(
-        { ...data, callbackURL },
+        { email, password, callbackURL },
         {
           onRequest: () => setLoading(true),
           onResponse: () => setLoading(false),

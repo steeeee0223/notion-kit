@@ -41,6 +41,7 @@
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/spinner": "workspace:*",
     "@notion-kit/tags-input": "workspace:*",
+    "@notion-kit/utils": "workspace:*",
     "@tanstack/react-table": "catalog:ui",
     "file-saver": "^2.0.5",
     "lucide-react": "catalog:ui",

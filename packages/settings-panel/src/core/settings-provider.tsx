@@ -31,6 +31,8 @@ export interface SettingsActions {
       currentPassword: string;
     }) => Promise<void>;
     setPassword?: (newPassword: string) => Promise<void>;
+    logoutAll?: () => Promise<void>;
+    logoutSession?: (token: string) => Promise<void>;
   };
   /** Workspace */
   workspace?: {
