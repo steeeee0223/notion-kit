@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { useHover } from "usehooks-ts";
 
@@ -46,8 +46,18 @@ export function AccountSection() {
       if (file) await uploadFile?.(file);
     },
   );
-  const updateName = (e: React.ChangeEvent<HTMLInputElement>) =>
-    update?.({ account: { preferredName: e.target.value } });
+  const [preferredName, setPreferredName] = useState("");
+  const updatePreferredName = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setPreferredName(e.target.value);
+  const savePreferredName = () => {
+    if (preferredName !== account.preferredName) {
+      void update?.({ account: { preferredName } });
+    }
+  };
+
+  useEffect(() => {
+    setPreferredName(account.preferredName);
+  }, [account.preferredName]);
 
   return (
     <SettingsSection title={trans.title}>
@@ -68,7 +78,7 @@ export function AccountSection() {
                 >
                   <AvatarImage src={account.avatarUrl} />
                   <AvatarFallback className="bg-default/5 text-2xl">
-                    {account.name.at(0) ?? ""}
+                    {account.preferredName.at(0) ?? ""}
                   </AvatarFallback>
                 </Avatar>
                 <Button
@@ -105,8 +115,13 @@ export function AccountSection() {
             <Input
               type="username"
               id="username"
-              value={account.preferredName}
-              onChange={updateName}
+              value={preferredName}
+              onChange={updatePreferredName}
+              onBlur={savePreferredName}
+              onKeyDown={(e) => {
+                if (e.key !== "Enter") return;
+                savePreferredName();
+              }}
             />
           </div>
         </div>
