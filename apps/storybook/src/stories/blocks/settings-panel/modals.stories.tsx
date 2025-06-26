@@ -4,6 +4,7 @@ import { ModalProvider, useModal } from "@notion-kit/modal";
 import {
   Add2FAForm,
   AddMembers,
+  AddPasskeys,
   DeleteAccount,
   DeleteGuest,
   DeleteMember,
@@ -125,5 +126,12 @@ export const Enable2FAMethodModal: Story = {
   args: {
     children: <Enable2FAMethod />,
     text: "Enable 2FA Method",
+  },
+};
+
+export const AddPasskeysModal: Story = {
+  args: {
+    children: <AddPasskeys />,
+    text: "Add Passkeys",
   },
 };

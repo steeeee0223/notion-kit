@@ -161,16 +161,22 @@ function DialogTitle({
   );
 }
 
+interface DialogDescriptionProps
+  extends React.ComponentProps<typeof DialogPrimitive.Description> {
+  typography?: Typography;
+}
+
 function DialogDescription({
   className,
+  typography: type = "body",
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Description>) {
+}: DialogDescriptionProps) {
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
       className={cn(
-        typography("body"),
-        "text-center text-secondary",
+        typography(type),
+        "text-center font-normal text-secondary",
         className,
       )}
       {...props}

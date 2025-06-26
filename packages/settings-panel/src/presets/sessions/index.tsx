@@ -10,7 +10,7 @@ interface SessionsTableProps {
   className?: string;
   currentSessionId?: string;
   data: SessionRow[];
-  onLogout?: (sessionId: string) => void;
+  onLogout?: (deviceName: string, token: string) => void;
 }
 
 export const SessionsTable = memo<SessionsTableProps>(

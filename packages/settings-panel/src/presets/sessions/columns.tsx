@@ -8,7 +8,7 @@ import { DeviceCell, SortingToggle, TextCell } from "./cells";
 
 interface CreateSessionColumnsOptions {
   currentSessionId?: string;
-  onLogout?: (token: string) => void;
+  onLogout?: (deviceName: string, token: string) => void;
 }
 
 export function createSessionColumns({
@@ -86,7 +86,7 @@ export function createSessionColumns({
           <Button
             size="xs"
             className="h-7 px-2 text-secondary"
-            onClick={() => onLogout?.(row.original.token)}
+            onClick={() => onLogout?.(row.original.device, row.original.token)}
           >
             Logout
           </Button>
