@@ -135,11 +135,9 @@ export function useSettings() {
           );
         },
         logoutAll: async () => {
-          await auth.revokeSessions(undefined, {
-            onSuccess: () => {
-              toast.success("All sessions logged out successfully");
-              router.push("/");
-            },
+          await auth.revokeOtherSessions(undefined, {
+            onSuccess: () =>
+              void toast.success("All sessions logged out successfully"),
             onError: ({ error }) => {
               console.error("Revoke sessions error", error);
               toast.error("Revoke sessions error", {
@@ -165,7 +163,7 @@ export function useSettings() {
         },
       },
     };
-  }, [auth, router]);
+  }, [auth]);
 
   const settings = useMemo<SettingsStore>(() => {
     return {
