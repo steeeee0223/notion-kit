@@ -18,6 +18,12 @@ export enum Scope {
 
 export type PartialRole = Exclude<Role, Role.GUEST>;
 
+export interface Passkey {
+  id: string;
+  name: string;
+  createdAt: number; // ts in seconds
+}
+
 export interface WorkspaceStore {
   id: string;
   name: string;
@@ -35,6 +41,7 @@ export interface AccountStore extends User {
   /** My Account */
   preferredName: string;
   hasPassword?: boolean;
+  passkeys?: Passkey[];
   currentSessionId?: string;
   sessions: SessionRow[];
   /** Region */

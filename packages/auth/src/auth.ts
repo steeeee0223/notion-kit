@@ -47,7 +47,12 @@ export function createAuth(env: AuthEnv) {
         clientSecret: env.GITHUB_CLIENT_SECRET,
       },
     },
-    plugins: [twoFactor(), passkey()],
+    plugins: [
+      twoFactor(),
+      passkey({
+        rpName: "Notion Auth",
+      }),
+    ],
   } satisfies BetterAuthOptions;
 
   return betterAuth(config);

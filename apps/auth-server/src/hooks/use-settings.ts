@@ -161,6 +161,18 @@ export function useSettings() {
             },
           );
         },
+        addPasskey: async () => {
+          const result = await auth.passkey.addPasskey();
+          if (!result) {
+            void toast.success("Add passkey successed");
+            return true;
+          }
+          console.error("Add passkey error", result.error);
+          toast.error("Add passkey error", {
+            description: result.error.message,
+          });
+          return false;
+        },
       },
     };
   }, [auth]);

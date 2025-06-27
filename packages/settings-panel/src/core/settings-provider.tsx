@@ -33,6 +33,7 @@ export interface SettingsActions {
     setPassword?: (newPassword: string) => Promise<void>;
     logoutAll?: () => Promise<void>;
     logoutSession?: (token: string) => Promise<void>;
+    addPasskey?: () => Promise<boolean>;
   };
   /** Workspace */
   workspace?: {

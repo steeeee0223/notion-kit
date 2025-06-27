@@ -28,7 +28,10 @@ export const LogoutConfirm = ({
 }: LogoutConfirmProps) => {
   const { isOpen, closeModal } = useModal();
 
-  const [logout, isPending] = useTransition(() => onConfirm?.());
+  const [logout, isPending] = useTransition(async () => {
+    await onConfirm?.();
+    closeModal();
+  });
 
   return (
     <Dialog open={isOpen} onOpenChange={closeModal}>

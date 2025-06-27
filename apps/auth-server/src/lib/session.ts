@@ -73,3 +73,8 @@ function mapDeviceType(
 function joinStr(data: (string | undefined)[]) {
   return data.filter(Boolean).join(", ");
 }
+
+export const getPasskeys = cache(async () => {
+  const passkeys = await auth.api.listPasskeys({ headers: await headers() });
+  return passkeys;
+});
