@@ -10,10 +10,16 @@ import {
   Button,
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogIcon,
+  DialogTitle,
   Form,
   FormControl,
   FormField,
   FormItem,
+  FormMessage,
   Input,
 } from "@notion-kit/shadcn";
 
@@ -50,66 +56,58 @@ export const DeleteWorkspace = ({ name, onSubmit }: DeleteWorkspaceProps) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
         forceMount
-        className="w-[420px] space-y-6 p-5"
+        className="w-[420px] p-5"
         onClick={(e) => e.stopPropagation()}
-        hideClose
-        noTitle
       >
-        <div className="relative flex w-full flex-col items-center gap-2 self-stretch">
-          <div className="flex items-center">
-            <CircleAlert className="size-9 flex-shrink-0 p-1 text-red" />
-          </div>
-          <div className="text-center text-lg/[22px] font-semibold">
+        <DialogHeader>
+          <DialogIcon>
+            <CircleAlert className="size-9 text-red" />
+          </DialogIcon>
+          <DialogTitle typography="h2">
             Delete this entire workspace permanently?
-          </div>
-          <div className="text-center text-xs/4 text-wrap text-secondary">
+          </DialogTitle>
+          <DialogDescription>
             This action cannot be undone. This will permanently delete the
             workspace, including all pages and files. Please type the name of
             the workspace to confirm.
-          </div>
-        </div>
+          </DialogDescription>
+        </DialogHeader>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(submit)}
-            className="flex w-full flex-col"
-            style={{ marginTop: 0 }}
-          >
+          <form onSubmit={form.handleSubmit(submit)} className="space-y-4">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem className="space-y-3">
+                <FormItem>
                   <FormControl>
-                    <Input placeholder={name} {...field} className="h-9" />
+                    <Input placeholder={name} {...field} data-size="lg" />
                   </FormControl>
                 </FormItem>
               )}
             />
             {form.formState.errors.name && (
-              <div className="mt-1 text-xs/5 text-red">
-                {`Please type "${name}" to continue`}
-              </div>
+              <FormMessage>{`Please type "${name}" to continue`}</FormMessage>
             )}
-            <Button
-              type="submit"
-              variant="red-fill"
-              size="sm"
-              className="mt-6 w-full"
-              disabled={form.formState.isSubmitting}
-            >
-              Permanently delete workspace
-            </Button>
-            <div className="flex justify-center">
+            <DialogFooter>
+              <Button
+                type="submit"
+                variant="red-fill"
+                size="sm"
+                className="w-full"
+                disabled={form.formState.isSubmitting}
+              >
+                Permanently delete workspace
+              </Button>
               <Button
                 onClick={onClose}
                 variant="hint"
                 size="sm"
-                className="mt-3 h-7 w-fit"
+                className="h-7 w-fit"
                 disabled={form.formState.isSubmitting}
               >
                 Cancel
               </Button>
-            </div>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>

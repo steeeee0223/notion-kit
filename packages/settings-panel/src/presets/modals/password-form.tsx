@@ -11,6 +11,11 @@ import {
   Button,
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogIcon,
+  DialogTitle,
   Form,
   FormControl,
   FormField,
@@ -77,23 +82,23 @@ export const PasswordForm = ({ hasPassword, onSubmit }: PasswordFormProps) => {
         forceMount
         className="w-[350px] p-6"
         onClick={(e) => e.stopPropagation()}
-        hideClose
-        noTitle
       >
         <Form {...form}>
-          <form onSubmit={submit} className="relative">
-            <div className="my-4 flex justify-center">
-              <Icon.Password className="size-[27px] flex-shrink-0 fill-icon" />
-            </div>
-            <h2 className="mb-1 px-2.5 text-center text-sm/tight font-medium">
-              {hasPassword ? "Change password" : "Set a password"}
-            </h2>
-            <div className="mb-4 text-center text-xs/snug text-secondary">
-              Use a password at least 15 letters long, or at least 8 characters
-              long with both letters and numbers. If you lose access to your
-              school email address, you&apos;ll be able to log in using your
-              password.
-            </div>
+          <form onSubmit={submit} className="space-y-2">
+            <DialogHeader>
+              <DialogIcon>
+                <Icon.Password className="size-[27px] fill-icon" />
+              </DialogIcon>
+              <DialogTitle>
+                {hasPassword ? "Change password" : "Set a password"}
+              </DialogTitle>
+              <DialogDescription>
+                Use a password at least 15 letters long, or at least 8
+                characters long with both letters and numbers. If you lose
+                access to your school email address, you&apos;ll be able to log
+                in using your password.
+              </DialogDescription>
+            </DialogHeader>
             {hasPassword && (
               <FormField
                 control={form.control}
@@ -144,18 +149,20 @@ export const PasswordForm = ({ hasPassword, onSubmit }: PasswordFormProps) => {
                 </FormItem>
               )}
             />
-            <FormMessage className="mt-2.5">
+            <FormMessage>
               {Object.values(formState.errors).at(0)?.message}
             </FormMessage>
-            <Button
-              type="submit"
-              variant="blue"
-              size="sm"
-              className="mt-4 w-full"
-              disabled={formState.isSubmitting}
-            >
-              {hasPassword ? "Change password" : "Set a password"}
-            </Button>
+            <DialogFooter className="mt-4">
+              <Button
+                type="submit"
+                variant="blue"
+                size="sm"
+                className="w-full"
+                disabled={formState.isSubmitting}
+              >
+                {hasPassword ? "Change password" : "Set a password"}
+              </Button>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>

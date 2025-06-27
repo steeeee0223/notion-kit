@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
 
-import { contentVariants } from "./variants";
+import { contentVariants, Typography, typography } from "./variants";
 import { VisuallyHidden } from "./visually-hidden";
 
 function Dialog({
@@ -55,45 +55,47 @@ interface DialogContentProps
   hideClose?: boolean;
   noTitle?: boolean;
 }
-const DialogContent = ({
+function DialogContent({
   className,
   children,
   hideClose = false,
   noTitle,
   ...props
-}: DialogContentProps) => (
-  <DialogPortal>
-    <DialogOverlay />
-    <DialogPrimitive.Content
-      data-slot="dialog-content"
-      className={cn(
-        contentVariants({ variant: "modal" }),
-        "rounded-sm",
-        className,
-      )}
-      {...props}
-      {...(noTitle && { "aria-describedby": undefined })}
-    >
-      {noTitle && (
-        <VisuallyHidden asChild>
-          <DialogTitle />
-        </VisuallyHidden>
-      )}
-      {children}
-      {!hideClose && (
-        <DialogPrimitive.Close
-          className={cn(
-            "absolute top-4 right-4 rounded-full bg-default/5 p-0.5 text-default/45 transition-opacity hover:bg-default/10 focus-visible:outline-hidden disabled:pointer-events-none data-[state=open]:bg-primary",
-            "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-          )}
-        >
-          <X />
-          <span className="sr-only">Close</span>
-        </DialogPrimitive.Close>
-      )}
-    </DialogPrimitive.Content>
-  </DialogPortal>
-);
+}: DialogContentProps) {
+  return (
+    <DialogPortal>
+      <DialogOverlay />
+      <DialogPrimitive.Content
+        data-slot="dialog-content"
+        className={cn(
+          contentVariants({ variant: "modal" }),
+          "rounded-sm",
+          className,
+        )}
+        {...props}
+        {...(noTitle && { "aria-describedby": undefined })}
+      >
+        {noTitle && (
+          <VisuallyHidden asChild>
+            <DialogTitle />
+          </VisuallyHidden>
+        )}
+        {children}
+        {!hideClose && (
+          <DialogPrimitive.Close
+            className={cn(
+              "absolute top-4 right-4 rounded-full bg-default/5 p-0.5 text-default/45 transition-opacity hover:bg-default/10 focus-visible:outline-hidden disabled:pointer-events-none data-[state=open]:bg-primary",
+              "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+            )}
+          >
+            <X />
+            <span className="sr-only">Close</span>
+          </DialogPrimitive.Close>
+        )}
+      </DialogPrimitive.Content>
+    </DialogPortal>
+  );
+}
 
 function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -121,15 +123,36 @@ function DialogFooter({
   );
 }
 
+function DialogIcon({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="dialog-icon"
+      className={cn(
+        "my-4 flex items-center justify-center",
+        "[&_svg]:block [&_svg]:shrink-0",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+interface DialogTitleProps
+  extends React.ComponentProps<typeof DialogPrimitive.Title> {
+  typography?: Typography;
+}
+
 function DialogTitle({
   className,
+  typography: type = "h3",
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Title>) {
+}: DialogTitleProps) {
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
       className={cn(
-        "text-center text-lg leading-none font-semibold tracking-tight break-words text-primary",
+        typography(type),
+        "text-center break-words text-primary",
         className,
       )}
       style={{ marginTop: 0 }}
@@ -138,14 +161,24 @@ function DialogTitle({
   );
 }
 
+interface DialogDescriptionProps
+  extends React.ComponentProps<typeof DialogPrimitive.Description> {
+  typography?: Typography;
+}
+
 function DialogDescription({
   className,
+  typography: type = "body",
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Description>) {
+}: DialogDescriptionProps) {
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      className={cn("text-sm text-muted", className)}
+      className={cn(
+        typography(type),
+        "text-center font-normal text-secondary",
+        className,
+      )}
       {...props}
     />
   );
@@ -159,6 +192,7 @@ export {
   DialogTrigger,
   DialogContent,
   DialogHeader,
+  DialogIcon,
   DialogFooter,
   DialogTitle,
   DialogDescription,
