@@ -34,6 +34,8 @@ export interface SettingsActions {
     logoutAll?: () => Promise<void>;
     logoutSession?: (token: string) => Promise<void>;
     addPasskey?: () => Promise<boolean>;
+    updatePasskey?: (data: { id: string; name: string }) => Promise<void>;
+    deletePasskey?: (id: string) => Promise<void>;
   };
   /** Workspace */
   workspace?: {

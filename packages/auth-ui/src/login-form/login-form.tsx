@@ -35,7 +35,7 @@ export function LoginForm({
   callbackURL,
   onModeChange,
 }: LoginFormProps) {
-  const auth = useAuth();
+  const { auth, redirect } = useAuth();
   const {
     form,
     forgotPasswordStage,
@@ -56,6 +56,7 @@ export function LoginForm({
         onResponse: () => setLoading(false),
         onSuccess: () => {
           toast("Logged in with passkey");
+          redirect?.(callbackURL ?? "/");
         },
         onError: ({ error }) => {
           toast.error("Failed to login with passkey", {

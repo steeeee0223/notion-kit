@@ -14,6 +14,7 @@ type UseTransitionReturn<T, Args extends unknown[]> = readonly [
 
 export function useTransition<T, Args extends unknown[]>(
   fn: Action<T, Args>,
+  optimisticUpdate?: (args: Args, result?: T) => void,
 ): UseTransitionReturn<T, Args> {
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<Error>();
@@ -23,6 +24,7 @@ export function useTransition<T, Args extends unknown[]>(
       try {
         setIsPending(true);
         const result = await Promise.resolve(fn(...args));
+        optimisticUpdate?.(args, result);
         return result;
       } catch (error) {
         setError(error as Error);
@@ -30,7 +32,7 @@ export function useTransition<T, Args extends unknown[]>(
         setIsPending(false);
       }
     },
-    [fn],
+    [fn, optimisticUpdate],
   );
 
   return [action, isPending, error] as const;

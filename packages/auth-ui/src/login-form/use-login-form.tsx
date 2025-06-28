@@ -33,7 +33,7 @@ interface UseLoginFormOptions {
 }
 
 export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
-  const authClient = useAuth();
+  const { auth } = useAuth();
 
   const [forgotPasswordStage, setForgotPasswordStage] =
     useState<ForgotPasswordStage>("none");
@@ -65,7 +65,7 @@ export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
     }
     if (mode === "sign_up") {
       const name = email.split("@")[0]!;
-      await authClient.signUp.email(
+      await auth.signUp.email(
         { name, email, password, preferredName: name, callbackURL },
         {
           onRequest: () => setLoading(true),
@@ -78,7 +78,7 @@ export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
         },
       );
     } else {
-      await authClient.signIn.email(
+      await auth.signIn.email(
         { email, password, callbackURL },
         {
           onRequest: () => setLoading(true),

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useTransition } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
   Input,
 } from "@notion-kit/shadcn";
+import { toDateString } from "@notion-kit/utils";
 
 import type { Passkey } from "../../lib";
 
@@ -78,8 +79,13 @@ export function PasskeysModal({
               <PasskeyCard
                 key={passkey.id}
                 passkey={passkey}
+                onEnterRename={() => setError(false)}
                 onRename={onRename}
-                onDelete={onDelete}
+                onDelete={(id) => {
+                  setError(false);
+                  onDelete?.(id);
+                  closeModal();
+                }}
               />
             ))}
           </div>
@@ -117,36 +123,60 @@ export function PasskeysModal({
 
 interface PasskeyCardProps {
   passkey: Passkey;
+  onEnterRename?: () => void;
   onRename?: (data: { id: string; name: string }) => void;
   onDelete?: (id: string) => void;
 }
 
-function PasskeyCard({ passkey, onRename, onDelete }: PasskeyCardProps) {
+function PasskeyCard({
+  passkey,
+  onEnterRename,
+  onRename,
+  onDelete,
+}: PasskeyCardProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [name, setName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
 
+  const enterEditName = () => {
+    setIsEditing(true);
+    onEnterRename?.();
+  };
+  const [saveName] = useTransition(
+    () => {
+      if (name !== passkey.name) {
+        onRename?.({ id: passkey.id, name });
+      }
+      setIsEditing(false);
+    },
+    () => setName(name),
+  );
+
+  useEffect(() => {
+    setName(passkey.name);
+  }, [passkey.name]);
+
   return (
-    <div className="flex h-[56px] items-center rounded-sm border border-border px-4 py-2.5">
-      <Icon.Key className="mr-2.5 size-6 fill-blue" />
+    <div className="flex h-[56px] items-center gap-2.5 rounded-sm border border-border px-4 py-2.5">
+      <Icon.Key className="size-8 fill-blue" />
       <div className="flex min-w-0 flex-col">
         {isEditing ? (
           <Input
+            ref={inputRef}
             className="w-[180px]"
-            defaultValue={passkey.name}
-            onBlur={(e) => {
-              onRename?.({ id: passkey.id, name: e.target.value });
-              setIsEditing(false);
-            }}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onBlur={saveName}
             onKeyDown={(e) => {
               if (e.key !== "Enter") return;
-              onRename?.({ id: passkey.id, name: e.currentTarget.value });
-              setIsEditing(false);
+              void saveName();
             }}
           />
         ) : (
-          <div className="text-sm text-primary">{passkey.name}</div>
+          <div className="text-sm text-primary">{name}</div>
         )}
         <div className="text-xs text-secondary">
-          Created at {passkey.createdAt}
+          Created at {toDateString(passkey.createdAt)}
         </div>
       </div>
       <DropdownMenu>
@@ -155,15 +185,23 @@ function PasskeyCard({ passkey, onRename, onDelete }: PasskeyCardProps) {
             <Icon.Dots className="fill-muted" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-[180px]">
+        <DropdownMenuContent
+          className="w-[180px]"
+          onCloseAutoFocus={(e) => {
+            e.preventDefault();
+            if (isEditing) {
+              inputRef.current?.focus();
+            }
+          }}
+        >
           <DropdownMenuGroup>
             <DropdownMenuItem
               Icon={<Icon.PencilLine className="size-5 fill-current" />}
               Body="Rename passkey"
-              onSelect={() => setIsEditing(true)}
+              onSelect={enterEditName}
             />
             <DropdownMenuItem
-              Icon={<Icon.Trash className="size-5 fill-current" />}
+              Icon={<Icon.Trash className="size-4 fill-current" />}
               Body="Delete passkey"
               onSelect={() => onDelete?.(passkey.id)}
             />

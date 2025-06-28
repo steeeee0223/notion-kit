@@ -4,7 +4,12 @@ import React, { createContext, use, useMemo } from "react";
 
 import { createAuthClient, type AuthClient } from "@notion-kit/auth";
 
-const AuthContext = createContext<AuthClient | null>(null);
+interface AuthContextInterface {
+  auth: AuthClient;
+  redirect?: (url: string) => void;
+}
+
+const AuthContext = createContext<AuthContextInterface | null>(null);
 
 function useAuth() {
   const context = use(AuthContext);
@@ -15,17 +20,32 @@ function useAuth() {
 }
 
 function useSession() {
-  const authClient = useAuth();
-  return authClient.useSession();
+  const { auth } = useAuth();
+  return auth.useSession();
 }
 
 interface AuthProviderProps extends React.PropsWithChildren {
   baseURL?: string;
+  redirect?: (url: string) => void;
 }
 
-function AuthProvider({ baseURL, children }: AuthProviderProps) {
-  const authClient = useMemo(() => createAuthClient(baseURL), [baseURL]);
-  return <AuthContext value={authClient}>{children}</AuthContext>;
+function AuthProvider({ baseURL, children, redirect }: AuthProviderProps) {
+  const ctx = useMemo<AuthContextInterface>(
+    () => ({
+      auth: createAuthClient(baseURL),
+      redirect: (url: string) => {
+        if (redirect) {
+          redirect(url);
+          return;
+        }
+        if (typeof window !== "undefined") {
+          window.location.href = url;
+        }
+      },
+    }),
+    [baseURL, redirect],
+  );
+  return <AuthContext value={ctx}>{children}</AuthContext>;
 }
 
 export { AuthProvider, useAuth, useSession };

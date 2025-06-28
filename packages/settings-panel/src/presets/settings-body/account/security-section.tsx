@@ -42,7 +42,14 @@ export function SecuritySection() {
       />,
     );
   const openAddPasskeyModal = () =>
-    openModal(<PasskeysModal onAddPasskey={actions?.addPasskey} />);
+    openModal(
+      <PasskeysModal
+        passkeys={account.passkeys}
+        onAddPasskey={actions?.addPasskey}
+        onRename={actions?.updatePasskey}
+        onDelete={actions?.deletePasskey}
+      />,
+    );
 
   return (
     <SettingsSection title={trans.title}>
