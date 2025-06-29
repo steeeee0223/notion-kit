@@ -56,6 +56,14 @@ export function PasskeysModal({
         forceMount
         className="w-100 p-5"
         onClick={(e) => e.stopPropagation()}
+        /**
+         * tmporary fix
+         * @see https://github.com/radix-ui/primitives/issues/1241
+         */
+        onCloseAutoFocus={(e) => {
+          e.preventDefault();
+          document.body.style.pointerEvents = "";
+        }}
       >
         <DialogHeader>
           <DialogIcon>
