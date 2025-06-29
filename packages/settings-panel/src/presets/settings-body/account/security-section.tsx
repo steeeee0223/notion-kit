@@ -5,7 +5,7 @@ import { useModal } from "@notion-kit/modal";
 import { Button, Switch } from "@notion-kit/shadcn";
 
 import { SettingsRule, SettingsSection, useSettings } from "../../../core";
-import { EmailSettings, PasswordForm } from "../../modals";
+import { EmailSettings, PasskeysModal, PasswordForm } from "../../modals";
 
 export function SecuritySection() {
   /** i18n */
@@ -41,6 +41,15 @@ export function SecuritySection() {
         }}
       />,
     );
+  const openAddPasskeyModal = () =>
+    openModal(
+      <PasskeysModal
+        passkeys={account.passkeys}
+        onAddPasskey={actions?.addPasskey}
+        onRename={actions?.updatePasskey}
+        onDelete={actions?.deletePasskey}
+      />,
+    );
 
   return (
     <SettingsSection title={trans.title}>
@@ -59,12 +68,12 @@ export function SecuritySection() {
         )}
       </SettingsRule>
       <SettingsRule {...trans.verification}>
-        <Button size="sm" onClick={setPassword} disabled>
+        <Button size="sm" disabled>
           {trans.verification.button}
         </Button>
       </SettingsRule>
       <SettingsRule {...trans.passkeys}>
-        <Button size="sm" onClick={setPassword} disabled>
+        <Button size="sm" onClick={openAddPasskeyModal}>
           {trans.passkeys.button}
         </Button>
       </SettingsRule>

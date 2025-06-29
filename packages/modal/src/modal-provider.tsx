@@ -8,6 +8,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { createPortal } from "react-dom";
 
 export interface ModalContextInterface {
   isOpen: boolean;
@@ -41,7 +42,10 @@ export function ModalProvider({ children }: ModalProviderProps) {
     setShowingModal(modal);
     setIsOpen(true);
   });
-  const closeModalFn = useRef(() => setIsOpen(false));
+  const closeModalFn = useRef(() => {
+    setShowingModal(null);
+    setIsOpen(false);
+  });
 
   const contextValue = useMemo<ModalContextInterface>(
     () => ({
@@ -56,7 +60,7 @@ export function ModalProvider({ children }: ModalProviderProps) {
   return (
     <ModalContext.Provider value={contextValue}>
       {children}
-      {showingModal}
+      {isOpen && createPortal(showingModal, document.body)}
     </ModalContext.Provider>
   );
 }

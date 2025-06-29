@@ -6,7 +6,7 @@ import { lookup } from "ip-location-api";
 import { UAParser } from "ua-parser-js";
 
 import type { Session } from "@notion-kit/auth";
-import type { SessionRow } from "@notion-kit/settings-panel";
+import type { Passkey, SessionRow } from "@notion-kit/settings-panel";
 
 import { auth } from "./auth";
 
@@ -73,3 +73,12 @@ function mapDeviceType(
 function joinStr(data: (string | undefined)[]) {
   return data.filter(Boolean).join(", ");
 }
+
+export const getPasskeys = cache(async () => {
+  const passkeys = await auth.api.listPasskeys({ headers: await headers() });
+  return passkeys.map<Passkey>((passkey, i) => ({
+    id: passkey.id,
+    name: passkey.name ?? `Unnamed Passkey ${i + 1}`,
+    createdAt: passkey.createdAt.valueOf(),
+  }));
+});

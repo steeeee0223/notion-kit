@@ -35,7 +35,7 @@ export function LoginForm({
   callbackURL,
   onModeChange,
 }: LoginFormProps) {
-  const auth = useAuth();
+  const { auth, redirect } = useAuth();
   const {
     form,
     forgotPasswordStage,
@@ -47,6 +47,26 @@ export function LoginForm({
 
   const [loading, setLoading] = useState(false);
   const disabled = form.formState.disabled || loading;
+
+  const loginWithPasskey = async () => {
+    await auth.signIn.passkey(
+      {},
+      {
+        onRequest: () => setLoading(true),
+        onResponse: () => setLoading(false),
+        onSuccess: () => {
+          toast("Logged in with passkey");
+          redirect?.(callbackURL ?? "/");
+        },
+        onError: ({ error }) => {
+          toast.error("Failed to login with passkey", {
+            description: error.message,
+          });
+          console.error("Failed to login with passkey", error.message);
+        },
+      },
+    );
+  };
 
   const loginWithOauth = async (provider: "google" | "github") => {
     await auth.signIn.social(
@@ -102,7 +122,12 @@ export function LoginForm({
             <Icon.MicrosoftLogo className="absolute left-2.5 fill-inherit" />
             Continue with Microsoft
           </Button>
-          <Button size="md" className="relative w-full" disabled>
+          <Button
+            size="md"
+            className="relative w-full"
+            disabled={disabled}
+            onClick={loginWithPasskey}
+          >
             <Icon.PersonWithKey className="absolute left-2.5 fill-inherit" />
             Login with passkey
           </Button>

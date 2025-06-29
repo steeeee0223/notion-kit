@@ -1,5 +1,7 @@
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { twoFactor } from "better-auth/plugins";
+import { passkey } from "better-auth/plugins/passkey";
 import { Resend } from "resend";
 
 import { db } from "./db";
@@ -10,6 +12,7 @@ export function createAuth(env: AuthEnv) {
   const resend = new Resend(env.RESEND_API_KEY);
 
   const config = {
+    appName: "Notion Auth",
     database: drizzleAdapter(db, { provider: "pg" }),
     user: {
       changeEmail: {
@@ -44,6 +47,12 @@ export function createAuth(env: AuthEnv) {
         clientSecret: env.GITHUB_CLIENT_SECRET,
       },
     },
+    plugins: [
+      twoFactor(),
+      passkey({
+        rpName: "Notion Auth",
+      }),
+    ],
   } satisfies BetterAuthOptions;
 
   return betterAuth(config);

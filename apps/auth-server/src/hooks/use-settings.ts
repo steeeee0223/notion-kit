@@ -11,7 +11,7 @@ import {
 import type { AccountStore, SettingsStore } from "@notion-kit/settings-panel";
 import { toast } from "@notion-kit/shadcn";
 
-import { listSessions } from "@/lib/session";
+import { getPasskeys, listSessions } from "@/lib/session";
 
 const mockWorkspace: SettingsStore["workspace"] = {
   id: "workspace-0",
@@ -36,7 +36,7 @@ const initialAccountStore: AccountStore = {
 };
 
 export function useSettings() {
-  const auth = useAuth();
+  const { auth } = useAuth();
   const { data } = useSession();
   const router = useRouter();
 
@@ -60,16 +60,26 @@ export function useSettings() {
     void listSessions().then((sessions) =>
       setAccountStore((prev) => ({ ...prev, sessions })),
     );
+    void getPasskeys().then((passkeys) =>
+      setAccountStore((prev) => ({ ...prev, passkeys })),
+    );
   }, [data]);
 
   const updateSettings = useCallback<UpdateSettings>(
     async (data) => {
-      await auth.updateUser({
-        name: data.account?.name,
-        image: data.account?.avatarUrl,
-        preferredName: data.account?.preferredName,
-        lang: data.account?.language,
+      if (!data.account) return;
+      const res = await auth.updateUser({
+        name: data.account.name,
+        image: data.account.avatarUrl,
+        preferredName: data.account.preferredName,
+        lang: data.account.language,
       });
+      if (res.error) {
+        console.error("Update user error", res.error);
+        toast.error("Update user error", { description: res.error.message });
+        return;
+      }
+      setAccountStore((prev) => ({ ...prev, ...data.account }));
     },
     [auth],
   );
@@ -135,11 +145,9 @@ export function useSettings() {
           );
         },
         logoutAll: async () => {
-          await auth.revokeSessions(undefined, {
-            onSuccess: () => {
-              toast.success("All sessions logged out successfully");
-              router.push("/");
-            },
+          await auth.revokeOtherSessions(undefined, {
+            onSuccess: () =>
+              void toast.success("All sessions logged out successfully"),
             onError: ({ error }) => {
               console.error("Revoke sessions error", error);
               toast.error("Revoke sessions error", {
@@ -163,9 +171,67 @@ export function useSettings() {
             },
           );
         },
+        addPasskey: async () => {
+          const result = await auth.passkey.addPasskey();
+          if (!result) {
+            toast.success("Add passkey successed");
+            await getPasskeys().then((passkeys) =>
+              setAccountStore((prev) => ({ ...prev, passkeys })),
+            );
+            return true;
+          }
+          console.error("Add passkey error", result.error);
+          toast.error("Add passkey error", {
+            description: result.error.message,
+          });
+          return false;
+        },
+        updatePasskey: async (data) => {
+          await auth.passkey.updatePasskey(data, {
+            onSuccess: () => {
+              toast.success("Passkey updated successfully");
+              setAccountStore((prev) => ({
+                ...prev,
+                passkeys: prev.passkeys?.map((passkey) =>
+                  passkey.id === data.id
+                    ? { ...passkey, name: data.name }
+                    : passkey,
+                ),
+              }));
+            },
+            onError: ({ error }) => {
+              console.error("Update passkey error", error);
+              toast.error("Update passkey error", {
+                description: error.message,
+              });
+            },
+          });
+        },
+        deletePasskey: async (id) => {
+          await auth.passkey.deletePasskey(
+            { id },
+            {
+              onSuccess: () => {
+                toast.success("Passkey deleted successfully");
+                setAccountStore((prev) => ({
+                  ...prev,
+                  passkeys: prev.passkeys?.filter(
+                    (passkey) => passkey.id !== id,
+                  ),
+                }));
+              },
+              onError: ({ error }) => {
+                console.error("Delete passkey error", error);
+                toast.error("Delete passkey error", {
+                  description: error.message,
+                });
+              },
+            },
+          );
+        },
       },
     };
-  }, [auth, router]);
+  }, [auth]);
 
   const settings = useMemo<SettingsStore>(() => {
     return {
