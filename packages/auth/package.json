@@ -36,7 +36,6 @@
     "@vercel/postgres": "^0.10.0",
     "better-auth": "^1.2.8",
     "drizzle-orm": "^0.44.2",
-    "resend": "^4.5.2",
     "zod": "catalog:"
   },
   "devDependencies": {
