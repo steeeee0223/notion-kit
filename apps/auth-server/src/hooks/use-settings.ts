@@ -1,6 +1,9 @@
+"use client";
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import type { ErrorContext } from "@notion-kit/auth";
 import { useAuth, useSession } from "@notion-kit/auth-ui";
 import { Plan, Role } from "@notion-kit/schemas";
 import {
@@ -8,7 +11,11 @@ import {
   TabType,
   UpdateSettings,
 } from "@notion-kit/settings-panel";
-import type { AccountStore, SettingsStore } from "@notion-kit/settings-panel";
+import type {
+  AccountStore,
+  Connection,
+  SettingsStore,
+} from "@notion-kit/settings-panel";
 import { toast } from "@notion-kit/shadcn";
 
 import { getPasskeys, listSessions } from "@/lib/session";
@@ -75,9 +82,7 @@ export function useSettings() {
         lang: data.account.language,
       });
       if (res.error) {
-        console.error("Update user error", res.error);
-        toast.error("Update user error", { description: res.error.message });
-        return;
+        return handleError(res, "Update user error");
       }
       setAccountStore((prev) => ({ ...prev, ...data.account }));
     },
@@ -88,10 +93,7 @@ export function useSettings() {
     await auth.signOut({
       fetchOptions: {
         onSuccess: () => router.push("/"),
-        onError: ({ error }) => {
-          console.error("Sign out error", error);
-          toast.error("Sign out error", { description: error.message });
-        },
+        onError: (e) => handleError(e, "Sign out error"),
       },
     });
   }, [auth, router]);
@@ -106,12 +108,7 @@ export function useSettings() {
               onSuccess: () => {
                 toast.success("Account deleted successfully");
               },
-              onError: ({ error }) => {
-                console.error("Delete account error", error);
-                toast.error("Delete account error", {
-                  description: error.message,
-                });
-              },
+              onError: (e) => handleError(e, "Delete account error"),
             },
           );
         },
@@ -120,12 +117,7 @@ export function useSettings() {
             { email },
             {
               onSuccess: () => void toast.success("Verification email sent"),
-              onError: ({ error }) => {
-                console.error("Send verification email error", error);
-                toast.error("Send verification email error", {
-                  description: error.message,
-                });
-              },
+              onError: (e) => handleError(e, "Send verification email error"),
             },
           );
         },
@@ -135,12 +127,7 @@ export function useSettings() {
             {
               onSuccess: () =>
                 void toast.success("Password changed successfully"),
-              onError: ({ error }) => {
-                console.error("Change password error", error);
-                toast.error("Change password error", {
-                  description: error.message,
-                });
-              },
+              onError: (e) => handleError(e, "Change password error"),
             },
           );
         },
@@ -148,12 +135,7 @@ export function useSettings() {
           await auth.revokeOtherSessions(undefined, {
             onSuccess: () =>
               void toast.success("All sessions logged out successfully"),
-            onError: ({ error }) => {
-              console.error("Revoke sessions error", error);
-              toast.error("Revoke sessions error", {
-                description: error.message,
-              });
-            },
+            onError: (e) => handleError(e, "Revoke sessions error"),
           });
         },
         logoutSession: async (token) => {
@@ -162,12 +144,7 @@ export function useSettings() {
             {
               onSuccess: () =>
                 void toast.success("Session logged out successfully"),
-              onError: ({ error }) => {
-                console.error("Revoke session error", error);
-                toast.error("Revoke session error", {
-                  description: error.message,
-                });
-              },
+              onError: (e) => handleError(e, "Revoke session error"),
             },
           );
         },
@@ -180,10 +157,7 @@ export function useSettings() {
             );
             return true;
           }
-          console.error("Add passkey error", result.error);
-          toast.error("Add passkey error", {
-            description: result.error.message,
-          });
+          handleError(result, "Add passkey error");
           return false;
         },
         updatePasskey: async (data) => {
@@ -199,12 +173,7 @@ export function useSettings() {
                 ),
               }));
             },
-            onError: ({ error }) => {
-              console.error("Update passkey error", error);
-              toast.error("Update passkey error", {
-                description: error.message,
-              });
-            },
+            onError: (e) => handleError(e, "Update passkey error"),
           });
         },
         deletePasskey: async (id) => {
@@ -220,12 +189,64 @@ export function useSettings() {
                   ),
                 }));
               },
-              onError: ({ error }) => {
-                console.error("Delete passkey error", error);
-                toast.error("Delete passkey error", {
-                  description: error.message,
-                });
+              onError: (e) => handleError(e, "Delete passkey error"),
+            },
+          );
+        },
+      },
+      connections: {
+        load: async () => {
+          const res = await auth.listAccounts();
+          if (res.error) {
+            handleError(res, "Fetch connections error");
+            return [];
+          }
+          const connections: Connection[] = [];
+          res.data.forEach((account) => {
+            if (account.provider === "credential") return;
+            connections.push({
+              id: account.id,
+              connection: {
+                type: account.provider,
+                account: account.accountId,
               },
+              scopes: account.scopes,
+            });
+          });
+          console.log("Connections loaded:", connections);
+          return connections;
+        },
+        add: async (strategy) => {
+          const options = {
+            onSuccess: () =>
+              void toast.success(`Connected ${strategy} successfully`),
+            onError: (e: ErrorContext) =>
+              handleError(e, `Connect ${strategy} error`),
+          };
+          switch (strategy) {
+            case "github":
+              await auth.linkSocial({ provider: "github" }, options);
+              return;
+            case "google-drive":
+              await auth.linkSocial(
+                {
+                  provider: "google",
+                  scopes: ["https://www.googleapis.com/auth/drive.readonly"],
+                },
+                options,
+              );
+              return;
+            default:
+              return;
+          }
+        },
+        delete: async () => {
+          await auth.unlinkAccount(
+            { providerId: "github" },
+            {
+              onSuccess: () =>
+                void toast.success("Connection deleted successfully"),
+              onError: (e) => handleError(e, "Delete connection error"),
             },
           );
         },
@@ -249,4 +270,14 @@ export function useSettings() {
     actions,
     signOut,
   };
+}
+
+function handleError(
+  { error }: ErrorContext | { error: { message?: string } },
+  title: string,
+) {
+  console.error(title, error);
+  toast.error(title, {
+    description: error.message,
+  });
 }

@@ -43,6 +43,12 @@ export function createAuth(env: AuthEnv) {
        */
       requireEmailVerification: false,
     },
+    account: {
+      accountLinking: {
+        enabled: true,
+        allowDifferentEmails: true,
+      },
+    },
     socialProviders: {
       google: {
         prompt: "select_account",
