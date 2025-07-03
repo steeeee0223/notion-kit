@@ -1,6 +1,9 @@
 "use server";
 
-import type { Session } from "better-auth";
+import { betterFetch } from "@better-fetch/fetch";
+import type { Account, Session } from "better-auth";
+import type { GithubProfile } from "better-auth/social-providers";
+import { eq } from "drizzle-orm";
 import { lookup } from "ip-location-api";
 import { UAParser } from "ua-parser-js";
 
@@ -30,9 +33,47 @@ export async function updateSessionData(session: Session) {
     payload.deviceModel = device.model ?? "";
     payload.deviceType = device.type ?? "unknown";
   }
-  await db.update(schema.session).set(payload);
+  await db
+    .update(schema.session)
+    .set(payload)
+    .where(eq(schema.session.id, session.id));
 }
 
 function joinStr(data: (string | undefined)[]) {
   return data.filter(Boolean).join(", ");
+}
+
+export async function updateAccountName(account: Account) {
+  if (!account.accessToken) return;
+  let username = "";
+
+  switch (account.providerId) {
+    case "github": {
+      /**
+       * @see https://github.com/better-auth/better-auth/blob/main/packages/better-auth/src/social-providers/github.ts#L104
+       */
+      const { data: profile, error } = await betterFetch<GithubProfile>(
+        "https://api.github.com/user",
+        {
+          headers: {
+            "User-Agent": "better-auth",
+            authorization: `Bearer ${account.accessToken}`,
+          },
+        },
+      );
+      if (error) {
+        console.error("Failed to fetch GitHub profile:", error);
+        return;
+      }
+      username = profile.name || profile.email;
+      break;
+    }
+    default:
+      break;
+  }
+
+  await db
+    .update(schema.account)
+    .set({ username })
+    .where(eq(schema.account.id, account.id));
 }

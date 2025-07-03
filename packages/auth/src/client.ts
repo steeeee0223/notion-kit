@@ -6,7 +6,11 @@ import {
 import { createAuthClient as createReactClient } from "better-auth/react";
 
 import type { Auth } from "./auth";
-import { additionalSessionFields, additionalUserFields } from "./lib";
+import {
+  additionalAccountFields,
+  additionalSessionFields,
+  additionalUserFields,
+} from "./lib";
 
 export function createAuthClient(baseURL?: string) {
   return createReactClient({
@@ -16,6 +20,7 @@ export function createAuthClient(baseURL?: string) {
       inferAdditionalFields<Auth>({
         user: additionalUserFields,
         session: additionalSessionFields,
+        account: additionalAccountFields,
       }),
       twoFactorClient(),
       passkeyClient(),

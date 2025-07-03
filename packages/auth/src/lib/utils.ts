@@ -13,3 +13,7 @@ export const additionalSessionFields = {
   deviceType: { type: "string", required: false },
   location: { type: "string", required: false },
 } satisfies AdditionalFields;
+
+export const additionalAccountFields = {
+  username: { type: "string", required: false },
+} satisfies AdditionalFields;

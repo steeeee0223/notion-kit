@@ -3,7 +3,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { twoFactor } from "better-auth/plugins";
 import { passkey } from "better-auth/plugins/passkey";
 
-import { db, updateSessionData } from "./db";
+import { db, updateAccountName, updateSessionData } from "./db";
 import { AuthEnv } from "./env";
 import { additionalSessionFields, additionalUserFields } from "./lib";
 
@@ -63,9 +63,11 @@ export function createAuth(env: AuthEnv) {
     },
     databaseHooks: {
       session: {
-        create: {
-          after: updateSessionData,
-        },
+        create: { after: updateSessionData },
+      },
+      account: {
+        create: { after: updateAccountName },
+        update: { after: updateAccountName },
       },
     },
     plugins: [
