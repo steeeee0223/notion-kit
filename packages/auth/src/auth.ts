@@ -3,8 +3,9 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { twoFactor } from "better-auth/plugins";
 import { passkey } from "better-auth/plugins/passkey";
 
-import { db } from "./db";
+import { db, updateSessionData } from "./db";
 import { AuthEnv } from "./env";
+import { additionalSessionFields, additionalUserFields } from "./lib";
 
 export function createAuth(env: AuthEnv) {
   const config = {
@@ -21,10 +22,10 @@ export function createAuth(env: AuthEnv) {
         },
       },
       deleteUser: { enabled: true },
-      additionalFields: {
-        preferredName: { type: "string", required: false },
-        lang: { type: "string", required: false, defaultValue: "en" },
-      },
+      additionalFields: additionalUserFields,
+    },
+    session: {
+      additionalFields: additionalSessionFields,
     },
     emailVerification: {
       sendOnSignUp: true,
@@ -58,6 +59,13 @@ export function createAuth(env: AuthEnv) {
       github: {
         clientId: env.GITHUB_CLIENT_ID,
         clientSecret: env.GITHUB_CLIENT_SECRET,
+      },
+    },
+    databaseHooks: {
+      session: {
+        create: {
+          after: updateSessionData,
+        },
       },
     },
     plugins: [

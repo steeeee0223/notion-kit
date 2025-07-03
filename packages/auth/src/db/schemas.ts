@@ -36,6 +36,10 @@ export const session = pgTable("session", {
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  deviceVendor: text("device_vendor"),
+  deviceModel: text("device_model"),
+  deviceType: text("device_type"),
+  location: text("location"),
 });
 
 export const account = pgTable("account", {
