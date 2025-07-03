@@ -18,7 +18,7 @@ import type {
 } from "@notion-kit/settings-panel";
 import { toast } from "@notion-kit/shadcn";
 
-import { getPasskeys, listSessions } from "@/lib/session";
+import { getPasskeys, listSessions } from "@/lib/api";
 
 const mockWorkspace: SettingsStore["workspace"] = {
   id: "workspace-0",
@@ -56,7 +56,7 @@ export function useSettings() {
       hasPassword: true,
       id: data.user.id,
       name: data.user.name,
-      preferredName: data.user.preferredName ?? data.user.name,
+      preferredName: data.user.preferredName || data.user.name,
       email: data.user.email,
       avatarUrl: data.user.image ?? "",
       language: data.user.lang as AccountStore["language"],
