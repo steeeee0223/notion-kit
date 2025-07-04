@@ -45,7 +45,23 @@ function joinStr(data: (string | undefined)[]) {
 
 export async function updateAccountName(account: Account) {
   if (!account.accessToken) return;
-  let username = "";
+  const username = await getAccountName(account);
+  if (!username) return;
+  await db
+    .update(schema.account)
+    .set({ username })
+    .where(eq(schema.account.id, account.id));
+}
+
+/**
+ * @note
+ * This function is used to get the account name for display purposes.
+ */
+export async function getAccountName(account: {
+  providerId: string;
+  accessToken?: string | null;
+}) {
+  if (!account.accessToken) return;
 
   switch (account.providerId) {
     case "github": {
@@ -65,15 +81,9 @@ export async function updateAccountName(account: Account) {
         console.error("Failed to fetch GitHub profile:", error);
         return;
       }
-      username = profile.name || profile.email;
-      break;
+      return profile.name || profile.email;
     }
     default:
-      break;
+      return;
   }
-
-  await db
-    .update(schema.account)
-    .set({ username })
-    .where(eq(schema.account.id, account.id));
 }
