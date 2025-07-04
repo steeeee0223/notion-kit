@@ -21,7 +21,7 @@ export type PartialRole = Exclude<Role, Role.GUEST>;
 export interface Passkey {
   id: string;
   name: string;
-  createdAt: number; // ts in seconds
+  createdAt: number; // ts in ms
 }
 
 export interface WorkspaceStore {
@@ -63,7 +63,7 @@ export interface SessionRow {
   token: string;
   device: string;
   type: "laptop" | "mobile" | "unknown";
-  lastActive: number; // ts in seconds
+  lastActive: number; // ts in ms
   location: string;
 }
 
