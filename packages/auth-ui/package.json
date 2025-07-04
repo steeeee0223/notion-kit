@@ -33,6 +33,8 @@
     "@notion-kit/auth": "workspace:*",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/icons": "workspace:*",
+    "@notion-kit/schemas": "workspace:*",
+    "@notion-kit/settings-panel": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@types/react": "catalog:react19",
     "react-hook-form": "catalog:ui",
