@@ -4,7 +4,7 @@ import { useTranslation } from "@notion-kit/i18n";
 
 import { SettingsSection, useSettings } from "../../core";
 import type { Connection } from "../../lib";
-import { ConnectionsTable } from "../tables/my-connections";
+import { ConnectionsTable } from "../tables";
 
 interface ConnectionsSectionProps {
   connections: Connection[];

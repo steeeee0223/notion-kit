@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@notion-kit/shadcn";
 
-import { connectionCardData } from "../../connections/data";
+import { connectionCardData } from "../../connections";
 
 export const Header = ({ title }: { title: string }) => {
   return <div className="truncate text-xs text-secondary">{title}</div>;

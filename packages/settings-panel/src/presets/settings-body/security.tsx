@@ -8,7 +8,7 @@ import { Button, Switch } from "@notion-kit/shadcn";
 import { TextLinks } from "../_components";
 import { SettingsRule, SettingsSection } from "../../core";
 import type { TabType } from "../data";
-import { usePeople } from "../people/use-people";
+import { usePeople } from "../people";
 
 interface CardItemProps {
   title: string;
