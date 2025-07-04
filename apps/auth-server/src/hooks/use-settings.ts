@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -11,7 +13,13 @@ import {
 import type { AccountStore, SettingsStore } from "@notion-kit/settings-panel";
 import { toast } from "@notion-kit/shadcn";
 
-import { getPasskeys, listSessions } from "@/lib/session";
+import { getPasskeys, listSessions } from "@/lib/api";
+import {
+  deleteConnection,
+  handleError,
+  linkAccount,
+  loadConnections,
+} from "@/lib/utils";
 
 const mockWorkspace: SettingsStore["workspace"] = {
   id: "workspace-0",
@@ -49,7 +57,7 @@ export function useSettings() {
       hasPassword: true,
       id: data.user.id,
       name: data.user.name,
-      preferredName: data.user.preferredName ?? data.user.name,
+      preferredName: data.user.preferredName || data.user.name,
       email: data.user.email,
       avatarUrl: data.user.image ?? "",
       language: data.user.lang as AccountStore["language"],
@@ -75,9 +83,7 @@ export function useSettings() {
         lang: data.account.language,
       });
       if (res.error) {
-        console.error("Update user error", res.error);
-        toast.error("Update user error", { description: res.error.message });
-        return;
+        return handleError(res, "Update user error");
       }
       setAccountStore((prev) => ({ ...prev, ...data.account }));
     },
@@ -88,10 +94,7 @@ export function useSettings() {
     await auth.signOut({
       fetchOptions: {
         onSuccess: () => router.push("/"),
-        onError: ({ error }) => {
-          console.error("Sign out error", error);
-          toast.error("Sign out error", { description: error.message });
-        },
+        onError: (e) => handleError(e, "Sign out error"),
       },
     });
   }, [auth, router]);
@@ -106,12 +109,7 @@ export function useSettings() {
               onSuccess: () => {
                 toast.success("Account deleted successfully");
               },
-              onError: ({ error }) => {
-                console.error("Delete account error", error);
-                toast.error("Delete account error", {
-                  description: error.message,
-                });
-              },
+              onError: (e) => handleError(e, "Delete account error"),
             },
           );
         },
@@ -120,12 +118,7 @@ export function useSettings() {
             { email },
             {
               onSuccess: () => void toast.success("Verification email sent"),
-              onError: ({ error }) => {
-                console.error("Send verification email error", error);
-                toast.error("Send verification email error", {
-                  description: error.message,
-                });
-              },
+              onError: (e) => handleError(e, "Send verification email error"),
             },
           );
         },
@@ -135,12 +128,7 @@ export function useSettings() {
             {
               onSuccess: () =>
                 void toast.success("Password changed successfully"),
-              onError: ({ error }) => {
-                console.error("Change password error", error);
-                toast.error("Change password error", {
-                  description: error.message,
-                });
-              },
+              onError: (e) => handleError(e, "Change password error"),
             },
           );
         },
@@ -148,12 +136,7 @@ export function useSettings() {
           await auth.revokeOtherSessions(undefined, {
             onSuccess: () =>
               void toast.success("All sessions logged out successfully"),
-            onError: ({ error }) => {
-              console.error("Revoke sessions error", error);
-              toast.error("Revoke sessions error", {
-                description: error.message,
-              });
-            },
+            onError: (e) => handleError(e, "Revoke sessions error"),
           });
         },
         logoutSession: async (token) => {
@@ -162,12 +145,7 @@ export function useSettings() {
             {
               onSuccess: () =>
                 void toast.success("Session logged out successfully"),
-              onError: ({ error }) => {
-                console.error("Revoke session error", error);
-                toast.error("Revoke session error", {
-                  description: error.message,
-                });
-              },
+              onError: (e) => handleError(e, "Revoke session error"),
             },
           );
         },
@@ -180,10 +158,7 @@ export function useSettings() {
             );
             return true;
           }
-          console.error("Add passkey error", result.error);
-          toast.error("Add passkey error", {
-            description: result.error.message,
-          });
+          handleError(result, "Add passkey error");
           return false;
         },
         updatePasskey: async (data) => {
@@ -199,12 +174,7 @@ export function useSettings() {
                 ),
               }));
             },
-            onError: ({ error }) => {
-              console.error("Update passkey error", error);
-              toast.error("Update passkey error", {
-                description: error.message,
-              });
-            },
+            onError: (e) => handleError(e, "Update passkey error"),
           });
         },
         deletePasskey: async (id) => {
@@ -220,15 +190,15 @@ export function useSettings() {
                   ),
                 }));
               },
-              onError: ({ error }) => {
-                console.error("Delete passkey error", error);
-                toast.error("Delete passkey error", {
-                  description: error.message,
-                });
-              },
+              onError: (e) => handleError(e, "Delete passkey error"),
             },
           );
         },
+      },
+      connections: {
+        load: () => loadConnections(auth),
+        add: (strategy) => linkAccount(auth, strategy, "/protected"),
+        delete: (connection) => deleteConnection(auth, connection),
       },
     };
   }, [auth]);

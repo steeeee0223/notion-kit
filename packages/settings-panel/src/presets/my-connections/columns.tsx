@@ -6,15 +6,15 @@ import type { ColumnDef } from "@tanstack/react-table";
 import type { Connection } from "../../lib";
 import { ActionCell, ConnectionCell, Header } from "./cells";
 
-export interface GetConnectionColumnsOptions {
+export interface CreateConnectionColumnsOptions {
   onCreateConnection?: () => void;
-  onDisconnect?: (connectionId: string) => void;
+  onDisconnect?: (connection: Connection) => void;
 }
 
-export const getConnectionColumns = ({
+export function createConnectionColumns({
   onCreateConnection,
   onDisconnect,
-}: GetConnectionColumnsOptions): ColumnDef<Connection, Connection>[] => {
+}: CreateConnectionColumnsOptions): ColumnDef<Connection>[] {
   return [
     {
       accessorKey: "connection",
@@ -40,10 +40,10 @@ export const getConnectionColumns = ({
         <div className="flex flex-col">
           <ActionCell
             onCreateConnection={onCreateConnection}
-            onDisconnect={() => onDisconnect?.(row.original.id)}
+            onDisconnect={() => onDisconnect?.(row.original)}
           />
         </div>
       ),
     },
   ];
-};
+}

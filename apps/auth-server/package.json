@@ -20,11 +20,9 @@
     "@notion-kit/settings-panel": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@t3-oss/env-nextjs": "catalog:env",
-    "ip-location-api": "^3.0.3",
     "next": "catalog:next15",
     "react": "catalog:react19",
-    "react-dom": "catalog:react19",
-    "ua-parser-js": "^2.0.4"
+    "react-dom": "catalog:react19"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",

@@ -32,16 +32,20 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
+    "@better-fetch/fetch": "1.1.18",
     "@t3-oss/env-nextjs": "catalog:env",
     "@vercel/postgres": "^0.10.0",
     "better-auth": "^1.2.8",
     "drizzle-orm": "^0.44.2",
+    "ip-location-api": "^3.0.3",
+    "ua-parser-js": "^2.0.4",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "@types/node": "catalog:node22",
     "dotenv-cli": "catalog:env",
     "drizzle-kit": "^0.31.1",
     "eslint": "catalog:",

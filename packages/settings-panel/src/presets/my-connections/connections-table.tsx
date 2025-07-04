@@ -3,10 +3,13 @@
 import React, { useMemo } from "react";
 
 import type { Connection } from "../../lib";
-import { getConnectionColumns, GetConnectionColumnsOptions } from "./columns";
+import {
+  createConnectionColumns,
+  type CreateConnectionColumnsOptions,
+} from "./columns";
 import { DataTable } from "./data-table";
 
-interface ConnectionsTableProps extends GetConnectionColumnsOptions {
+interface ConnectionsTableProps extends CreateConnectionColumnsOptions {
   data: Connection[];
 }
 
@@ -14,6 +17,6 @@ export const ConnectionsTable: React.FC<ConnectionsTableProps> = ({
   data,
   ...actions
 }) => {
-  const columns = useMemo(() => getConnectionColumns(actions), [actions]);
+  const columns = useMemo(() => createConnectionColumns(actions), [actions]);
   return <DataTable columns={columns} data={data} />;
 };

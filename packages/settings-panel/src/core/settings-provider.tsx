@@ -46,7 +46,7 @@ export interface SettingsActions {
   connections?: {
     load?: () => Promise<Connection[]>;
     add?: (strategy: ConnectionStrategy) => Promise<void>;
-    delete?: (connectionId: string) => Promise<void>;
+    delete?: (connection: Connection) => Promise<void>;
   };
   /** People */
   people?: {

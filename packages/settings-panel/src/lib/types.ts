@@ -69,7 +69,7 @@ export interface SessionRow {
 
 export interface Connection {
   id: string;
-  connection: { type: string; account: string };
+  connection: { type: string; account: string; accountId?: string };
   scopes: string[];
 }
 

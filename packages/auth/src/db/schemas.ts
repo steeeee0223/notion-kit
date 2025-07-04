@@ -21,6 +21,9 @@ export const user = pgTable("user", {
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
   twoFactorEnabled: boolean("two_factor_enabled"),
+  /**
+   * Additional fields can be added here.
+   */
   preferredName: text("preferred_name"),
   lang: text("lang").default("en"),
 });
@@ -36,6 +39,13 @@ export const session = pgTable("session", {
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  /**
+   * Additional fields can be added here.
+   */
+  deviceVendor: text("device_vendor"),
+  deviceModel: text("device_model"),
+  deviceType: text("device_type"),
+  location: text("location"),
 });
 
 export const account = pgTable("account", {
@@ -54,6 +64,10 @@ export const account = pgTable("account", {
   password: text("password"),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
+  /**
+   * Additional fields can be added here.
+   */
+  username: text("username"),
 });
 
 export const verification = pgTable("verification", {
