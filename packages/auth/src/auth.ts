@@ -57,6 +57,7 @@ export function createAuth(env: AuthEnv) {
         clientSecret: env.GOOGLE_CLIENT_SECRET,
       },
       github: {
+        prompt: "select_account",
         clientId: env.GITHUB_CLIENT_ID,
         clientSecret: env.GITHUB_CLIENT_SECRET,
       },

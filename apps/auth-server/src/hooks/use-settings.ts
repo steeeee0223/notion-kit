@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import type { ErrorContext } from "@notion-kit/auth";
 import { useAuth, useSession } from "@notion-kit/auth-ui";
 import { Plan, Role } from "@notion-kit/schemas";
 import {
@@ -11,14 +10,16 @@ import {
   TabType,
   UpdateSettings,
 } from "@notion-kit/settings-panel";
-import type {
-  AccountStore,
-  Connection,
-  SettingsStore,
-} from "@notion-kit/settings-panel";
+import type { AccountStore, SettingsStore } from "@notion-kit/settings-panel";
 import { toast } from "@notion-kit/shadcn";
 
 import { getPasskeys, listSessions } from "@/lib/api";
+import {
+  deleteConnection,
+  handleError,
+  linkAccount,
+  loadConnections,
+} from "@/lib/utils";
 
 const mockWorkspace: SettingsStore["workspace"] = {
   id: "workspace-0",
@@ -195,61 +196,9 @@ export function useSettings() {
         },
       },
       connections: {
-        load: async () => {
-          const res = await auth.listAccounts();
-          if (res.error) {
-            handleError(res, "Fetch connections error");
-            return [];
-          }
-          const connections: Connection[] = [];
-          res.data.forEach((account) => {
-            if (account.provider === "credential") return;
-            connections.push({
-              id: account.id,
-              connection: {
-                type: account.provider,
-                account: account.accountId,
-              },
-              scopes: account.scopes,
-            });
-          });
-          console.log("Connections loaded:", connections);
-          return connections;
-        },
-        add: async (strategy) => {
-          const options = {
-            onSuccess: () =>
-              void toast.success(`Connected ${strategy} successfully`),
-            onError: (e: ErrorContext) =>
-              handleError(e, `Connect ${strategy} error`),
-          };
-          switch (strategy) {
-            case "github":
-              await auth.linkSocial({ provider: "github" }, options);
-              return;
-            case "google-drive":
-              await auth.linkSocial(
-                {
-                  provider: "google",
-                  scopes: ["https://www.googleapis.com/auth/drive.readonly"],
-                },
-                options,
-              );
-              return;
-            default:
-              return;
-          }
-        },
-        delete: async () => {
-          await auth.unlinkAccount(
-            { providerId: "github" },
-            {
-              onSuccess: () =>
-                void toast.success("Connection deleted successfully"),
-              onError: (e) => handleError(e, "Delete connection error"),
-            },
-          );
-        },
+        load: () => loadConnections(auth),
+        add: (strategy) => linkAccount(auth, strategy, "/protected"),
+        delete: (connection) => deleteConnection(auth, connection),
       },
     };
   }, [auth]);
@@ -270,14 +219,4 @@ export function useSettings() {
     actions,
     signOut,
   };
-}
-
-function handleError(
-  { error }: ErrorContext | { error: { message?: string } },
-  title: string,
-) {
-  console.error(title, error);
-  toast.error(title, {
-    description: error.message,
-  });
 }
