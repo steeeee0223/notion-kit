@@ -1,7 +1,7 @@
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { twoFactor } from "better-auth/plugins";
-import { passkey } from "better-auth/plugins/passkey";
+import { passkey, type Passkey } from "better-auth/plugins/passkey";
 
 import { db, updateAccountName, updateSessionData } from "./db";
 import { AuthEnv } from "./env";
@@ -71,12 +71,7 @@ export function createAuth(env: AuthEnv) {
         update: { after: updateAccountName },
       },
     },
-    plugins: [
-      twoFactor(),
-      passkey({
-        rpName: "Notion Auth",
-      }),
-    ],
+    plugins: [twoFactor(), passkey({ rpName: "Notion Auth" })],
   } satisfies BetterAuthOptions;
 
   return betterAuth(config);
@@ -84,3 +79,4 @@ export function createAuth(env: AuthEnv) {
 
 export type Auth = ReturnType<typeof createAuth>;
 export type Session = Auth["$Infer"]["Session"];
+export type { Passkey };

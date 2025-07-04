@@ -19,6 +19,7 @@ import {
 } from "@notion-kit/shadcn";
 
 import { useAuth } from "../auth-provider";
+import { handleError } from "../lib";
 import type { LoginMode } from "./types";
 import { useLoginForm } from "./use-login-form";
 
@@ -58,12 +59,7 @@ export function LoginForm({
           toast("Logged in with passkey");
           redirect?.(callbackURL ?? "/");
         },
-        onError: ({ error }) => {
-          toast.error("Failed to login with passkey", {
-            description: error.message,
-          });
-          console.error("Failed to login with passkey", error.message);
-        },
+        onError: (e) => handleError(e, "Failed to login with passkey"),
       },
     );
   };
@@ -74,15 +70,8 @@ export function LoginForm({
       {
         onRequest: () => setLoading(true),
         onResponse: () => setLoading(false),
-        onSuccess: () => {
-          toast(`Logged in with ${provider}`);
-        },
-        onError: ({ error }) => {
-          toast.error(`Failed to login with ${provider}`, {
-            description: error.message,
-          });
-          console.error(`Failed to login with ${provider}`, error.message);
-        },
+        onSuccess: () => void toast(`Logged in with ${provider}`),
+        onError: (e) => handleError(e, `Failed to login with ${provider}`),
       },
     );
   };

@@ -24,6 +24,11 @@ function useSession() {
   return auth.useSession();
 }
 
+function usePasskeys() {
+  const { auth } = useAuth();
+  return auth.useListPasskeys();
+}
+
 interface AuthProviderProps extends React.PropsWithChildren {
   baseURL?: string;
   redirect?: (url: string) => void;
@@ -48,4 +53,4 @@ function AuthProvider({ baseURL, children, redirect }: AuthProviderProps) {
   return <AuthContext value={ctx}>{children}</AuthContext>;
 }
 
-export { AuthProvider, useAuth, useSession };
+export { AuthProvider, useAuth, useSession, usePasskeys };

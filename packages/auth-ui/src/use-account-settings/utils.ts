@@ -1,9 +1,56 @@
-import type { AuthClient, ErrorContext } from "@notion-kit/auth";
+import type {
+  AuthClient,
+  ErrorContext,
+  Passkey,
+  Session,
+} from "@notion-kit/auth";
 import type {
   Connection,
   ConnectionStrategy,
+  SessionRow,
 } from "@notion-kit/settings-panel";
 import { toast } from "@notion-kit/shadcn";
+
+import { handleError } from "../lib";
+
+export function transferPasskeys(passkeys?: Passkey[] | null) {
+  if (!passkeys) return;
+  return passkeys.map((passkey, i) => ({
+    id: passkey.id,
+    name: passkey.name ?? `Unnamed Passkey ${i + 1}`,
+    createdAt: passkey.createdAt.valueOf(),
+  }));
+}
+
+export function transferSessions(sessions: Session["session"][]) {
+  return sessions.map((session) => ({
+    id: session.id,
+    token: session.token,
+    lastActive: session.updatedAt.valueOf(),
+    device:
+      joinStr([session.deviceVendor, session.deviceModel]) || "Unknown Device",
+    type: mapDeviceType(session.deviceType),
+    location: session.location ?? "",
+  }));
+}
+
+/**
+ * @param type https://docs.uaparser.dev/info/device/type.html
+ */
+function mapDeviceType(type?: string | null): SessionRow["type"] {
+  switch (type) {
+    case "mobile":
+      return "mobile";
+    case "tablet":
+      return "laptop";
+    default:
+      return "unknown";
+  }
+}
+
+function joinStr(data: (string | null | undefined)[]) {
+  return data.filter(Boolean).join(", ");
+}
 
 export async function loadConnections(auth: AuthClient) {
   const res = await auth.listAccounts();
@@ -29,14 +76,12 @@ export async function loadConnections(auth: AuthClient) {
       scopes: account.scopes,
     });
   });
-  console.log("Connections loaded:", connections);
   return connections;
 }
 
 export async function linkAccount(
   auth: AuthClient,
   strategy: ConnectionStrategy,
-  callbackURL?: string,
 ) {
   const options = {
     onSuccess: () => void toast.success(`Connected ${strategy} successfully`),
@@ -49,7 +94,6 @@ export async function linkAccount(
     case "google-drive":
       await auth.linkSocial(
         {
-          callbackURL,
           provider: "google",
           scopes: [
             "https://www.googleapis.com/auth/userinfo.email",
@@ -80,14 +124,4 @@ export async function deleteConnection(
       onError: (e: ErrorContext) => handleError(e, "Unlink connection error"),
     },
   );
-}
-
-export function handleError(
-  { error }: ErrorContext | { error: { message?: string } },
-  title: string,
-) {
-  console.error(title, error);
-  toast.error(title, {
-    description: error.message,
-  });
 }
