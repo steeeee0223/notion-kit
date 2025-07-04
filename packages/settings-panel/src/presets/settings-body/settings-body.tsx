@@ -7,17 +7,17 @@ import { useTranslation } from "@notion-kit/i18n";
 import { NotImplemented } from "../_components";
 import { SettingsSection, useSettings } from "../../core";
 import { Scope } from "../../lib";
+import { Account } from "../account";
+import { Connections } from "../connections";
 import type { TabType } from "../data";
-import { Account } from "./account";
-import { Connections } from "./connections";
+import { Notifications } from "../notifications";
+import { People } from "../people";
+import { Plans } from "../plans";
+import { Preferences } from "../preferences";
 import { General } from "./general";
 import { General2 } from "./general-2";
 import { Identity } from "./identity";
-import { Notifications } from "./notifications";
 import { NotionAI } from "./notion-ai";
-import { People } from "./people";
-import { Plans } from "./plans";
-import { Preferences } from "./preferences";
 import { Security } from "./security";
 
 interface SettingsBodyProps {
