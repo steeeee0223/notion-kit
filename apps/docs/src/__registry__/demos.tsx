@@ -189,6 +189,12 @@ export const Index: Record<
       () => import("@/components/demos/settings-panel/plans-table"),
     ),
   },
+  "settings-panel/sessions-table": {
+    files: ["components/demos/settings-panel/sessions-table.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/settings-panel/sessions-table"),
+    ),
+  },
   "sidebar/basic": {
     files: ["components/demos/sidebar/basic.tsx"],
     component: React.lazy(() => import("@/components/demos/sidebar/basic")),
