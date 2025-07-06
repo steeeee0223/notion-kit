@@ -1,0 +1,39 @@
+---
+title: Login Form
+description: A login form component for authentication.
+---
+
+<ComponentPreview name="login-form/default" hideCode />
+
+## Installation
+
+<Installation packages="@notion-kit/auth-ui" registryName="blocks" />
+
+## Examples
+
+---
+
+### Login Form
+
+<ComponentPreview
+  name="login-form/default"
+  preview={`<LoginForm
+    callbackURL="/"
+    mode={mode}
+    onModeChange={setMode}
+  />`}
+/>
+
+## API Reference
+
+### LoginForm
+
+<Callout title="Note">
+  It should be used within the `<AuthProvider>` context.
+</Callout>
+
+| Prop           | Type                        | Default | Description                                                |
+| -------------- | --------------------------- | ------- | ---------------------------------------------------------- |
+| `mode`\*       | `LoginMode`                 | -       | The mode of the form. Either for signing up or signing in. |
+| `callbackURL`  | `string`                    | -       | The URL to redirect after successful authentication.       |
+| `onModeChange` | `(mode: LoginMode) => void` | -       | Handler that is called when the mode of the form changes.  |

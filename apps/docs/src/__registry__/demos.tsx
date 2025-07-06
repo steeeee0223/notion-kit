@@ -107,6 +107,12 @@ export const Index: Record<
     files: ["components/demos/input/search.tsx"],
     component: React.lazy(() => import("@/components/demos/input/search")),
   },
+  "login-form/default": {
+    files: ["components/demos/login-form/default.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/login-form/default"),
+    ),
+  },
   "modal/basic": {
     files: [
       "components/demos/modal/basic/index.tsx",
@@ -311,5 +317,11 @@ export const Index: Record<
   "unsplash/search": {
     files: ["components/demos/unsplash/search.tsx"],
     component: React.lazy(() => import("@/components/demos/unsplash/search")),
+  },
+  "use-account-settings/settings-panel": {
+    files: ["components/demos/use-account-settings/settings-panel.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/use-account-settings/settings-panel"),
+    ),
   },
 };
