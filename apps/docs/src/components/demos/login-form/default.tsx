@@ -11,7 +11,7 @@ export default function Demo() {
 
   return (
     <AuthProvider baseURL={BASE_URL}>
-      <LoginForm callbackURL="/" mode={mode} onModeChange={setMode} />;
+      <LoginForm callbackURL="/" mode={mode} onModeChange={setMode} />
     </AuthProvider>
   );
 }
