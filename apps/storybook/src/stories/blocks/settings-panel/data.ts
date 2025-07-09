@@ -1,6 +1,7 @@
 import { Plan, Role, type User, type Workspace } from "@notion-kit/schemas";
 import type {
   Connection,
+  Passkey,
   SessionRow,
   SettingsStore,
   WorkspaceMemberships,
@@ -178,7 +179,6 @@ export const mockSettings: SettingsStore = {
     ...mockUsers[0]!,
     preferredName: "Jonathan",
     language: "en",
-    sessions: mockSessions,
     currentSessionId: mockSessions[0]!.id,
   },
   memberships: mockUsers.reduce(
@@ -242,4 +242,10 @@ export const mockConnections: Connection[] = [
     connection: { type: "jira", account: "steeeee@example.com" },
     scopes: ["Can preview links and sync databases"],
   },
+];
+
+export const mockPasskeys: Passkey[] = [
+  { id: "p-1", name: "My Laptop", createdAt: Date.UTC(2023, 10, 1) },
+  { id: "p-2", name: "My Phone", createdAt: Date.UTC(2023, 10, 2) },
+  { id: "p-3", name: "My Tablet", createdAt: Date.UTC(2023, 10, 3) },
 ];

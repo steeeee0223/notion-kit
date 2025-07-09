@@ -82,6 +82,9 @@ catalogs:
     '@hookform/resolvers':
       specifier: ^5.0.1
       version: 5.0.1
+    '@tanstack/react-query':
+      specifier: ^5.81.5
+      version: 5.81.5
     '@tanstack/react-table':
       specifier: ^8.21.3
       version: 8.21.3
@@ -1126,6 +1129,9 @@ importers:
       '@notion-kit/utils':
         specifier: workspace:*
         version: link:../utils
+      '@tanstack/react-query':
+        specifier: catalog:ui
+        version: 5.81.5(react@19.1.0)
       '@tanstack/react-table':
         specifier: catalog:ui
         version: 8.21.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -4746,6 +4752,14 @@ packages:
 
   '@tailwindcss/postcss@4.1.0':
     resolution: {integrity: sha512-b2NWFAFfLXY7960jLY5QkKbuYKrQUULx60XU3BCzyaUQpU/7lLf3n2CiHibZPdBq5CIXrUp10wdxhV0EI0Js2g==}
+
+  '@tanstack/query-core@5.81.5':
+    resolution: {integrity: sha512-ZJOgCy/z2qpZXWaj/oxvodDx07XcQa9BF92c0oINjHkoqUPsmm3uG08HpTaviviZ/N9eP1f9CM7mKSEkIo7O1Q==}
+
+  '@tanstack/react-query@5.81.5':
+    resolution: {integrity: sha512-lOf2KqRRiYWpQT86eeeftAGnjuTR35myTP8MXyvHa81VlomoAWNEd8x5vkcAfQefu0qtYCvyqLropFZqgI2EQw==}
+    peerDependencies:
+      react: ^18 || ^19
 
   '@tanstack/react-table@8.21.3':
     resolution: {integrity: sha512-5nNMTSETP4ykGegmVkhjcS8tTLW6Vl4axfEGQN3v0zdHYbK4UfoqfPChclTrJ4EoK9QynqAu9oUf8VEmrpZ5Ww==}
@@ -12893,6 +12907,13 @@ snapshots:
       '@tailwindcss/oxide': 4.1.0
       postcss: 8.5.3
       tailwindcss: 4.1.0
+
+  '@tanstack/query-core@5.81.5': {}
+
+  '@tanstack/react-query@5.81.5(react@19.1.0)':
+    dependencies:
+      '@tanstack/query-core': 5.81.5
+      react: 19.1.0
 
   '@tanstack/react-table@8.21.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 
 import type { Connection } from "../../../lib";
 import {
@@ -13,10 +13,7 @@ interface ConnectionsTableProps extends CreateConnectionColumnsOptions {
   data: Connection[];
 }
 
-export const ConnectionsTable: React.FC<ConnectionsTableProps> = ({
-  data,
-  ...actions
-}) => {
+export function ConnectionsTable({ data, ...actions }: ConnectionsTableProps) {
   const columns = useMemo(() => createConnectionColumns(actions), [actions]);
   return <DataTable columns={columns} data={data} />;
-};
+}

@@ -7,6 +7,7 @@ import { Button } from "@notion-kit/shadcn";
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
 import { LogoutConfirm } from "../modals";
 import { SessionsTable } from "../tables";
+import { useSessions } from "./use-sessions";
 
 export function DevicesSection() {
   const { openModal } = useModal();
@@ -14,14 +15,14 @@ export function DevicesSection() {
   const { t } = useTranslation("settings", { keyPrefix: "account" });
   const trans = t("devices", { returnObjects: true });
   /** handlers */
-  const { settings, account: actions } = useSettings();
-  const { currentSessionId, sessions } = settings.account;
+  const { settings } = useSettings();
+  const { sessions, revoke, revokeOthers } = useSessions();
   const openLogoutAllConfirmModal = () =>
     openModal(
       <LogoutConfirm
         title="Log out of all devices?"
         description="You will be logged out of all other active sessions on other devices except this one."
-        onConfirm={actions?.logoutAll}
+        onConfirm={revokeOthers}
       />,
     );
   const openLogoutConfirmModal = (deviceName: string, token: string) =>
@@ -29,7 +30,7 @@ export function DevicesSection() {
       <LogoutConfirm
         title={`Log out of ${deviceName}?`}
         description="You will be logged out of this device."
-        onConfirm={() => actions?.logoutSession?.(token)}
+        onConfirm={() => revoke(token)}
       />,
     );
 
@@ -45,7 +46,7 @@ export function DevicesSection() {
         </Button>
       </SettingsRule>
       <SessionsTable
-        currentSessionId={currentSessionId}
+        currentSessionId={settings.account.currentSessionId}
         data={sessions}
         onLogout={openLogoutConfirmModal}
       />

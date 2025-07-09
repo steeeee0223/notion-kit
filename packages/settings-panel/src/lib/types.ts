@@ -41,9 +41,7 @@ export interface AccountStore extends User {
   /** My Account */
   preferredName: string;
   hasPassword?: boolean;
-  passkeys?: Passkey[];
   currentSessionId?: string;
-  sessions: SessionRow[];
   /** Region */
   language?: LOCALE;
 }

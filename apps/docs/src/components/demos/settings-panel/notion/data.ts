@@ -135,7 +135,6 @@ export const mockSettings: SettingsStore = {
     ...mockUsers[0]!,
     preferredName: "Jonathan",
     language: "en",
-    sessions: [],
   },
   memberships: mockUsers.reduce(
     (acc, user, i) => ({
