@@ -18,6 +18,7 @@ export interface ConnectionCardProps {
   title: string;
   description: string;
   tags: string[];
+  isConnecting?: boolean;
   onConnect?: () => Promise<void>;
 }
 
@@ -27,6 +28,7 @@ export const ConnectionCard = ({
   title,
   description,
   tags,
+  isConnecting,
   onConnect,
 }: ConnectionCardProps) => {
   /** i18n */
@@ -64,6 +66,7 @@ export const ConnectionCard = ({
           variant="soft-blue"
           size="sm"
           className="h-7 w-full"
+          disabled={isConnecting}
           onClick={onConnect}
         >
           {trans}

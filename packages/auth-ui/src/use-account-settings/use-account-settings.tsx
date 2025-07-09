@@ -1,16 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 
 import type {
   AccountStore,
-  SessionRow,
   SettingsActions,
   UpdateSettings,
 } from "@notion-kit/settings-panel";
 import { toast } from "@notion-kit/shadcn";
 
-import { useAuth, usePasskeys, useSession } from "../auth-provider";
+import { useAuth, useSession } from "../auth-provider";
 import { handleError } from "../lib";
 import {
   deleteConnection,
@@ -29,28 +28,11 @@ const initialAccountStore: AccountStore = {
   avatarUrl: "",
   language: "en",
   currentSessionId: "",
-  sessions: [],
 };
 
 export function useAccountSettings() {
   const { auth } = useAuth();
   const { data } = useSession();
-  const { data: passkeys } = usePasskeys();
-
-  const [refetchSessions, setRefetchSessions] = useState(true);
-  const [sessions, setSessions] = useState<SessionRow[]>([]);
-  useEffect(() => {
-    void auth
-      .listSessions()
-      .then((sessions) => {
-        if (sessions.error) {
-          handleError(sessions, "Fetch sessions error");
-          return;
-        }
-        setSessions(transferSessions(sessions.data));
-      })
-      .finally(() => setRefetchSessions(false));
-  }, [auth, refetchSessions]);
 
   const accountStore = useMemo(() => {
     if (!data) return initialAccountStore;
@@ -63,10 +45,8 @@ export function useAccountSettings() {
       avatarUrl: data.user.image ?? "",
       language: data.user.lang as AccountStore["language"],
       currentSessionId: data.session.id,
-      sessions,
-      passkeys: transferPasskeys(passkeys),
     };
-  }, [data, passkeys, sessions]);
+  }, [data]);
 
   const updateSettings = useCallback<UpdateSettings>(
     async (data) => {
@@ -117,55 +97,41 @@ export function useAccountSettings() {
             },
           );
         },
-        logoutAll: async () => {
-          await auth.revokeOtherSessions(undefined, {
-            onSuccess: () => {
-              toast.success("All sessions logged out successfully");
-              setRefetchSessions(true);
-            },
-            onError: (e) => handleError(e, "Revoke sessions error"),
-          });
-        },
-        logoutSession: async (token) => {
-          await auth.revokeSession(
-            { token },
-            {
-              onSuccess: () => {
-                toast.success("Session logged out successfully");
-                setRefetchSessions(true);
-              },
-              onError: (e) => handleError(e, "Revoke session error"),
-            },
-          );
-        },
-        addPasskey: async () => {
-          const result = await auth.passkey.addPasskey();
-          if (!result) {
-            toast.success("Add passkey successed");
-            return true;
+      },
+      sessions: {
+        getAll: async () => {
+          const result = await auth.listSessions();
+          if (result.error) {
+            handleError(result, "Fetch sessions error");
+            return [];
           }
-          handleError(result, "Add passkey error");
-          return false;
+          return transferSessions(result.data);
         },
-        updatePasskey: async (data) => {
-          await auth.passkey.updatePasskey(data, {
-            onSuccess: () => void toast.success("Passkey updated successfully"),
-            onError: (e) => handleError(e, "Update passkey error"),
-          });
+        delete: async (token) => {
+          await auth.revokeSession({ token }, { throw: true });
         },
-        deletePasskey: async (id) => {
-          await auth.passkey.deletePasskey(
-            { id },
-            {
-              onSuccess: () =>
-                void toast.success("Passkey deleted successfully"),
-              onError: (e) => handleError(e, "Delete passkey error"),
-            },
-          );
+        deleteAll: async () => {
+          await auth.revokeOtherSessions(undefined, { throw: true });
+        },
+      },
+      passkeys: {
+        getAll: async () => {
+          const result = await auth.passkey.listUserPasskeys();
+          return transferPasskeys(result.data);
+        },
+        add: async () => {
+          const result = await auth.passkey.addPasskey();
+          return !result;
+        },
+        update: async (data) => {
+          await auth.passkey.updatePasskey(data, { throw: true });
+        },
+        delete: async (id) => {
+          await auth.passkey.deletePasskey({ id }, { throw: true });
         },
       },
       connections: {
-        load: () => loadConnections(auth),
+        getAll: () => loadConnections(auth),
         add: (strategy) => linkAccount(auth, strategy),
         delete: (connection) => deleteConnection(auth, connection),
       },

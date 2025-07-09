@@ -12,10 +12,17 @@ import {
   Enable2FAMethod,
   PasskeysModal,
   PasswordForm,
+  SettingsProvider,
 } from "@notion-kit/settings-panel";
 import { Button, type ButtonProps } from "@notion-kit/shadcn";
 
-import { mockMemberships, mockUser, mockWorkspaces } from "./data";
+import {
+  mockMemberships,
+  mockPasskeys,
+  mockSettings,
+  mockUser,
+  mockWorkspaces,
+} from "./data";
 
 const ModalTrigger = ({
   text,
@@ -131,16 +138,17 @@ export const Enable2FAMethodModal: Story = {
 
 export const PasskeysManagement: Story = {
   args: {
-    children: (
-      <PasskeysModal
-        passkeys={[
-          { id: "p-1", name: "My Laptop", createdAt: Date.UTC(2023, 10, 1) },
-          { id: "p-2", name: "My Phone", createdAt: Date.UTC(2023, 10, 2) },
-          { id: "p-3", name: "My Tablet", createdAt: Date.UTC(2023, 10, 3) },
-        ]}
-        onRename={(data) => console.log("Renaming passkey", data.name)}
-      />
-    ),
+    children: <PasskeysModal />,
     text: "Add Passkeys",
   },
+  render: (props) => (
+    <SettingsProvider
+      settings={mockSettings}
+      passkeys={{ getAll: () => Promise.resolve(mockPasskeys) }}
+    >
+      <ModalProvider>
+        <ModalTrigger {...props} />
+      </ModalProvider>
+    </SettingsProvider>
+  ),
 };

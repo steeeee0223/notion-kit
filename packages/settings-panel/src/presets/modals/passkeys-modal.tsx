@@ -24,31 +24,12 @@ import {
 import { toDateString } from "@notion-kit/utils";
 
 import type { Passkey } from "../../lib";
+import { usePasskeys } from "../account/use-passkeys";
 
-interface PasskeysModalProps {
-  passkeys?: Passkey[];
-  onAddPasskey?: () => Promise<boolean> | boolean;
-  onRename?: (data: { id: string; name: string }) => void;
-  onDelete?: (id: string) => void;
-}
-
-export function PasskeysModal({
-  passkeys = [],
-  onAddPasskey,
-  onRename,
-  onDelete,
-}: PasskeysModalProps) {
+export function PasskeysModal() {
   const { isOpen, closeModal } = useModal();
-  const [error, setError] = useState(false);
-
-  const [addPasskey, isAdding] = useTransition(async () => {
-    const ok = await onAddPasskey?.();
-    if (ok) {
-      closeModal();
-    } else {
-      setError(true);
-    }
-  });
+  const { passkeys, error, isPending, create, update, remove, clearError } =
+    usePasskeys();
 
   return (
     <Dialog open={isOpen} onOpenChange={closeModal}>
@@ -87,13 +68,9 @@ export function PasskeysModal({
               <PasskeyCard
                 key={passkey.id}
                 passkey={passkey}
-                onEnterRename={() => setError(false)}
-                onRename={onRename}
-                onDelete={(id) => {
-                  setError(false);
-                  onDelete?.(id);
-                  closeModal();
-                }}
+                onEnterRename={clearError}
+                onRename={update}
+                onDelete={remove}
               />
             ))}
           </div>
@@ -104,8 +81,8 @@ export function PasskeysModal({
             variant="blue"
             size="sm"
             className="w-full"
-            onClick={addPasskey}
-            disabled={isAdding}
+            onClick={() => create()}
+            disabled={isPending}
           >
             {passkeys.length > 0 ? (
               <Icon.Plus className="mr-1.5 size-3.5 fill-current" />
@@ -119,7 +96,7 @@ export function PasskeysModal({
             size="sm"
             className="w-full"
             onClick={closeModal}
-            disabled={isAdding}
+            disabled={isPending}
           >
             Cancel
           </Button>
@@ -150,15 +127,12 @@ function PasskeyCard({
     setIsEditing(true);
     onEnterRename?.();
   };
-  const [saveName] = useTransition(
-    () => {
-      if (name !== passkey.name) {
-        onRename?.({ id: passkey.id, name });
-      }
-      setIsEditing(false);
-    },
-    () => setName(name),
-  );
+  const [saveName] = useTransition(() => {
+    if (name !== passkey.name) {
+      onRename?.({ id: passkey.id, name });
+    }
+    setIsEditing(false);
+  });
 
   useEffect(() => {
     setName(passkey.name);

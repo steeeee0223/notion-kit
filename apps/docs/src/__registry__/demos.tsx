@@ -107,6 +107,12 @@ export const Index: Record<
     files: ["components/demos/input/search.tsx"],
     component: React.lazy(() => import("@/components/demos/input/search")),
   },
+  "login-form/default": {
+    files: ["components/demos/login-form/default.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/login-form/default"),
+    ),
+  },
   "modal/basic": {
     files: [
       "components/demos/modal/basic/index.tsx",
@@ -187,6 +193,12 @@ export const Index: Record<
     files: ["components/demos/settings-panel/plans-table.tsx"],
     component: React.lazy(
       () => import("@/components/demos/settings-panel/plans-table"),
+    ),
+  },
+  "settings-panel/sessions-table": {
+    files: ["components/demos/settings-panel/sessions-table.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/settings-panel/sessions-table"),
     ),
   },
   "sidebar/basic": {

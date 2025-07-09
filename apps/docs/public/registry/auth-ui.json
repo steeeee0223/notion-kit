@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "auth-ui",
+  "type": "registry:component",
+  "title": "Auth UI",
+  "dependencies": ["@notion-kit/auth-ui"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/auth-ui.tsx",
+      "content": "export {\n  AuthProvider,\n  LoginForm,\n  useAccountSettings,\n  useAuth,\n} from \"@notion-kit/auth-ui\";\n",
+      "type": "registry:component",
+      "target": "components/core/auth-ui.tsx"
+    }
+  ]
+}

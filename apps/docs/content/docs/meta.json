@@ -9,6 +9,8 @@
     "...components",
     "---Blocks---",
     "...blocks",
+    "---Auth---",
+    "...auth",
     "---Objects---",
     "...objects"
   ]

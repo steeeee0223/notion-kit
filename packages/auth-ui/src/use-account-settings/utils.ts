@@ -1,20 +1,14 @@
-import type {
-  AuthClient,
-  ErrorContext,
-  Passkey,
-  Session,
-} from "@notion-kit/auth";
+import type { AuthClient, Passkey, Session } from "@notion-kit/auth";
 import type {
   Connection,
   ConnectionStrategy,
   SessionRow,
 } from "@notion-kit/settings-panel";
-import { toast } from "@notion-kit/shadcn";
 
 import { handleError } from "../lib";
 
 export function transferPasskeys(passkeys?: Passkey[] | null) {
-  if (!passkeys) return;
+  if (!passkeys) return [];
   return passkeys.map((passkey, i) => ({
     id: passkey.id,
     name: passkey.name ?? `Unnamed Passkey ${i + 1}`,
@@ -83,10 +77,7 @@ export async function linkAccount(
   auth: AuthClient,
   strategy: ConnectionStrategy,
 ) {
-  const options = {
-    onSuccess: () => void toast.success(`Connected ${strategy} successfully`),
-    onError: (e: ErrorContext) => handleError(e, `Connect ${strategy} error`),
-  };
+  const options = { throw: true };
   switch (strategy) {
     case "github":
       await auth.linkSocial({ provider: "github" }, options);
@@ -119,9 +110,6 @@ export async function deleteConnection(
         connection.type === "google-drive" ? "google" : connection.type,
       accountId: connection.accountId,
     },
-    {
-      onSuccess: () => void toast.success("Connection unlink successfully"),
-      onError: (e: ErrorContext) => handleError(e, "Unlink connection error"),
-    },
+    { throw: true },
   );
 }

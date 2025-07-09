@@ -13,6 +13,23 @@ pnpm add @notion-kit/settings-panel
 
 ---
 
+### Sessions Table
+
+A table to display all active sessions in the workspace.
+
+<ComponentPreview
+  name="settings-panel/sessions-table"
+  preview={`<SessionsTable currentSessionId={currentSessionId} data={data} />`}
+/>
+
+#### API Reference
+
+| Prop               | Type                                                              | Description                                       |
+| ------------------ | ----------------------------------------------------------------- | ------------------------------------------------- |
+| `data`\*           | [`SessionRow[]`](/docs/blocks/settings-panel/objects#session-row) | All active sessions.                              |
+| `currentSessionId` | `string`                                                          | Unique identifier of the current session.         |
+| `onLogout`         | `(deviceName: string, token: string) => void`                     | Handler that is called when a session is revoked. |
+
 ### Connections Table
 
 A table to display all established connections.
@@ -24,9 +41,9 @@ A table to display all established connections.
 
 #### API Reference
 
-| Prop     | Type                                                             | Default | Description          |
-| -------- | ---------------------------------------------------------------- | ------- | -------------------- |
-| `data`\* | [`Connection[]`](/docs/blocks/settings-panel/objects#connection) | -       | Current connections. |
+| Prop     | Type                                                             | Description          |
+| -------- | ---------------------------------------------------------------- | -------------------- |
+| `data`\* | [`Connection[]`](/docs/blocks/settings-panel/objects#connection) | Current connections. |
 
 ### Members Table
 
@@ -39,13 +56,13 @@ A table to display all members (except guests) in the workspace.
 
 #### API Reference
 
-| Prop       | Type                                                            | Default | Description                                                    |
-| ---------- | --------------------------------------------------------------- | ------- | -------------------------------------------------------------- |
-| `scopes`\* | [`Set<Scope>`](/docs/blocks/settings-panel/scopes)              | -       | Current scopes.                                                |
-| `data`\*   | [`MemberRow[]`](/docs/blocks/settings-panel/objects#member-row) | -       | Current members and owners.                                    |
-| `search`   | `string`                                                        | -       | Current search string.                                         |
-| `onUpdate` | `(id: string, role: Role) => void`                              | -       | Handler that is called when the role of the member is changed. |
-| `onDelete` | `(id: string) => void`                                          | -       | Handler that is called when the member is removed.             |
+| Prop       | Type                                                            | Description                                                    |
+| ---------- | --------------------------------------------------------------- | -------------------------------------------------------------- |
+| `scopes`\* | [`Set<Scope>`](/docs/blocks/settings-panel/scopes)              | Current scopes.                                                |
+| `data`\*   | [`MemberRow[]`](/docs/blocks/settings-panel/objects#member-row) | Current members and owners.                                    |
+| `search`   | `string`                                                        | Current search string.                                         |
+| `onUpdate` | `(id: string, role: Role) => void`                              | Handler that is called when the role of the member is changed. |
+| `onDelete` | `(id: string) => void`                                          | Handler that is called when the member is removed.             |
 
 ### Guests Table
 
@@ -58,13 +75,13 @@ A table to display all guests in the workspace.
 
 #### API Reference
 
-| Prop       | Type                                                          | Default | Description                                                   |
-| ---------- | ------------------------------------------------------------- | ------- | ------------------------------------------------------------- |
-| `scopes`\* | [`Set<Scope>`](/docs/blocks/settings-panel/scopes)            | -       | Current scopes.                                               |
-| `data`\*   | [`GuestRow[]`](/docs/blocks/settings-panel/objects#guest-row) | -       | Current guests.                                               |
-| `search`   | `string`                                                      | -       | Current search string.                                        |
-| `onUpdate` | `(id: string, role: Role) => void`                            | -       | Handler that is called when the role of the guest is changed. |
-| `onDelete` | `(id: string, name: string) => void`                          | -       | Handler that is called when the guest is removed.             |
+| Prop       | Type                                                          | Description                                                   |
+| ---------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
+| `scopes`\* | [`Set<Scope>`](/docs/blocks/settings-panel/scopes)            | Current scopes.                                               |
+| `data`\*   | [`GuestRow[]`](/docs/blocks/settings-panel/objects#guest-row) | Current guests.                                               |
+| `search`   | `string`                                                      | Current search string.                                        |
+| `onUpdate` | `(id: string, role: Role) => void`                            | Handler that is called when the role of the guest is changed. |
+| `onDelete` | `(id: string, name: string) => void`                          | Handler that is called when the guest is removed.             |
 
 ### Plans Table
 
@@ -77,6 +94,6 @@ A table to display all possible plans and their corresponding features.
 
 #### API Reference
 
-| Prop         | Type      | Default | Description                            |
-| ------------ | --------- | ------- | -------------------------------------- |
-| `canUpgrade` | `boolean` | -       | Whether the current plan is updatable. |
+| Prop         | Type      | Description                            |
+| ------------ | --------- | -------------------------------------- |
+| `canUpgrade` | `boolean` | Whether the current plan is updatable. |

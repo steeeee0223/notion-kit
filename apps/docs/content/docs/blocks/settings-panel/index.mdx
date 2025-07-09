@@ -7,6 +7,12 @@ description: A composable, themeable and customizable settings panel.
 
 ## Supported Features
 
+- Account settings
+  - Update/delete account
+  - Change password
+  - Device sessions
+  - Passkeys management
+  - Link social accounts
 - Theme select
 - Localization support for `EN`, `DE`, `ES`
 - Members & scopes management
@@ -71,24 +77,36 @@ description: A composable, themeable and customizable settings panel.
 
 A provider that provides settings data and actions within a workspace.
 
-| Prop                  | Type                                                            | Description                                                     |
-| --------------------- | --------------------------------------------------------------- | --------------------------------------------------------------- |
-| `settings`\*          | `SettingsStore`                                                 | Settings data.                                                  |
-| `updateSettings`      | `(data: Partial<SettingsStore>) => Promise<void>`               | Handler that is called when settings data is updated.           |
-| `updateFile`          | `(file: File) => Promise<void>`                                 | Handler that is called when a file is uploaded.                 |
-| `account.delete`      | `(data: { accountId: string, email: string }) => Promise<void>` | Handler that is called when an account is deleted.              |
-| `workspace.delete`    | `(workspaceId: string) => Promise<void>`                        | Handler that is called when a workspace is deleted.             |
-| `workspace.resetLink` | `() => Promise<void>`                                           | Handler that is called when the workspace invite link is reset. |
-| `connections.load`    | `() => Promise<Connection[]>`                                   | Handler that is called when loading user's connection data.     |
-| `connections.add`     | `(strategy: ConnectionStrategy) => Promise<void>`               | Handler that is called when creating a new connection.          |
-| `connections.delete`  | `(connectionId: string) => Promise<void>`                       | Handler that is called when a connection is removed.            |
-| `people.add`          | `(emails: string[], role: Role) => Promise<void>`               | Handler that is called when adding new members to workspace.    |
-| `people.update`       | `(id: string, role: Role) => Promise<void>`                     | Handler that is called when a member's role is updated.         |
-| `people.delete`       | `(id: string) => Promise<void>`                                 | Handler that is called when a member is removed.                |
+| Prop                            | Type                                                                        | Description                                                                       |
+| ------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `settings`\*                    | `SettingsStore`                                                             | Settings data.                                                                    |
+| `updateSettings`                | `(data: Partial<SettingsStore>) => Promise<void>`                           | Handler that is called when settings data is updated.                             |
+| `updateFile`                    | `(file: File) => Promise<void>`                                             | Handler that is called when a file is uploaded.                                   |
+| `account.delete`                | `(data: { accountId: string, email: string }) => Promise<void>`             | Handler that is called when an account is deleted.                                |
+| `account.sendEmailVerification` | `(email: string) => Promise<void>`                                          | Handler that is called when an email verification is sent.                        |
+| `account.changePassword`        | `(data: { newPassword: string, currentPassword: string }) => Promise<void>` | Handler that is called when the password is changed.                              |
+| `account.setPassword`           | `(newPassword: string) => Promise<void>`                                    | Handler that is called when the password is set.                                  |
+| `sessions.getAll`               | `() => Promise<SessionRow[]>`                                               | Handler that is called to retrieve all device sessions of the account             |
+| `sessions.delete`               | `(token: string) => Promise<void>`                                          | Handler that is called when a specific session is revoked.                        |
+| `sessions.deleteAll`            | `() => Promise<void>`                                                       | Handler that is called when all (except current) sessions are revoked.            |
+| `passkeys.getAll`               | `() => Promise<Passkey[]>`                                                  | Handler that is called to retrieve user's passkeys.                               |
+| `passkeys.add`                  | `() => Promise<boolean>`                                                    | Handler that is called when a new passkey is added. Returns `true` if successful. |
+| `passkeys.update`               | `(data: { id: string; name: string }) => Promise<void>`                     | Handler that is called when a passkey is updated.                                 |
+| `passkeys.delete`               | `(id: string) => Promise<void>`                                             | Handler that is called when a passkey is deleted                                  |
+| `workspace.delete`              | `(workspaceId: string) => Promise<void>`                                    | Handler that is called when a workspace is deleted.                               |
+| `workspace.resetLink`           | `() => Promise<void>`                                                       | Handler that is called when the workspace invite link is reset.                   |
+| `connections.getAll`            | `() => Promise<Connection[]>`                                               | Handler that is called to retrieve user's connection data.                        |
+| `connections.add`               | `(strategy: ConnectionStrategy) => Promise<void>`                           | Handler that is called when creating a new connection.                            |
+| `connections.delete`            | `(connection: Connection) => Promise<void>`                                 | Handler that is called when a connection is removed.                              |
+| `people.add`                    | `(emails: string[], role: Role) => Promise<void>`                           | Handler that is called when adding new members to workspace.                      |
+| `people.update`                 | `(id: string, role: Role) => Promise<void>`                                 | Handler that is called when a member's role is updated.                           |
+| `people.delete`                 | `(id: string) => Promise<void>`                                             | Handler that is called when a member is removed.                                  |
 
 See schema definitions for:
 
 - [`SettingsStore`](/docs/blocks/settings-panel/objects#settings-store)
+- [`SessionRow`](/docs/blocks/settings-panel/objects#session-row)
+- [`Passkey`](/docs/blocks/settings-panel/objects#passkey)
 - [`Connection`](/docs/blocks/settings-panel/objects#connection)
 - [`Role`](/docs/objects/workspace#role)
 

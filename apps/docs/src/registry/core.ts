@@ -69,6 +69,12 @@ export const core = [
     filePath: "components/core/table-view.tsx",
     dependencies: ["@notion-kit/table-view"],
   },
+  {
+    name: "auth-ui",
+    title: "Auth UI",
+    filePath: "components/core/auth-ui.tsx",
+    dependencies: ["@notion-kit/auth-ui"],
+  },
 ].map<RegistryItem>(({ filePath, ...item }) => ({
   $schema: "https://ui.shadcn.com/schema/registry-item.json",
   type: "registry:component",

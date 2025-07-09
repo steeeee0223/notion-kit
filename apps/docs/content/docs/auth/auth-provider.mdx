@@ -1,0 +1,24 @@
+---
+title: Auth Provider
+description: An authentication context provider for your application.
+---
+
+## Installation
+
+<Installation packages="@notion-kit/auth-ui" registryName="blocks" />
+
+## Examples
+
+See [Notion Auth](https://notion-auth.vercel.app/) for a complete example.
+
+## API Reference
+
+<Callout title="Note">
+  You can use `https://notion-auth.vercel.app` as the `baseURL` for testing
+  purposes.
+</Callout>
+
+| Prop       | Type                    | Default | Description                                 |
+| ---------- | ----------------------- | ------- | ------------------------------------------- |
+| `baseURL`  | `string`                | -       | The base URL of the authentication service. |
+| `redirect` | `(url: string) => void` | -       | Your URL redirect function.                 |
