@@ -1,3 +1,5 @@
+import { toast } from "@notion-kit/shadcn";
+
 import type { GuestRow } from "./types";
 
 export function generateGuestsCsv(data: GuestRow[]) {
@@ -15,4 +17,9 @@ export function generateGuestsCsv(data: GuestRow[]) {
     );
   });
   return new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8;" });
+}
+
+export function logError(title: string, error: Error | { message: string }) {
+  toast.error(title, { description: error.message });
+  console.error(title, error);
 }

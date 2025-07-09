@@ -56,6 +56,10 @@ catalogs:
     "@dnd-kit/modifiers": ^9.0.0
     "@dnd-kit/sortable": ^10.0.0
     "@hookform/resolvers": ^5.0.1
+    "@tanstack/react-query": ^5.81.5
     "@tanstack/react-table": ^8.21.3
   uuid:
     uuid: ^11.1.0
+  env:
+    dotenv-cli: ^8.0.0
+    "@t3-oss/env-nextjs": ^0.13.6

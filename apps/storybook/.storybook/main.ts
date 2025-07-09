@@ -12,5 +12,19 @@ const config: StorybookConfig = {
     name: "@storybook/nextjs",
     options: {},
   },
+  /**
+   * @note These settings are required to prevent errors related to the 'child_process' module in Storybook
+   * since `ip-location-api` uses `child_process` internally.
+   */
+  webpackFinal: (config) => {
+    config.resolve = {
+      ...config.resolve,
+      fallback: {
+        ...config.resolve?.fallback,
+        child_process: false,
+      },
+    };
+    return config;
+  },
 };
 export default config;

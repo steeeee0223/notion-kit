@@ -1,6 +1,32 @@
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
 
+const typographyVariants = cva("", {
+  variants: {
+    type: {
+      /**
+       * @prop h2
+       * @note tx-heading-17-semi
+       */
+      h2: "text-lg/[22px] font-semibold",
+      /**
+       * @prop h3
+       * @note tx-uiregular-14-semi
+       */
+      h3: "text-sm/5 font-semibold",
+      /**
+       * @prop body
+       * @note tx-body-14-reg
+       */
+      body: "text-sm/5 font-normal",
+      label: "text-xs/4.5 font-medium",
+      desc: "text-xs/4",
+    },
+  },
+});
+export type Typography = VariantProps<typeof typographyVariants>["type"];
+export const typography = (type: Typography) => typographyVariants({ type });
+
 export const buttonVariants = cva(
   [
     "inline-flex animate-bg-in cursor-pointer items-center justify-center rounded-sm text-sm font-normal whitespace-nowrap select-none",
@@ -11,7 +37,7 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "border border-border-button",
+        primary: "border border-border-button fill-primary text-primary",
         icon: "size-9 rounded-md border border-border-button text-icon",
         "nav-icon": "size-7 text-icon",
         link: "text-primary underline-offset-4 hover:bg-transparent hover:underline",
@@ -73,7 +99,7 @@ export type MenuItemVariants = VariantProps<typeof menuItemVariants>;
 
 export const inputVariants = cva(
   [
-    "relative flex h-7 w-full cursor-text items-center rounded-md bg-input/60 px-1.5 py-[3px] text-sm text-primary transition-colors dark:bg-input/5",
+    "relative flex w-full cursor-text items-center rounded-md bg-input/60 text-primary transition-colors dark:bg-input/5",
     "[&_input]:block [&_input]:w-full [&_input]:bg-transparent [&_input]:p-0 [&_input]:text-inherit",
   ],
   {
@@ -89,8 +115,12 @@ export const inputVariants = cva(
          */
         flat: "bg-transparent dark:bg-transparent",
       },
+      size: {
+        default: "h-7 px-1.5 py-[3px] text-sm",
+        lg: "h-[34px] px-2.5 py-1 text-[15px]/[26px]",
+      },
     },
-    defaultVariants: { variant: "default" },
+    defaultVariants: { variant: "default", size: "default" },
   },
 );
 export type InputVariants = VariantProps<typeof inputVariants>;

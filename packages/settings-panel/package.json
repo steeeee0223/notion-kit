@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/settings-panel",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -41,6 +41,8 @@
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/spinner": "workspace:*",
     "@notion-kit/tags-input": "workspace:*",
+    "@notion-kit/utils": "workspace:*",
+    "@tanstack/react-query": "catalog:ui",
     "@tanstack/react-table": "catalog:ui",
     "file-saver": "^2.0.5",
     "lucide-react": "catalog:ui",

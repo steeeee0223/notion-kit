@@ -2,9 +2,9 @@ name: CI
 
 on:
   pull_request:
-    branches: ["*"]
+    branches: ["*", "feat/*"]
   push:
-    branches: ["main"]
+    branches: ["main", "feat/*"]
   merge_group:
 
 concurrency:
@@ -27,9 +27,9 @@ jobs:
       - name: Setup
         uses: ./tooling/github/setup
 
-      # - name: Copy env
-      #   shell: bash
-      #   run: cp .env.example .env
+      - name: Copy env
+        shell: bash
+        run: cp .env.example .env
 
       - name: Lint
         run: pnpm lint && pnpm lint:ws

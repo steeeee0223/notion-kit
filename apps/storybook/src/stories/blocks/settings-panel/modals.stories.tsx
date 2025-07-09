@@ -2,17 +2,27 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { ModalProvider, useModal } from "@notion-kit/modal";
 import {
+  Add2FAForm,
   AddMembers,
   DeleteAccount,
   DeleteGuest,
   DeleteMember,
   DeleteWorkspace,
   EmailSettings,
+  Enable2FAMethod,
+  PasskeysModal,
   PasswordForm,
+  SettingsProvider,
 } from "@notion-kit/settings-panel";
 import { Button, type ButtonProps } from "@notion-kit/shadcn";
 
-import { mockMemberships, mockUser, mockWorkspaces } from "./data";
+import {
+  mockMemberships,
+  mockPasskeys,
+  mockSettings,
+  mockUser,
+  mockWorkspaces,
+} from "./data";
 
 const ModalTrigger = ({
   text,
@@ -103,4 +113,42 @@ export const ChangePasswordModal: Story = {
     children: <PasswordForm hasPassword />,
     text: "Change Password",
   },
+};
+
+export const Add2FAModal: Story = {
+  args: {
+    children: (
+      <Add2FAForm
+        preferredName="john"
+        email="john@example.com"
+        avatarUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Go_gopher_favicon.svg/1200px-Go_gopher_favicon.svg.png"
+        onSubmit={() => true}
+      />
+    ),
+    text: "Add verification method",
+  },
+};
+
+export const Enable2FAMethodModal: Story = {
+  args: {
+    children: <Enable2FAMethod />,
+    text: "Enable 2FA Method",
+  },
+};
+
+export const PasskeysManagement: Story = {
+  args: {
+    children: <PasskeysModal />,
+    text: "Add Passkeys",
+  },
+  render: (props) => (
+    <SettingsProvider
+      settings={mockSettings}
+      passkeys={{ getAll: () => Promise.resolve(mockPasskeys) }}
+    >
+      <ModalProvider>
+        <ModalTrigger {...props} />
+      </ModalProvider>
+    </SettingsProvider>
+  ),
 };

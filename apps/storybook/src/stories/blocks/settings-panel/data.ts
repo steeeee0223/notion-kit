@@ -1,6 +1,8 @@
 import { Plan, Role, type User, type Workspace } from "@notion-kit/schemas";
 import type {
   Connection,
+  Passkey,
+  SessionRow,
   SettingsStore,
   WorkspaceMemberships,
 } from "@notion-kit/settings-panel";
@@ -127,6 +129,41 @@ const pageAccesses = [
   [],
 ];
 
+export const mockSessions: SessionRow[] = [
+  {
+    id: "session-1",
+    type: "laptop",
+    device: "MacBook Pro",
+    lastActive: Date.UTC(2023, 9, 1, 12, 0, 0),
+    location: "New York, USA",
+    token: "token-1",
+  },
+  {
+    id: "session-2",
+    device: "iPhone 14",
+    type: "mobile",
+    lastActive: Date.UTC(2023, 9, 2, 14, 30, 0),
+    location: "San Francisco, USA",
+    token: "token-2",
+  },
+  {
+    id: "session-3",
+    device: "iPad Pro",
+    type: "mobile",
+    lastActive: Date.UTC(2023, 9, 3, 9, 15, 0),
+    location: "Los Angeles, USA",
+    token: "token-3",
+  },
+  {
+    id: "session-4",
+    device: "Windows PC",
+    type: "unknown",
+    lastActive: Date.UTC(2023, 9, 4, 18, 45, 0),
+    location: "Chicago, USA",
+    token: "token-4",
+  },
+];
+
 export const mockSettings: SettingsStore = {
   workspace: {
     ...mockWorkspaces[0]!,
@@ -138,7 +175,12 @@ export const mockSettings: SettingsStore = {
     domain: "fake-domain",
     inviteLink: "#",
   },
-  account: { ...mockUsers[0]!, preferredName: "Jonathan", language: "en" },
+  account: {
+    ...mockUsers[0]!,
+    preferredName: "Jonathan",
+    language: "en",
+    currentSessionId: mockSessions[0]!.id,
+  },
   memberships: mockUsers.reduce(
     (acc, user, i) => ({
       ...acc,
@@ -200,4 +242,10 @@ export const mockConnections: Connection[] = [
     connection: { type: "jira", account: "steeeee@example.com" },
     scopes: ["Can preview links and sync databases"],
   },
+];
+
+export const mockPasskeys: Passkey[] = [
+  { id: "p-1", name: "My Laptop", createdAt: Date.UTC(2023, 10, 1) },
+  { id: "p-2", name: "My Phone", createdAt: Date.UTC(2023, 10, 2) },
+  { id: "p-3", name: "My Tablet", createdAt: Date.UTC(2023, 10, 3) },
 ];

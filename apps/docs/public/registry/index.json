@@ -203,6 +203,23 @@
           "target": "components/core/table-view.tsx"
         }
       ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "auth-ui",
+      "title": "Auth UI",
+      "type": "registry:component",
+      "dependencies": ["@notion-kit/auth-ui"],
+      "registryDependencies": [
+        "https://notion-ui.vercel.app/registry/notion-theme.json"
+      ],
+      "files": [
+        {
+          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/auth-ui.tsx",
+          "type": "registry:component",
+          "target": "components/core/auth-ui.tsx"
+        }
+      ]
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/docs",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "scripts": {
     "build": "next build",
@@ -15,6 +15,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@notion-kit/auth-ui": "workspace:*",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/cover": "workspace:*",
     "@notion-kit/icon-block": "workspace:*",

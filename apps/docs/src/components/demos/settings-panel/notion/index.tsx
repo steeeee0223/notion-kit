@@ -29,7 +29,7 @@ export default function Demo() {
         return Promise.resolve();
       }}
       connections={{
-        load: () => Promise.resolve(mockConnections),
+        getAll: () => Promise.resolve(mockConnections),
       }}
     >
       <SettingsPanel className="w-[calc(100%-20px)]">

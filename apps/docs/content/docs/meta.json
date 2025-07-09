@@ -9,6 +9,9 @@
     "...components",
     "---Blocks---",
     "...blocks",
+    "---Auth---",
+    "auth/get-started",
+    "...auth-ui",
     "---Objects---",
     "...objects"
   ]

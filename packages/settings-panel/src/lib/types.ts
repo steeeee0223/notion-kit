@@ -18,6 +18,12 @@ export enum Scope {
 
 export type PartialRole = Exclude<Role, Role.GUEST>;
 
+export interface Passkey {
+  id: string;
+  name: string;
+  createdAt: number; // ts in ms
+}
+
 export interface WorkspaceStore {
   id: string;
   name: string;
@@ -35,6 +41,7 @@ export interface AccountStore extends User {
   /** My Account */
   preferredName: string;
   hasPassword?: boolean;
+  currentSessionId?: string;
   /** Region */
   language?: LOCALE;
 }
@@ -49,9 +56,18 @@ export type ConnectionStrategy =
   | "jira";
 
 /** Table Data */
+export interface SessionRow {
+  id: string;
+  token: string;
+  device: string;
+  type: "laptop" | "mobile" | "unknown";
+  lastActive: number; // ts in ms
+  location: string;
+}
+
 export interface Connection {
   id: string;
-  connection: { type: string; account: string };
+  connection: { type: string; account: string; accountId?: string };
   scopes: string[];
 }
 

@@ -8,8 +8,10 @@ import {
   Button,
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogIcon,
   DialogTitle,
 } from "@notion-kit/shadcn";
 import { Spinner } from "@notion-kit/spinner";
@@ -33,25 +35,21 @@ export const DeleteGuest = ({ name, onDelete }: DeleteGuestProps) => {
     <Dialog open={isOpen} onOpenChange={closeModal}>
       <DialogContent
         forceMount
-        className="flex w-[300px] flex-col items-start justify-center gap-5 p-5"
+        className="w-[300px] p-5"
         onClick={(e) => e.stopPropagation()}
-        aria-describedby={undefined}
       >
         <DialogHeader>
-          <div className="flex items-center justify-center">
-            <Icon.UserX className="size-9 flex-shrink-0 fill-default/45 p-1" />
-          </div>
-          <DialogTitle className="text-lg/[22px]">
+          <DialogIcon>
+            <Icon.UserX className="size-9 fill-default/45" />
+          </DialogIcon>
+          <DialogTitle typography="h2">
             Remove {name} from the workspace?
           </DialogTitle>
         </DialogHeader>
-        <div className="relative flex w-full flex-col items-center gap-2 self-stretch">
-          <div className="text-md text-center text-wrap text-muted">
-            They will lose access to all shared pages. To add them as a guest in
-            the future, a request must be submitted, or an admin must invite
-            them.
-          </div>
-        </div>
+        <DialogDescription className="text-muted">
+          They will lose access to all shared pages. To add them as a guest in
+          the future, a request must be submitted, or an admin must invite them.
+        </DialogDescription>
         <DialogFooter>
           <Button
             onClick={onRemove}

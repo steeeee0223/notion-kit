@@ -1,0 +1,5 @@
+{
+  "extends": "@notion-kit/tsconfig/internal-package.json",
+  "include": ["src", "drizzle.config.ts"],
+  "exclude": ["node_modules"]
+}

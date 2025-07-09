@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useMemo, useRef } from "react";
+import React, { createContext, use, useMemo, useRef } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { I18nProvider } from "@notion-kit/i18n";
 import { ModalProvider } from "@notion-kit/modal";
@@ -14,17 +15,36 @@ import {
 import type {
   Connection,
   ConnectionStrategy,
+  Passkey,
+  SessionRow,
   SettingsStore,
   UpdateSettings,
 } from "../lib";
 import { getScopes, Scope } from "../lib";
 
-interface SettingsActions {
+export interface SettingsActions {
   updateSettings?: UpdateSettings;
   uploadFile?: (file: File) => Promise<void>;
   /** Account */
   account?: {
     delete?: (data: { accountId: string; email: string }) => Promise<void>;
+    sendEmailVerification?: (email: string) => Promise<void>;
+    changePassword?: (data: {
+      newPassword: string;
+      currentPassword: string;
+    }) => Promise<void>;
+    setPassword?: (newPassword: string) => Promise<void>;
+  };
+  sessions?: {
+    getAll?: () => Promise<SessionRow[]>;
+    delete?: (token: string) => Promise<void>;
+    deleteAll?: () => Promise<void>;
+  };
+  passkeys?: {
+    getAll?: () => Promise<Passkey[]>;
+    add?: () => Promise<boolean>;
+    update?: (data: { id: string; name: string }) => Promise<void>;
+    delete?: (id: string) => Promise<void>;
   };
   /** Workspace */
   workspace?: {
@@ -33,9 +53,9 @@ interface SettingsActions {
   };
   /** Connections */
   connections?: {
-    load?: () => Promise<Connection[]>;
+    getAll?: () => Promise<Connection[]>;
     add?: (strategy: ConnectionStrategy) => Promise<void>;
-    delete?: (connectionId: string) => Promise<void>;
+    delete?: (connection: Connection) => Promise<void>;
   };
   /** People */
   people?: {
@@ -55,11 +75,13 @@ interface SettingsContextInterface
 const SettingsContext = createContext<SettingsContextInterface | null>(null);
 
 export function useSettings() {
-  const object = useContext(SettingsContext);
+  const object = use(SettingsContext);
   if (!object)
     throw new Error("useSettings must be used within SettingsProvider");
   return object;
 }
+
+const queryClient = new QueryClient();
 
 export interface SettingsProviderProps
   extends React.PropsWithChildren,
@@ -88,9 +110,11 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   return (
     <I18nProvider language={settings.account.language} defaultNS="settings">
       <TooltipProvider delayDuration={500}>
-        <SettingsContext.Provider value={contextValue}>
-          <ModalProvider>{children}</ModalProvider>
-        </SettingsContext.Provider>
+        <SettingsContext value={contextValue}>
+          <QueryClientProvider client={queryClient}>
+            <ModalProvider>{children}</ModalProvider>
+          </QueryClientProvider>
+        </SettingsContext>
       </TooltipProvider>
     </I18nProvider>
   );

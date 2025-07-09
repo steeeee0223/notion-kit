@@ -5,9 +5,13 @@ import { Button, Dialog, DialogContent } from "@notion-kit/shadcn";
 
 interface EmailSettingsProps {
   email: string;
+  onSendVerification?: () => void;
 }
 
-export const EmailSettings = ({ email }: EmailSettingsProps) => {
+export const EmailSettings = ({
+  email,
+  onSendVerification,
+}: EmailSettingsProps) => {
   const { isOpen, closeModal } = useModal();
 
   return (
@@ -28,6 +32,7 @@ export const EmailSettings = ({ email }: EmailSettingsProps) => {
           variant="blue"
           size="sm"
           className="max-w-fit flex-shrink-0"
+          onClick={onSendVerification}
         >
           Send verification code
         </Button>

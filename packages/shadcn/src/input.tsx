@@ -7,9 +7,9 @@ import { cn } from "@notion-kit/cn";
 import type { InputVariants } from "./variants";
 import { inputVariants } from "./variants";
 
-export interface InputProps
-  extends React.ComponentProps<"input">,
-    InputVariants {
+export interface InputProps extends React.ComponentProps<"input"> {
+  variant?: InputVariants["variant"];
+  "data-size"?: InputVariants["size"];
   search?: boolean;
   clear?: boolean;
   endIcon?: React.ReactNode;
@@ -46,6 +46,7 @@ function Input({
   search,
   clear,
   endIcon,
+  "data-size": size,
   onCancel,
   ...props
 }: InputProps) {
@@ -55,7 +56,7 @@ function Input({
     typeof props.value === "string" &&
     props.value.length > 0;
   return (
-    <div className={cn(inputVariants({ variant, className }))}>
+    <div className={cn(inputVariants({ variant, size, className }))}>
       {search && (
         <div className="mr-1.5">
           <SearchIcon />

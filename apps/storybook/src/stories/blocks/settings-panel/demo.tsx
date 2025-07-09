@@ -14,7 +14,7 @@ import {
 
 import { delay } from "@/lib/utils";
 
-import { mockConnections, mockSettings } from "./data";
+import { mockConnections, mockSessions, mockSettings } from "./data";
 
 export const Demo = () => {
   const [tab, setTab] = useState<TabType>("preferences");
@@ -30,8 +30,11 @@ export const Demo = () => {
           memberships: { ...prev.memberships, ...data.memberships },
         }));
       }}
+      sessions={{
+        getAll: () => Promise.resolve(mockSessions),
+      }}
       connections={{
-        load: () => Promise.resolve(mockConnections),
+        getAll: () => Promise.resolve(mockConnections),
       }}
     >
       <SettingsPanel>

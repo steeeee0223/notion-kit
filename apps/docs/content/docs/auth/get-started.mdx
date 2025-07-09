@@ -1,0 +1,82 @@
+---
+title: Get Started
+description: Learn how to authenticate and authorize users with Notion UI.
+---
+
+We provide a complete example to set up authentication by integrating Notion UI with [`BETTER-AUTH`](https://www.better-auth.com/).
+See [Notion Auth](https://notion-auth.vercel.app/) for full example.
+
+## Basic Usage
+
+<Steps>
+<Step>
+### Setup Auth instance with BETTER-AUTH
+
+Follow the tutorial on [`BETTER-AUTH`](https://www.better-auth.com/docs/installation) to set up your auth instance.
+
+</Step>
+<Step>
+### Install Auth UI from Notion UI
+
+<Installation packages="@notion-kit/auth-ui" registryName="auth-ui" />
+
+</Step>
+<Step>
+### Add an `AuthProvider` at the root of your application
+
+```tsx
+// app/layout.tsx
+import { AuthProvider } from "@/components/core/auth-ui"; // [!code highlight]
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <AuthProvider // [!code highlight]
+      /**
+       * The base URL of the server.
+       * You can use `https://notion-auth.vercel.app` for testing.
+       */
+      baseURL={...} // [!code highlight]
+    >
+      <main>{children}</main>
+    </AuthProvider> // [!code highlight]
+  );
+}
+```
+
+</Step>
+<Step>
+### Now, let's add a `LoginForm` to your root page
+
+```tsx
+// app/page.tsx
+import { LoginForm } from "@/components/core/auth-ui"; // [!code highlight]
+
+export default function Page() {
+  return (
+    <div className="flex h-screen w-screen flex-col items-center justify-center gap-10 bg-main">
+      <h1 className="text-lg font-bold text-primary">Login Page</h1>
+      <LoginForm // [!code highlight]
+        mode="sign_in" // [!code highlight]
+        callbackURL="/protected" // [!code highlight]
+        className="w-80" // [!code highlight]
+      />
+      {/* [!code highlight] */}
+    </div>
+  );
+}
+```
+
+</Step>
+    <Step>
+### You've created your login page.
+
+You should see something like this:
+
+<ComponentPreview
+  name="login-form/auth"
+  hideCode
+  className="h-110 scale-50 p-0"
+/>
+
+</Step>
+</Steps>
