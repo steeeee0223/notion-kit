@@ -107,6 +107,10 @@ export const Index: Record<
     files: ["components/demos/input/search.tsx"],
     component: React.lazy(() => import("@/components/demos/input/search")),
   },
+  "login-form/auth": {
+    files: ["components/demos/login-form/auth.tsx"],
+    component: React.lazy(() => import("@/components/demos/login-form/auth")),
+  },
   "login-form/default": {
     files: ["components/demos/login-form/default.tsx"],
     component: React.lazy(

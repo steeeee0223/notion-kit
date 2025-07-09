@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { redirect } from "next/navigation";
 
-import { LoginForm, useSession } from "@notion-kit/auth-ui";
+import { LoginForm, useSession, type LoginMode } from "@notion-kit/auth-ui";
 
 export default function Page() {
-  const [mode, setMode] = useState<"sign_up" | "sign_in">("sign_in");
+  const [mode, setMode] = useState<LoginMode>("sign_in");
   const { data } = useSession();
 
   if (data) return redirect("/protected");
