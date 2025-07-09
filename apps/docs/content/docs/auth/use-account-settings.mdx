@@ -3,8 +3,6 @@ title: Use Account Settings
 description: A React hook for integrating authentication into Notion's Settings Panel.
 ---
 
-<ComponentPreview name="use-account-settings/settings-panel" hideCode />
-
 ## Installation
 
 <Installation packages="@notion-kit/auth-ui" registryName="blocks" />
@@ -15,7 +13,37 @@ description: A React hook for integrating authentication into Notion's Settings 
 
 ### Settings Panel
 
-<ComponentPreview name="use-account-settings/settings-panel" />
+```tsx
+function Settings() {
+  const [tab, setTab] = useState<TabType>("account");
+  const { accountStore, actions, updateSettings } = useAccountSettings(); // [!code highlight]
+  const settings = useMemo<SettingsStore>(
+    () => ({
+      account: accountStore,
+      workspace: mockWorkspace,
+      memberships: {},
+    }),
+    [accountStore],
+  );
+
+  return (
+    <SettingsProvider
+      settings={settings}
+      updateSettings={updateSettings} // [!code highlight]
+      {...actions} // [!code highlight]
+    >
+      <SettingsPanel>
+        <SettingsSidebar>
+          <SettingsSidebarPreset tab={tab} onTabChange={setTab} />
+        </SettingsSidebar>
+        <SettingsContent>
+          <SettingsBodyPreset tab={tab} onTabChange={setTab} />
+        </SettingsContent>
+      </SettingsPanel>
+    </SettingsProvider>
+  );
+}
+```
 
 ## API Reference
 
