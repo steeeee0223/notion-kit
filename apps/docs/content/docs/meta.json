@@ -10,7 +10,8 @@
     "---Blocks---",
     "...blocks",
     "---Auth---",
-    "...auth",
+    "auth/get-started",
+    "...auth-ui",
     "---Objects---",
     "...objects"
   ]
