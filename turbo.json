@@ -9,6 +9,19 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "dist/**", "storybook-static/**"]
     },
+    "auth-server#build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**"],
+      "env": [
+        "POSTGRES_URL",
+        "BETTER_AUTH_URL",
+        "BETTER_AUTH_SECRET",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
+        "GITHUB_CLIENT_ID",
+        "GITHUB_CLIENT_SECRET"
+      ]
+    },
     "dev": {
       "dependsOn": ["^dev"],
       "cache": false,

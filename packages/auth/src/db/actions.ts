@@ -4,7 +4,6 @@ import { betterFetch } from "@better-fetch/fetch";
 import type { Account, Session } from "better-auth";
 import type { GithubProfile } from "better-auth/social-providers";
 import { eq } from "drizzle-orm";
-import { lookup } from "ip-location-api";
 import { UAParser } from "ua-parser-js";
 
 import { db } from "./db";
@@ -18,12 +17,12 @@ export async function updateSessionData(session: Session) {
     deviceModel: "",
   };
   if (session.ipAddress) {
-    const res = await Promise.resolve(lookup(session.ipAddress));
+    const res = await getGeoLocation(session.ipAddress);
     if (res) {
       payload.location = joinStr([
         res.city,
-        res.region1_name,
-        res.country_name || res.country,
+        res.regionName,
+        res.country || res.countryCode,
       ]);
     }
   }
@@ -37,6 +36,39 @@ export async function updateSessionData(session: Session) {
     .update(schema.session)
     .set(payload)
     .where(eq(schema.session.id, session.id));
+}
+
+interface GeoLocation {
+  status: "success" | "fail";
+  message?: string;
+  country: string;
+  countryCode: string;
+  region: string;
+  regionName: string;
+  city: string;
+  timezone: string;
+  query: string;
+}
+
+/**
+ * @note
+ * This function is used to get the geo location of the user based on their IP address.
+ * It uses the FREE ip-api.com service.
+ * @see https://ip-api.com/docs/api:json
+ */
+async function getGeoLocation(ipAddress: string) {
+  const { data, error } = await betterFetch<GeoLocation>(
+    `http://ip-api.com/json/${ipAddress}?fields=57631`,
+  );
+  if (error) {
+    console.error(`Failed to fetch geolocation for ${ipAddress}`, error);
+    return;
+  }
+  if (data.status !== "success") {
+    console.error(`Failed to fetch geolocation for ${ipAddress}`, data.message);
+    return;
+  }
+  return data;
 }
 
 function joinStr(data: (string | undefined)[]) {
