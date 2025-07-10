@@ -2,8 +2,12 @@
 
 import { betterFetch } from "@better-fetch/fetch";
 import type { Account, Session } from "better-auth";
-import type { GithubProfile } from "better-auth/social-providers";
+import type {
+  GithubProfile,
+  GoogleProfile,
+} from "better-auth/social-providers";
 import { eq } from "drizzle-orm";
+import { decodeJwt } from "jose";
 import { UAParser } from "ua-parser-js";
 
 import { db } from "./db";
@@ -89,17 +93,22 @@ export async function updateAccountName(account: Account) {
  * @note
  * This function is used to get the account name for display purposes.
  */
-export async function getAccountName(account: {
-  providerId: string;
-  accessToken?: string | null;
-}) {
+export async function getAccountName(account: Account) {
   if (!account.accessToken) return;
 
   switch (account.providerId) {
+    /**
+     * @see https://github.com/better-auth/better-auth/blob/main/packages/better-auth/src/social-providers/google.ts#L147
+     */
+    case "google": {
+      if (!account.idToken) return;
+      const profile = decodeJwt<GoogleProfile>(account.idToken);
+      return profile.name || profile.email;
+    }
+    /**
+     * @see https://github.com/better-auth/better-auth/blob/main/packages/better-auth/src/social-providers/github.ts#L104
+     */
     case "github": {
-      /**
-       * @see https://github.com/better-auth/better-auth/blob/main/packages/better-auth/src/social-providers/github.ts#L104
-       */
       const { data: profile, error } = await betterFetch<GithubProfile>(
         "https://api.github.com/user",
         {
