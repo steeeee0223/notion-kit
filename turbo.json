@@ -9,17 +9,19 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "dist/**", "storybook-static/**"]
     },
-    "auth-server#build": {
+    "@notion-kit/auth-server#build": {
       "dependsOn": ["^build"],
       "outputs": [".next/**"],
       "env": [
         "POSTGRES_URL",
         "BETTER_AUTH_URL",
         "BETTER_AUTH_SECRET",
+        "TRUSTED_ORIGINS",
         "GOOGLE_CLIENT_ID",
         "GOOGLE_CLIENT_SECRET",
         "GITHUB_CLIENT_ID",
-        "GITHUB_CLIENT_SECRET"
+        "GITHUB_CLIENT_SECRET",
+        "NEXT_PUBLIC_AUTH_URL"
       ]
     },
     "dev": {
@@ -50,7 +52,6 @@
       "interactive": true
     }
   },
-  "globalEnv": ["PORT"],
   "globalPassThroughEnv": [
     "NODE_ENV",
     "CI",
