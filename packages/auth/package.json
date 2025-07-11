@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/auth",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -37,7 +37,7 @@
     "@vercel/postgres": "^0.10.0",
     "better-auth": "^1.2.8",
     "drizzle-orm": "^0.44.2",
-    "ip-location-api": "^3.0.3",
+    "jose": "^6.0.11",
     "ua-parser-js": "^2.0.4",
     "zod": "catalog:"
   },

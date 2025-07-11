@@ -18,6 +18,11 @@ export const ibm_plex_mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    env.VERCEL_ENV === "production"
+      ? "https://notion-authn.vercel.app"
+      : env.NEXT_PUBLIC_AUTH_URL,
+  ),
   title: "Notion Auth Server",
   icons: "/logo.svg",
 };
