@@ -2,9 +2,12 @@
 
 import { betterFetch } from "@better-fetch/fetch";
 import type { Account, Session } from "better-auth";
-import type { GithubProfile } from "better-auth/social-providers";
+import type {
+  GithubProfile,
+  GoogleProfile,
+} from "better-auth/social-providers";
 import { eq } from "drizzle-orm";
-import { lookup } from "ip-location-api";
+import { decodeJwt } from "jose";
 import { UAParser } from "ua-parser-js";
 
 import { db } from "./db";
@@ -18,12 +21,12 @@ export async function updateSessionData(session: Session) {
     deviceModel: "",
   };
   if (session.ipAddress) {
-    const res = await Promise.resolve(lookup(session.ipAddress));
+    const res = await getGeoLocation(session.ipAddress);
     if (res) {
       payload.location = joinStr([
         res.city,
-        res.region1_name,
-        res.country_name || res.country,
+        res.regionName,
+        res.country || res.countryCode,
       ]);
     }
   }
@@ -37,6 +40,39 @@ export async function updateSessionData(session: Session) {
     .update(schema.session)
     .set(payload)
     .where(eq(schema.session.id, session.id));
+}
+
+interface GeoLocation {
+  status: "success" | "fail";
+  message?: string;
+  country: string;
+  countryCode: string;
+  region: string;
+  regionName: string;
+  city: string;
+  timezone: string;
+  query: string;
+}
+
+/**
+ * @note
+ * This function is used to get the geo location of the user based on their IP address.
+ * It uses the FREE ip-api.com service.
+ * @see https://ip-api.com/docs/api:json
+ */
+async function getGeoLocation(ipAddress: string) {
+  const { data, error } = await betterFetch<GeoLocation>(
+    `http://ip-api.com/json/${ipAddress}?fields=57631`,
+  );
+  if (error) {
+    console.error(`Failed to fetch geolocation for ${ipAddress}`, error);
+    return;
+  }
+  if (data.status !== "success") {
+    console.error(`Failed to fetch geolocation for ${ipAddress}`, data.message);
+    return;
+  }
+  return data;
 }
 
 function joinStr(data: (string | undefined)[]) {
@@ -57,17 +93,22 @@ export async function updateAccountName(account: Account) {
  * @note
  * This function is used to get the account name for display purposes.
  */
-export async function getAccountName(account: {
-  providerId: string;
-  accessToken?: string | null;
-}) {
+export async function getAccountName(account: Account) {
   if (!account.accessToken) return;
 
   switch (account.providerId) {
+    /**
+     * @see https://github.com/better-auth/better-auth/blob/main/packages/better-auth/src/social-providers/google.ts#L147
+     */
+    case "google": {
+      if (!account.idToken) return;
+      const profile = decodeJwt<GoogleProfile>(account.idToken);
+      return profile.name || profile.email;
+    }
+    /**
+     * @see https://github.com/better-auth/better-auth/blob/main/packages/better-auth/src/social-providers/github.ts#L104
+     */
     case "github": {
-      /**
-       * @see https://github.com/better-auth/better-auth/blob/main/packages/better-auth/src/social-providers/github.ts#L104
-       */
       const { data: profile, error } = await betterFetch<GithubProfile>(
         "https://api.github.com/user",
         {

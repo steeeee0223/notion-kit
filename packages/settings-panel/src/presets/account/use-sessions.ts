@@ -23,6 +23,7 @@ export function useSessions() {
     initialData: [],
     queryKey,
     queryFn: actions?.getAll ?? createDefaultFn([]),
+    enabled: !!settings.account.currentSessionId,
   });
 
   const { mutate: revoke } = useMutation({
