@@ -185,3 +185,18 @@ export function isCountMethodSet(properties: TableViewCtx["properties"]) {
     (p) => p.countMethod !== undefined && p.countMethod !== CountMethod.NONE,
   );
 }
+
+export function toSortableValue(src?: CellType): string {
+  if (!src) return "";
+  switch (src.type) {
+    case "title":
+    case "text":
+      return src.value;
+    case "checkbox":
+      return src.checked ? "1" : "0";
+    case "select":
+      return src.select?.name ?? "";
+    default:
+      return "";
+  }
+}

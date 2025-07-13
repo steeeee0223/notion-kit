@@ -1,4 +1,4 @@
-import type { Updater } from "@tanstack/react-table";
+import type { SortingState, Updater } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { IconData } from "@notion-kit/icon-block";
@@ -18,6 +18,10 @@ import {
 import type { AddColumnPayload, UpdateColumnPayload } from "./types";
 
 export interface TableViewAtom {
+  /**
+   * @field sorting state of the table
+   */
+  sorting: SortingState;
   /**
    * @field property definitions
    * @param key property (column) id
@@ -65,6 +69,7 @@ export type TableViewAction =
       type: "update:cell";
       payload: { rowId: string; colId: string; data: CellDataType };
     }
+  | { type: "update:sorting"; updater: Updater<SortingState> }
   | { type: "reset" };
 
 export const tableViewReducer = (
@@ -79,13 +84,12 @@ export const tableViewReducer = (
         data[rowId]!.properties[colId] = getDefaultCell(type);
       });
       return {
+        ...v,
         properties: {
           ...v.properties,
           [colId]: { id: colId, type, name, icon: null },
         },
         propertiesOrder: [...v.propertiesOrder, colId],
-        freezedIndex: v.freezedIndex,
-        dataOrder: v.dataOrder,
         data,
       };
     }
@@ -150,10 +154,10 @@ export const tableViewReducer = (
         data[rowId]!.properties[prop.id] = getDefaultCell(src.type);
       });
       return {
+        ...v,
         properties: { ...v.properties, [prop.id]: prop },
         propertiesOrder: insertAt(v.propertiesOrder, prop.id, idx + 1),
         freezedIndex: v.freezedIndex + Number(idx <= v.freezedIndex),
-        dataOrder: v.dataOrder,
         data,
       };
     }
@@ -172,12 +176,12 @@ export const tableViewReducer = (
       });
 
       return {
+        ...v,
         properties,
         propertiesOrder: v.propertiesOrder.filter(
           (colId) => colId !== a.payload.id,
         ),
         freezedIndex: v.freezedIndex - Number(idx <= v.freezedIndex),
-        dataOrder: v.dataOrder,
         data,
       };
     }
@@ -224,7 +228,7 @@ export const tableViewReducer = (
         ? a.updater
         : a.updater(v.dataOrder);
       // TODO select row after reorder
-      return { ...v, dataOrder };
+      return { ...v, dataOrder, sorting: [] };
     }
     case "update:row:icon": {
       const data = { ...v.data };
@@ -244,8 +248,15 @@ export const tableViewReducer = (
       data[a.payload.rowId]!.properties[a.payload.colId] = a.payload.data;
       return { ...v, data };
     }
+    case "update:sorting": {
+      const sorting = Array.isArray(a.updater)
+        ? a.updater
+        : a.updater(v.sorting);
+      return { ...v, sorting };
+    }
     case "reset":
       return {
+        sorting: [],
         properties: {},
         propertiesOrder: [],
         freezedIndex: -1,

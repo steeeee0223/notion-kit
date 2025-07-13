@@ -58,8 +58,9 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
     });
   };
   // 3. Sorting
-  const sortColumn = () => {
-    console.log("Sorting is not implemented yet");
+  const sortColumn = (desc: boolean) => {
+    table.setSorting([{ id: propId, desc }]);
+    closeMenu();
   };
   // 6. Pin columns
   const canFreeze = canFreezeProperty(property.id);
@@ -106,23 +107,19 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
       <MenuGroup>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <MenuItem
-              onClick={sortColumn}
-              Icon={<Icon.ArrowUpDown />}
-              Body="Sort"
-            />
+            <MenuItem Icon={<Icon.ArrowUpDown />} Body="Sort" />
           </DropdownMenuTrigger>
           <DropdownMenuContent side="right" sideOffset={0} className="w-50">
             <DropdownMenuGroup>
               <DropdownMenuItem
                 Icon={<Icon.ArrowUp className="size-4" />}
                 Body="Sort ascending"
-                onSelect={sortColumn}
+                onSelect={() => sortColumn(false)}
               />
               <DropdownMenuItem
                 Icon={<Icon.ArrowDown className="size-4" />}
                 Body="Sort descending"
-                onSelect={sortColumn}
+                onSelect={() => sortColumn(true)}
               />
             </DropdownMenuGroup>
           </DropdownMenuContent>

@@ -12,6 +12,7 @@ import {
   ColumnOrderState,
   ColumnPinningState,
   getCoreRowModel,
+  getSortedRowModel,
   useReactTable,
   VisibilityState,
   type ColumnDef,
@@ -30,6 +31,7 @@ import {
   DEFAULT_FREEZED_INDEX,
   getMinWidth,
   getTableViewAtom,
+  tableViewSortingFn,
   toControlledState,
 } from "./utils";
 
@@ -73,6 +75,7 @@ export function useTableView(props: TableProps) {
         id,
         accessorKey: property.name,
         minSize: getMinWidth(property.type),
+        sortingFn: tableViewSortingFn,
         header: ({ header }) => (
           <TableHeaderCell
             id={id}
@@ -173,11 +176,14 @@ export function useTableView(props: TableProps) {
     },
     columnResizeMode: "onChange",
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     state: {
+      sorting: _state.sorting,
       columnOrder,
       columnVisibility,
       columnPinning,
     },
+    onSortingChange: (updater) => dispatch({ type: "update:sorting", updater }),
     getRowId: (row) => row.id,
   });
 

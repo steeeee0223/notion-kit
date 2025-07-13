@@ -48,6 +48,14 @@ function MenuProvider({ children }: React.PropsWithChildren) {
           sideOffset={0}
           collisionPadding={12}
           forceMount
+          /**
+           * tmporary fix
+           * @see https://github.com/radix-ui/primitives/issues/1241
+           */
+          onCloseAutoFocus={(e) => {
+            e.preventDefault();
+            document.body.style.pointerEvents = "";
+          }}
         >
           {popover}
         </PopoverContent>,
