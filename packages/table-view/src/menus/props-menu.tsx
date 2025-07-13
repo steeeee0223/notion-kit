@@ -147,12 +147,12 @@ export const PropsMenu = () => {
             variant="secondary"
             tabIndex={0}
             onClick={openDeletedPropsMenu}
-            Icon={<Icon.Trash className="size-4 fill-default/45" />}
+            Icon={<Icon.Trash className="size-4" />}
             Body="Deleted properties"
           >
-            <MenuItemAction className="flex items-center fill-default/35 text-muted">
+            <MenuItemAction className="flex items-center text-muted">
               <div className="flex truncate">{deletedCount}</div>
-              <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-default/35 dark:fill-default/30" />
+              <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-current" />
             </MenuItemAction>
           </MenuItem>
         )}
@@ -162,7 +162,7 @@ export const PropsMenu = () => {
         <MenuItem
           variant="secondary"
           onClick={openTypesMenu}
-          Icon={<Icon.Plus className="size-4 fill-default/45" />}
+          Icon={<Icon.Plus className="size-4" />}
           Body="New property"
         />
         <MenuItem
@@ -170,7 +170,7 @@ export const PropsMenu = () => {
           onClick={() =>
             window.open("https://www.notion.com/help/database-properties")
           }
-          Icon={<Icon.Help className="size-4 fill-default/45" />}
+          Icon={<Icon.Help className="size-4" />}
           Body="Learn about properties"
         />
       </MenuGroup>
@@ -226,7 +226,7 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
           {...attributes}
           {...listeners}
         >
-          <Icon.DragHandle className="size-3 fill-default/45" />
+          <Icon.DragHandle className="size-3" />
         </div>,
         <React.Fragment key="icon">
           {icon ? <IconBlock icon={icon} /> : <DefaultIcon type={type} />}
@@ -235,13 +235,13 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
       Body={name}
       className="*:data-[slot=menu-item-body]:leading-normal"
     >
-      <MenuItemAction className="flex items-center fill-default/35 text-muted">
+      <MenuItemAction className="flex items-center text-muted">
         <Button
           tabIndex={0}
           aria-label="Toggle property visibility"
           disabled={type === "title"}
           variant="hint"
-          className="size-6 p-0 disabled:opacity-40 [&_svg]:fill-icon"
+          className="size-6 p-0 disabled:opacity-40 [&_svg]:fill-current"
           onClick={(e) => {
             e.stopPropagation();
             onVisibilityChange(!hidden);
@@ -249,7 +249,7 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
         >
           {hidden ? <Icon.EyeHide /> : <Icon.Eye />}
         </Button>
-        <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-default/35 dark:fill-default/30" />
+        <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-current" />
       </MenuItemAction>
     </MenuItem>
   );
