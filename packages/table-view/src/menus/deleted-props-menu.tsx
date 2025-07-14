@@ -66,7 +66,7 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
       Icon={icon ? <IconBlock icon={icon} /> : <DefaultIcon type={type} />}
       Body={name}
     >
-      <MenuItemAction className="flex items-center fill-default/35 text-muted">
+      <MenuItemAction className="flex items-center text-muted">
         <Button
           tabIndex={0}
           aria-label="Restore"
@@ -77,7 +77,7 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
             onRestore();
           }}
         >
-          <Icon.Undo className="size-3.5 fill-default/45" />
+          <Icon.Undo className="size-3.5 fill-current" />
         </Button>
         <Button
           tabIndex={0}
@@ -89,7 +89,7 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
             onDelete();
           }}
         >
-          <Icon.Trash className="size-3.5 fill-default/45" />
+          <Icon.Trash className="size-3.5 fill-current" />
         </Button>
       </MenuItemAction>
     </MenuItem>
