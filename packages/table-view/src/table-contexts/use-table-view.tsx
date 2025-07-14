@@ -9,13 +9,13 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import {
-  ColumnOrderState,
-  ColumnPinningState,
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
-  VisibilityState,
   type ColumnDef,
+  type ColumnOrderState,
+  type ColumnPinningState,
+  type VisibilityState,
 } from "@tanstack/react-table";
 
 import { TableRowCell } from "../cells";
@@ -23,8 +23,8 @@ import { CountMethod, type RowDataType } from "../lib/types";
 import { arrayToEntity, getCount, isCountMethodSet } from "../lib/utils";
 import { TableFooterCell } from "../table-footer";
 import { TableHeaderCell } from "../table-header";
-import { TableViewAction, tableViewReducer } from "./table-reducer";
-import { TableViewCtx } from "./table-view-context";
+import { tableViewReducer, type TableViewAction } from "./table-reducer";
+import type { TableViewCtx } from "./table-view-context";
 import type { TableProps } from "./types";
 import {
   createInitialTable,

@@ -25,7 +25,7 @@ export function TableBody({ table, dataOrder }: TableBodyProps) {
         items={rows.map((row) => row.id)}
         strategy={verticalListSortingStrategy}
       >
-        {table.getRowModel().rows.map((row) => (
+        {rows.map((row) => (
           <TableRow key={row.id} row={row} />
         ))}
       </SortableContext>

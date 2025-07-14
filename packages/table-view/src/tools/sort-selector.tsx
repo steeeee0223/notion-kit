@@ -1,14 +1,16 @@
 "use client";
 
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 
 import { Icon } from "@notion-kit/icons";
-import { Button, useMenu } from "@notion-kit/shadcn";
+import { Button, MenuProvider, useMenu } from "@notion-kit/shadcn";
 
 import { SortMenu } from "../menus";
+import { useTableViewCtx } from "../table-contexts";
 
 export function SortSelector() {
   const { openMenu } = useMenu();
+  const { table, properties } = useTableViewCtx();
 
   const ref = useRef<HTMLButtonElement>(null);
   const openSortMenu = () => {
@@ -16,8 +18,37 @@ export function SortSelector() {
       top: 0,
       left: 0,
     };
-    openMenu(<SortMenu />, { x: left, y: top + 32 });
+    openMenu(
+      <MenuProvider>
+        <SortMenu />
+      </MenuProvider>,
+      { x: left, y: top + 32, className: "w-80" },
+    );
   };
+
+  const sorting = table.getState().sorting;
+  const badgeDisplay = useMemo(() => {
+    const count = sorting.length;
+    if (count === 1) {
+      const sort = sorting[0]!;
+      return (
+        <>
+          {sort.desc ? (
+            <Icon.ArrowDown className="size-3.5" />
+          ) : (
+            <Icon.ArrowUp className="size-3.5" />
+          )}
+          {properties[sort.id]?.name}
+        </>
+      );
+    }
+    return (
+      <>
+        <Icon.ArrowUpDown className="size-4" />
+        {count} sorts
+      </>
+    );
+  }, [properties, sorting]);
 
   return (
     <Button
@@ -27,8 +58,7 @@ export function SortSelector() {
       className="gap-1 rounded-full px-2 text-sm [&_svg]:fill-current"
       onClick={openSortMenu}
     >
-      <Icon.ArrowUp className="size-3.5" />
-      Name
+      {badgeDisplay}
       <Icon.ChevronDown className="size-3" />
     </Button>
   );
