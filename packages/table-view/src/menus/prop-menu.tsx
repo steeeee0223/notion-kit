@@ -3,7 +3,17 @@
 import React from "react";
 
 import { Icon } from "@notion-kit/icons";
-import { MenuGroup, MenuItem, Separator, useMenu } from "@notion-kit/shadcn";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  MenuGroup,
+  MenuItem,
+  Separator,
+  useMenu,
+} from "@notion-kit/shadcn";
 
 import { PropMeta } from "../common";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
@@ -21,12 +31,16 @@ interface PropMenuProps {
  * ---
  * 2. 🚧 Filter
  * 3. 🚧 Sorting
- * 4. ✅ Freeze up to column
- * 5. ✅ Hide in view
- * 6. ✅ Wrap column
+ * 4. 🚧 Group
+ * 5. 🚧 Calculate
+ * 6. ✅ Freeze up to column
+ * 7. ✅ Hide in view
+ * 8. ✅ Wrap column
  * ---
- * 7. ✅ Duplicate property
- * 8. ✅ Delete property
+ * 9. 🚧 Insert left
+ * 10. 🚧 Insert right
+ * 11. ✅ Duplicate property
+ * 12. ✅ Delete property
  */
 export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
   const { table, properties, isPropertyUnique, canFreezeProperty } =
@@ -43,27 +57,32 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
       y: rect?.bottom,
     });
   };
-  // 4. Pin columns
+  // 3. Sorting
+  const sortColumn = (desc: boolean) => {
+    table.setSorting([{ id: propId, desc }]);
+    closeMenu();
+  };
+  // 6. Pin columns
   const canFreeze = canFreezeProperty(property.id);
   const canUnfreeze = table.getColumn(property.id)?.getIsLastColumn("left");
   const pinColumns = () => {
     freezeColumns(canUnfreeze ? null : property.id);
     closeMenu();
   };
-  // 5. Hide in view
+  // 7. Hide in view
   const hideProp = () => {
     updateColumn(property.id, { hidden: true });
     closeMenu();
   };
-  // 6. Wrap in view
+  // 8. Wrap in view
   const wrapProp = () =>
     updateColumn(property.id, { wrapped: !property.wrapped });
-  // 7. Duplicate property
+  // 11. Duplicate property
   const duplicateProp = () => {
     duplicate(property.id, "col");
     closeMenu();
   };
-  // 8. Delete property
+  // 12. Delete property
   const deleteProp = () => {
     updateColumn(property.id, { isDeleted: true });
     closeMenu();
@@ -86,18 +105,37 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
       </MenuGroup>
       <Separator />
       <MenuGroup>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <MenuItem Icon={<Icon.ArrowUpDown />} Body="Sort" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="right" sideOffset={0} className="w-50">
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                Icon={<Icon.ArrowUp className="size-4" />}
+                Body="Sort ascending"
+                onSelect={() => sortColumn(false)}
+              />
+              <DropdownMenuItem
+                Icon={<Icon.ArrowDown className="size-4" />}
+                Body="Sort descending"
+                onSelect={() => sortColumn(true)}
+              />
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <MenuItem
           disabled={!canFreeze}
           onClick={pinColumns}
           {...(canUnfreeze
             ? { Icon: <Icon.PinStrikeThrough />, Body: "Unfreeze columns" }
             : { Icon: <Icon.Pin />, Body: "Freeze up to column" })}
-          className="[&_svg]:w-3 [&_svg]:fill-icon"
+          className="[&_svg]:w-3"
         />
         {property.type !== "title" && (
           <MenuItem
             onClick={hideProp}
-            Icon={<Icon.EyeHideInversePadded className="size-6 fill-icon" />}
+            Icon={<Icon.EyeHideInversePadded className="size-6" />}
             Body="Hide in view"
           />
         )}
@@ -115,16 +153,13 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
           <MenuGroup>
             <MenuItem
               onClick={duplicateProp}
-              Icon={<Icon.Duplicate className="h-4 fill-icon" />}
+              Icon={<Icon.Duplicate className="h-4" />}
               Body="Duplicate property"
             />
             <MenuItem
               variant="warning"
-              className="group/trash"
               onClick={deleteProp}
-              Icon={
-                <Icon.Trash className="size-4 fill-icon group-hover/trash:fill-red" />
-              }
+              Icon={<Icon.Trash className="size-4" />}
               Body="Delete property"
             />
           </MenuGroup>

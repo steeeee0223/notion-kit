@@ -1,7 +1,8 @@
+import type { SortingFn } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { DatabaseProperty, PropertyType, RowDataType } from "../lib/types";
-import { arrayToEntity } from "../lib/utils";
+import { arrayToEntity, toSortableValue } from "../lib/utils";
 import type { TableViewAtom } from "./table-reducer";
 import type { TableState } from "./types";
 
@@ -43,6 +44,7 @@ export function getTableViewAtom(state: TableState): TableViewAtom {
   const columnData = arrayToEntity(state.properties);
   const rowData = arrayToEntity(state.data);
   return {
+    sorting: [],
     properties: columnData.items,
     propertiesOrder: columnData.ids,
     data: rowData.items,
@@ -58,3 +60,13 @@ export function toControlledState(atom: TableViewAtom): TableState {
     freezedIndex: atom.freezedIndex,
   };
 }
+
+export const tableViewSortingFn: SortingFn<RowDataType> = (
+  rowA,
+  rowB,
+  colId,
+) => {
+  const dataA = toSortableValue(rowA.original.properties[colId]);
+  const dataB = toSortableValue(rowB.original.properties[colId]);
+  return dataA.localeCompare(dataB);
+};

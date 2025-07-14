@@ -46,7 +46,7 @@ export function TableViewProvider({
         if (!over || active.id === over.id) return;
         dispatch({
           type: `reorder:${type}`,
-          updater: (prev) => {
+          updater: (prev: string[]) => {
             const oldIndex = prev.indexOf(active.id as string);
             const newIndex = prev.indexOf(over.id as string);
             return arrayMove(prev, oldIndex, newIndex); //this is just a splice util

@@ -1,15 +1,17 @@
 "use client";
 
 import React from "react";
-import { closestCenter, DndContext } from "@dnd-kit/core";
+import { closestCenter, DndContext, type DragEndEvent } from "@dnd-kit/core";
 import {
   restrictToHorizontalAxis,
   restrictToParentElement,
   restrictToVerticalAxis,
 } from "@dnd-kit/modifiers";
 
+import { BaseModal } from "@notion-kit/common";
 import { Icon } from "@notion-kit/icons";
-import { Button, MenuProvider } from "@notion-kit/shadcn";
+import { ModalProvider, useModal } from "@notion-kit/modal";
+import { Button, MenuProvider, Separator } from "@notion-kit/shadcn";
 
 import { MemoizedTableBody, TableBody } from "./table-body";
 import {
@@ -20,24 +22,41 @@ import {
 } from "./table-contexts";
 import { TableFooter } from "./table-footer";
 import { TableHeaderRow } from "./table-header";
+import { SortSelector } from "./tools";
 
 export function TableView(props: TableProps) {
   return (
     <TableViewProvider {...props}>
-      <MenuProvider>
-        <TableViewContent />
-      </MenuProvider>
+      <ModalProvider>
+        <MenuProvider>
+          <TableViewContent />
+        </MenuProvider>
+      </ModalProvider>
     </TableViewProvider>
   );
 }
 
 export function TableViewContent() {
+  const { openModal } = useModal();
   const { table, columnSizeVars, columnSensors, rowSensors, dataOrder } =
     useTableViewCtx();
   const { reorder, addRow } = useTableActions();
 
   const leftPinnedHeaders = table.getLeftLeafHeaders();
   const headers = table.getCenterLeafHeaders();
+
+  const isSorted = table.getState().sorting.length > 0;
+  const handleRowDragEnd = (e: DragEndEvent) => {
+    if (!isSorted) return reorder(e, "row");
+    openModal(
+      <BaseModal
+        title="Would you like to remove sorting?"
+        primary="Remove"
+        secondary="Don't remove"
+        onTrigger={() => reorder(e, "row")}
+      />,
+    );
+  };
 
   return (
     <div
@@ -46,6 +65,26 @@ export function TableViewContent() {
     >
       <div className="absolute z-[9990] w-full" />
       <div className="pointer-events-none mt-0 h-0" />
+      {isSorted && (
+        <div className="flex pt-1">
+          <div className="relative grow-0 overflow-hidden">
+            <div className="z-10 flex h-10 items-center overflow-x-hidden overflow-y-auto py-2">
+              <SortSelector />
+              <Separator orientation="vertical" className="mx-3" />
+              {/* Filter button */}
+              <Button
+                tabIndex={0}
+                variant="hint"
+                size="xs"
+                className="mr-3 gap-1 rounded-full px-2 text-sm"
+              >
+                <Icon.Plus className="size-3.5 fill-current" />
+                Filter
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
       <div
         data-block-id="15f35e0f-492c-8003-9976-f8ae747a6aeb"
         className="relative"
@@ -113,7 +152,7 @@ export function TableViewContent() {
           <DndContext
             collisionDetection={closestCenter}
             modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-            onDragEnd={(e) => reorder(e, "row")}
+            onDragEnd={handleRowDragEnd}
             sensors={rowSensors}
           >
             <div className="relative">
