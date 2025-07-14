@@ -4,19 +4,19 @@ import React from "react";
 
 import { Icon } from "@notion-kit/icons";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuTrigger,
-  MenuGroup,
-  MenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   Separator,
   useMenu,
 } from "@notion-kit/shadcn";
 
 import { PropMeta } from "../common";
+import { CountMethod } from "../lib/types";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
+import { CalcMenu } from "./calc-menu";
 import { EditPropMenu } from "./edit-prop-menu";
 
 interface PropMenuProps {
@@ -30,9 +30,9 @@ interface PropMenuProps {
  * 1. ✅ Edit property: opens `EditPropMenu`
  * ---
  * 2. 🚧 Filter
- * 3. 🚧 Sorting
+ * 3. ✅ Sorting
  * 4. 🚧 Group
- * 5. 🚧 Calculate
+ * 5. ✅ Calculate
  * 6. ✅ Freeze up to column
  * 7. ✅ Hide in view
  * 8. ✅ Wrap column
@@ -42,7 +42,7 @@ interface PropMenuProps {
  * 11. ✅ Duplicate property
  * 12. ✅ Delete property
  */
-export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
+export function PropMenu({ propId, rect }: PropMenuProps) {
   const { table, properties, isPropertyUnique, canFreezeProperty } =
     useTableViewCtx();
   const { updateColumn, duplicate, freezeColumns } = useTableActions();
@@ -96,20 +96,18 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
         onUpdate={(data) => updateColumn(property.id, data)}
         onKeyDownUpdate={closeMenu}
       />
-      <MenuGroup>
-        <MenuItem
-          onClick={openEditPropMenu}
+      <DropdownMenuGroup>
+        <DropdownMenuItem
+          onSelect={openEditPropMenu}
           Icon={<Icon.Sliders className="fill-icon" />}
           Body="Edit property"
         />
-      </MenuGroup>
+      </DropdownMenuGroup>
       <Separator />
-      <MenuGroup>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <MenuItem Icon={<Icon.ArrowUpDown />} Body="Sort" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="right" sideOffset={0} className="w-50">
+      <DropdownMenuGroup>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger Icon={<Icon.ArrowUpDown />} Body="Sort" />
+          <DropdownMenuSubContent sideOffset={-4} className="w-50">
             <DropdownMenuGroup>
               <DropdownMenuItem
                 Icon={<Icon.ArrowUp className="size-4" />}
@@ -122,49 +120,64 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
                 onSelect={() => sortColumn(true)}
               />
             </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <MenuItem
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger Icon={<Icon.Sum />} Body="Calculate" />
+          <DropdownMenuSubContent
+            sideOffset={-4}
+            className="w-50"
+            collisionPadding={12}
+          >
+            <CalcMenu
+              id={propId}
+              type={property.type}
+              countMethod={property.countMethod ?? CountMethod.NONE}
+              isCountCapped={property.isCountCapped}
+            />
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+        <DropdownMenuItem
           disabled={!canFreeze}
-          onClick={pinColumns}
+          onSelect={pinColumns}
           {...(canUnfreeze
             ? { Icon: <Icon.PinStrikeThrough />, Body: "Unfreeze columns" }
             : { Icon: <Icon.Pin />, Body: "Freeze up to column" })}
           className="[&_svg]:w-3"
         />
         {property.type !== "title" && (
-          <MenuItem
-            onClick={hideProp}
+          <DropdownMenuItem
+            onSelect={hideProp}
             Icon={<Icon.EyeHideInversePadded className="size-6" />}
             Body="Hide in view"
           />
         )}
-        <MenuItem
-          onClick={wrapProp}
+        <DropdownMenuItem
+          onSelect={wrapProp}
           {...(property.wrapped
             ? { Icon: <Icon.ArrowLineRight />, Body: "Unwrap text" }
             : { Icon: <Icon.ArrowUTurnDownLeft />, Body: "Wrap text" })}
           className="[&_svg]:fill-icon"
         />
-      </MenuGroup>
+      </DropdownMenuGroup>
       {property.type !== "title" && (
         <>
           <Separator />
-          <MenuGroup>
-            <MenuItem
-              onClick={duplicateProp}
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              onSelect={duplicateProp}
               Icon={<Icon.Duplicate className="h-4" />}
               Body="Duplicate property"
             />
-            <MenuItem
+            <DropdownMenuItem
               variant="warning"
-              onClick={deleteProp}
+              onSelect={deleteProp}
               Icon={<Icon.Trash className="size-4" />}
               Body="Delete property"
             />
-          </MenuGroup>
+          </DropdownMenuGroup>
         </>
       )}
     </>
   );
-};
+}

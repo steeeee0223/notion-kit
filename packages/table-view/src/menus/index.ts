@@ -1,3 +1,4 @@
+export * from "./calc-menu";
 export * from "./edit-prop-menu";
 export * from "./prop-menu";
 export * from "./props-menu";
