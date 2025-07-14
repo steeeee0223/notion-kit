@@ -82,7 +82,7 @@ export const tableViewReducer = (
 ): TableViewAtom => {
   switch (a.type) {
     case "add:col": {
-      const { id: colId, type, name } = a.payload;
+      const { id: colId, type, name, at } = a.payload;
       const data = { ...v.data };
       v.dataOrder.forEach((rowId) => {
         data[rowId]!.properties[colId] = getDefaultCell(type);
@@ -93,7 +93,13 @@ export const tableViewReducer = (
           ...v.properties,
           [colId]: { id: colId, type, name, icon: null },
         },
-        propertiesOrder: [...v.propertiesOrder, colId],
+        get propertiesOrder() {
+          if (at === undefined) return [...v.propertiesOrder, colId];
+          const idx = v.propertiesOrder.indexOf(at.id);
+          return at.side === "right"
+            ? insertAt(v.propertiesOrder, colId, idx + 1)
+            : insertAt(v.propertiesOrder, colId, idx);
+        },
         data,
       };
     }

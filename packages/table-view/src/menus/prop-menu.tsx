@@ -20,6 +20,7 @@ import { CountMethod } from "../lib/types";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { CalcMenu } from "./calc-menu";
 import { EditPropMenu } from "./edit-prop-menu";
+import { TypesMenu } from "./types-menu";
 
 interface PropMenuProps {
   propId: string;
@@ -39,10 +40,9 @@ interface PropMenuProps {
  * 7. ✅ Hide in view
  * 8. ✅ Wrap column
  * ---
- * 9. 🚧 Insert left
- * 10. 🚧 Insert right
- * 11. ✅ Duplicate property
- * 12. ✅ Delete property
+ * 9. ✅ Insert left/right
+ * 10. ✅ Duplicate property
+ * 11. ✅ Delete property
  */
 export function PropMenu({ propId, rect }: PropMenuProps) {
   const {
@@ -54,7 +54,7 @@ export function PropMenu({ propId, rect }: PropMenuProps) {
   } = useTableViewCtx();
   const { toggleIconVisibility, updateColumn, duplicate, freezeColumns } =
     useTableActions();
-  const { openMenu, closeMenu } = useMenu();
+  const { openMenu } = useMenu();
 
   const property = properties[propId]!;
 
@@ -66,35 +66,28 @@ export function PropMenu({ propId, rect }: PropMenuProps) {
     });
   };
   // 3. Sorting
-  const sortColumn = (desc: boolean) => {
+  const sortColumn = (desc: boolean) =>
     table.setSorting([{ id: propId, desc }]);
-    closeMenu();
-  };
   // 6. Pin columns
   const canFreeze = canFreezeProperty(property.id);
   const canUnfreeze = table.getColumn(property.id)?.getIsLastColumn("left");
-  const pinColumns = () => {
-    freezeColumns(canUnfreeze ? null : property.id);
-    closeMenu();
-  };
+  const pinColumns = () => freezeColumns(canUnfreeze ? null : property.id);
   // 7. Hide in view
-  const hideProp = () => {
-    updateColumn(property.id, { hidden: true });
-    closeMenu();
-  };
+  const hideProp = () => updateColumn(property.id, { hidden: true });
   // 8. Wrap in view
   const wrapProp = () =>
     updateColumn(property.id, { wrapped: !property.wrapped });
-  // 11. Duplicate property
-  const duplicateProp = () => {
-    duplicate(property.id, "col");
-    closeMenu();
+  // 9. Insert left/right
+  const insertColumn = (side: "left" | "right") => {
+    openMenu(<TypesMenu propId={null} at={{ id: propId, side }} />, {
+      x: -12,
+      y: -12,
+    });
   };
-  // 12. Delete property
-  const deleteProp = () => {
-    updateColumn(property.id, { isDeleted: true });
-    closeMenu();
-  };
+  // 10. Duplicate property
+  const duplicateProp = () => duplicate(property.id, "col");
+  // 11. Delete property
+  const deleteProp = () => updateColumn(property.id, { isDeleted: true });
 
   return (
     <>
@@ -102,12 +95,14 @@ export function PropMenu({ propId, rect }: PropMenuProps) {
         property={property}
         validateName={isPropertyUnique}
         onUpdate={(data) => updateColumn(property.id, data)}
-        onKeyDownUpdate={closeMenu}
       />
       <DropdownMenuGroup>
         {property.type === "title" && (
           <DropdownMenuItem
-            onSelect={toggleIconVisibility}
+            onSelect={(e) => {
+              e.stopPropagation();
+              toggleIconVisibility();
+            }}
             Icon={<Icon.EmojiFace />}
             Body="Show page icon"
           >
@@ -179,10 +174,20 @@ export function PropMenu({ propId, rect }: PropMenuProps) {
           className="[&_svg]:fill-icon"
         />
       </DropdownMenuGroup>
-      {property.type !== "title" && (
-        <>
-          <Separator />
-          <DropdownMenuGroup>
+      <Separator />
+      <DropdownMenuGroup>
+        <DropdownMenuItem
+          onSelect={() => insertColumn("left")}
+          Icon={<Icon.ArrowRectangle side="left" />}
+          Body="Insert left"
+        />
+        <DropdownMenuItem
+          onSelect={() => insertColumn("right")}
+          Icon={<Icon.ArrowRectangle side="right" />}
+          Body="Insert right"
+        />
+        {property.type !== "title" && (
+          <>
             <DropdownMenuItem
               onSelect={duplicateProp}
               Icon={<Icon.Duplicate className="h-4" />}
@@ -194,9 +199,9 @@ export function PropMenu({ propId, rect }: PropMenuProps) {
               Icon={<Icon.Trash className="size-4" />}
               Body="Delete property"
             />
-          </DropdownMenuGroup>
-        </>
-      )}
+          </>
+        )}
+      </DropdownMenuGroup>
     </>
   );
 }
