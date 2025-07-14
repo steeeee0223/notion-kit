@@ -153,7 +153,7 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
             onValueChange={(id) => updateRule({ id, desc })}
           >
             <SelectTrigger className="my-0 w-fit max-w-[180px] border border-border">
-              <SelectValue>
+              <SelectValue aria-label={current.name}>
                 <div className="flex items-center gap-2">
                   {current.icon ? (
                     <IconBlock icon={current.icon} />
@@ -186,7 +186,7 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
             }
           >
             <SelectTrigger className="my-0 w-fit max-w-[180px] border border-border">
-              <SelectValue />
+              <SelectValue aria-label={desc ? "desc" : "asc"} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="asc">Ascending</SelectItem>
