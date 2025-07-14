@@ -9,7 +9,9 @@ import {
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
+  MenuItemAction,
   Separator,
+  Switch,
   useMenu,
 } from "@notion-kit/shadcn";
 
@@ -43,9 +45,15 @@ interface PropMenuProps {
  * 12. ✅ Delete property
  */
 export function PropMenu({ propId, rect }: PropMenuProps) {
-  const { table, properties, isPropertyUnique, canFreezeProperty } =
-    useTableViewCtx();
-  const { updateColumn, duplicate, freezeColumns } = useTableActions();
+  const {
+    table,
+    properties,
+    showPageIcon,
+    isPropertyUnique,
+    canFreezeProperty,
+  } = useTableViewCtx();
+  const { toggleIconVisibility, updateColumn, duplicate, freezeColumns } =
+    useTableActions();
   const { openMenu, closeMenu } = useMenu();
 
   const property = properties[propId]!;
@@ -97,6 +105,17 @@ export function PropMenu({ propId, rect }: PropMenuProps) {
         onKeyDownUpdate={closeMenu}
       />
       <DropdownMenuGroup>
+        {property.type === "title" && (
+          <DropdownMenuItem
+            onSelect={toggleIconVisibility}
+            Icon={<Icon.EmojiFace />}
+            Body="Show page icon"
+          >
+            <MenuItemAction className="flex items-center">
+              <Switch size="sm" checked={showPageIcon} />
+            </MenuItemAction>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem
           onSelect={openEditPropMenu}
           Icon={<Icon.Sliders className="fill-icon" />}

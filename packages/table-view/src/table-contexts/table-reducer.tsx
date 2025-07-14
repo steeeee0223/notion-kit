@@ -19,9 +19,12 @@ import type { AddColumnPayload, UpdateColumnPayload } from "./types";
 
 export interface TableViewAtom {
   /**
-   * @field sorting state of the table
+   * @field global table state
    */
-  sorting: SortingState;
+  table: {
+    showPageIcon: boolean;
+    sorting: SortingState;
+  };
   /**
    * @field property definitions
    * @param key property (column) id
@@ -70,6 +73,7 @@ export type TableViewAction =
       payload: { rowId: string; colId: string; data: CellDataType };
     }
   | { type: "update:sorting"; updater: Updater<SortingState> }
+  | { type: "toggle:icon:visibility"; updater: Updater<boolean> }
   | { type: "reset" };
 
 export const tableViewReducer = (
@@ -194,6 +198,13 @@ export const tableViewReducer = (
           : a.payload.updater;
       return { ...v, properties: { ...v.properties, [a.payload.id]: prop } };
     }
+    case "toggle:icon:visibility": {
+      const showPageIcon =
+        typeof a.updater === "function"
+          ? a.updater(v.table.showPageIcon)
+          : a.updater;
+      return { ...v, table: { ...v.table, showPageIcon } };
+    }
     case "add:row": {
       const row: RowDataType = { id: v4(), properties: {} };
       v.propertiesOrder.forEach((colId) => {
@@ -228,7 +239,7 @@ export const tableViewReducer = (
         ? a.updater
         : a.updater(v.dataOrder);
       // TODO select row after reorder
-      return { ...v, dataOrder, sorting: [] };
+      return { ...v, dataOrder, table: { ...v.table, sorting: [] } };
     }
     case "update:row:icon": {
       const data = { ...v.data };
@@ -251,12 +262,15 @@ export const tableViewReducer = (
     case "update:sorting": {
       const sorting = Array.isArray(a.updater)
         ? a.updater
-        : a.updater(v.sorting);
-      return { ...v, sorting };
+        : a.updater(v.table.sorting);
+      return { ...v, table: { ...v.table, sorting } };
     }
     case "reset":
       return {
-        sorting: [],
+        table: {
+          showPageIcon: true,
+          sorting: [],
+        },
         properties: {},
         propertiesOrder: [],
         freezedIndex: -1,

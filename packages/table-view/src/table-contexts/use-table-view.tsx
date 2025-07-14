@@ -113,7 +113,11 @@ export function useTableView(props: TableProps) {
               colId={column.getIndex()}
               // width={property.width}
               width={`calc(var(--col-${id}-size) * 1px)`}
-              icon={cell.type === "title" ? row.original.icon : undefined}
+              icon={
+                _state.table.showPageIcon && cell.type === "title"
+                  ? row.original.icon
+                  : undefined
+              }
               wrapped={property.wrapped}
               onChange={(data) =>
                 dispatch({
@@ -138,7 +142,7 @@ export function useTableView(props: TableProps) {
           />
         ),
       })),
-    [dispatch, properties],
+    [_state.table.showPageIcon, dispatch, properties],
   );
 
   const columnVisibility = useMemo<VisibilityState>(
@@ -178,7 +182,7 @@ export function useTableView(props: TableProps) {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     state: {
-      sorting: _state.sorting,
+      sorting: _state.table.sorting,
       columnOrder,
       columnVisibility,
       columnPinning,
@@ -243,6 +247,7 @@ export function useTableView(props: TableProps) {
       rowSensors,
       dataOrder,
       properties: _state.properties,
+      showPageIcon: _state.table.showPageIcon,
       isPropertyUnique: (name) => properties.every((p) => p.name !== name),
       canFreezeProperty: (id) => table.getState().columnOrder.at(-1) !== id,
       isSomeCountMethodSet: isCountMethodSet(_state.properties),
@@ -260,6 +265,7 @@ export function useTableView(props: TableProps) {
     };
   }, [
     _state.properties,
+    _state.table.showPageIcon,
     columnSensors,
     columnSizeVars,
     dataOrder,

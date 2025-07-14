@@ -19,6 +19,7 @@ export interface TableViewCtx {
   table: Table<RowDataType>;
   properties: Record<string, DatabaseProperty>;
   dataOrder: string[];
+  showPageIcon: boolean;
   columnSizeVars: Record<string, number>;
   isPropertyUnique: (name: string) => boolean;
   canFreezeProperty: (id: string) => boolean;
@@ -50,6 +51,7 @@ export interface TableActions {
   updateColumnType: (id: string, type: PropertyType) => void;
   freezeColumns: (id: string | null) => void;
   toggleCountCap: (id: string) => void;
+  toggleIconVisibility: () => void;
   addRow: (src?: { id: string; at: "prev" | "next" }) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
   reorder: (e: DragEndEvent, type: ActionType) => void;
