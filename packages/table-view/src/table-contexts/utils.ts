@@ -44,7 +44,7 @@ export function getTableViewAtom(state: TableState): TableViewAtom {
   const columnData = arrayToEntity(state.properties);
   const rowData = arrayToEntity(state.data);
   return {
-    table: { showPageIcon: true, sorting: [] },
+    table: { showPageIcon: true, sorting: [], grouping: [] },
     properties: columnData.items,
     propertiesOrder: columnData.ids,
     data: rowData.items,

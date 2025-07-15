@@ -10,7 +10,6 @@ import {
 } from "@dnd-kit/core";
 import {
   getCoreRowModel,
-  getGroupedRowModel,
   getSortedRowModel,
   useReactTable,
   type ColumnDef,
@@ -182,7 +181,6 @@ export function useTableView(props: TableProps) {
     columnResizeMode: "onChange",
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getGroupedRowModel: getGroupedRowModel(),
     state: {
       sorting: _state.table.sorting,
       grouping: _state.table.grouping,
