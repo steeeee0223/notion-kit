@@ -1,8 +1,8 @@
-import type { SortingFn } from "@tanstack/react-table";
+import type { AggregationFn, SortingFn } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { DatabaseProperty, PropertyType, RowDataType } from "../lib/types";
-import { arrayToEntity, toSortableValue } from "../lib/utils";
+import { arrayToEntity, toReadableValue } from "../lib/utils";
 import type { TableViewAtom } from "./table-reducer";
 import type { TableState } from "./types";
 
@@ -66,7 +66,18 @@ export const tableViewSortingFn: SortingFn<RowDataType> = (
   rowB,
   colId,
 ) => {
-  const dataA = toSortableValue(rowA.original.properties[colId]);
-  const dataB = toSortableValue(rowB.original.properties[colId]);
+  const dataA = toReadableValue(rowA.original.properties[colId]);
+  const dataB = toReadableValue(rowB.original.properties[colId]);
   return dataA.localeCompare(dataB);
+};
+
+export const tableViewAggregationFn: AggregationFn<RowDataType> = (
+  colId,
+  leafRows,
+) => {
+  const set = new Set(
+    leafRows.map((row) => toReadableValue(row.original.properties[colId])),
+  );
+  console.log("aggr.set", set, colId);
+  return set;
 };

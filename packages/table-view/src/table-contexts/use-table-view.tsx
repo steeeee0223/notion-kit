@@ -10,6 +10,7 @@ import {
 } from "@dnd-kit/core";
 import {
   getCoreRowModel,
+  getGroupedRowModel,
   getSortedRowModel,
   useReactTable,
   type ColumnDef,
@@ -31,6 +32,7 @@ import {
   DEFAULT_FREEZED_INDEX,
   getMinWidth,
   getTableViewAtom,
+  tableViewAggregationFn,
   tableViewSortingFn,
   toControlledState,
 } from "./utils";
@@ -76,6 +78,7 @@ export function useTableView(props: TableProps) {
         accessorKey: property.name,
         minSize: getMinWidth(property.type),
         sortingFn: tableViewSortingFn,
+        aggregationFn: tableViewAggregationFn,
         header: ({ header }) => (
           <TableHeaderCell
             id={id}
@@ -179,8 +182,10 @@ export function useTableView(props: TableProps) {
       maxSize: Number.MAX_SAFE_INTEGER,
     },
     columnResizeMode: "onChange",
+    groupedColumnMode: false, // add this to persist columns order
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getGroupedRowModel: getGroupedRowModel(),
     state: {
       sorting: _state.table.sorting,
       grouping: _state.table.grouping,

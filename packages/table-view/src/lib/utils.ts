@@ -186,7 +186,7 @@ export function isCountMethodSet(properties: TableViewCtx["properties"]) {
   );
 }
 
-export function toSortableValue(src?: CellType): string {
+export function toReadableValue(src?: CellType): string {
   if (!src) return "";
   switch (src.type) {
     case "title":
