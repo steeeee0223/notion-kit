@@ -68,7 +68,7 @@ function DropdownMenuSubTrigger({
     >
       <MenuItem className={className} {...props}>
         <MenuItemAction>
-          <ChevronRightIcon className="size-4" />
+          <ChevronRightIcon className="size-4 text-muted" />
         </MenuItemAction>
       </MenuItem>
     </DropdownMenuPrimitive.SubTrigger>

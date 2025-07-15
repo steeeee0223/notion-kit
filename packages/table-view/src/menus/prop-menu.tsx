@@ -4,20 +4,23 @@ import React from "react";
 
 import { Icon } from "@notion-kit/icons";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuTrigger,
-  MenuGroup,
-  MenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  MenuItemAction,
   Separator,
+  Switch,
   useMenu,
 } from "@notion-kit/shadcn";
 
 import { PropMeta } from "../common";
+import { CountMethod } from "../lib/types";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
+import { CalcMenu } from "./calc-menu";
 import { EditPropMenu } from "./edit-prop-menu";
+import { TypesMenu } from "./types-menu";
 
 interface PropMenuProps {
   propId: string;
@@ -30,23 +33,28 @@ interface PropMenuProps {
  * 1. ✅ Edit property: opens `EditPropMenu`
  * ---
  * 2. 🚧 Filter
- * 3. 🚧 Sorting
+ * 3. ✅ Sorting
  * 4. 🚧 Group
- * 5. 🚧 Calculate
+ * 5. ✅ Calculate
  * 6. ✅ Freeze up to column
  * 7. ✅ Hide in view
  * 8. ✅ Wrap column
  * ---
- * 9. 🚧 Insert left
- * 10. 🚧 Insert right
- * 11. ✅ Duplicate property
- * 12. ✅ Delete property
+ * 9. ✅ Insert left/right
+ * 10. ✅ Duplicate property
+ * 11. ✅ Delete property
  */
-export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
-  const { table, properties, isPropertyUnique, canFreezeProperty } =
-    useTableViewCtx();
-  const { updateColumn, duplicate, freezeColumns } = useTableActions();
-  const { openMenu, closeMenu } = useMenu();
+export function PropMenu({ propId, rect }: PropMenuProps) {
+  const {
+    table,
+    properties,
+    showPageIcon,
+    isPropertyUnique,
+    canFreezeProperty,
+  } = useTableViewCtx();
+  const { toggleIconVisibility, updateColumn, duplicate, freezeColumns } =
+    useTableActions();
+  const { openMenu } = useMenu();
 
   const property = properties[propId]!;
 
@@ -58,35 +66,28 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
     });
   };
   // 3. Sorting
-  const sortColumn = (desc: boolean) => {
+  const sortColumn = (desc: boolean) =>
     table.setSorting([{ id: propId, desc }]);
-    closeMenu();
-  };
   // 6. Pin columns
   const canFreeze = canFreezeProperty(property.id);
   const canUnfreeze = table.getColumn(property.id)?.getIsLastColumn("left");
-  const pinColumns = () => {
-    freezeColumns(canUnfreeze ? null : property.id);
-    closeMenu();
-  };
+  const pinColumns = () => freezeColumns(canUnfreeze ? null : property.id);
   // 7. Hide in view
-  const hideProp = () => {
-    updateColumn(property.id, { hidden: true });
-    closeMenu();
-  };
+  const hideProp = () => updateColumn(property.id, { hidden: true });
   // 8. Wrap in view
   const wrapProp = () =>
     updateColumn(property.id, { wrapped: !property.wrapped });
-  // 11. Duplicate property
-  const duplicateProp = () => {
-    duplicate(property.id, "col");
-    closeMenu();
+  // 9. Insert left/right
+  const insertColumn = (side: "left" | "right") => {
+    openMenu(<TypesMenu propId={null} at={{ id: propId, side }} />, {
+      x: -12,
+      y: -12,
+    });
   };
-  // 12. Delete property
-  const deleteProp = () => {
-    updateColumn(property.id, { isDeleted: true });
-    closeMenu();
-  };
+  // 10. Duplicate property
+  const duplicateProp = () => duplicate(property.id, "col");
+  // 11. Delete property
+  const deleteProp = () => updateColumn(property.id, { isDeleted: true });
 
   return (
     <>
@@ -94,22 +95,33 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
         property={property}
         validateName={isPropertyUnique}
         onUpdate={(data) => updateColumn(property.id, data)}
-        onKeyDownUpdate={closeMenu}
       />
-      <MenuGroup>
-        <MenuItem
-          onClick={openEditPropMenu}
+      <DropdownMenuGroup>
+        {property.type === "title" && (
+          <DropdownMenuItem
+            onSelect={(e) => {
+              e.stopPropagation();
+              toggleIconVisibility();
+            }}
+            Icon={<Icon.EmojiFace />}
+            Body="Show page icon"
+          >
+            <MenuItemAction className="flex items-center">
+              <Switch size="sm" checked={showPageIcon} />
+            </MenuItemAction>
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuItem
+          onSelect={openEditPropMenu}
           Icon={<Icon.Sliders className="fill-icon" />}
           Body="Edit property"
         />
-      </MenuGroup>
+      </DropdownMenuGroup>
       <Separator />
-      <MenuGroup>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <MenuItem Icon={<Icon.ArrowUpDown />} Body="Sort" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="right" sideOffset={0} className="w-50">
+      <DropdownMenuGroup>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger Icon={<Icon.ArrowUpDown />} Body="Sort" />
+          <DropdownMenuSubContent sideOffset={-4} className="w-50">
             <DropdownMenuGroup>
               <DropdownMenuItem
                 Icon={<Icon.ArrowUp className="size-4" />}
@@ -122,49 +134,74 @@ export const PropMenu: React.FC<PropMenuProps> = ({ propId, rect }) => {
                 onSelect={() => sortColumn(true)}
               />
             </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <MenuItem
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger Icon={<Icon.Sum />} Body="Calculate" />
+          <DropdownMenuSubContent
+            sideOffset={-4}
+            className="w-50"
+            collisionPadding={12}
+          >
+            <CalcMenu
+              id={propId}
+              type={property.type}
+              countMethod={property.countMethod ?? CountMethod.NONE}
+              isCountCapped={property.isCountCapped}
+            />
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+        <DropdownMenuItem
           disabled={!canFreeze}
-          onClick={pinColumns}
+          onSelect={pinColumns}
           {...(canUnfreeze
             ? { Icon: <Icon.PinStrikeThrough />, Body: "Unfreeze columns" }
             : { Icon: <Icon.Pin />, Body: "Freeze up to column" })}
           className="[&_svg]:w-3"
         />
         {property.type !== "title" && (
-          <MenuItem
-            onClick={hideProp}
+          <DropdownMenuItem
+            onSelect={hideProp}
             Icon={<Icon.EyeHideInversePadded className="size-6" />}
             Body="Hide in view"
           />
         )}
-        <MenuItem
-          onClick={wrapProp}
+        <DropdownMenuItem
+          onSelect={wrapProp}
           {...(property.wrapped
             ? { Icon: <Icon.ArrowLineRight />, Body: "Unwrap text" }
             : { Icon: <Icon.ArrowUTurnDownLeft />, Body: "Wrap text" })}
           className="[&_svg]:fill-icon"
         />
-      </MenuGroup>
-      {property.type !== "title" && (
-        <>
-          <Separator />
-          <MenuGroup>
-            <MenuItem
-              onClick={duplicateProp}
+      </DropdownMenuGroup>
+      <Separator />
+      <DropdownMenuGroup>
+        <DropdownMenuItem
+          onSelect={() => insertColumn("left")}
+          Icon={<Icon.ArrowRectangle side="left" />}
+          Body="Insert left"
+        />
+        <DropdownMenuItem
+          onSelect={() => insertColumn("right")}
+          Icon={<Icon.ArrowRectangle side="right" />}
+          Body="Insert right"
+        />
+        {property.type !== "title" && (
+          <>
+            <DropdownMenuItem
+              onSelect={duplicateProp}
               Icon={<Icon.Duplicate className="h-4" />}
               Body="Duplicate property"
             />
-            <MenuItem
+            <DropdownMenuItem
               variant="warning"
-              onClick={deleteProp}
+              onSelect={deleteProp}
               Icon={<Icon.Trash className="size-4" />}
               Body="Delete property"
             />
-          </MenuGroup>
-        </>
-      )}
+          </>
+        )}
+      </DropdownMenuGroup>
     </>
   );
-};
+}

@@ -16,14 +16,12 @@ interface PropMetaProps {
   property: Pick<DatabaseProperty, "type" | "name" | "icon" | "description">;
   validateName: (value: string) => boolean;
   onUpdate: (data: Omit<UpdateColumnPayload, "width">) => void;
-  onKeyDownUpdate: () => void;
 }
 
 export const PropMeta: React.FC<PropMetaProps> = ({
   property,
   validateName,
   onUpdate,
-  onKeyDownUpdate,
 }) => {
   const [showDesc, setShowDesc] = useState(false);
   const toggleDesc = () => setShowDesc((prev) => !prev);
@@ -33,13 +31,11 @@ export const PropMeta: React.FC<PropMetaProps> = ({
     initialValue: property.name,
     validate: validateName,
     onUpdate: (name) => onUpdate({ name }),
-    onKeyDownUpdate,
   });
   const descField = useInputField({
     id: "description",
     initialValue: property.description ?? "",
     onUpdate: (description) => onUpdate({ description }),
-    onKeyDownUpdate,
   });
   /** Icon */
   const uploadIcon = (file: File) => {

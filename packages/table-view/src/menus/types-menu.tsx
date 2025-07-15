@@ -30,9 +30,17 @@ interface TypesMenuProps {
    * otherwise will update a column by given `propId`
    */
   propId: string | null;
+  /**
+   * @prop {at}: if undefined, will create a new column at the end;
+   * otherwise will create a column at `at.side` of the column `at.id`
+   */
+  at?: {
+    id: string;
+    side: "left" | "right";
+  };
 }
 
-export const TypesMenu: React.FC<TypesMenuProps> = ({ propId }) => {
+export function TypesMenu({ propId, at }: TypesMenuProps) {
   const { properties } = useTableViewCtx();
   const { addColumn, updateColumnType } = useTableActions();
   const { openMenu } = useMenu();
@@ -50,7 +58,7 @@ export const TypesMenu: React.FC<TypesMenuProps> = ({ propId }) => {
         name,
         Object.values(properties).map((p) => p.name),
       );
-      addColumn({ id: colId, type, name: uniqueName });
+      addColumn({ id: colId, type, name: uniqueName, at });
     } else {
       updateColumnType(colId, type);
     }
@@ -124,4 +132,4 @@ export const TypesMenu: React.FC<TypesMenuProps> = ({ propId }) => {
       </Command>
     </>
   );
-};
+}
