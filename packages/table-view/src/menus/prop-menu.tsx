@@ -34,7 +34,7 @@ interface PropMenuProps {
  * ---
  * 2. 🚧 Filter
  * 3. ✅ Sorting
- * 4. 🚧 Group
+ * 4. ✅ Group
  * 5. ✅ Calculate
  * 6. ✅ Freeze up to column
  * 7. ✅ Hide in view
@@ -68,6 +68,8 @@ export function PropMenu({ propId, rect }: PropMenuProps) {
   // 3. Sorting
   const sortColumn = (desc: boolean) =>
     table.setSorting([{ id: propId, desc }]);
+  // 4. Grouping
+  const groupByColumn = () => table.setGrouping([propId]);
   // 6. Pin columns
   const canFreeze = canFreezeProperty(property.id);
   const canUnfreeze = table.getColumn(property.id)?.getIsLastColumn("left");
@@ -113,7 +115,7 @@ export function PropMenu({ propId, rect }: PropMenuProps) {
         )}
         <DropdownMenuItem
           onSelect={openEditPropMenu}
-          Icon={<Icon.Sliders className="fill-icon" />}
+          Icon={<Icon.Sliders />}
           Body="Edit property"
         />
       </DropdownMenuGroup>
@@ -136,6 +138,11 @@ export function PropMenu({ propId, rect }: PropMenuProps) {
             </DropdownMenuGroup>
           </DropdownMenuSubContent>
         </DropdownMenuSub>
+        <DropdownMenuItem
+          onSelect={groupByColumn}
+          Icon={<Icon.SquareGridBelowLines />}
+          Body="Group"
+        />
         <DropdownMenuSub>
           <DropdownMenuSubTrigger Icon={<Icon.Sum />} Body="Calculate" />
           <DropdownMenuSubContent
@@ -171,7 +178,6 @@ export function PropMenu({ propId, rect }: PropMenuProps) {
           {...(property.wrapped
             ? { Icon: <Icon.ArrowLineRight />, Body: "Unwrap text" }
             : { Icon: <Icon.ArrowUTurnDownLeft />, Body: "Wrap text" })}
-          className="[&_svg]:fill-icon"
         />
       </DropdownMenuGroup>
       <Separator />

@@ -1,4 +1,8 @@
-import type { SortingState, Updater } from "@tanstack/react-table";
+import type {
+  GroupingState,
+  SortingState,
+  Updater,
+} from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { IconData } from "@notion-kit/icon-block";
@@ -24,6 +28,7 @@ export interface TableViewAtom {
   table: {
     showPageIcon: boolean;
     sorting: SortingState;
+    grouping: GroupingState;
   };
   /**
    * @field property definitions
@@ -73,6 +78,7 @@ export type TableViewAction =
       payload: { rowId: string; colId: string; data: CellDataType };
     }
   | { type: "update:sorting"; updater: Updater<SortingState> }
+  | { type: "update:grouping"; updater: Updater<GroupingState> }
   | { type: "toggle:icon:visibility"; updater: Updater<boolean> }
   | { type: "reset" };
 
@@ -271,11 +277,18 @@ export const tableViewReducer = (
         : a.updater(v.table.sorting);
       return { ...v, table: { ...v.table, sorting } };
     }
+    case "update:grouping": {
+      const grouping = Array.isArray(a.updater)
+        ? a.updater
+        : a.updater(v.table.grouping);
+      return { ...v, table: { ...v.table, grouping } };
+    }
     case "reset":
       return {
         table: {
           showPageIcon: true,
           sorting: [],
+          grouping: [],
         },
         properties: {},
         propertiesOrder: [],
