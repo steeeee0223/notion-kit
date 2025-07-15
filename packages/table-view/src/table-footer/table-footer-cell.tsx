@@ -9,8 +9,7 @@ import {
 } from "@notion-kit/shadcn";
 
 import { CountMethod, type PropertyType } from "../lib/types";
-import { CalcMenu } from "../menus";
-import { countMethodHint } from "../menus/constants";
+import { CalcMenu, countMethodHint } from "../menus";
 import { useTableViewCtx } from "../table-contexts";
 
 interface TableFooterCellProps {
