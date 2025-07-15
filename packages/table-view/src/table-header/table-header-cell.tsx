@@ -83,7 +83,7 @@ export function TableHeaderCell({
       {...attributes}
       style={style}
     >
-      <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenu open={open} onOpenChange={setOpen} modal={false}>
         <div
           ref={cellRef}
           id="notion-table-view-header-cell"
