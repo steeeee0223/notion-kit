@@ -72,7 +72,6 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
         property={property}
         validateName={isPropertyUnique}
         onUpdate={(data) => updateColumn(property.id, data)}
-        onKeyDownUpdate={closeMenu}
       />
       <MenuGroup>
         {property.type === "title" ? (

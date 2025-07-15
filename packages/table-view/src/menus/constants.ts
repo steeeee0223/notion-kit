@@ -1,6 +1,6 @@
 import { CountMethod } from "../lib/types";
 
-export const footerHint: Record<
+export const countMethodHint: Record<
   CountMethod,
   { title: string; desc: string; imgSrc: string; label: string }
 > = {
