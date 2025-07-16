@@ -1,15 +1,15 @@
-import type { DatabaseProperty, RowDataType } from "../lib/types";
+import type { DatabaseProperty, PropertyType, RowDataType } from "../lib/types";
 import type { TableViewAction } from "./table-reducer";
 
-export type AddColumnPayload = Pick<
-  DatabaseProperty,
-  "id" | "type" | "name"
-> & {
+export interface AddColumnPayload {
+  id: string;
+  name: string;
+  type: PropertyType;
   at?: {
     id: string;
     side: "left" | "right";
   };
-};
+}
 
 export type UpdateColumnPayload = Partial<
   Pick<

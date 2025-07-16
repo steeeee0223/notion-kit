@@ -3,6 +3,10 @@ import { v4 } from "uuid";
 
 import type { IconData } from "@notion-kit/icon-block";
 
+import {
+  transferPropertyConfig,
+  transferPropertyValues,
+} from "../lib/data-transfer";
 import type {
   CellDataType,
   DatabaseProperty,
@@ -11,9 +15,9 @@ import type {
 } from "../lib/types";
 import {
   getDefaultCell,
+  getDefaultPropConfig,
   getUniqueName,
   insertAt,
-  transferPropertyValues,
 } from "../lib/utils";
 import type { AddColumnPayload, UpdateColumnPayload } from "./types";
 
@@ -91,7 +95,12 @@ export const tableViewReducer = (
         ...v,
         properties: {
           ...v.properties,
-          [colId]: { id: colId, type, name, icon: null },
+          [colId]: {
+            id: colId,
+            name,
+            icon: null,
+            ...getDefaultPropConfig(type),
+          },
         },
         get propertiesOrder() {
           if (at === undefined) return [...v.propertiesOrder, colId];
@@ -115,20 +124,24 @@ export const tableViewReducer = (
       };
     }
     case "update:col:type": {
-      const prop = v.properties[a.payload.id];
-      if (!prop) return v as never;
+      const property = v.properties[a.payload.id];
+      if (!property) return v as never;
+      const config = transferPropertyConfig(
+        { data: v.data, property },
+        a.payload.type,
+      );
       const data = { ...v.data };
       v.dataOrder.forEach((rowId) => {
         data[rowId]!.properties[a.payload.id] = transferPropertyValues(
           data[rowId]!.properties[a.payload.id]!,
-          a.payload.type,
+          config,
         );
       });
       return {
         ...v,
         properties: {
           ...v.properties,
-          [a.payload.id]: { ...prop, type: a.payload.type },
+          [a.payload.id]: { ...property, ...config },
         },
         data,
       };

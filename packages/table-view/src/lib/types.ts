@@ -1,15 +1,17 @@
 import type { IconData } from "@notion-kit/icon-block";
 
+import { Color } from "./colors";
+
 export interface Option {
   id: string;
   name: string;
-  color: string;
 }
 
 export type CellType =
   | { type: "title" | "text"; value: string }
   | { type: "checkbox"; checked: boolean }
-  | { type: "select"; select: Option | null };
+  | { type: "select"; option: Option | null }
+  | { type: "multi-select"; options: Option[] };
 export type PropertyType = CellType["type"];
 
 export type CellDataType = {
@@ -26,10 +28,6 @@ export interface RowDataType {
   icon?: IconData;
 }
 
-export type HeaderCellType =
-  | { type: "title" | "text" | "checkbox" }
-  | { type: "select"; options: Option[] };
-
 export enum CountMethod {
   NONE,
   ALL,
@@ -45,7 +43,28 @@ export enum CountMethod {
   PERCENTAGE_NONEMPTY,
 }
 
-export interface DatabaseProperty {
+type SelectSort = "manual" | "alphabetical" | "reverse-alphabetical";
+
+export interface OptionConfig extends Option {
+  color: Color;
+}
+
+export type PropertyConfig =
+  | { type: "text" | "checkbox" }
+  | { type: "title"; config: { showIcon?: boolean } }
+  | {
+      type: "select" | "multi-select";
+      config: {
+        /**
+         * @prop options: array of options
+         * key: option name
+         */
+        options: Record<string, OptionConfig>;
+        sort?: SelectSort;
+      };
+    };
+
+export type DatabaseProperty = {
   id: string;
   type: PropertyType;
   name: string;
@@ -57,4 +76,4 @@ export interface DatabaseProperty {
   isDeleted?: boolean;
   isCountCapped?: boolean;
   countMethod?: CountMethod;
-}
+} & PropertyConfig;
