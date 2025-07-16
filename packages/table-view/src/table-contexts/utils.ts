@@ -21,7 +21,7 @@ export function getMinWidth(type: PropertyType) {
 export function createInitialTable(): TableState {
   const titleId = v4();
   const properties: DatabaseProperty[] = [
-    { id: titleId, name: "Name", config: getDefaultPropConfig("title") },
+    { id: titleId, name: "Name", ...getDefaultPropConfig("title") },
   ];
   const data: RowDataType[] = [
     {
