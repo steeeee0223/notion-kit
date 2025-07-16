@@ -23,6 +23,9 @@ export const DefaultIcon: React.FC<DefaultIconProps> = ({
     case "checkbox":
       return <Icon.TypesCheckbox className={iconClassName} />;
     case "select":
+      return <Icon.TypesSelect className={iconClassName} />;
+    case "multi-select":
+      return <Icon.TypesMultiSelect className={iconClassName} />;
     default:
       return <div className={iconClassName} />;
   }
