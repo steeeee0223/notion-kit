@@ -27,7 +27,7 @@ export function TableFooter({ leftPinnedHeaders, headers }: TableFooterProps) {
         <div className={cn("m-0 inline-flex", isLeftPinned && "flex")}>
           {/* Pinned Columns */}
           {isLeftPinned && (
-            <div className="sticky left-8 z-830 flex bg-main shadow-header-sticky">
+            <div className="sticky left-8 z-830 flex bg-main">
               {leftPinnedHeaders.map((header) => (
                 <React.Fragment key={header.id}>
                   {flexRender(

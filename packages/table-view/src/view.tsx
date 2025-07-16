@@ -178,13 +178,7 @@ export function TableViewContent() {
           </span>
         </Button>
         {/* Table footer */}
-        {table.getHeaderGroups().map((footerGroup) => (
-          <TableFooter
-            key={footerGroup.id}
-            leftPinnedHeaders={leftPinnedHeaders}
-            headers={headers}
-          />
-        ))}
+        <TableFooter leftPinnedHeaders={leftPinnedHeaders} headers={headers} />
       </div>
       <div className="pointer-events-none clear-both mt-0 h-0 translate-y-0" />
       <div className="absolute z-[9990] w-full translate-y-[-34px]" />
