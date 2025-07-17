@@ -114,7 +114,7 @@ export function useTableView(props: TableProps) {
               // width={property.width}
               width={`calc(var(--col-${id}-size) * 1px)`}
               icon={
-                _state.table.showPageIcon && cell.type === "title"
+                property.type === "title" && property.config.showIcon
                   ? row.original.icon
                   : undefined
               }
@@ -142,7 +142,7 @@ export function useTableView(props: TableProps) {
           />
         ),
       })),
-    [_state.table.showPageIcon, dispatch, properties],
+    [dispatch, properties],
   );
 
   const columnVisibility = useMemo<VisibilityState>(
@@ -247,7 +247,6 @@ export function useTableView(props: TableProps) {
       rowSensors,
       dataOrder,
       properties: _state.properties,
-      showPageIcon: _state.table.showPageIcon,
       isPropertyUnique: (name) => properties.every((p) => p.name !== name),
       canFreezeProperty: (id) => table.getState().columnOrder.at(-1) !== id,
       isSomeCountMethodSet: isCountMethodSet(_state.properties),
@@ -265,7 +264,6 @@ export function useTableView(props: TableProps) {
     };
   }, [
     _state.properties,
-    _state.table.showPageIcon,
     columnSensors,
     columnSizeVars,
     dataOrder,

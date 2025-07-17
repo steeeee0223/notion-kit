@@ -20,13 +20,13 @@ import {
   insertAt,
 } from "../lib/utils";
 import type { AddColumnPayload, UpdateColumnPayload } from "./types";
+import { getState } from "./utils";
 
 export interface TableViewAtom {
   /**
    * @field global table state
    */
   table: {
-    showPageIcon: boolean;
     sorting: SortingState;
   };
   /**
@@ -59,6 +59,10 @@ export type TableViewAction =
   | { type: "add:col"; payload: AddColumnPayload }
   | { type: "update:col"; payload: { id: string; data: UpdateColumnPayload } }
   | { type: "update:col:type"; payload: { id: string; type: PropertyType } }
+  | {
+      type: "update:col:meta:title";
+      payload: { id: string; updater: Updater<boolean> };
+    }
   | { type: "update:col:visibility"; payload: { hidden: boolean } }
   | { type: "reorder:col" | "reorder:row"; updater: Updater<string[]> }
   | { type: "freeze:col"; payload: { id: string | null } }
@@ -77,7 +81,7 @@ export type TableViewAction =
       payload: { rowId: string; colId: string; data: CellDataType };
     }
   | { type: "update:sorting"; updater: Updater<SortingState> }
-  | { type: "toggle:icon:visibility"; updater: Updater<boolean> }
+  // | { type: "toggle:icon:visibility"; updater: Updater<boolean> }
   | { type: "reset" };
 
 export const tableViewReducer = (
@@ -155,9 +159,7 @@ export const tableViewReducer = (
       return { ...v, properties };
     }
     case "reorder:col": {
-      const propertiesOrder = Array.isArray(a.updater)
-        ? a.updater
-        : a.updater(v.propertiesOrder);
+      const propertiesOrder = getState(a.updater, v.propertiesOrder);
       return { ...v, propertiesOrder };
     }
     case "duplicate:col": {
@@ -211,18 +213,20 @@ export const tableViewReducer = (
     case "update:count:cap": {
       const prop = v.properties[a.payload.id];
       if (!prop) return v;
-      prop.isCountCapped =
-        typeof a.payload.updater === "function"
-          ? a.payload.updater(prop.isCountCapped ?? false)
-          : a.payload.updater;
+      prop.isCountCapped = getState(
+        a.payload.updater,
+        prop.isCountCapped ?? false,
+      );
       return { ...v, properties: { ...v.properties, [a.payload.id]: prop } };
     }
-    case "toggle:icon:visibility": {
-      const showPageIcon =
-        typeof a.updater === "function"
-          ? a.updater(v.table.showPageIcon)
-          : a.updater;
-      return { ...v, table: { ...v.table, showPageIcon } };
+    case "update:col:meta:title": {
+      const prop = v.properties[a.payload.id];
+      if (!prop || prop.type !== "title") return v as never;
+      prop.config.showIcon = getState(
+        a.payload.updater,
+        prop.config.showIcon ?? true,
+      );
+      return { ...v, properties: { ...v.properties, [a.payload.id]: prop } };
     }
     case "add:row": {
       const row: RowDataType = { id: v4(), properties: {} };
@@ -254,9 +258,7 @@ export const tableViewReducer = (
       };
     }
     case "reorder:row": {
-      const dataOrder = Array.isArray(a.updater)
-        ? a.updater
-        : a.updater(v.dataOrder);
+      const dataOrder = getState(a.updater, v.dataOrder);
       // TODO select row after reorder
       return { ...v, dataOrder, table: { ...v.table, sorting: [] } };
     }
@@ -279,15 +281,12 @@ export const tableViewReducer = (
       return { ...v, data };
     }
     case "update:sorting": {
-      const sorting = Array.isArray(a.updater)
-        ? a.updater
-        : a.updater(v.table.sorting);
+      const sorting = getState(a.updater, v.table.sorting);
       return { ...v, table: { ...v.table, sorting } };
     }
     case "reset":
       return {
         table: {
-          showPageIcon: true,
           sorting: [],
         },
         properties: {},

@@ -4,8 +4,9 @@ import { useState } from "react";
 
 import type { IconData } from "@notion-kit/icon-block";
 
-import type { CellType } from "../lib/types";
+import type { CellType, OptionConfig } from "../lib/types";
 import { CheckboxCell } from "./checkbox-cell";
+import { SelectCell } from "./select-cell";
 import { TextCell } from "./text-cell";
 import { TitleCell } from "./title-cell";
 
@@ -82,6 +83,24 @@ function DataCell({ data, icon, wrapped, onChange }: DataCellProps) {
           onChange={(checked) => onChange?.({ type: "checkbox", checked })}
         />
       );
+    case "select":
+    case "multi-select": {
+      const options: OptionConfig[] = [
+        { id: "1", name: "Option 1", color: "blue" },
+        { id: "2", name: "Option 2", color: "green" },
+        { id: "3", name: "Option 3", color: "red" },
+      ];
+      return (
+        <SelectCell
+          type={data.type}
+          options={options.slice(0, data.type === "select" ? 1 : undefined)}
+          wrapped={wrapped}
+          onPointerDown={() => {
+            // Handle pointer down event
+          }}
+        />
+      );
+    }
     default:
       return null;
   }
