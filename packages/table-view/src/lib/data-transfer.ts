@@ -10,6 +10,7 @@ import type {
   PropertyConfig,
   PropertyType,
   RowDataType,
+  SelectConfig,
 } from "./types";
 
 interface OriginalData {
@@ -31,11 +32,6 @@ export function transferPropertyConfig(
       return { type: dest };
   }
 }
-
-type SelectConfig = Extract<
-  PropertyConfig,
-  { type: "select" | "multi-select" }
->;
 
 export function transferPropertyValues(
   src: CellDataType,

@@ -92,7 +92,8 @@ export const PropMeta: React.FC<PropMetaProps> = ({
         </div>
         {nameField.error && (
           <div className="mx-4 pt-2 text-sm text-red">
-            A property named Select already exists in this database.
+            A property named {nameField.props.value} already exists in this
+            database.
           </div>
         )}
       </div>

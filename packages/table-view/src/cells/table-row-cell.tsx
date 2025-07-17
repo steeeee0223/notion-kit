@@ -85,19 +85,18 @@ function DataCell({ data, icon, wrapped, onChange }: DataCellProps) {
       );
     case "select":
     case "multi-select": {
-      const options: OptionConfig[] = [
-        { id: "1", name: "Option 1", color: "blue" },
-        { id: "2", name: "Option 2", color: "green" },
-        { id: "3", name: "Option 3", color: "red" },
-      ];
+      const options: Record<string, OptionConfig> = {
+        "Option 1": { id: "1", name: "Option 1", color: "blue" },
+        "Option 2": { id: "2", name: "Option 2", color: "green" },
+        "Option 3": { id: "3", name: "Option 3", color: "red" },
+      };
       return (
         <SelectCell
-          type={data.type}
-          options={options.slice(0, data.type === "select" ? 1 : undefined)}
-          wrapped={wrapped}
-          onPointerDown={() => {
-            // Handle pointer down event
+          config={{
+            type: data.type,
+            config: { options },
           }}
+          wrapped={wrapped}
         />
       );
     }

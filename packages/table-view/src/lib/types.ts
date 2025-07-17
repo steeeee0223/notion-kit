@@ -47,6 +47,7 @@ type SelectSort = "manual" | "alphabetical" | "reverse-alphabetical";
 
 export interface OptionConfig extends Option {
   color: Color;
+  description?: string;
 }
 
 export type PropertyConfig =
@@ -63,6 +64,11 @@ export type PropertyConfig =
         sort?: SelectSort;
       };
     };
+
+export type SelectConfig = Extract<
+  PropertyConfig,
+  { type: "select" | "multi-select" }
+>;
 
 export type DatabaseProperty = {
   id: string;
