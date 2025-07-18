@@ -44,9 +44,15 @@ export function getDefaultPropConfig(type: PropertyType): PropertyConfig {
       return { type, config: { showIcon: true } };
     case "select":
     case "multi-select":
-      return { type, config: { options: {}, sort: "manual" } };
+      return {
+        type,
+        config: {
+          options: { names: [], items: {} },
+          sort: "manual",
+        },
+      };
     default:
-      return { type };
+      return { type, config: undefined as never };
   }
 }
 

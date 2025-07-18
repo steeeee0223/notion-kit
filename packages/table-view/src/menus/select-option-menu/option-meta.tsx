@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Updater } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
 import { Button, Input, TooltipPreset } from "@notion-kit/shadcn";
@@ -10,13 +9,13 @@ import { useInputField } from "../../hooks";
 import type { OptionConfig } from "../../lib/types";
 
 interface OptionMetaProps {
-  config: OptionConfig;
+  option: OptionConfig;
   validateName: (name: string) => boolean;
-  onUpdate: (updater: Updater<OptionConfig>) => void;
+  onUpdate: (data: { name?: string; description?: string }) => void;
 }
 
 export function OptionMeta({
-  config,
+  option,
   validateName,
   onUpdate,
 }: OptionMetaProps) {
@@ -25,14 +24,14 @@ export function OptionMeta({
 
   const nameField = useInputField({
     id: "name",
-    initialValue: config.name,
+    initialValue: option.name,
     validate: validateName,
-    onUpdate: (name) => onUpdate((prev) => ({ ...prev, name })),
+    onUpdate: (name) => onUpdate({ name }),
   });
   const descField = useInputField({
     id: "description",
-    initialValue: config.description ?? "",
-    onUpdate: (description) => onUpdate((prev) => ({ ...prev, description })),
+    initialValue: option.description ?? "",
+    onUpdate: (description) => onUpdate({ description }),
   });
 
   useEffect(() => {

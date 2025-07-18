@@ -6,7 +6,6 @@ import type {
   CellType,
   DatabaseProperty,
   Option,
-  OptionConfig,
   PropertyConfig,
   PropertyType,
   RowDataType,
@@ -29,7 +28,7 @@ export function transferPropertyConfig(
     case "multi-select":
       return toSelectConfig(src, dest);
     default:
-      return { type: dest };
+      return { type: dest, config: undefined as never };
   }
 }
 
@@ -92,24 +91,31 @@ function toSelectConfig(
       return { type, config: src.property.config };
     case "text": {
       const options = Object.values(src.data).reduce<
-        Record<string, OptionConfig>
-      >((acc, row) => {
-        const name = toTextValue(row.properties[src.property.id]!).trim();
-        if (!name) return acc;
-        acc[name] = { id: v4(), name, color: getRandomColor() };
-        return acc;
-      }, {});
+        SelectConfig["config"]["options"]
+      >(
+        (acc, row) => {
+          const name = toTextValue(row.properties[src.property.id]!).trim();
+          if (!name) return acc;
+          acc.names.push(name);
+          acc.items[name] = { id: v4(), name, color: getRandomColor() };
+          return acc;
+        },
+        { names: [], items: {} },
+      );
       return { type, config: { sort: "manual", options } };
     }
     default:
-      return { type, config: { options: {}, sort: "manual" } };
+      return {
+        type,
+        config: { options: { names: [], items: {} }, sort: "manual" },
+      };
   }
 }
 
 function toSelectValue(src: CellType, dest: SelectConfig): Option | null {
   switch (src.type) {
     case "text":
-      return dest.config.options[src.value] ?? null;
+      return dest.config.options.items[src.value] ?? null;
     case "select":
       return src.option;
     default:
@@ -122,7 +128,7 @@ function toMultiSelectValue(src: CellType, dest: SelectConfig): Option[] {
     case "text": {
       const options: Option[] = [];
       src.value.split(",").forEach((name) => {
-        const option = dest.config.options[name];
+        const option = dest.config.options.items[name];
         if (!option) return;
         options.push(option);
       });

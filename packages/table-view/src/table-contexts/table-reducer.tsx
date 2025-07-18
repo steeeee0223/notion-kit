@@ -19,6 +19,10 @@ import {
   getUniqueName,
   insertAt,
 } from "../lib/utils";
+import {
+  SelectConfigActionPayload,
+  selectConfigReducer,
+} from "./select-config-reducer";
 import type { AddColumnPayload, UpdateColumnPayload } from "./types";
 import { getState } from "./utils";
 
@@ -63,6 +67,10 @@ export type TableViewAction =
       type: "update:col:meta:title";
       payload: { id: string; updater: Updater<boolean> };
     }
+  | {
+      type: "update:col:meta:select" | "update:col:meta:multi-select";
+      payload: { id: string } & SelectConfigActionPayload;
+    }
   | { type: "update:col:visibility"; payload: { hidden: boolean } }
   | { type: "reorder:col" | "reorder:row"; updater: Updater<string[]> }
   | { type: "freeze:col"; payload: { id: string | null } }
@@ -81,7 +89,6 @@ export type TableViewAction =
       payload: { rowId: string; colId: string; data: CellDataType };
     }
   | { type: "update:sorting"; updater: Updater<SortingState> }
-  // | { type: "toggle:icon:visibility"; updater: Updater<boolean> }
   | { type: "reset" };
 
 export const tableViewReducer = (
@@ -227,6 +234,17 @@ export const tableViewReducer = (
         prop.config.showIcon ?? true,
       );
       return { ...v, properties: { ...v.properties, [a.payload.id]: prop } };
+    }
+    case "update:col:meta:select":
+    case "update:col:meta:multi-select": {
+      const prop = v.properties[a.payload.id];
+      if (!prop || (prop.type !== "select" && prop.type !== "multi-select"))
+        return v as never;
+      const config = selectConfigReducer(prop.config, a.payload);
+      return {
+        ...v,
+        properties: { ...v.properties, [a.payload.id]: { ...prop, config } },
+      };
     }
     case "add:row": {
       const row: RowDataType = { id: v4(), properties: {} };

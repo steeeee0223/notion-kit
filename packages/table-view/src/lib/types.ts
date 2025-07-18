@@ -1,6 +1,6 @@
 import type { IconData } from "@notion-kit/icon-block";
 
-import { Color } from "./colors";
+import type { Color } from "./colors";
 
 export interface Option {
   id: string;
@@ -51,16 +51,18 @@ export interface OptionConfig extends Option {
 }
 
 export type PropertyConfig =
-  | { type: "text" | "checkbox" }
+  | { type: "text" | "checkbox"; config: never }
   | { type: "title"; config: { showIcon?: boolean } }
   | {
       type: "select" | "multi-select";
       config: {
-        /**
-         * @prop options: array of options
-         * key: option name
-         */
-        options: Record<string, OptionConfig>;
+        options: {
+          names: string[];
+          /**
+           * @prop items: map of option name to option config
+           */
+          items: Record<string, OptionConfig>;
+        };
         sort?: SelectSort;
       };
     };

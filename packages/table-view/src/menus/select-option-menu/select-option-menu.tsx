@@ -1,49 +1,61 @@
 "use client";
 
-import type { Updater } from "@tanstack/react-table";
-
+import { Icon } from "@notion-kit/icons";
 import {
   DropdownMenuCheckboxItem,
   DropdownMenuGroup,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@notion-kit/shadcn";
 
+import { ColorIcon } from "../../common";
 import { Color, COLOR } from "../../lib/colors";
 import type { OptionConfig } from "../../lib/types";
 import { OptionMeta } from "./option-meta";
 
 interface SelectOptionMenuProps {
-  config: OptionConfig;
+  option: OptionConfig;
   validateName: (name: string) => boolean;
-  onUpdate: (updater: Updater<OptionConfig>) => void;
+  onDelete: () => void;
+  onUpdate: (data: {
+    name?: string;
+    description?: string;
+    color?: Color;
+  }) => void;
 }
 
 export function SelectOptionMenu({
-  config,
+  option,
   validateName,
+  onDelete,
   onUpdate,
 }: SelectOptionMenuProps) {
   return (
     <>
       <DropdownMenuGroup>
         <OptionMeta
-          config={config}
+          option={option}
           validateName={validateName}
           onUpdate={onUpdate}
+        />
+        <DropdownMenuItem
+          variant="warning"
+          onSelect={onDelete}
+          Icon={<Icon.Trash className="size-4" />}
+          Body="Delete"
         />
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
-        <DropdownMenuLabel>Colors</DropdownMenuLabel>
-        {Object.entries(COLOR).map(([key, value]) => (
+        <DropdownMenuLabel title="Colors" />
+        {Object.entries(COLOR).map(([key, color]) => (
           <DropdownMenuCheckboxItem
             key={key}
-            Body={value.name}
-            checked={config.color === key}
-            onCheckedChange={() =>
-              onUpdate((prev) => ({ ...prev, color: key as Color }))
-            }
+            Icon={<ColorIcon color={color.rgba} />}
+            Body={color.name}
+            checked={option.color === key}
+            onCheckedChange={() => onUpdate({ color: key as Color })}
           />
         ))}
       </DropdownMenuGroup>

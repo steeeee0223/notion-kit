@@ -1,3 +1,3 @@
-export { DefaultIcon } from "./default-icon";
+export { DefaultIcon, ColorIcon } from "./default-icon";
 export * from "./menu";
 export { PropMeta } from "./prop-meta";

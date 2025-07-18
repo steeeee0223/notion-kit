@@ -10,16 +10,26 @@ import { CellTrigger } from "./cell-trigger";
 import { useSelectPopover } from "./use-select-popover";
 
 interface SelectCellProps {
-  config: SelectConfig;
+  propId: string;
+  meta: SelectConfig;
   wrapped?: boolean;
   onUpdate?: (values: string[]) => void;
 }
 
-export function SelectCell({ config, wrapped, onUpdate }: SelectCellProps) {
+export function SelectCell({
+  propId,
+  meta,
+  wrapped,
+  onUpdate,
+}: SelectCellProps) {
   const { ref, openSelectMenu } = useSelectPopover<HTMLDivElement>({
-    config,
+    propId,
+    meta: meta,
     onUpdate,
   });
+  const {
+    config: { options },
+  } = meta;
 
   return (
     <CellTrigger
@@ -30,29 +40,33 @@ export function SelectCell({ config, wrapped, onUpdate }: SelectCellProps) {
     >
       <div className="flex items-center justify-between">
         <div className="flex flex-nowrap gap-x-2 gap-y-1.5">
-          {Object.values(config.config.options).map((option) => (
-            <TooltipPreset
-              key={option.id}
-              description={
-                option.description
-                  ? [
-                      { type: "default", text: option.name },
-                      { type: "secondary", text: option.description },
-                    ]
-                  : option.name
-              }
-              side="top"
-            >
-              <Badge
-                variant="tag"
-                size="sm"
-                className="h-5 max-w-full min-w-0 shrink-0 text-sm leading-5"
-                style={{ backgroundColor: COLOR[option.color].rgba }}
+          {options.names.map((name) => {
+            const option = options.items[name];
+            if (!option) return;
+            return (
+              <TooltipPreset
+                key={option.id}
+                description={
+                  option.description
+                    ? [
+                        { type: "default", text: option.name },
+                        { type: "secondary", text: option.description },
+                      ]
+                    : option.name
+                }
+                side="top"
               >
-                <span className="truncate">{option.name}</span>
-              </Badge>
-            </TooltipPreset>
-          ))}
+                <Badge
+                  variant="tag"
+                  size="sm"
+                  className="h-5 max-w-full min-w-0 shrink-0 text-sm leading-5"
+                  style={{ backgroundColor: COLOR[option.color].rgba }}
+                >
+                  <span className="truncate">{option.name}</span>
+                </Badge>
+              </TooltipPreset>
+            );
+          })}
         </div>
       </div>
     </CellTrigger>

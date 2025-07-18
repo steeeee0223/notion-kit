@@ -71,15 +71,15 @@ export function useTableView(props: TableProps) {
 
   const columns = useMemo(
     () =>
-      properties.map<ColumnDef<RowDataType>>(({ id, ...property }) => ({
-        id,
+      properties.map<ColumnDef<RowDataType>>((property) => ({
+        id: property.id,
         accessorKey: property.name,
         minSize: getMinWidth(property.type),
         sortingFn: tableViewSortingFn,
         header: ({ header }) => (
           <TableHeaderCell
-            id={id}
-            width={`calc(var(--col-${id}-size) * 1px)`}
+            id={property.id}
+            width={`calc(var(--col-${property.id}-size) * 1px)`}
             isResizing={header.column.getIsResizing()}
             resizeHandle={{
               onMouseDown: header.getResizeHandler(),
@@ -87,7 +87,7 @@ export function useTableView(props: TableProps) {
                 dispatch({
                   type: "update:col",
                   payload: {
-                    id,
+                    id: property.id,
                     data: { width: `${header.column.getSize()}px` },
                   },
                 }),
@@ -96,7 +96,7 @@ export function useTableView(props: TableProps) {
                 dispatch({
                   type: "update:col",
                   payload: {
-                    id,
+                    id: property.id,
                     data: { width: `${header.column.getSize()}px` },
                   },
                 }),
@@ -104,27 +104,23 @@ export function useTableView(props: TableProps) {
           />
         ),
         cell: ({ row, column }) => {
-          const cell = row.original.properties[id];
+          const cell = row.original.properties[property.id];
           if (!cell) return null;
           return (
             <TableRowCell
               data={cell}
-              rowId={row.index}
-              colId={column.getIndex()}
+              rowIndex={row.index}
+              colIndex={column.getIndex()}
+              property={property}
               // width={property.width}
-              width={`calc(var(--col-${id}-size) * 1px)`}
-              icon={
-                property.type === "title" && property.config.showIcon
-                  ? row.original.icon
-                  : undefined
-              }
-              wrapped={property.wrapped}
+              width={`calc(var(--col-${property.id}-size) * 1px)`}
+              icon={row.original.icon}
               onChange={(data) =>
                 dispatch({
                   type: "update:cell",
                   payload: {
                     rowId: row.original.id,
-                    colId: id,
+                    colId: property.id,
                     data: { id: cell.id, ...data },
                   },
                 })
@@ -134,11 +130,11 @@ export function useTableView(props: TableProps) {
         },
         footer: () => (
           <TableFooterCell
-            id={id}
+            id={property.id}
             type={property.type}
             countMethod={property.countMethod ?? CountMethod.NONE}
             isCountCapped={property.isCountCapped}
-            width={`calc(var(--col-${id}-size) * 1px)`}
+            width={`calc(var(--col-${property.id}-size) * 1px)`}
           />
         ),
       })),

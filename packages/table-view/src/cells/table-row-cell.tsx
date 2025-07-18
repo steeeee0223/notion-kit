@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import type { IconData } from "@notion-kit/icon-block";
 
-import type { CellType, OptionConfig } from "../lib/types";
+import type { CellType, DatabaseProperty, SelectConfig } from "../lib/types";
 import { CheckboxCell } from "./checkbox-cell";
 import { SelectCell } from "./select-cell";
 import { TextCell } from "./text-cell";
@@ -17,15 +17,15 @@ enum CellMode {
 }
 
 interface TableRowCellProps extends DataCellProps {
-  rowId: number;
-  colId: number;
+  rowIndex: number;
+  colIndex: number;
   width?: string;
 }
 
 export function TableRowCell({
   data,
-  rowId,
-  colId,
+  rowIndex,
+  colIndex,
   width,
   ...cellProps
 }: TableRowCellProps) {
@@ -34,8 +34,8 @@ export function TableRowCell({
   return (
     <div
       id="notion-table-view-cell"
-      data-row-index={rowId}
-      data-col-index={colId}
+      data-row-index={rowIndex}
+      data-col-index={colIndex}
       className="relative flex h-full border-r border-r-border-cell"
       style={{ width }}
     >
@@ -50,20 +50,24 @@ export function TableRowCell({
 }
 
 interface DataCellProps {
+  property: DatabaseProperty;
   data: CellType;
   icon?: IconData;
-  wrapped?: boolean;
   onChange?: (data: CellType) => void;
 }
 
-function DataCell({ data, icon, wrapped, onChange }: DataCellProps) {
+function DataCell({ property, data, icon, onChange }: DataCellProps) {
   switch (data.type) {
     case "title":
       return (
         <TitleCell
           value={data.value}
-          icon={icon}
-          wrapped={wrapped}
+          icon={
+            property.type === "title" && property.config.showIcon
+              ? icon
+              : undefined
+          }
+          wrapped={property.wrapped}
           onUpdate={(value) => onChange?.({ type: "title", value })}
         />
       );
@@ -71,7 +75,7 @@ function DataCell({ data, icon, wrapped, onChange }: DataCellProps) {
       return (
         <TextCell
           value={data.value}
-          wrapped={wrapped}
+          wrapped={property.wrapped}
           onUpdate={(value) => onChange?.({ type: "text", value })}
         />
       );
@@ -79,24 +83,17 @@ function DataCell({ data, icon, wrapped, onChange }: DataCellProps) {
       return (
         <CheckboxCell
           checked={data.checked}
-          wrapped={wrapped}
+          wrapped={property.wrapped}
           onChange={(checked) => onChange?.({ type: "checkbox", checked })}
         />
       );
     case "select":
     case "multi-select": {
-      const options: Record<string, OptionConfig> = {
-        "Option 1": { id: "1", name: "Option 1", color: "blue" },
-        "Option 2": { id: "2", name: "Option 2", color: "green" },
-        "Option 3": { id: "3", name: "Option 3", color: "red" },
-      };
       return (
         <SelectCell
-          config={{
-            type: data.type,
-            config: { options },
-          }}
-          wrapped={wrapped}
+          propId={property.id}
+          meta={property.config as SelectConfig}
+          wrapped={property.wrapped}
         />
       );
     }

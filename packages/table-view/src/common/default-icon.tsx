@@ -10,10 +10,7 @@ interface DefaultIconProps {
   className?: string;
 }
 
-export const DefaultIcon: React.FC<DefaultIconProps> = ({
-  type,
-  className,
-}) => {
+export function DefaultIcon({ type, className }: DefaultIconProps) {
   const iconClassName = cn("block size-4 shrink-0", className);
   switch (type) {
     case "title":
@@ -29,4 +26,17 @@ export const DefaultIcon: React.FC<DefaultIconProps> = ({
     default:
       return <div className={iconClassName} />;
   }
-};
+}
+
+interface ColorIconProps {
+  color: string;
+}
+
+export function ColorIcon({ color }: ColorIconProps) {
+  return (
+    <div
+      className="block size-[18px] shrink-0 rounded-sm"
+      style={{ backgroundColor: color }}
+    />
+  );
+}
