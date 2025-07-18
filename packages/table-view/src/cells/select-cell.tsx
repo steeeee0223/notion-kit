@@ -12,24 +12,24 @@ import { useSelectPopover } from "./use-select-popover";
 interface SelectCellProps {
   propId: string;
   meta: SelectConfig;
+  options: string[];
   wrapped?: boolean;
-  onUpdate?: (values: string[]) => void;
+  onChange?: (options: string[]) => void;
 }
 
 export function SelectCell({
   propId,
   meta,
+  options,
   wrapped,
-  onUpdate,
+  onChange,
 }: SelectCellProps) {
   const { ref, openSelectMenu } = useSelectPopover<HTMLDivElement>({
     propId,
-    meta: meta,
-    onUpdate,
+    meta,
+    options,
+    onChange,
   });
-  const {
-    config: { options },
-  } = meta;
 
   return (
     <CellTrigger
@@ -40,8 +40,8 @@ export function SelectCell({
     >
       <div className="flex items-center justify-between">
         <div className="flex flex-nowrap gap-x-2 gap-y-1.5">
-          {options.names.map((name) => {
-            const option = options.items[name];
+          {options.map((name) => {
+            const option = meta.config.options.items[name];
             if (!option) return;
             return (
               <TooltipPreset

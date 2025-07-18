@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { closestCenter, DndContext, DragEndEvent } from "@dnd-kit/core";
 import {
   restrictToParentElement,
@@ -37,14 +36,20 @@ import { SelectOptionMenu } from "./select-option-menu";
 
 type SelectMenuProps = SelectConfig & {
   propId: string;
-  onUpdate?: (values: string[]) => void;
+  options: string[];
+  onUpdate?: (options: string[]) => void;
 };
 
-export function SelectMenu({ propId, type, config }: SelectMenuProps) {
+export function SelectMenu({
+  propId,
+  type,
+  config,
+  options,
+  onUpdate,
+}: SelectMenuProps) {
   const { dispatch } = useTableActions();
 
   /** Input & Filter */
-  const [options, setOptions] = useState<string[]>([]);
   const { search, results, updateSearch } = useFilter(
     Object.values(config.options.items),
     (option, v) => option.name.includes(v),
@@ -54,7 +59,7 @@ export function SelectMenu({ propId, type, config }: SelectMenuProps) {
     updateSearch(input);
   };
   const onTagSelect = (value: string) => {
-    setOptions((prev) => [...prev, value]);
+    onUpdate?.([...options, value]);
     onInputChange("");
   };
   /** Actions */
@@ -114,7 +119,7 @@ export function SelectMenu({ propId, type, config }: SelectMenuProps) {
               placeholder="Search name or emails"
               autoComplete="off"
               value={{ tags: options, input: search }}
-              onTagsChange={setOptions}
+              onTagsChange={onUpdate}
               onInputChange={onInputChange}
               className="min-h-[34px] min-w-0 flex-grow border-none bg-transparent px-0"
             />

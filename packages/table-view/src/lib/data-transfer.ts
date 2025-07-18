@@ -5,7 +5,6 @@ import type {
   CellDataType,
   CellType,
   DatabaseProperty,
-  Option,
   PropertyConfig,
   PropertyType,
   RowDataType,
@@ -59,9 +58,9 @@ function toTextValue(src: CellType): string {
     case "text":
       return src.value;
     case "select":
-      return src.option?.name ?? "";
+      return src.option ?? "";
     case "multi-select":
-      return src.options.map((o) => o.name).join(", ");
+      return src.options.join(", ");
     case "checkbox":
       return src.checked ? "✅" : "";
     default:
@@ -112,10 +111,12 @@ function toSelectConfig(
   }
 }
 
-function toSelectValue(src: CellType, dest: SelectConfig): Option | null {
+function toSelectValue(src: CellType, dest: SelectConfig): string | null {
   switch (src.type) {
-    case "text":
-      return dest.config.options.items[src.value] ?? null;
+    case "text": {
+      const option = dest.config.options.items[src.value];
+      return option ? src.value : null;
+    }
     case "select":
       return src.option;
     default:
@@ -123,16 +124,15 @@ function toSelectValue(src: CellType, dest: SelectConfig): Option | null {
   }
 }
 
-function toMultiSelectValue(src: CellType, dest: SelectConfig): Option[] {
+function toMultiSelectValue(src: CellType, dest: SelectConfig): string[] {
   switch (src.type) {
     case "text": {
-      const options: Option[] = [];
-      src.value.split(",").forEach((name) => {
-        const option = dest.config.options.items[name];
-        if (!option) return;
-        options.push(option);
-      });
-      return options;
+      return src.value.split(",").reduce<string[]>((acc, value) => {
+        const option = dest.config.options.items[value];
+        if (!option) return acc;
+        acc.push(value);
+        return acc;
+      }, []);
     }
     case "multi-select":
       return src.options;
@@ -152,9 +152,9 @@ export function toReadableValue(src?: CellType): string {
     case "checkbox":
       return src.checked ? "1" : "0";
     case "select":
-      return src.option?.name ?? "";
+      return src.option ?? "";
     case "multi-select":
-      return src.options.map((o) => o.name).join(", ");
+      return src.options.join(", ");
     default:
       return "";
   }

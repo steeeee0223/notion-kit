@@ -87,13 +87,27 @@ function DataCell({ property, data, icon, onChange }: DataCellProps) {
           onChange={(checked) => onChange?.({ type: "checkbox", checked })}
         />
       );
-    case "select":
+    case "select": {
+      return (
+        <SelectCell
+          propId={property.id}
+          options={data.option ? [data.option] : []}
+          meta={property.config as SelectConfig}
+          wrapped={property.wrapped}
+          onChange={(options) =>
+            onChange?.({ type: "select", option: options.at(0) ?? null })
+          }
+        />
+      );
+    }
     case "multi-select": {
       return (
         <SelectCell
           propId={property.id}
+          options={data.options}
           meta={property.config as SelectConfig}
           wrapped={property.wrapped}
+          onChange={(options) => onChange?.({ type: "multi-select", options })}
         />
       );
     }

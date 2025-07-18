@@ -2,16 +2,11 @@ import type { IconData } from "@notion-kit/icon-block";
 
 import type { Color } from "./colors";
 
-export interface Option {
-  id: string;
-  name: string;
-}
-
 export type CellType =
   | { type: "title" | "text"; value: string }
   | { type: "checkbox"; checked: boolean }
-  | { type: "select"; option: Option | null }
-  | { type: "multi-select"; options: Option[] };
+  | { type: "select"; option: string | null }
+  | { type: "multi-select"; options: string[] };
 export type PropertyType = CellType["type"];
 
 export type CellDataType = {
@@ -45,7 +40,9 @@ export enum CountMethod {
 
 type SelectSort = "manual" | "alphabetical" | "reverse-alphabetical";
 
-export interface OptionConfig extends Option {
+export interface OptionConfig {
+  id: string;
+  name: string;
   color: Color;
   description?: string;
 }

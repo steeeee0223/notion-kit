@@ -10,12 +10,15 @@ import { SelectMenu } from "../menus";
 interface UseSelectPopoverProps {
   propId: string;
   meta: SelectConfig;
-  onUpdate?: (values: string[]) => void;
+  options: string[];
+  onChange?: (options: string[]) => void;
 }
 
 export function useSelectPopover<T extends HTMLElement = HTMLElement>({
-  meta,
   propId,
+  meta,
+  options,
+  onChange,
 }: UseSelectPopoverProps) {
   const ref = useRef<T>(null);
   const { openMenu } = useMenu();
@@ -25,13 +28,21 @@ export function useSelectPopover<T extends HTMLElement = HTMLElement>({
   const openSelectMenu = useCallback(() => {
     const rect = ref.current?.getBoundingClientRect();
 
-    openMenu(<SelectMenu propId={propId} {...meta} />, {
-      x: rect?.x,
-      y: rect?.y,
-      className:
-        "max-h-[773px] min-h-[34px] w-[300px] overflow-visible backdrop-filter-none",
-    });
-  }, [openMenu, propId, meta]);
+    openMenu(
+      <SelectMenu
+        propId={propId}
+        {...meta}
+        options={options}
+        onUpdate={onChange}
+      />,
+      {
+        x: rect?.x,
+        y: rect?.y,
+        className:
+          "max-h-[773px] min-h-[34px] w-[300px] overflow-visible backdrop-filter-none",
+      },
+    );
+  }, [meta, onChange, openMenu, options, propId]);
 
   useLayoutEffect(() => {
     const rect = ref.current?.getBoundingClientRect();
