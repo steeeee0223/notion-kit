@@ -6,6 +6,7 @@ export const mockProps: DatabaseProperty[] = [
     type: "title",
     name: "Name",
     width: "216px",
+    config: {},
   },
   {
     id: "prop-2",

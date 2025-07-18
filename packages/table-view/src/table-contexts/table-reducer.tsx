@@ -3,6 +3,10 @@ import { v4 } from "uuid";
 
 import type { IconData } from "@notion-kit/icon-block";
 
+import {
+  transferPropertyConfig,
+  transferPropertyValues,
+} from "../lib/data-transfer";
 import type {
   CellDataType,
   DatabaseProperty,
@@ -11,18 +15,22 @@ import type {
 } from "../lib/types";
 import {
   getDefaultCell,
+  getDefaultPropConfig,
   getUniqueName,
   insertAt,
-  transferPropertyValues,
 } from "../lib/utils";
+import {
+  SelectConfigActionPayload,
+  selectConfigReducer,
+} from "./select-config-reducer";
 import type { AddColumnPayload, UpdateColumnPayload } from "./types";
+import { getState } from "./utils";
 
 export interface TableViewAtom {
   /**
    * @field global table state
    */
   table: {
-    showPageIcon: boolean;
     sorting: SortingState;
   };
   /**
@@ -55,6 +63,14 @@ export type TableViewAction =
   | { type: "add:col"; payload: AddColumnPayload }
   | { type: "update:col"; payload: { id: string; data: UpdateColumnPayload } }
   | { type: "update:col:type"; payload: { id: string; type: PropertyType } }
+  | {
+      type: "update:col:meta:title";
+      payload: { id: string; updater: Updater<boolean> };
+    }
+  | {
+      type: "update:col:meta:select" | "update:col:meta:multi-select";
+      payload: { id: string } & SelectConfigActionPayload;
+    }
   | { type: "update:col:visibility"; payload: { hidden: boolean } }
   | { type: "reorder:col" | "reorder:row"; updater: Updater<string[]> }
   | { type: "freeze:col"; payload: { id: string | null } }
@@ -73,7 +89,6 @@ export type TableViewAction =
       payload: { rowId: string; colId: string; data: CellDataType };
     }
   | { type: "update:sorting"; updater: Updater<SortingState> }
-  | { type: "toggle:icon:visibility"; updater: Updater<boolean> }
   | { type: "reset" };
 
 export const tableViewReducer = (
@@ -91,7 +106,12 @@ export const tableViewReducer = (
         ...v,
         properties: {
           ...v.properties,
-          [colId]: { id: colId, type, name, icon: null },
+          [colId]: {
+            id: colId,
+            name,
+            icon: null,
+            ...getDefaultPropConfig(type),
+          },
         },
         get propertiesOrder() {
           if (at === undefined) return [...v.propertiesOrder, colId];
@@ -115,20 +135,24 @@ export const tableViewReducer = (
       };
     }
     case "update:col:type": {
-      const prop = v.properties[a.payload.id];
-      if (!prop) return v as never;
+      const property = v.properties[a.payload.id];
+      if (!property) return v as never;
+      const config = transferPropertyConfig(
+        { data: v.data, property },
+        a.payload.type,
+      );
       const data = { ...v.data };
       v.dataOrder.forEach((rowId) => {
         data[rowId]!.properties[a.payload.id] = transferPropertyValues(
           data[rowId]!.properties[a.payload.id]!,
-          a.payload.type,
+          config,
         );
       });
       return {
         ...v,
         properties: {
           ...v.properties,
-          [a.payload.id]: { ...prop, type: a.payload.type },
+          [a.payload.id]: { ...property, ...config },
         },
         data,
       };
@@ -142,9 +166,7 @@ export const tableViewReducer = (
       return { ...v, properties };
     }
     case "reorder:col": {
-      const propertiesOrder = Array.isArray(a.updater)
-        ? a.updater
-        : a.updater(v.propertiesOrder);
+      const propertiesOrder = getState(a.updater, v.propertiesOrder);
       return { ...v, propertiesOrder };
     }
     case "duplicate:col": {
@@ -198,18 +220,31 @@ export const tableViewReducer = (
     case "update:count:cap": {
       const prop = v.properties[a.payload.id];
       if (!prop) return v;
-      prop.isCountCapped =
-        typeof a.payload.updater === "function"
-          ? a.payload.updater(prop.isCountCapped ?? false)
-          : a.payload.updater;
+      prop.isCountCapped = getState(
+        a.payload.updater,
+        prop.isCountCapped ?? false,
+      );
       return { ...v, properties: { ...v.properties, [a.payload.id]: prop } };
     }
-    case "toggle:icon:visibility": {
-      const showPageIcon =
-        typeof a.updater === "function"
-          ? a.updater(v.table.showPageIcon)
-          : a.updater;
-      return { ...v, table: { ...v.table, showPageIcon } };
+    case "update:col:meta:title": {
+      const prop = v.properties[a.payload.id];
+      if (!prop || prop.type !== "title") return v as never;
+      prop.config.showIcon = getState(
+        a.payload.updater,
+        prop.config.showIcon ?? true,
+      );
+      return { ...v, properties: { ...v.properties, [a.payload.id]: prop } };
+    }
+    case "update:col:meta:select":
+    case "update:col:meta:multi-select": {
+      const prop = v.properties[a.payload.id];
+      if (!prop || (prop.type !== "select" && prop.type !== "multi-select"))
+        return v as never;
+      const config = selectConfigReducer(prop.config, a.payload);
+      return {
+        ...v,
+        properties: { ...v.properties, [a.payload.id]: { ...prop, config } },
+      };
     }
     case "add:row": {
       const row: RowDataType = { id: v4(), properties: {} };
@@ -241,9 +276,7 @@ export const tableViewReducer = (
       };
     }
     case "reorder:row": {
-      const dataOrder = Array.isArray(a.updater)
-        ? a.updater
-        : a.updater(v.dataOrder);
+      const dataOrder = getState(a.updater, v.dataOrder);
       // TODO select row after reorder
       return { ...v, dataOrder, table: { ...v.table, sorting: [] } };
     }
@@ -266,15 +299,12 @@ export const tableViewReducer = (
       return { ...v, data };
     }
     case "update:sorting": {
-      const sorting = Array.isArray(a.updater)
-        ? a.updater
-        : a.updater(v.table.sorting);
+      const sorting = getState(a.updater, v.table.sorting);
       return { ...v, table: { ...v.table, sorting } };
     }
     case "reset":
       return {
         table: {
-          showPageIcon: true,
           sorting: [],
         },
         properties: {},

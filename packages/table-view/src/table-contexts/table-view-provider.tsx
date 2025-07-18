@@ -37,8 +37,6 @@ export function TableViewProvider({
           type: "update:count:cap",
           payload: { id, updater: (prev) => !prev },
         }),
-      toggleIconVisibility: () =>
-        dispatch({ type: "toggle:icon:visibility", updater: (prev) => !prev }),
       addRow: (src) => dispatch({ type: "add:row", payload: src }),
       updateRowIcon: (id, icon) =>
         dispatch({ type: "update:row:icon", payload: { id, icon } }),
