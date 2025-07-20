@@ -1,15 +1,11 @@
 import type { IconData } from "@notion-kit/icon-block";
-
-export interface Option {
-  id: string;
-  name: string;
-  color: string;
-}
+import type { Color } from "@notion-kit/utils";
 
 export type CellType =
   | { type: "title" | "text"; value: string }
   | { type: "checkbox"; checked: boolean }
-  | { type: "select"; select: Option | null };
+  | { type: "select"; option: string | null }
+  | { type: "multi-select"; options: string[] };
 export type PropertyType = CellType["type"];
 
 export type CellDataType = {
@@ -26,10 +22,6 @@ export interface RowDataType {
   icon?: IconData;
 }
 
-export type HeaderCellType =
-  | { type: "title" | "text" | "checkbox" }
-  | { type: "select"; options: Option[] };
-
 export enum CountMethod {
   NONE,
   ALL,
@@ -45,7 +37,38 @@ export enum CountMethod {
   PERCENTAGE_NONEMPTY,
 }
 
-export interface DatabaseProperty {
+type SelectSort = "manual" | "alphabetical" | "reverse-alphabetical";
+
+export interface OptionConfig {
+  id: string;
+  name: string;
+  color: Color;
+  description?: string;
+}
+
+export type PropertyConfig =
+  | { type: "text" | "checkbox"; config: never }
+  | { type: "title"; config: { showIcon?: boolean } }
+  | {
+      type: "select" | "multi-select";
+      config: {
+        options: {
+          names: string[];
+          /**
+           * @prop items: map of option name to option config
+           */
+          items: Record<string, OptionConfig>;
+        };
+        sort?: SelectSort;
+      };
+    };
+
+export type SelectConfig = Extract<
+  PropertyConfig,
+  { type: "select" | "multi-select" }
+>;
+
+export type DatabaseProperty = {
   id: string;
   type: PropertyType;
   name: string;
@@ -57,4 +80,4 @@ export interface DatabaseProperty {
   isDeleted?: boolean;
   isCountCapped?: boolean;
   countMethod?: CountMethod;
-}
+} & PropertyConfig;

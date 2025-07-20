@@ -1,8 +1,9 @@
-import type { SortingFn } from "@tanstack/react-table";
+import type { SortingFn, Updater } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
+import { toReadableValue } from "../lib/data-transfer";
 import type { DatabaseProperty, PropertyType, RowDataType } from "../lib/types";
-import { arrayToEntity, toSortableValue } from "../lib/utils";
+import { arrayToEntity, getDefaultPropConfig } from "../lib/utils";
 import type { TableViewAtom } from "./table-reducer";
 import type { TableState } from "./types";
 
@@ -20,7 +21,7 @@ export function getMinWidth(type: PropertyType) {
 export function createInitialTable(): TableState {
   const titleId = v4();
   const properties: DatabaseProperty[] = [
-    { id: titleId, type: "title", name: "Name" },
+    { id: titleId, name: "Name", ...getDefaultPropConfig("title") },
   ];
   const data: RowDataType[] = [
     {
@@ -44,7 +45,7 @@ export function getTableViewAtom(state: TableState): TableViewAtom {
   const columnData = arrayToEntity(state.properties);
   const rowData = arrayToEntity(state.data);
   return {
-    table: { showPageIcon: true, sorting: [] },
+    table: { sorting: [] },
     properties: columnData.items,
     propertiesOrder: columnData.ids,
     data: rowData.items,
@@ -61,12 +62,18 @@ export function toControlledState(atom: TableViewAtom): TableState {
   };
 }
 
+export function getState<T>(updater: Updater<T>, snapshot: T) {
+  return typeof updater === "function"
+    ? (updater as (old: T) => T)(snapshot)
+    : updater;
+}
+
 export const tableViewSortingFn: SortingFn<RowDataType> = (
   rowA,
   rowB,
   colId,
 ) => {
-  const dataA = toSortableValue(rowA.original.properties[colId]);
-  const dataB = toSortableValue(rowB.original.properties[colId]);
+  const dataA = toReadableValue(rowA.original.properties[colId]);
+  const dataB = toReadableValue(rowB.original.properties[colId]);
   return dataA.localeCompare(dataB);
 };

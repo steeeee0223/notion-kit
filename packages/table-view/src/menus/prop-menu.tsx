@@ -45,14 +45,9 @@ interface PropMenuProps {
  * 11. ✅ Delete property
  */
 export function PropMenu({ propId, rect }: PropMenuProps) {
-  const {
-    table,
-    properties,
-    showPageIcon,
-    isPropertyUnique,
-    canFreezeProperty,
-  } = useTableViewCtx();
-  const { toggleIconVisibility, updateColumn, duplicate, freezeColumns } =
+  const { table, properties, isPropertyUnique, canFreezeProperty } =
+    useTableViewCtx();
+  const { dispatch, updateColumn, duplicate, freezeColumns } =
     useTableActions();
   const { openMenu } = useMenu();
 
@@ -65,6 +60,11 @@ export function PropMenu({ propId, rect }: PropMenuProps) {
       y: rect?.bottom,
     });
   };
+  const toggleIconVisibility = () =>
+    dispatch({
+      type: "update:col:meta:title",
+      payload: { id: propId, updater: (prev) => !prev },
+    });
   // 3. Sorting
   const sortColumn = (desc: boolean) =>
     table.setSorting([{ id: propId, desc }]);
@@ -99,15 +99,12 @@ export function PropMenu({ propId, rect }: PropMenuProps) {
       <DropdownMenuGroup>
         {property.type === "title" && (
           <DropdownMenuItem
-            onSelect={(e) => {
-              e.stopPropagation();
-              toggleIconVisibility();
-            }}
+            onSelect={toggleIconVisibility}
             Icon={<Icon.EmojiFace />}
             Body="Show page icon"
           >
             <MenuItemAction className="flex items-center">
-              <Switch size="sm" checked={showPageIcon} />
+              <Switch size="sm" checked={property.config.showIcon} />
             </MenuItemAction>
           </DropdownMenuItem>
         )}

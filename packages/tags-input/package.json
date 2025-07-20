@@ -32,6 +32,7 @@
     "@hookform/resolvers": "catalog:ui",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
+    "@notion-kit/utils": "workspace:*",
     "lucide-react": "catalog:ui",
     "zod": "catalog:"
   },

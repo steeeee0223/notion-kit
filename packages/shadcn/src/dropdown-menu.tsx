@@ -13,7 +13,7 @@ import {
   MenuItemCheck,
   MenuItemShortcut,
 } from "./menu";
-import { contentVariants, separatorVariants } from "./variants";
+import { contentVariants, separatorVariants, typography } from "./variants";
 
 function DropdownMenu({
   ...props
@@ -184,26 +184,26 @@ function DropdownMenuRadioItem({
   );
 }
 
-type DropdownMenuLabelProps = React.ComponentProps<
-  typeof DropdownMenuPrimitive.Label
-> & {
-  inset?: boolean;
-};
 function DropdownMenuLabel({
   className,
-  inset,
+  title,
+  children,
   ...props
-}: DropdownMenuLabelProps) {
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Label>) {
   return (
     <DropdownMenuPrimitive.Label
       data-slot="dropdown-menu-label"
       className={cn(
-        "px-2 py-1.5 text-sm font-semibold",
-        inset && "pl-8",
+        typography("label"),
+        "mt-1.5 mb-2 flex fill-default/45 px-3.5 text-secondary select-none",
         className,
       )}
+      title={title}
       {...props}
-    />
+    >
+      <div className="flex self-center">{title}</div>
+      {children}
+    </DropdownMenuPrimitive.Label>
   );
 }
 
