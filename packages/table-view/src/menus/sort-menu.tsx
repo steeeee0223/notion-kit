@@ -1,17 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { closestCenter, DndContext, DragEndEvent } from "@dnd-kit/core";
-import {
-  restrictToParentElement,
-  restrictToVerticalAxis,
-} from "@dnd-kit/modifiers";
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { type DragEndEvent } from "@dnd-kit/core";
+import { arrayMove, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { ColumnSort } from "@tanstack/react-table";
 
@@ -32,7 +23,7 @@ import {
   useMenu,
 } from "@notion-kit/shadcn";
 
-import { DefaultIcon } from "../common";
+import { DefaultIcon, VerticalDnd } from "../common";
 import { useTableViewCtx } from "../table-contexts";
 
 export function SortMenu() {
@@ -66,20 +57,11 @@ export function SortMenu() {
   return (
     <>
       <MenuGroup>
-        <DndContext
-          collisionDetection={closestCenter}
-          modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-          onDragEnd={reorderRules}
-        >
-          <SortableContext
-            items={sorting.map((s) => s.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            {sorting.map((prop) => (
-              <SortRule key={prop.id} {...prop} />
-            ))}
-          </SortableContext>
-        </DndContext>
+        <VerticalDnd items={sorting.map((s) => s.id)} onDragEnd={reorderRules}>
+          {sorting.map((prop) => (
+            <SortRule key={prop.id} {...prop} />
+          ))}
+        </VerticalDnd>
       </MenuGroup>
       <MenuGroup>
         <MenuItem
