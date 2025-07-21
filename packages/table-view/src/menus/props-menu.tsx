@@ -1,14 +1,5 @@
 import React, { useLayoutEffect, useMemo, useRef } from "react";
-import { closestCenter, DndContext } from "@dnd-kit/core";
-import {
-  restrictToParentElement,
-  restrictToVerticalAxis,
-} from "@dnd-kit/modifiers";
-import {
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 import { cn } from "@notion-kit/cn";
@@ -25,7 +16,12 @@ import {
   useMenu,
 } from "@notion-kit/shadcn";
 
-import { DefaultIcon, MenuGroupHeader, MenuHeader } from "../common";
+import {
+  DefaultIcon,
+  MenuGroupHeader,
+  MenuHeader,
+  VerticalDnd,
+} from "../common";
 import type { DatabaseProperty } from "../lib/types";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { DeletedPropsMenu } from "./deleted-props-menu";
@@ -106,39 +102,30 @@ export const PropsMenu = () => {
           onActionClick={() => toggleAllColumns(!noShownProps)}
         />
         <div className="flex flex-col">
-          <DndContext
-            collisionDetection={closestCenter}
-            modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-            onDragEnd={(e) => reorder(e, "col")}
-          >
-            <SortableContext
-              items={columnOrder}
-              strategy={verticalListSortingStrategy}
-            >
-              {search.length === 0
-                ? props.map((prop) => (
-                    <PropertyItem
-                      key={prop.id}
-                      draggable
-                      property={prop}
-                      onClick={() => openEditPropMenu(prop.id)}
-                      onVisibilityChange={(hidden) =>
-                        toggleVisibility(prop.id, hidden)
-                      }
-                    />
-                  ))
-                : (results ?? []).map((prop) => (
-                    <PropertyItem
-                      key={prop.id}
-                      property={prop}
-                      onClick={() => openEditPropMenu(prop.id)}
-                      onVisibilityChange={(hidden) =>
-                        toggleVisibility(prop.id, hidden)
-                      }
-                    />
-                  ))}
-            </SortableContext>
-          </DndContext>
+          <VerticalDnd items={columnOrder} onDragEnd={(e) => reorder(e, "col")}>
+            {search.length === 0
+              ? props.map((prop) => (
+                  <PropertyItem
+                    key={prop.id}
+                    draggable
+                    property={prop}
+                    onClick={() => openEditPropMenu(prop.id)}
+                    onVisibilityChange={(hidden) =>
+                      toggleVisibility(prop.id, hidden)
+                    }
+                  />
+                ))
+              : (results ?? []).map((prop) => (
+                  <PropertyItem
+                    key={prop.id}
+                    property={prop}
+                    onClick={() => openEditPropMenu(prop.id)}
+                    onVisibilityChange={(hidden) =>
+                      toggleVisibility(prop.id, hidden)
+                    }
+                  />
+                ))}
+          </VerticalDnd>
         </div>
       </MenuGroup>
       <MenuGroup>
