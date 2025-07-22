@@ -255,11 +255,47 @@ export const tableViewReducer = (
       const prop = v.properties[a.payload.id];
       if (!prop || (prop.type !== "select" && prop.type !== "multi-select"))
         return v as never;
-      const config = selectConfigReducer(prop.config, a.payload);
-      return {
-        ...v,
-        properties: { ...v.properties, [a.payload.id]: { ...prop, config } },
+      const { config, nextEvent } = selectConfigReducer(prop.config, a.payload);
+      const properties = {
+        ...v.properties,
+        [a.payload.id]: { ...prop, config },
       };
+      if (!nextEvent) return { ...v, properties };
+
+      switch (nextEvent.type) {
+        case "update:name": {
+          const { originalName, name } = nextEvent.payload;
+          const data = { ...v.data };
+          v.dataOrder.forEach((rowId) => {
+            const cell = data[rowId]?.properties[a.payload.id];
+            if (!cell || cell.type !== prop.type) return;
+            if (cell.type === "multi-select") {
+              cell.options = cell.options.map((option) =>
+                option === originalName ? name : option,
+              );
+            } else if (cell.option === originalName) {
+              cell.option = name;
+            }
+          });
+          return { ...v, properties, data };
+        }
+        case "delete": {
+          const { name } = nextEvent.payload;
+          const data = { ...v.data };
+          v.dataOrder.forEach((rowId) => {
+            const cell = data[rowId]?.properties[a.payload.id];
+            if (!cell || cell.type !== prop.type) return;
+            if (cell.type === "multi-select") {
+              cell.options = cell.options.filter((option) => option !== name);
+            } else if (cell.option === name) {
+              cell.option = null;
+            }
+          });
+          return { ...v, properties, data };
+        }
+        default:
+          return v as never;
+      }
     }
     case "add:row": {
       const row: RowDataType = { id: v4(), properties: {} };

@@ -102,6 +102,7 @@ export function OptionItem({
               sideOffset={0}
               className="w-[220px]"
               collisionPadding={12}
+              onClick={(e) => e.stopPropagation()}
             >
               <SelectOptionMenu
                 option={option}

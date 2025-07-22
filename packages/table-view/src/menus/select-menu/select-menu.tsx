@@ -56,7 +56,7 @@ export function SelectMenu(props: SelectMenuProps) {
               if (!option) return;
               return (
                 <OptionItem
-                  key={option.id}
+                  key={option.name}
                   option={option}
                   onSelect={selectTag}
                   onUpdate={(data) => updateOption(name, data)}

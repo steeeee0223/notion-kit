@@ -27,39 +27,54 @@ export type SelectConfigActionPayload = { action: SelectConfigAction } & (
   | { action: "update:sort:manual"; updater: Updater<string[]> }
 );
 
+interface SelectConfigReducerResult {
+  config: SelectConfig["config"];
+  nextEvent?:
+    | { type: "update:name"; payload: { originalName: string; name: string } }
+    | { type: "delete"; payload: { name: string } };
+}
+
 export function selectConfigReducer(
   v: SelectConfig["config"],
   a: SelectConfigActionPayload,
-): SelectConfig["config"] {
+): SelectConfigReducerResult {
   switch (a.action) {
     case "add": {
       const options = { ...v.options };
       options.names.push(a.payload.name);
       options.items[a.payload.name] = { id: v4(), ...a.payload };
-      return { ...v, options };
+      return { config: { ...v, options } };
     }
     case "update:meta": {
       const { originalName, name, ...payload } = a.payload;
       const { [originalName]: option, ...items } = v.options.items;
       if (!option) return v as never;
-      items[originalName] = { ...option, ...payload };
-      if (!name) return { ...v, options: { ...v.options, items } };
-      // Update the name in the names array
+      if (!name) {
+        items[originalName] = { ...option, ...payload };
+        return { config: { ...v, options: { ...v.options, items } } };
+      }
+      items[name] = { ...option, name };
       const names = v.options.names.map((n) => (n === originalName ? name : n));
-      return { ...v, options: { names, items } };
+      return {
+        config: { ...v, options: { names, items } },
+        nextEvent: { type: "update:name", payload: { originalName, name } },
+      };
     }
     case "update:sort:manual": {
       const names = getState(a.updater, v.options.names);
-      return { sort: "manual", options: { ...v.options, names } };
+      return { config: { sort: "manual", options: { ...v.options, names } } };
     }
     case "delete": {
       const { [a.payload.name]: option, ...rest } = v.options.items;
       return {
-        ...v,
-        options: {
-          names: v.options.names.filter((name) => name !== option?.name),
-          items: rest,
+        config: {
+          ...v,
+          options: {
+            names: v.options.names.filter((name) => name !== option?.name),
+            items: rest,
+          },
         },
+        nextEvent: { type: "delete", payload: a.payload },
       };
     }
   }
