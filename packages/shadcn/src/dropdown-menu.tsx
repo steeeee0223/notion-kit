@@ -12,8 +12,9 @@ import {
   MenuItemAction,
   MenuItemCheck,
   MenuItemShortcut,
+  MenuLabel,
 } from "./menu";
-import { contentVariants, separatorVariants, typography } from "./variants";
+import { contentVariants, separatorVariants } from "./variants";
 
 function DropdownMenu({
   ...props
@@ -185,24 +186,11 @@ function DropdownMenuRadioItem({
 }
 
 function DropdownMenuLabel({
-  className,
-  title,
-  children,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Label>) {
   return (
-    <DropdownMenuPrimitive.Label
-      data-slot="dropdown-menu-label"
-      className={cn(
-        typography("label"),
-        "mt-1.5 mb-2 flex fill-default/45 px-3.5 text-secondary select-none",
-        className,
-      )}
-      title={title}
-      {...props}
-    >
-      <div className="flex self-center">{title}</div>
-      {children}
+    <DropdownMenuPrimitive.Label data-slot="dropdown-menu-label" asChild>
+      <MenuLabel {...props} />
     </DropdownMenuPrimitive.Label>
   );
 }

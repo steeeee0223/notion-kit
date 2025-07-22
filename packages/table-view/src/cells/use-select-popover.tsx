@@ -2,7 +2,7 @@
 
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 
-import { useMenu } from "@notion-kit/shadcn";
+import { MenuProvider, useMenu } from "@notion-kit/shadcn";
 
 import { SelectMenu } from "../menus";
 
@@ -26,7 +26,9 @@ export function useSelectPopover<T extends HTMLElement = HTMLElement>({
     const rect = ref.current?.getBoundingClientRect();
 
     openMenu(
-      <SelectMenu propId={propId} options={options} onUpdate={onChange} />,
+      <MenuProvider>
+        <SelectMenu propId={propId} options={options} onUpdate={onChange} />
+      </MenuProvider>,
       {
         x: rect?.x,
         y: rect?.y,

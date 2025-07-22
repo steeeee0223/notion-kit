@@ -7,6 +7,8 @@ import {
   type MenuItemVariants,
 } from "@notion-kit/shadcn";
 
+import { typography } from "./variants";
+
 function MenuGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -15,6 +17,29 @@ function MenuGroup({ className, ...props }: React.ComponentProps<"div">) {
       className={cn(groupVariants({ className }))}
       {...props}
     />
+  );
+}
+
+function MenuLabel({
+  className,
+  title,
+  children,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="menu-label"
+      className={cn(
+        typography("label"),
+        "mt-1.5 mb-2 flex fill-default/45 px-3.5 text-secondary select-none",
+        className,
+      )}
+      title={title}
+      {...props}
+    >
+      <div className="flex self-center">{title}</div>
+      {children}
+    </div>
   );
 }
 
@@ -108,4 +133,11 @@ function MenuItemShortcut({
   );
 }
 
-export { MenuGroup, MenuItem, MenuItemAction, MenuItemCheck, MenuItemShortcut };
+export {
+  MenuGroup,
+  MenuLabel,
+  MenuItem,
+  MenuItemAction,
+  MenuItemCheck,
+  MenuItemShortcut,
+};

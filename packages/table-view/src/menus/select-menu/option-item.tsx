@@ -6,11 +6,11 @@ import { CSS } from "@dnd-kit/utilities";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
   MenuItem,
   MenuItemAction,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   TooltipPreset,
 } from "@notion-kit/shadcn";
 import type { Color } from "@notion-kit/utils";
@@ -86,8 +86,8 @@ export function OptionItem({
         Body={<OptionTag {...option} />}
       >
         <MenuItemAction className="flex items-center text-muted">
-          <DropdownMenu modal>
-            <DropdownMenuTrigger asChild>
+          <Popover>
+            <PopoverTrigger asChild>
               <Button
                 tabIndex={0}
                 variant="hint"
@@ -96,13 +96,12 @@ export function OptionItem({
               >
                 <Icon.Dots className="size-3.5 fill-current" />
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
+            </PopoverTrigger>
+            <PopoverContent
               align="center"
               sideOffset={0}
               className="w-[220px]"
               collisionPadding={12}
-              onClick={(e) => e.stopPropagation()}
             >
               <SelectOptionMenu
                 option={option}
@@ -110,8 +109,8 @@ export function OptionItem({
                 onUpdate={onUpdate}
                 onDelete={onDelete}
               />
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </PopoverContent>
+          </Popover>
         </MenuItemAction>
       </MenuItem>
     </TooltipPreset>

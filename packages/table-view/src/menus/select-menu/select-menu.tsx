@@ -1,6 +1,6 @@
 "use client";
 
-import { DropdownMenuLabel, MenuGroup, MenuItem } from "@notion-kit/shadcn";
+import { MenuGroup, MenuItem, MenuLabel } from "@notion-kit/shadcn";
 import { TagsInput } from "@notion-kit/tags-input";
 
 import { OptionTag, VerticalDnd } from "../../common";
@@ -48,7 +48,7 @@ export function SelectMenu(props: SelectMenuProps) {
         </div>
       </div>
       <MenuGroup>
-        <DropdownMenuLabel title="Select an option or create one" />
+        <MenuLabel title="Select an option or create one" />
         <div className="flex flex-col">
           <VerticalDnd items={results ?? []} onDragEnd={reorderOptions}>
             {results?.map((name) => {

@@ -2,11 +2,11 @@
 
 import { Icon } from "@notion-kit/icons";
 import {
-  DropdownMenuCheckboxItem,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
+  MenuGroup,
+  MenuItem,
+  MenuItemCheck,
+  MenuLabel,
+  Separator,
 } from "@notion-kit/shadcn";
 import { COLOR, type Color } from "@notion-kit/utils";
 
@@ -33,32 +33,33 @@ export function SelectOptionMenu({
 }: SelectOptionMenuProps) {
   return (
     <>
-      <DropdownMenuGroup>
+      <MenuGroup>
         <OptionMeta
           option={option}
           validateName={validateName}
           onUpdate={onUpdate}
         />
-        <DropdownMenuItem
+        <MenuItem
           variant="warning"
-          onSelect={onDelete}
+          onClick={onDelete}
           Icon={<Icon.Trash className="size-4" />}
           Body="Delete"
         />
-      </DropdownMenuGroup>
-      <DropdownMenuSeparator />
-      <DropdownMenuGroup>
-        <DropdownMenuLabel title="Colors" />
+      </MenuGroup>
+      <Separator />
+      <MenuGroup>
+        <MenuLabel title="Colors" />
         {Object.entries(COLOR).map(([key, color]) => (
-          <DropdownMenuCheckboxItem
+          <MenuItem
             key={key}
             Icon={<ColorIcon color={color.rgba} />}
             Body={color.name}
-            checked={option.color === key}
-            onCheckedChange={() => onUpdate({ color: key as Color })}
-          />
+            onClick={() => onUpdate({ color: key as Color })}
+          >
+            {option.color === key && <MenuItemCheck />}
+          </MenuItem>
         ))}
-      </DropdownMenuGroup>
+      </MenuGroup>
     </>
   );
 }
