@@ -2,12 +2,13 @@
 
 import React from "react";
 
-import { TooltipPreset } from "@notion-kit/shadcn";
+import { MenuProvider, TooltipPreset, useMenu } from "@notion-kit/shadcn";
 
 import { OptionTag } from "../common";
 import type { SelectConfig } from "../lib/types";
+import { SelectMenu } from "../menus";
 import { CellTrigger } from "./cell-trigger";
-import { useSelectPopover } from "./use-select-popover";
+import { useTriggerPosition } from "./use-trigger-position";
 
 interface SelectCellProps {
   propId: string;
@@ -24,11 +25,22 @@ export function SelectCell({
   wrapped,
   onChange,
 }: SelectCellProps) {
-  const { ref, openSelectMenu } = useSelectPopover<HTMLDivElement>({
-    propId,
-    options,
-    onChange,
-  });
+  const { openMenu } = useMenu();
+  const { ref, position } = useTriggerPosition<HTMLDivElement>();
+
+  const openSelectMenu = () => {
+    openMenu(
+      <MenuProvider>
+        <SelectMenu propId={propId} options={options} onUpdate={onChange} />
+      </MenuProvider>,
+      {
+        x: position.left,
+        y: position.top,
+        className:
+          "max-h-[773px] min-h-[34px] w-[300px] overflow-visible backdrop-filter-none",
+      },
+    );
+  };
 
   return (
     <CellTrigger
