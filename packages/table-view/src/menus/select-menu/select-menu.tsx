@@ -1,19 +1,9 @@
 "use client";
 
-import { closestCenter, DndContext } from "@dnd-kit/core";
-import {
-  restrictToParentElement,
-  restrictToVerticalAxis,
-} from "@dnd-kit/modifiers";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-
 import { DropdownMenuLabel, MenuGroup, MenuItem } from "@notion-kit/shadcn";
 import { TagsInput } from "@notion-kit/tags-input";
 
-import { OptionTag } from "../../common";
+import { OptionTag, VerticalDnd } from "../../common";
 import { OptionItem } from "./option-item";
 import { useSelectMenu } from "./use-select-menu";
 
@@ -60,31 +50,22 @@ export function SelectMenu(props: SelectMenuProps) {
       <MenuGroup>
         <DropdownMenuLabel title="Select an option or create one" />
         <div className="flex flex-col">
-          <DndContext
-            collisionDetection={closestCenter}
-            modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-            onDragEnd={reorderOptions}
-          >
-            <SortableContext
-              items={results ?? []}
-              strategy={verticalListSortingStrategy}
-            >
-              {results?.map((name) => {
-                const option = config.options.items[name];
-                if (!option) return;
-                return (
-                  <OptionItem
-                    key={option.id}
-                    option={option}
-                    onSelect={selectTag}
-                    onUpdate={(data) => updateOption(name, data)}
-                    onDelete={() => deleteOption(name)}
-                    validateName={validateOptionName}
-                  />
-                );
-              })}
-            </SortableContext>
-          </DndContext>
+          <VerticalDnd items={results ?? []} onDragEnd={reorderOptions}>
+            {results?.map((name) => {
+              const option = config.options.items[name];
+              if (!option) return;
+              return (
+                <OptionItem
+                  key={option.id}
+                  option={option}
+                  onSelect={selectTag}
+                  onUpdate={(data) => updateOption(name, data)}
+                  onDelete={() => deleteOption(name)}
+                  validateName={validateOptionName}
+                />
+              );
+            })}
+          </VerticalDnd>
           {search && optionSuggestion && (
             <MenuItem
               Body={
