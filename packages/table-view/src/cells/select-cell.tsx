@@ -2,6 +2,7 @@
 
 import React from "react";
 
+import { cn } from "@notion-kit/cn";
 import { MenuProvider, TooltipPreset, useMenu } from "@notion-kit/shadcn";
 
 import { OptionTag } from "../common";
@@ -50,7 +51,12 @@ export function SelectCell({
       onPointerDown={openSelectMenu}
     >
       <div className="flex items-center justify-between">
-        <div className="flex flex-nowrap gap-x-2 gap-y-1.5">
+        <div
+          className={cn(
+            "flex flex-nowrap gap-x-2 gap-y-1.5",
+            wrapped && "flex-wrap",
+          )}
+        >
           {options.map((name) => {
             const option = meta.config.options.items[name];
             if (!option) return;
