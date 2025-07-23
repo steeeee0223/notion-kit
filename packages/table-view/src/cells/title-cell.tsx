@@ -7,7 +7,7 @@ import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import { Button, TooltipPreset } from "@notion-kit/shadcn";
 
-import { CellTrigger } from "./cell-trigger";
+import { CellTrigger } from "../common";
 import { useTextInputPopover } from "./use-text-input-popover";
 
 import "../view.css";

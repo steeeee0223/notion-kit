@@ -7,10 +7,10 @@ import { IconMenu } from "@notion-kit/icon-menu";
 import { Icon } from "@notion-kit/icons";
 import { Button, Input, TooltipPreset } from "@notion-kit/shadcn";
 
-import { useInputField } from "../hooks";
 import type { DatabaseProperty } from "../lib/types";
 import { UpdateColumnPayload } from "../table-contexts";
 import { DefaultIcon } from "./default-icon";
+import { useInputField } from "./use-input-field";
 
 interface PropMetaProps {
   property: Pick<DatabaseProperty, "type" | "name" | "icon" | "description">;

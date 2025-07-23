@@ -4,7 +4,7 @@ import React from "react";
 
 import { Checkbox } from "@notion-kit/shadcn";
 
-import { CellTrigger } from "./cell-trigger";
+import { CellTrigger } from "../common";
 
 interface CheckboxCellProps {
   checked: boolean;

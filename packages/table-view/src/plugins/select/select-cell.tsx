@@ -5,11 +5,9 @@ import React from "react";
 import { cn } from "@notion-kit/cn";
 import { MenuProvider, TooltipPreset, useMenu } from "@notion-kit/shadcn";
 
-import { OptionTag } from "../common";
-import type { SelectConfig } from "../lib/types";
-import { SelectMenu } from "../menus";
-import { CellTrigger } from "./cell-trigger";
-import { useTriggerPosition } from "./use-trigger-position";
+import { CellTrigger, OptionTag, useTriggerPosition } from "../../common";
+import type { SelectConfig } from "../../lib/types";
+import { SelectMenu } from "./select-menu";
 
 interface SelectCellProps {
   propId: string;

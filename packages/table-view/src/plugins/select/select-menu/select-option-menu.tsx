@@ -10,8 +10,8 @@ import {
 } from "@notion-kit/shadcn";
 import { COLOR, type Color } from "@notion-kit/utils";
 
-import { ColorIcon } from "../../common";
-import type { OptionConfig } from "../../lib/types";
+import { ColorIcon } from "../../../common";
+import type { OptionConfig } from "../../../lib/types";
 import { OptionMeta } from "./option-meta";
 
 interface SelectOptionMenuProps {

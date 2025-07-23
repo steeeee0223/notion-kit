@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 
 import { Input, useMenu } from "@notion-kit/shadcn";
 
-import { useTriggerPosition } from "./use-trigger-position";
+import { useTriggerPosition } from "../common";
 
 type UseTextInputPopoverProps = TextInputPopoverProps;
 

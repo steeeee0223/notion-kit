@@ -7,8 +7,8 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { useFilter } from "@notion-kit/hooks";
 import { getRandomColor, type Color } from "@notion-kit/utils";
 
-import type { DatabaseProperty } from "../../lib/types";
-import { useTableActions, useTableViewCtx } from "../../table-contexts";
+import type { DatabaseProperty } from "../../../lib/types";
+import { useTableActions, useTableViewCtx } from "../../../table-contexts";
 
 type SelectProperty = Extract<
   DatabaseProperty,

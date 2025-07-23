@@ -3,7 +3,7 @@
 import { MenuGroup, MenuItem, MenuLabel } from "@notion-kit/shadcn";
 import { TagsInput } from "@notion-kit/tags-input";
 
-import { OptionTag, VerticalDnd } from "../../common";
+import { OptionTag, VerticalDnd } from "../../../common";
 import { OptionItem } from "./option-item";
 import { useSelectMenu } from "./use-select-menu";
 

@@ -5,8 +5,8 @@ import { useState } from "react";
 import type { IconData } from "@notion-kit/icon-block";
 
 import type { CellType, DatabaseProperty, SelectConfig } from "../lib/types";
+import { SelectCell } from "../plugins/select";
 import { CheckboxCell } from "./checkbox-cell";
-import { SelectCell } from "./select-cell";
 import { TextCell } from "./text-cell";
 import { TitleCell } from "./title-cell";
 
