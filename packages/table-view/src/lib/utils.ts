@@ -39,7 +39,9 @@ export function getDefaultCell(type: PropertyType): CellDataType {
   }
 }
 
-export function getDefaultPropConfig(type: PropertyType): PropertyConfig {
+export function getDefaultPropConfig(
+  type: PropertyType,
+): Extract<PropertyConfig, { type: typeof type }> {
   switch (type) {
     case "title":
       return { type, config: { showIcon: true } };

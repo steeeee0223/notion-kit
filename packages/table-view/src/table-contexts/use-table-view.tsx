@@ -28,11 +28,11 @@ import type { TableViewCtx } from "./table-view-context";
 import type { TableProps } from "./types";
 import {
   createInitialTable,
-  DEFAULT_FREEZED_INDEX,
   getMinWidth,
   getTableViewAtom,
   tableViewSortingFn,
   toControlledState,
+  toDatabaseProperties,
 } from "./utils";
 
 /**
@@ -56,8 +56,10 @@ export function useTableView(props: TableProps) {
     [_dispatch, props],
   );
 
-  const properties =
-    props.state?.properties ?? Object.values(_state.properties);
+  const controlledProperties = props.state?.properties
+    ? toDatabaseProperties(props.state.properties)
+    : undefined;
+  const properties = controlledProperties ?? Object.values(_state.properties);
 
   const data = useMemo(
     () => props.state?.data ?? Object.values(_state.data),
@@ -154,7 +156,7 @@ export function useTableView(props: TableProps) {
     return {
       left: props.state
         ? props.state.properties
-            .slice(0, (props.state.freezedIndex ?? DEFAULT_FREEZED_INDEX) + 1)
+            .slice(0, _state.freezedIndex + 1)
             .map((prop) => prop.id)
         : _state.propertiesOrder.slice(0, _state.freezedIndex + 1),
     };
@@ -249,8 +251,8 @@ export function useTableView(props: TableProps) {
       getColumnCount: (...params) =>
         getCount({ table, properties: _state.properties }, ...params),
     };
-    if (!props.state?.properties) return uncontrolled;
-    const colData = arrayToEntity(props.state.properties);
+    if (!controlledProperties) return uncontrolled;
+    const colData = arrayToEntity(controlledProperties);
     return {
       ...uncontrolled,
       properties: colData.items,
@@ -262,9 +264,9 @@ export function useTableView(props: TableProps) {
     _state.properties,
     columnSensors,
     columnSizeVars,
+    controlledProperties,
     dataOrder,
     properties,
-    props.state?.properties,
     rowSensors,
     table,
   ]);

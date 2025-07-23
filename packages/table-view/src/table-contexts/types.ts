@@ -1,4 +1,9 @@
-import type { DatabaseProperty, PropertyType, RowDataType } from "../lib/types";
+import type {
+  DatabaseProperty,
+  PartialDatabaseProperty,
+  PropertyType,
+  RowDataType,
+} from "../lib/types";
 import type { TableViewAction } from "./table-reducer";
 
 export interface AddColumnPayload {
@@ -25,15 +30,25 @@ export type UpdateColumnPayload = Partial<
   >
 >;
 
+export interface PartialTableState {
+  properties: PartialDatabaseProperty[];
+  data: RowDataType[];
+}
+
 export interface TableState {
   properties: DatabaseProperty[];
   data: RowDataType[];
-  freezedIndex?: number;
 }
 
 export interface TableProps {
-  defaultState?: TableState;
-  state?: TableState;
-  onStateChange?: (newState: TableState, type: TableViewAction["type"]) => void;
+  defaultState?: PartialTableState;
+  state?: PartialTableState;
+  onStateChange?: (
+    newState: PartialTableState,
+    type: TableViewAction["type"],
+  ) => void;
   dispatch?: React.Dispatch<TableViewAction>;
+  // defaultState?: TableState;
+  // state?: TableState;
+  // onStateChange?: (newState: TableState, type: TableViewAction["type"]) => void;
 }

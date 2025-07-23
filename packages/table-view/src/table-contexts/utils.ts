@@ -2,10 +2,15 @@ import type { SortingFn } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import { toReadableValue } from "../lib/data-transfer";
-import type { DatabaseProperty, PropertyType, RowDataType } from "../lib/types";
+import type {
+  DatabaseProperty,
+  PartialDatabaseProperty,
+  PropertyType,
+  RowDataType,
+} from "../lib/types";
 import { arrayToEntity, getDefaultPropConfig } from "../lib/utils";
 import type { TableViewAtom } from "./table-reducer";
-import type { TableState } from "./types";
+import type { PartialTableState, TableState } from "./types";
 
 export const DEFAULT_FREEZED_INDEX = -1;
 
@@ -18,10 +23,10 @@ export function getMinWidth(type: PropertyType) {
   }
 }
 
-export function createInitialTable(): TableState {
+export function createInitialTable(): PartialTableState {
   const titleId = v4();
-  const properties: DatabaseProperty[] = [
-    { id: titleId, name: "Name", ...getDefaultPropConfig("title") },
+  const properties: PartialDatabaseProperty[] = [
+    { id: titleId, name: "Name", type: "title" },
   ];
   const data: RowDataType[] = [
     {
@@ -38,11 +43,24 @@ export function createInitialTable(): TableState {
     },
   ];
 
-  return { properties, data, freezedIndex: DEFAULT_FREEZED_INDEX };
+  return { properties, data };
 }
 
-export function getTableViewAtom(state: TableState): TableViewAtom {
-  const columnData = arrayToEntity(state.properties);
+export function toDatabaseProperties(
+  properties: PartialDatabaseProperty[],
+): DatabaseProperty[] {
+  return properties.map((property) => ({
+    ...property,
+    ...getDefaultPropConfig(property.type),
+  }));
+}
+
+/**
+ * getTableViewAtom
+ * Converts a controlled state `PartialTableState` into a TableViewAtom.
+ */
+export function getTableViewAtom(state: PartialTableState): TableViewAtom {
+  const columnData = arrayToEntity(toDatabaseProperties(state.properties));
   const rowData = arrayToEntity(state.data);
   return {
     table: { sorting: [] },
@@ -50,7 +68,7 @@ export function getTableViewAtom(state: TableState): TableViewAtom {
     propertiesOrder: columnData.ids,
     data: rowData.items,
     dataOrder: rowData.ids,
-    freezedIndex: state.freezedIndex ?? DEFAULT_FREEZED_INDEX,
+    freezedIndex: DEFAULT_FREEZED_INDEX,
   };
 }
 
@@ -58,7 +76,6 @@ export function toControlledState(atom: TableViewAtom): TableState {
   return {
     properties: atom.propertiesOrder.map((id) => atom.properties[id]!),
     data: atom.dataOrder.map((id) => atom.data[id]!),
-    freezedIndex: atom.freezedIndex,
   };
 }
 

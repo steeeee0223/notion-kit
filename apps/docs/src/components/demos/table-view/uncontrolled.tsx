@@ -1,13 +1,15 @@
 import { TableView } from "@notion-kit/table-view";
-import type { DatabaseProperty, RowDataType } from "@notion-kit/table-view";
+import type {
+  PartialDatabaseProperty,
+  RowDataType,
+} from "@notion-kit/table-view";
 
-const mockProps: DatabaseProperty[] = [
+const mockProps: PartialDatabaseProperty[] = [
   {
     id: "prop-1",
     type: "title",
     name: "Name",
     width: "216px",
-    config: {},
   },
   {
     id: "prop-2",

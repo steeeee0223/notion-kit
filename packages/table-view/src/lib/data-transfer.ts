@@ -10,6 +10,7 @@ import type {
   PropertyType,
   RowDataType,
   SelectConfig,
+  SelectConfigMeta,
 } from "./types";
 
 interface OriginalData {
@@ -84,15 +85,13 @@ export function toCheckboxValue(src: CellType): boolean {
 function toSelectConfig(
   src: OriginalData,
   type: "select" | "multi-select",
-): SelectConfig {
+): SelectConfigMeta {
   switch (src.property.type) {
     case "select":
     case "multi-select":
       return { type, config: src.property.config };
     case "text": {
-      const options = Object.values(src.data).reduce<
-        SelectConfig["config"]["options"]
-      >(
+      const options = Object.values(src.data).reduce<SelectConfig["options"]>(
         (acc, row) => {
           const name = toTextValue(row.properties[src.property.id]!).trim();
           if (!name) return acc;
@@ -112,7 +111,7 @@ function toSelectConfig(
   }
 }
 
-function toSelectValue(src: CellType, dest: SelectConfig): string | null {
+function toSelectValue(src: CellType, dest: SelectConfigMeta): string | null {
   switch (src.type) {
     case "text": {
       const option = dest.config.options.items[src.value];
@@ -125,7 +124,7 @@ function toSelectValue(src: CellType, dest: SelectConfig): string | null {
   }
 }
 
-function toMultiSelectValue(src: CellType, dest: SelectConfig): string[] {
+function toMultiSelectValue(src: CellType, dest: SelectConfigMeta): string[] {
   switch (src.type) {
     case "text": {
       return src.value.split(",").reduce<string[]>((acc, value) => {

@@ -4,7 +4,11 @@ import { useState } from "react";
 
 import type { IconData } from "@notion-kit/icon-block";
 
-import type { CellType, DatabaseProperty, SelectConfig } from "../lib/types";
+import type {
+  CellType,
+  DatabaseProperty,
+  SelectConfigMeta,
+} from "../lib/types";
 import { SelectCell } from "../plugins/select";
 import { CheckboxCell } from "./checkbox-cell";
 import { TextCell } from "./text-cell";
@@ -96,7 +100,7 @@ function DataCell({ property, data, icon, onChange }: DataCellProps) {
             {
               type: property.type,
               config: property.config,
-            } as SelectConfig
+            } as SelectConfigMeta
           }
           wrapped={property.wrapped}
           onChange={(options) =>
@@ -114,7 +118,7 @@ function DataCell({ property, data, icon, onChange }: DataCellProps) {
             {
               type: property.type,
               config: property.config,
-            } as SelectConfig
+            } as SelectConfigMeta
           }
           wrapped={property.wrapped}
           onChange={(options) => onChange?.({ type: "multi-select", options })}

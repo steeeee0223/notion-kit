@@ -28,14 +28,14 @@ export type SelectConfigActionPayload = { action: SelectConfigAction } & (
 );
 
 interface SelectConfigReducerResult {
-  config: SelectConfig["config"];
+  config: SelectConfig;
   nextEvent?:
     | { type: "update:name"; payload: { originalName: string; name: string } }
     | { type: "delete"; payload: { name: string } };
 }
 
 export function selectConfigReducer(
-  v: SelectConfig["config"],
+  v: SelectConfig,
   a: SelectConfigActionPayload,
 ): SelectConfigReducerResult {
   switch (a.action) {

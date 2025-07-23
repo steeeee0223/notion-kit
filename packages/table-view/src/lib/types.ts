@@ -46,29 +46,31 @@ export interface OptionConfig {
   description?: string;
 }
 
+export interface SelectConfig {
+  options: {
+    names: string[];
+    /**
+     * @prop items: map of option name to option config
+     */
+    items: Record<string, OptionConfig>;
+  };
+  sort?: SelectSort;
+}
+export interface SelectConfigMeta {
+  type: "select" | "multi-select";
+  config: SelectConfig;
+}
+
 export type PropertyConfig =
   | { type: "text" | "checkbox"; config: never }
   | { type: "title"; config: { showIcon?: boolean } }
-  | {
-      type: "select" | "multi-select";
-      config: {
-        options: {
-          names: string[];
-          /**
-           * @prop items: map of option name to option config
-           */
-          items: Record<string, OptionConfig>;
-        };
-        sort?: SelectSort;
-      };
-    };
+  | SelectConfigMeta;
+export type PartialPropertyConfig =
+  | { type: "text" | "checkbox" }
+  | { type: "title"; config?: { showIcon?: boolean } }
+  | { type: "select" | "multi-select"; config?: SelectConfig };
 
-export type SelectConfig = Extract<
-  PropertyConfig,
-  { type: "select" | "multi-select" }
->;
-
-export type DatabaseProperty = {
+interface PropertyBase {
   id: string;
   type: PropertyType;
   name: string;
@@ -80,4 +82,6 @@ export type DatabaseProperty = {
   isDeleted?: boolean;
   isCountCapped?: boolean;
   countMethod?: CountMethod;
-} & PropertyConfig;
+}
+export type DatabaseProperty = PropertyBase & PropertyConfig;
+export type PartialDatabaseProperty = PropertyBase & Partial<PropertyConfig>;
