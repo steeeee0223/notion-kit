@@ -3,8 +3,8 @@ import { v4 } from "uuid";
 
 import type { Color } from "@notion-kit/utils";
 
-import { SelectConfig } from "../lib/types";
-import { getState } from "./utils";
+import type { SelectConfig } from "../../lib/types";
+import { getState } from "../../lib/utils";
 
 export type SelectConfigAction =
   | "add:option"

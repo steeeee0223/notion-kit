@@ -1,4 +1,4 @@
-import type { SortingFn, Updater } from "@tanstack/react-table";
+import type { SortingFn } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import { toReadableValue } from "../lib/data-transfer";
@@ -60,12 +60,6 @@ export function toControlledState(atom: TableViewAtom): TableState {
     data: atom.dataOrder.map((id) => atom.data[id]!),
     freezedIndex: atom.freezedIndex,
   };
-}
-
-export function getState<T>(updater: Updater<T>, snapshot: T) {
-  return typeof updater === "function"
-    ? (updater as (old: T) => T)(snapshot)
-    : updater;
 }
 
 export const tableViewSortingFn: SortingFn<RowDataType> = (

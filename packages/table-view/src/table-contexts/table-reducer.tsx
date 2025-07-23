@@ -16,15 +16,15 @@ import type {
 import {
   getDefaultCell,
   getDefaultPropConfig,
+  getState,
   getUniqueName,
   insertAt,
 } from "../lib/utils";
 import {
-  SelectConfigActionPayload,
   selectConfigReducer,
-} from "./select-config-reducer";
+  type SelectConfigActionPayload,
+} from "../plugins/select";
 import type { AddColumnPayload, UpdateColumnPayload } from "./types";
-import { getState } from "./utils";
 
 const NEVER = undefined as never;
 

@@ -1,1 +1,5 @@
 export { SelectCell } from "./select-cell";
+export {
+  selectConfigReducer,
+  type SelectConfigActionPayload,
+} from "./select-config-reducer";

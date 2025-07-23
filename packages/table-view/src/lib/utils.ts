@@ -1,3 +1,4 @@
+import type { Updater } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { TableViewCtx } from "../table-contexts";
@@ -160,4 +161,10 @@ export function isCountMethodSet(properties: TableViewCtx["properties"]) {
   return Object.values(properties).some(
     (p) => p.countMethod !== undefined && p.countMethod !== CountMethod.NONE,
   );
+}
+
+export function getState<T>(updater: Updater<T>, snapshot: T) {
+  return typeof updater === "function"
+    ? (updater as (old: T) => T)(snapshot)
+    : updater;
 }
