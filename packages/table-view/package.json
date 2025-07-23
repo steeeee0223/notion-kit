@@ -62,5 +62,9 @@
   "peerDependencies": {
     "react": "catalog:react19"
   },
+  "bundleDependencies": [
+    "@notion-kit/common",
+    "@notion-kit/utils"
+  ],
   "prettier": "@notion-kit/prettier-config"
 }

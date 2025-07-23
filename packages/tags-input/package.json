@@ -51,5 +51,8 @@
     "react": "catalog:react19",
     "zod": "catalog:"
   },
+  "bundleDependencies": [
+    "@notion-kit/utils"
+  ],
   "prettier": "@notion-kit/prettier-config"
 }
