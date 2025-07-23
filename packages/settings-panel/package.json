@@ -65,7 +65,8 @@
   },
   "bundleDependencies": [
     "@notion-kit/common",
-    "@notion-kit/i18n"
+    "@notion-kit/i18n",
+    "@notion-kit/utils"
   ],
   "prettier": "@notion-kit/prettier-config"
 }
