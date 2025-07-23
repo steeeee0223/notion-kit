@@ -69,7 +69,7 @@ export function TypesMenu({ propId, at }: TypesMenuProps) {
   return (
     <>
       <MenuHeader title={propId ? "Change property type" : "New property"} />
-      <Command>
+      <Command className="bg-popover">
         <div className="flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2">
           <Input
             value={search}

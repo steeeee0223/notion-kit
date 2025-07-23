@@ -45,7 +45,7 @@ export function SelectCell({
   return (
     <CellTrigger
       ref={ref}
-      className="py-2"
+      className="py-1.5"
       wrapped={wrapped}
       onPointerDown={openSelectMenu}
     >
