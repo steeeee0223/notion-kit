@@ -19,18 +19,17 @@ import { PropMeta } from "../common";
 import { CountMethod } from "../lib/types";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { CalcMenu } from "./calc-menu";
-import { EditPropMenu } from "./edit-prop-menu";
 import { TypesMenu } from "./types-menu";
 
 interface PropMenuProps {
   propId: string;
-  rect?: DOMRect;
 }
 
 /**
  * @summary The definition of the property
  *
- * 1. ✅ Edit property: opens `EditPropMenu`
+ * 0. 🚧 Edit property config
+ * 1. ✅ Change type
  * ---
  * 2. 🚧 Filter
  * 3. ✅ Sorting
@@ -44,7 +43,7 @@ interface PropMenuProps {
  * 10. ✅ Duplicate property
  * 11. ✅ Delete property
  */
-export function PropMenu({ propId, rect }: PropMenuProps) {
+export function PropMenu({ propId }: PropMenuProps) {
   const { table, properties, isPropertyUnique, canFreezeProperty } =
     useTableViewCtx();
   const { dispatch, updateColumn, duplicate, freezeColumns } =
@@ -53,13 +52,6 @@ export function PropMenu({ propId, rect }: PropMenuProps) {
 
   const property = properties[propId]!;
 
-  // 1. Edit property
-  const openEditPropMenu = () => {
-    openMenu(<EditPropMenu propId={propId} />, {
-      x: rect?.x,
-      y: rect?.bottom,
-    });
-  };
   const toggleIconVisibility = () =>
     dispatch({
       type: "update:col:meta:title",
@@ -108,11 +100,17 @@ export function PropMenu({ propId, rect }: PropMenuProps) {
             </MenuItemAction>
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem
-          onSelect={openEditPropMenu}
-          Icon={<Icon.Sliders className="fill-icon" />}
-          Body="Edit property"
-        />
+        {property.type !== "title" && (
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger
+              Icon={<Icon.ArrowSquarePathUpDown />}
+              Body="Change type"
+            />
+            <DropdownMenuSubContent sideOffset={-4} className="w-50">
+              <TypesMenu propId={propId} showHeader={false} />
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+        )}
       </DropdownMenuGroup>
       <Separator />
       <DropdownMenuGroup>

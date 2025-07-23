@@ -222,13 +222,13 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
       Body={name}
       className="*:data-[slot=menu-item-body]:leading-normal"
     >
-      <MenuItemAction className="flex items-center text-muted">
+      <MenuItemAction className="flex items-center text-muted [&_svg]:fill-current">
         <Button
           tabIndex={0}
           aria-label="Toggle property visibility"
           disabled={type === "title"}
           variant="hint"
-          className="size-6 p-0 disabled:opacity-40 [&_svg]:fill-current"
+          className="size-6 p-0 disabled:opacity-40"
           onClick={(e) => {
             e.stopPropagation();
             onVisibilityChange(!hidden);
@@ -236,7 +236,7 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
         >
           {hidden ? <Icon.EyeHide /> : <Icon.Eye />}
         </Button>
-        <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-current" />
+        <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3" />
       </MenuItemAction>
     </MenuItem>
   );

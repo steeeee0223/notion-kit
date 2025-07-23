@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { v4 } from "uuid";
 
 import { cn } from "@notion-kit/cn";
@@ -38,9 +37,10 @@ interface TypesMenuProps {
     id: string;
     side: "left" | "right";
   };
+  showHeader?: boolean;
 }
 
-export function TypesMenu({ propId, at }: TypesMenuProps) {
+export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
   const { properties } = useTableViewCtx();
   const { addColumn, updateColumnType } = useTableActions();
   const { openMenu } = useMenu();
@@ -68,7 +68,9 @@ export function TypesMenu({ propId, at }: TypesMenuProps) {
 
   return (
     <>
-      <MenuHeader title={propId ? "Change property type" : "New property"} />
+      {showHeader && (
+        <MenuHeader title={propId ? "Change property type" : "New property"} />
+      )}
       <Command className="bg-popover">
         <div className="flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2">
           <Input

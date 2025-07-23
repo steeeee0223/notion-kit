@@ -26,7 +26,7 @@ interface RowActionMenuProps {
 /**
  * @summary The actions of a row
  *
- * 1. 🚧 Edit icon
+ * 1. ✅ Edit icon
  * 2. 🚧 Edit property
  * ---
  * 3. 🚧 Open in
