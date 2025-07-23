@@ -15,7 +15,7 @@ interface SelectCellProps {
   meta: SelectConfig;
   options: string[];
   wrapped?: boolean;
-  onChange?: (options: string[]) => void;
+  onChange: (options: string[]) => void;
 }
 
 export function SelectCell({

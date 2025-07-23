@@ -18,7 +18,7 @@ type SelectProperty = Extract<
 interface UseSelectMenuOptions {
   propId: string;
   options: string[];
-  onUpdate?: (options: string[]) => void;
+  onUpdate: (options: string[]) => void;
 }
 
 export function useSelectMenu({
@@ -50,11 +50,12 @@ export function useSelectMenu({
     updateSearch("");
     dispatch({
       type: `update:col:meta:${type}`,
-      payload: { id: propId, action: "add", payload: optionSuggestion },
+      payload: { id: propId, action: "add:option", payload: optionSuggestion },
     });
-    setCurrentOptions((prev) =>
-      new Map(prev).set(optionSuggestion.name, optionSuggestion.color),
-    );
+    setCurrentOptions((prev) => {
+      const options = type === "multi-select" ? new Map(prev) : new Map();
+      return options.set(optionSuggestion.name, optionSuggestion.color);
+    });
     setOptionSuggestion(undefined);
   }, [dispatch, optionSuggestion, propId, type, updateSearch]);
 
@@ -101,11 +102,12 @@ export function useSelectMenu({
         type: `update:col:meta:${type}`,
         payload: {
           id: propId,
-          action: "update:meta",
+          action: "update:option",
           payload: { originalName, ...data },
         },
       });
       setCurrentOptions((prev) => {
+        if (!prev.has(originalName)) return prev;
         const options = new Map(prev);
         if (data.name) {
           options.set(data.name, options.get(originalName));
@@ -123,7 +125,7 @@ export function useSelectMenu({
     (name: string) => {
       dispatch({
         type: `update:col:meta:${type}`,
-        payload: { id: propId, action: "delete", payload: { name } },
+        payload: { id: propId, action: "delete:option", payload: { name } },
       });
       setCurrentOptions((prev) => {
         const options = new Map(prev);
@@ -160,10 +162,14 @@ export function useSelectMenu({
       }
       setOptionSuggestion(undefined);
       setCurrentOptions(
-        new Map(tags.map((tag) => [tag, config.options.items[tag]?.color])),
+        new Map(
+          tags
+            .slice(type === "multi-select" ? 0 : -1)
+            .map((tag) => [tag, config.options.items[tag]?.color]),
+        ),
       );
     },
-    [config.options.items, addOption],
+    [type, config.options.items, addOption],
   );
 
   const selectTag = useCallback(
@@ -172,10 +178,11 @@ export function useSelectMenu({
       setOptionSuggestion(undefined);
       setCurrentOptions((prev) => {
         if (prev.has(value)) return prev;
-        return new Map(prev).set(value, config.options.items[value]?.color);
+        const options = type === "multi-select" ? new Map(prev) : new Map();
+        return options.set(value, config.options.items[value]?.color);
       });
     },
-    [config.options.items, updateSearch],
+    [config.options.items, type, updateSearch],
   );
 
   const tags = useMemo(
@@ -188,7 +195,7 @@ export function useSelectMenu({
   );
 
   useEffect(() => {
-    onUpdate?.([...currentOptions.keys()]);
+    onUpdate([...currentOptions.keys()]);
   }, [currentOptions, onUpdate]);
 
   return {

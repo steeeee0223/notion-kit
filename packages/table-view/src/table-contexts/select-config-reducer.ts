@@ -7,15 +7,15 @@ import { SelectConfig } from "../lib/types";
 import { getState } from "./utils";
 
 export type SelectConfigAction =
-  | "add"
-  | "update:meta"
+  | "add:option"
+  | "update:option"
   | "update:sort:manual"
-  | "delete";
+  | "delete:option";
 
 export type SelectConfigActionPayload = { action: SelectConfigAction } & (
-  | { action: "add"; payload: { name: string; color: Color } }
+  | { action: "add:option"; payload: { name: string; color: Color } }
   | {
-      action: "update:meta";
+      action: "update:option";
       payload: {
         originalName: string;
         name?: string;
@@ -23,7 +23,7 @@ export type SelectConfigActionPayload = { action: SelectConfigAction } & (
         color?: Color;
       };
     }
-  | { action: "delete"; payload: { name: string } }
+  | { action: "delete:option"; payload: { name: string } }
   | { action: "update:sort:manual"; updater: Updater<string[]> }
 );
 
@@ -39,13 +39,13 @@ export function selectConfigReducer(
   a: SelectConfigActionPayload,
 ): SelectConfigReducerResult {
   switch (a.action) {
-    case "add": {
+    case "add:option": {
       const options = { ...v.options };
       options.names.push(a.payload.name);
       options.items[a.payload.name] = { id: v4(), ...a.payload };
       return { config: { ...v, options } };
     }
-    case "update:meta": {
+    case "update:option": {
       const { originalName, name, ...payload } = a.payload;
       const { [originalName]: option, ...items } = v.options.items;
       if (!option) return v as never;
@@ -64,7 +64,7 @@ export function selectConfigReducer(
       const names = getState(a.updater, v.options.names);
       return { config: { sort: "manual", options: { ...v.options, names } } };
     }
-    case "delete": {
+    case "delete:option": {
       const { [a.payload.name]: option, ...rest } = v.options.items;
       return {
         config: {

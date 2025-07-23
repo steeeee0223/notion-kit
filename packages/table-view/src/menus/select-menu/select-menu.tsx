@@ -10,7 +10,7 @@ import { useSelectMenu } from "./use-select-menu";
 interface SelectMenuProps {
   propId: string;
   options: string[];
-  onUpdate?: (options: string[]) => void;
+  onUpdate: (options: string[]) => void;
 }
 
 export function SelectMenu(props: SelectMenuProps) {
