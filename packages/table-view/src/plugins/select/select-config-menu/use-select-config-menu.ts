@@ -6,8 +6,9 @@ import { arrayMove } from "@dnd-kit/sortable";
 
 import { getRandomColor, type Color } from "@notion-kit/utils";
 
-import type { ConfigMeta, SelectSort } from "../../../lib/types";
+import type { ConfigMeta } from "../../../lib/types";
 import { useTableActions } from "../../../table-contexts";
+import type { SelectSort } from "../types";
 
 interface UseSelectConfigMenuOptions {
   propId: string;

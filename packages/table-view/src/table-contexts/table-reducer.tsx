@@ -10,20 +10,19 @@ import {
 import type {
   CellDataType,
   DatabaseProperty,
+  PropertyConfig,
   PropertyType,
   RowDataType,
 } from "../lib/types";
 import {
   getDefaultCell,
-  getDefaultPropConfig,
   getState,
   getUniqueName,
   insertAt,
 } from "../lib/utils";
-import {
-  selectConfigReducer,
-  type SelectConfigActionPayload,
-} from "../plugins/select";
+import { defaultPlugins } from "../plugins";
+import { selectReducer, type SelectActionPayload } from "../plugins/select";
+import { titleReducer, type TitleActionPayload } from "../plugins/title";
 import type { AddColumnPayload, UpdateColumnPayload } from "./types";
 
 const NEVER = undefined as never;
@@ -65,14 +64,8 @@ export type TableViewAction =
   | { type: "add:col"; payload: AddColumnPayload }
   | { type: "update:col"; payload: { id: string; data: UpdateColumnPayload } }
   | { type: "update:col:type"; payload: { id: string; type: PropertyType } }
-  | {
-      type: "update:col:meta:title";
-      payload: { id: string; updater: Updater<boolean> };
-    }
-  | {
-      type: "update:col:meta:select" | "update:col:meta:multi-select";
-      payload: { id: string } & SelectConfigActionPayload;
-    }
+  | TitleActionPayload
+  | SelectActionPayload
   | { type: "update:col:visibility"; payload: { hidden: boolean } }
   | { type: "reorder:col" | "reorder:row"; updater: Updater<string[]> }
   | { type: "freeze:col"; payload: { id: string | null } }
@@ -116,7 +109,12 @@ export const tableViewReducer = (
         id: colId,
         name,
         icon: null,
-        ...getDefaultPropConfig(type),
+        ...({
+          type: defaultPlugins.items[type].id,
+          // TODO remove
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          config: defaultPlugins.items[type].default.config!,
+        } as PropertyConfig),
       };
       return {
         ...v,
@@ -241,62 +239,11 @@ export const tableViewReducer = (
       );
       return { ...v, properties: { ...v.properties, [a.payload.id]: prop } };
     }
-    case "update:col:meta:title": {
-      const prop = v.properties[a.payload.id];
-      if (!prop || prop.type !== "title") return v as never;
-      prop.config.showIcon = getState(
-        a.payload.updater,
-        prop.config.showIcon ?? true,
-      );
-      return { ...v, properties: { ...v.properties, [a.payload.id]: prop } };
-    }
+    case "update:col:meta:title":
+      return titleReducer(v, a);
     case "update:col:meta:select":
-    case "update:col:meta:multi-select": {
-      const prop = v.properties[a.payload.id];
-      if (!prop || (prop.type !== "select" && prop.type !== "multi-select"))
-        return v as never;
-      const { config, nextEvent } = selectConfigReducer(prop.config, a.payload);
-      const properties = {
-        ...v.properties,
-        [a.payload.id]: { ...prop, config },
-      };
-      if (!nextEvent) return { ...v, properties };
-
-      switch (nextEvent.type) {
-        case "update:name": {
-          const { originalName, name } = nextEvent.payload;
-          const data = { ...v.data };
-          v.dataOrder.forEach((rowId) => {
-            const cell = data[rowId]?.properties[a.payload.id];
-            if (!cell || cell.type !== prop.type) return;
-            if (cell.type === "multi-select") {
-              cell.options = cell.options.map((option) =>
-                option === originalName ? name : option,
-              );
-            } else if (cell.option === originalName) {
-              cell.option = name;
-            }
-          });
-          return { ...v, properties, data };
-        }
-        case "delete": {
-          const name = nextEvent.payload;
-          const data = { ...v.data };
-          v.dataOrder.forEach((rowId) => {
-            const cell = data[rowId]?.properties[a.payload.id];
-            if (!cell || cell.type !== prop.type) return;
-            if (cell.type === "multi-select") {
-              cell.options = cell.options.filter((option) => option !== name);
-            } else if (cell.option === name) {
-              cell.option = null;
-            }
-          });
-          return { ...v, properties, data };
-        }
-        default:
-          return v as never;
-      }
-    }
+    case "update:col:meta:multi-select":
+      return selectReducer(v, a);
     case "add:row": {
       const row: RowDataType = { id: v4(), properties: {} };
       v.propertiesOrder.forEach((colId) => {

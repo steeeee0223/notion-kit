@@ -1,6 +1,7 @@
 import type { Updater } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
+import { defaultPlugins } from "../plugins";
 import type { TableViewCtx } from "../table-contexts";
 import { toCheckboxValue, toReadableValue } from "./data-transfer";
 import type {
@@ -32,36 +33,13 @@ export function insertAt<T>(array: T[], item: T, index: number) {
 }
 
 export function getDefaultCell(type: PropertyType): CellDataType {
-  switch (type) {
-    case "checkbox":
-      return { type, id: v4(), checked: false };
-    case "select":
-      return { type, id: v4(), option: null };
-    case "multi-select":
-      return { type, id: v4(), options: [] };
-    default:
-      return { type, id: v4(), value: "" };
-  }
-}
-
-export function getDefaultPropConfig(
-  type: PropertyType,
-): ConfigMeta<typeof type> {
-  switch (type) {
-    case "title":
-      return { type, config: { showIcon: true } };
-    case "select":
-    case "multi-select":
-      return {
-        type,
-        config: {
-          options: { names: [], items: {} },
-          sort: "manual",
-        },
-      };
-    default:
-      return { type, config: undefined as never };
-  }
+  return {
+    type,
+    id: v4(),
+    // TODO remove this
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    data: defaultPlugins.items[type].default.data,
+  };
 }
 
 export function extractPropConfig(

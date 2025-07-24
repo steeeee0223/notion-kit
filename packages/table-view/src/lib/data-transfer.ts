@@ -2,6 +2,7 @@ import { v4 } from "uuid";
 
 import { getRandomColor } from "@notion-kit/utils";
 
+import { SelectConfig } from "../plugins/select";
 import type {
   CellDataType,
   CellType,
@@ -10,7 +11,6 @@ import type {
   PropertyConfig,
   PropertyType,
   RowDataType,
-  SelectConfig,
 } from "./types";
 
 interface OriginalData {
@@ -40,16 +40,16 @@ export function transferPropertyValues(
   switch (dest.type) {
     case "title":
     case "text":
-      return { type: dest.type, id: src.id, value: toTextValue(src) };
+      return { type: dest.type, id: src.id, data: toTextValue(src) };
     case "checkbox":
-      return { type: dest.type, id: src.id, checked: toCheckboxValue(src) };
+      return { type: dest.type, id: src.id, data: toCheckboxValue(src) };
     case "select":
-      return { type: dest.type, id: src.id, option: toSelectValue(src, dest) };
+      return { type: dest.type, id: src.id, data: toSelectValue(src, dest) };
     case "multi-select":
       return {
         type: dest.type,
         id: src.id,
-        options: toMultiSelectValue(src, dest),
+        data: toMultiSelectValue(src, dest),
       };
   }
 }
@@ -58,13 +58,13 @@ function toTextValue(src: CellType): string {
   switch (src.type) {
     case "title":
     case "text":
-      return src.value;
+      return src.data;
     case "select":
-      return src.option ?? "";
+      return src.data ?? "";
     case "multi-select":
-      return src.options.join(", ");
+      return src.data.join(", ");
     case "checkbox":
-      return src.checked ? "✅" : "";
+      return src.data ? "✅" : "";
     default:
       return "";
   }
@@ -73,7 +73,7 @@ function toTextValue(src: CellType): string {
 export function toCheckboxValue(src: CellType): boolean {
   switch (src.type) {
     case "checkbox":
-      return src.checked;
+      return src.data;
     default:
       return false;
   }
@@ -117,11 +117,11 @@ function toSelectValue(
 ): string | null {
   switch (src.type) {
     case "text": {
-      const option = dest.config.options.items[src.value];
-      return option ? src.value : null;
+      const option = dest.config.options.items[src.data];
+      return option ? src.data : null;
     }
     case "select":
-      return src.option;
+      return src.data;
     default:
       return null;
   }
@@ -133,7 +133,7 @@ function toMultiSelectValue(
 ): string[] {
   switch (src.type) {
     case "text": {
-      return src.value.split(",").reduce<string[]>((acc, value) => {
+      return src.data.split(",").reduce<string[]>((acc, value) => {
         const option = dest.config.options.items[value];
         if (!option) return acc;
         acc.push(value);
@@ -141,9 +141,9 @@ function toMultiSelectValue(
       }, []);
     }
     case "multi-select":
-      return src.options;
+      return src.data;
     case "select":
-      return src.option ? [src.option] : [];
+      return src.data ? [src.data] : [];
     default:
       return [];
   }
@@ -154,13 +154,13 @@ export function toReadableValue(src?: CellType): string {
   switch (src.type) {
     case "title":
     case "text":
-      return src.value;
+      return src.data;
     case "checkbox":
-      return src.checked ? "1" : "0";
+      return src.data ? "1" : "0";
     case "select":
-      return src.option ?? "";
+      return src.data ?? "";
     case "multi-select":
-      return src.options.join(", ");
+      return src.data.join(", ");
     default:
       return "";
   }
