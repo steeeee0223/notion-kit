@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Icon } from "@notion-kit/icons";
 import {
@@ -19,7 +19,7 @@ import {
   MenuItemAction,
 } from "@notion-kit/shadcn";
 
-import { VerticalDnd } from "../../../common";
+import { useInputField, VerticalDnd } from "../../../common";
 import type { ConfigMeta, SelectSort } from "../../../lib/types";
 import { OptionItem } from "./option-item";
 import { useSelectConfigMenu } from "./use-select-config-menu";
@@ -48,12 +48,26 @@ export function SelectConfigMenu({ propId, meta }: SelectConfigMenuProps) {
   } = useSelectConfigMenu({ propId, meta });
 
   const [showInput, setShowInput] = useState(false);
-  // TODO useInputField for input handling
-  const saveOption = (value: string) => {
-    const name = value.trim();
-    if (name) addOption(name);
-    setShowInput(false);
-  };
+  const nameField = useInputField({
+    id: "name",
+    initialValue: "",
+    validate: validateOptionName,
+    onUpdate: (name) => {
+      if (name) addOption(name);
+      setShowInput(false);
+    },
+  });
+  const toggleInput = () =>
+    setShowInput((prev) => {
+      if (prev) nameField.reset();
+      else nameField.ref.current?.focus();
+      return !prev;
+    });
+
+  useEffect(() => {
+    if (!showInput) return;
+    nameField.ref.current?.focus();
+  }, [nameField.ref, showInput]);
 
   return (
     <DropdownMenuSub>
@@ -94,29 +108,22 @@ export function SelectConfigMenu({ propId, meta }: SelectConfigMenuProps) {
         </DropdownMenuGroup>
         <DropdownMenuGroup>
           <DropdownMenuLabel title="Options" className="relative">
-            {!showInput && (
-              <Button
-                variant="hint"
-                className="absolute top-0 right-2 size-5"
-                onClick={() => setShowInput(true)}
-              >
-                <Icon.Plus />
-              </Button>
-            )}
+            <Button
+              variant="hint"
+              className="absolute top-0 right-2 size-5 [&_svg]:size-3.5"
+              onClick={toggleInput}
+            >
+              {!showInput ? <Icon.Plus /> : <Icon.Close />}
+            </Button>
           </DropdownMenuLabel>
           {showInput && (
-            <div className="mb-2 flex w-full min-w-0 flex-auto items-center px-3 select-none">
-              <Input
-                onBlur={(e) => {
-                  e.stopPropagation();
-                  saveOption(e.target.value);
-                }}
-                onKeyDown={(e) => {
-                  e.stopPropagation();
-                  if (e.key !== "Enter") return;
-                  saveOption(e.currentTarget.value);
-                }}
-              />
+            <div className="mb-2 flex flex-col gap-2 px-3">
+              <div className="flex w-full min-w-0 flex-auto items-center select-none">
+                <Input {...nameField.props} />
+              </div>
+              {nameField.error && (
+                <div className="text-sm text-red">Option already exists.</div>
+              )}
             </div>
           )}
           <div className="flex flex-col">

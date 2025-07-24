@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 interface UseInputFieldOptions {
   id: string;
@@ -14,32 +20,36 @@ interface UseInputFieldResults {
   error: boolean;
   props: Pick<
     React.ComponentProps<"input">,
-    "id" | "value" | "onError" | "onChange" | "onBlur" | "onKeyDown"
+    | "ref"
+    | "id"
+    | "value"
+    | "onError"
+    | "onChange"
+    | "onBlur"
+    | "onKeyDown"
+    | "aria-invalid"
   >;
   ref: React.RefObject<HTMLInputElement | null>;
+  reset: () => void;
 }
 
-export const useInputField = ({
+export function useInputField({
   id,
   initialValue,
   validate = (_value) => true,
   onUpdate,
   onKeyDownUpdate,
-}: UseInputFieldOptions): UseInputFieldResults => {
+}: UseInputFieldOptions): UseInputFieldResults {
   const ref = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState(initialValue);
   const [error, setError] = useState(false);
 
-  useEffect(() => {
-    ref.current?.focus();
-  }, []);
-
-  return {
-    error,
-    ref,
-    props: {
+  const props = useMemo<UseInputFieldResults["props"]>(
+    () => ({
+      ref,
       id,
       value,
+      "aria-invalid": error,
       onChange: (e) => {
         e.preventDefault();
         setValue(e.target.value);
@@ -55,6 +65,18 @@ export const useInputField = ({
         if (!error) onUpdate?.(value);
         onKeyDownUpdate?.();
       },
-    },
-  };
-};
+    }),
+    [error, id, initialValue, onKeyDownUpdate, onUpdate, validate, value],
+  );
+
+  const reset = useCallback(() => {
+    setValue(initialValue);
+    setError(false);
+  }, [initialValue]);
+
+  useEffect(() => {
+    ref.current?.focus();
+  }, []);
+
+  return { error, ref, props, reset };
+}

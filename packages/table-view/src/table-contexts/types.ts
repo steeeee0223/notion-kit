@@ -48,7 +48,4 @@ export interface TableProps {
     type: TableViewAction["type"],
   ) => void;
   dispatch?: React.Dispatch<TableViewAction>;
-  // defaultState?: TableState;
-  // state?: TableState;
-  // onStateChange?: (newState: TableState, type: TableViewAction["type"]) => void;
 }

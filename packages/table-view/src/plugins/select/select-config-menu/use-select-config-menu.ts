@@ -66,12 +66,10 @@ export function useSelectConfigMenu({
   );
 
   const validateOptionName = useCallback(
-    (name: string) => {
-      if (!name.trim()) return false;
-      return !Object.values(config.options.items).some(
+    (name: string) =>
+      !Object.values(config.options.items).some(
         (option) => option.name === name,
-      );
-    },
+      ),
     [config.options.items],
   );
 

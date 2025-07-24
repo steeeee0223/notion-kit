@@ -43,7 +43,6 @@ export function OptionMeta({
       <div className="flex flex-col gap-px px-3 pt-3 pb-1">
         <div className="flex min-h-7 w-full items-center select-none">
           <Input
-            ref={nameField.ref}
             {...nameField.props}
             endIcon={
               <TooltipPreset
@@ -65,14 +64,13 @@ export function OptionMeta({
         </div>
         {nameField.error && (
           <div className="mx-4 pt-2 text-sm text-red">
-            This select option already exists.
+            Option already exists.
           </div>
         )}
       </div>
       {showDesc && (
         <div className="flex min-h-7 w-full min-w-0 flex-auto items-center px-3 py-1 leading-[1.2] select-none">
           <Input
-            ref={descField.ref}
             className="h-auto text-[13px]/[20px]"
             placeholder="Add a description..."
             {...descField.props}

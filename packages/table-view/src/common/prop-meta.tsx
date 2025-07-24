@@ -68,7 +68,6 @@ export const PropMeta: React.FC<PropMetaProps> = ({
           <div className="mr-3 ml-1.5 min-w-0 flex-auto">
             <div className="flex">
               <Input
-                ref={nameField.ref}
                 {...nameField.props}
                 endIcon={
                   <TooltipPreset
@@ -100,7 +99,6 @@ export const PropMeta: React.FC<PropMetaProps> = ({
       {showDesc && (
         <div className="flex min-h-7 w-full min-w-0 flex-auto items-center px-3 py-1 leading-[1.2] select-none">
           <Input
-            ref={descField.ref}
             className="h-auto text-[13px]/[20px]"
             placeholder="Add a description..."
             {...descField.props}
