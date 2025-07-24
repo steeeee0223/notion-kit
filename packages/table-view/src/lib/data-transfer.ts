@@ -5,12 +5,12 @@ import { getRandomColor } from "@notion-kit/utils";
 import type {
   CellDataType,
   CellType,
+  ConfigMeta,
   DatabaseProperty,
   PropertyConfig,
   PropertyType,
   RowDataType,
   SelectConfig,
-  SelectConfigMeta,
 } from "./types";
 
 interface OriginalData {
@@ -85,7 +85,7 @@ export function toCheckboxValue(src: CellType): boolean {
 function toSelectConfig(
   src: OriginalData,
   type: "select" | "multi-select",
-): SelectConfigMeta {
+): ConfigMeta<typeof type> {
   switch (src.property.type) {
     case "select":
     case "multi-select":
@@ -111,7 +111,10 @@ function toSelectConfig(
   }
 }
 
-function toSelectValue(src: CellType, dest: SelectConfigMeta): string | null {
+function toSelectValue(
+  src: CellType,
+  dest: ConfigMeta<"select" | "multi-select">,
+): string | null {
   switch (src.type) {
     case "text": {
       const option = dest.config.options.items[src.value];
@@ -124,7 +127,10 @@ function toSelectValue(src: CellType, dest: SelectConfigMeta): string | null {
   }
 }
 
-function toMultiSelectValue(src: CellType, dest: SelectConfigMeta): string[] {
+function toMultiSelectValue(
+  src: CellType,
+  dest: ConfigMeta<"select" | "multi-select">,
+): string[] {
   switch (src.type) {
     case "text": {
       return src.value.split(",").reduce<string[]>((acc, value) => {

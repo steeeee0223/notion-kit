@@ -3,12 +3,13 @@ import { v4 } from "uuid";
 
 import type { Color } from "@notion-kit/utils";
 
-import type { SelectConfig } from "../../lib/types";
+import type { SelectConfig, SelectSort } from "../../lib/types";
 import { getState } from "../../lib/utils";
 
 export type SelectConfigAction =
   | "add:option"
   | "update:option"
+  | "update:sort"
   | "update:sort:manual"
   | "delete:option";
 
@@ -24,6 +25,7 @@ export type SelectConfigActionPayload = { action: SelectConfigAction } & (
       };
     }
   | { action: "delete:option"; payload: { name: string } }
+  | { action: "update:sort"; payload: { sort: SelectSort } }
   | { action: "update:sort:manual"; updater: Updater<string[]> }
 );
 
@@ -59,6 +61,10 @@ export function selectConfigReducer(
         config: { ...v, options: { names, items } },
         nextEvent: { type: "update:name", payload: { originalName, name } },
       };
+    }
+    case "update:sort": {
+      // TODO update the order of options names
+      return { config: { ...v, sort: a.payload.sort } };
     }
     case "update:sort:manual": {
       const names = getState(a.updater, v.options.names);

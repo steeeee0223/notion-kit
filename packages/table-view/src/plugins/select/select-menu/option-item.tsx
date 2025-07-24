@@ -17,7 +17,7 @@ import type { Color } from "@notion-kit/utils";
 
 import { OptionTag } from "../../../common";
 import type { OptionConfig } from "../../../lib/types";
-import { SelectOptionMenu } from "./select-option-menu";
+import { SelectOptionMenu } from "../select-option-menu";
 
 interface OptionItemProps {
   option: OptionConfig;

@@ -37,7 +37,7 @@ export enum CountMethod {
   PERCENTAGE_NONEMPTY,
 }
 
-type SelectSort = "manual" | "alphabetical" | "reverse-alphabetical";
+export type SelectSort = "manual" | "alphabetical" | "reverse-alphabetical";
 
 export interface OptionConfig {
   id: string;
@@ -56,19 +56,22 @@ export interface SelectConfig {
   };
   sort?: SelectSort;
 }
-export interface SelectConfigMeta {
-  type: "select" | "multi-select";
-  config: SelectConfig;
-}
 
 export type PropertyConfig =
-  | { type: "text" | "checkbox"; config: never }
+  | { type: "text"; config: never }
+  | { type: "checkbox"; config: never }
   | { type: "title"; config: { showIcon?: boolean } }
-  | SelectConfigMeta;
+  | { type: "select"; config: SelectConfig }
+  | { type: "multi-select"; config: SelectConfig };
 export type PartialPropertyConfig =
-  | { type: "text" | "checkbox" }
+  | { type: "text" | "checkbox"; config?: never }
   | { type: "title"; config?: { showIcon?: boolean } }
   | { type: "select" | "multi-select"; config?: SelectConfig };
+
+export type ConfigMeta<T extends PropertyType> = Extract<
+  PropertyConfig,
+  { type: T }
+>;
 
 interface PropertyBase {
   id: string;

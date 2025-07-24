@@ -3,7 +3,12 @@ import { v4 } from "uuid";
 
 import type { TableViewCtx } from "../table-contexts";
 import { toCheckboxValue, toReadableValue } from "./data-transfer";
-import type { CellDataType, PropertyConfig, PropertyType } from "./types";
+import type {
+  CellDataType,
+  ConfigMeta,
+  DatabaseProperty,
+  PropertyType,
+} from "./types";
 import { CountMethod } from "./types";
 
 interface Entity<T extends { id: string }> {
@@ -41,7 +46,7 @@ export function getDefaultCell(type: PropertyType): CellDataType {
 
 export function getDefaultPropConfig(
   type: PropertyType,
-): Extract<PropertyConfig, { type: typeof type }> {
+): ConfigMeta<typeof type> {
   switch (type) {
     case "title":
       return { type, config: { showIcon: true } };
@@ -56,6 +61,20 @@ export function getDefaultPropConfig(
       };
     default:
       return { type, config: undefined as never };
+  }
+}
+
+export function extractPropConfig(
+  prop: DatabaseProperty,
+): ConfigMeta<typeof prop.type> {
+  switch (prop.type) {
+    case "title":
+      return { type: prop.type, config: prop.config };
+    case "select":
+    case "multi-select":
+      return { type: prop.type, config: prop.config };
+    default:
+      return { type: prop.type, config: undefined as never };
   }
 }
 

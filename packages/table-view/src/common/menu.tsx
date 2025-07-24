@@ -1,5 +1,3 @@
-import React from "react";
-
 import { Icon } from "@notion-kit/icons";
 import { Button, PopoverClose } from "@notion-kit/shadcn";
 
@@ -8,7 +6,7 @@ interface MenuHeaderProps {
   onBack?: () => void;
 }
 
-export const MenuHeader: React.FC<MenuHeaderProps> = ({ title, onBack }) => {
+export function MenuHeader({ title, onBack }: MenuHeaderProps) {
   return (
     <div className="flex h-[42px] shrink-0 items-center px-4 pt-3.5 pb-1.5">
       <Button
@@ -28,7 +26,7 @@ export const MenuHeader: React.FC<MenuHeaderProps> = ({ title, onBack }) => {
       </PopoverClose>
     </div>
   );
-};
+}
 
 interface MenuGroupHeaderProps {
   title: string;

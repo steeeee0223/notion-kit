@@ -49,10 +49,13 @@ export function createInitialTable(): PartialTableState {
 export function toDatabaseProperties(
   properties: PartialDatabaseProperty[],
 ): DatabaseProperty[] {
-  return properties.map((property) => ({
-    ...property,
-    ...getDefaultPropConfig(property.type),
-  }));
+  return properties.map(
+    (property) =>
+      ({
+        ...getDefaultPropConfig(property.type),
+        ...property,
+      }) as DatabaseProperty,
+  );
 }
 
 /**

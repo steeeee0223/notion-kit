@@ -9,16 +9,16 @@ import {
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  MenuItemAction,
   Separator,
-  Switch,
   useMenu,
 } from "@notion-kit/shadcn";
 
 import { PropMeta } from "../common";
 import { CountMethod } from "../lib/types";
+import { extractPropConfig } from "../lib/utils";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { CalcMenu } from "./calc-menu";
+import { PropConfig } from "./prop-config";
 import { TypesMenu } from "./types-menu";
 
 interface PropMenuProps {
@@ -46,17 +46,11 @@ interface PropMenuProps {
 export function PropMenu({ propId }: PropMenuProps) {
   const { table, properties, isPropertyUnique, canFreezeProperty } =
     useTableViewCtx();
-  const { dispatch, updateColumn, duplicate, freezeColumns } =
-    useTableActions();
+  const { updateColumn, duplicate, freezeColumns } = useTableActions();
   const { openMenu } = useMenu();
 
   const property = properties[propId]!;
 
-  const toggleIconVisibility = () =>
-    dispatch({
-      type: "update:col:meta:title",
-      payload: { id: propId, updater: (prev) => !prev },
-    });
   // 3. Sorting
   const sortColumn = (desc: boolean) =>
     table.setSorting([{ id: propId, desc }]);
@@ -89,17 +83,7 @@ export function PropMenu({ propId }: PropMenuProps) {
         onUpdate={(data) => updateColumn(property.id, data)}
       />
       <DropdownMenuGroup>
-        {property.type === "title" && (
-          <DropdownMenuItem
-            onSelect={toggleIconVisibility}
-            Icon={<Icon.EmojiFace />}
-            Body="Show page icon"
-          >
-            <MenuItemAction className="flex items-center">
-              <Switch size="sm" checked={property.config.showIcon} />
-            </MenuItemAction>
-          </DropdownMenuItem>
-        )}
+        <PropConfig propId={propId} meta={extractPropConfig(property)} />
         {property.type !== "title" && (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger

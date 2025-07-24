@@ -4,11 +4,7 @@ import { useState } from "react";
 
 import type { IconData } from "@notion-kit/icon-block";
 
-import type {
-  CellType,
-  DatabaseProperty,
-  SelectConfigMeta,
-} from "../lib/types";
+import type { CellType, ConfigMeta, DatabaseProperty } from "../lib/types";
 import { SelectCell } from "../plugins/select";
 import { CheckboxCell } from "./checkbox-cell";
 import { TextCell } from "./text-cell";
@@ -91,7 +87,7 @@ function DataCell({ property, data, icon, onChange }: DataCellProps) {
           onChange={(checked) => onChange?.({ type: "checkbox", checked })}
         />
       );
-    case "select": {
+    case "select":
       return (
         <SelectCell
           propId={property.id}
@@ -100,7 +96,7 @@ function DataCell({ property, data, icon, onChange }: DataCellProps) {
             {
               type: property.type,
               config: property.config,
-            } as SelectConfigMeta
+            } as ConfigMeta<"select">
           }
           wrapped={property.wrapped}
           onChange={(options) =>
@@ -108,8 +104,7 @@ function DataCell({ property, data, icon, onChange }: DataCellProps) {
           }
         />
       );
-    }
-    case "multi-select": {
+    case "multi-select":
       return (
         <SelectCell
           propId={property.id}
@@ -118,13 +113,12 @@ function DataCell({ property, data, icon, onChange }: DataCellProps) {
             {
               type: property.type,
               config: property.config,
-            } as SelectConfigMeta
+            } as ConfigMeta<"multi-select">
           }
           wrapped={property.wrapped}
           onChange={(options) => onChange?.({ type: "multi-select", options })}
         />
       );
-    }
     default:
       return null;
   }
