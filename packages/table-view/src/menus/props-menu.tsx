@@ -207,7 +207,7 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
         <div
           key="drag-handle"
           className={cn(
-            "mr-2 hidden h-6 w-4.5 shrink-0 cursor-grab items-center justify-center",
+            "mr-2 hidden h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-default/45",
             draggable && "flex",
           )}
           {...attributes}

@@ -280,7 +280,7 @@ export const tableViewReducer = (
           return { ...v, properties, data };
         }
         case "delete": {
-          const { name } = nextEvent.payload;
+          const name = nextEvent.payload;
           const data = { ...v.data };
           v.dataOrder.forEach((rowId) => {
             const cell = data[rowId]?.properties[a.payload.id];

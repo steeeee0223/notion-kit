@@ -76,7 +76,7 @@ export function OptionItem({
         Icon={
           <div
             key="drag-handle"
-            className="flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center"
+            className="flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-default/45"
             {...attributes}
             {...listeners}
           >

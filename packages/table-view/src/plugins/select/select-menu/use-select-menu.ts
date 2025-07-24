@@ -125,7 +125,7 @@ export function useSelectMenu({
     (name: string) => {
       dispatch({
         type: `update:col:meta:${type}`,
-        payload: { id: propId, action: "delete:option", payload: { name } },
+        payload: { id: propId, action: "delete:option", payload: name },
       });
       setCurrentOptions((prev) => {
         const options = new Map(prev);

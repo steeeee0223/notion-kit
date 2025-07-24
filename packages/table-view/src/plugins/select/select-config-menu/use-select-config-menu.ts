@@ -26,22 +26,24 @@ export function useSelectConfigMenu({
     (sort: SelectSort) =>
       dispatch({
         type: `update:col:meta:${type}`,
-        payload: { id: propId, action: "update:sort", payload: { sort } },
+        payload: { id: propId, action: "update:sort", payload: sort },
       }),
     [dispatch, propId, type],
   );
 
-  const addOption = useCallback(() => {
-    dispatch({
-      type: `update:col:meta:${type}`,
-      // TODO: add a default name and color
-      payload: {
-        id: propId,
-        action: "add:option",
-        payload: { name: "", color: getRandomColor() },
-      },
-    });
-  }, [dispatch, propId, type]);
+  const addOption = useCallback(
+    (name: string) => {
+      dispatch({
+        type: `update:col:meta:${type}`,
+        payload: {
+          id: propId,
+          action: "add:option",
+          payload: { name, color: getRandomColor() },
+        },
+      });
+    },
+    [dispatch, propId, type],
+  );
 
   const reorderOptions = useCallback(
     (e: DragEndEvent) => {
@@ -97,7 +99,7 @@ export function useSelectConfigMenu({
     (name: string) =>
       dispatch({
         type: `update:col:meta:${type}`,
-        payload: { id: propId, action: "delete:option", payload: { name } },
+        payload: { id: propId, action: "delete:option", payload: name },
       }),
     [dispatch, type, propId],
   );

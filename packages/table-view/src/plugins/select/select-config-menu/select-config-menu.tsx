@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
+
 import { Icon } from "@notion-kit/icons";
 import {
+  Button,
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -11,7 +14,9 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
+  Input,
   MenuItem,
+  MenuItemAction,
 } from "@notion-kit/shadcn";
 
 import { VerticalDnd } from "../../../common";
@@ -42,6 +47,14 @@ export function SelectConfigMenu({ propId, meta }: SelectConfigMenuProps) {
     deleteOption,
   } = useSelectConfigMenu({ propId, meta });
 
+  const [showInput, setShowInput] = useState(false);
+  // TODO useInputField for input handling
+  const saveOption = (value: string) => {
+    const name = value.trim();
+    if (name) addOption(name);
+    setShowInput(false);
+  };
+
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger
@@ -52,7 +65,12 @@ export function SelectConfigMenu({ propId, meta }: SelectConfigMenuProps) {
         <DropdownMenuGroup>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <MenuItem Icon={<Icon.ArrowUpDown />} Body="Sort"></MenuItem>
+              <MenuItem Icon={<Icon.ArrowUpDown />} Body="Sort">
+                <MenuItemAction className="flex items-center text-muted">
+                  {sortOptions.find((o) => o.value === config.sort)?.label}
+                  <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-current" />
+                </MenuItemAction>
+              </MenuItem>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="start"
@@ -75,7 +93,32 @@ export function SelectConfigMenu({ propId, meta }: SelectConfigMenuProps) {
           </DropdownMenu>
         </DropdownMenuGroup>
         <DropdownMenuGroup>
-          <DropdownMenuLabel title="Options" />
+          <DropdownMenuLabel title="Options" className="relative">
+            {!showInput && (
+              <Button
+                variant="hint"
+                className="absolute top-0 right-2 size-5"
+                onClick={() => setShowInput(true)}
+              >
+                <Icon.Plus />
+              </Button>
+            )}
+          </DropdownMenuLabel>
+          {showInput && (
+            <div className="mb-2 flex w-full min-w-0 flex-auto items-center px-3 select-none">
+              <Input
+                onBlur={(e) => {
+                  e.stopPropagation();
+                  saveOption(e.target.value);
+                }}
+                onKeyDown={(e) => {
+                  e.stopPropagation();
+                  if (e.key !== "Enter") return;
+                  saveOption(e.currentTarget.value);
+                }}
+              />
+            </div>
+          )}
           <div className="flex flex-col">
             <VerticalDnd
               items={config.options.names}

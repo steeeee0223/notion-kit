@@ -13,7 +13,7 @@ export type SelectConfigAction =
   | "update:sort:manual"
   | "delete:option";
 
-export type SelectConfigActionPayload = { action: SelectConfigAction } & (
+export type SelectConfigActionPayload =
   | { action: "add:option"; payload: { name: string; color: Color } }
   | {
       action: "update:option";
@@ -24,16 +24,15 @@ export type SelectConfigActionPayload = { action: SelectConfigAction } & (
         color?: Color;
       };
     }
-  | { action: "delete:option"; payload: { name: string } }
-  | { action: "update:sort"; payload: { sort: SelectSort } }
-  | { action: "update:sort:manual"; updater: Updater<string[]> }
-);
+  | { action: "delete:option"; payload: string }
+  | { action: "update:sort"; payload: SelectSort }
+  | { action: "update:sort:manual"; updater: Updater<string[]> };
 
 interface SelectConfigReducerResult {
   config: SelectConfig;
   nextEvent?:
     | { type: "update:name"; payload: { originalName: string; name: string } }
-    | { type: "delete"; payload: { name: string } };
+    | { type: "delete"; payload: string };
 }
 
 export function selectConfigReducer(
@@ -63,15 +62,23 @@ export function selectConfigReducer(
       };
     }
     case "update:sort": {
-      // TODO update the order of options names
-      return { config: { ...v, sort: a.payload.sort } };
+      const meta = { config: { ...v, sort: a.payload } };
+      if (a.payload === "manual") return meta;
+      meta.config.options.names = meta.config.options.names
+        .slice()
+        .sort(
+          (name1, name2) =>
+            name1.localeCompare(name2) *
+            (a.payload === "alphabetical" ? 1 : -1),
+        );
+      return meta;
     }
     case "update:sort:manual": {
       const names = getState(a.updater, v.options.names);
       return { config: { sort: "manual", options: { ...v.options, names } } };
     }
     case "delete:option": {
-      const { [a.payload.name]: option, ...rest } = v.options.items;
+      const { [a.payload]: option, ...rest } = v.options.items;
       return {
         config: {
           ...v,
