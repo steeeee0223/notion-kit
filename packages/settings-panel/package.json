@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/settings-panel",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -65,7 +65,8 @@
   },
   "bundleDependencies": [
     "@notion-kit/common",
-    "@notion-kit/i18n"
+    "@notion-kit/i18n",
+    "@notion-kit/utils"
   ],
   "prettier": "@notion-kit/prettier-config"
 }
