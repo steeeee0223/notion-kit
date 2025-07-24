@@ -3,9 +3,12 @@
 import { useState } from "react";
 
 import { TableView as Table } from "@notion-kit/table-view";
-import type { DatabaseProperty, RowDataType } from "@notion-kit/table-view";
+import type {
+  PartialDatabaseProperty,
+  RowDataType,
+} from "@notion-kit/table-view";
 
-const mockProps: DatabaseProperty[] = [
+const mockProps: PartialDatabaseProperty[] = [
   {
     id: "prop-1",
     type: "title",

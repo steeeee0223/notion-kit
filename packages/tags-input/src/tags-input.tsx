@@ -3,22 +3,28 @@
 /**
  * @see https://github.com/shadcn-ui/ui/issues/3647
  */
-import React, { useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { XIcon } from "lucide-react";
 import { z } from "zod";
 
 import { cn } from "@notion-kit/cn";
 import type { InputProps } from "@notion-kit/shadcn";
 import { Badge, Button } from "@notion-kit/shadcn";
+import { COLOR, type Color } from "@notion-kit/utils";
+
+export interface TagOption {
+  value: string;
+  color?: Color;
+}
 
 type TagsInputProps = Omit<InputProps, "value" | "onChange" | "variant"> & {
-  value: { tags: string[]; input: string };
+  value: { tags: (string | TagOption)[]; input: string };
   inputSchema?: z.Schema;
   onTagsChange?: (value: string[]) => void;
   onInputChange?: (value: string) => void;
 };
 
-const TagsInput: React.FC<TagsInputProps> = ({
+function TagsInput({
   ref,
   className,
   value,
@@ -26,7 +32,9 @@ const TagsInput: React.FC<TagsInputProps> = ({
   onTagsChange,
   onInputChange,
   ...props
-}) => {
+}: TagsInputProps) {
+  const tags = toTagOptions(value.tags);
+
   const onUpdate = useCallback(
     (tags: string[], input?: string) => {
       onTagsChange?.(tags);
@@ -35,14 +43,22 @@ const TagsInput: React.FC<TagsInputProps> = ({
     [onInputChange, onTagsChange],
   );
   const onAddTag = () => {
+    if (!value.input) return;
     const result = inputSchema?.safeParse(value.input) ?? { success: true };
     if (result.success) {
-      const tags = Array.from(new Set([...value.tags, value.input]));
-      onUpdate(tags, "");
+      const tags = new Set(value.tags.map((tag) => getValue(tag)));
+      tags.add(value.input);
+      onUpdate(Array.from(tags), "");
     }
   };
   const onDeleteTag = (item: string) =>
-    onUpdate(value.tags.filter((i) => i !== item));
+    onUpdate(
+      value.tags.reduce<string[]>((acc, tag) => {
+        const value = getValue(tag);
+        if (value !== item) acc.push(value);
+        return acc;
+      }, []),
+    );
   const onKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
@@ -53,47 +69,47 @@ const TagsInput: React.FC<TagsInputProps> = ({
       value.tags.length > 0
     ) {
       e.preventDefault();
-      onUpdate(value.tags.slice(0, -1));
+      onUpdate(value.tags.slice(0, -1).map((tag) => getValue(tag)));
     }
   };
 
   useEffect(() => {
     if (value.input.includes(",")) {
-      const newDataPoints = new Set([
-        ...value.tags,
-        ...value.input.split(",").map((chunk) => chunk.trim()),
-      ]);
-      onUpdate(Array.from(newDataPoints), "");
+      const tags = new Set(value.tags.map((tag) => getValue(tag)));
+      value.input.split(",").forEach((chunk) => tags.add(chunk.trim()));
+      onUpdate(Array.from(tags), "");
     }
   }, [value, onUpdate]);
 
   return (
     <div
       className={cn(
-        // caveat: :has() variant requires tailwind v3.4 or above: https://tailwindcss.com/blog/tailwindcss-v3-4#new-has-variant
         "flex min-h-10 w-full flex-wrap gap-2 rounded-sm border border-border bg-default/5 px-3 py-2 text-sm",
         "placeholder:text-muted disabled:cursor-not-allowed disabled:opacity-50",
-        "has-[:focus-visible]:outline-none",
+        "focus-visible:outline-none",
         className,
       )}
     >
-      {value.tags.map((item) => (
+      {tags.map((tag) => (
         <Badge
-          key={item}
+          key={tag.value}
           role="listitem"
-          aria-label={item}
+          aria-label={tag.value}
           variant="tag"
           size="sm"
-          className="h-5 max-w-full min-w-0 flex-shrink-0 rounded pr-0 text-sm leading-[120%]"
+          className="h-5 max-w-full min-w-0 shrink-0 rounded pr-0 text-sm/[1.2]"
+          style={{
+            backgroundColor: tag.color ? COLOR[tag.color].rgba : undefined,
+          }}
         >
-          <span className="truncate">{item}</span>
+          <span className="truncate">{tag.value}</span>
           <Button
             variant="hint"
-            className="size-5 flex-shrink-0 hover:bg-transparent hover:text-icon"
+            className="size-5 shrink-0 hover:bg-transparent hover:text-icon"
             tabIndex={0}
-            onClick={() => onDeleteTag(item)}
+            onClick={() => onDeleteTag(getValue(tag))}
           >
-            <XIcon className="size-2 flex-shrink-0 flex-grow-0" />
+            <XIcon className="size-2 shrink-0 flex-grow-0" />
           </Button>
         </Badge>
       ))}
@@ -109,8 +125,22 @@ const TagsInput: React.FC<TagsInputProps> = ({
       </div>
     </div>
   );
-};
+}
 
-TagsInput.displayName = "TagsInput";
+function getValue(tag: string | TagOption): string {
+  return typeof tag === "string" ? tag : tag.value;
+}
+
+function toTagOptions(
+  tags: (string | [string, Color | undefined] | TagOption)[],
+): TagOption[] {
+  return tags.map((tag) =>
+    typeof tag === "string"
+      ? { value: tag }
+      : Array.isArray(tag)
+        ? { value: tag[0], color: tag[1] }
+        : tag,
+  );
+}
 
 export { TagsInput };

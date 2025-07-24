@@ -1,6 +1,9 @@
-import type { DatabaseProperty, RowDataType } from "@notion-kit/table-view";
+import type {
+  PartialDatabaseProperty,
+  RowDataType,
+} from "@notion-kit/table-view";
 
-export const mockProps: DatabaseProperty[] = [
+export const mockProps: PartialDatabaseProperty[] = [
   {
     id: "prop-1",
     type: "title",

@@ -9,28 +9,27 @@ import {
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  MenuItemAction,
   Separator,
-  Switch,
   useMenu,
 } from "@notion-kit/shadcn";
 
 import { PropMeta } from "../common";
 import { CountMethod } from "../lib/types";
+import { extractPropConfig } from "../lib/utils";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { CalcMenu } from "./calc-menu";
-import { EditPropMenu } from "./edit-prop-menu";
+import { PropConfig } from "./prop-config";
 import { TypesMenu } from "./types-menu";
 
 interface PropMenuProps {
   propId: string;
-  rect?: DOMRect;
 }
 
 /**
  * @summary The definition of the property
  *
- * 1. ✅ Edit property: opens `EditPropMenu`
+ * 0. 🚧 Edit property config
+ * 1. ✅ Change type
  * ---
  * 2. 🚧 Filter
  * 3. ✅ Sorting
@@ -44,27 +43,14 @@ interface PropMenuProps {
  * 10. ✅ Duplicate property
  * 11. ✅ Delete property
  */
-export function PropMenu({ propId, rect }: PropMenuProps) {
-  const {
-    table,
-    properties,
-    showPageIcon,
-    isPropertyUnique,
-    canFreezeProperty,
-  } = useTableViewCtx();
-  const { toggleIconVisibility, updateColumn, duplicate, freezeColumns } =
-    useTableActions();
+export function PropMenu({ propId }: PropMenuProps) {
+  const { table, properties, isPropertyUnique, canFreezeProperty } =
+    useTableViewCtx();
+  const { updateColumn, duplicate, freezeColumns } = useTableActions();
   const { openMenu } = useMenu();
 
   const property = properties[propId]!;
 
-  // 1. Edit property
-  const openEditPropMenu = () => {
-    openMenu(<EditPropMenu propId={propId} />, {
-      x: rect?.x,
-      y: rect?.bottom,
-    });
-  };
   // 3. Sorting
   const sortColumn = (desc: boolean) =>
     table.setSorting([{ id: propId, desc }]);
@@ -97,25 +83,18 @@ export function PropMenu({ propId, rect }: PropMenuProps) {
         onUpdate={(data) => updateColumn(property.id, data)}
       />
       <DropdownMenuGroup>
-        {property.type === "title" && (
-          <DropdownMenuItem
-            onSelect={(e) => {
-              e.stopPropagation();
-              toggleIconVisibility();
-            }}
-            Icon={<Icon.EmojiFace />}
-            Body="Show page icon"
-          >
-            <MenuItemAction className="flex items-center">
-              <Switch size="sm" checked={showPageIcon} />
-            </MenuItemAction>
-          </DropdownMenuItem>
+        <PropConfig propId={propId} meta={extractPropConfig(property)} />
+        {property.type !== "title" && (
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger
+              Icon={<Icon.ArrowSquarePathUpDown />}
+              Body="Change type"
+            />
+            <DropdownMenuSubContent sideOffset={-4} className="w-50">
+              <TypesMenu propId={propId} showHeader={false} />
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
         )}
-        <DropdownMenuItem
-          onSelect={openEditPropMenu}
-          Icon={<Icon.Sliders className="fill-icon" />}
-          Body="Edit property"
-        />
       </DropdownMenuGroup>
       <Separator />
       <DropdownMenuGroup>

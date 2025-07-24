@@ -1,15 +1,11 @@
 import type { IconData } from "@notion-kit/icon-block";
-
-export interface Option {
-  id: string;
-  name: string;
-  color: string;
-}
+import type { Color } from "@notion-kit/utils";
 
 export type CellType =
   | { type: "title" | "text"; value: string }
   | { type: "checkbox"; checked: boolean }
-  | { type: "select"; select: Option | null };
+  | { type: "select"; option: string | null }
+  | { type: "multi-select"; options: string[] };
 export type PropertyType = CellType["type"];
 
 export type CellDataType = {
@@ -26,10 +22,6 @@ export interface RowDataType {
   icon?: IconData;
 }
 
-export type HeaderCellType =
-  | { type: "title" | "text" | "checkbox" }
-  | { type: "select"; options: Option[] };
-
 export enum CountMethod {
   NONE,
   ALL,
@@ -45,7 +37,43 @@ export enum CountMethod {
   PERCENTAGE_NONEMPTY,
 }
 
-export interface DatabaseProperty {
+export type SelectSort = "manual" | "alphabetical" | "reverse-alphabetical";
+
+export interface OptionConfig {
+  id: string;
+  name: string;
+  color: Color;
+  description?: string;
+}
+
+export interface SelectConfig {
+  options: {
+    names: string[];
+    /**
+     * @prop items: map of option name to option config
+     */
+    items: Record<string, OptionConfig>;
+  };
+  sort?: SelectSort;
+}
+
+export type PropertyConfig =
+  | { type: "text"; config: never }
+  | { type: "checkbox"; config: never }
+  | { type: "title"; config: { showIcon?: boolean } }
+  | { type: "select"; config: SelectConfig }
+  | { type: "multi-select"; config: SelectConfig };
+export type PartialPropertyConfig =
+  | { type: "text" | "checkbox"; config?: never }
+  | { type: "title"; config?: { showIcon?: boolean } }
+  | { type: "select" | "multi-select"; config?: SelectConfig };
+
+export type ConfigMeta<T extends PropertyType> = Extract<
+  PropertyConfig,
+  { type: T }
+>;
+
+interface PropertyBase {
   id: string;
   type: PropertyType;
   name: string;
@@ -58,3 +86,5 @@ export interface DatabaseProperty {
   isCountCapped?: boolean;
   countMethod?: CountMethod;
 }
+export type DatabaseProperty = PropertyBase & PropertyConfig;
+export type PartialDatabaseProperty = PropertyBase & Partial<PropertyConfig>;

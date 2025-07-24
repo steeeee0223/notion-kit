@@ -1,7 +1,14 @@
+import type { Updater } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { TableViewCtx } from "../table-contexts";
-import type { CellDataType, CellType, Option, PropertyType } from "./types";
+import { toCheckboxValue, toReadableValue } from "./data-transfer";
+import type {
+  CellDataType,
+  ConfigMeta,
+  DatabaseProperty,
+  PropertyType,
+} from "./types";
 import { CountMethod } from "./types";
 
 interface Entity<T extends { id: string }> {
@@ -29,9 +36,45 @@ export function getDefaultCell(type: PropertyType): CellDataType {
     case "checkbox":
       return { type, id: v4(), checked: false };
     case "select":
-      return { type, id: v4(), select: null };
+      return { type, id: v4(), option: null };
+    case "multi-select":
+      return { type, id: v4(), options: [] };
     default:
       return { type, id: v4(), value: "" };
+  }
+}
+
+export function getDefaultPropConfig(
+  type: PropertyType,
+): ConfigMeta<typeof type> {
+  switch (type) {
+    case "title":
+      return { type, config: { showIcon: true } };
+    case "select":
+    case "multi-select":
+      return {
+        type,
+        config: {
+          options: { names: [], items: {} },
+          sort: "manual",
+        },
+      };
+    default:
+      return { type, config: undefined as never };
+  }
+}
+
+export function extractPropConfig(
+  prop: DatabaseProperty,
+): ConfigMeta<typeof prop.type> {
+  switch (prop.type) {
+    case "title":
+      return { type: prop.type, config: prop.config };
+    case "select":
+    case "multi-select":
+      return { type: prop.type, config: prop.config };
+    default:
+      return { type: prop.type, config: undefined as never };
   }
 }
 
@@ -45,51 +88,6 @@ export function getUniqueName(name: string, names: string[]) {
     suffix++;
   }
   return uniqueName;
-}
-
-export function transferPropertyValues(
-  src: CellDataType,
-  dest: PropertyType,
-): CellDataType {
-  switch (dest) {
-    case "title":
-    case "text":
-      return { type: dest, id: src.id, value: toTextValue(src) };
-    case "checkbox":
-      return { type: dest, id: src.id, checked: toCheckboxValue(src) };
-    case "select":
-      return { type: dest, id: src.id, select: toSelectValue(src) };
-  }
-}
-
-function toTextValue(src: CellType): string {
-  switch (src.type) {
-    case "title":
-    case "text":
-      return src.value;
-    case "select":
-      return src.select?.name ?? "";
-    default:
-      return "";
-  }
-}
-
-function toCheckboxValue(src: CellType): boolean {
-  switch (src.type) {
-    case "checkbox":
-      return src.checked;
-    default:
-      return false;
-  }
-}
-
-function toSelectValue(src: CellType): Option | null {
-  switch (src.type) {
-    case "select":
-      return src.select;
-    default:
-      return null;
-  }
 }
 
 export function getCount(
@@ -106,12 +104,12 @@ export function getCount(
     case CountMethod.ALL:
       return capValue(columnData.length, capped);
     case CountMethod.UNIQUE: {
-      const values = new Set(columnData.map((c) => toTextValue(c)));
+      const values = new Set(columnData.map((c) => toReadableValue(c)));
       return capValue(values.size, capped);
     }
     case CountMethod.EMPTY: {
       const count = columnData.reduce(
-        (acc, c) => acc + Number(toTextValue(c) === ""),
+        (acc, c) => acc + Number(toReadableValue(c) === ""),
         0,
       );
       return capValue(count, capped);
@@ -119,7 +117,7 @@ export function getCount(
     case CountMethod.VALUES:
     case CountMethod.NONEMPTY: {
       const count = columnData.reduce(
-        (acc, c) => acc + Number(toTextValue(c) !== ""),
+        (acc, c) => acc + Number(toReadableValue(c) !== ""),
         0,
       );
       return capValue(count, capped);
@@ -140,14 +138,14 @@ export function getCount(
     }
     case CountMethod.PERCENTAGE_EMPTY: {
       const count = columnData.reduce(
-        (acc, c) => acc + Number(toTextValue(c) === ""),
+        (acc, c) => acc + Number(toReadableValue(c) === ""),
         0,
       );
       return getPercentage(count, columnData.length);
     }
     case CountMethod.PERCENTAGE_NONEMPTY: {
       const count = columnData.reduce(
-        (acc, c) => acc + Number(toTextValue(c) !== ""),
+        (acc, c) => acc + Number(toReadableValue(c) !== ""),
         0,
       );
       return getPercentage(count, columnData.length);
@@ -186,17 +184,8 @@ export function isCountMethodSet(properties: TableViewCtx["properties"]) {
   );
 }
 
-export function toSortableValue(src?: CellType): string {
-  if (!src) return "";
-  switch (src.type) {
-    case "title":
-    case "text":
-      return src.value;
-    case "checkbox":
-      return src.checked ? "1" : "0";
-    case "select":
-      return src.select?.name ?? "";
-    default:
-      return "";
-  }
+export function getState<T>(updater: Updater<T>, snapshot: T) {
+  return typeof updater === "function"
+    ? (updater as (old: T) => T)(snapshot)
+    : updater;
 }

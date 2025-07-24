@@ -1,4 +1,8 @@
-export { DefaultIcon } from "./default-icon";
+export { CellTrigger } from "./cell-trigger";
+export { DefaultIcon, ColorIcon } from "./default-icon";
 export * from "./menu";
+export { OptionTag } from "./option-tag";
 export { PropMeta } from "./prop-meta";
-export * from "./vertical-dnd";
+export { useInputField } from "./use-input-field";
+export { useTriggerPosition } from "./use-trigger-position";
+export { VerticalDnd } from "./vertical-dnd";

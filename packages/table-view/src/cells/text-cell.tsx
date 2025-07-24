@@ -7,7 +7,7 @@ import { useCopyToClipboard } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { Button, TooltipPreset } from "@notion-kit/shadcn";
 
-import { CellTrigger } from "./cell-trigger";
+import { CellTrigger } from "../common";
 import { useTextInputPopover } from "./use-text-input-popover";
 
 interface TextCellProps {

@@ -140,7 +140,7 @@ export function TableHeaderCell({
           </TooltipPreset>
         </div>
         <DropdownMenuContent align="start" sideOffset={rect?.height}>
-          <PropMenu propId={id} rect={rect} />
+          <PropMenu propId={id} />
         </DropdownMenuContent>
       </DropdownMenu>
       {/* Resize handle */}

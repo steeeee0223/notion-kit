@@ -124,7 +124,12 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
       className="h-9 hover:bg-transparent *:data-[slot=menu-item-body]:mx-0"
       style={style}
       Icon={
-        <div key="drag-handle" {...attributes} {...listeners}>
+        <div
+          key="drag-handle"
+          className="[&_svg]:fill-default/45"
+          {...attributes}
+          {...listeners}
+        >
           <Icon.DragHandle className="size-3" />
         </div>
       }

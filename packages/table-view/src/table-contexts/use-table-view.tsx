@@ -28,11 +28,11 @@ import type { TableViewCtx } from "./table-view-context";
 import type { TableProps } from "./types";
 import {
   createInitialTable,
-  DEFAULT_FREEZED_INDEX,
   getMinWidth,
   getTableViewAtom,
   tableViewSortingFn,
   toControlledState,
+  toDatabaseProperties,
 } from "./utils";
 
 /**
@@ -56,8 +56,10 @@ export function useTableView(props: TableProps) {
     [_dispatch, props],
   );
 
-  const properties =
-    props.state?.properties ?? Object.values(_state.properties);
+  const controlledProperties = props.state?.properties
+    ? toDatabaseProperties(props.state.properties)
+    : undefined;
+  const properties = controlledProperties ?? Object.values(_state.properties);
 
   const data = useMemo(
     () => props.state?.data ?? Object.values(_state.data),
@@ -71,15 +73,15 @@ export function useTableView(props: TableProps) {
 
   const columns = useMemo(
     () =>
-      properties.map<ColumnDef<RowDataType>>(({ id, ...property }) => ({
-        id,
+      properties.map<ColumnDef<RowDataType>>((property) => ({
+        id: property.id,
         accessorKey: property.name,
         minSize: getMinWidth(property.type),
         sortingFn: tableViewSortingFn,
         header: ({ header }) => (
           <TableHeaderCell
-            id={id}
-            width={`calc(var(--col-${id}-size) * 1px)`}
+            id={property.id}
+            width={`calc(var(--col-${property.id}-size) * 1px)`}
             isResizing={header.column.getIsResizing()}
             resizeHandle={{
               onMouseDown: header.getResizeHandler(),
@@ -87,7 +89,7 @@ export function useTableView(props: TableProps) {
                 dispatch({
                   type: "update:col",
                   payload: {
-                    id,
+                    id: property.id,
                     data: { width: `${header.column.getSize()}px` },
                   },
                 }),
@@ -96,7 +98,7 @@ export function useTableView(props: TableProps) {
                 dispatch({
                   type: "update:col",
                   payload: {
-                    id,
+                    id: property.id,
                     data: { width: `${header.column.getSize()}px` },
                   },
                 }),
@@ -104,27 +106,23 @@ export function useTableView(props: TableProps) {
           />
         ),
         cell: ({ row, column }) => {
-          const cell = row.original.properties[id];
+          const cell = row.original.properties[property.id];
           if (!cell) return null;
           return (
             <TableRowCell
               data={cell}
-              rowId={row.index}
-              colId={column.getIndex()}
+              rowIndex={row.index}
+              colIndex={column.getIndex()}
+              property={property}
               // width={property.width}
-              width={`calc(var(--col-${id}-size) * 1px)`}
-              icon={
-                _state.table.showPageIcon && cell.type === "title"
-                  ? row.original.icon
-                  : undefined
-              }
-              wrapped={property.wrapped}
+              width={`calc(var(--col-${property.id}-size) * 1px)`}
+              icon={row.original.icon}
               onChange={(data) =>
                 dispatch({
                   type: "update:cell",
                   payload: {
                     rowId: row.original.id,
-                    colId: id,
+                    colId: property.id,
                     data: { id: cell.id, ...data },
                   },
                 })
@@ -134,15 +132,15 @@ export function useTableView(props: TableProps) {
         },
         footer: () => (
           <TableFooterCell
-            id={id}
+            id={property.id}
             type={property.type}
             countMethod={property.countMethod ?? CountMethod.NONE}
             isCountCapped={property.isCountCapped}
-            width={`calc(var(--col-${id}-size) * 1px)`}
+            width={`calc(var(--col-${property.id}-size) * 1px)`}
           />
         ),
       })),
-    [_state.table.showPageIcon, dispatch, properties],
+    [dispatch, properties],
   );
 
   const columnVisibility = useMemo<VisibilityState>(
@@ -158,7 +156,7 @@ export function useTableView(props: TableProps) {
     return {
       left: props.state
         ? props.state.properties
-            .slice(0, (props.state.freezedIndex ?? DEFAULT_FREEZED_INDEX) + 1)
+            .slice(0, _state.freezedIndex + 1)
             .map((prop) => prop.id)
         : _state.propertiesOrder.slice(0, _state.freezedIndex + 1),
     };
@@ -247,15 +245,14 @@ export function useTableView(props: TableProps) {
       rowSensors,
       dataOrder,
       properties: _state.properties,
-      showPageIcon: _state.table.showPageIcon,
       isPropertyUnique: (name) => properties.every((p) => p.name !== name),
       canFreezeProperty: (id) => table.getState().columnOrder.at(-1) !== id,
       isSomeCountMethodSet: isCountMethodSet(_state.properties),
       getColumnCount: (...params) =>
         getCount({ table, properties: _state.properties }, ...params),
     };
-    if (!props.state?.properties) return uncontrolled;
-    const colData = arrayToEntity(props.state.properties);
+    if (!controlledProperties) return uncontrolled;
+    const colData = arrayToEntity(controlledProperties);
     return {
       ...uncontrolled,
       properties: colData.items,
@@ -265,12 +262,11 @@ export function useTableView(props: TableProps) {
     };
   }, [
     _state.properties,
-    _state.table.showPageIcon,
     columnSensors,
     columnSizeVars,
+    controlledProperties,
     dataOrder,
     properties,
-    props.state?.properties,
     rowSensors,
     table,
   ]);

@@ -21,7 +21,11 @@ export function toDateString(date: Date | string | number): string {
 export function idToColor(id: string): string {
   const colors = Object.values(COLOR);
   const sum = Array.from(id).reduce((acc, x) => acc + x.charCodeAt(0), 0);
-  return colors[sum % colors.length]!;
+  return colors[sum % colors.length]!.hex;
+}
+
+export function getRandomColor() {
+  return randomItem(Object.keys(COLOR)) as Color;
 }
 
 export { COLOR, Color };

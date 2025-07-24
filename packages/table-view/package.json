@@ -40,6 +40,8 @@
     "@notion-kit/icons": "workspace:*",
     "@notion-kit/modal": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
+    "@notion-kit/tags-input": "workspace:*",
+    "@notion-kit/utils": "workspace:*",
     "@tanstack/react-table": "catalog:ui",
     "react-hotkeys-hook": "catalog:ui",
     "uuid": "catalog:uuid"
@@ -60,5 +62,9 @@
   "peerDependencies": {
     "react": "catalog:react19"
   },
+  "bundleDependencies": [
+    "@notion-kit/common",
+    "@notion-kit/utils"
+  ],
   "prettier": "@notion-kit/prettier-config"
 }
