@@ -8,7 +8,8 @@ import type {
   PropertyType,
   RowDataType,
 } from "../lib/types";
-import { arrayToEntity, getDefaultPropConfig } from "../lib/utils";
+import { arrayToEntity } from "../lib/utils";
+import { defaultPlugins } from "../plugins";
 import type { TableViewAtom } from "./table-reducer";
 import type { PartialTableState, TableState } from "./types";
 
@@ -31,15 +32,15 @@ export function createInitialTable(): PartialTableState {
   const data: RowDataType[] = [
     {
       id: v4(),
-      properties: { [titleId]: { id: v4(), type: "title", value: "" } },
+      properties: { [titleId]: { id: v4(), type: "title", data: "" } },
     },
     {
       id: v4(),
-      properties: { [titleId]: { id: v4(), type: "title", value: "" } },
+      properties: { [titleId]: { id: v4(), type: "title", data: "" } },
     },
     {
       id: v4(),
-      properties: { [titleId]: { id: v4(), type: "title", value: "" } },
+      properties: { [titleId]: { id: v4(), type: "title", data: "" } },
     },
   ];
 
@@ -52,7 +53,9 @@ export function toDatabaseProperties(
   return properties.map(
     (property) =>
       ({
-        ...getDefaultPropConfig(property.type),
+        // TODO remove this
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        config: defaultPlugins.items[property.type].default.config,
         ...property,
       }) as DatabaseProperty,
   );

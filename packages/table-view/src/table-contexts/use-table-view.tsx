@@ -113,10 +113,11 @@ export function useTableView(props: TableProps) {
               data={cell}
               rowIndex={row.index}
               colIndex={column.getIndex()}
-              property={property}
-              // width={property.width}
+              propId={property.id}
+              config={property.config}
               width={`calc(var(--col-${property.id}-size) * 1px)`}
-              icon={row.original.icon}
+              wrapped={property.wrapped}
+              // icon={row.original.icon}
               onChange={(data) =>
                 dispatch({
                   type: "update:cell",

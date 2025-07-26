@@ -4,3 +4,5 @@ export {
   selectConfigReducer,
   type SelectConfigActionPayload,
 } from "./select-config-reducer";
+export { select, multiSelect, selectReducer } from "./plugin";
+export type * from "./types";

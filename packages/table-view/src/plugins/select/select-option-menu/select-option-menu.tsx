@@ -11,7 +11,7 @@ import {
 import { COLOR, type Color } from "@notion-kit/utils";
 
 import { ColorIcon } from "../../../common";
-import type { OptionConfig } from "../../../lib/types";
+import type { OptionConfig } from "../types";
 import { OptionMeta } from "./option-meta";
 
 interface SelectOptionMenuProps {

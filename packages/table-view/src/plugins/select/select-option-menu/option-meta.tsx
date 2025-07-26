@@ -6,7 +6,7 @@ import { Icon } from "@notion-kit/icons";
 import { Button, Input, TooltipPreset } from "@notion-kit/shadcn";
 
 import { useInputField } from "../../../common";
-import type { OptionConfig } from "../../../lib/types";
+import type { OptionConfig } from "../types";
 
 interface OptionMetaProps {
   option: OptionConfig;

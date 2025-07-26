@@ -1,11 +1,12 @@
 import type { IconData } from "@notion-kit/icon-block";
-import type { Color } from "@notion-kit/utils";
+
+import { SelectConfig } from "../plugins/select";
 
 export type CellType =
-  | { type: "title" | "text"; value: string }
-  | { type: "checkbox"; checked: boolean }
-  | { type: "select"; option: string | null }
-  | { type: "multi-select"; options: string[] };
+  | { type: "title" | "text"; data: string }
+  | { type: "checkbox"; data: boolean }
+  | { type: "select"; data: string | null }
+  | { type: "multi-select"; data: string[] };
 export type PropertyType = CellType["type"];
 
 export type CellDataType = {
@@ -35,26 +36,6 @@ export enum CountMethod {
   PERCENTAGE_UNCHECKED,
   PERCENTAGE_EMPTY,
   PERCENTAGE_NONEMPTY,
-}
-
-export type SelectSort = "manual" | "alphabetical" | "reverse-alphabetical";
-
-export interface OptionConfig {
-  id: string;
-  name: string;
-  color: Color;
-  description?: string;
-}
-
-export interface SelectConfig {
-  options: {
-    names: string[];
-    /**
-     * @prop items: map of option name to option config
-     */
-    items: Record<string, OptionConfig>;
-  };
-  sort?: SelectSort;
 }
 
 export type PropertyConfig =

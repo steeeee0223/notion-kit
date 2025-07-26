@@ -20,7 +20,8 @@ import {
 } from "@notion-kit/shadcn";
 
 import { useInputField, VerticalDnd } from "../../../common";
-import type { ConfigMeta, SelectSort } from "../../../lib/types";
+import type { ConfigMeta } from "../../../lib/types";
+import type { SelectSort } from "../types";
 import { OptionItem } from "./option-item";
 import { useSelectConfigMenu } from "./use-select-config-menu";
 
