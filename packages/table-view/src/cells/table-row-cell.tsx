@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 
-import type { CellType, PropertyConfig } from "../lib/types";
-import { defaultPlugins } from "../plugins";
+import type { Cell } from "../lib/types";
+import type { CellPlugin, InferConfig, InferData } from "../plugins";
 
 enum CellMode {
   Normal = "normal",
@@ -11,28 +11,41 @@ enum CellMode {
   Select = "select",
 }
 
-interface TableRowCellProps {
+interface TableRowCellProps<TPlugin extends CellPlugin> {
+  plugin: TPlugin;
   rowIndex: number;
   colIndex: number;
   width?: string;
   wrapped?: boolean;
   propId: string;
-  config?: PropertyConfig["config"];
-  data: CellType;
-  onChange?: (data: CellType) => void;
+  config?: InferConfig<TPlugin>;
+  data: InferData<TPlugin>;
+  onChange?: (data: Cell<TPlugin>) => void;
 }
 
-export function TableRowCell({
+export function TableRowCell<TPlugin extends CellPlugin>({
+  plugin,
   rowIndex,
   colIndex,
   width,
-  ...props
-}: TableRowCellProps) {
+  wrapped,
+  propId,
+  config,
+  data,
+  onChange,
+}: TableRowCellProps<TPlugin>) {
   const [mode] = useState<CellMode>(CellMode.Normal);
 
   const cell = useMemo(
-    () => defaultPlugins.items[props.data.type].renderCell(props),
-    [props],
+    () =>
+      plugin.renderCell({
+        propId,
+        data,
+        config,
+        wrapped,
+        onChange,
+      }),
+    [config, data, onChange, plugin, propId, wrapped],
   );
 
   return (

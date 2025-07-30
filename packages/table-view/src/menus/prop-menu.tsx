@@ -15,7 +15,7 @@ import {
 
 import { PropMeta } from "../common";
 import { CountMethod } from "../lib/types";
-import { extractPropConfig } from "../lib/utils";
+import { extractColumnConfig } from "../lib/utils";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { CalcMenu } from "./calc-menu";
 import { PropConfig } from "./prop-config";
@@ -44,12 +44,13 @@ interface PropMenuProps {
  * 11. ✅ Delete property
  */
 export function PropMenu({ propId }: PropMenuProps) {
-  const { table, properties, isPropertyUnique, canFreezeProperty } =
+  const { plugins, table, properties, isPropertyUnique, canFreezeProperty } =
     useTableViewCtx();
   const { updateColumn, duplicate, freezeColumns } = useTableActions();
   const { openMenu } = useMenu();
 
   const property = properties[propId]!;
+  const plugin = plugins.items[property.type]!;
 
   // 3. Sorting
   const sortColumn = (desc: boolean) =>
@@ -83,7 +84,11 @@ export function PropMenu({ propId }: PropMenuProps) {
         onUpdate={(data) => updateColumn(property.id, data)}
       />
       <DropdownMenuGroup>
-        <PropConfig propId={propId} meta={extractPropConfig(property)} />
+        <PropConfig
+          plugin={plugin}
+          propId={propId}
+          meta={extractColumnConfig(property)}
+        />
         {property.type !== "title" && (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger

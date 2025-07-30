@@ -8,13 +8,14 @@ import {
   DropdownMenuTrigger,
 } from "@notion-kit/shadcn";
 
-import { CountMethod, type PropertyType } from "../lib/types";
+import { CountMethod } from "../lib/types";
 import { CalcMenu, countMethodHint } from "../menus";
+import type { CellPlugin, InferKey } from "../plugins";
 import { useTableViewCtx } from "../table-contexts";
 
 interface TableFooterCellProps {
   id: string; // column id
-  type: PropertyType;
+  type: InferKey<CellPlugin>;
   countMethod: CountMethod;
   isCountCapped?: boolean;
   width?: string;
@@ -47,7 +48,7 @@ export function TableFooterCell({
 
 interface CountDisplayProps {
   id: string;
-  type: PropertyType;
+  type: InferKey<CellPlugin>;
   countMethod: CountMethod;
 }
 
@@ -69,7 +70,7 @@ function CountDisplay({ id, type, countMethod }: CountDisplayProps) {
         {countMethodHint[countMethod].label}
       </span>
       <span className="flex h-full items-center">
-        {getColumnCount(id, countMethod)}
+        {getColumnCount(id, type, countMethod)}
       </span>
     </div>
   );

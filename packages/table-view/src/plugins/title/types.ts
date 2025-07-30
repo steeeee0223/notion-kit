@@ -8,14 +8,14 @@ export interface TitleConfig {
   showIcon?: boolean;
 }
 
-export interface TitleActionPayload {
-  type: "update:col:meta:title";
-  payload: { id: string; updater: Updater<boolean> };
+export interface TitleActions {
+  id: string;
+  updater: Updater<boolean>;
 }
 
 export type TitlePlugin = CellPlugin<
   "title",
   { value: string; icon?: IconData },
   TitleConfig,
-  TitleActionPayload
+  TitleActions
 >;

@@ -6,13 +6,12 @@ import { arrayMove } from "@dnd-kit/sortable";
 
 import { getRandomColor, type Color } from "@notion-kit/utils";
 
-import type { ConfigMeta } from "../../../lib/types";
 import { useTableActions } from "../../../table-contexts";
-import type { SelectSort } from "../types";
+import type { SelectActions, SelectMeta, SelectSort } from "../types";
 
 interface UseSelectConfigMenuOptions {
   propId: string;
-  meta: ConfigMeta<"select" | "multi-select">;
+  meta: SelectMeta;
 }
 
 export function useSelectConfigMenu({
@@ -26,8 +25,15 @@ export function useSelectConfigMenu({
   const updateSort = useCallback(
     (sort: SelectSort) =>
       dispatch({
-        type: `update:col:meta:${type}`,
-        payload: { id: propId, action: "update:sort", payload: sort },
+        type: "update:col:meta",
+        payload: {
+          type,
+          actions: {
+            id: propId,
+            action: "update:sort",
+            payload: sort,
+          } satisfies SelectActions,
+        },
       }),
     [dispatch, propId, type],
   );
@@ -35,11 +41,14 @@ export function useSelectConfigMenu({
   const addOption = useCallback(
     (name: string) => {
       dispatch({
-        type: `update:col:meta:${type}`,
+        type: "update:col:meta",
         payload: {
-          id: propId,
-          action: "add:option",
-          payload: { name, color: getRandomColor() },
+          type,
+          actions: {
+            id: propId,
+            action: "add:option",
+            payload: { name, color: getRandomColor() },
+          },
         },
       });
     },
@@ -51,15 +60,19 @@ export function useSelectConfigMenu({
       const { active, over } = e;
       if (!over || active.id === over.id) return;
       dispatch({
-        type: `update:col:meta:${type}`,
+        type: "update:col:meta",
         payload: {
-          id: propId,
-          action: "update:sort:manual",
-          updater: (prev) => {
-            const oldIndex = prev.indexOf(active.id as string);
-            const newIndex = prev.indexOf(over.id as string);
-            return arrayMove(prev, oldIndex, newIndex);
-          },
+          type,
+
+          actions: {
+            id: propId,
+            action: "update:sort:manual",
+            updater: (prev) => {
+              const oldIndex = prev.indexOf(active.id as string);
+              const newIndex = prev.indexOf(over.id as string);
+              return arrayMove(prev, oldIndex, newIndex);
+            },
+          } satisfies SelectActions,
         },
       });
     },
@@ -84,11 +97,14 @@ export function useSelectConfigMenu({
       },
     ) =>
       dispatch({
-        type: `update:col:meta:${type}`,
+        type: "update:col:meta",
         payload: {
-          id: propId,
-          action: "update:option",
-          payload: { originalName, ...data },
+          type,
+          actions: {
+            id: propId,
+            action: "update:option",
+            payload: { originalName, ...data },
+          } satisfies SelectActions,
         },
       }),
     [dispatch, type, propId],
@@ -97,8 +113,16 @@ export function useSelectConfigMenu({
   const deleteOption = useCallback(
     (name: string) =>
       dispatch({
-        type: `update:col:meta:${type}`,
-        payload: { id: propId, action: "delete:option", payload: name },
+        type: "update:col:meta",
+        payload: {
+          type,
+
+          actions: {
+            id: propId,
+            action: "delete:option",
+            payload: name,
+          } satisfies SelectActions,
+        },
       }),
     [dispatch, type, propId],
   );

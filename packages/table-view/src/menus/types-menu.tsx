@@ -17,8 +17,9 @@ import {
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader } from "../common";
-import type { PropertyType } from "../lib/types";
+import type { PluginType } from "../lib/types";
 import { getUniqueName } from "../lib/utils";
+import { CellPlugin } from "../plugins";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { EditPropMenu } from "./edit-prop-menu";
 import { propOptions } from "./types-menu-options";
@@ -50,7 +51,7 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
   const { search, results, updateSearch } = useFilter(propOptions, (prop, v) =>
     prop.title.toLowerCase().includes(v),
   );
-  const select = (type: PropertyType, name: string) => {
+  const select = (type: PluginType<CellPlugin[]>, name: string) => {
     let colId = propId;
     if (colId === null) {
       colId = v4();

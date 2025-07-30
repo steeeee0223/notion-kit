@@ -1,21 +1,22 @@
 import type { SortingFn } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
-import { toReadableValue } from "../lib/data-transfer";
 import type {
-  DatabaseProperty,
-  PartialDatabaseProperty,
-  PropertyType,
-  RowDataType,
+  Column,
+  ColumnDefs,
+  PluginsMap,
+  PluginType,
+  Row,
 } from "../lib/types";
 import { arrayToEntity } from "../lib/utils";
-import { defaultPlugins } from "../plugins";
+import type { CellPlugin, InferConfig } from "../plugins";
+import type { TitlePlugin } from "../plugins/title";
 import type { TableViewAtom } from "./table-reducer";
-import type { PartialTableState, TableState } from "./types";
+import type { PartialTableState } from "./types";
 
 export const DEFAULT_FREEZED_INDEX = -1;
 
-export function getMinWidth(type: PropertyType) {
+export function getMinWidth(type: PluginType<CellPlugin[]>) {
   switch (type) {
     case "checkbox":
       return 32;
@@ -24,53 +25,62 @@ export function getMinWidth(type: PropertyType) {
   }
 }
 
-export function createInitialTable(): PartialTableState {
+export function createInitialTable(): PartialTableState<CellPlugin[]> {
   const titleId = v4();
-  const properties: PartialDatabaseProperty[] = [
-    { id: titleId, name: "Name", type: "title" },
+  const columns: Column<TitlePlugin>[] = [
+    { id: titleId, name: "Name", type: "title", config: { showIcon: true } },
   ];
-  const data: RowDataType[] = [
+  const data: Row<TitlePlugin[]>[] = [
     {
       id: v4(),
-      properties: { [titleId]: { id: v4(), type: "title", data: "" } },
+      properties: {
+        [titleId]: { id: v4(), value: { value: "" } },
+      },
     },
     {
       id: v4(),
-      properties: { [titleId]: { id: v4(), type: "title", data: "" } },
+      properties: {
+        [titleId]: { id: v4(), value: { value: "" } },
+      },
     },
     {
       id: v4(),
-      properties: { [titleId]: { id: v4(), type: "title", data: "" } },
+      properties: {
+        [titleId]: { id: v4(), value: { value: "" } },
+      },
     },
   ];
 
-  return { properties, data };
+  return { properties: columns, data };
 }
 
-export function toDatabaseProperties(
-  properties: PartialDatabaseProperty[],
-): DatabaseProperty[] {
-  return properties.map(
-    (property) =>
-      ({
-        // TODO remove this
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        config: defaultPlugins.items[property.type].default.config,
-        ...property,
-      }) as DatabaseProperty,
-  );
+export function toDatabaseProperties<TPlugins extends CellPlugin[]>(
+  plugins: Record<string, TPlugins[number]>,
+  properties: ColumnDefs<TPlugins>,
+): Column<CellPlugin>[] {
+  return properties.map((property) => ({
+    config: plugins[property.type]!.default.config as InferConfig<
+      TPlugins[number]
+    >,
+    ...property,
+  }));
 }
 
 /**
  * getTableViewAtom
  * Converts a controlled state `PartialTableState` into a TableViewAtom.
  */
-export function getTableViewAtom(state: PartialTableState): TableViewAtom {
-  const columnData = arrayToEntity(toDatabaseProperties(state.properties));
+export function getTableViewAtom<TPlugins extends CellPlugin[]>(
+  plugins: PluginsMap<TPlugins>,
+  state: PartialTableState<TPlugins>,
+): TableViewAtom<TPlugins> {
+  const columnData = arrayToEntity(
+    toDatabaseProperties(plugins, state.properties),
+  );
   const rowData = arrayToEntity(state.data);
   return {
     table: { sorting: [] },
-    properties: columnData.items,
+    properties: columnData.items as Record<string, Column<TPlugins[number]>>,
     propertiesOrder: columnData.ids,
     data: rowData.items,
     dataOrder: rowData.ids,
@@ -78,19 +88,19 @@ export function getTableViewAtom(state: PartialTableState): TableViewAtom {
   };
 }
 
-export function toControlledState(atom: TableViewAtom): TableState {
+export function toControlledState<TPlugins extends CellPlugin[]>(
+  atom: TableViewAtom<TPlugins>,
+): PartialTableState<TPlugins> {
   return {
     properties: atom.propertiesOrder.map((id) => atom.properties[id]!),
     data: atom.dataOrder.map((id) => atom.data[id]!),
   };
 }
 
-export const tableViewSortingFn: SortingFn<RowDataType> = (
-  rowA,
-  rowB,
-  colId,
-) => {
-  const dataA = toReadableValue(rowA.original.properties[colId]);
-  const dataB = toReadableValue(rowB.original.properties[colId]);
-  return dataA.localeCompare(dataB);
-};
+export function createColumnSortingFn(plugin: CellPlugin): SortingFn<Row> {
+  return (rowA, rowB, colId) => {
+    const dataA = plugin.toReadableValue(rowA.original.properties[colId]);
+    const dataB = plugin.toReadableValue(rowB.original.properties[colId]);
+    return dataA.localeCompare(dataB);
+  };
+}

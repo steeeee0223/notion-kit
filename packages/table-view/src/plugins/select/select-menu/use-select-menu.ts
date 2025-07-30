@@ -7,13 +7,10 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { useFilter } from "@notion-kit/hooks";
 import { getRandomColor, type Color } from "@notion-kit/utils";
 
-import type { DatabaseProperty } from "../../../lib/types";
+import type { Column } from "../../../lib/types";
+import { extractColumnConfig } from "../../../lib/utils";
 import { useTableActions, useTableViewCtx } from "../../../table-contexts";
-
-type SelectProperty = Extract<
-  DatabaseProperty,
-  { type: "select" | "multi-select" }
->;
+import type { MultiSelectPlugin, SelectActions, SelectPlugin } from "../types";
 
 interface UseSelectMenuOptions {
   propId: string;
@@ -29,7 +26,9 @@ export function useSelectMenu({
   const { properties } = useTableViewCtx();
   const { dispatch } = useTableActions();
 
-  const { type, config } = properties[propId]! as SelectProperty;
+  const { type, config } = extractColumnConfig(
+    properties[propId]! as Column<SelectPlugin | MultiSelectPlugin>,
+  );
 
   const [currentOptions, setCurrentOptions] = useState(
     new Map<string, Color | undefined>(
@@ -49,8 +48,15 @@ export function useSelectMenu({
     if (!optionSuggestion) return;
     updateSearch("");
     dispatch({
-      type: `update:col:meta:${type}`,
-      payload: { id: propId, action: "add:option", payload: optionSuggestion },
+      type: "update:col:meta",
+      payload: {
+        type,
+        actions: {
+          id: propId,
+          action: "add:option",
+          payload: optionSuggestion,
+        } satisfies SelectActions,
+      },
     });
     setCurrentOptions((prev) => {
       const options = type === "multi-select" ? new Map(prev) : new Map();
@@ -64,15 +70,18 @@ export function useSelectMenu({
       const { active, over } = e;
       if (!over || active.id === over.id) return;
       dispatch({
-        type: `update:col:meta:${type}`,
+        type: "update:col:meta",
         payload: {
-          id: propId,
-          action: "update:sort:manual",
-          updater: (prev) => {
-            const oldIndex = prev.indexOf(active.id as string);
-            const newIndex = prev.indexOf(over.id as string);
-            return arrayMove(prev, oldIndex, newIndex);
-          },
+          type,
+          actions: {
+            id: propId,
+            action: "update:sort:manual",
+            updater: (prev: string[]) => {
+              const oldIndex = prev.indexOf(active.id as string);
+              const newIndex = prev.indexOf(over.id as string);
+              return arrayMove(prev, oldIndex, newIndex);
+            },
+          } satisfies SelectActions,
         },
       });
     },
@@ -99,11 +108,14 @@ export function useSelectMenu({
       },
     ) => {
       dispatch({
-        type: `update:col:meta:${type}`,
+        type: "update:col:meta",
         payload: {
-          id: propId,
-          action: "update:option",
-          payload: { originalName, ...data },
+          type,
+          actions: {
+            id: propId,
+            action: "update:option",
+            payload: { originalName, ...data },
+          } satisfies SelectActions,
         },
       });
       setCurrentOptions((prev) => {
@@ -124,8 +136,15 @@ export function useSelectMenu({
   const deleteOption = useCallback(
     (name: string) => {
       dispatch({
-        type: `update:col:meta:${type}`,
-        payload: { id: propId, action: "delete:option", payload: name },
+        type: "update:col:meta",
+        payload: {
+          type,
+          actions: {
+            id: propId,
+            action: "delete:option",
+            payload: name,
+          } satisfies SelectActions,
+        },
       });
       setCurrentOptions((prev) => {
         const options = new Map(prev);

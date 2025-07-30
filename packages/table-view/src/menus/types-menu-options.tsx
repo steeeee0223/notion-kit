@@ -1,16 +1,19 @@
 import React from "react";
 
 import { DefaultIcon } from "../common";
-import type { PropertyType } from "../lib/types";
+import type { PluginType } from "../lib/types";
+import { CellPlugin } from "../plugins";
 
 interface MenuOption {
-  type: PropertyType;
+  type: PluginType<CellPlugin[]>;
   title: string;
   description: string;
   icon: React.ReactNode;
 }
 
-export const propertyTypes: Partial<Record<PropertyType, MenuOption>> = {
+export const propertyTypes: Partial<
+  Record<PluginType<CellPlugin[]>, MenuOption>
+> = {
   title: {
     type: "title",
     title: "Title",
@@ -47,4 +50,4 @@ export const propertyTypes: Partial<Record<PropertyType, MenuOption>> = {
   },
 } as const;
 
-export const propOptions = Object.values(propertyTypes);
+export const propOptions = Object.values(propertyTypes) as MenuOption[];
