@@ -16,13 +16,13 @@ import { useIsMobile } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { Checkbox, useMenu } from "@notion-kit/shadcn";
 
-import type { RowDataType } from "../lib/types";
+import type { Row } from "../lib/types";
 import { PropsMenu, TypesMenu } from "../menus";
 import { TableHeaderActionCell } from "./table-header-action-cell";
 
 interface TableHeaderRowProps {
-  leftPinnedHeaders: Header<RowDataType, unknown>[];
-  headers: Header<RowDataType, unknown>[];
+  leftPinnedHeaders: Header<Row, unknown>[];
+  headers: Header<Row, unknown>[];
   columnOrder: ColumnOrderState;
 }
 

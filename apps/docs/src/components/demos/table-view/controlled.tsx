@@ -3,12 +3,9 @@
 import { useState } from "react";
 
 import { TableView } from "@notion-kit/table-view";
-import type {
-  PartialDatabaseProperty,
-  RowDataType,
-} from "@notion-kit/table-view";
+import type { ColumnDefs, Row } from "@notion-kit/table-view";
 
-const mockProps: PartialDatabaseProperty[] = [
+const mockProps: ColumnDefs = [
   {
     id: "prop-1",
     type: "title",
@@ -29,21 +26,21 @@ const mockProps: PartialDatabaseProperty[] = [
   },
 ];
 
-const mockData: RowDataType[] = [
+const mockData: Row[] = [
   {
     id: "row-1",
     properties: {
-      "prop-1": { id: "prop-1-1", type: "title", value: "page 1" },
-      "prop-2": { id: "prop-1-2", type: "text", value: "desc1" },
-      "prop-3": { id: "prop-1-3", type: "checkbox", checked: true },
+      "prop-1": { id: "prop-1-1", value: { value: "page 1" } },
+      "prop-2": { id: "prop-1-2", value: "desc1" },
+      "prop-3": { id: "prop-1-3", value: true },
     },
   },
   {
     id: "row-2",
     properties: {
-      "prop-1": { id: "prop-2-1", type: "title", value: "page 2" },
-      "prop-2": { id: "prop-2-2", type: "text", value: "desc2" },
-      "prop-3": { id: "prop-2-3", type: "checkbox", checked: false },
+      "prop-1": { id: "prop-2-1", value: { value: "page 2" } },
+      "prop-2": { id: "prop-2-2", value: "desc2" },
+      "prop-3": { id: "prop-2-3", value: false },
     },
   },
 ];
