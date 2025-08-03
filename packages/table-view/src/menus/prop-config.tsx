@@ -2,22 +2,27 @@
 
 import { useMemo } from "react";
 
-import type { PropertyConfig } from "../lib/types";
-import { defaultPlugins } from "../plugins";
+import type { ColumnConfig } from "../lib/types";
+import type { CellPlugin } from "../plugins";
 
-interface PropConfigProps {
+interface PropConfigProps<TPlugin> {
+  plugin: TPlugin;
   propId: string;
-  meta: PropertyConfig;
+  meta: ColumnConfig<TPlugin>;
 }
 
-export function PropConfig({ propId, meta }: PropConfigProps) {
+export function PropConfig<TPlugin extends CellPlugin>({
+  plugin,
+  propId,
+  meta,
+}: PropConfigProps<TPlugin>) {
   const comp = useMemo(
     () =>
-      defaultPlugins.items[meta.type].renderConfigMenu?.({
+      plugin.renderConfigMenu?.({
         propId,
         config: meta.config,
       }),
-    [propId, meta],
+    [plugin, propId, meta.config],
   );
   return comp;
 }

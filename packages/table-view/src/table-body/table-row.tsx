@@ -10,12 +10,12 @@ import { useIsMobile } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { Button, Checkbox, TooltipPreset, useMenu } from "@notion-kit/shadcn";
 
-import type { RowDataType } from "../lib/types";
+import type { Row as RowModel } from "../lib/types";
 import { RowActionMenu } from "../menus";
 import { useTableActions } from "../table-contexts";
 
 interface TableRowProps {
-  row: Row<RowDataType>;
+  row: Row<RowModel>;
 }
 
 export function TableRow({ row }: TableRowProps) {

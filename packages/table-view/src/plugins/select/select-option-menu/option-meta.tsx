@@ -63,9 +63,7 @@ export function OptionMeta({
           />
         </div>
         {nameField.error && (
-          <div className="mx-4 pt-2 text-sm text-red">
-            Option already exists.
-          </div>
+          <div className="pt-2 text-sm text-red">Option already exists.</div>
         )}
       </div>
       {showDesc && (

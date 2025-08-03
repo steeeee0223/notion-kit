@@ -22,7 +22,8 @@ import {
   MenuHeader,
   VerticalDnd,
 } from "../common";
-import type { DatabaseProperty } from "../lib/types";
+import type { Column } from "../lib/types";
+import { CellPlugin } from "../plugins";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { DeletedPropsMenu } from "./deleted-props-menu";
 import { EditPropMenu } from "./edit-prop-menu";
@@ -51,7 +52,7 @@ export const PropsMenu = () => {
   // Search
   const inputRef = useRef<HTMLInputElement>(null);
   const [props, deletedCount] = useMemo(() => {
-    const props: DatabaseProperty[] = [];
+    const props: Column<CellPlugin>[] = [];
     let deletedCount = 0;
     columnOrder.forEach((propId) => {
       const prop = properties[propId];
@@ -167,7 +168,7 @@ export const PropsMenu = () => {
 
 interface PropertyItemProps {
   draggable?: boolean;
-  property: DatabaseProperty;
+  property: Column<CellPlugin>;
   onClick: () => void;
   onVisibilityChange: (hidden: boolean) => void;
 }

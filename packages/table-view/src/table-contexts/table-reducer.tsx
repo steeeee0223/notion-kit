@@ -3,31 +3,25 @@ import { v4 } from "uuid";
 
 import type { IconData } from "@notion-kit/icon-block";
 
-import {
-  transferPropertyConfig,
-  transferPropertyValues,
-} from "../lib/data-transfer";
 import type {
-  CellDataType,
-  DatabaseProperty,
-  PropertyConfig,
-  PropertyType,
-  RowDataType,
+  Cell,
+  Column,
+  PluginsMap,
+  PluginType,
+  Row,
+  Rows,
 } from "../lib/types";
 import {
   getDefaultCell,
   getState,
   getUniqueName,
   insertAt,
+  NEVER,
 } from "../lib/utils";
-import { defaultPlugins } from "../plugins";
-import { selectReducer, type SelectActionPayload } from "../plugins/select";
-import { titleReducer, type TitleActionPayload } from "../plugins/title";
+import type { CellPlugin, InferActions, InferKey } from "../plugins";
 import type { AddColumnPayload, UpdateColumnPayload } from "./types";
 
-const NEVER = undefined as never;
-
-export interface TableViewAtom {
+export interface TableViewAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {
   /**
    * @field global table state
    */
@@ -38,7 +32,7 @@ export interface TableViewAtom {
    * @field property definitions
    * @param key property (column) id
    */
-  properties: Record<string, DatabaseProperty>;
+  properties: Record<string, Column<TPlugins[number]>>;
   /**
    * @field column freezing up to the given `index` in `propertiesOrder`
    * @note returns -1 if no column is freezing
@@ -57,15 +51,26 @@ export interface TableViewAtom {
    * @field data of each row
    * @param key property (column) id
    */
-  data: Record<string, RowDataType>;
+  data: Rows<TPlugins>;
 }
 
-export type TableViewAction =
-  | { type: "add:col"; payload: AddColumnPayload }
-  | { type: "update:col"; payload: { id: string; data: UpdateColumnPayload } }
-  | { type: "update:col:type"; payload: { id: string; type: PropertyType } }
-  | TitleActionPayload
-  | SelectActionPayload
+export type TableViewAction<TPlugins extends CellPlugin[]> =
+  | { type: "add:col"; payload: AddColumnPayload<TPlugins> }
+  | {
+      type: "update:col";
+      payload: { id: string; data: UpdateColumnPayload<TPlugins[number]> };
+    }
+  | {
+      type: "update:col:type";
+      payload: { id: string; type: PluginType<TPlugins> };
+    }
+  | {
+      type: "update:col:meta";
+      payload: {
+        type: InferKey<TPlugins[number]>;
+        actions: InferActions<TPlugins[number]>;
+      };
+    }
   | { type: "update:col:visibility"; payload: { hidden: boolean } }
   | { type: "reorder:col" | "reorder:row"; updater: Updater<string[]> }
   | { type: "freeze:col"; payload: { id: string | null } }
@@ -81,18 +86,20 @@ export type TableViewAction =
   | { type: "update:row:icon"; payload: { id: string; icon: IconData | null } }
   | {
       type: "update:cell";
-      payload: { rowId: string; colId: string; data: CellDataType };
+      payload: { rowId: string; colId: string; data: Cell<TPlugins[number]> };
     }
   | { type: "update:sorting"; updater: Updater<SortingState> }
   | { type: "reset" };
 
-export const tableViewReducer = (
-  v: TableViewAtom,
-  a: TableViewAction,
-): TableViewAtom => {
+export function tableViewReducer<TPlugins extends CellPlugin[]>(
+  p: PluginsMap<TPlugins>,
+  v: TableViewAtom<TPlugins>,
+  a: TableViewAction<TPlugins>,
+): TableViewAtom<TPlugins> {
   switch (a.type) {
     case "add:col": {
       const { id: colId, type, name, at } = a.payload;
+      const plugin = p[type];
       const data = { ...v.data };
       v.dataOrder.forEach((rowId) => {
         if (!data[rowId]) return NEVER;
@@ -100,7 +107,7 @@ export const tableViewReducer = (
           ...data[rowId],
           properties: {
             ...data[rowId].properties,
-            [colId]: getDefaultCell(type),
+            [colId]: getDefaultCell(plugin),
           },
         };
       });
@@ -108,13 +115,8 @@ export const tableViewReducer = (
       properties[colId] = {
         id: colId,
         name,
-        icon: null,
-        ...({
-          type: defaultPlugins.items[type].id,
-          // TODO remove
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          config: defaultPlugins.items[type].default.config!,
-        } as PropertyConfig),
+        type: plugin.id,
+        config: plugin.default.config,
       };
       return {
         ...v,
@@ -143,21 +145,26 @@ export const tableViewReducer = (
     case "update:col:type": {
       const property = v.properties[a.payload.id];
       if (!property) return v as never;
-      const config = transferPropertyConfig(
-        { data: v.data, property },
-        a.payload.type,
-      );
+      const destPlugin = p[a.payload.type];
+      const config =
+        destPlugin.transferConfig?.(property, v.data) ??
+        destPlugin.default.config;
       const data = { ...v.data };
       v.dataOrder.forEach((rowId) => {
         if (!data[rowId]) return;
+        const cell = data[rowId].properties[a.payload.id]!;
+        const srcPlugin = p[property.type];
         data[rowId] = {
           ...data[rowId],
           properties: {
             ...data[rowId].properties,
-            [a.payload.id]: transferPropertyValues(
-              data[rowId].properties[a.payload.id]!,
-              config,
-            ),
+            [a.payload.id]: {
+              id: cell.id,
+              value: destPlugin.fromReadableValue(
+                srcPlugin.toReadableValue(cell.value),
+                config,
+              ),
+            },
           },
         };
       });
@@ -165,7 +172,7 @@ export const tableViewReducer = (
         ...v,
         properties: {
           ...v.properties,
-          [a.payload.id]: { ...property, ...config },
+          [a.payload.id]: { ...property, type: destPlugin.id, config },
         },
         data,
       };
@@ -196,7 +203,7 @@ export const tableViewReducer = (
       };
       const data = { ...v.data };
       v.dataOrder.forEach((rowId) => {
-        data[rowId]!.properties[prop.id] = getDefaultCell(src.type);
+        data[rowId]!.properties[prop.id] = getDefaultCell(p[src.type]);
       });
       return {
         ...v,
@@ -239,15 +246,15 @@ export const tableViewReducer = (
       );
       return { ...v, properties: { ...v.properties, [a.payload.id]: prop } };
     }
-    case "update:col:meta:title":
-      return titleReducer(v, a);
-    case "update:col:meta:select":
-    case "update:col:meta:multi-select":
-      return selectReducer(v, a);
+    case "update:col:meta": {
+      const { type, actions } = a.payload;
+      return p[type].reducer<TPlugins>(v, actions);
+    }
     case "add:row": {
-      const row: RowDataType = { id: v4(), properties: {} };
+      const row: Row<TPlugins> = { id: v4(), properties: {} };
       v.propertiesOrder.forEach((colId) => {
-        row.properties[colId] = getDefaultCell(v.properties[colId]!.type);
+        const type = v.properties[colId]!.type;
+        row.properties[colId] = getDefaultCell(p[type]);
       });
       return {
         ...v,
@@ -262,7 +269,7 @@ export const tableViewReducer = (
       };
     }
     case "duplicate:row": {
-      const row: RowDataType = { ...v.data[a.payload.id]!, id: v4() };
+      const row = { ...v.data[a.payload.id]!, id: v4() };
       v.propertiesOrder.forEach((colId) => (row.properties[colId]!.id = v4()));
       return {
         ...v,
@@ -279,9 +286,14 @@ export const tableViewReducer = (
       return { ...v, dataOrder, table: { ...v.table, sorting: [] } };
     }
     case "update:row:icon": {
-      const data = { ...v.data };
-      data[a.payload.id]!.icon = a.payload.icon ?? undefined;
-      return { ...v, data };
+      const row = v.data[a.payload.id];
+      if (!row) return v as never;
+      row.icon = a.payload.icon ?? undefined;
+      const colId = v.propertiesOrder.find(
+        (propId) => v.properties[propId]?.type === "title",
+      )!;
+      row.properties[colId]!.value.icon = a.payload.icon ?? undefined;
+      return { ...v, data: { ...v.data, [a.payload.id]: row } };
     }
     case "delete:row": {
       const { [a.payload.id]: _, ...data } = v.data;
@@ -314,4 +326,11 @@ export const tableViewReducer = (
     default:
       return v;
   }
-};
+}
+
+export function createTableViewReducer<TPlugins extends CellPlugin[]>(
+  plugins: PluginsMap<TPlugins>,
+) {
+  return (v: TableViewAtom<TPlugins>, a: TableViewAction<TPlugins>) =>
+    tableViewReducer<TPlugins>(plugins, v, a);
+}

@@ -13,6 +13,7 @@ import { Icon } from "@notion-kit/icons";
 import { ModalProvider, useModal } from "@notion-kit/modal";
 import { Button, MenuProvider, Separator } from "@notion-kit/shadcn";
 
+import type { CellPlugin } from "./plugins";
 import { MemoizedTableBody, TableBody } from "./table-body";
 import {
   TableViewProvider,
@@ -24,7 +25,9 @@ import { TableFooter } from "./table-footer";
 import { TableHeaderRow } from "./table-header";
 import { SortSelector } from "./tools";
 
-export function TableView(props: TableProps) {
+export function TableView<TPlugins extends CellPlugin[] = CellPlugin[]>(
+  props: TableProps<TPlugins>,
+) {
   return (
     <TableViewProvider {...props}>
       <ModalProvider>

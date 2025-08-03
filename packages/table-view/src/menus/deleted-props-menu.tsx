@@ -13,7 +13,8 @@ import {
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader } from "../common";
-import type { DatabaseProperty } from "../lib/types";
+import type { Column } from "../lib/types";
+import type { CellPlugin } from "../plugins";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { PropsMenu } from "./props-menu";
 
@@ -47,7 +48,7 @@ export const DeletedPropsMenu = () => {
 };
 
 interface PropertyItemProps {
-  property: DatabaseProperty;
+  property: Column<CellPlugin>;
   onRestore: () => void;
   onDelete: () => void;
 }

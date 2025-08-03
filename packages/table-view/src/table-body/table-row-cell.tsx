@@ -2,8 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import type { CellType, PropertyConfig } from "../lib/types";
-import { defaultPlugins } from "../plugins";
+import type { CellPlugin, CellProps, InferConfig, InferData } from "../plugins";
 
 enum CellMode {
   Normal = "normal",
@@ -11,29 +10,24 @@ enum CellMode {
   Select = "select",
 }
 
-interface TableRowCellProps {
+interface TableRowCellProps<TPlugin extends CellPlugin>
+  extends CellProps<InferData<TPlugin>, InferConfig<TPlugin>> {
+  plugin: TPlugin;
   rowIndex: number;
   colIndex: number;
   width?: string;
-  wrapped?: boolean;
-  propId: string;
-  config?: PropertyConfig["config"];
-  data: CellType;
-  onChange?: (data: CellType) => void;
 }
 
-export function TableRowCell({
+export function TableRowCell<TPlugin extends CellPlugin>({
+  plugin,
   rowIndex,
   colIndex,
   width,
-  ...props
-}: TableRowCellProps) {
+  ...cellProps
+}: TableRowCellProps<TPlugin>) {
   const [mode] = useState<CellMode>(CellMode.Normal);
 
-  const cell = useMemo(
-    () => defaultPlugins.items[props.data.type].renderCell(props),
-    [props],
-  );
+  const cell = useMemo(() => plugin.renderCell(cellProps), [cellProps, plugin]);
 
   return (
     <div

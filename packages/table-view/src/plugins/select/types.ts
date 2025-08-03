@@ -1,5 +1,6 @@
 import type { Color } from "@notion-kit/utils";
 
+import type { Cell } from "../../lib/types";
 import type { CellPlugin } from "../types";
 import type { SelectConfigActionPayload } from "./select-config-reducer";
 
@@ -23,21 +24,27 @@ export interface SelectConfig {
   sort: SelectSort;
 }
 
-export interface SelectActionPayload {
-  type: "update:col:meta:select" | "update:col:meta:multi-select";
-  payload: { id: string } & SelectConfigActionPayload;
+export interface SelectMeta {
+  type: "select" | "multi-select";
+  config: SelectConfig;
 }
+
+export type SelectActions = SelectConfigActionPayload & {
+  id: string;
+};
 
 export type SelectPlugin = CellPlugin<
   "select",
   string | null,
   SelectConfig,
-  SelectActionPayload
+  SelectActions
 >;
 
 export type MultiSelectPlugin = CellPlugin<
   "multi-select",
   string[],
   SelectConfig,
-  SelectActionPayload
+  SelectActions
 >;
+
+export type SelectCell = Cell<SelectPlugin> | Cell<MultiSelectPlugin>;

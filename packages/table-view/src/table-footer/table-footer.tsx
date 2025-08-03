@@ -3,12 +3,12 @@ import { flexRender, type Header } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 
-import type { RowDataType } from "../lib/types";
+import type { Row } from "../lib/types";
 import { useTableViewCtx } from "../table-contexts";
 
 interface TableFooterProps {
-  leftPinnedHeaders: Header<RowDataType, unknown>[];
-  headers: Header<RowDataType, unknown>[];
+  leftPinnedHeaders: Header<Row, unknown>[];
+  headers: Header<Row, unknown>[];
 }
 
 export function TableFooter({ leftPinnedHeaders, headers }: TableFooterProps) {

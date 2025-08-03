@@ -3,10 +3,11 @@ import React from "react";
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 
-import { PropertyType } from "../lib/types";
+import { PluginType } from "../lib/types";
+import { CellPlugin } from "../plugins";
 
 interface DefaultIconProps {
-  type: PropertyType;
+  type: PluginType<CellPlugin[]>;
   className?: string;
 }
 

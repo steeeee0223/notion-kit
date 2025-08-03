@@ -5,11 +5,11 @@ import {
 } from "@dnd-kit/sortable";
 import type { Table } from "@tanstack/react-table";
 
-import type { RowDataType } from "../lib/types";
+import type { Row } from "../lib/types";
 import { TableRow } from "./table-row";
 
 interface TableBodyProps {
-  table: Table<RowDataType>;
+  table: Table<Row>;
   dataOrder: string[];
 }
 
