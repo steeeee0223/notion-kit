@@ -85,10 +85,12 @@ function toSelectConfig<TPlugin extends CellPlugin>(
           const cell = row.properties[column.id]! as Cell<
             CellPlugin<string, string>
           >;
-          const name = cell.value.trim();
-          if (!name) return acc;
-          acc.names.push(name);
-          acc.items[name] = { id: v4(), name, color: getRandomColor() };
+          cell.value.split(",").forEach((v) => {
+            const name = v.trim();
+            if (!name || acc.items[name]) return;
+            acc.names.push(name);
+            acc.items[name] = { id: v4(), name, color: getRandomColor() };
+          });
           return acc;
         },
         { names: [], items: {} },
@@ -98,6 +100,23 @@ function toSelectConfig<TPlugin extends CellPlugin>(
     default:
       return { options: { names: [], items: {} }, sort: "manual" };
   }
+}
+
+function fromReadableValue(
+  value: string,
+  config: SelectConfig,
+  type: "select" | "multi-select",
+): string[] {
+  const values = value.split(",").reduce((acc, v) => {
+    if (type === "select" && acc.size > 0) return acc;
+    const name = v.trim();
+    if (!name) return acc;
+    const option = config.options.items[name];
+    if (!option) return acc;
+    acc.add(option.name);
+    return acc;
+  }, new Set<string>());
+  return Array.from(values);
 }
 
 export function select(): SelectPlugin {
@@ -113,8 +132,8 @@ export function select(): SelectPlugin {
       },
     },
     fromReadableValue: (value, config) => {
-      const option = config.options.items[value.trim()];
-      return option?.name ?? null;
+      const options = fromReadableValue(value, config, "select");
+      return options.at(0) ?? null;
     },
     toReadableValue: (data) => data ?? "",
     toTextValue: (data) => data ?? "",
@@ -150,14 +169,8 @@ export function multiSelect(): MultiSelectPlugin {
         sort: "manual",
       },
     },
-    fromReadableValue: (value, config) => {
-      return value.split(",").reduce<string[]>((acc, value) => {
-        const v = value.trim();
-        const option = config.options.items[v];
-        if (option) acc.push(option.name);
-        return acc;
-      }, []);
-    },
+    fromReadableValue: (value, config) =>
+      fromReadableValue(value, config, "multi-select"),
     toReadableValue: (data) => data.join(","),
     toTextValue: (data) => data.join(","),
     transferConfig: toSelectConfig,
