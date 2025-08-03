@@ -20,7 +20,7 @@ import {
 } from "@notion-kit/shadcn";
 
 import { useInputField, VerticalDnd } from "../../../common";
-import type { ConfigMeta, SelectSort } from "../../../lib/types";
+import type { SelectMeta, SelectSort } from "../types";
 import { OptionItem } from "./option-item";
 import { useSelectConfigMenu } from "./use-select-config-menu";
 
@@ -32,7 +32,7 @@ const sortOptions: { label: string; value: SelectSort }[] = [
 
 interface SelectConfigMenuProps {
   propId: string;
-  meta: ConfigMeta<"select" | "multi-select">;
+  meta: SelectMeta;
 }
 
 export function SelectConfigMenu({ propId, meta }: SelectConfigMenuProps) {

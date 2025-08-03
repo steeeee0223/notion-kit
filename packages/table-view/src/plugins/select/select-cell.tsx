@@ -6,12 +6,12 @@ import { cn } from "@notion-kit/cn";
 import { MenuProvider, TooltipPreset, useMenu } from "@notion-kit/shadcn";
 
 import { CellTrigger, OptionTag, useTriggerPosition } from "../../common";
-import type { ConfigMeta } from "../../lib/types";
 import { SelectMenu } from "./select-menu";
+import type { SelectMeta } from "./types";
 
 interface SelectCellProps {
   propId: string;
-  meta: ConfigMeta<"select" | "multi-select">;
+  meta: SelectMeta;
   options: string[];
   wrapped?: boolean;
   onChange: (options: string[]) => void;

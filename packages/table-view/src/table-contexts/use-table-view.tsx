@@ -18,46 +18,78 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table";
 
-import { TableRowCell } from "../cells";
-import { CountMethod, type RowDataType } from "../lib/types";
-import { arrayToEntity, getCount, isCountMethodSet } from "../lib/utils";
+import { CountMethod } from "../lib/types";
+import type { PluginsMap, Row } from "../lib/types";
+import {
+  arrayToEntity,
+  getCount,
+  isCountMethodSet,
+  type Entity,
+} from "../lib/utils";
+import type { CellPlugin, InferConfig, InferPlugin } from "../plugins";
+import { TableRowCell } from "../table-body";
 import { TableFooterCell } from "../table-footer";
 import { TableHeaderCell } from "../table-header";
-import { tableViewReducer, type TableViewAction } from "./table-reducer";
+import { createTableViewReducer, type TableViewAction } from "./table-reducer";
 import type { TableViewCtx } from "./table-view-context";
-import type { TableProps } from "./types";
+import type { PartialTableState } from "./types";
 import {
+  createColumnSortingFn,
   createInitialTable,
   getMinWidth,
   getTableViewAtom,
-  tableViewSortingFn,
   toControlledState,
   toDatabaseProperties,
 } from "./utils";
+
+interface UseTableViewOptions<TPlugins extends CellPlugin[]> {
+  plugins: Entity<TPlugins[number]>;
+  defaultState?: PartialTableState<TPlugins>;
+  state?: PartialTableState<TPlugins>;
+  onStateChange?: (
+    newState: PartialTableState<TPlugins>,
+    type: TableViewAction<TPlugins>["type"],
+  ) => void;
+  dispatch?: React.Dispatch<TableViewAction<TPlugins>>;
+}
 
 /**
  * useTableView
  * @returns [table context, table dispatcher]
  */
-export function useTableView(props: TableProps) {
+export function useTableView<TPlugins extends CellPlugin[]>({
+  plugins,
+  ...props
+}: UseTableViewOptions<TPlugins>) {
+  const pluginsMap = plugins.items as PluginsMap<TPlugins>;
+  const tableViewReducer = useMemo(
+    () => createTableViewReducer(pluginsMap),
+    [pluginsMap],
+  );
   const [_state, _dispatch] = useReducer(
     tableViewReducer,
-    getTableViewAtom(props.defaultState ?? createInitialTable()),
+    getTableViewAtom<TPlugins>(
+      pluginsMap,
+      props.defaultState ?? createInitialTable(),
+    ),
   );
 
   const dispatch = useCallback(
-    (action: TableViewAction) => {
+    (action: TableViewAction<TPlugins>) => {
       if (!props.state) return _dispatch(action);
 
-      const nextState = tableViewReducer(getTableViewAtom(props.state), action);
+      const nextState = tableViewReducer(
+        getTableViewAtom(pluginsMap, props.state),
+        action,
+      );
       props.onStateChange?.(toControlledState(nextState), action.type);
       props.dispatch?.(action);
     },
-    [_dispatch, props],
+    [pluginsMap, props, tableViewReducer],
   );
 
   const controlledProperties = props.state?.properties
-    ? toDatabaseProperties(props.state.properties)
+    ? toDatabaseProperties(pluginsMap, props.state.properties)
     : undefined;
   const properties = controlledProperties ?? Object.values(_state.properties);
 
@@ -73,74 +105,69 @@ export function useTableView(props: TableProps) {
 
   const columns = useMemo(
     () =>
-      properties.map<ColumnDef<RowDataType>>((property) => ({
-        id: property.id,
-        accessorKey: property.name,
-        minSize: getMinWidth(property.type),
-        sortingFn: tableViewSortingFn,
-        header: ({ header }) => (
-          <TableHeaderCell
-            id={property.id}
-            width={`calc(var(--col-${property.id}-size) * 1px)`}
-            isResizing={header.column.getIsResizing()}
-            resizeHandle={{
-              onMouseDown: header.getResizeHandler(),
-              onMouseUp: () =>
-                dispatch({
-                  type: "update:col",
-                  payload: {
-                    id: property.id,
-                    data: { width: `${header.column.getSize()}px` },
-                  },
-                }),
-              onTouchStart: header.getResizeHandler(),
-              onTouchEnd: () =>
-                dispatch({
-                  type: "update:col",
-                  payload: {
-                    id: property.id,
-                    data: { width: `${header.column.getSize()}px` },
-                  },
-                }),
-            }}
-          />
-        ),
-        cell: ({ row, column }) => {
-          const cell = row.original.properties[property.id];
-          if (!cell) return null;
-          return (
-            <TableRowCell
-              data={cell}
-              rowIndex={row.index}
-              colIndex={column.getIndex()}
-              property={property}
-              // width={property.width}
+      properties.map<ColumnDef<Row<TPlugins>>>((property) => {
+        const plugin = plugins.items[property.type]!;
+        const sortingFn = createColumnSortingFn(plugin);
+        return {
+          id: property.id,
+          accessorKey: property.name,
+          minSize: getMinWidth(property.type),
+          sortingFn,
+          header: ({ header }) => (
+            <TableHeaderCell
+              id={property.id}
               width={`calc(var(--col-${property.id}-size) * 1px)`}
-              icon={row.original.icon}
-              onChange={(data) =>
+              isResizing={header.column.getIsResizing()}
+              onResizeStart={header.getResizeHandler()}
+              onResizeEnd={() =>
                 dispatch({
-                  type: "update:cell",
+                  type: "update:col",
                   payload: {
-                    rowId: row.original.id,
-                    colId: property.id,
-                    data: { id: cell.id, ...data },
+                    id: property.id,
+                    data: { width: `${header.column.getSize()}px` },
                   },
                 })
               }
             />
-          );
-        },
-        footer: () => (
-          <TableFooterCell
-            id={property.id}
-            type={property.type}
-            countMethod={property.countMethod ?? CountMethod.NONE}
-            isCountCapped={property.isCountCapped}
-            width={`calc(var(--col-${property.id}-size) * 1px)`}
-          />
-        ),
-      })),
-    [dispatch, properties],
+          ),
+          cell: ({ row, column }) => {
+            const cell = row.original.properties[property.id];
+            if (!cell) return null;
+            return (
+              <TableRowCell
+                plugin={plugin}
+                data={cell.value}
+                rowIndex={row.index}
+                colIndex={column.getIndex()}
+                propId={property.id}
+                config={property.config as InferConfig<InferPlugin<TPlugins>>}
+                width={`calc(var(--col-${property.id}-size) * 1px)`}
+                wrapped={property.wrapped}
+                onChange={(value) =>
+                  dispatch({
+                    type: "update:cell",
+                    payload: {
+                      rowId: row.original.id,
+                      colId: property.id,
+                      data: { id: cell.id, value },
+                    },
+                  })
+                }
+              />
+            );
+          },
+          footer: () => (
+            <TableFooterCell
+              id={property.id}
+              type={property.type}
+              countMethod={property.countMethod ?? CountMethod.NONE}
+              isCountCapped={property.isCountCapped}
+              width={`calc(var(--col-${property.id}-size) * 1px)`}
+            />
+          ),
+        };
+      }),
+    [dispatch, plugins.items, properties],
   );
 
   const columnVisibility = useMemo<VisibilityState>(
@@ -239,6 +266,7 @@ export function useTableView(props: TableProps) {
 
   const tableViewCtx = useMemo<TableViewCtx>(() => {
     const uncontrolled: TableViewCtx = {
+      plugins,
       table,
       columnSizeVars,
       columnSensors,
@@ -248,8 +276,15 @@ export function useTableView(props: TableProps) {
       isPropertyUnique: (name) => properties.every((p) => p.name !== name),
       canFreezeProperty: (id) => table.getState().columnOrder.at(-1) !== id,
       isSomeCountMethodSet: isCountMethodSet(_state.properties),
-      getColumnCount: (...params) =>
-        getCount({ table, properties: _state.properties }, ...params),
+      getColumnCount: (colId, type, method) => {
+        const plugin = plugins.items[type]!;
+        return getCount(
+          { table, properties: _state.properties },
+          colId,
+          plugin,
+          method,
+        );
+      },
     };
     if (!controlledProperties) return uncontrolled;
     const colData = arrayToEntity(controlledProperties);
@@ -257,8 +292,15 @@ export function useTableView(props: TableProps) {
       ...uncontrolled,
       properties: colData.items,
       isSomeCountMethodSet: isCountMethodSet(colData.items),
-      getColumnCount: (...params) =>
-        getCount({ table, properties: colData.items }, ...params),
+      getColumnCount: (colId, type, method) => {
+        const plugin = plugins.items[type]!;
+        return getCount(
+          { table, properties: colData.items },
+          colId,
+          plugin,
+          method,
+        );
+      },
     };
   }, [
     _state.properties,
@@ -266,6 +308,7 @@ export function useTableView(props: TableProps) {
     columnSizeVars,
     controlledProperties,
     dataOrder,
+    plugins,
     properties,
     rowSensors,
     table,

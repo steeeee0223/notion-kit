@@ -10,20 +10,27 @@ import type { Table } from "@tanstack/react-table";
 
 import type { IconData } from "@notion-kit/icon-block";
 
-import type { DatabaseProperty, PropertyType, RowDataType } from "../lib/types";
+import type { Column, PluginType, Row } from "../lib/types";
 import { CountMethod } from "../lib/types";
+import type { Entity } from "../lib/utils";
+import type { CellPlugin, InferKey } from "../plugins";
 import type { TableViewAction } from "./table-reducer";
 import type { AddColumnPayload, UpdateColumnPayload } from "./types";
 
-export interface TableViewCtx {
-  table: Table<RowDataType>;
-  properties: Record<string, DatabaseProperty>;
+export interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
+  plugins: Entity<TPlugins[number]>;
+  table: Table<Row<TPlugins>>;
+  properties: Record<string, Column<TPlugins[number]>>;
   dataOrder: string[];
   columnSizeVars: Record<string, number>;
   isPropertyUnique: (name: string) => boolean;
   canFreezeProperty: (id: string) => boolean;
   isSomeCountMethodSet: boolean;
-  getColumnCount: (colId: string, method: CountMethod) => string;
+  getColumnCount: <TPlugin extends CellPlugin>(
+    colId: string,
+    type: InferKey<TPlugin>,
+    method: CountMethod,
+  ) => string;
   /** DND */
   columnSensors: SensorDescriptor<SensorOptions>[];
   rowSensors: SensorDescriptor<SensorOptions>[];
@@ -42,12 +49,15 @@ export const useTableViewCtx = () => {
 
 type ActionType = "row" | "col";
 
-export interface TableActions {
-  dispatch: React.Dispatch<TableViewAction>;
-  addColumn: (data: AddColumnPayload) => void;
-  updateColumn: (id: string, data: UpdateColumnPayload) => void;
+export interface TableActions<TPlugins extends CellPlugin[] = CellPlugin[]> {
+  dispatch: React.Dispatch<TableViewAction<TPlugins>>;
+  addColumn: (data: AddColumnPayload<TPlugins>) => void;
+  updateColumn: (
+    id: string,
+    data: UpdateColumnPayload<TPlugins[number]>,
+  ) => void;
   toggleAllColumns: (hidden: boolean) => void;
-  updateColumnType: (id: string, type: PropertyType) => void;
+  updateColumnType: (id: string, type: PluginType<TPlugins>) => void;
   freezeColumns: (id: string | null) => void;
   toggleCountCap: (id: string) => void;
   addRow: (src?: { id: string; at: "prev" | "next" }) => void;

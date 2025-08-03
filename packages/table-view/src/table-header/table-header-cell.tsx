@@ -23,19 +23,9 @@ import { useTableViewCtx } from "../table-contexts";
 interface TableHeaderCellProps {
   id: string;
   width: string;
-  isResizing?: boolean;
-  resizeHandle: {
-    /**
-     * @prop onMouseDown: resize for desktop
-     */
-    onMouseDown?: React.MouseEventHandler<HTMLDivElement>;
-    onMouseUp?: React.MouseEventHandler<HTMLDivElement>;
-    /**
-     * @prop onTouchStart: resize for mobile
-     */
-    onTouchStart?: React.TouchEventHandler<HTMLDivElement>;
-    onTouchEnd?: React.TouchEventHandler<HTMLDivElement>;
-  };
+  isResizing: boolean;
+  onResizeStart: (e: React.MouseEvent | React.TouchEvent) => void;
+  onResizeEnd: (e: React.MouseEvent | React.TouchEvent) => void;
 }
 
 /**
@@ -47,7 +37,8 @@ export function TableHeaderCell({
   id,
   width,
   isResizing,
-  resizeHandle,
+  onResizeStart,
+  onResizeEnd,
 }: TableHeaderCellProps) {
   const { properties } = useTableViewCtx();
 
@@ -139,19 +130,29 @@ export function TableHeaderCell({
             </Button>
           </TooltipPreset>
         </div>
-        <DropdownMenuContent align="start" sideOffset={rect?.height}>
+        <DropdownMenuContent
+          align="start"
+          sideOffset={rect?.height}
+          className="w-[220px]"
+        >
           <PropMenu propId={id} />
         </DropdownMenuContent>
       </DropdownMenu>
       {/* Resize handle */}
       <div className="absolute right-0 z-10 w-0 grow-0">
         <div
+          role="presentation"
           tabIndex={-1}
           className={cn(
             "-mt-px -ml-[3px] h-[34px] w-[5px] animate-bg-out cursor-col-resize bg-transparent hover:bg-blue/80",
             isResizing && "bg-blue/80",
           )}
-          {...resizeHandle}
+          // Resize for desktop
+          onMouseDown={onResizeStart}
+          onMouseUp={onResizeEnd}
+          // Resize for mobile
+          onTouchStart={onResizeStart}
+          onTouchEnd={onResizeEnd}
         />
       </div>
     </div>

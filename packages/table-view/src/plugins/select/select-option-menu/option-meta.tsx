@@ -6,7 +6,7 @@ import { Icon } from "@notion-kit/icons";
 import { Button, Input, TooltipPreset } from "@notion-kit/shadcn";
 
 import { useInputField } from "../../../common";
-import type { OptionConfig } from "../../../lib/types";
+import type { OptionConfig } from "../types";
 
 interface OptionMetaProps {
   option: OptionConfig;
@@ -63,9 +63,7 @@ export function OptionMeta({
           />
         </div>
         {nameField.error && (
-          <div className="mx-4 pt-2 text-sm text-red">
-            Option already exists.
-          </div>
+          <div className="pt-2 text-sm text-red">Option already exists.</div>
         )}
       </div>
       {showDesc && (

@@ -15,13 +15,14 @@ import {
   TooltipPreset,
 } from "@notion-kit/shadcn";
 
-import { CountMethod, type PropertyType } from "../lib/types";
+import { CountMethod, type PluginType } from "../lib/types";
+import type { CellPlugin } from "../plugins";
 import { useTableActions } from "../table-contexts";
 import { countMethodHint } from "./constants";
 
 interface CalcMenuProps {
   id: string; // column id
-  type: PropertyType;
+  type: PluginType<CellPlugin[]>;
   countMethod: CountMethod;
   isCountCapped?: boolean;
 }
