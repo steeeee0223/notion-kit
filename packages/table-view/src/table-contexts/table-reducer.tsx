@@ -18,7 +18,12 @@ import {
   insertAt,
   NEVER,
 } from "../lib/utils";
-import type { CellPlugin, InferActions, InferKey } from "../plugins";
+import type {
+  CellPlugin,
+  InferActions,
+  InferKey,
+  InferPlugin,
+} from "../plugins";
 import type { AddColumnPayload, UpdateColumnPayload } from "./types";
 
 export interface TableViewAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {
@@ -32,7 +37,7 @@ export interface TableViewAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {
    * @field property definitions
    * @param key property (column) id
    */
-  properties: Record<string, Column<TPlugins[number]>>;
+  properties: Record<string, Column<InferPlugin<TPlugins>>>;
   /**
    * @field column freezing up to the given `index` in `propertiesOrder`
    * @note returns -1 if no column is freezing
@@ -58,7 +63,7 @@ export type TableViewAction<TPlugins extends CellPlugin[]> =
   | { type: "add:col"; payload: AddColumnPayload<TPlugins> }
   | {
       type: "update:col";
-      payload: { id: string; data: UpdateColumnPayload<TPlugins[number]> };
+      payload: { id: string; data: UpdateColumnPayload<InferPlugin<TPlugins>> };
     }
   | {
       type: "update:col:type";
@@ -67,8 +72,8 @@ export type TableViewAction<TPlugins extends CellPlugin[]> =
   | {
       type: "update:col:meta";
       payload: {
-        type: InferKey<TPlugins[number]>;
-        actions: InferActions<TPlugins[number]>;
+        type: InferKey<InferPlugin<TPlugins>>;
+        actions: InferActions<InferPlugin<TPlugins>>;
       };
     }
   | { type: "update:col:visibility"; payload: { hidden: boolean } }
@@ -86,12 +91,16 @@ export type TableViewAction<TPlugins extends CellPlugin[]> =
   | { type: "update:row:icon"; payload: { id: string; icon: IconData | null } }
   | {
       type: "update:cell";
-      payload: { rowId: string; colId: string; data: Cell<TPlugins[number]> };
+      payload: {
+        rowId: string;
+        colId: string;
+        data: Cell<InferPlugin<TPlugins>>;
+      };
     }
   | { type: "update:sorting"; updater: Updater<SortingState> }
   | { type: "reset" };
 
-export function tableViewReducer<TPlugins extends CellPlugin[]>(
+function tableViewReducer<TPlugins extends CellPlugin[]>(
   p: PluginsMap<TPlugins>,
   v: TableViewAtom<TPlugins>,
   a: TableViewAction<TPlugins>,
