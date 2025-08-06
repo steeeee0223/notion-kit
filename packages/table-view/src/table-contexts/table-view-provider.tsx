@@ -5,6 +5,8 @@ import { arrayMove } from "@dnd-kit/sortable";
 
 import { TooltipProvider } from "@notion-kit/shadcn";
 
+import { arrayToEntity } from "../lib/utils";
+import { DEFAULT_PLUGINS, DefaultPlugins, type CellPlugin } from "../plugins";
 import {
   TableActionsContext,
   TableViewContext,
@@ -13,15 +15,22 @@ import {
 import type { TableProps } from "./types";
 import { useTableView } from "./use-table-view";
 
-type TableViewProviderProps = React.PropsWithChildren<TableProps>;
+type TableViewProviderProps<TPlugins extends CellPlugin[]> =
+  React.PropsWithChildren<TableProps<TPlugins>>;
 
-export function TableViewProvider({
+export function TableViewProvider<
+  TPlugins extends CellPlugin[] = DefaultPlugins,
+>({
   children,
+  plugins = DEFAULT_PLUGINS as TPlugins,
   ...props
-}: TableViewProviderProps) {
-  const [tableViewCtx, dispatch] = useTableView(props);
+}: TableViewProviderProps<TPlugins>) {
+  const [tableViewCtx, dispatch] = useTableView({
+    plugins: arrayToEntity(plugins),
+    ...props,
+  });
 
-  const actions = useMemo<TableActions>(
+  const actions = useMemo<TableActions<TPlugins>>(
     () => ({
       dispatch,
       addColumn: (payload) => dispatch({ type: "add:col", payload }),
@@ -35,21 +44,20 @@ export function TableViewProvider({
       toggleCountCap: (id) =>
         dispatch({
           type: "update:count:cap",
-          payload: { id, updater: (prev) => !prev },
+          payload: { id, updater: (prev: boolean) => !prev },
         }),
       addRow: (src) => dispatch({ type: "add:row", payload: src }),
       updateRowIcon: (id, icon) =>
         dispatch({ type: "update:row:icon", payload: { id, icon } }),
       reorder: (e, type) => {
-        // reorder after drag & drop
         const { active, over } = e;
         if (!over || active.id === over.id) return;
         dispatch({
           type: `reorder:${type}`,
-          updater: (prev) => {
+          updater: (prev: string[]) => {
             const oldIndex = prev.indexOf(active.id as string);
             const newIndex = prev.indexOf(over.id as string);
-            return arrayMove(prev, oldIndex, newIndex); //this is just a splice util
+            return arrayMove(prev, oldIndex, newIndex);
           },
         });
       },
@@ -63,7 +71,7 @@ export function TableViewProvider({
 
   return (
     <TableViewContext value={tableViewCtx}>
-      <TableActionsContext value={actions}>
+      <TableActionsContext value={actions as unknown as TableActions}>
         <TooltipProvider delayDuration={500}>{children}</TooltipProvider>
       </TableActionsContext>
     </TableViewContext>

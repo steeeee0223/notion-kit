@@ -26,7 +26,7 @@ interface RowActionMenuProps {
 /**
  * @summary The actions of a row
  *
- * 1. 🚧 Edit icon
+ * 1. ✅ Edit icon
  * 2. 🚧 Edit property
  * ---
  * 3. 🚧 Open in
@@ -103,9 +103,7 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
           onUpload={uploadIcon}
         >
           <MenuItem
-            Icon={
-              <Icon.EmojiFace className="size-5 fill-[#32302c] dark:fill-icon" />
-            }
+            Icon={<Icon.EmojiFace className="size-5" />}
             Body="Edit icon"
           />
         </IconMenu>
@@ -113,19 +111,14 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
       <Separator />
       <MenuGroup>
         <MenuItem
-          Icon={
-            <Icon.Duplicate className="size-4 fill-[#32302c] dark:fill-icon" />
-          }
+          Icon={<Icon.Duplicate className="size-4" />}
           Body="Duplicate"
           onClick={duplicateRow}
         >
           <MenuItemShortcut>⌘D</MenuItemShortcut>
         </MenuItem>
         <MenuItem
-          className="group/trash"
-          Icon={
-            <Icon.Trash className="size-4 fill-[#32302c] group-hover/trash:fill-red dark:fill-icon group-hover/trash:dark:fill-red" />
-          }
+          Icon={<Icon.Trash className="size-4" />}
           Body="Delete"
           variant="warning"
           onClick={deleteRow}

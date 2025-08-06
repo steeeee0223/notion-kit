@@ -1422,6 +1422,9 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../cn
+      '@notion-kit/common':
+        specifier: workspace:*
+        version: link:../common
       '@notion-kit/hooks':
         specifier: workspace:*
         version: link:../hooks
@@ -1434,9 +1437,18 @@ importers:
       '@notion-kit/icons':
         specifier: workspace:*
         version: link:../icons
+      '@notion-kit/modal':
+        specifier: workspace:*
+        version: link:../modal
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../shadcn
+      '@notion-kit/tags-input':
+        specifier: workspace:*
+        version: link:../tags-input
+      '@notion-kit/utils':
+        specifier: workspace:*
+        version: link:../utils
       '@tanstack/react-table':
         specifier: catalog:ui
         version: 8.21.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -1492,6 +1504,9 @@ importers:
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../shadcn
+      '@notion-kit/utils':
+        specifier: workspace:*
+        version: link:../utils
       lucide-react:
         specifier: catalog:ui
         version: 0.456.0(react@19.1.0)

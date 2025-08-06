@@ -72,7 +72,6 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
         property={property}
         validateName={isPropertyUnique}
         onUpdate={(data) => updateColumn(property.id, data)}
-        onKeyDownUpdate={closeMenu}
       />
       <MenuGroup>
         {property.type === "title" ? (
@@ -83,16 +82,16 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
           >
             <MenuItem
               disabled
-              Icon={<Icon.ArrowSquarePathUpDown className="fill-icon" />}
+              Icon={<Icon.ArrowSquarePathUpDown />}
               Body="Type"
             >
-              <MenuItemAction className="flex items-center fill-default/35 text-muted">
-                <div className="flex truncate">
+              <MenuItemAction className="flex items-center text-muted">
+                <div className="flex items-center truncate">
                   <Icon.LockedFilled className="h-full w-3.5 fill-icon" />
                   <div className="inline-block min-h-1 min-w-1" />
                   <span>Title</span>
                 </div>
-                <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-default/35 dark:fill-default/30" />
+                <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-current" />
               </MenuItemAction>
             </MenuItem>
           </TooltipPreset>
@@ -100,25 +99,22 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
           <>
             <MenuItem
               onClick={openTypesMenu}
-              Icon={<Icon.ArrowSquarePathUpDown className="fill-icon" />}
+              Icon={<Icon.ArrowSquarePathUpDown />}
               Body="Type"
             >
-              <MenuItemAction className="flex items-center fill-default/35 text-muted">
+              <MenuItemAction className="flex items-center text-muted">
                 <div className="flex truncate">
-                  <DefaultIcon
-                    type={property.type}
-                    className="fill-default/45"
-                  />
+                  <DefaultIcon type={property.type} className="fill-current" />
                   <div className="inline-block min-h-1 min-w-1" />
                   <span>{propertyTypes[property.type]!.title}</span>
                 </div>
-                <Icon.ChevronRight className="transition-out h-full w-3 fill-default/35 dark:fill-default/30" />
+                <Icon.ChevronRight className="transition-out h-full w-3 fill-current" />
               </MenuItemAction>
             </MenuItem>
             <MenuItem
               // TODO
               disabled
-              Icon={<Icon.PencilLine className="fill-icon" />}
+              Icon={<Icon.PencilLine />}
               Body={
                 <div className="flex items-center">
                   AI Autofill
@@ -128,9 +124,9 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
                 </div>
               }
             >
-              <MenuItemAction className="flex items-center fill-default/35 text-muted">
+              <MenuItemAction className="flex items-center text-muted">
                 <div className="flex truncate">Off</div>
-                <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-default/35 dark:fill-default/30" />
+                <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-current" />
               </MenuItemAction>
             </MenuItem>
           </>
@@ -140,7 +136,7 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
       <MenuGroup>
         <MenuItem
           onClick={wrapProp}
-          Icon={<Icon.ArrowUTurnDownLeft className="fill-icon" />}
+          Icon={<Icon.ArrowUTurnDownLeft />}
           Body="Wrap in view"
         >
           <MenuItemAction className="flex items-center">
@@ -151,21 +147,18 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
           <>
             <MenuItem
               onClick={hideProp}
-              Icon={<Icon.EyeHideInversePadded className="size-6 fill-icon" />}
+              Icon={<Icon.EyeHideInversePadded className="size-6" />}
               Body="Hide in view"
             />
             <MenuItem
               onClick={duplicateProp}
-              Icon={<Icon.Duplicate className="h-4 fill-icon" />}
+              Icon={<Icon.Duplicate className="h-4" />}
               Body="Duplicate property"
             />
             <MenuItem
               variant="warning"
-              className="group/trash"
               onClick={deleteProp}
-              Icon={
-                <Icon.Trash className="w-4 fill-icon group-hover/trash:fill-red" />
-              }
+              Icon={<Icon.Trash className="w-4" />}
               Body="Delete property"
             />
           </>

@@ -7,10 +7,9 @@ import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import { Button, TooltipPreset } from "@notion-kit/shadcn";
 
-import { CellTrigger } from "./cell-trigger";
-import { useTextInputPopover } from "./use-text-input-popover";
+import { CellTrigger, useTextInputPopover } from "../../common";
 
-import "../view.css";
+import "../../view.css";
 
 interface TitleCellProps {
   icon?: IconData;
@@ -19,12 +18,7 @@ interface TitleCellProps {
   onUpdate?: (value: string) => void;
 }
 
-export const TitleCell: React.FC<TitleCellProps> = ({
-  icon,
-  value,
-  wrapped,
-  onUpdate,
-}) => {
+export function TitleCell({ icon, value, wrapped, onUpdate }: TitleCellProps) {
   const { ref, width, openTextInput } = useTextInputPopover<HTMLDivElement>({
     value,
     onUpdate,
@@ -72,4 +66,4 @@ export const TitleCell: React.FC<TitleCellProps> = ({
       </div>
     </CellTrigger>
   );
-};
+}

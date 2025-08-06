@@ -1,13 +1,22 @@
+import type { SortingFn } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
-import type { DatabaseProperty, PropertyType, RowDataType } from "../lib/types";
+import type {
+  Column,
+  ColumnDefs,
+  PluginsMap,
+  PluginType,
+  Row,
+} from "../lib/types";
 import { arrayToEntity } from "../lib/utils";
+import type { CellPlugin, InferConfig } from "../plugins";
+import type { TitlePlugin } from "../plugins/title";
 import type { TableViewAtom } from "./table-reducer";
-import type { TableState } from "./types";
+import type { PartialTableState } from "./types";
 
 export const DEFAULT_FREEZED_INDEX = -1;
 
-export function getMinWidth(type: PropertyType) {
+export function getMinWidth(type: PluginType<CellPlugin[]>) {
   switch (type) {
     case "checkbox":
       return 32;
@@ -16,45 +25,82 @@ export function getMinWidth(type: PropertyType) {
   }
 }
 
-export function createInitialTable(): TableState {
+export function createInitialTable(): PartialTableState<CellPlugin[]> {
   const titleId = v4();
-  const properties: DatabaseProperty[] = [
-    { id: titleId, type: "title", name: "Name" },
+  const columns: Column<TitlePlugin>[] = [
+    { id: titleId, name: "Name", type: "title", config: { showIcon: true } },
   ];
-  const data: RowDataType[] = [
+  const data: Row<TitlePlugin[]>[] = [
     {
       id: v4(),
-      properties: { [titleId]: { id: v4(), type: "title", value: "" } },
+      properties: {
+        [titleId]: { id: v4(), value: { value: "" } },
+      },
     },
     {
       id: v4(),
-      properties: { [titleId]: { id: v4(), type: "title", value: "" } },
+      properties: {
+        [titleId]: { id: v4(), value: { value: "" } },
+      },
     },
     {
       id: v4(),
-      properties: { [titleId]: { id: v4(), type: "title", value: "" } },
+      properties: {
+        [titleId]: { id: v4(), value: { value: "" } },
+      },
     },
   ];
 
-  return { properties, data, freezedIndex: DEFAULT_FREEZED_INDEX };
+  return { properties: columns, data };
 }
 
-export function getTableViewAtom(state: TableState): TableViewAtom {
-  const columnData = arrayToEntity(state.properties);
+export function toDatabaseProperties<TPlugins extends CellPlugin[]>(
+  plugins: Record<string, TPlugins[number]>,
+  properties: ColumnDefs<TPlugins>,
+): Column<CellPlugin>[] {
+  return properties.map((property) => ({
+    config: plugins[property.type]!.default.config as InferConfig<
+      TPlugins[number]
+    >,
+    ...property,
+  }));
+}
+
+/**
+ * getTableViewAtom
+ * Converts a controlled state `PartialTableState` into a TableViewAtom.
+ */
+export function getTableViewAtom<TPlugins extends CellPlugin[]>(
+  plugins: PluginsMap<TPlugins>,
+  state: PartialTableState<TPlugins>,
+): TableViewAtom<TPlugins> {
+  const columnData = arrayToEntity(
+    toDatabaseProperties(plugins, state.properties),
+  );
   const rowData = arrayToEntity(state.data);
   return {
-    properties: columnData.items,
+    table: { sorting: [] },
+    properties: columnData.items as Record<string, Column<TPlugins[number]>>,
     propertiesOrder: columnData.ids,
     data: rowData.items,
     dataOrder: rowData.ids,
-    freezedIndex: state.freezedIndex ?? DEFAULT_FREEZED_INDEX,
+    freezedIndex: DEFAULT_FREEZED_INDEX,
   };
 }
 
-export function toControlledState(atom: TableViewAtom): TableState {
+export function toControlledState<TPlugins extends CellPlugin[]>(
+  atom: TableViewAtom<TPlugins>,
+): PartialTableState<TPlugins> {
   return {
     properties: atom.propertiesOrder.map((id) => atom.properties[id]!),
     data: atom.dataOrder.map((id) => atom.data[id]!),
-    freezedIndex: atom.freezedIndex,
+  };
+}
+
+export function createColumnSortingFn(plugin: CellPlugin): SortingFn<Row> {
+  return (rowA, rowB, colId) => {
+    const dataA = plugin.toReadableValue(rowA.original.properties[colId]);
+    const dataB = plugin.toReadableValue(rowB.original.properties[colId]);
+    return dataA.localeCompare(dataB);
   };
 }

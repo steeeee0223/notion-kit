@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/tags-input",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -32,6 +32,7 @@
     "@hookform/resolvers": "catalog:ui",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
+    "@notion-kit/utils": "workspace:*",
     "lucide-react": "catalog:ui",
     "zod": "catalog:"
   },
@@ -50,5 +51,8 @@
     "react": "catalog:react19",
     "zod": "catalog:"
   },
+  "bundleDependencies": [
+    "@notion-kit/utils"
+  ],
   "prettier": "@notion-kit/prettier-config"
 }

@@ -1,28 +1,43 @@
-import type { Updater } from "@tanstack/react-table";
+import type { SortingState, Updater } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { IconData } from "@notion-kit/icon-block";
 
 import type {
-  CellDataType,
-  DatabaseProperty,
-  PropertyType,
-  RowDataType,
+  Cell,
+  Column,
+  PluginsMap,
+  PluginType,
+  Row,
+  Rows,
 } from "../lib/types";
 import {
   getDefaultCell,
+  getState,
   getUniqueName,
   insertAt,
-  transferPropertyValues,
+  NEVER,
 } from "../lib/utils";
+import type {
+  CellPlugin,
+  InferActions,
+  InferKey,
+  InferPlugin,
+} from "../plugins";
 import type { AddColumnPayload, UpdateColumnPayload } from "./types";
 
-export interface TableViewAtom {
+export interface TableViewAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {
+  /**
+   * @field global table state
+   */
+  table: {
+    sorting: SortingState;
+  };
   /**
    * @field property definitions
    * @param key property (column) id
    */
-  properties: Record<string, DatabaseProperty>;
+  properties: Record<string, Column<InferPlugin<TPlugins>>>;
   /**
    * @field column freezing up to the given `index` in `propertiesOrder`
    * @note returns -1 if no column is freezing
@@ -41,13 +56,26 @@ export interface TableViewAtom {
    * @field data of each row
    * @param key property (column) id
    */
-  data: Record<string, RowDataType>;
+  data: Rows<TPlugins>;
 }
 
-export type TableViewAction =
-  | { type: "add:col"; payload: AddColumnPayload }
-  | { type: "update:col"; payload: { id: string; data: UpdateColumnPayload } }
-  | { type: "update:col:type"; payload: { id: string; type: PropertyType } }
+export type TableViewAction<TPlugins extends CellPlugin[]> =
+  | { type: "add:col"; payload: AddColumnPayload<TPlugins> }
+  | {
+      type: "update:col";
+      payload: { id: string; data: UpdateColumnPayload<InferPlugin<TPlugins>> };
+    }
+  | {
+      type: "update:col:type";
+      payload: { id: string; type: PluginType<TPlugins> };
+    }
+  | {
+      type: "update:col:meta";
+      payload: {
+        type: InferKey<InferPlugin<TPlugins>>;
+        actions: InferActions<InferPlugin<TPlugins>>;
+      };
+    }
   | { type: "update:col:visibility"; payload: { hidden: boolean } }
   | { type: "reorder:col" | "reorder:row"; updater: Updater<string[]> }
   | { type: "freeze:col"; payload: { id: string | null } }
@@ -63,29 +91,52 @@ export type TableViewAction =
   | { type: "update:row:icon"; payload: { id: string; icon: IconData | null } }
   | {
       type: "update:cell";
-      payload: { rowId: string; colId: string; data: CellDataType };
+      payload: {
+        rowId: string;
+        colId: string;
+        data: Cell<InferPlugin<TPlugins>>;
+      };
     }
+  | { type: "update:sorting"; updater: Updater<SortingState> }
   | { type: "reset" };
 
-export const tableViewReducer = (
-  v: TableViewAtom,
-  a: TableViewAction,
-): TableViewAtom => {
+function tableViewReducer<TPlugins extends CellPlugin[]>(
+  p: PluginsMap<TPlugins>,
+  v: TableViewAtom<TPlugins>,
+  a: TableViewAction<TPlugins>,
+): TableViewAtom<TPlugins> {
   switch (a.type) {
     case "add:col": {
-      const { id: colId, type, name } = a.payload;
+      const { id: colId, type, name, at } = a.payload;
+      const plugin = p[type];
       const data = { ...v.data };
       v.dataOrder.forEach((rowId) => {
-        data[rowId]!.properties[colId] = getDefaultCell(type);
+        if (!data[rowId]) return NEVER;
+        data[rowId] = {
+          ...data[rowId],
+          properties: {
+            ...data[rowId].properties,
+            [colId]: getDefaultCell(plugin),
+          },
+        };
       });
+      const properties = { ...v.properties };
+      properties[colId] = {
+        id: colId,
+        name,
+        type: plugin.id,
+        config: plugin.default.config,
+      };
       return {
-        properties: {
-          ...v.properties,
-          [colId]: { id: colId, type, name, icon: null },
+        ...v,
+        properties,
+        get propertiesOrder() {
+          if (at === undefined) return [...v.propertiesOrder, colId];
+          const idx = v.propertiesOrder.indexOf(at.id);
+          return at.side === "right"
+            ? insertAt(v.propertiesOrder, colId, idx + 1)
+            : insertAt(v.propertiesOrder, colId, idx);
         },
-        propertiesOrder: [...v.propertiesOrder, colId],
-        freezedIndex: v.freezedIndex,
-        dataOrder: v.dataOrder,
         data,
       };
     }
@@ -101,20 +152,36 @@ export const tableViewReducer = (
       };
     }
     case "update:col:type": {
-      const prop = v.properties[a.payload.id];
-      if (!prop) return v as never;
+      const property = v.properties[a.payload.id];
+      if (!property) return v as never;
+      const destPlugin = p[a.payload.type];
+      const config =
+        destPlugin.transferConfig?.(property, v.data) ??
+        destPlugin.default.config;
       const data = { ...v.data };
       v.dataOrder.forEach((rowId) => {
-        data[rowId]!.properties[a.payload.id] = transferPropertyValues(
-          data[rowId]!.properties[a.payload.id]!,
-          a.payload.type,
-        );
+        if (!data[rowId]) return;
+        const cell = data[rowId].properties[a.payload.id]!;
+        const srcPlugin = p[property.type];
+        data[rowId] = {
+          ...data[rowId],
+          properties: {
+            ...data[rowId].properties,
+            [a.payload.id]: {
+              id: cell.id,
+              value: destPlugin.fromReadableValue(
+                srcPlugin.toReadableValue(cell.value),
+                config,
+              ),
+            },
+          },
+        };
       });
       return {
         ...v,
         properties: {
           ...v.properties,
-          [a.payload.id]: { ...prop, type: a.payload.type },
+          [a.payload.id]: { ...property, type: destPlugin.id, config },
         },
         data,
       };
@@ -128,9 +195,7 @@ export const tableViewReducer = (
       return { ...v, properties };
     }
     case "reorder:col": {
-      const propertiesOrder = Array.isArray(a.updater)
-        ? a.updater
-        : a.updater(v.propertiesOrder);
+      const propertiesOrder = getState(a.updater, v.propertiesOrder);
       return { ...v, propertiesOrder };
     }
     case "duplicate:col": {
@@ -147,13 +212,13 @@ export const tableViewReducer = (
       };
       const data = { ...v.data };
       v.dataOrder.forEach((rowId) => {
-        data[rowId]!.properties[prop.id] = getDefaultCell(src.type);
+        data[rowId]!.properties[prop.id] = getDefaultCell(p[src.type]);
       });
       return {
+        ...v,
         properties: { ...v.properties, [prop.id]: prop },
         propertiesOrder: insertAt(v.propertiesOrder, prop.id, idx + 1),
         freezedIndex: v.freezedIndex + Number(idx <= v.freezedIndex),
-        dataOrder: v.dataOrder,
         data,
       };
     }
@@ -172,28 +237,33 @@ export const tableViewReducer = (
       });
 
       return {
+        ...v,
         properties,
         propertiesOrder: v.propertiesOrder.filter(
           (colId) => colId !== a.payload.id,
         ),
         freezedIndex: v.freezedIndex - Number(idx <= v.freezedIndex),
-        dataOrder: v.dataOrder,
         data,
       };
     }
     case "update:count:cap": {
       const prop = v.properties[a.payload.id];
       if (!prop) return v;
-      prop.isCountCapped =
-        typeof a.payload.updater === "function"
-          ? a.payload.updater(prop.isCountCapped ?? false)
-          : a.payload.updater;
+      prop.isCountCapped = getState(
+        a.payload.updater,
+        prop.isCountCapped ?? false,
+      );
       return { ...v, properties: { ...v.properties, [a.payload.id]: prop } };
     }
+    case "update:col:meta": {
+      const { type, actions } = a.payload;
+      return p[type].reducer<TPlugins>(v, actions);
+    }
     case "add:row": {
-      const row: RowDataType = { id: v4(), properties: {} };
+      const row: Row<TPlugins> = { id: v4(), properties: {} };
       v.propertiesOrder.forEach((colId) => {
-        row.properties[colId] = getDefaultCell(v.properties[colId]!.type);
+        const type = v.properties[colId]!.type;
+        row.properties[colId] = getDefaultCell(p[type]);
       });
       return {
         ...v,
@@ -208,7 +278,7 @@ export const tableViewReducer = (
       };
     }
     case "duplicate:row": {
-      const row: RowDataType = { ...v.data[a.payload.id]!, id: v4() };
+      const row = { ...v.data[a.payload.id]!, id: v4() };
       v.propertiesOrder.forEach((colId) => (row.properties[colId]!.id = v4()));
       return {
         ...v,
@@ -220,16 +290,19 @@ export const tableViewReducer = (
       };
     }
     case "reorder:row": {
-      const dataOrder = Array.isArray(a.updater)
-        ? a.updater
-        : a.updater(v.dataOrder);
+      const dataOrder = getState(a.updater, v.dataOrder);
       // TODO select row after reorder
-      return { ...v, dataOrder };
+      return { ...v, dataOrder, table: { ...v.table, sorting: [] } };
     }
     case "update:row:icon": {
-      const data = { ...v.data };
-      data[a.payload.id]!.icon = a.payload.icon ?? undefined;
-      return { ...v, data };
+      const row = v.data[a.payload.id];
+      if (!row) return v as never;
+      row.icon = a.payload.icon ?? undefined;
+      const colId = v.propertiesOrder.find(
+        (propId) => v.properties[propId]?.type === "title",
+      )!;
+      row.properties[colId]!.value.icon = a.payload.icon ?? undefined;
+      return { ...v, data: { ...v.data, [a.payload.id]: row } };
     }
     case "delete:row": {
       const { [a.payload.id]: _, ...data } = v.data;
@@ -244,8 +317,15 @@ export const tableViewReducer = (
       data[a.payload.rowId]!.properties[a.payload.colId] = a.payload.data;
       return { ...v, data };
     }
+    case "update:sorting": {
+      const sorting = getState(a.updater, v.table.sorting);
+      return { ...v, table: { ...v.table, sorting } };
+    }
     case "reset":
       return {
+        table: {
+          sorting: [],
+        },
         properties: {},
         propertiesOrder: [],
         freezedIndex: -1,
@@ -255,4 +335,11 @@ export const tableViewReducer = (
     default:
       return v;
   }
-};
+}
+
+export function createTableViewReducer<TPlugins extends CellPlugin[]>(
+  plugins: PluginsMap<TPlugins>,
+) {
+  return (v: TableViewAtom<TPlugins>, a: TableViewAction<TPlugins>) =>
+    tableViewReducer<TPlugins>(plugins, v, a);
+}

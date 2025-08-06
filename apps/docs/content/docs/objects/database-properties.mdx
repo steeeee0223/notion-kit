@@ -3,16 +3,17 @@ title: Database Properties
 description: Database property objects are rendered in the Notion UI as database columns.
 ---
 
-## Database Property
+Database properties are represented as columns in the Notion database. They are defined by [`CellPlugin`](/docs/blocks/table-view/cell-plugins)'s that specify how the property behaves and renders in the Notion UI.
 
-### Properties
+## Column
 
-A database property object consists of the following data:
+A database column object `Column<TPlugin>` consists of the common properties and the plugin-specific configuration.
+
+### Common Properties
 
 | Prop            | Type                                                | Description                                        |
 | --------------- | --------------------------------------------------- | -------------------------------------------------- |
 | `id`\*          | `string`                                            | Unique identifier of the column.                   |
-| `type`\*        | `PropertyType`                                      | Type of the column.                                |
 | `name`\*        | `string`                                            | Name of the column.                                |
 | `icon`          | [`IconData`](/docs/blocks/icon-block#type-icondata) | Displayed icon of the column.                      |
 | `width`         | `string`                                            | Width of the column.                               |
@@ -23,82 +24,82 @@ A database property object consists of the following data:
 | `isCountCapped` | `boolean`                                           | Whether the count of the column should be capped.  |
 | `countMethod`   | `CountMethod`                                       | The count method of the column.                    |
 
-## Row Data Type
+### Plugin Configuration
 
-The data of a row.
+The plugin-specific configuration `ColumnConfig<TPlugin>` for the column.
 
-### Properties
+| Prop       | Type                   | Description                        |
+| ---------- | ---------------------- | ---------------------------------- |
+| `type`\*   | `PluginType<TPlugins>` | Plugin type ID for the column.     |
+| `config`\* | `InferConfig<TPlugin>` | Plugin-specific config for column. |
 
-| Prop           | Type                                                | Description                                                                   |
-| -------------- | --------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `id`\*         | `string`                                            | Unique identifier of the row.                                                 |
-| `properties`\* | `Record<string, CellDataType>`                      | The row data where the key-value is given by the column ID and the cell data. |
-| `icon`         | [`IconData`](/docs/blocks/icon-block#type-icondata) | Displayed icon of the column.                                                 |
+## ColumnDefs
 
-## Cell Data Type
+`ColumnDefs<TPlugins>` is an array of column definitions `Column<TPlugin>` where the `config` property is optional.
 
-There are various type of cells, where each cell consists of:
+```ts
+const columnDefs: ColumnDefs = [
+  {
+    id: "col-1",
+    name: "Title",
+    type: "title",
+    // the `config` optional
+    config: { showIcon: true },
+  },
+];
+```
 
-1. the common properties
-2. the value corresponding to it property type
+## Row
+
+A `Row<TPlugins>` represents a row of data in the table.
+
+### API Reference
+
+| Prop           | Type                                                | Description                      |
+| -------------- | --------------------------------------------------- | -------------------------------- |
+| `id`\*         | `string`                                            | Unique identifier of the row.    |
+| `properties`\* | `Record<string, Cell<TPlugin>>`                     | The row data keyed by column ID. |
+| `icon`         | [`IconData`](/docs/blocks/icon-block#type-icondata) | Displayed icon of the row.       |
+
+## Cell
+
+A `Cell<TPlugin>` contains the `id` and `value`, where the value is determined by the plugin’s data type.
 
 ### Common Properties
 
-| Prop     | Type           | Description                    |
-| -------- | -------------- | ------------------------------ |
-| `type`\* | `PropertyType` | The property type.             |
-| `id`\*   | `string`       | Unique identifier of the cell. |
+| Prop      | Type                 | Description                    |
+| --------- | -------------------- | ------------------------------ |
+| `id`\*    | `string`             | Unique identifier of the cell. |
+| `value`\* | `InferData<TPlugin>` | Plugin-defined cell data.      |
 
-### Title Cell
+### Examples
 
-| Prop      | Type      | Description                    |
-| --------- | --------- | ------------------------------ |
-| `type`\*  | `"title"` | -                              |
-| `id`\*    | `string`  | Unique identifier of the cell. |
-| `value`\* | `string`  | The title value.               |
-
-#### Example
+#### Title Cell
 
 ```ts
+// Cell<TitlePlugin>
 {
-  type: "title",
   id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
-  value: "New title"
+  value: { value: "New title", icon: { type: "emoji", src: "📄" } },
 }
 ```
 
-### Text Cell
-
-| Prop      | Type     | Description                    |
-| --------- | -------- | ------------------------------ |
-| `type`\*  | `"text"` | -                              |
-| `id`\*    | `string` | Unique identifier of the cell. |
-| `value`\* | `string` | The text value.                |
-
-#### Example
+#### Text Cell
 
 ```ts
+// Cell<TextPlugin>
 {
-  type: "text",
   id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
-  value: "Some description..."
+  value: "Some text..."
 }
 ```
 
-### Checkbox Cell
-
-| Prop        | Type         | Description                      |
-| ----------- | ------------ | -------------------------------- |
-| `type`\*    | `"checkbox"` | -                                |
-| `id`\*      | `string`     | Unique identifier of the cell.   |
-| `checked`\* | `boolean`    | Whether the checkbox is checked. |
-
-#### Example
+#### Checkbox Cell
 
 ```ts
+// Cell<CheckboxPlugin>
 {
-  type: "checkbox",
   id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
-  checked: true,
+  value: true,
 }
 ```

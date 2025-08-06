@@ -1,34 +1,12 @@
 import type { IconData } from "@notion-kit/icon-block";
 
-export interface Option {
-  id: string;
-  name: string;
-  color: string;
-}
-
-export type CellType =
-  | { type: "title" | "text"; value: string }
-  | { type: "checkbox"; checked: boolean }
-  | { type: "select"; select: Option | null };
-export type PropertyType = CellType["type"];
-
-export type CellDataType = {
-  id: string; // cell id
-} & CellType;
-
-export interface RowDataType {
-  id: string; // row id (page id)
-  /**
-   * @param key: column id
-   * @param value: cell data
-   */
-  properties: Record<string, CellDataType>;
-  icon?: IconData;
-}
-
-export type HeaderCellType =
-  | { type: "title" | "text" | "checkbox" }
-  | { type: "select"; options: Option[] };
+import type {
+  CellPlugin,
+  InferConfig,
+  InferData,
+  InferKey,
+  InferPlugin,
+} from "../plugins";
 
 export enum CountMethod {
   NONE,
@@ -44,10 +22,8 @@ export enum CountMethod {
   PERCENTAGE_EMPTY,
   PERCENTAGE_NONEMPTY,
 }
-
-export interface DatabaseProperty {
+interface PropertyBase {
   id: string;
-  type: PropertyType;
   name: string;
   icon?: IconData | null;
   width?: string;
@@ -58,3 +34,43 @@ export interface DatabaseProperty {
   isCountCapped?: boolean;
   countMethod?: CountMethod;
 }
+
+export type PluginType<TPlugins extends CellPlugin[]> = InferKey<
+  InferPlugin<TPlugins>
+>;
+
+export type PluginsMap<TPlugins extends CellPlugin[]> = Record<
+  PluginType<TPlugins>,
+  InferPlugin<TPlugins>
+>;
+
+export interface ColumnConfig<TPlugin> {
+  type: InferKey<TPlugin>;
+  config: InferConfig<TPlugin>;
+}
+
+export type Column<TPlugin = CellPlugin> = PropertyBase & ColumnConfig<TPlugin>;
+
+export type ColumnDefs<
+  TPlugins extends CellPlugin[] = CellPlugin[],
+  TPlugin = InferPlugin<TPlugins>,
+> = (PropertyBase & {
+  type: InferKey<TPlugin>;
+  config?: InferConfig<TPlugin>;
+})[];
+
+export interface Cell<TPlugin> {
+  id: string;
+  value: InferData<TPlugin>;
+}
+
+export interface Row<TPlugins extends CellPlugin[] = CellPlugin[]> {
+  id: string;
+  properties: Record<string, Cell<TPlugins[number]>>;
+  icon?: IconData;
+}
+
+export type Rows<TPlugins extends CellPlugin[] = CellPlugin[]> = Record<
+  string,
+  Row<TPlugins>
+>;

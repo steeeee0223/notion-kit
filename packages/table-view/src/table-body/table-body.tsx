@@ -5,11 +5,11 @@ import {
 } from "@dnd-kit/sortable";
 import type { Table } from "@tanstack/react-table";
 
-import type { RowDataType } from "../lib/types";
+import type { Row } from "../lib/types";
 import { TableRow } from "./table-row";
 
 interface TableBodyProps {
-  table: Table<RowDataType>;
+  table: Table<Row>;
   dataOrder: string[];
 }
 
@@ -17,6 +17,21 @@ interface TableBodyProps {
  * un-memoized normal table body component - see memoized version below
  */
 export function TableBody({ table, dataOrder }: TableBodyProps) {
+  const isSorted = table.getState().sorting.length > 0;
+  if (isSorted) {
+    const rows = table.getRowModel().rows;
+    return (
+      <SortableContext
+        items={rows.map((row) => row.id)}
+        strategy={verticalListSortingStrategy}
+      >
+        {rows.map((row) => (
+          <TableRow key={row.id} row={row} />
+        ))}
+      </SortableContext>
+    );
+  }
+
   return (
     <SortableContext items={dataOrder} strategy={verticalListSortingStrategy}>
       {dataOrder.map((rowId) => (

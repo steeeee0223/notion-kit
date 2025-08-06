@@ -7,23 +7,22 @@ import { IconMenu } from "@notion-kit/icon-menu";
 import { Icon } from "@notion-kit/icons";
 import { Button, Input, TooltipPreset } from "@notion-kit/shadcn";
 
-import { useInputField } from "../hooks";
-import type { DatabaseProperty } from "../lib/types";
+import type { Column } from "../lib/types";
+import { CellPlugin } from "../plugins";
 import { UpdateColumnPayload } from "../table-contexts";
 import { DefaultIcon } from "./default-icon";
+import { useInputField } from "./use-input-field";
 
-interface PropMetaProps {
-  property: Pick<DatabaseProperty, "type" | "name" | "icon" | "description">;
+interface PropMetaProps<TPlugin extends CellPlugin = CellPlugin> {
+  property: Pick<Column<TPlugin>, "type" | "icon" | "name" | "description">;
   validateName: (value: string) => boolean;
-  onUpdate: (data: Omit<UpdateColumnPayload, "width">) => void;
-  onKeyDownUpdate: () => void;
+  onUpdate: (data: Omit<UpdateColumnPayload<TPlugin>, "width">) => void;
 }
 
 export const PropMeta: React.FC<PropMetaProps> = ({
   property,
   validateName,
   onUpdate,
-  onKeyDownUpdate,
 }) => {
   const [showDesc, setShowDesc] = useState(false);
   const toggleDesc = () => setShowDesc((prev) => !prev);
@@ -33,13 +32,11 @@ export const PropMeta: React.FC<PropMetaProps> = ({
     initialValue: property.name,
     validate: validateName,
     onUpdate: (name) => onUpdate({ name }),
-    onKeyDownUpdate,
   });
   const descField = useInputField({
     id: "description",
     initialValue: property.description ?? "",
     onUpdate: (description) => onUpdate({ description }),
-    onKeyDownUpdate,
   });
   /** Icon */
   const uploadIcon = (file: File) => {
@@ -72,7 +69,6 @@ export const PropMeta: React.FC<PropMetaProps> = ({
           <div className="mr-3 ml-1.5 min-w-0 flex-auto">
             <div className="flex">
               <Input
-                ref={nameField.ref}
                 {...nameField.props}
                 endIcon={
                   <TooltipPreset
@@ -96,14 +92,14 @@ export const PropMeta: React.FC<PropMetaProps> = ({
         </div>
         {nameField.error && (
           <div className="mx-4 pt-2 text-sm text-red">
-            A property named Select already exists in this database.
+            A property named {nameField.props.value} already exists in this
+            database.
           </div>
         )}
       </div>
       {showDesc && (
         <div className="flex min-h-7 w-full min-w-0 flex-auto items-center px-3 py-1 leading-[1.2] select-none">
           <Input
-            ref={descField.ref}
             className="h-auto text-[13px]/[20px]"
             placeholder="Add a description..."
             {...descField.props}

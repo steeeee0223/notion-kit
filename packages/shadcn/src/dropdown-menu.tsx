@@ -12,6 +12,7 @@ import {
   MenuItemAction,
   MenuItemCheck,
   MenuItemShortcut,
+  MenuLabel,
 } from "./menu";
 import { contentVariants, separatorVariants } from "./variants";
 
@@ -68,7 +69,7 @@ function DropdownMenuSubTrigger({
     >
       <MenuItem className={className} {...props}>
         <MenuItemAction>
-          <ChevronRightIcon className="size-4" />
+          <ChevronRightIcon className="size-4 text-muted" />
         </MenuItemAction>
       </MenuItem>
     </DropdownMenuPrimitive.SubTrigger>
@@ -184,26 +185,13 @@ function DropdownMenuRadioItem({
   );
 }
 
-type DropdownMenuLabelProps = React.ComponentProps<
-  typeof DropdownMenuPrimitive.Label
-> & {
-  inset?: boolean;
-};
 function DropdownMenuLabel({
-  className,
-  inset,
   ...props
-}: DropdownMenuLabelProps) {
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Label>) {
   return (
-    <DropdownMenuPrimitive.Label
-      data-slot="dropdown-menu-label"
-      className={cn(
-        "px-2 py-1.5 text-sm font-semibold",
-        inset && "pl-8",
-        className,
-      )}
-      {...props}
-    />
+    <DropdownMenuPrimitive.Label data-slot="dropdown-menu-label" asChild>
+      <MenuLabel {...props} />
+    </DropdownMenuPrimitive.Label>
   );
 }
 

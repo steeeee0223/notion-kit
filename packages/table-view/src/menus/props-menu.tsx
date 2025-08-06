@@ -1,14 +1,5 @@
 import React, { useLayoutEffect, useMemo, useRef } from "react";
-import { closestCenter, DndContext } from "@dnd-kit/core";
-import {
-  restrictToParentElement,
-  restrictToVerticalAxis,
-} from "@dnd-kit/modifiers";
-import {
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 import { cn } from "@notion-kit/cn";
@@ -25,8 +16,14 @@ import {
   useMenu,
 } from "@notion-kit/shadcn";
 
-import { DefaultIcon, MenuGroupHeader, MenuHeader } from "../common";
-import type { DatabaseProperty } from "../lib/types";
+import {
+  DefaultIcon,
+  MenuGroupHeader,
+  MenuHeader,
+  VerticalDnd,
+} from "../common";
+import type { Column } from "../lib/types";
+import { CellPlugin } from "../plugins";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { DeletedPropsMenu } from "./deleted-props-menu";
 import { EditPropMenu } from "./edit-prop-menu";
@@ -55,7 +52,7 @@ export const PropsMenu = () => {
   // Search
   const inputRef = useRef<HTMLInputElement>(null);
   const [props, deletedCount] = useMemo(() => {
-    const props: DatabaseProperty[] = [];
+    const props: Column<CellPlugin>[] = [];
     let deletedCount = 0;
     columnOrder.forEach((propId) => {
       const prop = properties[propId];
@@ -106,39 +103,30 @@ export const PropsMenu = () => {
           onActionClick={() => toggleAllColumns(!noShownProps)}
         />
         <div className="flex flex-col">
-          <DndContext
-            collisionDetection={closestCenter}
-            modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-            onDragEnd={(e) => reorder(e, "col")}
-          >
-            <SortableContext
-              items={columnOrder}
-              strategy={verticalListSortingStrategy}
-            >
-              {search.length === 0
-                ? props.map((prop) => (
-                    <PropertyItem
-                      key={prop.id}
-                      draggable
-                      property={prop}
-                      onClick={() => openEditPropMenu(prop.id)}
-                      onVisibilityChange={(hidden) =>
-                        toggleVisibility(prop.id, hidden)
-                      }
-                    />
-                  ))
-                : (results ?? []).map((prop) => (
-                    <PropertyItem
-                      key={prop.id}
-                      property={prop}
-                      onClick={() => openEditPropMenu(prop.id)}
-                      onVisibilityChange={(hidden) =>
-                        toggleVisibility(prop.id, hidden)
-                      }
-                    />
-                  ))}
-            </SortableContext>
-          </DndContext>
+          <VerticalDnd items={columnOrder} onDragEnd={(e) => reorder(e, "col")}>
+            {search.length === 0
+              ? props.map((prop) => (
+                  <PropertyItem
+                    key={prop.id}
+                    draggable
+                    property={prop}
+                    onClick={() => openEditPropMenu(prop.id)}
+                    onVisibilityChange={(hidden) =>
+                      toggleVisibility(prop.id, hidden)
+                    }
+                  />
+                ))
+              : (results ?? []).map((prop) => (
+                  <PropertyItem
+                    key={prop.id}
+                    property={prop}
+                    onClick={() => openEditPropMenu(prop.id)}
+                    onVisibilityChange={(hidden) =>
+                      toggleVisibility(prop.id, hidden)
+                    }
+                  />
+                ))}
+          </VerticalDnd>
         </div>
       </MenuGroup>
       <MenuGroup>
@@ -147,12 +135,12 @@ export const PropsMenu = () => {
             variant="secondary"
             tabIndex={0}
             onClick={openDeletedPropsMenu}
-            Icon={<Icon.Trash className="size-4 fill-default/45" />}
+            Icon={<Icon.Trash className="size-4" />}
             Body="Deleted properties"
           >
-            <MenuItemAction className="flex items-center fill-default/35 text-muted">
+            <MenuItemAction className="flex items-center text-muted">
               <div className="flex truncate">{deletedCount}</div>
-              <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-default/35 dark:fill-default/30" />
+              <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-current" />
             </MenuItemAction>
           </MenuItem>
         )}
@@ -162,7 +150,7 @@ export const PropsMenu = () => {
         <MenuItem
           variant="secondary"
           onClick={openTypesMenu}
-          Icon={<Icon.Plus className="size-4 fill-default/45" />}
+          Icon={<Icon.Plus className="size-4" />}
           Body="New property"
         />
         <MenuItem
@@ -170,7 +158,7 @@ export const PropsMenu = () => {
           onClick={() =>
             window.open("https://www.notion.com/help/database-properties")
           }
-          Icon={<Icon.Help className="size-4 fill-default/45" />}
+          Icon={<Icon.Help className="size-4" />}
           Body="Learn about properties"
         />
       </MenuGroup>
@@ -180,7 +168,7 @@ export const PropsMenu = () => {
 
 interface PropertyItemProps {
   draggable?: boolean;
-  property: DatabaseProperty;
+  property: Column<CellPlugin>;
   onClick: () => void;
   onVisibilityChange: (hidden: boolean) => void;
 }
@@ -220,13 +208,13 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
         <div
           key="drag-handle"
           className={cn(
-            "mr-2 hidden h-6 w-4.5 shrink-0 cursor-grab items-center justify-center",
+            "mr-2 hidden h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-default/45",
             draggable && "flex",
           )}
           {...attributes}
           {...listeners}
         >
-          <Icon.DragHandle className="size-3 fill-default/45" />
+          <Icon.DragHandle className="size-3" />
         </div>,
         <React.Fragment key="icon">
           {icon ? <IconBlock icon={icon} /> : <DefaultIcon type={type} />}
@@ -235,13 +223,13 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
       Body={name}
       className="*:data-[slot=menu-item-body]:leading-normal"
     >
-      <MenuItemAction className="flex items-center fill-default/35 text-muted">
+      <MenuItemAction className="flex items-center text-muted [&_svg]:fill-current">
         <Button
           tabIndex={0}
           aria-label="Toggle property visibility"
           disabled={type === "title"}
           variant="hint"
-          className="size-6 p-0 disabled:opacity-40 [&_svg]:fill-icon"
+          className="size-6 p-0 disabled:opacity-40"
           onClick={(e) => {
             e.stopPropagation();
             onVisibilityChange(!hidden);
@@ -249,7 +237,7 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
         >
           {hidden ? <Icon.EyeHide /> : <Icon.Eye />}
         </Button>
-        <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-default/35 dark:fill-default/30" />
+        <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3" />
       </MenuItemAction>
     </MenuItem>
   );

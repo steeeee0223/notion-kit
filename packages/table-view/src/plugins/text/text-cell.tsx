@@ -1,14 +1,11 @@
 "use client";
 
-import React from "react";
-
 import { cn } from "@notion-kit/cn";
 import { useCopyToClipboard } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { Button, TooltipPreset } from "@notion-kit/shadcn";
 
-import { CellTrigger } from "./cell-trigger";
-import { useTextInputPopover } from "./use-text-input-popover";
+import { CellTrigger, useTextInputPopover } from "../../common";
 
 interface TextCellProps {
   value: string;
@@ -16,11 +13,7 @@ interface TextCellProps {
   onUpdate?: (value: string) => void;
 }
 
-export const TextCell: React.FC<TextCellProps> = ({
-  value,
-  wrapped,
-  onUpdate,
-}) => {
+export function TextCell({ value, wrapped, onUpdate }: TextCellProps) {
   const { ref, openTextInput } = useTextInputPopover<HTMLDivElement>({
     value,
     onUpdate,
@@ -71,4 +64,4 @@ export const TextCell: React.FC<TextCellProps> = ({
       </div>
     </CellTrigger>
   );
-};
+}

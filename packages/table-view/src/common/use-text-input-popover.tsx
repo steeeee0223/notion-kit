@@ -1,14 +1,10 @@
 "use client";
 
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { Input, useMenu } from "@notion-kit/shadcn";
+
+import { useTriggerPosition } from "../common";
 
 type UseTextInputPopoverProps = TextInputPopoverProps;
 
@@ -16,14 +12,10 @@ export function useTextInputPopover<T extends HTMLElement = HTMLElement>({
   value,
   onUpdate,
 }: UseTextInputPopoverProps) {
-  const ref = useRef<T>(null);
   const { openMenu, closeMenu } = useMenu();
-
-  const [width, setWidth] = useState(0);
+  const { ref, position, width } = useTriggerPosition<T>();
 
   const openTextInput = useCallback(() => {
-    const rect = ref.current?.getBoundingClientRect();
-
     openMenu(
       <TextInputPopover
         value={value}
@@ -33,18 +25,13 @@ export function useTextInputPopover<T extends HTMLElement = HTMLElement>({
         }}
       />,
       {
-        x: rect?.x,
-        y: rect?.y,
+        x: position.left,
+        y: position.top,
         className:
           "max-h-[773px] min-h-[34px] w-60 overflow-visible backdrop-filter-none",
       },
     );
-  }, [openMenu, value, onUpdate, closeMenu]);
-
-  useLayoutEffect(() => {
-    const rect = ref.current?.getBoundingClientRect();
-    if (rect) setWidth(rect.width);
-  }, []);
+  }, [openMenu, value, position, onUpdate, closeMenu]);
 
   return { ref, width, openTextInput };
 }

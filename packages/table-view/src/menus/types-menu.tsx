@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { v4 } from "uuid";
 
 import { cn } from "@notion-kit/cn";
@@ -18,8 +17,9 @@ import {
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader } from "../common";
-import type { PropertyType } from "../lib/types";
+import type { PluginType } from "../lib/types";
 import { getUniqueName } from "../lib/utils";
+import { CellPlugin } from "../plugins";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { EditPropMenu } from "./edit-prop-menu";
 import { propOptions } from "./types-menu-options";
@@ -30,9 +30,18 @@ interface TypesMenuProps {
    * otherwise will update a column by given `propId`
    */
   propId: string | null;
+  /**
+   * @prop {at}: if undefined, will create a new column at the end;
+   * otherwise will create a column at `at.side` of the column `at.id`
+   */
+  at?: {
+    id: string;
+    side: "left" | "right";
+  };
+  showHeader?: boolean;
 }
 
-export const TypesMenu: React.FC<TypesMenuProps> = ({ propId }) => {
+export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
   const { properties } = useTableViewCtx();
   const { addColumn, updateColumnType } = useTableActions();
   const { openMenu } = useMenu();
@@ -42,7 +51,7 @@ export const TypesMenu: React.FC<TypesMenuProps> = ({ propId }) => {
   const { search, results, updateSearch } = useFilter(propOptions, (prop, v) =>
     prop.title.toLowerCase().includes(v),
   );
-  const select = (type: PropertyType, name: string) => {
+  const select = (type: PluginType<CellPlugin[]>, name: string) => {
     let colId = propId;
     if (colId === null) {
       colId = v4();
@@ -50,7 +59,7 @@ export const TypesMenu: React.FC<TypesMenuProps> = ({ propId }) => {
         name,
         Object.values(properties).map((p) => p.name),
       );
-      addColumn({ id: colId, type, name: uniqueName });
+      addColumn({ id: colId, type, name: uniqueName, at });
     } else {
       updateColumnType(colId, type);
     }
@@ -60,8 +69,10 @@ export const TypesMenu: React.FC<TypesMenuProps> = ({ propId }) => {
 
   return (
     <>
-      <MenuHeader title={propId ? "Change property type" : "New property"} />
-      <Command>
+      {showHeader && (
+        <MenuHeader title={propId ? "Change property type" : "New property"} />
+      )}
+      <Command className="bg-popover">
         <div className="flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2">
           <Input
             value={search}
@@ -124,4 +135,4 @@ export const TypesMenu: React.FC<TypesMenuProps> = ({ propId }) => {
       </Command>
     </>
   );
-};
+}

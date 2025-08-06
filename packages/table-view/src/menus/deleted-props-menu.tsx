@@ -13,7 +13,8 @@ import {
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader } from "../common";
-import type { DatabaseProperty } from "../lib/types";
+import type { Column } from "../lib/types";
+import type { CellPlugin } from "../plugins";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { PropsMenu } from "./props-menu";
 
@@ -47,7 +48,7 @@ export const DeletedPropsMenu = () => {
 };
 
 interface PropertyItemProps {
-  property: DatabaseProperty;
+  property: Column<CellPlugin>;
   onRestore: () => void;
   onDelete: () => void;
 }
@@ -66,7 +67,7 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
       Icon={icon ? <IconBlock icon={icon} /> : <DefaultIcon type={type} />}
       Body={name}
     >
-      <MenuItemAction className="flex items-center fill-default/35 text-muted">
+      <MenuItemAction className="flex items-center text-muted">
         <Button
           tabIndex={0}
           aria-label="Restore"
@@ -77,7 +78,7 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
             onRestore();
           }}
         >
-          <Icon.Undo className="size-3.5 fill-default/45" />
+          <Icon.Undo className="size-3.5 fill-current" />
         </Button>
         <Button
           tabIndex={0}
@@ -89,7 +90,7 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
             onDelete();
           }}
         >
-          <Icon.Trash className="size-3.5 fill-default/45" />
+          <Icon.Trash className="size-3.5 fill-current" />
         </Button>
       </MenuItemAction>
     </MenuItem>

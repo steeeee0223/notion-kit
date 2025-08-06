@@ -1,10 +1,8 @@
 "use client";
 
-import React from "react";
-
 import { Checkbox } from "@notion-kit/shadcn";
 
-import { CellTrigger } from "./cell-trigger";
+import { CellTrigger } from "../../common";
 
 interface CheckboxCellProps {
   checked: boolean;
@@ -12,11 +10,11 @@ interface CheckboxCellProps {
   onChange?: (check: boolean) => void;
 }
 
-export const CheckboxCell: React.FC<CheckboxCellProps> = ({
+export function CheckboxCell({
   checked,
   wrapped,
   onChange,
-}) => {
+}: CheckboxCellProps) {
   return (
     <CellTrigger
       className="py-2"
@@ -28,4 +26,4 @@ export const CheckboxCell: React.FC<CheckboxCellProps> = ({
       </div>
     </CellTrigger>
   );
-};
+}
