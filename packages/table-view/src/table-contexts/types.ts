@@ -1,11 +1,11 @@
 import type { Column, ColumnDefs, PluginsMap, Row } from "../lib/types";
-import type { CellPlugin, InferKey } from "../plugins";
+import type { CellPlugin, InferKey, InferPlugin } from "../plugins";
 import type { TableViewAction } from "./table-reducer";
 
 export interface AddColumnPayload<TPlugins extends CellPlugin[]> {
   id: string;
   name: string;
-  type: InferKey<TPlugins[number]>;
+  type: InferKey<InferPlugin<TPlugins>>;
   at?: {
     id: string;
     side: "left" | "right";
@@ -33,7 +33,7 @@ export interface PartialTableState<TPlugins extends CellPlugin[]> {
 
 export interface TableState<TPlugins extends CellPlugin[]> {
   plugins: PluginsMap<TPlugins>;
-  properties: Column<TPlugins[number]>[];
+  properties: Column<InferPlugin<TPlugins>>[];
   data: Row<TPlugins>[];
 }
 

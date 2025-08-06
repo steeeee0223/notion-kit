@@ -1,0 +1,150 @@
+---
+title: Creating a Cell Plugin
+description: A step-by-step tutorial for building a custom cell plugin in the Notion database.
+---
+
+## Introduction
+
+This guide walks you through the process of creating a custom `CellPlugin` to extend the database system with new property types. A cell plugin controls how values are stored, rendered, and interacted with.
+
+## Step-by-Step: Create a "Tag" Plugin
+
+<Steps>
+<Step>
+
+### Define the Types
+
+```ts
+// tag-plugin.tsx
+
+export type TagData = string[];
+export interface TagConfig {
+  options: string[];
+}
+export interface TagActions {
+  id: string;
+  type: "add" | "remove";
+  tag: string;
+}
+export type TagPlugin = CellPlugin<"tag", TagData, TagConfig, TagActions>;
+```
+
+</Step>
+<Step>
+### Implement the Plugin
+
+```ts
+// tag-plugin.tsx
+
+export const tagPlugin: TagPlugin = {
+  id: 'tag',
+  default: {
+    name: 'Tags',
+    icon: <TagIcon />, // Your own icon component
+    config: { options: [] },
+    data: [],
+  },
+  fromReadableValue: (value, config) => value.split(',').map(tag => tag.trim()),
+  toReadableValue: data => data.join(', '),
+  toTextValue: data => data.join(', '),
+  reducer: (view, action) => {
+    // TODO custom reducer logic (if needed)
+    return view;
+  },
+  renderCell: ({ data, config, onChange }) => {
+    return <TagCell tags={data} options={config?.options ?? []} onChange={onChange} />;
+  },
+  renderConfigMenu: ({ config, propId }) => {
+    return <TagConfigMenu config={config} propId={propId} />;
+  }
+};
+```
+
+</Step>
+<Step>
+### Render the Cell Component
+
+```tsx
+// tag-plugin.tsx
+
+function TagCell({
+  tags,
+  options,
+  onChange,
+}: {
+  tags: string[];
+  options: string[];
+  onChange?: (next: string[]) => void;
+}) {
+  return (
+    <div>
+      {options.map((tag) => (
+        <Badge
+          key={tag}
+          onClick={() => {
+            if (!onChange) return;
+            const next = tags.includes(tag)
+              ? tags.filter((t) => t !== tag)
+              : [...tags, tag];
+            onChange(next);
+          }}
+        >
+          {tag} {tags.includes(tag) ? "✅" : ""}
+        </Badge>
+      ))}
+    </div>
+  );
+}
+```
+
+</Step>
+<Step>
+### `Optional` Configuration Menu
+
+```tsx
+// tag-plugin.tsx
+
+function TagConfigMenu({ config, propId }: ConfigMenuProps<TagConfig>) {
+  return (
+    <div>
+      <label htmlFor={`${propId}-options`}>
+        Tag Options (comma separated):
+      </label>
+      <input
+        id={`${propId}-options`}
+        defaultValue={config?.options?.join(", ") ?? ""}
+        onBlur={(e) => {
+          const options = e.target.value.split(",").map((o) => o.trim());
+          // persist config change using your system
+        }}
+      />
+    </div>
+  );
+}
+```
+
+</Step>
+<Step>
+### Register the Plugin
+
+Finally, register your plugin in the table view:
+
+```ts
+import { tagPlugin } from "./tag-plugin";
+
+function DatabaseView() {
+  return (
+    <TableView
+      plugins={[...DEFAULT_PLUGINS, tagPlugin]} // Register your custom plugin here // [!code highlight]
+      // other props...
+    />
+  );
+}
+```
+
+</Step>
+</Steps>
+
+---
+
+This plugin system makes your table highly extensible while maintaining strong typing. You can now build more plugins like number pickers, multi-selects, color swatches, or even embedded widgets.

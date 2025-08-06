@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Column, Row } from "../lib/types";
+import type { Column, Rows } from "../lib/types";
 import type { TableViewAtom } from "../table-contexts";
 
 export interface CellProps<Data, Config = undefined> {
@@ -53,7 +53,7 @@ export interface CellPlugin<
   toTextValue: (data: Data) => string;
   transferConfig?: <TPlugin extends CellPlugin>(
     column: Column<TPlugin>,
-    data: Record<string, Row<TPlugin[]>>,
+    data: Rows,
   ) => Config;
   reducer: <TPlugins extends CellPlugin[]>(
     v: TableViewAtom<TPlugins>,

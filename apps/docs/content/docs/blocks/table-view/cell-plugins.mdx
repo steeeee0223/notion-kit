@@ -1,0 +1,71 @@
+---
+title: Cell Plugins
+description: Cell plugins define how specific properties behave and render in the Notion database.
+---
+
+A `CellPlugin` is a generic interface that accepts four type parameters:
+
+- `Key`: The unique identifier for the plugin.
+- `Data`: The data type stored in the cell.
+- `Config` (optional): The configuration type for the plugin.
+- `Actions` (optional): The actions that can be performed on the cell.
+
+## API Reference
+
+### CellPlugin
+
+| Prop                  | Type                                                  | Description                                                                                                            |
+| --------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `id`\*                | `Key`                                                 | Unique identifier of the plugin.                                                                                       |
+| `default.name`\*      | `string`                                              | Default name used when a new column of this plugin is created.                                                         |
+| `default.icon`\*      | `React.ReactNode`                                     | Default icon used when a new column of this plugin is created.                                                         |
+| `default.config`\*    | `Config`                                              | Default config used when a new column of this plugin is created.                                                       |
+| `default.width`       | `number`                                              | Default width used when a new column of this plugin is created.                                                        |
+| `default.data`\*      | `Data`                                                | Default data used when a new cell of this plugin is created.                                                           |
+| `fromReadableValue`\* | `(value: string, config: Config) => Data`             | Converts a readable value to the plugin's data type.                                                                   |
+| `toReadableValue`\*   | `(data: Data) => string`                              | Converts the plugin's data type to a readable value. This is useful for sorting a column.                              |
+| `toTextValue`\*       | `(data: Data) => string`                              | Converts the plugin's data type to a text value. This is useful for displaying/exporting the data in a compact format. |
+| `transferConfig`      | `(column: Column<TPlugin>, data: Rows) => string`     | Converts the given column and rows data to this plugin configuration. This is useful for changing column types.        |
+| `reducer`\*           | `React.Reducer<TableViewAtom<TPlugins>, Actions>`     | The reducer function to handle actions related to this plugin. This is useful for updating the table state.            |
+| `renderCell`\*        | `(props: CellProps<Data, Config>) => React.ReactNode` | Renders the cell for this plugin. This is where you define how the cell should look and behave in the UI.              |
+| `renderConfigMenu`    | `(props: ConfigMenuProps<Config>) => React.ReactNode` | Renders the configuration menu for this plugin. This is where you define how the column configuration should look.     |
+
+### CellProps
+
+| Prop       | Type                   | Description                                                                                                          |
+| ---------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `propId`\* | `string`               | The ID of the column this cell belongs to. This is useful for identifying the column in the table.                   |
+| `data`\*   | `Data`                 | The data of the cell. This is the value stored in the cell.                                                          |
+| `config`   | `Config`               | The configuration of the cell. This can be used to customize the cell's behavior.                                    |
+| `wrapped`  | `boolean`              | Whether the cell should be wrapped. This is useful for long text values that need to be displayed in multiple lines. |
+| `onChange` | `(data: Data) => void` | A callback function that is called when the cell data changes.                                                       |
+
+### ConfigMenuProps
+
+| Prop       | Type     | Description                                                                                                      |
+| ---------- | -------- | ---------------------------------------------------------------------------------------------------------------- |
+| `propId`\* | `string` | The ID of the column this configuration menu belongs to. This is useful for identifying the column in the table. |
+| `config`   | `Config` | The configuration of the column. This can be used to customize the column's behavior.                            |
+
+### Type Inference Utilities
+
+| Type                    | Description                                      |
+| ----------------------- | ------------------------------------------------ |
+| `InferKey<TPlugin>`     | Infers the plugin ID from `CellPlugin`.          |
+| `InferData<TPlugin>`    | Infers the cell data type.                       |
+| `InferConfig<TPlugin>`  | Infers the column config type.                   |
+| `InferActions<TPlugin>` | Infers the plugin action type.                   |
+| `InferPlugin<TPlugins>` | Merges plugin types into a unified `CellPlugin`. |
+
+---
+
+## What's Next?
+
+You can define plugins, columns, and rows in a flexible and strongly-typed way using these abstractions.
+
+<Cards>
+  <Card
+    title="Learn about customizing cell plugins"
+    href="/docs/blocks/table-view/tutorial"
+  />
+</Cards>

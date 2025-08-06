@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 
-import { TableView as Table } from "@notion-kit/table-view";
-import type { ColumnDefs, Row } from "@notion-kit/table-view";
+import { DEFAULT_PLUGINS, TableView as Table } from "@notion-kit/table-view";
+import type { ColumnDefs, DefaultPlugins, Row } from "@notion-kit/table-view";
 
-const mockProps: ColumnDefs = [
+const mockProps: ColumnDefs<DefaultPlugins> = [
   {
     id: "prop-1",
     type: "title",
@@ -26,7 +26,7 @@ const mockProps: ColumnDefs = [
   },
 ];
 
-const mockData: Row[] = [
+const mockData: Row<DefaultPlugins>[] = [
   {
     id: "row-1",
     properties: {
@@ -51,5 +51,7 @@ export function TableView() {
     data: mockData,
   });
 
-  return <Table state={state} onStateChange={setState} />;
+  return (
+    <Table plugins={DEFAULT_PLUGINS} state={state} onStateChange={setState} />
+  );
 }

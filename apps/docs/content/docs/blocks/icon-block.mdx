@@ -5,7 +5,7 @@ description: A block for icon, emoji, or image display.
 
 <ComponentPreview
   name="icon-block/emoji"
-  preview={`<IconBlock size="md" icon={{ type: "emoji", emoji: "🚀" }} />`}
+  preview={`<IconBlock size="md" icon={{ type: "emoji", src: "🚀" }} />`}
 />
 
 ## Installation
@@ -38,7 +38,7 @@ Use the `size` prop to control the size of the button.
   name="icon-block/lucide"
   preview={`<IconBlock
     size="md"
-    icon={{ type: "lucide", name: "badge-euro", color: "#3e9392" }}
+    icon={{ type: "lucide", src: "badge-euro", color: "#3e9392" }}
   />`}
 />
 
@@ -48,7 +48,7 @@ Use the `size` prop to control the size of the button.
   name="icon-block/url"
   preview={`<IconBlock
     size="md"
-    icon={{ type: "file", url: "https://github.com/shadcn.png" }}
+    icon={{ type: "file", src: "https://github.com/shadcn.png" }}
   />`}
 />
 
@@ -56,7 +56,7 @@ Use the `size` prop to control the size of the button.
 
 <ComponentPreview
   name="icon-block/text"
-  preview={`<IconBlock size="md" icon={{ type: "text", text: "John" }} />`}
+  preview={`<IconBlock size="md" icon={{ type: "text", src: "John" }} />`}
 />
 
 ## API Reference

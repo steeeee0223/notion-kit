@@ -13,4 +13,5 @@ export const DEFAULT_PLUGINS = [
 
 export type DefaultPlugins = (typeof DEFAULT_PLUGINS)[number][];
 
+export { title, text, checkbox, select, multiSelect };
 export type * from "./types";

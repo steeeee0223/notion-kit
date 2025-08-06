@@ -1,0 +1,132 @@
+---
+title: Table View
+description: An composable, editable data table.
+---
+
+<ComponentPreview name="table-view/uncontrolled" />
+
+## Supported Features
+
+- Controlled/Uncontrolled state management
+
+- Column & row CRUD
+
+- Column & row DND
+
+- Column & row duplicating
+
+- Column wrapping
+
+- Column pinning
+
+- Column type changing
+
+- Table sorting
+
+- Cells plugins: title, text, checkbox, select, multi-select
+
+## Installation
+
+<Installation packages="@notion-kit/table-view" registryName="table-view" />
+
+## Note
+
+<Callout>
+  - 1. Every table should have at least two plugins: `title()` and `text()`
+  
+  - 2. Every table should have exactly one `title` property.
+
+</Callout>
+
+## Examples
+
+---
+
+### Uncontrolled Table
+
+<ComponentPreview
+  name="table-view/uncontrolled"
+  preview={`<TableView
+    defaultState={{ properties: mockProps, data: mockData }}
+  />
+  `}
+/>
+
+### Controlled Table
+
+<ComponentPreview
+  name="table-view/controlled"
+  preview={`<TableView state={state} onStateChange={setState} />`}
+/>
+
+## API Reference
+
+### TableView
+
+A `TableView` is a generic component `TableView<TPlugins>` where `TPlugins` extends `CellPlugin[]`.
+It provides a table view with editable cells and supports various plugins for cell types.
+
+| Prop            | Type                                                                                       | Description                                                                                                        |
+| --------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `plugins`       | `TPlugins`                                                                                 | The plugins to use for the table. Each table should contain at least `title()` and `text()` plugins.               |
+| `defaultState`  | `PartialTableState<TPlugins>`                                                              | The (uncontrolled) table state, consisting of column definitions and row data.                                     |
+| `state`         | `PartialTableState<TPlugins>`                                                              | The (controlled) table state, consisting of column definitions and row data.                                       |
+| `onStateChange` | `(newState: PartialTableState<TPlugins>, type: TableViewAction<TPlugins>["type"]) => void` | Handler that is called when the table data is updated.                                                             |
+| `dispatch`      | `(action: TableViewAction<TPlugins>) => void`                                              | Handler that is called when the table data is updated. This is useful when you want to customize the table action. |
+
+### `type` PartialTableState
+
+A `PartialTableState` is a generic type `PartialTableState<TPlugins>` that represents the state of a table, including its column definitions and row data.
+
+| Prop         | Type                                                                   | Default | Description                          |
+| ------------ | ---------------------------------------------------------------------- | ------- | ------------------------------------ |
+| `properties` | [`ColumnDefs<TPlugins>`](/docs/objects/database-properties#columndefs) | -       | The column definitions of the table. |
+| `data`       | [`Row<TPlugins>[]`](/docs/objects/database-properties#row)             | -       | The rows of the table.               |
+
+### `type` TableViewAction
+
+Possible actions of the `<TableView />`, where an "action" is given by
+
+```ts
+const action: TableViewAction = {
+  type: "action-type",
+  payload: {
+    // ...
+  },
+};
+// or updater
+const action: TableViewAction = {
+  type: "action-type",
+  updater: (prev) => {
+    // ...
+  },
+};
+```
+
+#### General Actions
+
+| Action type             | Payload                                             | Description                                                              |
+| ----------------------- | --------------------------------------------------- | ------------------------------------------------------------------------ |
+| `add:col`               | `{ id: string, name: string, type: PropertyType }`  | The action to create a new column.                                       |
+| `update:col`            | `{ id: string, data: UpdateColumnPayload }`         | The action to update the column definition.                              |
+| `update:col:visibility` | `{ id: string, hidden: boolean }`                   | The action to toggle the visibility of all columns.                      |
+| `freeze:col`            | `{ id: string \| null }`                            | The action to freeze or unfreeze up to a column.                         |
+| `duplicate:col`         | `{ id: string }`                                    | The action to duplicate a column.                                        |
+| `delete:col`            | `{ id: string }`                                    | The action to delete a column.                                           |
+| `reorder:col`           | `Updater<string>`                                   | The action to reorder the columns (by DND).                              |
+| `add:row`               | `{ id: string, at: "prev" \| "next" } \| undefined` | The action to add a new row at bottom or add below/above of a given row. |
+| `update:row:icon`       | `{ id: string, icon: IconData \| null }`            | The action to update the icon of the row title.                          |
+| `duplicate:row`         | `{ id: string }`                                    | The action to duplicate a row.                                           |
+| `delete:row`            | `{ id: string }`                                    | The action to delete a row.                                              |
+| `reorder:row`           | `Updater<string>`                                   | The action to reorder the rows (by DND).                                 |
+| `update:count:cap`      | `{ id: string, updater: Updater<boolean> }`         | The action to set whether to cap the value when counting rows.           |
+| `update:sorting`        | `Updater<SortingState>`                             | The action to set the sorting state of the table.                        |
+| `reset`                 | -                                                   | The action to reset the table.                                           |
+
+#### Actions based on Cell Plugins
+
+| Action type       | Payload                                                                                      | Description                                      |
+| ----------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| `update:col:type` | `{ id: string, type: PluginType }`                                                           | The action to change the column type.            |
+| `update:col:meta` | `{ type: PluginType, payload: { type: InferKey<TPlugin>, actions: InferActions<TPlugin> } }` | The action to update the column's configuration. |
+| `update:cell`     | `{ rowId: string, colId: string, data: Cell<TPlugin> }`                                      | The action to update the cell data.              |
