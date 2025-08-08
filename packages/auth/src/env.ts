@@ -1,5 +1,5 @@
 import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export function createAuthEnv() {
   return createEnv({
@@ -14,7 +14,7 @@ export function createAuthEnv() {
       GITHUB_CLIENT_SECRET: z.string(),
       NODE_ENV: z
         .enum(["development", "production", "test"])
-        .default("development"),
+        .prefault("development"),
     },
     experimental__runtimeEnv: {},
     skipValidation:

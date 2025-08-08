@@ -1,6 +1,6 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { vercel } from "@t3-oss/env-nextjs/presets-zod";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 import { createAuthEnv } from "@notion-kit/auth";
 
@@ -9,7 +9,7 @@ export const env = createEnv({
   shared: {
     NODE_ENV: z
       .enum(["development", "production", "test"])
-      .default("development"),
+      .prefault("development"),
   },
   /**
    * Specify your server-side environment variables schema here.

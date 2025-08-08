@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
@@ -36,10 +36,11 @@ const passwordSchema = z
   })
   .superRefine(({ confirmPassword, password }, ctx) => {
     if (confirmPassword !== password)
-      ctx.addIssue({
+      ctx.issues.push({
         code: "custom",
         message: "Your new password does not match.",
         path: ["confirmPassword"],
+        input: "",
       });
   });
 type PasswordSchema = z.infer<typeof passwordSchema>;

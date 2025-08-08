@@ -1,9 +1,6 @@
 import path from "path";
 
-import {
-  RegistryItemTypeSchema,
-  type RegistryItem,
-} from "@notion-kit/validators";
+import { type RegistryItem } from "@notion-kit/validators";
 
 import { getRegistryPath } from "@/lib/get-file-source";
 
@@ -81,7 +78,7 @@ export const core = [
   ...item,
   files: [
     {
-      type: RegistryItemTypeSchema.Enum["registry:component"],
+      type: "registry:component",
       path: path.join(process.cwd(), "src", filePath),
       target: filePath,
     },
