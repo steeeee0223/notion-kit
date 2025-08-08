@@ -35,7 +35,7 @@ export function RegionSection() {
       />,
     );
   };
-  const toggleAutoSetTimezone = (checked: boolean) => {
+  const toggleAutoSetTimezone = (checked: boolean) =>
     updateSettings?.({
       account: {
         timezone: checked
@@ -43,10 +43,8 @@ export function RegionSection() {
           : Intl.DateTimeFormat().resolvedOptions().timeZone,
       },
     });
-  };
-  const changeTimzone = (timezone: string) => {
+  const changeTimzone = (timezone: string) =>
     updateSettings?.({ account: { timezone } });
-  };
 
   return (
     <SettingsSection title={trans.region.title}>
