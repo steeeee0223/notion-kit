@@ -15,9 +15,9 @@ import {
 } from "@notion-kit/shadcn";
 
 const urlSchema = z.object({
-  url: z.url().min(1, {
-    error: "URL should not be empty",
-  }),
+  url: z
+    .url({ error: "Invalid URL format" })
+    .min(1, { error: "URL should not be empty" }),
 });
 
 interface UrlFormProps {

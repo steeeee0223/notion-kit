@@ -27,12 +27,12 @@ import {
 
 import { PasswordSuccess } from "./password-success";
 
-const message = "Please include additional unique characters.";
+const error = "Please include additional unique characters.";
 const passwordSchema = z
   .object({
-    password: z.string().min(8, { message }),
-    confirmPassword: z.string().min(1, { message }),
-    currentPassword: z.string().min(1, { message }).optional(),
+    password: z.string().min(8, { error }),
+    confirmPassword: z.string().min(1, { error }),
+    currentPassword: z.string().min(1, { error }).optional(),
   })
   .superRefine(({ confirmPassword, password }, ctx) => {
     if (confirmPassword !== password)
@@ -40,7 +40,7 @@ const passwordSchema = z
         code: "custom",
         message: "Your new password does not match.",
         path: ["confirmPassword"],
-        input: "",
+        input: confirmPassword,
       });
   });
 type PasswordSchema = z.infer<typeof passwordSchema>;
