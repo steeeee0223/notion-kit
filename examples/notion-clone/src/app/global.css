@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+@import "@notion-kit/tailwind-config/base.css";
+
+@source "../../../../packages/**/src/**/*.{ts,tsx}";
+
+@theme inline {
+  --font-mono: var(--font-ibm-plex-mono);
+}
