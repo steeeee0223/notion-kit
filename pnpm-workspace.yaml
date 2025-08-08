@@ -4,10 +4,10 @@ packages:
   - tooling/*
 
 catalog:
-  eslint: ^9.26.0
-  prettier: ^3.4.2
-  tsup: ^8.4.0
-  typescript: ^5.7.3
+  eslint: ^9.32.0
+  prettier: ^3.6.2
+  tsup: ^8.5.0
+  typescript: ^5.9.2
   zod: ^4.0.15
 
 catalogs:
@@ -39,9 +39,9 @@ catalogs:
     "@testing-library/react": ^16.1.0
     "@testing-library/user-event": ^14.5.2
   turbo:
-    turbo: ^2.5.3
-    "@turbo/gen": ^2.5.3
-    eslint-plugin-turbo: ^2.5.3
+    turbo: ^2.5.5
+    "@turbo/gen": ^2.5.5
+    eslint-plugin-turbo: ^2.5.5
   tailwind-v4:
     tailwindcss: ^4.1.0
     "@tailwindcss/postcss": ^4.1.0
