@@ -25,6 +25,8 @@ interface WorkspaceSwitcherProps {
   onCreateWorkspace?: () => void;
   onLogout?: () => void;
   onSelect?: (id: string) => void;
+  onOpenSettings?: () => void;
+  onInviteMembers?: () => void;
 }
 
 export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
@@ -35,6 +37,8 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
   onCreateWorkspace,
   onLogout,
   onSelect,
+  onOpenSettings,
+  onInviteMembers,
 }) => {
   const icon = activeWorkspace.icon ?? {
     type: "text",
@@ -64,6 +68,14 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
         align="start"
         alignOffset={11}
         forceMount
+        /**
+         * tmporary fix
+         * @see https://github.com/radix-ui/primitives/issues/1241
+         */
+        onCloseAutoFocus={(e) => {
+          e.preventDefault();
+          document.body.style.pointerEvents = "";
+        }}
       >
         <div className="flex flex-col gap-3 p-3">
           <div className="flex items-center gap-2.5">
@@ -84,6 +96,7 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
             <Button
               tabIndex={0}
               className="h-7 px-2 text-xs/[1.2] font-medium text-secondary focus-within:shadow-notion"
+              onClick={onOpenSettings}
             >
               <Icon.Settings className="mr-1.5 size-3.5 fill-secondary" />
               Settings
@@ -91,6 +104,7 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
             <Button
               tabIndex={0}
               className="h-7 px-2 text-xs/[1.2] font-medium text-secondary focus-within:shadow-notion"
+              onClick={onInviteMembers}
             >
               <Icon.InviteMemberSmall className="mr-1.5 size-3.5 fill-secondary" />
               Invite members
