@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const CoverImageObject = z.object({
   type: z.enum(["file", "url"]),
@@ -38,7 +38,7 @@ export type UpdatePageParams = Partial<
 export const UserObject = z.object({
   id: z.string(),
   name: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   avatarUrl: z.string(),
 });
 export type User = z.infer<typeof UserObject>;
@@ -48,7 +48,7 @@ export enum Role {
   MEMBER = "member",
   GUEST = "guest",
 }
-export const RoleObject = z.nativeEnum(Role);
+export const RoleObject = z.enum(Role);
 
 export enum Plan {
   FREE = "free",
@@ -57,7 +57,7 @@ export enum Plan {
   BUSINESS = "business",
   ENTERPRISE = "enterprise",
 }
-export const PlanObject = z.nativeEnum(Plan);
+export const PlanObject = z.enum(Plan);
 
 export const WorkspaceObject = z.object({
   id: z.string(),

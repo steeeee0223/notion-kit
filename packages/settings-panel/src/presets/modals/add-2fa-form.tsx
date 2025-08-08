@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 import { useTransition } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
