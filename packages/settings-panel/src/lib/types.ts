@@ -44,6 +44,7 @@ export interface AccountStore extends User {
   currentSessionId?: string;
   /** Region */
   language?: LOCALE;
+  timezone?: string;
 }
 
 export type ConnectionStrategy =

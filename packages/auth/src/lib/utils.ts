@@ -5,6 +5,7 @@ type AdditionalFields = Record<string, FieldAttribute>;
 export const additionalUserFields = {
   preferredName: { type: "string" },
   lang: { type: "string", defaultValue: "en" },
+  tz: { type: "string", required: false },
 } satisfies AdditionalFields;
 
 export const additionalSessionFields = {

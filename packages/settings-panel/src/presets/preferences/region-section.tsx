@@ -6,6 +6,7 @@ import { useModal } from "@notion-kit/modal";
 import { SelectPreset as Select, Switch } from "@notion-kit/shadcn";
 
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
+import { TimezoneMenu } from "./timezone-menu";
 
 export function RegionSection() {
   const {
@@ -34,6 +35,16 @@ export function RegionSection() {
       />,
     );
   };
+  const toggleAutoSetTimezone = (checked: boolean) =>
+    updateSettings?.({
+      account: {
+        timezone: checked
+          ? undefined
+          : Intl.DateTimeFormat().resolvedOptions().timeZone,
+      },
+    });
+  const changeTimzone = (timezone: string) =>
+    updateSettings?.({ account: { timezone } });
 
   return (
     <SettingsSection title={trans.region.title}>
@@ -55,9 +66,15 @@ export function RegionSection() {
         <Switch size="sm" defaultChecked />
       </SettingsRule>
       <SettingsRule {...trans.region["set-timezone"]}>
-        <Switch size="sm" />
+        <Switch
+          size="sm"
+          checked={!account.timezone}
+          onCheckedChange={toggleAutoSetTimezone}
+        />
       </SettingsRule>
-      <SettingsRule {...trans.region.timezone}></SettingsRule>
+      <SettingsRule {...trans.region.timezone}>
+        <TimezoneMenu currentTz={account.timezone} onChange={changeTimzone} />
+      </SettingsRule>
     </SettingsSection>
   );
 }

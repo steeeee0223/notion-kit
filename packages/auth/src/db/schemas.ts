@@ -26,6 +26,7 @@ export const user = pgTable("user", {
    */
   preferredName: text("preferred_name"),
   lang: text("lang").default("en"),
+  tz: text("tz"),
 });
 
 export const session = pgTable("session", {
