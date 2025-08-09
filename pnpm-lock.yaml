@@ -487,6 +487,9 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../../packages/cn
+      '@notion-kit/shadcn':
+        specifier: workspace:*
+        version: link:../../packages/shadcn
       '@notion-kit/table-view':
         specifier: workspace:*
         version: link:../../packages/table-view

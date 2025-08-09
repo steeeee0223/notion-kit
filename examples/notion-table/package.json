@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@notion-kit/cn": "workspace:*",
+    "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/table-view": "workspace:*",
     "lucide-react": "catalog:ui",
     "next": "catalog:next15",
