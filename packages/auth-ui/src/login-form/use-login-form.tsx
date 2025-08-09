@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 import { toast } from "@notion-kit/shadcn";
 
@@ -12,12 +12,12 @@ import type { ForgotPasswordStage, LoginMode } from "./types";
 
 const loginSchema = z.object({
   forgotPassword: z.literal(false),
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(1, "Incorrect password."),
 });
 const forgotPasswordSchema = z.object({
   forgotPassword: z.literal(true),
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().length(0),
 });
 const formSchema = z.discriminatedUnion("forgotPassword", [

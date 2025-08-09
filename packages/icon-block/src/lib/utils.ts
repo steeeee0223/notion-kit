@@ -1,10 +1,9 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 import type { LucideName } from "../types";
 import { iconNodes } from "./data";
 
-export const isEmoji = (text: string) =>
-  z.string().emoji().safeParse(text).success;
+export const isEmoji = (text: string) => z.emoji().safeParse(text).success;
 
 export const isLucideIcon = (name: string): name is LucideName => {
   return name in iconNodes;

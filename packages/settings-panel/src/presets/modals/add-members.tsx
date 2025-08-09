@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { CircleHelp, Mail } from "lucide-react";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 import { useFilter, useTransition } from "@notion-kit/hooks";
 import { useModal } from "@notion-kit/modal";
@@ -29,7 +29,7 @@ enum Heading {
   Type = "Keep typing to invite email",
 }
 
-const emailSchema = z.string().email();
+const emailSchema = z.email();
 
 type DetailedAccount = User & { invited?: boolean };
 interface AddMembersProps {

@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
@@ -27,19 +27,20 @@ import {
 
 import { PasswordSuccess } from "./password-success";
 
-const message = "Please include additional unique characters.";
+const error = "Please include additional unique characters.";
 const passwordSchema = z
   .object({
-    password: z.string().min(8, { message }),
-    confirmPassword: z.string().min(1, { message }),
-    currentPassword: z.string().min(1, { message }).optional(),
+    password: z.string().min(8, { error }),
+    confirmPassword: z.string().min(1, { error }),
+    currentPassword: z.string().min(1, { error }).optional(),
   })
   .superRefine(({ confirmPassword, password }, ctx) => {
     if (confirmPassword !== password)
-      ctx.addIssue({
+      ctx.issues.push({
         code: "custom",
         message: "Your new password does not match.",
         path: ["confirmPassword"],
+        input: confirmPassword,
       });
   });
 type PasswordSchema = z.infer<typeof passwordSchema>;

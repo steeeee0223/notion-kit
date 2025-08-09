@@ -4,7 +4,7 @@ import {
   frontmatterSchema,
   metaSchema,
 } from "fumadocs-mdx/config";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const { docs, meta } = defineDocs({
   dir: "content/docs",

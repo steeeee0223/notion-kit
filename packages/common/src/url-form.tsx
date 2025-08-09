@@ -3,7 +3,7 @@
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 import {
   Button,
@@ -16,9 +16,8 @@ import {
 
 const urlSchema = z.object({
   url: z
-    .string()
-    .min(1, { message: "URL should not be empty" })
-    .url({ message: "Invalid URL" }),
+    .url({ error: "Invalid URL format" })
+    .min(1, { error: "URL should not be empty" }),
 });
 
 interface UrlFormProps {

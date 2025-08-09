@@ -5,7 +5,7 @@
  */
 import { useCallback, useEffect } from "react";
 import { XIcon } from "lucide-react";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 import { cn } from "@notion-kit/cn";
 import type { InputProps } from "@notion-kit/shadcn";

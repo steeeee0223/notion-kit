@@ -4,11 +4,11 @@ packages:
   - tooling/*
 
 catalog:
-  eslint: ^9.26.0
-  prettier: ^3.4.2
-  tsup: ^8.4.0
-  typescript: ^5.7.3
-  zod: ^3.24.1
+  eslint: ^9.32.0
+  prettier: ^3.6.2
+  tsup: ^8.5.0
+  typescript: ^5.9.2
+  zod: ^4.0.15
 
 catalogs:
   node22:
@@ -39,23 +39,23 @@ catalogs:
     "@testing-library/react": ^16.1.0
     "@testing-library/user-event": ^14.5.2
   turbo:
-    turbo: ^2.5.3
-    "@turbo/gen": ^2.5.3
-    eslint-plugin-turbo: ^2.5.3
+    turbo: ^2.5.5
+    "@turbo/gen": ^2.5.5
+    eslint-plugin-turbo: ^2.5.5
   tailwind-v4:
     tailwindcss: ^4.1.0
     "@tailwindcss/postcss": ^4.1.0
   ui:
     class-variance-authority: ^0.7.1
     lucide-react: ^0.456.0
-    react-hook-form: ^7.56.3
+    react-hook-form: ^7.62.0
     react-hotkeys-hook: 4.6.1
     usehooks-ts: ^3.1.1
     zustand: ^5.0.3
     "@dnd-kit/core": ^6.3.1
     "@dnd-kit/modifiers": ^9.0.0
     "@dnd-kit/sortable": ^10.0.0
-    "@hookform/resolvers": ^5.0.1
+    "@hookform/resolvers": ^5.2.1
     "@tanstack/react-query": ^5.81.5
     "@tanstack/react-table": ^8.21.3
   uuid:

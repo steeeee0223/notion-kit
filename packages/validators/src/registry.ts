@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 /**
  * @see https://ui.shadcn.com/docs/registry/registry-item-json#type
@@ -20,9 +20,9 @@ export type RegistryItemType = z.infer<typeof RegistryItemTypeSchema>;
  * @see https://ui.shadcn.com/docs/registry/registry-item-json#cssvars
  */
 export const RegistryItemCssVarsSchema = z.object({
-  theme: z.record(z.string()).optional(),
-  light: z.record(z.string()).optional(),
-  dark: z.record(z.string()).optional(),
+  theme: z.record(z.string(), z.string()).optional(),
+  light: z.record(z.string(), z.string()).optional(),
+  dark: z.record(z.string(), z.string()).optional(),
 });
 export type RegistryItemCssVars = z.infer<typeof RegistryItemCssVarsSchema>;
 
@@ -46,8 +46,8 @@ export const RegistryItemSchema = z.object({
     }),
   ),
   cssVars: RegistryItemCssVarsSchema.optional(),
-  css: z.record(z.any()).optional(),
-  meta: z.record(z.any()).optional(),
+  css: z.record(z.string(), z.any()).optional(),
+  meta: z.record(z.string(), z.any()).optional(),
   docs: z.string().optional(),
   categories: z.array(z.string()).optional(),
   extends: z.literal("none").optional(),
