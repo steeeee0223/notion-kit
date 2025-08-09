@@ -1,0 +1,35 @@
+{
+  "name": "@notion-kit/notion-table",
+  "version": "0.9.0",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "clean": "git clean -xdf .cache .next .turbo node_modules",
+    "dev": "next dev --turbopack -p 3003",
+    "format": "prettier --check . \"!**/*.{md,mdx}\" --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@notion-kit/cn": "workspace:*",
+    "@notion-kit/shadcn": "workspace:*",
+    "@notion-kit/table-view": "workspace:*",
+    "lucide-react": "catalog:ui",
+    "next": "catalog:next15",
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19"
+  },
+  "devDependencies": {
+    "@notion-kit/eslint-config": "workspace:*",
+    "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tailwind-config": "workspace:*",
+    "@notion-kit/tsconfig": "workspace:*",
+    "@tailwindcss/postcss": "catalog:tailwind-v4",
+    "@types/react": "catalog:react19",
+    "@types/react-dom": "catalog:react19",
+    "tailwindcss": "catalog:tailwind-v4",
+    "typescript": "catalog:"
+  },
+  "prettier": "@notion-kit/prettier-config"
+}
