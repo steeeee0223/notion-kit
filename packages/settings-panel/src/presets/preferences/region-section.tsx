@@ -1,11 +1,14 @@
 "use client";
 
+import { useLocalStorage } from "usehooks-ts";
+
 import { BaseModal } from "@notion-kit/common";
 import { LOCALE, useTranslation } from "@notion-kit/i18n";
 import { useModal } from "@notion-kit/modal";
 import { SelectPreset as Select, Switch } from "@notion-kit/shadcn";
 
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
+import { LOCALSTORAGE_KEYS } from "../../lib";
 import { TimezoneMenu } from "./timezone-menu";
 
 export function RegionSection() {
@@ -15,9 +18,16 @@ export function RegionSection() {
   } = useSettings();
   /** i18n */
   const { t, i18n } = useTranslation("settings");
-  const trans = t("preferences", {
-    returnObjects: true,
-  });
+  const trans = t("preferences", { returnObjects: true });
+  /** Localstorage */
+  const [locale, setLocale] = useLocalStorage(
+    LOCALSTORAGE_KEYS.locale,
+    account.language ?? "en",
+  );
+  const [timezone, setTimezone] = useLocalStorage(
+    LOCALSTORAGE_KEYS.timezone,
+    account.timezone,
+  );
   /** Actions */
   const { openModal } = useModal();
   const switchLanguage = (language: LOCALE) => {
@@ -29,29 +39,29 @@ export function RegionSection() {
           language: langLabel,
         })}
         onTrigger={async () => {
-          await updateSettings?.({ account: { language } });
+          setLocale(language);
           await i18n.changeLanguage(language);
+          await updateSettings?.({ account: { language } });
         }}
       />,
     );
   };
-  const toggleAutoSetTimezone = (checked: boolean) =>
-    updateSettings?.({
-      account: {
-        timezone: checked
-          ? undefined
-          : Intl.DateTimeFormat().resolvedOptions().timeZone,
-      },
-    });
-  const changeTimzone = (timezone: string) =>
-    updateSettings?.({ account: { timezone } });
+  const changeTimzone = (timezone?: string) => {
+    setTimezone(timezone);
+    void updateSettings?.({ account: { timezone } });
+  };
+  const toggleAutoSetTimezone = (checked: boolean) => {
+    changeTimzone(
+      checked ? undefined : Intl.DateTimeFormat().resolvedOptions().timeZone,
+    );
+  };
 
   return (
     <SettingsSection title={trans.region.title}>
       <SettingsRule {...trans.region.language}>
         <Select
           options={trans.region.language.options}
-          value={account.language ?? "en"}
+          value={locale}
           onChange={switchLanguage}
           side="bottom"
           align="end"
@@ -68,12 +78,12 @@ export function RegionSection() {
       <SettingsRule {...trans.region["set-timezone"]}>
         <Switch
           size="sm"
-          checked={!account.timezone}
+          checked={!timezone}
           onCheckedChange={toggleAutoSetTimezone}
         />
       </SettingsRule>
       <SettingsRule {...trans.region.timezone}>
-        <TimezoneMenu currentTz={account.timezone} onChange={changeTimzone} />
+        <TimezoneMenu currentTz={timezone} onChange={changeTimzone} />
       </SettingsRule>
     </SettingsSection>
   );

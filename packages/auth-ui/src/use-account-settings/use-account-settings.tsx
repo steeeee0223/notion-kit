@@ -45,6 +45,7 @@ export function useAccountSettings() {
       avatarUrl: data.user.image ?? "",
       language: data.user.lang as AccountStore["language"],
       currentSessionId: data.session.id,
+      timezone: data.user.tz,
     };
   }, [data]);
 
@@ -57,6 +58,7 @@ export function useAccountSettings() {
           image: data.account.avatarUrl,
           preferredName: data.account.preferredName,
           lang: data.account.language,
+          tz: data.account.timezone,
         },
         { onError: (e) => handleError(e, "Update user error") },
       );
