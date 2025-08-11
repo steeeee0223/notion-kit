@@ -262,7 +262,7 @@ importers:
         version: 15.0.14(@types/react@19.1.3)(next@15.3.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       fumadocs-mdx:
         specifier: 11.7.4
-        version: 11.7.4(acorn@8.14.0)(fumadocs-core@15.0.14(@types/react@19.1.3)(next@15.3.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(next@15.3.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
+        version: 11.7.4(acorn@8.15.0)(fumadocs-core@15.0.14(@types/react@19.1.3)(next@15.3.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(next@15.3.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
       fumadocs-ui:
         specifier: 15.0.14
         version: 15.0.14(@types/react-dom@19.1.3(@types/react@19.1.3))(@types/react@19.1.3)(fumadocs-core@15.0.14(@types/react@19.1.3)(next@15.3.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(next@15.3.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@4.1.0)
@@ -475,6 +475,85 @@ importers:
       storybook:
         specifier: ^8.6.2
         version: 8.6.3(bufferutil@4.0.9)(prettier@3.6.2)
+      tailwindcss:
+        specifier: catalog:tailwind-v4
+        version: 4.1.0
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+
+  examples/notion-clone:
+    dependencies:
+      '@notion-kit/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@notion-kit/auth-ui':
+        specifier: workspace:*
+        version: link:../../packages/auth-ui
+      '@notion-kit/cn':
+        specifier: workspace:*
+        version: link:../../packages/cn
+      '@notion-kit/modal':
+        specifier: workspace:*
+        version: link:../../packages/modal
+      '@notion-kit/schemas':
+        specifier: workspace:*
+        version: link:../../packages/schemas
+      '@notion-kit/settings-panel':
+        specifier: workspace:*
+        version: link:../../packages/settings-panel
+      '@notion-kit/shadcn':
+        specifier: workspace:*
+        version: link:../../packages/shadcn
+      '@notion-kit/sidebar':
+        specifier: workspace:*
+        version: link:../../packages/sidebar
+      '@t3-oss/env-nextjs':
+        specifier: catalog:env
+        version: 0.13.6(typescript@5.9.2)(zod@4.0.15)
+      lucide-react:
+        specifier: catalog:ui
+        version: 0.456.0(react@19.1.0)
+      next:
+        specifier: catalog:next15
+        version: 15.3.2(@babel/core@7.26.9)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react:
+        specifier: catalog:react19
+        version: 19.1.0
+      react-dom:
+        specifier: catalog:react19
+        version: 19.1.0(react@19.1.0)
+      react-hotkeys-hook:
+        specifier: catalog:ui
+        version: 4.6.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+    devDependencies:
+      '@notion-kit/eslint-config':
+        specifier: workspace:*
+        version: link:../../tooling/eslint
+      '@notion-kit/prettier-config':
+        specifier: workspace:*
+        version: link:../../tooling/prettier
+      '@notion-kit/tailwind-config':
+        specifier: workspace:*
+        version: link:../../tooling/tailwind
+      '@notion-kit/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
+      '@tailwindcss/postcss':
+        specifier: catalog:tailwind-v4
+        version: 4.1.0
+      '@types/node':
+        specifier: catalog:node22
+        version: 22.13.9
+      '@types/react':
+        specifier: catalog:react19
+        version: 19.1.3
+      '@types/react-dom':
+        specifier: catalog:react19
+        version: 19.1.3(@types/react@19.1.3)
+      dotenv-cli:
+        specifier: catalog:env
+        version: 8.0.0
       tailwindcss:
         specifier: catalog:tailwind-v4
         version: 4.1.0
@@ -6476,10 +6555,6 @@ packages:
     resolution: {integrity: sha512-wpc+LXeiyiisxPlEkUzU6svyS1frIO3Mgxj1fdy7Pm8Ygzguax2N3Fa/D/ag1WqbOprdI+uY6wMUl8/a2G+iag==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  eslint-visitor-keys@4.2.0:
-    resolution: {integrity: sha512-UyLnSehNt62FFhSwjZlHmeokpRK59rcz29j+F1/aDgbkbRTk7wIc9XzdoasMUbRNKDM0qQt/+BJ4BrpFeABemw==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
   eslint-visitor-keys@4.2.1:
     resolution: {integrity: sha512-Uhdk5sfqcee/9H/rCOJikYz67o0a2Tw2hGRPOG2Y1R2dg7brRe1uG0yaNQDHu+TO/uQPF/5eCapvYSmHUjt7JQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -11368,7 +11443,7 @@ snapshots:
       globby: 11.1.0
       read-yaml-file: 1.1.0
 
-  '@mdx-js/mdx@3.1.0(acorn@8.14.0)':
+  '@mdx-js/mdx@3.1.0(acorn@8.15.0)':
     dependencies:
       '@types/estree': 1.0.6
       '@types/estree-jsx': 1.0.5
@@ -11382,7 +11457,7 @@ snapshots:
       hast-util-to-jsx-runtime: 2.3.6
       markdown-extensions: 2.0.0
       recma-build-jsx: 1.0.0
-      recma-jsx: 1.0.0(acorn@8.14.0)
+      recma-jsx: 1.0.0(acorn@8.15.0)
       recma-stringify: 1.0.0
       rehype-recma: 1.0.0
       remark-mdx: 3.1.0
@@ -13352,7 +13427,7 @@ snapshots:
   '@typescript-eslint/visitor-keys@8.27.0':
     dependencies:
       '@typescript-eslint/types': 8.27.0
-      eslint-visitor-keys: 4.2.0
+      eslint-visitor-keys: 4.2.1
 
   '@typescript-eslint/visitor-keys@8.39.0':
     dependencies:
@@ -13485,17 +13560,13 @@ snapshots:
     dependencies:
       event-target-shim: 5.0.1
 
-  acorn-jsx@5.3.2(acorn@8.14.0):
-    dependencies:
-      acorn: 8.14.0
-
   acorn-jsx@5.3.2(acorn@8.15.0):
     dependencies:
       acorn: 8.15.0
 
   acorn-walk@8.3.4:
     dependencies:
-      acorn: 8.14.0
+      acorn: 8.15.0
 
   acorn@8.14.0: {}
 
@@ -14653,7 +14724,7 @@ snapshots:
   esast-util-from-js@2.0.1:
     dependencies:
       '@types/estree-jsx': 1.0.5
-      acorn: 8.14.0
+      acorn: 8.15.0
       esast-util-from-estree: 2.0.0
       vfile-message: 4.0.2
 
@@ -14916,8 +14987,6 @@ snapshots:
       estraverse: 5.3.0
 
   eslint-visitor-keys@3.4.3: {}
-
-  eslint-visitor-keys@4.2.0: {}
 
   eslint-visitor-keys@4.2.1: {}
 
@@ -15236,9 +15305,9 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  fumadocs-mdx@11.7.4(acorn@8.14.0)(fumadocs-core@15.0.14(@types/react@19.1.3)(next@15.3.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(next@15.3.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0):
+  fumadocs-mdx@11.7.4(acorn@8.15.0)(fumadocs-core@15.0.14(@types/react@19.1.3)(next@15.3.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(next@15.3.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0):
     dependencies:
-      '@mdx-js/mdx': 3.1.0(acorn@8.14.0)
+      '@mdx-js/mdx': 3.1.0(acorn@8.15.0)
       '@standard-schema/spec': 1.0.0
       chokidar: 4.0.3
       esbuild: 0.25.8
@@ -16436,8 +16505,8 @@ snapshots:
 
   micromark-extension-mdxjs@3.0.0:
     dependencies:
-      acorn: 8.14.0
-      acorn-jsx: 5.3.2(acorn@8.14.0)
+      acorn: 8.15.0
+      acorn-jsx: 5.3.2(acorn@8.15.0)
       micromark-extension-mdx-expression: 3.0.0
       micromark-extension-mdx-jsx: 3.0.1
       micromark-extension-mdx-md: 2.0.0
@@ -16628,7 +16697,7 @@ snapshots:
 
   mlly@1.7.4:
     dependencies:
-      acorn: 8.14.0
+      acorn: 8.15.0
       pathe: 2.0.3
       pkg-types: 1.3.1
       ufo: 1.6.1
@@ -17505,9 +17574,9 @@ snapshots:
       estree-util-build-jsx: 3.0.1
       vfile: 6.0.3
 
-  recma-jsx@1.0.0(acorn@8.14.0):
+  recma-jsx@1.0.0(acorn@8.15.0):
     dependencies:
-      acorn-jsx: 5.3.2(acorn@8.14.0)
+      acorn-jsx: 5.3.2(acorn@8.15.0)
       estree-util-to-js: 2.0.0
       recma-parse: 1.0.0
       recma-stringify: 1.0.0
@@ -18230,7 +18299,7 @@ snapshots:
   terser@5.39.0:
     dependencies:
       '@jridgewell/source-map': 0.3.6
-      acorn: 8.14.0
+      acorn: 8.15.0
       commander: 2.20.3
       source-map-support: 0.5.21
 
@@ -18324,7 +18393,7 @@ snapshots:
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
       '@types/node': 22.13.9
-      acorn: 8.14.0
+      acorn: 8.15.0
       acorn-walk: 8.3.4
       arg: 4.1.3
       create-require: 1.1.1
@@ -18568,7 +18637,7 @@ snapshots:
 
   unplugin@1.16.1:
     dependencies:
-      acorn: 8.14.0
+      acorn: 8.15.0
       webpack-virtual-modules: 0.6.2
 
   unsplash-js@7.0.19: {}
