@@ -9,3 +9,8 @@ export function createDefaultFn<T>(data: T): () => Promise<T>;
 export function createDefaultFn<T>(data: T | void) {
   return () => Promise.resolve(data);
 }
+
+export const LOCALSTORAGE_KEYS = {
+  locale: "notion-kit:preferences:locale",
+  timezone: "notion-kit:preferences:timezone",
+};

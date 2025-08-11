@@ -34,7 +34,7 @@ export function useAccountSettings() {
   const { auth } = useAuth();
   const { data } = useSession();
 
-  const accountStore = useMemo(() => {
+  const accountStore = useMemo<AccountStore>(() => {
     if (!data) return initialAccountStore;
     return {
       hasPassword: true,
@@ -45,6 +45,7 @@ export function useAccountSettings() {
       avatarUrl: data.user.image ?? "",
       language: data.user.lang as AccountStore["language"],
       currentSessionId: data.session.id,
+      timezone: data.user.tz ?? undefined,
     };
   }, [data]);
 
@@ -57,6 +58,7 @@ export function useAccountSettings() {
           image: data.account.avatarUrl,
           preferredName: data.account.preferredName,
           lang: data.account.language,
+          tz: data.account.timezone,
         },
         { onError: (e) => handleError(e, "Update user error") },
       );
