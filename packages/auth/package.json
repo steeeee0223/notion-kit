@@ -35,7 +35,7 @@
     "@better-fetch/fetch": "1.1.18",
     "@t3-oss/env-nextjs": "catalog:env",
     "@vercel/postgres": "^0.10.0",
-    "better-auth": "^1.2.8",
+    "better-auth": "^1.3.4",
     "drizzle-orm": "^0.44.2",
     "jose": "^6.0.11",
     "ua-parser-js": "^2.0.4",
