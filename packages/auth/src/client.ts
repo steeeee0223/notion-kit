@@ -1,5 +1,6 @@
 import {
   inferAdditionalFields,
+  organizationClient,
   passkeyClient,
   twoFactorClient,
 } from "better-auth/client/plugins";
@@ -24,6 +25,9 @@ export function createAuthClient(baseURL?: string) {
       }),
       twoFactorClient(),
       passkeyClient(),
+      organizationClient({
+        teams: { enabled: true },
+      }),
     ],
   });
 }

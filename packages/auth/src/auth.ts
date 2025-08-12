@@ -1,6 +1,6 @@
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { twoFactor } from "better-auth/plugins";
+import { organization, twoFactor } from "better-auth/plugins";
 import { passkey, type Passkey } from "better-auth/plugins/passkey";
 
 import { db, updateAccountName, updateSessionData } from "./db";
@@ -75,7 +75,17 @@ export function createAuth(env: AuthEnv) {
         update: { after: updateAccountName },
       },
     },
-    plugins: [twoFactor(), passkey({ rpName: "Notion Auth" })],
+    plugins: [
+      twoFactor(),
+      passkey({ rpName: "Notion Auth" }),
+      organization({
+        teams: {
+          enabled: true,
+          maximumTeams: 10, // Optional: limit teams per organization
+          allowRemovingAllTeams: false, // Optional: prevent removing the last team
+        },
+      }),
+    ],
   } satisfies BetterAuthOptions;
 
   return betterAuth(config);

@@ -10,3 +10,14 @@ export function handleError(
     description: error.message,
   });
 }
+
+/**
+ * Converts any name to a URL-friendly slug
+ */
+export function toSlugLike(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-") // Replace non-alphanumeric with hyphen
+    .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
+}
