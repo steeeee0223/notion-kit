@@ -16,11 +16,7 @@ export function useSettings() {
   const router = useRouter();
 
   const [tab, setTab] = useState<TabType>("account");
-  const {
-    accountStore,
-    updateSettings,
-    actions: accountActions,
-  } = useAccountSettings();
+  const { accountStore, actions: accountActions } = useAccountSettings();
   const { workspaceStore, actions: workspaceActions } = useWorkspaceSettings();
 
   const actions = useMemo(
@@ -48,7 +44,6 @@ export function useSettings() {
       account: accountStore,
       memberships: {},
     },
-    updateSettings,
     actions,
     signOut,
   };

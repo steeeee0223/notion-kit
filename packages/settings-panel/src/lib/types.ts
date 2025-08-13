@@ -115,7 +115,6 @@ export interface SettingsStore {
 }
 
 export interface UpdateSettingsParams {
-  account?: Partial<AccountStore>;
   memberships?: Record<string, Membership>;
 }
 export type UpdateSettings = (data: UpdateSettingsParams) => Promise<void>;

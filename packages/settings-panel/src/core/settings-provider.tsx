@@ -13,6 +13,7 @@ import {
 } from "@notion-kit/shadcn";
 
 import type {
+  AccountStore,
   Connection,
   ConnectionStrategy,
   Passkey,
@@ -24,10 +25,14 @@ import type {
 import { getScopes, Scope } from "../lib";
 
 export interface SettingsActions {
+  /**
+   * @deprecated Use `account.update`, `workspace.update` instead
+   */
   updateSettings?: UpdateSettings;
   uploadFile?: (file: File) => Promise<void>;
   /** Account */
   account?: {
+    update?: (data: Partial<Omit<AccountStore, "id">>) => Promise<void>;
     delete?: (data: { accountId: string; email: string }) => Promise<void>;
     sendEmailVerification?: (email: string) => Promise<void>;
     changePassword?: (data: {
@@ -49,10 +54,7 @@ export interface SettingsActions {
   };
   /** Workspace */
   workspace?: {
-    update?: (
-      id: string,
-      data: Partial<Omit<WorkspaceStore, "id">>,
-    ) => Promise<void>;
+    update?: (data: Partial<Omit<WorkspaceStore, "id">>) => Promise<void>;
     delete?: (id: string) => Promise<void>;
     resetLink?: () => Promise<void>;
   };

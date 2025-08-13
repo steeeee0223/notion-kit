@@ -64,9 +64,9 @@ export function People() {
   const updateMember = useCallback(
     async (id: string, role: Role) => {
       await people?.update?.(id, role);
-      if (id === account.id) await actions?.update?.(workspace.id, { role });
+      if (id === account.id) await actions?.update?.({ role });
     },
-    [account.id, actions, people, workspace.id],
+    [account.id, actions, people],
   );
   const deleteMember = (id: string) =>
     openModal(<DeleteMember onDelete={() => people?.delete?.(id)} />);

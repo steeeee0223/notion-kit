@@ -12,15 +12,11 @@ import {
 import { useSettings } from "@/hooks/use-settings";
 
 export default function Page() {
-  const { tab, setTab, settings, updateSettings, actions } = useSettings();
+  const { tab, setTab, settings, actions } = useSettings();
 
   return (
     <main className="flex h-screen w-full flex-col items-center justify-center gap-6">
-      <SettingsProvider
-        settings={settings}
-        updateSettings={updateSettings}
-        {...actions}
-      >
+      <SettingsProvider settings={settings} {...actions}>
         <SettingsPanel>
           <SettingsSidebar>
             <SettingsSidebarPreset tab={tab} onTabChange={setTab} />

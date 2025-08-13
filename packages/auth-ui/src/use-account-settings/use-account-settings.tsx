@@ -1,12 +1,8 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 
-import type {
-  AccountStore,
-  SettingsActions,
-  UpdateSettings,
-} from "@notion-kit/settings-panel";
+import type { AccountStore, SettingsActions } from "@notion-kit/settings-panel";
 import { toast } from "@notion-kit/shadcn";
 
 import { useAuth, useSession } from "../auth-provider";
@@ -49,26 +45,21 @@ export function useAccountSettings() {
     };
   }, [data]);
 
-  const updateSettings = useCallback<UpdateSettings>(
-    async (data) => {
-      if (!data.account) return;
-      await auth.updateUser(
-        {
-          name: data.account.name,
-          image: data.account.avatarUrl,
-          preferredName: data.account.preferredName,
-          lang: data.account.language,
-          tz: data.account.timezone,
-        },
-        { onError: (e) => handleError(e, "Update user error") },
-      );
-    },
-    [auth],
-  );
-
   const actions = useMemo<SettingsActions>(() => {
     return {
       account: {
+        update: async (data) => {
+          await auth.updateUser(
+            {
+              name: data.name,
+              image: data.avatarUrl,
+              preferredName: data.preferredName,
+              lang: data.language,
+              tz: data.timezone,
+            },
+            { onError: (e) => handleError(e, "Update user error") },
+          );
+        },
         delete: async () => {
           await auth.deleteUser(
             { callbackURL: "/" },
@@ -142,6 +133,5 @@ export function useAccountSettings() {
   return {
     accountStore,
     actions,
-    updateSettings,
   };
 }

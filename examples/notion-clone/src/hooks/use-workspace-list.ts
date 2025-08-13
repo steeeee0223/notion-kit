@@ -58,7 +58,7 @@ export function useWorkspaceList() {
 }
 
 function mapWorkspace(org: Organization): Workspace {
-  const res = IconObject.safeParse(org.logo ?? "");
+  const res = IconObject.safeParse(JSON.parse(org.logo ?? ""));
   const icon: IconData = res.success
     ? res.data
     : { type: "text", src: org.name[0] ?? "" };

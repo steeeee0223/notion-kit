@@ -46,12 +46,14 @@ export function useWorkspaceSettings() {
   }, [data]);
 
   const actions = useMemo<SettingsActions>(() => {
+    const organizationId = data?.id;
+    if (!organizationId) return {};
     return {
       workspace: {
-        update: async (id, { name, icon }) => {
+        update: async ({ name, icon }) => {
           await auth.organization.update(
             {
-              organizationId: id,
+              organizationId,
               data: {
                 name,
                 logo: icon ? JSON.stringify(icon) : undefined,
