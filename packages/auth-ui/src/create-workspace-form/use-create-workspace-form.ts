@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod/v4";
 
+import type { Organization } from "@notion-kit/auth";
 import { IconObject, type IconData } from "@notion-kit/schemas";
 
 import { useAuth } from "../auth-provider";
@@ -18,7 +19,13 @@ type CreateWorkspaceSchema = z.infer<typeof createWorkspaceSchema>;
 
 const defaultIcon: IconData = { type: "text", src: "A" };
 
-export function useCreateWorkspaceForm() {
+interface UseCreateWorkspaceFormOptions {
+  onSuccess?: (workspace: Organization) => void;
+}
+
+export function useCreateWorkspaceForm({
+  onSuccess,
+}: UseCreateWorkspaceFormOptions) {
   const { auth, generateUniqueSlug } = useAuth();
 
   const form = useForm<CreateWorkspaceSchema>({
@@ -55,6 +62,7 @@ export function useCreateWorkspaceForm() {
       },
     );
     if (!res.data) return;
+    onSuccess?.(res.data);
     await auth.organization.setActive({
       organizationId: res.data.id,
     });

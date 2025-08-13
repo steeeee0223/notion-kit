@@ -1,5 +1,6 @@
 "use client";
 
+import type { Organization } from "@notion-kit/auth";
 import { IconBlock } from "@notion-kit/icon-block";
 import { IconMenu } from "@notion-kit/icon-menu";
 import {
@@ -16,8 +17,13 @@ import { Spinner } from "@notion-kit/spinner";
 
 import { useCreateWorkspaceForm } from "./use-create-workspace-form";
 
-export function CreateWorkspaceForm() {
-  const { form, uploadIcon, removeIcon, submit } = useCreateWorkspaceForm();
+interface CreateWorkspaceFormProps {
+  onSuccess?: (workspace: Organization) => void;
+}
+
+export function CreateWorkspaceForm({ ...props }: CreateWorkspaceFormProps) {
+  const { form, uploadIcon, removeIcon, submit } =
+    useCreateWorkspaceForm(props);
 
   return (
     <div className="flex flex-col items-center gap-20">

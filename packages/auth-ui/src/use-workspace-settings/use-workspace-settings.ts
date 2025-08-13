@@ -23,7 +23,7 @@ const initialWorkspaceStore: WorkspaceStore = {
 };
 
 export function useWorkspaceSettings() {
-  const { auth } = useAuth();
+  const { auth, redirect } = useAuth();
   const { data } = useActiveWorkspace();
 
   const workspaceStore = useMemo<WorkspaceStore>(() => {
@@ -65,18 +65,21 @@ export function useWorkspaceSettings() {
             },
           );
         },
-        delete: async (workspaceId) => {
+        delete: async () => {
           await auth.organization.delete(
-            { organizationId: workspaceId },
+            { organizationId },
             {
-              onSuccess: () => void toast.success("Workspace deleted"),
+              onSuccess: () => {
+                toast.success("Workspace deleted");
+                redirect?.("/");
+              },
               onError: (e) => handleError(e, "Delete workspace error"),
             },
           );
         },
       },
     };
-  }, [auth]);
+  }, [auth.organization, data?.id, redirect]);
 
   return {
     workspaceStore,

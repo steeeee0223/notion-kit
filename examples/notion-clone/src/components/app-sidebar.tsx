@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Home, SearchIcon, SettingsIcon } from "lucide-react";
 import { useHotkeys } from "react-hotkeys-hook";
 
@@ -23,6 +24,7 @@ import { useWorkspaceList } from "@/hooks/use-workspace-list";
 import { SettingsModal } from "./settings-modal";
 
 export function AppSidebar() {
+  const router = useRouter();
   const {
     settings: { account },
     signOut,
@@ -52,6 +54,7 @@ export function AppSidebar() {
             }}
             activeWorkspace={activeWorkspace}
             workspaces={workspaceList}
+            onCreateWorkspace={() => router.push("/onboarding")}
             onSelect={selectWorkspace}
             onLogout={signOut}
             onOpenSettings={openSettings}
