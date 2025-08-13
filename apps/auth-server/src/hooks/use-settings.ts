@@ -13,7 +13,7 @@ const mockWorkspace: WorkspaceStore = {
   icon: { type: "lucide", src: "activity", color: "#CB912F" },
   role: Role.OWNER,
   plan: Plan.FREE,
-  domain: "fake-domain",
+  slug: "fake-slug",
   inviteLink: "#",
 };
 

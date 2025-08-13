@@ -21,7 +21,7 @@
   "types": "./dist/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build": "tsup src/index.ts --format cjs,esm",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "db:push": "pnpm with-env drizzle-kit push",
     "dev": "pnpm with-env drizzle-kit studio",
