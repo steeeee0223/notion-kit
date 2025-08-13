@@ -25,8 +25,8 @@ export const Demo = () => {
       updateSettings={async (data) => {
         await delay(500);
         setSettings((prev) => ({
+          ...prev,
           account: { ...prev.account, ...data.account },
-          workspace: { ...prev.workspace, ...data.workspace },
           memberships: { ...prev.memberships, ...data.memberships },
         }));
       }}

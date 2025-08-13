@@ -19,6 +19,7 @@ import type {
   SessionRow,
   SettingsStore,
   UpdateSettings,
+  WorkspaceStore,
 } from "../lib";
 import { getScopes, Scope } from "../lib";
 
@@ -48,7 +49,11 @@ export interface SettingsActions {
   };
   /** Workspace */
   workspace?: {
-    delete?: (workspaceId: string) => Promise<void>;
+    update?: (
+      id: string,
+      data: Partial<Omit<WorkspaceStore, "id">>,
+    ) => Promise<void>;
+    delete?: (id: string) => Promise<void>;
     resetLink?: () => Promise<void>;
   };
   /** Connections */

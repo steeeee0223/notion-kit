@@ -22,8 +22,8 @@ export default function Demo() {
       settings={settings}
       updateSettings={(data) => {
         setSettings((prev) => ({
+          ...prev,
           account: { ...prev.account, ...data.account },
-          workspace: { ...prev.workspace, ...data.workspace },
           memberships: { ...prev.memberships, ...data.memberships },
         }));
         return Promise.resolve();

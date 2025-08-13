@@ -14,11 +14,10 @@ import { Content, TextLinks } from "../_components";
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
 import { DeleteWorkspace } from "../modals";
 
-export const General = () => {
+export function General() {
   const { openModal } = useModal();
   const {
     settings: { workspace },
-    updateSettings: update,
     uploadFile,
     workspace: actions,
   } = useSettings();
@@ -35,12 +34,14 @@ export const General = () => {
   } = t("general", { returnObjects: true });
   /** Handlers */
   const updateName = (e: React.ChangeEvent<HTMLInputElement>) =>
-    update?.({ workspace: { name: e.target.value } });
+    actions?.update?.(workspace.id, { name: e.target.value });
   const [updateIcon, isUpdatingIcon] = useTransition((icon: IconData) =>
-    update?.({ workspace: { icon } }),
+    actions?.update?.(workspace.id, { icon }),
   );
   const [removeIcon, isRemoving] = useTransition(() =>
-    update?.({ workspace: { icon: { type: "text", src: workspace.name } } }),
+    actions?.update?.(workspace.id, {
+      icon: { type: "text", src: workspace.name },
+    }),
   );
   const [uploadIcon, isUploading] = useTransition((file: File) =>
     uploadFile?.(file),
@@ -147,4 +148,4 @@ export const General = () => {
       </SettingsSection>
     </div>
   );
-};
+}

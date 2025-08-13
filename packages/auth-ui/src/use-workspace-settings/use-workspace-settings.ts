@@ -16,7 +16,7 @@ const initialWorkspaceStore: WorkspaceStore = {
   id: "",
   name: "",
   icon: { type: "text", src: "" },
-  domain: "",
+  slug: "",
   inviteLink: "",
   plan: Plan.FREE,
   role: Role.OWNER,
@@ -31,14 +31,14 @@ export function useWorkspaceSettings() {
     const res = IconObject.safeParse(JSON.parse(data.logo ?? ""));
     const icon: IconData = res.success
       ? res.data
-      : { type: "text", src: data.name[0] ?? "" };
+      : { type: "text", src: data.name };
 
     return {
       id: data.id,
       name: data.name,
       icon,
-      domain: "",
-      inviteLink: data.slug,
+      slug: data.slug,
+      inviteLink: "",
       // TODO handle memberships
       plan: Plan.FREE,
       role: Role.OWNER,
@@ -48,6 +48,21 @@ export function useWorkspaceSettings() {
   const actions = useMemo<SettingsActions>(() => {
     return {
       workspace: {
+        update: async (id, { name, icon }) => {
+          await auth.organization.update(
+            {
+              organizationId: id,
+              data: {
+                name,
+                logo: icon ? JSON.stringify(icon) : undefined,
+              },
+            },
+            {
+              onSuccess: () => void toast.success("Workspace updated"),
+              onError: (e) => handleError(e, "Update workspace error"),
+            },
+          );
+        },
         delete: async (workspaceId) => {
           await auth.organization.delete(
             { organizationId: workspaceId },
