@@ -29,7 +29,7 @@ export const typography = (type: Typography) => typographyVariants({ type });
 
 export const buttonVariants = cva(
   [
-    "inline-flex animate-bg-in cursor-pointer items-center justify-center rounded-sm text-sm font-normal whitespace-nowrap select-none",
+    "inline-flex animate-bg-in cursor-pointer items-center justify-center gap-1.5 rounded-sm text-sm font-normal whitespace-nowrap select-none",
     "hover:bg-default/5 focus-visible:outline-hidden",
     "disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-50",
     "[&_svg]:block [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",

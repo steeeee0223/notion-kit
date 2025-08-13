@@ -192,10 +192,10 @@ export function LoginForm({
                 variant="blue"
                 size="md"
                 type="submit"
-                className="w-full gap-1"
+                className="w-full"
                 disabled={disabled}
               >
-                {loading && <Spinner />}
+                {loading && <Spinner className="text-current" />}
                 {forgotPasswordStage === "none"
                   ? "Continue"
                   : "Send reset link"}

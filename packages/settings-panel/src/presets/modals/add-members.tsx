@@ -129,7 +129,7 @@ export const AddMembers: React.FC<AddMembersProps> = ({
                 className="h-7 min-w-[70px] font-medium"
               >
                 Invite
-                {loading && <Spinner className="ml-2 text-white" />}
+                {loading && <Spinner className="text-current" />}
               </Button>
             </div>
           </div>
