@@ -73,9 +73,8 @@ export function useAccountSettings() {
           await auth.deleteUser(
             { callbackURL: "/" },
             {
-              onSuccess: () => {
-                toast.success("Account deleted successfully");
-              },
+              onSuccess: () =>
+                void toast.success("Account deleted successfully"),
               onError: (e) => handleError(e, "Delete account error"),
             },
           );

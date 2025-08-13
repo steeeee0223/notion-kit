@@ -1,28 +1,35 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { handleError, useAccountSettings, useAuth } from "@notion-kit/auth-ui";
-import { Plan, Role } from "@notion-kit/schemas";
-import type { TabType, WorkspaceStore } from "@notion-kit/settings-panel";
-
-const mockWorkspace: WorkspaceStore = {
-  id: "workspace-0",
-  name: "John's Private",
-  icon: { type: "lucide", src: "activity", color: "#CB912F" },
-  role: Role.OWNER,
-  plan: Plan.FREE,
-  domain: "fake-domain",
-  inviteLink: "#",
-};
+import {
+  handleError,
+  useAccountSettings,
+  useAuth,
+  useWorkspaceSettings,
+} from "@notion-kit/auth-ui";
+import type { TabType } from "@notion-kit/settings-panel";
 
 export function useSettings() {
   const { auth } = useAuth();
   const router = useRouter();
 
   const [tab, setTab] = useState<TabType>("account");
-  const { accountStore, updateSettings, actions } = useAccountSettings();
+  const {
+    accountStore,
+    updateSettings,
+    actions: accountActions,
+  } = useAccountSettings();
+  const { workspaceStore, actions: workspaceActions } = useWorkspaceSettings();
+
+  const actions = useMemo(
+    () => ({
+      ...accountActions,
+      ...workspaceActions,
+    }),
+    [accountActions, workspaceActions],
+  );
 
   const signOut = useCallback(async () => {
     await auth.signOut({
@@ -37,7 +44,7 @@ export function useSettings() {
     tab,
     setTab,
     settings: {
-      workspace: mockWorkspace,
+      workspace: workspaceStore,
       account: accountStore,
       memberships: {},
     },

@@ -4,7 +4,6 @@ import { Home, SearchIcon, SettingsIcon } from "lucide-react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { useModal } from "@notion-kit/modal";
-import { Workspace } from "@notion-kit/schemas";
 import {
   DocList,
   Sidebar,
@@ -19,27 +18,21 @@ import {
 } from "@notion-kit/sidebar";
 
 import { useSettings } from "@/hooks/use-settings";
+import { useWorkspaceList } from "@/hooks/use-workspace-list";
 
 import { SettingsModal } from "./settings-modal";
 
 export function AppSidebar() {
   const {
-    settings: { account, workspace },
+    settings: { account },
     signOut,
   } = useSettings();
-  const currWorkspace: Workspace = {
-    id: workspace.id,
-    role: workspace.role,
-    name: workspace.name,
-    plan: workspace.plan,
-    // TODO update this
-    memberCount: 3,
-  };
+  const { activeWorkspace, workspaceList, selectWorkspace } =
+    useWorkspaceList();
+
   /** Actions */
   const { openModal } = useModal();
-  const openSettings = () => {
-    openModal(<SettingsModal />);
-  };
+  const openSettings = () => openModal(<SettingsModal />);
 
   /** Keyboard shortcut */
   const shortcutOptions = { preventDefault: true };
@@ -57,8 +50,9 @@ export function AppSidebar() {
               avatarUrl: account.avatarUrl,
               email: account.email,
             }}
-            activeWorkspace={currWorkspace}
-            workspaces={[currWorkspace]}
+            activeWorkspace={activeWorkspace}
+            workspaces={workspaceList}
+            onSelect={selectWorkspace}
             onLogout={signOut}
             onOpenSettings={openSettings}
           />
