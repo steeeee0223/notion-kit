@@ -66,7 +66,7 @@ export function CreateWorkspaceForm() {
             type="submit"
             variant="blue"
             size="md"
-            className="w-full"
+            className="w-full gap-1"
             disabled={form.formState.isSubmitting || !form.formState.isValid}
           >
             {form.formState.isSubmitting && <Spinner />}

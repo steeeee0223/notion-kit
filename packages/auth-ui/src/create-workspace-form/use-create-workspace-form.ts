@@ -43,7 +43,7 @@ export function useCreateWorkspaceForm() {
 
   const submit = handleSubmit(async (values) => {
     const slug = await generateUniqueSlug(values.name);
-    await auth.organization.create(
+    const res = await auth.organization.create(
       {
         name: values.name,
         slug,
@@ -54,6 +54,10 @@ export function useCreateWorkspaceForm() {
         onError: (error) => handleError(error, "Create workspace error"),
       },
     );
+    if (!res.data) return;
+    await auth.organization.setActive({
+      organizationId: res.data.id,
+    });
   });
 
   useEffect(() => {
