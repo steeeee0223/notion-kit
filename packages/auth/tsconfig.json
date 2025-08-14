@@ -1,5 +1,9 @@
 {
-  "extends": "@notion-kit/tsconfig/internal-package.json",
+  "extends": "@notion-kit/tsconfig/base.json",
+  "compilerOptions": {
+    "declaration": false,
+    "composite": false
+  },
   "include": ["src", "drizzle.config.ts"],
   "exclude": ["node_modules"]
 }

@@ -14,7 +14,7 @@ import { TimezoneMenu } from "./timezone-menu";
 export function RegionSection() {
   const {
     settings: { account },
-    updateSettings,
+    account: actions,
   } = useSettings();
   /** i18n */
   const { t, i18n } = useTranslation("settings");
@@ -41,14 +41,14 @@ export function RegionSection() {
         onTrigger={async () => {
           setLocale(language);
           await i18n.changeLanguage(language);
-          await updateSettings?.({ account: { language } });
+          await actions?.update?.({ language });
         }}
       />,
     );
   };
   const changeTimzone = (timezone?: string) => {
     setTimezone(timezone);
-    void updateSettings?.({ account: { timezone } });
+    void actions?.update?.({ timezone });
   };
   const toggleAutoSetTimezone = (checked: boolean) => {
     changeTimzone(

@@ -69,7 +69,7 @@ export const DeleteMember = ({ onDelete }: DeleteMemberProps) => {
             className="w-full font-semibold"
           >
             Continue
-            {loading && <Spinner className="ml-2 text-white" />}
+            {loading && <Spinner className="text-current" />}
           </Button>
           <Button
             onClick={closeModal}

@@ -22,13 +22,23 @@ export const Demo = () => {
   return (
     <SettingsProvider
       settings={settings}
-      updateSettings={async (data) => {
-        await delay(500);
-        setSettings((prev) => ({
-          account: { ...prev.account, ...data.account },
-          workspace: { ...prev.workspace, ...data.workspace },
-          memberships: { ...prev.memberships, ...data.memberships },
-        }));
+      account={{
+        update: async (data) => {
+          await delay(500);
+          setSettings((prev) => ({
+            ...prev,
+            account: { ...prev.account, ...data },
+          }));
+        },
+      }}
+      workspace={{
+        update: async (data) => {
+          await delay(500);
+          setSettings((prev) => ({
+            ...prev,
+            workspace: { ...prev.workspace, ...data },
+          }));
+        },
       }}
       sessions={{
         getAll: () => Promise.resolve(mockSessions),

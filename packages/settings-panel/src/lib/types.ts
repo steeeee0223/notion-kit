@@ -28,7 +28,7 @@ export interface WorkspaceStore {
   id: string;
   name: string;
   icon: IconData;
-  domain: string;
+  slug: string;
   /** People */
   inviteLink: string;
   /** Plans */
@@ -115,8 +115,6 @@ export interface SettingsStore {
 }
 
 export interface UpdateSettingsParams {
-  workspace?: Partial<WorkspaceStore>;
-  account?: Partial<AccountStore>;
   memberships?: Record<string, Membership>;
 }
 export type UpdateSettings = (data: UpdateSettingsParams) => Promise<void>;

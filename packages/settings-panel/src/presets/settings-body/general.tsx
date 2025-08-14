@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { useTransition } from "@notion-kit/hooks";
+import { useInputField, useTransition } from "@notion-kit/hooks";
 import { useTranslation } from "@notion-kit/i18n";
 import { IconBlock } from "@notion-kit/icon-block";
 import { IconMenu } from "@notion-kit/icon-menu";
@@ -14,11 +14,10 @@ import { Content, TextLinks } from "../_components";
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
 import { DeleteWorkspace } from "../modals";
 
-export const General = () => {
+export function General() {
   const { openModal } = useModal();
   const {
     settings: { workspace },
-    updateSettings: update,
     uploadFile,
     workspace: actions,
   } = useSettings();
@@ -34,13 +33,16 @@ export const General = () => {
     danger,
   } = t("general", { returnObjects: true });
   /** Handlers */
-  const updateName = (e: React.ChangeEvent<HTMLInputElement>) =>
-    update?.({ workspace: { name: e.target.value } });
+  const { props: nameProps } = useInputField({
+    id: "workspace-name",
+    initialValue: workspace.name,
+    onUpdate: (name) => void actions?.update?.({ name }),
+  });
   const [updateIcon, isUpdatingIcon] = useTransition((icon: IconData) =>
-    update?.({ workspace: { icon } }),
+    actions?.update?.({ icon }),
   );
   const [removeIcon, isRemoving] = useTransition(() =>
-    update?.({ workspace: { icon: { type: "text", src: workspace.name } } }),
+    actions?.update?.({ icon: { type: "text", src: workspace.name } }),
   );
   const [uploadIcon, isUploading] = useTransition((file: File) =>
     uploadFile?.(file),
@@ -59,7 +61,7 @@ export const General = () => {
     <div className="space-y-[18px]">
       <SettingsSection title={workspaceSettings.title}>
         <Content {...workspaceSettings.name}>
-          <Input value={workspace.name} onChange={updateName} />
+          <Input {...nameProps} />
         </Content>
         <Content {...workspaceSettings.icon}>
           <IconMenu
@@ -147,4 +149,4 @@ export const General = () => {
       </SettingsSection>
     </div>
   );
-};
+}

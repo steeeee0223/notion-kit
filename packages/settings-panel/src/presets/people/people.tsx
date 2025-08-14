@@ -38,7 +38,6 @@ export function People() {
     settings: { account, workspace },
     people,
     workspace: actions,
-    updateSettings,
   } = useSettings();
   /** i18n */
   const { t } = useTranslation("settings");
@@ -65,9 +64,9 @@ export function People() {
   const updateMember = useCallback(
     async (id: string, role: Role) => {
       await people?.update?.(id, role);
-      if (id === account.id) await updateSettings?.({ workspace: { role } });
+      if (id === account.id) await actions?.update?.({ role });
     },
-    [account.id, people, updateSettings],
+    [account.id, actions, people],
   );
   const deleteMember = (id: string) =>
     openModal(<DeleteMember onDelete={() => people?.delete?.(id)} />);

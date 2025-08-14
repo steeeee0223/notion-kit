@@ -56,7 +56,7 @@ export const LogoutConfirm = ({
             onClick={logout}
             disabled={isPending}
           >
-            {isPending && <Spinner className="mr-1.5 text-white" />}
+            {isPending && <Spinner className="text-current" />}
             Log out
           </Button>
           <Button

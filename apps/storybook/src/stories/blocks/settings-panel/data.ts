@@ -172,7 +172,7 @@ export const mockSettings: SettingsStore = {
       src: mockWorkspaces[0]!.name,
     },
     plan: Plan.FREE,
-    domain: "fake-domain",
+    slug: "fake-slug",
     inviteLink: "#",
   },
   account: {

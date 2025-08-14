@@ -177,7 +177,7 @@ const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
           checked={id === activeWorkspace}
           Body={<WorkspaceTitle role={role} name={name} />}
           {...listeners}
-          onSelect={() => onSelect?.(id)}
+          onClick={() => onSelect?.(id)}
         />
       </TooltipPreset>
     </div>

@@ -1,0 +1,88 @@
+"use client";
+
+import { useMemo } from "react";
+
+import { IconObject, Plan, Role, type IconData } from "@notion-kit/schemas";
+import type {
+  SettingsActions,
+  WorkspaceStore,
+} from "@notion-kit/settings-panel";
+import { toast } from "@notion-kit/shadcn";
+
+import { useActiveWorkspace, useAuth } from "../auth-provider";
+import { handleError } from "../lib";
+
+const initialWorkspaceStore: WorkspaceStore = {
+  id: "",
+  name: "",
+  icon: { type: "text", src: "" },
+  slug: "",
+  inviteLink: "",
+  plan: Plan.FREE,
+  role: Role.OWNER,
+};
+
+export function useWorkspaceSettings() {
+  const { auth, redirect } = useAuth();
+  const { data } = useActiveWorkspace();
+
+  const workspaceStore = useMemo<WorkspaceStore>(() => {
+    if (!data) return initialWorkspaceStore;
+    const res = IconObject.safeParse(JSON.parse(data.logo ?? ""));
+    const icon: IconData = res.success
+      ? res.data
+      : { type: "text", src: data.name };
+
+    return {
+      id: data.id,
+      name: data.name,
+      icon,
+      slug: data.slug,
+      inviteLink: "",
+      // TODO handle memberships
+      plan: Plan.FREE,
+      role: Role.OWNER,
+    };
+  }, [data]);
+
+  const actions = useMemo<SettingsActions>(() => {
+    const organizationId = data?.id;
+    if (!organizationId) return {};
+    return {
+      workspace: {
+        update: async ({ name, icon }) => {
+          await auth.organization.update(
+            {
+              organizationId,
+              data: {
+                name,
+                logo: icon ? JSON.stringify(icon) : undefined,
+              },
+            },
+            {
+              onSuccess: () => void toast.success("Workspace updated"),
+              onError: (e) => handleError(e, "Update workspace error"),
+            },
+          );
+        },
+        delete: async () => {
+          await auth.organization.delete(
+            { organizationId },
+            {
+              onSuccess: () => {
+                toast.success("Workspace deleted");
+                redirect?.("/");
+              },
+              onError: (e) => handleError(e, "Delete workspace error"),
+            },
+          );
+        },
+      },
+    };
+  }, [auth.organization, data?.id, redirect]);
+
+  return {
+    workspaceStore,
+    actions,
+  };
+}

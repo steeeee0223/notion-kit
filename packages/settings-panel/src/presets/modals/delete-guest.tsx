@@ -58,7 +58,7 @@ export const DeleteGuest = ({ name, onDelete }: DeleteGuestProps) => {
             className="w-full font-semibold"
           >
             Remove
-            {loading && <Spinner className="ml-2 text-white" />}
+            {loading && <Spinner className="text-current" />}
           </Button>
           <Button
             onClick={closeModal}

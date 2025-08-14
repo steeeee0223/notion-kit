@@ -15,7 +15,7 @@ import { useSettings } from "@/hooks/use-settings";
 
 export function SettingsModal() {
   const { isOpen, closeModal } = useModal();
-  const { tab, setTab, settings, updateSettings, actions } = useSettings();
+  const { tab, setTab, settings, actions } = useSettings();
 
   return (
     <Dialog open={isOpen} onOpenChange={closeModal}>
@@ -24,11 +24,7 @@ export function SettingsModal() {
         className="flex h-[calc(100vh-100px)] max-h-[720px] w-[calc(100vw-100px)] max-w-[1150px] rounded border-none p-0 shadow"
         onClick={(e) => e.stopPropagation()}
       >
-        <SettingsProvider
-          settings={settings}
-          updateSettings={updateSettings}
-          {...actions}
-        >
+        <SettingsProvider settings={settings} {...actions}>
           <SettingsPanel>
             <SettingsSidebar>
               <SettingsSidebarPreset tab={tab} onTabChange={setTab} />

@@ -20,13 +20,23 @@ export default function Demo() {
   return (
     <SettingsProvider
       settings={settings}
-      updateSettings={(data) => {
-        setSettings((prev) => ({
-          account: { ...prev.account, ...data.account },
-          workspace: { ...prev.workspace, ...data.workspace },
-          memberships: { ...prev.memberships, ...data.memberships },
-        }));
-        return Promise.resolve();
+      account={{
+        update: (data) => {
+          setSettings((prev) => ({
+            ...prev,
+            account: { ...prev.account, ...data },
+          }));
+          return Promise.resolve();
+        },
+      }}
+      workspace={{
+        update: (data) => {
+          setSettings((prev) => ({
+            ...prev,
+            workspace: { ...prev.workspace, ...data },
+          }));
+          return Promise.resolve();
+        },
       }}
       connections={{
         getAll: () => Promise.resolve(mockConnections),
