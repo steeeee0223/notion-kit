@@ -11,7 +11,7 @@ import { useCopyToClipboard, useTransition } from "@notion-kit/hooks";
 import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
-import { Plan, Role } from "@notion-kit/schemas";
+import { Plan } from "@notion-kit/schemas";
 import {
   Button,
   Input,
@@ -30,7 +30,8 @@ import { SettingsRule, SettingsSection, useSettings } from "../../core";
 import { generateGuestsCsv, Scope } from "../../lib";
 import { AddMembers, DeleteGuest, DeleteMember } from "../modals";
 import { GroupsTable, GuestsTable, MembersTable } from "../tables";
-import { usePeople } from "./use-people";
+import { useInvitedMembers, useWorkspaceMemberships } from "./use-people";
+import { usePeopleActions } from "./use-people-actions";
 
 export function People() {
   const {
@@ -60,20 +61,12 @@ export function People() {
   /** Modals */
   const { openModal } = useModal();
   /** Tables */
-  const { members, guests } = usePeople();
-  const updateMember = useCallback(
-    async (id: string, role: Role) => {
-      await people?.update?.(id, role);
-      if (id === account.id) await actions?.update?.({ role });
-    },
-    [account.id, actions, people],
-  );
+  const { members, guests } = useWorkspaceMemberships();
+  const { update, remove } = usePeopleActions();
   const deleteMember = (id: string) =>
-    openModal(<DeleteMember onDelete={() => people?.delete?.(id)} />);
+    openModal(<DeleteMember onDelete={() => remove(id)} />);
   const deleteGuest = (id: string, name: string) =>
-    openModal(
-      <DeleteGuest name={name} onDelete={() => people?.delete?.(id)} />,
-    );
+    openModal(<DeleteGuest name={name} onDelete={() => remove(id)} />);
   /** Handlers */
   const [, copy] = useCopyToClipboard();
   const copyLink = async () => {
@@ -88,15 +81,10 @@ export function People() {
         onTrigger={() => void updateLink()}
       />,
     );
+  const invitedMembers = useInvitedMembers();
   const addMembers = () =>
     openModal(
-      <AddMembers
-        invitedMembers={[
-          ...members.map(({ user }) => user),
-          ...guests.map(({ user }) => user),
-        ]}
-        onAdd={people?.add}
-      />,
+      <AddMembers invitedMembers={invitedMembers} onAdd={people?.add} />,
     );
   const downloadCsv = useCallback(() => {
     const csv = generateGuestsCsv(guests);
@@ -194,7 +182,7 @@ export function People() {
             search={search}
             data={members}
             scopes={scopes}
-            onUpdate={updateMember}
+            onUpdate={(id, role) => update({ id, role })}
             onDelete={deleteMember}
           />
         </TabsContent>
@@ -203,7 +191,7 @@ export function People() {
             search={search}
             data={guests}
             scopes={scopes}
-            onUpdate={updateMember}
+            onUpdate={(id, role) => update({ id, role })}
             onDelete={deleteGuest}
           />
         </TabsContent>
