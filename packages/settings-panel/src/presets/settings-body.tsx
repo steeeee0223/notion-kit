@@ -4,20 +4,18 @@ import React from "react";
 
 import { useTranslation } from "@notion-kit/i18n";
 
-import { NotImplemented } from "../_components";
-import { SettingsSection, useSettings } from "../../core";
-import { Scope } from "../../lib";
-import { Account } from "../account";
-import { Connections } from "../connections";
-import type { TabType } from "../data";
-import { Notifications } from "../notifications";
-import { People } from "../people";
-import { Plans } from "../plans";
-import { Preferences } from "../preferences";
+import { SettingsSection } from "../core";
+import { NotImplemented } from "./_components";
+import { Account } from "./account";
+import { Connections } from "./connections";
+import type { TabType } from "./data";
 import { General } from "./general";
-import { General2 } from "./general-2";
 import { Identity } from "./identity";
+import { Notifications } from "./notifications";
 import { NotionAI } from "./notion-ai";
+import { People } from "./people";
+import { Plans } from "./plans";
+import { Preferences } from "./preferences";
 import { Security } from "./security";
 
 interface SettingsBodyProps {
@@ -29,7 +27,6 @@ export const SettingsBody: React.FC<SettingsBodyProps> = ({
   tab,
   onTabChange,
 }) => {
-  const { scopes } = useSettings();
   const { t } = useTranslation();
 
   switch (tab) {
@@ -42,7 +39,7 @@ export const SettingsBody: React.FC<SettingsBodyProps> = ({
     case "my-connections":
       return <Connections />;
     case "general":
-      return scopes.has(Scope.WorkspaceUpdate) ? <General /> : <General2 />;
+      return <General />;
     case "people":
       return <People />;
     case "security":
