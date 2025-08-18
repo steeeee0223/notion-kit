@@ -6,7 +6,12 @@ import { CircleHelp, Construction } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
 import { Trans, TransProps } from "@notion-kit/i18n";
-import { Button } from "@notion-kit/shadcn";
+import {
+  AvatarFallback,
+  AvatarImage,
+  Avatar as AvatarRoot,
+  Button,
+} from "@notion-kit/shadcn";
 
 import { SettingsPlan } from "../../core";
 
@@ -119,3 +124,20 @@ export const NotImplemented = () => {
     </div>
   );
 };
+
+interface AvatarProps {
+  className?: string;
+  src?: string;
+  fallback: string;
+}
+
+export function Avatar({ className, src, fallback }: AvatarProps) {
+  return (
+    <AvatarRoot className={cn("size-5", className)}>
+      <AvatarImage src={src} alt="" />
+      <AvatarFallback className="uppercase">
+        {fallback.at(0) ?? ""}
+      </AvatarFallback>
+    </AvatarRoot>
+  );
+}

@@ -73,11 +73,11 @@ export function AccountSection() {
               <div>
                 <Avatar
                   ref={avatarRef}
-                  className="size-[60px] border border-default/20 select-none"
+                  className="size-15"
                   onClick={updateAvatar}
                 >
                   <AvatarImage src={account.avatarUrl} />
-                  <AvatarFallback className="bg-default/5 text-2xl">
+                  <AvatarFallback className="text-2xl uppercase">
                     {account.preferredName.at(0) ?? ""}
                   </AvatarFallback>
                 </Avatar>

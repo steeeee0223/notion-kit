@@ -15,6 +15,8 @@ export function createAuthEnv() {
       NODE_ENV: z
         .enum(["development", "production", "test"])
         .prefault("development"),
+      MAILTRAP_API_KEY: z.string(),
+      MAILTRAP_INBOX_ID: z.string().optional(),
     },
     experimental__runtimeEnv: {},
     skipValidation:

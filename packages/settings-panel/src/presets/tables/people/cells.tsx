@@ -18,6 +18,7 @@ import {
   type SelectPresetProps,
 } from "@notion-kit/shadcn";
 
+import { Avatar } from "../../_components";
 import { Scope } from "../../../lib";
 import type { GuestRow, MemberRow, PartialRole } from "../../../lib";
 import { roleOptions } from "./constants";
@@ -70,13 +71,7 @@ export const UserCell = ({ user }: UserCellProps) => {
   return (
     <div className="z-20 flex h-full min-h-[42px] w-[220px] items-center justify-between pr-3">
       <div className="flex w-full items-center gap-2.5">
-        <div className="relative flex-shrink-0">
-          <img
-            src={user.avatarUrl}
-            alt={user.name[0]}
-            className="size-7 rounded-full border border-border"
-          />
-        </div>
+        <Avatar src={user.avatarUrl} fallback={user.name} className="size-7" />
         <div className="max-w-[164px]">
           <div className="truncate text-sm text-primary">{user.name}</div>
           <div className="truncate text-xs text-secondary">{user.email}</div>
@@ -181,7 +176,7 @@ export const MemberActionCell = ({
           <DropdownMenuItem
             variant="error"
             onClick={remove}
-            Icon={<Icon.Bye className="size-4 fill-red" />}
+            Icon={<Icon.Bye className="size-4" />}
             Body={isSelf ? "Leave workspace" : "Remove from workspace"}
           />
         </DropdownMenuGroup>

@@ -48,7 +48,7 @@ function TabsTrigger({
       )}
       {...props}
     >
-      <p className="inline-flex items-center rounded-sm px-2 py-1 hover:bg-default/5">
+      <p className="inline-flex items-center gap-1.5 rounded-sm px-2 py-1 hover:bg-default/5">
         {children}
       </p>
     </TabsPrimitive.Trigger>

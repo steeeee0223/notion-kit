@@ -16,7 +16,6 @@ export function DangerSection() {
     scopes,
     settings: { account, workspace },
     workspace: actions,
-    people,
   } = useSettings();
   /** i18n */
   const { t } = useTranslation("settings");
@@ -34,7 +33,7 @@ export function DangerSection() {
     openModal(
       <BaseModal
         {...modalsTrans.leave}
-        onTrigger={() => people?.delete?.(account.id)}
+        onTrigger={() => actions?.leave?.(account.id)}
       />,
     );
 

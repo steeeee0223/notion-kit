@@ -1,1 +1,7 @@
-export { HintButton, NotImplemented, TextLinks, Content } from "./helper";
+export {
+  HintButton,
+  NotImplemented,
+  TextLinks,
+  Content,
+  Avatar,
+} from "./helper";

@@ -21,7 +21,7 @@ import {
 import { Spinner } from "@notion-kit/spinner";
 import { TagsInput } from "@notion-kit/tags-input";
 
-import { HintButton } from "../_components";
+import { Avatar, HintButton } from "../_components";
 import type { PartialRole } from "../../lib";
 
 enum Heading {
@@ -186,13 +186,7 @@ const Item: React.FC<ItemProps> = ({
     >
       <div className="mr-2.5 flex items-center justify-center">
         {invited ? (
-          <div className="relative">
-            <img
-              src={avatarUrl}
-              alt={name.at(0)?.toUpperCase()}
-              className="size-5 rounded-full border border-border"
-            />
-          </div>
+          <Avatar src={avatarUrl} fallback={name} />
         ) : (
           <Mail className="size-5 flex-shrink-0 text-primary" />
         )}

@@ -57,6 +57,7 @@ export interface SettingsActions {
   workspace?: {
     update?: (data: Partial<Omit<WorkspaceStore, "id">>) => Promise<void>;
     delete?: (id: string) => Promise<void>;
+    leave?: (id: string) => Promise<void>;
     resetLink?: () => Promise<void>;
   };
   /** Connections */

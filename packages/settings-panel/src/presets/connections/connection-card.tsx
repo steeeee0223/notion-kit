@@ -12,6 +12,8 @@ import {
   CardTitle,
 } from "@notion-kit/shadcn";
 
+import { Avatar } from "../_components";
+
 export interface ConnectionCardProps {
   id: string;
   imageUrl: string;
@@ -23,7 +25,6 @@ export interface ConnectionCardProps {
 }
 
 export const ConnectionCard = ({
-  id,
   imageUrl,
   title,
   description,
@@ -42,7 +43,11 @@ export const ConnectionCard = ({
     >
       <CardContent className="flex flex-col items-start gap-2">
         <CardHeader className="px-0 py-1">
-          <img src={imageUrl} alt={id} className="size-7 rounded-md" />
+          <Avatar
+            src={imageUrl}
+            fallback={title}
+            className="size-7 rounded-md border-none"
+          />
         </CardHeader>
         <CardTitle className="text-sm/[1.3] font-medium">{title}</CardTitle>
         <CardDescription className="max-h-[72px] overflow-hidden text-xs/[1.3] text-secondary">

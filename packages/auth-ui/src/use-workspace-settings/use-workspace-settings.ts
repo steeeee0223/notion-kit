@@ -4,6 +4,7 @@ import { useMemo } from "react";
 
 import { IconObject, Plan, Role, type IconData } from "@notion-kit/schemas";
 import type {
+  Memberships,
   SettingsActions,
   WorkspaceStore,
 } from "@notion-kit/settings-panel";
@@ -24,29 +25,29 @@ const initialWorkspaceStore: WorkspaceStore = {
 
 export function useWorkspaceSettings() {
   const { auth, redirect } = useAuth();
-  const { data } = useActiveWorkspace();
+  const { data: workspace } = useActiveWorkspace();
 
   const workspaceStore = useMemo<WorkspaceStore>(() => {
-    if (!data) return initialWorkspaceStore;
-    const res = IconObject.safeParse(JSON.parse(data.logo ?? ""));
+    if (!workspace) return initialWorkspaceStore;
+    const res = IconObject.safeParse(JSON.parse(workspace.logo ?? ""));
     const icon: IconData = res.success
       ? res.data
-      : { type: "text", src: data.name };
+      : { type: "text", src: workspace.name };
 
     return {
-      id: data.id,
-      name: data.name,
+      id: workspace.id,
+      name: workspace.name,
       icon,
-      slug: data.slug,
+      slug: workspace.slug,
       inviteLink: "",
       // TODO handle memberships
       plan: Plan.FREE,
       role: Role.OWNER,
     };
-  }, [data]);
+  }, [workspace]);
 
   const actions = useMemo<SettingsActions>(() => {
-    const organizationId = data?.id;
+    const organizationId = workspace?.id;
     if (!organizationId) return {};
     return {
       workspace: {
@@ -61,7 +62,7 @@ export function useWorkspaceSettings() {
             },
             {
               onSuccess: () => void toast.success("Workspace updated"),
-              onError: (e) => handleError(e, "Update workspace error"),
+              onError: (e) => handleError(e, "Update workspace failed"),
             },
           );
         },
@@ -73,13 +74,72 @@ export function useWorkspaceSettings() {
                 toast.success("Workspace deleted");
                 redirect?.("/");
               },
-              onError: (e) => handleError(e, "Delete workspace error"),
+              onError: (e) => handleError(e, "Delete workspace failed"),
+            },
+          );
+        },
+        leave: async () => {
+          await auth.organization.leave(
+            { organizationId },
+            {
+              onSuccess: () => redirect?.("/"),
+              onError: (e) => handleError(e, "Leave workspace failed"),
+            },
+          );
+        },
+      },
+      people: {
+        getAll: async () => {
+          const result = await auth.organization.listMembers({
+            query: { organizationId },
+          });
+          if (!result.data) {
+            handleError(result, "Fetch members failed");
+            return {};
+          }
+          return result.data.members.reduce<Memberships>((acc, m) => {
+            acc[m.userId] = {
+              role: m.role as Role,
+              user: {
+                id: m.userId,
+                name: m.user.name,
+                email: m.user.email,
+                avatarUrl: m.user.image ?? "",
+              },
+            };
+            return acc;
+          }, {});
+        },
+        add: async (emails) => {
+          await Promise.all(
+            emails.map((email) =>
+              auth.organization.inviteMember(
+                {
+                  organizationId,
+                  email,
+                  role: "member", // TODO
+                  resend: true,
+                },
+                {
+                  onSuccess: () => void toast.success("Invitation mail sent"),
+                  onError: (e) => handleError(e, "Invite user failed"),
+                },
+              ),
+            ),
+          );
+        },
+        delete: async (id) => {
+          await auth.organization.removeMember(
+            { organizationId, memberIdOrEmail: id },
+            {
+              onSuccess: () => void toast.success("Member removed"),
+              onError: (e) => handleError(e, "Remove member failed"),
             },
           );
         },
       },
     };
-  }, [auth.organization, data?.id, redirect]);
+  }, [auth.organization, workspace?.id, redirect]);
 
   return {
     workspaceStore,
