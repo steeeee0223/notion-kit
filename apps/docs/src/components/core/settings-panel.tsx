@@ -27,7 +27,6 @@ const mockSettings = {
     language: "en",
   },
   workspace: {},
-  memberships: {},
 } as SettingsStore;
 
 const settingsTabs = [

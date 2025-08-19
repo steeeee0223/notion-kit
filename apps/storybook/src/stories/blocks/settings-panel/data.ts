@@ -206,7 +206,6 @@ export const mockSettings: SettingsStore = {
     language: "en",
     currentSessionId: mockSessions[0]!.id,
   },
-  memberships: {},
 };
 
 export const mockConnections: Connection[] = [

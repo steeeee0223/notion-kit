@@ -21,16 +21,11 @@ import type {
   Passkey,
   SessionRow,
   SettingsStore,
-  UpdateSettings,
   WorkspaceStore,
 } from "../lib";
 import { getScopes, Scope } from "../lib";
 
 export interface SettingsActions {
-  /**
-   * @deprecated Use `account.update`, `workspace.update` instead
-   */
-  updateSettings?: UpdateSettings;
   uploadFile?: (file: File) => Promise<void>;
   /** Account */
   account?: {

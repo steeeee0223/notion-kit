@@ -112,33 +112,12 @@ export interface GroupOption {
   memberCount: number;
 }
 
-type Membership =
-  | ({ role: Role.OWNER | Role.MEMBER } & MemberRow)
-  | ({ role: Role.GUEST } & GuestRow);
-
 export type Memberships = Record<string, { role: Role; user: User }>;
 
 export interface SettingsStore {
   workspace: WorkspaceStore;
   account: AccountStore;
-  /**
-   * @deprecated
-   * key: userId
-   */
-  memberships: Record<string, Membership>;
 }
-
-/**
- * @deprecated
- */
-export interface UpdateSettingsParams {
-  memberships?: Record<string, Membership>;
-}
-/**
- * @deprecated
- */
-export type UpdateSettings = (data: UpdateSettingsParams) => Promise<void>;
-
 export interface WorkspaceMemberships {
   members: MemberRow[];
   guests: GuestRow[];
