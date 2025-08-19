@@ -50,18 +50,13 @@ export function useCreateWorkspaceForm({
 
   const submit = handleSubmit(async (values) => {
     const slug = await generateUniqueSlug(values.name);
-    const res = await auth.organization.create(
-      {
-        name: values.name,
-        slug,
-        logo: JSON.stringify(values.icon),
-        keepCurrentActiveOrganization: false,
-      },
-      {
-        onError: (error) => handleError(error, "Create workspace error"),
-      },
-    );
-    if (!res.data) return;
+    const res = await auth.organization.create({
+      name: values.name,
+      slug,
+      logo: JSON.stringify(values.icon),
+      keepCurrentActiveOrganization: false,
+    });
+    if (!res.data) return handleError(res, "Create workspace error");
     onSuccess?.(res.data);
     await auth.organization.setActive({
       organizationId: res.data.id,

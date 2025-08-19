@@ -8,9 +8,9 @@ import { Role, User } from "@notion-kit/schemas";
 import { useSettings } from "../../core";
 import {
   createDefaultFn,
-  InvitationRow,
-  Memberships,
   QUERY_KEYS,
+  type Invitations,
+  type Memberships,
   type WorkspaceMemberships,
 } from "../../lib";
 
@@ -30,18 +30,18 @@ export function usePeople<T = Memberships>(
   });
 }
 
-export function useInvitations<T = InvitationRow[]>(
-  selector?: (data: InvitationRow[]) => T,
+export function useInvitations<T = Invitations>(
+  selector?: (data: Invitations) => T,
 ) {
   const {
     settings: { workspace },
     invitations: actions,
   } = useSettings();
 
-  return useQuery<InvitationRow[], Error, T>({
-    initialData: [],
+  return useQuery<Invitations, Error, T>({
+    initialData: {},
     queryKey: QUERY_KEYS.invitations(workspace.id),
-    queryFn: actions?.getAll ?? createDefaultFn([]),
+    queryFn: actions?.getAll ?? createDefaultFn({}),
     select: selector,
   });
 }
@@ -75,7 +75,7 @@ export function useInvitedMembers() {
     Object.values(res).map((mem) => mem.user),
   );
   const { data: invitations } = useInvitations((res) =>
-    res.map<User>((invitation) => ({
+    Object.values(res).map<User>((invitation) => ({
       id: invitation.id,
       email: invitation.email,
       name: invitation.email,

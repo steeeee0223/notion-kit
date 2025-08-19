@@ -4,6 +4,7 @@ import { useMemo } from "react";
 
 import { IconObject, Plan, Role, type IconData } from "@notion-kit/schemas";
 import type {
+  Invitations,
   Memberships,
   SettingsActions,
   WorkspaceStore,
@@ -110,18 +111,65 @@ export function useWorkspaceSettings() {
             return acc;
           }, {});
         },
-
         delete: async (id) => {
           await auth.organization.removeMember(
             { organizationId, memberIdOrEmail: id },
-            {
-              onSuccess: () => void toast.success("Member removed"),
-              onError: (e) => handleError(e, "Remove member failed"),
-            },
+            { throw: true },
           );
         },
       },
       invitations: {
+        getAll: async () => {
+          const res = await auth.organization.listInvitations({
+            query: { organizationId },
+          });
+          if (res.error) {
+            handleError(res, "Fetch invitations failed");
+            return {};
+          }
+          const invitations: Invitations = {};
+          const invitationMap: Record<string, string[]> = {}; // maps: invitor id -> invitation ids
+          res.data.forEach((invitation) => {
+            if (invitation.status === "accepted") return;
+            if (invitationMap[invitation.inviterId]) {
+              invitationMap[invitation.inviterId]!.push(invitation.id);
+            } else {
+              invitationMap[invitation.inviterId] = [invitation.id];
+            }
+            invitations[invitation.id] = {
+              id: invitation.id,
+              email: invitation.email,
+              role: invitation.role as Role,
+              status: invitation.status,
+              invitedBy: {
+                id: invitation.inviterId,
+                name: "Unknown",
+                email: "",
+                avatarUrl: "",
+              },
+            };
+          });
+          const members = await auth.organization.listMembers({
+            query: { organizationId },
+          });
+          if (members.error) {
+            console.error(`[invitations:getAll] Fetch error`, members.error);
+            return invitations;
+          }
+          members.data.members.forEach((mem) => {
+            const invitationIds = invitationMap[mem.userId];
+            if (!invitationIds) return;
+            invitationIds.forEach((invitationId) => {
+              invitations[invitationId]!.invitedBy = {
+                id: mem.userId,
+                name: mem.user.name,
+                email: mem.user.email,
+                avatarUrl: mem.user.image ?? "",
+              };
+            });
+          });
+          return invitations;
+        },
         add: async ({ emails }) => {
           await Promise.all(
             emails.map((email) =>
@@ -132,12 +180,15 @@ export function useWorkspaceSettings() {
                   role: "member", // TODO
                   resend: true,
                 },
-                {
-                  onSuccess: () => void toast.success("Invitation mail sent"),
-                  onError: (e) => handleError(e, "Invite user failed"),
-                },
+                { throw: true },
               ),
             ),
+          );
+        },
+        cancel: async (invitationId) => {
+          await auth.organization.cancelInvitation(
+            { invitationId },
+            { throw: true },
           );
         },
       },

@@ -16,7 +16,7 @@ import type {
   AccountStore,
   Connection,
   ConnectionStrategy,
-  InvitationRow,
+  Invitations,
   Memberships,
   Passkey,
   SessionRow,
@@ -69,7 +69,7 @@ export interface SettingsActions {
     delete?: (id: string) => Promise<void>;
   };
   invitations?: {
-    getAll?: () => Promise<InvitationRow[]>;
+    getAll?: () => Promise<Invitations>;
     add?: (data: { emails: string[]; role: Role }) => Promise<void>;
     cancel?: (id: string) => Promise<void>;
   };

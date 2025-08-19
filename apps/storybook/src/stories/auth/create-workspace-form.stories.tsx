@@ -5,7 +5,7 @@ import { CreateWorkspaceForm } from "@notion-kit/auth-ui";
 import { withAuth } from "@/lib/decorators";
 
 const meta = {
-  title: "blocks/Create Workspace Form",
+  title: "auth/Create Workspace Form",
   component: CreateWorkspaceForm,
   parameters: {
     layout: "centered",

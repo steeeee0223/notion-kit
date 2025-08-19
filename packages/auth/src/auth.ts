@@ -97,7 +97,7 @@ export function createAuth(env: AuthEnv) {
             from: { email: inviter.user.email, name: inviter.user.name },
             to: [{ email }],
             subject: `You're invited to join ${organization.name}`,
-            text: `You've been invited to join ${organization.name}. Please click the link below to accept the invitation:\n\n${inviteLink}\n\nBest,\nSteeeee at WorXpace`,
+            text: `${inviter.user.name} has invited you to join ${organization.name}. Please click the link below to accept the invitation:\n\n${inviteLink}\n\nBest,\nSteeeee at WorXpace`,
           });
         },
         teams: {

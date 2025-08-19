@@ -105,6 +105,7 @@ export interface InvitationRow {
   invitedBy: User;
   status: "pending" | "rejected" | "canceled";
 }
+export type Invitations = Record<string, InvitationRow>;
 
 export interface GroupOption {
   id: string;
