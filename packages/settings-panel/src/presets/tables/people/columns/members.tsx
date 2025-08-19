@@ -4,11 +4,11 @@ import type { ColumnDef, Row } from "@tanstack/react-table";
 
 import { Role } from "@notion-kit/schemas";
 
-import { Scope, type MemberRow } from "../../../../lib";
+import { MemberRow, PartialRole, Scope } from "../../../../lib";
 import {
   Header,
   MemberActionCell,
-  RoleCell,
+  RoleSelectCell,
   SortingToggle,
   TeamspacesCell,
   UserCell,
@@ -28,7 +28,6 @@ export const getMemberColumns = ({
   onDelete,
 }: GetMemberColumnsOptions): ColumnDef<MemberRow, MemberRow>[] => [
   {
-    id: "user",
     accessorKey: "user",
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
@@ -40,30 +39,22 @@ export const getMemberColumns = ({
         />
       );
     },
-    cell: ({ row }) => <UserCell user={row.getValue("user")} />,
+    cell: ({ row }) => <UserCell user={row.original.user} />,
     filterFn: (row, _columnId, filterValue) =>
-      row
-        .getValue<MemberRow["user"]>("user")
-        .email.trim()
-        .toLowerCase()
-        .includes(filterValue as string),
+      row.original.user.email.toLowerCase().includes(filterValue as string),
   },
   {
     accessorKey: "teamspaces",
     header: () => (
       <Header title="Teamspaces" className="min-w-[175px] pl-2 text-sm" />
     ),
-    cell: ({ row }) => (
-      <TeamspacesCell teamspaces={row.getValue("teamspaces")} />
-    ),
+    cell: ({ row }) => <TeamspacesCell teamspaces={row.original.teamspaces} />,
   },
   {
     accessorKey: "groups",
-    header: () => <Header title="Groups" className="min-w-[120px] text-sm" />,
+    header: () => <Header title="Groups" className="min-w-30 text-sm" />,
     cell: () => (
-      <div className="min-w-[120px] cursor-default text-sm text-muted">
-        None
-      </div>
+      <div className="min-w-30 cursor-default text-sm text-muted">None</div>
     ),
   },
   {
@@ -79,9 +70,9 @@ export const getMemberColumns = ({
       );
     },
     cell: ({ row }) => (
-      <RoleCell
+      <RoleSelectCell
         scopes={scopes}
-        role={row.getValue("role")}
+        role={row.original.role as PartialRole}
         onSelect={(role) => onUpdate?.(row.original.user.id, role)}
       />
     ),

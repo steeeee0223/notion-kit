@@ -29,15 +29,27 @@ import { TextLinks } from "../_components";
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
 import { generateGuestsCsv, Scope } from "../../lib";
 import { AddMembers, DeleteGuest, DeleteMember } from "../modals";
-import { GroupsTable, GuestsTable, MembersTable } from "../tables";
+import {
+  GroupsTable,
+  GuestsTable,
+  InvitationsTable,
+  MembersTable,
+} from "../tables";
+import { useInvitationsActions } from "./use-invitations-actions";
 import { useInvitedMembers, useWorkspaceMemberships } from "./use-people";
 import { usePeopleActions } from "./use-people-actions";
+
+enum PeopleTabs {
+  Members = "members",
+  Guests = "guests",
+  Groups = "groups",
+  Invitations = "invitations",
+}
 
 export function People() {
   const {
     scopes,
     settings: { account, workspace },
-    people,
     workspace: actions,
   } = useSettings();
   /** i18n */
@@ -63,6 +75,7 @@ export function People() {
   /** Tables */
   const { members, guests } = useWorkspaceMemberships();
   const { update, remove } = usePeopleActions();
+  const { invite: inviteMember, cancel } = useInvitationsActions();
   const deleteMember = (id: string) =>
     openModal(<DeleteMember onDelete={() => remove(id)} />);
   const deleteGuest = (id: string, name: string) =>
@@ -84,7 +97,7 @@ export function People() {
   const invitedMembers = useInvitedMembers();
   const addMembers = () =>
     openModal(
-      <AddMembers invitedMembers={invitedMembers} onAdd={people?.add} />,
+      <AddMembers invitedMembers={invitedMembers} onAdd={inviteMember} />,
     );
   const downloadCsv = useCallback(() => {
     const csv = generateGuestsCsv(guests);
@@ -125,17 +138,22 @@ export function People() {
           <Separator className="my-4" />
         </>
       )}
-      <Tabs defaultValue="members" className="relative mt-1 w-full">
+      <Tabs defaultValue={PeopleTabs.Members} className="relative mt-1 w-full">
         <TabsList className="gap-3 overflow-y-auto p-0">
           <div className="flex grow">
-            <TabsTrigger value="members">
-              {tabs.members}{" "}
+            <TabsTrigger value={PeopleTabs.Members}>
+              {tabs.members}
               <span className="text-muted">{members.length}</span>
             </TabsTrigger>
-            <TabsTrigger value="guests">
-              {tabs.guests} <span className="text-muted">{guests.length}</span>
+            <TabsTrigger value={PeopleTabs.Guests}>
+              {tabs.guests}
+              <span className="text-muted">{guests.length}</span>
             </TabsTrigger>
-            <TabsTrigger value="groups">{tabs.groups}</TabsTrigger>
+            <TabsTrigger value={PeopleTabs.Groups}>{tabs.groups}</TabsTrigger>
+            <TabsTrigger value={PeopleTabs.Invitations}>
+              {tabs.invitations}
+              <span className="text-muted">{guests.length}</span>
+            </TabsTrigger>
           </div>
           <div ref={searchRef} className="flex items-center justify-end gap-1">
             <div className="flex items-center">
@@ -176,7 +194,7 @@ export function People() {
             </Button>
           </div>
         </TabsList>
-        <TabsContent value="members" className="mt-0 bg-transparent">
+        <TabsContent value={PeopleTabs.Members} className="mt-0 bg-transparent">
           <MembersTable
             accountId={account.id}
             search={search}
@@ -186,7 +204,7 @@ export function People() {
             onDelete={deleteMember}
           />
         </TabsContent>
-        <TabsContent value="guests" className="mt-0 bg-transparent">
+        <TabsContent value={PeopleTabs.Guests} className="mt-0 bg-transparent">
           <GuestsTable
             search={search}
             data={guests}
@@ -195,7 +213,7 @@ export function People() {
             onDelete={deleteGuest}
           />
         </TabsContent>
-        <TabsContent value="groups" className="mt-0 bg-transparent">
+        <TabsContent value={PeopleTabs.Groups} className="mt-0 bg-transparent">
           {scopes.has(Scope.Upgrade) &&
             (workspace.plan === Plan.FREE ||
               workspace.plan === Plan.EDUCATION) && (
@@ -219,6 +237,12 @@ export function People() {
               </>
             )}
           <GroupsTable search={search} data={[]} />
+        </TabsContent>
+        <TabsContent
+          value={PeopleTabs.Invitations}
+          className="mt-0 bg-transparent"
+        >
+          <InvitationsTable scopes={scopes} data={[]} onCancel={cancel} />
         </TabsContent>
       </Tabs>
     </SettingsSection>

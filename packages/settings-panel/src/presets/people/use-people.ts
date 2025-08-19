@@ -1,20 +1,22 @@
 "use client";
 
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import { Role } from "@notion-kit/schemas";
+import { Role, User } from "@notion-kit/schemas";
 
 import { useSettings } from "../../core";
 import {
   createDefaultFn,
+  InvitationRow,
   Memberships,
   QUERY_KEYS,
   type WorkspaceMemberships,
 } from "../../lib";
 
-type Selector<T = Memberships> = (data: Memberships) => T;
-
-export function usePeople<T = Memberships>(selector?: Selector<T>) {
+export function usePeople<T = Memberships>(
+  selector?: (data: Memberships) => T,
+) {
   const {
     settings: { workspace },
     people: actions,
@@ -24,6 +26,22 @@ export function usePeople<T = Memberships>(selector?: Selector<T>) {
     initialData: {},
     queryKey: QUERY_KEYS.members(workspace.id),
     queryFn: actions?.getAll ?? createDefaultFn({}),
+    select: selector,
+  });
+}
+
+export function useInvitations<T = InvitationRow[]>(
+  selector?: (data: InvitationRow[]) => T,
+) {
+  const {
+    settings: { workspace },
+    invitations: actions,
+  } = useSettings();
+
+  return useQuery<InvitationRow[], Error, T>({
+    initialData: [],
+    queryKey: QUERY_KEYS.invitations(workspace.id),
+    queryFn: actions?.getAll ?? createDefaultFn([]),
     select: selector,
   });
 }
@@ -45,17 +63,27 @@ export function useWorkspaceMemberships() {
         }
         return acc;
       },
-      { members: [], guests: [] },
+      { members: [], guests: [], invitations: [] },
     ),
   );
-  return data;
+  const { data: invitations } = useInvitations();
+  return useMemo(() => ({ ...data, invitations }), [data, invitations]);
 }
 
 export function useInvitedMembers() {
-  const { data } = usePeople((res) =>
+  const { data: people } = usePeople((res) =>
     Object.values(res).map((mem) => mem.user),
   );
-  return data;
+  const { data: invitations } = useInvitations((res) =>
+    res.map<User>((invitation) => ({
+      id: invitation.id,
+      email: invitation.email,
+      name: invitation.email,
+      avatarUrl: "",
+    })),
+  );
+
+  return useMemo(() => [...people, ...invitations], [people, invitations]);
 }
 
 export function useGuestsCount() {

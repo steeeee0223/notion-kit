@@ -110,7 +110,19 @@ export function useWorkspaceSettings() {
             return acc;
           }, {});
         },
-        add: async (emails) => {
+
+        delete: async (id) => {
+          await auth.organization.removeMember(
+            { organizationId, memberIdOrEmail: id },
+            {
+              onSuccess: () => void toast.success("Member removed"),
+              onError: (e) => handleError(e, "Remove member failed"),
+            },
+          );
+        },
+      },
+      invitations: {
+        add: async ({ emails }) => {
           await Promise.all(
             emails.map((email) =>
               auth.organization.inviteMember(
@@ -126,15 +138,6 @@ export function useWorkspaceSettings() {
                 },
               ),
             ),
-          );
-        },
-        delete: async (id) => {
-          await auth.organization.removeMember(
-            { organizationId, memberIdOrEmail: id },
-            {
-              onSuccess: () => void toast.success("Member removed"),
-              onError: (e) => handleError(e, "Remove member failed"),
-            },
           );
         },
       },

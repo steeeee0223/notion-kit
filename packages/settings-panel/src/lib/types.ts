@@ -95,6 +95,17 @@ export interface GuestRow {
   access: PageAccess[];
 }
 
+export interface InvitationRow {
+  /**
+   * @prop the unique identifier for the invitation
+   */
+  id: string;
+  email: string;
+  role: Role;
+  invitedBy: User;
+  status: "pending" | "rejected" | "canceled";
+}
+
 export interface GroupOption {
   id: string;
   name: string;
@@ -131,4 +142,5 @@ export type UpdateSettings = (data: UpdateSettingsParams) => Promise<void>;
 export interface WorkspaceMemberships {
   members: MemberRow[];
   guests: GuestRow[];
+  invitations: InvitationRow[];
 }

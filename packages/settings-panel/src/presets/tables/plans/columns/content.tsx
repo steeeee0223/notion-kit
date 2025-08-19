@@ -14,7 +14,7 @@ export const contentColumns: ColumnDef<ContentPlanRow>[] = [
     accessorKey: "title",
     header: () => null,
     cell: ({ row }) => (
-      <div className="max-w-[118px] min-w-0 p-3">{row.getValue("title")}</div>
+      <div className="max-w-[118px] min-w-0 p-3">{row.original.title}</div>
     ),
   },
   ...Object.values(Plan)
@@ -22,6 +22,6 @@ export const contentColumns: ColumnDef<ContentPlanRow>[] = [
     .map<ColumnDef<ContentPlanRow>>((plan) => ({
       accessorKey: plan,
       header: () => null,
-      cell: ({ row }) => <ContentCell {...row.getValue(plan)} />,
+      cell: ({ row }) => <ContentCell {...row.original[plan]} />,
     })),
 ];

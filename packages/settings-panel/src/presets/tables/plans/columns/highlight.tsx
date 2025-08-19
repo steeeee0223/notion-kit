@@ -17,7 +17,7 @@ export const getHighlightColumns = (
     accessorKey: "title",
     header: () => <div className="w-[118px]" />,
     cell: ({ row }) => (
-      <div className="p-3 font-medium">{row.getValue("title")}</div>
+      <div className="p-3 font-medium">{row.original.title}</div>
     ),
   },
   {
@@ -25,7 +25,7 @@ export const getHighlightColumns = (
     header: () => (
       <PlanHeader title={"Free"} description={"$0 per member / month"} />
     ),
-    cell: ({ row }) => <ListCell items={row.getValue("free")} />,
+    cell: ({ row }) => <ListCell items={row.original.free} />,
   },
   {
     accessorKey: Plan.PLUS,
@@ -47,7 +47,7 @@ export const getHighlightColumns = (
         </PlanHeader>
       </TooltipProvider>
     ),
-    cell: ({ row }) => <ListCell items={row.getValue("plus")} />,
+    cell: ({ row }) => <ListCell items={row.original.plus} />,
   },
   {
     accessorKey: Plan.BUSINESS,
@@ -74,7 +74,7 @@ export const getHighlightColumns = (
         </PlanHeader>
       </TooltipProvider>
     ),
-    cell: ({ row }) => <ListCell items={row.getValue("business")} />,
+    cell: ({ row }) => <ListCell items={row.original.business} />,
   },
   {
     accessorKey: Plan.ENTERPRISE,
@@ -95,6 +95,6 @@ export const getHighlightColumns = (
         </PlanHeader>
       </TooltipProvider>
     ),
-    cell: ({ row }) => <ListCell items={row.getValue("enterprise")} />,
+    cell: ({ row }) => <ListCell items={row.original.enterprise} />,
   },
 ];

@@ -34,7 +34,7 @@ const emailSchema = z.email();
 type DetailedAccount = User & { invited?: boolean };
 interface AddMembersProps {
   invitedMembers: User[];
-  onAdd?: (emails: string[], role: Role) => void;
+  onAdd?: (data: { emails: string[]; role: Role }) => void;
 }
 
 export const AddMembers: React.FC<AddMembersProps> = ({
@@ -66,7 +66,7 @@ export const AddMembers: React.FC<AddMembersProps> = ({
       : null;
   /** Actions */
   const [invite, loading] = useTransition(() => {
-    onAdd?.(emails, role);
+    onAdd?.({ emails, role });
     onClose();
   });
   const onInputChange = (input: string) => {

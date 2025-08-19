@@ -19,14 +19,14 @@ export function createConnectionColumns({
     {
       accessorKey: "connection",
       header: () => <Header title="Connection" />,
-      cell: ({ row }) => <ConnectionCell {...row.getValue("connection")} />,
+      cell: ({ row }) => <ConnectionCell {...row.original.connection} />,
     },
     {
       accessorKey: "scopes",
       header: () => <Header title="Access" />,
       cell: ({ row }) => (
         <div className="flex flex-col text-xs">
-          {row.getValue<string[]>("scopes").map((scope, i) => (
+          {row.original.scopes.map((scope, i) => (
             <span key={i} className="w-full">
               {scope}
             </span>

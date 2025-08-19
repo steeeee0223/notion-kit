@@ -90,6 +90,7 @@ export function createAuth(env: AuthEnv) {
       twoFactor(),
       passkey({ rpName: "Notion Auth" }),
       organization({
+        cancelPendingInvitationsOnReInvite: true,
         sendInvitationEmail: async ({ id, email, inviter, organization }) => {
           const inviteLink = `${env.BETTER_AUTH_URL}/accept-invitation/${id}`;
           await sendEmail(mailApi, env.MAILTRAP_INBOX_ID ?? "", {
