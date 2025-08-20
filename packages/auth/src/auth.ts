@@ -9,9 +9,16 @@ import { passkey, type Passkey } from "better-auth/plugins/passkey";
 
 import { db, updateAccountName, updateSessionData } from "./db";
 import { AuthEnv } from "./env";
-import { additionalSessionFields, additionalUserFields } from "./lib";
+import {
+  additionalSessionFields,
+  additionalUserFields,
+  createMailtrapApi,
+  sendEmail,
+} from "./lib";
 
 export function createAuth(env: AuthEnv) {
+  const mailApi = createMailtrapApi(env.MAILTRAP_API_KEY);
+
   const config = {
     appName: "Notion Auth",
     database: drizzleAdapter(db, { provider: "pg" }),
@@ -83,6 +90,16 @@ export function createAuth(env: AuthEnv) {
       twoFactor(),
       passkey({ rpName: "Notion Auth" }),
       organization({
+        cancelPendingInvitationsOnReInvite: true,
+        sendInvitationEmail: async ({ id, email, inviter, organization }) => {
+          const inviteLink = `${env.BETTER_AUTH_URL}/accept-invitation/${id}`;
+          await sendEmail(mailApi, env.MAILTRAP_INBOX_ID ?? "", {
+            from: { email: inviter.user.email, name: inviter.user.name },
+            to: [{ email }],
+            subject: `You're invited to join ${organization.name}`,
+            text: `${inviter.user.name} has invited you to join ${organization.name}. Please click the link below to accept the invitation:\n\n${inviteLink}\n\nBest,\nSteeeee at WorXpace`,
+          });
+        },
         teams: {
           enabled: true,
           maximumTeams: 10, // Optional: limit teams per organization

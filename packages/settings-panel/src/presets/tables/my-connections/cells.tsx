@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@notion-kit/shadcn";
 
+import { Avatar } from "../../_components";
 import { connectionCardData } from "../../connections";
 
 export const Header = ({ title }: { title: string }) => {
@@ -26,11 +27,7 @@ export const ConnectionCell = ({ type, account }: ConnectionCellProps) => {
   if (!connection) return null;
   return (
     <div className="mr-3 flex items-center">
-      <img
-        src={connection.imageUrl}
-        alt={type}
-        className="block size-7 shrink-0"
-      />
+      <Avatar src={connection.imageUrl} fallback={type} className="size-7" />
       <div className="ml-[15px]">
         <div className="truncate text-sm text-primary">{connection.title}</div>
         <div className="truncate text-xs text-secondary">{account}</div>

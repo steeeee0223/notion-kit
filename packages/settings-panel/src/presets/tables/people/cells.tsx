@@ -6,6 +6,7 @@ import { CircleArrowUp, MoreHorizontalIcon } from "lucide-react";
 import { cn } from "@notion-kit/cn";
 import { useTransition } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
+import { Role } from "@notion-kit/schemas";
 import {
   Button,
   DropdownMenu,
@@ -18,9 +19,10 @@ import {
   type SelectPresetProps,
 } from "@notion-kit/shadcn";
 
+import { Avatar } from "../../_components";
 import { Scope } from "../../../lib";
 import type { GuestRow, MemberRow, PartialRole } from "../../../lib";
-import { roleOptions } from "./constants";
+import { roleLabels, roleOptions } from "./constants";
 
 interface HeaderProps {
   title: string;
@@ -52,7 +54,7 @@ export const SortingToggle = ({
   isSorted,
   toggle,
 }: SortingToggleProps) => (
-  <Button variant="hint" size="xs" onClick={toggle} className="px-1">
+  <Button variant="hint" size="xs" onClick={toggle} className="gap-0.5 px-1">
     <Header title={title} className="text-sm" />
     {isSorted &&
       (isSorted === "asc" ? (
@@ -70,13 +72,7 @@ export const UserCell = ({ user }: UserCellProps) => {
   return (
     <div className="z-20 flex h-full min-h-[42px] w-[220px] items-center justify-between pr-3">
       <div className="flex w-full items-center gap-2.5">
-        <div className="relative flex-shrink-0">
-          <img
-            src={user.avatarUrl}
-            alt={user.name[0]}
-            className="size-7 rounded-full border border-border"
-          />
-        </div>
+        <Avatar src={user.avatarUrl} fallback={user.name} className="size-7" />
         <div className="max-w-[164px]">
           <div className="truncate text-sm text-primary">{user.name}</div>
           <div className="truncate text-xs text-secondary">{user.email}</div>
@@ -122,18 +118,37 @@ export const TeamspacesCell = ({ teamspaces }: TeamspacesCellProps) => {
 };
 
 interface RoleCellProps {
+  className?: string;
+  role: Role;
+}
+
+export function RoleCell({ className, role }: RoleCellProps) {
+  return (
+    <div
+      className={cn("w-auto cursor-default text-sm text-secondary", className)}
+    >
+      {roleLabels[role]}
+    </div>
+  );
+}
+
+interface RoleSelectCellProps {
   role: PartialRole;
-  scopes: Set<Scope>;
+  scopes?: Set<Scope>;
   onSelect?: (role: PartialRole) => void | Promise<void>;
 }
-export const RoleCell = ({ role, scopes, onSelect }: RoleCellProps) => {
+export function RoleSelectCell({
+  role,
+  scopes,
+  onSelect,
+}: RoleSelectCellProps) {
   const [select, isUpdating] = useTransition((role: PartialRole) =>
     onSelect?.(role),
   );
 
   return (
     <div className="flex items-center">
-      {scopes.has(Scope.MemberUpdate) ? (
+      {scopes?.has(Scope.MemberUpdate) ? (
         <Select
           className="m-0 w-auto"
           options={roleOptions}
@@ -144,13 +159,11 @@ export const RoleCell = ({ role, scopes, onSelect }: RoleCellProps) => {
           disabled={isUpdating}
         />
       ) : (
-        <div className="w-auto cursor-default text-sm text-secondary">
-          {roleOptions[role].label}
-        </div>
+        <RoleCell role={role} />
       )}
     </div>
   );
-};
+}
 
 const Custom: SelectPresetProps["renderOption"] = ({ option }) => (
   <div className="min-w-0 truncate text-secondary">
@@ -176,12 +189,12 @@ export const MemberActionCell = ({
           <MoreHorizontalIcon className="size-5" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent className="w-50">
         <DropdownMenuGroup>
           <DropdownMenuItem
             variant="error"
             onClick={remove}
-            Icon={<Icon.Bye className="size-4 fill-red" />}
+            Icon={<Icon.Bye className="size-4" />}
             Body={isSelf ? "Leave workspace" : "Remove from workspace"}
           />
         </DropdownMenuGroup>
@@ -248,7 +261,7 @@ export const GuestActionCell = ({
           <MoreHorizontalIcon className="size-5" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent className="w-50">
         <DropdownMenuGroup>
           <DropdownMenuItem
             Icon={<CircleArrowUp className="size-4" />}
@@ -260,7 +273,7 @@ export const GuestActionCell = ({
         <DropdownMenuGroup>
           <DropdownMenuItem
             variant="error"
-            Icon={<Icon.Bye className="size-4 fill-red" />}
+            Icon={<Icon.Bye className="size-4" />}
             Body="Remove from workspace"
             onSelect={remove}
           />
@@ -269,3 +282,31 @@ export const GuestActionCell = ({
     </DropdownMenu>
   );
 };
+
+interface InvitationActionCellProps {
+  onCancel?: () => void | Promise<void>;
+}
+
+export function InvitationActionCell({ onCancel }: InvitationActionCellProps) {
+  const [cancel, isCancelling] = useTransition(() => onCancel?.());
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="hint" className="size-5" disabled={isCancelling}>
+          <MoreHorizontalIcon className="size-5" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-50">
+        <DropdownMenuGroup>
+          <DropdownMenuItem
+            variant="error"
+            Icon={<Icon.Bye className="size-4" />}
+            Body="Cancel invitation"
+            onSelect={cancel}
+          />
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}

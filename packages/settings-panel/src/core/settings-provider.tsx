@@ -16,19 +16,16 @@ import type {
   AccountStore,
   Connection,
   ConnectionStrategy,
+  Invitations,
+  Memberships,
   Passkey,
   SessionRow,
   SettingsStore,
-  UpdateSettings,
   WorkspaceStore,
 } from "../lib";
 import { getScopes, Scope } from "../lib";
 
 export interface SettingsActions {
-  /**
-   * @deprecated Use `account.update`, `workspace.update` instead
-   */
-  updateSettings?: UpdateSettings;
   uploadFile?: (file: File) => Promise<void>;
   /** Account */
   account?: {
@@ -56,6 +53,7 @@ export interface SettingsActions {
   workspace?: {
     update?: (data: Partial<Omit<WorkspaceStore, "id">>) => Promise<void>;
     delete?: (id: string) => Promise<void>;
+    leave?: (id: string) => Promise<void>;
     resetLink?: () => Promise<void>;
   };
   /** Connections */
@@ -66,9 +64,14 @@ export interface SettingsActions {
   };
   /** People */
   people?: {
-    add?: (emails: string[], role: Role) => Promise<void>;
-    update?: (id: string, role: Role) => Promise<void>;
+    getAll?: () => Promise<Memberships>;
+    update?: (data: { id: string; role: Role }) => Promise<void>;
     delete?: (id: string) => Promise<void>;
+  };
+  invitations?: {
+    getAll?: () => Promise<Invitations>;
+    add?: (data: { emails: string[]; role: Role }) => Promise<void>;
+    cancel?: (id: string) => Promise<void>;
   };
 }
 

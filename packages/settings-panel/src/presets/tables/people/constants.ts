@@ -1,3 +1,5 @@
+import { Role } from "@notion-kit/schemas";
+
 import type { PartialRole } from "../../../lib";
 
 export const roleOptions: Record<
@@ -15,3 +17,15 @@ export const roleOptions: Record<
       "Cannot change workspace settings or invite new members to the workspace.",
   },
 } as const;
+
+export const roleLabels: Record<Role, string> = {
+  owner: "Owner",
+  member: "Member",
+  guest: "Guest",
+};
+
+export const statusLabels: Record<string, string> = {
+  pending: "Pending",
+  rejected: "Rejected",
+  canceled: "Canceled",
+};

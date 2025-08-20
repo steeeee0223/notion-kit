@@ -51,13 +51,12 @@ export const getGuestColumns = (
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
         />
-        <UserCell user={row.getValue("user")} />
+        <UserCell user={row.original.user} />
       </div>
     ),
     filterFn: (row, _columnId, filterValue) =>
-      row
-        .getValue<GuestRow["user"]>("user")
-        .email.trim()
+      row.original.user.email
+        .trim()
         .toLowerCase()
         .includes(filterValue as string),
     enableHiding: false,
@@ -68,7 +67,7 @@ export const getGuestColumns = (
           accessorKey: "access",
           header: () => <Header title="Access" className="pl-2 text-sm" />,
           cell: ({ row }: { row: Row<GuestRow> }) => (
-            <AccessCell access={row.getValue("access")} />
+            <AccessCell access={row.original.access} />
           ),
         },
         {

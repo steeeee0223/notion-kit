@@ -95,30 +95,30 @@ export interface GuestRow {
   access: PageAccess[];
 }
 
+export interface InvitationRow {
+  /**
+   * @prop the unique identifier for the invitation
+   */
+  id: string;
+  email: string;
+  role: Role;
+  invitedBy: User;
+  status: "pending" | "rejected" | "canceled";
+}
+export type Invitations = Record<string, InvitationRow>;
+
 export interface GroupOption {
   id: string;
   name: string;
   memberCount: number;
 }
 
-type Membership =
-  | ({ role: Role.OWNER | Role.MEMBER } & MemberRow)
-  | ({ role: Role.GUEST } & GuestRow);
+export type Memberships = Record<string, { role: Role; user: User }>;
 
 export interface SettingsStore {
   workspace: WorkspaceStore;
   account: AccountStore;
-  /**
-   * key: userId
-   */
-  memberships: Record<string, Membership>;
 }
-
-export interface UpdateSettingsParams {
-  memberships?: Record<string, Membership>;
-}
-export type UpdateSettings = (data: UpdateSettingsParams) => Promise<void>;
-
 export interface WorkspaceMemberships {
   members: MemberRow[];
   guests: GuestRow[];

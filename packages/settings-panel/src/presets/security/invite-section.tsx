@@ -7,14 +7,14 @@ import { Switch } from "@notion-kit/shadcn";
 import { TextLinks } from "../_components";
 import { SettingsRule, SettingsSection } from "../../core";
 import type { TabType } from "../data";
-import { usePeople } from "../people";
+import { useGuestsCount } from "../people";
 
 interface InviteSectionProps {
   onTabChange: (tab: TabType) => void;
 }
 
 export function InviteSection({ onTabChange }: InviteSectionProps) {
-  const { guests } = usePeople();
+  const guests = useGuestsCount();
   /** i18n */
   const { t } = useTranslation("settings");
   const trans = t("security.invite", { returnObjects: true });
@@ -29,7 +29,7 @@ export function InviteSection({ onTabChange }: InviteSectionProps) {
         description={
           <TextLinks
             i18nKey="security.invite.invite.description"
-            values={{ count: guests.length }}
+            values={{ count: guests }}
             onClick={() => onTabChange("people")}
           />
         }

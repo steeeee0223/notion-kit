@@ -6,7 +6,7 @@ import { LoginForm } from "@notion-kit/auth-ui";
 import { withAuth } from "@/lib/decorators";
 
 const meta = {
-  title: "blocks/Login Form",
+  title: "auth/Login Form",
   component: LoginForm,
   parameters: {
     layout: "centered",

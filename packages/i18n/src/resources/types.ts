@@ -269,6 +269,7 @@ interface Resources {
         members: "Members";
         guests: "Guests";
         groups: "Groups";
+        invitations: "Invitations";
         search: "Type to search...";
         "add-members": "Add members";
       };

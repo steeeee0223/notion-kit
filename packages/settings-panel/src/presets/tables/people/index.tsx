@@ -5,8 +5,14 @@ import React, { memo, useMemo } from "react";
 import { Role } from "@notion-kit/schemas";
 
 import { Scope } from "../../../lib";
-import type { GroupOption, GuestRow, MemberRow } from "../../../lib";
+import type {
+  GroupOption,
+  GuestRow,
+  InvitationRow,
+  MemberRow,
+} from "../../../lib";
 import { getGuestColumns, getMemberColumns, groupColumns } from "./columns";
+import { getInvitationColumns } from "./columns/invitations";
 import { DataTable } from "./data-table";
 
 interface MembersTableProps {
@@ -59,3 +65,18 @@ export const GroupsTable = memo<GroupsTableProps>(({ ...props }) => {
     <DataTable columns={groupColumns} emptyResult="No groups" {...props} />
   );
 });
+
+interface InvitationsTableProps {
+  scopes: Set<Scope>;
+  data: InvitationRow[];
+  onCancel?: (id: string) => void;
+}
+
+export const InvitationsTable = memo<InvitationsTableProps>(
+  ({ data, ...props }) => {
+    const columns = useMemo(() => getInvitationColumns(props), [props]);
+    return (
+      <DataTable columns={columns} data={data} emptyResult="No invitations" />
+    );
+  },
+);
