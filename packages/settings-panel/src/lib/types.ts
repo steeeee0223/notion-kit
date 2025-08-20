@@ -122,5 +122,4 @@ export interface SettingsStore {
 export interface WorkspaceMemberships {
   members: MemberRow[];
   guests: GuestRow[];
-  invitations: InvitationRow[];
 }
