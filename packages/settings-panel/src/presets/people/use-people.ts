@@ -66,22 +66,26 @@ export function useWorkspaceMemberships() {
       { members: [], guests: [], invitations: [] },
     ),
   );
-  const { data: invitations } = useInvitations();
-  return useMemo(() => ({ ...data, invitations }), [data, invitations]);
+  return data;
 }
 
 export function useInvitedMembers() {
   const { data: people } = usePeople((res) =>
     Object.values(res).map((mem) => mem.user),
   );
-  const { data: invitations } = useInvitations((res) =>
-    Object.values(res).map<User>((invitation) => ({
-      id: invitation.id,
-      email: invitation.email,
-      name: invitation.email,
-      avatarUrl: "",
-    })),
-  );
+  const { data: invitations } = useInvitations((res) => {
+    const users: User[] = [];
+    Object.values(res).forEach((invitation) => {
+      if (invitation.status !== "pending") return;
+      users.push({
+        id: invitation.id,
+        email: invitation.email,
+        name: invitation.email,
+        avatarUrl: "",
+      });
+    });
+    return users;
+  });
 
   return useMemo(() => [...people, ...invitations], [people, invitations]);
 }

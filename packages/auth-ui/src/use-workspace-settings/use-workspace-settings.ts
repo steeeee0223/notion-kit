@@ -102,7 +102,7 @@ export function useWorkspaceSettings() {
             acc[m.userId] = {
               role: m.role as Role,
               user: {
-                id: m.userId,
+                id: m.id,
                 name: m.user.name,
                 email: m.user.email,
                 avatarUrl: m.user.image ?? "",

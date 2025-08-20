@@ -19,9 +19,5 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     invitationId: "test-invitation-id",
-    workspace: {
-      name: "Acme Inc.",
-      icon: { type: "text", src: "A" },
-    },
   },
 };

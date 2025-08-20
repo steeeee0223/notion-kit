@@ -1,6 +1,6 @@
 "use client";
 
-import { IconBlock, type IconData } from "@notion-kit/icon-block";
+import { IconBlock } from "@notion-kit/icon-block";
 import { Button, Form } from "@notion-kit/shadcn";
 import { Spinner } from "@notion-kit/spinner";
 
@@ -8,14 +8,17 @@ import { useAcceptInvitationForm } from "./use-accept-invitation-form";
 
 interface AcceptInvitationFormProps {
   invitationId: string;
-  workspace: { name: string; icon: IconData };
+  onAccept?: (workspace: { id: string; name: string; slug: string }) => void;
 }
 
 export function AcceptInvitationForm({
   invitationId,
-  workspace,
+  onAccept,
 }: AcceptInvitationFormProps) {
-  const { form, submit } = useAcceptInvitationForm(invitationId);
+  const { form, isFetching, workspace, submit } = useAcceptInvitationForm({
+    invitationId,
+    onAccept,
+  });
 
   return (
     <div className="flex flex-col items-center gap-12 p-10">
@@ -32,7 +35,7 @@ export function AcceptInvitationForm({
             variant="blue"
             size="md"
             className="w-full"
-            disabled={form.formState.isSubmitting}
+            disabled={form.formState.isSubmitting || isFetching}
           >
             {form.formState.isSubmitting && (
               <Spinner className="text-current" />

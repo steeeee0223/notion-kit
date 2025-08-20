@@ -36,7 +36,11 @@ import {
   MembersTable,
 } from "../tables";
 import { useInvitationsActions } from "./use-invitations-actions";
-import { useInvitedMembers, useWorkspaceMemberships } from "./use-people";
+import {
+  useInvitations,
+  useInvitedMembers,
+  useWorkspaceMemberships,
+} from "./use-people";
 import { usePeopleActions } from "./use-people-actions";
 
 enum PeopleTabs {
@@ -75,6 +79,7 @@ export function People() {
   /** Tables */
   const { members, guests } = useWorkspaceMemberships();
   const { update, remove } = usePeopleActions();
+  const { data: invitations } = useInvitations((res) => Object.values(res));
   const { invite: inviteMember, cancel } = useInvitationsActions();
   const deleteMember = (id: string) =>
     openModal(<DeleteMember onDelete={() => remove(id)} />);
@@ -152,7 +157,7 @@ export function People() {
             <TabsTrigger value={PeopleTabs.Groups}>{tabs.groups}</TabsTrigger>
             <TabsTrigger value={PeopleTabs.Invitations}>
               {tabs.invitations}
-              <span className="text-muted">{guests.length}</span>
+              <span className="text-muted">{invitations.length}</span>
             </TabsTrigger>
           </div>
           <div ref={searchRef} className="flex items-center justify-end gap-1">
@@ -242,7 +247,11 @@ export function People() {
           value={PeopleTabs.Invitations}
           className="mt-0 bg-transparent"
         >
-          <InvitationsTable scopes={scopes} data={[]} onCancel={cancel} />
+          <InvitationsTable
+            scopes={scopes}
+            data={invitations}
+            onCancel={cancel}
+          />
         </TabsContent>
       </Tabs>
     </SettingsSection>
