@@ -63,7 +63,7 @@ export function useWorkspaceMemberships() {
         }
         return acc;
       },
-      { members: [], guests: [], invitations: [] },
+      { members: [], guests: [] },
     ),
   );
   return data;
