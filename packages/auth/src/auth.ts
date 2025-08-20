@@ -10,9 +10,11 @@ import { passkey, type Passkey } from "better-auth/plugins/passkey";
 import { db, updateAccountName, updateSessionData } from "./db";
 import { AuthEnv } from "./env";
 import {
+  ac,
   additionalSessionFields,
   additionalUserFields,
   createMailtrapApi,
+  roles,
   sendEmail,
 } from "./lib";
 
@@ -90,6 +92,8 @@ export function createAuth(env: AuthEnv) {
       twoFactor(),
       passkey({ rpName: "Notion Auth" }),
       organization({
+        ac,
+        roles,
         cancelPendingInvitationsOnReInvite: true,
         sendInvitationEmail: async ({ id, email, inviter, organization }) => {
           const inviteLink = `${env.BETTER_AUTH_URL}/accept-invitation/${id}`;

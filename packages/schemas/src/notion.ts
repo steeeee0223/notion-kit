@@ -44,6 +44,7 @@ export const UserObject = z.object({
 export type User = z.infer<typeof UserObject>;
 
 export enum Role {
+  ADMIN = "admin",
   OWNER = "owner",
   MEMBER = "member",
   GUEST = "guest",
