@@ -706,6 +706,9 @@ importers:
       react-hook-form:
         specifier: catalog:ui
         version: 7.62.0(react@19.1.0)
+      uuid:
+        specifier: catalog:uuid
+        version: 11.1.0
       zod:
         specifier: 'catalog:'
         version: 4.0.15

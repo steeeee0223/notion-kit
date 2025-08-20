@@ -3,9 +3,10 @@
 import { useCallback, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { v4 } from "uuid";
 import z from "zod/v4";
 
-import type { Organization } from "@notion-kit/auth";
+import type { Organization, WorkspaceMetadata } from "@notion-kit/auth";
 import { IconObject, type IconData } from "@notion-kit/schemas";
 
 import { useAuth } from "../auth-provider";
@@ -54,6 +55,7 @@ export function useCreateWorkspaceForm({
       name: values.name,
       slug,
       logo: JSON.stringify(values.icon),
+      metadata: { inviteLink: v4() } satisfies WorkspaceMetadata,
       keepCurrentActiveOrganization: false,
     });
     if (!res.data) return handleError(res, "Create workspace error");

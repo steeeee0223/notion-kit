@@ -7,7 +7,7 @@ import { Switch } from "@notion-kit/shadcn";
 import { TextLinks } from "../_components";
 import { SettingsRule, SettingsSection } from "../../core";
 import type { TabType } from "../data";
-import { useGuestsCount } from "../people";
+import { useGuestsCount } from "../hooks";
 
 interface InviteSectionProps {
   onTabChange: (tab: TabType) => void;

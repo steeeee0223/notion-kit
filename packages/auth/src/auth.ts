@@ -119,3 +119,7 @@ export function createAuth(env: AuthEnv) {
 export type Auth = ReturnType<typeof createAuth>;
 export type Session = Auth["$Infer"]["Session"];
 export type { Organization, Passkey };
+
+export interface WorkspaceMetadata {
+  inviteLink: string;
+}

@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
+import { v4 } from "uuid";
 
+import { WorkspaceMetadata } from "@notion-kit/auth";
 import { IconObject, Plan, Role, type IconData } from "@notion-kit/schemas";
 import type {
   Invitations,
@@ -42,15 +44,16 @@ export function useWorkspaceSettings() {
     const icon: IconData = res.success
       ? res.data
       : { type: "text", src: workspace.name };
+    const metadata = workspace.metadata as WorkspaceMetadata;
 
     return {
       id: workspace.id,
       name: workspace.name,
       icon,
       slug: workspace.slug,
+      inviteLink: metadata.inviteLink,
       role: user.role as Role,
       // TODO
-      inviteLink: "",
       plan: Plan.FREE,
     };
   }, [session?.user.id, workspace]);
@@ -94,6 +97,17 @@ export function useWorkspaceSettings() {
               onSuccess: () => redirect?.("/"),
               onError: (e) => handleError(e, "Leave workspace failed"),
             },
+          );
+        },
+        resetLink: async () => {
+          await auth.organization.update(
+            {
+              organizationId,
+              data: {
+                metadata: { inviteLink: v4() } satisfies WorkspaceMetadata,
+              },
+            },
+            { throw: true },
           );
         },
       },
