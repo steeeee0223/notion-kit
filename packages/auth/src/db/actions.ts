@@ -36,9 +36,15 @@ export async function updateSessionData(session: Session) {
     payload.deviceModel = device.model ?? "";
     payload.deviceType = device.type ?? "unknown";
   }
+  // find organization
+  const organizations = await db
+    .select({ organizationId: schema.member.organizationId })
+    .from(schema.member)
+    .where(eq(schema.member.userId, session.userId));
+  const activeOrganizationId = organizations.at(0)?.organizationId;
   await db
     .update(schema.session)
-    .set(payload)
+    .set({ ...payload, activeOrganizationId })
     .where(eq(schema.session.id, session.id));
 }
 

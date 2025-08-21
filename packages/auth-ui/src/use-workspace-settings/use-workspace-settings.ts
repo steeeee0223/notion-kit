@@ -51,7 +51,7 @@ export function useWorkspaceSettings() {
       name: workspace.name,
       icon,
       slug: workspace.slug,
-      inviteLink: metadata.inviteLink,
+      inviteLink: metadata.inviteLink ?? "",
       role: user.role as Role,
       // TODO
       plan: Plan.FREE,

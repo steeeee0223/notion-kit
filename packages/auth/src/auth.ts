@@ -121,5 +121,5 @@ export type Session = Auth["$Infer"]["Session"];
 export type { Organization, Passkey };
 
 export interface WorkspaceMetadata {
-  inviteLink: string;
+  inviteLink?: string;
 }

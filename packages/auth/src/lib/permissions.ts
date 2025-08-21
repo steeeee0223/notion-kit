@@ -1,30 +1,34 @@
 import { createAccessControl } from "better-auth/plugins/access";
+import {
+  adminAc,
+  defaultStatements,
+  memberAc,
+  ownerAc,
+} from "better-auth/plugins/organization/access";
 
 export const statement = {
-  workspace: ["read", "update"],
-  people: ["invite", "read", "add", "add:request", "update", "group:enable"],
+  ...defaultStatements,
 } as const;
 
 export const ac = createAccessControl(statement);
 
 const admin = ac.newRole({
-  workspace: ["read", "update"],
-  people: ["invite", "read", "add", "update", "group:enable"],
+  ...adminAc.statements,
 });
 
 const owner = ac.newRole({
-  workspace: ["read", "update"],
-  people: ["invite", "read", "add", "update"],
+  ...ownerAc.statements,
 });
 
 const member = ac.newRole({
-  workspace: ["read"],
-  people: ["read", "add:request"],
+  ...memberAc.statements,
 });
 
 const guest = ac.newRole({
-  workspace: [],
-  people: [],
+  organization: [],
+  member: [],
+  invitation: [],
+  team: [],
 });
 
 export const roles = {
