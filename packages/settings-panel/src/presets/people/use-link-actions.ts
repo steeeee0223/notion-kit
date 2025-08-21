@@ -9,7 +9,7 @@ import { toast } from "@notion-kit/shadcn";
 import { useSettings } from "../../core";
 import { createDefaultFn } from "../../lib";
 
-export function useWorkspaceActions() {
+export function useLinkActions() {
   const {
     settings: { workspace },
     workspace: actions,

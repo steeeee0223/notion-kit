@@ -26,14 +26,6 @@ import {
 import { TextLinks } from "../_components";
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
 import { generateGuestsCsv, Scope } from "../../lib";
-import {
-  useInvitations,
-  useInvitationsActions,
-  useInvitedMembers,
-  usePeopleActions,
-  useWorkspaceActions,
-  useWorkspaceMemberships,
-} from "../hooks";
 import { AddMembers, DeleteGuest, DeleteMember } from "../modals";
 import {
   GroupsTable,
@@ -41,6 +33,14 @@ import {
   InvitationsTable,
   MembersTable,
 } from "../tables";
+import { useInvitationsActions } from "./use-invitations-actions";
+import { useLinkActions } from "./use-link-actions";
+import {
+  useInvitations,
+  useInvitedMembers,
+  useWorkspaceMemberships,
+} from "./use-people";
+import { usePeopleActions } from "./use-people-actions";
 
 enum PeopleTabs {
   Members = "members",
@@ -84,7 +84,7 @@ export function People() {
   const deleteGuest = (id: string, name: string) =>
     openModal(<DeleteGuest name={name} onDelete={() => remove(id)} />);
   /** Handlers */
-  const { isResetting, copyLink, updateLink } = useWorkspaceActions();
+  const { isResetting, copyLink, updateLink } = useLinkActions();
   const resetLink = () =>
     openModal(<BaseModal {...modals["reset-link"]} onTrigger={updateLink} />);
   const invitedMembers = useInvitedMembers();

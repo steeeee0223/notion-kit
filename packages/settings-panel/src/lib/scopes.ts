@@ -72,6 +72,29 @@ export const SCOPES: Record<Role, Record<Plan, Set<Scope>>> = {
       Scope.Upgrade,
     ]),
   },
+  [Role.ADMIN]: {
+    [Plan.FREE]: new Set([]),
+    [Plan.EDUCATION]: new Set([]),
+    [Plan.PLUS]: new Set([]),
+    [Plan.BUSINESS]: new Set([
+      Scope.WorkspaceUpdate,
+      Scope.MemberInvite,
+      Scope.MemberRead,
+      Scope.MemberAdd,
+      Scope.MemberUpdate,
+      Scope.GroupEnable,
+      Scope.Upgrade,
+    ]),
+    [Plan.ENTERPRISE]: new Set([
+      Scope.WorkspaceUpdate,
+      Scope.MemberInvite,
+      Scope.MemberRead,
+      Scope.MemberAdd,
+      Scope.MemberUpdate,
+      Scope.GroupEnable,
+      Scope.Upgrade,
+    ]),
+  },
 };
 
 export function getScopes(plan: Plan, role: Role): Set<Scope> {
