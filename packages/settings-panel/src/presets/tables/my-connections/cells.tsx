@@ -1,5 +1,4 @@
-import { MoreHorizontalIcon } from "lucide-react";
-
+import { Icon } from "@notion-kit/icons";
 import {
   Button,
   DropdownMenu,
@@ -12,16 +11,16 @@ import {
 import { Avatar } from "../../_components";
 import { connectionCardData } from "../../connections";
 
-export const Header = ({ title }: { title: string }) => {
+export function Header({ title }: { title: string }) {
   return <div className="truncate text-xs text-secondary">{title}</div>;
-};
+}
 
 interface ConnectionCellProps {
   type: string;
   account: string;
 }
 
-export const ConnectionCell = ({ type, account }: ConnectionCellProps) => {
+export function ConnectionCell({ type, account }: ConnectionCellProps) {
   const connection = connectionCardData.find(({ id }) => id === type);
 
   if (!connection) return null;
@@ -34,22 +33,22 @@ export const ConnectionCell = ({ type, account }: ConnectionCellProps) => {
       </div>
     </div>
   );
-};
+}
 
 interface ActionCellProps {
   onCreateConnection?: () => void;
   onDisconnect?: () => void;
 }
 
-export const ActionCell = ({
+export function ActionCell({
   onCreateConnection,
   onDisconnect,
-}: ActionCellProps) => {
+}: ActionCellProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="hint" className="size-5">
-          <MoreHorizontalIcon className="size-5" />
+          <Icon.Dots className="size-4 fill-current" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center">
@@ -69,4 +68,4 @@ export const ActionCell = ({
       </DropdownMenuContent>
     </DropdownMenu>
   );
-};
+}

@@ -8,9 +8,11 @@ import { createAuthClient as createReactClient } from "better-auth/react";
 
 import type { Auth } from "./auth";
 import {
+  ac,
   additionalAccountFields,
   additionalSessionFields,
   additionalUserFields,
+  roles,
 } from "./lib";
 
 export function createAuthClient(baseURL?: string) {
@@ -26,6 +28,8 @@ export function createAuthClient(baseURL?: string) {
       twoFactorClient(),
       passkeyClient(),
       organizationClient({
+        ac,
+        roles,
         teams: { enabled: true },
       }),
     ],

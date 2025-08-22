@@ -9,6 +9,7 @@ import { toSlugLike } from "../lib";
 
 interface AuthContextInterface {
   auth: AuthClient;
+  baseURL: string;
   generateUniqueSlug: (name: string) => Promise<string>;
   redirect?: (url: string) => void;
 }
@@ -53,6 +54,7 @@ function AuthProvider({ baseURL, children, redirect }: AuthProviderProps) {
     const auth = createAuthClient(baseURL);
     return {
       auth,
+      baseURL: baseURL ?? "",
       generateUniqueSlug: async (name) => {
         const baseSlug = toSlugLike(name);
         let slug = baseSlug;

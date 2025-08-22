@@ -13,8 +13,18 @@ import { UAParser } from "ua-parser-js";
 import { db } from "./db";
 import * as schema from "./schemas";
 
-export async function updateSessionData(session: Session) {
-  const payload = {
+interface UpdateSessionPayload {
+  location: string;
+  deviceType: string;
+  deviceVendor: string;
+  deviceModel: string;
+  activeOrganizationId?: string;
+}
+
+export async function updateSessionData(
+  session: Session & Record<string, unknown>,
+) {
+  const payload: UpdateSessionPayload = {
     location: "",
     deviceType: "",
     deviceVendor: "",
@@ -36,9 +46,17 @@ export async function updateSessionData(session: Session) {
     payload.deviceModel = device.model ?? "";
     payload.deviceType = device.type ?? "unknown";
   }
+  // find organization
+  if (!("activeOrganizationId" in session) || !session.activeOrganizationId) {
+    const organizations = await db
+      .select({ organizationId: schema.member.organizationId })
+      .from(schema.member)
+      .where(eq(schema.member.userId, session.userId));
+    payload.activeOrganizationId = organizations.at(0)?.organizationId;
+  }
   await db
     .update(schema.session)
-    .set(payload)
+    .set({ ...payload })
     .where(eq(schema.session.id, session.id));
 }
 

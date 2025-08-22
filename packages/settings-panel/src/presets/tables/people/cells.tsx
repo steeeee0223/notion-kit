@@ -1,7 +1,6 @@
 "use client";
 
 import { SortDirection } from "@tanstack/react-table";
-import { CircleArrowUp, MoreHorizontalIcon } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
 import { useTransition } from "@notion-kit/hooks";
@@ -58,9 +57,9 @@ export const SortingToggle = ({
     <Header title={title} className="text-sm" />
     {isSorted &&
       (isSorted === "asc" ? (
-        <Icon.ArrowUp className="ml-1 size-3 flex-shrink-0 fill-secondary" />
+        <Icon.ArrowUp className="ml-1 size-3 shrink-0 fill-current" />
       ) : (
-        <Icon.ArrowDown className="ml-1 size-3 flex-shrink-0 fill-secondary" />
+        <Icon.ArrowDown className="ml-1 size-3 shrink-0 fill-current" />
       ))}
   </Button>
 );
@@ -186,7 +185,7 @@ export const MemberActionCell = ({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="hint" className="size-5" disabled={isRemoving}>
-          <MoreHorizontalIcon className="size-5" />
+          <Icon.Dots className="size-4 fill-current" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-50">
@@ -258,13 +257,13 @@ export const GuestActionCell = ({
           className="size-5"
           disabled={isUpgrading || isRemoving}
         >
-          <MoreHorizontalIcon className="size-5" />
+          <Icon.Dots className="size-4 fill-current" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-50">
         <DropdownMenuGroup>
           <DropdownMenuItem
-            Icon={<CircleArrowUp className="size-4" />}
+            Icon={<Icon.ArrowUpCircled className="size-4" />}
             Body="Upgrade to member"
             onSelect={upgrade}
           />
@@ -294,7 +293,7 @@ export function InvitationActionCell({ onCancel }: InvitationActionCellProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="hint" className="size-5" disabled={isCancelling}>
-          <MoreHorizontalIcon className="size-5" />
+          <Icon.Dots className="size-4 fill-current" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-50">

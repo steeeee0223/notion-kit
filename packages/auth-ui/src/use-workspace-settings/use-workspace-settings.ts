@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
+import { v4 } from "uuid";
 
+import { WorkspaceMetadata } from "@notion-kit/auth";
 import { IconObject, Plan, Role, type IconData } from "@notion-kit/schemas";
 import type {
   Invitations,
@@ -11,7 +13,7 @@ import type {
 } from "@notion-kit/settings-panel";
 import { toast } from "@notion-kit/shadcn";
 
-import { useActiveWorkspace, useAuth } from "../auth-provider";
+import { useActiveWorkspace, useAuth, useSession } from "../auth-provider";
 import { handleError } from "../lib";
 
 const initialWorkspaceStore: WorkspaceStore = {
@@ -25,27 +27,41 @@ const initialWorkspaceStore: WorkspaceStore = {
 };
 
 export function useWorkspaceSettings() {
-  const { auth, redirect } = useAuth();
+  const { baseURL, auth, redirect } = useAuth();
+  const { data: session } = useSession();
   const { data: workspace } = useActiveWorkspace();
 
   const workspaceStore = useMemo<WorkspaceStore>(() => {
     if (!workspace) return initialWorkspaceStore;
+    const user = workspace.members.find((m) => m.userId === session?.user.id);
+    if (!user) {
+      console.error(
+        "[useWorkspaceSettings] User not found in workspace members",
+      );
+      return initialWorkspaceStore;
+    }
     const res = IconObject.safeParse(JSON.parse(workspace.logo ?? ""));
     const icon: IconData = res.success
       ? res.data
       : { type: "text", src: workspace.name };
+    const metadata = JSON.parse(
+      workspace.metadata as string,
+    ) as WorkspaceMetadata;
+    const inviteLink = metadata.inviteToken
+      ? `${baseURL}/invite/${metadata.inviteToken}`
+      : "";
 
     return {
       id: workspace.id,
       name: workspace.name,
       icon,
       slug: workspace.slug,
-      inviteLink: "",
-      // TODO handle memberships
+      inviteLink,
+      role: user.role as Role,
+      // TODO
       plan: Plan.FREE,
-      role: Role.OWNER,
     };
-  }, [workspace]);
+  }, [baseURL, session?.user.id, workspace]);
 
   const actions = useMemo<SettingsActions>(() => {
     const organizationId = workspace?.id;
@@ -88,6 +104,17 @@ export function useWorkspaceSettings() {
             },
           );
         },
+        resetLink: async () => {
+          await auth.organization.update(
+            {
+              organizationId,
+              data: {
+                metadata: { inviteToken: v4() } satisfies WorkspaceMetadata,
+              },
+            },
+            { throw: true },
+          );
+        },
       },
       people: {
         getAll: async () => {
@@ -110,6 +137,12 @@ export function useWorkspaceSettings() {
             };
             return acc;
           }, {});
+        },
+        update: async ({ id, role }) => {
+          await auth.organization.updateMemberRole(
+            { organizationId, memberId: id, role },
+            { throw: true },
+          );
         },
         delete: async (id) => {
           await auth.organization.removeMember(
@@ -170,16 +203,11 @@ export function useWorkspaceSettings() {
           });
           return invitations;
         },
-        add: async ({ emails }) => {
+        add: async ({ emails, role }) => {
           await Promise.all(
             emails.map((email) =>
               auth.organization.inviteMember(
-                {
-                  organizationId,
-                  email,
-                  role: "member", // TODO
-                  resend: true,
-                },
+                { organizationId, email, role, resend: true },
                 { throw: true },
               ),
             ),

@@ -10,9 +10,11 @@ import { passkey, type Passkey } from "better-auth/plugins/passkey";
 import { db, updateAccountName, updateSessionData } from "./db";
 import { AuthEnv } from "./env";
 import {
+  ac,
   additionalSessionFields,
   additionalUserFields,
   createMailtrapApi,
+  roles,
   sendEmail,
 } from "./lib";
 
@@ -80,6 +82,7 @@ export function createAuth(env: AuthEnv) {
     databaseHooks: {
       session: {
         create: { after: updateSessionData },
+        update: { after: updateSessionData },
       },
       account: {
         create: { after: updateAccountName },
@@ -90,6 +93,8 @@ export function createAuth(env: AuthEnv) {
       twoFactor(),
       passkey({ rpName: "Notion Auth" }),
       organization({
+        ac,
+        roles,
         cancelPendingInvitationsOnReInvite: true,
         sendInvitationEmail: async ({ id, email, inviter, organization }) => {
           const inviteLink = `${env.BETTER_AUTH_URL}/accept-invitation/${id}`;
@@ -115,3 +120,7 @@ export function createAuth(env: AuthEnv) {
 export type Auth = ReturnType<typeof createAuth>;
 export type Session = Auth["$Infer"]["Session"];
 export type { Organization, Passkey };
+
+export interface WorkspaceMetadata {
+  inviteToken?: string;
+}

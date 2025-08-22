@@ -16,7 +16,7 @@ export enum Scope {
   Upgrade = "plan:upgrade",
 }
 
-export type PartialRole = Exclude<Role, Role.GUEST>;
+export type PartialRole = Role.OWNER | Role.MEMBER;
 
 export interface Passkey {
   id: string;

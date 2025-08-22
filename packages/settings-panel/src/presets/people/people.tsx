@@ -7,7 +7,6 @@ import { useOnClickOutside } from "usehooks-ts";
 
 import { cn } from "@notion-kit/cn";
 import { BaseModal } from "@notion-kit/common";
-import { useCopyToClipboard, useTransition } from "@notion-kit/hooks";
 import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
@@ -21,7 +20,6 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  toast,
   TooltipPreset,
 } from "@notion-kit/shadcn";
 
@@ -36,6 +34,7 @@ import {
   MembersTable,
 } from "../tables";
 import { useInvitationsActions } from "./use-invitations-actions";
+import { useLinkActions } from "./use-link-actions";
 import {
   useInvitations,
   useInvitedMembers,
@@ -54,7 +53,6 @@ export function People() {
   const {
     scopes,
     settings: { account, workspace },
-    workspace: actions,
   } = useSettings();
   /** i18n */
   const { t } = useTranslation("settings");
@@ -86,19 +84,9 @@ export function People() {
   const deleteGuest = (id: string, name: string) =>
     openModal(<DeleteGuest name={name} onDelete={() => remove(id)} />);
   /** Handlers */
-  const [, copy] = useCopyToClipboard();
-  const copyLink = async () => {
-    await copy(workspace.inviteLink);
-    toast.success("Copied link to clipboard");
-  };
-  const [updateLink, isUpdating] = useTransition(() => actions?.resetLink?.());
+  const { isResetting, copyLink, updateLink } = useLinkActions();
   const resetLink = () =>
-    openModal(
-      <BaseModal
-        {...modals["reset-link"]}
-        onTrigger={() => void updateLink()}
-      />,
-    );
+    openModal(<BaseModal {...modals["reset-link"]} onTrigger={updateLink} />);
   const invitedMembers = useInvitedMembers();
   const addMembers = () =>
     openModal(
@@ -132,7 +120,7 @@ export function People() {
                 variant="soft-blue"
                 size="sm"
                 className="h-7"
-                disabled={isUpdating}
+                disabled={isResetting}
                 onClick={copyLink}
               >
                 {invite.button}
