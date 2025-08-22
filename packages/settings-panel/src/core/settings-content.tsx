@@ -1,4 +1,5 @@
 import React from "react";
+import { HelpCircle } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
 import { Badge, Button, Separator, TooltipPreset } from "@notion-kit/shadcn";
@@ -48,6 +49,7 @@ interface SettingsRuleProps extends React.PropsWithChildren {
   description: React.ReactNode;
   className?: string;
   plan?: string;
+  href?: string;
 }
 const SettingsRule: React.FC<SettingsRuleProps> = ({
   children,
@@ -55,6 +57,7 @@ const SettingsRule: React.FC<SettingsRuleProps> = ({
   description,
   className,
   plan,
+  href,
 }) => {
   return (
     <div
@@ -64,7 +67,7 @@ const SettingsRule: React.FC<SettingsRuleProps> = ({
       )}
     >
       <div className="mr-[10%] flex w-full flex-col">
-        <div className="flex items-center">
+        <div className="flex items-center gap-0.5">
           <h3
             data-slot="settings-rule-title"
             className="mb-0.5 flex p-0 text-sm font-normal"
@@ -72,6 +75,16 @@ const SettingsRule: React.FC<SettingsRuleProps> = ({
             {title}
           </h3>
           {!!plan && <SettingsPlan plan={plan} />}
+          {!!href && (
+            <Button
+              variant="hint"
+              size="circle"
+              className="size-4"
+              onClick={() => window.open(href)}
+            >
+              <HelpCircle className="size-4" />
+            </Button>
+          )}
         </div>
         <p className="w-4/5 text-xs text-secondary">{description}</p>
       </div>

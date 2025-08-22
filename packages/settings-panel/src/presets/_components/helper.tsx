@@ -41,7 +41,7 @@ export const HintButton = ({
       className={cn("-ml-1.5", className)}
       onClick={click}
     >
-      <Icon className="mr-1.5 h-3.5 w-3.5" />
+      <Icon className="size-3.5" />
       {label}
     </Button>
   );
