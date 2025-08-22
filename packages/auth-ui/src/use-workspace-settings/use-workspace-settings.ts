@@ -27,7 +27,7 @@ const initialWorkspaceStore: WorkspaceStore = {
 };
 
 export function useWorkspaceSettings() {
-  const { auth, redirect } = useAuth();
+  const { baseURL, auth, redirect } = useAuth();
   const { data: session } = useSession();
   const { data: workspace } = useActiveWorkspace();
 
@@ -44,19 +44,24 @@ export function useWorkspaceSettings() {
     const icon: IconData = res.success
       ? res.data
       : { type: "text", src: workspace.name };
-    const metadata = workspace.metadata as WorkspaceMetadata;
+    const metadata = JSON.parse(
+      workspace.metadata as string,
+    ) as WorkspaceMetadata;
+    const inviteLink = metadata.inviteToken
+      ? `${baseURL}/invite/${metadata.inviteToken}`
+      : "";
 
     return {
       id: workspace.id,
       name: workspace.name,
       icon,
       slug: workspace.slug,
-      inviteLink: metadata.inviteLink ?? "",
+      inviteLink,
       role: user.role as Role,
       // TODO
       plan: Plan.FREE,
     };
-  }, [session?.user.id, workspace]);
+  }, [baseURL, session?.user.id, workspace]);
 
   const actions = useMemo<SettingsActions>(() => {
     const organizationId = workspace?.id;
@@ -104,7 +109,7 @@ export function useWorkspaceSettings() {
             {
               organizationId,
               data: {
-                metadata: { inviteLink: v4() } satisfies WorkspaceMetadata,
+                metadata: { inviteToken: v4() } satisfies WorkspaceMetadata,
               },
             },
             { throw: true },

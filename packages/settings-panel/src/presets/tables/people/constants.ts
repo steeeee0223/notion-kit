@@ -20,7 +20,7 @@ export const roleOptions: Record<
 
 export const roleLabels: Record<Role, string> = {
   admin: "Admin",
-  owner: "Owner",
+  owner: "Workspace Owner",
   member: "Member",
   guest: "Guest",
 };

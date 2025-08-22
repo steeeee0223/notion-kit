@@ -22,7 +22,6 @@ import { Spinner } from "@notion-kit/spinner";
 import { TagsInput } from "@notion-kit/tags-input";
 
 import { Avatar, HintButton } from "../_components";
-import type { PartialRole } from "../../lib";
 
 enum Heading {
   Select = "Select a person",
@@ -44,7 +43,7 @@ export const AddMembers: React.FC<AddMembersProps> = ({
   const { isOpen, closeModal } = useModal();
 
   const [heading, setHeading] = useState(Heading.Select);
-  const [role, setRole] = useState<PartialRole>(Role.OWNER);
+  const [role, setRole] = useState<Exclude<Role, Role.ADMIN>>(Role.OWNER);
   /** Input & Filter */
   const [emails, setEmails] = useState<string[]>([]);
   const { search, results, updateSearch } = useFilter(
@@ -117,7 +116,11 @@ export const AddMembers: React.FC<AddMembersProps> = ({
               <Select
                 value={role}
                 onChange={setRole}
-                options={{ owner: "Workspace Owner", member: "Member" }}
+                options={{
+                  owner: "Workspace Owner",
+                  member: "Member",
+                  guest: "Guest",
+                }}
                 className="m-0 w-fit text-muted"
               />
               <Button

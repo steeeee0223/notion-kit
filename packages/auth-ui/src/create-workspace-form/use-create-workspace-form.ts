@@ -55,7 +55,7 @@ export function useCreateWorkspaceForm({
       name: values.name,
       slug,
       logo: JSON.stringify(values.icon),
-      metadata: { inviteLink: v4() } satisfies WorkspaceMetadata,
+      metadata: { inviteToken: v4() } satisfies WorkspaceMetadata,
       keepCurrentActiveOrganization: false,
     });
     if (!res.data) return handleError(res, "Create workspace error");
