@@ -20,6 +20,7 @@ function SearchIcon() {
   return (
     <svg
       role="graphics-symbol"
+      aria-hidden="true"
       viewBox="0 0 16 16"
       className="block size-3.5 shrink-0 grow-0 fill-default/45"
     >
@@ -65,19 +66,23 @@ function Input({
       <input
         className="block resize-none border-none outline-hidden file:bg-inherit file:font-medium placeholder:text-default/45 disabled:cursor-not-allowed disabled:opacity-50 [&::-webkit-search-cancel-button]:appearance-none"
         {...props}
+        type={search ? "search" : props.type}
       />
       {showClear && (
-        <div
-          role="button"
-          tabIndex={-1}
-          className="ml-1 shrink-0 grow-0 animate-bg-in cursor-pointer rounded-full select-none hover:bg-default/5"
+        <button
+          type="button"
+          className="ml-1 shrink-0 grow-0 animate-bg-in cursor-pointer rounded-full outline-none select-none hover:bg-default/5 focus-visible:shadow-notion"
+          aria-label="Clear input"
           onClick={onCancel}
-          onKeyDown={onCancel}
         >
           <ClearIcon />
+        </button>
+      )}
+      {endIcon && (
+        <div className="ml-1" aria-hidden="true">
+          {endIcon}
         </div>
       )}
-      {endIcon && <div className="ml-1">{endIcon}</div>}
     </div>
   );
 }
