@@ -69,7 +69,7 @@ function Input({
       {showClear && (
         <div
           role="button"
-          tabIndex={0}
+          tabIndex={-1}
           className="ml-1 shrink-0 grow-0 animate-bg-in cursor-pointer rounded-full select-none hover:bg-default/5"
           onClick={onCancel}
           onKeyDown={onCancel}

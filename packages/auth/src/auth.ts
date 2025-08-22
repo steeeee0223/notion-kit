@@ -82,6 +82,7 @@ export function createAuth(env: AuthEnv) {
     databaseHooks: {
       session: {
         create: { after: updateSessionData },
+        update: { after: updateSessionData },
       },
       account: {
         create: { after: updateAccountName },
