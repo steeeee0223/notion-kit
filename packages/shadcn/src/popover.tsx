@@ -5,6 +5,8 @@ import * as PopoverPrimitive from "@radix-ui/react-popover";
 
 import { cn } from "@notion-kit/cn";
 
+import { Button } from "./button";
+import * as Icon from "./icons";
 import { contentVariants } from "./variants";
 
 function Popover({
@@ -22,7 +24,13 @@ function PopoverTrigger({
 function PopoverClose({
   ...props
 }: React.ComponentProps<typeof PopoverPrimitive.Close>) {
-  return <PopoverPrimitive.Close data-slot="popover-close" {...props} />;
+  return (
+    <PopoverPrimitive.Close data-slot="popover-close" asChild>
+      <Button variant="close" size="circle" {...props}>
+        <Icon.Close className="h-full w-3.5 fill-secondary dark:fill-default/45" />
+      </Button>
+    </PopoverPrimitive.Close>
+  );
 }
 
 type PopoverContentProps = React.ComponentProps<

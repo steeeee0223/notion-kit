@@ -36,6 +36,7 @@ export const HintButton = ({
   };
   return (
     <Button
+      type="button"
       variant="hint"
       size="xs"
       className={cn("-ml-1.5", className)}

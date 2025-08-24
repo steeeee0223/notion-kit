@@ -4,6 +4,7 @@ import { ModalProvider, useModal } from "@notion-kit/modal";
 import {
   Add2FAForm,
   AddMembers,
+  CreateTeamspace,
   DeleteAccount,
   DeleteGuest,
   DeleteMember,
@@ -151,4 +152,11 @@ export const PasskeysManagement: Story = {
       </ModalProvider>
     </SettingsProvider>
   ),
+};
+
+export const CreateTeamspaceModal: Story = {
+  args: {
+    children: <CreateTeamspace />,
+    text: "Create Teamspace",
+  },
 };

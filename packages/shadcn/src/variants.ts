@@ -41,7 +41,7 @@ export const buttonVariants = cva(
         icon: "size-9 rounded-md border border-border-button text-icon",
         "nav-icon": "size-7 text-icon",
         link: "text-primary underline-offset-4 hover:bg-transparent hover:underline",
-        blue: "border border-border bg-blue font-medium text-white shadow-xs hover:bg-blue-hover hover:text-white disabled:bg-blue",
+        blue: "border border-border bg-blue font-medium text-white shadow-xs hover:bg-blue-hover hover:text-white disabled:bg-blue/40",
         "soft-blue":
           "bg-blue/5 text-blue shadow-xs hover:bg-blue/15 disabled:bg-blue/5",
         hint: "font-medium text-muted",

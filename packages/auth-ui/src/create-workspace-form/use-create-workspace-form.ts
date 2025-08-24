@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { v4 } from "uuid";
@@ -18,7 +18,7 @@ const createWorkspaceSchema = z.object({
 });
 type CreateWorkspaceSchema = z.infer<typeof createWorkspaceSchema>;
 
-const defaultIcon: IconData = { type: "text", src: "A" };
+export const defaultIcon: IconData = { type: "text", src: "A" };
 
 interface UseCreateWorkspaceFormOptions {
   onSuccess?: (workspace: Organization) => void;
@@ -34,20 +34,6 @@ export function useCreateWorkspaceForm({
     defaultValues: { name: "", icon: defaultIcon },
   });
   const { handleSubmit, setValue, watch } = form;
-
-  const removeIcon = useCallback(
-    () => setValue("icon", defaultIcon),
-    [setValue],
-  );
-
-  const uploadIcon = useCallback(
-    (file: File) =>
-      setValue("icon", {
-        type: "url",
-        src: URL.createObjectURL(file),
-      }),
-    [setValue],
-  );
 
   const submit = handleSubmit(async (values) => {
     const slug = await generateUniqueSlug(values.name);
@@ -80,5 +66,5 @@ export function useCreateWorkspaceForm({
     return () => sub.unsubscribe();
   }, [setValue, watch]);
 
-  return { form, uploadIcon, removeIcon, submit };
+  return { form, submit };
 }

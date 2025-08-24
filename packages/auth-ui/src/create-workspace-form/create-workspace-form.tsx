@@ -15,15 +15,17 @@ import {
 } from "@notion-kit/shadcn";
 import { Spinner } from "@notion-kit/spinner";
 
-import { useCreateWorkspaceForm } from "./use-create-workspace-form";
+import {
+  defaultIcon,
+  useCreateWorkspaceForm,
+} from "./use-create-workspace-form";
 
 interface CreateWorkspaceFormProps {
   onSuccess?: (workspace: Organization) => void;
 }
 
 export function CreateWorkspaceForm({ ...props }: CreateWorkspaceFormProps) {
-  const { form, uploadIcon, removeIcon, submit } =
-    useCreateWorkspaceForm(props);
+  const { form, submit } = useCreateWorkspaceForm(props);
 
   return (
     <div className="flex flex-col items-center gap-20">
@@ -43,8 +45,13 @@ export function CreateWorkspaceForm({ ...props }: CreateWorkspaceFormProps) {
                   <IconMenu
                     disabled={field.disabled}
                     onSelect={field.onChange}
-                    onRemove={removeIcon}
-                    onUpload={uploadIcon}
+                    onRemove={() => field.onChange(defaultIcon)}
+                    onUpload={(file) =>
+                      field.onChange({
+                        type: "url",
+                        src: URL.createObjectURL(file),
+                      })
+                    }
                   >
                     <IconBlock icon={field.value} size="lg" />
                   </IconMenu>
