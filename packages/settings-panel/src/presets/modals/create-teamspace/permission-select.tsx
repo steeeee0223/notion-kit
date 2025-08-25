@@ -52,7 +52,8 @@ export function PermissionSelect({
       disabled={disabled}
       options={options}
       renderOption={({ option }) => {
-        if (typeof option === "string" || typeof option === "undefined") return;
+        if (typeof option === "string" || typeof option === "undefined")
+          return null as never;
         return (
           <MenuItem
             className="h-10 w-full"

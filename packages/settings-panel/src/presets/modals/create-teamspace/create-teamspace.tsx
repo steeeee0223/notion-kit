@@ -44,7 +44,11 @@ interface CreateTeamspaceProps {
   onSubmit?: (values: CreateTeamspaceSchema) => Promise<void>;
 }
 
-export function CreateTeamspace({ workspace, onSubmit }: CreateTeamspaceProps) {
+export function CreateTeamspace({
+  workspace,
+
+  onSubmit,
+}: CreateTeamspaceProps) {
   const { isOpen, closeModal } = useModal();
 
   const form = useForm<CreateTeamspaceSchema>({
@@ -147,24 +151,24 @@ export function CreateTeamspace({ workspace, onSubmit }: CreateTeamspaceProps) {
                 </FormItem>
               )}
             />
+            <DialogFooter className="flex-row justify-between">
+              <HintButton
+                icon={CircleHelp}
+                label="Learn about teamspaces"
+                href="https://www.notion.com/help/guides/teamspaces-give-teams-home-for-important-work"
+              />
+              <Button
+                type="submit"
+                variant="blue"
+                size="md"
+                disabled={formState.isSubmitting || !formState.isValid}
+              >
+                {formState.isSubmitting && <Spinner />}
+                Create teamspace
+              </Button>
+            </DialogFooter>
           </form>
         </Form>
-        <DialogFooter className="flex-row justify-between">
-          <HintButton
-            icon={CircleHelp}
-            label="Learn about teamspaces"
-            href="https://www.notion.com/help/guides/teamspaces-give-teams-home-for-important-work"
-          />
-          <Button
-            type="submit"
-            variant="blue"
-            size="md"
-            disabled={formState.isSubmitting || !formState.isValid}
-          >
-            {formState.isSubmitting && <Spinner />}
-            Create teamspace
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

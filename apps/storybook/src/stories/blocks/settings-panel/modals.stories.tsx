@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { delay } from "msw";
 
 import { ModalProvider, useModal } from "@notion-kit/modal";
 import {
@@ -156,7 +157,10 @@ export const PasskeysManagement: Story = {
 
 export const CreateTeamspaceModal: Story = {
   args: {
-    children: <CreateTeamspace workspace="Acme Inc." />,
+    children: (
+      <CreateTeamspace workspace="Acme Inc." onSubmit={() => delay(2000)} />
+    ),
+    variant: "blue",
     text: "Create Teamspace",
   },
 };

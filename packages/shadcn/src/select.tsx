@@ -49,6 +49,7 @@ function SelectTrigger({
       className={cn(
         buttonVariants({ variant: null }),
         "relative flex h-7 w-full min-w-0 shrink-0 justify-normal p-2 text-primary",
+        "focus-within:shadow-notion",
         "placeholder:text-secondary data-placeholder:text-secondary",
         "[&>span]:line-clamp-1",
         className,
@@ -160,24 +161,16 @@ function SelectItem({
   className,
   children,
   hideCheck = false,
-  value,
-  textValue,
   Icon,
   ...props
 }: SelectItemProps) {
   return (
-    <SelectPrimitive.Item
-      asChild
-      data-slot="select-item"
-      value={value}
-      textValue={textValue}
-    >
+    <SelectPrimitive.Item asChild data-slot="select-item" {...props}>
       <MenuItem
         role="menuitem"
         className={cn("py-1 focus:bg-default/5", className)}
         Icon={Icon}
         Body={<SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>}
-        {...props}
       >
         {!hideCheck && (
           <SelectPrimitive.ItemIndicator asChild>
@@ -259,6 +252,7 @@ function SelectPreset<T extends string = string>({
             ) : (
               <SelectItem
                 value={key}
+                textValue={key}
                 key={key}
                 hideCheck={hideCheck}
                 Icon={option.icon}

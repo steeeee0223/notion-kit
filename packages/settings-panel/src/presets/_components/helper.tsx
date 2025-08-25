@@ -23,13 +23,13 @@ interface HintButtonProps {
   onClick?: () => void;
 }
 
-export const HintButton = ({
+export function HintButton({
   icon: Icon,
   label,
   href,
   className,
   onClick,
-}: HintButtonProps) => {
+}: HintButtonProps) {
   const click = () => {
     if (!href) return onClick?.();
     window.open(href);
@@ -39,6 +39,7 @@ export const HintButton = ({
       type="button"
       variant="hint"
       size="xs"
+      tabIndex={-1}
       className={cn("-ml-1.5", className)}
       onClick={click}
     >
@@ -46,7 +47,7 @@ export const HintButton = ({
       {label}
     </Button>
   );
-};
+}
 
 interface ContentProps extends React.PropsWithChildren {
   title?: string;
@@ -56,14 +57,14 @@ interface ContentProps extends React.PropsWithChildren {
   href?: string;
 }
 
-export const Content = ({
+export function Content({
   children,
   title,
   description,
   plan,
   hint,
   href,
-}: ContentProps) => {
+}: ContentProps) {
   return (
     <div>
       {title && (
@@ -83,7 +84,7 @@ export const Content = ({
       )}
     </div>
   );
-};
+}
 
 interface TextLinksProps
   extends Pick<TransProps, "i18nKey" | "values">,
@@ -91,13 +92,13 @@ interface TextLinksProps
   hrefs?: string | string[];
 }
 
-export const TextLinks = ({
+export function TextLinks({
   i18nKey,
   values,
   children = "-",
   hrefs,
   ...props
-}: TextLinksProps) => {
+}: TextLinksProps) {
   const Links = useMemo(() => {
     // if (hrefs === undefined) return;
     const urls = Array.isArray(hrefs) ? hrefs : [hrefs];
@@ -115,16 +116,16 @@ export const TextLinks = ({
   }, [children, props, hrefs]);
 
   return <Trans i18nKey={i18nKey} values={values} components={Links} />;
-};
+}
 
-export const NotImplemented = () => {
+export function NotImplemented() {
   return (
     <div className="inline-flex w-full items-center rounded-sm bg-default/5 p-4 text-sm font-medium">
       <Construction color="#b9aa4b" className="mr-2 size-5" />
       Under construction
     </div>
   );
-};
+}
 
 interface AvatarProps {
   className?: string;

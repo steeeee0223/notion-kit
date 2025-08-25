@@ -61,6 +61,7 @@ const SettingsRule: React.FC<SettingsRuleProps> = ({
 }) => {
   return (
     <div
+      data-slot="settings-rule"
       className={cn(
         "flex cursor-default items-center justify-between",
         className,
