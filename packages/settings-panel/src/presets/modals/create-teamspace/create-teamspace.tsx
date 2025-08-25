@@ -24,12 +24,12 @@ import {
   FormLabel,
   Input,
   Label,
-  SelectPreset,
   Textarea,
 } from "@notion-kit/shadcn";
 import { Spinner } from "@notion-kit/spinner";
 
-import { HintButton } from "../_components";
+import { HintButton } from "../../_components";
+import { PermissionSelect } from "./permission-select";
 
 const createTeamspaceSchema = z.object({
   name: z.string().min(1),
@@ -40,10 +40,11 @@ const createTeamspaceSchema = z.object({
 type CreateTeamspaceSchema = z.infer<typeof createTeamspaceSchema>;
 
 interface CreateTeamspaceProps {
+  workspace: string;
   onSubmit?: (values: CreateTeamspaceSchema) => Promise<void>;
 }
 
-export function CreateTeamspace({ onSubmit }: CreateTeamspaceProps) {
+export function CreateTeamspace({ workspace, onSubmit }: CreateTeamspaceProps) {
   const { isOpen, closeModal } = useModal();
 
   const form = useForm<CreateTeamspaceSchema>({
@@ -141,17 +142,7 @@ export function CreateTeamspace({ onSubmit }: CreateTeamspaceProps) {
                 <FormItem>
                   <FormLabel>Permissions</FormLabel>
                   <FormControl>
-                    <SelectPreset
-                      className="my-0"
-                      value={field.value}
-                      onChange={field.onChange}
-                      options={{
-                        default: "Default",
-                        open: "Open",
-                        closed: "Closed",
-                        private: "Private",
-                      }}
-                    />
+                    <PermissionSelect workspace={workspace} {...field} />
                   </FormControl>
                 </FormItem>
               )}

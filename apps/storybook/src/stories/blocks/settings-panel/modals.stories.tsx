@@ -156,7 +156,7 @@ export const PasskeysManagement: Story = {
 
 export const CreateTeamspaceModal: Story = {
   args: {
-    children: <CreateTeamspace />,
+    children: <CreateTeamspace workspace="Acme Inc." />,
     text: "Create Teamspace",
   },
 };

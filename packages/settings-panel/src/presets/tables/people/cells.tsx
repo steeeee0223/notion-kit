@@ -104,7 +104,7 @@ export const TeamspacesCell = ({ teamspaces }: TeamspacesCellProps) => {
         </div>
       ) : (
         <Select
-          className="m-0 w-auto"
+          className="w-auto"
           options={$options}
           value={current ?? undefined}
           hideCheck
@@ -149,7 +149,7 @@ export function RoleSelectCell({
     <div className="flex items-center">
       {scopes?.has(Scope.MemberUpdate) ? (
         <Select
-          className="m-0 w-auto"
+          className="w-auto"
           options={roleOptions}
           onChange={select}
           value={role}
@@ -221,7 +221,7 @@ export const AccessCell = ({ access }: AccessCellProps) => {
         </div>
       ) : (
         <Select
-          className="m-0 w-auto"
+          className="w-auto"
           options={options}
           hideCheck
           align="center"
