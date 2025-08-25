@@ -7,6 +7,7 @@ import type {
   Passkey,
   SessionRow,
   SettingsStore,
+  TeamspaceRow,
 } from "@notion-kit/settings-panel";
 import { randomItem } from "@notion-kit/utils";
 
@@ -253,5 +254,47 @@ export const mockInvitations: InvitationRow[] = [
     email: "invitee3@example.com",
     status: "rejected",
     invitedBy: mockUsers[2]!,
+  },
+];
+
+export const mockTeamspaces: TeamspaceRow[] = [
+  {
+    id: "team-1",
+    name: "Acme Lab 1",
+    icon: { type: "text", src: "A" },
+    memberCount: 20,
+    permission: "default",
+    owners: {
+      ownerName: "Jason",
+      ownerAvatarUrl: "",
+      count: 3,
+    },
+    updatedAt: Date.UTC(2024, 5, 1),
+  },
+  {
+    id: "team-2",
+    name: "Acme Lab 2",
+    icon: { type: "text", src: "B" },
+    memberCount: 30,
+    permission: "default",
+    owners: {
+      ownerName: "Alice",
+      ownerAvatarUrl: "",
+      count: 2,
+    },
+    updatedAt: Date.UTC(2024, 5, 3),
+  },
+  {
+    id: "team-3",
+    name: "Acme Lab 3",
+    icon: { type: "text", src: "C" },
+    memberCount: 25,
+    permission: "default",
+    owners: {
+      ownerName: "Bob",
+      ownerAvatarUrl: "",
+      count: 1,
+    },
+    updatedAt: Date.UTC(2024, 5, 10),
   },
 ];

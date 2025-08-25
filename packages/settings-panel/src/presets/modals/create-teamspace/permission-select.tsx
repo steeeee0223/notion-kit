@@ -1,7 +1,9 @@
 import { Icon } from "@notion-kit/icons";
 import { MenuItem, SelectPreset as Select } from "@notion-kit/shadcn";
 
-const permissions = {
+import type { TeamspacePermission } from "../../../lib";
+
+export const permissions = {
   default: {
     label: "Default",
     icon: <Icon.Globe className="size-5" />,
@@ -26,13 +28,11 @@ const permissions = {
   },
 };
 
-type Permission = keyof typeof permissions;
-
 interface PermissionSelectProps {
   workspace: string;
   disabled?: boolean;
-  value: Permission;
-  onChange: (value: Permission) => void;
+  value: TeamspacePermission;
+  onChange: (value: TeamspacePermission) => void;
 }
 
 export function PermissionSelect({

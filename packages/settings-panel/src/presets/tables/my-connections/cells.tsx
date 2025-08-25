@@ -11,10 +11,6 @@ import {
 import { Avatar } from "../../_components";
 import { connectionCardData } from "../../connections";
 
-export function Header({ title }: { title: string }) {
-  return <div className="truncate text-xs text-secondary">{title}</div>;
-}
-
 interface ConnectionCellProps {
   type: string;
   account: string;

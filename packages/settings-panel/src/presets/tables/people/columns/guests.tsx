@@ -4,13 +4,8 @@ import { Role } from "@notion-kit/schemas";
 import { Checkbox } from "@notion-kit/shadcn";
 
 import { Scope, type GuestRow } from "../../../../lib";
-import {
-  AccessCell,
-  GuestActionCell,
-  Header,
-  SortingToggle,
-  UserCell,
-} from "../cells";
+import { SortingToggle, TextCell } from "../../common-cells";
+import { AccessCell, GuestActionCell, UserCell } from "../cells";
 
 export const getGuestColumns = (
   scopes: Set<Scope>,
@@ -65,7 +60,7 @@ export const getGuestColumns = (
     ? [
         {
           accessorKey: "access",
-          header: () => <Header title="Access" className="pl-2 text-sm" />,
+          header: () => <TextCell header value="Access" className="pl-2" />,
           cell: ({ row }: { row: Row<GuestRow> }) => (
             <AccessCell access={row.original.access} />
           ),

@@ -1,7 +1,5 @@
 "use client";
 
-import { SortDirection } from "@tanstack/react-table";
-
 import { cn } from "@notion-kit/cn";
 import { useTransition } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
@@ -22,47 +20,6 @@ import { Avatar } from "../../_components";
 import { Scope } from "../../../lib";
 import type { GuestRow, MemberRow, PartialRole } from "../../../lib";
 import { roleLabels, roleOptions } from "./constants";
-
-interface HeaderProps {
-  title: string;
-  className?: string;
-}
-
-/**
- * Extended version
- * @see my-connections
- */
-export const Header = ({ title, className }: HeaderProps) => {
-  return (
-    <div
-      className={cn("truncate text-xs font-normal text-secondary", className)}
-    >
-      {title}
-    </div>
-  );
-};
-
-interface SortingToggleProps {
-  title: string;
-  isSorted: false | SortDirection;
-  toggle: () => void;
-}
-
-export const SortingToggle = ({
-  title,
-  isSorted,
-  toggle,
-}: SortingToggleProps) => (
-  <Button variant="hint" size="xs" onClick={toggle} className="gap-0.5 px-1">
-    <Header title={title} className="text-sm" />
-    {isSorted &&
-      (isSorted === "asc" ? (
-        <Icon.ArrowUp className="ml-1 size-3 shrink-0 fill-current" />
-      ) : (
-        <Icon.ArrowDown className="ml-1 size-3 shrink-0 fill-current" />
-      ))}
-  </Button>
-);
 
 interface UserCellProps {
   user: MemberRow["user"];

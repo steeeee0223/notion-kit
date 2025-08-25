@@ -56,6 +56,8 @@ export type ConnectionStrategy =
   | "grid"
   | "jira";
 
+export type TeamspacePermission = "default" | "open" | "closed" | "private";
+
 /** Table Data */
 export interface SessionRow {
   id: string;
@@ -122,4 +124,18 @@ export interface SettingsStore {
 export interface WorkspaceMemberships {
   members: MemberRow[];
   guests: GuestRow[];
+}
+
+export interface TeamspaceRow {
+  id: string;
+  name: string;
+  icon: IconData;
+  memberCount: number;
+  permission: TeamspacePermission;
+  owners: {
+    ownerName: string;
+    ownerAvatarUrl?: string;
+    count: number;
+  };
+  updatedAt: number; // ts in ms
 }

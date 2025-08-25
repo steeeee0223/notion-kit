@@ -5,11 +5,10 @@ import type { ColumnDef, Row } from "@tanstack/react-table";
 import { Role } from "@notion-kit/schemas";
 
 import { MemberRow, PartialRole, Scope } from "../../../../lib";
+import { SortingToggle, TextCell } from "../../common-cells";
 import {
-  Header,
   MemberActionCell,
   RoleSelectCell,
-  SortingToggle,
   TeamspacesCell,
   UserCell,
 } from "../cells";
@@ -46,13 +45,13 @@ export const getMemberColumns = ({
   {
     accessorKey: "teamspaces",
     header: () => (
-      <Header title="Teamspaces" className="min-w-[175px] pl-2 text-sm" />
+      <TextCell header value="Teamspaces" className="min-w-[175px] pl-2" />
     ),
     cell: ({ row }) => <TeamspacesCell teamspaces={row.original.teamspaces} />,
   },
   {
     accessorKey: "groups",
-    header: () => <Header title="Groups" className="min-w-30 text-sm" />,
+    header: () => <TextCell header value="Groups" className="min-w-30" />,
     cell: () => (
       <div className="min-w-30 cursor-default text-sm text-muted">None</div>
     ),
