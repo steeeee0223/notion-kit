@@ -57,6 +57,7 @@ export type ConnectionStrategy =
   | "jira";
 
 export type TeamspacePermission = "default" | "open" | "closed" | "private";
+export type TeamspaceRole = "owner" | "member";
 
 /** Table Data */
 export interface SessionRow {
@@ -126,10 +127,17 @@ export interface WorkspaceMemberships {
   guests: GuestRow[];
 }
 
+export interface TeamMemberRow {
+  id: string; // the member id
+  user: User;
+  isWorkspaceOwner?: boolean;
+  role: TeamspaceRole;
+}
 export interface TeamspaceRow {
   id: string;
   name: string;
   icon: IconData;
+  description?: string;
   memberCount: number;
   permission: TeamspacePermission;
   owners: {
@@ -137,5 +145,8 @@ export interface TeamspaceRow {
     ownerAvatarUrl?: string;
     count: number;
   };
+  members: TeamMemberRow[];
   updatedAt: number; // ts in ms
 }
+
+export type Teamspaces = Record<string, TeamspaceRow>;

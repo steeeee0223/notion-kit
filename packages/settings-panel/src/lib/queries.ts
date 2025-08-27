@@ -9,6 +9,7 @@ export const QUERY_KEYS = {
     "members",
     "invitations",
   ],
+  teamspaces: (workspaceId: string) => ["workspace", workspaceId, "teamspaces"],
 };
 
 export function createDefaultFn(data: void): () => Promise<void>;

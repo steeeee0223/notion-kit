@@ -11,6 +11,7 @@ import {
   ac,
   additionalAccountFields,
   additionalSessionFields,
+  additionalTeamFields,
   additionalUserFields,
   roles,
 } from "./lib";
@@ -31,6 +32,9 @@ export function createAuthClient(baseURL?: string) {
         ac,
         roles,
         teams: { enabled: true },
+        schema: {
+          team: { additionalFields: additionalTeamFields },
+        },
       }),
     ],
   });

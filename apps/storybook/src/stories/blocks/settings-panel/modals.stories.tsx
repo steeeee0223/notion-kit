@@ -15,6 +15,7 @@ import {
   PasskeysModal,
   PasswordForm,
   SettingsProvider,
+  TeamspaceDetail,
 } from "@notion-kit/settings-panel";
 import { Button, type ButtonProps } from "@notion-kit/shadcn";
 
@@ -45,6 +46,9 @@ const meta = {
   title: "blocks/Settings Panel/Modals",
   component: ModalTrigger,
   parameters: { layout: "centered" },
+  argTypes: {
+    children: { control: false },
+  },
   render: (props) => (
     <ModalProvider>
       <ModalTrigger {...props} />
@@ -162,5 +166,22 @@ export const CreateTeamspaceModal: Story = {
     ),
     variant: "blue",
     text: "Create Teamspace",
+  },
+};
+
+export const TeamspaceDetailModal: Story = {
+  args: {
+    children: (
+      <TeamspaceDetail
+        workspace="Acme Inc."
+        teamspace={{
+          name: "Acme Lab",
+          icon: { type: "text", src: "T" },
+          description: "This is an example teamspace.",
+          permission: "default",
+        }}
+      />
+    ),
+    text: "Teamspace Details",
   },
 };

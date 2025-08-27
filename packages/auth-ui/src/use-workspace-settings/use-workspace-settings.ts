@@ -9,6 +9,7 @@ import type {
   Invitations,
   Memberships,
   SettingsActions,
+  Teamspaces,
   WorkspaceStore,
 } from "@notion-kit/settings-panel";
 import { toast } from "@notion-kit/shadcn";
@@ -220,8 +221,99 @@ export function useWorkspaceSettings() {
           );
         },
       },
+      teamspaces: {
+        getAll: async () => {
+          const teams = await auth.organization.listTeams({
+            query: { organizationId },
+          });
+
+          if (teams.error) {
+            handleError(teams, "Fetch teamspaces failed");
+            return {};
+          }
+
+          const data: Teamspaces = {};
+
+          const results = await Promise.all(
+            teams.data.map((team) =>
+              auth.organization.listTeamMembers({
+                query: { teamId: team.id },
+              }),
+            ),
+          );
+          results.forEach((res, index) => {
+            if (res.error) return;
+            const team = teams.data[index]!;
+            data[team.id] = {
+              id: team.id,
+              name: team.name,
+              updatedAt: (team.updatedAt ?? team.createdAt).getMilliseconds(),
+              memberCount: res.data.length,
+              // TODO update these
+              icon: { type: "text", src: team.name },
+              permission: "default",
+              owners: {
+                ownerName: "",
+                count: 0,
+              },
+              members: res.data.map((m) => ({
+                id: m.id,
+                user: {
+                  id: m.userId,
+                  name: "",
+                  email: "",
+                  avatarUrl: "",
+                },
+                role: "owner",
+              })),
+            };
+          });
+          return data;
+        },
+        add: async ({ icon, ...data }) => {
+          await auth.organization.createTeam(
+            { ...data, icon: JSON.stringify(icon) },
+            { throw: true },
+          );
+        },
+        update: async ({ id, icon, ...data }) => {
+          await auth.organization.updateTeam(
+            {
+              teamId: id,
+              data: {
+                icon: icon ? JSON.stringify(icon) : undefined,
+                ...data,
+              },
+            },
+            { throw: true },
+          );
+        },
+        delete: async (teamId) => {
+          await auth.organization.removeTeam({ teamId }, { throw: true });
+        },
+        leave: async (teamId) => {
+          await auth.organization.removeTeamMember(
+            { teamId, userId: session?.user.id },
+            { throw: true },
+          );
+        },
+        addMember: async ({ teamspaceId, memberId }) => {
+          // TODO cannot add role
+          await auth.organization.addTeamMember(
+            { teamId: teamspaceId, userId: memberId },
+            { throw: true },
+          );
+        },
+        deleteMember: async ({ teamspaceId, memberId }) => {
+          await auth.organization.removeTeamMember(
+            // TODO check if this memberId is correct
+            { teamId: teamspaceId, userId: memberId },
+            { throw: true },
+          );
+        },
+      },
     };
-  }, [auth.organization, workspace?.id, redirect]);
+  }, [auth.organization, redirect, session?.user.id, workspace?.id]);
 
   return {
     workspaceStore,

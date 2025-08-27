@@ -14,3 +14,4 @@ export { DeleteMember } from "./delete-member";
 export { DeleteGuest } from "./delete-guest";
 /** Teamspaces */
 export { CreateTeamspace } from "./create-teamspace";
+export { TeamspaceDetail } from "./teamspace-detail";

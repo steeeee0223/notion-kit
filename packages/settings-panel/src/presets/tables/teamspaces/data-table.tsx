@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
+  Row,
   useReactTable,
   type ColumnDef,
   type ColumnFiltersState,
@@ -23,17 +24,20 @@ import {
 } from "@notion-kit/shadcn";
 
 export interface DataTableProps<TData, TValue> {
+  className?: string;
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   search?: string;
   emptyResult?: string;
+  onRowClick?: (row: Row<TData>) => void;
 }
 
 export function DataTable<TData, TValue>({
+  className,
   columns,
   data,
-  search,
   emptyResult,
+  onRowClick,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -49,12 +53,12 @@ export function DataTable<TData, TValue>({
     state: { sorting, columnFilters },
   });
 
-  useEffect(() => {
-    table.getColumn("user")?.setFilterValue(search);
-  }, [table, search]);
+  // useEffect(() => {
+  //   table.getColumn("user")?.setFilterValue(search);
+  // }, [table, search]);
 
   return (
-    <Table className="border-t-0">
+    <Table className={cn("border-t-0", className)}>
       <TableHeader>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id} className="border-none">
@@ -65,11 +69,6 @@ export function DataTable<TData, TValue>({
                   "sticky top-0 h-8 bg-transparent py-0",
                   header.id === "teamspace" &&
                     "left-0 z-40 min-w-[220px] bg-modal inset-shadow-[-1px_0_0_#e9e9e7] dark:inset-shadow-[-1px_0_0_#2f2f2f]",
-                  // header.id === "teamspaces" && "z-30 w-[175px] pr-1 pl-3",
-                  // header.id === "access" && "z-30 w-[180px] pr-1 pl-4",
-                  // header.id === "groups" && "w-[120px] px-1",
-                  // header.id === "role" && "min-w-[120px] px-1",
-                  // header.id === "actions" && "w-[52px] px-1",
                 )}
               >
                 {header.isPlaceholder
@@ -89,6 +88,10 @@ export function DataTable<TData, TValue>({
             <TableRow
               key={row.id}
               data-state={row.getIsSelected() && "selected"}
+              onClick={() => onRowClick?.(row)}
+              className={cn(
+                !!onRowClick && "cursor-pointer hover:bg-default/5",
+              )}
             >
               {row.getVisibleCells().map((cell) => (
                 <TableCell
@@ -97,11 +100,6 @@ export function DataTable<TData, TValue>({
                     "h-[42px] bg-transparent py-0",
                     cell.column.id === "teamspace" &&
                       "sticky left-0 z-20 w-[220px] bg-modal inset-shadow-[-1px_0_0_#e9e9e7] dark:inset-shadow-[-1px_0_0_#2f2f2f]",
-                    // cell.column.id === "teamspaces" && "w-[175px] pr-1 pl-3",
-                    // cell.column.id === "access" && "z-30 w-[180px] pr-1 pl-4",
-                    // cell.column.id === "groups" && "w-[120px] px-1",
-                    // cell.column.id === "role" && "w-[120px] px-1",
-                    // cell.column.id === "actions" && "w-[52px] px-1",
                   )}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

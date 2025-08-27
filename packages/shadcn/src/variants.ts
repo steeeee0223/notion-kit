@@ -153,7 +153,7 @@ export const contentVariants = cva(
          * @note Used by: Tabs
          * @note Used with: `openAnimation`, `sideAnimation`
          */
-        tab: "border-none bg-popover",
+        tab: "border-none bg-transparent",
         /**
          * @prop tooltip
          * @note Used by: Tooltip

@@ -9,12 +9,18 @@ import {
   SettingsProvider,
   SettingsSidebar,
   SettingsSidebarPreset,
+  Teamspaces,
   type TabType,
 } from "@notion-kit/settings-panel";
 
 import { delay } from "@/lib/utils";
 
-import { mockConnections, mockSessions, mockSettings } from "./data";
+import {
+  mockConnections,
+  mockSessions,
+  mockSettings,
+  mockTeamspaces,
+} from "./data";
 
 export const Demo = () => {
   const [tab, setTab] = useState<TabType>("preferences");
@@ -45,6 +51,15 @@ export const Demo = () => {
       }}
       connections={{
         getAll: () => Promise.resolve(mockConnections),
+      }}
+      teamspaces={{
+        getAll: () =>
+          Promise.resolve(
+            mockTeamspaces.reduce<Teamspaces>((acc, teamspace) => {
+              acc[teamspace.id] = teamspace;
+              return acc;
+            }, {}),
+          ),
       }}
     >
       <SettingsPanel>

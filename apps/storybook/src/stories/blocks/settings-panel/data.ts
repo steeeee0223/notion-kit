@@ -7,6 +7,7 @@ import type {
   Passkey,
   SessionRow,
   SettingsStore,
+  TeamMemberRow,
   TeamspaceRow,
 } from "@notion-kit/settings-panel";
 import { randomItem } from "@notion-kit/utils";
@@ -78,6 +79,25 @@ const mockUsers: User[] = [
     id: "user11",
     name: "Quinn Elton",
     email: "quinn-elton@example.com",
+    avatarUrl: "https://liveblocks.io/avatars/avatar-8.png",
+  },
+
+  {
+    id: "user12",
+    name: "Amanda Wang",
+    email: "amanda-wang@example.com",
+    avatarUrl: "https://liveblocks.io/avatars/avatar-8.png",
+  },
+  {
+    id: "user13",
+    name: "Gary Oak",
+    email: "gary-oak@example.com",
+    avatarUrl: "https://liveblocks.io/avatars/avatar-8.png",
+  },
+  {
+    id: "user14",
+    name: "Kervin Frazen",
+    email: "kervin-frazen@example.com",
     avatarUrl: "https://liveblocks.io/avatars/avatar-8.png",
   },
 ] as const;
@@ -257,6 +277,13 @@ export const mockInvitations: InvitationRow[] = [
   },
 ];
 
+const mockTeamMembers: TeamMemberRow[] = mockUsers.map((user, i) => ({
+  user,
+  isWorkspaceOwner: i % 3 === 0,
+  role: i % 2 === 0 ? "member" : "owner",
+  id: `team-member-${i + 1}`,
+}));
+
 export const mockTeamspaces: TeamspaceRow[] = [
   {
     id: "team-1",
@@ -270,6 +297,7 @@ export const mockTeamspaces: TeamspaceRow[] = [
       count: 3,
     },
     updatedAt: Date.UTC(2024, 5, 1),
+    members: mockTeamMembers,
   },
   {
     id: "team-2",
@@ -283,6 +311,7 @@ export const mockTeamspaces: TeamspaceRow[] = [
       count: 2,
     },
     updatedAt: Date.UTC(2024, 5, 3),
+    members: mockTeamMembers.slice(0, 5),
   },
   {
     id: "team-3",
@@ -296,5 +325,6 @@ export const mockTeamspaces: TeamspaceRow[] = [
       count: 1,
     },
     updatedAt: Date.UTC(2024, 5, 10),
+    members: [],
   },
 ];

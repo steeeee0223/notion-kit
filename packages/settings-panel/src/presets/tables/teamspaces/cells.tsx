@@ -4,17 +4,18 @@ import { Icon } from "@notion-kit/icons";
 import {
   Button,
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
   Option,
   SelectPreset as Select,
+  TooltipPreset,
 } from "@notion-kit/shadcn";
 
-import { Avatar } from "../../_components";
-import { TeamspacePermission } from "../../../lib";
-import { permissions } from "../../modals/create-teamspace/permission-select";
+import { Avatar, permissions } from "../../_components";
+import { TeamspacePermission, TeamspaceRole } from "../../../lib";
 import { TextCell } from "../common-cells";
 
 interface TeamspaceCellProps {
@@ -96,7 +97,7 @@ export function OwnersCell({
   count,
 }: OwnersCellProps) {
   return (
-    <div className="flex h-14 min-w-15 items-center gap-1.5 overflow-hidden text-sm text-primary">
+    <div className="flex h-14 min-w-15 items-center gap-1.5 overflow-hidden px-2 text-sm text-primary">
       <Avatar src={ownerAvatarUrl} fallback={ownerName} />
       <div className="contents">
         <div className="shrink truncate">{ownerName}</div>
@@ -123,12 +124,17 @@ export function TeamspaceActionCell({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="hint" className="size-5" disabled={disabled}>
-          <Icon.Dots className="size-4 fill-current" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-[282px]">
+      <TooltipPreset description="Teamspace settings and members...">
+        <DropdownMenuTrigger asChild>
+          <Button variant="hint" className="size-5" disabled={disabled}>
+            <Icon.Dots className="size-4 fill-current" />
+          </Button>
+        </DropdownMenuTrigger>
+      </TooltipPreset>
+      <DropdownMenuContent
+        className="w-[282px]"
+        onClick={(e) => e.stopPropagation()}
+      >
         <DropdownMenuGroup>
           <DropdownMenuItem Icon={<Icon.Gear />} Body="Teamspace settings" />
           <DropdownMenuItem
@@ -143,6 +149,72 @@ export function TeamspaceActionCell({
             Icon={<Icon.ArchiveBox />}
             Body="Archive teamspace"
           />
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+const teamspaceRoles = {
+  owner: {
+    label: "Teamspace owner",
+    description:
+      "Can edit teamspace settings and full access to teamspace pages.",
+  },
+  member: {
+    label: "Teamspace member",
+    description:
+      "Cannot edit teamspace settings and can access teamspace pages.",
+  },
+};
+
+interface TeamMemberActionCellProps {
+  role: TeamspaceRole;
+  onUpdate?: (role: TeamspaceRole) => void | Promise<void>;
+  onRemove?: () => void | Promise<void>;
+}
+
+export function TeamMemberActionCell({
+  role,
+  onUpdate,
+  onRemove,
+}: TeamMemberActionCellProps) {
+  const [update, isUpdating] = useTransition((role: TeamspaceRole) =>
+    onUpdate?.(role),
+  );
+  const [remove, isRemoving] = useTransition(() => onRemove?.());
+  const disabled = isUpdating || isRemoving;
+
+  return (
+    <DropdownMenu>
+      <TooltipPreset description="Teamspace settings and members...">
+        <DropdownMenuTrigger asChild>
+          <Button variant="hint" size="xs" disabled={disabled}>
+            <span className="text-primary">{teamspaceRoles[role].label}</span>
+            <Icon.ChevronDown className="size-3 fill-current" />
+          </Button>
+        </DropdownMenuTrigger>
+      </TooltipPreset>
+      <DropdownMenuContent className="w-[288px]">
+        <DropdownMenuGroup>
+          {Object.entries(teamspaceRoles).map(
+            ([key, { label, description }]) => (
+              <DropdownMenuCheckboxItem
+                key={key}
+                checked={role === key}
+                onClick={() => update(key as TeamspaceRole)}
+                Body={
+                  <div className="flex flex-col items-start gap-0.5 py-1">
+                    <div className="truncate">{label}</div>
+                    <div className="text-xs whitespace-normal text-secondary">
+                      {description}
+                    </div>
+                  </div>
+                }
+              />
+            ),
+          )}
+          <DropdownMenuItem variant="error" onClick={remove} Body="Remove" />
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -12,6 +12,7 @@ import { AuthEnv } from "./env";
 import {
   ac,
   additionalSessionFields,
+  additionalTeamFields,
   additionalUserFields,
   createMailtrapApi,
   roles,
@@ -108,7 +109,10 @@ export function createAuth(env: AuthEnv) {
         teams: {
           enabled: true,
           maximumTeams: 10, // Optional: limit teams per organization
-          allowRemovingAllTeams: false, // Optional: prevent removing the last team
+          allowRemovingAllTeams: true, // Optional: prevent removing the last team
+        },
+        schema: {
+          team: { additionalFields: additionalTeamFields },
         },
       }),
     ],

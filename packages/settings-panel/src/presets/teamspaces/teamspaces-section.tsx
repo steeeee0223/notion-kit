@@ -10,9 +10,13 @@ import { TagsInput } from "@notion-kit/tags-input";
 import { HintButton } from "../_components";
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
 import { CreateTeamspace } from "../modals";
+import { TeamspacesTable } from "../tables";
+import { useTeamspaceActions } from "./use-teamspace-actions";
+import { useTeamspaces } from "./use-teamspaces";
 
 export function TeamspacesSection() {
   const {
+    scopes,
     settings: { workspace },
   } = useSettings();
   const { openModal } = useModal();
@@ -20,11 +24,13 @@ export function TeamspacesSection() {
   const { t } = useTranslation("settings");
   const trans = t("teamspaces.teamspaces", { returnObjects: true });
   /** handlers */
+  const { data: teamspaces } = useTeamspaces((res) => Object.values(res));
+  const { create, update, remove, leave, updateMember, removeMember } =
+    useTeamspaceActions();
   const openCreateTeamspace = () =>
-    openModal(<CreateTeamspace workspace={workspace.name} />);
+    openModal(<CreateTeamspace workspace={workspace.name} onSubmit={create} />);
   // TODO update default teamspace
   // TODO limit creation to owner
-  // TODO teamspace table
 
   return (
     <SettingsSection title={trans.title}>
@@ -53,7 +59,16 @@ export function TeamspacesSection() {
           {trans.manage.button}
         </Button>
       </SettingsRule>
-      {/* teamspace table */}
+      <TeamspacesTable
+        scopes={scopes}
+        workspace={workspace.name}
+        data={teamspaces}
+        onUpdate={update}
+        onArchive={remove}
+        onLeave={leave}
+        onUpdateMember={updateMember}
+        onRemoveMember={removeMember}
+      />
     </SettingsSection>
   );
 }

@@ -35,7 +35,7 @@ const createTeamspaceSchema = z.object({
   name: z.string().min(1),
   icon: IconObject,
   description: z.string().max(500).optional(),
-  permissions: z.enum(["default", "open", "closed", "private"]),
+  permission: z.enum(["default", "open", "closed", "private"]),
 });
 type CreateTeamspaceSchema = z.infer<typeof createTeamspaceSchema>;
 
@@ -56,7 +56,7 @@ export function CreateTeamspace({
     defaultValues: {
       name: "",
       icon: { type: "text", src: "T" },
-      permissions: "open",
+      permission: "open",
     },
   });
   const { formState, handleSubmit } = form;
@@ -141,7 +141,7 @@ export function CreateTeamspace({
             />
             <FormField
               control={form.control}
-              name="permissions"
+              name="permission"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Permissions</FormLabel>
