@@ -5,8 +5,8 @@ import type { ColumnDef, Row } from "@tanstack/react-table";
 import { Badge } from "@notion-kit/shadcn";
 
 import { Scope, type InvitationRow } from "../../../../lib";
-import { SortingToggle } from "../../common-cells";
-import { InvitationActionCell, RoleCell, UserCell } from "../cells";
+import { SortingToggle, UserCell } from "../../common-cells";
+import { InvitationActionCell, RoleCell } from "../cells";
 import { statusLabels } from "../constants";
 
 interface GetInvitationColumnsOptions {

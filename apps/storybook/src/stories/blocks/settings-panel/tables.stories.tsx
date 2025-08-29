@@ -60,16 +60,7 @@ export const Invitations: Story = {
 };
 
 export const Teamspaces: Story = {
-  render: () => {
-    const scopes = SCOPES.owner.plus;
-    return (
-      <TeamspacesTable
-        workspace="Acme Inc."
-        data={mockTeamspaces}
-        scopes={scopes}
-      />
-    );
-  },
+  render: () => <TeamspacesTable workspace="Acme Inc." data={mockTeamspaces} />,
 };
 
 export const Plans: Story = {

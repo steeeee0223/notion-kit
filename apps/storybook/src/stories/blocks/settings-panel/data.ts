@@ -7,7 +7,7 @@ import type {
   Passkey,
   SessionRow,
   SettingsStore,
-  TeamMemberRow,
+  TeamspaceRole,
   TeamspaceRow,
 } from "@notion-kit/settings-panel";
 import { randomItem } from "@notion-kit/utils";
@@ -190,16 +190,20 @@ export const mockSessions: SessionRow[] = [
 export const mockMembers: MemberRow[] = [
   {
     user: mockUsers[0]!,
-    teamspaces: {
-      current: "1",
-      options: [{ id: "1", name: "General", memberCount: 29 }],
-    },
+    teamspaces: [
+      {
+        id: "1",
+        name: "General",
+        memberCount: 29,
+        icon: { type: "text", src: "T" },
+      },
+    ],
     groups: { current: null, options: [] },
     role: Role.OWNER,
   },
   {
     user: mockUsers[1]!,
-    teamspaces: { current: null, options: [] },
+    teamspaces: [],
     groups: { current: null, options: [] },
     role: Role.MEMBER,
   },
@@ -277,11 +281,12 @@ export const mockInvitations: InvitationRow[] = [
   },
 ];
 
-const mockTeamMembers: TeamMemberRow[] = mockUsers.map((user, i) => ({
-  user,
-  isWorkspaceOwner: i % 3 === 0,
+export const mockTeamMembers = mockUsers.map<{
+  userId: string;
+  role: TeamspaceRole;
+}>((user, i) => ({
+  userId: user.id,
   role: i % 2 === 0 ? "member" : "owner",
-  id: `team-member-${i + 1}`,
 }));
 
 export const mockTeamspaces: TeamspaceRow[] = [
@@ -297,7 +302,6 @@ export const mockTeamspaces: TeamspaceRow[] = [
       count: 3,
     },
     updatedAt: Date.UTC(2024, 5, 1),
-    members: mockTeamMembers,
   },
   {
     id: "team-2",
@@ -311,7 +315,6 @@ export const mockTeamspaces: TeamspaceRow[] = [
       count: 2,
     },
     updatedAt: Date.UTC(2024, 5, 3),
-    members: mockTeamMembers.slice(0, 5),
   },
   {
     id: "team-3",
@@ -325,6 +328,5 @@ export const mockTeamspaces: TeamspaceRow[] = [
       count: 1,
     },
     updatedAt: Date.UTC(2024, 5, 10),
-    members: [],
   },
 ];

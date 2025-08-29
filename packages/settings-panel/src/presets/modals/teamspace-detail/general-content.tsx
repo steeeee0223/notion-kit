@@ -1,12 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { CircleHelp } from "lucide-react";
 
-import { useTransition } from "@notion-kit/hooks";
 import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
-import { Button, MenuItemAction, Separator } from "@notion-kit/shadcn";
-import { Spinner } from "@notion-kit/spinner";
+import {
+  Button,
+  Dialog,
+  DialogTrigger,
+  MenuItemAction,
+  Separator,
+} from "@notion-kit/shadcn";
 
 import {
   HintButton,
@@ -14,6 +19,7 @@ import {
   TeamspacePermission,
 } from "../../_components";
 import { TeamspacePermission as Permission } from "../../../lib";
+import { LeaveTeamspace } from "../leave-teamspace";
 import { Card, Tab, Title } from "./common";
 
 interface GeneralContentProps {
@@ -37,7 +43,7 @@ export function GeneralContent({
   const options = { ...permissions };
   options.default.description = permissions.default.getDescription(workspace);
 
-  const [leave, isLeaving] = useTransition(() => onLeave?.());
+  const [openLeave, setOpenLeave] = useState(false);
 
   return (
     <div className="space-y-5">
@@ -87,27 +93,30 @@ export function GeneralContent({
       <section>
         <Title title="Danger zone" />
         <Card className="mb-2.5 flex flex-col hover:bg-red/10">
-          <Button
-            tabIndex={-1}
-            variant={null}
-            disabled={isLeaving}
-            onClick={leave}
-            className="h-11 w-full min-w-0 shrink-0 justify-normal gap-3.5 py-2 text-sm/[1.2] text-red hover:bg-transparent"
-          >
-            {isLeaving ? (
-              <Spinner />
-            ) : (
-              <Icon.ArrowLineRight className="size-5 fill-current" />
-            )}
-            <div className="flex flex-col items-start">
-              <div className="truncate text-sm leading-5 text-red">
-                Leave teamspace
-              </div>
-              <div className="overflow-hidden text-xs text-ellipsis whitespace-normal text-secondary">
-                Removes teamspace from your sidebar
-              </div>
-            </div>
-          </Button>
+          <Dialog open={openLeave} onOpenChange={setOpenLeave}>
+            <DialogTrigger asChild>
+              <Button
+                tabIndex={-1}
+                variant={null}
+                className="h-11 w-full min-w-0 shrink-0 justify-normal gap-3.5 py-2 text-sm/[1.2] text-red hover:bg-transparent"
+              >
+                <Icon.ArrowLineRight className="size-5 fill-current" />
+                <div className="flex flex-col items-start">
+                  <div className="truncate text-sm leading-5 text-red">
+                    Leave teamspace
+                  </div>
+                  <div className="overflow-hidden text-xs text-ellipsis whitespace-normal text-secondary">
+                    Removes teamspace from your sidebar
+                  </div>
+                </div>
+              </Button>
+            </DialogTrigger>
+            <LeaveTeamspace
+              name={teamspace.name}
+              onLeave={onLeave}
+              onClose={() => setOpenLeave(false)}
+            />
+          </Dialog>
         </Card>
         <HintButton
           icon={CircleHelp}

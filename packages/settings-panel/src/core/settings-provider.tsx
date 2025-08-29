@@ -96,17 +96,17 @@ export interface SettingsActions {
     leave?: (teamspaceId: string) => Promise<void>;
     addMember?: (data: {
       teamspaceId: string;
-      memberId: string;
+      userId: string;
       role: TeamspaceRole;
     }) => Promise<void>;
     updateMember?: (data: {
       teamspaceId: string;
-      memberId: string;
+      userId: string;
       role: TeamspaceRole;
     }) => Promise<void>;
     deleteMember?: (data: {
       teamspaceId: string;
-      memberId: string;
+      userId: string;
     }) => Promise<void>;
   };
 }

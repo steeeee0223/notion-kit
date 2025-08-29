@@ -1,34 +1,41 @@
 "use client";
 
+import { useState } from "react";
 import { CircleHelp } from "lucide-react";
 
 import { useTranslation } from "@notion-kit/i18n";
-import { useModal } from "@notion-kit/modal";
-import { Button, Separator, Switch } from "@notion-kit/shadcn";
+import {
+  Button,
+  Dialog,
+  DialogTrigger,
+  Separator,
+  Switch,
+} from "@notion-kit/shadcn";
 import { TagsInput } from "@notion-kit/tags-input";
 
 import { HintButton } from "../_components";
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
+import { Scope } from "../../lib";
+import { useTeamspaceActions, useTeamspaceDetail } from "../hooks";
 import { CreateTeamspace } from "../modals";
 import { TeamspacesTable } from "../tables";
-import { useTeamspaceActions } from "./use-teamspace-actions";
-import { useTeamspaces } from "./use-teamspaces";
+import { useTeamspacesTable } from "./use-teamspaces";
 
 export function TeamspacesSection() {
   const {
     scopes,
     settings: { workspace },
   } = useSettings();
-  const { openModal } = useModal();
   /** i18n */
   const { t } = useTranslation("settings");
   const trans = t("teamspaces.teamspaces", { returnObjects: true });
   /** handlers */
-  const { data: teamspaces } = useTeamspaces((res) => Object.values(res));
-  const { create, update, remove, leave, updateMember, removeMember } =
-    useTeamspaceActions();
-  const openCreateTeamspace = () =>
-    openModal(<CreateTeamspace workspace={workspace.name} onSubmit={create} />);
+  const teamspaces = useTeamspacesTable();
+  const [openCreate, setOpenCreate] = useState(false);
+  const { selectedTeamspace, setSelectedTeamspace, renderTeamspaceDetail } =
+    useTeamspaceDetail();
+  const { create, update, remove, leave } = useTeamspaceActions();
+
   // TODO update default teamspace
   // TODO limit creation to owner
 
@@ -55,19 +62,39 @@ export function TeamspacesSection() {
       </SettingsRule>
       <Separator />
       <SettingsRule {...trans.manage}>
-        <Button variant="blue" size="sm" onClick={openCreateTeamspace}>
-          {trans.manage.button}
-        </Button>
+        <Dialog open={openCreate} onOpenChange={setOpenCreate}>
+          <DialogTrigger>
+            <Button
+              variant="blue"
+              size="sm"
+              disabled={!scopes.has(Scope.TeamspaceCreate)}
+            >
+              {trans.manage.button}
+            </Button>
+          </DialogTrigger>
+          <CreateTeamspace
+            workspace={workspace.name}
+            onClose={() => setOpenCreate(false)}
+            onSubmit={create}
+          />
+        </Dialog>
       </SettingsRule>
+      <Dialog
+        open={!!selectedTeamspace}
+        onOpenChange={(open) => {
+          if (open) return;
+          setSelectedTeamspace(null);
+        }}
+      >
+        {renderTeamspaceDetail()}
+      </Dialog>
       <TeamspacesTable
-        scopes={scopes}
         workspace={workspace.name}
         data={teamspaces}
+        onRowSelect={(t) => setSelectedTeamspace(t.id)}
         onUpdate={update}
-        onArchive={remove}
-        onLeave={leave}
-        onUpdateMember={updateMember}
-        onRemoveMember={removeMember}
+        onArchive={(t) => remove(t.id)}
+        onLeave={(t) => leave(t.id)}
       />
     </SettingsSection>
   );

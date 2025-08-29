@@ -1,9 +1,12 @@
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import {
-  organization,
-  twoFactor,
-  type Organization,
+import { openAPI, organization, twoFactor } from "better-auth/plugins";
+import type {
+  Invitation,
+  Member,
+  Organization,
+  Team as TeamBase,
+  TeamMember,
 } from "better-auth/plugins";
 import { passkey, type Passkey } from "better-auth/plugins/passkey";
 
@@ -115,6 +118,7 @@ export function createAuth(env: AuthEnv) {
           team: { additionalFields: additionalTeamFields },
         },
       }),
+      openAPI(),
     ],
   } satisfies BetterAuthOptions;
 
@@ -123,8 +127,13 @@ export function createAuth(env: AuthEnv) {
 
 export type Auth = ReturnType<typeof createAuth>;
 export type Session = Auth["$Infer"]["Session"];
-export type { Organization, Passkey };
+export type { Organization, Passkey, TeamMember, Member, Invitation };
 
 export interface WorkspaceMetadata {
   inviteToken?: string;
 }
+export type Team = TeamBase & {
+  icon: string;
+  description?: string;
+  permission: "default" | "open" | "closed" | "private";
+};

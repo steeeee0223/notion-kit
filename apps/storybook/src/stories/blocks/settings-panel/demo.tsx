@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 
+import { Role } from "@notion-kit/schemas";
 import {
+  Memberships,
   SettingsBodyPreset,
   SettingsContent,
   SettingsPanel,
@@ -17,8 +19,11 @@ import { delay } from "@/lib/utils";
 
 import {
   mockConnections,
+  mockGuests,
+  mockMembers,
   mockSessions,
   mockSettings,
+  mockTeamMembers,
   mockTeamspaces,
 } from "./data";
 
@@ -52,11 +57,29 @@ export const Demo = () => {
       connections={{
         getAll: () => Promise.resolve(mockConnections),
       }}
+      people={{
+        getAll: () =>
+          Promise.resolve(
+            [...mockMembers, ...mockGuests].reduce<Memberships>(
+              (acc, member) => {
+                acc[member.user.id] = {
+                  user: member.user,
+                  role: "role" in member ? member.role : Role.GUEST,
+                };
+                return acc;
+              },
+              {},
+            ),
+          ),
+      }}
       teamspaces={{
         getAll: () =>
           Promise.resolve(
-            mockTeamspaces.reduce<Teamspaces>((acc, teamspace) => {
-              acc[teamspace.id] = teamspace;
+            mockTeamspaces.reduce<Teamspaces>((acc, teamspace, i) => {
+              acc[teamspace.id] = {
+                ...teamspace,
+                members: i < 2 ? mockTeamMembers : [],
+              };
               return acc;
             }, {}),
           ),

@@ -8,3 +8,5 @@ export * from "./use-mounted";
 export * from "./use-origin";
 export * from "./use-scroll";
 export * from "./use-transition";
+/** Temp. */
+export * from "./use-temporary-fix";

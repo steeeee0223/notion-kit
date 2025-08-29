@@ -35,9 +35,16 @@ export const SettingsSidebarPreset: React.FC<SettingsSidebarPresetProps> = ({
     scopes,
   } = useSettings();
   const { t } = useTranslation("settings");
-  const workspaceTabs = _workspaceTabs.filter(
-    (tab) => tab.value !== "people" || scopes.has(Scope.MemberRead),
-  );
+  const workspaceTabs = _workspaceTabs.filter((tab) => {
+    switch (tab.value) {
+      case "people":
+        return scopes.has(Scope.MemberRead);
+      case "teamspaces":
+        return scopes.has(Scope.TeamspaceRead);
+      default:
+        return true;
+    }
+  });
 
   return (
     <>

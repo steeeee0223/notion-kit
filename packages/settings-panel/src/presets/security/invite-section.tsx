@@ -2,19 +2,25 @@
 
 import { useTranslation } from "react-i18next";
 
+import { Role } from "@notion-kit/schemas";
 import { Switch } from "@notion-kit/shadcn";
 
 import { TextLinks } from "../_components";
 import { SettingsRule, SettingsSection } from "../../core";
 import type { TabType } from "../data";
-import { useGuestsCount } from "../people";
+import { usePeople } from "../hooks";
 
 interface InviteSectionProps {
   onTabChange: (tab: TabType) => void;
 }
 
 export function InviteSection({ onTabChange }: InviteSectionProps) {
-  const guests = useGuestsCount();
+  const { data: guests } = usePeople((res) =>
+    Object.values(res).reduce(
+      (acc, member) => (member.role === Role.GUEST ? acc + 1 : acc),
+      0,
+    ),
+  );
   /** i18n */
   const { t } = useTranslation("settings");
   const trans = t("security.invite", { returnObjects: true });

@@ -6,6 +6,7 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
+  OnChangeFn,
   Row,
   useReactTable,
   type ColumnDef,
@@ -27,9 +28,10 @@ export interface DataTableProps<TData, TValue> {
   className?: string;
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  search?: string;
   emptyResult?: string;
+  columnFilters?: ColumnFiltersState;
   onRowClick?: (row: Row<TData>) => void;
+  onColumnFiltersChange?: OnChangeFn<ColumnFiltersState>;
 }
 
 export function DataTable<TData, TValue>({
@@ -37,10 +39,11 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   emptyResult,
+  columnFilters,
   onRowClick,
+  onColumnFiltersChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
     data,
@@ -48,14 +51,10 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange,
     getFilteredRowModel: getFilteredRowModel(),
     state: { sorting, columnFilters },
   });
-
-  // useEffect(() => {
-  //   table.getColumn("user")?.setFilterValue(search);
-  // }, [table, search]);
 
   return (
     <Table className={cn("border-t-0", className)}>

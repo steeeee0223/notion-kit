@@ -1,11 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { delay } from "msw";
 
 import { ModalProvider, useModal } from "@notion-kit/modal";
 import {
   Add2FAForm,
   AddMembers,
-  CreateTeamspace,
   DeleteAccount,
   DeleteGuest,
   DeleteMember,
@@ -15,7 +13,6 @@ import {
   PasskeysModal,
   PasswordForm,
   SettingsProvider,
-  TeamspaceDetail,
 } from "@notion-kit/settings-panel";
 import { Button, type ButtonProps } from "@notion-kit/shadcn";
 
@@ -157,31 +154,4 @@ export const PasskeysManagement: Story = {
       </ModalProvider>
     </SettingsProvider>
   ),
-};
-
-export const CreateTeamspaceModal: Story = {
-  args: {
-    children: (
-      <CreateTeamspace workspace="Acme Inc." onSubmit={() => delay(2000)} />
-    ),
-    variant: "blue",
-    text: "Create Teamspace",
-  },
-};
-
-export const TeamspaceDetailModal: Story = {
-  args: {
-    children: (
-      <TeamspaceDetail
-        workspace="Acme Inc."
-        teamspace={{
-          name: "Acme Lab",
-          icon: { type: "text", src: "T" },
-          description: "This is an example teamspace.",
-          permission: "default",
-        }}
-      />
-    ),
-    text: "Teamspace Details",
-  },
 };

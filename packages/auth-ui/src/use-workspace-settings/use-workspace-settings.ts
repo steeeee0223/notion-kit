@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { v4 } from "uuid";
 
-import { WorkspaceMetadata } from "@notion-kit/auth";
+import type { Team, WorkspaceMetadata } from "@notion-kit/auth";
 import { IconObject, Plan, Role, type IconData } from "@notion-kit/schemas";
 import type {
   Invitations,
@@ -65,8 +65,9 @@ export function useWorkspaceSettings() {
   }, [baseURL, session?.user.id, workspace]);
 
   const actions = useMemo<SettingsActions>(() => {
+    const userId = session?.user.id;
     const organizationId = workspace?.id;
-    if (!organizationId) return {};
+    if (!organizationId || !userId) return {};
     return {
       workspace: {
         update: async ({ name, icon }) => {
@@ -231,9 +232,7 @@ export function useWorkspaceSettings() {
             handleError(teams, "Fetch teamspaces failed");
             return {};
           }
-
           const data: Teamspaces = {};
-
           const results = await Promise.all(
             teams.data.map((team) =>
               auth.organization.listTeamMembers({
@@ -242,39 +241,29 @@ export function useWorkspaceSettings() {
             ),
           );
           results.forEach((res, index) => {
-            if (res.error) return;
-            const team = teams.data[index]!;
+            const team = teams.data[index]! as Team;
             data[team.id] = {
               id: team.id,
               name: team.name,
               updatedAt: (team.updatedAt ?? team.createdAt).getMilliseconds(),
-              memberCount: res.data.length,
+              icon: JSON.parse(team.icon) as IconData,
+              permission: team.permission,
               // TODO update these
-              icon: { type: "text", src: team.name },
-              permission: "default",
-              owners: {
-                ownerName: "",
-                count: 0,
-              },
-              members: res.data.map((m) => ({
-                id: m.id,
-                user: {
-                  id: m.userId,
-                  name: "",
-                  email: "",
-                  avatarUrl: "",
-                },
-                role: "owner",
-              })),
+              members:
+                res.data?.map((m) => ({
+                  userId: m.userId,
+                  role: "owner",
+                })) ?? [],
             };
           });
           return data;
         },
         add: async ({ icon, ...data }) => {
-          await auth.organization.createTeam(
+          const res = await auth.organization.createTeam(
             { ...data, icon: JSON.stringify(icon) },
             { throw: true },
           );
+          await auth.organization.addTeamMember({ teamId: res.id, userId });
         },
         update: async ({ id, icon, ...data }) => {
           await auth.organization.updateTeam(
@@ -293,21 +282,25 @@ export function useWorkspaceSettings() {
         },
         leave: async (teamId) => {
           await auth.organization.removeTeamMember(
-            { teamId, userId: session?.user.id },
+            { teamId, userId },
             { throw: true },
           );
         },
-        addMember: async ({ teamspaceId, memberId }) => {
+        addMember: async ({ teamspaceId, userId }) => {
           // TODO cannot add role
           await auth.organization.addTeamMember(
-            { teamId: teamspaceId, userId: memberId },
+            { teamId: teamspaceId, userId },
             { throw: true },
           );
         },
-        deleteMember: async ({ teamspaceId, memberId }) => {
+        updateMember: async () => {
+          // TODO
+          console.warn("Not implemented");
+          await Promise.resolve();
+        },
+        deleteMember: async ({ teamspaceId, userId }) => {
           await auth.organization.removeTeamMember(
-            // TODO check if this memberId is correct
-            { teamId: teamspaceId, userId: memberId },
+            { teamId: teamspaceId, userId },
             { throw: true },
           );
         },

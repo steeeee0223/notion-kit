@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { CircleHelp } from "lucide-react";
 
 import { type IconData } from "@notion-kit/icon-block";
@@ -13,7 +14,6 @@ import {
 } from "../../_components";
 import type {
   TeamspacePermission as Permission,
-  Scope,
   TeamMemberRow,
   TeamspaceRole,
 } from "../../../lib";
@@ -21,7 +21,6 @@ import { TeamMembersTable } from "../../tables";
 import { Card, Title } from "./common";
 
 interface MembersContentProps {
-  scopes: Set<Scope>;
   workspace: string;
   teamspace: {
     name: string;
@@ -31,14 +30,13 @@ interface MembersContentProps {
   };
   teamMembers: TeamMemberRow[];
   onUpdateMember?: (data: {
-    memberId: string;
+    userId: string;
     role: TeamspaceRole;
   }) => void | Promise<void>;
-  onRemoveMember?: (memberId: string) => void | Promise<void>;
+  onRemoveMember?: (userId: string) => void | Promise<void>;
 }
 
 export function MembersContent({
-  scopes,
   workspace,
   teamspace,
   teamMembers,
@@ -47,6 +45,8 @@ export function MembersContent({
 }: MembersContentProps) {
   const options = { ...permissions };
   options.default.description = permissions.default.getDescription(workspace);
+  /** Search Field */
+  const [search, setSearch] = useState("");
 
   return (
     <div className="h-full space-y-5 overflow-auto">
@@ -79,13 +79,16 @@ export function MembersContent({
               className="mr-1 ml-auto w-[45%] rounded-full pl-3"
               search
               placeholder="Search for members or groups"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <TeamMembersTable
-            scopes={scopes}
             data={teamMembers}
+            search={search}
             onUpdate={onUpdateMember}
             onRemove={onRemoveMember}
+            onSearchChange={setSearch}
           />
         </div>
       </section>

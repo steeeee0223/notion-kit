@@ -5,19 +5,16 @@ import type { ColumnDef, Row } from "@tanstack/react-table";
 import { Role } from "@notion-kit/schemas";
 
 import { MemberRow, PartialRole, Scope } from "../../../../lib";
-import { SortingToggle, TextCell } from "../../common-cells";
-import {
-  MemberActionCell,
-  RoleSelectCell,
-  TeamspacesCell,
-  UserCell,
-} from "../cells";
+import { SortingToggle, TextCell, UserCell } from "../../common-cells";
+import { userFilterFn } from "../../utils";
+import { MemberActionCell, RoleSelectCell, TeamspacesCell } from "../cells";
 
 interface GetMemberColumnsOptions {
   scopes: Set<Scope>;
   memberId?: string;
   onUpdate?: (id: string, role: Role) => void;
   onDelete?: (id: string) => void;
+  onTeamspaceSelect?: (teamspaceId: string) => void;
 }
 
 export const getMemberColumns = ({
@@ -25,6 +22,7 @@ export const getMemberColumns = ({
   memberId,
   onUpdate,
   onDelete,
+  onTeamspaceSelect,
 }: GetMemberColumnsOptions): ColumnDef<MemberRow, MemberRow>[] => [
   {
     accessorKey: "user",
@@ -39,15 +37,19 @@ export const getMemberColumns = ({
       );
     },
     cell: ({ row }) => <UserCell user={row.original.user} />,
-    filterFn: (row, _columnId, filterValue) =>
-      row.original.user.email.toLowerCase().includes(filterValue as string),
+    filterFn: userFilterFn,
   },
   {
     accessorKey: "teamspaces",
     header: () => (
       <TextCell header value="Teamspaces" className="min-w-[175px] pl-2" />
     ),
-    cell: ({ row }) => <TeamspacesCell teamspaces={row.original.teamspaces} />,
+    cell: ({ row }) => (
+      <TeamspacesCell
+        teamspaces={row.original.teamspaces}
+        onTeamspaceSelect={onTeamspaceSelect}
+      />
+    ),
   },
   {
     accessorKey: "groups",

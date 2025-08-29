@@ -1,54 +1,32 @@
 "use client";
 
 import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
 
 import { Role, User } from "@notion-kit/schemas";
 
-import { useSettings } from "../../core";
-import {
-  createDefaultFn,
-  QUERY_KEYS,
-  type Invitations,
-  type Memberships,
-  type WorkspaceMemberships,
-} from "../../lib";
-
-export function usePeople<T = Memberships>(
-  selector?: (data: Memberships) => T,
-) {
-  const {
-    settings: { workspace },
-    people: actions,
-  } = useSettings();
-
-  return useQuery<Memberships, Error, T>({
-    initialData: {},
-    queryKey: QUERY_KEYS.members(workspace.id),
-    queryFn: actions?.getAll ?? createDefaultFn({}),
-    select: selector,
-  });
-}
-
-export function useInvitations<T = Invitations>(
-  selector?: (data: Invitations) => T,
-) {
-  const {
-    settings: { workspace },
-    invitations: actions,
-  } = useSettings();
-
-  return useQuery<Invitations, Error, T>({
-    initialData: {},
-    queryKey: QUERY_KEYS.invitations(workspace.id),
-    queryFn: actions?.getAll ?? createDefaultFn({}),
-    select: selector,
-  });
-}
+import { MemberTeamspace, type WorkspaceMemberships } from "../../lib";
+import { useInvitations, usePeople, useTeamspaces } from "../hooks";
 
 const defaultOptions = { current: null, options: [] };
 
 export function useWorkspaceMemberships() {
+  const { data: teamspaces } = useTeamspaces((res) =>
+    Object.values(res).reduce<Record<string, MemberTeamspace[]>>(
+      (acc, teamspace) => {
+        teamspace.members.forEach((member) => {
+          acc[member.userId] ??= [];
+          acc[member.userId]!.push({
+            id: teamspace.id,
+            name: teamspace.name,
+            icon: teamspace.icon,
+            memberCount: teamspace.members.length,
+          });
+        });
+        return acc;
+      },
+      {},
+    ),
+  );
   const { data } = usePeople((res) =>
     Object.values(res).reduce<WorkspaceMemberships>(
       (acc, member) => {
@@ -57,7 +35,7 @@ export function useWorkspaceMemberships() {
         } else {
           acc.members.push({
             ...member,
-            teamspaces: defaultOptions,
+            teamspaces: teamspaces[member.user.id] ?? [],
             groups: defaultOptions,
           });
         }
@@ -88,14 +66,4 @@ export function useInvitedMembers() {
   });
 
   return useMemo(() => [...people, ...invitations], [people, invitations]);
-}
-
-export function useGuestsCount() {
-  const { data } = usePeople((res) =>
-    Object.values(res).reduce(
-      (acc, member) => (member.role === Role.GUEST ? acc + 1 : acc),
-      0,
-    ),
-  );
-  return data;
 }

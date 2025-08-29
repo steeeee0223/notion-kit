@@ -173,7 +173,7 @@ function SelectItem({
         Body={<SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>}
       >
         {!hideCheck && (
-          <SelectPrimitive.ItemIndicator asChild>
+          <SelectPrimitive.ItemIndicator asChild className="ml-2">
             <MenuItemCheck />
           </SelectPrimitive.ItemIndicator>
         )}
@@ -230,12 +230,12 @@ function SelectPreset<T extends string = string>({
 }: SelectPresetProps<T>) {
   return (
     <Select value={value} onValueChange={onChange} disabled={disabled}>
-      <SelectTrigger className={className}>
+      <SelectTrigger className={className} onClick={(e) => e.stopPropagation()}>
         <SelectValue
           aria-disabled={disabled}
           placeholder={placeholder}
           {...(OptionValue && {
-            "aira-label": value,
+            "aria-label": value,
             children: (
               <OptionValue option={value ? options[value] : undefined} />
             ),

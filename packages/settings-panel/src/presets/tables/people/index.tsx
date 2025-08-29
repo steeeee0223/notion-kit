@@ -25,13 +25,28 @@ interface MembersTableProps {
   search?: string;
   onUpdate?: (id: string, role: Role) => void;
   onDelete?: (id: string) => void;
+  onTeamspaceSelect?: (teamspaceId: string) => void;
 }
 
 export const MembersTable = memo<MembersTableProps>(
-  ({ accountId: memberId, scopes, onUpdate, onDelete, ...props }) => {
+  ({
+    accountId: memberId,
+    scopes,
+    onUpdate,
+    onDelete,
+    onTeamspaceSelect,
+    ...props
+  }) => {
     const columns = useMemo(
-      () => getMemberColumns({ scopes, memberId, onUpdate, onDelete }),
-      [memberId, scopes, onUpdate, onDelete],
+      () =>
+        getMemberColumns({
+          scopes,
+          memberId,
+          onUpdate,
+          onDelete,
+          onTeamspaceSelect,
+        }),
+      [memberId, scopes, onUpdate, onDelete, onTeamspaceSelect],
     );
     return <DataTable columns={columns} emptyResult="No members" {...props} />;
   },

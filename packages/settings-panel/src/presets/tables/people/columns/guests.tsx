@@ -4,8 +4,9 @@ import { Role } from "@notion-kit/schemas";
 import { Checkbox } from "@notion-kit/shadcn";
 
 import { Scope, type GuestRow } from "../../../../lib";
-import { SortingToggle, TextCell } from "../../common-cells";
-import { AccessCell, GuestActionCell, UserCell } from "../cells";
+import { SortingToggle, TextCell, UserCell } from "../../common-cells";
+import { userFilterFn } from "../../utils";
+import { AccessCell, GuestActionCell } from "../cells";
 
 export const getGuestColumns = (
   scopes: Set<Scope>,
@@ -49,11 +50,7 @@ export const getGuestColumns = (
         <UserCell user={row.original.user} />
       </div>
     ),
-    filterFn: (row, _columnId, filterValue) =>
-      row.original.user.email
-        .trim()
-        .toLowerCase()
-        .includes(filterValue as string),
+    filterFn: userFilterFn,
     enableHiding: false,
   },
   ...(scopes.has(Scope.MemberUpdate)

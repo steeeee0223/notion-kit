@@ -75,7 +75,7 @@ export function useTeamspaceActions() {
           [payload]: {
             ...teamspace,
             members: teamspace.members.filter(
-              (m) => m.user.id !== settings.account.id,
+              (m) => m.userId !== settings.account.id,
             ),
           },
         };
@@ -113,7 +113,7 @@ export function useTeamspaceActions() {
           [payload.teamspaceId]: {
             ...teamspace,
             members: teamspace.members.map((m) => {
-              if (m.id !== payload.memberId) return m;
+              if (m.userId !== payload.userId) return m;
               return { ...m, role: payload.role };
             }),
           },
@@ -144,7 +144,9 @@ export function useTeamspaceActions() {
           ...rest,
           [payload.teamspaceId]: {
             ...teamspace,
-            members: teamspace.members.filter((m) => m.id !== payload.memberId),
+            members: teamspace.members.filter(
+              (m) => m.userId !== payload.userId,
+            ),
           },
         };
       });

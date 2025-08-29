@@ -4,14 +4,13 @@ import type { IconData } from "@notion-kit/icon-block";
 import { toDateString } from "@notion-kit/utils";
 
 import type {
-  Scope,
   TeamMemberRow,
   TeamspacePermission,
   TeamspaceRole,
   TeamspaceRow,
 } from "../../../lib";
-import { SortingToggle, TextCell } from "../common-cells";
-import { UserCell } from "../people/cells";
+import { SortingToggle, TextCell, UserCell } from "../common-cells";
+import { userFilterFn } from "../utils";
 import {
   AccessSelectCell,
   OwnersCell,
@@ -21,9 +20,9 @@ import {
 } from "./cells";
 
 interface CreateTeamspaceColumnsOptions {
-  scopes: Set<Scope>;
   workspace: string;
-  onLeave?: (teamspaceId: string) => void | Promise<void>;
+  onViewDetail?: (teamspace: TeamspaceRow) => void | Promise<void>;
+  onLeave?: (teamspace: TeamspaceRow) => void | Promise<void>;
   onUpdate?: (data: {
     id: string;
     name?: string;
@@ -31,11 +30,12 @@ interface CreateTeamspaceColumnsOptions {
     description?: string;
     permission?: TeamspacePermission;
   }) => void | Promise<void>;
-  onArchive?: (teamspaceId: string) => void | Promise<void>;
+  onArchive?: (teamspace: TeamspaceRow) => void | Promise<void>;
 }
 
 export function createTeamspaceColumns({
   workspace,
+  onViewDetail,
   onLeave,
   onUpdate,
   onArchive,
@@ -90,6 +90,7 @@ export function createTeamspaceColumns({
         <AccessSelectCell
           workspace={workspace}
           permission={row.original.permission}
+          disabled={row.original.role !== "owner"}
           onSelect={(permission) =>
             onUpdate?.({ id: row.original.id, permission })
           }
@@ -120,8 +121,11 @@ export function createTeamspaceColumns({
       cell: ({ row }) => (
         <div className="flex min-w-[52px] items-center justify-end pr-3">
           <TeamspaceActionCell
-            onArchive={() => onArchive?.(row.original.id)}
-            onLeave={() => onLeave?.(row.original.id)}
+            name={row.original.name}
+            role={row.original.role}
+            onViewDetail={() => onViewDetail?.(row.original)}
+            onArchive={() => onArchive?.(row.original)}
+            onLeave={() => onLeave?.(row.original)}
           />
         </div>
       ),
@@ -130,12 +134,11 @@ export function createTeamspaceColumns({
 }
 
 interface CreateTeamMembersColumnsOptions {
-  scopes: Set<Scope>;
   onUpdate?: (data: {
-    memberId: string;
+    userId: string;
     role: TeamspaceRole;
   }) => void | Promise<void>;
-  onRemove?: (memberId: string) => void | Promise<void>;
+  onRemove?: (userId: string) => void | Promise<void>;
 }
 
 export function createTeamMembersColumns({
@@ -158,8 +161,7 @@ export function createTeamMembersColumns({
         );
       },
       cell: ({ row }) => <UserCell user={row.original.user} />,
-      filterFn: (row, _columnId, filterValue) =>
-        row.original.user.email.toLowerCase().includes(filterValue as string),
+      filterFn: userFilterFn,
     },
     {
       accessorKey: "role",
@@ -178,7 +180,7 @@ export function createTeamMembersColumns({
       cell: ({ row }) => (
         <TeamMemberActionCell
           role={row.original.role}
-          onUpdate={(role) => onUpdate?.({ memberId: row.original.id, role })}
+          onUpdate={(role) => onUpdate?.({ userId: row.original.id, role })}
           onRemove={() => onRemove?.(row.original.id)}
         />
       ),

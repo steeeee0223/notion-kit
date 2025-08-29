@@ -12,6 +12,9 @@ export enum Scope {
   MemberAddRequest = "people:add:request",
   MemberUpdate = "people:update",
   GroupEnable = "people:group:enable",
+  /** Teamspaces */
+  TeamspaceRead = "teamspace:read",
+  TeamspaceCreate = "teamspace:create",
   /** Plans */
   Upgrade = "plan:upgrade",
 }
@@ -80,9 +83,16 @@ export interface CellOptions<T extends { id: string }> {
   options: T[];
 }
 
+export interface MemberTeamspace {
+  id: string;
+  name: string;
+  icon: IconData;
+  memberCount: number;
+}
+
 export interface MemberRow {
   user: User;
-  teamspaces: CellOptions<GroupOption>;
+  teamspaces: MemberTeamspace[];
   groups: CellOptions<GroupOption>;
   role: Role;
 }
@@ -128,7 +138,7 @@ export interface WorkspaceMemberships {
 }
 
 export interface TeamMemberRow {
-  id: string; // the member id
+  id: string; // the user id
   user: User;
   isWorkspaceOwner?: boolean;
   role: TeamspaceRole;
@@ -145,8 +155,22 @@ export interface TeamspaceRow {
     ownerAvatarUrl?: string;
     count: number;
   };
-  members: TeamMemberRow[];
   updatedAt: number; // ts in ms
+  /**
+   * @prop the role of the user in the teamspace
+   */
+  role?: TeamspaceRole | false;
 }
 
-export type Teamspaces = Record<string, TeamspaceRow>;
+export type Teamspaces = Record<
+  string,
+  {
+    id: string;
+    name: string;
+    icon: IconData;
+    description?: string;
+    permission: TeamspacePermission;
+    members: { userId: string; role: TeamspaceRole }[];
+    updatedAt: number; // ts in ms
+  }
+>;
