@@ -30,3 +30,5 @@ export * from "./visually-hidden";
 /** Custom */
 export * from "./menu";
 export * from "./menu-provider";
+/** shadcn/ui expansions */
+export * from "./multi-select";

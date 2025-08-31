@@ -2,8 +2,14 @@ import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { delay } from "msw";
 
-import { CreateTeamspace, TeamspaceDetail } from "@notion-kit/settings-panel";
+import {
+  AddTeamMembers,
+  CreateTeamspace,
+  TeamspaceDetail,
+} from "@notion-kit/settings-panel";
 import { Dialog } from "@notion-kit/shadcn";
+
+import { mockTeamMemberRows, mockUsers } from "./data";
 
 const Portal = ({ children }: React.PropsWithChildren) => (
   <Dialog open>{children}</Dialog>
@@ -40,7 +46,29 @@ export const TeamspaceDetailModal: Story = {
           description: "This is an example teamspace.",
           permission: "default",
         }}
-        teamMembers={[]}
+        teamMembers={mockTeamMemberRows}
+      />
+    ),
+  },
+};
+
+export const AddTeamMembersModal: Story = {
+  args: {
+    children: (
+      <AddTeamMembers
+        teamspace={{
+          id: "team-1",
+          name: "Acme Lab",
+          icon: { type: "text", src: "A" },
+        }}
+        workspaceMembers={mockUsers.map((user, i) => ({
+          ...user,
+          invited: i % 2 === 0,
+        }))}
+        onAddMembers={async (data) => {
+          await delay(500);
+          console.log("submitted with", data);
+        }}
       />
     ),
   },

@@ -13,6 +13,7 @@ export { AddMembers } from "./add-members";
 export { DeleteMember } from "./delete-member";
 export { DeleteGuest } from "./delete-guest";
 /** Teamspaces */
+export { AddTeamMembers } from "./add-team-members";
 export { CreateTeamspace } from "./create-teamspace";
 export { LeaveTeamspace } from "./leave-teamspace";
 export { TeamspaceDetail } from "./teamspace-detail";

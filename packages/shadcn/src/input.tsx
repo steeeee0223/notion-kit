@@ -4,6 +4,7 @@ import * as React from "react";
 
 import { cn } from "@notion-kit/cn";
 
+import { Button } from "./button";
 import * as Icon from "./icons";
 import type { InputVariants } from "./variants";
 import { inputVariants } from "./variants";
@@ -45,14 +46,16 @@ function Input({
         type={search ? "search" : props.type}
       />
       {showClear && (
-        <button
+        <Button
           type="button"
-          className="ml-1 shrink-0 grow-0 animate-bg-in cursor-pointer rounded-full outline-none select-none hover:bg-default/5 focus-visible:shadow-notion"
+          variant="close"
+          size="circle"
+          className="ml-1 focus-visible:shadow-notion"
           aria-label="Clear input"
           onClick={onCancel}
         >
           <Icon.Clear />
-        </button>
+        </Button>
       )}
       {endIcon && (
         <div className="ml-1" aria-hidden="true">

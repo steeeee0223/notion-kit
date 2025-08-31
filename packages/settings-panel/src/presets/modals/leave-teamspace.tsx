@@ -1,14 +1,12 @@
 "use client";
 
-import { useTemporaryFix, useTransition } from "@notion-kit/hooks";
-import { Icon } from "@notion-kit/icons";
+import { useTransition } from "@notion-kit/hooks";
 import {
   Button,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogIcon,
   DialogTitle,
 } from "@notion-kit/shadcn";
 import { Spinner } from "@notion-kit/spinner";
@@ -27,7 +25,6 @@ export function LeaveTeamspace({
   onLeave,
   onClose,
 }: LeaveTeamspaceProps) {
-  const { onCloseAutoFocus } = useTemporaryFix();
   const [leave, isLeaving] = useTransition(async () => {
     await onLeave?.();
     onClose?.();
@@ -38,12 +35,8 @@ export function LeaveTeamspace({
       forceMount
       className="w-[300px] p-5"
       onClick={(e) => e.stopPropagation()}
-      onCloseAutoFocus={onCloseAutoFocus}
     >
       <DialogHeader>
-        <DialogIcon>
-          <Icon.UserX className="size-9 fill-default/45" />
-        </DialogIcon>
         <DialogTitle typography="h2">Leave {name}?</DialogTitle>
       </DialogHeader>
       <DialogDescription className="text-muted">

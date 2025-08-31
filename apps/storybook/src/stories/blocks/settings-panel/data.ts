@@ -7,12 +7,13 @@ import type {
   Passkey,
   SessionRow,
   SettingsStore,
+  TeamMemberRow,
   TeamspaceRole,
   TeamspaceRow,
 } from "@notion-kit/settings-panel";
 import { randomItem } from "@notion-kit/utils";
 
-const mockUsers: User[] = [
+export const mockUsers: User[] = [
   {
     id: "user1",
     name: "John Wick",
@@ -286,6 +287,12 @@ export const mockTeamMembers = mockUsers.map<{
   role: TeamspaceRole;
 }>((user, i) => ({
   userId: user.id,
+  role: i % 2 === 0 ? "member" : "owner",
+}));
+
+export const mockTeamMemberRows: TeamMemberRow[] = mockUsers.map((user, i) => ({
+  id: user.id,
+  user,
   role: i % 2 === 0 ? "member" : "owner",
 }));
 

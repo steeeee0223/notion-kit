@@ -25,6 +25,7 @@ export function Clear() {
   return (
     <svg
       role="graphics-symbol"
+      aria-hidden="true"
       viewBox="0 0 16 16"
       className="block size-4 shrink-0 fill-default/35 dark:fill-default/30"
     >
