@@ -161,6 +161,9 @@ export const team = pgTable("team", {
   icon: text("icon").notNull(),
   description: text("description"),
   permission: text("permission").default("default").notNull(),
+  ownedBy: text("owned_by")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
 });
 
 export const teamMember = pgTable("team_member", {

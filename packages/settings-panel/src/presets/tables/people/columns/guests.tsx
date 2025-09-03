@@ -10,8 +10,8 @@ import { AccessCell, GuestActionCell } from "../cells";
 
 export const getGuestColumns = (
   scopes: Set<Scope>,
-  onUpdate?: (id: string, role: Role) => void,
-  onDelete?: (id: string, name: string) => void,
+  onUpdate?: (data: { id: string; memberId: string; role: Role }) => void,
+  onDelete?: (data: { id: string; memberId: string; name: string }) => void,
 ): ColumnDef<GuestRow, GuestRow>[] => [
   {
     id: "user",
@@ -69,8 +69,20 @@ export const getGuestColumns = (
             return (
               <div className="flex min-w-[52px] items-center justify-end">
                 <GuestActionCell
-                  onUpdate={() => onUpdate?.(id, Role.MEMBER)}
-                  onDelete={() => onDelete?.(id, preferredName)}
+                  onUpdate={() =>
+                    onUpdate?.({
+                      id,
+                      memberId: row.original.id,
+                      role: Role.MEMBER,
+                    })
+                  }
+                  onDelete={() =>
+                    onDelete?.({
+                      id,
+                      memberId: row.original.id,
+                      name: preferredName,
+                    })
+                  }
                 />
               </div>
             );

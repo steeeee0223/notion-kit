@@ -64,13 +64,18 @@ export function createTeamspaceColumns({
       ),
     },
     {
-      accessorKey: "owners",
+      accessorKey: "ownedBy",
       header: () => (
         <div className="flex w-1/4 min-w-20 items-center px-2">
           <TextCell header value="Owners" />
         </div>
       ),
-      cell: ({ row }) => <OwnersCell {...row.original.owners} />,
+      cell: ({ row }) => (
+        <OwnersCell
+          ownedBy={row.original.ownedBy}
+          count={row.original.ownerCount}
+        />
+      ),
     },
     {
       accessorKey: "permission",

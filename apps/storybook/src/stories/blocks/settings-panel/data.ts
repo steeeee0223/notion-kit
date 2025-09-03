@@ -190,6 +190,7 @@ export const mockSessions: SessionRow[] = [
 
 export const mockMembers: MemberRow[] = [
   {
+    id: "member-1",
     user: mockUsers[0]!,
     teamspaces: [
       {
@@ -203,6 +204,7 @@ export const mockMembers: MemberRow[] = [
     role: Role.OWNER,
   },
   {
+    id: "member-2",
     user: mockUsers[1]!,
     teamspaces: [],
     groups: { current: null, options: [] },
@@ -211,6 +213,7 @@ export const mockMembers: MemberRow[] = [
 ];
 
 export const mockGuests: GuestRow[] = mockUsers.slice(2).map((user) => ({
+  id: `guest-${user.id}`,
   user,
   access: randomItem(pageAccesses),
 }));
@@ -303,11 +306,8 @@ export const mockTeamspaces: TeamspaceRow[] = [
     icon: { type: "text", src: "A" },
     memberCount: 20,
     permission: "default",
-    owners: {
-      ownerName: "Jason",
-      ownerAvatarUrl: "",
-      count: 3,
-    },
+    ownedBy: { name: "Jason" },
+    ownerCount: 3,
     updatedAt: Date.UTC(2024, 5, 1),
   },
   {
@@ -316,11 +316,8 @@ export const mockTeamspaces: TeamspaceRow[] = [
     icon: { type: "text", src: "B" },
     memberCount: 30,
     permission: "default",
-    owners: {
-      ownerName: "Alice",
-      ownerAvatarUrl: "",
-      count: 2,
-    },
+    ownedBy: { name: "Alice" },
+    ownerCount: 2,
     updatedAt: Date.UTC(2024, 5, 3),
   },
   {
@@ -329,11 +326,8 @@ export const mockTeamspaces: TeamspaceRow[] = [
     icon: { type: "text", src: "C" },
     memberCount: 25,
     permission: "default",
-    owners: {
-      ownerName: "Bob",
-      ownerAvatarUrl: "",
-      count: 1,
-    },
+    ownedBy: { name: "Bob" },
+    ownerCount: 1,
     updatedAt: Date.UTC(2024, 5, 10),
   },
 ];

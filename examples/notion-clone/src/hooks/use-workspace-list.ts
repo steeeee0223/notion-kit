@@ -34,7 +34,7 @@ export function useWorkspaceList() {
   const { data: active } = useActiveWorkspace();
   const { data: workspaces } = useListWorkspaces();
 
-  const listMembersApi = useRef(auth.organization.listMembers);
+  const orgApi = useRef(auth.organization);
 
   const [activeWorkspace, setActiveWorkspace] =
     useState<Workspace>(defaultWorkspace);
@@ -44,7 +44,7 @@ export function useWorkspaceList() {
       if (!workspaces || !session?.user.id) return;
       const memberships = await Promise.all(
         workspaces.map((w) =>
-          listMembersApi.current({ query: { organizationId: w.id } }),
+          orgApi.current.listMembers({ query: { organizationId: w.id } }),
         ),
       );
       const updatedWorkspaces = workspaces.map((w, i) => ({
@@ -64,11 +64,11 @@ export function useWorkspaceList() {
       );
     };
     void fetchMemberships();
-  }, [active?.id, auth.organization, session?.user.id, workspaces]);
+  }, [active?.id, session?.user.id, workspaces]);
 
   const selectWorkspace = useCallback(
     async (id: string) => {
-      const res = await auth.organization.setActive({ organizationId: id });
+      const res = await orgApi.current.setActive({ organizationId: id });
       console.log(`[useWorkspaceList] Switching to workspace ${id}`);
       if (!res.data) {
         console.error("Failed to set active workspace");
@@ -76,7 +76,7 @@ export function useWorkspaceList() {
       }
       router.push(`/workspace/${res.data.slug}`);
     },
-    [auth.organization, router],
+    [router],
   );
 
   return { activeWorkspace, workspaceList, selectWorkspace };

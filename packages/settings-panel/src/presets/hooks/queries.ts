@@ -19,6 +19,7 @@ export function usePeople<T = Memberships>(
     queryKey: QUERY_KEYS.members(workspace.id),
     queryFn: actions?.getAll ?? createDefaultFn({}),
     select: selector,
+    retry: false,
   });
 }
 
@@ -35,6 +36,7 @@ export function useInvitations<T = Invitations>(
     queryKey: QUERY_KEYS.invitations(workspace.id),
     queryFn: actions?.getAll ?? createDefaultFn({}),
     select: selector,
+    retry: false,
   });
 }
 
@@ -51,5 +53,6 @@ export function useTeamspaces<T = Teamspaces>(
     queryKey: QUERY_KEYS.teamspaces(workspace.id),
     queryFn: actions?.getAll ?? createDefaultFn({}),
     select: selector,
+    retry: false,
   });
 }

@@ -91,6 +91,7 @@ export interface MemberTeamspace {
 }
 
 export interface MemberRow {
+  id: string; // the member ID
   user: User;
   teamspaces: MemberTeamspace[];
   groups: CellOptions<GroupOption>;
@@ -104,15 +105,13 @@ export interface PageAccess {
 }
 
 export interface GuestRow {
+  id: string; // the member ID
   user: User;
   access: PageAccess[];
 }
 
 export interface InvitationRow {
-  /**
-   * @prop the unique identifier for the invitation
-   */
-  id: string;
+  id: string; // the invitation ID
   email: string;
   role: Role;
   invitedBy: User;
@@ -126,7 +125,17 @@ export interface GroupOption {
   memberCount: number;
 }
 
-export type Memberships = Record<string, { role: Role; user: User }>;
+/**
+ * @note key: user ID
+ */
+export type Memberships = Record<
+  string,
+  {
+    id: string; // the member ID
+    role: Role;
+    user: User;
+  }
+>;
 
 export interface SettingsStore {
   workspace: WorkspaceStore;
@@ -150,11 +159,11 @@ export interface TeamspaceRow {
   description?: string;
   memberCount: number;
   permission: TeamspacePermission;
-  owners: {
-    ownerName: string;
-    ownerAvatarUrl?: string;
-    count: number;
+  ownedBy: {
+    name: string;
+    avatarUrl?: string;
   };
+  ownerCount: number;
   updatedAt: number; // ts in ms
   /**
    * @prop the role of the user in the teamspace
@@ -172,5 +181,6 @@ export type Teamspaces = Record<
     permission: TeamspacePermission;
     members: { userId: string; role: TeamspaceRole }[];
     updatedAt: number; // ts in ms
+    ownedBy: string;
   }
 >;

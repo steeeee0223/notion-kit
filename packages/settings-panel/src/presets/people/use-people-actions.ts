@@ -40,7 +40,7 @@ export function usePeopleActions() {
       const previous = queryClient.getQueryData<Memberships>(queryKey);
       queryClient.setQueryData<Memberships>(queryKey, (prev) => {
         if (!prev) return {};
-        const { [payload]: _, ...rest } = prev;
+        const { [payload.id]: _, ...rest } = prev;
         return rest;
       });
       return { previous };

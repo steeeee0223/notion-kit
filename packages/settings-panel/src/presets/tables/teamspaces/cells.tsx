@@ -94,21 +94,16 @@ export function AccessSelectCell({
 }
 
 interface OwnersCellProps {
-  ownerName: string;
-  ownerAvatarUrl?: string;
+  ownedBy: { name: string; avatarUrl?: string };
   count: number;
 }
 
-export function OwnersCell({
-  ownerName,
-  ownerAvatarUrl,
-  count,
-}: OwnersCellProps) {
+export function OwnersCell({ ownedBy, count }: OwnersCellProps) {
   return (
     <div className="flex h-14 min-w-15 items-center gap-1.5 overflow-hidden px-2 text-sm text-primary">
-      <Avatar src={ownerAvatarUrl} fallback={ownerName} />
+      <Avatar src={ownedBy.avatarUrl} fallback={ownedBy.name} />
       <div className="contents">
-        <div className="shrink truncate">{ownerName}</div>
+        <div className="shrink truncate">{ownedBy.name}</div>
         {count > 1 && (
           <div className="shrink-0 text-secondary">+{count - 1}</div>
         )}

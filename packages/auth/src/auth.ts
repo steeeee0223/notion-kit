@@ -136,4 +136,5 @@ export type Team = TeamBase & {
   icon: string;
   description?: string;
   permission: "default" | "open" | "closed" | "private";
+  ownedBy: string;
 };

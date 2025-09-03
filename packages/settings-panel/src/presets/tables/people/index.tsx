@@ -17,36 +17,29 @@ import { DataTable } from "./data-table";
 
 interface MembersTableProps {
   /**
-   * @prop account - Your Id
+   * @prop userId
    */
-  accountId?: string;
+  userId?: string;
   scopes: Set<Scope>;
   data: MemberRow[];
   search?: string;
-  onUpdate?: (id: string, role: Role) => void;
-  onDelete?: (id: string) => void;
+  onUpdate?: (data: { id: string; memberId: string; role: Role }) => void;
+  onDelete?: (data: { id: string; memberId: string }) => void;
   onTeamspaceSelect?: (teamspaceId: string) => void;
 }
 
 export const MembersTable = memo<MembersTableProps>(
-  ({
-    accountId: memberId,
-    scopes,
-    onUpdate,
-    onDelete,
-    onTeamspaceSelect,
-    ...props
-  }) => {
+  ({ userId, scopes, onUpdate, onDelete, onTeamspaceSelect, ...props }) => {
     const columns = useMemo(
       () =>
         getMemberColumns({
           scopes,
-          memberId,
+          userId,
           onUpdate,
           onDelete,
           onTeamspaceSelect,
         }),
-      [memberId, scopes, onUpdate, onDelete, onTeamspaceSelect],
+      [userId, scopes, onUpdate, onDelete, onTeamspaceSelect],
     );
     return <DataTable columns={columns} emptyResult="No members" {...props} />;
   },
@@ -56,8 +49,8 @@ interface GuestsTableProps {
   scopes: Set<Scope>;
   data: GuestRow[];
   search?: string;
-  onUpdate?: (id: string, role: Role) => void;
-  onDelete?: (id: string, name: string) => void;
+  onUpdate?: (data: { id: string; memberId: string; role: Role }) => void;
+  onDelete?: (data: { id: string; memberId: string; name: string }) => void;
 }
 
 export const GuestsTable = memo<GuestsTableProps>(

@@ -11,15 +11,15 @@ import { MemberActionCell, RoleSelectCell, TeamspacesCell } from "../cells";
 
 interface GetMemberColumnsOptions {
   scopes: Set<Scope>;
-  memberId?: string;
-  onUpdate?: (id: string, role: Role) => void;
-  onDelete?: (id: string) => void;
+  userId?: string;
+  onUpdate?: (data: { id: string; memberId: string; role: Role }) => void;
+  onDelete?: (data: { id: string; memberId: string }) => void;
   onTeamspaceSelect?: (teamspaceId: string) => void;
 }
 
 export const getMemberColumns = ({
   scopes,
-  memberId,
+  userId,
   onUpdate,
   onDelete,
   onTeamspaceSelect,
@@ -74,7 +74,13 @@ export const getMemberColumns = ({
       <RoleSelectCell
         scopes={scopes}
         role={row.original.role as PartialRole}
-        onSelect={(role) => onUpdate?.(row.original.user.id, role)}
+        onSelect={(role) =>
+          onUpdate?.({
+            id: row.original.user.id,
+            memberId: row.original.id,
+            role,
+          })
+        }
       />
     ),
   },
@@ -87,8 +93,8 @@ export const getMemberColumns = ({
             return (
               <div className="flex min-w-[52px] items-center justify-end">
                 <MemberActionCell
-                  isSelf={id === memberId}
-                  onDelete={() => onDelete?.(id)}
+                  isSelf={id === userId}
+                  onDelete={() => onDelete?.({ id, memberId: row.original.id })}
                 />
               </div>
             );

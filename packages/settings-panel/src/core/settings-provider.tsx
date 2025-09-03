@@ -68,8 +68,12 @@ export interface SettingsActions {
   /** People */
   people?: {
     getAll?: () => Promise<Memberships>;
-    update?: (data: { id: string; role: Role }) => Promise<void>;
-    delete?: (id: string) => Promise<void>;
+    update?: (data: {
+      id: string;
+      memberId: string;
+      role: Role;
+    }) => Promise<void>;
+    delete?: (data: { id: string; memberId: string }) => Promise<void>;
   };
   invitations?: {
     getAll?: () => Promise<Invitations>;

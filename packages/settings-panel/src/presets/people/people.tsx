@@ -79,10 +79,10 @@ export function People() {
   const { update, remove } = usePeopleActions();
   const { data: invitations } = useInvitations((res) => Object.values(res));
   const { invite: inviteMember, cancel } = useInvitationsActions();
-  const deleteMember = (id: string) =>
-    openModal(<DeleteMember onDelete={() => remove(id)} />);
-  const deleteGuest = (id: string, name: string) =>
-    openModal(<DeleteGuest name={name} onDelete={() => remove(id)} />);
+  const deleteMember = (data: { id: string; memberId: string }) =>
+    openModal(<DeleteMember onDelete={() => remove(data)} />);
+  const deleteGuest = (data: { id: string; memberId: string; name: string }) =>
+    openModal(<DeleteGuest name={data.name} onDelete={() => remove(data)} />);
   /** Handlers */
   const { isResetting, copyLink, updateLink } = useLinkActions();
   const resetLink = () =>
@@ -198,11 +198,11 @@ export function People() {
             {renderTeamspaceDetail()}
           </Dialog>
           <MembersTable
-            accountId={account.id}
+            userId={account.id}
             search={search}
             data={members}
             scopes={scopes}
-            onUpdate={(id, role) => update({ id, role })}
+            onUpdate={update}
             onDelete={deleteMember}
             onTeamspaceSelect={setSelectedTeamspace}
           />
@@ -212,7 +212,7 @@ export function People() {
             search={search}
             data={guests}
             scopes={scopes}
-            onUpdate={(id, role) => update({ id, role })}
+            onUpdate={update}
             onDelete={deleteGuest}
           />
         </TabsContent>
