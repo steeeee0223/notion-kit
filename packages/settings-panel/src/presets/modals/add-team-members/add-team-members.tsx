@@ -20,6 +20,7 @@ import {
   MultiSelectOption,
   SelectPreset,
 } from "@notion-kit/shadcn";
+import { Spinner } from "@notion-kit/spinner";
 import { idToColor } from "@notion-kit/utils";
 
 import { Avatar } from "../../_components";
@@ -174,6 +175,7 @@ export function AddTeamMembers({
               Copy invite link
             </Button>
             <Button type="submit" variant="blue" size="sm" disabled={disabled}>
+              {form.formState.isSubmitting && <Spinner />}
               Invite
             </Button>
           </DialogFooter>

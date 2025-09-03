@@ -1,5 +1,8 @@
 "use client";
 
+import type { MultiSelectOption } from "@notion-kit/shadcn";
+import { idToColor } from "@notion-kit/utils";
+
 import { useSettings } from "../../core";
 import type { TeamspaceRow } from "../../lib";
 import { usePeople, useTeamspaces } from "../hooks";
@@ -43,6 +46,19 @@ export function useTeamspacesTable() {
         role,
       };
     }),
+  );
+  return data;
+}
+
+export function useTeamspaceOptions() {
+  const { data } = useTeamspaces<MultiSelectOption[]>((res) =>
+    Object.values(res).map((t) => ({
+      label: t.name,
+      value: t.name,
+      id: t.id,
+      color: idToColor(t.id),
+      icon: JSON.stringify(t.icon),
+    })),
   );
   return data;
 }

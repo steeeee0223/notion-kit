@@ -11,7 +11,6 @@ import {
   Separator,
   Switch,
 } from "@notion-kit/shadcn";
-import { TagsInput } from "@notion-kit/tags-input";
 
 import { HintButton } from "../_components";
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
@@ -19,6 +18,7 @@ import { Scope } from "../../lib";
 import { useTeamspaceActions, useTeamspaceDetail } from "../hooks";
 import { CreateTeamspace } from "../modals";
 import { TeamspacesTable } from "../tables";
+import { DefaultTeamspace } from "./default-teamspace";
 import { useTeamspacesTable } from "./use-teamspaces";
 
 export function TeamspacesSection() {
@@ -36,7 +36,6 @@ export function TeamspacesSection() {
     useTeamspaceDetail();
   const { create, update, remove, leave } = useTeamspaceActions();
 
-  // TODO update default teamspace
   // TODO limit creation to owner
 
   return (
@@ -47,15 +46,7 @@ export function TeamspacesSection() {
         href="https://www.notion.com/help/intro-to-teamspaces#modify-teamspace-settings"
       />
       <SettingsRule {...trans.default} />
-      <div className="flex items-center gap-2.5">
-        <TagsInput
-          className="w-full"
-          value={{ tags: ["Acme Lab"], input: "" }}
-        />
-        <Button variant="blue" size="sm">
-          {trans.default.button}
-        </Button>
-      </div>
+      <DefaultTeamspace />
       <Separator />
       <SettingsRule {...trans.limit}>
         <Switch size="sm" />
