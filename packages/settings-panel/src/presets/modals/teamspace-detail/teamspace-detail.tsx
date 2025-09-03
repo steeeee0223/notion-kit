@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useTemporaryFix } from "@notion-kit/hooks";
 import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
+import { User } from "@notion-kit/schemas";
 import {
   Button,
   Dialog,
@@ -41,11 +42,16 @@ interface TeamspaceDetailProps {
   teamMembers: TeamMemberRow[];
   onClose?: () => void;
   onLeave?: () => void | Promise<void>;
+  onAddMembers?: (data: {
+    userIds: string[];
+    role: TeamspaceRole;
+  }) => Promise<void>;
   onUpdateMember?: (data: {
     userId: string;
     role: TeamspaceRole;
   }) => void | Promise<void>;
   onRemoveMember?: (userId: string) => void | Promise<void>;
+  onFetchWorkspaceMembers?: () => User[] | Promise<User[]>;
 }
 
 export function TeamspaceDetail({
@@ -54,8 +60,10 @@ export function TeamspaceDetail({
   teamMembers,
   onClose,
   onLeave,
+  onAddMembers,
   onUpdateMember,
   onRemoveMember,
+  onFetchWorkspaceMembers,
 }: TeamspaceDetailProps) {
   const { onCloseAutoFocus } = useTemporaryFix();
   const [tab, setTab] = useState(Tab.Members);
@@ -132,8 +140,10 @@ export function TeamspaceDetail({
               workspace={workspace}
               teamspace={teamspace}
               teamMembers={teamMembers}
+              onAddMembers={onAddMembers}
               onUpdateMember={onUpdateMember}
               onRemoveMember={onRemoveMember}
+              onFetchWorkspaceMembers={onFetchWorkspaceMembers}
             />
           </TabsContent>
           <TabsContent value={Tab.Security}>

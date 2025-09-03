@@ -94,9 +94,9 @@ export interface SettingsActions {
     }) => Promise<void>;
     delete?: (teamspaceId: string) => Promise<void>;
     leave?: (teamspaceId: string) => Promise<void>;
-    addMember?: (data: {
+    addMembers?: (data: {
       teamspaceId: string;
-      userId: string;
+      userIds: string[];
       role: TeamspaceRole;
     }) => Promise<void>;
     updateMember?: (data: {

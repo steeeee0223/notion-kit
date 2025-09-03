@@ -89,11 +89,11 @@ export function useTeamspaceActions() {
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
-  const { mutateAsync: addMember } = useMutation({
-    mutationFn: actions?.addMember ?? createDefaultFn(),
-    onSuccess: () => toast.success("Teamspace member added"),
+  const { mutateAsync: addMembers } = useMutation({
+    mutationFn: actions?.addMembers ?? createDefaultFn(),
+    onSuccess: () => toast.success("Teamspace members added"),
     onError: (error) =>
-      toast.error("Add teamspace member failed", {
+      toast.error("Add teamspace members failed", {
         description: error.message,
       }),
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
@@ -167,7 +167,7 @@ export function useTeamspaceActions() {
     update,
     remove,
     leave,
-    addMember,
+    addMembers,
     updateMember,
     removeMember,
   };

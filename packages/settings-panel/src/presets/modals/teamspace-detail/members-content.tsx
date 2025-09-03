@@ -5,7 +5,8 @@ import { CircleHelp } from "lucide-react";
 
 import { type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
-import { Button, Input } from "@notion-kit/shadcn";
+import { User } from "@notion-kit/schemas";
+import { Button, Dialog, DialogTrigger, Input } from "@notion-kit/shadcn";
 
 import {
   HintButton,
@@ -18,6 +19,7 @@ import type {
   TeamspaceRole,
 } from "../../../lib";
 import { TeamMembersTable } from "../../tables";
+import { AddTeamMembers } from "../add-team-members";
 import { Card, Title } from "./common";
 
 interface MembersContentProps {
@@ -29,24 +31,50 @@ interface MembersContentProps {
     permission: Permission;
   };
   teamMembers: TeamMemberRow[];
+  onAddMembers?: (data: {
+    userIds: string[];
+    role: TeamspaceRole;
+  }) => Promise<void>;
   onUpdateMember?: (data: {
     userId: string;
     role: TeamspaceRole;
   }) => void | Promise<void>;
   onRemoveMember?: (userId: string) => void | Promise<void>;
+  onFetchWorkspaceMembers?: () => User[] | Promise<User[]>;
 }
 
 export function MembersContent({
   workspace,
   teamspace,
   teamMembers,
+  onAddMembers,
   onUpdateMember,
   onRemoveMember,
+  onFetchWorkspaceMembers,
 }: MembersContentProps) {
   const options = { ...permissions };
   options.default.description = permissions.default.getDescription(workspace);
-  /** Search Field */
+  /** Search field */
   const [search, setSearch] = useState("");
+  /** Add team members */
+  const [workspaceMembers, setWorkspaceMembers] = useState<
+    (User & { invited?: boolean })[]
+  >([]);
+  const handleAddTeamMembers = async (open: boolean) => {
+    if (!onFetchWorkspaceMembers) return;
+    if (!open) {
+      setWorkspaceMembers([]);
+      return;
+    }
+    const members = await onFetchWorkspaceMembers();
+    const teamMemberIds = new Set(teamMembers.map((member) => member.id));
+    setWorkspaceMembers(
+      members.map((member) => ({
+        ...member,
+        invited: teamMemberIds.has(member.id),
+      })),
+    );
+  };
 
   return (
     <div className="h-full space-y-5 overflow-auto">
@@ -68,9 +96,18 @@ export function MembersContent({
         <Title title="Members" />
         <div className="flex flex-col gap-1.5">
           <div className="sticky top-0 z-10 flex items-center gap-1 bg-modal pb-2">
-            <Button variant="blue" size="sm">
-              Add members
-            </Button>
+            <Dialog onOpenChange={handleAddTeamMembers}>
+              <DialogTrigger asChild>
+                <Button variant="blue" size="sm">
+                  Add members
+                </Button>
+              </DialogTrigger>
+              <AddTeamMembers
+                teamspace={teamspace}
+                workspaceMembers={workspaceMembers}
+                onAddMembers={onAddMembers}
+              />
+            </Dialog>
             <Button variant="soft-blue" size="sm" disabled>
               <Icon.Link className="size-3 fill-current" />
               Copy link

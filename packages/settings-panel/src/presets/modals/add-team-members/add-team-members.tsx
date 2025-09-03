@@ -37,7 +37,6 @@ interface WorkspaceMember extends User {
 
 interface AddTeamMembersProps {
   teamspace: {
-    id: string;
     name: string;
     icon: IconData;
   };
@@ -53,11 +52,6 @@ export function AddTeamMembers({
   workspaceMembers,
   onAddMembers,
 }: AddTeamMembersProps) {
-  const { form, members, submit } = useAddTeamMembersForm({
-    workspaceMembers,
-    onSubmit: onAddMembers,
-  });
-
   const multiSelectOptions = useMemo(
     () =>
       workspaceMembers.map<MultiSelectOption>((user) => ({
@@ -70,11 +64,18 @@ export function AddTeamMembers({
     [workspaceMembers],
   );
 
+  const { form, members, submit } = useAddTeamMembersForm({
+    workspaceMembers,
+    onSubmit: onAddMembers,
+  });
+  const disabled = !form.formState.isValid || form.formState.isSubmitting;
+
   return (
     <DialogContent
       hideClose
       className="max-h-1/2 min-h-50 w-125"
       aria-describedby=""
+      onCloseAutoFocus={() => form.reset()}
     >
       <DialogHeader className="items-start text-left">
         <DialogTitle typography="h2" className="flex items-center text-start">
@@ -98,7 +99,7 @@ export function AddTeamMembers({
                       groupBy="header"
                       className="min-h-7 border-none bg-transparent py-1.5 pl-2 focus-within:shadow-none! dark:bg-transparent"
                       classNames={{ input: "p-0" }}
-                      defaultOptions={multiSelectOptions}
+                      options={multiSelectOptions}
                       disabled={field.disabled}
                       placeholder="Search people or groups"
                       hideClearAllButton
@@ -172,7 +173,7 @@ export function AddTeamMembers({
               <Icon.Link className="size-3.5 fill-current" />
               Copy invite link
             </Button>
-            <Button type="submit" variant="blue" size="sm">
+            <Button type="submit" variant="blue" size="sm" disabled={disabled}>
               Invite
             </Button>
           </DialogFooter>

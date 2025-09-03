@@ -78,7 +78,7 @@ export const Demo = () => {
             mockTeamspaces.reduce<Teamspaces>((acc, teamspace, i) => {
               acc[teamspace.id] = {
                 ...teamspace,
-                members: i < 2 ? mockTeamMembers : [],
+                members: mockTeamMembers.slice(0, i < 2 ? -1 : 5),
               };
               return acc;
             }, {}),

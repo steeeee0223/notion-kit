@@ -5,7 +5,7 @@ import { useCallback, useState } from "react";
 import { Role } from "@notion-kit/schemas";
 
 import { useSettings } from "../../core";
-import { TeamMemberRow } from "../../lib";
+import type { TeamMemberRow } from "../../lib";
 import { TeamspaceDetail } from "../modals";
 import { usePeople, useTeamspaces } from "./queries";
 import { useTeamspaceActions } from "./use-teamspace-actions";
@@ -18,9 +18,10 @@ export function useTeamspaceDetail() {
     null,
   );
 
-  const { data: people } = usePeople();
+  const { data: people, refetch: refetchPeople } = usePeople();
   const { data: teamspaces } = useTeamspaces();
-  const { leave, updateMember, removeMember } = useTeamspaceActions();
+  const { leave, addMembers, updateMember, removeMember } =
+    useTeamspaceActions();
 
   const renderTeamspaceDetail = useCallback(() => {
     if (!selectedTeamspace) return null;
@@ -49,18 +50,27 @@ export function useTeamspaceDetail() {
           return acc;
         }, [])}
         onLeave={() => leave(selectedTeamspace)}
+        onAddMembers={(data) =>
+          addMembers({ teamspaceId: selectedTeamspace, ...data })
+        }
         onUpdateMember={(data) =>
           updateMember({ teamspaceId: selectedTeamspace, ...data })
         }
         onRemoveMember={(userId) =>
           removeMember({ teamspaceId: selectedTeamspace, userId })
         }
+        onFetchWorkspaceMembers={async () => {
+          const { data } = await refetchPeople();
+          return Object.values(data ?? {}).map((m) => m.user);
+        }}
       />
     );
   }, [
     account.id,
+    addMembers,
     leave,
     people,
+    refetchPeople,
     removeMember,
     selectedTeamspace,
     teamspaces,
