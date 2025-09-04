@@ -15,10 +15,6 @@ export const additionalSessionFields = {
   location: { type: "string", required: false },
 } satisfies AdditionalFields;
 
-export const additionalAccountFields = {
-  username: { type: "string", required: false },
-} satisfies AdditionalFields;
-
 export const additionalTeamFields = {
   icon: { type: "string", required: true },
   description: { type: "string", required: false },
