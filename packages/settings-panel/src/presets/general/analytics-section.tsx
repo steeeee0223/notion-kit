@@ -1,9 +1,11 @@
 "use client";
 
+import { CircleHelp } from "lucide-react";
+
 import { useTranslation } from "@notion-kit/i18n";
 import { Switch } from "@notion-kit/shadcn";
 
-import { Content, TextLinks } from "../_components";
+import { HintButton, TextLinks } from "../_components";
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
 
 export function AnalyticsSection() {
@@ -16,22 +18,22 @@ export function AnalyticsSection() {
 
   return (
     <SettingsSection title={trans.title}>
-      <Content
-        hint={trans.analytics.hint}
-        href="https://www.notion.com/help/workspace-analytics"
+      <SettingsRule
+        title={trans.analytics.title}
+        description={
+          <TextLinks
+            i18nKey="general.analytics.analytics.description"
+            values={{ workspace: workspace.name }}
+          />
+        }
       >
-        <SettingsRule
-          title={trans.analytics.title}
-          description={
-            <TextLinks
-              i18nKey="general.analytics.analytics.description"
-              values={{ workspace: workspace.name }}
-            />
-          }
-        >
-          <Switch size="sm" />
-        </SettingsRule>
-      </Content>
+        <Switch size="sm" />
+      </SettingsRule>
+      <HintButton
+        icon={CircleHelp}
+        label={trans.analytics.hint}
+        href="https://www.notion.com/help/workspace-analytics"
+      />
     </SettingsSection>
   );
 }

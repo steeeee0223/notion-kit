@@ -17,6 +17,7 @@ import { People } from "./people";
 import { Plans } from "./plans";
 import { Preferences } from "./preferences";
 import { Security } from "./security";
+import { Teamspaces } from "./teamspaces";
 
 interface SettingsBodyProps {
   tab: TabType;
@@ -42,6 +43,8 @@ export const SettingsBody: React.FC<SettingsBodyProps> = ({
       return <General />;
     case "people":
       return <People />;
+    case "teamspaces":
+      return <Teamspaces />;
     case "security":
       return <Security onTabChange={onTabChange} />;
     case "identity":

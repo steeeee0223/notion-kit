@@ -1,9 +1,8 @@
 "use client";
 
-import { SortDirection } from "@tanstack/react-table";
-
 import { cn } from "@notion-kit/cn";
 import { useTransition } from "@notion-kit/hooks";
+import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import { Role } from "@notion-kit/schemas";
 import {
@@ -18,99 +17,59 @@ import {
   type SelectPresetProps,
 } from "@notion-kit/shadcn";
 
-import { Avatar } from "../../_components";
 import { Scope } from "../../../lib";
 import type { GuestRow, MemberRow, PartialRole } from "../../../lib";
 import { roleLabels, roleOptions } from "./constants";
 
-interface HeaderProps {
-  title: string;
-  className?: string;
-}
-
-/**
- * Extended version
- * @see my-connections
- */
-export const Header = ({ title, className }: HeaderProps) => {
-  return (
-    <div
-      className={cn("truncate text-xs font-normal text-secondary", className)}
-    >
-      {title}
-    </div>
-  );
-};
-
-interface SortingToggleProps {
-  title: string;
-  isSorted: false | SortDirection;
-  toggle: () => void;
-}
-
-export const SortingToggle = ({
-  title,
-  isSorted,
-  toggle,
-}: SortingToggleProps) => (
-  <Button variant="hint" size="xs" onClick={toggle} className="gap-0.5 px-1">
-    <Header title={title} className="text-sm" />
-    {isSorted &&
-      (isSorted === "asc" ? (
-        <Icon.ArrowUp className="ml-1 size-3 shrink-0 fill-current" />
-      ) : (
-        <Icon.ArrowDown className="ml-1 size-3 shrink-0 fill-current" />
-      ))}
-  </Button>
-);
-
-interface UserCellProps {
-  user: MemberRow["user"];
-}
-export const UserCell = ({ user }: UserCellProps) => {
-  return (
-    <div className="z-20 flex h-full min-h-[42px] w-[220px] items-center justify-between pr-3">
-      <div className="flex w-full items-center gap-2.5">
-        <Avatar src={user.avatarUrl} fallback={user.name} className="size-7" />
-        <div className="max-w-[164px]">
-          <div className="truncate text-sm text-primary">{user.name}</div>
-          <div className="truncate text-xs text-secondary">{user.email}</div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 interface TeamspacesCellProps {
   teamspaces: MemberRow["teamspaces"];
+  onTeamspaceSelect?: (id: string) => void;
 }
-export const TeamspacesCell = ({ teamspaces }: TeamspacesCellProps) => {
-  const { options, current } = teamspaces;
-  const $options = options.reduce<SelectPresetProps["options"]>(
-    (acc, { id, name, memberCount: members }) => ({
-      ...acc,
-      [id]: {
-        label: name,
-        description: `${members} members`,
-      },
-    }),
-    {},
-  );
+export const TeamspacesCell = ({
+  teamspaces,
+  onTeamspaceSelect,
+}: TeamspacesCellProps) => {
   return (
     <div className="flex items-center">
-      {options.length < 1 ? (
+      {teamspaces.length < 1 ? (
         <div className="w-auto cursor-default p-2 text-sm text-muted">
           No access
         </div>
       ) : (
-        <Select
-          className="m-0 w-auto"
-          options={$options}
-          value={current ?? undefined}
-          hideCheck
-          align="center"
-          renderOption={Custom}
-        />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="hint" size="xs">
+              <span className="text-primary">
+                {teamspaces.length} teamspaces
+              </span>
+              <Icon.ChevronDown className="size-3 fill-current" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuGroup>
+              {teamspaces.map((t) => (
+                <DropdownMenuItem
+                  key={t.id}
+                  onClick={() => onTeamspaceSelect?.(t.id)}
+                  Icon={<IconBlock icon={t.icon} size="sm" />}
+                  Body={
+                    <div className="flex items-center">
+                      <div className="max-w-full shrink-0 truncate">
+                        <div className="max-w-25 truncate text-sm leading-5 text-primary">
+                          {t.name}
+                        </div>
+                      </div>
+                      <div className="inline-flex truncate text-xs text-muted">
+                        <span className="mx-2">—</span>
+                        {t.memberCount} members
+                      </div>
+                    </div>
+                  }
+                />
+              ))}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       )}
     </div>
   );
@@ -149,7 +108,7 @@ export function RoleSelectCell({
     <div className="flex items-center">
       {scopes?.has(Scope.MemberUpdate) ? (
         <Select
-          className="m-0 w-auto"
+          className="w-auto"
           options={roleOptions}
           onChange={select}
           value={role}
@@ -221,7 +180,7 @@ export const AccessCell = ({ access }: AccessCellProps) => {
         </div>
       ) : (
         <Select
-          className="m-0 w-auto"
+          className="w-auto"
           options={options}
           hideCheck
           align="center"

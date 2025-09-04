@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -19,13 +19,10 @@ export function useSettings() {
   const { accountStore, actions: accountActions } = useAccountSettings();
   const { workspaceStore, actions: workspaceActions } = useWorkspaceSettings();
 
-  const actions = useMemo(
-    () => ({
-      ...accountActions,
-      ...workspaceActions,
-    }),
-    [accountActions, workspaceActions],
-  );
+  const actions = useRef({
+    ...accountActions,
+    ...workspaceActions,
+  });
 
   const signOut = useCallback(async () => {
     await auth.signOut({
@@ -44,7 +41,7 @@ export function useSettings() {
       account: accountStore,
       memberships: {},
     },
-    actions,
+    actions: actions.current,
     signOut,
   };
 }

@@ -1,9 +1,12 @@
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import {
-  organization,
-  twoFactor,
-  type Organization,
+import { openAPI, organization, twoFactor } from "better-auth/plugins";
+import type {
+  Invitation,
+  Member,
+  Organization,
+  Team as TeamBase,
+  TeamMember,
 } from "better-auth/plugins";
 import { passkey, type Passkey } from "better-auth/plugins/passkey";
 
@@ -12,6 +15,7 @@ import { AuthEnv } from "./env";
 import {
   ac,
   additionalSessionFields,
+  additionalTeamFields,
   additionalUserFields,
   createMailtrapApi,
   roles,
@@ -108,9 +112,13 @@ export function createAuth(env: AuthEnv) {
         teams: {
           enabled: true,
           maximumTeams: 10, // Optional: limit teams per organization
-          allowRemovingAllTeams: false, // Optional: prevent removing the last team
+          allowRemovingAllTeams: true, // Optional: prevent removing the last team
+        },
+        schema: {
+          team: { additionalFields: additionalTeamFields },
         },
       }),
+      openAPI(),
     ],
   } satisfies BetterAuthOptions;
 
@@ -119,8 +127,14 @@ export function createAuth(env: AuthEnv) {
 
 export type Auth = ReturnType<typeof createAuth>;
 export type Session = Auth["$Infer"]["Session"];
-export type { Organization, Passkey };
+export type { Organization, Passkey, TeamMember, Member, Invitation };
 
 export interface WorkspaceMetadata {
   inviteToken?: string;
 }
+export type Team = TeamBase & {
+  icon: string;
+  description?: string;
+  permission: "default" | "open" | "closed" | "private";
+  ownedBy: string;
+};

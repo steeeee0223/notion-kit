@@ -226,13 +226,13 @@ interface Resources {
       export: {
         title: "Export";
         content: {
-          title: "Export content";
-          hint: "Learn about exporting workspaces.";
-          button: "Export all workspace content";
+          title: "Workspace content";
+          description: "Export all pages in {{workspace}} as HTML, Markdown, CSV or PDF";
+          button: "Export";
         };
         members: {
-          title: "Export members";
-          hint: "Learn about exporting members.";
+          title: "Members";
+          description: "Export a list of members and guests in {{workspace}}";
           button: "Export members as CSV";
         };
       };
@@ -287,6 +287,26 @@ interface Resources {
     };
     teamspaces: {
       title: "Teamspaces";
+      teamspaces: {
+        title: "Teamspaces settings";
+        info: {
+          learn: "Learn about teamspaces";
+        };
+        default: {
+          title: "Default teamspaces";
+          description: "Choose teamspaces that all new and current workspace members will automatically join";
+          button: "Update";
+        };
+        limit: {
+          title: "Limit teamspace creation to only workspace owners";
+          description: "Only allow workspace owners to create teamspaces";
+        };
+        manage: {
+          title: "Manage teamspaces";
+          description: "Manage all teamspaces you have access to here";
+          button: "New teamspaces";
+        };
+      };
     };
     plans: {
       title: "Explore plans";

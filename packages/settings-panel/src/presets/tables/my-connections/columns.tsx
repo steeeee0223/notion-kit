@@ -4,7 +4,8 @@ import React from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 
 import type { Connection } from "../../../lib";
-import { ActionCell, ConnectionCell, Header } from "./cells";
+import { TextCell } from "../common-cells";
+import { ActionCell, ConnectionCell } from "./cells";
 
 export interface CreateConnectionColumnsOptions {
   onCreateConnection?: () => void;
@@ -18,12 +19,12 @@ export function createConnectionColumns({
   return [
     {
       accessorKey: "connection",
-      header: () => <Header title="Connection" />,
+      header: () => <TextCell header value="Connection" />,
       cell: ({ row }) => <ConnectionCell {...row.original.connection} />,
     },
     {
       accessorKey: "scopes",
-      header: () => <Header title="Access" />,
+      header: () => <TextCell header value="Access" />,
       cell: ({ row }) => (
         <div className="flex flex-col text-xs">
           {row.original.scopes.map((scope, i) => (

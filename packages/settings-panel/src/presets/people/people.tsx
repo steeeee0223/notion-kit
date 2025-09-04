@@ -13,6 +13,7 @@ import { useModal } from "@notion-kit/modal";
 import { Plan } from "@notion-kit/schemas";
 import {
   Button,
+  Dialog,
   Input,
   Separator,
   Switch,
@@ -25,7 +26,8 @@ import {
 
 import { TextLinks } from "../_components";
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
-import { generateGuestsCsv, Scope } from "../../lib";
+import { generateGuestsCsv, GuestRow, MemberRow, Scope } from "../../lib";
+import { useInvitations, useTeamspaceDetail } from "../hooks";
 import { AddMembers, DeleteGuest, DeleteMember } from "../modals";
 import {
   GroupsTable,
@@ -35,11 +37,7 @@ import {
 } from "../tables";
 import { useInvitationsActions } from "./use-invitations-actions";
 import { useLinkActions } from "./use-link-actions";
-import {
-  useInvitations,
-  useInvitedMembers,
-  useWorkspaceMemberships,
-} from "./use-people";
+import { useInvitedMembers, useWorkspaceMemberships } from "./use-people";
 import { usePeopleActions } from "./use-people-actions";
 
 enum PeopleTabs {
@@ -76,13 +74,24 @@ export function People() {
   const { openModal } = useModal();
   /** Tables */
   const { members, guests } = useWorkspaceMemberships();
+  const { selectedTeamspace, setSelectedTeamspace, renderTeamspaceDetail } =
+    useTeamspaceDetail();
   const { update, remove } = usePeopleActions();
   const { data: invitations } = useInvitations((res) => Object.values(res));
   const { invite: inviteMember, cancel } = useInvitationsActions();
-  const deleteMember = (id: string) =>
-    openModal(<DeleteMember onDelete={() => remove(id)} />);
-  const deleteGuest = (id: string, name: string) =>
-    openModal(<DeleteGuest name={name} onDelete={() => remove(id)} />);
+  const deleteMember = (data: MemberRow) =>
+    openModal(
+      <DeleteMember
+        onDelete={() => remove({ id: data.user.id, memberId: data.id })}
+      />,
+    );
+  const deleteGuest = (data: GuestRow) =>
+    openModal(
+      <DeleteGuest
+        name={data.user.name}
+        onDelete={() => remove({ id: data.user.id, memberId: data.id })}
+      />,
+    );
   /** Handlers */
   const { isResetting, copyLink, updateLink } = useLinkActions();
   const resetLink = () =>
@@ -188,13 +197,23 @@ export function People() {
           </div>
         </TabsList>
         <TabsContent value={PeopleTabs.Members} className="mt-0 bg-transparent">
+          <Dialog
+            open={!!selectedTeamspace}
+            onOpenChange={(open) => {
+              if (open) return;
+              setSelectedTeamspace(null);
+            }}
+          >
+            {renderTeamspaceDetail()}
+          </Dialog>
           <MembersTable
-            accountId={account.id}
+            userId={account.id}
             search={search}
             data={members}
             scopes={scopes}
-            onUpdate={(id, role) => update({ id, role })}
+            onUpdate={update}
             onDelete={deleteMember}
+            onTeamspaceSelect={setSelectedTeamspace}
           />
         </TabsContent>
         <TabsContent value={PeopleTabs.Guests} className="mt-0 bg-transparent">
@@ -202,7 +221,7 @@ export function People() {
             search={search}
             data={guests}
             scopes={scopes}
-            onUpdate={(id, role) => update({ id, role })}
+            onUpdate={update}
             onDelete={deleteGuest}
           />
         </TabsContent>

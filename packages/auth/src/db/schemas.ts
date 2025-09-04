@@ -155,6 +155,15 @@ export const team = pgTable("team", {
     .references(() => organization.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at"),
+  /**
+   * Additional fields can be added here.
+   */
+  icon: text("icon").notNull(),
+  description: text("description"),
+  permission: text("permission").default("default").notNull(),
+  ownedBy: text("owned_by")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
 });
 
 export const teamMember = pgTable("team_member", {
@@ -164,4 +173,8 @@ export const teamMember = pgTable("team_member", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at"),
+  /**
+   * Additional fields can be added here.
+   */
+  role: text("role").default("member").notNull(),
 });

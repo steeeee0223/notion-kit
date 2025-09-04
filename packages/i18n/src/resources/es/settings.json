@@ -214,13 +214,13 @@
     "export": {
       "title": "Exportar",
       "content": {
-        "title": "Exportar contenido",
-        "hint": "Más información sobre cómo exportar espacios de trabajo.",
-        "button": "Exportar todo el contenido del espacio de trabajo"
+        "title": "Contenido del espacio de trabajo",
+        "description": "Exporta todas las páginas de Steeeee Private en formato HTML, Markdown, CSV o PDF",
+        "button": "Exportar"
       },
       "members": {
-        "title": "Exportar miembros",
-        "hint": "Más información sobre cómo exportar miembros.",
+        "title": "Miembros",
+        "description": "Exporta una lista de los miembros e invitados de {{workspace}}",
         "button": "Exportar miembros como CSV"
       }
     },
@@ -274,7 +274,29 @@
       }
     }
   },
-  "teamspaces": { "title": "Espacios de equipo" },
+  "teamspaces": {
+    "title": "Espacios de equipo",
+    "teamspaces": {
+      "title": "Configuración del espacio de equipo",
+      "info": {
+        "learn": "Más información sobre los espacios de equipo"
+      },
+      "default": {
+        "title": "Espacios de equipo predeterminados",
+        "description": "Elige los espacios de equipo a los que todos los nuevos y actuales miembros del espacio de trabajo se unirán automáticamente",
+        "button": "Actualizar"
+      },
+      "limit": {
+        "title": "Limitar la creación de espacios de equipo solo a propietarios del espacio de trabajo",
+        "description": "Solo los administradores del espacio de trabajo podrán crear espacios de equipo."
+      },
+      "manage": {
+        "title": "Gestionar espacios de equipo",
+        "description": "Gestiona todos los espacios de equipo a los que tienes acceso aquí",
+        "button": "Nuevo espacio de equipo"
+      }
+    }
+  },
   "plans": {
     "title": "Descubre los planes",
     "active": {

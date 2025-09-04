@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { useTransition } from "@notion-kit/hooks";
+import { useTemporaryFix, useTransition } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
 import {
@@ -27,6 +27,7 @@ import type { Passkey } from "../../lib";
 import { usePasskeys } from "../account/use-passkeys";
 
 export function PasskeysModal() {
+  const { onCloseAutoFocus } = useTemporaryFix();
   const { isOpen, closeModal } = useModal();
   const { passkeys, error, isPending, create, update, remove, clearError } =
     usePasskeys();
@@ -37,14 +38,7 @@ export function PasskeysModal() {
         forceMount
         className="w-100 p-5"
         onClick={(e) => e.stopPropagation()}
-        /**
-         * tmporary fix
-         * @see https://github.com/radix-ui/primitives/issues/1241
-         */
-        onCloseAutoFocus={(e) => {
-          e.preventDefault();
-          document.body.style.pointerEvents = "";
-        }}
+        onCloseAutoFocus={onCloseAutoFocus}
       >
         <DialogHeader>
           <DialogIcon>

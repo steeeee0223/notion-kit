@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { I18nProvider } from "@notion-kit/i18n";
 import { ModalProvider } from "@notion-kit/modal";
-import { Role } from "@notion-kit/schemas";
+import { Role, type IconData } from "@notion-kit/schemas";
 import {
   TooltipProvider,
   useTheme,
@@ -21,6 +21,9 @@ import type {
   Passkey,
   SessionRow,
   SettingsStore,
+  TeamspacePermission,
+  TeamspaceRole,
+  Teamspaces,
   WorkspaceStore,
 } from "../lib";
 import { getScopes, Scope } from "../lib";
@@ -65,13 +68,50 @@ export interface SettingsActions {
   /** People */
   people?: {
     getAll?: () => Promise<Memberships>;
-    update?: (data: { id: string; role: Role }) => Promise<void>;
-    delete?: (id: string) => Promise<void>;
+    update?: (data: {
+      id: string;
+      memberId: string;
+      role: Role;
+    }) => Promise<void>;
+    delete?: (data: { id: string; memberId: string }) => Promise<void>;
   };
   invitations?: {
     getAll?: () => Promise<Invitations>;
     add?: (data: { emails: string[]; role: Role }) => Promise<void>;
     cancel?: (id: string) => Promise<void>;
+  };
+  /** Teamspaces */
+  teamspaces?: {
+    getAll?: () => Promise<Teamspaces>;
+    add?: (data: {
+      name: string;
+      icon: IconData;
+      description?: string;
+      permission: TeamspacePermission;
+    }) => Promise<void>;
+    update?: (data: {
+      id: string;
+      name?: string;
+      icon?: IconData;
+      description?: string;
+      permission?: TeamspacePermission;
+    }) => Promise<void>;
+    delete?: (teamspaceId: string) => Promise<void>;
+    leave?: (teamspaceId: string) => Promise<void>;
+    addMembers?: (data: {
+      teamspaceId: string;
+      userIds: string[];
+      role: TeamspaceRole;
+    }) => Promise<void>;
+    updateMember?: (data: {
+      teamspaceId: string;
+      userId: string;
+      role: TeamspaceRole;
+    }) => Promise<void>;
+    deleteMember?: (data: {
+      teamspaceId: string;
+      userId: string;
+    }) => Promise<void>;
   };
 }
 

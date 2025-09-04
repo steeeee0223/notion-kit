@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import type { Organization } from "@notion-kit/auth";
@@ -8,6 +8,7 @@ import {
   useActiveWorkspace,
   useAuth,
   useListWorkspaces,
+  useSession,
 } from "@notion-kit/auth-ui";
 import {
   IconObject,
@@ -17,33 +18,57 @@ import {
   type Workspace,
 } from "@notion-kit/schemas";
 
+const defaultWorkspace: Workspace = {
+  id: "",
+  name: "",
+  icon: { type: "text", src: "" },
+  role: Role.OWNER,
+  plan: Plan.FREE,
+  memberCount: 0,
+};
+
 export function useWorkspaceList() {
   const router = useRouter();
   const { auth } = useAuth();
-  const { data } = useActiveWorkspace();
+  const { data: session } = useSession();
+  const { data: active } = useActiveWorkspace();
   const { data: workspaces } = useListWorkspaces();
 
-  const activeWorkspace = useMemo<Workspace>(() => {
-    if (!data)
-      return {
-        id: "",
-        name: "",
-        icon: { type: "text", src: "" },
-        role: Role.OWNER,
-        plan: Plan.FREE,
-        memberCount: 0,
-      };
-    return mapWorkspace(data);
-  }, [data]);
+  const orgApi = useRef(auth.organization);
 
-  const workspaceList = useMemo(() => {
-    if (!workspaces) return [];
-    return workspaces.map<Workspace>((w) => mapWorkspace(w));
-  }, [workspaces]);
+  const [activeWorkspace, setActiveWorkspace] =
+    useState<Workspace>(defaultWorkspace);
+  const [workspaceList, setWorkspaceList] = useState<Workspace[]>([]);
+  useEffect(() => {
+    const fetchMemberships = async () => {
+      if (!workspaces || !session?.user.id) return;
+      const memberships = await Promise.all(
+        workspaces.map((w) =>
+          orgApi.current.listMembers({ query: { organizationId: w.id } }),
+        ),
+      );
+      const updatedWorkspaces = workspaces.map((w, i) => ({
+        ...mapWorkspace(w),
+        ...(memberships[i]?.data
+          ? {
+              memberCount: memberships[i].data.total,
+              role: memberships[i].data.members.find(
+                (m) => m.userId === session.user.id,
+              )?.role as Role,
+            }
+          : {}),
+      }));
+      setWorkspaceList(updatedWorkspaces);
+      setActiveWorkspace(
+        updatedWorkspaces.find((w) => w.id === active?.id) ?? defaultWorkspace,
+      );
+    };
+    void fetchMemberships();
+  }, [active?.id, session?.user.id, workspaces]);
 
   const selectWorkspace = useCallback(
     async (id: string) => {
-      const res = await auth.organization.setActive({ organizationId: id });
+      const res = await orgApi.current.setActive({ organizationId: id });
       console.log(`[useWorkspaceList] Switching to workspace ${id}`);
       if (!res.data) {
         console.error("Failed to set active workspace");
@@ -51,7 +76,7 @@ export function useWorkspaceList() {
       }
       router.push(`/workspace/${res.data.slug}`);
     },
-    [auth.organization, router],
+    [router],
   );
 
   return { activeWorkspace, workspaceList, selectWorkspace };

@@ -1,8 +1,8 @@
 import { Role, type User } from "@notion-kit/schemas";
 import {
   MembersTable,
+  MemberTeamspace,
   Scope,
-  type GroupOption,
   type MemberRow,
 } from "@notion-kit/settings-panel";
 import { randomItem } from "@notion-kit/utils";
@@ -31,19 +31,32 @@ const users: User[] = [
 ];
 
 const generateMembers = (users: User[]) => {
-  const teamspaceOptions: GroupOption[] = [
-    { id: "t1", memberCount: 26, name: "Dev Lab" },
-    { id: "t2", memberCount: 3, name: "Private group" },
-    { id: "t3", memberCount: 44, name: "Teamspace" },
+  const teamspaces: MemberTeamspace[] = [
+    {
+      id: "t1",
+      memberCount: 26,
+      name: "Dev Lab",
+      icon: { type: "text", src: "D" },
+    },
+    {
+      id: "t2",
+      memberCount: 3,
+      name: "Private group",
+      icon: { type: "text", src: "P" },
+    },
+    {
+      id: "t3",
+      memberCount: 44,
+      name: "Teamspace",
+      icon: { type: "text", src: "T" },
+    },
   ];
 
   return users.map<MemberRow>((user) => ({
+    id: user.id,
     user,
     role: randomItem([Role.OWNER, Role.MEMBER]),
-    teamspaces: {
-      options: teamspaceOptions,
-      current: randomItem(teamspaceOptions).id,
-    },
+    teamspaces,
     groups: { current: null, options: [] },
   }));
 };

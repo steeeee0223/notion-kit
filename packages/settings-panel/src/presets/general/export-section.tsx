@@ -1,34 +1,46 @@
 "use client";
 
-import { useTranslation } from "react-i18next";
-
+import { Trans, useTranslation } from "@notion-kit/i18n";
 import { Button } from "@notion-kit/shadcn";
 
-import { Content } from "../_components";
-import { SettingsSection } from "../../core";
+import { SettingsRule, SettingsSection, useSettings } from "../../core";
 
 export function ExportSection() {
+  const {
+    settings: { workspace },
+  } = useSettings();
   /** i18n */
   const { t } = useTranslation("settings");
   const trans = t("general.export", { returnObjects: true });
 
   return (
     <SettingsSection title={trans.title}>
-      <Content
-        {...trans.content}
+      <SettingsRule
+        title={trans.content.title}
+        description={
+          <Trans
+            i18nKey="general.export.content.description"
+            values={{ workspace: workspace.name }}
+          />
+        }
         href="https://www.notion.com/help/workspace-settings"
       >
         <Button size="sm">{trans.content.button}</Button>
-      </Content>
-      <Content
-        {...trans.members}
-        plan="business"
+      </SettingsRule>
+      <SettingsRule
+        title={trans.members.title}
+        description={
+          <Trans
+            i18nKey="general.export.members.description"
+            values={{ workspace: workspace.name }}
+          />
+        }
         href="https://www.notion.com/help/workspace-settings"
       >
-        <Button size="sm" disabled>
+        <Button disabled size="sm">
           {trans.members.button}
         </Button>
-      </Content>
+      </SettingsRule>
     </SettingsSection>
   );
 }

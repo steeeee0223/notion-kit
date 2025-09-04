@@ -4,7 +4,8 @@ import { Button } from "@notion-kit/shadcn";
 import { toDateString } from "@notion-kit/utils";
 
 import type { SessionRow } from "../../../lib";
-import { DeviceCell, SortingToggle, TextCell } from "./cells";
+import { SortingToggle, TextCell } from "../common-cells";
+import { DeviceCell } from "./cells";
 
 interface CreateSessionColumnsOptions {
   currentSessionId?: string;

@@ -19,11 +19,7 @@ export function MenuHeader({ title, onBack }: MenuHeaderProps) {
       <span className="grow truncate text-sm font-semibold" aria-label={title}>
         {title}
       </span>
-      <PopoverClose asChild>
-        <Button variant="close" size="circle">
-          <Icon.Close className="h-full w-3.5 fill-secondary dark:fill-default/45" />
-        </Button>
-      </PopoverClose>
+      <PopoverClose />
     </div>
   );
 }

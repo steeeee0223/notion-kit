@@ -121,7 +121,7 @@ export const AddMembers: React.FC<AddMembersProps> = ({
                   member: "Member",
                   guest: "Guest",
                 }}
-                className="m-0 w-fit text-muted"
+                className="w-fit text-muted"
               />
               <Button
                 tabIndex={0}

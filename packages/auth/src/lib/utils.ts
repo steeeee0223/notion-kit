@@ -18,3 +18,14 @@ export const additionalSessionFields = {
 export const additionalAccountFields = {
   username: { type: "string", required: false },
 } satisfies AdditionalFields;
+
+export const additionalTeamFields = {
+  icon: { type: "string", required: true },
+  description: { type: "string", required: false },
+  permission: { type: "string", required: true },
+  ownedBy: { type: "string", required: true },
+} satisfies AdditionalFields;
+
+export const additionalTeamMemberFields = {
+  role: { type: "string", required: true },
+} satisfies AdditionalFields;

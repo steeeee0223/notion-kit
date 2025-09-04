@@ -7,3 +7,4 @@ export {
 } from "./people";
 export { PlansTable } from "./plans";
 export { SessionsTable } from "./sessions";
+export { TeamspacesTable, TeamMembersTable } from "./teamspaces";

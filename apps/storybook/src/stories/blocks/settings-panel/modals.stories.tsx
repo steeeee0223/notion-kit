@@ -43,6 +43,9 @@ const meta = {
   title: "blocks/Settings Panel/Modals",
   component: ModalTrigger,
   parameters: { layout: "centered" },
+  argTypes: {
+    children: { control: false },
+  },
   render: (props) => (
     <ModalProvider>
       <ModalTrigger {...props} />

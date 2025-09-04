@@ -12,6 +12,9 @@ export enum Scope {
   MemberAddRequest = "people:add:request",
   MemberUpdate = "people:update",
   GroupEnable = "people:group:enable",
+  /** Teamspaces */
+  TeamspaceRead = "teamspace:read",
+  TeamspaceCreate = "teamspace:create",
   /** Plans */
   Upgrade = "plan:upgrade",
 }
@@ -56,6 +59,9 @@ export type ConnectionStrategy =
   | "grid"
   | "jira";
 
+export type TeamspacePermission = "default" | "open" | "closed" | "private";
+export type TeamspaceRole = "owner" | "member";
+
 /** Table Data */
 export interface SessionRow {
   id: string;
@@ -77,9 +83,17 @@ export interface CellOptions<T extends { id: string }> {
   options: T[];
 }
 
+export interface MemberTeamspace {
+  id: string;
+  name: string;
+  icon: IconData;
+  memberCount: number;
+}
+
 export interface MemberRow {
+  id: string; // the member ID
   user: User;
-  teamspaces: CellOptions<GroupOption>;
+  teamspaces: MemberTeamspace[];
   groups: CellOptions<GroupOption>;
   role: Role;
 }
@@ -91,15 +105,13 @@ export interface PageAccess {
 }
 
 export interface GuestRow {
+  id: string; // the member ID
   user: User;
   access: PageAccess[];
 }
 
 export interface InvitationRow {
-  /**
-   * @prop the unique identifier for the invitation
-   */
-  id: string;
+  id: string; // the invitation ID
   email: string;
   role: Role;
   invitedBy: User;
@@ -113,7 +125,17 @@ export interface GroupOption {
   memberCount: number;
 }
 
-export type Memberships = Record<string, { role: Role; user: User }>;
+/**
+ * @note key: user ID
+ */
+export type Memberships = Record<
+  string,
+  {
+    id: string; // the member ID
+    role: Role;
+    user: User;
+  }
+>;
 
 export interface SettingsStore {
   workspace: WorkspaceStore;
@@ -123,3 +145,42 @@ export interface WorkspaceMemberships {
   members: MemberRow[];
   guests: GuestRow[];
 }
+
+export interface TeamMemberRow {
+  id: string; // the user id
+  user: User;
+  isWorkspaceOwner?: boolean;
+  role: TeamspaceRole;
+}
+export interface TeamspaceRow {
+  id: string;
+  name: string;
+  icon: IconData;
+  description?: string;
+  memberCount: number;
+  permission: TeamspacePermission;
+  ownedBy: {
+    name: string;
+    avatarUrl?: string;
+  };
+  ownerCount: number;
+  updatedAt: number; // ts in ms
+  /**
+   * @prop the role of the user in the teamspace
+   */
+  role?: TeamspaceRole | false;
+}
+
+export type Teamspaces = Record<
+  string,
+  {
+    id: string;
+    name: string;
+    icon: IconData;
+    description?: string;
+    permission: TeamspacePermission;
+    members: { userId: string; role: TeamspaceRole }[];
+    updatedAt: number; // ts in ms
+    ownedBy: string;
+  }
+>;

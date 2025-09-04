@@ -11,27 +11,39 @@ import type {
   InvitationRow,
   MemberRow,
 } from "../../../lib";
-import { getGuestColumns, getMemberColumns, groupColumns } from "./columns";
-import { getInvitationColumns } from "./columns/invitations";
+import {
+  createGuestColumns,
+  createMemberColumns,
+  groupColumns,
+} from "./columns";
+import { createInvitationColumns } from "./columns/invitations";
 import { DataTable } from "./data-table";
 
 interface MembersTableProps {
   /**
-   * @prop account - Your Id
+   * @prop userId
    */
-  accountId?: string;
+  userId?: string;
   scopes: Set<Scope>;
   data: MemberRow[];
   search?: string;
-  onUpdate?: (id: string, role: Role) => void;
-  onDelete?: (id: string) => void;
+  onUpdate?: (data: { id: string; memberId: string; role: Role }) => void;
+  onDelete?: (data: MemberRow) => void;
+  onTeamspaceSelect?: (teamspaceId: string) => void;
 }
 
 export const MembersTable = memo<MembersTableProps>(
-  ({ accountId: memberId, scopes, onUpdate, onDelete, ...props }) => {
+  ({ userId, scopes, onUpdate, onDelete, onTeamspaceSelect, ...props }) => {
     const columns = useMemo(
-      () => getMemberColumns({ scopes, memberId, onUpdate, onDelete }),
-      [memberId, scopes, onUpdate, onDelete],
+      () =>
+        createMemberColumns({
+          scopes,
+          userId,
+          onUpdate,
+          onDelete,
+          onTeamspaceSelect,
+        }),
+      [userId, scopes, onUpdate, onDelete, onTeamspaceSelect],
     );
     return <DataTable columns={columns} emptyResult="No members" {...props} />;
   },
@@ -41,14 +53,14 @@ interface GuestsTableProps {
   scopes: Set<Scope>;
   data: GuestRow[];
   search?: string;
-  onUpdate?: (id: string, role: Role) => void;
-  onDelete?: (id: string, name: string) => void;
+  onUpdate?: (data: { id: string; memberId: string; role: Role }) => void;
+  onDelete?: (data: GuestRow) => void;
 }
 
 export const GuestsTable = memo<GuestsTableProps>(
   ({ scopes, onUpdate, onDelete, ...props }) => {
     const columns = useMemo(
-      () => getGuestColumns(new Set(scopes), onUpdate, onDelete),
+      () => createGuestColumns({ scopes: new Set(scopes), onUpdate, onDelete }),
       [scopes, onUpdate, onDelete],
     );
     return <DataTable columns={columns} emptyResult="No guests" {...props} />;
@@ -74,7 +86,7 @@ interface InvitationsTableProps {
 
 export const InvitationsTable = memo<InvitationsTableProps>(
   ({ data, ...props }) => {
-    const columns = useMemo(() => getInvitationColumns(props), [props]);
+    const columns = useMemo(() => createInvitationColumns(props), [props]);
     return (
       <DataTable columns={columns} data={data} emptyResult="No invitations" />
     );

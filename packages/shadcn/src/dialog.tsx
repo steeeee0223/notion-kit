@@ -2,10 +2,11 @@
 
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
 
+import { Button } from "./button";
+import * as Icon from "./icons";
 import { contentVariants, Typography, typography } from "./variants";
 import { VisuallyHidden } from "./visually-hidden";
 
@@ -30,7 +31,14 @@ function DialogPortal({
 function DialogClose({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Close>) {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
+  return (
+    <DialogPrimitive.Close data-slot="dialog-close" asChild>
+      <Button type="button" variant="close" size="circle" {...props}>
+        <Icon.Close className="h-full w-3.5 fill-secondary dark:fill-default/45" />
+        <span className="sr-only">Close</span>
+      </Button>
+    </DialogPrimitive.Close>
+  );
 }
 
 function DialogOverlay({
@@ -81,17 +89,7 @@ function DialogContent({
           </VisuallyHidden>
         )}
         {children}
-        {!hideClose && (
-          <DialogPrimitive.Close
-            className={cn(
-              "absolute top-4 right-4 rounded-full bg-default/5 p-0.5 text-default/45 transition-opacity hover:bg-default/10 focus-visible:outline-hidden disabled:pointer-events-none data-[state=open]:bg-primary",
-              "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-            )}
-          >
-            <X />
-            <span className="sr-only">Close</span>
-          </DialogPrimitive.Close>
-        )}
+        {!hideClose && <DialogClose className={cn("absolute top-4 right-4")} />}
       </DialogPrimitive.Content>
     </DialogPortal>
   );
