@@ -493,6 +493,9 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../../packages/cn
+      '@notion-kit/icon-block':
+        specifier: workspace:*
+        version: link:../../packages/icon-block
       '@notion-kit/modal':
         specifier: workspace:*
         version: link:../../packages/modal
