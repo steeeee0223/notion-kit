@@ -42,10 +42,11 @@ interface TeamspaceDetailProps {
   teamMembers: TeamMemberRow[];
   onClose?: () => void;
   onLeave?: () => void | Promise<void>;
+  onJoin?: () => void | Promise<void>;
   onAddMembers?: (data: {
     userIds: string[];
     role: TeamspaceRole;
-  }) => Promise<void>;
+  }) => void | Promise<void>;
   onUpdateMember?: (data: {
     userId: string;
     role: TeamspaceRole;
@@ -60,6 +61,7 @@ export function TeamspaceDetail({
   teamMembers,
   onClose,
   onLeave,
+  onJoin,
   onAddMembers,
   onUpdateMember,
   onRemoveMember,
@@ -113,6 +115,7 @@ export function TeamspaceDetail({
               tabIndex={-1}
               variant={null}
               className="h-7 rounded-full bg-default/5 px-2.5 hover:bg-default/15"
+              onClick={onJoin}
             >
               Join
             </Button>

@@ -53,6 +53,7 @@ const generateMembers = (users: User[]) => {
   ];
 
   return users.map<MemberRow>((user) => ({
+    id: user.id,
     user,
     role: randomItem([Role.OWNER, Role.MEMBER]),
     teamspaces,

@@ -57,7 +57,6 @@ export const AddTeamMembersModal: Story = {
     children: (
       <AddTeamMembers
         teamspace={{
-          id: "team-1",
           name: "Acme Lab",
           icon: { type: "text", src: "A" },
         }}

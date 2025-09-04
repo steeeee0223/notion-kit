@@ -56,12 +56,12 @@ export const TeamspacesCell = ({
                     <div className="flex items-center">
                       <div className="max-w-full shrink-0 truncate">
                         <div className="max-w-25 truncate text-sm leading-5 text-primary">
-                          T.Interceptor
+                          {t.name}
                         </div>
                       </div>
                       <div className="inline-flex truncate text-xs text-muted">
                         <span className="mx-2">—</span>
-                        24 members
+                        {t.memberCount} members
                       </div>
                     </div>
                   }

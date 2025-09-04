@@ -11,8 +11,12 @@ import type {
   InvitationRow,
   MemberRow,
 } from "../../../lib";
-import { getGuestColumns, getMemberColumns, groupColumns } from "./columns";
-import { getInvitationColumns } from "./columns/invitations";
+import {
+  createGuestColumns,
+  createMemberColumns,
+  groupColumns,
+} from "./columns";
+import { createInvitationColumns } from "./columns/invitations";
 import { DataTable } from "./data-table";
 
 interface MembersTableProps {
@@ -24,7 +28,7 @@ interface MembersTableProps {
   data: MemberRow[];
   search?: string;
   onUpdate?: (data: { id: string; memberId: string; role: Role }) => void;
-  onDelete?: (data: { id: string; memberId: string }) => void;
+  onDelete?: (data: MemberRow) => void;
   onTeamspaceSelect?: (teamspaceId: string) => void;
 }
 
@@ -32,7 +36,7 @@ export const MembersTable = memo<MembersTableProps>(
   ({ userId, scopes, onUpdate, onDelete, onTeamspaceSelect, ...props }) => {
     const columns = useMemo(
       () =>
-        getMemberColumns({
+        createMemberColumns({
           scopes,
           userId,
           onUpdate,
@@ -50,13 +54,13 @@ interface GuestsTableProps {
   data: GuestRow[];
   search?: string;
   onUpdate?: (data: { id: string; memberId: string; role: Role }) => void;
-  onDelete?: (data: { id: string; memberId: string; name: string }) => void;
+  onDelete?: (data: GuestRow) => void;
 }
 
 export const GuestsTable = memo<GuestsTableProps>(
   ({ scopes, onUpdate, onDelete, ...props }) => {
     const columns = useMemo(
-      () => getGuestColumns(new Set(scopes), onUpdate, onDelete),
+      () => createGuestColumns({ scopes: new Set(scopes), onUpdate, onDelete }),
       [scopes, onUpdate, onDelete],
     );
     return <DataTable columns={columns} emptyResult="No guests" {...props} />;
@@ -82,7 +86,7 @@ interface InvitationsTableProps {
 
 export const InvitationsTable = memo<InvitationsTableProps>(
   ({ data, ...props }) => {
-    const columns = useMemo(() => getInvitationColumns(props), [props]);
+    const columns = useMemo(() => createInvitationColumns(props), [props]);
     return (
       <DataTable columns={columns} data={data} emptyResult="No invitations" />
     );

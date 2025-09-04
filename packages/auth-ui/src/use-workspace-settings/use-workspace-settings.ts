@@ -130,7 +130,7 @@ export function useWorkspaceSettings() {
             return {};
           }
           return result.data.members.reduce<Memberships>((acc, m) => {
-            acc[m.id] = {
+            acc[m.user.id] = {
               id: m.id,
               role: m.role as Role,
               user: {
@@ -252,10 +252,10 @@ export function useWorkspaceSettings() {
               icon: JSON.parse(team.icon) as IconData,
               permission: team.permission,
               ownedBy: team.ownedBy,
-              // TODO update these
               members:
                 res.data?.map((m) => ({
                   userId: m.userId,
+                  // TODO update role
                   role: "owner",
                 })) ?? [],
             };

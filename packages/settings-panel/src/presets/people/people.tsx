@@ -26,7 +26,7 @@ import {
 
 import { TextLinks } from "../_components";
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
-import { generateGuestsCsv, Scope } from "../../lib";
+import { generateGuestsCsv, GuestRow, MemberRow, Scope } from "../../lib";
 import { useInvitations, useTeamspaceDetail } from "../hooks";
 import { AddMembers, DeleteGuest, DeleteMember } from "../modals";
 import {
@@ -79,10 +79,19 @@ export function People() {
   const { update, remove } = usePeopleActions();
   const { data: invitations } = useInvitations((res) => Object.values(res));
   const { invite: inviteMember, cancel } = useInvitationsActions();
-  const deleteMember = (data: { id: string; memberId: string }) =>
-    openModal(<DeleteMember onDelete={() => remove(data)} />);
-  const deleteGuest = (data: { id: string; memberId: string; name: string }) =>
-    openModal(<DeleteGuest name={data.name} onDelete={() => remove(data)} />);
+  const deleteMember = (data: MemberRow) =>
+    openModal(
+      <DeleteMember
+        onDelete={() => remove({ id: data.user.id, memberId: data.id })}
+      />,
+    );
+  const deleteGuest = (data: GuestRow) =>
+    openModal(
+      <DeleteGuest
+        name={data.user.name}
+        onDelete={() => remove({ id: data.user.id, memberId: data.id })}
+      />,
+    );
   /** Handlers */
   const { isResetting, copyLink, updateLink } = useLinkActions();
   const resetLink = () =>

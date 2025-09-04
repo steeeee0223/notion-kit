@@ -36,7 +36,7 @@ const generateGuests = (users: User[]) => {
     { id: "p3", name: "Page 3", scope: "Can comment" },
   ];
 
-  return users.map<GuestRow>((user) => ({ user, access }));
+  return users.map<GuestRow>((user) => ({ id: user.id, user, access }));
 };
 
 export default function Demo() {

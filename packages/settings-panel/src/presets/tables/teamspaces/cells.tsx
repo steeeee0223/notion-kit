@@ -157,20 +157,24 @@ export function TeamspaceActionCell({
               Icon={<Icon.Gear />}
               Body="Teamspace settings"
             />
-            <DialogTrigger asChild>
-              <DropdownMenuItem
-                variant="error"
-                Icon={<Icon.Bye className="size-4" />}
-                Body="Leave teamspace"
-              />
-            </DialogTrigger>
-            <DropdownMenuItem
-              variant="error"
-              onClick={archive}
-              disabled={role !== "owner"}
-              Icon={<Icon.ArchiveBox />}
-              Body="Archive teamspace"
-            />
+            {!!role && (
+              <>
+                <DialogTrigger asChild>
+                  <DropdownMenuItem
+                    variant="error"
+                    Icon={<Icon.Bye className="size-4" />}
+                    Body="Leave teamspace"
+                  />
+                </DialogTrigger>
+                <DropdownMenuItem
+                  variant="error"
+                  onClick={archive}
+                  disabled={role !== "owner"}
+                  Icon={<Icon.ArchiveBox />}
+                  Body="Archive teamspace"
+                />
+              </>
+            )}
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>

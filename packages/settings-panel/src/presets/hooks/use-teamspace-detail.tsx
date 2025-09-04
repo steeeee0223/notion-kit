@@ -50,6 +50,13 @@ export function useTeamspaceDetail() {
           return acc;
         }, [])}
         onLeave={() => leave(selectedTeamspace)}
+        onJoin={() =>
+          addMembers({
+            teamspaceId: selectedTeamspace,
+            userIds: [account.id],
+            role: "member",
+          })
+        }
         onAddMembers={(data) =>
           addMembers({ teamspaceId: selectedTeamspace, ...data })
         }

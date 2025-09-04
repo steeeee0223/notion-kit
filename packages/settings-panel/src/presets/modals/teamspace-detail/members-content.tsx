@@ -34,7 +34,7 @@ interface MembersContentProps {
   onAddMembers?: (data: {
     userIds: string[];
     role: TeamspaceRole;
-  }) => Promise<void>;
+  }) => void | Promise<void>;
   onUpdateMember?: (data: {
     userId: string;
     role: TeamspaceRole;
@@ -57,10 +57,12 @@ export function MembersContent({
   /** Search field */
   const [search, setSearch] = useState("");
   /** Add team members */
+  const [openAddTeamMembers, setOpenAddTeamMembers] = useState(false);
   const [workspaceMembers, setWorkspaceMembers] = useState<
     (User & { invited?: boolean })[]
   >([]);
   const handleAddTeamMembers = async (open: boolean) => {
+    setOpenAddTeamMembers(open);
     if (!onFetchWorkspaceMembers) return;
     if (!open) {
       setWorkspaceMembers([]);
@@ -96,7 +98,10 @@ export function MembersContent({
         <Title title="Members" />
         <div className="flex flex-col gap-1.5">
           <div className="sticky top-0 z-10 flex items-center gap-1 bg-modal pb-2">
-            <Dialog onOpenChange={handleAddTeamMembers}>
+            <Dialog
+              open={openAddTeamMembers}
+              onOpenChange={handleAddTeamMembers}
+            >
               <DialogTrigger asChild>
                 <Button variant="blue" size="sm">
                   Add members
@@ -105,7 +110,10 @@ export function MembersContent({
               <AddTeamMembers
                 teamspace={teamspace}
                 workspaceMembers={workspaceMembers}
-                onAddMembers={onAddMembers}
+                onAddMembers={async (data) => {
+                  await onAddMembers?.(data);
+                  setOpenAddTeamMembers(false);
+                }}
               />
             </Dialog>
             <Button variant="soft-blue" size="sm" disabled>

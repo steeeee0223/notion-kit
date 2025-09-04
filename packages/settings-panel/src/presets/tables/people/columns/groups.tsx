@@ -3,7 +3,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import type { GroupOption } from "../../../../lib";
 import { TextCell } from "../../common-cells";
 
-export const groupColumns: ColumnDef<GroupOption, GroupOption>[] = [
+export const groupColumns: ColumnDef<GroupOption>[] = [
   {
     id: "group",
     accessorKey: "group",

@@ -63,6 +63,7 @@ export const Demo = () => {
             [...mockMembers, ...mockGuests].reduce<Memberships>(
               (acc, member) => {
                 acc[member.user.id] = {
+                  id: member.user.id,
                   user: member.user,
                   role: "role" in member ? member.role : Role.GUEST,
                 };
@@ -78,6 +79,7 @@ export const Demo = () => {
             mockTeamspaces.reduce<Teamspaces>((acc, teamspace, i) => {
               acc[teamspace.id] = {
                 ...teamspace,
+                ownedBy: teamspace.ownedBy.name,
                 members: mockTeamMembers.slice(0, i < 2 ? -1 : 5),
               };
               return acc;
