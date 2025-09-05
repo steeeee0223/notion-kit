@@ -56,13 +56,15 @@ A table to display all members (except guests) in the workspace.
 
 #### API Reference
 
-| Prop       | Type                                                            | Description                                                    |
-| ---------- | --------------------------------------------------------------- | -------------------------------------------------------------- |
-| `scopes`\* | [`Set<Scope>`](/docs/blocks/settings-panel/scopes)              | Current scopes.                                                |
-| `data`\*   | [`MemberRow[]`](/docs/blocks/settings-panel/objects#member-row) | Current members and owners.                                    |
-| `search`   | `string`                                                        | Current search string.                                         |
-| `onUpdate` | `(id: string, role: Role) => void`                              | Handler that is called when the role of the member is changed. |
-| `onDelete` | `(id: string) => void`                                          | Handler that is called when the member is removed.             |
+| Prop                | Type                                                            | Description                                                    |
+| ------------------- | --------------------------------------------------------------- | -------------------------------------------------------------- |
+| `scopes`\*          | [`Set<Scope>`](/docs/blocks/settings-panel/scopes)              | Current scopes.                                                |
+| `data`\*            | [`MemberRow[]`](/docs/blocks/settings-panel/objects#member-row) | Current members and owners.                                    |
+| `userId`            | `string`                                                        | Unique identifier of the current user.                         |
+| `search`            | `string`                                                        | Current search string.                                         |
+| `onUpdate`          | `(data: {id: string, memberId: string, role: Role}) => void`    | Handler that is called when the role of the member is changed. |
+| `onDelete`          | `(data: MemberRow) => void`                                     | Handler that is called when the member is removed.             |
+| `onTeamspaceSelect` | `(teamspaceId: string) => void`                                 | Handler that is called when the teamspace is selected.         |
 
 ### Guests Table
 
@@ -80,8 +82,45 @@ A table to display all guests in the workspace.
 | `scopes`\* | [`Set<Scope>`](/docs/blocks/settings-panel/scopes)            | Current scopes.                                               |
 | `data`\*   | [`GuestRow[]`](/docs/blocks/settings-panel/objects#guest-row) | Current guests.                                               |
 | `search`   | `string`                                                      | Current search string.                                        |
-| `onUpdate` | `(id: string, role: Role) => void`                            | Handler that is called when the role of the guest is changed. |
-| `onDelete` | `(id: string, name: string) => void`                          | Handler that is called when the guest is removed.             |
+| `onUpdate` | `(data: {id: string, memberId: string, role: Role}) => void`  | Handler that is called when the role of the guest is changed. |
+| `onDelete` | `(data: GuestRow) => void`                                    | Handler that is called when the guest is removed.             |
+
+### Invitations Table
+
+A table to display all invitations in the workspace.
+
+<ComponentPreview
+  name="settings-panel/invitations-table"
+  preview={`<InvitationsTable data={data} scopes={scopes} />`}
+/>
+
+#### API Reference
+
+| Prop       | Type                                                                    | Description                                             |
+| ---------- | ----------------------------------------------------------------------- | ------------------------------------------------------- |
+| `scopes`\* | [`Set<Scope>`](/docs/blocks/settings-panel/scopes)                      | Current scopes.                                         |
+| `data`\*   | [`InvitationRow[]`](/docs/blocks/settings-panel/objects#invitation-row) | Current invitations.                                    |
+| `onCancel` | `(id: string) => void`                                                  | Handler that is called when the invitation is canceled. |
+
+### Teamspaces Table
+
+A table to display all teamspaces in the workspace.
+
+<ComponentPreview
+  name="settings-panel/teamspaces-table"
+  preview={`<TeamspacesTable workspace={name} data={data} />`}
+/>
+
+#### API Reference
+
+| Prop          | Type                                                                                                                                    | Description                                                |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `workspace`\* | `string`                                                                                                                                | Name of the current workspace.                             |
+| `data`\*      | [`TeamspaceRow[]`](/docs/blocks/settings-panel/objects#teamspace-row)                                                                   | Current teamspaces.                                        |
+| `onRowSelect` | `(teamspace: TeamspaceRow) => void \| Promise<void>`                                                                                    | Handler that is called when the teamspace is selected.     |
+| `onUpdate`    | `(data: {id: string, name?: string, icon?: IconData, description?: string, permission?: TeamspacePermission}) => void \| Promise<void>` | Handler that is called when the teamspace is updated.      |
+| `onArchive`   | `(teamspace: TeamspaceRow) => void \| Promise<void>`                                                                                    | Handler that is called when the teamspace is archived.     |
+| `onLeave`     | `(teamspace: TeamspaceRow) => void \| Promise<void>`                                                                                    | Handler that is called when the user leaves the teamspace. |
 
 ### Plans Table
 
