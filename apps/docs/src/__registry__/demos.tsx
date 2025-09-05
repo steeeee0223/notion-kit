@@ -178,6 +178,12 @@ export const Index: Record<
       () => import("@/components/demos/settings-panel/guests-table"),
     ),
   },
+  "settings-panel/invitations-table": {
+    files: ["components/demos/settings-panel/invitations-table.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/settings-panel/invitations-table"),
+    ),
+  },
   "settings-panel/members-table": {
     files: ["components/demos/settings-panel/members-table.tsx"],
     component: React.lazy(
@@ -203,6 +209,12 @@ export const Index: Record<
     files: ["components/demos/settings-panel/sessions-table.tsx"],
     component: React.lazy(
       () => import("@/components/demos/settings-panel/sessions-table"),
+    ),
+  },
+  "settings-panel/teamspaces-table": {
+    files: ["components/demos/settings-panel/teamspaces-table.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/settings-panel/teamspaces-table"),
     ),
   },
   "sidebar/basic": {

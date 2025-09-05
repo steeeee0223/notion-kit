@@ -1,0 +1,225 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "notion-ui",
+  "homepage": "https://notion-ui.vercel.app/",
+  "items": [
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "notion-theme",
+      "title": "Notion Theme",
+      "type": "registry:style",
+      "dependencies": ["tailwind-merge", "clsx"],
+      "registryDependencies": ["utils"],
+      "files": [],
+      "cssVars": {
+        "theme": {
+          "shadow-notion": "--alpha(var(--blue) / 57%) 0 0 0 1px inset, --alpha(var(--blue) / 35%) 0 0 0 2px",
+          "animate-bg": "background 200ms ease",
+          "animate-bg-in": "background 20ms ease-in",
+          "animate-bg-out": "background 200ms ease-out"
+        },
+        "light": {
+          "base": "55 53 47",
+          "blue": "rgb(35, 131, 226)",
+          "blue-hover": "rgb(0, 119, 212)",
+          "red": "rgb(235, 87, 87)",
+          "orange": "rgb(218, 163, 64)",
+          "default": "rgb(var(--base))",
+          "primary": "rgb(var(--base))",
+          "secondary": "rgba(var(--base) / 0.65)",
+          "muted": "rgba(var(--base) / 0.5)",
+          "icon": "rgba(var(--base) / 0.85)",
+          "tooltip-primary": "rgba(255, 255, 255, 0.9)",
+          "tooltip-secondary": "rgba(206, 205, 202, 0.6)",
+          "sidebar-primary": "rgb(95, 94, 91)",
+          "bg-main": "rgb(255, 255, 255)",
+          "bg-sidebar": "rgb(247, 247, 245)",
+          "bg-modal": "rgb(255, 255, 255)",
+          "bg-popover": "rgb(255, 255, 255)",
+          "bg-tooltip": "rgb(15, 15, 15)",
+          "bg-input": "rgb(242, 241, 238)",
+          "border": "rgba(var(--base) / 0.1)",
+          "border-button": "rgba(var(--base) / 0.15)",
+          "border-cell": "rgb(233, 233, 231)",
+          "ring": "rgba(15, 15, 15, 0.1)",
+          "radius": "0.5rem"
+        },
+        "dark": {
+          "base": "255 255 255",
+          "default": "rgb(var(--base))",
+          "primary": "rgba(var(--base) / 0.8)",
+          "secondary": "rgba(var(--base) / 0.45)",
+          "muted": "rgba(var(--base) / 0.3)",
+          "icon": "rgba(var(--base) / 0.8)",
+          "tooltip-primary": "rgba(211, 211, 211, 1)",
+          "tooltip-secondary": "rgba(127, 127, 127, 1)",
+          "sidebar-primary": "rgb(155, 155, 155)",
+          "bg-main": "rgb(25, 25, 25)",
+          "bg-sidebar": "rgb(32, 32, 32)",
+          "bg-modal": "rgb(32, 32, 32)",
+          "bg-popover": "rgb(37, 37, 37)",
+          "bg-tooltip": "rgb(47, 47, 47)",
+          "bg-input": "rgb(255, 255, 255)",
+          "border-cell": "rgb(47, 47, 47)",
+          "ring": "rgba(255, 255, 255, 0.075)"
+        }
+      },
+      "extends": "none"
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "notion-ui",
+      "title": "Notion UI",
+      "type": "registry:component",
+      "dependencies": [
+        "@notion-kit/shadcn",
+        "@notion-kit/single-image-dropzone",
+        "@notion-kit/spinner",
+        "@notion-kit/tags-input",
+        "@notion-kit/tree"
+      ],
+      "registryDependencies": [
+        "https://notion-ui.vercel.app/registry/notion-theme.json"
+      ],
+      "files": [
+        {
+          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/notion-ui.tsx",
+          "type": "registry:component",
+          "target": "components/core/notion-ui.tsx"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "icons",
+      "title": "Icons",
+      "type": "registry:component",
+      "dependencies": ["@notion-kit/icons"],
+      "registryDependencies": [
+        "https://notion-ui.vercel.app/registry/notion-theme.json"
+      ],
+      "files": [
+        {
+          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/icons.tsx",
+          "type": "registry:component",
+          "target": "components/core/icons.tsx"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "blocks",
+      "title": "Blocks",
+      "type": "registry:component",
+      "dependencies": [
+        "@notion-kit/cover",
+        "@notion-kit/icon-block",
+        "@notion-kit/icon-menu",
+        "@notion-kit/modal"
+      ],
+      "registryDependencies": [
+        "https://notion-ui.vercel.app/registry/notion-theme.json"
+      ],
+      "files": [
+        {
+          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/blocks.tsx",
+          "type": "registry:component",
+          "target": "components/core/blocks.tsx"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "navbar",
+      "title": "Navbar",
+      "type": "registry:component",
+      "dependencies": [
+        "@notion-kit/icons",
+        "@notion-kit/navbar",
+        "@notion-kit/schemas"
+      ],
+      "registryDependencies": [
+        "https://notion-ui.vercel.app/registry/notion-theme.json"
+      ],
+      "files": [
+        {
+          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/navbar.tsx",
+          "type": "registry:component",
+          "target": "components/core/navbar.tsx"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "sidebar",
+      "title": "Sidebar",
+      "type": "registry:component",
+      "dependencies": ["@notion-kit/sidebar"],
+      "registryDependencies": [
+        "https://notion-ui.vercel.app/registry/notion-theme.json"
+      ],
+      "files": [
+        {
+          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/sidebar.tsx",
+          "type": "registry:component",
+          "target": "components/core/sidebar.tsx"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "settings-panel",
+      "title": "Settings Panel",
+      "type": "registry:component",
+      "dependencies": [
+        "@notion-kit/settings-panel",
+        "@notion-kit/icons",
+        "@notion-kit/shadcn"
+      ],
+      "registryDependencies": [
+        "https://notion-ui.vercel.app/registry/notion-theme.json"
+      ],
+      "files": [
+        {
+          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/settings-panel.tsx",
+          "type": "registry:component",
+          "target": "components/core/settings-panel.tsx"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "table-view",
+      "title": "Settings Panel",
+      "type": "registry:component",
+      "dependencies": ["@notion-kit/table-view"],
+      "registryDependencies": [
+        "https://notion-ui.vercel.app/registry/notion-theme.json"
+      ],
+      "files": [
+        {
+          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/table-view.tsx",
+          "type": "registry:component",
+          "target": "components/core/table-view.tsx"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "auth-ui",
+      "title": "Auth UI",
+      "type": "registry:component",
+      "dependencies": ["@notion-kit/auth-ui"],
+      "registryDependencies": [
+        "https://notion-ui.vercel.app/registry/notion-theme.json"
+      ],
+      "files": [
+        {
+          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/auth-ui.tsx",
+          "type": "registry:component",
+          "target": "components/core/auth-ui.tsx"
+        }
+      ]
+    }
+  ]
+}
