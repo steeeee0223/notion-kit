@@ -330,9 +330,6 @@ importers:
 
   apps/storybook:
     dependencies:
-      '@notion-kit/auth':
-        specifier: workspace:*
-        version: link:../../packages/auth
       '@notion-kit/auth-ui':
         specifier: workspace:*
         version: link:../../packages/auth-ui
