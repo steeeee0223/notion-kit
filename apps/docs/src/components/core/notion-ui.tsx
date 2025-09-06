@@ -11,6 +11,7 @@ export {
   DropdownMenuItem,
   DropdownMenuTrigger,
   Input,
+  MultiSelect,
   Popover,
   PopoverTrigger,
   PopoverContent,

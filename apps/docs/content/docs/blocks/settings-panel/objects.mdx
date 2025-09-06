@@ -8,11 +8,10 @@ The core object for settings panel.
 
 ### Properties
 
-| Prop            | Type                                        | Description                       |
-| --------------- | ------------------------------------------- | --------------------------------- |
-| `account`\*     | [`AccountStore`](#account-store)            | User account.                     |
-| `workspace`\*   | [`WorkspaceStore`](#workspace-store)        | Current workspace.                |
-| `memberships`\* | [`Record<string, Membership>`](#membership) | Memberships in current workspace. |
+| Prop          | Type                                 | Description        |
+| ------------- | ------------------------------------ | ------------------ |
+| `account`\*   | [`AccountStore`](#account-store)     | User account.      |
+| `workspace`\* | [`WorkspaceStore`](#workspace-store) | Current workspace. |
 
 ## Account Store
 
@@ -69,28 +68,6 @@ The core object for settings panel.
   role: "owner"
 }
 ```
-
-## Membersip
-
-There are 2 types of membership.
-
-1. Workspace owner or member
-2. Guest
-
-### Properties
-
-The properties is defined by
-
-```ts
-type Membership =
-  | ({ role: Role.OWNER | Role.MEMBER } & MemberRow)
-  | ({ role: Role.GUEST } & GuestRow);
-```
-
-See schema definitions for:
-
-- [`MemberRow`](#member-row)
-- [`GuestRow`](#guest-row)
 
 ## Passkey
 
@@ -172,24 +149,26 @@ The row data of the members table.
 
 ### Properties
 
-| Prop           | Type                       | Description                |
-| -------------- | -------------------------- | -------------------------- |
-| `user`\*       | `User`                     | Information of the member. |
-| `role`\*       | `Role`                     | Role of the member.        |
-| `teamspaces`\* | `CellOptions<GroupOption>` | Available teamspaces.      |
-| `groups`\*     | `CellOptions<GroupOption>` | Available groups.          |
+| Prop           | Type                       | Description                      |
+| -------------- | -------------------------- | -------------------------------- |
+| `id`\*         | `string`                   | Unique identifier of the member. |
+| `user`\*       | `User`                     | Information of the member.       |
+| `role`\*       | `Role`                     | Role of the member.              |
+| `teamspaces`\* | `MemberTeamspace[]`        | Available teamspaces.            |
+| `groups`\*     | `CellOptions<GroupOption>` | Available groups.                |
 
 See schema definitions for:
 
 - [`User`](/docs/objects/user)
 - [`CellOptions`](#cell-options)
 - [`GroupOption`](#group-option)
-- [`Role`](/docs/objects/user)
+- [`Role`](/docs/objects/workspace#role)
 
 ### Example
 
 ```ts
 {
+  id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
   user: {
     id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
     name: "Steve",
@@ -222,10 +201,11 @@ The row data of the guests table.
 
 ### Properties
 
-| Prop       | Type           | Description                    |
-| ---------- | -------------- | ------------------------------ |
-| `user`\*   | `User`         | Information of the guest.      |
-| `access`\* | `PageAccess[]` | Available pages for the guest. |
+| Prop       | Type           | Description                     |
+| ---------- | -------------- | ------------------------------- |
+| `id`\*     | `string`       | Unique identifier of the guest. |
+| `user`\*   | `User`         | Information of the guest.       |
+| `access`\* | `PageAccess[]` | Available pages for the guest.  |
 
 See schema definitions for:
 
@@ -236,6 +216,7 @@ See schema definitions for:
 
 ```ts
 {
+  id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
   user: {
     id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
     name: "Steve",
@@ -259,6 +240,84 @@ See schema definitions for:
       { id: "g3", name: "Group 3", memberCount: 3 },
     ]
   }
+}
+```
+
+## Invitation Row
+
+The row data of the invitations table.
+
+### Properties
+
+| Prop          | Type                                    | Description                              |
+| ------------- | --------------------------------------- | ---------------------------------------- |
+| `id`\*        | `string`                                | The unique identifier of the invitation. |
+| `email`\*     | `string`                                | Email address of the invited user.       |
+| `role`\*      | `Role`                                  | Role of the invited user.                |
+| `status`\*    | `"pending" \| "rejected" \| "canceled"` | Current status of the invitation.        |
+| `invitedBy`\* | `User`                                  | The user who sent the invitation.        |
+
+See schema definitions for:
+
+- [`User`](/docs/objects/user)
+- [`Role`](/docs/objects/workspace#role)
+
+### Example
+
+```ts
+{
+  id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
+  email: "steve@example.com",
+  role: "guest"
+  status: "pending",
+  invitedBy: {
+    id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
+    name: "Steve",
+    email: "steve@example.com",
+    avatarUrl: "https://secure.notion-static.com/e6a352a8-8381-44d0-a1dc-9ed80e62b53d.jpg"
+  },
+}
+```
+
+## Teamspace Row
+
+The row data of the teamspaces table.
+
+### Properties
+
+| Prop            | Type                                           | Description                                                           |
+| --------------- | ---------------------------------------------- | --------------------------------------------------------------------- |
+| `id`\*          | `string`                                       | The unique identifier of the teamspace.                               |
+| `name`\*        | `string`                                       | Name of the teamspace.                                                |
+| `icon`\*        | `IconData`                                     | Icon of the teamspace.                                                |
+| `permission`\*  | `"default" \| "open" \| "closed" \| "private"` | Permission level of the teamspace.                                    |
+| `description`   | `string`                                       | Description of the teamspace.                                         |
+| `memberCount`\* | `number`                                       | The number of users in the teamspace.                                 |
+| `ownedBy`\*     | `Pick<User, "name" \| "avatarUrl">`            | User who owns the teamspace.                                          |
+| `ownerCount`\*  | `number`                                       | The number of teamspace owners.                                       |
+| `updatedAt`\*   | `number`                                       | Last updated time of the teamspace. Formatted as timestamp (ms).      |
+| `role`          | `"owner" \| "member" \| false`                 | Role of the user in the teamspace; falsy if the user is not a member. |
+
+See schema definitions for:
+
+- [`User`](/docs/objects/user)
+- [`IconData`](/docs/objects/icon)
+
+### Example
+
+```ts
+{
+  id: "t1",
+  name: "Acme Lab",
+  icon: { type: "emoji", value: "🚀" },
+  permission: "closed",
+  memberCount: 25,
+  ownedBy: {
+    name: "Steve",
+    avatarUrl: "https://secure.notion-static.com/e6a352a8-8381-44d0-a1dc-9ed80e62b53d.jpg"
+  },
+  ownerCount: 3,
+  updatedAt: 1738368000000,
 }
 ```
 
