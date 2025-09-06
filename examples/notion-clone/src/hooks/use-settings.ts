@@ -39,7 +39,6 @@ export function useSettings() {
     settings: {
       workspace: workspaceStore,
       account: accountStore,
-      memberships: {},
     },
     actions: actions.current,
     signOut,

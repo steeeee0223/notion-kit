@@ -14,7 +14,7 @@ const frameworks: MultiSelectOption[] = [
   {
     value: "nuxt.js",
     label: "Nuxt.js",
-    disable: true,
+    disabled: true,
   },
   {
     value: "remix",
@@ -47,7 +47,7 @@ const frameworks: MultiSelectOption[] = [
   {
     value: "eleventy",
     label: "Eleventy",
-    disable: true,
+    disabled: true,
   },
   {
     value: "solid",

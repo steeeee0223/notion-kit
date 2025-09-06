@@ -58,6 +58,7 @@ export function AddTeamMembers({
       workspaceMembers.map<MultiSelectOption>((user) => ({
         label: user.name,
         value: user.name,
+        id: user.id,
         disabled: user.invited,
         avatarUrl: user.avatarUrl,
         header: Heading.Select,
@@ -108,6 +109,7 @@ export function AddTeamMembers({
                       value={field.value.map((user) => ({
                         label: user.name,
                         value: user.name,
+                        id: user.id,
                         color: idToColor(user.id),
                       }))}
                       onChange={(values) =>

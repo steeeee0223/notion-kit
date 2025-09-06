@@ -215,7 +215,7 @@
       "title": "Exportar",
       "content": {
         "title": "Contenido del espacio de trabajo",
-        "description": "Exporta todas las páginas de Steeeee Private en formato HTML, Markdown, CSV o PDF",
+        "description": "Exporta todas las páginas de {{workspace}} en formato HTML, Markdown, CSV o PDF",
         "button": "Exportar"
       },
       "members": {

@@ -25,6 +25,6 @@ export default function Layout({ children }: React.PropsWithChildren) {
     router.replace(`/workspace/${activeWorkspace.slug}`);
   }, [activeWorkspace, data, isPending, router]);
 
-  if (!isPending && !data) return;
+  if (!isPending && !data) return null;
   return children;
 }
