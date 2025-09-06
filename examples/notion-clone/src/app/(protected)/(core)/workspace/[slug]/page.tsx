@@ -1,31 +1,22 @@
 "use client";
 
-import {
-  SettingsBodyPreset,
-  SettingsContent,
-  SettingsPanel,
-  SettingsProvider,
-  SettingsSidebar,
-  SettingsSidebarPreset,
-} from "@notion-kit/settings-panel";
+import { IconBlock } from "@notion-kit/icon-block";
 
 import { useSettings } from "@/hooks/use-settings";
 
 export default function Page() {
-  const { tab, setTab, settings, actions } = useSettings();
+  const { settings } = useSettings();
 
   return (
-    <main className="flex h-screen w-full flex-col items-center justify-center gap-6">
-      <SettingsProvider settings={settings} {...actions}>
-        <SettingsPanel>
-          <SettingsSidebar>
-            <SettingsSidebarPreset tab={tab} onTabChange={setTab} />
-          </SettingsSidebar>
-          <SettingsContent>
-            <SettingsBodyPreset tab={tab} onTabChange={setTab} />
-          </SettingsContent>
-        </SettingsPanel>
-      </SettingsProvider>
+    <main className="flex h-screen w-full flex-col items-center">
+      <div className="mt-10 flex h-20 flex-col items-center justify-center text-2xl">
+        <span>Hi, {settings.account.preferredName}!</span>
+        <div className="flex items-center gap-2">
+          Welcome to
+          <IconBlock icon={settings.workspace.icon} size="md" />
+          {settings.workspace.name}
+        </div>
+      </div>
     </main>
   );
 }

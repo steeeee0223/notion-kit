@@ -1,16 +1,9 @@
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { openAPI, organization, twoFactor } from "better-auth/plugins";
-import type {
-  Invitation,
-  Member,
-  Organization,
-  Team as TeamBase,
-  TeamMember,
-} from "better-auth/plugins";
-import { passkey, type Passkey } from "better-auth/plugins/passkey";
+import { passkey } from "better-auth/plugins/passkey";
 
-import { db, updateAccountName, updateSessionData } from "./db";
+import { db, updateSessionData } from "./db";
 import { AuthEnv } from "./env";
 import {
   ac,
@@ -28,10 +21,7 @@ export function createAuth(env: AuthEnv) {
   const config = {
     appName: "Notion Auth",
     database: drizzleAdapter(db, { provider: "pg" }),
-    trustedOrigins: [
-      env.BETTER_AUTH_URL,
-      ...(env.TRUSTED_ORIGIN ? [env.TRUSTED_ORIGIN] : []),
-    ],
+    trustedOrigins: [env.BETTER_AUTH_URL, ...env.TRUSTED_ORIGINS],
     user: {
       changeEmail: {
         enabled: true,
@@ -88,10 +78,6 @@ export function createAuth(env: AuthEnv) {
         create: { after: updateSessionData },
         update: { after: updateSessionData },
       },
-      account: {
-        create: { after: updateAccountName },
-        update: { after: updateAccountName },
-      },
     },
     plugins: [
       twoFactor(),
@@ -127,14 +113,3 @@ export function createAuth(env: AuthEnv) {
 
 export type Auth = ReturnType<typeof createAuth>;
 export type Session = Auth["$Infer"]["Session"];
-export type { Organization, Passkey, TeamMember, Member, Invitation };
-
-export interface WorkspaceMetadata {
-  inviteToken?: string;
-}
-export type Team = TeamBase & {
-  icon: string;
-  description?: string;
-  permission: "default" | "open" | "closed" | "private";
-  ownedBy: string;
-};

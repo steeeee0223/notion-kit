@@ -7,7 +7,13 @@ export function createAuthEnv() {
       POSTGRES_URL: z.string(),
       BETTER_AUTH_URL: z.string(),
       BETTER_AUTH_SECRET: z.string(),
-      TRUSTED_ORIGIN: z.string().optional(),
+      TRUSTED_ORIGINS: z
+        .string()
+        .optional()
+        .transform((val) => {
+          if (!val) return [];
+          return val.split(",").map((url) => url.trim());
+        }),
       GOOGLE_CLIENT_ID: z.string(),
       GOOGLE_CLIENT_SECRET: z.string(),
       GITHUB_CLIENT_ID: z.string(),

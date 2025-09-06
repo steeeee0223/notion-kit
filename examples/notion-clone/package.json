@@ -8,7 +8,7 @@
     "dev": "pnpm with-env next dev --turbopack -p 3001",
     "format": "prettier --check . \"!**/*.{md,mdx}\" --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "start": "pnpm with-env next start",
+    "start": "pnpm with-env next start -p 3001",
     "typecheck": "tsc --noEmit",
     "with-env": "dotenv -e ../../.env --"
   },
@@ -16,6 +16,7 @@
     "@notion-kit/auth": "workspace:*",
     "@notion-kit/auth-ui": "workspace:*",
     "@notion-kit/cn": "workspace:*",
+    "@notion-kit/icon-block": "workspace:*",
     "@notion-kit/modal": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/settings-panel": "workspace:*",
