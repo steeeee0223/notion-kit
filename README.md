@@ -10,6 +10,13 @@ A component registry inspired by Notion's clean design — modular, customizable
 - ⚙️ **Type-Safe** — Written in TypeScript with first-class support for strict types
 - 🧪 **Tested** — Unit and visual testing for confidence across changes
 
+## 🎯 Showcases
+
+- [`Notion Table`](https://notion-table-view.vercel.app/) - A Notion-style database table
+- [`Notion Authn`](https://notion-authn.vercel.app/) - An auth server using `better-auth` under the hood
+- [`Notion Clone`](https://notion-sass-demo.vercel.app/) - A Notion Sass starter using `better-auth` under the hood
+- [`Storybook`](https://notion-kit.vercel.app/) - A `Storybook` to demonstrate all Notion-style UIs
+
 ## 🚀 Installation
 
 [Read the docs](https://notion-ui.vercel.app/)

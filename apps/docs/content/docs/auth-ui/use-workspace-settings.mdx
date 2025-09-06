@@ -1,0 +1,74 @@
+---
+title: Use Workspace Settings
+description: A React hook for integrating workspace settings into Notion's Settings Panel.
+---
+
+## Installation
+
+<Installation packages="@notion-kit/auth-ui" registryName="auth-ui" />
+
+## Supported Features
+
+- Update/delete/leave workspace
+- Members & scopes management
+- Teamspaces management
+
+## Usage
+
+---
+
+### Settings Panel
+
+You can see [`Notion Clone`](`https://notion-sass-demo.vercel.app/`) for a full example.
+
+```tsx
+function Settings() {
+  const [tab, setTab] = useState<TabType>("account");
+  const { accountStore, actions: accountActions } = useAccountSettings(); // [!code highlight]
+  const { workspaceStore, actions: workspaceActions } = useWorkspaceSettings(); // [!code highlight]
+  const settings = useMemo<SettingsStore>(
+    () => ({
+      account: accountStore,
+      workspace: workspaceStore,
+    }),
+    [accountStore, workspaceStore],
+  );
+
+  return (
+    <SettingsProvider
+      settings={settings}
+      {...accountActions} // [!code highlight]
+      {...workspaceActions} // [!code highlight]
+    >
+      <SettingsPanel>
+        <SettingsSidebar>
+          <SettingsSidebarPreset tab={tab} onTabChange={setTab} />
+        </SettingsSidebar>
+        <SettingsContent>
+          <SettingsBodyPreset tab={tab} onTabChange={setTab} />
+        </SettingsContent>
+      </SettingsPanel>
+    </SettingsProvider>
+  );
+}
+```
+
+## API Reference
+
+### useAccountSettings
+
+<Callout title="Note">
+  It should be used within the `<AuthProvider>` context.
+</Callout>
+
+It returns an object with the following properties:
+
+| Property         | Type                             | Description                                                            |
+| ---------------- | -------------------------------- | ---------------------------------------------------------------------- |
+| `workspaceStore` | `WorkspaceStore`                 | The workspace store instance.                                          |
+| `actions`        | `Partial<SettingsProviderProps>` | Workspace settings actions: workspace, people, invitations, teamspaces |
+
+See schema definitions for:
+
+- [`WorkspaceStore`](/docs/blocks/settings-panel/objects#workspace-store)
+- [`SettingsProviderProps`](/docs/blocks/settings-panel#settingsprovider)
