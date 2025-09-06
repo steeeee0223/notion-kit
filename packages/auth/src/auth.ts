@@ -21,7 +21,7 @@ export function createAuth(env: AuthEnv) {
   const config = {
     appName: "Notion Auth",
     database: drizzleAdapter(db, { provider: "pg" }),
-    trustedOrigins: [env.BETTER_AUTH_URL, ...env.TRUSTED_ORIGIN],
+    trustedOrigins: [env.BETTER_AUTH_URL, ...env.TRUSTED_ORIGINS],
     user: {
       changeEmail: {
         enabled: true,

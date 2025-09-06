@@ -7,7 +7,7 @@ export function createAuthEnv() {
       POSTGRES_URL: z.string(),
       BETTER_AUTH_URL: z.string(),
       BETTER_AUTH_SECRET: z.string(),
-      TRUSTED_ORIGIN: z
+      TRUSTED_ORIGINS: z
         .string()
         .optional()
         .transform((val) => {
