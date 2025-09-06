@@ -2,19 +2,30 @@
 
 import { useState } from "react";
 
+import { Role } from "@notion-kit/schemas";
 import {
+  Memberships,
   SettingsBodyPreset,
   SettingsContent,
   SettingsPanel,
   SettingsProvider,
   SettingsSidebar,
   SettingsSidebarPreset,
+  Teamspaces,
   type TabType,
 } from "@notion-kit/settings-panel";
 
 import { delay } from "@/lib/utils";
 
-import { mockConnections, mockSessions, mockSettings } from "./data";
+import {
+  mockConnections,
+  mockGuests,
+  mockMembers,
+  mockSessions,
+  mockSettings,
+  mockTeamMembers,
+  mockTeamspaces,
+} from "./data";
 
 export const Demo = () => {
   const [tab, setTab] = useState<TabType>("preferences");
@@ -22,19 +33,58 @@ export const Demo = () => {
   return (
     <SettingsProvider
       settings={settings}
-      updateSettings={async (data) => {
-        await delay(500);
-        setSettings((prev) => ({
-          account: { ...prev.account, ...data.account },
-          workspace: { ...prev.workspace, ...data.workspace },
-          memberships: { ...prev.memberships, ...data.memberships },
-        }));
+      account={{
+        update: async (data) => {
+          await delay(500);
+          setSettings((prev) => ({
+            ...prev,
+            account: { ...prev.account, ...data },
+          }));
+        },
+      }}
+      workspace={{
+        update: async (data) => {
+          await delay(500);
+          setSettings((prev) => ({
+            ...prev,
+            workspace: { ...prev.workspace, ...data },
+          }));
+        },
       }}
       sessions={{
         getAll: () => Promise.resolve(mockSessions),
       }}
       connections={{
         getAll: () => Promise.resolve(mockConnections),
+      }}
+      people={{
+        getAll: () =>
+          Promise.resolve(
+            [...mockMembers, ...mockGuests].reduce<Memberships>(
+              (acc, member) => {
+                acc[member.user.id] = {
+                  id: member.user.id,
+                  user: member.user,
+                  role: "role" in member ? member.role : Role.GUEST,
+                };
+                return acc;
+              },
+              {},
+            ),
+          ),
+      }}
+      teamspaces={{
+        getAll: () =>
+          Promise.resolve(
+            mockTeamspaces.reduce<Teamspaces>((acc, teamspace, i) => {
+              acc[teamspace.id] = {
+                ...teamspace,
+                ownedBy: teamspace.ownedBy.name,
+                members: mockTeamMembers.slice(0, i < 2 ? -1 : 5),
+              };
+              return acc;
+            }, {}),
+          ),
       }}
     >
       <SettingsPanel>

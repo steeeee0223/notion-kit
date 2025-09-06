@@ -16,7 +16,7 @@ import { ibm_plex_mono } from "@/lib/fonts";
 
 const installationStyles = tv({
   slots: {
-    tab: cn(ibm_plex_mono.className, "font-normal [&_svg]:mr-2"),
+    tab: cn(ibm_plex_mono.className, "font-normal"),
     content:
       "bg-main text-xs [&_figure]:rounded-none [&_figure]:rounded-b-lg [&_figure]:border-none",
   },

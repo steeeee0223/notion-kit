@@ -29,7 +29,7 @@ export const typography = (type: Typography) => typographyVariants({ type });
 
 export const buttonVariants = cva(
   [
-    "inline-flex animate-bg-in cursor-pointer items-center justify-center rounded-sm text-sm font-normal whitespace-nowrap select-none",
+    "inline-flex animate-bg-in cursor-pointer items-center justify-center gap-1.5 rounded-sm text-sm font-normal whitespace-nowrap select-none",
     "hover:bg-default/5 focus-visible:outline-hidden",
     "disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-50",
     "[&_svg]:block [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -41,7 +41,7 @@ export const buttonVariants = cva(
         icon: "size-9 rounded-md border border-border-button text-icon",
         "nav-icon": "size-7 text-icon",
         link: "text-primary underline-offset-4 hover:bg-transparent hover:underline",
-        blue: "border border-border bg-blue font-medium text-white shadow-xs hover:bg-blue-hover hover:text-white disabled:bg-blue",
+        blue: "border border-border bg-blue font-medium text-white shadow-xs hover:bg-blue-hover hover:text-white disabled:bg-blue/40",
         "soft-blue":
           "bg-blue/5 text-blue shadow-xs hover:bg-blue/15 disabled:bg-blue/5",
         hint: "font-medium text-muted",
@@ -153,7 +153,7 @@ export const contentVariants = cva(
          * @note Used by: Tabs
          * @note Used with: `openAnimation`, `sideAnimation`
          */
-        tab: "border-none bg-popover",
+        tab: "border-none bg-transparent",
         /**
          * @prop tooltip
          * @note Used by: Tooltip

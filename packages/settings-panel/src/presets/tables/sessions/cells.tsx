@@ -1,34 +1,8 @@
 "use client";
 
-import type { SortDirection } from "@tanstack/react-table";
-
 import { Icon } from "@notion-kit/icons";
-import { Button } from "@notion-kit/shadcn";
 
 import type { SessionRow } from "../../../lib";
-
-interface SortingToggleProps {
-  title: string;
-  isSorted: false | SortDirection;
-  toggle: () => void;
-}
-
-/**
- * @see people (extended version)
- */
-export function SortingToggle({ title, isSorted, toggle }: SortingToggleProps) {
-  return (
-    <Button variant="hint" size="xs" onClick={toggle} className="px-1">
-      <TextCell value={title} />
-      {isSorted &&
-        (isSorted === "asc" ? (
-          <Icon.ArrowUp className="ml-1 size-3 flex-shrink-0 fill-secondary" />
-        ) : (
-          <Icon.ArrowDown className="ml-1 size-3 flex-shrink-0 fill-secondary" />
-        ))}
-    </Button>
-  );
-}
 
 interface DeviceCellProps {
   device: string;
@@ -67,14 +41,4 @@ function DeviceIcon({ type, className }: DeviceIconProps) {
     default:
       return <Icon.Laptop className={className} />;
   }
-}
-
-interface TextCellProps {
-  value: string;
-}
-
-export function TextCell({ value }: TextCellProps) {
-  return (
-    <div className="truncate text-xs font-normal text-secondary">{value}</div>
-  );
 }

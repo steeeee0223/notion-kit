@@ -211,13 +211,13 @@
     "export": {
       "title": "Exportieren",
       "content": {
-        "title": "Inhalt exportieren",
-        "hint": "Informationen zum Exportieren von Workspaces",
-        "button": "Gesamten Workspace-Inhalt exportieren"
+        "title": "Workspace-Inhalt",
+        "description": "Exportiere alle Seiten in {{workspace}} als HTML, Markdown, CSV oder PDF",
+        "button": "Exportieren"
       },
       "members": {
         "title": "Mitglieder exportieren",
-        "hint": "Informationen zum Exportieren von Mitgliedern",
+        "description": "Exportiere eine Liste von Mitgliedern und Gästen in {{workspace}}",
         "button": "Mitglieder in CSV exportieren"
       }
     },
@@ -254,6 +254,7 @@
       "members": "Mitglieder",
       "guests": "Gäste",
       "groups": "Gruppen",
+      "invitations": "Einladungen",
       "search": "Schribe zum Suchen...",
       "add-members": "Mitglieder hinzuzufügen"
     },
@@ -269,7 +270,29 @@
       }
     }
   },
-  "teamspaces": { "title": "Teamspaces" },
+  "teamspaces": {
+    "title": "Teamspaces",
+    "teamspaces": {
+      "title": "Teamspace-Einstellungen",
+      "info": {
+        "learn": "Informationen über Teamspaces"
+      },
+      "default": {
+        "title": "Standard-Teamspaces",
+        "description": "Wähle Teamspaces aus, denen alle neuen und aktuellen Workspace-Mitglieder automatisch beitreten",
+        "button": "Aktualisieren"
+      },
+      "limit": {
+        "title": "Teamspace-Erstellung auf Workspace-Besitzer/-innen beschränken",
+        "description": "Nur Workspace-Besitzer/-innen erlauben, Teamspaces zu erstellen."
+      },
+      "manage": {
+        "title": "Teamspaces verwalten",
+        "description": "Verwalte hier alle Teamspaces, auf die du Zugriff hast",
+        "button": "Teamspace hinzufügen"
+      }
+    }
+  },
   "plans": {
     "title": "Tarife anzeigen",
     "active": {

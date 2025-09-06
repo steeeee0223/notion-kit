@@ -3,12 +3,7 @@
 import React from "react";
 
 import { useTranslation } from "@notion-kit/i18n";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Separator,
-} from "@notion-kit/shadcn";
+import { Separator } from "@notion-kit/shadcn";
 
 import {
   SettingsSidebarGroup,
@@ -17,6 +12,7 @@ import {
   useSettings,
 } from "../core";
 import { Scope } from "../lib";
+import { Avatar } from "./_components";
 import {
   workspaceTabs as _workspaceTabs,
   accountTabs,
@@ -39,9 +35,16 @@ export const SettingsSidebarPreset: React.FC<SettingsSidebarPresetProps> = ({
     scopes,
   } = useSettings();
   const { t } = useTranslation("settings");
-  const workspaceTabs = _workspaceTabs.filter(
-    (tab) => tab.value !== "people" || scopes.has(Scope.MemberRead),
-  );
+  const workspaceTabs = _workspaceTabs.filter((tab) => {
+    switch (tab.value) {
+      case "people":
+        return scopes.has(Scope.MemberRead);
+      case "teamspaces":
+        return scopes.has(Scope.TeamspaceRead);
+      default:
+        return true;
+    }
+  });
 
   return (
     <>
@@ -52,12 +55,7 @@ export const SettingsSidebarPreset: React.FC<SettingsSidebarPresetProps> = ({
           className="font-medium"
           isActive={tab === "account"}
           Icon={
-            <Avatar className="size-5 border">
-              <AvatarImage src={account.avatarUrl} alt="" />
-              <AvatarFallback className="bg-default/5">
-                {account.preferredName.at(0) ?? ""}
-              </AvatarFallback>
-            </Avatar>
+            <Avatar src={account.avatarUrl} fallback={account.preferredName} />
           }
           onClick={() => onTabChange("account")}
         />

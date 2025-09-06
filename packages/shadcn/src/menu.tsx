@@ -44,7 +44,6 @@ function MenuLabel({
 }
 
 interface MenuItemProps extends React.ComponentProps<"div">, MenuItemVariants {
-  inset?: boolean;
   Icon?: React.ReactNode;
   Body?: React.ReactNode;
 }

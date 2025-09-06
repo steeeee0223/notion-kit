@@ -14,7 +14,6 @@ export function SecuritySection() {
   /** Handlers */
   const {
     settings: { account },
-    updateSettings: update,
     account: actions,
   } = useSettings();
   const { openModal } = useModal();
@@ -32,7 +31,7 @@ export function SecuritySection() {
       <PasswordForm
         hasPassword={account.hasPassword}
         onSubmit={async (newPassword, currentPassword) => {
-          await update?.({ account: { hasPassword: true } });
+          await actions?.update?.({ hasPassword: true });
           if (currentPassword) {
             await actions?.changePassword?.({ newPassword, currentPassword });
           } else {

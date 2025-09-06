@@ -4,104 +4,104 @@ import type { ColumnDef, Row } from "@tanstack/react-table";
 
 import { Role } from "@notion-kit/schemas";
 
-import { Scope, type MemberRow } from "../../../../lib";
-import {
-  Header,
-  MemberActionCell,
-  RoleCell,
-  SortingToggle,
-  TeamspacesCell,
-  UserCell,
-} from "../cells";
+import { MemberRow, PartialRole, Scope } from "../../../../lib";
+import { SortingToggle, TextCell, UserCell } from "../../common-cells";
+import { userFilterFn } from "../../utils";
+import { MemberActionCell, RoleSelectCell, TeamspacesCell } from "../cells";
 
-interface GetMemberColumnsOptions {
+interface CreateMemberColumnsOptions {
   scopes: Set<Scope>;
-  memberId?: string;
-  onUpdate?: (id: string, role: Role) => void;
-  onDelete?: (id: string) => void;
+  userId?: string;
+  onUpdate?: (data: { id: string; memberId: string; role: Role }) => void;
+  onDelete?: (data: MemberRow) => void;
+  onTeamspaceSelect?: (teamspaceId: string) => void;
 }
 
-export const getMemberColumns = ({
+export function createMemberColumns({
   scopes,
-  memberId,
+  userId,
   onUpdate,
   onDelete,
-}: GetMemberColumnsOptions): ColumnDef<MemberRow, MemberRow>[] => [
-  {
-    id: "user",
-    accessorKey: "user",
-    header: ({ column }) => {
-      const isSorted = column.getIsSorted();
-      return (
-        <SortingToggle
-          title="User"
-          isSorted={isSorted}
-          toggle={() => column.toggleSorting(isSorted === "asc")}
-        />
-      );
+  onTeamspaceSelect,
+}: CreateMemberColumnsOptions): ColumnDef<MemberRow>[] {
+  return [
+    {
+      accessorKey: "user",
+      header: ({ column }) => {
+        const isSorted = column.getIsSorted();
+        return (
+          <SortingToggle
+            title="User"
+            isSorted={isSorted}
+            toggle={() => column.toggleSorting(isSorted === "asc")}
+          />
+        );
+      },
+      cell: ({ row }) => <UserCell user={row.original.user} />,
+      filterFn: userFilterFn,
     },
-    cell: ({ row }) => <UserCell user={row.getValue("user")} />,
-    filterFn: (row, _columnId, filterValue) =>
-      row
-        .getValue<MemberRow["user"]>("user")
-        .email.trim()
-        .toLowerCase()
-        .includes(filterValue as string),
-  },
-  {
-    accessorKey: "teamspaces",
-    header: () => (
-      <Header title="Teamspaces" className="min-w-[175px] pl-2 text-sm" />
-    ),
-    cell: ({ row }) => (
-      <TeamspacesCell teamspaces={row.getValue("teamspaces")} />
-    ),
-  },
-  {
-    accessorKey: "groups",
-    header: () => <Header title="Groups" className="min-w-[120px] text-sm" />,
-    cell: () => (
-      <div className="min-w-[120px] cursor-default text-sm text-muted">
-        None
-      </div>
-    ),
-  },
-  {
-    accessorKey: "role",
-    header: ({ column }) => {
-      const isSorted = column.getIsSorted();
-      return (
-        <SortingToggle
-          title="Role"
-          isSorted={isSorted}
-          toggle={() => column.toggleSorting(isSorted === "asc")}
+    {
+      accessorKey: "teamspaces",
+      header: () => (
+        <TextCell header value="Teamspaces" className="min-w-[175px] pl-2" />
+      ),
+      cell: ({ row }) => (
+        <TeamspacesCell
+          teamspaces={row.original.teamspaces}
+          onTeamspaceSelect={onTeamspaceSelect}
         />
-      );
+      ),
     },
-    cell: ({ row }) => (
-      <RoleCell
-        scopes={scopes}
-        role={row.getValue("role")}
-        onSelect={(role) => onUpdate?.(row.original.user.id, role)}
-      />
-    ),
-  },
-  ...(scopes.has(Scope.MemberUpdate)
-    ? [
-        {
-          id: "actions",
-          cell: ({ row }: { row: Row<MemberRow> }) => {
-            const id = row.original.user.id;
-            return (
-              <div className="flex min-w-[52px] items-center justify-end">
-                <MemberActionCell
-                  isSelf={id === memberId}
-                  onDelete={() => onDelete?.(id)}
-                />
-              </div>
-            );
+    {
+      accessorKey: "groups",
+      header: () => <TextCell header value="Groups" className="min-w-30" />,
+      cell: () => (
+        <div className="min-w-30 cursor-default text-sm text-muted">None</div>
+      ),
+    },
+    {
+      accessorKey: "role",
+      header: ({ column }) => {
+        const isSorted = column.getIsSorted();
+        return (
+          <SortingToggle
+            title="Role"
+            isSorted={isSorted}
+            toggle={() => column.toggleSorting(isSorted === "asc")}
+          />
+        );
+      },
+      cell: ({ row }) => (
+        <RoleSelectCell
+          scopes={scopes}
+          role={row.original.role as PartialRole}
+          onSelect={(role) =>
+            onUpdate?.({
+              id: row.original.user.id,
+              memberId: row.original.id,
+              role,
+            })
+          }
+        />
+      ),
+    },
+    ...(scopes.has(Scope.MemberUpdate)
+      ? [
+          {
+            id: "actions",
+            cell: ({ row }: { row: Row<MemberRow> }) => {
+              const id = row.original.user.id;
+              return (
+                <div className="flex min-w-[52px] items-center justify-end">
+                  <MemberActionCell
+                    isSelf={id === userId}
+                    onDelete={() => onDelete?.(row.original)}
+                  />
+                </div>
+              );
+            },
           },
-        },
-      ]
-    : []),
-];
+        ]
+      : []),
+  ];
+}

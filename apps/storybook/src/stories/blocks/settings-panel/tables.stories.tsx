@@ -3,13 +3,22 @@ import type { Meta, StoryObj } from "@storybook/react";
 import {
   ConnectionsTable,
   GuestsTable,
+  InvitationsTable,
   MembersTable,
   PlansTable,
   SCOPES,
   SessionsTable,
+  TeamspacesTable,
 } from "@notion-kit/settings-panel";
 
-import { mockConnections, mockMemberships, mockSessions } from "./data";
+import {
+  mockConnections,
+  mockGuests,
+  mockInvitations,
+  mockMembers,
+  mockSessions,
+  mockTeamspaces,
+} from "./data";
 
 const meta = {
   title: "blocks/Settings Panel/Tables",
@@ -32,15 +41,26 @@ export const MyConnections: Story = {
 export const Members: Story = {
   render: () => {
     const scopes = SCOPES.owner.plus;
-    return <MembersTable data={mockMemberships.members} scopes={scopes} />;
+    return <MembersTable data={mockMembers} scopes={scopes} />;
   },
 };
 
 export const Guests: Story = {
   render: () => {
     const scopes = SCOPES.owner.plus;
-    return <GuestsTable data={mockMemberships.guests} scopes={scopes} />;
+    return <GuestsTable data={mockGuests} scopes={scopes} />;
   },
+};
+
+export const Invitations: Story = {
+  render: () => {
+    const scopes = SCOPES.owner.plus;
+    return <InvitationsTable data={mockInvitations} scopes={scopes} />;
+  },
+};
+
+export const Teamspaces: Story = {
+  render: () => <TeamspacesTable workspace="Acme Inc." data={mockTeamspaces} />,
 };
 
 export const Plans: Story = {

@@ -7,7 +7,13 @@ export function createAuthEnv() {
       POSTGRES_URL: z.string(),
       BETTER_AUTH_URL: z.string(),
       BETTER_AUTH_SECRET: z.string(),
-      TRUSTED_ORIGIN: z.string().optional(),
+      TRUSTED_ORIGINS: z
+        .string()
+        .optional()
+        .transform((val) => {
+          if (!val) return [];
+          return val.split(",").map((url) => url.trim());
+        }),
       GOOGLE_CLIENT_ID: z.string(),
       GOOGLE_CLIENT_SECRET: z.string(),
       GITHUB_CLIENT_ID: z.string(),
@@ -15,6 +21,8 @@ export function createAuthEnv() {
       NODE_ENV: z
         .enum(["development", "production", "test"])
         .prefault("development"),
+      MAILTRAP_API_KEY: z.string(),
+      MAILTRAP_INBOX_ID: z.string().optional(),
     },
     experimental__runtimeEnv: {},
     skipValidation:

@@ -63,7 +63,7 @@ export const BaseModal = ({
             className="w-full"
           >
             {primary}
-            {loading && <Spinner className="ml-2 text-white" />}
+            {loading && <Spinner className="text-current" />}
           </Button>
           <Button onClick={closeModal} size="sm" className="w-full">
             {secondary}

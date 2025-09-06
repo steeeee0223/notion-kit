@@ -9,9 +9,6 @@ import { useTransition } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   Button,
   Dialog,
   DialogContent,
@@ -28,6 +25,7 @@ import {
   Input,
 } from "@notion-kit/shadcn";
 
+import { Avatar } from "../_components";
 import { Enable2FAMethod } from "./enable-2fa-method";
 
 const passwordSchema = z.object({
@@ -93,12 +91,11 @@ export const Add2FAForm = ({
           <form onSubmit={submit} className="space-y-4">
             <DialogHeader>
               <DialogIcon className="relative size-9">
-                <Avatar className="size-full bg-main select-none">
-                  <AvatarImage src={avatarUrl} />
-                  <AvatarFallback className="text-2xl">
-                    {preferredName.at(0) ?? ""}
-                  </AvatarFallback>
-                </Avatar>
+                <Avatar
+                  src={avatarUrl}
+                  fallback={preferredName}
+                  className="size-9 *:data-[slot=avatar-fallback]:text-2xl"
+                />
                 <Icon.LockedFilled className="absolute -right-1 -bottom-1 size-5 fill-red" />
               </DialogIcon>
               <DialogTitle>

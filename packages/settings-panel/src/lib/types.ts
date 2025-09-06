@@ -12,11 +12,14 @@ export enum Scope {
   MemberAddRequest = "people:add:request",
   MemberUpdate = "people:update",
   GroupEnable = "people:group:enable",
+  /** Teamspaces */
+  TeamspaceRead = "teamspace:read",
+  TeamspaceCreate = "teamspace:create",
   /** Plans */
   Upgrade = "plan:upgrade",
 }
 
-export type PartialRole = Exclude<Role, Role.GUEST>;
+export type PartialRole = Role.OWNER | Role.MEMBER;
 
 export interface Passkey {
   id: string;
@@ -28,7 +31,7 @@ export interface WorkspaceStore {
   id: string;
   name: string;
   icon: IconData;
-  domain: string;
+  slug: string;
   /** People */
   inviteLink: string;
   /** Plans */
@@ -44,6 +47,7 @@ export interface AccountStore extends User {
   currentSessionId?: string;
   /** Region */
   language?: LOCALE;
+  timezone?: string;
 }
 
 export type ConnectionStrategy =
@@ -54,6 +58,9 @@ export type ConnectionStrategy =
   | "gitlab"
   | "grid"
   | "jira";
+
+export type TeamspacePermission = "default" | "open" | "closed" | "private";
+export type TeamspaceRole = "owner" | "member";
 
 /** Table Data */
 export interface SessionRow {
@@ -76,9 +83,17 @@ export interface CellOptions<T extends { id: string }> {
   options: T[];
 }
 
+export interface MemberTeamspace {
+  id: string;
+  name: string;
+  icon: IconData;
+  memberCount: number;
+}
+
 export interface MemberRow {
+  id: string; // the member ID
   user: User;
-  teamspaces: CellOptions<GroupOption>;
+  teamspaces: MemberTeamspace[];
   groups: CellOptions<GroupOption>;
   role: Role;
 }
@@ -90,9 +105,19 @@ export interface PageAccess {
 }
 
 export interface GuestRow {
+  id: string; // the member ID
   user: User;
   access: PageAccess[];
 }
+
+export interface InvitationRow {
+  id: string; // the invitation ID
+  email: string;
+  role: Role;
+  invitedBy: User;
+  status: "pending" | "rejected" | "canceled";
+}
+export type Invitations = Record<string, InvitationRow>;
 
 export interface GroupOption {
   id: string;
@@ -100,27 +125,62 @@ export interface GroupOption {
   memberCount: number;
 }
 
-type Membership =
-  | ({ role: Role.OWNER | Role.MEMBER } & MemberRow)
-  | ({ role: Role.GUEST } & GuestRow);
+/**
+ * @note key: user ID
+ */
+export type Memberships = Record<
+  string,
+  {
+    id: string; // the member ID
+    role: Role;
+    user: User;
+  }
+>;
 
 export interface SettingsStore {
   workspace: WorkspaceStore;
   account: AccountStore;
-  /**
-   * key: userId
-   */
-  memberships: Record<string, Membership>;
 }
-
-export interface UpdateSettingsParams {
-  workspace?: Partial<WorkspaceStore>;
-  account?: Partial<AccountStore>;
-  memberships?: Record<string, Membership>;
-}
-export type UpdateSettings = (data: UpdateSettingsParams) => Promise<void>;
-
 export interface WorkspaceMemberships {
   members: MemberRow[];
   guests: GuestRow[];
 }
+
+export interface TeamMemberRow {
+  id: string; // the user id
+  user: User;
+  isWorkspaceOwner?: boolean;
+  role: TeamspaceRole;
+}
+export interface TeamspaceRow {
+  id: string;
+  name: string;
+  icon: IconData;
+  description?: string;
+  memberCount: number;
+  permission: TeamspacePermission;
+  ownedBy: {
+    name: string;
+    avatarUrl?: string;
+  };
+  ownerCount: number;
+  updatedAt: number; // ts in ms
+  /**
+   * @prop the role of the user in the teamspace
+   */
+  role?: TeamspaceRole | false;
+}
+
+export type Teamspaces = Record<
+  string,
+  {
+    id: string;
+    name: string;
+    icon: IconData;
+    description?: string;
+    permission: TeamspacePermission;
+    members: { userId: string; role: TeamspaceRole }[];
+    updatedAt: number; // ts in ms
+    ownedBy: string;
+  }
+>;

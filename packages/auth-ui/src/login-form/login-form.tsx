@@ -17,6 +17,7 @@ import {
   Separator,
   toast,
 } from "@notion-kit/shadcn";
+import { Spinner } from "@notion-kit/spinner";
 
 import { useAuth } from "../auth-provider";
 import { handleError } from "../lib";
@@ -194,6 +195,7 @@ export function LoginForm({
                 className="w-full"
                 disabled={disabled}
               >
+                {loading && <Spinner className="text-current" />}
                 {forgotPasswordStage === "none"
                   ? "Continue"
                   : "Send reset link"}

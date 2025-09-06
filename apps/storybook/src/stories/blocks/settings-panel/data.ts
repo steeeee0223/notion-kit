@@ -1,14 +1,19 @@
 import { Plan, Role, type User, type Workspace } from "@notion-kit/schemas";
 import type {
   Connection,
+  GuestRow,
+  InvitationRow,
+  MemberRow,
   Passkey,
   SessionRow,
   SettingsStore,
-  WorkspaceMemberships,
+  TeamMemberRow,
+  TeamspaceRole,
+  TeamspaceRow,
 } from "@notion-kit/settings-panel";
 import { randomItem } from "@notion-kit/utils";
 
-const mockUsers: User[] = [
+export const mockUsers: User[] = [
   {
     id: "user1",
     name: "John Wick",
@@ -75,6 +80,25 @@ const mockUsers: User[] = [
     id: "user11",
     name: "Quinn Elton",
     email: "quinn-elton@example.com",
+    avatarUrl: "https://liveblocks.io/avatars/avatar-8.png",
+  },
+
+  {
+    id: "user12",
+    name: "Amanda Wang",
+    email: "amanda-wang@example.com",
+    avatarUrl: "https://liveblocks.io/avatars/avatar-8.png",
+  },
+  {
+    id: "user13",
+    name: "Gary Oak",
+    email: "gary-oak@example.com",
+    avatarUrl: "https://liveblocks.io/avatars/avatar-8.png",
+  },
+  {
+    id: "user14",
+    name: "Kervin Frazen",
+    email: "kervin-frazen@example.com",
     avatarUrl: "https://liveblocks.io/avatars/avatar-8.png",
   },
 ] as const;
@@ -164,6 +188,36 @@ export const mockSessions: SessionRow[] = [
   },
 ];
 
+export const mockMembers: MemberRow[] = [
+  {
+    id: "member-1",
+    user: mockUsers[0]!,
+    teamspaces: [
+      {
+        id: "1",
+        name: "General",
+        memberCount: 29,
+        icon: { type: "text", src: "T" },
+      },
+    ],
+    groups: { current: null, options: [] },
+    role: Role.OWNER,
+  },
+  {
+    id: "member-2",
+    user: mockUsers[1]!,
+    teamspaces: [],
+    groups: { current: null, options: [] },
+    role: Role.MEMBER,
+  },
+];
+
+export const mockGuests: GuestRow[] = mockUsers.slice(2).map((user) => ({
+  id: `guest-${user.id}`,
+  user,
+  access: randomItem(pageAccesses),
+}));
+
 export const mockSettings: SettingsStore = {
   workspace: {
     ...mockWorkspaces[0]!,
@@ -172,7 +226,7 @@ export const mockSettings: SettingsStore = {
       src: mockWorkspaces[0]!.name,
     },
     plan: Plan.FREE,
-    domain: "fake-domain",
+    slug: "fake-slug",
     inviteLink: "#",
   },
   account: {
@@ -181,50 +235,7 @@ export const mockSettings: SettingsStore = {
     language: "en",
     currentSessionId: mockSessions[0]!.id,
   },
-  memberships: mockUsers.reduce(
-    (acc, user, i) => ({
-      ...acc,
-      get [user.id]() {
-        switch (i) {
-          case 0:
-            return {
-              user,
-              teamspaces: {
-                current: "1",
-                options: [{ id: "1", name: "General", members: 29 }],
-              },
-              groups: { current: null, options: [] },
-              role: Role.OWNER,
-            };
-          case 1:
-            return {
-              user,
-              teamspaces: { current: null, options: [] },
-              groups: { current: null, options: [] },
-              role: Role.MEMBER,
-            };
-          default:
-            return {
-              role: Role.GUEST,
-              user,
-              access: randomItem(pageAccesses),
-            };
-        }
-      },
-    }),
-    {},
-  ),
 };
-
-export const mockMemberships = Object.values(
-  mockSettings.memberships,
-).reduce<WorkspaceMemberships>(
-  (acc, mem) =>
-    mem.role === Role.GUEST
-      ? { members: acc.members, guests: [...acc.guests, mem] }
-      : { members: [...acc.members, mem], guests: acc.guests },
-  { members: [], guests: [] },
-);
 
 export const mockConnections: Connection[] = [
   {
@@ -248,4 +259,75 @@ export const mockPasskeys: Passkey[] = [
   { id: "p-1", name: "My Laptop", createdAt: Date.UTC(2023, 10, 1) },
   { id: "p-2", name: "My Phone", createdAt: Date.UTC(2023, 10, 2) },
   { id: "p-3", name: "My Tablet", createdAt: Date.UTC(2023, 10, 3) },
+];
+
+export const mockInvitations: InvitationRow[] = [
+  {
+    id: "i-1",
+    role: Role.MEMBER,
+    email: "invitee1@example.com",
+    status: "pending",
+    invitedBy: mockUsers[0]!,
+  },
+  {
+    id: "i-2",
+    role: Role.OWNER,
+    email: "invitee2@example.com",
+    status: "canceled",
+    invitedBy: mockUsers[1]!,
+  },
+  {
+    id: "i-3",
+    role: Role.GUEST,
+    email: "invitee3@example.com",
+    status: "rejected",
+    invitedBy: mockUsers[2]!,
+  },
+];
+
+export const mockTeamMembers = mockUsers.map<{
+  userId: string;
+  role: TeamspaceRole;
+}>((user, i) => ({
+  userId: user.id,
+  role: i % 2 === 0 ? "member" : "owner",
+}));
+
+export const mockTeamMemberRows: TeamMemberRow[] = mockUsers.map((user, i) => ({
+  id: user.id,
+  user,
+  role: i % 2 === 0 ? "member" : "owner",
+}));
+
+export const mockTeamspaces: TeamspaceRow[] = [
+  {
+    id: "team-1",
+    name: "Acme Lab 1",
+    icon: { type: "text", src: "A" },
+    memberCount: 20,
+    permission: "default",
+    ownedBy: { name: "Jason" },
+    ownerCount: 3,
+    updatedAt: Date.UTC(2024, 5, 1),
+  },
+  {
+    id: "team-2",
+    name: "Acme Lab 2",
+    icon: { type: "text", src: "B" },
+    memberCount: 30,
+    permission: "default",
+    ownedBy: { name: "Alice" },
+    ownerCount: 2,
+    updatedAt: Date.UTC(2024, 5, 3),
+  },
+  {
+    id: "team-3",
+    name: "Acme Lab 3",
+    icon: { type: "text", src: "C" },
+    memberCount: 25,
+    permission: "default",
+    ownedBy: { name: "Bob" },
+    ownerCount: 1,
+    updatedAt: Date.UTC(2024, 5, 10),
+  },
 ];

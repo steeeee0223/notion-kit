@@ -52,25 +52,32 @@ export async function loadConnections(auth: AuthClient) {
     handleError(res, "Fetch connections error");
     return [];
   }
-  const connections: Connection[] = [];
-  res.data.forEach((account) => {
-    if (account.provider === "credential") return;
+  const infos = await Promise.all(
+    res.data.map(({ accountId }) => auth.accountInfo({ accountId })),
+  );
+  return res.data.reduce<Connection[]>((acc, account, i) => {
+    if (account.providerId === "credential") return acc;
     const type =
-      account.provider === "google" ? "google-drive" : account.provider;
-    connections.push({
+      account.providerId === "google" ? "google-drive" : account.providerId;
+    const info = infos[i]!;
+    if (info.error) {
+      console.error(`Fetch ${type} info failed`, info.error);
+      return acc;
+    }
+    acc.push({
       id: account.id,
       connection: {
         type,
         /**
          * @note Currently, `better-auth` does not return custom fields of `account`.
          */
-        account: account.accountId,
+        account: info.data.user.name ?? info.data.user.email ?? "Account",
         accountId: account.accountId,
       },
       scopes: account.scopes,
     });
-  });
-  return connections;
+    return acc;
+  }, []);
 }
 
 export async function linkAccount(

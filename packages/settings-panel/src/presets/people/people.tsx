@@ -7,13 +7,13 @@ import { useOnClickOutside } from "usehooks-ts";
 
 import { cn } from "@notion-kit/cn";
 import { BaseModal } from "@notion-kit/common";
-import { useCopyToClipboard, useTransition } from "@notion-kit/hooks";
 import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
-import { Plan, Role } from "@notion-kit/schemas";
+import { Plan } from "@notion-kit/schemas";
 import {
   Button,
+  Dialog,
   Input,
   Separator,
   Switch,
@@ -21,24 +21,36 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  toast,
   TooltipPreset,
 } from "@notion-kit/shadcn";
 
 import { TextLinks } from "../_components";
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
-import { generateGuestsCsv, Scope } from "../../lib";
+import { generateGuestsCsv, GuestRow, MemberRow, Scope } from "../../lib";
+import { useInvitations, useTeamspaceDetail } from "../hooks";
 import { AddMembers, DeleteGuest, DeleteMember } from "../modals";
-import { GroupsTable, GuestsTable, MembersTable } from "../tables";
-import { usePeople } from "./use-people";
+import {
+  GroupsTable,
+  GuestsTable,
+  InvitationsTable,
+  MembersTable,
+} from "../tables";
+import { useInvitationsActions } from "./use-invitations-actions";
+import { useLinkActions } from "./use-link-actions";
+import { useInvitedMembers, useWorkspaceMemberships } from "./use-people";
+import { usePeopleActions } from "./use-people-actions";
+
+enum PeopleTabs {
+  Members = "members",
+  Guests = "guests",
+  Groups = "groups",
+  Invitations = "invitations",
+}
 
 export function People() {
   const {
     scopes,
     settings: { account, workspace },
-    people,
-    workspace: actions,
-    updateSettings,
   } = useSettings();
   /** i18n */
   const { t } = useTranslation("settings");
@@ -61,43 +73,33 @@ export function People() {
   /** Modals */
   const { openModal } = useModal();
   /** Tables */
-  const { members, guests } = usePeople();
-  const updateMember = useCallback(
-    async (id: string, role: Role) => {
-      await people?.update?.(id, role);
-      if (id === account.id) await updateSettings?.({ workspace: { role } });
-    },
-    [account.id, people, updateSettings],
-  );
-  const deleteMember = (id: string) =>
-    openModal(<DeleteMember onDelete={() => people?.delete?.(id)} />);
-  const deleteGuest = (id: string, name: string) =>
+  const { members, guests } = useWorkspaceMemberships();
+  const { selectedTeamspace, setSelectedTeamspace, renderTeamspaceDetail } =
+    useTeamspaceDetail();
+  const { update, remove } = usePeopleActions();
+  const { data: invitations } = useInvitations((res) => Object.values(res));
+  const { invite: inviteMember, cancel } = useInvitationsActions();
+  const deleteMember = (data: MemberRow) =>
     openModal(
-      <DeleteGuest name={name} onDelete={() => people?.delete?.(id)} />,
+      <DeleteMember
+        onDelete={() => remove({ id: data.user.id, memberId: data.id })}
+      />,
+    );
+  const deleteGuest = (data: GuestRow) =>
+    openModal(
+      <DeleteGuest
+        name={data.user.name}
+        onDelete={() => remove({ id: data.user.id, memberId: data.id })}
+      />,
     );
   /** Handlers */
-  const [, copy] = useCopyToClipboard();
-  const copyLink = async () => {
-    await copy(workspace.inviteLink);
-    toast.success("Copied link to clipboard");
-  };
-  const [updateLink, isUpdating] = useTransition(() => actions?.resetLink?.());
+  const { isResetting, copyLink, updateLink } = useLinkActions();
   const resetLink = () =>
-    openModal(
-      <BaseModal
-        {...modals["reset-link"]}
-        onTrigger={() => void updateLink()}
-      />,
-    );
+    openModal(<BaseModal {...modals["reset-link"]} onTrigger={updateLink} />);
+  const invitedMembers = useInvitedMembers();
   const addMembers = () =>
     openModal(
-      <AddMembers
-        invitedMembers={[
-          ...members.map(({ user }) => user),
-          ...guests.map(({ user }) => user),
-        ]}
-        onAdd={people?.add}
-      />,
+      <AddMembers invitedMembers={invitedMembers} onAdd={inviteMember} />,
     );
   const downloadCsv = useCallback(() => {
     const csv = generateGuestsCsv(guests);
@@ -127,7 +129,7 @@ export function People() {
                 variant="soft-blue"
                 size="sm"
                 className="h-7"
-                disabled={isUpdating}
+                disabled={isResetting}
                 onClick={copyLink}
               >
                 {invite.button}
@@ -138,17 +140,22 @@ export function People() {
           <Separator className="my-4" />
         </>
       )}
-      <Tabs defaultValue="members" className="relative mt-1 w-full">
+      <Tabs defaultValue={PeopleTabs.Members} className="relative mt-1 w-full">
         <TabsList className="gap-3 overflow-y-auto p-0">
           <div className="flex grow">
-            <TabsTrigger value="members">
-              {tabs.members}{" "}
+            <TabsTrigger value={PeopleTabs.Members}>
+              {tabs.members}
               <span className="text-muted">{members.length}</span>
             </TabsTrigger>
-            <TabsTrigger value="guests">
-              {tabs.guests} <span className="text-muted">{guests.length}</span>
+            <TabsTrigger value={PeopleTabs.Guests}>
+              {tabs.guests}
+              <span className="text-muted">{guests.length}</span>
             </TabsTrigger>
-            <TabsTrigger value="groups">{tabs.groups}</TabsTrigger>
+            <TabsTrigger value={PeopleTabs.Groups}>{tabs.groups}</TabsTrigger>
+            <TabsTrigger value={PeopleTabs.Invitations}>
+              {tabs.invitations}
+              <span className="text-muted">{invitations.length}</span>
+            </TabsTrigger>
           </div>
           <div ref={searchRef} className="flex items-center justify-end gap-1">
             <div className="flex items-center">
@@ -189,26 +196,36 @@ export function People() {
             </Button>
           </div>
         </TabsList>
-        <TabsContent value="members" className="mt-0 bg-transparent">
+        <TabsContent value={PeopleTabs.Members} className="mt-0 bg-transparent">
+          <Dialog
+            open={!!selectedTeamspace}
+            onOpenChange={(open) => {
+              if (open) return;
+              setSelectedTeamspace(null);
+            }}
+          >
+            {renderTeamspaceDetail()}
+          </Dialog>
           <MembersTable
-            accountId={account.id}
+            userId={account.id}
             search={search}
             data={members}
             scopes={scopes}
-            onUpdate={updateMember}
+            onUpdate={update}
             onDelete={deleteMember}
+            onTeamspaceSelect={setSelectedTeamspace}
           />
         </TabsContent>
-        <TabsContent value="guests" className="mt-0 bg-transparent">
+        <TabsContent value={PeopleTabs.Guests} className="mt-0 bg-transparent">
           <GuestsTable
             search={search}
             data={guests}
             scopes={scopes}
-            onUpdate={updateMember}
+            onUpdate={update}
             onDelete={deleteGuest}
           />
         </TabsContent>
-        <TabsContent value="groups" className="mt-0 bg-transparent">
+        <TabsContent value={PeopleTabs.Groups} className="mt-0 bg-transparent">
           {scopes.has(Scope.Upgrade) &&
             (workspace.plan === Plan.FREE ||
               workspace.plan === Plan.EDUCATION) && (
@@ -232,6 +249,16 @@ export function People() {
               </>
             )}
           <GroupsTable search={search} data={[]} />
+        </TabsContent>
+        <TabsContent
+          value={PeopleTabs.Invitations}
+          className="mt-0 bg-transparent"
+        >
+          <InvitationsTable
+            scopes={scopes}
+            data={invitations}
+            onCancel={cancel}
+          />
         </TabsContent>
       </Tabs>
     </SettingsSection>

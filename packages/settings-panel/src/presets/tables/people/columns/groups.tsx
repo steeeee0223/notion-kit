@@ -1,17 +1,17 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import type { GroupOption } from "../../../../lib";
-import { Header } from "../cells";
+import { TextCell } from "../../common-cells";
 
-export const groupColumns: ColumnDef<GroupOption, GroupOption>[] = [
+export const groupColumns: ColumnDef<GroupOption>[] = [
   {
     id: "group",
     accessorKey: "group",
-    header: () => <Header title="Group" className="text-sm" />,
+    header: () => <TextCell value="Group" header />,
   },
   {
     id: "members",
     accessorKey: "members",
-    header: () => <Header title="Members" className="text-sm" />,
+    header: () => <TextCell value="Members" header />,
   },
 ];

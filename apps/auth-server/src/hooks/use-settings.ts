@@ -13,7 +13,7 @@ const mockWorkspace: WorkspaceStore = {
   icon: { type: "lucide", src: "activity", color: "#CB912F" },
   role: Role.OWNER,
   plan: Plan.FREE,
-  domain: "fake-domain",
+  slug: "fake-slug",
   inviteLink: "#",
 };
 
@@ -22,7 +22,7 @@ export function useSettings() {
   const router = useRouter();
 
   const [tab, setTab] = useState<TabType>("account");
-  const { accountStore, updateSettings, actions } = useAccountSettings();
+  const { accountStore, actions } = useAccountSettings();
 
   const signOut = useCallback(async () => {
     await auth.signOut({
@@ -41,7 +41,6 @@ export function useSettings() {
       account: accountStore,
       memberships: {},
     },
-    updateSettings,
     actions,
     signOut,
   };

@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/auth-server",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "private": true,
   "scripts": {
     "build": "pnpm with-env next build",
@@ -8,7 +8,7 @@
     "dev": "pnpm with-env next dev --turbopack -p 3001",
     "format": "prettier --check . \"!**/*.{md,mdx}\" --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "start": "pnpm with-env next start",
+    "start": "pnpm with-env next start -p 3001",
     "typecheck": "tsc --noEmit",
     "with-env": "dotenv -e ../../.env --"
   },

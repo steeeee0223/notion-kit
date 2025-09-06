@@ -7,21 +7,33 @@ description: A React hook for integrating authentication into Notion's Settings 
 
 <Installation packages="@notion-kit/auth-ui" registryName="auth-ui" />
 
-## Examples
+## Supported Features
+
+- Account settings
+- Change password
+- Logged in sessions
+- Passkeys management
+- Link social accounts
+- Theme select
+- Localization support for `EN`, `DE`, `ES`
+- Timezone support
+
+## Usage
 
 ---
 
 ### Settings Panel
 
+You can see [`Notion Authn`](https://notion-authn.vercel.app/) for a full example.
+
 ```tsx
 function Settings() {
   const [tab, setTab] = useState<TabType>("account");
-  const { accountStore, actions, updateSettings } = useAccountSettings(); // [!code highlight]
+  const { accountStore, actions } = useAccountSettings(); // [!code highlight]
   const settings = useMemo<SettingsStore>(
     () => ({
       account: accountStore,
       workspace: mockWorkspace,
-      memberships: {},
     }),
     [accountStore],
   );
@@ -29,7 +41,6 @@ function Settings() {
   return (
     <SettingsProvider
       settings={settings}
-      updateSettings={updateSettings} // [!code highlight]
       {...actions} // [!code highlight]
     >
       <SettingsPanel>
@@ -55,14 +66,12 @@ function Settings() {
 
 It returns an object with the following properties:
 
-| Property         | Type                                                      | Description                              |
-| ---------------- | --------------------------------------------------------- | ---------------------------------------- |
-| `accountStore`   | `AccountStore`                                            | The account store instance.              |
-| `actions`        | `Pick<SettingsProviderProps, "account" \| "connections">` | A collection of account settings actions |
-| `updateSettings` | `(data: Partial<SettingsStore>) => Promise<void>`         | Function to update settings.             |
+| Property       | Type                             | Description                                                        |
+| -------------- | -------------------------------- | ------------------------------------------------------------------ |
+| `accountStore` | `AccountStore`                   | The account store instance.                                        |
+| `actions`      | `Partial<SettingsProviderProps>` | Account settings actions: account, sessions, passkeys, connections |
 
 See schema definitions for:
 
 - [`AccountStore`](/docs/blocks/settings-panel/objects#account-store)
-- [`SettingsStore`](/docs/blocks/settings-panel/objects#settings-store)
 - [`SettingsProviderProps`](/docs/blocks/settings-panel#settingsprovider)

@@ -21,8 +21,7 @@ import {
 import { Spinner } from "@notion-kit/spinner";
 import { TagsInput } from "@notion-kit/tags-input";
 
-import { HintButton } from "../_components";
-import type { PartialRole } from "../../lib";
+import { Avatar, HintButton } from "../_components";
 
 enum Heading {
   Select = "Select a person",
@@ -34,7 +33,7 @@ const emailSchema = z.email();
 type DetailedAccount = User & { invited?: boolean };
 interface AddMembersProps {
   invitedMembers: User[];
-  onAdd?: (emails: string[], role: Role) => void;
+  onAdd?: (data: { emails: string[]; role: Role }) => void;
 }
 
 export const AddMembers: React.FC<AddMembersProps> = ({
@@ -44,7 +43,7 @@ export const AddMembers: React.FC<AddMembersProps> = ({
   const { isOpen, closeModal } = useModal();
 
   const [heading, setHeading] = useState(Heading.Select);
-  const [role, setRole] = useState<PartialRole>(Role.OWNER);
+  const [role, setRole] = useState<Exclude<Role, Role.ADMIN>>(Role.OWNER);
   /** Input & Filter */
   const [emails, setEmails] = useState<string[]>([]);
   const { search, results, updateSearch } = useFilter(
@@ -66,7 +65,7 @@ export const AddMembers: React.FC<AddMembersProps> = ({
       : null;
   /** Actions */
   const [invite, loading] = useTransition(() => {
-    onAdd?.(emails, role);
+    onAdd?.({ emails, role });
     onClose();
   });
   const onInputChange = (input: string) => {
@@ -117,8 +116,12 @@ export const AddMembers: React.FC<AddMembersProps> = ({
               <Select
                 value={role}
                 onChange={setRole}
-                options={{ owner: "Workspace Owner", member: "Member" }}
-                className="m-0 w-fit text-muted"
+                options={{
+                  owner: "Workspace Owner",
+                  member: "Member",
+                  guest: "Guest",
+                }}
+                className="w-fit text-muted"
               />
               <Button
                 tabIndex={0}
@@ -129,7 +132,7 @@ export const AddMembers: React.FC<AddMembersProps> = ({
                 className="h-7 min-w-[70px] font-medium"
               >
                 Invite
-                {loading && <Spinner className="ml-2 text-white" />}
+                {loading && <Spinner className="text-current" />}
               </Button>
             </div>
           </div>
@@ -186,13 +189,7 @@ const Item: React.FC<ItemProps> = ({
     >
       <div className="mr-2.5 flex items-center justify-center">
         {invited ? (
-          <div className="relative">
-            <img
-              src={avatarUrl}
-              alt={name.at(0)?.toUpperCase()}
-              className="size-5 rounded-full border border-border"
-            />
-          </div>
+          <Avatar src={avatarUrl} fallback={name} />
         ) : (
           <Mail className="size-5 flex-shrink-0 text-primary" />
         )}

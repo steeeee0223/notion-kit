@@ -17,7 +17,8 @@ import {
 import { Button, type ButtonProps } from "@notion-kit/shadcn";
 
 import {
-  mockMemberships,
+  mockGuests,
+  mockMembers,
   mockPasskeys,
   mockSettings,
   mockUser,
@@ -42,6 +43,9 @@ const meta = {
   title: "blocks/Settings Panel/Modals",
   component: ModalTrigger,
   parameters: { layout: "centered" },
+  argTypes: {
+    children: { control: false },
+  },
   render: (props) => (
     <ModalProvider>
       <ModalTrigger {...props} />
@@ -52,16 +56,15 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const { members, guests } = mockMemberships;
 export const AddMembersModal: Story = {
   args: {
     children: (
       <AddMembers
         invitedMembers={[
-          ...members.map(({ user }) => user),
-          ...guests.map(({ user }) => user),
+          ...mockMembers.map(({ user }) => user),
+          ...mockGuests.map(({ user }) => user),
         ]}
-        onAdd={(emails, role) => console.log(`Adding ${role}s: `, emails)}
+        onAdd={({ emails, role }) => console.log(`Adding ${role}s: `, emails)}
       />
     ),
     text: "Add Members",

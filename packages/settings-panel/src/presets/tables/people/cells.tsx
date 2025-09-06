@@ -1,11 +1,10 @@
 "use client";
 
-import { SortDirection } from "@tanstack/react-table";
-import { CircleArrowUp, MoreHorizontalIcon } from "lucide-react";
-
 import { cn } from "@notion-kit/cn";
 import { useTransition } from "@notion-kit/hooks";
+import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
+import { Role } from "@notion-kit/schemas";
 import {
   Button,
   DropdownMenu,
@@ -20,122 +19,96 @@ import {
 
 import { Scope } from "../../../lib";
 import type { GuestRow, MemberRow, PartialRole } from "../../../lib";
-import { roleOptions } from "./constants";
-
-interface HeaderProps {
-  title: string;
-  className?: string;
-}
-
-/**
- * Extended version
- * @see my-connections
- */
-export const Header = ({ title, className }: HeaderProps) => {
-  return (
-    <div
-      className={cn("truncate text-xs font-normal text-secondary", className)}
-    >
-      {title}
-    </div>
-  );
-};
-
-interface SortingToggleProps {
-  title: string;
-  isSorted: false | SortDirection;
-  toggle: () => void;
-}
-
-export const SortingToggle = ({
-  title,
-  isSorted,
-  toggle,
-}: SortingToggleProps) => (
-  <Button variant="hint" size="xs" onClick={toggle} className="px-1">
-    <Header title={title} className="text-sm" />
-    {isSorted &&
-      (isSorted === "asc" ? (
-        <Icon.ArrowUp className="ml-1 size-3 flex-shrink-0 fill-secondary" />
-      ) : (
-        <Icon.ArrowDown className="ml-1 size-3 flex-shrink-0 fill-secondary" />
-      ))}
-  </Button>
-);
-
-interface UserCellProps {
-  user: MemberRow["user"];
-}
-export const UserCell = ({ user }: UserCellProps) => {
-  return (
-    <div className="z-20 flex h-full min-h-[42px] w-[220px] items-center justify-between pr-3">
-      <div className="flex w-full items-center gap-2.5">
-        <div className="relative flex-shrink-0">
-          <img
-            src={user.avatarUrl}
-            alt={user.name[0]}
-            className="size-7 rounded-full border border-border"
-          />
-        </div>
-        <div className="max-w-[164px]">
-          <div className="truncate text-sm text-primary">{user.name}</div>
-          <div className="truncate text-xs text-secondary">{user.email}</div>
-        </div>
-      </div>
-    </div>
-  );
-};
+import { roleLabels, roleOptions } from "./constants";
 
 interface TeamspacesCellProps {
   teamspaces: MemberRow["teamspaces"];
+  onTeamspaceSelect?: (id: string) => void;
 }
-export const TeamspacesCell = ({ teamspaces }: TeamspacesCellProps) => {
-  const { options, current } = teamspaces;
-  const $options = options.reduce<SelectPresetProps["options"]>(
-    (acc, { id, name, memberCount: members }) => ({
-      ...acc,
-      [id]: {
-        label: name,
-        description: `${members} members`,
-      },
-    }),
-    {},
-  );
+export const TeamspacesCell = ({
+  teamspaces,
+  onTeamspaceSelect,
+}: TeamspacesCellProps) => {
   return (
     <div className="flex items-center">
-      {options.length < 1 ? (
+      {teamspaces.length < 1 ? (
         <div className="w-auto cursor-default p-2 text-sm text-muted">
           No access
         </div>
       ) : (
-        <Select
-          className="m-0 w-auto"
-          options={$options}
-          value={current ?? undefined}
-          hideCheck
-          align="center"
-          renderOption={Custom}
-        />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="hint" size="xs">
+              <span className="text-primary">
+                {teamspaces.length} teamspaces
+              </span>
+              <Icon.ChevronDown className="size-3 fill-current" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuGroup>
+              {teamspaces.map((t) => (
+                <DropdownMenuItem
+                  key={t.id}
+                  onClick={() => onTeamspaceSelect?.(t.id)}
+                  Icon={<IconBlock icon={t.icon} size="sm" />}
+                  Body={
+                    <div className="flex items-center">
+                      <div className="max-w-full shrink-0 truncate">
+                        <div className="max-w-25 truncate text-sm leading-5 text-primary">
+                          {t.name}
+                        </div>
+                      </div>
+                      <div className="inline-flex truncate text-xs text-muted">
+                        <span className="mx-2">—</span>
+                        {t.memberCount} members
+                      </div>
+                    </div>
+                  }
+                />
+              ))}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       )}
     </div>
   );
 };
 
 interface RoleCellProps {
+  className?: string;
+  role: Role;
+}
+
+export function RoleCell({ className, role }: RoleCellProps) {
+  return (
+    <div
+      className={cn("w-auto cursor-default text-sm text-secondary", className)}
+    >
+      {roleLabels[role]}
+    </div>
+  );
+}
+
+interface RoleSelectCellProps {
   role: PartialRole;
-  scopes: Set<Scope>;
+  scopes?: Set<Scope>;
   onSelect?: (role: PartialRole) => void | Promise<void>;
 }
-export const RoleCell = ({ role, scopes, onSelect }: RoleCellProps) => {
+export function RoleSelectCell({
+  role,
+  scopes,
+  onSelect,
+}: RoleSelectCellProps) {
   const [select, isUpdating] = useTransition((role: PartialRole) =>
     onSelect?.(role),
   );
 
   return (
     <div className="flex items-center">
-      {scopes.has(Scope.MemberUpdate) ? (
+      {scopes?.has(Scope.MemberUpdate) ? (
         <Select
-          className="m-0 w-auto"
+          className="w-auto"
           options={roleOptions}
           onChange={select}
           value={role}
@@ -144,13 +117,11 @@ export const RoleCell = ({ role, scopes, onSelect }: RoleCellProps) => {
           disabled={isUpdating}
         />
       ) : (
-        <div className="w-auto cursor-default text-sm text-secondary">
-          {roleOptions[role].label}
-        </div>
+        <RoleCell role={role} />
       )}
     </div>
   );
-};
+}
 
 const Custom: SelectPresetProps["renderOption"] = ({ option }) => (
   <div className="min-w-0 truncate text-secondary">
@@ -173,15 +144,15 @@ export const MemberActionCell = ({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="hint" className="size-5" disabled={isRemoving}>
-          <MoreHorizontalIcon className="size-5" />
+          <Icon.Dots className="size-4 fill-current" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent className="w-50">
         <DropdownMenuGroup>
           <DropdownMenuItem
             variant="error"
             onClick={remove}
-            Icon={<Icon.Bye className="size-4 fill-red" />}
+            Icon={<Icon.Bye className="size-4" />}
             Body={isSelf ? "Leave workspace" : "Remove from workspace"}
           />
         </DropdownMenuGroup>
@@ -209,7 +180,7 @@ export const AccessCell = ({ access }: AccessCellProps) => {
         </div>
       ) : (
         <Select
-          className="m-0 w-auto"
+          className="w-auto"
           options={options}
           hideCheck
           align="center"
@@ -245,13 +216,13 @@ export const GuestActionCell = ({
           className="size-5"
           disabled={isUpgrading || isRemoving}
         >
-          <MoreHorizontalIcon className="size-5" />
+          <Icon.Dots className="size-4 fill-current" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent className="w-50">
         <DropdownMenuGroup>
           <DropdownMenuItem
-            Icon={<CircleArrowUp className="size-4" />}
+            Icon={<Icon.ArrowUpCircled className="size-4" />}
             Body="Upgrade to member"
             onSelect={upgrade}
           />
@@ -260,7 +231,7 @@ export const GuestActionCell = ({
         <DropdownMenuGroup>
           <DropdownMenuItem
             variant="error"
-            Icon={<Icon.Bye className="size-4 fill-red" />}
+            Icon={<Icon.Bye className="size-4" />}
             Body="Remove from workspace"
             onSelect={remove}
           />
@@ -269,3 +240,31 @@ export const GuestActionCell = ({
     </DropdownMenu>
   );
 };
+
+interface InvitationActionCellProps {
+  onCancel?: () => void | Promise<void>;
+}
+
+export function InvitationActionCell({ onCancel }: InvitationActionCellProps) {
+  const [cancel, isCancelling] = useTransition(() => onCancel?.());
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="hint" className="size-5" disabled={isCancelling}>
+          <Icon.Dots className="size-4 fill-current" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-50">
+        <DropdownMenuGroup>
+          <DropdownMenuItem
+            variant="error"
+            Icon={<Icon.Bye className="size-4" />}
+            Body="Cancel invitation"
+            onSelect={cancel}
+          />
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}

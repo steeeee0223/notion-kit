@@ -1,6 +1,5 @@
 import { Plan, Role, Workspace, type User } from "@notion-kit/schemas";
 import type { Connection, SettingsStore } from "@notion-kit/settings-panel";
-import { randomItem } from "@notion-kit/utils";
 
 const mockUsers: User[] = [
   {
@@ -108,19 +107,6 @@ const mockWorkspaces: Workspace[] = [
   },
 ];
 
-const pageAccesses = [
-  [
-    { id: "page1", name: "Page 1", scope: "Full access" },
-    { id: "page2", name: "Page 2", scope: "Can view" },
-  ],
-  [
-    { id: "page1", name: "Page 1", scope: "Can view" },
-    { id: "page2", name: "Page 2", scope: "Can view" },
-  ],
-  [{ id: "page1", name: "Page 1", scope: "Can view" }],
-  [],
-];
-
 export const mockSettings: SettingsStore = {
   workspace: {
     ...mockWorkspaces[0]!,
@@ -128,7 +114,7 @@ export const mockSettings: SettingsStore = {
       type: "text",
       src: mockWorkspaces[0]!.name,
     },
-    domain: "fake-domain",
+    slug: "fake-slug",
     inviteLink: "#",
   },
   account: {
@@ -136,39 +122,6 @@ export const mockSettings: SettingsStore = {
     preferredName: "Jonathan",
     language: "en",
   },
-  memberships: mockUsers.reduce(
-    (acc, user, i) => ({
-      ...acc,
-      get [user.id]() {
-        switch (i) {
-          case 0:
-            return {
-              user,
-              teamspaces: {
-                current: "1",
-                options: [{ id: "1", name: "General", members: 29 }],
-              },
-              groups: { current: null, options: [] },
-              role: Role.OWNER,
-            };
-          case 1:
-            return {
-              user,
-              teamspaces: { current: null, options: [] },
-              groups: { current: null, options: [] },
-              role: Role.MEMBER,
-            };
-          default:
-            return {
-              role: Role.GUEST,
-              user,
-              access: randomItem(pageAccesses),
-            };
-        }
-      },
-    }),
-    {},
-  ),
 };
 
 export const mockConnections: Connection[] = [

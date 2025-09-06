@@ -33,12 +33,12 @@ export function AccountSection() {
   /** handlers */
   const {
     settings: { account },
-    updateSettings: update,
+    account: actions,
     uploadFile,
   } = useSettings();
   const updateAvatar = () => avatarInputRef.current?.click();
   const [removeAvatar, isRemoving] = useTransition(() =>
-    update?.({ account: { avatarUrl: "" } }),
+    actions?.update?.({ avatarUrl: "" }),
   );
   const [selectImage, isUploading] = useTransition(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,7 +51,7 @@ export function AccountSection() {
     setPreferredName(e.target.value);
   const savePreferredName = () => {
     if (preferredName !== account.preferredName) {
-      void update?.({ account: { preferredName } });
+      void actions?.update?.({ preferredName });
     }
   };
 
@@ -73,11 +73,11 @@ export function AccountSection() {
               <div>
                 <Avatar
                   ref={avatarRef}
-                  className="size-[60px] border border-default/20 select-none"
+                  className="size-15"
                   onClick={updateAvatar}
                 >
                   <AvatarImage src={account.avatarUrl} />
-                  <AvatarFallback className="bg-default/5 text-2xl">
+                  <AvatarFallback className="text-2xl uppercase">
                     {account.preferredName.at(0) ?? ""}
                   </AvatarFallback>
                 </Avatar>
