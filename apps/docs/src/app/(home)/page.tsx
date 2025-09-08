@@ -37,7 +37,7 @@ export default function HomePage() {
             </CardHeader>
             <CardFooter className="mt-auto">
               <Button size="md" className="w-full" asChild>
-                <Link href="https://notion-kit.vercel.app/">
+                <Link href="https://notion-ui-kit.vercel.app//">
                   View Storybook
                   <ArrowRight />
                 </Link>
