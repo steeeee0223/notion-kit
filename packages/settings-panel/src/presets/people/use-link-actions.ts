@@ -15,11 +15,13 @@ export function useLinkActions() {
     workspace: actions,
   } = useSettings();
 
-  const [, copy] = useCopyToClipboard();
-  const copyLink = useCallback(async () => {
-    await copy(workspace.inviteLink);
-    toast.success("Copied link to clipboard");
-  }, [copy, workspace.inviteLink]);
+  const { copy } = useCopyToClipboard({
+    onSuccess: () => toast.success("Copied link to clipboard"),
+  });
+  const copyLink = useCallback(
+    () => copy(workspace.inviteLink),
+    [copy, workspace.inviteLink],
+  );
 
   const { mutateAsync: updateLink, isPending: isResetting } = useMutation({
     mutationFn: actions?.resetLink ?? createDefaultFn(),

@@ -15,7 +15,7 @@ interface TextCellProps {
 }
 
 export function TextCell({ value, wrapped, onUpdate }: TextCellProps) {
-  const [, copy] = useCopyToClipboard();
+  const { copy } = useCopyToClipboard();
 
   return (
     <TextInputPopover

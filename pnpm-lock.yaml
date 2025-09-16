@@ -336,6 +336,9 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../../packages/cn
+      '@notion-kit/code-block':
+        specifier: workspace:*
+        version: link:../../packages/code-block
       '@notion-kit/common':
         specifier: workspace:*
         version: link:../../packages/common
@@ -786,6 +789,52 @@ importers:
       tsup:
         specifier: 'catalog:'
         version: 8.5.0(jiti@2.6.1)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.9.2)(yaml@2.7.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+
+  packages/code-block:
+    dependencies:
+      '@notion-kit/cn':
+        specifier: workspace:*
+        version: link:../cn
+      '@notion-kit/hooks':
+        specifier: workspace:*
+        version: link:../hooks
+      '@notion-kit/icons':
+        specifier: workspace:*
+        version: link:../icons
+      '@notion-kit/shadcn':
+        specifier: workspace:*
+        version: link:../shadcn
+      class-variance-authority:
+        specifier: catalog:ui
+        version: 0.7.1
+    devDependencies:
+      '@notion-kit/eslint-config':
+        specifier: workspace:*
+        version: link:../../tooling/eslint
+      '@notion-kit/prettier-config':
+        specifier: workspace:*
+        version: link:../../tooling/prettier
+      '@notion-kit/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
+      '@types/react':
+        specifier: catalog:react19
+        version: 19.1.3
+      eslint:
+        specifier: 'catalog:'
+        version: 9.32.0(jiti@2.4.2)
+      prettier:
+        specifier: 'catalog:'
+        version: 3.6.2
+      react:
+        specifier: catalog:react19
+        version: 19.1.0
+      tsup:
+        specifier: 'catalog:'
+        version: 8.5.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.9.2)(yaml@2.7.1)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
