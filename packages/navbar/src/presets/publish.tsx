@@ -32,13 +32,13 @@ export function Publish({ page, onUpdate }: PublishProps) {
   const origin = useOrigin();
   const url = `${origin}${page.publicUrl ?? ""}`;
   /** Copy */
-  const [, copy] = useCopyToClipboard();
   const [isCopied, setIsCopied] = useState(false);
-  const onCopy = async () => {
-    await copy(url);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 1000);
-  };
+  const { copy } = useCopyToClipboard({
+    onSuccess: () => {
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 1000);
+    },
+  });
   /** Actions - Publish & Unpublish */
   const [isPending, startTransition] = useTransition();
   const handlePublish = () => {
@@ -84,7 +84,7 @@ export function Publish({ page, onUpdate }: PublishProps) {
                   />
                   <Button
                     variant="icon"
-                    onClick={onCopy}
+                    onClick={() => copy(url)}
                     disabled={isCopied}
                     className="size-7 rounded-l-none"
                   >

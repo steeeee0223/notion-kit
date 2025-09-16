@@ -11,11 +11,13 @@ export function useLinkActions() {
   const { data: workspace } = useWorkspace();
   const { isResettingLink, resetLink } = useWorkspaceActions();
 
-  const [, copy] = useCopyToClipboard();
-  const copyLink = useCallback(async () => {
-    await copy(workspace.inviteLink);
-    toast.success("Copied link to clipboard");
-  }, [copy, workspace.inviteLink]);
+  const { copy } = useCopyToClipboard({
+    onSuccess: () => toast.success("Copied link to clipboard"),
+  });
+  const copyLink = useCallback(
+    () => copy(workspace.inviteLink),
+    [copy, workspace.inviteLink],
+  );
 
   return { isResetting: isResettingLink, copyLink, resetLink };
 }

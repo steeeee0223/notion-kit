@@ -524,6 +524,9 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../../packages/cn
+      '@notion-kit/code-block':
+        specifier: workspace:*
+        version: link:../../packages/code-block
       '@notion-kit/common':
         specifier: workspace:*
         version: link:../../packages/common
@@ -980,6 +983,58 @@ importers:
       prettier:
         specifier: 'catalog:'
         version: 3.6.2
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.16.6(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  packages/code-block:
+    dependencies:
+      '@notion-kit/cn':
+        specifier: workspace:*
+        version: link:../cn
+      '@notion-kit/hooks':
+        specifier: workspace:*
+        version: link:../hooks
+      '@notion-kit/icons':
+        specifier: workspace:*
+        version: link:../icons
+      '@notion-kit/shadcn':
+        specifier: workspace:*
+        version: link:../shadcn
+    devDependencies:
+      '@notion-kit/config':
+        specifier: workspace:*
+        version: link:../../tooling/config
+      '@notion-kit/eslint-config':
+        specifier: workspace:*
+        version: link:../../tooling/eslint
+      '@notion-kit/prettier-config':
+        specifier: workspace:*
+        version: link:../../tooling/prettier
+      '@notion-kit/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
+      '@types/react':
+        specifier: catalog:react19
+        version: 19.2.7
+      babel-plugin-react-compiler:
+        specifier: catalog:react-compiler
+        version: 1.0.0
+      eslint:
+        specifier: 'catalog:'
+        version: 9.39.1(jiti@2.6.1)
+      prettier:
+        specifier: 'catalog:'
+        version: 3.6.2
+      react:
+        specifier: catalog:react19
+        version: 19.2.3
+      react-compiler-runtime:
+        specifier: catalog:react-compiler
+        version: 1.0.0(react@19.2.3)
       tsdown:
         specifier: 'catalog:'
         version: 0.16.6(typescript@5.9.3)

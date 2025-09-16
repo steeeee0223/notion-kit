@@ -450,6 +450,12 @@ export const Dots = (props: IconProps) => (
   </svg>
 );
 
+export const EllipsisSmall = (props: IconProps) => (
+  <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 16 16" {...props}>
+    <path d="M3.2 6.725a1.275 1.275 0 1 0 0 2.55 1.275 1.275 0 0 0 0-2.55m4.8 0a1.275 1.275 0 1 0 0 2.55 1.275 1.275 0 0 0 0-2.55m4.8 0a1.275 1.275 0 1 0 0 2.55 1.275 1.275 0 0 0 0-2.55" />
+  </svg>
+);
+
 export const RoundedSquareCheckbox = (props: IconProps) => (
   <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 14 14" {...props}>
     <rect x="0.5" y="0.5" width="13" height="13" rx="2.5" />

@@ -45,7 +45,7 @@ export function DocItemActions({
   onDuplicate,
   onUpdate,
 }: DocItemActionsProps) {
-  const [, copy] = useCopyToClipboard();
+  const { copy } = useCopyToClipboard();
 
   return (
     <MenuItemAction className="flex items-center opacity-0 transition-opacity group-hover/doc-item:opacity-100 focus-within:opacity-100">
@@ -88,7 +88,7 @@ export function DocItemActions({
             <DropdownMenuItem
               Icon={<Icon.Link />}
               Body="Copy link"
-              onSelect={() => void copy(pageLink)}
+              onSelect={() => copy(pageLink)}
             />
             {type === "normal" && (
               <DropdownMenuItem
