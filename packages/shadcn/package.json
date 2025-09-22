@@ -30,6 +30,8 @@
     "ui-add": "pnpm dlx shadcn@latest add && prettier src --write --list-different"
   },
   "dependencies": {
+    "@headless-tree/core": "^1.4.0",
+    "@headless-tree/react": "^1.4.0",
     "@hookform/resolvers": "catalog:ui",
     "@notion-kit/cn": "workspace:*",
     "@radix-ui/react-icons": "^1.3.2",

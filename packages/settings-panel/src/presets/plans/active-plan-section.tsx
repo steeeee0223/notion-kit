@@ -36,7 +36,9 @@ export function ActivePlanSection() {
         <CardContent className="flex flex-col gap-1.5">
           <CardTitle className="relative flex items-center gap-1 self-stretch text-[22px]/[26px] tracking-[-0.1px]">
             {trans.plan[activePlan].title}{" "}
-            {activePlan === Plan.EDUCATION && <Icon.QuestionMarkCircled />}
+            {activePlan === Plan.EDUCATION && (
+              <Icon.QuestionMarkCircled className="block size-5 shrink-0 grow-0 overflow-visible fill-[rgb(199,198,196)]" />
+            )}
           </CardTitle>
           <CardDescription className="text-sm text-primary">
             {trans.plan[activePlan].description}

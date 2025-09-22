@@ -111,14 +111,14 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
       <Separator />
       <MenuGroup>
         <MenuItem
-          Icon={<Icon.Duplicate className="size-4" />}
+          Icon={<Icon.Duplicate />}
           Body="Duplicate"
           onClick={duplicateRow}
         >
           <MenuItemShortcut>⌘D</MenuItemShortcut>
         </MenuItem>
         <MenuItem
-          Icon={<Icon.Trash className="size-4" />}
+          Icon={<Icon.Trash />}
           Body="Delete"
           variant="warning"
           onClick={deleteRow}

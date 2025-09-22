@@ -110,7 +110,7 @@ export const Publish: React.FC<PublishProps> = ({ page, onUpdate }) => {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center gap-2">
-                <Globe className="size-8 text-icon" />
+                <Globe className="size-8 text-secondary" />
                 <p className="text-sm font-medium">Publish to web</p>
                 <span className="text-xs text-muted">
                   Create a website with Notion

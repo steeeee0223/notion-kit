@@ -35,13 +35,13 @@ interface SortingToggleProps {
 
 export function SortingToggle({ title, isSorted, toggle }: SortingToggleProps) {
   return (
-    <Button variant="hint" size="xs" onClick={toggle} className="gap-0.5 px-1">
+    <Button variant="hint" size="xs" onClick={toggle} className="px-1">
       <TextCell header value={title} />
       {isSorted &&
         (isSorted === "asc" ? (
-          <Icon.ArrowUp className="ml-1 size-3 flex-shrink-0 fill-secondary" />
+          <Icon.ArrowUp className="size-3 shrink-0 fill-icon" />
         ) : (
-          <Icon.ArrowDown className="ml-1 size-3 flex-shrink-0 fill-secondary" />
+          <Icon.ArrowDown className="size-3 shrink-0 fill-icon" />
         ))}
     </Button>
   );

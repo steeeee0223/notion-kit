@@ -90,7 +90,7 @@ export function AddTeamMembers({
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={submit} className="flex flex-col justify-between gap-3">
-          <div className="flex min-h-8 w-full cursor-text flex-nowrap items-start rounded-sm bg-input/60 p-[4px_9px] text-sm focus-within:shadow-notion dark:bg-input/5">
+          <div className="flex min-h-8 w-full cursor-text flex-nowrap items-start rounded-sm bg-input p-[4px_9px] text-sm focus-within:shadow-notion">
             <FormField
               control={form.control}
               name="users"
@@ -99,7 +99,7 @@ export function AddTeamMembers({
                   <FormControl>
                     <MultiSelect
                       groupBy="header"
-                      className="min-h-7 border-none bg-transparent py-1.5 pl-2 focus-within:shadow-none! dark:bg-transparent"
+                      className="min-h-7 border-none bg-transparent py-1.5 pl-2 focus-within:shadow-none!"
                       classNames={{ input: "p-0" }}
                       options={multiSelectOptions}
                       disabled={field.disabled}

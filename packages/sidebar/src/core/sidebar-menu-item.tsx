@@ -1,24 +1,35 @@
-import React from "react";
-import type { LucideIcon } from "lucide-react";
+import React, { useMemo } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { MenuItem, TooltipPreset } from "@notion-kit/shadcn";
 
 interface SidebarMenuItemProps extends React.ComponentProps<"div"> {
-  label: string;
-  hint: string;
+  label: React.ReactNode;
+  hint?: string;
   shortcut?: string;
-  icon: LucideIcon;
+  icon?: React.ReactNode;
 }
 
-export const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({
-  className,
-  label,
+export function SidebarMenuItem({
   hint,
   shortcut,
-  icon: Icon,
   ...props
-}) => {
+}: SidebarMenuItemProps) {
+  const item = useMemo(() => {
+    const { className, label, icon, ...rest } = props;
+    return (
+      <MenuItem
+        data-slot="sidebar-menuitem"
+        variant="sidebar"
+        className={cn("h-[27px] font-medium", className)}
+        Body={label}
+        Icon={icon}
+        {...rest}
+      />
+    );
+  }, [props]);
+
+  if (!hint) return item;
   return (
     <TooltipPreset
       description={
@@ -32,14 +43,7 @@ export const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({
       side="right"
       sideOffset={8}
     >
-      <MenuItem
-        data-slot="sidebar-menuitem"
-        variant="sidebar"
-        className={cn("h-[27px] font-medium", className)}
-        Icon={<Icon className="size-5 text-muted" />}
-        Body={label}
-        {...props}
-      />
+      {item}
     </TooltipPreset>
   );
-};
+}

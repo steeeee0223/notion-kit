@@ -126,7 +126,7 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
                 value={`search-${search}`}
                 onSelect={() => select("text", search)}
               >
-                <DefaultIcon type="text" className="fill-icon" />
+                <DefaultIcon type="text" className="fill-menu-icon" />
                 {search}
               </CommandItem>
             </CommandGroup>
