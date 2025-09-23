@@ -89,14 +89,18 @@ export class PagesStore {
   };
 
   favorites = () => {
-    const pages = Object.values(this.state.pages);
-    return pages
-      .filter((page) => page.isFavorite && !page.isArchived)
-      .map<TreeNode<Page>>((fav) => ({
-        ...fav,
+    const pages = Object.values(this.state.pages).filter(
+      (page) => !page.isArchived,
+    );
+    return pages.reduce<TreeNode<Page>[]>((acc, page) => {
+      if (!page.isFavorite) return acc;
+      acc.push({
+        ...page,
         parentId: null,
-        children: buildTree(pages, fav.id),
-      }));
+        children: buildTree(pages, page.id),
+      });
+      return acc;
+    }, []);
   };
 
   archivedPages = () => {
