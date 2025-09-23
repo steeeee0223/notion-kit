@@ -1,6 +1,6 @@
 import React from "react";
-import { MoreHorizontal, PlusSquare, XCircle } from "lucide-react";
 
+import { Icon } from "@notion-kit/icons";
 import {
   Button,
   DropdownMenu,
@@ -15,26 +15,26 @@ interface HeaderDropdownProps {
   onCreateWorkspace?: () => void;
 }
 
-export const HeaderDropdown: React.FC<HeaderDropdownProps> = ({
+export function HeaderDropdown({
   onCreateWorkspace,
   onLogout,
-}) => {
+}: HeaderDropdownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant={null} className="relative flex size-5 text-secondary">
-          <MoreHorizontal className="size-4" />
+          <Icon.Dots className="size-3 fill-current" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
         <DropdownMenuGroup>
           <DropdownMenuItem
-            Icon={<PlusSquare className="size-4 text-icon" />}
+            Icon={<Icon.SquarePlus className="size-4" />}
             Body="Join or create workspace"
             onSelect={onCreateWorkspace}
           />
           <DropdownMenuItem
-            Icon={<XCircle className="size-4 text-icon" />}
+            Icon={<Icon.CircleCross className="size-4" />}
             Body="Log out"
             onSelect={onLogout}
           />
@@ -42,4 +42,4 @@ export const HeaderDropdown: React.FC<HeaderDropdownProps> = ({
       </DropdownMenuContent>
     </DropdownMenu>
   );
-};
+}

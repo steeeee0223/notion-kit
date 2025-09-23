@@ -493,6 +493,9 @@ importers:
       '@notion-kit/icon-block':
         specifier: workspace:*
         version: link:../../packages/icon-block
+      '@notion-kit/icons':
+        specifier: workspace:*
+        version: link:../../packages/icons
       '@notion-kit/modal':
         specifier: workspace:*
         version: link:../../packages/modal
@@ -511,9 +514,6 @@ importers:
       '@t3-oss/env-nextjs':
         specifier: catalog:env
         version: 0.13.6(typescript@5.9.2)(zod@4.1.5)
-      lucide-react:
-        specifier: catalog:ui
-        version: 0.456.0(react@19.1.0)
       next:
         specifier: catalog:next15
         version: 15.3.2(@babel/core@7.26.9)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -1321,6 +1321,12 @@ importers:
 
   packages/shadcn:
     dependencies:
+      '@headless-tree/core':
+        specifier: ^1.4.0
+        version: 1.4.0
+      '@headless-tree/react':
+        specifier: ^1.4.0
+        version: 1.4.0(@headless-tree/core@1.4.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@hookform/resolvers':
         specifier: catalog:ui
         version: 5.2.1(react-hook-form@7.62.0(react@19.1.0))
@@ -1433,9 +1439,6 @@ importers:
       '@notion-kit/utils':
         specifier: workspace:*
         version: link:../utils
-      lucide-react:
-        specifier: catalog:ui
-        version: 0.456.0(react@19.1.0)
     devDependencies:
       '@notion-kit/eslint-config':
         specifier: workspace:*
@@ -1693,15 +1696,15 @@ importers:
       '@notion-kit/icon-block':
         specifier: workspace:*
         version: link:../icon-block
+      '@notion-kit/icons':
+        specifier: workspace:*
+        version: link:../icons
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../shadcn
       '@notion-kit/spinner':
         specifier: workspace:*
         version: link:../spinner
-      lucide-react:
-        specifier: catalog:ui
-        version: 0.456.0(react@19.1.0)
     devDependencies:
       '@notion-kit/eslint-config':
         specifier: workspace:*
@@ -3268,6 +3271,16 @@ packages:
 
   '@formatjs/intl-localematcher@0.6.0':
     resolution: {integrity: sha512-4rB4g+3hESy1bHSBG3tDFaMY2CH67iT7yne1e+0CLTsGLDcmoEWWpJjjpWVaYgYfYuohIRuo0E+N536gd2ZHZA==}
+
+  '@headless-tree/core@1.4.0':
+    resolution: {integrity: sha512-xBDYr9WJb7CuWuWzAAHfCfYfYUdCknsHa6OkdsLqeOc4JuwYuSlQ+TcDjeeImmgF6hVSAbeBBubOwotk5pmiMw==}
+
+  '@headless-tree/react@1.4.0':
+    resolution: {integrity: sha512-B62Ku6E3u0JPrz2Sm3cKqTCRMltmhgo5mgkuOvfYbrVILsDSZ6ct2yX56/1GQlipPkVF3mEhlwiIVKNOQKWnqA==}
+    peerDependencies:
+      '@headless-tree/core': '*'
+      react: '*'
+      react-dom: '*'
 
   '@hexagon/base64@1.1.28':
     resolution: {integrity: sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw==}
@@ -11389,6 +11402,14 @@ snapshots:
   '@formatjs/intl-localematcher@0.6.0':
     dependencies:
       tslib: 2.8.1
+
+  '@headless-tree/core@1.4.0': {}
+
+  '@headless-tree/react@1.4.0(@headless-tree/core@1.4.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@headless-tree/core': 1.4.0
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   '@hexagon/base64@1.1.28': {}
 

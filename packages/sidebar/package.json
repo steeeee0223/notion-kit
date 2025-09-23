@@ -42,8 +42,7 @@
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/tree": "workspace:*",
-    "@notion-kit/utils": "workspace:*",
-    "lucide-react": "catalog:ui"
+    "@notion-kit/utils": "workspace:*"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",

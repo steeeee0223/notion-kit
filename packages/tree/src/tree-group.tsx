@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus } from "lucide-react";
 
+import { Icon } from "@notion-kit/icons";
 import {
   Button,
   Skeleton,
@@ -51,9 +51,9 @@ const TreeGroup: React.FC<TreeGroupProps> = ({
                 variant="hint"
                 size="xs"
                 onClick={onCreate}
-                className="ml-auto size-auto p-0.5 opacity-0 group-hover/tree:opacity-100"
+                className="ml-auto size-auto opacity-0 group-hover/tree:opacity-100"
               >
-                <Plus className="size-4" />
+                <Icon.Plus className="size-3 fill-current" />
               </Button>
             </TooltipPreset>
           )}

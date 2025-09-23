@@ -71,10 +71,7 @@ export function SelectConfigMenu({ propId, meta }: SelectConfigMenuProps) {
 
   return (
     <DropdownMenuSub>
-      <DropdownMenuSubTrigger
-        Icon={<Icon.Sliders className="fill-icon" />}
-        Body="Edit property"
-      />
+      <DropdownMenuSubTrigger Icon={<Icon.Sliders />} Body="Edit property" />
       <DropdownMenuSubContent className="w-[250px]">
         <DropdownMenuGroup>
           <DropdownMenu>
@@ -82,7 +79,7 @@ export function SelectConfigMenu({ propId, meta }: SelectConfigMenuProps) {
               <MenuItem Icon={<Icon.ArrowUpDown />} Body="Sort">
                 <MenuItemAction className="flex items-center text-muted">
                   {sortOptions.find((o) => o.value === config.sort)?.label}
-                  <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-current" />
+                  <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-icon" />
                 </MenuItemAction>
               </MenuItem>
             </DropdownMenuTrigger>

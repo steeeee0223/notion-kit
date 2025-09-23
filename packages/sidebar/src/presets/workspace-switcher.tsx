@@ -1,5 +1,4 @@
 import React from "react";
-import { ChevronsUpDown } from "lucide-react";
 
 import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
@@ -29,7 +28,7 @@ interface WorkspaceSwitcherProps {
   onInviteMembers?: () => void;
 }
 
-export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
+export function WorkspaceSwitcher({
   user,
   activeWorkspace,
   workspaces,
@@ -39,7 +38,7 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
   onSelect,
   onOpenSettings,
   onInviteMembers,
-}) => {
+}: WorkspaceSwitcherProps) {
   const icon = activeWorkspace.icon ?? {
     type: "text",
     src: activeWorkspace.name,
@@ -60,7 +59,7 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
               {activeWorkspace.name}
             </span>
           </div>
-          <ChevronsUpDown className="ml-2 size-4 text-default/45" />
+          <Icon.ChevronDown className="size-3.5 fill-icon" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -98,7 +97,7 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
               className="h-7 px-2 text-xs/[1.2] font-medium text-secondary focus-within:shadow-notion"
               onClick={onOpenSettings}
             >
-              <Icon.Settings className="mr-1.5 size-3.5 fill-secondary" />
+              <Icon.Settings className="size-3.5 fill-secondary" />
               Settings
             </Button>
             <Button
@@ -106,8 +105,8 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
               className="h-7 px-2 text-xs/[1.2] font-medium text-secondary focus-within:shadow-notion"
               onClick={onInviteMembers}
             >
-              <Icon.InviteMemberSmall className="mr-1.5 size-3.5 fill-secondary" />
-              Invite members
+              <Icon.PersonCircle className="size-3.5 fill-secondary" />
+              People
             </Button>
           </div>
         </div>
@@ -147,4 +146,4 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
       </DropdownMenuContent>
     </DropdownMenu>
   );
-};
+}

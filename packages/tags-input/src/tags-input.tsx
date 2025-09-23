@@ -109,7 +109,7 @@ function TagsInput({
             tabIndex={0}
             onClick={() => onDeleteTag(getValue(tag))}
           >
-            <XIcon className="size-2 shrink-0 flex-grow-0" />
+            <XIcon className="size-2 grow-0" />
           </Button>
         </Badge>
       ))}

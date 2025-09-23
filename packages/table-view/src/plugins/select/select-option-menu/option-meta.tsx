@@ -56,7 +56,7 @@ export function OptionMeta({
                   className="ml-1 grow-0"
                   onClick={toggleDesc}
                 >
-                  <Icon.InfoFilled className="fill-default/45 hover:fill-icon" />
+                  <Icon.InfoFilled className="fill-icon hover:fill-default/5" />
                 </Button>
               </TooltipPreset>
             }

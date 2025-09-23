@@ -35,7 +35,7 @@ export const Hint: Story = {
     size: "xs",
     children: (
       <>
-        <CircleHelp className="mr-1.5 size-3.5" />
+        <CircleHelp className="size-3.5" />
         Learn more about this feature
       </>
     ),
@@ -48,7 +48,7 @@ export const Nav: Story = {
   args: {
     variant: "nav-icon",
     size: null,
-    children: <ChevronRight className="size-4" />,
+    children: <ChevronRight />,
   },
 };
 export const Loading: Story = {
@@ -56,7 +56,7 @@ export const Loading: Story = {
     disabled: true,
     children: (
       <>
-        <RefreshCw className="mr-2 size-4 animate-spin" /> Please wait
+        <RefreshCw className="animate-spin" /> Please wait
       </>
     ),
   },

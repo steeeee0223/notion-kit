@@ -70,7 +70,7 @@ function MenuItem({
       <div
         data-slot="menu-item-icon"
         className={cn(
-          "peer mr-1 flex items-center justify-center empty:hidden [&_svg]:fill-current",
+          "peer mr-1 flex items-center justify-center empty:hidden [&_svg]:fill-inherit",
           iconChildren.length === 1 && "size-5",
         )}
       >

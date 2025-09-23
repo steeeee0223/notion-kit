@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import { ChevronsLeft, MenuIcon } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
+import { Icon } from "@notion-kit/icons";
 import { Button, TooltipPreset } from "@notion-kit/shadcn";
 
 import { mergeRefs } from "./merge-refs";
@@ -15,12 +15,12 @@ interface SidebarRailProps extends React.ComponentProps<"div"> {
   enableDrag?: boolean;
 }
 
-const SidebarRail: React.FC<SidebarRailProps> = ({
+function SidebarRail({
   ref,
   className,
   enableDrag = true,
   ...props
-}) => {
+}: SidebarRailProps) {
   const { config, toggleSidebar, setWidth, state, width, setIsDraggingRail } =
     useSidebar();
 
@@ -59,13 +59,13 @@ const SidebarRail: React.FC<SidebarRailProps> = ({
       {...props}
     />
   );
-};
+}
 
-const SidebarClose = ({
+function SidebarClose({
   className,
   onClick,
   ...props
-}: React.ComponentProps<typeof Button>) => {
+}: React.ComponentProps<typeof Button>) {
   const { config, isMobile, toggleSidebar } = useSidebar();
 
   return (
@@ -89,17 +89,17 @@ const SidebarClose = ({
         )}
         {...props}
       >
-        <ChevronsLeft className="size-4" />
+        <Icon.ArrowChevronDoubleBackward className="fill-current" />
       </Button>
     </TooltipPreset>
   );
-};
+}
 
-const SidebarOpen = ({
+function SidebarOpen({
   className,
   onClick,
   ...props
-}: React.ComponentProps<typeof Button>) => {
+}: React.ComponentProps<typeof Button>) {
   const { config, toggleSidebar } = useSidebar();
 
   return (
@@ -120,10 +120,10 @@ const SidebarOpen = ({
         className={cn("size-6 p-0 transition", className)}
         {...props}
       >
-        <MenuIcon className="size-4" />
+        <Icon.Menu className="fill-current" />
       </Button>
     </TooltipPreset>
   );
-};
+}
 
 export { SidebarRail, SidebarClose, SidebarOpen };

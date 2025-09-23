@@ -1,15 +1,6 @@
 "use client";
 
 import React from "react";
-import {
-  ArrowUpRight,
-  Copy,
-  Link,
-  MoreHorizontal,
-  Plus,
-  SquarePen,
-  Trash,
-} from "lucide-react";
 
 import { useCopyToClipboard } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
@@ -21,14 +12,17 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
+  MenuItemAction,
   TooltipPreset,
 } from "@notion-kit/shadcn";
 import { toDateString } from "@notion-kit/utils";
 
 import { RenamePopover } from "./rename-popover";
 
-interface ActionGroupProps {
+interface DocItemActionsProps {
   type: "normal" | "favorites";
   title: string;
   icon: IconData;
@@ -41,7 +35,7 @@ interface ActionGroupProps {
   onUpdate: (data: UpdatePageParams) => void;
 }
 
-export const ActionGroup: React.FC<ActionGroupProps> = ({
+export function DocItemActions({
   type,
   title,
   icon,
@@ -52,20 +46,20 @@ export const ActionGroup: React.FC<ActionGroupProps> = ({
   onCreate,
   onDuplicate,
   onUpdate,
-}) => {
+}: DocItemActionsProps) {
   const [, copy] = useCopyToClipboard();
 
   return (
-    <div className="ml-auto flex items-center p-0.5">
+    <MenuItemAction className="flex items-center opacity-0 transition-opacity group-hover/doc-item:opacity-100 focus-within:opacity-100">
       <DropdownMenu>
         <TooltipPreset description="Delete, duplicate, and more...">
           <DropdownMenuTrigger asChild>
             <Button
               variant="hint"
-              className="ml-auto size-auto p-0.5 opacity-0 group-hover:opacity-100"
+              className="size-5"
               onClick={(e) => e.stopPropagation()}
             >
-              <MoreHorizontal className="size-4" />
+              <Icon.Dots className="size-3 fill-secondary" />
             </Button>
           </DropdownMenuTrigger>
         </TooltipPreset>
@@ -74,18 +68,17 @@ export const ActionGroup: React.FC<ActionGroupProps> = ({
           align="start"
           side="right"
           forceMount
-          onClick={(e) => e.stopPropagation()}
         >
           <DropdownMenuGroup>
             {isFavorite ? (
               <DropdownMenuItem
-                Icon={<Icon.Unstar className="size-4 fill-icon" />}
+                Icon={<Icon.StarSlash />}
                 Body="Remove from Favorites"
                 onSelect={() => onUpdate({ isFavorite: false })}
               />
             ) : (
               <DropdownMenuItem
-                Icon={<Icon.Star className="size-4 fill-icon" />}
+                Icon={<Icon.Star />}
                 Body="Add to Favorites"
                 onSelect={() => onUpdate({ isFavorite: true })}
               />
@@ -94,28 +87,25 @@ export const ActionGroup: React.FC<ActionGroupProps> = ({
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem
-              Icon={<Link className="size-4" />}
+              Icon={<Icon.Link />}
               Body="Copy link"
               onSelect={() => void copy(pageLink)}
             />
             {type === "normal" && (
               <DropdownMenuItem
-                Icon={<Copy className="size-4" />}
+                Icon={<Icon.Duplicate />}
                 Body="Duplicate"
                 onSelect={onDuplicate}
               />
             )}
-            <RenamePopover title={title} icon={icon} onChange={onUpdate}>
-              <DropdownMenuItem
-                Icon={<SquarePen className="size-4" />}
-                Body="Rename"
-                onSelect={(e) => e.preventDefault()}
-              />
-            </RenamePopover>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger Icon={<Icon.Compose />} Body="Rename" />
+              <RenamePopover title={title} icon={icon} onChange={onUpdate} />
+            </DropdownMenuSub>
             {type === "normal" && (
               <DropdownMenuItem
                 variant="warning"
-                Icon={<Trash className="size-4" />}
+                Icon={<Icon.Trash />}
                 Body="Move to Trash"
                 onSelect={() => onUpdate({ isArchived: true })}
               />
@@ -124,7 +114,7 @@ export const ActionGroup: React.FC<ActionGroupProps> = ({
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem
-              Icon={<ArrowUpRight className="size-4" />}
+              Icon={<Icon.ArrowDiagonalUpRight />}
               Body="Open in new tab"
               onSelect={() => window.open(pageLink)}
             />
@@ -139,12 +129,15 @@ export const ActionGroup: React.FC<ActionGroupProps> = ({
       <TooltipPreset description="Add a page inside">
         <Button
           variant="hint"
-          className="ml-auto size-auto rounded-sm p-0.5 opacity-0 group-hover:opacity-100"
-          onClick={onCreate}
+          className="size-5"
+          onClick={(e) => {
+            e.stopPropagation();
+            onCreate?.();
+          }}
         >
-          <Plus className="size-4" />
+          <Icon.Plus className="size-3 fill-secondary" />
         </Button>
       </TooltipPreset>
-    </div>
+    </MenuItemAction>
   );
-};
+}

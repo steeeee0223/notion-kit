@@ -155,7 +155,6 @@ export function PropMenu({ propId }: PropMenuProps) {
           {...(property.wrapped
             ? { Icon: <Icon.ArrowLineRight />, Body: "Unwrap text" }
             : { Icon: <Icon.ArrowUTurnDownLeft />, Body: "Wrap text" })}
-          className="[&_svg]:fill-icon"
         />
       </DropdownMenuGroup>
       <Separator />
@@ -174,13 +173,13 @@ export function PropMenu({ propId }: PropMenuProps) {
           <>
             <DropdownMenuItem
               onSelect={duplicateProp}
-              Icon={<Icon.Duplicate className="h-4" />}
+              Icon={<Icon.Duplicate />}
               Body="Duplicate property"
             />
             <DropdownMenuItem
               variant="warning"
               onSelect={deleteProp}
-              Icon={<Icon.Trash className="size-4" />}
+              Icon={<Icon.Trash />}
               Body="Delete property"
             />
           </>

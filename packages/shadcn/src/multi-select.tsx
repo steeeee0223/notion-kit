@@ -260,7 +260,7 @@ function MultiSelect({
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         onKeyDown={() => {}}
         className={cn(
-          "relative min-h-[34px] rounded-md border border-border bg-input/60 text-sm transition-[color,box-shadow] outline-none focus-within:shadow-notion dark:bg-input/5",
+          "relative min-h-[34px] rounded-md border border-border bg-input text-sm transition-[color,box-shadow] outline-none focus-within:shadow-notion",
           selected.length > 0 && "cursor-text py-1 pl-2",
           !disabled && "cursor-text",
           !hideClearAllButton && "pe-9",
