@@ -1,80 +1,70 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useState } from "react";
 
-import { useOrigin } from "@notion-kit/hooks";
 import type { Page, UpdatePageParams } from "@notion-kit/schemas";
-import {
-  buildTree,
-  TreeGroup,
-  TreeItem,
-  TreeList,
-  TreeNode,
-} from "@notion-kit/tree";
+import { TreeItem, TreeList, TreeNode } from "@notion-kit/tree";
 
-import { ActionGroup } from "./_components";
+import { SidebarGroup, SidebarMenuItem } from "../core";
+import { DocItemActions } from "./_components/doc-item-actions";
 
 interface FavoriteListProps {
-  pages: Page[];
+  pages: TreeNode<Page>[];
   activePage?: string | null;
-  isLoading?: boolean;
   onSelect?: (page: Page) => void;
-  onCreate?: (group: string, parentId: string) => void;
+  onCreate?: (group: string, parentId?: string) => void;
   onDuplicate?: (id: string) => void;
   onUpdate?: (id: string, data: UpdatePageParams) => void;
 }
 
-export const FavoriteList: React.FC<FavoriteListProps> = ({
-  pages,
+export function FavoriteList({
+  pages: nodes,
   activePage,
-  isLoading,
   onSelect,
   onCreate,
   onDuplicate,
   onUpdate,
-}) => {
-  const origin = useOrigin();
-  const nodes = useMemo(
-    () =>
-      pages
-        .filter((page) => page.isFavorite && !page.isArchived)
-        .map<TreeNode<Page>>((fav) => ({
-          ...fav,
-          parentId: null,
-          children: buildTree(pages, fav.id),
-        })),
-    [pages],
-  );
+}: FavoriteListProps) {
+  const [showList, setShowList] = useState(true);
 
   return (
-    <TreeGroup title="Favorites" isLoading={isLoading}>
-      <TreeList
-        nodes={nodes}
-        defaultIcon={{ type: "lucide", src: "file" }}
-        selectedId={activePage}
-        renderItem={({ node, ...props }) => (
-          <TreeItem
-            {...props}
-            node={node}
-            className="group"
-            onSelect={() => onSelect?.(node)}
-            expandable={node.type === "document"}
-          >
-            <ActionGroup
-              type={node.isFavorite ? "favorites" : "normal"}
-              title={node.title}
-              icon={node.icon ?? { type: "text", src: node.title }}
-              pageLink={node.url ? `${origin}/${node.url}` : "#"}
-              isFavorite={node.isFavorite}
-              lastEditedBy={node.lastEditedBy}
-              lastEditedAt={node.lastEditedAt}
-              onCreate={() => onCreate?.(node.type, node.id)}
-              onDuplicate={() => onDuplicate?.(node.id)}
-              onUpdate={(data) => onUpdate?.(node.id, data)}
-            />
-          </TreeItem>
-        )}
+    <SidebarGroup>
+      <SidebarMenuItem
+        className="group/doc-list"
+        label={<span className="text-xs/none font-medium">Favorites</span>}
+        aria-expanded={showList}
+        onClick={() => setShowList((prev) => !prev)}
       />
-    </TreeGroup>
+      {showList && (
+        <TreeList
+          nodes={nodes}
+          defaultIcon={{ type: "lucide", src: "file" }}
+          showEmptyChild
+          selectedId={activePage}
+          renderItem={({ node, ...props }) => (
+            <TreeItem
+              {...props}
+              node={node}
+              onSelect={() => onSelect?.(node)}
+              className="group/doc-item"
+              expandable
+            >
+              <DocItemActions
+                type="normal"
+                title={node.title}
+                icon={node.icon ?? { type: "lucide", src: "file" }}
+                pageLink={node.url ?? "#"}
+                isFavorite={node.isFavorite}
+                lastEditedBy={node.lastEditedBy}
+                lastEditedAt={node.lastEditedAt}
+                onCreate={() => onCreate?.(node.type, node.id)}
+                onDuplicate={() => onDuplicate?.(node.id)}
+                onUpdate={(data) => onUpdate?.(node.id, data)}
+              />
+            </TreeItem>
+          )}
+        />
+      )}
+    </SidebarGroup>
   );
-};
+}

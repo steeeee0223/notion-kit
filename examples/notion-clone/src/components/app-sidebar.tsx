@@ -82,7 +82,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarHeader>
       <SidebarContent>
-        <DocList group="document" title="Document" pages={{}} />
+        <DocList group="document" title="Document" pages={[]} />
       </SidebarContent>
       <SidebarFooter className="mb-10" />
       <SidebarRail />

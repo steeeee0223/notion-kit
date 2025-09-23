@@ -11,11 +11,11 @@ interface DocGroupActionsProps {
 
 export function DocGroupActions({ onCreate }: DocGroupActionsProps) {
   return (
-    <MenuItemAction className="flex items-center">
+    <MenuItemAction className="flex items-center opacity-0 transition-opacity group-hover/doc-list:opacity-100 focus-visible:opacity-100">
       <TooltipPreset description="Add a page">
         <Button
           variant="hint"
-          className="size-5 opacity-0 group-hover/doc-list:opacity-100 focus-visible:opacity-100"
+          className="size-5"
           onClick={(e) => {
             e.stopPropagation();
             onCreate?.();

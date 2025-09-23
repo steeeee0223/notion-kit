@@ -83,6 +83,7 @@ function DropdownMenuSubContent({
   return (
     <DropdownMenuPrimitive.SubContent
       data-slot="dropdown-menu-sub-content"
+      // data-side="bottom"
       className={cn(
         "min-w-[8rem] overflow-hidden",
         contentVariants({ variant: "popover", sideAnimation: true }),

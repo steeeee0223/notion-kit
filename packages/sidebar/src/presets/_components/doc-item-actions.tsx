@@ -12,6 +12,8 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
   MenuItemAction,
   TooltipPreset,
@@ -48,16 +50,16 @@ export function DocItemActions({
   const [, copy] = useCopyToClipboard();
 
   return (
-    <MenuItemAction className="flex items-center">
+    <MenuItemAction className="flex items-center opacity-0 transition-opacity group-hover/doc-item:opacity-100 focus-within:opacity-100">
       <DropdownMenu>
         <TooltipPreset description="Delete, duplicate, and more...">
           <DropdownMenuTrigger asChild>
             <Button
               variant="hint"
-              className="size-5 opacity-0 group-hover/doc-item:opacity-100"
+              className="size-5"
               onClick={(e) => e.stopPropagation()}
             >
-              <Icon.Dots className="size-3" />
+              <Icon.Dots className="size-3 fill-secondary" />
             </Button>
           </DropdownMenuTrigger>
         </TooltipPreset>
@@ -66,7 +68,6 @@ export function DocItemActions({
           align="start"
           side="right"
           forceMount
-          onClick={(e) => e.stopPropagation()}
         >
           <DropdownMenuGroup>
             {isFavorite ? (
@@ -97,13 +98,10 @@ export function DocItemActions({
                 onSelect={onDuplicate}
               />
             )}
-            <RenamePopover title={title} icon={icon} onChange={onUpdate}>
-              <DropdownMenuItem
-                Icon={<Icon.Compose />}
-                Body="Rename"
-                onSelect={(e) => e.preventDefault()}
-              />
-            </RenamePopover>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger Icon={<Icon.Compose />} Body="Rename" />
+              <RenamePopover title={title} icon={icon} onChange={onUpdate} />
+            </DropdownMenuSub>
             {type === "normal" && (
               <DropdownMenuItem
                 variant="warning"
@@ -131,13 +129,13 @@ export function DocItemActions({
       <TooltipPreset description="Add a page inside">
         <Button
           variant="hint"
-          className="size-5 opacity-0 group-hover/doc-item:opacity-100"
+          className="size-5"
           onClick={(e) => {
             e.stopPropagation();
             onCreate?.();
           }}
         >
-          <Icon.Plus className="size-3" />
+          <Icon.Plus className="size-3 fill-secondary" />
         </Button>
       </TooltipPreset>
     </MenuItemAction>
