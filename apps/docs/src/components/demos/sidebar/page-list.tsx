@@ -160,7 +160,7 @@ export default function Demo() {
     <DocList
       group={GROUP}
       title="Document"
-      pages={pages.visibleByGroup("document")}
+      pages={pages.visibleByGroup(GROUP)}
     />
   );
 }

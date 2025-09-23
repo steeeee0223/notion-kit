@@ -31,9 +31,9 @@
   "dependencies": {
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/icon-block": "workspace:*",
+    "@notion-kit/icons": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
-    "@notion-kit/spinner": "workspace:*",
-    "lucide-react": "catalog:ui"
+    "@notion-kit/spinner": "workspace:*"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",

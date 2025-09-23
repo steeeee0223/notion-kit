@@ -46,6 +46,7 @@ export function DocList({
       </SidebarMenuItem>
       {showList && (
         <TreeList
+          indent={8}
           nodes={nodes}
           defaultIcon={defaultIcon}
           showEmptyChild={group === "document"}

@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
 import { IconBlock } from "@notion-kit/icon-block";
-import { Button, buttonVariants } from "@notion-kit/shadcn";
+import { Icon } from "@notion-kit/icons";
+import { Button, MenuItem } from "@notion-kit/shadcn";
 
 import type { TreeItemData } from "./types";
 
@@ -17,6 +17,7 @@ export interface TreeItemProps<T extends TreeItemData>
   expandable?: boolean;
   expanded?: boolean;
   isSelected?: boolean;
+  indent?: number;
   onExpand?: () => void;
   onSelect?: () => void;
 }
@@ -28,49 +29,56 @@ function TreeItem<T extends TreeItemData>({
   expandable,
   expanded,
   isSelected,
+  indent = 12,
   children,
   onExpand,
   onSelect,
 }: TreeItemProps<T>) {
   return (
-    <div
-      role="button"
+    <MenuItem
+      role="treeitem"
+      data-slot="tree-item"
+      variant="sidebar"
       id={node.id}
       tabIndex={0}
       aria-label={node.title}
       onClick={onSelect}
       onKeyDown={onSelect}
-      style={{ paddingLeft: `${(level + 1) * 12}px` }}
-      className={cn(
-        buttonVariants({ variant: null }),
-        "relative flex h-[30px] w-full justify-normal py-1 pr-3 font-medium text-secondary",
-        isSelected && "bg-default/10 text-primary",
-        className,
-      )}
+      style={{ paddingLeft: `${(level + 1) * indent}px` }}
+      className={className}
+      aria-expanded={expandable ? expanded : undefined}
+      aria-selected={isSelected}
+      Icon={
+        <div className="group/icon">
+          <Button
+            variant="hint"
+            className={cn(
+              "relative hidden size-5 shrink-0",
+              expandable && "group-hover/icon:flex",
+            )}
+            onClick={(e) => {
+              e.stopPropagation();
+              onExpand?.();
+            }}
+            aria-label={expanded ? "collapse" : "expand"}
+          >
+            <Icon.ChevronDown
+              className={cn(
+                "size-3 rotate-0 transition-[rotate]",
+                !expanded && "-rotate-90",
+              )}
+            />
+          </Button>
+          <IconBlock
+            className={cn(expandable && "group-hover/icon:hidden")}
+            icon={node.icon ?? { type: "text", src: node.title }}
+          />
+        </div>
+      }
+      Body={node.title}
     >
-      <div className="group/icon">
-        <Button
-          variant="hint"
-          className={cn(
-            "relative hidden size-5 shrink-0 p-0.5",
-            expandable && "group-hover/icon:flex",
-          )}
-          onClick={(e) => {
-            e.stopPropagation();
-            onExpand?.();
-          }}
-          aria-label={expanded ? "collapse" : "expand"}
-        >
-          {expanded ? <ChevronDown /> : <ChevronRight />}
-        </Button>
-        <IconBlock
-          className={cn(expandable && "group-hover/icon:hidden")}
-          icon={node.icon ?? { type: "text", src: node.title }}
-        />
-      </div>
-      <span className="ml-1 truncate">{node.title}</span>
       {children}
-    </div>
+    </MenuItem>
   );
 }
 

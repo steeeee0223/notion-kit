@@ -11,7 +11,7 @@ interface DocGroupActionsProps {
 
 export function DocGroupActions({ onCreate }: DocGroupActionsProps) {
   return (
-    <MenuItemAction className="flex items-center opacity-0 transition-opacity group-hover/doc-list:opacity-100 focus-visible:opacity-100">
+    <MenuItemAction className="flex items-center opacity-0 transition-opacity group-hover/doc-list:opacity-100 focus-within:opacity-100">
       <TooltipPreset description="Add a page">
         <Button
           variant="hint"

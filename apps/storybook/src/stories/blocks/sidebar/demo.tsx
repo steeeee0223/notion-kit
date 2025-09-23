@@ -121,6 +121,7 @@ const AppSidebar = () => {
           isOpen={trashOpen}
           pages={pages.archivedPages()}
           onOpenChange={setTrashOpen}
+          onRestore={(id) => pages.update(id, { isArchived: false })}
           onSelect={(page) => pages.setActive(page.id)}
         />
       </SidebarFooter>

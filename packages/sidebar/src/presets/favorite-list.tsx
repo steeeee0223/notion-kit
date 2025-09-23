@@ -37,6 +37,7 @@ export function FavoriteList({
       />
       {showList && (
         <TreeList
+          indent={8}
           nodes={nodes}
           defaultIcon={{ type: "lucide", src: "file" }}
           showEmptyChild
