@@ -33,7 +33,8 @@
     "@notion-kit/hooks": "workspace:*",
     "@notion-kit/icons": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
-    "class-variance-authority": "catalog:ui"
+    "class-variance-authority": "catalog:ui",
+    "shiki": "^3.13.0"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",

@@ -24,7 +24,10 @@ function Demo() {
       <CodeBlock>
         <CodeBlockLang value={lang} onChange={setLang} />
         <CodeBlockToolbar />
-        <CodeBlockContent>Hello world</CodeBlockContent>
+        <CodeBlockContent
+          code="console.log('Hello world!')"
+          lang="typescript"
+        />
         <CodeBlockCaption>Caption</CodeBlockCaption>
       </CodeBlock>
     </div>

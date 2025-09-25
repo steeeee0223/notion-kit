@@ -43,37 +43,6 @@ function CodeBlockCaption({ children, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function CodeBlockContent({ children, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div className="rounded-[10px] p-[22px] dark:bg-default/5" {...props}>
-      <div
-        key="line-numbers notion-code-block"
-        className="flex overflow-x-auto py-3"
-      >
-        <div
-          role="textbox"
-          spellCheck="false"
-          autoCorrect="off"
-          autoCapitalize="off"
-          aria-placeholder=" "
-          contentEditable="true"
-          data-content-editable-leaf="true"
-          tabIndex={0}
-          aria-label="Start typing to edit text"
-          className="min-h-[1em] shrink grow text-start text-[85%] whitespace-pre text-primary focus-visible:outline-none"
-          style={{
-            fontFamily:
-              'SFMono-Regular, Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace',
-            tabSize: 2,
-          }}
-        >
-          {children}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /**
  * @usage
  * import { CodeBlock } from "@notion-kit/code-block"
@@ -86,4 +55,4 @@ function CodeBlockContent({ children, ...props }: React.ComponentProps<"div">) {
  * </CodeBlock>
  */
 
-export { CodeBlock, CodeBlockContent, CodeBlockCaption };
+export { CodeBlock, CodeBlockCaption };
