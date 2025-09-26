@@ -3,10 +3,13 @@ import { useCopyToClipboard } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { Button, toast } from "@notion-kit/shadcn";
 
+import { useCodeBlock } from "./code-block-provider";
+
 export function CodeBlockToolbar() {
   const { copy } = useCopyToClipboard({
     onSuccess: () => toast.success("Code copied to clipboard"),
   });
+  const { state } = useCodeBlock();
 
   return (
     <div
@@ -20,7 +23,7 @@ export function CodeBlockToolbar() {
           tabIndex={0}
           variant={null}
           className="h-[25px] min-w-0 shrink-0 gap-1 rounded-e-none px-1.5 text-[11.5px]/[1.2]"
-          onClick={() => copy("Hello world!")} // TODO: pass the actual code string here
+          onClick={() => copy(state.code)}
         >
           <Icon.Copy className="size-4 fill-current" />
           Copy

@@ -17,19 +17,16 @@ import {
   PopoverTrigger,
 } from "@notion-kit/shadcn";
 
+import { useCodeBlock } from "./code-block-provider";
 import { CODE_BLOCK_LANGUAGES } from "./constant";
 
 interface CodeBlockCaptionProps {
   className?: string;
-  value?: string;
-  onChange?: (lang: string) => void;
 }
 
-export function CodeBlockLang({
-  className,
-  value = "plain-text",
-  onChange,
-}: CodeBlockCaptionProps) {
+export function CodeBlockLang({ className }: CodeBlockCaptionProps) {
+  const { state, store } = useCodeBlock();
+
   const { search, results, updateSearch } = useFilter(
     CODE_BLOCK_LANGUAGES,
     (lang, v) => lang.value.toLowerCase().includes(v),
@@ -53,7 +50,10 @@ export function CodeBlockLang({
             variant={null}
             className="h-5 min-w-0 shrink-0 px-1.5 text-xs/[1.2] text-secondary"
           >
-            {CODE_BLOCK_LANGUAGES.find((lang) => lang.value === value)?.label}
+            {
+              CODE_BLOCK_LANGUAGES.find((lang) => lang.value === state.lang)
+                ?.label
+            }
             <Icon.ChevronDown className="size-2.5 fill-icon" />
           </Button>
         </PopoverTrigger>
@@ -74,10 +74,10 @@ export function CodeBlockLang({
                       asChild
                       key={lang.value}
                       value={lang.value}
-                      onSelect={onChange}
+                      onSelect={(lang) => store.updateHtml({ lang })}
                     >
                       <MenuItem Body={lang.label}>
-                        {lang.value === value && <MenuItemCheck />}
+                        {lang.value === state.lang && <MenuItemCheck />}
                       </MenuItem>
                     </CommandItem>
                   ))}

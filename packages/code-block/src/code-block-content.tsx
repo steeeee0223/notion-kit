@@ -1,38 +1,9 @@
-import React, { useLayoutEffect, useState } from "react";
-import { jsx, jsxs } from "react/jsx-runtime";
-import { toJsxRuntime } from "hast-util-to-jsx-runtime";
-import type { BundledLanguage } from "shiki/bundle/web";
-import { codeToHast } from "shiki/bundle/web";
+import React from "react";
 
-export async function highlight(code: string, lang: BundledLanguage | "text") {
-  const out = await codeToHast(code, {
-    lang,
-    theme: "github-dark",
-  });
+import { useEditableContent } from "./use-code-block-content";
 
-  return toJsxRuntime(out, {
-    Fragment: React.Fragment,
-    jsx,
-    jsxs,
-  }) as React.JSX.Element;
-}
-
-interface CodeBlockContentProps extends React.ComponentProps<"div"> {
-  lang?: BundledLanguage | "text";
-  code?: string;
-}
-
-export function CodeBlockContent({
-  lang = "text",
-  code = "",
-  children,
-  ...props
-}: CodeBlockContentProps) {
-  const [nodes, setNodes] = useState<React.ReactNode>(null);
-
-  useLayoutEffect(() => {
-    void highlight(code, lang).then(setNodes);
-  }, [code, lang]);
+export function CodeBlockContent({ ...props }: React.ComponentProps<"div">) {
+  const { props: contentEditableProps } = useEditableContent();
 
   return (
     <div className="rounded-[10px] p-[22px] dark:bg-default/5" {...props}>
@@ -56,10 +27,8 @@ export function CodeBlockContent({
               'SFMono-Regular, Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace',
             tabSize: 2,
           }}
-        >
-          {nodes}
-          {children}
-        </div>
+          {...contentEditableProps}
+        ></div>
       </div>
     </div>
   );
