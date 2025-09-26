@@ -2,20 +2,24 @@
 
 import React from "react";
 
+import { CodeBlockProvider } from "./code-block-provider";
+
 function CodeBlock({ children, ...props }: React.ComponentProps<"div">) {
   return (
-    <div className="flex">
-      <div
-        contentEditable={false}
-        data-content-editable-void="true"
-        role="figure"
-        aria-labelledby={props.id}
-        className="group/code-block relative w-full min-w-0 grow rounded-[10px] text-start"
-        {...props}
-      >
-        {children}
+    <CodeBlockProvider>
+      <div className="flex">
+        <div
+          contentEditable={false}
+          data-content-editable-void="true"
+          role="figure"
+          aria-labelledby={props.id}
+          className="group/code-block relative w-full min-w-0 grow rounded-[10px] text-start"
+          {...props}
+        >
+          {children}
+        </div>
       </div>
-    </div>
+    </CodeBlockProvider>
   );
 }
 

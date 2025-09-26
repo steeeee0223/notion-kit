@@ -57,7 +57,7 @@ export const CODE_BLOCK_LANGUAGES = [
   { value: "pascal", label: "Pascal" },
   { value: "perl", label: "Perl" },
   { value: "php", label: "PHP" },
-  { value: "plain-text", label: "Plain Text" },
+  { value: "text", label: "Plain Text" },
   { value: "powershell", label: "PowerShell" },
   { value: "prolog", label: "Prolog" },
   { value: "protobuf", label: "Protobuf" },

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 import {
@@ -18,16 +17,12 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 function Demo() {
-  const [lang, setLang] = useState("plain-text");
   return (
     <div className="min-w-200">
       <CodeBlock>
-        <CodeBlockLang value={lang} onChange={setLang} />
+        <CodeBlockLang />
         <CodeBlockToolbar />
-        <CodeBlockContent
-          code="console.log('Hello world!')"
-          lang="typescript"
-        />
+        <CodeBlockContent />
         <CodeBlockCaption>Caption</CodeBlockCaption>
       </CodeBlock>
     </div>

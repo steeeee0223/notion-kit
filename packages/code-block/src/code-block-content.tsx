@@ -1,64 +1,83 @@
-import React, { useLayoutEffect, useState } from "react";
-import { jsx, jsxs } from "react/jsx-runtime";
-import { toJsxRuntime } from "hast-util-to-jsx-runtime";
-import type { BundledLanguage } from "shiki/bundle/web";
-import { codeToHast } from "shiki/bundle/web";
+"use client";
 
-export async function highlight(code: string, lang: BundledLanguage | "text") {
-  const out = await codeToHast(code, {
-    lang,
-    theme: "github-dark",
-  });
+import React, { useCallback, useRef } from "react";
 
-  return toJsxRuntime(out, {
-    Fragment: React.Fragment,
-    jsx,
-    jsxs,
-  }) as React.JSX.Element;
-}
+import { useCodeBlock } from "./code-block-provider";
 
-interface CodeBlockContentProps extends React.ComponentProps<"div"> {
-  lang?: BundledLanguage | "text";
-  code?: string;
-}
+/**
+ * CodeBlockContent uses the Shiki playground pattern:
+ * - A <span> displays the syntax-highlighted HTML
+ * - A transparent <textarea> overlays it for editing
+ * - The user types in the textarea but sees the highlighted code
+ */
+export function CodeBlockContent({ ...props }: React.ComponentProps<"div">) {
+  const { state, store } = useCodeBlock();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const highlightRef = useRef<HTMLSpanElement>(null);
 
-export function CodeBlockContent({
-  lang = "text",
-  code = "",
-  children,
-  ...props
-}: CodeBlockContentProps) {
-  const [nodes, setNodes] = useState<React.ReactNode>(null);
+  // Sync scroll between textarea and highlighted code
+  const syncScroll = useCallback(() => {
+    if (!highlightRef.current || !textareaRef.current) return;
+    const preEl = highlightRef.current.querySelector("pre");
+    if (!preEl) return;
+    preEl.scrollLeft = textareaRef.current.scrollLeft;
+    preEl.scrollTop = textareaRef.current.scrollTop;
+  }, []);
 
-  useLayoutEffect(() => {
-    void highlight(code, lang).then(setNodes);
-  }, [code, lang]);
+  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    store.updateCode(e.target.value);
+    // Sync scroll after input
+    requestAnimationFrame(syncScroll);
+  };
+
+  // Common font styles for both textarea and highlighted code
+  const fontStyle: React.CSSProperties = {
+    fontFamily:
+      'SFMono-Regular, Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace',
+    tabSize: 2,
+    lineHeight: 1.5,
+  };
 
   return (
-    <div className="rounded-[10px] p-[22px] dark:bg-default/5" {...props}>
+    <div
+      className="rounded-[10px] bg-[rgba(66,35,3,.031)] p-[22px] dark:bg-default/5"
+      {...props}
+    >
       <div
         key="line-numbers notion-code-block"
         className="flex overflow-x-auto py-3"
       >
+        {/* Container for overlay pattern */}
         <div
-          role="textbox"
-          spellCheck="false"
-          autoCorrect="off"
-          autoCapitalize="off"
-          aria-placeholder=" "
-          contentEditable="true"
-          data-content-editable-leaf="true"
-          tabIndex={0}
-          aria-label="Start typing to edit text"
-          className="min-h-[1em] shrink grow text-start text-[85%] whitespace-pre text-primary focus-visible:outline-none"
-          style={{
-            fontFamily:
-              'SFMono-Regular, Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace',
-            tabSize: 2,
-          }}
+          className="relative min-h-[1em] shrink grow text-start text-[85%] whitespace-pre text-primary"
+          style={fontStyle}
         >
-          {nodes}
-          {children}
+          {/* Highlighted code display */}
+          <span
+            ref={highlightRef}
+            aria-hidden="true"
+            className="pointer-events-none [&>pre]:m-0 [&>pre]:bg-transparent! [&>pre]:p-0 [&>pre]:leading-[inherit] [&>pre>code]:block"
+            dangerouslySetInnerHTML={{ __html: state.html }}
+          />
+
+          {/* Editable textarea overlay */}
+          <textarea
+            ref={textareaRef}
+            value={state.code}
+            onChange={handleInput}
+            onScroll={syncScroll}
+            spellCheck={false}
+            autoCorrect="off"
+            autoCapitalize="off"
+            autoComplete="off"
+            aria-label="Code editor"
+            className="absolute inset-0 h-full w-full resize-none bg-transparent text-transparent caret-primary focus-visible:outline-none"
+            style={{
+              ...fontStyle,
+              // Match Shiki's default code block padding
+              padding: "inherit",
+            }}
+          />
         </div>
       </div>
     </div>
