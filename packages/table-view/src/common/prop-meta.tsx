@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { useInputField } from "@notion-kit/hooks";
 import { IconBlock } from "@notion-kit/icon-block";
 import { IconMenu } from "@notion-kit/icon-menu";
 import { Icon } from "@notion-kit/icons";
@@ -11,7 +12,6 @@ import type { Column } from "../lib/types";
 import { CellPlugin } from "../plugins";
 import { UpdateColumnPayload } from "../table-contexts";
 import { DefaultIcon } from "./default-icon";
-import { useInputField } from "./use-input-field";
 
 interface PropMetaProps<TPlugin extends CellPlugin = CellPlugin> {
   property: Pick<Column<TPlugin>, "type" | "icon" | "name" | "description">;
