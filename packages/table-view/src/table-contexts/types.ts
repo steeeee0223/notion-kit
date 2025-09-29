@@ -22,7 +22,6 @@ export type UpdateColumnPayload<TPlugin extends CellPlugin> = Partial<
     | "wrapped"
     | "hidden"
     | "isDeleted"
-    | "countMethod"
   >
 >;
 

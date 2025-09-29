@@ -83,10 +83,6 @@ export type TableViewAction<TPlugins extends CellPlugin[]> =
       type: "delete:col" | "duplicate:col" | "delete:row" | "duplicate:row";
       payload: { id: string };
     }
-  | {
-      type: "update:count:cap";
-      payload: { id: string; updater: Updater<boolean> };
-    }
   | { type: "add:row"; payload?: { id: string; at: "prev" | "next" } }
   | { type: "update:row:icon"; payload: { id: string; icon: IconData | null } }
   | {
@@ -245,15 +241,6 @@ function tableViewReducer<TPlugins extends CellPlugin[]>(
         freezedIndex: v.freezedIndex - Number(idx <= v.freezedIndex),
         data,
       };
-    }
-    case "update:count:cap": {
-      const prop = v.properties[a.payload.id];
-      if (!prop) return v;
-      prop.isCountCapped = getState(
-        a.payload.updater,
-        prop.isCountCapped ?? false,
-      );
-      return { ...v, properties: { ...v.properties, [a.payload.id]: prop } };
     }
     case "update:col:meta": {
       const { type, actions } = a.payload;

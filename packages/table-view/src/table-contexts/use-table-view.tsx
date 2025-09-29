@@ -18,14 +18,9 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table";
 
-import { CountMethod } from "../lib/types";
+import { CountingFeature } from "../features";
 import type { PluginsMap, Row } from "../lib/types";
-import {
-  arrayToEntity,
-  getCount,
-  isCountMethodSet,
-  type Entity,
-} from "../lib/utils";
+import { arrayToEntity, getCount, type Entity } from "../lib/utils";
 import type { CellPlugin, InferConfig, InferPlugin } from "../plugins";
 import { TableRowCell } from "../table-body";
 import { TableFooterCell } from "../table-footer";
@@ -160,8 +155,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
             <TableFooterCell
               id={property.id}
               type={property.type}
-              countMethod={property.countMethod ?? CountMethod.NONE}
-              isCountCapped={property.isCountCapped}
               width={`calc(var(--col-${property.id}-size) * 1px)`}
             />
           ),
@@ -204,6 +197,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       maxSize: Number.MAX_SAFE_INTEGER,
     },
     columnResizeMode: "onChange",
+    enableColumnCounting: true,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     state: {
@@ -214,6 +208,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     },
     onSortingChange: (updater) => dispatch({ type: "update:sorting", updater }),
     getRowId: (row) => row.id,
+    _features: [CountingFeature],
   });
 
   /**
@@ -275,7 +270,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       properties: _state.properties,
       isPropertyUnique: (name) => properties.every((p) => p.name !== name),
       canFreezeProperty: (id) => table.getState().columnOrder.at(-1) !== id,
-      isSomeCountMethodSet: isCountMethodSet(_state.properties),
       getColumnCount: (colId, type, method) => {
         const plugin = plugins.items[type]!;
         return getCount(
@@ -291,7 +285,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     return {
       ...uncontrolled,
       properties: colData.items,
-      isSomeCountMethodSet: isCountMethodSet(colData.items),
       getColumnCount: (colId, type, method) => {
         const plugin = plugins.items[type]!;
         return getCount(

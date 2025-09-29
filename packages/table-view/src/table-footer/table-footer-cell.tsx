@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@notion-kit/shadcn";
 
-import { CountMethod } from "../lib/types";
+import { CountMethod } from "../features";
 import { CalcMenu, countMethodHint } from "../menus";
 import type { CellPlugin, InferKey } from "../plugins";
 import { useTableViewCtx } from "../table-contexts";
@@ -16,16 +16,10 @@ import { useTableViewCtx } from "../table-contexts";
 interface TableFooterCellProps {
   id: string; // column id
   type: InferKey<CellPlugin>;
-  countMethod: CountMethod;
-  isCountCapped?: boolean;
   width?: string;
 }
 
-export function TableFooterCell({
-  isCountCapped,
-  width,
-  ...props
-}: TableFooterCellProps) {
+export function TableFooterCell({ width, ...props }: TableFooterCellProps) {
   return (
     <div className="flex" style={{ width }}>
       <DropdownMenu>
@@ -39,7 +33,7 @@ export function TableFooterCell({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-50" align="start" alignOffset={-4}>
-          <CalcMenu {...props} isCountCapped={isCountCapped} />
+          <CalcMenu {...props} />
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
@@ -49,13 +43,13 @@ export function TableFooterCell({
 interface CountDisplayProps {
   id: string;
   type: InferKey<CellPlugin>;
-  countMethod: CountMethod;
 }
 
-function CountDisplay({ id, type, countMethod }: CountDisplayProps) {
-  const { getColumnCount } = useTableViewCtx();
+function CountDisplay({ id, type }: CountDisplayProps) {
+  const { table, getColumnCount } = useTableViewCtx();
+  const counting = table.getColumnCounting(id);
 
-  return countMethod === CountMethod.NONE ? (
+  return counting.method === CountMethod.NONE ? (
     <div className="flex items-center opacity-100 transition-opacity duration-200">
       <div className="flex items-center">
         <span className="text-muted">
@@ -67,10 +61,10 @@ function CountDisplay({ id, type, countMethod }: CountDisplayProps) {
   ) : (
     <div className="flex items-center justify-center gap-1">
       <span className="mt-0.5 text-[10px] tracking-[1px] text-muted uppercase select-none">
-        {countMethodHint[countMethod].label}
+        {countMethodHint[counting.method].label}
       </span>
       <span className="flex h-full items-center">
-        {getColumnCount(id, type, countMethod)}
+        {getColumnCount(id, type, counting.method)}
       </span>
     </div>
   );

@@ -14,7 +14,6 @@ import {
 } from "@notion-kit/shadcn";
 
 import { PropMeta } from "../common";
-import { CountMethod } from "../lib/types";
 import { extractColumnConfig } from "../lib/utils";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { CalcMenu } from "./calc-menu";
@@ -127,12 +126,7 @@ export function PropMenu({ propId }: PropMenuProps) {
             className="w-50"
             collisionPadding={12}
           >
-            <CalcMenu
-              id={propId}
-              type={property.type}
-              countMethod={property.countMethod ?? CountMethod.NONE}
-              isCountCapped={property.isCountCapped}
-            />
+            <CalcMenu id={propId} type={property.type} />
           </DropdownMenuSubContent>
         </DropdownMenuSub>
         <DropdownMenuItem

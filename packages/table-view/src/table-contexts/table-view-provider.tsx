@@ -41,11 +41,6 @@ export function TableViewProvider<
       toggleAllColumns: (hidden) =>
         dispatch({ type: "update:col:visibility", payload: { hidden } }),
       freezeColumns: (id) => dispatch({ type: "freeze:col", payload: { id } }),
-      toggleCountCap: (id) =>
-        dispatch({
-          type: "update:count:cap",
-          payload: { id, updater: (prev: boolean) => !prev },
-        }),
       addRow: (src) => dispatch({ type: "add:row", payload: src }),
       updateRowIcon: (id, icon) =>
         dispatch({ type: "update:row:icon", payload: { id, icon } }),

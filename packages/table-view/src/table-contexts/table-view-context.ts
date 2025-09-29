@@ -10,8 +10,8 @@ import type { Table } from "@tanstack/react-table";
 
 import type { IconData } from "@notion-kit/icon-block";
 
+import { CountMethod } from "../features";
 import type { Column, PluginType, Row } from "../lib/types";
-import { CountMethod } from "../lib/types";
 import type { Entity } from "../lib/utils";
 import type { CellPlugin, InferKey } from "../plugins";
 import type { TableViewAction } from "./table-reducer";
@@ -25,7 +25,6 @@ export interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
   columnSizeVars: Record<string, number>;
   isPropertyUnique: (name: string) => boolean;
   canFreezeProperty: (id: string) => boolean;
-  isSomeCountMethodSet: boolean;
   getColumnCount: <TPlugin extends CellPlugin>(
     colId: string,
     type: InferKey<TPlugin>,
@@ -59,7 +58,6 @@ export interface TableActions<TPlugins extends CellPlugin[] = CellPlugin[]> {
   toggleAllColumns: (hidden: boolean) => void;
   updateColumnType: (id: string, type: PluginType<TPlugins>) => void;
   freezeColumns: (id: string | null) => void;
-  toggleCountCap: (id: string) => void;
   addRow: (src?: { id: string; at: "prev" | "next" }) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
   reorder: (e: DragEndEvent, type: ActionType) => void;
