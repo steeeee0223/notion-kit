@@ -14,11 +14,10 @@ import {
   useReactTable,
   type ColumnDef,
   type ColumnOrderState,
-  type ColumnPinningState,
   type VisibilityState,
 } from "@tanstack/react-table";
 
-import { CountingFeature, WrappingFeature } from "../features";
+import { CountingFeature, FreezingFeature, WrappingFeature } from "../features";
 import type { PluginsMap, Row } from "../lib/types";
 import { arrayToEntity, getCount, type Entity } from "../lib/utils";
 import type { CellPlugin, InferConfig, InferPlugin } from "../plugins";
@@ -172,16 +171,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     [properties],
   );
 
-  const columnPinning = useMemo<ColumnPinningState>(() => {
-    return {
-      left: props.state
-        ? props.state.properties
-            .slice(0, _state.freezedIndex + 1)
-            .map((prop) => prop.id)
-        : _state.propertiesOrder.slice(0, _state.freezedIndex + 1),
-    };
-  }, [props.state, _state.propertiesOrder, _state.freezedIndex]);
-
   const columnOrder = useMemo<ColumnOrderState>(
     () =>
       props.state?.properties.map((prop) => prop.id) ?? _state.propertiesOrder,
@@ -203,11 +192,10 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       sorting: _state.table.sorting,
       columnOrder,
       columnVisibility,
-      columnPinning,
     },
     onSortingChange: (updater) => dispatch({ type: "update:sorting", updater }),
     getRowId: (row) => row.id,
-    _features: [CountingFeature, WrappingFeature],
+    _features: [CountingFeature, FreezingFeature, WrappingFeature],
   });
 
   /**
@@ -268,7 +256,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       dataOrder,
       properties: _state.properties,
       isPropertyUnique: (name) => properties.every((p) => p.name !== name),
-      canFreezeProperty: (id) => table.getState().columnOrder.at(-1) !== id,
       getColumnCount: (colId, type, method) => {
         const plugin = plugins.items[type]!;
         return getCount(

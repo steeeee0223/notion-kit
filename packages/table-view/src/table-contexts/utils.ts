@@ -14,8 +14,6 @@ import type { TitlePlugin } from "../plugins/title";
 import type { TableViewAtom } from "./table-reducer";
 import type { PartialTableState } from "./types";
 
-export const DEFAULT_FREEZED_INDEX = -1;
-
 export function getMinWidth(type: PluginType<CellPlugin[]>) {
   switch (type) {
     case "checkbox":
@@ -84,7 +82,6 @@ export function getTableViewAtom<TPlugins extends CellPlugin[]>(
     propertiesOrder: columnData.ids,
     data: rowData.items,
     dataOrder: rowData.ids,
-    freezedIndex: DEFAULT_FREEZED_INDEX,
   };
 }
 

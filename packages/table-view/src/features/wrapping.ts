@@ -9,7 +9,6 @@ import type {
 import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
 
 // define types for our new feature's custom state
-
 export type WrappingState = Record<string, boolean>;
 
 export interface WrappingTableState {

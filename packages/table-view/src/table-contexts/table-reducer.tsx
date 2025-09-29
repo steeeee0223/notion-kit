@@ -39,11 +39,6 @@ export interface TableViewAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {
    */
   properties: Record<string, Column<InferPlugin<TPlugins>>>;
   /**
-   * @field column freezing up to the given `index` in `propertiesOrder`
-   * @note returns -1 if no column is freezing
-   */
-  freezedIndex: number;
-  /**
    * @field array of ordered property (column) ids
    * @note freezed columns: `propertiesOrder.slice(0, freezedIndex + 1)`
    */
@@ -78,7 +73,6 @@ export type TableViewAction<TPlugins extends CellPlugin[]> =
     }
   | { type: "update:col:visibility"; payload: { hidden: boolean } }
   | { type: "reorder:col" | "reorder:row"; updater: Updater<string[]> }
-  | { type: "freeze:col"; payload: { id: string | null } }
   | {
       type: "delete:col" | "duplicate:col" | "delete:row" | "duplicate:row";
       payload: { id: string };
@@ -214,14 +208,8 @@ function tableViewReducer<TPlugins extends CellPlugin[]>(
         ...v,
         properties: { ...v.properties, [prop.id]: prop },
         propertiesOrder: insertAt(v.propertiesOrder, prop.id, idx + 1),
-        freezedIndex: v.freezedIndex + Number(idx <= v.freezedIndex),
         data,
       };
-    }
-    case "freeze:col": {
-      const freezedIndex =
-        a.payload.id !== null ? v.propertiesOrder.indexOf(a.payload.id) : -1;
-      return { ...v, freezedIndex };
     }
     case "delete:col": {
       const idx = v.propertiesOrder.indexOf(a.payload.id);
@@ -238,7 +226,6 @@ function tableViewReducer<TPlugins extends CellPlugin[]>(
         propertiesOrder: v.propertiesOrder.filter(
           (colId) => colId !== a.payload.id,
         ),
-        freezedIndex: v.freezedIndex - Number(idx <= v.freezedIndex),
         data,
       };
     }
@@ -315,7 +302,6 @@ function tableViewReducer<TPlugins extends CellPlugin[]>(
         },
         properties: {},
         propertiesOrder: [],
-        freezedIndex: -1,
         dataOrder: [],
         data: {},
       };

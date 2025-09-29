@@ -43,9 +43,8 @@ interface PropMenuProps {
  * 11. ✅ Delete property
  */
 export function PropMenu({ propId }: PropMenuProps) {
-  const { plugins, table, properties, isPropertyUnique, canFreezeProperty } =
-    useTableViewCtx();
-  const { updateColumn, duplicate, freezeColumns } = useTableActions();
+  const { plugins, table, properties, isPropertyUnique } = useTableViewCtx();
+  const { updateColumn, duplicate } = useTableActions();
   const { openMenu } = useMenu();
 
   const property = properties[propId]!;
@@ -55,9 +54,9 @@ export function PropMenu({ propId }: PropMenuProps) {
   const sortColumn = (desc: boolean) =>
     table.setSorting([{ id: propId, desc }]);
   // 6. Pin columns
-  const canFreeze = canFreezeProperty(property.id);
-  const canUnfreeze = table.getColumn(property.id)?.getIsLastColumn("left");
-  const pinColumns = () => freezeColumns(canUnfreeze ? null : property.id);
+  const canFreeze = table.getCanFreezeColumn(property.id);
+  const canUnfreeze = table.getFreezingState()?.colId === property.id;
+  const pinColumns = () => table.toggleColumnFreezed(property.id);
   // 7. Hide in view
   const hideProp = () => updateColumn(property.id, { hidden: true });
   // 8. Wrap in view

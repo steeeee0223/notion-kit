@@ -24,7 +24,6 @@ export interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
   dataOrder: string[];
   columnSizeVars: Record<string, number>;
   isPropertyUnique: (name: string) => boolean;
-  canFreezeProperty: (id: string) => boolean;
   getColumnCount: <TPlugin extends CellPlugin>(
     colId: string,
     type: InferKey<TPlugin>,
@@ -57,7 +56,6 @@ export interface TableActions<TPlugins extends CellPlugin[] = CellPlugin[]> {
   ) => void;
   toggleAllColumns: (hidden: boolean) => void;
   updateColumnType: (id: string, type: PluginType<TPlugins>) => void;
-  freezeColumns: (id: string | null) => void;
   addRow: (src?: { id: string; at: "prev" | "next" }) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
   reorder: (e: DragEndEvent, type: ActionType) => void;

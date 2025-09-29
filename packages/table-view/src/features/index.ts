@@ -6,6 +6,11 @@ import type {
   CountingTableState,
 } from "./counting";
 import type {
+  FreezingInstance,
+  FreezingOptions,
+  FreezingTableState,
+} from "./freezing";
+import type {
   WrappingColumnApi,
   WrappingInstance,
   WrappingOptions,
@@ -14,15 +19,20 @@ import type {
 
 declare module "@tanstack/react-table" {
   //merge our new feature's state with the existing table state
-  interface TableState extends CountingTableState, WrappingTableState {}
+  interface TableState
+    extends CountingTableState,
+      WrappingTableState,
+      FreezingTableState {}
   //merge our new feature's options with the existing table options
   interface TableOptionsResolved<TData extends RowData>
     extends CountingOptions,
-      WrappingOptions {}
+      WrappingOptions,
+      FreezingOptions {}
   //merge our new feature's instance APIs with the existing table instance APIs
   interface Table<TData extends RowData>
     extends CountingInstance,
-      WrappingInstance {}
+      WrappingInstance,
+      FreezingInstance {}
 
   // interface TableMeta<TData extends RowData> {
   //   updateData: (rowIndex: number, columnId: string, value: unknown) => void;
@@ -33,4 +43,5 @@ declare module "@tanstack/react-table" {
 }
 
 export * from "./counting";
+export * from "./freezing";
 export * from "./wrapping";

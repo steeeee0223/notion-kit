@@ -40,7 +40,6 @@ export function TableViewProvider<
         dispatch({ type: "update:col:type", payload: { id, type } }),
       toggleAllColumns: (hidden) =>
         dispatch({ type: "update:col:visibility", payload: { hidden } }),
-      freezeColumns: (id) => dispatch({ type: "freeze:col", payload: { id } }),
       addRow: (src) => dispatch({ type: "add:row", payload: src }),
       updateRowIcon: (id, icon) =>
         dispatch({ type: "update:row:icon", payload: { id, icon } }),
