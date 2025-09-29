@@ -52,7 +52,7 @@ export const FreezingFeature: TableFeature = {
     const throwIfDisabled = () => {
       if (!table.options.enableColumnFreezing) {
         throw new Error(
-          `[TableView] Column Freezing is not enabled. To enable, pass \`enableFreezing: true\` to your table options.`,
+          `[TableView] Column Freezing is not enabled. To enable, pass \`enableColumnFreezing: true\` to your table options.`,
         );
       }
     };

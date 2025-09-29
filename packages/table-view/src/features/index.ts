@@ -24,11 +24,13 @@ declare module "@tanstack/react-table" {
       WrappingTableState,
       FreezingTableState {}
   //merge our new feature's options with the existing table options
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface TableOptionsResolved<TData extends RowData>
     extends CountingOptions,
       WrappingOptions,
       FreezingOptions {}
   //merge our new feature's instance APIs with the existing table instance APIs
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Table<TData extends RowData>
     extends CountingInstance,
       WrappingInstance,
@@ -38,8 +40,8 @@ declare module "@tanstack/react-table" {
   //   updateData: (rowIndex: number, columnId: string, value: unknown) => void;
   // }
 
-  interface Column<TData extends RowData, TValue = unknown>
-    extends WrappingColumnApi {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-object-type
+  interface Column<TData extends RowData> extends WrappingColumnApi {}
 }
 
 export * from "./counting";

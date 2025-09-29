@@ -56,7 +56,7 @@ export const WrappingFeature: TableFeature = {
     table.getIsColumnWrapped = (colId) => {
       if (!table.options.enableColumnWrapping) {
         throw new Error(
-          `[TableView] Column Wrapping is not enabled. To enable, pass \`enableWrapping: true\` to your table options.`,
+          `[TableView] Column Wrapping is not enabled. To enable, pass \`enableColumnWrapping: true\` to your table options.`,
         );
       }
       return table.getState().columnWrapping[colId] ?? false;

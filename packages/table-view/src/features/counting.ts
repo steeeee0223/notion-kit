@@ -67,17 +67,13 @@ export const CountingFeature: TableFeature = {
       onColumnCountingChange: makeStateUpdater("columnCounting", table),
     };
   },
-  // if you need to add a default column definition...
-  // getDefaultColumnDef: <TData extends RowData>(): Partial<ColumnDef<TData>> => {
-  //   return { meta: {} } //use meta instead of directly adding to the columnDef to avoid typescript stuff that's hard to workaround
-  // },
 
   // define the new feature's table instance methods
   createTable: <TData extends RowData>(table: Table<TData>): void => {
     table.getColumnCounting = (colId) => {
       if (!table.options.enableColumnCounting) {
         throw new Error(
-          `[TableView] Column counting is not enabled. To enable, pass \`enableCounting: true\` to your table options.`,
+          `[TableView] Column counting is not enabled. To enable, pass \`enableColumnCounting: true\` to your table options.`,
         );
       }
       const counting = table.getState().columnCounting;
