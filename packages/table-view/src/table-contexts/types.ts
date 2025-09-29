@@ -15,13 +15,7 @@ export interface AddColumnPayload<TPlugins extends CellPlugin[]> {
 export type UpdateColumnPayload<TPlugin extends CellPlugin> = Partial<
   Pick<
     Column<TPlugin>,
-    | "name"
-    | "icon"
-    | "description"
-    | "width"
-    | "wrapped"
-    | "hidden"
-    | "isDeleted"
+    "name" | "icon" | "description" | "width" | "hidden" | "isDeleted"
   >
 >;
 

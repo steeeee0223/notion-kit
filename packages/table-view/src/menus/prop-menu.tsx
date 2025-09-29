@@ -61,8 +61,7 @@ export function PropMenu({ propId }: PropMenuProps) {
   // 7. Hide in view
   const hideProp = () => updateColumn(property.id, { hidden: true });
   // 8. Wrap in view
-  const wrapProp = () =>
-    updateColumn(property.id, { wrapped: !property.wrapped });
+  const wrapProp = () => table.toggleColumnWrapped(property.id, (v) => !v);
   // 9. Insert left/right
   const insertColumn = (side: "left" | "right") => {
     openMenu(<TypesMenu propId={null} at={{ id: propId, side }} />, {
@@ -146,7 +145,7 @@ export function PropMenu({ propId }: PropMenuProps) {
         )}
         <DropdownMenuItem
           onSelect={wrapProp}
-          {...(property.wrapped
+          {...(table.getIsColumnWrapped(property.id)
             ? { Icon: <Icon.ArrowLineRight />, Body: "Unwrap text" }
             : { Icon: <Icon.ArrowUTurnDownLeft />, Body: "Wrap text" })}
         />

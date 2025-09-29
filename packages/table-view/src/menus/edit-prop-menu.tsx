@@ -35,7 +35,7 @@ interface EditPropMenuProps {
  * 6. ✅ Delete property
  */
 export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
-  const { properties, isPropertyUnique } = useTableViewCtx();
+  const { table, properties, isPropertyUnique } = useTableViewCtx();
   const { updateColumn, duplicate } = useTableActions();
   const { openMenu, closeMenu } = useMenu();
 
@@ -47,8 +47,7 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
   const openTypesMenu = () =>
     openMenu(<TypesMenu propId={property.id} />, { x: -12, y: -12 });
   // 3. Wrap in view
-  const wrapProp = () =>
-    updateColumn(property.id, { wrapped: !property.wrapped });
+  const wrapProp = () => table.toggleColumnWrapped(property.id, (v) => !v);
   // 4. Hide in view
   const hideProp = () => {
     updateColumn(property.id, { hidden: true });
@@ -140,7 +139,7 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
           Body="Wrap in view"
         >
           <MenuItemAction className="flex items-center">
-            <Switch size="sm" checked={property.wrapped} />
+            <Switch size="sm" checked={table.getIsColumnWrapped(property.id)} />
           </MenuItemAction>
         </MenuItem>
         {property.type !== "title" && (

@@ -18,7 +18,7 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table";
 
-import { CountingFeature } from "../features";
+import { CountingFeature, WrappingFeature } from "../features";
 import type { PluginsMap, Row } from "../lib/types";
 import { arrayToEntity, getCount, type Entity } from "../lib/utils";
 import type { CellPlugin, InferConfig, InferPlugin } from "../plugins";
@@ -137,7 +137,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
                 propId={property.id}
                 config={property.config as InferConfig<InferPlugin<TPlugins>>}
                 width={`calc(var(--col-${property.id}-size) * 1px)`}
-                wrapped={property.wrapped}
+                wrapped={column.getIsWrapped()}
                 onChange={(value) =>
                   dispatch({
                     type: "update:cell",
@@ -197,7 +197,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       maxSize: Number.MAX_SAFE_INTEGER,
     },
     columnResizeMode: "onChange",
-    enableColumnCounting: true,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     state: {
@@ -208,7 +207,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     },
     onSortingChange: (updater) => dispatch({ type: "update:sorting", updater }),
     getRowId: (row) => row.id,
-    _features: [CountingFeature],
+    _features: [CountingFeature, WrappingFeature],
   });
 
   /**
