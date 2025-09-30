@@ -34,7 +34,7 @@ import { TypesMenu } from "./types-menu";
  */
 export const PropsMenu = () => {
   const { table, properties } = useTableViewCtx();
-  const { reorder, updateColumn, toggleAllColumns } = useTableActions();
+  const { updateColumn, toggleAllColumns } = useTableActions();
   const { openMenu } = useMenu();
 
   const { columnOrder, columnVisibility } = table.getState();
@@ -103,7 +103,10 @@ export const PropsMenu = () => {
           onActionClick={() => toggleAllColumns(!noShownProps)}
         />
         <div className="flex flex-col">
-          <VerticalDnd items={columnOrder} onDragEnd={(e) => reorder(e, "col")}>
+          <VerticalDnd
+            items={columnOrder}
+            onDragEnd={table.handleColumnDragEnd}
+          >
             {search.length === 0
               ? props.map((prop) => (
                   <PropertyItem

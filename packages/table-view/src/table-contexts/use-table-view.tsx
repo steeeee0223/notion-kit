@@ -17,7 +17,12 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table";
 
-import { CountingFeature, FreezingFeature, WrappingFeature } from "../features";
+import {
+  CountingFeature,
+  FreezingFeature,
+  OrderingFeature,
+  WrappingFeature,
+} from "../features";
 import type { PluginsMap, Row } from "../lib/types";
 import { arrayToEntity, getCount, type Entity } from "../lib/utils";
 import type { CellPlugin, InferConfig, InferPlugin } from "../plugins";
@@ -92,7 +97,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     [_state.data, props.state?.data],
   );
 
-  const dataOrder = useMemo(
+  const rowOrder = useMemo(
     () => props.state?.data.map((row) => row.id) ?? _state.dataOrder,
     [_state.dataOrder, props.state?.data],
   );
@@ -190,12 +195,21 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     getSortedRowModel: getSortedRowModel(),
     state: {
       sorting: _state.table.sorting,
+      rowOrder,
       columnOrder,
       columnVisibility,
     },
     onSortingChange: (updater) => dispatch({ type: "update:sorting", updater }),
+    onColumnOrderChange: (updater) =>
+      dispatch({ type: "set:col:order", updater }),
+    onRowOrderChange: (updater) => dispatch({ type: "set:row:order", updater }),
     getRowId: (row) => row.id,
-    _features: [CountingFeature, FreezingFeature, WrappingFeature],
+    _features: [
+      CountingFeature,
+      FreezingFeature,
+      OrderingFeature,
+      WrappingFeature,
+    ],
   });
 
   /**
@@ -253,7 +267,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       columnSizeVars,
       columnSensors,
       rowSensors,
-      dataOrder,
       properties: _state.properties,
       isPropertyUnique: (name) => properties.every((p) => p.name !== name),
       getColumnCount: (colId, type, method) => {
@@ -286,7 +299,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     columnSensors,
     columnSizeVars,
     controlledProperties,
-    dataOrder,
     plugins,
     properties,
     rowSensors,

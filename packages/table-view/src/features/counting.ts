@@ -42,7 +42,7 @@ export interface CountingOptions {
 }
 
 // Define types for our new feature's table APIs
-export interface CountingInstance {
+export interface CountingTableApi {
   getColumnCounting: (colId: string) => CountingState[string];
   setColumnCounting: (updater: Updater<CountingState>) => void;
   setColumnCountMethod: (colId: string, method: CountMethod) => void;

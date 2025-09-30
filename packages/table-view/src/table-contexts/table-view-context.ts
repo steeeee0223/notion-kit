@@ -1,11 +1,7 @@
 "use client";
 
 import React, { createContext, use } from "react";
-import type {
-  DragEndEvent,
-  SensorDescriptor,
-  SensorOptions,
-} from "@dnd-kit/core";
+import type { SensorDescriptor, SensorOptions } from "@dnd-kit/core";
 import type { Table } from "@tanstack/react-table";
 
 import type { IconData } from "@notion-kit/icon-block";
@@ -21,7 +17,6 @@ export interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
   plugins: Entity<TPlugins[number]>;
   table: Table<Row<TPlugins>>;
   properties: Record<string, Column<TPlugins[number]>>;
-  dataOrder: string[];
   columnSizeVars: Record<string, number>;
   isPropertyUnique: (name: string) => boolean;
   getColumnCount: <TPlugin extends CellPlugin>(
@@ -58,7 +53,6 @@ export interface TableActions<TPlugins extends CellPlugin[] = CellPlugin[]> {
   updateColumnType: (id: string, type: PluginType<TPlugins>) => void;
   addRow: (src?: { id: string; at: "prev" | "next" }) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
-  reorder: (e: DragEndEvent, type: ActionType) => void;
   duplicate: (id: string, type: ActionType) => void;
   remove: (id: string, type: ActionType) => void;
 }

@@ -24,7 +24,7 @@ export interface FreezingOptions {
 }
 
 // Define types for our new feature's table APIs
-export interface FreezingInstance {
+export interface FreezingTableApi {
   getFreezingState: () => FreezingState;
   getCanFreezeColumn: (colId: string) => boolean;
   setColumnFreezing: (updater: Updater<FreezingState>) => void;

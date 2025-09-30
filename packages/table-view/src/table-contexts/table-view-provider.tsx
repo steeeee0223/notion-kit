@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { arrayMove } from "@dnd-kit/sortable";
 
 import { TooltipProvider } from "@notion-kit/shadcn";
 
@@ -43,18 +42,6 @@ export function TableViewProvider<
       addRow: (src) => dispatch({ type: "add:row", payload: src }),
       updateRowIcon: (id, icon) =>
         dispatch({ type: "update:row:icon", payload: { id, icon } }),
-      reorder: (e, type) => {
-        const { active, over } = e;
-        if (!over || active.id === over.id) return;
-        dispatch({
-          type: `reorder:${type}`,
-          updater: (prev: string[]) => {
-            const oldIndex = prev.indexOf(active.id as string);
-            const newIndex = prev.indexOf(over.id as string);
-            return arrayMove(prev, oldIndex, newIndex);
-          },
-        });
-      },
       duplicate: (id, type) =>
         dispatch({ type: `duplicate:${type}`, payload: { id } }),
       remove: (id, type) =>

@@ -1,19 +1,24 @@
 import type { RowData } from "@tanstack/react-table";
 
 import type {
-  CountingInstance,
   CountingOptions,
+  CountingTableApi,
   CountingTableState,
 } from "./counting";
 import type {
-  FreezingInstance,
   FreezingOptions,
+  FreezingTableApi,
   FreezingTableState,
 } from "./freezing";
+import {
+  OrderingOptions,
+  OrderingTableApi,
+  OrderingTableState,
+} from "./ordering";
 import type {
   WrappingColumnApi,
-  WrappingInstance,
   WrappingOptions,
+  WrappingTableApi,
   WrappingTableState,
 } from "./wrapping";
 
@@ -22,19 +27,22 @@ declare module "@tanstack/react-table" {
   interface TableState
     extends CountingTableState,
       WrappingTableState,
-      FreezingTableState {}
+      FreezingTableState,
+      OrderingTableState {}
   //merge our new feature's options with the existing table options
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface TableOptionsResolved<TData extends RowData>
     extends CountingOptions,
       WrappingOptions,
-      FreezingOptions {}
+      FreezingOptions,
+      OrderingOptions {}
   //merge our new feature's instance APIs with the existing table instance APIs
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Table<TData extends RowData>
-    extends CountingInstance,
-      WrappingInstance,
-      FreezingInstance {}
+    extends CountingTableApi,
+      WrappingTableApi,
+      FreezingTableApi,
+      OrderingTableApi {}
 
   // interface TableMeta<TData extends RowData> {
   //   updateData: (rowIndex: number, columnId: string, value: unknown) => void;
@@ -46,4 +54,5 @@ declare module "@tanstack/react-table" {
 
 export * from "./counting";
 export * from "./freezing";
+export * from "./ordering";
 export * from "./wrapping";

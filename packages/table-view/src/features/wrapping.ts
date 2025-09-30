@@ -22,7 +22,7 @@ export interface WrappingOptions {
 }
 
 // Define types for our new feature's table APIs
-export interface WrappingInstance {
+export interface WrappingTableApi {
   getIsColumnWrapped: (colId: string) => boolean;
   setColumnWrapping: (updater: Updater<WrappingState>) => void;
   toggleColumnWrapped: (colId: string, updater: Updater<boolean>) => void;

@@ -1,4 +1,5 @@
 import type { SortingState, Updater } from "@tanstack/react-table";
+import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { IconData } from "@notion-kit/icon-block";
@@ -11,13 +12,7 @@ import type {
   Row,
   Rows,
 } from "../lib/types";
-import {
-  getDefaultCell,
-  getState,
-  getUniqueName,
-  insertAt,
-  NEVER,
-} from "../lib/utils";
+import { getDefaultCell, getUniqueName, insertAt, NEVER } from "../lib/utils";
 import type {
   CellPlugin,
   InferActions,
@@ -72,7 +67,7 @@ export type TableViewAction<TPlugins extends CellPlugin[]> =
       };
     }
   | { type: "update:col:visibility"; payload: { hidden: boolean } }
-  | { type: "reorder:col" | "reorder:row"; updater: Updater<string[]> }
+  | { type: "set:col:order" | "set:row:order"; updater: Updater<string[]> }
   | {
       type: "delete:col" | "duplicate:col" | "delete:row" | "duplicate:row";
       payload: { id: string };
@@ -184,10 +179,6 @@ function tableViewReducer<TPlugins extends CellPlugin[]>(
       });
       return { ...v, properties };
     }
-    case "reorder:col": {
-      const propertiesOrder = getState(a.updater, v.propertiesOrder);
-      return { ...v, propertiesOrder };
-    }
     case "duplicate:col": {
       const src = v.properties[a.payload.id];
       const idx = v.propertiesOrder.indexOf(a.payload.id);
@@ -263,11 +254,6 @@ function tableViewReducer<TPlugins extends CellPlugin[]>(
         },
       };
     }
-    case "reorder:row": {
-      const dataOrder = getState(a.updater, v.dataOrder);
-      // TODO select row after reorder
-      return { ...v, dataOrder, table: { ...v.table, sorting: [] } };
-    }
     case "update:row:icon": {
       const row = v.data[a.payload.id];
       if (!row) return v as never;
@@ -292,8 +278,17 @@ function tableViewReducer<TPlugins extends CellPlugin[]>(
       return { ...v, data };
     }
     case "update:sorting": {
-      const sorting = getState(a.updater, v.table.sorting);
+      const sorting = functionalUpdate(a.updater, v.table.sorting);
       return { ...v, table: { ...v.table, sorting } };
+    }
+    case "set:col:order": {
+      return {
+        ...v,
+        propertiesOrder: functionalUpdate(a.updater, v.propertiesOrder),
+      };
+    }
+    case "set:row:order": {
+      return { ...v, dataOrder: functionalUpdate(a.updater, v.dataOrder) };
     }
     case "reset":
       return {
