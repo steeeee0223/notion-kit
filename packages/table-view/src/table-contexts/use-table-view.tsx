@@ -18,10 +18,10 @@ import {
 } from "@tanstack/react-table";
 
 import {
+  ColumnsInfoFeature,
   CountingFeature,
   FreezingFeature,
   OrderingFeature,
-  WrappingFeature,
 } from "../features";
 import type { PluginsMap, Row } from "../lib/types";
 import { arrayToEntity, getCount, type Entity } from "../lib/utils";
@@ -112,23 +112,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
           accessorKey: property.name,
           minSize: getMinWidth(property.type),
           sortingFn,
-          header: ({ header }) => (
-            <TableHeaderCell
-              id={property.id}
-              width={`calc(var(--col-${property.id}-size) * 1px)`}
-              isResizing={header.column.getIsResizing()}
-              onResizeStart={header.getResizeHandler()}
-              onResizeEnd={() =>
-                dispatch({
-                  type: "update:col",
-                  payload: {
-                    id: property.id,
-                    data: { width: `${header.column.getSize()}px` },
-                  },
-                })
-              }
-            />
-          ),
+          header: ({ header }) => <TableHeaderCell header={header} />,
           cell: ({ row, column }) => {
             const cell = row.original.properties[property.id];
             if (!cell) return null;
@@ -138,16 +122,16 @@ export function useTableView<TPlugins extends CellPlugin[]>({
                 data={cell.value}
                 rowIndex={row.index}
                 colIndex={column.getIndex()}
-                propId={property.id}
+                propId={column.id}
                 config={property.config as InferConfig<InferPlugin<TPlugins>>}
-                width={`calc(var(--col-${property.id}-size) * 1px)`}
-                wrapped={column.getIsWrapped()}
+                width={column.getWidth()}
+                wrapped={column.getInfo().wrapped}
                 onChange={(value) =>
                   dispatch({
                     type: "update:cell",
                     payload: {
                       rowId: row.original.id,
-                      colId: property.id,
+                      colId: column.id,
                       data: { id: cell.id, value },
                     },
                   })
@@ -155,11 +139,11 @@ export function useTableView<TPlugins extends CellPlugin[]>({
               />
             );
           },
-          footer: () => (
+          footer: ({ column }) => (
             <TableFooterCell
-              id={property.id}
+              id={column.id}
               type={property.type}
-              width={`calc(var(--col-${property.id}-size) * 1px)`}
+              width={column.getWidth()}
             />
           ),
         };
@@ -205,10 +189,10 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     onRowOrderChange: (updater) => dispatch({ type: "set:row:order", updater }),
     getRowId: (row) => row.id,
     _features: [
+      ColumnsInfoFeature,
       CountingFeature,
       FreezingFeature,
       OrderingFeature,
-      WrappingFeature,
     ],
   });
 

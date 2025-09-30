@@ -11,7 +11,7 @@ import type { Column, PluginType, Row } from "../lib/types";
 import type { Entity } from "../lib/utils";
 import type { CellPlugin, InferKey } from "../plugins";
 import type { TableViewAction } from "./table-reducer";
-import type { AddColumnPayload, UpdateColumnPayload } from "./types";
+import type { AddColumnPayload } from "./types";
 
 export interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
   plugins: Entity<TPlugins[number]>;
@@ -45,10 +45,6 @@ type ActionType = "row" | "col";
 export interface TableActions<TPlugins extends CellPlugin[] = CellPlugin[]> {
   dispatch: React.Dispatch<TableViewAction<TPlugins>>;
   addColumn: (data: AddColumnPayload<TPlugins>) => void;
-  updateColumn: (
-    id: string,
-    data: UpdateColumnPayload<TPlugins[number]>,
-  ) => void;
   toggleAllColumns: (hidden: boolean) => void;
   updateColumnType: (id: string, type: PluginType<TPlugins>) => void;
   addRow: (src?: { id: string; at: "prev" | "next" }) => void;

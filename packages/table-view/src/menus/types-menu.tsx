@@ -46,7 +46,7 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
   const { addColumn, updateColumnType } = useTableActions();
   const { openMenu } = useMenu();
 
-  const property = propId ? properties[propId]! : null;
+  const propType = propId ? properties[propId]?.type : null;
 
   const { search, results, updateSearch } = useFilter(propOptions, (prop, v) =>
     prop.title.toLowerCase().includes(v),
@@ -106,7 +106,7 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
                       Body={title}
                       onClick={() => select(type, title)}
                     >
-                      {property?.type === type && <MenuItemCheck />}
+                      {propType === type && <MenuItemCheck />}
                     </MenuItem>
                   </TooltipPreset>
                 </CommandItem>

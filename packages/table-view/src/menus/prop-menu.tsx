@@ -43,24 +43,25 @@ interface PropMenuProps {
  * 11. ✅ Delete property
  */
 export function PropMenu({ propId }: PropMenuProps) {
-  const { plugins, table, properties, isPropertyUnique } = useTableViewCtx();
-  const { updateColumn, duplicate } = useTableActions();
+  const { plugins, table, properties } = useTableViewCtx();
+  const { duplicate } = useTableActions();
   const { openMenu } = useMenu();
 
   const property = properties[propId]!;
   const plugin = plugins.items[property.type]!;
+  const info = table.getColumnInfo(propId);
 
   // 3. Sorting
   const sortColumn = (desc: boolean) =>
     table.setSorting([{ id: propId, desc }]);
   // 6. Pin columns
-  const canFreeze = table.getCanFreezeColumn(property.id);
-  const canUnfreeze = table.getFreezingState()?.colId === property.id;
-  const pinColumns = () => table.toggleColumnFreezed(property.id);
+  const canFreeze = table.getCanFreezeColumn(propId);
+  const canUnfreeze = table.getFreezingState()?.colId === propId;
+  const pinColumns = () => table.toggleColumnFreezed(propId);
   // 7. Hide in view
-  const hideProp = () => updateColumn(property.id, { hidden: true });
+  const hideProp = () => table.setColumnInfo(propId, { hidden: true });
   // 8. Wrap in view
-  const wrapProp = () => table.toggleColumnWrapped(property.id, (v) => !v);
+  const wrapProp = () => table.toggleColumnWrapped(propId, (v) => !v);
   // 9. Insert left/right
   const insertColumn = (side: "left" | "right") => {
     openMenu(<TypesMenu propId={null} at={{ id: propId, side }} />, {
@@ -69,17 +70,13 @@ export function PropMenu({ propId }: PropMenuProps) {
     });
   };
   // 10. Duplicate property
-  const duplicateProp = () => duplicate(property.id, "col");
+  const duplicateProp = () => duplicate(propId, "col");
   // 11. Delete property
-  const deleteProp = () => updateColumn(property.id, { isDeleted: true });
+  const deleteProp = () => table.setColumnInfo(propId, { isDeleted: true });
 
   return (
     <>
-      <PropMeta
-        property={property}
-        validateName={isPropertyUnique}
-        onUpdate={(data) => updateColumn(property.id, data)}
-      />
+      <PropMeta propId={propId} type={property.type} />
       <DropdownMenuGroup>
         <PropConfig
           plugin={plugin}
@@ -144,7 +141,7 @@ export function PropMenu({ propId }: PropMenuProps) {
         )}
         <DropdownMenuItem
           onSelect={wrapProp}
-          {...(table.getIsColumnWrapped(property.id)
+          {...(info.wrapped
             ? { Icon: <Icon.ArrowLineRight />, Body: "Unwrap text" }
             : { Icon: <Icon.ArrowUTurnDownLeft />, Body: "Wrap text" })}
         />

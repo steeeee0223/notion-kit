@@ -3,6 +3,7 @@
 import React, { useRef, useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import type { Header } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { IconBlock } from "@notion-kit/icon-block";
@@ -17,15 +18,12 @@ import {
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon } from "../common";
+import type { Row } from "../lib/types";
 import { PropMenu } from "../menus";
 import { useTableViewCtx } from "../table-contexts";
 
 interface TableHeaderCellProps {
-  id: string;
-  width: string;
-  isResizing: boolean;
-  onResizeStart: (e: React.MouseEvent | React.TouchEvent) => void;
-  onResizeEnd: (e: React.MouseEvent | React.TouchEvent) => void;
+  header: Header<Row, unknown>;
 }
 
 /**
@@ -33,16 +31,13 @@ interface TableHeaderCellProps {
  *
  * @requires SortableContext
  */
-export function TableHeaderCell({
-  id,
-  width,
-  isResizing,
-  onResizeStart,
-  onResizeEnd,
-}: TableHeaderCellProps) {
+export function TableHeaderCell({ header }: TableHeaderCellProps) {
   const { properties } = useTableViewCtx();
 
-  const property = properties[id]!;
+  const type = properties[header.column.id]!.type;
+  const info = header.column.getInfo();
+  const isResizing = header.column.getIsResizing();
+  const onResizeStart = header.getResizeHandler();
 
   const [open, setOpen] = useState(false);
   const cellRef = useRef<HTMLDivElement>(null);
@@ -57,10 +52,10 @@ export function TableHeaderCell({
     setActivatorNodeRef,
     transform,
     transition,
-  } = useSortable({ id });
+  } = useSortable({ id: header.column.id });
 
   const style: React.CSSProperties = {
-    width,
+    width: header.column.getWidth(),
     opacity: isDragging ? 0.8 : 1,
     zIndex: isDragging ? 10 : 0,
     transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
@@ -79,19 +74,19 @@ export function TableHeaderCell({
           ref={cellRef}
           id="notion-table-view-header-cell"
           className="flex shrink-0 overflow-hidden p-0 text-sm"
-          style={{ width }}
+          style={{ width: header.column.getSize() }}
         >
           <DropdownMenuTrigger className="relative h-0">
             <VisuallyHidden />
           </DropdownMenuTrigger>
           <TooltipPreset
             description={
-              property.description
+              info.description
                 ? [
-                    { type: "default", text: property.name },
-                    { type: "secondary", text: property.description },
+                    { type: "default", text: info.name },
+                    { type: "secondary", text: info.description },
                   ]
-                : property.name
+                : info.name
             }
             side="top"
             className="z-[990]"
@@ -107,21 +102,18 @@ export function TableHeaderCell({
               <div className="flex min-w-0 flex-auto items-center text-sm/[1.2]">
                 <div className="mr-1 grid items-center justify-center">
                   <div className="col-start-1 row-start-1 opacity-100 transition-opacity duration-150">
-                    {property.icon ? (
+                    {info.icon ? (
                       <IconBlock
-                        icon={property.icon}
+                        icon={info.icon}
                         className="size-4 p-0 opacity-60 dark:opacity-45"
                       />
                     ) : (
-                      <DefaultIcon
-                        type={property.type}
-                        className="fill-default/45"
-                      />
+                      <DefaultIcon type={type} className="fill-default/45" />
                     )}
                   </div>
                 </div>
-                <div className="truncate">{property.name}</div>
-                {property.description && (
+                <div className="truncate">{info.name}</div>
+                {info.description && (
                   <div className="inline-flex items-center">
                     <Icon.Info className="mt-px ml-1 block h-full w-3.5 shrink-0 fill-default/35" />
                   </div>
@@ -135,7 +127,7 @@ export function TableHeaderCell({
           sideOffset={rect?.height}
           className="w-[220px]"
         >
-          <PropMenu propId={id} />
+          <PropMenu propId={header.column.id} />
         </DropdownMenuContent>
       </DropdownMenu>
       {/* Resize handle */}
@@ -149,10 +141,10 @@ export function TableHeaderCell({
           )}
           // Resize for desktop
           onMouseDown={onResizeStart}
-          onMouseUp={onResizeEnd}
+          onMouseUp={header.column.handleResizeEnd}
           // Resize for mobile
           onTouchStart={onResizeStart}
-          onTouchEnd={onResizeEnd}
+          onTouchEnd={header.column.handleResizeEnd}
         />
       </div>
     </div>

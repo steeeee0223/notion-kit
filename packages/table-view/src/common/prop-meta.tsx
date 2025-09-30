@@ -8,40 +8,38 @@ import { IconMenu } from "@notion-kit/icon-menu";
 import { Icon } from "@notion-kit/icons";
 import { Button, Input, TooltipPreset } from "@notion-kit/shadcn";
 
-import type { Column } from "../lib/types";
-import { CellPlugin } from "../plugins";
-import { UpdateColumnPayload } from "../table-contexts";
+import { useTableViewCtx } from "../table-contexts";
 import { DefaultIcon } from "./default-icon";
 
-interface PropMetaProps<TPlugin extends CellPlugin = CellPlugin> {
-  property: Pick<Column<TPlugin>, "type" | "icon" | "name" | "description">;
-  validateName: (value: string) => boolean;
-  onUpdate: (data: Omit<UpdateColumnPayload<TPlugin>, "width">) => void;
+interface PropMetaProps {
+  propId: string;
+  type: string;
 }
 
-export const PropMeta: React.FC<PropMetaProps> = ({
-  property,
-  validateName,
-  onUpdate,
-}) => {
+export function PropMeta({ propId, type }: PropMetaProps) {
+  const { table, isPropertyUnique } = useTableViewCtx();
+
   const [showDesc, setShowDesc] = useState(false);
   const toggleDesc = () => setShowDesc((prev) => !prev);
 
+  const info = table.getColumnInfo(propId);
   const nameField = useInputField({
     id: "name",
-    initialValue: property.name,
-    validate: validateName,
-    onUpdate: (name) => onUpdate({ name }),
+    initialValue: info.name,
+    validate: isPropertyUnique,
+    onUpdate: (name) => table.setColumnInfo(propId, { name }),
   });
   const descField = useInputField({
     id: "description",
-    initialValue: property.description ?? "",
-    onUpdate: (description) => onUpdate({ description }),
+    initialValue: info.description ?? "",
+    onUpdate: (description) => table.setColumnInfo(propId, { description }),
   });
   /** Icon */
   const uploadIcon = (file: File) => {
     // TODO impl. this
-    onUpdate({ icon: { type: "url", src: URL.createObjectURL(file) } });
+    table.setColumnInfo(propId, {
+      icon: { type: "url", src: URL.createObjectURL(file) },
+    });
   };
 
   useEffect(() => {
@@ -55,14 +53,14 @@ export const PropMeta: React.FC<PropMetaProps> = ({
           <div className="mr-auto ml-3 min-w-0 shrink-0">
             <IconMenu
               className="box-border size-7 animate-bg-in rounded-md border border-border"
-              onSelect={(icon) => onUpdate({ icon })}
-              onRemove={() => onUpdate({ icon: null })}
+              onSelect={(icon) => table.setColumnInfo(propId, { icon })}
+              onRemove={() => table.setColumnInfo(propId, { icon: null })}
               onUpload={uploadIcon}
             >
-              {property.icon ? (
-                <IconBlock icon={property.icon} className="size-3.5 p-0" />
+              {info.icon ? (
+                <IconBlock icon={info.icon} className="size-3.5 p-0" />
               ) : (
-                <DefaultIcon type={property.type} />
+                <DefaultIcon type={type} />
               )}
             </IconMenu>
           </div>
@@ -108,4 +106,4 @@ export const PropMeta: React.FC<PropMetaProps> = ({
       )}
     </>
   );
-};
+}

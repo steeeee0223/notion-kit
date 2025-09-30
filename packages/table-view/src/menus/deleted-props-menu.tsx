@@ -1,7 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
-
 import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import {
@@ -13,33 +11,28 @@ import {
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader } from "../common";
-import type { Column } from "../lib/types";
-import type { CellPlugin } from "../plugins";
+import type { ColumnInfo } from "../features";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { PropsMenu } from "./props-menu";
 
 export const DeletedPropsMenu = () => {
-  const { properties } = useTableViewCtx();
-  const { updateColumn, remove } = useTableActions();
+  const { table, properties } = useTableViewCtx();
+  const { remove } = useTableActions();
   const { openMenu } = useMenu();
 
   const openPropsMenu = () => openMenu(<PropsMenu />, { x: -12, y: -12 });
-
-  const deletedProps = useMemo(
-    () => Object.values(properties).filter((prop) => prop.isDeleted),
-    [properties],
-  );
 
   return (
     <>
       <MenuHeader title="Deleted properties" onBack={openPropsMenu} />
       <MenuGroup>
-        {deletedProps.map((prop) => (
+        {table.getDeletedColumns().map((info) => (
           <PropertyItem
-            key={prop.id}
-            property={prop}
-            onRestore={() => updateColumn(prop.id, { isDeleted: false })}
-            onDelete={() => remove(prop.id, "col")}
+            key={info.id}
+            info={info}
+            type={properties[info.id]!.type}
+            onRestore={() => table.setColumnInfo(info.id, { isDeleted: false })}
+            onDelete={() => remove(info.id, "col")}
           />
         ))}
       </MenuGroup>
@@ -48,24 +41,26 @@ export const DeletedPropsMenu = () => {
 };
 
 interface PropertyItemProps {
-  property: Column<CellPlugin>;
+  info: ColumnInfo;
+  type: string;
   onRestore: () => void;
   onDelete: () => void;
 }
 
 const PropertyItem: React.FC<PropertyItemProps> = ({
-  property,
+  info,
+  type,
   onRestore,
   onDelete,
 }) => {
-  const { name, icon, type } = property;
-
   return (
     <MenuItem
       role="menuitem"
       className="*:data-[slot=menu-item-body]:leading-normal"
-      Icon={icon ? <IconBlock icon={icon} /> : <DefaultIcon type={type} />}
-      Body={name}
+      Icon={
+        info.icon ? <IconBlock icon={info.icon} /> : <DefaultIcon type={type} />
+      }
+      Body={info.name}
     >
       <MenuItemAction className="flex items-center text-muted">
         <Button

@@ -33,8 +33,6 @@ export function TableViewProvider<
     () => ({
       dispatch,
       addColumn: (payload) => dispatch({ type: "add:col", payload }),
-      updateColumn: (id, data) =>
-        dispatch({ type: "update:col", payload: { id, data } }),
       updateColumnType: (id, type) =>
         dispatch({ type: "update:col:type", payload: { id, type } }),
       toggleAllColumns: (hidden) =>
