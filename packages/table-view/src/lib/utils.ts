@@ -1,4 +1,3 @@
-import type { Updater } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import { CountMethod } from "../features";
@@ -140,10 +139,4 @@ function capValue(num: number, capped?: boolean) {
 
 function getPercentage(a: number, b: number) {
   return ((a * 100) / b).toFixed(1) + "%";
-}
-
-export function getState<T>(updater: Updater<T>, snapshot: T) {
-  return typeof updater === "function"
-    ? (updater as (old: T) => T)(snapshot)
-    : updater;
 }
