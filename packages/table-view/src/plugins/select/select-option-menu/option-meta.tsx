@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 
+import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { Button, Input, TooltipPreset } from "@notion-kit/shadcn";
 
-import { useInputField } from "../../../common";
 import type { OptionConfig } from "../types";
 
 interface OptionMetaProps {

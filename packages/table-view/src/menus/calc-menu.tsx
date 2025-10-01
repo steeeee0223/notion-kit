@@ -15,25 +15,20 @@ import {
   TooltipPreset,
 } from "@notion-kit/shadcn";
 
-import { CountMethod, type PluginType } from "../lib/types";
+import { CountMethod } from "../features";
+import { type PluginType } from "../lib/types";
 import type { CellPlugin } from "../plugins";
-import { useTableActions } from "../table-contexts";
+import { useTableViewCtx } from "../table-contexts";
 import { countMethodHint } from "./constants";
 
 interface CalcMenuProps {
   id: string; // column id
   type: PluginType<CellPlugin[]>;
-  countMethod: CountMethod;
-  isCountCapped?: boolean;
 }
 
-export function CalcMenu({
-  id,
-  type,
-  countMethod,
-  isCountCapped,
-}: CalcMenuProps) {
-  const { updateColumn, toggleCountCap } = useTableActions();
+export function CalcMenu({ id, type }: CalcMenuProps) {
+  const { table } = useTableViewCtx();
+  const counting = table.getColumnCounting(id);
 
   const { countMethods, percentMethods } = useMemo(() => {
     const countMethods = [
@@ -58,10 +53,8 @@ export function CalcMenu({
     <DropdownMenuGroup>
       <DropdownMenuCheckboxItem
         Body="None"
-        checked={countMethod === CountMethod.NONE}
-        onCheckedChange={() =>
-          updateColumn(id, { countMethod: CountMethod.NONE })
-        }
+        checked={counting.method === CountMethod.NONE}
+        onCheckedChange={() => table.setColumnCountMethod(id, CountMethod.NONE)}
       />
       <DropdownMenuSub>
         <DropdownMenuSubTrigger Body="Count" />
@@ -77,10 +70,10 @@ export function CalcMenu({
                   </div>
                 </>
               }
-              onSelect={() => toggleCountCap(id)}
+              onSelect={() => table.setColumnCountCapped(id, (v) => !v)}
             >
               <MenuItemAction>
-                <Switch size="sm" checked={isCountCapped} />
+                <Switch size="sm" checked={counting.isCapped} />
               </MenuItemAction>
             </DropdownMenuItem>
           </DropdownMenuGroup>
@@ -90,10 +83,8 @@ export function CalcMenu({
               <HintItem
                 key={method}
                 {...countMethodHint[method]}
-                checked={countMethod === method}
-                onCheckedChange={() =>
-                  updateColumn(id, { countMethod: method })
-                }
+                checked={counting.method === method}
+                onCheckedChange={() => table.setColumnCountMethod(id, method)}
               />
             ))}
           </DropdownMenuGroup>
@@ -107,10 +98,8 @@ export function CalcMenu({
               <HintItem
                 key={method}
                 {...countMethodHint[method]}
-                checked={countMethod === method}
-                onCheckedChange={() =>
-                  updateColumn(id, { countMethod: method })
-                }
+                checked={counting.method === method}
+                onCheckedChange={() => table.setColumnCountMethod(id, method)}
               />
             ))}
           </DropdownMenuGroup>

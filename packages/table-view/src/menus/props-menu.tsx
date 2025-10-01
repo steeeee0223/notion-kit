@@ -22,8 +22,7 @@ import {
   MenuHeader,
   VerticalDnd,
 } from "../common";
-import type { Column } from "../lib/types";
-import { CellPlugin } from "../plugins";
+import type { ColumnInfoWithId } from "../features";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { DeletedPropsMenu } from "./deleted-props-menu";
 import { EditPropMenu } from "./edit-prop-menu";
@@ -34,7 +33,7 @@ import { TypesMenu } from "./types-menu";
  */
 export const PropsMenu = () => {
   const { table, properties } = useTableViewCtx();
-  const { reorder, updateColumn, toggleAllColumns } = useTableActions();
+  const { toggleAllColumns } = useTableActions();
   const { openMenu } = useMenu();
 
   const { columnOrder, columnVisibility } = table.getState();
@@ -52,18 +51,18 @@ export const PropsMenu = () => {
   // Search
   const inputRef = useRef<HTMLInputElement>(null);
   const [props, deletedCount] = useMemo(() => {
-    const props: Column<CellPlugin>[] = [];
+    const props: (ColumnInfoWithId & { type: string })[] = [];
     let deletedCount = 0;
     columnOrder.forEach((propId) => {
-      const prop = properties[propId];
-      if (prop && !prop.isDeleted) {
-        props.push(prop);
+      const info = table.getColumnInfo(propId);
+      if (!info.isDeleted) {
+        props.push({ ...info, id: propId, type: properties[propId]!.type });
       } else {
         deletedCount++;
       }
     });
     return [props, deletedCount];
-  }, [properties, columnOrder]);
+  }, [columnOrder, table, properties]);
   const { search, results, updateSearch } = useFilter(
     props,
     (prop, v) => prop.name.toLowerCase().includes(v),
@@ -74,8 +73,6 @@ export const PropsMenu = () => {
     openMenu(<TypesMenu propId={null} />, { x: -12, y: -12 });
   const openEditPropMenu = (propId: string) =>
     openMenu(<EditPropMenu propId={propId} />, { x: -12, y: -12 });
-  const toggleVisibility = (propId: string, hidden: boolean) =>
-    updateColumn(propId, { hidden });
   const openDeletedPropsMenu = () =>
     openMenu(<DeletedPropsMenu />, { x: -12, y: -12 });
 
@@ -103,26 +100,29 @@ export const PropsMenu = () => {
           onActionClick={() => toggleAllColumns(!noShownProps)}
         />
         <div className="flex flex-col">
-          <VerticalDnd items={columnOrder} onDragEnd={(e) => reorder(e, "col")}>
+          <VerticalDnd
+            items={columnOrder}
+            onDragEnd={table.handleColumnDragEnd}
+          >
             {search.length === 0
               ? props.map((prop) => (
                   <PropertyItem
                     key={prop.id}
                     draggable
-                    property={prop}
+                    info={prop}
                     onClick={() => openEditPropMenu(prop.id)}
                     onVisibilityChange={(hidden) =>
-                      toggleVisibility(prop.id, hidden)
+                      table.setColumnInfo(prop.id, { hidden })
                     }
                   />
                 ))
               : (results ?? []).map((prop) => (
                   <PropertyItem
                     key={prop.id}
-                    property={prop}
+                    info={prop}
                     onClick={() => openEditPropMenu(prop.id)}
                     onVisibilityChange={(hidden) =>
-                      toggleVisibility(prop.id, hidden)
+                      table.setColumnInfo(prop.id, { hidden })
                     }
                   />
                 ))}
@@ -135,7 +135,7 @@ export const PropsMenu = () => {
             variant="secondary"
             tabIndex={0}
             onClick={openDeletedPropsMenu}
-            Icon={<Icon.Trash className="size-4" />}
+            Icon={<Icon.Trash />}
             Body="Deleted properties"
           >
             <MenuItemAction className="flex items-center text-muted">
@@ -168,18 +168,18 @@ export const PropsMenu = () => {
 
 interface PropertyItemProps {
   draggable?: boolean;
-  property: Column<CellPlugin>;
+  info: ColumnInfoWithId & { type: string };
   onClick: () => void;
   onVisibilityChange: (hidden: boolean) => void;
 }
 
 const PropertyItem: React.FC<PropertyItemProps> = ({
   draggable,
-  property,
+  info,
   onClick,
   onVisibilityChange,
 }) => {
-  const { id, name, icon, type, hidden } = property;
+  const { id, name, icon, hidden, type } = info;
 
   /** DND */
   const {
@@ -208,7 +208,7 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
         <div
           key="drag-handle"
           className={cn(
-            "mr-2 hidden h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-default/45",
+            "mr-2 hidden h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-icon",
             draggable && "flex",
           )}
           {...attributes}

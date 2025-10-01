@@ -1,10 +1,9 @@
-import type { Updater } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
+import { CountMethod } from "../features";
 import type { CellPlugin, InferData } from "../plugins";
 import type { TableViewCtx } from "../table-contexts";
 import type { Cell, Column, ColumnConfig } from "./types";
-import { CountMethod } from "./types";
 
 export const NEVER = undefined as never;
 
@@ -140,16 +139,4 @@ function capValue(num: number, capped?: boolean) {
 
 function getPercentage(a: number, b: number) {
   return ((a * 100) / b).toFixed(1) + "%";
-}
-
-export function isCountMethodSet(properties: TableViewCtx["properties"]) {
-  return Object.values(properties).some(
-    (p) => p.countMethod !== undefined && p.countMethod !== CountMethod.NONE,
-  );
-}
-
-export function getState<T>(updater: Updater<T>, snapshot: T) {
-  return typeof updater === "function"
-    ? (updater as (old: T) => T)(snapshot)
-    : updater;
 }

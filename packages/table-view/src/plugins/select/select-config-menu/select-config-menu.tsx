@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -19,7 +20,7 @@ import {
   MenuItemAction,
 } from "@notion-kit/shadcn";
 
-import { useInputField, VerticalDnd } from "../../../common";
+import { VerticalDnd } from "../../../common";
 import type { SelectMeta, SelectSort } from "../types";
 import { OptionItem } from "./option-item";
 import { useSelectConfigMenu } from "./use-select-config-menu";

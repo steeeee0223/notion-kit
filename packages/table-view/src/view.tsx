@@ -41,22 +41,22 @@ export function TableView<TPlugins extends CellPlugin[] = CellPlugin[]>(
 
 export function TableViewContent() {
   const { openModal } = useModal();
-  const { table, columnSizeVars, columnSensors, rowSensors, dataOrder } =
+  const { table, columnSizeVars, columnSensors, rowSensors } =
     useTableViewCtx();
-  const { reorder, addRow } = useTableActions();
+  const { addRow } = useTableActions();
 
   const leftPinnedHeaders = table.getLeftLeafHeaders();
   const headers = table.getCenterLeafHeaders();
 
   const isSorted = table.getState().sorting.length > 0;
   const handleRowDragEnd = (e: DragEndEvent) => {
-    if (!isSorted) return reorder(e, "row");
+    if (!isSorted) return table.handleRowDragEnd(e);
     openModal(
       <BaseModal
         title="Would you like to remove sorting?"
         primary="Remove"
         secondary="Don't remove"
-        onTrigger={() => reorder(e, "row")}
+        onTrigger={() => table.handleRowDragEnd(e)}
       />,
     );
   };
@@ -108,7 +108,7 @@ export function TableViewContent() {
                     restrictToHorizontalAxis,
                     restrictToParentElement,
                   ]}
-                  onDragEnd={(e) => reorder(e, "col")}
+                  onDragEnd={table.handleColumnDragEnd}
                   sensors={columnSensors}
                 >
                   <div className="relative">
@@ -160,9 +160,9 @@ export function TableViewContent() {
           >
             <div className="relative">
               {table.getState().columnSizingInfo.isResizingColumn ? (
-                <MemoizedTableBody table={table} dataOrder={dataOrder} />
+                <MemoizedTableBody table={table} />
               ) : (
-                <TableBody table={table} dataOrder={dataOrder} />
+                <TableBody table={table} />
               )}
             </div>
           </DndContext>

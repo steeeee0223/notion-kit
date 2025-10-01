@@ -10,13 +10,12 @@ import { TableRow } from "./table-row";
 
 interface TableBodyProps {
   table: Table<Row>;
-  dataOrder: string[];
 }
 
 /**
  * un-memoized normal table body component - see memoized version below
  */
-export function TableBody({ table, dataOrder }: TableBodyProps) {
+export function TableBody({ table }: TableBodyProps) {
   const isSorted = table.getState().sorting.length > 0;
   if (isSorted) {
     const rows = table.getRowModel().rows;
@@ -32,9 +31,10 @@ export function TableBody({ table, dataOrder }: TableBodyProps) {
     );
   }
 
+  const rowOrder = table.getState().rowOrder;
   return (
-    <SortableContext items={dataOrder} strategy={verticalListSortingStrategy}>
-      {dataOrder.map((rowId) => (
+    <SortableContext items={rowOrder} strategy={verticalListSortingStrategy}>
+      {rowOrder.map((rowId) => (
         <TableRow key={rowId} row={table.getRow(rowId)} />
       ))}
     </SortableContext>

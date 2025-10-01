@@ -1,5 +1,6 @@
 import type { IconData } from "@notion-kit/icon-block";
 
+import { CountMethod } from "../features";
 import type {
   CellPlugin,
   InferConfig,
@@ -8,20 +9,6 @@ import type {
   InferPlugin,
 } from "../plugins";
 
-export enum CountMethod {
-  NONE,
-  ALL,
-  VALUES,
-  UNIQUE,
-  EMPTY,
-  NONEMPTY,
-  CHECKED,
-  UNCHECKED,
-  PERCENTAGE_CHECKED,
-  PERCENTAGE_UNCHECKED,
-  PERCENTAGE_EMPTY,
-  PERCENTAGE_NONEMPTY,
-}
 interface PropertyBase {
   id: string;
   name: string;

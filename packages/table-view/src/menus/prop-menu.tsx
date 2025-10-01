@@ -14,7 +14,6 @@ import {
 } from "@notion-kit/shadcn";
 
 import { PropMeta } from "../common";
-import { CountMethod } from "../lib/types";
 import { extractColumnConfig } from "../lib/utils";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { CalcMenu } from "./calc-menu";
@@ -44,26 +43,25 @@ interface PropMenuProps {
  * 11. ✅ Delete property
  */
 export function PropMenu({ propId }: PropMenuProps) {
-  const { plugins, table, properties, isPropertyUnique, canFreezeProperty } =
-    useTableViewCtx();
-  const { updateColumn, duplicate, freezeColumns } = useTableActions();
+  const { plugins, table, properties } = useTableViewCtx();
+  const { duplicate } = useTableActions();
   const { openMenu } = useMenu();
 
   const property = properties[propId]!;
   const plugin = plugins.items[property.type]!;
+  const info = table.getColumnInfo(propId);
 
   // 3. Sorting
   const sortColumn = (desc: boolean) =>
     table.setSorting([{ id: propId, desc }]);
   // 6. Pin columns
-  const canFreeze = canFreezeProperty(property.id);
-  const canUnfreeze = table.getColumn(property.id)?.getIsLastColumn("left");
-  const pinColumns = () => freezeColumns(canUnfreeze ? null : property.id);
+  const canFreeze = table.getCanFreezeColumn(propId);
+  const canUnfreeze = table.getFreezingState()?.colId === propId;
+  const pinColumns = () => table.toggleColumnFreezed(propId);
   // 7. Hide in view
-  const hideProp = () => updateColumn(property.id, { hidden: true });
+  const hideProp = () => table.setColumnInfo(propId, { hidden: true });
   // 8. Wrap in view
-  const wrapProp = () =>
-    updateColumn(property.id, { wrapped: !property.wrapped });
+  const wrapProp = () => table.toggleColumnWrapped(propId, (v) => !v);
   // 9. Insert left/right
   const insertColumn = (side: "left" | "right") => {
     openMenu(<TypesMenu propId={null} at={{ id: propId, side }} />, {
@@ -72,17 +70,13 @@ export function PropMenu({ propId }: PropMenuProps) {
     });
   };
   // 10. Duplicate property
-  const duplicateProp = () => duplicate(property.id, "col");
+  const duplicateProp = () => duplicate(propId, "col");
   // 11. Delete property
-  const deleteProp = () => updateColumn(property.id, { isDeleted: true });
+  const deleteProp = () => table.setColumnInfo(propId, { isDeleted: true });
 
   return (
     <>
-      <PropMeta
-        property={property}
-        validateName={isPropertyUnique}
-        onUpdate={(data) => updateColumn(property.id, data)}
-      />
+      <PropMeta propId={propId} type={property.type} />
       <DropdownMenuGroup>
         <PropConfig
           plugin={plugin}
@@ -127,12 +121,7 @@ export function PropMenu({ propId }: PropMenuProps) {
             className="w-50"
             collisionPadding={12}
           >
-            <CalcMenu
-              id={propId}
-              type={property.type}
-              countMethod={property.countMethod ?? CountMethod.NONE}
-              isCountCapped={property.isCountCapped}
-            />
+            <CalcMenu id={propId} type={property.type} />
           </DropdownMenuSubContent>
         </DropdownMenuSub>
         <DropdownMenuItem
@@ -152,7 +141,7 @@ export function PropMenu({ propId }: PropMenuProps) {
         )}
         <DropdownMenuItem
           onSelect={wrapProp}
-          {...(property.wrapped
+          {...(info.wrapped
             ? { Icon: <Icon.ArrowLineRight />, Body: "Unwrap text" }
             : { Icon: <Icon.ArrowUTurnDownLeft />, Body: "Wrap text" })}
         />
