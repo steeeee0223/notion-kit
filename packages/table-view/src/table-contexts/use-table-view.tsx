@@ -24,7 +24,7 @@ import {
   OrderingFeature,
 } from "../features";
 import type { PluginsMap, Row } from "../lib/types";
-import { arrayToEntity, getCount, type Entity } from "../lib/utils";
+import { arrayToEntity, type Entity } from "../lib/utils";
 import type { CellPlugin, InferConfig, InferPlugin } from "../plugins";
 import { TableRowCell } from "../table-body";
 import { TableFooterCell } from "../table-footer";
@@ -250,31 +250,12 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       columnSensors,
       rowSensors,
       properties: _state.properties,
-      isPropertyUnique: (name) => properties.every((p) => p.name !== name),
-      getColumnCount: (colId, type, method) => {
-        const plugin = plugins.items[type]!;
-        return getCount(
-          { table, properties: _state.properties },
-          colId,
-          plugin,
-          method,
-        );
-      },
     };
     if (!controlledProperties) return uncontrolled;
     const colData = arrayToEntity(controlledProperties);
     return {
       ...uncontrolled,
       properties: colData.items,
-      getColumnCount: (colId, type, method) => {
-        const plugin = plugins.items[type]!;
-        return getCount(
-          { table, properties: colData.items },
-          colId,
-          plugin,
-          method,
-        );
-      },
     };
   }, [
     _state.properties,
@@ -282,7 +263,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     columnSizeVars,
     controlledProperties,
     plugins,
-    properties,
     rowSensors,
     table,
   ]);

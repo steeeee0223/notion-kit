@@ -7,7 +7,7 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { useFilter } from "@notion-kit/hooks";
 import { getRandomColor, type Color } from "@notion-kit/utils";
 
-import type { Column } from "../../../lib/types";
+import type { ColumnInfo } from "../../../lib/types";
 import { extractColumnConfig } from "../../../lib/utils";
 import { useTableActions, useTableViewCtx } from "../../../table-contexts";
 import type { MultiSelectPlugin, SelectActions, SelectPlugin } from "../types";
@@ -27,7 +27,7 @@ export function useSelectMenu({
   const { dispatch } = useTableActions();
 
   const { type, config } = extractColumnConfig(
-    properties[propId]! as Column<SelectPlugin | MultiSelectPlugin>,
+    properties[propId]! as ColumnInfo<SelectPlugin | MultiSelectPlugin>,
   );
 
   const [currentOptions, setCurrentOptions] = useState(

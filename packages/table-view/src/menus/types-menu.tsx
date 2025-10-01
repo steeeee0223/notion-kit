@@ -42,11 +42,11 @@ interface TypesMenuProps {
 }
 
 export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
-  const { properties } = useTableViewCtx();
-  const { addColumn, updateColumnType } = useTableActions();
+  const { table, properties } = useTableViewCtx();
+  const { addColumn } = useTableActions();
   const { openMenu } = useMenu();
 
-  const propType = propId ? properties[propId]?.type : null;
+  const propType = propId ? table.getColumnInfo(propId).type : null;
 
   const { search, results, updateSearch } = useFilter(propOptions, (prop, v) =>
     prop.title.toLowerCase().includes(v),
@@ -61,7 +61,7 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
       );
       addColumn({ id: colId, type, name: uniqueName, at });
     } else {
-      updateColumnType(colId, type);
+      table.setColumnType(colId, type);
     }
 
     openMenu(<EditPropMenu propId={colId} />, { x: -12, y: -12 });

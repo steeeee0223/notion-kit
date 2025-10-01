@@ -4,10 +4,9 @@ import { v4 } from "uuid";
 
 import type { IconData } from "@notion-kit/icon-block";
 
-import type { ColumnInfo } from "../features";
 import type {
   Cell,
-  Column,
+  ColumnInfo,
   PluginsMap,
   PluginType,
   Row,
@@ -33,7 +32,7 @@ export interface TableViewAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {
    * @field property definitions
    * @param key property (column) id
    */
-  properties: Record<string, Column<InferPlugin<TPlugins>>>;
+  properties: Record<string, ColumnInfo<InferPlugin<TPlugins>>>;
   /**
    * @field array of ordered property (column) ids
    * @note freezed columns: `propertiesOrder.slice(0, freezedIndex + 1)`
@@ -55,7 +54,7 @@ export type TableViewAction<TPlugins extends CellPlugin[]> =
   | {
       type: "update:col";
       payload: { id: string };
-      updater: Updater<ColumnInfo>;
+      updater: Updater<ColumnInfo<InferPlugin<TPlugins>>>;
     }
   | {
       type: "update:col:type";
@@ -146,32 +145,32 @@ function tableViewReducer<TPlugins extends CellPlugin[]>(
       const config =
         destPlugin.transferConfig?.(property, v.data) ??
         destPlugin.default.config;
-      const data = { ...v.data };
-      v.dataOrder.forEach((rowId) => {
-        if (!data[rowId]) return;
-        const cell = data[rowId].properties[a.payload.id]!;
-        const srcPlugin = p[property.type];
-        data[rowId] = {
-          ...data[rowId],
-          properties: {
-            ...data[rowId].properties,
-            [a.payload.id]: {
-              id: cell.id,
-              value: destPlugin.fromReadableValue(
-                srcPlugin.toReadableValue(cell.value),
-                config,
-              ),
-            },
-          },
-        };
-      });
+      // const data = { ...v.data };
+      // v.dataOrder.forEach((rowId) => {
+      //   if (!data[rowId]) return;
+      //   const cell = data[rowId].properties[a.payload.id]!;
+      //   const srcPlugin = p[property.type];
+      //   data[rowId] = {
+      //     ...data[rowId],
+      //     properties: {
+      //       ...data[rowId].properties,
+      //       [a.payload.id]: {
+      //         id: cell.id,
+      //         value: destPlugin.fromReadableValue(
+      //           srcPlugin.toReadableValue(cell.value),
+      //           config,
+      //         ),
+      //       },
+      //     },
+      //   };
+      // });
       return {
         ...v,
         properties: {
           ...v.properties,
           [a.payload.id]: { ...property, type: destPlugin.id, config },
         },
-        data,
+        // data,
       };
     }
     case "update:col:visibility": {

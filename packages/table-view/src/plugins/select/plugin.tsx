@@ -3,7 +3,7 @@ import { v4 } from "uuid";
 import { getRandomColor } from "@notion-kit/utils";
 
 import { DefaultIcon } from "../../common";
-import type { Cell, Column, Row } from "../../lib/types";
+import type { Cell, ColumnInfo, Row } from "../../lib/types";
 import type { TableViewAtom } from "../../table-contexts";
 import type { CellPlugin } from "../types";
 import { SelectCell } from "./select-cell";
@@ -18,7 +18,9 @@ import type {
 } from "./types";
 
 function selectReducer(v: TableViewAtom, a: SelectActions): TableViewAtom {
-  const prop = v.properties[a.id] as Column<SelectPlugin | MultiSelectPlugin>;
+  const prop = v.properties[a.id] as ColumnInfo<
+    SelectPlugin | MultiSelectPlugin
+  >;
   const { config, nextEvent } = selectConfigReducer(prop.config, a);
   const properties = {
     ...v.properties,
@@ -72,13 +74,13 @@ function selectReducer(v: TableViewAtom, a: SelectActions): TableViewAtom {
  * Transfers the property configuration to "select" or "multi-select"
  */
 function toSelectConfig<TPlugin extends CellPlugin>(
-  column: Column<TPlugin>,
+  column: ColumnInfo<TPlugin>,
   data: Record<string, Row<TPlugin[]>>,
 ): SelectConfig {
   switch (column.type) {
     case "select":
     case "multi-select":
-      return (column as Column<SelectPlugin>).config;
+      return (column as ColumnInfo<SelectPlugin>).config;
     case "text": {
       const options = Object.values(data).reduce<SelectConfig["options"]>(
         (acc, row) => {

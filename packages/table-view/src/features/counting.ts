@@ -7,6 +7,9 @@ import type {
 } from "@tanstack/react-table";
 import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
 
+import type { Row } from "../lib/types";
+import { getCount } from "../lib/utils";
+
 // define types for our new feature's custom state
 export enum CountMethod {
   NONE,
@@ -44,6 +47,7 @@ export interface CountingOptions {
 // Define types for our new feature's table APIs
 export interface CountingTableApi {
   getColumnCounting: (colId: string) => CountingState[string];
+  getColumnCountResult: (colId: string) => string;
   setColumnCounting: (updater: Updater<CountingState>) => void;
   setColumnCountMethod: (colId: string, method: CountMethod) => void;
   setColumnCountCapped: (colId: string, updater: Updater<boolean>) => void;
@@ -69,7 +73,7 @@ export const CountingFeature: TableFeature = {
   },
 
   // define the new feature's table instance methods
-  createTable: <TData extends RowData>(table: Table<TData>): void => {
+  createTable: (table: Table<Row>): void => {
     table.getColumnCounting = (colId) => {
       if (!table.options.enableColumnCounting) {
         throw new Error(
@@ -78,6 +82,14 @@ export const CountingFeature: TableFeature = {
       }
       const counting = table.getState().columnCounting;
       return counting[colId] ?? { method: CountMethod.NONE };
+    };
+    table.getColumnCountResult = (colId) => {
+      if (!table.options.enableColumnCounting) {
+        throw new Error(
+          `[TableView] Column counting is not enabled. To enable, pass \`enableColumnCounting: true\` to your table options.`,
+        );
+      }
+      return getCount(table, colId);
     };
     table.setColumnCounting = (updater) =>
       table.options.onColumnCountingChange?.((prev) =>

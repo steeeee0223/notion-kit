@@ -43,13 +43,12 @@ interface PropMenuProps {
  * 11. ✅ Delete property
  */
 export function PropMenu({ propId }: PropMenuProps) {
-  const { plugins, table, properties } = useTableViewCtx();
+  const { table } = useTableViewCtx();
   const { duplicate } = useTableActions();
   const { openMenu } = useMenu();
 
-  const property = properties[propId]!;
-  const plugin = plugins.items[property.type]!;
   const info = table.getColumnInfo(propId);
+  const plugin = table.getColumnPlugin(propId);
 
   // 3. Sorting
   const sortColumn = (desc: boolean) =>
@@ -76,14 +75,14 @@ export function PropMenu({ propId }: PropMenuProps) {
 
   return (
     <>
-      <PropMeta propId={propId} type={property.type} />
+      <PropMeta propId={propId} type={info.type} />
       <DropdownMenuGroup>
         <PropConfig
           plugin={plugin}
           propId={propId}
-          meta={extractColumnConfig(property)}
+          meta={extractColumnConfig(info)}
         />
-        {property.type !== "title" && (
+        {info.type !== "title" && (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger
               Icon={<Icon.ArrowSquarePathUpDown />}
@@ -121,7 +120,7 @@ export function PropMenu({ propId }: PropMenuProps) {
             className="w-50"
             collisionPadding={12}
           >
-            <CalcMenu id={propId} type={property.type} />
+            <CalcMenu id={propId} type={info.type} />
           </DropdownMenuSubContent>
         </DropdownMenuSub>
         <DropdownMenuItem
@@ -132,7 +131,7 @@ export function PropMenu({ propId }: PropMenuProps) {
             : { Icon: <Icon.Pin />, Body: "Freeze up to column" })}
           className="[&_svg]:w-3"
         />
-        {property.type !== "title" && (
+        {info.type !== "title" && (
           <DropdownMenuItem
             onSelect={hideProp}
             Icon={<Icon.EyeHideInversePadded className="size-6" />}
@@ -158,7 +157,7 @@ export function PropMenu({ propId }: PropMenuProps) {
           Icon={<Icon.ArrowRectangle side="right" />}
           Body="Insert right"
         />
-        {property.type !== "title" && (
+        {info.type !== "title" && (
           <>
             <DropdownMenuItem
               onSelect={duplicateProp}

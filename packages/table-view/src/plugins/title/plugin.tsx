@@ -1,14 +1,14 @@
 import { functionalUpdate } from "@tanstack/react-table";
 
 import { DefaultIcon } from "../../common";
-import type { Column } from "../../lib/types";
+import type { ColumnInfo } from "../../lib/types";
 import type { TableViewAtom } from "../../table-contexts";
 import { TitleCell } from "./title-cell";
 import { TitleConfig } from "./title-config";
 import type { TitleActions, TitlePlugin } from "./types";
 
 function titleReducer(v: TableViewAtom, a: TitleActions): TableViewAtom {
-  const prop = v.properties[a.id] as Column<TitlePlugin>;
+  const prop = v.properties[a.id] as ColumnInfo<TitlePlugin>;
   prop.config.showIcon = functionalUpdate(
     a.updater,
     prop.config.showIcon ?? true,

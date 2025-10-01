@@ -2,8 +2,8 @@ import type { SortingFn } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type {
-  Column,
   ColumnDefs,
+  ColumnInfo,
   PluginsMap,
   PluginType,
   Row,
@@ -25,7 +25,7 @@ export function getMinWidth(type: PluginType<CellPlugin[]>) {
 
 export function createInitialTable(): PartialTableState<CellPlugin[]> {
   const titleId = v4();
-  const columns: Column<TitlePlugin>[] = [
+  const columns: ColumnInfo<TitlePlugin>[] = [
     { id: titleId, name: "Name", type: "title", config: { showIcon: true } },
   ];
   const data: Row<TitlePlugin[]>[] = [
@@ -55,7 +55,7 @@ export function createInitialTable(): PartialTableState<CellPlugin[]> {
 export function toDatabaseProperties<TPlugins extends CellPlugin[]>(
   plugins: Record<string, TPlugins[number]>,
   properties: ColumnDefs<TPlugins>,
-): Column<CellPlugin>[] {
+): ColumnInfo<CellPlugin>[] {
   return properties.map((property) => ({
     config: plugins[property.type]!.default.config as InferConfig<
       TPlugins[number]
@@ -78,7 +78,10 @@ export function getTableViewAtom<TPlugins extends CellPlugin[]>(
   const rowData = arrayToEntity(state.data);
   return {
     table: { sorting: [] },
-    properties: columnData.items as Record<string, Column<TPlugins[number]>>,
+    properties: columnData.items as Record<
+      string,
+      ColumnInfo<TPlugins[number]>
+    >,
     propertiesOrder: columnData.ids,
     data: rowData.items,
     dataOrder: rowData.ids,

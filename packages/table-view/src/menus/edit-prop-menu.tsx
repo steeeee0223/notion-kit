@@ -35,11 +35,10 @@ interface EditPropMenuProps {
  * 6. ✅ Delete property
  */
 export function EditPropMenu({ propId }: EditPropMenuProps) {
-  const { table, properties } = useTableViewCtx();
+  const { table } = useTableViewCtx();
   const { duplicate } = useTableActions();
   const { openMenu, closeMenu } = useMenu();
 
-  const propType = properties[propId]!.type;
   const info = table.getColumnInfo(propId);
 
   const openPropsMenu = () => openMenu(<PropsMenu />, { x: -12, y: -12 });
@@ -68,9 +67,9 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
   return (
     <>
       <MenuHeader title="Edit property" onBack={openPropsMenu} />
-      <PropMeta propId={propId} type={propType} />
+      <PropMeta propId={propId} type={info.type} />
       <MenuGroup>
-        {propType === "title" ? (
+        {info.type === "title" ? (
           <TooltipPreset
             side="left"
             sideOffset={6}
@@ -100,9 +99,9 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
             >
               <MenuItemAction className="flex items-center text-muted">
                 <div className="flex truncate">
-                  <DefaultIcon type={propType} className="fill-current" />
+                  <DefaultIcon type={info.type} className="fill-current" />
                   <div className="inline-block min-h-1 min-w-1" />
-                  <span>{propertyTypes[propType]!.title}</span>
+                  <span>{propertyTypes[info.type]!.title}</span>
                 </div>
                 <Icon.ChevronRight className="transition-out h-full w-3 fill-current" />
               </MenuItemAction>
@@ -139,7 +138,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
             <Switch size="sm" checked={info.wrapped} />
           </MenuItemAction>
         </MenuItem>
-        {propType !== "title" && (
+        {info.type !== "title" && (
           <>
             <MenuItem
               onClick={hideProp}

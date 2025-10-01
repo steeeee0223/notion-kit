@@ -11,12 +11,12 @@ import {
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader } from "../common";
-import type { ColumnInfo } from "../features";
+import { ColumnInfo } from "../lib/types";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { PropsMenu } from "./props-menu";
 
-export const DeletedPropsMenu = () => {
-  const { table, properties } = useTableViewCtx();
+export function DeletedPropsMenu() {
+  const { table } = useTableViewCtx();
   const { remove } = useTableActions();
   const { openMenu } = useMenu();
 
@@ -30,7 +30,6 @@ export const DeletedPropsMenu = () => {
           <PropertyItem
             key={info.id}
             info={info}
-            type={properties[info.id]!.type}
             onRestore={() => table.setColumnInfo(info.id, { isDeleted: false })}
             onDelete={() => remove(info.id, "col")}
           />
@@ -38,18 +37,16 @@ export const DeletedPropsMenu = () => {
       </MenuGroup>
     </>
   );
-};
+}
 
 interface PropertyItemProps {
   info: ColumnInfo;
-  type: string;
   onRestore: () => void;
   onDelete: () => void;
 }
 
 const PropertyItem: React.FC<PropertyItemProps> = ({
   info,
-  type,
   onRestore,
   onDelete,
 }) => {
@@ -58,7 +55,11 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
       role="menuitem"
       className="*:data-[slot=menu-item-body]:leading-normal"
       Icon={
-        info.icon ? <IconBlock icon={info.icon} /> : <DefaultIcon type={type} />
+        info.icon ? (
+          <IconBlock icon={info.icon} />
+        ) : (
+          <DefaultIcon type={info.type} />
+        )
       }
       Body={info.name}
     >
