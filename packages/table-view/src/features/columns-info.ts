@@ -13,7 +13,7 @@ import type {
   Row,
   Rows,
 } from "../lib/types";
-import { arrayToEntity } from "../lib/utils";
+import { arrayToEntity, getUniqueName } from "../lib/utils";
 import type { CellPlugin, InferActions, InferPlugin } from "../plugins";
 import { DEFAULT_PLUGINS } from "../plugins";
 import { TableViewAtom } from "../table-contexts";
@@ -52,7 +52,9 @@ export interface ColumnsInfoTableApi {
     colId: string,
     actions: InferActions<InferPlugin<TPlugins>>,
   ) => void;
+  // Column name
   checkIsUniqueColumnName: (name: string) => boolean;
+  generateUniqueColumnName: (initial?: string) => string;
 }
 
 export interface ColumnInfoColumnApi {
@@ -153,6 +155,12 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     table.checkIsUniqueColumnName = (name) => {
       return Object.values(table.getState().columnsInfo).every(
         (info) => info.name !== name,
+      );
+    };
+    table.generateUniqueColumnName = (initial = "") => {
+      return getUniqueName(
+        initial,
+        Object.values(table.getState().columnsInfo).map((info) => info.name),
       );
     };
   },

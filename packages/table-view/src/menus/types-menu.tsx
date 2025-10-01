@@ -18,7 +18,6 @@ import {
 
 import { DefaultIcon, MenuHeader } from "../common";
 import type { PluginType } from "../lib/types";
-import { getUniqueName } from "../lib/utils";
 import { CellPlugin } from "../plugins";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { EditPropMenu } from "./edit-prop-menu";
@@ -42,7 +41,7 @@ interface TypesMenuProps {
 }
 
 export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
-  const { table, properties } = useTableViewCtx();
+  const { table } = useTableViewCtx();
   const { addColumn } = useTableActions();
   const { openMenu } = useMenu();
 
@@ -55,10 +54,7 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
     let colId = propId;
     if (colId === null) {
       colId = v4();
-      const uniqueName = getUniqueName(
-        name,
-        Object.values(properties).map((p) => p.name),
-      );
+      const uniqueName = table.generateUniqueColumnName(name);
       addColumn({ id: colId, type, name: uniqueName, at });
     } else {
       table.setColumnType(colId, type);

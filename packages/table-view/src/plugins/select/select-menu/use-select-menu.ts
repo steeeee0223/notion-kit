@@ -23,11 +23,11 @@ export function useSelectMenu({
   options,
   onUpdate,
 }: UseSelectMenuOptions) {
-  const { properties } = useTableViewCtx();
+  const { table } = useTableViewCtx();
   const { dispatch } = useTableActions();
 
   const { type, config } = extractColumnConfig(
-    properties[propId]! as ColumnInfo<SelectPlugin | MultiSelectPlugin>,
+    table.getColumnInfo(propId) as ColumnInfo<SelectPlugin | MultiSelectPlugin>,
   );
 
   const [currentOptions, setCurrentOptions] = useState(

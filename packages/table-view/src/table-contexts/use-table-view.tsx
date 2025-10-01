@@ -244,12 +244,10 @@ export function useTableView<TPlugins extends CellPlugin[]>({
 
   const tableViewCtx = useMemo<TableViewCtx>(() => {
     const uncontrolled: TableViewCtx = {
-      plugins,
       table,
       columnSizeVars,
       columnSensors,
       rowSensors,
-      properties: _state.properties,
     };
     if (!controlledProperties) return uncontrolled;
     const colData = arrayToEntity(controlledProperties);
@@ -257,15 +255,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       ...uncontrolled,
       properties: colData.items,
     };
-  }, [
-    _state.properties,
-    columnSensors,
-    columnSizeVars,
-    controlledProperties,
-    plugins,
-    rowSensors,
-    table,
-  ]);
+  }, [columnSensors, columnSizeVars, controlledProperties, rowSensors, table]);
 
   return [tableViewCtx, dispatch] as const;
 }
