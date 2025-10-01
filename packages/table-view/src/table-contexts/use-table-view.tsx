@@ -14,11 +14,11 @@ import {
   useReactTable,
   type ColumnDef,
   type ColumnOrderState,
-  type VisibilityState,
 } from "@tanstack/react-table";
 
 import {
   ColumnsInfoFeature,
+  ColumnsInfoState,
   CountingFeature,
   FreezingFeature,
   OrderingFeature,
@@ -151,12 +151,8 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     [dispatch, plugins.items, properties],
   );
 
-  const columnVisibility = useMemo<VisibilityState>(
-    () =>
-      properties.reduce(
-        (acc, col) => ({ ...acc, [col.id]: !col.hidden && !col.isDeleted }),
-        {},
-      ),
+  const columnsInfo = useMemo<ColumnsInfoState>(
+    () => properties.reduce((acc, col) => ({ ...acc, [col.id]: col }), {}),
     [properties],
   );
 
@@ -181,9 +177,11 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       sorting: _state.table.sorting,
       rowOrder,
       columnOrder,
-      columnVisibility,
+      columnsInfo,
     },
     onSortingChange: (updater) => dispatch({ type: "update:sorting", updater }),
+    onColumnInfoChange: (id, updater) =>
+      dispatch({ type: "update:col", payload: { id }, updater }),
     onColumnOrderChange: (updater) =>
       dispatch({ type: "set:col:order", updater }),
     onRowOrderChange: (updater) => dispatch({ type: "set:row:order", updater }),

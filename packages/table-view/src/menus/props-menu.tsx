@@ -55,7 +55,7 @@ export const PropsMenu = () => {
     let deletedCount = 0;
     columnOrder.forEach((propId) => {
       const info = table.getColumnInfo(propId);
-      if (info.isDeleted) {
+      if (!info.isDeleted) {
         props.push({ ...info, id: propId, type: properties[propId]!.type });
       } else {
         deletedCount++;
@@ -135,7 +135,7 @@ export const PropsMenu = () => {
             variant="secondary"
             tabIndex={0}
             onClick={openDeletedPropsMenu}
-            Icon={<Icon.Trash className="size-4" />}
+            Icon={<Icon.Trash />}
             Body="Deleted properties"
           >
             <MenuItemAction className="flex items-center text-muted">
@@ -208,7 +208,7 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
         <div
           key="drag-handle"
           className={cn(
-            "mr-2 hidden h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-default/45",
+            "mr-2 hidden h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-icon",
             draggable && "flex",
           )}
           {...attributes}

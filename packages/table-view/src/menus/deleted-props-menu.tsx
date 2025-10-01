@@ -79,13 +79,13 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
           tabIndex={0}
           aria-label="Delete"
           variant="hint"
-          className="size-6 p-0 disabled:opacity-40"
+          className="size-6 disabled:opacity-40"
           onClick={(e) => {
             e.stopPropagation();
             onDelete();
           }}
         >
-          <Icon.Trash className="size-3.5 fill-current" />
+          <Icon.Trash className="fill-current" />
         </Button>
       </MenuItemAction>
     </MenuItem>

@@ -1,12 +1,11 @@
 import type {
   Column,
-  OnChangeFn,
   RowData,
   Table,
   TableFeature,
   Updater,
 } from "@tanstack/react-table";
-import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
+import { functionalUpdate } from "@tanstack/react-table";
 
 import type { IconData } from "@notion-kit/icon-block";
 
@@ -32,14 +31,13 @@ export interface ColumnsInfoTableState {
 
 // define types for our new feature's table options
 export interface ColumnsInfoOptions {
-  onColumnsInfoChange?: OnChangeFn<ColumnsInfoState>;
+  onColumnInfoChange?: (id: string, updater: Updater<ColumnInfo>) => void;
 }
 
 // Define types for our new feature's table APIs
 export interface ColumnsInfoTableApi {
   getColumnInfo: (colId: string) => ColumnInfo;
   getDeletedColumns: () => ColumnInfoWithId[];
-  _setColumnsInfo: (updater: Updater<ColumnsInfoState>) => void;
   setColumnInfo: (colId: string, info: Partial<ColumnInfo>) => void;
   toggleColumnWrapped: (colId: string, updater: Updater<boolean>) => void;
 }
@@ -61,7 +59,15 @@ export const ColumnsInfoFeature: TableFeature = {
     table: Table<TData>,
   ): ColumnsInfoOptions => {
     return {
-      onColumnsInfoChange: makeStateUpdater("columnsInfo", table),
+      onColumnInfoChange: (id, updater) => {
+        table.setState((prev) => ({
+          ...prev,
+          columnsInfo: {
+            ...prev.columnsInfo,
+            [id]: functionalUpdate(updater, prev.columnsInfo[id]!),
+          },
+        }));
+      },
     };
   },
 
@@ -83,23 +89,21 @@ export const ColumnsInfoFeature: TableFeature = {
         return acc;
       }, []);
     };
-    table._setColumnsInfo = (updater) =>
-      table.options.onColumnsInfoChange?.((prev) =>
-        functionalUpdate(updater, prev),
-      );
     table.setColumnInfo = (colId, info) => {
-      table._setColumnsInfo((prev) => ({
+      table.options.onColumnInfoChange?.(colId, (prev) => ({
         ...prev,
-        [colId]: { ...prev[colId]!, ...info },
+        ...info,
       }));
+      if (info.hidden !== undefined || info.isDeleted !== undefined)
+        table.setColumnVisibility((prev) => ({
+          ...prev,
+          [colId]: !info.hidden && !info.isDeleted,
+        }));
     };
     table.toggleColumnWrapped = (colId, updater) => {
-      table._setColumnsInfo((prev) => ({
+      table.options.onColumnInfoChange?.(colId, (prev) => ({
         ...prev,
-        [colId]: {
-          ...prev[colId]!,
-          wrapped: functionalUpdate(updater, prev[colId]?.wrapped ?? false),
-        },
+        wrapped: functionalUpdate(updater, prev.wrapped ?? false),
       }));
     };
   },

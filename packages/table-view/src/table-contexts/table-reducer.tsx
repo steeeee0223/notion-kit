@@ -4,6 +4,7 @@ import { v4 } from "uuid";
 
 import type { IconData } from "@notion-kit/icon-block";
 
+import type { ColumnInfo } from "../features";
 import type {
   Cell,
   Column,
@@ -51,6 +52,11 @@ export interface TableViewAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {
 
 export type TableViewAction<TPlugins extends CellPlugin[]> =
   | { type: "add:col"; payload: AddColumnPayload<TPlugins> }
+  | {
+      type: "update:col";
+      payload: { id: string };
+      updater: Updater<ColumnInfo>;
+    }
   | {
       type: "update:col:type";
       payload: { id: string; type: PluginType<TPlugins> };
@@ -119,6 +125,18 @@ function tableViewReducer<TPlugins extends CellPlugin[]>(
             : insertAt(v.propertiesOrder, colId, idx);
         },
         data,
+      };
+    }
+    case "update:col": {
+      const prop = v.properties[a.payload.id];
+      if (!prop) return v as never;
+      const info = functionalUpdate(a.updater, prop);
+      return {
+        ...v,
+        properties: {
+          ...v.properties,
+          [a.payload.id]: { ...prop, ...info },
+        },
       };
     }
     case "update:col:type": {
