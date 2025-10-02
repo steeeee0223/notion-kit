@@ -13,12 +13,7 @@ import type {
   Rows,
 } from "../lib/types";
 import { getDefaultCell, getUniqueName, insertAt, NEVER } from "../lib/utils";
-import type {
-  CellPlugin,
-  InferActions,
-  InferKey,
-  InferPlugin,
-} from "../plugins";
+import type { CellPlugin, InferPlugin } from "../plugins";
 import type { AddColumnPayload } from "./types";
 
 export interface TableViewAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {
@@ -59,13 +54,6 @@ export type TableViewAction<TPlugins extends CellPlugin[]> =
   | {
       type: "update:col:type";
       payload: { id: string; type: PluginType<TPlugins> };
-    }
-  | {
-      type: "update:col:meta";
-      payload: {
-        type: InferKey<InferPlugin<TPlugins>>;
-        actions: InferActions<InferPlugin<TPlugins>>;
-      };
     }
   | { type: "update:col:visibility"; payload: { hidden: boolean } }
   | { type: "set:col:order" | "set:row:order"; updater: Updater<string[]> }
@@ -145,33 +133,27 @@ function tableViewReducer<TPlugins extends CellPlugin[]>(
       const config =
         destPlugin.transferConfig?.(property, v.data) ??
         destPlugin.default.config;
-      // const data = { ...v.data };
-      // v.dataOrder.forEach((rowId) => {
-      //   if (!data[rowId]) return;
-      //   const cell = data[rowId].properties[a.payload.id]!;
-      //   const srcPlugin = p[property.type];
-      //   data[rowId] = {
-      //     ...data[rowId],
-      //     properties: {
-      //       ...data[rowId].properties,
-      //       [a.payload.id]: {
-      //         id: cell.id,
-      //         value: destPlugin.fromReadableValue(
-      //           srcPlugin.toReadableValue(cell.value),
-      //           config,
-      //         ),
-      //       },
-      //     },
-      //   };
-      // });
-      return {
-        ...v,
-        properties: {
-          ...v.properties,
-          [a.payload.id]: { ...property, type: destPlugin.id, config },
-        },
-        // data,
-      };
+      // TODO
+      const data = { ...v.data };
+      v.dataOrder.forEach((rowId) => {
+        if (!data[rowId]) return;
+        const cell = data[rowId].properties[a.payload.id]!;
+        const srcPlugin = p[property.type];
+        data[rowId] = {
+          ...data[rowId],
+          properties: {
+            ...data[rowId].properties,
+            [a.payload.id]: {
+              id: cell.id,
+              value: destPlugin.fromReadableValue(
+                srcPlugin.toReadableValue(cell.value),
+                config,
+              ),
+            },
+          },
+        };
+      });
+      return { ...v, data };
     }
     case "update:col:visibility": {
       const properties = { ...v.properties };
@@ -221,10 +203,6 @@ function tableViewReducer<TPlugins extends CellPlugin[]>(
         ),
         data,
       };
-    }
-    case "update:col:meta": {
-      const { type, actions } = a.payload;
-      return p[type].reducer<TPlugins>(v, actions);
     }
     case "add:row": {
       const row: Row<TPlugins> = { id: v4(), properties: {} };

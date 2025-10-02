@@ -21,7 +21,7 @@ import {
 } from "@notion-kit/shadcn";
 
 import { VerticalDnd } from "../../../common";
-import type { SelectMeta, SelectSort } from "../types";
+import type { SelectConfig, SelectSort } from "../types";
 import { OptionItem } from "./option-item";
 import { useSelectConfigMenu } from "./use-select-config-menu";
 
@@ -33,12 +33,10 @@ const sortOptions: { label: string; value: SelectSort }[] = [
 
 interface SelectConfigMenuProps {
   propId: string;
-  meta: SelectMeta;
+  config: SelectConfig;
 }
 
-export function SelectConfigMenu({ propId, meta }: SelectConfigMenuProps) {
-  const { config } = meta;
-
+export function SelectConfigMenu({ propId, config }: SelectConfigMenuProps) {
   const {
     addOption,
     reorderOptions,
@@ -46,7 +44,7 @@ export function SelectConfigMenu({ propId, meta }: SelectConfigMenuProps) {
     updateOption,
     updateSort,
     deleteOption,
-  } = useSelectConfigMenu({ propId, meta });
+  } = useSelectConfigMenu({ propId, config });
 
   const [showInput, setShowInput] = useState(false);
   const nameField = useInputField({

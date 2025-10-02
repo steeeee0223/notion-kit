@@ -24,11 +24,6 @@ export interface SelectConfig {
   sort: SelectSort;
 }
 
-export interface SelectMeta {
-  type: "select" | "multi-select";
-  config: SelectConfig;
-}
-
 export type SelectActions = SelectConfigActionPayload & {
   id: string;
 };

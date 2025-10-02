@@ -144,16 +144,13 @@ export function select(): SelectPlugin {
       <SelectCell
         propId={propId}
         options={data ? [data] : []}
-        meta={{ type: "select", config: config! }}
+        config={config!}
         wrapped={wrapped}
         onChange={(options) => onChange?.(options.at(0) ?? null)}
       />
     ),
     renderConfigMenu: ({ propId, config }) => (
-      <SelectConfigMenu
-        propId={propId}
-        meta={{ type: "multi-select", config: config! }}
-      />
+      <SelectConfigMenu propId={propId} config={config!} />
     ),
     reducer: selectReducer,
   };
@@ -180,16 +177,13 @@ export function multiSelect(): MultiSelectPlugin {
       <SelectCell
         propId={propId}
         options={data}
-        meta={{ type: "multi-select", config: config! }}
+        config={config!}
         wrapped={wrapped}
         onChange={(options) => onChange?.(options)}
       />
     ),
     renderConfigMenu: ({ propId, config }) => (
-      <SelectConfigMenu
-        propId={propId}
-        meta={{ type: "multi-select", config: config! }}
-      />
+      <SelectConfigMenu propId={propId} config={config!} />
     ),
     reducer: selectReducer,
   };
