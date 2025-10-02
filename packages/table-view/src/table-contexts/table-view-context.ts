@@ -6,7 +6,7 @@ import type { Table } from "@tanstack/react-table";
 
 import type { IconData } from "@notion-kit/icon-block";
 
-import type { PluginType, Row } from "../lib/types";
+import type { Row } from "../lib/types";
 import type { CellPlugin } from "../plugins";
 import type { TableViewAction } from "./table-reducer";
 import type { AddColumnPayload } from "./types";
@@ -35,8 +35,6 @@ type ActionType = "row" | "col";
 export interface TableActions<TPlugins extends CellPlugin[] = CellPlugin[]> {
   dispatch: React.Dispatch<TableViewAction<TPlugins>>;
   addColumn: (data: AddColumnPayload<TPlugins>) => void;
-  toggleAllColumns: (hidden: boolean) => void;
-  updateColumnType: (id: string, type: PluginType<TPlugins>) => void;
   addRow: (src?: { id: string; at: "prev" | "next" }) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
   duplicate: (id: string, type: ActionType) => void;

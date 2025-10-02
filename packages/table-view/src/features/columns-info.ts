@@ -7,6 +7,7 @@ import type {
 import { functionalUpdate } from "@tanstack/react-table";
 
 import type {
+  Cell,
   ColumnInfo,
   PluginType,
   PropertyBase,
@@ -16,7 +17,6 @@ import type {
 import { arrayToEntity, getUniqueName } from "../lib/utils";
 import type { CellPlugin, InferActions, InferPlugin } from "../plugins";
 import { DEFAULT_PLUGINS } from "../plugins";
-import { TableViewAtom } from "../table-contexts";
 
 // define types for our new feature's custom state
 export type ColumnsInfoState = Record<string, ColumnInfo<CellPlugin>>;
@@ -32,13 +32,21 @@ export interface ColumnsInfoOptions {
     id: string,
     updater: Updater<ColumnInfo<TPlugin>>,
   ) => void;
+  onCellChange?: <TPlugins extends CellPlugin[]>(
+    rowId: string,
+    colId: string,
+    data: Cell<InferPlugin<TPlugins>>,
+  ) => void;
+  onTableDataChange?: (data: Rows) => void;
 }
 
 // Define types for our new feature's table APIs
 export interface ColumnsInfoTableApi {
+  // Column Getters
   getColumnInfo: (colId: string) => ColumnInfo;
   getColumnPlugin: (colId: string) => CellPlugin;
   getDeletedColumns: () => ColumnInfo[];
+  // Column Setters
   setColumnInfo: (
     colId: string,
     info: Partial<Omit<PropertyBase, "id">>,
@@ -52,15 +60,27 @@ export interface ColumnsInfoTableApi {
     colId: string,
     actions: InferActions<InferPlugin<TPlugins>>,
   ) => void;
-  // Column name
+  // Column name checkers
   checkIsUniqueColumnName: (name: string) => boolean;
   generateUniqueColumnName: (initial?: string) => string;
+  // Cell API
+  getCellValues: <TPlugins extends CellPlugin[]>() => Rows<TPlugins>;
+  updateCell: <TPlugins extends CellPlugin[]>(
+    rowId: string,
+    colId: string,
+    data: Cell<InferPlugin<TPlugins>>,
+  ) => void;
 }
 
 export interface ColumnInfoColumnApi {
   getInfo: () => ColumnInfo;
   getWidth: () => string;
   handleResizeEnd: () => void;
+  // Cell updater
+  updateCell: <TPlugins extends CellPlugin[]>(
+    rowId: string,
+    data: Cell<InferPlugin<TPlugins>>,
+  ) => void;
 }
 
 export const ColumnsInfoFeature: TableFeature<Row> = {
@@ -93,6 +113,15 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
 
   // define the new feature's table instance methods
   createTable: (table: Table<Row>): void => {
+    /** Cell API */
+    table.getCellValues = () =>
+      table.getRowModel().rows.reduce<Rows>((acc, row) => {
+        acc[row.id] = row.original;
+        return acc;
+      }, {});
+    table.updateCell = (rowId, colId, data) =>
+      table.options.onCellChange?.(rowId, colId, data);
+    /** Column Getters */
     table.getColumnInfo = (colId) => {
       const info = table.getState().columnsInfo[colId];
       if (!info) {
@@ -117,6 +146,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         return acc;
       }, []);
     };
+    /** Column Setters */
     table.setColumnInfo = (colId, info) => {
       table.options.onColumnInfoChange?.(colId, (prev) => ({
         ...prev,
@@ -134,24 +164,69 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         wrapped: functionalUpdate(updater, prev.wrapped ?? false),
       }));
     };
-    table.setColumnType = (colId, type) => {
-      const plugin = table.getColumnPlugin(colId);
-      const data = table.getRowModel().rows.reduce<Rows>((acc, row) => {
-        acc[row.id] = row.original;
-        return acc;
-      }, {});
+    table.toggleAllColumnsVisible = (visible) => {
+      const infos = table.getState().columnsInfo;
+      Object.values(infos).forEach((info) => {
+        table.setColumnInfo(info.id, {
+          hidden: info.type === "title" ? false : !visible,
+        });
+      });
+    };
+    table.setColumnType = <TPlugins extends CellPlugin[]>(
+      colId: string,
+      type: PluginType<TPlugins>,
+    ) => {
+      const destPlugin = table.getState().cellPlugins[type] as
+        | InferPlugin<TPlugins>
+        | undefined;
+      if (!destPlugin) {
+        throw new Error(`[TableView] Plugin not found: ${type}`);
+      }
+      const data = table.getCellValues();
+      const config =
+        destPlugin.transferConfig?.(table.getColumnInfo(colId), data) ??
+        destPlugin.default.config;
       table.options.onColumnInfoChange?.(colId, (prev) => ({
         ...prev,
         type,
-        config: plugin.transferConfig?.(prev, data) ?? plugin.default.config,
+        config,
       }));
-      table.setColumnTypeConfig = (colId, actions) => {
-        const plugin = table.getColumnPlugin(colId);
-        // TODO update this
-        const newState = plugin.reducer({} as TableViewAtom, actions);
-        table.options.onColumnInfoChange?.(colId, newState.properties[colId]!);
-      };
+      // Update all cells
+      const newData = { ...data };
+      const srcPlugin = table.getColumnPlugin(colId);
+      Object.keys(newData).forEach((rowId) => {
+        if (!newData[rowId]) return;
+        const cell = newData[rowId].properties[colId]!;
+        newData[rowId] = {
+          ...newData[rowId],
+          properties: {
+            ...newData[rowId].properties,
+            [colId]: {
+              id: cell.id,
+              value: destPlugin.fromReadableValue(
+                srcPlugin.toReadableValue(cell.value),
+                config,
+              ),
+            },
+          },
+        };
+      });
+      table.options.onTableDataChange?.(newData);
     };
+    table.setColumnTypeConfig = (colId, actions) => {
+      const plugin = table.getColumnPlugin(colId);
+      const { properties, data } = plugin.reducer(
+        {
+          properties: table.getState().columnsInfo,
+          data: table.getCellValues(),
+        },
+        actions,
+      );
+      table.setColumnInfo(colId, properties[colId]!);
+      // Update all cells
+      table.options.onTableDataChange?.(data);
+    };
+    /** Column name */
     table.checkIsUniqueColumnName = (name) => {
       return Object.values(table.getState().columnsInfo).every(
         (info) => info.name !== name,
@@ -169,10 +244,15 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     table: Table<Row<TPlugins>>,
   ): void => {
     column.getInfo = () => table.getColumnInfo(column.id);
+    /** Column width */
     column.getWidth = () => `calc(var(--col-${column.id}-size) * 1px)`;
     column.handleResizeEnd = () =>
       table.setColumnInfo(column.id, {
         width: `${column.getSize()}px`,
       });
+    /** Cell */
+    column.updateCell = (rowId, data) => {
+      table.updateCell(rowId, column.id, data);
+    };
   },
 };

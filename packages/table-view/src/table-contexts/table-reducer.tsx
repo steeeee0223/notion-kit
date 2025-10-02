@@ -4,14 +4,7 @@ import { v4 } from "uuid";
 
 import type { IconData } from "@notion-kit/icon-block";
 
-import type {
-  Cell,
-  ColumnInfo,
-  PluginsMap,
-  PluginType,
-  Row,
-  Rows,
-} from "../lib/types";
+import type { Cell, ColumnInfo, PluginsMap, Row, Rows } from "../lib/types";
 import { getDefaultCell, getUniqueName, insertAt, NEVER } from "../lib/utils";
 import type { CellPlugin, InferPlugin } from "../plugins";
 import type { AddColumnPayload } from "./types";
@@ -51,11 +44,6 @@ export type TableViewAction<TPlugins extends CellPlugin[]> =
       payload: { id: string };
       updater: Updater<ColumnInfo<InferPlugin<TPlugins>>>;
     }
-  | {
-      type: "update:col:type";
-      payload: { id: string; type: PluginType<TPlugins> };
-    }
-  | { type: "update:col:visibility"; payload: { hidden: boolean } }
   | { type: "set:col:order" | "set:row:order"; updater: Updater<string[]> }
   | {
       type: "delete:col" | "duplicate:col" | "delete:row" | "duplicate:row";
@@ -71,6 +59,7 @@ export type TableViewAction<TPlugins extends CellPlugin[]> =
         data: Cell<InferPlugin<TPlugins>>;
       };
     }
+  | { type: "set:table:data"; payload: Rows<TPlugins> }
   | { type: "update:sorting"; updater: Updater<SortingState> }
   | { type: "reset" };
 
@@ -125,43 +114,6 @@ function tableViewReducer<TPlugins extends CellPlugin[]>(
           [a.payload.id]: { ...prop, ...info },
         },
       };
-    }
-    case "update:col:type": {
-      const property = v.properties[a.payload.id];
-      if (!property) return v as never;
-      const destPlugin = p[a.payload.type];
-      const config =
-        destPlugin.transferConfig?.(property, v.data) ??
-        destPlugin.default.config;
-      // TODO
-      const data = { ...v.data };
-      v.dataOrder.forEach((rowId) => {
-        if (!data[rowId]) return;
-        const cell = data[rowId].properties[a.payload.id]!;
-        const srcPlugin = p[property.type];
-        data[rowId] = {
-          ...data[rowId],
-          properties: {
-            ...data[rowId].properties,
-            [a.payload.id]: {
-              id: cell.id,
-              value: destPlugin.fromReadableValue(
-                srcPlugin.toReadableValue(cell.value),
-                config,
-              ),
-            },
-          },
-        };
-      });
-      return { ...v, data };
-    }
-    case "update:col:visibility": {
-      const properties = { ...v.properties };
-      v.propertiesOrder.forEach((propId) => {
-        const property = properties[propId]!;
-        property.hidden = property.type === "title" ? false : a.payload.hidden;
-      });
-      return { ...v, properties };
     }
     case "duplicate:col": {
       const src = v.properties[a.payload.id];
@@ -251,6 +203,9 @@ function tableViewReducer<TPlugins extends CellPlugin[]>(
         dataOrder: v.dataOrder.filter((rowId) => rowId !== a.payload.id),
         data,
       };
+    }
+    case "set:table:data": {
+      return { ...v, data: a.payload };
     }
     case "update:cell": {
       const data = { ...v.data };

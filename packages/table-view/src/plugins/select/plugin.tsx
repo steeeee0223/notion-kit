@@ -4,8 +4,7 @@ import { getRandomColor } from "@notion-kit/utils";
 
 import { DefaultIcon } from "../../common";
 import type { Cell, ColumnInfo, Row } from "../../lib/types";
-import type { TableViewAtom } from "../../table-contexts";
-import type { CellPlugin } from "../types";
+import type { CellPlugin, TableDataAtom } from "../types";
 import { SelectCell } from "./select-cell";
 import { SelectConfigMenu } from "./select-config-menu";
 import { selectConfigReducer } from "./select-config-reducer";
@@ -17,7 +16,7 @@ import type {
   SelectPlugin,
 } from "./types";
 
-function selectReducer(v: TableViewAtom, a: SelectActions): TableViewAtom {
+function selectReducer(v: TableDataAtom, a: SelectActions): TableDataAtom {
   const prop = v.properties[a.id] as ColumnInfo<
     SelectPlugin | MultiSelectPlugin
   >;
@@ -32,7 +31,7 @@ function selectReducer(v: TableViewAtom, a: SelectActions): TableViewAtom {
     case "update:name": {
       const { originalName, name } = nextEvent.payload;
       const data = { ...v.data };
-      v.dataOrder.forEach((rowId) => {
+      Object.keys(data).forEach((rowId) => {
         const cell = data[rowId]?.properties[a.id] as
           | SelectCellModel
           | undefined;
@@ -45,12 +44,12 @@ function selectReducer(v: TableViewAtom, a: SelectActions): TableViewAtom {
           cell.value = name;
         }
       });
-      return { ...v, properties, data };
+      return { properties, data };
     }
     case "delete": {
       const name = nextEvent.payload;
       const data = { ...v.data };
-      v.dataOrder.forEach((rowId) => {
+      Object.keys(data).forEach((rowId) => {
         const cell = data[rowId]?.properties[a.id] as
           | SelectCellModel
           | undefined;
@@ -63,7 +62,7 @@ function selectReducer(v: TableViewAtom, a: SelectActions): TableViewAtom {
           cell.value = null;
         }
       });
-      return { ...v, properties, data };
+      return { properties, data };
     }
     default:
       return v as never;

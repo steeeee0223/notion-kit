@@ -25,7 +25,7 @@ import {
   VerticalDnd,
 } from "../common";
 import type { ColumnInfo } from "../lib/types";
-import { useTableActions, useTableViewCtx } from "../table-contexts";
+import { useTableViewCtx } from "../table-contexts";
 import { DeletedPropsMenu } from "./deleted-props-menu";
 import { EditPropMenu } from "./edit-prop-menu";
 import { TypesMenu } from "./types-menu";
@@ -35,7 +35,6 @@ import { TypesMenu } from "./types-menu";
  */
 export function PropsMenu() {
   const { table } = useTableViewCtx();
-  const { toggleAllColumns } = useTableActions();
   const { openMenu } = useMenu();
 
   const { columnOrder, columnVisibility } = table.getState();
@@ -99,7 +98,7 @@ export function PropsMenu() {
         <MenuGroupHeader
           title={search && !results ? "No results" : "Properties"}
           action={search ? null : noShownProps ? "Show all" : "Hide all"}
-          onActionClick={() => toggleAllColumns(!noShownProps)}
+          onActionClick={() => table.toggleAllColumnsVisible(!noShownProps)}
         />
         <div className="flex flex-col">
           <VerticalDnd
