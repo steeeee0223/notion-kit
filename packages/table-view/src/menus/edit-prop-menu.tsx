@@ -147,13 +147,13 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
             />
             <MenuItem
               onClick={duplicateProp}
-              Icon={<Icon.Duplicate className="h-4" />}
+              Icon={<Icon.Duplicate />}
               Body="Duplicate property"
             />
             <MenuItem
               variant="warning"
               onClick={deleteProp}
-              Icon={<Icon.Trash className="w-4" />}
+              Icon={<Icon.Trash />}
               Body="Delete property"
             />
           </>

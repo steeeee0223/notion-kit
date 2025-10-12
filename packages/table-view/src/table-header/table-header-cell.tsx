@@ -113,9 +113,7 @@ export function TableHeaderCell({ header }: TableHeaderCellProps) {
                 </div>
                 <div className="truncate">{info.name}</div>
                 {info.description && (
-                  <div className="inline-flex items-center">
-                    <Icon.Info className="mt-px ml-1 block h-full w-3.5 shrink-0 fill-default/35" />
-                  </div>
+                  <Icon.Info className="ml-1 size-3 fill-icon" />
                 )}
               </div>
             </Button>

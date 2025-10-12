@@ -115,7 +115,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
   createTable: (table: Table<Row>): void => {
     /** Cell API */
     table.getCellValues = () =>
-      table.getRowModel().rows.reduce<Rows>((acc, row) => {
+      table.getCoreRowModel().rows.reduce<Rows>((acc, row) => {
         acc[row.id] = row.original;
         return acc;
       }, {});
@@ -167,8 +167,9 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     table.toggleAllColumnsVisible = (visible) => {
       const infos = table.getState().columnsInfo;
       Object.values(infos).forEach((info) => {
+        if (info.isDeleted) return;
         table.setColumnInfo(info.id, {
-          hidden: info.type === "title" ? false : !visible,
+          hidden: info.type === "title" ? false : visible,
         });
       });
     };
