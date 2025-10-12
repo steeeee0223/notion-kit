@@ -6,7 +6,7 @@ import type { Table } from "@tanstack/react-table";
 
 import type { IconData } from "@notion-kit/icon-block";
 
-import type { Row } from "../lib/types";
+import type { Row, TableMenu } from "../lib/types";
 import type { CellPlugin } from "../plugins";
 import type { TableViewAction } from "./table-reducer";
 import type { AddColumnPayload } from "./types";
@@ -17,6 +17,9 @@ export interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
   /** DND */
   columnSensors: SensorDescriptor<SensorOptions>[];
   rowSensors: SensorDescriptor<SensorOptions>[];
+  /** Table menu */
+  menu: TableMenu;
+  setTableMenu: (menu: TableMenu) => void;
 }
 
 export const TableViewContext = createContext<TableViewCtx | null>(null);

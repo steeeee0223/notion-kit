@@ -1,5 +1,6 @@
 import type { IconData } from "@notion-kit/icon-block";
 
+import { TableViewMenuPage } from "../menus";
 import type {
   CellPlugin,
   InferConfig,
@@ -59,3 +60,9 @@ export type Rows<TPlugins extends CellPlugin[] = CellPlugin[]> = Record<
   string,
   Row<TPlugins>
 >;
+
+// Table View Menu
+export interface TableMenu {
+  page: TableViewMenuPage | null;
+  id?: string;
+}

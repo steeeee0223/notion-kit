@@ -13,14 +13,13 @@ import {
   MenuItem,
   MenuItemCheck,
   TooltipPreset,
-  useMenu,
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader } from "../common";
 import type { PluginType } from "../lib/types";
 import { CellPlugin } from "../plugins";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
-import { EditPropMenu } from "./edit-prop-menu";
+import { TableViewMenuPage } from "./constants";
 import { propOptions } from "./types-menu-options";
 
 interface TypesMenuProps {
@@ -28,7 +27,7 @@ interface TypesMenuProps {
    * @prop {propId}: if null, will create a new column;
    * otherwise will update a column by given `propId`
    */
-  propId: string | null;
+  propId?: string;
   /**
    * @prop {at}: if undefined, will create a new column at the end;
    * otherwise will create a column at `at.side` of the column `at.id`
@@ -41,9 +40,8 @@ interface TypesMenuProps {
 }
 
 export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
-  const { table } = useTableViewCtx();
+  const { table, setTableMenu } = useTableViewCtx();
   const { addColumn } = useTableActions();
-  const { openMenu } = useMenu();
 
   const propType = propId ? table.getColumnInfo(propId).type : null;
 
@@ -52,21 +50,30 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
   );
   const select = (type: PluginType<CellPlugin[]>, name: string) => {
     let colId = propId;
-    if (colId === null) {
+    if (colId === undefined) {
       colId = v4();
       const uniqueName = table.generateUniqueColumnName(name);
       addColumn({ id: colId, type, name: uniqueName, at });
     } else {
       table.setColumnType(colId, type);
     }
-
-    openMenu(<EditPropMenu propId={colId} />, { x: -12, y: -12 });
+    setTableMenu({ page: TableViewMenuPage.EditProp, id: colId });
   };
 
   return (
     <>
       {showHeader && (
-        <MenuHeader title={propId ? "Change property type" : "New property"} />
+        <MenuHeader
+          title={propId ? "Change property type" : "New property"}
+          onBack={() =>
+            setTableMenu({
+              page: propId
+                ? TableViewMenuPage.EditProp
+                : TableViewMenuPage.Props,
+              id: propId,
+            })
+          }
+        />
       )}
       <Command shouldFilter={false}>
         <CommandInput

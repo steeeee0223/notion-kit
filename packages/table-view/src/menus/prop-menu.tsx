@@ -63,7 +63,7 @@ export function PropMenu({ propId }: PropMenuProps) {
   const wrapProp = () => table.toggleColumnWrapped(propId, (v) => !v);
   // 9. Insert left/right
   const insertColumn = (side: "left" | "right") => {
-    openMenu(<TypesMenu propId={null} at={{ id: propId, side }} />, {
+    openMenu(<TypesMenu at={{ id: propId, side }} />, {
       x: -12,
       y: -12,
     });

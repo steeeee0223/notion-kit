@@ -14,10 +14,17 @@ import {
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
-import { Checkbox, useMenu } from "@notion-kit/shadcn";
+import {
+  Checkbox,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  useMenu,
+} from "@notion-kit/shadcn";
 
 import type { Row } from "../lib/types";
-import { PropsMenu, TypesMenu } from "../menus";
+import { TableViewMenu, TypesMenu } from "../menus";
+import { useTableViewCtx } from "../table-contexts";
 import { TableHeaderActionCell } from "./table-header-action-cell";
 
 interface TableHeaderRowProps {
@@ -26,11 +33,12 @@ interface TableHeaderRowProps {
   columnOrder: ColumnOrderState;
 }
 
-export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({
+export function TableHeaderRow({
   leftPinnedHeaders,
   headers,
   columnOrder,
-}) => {
+}: TableHeaderRowProps) {
+  const { setTableMenu } = useTableViewCtx();
   const isMobile = useIsMobile();
   const { openMenu } = useMenu();
 
@@ -39,12 +47,11 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({
   const plusButtonRef = useRef<HTMLButtonElement>(null);
   const openTypesMenu = () => {
     const rect = plusButtonRef.current?.getBoundingClientRect();
-    openMenu(<TypesMenu propId={null} />, {
+    openMenu(<TypesMenu />, {
       x: rect?.left,
       y: rect ? rect.top + rect.height : 0,
     });
   };
-  const openPropsMenu = () => openMenu(<PropsMenu />, { x: -12, y: -12 });
 
   return (
     <div
@@ -112,7 +119,19 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({
         icon={<Icon.Plus />}
         onClick={openTypesMenu}
       />
-      <TableHeaderActionCell icon={<Icon.Dots />} onClick={openPropsMenu} />
+      <Popover
+        onOpenChange={(open) => {
+          if (open) return;
+          setTableMenu({ page: null });
+        }}
+      >
+        <PopoverTrigger asChild>
+          <TableHeaderActionCell icon={<Icon.Dots />} />
+        </PopoverTrigger>
+        <PopoverContent sideOffset={0} collisionPadding={12}>
+          <TableViewMenu />
+        </PopoverContent>
+      </Popover>
     </div>
   );
-};
+}

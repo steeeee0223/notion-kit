@@ -76,7 +76,11 @@ export interface CommandInputProps
   clear?: boolean;
   onCancel?: () => void;
 }
-function CommandInput({ classNames, ...props }: CommandInputProps) {
+function CommandInput({
+  classNames,
+  onValueChange,
+  ...props
+}: CommandInputProps) {
   return (
     <div
       data-slot="command-input-wrapper"
@@ -87,8 +91,8 @@ function CommandInput({ classNames, ...props }: CommandInputProps) {
     >
       <CommandPrimitive.Input data-slot="command-input" asChild>
         <Input
-          onChange={(e) => props.onValueChange?.(e.target.value)}
-          onCancel={() => props.onValueChange?.("")}
+          onChange={(e) => onValueChange?.(e.target.value)}
+          onCancel={() => onValueChange?.("")}
           {...props}
         />
       </CommandPrimitive.Input>

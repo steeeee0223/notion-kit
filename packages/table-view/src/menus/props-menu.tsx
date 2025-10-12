@@ -15,7 +15,6 @@ import {
   MenuItem,
   MenuItemAction,
   Separator,
-  useMenu,
 } from "@notion-kit/shadcn";
 
 import {
@@ -26,16 +25,13 @@ import {
 } from "../common";
 import type { ColumnInfo } from "../lib/types";
 import { useTableViewCtx } from "../table-contexts";
-import { DeletedPropsMenu } from "./deleted-props-menu";
-import { EditPropMenu } from "./edit-prop-menu";
-import { TypesMenu } from "./types-menu";
+import { TableViewMenuPage } from "./constants";
 
 /**
  * @summary The menu of all properties
  */
 export function PropsMenu() {
-  const { table } = useTableViewCtx();
-  const { openMenu } = useMenu();
+  const { table, setTableMenu } = useTableViewCtx();
 
   const { columnOrder, columnVisibility } = table.getState();
   const noShownProps = (() => {
@@ -70,12 +66,8 @@ export function PropsMenu() {
     { default: "empty" },
   );
   // Menu actions
-  const openTypesMenu = () =>
-    openMenu(<TypesMenu propId={null} />, { x: -12, y: -12 });
   const openEditPropMenu = (propId: string) =>
-    openMenu(<EditPropMenu propId={propId} />, { x: -12, y: -12 });
-  const openDeletedPropsMenu = () =>
-    openMenu(<DeletedPropsMenu />, { x: -12, y: -12 });
+    setTableMenu({ page: TableViewMenuPage.EditProp, id: propId });
 
   useLayoutEffect(() => {
     inputRef.current?.focus();
@@ -83,7 +75,10 @@ export function PropsMenu() {
 
   return (
     <>
-      <MenuHeader title="Properties" />
+      <MenuHeader
+        title="Properties"
+        onBack={() => setTableMenu({ page: null })}
+      />
       <div className="flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2">
         <Input
           ref={inputRef}
@@ -130,30 +125,30 @@ export function PropsMenu() {
           </VerticalDnd>
         </div>
       </MenuGroup>
+      <Separator />
       <MenuGroup>
+        <MenuItem
+          variant="secondary"
+          onClick={() => setTableMenu({ page: TableViewMenuPage.CreateProp })}
+          Icon={<Icon.Plus className="size-4" />}
+          Body="New property"
+        />
         {deletedCount > 0 && (
           <MenuItem
             variant="secondary"
             tabIndex={0}
-            onClick={openDeletedPropsMenu}
+            onClick={() =>
+              setTableMenu({ page: TableViewMenuPage.DeletedProps })
+            }
             Icon={<Icon.Trash />}
             Body="Deleted properties"
           >
             <MenuItemAction className="flex items-center text-muted">
               <div className="flex truncate">{deletedCount}</div>
-              <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-current" />
+              <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-icon" />
             </MenuItemAction>
           </MenuItem>
         )}
-      </MenuGroup>
-      <Separator />
-      <MenuGroup>
-        <MenuItem
-          variant="secondary"
-          onClick={openTypesMenu}
-          Icon={<Icon.Plus className="size-4" />}
-          Body="New property"
-        />
         <MenuItem
           variant="secondary"
           onClick={() =>
@@ -174,12 +169,12 @@ interface PropertyItemProps {
   onVisibilityChange: () => void;
 }
 
-const PropertyItem: React.FC<PropertyItemProps> = ({
+function PropertyItem({
   draggable,
   info,
   onClick,
   onVisibilityChange,
-}) => {
+}: PropertyItemProps) {
   const { id, name, icon, hidden, type } = info;
 
   /** DND */
@@ -238,8 +233,8 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
         >
           {hidden ? <Icon.EyeHide /> : <Icon.Eye />}
         </Button>
-        <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3" />
+        <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-icon" />
       </MenuItemAction>
     </MenuItem>
   );
-};
+}
