@@ -7,9 +7,9 @@ import { useFilter } from "@notion-kit/hooks";
 import {
   Command,
   CommandGroup,
+  CommandInput,
   CommandItem,
   CommandList,
-  Input,
   MenuItem,
   MenuItemCheck,
   TooltipPreset,
@@ -68,16 +68,14 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
       {showHeader && (
         <MenuHeader title={propId ? "Change property type" : "New property"} />
       )}
-      <Command className="bg-popover">
-        <div className="flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2">
-          <Input
-            value={search}
-            onChange={(e) => updateSearch(e.target.value)}
-            placeholder={
-              propId ? "Search for property type" : "Search or add new property"
-            }
-          />
-        </div>
+      <Command shouldFilter={false}>
+        <CommandInput
+          value={search}
+          onValueChange={updateSearch}
+          placeholder={
+            propId ? "Search for property type" : "Search or add new property"
+          }
+        />
         <CommandList>
           {results && results.length > 0 && (
             <CommandGroup
@@ -100,7 +98,7 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
                       disabled={type === "title"}
                       Icon={icon}
                       Body={title}
-                      onClick={() => select(type, title)}
+                      onPointerDown={() => select(type, title)}
                     >
                       {propType === type && <MenuItemCheck />}
                     </MenuItem>
@@ -118,12 +116,15 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
               heading="Select to add"
             >
               <CommandItem
-                className="mx-1 gap-2"
                 value={`search-${search}`}
                 onSelect={() => select("text", search)}
+                asChild
               >
-                <DefaultIcon type="text" className="fill-menu-icon" />
-                {search}
+                <MenuItem
+                  Icon={<DefaultIcon type="text" className="fill-menu-icon" />}
+                  Body={search}
+                  onClick={() => select("text", search)}
+                />
               </CommandItem>
             </CommandGroup>
           )}

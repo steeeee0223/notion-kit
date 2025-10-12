@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { flexRender, Row } from "@tanstack/react-table";
@@ -8,7 +8,14 @@ import { flexRender, Row } from "@tanstack/react-table";
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
-import { Button, Checkbox, TooltipPreset, useMenu } from "@notion-kit/shadcn";
+import {
+  Button,
+  Checkbox,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  TooltipPreset,
+} from "@notion-kit/shadcn";
 
 import type { Row as RowModel } from "../lib/types";
 import { RowActionMenu } from "../menus";
@@ -28,17 +35,6 @@ export function TableRow({ row }: TableRowProps) {
       return;
     }
     addRow({ id: row.id, at: "next" });
-  };
-  /** Open row menu */
-  const dragHandleRef = useRef<HTMLButtonElement>(null);
-  const { openMenu } = useMenu();
-  const openActionMenu = () => {
-    const rect = dragHandleRef.current?.getBoundingClientRect();
-    openMenu(<RowActionMenu rowId={row.id} />, {
-      x: rect?.right,
-      y: (rect?.y ?? 0) - 40,
-      className: "w-[265px]",
-    });
   };
   /** DND */
   const {
@@ -83,28 +79,37 @@ export function TableRow({ row }: TableRowProps) {
                 className="z-999 text-center"
               >
                 <Button variant="hint" className="size-6" onClick={addNextRow}>
-                  <Icon.Plus className="size-3.5 fill-[#51493c]/30 dark:fill-default/30" />
+                  <Icon.Plus className="size-3.5 fill-icon" />
                 </Button>
               </TooltipPreset>
-              <TooltipPreset
-                description={[
-                  { type: "default", text: "Drag to move" },
-                  { type: "default", text: "Click to open menu" },
-                ]}
-                disabled={isDragging}
-                className="z-999 text-center"
-              >
-                <Button
-                  ref={dragHandleRef}
-                  variant="hint"
-                  className="h-6 w-4.5"
-                  {...attributes}
-                  {...listeners}
-                  onClick={openActionMenu}
+              <Popover>
+                <TooltipPreset
+                  description={[
+                    { type: "default", text: "Drag to move" },
+                    { type: "default", text: "Click to open menu" },
+                  ]}
+                  disabled={isDragging}
+                  className="z-999 text-center"
                 >
-                  <Icon.DragHandle className="size-3.5 fill-[#51493c]/30 dark:fill-default/30" />
-                </Button>
-              </TooltipPreset>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="hint"
+                      className="h-6 w-4.5"
+                      {...attributes}
+                      {...listeners}
+                    >
+                      <Icon.DragHandle className="size-3.5 fill-icon" />
+                    </Button>
+                  </PopoverTrigger>
+                </TooltipPreset>
+                <PopoverContent
+                  className="w-[265px]"
+                  side="right"
+                  align="start"
+                >
+                  <RowActionMenu rowId={row.id} />
+                </PopoverContent>
+              </Popover>
             </TableRowActionGroup>
             {/* Row selection */}
             <TableRowActionGroup
@@ -162,6 +167,7 @@ function TableRowActionGroup({
         className={cn(
           "flex h-full items-center opacity-0 transition-opacity delay-0 duration-200",
           "group-hover/row:opacity-100",
+          "has-[button[aria-expanded='true']]:opacity-100",
           // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
           (isMobile || isDragging) && "opacity-100",
         )}

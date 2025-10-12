@@ -10,10 +10,10 @@ import {
   CommandDialog,
   CommandEmpty,
   CommandGroup,
+  CommandInput,
   CommandItem,
   CommandList,
   CommandSeparator,
-  Input,
 } from "@notion-kit/shadcn";
 import { toDateString } from "@notion-kit/utils";
 
@@ -50,23 +50,24 @@ export function SearchCommand({
 
   return (
     <CommandDialog
-      className="max-h-[max(50vh,570px)] min-h-[max(50vh,570px)] w-full max-w-[755px] rounded-[12px] bg-modal"
+      className="max-h-[max(50vh,570px)] min-h-[max(50vh,570px)] w-full max-w-[755px] rounded-[12px]"
       open={isOpen}
       onOpenChange={closeModal}
       shouldFilter={false}
     >
-      <div className="z-10 flex h-12 w-full shrink-0 grow-0 overflow-hidden border-b bg-transparent px-1">
-        <Input
-          search
-          clear
-          variant="flat"
-          value={search}
-          onChange={(e) => updateSearch(e.target.value)}
-          onCancel={() => updateSearch("")}
-          placeholder={`Search in ${workspaceName}...`}
-          className="h-full w-full min-w-0 px-3 text-lg/[27px]"
-        />
-      </div>
+      <CommandInput
+        search
+        clear
+        variant="flat"
+        value={search}
+        onValueChange={updateSearch}
+        placeholder={`Search in ${workspaceName}...`}
+        classNames={{
+          wrapper:
+            "z-10 h-12 w-full shrink-0 grow-0 overflow-hidden border-b bg-transparent px-1 py-0",
+        }}
+        className="h-full w-full min-w-0 px-3 text-lg/[27px]"
+      />
       <CommandList
         className={cn(
           "h-full min-h-0 grow transform",

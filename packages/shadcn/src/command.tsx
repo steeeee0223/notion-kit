@@ -5,7 +5,6 @@ import { Command as CommandPrimitive } from "cmdk";
 
 import { cn } from "@notion-kit/cn";
 
-import { Button } from "./button";
 import {
   Dialog,
   DialogContent,
@@ -13,8 +12,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./dialog";
-import * as Icon from "./icons";
-import { inputVariants, menuItemVariants, separatorVariants } from "./variants";
+import { Input } from "./input";
+import { InputVariants, menuItemVariants, separatorVariants } from "./variants";
 
 function Command({
   className,
@@ -24,7 +23,7 @@ function Command({
     <CommandPrimitive
       data-slot="command"
       className={cn(
-        "flex h-full w-full flex-col overflow-hidden rounded-md bg-modal text-primary focus-visible:outline-none",
+        "flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-primary focus-visible:outline-none",
         className,
       )}
       {...props}
@@ -58,7 +57,7 @@ function CommandDialog({
       >
         <Command
           shouldFilter={shouldFilter}
-          className="focus-visible:outline-hidden [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12"
+          className="bg-modal focus-visible:outline-hidden [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12"
         >
           {children}
         </Command>
@@ -69,46 +68,30 @@ function CommandDialog({
 
 export interface CommandInputProps
   extends React.ComponentProps<typeof CommandPrimitive.Input> {
+  classNames?: {
+    wrapper?: string;
+  };
+  variant?: InputVariants["variant"];
+  search?: boolean;
   clear?: boolean;
   onCancel?: () => void;
 }
-function CommandInput({
-  className,
-  clear,
-  onCancel,
-  ...props
-}: CommandInputProps) {
-  const showClear =
-    clear &&
-    !props.disabled &&
-    typeof props.value === "string" &&
-    props.value.length > 0;
-
+function CommandInput({ classNames, ...props }: CommandInputProps) {
   return (
     <div
       data-slot="command-input-wrapper"
       className={cn(
-        inputVariants({ variant: "default", size: "lg", className }),
+        "flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2",
+        classNames?.wrapper,
       )}
-      cmdk-input-wrapper=""
     >
-      <CommandPrimitive.Input
-        data-slot="command-input"
-        className="block resize-none border-none outline-hidden placeholder:text-default/45 disabled:cursor-not-allowed disabled:opacity-50 [&::-webkit-search-cancel-button]:appearance-none"
-        {...props}
-      />
-      {showClear && (
-        <Button
-          type="button"
-          variant="close"
-          size="circle"
-          className="ml-1 focus-visible:shadow-notion"
-          aria-label="Clear input"
-          onClick={onCancel}
-        >
-          <Icon.Clear />
-        </Button>
-      )}
+      <CommandPrimitive.Input data-slot="command-input" asChild>
+        <Input
+          onChange={(e) => props.onValueChange?.(e.target.value)}
+          onCancel={() => props.onValueChange?.("")}
+          {...props}
+        />
+      </CommandPrimitive.Input>
     </div>
   );
 }
@@ -120,7 +103,10 @@ function CommandList({
   return (
     <CommandPrimitive.List
       data-slot="command-list"
-      className={cn("overflow-x-hidden overflow-y-auto", className)}
+      className={cn(
+        "overflow-x-hidden overflow-y-auto focus-visible:outline-none",
+        className,
+      )}
       {...props}
     />
   );

@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef } from "react";
 import { type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -11,34 +10,31 @@ import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
-  Input,
+  Command,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
   MenuGroup,
   MenuItem,
   MenuItemAction,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-  useMenu,
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, VerticalDnd } from "../common";
 import { useTableViewCtx } from "../table-contexts";
 
 export function SortMenu() {
-  const { openMenu, closeMenu } = useMenu();
   const { table } = useTableViewCtx();
   const sorting = table.getState().sorting;
 
-  const addRuleRef = useRef<HTMLDivElement>(null);
-  const openSelectMenu = () => {
-    const rect = addRuleRef.current?.getBoundingClientRect() ?? {
-      top: 0,
-      left: 0,
-    };
-    openMenu(<PropSelectMenu />, { x: rect.left, y: rect.top + 32 });
-  };
   const reorderRules = (e: DragEndEvent) => {
     // reorder after drag & drop
     const { active, over } = e;
@@ -48,10 +44,6 @@ export function SortMenu() {
       const newIndex = prev.findIndex((s) => s.id === over.id);
       return arrayMove(prev, oldIndex, newIndex); //this is just a splice util
     });
-  };
-  const removeSorting = () => {
-    table.resetSorting();
-    closeMenu();
   };
 
   return (
@@ -64,19 +56,24 @@ export function SortMenu() {
         </VerticalDnd>
       </MenuGroup>
       <MenuGroup>
-        <MenuItem
-          ref={addRuleRef}
-          variant="secondary"
-          Icon={<Icon.Plus className="size-4" />}
-          Body="Add sort"
-          onClick={openSelectMenu}
-        />
+        <Popover>
+          <PopoverTrigger asChild>
+            <MenuItem
+              variant="secondary"
+              Icon={<Icon.Plus className="size-4" />}
+              Body="Add sort"
+            />
+          </PopoverTrigger>
+          <PopoverContent align="start">
+            <PropSelectMenu />
+          </PopoverContent>
+        </Popover>
         <MenuItem
           variant="warning"
           className="text-secondary"
           Icon={<Icon.Trash />}
           Body="Delete sort"
-          onClick={removeSorting}
+          onClick={() => table.resetSorting()}
         />
       </MenuGroup>
     </>
@@ -89,7 +86,6 @@ interface SortRuleProps {
 }
 
 function SortRule({ id: currentId, desc }: SortRuleProps) {
-  const { closeMenu } = useMenu();
   const { table } = useTableViewCtx();
 
   const current = table.getColumnInfo(currentId);
@@ -102,7 +98,9 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
   const removeRule = () => {
     table.setSorting((prev) => prev.filter((s) => s.id !== currentId));
     const isLastRule = table.getState().sorting.length === 1;
-    if (isLastRule) closeMenu();
+    if (isLastRule) {
+      // TODO close popover
+    }
   };
 
   /** DND */
@@ -191,47 +189,47 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
 }
 
 function PropSelectMenu() {
-  const { closeMenu } = useMenu();
   const { table } = useTableViewCtx();
 
   /** Search */
-  const inputRef = useRef<HTMLInputElement>(null);
   const { search, results, updateSearch } = useFilter(
     Object.values(table.getState().columnsInfo),
     (prop, v) => prop.name.toLowerCase().includes(v),
   );
   /** Select */
   const sortedProps = new Set(table.getState().sorting.map((s) => s.id));
-  const selectProp = (id: string) => {
+  const selectProp = (id: string) =>
     table.setSorting((prev) => [...prev, { id, desc: false }]);
-    closeMenu();
-  };
 
   return (
-    <>
-      <div className="flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2">
-        <Input
-          ref={inputRef}
-          clear
-          value={search}
-          onChange={(e) => updateSearch(e.target.value)}
-          onCancel={() => updateSearch("")}
-          placeholder="Search for a property..."
-        />
-      </div>
-      <MenuGroup className="h-40 overflow-y-auto">
-        {results?.map(({ id, name, type, icon }) => (
-          <MenuItem
-            key={id}
-            Icon={
-              icon ? <IconBlock icon={icon} /> : <DefaultIcon type={type} />
-            }
-            Body={name}
-            disabled={sortedProps.has(id)}
-            onClick={() => selectProp(id)}
-          />
-        )) ?? <span className="px-3 text-xs text-muted">No results</span>}
-      </MenuGroup>
-    </>
+    <Command shouldFilter={false}>
+      <CommandInput
+        clear
+        value={search}
+        onValueChange={updateSearch}
+        placeholder="Search for a property..."
+      />
+      <CommandList>
+        <CommandGroup className="h-40 overflow-y-auto">
+          {results?.map(({ id, name, type, icon }) => (
+            <CommandItem
+              key={id}
+              value={name}
+              onSelect={() => selectProp(id)}
+              disabled={sortedProps.has(id)}
+              asChild
+            >
+              <MenuItem
+                key={id}
+                Icon={
+                  icon ? <IconBlock icon={icon} /> : <DefaultIcon type={type} />
+                }
+                Body={name}
+              />
+            </CommandItem>
+          )) ?? <span className="px-3 text-xs text-muted">No results</span>}
+        </CommandGroup>
+      </CommandList>
+    </Command>
   );
 }

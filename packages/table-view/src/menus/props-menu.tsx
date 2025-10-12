@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useLayoutEffect, useMemo, useRef } from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -51,19 +51,19 @@ export function PropsMenu() {
   })();
   // Search
   const inputRef = useRef<HTMLInputElement>(null);
-  const [props, deletedCount] = useMemo(() => {
-    const props: ColumnInfo[] = [];
-    let deletedCount = 0;
-    columnOrder.forEach((propId) => {
+  const { props, deletedCount } = columnOrder.reduce(
+    (acc, propId) => {
       const info = table.getColumnInfo(propId);
       if (!info.isDeleted) {
-        props.push({ ...info, id: propId });
+        acc.props.push({ ...info, id: propId });
       } else {
-        deletedCount++;
+        acc.deletedCount++;
       }
-    });
-    return [props, deletedCount];
-  }, [columnOrder, table]);
+      return acc;
+    },
+    { deletedCount: 0, props: [] as ColumnInfo[] },
+  );
+
   const { search, results, updateSearch } = useFilter(
     props,
     (prop, v) => prop.name.toLowerCase().includes(v),
@@ -112,8 +112,8 @@ export function PropsMenu() {
                     draggable
                     info={prop}
                     onClick={() => openEditPropMenu(prop.id)}
-                    onVisibilityChange={(hidden) =>
-                      table.setColumnInfo(prop.id, { hidden })
+                    onVisibilityChange={() =>
+                      table.setColumnInfo(prop.id, { hidden: !prop.hidden })
                     }
                   />
                 ))
@@ -122,8 +122,8 @@ export function PropsMenu() {
                     key={prop.id}
                     info={prop}
                     onClick={() => openEditPropMenu(prop.id)}
-                    onVisibilityChange={(hidden) =>
-                      table.setColumnInfo(prop.id, { hidden })
+                    onVisibilityChange={() =>
+                      table.setColumnInfo(prop.id, { hidden: !prop.hidden })
                     }
                   />
                 ))}
@@ -171,7 +171,7 @@ interface PropertyItemProps {
   draggable?: boolean;
   info: ColumnInfo;
   onClick: () => void;
-  onVisibilityChange: (hidden: boolean) => void;
+  onVisibilityChange: () => void;
 }
 
 const PropertyItem: React.FC<PropertyItemProps> = ({
@@ -209,7 +209,7 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
         <div
           key="drag-handle"
           className={cn(
-            "mr-2 hidden h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-icon",
+            "mr-2 hidden h-6 w-4.5 shrink-0 cursor-grab items-center justify-center fill-icon!",
             draggable && "flex",
           )}
           {...attributes}
@@ -233,7 +233,7 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
           className="size-6 p-0 disabled:opacity-40"
           onClick={(e) => {
             e.stopPropagation();
-            onVisibilityChange(!hidden);
+            onVisibilityChange();
           }}
         >
           {hidden ? <Icon.EyeHide /> : <Icon.Eye />}
