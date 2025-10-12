@@ -99,8 +99,12 @@ export function toControlledState<TPlugins extends CellPlugin[]>(
 
 export function createColumnSortingFn(plugin: CellPlugin): SortingFn<Row> {
   return (rowA, rowB, colId) => {
-    const dataA = plugin.toReadableValue(rowA.original.properties[colId]);
-    const dataB = plugin.toReadableValue(rowB.original.properties[colId]);
+    const dataA = plugin.toReadableValue(
+      rowA.original.properties[colId]?.value,
+    );
+    const dataB = plugin.toReadableValue(
+      rowB.original.properties[colId]?.value,
+    );
     return dataA.localeCompare(dataB);
   };
 }
