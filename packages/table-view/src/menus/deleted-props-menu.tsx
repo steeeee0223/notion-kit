@@ -11,8 +11,8 @@ import {
 
 import { DefaultIcon, MenuHeader } from "../common";
 import type { ColumnInfo } from "../lib/types";
+import { TableViewMenuPage } from "../lib/utils";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
-import { TableViewMenuPage } from "./constants";
 
 export function DeletedPropsMenu() {
   const { table, setTableMenu } = useTableViewCtx();

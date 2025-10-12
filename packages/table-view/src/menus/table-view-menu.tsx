@@ -7,8 +7,8 @@ import {
 } from "@notion-kit/shadcn";
 
 import { MenuGroupHeader, MenuHeader } from "../common";
+import { TableViewMenuPage } from "../lib/utils";
 import { useTableViewCtx } from "../table-contexts";
-import { TableViewMenuPage } from "./constants";
 import { DeletedPropsMenu } from "./deleted-props-menu";
 import { EditPropMenu } from "./edit-prop-menu";
 import { PropsMenu } from "./props-menu";

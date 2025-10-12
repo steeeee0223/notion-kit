@@ -1,6 +1,5 @@
 import type { IconData } from "@notion-kit/icon-block";
 
-import { TableViewMenuPage } from "../menus";
 import type {
   CellPlugin,
   InferConfig,
@@ -8,6 +7,7 @@ import type {
   InferKey,
   InferPlugin,
 } from "../plugins";
+import { TableViewMenuPage } from "./utils";
 
 export interface PropertyBase {
   id: string;

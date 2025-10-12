@@ -13,8 +13,8 @@ import {
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader, PropMeta } from "../common";
+import { TableViewMenuPage } from "../lib/utils";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
-import { TableViewMenuPage } from "./constants";
 import { propertyTypes } from "./types-menu-options";
 
 interface EditPropMenuProps {

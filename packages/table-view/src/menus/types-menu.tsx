@@ -17,9 +17,9 @@ import {
 
 import { DefaultIcon, MenuHeader } from "../common";
 import type { PluginType } from "../lib/types";
+import { TableViewMenuPage } from "../lib/utils";
 import { CellPlugin } from "../plugins";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
-import { TableViewMenuPage } from "./constants";
 import { propOptions } from "./types-menu-options";
 
 interface TypesMenuProps {
@@ -43,9 +43,11 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
   const { table, setTableMenu } = useTableViewCtx();
   const { addColumn } = useTableActions();
 
+  const plugins = table.getState().cellPlugins;
   const propType = propId ? table.getColumnInfo(propId).type : null;
 
-  const { search, results, updateSearch } = useFilter(propOptions, (prop, v) =>
+  const typeOptions = propOptions.filter((option) => option.type in plugins);
+  const { search, results, updateSearch } = useFilter(typeOptions, (prop, v) =>
     prop.title.toLowerCase().includes(v),
   );
   const select = (type: PluginType<CellPlugin[]>, name: string) => {
@@ -93,7 +95,12 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
               heading="Type"
             >
               {results.map(({ type, title, description, icon }) => (
-                <CommandItem key={type} value={`default-${type}`} asChild>
+                <CommandItem
+                  key={type}
+                  value={`default-${type}`}
+                  asChild
+                  onSelect={() => select(type, title)}
+                >
                   <TooltipPreset
                     side="left"
                     sideOffset={6}
@@ -105,7 +112,6 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
                       disabled={type === "title"}
                       Icon={icon}
                       Body={title}
-                      onPointerDown={() => select(type, title)}
                     >
                       {propType === type && <MenuItemCheck />}
                     </MenuItem>
@@ -130,7 +136,6 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
                 <MenuItem
                   Icon={<DefaultIcon type="text" className="fill-menu-icon" />}
                   Body={search}
-                  onClick={() => select("text", search)}
                 />
               </CommandItem>
             </CommandGroup>

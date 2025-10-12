@@ -24,8 +24,8 @@ import {
   VerticalDnd,
 } from "../common";
 import type { ColumnInfo } from "../lib/types";
+import { TableViewMenuPage } from "../lib/utils";
 import { useTableViewCtx } from "../table-contexts";
-import { TableViewMenuPage } from "./constants";
 
 /**
  * @summary The menu of all properties

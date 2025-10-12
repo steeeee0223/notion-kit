@@ -82,13 +82,3 @@ export const countMethodHint: Record<
       "https://www.notion.so/images/aggregations/percentNotEmpty.c3ac1c83.png",
   },
 };
-
-export enum TableViewMenuPage {
-  Sort = "table:sort",
-  Visibility = "props:visibility",
-  Props = "props:edit",
-  DeletedProps = "props:deleted",
-  CreateProp = "prop:create",
-  EditProp = "prop:edit",
-  ChangePropType = "prop:edit:type",
-}
