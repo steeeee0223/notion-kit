@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useLayoutEffect, useMemo, useRef } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -22,8 +24,8 @@ import {
   MenuHeader,
   VerticalDnd,
 } from "../common";
-import type { ColumnInfoWithId } from "../features";
-import { useTableActions, useTableViewCtx } from "../table-contexts";
+import type { ColumnInfo } from "../lib/types";
+import { useTableViewCtx } from "../table-contexts";
 import { DeletedPropsMenu } from "./deleted-props-menu";
 import { EditPropMenu } from "./edit-prop-menu";
 import { TypesMenu } from "./types-menu";
@@ -31,9 +33,8 @@ import { TypesMenu } from "./types-menu";
 /**
  * @summary The menu of all properties
  */
-export const PropsMenu = () => {
-  const { table, properties } = useTableViewCtx();
-  const { toggleAllColumns } = useTableActions();
+export function PropsMenu() {
+  const { table } = useTableViewCtx();
   const { openMenu } = useMenu();
 
   const { columnOrder, columnVisibility } = table.getState();
@@ -51,18 +52,18 @@ export const PropsMenu = () => {
   // Search
   const inputRef = useRef<HTMLInputElement>(null);
   const [props, deletedCount] = useMemo(() => {
-    const props: (ColumnInfoWithId & { type: string })[] = [];
+    const props: ColumnInfo[] = [];
     let deletedCount = 0;
     columnOrder.forEach((propId) => {
       const info = table.getColumnInfo(propId);
       if (!info.isDeleted) {
-        props.push({ ...info, id: propId, type: properties[propId]!.type });
+        props.push({ ...info, id: propId });
       } else {
         deletedCount++;
       }
     });
     return [props, deletedCount];
-  }, [columnOrder, table, properties]);
+  }, [columnOrder, table]);
   const { search, results, updateSearch } = useFilter(
     props,
     (prop, v) => prop.name.toLowerCase().includes(v),
@@ -97,7 +98,7 @@ export const PropsMenu = () => {
         <MenuGroupHeader
           title={search && !results ? "No results" : "Properties"}
           action={search ? null : noShownProps ? "Show all" : "Hide all"}
-          onActionClick={() => toggleAllColumns(!noShownProps)}
+          onActionClick={() => table.toggleAllColumnsVisible(!noShownProps)}
         />
         <div className="flex flex-col">
           <VerticalDnd
@@ -164,11 +165,11 @@ export const PropsMenu = () => {
       </MenuGroup>
     </>
   );
-};
+}
 
 interface PropertyItemProps {
   draggable?: boolean;
-  info: ColumnInfoWithId & { type: string };
+  info: ColumnInfo;
   onClick: () => void;
   onVisibilityChange: (hidden: boolean) => void;
 }

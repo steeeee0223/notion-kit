@@ -6,77 +6,56 @@ import { arrayMove } from "@dnd-kit/sortable";
 
 import { getRandomColor, type Color } from "@notion-kit/utils";
 
-import { useTableActions } from "../../../table-contexts";
-import type { SelectActions, SelectMeta, SelectSort } from "../types";
+import { useTableViewCtx } from "../../../table-contexts";
+import type { SelectActions, SelectConfig, SelectSort } from "../types";
 
 interface UseSelectConfigMenuOptions {
   propId: string;
-  meta: SelectMeta;
+  config: SelectConfig;
 }
 
 export function useSelectConfigMenu({
   propId,
-  meta,
+  config,
 }: UseSelectConfigMenuOptions) {
-  const { dispatch } = useTableActions();
-
-  const { type, config } = meta;
+  const { table } = useTableViewCtx();
 
   const updateSort = useCallback(
     (sort: SelectSort) =>
-      dispatch({
-        type: "update:col:meta",
-        payload: {
-          type,
-          actions: {
-            id: propId,
-            action: "update:sort",
-            payload: sort,
-          } satisfies SelectActions,
-        },
-      }),
-    [dispatch, propId, type],
+      table.setColumnTypeConfig(propId, {
+        id: propId,
+        action: "update:sort",
+        payload: sort,
+      } satisfies SelectActions),
+    [table, propId],
   );
 
   const addOption = useCallback(
     (name: string) => {
-      dispatch({
-        type: "update:col:meta",
-        payload: {
-          type,
-          actions: {
-            id: propId,
-            action: "add:option",
-            payload: { name, color: getRandomColor() },
-          },
-        },
-      });
+      table.setColumnTypeConfig(propId, {
+        id: propId,
+        action: "add:option",
+        payload: { name, color: getRandomColor() },
+      } satisfies SelectActions);
     },
-    [dispatch, propId, type],
+    [table, propId],
   );
 
   const reorderOptions = useCallback(
     (e: DragEndEvent) => {
       const { active, over } = e;
       if (!over || active.id === over.id) return;
-      dispatch({
-        type: "update:col:meta",
-        payload: {
-          type,
-
-          actions: {
-            id: propId,
-            action: "update:sort:manual",
-            updater: (prev) => {
-              const oldIndex = prev.indexOf(active.id as string);
-              const newIndex = prev.indexOf(over.id as string);
-              return arrayMove(prev, oldIndex, newIndex);
-            },
-          } satisfies SelectActions,
+      table.setColumnTypeConfig(propId, {
+        id: propId,
+        action: "update:sort:manual",
+        updater: (prev) => {
+          const oldIndex = prev.indexOf(active.id as string);
+          const newIndex = prev.indexOf(over.id as string);
+          return arrayMove(prev, oldIndex, newIndex);
         },
-      });
+      } satisfies SelectActions);
     },
-    [dispatch, type, propId],
+    [table, propId],
   );
 
   const validateOptionName = useCallback(
@@ -96,35 +75,22 @@ export function useSelectConfigMenu({
         color?: Color;
       },
     ) =>
-      dispatch({
-        type: "update:col:meta",
-        payload: {
-          type,
-          actions: {
-            id: propId,
-            action: "update:option",
-            payload: { originalName, ...data },
-          } satisfies SelectActions,
-        },
-      }),
-    [dispatch, type, propId],
+      table.setColumnTypeConfig(propId, {
+        id: propId,
+        action: "update:option",
+        payload: { originalName, ...data },
+      } satisfies SelectActions),
+    [table, propId],
   );
 
   const deleteOption = useCallback(
     (name: string) =>
-      dispatch({
-        type: "update:col:meta",
-        payload: {
-          type,
-
-          actions: {
-            id: propId,
-            action: "delete:option",
-            payload: name,
-          } satisfies SelectActions,
-        },
-      }),
-    [dispatch, type, propId],
+      table.setColumnTypeConfig(propId, {
+        id: propId,
+        action: "delete:option",
+        payload: name,
+      } satisfies SelectActions),
+    [table, propId],
   );
 
   return {

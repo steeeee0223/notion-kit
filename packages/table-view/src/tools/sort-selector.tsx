@@ -10,7 +10,7 @@ import { useTableViewCtx } from "../table-contexts";
 
 export function SortSelector() {
   const { openMenu } = useMenu();
-  const { table, properties } = useTableViewCtx();
+  const { table } = useTableViewCtx();
 
   const ref = useRef<HTMLButtonElement>(null);
   const openSortMenu = () => {
@@ -38,7 +38,7 @@ export function SortSelector() {
           ) : (
             <Icon.ArrowUp className="size-3.5" />
           )}
-          {properties[sort.id]?.name}
+          {table.getColumnInfo(sort.id).name}
         </>
       );
     }
@@ -48,7 +48,7 @@ export function SortSelector() {
         {count} sorts
       </>
     );
-  }, [properties, sorting]);
+  }, [sorting, table]);
 
   return (
     <Button

@@ -1,7 +1,6 @@
 import React from "react";
 
-import type { Column, Rows } from "../lib/types";
-import type { TableViewAtom } from "../table-contexts";
+import type { ColumnInfo, Rows } from "../lib/types";
 
 export interface CellProps<Data, Config = undefined> {
   propId: string;
@@ -14,6 +13,11 @@ export interface CellProps<Data, Config = undefined> {
 export interface ConfigMenuProps<Config = unknown> {
   propId: string;
   config?: Config;
+}
+
+export interface TableDataAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {
+  properties: Record<string, ColumnInfo<InferPlugin<TPlugins>>>;
+  data: Rows<TPlugins>;
 }
 
 export interface CellPlugin<
@@ -52,13 +56,13 @@ export interface CellPlugin<
   toReadableValue: (data: Data) => string;
   toTextValue: (data: Data) => string;
   transferConfig?: <TPlugin extends CellPlugin>(
-    column: Column<TPlugin>,
+    column: ColumnInfo<TPlugin>,
     data: Rows,
   ) => Config;
   reducer: <TPlugins extends CellPlugin[]>(
-    v: TableViewAtom<TPlugins>,
+    v: TableDataAtom<TPlugins>,
     a: Actions,
-  ) => TableViewAtom<TPlugins>;
+  ) => TableDataAtom<TPlugins>;
   renderCell: (props: CellProps<Data, Config>) => React.ReactNode;
   renderConfigMenu?: (props: ConfigMenuProps<Config>) => React.ReactNode;
 }

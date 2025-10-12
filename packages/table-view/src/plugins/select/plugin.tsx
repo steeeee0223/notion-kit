@@ -3,9 +3,8 @@ import { v4 } from "uuid";
 import { getRandomColor } from "@notion-kit/utils";
 
 import { DefaultIcon } from "../../common";
-import type { Cell, Column, Row } from "../../lib/types";
-import type { TableViewAtom } from "../../table-contexts";
-import type { CellPlugin } from "../types";
+import type { Cell, ColumnInfo, Row } from "../../lib/types";
+import type { CellPlugin, TableDataAtom } from "../types";
 import { SelectCell } from "./select-cell";
 import { SelectConfigMenu } from "./select-config-menu";
 import { selectConfigReducer } from "./select-config-reducer";
@@ -17,8 +16,10 @@ import type {
   SelectPlugin,
 } from "./types";
 
-function selectReducer(v: TableViewAtom, a: SelectActions): TableViewAtom {
-  const prop = v.properties[a.id] as Column<SelectPlugin | MultiSelectPlugin>;
+function selectReducer(v: TableDataAtom, a: SelectActions): TableDataAtom {
+  const prop = v.properties[a.id] as ColumnInfo<
+    SelectPlugin | MultiSelectPlugin
+  >;
   const { config, nextEvent } = selectConfigReducer(prop.config, a);
   const properties = {
     ...v.properties,
@@ -30,7 +31,7 @@ function selectReducer(v: TableViewAtom, a: SelectActions): TableViewAtom {
     case "update:name": {
       const { originalName, name } = nextEvent.payload;
       const data = { ...v.data };
-      v.dataOrder.forEach((rowId) => {
+      Object.keys(data).forEach((rowId) => {
         const cell = data[rowId]?.properties[a.id] as
           | SelectCellModel
           | undefined;
@@ -43,12 +44,12 @@ function selectReducer(v: TableViewAtom, a: SelectActions): TableViewAtom {
           cell.value = name;
         }
       });
-      return { ...v, properties, data };
+      return { properties, data };
     }
     case "delete": {
       const name = nextEvent.payload;
       const data = { ...v.data };
-      v.dataOrder.forEach((rowId) => {
+      Object.keys(data).forEach((rowId) => {
         const cell = data[rowId]?.properties[a.id] as
           | SelectCellModel
           | undefined;
@@ -61,7 +62,7 @@ function selectReducer(v: TableViewAtom, a: SelectActions): TableViewAtom {
           cell.value = null;
         }
       });
-      return { ...v, properties, data };
+      return { properties, data };
     }
     default:
       return v as never;
@@ -72,13 +73,13 @@ function selectReducer(v: TableViewAtom, a: SelectActions): TableViewAtom {
  * Transfers the property configuration to "select" or "multi-select"
  */
 function toSelectConfig<TPlugin extends CellPlugin>(
-  column: Column<TPlugin>,
+  column: ColumnInfo<TPlugin>,
   data: Record<string, Row<TPlugin[]>>,
 ): SelectConfig {
   switch (column.type) {
     case "select":
     case "multi-select":
-      return (column as Column<SelectPlugin>).config;
+      return (column as ColumnInfo<SelectPlugin>).config;
     case "text": {
       const options = Object.values(data).reduce<SelectConfig["options"]>(
         (acc, row) => {
@@ -142,16 +143,13 @@ export function select(): SelectPlugin {
       <SelectCell
         propId={propId}
         options={data ? [data] : []}
-        meta={{ type: "select", config: config! }}
+        config={config!}
         wrapped={wrapped}
         onChange={(options) => onChange?.(options.at(0) ?? null)}
       />
     ),
     renderConfigMenu: ({ propId, config }) => (
-      <SelectConfigMenu
-        propId={propId}
-        meta={{ type: "multi-select", config: config! }}
-      />
+      <SelectConfigMenu propId={propId} config={config!} />
     ),
     reducer: selectReducer,
   };
@@ -178,16 +176,13 @@ export function multiSelect(): MultiSelectPlugin {
       <SelectCell
         propId={propId}
         options={data}
-        meta={{ type: "multi-select", config: config! }}
+        config={config!}
         wrapped={wrapped}
         onChange={(options) => onChange?.(options)}
       />
     ),
     renderConfigMenu: ({ propId, config }) => (
-      <SelectConfigMenu
-        propId={propId}
-        meta={{ type: "multi-select", config: config! }}
-      />
+      <SelectConfigMenu propId={propId} config={config!} />
     ),
     reducer: selectReducer,
   };

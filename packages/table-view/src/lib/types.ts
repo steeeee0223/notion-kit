@@ -1,6 +1,5 @@
 import type { IconData } from "@notion-kit/icon-block";
 
-import { CountMethod } from "../features";
 import type {
   CellPlugin,
   InferConfig,
@@ -9,7 +8,7 @@ import type {
   InferPlugin,
 } from "../plugins";
 
-interface PropertyBase {
+export interface PropertyBase {
   id: string;
   name: string;
   icon?: IconData | null;
@@ -18,8 +17,6 @@ interface PropertyBase {
   wrapped?: boolean;
   hidden?: boolean;
   isDeleted?: boolean;
-  isCountCapped?: boolean;
-  countMethod?: CountMethod;
 }
 
 export type PluginType<TPlugins extends CellPlugin[]> = InferKey<
@@ -36,7 +33,8 @@ export interface ColumnConfig<TPlugin> {
   config: InferConfig<TPlugin>;
 }
 
-export type Column<TPlugin = CellPlugin> = PropertyBase & ColumnConfig<TPlugin>;
+export type ColumnInfo<TPlugin = CellPlugin> = PropertyBase &
+  ColumnConfig<TPlugin>;
 
 export type ColumnDefs<
   TPlugins extends CellPlugin[] = CellPlugin[],

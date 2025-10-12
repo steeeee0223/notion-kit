@@ -18,7 +18,6 @@ import {
 
 import { DefaultIcon, MenuHeader } from "../common";
 import type { PluginType } from "../lib/types";
-import { getUniqueName } from "../lib/utils";
 import { CellPlugin } from "../plugins";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { EditPropMenu } from "./edit-prop-menu";
@@ -42,11 +41,11 @@ interface TypesMenuProps {
 }
 
 export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
-  const { properties } = useTableViewCtx();
-  const { addColumn, updateColumnType } = useTableActions();
+  const { table } = useTableViewCtx();
+  const { addColumn } = useTableActions();
   const { openMenu } = useMenu();
 
-  const propType = propId ? properties[propId]?.type : null;
+  const propType = propId ? table.getColumnInfo(propId).type : null;
 
   const { search, results, updateSearch } = useFilter(propOptions, (prop, v) =>
     prop.title.toLowerCase().includes(v),
@@ -55,13 +54,10 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
     let colId = propId;
     if (colId === null) {
       colId = v4();
-      const uniqueName = getUniqueName(
-        name,
-        Object.values(properties).map((p) => p.name),
-      );
+      const uniqueName = table.generateUniqueColumnName(name);
       addColumn({ id: colId, type, name: uniqueName, at });
     } else {
-      updateColumnType(colId, type);
+      table.setColumnType(colId, type);
     }
 
     openMenu(<EditPropMenu propId={colId} />, { x: -12, y: -12 });

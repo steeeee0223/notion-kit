@@ -7,11 +7,11 @@ import { MenuProvider, TooltipPreset, useMenu } from "@notion-kit/shadcn";
 
 import { CellTrigger, OptionTag, useTriggerPosition } from "../../common";
 import { SelectMenu } from "./select-menu";
-import type { SelectMeta } from "./types";
+import type { SelectConfig } from "./types";
 
 interface SelectCellProps {
   propId: string;
-  meta: SelectMeta;
+  config: SelectConfig;
   options: string[];
   wrapped?: boolean;
   onChange: (options: string[]) => void;
@@ -19,7 +19,7 @@ interface SelectCellProps {
 
 export function SelectCell({
   propId,
-  meta,
+  config,
   options,
   wrapped,
   onChange,
@@ -56,7 +56,7 @@ export function SelectCell({
           )}
         >
           {options.map((name) => {
-            const option = meta.config.options.items[name];
+            const option = config.options.items[name];
             if (!option) return;
             return (
               <TooltipPreset

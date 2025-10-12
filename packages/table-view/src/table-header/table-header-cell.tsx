@@ -20,7 +20,6 @@ import {
 import { DefaultIcon } from "../common";
 import type { Row } from "../lib/types";
 import { PropMenu } from "../menus";
-import { useTableViewCtx } from "../table-contexts";
 
 interface TableHeaderCellProps {
   header: Header<Row, unknown>;
@@ -32,9 +31,6 @@ interface TableHeaderCellProps {
  * @requires SortableContext
  */
 export function TableHeaderCell({ header }: TableHeaderCellProps) {
-  const { properties } = useTableViewCtx();
-
-  const type = properties[header.column.id]!.type;
   const info = header.column.getInfo();
   const isResizing = header.column.getIsResizing();
   const onResizeStart = header.getResizeHandler();
@@ -108,15 +104,16 @@ export function TableHeaderCell({ header }: TableHeaderCellProps) {
                         className="size-4 p-0 opacity-60 dark:opacity-45"
                       />
                     ) : (
-                      <DefaultIcon type={type} className="fill-default/45" />
+                      <DefaultIcon
+                        type={info.type}
+                        className="fill-default/45"
+                      />
                     )}
                   </div>
                 </div>
                 <div className="truncate">{info.name}</div>
                 {info.description && (
-                  <div className="inline-flex items-center">
-                    <Icon.Info className="mt-px ml-1 block h-full w-3.5 shrink-0 fill-default/35" />
-                  </div>
+                  <Icon.Info className="ml-1 size-3 fill-icon" />
                 )}
               </div>
             </Button>

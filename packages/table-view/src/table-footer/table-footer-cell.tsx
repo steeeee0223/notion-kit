@@ -46,10 +46,10 @@ interface CountDisplayProps {
 }
 
 function CountDisplay({ id, type }: CountDisplayProps) {
-  const { table, getColumnCount } = useTableViewCtx();
-  const counting = table.getColumnCounting(id);
+  const { table } = useTableViewCtx();
+  const { method } = table.getColumnCounting(id);
 
-  return counting.method === CountMethod.NONE ? (
+  return method === CountMethod.NONE ? (
     <div className="flex items-center opacity-100 transition-opacity duration-200">
       <div className="flex items-center">
         <span className="text-muted">
@@ -61,10 +61,10 @@ function CountDisplay({ id, type }: CountDisplayProps) {
   ) : (
     <div className="flex items-center justify-center gap-1">
       <span className="mt-0.5 text-[10px] tracking-[1px] text-muted uppercase select-none">
-        {countMethodHint[counting.method].label}
+        {countMethodHint[method].label}
       </span>
       <span className="flex h-full items-center">
-        {getColumnCount(id, type, counting.method)}
+        {table.getColumnCountResult(id)}
       </span>
     </div>
   );

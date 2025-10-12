@@ -17,7 +17,7 @@ interface PropMetaProps {
 }
 
 export function PropMeta({ propId, type }: PropMetaProps) {
-  const { table, isPropertyUnique } = useTableViewCtx();
+  const { table } = useTableViewCtx();
 
   const [showDesc, setShowDesc] = useState(false);
   const toggleDesc = () => setShowDesc((prev) => !prev);
@@ -26,7 +26,7 @@ export function PropMeta({ propId, type }: PropMetaProps) {
   const nameField = useInputField({
     id: "name",
     initialValue: info.name,
-    validate: isPropertyUnique,
+    validate: table.checkIsUniqueColumnName,
     onUpdate: (name) => table.setColumnInfo(propId, { name }),
   });
   const descField = useInputField({

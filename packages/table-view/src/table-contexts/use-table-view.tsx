@@ -24,8 +24,8 @@ import {
   OrderingFeature,
 } from "../features";
 import type { PluginsMap, Row } from "../lib/types";
-import { arrayToEntity, getCount, type Entity } from "../lib/utils";
-import type { CellPlugin, InferConfig, InferPlugin } from "../plugins";
+import { arrayToEntity, type Entity } from "../lib/utils";
+import type { CellPlugin, InferConfig } from "../plugins";
 import { TableRowCell } from "../table-body";
 import { TableFooterCell } from "../table-footer";
 import { TableHeaderCell } from "../table-header";
@@ -114,6 +114,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
           sortingFn,
           header: ({ header }) => <TableHeaderCell header={header} />,
           cell: ({ row, column }) => {
+            const info = column.getInfo();
             const cell = row.original.properties[property.id];
             if (!cell) return null;
             return (
@@ -123,18 +124,11 @@ export function useTableView<TPlugins extends CellPlugin[]>({
                 rowIndex={row.index}
                 colIndex={column.getIndex()}
                 propId={column.id}
-                config={property.config as InferConfig<InferPlugin<TPlugins>>}
+                config={info.config as InferConfig<typeof plugin>}
                 width={column.getWidth()}
-                wrapped={column.getInfo().wrapped}
+                wrapped={info.wrapped}
                 onChange={(value) =>
-                  dispatch({
-                    type: "update:cell",
-                    payload: {
-                      rowId: row.original.id,
-                      colId: column.id,
-                      data: { id: cell.id, value },
-                    },
-                  })
+                  column.updateCell(row.original.id, { id: cell.id, value })
                 }
               />
             );
@@ -148,7 +142,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
           ),
         };
       }),
-    [dispatch, plugins.items, properties],
+    [plugins.items, properties],
   );
 
   const columnsInfo = useMemo<ColumnsInfoState>(
@@ -185,6 +179,10 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     onColumnOrderChange: (updater) =>
       dispatch({ type: "set:col:order", updater }),
     onRowOrderChange: (updater) => dispatch({ type: "set:row:order", updater }),
+    onCellChange: (rowId, colId, data) =>
+      dispatch({ type: "update:cell", payload: { rowId, colId, data } }),
+    onTableDataChange: (data) =>
+      dispatch({ type: "set:table:data", payload: data }),
     getRowId: (row) => row.id,
     _features: [
       ColumnsInfoFeature,
@@ -244,48 +242,18 @@ export function useTableView<TPlugins extends CellPlugin[]>({
 
   const tableViewCtx = useMemo<TableViewCtx>(() => {
     const uncontrolled: TableViewCtx = {
-      plugins,
       table,
       columnSizeVars,
       columnSensors,
       rowSensors,
-      properties: _state.properties,
-      isPropertyUnique: (name) => properties.every((p) => p.name !== name),
-      getColumnCount: (colId, type, method) => {
-        const plugin = plugins.items[type]!;
-        return getCount(
-          { table, properties: _state.properties },
-          colId,
-          plugin,
-          method,
-        );
-      },
     };
     if (!controlledProperties) return uncontrolled;
     const colData = arrayToEntity(controlledProperties);
     return {
       ...uncontrolled,
       properties: colData.items,
-      getColumnCount: (colId, type, method) => {
-        const plugin = plugins.items[type]!;
-        return getCount(
-          { table, properties: colData.items },
-          colId,
-          plugin,
-          method,
-        );
-      },
     };
-  }, [
-    _state.properties,
-    columnSensors,
-    columnSizeVars,
-    controlledProperties,
-    plugins,
-    properties,
-    rowSensors,
-    table,
-  ]);
+  }, [columnSensors, columnSizeVars, controlledProperties, rowSensors, table]);
 
   return [tableViewCtx, dispatch] as const;
 }

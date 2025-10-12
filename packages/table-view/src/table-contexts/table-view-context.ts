@@ -6,24 +6,14 @@ import type { Table } from "@tanstack/react-table";
 
 import type { IconData } from "@notion-kit/icon-block";
 
-import { CountMethod } from "../features";
-import type { Column, PluginType, Row } from "../lib/types";
-import type { Entity } from "../lib/utils";
-import type { CellPlugin, InferKey } from "../plugins";
+import type { Row } from "../lib/types";
+import type { CellPlugin } from "../plugins";
 import type { TableViewAction } from "./table-reducer";
 import type { AddColumnPayload } from "./types";
 
 export interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
-  plugins: Entity<TPlugins[number]>;
   table: Table<Row<TPlugins>>;
-  properties: Record<string, Column<TPlugins[number]>>;
   columnSizeVars: Record<string, number>;
-  isPropertyUnique: (name: string) => boolean;
-  getColumnCount: <TPlugin extends CellPlugin>(
-    colId: string,
-    type: InferKey<TPlugin>,
-    method: CountMethod,
-  ) => string;
   /** DND */
   columnSensors: SensorDescriptor<SensorOptions>[];
   rowSensors: SensorDescriptor<SensorOptions>[];
@@ -45,8 +35,6 @@ type ActionType = "row" | "col";
 export interface TableActions<TPlugins extends CellPlugin[] = CellPlugin[]> {
   dispatch: React.Dispatch<TableViewAction<TPlugins>>;
   addColumn: (data: AddColumnPayload<TPlugins>) => void;
-  toggleAllColumns: (hidden: boolean) => void;
-  updateColumnType: (id: string, type: PluginType<TPlugins>) => void;
   addRow: (src?: { id: string; at: "prev" | "next" }) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
   duplicate: (id: string, type: ActionType) => void;

@@ -90,8 +90,11 @@ interface SortRuleProps {
 
 function SortRule({ id: currentId, desc }: SortRuleProps) {
   const { closeMenu } = useMenu();
-  const { table, properties } = useTableViewCtx();
-  const current = properties[currentId]!;
+  const { table } = useTableViewCtx();
+
+  const current = table.getColumnInfo(currentId);
+  const properties = Object.values(table.getState().columnsInfo);
+
   const updateRule = (columnSort: ColumnSort) =>
     table.setSorting((prev) =>
       prev.map((s) => (s.id === currentId ? columnSort : s)),
@@ -152,7 +155,7 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              {Object.values(properties).map(({ id, name, type, icon }) => (
+              {properties.map(({ id, name, type, icon }) => (
                 <SelectItem key={id} value={id}>
                   <div className="flex items-center gap-2">
                     {icon ? (
@@ -194,12 +197,12 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
 
 function PropSelectMenu() {
   const { closeMenu } = useMenu();
-  const { table, properties } = useTableViewCtx();
+  const { table } = useTableViewCtx();
 
   /** Search */
   const inputRef = useRef<HTMLInputElement>(null);
   const { search, results, updateSearch } = useFilter(
-    Object.values(properties),
+    Object.values(table.getState().columnsInfo),
     (prop, v) => prop.name.toLowerCase().includes(v),
   );
   /** Select */

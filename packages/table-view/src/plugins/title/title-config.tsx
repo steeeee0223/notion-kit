@@ -3,23 +3,17 @@
 import { Icon } from "@notion-kit/icons";
 import { DropdownMenuItem, MenuItemAction, Switch } from "@notion-kit/shadcn";
 
-import { useTableActions } from "../../table-contexts";
+import { useTableViewCtx } from "../../table-contexts";
 import type { ConfigMenuProps } from "../types";
 import type { TitleActions, TitleConfig } from "./types";
 
 export function TitleConfig({ propId, config }: ConfigMenuProps<TitleConfig>) {
-  const { dispatch } = useTableActions();
+  const { table } = useTableViewCtx();
   const toggleIconVisibility = () =>
-    dispatch({
-      type: "update:col:meta",
-      payload: {
-        type: "title",
-        actions: {
-          id: propId,
-          updater: (prev) => !prev,
-        } satisfies TitleActions,
-      },
-    });
+    table.setColumnTypeConfig(propId, {
+      id: propId,
+      updater: (prev) => !prev,
+    } satisfies TitleActions);
 
   return (
     <DropdownMenuItem
