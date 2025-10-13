@@ -7,24 +7,25 @@ import {
   MenuGroup,
   MenuItem,
   MenuItemAction,
-  useMenu,
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader } from "../common";
-import { ColumnInfo } from "../lib/types";
+import type { ColumnInfo } from "../lib/types";
+import { TableViewMenuPage } from "../lib/utils";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
-import { PropsMenu } from "./props-menu";
 
 export function DeletedPropsMenu() {
-  const { table } = useTableViewCtx();
+  const { table, setTableMenu } = useTableViewCtx();
   const { remove } = useTableActions();
-  const { openMenu } = useMenu();
-
-  const openPropsMenu = () => openMenu(<PropsMenu />, { x: -12, y: -12 });
 
   return (
     <>
-      <MenuHeader title="Deleted properties" onBack={openPropsMenu} />
+      <MenuHeader
+        title="Deleted properties"
+        onBack={() =>
+          setTableMenu({ open: true, page: TableViewMenuPage.Props })
+        }
+      />
       <MenuGroup>
         {table.getDeletedColumns().map((info) => (
           <PropertyItem
@@ -45,11 +46,7 @@ interface PropertyItemProps {
   onDelete: () => void;
 }
 
-const PropertyItem: React.FC<PropertyItemProps> = ({
-  info,
-  onRestore,
-  onDelete,
-}) => {
+function PropertyItem({ info, onRestore, onDelete }: PropertyItemProps) {
   return (
     <MenuItem
       role="menuitem"
@@ -91,4 +88,4 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
       </MenuItemAction>
     </MenuItem>
   );
-};
+}

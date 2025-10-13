@@ -10,13 +10,11 @@ import {
   Separator,
   Switch,
   TooltipPreset,
-  useMenu,
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader, PropMeta } from "../common";
+import { TableViewMenuPage } from "../lib/utils";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
-import { PropsMenu } from "./props-menu";
-import { TypesMenu } from "./types-menu";
 import { propertyTypes } from "./types-menu-options";
 
 interface EditPropMenuProps {
@@ -35,38 +33,35 @@ interface EditPropMenuProps {
  * 6. ✅ Delete property
  */
 export function EditPropMenu({ propId }: EditPropMenuProps) {
-  const { table } = useTableViewCtx();
+  const { table, setTableMenu } = useTableViewCtx();
   const { duplicate } = useTableActions();
-  const { openMenu, closeMenu } = useMenu();
 
   const info = table.getColumnInfo(propId);
 
-  const openPropsMenu = () => openMenu(<PropsMenu />, { x: -12, y: -12 });
-
   // 1. Type selection
   const openTypesMenu = () =>
-    openMenu(<TypesMenu propId={propId} />, { x: -12, y: -12 });
+    setTableMenu({
+      open: true,
+      page: TableViewMenuPage.ChangePropType,
+      id: propId,
+    });
   // 3. Wrap in view
   const wrapProp = () => table.toggleColumnWrapped(propId, (v) => !v);
   // 4. Hide in view
-  const hideProp = () => {
-    table.setColumnInfo(propId, { hidden: true });
-    closeMenu();
-  };
+  const hideProp = () => table.setColumnInfo(propId, { hidden: true });
   // 5. Duplicate property
-  const duplicateProp = () => {
-    duplicate(propId, "col");
-    closeMenu();
-  };
+  const duplicateProp = () => duplicate(propId, "col");
   // 6. Delete property
-  const deleteProp = () => {
-    table.setColumnInfo(propId, { isDeleted: true });
-    closeMenu();
-  };
+  const deleteProp = () => table.setColumnInfo(propId, { isDeleted: true });
 
   return (
     <>
-      <MenuHeader title="Edit property" onBack={openPropsMenu} />
+      <MenuHeader
+        title="Edit property"
+        onBack={() =>
+          setTableMenu({ open: true, page: TableViewMenuPage.Props })
+        }
+      />
       <PropMeta propId={propId} type={info.type} />
       <MenuGroup>
         {info.type === "title" ? (

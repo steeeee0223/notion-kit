@@ -56,6 +56,14 @@ function PopoverContent({
           contentVariants({ variant: "popover", sideAnimation: true }),
           className,
         )}
+        /**
+         * tmporary fix
+         * @see https://github.com/radix-ui/primitives/issues/1241
+         */
+        onCloseAutoFocus={(e) => {
+          e.preventDefault();
+          document.body.style.pointerEvents = "";
+        }}
         {...props}
       />
     </PopoverPrimitive.Portal>

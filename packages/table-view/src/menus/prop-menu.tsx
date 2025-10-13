@@ -14,7 +14,7 @@ import {
 } from "@notion-kit/shadcn";
 
 import { PropMeta } from "../common";
-import { extractColumnConfig } from "../lib/utils";
+import { extractColumnConfig, TableViewMenuPage } from "../lib/utils";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { CalcMenu } from "./calc-menu";
 import { PropConfig } from "./prop-config";
@@ -63,10 +63,13 @@ export function PropMenu({ propId }: PropMenuProps) {
   const wrapProp = () => table.toggleColumnWrapped(propId, (v) => !v);
   // 9. Insert left/right
   const insertColumn = (side: "left" | "right") => {
-    openMenu(<TypesMenu propId={null} at={{ id: propId, side }} />, {
-      x: -12,
-      y: -12,
-    });
+    openMenu(
+      <TypesMenu
+        at={{ id: propId, side }}
+        menu={TableViewMenuPage.CreateProp}
+      />,
+      { x: -12, y: -12 },
+    );
   };
   // 10. Duplicate property
   const duplicateProp = () => duplicate(propId, "col");
@@ -89,7 +92,7 @@ export function PropMenu({ propId }: PropMenuProps) {
               Body="Change type"
             />
             <DropdownMenuSubContent sideOffset={-4} className="w-50">
-              <TypesMenu propId={propId} showHeader={false} />
+              <TypesMenu propId={propId} menu={null} />
             </DropdownMenuSubContent>
           </DropdownMenuSub>
         )}

@@ -9,9 +9,9 @@ import {
   Button,
   Command,
   CommandGroup,
+  CommandInput,
   CommandItem,
   CommandList,
-  Input,
   MenuItem,
   MenuItemCheck,
   Popover,
@@ -45,14 +45,12 @@ export function TimezoneMenu({ currentTz, onChange }: TimezoneMenuProps) {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[342px]">
-        <Command className="bg-popover">
-          <div className="flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2">
-            <Input
-              value={search}
-              onChange={(e) => updateSearch(e.target.value)}
-              placeholder={"Search cities, timezones..."}
-            />
-          </div>
+        <Command shouldFilter={false}>
+          <CommandInput
+            value={search}
+            onValueChange={updateSearch}
+            placeholder={"Search cities, timezones..."}
+          />
           <CommandList className="max-h-100 overflow-y-auto">
             <CommandGroup
               className={cn(

@@ -7,8 +7,9 @@ import type {
   InferKey,
   InferPlugin,
 } from "../plugins";
+import { TableViewMenuPage } from "./utils";
 
-export interface PropertyBase {
+interface PropertyBase {
   id: string;
   name: string;
   icon?: IconData | null;
@@ -59,3 +60,10 @@ export type Rows<TPlugins extends CellPlugin[] = CellPlugin[]> = Record<
   string,
   Row<TPlugins>
 >;
+
+// Table View Menu
+export interface TableMenu {
+  open: boolean;
+  page: TableViewMenuPage | null;
+  id?: string;
+}

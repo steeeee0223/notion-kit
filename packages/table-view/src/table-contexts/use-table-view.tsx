@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useReducer } from "react";
+import { useCallback, useMemo, useReducer, useState } from "react";
 import {
   KeyboardSensor,
   MouseSensor,
@@ -23,9 +23,9 @@ import {
   FreezingFeature,
   OrderingFeature,
 } from "../features";
-import type { PluginsMap, Row } from "../lib/types";
+import type { ColumnInfo, PluginsMap, Row, TableMenu } from "../lib/types";
 import { arrayToEntity, type Entity } from "../lib/utils";
-import type { CellPlugin, InferConfig } from "../plugins";
+import type { CellPlugin } from "../plugins";
 import { TableRowCell } from "../table-body";
 import { TableFooterCell } from "../table-footer";
 import { TableHeaderCell } from "../table-header";
@@ -114,7 +114,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
           sortingFn,
           header: ({ header }) => <TableHeaderCell header={header} />,
           cell: ({ row, column }) => {
-            const info = column.getInfo();
+            const info = column.getInfo() as ColumnInfo<typeof plugin>;
             const cell = row.original.properties[property.id];
             if (!cell) return null;
             return (
@@ -124,7 +124,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
                 rowIndex={row.index}
                 colIndex={column.getIndex()}
                 propId={column.id}
-                config={info.config as InferConfig<typeof plugin>}
+                config={info.config}
                 width={column.getWidth()}
                 wrapped={info.wrapped}
                 onChange={(value) =>
@@ -240,12 +240,18 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     useSensor(KeyboardSensor, {}),
   );
 
+  const [tableMenu, setTableMenu] = useState<TableMenu>({
+    open: false,
+    page: null,
+  });
   const tableViewCtx = useMemo<TableViewCtx>(() => {
     const uncontrolled: TableViewCtx = {
       table,
       columnSizeVars,
       columnSensors,
       rowSensors,
+      menu: tableMenu,
+      setTableMenu,
     };
     if (!controlledProperties) return uncontrolled;
     const colData = arrayToEntity(controlledProperties);
@@ -253,7 +259,14 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       ...uncontrolled,
       properties: colData.items,
     };
-  }, [columnSensors, columnSizeVars, controlledProperties, rowSensors, table]);
+  }, [
+    columnSensors,
+    columnSizeVars,
+    controlledProperties,
+    rowSensors,
+    table,
+    tableMenu,
+  ]);
 
   return [tableViewCtx, dispatch] as const;
 }

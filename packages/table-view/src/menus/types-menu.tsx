@@ -7,20 +7,19 @@ import { useFilter } from "@notion-kit/hooks";
 import {
   Command,
   CommandGroup,
+  CommandInput,
   CommandItem,
   CommandList,
-  Input,
   MenuItem,
   MenuItemCheck,
   TooltipPreset,
-  useMenu,
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader } from "../common";
 import type { PluginType } from "../lib/types";
+import { TableViewMenuPage } from "../lib/utils";
 import { CellPlugin } from "../plugins";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
-import { EditPropMenu } from "./edit-prop-menu";
 import { propOptions } from "./types-menu-options";
 
 interface TypesMenuProps {
@@ -28,7 +27,7 @@ interface TypesMenuProps {
    * @prop {propId}: if null, will create a new column;
    * otherwise will update a column by given `propId`
    */
-  propId: string | null;
+  propId?: string;
   /**
    * @prop {at}: if undefined, will create a new column at the end;
    * otherwise will create a column at `at.side` of the column `at.id`
@@ -37,47 +36,71 @@ interface TypesMenuProps {
     id: string;
     side: "left" | "right";
   };
-  showHeader?: boolean;
+  /**
+   * @prop {menu}: control the menu page
+   */
+  menu: TableViewMenuPage.CreateProp | TableViewMenuPage.ChangePropType | null;
+  /**
+   * @prop {back}: whether to show back button in the header
+   */
+  back?: boolean;
 }
 
-export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
-  const { table } = useTableViewCtx();
+export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
+  const { table, setTableMenu } = useTableViewCtx();
   const { addColumn } = useTableActions();
-  const { openMenu } = useMenu();
 
+  const plugins = table.getState().cellPlugins;
   const propType = propId ? table.getColumnInfo(propId).type : null;
 
-  const { search, results, updateSearch } = useFilter(propOptions, (prop, v) =>
+  const typeOptions = propOptions.filter((option) => option.type in plugins);
+  const { search, results, updateSearch } = useFilter(typeOptions, (prop, v) =>
     prop.title.toLowerCase().includes(v),
   );
   const select = (type: PluginType<CellPlugin[]>, name: string) => {
     let colId = propId;
-    if (colId === null) {
+    if (colId === undefined) {
       colId = v4();
       const uniqueName = table.generateUniqueColumnName(name);
       addColumn({ id: colId, type, name: uniqueName, at });
     } else {
       table.setColumnType(colId, type);
     }
-
-    openMenu(<EditPropMenu propId={colId} />, { x: -12, y: -12 });
+    setTableMenu({ open: true, page: TableViewMenuPage.EditProp, id: colId });
   };
 
   return (
     <>
-      {showHeader && (
-        <MenuHeader title={propId ? "Change property type" : "New property"} />
+      {menu && (
+        <MenuHeader
+          title={
+            menu === TableViewMenuPage.ChangePropType
+              ? "Change property type"
+              : "New property"
+          }
+          onBack={
+            back
+              ? () =>
+                  setTableMenu({
+                    open: true,
+                    page:
+                      menu === TableViewMenuPage.ChangePropType
+                        ? TableViewMenuPage.EditProp
+                        : TableViewMenuPage.Props,
+                    id: propId,
+                  })
+              : undefined
+          }
+        />
       )}
-      <Command className="bg-popover">
-        <div className="flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2">
-          <Input
-            value={search}
-            onChange={(e) => updateSearch(e.target.value)}
-            placeholder={
-              propId ? "Search for property type" : "Search or add new property"
-            }
-          />
-        </div>
+      <Command shouldFilter={false}>
+        <CommandInput
+          value={search}
+          onValueChange={updateSearch}
+          placeholder={
+            propId ? "Search for property type" : "Search or add new property"
+          }
+        />
         <CommandList>
           {results && results.length > 0 && (
             <CommandGroup
@@ -118,12 +141,14 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
               heading="Select to add"
             >
               <CommandItem
-                className="mx-1 gap-2"
                 value={`search-${search}`}
                 onSelect={() => select("text", search)}
+                asChild
               >
-                <DefaultIcon type="text" className="fill-menu-icon" />
-                {search}
+                <MenuItem
+                  Icon={<DefaultIcon type="text" className="fill-menu-icon" />}
+                  Body={search}
+                />
               </CommandItem>
             </CommandGroup>
           )}

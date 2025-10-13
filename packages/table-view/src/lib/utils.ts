@@ -136,3 +136,13 @@ function capValue(num: number, capped?: boolean) {
 function getPercentage(a: number, b: number) {
   return ((a * 100) / b).toFixed(1) + "%";
 }
+
+export enum TableViewMenuPage {
+  Sort,
+  Visibility,
+  Props,
+  DeletedProps,
+  CreateProp,
+  EditProp,
+  ChangePropType,
+}
