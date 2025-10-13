@@ -39,6 +39,7 @@ export interface ColumnsInfoTableApi {
   getColumnInfo: (colId: string) => ColumnInfo;
   getColumnPlugin: (colId: string) => CellPlugin;
   getDeletedColumns: () => ColumnInfo[];
+  countVisibleColumns: () => number;
   // Column Setters
   _setColumnInfo: (colId: string, updater: Updater<ColumnInfo>) => void;
   setColumnInfo: (colId: string, info: Partial<Omit<ColumnInfo, "id">>) => void;
@@ -137,6 +138,13 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         return acc;
       }, []);
     };
+    table.countVisibleColumns = () => {
+      const { columnsInfo } = table.getState();
+      return Object.values(columnsInfo).reduce((acc, info) => {
+        if (!info.hidden && !info.isDeleted) acc++;
+        return acc;
+      }, 0);
+    };
     /** Column Setters */
     table._setColumnInfo = (colId, updater) => {
       table.options.onColumnInfoChange?.(colId, updater);
@@ -157,11 +165,12 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         wrapped: functionalUpdate(updater, prev.wrapped ?? false),
       }));
     };
-    table.toggleAllColumnsVisible = (visible) => {
+    table.toggleAllColumnsVisible = () => {
+      const canHide = table.countVisibleColumns() > 1;
       table.getState().columnOrder.forEach((colId) => {
         table._setColumnInfo(colId, (prev) => {
           if (prev.isDeleted) return prev;
-          return { ...prev, hidden: prev.type === "title" ? false : !visible };
+          return { ...prev, hidden: prev.type === "title" ? false : canHide };
         });
       });
     };

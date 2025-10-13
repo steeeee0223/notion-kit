@@ -32,19 +32,8 @@ import { useTableViewCtx } from "../table-contexts";
  */
 export function PropsMenu() {
   const { table, setTableMenu } = useTableViewCtx();
-
-  const { columnOrder, columnVisibility } = table.getState();
-  const noShownProps = (() => {
-    const count = Object.values(columnVisibility).reduce(
-      (acc, shown) => {
-        const num = Number(shown) as 0 | 1;
-        acc[num]++;
-        return acc;
-      },
-      { [1]: 0, [0]: 0 },
-    );
-    return count[1] === 1;
-  })();
+  const { columnOrder } = table.getState();
+  const noShownProps = table.countVisibleColumns() === 1;
   // Search
   const inputRef = useRef<HTMLInputElement>(null);
   const { props, deletedCount } = columnOrder.reduce(
@@ -93,7 +82,7 @@ export function PropsMenu() {
         <MenuGroupHeader
           title={search && !results ? "No results" : "Properties"}
           action={search ? null : noShownProps ? "Show all" : "Hide all"}
-          onActionClick={() => table.toggleAllColumnsVisible(!noShownProps)}
+          onActionClick={table.toggleAllColumnsVisible}
         />
         <div className="flex flex-col">
           <VerticalDnd
