@@ -203,7 +203,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
           properties: {
             ...newData[rowId].properties,
             [colId]: {
-              id: cell.id,
+              ...cell,
               value: destPlugin.fromReadableValue(
                 srcPlugin.toReadableValue(cell.value),
                 config,

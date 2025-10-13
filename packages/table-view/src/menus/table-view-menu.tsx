@@ -36,7 +36,7 @@ export function TableViewMenu() {
       return <EditPropMenu propId={menu.id} />;
     case TableViewMenuPage.CreateProp:
     case TableViewMenuPage.ChangePropType:
-      return <TypesMenu propId={menu.id} />;
+      return <TypesMenu propId={menu.id} menu={menu.page} back />;
     case TableViewMenuPage.DeletedProps:
       return <DeletedPropsMenu />;
     default:

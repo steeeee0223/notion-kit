@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React from "react";
 import {
   horizontalListSortingStrategy,
   SortableContext,
@@ -19,10 +19,10 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  useMenu,
 } from "@notion-kit/shadcn";
 
 import type { Row } from "../lib/types";
+import { TableViewMenuPage } from "../lib/utils";
 import { TableViewMenu, TypesMenu } from "../menus";
 import { useTableViewCtx } from "../table-contexts";
 import { TableHeaderActionCell } from "./table-header-action-cell";
@@ -40,18 +40,8 @@ export function TableHeaderRow({
 }: TableHeaderRowProps) {
   const { setTableMenu } = useTableViewCtx();
   const isMobile = useIsMobile();
-  const { openMenu } = useMenu();
 
   const isLeftPinned = leftPinnedHeaders.length > 0;
-
-  const plusButtonRef = useRef<HTMLButtonElement>(null);
-  const openTypesMenu = () => {
-    const rect = plusButtonRef.current?.getBoundingClientRect();
-    openMenu(<TypesMenu />, {
-      x: rect?.left,
-      y: rect ? rect.top + rect.height : 0,
-    });
-  };
 
   return (
     <div
@@ -114,11 +104,14 @@ export function TableHeaderRow({
           </div>
         </SortableContext>
       </div>
-      <TableHeaderActionCell
-        ref={plusButtonRef}
-        icon={<Icon.Plus />}
-        onClick={openTypesMenu}
-      />
+      <Popover>
+        <PopoverTrigger asChild>
+          <TableHeaderActionCell icon={<Icon.Plus />} />
+        </PopoverTrigger>
+        <PopoverContent sideOffset={0} collisionPadding={12}>
+          <TypesMenu menu={TableViewMenuPage.CreateProp} />
+        </PopoverContent>
+      </Popover>
       <Popover
         onOpenChange={(open) => {
           if (open) return;

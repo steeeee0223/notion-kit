@@ -36,10 +36,17 @@ interface TypesMenuProps {
     id: string;
     side: "left" | "right";
   };
-  showHeader?: boolean;
+  /**
+   * @prop {menu}: control the menu page
+   */
+  menu: TableViewMenuPage.CreateProp | TableViewMenuPage.ChangePropType | null;
+  /**
+   * @prop {back}: whether to show back button in the header
+   */
+  back?: boolean;
 }
 
-export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
+export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
   const { table, setTableMenu } = useTableViewCtx();
   const { addColumn } = useTableActions();
 
@@ -64,16 +71,24 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
 
   return (
     <>
-      {showHeader && (
+      {menu && (
         <MenuHeader
-          title={propId ? "Change property type" : "New property"}
-          onBack={() =>
-            setTableMenu({
-              page: propId
-                ? TableViewMenuPage.EditProp
-                : TableViewMenuPage.Props,
-              id: propId,
-            })
+          title={
+            menu === TableViewMenuPage.ChangePropType
+              ? "Change property type"
+              : "New property"
+          }
+          onBack={
+            back
+              ? () =>
+                  setTableMenu({
+                    page:
+                      menu === TableViewMenuPage.ChangePropType
+                        ? TableViewMenuPage.EditProp
+                        : TableViewMenuPage.Props,
+                    id: propId,
+                  })
+              : undefined
           }
         />
       )}
@@ -95,12 +110,7 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
               heading="Type"
             >
               {results.map(({ type, title, description, icon }) => (
-                <CommandItem
-                  key={type}
-                  value={`default-${type}`}
-                  asChild
-                  onSelect={() => select(type, title)}
-                >
+                <CommandItem key={type} value={`default-${type}`} asChild>
                   <TooltipPreset
                     side="left"
                     sideOffset={6}
@@ -112,6 +122,7 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
                       disabled={type === "title"}
                       Icon={icon}
                       Body={title}
+                      onClick={() => select(type, title)}
                     >
                       {propType === type && <MenuItemCheck />}
                     </MenuItem>
