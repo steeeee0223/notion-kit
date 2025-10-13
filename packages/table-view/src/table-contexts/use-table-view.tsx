@@ -240,7 +240,10 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     useSensor(KeyboardSensor, {}),
   );
 
-  const [tableMenu, setTableMenu] = useState<TableMenu>({ page: null });
+  const [tableMenu, setTableMenu] = useState<TableMenu>({
+    open: false,
+    page: null,
+  });
   const tableViewCtx = useMemo<TableViewCtx>(() => {
     const uncontrolled: TableViewCtx = {
       table,

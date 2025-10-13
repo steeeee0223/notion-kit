@@ -66,7 +66,7 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
     } else {
       table.setColumnType(colId, type);
     }
-    setTableMenu({ page: TableViewMenuPage.EditProp, id: colId });
+    setTableMenu({ open: true, page: TableViewMenuPage.EditProp, id: colId });
   };
 
   return (
@@ -82,6 +82,7 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
             back
               ? () =>
                   setTableMenu({
+                    open: true,
                     page:
                       menu === TableViewMenuPage.ChangePropType
                         ? TableViewMenuPage.EditProp

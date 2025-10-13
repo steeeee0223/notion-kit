@@ -67,7 +67,7 @@ export function PropsMenu() {
   );
   // Menu actions
   const openEditPropMenu = (propId: string) =>
-    setTableMenu({ page: TableViewMenuPage.EditProp, id: propId });
+    setTableMenu({ open: true, page: TableViewMenuPage.EditProp, id: propId });
 
   useLayoutEffect(() => {
     inputRef.current?.focus();
@@ -77,7 +77,7 @@ export function PropsMenu() {
     <>
       <MenuHeader
         title="Properties"
-        onBack={() => setTableMenu({ page: null })}
+        onBack={() => setTableMenu({ open: true, page: null })}
       />
       <div className="flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2">
         <Input
@@ -129,7 +129,9 @@ export function PropsMenu() {
       <MenuGroup>
         <MenuItem
           variant="secondary"
-          onClick={() => setTableMenu({ page: TableViewMenuPage.CreateProp })}
+          onClick={() =>
+            setTableMenu({ open: true, page: TableViewMenuPage.CreateProp })
+          }
           Icon={<Icon.Plus className="size-4" />}
           Body="New property"
         />
@@ -138,7 +140,7 @@ export function PropsMenu() {
             variant="secondary"
             tabIndex={0}
             onClick={() =>
-              setTableMenu({ page: TableViewMenuPage.DeletedProps })
+              setTableMenu({ open: true, page: TableViewMenuPage.DeletedProps })
             }
             Icon={<Icon.Trash />}
             Body="Deleted properties"

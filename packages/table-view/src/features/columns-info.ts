@@ -6,14 +6,7 @@ import type {
 } from "@tanstack/react-table";
 import { functionalUpdate } from "@tanstack/react-table";
 
-import type {
-  Cell,
-  ColumnInfo,
-  PluginType,
-  PropertyBase,
-  Row,
-  Rows,
-} from "../lib/types";
+import type { Cell, ColumnInfo, PluginType, Row, Rows } from "../lib/types";
 import { arrayToEntity, getUniqueName } from "../lib/utils";
 import type { CellPlugin, InferActions, InferPlugin } from "../plugins";
 import { DEFAULT_PLUGINS } from "../plugins";
@@ -47,10 +40,8 @@ export interface ColumnsInfoTableApi {
   getColumnPlugin: (colId: string) => CellPlugin;
   getDeletedColumns: () => ColumnInfo[];
   // Column Setters
-  setColumnInfo: (
-    colId: string,
-    info: Partial<Omit<PropertyBase, "id">>,
-  ) => void;
+  _setColumnInfo: (colId: string, updater: Updater<ColumnInfo>) => void;
+  setColumnInfo: (colId: string, info: Partial<Omit<ColumnInfo, "id">>) => void;
   toggleColumnWrapped: (colId: string, updater: Updater<boolean>) => void;
   setColumnType: <TPlugins extends CellPlugin[]>(
     colId: string,
@@ -147,29 +138,30 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
       }, []);
     };
     /** Column Setters */
-    table.setColumnInfo = (colId, info) => {
-      table.options.onColumnInfoChange?.(colId, (prev) => ({
-        ...prev,
-        ...info,
-      }));
+    table._setColumnInfo = (colId, updater) => {
+      table.options.onColumnInfoChange?.(colId, updater);
+      // Sync column visibility
+      const info = functionalUpdate(updater, table.getColumnInfo(colId));
       if (info.hidden !== undefined || info.isDeleted !== undefined)
         table.setColumnVisibility((prev) => ({
           ...prev,
           [colId]: !info.hidden && !info.isDeleted,
         }));
     };
+    table.setColumnInfo = (colId, info) => {
+      table._setColumnInfo(colId, (prev) => ({ ...prev, ...info }));
+    };
     table.toggleColumnWrapped = (colId, updater) => {
-      table.options.onColumnInfoChange?.(colId, (prev) => ({
+      table._setColumnInfo(colId, (prev) => ({
         ...prev,
         wrapped: functionalUpdate(updater, prev.wrapped ?? false),
       }));
     };
     table.toggleAllColumnsVisible = (visible) => {
-      const infos = table.getState().columnsInfo;
-      Object.values(infos).forEach((info) => {
-        if (info.isDeleted) return;
-        table.setColumnInfo(info.id, {
-          hidden: info.type === "title" ? false : visible,
+      table.getState().columnOrder.forEach((colId) => {
+        table._setColumnInfo(colId, (prev) => {
+          if (prev.isDeleted) return prev;
+          return { ...prev, hidden: prev.type === "title" ? false : !visible };
         });
       });
     };
@@ -187,11 +179,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
       const config =
         destPlugin.transferConfig?.(table.getColumnInfo(colId), data) ??
         destPlugin.default.config;
-      table.options.onColumnInfoChange?.(colId, (prev) => ({
-        ...prev,
-        type,
-        config,
-      }));
+      table.setColumnInfo(colId, { type, config });
       // Update all cells
       const newData = { ...data };
       const srcPlugin = table.getColumnPlugin(colId);
@@ -223,7 +211,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         },
         actions,
       );
-      table.setColumnInfo(colId, properties[colId]!);
+      table._setColumnInfo(colId, properties[colId]!);
       // Update all cells
       table.options.onTableDataChange?.(data);
     };
@@ -248,9 +236,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     /** Column width */
     column.getWidth = () => `calc(var(--col-${column.id}-size) * 1px)`;
     column.handleResizeEnd = () =>
-      table.setColumnInfo(column.id, {
-        width: `${column.getSize()}px`,
-      });
+      table.setColumnInfo(column.id, { width: `${column.getSize()}px` });
     /** Cell */
     column.updateCell = (rowId, data) => {
       table.updateCell(rowId, column.id, data);

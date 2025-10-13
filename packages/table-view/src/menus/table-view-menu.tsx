@@ -24,7 +24,7 @@ export function TableViewMenu() {
         <>
           <MenuHeader
             title="Sort"
-            onBack={() => setTableMenu({ page: null })}
+            onBack={() => setTableMenu({ open: true, page: null })}
           />
           <SortMenu />
         </>
@@ -47,7 +47,9 @@ export function TableViewMenu() {
             <MenuItem
               Icon={<Icon.ArrowUpDown />}
               Body="Sort"
-              onClick={() => setTableMenu({ page: TableViewMenuPage.Sort })}
+              onClick={() =>
+                setTableMenu({ open: true, page: TableViewMenuPage.Sort })
+              }
             >
               <MenuItemAction className="flex items-center">
                 <Icon.ChevronRight className="h-full w-3 fill-icon" />
@@ -60,7 +62,9 @@ export function TableViewMenu() {
             <MenuItem
               Icon={<Icon.Sliders />}
               Body="Edit properties"
-              onClick={() => setTableMenu({ page: TableViewMenuPage.Props })}
+              onClick={() =>
+                setTableMenu({ open: true, page: TableViewMenuPage.Props })
+              }
             >
               <MenuItemAction className="flex items-center">
                 <Icon.ChevronRight className="h-full w-3 fill-icon" />

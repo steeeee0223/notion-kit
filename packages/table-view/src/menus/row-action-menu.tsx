@@ -107,7 +107,12 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
         <CommandSeparator />
         <CommandGroup>
           {results?.map((prop) => (
-            <CommandItem asChild value={prop.value} onSelect={prop.onSelect}>
+            <CommandItem
+              asChild
+              key={prop.value}
+              value={prop.value}
+              onSelect={prop.onSelect}
+            >
               <MenuItem Icon={prop.icon} Body={prop.name}>
                 <MenuItemShortcut>{prop.shortcut}</MenuItemShortcut>
               </MenuItem>

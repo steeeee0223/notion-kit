@@ -40,7 +40,11 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
 
   // 1. Type selection
   const openTypesMenu = () =>
-    setTableMenu({ page: TableViewMenuPage.ChangePropType, id: propId });
+    setTableMenu({
+      open: true,
+      page: TableViewMenuPage.ChangePropType,
+      id: propId,
+    });
   // 3. Wrap in view
   const wrapProp = () => table.toggleColumnWrapped(propId, (v) => !v);
   // 4. Hide in view
@@ -54,7 +58,9 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
     <>
       <MenuHeader
         title="Edit property"
-        onBack={() => setTableMenu({ page: TableViewMenuPage.Props })}
+        onBack={() =>
+          setTableMenu({ open: true, page: TableViewMenuPage.Props })
+        }
       />
       <PropMeta propId={propId} type={info.type} />
       <MenuGroup>

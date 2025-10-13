@@ -22,7 +22,9 @@ export function DeletedPropsMenu() {
     <>
       <MenuHeader
         title="Deleted properties"
-        onBack={() => setTableMenu({ page: TableViewMenuPage.Props })}
+        onBack={() =>
+          setTableMenu({ open: true, page: TableViewMenuPage.Props })
+        }
       />
       <MenuGroup>
         {table.getDeletedColumns().map((info) => (

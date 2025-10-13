@@ -38,7 +38,7 @@ export function TableHeaderRow({
   headers,
   columnOrder,
 }: TableHeaderRowProps) {
-  const { setTableMenu } = useTableViewCtx();
+  const { menu, setTableMenu } = useTableViewCtx();
   const isMobile = useIsMobile();
 
   const isLeftPinned = leftPinnedHeaders.length > 0;
@@ -113,15 +113,13 @@ export function TableHeaderRow({
         </PopoverContent>
       </Popover>
       <Popover
-        onOpenChange={(open) => {
-          if (open) return;
-          setTableMenu({ page: null });
-        }}
+        open={menu.open}
+        onOpenChange={(open) => setTableMenu({ open, page: null })}
       >
         <PopoverTrigger asChild>
           <TableHeaderActionCell icon={<Icon.Dots />} />
         </PopoverTrigger>
-        <PopoverContent sideOffset={0} collisionPadding={12}>
+        <PopoverContent sideOffset={0} collisionPadding={12} sticky="always">
           <TableViewMenu />
         </PopoverContent>
       </Popover>

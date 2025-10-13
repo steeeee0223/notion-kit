@@ -9,7 +9,7 @@ import type {
 } from "../plugins";
 import { TableViewMenuPage } from "./utils";
 
-export interface PropertyBase {
+interface PropertyBase {
   id: string;
   name: string;
   icon?: IconData | null;
@@ -63,6 +63,7 @@ export type Rows<TPlugins extends CellPlugin[] = CellPlugin[]> = Record<
 
 // Table View Menu
 export interface TableMenu {
+  open: boolean;
   page: TableViewMenuPage | null;
   id?: string;
 }
