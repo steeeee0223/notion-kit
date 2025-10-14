@@ -23,7 +23,7 @@ import {
   FreezingFeature,
   OrderingFeature,
 } from "../features";
-import type { ColumnInfo, PluginsMap, Row, TableMenu } from "../lib/types";
+import type { PluginsMap, Row, TableMenu } from "../lib/types";
 import { arrayToEntity, type Entity } from "../lib/utils";
 import type { CellPlugin } from "../plugins";
 import { TableRowCell } from "../table-body";
@@ -113,33 +113,8 @@ export function useTableView<TPlugins extends CellPlugin[]>({
           minSize: getMinWidth(property.type),
           sortingFn,
           header: ({ header }) => <TableHeaderCell header={header} />,
-          cell: ({ row, column }) => {
-            const info = column.getInfo() as ColumnInfo<typeof plugin>;
-            const cell = row.original.properties[property.id];
-            if (!cell) return null;
-            return (
-              <TableRowCell
-                plugin={plugin}
-                data={cell.value}
-                rowIndex={row.index}
-                colIndex={column.getIndex()}
-                propId={column.id}
-                config={info.config}
-                width={column.getWidth()}
-                wrapped={info.wrapped}
-                onChange={(value) =>
-                  column.updateCell(row.original.id, { id: cell.id, value })
-                }
-              />
-            );
-          },
-          footer: ({ column }) => (
-            <TableFooterCell
-              id={column.id}
-              type={property.type}
-              width={column.getWidth()}
-            />
-          ),
+          cell: ({ row, column }) => <TableRowCell column={column} row={row} />,
+          footer: ({ column }) => <TableFooterCell column={column} />,
         };
       }),
     [plugins.items, properties],
