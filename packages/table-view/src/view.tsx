@@ -11,7 +11,7 @@ import {
 import { BaseModal } from "@notion-kit/common";
 import { Icon } from "@notion-kit/icons";
 import { ModalProvider, useModal } from "@notion-kit/modal";
-import { Button, MenuProvider, Separator } from "@notion-kit/shadcn";
+import { Button, Separator } from "@notion-kit/shadcn";
 
 import type { CellPlugin } from "./plugins";
 import { MemoizedTableBody, TableBody } from "./table-body";
@@ -31,9 +31,7 @@ export function TableView<TPlugins extends CellPlugin[] = CellPlugin[]>(
   return (
     <TableViewProvider {...props}>
       <ModalProvider>
-        <MenuProvider>
-          <TableViewContent />
-        </MenuProvider>
+        <TableViewContent />
       </ModalProvider>
     </TableViewProvider>
   );

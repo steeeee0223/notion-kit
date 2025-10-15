@@ -5,15 +5,13 @@ import { TagsInput } from "@notion-kit/tags-input";
 
 import { OptionTag, VerticalDnd } from "../../../common";
 import { OptionItem } from "./option-item";
-import { useSelectMenu } from "./use-select-menu";
+import { SelectMenuApi } from "./use-select-menu";
 
 interface SelectMenuProps {
-  propId: string;
-  options: string[];
-  onUpdate: (options: string[]) => void;
+  menu: SelectMenuApi;
 }
 
-export function SelectMenu(props: SelectMenuProps) {
+export function SelectMenu({ menu }: SelectMenuProps) {
   const {
     config,
     tags,
@@ -28,7 +26,8 @@ export function SelectMenu(props: SelectMenuProps) {
     validateOptionName,
     updateOption,
     deleteOption,
-  } = useSelectMenu(props);
+    commitChange,
+  } = menu;
 
   return (
     <>
@@ -61,6 +60,7 @@ export function SelectMenu(props: SelectMenuProps) {
                   onSelect={selectTag}
                   onUpdate={(data) => updateOption(name, data)}
                   onDelete={() => deleteOption(name)}
+                  onMenuClose={commitChange}
                   validateName={validateOptionName}
                 />
               );

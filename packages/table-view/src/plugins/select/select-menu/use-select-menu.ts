@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 
@@ -8,26 +8,25 @@ import { useFilter } from "@notion-kit/hooks";
 import { getRandomColor, type Color } from "@notion-kit/utils";
 
 import type { ColumnInfo } from "../../../lib/types";
-import { extractColumnConfig } from "../../../lib/utils";
 import { useTableViewCtx } from "../../../table-contexts";
 import type { MultiSelectPlugin, SelectActions, SelectPlugin } from "../types";
 
 interface UseSelectMenuOptions {
   propId: string;
   options: string[];
-  onUpdate: (options: string[]) => void;
+  onChange?: (options: string[]) => void;
 }
 
 export function useSelectMenu({
   propId,
   options,
-  onUpdate,
+  onChange,
 }: UseSelectMenuOptions) {
   const { table } = useTableViewCtx();
 
-  const { type, config } = extractColumnConfig(
-    table.getColumnInfo(propId) as ColumnInfo<SelectPlugin | MultiSelectPlugin>,
-  );
+  const { type, config } = table.getColumnInfo(propId) as ColumnInfo<
+    SelectPlugin | MultiSelectPlugin
+  >;
 
   const [currentOptions, setCurrentOptions] = useState(
     new Map<string, Color | undefined>(
@@ -188,9 +187,9 @@ export function useSelectMenu({
     [currentOptions],
   );
 
-  useEffect(() => {
-    onUpdate([...currentOptions.keys()]);
-  }, [currentOptions, onUpdate]);
+  const commitChange = useCallback(() => {
+    onChange?.(Array.from(currentOptions.keys()));
+  }, [onChange, currentOptions]);
 
   return {
     config,
@@ -206,5 +205,8 @@ export function useSelectMenu({
     validateOptionName,
     updateOption,
     deleteOption,
+    commitChange,
   };
 }
+
+export type SelectMenuApi = ReturnType<typeof useSelectMenu>;

@@ -28,6 +28,7 @@ interface OptionItemProps {
     color?: Color;
   }) => void;
   onDelete: () => void;
+  onMenuClose: () => void;
   validateName: (name: string) => boolean;
 }
 
@@ -36,6 +37,7 @@ export function OptionItem({
   onSelect,
   onUpdate,
   onDelete,
+  onMenuClose,
   validateName,
 }: OptionItemProps) {
   /** DND */
@@ -86,7 +88,12 @@ export function OptionItem({
         Body={<OptionTag {...option} />}
       >
         <MenuItemAction className="flex items-center text-muted">
-          <Popover>
+          <Popover
+            onOpenChange={(open) => {
+              if (open) return;
+              onMenuClose();
+            }}
+          >
             <PopoverTrigger asChild>
               <Button
                 tabIndex={0}
@@ -103,6 +110,7 @@ export function OptionItem({
               className="z-990 w-[220px]"
               collisionPadding={12}
               onClick={(e) => e.stopPropagation()}
+              onCloseAutoFocus={() => onMenuClose()}
             >
               <SelectOptionMenu
                 option={option}
