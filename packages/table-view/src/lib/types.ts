@@ -66,4 +66,5 @@ export interface TableMenu {
   open: boolean;
   page: TableViewMenuPage | null;
   id?: string;
+  data?: Record<string, unknown>;
 }

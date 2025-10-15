@@ -1,5 +1,7 @@
 "use client";
 
+import { Column } from "@tanstack/react-table";
+
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -9,19 +11,24 @@ import {
 } from "@notion-kit/shadcn";
 
 import { CountMethod } from "../features";
+import { Row } from "../lib/types";
 import { CalcMenu, countMethodHint } from "../menus";
 import type { CellPlugin, InferKey } from "../plugins";
 import { useTableViewCtx } from "../table-contexts";
 
 interface TableFooterCellProps {
-  id: string; // column id
-  type: InferKey<CellPlugin>;
-  width?: string;
+  column: Column<Row>;
 }
 
-export function TableFooterCell({ width, ...props }: TableFooterCellProps) {
+export function TableFooterCell({ column }: TableFooterCellProps) {
+  const props = {
+    id: column.id,
+    type: column.getInfo().type,
+    width: column.getWidth(),
+  };
+
   return (
-    <div className="flex" style={{ width }}>
+    <div className="flex" style={{ width: props.width }}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button

@@ -10,7 +10,6 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   Separator,
-  useMenu,
 } from "@notion-kit/shadcn";
 
 import { PropMeta } from "../common";
@@ -43,9 +42,8 @@ interface PropMenuProps {
  * 11. ✅ Delete property
  */
 export function PropMenu({ propId }: PropMenuProps) {
-  const { table } = useTableViewCtx();
+  const { table, setTableMenu } = useTableViewCtx();
   const { duplicate } = useTableActions();
-  const { openMenu } = useMenu();
 
   const info = table.getColumnInfo(propId);
   const plugin = table.getColumnPlugin(propId);
@@ -63,13 +61,11 @@ export function PropMenu({ propId }: PropMenuProps) {
   const wrapProp = () => table.toggleColumnWrapped(propId, (v) => !v);
   // 9. Insert left/right
   const insertColumn = (side: "left" | "right") => {
-    openMenu(
-      <TypesMenu
-        at={{ id: propId, side }}
-        menu={TableViewMenuPage.CreateProp}
-      />,
-      { x: -12, y: -12 },
-    );
+    setTableMenu({
+      open: true,
+      page: TableViewMenuPage.CreateProp,
+      data: { at: { id: propId, side } },
+    });
   };
   // 10. Duplicate property
   const duplicateProp = () => duplicate(propId, "col");

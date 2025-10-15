@@ -57,21 +57,28 @@ export interface ColumnsInfoTableApi {
   generateUniqueColumnName: (initial?: string) => string;
   // Cell API
   getCellValues: <TPlugins extends CellPlugin[]>() => Rows<TPlugins>;
-  updateCell: <TPlugins extends CellPlugin[]>(
+  getCell: <TPlugin extends CellPlugin>(
+    colId: string,
+    rowId: string,
+  ) => Cell<TPlugin>;
+  // Cell updater
+  updateCell: <TPlugin extends CellPlugin>(
     rowId: string,
     colId: string,
-    data: Cell<InferPlugin<TPlugins>>,
+    data: Cell<TPlugin>,
   ) => void;
 }
 
 export interface ColumnInfoColumnApi {
   getInfo: () => ColumnInfo;
   getWidth: () => string;
+  getPlugin: () => CellPlugin;
   handleResizeEnd: () => void;
   // Cell updater
-  updateCell: <TPlugins extends CellPlugin[]>(
+  getCell: <TPlugin extends CellPlugin>(rowId: string) => Cell<TPlugin>;
+  updateCell: <TPlugin extends CellPlugin>(
     rowId: string,
-    data: Cell<InferPlugin<TPlugins>>,
+    data: Cell<TPlugin>,
   ) => void;
 }
 
@@ -111,6 +118,13 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         acc[row.id] = row.original;
         return acc;
       }, {});
+    table.getCell = (colId, rowId) => {
+      const cell = table.getRow(rowId).original.properties[colId];
+      if (!cell) {
+        throw new Error(`[TableView] Cell not found: ${rowId}, ${colId}`);
+      }
+      return cell;
+    };
     table.updateCell = (rowId, colId, data) =>
       table.options.onCellChange?.(rowId, colId, data);
     /** Column Getters */
@@ -242,11 +256,13 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     table: Table<Row<TPlugins>>,
   ): void => {
     column.getInfo = () => table.getColumnInfo(column.id);
+    column.getPlugin = () => table.getColumnPlugin(column.id);
     /** Column width */
     column.getWidth = () => `calc(var(--col-${column.id}-size) * 1px)`;
     column.handleResizeEnd = () =>
       table.setColumnInfo(column.id, { width: `${column.getSize()}px` });
     /** Cell */
+    column.getCell = (rowId) => table.getCell(column.id, rowId);
     column.updateCell = (rowId, data) => {
       table.updateCell(rowId, column.id, data);
     };
