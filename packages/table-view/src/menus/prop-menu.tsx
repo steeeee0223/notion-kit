@@ -13,10 +13,9 @@ import {
 } from "@notion-kit/shadcn";
 
 import { PropMeta } from "../common";
-import { extractColumnConfig, TableViewMenuPage } from "../lib/utils";
+import { TableViewMenuPage } from "../lib/utils";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { CalcMenu } from "./calc-menu";
-import { PropConfig } from "./prop-config";
 import { TypesMenu } from "./types-menu";
 
 interface PropMenuProps {
@@ -76,11 +75,7 @@ export function PropMenu({ propId }: PropMenuProps) {
     <>
       <PropMeta propId={propId} type={info.type} />
       <DropdownMenuGroup>
-        <PropConfig
-          plugin={plugin}
-          propId={propId}
-          meta={extractColumnConfig(info)}
-        />
+        {plugin.renderConfigMenu?.({ propId, config: info.config as unknown })}
         {info.type !== "title" && (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger

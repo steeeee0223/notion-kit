@@ -59,6 +59,9 @@ export interface CellPlugin<
     column: ColumnInfo<TPlugin>,
     data: Rows,
   ) => Config;
+  /**
+   * @prop A reducer to handle actions related to other cells within this table.
+   */
   reducer: <TPlugins extends CellPlugin[]>(
     v: TableDataAtom<TPlugins>,
     a: Actions,
