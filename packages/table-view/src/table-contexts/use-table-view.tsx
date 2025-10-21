@@ -4,6 +4,7 @@ import { useCallback, useMemo, useReducer, useState } from "react";
 import {
   KeyboardSensor,
   MouseSensor,
+  PointerSensor,
   TouchSensor,
   useSensor,
   useSensors,
@@ -196,24 +197,18 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   );
 
   /** DND */
-  const columnSensors = useSensors(
-    useSensor(MouseSensor, {
-      activationConstraint: { distance: 5 },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: { distance: 5 },
-    }),
-    useSensor(KeyboardSensor, {}),
-  );
-  const rowSensors = useSensors(
-    useSensor(MouseSensor, {
-      activationConstraint: { distance: 5 },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: { distance: 5 },
-    }),
-    useSensor(KeyboardSensor, {}),
-  );
+  const pointer = useSensor(PointerSensor, {
+    activationConstraint: { distance: 5 },
+  });
+  const mouse = useSensor(MouseSensor, {
+    activationConstraint: { distance: 5 },
+  });
+  const touch = useSensor(TouchSensor, {
+    activationConstraint: { distance: 5 },
+  });
+  const keyboard = useSensor(KeyboardSensor, {});
+  const columnSensors = useSensors(pointer, mouse, touch, keyboard);
+  const rowSensors = useSensors(pointer, mouse, touch, keyboard);
 
   const [tableMenu, setTableMenu] = useState<TableMenu>({
     open: false,
