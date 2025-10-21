@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 import { Icon } from "@notion-kit/icons";
 import {
   DropdownMenuGroup,
@@ -12,7 +10,6 @@ import {
 } from "@notion-kit/shadcn";
 
 import { MenuGroupHeader } from "../../../common";
-import { useTableViewCtx } from "../../../table-contexts";
 import type { ConfigMenuProps } from "../../types";
 import { DEFAULT_CONFIG } from "../constant";
 import type { NumberConfig } from "../types";
@@ -22,34 +19,22 @@ import { OptionSettings } from "./option-settings";
 import { RoundingMenu } from "./rounding-menu";
 
 export function NumberConfigMenu({
-  propId,
   config = DEFAULT_CONFIG,
+  onChange,
+  onOpenChange,
 }: ConfigMenuProps<NumberConfig>) {
-  const { table } = useTableViewCtx();
-  const [configDraft, setConfigDraft] = useState<NumberConfig>(config);
-  const updateConfig = () =>
-    table._setColumnInfo(propId, (prev) => ({
-      ...prev,
-      config: configDraft,
-    }));
-
   return (
-    <DropdownMenuSub
-      onOpenChange={(open) => {
-        if (open) return;
-        updateConfig();
-      }}
-    >
+    <DropdownMenuSub onOpenChange={onOpenChange}>
       <DropdownMenuSubTrigger Icon={<Icon.Sliders />} Body="Edit property" />
       <DropdownMenuSubContent className="w-[250px]">
         <DropdownMenuGroup>
           <FormatMenu
-            format={configDraft.format}
-            onUpdate={(format) => setConfigDraft((v) => ({ ...v, format }))}
+            format={config.format}
+            onUpdate={(format) => onChange?.((v) => ({ ...v, format }))}
           />
           <RoundingMenu
-            round={configDraft.round}
-            onUpdate={(round) => setConfigDraft((v) => ({ ...v, round }))}
+            round={config.round}
+            onUpdate={(round) => onChange?.((v) => ({ ...v, round }))}
           />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -57,14 +42,14 @@ export function NumberConfigMenu({
           <MenuGroupHeader title="Show as" />
           {/* buttons for display type */}
           <DisplayTypeSelect
-            type={configDraft.showAs}
-            onUpdate={(showAs) => setConfigDraft((v) => ({ ...v, showAs }))}
+            type={config.showAs}
+            onUpdate={(showAs) => onChange?.((v) => ({ ...v, showAs }))}
           />
           {/* settings */}
           <OptionSettings
-            options={configDraft.options}
+            options={config.options}
             onUpdate={(options) =>
-              setConfigDraft((v) => ({
+              onChange?.((v) => ({
                 ...v,
                 options: { ...v.options, ...options },
               }))

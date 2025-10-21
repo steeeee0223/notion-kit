@@ -1,4 +1,5 @@
 import React from "react";
+import { Updater } from "@tanstack/react-table";
 
 import type { ColumnInfo, Rows } from "../lib/types";
 
@@ -13,6 +14,8 @@ export interface CellProps<Data, Config = undefined> {
 export interface ConfigMenuProps<Config = unknown> {
   propId: string;
   config?: Config;
+  onChange?: (updater: Updater<Config>) => void;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export interface TableDataAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {

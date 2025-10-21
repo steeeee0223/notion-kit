@@ -7,12 +7,16 @@ interface DisplayTypeSelectProps {
   onUpdate: (type: NumberDisplayType) => void;
 }
 
+// TODO: default color: text color
+// TODO: selected color: blue or the color of the property
+
 export function DisplayTypeSelect({ type, onUpdate }: DisplayTypeSelectProps) {
   return (
     <div className="mx-2 mt-1.5 flex items-center justify-between gap-1.5">
       <Button
         tabIndex={0}
-        className="m-px box-content flex h-9 flex-[1_1_0] flex-col px-3 py-1.5"
+        className="flex h-13 flex-[1_1_0] flex-col px-3 aria-selected:border-2 aria-selected:border-blue"
+        aria-selected={type === "number"}
         onClick={() => onUpdate("number")}
       >
         <div className="mb-1 flex h-5 w-full items-center justify-center">
@@ -22,7 +26,8 @@ export function DisplayTypeSelect({ type, onUpdate }: DisplayTypeSelectProps) {
       </Button>
       <Button
         tabIndex={0}
-        className="box-shadow: 0 0 0 2px var(--c-bluBorAccPri); color: var(--c-bluTexAccPri); m-px box-content flex h-9 flex-[1_1_0] flex-col px-3 py-1.5"
+        className="color: var(--c-bluTexAccPri); flex h-13 flex-[1_1_0] flex-col px-3 aria-selected:border-2 aria-selected:border-blue"
+        aria-selected={type === "bar"}
         onClick={() => onUpdate("bar")}
       >
         <div className="mb-1 flex h-5 w-full items-center justify-center">
@@ -31,7 +36,7 @@ export function DisplayTypeSelect({ type, onUpdate }: DisplayTypeSelectProps) {
             aria-valuenow={50}
             className="pointer-events-auto flex w-full items-center justify-stretch self-stretch"
           >
-            <div className="background-color: var(--ca-bluBacTerTra); relative h-1 min-h-1 w-full overflow-hidden rounded-full bg-blue">
+            <div className="background-color: var(--ca-bluBacTerTra); relative h-1 min-h-1 w-full overflow-hidden rounded-full bg-blue/20">
               <div className="absolute h-full w-[calc(50%+2px)] rounded-full bg-transparent" />
               <div className="background-color: var(--c-bluBacAccPri); absolute h-full w-1/2 rounded-full bg-blue" />
             </div>
@@ -41,7 +46,8 @@ export function DisplayTypeSelect({ type, onUpdate }: DisplayTypeSelectProps) {
       </Button>
       <Button
         tabIndex={0}
-        className="box-shadow: 0 0 0 1px var(--ca-regDivCol); color: var(--c-texSec); m-px box-content flex h-9 flex-[1_1_0] flex-col px-3 py-1.5"
+        className="box-shadow: 0 0 0 1px var(--ca-regDivCol); color: var(--c-texSec); flex h-13 flex-[1_1_0] flex-col px-3 aria-selected:border-2 aria-selected:border-blue"
+        aria-selected={type === "ring"}
         onClick={() => onUpdate("ring")}
       >
         <div className="mb-1 flex h-5 w-full items-center justify-center">
@@ -67,7 +73,8 @@ export function DisplayTypeSelect({ type, onUpdate }: DisplayTypeSelectProps) {
                 r="6"
                 fill="none"
                 stroke-width="2"
-                className="stroke: var(--ca-graBacTerTra)"
+                // className="stroke: var(--ca-graBacTerTra)"
+                className="stroke-blue/20"
               />
               <g transform="rotate(-90 7 7)">
                 <circle
@@ -75,11 +82,12 @@ export function DisplayTypeSelect({ type, onUpdate }: DisplayTypeSelectProps) {
                   cy="7"
                   r="6"
                   fill="none"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-dasharray="37.69911184307752"
-                  stroke-dashoffset="22.61946710584651"
-                  className="stroke: var(--c-graIcoAccPri); transition: stroke-dashoffset 0.5s ease-out;"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray="37.69911184307752"
+                  strokeDashoffset="22.61946710584651"
+                  className="stroke-blue transition-[stroke-dashoffset] duration-500 ease-out"
+                  // className="stroke: var(--c-graIcoAccPri); transition: stroke-dashoffset 0.5s ease-out;"
                 />
               </g>
             </svg>

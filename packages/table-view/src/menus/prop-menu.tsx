@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import { Icon } from "@notion-kit/icons";
 import {
@@ -14,6 +14,7 @@ import {
 
 import { PropMeta } from "../common";
 import { TableViewMenuPage } from "../lib/utils";
+import type { CellPlugin, InferConfig } from "../plugins";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { CalcMenu } from "./calc-menu";
 import { TypesMenu } from "./types-menu";
@@ -25,7 +26,7 @@ interface PropMenuProps {
 /**
  * @summary The definition of the property
  *
- * 0. 🚧 Edit property config
+ * 0. ✅ Edit property config
  * 1. ✅ Change type
  * ---
  * 2. 🚧 Filter
@@ -47,6 +48,10 @@ export function PropMenu({ propId }: PropMenuProps) {
   const info = table.getColumnInfo(propId);
   const plugin = table.getColumnPlugin(propId);
 
+  // 0. Edit property config
+  const [configDraft, setConfigDraft] = useState<
+    InferConfig<CellPlugin<string, unknown, unknown>>
+  >(info.config ?? plugin.default.config);
   // 3. Sorting
   const sortColumn = (desc: boolean) =>
     table.setSorting([{ id: propId, desc }]);
@@ -75,7 +80,18 @@ export function PropMenu({ propId }: PropMenuProps) {
     <>
       <PropMeta propId={propId} type={info.type} />
       <DropdownMenuGroup>
-        {plugin.renderConfigMenu?.({ propId, config: info.config as unknown })}
+        {plugin.renderConfigMenu?.({
+          propId,
+          config: configDraft,
+          onChange: setConfigDraft,
+          onOpenChange: (open) => {
+            if (open) return;
+            table._setColumnInfo(propId, (prev) => ({
+              ...prev,
+              config: configDraft,
+            }));
+          },
+        })}
         {info.type !== "title" && (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger

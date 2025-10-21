@@ -24,9 +24,7 @@ export function number(): NumberPlugin {
     toReadableValue: (data) => data ?? "",
     toTextValue: (data) => data ?? "",
     renderCell: ({ data, config, wrapped, onChange }) => data,
-    renderConfigMenu: ({ propId, config }) => (
-      <NumberConfigMenu propId={propId} config={config} />
-    ),
+    renderConfigMenu: (props) => <NumberConfigMenu {...props} />,
     reducer: (v) => v,
   };
 }
