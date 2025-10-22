@@ -5,15 +5,15 @@ import { DropdownMenuItem, MenuItemAction, Switch } from "@notion-kit/shadcn";
 
 import { useTableViewCtx } from "../../table-contexts";
 import type { ConfigMenuProps } from "../types";
-import type { TitleActions, TitleConfig } from "./types";
+import type { TitleConfig, TitlePlugin } from "./types";
 
 export function TitleConfig({ propId, config }: ConfigMenuProps<TitleConfig>) {
   const { table } = useTableViewCtx();
   const toggleIconVisibility = () =>
-    table.setColumnTypeConfig(propId, {
+    table.setColumnTypeConfig<TitlePlugin>(propId, {
       id: propId,
       updater: (prev) => !prev,
-    } satisfies TitleActions);
+    });
 
   return (
     <DropdownMenuItem

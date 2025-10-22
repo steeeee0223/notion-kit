@@ -16,7 +16,15 @@ import type {
   SelectPlugin,
 } from "./types";
 
-function selectReducer(v: TableDataAtom, a: SelectActions): TableDataAtom {
+export const DEFAULT_CONFIG: SelectConfig = {
+  options: { names: [], items: {} },
+  sort: "manual",
+};
+
+export function selectReducer(
+  v: TableDataAtom,
+  a: SelectActions,
+): TableDataAtom {
   const prop = v.properties[a.id] as ColumnInfo<
     SelectPlugin | MultiSelectPlugin
   >;
@@ -81,25 +89,22 @@ function toSelectConfig<TPlugin extends CellPlugin>(
     case "multi-select":
       return (column as ColumnInfo<SelectPlugin>).config;
     case "text": {
-      const options = Object.values(data).reduce<SelectConfig["options"]>(
-        (acc, row) => {
-          const cell = row.properties[column.id]! as Cell<
-            CellPlugin<string, string>
-          >;
-          cell.value.split(",").forEach((v) => {
-            const name = v.trim();
-            if (!name || acc.items[name]) return;
-            acc.names.push(name);
-            acc.items[name] = { id: v4(), name, color: getRandomColor() };
-          });
-          return acc;
-        },
-        { names: [], items: {} },
-      );
+      const options = Object.values(data).reduce((acc, row) => {
+        const cell = row.properties[column.id]! as Cell<
+          CellPlugin<string, string>
+        >;
+        cell.value.split(",").forEach((v) => {
+          const name = v.trim();
+          if (!name || acc.items[name]) return;
+          acc.names.push(name);
+          acc.items[name] = { id: v4(), name, color: getRandomColor() };
+        });
+        return acc;
+      }, DEFAULT_CONFIG.options);
       return { sort: "manual", options };
     }
     default:
-      return { options: { names: [], items: {} }, sort: "manual" };
+      return DEFAULT_CONFIG;
   }
 }
 
@@ -127,10 +132,7 @@ export function select(): SelectPlugin {
       name: "Select",
       icon: <DefaultIcon type="select" />,
       data: null,
-      config: {
-        options: { names: [], items: {} },
-        sort: "manual",
-      },
+      config: DEFAULT_CONFIG,
     },
     fromReadableValue: (value, config) => {
       const options = fromReadableValue(value, config, "select");
@@ -148,9 +150,7 @@ export function select(): SelectPlugin {
         onChange={(options) => onChange?.(options.at(0) ?? null)}
       />
     ),
-    renderConfigMenu: ({ propId, config }) => (
-      <SelectConfigMenu propId={propId} config={config!} />
-    ),
+    renderConfigMenu: (props) => <SelectConfigMenu {...props} />,
     reducer: selectReducer,
   };
 }
@@ -162,10 +162,7 @@ export function multiSelect(): MultiSelectPlugin {
       name: "Multi-Select",
       icon: <DefaultIcon type="multi-select" />,
       data: [],
-      config: {
-        options: { names: [], items: {} },
-        sort: "manual",
-      },
+      config: DEFAULT_CONFIG,
     },
     fromReadableValue: (value, config) =>
       fromReadableValue(value, config, "multi-select"),
@@ -181,9 +178,7 @@ export function multiSelect(): MultiSelectPlugin {
         onChange={(options) => onChange?.(options)}
       />
     ),
-    renderConfigMenu: ({ propId, config }) => (
-      <SelectConfigMenu propId={propId} config={config!} />
-    ),
+    renderConfigMenu: (props) => <SelectConfigMenu {...props} />,
     reducer: selectReducer,
   };
 }

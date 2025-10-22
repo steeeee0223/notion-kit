@@ -9,7 +9,7 @@ import { getRandomColor, type Color } from "@notion-kit/utils";
 
 import type { ColumnInfo } from "../../../lib/types";
 import { useTableViewCtx } from "../../../table-contexts";
-import type { MultiSelectPlugin, SelectActions, SelectPlugin } from "../types";
+import type { MultiSelectPlugin, SelectPlugin } from "../types";
 
 interface UseSelectMenuOptions {
   propId: string;
@@ -45,11 +45,11 @@ export function useSelectMenu({
   const addOption = useCallback(() => {
     if (!optionSuggestion) return;
     updateSearch("");
-    table.setColumnTypeConfig(propId, {
+    table.setColumnTypeConfig<SelectPlugin>(propId, {
       id: propId,
       action: "add:option",
       payload: optionSuggestion,
-    } satisfies SelectActions);
+    });
     setCurrentOptions((prev) => {
       const options = type === "multi-select" ? new Map(prev) : new Map();
       return options.set(optionSuggestion.name, optionSuggestion.color);
@@ -61,7 +61,7 @@ export function useSelectMenu({
     (e: DragEndEvent) => {
       const { active, over } = e;
       if (!over || active.id === over.id) return;
-      table.setColumnTypeConfig(propId, {
+      table.setColumnTypeConfig<SelectPlugin>(propId, {
         id: propId,
         action: "update:sort:manual",
         updater: (prev: string[]) => {
@@ -69,7 +69,7 @@ export function useSelectMenu({
           const newIndex = prev.indexOf(over.id as string);
           return arrayMove(prev, oldIndex, newIndex);
         },
-      } satisfies SelectActions);
+      });
     },
     [table, propId],
   );
@@ -93,11 +93,11 @@ export function useSelectMenu({
         color?: Color;
       },
     ) => {
-      table.setColumnTypeConfig(propId, {
+      table.setColumnTypeConfig<SelectPlugin>(propId, {
         id: propId,
         action: "update:option",
         payload: { originalName, ...data },
-      } satisfies SelectActions);
+      });
       setCurrentOptions((prev) => {
         if (!prev.has(originalName)) return prev;
         const options = new Map(prev);
@@ -115,11 +115,11 @@ export function useSelectMenu({
 
   const deleteOption = useCallback(
     (name: string) => {
-      table.setColumnTypeConfig(propId, {
+      table.setColumnTypeConfig<SelectPlugin>(propId, {
         id: propId,
         action: "delete:option",
         payload: name,
-      } satisfies SelectActions);
+      });
       setCurrentOptions((prev) => {
         const options = new Map(prev);
         options.delete(name);

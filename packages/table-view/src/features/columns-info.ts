@@ -48,9 +48,9 @@ export interface ColumnsInfoTableApi {
     colId: string,
     type: PluginType<TPlugins>,
   ) => void;
-  setColumnTypeConfig: <TPlugins extends CellPlugin[]>(
+  setColumnTypeConfig: <TPlugin extends CellPlugin>(
     colId: string,
-    actions: InferActions<InferPlugin<TPlugins>>,
+    actions: InferActions<TPlugin>,
   ) => void;
   // Column name checkers
   checkIsUniqueColumnName: (name: string) => boolean;
@@ -67,6 +67,7 @@ export interface ColumnsInfoTableApi {
     colId: string,
     data: Cell<TPlugin>,
   ) => void;
+  setTableData: (data: Rows) => void;
 }
 
 export interface ColumnInfoColumnApi {
@@ -112,6 +113,8 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
 
   // define the new feature's table instance methods
   createTable: (table: Table<Row>): void => {
+    table.setTableData = (data: Rows) =>
+      table.options.onTableDataChange?.(data);
     /** Cell API */
     table.getCellValues = () =>
       table.getCoreRowModel().rows.reduce<Rows>((acc, row) => {
@@ -223,20 +226,20 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
           },
         };
       });
-      table.options.onTableDataChange?.(newData);
+      table.setTableData(newData);
     };
-    table.setColumnTypeConfig = (colId, actions) => {
+    table.setColumnTypeConfig = (colId, action) => {
       const plugin = table.getColumnPlugin(colId);
       const { properties, data } = plugin.reducer(
         {
           properties: table.getState().columnsInfo,
           data: table.getCellValues(),
         },
-        actions,
+        action,
       );
       table._setColumnInfo(colId, properties[colId]!);
       // Update all cells
-      table.options.onTableDataChange?.(data);
+      table.setTableData(data);
     };
     /** Column name */
     table.checkIsUniqueColumnName = (name) => {

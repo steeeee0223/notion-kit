@@ -1,3 +1,5 @@
+import type { Updater } from "@tanstack/react-table";
+
 import type { Color } from "@notion-kit/utils";
 
 import type { CellPlugin } from "../types";
@@ -34,4 +36,14 @@ export interface NumberConfig {
   options: NumberOptions;
 }
 
-export type NumberPlugin = CellPlugin<"number", string | null, NumberConfig>;
+export interface NumberActions {
+  id: string;
+  updater: Updater<NumberConfig>;
+}
+
+export type NumberPlugin = CellPlugin<
+  "number",
+  string | null,
+  NumberConfig,
+  NumberActions
+>;
