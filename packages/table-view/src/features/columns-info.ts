@@ -25,10 +25,10 @@ export interface ColumnsInfoOptions {
     id: string,
     updater: Updater<ColumnInfo<TPlugin>>,
   ) => void;
-  onCellChange?: <TPlugins extends CellPlugin[]>(
+  onCellChange?: <TPlugin extends CellPlugin>(
     rowId: string,
     colId: string,
-    data: Cell<InferPlugin<TPlugins>>,
+    data: Cell<TPlugin>,
   ) => void;
   onTableDataChange?: (data: Rows) => void;
 }

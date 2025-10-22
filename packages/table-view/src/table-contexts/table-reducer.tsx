@@ -56,7 +56,7 @@ export type TableViewAction<TPlugins extends CellPlugin[]> =
       payload: {
         rowId: string;
         colId: string;
-        data: Cell<InferPlugin<TPlugins>>;
+        data: Cell<CellPlugin>;
       };
     }
   | { type: "set:table:data"; payload: Rows<TPlugins> }
