@@ -39,8 +39,7 @@ export function TableView<TPlugins extends CellPlugin[] = CellPlugin[]>(
 
 export function TableViewContent() {
   const { openModal } = useModal();
-  const { table, columnSizeVars, columnSensors, rowSensors } =
-    useTableViewCtx();
+  const { table, columnSizeVars, sensors } = useTableViewCtx();
   const { addRow } = useTableActions();
 
   const leftPinnedHeaders = table.getLeftLeafHeaders();
@@ -107,7 +106,7 @@ export function TableViewContent() {
                     restrictToParentElement,
                   ]}
                   onDragEnd={table.handleColumnDragEnd}
-                  sensors={columnSensors}
+                  sensors={sensors}
                 >
                   <div className="relative">
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -154,7 +153,7 @@ export function TableViewContent() {
             collisionDetection={closestCenter}
             modifiers={[restrictToVerticalAxis, restrictToParentElement]}
             onDragEnd={handleRowDragEnd}
-            sensors={rowSensors}
+            sensors={sensors}
           >
             <div className="relative">
               {table.getState().columnSizingInfo.isResizingColumn ? (

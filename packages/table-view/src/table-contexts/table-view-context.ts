@@ -15,8 +15,7 @@ export interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
   table: Table<Row<TPlugins>>;
   columnSizeVars: Record<string, number>;
   /** DND */
-  columnSensors: SensorDescriptor<SensorOptions>[];
-  rowSensors: SensorDescriptor<SensorOptions>[];
+  sensors: SensorDescriptor<SensorOptions>[];
   /** Table menu */
   menu: TableMenu;
   setTableMenu: (menu: TableMenu) => void;

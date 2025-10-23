@@ -1,4 +1,4 @@
-import type { ColumnDefs, ColumnInfo, PluginsMap, Row } from "../lib/types";
+import type { ColumnDefs, Row } from "../lib/types";
 import type { CellPlugin, InferKey, InferPlugin } from "../plugins";
 import type { TableViewAction } from "./table-reducer";
 
@@ -14,12 +14,6 @@ export interface AddColumnPayload<TPlugins extends CellPlugin[]> {
 
 export interface PartialTableState<TPlugins extends CellPlugin[]> {
   properties: ColumnDefs<TPlugins>;
-  data: Row<TPlugins>[];
-}
-
-export interface TableState<TPlugins extends CellPlugin[]> {
-  plugins: PluginsMap<TPlugins>;
-  properties: ColumnInfo<InferPlugin<TPlugins>>[];
   data: Row<TPlugins>[];
 }
 
