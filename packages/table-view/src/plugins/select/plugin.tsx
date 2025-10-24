@@ -89,22 +89,25 @@ function toSelectConfig<TPlugin extends CellPlugin>(
     case "multi-select":
       return (column as ColumnInfo<SelectPlugin>).config;
     case "text": {
-      const options = Object.values(data).reduce((acc, row) => {
-        const cell = row.properties[column.id]! as Cell<
-          CellPlugin<string, string>
-        >;
-        cell.value.split(",").forEach((v) => {
-          const name = v.trim();
-          if (!name || acc.items[name]) return;
-          acc.names.push(name);
-          acc.items[name] = { id: v4(), name, color: getRandomColor() };
-        });
-        return acc;
-      }, DEFAULT_CONFIG.options);
+      const options = Object.values(data).reduce<SelectConfig["options"]>(
+        (acc, row) => {
+          const cell = row.properties[column.id]! as Cell<
+            CellPlugin<string, string>
+          >;
+          cell.value.split(",").forEach((v) => {
+            const name = v.trim();
+            if (!name || acc.items[name]) return;
+            acc.names.push(name);
+            acc.items[name] = { id: v4(), name, color: getRandomColor() };
+          });
+          return acc;
+        },
+        { names: [], items: {} },
+      );
       return { sort: "manual", options };
     }
     default:
-      return DEFAULT_CONFIG;
+      return { options: { names: [], items: {} }, sort: "manual" };
   }
 }
 

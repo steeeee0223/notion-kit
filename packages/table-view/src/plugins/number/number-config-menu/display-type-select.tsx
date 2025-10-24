@@ -22,7 +22,7 @@ export function DisplayTypeSelect({ type, onUpdate }: DisplayTypeSelectProps) {
         onClick={() => onUpdate("number")}
       >
         <div className="mb-1 flex h-5 w-full items-center justify-center">
-          <div className="font-size: 16px; font-medium">42</div>
+          <div className="text-base font-medium">42</div>
         </div>
         <div className="text-xs/none">Number</div>
       </Button>

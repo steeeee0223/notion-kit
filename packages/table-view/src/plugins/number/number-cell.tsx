@@ -36,7 +36,7 @@ export function NumberCell({
       value={value}
       onUpdate={handleUpdate}
       renderTrigger={() => (
-        <CellTrigger className="group/number-cell" wrapped={wrapped}>
+        <CellTrigger className="group/number-cell h-9" wrapped={wrapped}>
           <div className="pointer-events-none absolute top-1.5 right-0 left-0 z-20 mx-1 my-0 hidden justify-start group-hover/number-cell:flex">
             <div
               id="quick-action-container"
