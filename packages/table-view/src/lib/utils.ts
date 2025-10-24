@@ -1,6 +1,8 @@
 import { Table } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
+import { cn } from "@notion-kit/cn";
+
 import { CountMethod } from "../features";
 import type { CellPlugin, InferData } from "../plugins";
 import type { Cell, Row } from "./types";
@@ -139,4 +141,12 @@ export enum TableViewMenuPage {
   CreateProp,
   EditProp,
   ChangePropType,
+}
+
+export function wrappedClassName(wrapped?: boolean) {
+  return cn(
+    wrapped
+      ? "break-words whitespace-pre-wrap"
+      : "break-normal whitespace-nowrap",
+  );
 }

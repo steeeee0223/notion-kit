@@ -22,7 +22,7 @@ export function TitleConfig({ propId, config }: ConfigMenuProps<TitleConfig>) {
       Body="Show page icon"
     >
       <MenuItemAction className="flex items-center">
-        <Switch size="sm" checked={config?.showIcon ?? true} />
+        <Switch size="sm" checked={config.showIcon} />
       </MenuItemAction>
     </DropdownMenuItem>
   );

@@ -10,7 +10,7 @@ interface OptionSettingsProps {
 
 export function OptionSettings({ options, onUpdate }: OptionSettingsProps) {
   return (
-    <div className="background-color: var(--cl-palGra30); mx-2 mt-3 flex flex-col items-center gap-2 overflow-hidden rounded-sm bg-default/5 py-3">
+    <div className="mx-2.5 mt-3 flex flex-col items-center gap-2 overflow-hidden rounded-sm bg-default/5 py-3">
       <div className="flex h-7 w-full items-center gap-4 px-4">
         <div className="flex-[6_1_0] text-sm">Color</div>
         <div className="flex flex-[6_1_0] flex-wrap gap-2">

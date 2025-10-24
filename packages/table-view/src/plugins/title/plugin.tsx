@@ -39,13 +39,11 @@ export function title(): TitlePlugin {
       <TitleCell
         value={data.value}
         wrapped={wrapped}
-        icon={config?.showIcon ? data.icon : undefined}
-        onUpdate={(value) => onChange?.({ ...data, value })}
+        icon={config.showIcon ? data.icon : undefined}
+        onUpdate={(value) => onChange({ ...data, value })}
       />
     ),
-    renderConfigMenu: ({ propId, config }) => (
-      <TitleConfig propId={propId} config={config} />
-    ),
+    renderConfigMenu: (props) => <TitleConfig {...props} />,
     reducer: titleReducer,
   };
 }

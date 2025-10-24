@@ -22,7 +22,6 @@ import {
 
 import { VerticalDnd } from "../../../common";
 import type { ConfigMenuProps } from "../../types";
-import { DEFAULT_CONFIG } from "../plugin";
 import type { SelectConfig, SelectSort } from "../types";
 import { OptionItem } from "./option-item";
 import { useSelectConfigMenu } from "./use-select-config-menu";
@@ -34,8 +33,8 @@ const sortOptions: { label: string; value: SelectSort }[] = [
 ];
 
 export function SelectConfigMenu({
-  propId,
-  config = DEFAULT_CONFIG,
+  config,
+  ...props
 }: ConfigMenuProps<SelectConfig>) {
   const {
     addOption,
@@ -44,7 +43,7 @@ export function SelectConfigMenu({
     updateOption,
     updateSort,
     deleteOption,
-  } = useSelectConfigMenu({ propId, config });
+  } = useSelectConfigMenu({ config, ...props });
 
   const [showInput, setShowInput] = useState(false);
   const nameField = useInputField({

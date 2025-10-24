@@ -17,7 +17,7 @@ export function CheckboxCell({
 }: CheckboxCellProps) {
   return (
     <CellTrigger
-      className="py-2"
+      className="py-2.5"
       wrapped={wrapped}
       onPointerDown={() => onChange?.(!checked)}
     >

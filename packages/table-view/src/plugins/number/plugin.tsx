@@ -4,7 +4,7 @@ import { z } from "zod/v4";
 import { DefaultIcon } from "../../common";
 import type { ColumnInfo } from "../../lib/types";
 import type { TableDataAtom } from "../types";
-import { DEFAULT_CONFIG } from "./constant";
+import { NumberCell } from "./number-cell";
 import { NumberConfigMenu } from "./number-config-menu";
 import type { NumberActions, NumberPlugin } from "./types";
 
@@ -17,7 +17,12 @@ export function number(): NumberPlugin {
       name: "Number",
       icon: <DefaultIcon type="number" />,
       data: "",
-      config: DEFAULT_CONFIG,
+      config: {
+        format: "number",
+        round: "default",
+        showAs: "number",
+        options: { color: "green", divideBy: 100, showNumber: true },
+      },
     },
     fromReadableValue: (value) => {
       const res = numberSchema.safeParse(value);
@@ -25,7 +30,14 @@ export function number(): NumberPlugin {
     },
     toReadableValue: (data) => data ?? "",
     toTextValue: (data) => data ?? "",
-    renderCell: ({ data }) => data,
+    renderCell: ({ data, config, wrapped, onChange }) => (
+      <NumberCell
+        value={data ?? ""}
+        config={config}
+        wrapped={wrapped}
+        onUpdate={onChange}
+      />
+    ),
     renderConfigMenu: (props) => <NumberConfigMenu {...props} />,
     reducer: numberReducer, // currently not using
   };

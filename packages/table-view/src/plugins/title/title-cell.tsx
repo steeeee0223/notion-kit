@@ -11,6 +11,8 @@ import { CellTrigger, TextInputPopover } from "../../common";
 
 import "../../view.css";
 
+import { wrappedClassName } from "../../lib/utils";
+
 interface TitleCellProps {
   icon?: IconData;
   value: string;
@@ -25,7 +27,7 @@ export function TitleCell({ icon, value, wrapped, onUpdate }: TitleCellProps) {
       onUpdate={onUpdate}
       renderTrigger={({ width }) => (
         <CellTrigger wrapped={wrapped}>
-          <div className="pointer-events-none absolute top-1 right-0 left-0 z-20 mx-1 my-0 hidden justify-end group-hover/row:flex">
+          <div className="pointer-events-none absolute top-1.5 right-0 left-0 z-20 mx-1 my-0 hidden justify-end group-hover/row:flex">
             <div
               id="quick-action-container"
               className="pointer-events-auto sticky right-1 flex bg-transparent"
@@ -55,9 +57,7 @@ export function TitleCell({ icon, value, wrapped, onUpdate }: TitleCellProps) {
             <span
               className={cn(
                 "title-cell-bg-img mr-[5px] ml-1 inline leading-[1.5] font-medium underline",
-                wrapped
-                  ? "break-words whitespace-pre-wrap"
-                  : "break-normal whitespace-nowrap",
+                wrappedClassName(wrapped),
               )}
             >
               {value}

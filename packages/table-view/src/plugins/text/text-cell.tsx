@@ -6,6 +6,7 @@ import { Icon } from "@notion-kit/icons";
 import { Button, TooltipPreset } from "@notion-kit/shadcn";
 
 import { CellTrigger, TextInputPopover } from "../../common";
+import { wrappedClassName } from "../../lib/utils";
 
 interface TextCellProps {
   value: string;
@@ -22,7 +23,7 @@ export function TextCell({ value, wrapped, onUpdate }: TextCellProps) {
       onUpdate={onUpdate}
       renderTrigger={() => (
         <CellTrigger className="group/text-cell" wrapped={wrapped}>
-          <div className="pointer-events-none absolute top-1 right-0 left-0 z-20 mx-1 my-0 hidden justify-end group-hover/text-cell:flex">
+          <div className="pointer-events-none absolute top-1.5 right-0 left-0 z-20 mx-1 my-0 hidden justify-end group-hover/text-cell:flex">
             <div
               id="quick-action-container"
               className="pointer-events-auto sticky right-1 flex bg-transparent"
@@ -50,9 +51,7 @@ export function TextCell({ value, wrapped, onUpdate }: TextCellProps) {
           <div
             className={cn(
               "leading-[1.5] whitespace-pre-wrap",
-              wrapped
-                ? "break-words whitespace-pre-wrap"
-                : "break-normal whitespace-nowrap",
+              wrappedClassName(wrapped),
             )}
           >
             <span>{value}</span>

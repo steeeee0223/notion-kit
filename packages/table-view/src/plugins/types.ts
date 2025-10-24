@@ -6,15 +6,15 @@ import type { ColumnInfo, Rows } from "../lib/types";
 export interface CellProps<Data, Config = undefined> {
   propId: string;
   data: Data;
-  config?: Config;
+  config: Config;
   wrapped?: boolean;
-  onChange?: (data: Data) => void;
+  onChange: (data: Data) => void;
 }
 
 export interface ConfigMenuProps<Config = unknown> {
   propId: string;
-  config?: Config;
-  onChange?: (updater: Updater<Config>) => void;
+  config: Config;
+  onChange: (updater: Updater<Config>) => void;
   onOpenChange?: (open: boolean) => void;
 }
 

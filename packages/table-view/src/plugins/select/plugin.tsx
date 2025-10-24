@@ -16,7 +16,7 @@ import type {
   SelectPlugin,
 } from "./types";
 
-export const DEFAULT_CONFIG: SelectConfig = {
+const DEFAULT_CONFIG: SelectConfig = {
   options: { names: [], items: {} },
   sort: "manual",
 };
@@ -141,13 +141,11 @@ export function select(): SelectPlugin {
     toReadableValue: (data) => data ?? "",
     toTextValue: (data) => data ?? "",
     transferConfig: toSelectConfig,
-    renderCell: ({ propId, data, config, wrapped, onChange }) => (
+    renderCell: ({ data, onChange, ...props }) => (
       <SelectCell
-        propId={propId}
         options={data ? [data] : []}
-        config={config!}
-        wrapped={wrapped}
-        onChange={(options) => onChange?.(options.at(0) ?? null)}
+        onChange={(options) => onChange(options.at(0) ?? null)}
+        {...props}
       />
     ),
     renderConfigMenu: (props) => <SelectConfigMenu {...props} />,
@@ -169,14 +167,8 @@ export function multiSelect(): MultiSelectPlugin {
     toReadableValue: (data) => data.join(","),
     toTextValue: (data) => data.join(","),
     transferConfig: toSelectConfig,
-    renderCell: ({ propId, data, config, wrapped, onChange }) => (
-      <SelectCell
-        propId={propId}
-        options={data}
-        config={config!}
-        wrapped={wrapped}
-        onChange={(options) => onChange?.(options)}
-      />
+    renderCell: ({ data, ...props }) => (
+      <SelectCell options={data} {...props} />
     ),
     renderConfigMenu: (props) => <SelectConfigMenu {...props} />,
     reducer: selectReducer,

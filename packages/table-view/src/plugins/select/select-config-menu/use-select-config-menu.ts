@@ -8,12 +8,11 @@ import { getRandomColor, type Color } from "@notion-kit/utils";
 
 import { useTableViewCtx } from "../../../table-contexts";
 import type { ConfigMenuProps } from "../../types";
-import { DEFAULT_CONFIG } from "../plugin";
 import type { SelectConfig, SelectPlugin, SelectSort } from "../types";
 
 export function useSelectConfigMenu({
   propId,
-  config = DEFAULT_CONFIG,
+  config,
 }: ConfigMenuProps<SelectConfig>) {
   const { table } = useTableViewCtx();
 
