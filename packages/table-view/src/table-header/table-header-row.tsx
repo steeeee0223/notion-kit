@@ -1,15 +1,16 @@
 "use client";
 
 import React from "react";
+import { closestCenter, DndContext } from "@dnd-kit/core";
+import {
+  restrictToHorizontalAxis,
+  restrictToParentElement,
+} from "@dnd-kit/modifiers";
 import {
   horizontalListSortingStrategy,
   SortableContext,
 } from "@dnd-kit/sortable";
-import {
-  flexRender,
-  type ColumnOrderState,
-  type Header,
-} from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
@@ -21,26 +22,34 @@ import {
   PopoverTrigger,
 } from "@notion-kit/shadcn";
 
-import type { Row } from "../lib/types";
 import { TableViewMenuPage } from "../lib/utils";
 import { TableViewMenu, TypesMenu } from "../menus";
 import { useTableViewCtx } from "../table-contexts";
 import { TableHeaderActionCell } from "./table-header-action-cell";
 
-interface TableHeaderRowProps {
-  leftPinnedHeaders: Header<Row, unknown>[];
-  headers: Header<Row, unknown>[];
-  columnOrder: ColumnOrderState;
-}
+export const DndTableHeader = React.memo(function DndTableHeader() {
+  const { table, sensors } = useTableViewCtx();
+  return (
+    <DndContext
+      collisionDetection={closestCenter}
+      modifiers={[restrictToHorizontalAxis, restrictToParentElement]}
+      onDragEnd={table.handleColumnDragEnd}
+      sensors={sensors}
+    >
+      <div className="relative">
+        <TableHeaderRow />
+      </div>
+    </DndContext>
+  );
+});
 
-export function TableHeaderRow({
-  leftPinnedHeaders,
-  headers,
-  columnOrder,
-}: TableHeaderRowProps) {
-  const { menu, setTableMenu } = useTableViewCtx();
+function TableHeaderRow() {
+  const { table, menu, setTableMenu } = useTableViewCtx();
   const isMobile = useIsMobile();
 
+  const { columnOrder } = table.getState();
+  const headers = table.getCenterLeafHeaders();
+  const leftPinnedHeaders = table.getLeftLeafHeaders();
   const isLeftPinned = leftPinnedHeaders.length > 0;
 
   return (

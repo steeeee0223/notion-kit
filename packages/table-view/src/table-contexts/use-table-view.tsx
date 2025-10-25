@@ -188,8 +188,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      table.getFlatHeaders(),
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       table.getState().columnSizingInfo,
       // eslint-disable-next-line react-hooks/exhaustive-deps
       table.getState().columnSizing,

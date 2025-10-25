@@ -1,20 +1,13 @@
 "use client";
 
 import React from "react";
-import { closestCenter, DndContext, type DragEndEvent } from "@dnd-kit/core";
-import {
-  restrictToHorizontalAxis,
-  restrictToParentElement,
-  restrictToVerticalAxis,
-} from "@dnd-kit/modifiers";
 
-import { BaseModal } from "@notion-kit/common";
 import { Icon } from "@notion-kit/icons";
-import { ModalProvider, useModal } from "@notion-kit/modal";
+import { ModalProvider } from "@notion-kit/modal";
 import { Button, Separator } from "@notion-kit/shadcn";
 
 import type { CellPlugin } from "./plugins";
-import { MemoizedTableBody, TableBody } from "./table-body";
+import { DndTableBody } from "./table-body";
 import {
   TableViewProvider,
   useTableActions,
@@ -22,7 +15,7 @@ import {
   type TableProps,
 } from "./table-contexts";
 import { TableFooter } from "./table-footer";
-import { TableHeaderRow } from "./table-header";
+import { DndTableHeader } from "./table-header";
 import { SortSelector } from "./tools";
 
 export function TableView<TPlugins extends CellPlugin[] = CellPlugin[]>(
@@ -38,25 +31,10 @@ export function TableView<TPlugins extends CellPlugin[] = CellPlugin[]>(
 }
 
 export function TableViewContent() {
-  const { openModal } = useModal();
-  const { table, columnSizeVars, sensors } = useTableViewCtx();
+  const { table, columnSizeVars } = useTableViewCtx();
   const { addRow } = useTableActions();
 
-  const leftPinnedHeaders = table.getLeftLeafHeaders();
-  const headers = table.getCenterLeafHeaders();
-
   const isSorted = table.getState().sorting.length > 0;
-  const handleRowDragEnd = (e: DragEndEvent) => {
-    if (!isSorted) return table.handleRowDragEnd(e);
-    openModal(
-      <BaseModal
-        title="Would you like to remove sorting?"
-        primary="Remove"
-        secondary="Don't remove"
-        onTrigger={() => table.handleRowDragEnd(e)}
-      />,
-    );
-  };
 
   return (
     <div
@@ -99,26 +77,7 @@ export function TableViewContent() {
                 data-is-sticky="false"
                 data-sticky-attach-point="ceiling"
               >
-                <DndContext
-                  collisionDetection={closestCenter}
-                  modifiers={[
-                    restrictToHorizontalAxis,
-                    restrictToParentElement,
-                  ]}
-                  onDragEnd={table.handleColumnDragEnd}
-                  sensors={sensors}
-                >
-                  <div className="relative">
-                    {table.getHeaderGroups().map((headerGroup) => (
-                      <TableHeaderRow
-                        key={headerGroup.id}
-                        leftPinnedHeaders={leftPinnedHeaders}
-                        headers={headers}
-                        columnOrder={table.getState().columnOrder}
-                      />
-                    ))}
-                  </div>
-                </DndContext>
+                <DndTableHeader />
               </div>
             </div>
           </div>
@@ -149,20 +108,7 @@ export function TableViewContent() {
             />
           </div>
           {/* Rows */}
-          <DndContext
-            collisionDetection={closestCenter}
-            modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-            onDragEnd={handleRowDragEnd}
-            sensors={sensors}
-          >
-            <div className="relative">
-              {table.getState().columnSizingInfo.isResizingColumn ? (
-                <MemoizedTableBody table={table} />
-              ) : (
-                <TableBody table={table} />
-              )}
-            </div>
-          </DndContext>
+          <DndTableBody />
         </div>
         <div className="w-[438px]" />
         <Button
@@ -178,7 +124,7 @@ export function TableViewContent() {
           </span>
         </Button>
         {/* Table footer */}
-        <TableFooter leftPinnedHeaders={leftPinnedHeaders} headers={headers} />
+        <TableFooter />
       </div>
       <div className="pointer-events-none clear-both mt-0 h-0 translate-y-0" />
       <div className="absolute z-[9990] w-full translate-y-[-34px]" />

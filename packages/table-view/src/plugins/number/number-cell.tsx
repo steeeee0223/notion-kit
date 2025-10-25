@@ -65,7 +65,7 @@ export function NumberCell({
           <div
             className={cn(
               "flex justify-end gap-x-2 gap-y-1.5",
-              wrapped ? "" : "flex-nowrap",
+              wrapped ? "flex-wrap" : "flex-nowrap",
             )}
           >
             <NumberDisplay value={value} config={config} wrapped={wrapped} />
@@ -90,7 +90,7 @@ function NumberDisplay({ value, config, wrapped }: NumberDisplayProps) {
         <div
           className={cn(
             "inline-flex flex-[1_0_auto] items-center justify-end gap-x-2 gap-y-1.5 leading-[1.5]",
-            wrapped ? "" : "text-nowrap break-normal",
+            wrapped ? "whitespace-pre-wrap" : "text-nowrap break-normal",
           )}
           // NO WRAP: white-space-collapse: collapse;
         >
@@ -112,7 +112,7 @@ function NumberDisplay({ value, config, wrapped }: NumberDisplayProps) {
         <div
           className={cn(
             "inline-flex flex-[1_0_auto] items-center justify-end gap-x-2 gap-y-1.5 leading-[1.5]",
-            wrapped ? "" : "text-nowrap break-normal",
+            wrapped ? "whitespace-pre-wrap" : "text-nowrap break-normal",
           )}
           // NO WRAP: white-space-collapse: collapse;
         >

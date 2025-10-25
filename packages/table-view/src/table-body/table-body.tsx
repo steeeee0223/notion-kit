@@ -1,12 +1,61 @@
-import React from "react";
+"use client";
+
+import React, { useCallback } from "react";
+import { closestCenter, DndContext, DragEndEvent } from "@dnd-kit/core";
+import {
+  restrictToParentElement,
+  restrictToVerticalAxis,
+} from "@dnd-kit/modifiers";
 import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import type { Table } from "@tanstack/react-table";
 
+import { BaseModal } from "@notion-kit/common";
+import { useModal } from "@notion-kit/modal";
+
 import type { Row } from "../lib/types";
+import { useTableViewCtx } from "../table-contexts";
 import { TableRow } from "./table-row";
+
+export function DndTableBody() {
+  const { openModal } = useModal();
+  const { table, sensors } = useTableViewCtx();
+
+  const handleRowDragEnd = useCallback(
+    (e: DragEndEvent) => {
+      const isSorted = table.getState().sorting.length > 0;
+      if (!isSorted) return table.handleRowDragEnd(e);
+      openModal(
+        <BaseModal
+          title="Would you like to remove sorting?"
+          primary="Remove"
+          secondary="Don't remove"
+          onTrigger={() => table.handleRowDragEnd(e)}
+        />,
+      );
+    },
+    [openModal, table],
+  );
+
+  return (
+    <DndContext
+      collisionDetection={closestCenter}
+      modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+      onDragEnd={handleRowDragEnd}
+      sensors={sensors}
+    >
+      <div className="relative">
+        {table.getState().columnSizingInfo.isResizingColumn ? (
+          <MemoizedTableBody table={table} />
+        ) : (
+          <TableBody table={table} />
+        )}
+      </div>
+    </DndContext>
+  );
+}
 
 interface TableBodyProps {
   table: Table<Row>;
@@ -15,7 +64,7 @@ interface TableBodyProps {
 /**
  * un-memoized normal table body component - see memoized version below
  */
-export function TableBody({ table }: TableBodyProps) {
+function TableBody({ table }: TableBodyProps) {
   const isSorted = table.getState().sorting.length > 0;
   if (isSorted) {
     const rows = table.getRowModel().rows;
