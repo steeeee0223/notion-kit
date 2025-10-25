@@ -7,36 +7,32 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { getRandomColor, type Color } from "@notion-kit/utils";
 
 import { useTableViewCtx } from "../../../table-contexts";
-import type { SelectActions, SelectConfig, SelectSort } from "../types";
-
-interface UseSelectConfigMenuOptions {
-  propId: string;
-  config: SelectConfig;
-}
+import type { ConfigMenuProps } from "../../types";
+import type { SelectConfig, SelectPlugin, SelectSort } from "../types";
 
 export function useSelectConfigMenu({
   propId,
   config,
-}: UseSelectConfigMenuOptions) {
+}: ConfigMenuProps<SelectConfig>) {
   const { table } = useTableViewCtx();
 
   const updateSort = useCallback(
     (sort: SelectSort) =>
-      table.setColumnTypeConfig(propId, {
+      table.setColumnTypeConfig<SelectPlugin>(propId, {
         id: propId,
         action: "update:sort",
         payload: sort,
-      } satisfies SelectActions),
+      }),
     [table, propId],
   );
 
   const addOption = useCallback(
     (name: string) => {
-      table.setColumnTypeConfig(propId, {
+      table.setColumnTypeConfig<SelectPlugin>(propId, {
         id: propId,
         action: "add:option",
         payload: { name, color: getRandomColor() },
-      } satisfies SelectActions);
+      });
     },
     [table, propId],
   );
@@ -45,7 +41,7 @@ export function useSelectConfigMenu({
     (e: DragEndEvent) => {
       const { active, over } = e;
       if (!over || active.id === over.id) return;
-      table.setColumnTypeConfig(propId, {
+      table.setColumnTypeConfig<SelectPlugin>(propId, {
         id: propId,
         action: "update:sort:manual",
         updater: (prev) => {
@@ -53,7 +49,7 @@ export function useSelectConfigMenu({
           const newIndex = prev.indexOf(over.id as string);
           return arrayMove(prev, oldIndex, newIndex);
         },
-      } satisfies SelectActions);
+      });
     },
     [table, propId],
   );
@@ -75,21 +71,21 @@ export function useSelectConfigMenu({
         color?: Color;
       },
     ) =>
-      table.setColumnTypeConfig(propId, {
+      table.setColumnTypeConfig<SelectPlugin>(propId, {
         id: propId,
         action: "update:option",
         payload: { originalName, ...data },
-      } satisfies SelectActions),
+      }),
     [table, propId],
   );
 
   const deleteOption = useCallback(
     (name: string) =>
-      table.setColumnTypeConfig(propId, {
+      table.setColumnTypeConfig<SelectPlugin>(propId, {
         id: propId,
         action: "delete:option",
         payload: name,
-      } satisfies SelectActions),
+      }),
     [table, propId],
   );
 

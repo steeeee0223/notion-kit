@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 
+import { cn } from "@notion-kit/cn";
 import {
   Input,
   Popover,
@@ -29,7 +30,7 @@ export function TextInputPopover({
         side="bottom"
         sideOffset={-position.h}
         align="start"
-        className="max-h-[773px] min-h-[34px] w-60 overflow-visible backdrop-filter-none"
+        className="max-h-[773px] min-h-[38px] w-60 overflow-visible backdrop-filter-none"
       >
         <TextInputContent {...props} />
       </PopoverContent>
@@ -38,11 +39,13 @@ export function TextInputPopover({
 }
 
 interface TextInputContentProps {
+  className?: string;
   value: string;
   onUpdate?: (value: string) => void;
 }
 
 function TextInputContent({
+  className,
   value: initialValue,
   onUpdate,
 }: TextInputContentProps) {
@@ -65,7 +68,10 @@ function TextInputContent({
         if (e.key === "Enter") onUpdate?.(value);
       }}
       onBlur={() => onUpdate?.(value)}
-      className="max-h-[771px] min-h-8 border-none bg-transparent word-break whitespace-pre-wrap caret-primary"
+      className={cn(
+        "max-h-[771px] min-h-8 border-none bg-transparent word-break whitespace-pre-wrap caret-primary",
+        className,
+      )}
     />
   );
 }

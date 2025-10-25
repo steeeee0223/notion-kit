@@ -1,9 +1,11 @@
 import { Table } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
+import { cn } from "@notion-kit/cn";
+
 import { CountMethod } from "../features";
 import type { CellPlugin, InferData } from "../plugins";
-import type { Cell, ColumnConfig, ColumnInfo, Row } from "./types";
+import type { Cell, Row } from "./types";
 
 export const NEVER = undefined as never;
 
@@ -34,12 +36,6 @@ export function getDefaultCell<TPlugin extends CellPlugin>(
     id: v4(),
     value: plugin.default.data as InferData<TPlugin>,
   };
-}
-
-export function extractColumnConfig<TPlugin>(
-  prop: ColumnInfo<TPlugin>,
-): ColumnConfig<TPlugin> {
-  return { type: prop.type, config: prop.config };
 }
 
 export function getUniqueName(name: string, names: string[]) {
@@ -145,4 +141,12 @@ export enum TableViewMenuPage {
   CreateProp,
   EditProp,
   ChangePropType,
+}
+
+export function wrappedClassName(wrapped?: boolean) {
+  return cn(
+    wrapped
+      ? "break-words whitespace-pre-wrap"
+      : "break-normal whitespace-nowrap",
+  );
 }

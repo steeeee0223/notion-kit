@@ -18,7 +18,7 @@ export function CellTrigger({
       tabIndex={0}
       className={cn(
         buttonVariants({ variant: "cell" }),
-        "relative block min-h-8 w-full overflow-clip px-2 py-[5px]",
+        "relative block min-h-9 w-full overflow-clip px-2 py-[7.5px] text-sm/[1.5]",
         wrapped && "whitespace-normal",
         className,
       )}

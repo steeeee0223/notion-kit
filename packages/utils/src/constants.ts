@@ -16,3 +16,10 @@ export const COLOR = {
 } as const;
 
 export type Color = keyof typeof COLOR;
+
+export const COLOR_OPTIONS = Object.entries(COLOR).reduce<
+  Record<string, string>
+>((options, [value, { name }]) => {
+  options[value] = name;
+  return options;
+}, {});

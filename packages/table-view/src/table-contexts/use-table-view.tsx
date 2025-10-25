@@ -4,6 +4,7 @@ import { useCallback, useMemo, useReducer, useState } from "react";
 import {
   KeyboardSensor,
   MouseSensor,
+  PointerSensor,
   TouchSensor,
   useSensor,
   useSensors,
@@ -13,18 +14,17 @@ import {
   getSortedRowModel,
   useReactTable,
   type ColumnDef,
-  type ColumnOrderState,
 } from "@tanstack/react-table";
 
 import {
   ColumnsInfoFeature,
-  ColumnsInfoState,
   CountingFeature,
   FreezingFeature,
   OrderingFeature,
+  type ColumnsInfoState,
 } from "../features";
 import type { PluginsMap, Row, TableMenu } from "../lib/types";
-import { arrayToEntity, type Entity } from "../lib/utils";
+import type { Entity } from "../lib/utils";
 import type { CellPlugin } from "../plugins";
 import { TableRowCell } from "../table-body";
 import { TableFooterCell } from "../table-footer";
@@ -65,6 +65,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     () => createTableViewReducer(pluginsMap),
     [pluginsMap],
   );
+  /** Internal state management */
   const [_state, _dispatch] = useReducer(
     tableViewReducer,
     getTableViewAtom<TPlugins>(
@@ -87,11 +88,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     [pluginsMap, props, tableViewReducer],
   );
 
-  const controlledProperties = props.state?.properties
-    ? toDatabaseProperties(pluginsMap, props.state.properties)
-    : undefined;
-  const properties = controlledProperties ?? Object.values(_state.properties);
-
   const data = useMemo(
     () => props.state?.data ?? Object.values(_state.data),
     [_state.data, props.state?.data],
@@ -102,37 +98,41 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     [_state.dataOrder, props.state?.data],
   );
 
-  const columns = useMemo(
-    () =>
-      properties.map<ColumnDef<Row<TPlugins>>>((property) => {
-        const plugin = plugins.items[property.type]!;
-        const sortingFn = createColumnSortingFn(plugin);
-        return {
-          id: property.id,
-          accessorKey: property.name,
-          minSize: getMinWidth(property.type),
-          sortingFn,
-          header: ({ header }) => <TableHeaderCell header={header} />,
-          cell: ({ row, column }) => <TableRowCell column={column} row={row} />,
-          footer: ({ column }) => <TableFooterCell column={column} />,
-        };
-      }),
-    [plugins.items, properties],
-  );
+  const columnsData = useMemo(() => {
+    const properties = props.state?.properties
+      ? toDatabaseProperties(plugins.items, props.state.properties)
+      : Object.values(_state.properties);
 
-  const columnsInfo = useMemo<ColumnsInfoState>(
-    () => properties.reduce((acc, col) => ({ ...acc, [col.id]: col }), {}),
-    [properties],
-  );
+    const columns = properties.map<ColumnDef<Row<TPlugins>>>((property) => {
+      const plugin = plugins.items[property.type]!;
+      const sortingFn = createColumnSortingFn(plugin);
+      return {
+        id: property.id,
+        accessorKey: property.name,
+        minSize: getMinWidth(property.type),
+        sortingFn,
+        header: ({ header }) => <TableHeaderCell header={header} />,
+        cell: ({ row, column }) => <TableRowCell column={column} row={row} />,
+        footer: ({ column }) => <TableFooterCell column={column} />,
+      };
+    });
 
-  const columnOrder = useMemo<ColumnOrderState>(
+    const columnsInfo = properties.reduce<ColumnsInfoState>(
+      (acc, col) => ({ ...acc, [col.id]: col }),
+      {},
+    );
+
+    return { columns, columnsInfo };
+  }, [_state.properties, plugins.items, props.state?.properties]);
+
+  const columnOrder = useMemo(
     () =>
       props.state?.properties.map((prop) => prop.id) ?? _state.propertiesOrder,
     [props.state?.properties, _state.propertiesOrder],
   );
 
   const table = useReactTable({
-    columns,
+    columns: columnsData.columns,
     data,
     defaultColumn: {
       size: 200,
@@ -146,7 +146,8 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       sorting: _state.table.sorting,
       rowOrder,
       columnOrder,
-      columnsInfo,
+      columnsInfo: columnsData.columnsInfo,
+      cellPlugins: pluginsMap,
     },
     onSortingChange: (updater) => dispatch({ type: "update:sorting", updater }),
     onColumnInfoChange: (id, updater) =>
@@ -196,52 +197,32 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   );
 
   /** DND */
-  const columnSensors = useSensors(
-    useSensor(MouseSensor, {
-      activationConstraint: { distance: 5 },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: { distance: 5 },
-    }),
-    useSensor(KeyboardSensor, {}),
-  );
-  const rowSensors = useSensors(
-    useSensor(MouseSensor, {
-      activationConstraint: { distance: 5 },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: { distance: 5 },
-    }),
-    useSensor(KeyboardSensor, {}),
-  );
+  const pointer = useSensor(PointerSensor, {
+    activationConstraint: { distance: 5 },
+  });
+  const mouse = useSensor(MouseSensor, {
+    activationConstraint: { distance: 5 },
+  });
+  const touch = useSensor(TouchSensor, {
+    activationConstraint: { distance: 5 },
+  });
+  const keyboard = useSensor(KeyboardSensor, {});
+  const sensors = useSensors(pointer, mouse, touch, keyboard);
 
   const [tableMenu, setTableMenu] = useState<TableMenu>({
     open: false,
     page: null,
   });
-  const tableViewCtx = useMemo<TableViewCtx>(() => {
-    const uncontrolled: TableViewCtx = {
+  const tableViewCtx = useMemo<TableViewCtx>(
+    () => ({
       table,
       columnSizeVars,
-      columnSensors,
-      rowSensors,
+      sensors,
       menu: tableMenu,
       setTableMenu,
-    };
-    if (!controlledProperties) return uncontrolled;
-    const colData = arrayToEntity(controlledProperties);
-    return {
-      ...uncontrolled,
-      properties: colData.items,
-    };
-  }, [
-    columnSensors,
-    columnSizeVars,
-    controlledProperties,
-    rowSensors,
-    table,
-    tableMenu,
-  ]);
+    }),
+    [columnSizeVars, sensors, table, tableMenu],
+  );
 
   return [tableViewCtx, dispatch] as const;
 }

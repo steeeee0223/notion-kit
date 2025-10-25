@@ -16,7 +16,15 @@ import type {
   SelectPlugin,
 } from "./types";
 
-function selectReducer(v: TableDataAtom, a: SelectActions): TableDataAtom {
+const DEFAULT_CONFIG: SelectConfig = {
+  options: { names: [], items: {} },
+  sort: "manual",
+};
+
+export function selectReducer(
+  v: TableDataAtom,
+  a: SelectActions,
+): TableDataAtom {
   const prop = v.properties[a.id] as ColumnInfo<
     SelectPlugin | MultiSelectPlugin
   >;
@@ -127,10 +135,7 @@ export function select(): SelectPlugin {
       name: "Select",
       icon: <DefaultIcon type="select" />,
       data: null,
-      config: {
-        options: { names: [], items: {} },
-        sort: "manual",
-      },
+      config: DEFAULT_CONFIG,
     },
     fromReadableValue: (value, config) => {
       const options = fromReadableValue(value, config, "select");
@@ -139,18 +144,14 @@ export function select(): SelectPlugin {
     toReadableValue: (data) => data ?? "",
     toTextValue: (data) => data ?? "",
     transferConfig: toSelectConfig,
-    renderCell: ({ propId, data, config, wrapped, onChange }) => (
+    renderCell: ({ data, onChange, ...props }) => (
       <SelectCell
-        propId={propId}
         options={data ? [data] : []}
-        config={config!}
-        wrapped={wrapped}
-        onChange={(options) => onChange?.(options.at(0) ?? null)}
+        onChange={(options) => onChange(options.at(0) ?? null)}
+        {...props}
       />
     ),
-    renderConfigMenu: ({ propId, config }) => (
-      <SelectConfigMenu propId={propId} config={config!} />
-    ),
+    renderConfigMenu: (props) => <SelectConfigMenu {...props} />,
     reducer: selectReducer,
   };
 }
@@ -162,28 +163,17 @@ export function multiSelect(): MultiSelectPlugin {
       name: "Multi-Select",
       icon: <DefaultIcon type="multi-select" />,
       data: [],
-      config: {
-        options: { names: [], items: {} },
-        sort: "manual",
-      },
+      config: DEFAULT_CONFIG,
     },
     fromReadableValue: (value, config) =>
       fromReadableValue(value, config, "multi-select"),
     toReadableValue: (data) => data.join(","),
     toTextValue: (data) => data.join(","),
     transferConfig: toSelectConfig,
-    renderCell: ({ propId, data, config, wrapped, onChange }) => (
-      <SelectCell
-        propId={propId}
-        options={data}
-        config={config!}
-        wrapped={wrapped}
-        onChange={(options) => onChange?.(options)}
-      />
+    renderCell: ({ data, ...props }) => (
+      <SelectCell options={data} {...props} />
     ),
-    renderConfigMenu: ({ propId, config }) => (
-      <SelectConfigMenu propId={propId} config={config!} />
-    ),
+    renderConfigMenu: (props) => <SelectConfigMenu {...props} />,
     reducer: selectReducer,
   };
 }

@@ -2,7 +2,7 @@ import React from "react";
 
 import { DefaultIcon } from "../common";
 import type { PluginType } from "../lib/types";
-import { CellPlugin } from "../plugins";
+import type { CellPlugin } from "../plugins";
 
 interface MenuOption {
   type: PluginType<CellPlugin[]>;
@@ -47,6 +47,12 @@ export const propertyTypes: Partial<
     description:
       "Use a multi-select property to choose multiple options from a predefined list. Useful for tagging or categorization.",
     icon: <DefaultIcon type="multi-select" className="fill-menu-icon" />,
+  },
+  number: {
+    type: "number",
+    title: "Number",
+    description: "",
+    icon: <DefaultIcon type="number" className="fill-menu-icon" />,
   },
 } as const;
 
