@@ -19,7 +19,7 @@ import { DefaultIcon, MenuHeader } from "../common";
 import { TableViewMenuPage } from "../features";
 import type { PluginType } from "../lib/types";
 import { CellPlugin } from "../plugins";
-import { useTableActions, useTableViewCtx } from "../table-contexts";
+import { useTableViewCtx } from "../table-contexts";
 import { propOptions } from "./types-menu-options";
 
 interface TypesMenuProps {
@@ -47,8 +47,7 @@ interface TypesMenuProps {
 }
 
 export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
-  const { table } = useTableViewCtx();
-  const { addColumn } = useTableActions();
+  const { table, actions } = useTableViewCtx();
 
   const plugins = table.getState().cellPlugins;
   const propType = propId ? table.getColumnInfo(propId).type : null;
@@ -62,7 +61,7 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
     if (colId === undefined) {
       colId = v4();
       const uniqueName = table.generateUniqueColumnName(name);
-      addColumn({ id: colId, type, name: uniqueName, at });
+      actions.addColumn({ id: colId, type, name: uniqueName, at });
     } else {
       table.setColumnType(colId, type);
     }

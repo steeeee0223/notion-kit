@@ -17,7 +17,7 @@ import {
   MenuItemShortcut,
 } from "@notion-kit/shadcn";
 
-import { useTableActions } from "../table-contexts";
+import { useTableViewCtx } from "../table-contexts";
 
 interface RowActionMenuProps {
   rowId: string;
@@ -39,24 +39,24 @@ interface RowActionMenuProps {
  * 8. 🚧 Comment
  */
 export function RowActionMenu({ rowId }: RowActionMenuProps) {
-  const { duplicate, remove, updateRowIcon } = useTableActions();
+  const { actions: table } = useTableViewCtx();
   // 1. Edit icon
   const selectIcon = (icon: IconData) => {
-    updateRowIcon(rowId, icon);
+    table.updateRowIcon(rowId, icon);
   };
   const removeIcon = () => {
-    updateRowIcon(rowId, null);
+    table.updateRowIcon(rowId, null);
   };
   const uploadIcon = (file: File) => {
-    updateRowIcon(rowId, {
+    table.updateRowIcon(rowId, {
       type: "url",
       src: URL.createObjectURL(file),
     });
   };
   // 5. Duplicate
-  const duplicateRow = () => duplicate(rowId, "row");
+  const duplicateRow = () => table.duplicate(rowId, "row");
   // 7. Delete
-  const deleteRow = () => remove(rowId, "row");
+  const deleteRow = () => table.remove(rowId, "row");
 
   /** Search */
   const actions = [

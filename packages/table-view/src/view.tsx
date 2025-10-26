@@ -10,7 +10,6 @@ import type { CellPlugin } from "./plugins";
 import { DndTableBody } from "./table-body";
 import {
   TableViewProvider,
-  useTableActions,
   useTableViewCtx,
   type TableProps,
 } from "./table-contexts";
@@ -31,8 +30,7 @@ export function TableView<TPlugins extends CellPlugin[] = CellPlugin[]>(
 }
 
 export function TableViewContent() {
-  const { table, columnSizeVars } = useTableViewCtx();
-  const { addRow } = useTableActions();
+  const { table, columnSizeVars, actions } = useTableViewCtx();
 
   const isSorted = table.getState().sorting.length > 0;
 
@@ -116,7 +114,7 @@ export function TableViewContent() {
           tabIndex={0}
           variant="cell"
           className="h-[33px] w-full bg-main pl-2 leading-5"
-          onClick={() => addRow()}
+          onClick={() => actions.addRow()}
         >
           <span className="sticky left-10 inline-flex items-center text-sm text-muted opacity-100 transition-opacity duration-200">
             <Icon.Plus className="mr-[7px] ml-px size-3.5 fill-default/35" />

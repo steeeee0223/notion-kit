@@ -15,7 +15,7 @@ import {
 import { PropMeta } from "../common";
 import { TableViewMenuPage } from "../features";
 import type { CellPlugin, InferConfig } from "../plugins";
-import { useTableActions, useTableViewCtx } from "../table-contexts";
+import { useTableViewCtx } from "../table-contexts";
 import { CalcMenu } from "./calc-menu";
 import { TypesMenu } from "./types-menu";
 
@@ -42,8 +42,7 @@ interface PropMenuProps {
  * 11. ✅ Delete property
  */
 export function PropMenu({ propId }: PropMenuProps) {
-  const { table } = useTableViewCtx();
-  const { duplicate } = useTableActions();
+  const { table, actions } = useTableViewCtx();
 
   const info = table.getColumnInfo(propId);
   const plugin = table.getColumnPlugin(propId);
@@ -72,7 +71,7 @@ export function PropMenu({ propId }: PropMenuProps) {
     });
   };
   // 10. Duplicate property
-  const duplicateProp = () => duplicate(propId, "col");
+  const duplicateProp = () => actions.duplicate(propId, "col");
   // 11. Delete property
   const deleteProp = () => table.setColumnInfo(propId, { isDeleted: true });
 

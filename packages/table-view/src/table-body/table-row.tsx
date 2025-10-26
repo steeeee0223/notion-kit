@@ -19,7 +19,7 @@ import {
 
 import type { Row as RowModel } from "../lib/types";
 import { RowActionMenu } from "../menus";
-import { useTableActions } from "../table-contexts";
+import { useTableViewCtx } from "../table-contexts";
 
 interface TableRowProps {
   row: Row<RowModel>;
@@ -28,13 +28,13 @@ interface TableRowProps {
 export function TableRow({ row }: TableRowProps) {
   const isMobile = useIsMobile();
   /** Add row */
-  const { addRow } = useTableActions();
+  const { actions } = useTableViewCtx();
   const addNextRow = (e: React.MouseEvent) => {
     if (e.altKey) {
-      addRow({ id: row.id, at: "prev" });
+      actions.addRow({ id: row.id, at: "prev" });
       return;
     }
-    addRow({ id: row.id, at: "next" });
+    actions.addRow({ id: row.id, at: "next" });
   };
   /** DND */
   const {

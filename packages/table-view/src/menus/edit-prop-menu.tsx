@@ -14,7 +14,7 @@ import {
 
 import { DefaultIcon, MenuHeader, PropMeta } from "../common";
 import { TableViewMenuPage } from "../features";
-import { useTableActions, useTableViewCtx } from "../table-contexts";
+import { useTableViewCtx } from "../table-contexts";
 import { propertyTypes } from "./types-menu-options";
 
 interface EditPropMenuProps {
@@ -33,8 +33,7 @@ interface EditPropMenuProps {
  * 6. ✅ Delete property
  */
 export function EditPropMenu({ propId }: EditPropMenuProps) {
-  const { table } = useTableViewCtx();
-  const { duplicate } = useTableActions();
+  const { table, actions } = useTableViewCtx();
 
   const info = table.getColumnInfo(propId);
 
@@ -50,7 +49,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
   // 4. Hide in view
   const hideProp = () => table.setColumnInfo(propId, { hidden: true });
   // 5. Duplicate property
-  const duplicateProp = () => duplicate(propId, "col");
+  const duplicateProp = () => actions.duplicate(propId, "col");
   // 6. Delete property
   const deleteProp = () => table.setColumnInfo(propId, { isDeleted: true });
 

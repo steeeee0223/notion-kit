@@ -212,9 +212,19 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       table,
       columnSizeVars,
       sensors,
+      actions: {
+        addColumn: (payload) => dispatch({ type: "add:col", payload }),
+        addRow: (src) => dispatch({ type: "add:row", payload: src }),
+        updateRowIcon: (id, icon) =>
+          dispatch({ type: "update:row:icon", payload: { id, icon } }),
+        duplicate: (id, type) =>
+          dispatch({ type: `duplicate:${type}`, payload: { id } }),
+        remove: (id, type) =>
+          dispatch({ type: `delete:${type}`, payload: { id } }),
+      },
     }),
-    [columnSizeVars, sensors, table],
+    [columnSizeVars, sensors, table, dispatch],
   );
 
-  return [tableViewCtx, dispatch] as const;
+  return tableViewCtx;
 }

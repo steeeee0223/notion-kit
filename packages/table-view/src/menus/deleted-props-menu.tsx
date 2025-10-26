@@ -12,11 +12,10 @@ import {
 import { DefaultIcon, MenuHeader } from "../common";
 import { TableViewMenuPage } from "../features";
 import type { ColumnInfo } from "../lib/types";
-import { useTableActions, useTableViewCtx } from "../table-contexts";
+import { useTableViewCtx } from "../table-contexts";
 
 export function DeletedPropsMenu() {
-  const { table } = useTableViewCtx();
-  const { remove } = useTableActions();
+  const { table, actions } = useTableViewCtx();
 
   return (
     <>
@@ -32,7 +31,7 @@ export function DeletedPropsMenu() {
             key={info.id}
             info={info}
             onRestore={() => table.setColumnInfo(info.id, { isDeleted: false })}
-            onDelete={() => remove(info.id, "col")}
+            onDelete={() => actions.remove(info.id, "col")}
           />
         ))}
       </MenuGroup>
