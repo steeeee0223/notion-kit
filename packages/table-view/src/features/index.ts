@@ -18,6 +18,7 @@ import type {
   FreezingTableApi,
   FreezingTableState,
 } from "./freezing";
+import type { TableMenuTableApi, TableMenuTableState } from "./menu";
 import type {
   OrderingOptions,
   OrderingTableApi,
@@ -30,7 +31,8 @@ declare module "@tanstack/react-table" {
     extends CountingTableState,
       ColumnsInfoTableState,
       FreezingTableState,
-      OrderingTableState {}
+      OrderingTableState,
+      TableMenuTableState {}
 
   // merge our new feature's options with the existing table options
   interface TableOptionsResolved<TData extends RowData>
@@ -44,11 +46,8 @@ declare module "@tanstack/react-table" {
     extends CountingTableApi,
       ColumnsInfoTableApi,
       FreezingTableApi,
-      OrderingTableApi {}
-
-  // interface TableMeta<TData extends RowData> {
-  //   updateData: (rowIndex: number, columnId: string, value: unknown) => void;
-  // }
+      OrderingTableApi,
+      TableMenuTableApi {}
 
   interface Column<TData extends RowData> extends ColumnInfoColumnApi {}
 }
@@ -56,4 +55,5 @@ declare module "@tanstack/react-table" {
 export * from "./columns-info";
 export * from "./counting";
 export * from "./freezing";
+export * from "./menu";
 export * from "./ordering";

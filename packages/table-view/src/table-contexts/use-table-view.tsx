@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useReducer, useState } from "react";
+import { useCallback, useMemo, useReducer } from "react";
 import {
   KeyboardSensor,
   MouseSensor,
@@ -23,7 +23,7 @@ import {
   OrderingFeature,
   type ColumnsInfoState,
 } from "../features";
-import type { PluginsMap, Row, TableMenu } from "../lib/types";
+import type { PluginsMap, Row } from "../lib/types";
 import type { Entity } from "../lib/utils";
 import type { CellPlugin } from "../plugins";
 import { TableRowCell } from "../table-body";
@@ -207,19 +207,13 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   const keyboard = useSensor(KeyboardSensor, {});
   const sensors = useSensors(pointer, mouse, touch, keyboard);
 
-  const [tableMenu, setTableMenu] = useState<TableMenu>({
-    open: false,
-    page: null,
-  });
   const tableViewCtx = useMemo<TableViewCtx>(
     () => ({
       table,
       columnSizeVars,
       sensors,
-      menu: tableMenu,
-      setTableMenu,
     }),
-    [columnSizeVars, sensors, table, tableMenu],
+    [columnSizeVars, sensors, table],
   );
 
   return [tableViewCtx, dispatch] as const;

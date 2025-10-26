@@ -22,7 +22,7 @@ import {
   PopoverTrigger,
 } from "@notion-kit/shadcn";
 
-import { TableViewMenuPage } from "../lib/utils";
+import { TableViewMenuPage } from "../features";
 import { TableViewMenu, TypesMenu } from "../menus";
 import { useTableViewCtx } from "../table-contexts";
 import { TableHeaderActionCell } from "./table-header-action-cell";
@@ -44,10 +44,10 @@ export const DndTableHeader = React.memo(function DndTableHeader() {
 });
 
 function TableHeaderRow() {
-  const { table, menu, setTableMenu } = useTableViewCtx();
+  const { table } = useTableViewCtx();
   const isMobile = useIsMobile();
 
-  const { columnOrder } = table.getState();
+  const { columnOrder, menu } = table.getState();
   const headers = table.getCenterLeafHeaders();
   const leftPinnedHeaders = table.getLeftLeafHeaders();
   const isLeftPinned = leftPinnedHeaders.length > 0;
@@ -123,7 +123,7 @@ function TableHeaderRow() {
       </Popover>
       <Popover
         open={menu.open}
-        onOpenChange={(open) => setTableMenu({ open, page: null })}
+        onOpenChange={(open) => table.setTableMenuState({ open, page: null })}
       >
         <PopoverTrigger asChild>
           <TableHeaderActionCell icon={<Icon.Dots />} />

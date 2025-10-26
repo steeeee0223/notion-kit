@@ -16,8 +16,8 @@ import {
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader } from "../common";
+import { TableViewMenuPage } from "../features";
 import type { PluginType } from "../lib/types";
-import { TableViewMenuPage } from "../lib/utils";
 import { CellPlugin } from "../plugins";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { propOptions } from "./types-menu-options";
@@ -47,7 +47,7 @@ interface TypesMenuProps {
 }
 
 export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
-  const { table, setTableMenu } = useTableViewCtx();
+  const { table } = useTableViewCtx();
   const { addColumn } = useTableActions();
 
   const plugins = table.getState().cellPlugins;
@@ -66,7 +66,11 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
     } else {
       table.setColumnType(colId, type);
     }
-    setTableMenu({ open: true, page: TableViewMenuPage.EditProp, id: colId });
+    table.setTableMenuState({
+      open: true,
+      page: TableViewMenuPage.EditProp,
+      id: colId,
+    });
   };
 
   return (
@@ -81,7 +85,7 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
           onBack={
             back
               ? () =>
-                  setTableMenu({
+                  table.setTableMenuState({
                     open: true,
                     page:
                       menu === TableViewMenuPage.ChangePropType

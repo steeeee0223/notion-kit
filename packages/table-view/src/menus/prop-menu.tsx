@@ -13,7 +13,7 @@ import {
 } from "@notion-kit/shadcn";
 
 import { PropMeta } from "../common";
-import { TableViewMenuPage } from "../lib/utils";
+import { TableViewMenuPage } from "../features";
 import type { CellPlugin, InferConfig } from "../plugins";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 import { CalcMenu } from "./calc-menu";
@@ -42,7 +42,7 @@ interface PropMenuProps {
  * 11. ✅ Delete property
  */
 export function PropMenu({ propId }: PropMenuProps) {
-  const { table, setTableMenu } = useTableViewCtx();
+  const { table } = useTableViewCtx();
   const { duplicate } = useTableActions();
 
   const info = table.getColumnInfo(propId);
@@ -65,7 +65,7 @@ export function PropMenu({ propId }: PropMenuProps) {
   const wrapProp = () => table.toggleColumnWrapped(propId, (v) => !v);
   // 9. Insert left/right
   const insertColumn = (side: "left" | "right") => {
-    setTableMenu({
+    table.setTableMenuState({
       open: true,
       page: TableViewMenuPage.CreateProp,
       data: { at: { id: propId, side } },

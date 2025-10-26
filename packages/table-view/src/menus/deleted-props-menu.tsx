@@ -10,12 +10,12 @@ import {
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader } from "../common";
+import { TableViewMenuPage } from "../features";
 import type { ColumnInfo } from "../lib/types";
-import { TableViewMenuPage } from "../lib/utils";
 import { useTableActions, useTableViewCtx } from "../table-contexts";
 
 export function DeletedPropsMenu() {
-  const { table, setTableMenu } = useTableViewCtx();
+  const { table } = useTableViewCtx();
   const { remove } = useTableActions();
 
   return (
@@ -23,7 +23,7 @@ export function DeletedPropsMenu() {
       <MenuHeader
         title="Deleted properties"
         onBack={() =>
-          setTableMenu({ open: true, page: TableViewMenuPage.Props })
+          table.setTableMenuState({ open: true, page: TableViewMenuPage.Props })
         }
       />
       <MenuGroup>
