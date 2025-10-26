@@ -2,14 +2,6 @@
 
 import { useCallback, useMemo, useReducer } from "react";
 import {
-  KeyboardSensor,
-  MouseSensor,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
@@ -21,6 +13,7 @@ import {
   CountingFeature,
   FreezingFeature,
   OrderingFeature,
+  TableMenuFeature,
   type ColumnsInfoState,
 } from "../features";
 import type { PluginsMap, Row } from "../lib/types";
@@ -29,6 +22,7 @@ import type { CellPlugin } from "../plugins";
 import { TableRowCell } from "../table-body";
 import { TableFooterCell } from "../table-footer";
 import { TableHeaderCell } from "../table-header";
+import { useTrackChanges } from "../use-track-changes";
 import { createTableViewReducer, type TableViewAction } from "./table-reducer";
 import type { TableViewCtx } from "./table-view-context";
 import type { PartialTableState } from "./types";
@@ -162,55 +156,14 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       CountingFeature,
       FreezingFeature,
       OrderingFeature,
+      TableMenuFeature,
     ],
   });
-
-  /**
-   * Instead of calling `column.getSize()` on every render for every header
-   * and especially every data cell (very expensive),
-   * we will calculate all column sizes at once at the root table level in a useMemo
-   * and pass the column sizes down as CSS variables to the <table> element.
-   */
-  const columnSizeVars = useMemo(
-    () => {
-      return table.getFlatHeaders().reduce<Record<string, number>>(
-        (sizes, header) => ({
-          ...sizes,
-          [`--header-${header.id}-size`]: header.getSize(),
-          [`--col-${header.column.id}-size`]: header.column.getSize(),
-        }),
-        {},
-      );
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      table.getState().columnSizingInfo,
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      table.getState().columnSizing,
-    ],
-  );
-
-  /** DND */
-  const pointer = useSensor(PointerSensor, {
-    activationConstraint: { distance: 5 },
-  });
-  const mouse = useSensor(MouseSensor, {
-    activationConstraint: { distance: 5 },
-  });
-  const touch = useSensor(TouchSensor, {
-    activationConstraint: { distance: 5 },
-  });
-  const keyboard = useSensor(KeyboardSensor, {});
-  const sensors = useSensors(pointer, mouse, touch, keyboard);
 
   const tableViewCtx = useMemo<TableViewCtx>(
     () => ({
       table,
-      columnSizeVars,
-      sensors,
       actions: {
-        // addColumn: (payload) => dispatch({ type: "add:col", payload }),
         addRow: (src) => dispatch({ type: "add:row", payload: src }),
         updateRowIcon: (id, icon) =>
           dispatch({ type: "update:row:icon", payload: { id, icon } }),
@@ -218,8 +171,11 @@ export function useTableView<TPlugins extends CellPlugin[]>({
         remove: (id) => dispatch({ type: "delete:row", payload: { id } }),
       },
     }),
-    [columnSizeVars, sensors, table, dispatch],
+    [table, dispatch],
   );
+
+  useTrackChanges("table", [table]);
+  useTrackChanges("dispatch", [dispatch]);
 
   return tableViewCtx;
 }

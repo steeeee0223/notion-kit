@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 
 import { Icon } from "@notion-kit/icons";
 import { ModalProvider } from "@notion-kit/modal";
@@ -30,9 +30,37 @@ export function TableView<TPlugins extends CellPlugin[] = CellPlugin[]>(
 }
 
 export function TableViewContent() {
-  const { table, columnSizeVars, actions } = useTableViewCtx();
+  const { table, actions } = useTableViewCtx();
 
   const isSorted = table.getState().sorting.length > 0;
+
+  /**
+   * Instead of calling `column.getSize()` on every render for every header
+   * and especially every data cell (very expensive),
+   * we will calculate all column sizes at once at the root table level in a useMemo
+   * and pass the column sizes down as CSS variables to the <table> element.
+   */
+  const columnSizeVars = useMemo(
+    () => {
+      return table.getFlatHeaders().reduce<Record<string, number>>(
+        (sizes, header) => ({
+          ...sizes,
+          [`--header-${header.id}-size`]: header.getSize(),
+          [`--col-${header.column.id}-size`]: header.column.getSize(),
+        }),
+        {},
+      );
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      table.getFlatHeaders(),
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      table.getState().columnSizingInfo,
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      table.getState().columnSizing,
+    ],
+  );
 
   return (
     <div

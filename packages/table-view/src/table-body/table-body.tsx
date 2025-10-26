@@ -15,13 +15,15 @@ import type { Table } from "@tanstack/react-table";
 import { BaseModal } from "@notion-kit/common";
 import { useModal } from "@notion-kit/modal";
 
+import { useDndSensors } from "../common";
 import type { Row } from "../lib/types";
 import { useTableViewCtx } from "../table-contexts";
 import { TableRow } from "./table-row";
 
 export function DndTableBody() {
   const { openModal } = useModal();
-  const { table, sensors } = useTableViewCtx();
+  const { table } = useTableViewCtx();
+  const sensors = useDndSensors();
 
   const handleRowDragEnd = useCallback(
     (e: DragEndEvent) => {
@@ -32,7 +34,10 @@ export function DndTableBody() {
           title="Would you like to remove sorting?"
           primary="Remove"
           secondary="Don't remove"
-          onTrigger={() => table.handleRowDragEnd(e)}
+          onTrigger={() => {
+            table.resetSorting();
+            table.handleRowDragEnd(e);
+          }}
         />,
       );
     },

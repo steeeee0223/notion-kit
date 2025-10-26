@@ -22,13 +22,16 @@ import {
   PopoverTrigger,
 } from "@notion-kit/shadcn";
 
+import { useDndSensors } from "../common";
 import { TableViewMenuPage } from "../features";
 import { TableViewMenu, TypesMenu } from "../menus";
 import { useTableViewCtx } from "../table-contexts";
 import { TableHeaderActionCell } from "./table-header-action-cell";
 
 export const DndTableHeader = React.memo(function DndTableHeader() {
-  const { table, sensors } = useTableViewCtx();
+  const { table } = useTableViewCtx();
+  const sensors = useDndSensors();
+
   return (
     <DndContext
       collisionDetection={closestCenter}

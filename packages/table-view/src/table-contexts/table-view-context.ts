@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, use } from "react";
-import type { SensorDescriptor, SensorOptions } from "@dnd-kit/core";
 import type { Table } from "@tanstack/react-table";
 
 import type { IconData } from "@notion-kit/icon-block";
@@ -11,9 +10,6 @@ import type { CellPlugin } from "../plugins";
 
 export interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
   table: Table<Row<TPlugins>>;
-  columnSizeVars: Record<string, number>;
-  /** DND */
-  sensors: SensorDescriptor<SensorOptions>[];
   actions: TableActions;
 }
 
