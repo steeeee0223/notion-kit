@@ -54,9 +54,9 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
     });
   };
   // 5. Duplicate
-  const duplicateRow = () => table.duplicate(rowId, "row");
+  const duplicateRow = () => table.duplicate(rowId);
   // 7. Delete
-  const deleteRow = () => table.remove(rowId, "row");
+  const deleteRow = () => table.remove(rowId);
 
   /** Search */
   const actions = [

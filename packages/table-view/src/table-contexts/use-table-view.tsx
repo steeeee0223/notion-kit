@@ -143,15 +143,12 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     state: {
-      sorting: _state.table.sorting,
       rowOrder,
       columnOrder,
       columnsInfo: columnsData.columnsInfo,
       cellPlugins: pluginsMap,
     },
-    onSortingChange: (updater) => dispatch({ type: "update:sorting", updater }),
-    onColumnInfoChange: (id, updater) =>
-      dispatch({ type: "update:col", payload: { id }, updater }),
+    onColumnInfoChange: (updater) => dispatch({ type: "set:col", updater }),
     onColumnOrderChange: (updater) =>
       dispatch({ type: "set:col:order", updater }),
     onRowOrderChange: (updater) => dispatch({ type: "set:row:order", updater }),
@@ -213,14 +210,12 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       columnSizeVars,
       sensors,
       actions: {
-        addColumn: (payload) => dispatch({ type: "add:col", payload }),
+        // addColumn: (payload) => dispatch({ type: "add:col", payload }),
         addRow: (src) => dispatch({ type: "add:row", payload: src }),
         updateRowIcon: (id, icon) =>
           dispatch({ type: "update:row:icon", payload: { id, icon } }),
-        duplicate: (id, type) =>
-          dispatch({ type: `duplicate:${type}`, payload: { id } }),
-        remove: (id, type) =>
-          dispatch({ type: `delete:${type}`, payload: { id } }),
+        duplicate: (id) => dispatch({ type: "duplicate:row", payload: { id } }),
+        remove: (id) => dispatch({ type: "delete:row", payload: { id } }),
       },
     }),
     [columnSizeVars, sensors, table, dispatch],

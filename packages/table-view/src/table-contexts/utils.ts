@@ -77,7 +77,6 @@ export function getTableViewAtom<TPlugins extends CellPlugin[]>(
   );
   const rowData = arrayToEntity(state.data);
   return {
-    table: { sorting: [] },
     properties: columnData.items as Record<
       string,
       ColumnInfo<TPlugins[number]>

@@ -42,7 +42,7 @@ interface PropMenuProps {
  * 11. ✅ Delete property
  */
 export function PropMenu({ propId }: PropMenuProps) {
-  const { table, actions } = useTableViewCtx();
+  const { table } = useTableViewCtx();
 
   const info = table.getColumnInfo(propId);
   const plugin = table.getColumnPlugin(propId);
@@ -71,7 +71,7 @@ export function PropMenu({ propId }: PropMenuProps) {
     });
   };
   // 10. Duplicate property
-  const duplicateProp = () => actions.duplicate(propId, "col");
+  const duplicateProp = () => table.duplicateColumnInfo(propId);
   // 11. Delete property
   const deleteProp = () => table.setColumnInfo(propId, { isDeleted: true });
 

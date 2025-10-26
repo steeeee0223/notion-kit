@@ -1,30 +1,40 @@
 import type {
   Column,
+  OnChangeFn,
   Table,
   TableFeature,
   Updater,
 } from "@tanstack/react-table";
-import { functionalUpdate } from "@tanstack/react-table";
+import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
+import { v4 } from "uuid";
 
 import type { Cell, ColumnInfo, PluginType, Row, Rows } from "../lib/types";
-import { arrayToEntity, getUniqueName } from "../lib/utils";
+import {
+  arrayToEntity,
+  getDefaultCell,
+  getUniqueName,
+  insertAt,
+} from "../lib/utils";
 import type { CellPlugin, InferActions, InferPlugin } from "../plugins";
 import { DEFAULT_PLUGINS } from "../plugins";
+import type { AddColumnPayload } from "../table-contexts";
 
 // define types for our new feature's custom state
-export type ColumnsInfoState = Record<string, ColumnInfo<CellPlugin>>;
+export type ColumnsInfoState<TPlugins extends CellPlugin[] = CellPlugin[]> =
+  Record<string, ColumnInfo<InferPlugin<TPlugins>>>;
 
 export interface ColumnsInfoTableState {
   cellPlugins: Record<string, CellPlugin>;
+  /**
+   * @field columns information
+   * @param key column id
+   */
   columnsInfo: ColumnsInfoState;
 }
 
 // define types for our new feature's table options
 export interface ColumnsInfoOptions {
-  onColumnInfoChange?: <TPlugin extends CellPlugin>(
-    id: string,
-    updater: Updater<ColumnInfo<TPlugin>>,
-  ) => void;
+  onColumnInfoChange?: OnChangeFn<ColumnsInfoState>;
   onCellChange?: <TPlugin extends CellPlugin>(
     rowId: string,
     colId: string,
@@ -43,6 +53,10 @@ export interface ColumnsInfoTableApi {
   // Column Setters
   _setColumnInfo: (colId: string, updater: Updater<ColumnInfo>) => void;
   setColumnInfo: (colId: string, info: Partial<Omit<ColumnInfo, "id">>) => void;
+  _addColumnInfo: (info: ColumnInfo) => void;
+  addColumnInfo: (payload: AddColumnPayload<CellPlugin>) => void;
+  duplicateColumnInfo: (colId: string) => void;
+  removeColumnInfo: (colId: string) => void;
   toggleColumnWrapped: (colId: string, updater: Updater<boolean>) => void;
   setColumnType: <TPlugins extends CellPlugin[]>(
     colId: string,
@@ -96,18 +110,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
   // define the new feature's default options
   getDefaultOptions: (table: Table<Row>): ColumnsInfoOptions => {
     return {
-      onColumnInfoChange: (id, updater) => {
-        table.setState((prev) => ({
-          ...prev,
-          columnsInfo: {
-            ...prev.columnsInfo,
-            [id]: functionalUpdate(
-              updater as Updater<ColumnInfo>,
-              prev.columnsInfo[id]!,
-            ),
-          },
-        }));
-      },
+      onColumnInfoChange: makeStateUpdater("columnsInfo", table),
     };
   },
 
@@ -164,7 +167,10 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     };
     /** Column Setters */
     table._setColumnInfo = (colId, updater) => {
-      table.options.onColumnInfoChange?.(colId, updater);
+      table.options.onColumnInfoChange?.((prev) => ({
+        ...prev,
+        [colId]: functionalUpdate(updater, prev[colId]!),
+      }));
       // Sync column visibility
       const info = functionalUpdate(updater, table.getColumnInfo(colId));
       if (info.hidden !== undefined || info.isDeleted !== undefined)
@@ -175,6 +181,94 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     };
     table.setColumnInfo = (colId, info) => {
       table._setColumnInfo(colId, (prev) => ({ ...prev, ...info }));
+    };
+    table._addColumnInfo = (info) => {
+      table.options.onColumnInfoChange?.((prev) => ({
+        ...prev,
+        [info.id]: info,
+      }));
+    };
+    table.addColumnInfo = <TPlugin extends CellPlugin>(
+      payload: AddColumnPayload<TPlugin>,
+    ) => {
+      const { cellPlugins, rowOrder } = table.getState();
+      const { id, name, type, at } = payload;
+      const plugin = cellPlugins[type];
+      if (!plugin) {
+        throw new Error(`[TableView] Plugin not found: ${type}`);
+      }
+      table._addColumnInfo({
+        id,
+        name,
+        type,
+        config: plugin.default.config as unknown,
+      });
+      // Update column order
+      table.setColumnOrder((prev) => {
+        if (at === undefined) return [...prev, id];
+        const idx = prev.indexOf(at.id);
+        return at.side === "right"
+          ? insertAt(prev, id, idx + 1)
+          : insertAt(prev, id, idx);
+      });
+      // Update all rows
+      const data = { ...table.getCellValues() };
+      rowOrder.forEach((rowId) => {
+        if (!data[rowId]) return;
+        data[rowId] = {
+          ...data[rowId],
+          properties: {
+            ...data[rowId].properties,
+            [id]: getDefaultCell(plugin),
+          },
+        };
+      });
+      table.setTableData(data);
+    };
+    table.duplicateColumnInfo = (colId) => {
+      const { columnOrder, rowOrder, cellPlugins } = table.getState();
+      const src = table.getColumnInfo(colId);
+      const idx = columnOrder.indexOf(colId);
+      const newColId = v4();
+      table._addColumnInfo({
+        ...src,
+        id: newColId,
+        name: table.generateUniqueColumnName(src.name),
+      });
+      // Update column order
+      table.setColumnOrder((prev) => insertAt(prev, newColId, idx + 1));
+      // Update all rows
+      const data = { ...table.getCellValues() };
+      rowOrder.forEach((rowId) => {
+        if (!data[rowId]) return;
+        data[rowId] = {
+          ...data[rowId],
+          properties: {
+            ...data[rowId].properties,
+            [newColId]: getDefaultCell(cellPlugins[src.type]!),
+          },
+        };
+      });
+      table.setTableData(data);
+    };
+    table.removeColumnInfo = (colId) => {
+      table.options.onColumnInfoChange?.((prev) => {
+        const { [colId]: _, ...rest } = prev;
+        return rest;
+      });
+      // Update column order
+      table.setColumnOrder((prev) => prev.filter((id) => id !== colId));
+      // Update all rows
+      const data = { ...table.getCellValues() };
+      Object.keys(data).forEach((rowId) => {
+        if (!data[rowId]) return;
+        const { [colId]: _, ...rest } = data[rowId].properties;
+        data[rowId] = {
+          ...data[rowId],
+          properties: rest,
+        };
+      });
+      table.setTableData(data);
     };
     table.toggleColumnWrapped = (colId, updater) => {
       table._setColumnInfo(colId, (prev) => ({

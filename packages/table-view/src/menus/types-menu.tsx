@@ -47,7 +47,7 @@ interface TypesMenuProps {
 }
 
 export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
-  const { table, actions } = useTableViewCtx();
+  const { table } = useTableViewCtx();
 
   const plugins = table.getState().cellPlugins;
   const propType = propId ? table.getColumnInfo(propId).type : null;
@@ -61,7 +61,7 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
     if (colId === undefined) {
       colId = v4();
       const uniqueName = table.generateUniqueColumnName(name);
-      actions.addColumn({ id: colId, type, name: uniqueName, at });
+      table.addColumnInfo({ id: colId, type, name: uniqueName, at });
     } else {
       table.setColumnType(colId, type);
     }

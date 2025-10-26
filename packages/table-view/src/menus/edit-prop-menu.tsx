@@ -33,7 +33,7 @@ interface EditPropMenuProps {
  * 6. ✅ Delete property
  */
 export function EditPropMenu({ propId }: EditPropMenuProps) {
-  const { table, actions } = useTableViewCtx();
+  const { table } = useTableViewCtx();
 
   const info = table.getColumnInfo(propId);
 
@@ -49,7 +49,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
   // 4. Hide in view
   const hideProp = () => table.setColumnInfo(propId, { hidden: true });
   // 5. Duplicate property
-  const duplicateProp = () => actions.duplicate(propId, "col");
+  const duplicateProp = () => table.duplicateColumnInfo(propId);
   // 6. Delete property
   const deleteProp = () => table.setColumnInfo(propId, { isDeleted: true });
 

@@ -1,11 +1,11 @@
 import type { ColumnDefs, Row } from "../lib/types";
-import type { CellPlugin, InferKey, InferPlugin } from "../plugins";
+import type { CellPlugin, InferKey } from "../plugins";
 import type { TableViewAction } from "./table-reducer";
 
-export interface AddColumnPayload<TPlugins extends CellPlugin[]> {
+export interface AddColumnPayload<TPlugin extends CellPlugin> {
   id: string;
   name: string;
-  type: InferKey<InferPlugin<TPlugins>>;
+  type: InferKey<TPlugin>;
   at?: {
     id: string;
     side: "left" | "right";

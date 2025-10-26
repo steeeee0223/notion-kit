@@ -15,7 +15,7 @@ import type { ColumnInfo } from "../lib/types";
 import { useTableViewCtx } from "../table-contexts";
 
 export function DeletedPropsMenu() {
-  const { table, actions } = useTableViewCtx();
+  const { table } = useTableViewCtx();
 
   return (
     <>
@@ -31,7 +31,7 @@ export function DeletedPropsMenu() {
             key={info.id}
             info={info}
             onRestore={() => table.setColumnInfo(info.id, { isDeleted: false })}
-            onDelete={() => actions.remove(info.id, "col")}
+            onDelete={() => table.removeColumnInfo(info.id)}
           />
         ))}
       </MenuGroup>

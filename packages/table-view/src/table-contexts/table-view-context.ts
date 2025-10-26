@@ -8,14 +8,13 @@ import type { IconData } from "@notion-kit/icon-block";
 
 import type { Row } from "../lib/types";
 import type { CellPlugin } from "../plugins";
-import type { AddColumnPayload } from "./types";
 
 export interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
   table: Table<Row<TPlugins>>;
   columnSizeVars: Record<string, number>;
   /** DND */
   sensors: SensorDescriptor<SensorOptions>[];
-  actions: TableActions<TPlugins>;
+  actions: TableActions;
 }
 
 export const TableViewContext = createContext<TableViewCtx | null>(null);
@@ -29,12 +28,9 @@ export const useTableViewCtx = () => {
   return ctx;
 };
 
-type ActionType = "row" | "col";
-
-export interface TableActions<TPlugins extends CellPlugin[] = CellPlugin[]> {
-  addColumn: (data: AddColumnPayload<TPlugins>) => void;
+export interface TableActions {
   addRow: (src?: { id: string; at: "prev" | "next" }) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
-  duplicate: (id: string, type: ActionType) => void;
-  remove: (id: string, type: ActionType) => void;
+  duplicate: (id: string) => void;
+  remove: (id: string) => void;
 }
