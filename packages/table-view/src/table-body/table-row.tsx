@@ -28,13 +28,13 @@ interface TableRowProps {
 export function TableRow({ row }: TableRowProps) {
   const isMobile = useIsMobile();
   /** Add row */
-  const { actions } = useTableViewCtx();
+  const { table } = useTableViewCtx();
   const addNextRow = (e: React.MouseEvent) => {
     if (e.altKey) {
-      actions.addRow({ id: row.id, at: "prev" });
+      table.addRow({ id: row.id, at: "prev" });
       return;
     }
-    actions.addRow({ id: row.id, at: "next" });
+    table.addRow({ id: row.id, at: "next" });
   };
   /** DND */
   const {

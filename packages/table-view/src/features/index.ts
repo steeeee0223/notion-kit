@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-object-type */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { RowData } from "@tanstack/react-table";
 
@@ -24,6 +23,11 @@ import type {
   OrderingTableApi,
   OrderingTableState,
 } from "./ordering";
+import type {
+  RowActionsColumnApi,
+  RowActionsOptions,
+  RowActionsTableApi,
+} from "./row-actions";
 
 declare module "@tanstack/react-table" {
   // merge our new feature's state with the existing table state
@@ -39,7 +43,8 @@ declare module "@tanstack/react-table" {
     extends CountingOptions,
       ColumnsInfoOptions,
       FreezingOptions,
-      OrderingOptions {}
+      OrderingOptions,
+      RowActionsOptions {}
 
   // merge our new feature's instance APIs with the existing table instance APIs
   interface Table<TData extends RowData>
@@ -47,9 +52,12 @@ declare module "@tanstack/react-table" {
       ColumnsInfoTableApi,
       FreezingTableApi,
       OrderingTableApi,
+      RowActionsTableApi,
       TableMenuTableApi {}
 
-  interface Column<TData extends RowData> extends ColumnInfoColumnApi {}
+  interface Column<TData extends RowData>
+    extends ColumnInfoColumnApi,
+      RowActionsColumnApi {}
 }
 
 export * from "./columns-info";
@@ -57,3 +65,4 @@ export * from "./counting";
 export * from "./freezing";
 export * from "./menu";
 export * from "./ordering";
+export * from "./row-actions";

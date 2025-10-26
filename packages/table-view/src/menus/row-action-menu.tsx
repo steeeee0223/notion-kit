@@ -39,7 +39,7 @@ interface RowActionMenuProps {
  * 8. 🚧 Comment
  */
 export function RowActionMenu({ rowId }: RowActionMenuProps) {
-  const { actions: table } = useTableViewCtx();
+  const { table } = useTableViewCtx();
   // 1. Edit icon
   const selectIcon = (icon: IconData) => {
     table.updateRowIcon(rowId, icon);
@@ -54,9 +54,9 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
     });
   };
   // 5. Duplicate
-  const duplicateRow = () => table.duplicate(rowId);
+  const duplicateRow = () => table.duplicateRow(rowId);
   // 7. Delete
-  const deleteRow = () => table.remove(rowId);
+  const deleteRow = () => table.deleteRow(rowId);
 
   /** Search */
   const actions = [

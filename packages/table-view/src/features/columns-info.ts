@@ -8,7 +8,7 @@ import type {
 import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
-import type { Cell, ColumnInfo, PluginType, Row, Rows } from "../lib/types";
+import type { ColumnInfo, PluginType, Row } from "../lib/types";
 import {
   arrayToEntity,
   getDefaultCell,
@@ -17,7 +17,6 @@ import {
 } from "../lib/utils";
 import type { CellPlugin, InferActions, InferPlugin } from "../plugins";
 import { DEFAULT_PLUGINS } from "../plugins";
-import type { AddColumnPayload } from "../table-contexts";
 
 // define types for our new feature's custom state
 export type ColumnsInfoState<TPlugins extends CellPlugin[] = CellPlugin[]> =
@@ -35,12 +34,6 @@ export interface ColumnsInfoTableState {
 // define types for our new feature's table options
 export interface ColumnsInfoOptions {
   onColumnInfoChange?: OnChangeFn<ColumnsInfoState>;
-  onCellChange?: <TPlugin extends CellPlugin>(
-    rowId: string,
-    colId: string,
-    data: Cell<TPlugin>,
-  ) => void;
-  onTableDataChange?: (data: Rows) => void;
 }
 
 // Define types for our new feature's table APIs
@@ -54,7 +47,15 @@ export interface ColumnsInfoTableApi {
   _setColumnInfo: (colId: string, updater: Updater<ColumnInfo>) => void;
   setColumnInfo: (colId: string, info: Partial<Omit<ColumnInfo, "id">>) => void;
   _addColumnInfo: (info: ColumnInfo) => void;
-  addColumnInfo: (payload: AddColumnPayload<CellPlugin>) => void;
+  addColumnInfo: (payload: {
+    id: string;
+    name: string;
+    type: string;
+    at?: {
+      id: string;
+      side: "left" | "right";
+    };
+  }) => void;
   duplicateColumnInfo: (colId: string) => void;
   removeColumnInfo: (colId: string) => void;
   toggleColumnWrapped: (colId: string, updater: Updater<boolean>) => void;
@@ -69,19 +70,6 @@ export interface ColumnsInfoTableApi {
   // Column name checkers
   checkIsUniqueColumnName: (name: string) => boolean;
   generateUniqueColumnName: (initial?: string) => string;
-  // Cell API
-  getCellValues: <TPlugins extends CellPlugin[]>() => Rows<TPlugins>;
-  getCell: <TPlugin extends CellPlugin>(
-    colId: string,
-    rowId: string,
-  ) => Cell<TPlugin>;
-  // Cell updater
-  updateCell: <TPlugin extends CellPlugin>(
-    rowId: string,
-    colId: string,
-    data: Cell<TPlugin>,
-  ) => void;
-  setTableData: (data: Rows) => void;
 }
 
 export interface ColumnInfoColumnApi {
@@ -89,12 +77,6 @@ export interface ColumnInfoColumnApi {
   getWidth: () => string;
   getPlugin: () => CellPlugin;
   handleResizeEnd: () => void;
-  // Cell updater
-  getCell: <TPlugin extends CellPlugin>(rowId: string) => Cell<TPlugin>;
-  updateCell: <TPlugin extends CellPlugin>(
-    rowId: string,
-    data: Cell<TPlugin>,
-  ) => void;
 }
 
 export const ColumnsInfoFeature: TableFeature<Row> = {
@@ -116,23 +98,6 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
 
   // define the new feature's table instance methods
   createTable: (table: Table<Row>): void => {
-    table.setTableData = (data: Rows) =>
-      table.options.onTableDataChange?.(data);
-    /** Cell API */
-    table.getCellValues = () =>
-      table.getCoreRowModel().rows.reduce<Rows>((acc, row) => {
-        acc[row.id] = row.original;
-        return acc;
-      }, {});
-    table.getCell = (colId, rowId) => {
-      const cell = table.getRow(rowId).original.properties[colId];
-      if (!cell) {
-        throw new Error(`[TableView] Cell not found: ${rowId}, ${colId}`);
-      }
-      return cell;
-    };
-    table.updateCell = (rowId, colId, data) =>
-      table.options.onCellChange?.(rowId, colId, data);
     /** Column Getters */
     table.getColumnInfo = (colId) => {
       const info = table.getState().columnsInfo[colId];
@@ -188,9 +153,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         [info.id]: info,
       }));
     };
-    table.addColumnInfo = <TPlugin extends CellPlugin>(
-      payload: AddColumnPayload<TPlugin>,
-    ) => {
+    table.addColumnInfo = (payload) => {
       const { cellPlugins, rowOrder } = table.getState();
       const { id, name, type, at } = payload;
       const plugin = cellPlugins[type];
@@ -358,10 +321,5 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     column.getWidth = () => `calc(var(--col-${column.id}-size) * 1px)`;
     column.handleResizeEnd = () =>
       table.setColumnInfo(column.id, { width: `${column.getSize()}px` });
-    /** Cell */
-    column.getCell = (rowId) => table.getCell(column.id, rowId);
-    column.updateCell = (rowId, data) => {
-      table.updateCell(rowId, column.id, data);
-    };
   },
 };

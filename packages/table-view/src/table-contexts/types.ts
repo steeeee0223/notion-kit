@@ -1,16 +1,6 @@
 import type { ColumnDefs, Row } from "../lib/types";
-import type { CellPlugin, InferKey } from "../plugins";
+import type { CellPlugin } from "../plugins";
 import type { TableViewAction } from "./table-reducer";
-
-export interface AddColumnPayload<TPlugin extends CellPlugin> {
-  id: string;
-  name: string;
-  type: InferKey<TPlugin>;
-  at?: {
-    id: string;
-    side: "left" | "right";
-  };
-}
 
 export interface PartialTableState<TPlugins extends CellPlugin[]> {
   properties: ColumnDefs<TPlugins>;

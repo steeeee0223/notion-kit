@@ -1,12 +1,8 @@
-import type { SortingState, Updater } from "@tanstack/react-table";
+import type { Updater } from "@tanstack/react-table";
 import { functionalUpdate } from "@tanstack/react-table";
-import { v4 } from "uuid";
-
-import type { IconData } from "@notion-kit/icon-block";
 
 import { ColumnsInfoState } from "../features";
-import type { Cell, PluginsMap, Row, Rows } from "../lib/types";
-import { getDefaultCell, insertAt } from "../lib/utils";
+import type { Cell, PluginsMap, Rows } from "../lib/types";
 import type { CellPlugin } from "../plugins";
 
 export interface TableViewAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {
@@ -35,12 +31,6 @@ export type TableViewAction<TPlugins extends CellPlugin[]> =
   | { type: "set:col"; updater: Updater<ColumnsInfoState> }
   | { type: "set:col:order" | "set:row:order"; updater: Updater<string[]> }
   | {
-      type: "delete:row" | "duplicate:row";
-      payload: { id: string };
-    }
-  | { type: "add:row"; payload?: { id: string; at: "prev" | "next" } }
-  | { type: "update:row:icon"; payload: { id: string; icon: IconData | null } }
-  | {
       type: "update:cell";
       payload: {
         rowId: string;
@@ -48,8 +38,7 @@ export type TableViewAction<TPlugins extends CellPlugin[]> =
         data: Cell<CellPlugin>;
       };
     }
-  | { type: "set:table:data"; payload: Rows<TPlugins> }
-  | { type: "update:sorting"; updater: Updater<SortingState> }
+  | { type: "set:table:data"; updater: Updater<Rows<TPlugins>> }
   | { type: "reset" };
 
 function tableViewReducer<TPlugins extends CellPlugin[]>(
@@ -61,56 +50,8 @@ function tableViewReducer<TPlugins extends CellPlugin[]>(
     case "set:col": {
       return { ...v, properties: functionalUpdate(a.updater, v.properties) };
     }
-    case "add:row": {
-      const row: Row<TPlugins> = { id: v4(), properties: {} };
-      v.propertiesOrder.forEach((colId) => {
-        const type = v.properties[colId]!.type;
-        row.properties[colId] = getDefaultCell(p[type]);
-      });
-      return {
-        ...v,
-        get dataOrder() {
-          if (a.payload === undefined) return [...v.dataOrder, row.id];
-          const idx = v.dataOrder.indexOf(a.payload.id);
-          return a.payload.at === "next"
-            ? insertAt(v.dataOrder, row.id, idx + 1)
-            : insertAt(v.dataOrder, row.id, idx);
-        },
-        data: { ...v.data, [row.id]: row },
-      };
-    }
-    case "duplicate:row": {
-      const row = { ...v.data[a.payload.id]!, id: v4() };
-      v.propertiesOrder.forEach((colId) => (row.properties[colId]!.id = v4()));
-      return {
-        ...v,
-        data: { ...v.data, [row.id]: row },
-        get dataOrder() {
-          const idx = v.dataOrder.indexOf(a.payload.id);
-          return insertAt(v.dataOrder, row.id, idx + 1);
-        },
-      };
-    }
-    case "update:row:icon": {
-      const row = v.data[a.payload.id];
-      if (!row) return v as never;
-      row.icon = a.payload.icon ?? undefined;
-      const colId = v.propertiesOrder.find(
-        (propId) => v.properties[propId]?.type === "title",
-      )!;
-      row.properties[colId]!.value.icon = a.payload.icon ?? undefined;
-      return { ...v, data: { ...v.data, [a.payload.id]: row } };
-    }
-    case "delete:row": {
-      const { [a.payload.id]: _, ...data } = v.data;
-      return {
-        ...v,
-        dataOrder: v.dataOrder.filter((rowId) => rowId !== a.payload.id),
-        data,
-      };
-    }
     case "set:table:data": {
-      return { ...v, data: a.payload };
+      return { ...v, data: functionalUpdate(a.updater, v.data) };
     }
     case "update:cell": {
       const data = { ...v.data };

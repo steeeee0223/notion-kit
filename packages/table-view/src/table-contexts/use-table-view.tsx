@@ -13,6 +13,7 @@ import {
   CountingFeature,
   FreezingFeature,
   OrderingFeature,
+  RowActionsFeature,
   TableMenuFeature,
   type ColumnsInfoState,
 } from "../features";
@@ -22,9 +23,7 @@ import type { CellPlugin } from "../plugins";
 import { TableRowCell } from "../table-body";
 import { TableFooterCell } from "../table-footer";
 import { TableHeaderCell } from "../table-header";
-import { useTrackChanges } from "../use-track-changes";
 import { createTableViewReducer, type TableViewAction } from "./table-reducer";
-import type { TableViewCtx } from "./table-view-context";
 import type { PartialTableState } from "./types";
 import {
   createColumnSortingFn,
@@ -148,8 +147,8 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     onRowOrderChange: (updater) => dispatch({ type: "set:row:order", updater }),
     onCellChange: (rowId, colId, data) =>
       dispatch({ type: "update:cell", payload: { rowId, colId, data } }),
-    onTableDataChange: (data) =>
-      dispatch({ type: "set:table:data", payload: data }),
+    onTableDataChange: (updater) =>
+      dispatch({ type: "set:table:data", updater }),
     getRowId: (row) => row.id,
     _features: [
       ColumnsInfoFeature,
@@ -157,25 +156,9 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       FreezingFeature,
       OrderingFeature,
       TableMenuFeature,
+      RowActionsFeature,
     ],
   });
 
-  const tableViewCtx = useMemo<TableViewCtx>(
-    () => ({
-      table,
-      actions: {
-        addRow: (src) => dispatch({ type: "add:row", payload: src }),
-        updateRowIcon: (id, icon) =>
-          dispatch({ type: "update:row:icon", payload: { id, icon } }),
-        duplicate: (id) => dispatch({ type: "duplicate:row", payload: { id } }),
-        remove: (id) => dispatch({ type: "delete:row", payload: { id } }),
-      },
-    }),
-    [table, dispatch],
-  );
-
-  useTrackChanges("table", [table]);
-  useTrackChanges("dispatch", [dispatch]);
-
-  return tableViewCtx;
+  return useMemo(() => ({ table }), [table]);
 }
