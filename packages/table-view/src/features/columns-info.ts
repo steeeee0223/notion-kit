@@ -175,18 +175,24 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
           : insertAt(prev, id, idx);
       });
       // Update all rows
-      const data = { ...table.getCellValues() };
-      rowOrder.forEach((rowId) => {
-        if (!data[rowId]) return;
-        data[rowId] = {
-          ...data[rowId],
-          properties: {
-            ...data[rowId].properties,
-            [id]: getDefaultCell(plugin),
+      table.setTableData((prev) =>
+        rowOrder.reduce(
+          (acc, rowId) => {
+            if (!prev[rowId]) return acc;
+            return {
+              ...acc,
+              [rowId]: {
+                ...prev[rowId],
+                properties: {
+                  ...prev[rowId].properties,
+                  [id]: getDefaultCell(plugin),
+                },
+              },
+            };
           },
-        };
-      });
-      table.setTableData(data);
+          { ...prev },
+        ),
+      );
     };
     table.duplicateColumnInfo = (colId) => {
       const { columnOrder, rowOrder, cellPlugins } = table.getState();
@@ -201,18 +207,25 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
       // Update column order
       table.setColumnOrder((prev) => insertAt(prev, newColId, idx + 1));
       // Update all rows
-      const data = { ...table.getCellValues() };
-      rowOrder.forEach((rowId) => {
-        if (!data[rowId]) return;
-        data[rowId] = {
-          ...data[rowId],
-          properties: {
-            ...data[rowId].properties,
-            [newColId]: getDefaultCell(cellPlugins[src.type]!),
+      const defaultCell = getDefaultCell(cellPlugins[src.type]!);
+      table.setTableData((prev) =>
+        rowOrder.reduce(
+          (acc, rowId) => {
+            if (!prev[rowId]) return acc;
+            return {
+              ...acc,
+              [rowId]: {
+                ...prev[rowId],
+                properties: {
+                  ...prev[rowId].properties,
+                  [newColId]: defaultCell,
+                },
+              },
+            };
           },
-        };
-      });
-      table.setTableData(data);
+          { ...prev },
+        ),
+      );
     };
     table.removeColumnInfo = (colId) => {
       table.options.onColumnInfoChange?.((prev) => {
@@ -222,16 +235,20 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
       // Update column order
       table.setColumnOrder((prev) => prev.filter((id) => id !== colId));
       // Update all rows
-      const data = { ...table.getCellValues() };
-      Object.keys(data).forEach((rowId) => {
-        if (!data[rowId]) return;
-        const { [colId]: _, ...rest } = data[rowId].properties;
-        data[rowId] = {
-          ...data[rowId],
-          properties: rest,
-        };
-      });
-      table.setTableData(data);
+      const { rowOrder } = table.getState();
+      table.setTableData((prev) =>
+        rowOrder.reduce(
+          (acc, rowId) => {
+            if (!prev[rowId]) return acc;
+            const { [colId]: _, ...properties } = prev[rowId].properties;
+            return {
+              ...acc,
+              [rowId]: { ...prev[rowId], properties },
+            };
+          },
+          { ...prev },
+        ),
+      );
     };
     table.toggleColumnWrapped = (colId, updater) => {
       table._setColumnInfo(colId, (prev) => ({

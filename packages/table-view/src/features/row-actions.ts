@@ -75,35 +75,47 @@ export const RowActionsFeature: TableFeature = {
       table.options.onCellChange?.(rowId, colId, data);
     /** Row API */
     table.addRow = (payload) => {
-      const row: Row = { id: v4(), properties: {} };
-      table.getState().columnOrder.forEach((colId) => {
-        const plugin = table.getColumnPlugin(colId);
-        row.properties[colId] = getDefaultCell(plugin);
-      });
+      const rowId = v4();
       // Update row order
       table.setRowOrder((prev) => {
-        if (payload === undefined) return [...prev, row.id];
+        if (payload === undefined) return [...prev, rowId];
         const idx = prev.indexOf(payload.id);
         return payload.at === "next"
-          ? insertAt(prev, row.id, idx + 1)
-          : insertAt(prev, row.id, idx);
+          ? insertAt(prev, rowId, idx + 1)
+          : insertAt(prev, rowId, idx);
       });
       // Update table data
-      table.setTableData((prev) => ({ ...prev, [row.id]: row }));
+      table.setTableData((prev) => {
+        const row: Row = { id: rowId, properties: {} };
+        table.getState().columnOrder.forEach((colId) => {
+          const plugin = table.getColumnPlugin(colId);
+          row.properties[colId] = getDefaultCell(plugin);
+        });
+        return { ...prev, [rowId]: row };
+      });
     };
     table.duplicateRow = (id) => {
-      const src = table.getRow(id).original;
-      const row: Row = { id: v4(), properties: {}, icon: src.icon };
-      table.getState().columnOrder.forEach((colId) => {
-        row.properties[colId] = { ...src.properties[colId]!, id: v4() };
-      });
+      const rowId = v4();
       // Update row order
       table.setRowOrder((prev) => {
         const idx = prev.indexOf(id);
-        return insertAt(prev, row.id, idx + 1);
+        return insertAt(prev, rowId, idx + 1);
       });
       // Update table data
-      table.setTableData((prev) => ({ ...prev, [row.id]: row }));
+      table.setTableData((prev) => {
+        const src = prev[id];
+        if (!src) return prev;
+        const properties = Object.fromEntries(
+          Object.entries(src.properties).map(([colId, cell]) => [
+            colId,
+            { ...cell, id: v4() },
+          ]),
+        );
+        return {
+          ...prev,
+          [rowId]: { ...src, id: rowId, properties },
+        };
+      });
     };
     table.deleteRow = (id) => {
       // Update row order
@@ -115,23 +127,33 @@ export const RowActionsFeature: TableFeature = {
       });
     };
     table.updateRowIcon = (id, icon) => {
-      const row = { ...table.getRow(id).original, icon: icon ?? undefined };
       const colId = table
         .getState()
         .columnOrder.find(
           (propId) => table.getColumnPlugin(propId).id === "title",
         )!;
-      const cell = row.properties[colId] as Cell<TitlePlugin> | undefined;
-      if (!cell) {
-        throw new Error(
-          `[TableView] Cell not found for row: ${id} at column ${colId}`,
-        );
-      }
-      row.properties[colId] = {
-        ...cell,
-        value: { ...cell.value, icon: icon ?? undefined },
-      };
-      table.setTableData((prev) => ({ ...prev, [id]: row }));
+      table.setTableData((prev) => {
+        const row = prev[id];
+        if (!row) return prev;
+        const cell = row.properties[colId] as Cell<TitlePlugin> | undefined;
+        if (!cell) return prev;
+        // Create a new cell with updated icon value
+        const updatedCell: Cell<TitlePlugin> = {
+          ...cell,
+          value: {
+            ...cell.value,
+            icon: icon ?? undefined,
+          },
+        };
+        return {
+          ...prev,
+          [id]: {
+            ...row,
+            icon: icon ?? undefined,
+            properties: { ...row.properties, [colId]: updatedCell },
+          },
+        };
+      });
     };
   },
   createColumn: (column, table): void => {
