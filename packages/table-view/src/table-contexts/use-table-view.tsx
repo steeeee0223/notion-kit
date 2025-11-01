@@ -110,10 +110,10 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       };
     });
 
-    const columnsInfo = properties.reduce<ColumnsInfoState>(
-      (acc, col) => ({ ...acc, [col.id]: col }),
-      {},
-    );
+    const columnsInfo = properties.reduce<ColumnsInfoState>((acc, col) => {
+      acc[col.id] = col;
+      return acc;
+    }, {});
 
     return { columns, columnsInfo };
   }, [_state.properties, plugins.items, props.state?.properties]);
@@ -145,8 +145,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     onColumnOrderChange: (updater) =>
       dispatch({ type: "set:col:order", updater }),
     onRowOrderChange: (updater) => dispatch({ type: "set:row:order", updater }),
-    onCellChange: (rowId, colId, data) =>
-      dispatch({ type: "update:cell", payload: { rowId, colId, data } }),
     onTableDataChange: (updater) =>
       dispatch({ type: "set:table:data", updater }),
     getRowId: (row) => row.id,

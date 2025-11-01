@@ -2,7 +2,7 @@ import type { Updater } from "@tanstack/react-table";
 import { functionalUpdate } from "@tanstack/react-table";
 
 import { ColumnsInfoState } from "../features";
-import type { Cell, PluginsMap, Rows } from "../lib/types";
+import type { PluginsMap, Rows } from "../lib/types";
 import type { CellPlugin } from "../plugins";
 
 export interface TableViewAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {
@@ -30,14 +30,6 @@ export interface TableViewAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {
 export type TableViewAction<TPlugins extends CellPlugin[]> =
   | { type: "set:col"; updater: Updater<ColumnsInfoState> }
   | { type: "set:col:order" | "set:row:order"; updater: Updater<string[]> }
-  | {
-      type: "update:cell";
-      payload: {
-        rowId: string;
-        colId: string;
-        data: Cell<CellPlugin>;
-      };
-    }
   | { type: "set:table:data"; updater: Updater<Rows<TPlugins>> }
   | { type: "reset" };
 
@@ -52,11 +44,6 @@ function tableViewReducer<TPlugins extends CellPlugin[]>(
     }
     case "set:table:data": {
       return { ...v, data: functionalUpdate(a.updater, v.data) };
-    }
-    case "update:cell": {
-      const data = { ...v.data };
-      data[a.payload.rowId]!.properties[a.payload.colId] = a.payload.data;
-      return { ...v, data };
     }
     case "set:col:order": {
       return {

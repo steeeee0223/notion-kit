@@ -1,8 +1,13 @@
-import type { Table, TableFeature } from "@tanstack/react-table";
+import {
+  makeStateUpdater,
+  type OnChangeFn,
+  type RowData,
+  type Table,
+  type TableFeature,
+} from "@tanstack/react-table";
 
 import type { Row } from "../lib/types";
 
-// define types for our new feature's custom state
 export enum TableViewMenuPage {
   Sort,
   Visibility,
@@ -24,14 +29,16 @@ export interface TableMenuTableState {
   menu: TableMenuState;
 }
 
-// Define types for our new feature's table APIs
+export interface TableMenuOptions {
+  onTableMenuChange?: OnChangeFn<TableMenuState>;
+}
+
 export interface TableMenuTableApi {
   getTableMenuState: () => TableMenuState;
   setTableMenuState: (state: TableMenuState) => void;
 }
 
 export const TableMenuFeature: TableFeature = {
-  // define the new feature's initial state
   getInitialState: (state): TableMenuTableState => {
     return {
       menu: { open: false, page: null },
@@ -39,10 +46,16 @@ export const TableMenuFeature: TableFeature = {
     };
   },
 
-  // define the new feature's table instance methods
+  getDefaultOptions: <TData extends RowData>(
+    table: Table<TData>,
+  ): TableMenuOptions => {
+    return {
+      onTableMenuChange: makeStateUpdater("menu", table),
+    };
+  },
+
   createTable: (table: Table<Row>): void => {
     table.getTableMenuState = () => table.getState().menu;
-    table.setTableMenuState = (menu) =>
-      table.setState((prev) => ({ ...prev, menu }));
+    table.setTableMenuState = (menu) => table.options.onTableMenuChange?.(menu);
   },
 };

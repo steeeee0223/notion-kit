@@ -17,7 +17,11 @@ import type {
   FreezingTableApi,
   FreezingTableState,
 } from "./freezing";
-import type { TableMenuTableApi, TableMenuTableState } from "./menu";
+import type {
+  TableMenuOptions,
+  TableMenuTableApi,
+  TableMenuTableState,
+} from "./menu";
 import type {
   OrderingOptions,
   OrderingTableApi,
@@ -44,7 +48,8 @@ declare module "@tanstack/react-table" {
       ColumnsInfoOptions,
       FreezingOptions,
       OrderingOptions,
-      RowActionsOptions {}
+      RowActionsOptions,
+      TableMenuOptions {}
 
   // merge our new feature's instance APIs with the existing table instance APIs
   interface Table<TData extends RowData>

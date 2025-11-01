@@ -43,7 +43,7 @@ export function SelectCell({
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
-        <CellTrigger ref={ref} className="py-1.5" wrapped={wrapped}>
+        <CellTrigger ref={ref} wrapped={wrapped}>
           <div className="flex items-center justify-between">
             <div
               className={cn(

@@ -10,11 +10,6 @@ import { TitlePlugin } from "../plugins/title";
 
 // define types for our new feature's table options
 export interface RowActionsOptions {
-  onCellChange?: <TPlugin extends CellPlugin>(
-    rowId: string,
-    colId: string,
-    data: Cell<TPlugin>,
-  ) => void;
   onTableDataChange?: OnChangeFn<Rows>;
 }
 
@@ -71,8 +66,19 @@ export const RowActionsFeature: TableFeature = {
       }
       return cell;
     };
-    table.updateCell = (rowId, colId, data) =>
-      table.options.onCellChange?.(rowId, colId, data);
+    table.updateCell = (rowId, colId, data) => {
+      table.setTableData((prev) => {
+        const row = prev[rowId];
+        if (!row) return prev;
+        return {
+          ...prev,
+          [rowId]: {
+            ...row,
+            properties: { ...row.properties, [colId]: data },
+          },
+        };
+      });
+    };
     /** Row API */
     table.addRow = (payload) => {
       const rowId = v4();
