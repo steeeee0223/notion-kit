@@ -3,6 +3,7 @@
 import React, { createContext, use } from "react";
 import type { Table } from "@tanstack/react-table";
 
+import { ModalProvider } from "@notion-kit/modal";
 import { TooltipProvider } from "@notion-kit/shadcn";
 
 import type { Row } from "../lib/types";
@@ -43,7 +44,9 @@ export function TableViewProvider<
 
   return (
     <TableViewContext value={ctx}>
-      <TooltipProvider delayDuration={500}>{children}</TooltipProvider>
+      <TooltipProvider delayDuration={500}>
+        <ModalProvider>{children}</ModalProvider>
+      </TooltipProvider>
     </TableViewContext>
   );
 }

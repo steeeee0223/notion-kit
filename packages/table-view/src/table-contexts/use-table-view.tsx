@@ -34,6 +34,15 @@ import {
   toDatabaseProperties,
 } from "./utils";
 
+const defaultColumn: Partial<ColumnDef<Row>> = {
+  size: 200,
+  minSize: 100,
+  maxSize: Number.MAX_SAFE_INTEGER,
+  header: ({ header }) => <TableHeaderCell header={header} />,
+  cell: ({ row, column }) => <TableRowCell column={column} row={row} />,
+  footer: ({ column }) => <TableFooterCell column={column} />,
+};
+
 interface UseTableViewOptions<TPlugins extends CellPlugin[]> {
   plugins: Entity<TPlugins[number]>;
   defaultState?: PartialTableState<TPlugins>;
@@ -104,9 +113,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
         accessorKey: property.name,
         minSize: getMinWidth(property.type),
         sortingFn,
-        header: ({ header }) => <TableHeaderCell header={header} />,
-        cell: ({ row, column }) => <TableRowCell column={column} row={row} />,
-        footer: ({ column }) => <TableFooterCell column={column} />,
       };
     });
 
@@ -127,11 +133,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   const table = useReactTable({
     columns: columnsData.columns,
     data,
-    defaultColumn: {
-      size: 200,
-      minSize: 100,
-      maxSize: Number.MAX_SAFE_INTEGER,
-    },
+    defaultColumn,
     columnResizeMode: "onChange",
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
