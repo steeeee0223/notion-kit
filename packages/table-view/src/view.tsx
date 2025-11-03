@@ -28,8 +28,8 @@ export function TableView<TPlugins extends CellPlugin[] = CellPlugin[]>(
 
 export function TableViewContent() {
   const { table } = useTableViewCtx();
-
-  const isSorted = table.getState().sorting.length > 0;
+  const { sorting, columnSizingInfo, columnSizing } = table.getState();
+  const isSorted = sorting.length > 0;
 
   /**
    * Instead of calling `column.getSize()` on every render for every header
@@ -52,10 +52,8 @@ export function TableViewContent() {
     [
       // eslint-disable-next-line react-hooks/exhaustive-deps
       table.getFlatHeaders(),
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      table.getState().columnSizingInfo,
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      table.getState().columnSizing,
+      columnSizingInfo,
+      columnSizing,
     ],
   );
 

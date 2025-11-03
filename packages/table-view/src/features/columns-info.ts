@@ -130,12 +130,35 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         return acc;
       }, 0);
     };
+    /** Overrides */
+    table.setColumnSizing = (updater) => {
+      table.options.onColumnSizingChange?.(updater);
+      table.options.meta?.sync?.(["header"]);
+    };
+    table.setColumnSizingInfo = (updater) => {
+      table.options.onColumnSizingInfoChange?.(updater);
+      table.options.meta?.sync?.(["header"]);
+    };
+    table.setColumnVisibility = (updater) => {
+      table.options.onColumnVisibilityChange?.(updater);
+      table.options.meta?.sync?.(["header"]);
+    };
+    table.toggleAllColumnsVisible = () => {
+      const canHide = table.countVisibleColumns() > 1;
+      table.getState().columnOrder.forEach((colId) => {
+        table._setColumnInfo(colId, (prev) => {
+          if (prev.isDeleted) return prev;
+          return { ...prev, hidden: prev.type === "title" ? false : canHide };
+        });
+      });
+    };
     /** Column Setters */
     table._setColumnInfo = (colId, updater) => {
       table.options.onColumnInfoChange?.((prev) => ({
         ...prev,
         [colId]: functionalUpdate(updater, prev[colId]!),
       }));
+      table.options.meta?.sync?.(["header"]);
       // Sync column visibility
       const info = functionalUpdate(updater, table.getColumnInfo(colId));
       if (info.hidden !== undefined || info.isDeleted !== undefined)
@@ -255,15 +278,6 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         ...prev,
         wrapped: functionalUpdate(updater, prev.wrapped ?? false),
       }));
-    };
-    table.toggleAllColumnsVisible = () => {
-      const canHide = table.countVisibleColumns() > 1;
-      table.getState().columnOrder.forEach((colId) => {
-        table._setColumnInfo(colId, (prev) => {
-          if (prev.isDeleted) return prev;
-          return { ...prev, hidden: prev.type === "title" ? false : canHide };
-        });
-      });
     };
     table.setColumnType = <TPlugins extends CellPlugin[]>(
       colId: string,

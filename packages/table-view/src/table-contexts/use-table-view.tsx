@@ -150,6 +150,9 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     onTableDataChange: (updater) =>
       dispatch({ type: "set:table:data", updater }),
     getRowId: (row) => row.id,
+    meta: {
+      sync: (key) => dispatch({ type: "sync", payload: key }),
+    },
     _features: [
       ColumnsInfoFeature,
       CountingFeature,
@@ -160,5 +163,12 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     ],
   });
 
-  return useMemo(() => ({ table }), [table]);
+  return useMemo(
+    () => ({
+      table,
+      // use synced to force re-render
+      __synced: _state.synced,
+    }),
+    [table, _state.synced],
+  );
 }

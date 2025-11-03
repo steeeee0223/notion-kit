@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
+import { flexRender, functionalUpdate } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
 import {
@@ -14,7 +15,7 @@ import {
 
 import { PropMeta } from "../common";
 import { TableViewMenuPage } from "../features";
-import type { CellPlugin, InferConfig } from "../plugins";
+import { ConfigMenuProps } from "../plugins";
 import { useTableViewCtx } from "../table-contexts";
 import { CalcMenu } from "./calc-menu";
 import { TypesMenu } from "./types-menu";
@@ -47,10 +48,6 @@ export function PropMenu({ propId }: PropMenuProps) {
   const info = table.getColumnInfo(propId);
   const plugin = table.getColumnPlugin(propId);
 
-  // 0. Edit property config
-  const [configDraft, setConfigDraft] = useState<
-    InferConfig<CellPlugin<string, unknown, unknown>>
-  >(info.config ?? plugin.default.config);
   // 3. Sorting
   const sortColumn = (desc: boolean) =>
     table.setSorting([{ id: propId, desc }]);
@@ -79,17 +76,14 @@ export function PropMenu({ propId }: PropMenuProps) {
     <>
       <PropMeta propId={propId} type={info.type} />
       <DropdownMenuGroup>
-        {plugin.renderConfigMenu?.({
+        {flexRender<ConfigMenuProps>(plugin.renderConfigMenu, {
           propId,
-          config: configDraft,
-          onChange: setConfigDraft,
-          onOpenChange: (open) => {
-            if (open) return;
+          config: info.config ?? plugin.default.config,
+          onChange: (updater) =>
             table._setColumnInfo(propId, (prev) => ({
               ...prev,
-              config: configDraft,
-            }));
-          },
+              config: functionalUpdate(updater, prev.config),
+            })),
         })}
         {info.type !== "title" && (
           <DropdownMenuSub>

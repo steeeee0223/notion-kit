@@ -19,6 +19,7 @@ export interface OrderingTableState {
 // define types for our new feature's table options
 export interface OrderingOptions {
   onRowOrderChange?: OnChangeFn<OrderingState>;
+  onColumnOrderChange?: OnChangeFn<OrderingState>;
 }
 
 // Define types for our new feature's table APIs
@@ -43,16 +44,24 @@ export const OrderingFeature: TableFeature = {
   ): OrderingOptions => {
     return {
       onRowOrderChange: makeStateUpdater("rowOrder", table),
+      onColumnOrderChange: makeStateUpdater("columnOrder", table),
     };
   },
 
   // define the new feature's table instance methods
   createTable: <TData extends RowData>(table: Table<TData>): void => {
-    table.setRowOrder = (updater) =>
+    table.setRowOrder = (updater) => {
       table.options.onRowOrderChange?.((prev) =>
         functionalUpdate(updater, prev),
       );
-
+      table.options.meta?.sync?.(["body"]);
+    };
+    table.setColumnOrder = (updater) => {
+      table.options.onColumnOrderChange?.((prev) =>
+        functionalUpdate(updater, prev),
+      );
+      table.options.meta?.sync?.(["header"]);
+    };
     table.handleRowDragEnd = (e) => {
       // if we don't have a rowOrder yet, initialize it to the current order
       const rowCount = table.getRowCount();

@@ -91,10 +91,12 @@ export const CountingFeature: TableFeature = {
       }
       return getCount(table, colId);
     };
-    table.setColumnCounting = (updater) =>
+    table.setColumnCounting = (updater) => {
       table.options.onColumnCountingChange?.((prev) =>
         functionalUpdate(updater, prev),
       );
+      table.options.meta?.sync?.(["footer"]);
+    };
     table.setColumnCountMethod = (colId, method) => {
       table.setColumnCounting((prev) => ({
         ...prev,

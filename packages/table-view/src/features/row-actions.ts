@@ -51,8 +51,10 @@ export const RowActionsFeature: TableFeature = {
 
   // define the new feature's table instance methods
   createTable: (table: Table<Row>): void => {
-    table.setTableData = (updater) =>
+    table.setTableData = (updater) => {
       table.options.onTableDataChange?.(updater);
+      table.options.meta?.sync?.(["body"]);
+    };
     /** Cell API */
     table.getCellValues = () =>
       table.getCoreRowModel().rows.reduce<Rows>((acc, row) => {

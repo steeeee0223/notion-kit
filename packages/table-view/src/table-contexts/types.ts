@@ -17,3 +17,9 @@ export interface TableProps<TPlugins extends CellPlugin[]> {
   ) => void;
   dispatch?: React.Dispatch<TableViewAction<TPlugins>>;
 }
+
+export interface SyncedState {
+  header: number;
+  body: number;
+  footer: number;
+}

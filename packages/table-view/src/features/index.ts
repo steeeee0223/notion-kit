@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { RowData } from "@tanstack/react-table";
 
+import type { SyncedState } from "../table-contexts";
 import type {
   ColumnInfoColumnApi,
   ColumnsInfoOptions,
@@ -63,6 +64,10 @@ declare module "@tanstack/react-table" {
   interface Column<TData extends RowData>
     extends ColumnInfoColumnApi,
       RowActionsColumnApi {}
+
+  interface TableMeta<TData extends RowData> {
+    sync?: (keys: (keyof SyncedState)[]) => void;
+  }
 }
 
 export * from "./columns-info";
