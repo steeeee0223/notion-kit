@@ -65,7 +65,7 @@ export function NumberCell({
           <div
             className={cn(
               "flex justify-end gap-x-2 gap-y-1.5",
-              wrapped ? "" : "flex-nowrap",
+              wrapped ? "flex-wrap" : "flex-nowrap",
             )}
           >
             <NumberDisplay value={value} config={config} wrapped={wrapped} />
@@ -90,20 +90,22 @@ function NumberDisplay({ value, config, wrapped }: NumberDisplayProps) {
         <div
           className={cn(
             "inline-flex flex-[1_0_auto] items-center justify-end gap-x-2 gap-y-1.5 leading-[1.5]",
-            wrapped ? "" : "text-nowrap break-normal",
+            wrapped ? "whitespace-pre-wrap" : "text-nowrap break-normal",
           )}
           // NO WRAP: white-space-collapse: collapse;
         >
           {config.options.showNumber && displayedValue}
           <TooltipPreset
             side="top"
-            description={`${value} / ${config.options.divideBy}`}
+            description={`${value || 0} / ${config.options.divideBy}`}
           >
-            <ProgressBar
-              className="h-[21px] max-w-40 min-w-12 grow-1"
-              value={cappedValue}
-              color={config.options.color}
-            />
+            <span className="inline-flex w-24">
+              <ProgressBar
+                className="h-[21px] max-w-40 min-w-12 grow-1"
+                value={cappedValue}
+                color={config.options.color}
+              />
+            </span>
           </TooltipPreset>
         </div>
       );
@@ -112,14 +114,14 @@ function NumberDisplay({ value, config, wrapped }: NumberDisplayProps) {
         <div
           className={cn(
             "inline-flex flex-[1_0_auto] items-center justify-end gap-x-2 gap-y-1.5 leading-[1.5]",
-            wrapped ? "" : "text-nowrap break-normal",
+            wrapped ? "whitespace-pre-wrap" : "text-nowrap break-normal",
           )}
           // NO WRAP: white-space-collapse: collapse;
         >
           {config.options.showNumber && displayedValue}
           <TooltipPreset
             side="top"
-            description={`${value} / ${config.options.divideBy}`}
+            description={`${value || 0} / ${config.options.divideBy}`}
           >
             <span className="inline-flex">
               <ProgressRing
@@ -168,26 +170,25 @@ function getNumberValue(value: string, config: NumberConfig): [string, number] {
     // Handle rounding
     const roundDigits =
       config.round === "default" ? undefined : Number(config.round);
-    const rounded =
-      config.round === "default" ? num : Number(num.toFixed(roundDigits));
+    // const rounded =
+    //   config.round === "default" ? num : Number(num.toFixed(roundDigits));
 
     switch (config.format) {
       case "number_with_commas":
-        return rounded.toLocaleString(undefined, {
+        return num.toLocaleString(undefined, {
           minimumFractionDigits: roundDigits,
           maximumFractionDigits: roundDigits,
         });
 
       case "percent":
-        return (
-          (rounded * 100).toLocaleString(undefined, {
-            minimumFractionDigits: roundDigits,
-            maximumFractionDigits: roundDigits,
-          }) + "%"
-        );
+        return num.toLocaleString(undefined, {
+          style: "percent",
+          minimumFractionDigits: roundDigits,
+          maximumFractionDigits: roundDigits,
+        });
 
       case "currency":
-        return rounded.toLocaleString(undefined, {
+        return num.toLocaleString(undefined, {
           style: "currency",
           currency: "USD", // or make this configurable later
           minimumFractionDigits: roundDigits,
@@ -195,7 +196,11 @@ function getNumberValue(value: string, config: NumberConfig): [string, number] {
         });
 
       default:
-        return rounded.toString();
+        return num.toLocaleString(undefined, {
+          useGrouping: false,
+          minimumFractionDigits: roundDigits,
+          maximumFractionDigits: roundDigits,
+        });
     }
   };
 

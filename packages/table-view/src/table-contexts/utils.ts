@@ -77,7 +77,6 @@ export function getTableViewAtom<TPlugins extends CellPlugin[]>(
   );
   const rowData = arrayToEntity(state.data);
   return {
-    table: { sorting: [] },
     properties: columnData.items as Record<
       string,
       ColumnInfo<TPlugins[number]>
@@ -85,6 +84,7 @@ export function getTableViewAtom<TPlugins extends CellPlugin[]>(
     propertiesOrder: columnData.ids,
     data: rowData.items,
     dataOrder: rowData.ids,
+    synced: { header: -1, body: -1, footer: -1 },
   };
 }
 

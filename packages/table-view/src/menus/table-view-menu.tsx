@@ -7,7 +7,7 @@ import {
 } from "@notion-kit/shadcn";
 
 import { MenuGroupHeader, MenuHeader } from "../common";
-import { TableViewMenuPage } from "../lib/utils";
+import { TableViewMenuPage } from "../features";
 import { useTableViewCtx } from "../table-contexts";
 import { DeletedPropsMenu } from "./deleted-props-menu";
 import { EditPropMenu } from "./edit-prop-menu";
@@ -16,7 +16,8 @@ import { SortMenu } from "./sort-menu";
 import { TypesMenu } from "./types-menu";
 
 export function TableViewMenu() {
-  const { menu, setTableMenu } = useTableViewCtx();
+  const { table } = useTableViewCtx();
+  const menu = table.getTableMenuState();
 
   switch (menu.page) {
     case TableViewMenuPage.Sort:
@@ -24,7 +25,7 @@ export function TableViewMenu() {
         <>
           <MenuHeader
             title="Sort"
-            onBack={() => setTableMenu({ open: true, page: null })}
+            onBack={() => table.setTableMenuState({ open: true, page: null })}
           />
           <SortMenu />
         </>
@@ -57,7 +58,10 @@ export function TableViewMenu() {
               Icon={<Icon.ArrowUpDown />}
               Body="Sort"
               onClick={() =>
-                setTableMenu({ open: true, page: TableViewMenuPage.Sort })
+                table.setTableMenuState({
+                  open: true,
+                  page: TableViewMenuPage.Sort,
+                })
               }
             >
               <MenuItemAction className="flex items-center">
@@ -72,7 +76,10 @@ export function TableViewMenu() {
               Icon={<Icon.Sliders />}
               Body="Edit properties"
               onClick={() =>
-                setTableMenu({ open: true, page: TableViewMenuPage.Props })
+                table.setTableMenuState({
+                  open: true,
+                  page: TableViewMenuPage.Props,
+                })
               }
             >
               <MenuItemAction className="flex items-center">

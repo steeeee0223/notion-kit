@@ -1,28 +1,44 @@
-/* eslint-disable @typescript-eslint/no-empty-object-type */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { RowData } from "@tanstack/react-table";
 
-import type {
-  ColumnInfoColumnApi,
-  ColumnsInfoOptions,
-  ColumnsInfoTableApi,
-  ColumnsInfoTableState,
+import {
+  ColumnsInfoFeature,
+  type ColumnInfoColumnApi,
+  type ColumnsInfoOptions,
+  type ColumnsInfoTableApi,
+  type ColumnsInfoTableState,
 } from "./columns-info";
-import type {
-  CountingOptions,
-  CountingTableApi,
-  CountingTableState,
+import {
+  CountingFeature,
+  type CountingOptions,
+  type CountingTableApi,
+  type CountingTableState,
 } from "./counting";
-import type {
-  FreezingOptions,
-  FreezingTableApi,
-  FreezingTableState,
+import {
+  FreezingFeature,
+  type FreezingOptions,
+  type FreezingTableApi,
+  type FreezingTableState,
 } from "./freezing";
-import type {
-  OrderingOptions,
-  OrderingTableApi,
-  OrderingTableState,
+import {
+  TableMenuFeature,
+  type TableMenuOptions,
+  type TableMenuTableApi,
+  type TableMenuTableState,
+} from "./menu";
+import {
+  OrderingFeature,
+  type OrderingOptions,
+  type OrderingTableApi,
+  type OrderingTableState,
 } from "./ordering";
+import {
+  RowActionsFeature,
+  type RowActionsColumnApi,
+  type RowActionsOptions,
+  type RowActionsTableApi,
+} from "./row-actions";
+import { SyncFeature, type SyncOptions } from "./sync";
 
 declare module "@tanstack/react-table" {
   // merge our new feature's state with the existing table state
@@ -30,30 +46,47 @@ declare module "@tanstack/react-table" {
     extends CountingTableState,
       ColumnsInfoTableState,
       FreezingTableState,
-      OrderingTableState {}
+      OrderingTableState,
+      TableMenuTableState {}
 
   // merge our new feature's options with the existing table options
   interface TableOptionsResolved<TData extends RowData>
     extends CountingOptions,
       ColumnsInfoOptions,
       FreezingOptions,
-      OrderingOptions {}
+      OrderingOptions,
+      RowActionsOptions,
+      TableMenuOptions,
+      SyncOptions {}
 
   // merge our new feature's instance APIs with the existing table instance APIs
   interface Table<TData extends RowData>
     extends CountingTableApi,
       ColumnsInfoTableApi,
       FreezingTableApi,
-      OrderingTableApi {}
+      OrderingTableApi,
+      RowActionsTableApi,
+      TableMenuTableApi {}
 
-  // interface TableMeta<TData extends RowData> {
-  //   updateData: (rowIndex: number, columnId: string, value: unknown) => void;
-  // }
-
-  interface Column<TData extends RowData> extends ColumnInfoColumnApi {}
+  interface Column<TData extends RowData>
+    extends ColumnInfoColumnApi,
+      RowActionsColumnApi {}
 }
 
 export * from "./columns-info";
 export * from "./counting";
 export * from "./freezing";
+export * from "./menu";
 export * from "./ordering";
+export * from "./row-actions";
+export * from "./sync";
+
+export const DEFAULT_FEATURES = [
+  ColumnsInfoFeature,
+  CountingFeature,
+  FreezingFeature,
+  OrderingFeature,
+  TableMenuFeature,
+  RowActionsFeature,
+  SyncFeature,
+];

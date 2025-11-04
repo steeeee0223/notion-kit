@@ -1,7 +1,17 @@
 "use client";
 
 import React from "react";
-import { closestCenter, DndContext, type DragEndEvent } from "@dnd-kit/core";
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  MouseSensor,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
 import {
   restrictToParentElement,
   restrictToVerticalAxis,
@@ -28,4 +38,19 @@ export function VerticalDnd({ items, children, onDragEnd }: VerticalDndProps) {
       </SortableContext>
     </DndContext>
   );
+}
+
+export function useDndSensors() {
+  const pointer = useSensor(PointerSensor, {
+    activationConstraint: { distance: 5 },
+  });
+  const mouse = useSensor(MouseSensor, {
+    activationConstraint: { distance: 5 },
+  });
+  const touch = useSensor(TouchSensor, {
+    activationConstraint: { distance: 5 },
+  });
+  const keyboard = useSensor(KeyboardSensor, {});
+
+  return useSensors(pointer, mouse, touch, keyboard);
 }

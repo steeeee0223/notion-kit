@@ -1,15 +1,16 @@
 "use client";
 
 import React from "react";
+import { closestCenter, DndContext } from "@dnd-kit/core";
+import {
+  restrictToHorizontalAxis,
+  restrictToParentElement,
+} from "@dnd-kit/modifiers";
 import {
   horizontalListSortingStrategy,
   SortableContext,
 } from "@dnd-kit/sortable";
-import {
-  flexRender,
-  type ColumnOrderState,
-  type Header,
-} from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
@@ -21,26 +22,37 @@ import {
   PopoverTrigger,
 } from "@notion-kit/shadcn";
 
-import type { Row } from "../lib/types";
-import { TableViewMenuPage } from "../lib/utils";
+import { useDndSensors } from "../common";
+import { TableViewMenuPage } from "../features";
 import { TableViewMenu, TypesMenu } from "../menus";
 import { useTableViewCtx } from "../table-contexts";
 import { TableHeaderActionCell } from "./table-header-action-cell";
 
-interface TableHeaderRowProps {
-  leftPinnedHeaders: Header<Row, unknown>[];
-  headers: Header<Row, unknown>[];
-  columnOrder: ColumnOrderState;
-}
+export const DndTableHeader = React.memo(function DndTableHeader() {
+  const { table } = useTableViewCtx();
+  const sensors = useDndSensors();
 
-export function TableHeaderRow({
-  leftPinnedHeaders,
-  headers,
-  columnOrder,
-}: TableHeaderRowProps) {
-  const { menu, setTableMenu } = useTableViewCtx();
+  return (
+    <DndContext
+      collisionDetection={closestCenter}
+      modifiers={[restrictToHorizontalAxis, restrictToParentElement]}
+      onDragEnd={table.handleColumnDragEnd}
+      sensors={sensors}
+    >
+      <div className="relative">
+        <TableHeaderRow />
+      </div>
+    </DndContext>
+  );
+});
+
+function TableHeaderRow() {
+  const { table } = useTableViewCtx();
   const isMobile = useIsMobile();
 
+  const { columnOrder, menu } = table.getState();
+  const headers = table.getCenterLeafHeaders();
+  const leftPinnedHeaders = table.getLeftLeafHeaders();
   const isLeftPinned = leftPinnedHeaders.length > 0;
 
   return (
@@ -114,7 +126,7 @@ export function TableHeaderRow({
       </Popover>
       <Popover
         open={menu.open}
-        onOpenChange={(open) => setTableMenu({ open, page: null })}
+        onOpenChange={(open) => table.setTableMenuState({ open, page: null })}
       >
         <PopoverTrigger asChild>
           <TableHeaderActionCell icon={<Icon.Dots />} />

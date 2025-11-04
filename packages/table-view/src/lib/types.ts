@@ -7,7 +7,6 @@ import type {
   InferKey,
   InferPlugin,
 } from "../plugins";
-import { TableViewMenuPage } from "./utils";
 
 interface PropertyBase {
   id: string;
@@ -60,11 +59,3 @@ export type Rows<TPlugins extends CellPlugin[] = CellPlugin[]> = Record<
   string,
   Row<TPlugins>
 >;
-
-// Table View Menu
-export interface TableMenu {
-  open: boolean;
-  page: TableViewMenuPage | null;
-  id?: string;
-  data?: Record<string, unknown>;
-}

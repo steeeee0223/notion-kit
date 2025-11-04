@@ -1,14 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useReducer, useState } from "react";
-import {
-  KeyboardSensor,
-  MouseSensor,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
+import { useCallback, useMemo, useReducer } from "react";
 import {
   getCoreRowModel,
   getSortedRowModel,
@@ -16,21 +8,14 @@ import {
   type ColumnDef,
 } from "@tanstack/react-table";
 
-import {
-  ColumnsInfoFeature,
-  CountingFeature,
-  FreezingFeature,
-  OrderingFeature,
-  type ColumnsInfoState,
-} from "../features";
-import type { PluginsMap, Row, TableMenu } from "../lib/types";
+import { DEFAULT_FEATURES, type ColumnsInfoState } from "../features";
+import type { PluginsMap, Row } from "../lib/types";
 import type { Entity } from "../lib/utils";
 import type { CellPlugin } from "../plugins";
 import { TableRowCell } from "../table-body";
 import { TableFooterCell } from "../table-footer";
 import { TableHeaderCell } from "../table-header";
 import { createTableViewReducer, type TableViewAction } from "./table-reducer";
-import type { TableViewCtx } from "./table-view-context";
 import type { PartialTableState } from "./types";
 import {
   createColumnSortingFn,
@@ -40,6 +25,15 @@ import {
   toControlledState,
   toDatabaseProperties,
 } from "./utils";
+
+const defaultColumn: Partial<ColumnDef<Row>> = {
+  size: 200,
+  minSize: 100,
+  maxSize: Number.MAX_SAFE_INTEGER,
+  header: ({ header }) => <TableHeaderCell header={header} />,
+  cell: ({ row, column }) => <TableRowCell column={column} row={row} />,
+  footer: ({ column }) => <TableFooterCell column={column} />,
+};
 
 interface UseTableViewOptions<TPlugins extends CellPlugin[]> {
   plugins: Entity<TPlugins[number]>;
@@ -111,16 +105,13 @@ export function useTableView<TPlugins extends CellPlugin[]>({
         accessorKey: property.name,
         minSize: getMinWidth(property.type),
         sortingFn,
-        header: ({ header }) => <TableHeaderCell header={header} />,
-        cell: ({ row, column }) => <TableRowCell column={column} row={row} />,
-        footer: ({ column }) => <TableFooterCell column={column} />,
       };
     });
 
-    const columnsInfo = properties.reduce<ColumnsInfoState>(
-      (acc, col) => ({ ...acc, [col.id]: col }),
-      {},
-    );
+    const columnsInfo = properties.reduce<ColumnsInfoState>((acc, col) => {
+      acc[col.id] = col;
+      return acc;
+    }, {});
 
     return { columns, columnsInfo };
   }, [_state.properties, plugins.items, props.state?.properties]);
@@ -134,95 +125,33 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   const table = useReactTable({
     columns: columnsData.columns,
     data,
-    defaultColumn: {
-      size: 200,
-      minSize: 100,
-      maxSize: Number.MAX_SAFE_INTEGER,
-    },
+    defaultColumn,
     columnResizeMode: "onChange",
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     state: {
-      sorting: _state.table.sorting,
       rowOrder,
       columnOrder,
       columnsInfo: columnsData.columnsInfo,
       cellPlugins: pluginsMap,
     },
-    onSortingChange: (updater) => dispatch({ type: "update:sorting", updater }),
-    onColumnInfoChange: (id, updater) =>
-      dispatch({ type: "update:col", payload: { id }, updater }),
+    onColumnInfoChange: (updater) => dispatch({ type: "set:col", updater }),
     onColumnOrderChange: (updater) =>
       dispatch({ type: "set:col:order", updater }),
     onRowOrderChange: (updater) => dispatch({ type: "set:row:order", updater }),
-    onCellChange: (rowId, colId, data) =>
-      dispatch({ type: "update:cell", payload: { rowId, colId, data } }),
-    onTableDataChange: (data) =>
-      dispatch({ type: "set:table:data", payload: data }),
+    onTableDataChange: (updater) =>
+      dispatch({ type: "set:table:data", updater }),
+    sync: (key) => dispatch({ type: "sync", payload: key }),
     getRowId: (row) => row.id,
-    _features: [
-      ColumnsInfoFeature,
-      CountingFeature,
-      FreezingFeature,
-      OrderingFeature,
-    ],
+    _features: DEFAULT_FEATURES,
   });
 
-  /**
-   * Instead of calling `column.getSize()` on every render for every header
-   * and especially every data cell (very expensive),
-   * we will calculate all column sizes at once at the root table level in a useMemo
-   * and pass the column sizes down as CSS variables to the <table> element.
-   */
-  const columnSizeVars = useMemo(
-    () => {
-      return table.getFlatHeaders().reduce<Record<string, number>>(
-        (sizes, header) => ({
-          ...sizes,
-          [`--header-${header.id}-size`]: header.getSize(),
-          [`--col-${header.column.id}-size`]: header.column.getSize(),
-        }),
-        {},
-      );
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      table.getFlatHeaders(),
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      table.getState().columnSizingInfo,
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      table.getState().columnSizing,
-    ],
-  );
-
-  /** DND */
-  const pointer = useSensor(PointerSensor, {
-    activationConstraint: { distance: 5 },
-  });
-  const mouse = useSensor(MouseSensor, {
-    activationConstraint: { distance: 5 },
-  });
-  const touch = useSensor(TouchSensor, {
-    activationConstraint: { distance: 5 },
-  });
-  const keyboard = useSensor(KeyboardSensor, {});
-  const sensors = useSensors(pointer, mouse, touch, keyboard);
-
-  const [tableMenu, setTableMenu] = useState<TableMenu>({
-    open: false,
-    page: null,
-  });
-  const tableViewCtx = useMemo<TableViewCtx>(
+  return useMemo(
     () => ({
       table,
-      columnSizeVars,
-      sensors,
-      menu: tableMenu,
-      setTableMenu,
+      // use synced to force re-render
+      __synced: _state.synced,
     }),
-    [columnSizeVars, sensors, table, tableMenu],
+    [table, _state.synced],
   );
-
-  return [tableViewCtx, dispatch] as const;
 }

@@ -13,8 +13,8 @@ import {
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader, PropMeta } from "../common";
-import { TableViewMenuPage } from "../lib/utils";
-import { useTableActions, useTableViewCtx } from "../table-contexts";
+import { TableViewMenuPage } from "../features";
+import { useTableViewCtx } from "../table-contexts";
 import { propertyTypes } from "./types-menu-options";
 
 interface EditPropMenuProps {
@@ -33,14 +33,13 @@ interface EditPropMenuProps {
  * 6. ✅ Delete property
  */
 export function EditPropMenu({ propId }: EditPropMenuProps) {
-  const { table, setTableMenu } = useTableViewCtx();
-  const { duplicate } = useTableActions();
+  const { table } = useTableViewCtx();
 
   const info = table.getColumnInfo(propId);
 
   // 1. Type selection
   const openTypesMenu = () =>
-    setTableMenu({
+    table.setTableMenuState({
       open: true,
       page: TableViewMenuPage.ChangePropType,
       id: propId,
@@ -50,7 +49,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
   // 4. Hide in view
   const hideProp = () => table.setColumnInfo(propId, { hidden: true });
   // 5. Duplicate property
-  const duplicateProp = () => duplicate(propId, "col");
+  const duplicateProp = () => table.duplicateColumnInfo(propId);
   // 6. Delete property
   const deleteProp = () => table.setColumnInfo(propId, { isDeleted: true });
 
@@ -59,7 +58,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
       <MenuHeader
         title="Edit property"
         onBack={() =>
-          setTableMenu({ open: true, page: TableViewMenuPage.Props })
+          table.setTableMenuState({ open: true, page: TableViewMenuPage.Props })
         }
       />
       <PropMeta propId={propId} type={info.type} />

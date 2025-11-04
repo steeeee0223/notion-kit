@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
+import { flexRender, functionalUpdate } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
 import {
@@ -13,9 +14,9 @@ import {
 } from "@notion-kit/shadcn";
 
 import { PropMeta } from "../common";
-import { TableViewMenuPage } from "../lib/utils";
-import type { CellPlugin, InferConfig } from "../plugins";
-import { useTableActions, useTableViewCtx } from "../table-contexts";
+import { TableViewMenuPage } from "../features";
+import { ConfigMenuProps } from "../plugins";
+import { useTableViewCtx } from "../table-contexts";
 import { CalcMenu } from "./calc-menu";
 import { TypesMenu } from "./types-menu";
 
@@ -42,16 +43,11 @@ interface PropMenuProps {
  * 11. ✅ Delete property
  */
 export function PropMenu({ propId }: PropMenuProps) {
-  const { table, setTableMenu } = useTableViewCtx();
-  const { duplicate } = useTableActions();
+  const { table } = useTableViewCtx();
 
   const info = table.getColumnInfo(propId);
   const plugin = table.getColumnPlugin(propId);
 
-  // 0. Edit property config
-  const [configDraft, setConfigDraft] = useState<
-    InferConfig<CellPlugin<string, unknown, unknown>>
-  >(info.config ?? plugin.default.config);
   // 3. Sorting
   const sortColumn = (desc: boolean) =>
     table.setSorting([{ id: propId, desc }]);
@@ -65,14 +61,14 @@ export function PropMenu({ propId }: PropMenuProps) {
   const wrapProp = () => table.toggleColumnWrapped(propId, (v) => !v);
   // 9. Insert left/right
   const insertColumn = (side: "left" | "right") => {
-    setTableMenu({
+    table.setTableMenuState({
       open: true,
       page: TableViewMenuPage.CreateProp,
       data: { at: { id: propId, side } },
     });
   };
   // 10. Duplicate property
-  const duplicateProp = () => duplicate(propId, "col");
+  const duplicateProp = () => table.duplicateColumnInfo(propId);
   // 11. Delete property
   const deleteProp = () => table.setColumnInfo(propId, { isDeleted: true });
 
@@ -80,17 +76,14 @@ export function PropMenu({ propId }: PropMenuProps) {
     <>
       <PropMeta propId={propId} type={info.type} />
       <DropdownMenuGroup>
-        {plugin.renderConfigMenu?.({
+        {flexRender<ConfigMenuProps>(plugin.renderConfigMenu, {
           propId,
-          config: configDraft,
-          onChange: setConfigDraft,
-          onOpenChange: (open) => {
-            if (open) return;
+          config: info.config ?? plugin.default.config,
+          onChange: (updater) =>
             table._setColumnInfo(propId, (prev) => ({
               ...prev,
-              config: configDraft,
-            }));
-          },
+              config: functionalUpdate(updater, prev.config),
+            })),
         })}
         {info.type !== "title" && (
           <DropdownMenuSub>

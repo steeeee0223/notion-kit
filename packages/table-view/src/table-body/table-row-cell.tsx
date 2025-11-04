@@ -1,10 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import type { Column, Row as RowModel } from "@tanstack/react-table";
+import {
+  flexRender,
+  type Column,
+  type Row as RowModel,
+} from "@tanstack/react-table";
 
 import type { ColumnInfo, Row } from "../lib/types";
-import type { CellPlugin, InferData } from "../plugins";
+import type { CellPlugin, CellProps } from "../plugins";
 
 enum CellMode {
   Normal = "normal",
@@ -39,16 +43,13 @@ export function TableRowCell<TPlugin extends CellPlugin>({
       style={{ width }}
     >
       <div className="flex h-full overflow-x-clip" style={{ width }}>
-        {plugin.renderCell({
+        {flexRender<CellProps<TPlugin>>(plugin.renderCell, {
           propId: column.id,
           data: cell.value,
           config: info.config,
           wrapped: info.wrapped,
           onChange: (value) =>
-            column.updateCell(row.id, {
-              id: cell.id,
-              value: value as InferData<TPlugin>,
-            }),
+            column.updateCell(row.id, { id: cell.id, value }),
         })}
       </div>
       {mode === CellMode.Select && (

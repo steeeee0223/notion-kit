@@ -5,4 +5,4 @@ export { OptionTag } from "./option-tag";
 export { PropMeta } from "./prop-meta";
 export { TextInputPopover } from "./use-text-input-popover";
 export { useTriggerPosition } from "./use-trigger-position";
-export { VerticalDnd } from "./vertical-dnd";
+export { VerticalDnd, useDndSensors } from "./vertical-dnd";

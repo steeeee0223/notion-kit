@@ -16,10 +16,10 @@ import {
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader } from "../common";
+import { TableViewMenuPage } from "../features";
 import type { PluginType } from "../lib/types";
-import { TableViewMenuPage } from "../lib/utils";
 import { CellPlugin } from "../plugins";
-import { useTableActions, useTableViewCtx } from "../table-contexts";
+import { useTableViewCtx } from "../table-contexts";
 import { propOptions } from "./types-menu-options";
 
 interface TypesMenuProps {
@@ -47,8 +47,7 @@ interface TypesMenuProps {
 }
 
 export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
-  const { table, setTableMenu } = useTableViewCtx();
-  const { addColumn } = useTableActions();
+  const { table } = useTableViewCtx();
 
   const plugins = table.getState().cellPlugins;
   const propType = propId ? table.getColumnInfo(propId).type : null;
@@ -62,11 +61,15 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
     if (colId === undefined) {
       colId = v4();
       const uniqueName = table.generateUniqueColumnName(name);
-      addColumn({ id: colId, type, name: uniqueName, at });
+      table.addColumnInfo({ id: colId, type, name: uniqueName, at });
     } else {
       table.setColumnType(colId, type);
     }
-    setTableMenu({ open: true, page: TableViewMenuPage.EditProp, id: colId });
+    table.setTableMenuState({
+      open: true,
+      page: TableViewMenuPage.EditProp,
+      id: colId,
+    });
   };
 
   return (
@@ -81,7 +84,7 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
           onBack={
             back
               ? () =>
-                  setTableMenu({
+                  table.setTableMenuState({
                     open: true,
                     page:
                       menu === TableViewMenuPage.ChangePropType

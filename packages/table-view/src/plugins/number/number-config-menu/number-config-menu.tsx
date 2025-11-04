@@ -20,10 +20,9 @@ import { RoundingMenu } from "./rounding-menu";
 export function NumberConfigMenu({
   config,
   onChange,
-  onOpenChange,
 }: ConfigMenuProps<NumberConfig>) {
   return (
-    <DropdownMenuSub onOpenChange={onOpenChange}>
+    <DropdownMenuSub>
       <DropdownMenuSubTrigger Icon={<Icon.Sliders />} Body="Edit property" />
       <DropdownMenuSubContent className="w-75">
         <DropdownMenuGroup>

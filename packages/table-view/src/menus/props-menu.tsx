@@ -23,15 +23,15 @@ import {
   MenuHeader,
   VerticalDnd,
 } from "../common";
+import { TableViewMenuPage } from "../features";
 import type { ColumnInfo } from "../lib/types";
-import { TableViewMenuPage } from "../lib/utils";
 import { useTableViewCtx } from "../table-contexts";
 
 /**
  * @summary The menu of all properties
  */
 export function PropsMenu() {
-  const { table, setTableMenu } = useTableViewCtx();
+  const { table } = useTableViewCtx();
   const { columnOrder } = table.getState();
   const noShownProps = table.countVisibleColumns() === 1;
   // Search
@@ -56,7 +56,11 @@ export function PropsMenu() {
   );
   // Menu actions
   const openEditPropMenu = (propId: string) =>
-    setTableMenu({ open: true, page: TableViewMenuPage.EditProp, id: propId });
+    table.setTableMenuState({
+      open: true,
+      page: TableViewMenuPage.EditProp,
+      id: propId,
+    });
 
   useLayoutEffect(() => {
     inputRef.current?.focus();
@@ -66,7 +70,7 @@ export function PropsMenu() {
     <>
       <MenuHeader
         title="Properties"
-        onBack={() => setTableMenu({ open: true, page: null })}
+        onBack={() => table.setTableMenuState({ open: true, page: null })}
       />
       <div className="flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2">
         <Input
@@ -119,7 +123,10 @@ export function PropsMenu() {
         <MenuItem
           variant="secondary"
           onClick={() =>
-            setTableMenu({ open: true, page: TableViewMenuPage.CreateProp })
+            table.setTableMenuState({
+              open: true,
+              page: TableViewMenuPage.CreateProp,
+            })
           }
           Icon={<Icon.Plus className="size-4" />}
           Body="New property"
@@ -129,7 +136,10 @@ export function PropsMenu() {
             variant="secondary"
             tabIndex={0}
             onClick={() =>
-              setTableMenu({ open: true, page: TableViewMenuPage.DeletedProps })
+              table.setTableMenuState({
+                open: true,
+                page: TableViewMenuPage.DeletedProps,
+              })
             }
             Icon={<Icon.Trash />}
             Body="Deleted properties"

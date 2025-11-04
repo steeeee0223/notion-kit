@@ -10,20 +10,19 @@ import {
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader } from "../common";
+import { TableViewMenuPage } from "../features";
 import type { ColumnInfo } from "../lib/types";
-import { TableViewMenuPage } from "../lib/utils";
-import { useTableActions, useTableViewCtx } from "../table-contexts";
+import { useTableViewCtx } from "../table-contexts";
 
 export function DeletedPropsMenu() {
-  const { table, setTableMenu } = useTableViewCtx();
-  const { remove } = useTableActions();
+  const { table } = useTableViewCtx();
 
   return (
     <>
       <MenuHeader
         title="Deleted properties"
         onBack={() =>
-          setTableMenu({ open: true, page: TableViewMenuPage.Props })
+          table.setTableMenuState({ open: true, page: TableViewMenuPage.Props })
         }
       />
       <MenuGroup>
@@ -32,7 +31,7 @@ export function DeletedPropsMenu() {
             key={info.id}
             info={info}
             onRestore={() => table.setColumnInfo(info.id, { isDeleted: false })}
-            onDelete={() => remove(info.id, "col")}
+            onDelete={() => table.removeColumnInfo(info.id)}
           />
         ))}
       </MenuGroup>

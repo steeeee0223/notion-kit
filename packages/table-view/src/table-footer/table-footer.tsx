@@ -1,20 +1,19 @@
+"use client";
+
 import React from "react";
-import { flexRender, type Header } from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 
 import { CountMethod } from "../features";
-import type { Row } from "../lib/types";
 import { useTableViewCtx } from "../table-contexts";
 
-interface TableFooterProps {
-  leftPinnedHeaders: Header<Row, unknown>[];
-  headers: Header<Row, unknown>[];
-}
-
-export function TableFooter({ leftPinnedHeaders, headers }: TableFooterProps) {
-  const isLeftPinned = leftPinnedHeaders.length > 0;
+export function TableFooter() {
   const { table } = useTableViewCtx();
+
+  const leftPinnedHeaders = table.getLeftLeafHeaders();
+  const headers = table.getCenterLeafHeaders();
+  const isLeftPinned = leftPinnedHeaders.length > 0;
   const isSomeCountMethodSet = Object.values(
     table.getState().columnCounting,
   ).some((v) => v.method !== CountMethod.NONE);

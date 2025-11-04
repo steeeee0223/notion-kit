@@ -17,7 +17,7 @@ interface TitleCellProps {
   icon?: IconData;
   value: string;
   wrapped?: boolean;
-  onUpdate?: (value: string) => void;
+  onUpdate: (value: string) => void;
 }
 
 export function TitleCell({ icon, value, wrapped, onUpdate }: TitleCellProps) {
