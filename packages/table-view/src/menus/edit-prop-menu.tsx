@@ -15,7 +15,6 @@ import {
 import { DefaultIcon, MenuHeader, PropMeta } from "../common";
 import { TableViewMenuPage } from "../features";
 import { useTableViewCtx } from "../table-contexts";
-import { propertyTypes } from "./types-menu-options";
 
 interface EditPropMenuProps {
   propId: string;
@@ -36,6 +35,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
   const { table } = useTableViewCtx();
 
   const info = table.getColumnInfo(propId);
+  const plugin = table.getColumnPlugin(propId);
 
   // 1. Type selection
   const openTypesMenu = () =>
@@ -95,7 +95,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
                 <div className="flex truncate">
                   <DefaultIcon type={info.type} className="fill-current" />
                   <div className="inline-block min-h-1 min-w-1" />
-                  <span>{propertyTypes[info.type]!.title}</span>
+                  <span>{plugin.meta.name}</span>
                 </div>
                 <Icon.ChevronRight className="transition-out h-full w-3 fill-current" />
               </MenuItemAction>
