@@ -8,12 +8,10 @@ import { getDefaultCell, insertAt } from "../lib/utils";
 import type { CellPlugin } from "../plugins";
 import { TitlePlugin } from "../plugins/title";
 
-// define types for our new feature's table options
 export interface RowActionsOptions {
   onTableDataChange?: OnChangeFn<Rows>;
 }
 
-// Define types for our new feature's table APIs
 export interface RowActionsTableApi {
   setTableData: OnChangeFn<Rows>;
   // Cell API
@@ -44,17 +42,12 @@ export interface RowActionsColumnApi {
 }
 
 export const RowActionsFeature: TableFeature = {
-  // define the new feature's default options
   getDefaultOptions: (): RowActionsOptions => {
     return {};
   },
-
-  // define the new feature's table instance methods
   createTable: (table: Table<Row>): void => {
-    table.setTableData = (updater) => {
+    table.setTableData = (updater) =>
       table.options.onTableDataChange?.(updater);
-      table.options.meta?.sync?.(["body"]);
-    };
     /** Cell API */
     table.getCellValues = () =>
       table.getCoreRowModel().rows.reduce<Rows>((acc, row) => {

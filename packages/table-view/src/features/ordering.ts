@@ -7,22 +7,19 @@ import type {
   TableFeature,
   Updater,
 } from "@tanstack/react-table";
-import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
+import { makeStateUpdater } from "@tanstack/react-table";
 
-// define types for our new feature's custom state
 export type OrderingState = string[];
 
 export interface OrderingTableState {
   rowOrder: OrderingState;
 }
 
-// define types for our new feature's table options
 export interface OrderingOptions {
   onRowOrderChange?: OnChangeFn<OrderingState>;
   onColumnOrderChange?: OnChangeFn<OrderingState>;
 }
 
-// Define types for our new feature's table APIs
 export interface OrderingTableApi {
   setRowOrder: (updater: Updater<OrderingState>) => void;
   handleRowDragEnd: (e: DragEndEvent) => void;
@@ -30,7 +27,6 @@ export interface OrderingTableApi {
 }
 
 export const OrderingFeature: TableFeature = {
-  // define the new feature's initial state
   getInitialState: (state): OrderingTableState => {
     return {
       rowOrder: [],
@@ -38,7 +34,6 @@ export const OrderingFeature: TableFeature = {
     };
   },
 
-  // define the new feature's default options
   getDefaultOptions: <TData extends RowData>(
     table: Table<TData>,
   ): OrderingOptions => {
@@ -48,20 +43,8 @@ export const OrderingFeature: TableFeature = {
     };
   },
 
-  // define the new feature's table instance methods
   createTable: <TData extends RowData>(table: Table<TData>): void => {
-    table.setRowOrder = (updater) => {
-      table.options.onRowOrderChange?.((prev) =>
-        functionalUpdate(updater, prev),
-      );
-      table.options.meta?.sync?.(["body"]);
-    };
-    table.setColumnOrder = (updater) => {
-      table.options.onColumnOrderChange?.((prev) =>
-        functionalUpdate(updater, prev),
-      );
-      table.options.meta?.sync?.(["header"]);
-    };
+    table.setRowOrder = (updater) => table.options.onRowOrderChange?.(updater);
     table.handleRowDragEnd = (e) => {
       // if we don't have a rowOrder yet, initialize it to the current order
       const rowCount = table.getRowCount();

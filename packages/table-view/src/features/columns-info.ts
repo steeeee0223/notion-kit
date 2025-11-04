@@ -18,7 +18,6 @@ import {
 import type { CellPlugin, InferActions, InferPlugin } from "../plugins";
 import { DEFAULT_PLUGINS } from "../plugins";
 
-// define types for our new feature's custom state
 export type ColumnsInfoState<TPlugins extends CellPlugin[] = CellPlugin[]> =
   Record<string, ColumnInfo<InferPlugin<TPlugins>>>;
 
@@ -31,12 +30,10 @@ export interface ColumnsInfoTableState {
   columnsInfo: ColumnsInfoState;
 }
 
-// define types for our new feature's table options
 export interface ColumnsInfoOptions {
   onColumnInfoChange?: OnChangeFn<ColumnsInfoState>;
 }
 
-// Define types for our new feature's table APIs
 export interface ColumnsInfoTableApi {
   // Column Getters
   getColumnInfo: (colId: string) => ColumnInfo;
@@ -80,7 +77,6 @@ export interface ColumnInfoColumnApi {
 }
 
 export const ColumnsInfoFeature: TableFeature<Row> = {
-  // define the new feature's initial state
   getInitialState: (state): ColumnsInfoTableState => {
     return {
       cellPlugins: arrayToEntity(DEFAULT_PLUGINS).items,
@@ -89,14 +85,12 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     };
   },
 
-  // define the new feature's default options
   getDefaultOptions: (table: Table<Row>): ColumnsInfoOptions => {
     return {
       onColumnInfoChange: makeStateUpdater("columnsInfo", table),
     };
   },
 
-  // define the new feature's table instance methods
   createTable: (table: Table<Row>): void => {
     /** Column Getters */
     table.getColumnInfo = (colId) => {
@@ -131,18 +125,6 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
       }, 0);
     };
     /** Overrides */
-    table.setColumnSizing = (updater) => {
-      table.options.onColumnSizingChange?.(updater);
-      table.options.meta?.sync?.(["header"]);
-    };
-    table.setColumnSizingInfo = (updater) => {
-      table.options.onColumnSizingInfoChange?.(updater);
-      table.options.meta?.sync?.(["header"]);
-    };
-    table.setColumnVisibility = (updater) => {
-      table.options.onColumnVisibilityChange?.(updater);
-      table.options.meta?.sync?.(["header"]);
-    };
     table.toggleAllColumnsVisible = () => {
       const canHide = table.countVisibleColumns() > 1;
       table.getState().columnOrder.forEach((colId) => {
@@ -158,7 +140,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         ...prev,
         [colId]: functionalUpdate(updater, prev[colId]!),
       }));
-      table.options.meta?.sync?.(["header"]);
+      table.options.sync?.(["header"]);
       // Sync column visibility
       const info = functionalUpdate(updater, table.getColumnInfo(colId));
       if (info.hidden !== undefined || info.isDeleted !== undefined)

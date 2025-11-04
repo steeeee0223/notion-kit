@@ -7,7 +7,6 @@ import type {
 } from "@tanstack/react-table";
 import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
 
-// define types for our new feature's custom state
 export type FreezingState = {
   colId: string;
   index: number;
@@ -17,13 +16,11 @@ export interface FreezingTableState {
   columnFreezing: FreezingState;
 }
 
-// define types for our new feature's table options
 export interface FreezingOptions {
   enableColumnFreezing?: boolean;
   onColumnFreezingChange?: OnChangeFn<FreezingState>;
 }
 
-// Define types for our new feature's table APIs
 export interface FreezingTableApi {
   getFreezingState: () => FreezingState;
   getCanFreezeColumn: (colId: string) => boolean;
@@ -32,12 +29,10 @@ export interface FreezingTableApi {
 }
 
 export const FreezingFeature: TableFeature = {
-  // define the new feature's initial state
   getInitialState: (state): FreezingTableState => {
     return { columnFreezing: null, ...state };
   },
 
-  // define the new feature's default options
   getDefaultOptions: <TData extends RowData>(
     table: Table<TData>,
   ): FreezingOptions => {
@@ -47,7 +42,6 @@ export const FreezingFeature: TableFeature = {
     };
   },
 
-  // define the new feature's table instance methods
   createTable: <TData extends RowData>(table: Table<TData>): void => {
     const throwIfDisabled = () => {
       if (!table.options.enableColumnFreezing) {
@@ -75,7 +69,6 @@ export const FreezingFeature: TableFeature = {
           ? table.getState().columnOrder.slice(0, nextState.index + 1)
           : [],
       });
-      table.options.meta?.sync?.(["header", "footer"]);
     };
     table.toggleColumnFreezed = (colId) => {
       const index = table.getColumn(colId)?.getIndex();

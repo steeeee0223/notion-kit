@@ -8,15 +8,7 @@ import {
   type ColumnDef,
 } from "@tanstack/react-table";
 
-import {
-  ColumnsInfoFeature,
-  CountingFeature,
-  FreezingFeature,
-  OrderingFeature,
-  RowActionsFeature,
-  TableMenuFeature,
-  type ColumnsInfoState,
-} from "../features";
+import { DEFAULT_FEATURES, type ColumnsInfoState } from "../features";
 import type { PluginsMap, Row } from "../lib/types";
 import type { Entity } from "../lib/utils";
 import type { CellPlugin } from "../plugins";
@@ -149,18 +141,9 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     onRowOrderChange: (updater) => dispatch({ type: "set:row:order", updater }),
     onTableDataChange: (updater) =>
       dispatch({ type: "set:table:data", updater }),
+    sync: (key) => dispatch({ type: "sync", payload: key }),
     getRowId: (row) => row.id,
-    meta: {
-      sync: (key) => dispatch({ type: "sync", payload: key }),
-    },
-    _features: [
-      ColumnsInfoFeature,
-      CountingFeature,
-      FreezingFeature,
-      OrderingFeature,
-      TableMenuFeature,
-      RowActionsFeature,
-    ],
+    _features: DEFAULT_FEATURES,
   });
 
   return useMemo(
