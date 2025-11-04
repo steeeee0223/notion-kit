@@ -11,7 +11,7 @@ import { wrappedClassName } from "../../lib/utils";
 interface TextCellProps {
   value: string;
   wrapped?: boolean;
-  onUpdate?: (value: string) => void;
+  onUpdate: (value: string) => void;
 }
 
 export function TextCell({ value, wrapped, onUpdate }: TextCellProps) {

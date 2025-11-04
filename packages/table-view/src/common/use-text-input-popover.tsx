@@ -18,11 +18,13 @@ interface TextInputPopoverProps extends TextInputContentProps {
 
 export function TextInputPopover({
   renderTrigger,
+  onUpdate,
   ...props
 }: TextInputPopoverProps) {
   const { ref, position, width } = useTriggerPosition<HTMLButtonElement>();
+  const [open, setOpen] = useState(false);
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger ref={ref} asChild>
         {renderTrigger({ width })}
       </PopoverTrigger>
@@ -32,7 +34,13 @@ export function TextInputPopover({
         align="start"
         className="max-h-[773px] min-h-[38px] w-60 overflow-visible backdrop-filter-none"
       >
-        <TextInputContent {...props} />
+        <TextInputContent
+          {...props}
+          onUpdate={(v) => {
+            onUpdate(v);
+            setOpen(false);
+          }}
+        />
       </PopoverContent>
     </Popover>
   );
@@ -41,7 +49,7 @@ export function TextInputPopover({
 interface TextInputContentProps {
   className?: string;
   value: string;
-  onUpdate?: (value: string) => void;
+  onUpdate: (value: string) => void;
 }
 
 function TextInputContent({
@@ -65,9 +73,9 @@ function TextInputContent({
         setValue(e.target.value);
       }}
       onKeyDown={(e) => {
-        if (e.key === "Enter") onUpdate?.(value);
+        if (e.key === "Enter") onUpdate(value);
       }}
-      onBlur={() => onUpdate?.(value)}
+      onBlur={() => onUpdate(value)}
       className={cn(
         "max-h-[771px] min-h-9 border-none bg-transparent word-break whitespace-pre-wrap caret-primary",
         className,
