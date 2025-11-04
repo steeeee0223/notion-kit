@@ -230,7 +230,6 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
       // Update column order
       table.setColumnOrder((prev) => insertAt(prev, newColId, idx + 1));
       // Update all rows
-      const defaultCell = getDefaultCell(cellPlugins[src.type]!);
       table.setTableData((prev) =>
         rowOrder.reduce(
           (acc, rowId) => {
@@ -241,7 +240,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
                 ...prev[rowId],
                 properties: {
                   ...prev[rowId].properties,
-                  [newColId]: defaultCell,
+                  [newColId]: getDefaultCell(cellPlugins[src.type]!),
                 },
               },
             };
