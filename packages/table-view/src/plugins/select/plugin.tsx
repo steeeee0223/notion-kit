@@ -131,6 +131,11 @@ function fromReadableValue(
 export function select(): SelectPlugin {
   return {
     id: "select",
+    meta: {
+      name: "Select",
+      icon: <DefaultIcon type="select" className="fill-menu-icon" />,
+      desc: "Use a select property to choose one option from a predefined list. Great for categorization.",
+    },
     default: {
       name: "Select",
       icon: <DefaultIcon type="select" />,
@@ -159,6 +164,11 @@ export function select(): SelectPlugin {
 export function multiSelect(): MultiSelectPlugin {
   return {
     id: "multi-select",
+    meta: {
+      name: "Multi-Select",
+      icon: <DefaultIcon type="multi-select" className="fill-menu-icon" />,
+      desc: "Use a multi-select property to choose multiple options from a predefined list. Useful for tagging or categorization.",
+    },
     default: {
       name: "Multi-Select",
       icon: <DefaultIcon type="multi-select" />,

@@ -26,6 +26,11 @@ function titleReducer(v: TableDataAtom, a: TitleActions): TableDataAtom {
 export function title(): TitlePlugin {
   return {
     id: "title",
+    meta: {
+      name: "Title",
+      icon: <DefaultIcon type="title" className="fill-menu-icon" />,
+      desc: "",
+    },
     default: {
       name: "Title",
       icon: <DefaultIcon type="title" />,

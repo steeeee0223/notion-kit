@@ -20,16 +20,15 @@ import { TableViewMenuPage } from "../features";
 import type { PluginType } from "../lib/types";
 import { CellPlugin } from "../plugins";
 import { useTableViewCtx } from "../table-contexts";
-import { propOptions } from "./types-menu-options";
 
 interface TypesMenuProps {
   /**
-   * @prop {propId}: if null, will create a new column;
+   * @prop if null, will create a new column;
    * otherwise will update a column by given `propId`
    */
   propId?: string;
   /**
-   * @prop {at}: if undefined, will create a new column at the end;
+   * @prop if undefined, will create a new column at the end;
    * otherwise will create a column at `at.side` of the column `at.id`
    */
   at?: {
@@ -37,11 +36,11 @@ interface TypesMenuProps {
     side: "left" | "right";
   };
   /**
-   * @prop {menu}: control the menu page
+   * @prop control the menu page
    */
   menu: TableViewMenuPage.CreateProp | TableViewMenuPage.ChangePropType | null;
   /**
-   * @prop {back}: whether to show back button in the header
+   * @prop whether to show back button in the header
    */
   back?: boolean;
 }
@@ -52,9 +51,9 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
   const plugins = table.getState().cellPlugins;
   const propType = propId ? table.getColumnInfo(propId).type : null;
 
-  const typeOptions = propOptions.filter((option) => option.type in plugins);
-  const { search, results, updateSearch } = useFilter(typeOptions, (prop, v) =>
-    prop.title.toLowerCase().includes(v),
+  const { search, results, updateSearch } = useFilter(
+    Object.values(plugins),
+    (prop, v) => prop.default.name.toLowerCase().includes(v),
   );
   const select = (type: PluginType<CellPlugin[]>, name: string) => {
     let colId = propId;
@@ -113,22 +112,22 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
               )}
               heading="Type"
             >
-              {results.map(({ type, title, description, icon }) => (
-                <CommandItem key={type} value={`default-${type}`} asChild>
+              {results.map(({ id, meta }) => (
+                <CommandItem key={id} value={`default-${id}`} asChild>
                   <TooltipPreset
                     side="left"
                     sideOffset={6}
-                    description={description}
+                    description={meta.desc}
                     // WARNING adding `text-xs/[1.4] to prevent style overriding by `CommandItem`
                     className="max-w-[282px] text-xs/[1.4]"
                   >
                     <MenuItem
-                      disabled={type === "title"}
-                      Icon={icon}
-                      Body={title}
-                      onClick={() => select(type, title)}
+                      disabled={id === "title"}
+                      Icon={meta.icon}
+                      Body={meta.name}
+                      onClick={() => select(id, meta.name)}
                     >
-                      {propType === type && <MenuItemCheck />}
+                      {propType === id && <MenuItemCheck />}
                     </MenuItem>
                   </TooltipPreset>
                 </CommandItem>

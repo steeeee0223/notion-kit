@@ -33,6 +33,23 @@ export interface CellPlugin<
   Actions extends { id: string } = any,
 > {
   id: Key;
+  /**
+   * @prop Metadata about the plugin. Displayed in <TypesMenu />.
+   */
+  meta: {
+    /**
+     * @prop Name of the plugin.
+     */
+    name: string;
+    /**
+     * @prop Description of the plugin.
+     */
+    desc: string;
+    /**
+     * @prop Icon representing the plugin in the UI.
+     */
+    icon: React.ReactNode;
+  };
   default: {
     /**
      * @prop Default property name when a new property is created.

@@ -23,6 +23,12 @@ export function DefaultIcon({ type, className }: DefaultIconProps) {
       return <Icon.TypesMultiSelect className={iconClassName} />;
     case "number":
       return <Icon.HashTag className={iconClassName} />;
+    case "email":
+      return <Icon.Username className={iconClassName} />;
+    case "phone":
+      return <Icon.PhoneCall className={iconClassName} />;
+    case "url":
+      return <Icon.Link className={iconClassName} />;
     default:
       return <div className={iconClassName} />;
   }

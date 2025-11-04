@@ -13,6 +13,11 @@ const numberSchema = z.string().refine((val) => !isNaN(Number(val)));
 export function number(): NumberPlugin {
   return {
     id: "number",
+    meta: {
+      name: "Number",
+      icon: <DefaultIcon type="number" className="fill-menu-icon" />,
+      desc: "Accepts numbers. These can also be formatted as currency or progress bars. Useful for tracking counts, prices and completion.",
+    },
     default: {
       name: "Number",
       icon: <DefaultIcon type="number" />,

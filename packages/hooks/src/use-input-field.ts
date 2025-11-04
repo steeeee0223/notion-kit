@@ -59,14 +59,10 @@ export function useInputField({
       onBlur: () => {
         if (error || value === initialValue) return;
         onUpdate?.(value);
-        setValue(initialValue);
       },
       onKeyDown: (e) => {
         if (e.key !== "Enter" || value === initialValue) return;
-        if (!error) {
-          onUpdate?.(value);
-          setValue(initialValue);
-        }
+        if (!error) onUpdate?.(value);
         onKeyDownUpdate?.();
       },
     }),
