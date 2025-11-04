@@ -1,3 +1,5 @@
+import { z } from "zod/v4";
+
 import { Input, SelectPreset, Switch } from "@notion-kit/shadcn";
 import { COLOR_OPTIONS } from "@notion-kit/utils";
 
@@ -9,6 +11,11 @@ interface OptionSettingsProps {
 }
 
 export function OptionSettings({ options, onUpdate }: OptionSettingsProps) {
+  const updateValue = (e: React.FocusEvent<HTMLInputElement>) => {
+    const parsed = z.coerce.number().safeParse(e.target.value);
+    onUpdate({ divideBy: parsed.success ? parsed.data : options.divideBy });
+  };
+
   return (
     <div className="mx-2.5 mt-3 flex flex-col items-center gap-2 overflow-hidden rounded-sm bg-default/5 py-3">
       <div className="flex h-7 w-full items-center gap-4 px-4">
@@ -26,10 +33,7 @@ export function OptionSettings({ options, onUpdate }: OptionSettingsProps) {
       <div className="flex h-7 w-full items-center gap-4 px-4">
         <div className="flex-[6_1_0] text-sm">Divide by</div>
         <div className="flex-[6_1_0]">
-          <Input
-            defaultValue={options.divideBy}
-            onBlur={(e) => onUpdate({ divideBy: e.target.valueAsNumber })}
-          />
+          <Input defaultValue={options.divideBy} onBlur={updateValue} />
         </div>
       </div>
       <div className="flex h-7 w-full items-center gap-4 px-4">
