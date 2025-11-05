@@ -169,8 +169,8 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     getSortedRowModel: getSortedRowModel(),
     state: {
       rowOrder: dataEntity.ids,
-      columnOrder: _columnEntity.ids,
-      columnsInfo: _columnEntity.items,
+      columnOrder: columnEntity.ids,
+      columnsInfo: columnEntity.items,
       cellPlugins: plugins.items,
     },
     ...columnHandlers,
