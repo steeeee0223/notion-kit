@@ -1,7 +1,7 @@
 import React from "react";
 import { Updater } from "@tanstack/react-table";
 
-import type { ColumnInfo, Rows } from "../lib/types";
+import type { ColumnInfo, Row } from "../lib/types";
 
 export interface CellProps<Data, Config = undefined> {
   propId: string;
@@ -20,7 +20,7 @@ export interface ConfigMenuProps<Config = unknown> {
 
 export interface TableDataAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {
   properties: Record<string, ColumnInfo<InferPlugin<TPlugins>>>;
-  data: Rows<TPlugins>;
+  data: Row<TPlugins>[];
 }
 
 export interface CellPlugin<
@@ -77,7 +77,7 @@ export interface CellPlugin<
   toTextValue: (data: Data) => string;
   transferConfig?: <TPlugin extends CellPlugin>(
     column: ColumnInfo<TPlugin>,
-    data: Rows,
+    data: Row<TPlugin[]>[],
   ) => Config;
   /**
    * @prop A reducer to handle actions related to other cells within this table.

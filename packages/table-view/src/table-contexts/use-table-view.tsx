@@ -13,7 +13,7 @@ import {
 
 import { DEFAULT_FEATURES } from "../features";
 import type { ColumnDefs, Row } from "../lib/types";
-import { arrayToEntity, type Entity } from "../lib/utils";
+import { type Entity } from "../lib/utils";
 import type { CellPlugin } from "../plugins";
 import { TableRowCell } from "../table-body";
 import { TableFooterCell } from "../table-footer";
@@ -115,42 +115,12 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   }, [onPropertiesChange, plugins.items]);
 
   /** data state */
-  const [_dataEntity, setDataEntity] = useState(arrayToEntity(data));
+  const [_dataEntity, setDataEntity] = useState(data);
   // Use memoized entity for controlled data
   const dataEntity = useMemo(
-    () => (isDataControlled ? arrayToEntity(data) : _dataEntity),
+    () => (isDataControlled ? data : _dataEntity),
     [isDataControlled, data, _dataEntity],
   );
-  const dataHandlers = useMemo<PartialTableOptions<TPlugins>>(() => {
-    if (!onDataChange) {
-      return {
-        onRowOrderChange: (updater) =>
-          setDataEntity((prev) => ({
-            ...prev,
-            ids: functionalUpdate(updater, prev.ids),
-          })),
-        onTableDataChange: (updater) =>
-          setDataEntity((prev) => ({
-            ...prev,
-            items: functionalUpdate(updater, prev.items),
-          })),
-      };
-    }
-    return {
-      onRowOrderChange: (updater) =>
-        onDataChange((prev) => {
-          const entity = arrayToEntity(prev);
-          const nextOrder = functionalUpdate(updater, entity.ids);
-          return nextOrder.map((id) => entity.items[id]!);
-        }),
-      onTableDataChange: (updater) =>
-        onDataChange((prev) => {
-          const entity = arrayToEntity(prev);
-          const next = functionalUpdate(updater, entity.items);
-          return prev.map((row) => next[row.id]!);
-        }),
-    };
-  }, [onDataChange]);
 
   const [synced, setSynced] = useState<SyncedState>({
     header: -1,
@@ -161,20 +131,20 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   /** table instance */
   const table = useReactTable({
     columns,
-    data: dataEntity.ids.map((id) => dataEntity.items[id]!),
+    data: dataEntity,
     defaultColumn,
     columnResizeMode: "onChange",
     getRowId: (row) => row.id,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     state: {
-      rowOrder: dataEntity.ids,
+      rowOrder: dataEntity.map((row) => row.id),
       columnOrder: columnEntity.ids,
       columnsInfo: columnEntity.items,
       cellPlugins: plugins.items,
     },
     ...columnHandlers,
-    ...dataHandlers,
+    onTableDataChange: onDataChange ?? setDataEntity,
     sync: (keys) =>
       setSynced((prev) =>
         keys.reduce((acc, key) => ({ ...acc, [key]: Date.now() }), {

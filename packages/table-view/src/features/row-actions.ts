@@ -3,19 +3,19 @@ import { v4 } from "uuid";
 
 import type { IconData } from "@notion-kit/icon-block";
 
-import type { Cell, Row, Rows } from "../lib/types";
+import type { Cell, Row } from "../lib/types";
 import { getDefaultCell, insertAt } from "../lib/utils";
 import type { CellPlugin } from "../plugins";
 import { TitlePlugin } from "../plugins/title";
 
 export interface RowActionsOptions {
-  onTableDataChange?: OnChangeFn<Rows>;
+  onTableDataChange?: OnChangeFn<Row[]>;
 }
 
 export interface RowActionsTableApi {
-  setTableData: OnChangeFn<Rows>;
+  setTableData: OnChangeFn<Row[]>;
   // Cell API
-  getCellValues: <TPlugins extends CellPlugin[]>() => Rows<TPlugins>;
+  getCellValues: <TPlugins extends CellPlugin[]>() => Row<TPlugins>[];
   getCell: <TPlugin extends CellPlugin>(
     colId: string,
     rowId: string,
@@ -50,10 +50,7 @@ export const RowActionsFeature: TableFeature = {
       table.options.onTableDataChange?.(updater);
     /** Cell API */
     table.getCellValues = () =>
-      table.getCoreRowModel().rows.reduce<Rows>((acc, row) => {
-        acc[row.id] = row.original;
-        return acc;
-      }, {});
+      table.getCoreRowModel().rows.map((row) => row.original);
     table.getCell = (colId, rowId) => {
       const cell = table.getRow(rowId).original.properties[colId];
       if (!cell) {
@@ -63,15 +60,13 @@ export const RowActionsFeature: TableFeature = {
     };
     table.updateCell = (rowId, colId, data) => {
       table.setTableData((prev) => {
-        const row = prev[rowId];
-        if (!row) return prev;
-        return {
-          ...prev,
-          [rowId]: {
+        return prev.map((row) => {
+          if (row.id !== rowId) return row;
+          return {
             ...row,
             properties: { ...row.properties, [colId]: data },
-          },
-        };
+          };
+        });
       });
     };
     /** Row API */
@@ -92,7 +87,11 @@ export const RowActionsFeature: TableFeature = {
           const plugin = table.getColumnPlugin(colId);
           row.properties[colId] = getDefaultCell(plugin);
         });
-        return { ...prev, [rowId]: row };
+        if (payload === undefined) return [...prev, row];
+        const idx = prev.findIndex((row) => row.id === payload.id);
+        return payload.at === "next"
+          ? insertAt(prev, row, idx + 1)
+          : insertAt(prev, row, idx);
       });
     };
     table.duplicateRow = (id) => {
@@ -100,32 +99,28 @@ export const RowActionsFeature: TableFeature = {
       // Update row order
       table.setRowOrder((prev) => {
         const idx = prev.indexOf(id);
+        if (idx < 0) return prev;
         return insertAt(prev, rowId, idx + 1);
       });
       // Update table data
       table.setTableData((prev) => {
-        const src = prev[id];
-        if (!src) return prev;
+        const idx = prev.findIndex((row) => row.id === id);
+        if (idx < 0) return prev;
+        const src = prev[idx]!;
         const properties = Object.fromEntries(
           Object.entries(src.properties).map(([colId, cell]) => [
             colId,
             { ...cell, id: v4() },
           ]),
         );
-        return {
-          ...prev,
-          [rowId]: { ...src, id: rowId, properties },
-        };
+        return insertAt(prev, { ...src, id: rowId, properties }, idx + 1);
       });
     };
     table.deleteRow = (id) => {
       // Update row order
       table.setRowOrder((prev) => prev.filter((rowId) => rowId !== id));
       // Update table data
-      table.setTableData((prev) => {
-        const { [id]: _, ...data } = prev;
-        return data;
-      });
+      table.setTableData((prev) => prev.filter((row) => row.id !== id));
     };
     table.updateRowIcon = (id, icon) => {
       const colId = table
@@ -134,26 +129,24 @@ export const RowActionsFeature: TableFeature = {
           (propId) => table.getColumnPlugin(propId).id === "title",
         )!;
       table.setTableData((prev) => {
-        const row = prev[id];
-        if (!row) return prev;
-        const cell = row.properties[colId] as Cell<TitlePlugin> | undefined;
-        if (!cell) return prev;
-        // Create a new cell with updated icon value
-        const updatedCell: Cell<TitlePlugin> = {
-          ...cell,
-          value: {
-            ...cell.value,
-            icon: icon ?? undefined,
-          },
-        };
-        return {
-          ...prev,
-          [id]: {
+        return prev.map((row) => {
+          if (row.id !== id) return row;
+          const cell = row.properties[colId] as Cell<TitlePlugin> | undefined;
+          if (!cell) return row;
+          // Create a new cell with updated icon value
+          const updatedCell: Cell<TitlePlugin> = {
+            ...cell,
+            value: {
+              ...cell.value,
+              icon: icon ?? undefined,
+            },
+          };
+          return {
             ...row,
             icon: icon ?? undefined,
             properties: { ...row.properties, [colId]: updatedCell },
-          },
-        };
+          };
+        });
       });
     };
   },

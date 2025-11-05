@@ -159,7 +159,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
       }));
     };
     table.addColumnInfo = (payload) => {
-      const { cellPlugins, rowOrder } = table.getState();
+      const { cellPlugins } = table.getState();
       const { id, name, type, at } = payload;
       const plugin = cellPlugins[type];
       if (!plugin) {
@@ -181,26 +181,19 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
       });
       // Update all rows
       table.setTableData((prev) =>
-        rowOrder.reduce(
-          (acc, rowId) => {
-            if (!prev[rowId]) return acc;
-            return {
-              ...acc,
-              [rowId]: {
-                ...prev[rowId],
-                properties: {
-                  ...prev[rowId].properties,
-                  [id]: getDefaultCell(plugin),
-                },
-              },
-            };
-          },
-          { ...prev },
-        ),
+        prev.map((row) => {
+          return {
+            ...row,
+            properties: {
+              ...row.properties,
+              [id]: getDefaultCell(plugin),
+            },
+          };
+        }),
       );
     };
     table.duplicateColumnInfo = (colId) => {
-      const { rowOrder, cellPlugins } = table.getState();
+      const { cellPlugins } = table.getState();
       const src = table.getColumnInfo(colId);
       const newColId = v4();
       table._addColumnInfo({
@@ -215,22 +208,15 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
       });
       // Update all rows
       table.setTableData((prev) =>
-        rowOrder.reduce(
-          (acc, rowId) => {
-            if (!prev[rowId]) return acc;
-            return {
-              ...acc,
-              [rowId]: {
-                ...prev[rowId],
-                properties: {
-                  ...prev[rowId].properties,
-                  [newColId]: getDefaultCell(cellPlugins[src.type]!),
-                },
-              },
-            };
-          },
-          { ...prev },
-        ),
+        prev.map((row) => {
+          return {
+            ...row,
+            properties: {
+              ...row.properties,
+              [newColId]: getDefaultCell(cellPlugins[src.type]!),
+            },
+          };
+        }),
       );
     };
     table.removeColumnInfo = (colId) => {
@@ -241,19 +227,11 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
       // Update column order
       table.setColumnOrder((prev) => prev.filter((id) => id !== colId));
       // Update all rows
-      const { rowOrder } = table.getState();
       table.setTableData((prev) =>
-        rowOrder.reduce(
-          (acc, rowId) => {
-            if (!prev[rowId]) return acc;
-            const { [colId]: _, ...properties } = prev[rowId].properties;
-            return {
-              ...acc,
-              [rowId]: { ...prev[rowId], properties },
-            };
-          },
-          { ...prev },
-        ),
+        prev.map((row) => {
+          const { [colId]: _, ...properties } = row.properties;
+          return { ...row, properties };
+        }),
       );
     };
     table.toggleColumnWrapped = (colId, updater) => {
@@ -278,26 +256,26 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         destPlugin.default.config;
       table.setColumnInfo(colId, { type, config });
       // Update all cells
-      const newData = { ...data };
       const srcPlugin = table.getColumnPlugin(colId);
-      Object.keys(newData).forEach((rowId) => {
-        if (!newData[rowId]) return;
-        const cell = newData[rowId].properties[colId]!;
-        newData[rowId] = {
-          ...newData[rowId],
-          properties: {
-            ...newData[rowId].properties,
-            [colId]: {
-              ...cell,
-              value: destPlugin.fromReadableValue(
-                srcPlugin.toReadableValue(cell.value),
-                config,
-              ),
+      table.setTableData((prev) =>
+        prev.map((row) => {
+          const cell = row.properties[colId];
+          if (!cell) return row;
+          return {
+            ...row,
+            properties: {
+              ...row.properties,
+              [colId]: {
+                ...cell,
+                value: destPlugin.fromReadableValue(
+                  srcPlugin.toReadableValue(cell.value),
+                  config,
+                ),
+              },
             },
-          },
-        };
-      });
-      table.setTableData(newData);
+          };
+        }),
+      );
     };
     table.setColumnTypeConfig = (colId, action) => {
       const plugin = table.getColumnPlugin(colId);

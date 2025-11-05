@@ -46,25 +46,30 @@ export const OrderingFeature: TableFeature = {
   createTable: <TData extends RowData>(table: Table<TData>): void => {
     table.setRowOrder = (updater) => table.options.onRowOrderChange?.(updater);
     table.handleRowDragEnd = (e) => {
-      // if we don't have a rowOrder yet, initialize it to the current order
-      const rowCount = table.getRowCount();
-      if (rowCount !== table.getState().rowOrder.length) {
-        table.setRowOrder(table.getRowModel().rows.map((row) => row.id));
-      }
-      table.setRowOrder(createRowDragEndUpdater(e));
+      table.setRowOrder(createRowDragEndUpdater(e, (v) => v));
+      table.setTableData(createRowDragEndUpdater(e, (v) => v.id));
     };
     table.handleColumnDragEnd = (e) => {
-      table.setColumnOrder(createRowDragEndUpdater(e));
+      table.setColumnOrder(createRowDragEndUpdater(e, (v) => v));
     };
   },
 };
 
-function createRowDragEndUpdater(e: DragEndEvent): Updater<OrderingState> {
+function createRowDragEndUpdater<T>(
+  e: DragEndEvent,
+  selector: (item: T) => string,
+): Updater<T[]> {
   return (prev) => {
     const { active, over } = e;
     if (!over || active.id === over.id) return prev;
-    const oldIndex = prev.indexOf(active.id as string);
-    const newIndex = prev.indexOf(over.id as string);
-    return arrayMove(prev, oldIndex, newIndex);
+    const indexes = prev.reduce(
+      (acc, item, idx) => {
+        if (selector(item) === active.id) acc.old = idx;
+        if (selector(item) === over.id) acc.new = idx;
+        return acc;
+      },
+      { old: -1, new: -1 },
+    );
+    return arrayMove(prev, indexes.old, indexes.new);
   };
 }
