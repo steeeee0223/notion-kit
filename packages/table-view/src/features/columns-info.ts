@@ -200,9 +200,8 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
       );
     };
     table.duplicateColumnInfo = (colId) => {
-      const { columnOrder, rowOrder, cellPlugins } = table.getState();
+      const { rowOrder, cellPlugins } = table.getState();
       const src = table.getColumnInfo(colId);
-      const idx = columnOrder.indexOf(colId);
       const newColId = v4();
       table._addColumnInfo({
         ...src,
@@ -210,7 +209,10 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         name: table.generateUniqueColumnName(src.name),
       });
       // Update column order
-      table.setColumnOrder((prev) => insertAt(prev, newColId, idx + 1));
+      table.setColumnOrder((prev) => {
+        const idx = prev.indexOf(colId);
+        return insertAt(prev, newColId, idx + 1);
+      });
       // Update all rows
       table.setTableData((prev) =>
         rowOrder.reduce(
