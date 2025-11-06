@@ -1,21 +1,18 @@
+import type { OnChangeFn } from "@tanstack/react-table";
+
 import type { ColumnDefs, Row } from "../lib/types";
 import type { CellPlugin } from "../plugins";
-import type { TableViewAction } from "./table-reducer";
 
-export interface PartialTableState<TPlugins extends CellPlugin[]> {
+export interface TableState<TPlugins extends CellPlugin[]> {
   properties: ColumnDefs<TPlugins>;
   data: Row<TPlugins>[];
 }
 
-export interface TableProps<TPlugins extends CellPlugin[]> {
+export interface TableProps<TPlugins extends CellPlugin[]>
+  extends TableState<TPlugins> {
   plugins?: TPlugins;
-  defaultState?: PartialTableState<TPlugins>;
-  state?: PartialTableState<TPlugins>;
-  onStateChange?: (
-    newState: PartialTableState<TPlugins>,
-    type: TableViewAction<TPlugins>["type"],
-  ) => void;
-  dispatch?: React.Dispatch<TableViewAction<TPlugins>>;
+  onDataChange?: OnChangeFn<Row<TPlugins>[]>;
+  onPropertiesChange?: OnChangeFn<ColumnDefs<TPlugins>>;
 }
 
 export interface SyncedState {

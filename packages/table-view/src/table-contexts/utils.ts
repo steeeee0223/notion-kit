@@ -1,18 +1,11 @@
 import type { SortingFn } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
-import type {
-  ColumnDefs,
-  ColumnInfo,
-  PluginsMap,
-  PluginType,
-  Row,
-} from "../lib/types";
-import { arrayToEntity } from "../lib/utils";
-import type { CellPlugin, InferConfig } from "../plugins";
+import type { ColumnDefs, ColumnInfo, PluginType, Row } from "../lib/types";
+import { Entity } from "../lib/utils";
+import type { CellPlugin } from "../plugins";
 import type { TitlePlugin } from "../plugins/title";
-import type { TableViewAtom } from "./table-reducer";
-import type { PartialTableState } from "./types";
+import type { TableState } from "./types";
 
 export function getMinWidth(type: PluginType<CellPlugin[]>) {
   switch (type) {
@@ -23,7 +16,7 @@ export function getMinWidth(type: PluginType<CellPlugin[]>) {
   }
 }
 
-export function createInitialTable(): PartialTableState<CellPlugin[]> {
+export function createInitialTable(): TableState<CellPlugin[]> {
   const titleId = v4();
   const columns: ColumnInfo<TitlePlugin>[] = [
     { id: titleId, name: "Name", type: "title", config: { showIcon: true } },
@@ -52,49 +45,21 @@ export function createInitialTable(): PartialTableState<CellPlugin[]> {
   return { properties: columns, data };
 }
 
-export function toDatabaseProperties<TPlugins extends CellPlugin[]>(
+export function toPropertyEntity<TPlugins extends CellPlugin[]>(
   plugins: Record<string, TPlugins[number]>,
   properties: ColumnDefs<TPlugins>,
-): ColumnInfo<CellPlugin>[] {
-  return properties.map((property) => ({
-    config: plugins[property.type]!.default.config as InferConfig<
-      TPlugins[number]
-    >,
-    ...property,
-  }));
-}
-
-/**
- * getTableViewAtom
- * Converts a controlled state `PartialTableState` into a TableViewAtom.
- */
-export function getTableViewAtom<TPlugins extends CellPlugin[]>(
-  plugins: PluginsMap<TPlugins>,
-  state: PartialTableState<TPlugins>,
-): TableViewAtom<TPlugins> {
-  const columnData = arrayToEntity(
-    toDatabaseProperties(plugins, state.properties),
+) {
+  return properties.reduce<Entity<ColumnInfo>>(
+    (acc, property) => {
+      acc.ids.push(property.id);
+      acc.items[property.id] = {
+        config: plugins[property.type]!.default.config,
+        ...property,
+      };
+      return acc;
+    },
+    { ids: [], items: {} },
   );
-  const rowData = arrayToEntity(state.data);
-  return {
-    properties: columnData.items as Record<
-      string,
-      ColumnInfo<TPlugins[number]>
-    >,
-    propertiesOrder: columnData.ids,
-    data: rowData.items,
-    dataOrder: rowData.ids,
-    synced: { header: -1, body: -1, footer: -1 },
-  };
-}
-
-export function toControlledState<TPlugins extends CellPlugin[]>(
-  atom: TableViewAtom<TPlugins>,
-): PartialTableState<TPlugins> {
-  return {
-    properties: atom.propertiesOrder.map((id) => atom.properties[id]!),
-    data: atom.dataOrder.map((id) => atom.data[id]!),
-  };
 }
 
 export function createColumnSortingFn(plugin: CellPlugin): SortingFn<Row> {

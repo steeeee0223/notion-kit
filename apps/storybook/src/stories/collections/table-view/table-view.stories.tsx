@@ -25,14 +25,17 @@ export const DatabaseView: Story = {
 export const Controlled: Story = {
   decorators: [
     () => {
-      const [state, setState] = useState({
-        properties: mockProps,
-        data: mockData,
-      });
+      const [data, setData] = useState(mockData);
+      const [properties, setProperties] = useState(mockProps);
 
       return (
         <div className="p-24">
-          <TableView state={state} onStateChange={setState} />
+          <TableView
+            properties={properties}
+            data={data}
+            onDataChange={setData}
+            onPropertiesChange={setProperties}
+          />
         </div>
       );
     },

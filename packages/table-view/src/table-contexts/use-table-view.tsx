@@ -1,30 +1,24 @@
 "use client";
 
-import { useCallback, useMemo, useReducer } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
+  functionalUpdate,
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
   type ColumnDef,
+  type OnChangeFn,
 } from "@tanstack/react-table";
 
-import { DEFAULT_FEATURES, type ColumnsInfoState } from "../features";
-import type { PluginsMap, Row } from "../lib/types";
-import type { Entity } from "../lib/utils";
+import { DEFAULT_FEATURES } from "../features";
+import type { ColumnDefs, ColumnInfo, Row } from "../lib/types";
+import { type Entity } from "../lib/utils";
 import type { CellPlugin } from "../plugins";
 import { TableRowCell } from "../table-body";
 import { TableFooterCell } from "../table-footer";
 import { TableHeaderCell } from "../table-header";
-import { createTableViewReducer, type TableViewAction } from "./table-reducer";
-import type { PartialTableState } from "./types";
-import {
-  createColumnSortingFn,
-  createInitialTable,
-  getMinWidth,
-  getTableViewAtom,
-  toControlledState,
-  toDatabaseProperties,
-} from "./utils";
+import type { SyncedState, TableState } from "./types";
+import { createColumnSortingFn, getMinWidth, toPropertyEntity } from "./utils";
 
 const defaultColumn: Partial<ColumnDef<Row>> = {
   size: 200,
@@ -35,15 +29,11 @@ const defaultColumn: Partial<ColumnDef<Row>> = {
   footer: ({ column }) => <TableFooterCell column={column} />,
 };
 
-interface UseTableViewOptions<TPlugins extends CellPlugin[]> {
+interface UseTableViewOptions<TPlugins extends CellPlugin[]>
+  extends TableState<TPlugins> {
   plugins: Entity<TPlugins[number]>;
-  defaultState?: PartialTableState<TPlugins>;
-  state?: PartialTableState<TPlugins>;
-  onStateChange?: (
-    newState: PartialTableState<TPlugins>,
-    type: TableViewAction<TPlugins>["type"],
-  ) => void;
-  dispatch?: React.Dispatch<TableViewAction<TPlugins>>;
+  onDataChange?: OnChangeFn<Row<TPlugins>[]>;
+  onPropertiesChange?: OnChangeFn<ColumnDefs<TPlugins>>;
 }
 
 /**
@@ -52,97 +42,92 @@ interface UseTableViewOptions<TPlugins extends CellPlugin[]> {
  */
 export function useTableView<TPlugins extends CellPlugin[]>({
   plugins,
-  ...props
+  data,
+  properties,
+  onDataChange,
+  onPropertiesChange,
 }: UseTableViewOptions<TPlugins>) {
-  const pluginsMap = plugins.items as PluginsMap<TPlugins>;
-  const tableViewReducer = useMemo(
-    () => createTableViewReducer(pluginsMap),
-    [pluginsMap],
+  const isPropertiesControlled = typeof onPropertiesChange !== "undefined";
+  const isDataControlled = typeof onDataChange !== "undefined";
+  /** columns states */
+  const [_columnEntity, setColumnEntity] = useState(
+    toPropertyEntity(plugins.items, properties),
   );
-  /** Internal state management */
-  const [_state, _dispatch] = useReducer(
-    tableViewReducer,
-    getTableViewAtom<TPlugins>(
-      pluginsMap,
-      props.defaultState ?? createInitialTable(),
-    ),
-  );
-
-  const dispatch = useCallback(
-    (action: TableViewAction<TPlugins>) => {
-      if (!props.state) return _dispatch(action);
-
-      const nextState = tableViewReducer(
-        getTableViewAtom(pluginsMap, props.state),
-        action,
-      );
-      props.onStateChange?.(toControlledState(nextState), action.type);
-      props.dispatch?.(action);
-    },
-    [pluginsMap, props, tableViewReducer],
-  );
-
-  const data = useMemo(
-    () => props.state?.data ?? Object.values(_state.data),
-    [_state.data, props.state?.data],
-  );
-
-  const rowOrder = useMemo(
-    () => props.state?.data.map((row) => row.id) ?? _state.dataOrder,
-    [_state.dataOrder, props.state?.data],
-  );
-
-  const columnsData = useMemo(() => {
-    const properties = props.state?.properties
-      ? toDatabaseProperties(plugins.items, props.state.properties)
-      : Object.values(_state.properties);
-
-    const columns = properties.map<ColumnDef<Row<TPlugins>>>((property) => {
-      const plugin = plugins.items[property.type]!;
-      const sortingFn = createColumnSortingFn(plugin);
-      return {
-        id: property.id,
-        accessorKey: property.name,
-        minSize: getMinWidth(property.type),
-        sortingFn,
-      };
-    });
-
-    const columnsInfo = properties.reduce<ColumnsInfoState>((acc, col) => {
-      acc[col.id] = col;
-      return acc;
-    }, {});
-
-    return { columns, columnsInfo };
-  }, [_state.properties, plugins.items, props.state?.properties]);
-
-  const columnOrder = useMemo(
+  // Use memoized entity for controlled properties
+  const columnEntity = useMemo(
     () =>
-      props.state?.properties.map((prop) => prop.id) ?? _state.propertiesOrder,
-    [props.state?.properties, _state.propertiesOrder],
+      isPropertiesControlled
+        ? toPropertyEntity(plugins.items, properties)
+        : _columnEntity,
+    [isPropertiesControlled, plugins.items, properties, _columnEntity],
+  );
+  const columns = useMemo(
+    () =>
+      columnEntity.ids.map<ColumnDef<Row<TPlugins>>>((colId) => {
+        const property = columnEntity.items[colId]!;
+        const plugin = plugins.items[property.type]!;
+        const sortingFn = createColumnSortingFn(plugin);
+        return {
+          id: property.id,
+          accessorKey: property.name,
+          minSize: getMinWidth(property.type),
+          sortingFn,
+        };
+      }),
+    [columnEntity, plugins.items],
+  );
+  const handleColumnChange: OnChangeFn<Entity<ColumnInfo>> = useCallback(
+    (updater) => {
+      if (!onPropertiesChange) {
+        setColumnEntity(updater);
+        return;
+      }
+      onPropertiesChange((prev) => {
+        const entity = toPropertyEntity(plugins.items, prev);
+        const next = functionalUpdate(updater, entity);
+        return next.ids.map((id) => next.items[id]!) as ColumnDefs<TPlugins>;
+      });
+    },
+    [onPropertiesChange, plugins.items],
   );
 
+  /** data state */
+  const [_dataEntity, setDataEntity] = useState(data);
+  // Use memoized entity for controlled data
+  const dataEntity = useMemo(
+    () => (isDataControlled ? data : _dataEntity),
+    [isDataControlled, data, _dataEntity],
+  );
+
+  const [synced, setSynced] = useState<SyncedState>({
+    header: -1,
+    body: -1,
+    footer: -1,
+  });
+
+  /** table instance */
   const table = useReactTable({
-    columns: columnsData.columns,
-    data,
+    columns,
+    data: dataEntity,
     defaultColumn,
     columnResizeMode: "onChange",
+    getRowId: (row) => row.id,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     state: {
-      rowOrder,
-      columnOrder,
-      columnsInfo: columnsData.columnsInfo,
-      cellPlugins: pluginsMap,
+      rowOrder: dataEntity.map((row) => row.id),
+      columnOrder: columnEntity.ids,
+      columnsInfo: columnEntity.items,
+      cellPlugins: plugins.items,
     },
-    onColumnInfoChange: (updater) => dispatch({ type: "set:col", updater }),
-    onColumnOrderChange: (updater) =>
-      dispatch({ type: "set:col:order", updater }),
-    onRowOrderChange: (updater) => dispatch({ type: "set:row:order", updater }),
-    onTableDataChange: (updater) =>
-      dispatch({ type: "set:table:data", updater }),
-    sync: (key) => dispatch({ type: "sync", payload: key }),
-    getRowId: (row) => row.id,
+    onColumnInfoChange: handleColumnChange,
+    onTableDataChange: onDataChange ?? setDataEntity,
+    sync: (keys) =>
+      setSynced((prev) =>
+        keys.reduce((acc, key) => ({ ...acc, [key]: Date.now() }), {
+          ...prev,
+        }),
+      ),
     _features: DEFAULT_FEATURES,
   });
 
@@ -150,8 +135,8 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     () => ({
       table,
       // use synced to force re-render
-      __synced: _state.synced,
+      __synced: synced,
     }),
-    [table, _state.synced],
+    [table, synced],
   );
 }

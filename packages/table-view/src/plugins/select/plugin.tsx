@@ -38,12 +38,8 @@ export function selectReducer(
   switch (nextEvent.type) {
     case "update:name": {
       const { originalName, name } = nextEvent.payload;
-      const data = { ...v.data };
-      Object.keys(data).forEach((rowId) => {
-        const cell = data[rowId]?.properties[a.id] as
-          | SelectCellModel
-          | undefined;
-        if (!cell) return;
+      const data = v.data.map((row) => {
+        const cell = { ...row.properties[a.id] } as SelectCellModel;
         if (prop.type === "multi-select") {
           cell.value = (cell.value as string[]).map((option) =>
             option === originalName ? name : option,
@@ -51,17 +47,15 @@ export function selectReducer(
         } else if (cell.value === originalName) {
           cell.value = name;
         }
+        return { ...row, properties: { ...row.properties, [a.id]: cell } };
       });
       return { properties, data };
     }
     case "delete": {
       const name = nextEvent.payload;
-      const data = { ...v.data };
-      Object.keys(data).forEach((rowId) => {
-        const cell = data[rowId]?.properties[a.id] as
-          | SelectCellModel
-          | undefined;
-        if (!cell) return;
+      const data = v.data.map((row) => {
+        const cell = { ...row.properties[a.id] } as SelectCellModel;
+
         if (prop.type === "multi-select") {
           cell.value = (cell.value as string[]).filter(
             (option) => option !== name,
@@ -69,6 +63,7 @@ export function selectReducer(
         } else if (cell.value === name) {
           cell.value = null;
         }
+        return { ...row, properties: { ...row.properties, [a.id]: cell } };
       });
       return { properties, data };
     }
@@ -82,14 +77,14 @@ export function selectReducer(
  */
 function toSelectConfig<TPlugin extends CellPlugin>(
   column: ColumnInfo<TPlugin>,
-  data: Record<string, Row<TPlugin[]>>,
+  data: Row<TPlugin[]>[],
 ): SelectConfig {
   switch (column.type) {
     case "select":
     case "multi-select":
       return (column as ColumnInfo<SelectPlugin>).config;
     case "text": {
-      const options = Object.values(data).reduce<SelectConfig["options"]>(
+      const options = data.reduce<SelectConfig["options"]>(
         (acc, row) => {
           const cell = row.properties[column.id]! as Cell<
             CellPlugin<string, string>

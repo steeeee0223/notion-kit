@@ -46,9 +46,7 @@ export default function Page() {
         <div className="text-3xl text-primary">Notion Clone - Table View</div>
         <div className="relative flex max-h-150 w-screen grow flex-col justify-center">
           <div className="h-full shrink-0 overflow-auto">
-            <TableView
-              defaultState={{ properties: mockProps, data: mockData }}
-            />
+            <TableView properties={mockProps} data={mockData} />
           </div>
         </div>
       </main>

@@ -128,11 +128,14 @@ function TableBody({ table }: TableBodyProps) {
     );
   }
 
-  const rowOrder = table.getState().rowOrder;
+  const rows = table.getRowModel().rows;
   return (
-    <SortableContext items={rowOrder} strategy={verticalListSortingStrategy}>
-      {rowOrder.map((rowId) => (
-        <TableRow key={rowId} row={table.getRow(rowId)} />
+    <SortableContext
+      items={rows.map((row) => row.id)}
+      strategy={verticalListSortingStrategy}
+    >
+      {rows.map((row) => (
+        <TableRow key={row.id} row={row} />
       ))}
     </SortableContext>
   );

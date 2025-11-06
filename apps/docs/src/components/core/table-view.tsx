@@ -46,12 +46,16 @@ const mockData: Row<DefaultPlugins>[] = [
 ];
 
 export function TableView() {
-  const [state, setState] = useState({
-    properties: mockProps,
-    data: mockData,
-  });
+  const [data, setData] = useState(mockData);
+  const [properties, setProperties] = useState(mockProps);
 
   return (
-    <Table plugins={DEFAULT_PLUGINS} state={state} onStateChange={setState} />
+    <Table
+      plugins={DEFAULT_PLUGINS}
+      properties={properties}
+      data={data}
+      onDataChange={setData}
+      onPropertiesChange={setProperties}
+    />
   );
 }

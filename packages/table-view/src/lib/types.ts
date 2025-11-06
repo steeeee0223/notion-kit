@@ -23,11 +23,6 @@ export type PluginType<TPlugins extends CellPlugin[]> = InferKey<
   InferPlugin<TPlugins>
 >;
 
-export type PluginsMap<TPlugins extends CellPlugin[]> = Record<
-  PluginType<TPlugins>,
-  InferPlugin<TPlugins>
->;
-
 export interface ColumnConfig<TPlugin> {
   type: InferKey<TPlugin>;
   config: InferConfig<TPlugin>;
@@ -54,8 +49,3 @@ export interface Row<TPlugins extends CellPlugin[] = CellPlugin[]> {
   properties: Record<string, Cell<TPlugins[number]>>;
   icon?: IconData;
 }
-
-export type Rows<TPlugins extends CellPlugin[] = CellPlugin[]> = Record<
-  string,
-  Row<TPlugins>
->;
