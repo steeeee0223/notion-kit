@@ -5,7 +5,7 @@ import type {
   TableFeature,
   Updater,
 } from "@tanstack/react-table";
-import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
+import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { ColumnInfo, PluginType, Row } from "../lib/types";
@@ -13,10 +13,11 @@ import {
   arrayToEntity,
   getDefaultCell,
   getUniqueName,
-  insertAt,
+  type Entity,
 } from "../lib/utils";
 import type { CellPlugin, InferActions, InferPlugin } from "../plugins";
 import { DEFAULT_PLUGINS } from "../plugins";
+import { createIdsUpdater } from "./utils";
 
 export type ColumnsInfoState<TPlugins extends CellPlugin[] = CellPlugin[]> =
   Record<string, ColumnInfo<InferPlugin<TPlugins>>>;
@@ -31,7 +32,7 @@ export interface ColumnsInfoTableState {
 }
 
 export interface ColumnsInfoOptions {
-  onColumnInfoChange?: OnChangeFn<ColumnsInfoState>;
+  onColumnInfoChange?: OnChangeFn<Entity<ColumnInfo>>;
 }
 
 export interface ColumnsInfoTableApi {
@@ -43,7 +44,7 @@ export interface ColumnsInfoTableApi {
   // Column Setters
   _setColumnInfo: (colId: string, updater: Updater<ColumnInfo>) => void;
   setColumnInfo: (colId: string, info: Partial<Omit<ColumnInfo, "id">>) => void;
-  _addColumnInfo: (info: ColumnInfo) => void;
+  _addColumnInfo: (info: ColumnInfo, idsUpdater: Updater<string[]>) => void;
   addColumnInfo: (payload: {
     id: string;
     name: string;
@@ -82,12 +83,6 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
       cellPlugins: arrayToEntity(DEFAULT_PLUGINS).items,
       columnsInfo: {},
       ...state,
-    };
-  },
-
-  getDefaultOptions: (table: Table<Row>): ColumnsInfoOptions => {
-    return {
-      onColumnInfoChange: makeStateUpdater("columnsInfo", table),
     };
   },
 
@@ -138,7 +133,10 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     table._setColumnInfo = (colId, updater) => {
       table.options.onColumnInfoChange?.((prev) => ({
         ...prev,
-        [colId]: functionalUpdate(updater, prev[colId]!),
+        items: {
+          ...prev.items,
+          [colId]: functionalUpdate(updater, prev.items[colId]!),
+        },
       }));
       table.options.sync?.(["header"]);
       // Sync column visibility
@@ -152,11 +150,14 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     table.setColumnInfo = (colId, info) => {
       table._setColumnInfo(colId, (prev) => ({ ...prev, ...info }));
     };
-    table._addColumnInfo = (info) => {
-      table.options.onColumnInfoChange?.((prev) => ({
-        ...prev,
-        [info.id]: info,
-      }));
+    table._addColumnInfo = (info, idsUpdater) => {
+      table.options.onColumnInfoChange?.((prev) => {
+        return {
+          ids: functionalUpdate(idsUpdater, prev.ids),
+          items: { ...prev.items, [info.id]: info },
+        };
+      });
+      table.options.sync?.(["header"]);
     };
     table.addColumnInfo = (payload) => {
       const { cellPlugins } = table.getState();
@@ -165,20 +166,13 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
       if (!plugin) {
         throw new Error(`[TableView] Plugin not found: ${type}`);
       }
-      table._addColumnInfo({
-        id,
-        name,
-        type,
-        config: plugin.default.config as unknown,
-      });
+      const idsUpdater = createIdsUpdater(id, at);
+      table._addColumnInfo(
+        { id, name, type, config: plugin.default.config },
+        idsUpdater,
+      );
       // Update column order
-      table.setColumnOrder((prev) => {
-        if (at === undefined) return [...prev, id];
-        const idx = prev.indexOf(at.id);
-        return at.side === "right"
-          ? insertAt(prev, id, idx + 1)
-          : insertAt(prev, id, idx);
-      });
+      table.setColumnOrder(idsUpdater);
       // Update all rows
       table.setTableData((prev) =>
         prev.map((row) => {
@@ -196,16 +190,20 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
       const { cellPlugins } = table.getState();
       const src = table.getColumnInfo(colId);
       const newColId = v4();
-      table._addColumnInfo({
-        ...src,
-        id: newColId,
-        name: table.generateUniqueColumnName(src.name),
+      const idsUpdater = createIdsUpdater(newColId, {
+        id: colId,
+        side: "right",
       });
+      table._addColumnInfo(
+        {
+          ...src,
+          id: newColId,
+          name: table.generateUniqueColumnName(src.name),
+        },
+        idsUpdater,
+      );
       // Update column order
-      table.setColumnOrder((prev) => {
-        const idx = prev.indexOf(colId);
-        return insertAt(prev, newColId, idx + 1);
-      });
+      table.setColumnOrder(idsUpdater);
       // Update all rows
       table.setTableData((prev) =>
         prev.map((row) => {
@@ -221,8 +219,8 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     };
     table.removeColumnInfo = (colId) => {
       table.options.onColumnInfoChange?.((prev) => {
-        const { [colId]: _, ...rest } = prev;
-        return rest;
+        const { [colId]: _, ...items } = prev.items;
+        return { ids: prev.ids.filter((id) => id !== colId), items };
       });
       // Update column order
       table.setColumnOrder((prev) => prev.filter((id) => id !== colId));

@@ -7,7 +7,7 @@ import type {
   TableFeature,
   Updater,
 } from "@tanstack/react-table";
-import { makeStateUpdater } from "@tanstack/react-table";
+import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
 
 export type OrderingState = string[];
 
@@ -46,16 +46,23 @@ export const OrderingFeature: TableFeature = {
   createTable: <TData extends RowData>(table: Table<TData>): void => {
     table.setRowOrder = (updater) => table.options.onRowOrderChange?.(updater);
     table.handleRowDragEnd = (e) => {
-      table.setRowOrder(createRowDragEndUpdater(e, (v) => v));
-      table.setTableData(createRowDragEndUpdater(e, (v) => v.id));
+      table.setRowOrder(createDragEndUpdater(e, (v) => v));
+      table.setTableData(createDragEndUpdater(e, (v) => v.id));
     };
     table.handleColumnDragEnd = (e) => {
-      table.setColumnOrder(createRowDragEndUpdater(e, (v) => v));
+      table.setColumnOrder(createDragEndUpdater(e, (v) => v));
+      table.options.onColumnInfoChange?.((prev) => {
+        const updater = createDragEndUpdater<string>(e, (v) => v);
+        return {
+          ...prev,
+          ids: functionalUpdate(updater, prev.ids),
+        };
+      });
     };
   },
 };
 
-function createRowDragEndUpdater<T>(
+function createDragEndUpdater<T>(
   e: DragEndEvent,
   selector: (item: T) => string,
 ): Updater<T[]> {

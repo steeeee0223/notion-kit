@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   functionalUpdate,
   getCoreRowModel,
@@ -8,11 +8,10 @@ import {
   useReactTable,
   type ColumnDef,
   type OnChangeFn,
-  type TableOptions,
 } from "@tanstack/react-table";
 
 import { DEFAULT_FEATURES } from "../features";
-import type { ColumnDefs, Row } from "../lib/types";
+import type { ColumnDefs, ColumnInfo, Row } from "../lib/types";
 import { type Entity } from "../lib/utils";
 import type { CellPlugin } from "../plugins";
 import { TableRowCell } from "../table-body";
@@ -29,10 +28,6 @@ const defaultColumn: Partial<ColumnDef<Row>> = {
   cell: ({ row, column }) => <TableRowCell column={column} row={row} />,
   footer: ({ column }) => <TableFooterCell column={column} />,
 };
-
-type PartialTableOptions<TPlugins extends CellPlugin[]> = Partial<
-  TableOptions<Row<TPlugins>>
->;
 
 interface UseTableViewOptions<TPlugins extends CellPlugin[]>
   extends TableState<TPlugins> {
@@ -81,38 +76,20 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       }),
     [columnEntity, plugins.items],
   );
-  const columnHandlers = useMemo<PartialTableOptions<TPlugins>>(() => {
-    if (!onPropertiesChange) {
-      return {
-        onColumnOrderChange: (updater) =>
-          setColumnEntity((prev) => ({
-            ...prev,
-            ids: functionalUpdate(updater, prev.ids),
-          })),
-        onColumnInfoChange: (updater) =>
-          setColumnEntity((prev) => ({
-            ...prev,
-            items: functionalUpdate(updater, prev.items),
-          })),
-      };
-    }
-    return {
-      onColumnInfoChange: (updater) => {
-        onPropertiesChange((prev) => {
-          const entity = toPropertyEntity(plugins.items, prev);
-          const next = functionalUpdate(updater, entity.items);
-          return prev.map((col) => next[col.id]!) as ColumnDefs<TPlugins>;
-        });
-      },
-      onColumnOrderChange: (updater) => {
-        onPropertiesChange((prev) => {
-          const entity = toPropertyEntity(plugins.items, prev);
-          const next = functionalUpdate(updater, entity.ids);
-          return next.map((id) => entity.items[id]!) as ColumnDefs<TPlugins>;
-        });
-      },
-    };
-  }, [onPropertiesChange, plugins.items]);
+  const handleColumnChange: OnChangeFn<Entity<ColumnInfo>> = useCallback(
+    (updater) => {
+      if (!onPropertiesChange) {
+        setColumnEntity(updater);
+        return;
+      }
+      onPropertiesChange((prev) => {
+        const entity = toPropertyEntity(plugins.items, prev);
+        const next = functionalUpdate(updater, entity);
+        return next.ids.map((id) => next.items[id]!) as ColumnDefs<TPlugins>;
+      });
+    },
+    [onPropertiesChange, plugins.items],
+  );
 
   /** data state */
   const [_dataEntity, setDataEntity] = useState(data);
@@ -143,7 +120,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       columnsInfo: columnEntity.items,
       cellPlugins: plugins.items,
     },
-    ...columnHandlers,
+    onColumnInfoChange: handleColumnChange,
     onTableDataChange: onDataChange ?? setDataEntity,
     sync: (keys) =>
       setSynced((prev) =>

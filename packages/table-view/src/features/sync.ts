@@ -39,13 +39,6 @@ export const SyncFeature: TableFeature = {
       table.options.sync?.(["header", "body"]);
     };
     /** Overrides for custom features */
-    table._addColumnInfo = (info) => {
-      table.options.onColumnInfoChange?.((prev) => ({
-        ...prev,
-        [info.id]: info,
-      }));
-      table.options.sync?.(["header"]);
-    };
     table.setColumnCounting = (updater) => {
       table.options.onColumnCountingChange?.(updater);
       table.options.sync?.(["footer"]);
