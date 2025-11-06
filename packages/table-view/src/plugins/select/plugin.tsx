@@ -16,10 +16,12 @@ import type {
   SelectPlugin,
 } from "./types";
 
-const DEFAULT_CONFIG: SelectConfig = {
-  options: { names: [], items: {} },
-  sort: "manual",
-};
+function getDefaultConfig(): SelectConfig {
+  return {
+    options: { names: [], items: {} },
+    sort: "manual",
+  };
+}
 
 export function selectReducer(
   v: TableDataAtom,
@@ -102,7 +104,7 @@ function toSelectConfig<TPlugin extends CellPlugin>(
       return { sort: "manual", options };
     }
     default:
-      return { options: { names: [], items: {} }, sort: "manual" };
+      return getDefaultConfig();
   }
 }
 
@@ -135,7 +137,7 @@ export function select(): SelectPlugin {
       name: "Select",
       icon: <DefaultIcon type="select" />,
       data: null,
-      config: DEFAULT_CONFIG,
+      config: getDefaultConfig(),
     },
     fromReadableValue: (value, config) => {
       const options = fromReadableValue(value, config, "select");
@@ -168,7 +170,7 @@ export function multiSelect(): MultiSelectPlugin {
       name: "Multi-Select",
       icon: <DefaultIcon type="multi-select" />,
       data: [],
-      config: DEFAULT_CONFIG,
+      config: getDefaultConfig(),
     },
     fromReadableValue: (value, config) =>
       fromReadableValue(value, config, "multi-select"),
