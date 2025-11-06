@@ -128,7 +128,7 @@ function TableBody({ table }: TableBodyProps) {
     );
   }
 
-  const rows = table.getCoreRowModel().rows;
+  const rows = table.getRowModel().rows;
   return (
     <SortableContext
       items={rows.map((row) => row.id)}
