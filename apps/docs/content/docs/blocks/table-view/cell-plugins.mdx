@@ -17,6 +17,9 @@ A `CellPlugin` is a generic interface that accepts four type parameters:
 | Prop                  | Type                                                  | Description                                                                                                            |
 | --------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | `id`\*                | `Key`                                                 | Unique identifier of the plugin.                                                                                       |
+| `meta.name`\*         | `string`                                              | The name of the plugin. This will be displayed in the UI.                                                              |
+| `meta.desc`\*         | `string`                                              | The description of the plugin. This will be displayed in the UI.                                                       |
+| `meta.icon`\*         | `React.ReactNode`                                     | The icon of the plugin. This will be displayed in the UI.                                                              |
 | `default.name`\*      | `string`                                              | Default name used when a new column of this plugin is created.                                                         |
 | `default.icon`\*      | `React.ReactNode`                                     | Default icon used when a new column of this plugin is created.                                                         |
 | `default.config`\*    | `Config`                                              | Default config used when a new column of this plugin is created.                                                       |
@@ -25,27 +28,37 @@ A `CellPlugin` is a generic interface that accepts four type parameters:
 | `fromReadableValue`\* | `(value: string, config: Config) => Data`             | Converts a readable value to the plugin's data type.                                                                   |
 | `toReadableValue`\*   | `(data: Data) => string`                              | Converts the plugin's data type to a readable value. This is useful for sorting a column.                              |
 | `toTextValue`\*       | `(data: Data) => string`                              | Converts the plugin's data type to a text value. This is useful for displaying/exporting the data in a compact format. |
-| `transferConfig`      | `(column: Column<TPlugin>, data: Rows) => string`     | Converts the given column and rows data to this plugin configuration. This is useful for changing column types.        |
-| `reducer`\*           | `React.Reducer<TableViewAtom<TPlugins>, Actions>`     | The reducer function to handle actions related to this plugin. This is useful for updating the table state.            |
+| `transferConfig`      | `(column: Column<TPlugin>, data: Row[]) => string`    | Converts the given column and rows data to this plugin configuration. This is useful for changing column types.        |
+| `reducer`\*           | `React.Reducer<TableDataAtom<TPlugins>, Actions>`     | The reducer function to handle actions related to this plugin. This is useful for updating the table state.            |
 | `renderCell`\*        | `(props: CellProps<Data, Config>) => React.ReactNode` | Renders the cell for this plugin. This is where you define how the cell should look and behave in the UI.              |
 | `renderConfigMenu`    | `(props: ConfigMenuProps<Config>) => React.ReactNode` | Renders the configuration menu for this plugin. This is where you define how the column configuration should look.     |
 
 ### CellProps
 
-| Prop       | Type                   | Description                                                                                                          |
-| ---------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `propId`\* | `string`               | The ID of the column this cell belongs to. This is useful for identifying the column in the table.                   |
-| `data`\*   | `Data`                 | The data of the cell. This is the value stored in the cell.                                                          |
-| `config`   | `Config`               | The configuration of the cell. This can be used to customize the cell's behavior.                                    |
-| `wrapped`  | `boolean`              | Whether the cell should be wrapped. This is useful for long text values that need to be displayed in multiple lines. |
-| `onChange` | `(data: Data) => void` | A callback function that is called when the cell data changes.                                                       |
+| Prop         | Type                   | Description                                                                                                          |
+| ------------ | ---------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `propId`\*   | `string`               | The ID of the column this cell belongs to. This is useful for identifying the column in the table.                   |
+| `data`\*     | `Data`                 | The data of the cell. This is the value stored in the cell.                                                          |
+| `config`\*   | `Config`               | The configuration of the cell. This can be used to customize the cell's behavior.                                    |
+| `wrapped`    | `boolean`              | Whether the cell should be wrapped. This is useful for long text values that need to be displayed in multiple lines. |
+| `onChange`\* | `(data: Data) => void` | A callback function that is called when the cell data changes.                                                       |
 
 ### ConfigMenuProps
 
-| Prop       | Type     | Description                                                                                                      |
-| ---------- | -------- | ---------------------------------------------------------------------------------------------------------------- |
-| `propId`\* | `string` | The ID of the column this configuration menu belongs to. This is useful for identifying the column in the table. |
-| `config`   | `Config` | The configuration of the column. This can be used to customize the column's behavior.                            |
+| Prop         | Type                 | Description                                                                                                      |
+| ------------ | -------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `propId`\*   | `string`             | The ID of the column this configuration menu belongs to. This is useful for identifying the column in the table. |
+| `config`\*   | `Config`             | The configuration of the column. This can be used to customize the column's behavior.                            |
+| `onChange`\* | `OnChangeFn<Config>` | A callback function that is called when the column configuration changes.                                        |
+
+### TableDataAtom
+
+A `TableDataAtom` represents the atom state of a table, including its column informations and row data.
+
+| Prop         | Type                                                                         | Default | Description                           |
+| ------------ | ---------------------------------------------------------------------------- | ------- | ------------------------------------- |
+| `properties` | [`Record<string, ColumnInfo>`](/docs/objects/database-properties#columninfo) | -       | The column informations of the table. |
+| `data`       | [`Row[]`](/docs/objects/database-properties#row)                             | -       | The rows of the table.                |
 
 ### Type Inference Utilities
 

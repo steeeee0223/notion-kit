@@ -49,8 +49,3 @@ export interface Row<TPlugins extends CellPlugin[] = CellPlugin[]> {
   properties: Record<string, Cell<TPlugins[number]>>;
   icon?: IconData;
 }
-
-export type Rows<TPlugins extends CellPlugin[] = CellPlugin[]> = Record<
-  string,
-  Row<TPlugins>
->;
