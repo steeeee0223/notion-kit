@@ -28,7 +28,7 @@ A `CellPlugin` is a generic interface that accepts four type parameters:
 | `fromReadableValue`\* | `(value: string, config: Config) => Data`             | Converts a readable value to the plugin's data type.                                                                   |
 | `toReadableValue`\*   | `(data: Data) => string`                              | Converts the plugin's data type to a readable value. This is useful for sorting a column.                              |
 | `toTextValue`\*       | `(data: Data) => string`                              | Converts the plugin's data type to a text value. This is useful for displaying/exporting the data in a compact format. |
-| `transferConfig`      | `(column: Column<TPlugin>, data: Row[]) => string`    | Converts the given column and rows data to this plugin configuration. This is useful for changing column types.        |
+| `transferConfig`      | `(column: ColumnInfo<TPlugin>, data: Row<TPlugin[]>[]) => Config`    | Converts the given column and rows data to this plugin configuration. This is useful for changing column types.        |
 | `reducer`\*           | `React.Reducer<TableDataAtom<TPlugins>, Actions>`     | The reducer function to handle actions related to this plugin. This is useful for updating the table state.            |
 | `renderCell`\*        | `(props: CellProps<Data, Config>) => React.ReactNode` | Renders the cell for this plugin. This is where you define how the cell should look and behave in the UI.              |
 | `renderConfigMenu`    | `(props: ConfigMenuProps<Config>) => React.ReactNode` | Renders the configuration menu for this plugin. This is where you define how the column configuration should look.     |
