@@ -7,81 +7,102 @@ import { useFilter } from "@notion-kit/hooks";
 import {
   Command,
   CommandGroup,
+  CommandInput,
   CommandItem,
   CommandList,
-  Input,
   MenuItem,
   MenuItemCheck,
   TooltipPreset,
-  useMenu,
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader } from "../common";
+import { TableViewMenuPage } from "../features";
 import type { PluginType } from "../lib/types";
-import { getUniqueName } from "../lib/utils";
 import { CellPlugin } from "../plugins";
-import { useTableActions, useTableViewCtx } from "../table-contexts";
-import { EditPropMenu } from "./edit-prop-menu";
-import { propOptions } from "./types-menu-options";
+import { useTableViewCtx } from "../table-contexts";
 
 interface TypesMenuProps {
   /**
-   * @prop {propId}: if null, will create a new column;
+   * @prop if null, will create a new column;
    * otherwise will update a column by given `propId`
    */
-  propId: string | null;
+  propId?: string;
   /**
-   * @prop {at}: if undefined, will create a new column at the end;
+   * @prop if undefined, will create a new column at the end;
    * otherwise will create a column at `at.side` of the column `at.id`
    */
   at?: {
     id: string;
     side: "left" | "right";
   };
-  showHeader?: boolean;
+  /**
+   * @prop control the menu page
+   */
+  menu: TableViewMenuPage.CreateProp | TableViewMenuPage.ChangePropType | null;
+  /**
+   * @prop whether to show back button in the header
+   */
+  back?: boolean;
 }
 
-export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
-  const { properties } = useTableViewCtx();
-  const { addColumn, updateColumnType } = useTableActions();
-  const { openMenu } = useMenu();
+export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
+  const { table } = useTableViewCtx();
 
-  const property = propId ? properties[propId]! : null;
+  const plugins = table.getState().cellPlugins;
+  const propType = propId ? table.getColumnInfo(propId).type : null;
 
-  const { search, results, updateSearch } = useFilter(propOptions, (prop, v) =>
-    prop.title.toLowerCase().includes(v),
+  const { search, results, updateSearch } = useFilter(
+    Object.values(plugins),
+    (prop, v) => prop.default.name.toLowerCase().includes(v),
   );
   const select = (type: PluginType<CellPlugin[]>, name: string) => {
     let colId = propId;
-    if (colId === null) {
+    if (colId === undefined) {
       colId = v4();
-      const uniqueName = getUniqueName(
-        name,
-        Object.values(properties).map((p) => p.name),
-      );
-      addColumn({ id: colId, type, name: uniqueName, at });
+      const uniqueName = table.generateUniqueColumnName(name);
+      table.addColumnInfo({ id: colId, type, name: uniqueName, at });
     } else {
-      updateColumnType(colId, type);
+      table.setColumnType(colId, type);
     }
-
-    openMenu(<EditPropMenu propId={colId} />, { x: -12, y: -12 });
+    table.setTableMenuState({
+      open: true,
+      page: TableViewMenuPage.EditProp,
+      id: colId,
+    });
   };
 
   return (
     <>
-      {showHeader && (
-        <MenuHeader title={propId ? "Change property type" : "New property"} />
+      {menu && (
+        <MenuHeader
+          title={
+            menu === TableViewMenuPage.ChangePropType
+              ? "Change property type"
+              : "New property"
+          }
+          onBack={
+            back
+              ? () =>
+                  table.setTableMenuState({
+                    open: true,
+                    page:
+                      menu === TableViewMenuPage.ChangePropType
+                        ? TableViewMenuPage.EditProp
+                        : TableViewMenuPage.Props,
+                    id: propId,
+                  })
+              : undefined
+          }
+        />
       )}
-      <Command className="bg-popover">
-        <div className="flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2">
-          <Input
-            value={search}
-            onChange={(e) => updateSearch(e.target.value)}
-            placeholder={
-              propId ? "Search for property type" : "Search or add new property"
-            }
-          />
-        </div>
+      <Command shouldFilter={false}>
+        <CommandInput
+          value={search}
+          onValueChange={updateSearch}
+          placeholder={
+            propId ? "Search for property type" : "Search or add new property"
+          }
+        />
         <CommandList>
           {results && results.length > 0 && (
             <CommandGroup
@@ -91,22 +112,22 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
               )}
               heading="Type"
             >
-              {results.map(({ type, title, description, icon }) => (
-                <CommandItem key={type} value={`default-${type}`} asChild>
+              {results.map(({ id, meta }) => (
+                <CommandItem key={id} value={`default-${id}`} asChild>
                   <TooltipPreset
                     side="left"
                     sideOffset={6}
-                    description={description}
+                    description={meta.desc}
                     // WARNING adding `text-xs/[1.4] to prevent style overriding by `CommandItem`
                     className="max-w-[282px] text-xs/[1.4]"
                   >
                     <MenuItem
-                      disabled={type === "title"}
-                      Icon={icon}
-                      Body={title}
-                      onClick={() => select(type, title)}
+                      disabled={id === "title"}
+                      Icon={meta.icon}
+                      Body={meta.name}
+                      onClick={() => select(id, meta.name)}
                     >
-                      {property?.type === type && <MenuItemCheck />}
+                      {propType === id && <MenuItemCheck />}
                     </MenuItem>
                   </TooltipPreset>
                 </CommandItem>
@@ -122,12 +143,14 @@ export function TypesMenu({ propId, at, showHeader = true }: TypesMenuProps) {
               heading="Select to add"
             >
               <CommandItem
-                className="mx-1 gap-2"
                 value={`search-${search}`}
                 onSelect={() => select("text", search)}
+                asChild
               >
-                <DefaultIcon type="text" className="fill-icon" />
-                {search}
+                <MenuItem
+                  Icon={<DefaultIcon type="text" className="fill-menu-icon" />}
+                  Body={search}
+                />
               </CommandItem>
             </CommandGroup>
           )}

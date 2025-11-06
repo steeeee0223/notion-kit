@@ -1,9 +1,8 @@
-import type { Updater } from "@tanstack/react-table";
+import { functionalUpdate, type Updater } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { Color } from "@notion-kit/utils";
 
-import { getState } from "../../lib/utils";
 import type { SelectConfig, SelectSort } from "./types";
 
 export type SelectConfigAction =
@@ -74,7 +73,7 @@ export function selectConfigReducer(
       return meta;
     }
     case "update:sort:manual": {
-      const names = getState(a.updater, v.options.names);
+      const names = functionalUpdate(a.updater, v.options.names);
       return { config: { sort: "manual", options: { ...v.options, names } } };
     }
     case "delete:option": {

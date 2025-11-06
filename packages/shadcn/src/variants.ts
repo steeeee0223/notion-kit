@@ -31,7 +31,7 @@ export const buttonVariants = cva(
   [
     "inline-flex animate-bg-in cursor-pointer items-center justify-center gap-1.5 rounded-sm text-sm font-normal whitespace-nowrap select-none",
     "hover:bg-default/5 focus-visible:outline-hidden",
-    "disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-50",
+    "disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-40",
     "[&_svg]:block [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   ],
   {
@@ -74,20 +74,21 @@ export type ButtonVariants = VariantProps<typeof buttonVariants>;
 export const menuItemVariants = cva(
   [
     "mx-1 flex min-h-7 w-[calc(100%-8px)] animate-bg-in cursor-pointer items-center rounded-md px-2 text-sm/[1.2] select-none hover:bg-default/5 focus-visible:outline-hidden",
-    "[&_svg]:block [&_svg]:shrink-0",
+    "fill-menu-icon [&_svg]:block [&_svg]:shrink-0",
   ],
   {
     variants: {
       variant: {
         default: "text-primary",
         secondary: "text-secondary",
-        sidebar: "text-sidebar-primary",
-        warning: "hover:text-red",
-        error: "text-red",
+        sidebar:
+          "fill-secondary text-sidebar-primary aria-selected:bg-default/10 aria-selected:text-primary",
+        warning: "hover:fill-red hover:text-red",
+        error: "fill-red text-red",
       },
       inset: { true: "pl-8" },
       disabled: {
-        true: "pointer-events-none cursor-not-allowed opacity-50 hover:bg-transparent",
+        true: "pointer-events-none cursor-not-allowed opacity-40 hover:bg-transparent",
       },
     },
     defaultVariants: {
@@ -99,7 +100,7 @@ export type MenuItemVariants = VariantProps<typeof menuItemVariants>;
 
 export const inputVariants = cva(
   [
-    "relative flex w-full cursor-text items-center rounded-md bg-input/60 text-primary transition-colors dark:bg-input/5",
+    "relative flex w-full cursor-text items-center rounded-md bg-input text-primary transition-colors",
     "[&_input]:block [&_input]:w-full [&_input]:bg-transparent [&_input]:p-0 [&_input]:text-inherit",
   ],
   {
@@ -113,11 +114,11 @@ export const inputVariants = cva(
         /**
          * transparent and without border
          */
-        flat: "bg-transparent dark:bg-transparent",
+        flat: "bg-transparent",
       },
       size: {
-        default: "h-7 px-1.5 py-[3px] text-sm",
-        lg: "h-[34px] px-2.5 py-1 text-[15px]/[26px]",
+        default: "h-7 px-1.5 text-sm",
+        lg: "h-[34px] px-2.5 text-[15px]/[26px]",
       },
     },
     defaultVariants: { variant: "default", size: "default" },

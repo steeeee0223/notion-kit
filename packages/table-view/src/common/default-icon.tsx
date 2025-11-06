@@ -3,11 +3,8 @@ import React from "react";
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 
-import { PluginType } from "../lib/types";
-import { CellPlugin } from "../plugins";
-
 interface DefaultIconProps {
-  type: PluginType<CellPlugin[]>;
+  type: string;
   className?: string;
 }
 
@@ -24,6 +21,14 @@ export function DefaultIcon({ type, className }: DefaultIconProps) {
       return <Icon.TypesSelect className={iconClassName} />;
     case "multi-select":
       return <Icon.TypesMultiSelect className={iconClassName} />;
+    case "number":
+      return <Icon.HashTag className={iconClassName} />;
+    case "email":
+      return <Icon.Username className={iconClassName} />;
+    case "phone":
+      return <Icon.PhoneCall className={iconClassName} />;
+    case "url":
+      return <Icon.Link className={iconClassName} />;
     default:
       return <div className={iconClassName} />;
   }

@@ -32,7 +32,7 @@ export const PageObject = z.object({
 export type Page = z.infer<typeof PageObject>;
 
 export type UpdatePageParams = Partial<
-  Pick<Page, "title" | "icon" | "isFavorite" | "isArchived">
+  Pick<Page, "parentId" | "title" | "icon" | "isFavorite" | "isArchived">
 >;
 
 export const UserObject = z.object({

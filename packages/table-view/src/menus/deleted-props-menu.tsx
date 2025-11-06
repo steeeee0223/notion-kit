@@ -1,7 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
-
 import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import {
@@ -9,63 +7,57 @@ import {
   MenuGroup,
   MenuItem,
   MenuItemAction,
-  useMenu,
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader } from "../common";
-import type { Column } from "../lib/types";
-import type { CellPlugin } from "../plugins";
-import { useTableActions, useTableViewCtx } from "../table-contexts";
-import { PropsMenu } from "./props-menu";
+import { TableViewMenuPage } from "../features";
+import type { ColumnInfo } from "../lib/types";
+import { useTableViewCtx } from "../table-contexts";
 
-export const DeletedPropsMenu = () => {
-  const { properties } = useTableViewCtx();
-  const { updateColumn, remove } = useTableActions();
-  const { openMenu } = useMenu();
-
-  const openPropsMenu = () => openMenu(<PropsMenu />, { x: -12, y: -12 });
-
-  const deletedProps = useMemo(
-    () => Object.values(properties).filter((prop) => prop.isDeleted),
-    [properties],
-  );
+export function DeletedPropsMenu() {
+  const { table } = useTableViewCtx();
 
   return (
     <>
-      <MenuHeader title="Deleted properties" onBack={openPropsMenu} />
+      <MenuHeader
+        title="Deleted properties"
+        onBack={() =>
+          table.setTableMenuState({ open: true, page: TableViewMenuPage.Props })
+        }
+      />
       <MenuGroup>
-        {deletedProps.map((prop) => (
+        {table.getDeletedColumns().map((info) => (
           <PropertyItem
-            key={prop.id}
-            property={prop}
-            onRestore={() => updateColumn(prop.id, { isDeleted: false })}
-            onDelete={() => remove(prop.id, "col")}
+            key={info.id}
+            info={info}
+            onRestore={() => table.setColumnInfo(info.id, { isDeleted: false })}
+            onDelete={() => table.removeColumnInfo(info.id)}
           />
         ))}
       </MenuGroup>
     </>
   );
-};
+}
 
 interface PropertyItemProps {
-  property: Column<CellPlugin>;
+  info: ColumnInfo;
   onRestore: () => void;
   onDelete: () => void;
 }
 
-const PropertyItem: React.FC<PropertyItemProps> = ({
-  property,
-  onRestore,
-  onDelete,
-}) => {
-  const { name, icon, type } = property;
-
+function PropertyItem({ info, onRestore, onDelete }: PropertyItemProps) {
   return (
     <MenuItem
       role="menuitem"
       className="*:data-[slot=menu-item-body]:leading-normal"
-      Icon={icon ? <IconBlock icon={icon} /> : <DefaultIcon type={type} />}
-      Body={name}
+      Icon={
+        info.icon ? (
+          <IconBlock icon={info.icon} />
+        ) : (
+          <DefaultIcon type={info.type} />
+        )
+      }
+      Body={info.name}
     >
       <MenuItemAction className="flex items-center text-muted">
         <Button
@@ -84,15 +76,15 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
           tabIndex={0}
           aria-label="Delete"
           variant="hint"
-          className="size-6 p-0 disabled:opacity-40"
+          className="size-6 disabled:opacity-40"
           onClick={(e) => {
             e.stopPropagation();
             onDelete();
           }}
         >
-          <Icon.Trash className="size-3.5 fill-current" />
+          <Icon.Trash className="fill-current" />
         </Button>
       </MenuItemAction>
     </MenuItem>
   );
-};
+}

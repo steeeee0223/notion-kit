@@ -15,6 +15,7 @@ interface TreeListProps<T extends TreeItemData> {
   defaultIcon?: IconData;
   showEmptyChild?: boolean;
   selectedId?: string | null;
+  indent?: number;
   onSelect?: (id: string) => void;
   renderItem?: (props: TreeItemProps<T>) => React.ReactNode;
 }
@@ -37,6 +38,7 @@ function TreeList<T extends TreeItemData>(props: TreeListProps<T>) {
       showEmptyChild,
       expanded,
       selectedId,
+      indent = 12,
       onSelect,
       renderItem = TreeItem,
     }: TreeProps<T>) => {
@@ -45,7 +47,7 @@ function TreeList<T extends TreeItemData>(props: TreeListProps<T>) {
           {showEmptyChild && (
             <p
               style={{
-                paddingLeft: level ? `${level * 12 + 25}px` : undefined,
+                paddingLeft: level ? `${level * indent + 25}px` : undefined,
               }}
               className={cn(
                 "hidden pl-4 text-sm font-medium text-muted",
@@ -65,6 +67,7 @@ function TreeList<T extends TreeItemData>(props: TreeListProps<T>) {
                 onSelect: () => onSelect?.(node.id),
                 expandable: true,
                 expanded: expanded[node.id],
+                indent,
                 onExpand: () => onExpand(node.id),
               })}
               {expanded[node.id] &&
@@ -75,6 +78,7 @@ function TreeList<T extends TreeItemData>(props: TreeListProps<T>) {
                   defaultIcon,
                   expanded,
                   selectedId,
+                  indent,
                   onSelect,
                   renderItem,
                 })}

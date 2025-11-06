@@ -1,50 +1,59 @@
 "use client";
 
-import React, { useRef } from "react";
+import React from "react";
+import { closestCenter, DndContext } from "@dnd-kit/core";
+import {
+  restrictToHorizontalAxis,
+  restrictToParentElement,
+} from "@dnd-kit/modifiers";
 import {
   horizontalListSortingStrategy,
   SortableContext,
 } from "@dnd-kit/sortable";
-import {
-  flexRender,
-  type ColumnOrderState,
-  type Header,
-} from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
-import { Checkbox, useMenu } from "@notion-kit/shadcn";
+import {
+  Checkbox,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@notion-kit/shadcn";
 
-import type { Row } from "../lib/types";
-import { PropsMenu, TypesMenu } from "../menus";
+import { useDndSensors } from "../common";
+import { TableViewMenuPage } from "../features";
+import { TableViewMenu, TypesMenu } from "../menus";
+import { useTableViewCtx } from "../table-contexts";
 import { TableHeaderActionCell } from "./table-header-action-cell";
 
-interface TableHeaderRowProps {
-  leftPinnedHeaders: Header<Row, unknown>[];
-  headers: Header<Row, unknown>[];
-  columnOrder: ColumnOrderState;
-}
+export const DndTableHeader = React.memo(function DndTableHeader() {
+  const { table } = useTableViewCtx();
+  const sensors = useDndSensors();
 
-export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({
-  leftPinnedHeaders,
-  headers,
-  columnOrder,
-}) => {
+  return (
+    <DndContext
+      collisionDetection={closestCenter}
+      modifiers={[restrictToHorizontalAxis, restrictToParentElement]}
+      onDragEnd={table.handleColumnDragEnd}
+      sensors={sensors}
+    >
+      <div className="relative">
+        <TableHeaderRow />
+      </div>
+    </DndContext>
+  );
+});
+
+function TableHeaderRow() {
+  const { table } = useTableViewCtx();
   const isMobile = useIsMobile();
-  const { openMenu } = useMenu();
 
+  const { columnOrder, menu } = table.getState();
+  const headers = table.getCenterLeafHeaders();
+  const leftPinnedHeaders = table.getLeftLeafHeaders();
   const isLeftPinned = leftPinnedHeaders.length > 0;
-
-  const plusButtonRef = useRef<HTMLButtonElement>(null);
-  const openTypesMenu = () => {
-    const rect = plusButtonRef.current?.getBoundingClientRect();
-    openMenu(<TypesMenu propId={null} />, {
-      x: rect?.left,
-      y: rect ? rect.top + rect.height : 0,
-    });
-  };
-  const openPropsMenu = () => openMenu(<PropsMenu />, { x: -12, y: -12 });
 
   return (
     <div
@@ -107,12 +116,25 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({
           </div>
         </SortableContext>
       </div>
-      <TableHeaderActionCell
-        ref={plusButtonRef}
-        icon={<Icon.Plus />}
-        onClick={openTypesMenu}
-      />
-      <TableHeaderActionCell icon={<Icon.Dots />} onClick={openPropsMenu} />
+      <Popover>
+        <PopoverTrigger asChild>
+          <TableHeaderActionCell icon={<Icon.Plus />} />
+        </PopoverTrigger>
+        <PopoverContent sideOffset={0} collisionPadding={12}>
+          <TypesMenu menu={TableViewMenuPage.CreateProp} />
+        </PopoverContent>
+      </Popover>
+      <Popover
+        open={menu.open}
+        onOpenChange={(open) => table.setTableMenuState({ open, page: null })}
+      >
+        <PopoverTrigger asChild>
+          <TableHeaderActionCell icon={<Icon.Dots />} />
+        </PopoverTrigger>
+        <PopoverContent sideOffset={0} collisionPadding={12} sticky="always">
+          <TableViewMenu />
+        </PopoverContent>
+      </Popover>
     </div>
   );
-};
+}

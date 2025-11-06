@@ -40,27 +40,26 @@ catalogs:
     "@testing-library/react": ^16.1.0
     "@testing-library/user-event": ^14.5.2
   turbo:
-    turbo: ^2.5.5
-    "@turbo/gen": ^2.5.5
-    eslint-plugin-turbo: ^2.5.5
+    turbo: ^2.6.0
+    "@turbo/gen": ^2.6.0
+    eslint-plugin-turbo: ^2.6.0
   tailwind-v4:
-    tailwindcss: ^4.1.0
-    "@tailwindcss/postcss": ^4.1.0
+    tailwindcss: ^4.1.16
+    "@tailwindcss/postcss": ^4.1.16
   ui:
     class-variance-authority: ^0.7.1
     lucide-react: ^0.456.0
-    react-hook-form: ^7.62.0
-    react-hotkeys-hook: 4.6.1
+    react-hook-form: ^7.66.0
+    react-hotkeys-hook: ^5.2.1
     usehooks-ts: ^3.1.1
-    zustand: ^5.0.3
     "@dnd-kit/core": ^6.3.1
     "@dnd-kit/modifiers": ^9.0.0
     "@dnd-kit/sortable": ^10.0.0
-    "@hookform/resolvers": ^5.2.1
+    "@hookform/resolvers": ^5.2.2
     "@tanstack/react-query": ^5.81.5
     "@tanstack/react-table": ^8.21.3
   uuid:
-    uuid: ^11.1.0
+    uuid: ^13.0.0
   env:
     dotenv-cli: ^8.0.0
     "@t3-oss/env-nextjs": ^0.13.6

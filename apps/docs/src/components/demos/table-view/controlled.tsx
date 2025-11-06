@@ -46,10 +46,15 @@ const mockData: Row[] = [
 ];
 
 export default function Demo() {
-  const [state, setState] = useState({
-    properties: mockProps,
-    data: mockData,
-  });
+  const [data, setData] = useState(mockData);
+  const [properties, setProperties] = useState(mockProps);
 
-  return <TableView state={state} onStateChange={setState} />;
+  return (
+    <TableView
+      properties={properties}
+      data={data}
+      onDataChange={setData}
+      onPropertiesChange={setProperties}
+    />
+  );
 }

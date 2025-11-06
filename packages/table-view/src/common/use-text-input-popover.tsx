@@ -1,50 +1,62 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { Input, useMenu } from "@notion-kit/shadcn";
+import { cn } from "@notion-kit/cn";
+import {
+  Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@notion-kit/shadcn";
 
 import { useTriggerPosition } from "../common";
 
-type UseTextInputPopoverProps = TextInputPopoverProps;
+interface TextInputPopoverProps extends TextInputContentProps {
+  renderTrigger: ({ width }: { width: number }) => React.ReactNode;
+}
 
-export function useTextInputPopover<T extends HTMLElement = HTMLElement>({
-  value,
+export function TextInputPopover({
+  renderTrigger,
   onUpdate,
-}: UseTextInputPopoverProps) {
-  const { openMenu, closeMenu } = useMenu();
-  const { ref, position, width } = useTriggerPosition<T>();
-
-  const openTextInput = useCallback(() => {
-    openMenu(
-      <TextInputPopover
-        value={value}
-        onUpdate={(v) => {
-          onUpdate?.(v);
-          closeMenu();
-        }}
-      />,
-      {
-        x: position.left,
-        y: position.top,
-        className:
-          "max-h-[773px] min-h-[34px] w-60 overflow-visible backdrop-filter-none",
-      },
-    );
-  }, [openMenu, value, position, onUpdate, closeMenu]);
-
-  return { ref, width, openTextInput };
+  ...props
+}: TextInputPopoverProps) {
+  const { ref, position, width } = useTriggerPosition<HTMLButtonElement>();
+  const [open, setOpen] = useState(false);
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger ref={ref} asChild>
+        {renderTrigger({ width })}
+      </PopoverTrigger>
+      <PopoverContent
+        side="bottom"
+        sideOffset={-position.h}
+        align="start"
+        className="max-h-[773px] min-h-[38px] w-60 overflow-visible backdrop-filter-none"
+      >
+        <TextInputContent
+          {...props}
+          onUpdate={(v) => {
+            onUpdate(v);
+            setOpen(false);
+          }}
+        />
+      </PopoverContent>
+    </Popover>
+  );
 }
 
-interface TextInputPopoverProps {
+interface TextInputContentProps {
+  className?: string;
   value: string;
-  onUpdate?: (value: string) => void;
+  onUpdate: (value: string) => void;
 }
 
-function TextInputPopover({
+function TextInputContent({
+  className,
   value: initialValue,
   onUpdate,
-}: TextInputPopoverProps) {
+}: TextInputContentProps) {
   const [value, setValue] = useState(initialValue);
 
   useEffect(() => {
@@ -61,10 +73,13 @@ function TextInputPopover({
         setValue(e.target.value);
       }}
       onKeyDown={(e) => {
-        if (e.key === "Enter") onUpdate?.(value);
+        if (e.key === "Enter") onUpdate(value);
       }}
-      onBlur={() => onUpdate?.(value)}
-      className="max-h-[771px] min-h-8 border-none bg-transparent word-break whitespace-pre-wrap caret-primary"
+      onBlur={() => onUpdate(value)}
+      className={cn(
+        "max-h-[771px] min-h-9 border-none bg-transparent word-break whitespace-pre-wrap caret-primary",
+        className,
+      )}
     />
   );
 }

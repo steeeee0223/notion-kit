@@ -1,4 +1,3 @@
-export * from "./action-group";
 export * from "./constant";
-export * from "./rename-popover";
+export * from "./doc-group-actions";
 export * from "./workspace-list";

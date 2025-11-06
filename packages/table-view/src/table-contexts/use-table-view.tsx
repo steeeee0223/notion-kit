@@ -1,56 +1,39 @@
 "use client";
 
-import { useCallback, useMemo, useReducer } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
+  functionalUpdate,
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
   type ColumnDef,
-  type ColumnOrderState,
-  type ColumnPinningState,
-  type VisibilityState,
+  type OnChangeFn,
 } from "@tanstack/react-table";
 
-import { CountMethod } from "../lib/types";
-import type { PluginsMap, Row } from "../lib/types";
-import {
-  arrayToEntity,
-  getCount,
-  isCountMethodSet,
-  type Entity,
-} from "../lib/utils";
-import type { CellPlugin, InferConfig, InferPlugin } from "../plugins";
+import { DEFAULT_FEATURES } from "../features";
+import type { ColumnDefs, ColumnInfo, Row } from "../lib/types";
+import { type Entity } from "../lib/utils";
+import type { CellPlugin } from "../plugins";
 import { TableRowCell } from "../table-body";
 import { TableFooterCell } from "../table-footer";
 import { TableHeaderCell } from "../table-header";
-import { createTableViewReducer, type TableViewAction } from "./table-reducer";
-import type { TableViewCtx } from "./table-view-context";
-import type { PartialTableState } from "./types";
-import {
-  createColumnSortingFn,
-  createInitialTable,
-  getMinWidth,
-  getTableViewAtom,
-  toControlledState,
-  toDatabaseProperties,
-} from "./utils";
+import type { SyncedState, TableState } from "./types";
+import { createColumnSortingFn, getMinWidth, toPropertyEntity } from "./utils";
 
-interface UseTableViewOptions<TPlugins extends CellPlugin[]> {
+const defaultColumn: Partial<ColumnDef<Row>> = {
+  size: 200,
+  minSize: 100,
+  maxSize: Number.MAX_SAFE_INTEGER,
+  header: ({ header }) => <TableHeaderCell header={header} />,
+  cell: ({ row, column }) => <TableRowCell column={column} row={row} />,
+  footer: ({ column }) => <TableFooterCell column={column} />,
+};
+
+interface UseTableViewOptions<TPlugins extends CellPlugin[]>
+  extends TableState<TPlugins> {
   plugins: Entity<TPlugins[number]>;
-  defaultState?: PartialTableState<TPlugins>;
-  state?: PartialTableState<TPlugins>;
-  onStateChange?: (
-    newState: PartialTableState<TPlugins>,
-    type: TableViewAction<TPlugins>["type"],
-  ) => void;
-  dispatch?: React.Dispatch<TableViewAction<TPlugins>>;
+  onDataChange?: OnChangeFn<Row<TPlugins>[]>;
+  onPropertiesChange?: OnChangeFn<ColumnDefs<TPlugins>>;
 }
 
 /**
@@ -59,53 +42,29 @@ interface UseTableViewOptions<TPlugins extends CellPlugin[]> {
  */
 export function useTableView<TPlugins extends CellPlugin[]>({
   plugins,
-  ...props
+  data,
+  properties,
+  onDataChange,
+  onPropertiesChange,
 }: UseTableViewOptions<TPlugins>) {
-  const pluginsMap = plugins.items as PluginsMap<TPlugins>;
-  const tableViewReducer = useMemo(
-    () => createTableViewReducer(pluginsMap),
-    [pluginsMap],
+  const isPropertiesControlled = typeof onPropertiesChange !== "undefined";
+  const isDataControlled = typeof onDataChange !== "undefined";
+  /** columns states */
+  const [_columnEntity, setColumnEntity] = useState(
+    toPropertyEntity(plugins.items, properties),
   );
-  const [_state, _dispatch] = useReducer(
-    tableViewReducer,
-    getTableViewAtom<TPlugins>(
-      pluginsMap,
-      props.defaultState ?? createInitialTable(),
-    ),
+  // Use memoized entity for controlled properties
+  const columnEntity = useMemo(
+    () =>
+      isPropertiesControlled
+        ? toPropertyEntity(plugins.items, properties)
+        : _columnEntity,
+    [isPropertiesControlled, plugins.items, properties, _columnEntity],
   );
-
-  const dispatch = useCallback(
-    (action: TableViewAction<TPlugins>) => {
-      if (!props.state) return _dispatch(action);
-
-      const nextState = tableViewReducer(
-        getTableViewAtom(pluginsMap, props.state),
-        action,
-      );
-      props.onStateChange?.(toControlledState(nextState), action.type);
-      props.dispatch?.(action);
-    },
-    [pluginsMap, props, tableViewReducer],
-  );
-
-  const controlledProperties = props.state?.properties
-    ? toDatabaseProperties(pluginsMap, props.state.properties)
-    : undefined;
-  const properties = controlledProperties ?? Object.values(_state.properties);
-
-  const data = useMemo(
-    () => props.state?.data ?? Object.values(_state.data),
-    [_state.data, props.state?.data],
-  );
-
-  const dataOrder = useMemo(
-    () => props.state?.data.map((row) => row.id) ?? _state.dataOrder,
-    [_state.dataOrder, props.state?.data],
-  );
-
   const columns = useMemo(
     () =>
-      properties.map<ColumnDef<Row<TPlugins>>>((property) => {
+      columnEntity.ids.map<ColumnDef<Row<TPlugins>>>((colId) => {
+        const property = columnEntity.items[colId]!;
         const plugin = plugins.items[property.type]!;
         const sortingFn = createColumnSortingFn(plugin);
         return {
@@ -113,206 +72,71 @@ export function useTableView<TPlugins extends CellPlugin[]>({
           accessorKey: property.name,
           minSize: getMinWidth(property.type),
           sortingFn,
-          header: ({ header }) => (
-            <TableHeaderCell
-              id={property.id}
-              width={`calc(var(--col-${property.id}-size) * 1px)`}
-              isResizing={header.column.getIsResizing()}
-              onResizeStart={header.getResizeHandler()}
-              onResizeEnd={() =>
-                dispatch({
-                  type: "update:col",
-                  payload: {
-                    id: property.id,
-                    data: { width: `${header.column.getSize()}px` },
-                  },
-                })
-              }
-            />
-          ),
-          cell: ({ row, column }) => {
-            const cell = row.original.properties[property.id];
-            if (!cell) return null;
-            return (
-              <TableRowCell
-                plugin={plugin}
-                data={cell.value}
-                rowIndex={row.index}
-                colIndex={column.getIndex()}
-                propId={property.id}
-                config={property.config as InferConfig<InferPlugin<TPlugins>>}
-                width={`calc(var(--col-${property.id}-size) * 1px)`}
-                wrapped={property.wrapped}
-                onChange={(value) =>
-                  dispatch({
-                    type: "update:cell",
-                    payload: {
-                      rowId: row.original.id,
-                      colId: property.id,
-                      data: { id: cell.id, value },
-                    },
-                  })
-                }
-              />
-            );
-          },
-          footer: () => (
-            <TableFooterCell
-              id={property.id}
-              type={property.type}
-              countMethod={property.countMethod ?? CountMethod.NONE}
-              isCountCapped={property.isCountCapped}
-              width={`calc(var(--col-${property.id}-size) * 1px)`}
-            />
-          ),
         };
       }),
-    [dispatch, plugins.items, properties],
+    [columnEntity, plugins.items],
+  );
+  const handleColumnChange: OnChangeFn<Entity<ColumnInfo>> = useCallback(
+    (updater) => {
+      if (!onPropertiesChange) {
+        setColumnEntity(updater);
+        return;
+      }
+      onPropertiesChange((prev) => {
+        const entity = toPropertyEntity(plugins.items, prev);
+        const next = functionalUpdate(updater, entity);
+        return next.ids.map((id) => next.items[id]!) as ColumnDefs<TPlugins>;
+      });
+    },
+    [onPropertiesChange, plugins.items],
   );
 
-  const columnVisibility = useMemo<VisibilityState>(
-    () =>
-      properties.reduce(
-        (acc, col) => ({ ...acc, [col.id]: !col.hidden && !col.isDeleted }),
-        {},
-      ),
-    [properties],
+  /** data state */
+  const [_dataEntity, setDataEntity] = useState(data);
+  // Use memoized entity for controlled data
+  const dataEntity = useMemo(
+    () => (isDataControlled ? data : _dataEntity),
+    [isDataControlled, data, _dataEntity],
   );
 
-  const columnPinning = useMemo<ColumnPinningState>(() => {
-    return {
-      left: props.state
-        ? props.state.properties
-            .slice(0, _state.freezedIndex + 1)
-            .map((prop) => prop.id)
-        : _state.propertiesOrder.slice(0, _state.freezedIndex + 1),
-    };
-  }, [props.state, _state.propertiesOrder, _state.freezedIndex]);
+  const [synced, setSynced] = useState<SyncedState>({
+    header: -1,
+    body: -1,
+    footer: -1,
+  });
 
-  const columnOrder = useMemo<ColumnOrderState>(
-    () =>
-      props.state?.properties.map((prop) => prop.id) ?? _state.propertiesOrder,
-    [props.state?.properties, _state.propertiesOrder],
-  );
-
+  /** table instance */
   const table = useReactTable({
     columns,
-    data,
-    defaultColumn: {
-      size: 200,
-      minSize: 100,
-      maxSize: Number.MAX_SAFE_INTEGER,
-    },
+    data: dataEntity,
+    defaultColumn,
     columnResizeMode: "onChange",
+    getRowId: (row) => row.id,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     state: {
-      sorting: _state.table.sorting,
-      columnOrder,
-      columnVisibility,
-      columnPinning,
+      rowOrder: dataEntity.map((row) => row.id),
+      columnOrder: columnEntity.ids,
+      columnsInfo: columnEntity.items,
+      cellPlugins: plugins.items,
     },
-    onSortingChange: (updater) => dispatch({ type: "update:sorting", updater }),
-    getRowId: (row) => row.id,
+    onColumnInfoChange: handleColumnChange,
+    onTableDataChange: onDataChange ?? setDataEntity,
+    sync: (keys) =>
+      setSynced((prev) =>
+        keys.reduce((acc, key) => ({ ...acc, [key]: Date.now() }), {
+          ...prev,
+        }),
+      ),
+    _features: DEFAULT_FEATURES,
   });
 
-  /**
-   * Instead of calling `column.getSize()` on every render for every header
-   * and especially every data cell (very expensive),
-   * we will calculate all column sizes at once at the root table level in a useMemo
-   * and pass the column sizes down as CSS variables to the <table> element.
-   */
-  const columnSizeVars = useMemo(
-    () => {
-      return table.getFlatHeaders().reduce<Record<string, number>>(
-        (sizes, header) => ({
-          ...sizes,
-          [`--header-${header.id}-size`]: header.getSize(),
-          [`--col-${header.column.id}-size`]: header.column.getSize(),
-        }),
-        {},
-      );
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      table.getFlatHeaders(),
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      table.getState().columnSizingInfo,
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      table.getState().columnSizing,
-    ],
-  );
-
-  /** DND */
-  const columnSensors = useSensors(
-    useSensor(MouseSensor, {
-      activationConstraint: { distance: 5 },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: { distance: 5 },
-    }),
-    useSensor(KeyboardSensor, {}),
-  );
-  const rowSensors = useSensors(
-    useSensor(MouseSensor, {
-      activationConstraint: { distance: 5 },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: { distance: 5 },
-    }),
-    useSensor(KeyboardSensor, {}),
-  );
-
-  const tableViewCtx = useMemo<TableViewCtx>(() => {
-    const uncontrolled: TableViewCtx = {
-      plugins,
+  return useMemo(
+    () => ({
       table,
-      columnSizeVars,
-      columnSensors,
-      rowSensors,
-      dataOrder,
-      properties: _state.properties,
-      isPropertyUnique: (name) => properties.every((p) => p.name !== name),
-      canFreezeProperty: (id) => table.getState().columnOrder.at(-1) !== id,
-      isSomeCountMethodSet: isCountMethodSet(_state.properties),
-      getColumnCount: (colId, type, method) => {
-        const plugin = plugins.items[type]!;
-        return getCount(
-          { table, properties: _state.properties },
-          colId,
-          plugin,
-          method,
-        );
-      },
-    };
-    if (!controlledProperties) return uncontrolled;
-    const colData = arrayToEntity(controlledProperties);
-    return {
-      ...uncontrolled,
-      properties: colData.items,
-      isSomeCountMethodSet: isCountMethodSet(colData.items),
-      getColumnCount: (colId, type, method) => {
-        const plugin = plugins.items[type]!;
-        return getCount(
-          { table, properties: colData.items },
-          colId,
-          plugin,
-          method,
-        );
-      },
-    };
-  }, [
-    _state.properties,
-    columnSensors,
-    columnSizeVars,
-    controlledProperties,
-    dataOrder,
-    plugins,
-    properties,
-    rowSensors,
-    table,
-  ]);
-
-  return [tableViewCtx, dispatch] as const;
+      // use synced to force re-render
+      __synced: synced,
+    }),
+    [table, synced],
+  );
 }

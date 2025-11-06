@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/sidebar",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -42,8 +42,7 @@
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/tree": "workspace:*",
-    "@notion-kit/utils": "workspace:*",
-    "lucide-react": "catalog:ui"
+    "@notion-kit/utils": "workspace:*"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",

@@ -6,6 +6,11 @@ import type { TextPlugin } from "./types";
 export function text(): TextPlugin {
   return {
     id: "text",
+    meta: {
+      name: "Text",
+      icon: <DefaultIcon type="text" className="fill-menu-icon" />,
+      desc: "Add text that can be formatted. Great for summaries, notes, or descriptions.",
+    },
     default: {
       name: "Text",
       icon: <DefaultIcon type="text" />,

@@ -10,14 +10,11 @@ import {
   Separator,
   Switch,
   TooltipPreset,
-  useMenu,
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader, PropMeta } from "../common";
-import { useTableActions, useTableViewCtx } from "../table-contexts";
-import { PropsMenu } from "./props-menu";
-import { TypesMenu } from "./types-menu";
-import { propertyTypes } from "./types-menu-options";
+import { TableViewMenuPage } from "../features";
+import { useTableViewCtx } from "../table-contexts";
 
 interface EditPropMenuProps {
   propId: string;
@@ -34,47 +31,39 @@ interface EditPropMenuProps {
  * 5. ✅ Duplicate property
  * 6. ✅ Delete property
  */
-export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
-  const { properties, isPropertyUnique } = useTableViewCtx();
-  const { updateColumn, duplicate } = useTableActions();
-  const { openMenu, closeMenu } = useMenu();
+export function EditPropMenu({ propId }: EditPropMenuProps) {
+  const { table } = useTableViewCtx();
 
-  const property = properties[propId]!;
-
-  const openPropsMenu = () => openMenu(<PropsMenu />, { x: -12, y: -12 });
+  const info = table.getColumnInfo(propId);
+  const plugin = table.getColumnPlugin(propId);
 
   // 1. Type selection
   const openTypesMenu = () =>
-    openMenu(<TypesMenu propId={property.id} />, { x: -12, y: -12 });
+    table.setTableMenuState({
+      open: true,
+      page: TableViewMenuPage.ChangePropType,
+      id: propId,
+    });
   // 3. Wrap in view
-  const wrapProp = () =>
-    updateColumn(property.id, { wrapped: !property.wrapped });
+  const wrapProp = () => table.toggleColumnWrapped(propId, (v) => !v);
   // 4. Hide in view
-  const hideProp = () => {
-    updateColumn(property.id, { hidden: true });
-    closeMenu();
-  };
+  const hideProp = () => table.setColumnInfo(propId, { hidden: true });
   // 5. Duplicate property
-  const duplicateProp = () => {
-    duplicate(property.id, "col");
-    closeMenu();
-  };
+  const duplicateProp = () => table.duplicateColumnInfo(propId);
   // 6. Delete property
-  const deleteProp = () => {
-    updateColumn(property.id, { isDeleted: true });
-    closeMenu();
-  };
+  const deleteProp = () => table.setColumnInfo(propId, { isDeleted: true });
 
   return (
     <>
-      <MenuHeader title="Edit property" onBack={openPropsMenu} />
-      <PropMeta
-        property={property}
-        validateName={isPropertyUnique}
-        onUpdate={(data) => updateColumn(property.id, data)}
+      <MenuHeader
+        title="Edit property"
+        onBack={() =>
+          table.setTableMenuState({ open: true, page: TableViewMenuPage.Props })
+        }
       />
+      <PropMeta propId={propId} type={info.type} />
       <MenuGroup>
-        {property.type === "title" ? (
+        {info.type === "title" ? (
           <TooltipPreset
             side="left"
             sideOffset={6}
@@ -104,9 +93,9 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
             >
               <MenuItemAction className="flex items-center text-muted">
                 <div className="flex truncate">
-                  <DefaultIcon type={property.type} className="fill-current" />
+                  <DefaultIcon type={info.type} className="fill-current" />
                   <div className="inline-block min-h-1 min-w-1" />
-                  <span>{propertyTypes[property.type]!.title}</span>
+                  <span>{plugin.meta.name}</span>
                 </div>
                 <Icon.ChevronRight className="transition-out h-full w-3 fill-current" />
               </MenuItemAction>
@@ -140,10 +129,10 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
           Body="Wrap in view"
         >
           <MenuItemAction className="flex items-center">
-            <Switch size="sm" checked={property.wrapped} />
+            <Switch size="sm" checked={info.wrapped} />
           </MenuItemAction>
         </MenuItem>
-        {property.type !== "title" && (
+        {info.type !== "title" && (
           <>
             <MenuItem
               onClick={hideProp}
@@ -152,13 +141,13 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
             />
             <MenuItem
               onClick={duplicateProp}
-              Icon={<Icon.Duplicate className="h-4" />}
+              Icon={<Icon.Duplicate />}
               Body="Duplicate property"
             />
             <MenuItem
               variant="warning"
               onClick={deleteProp}
-              Icon={<Icon.Trash className="w-4" />}
+              Icon={<Icon.Trash />}
               Body="Delete property"
             />
           </>
@@ -166,4 +155,4 @@ export const EditPropMenu: React.FC<EditPropMenuProps> = ({ propId }) => {
       </MenuGroup>
     </>
   );
-};
+}

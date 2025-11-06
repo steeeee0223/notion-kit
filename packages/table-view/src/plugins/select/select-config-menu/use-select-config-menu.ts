@@ -6,77 +6,52 @@ import { arrayMove } from "@dnd-kit/sortable";
 
 import { getRandomColor, type Color } from "@notion-kit/utils";
 
-import { useTableActions } from "../../../table-contexts";
-import type { SelectActions, SelectMeta, SelectSort } from "../types";
-
-interface UseSelectConfigMenuOptions {
-  propId: string;
-  meta: SelectMeta;
-}
+import { useTableViewCtx } from "../../../table-contexts";
+import type { ConfigMenuProps } from "../../types";
+import type { SelectConfig, SelectPlugin, SelectSort } from "../types";
 
 export function useSelectConfigMenu({
   propId,
-  meta,
-}: UseSelectConfigMenuOptions) {
-  const { dispatch } = useTableActions();
-
-  const { type, config } = meta;
+  config,
+}: ConfigMenuProps<SelectConfig>) {
+  const { table } = useTableViewCtx();
 
   const updateSort = useCallback(
     (sort: SelectSort) =>
-      dispatch({
-        type: "update:col:meta",
-        payload: {
-          type,
-          actions: {
-            id: propId,
-            action: "update:sort",
-            payload: sort,
-          } satisfies SelectActions,
-        },
+      table.setColumnTypeConfig<SelectPlugin>(propId, {
+        id: propId,
+        action: "update:sort",
+        payload: sort,
       }),
-    [dispatch, propId, type],
+    [table, propId],
   );
 
   const addOption = useCallback(
     (name: string) => {
-      dispatch({
-        type: "update:col:meta",
-        payload: {
-          type,
-          actions: {
-            id: propId,
-            action: "add:option",
-            payload: { name, color: getRandomColor() },
-          },
-        },
+      table.setColumnTypeConfig<SelectPlugin>(propId, {
+        id: propId,
+        action: "add:option",
+        payload: { name, color: getRandomColor() },
       });
     },
-    [dispatch, propId, type],
+    [table, propId],
   );
 
   const reorderOptions = useCallback(
     (e: DragEndEvent) => {
       const { active, over } = e;
       if (!over || active.id === over.id) return;
-      dispatch({
-        type: "update:col:meta",
-        payload: {
-          type,
-
-          actions: {
-            id: propId,
-            action: "update:sort:manual",
-            updater: (prev) => {
-              const oldIndex = prev.indexOf(active.id as string);
-              const newIndex = prev.indexOf(over.id as string);
-              return arrayMove(prev, oldIndex, newIndex);
-            },
-          } satisfies SelectActions,
+      table.setColumnTypeConfig<SelectPlugin>(propId, {
+        id: propId,
+        action: "update:sort:manual",
+        updater: (prev) => {
+          const oldIndex = prev.indexOf(active.id as string);
+          const newIndex = prev.indexOf(over.id as string);
+          return arrayMove(prev, oldIndex, newIndex);
         },
       });
     },
-    [dispatch, type, propId],
+    [table, propId],
   );
 
   const validateOptionName = useCallback(
@@ -96,35 +71,22 @@ export function useSelectConfigMenu({
         color?: Color;
       },
     ) =>
-      dispatch({
-        type: "update:col:meta",
-        payload: {
-          type,
-          actions: {
-            id: propId,
-            action: "update:option",
-            payload: { originalName, ...data },
-          } satisfies SelectActions,
-        },
+      table.setColumnTypeConfig<SelectPlugin>(propId, {
+        id: propId,
+        action: "update:option",
+        payload: { originalName, ...data },
       }),
-    [dispatch, type, propId],
+    [table, propId],
   );
 
   const deleteOption = useCallback(
     (name: string) =>
-      dispatch({
-        type: "update:col:meta",
-        payload: {
-          type,
-
-          actions: {
-            id: propId,
-            action: "delete:option",
-            payload: name,
-          } satisfies SelectActions,
-        },
+      table.setColumnTypeConfig<SelectPlugin>(propId, {
+        id: propId,
+        action: "delete:option",
+        payload: name,
       }),
-    [dispatch, type, propId],
+    [table, propId],
   );
 
   return {

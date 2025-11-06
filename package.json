@@ -23,7 +23,7 @@
     "ui-add": "turbo run ui-add"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.28.1",
+    "@changesets/cli": "^2.29.7",
     "@notion-kit/prettier-config": "workspace:*",
     "@turbo/gen": "catalog:turbo",
     "prettier": "catalog:",

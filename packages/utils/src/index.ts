@@ -29,3 +29,4 @@ export function getRandomColor() {
 }
 
 export { COLOR, Color };
+export * from "./constants";

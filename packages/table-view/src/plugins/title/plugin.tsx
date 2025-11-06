@@ -1,20 +1,36 @@
+import { functionalUpdate } from "@tanstack/react-table";
+
 import { DefaultIcon } from "../../common";
-import type { Column } from "../../lib/types";
-import { getState } from "../../lib/utils";
-import type { TableViewAtom } from "../../table-contexts";
+import type { ColumnInfo } from "../../lib/types";
+import { TableDataAtom } from "../types";
 import { TitleCell } from "./title-cell";
 import { TitleConfig } from "./title-config";
 import type { TitleActions, TitlePlugin } from "./types";
 
-function titleReducer(v: TableViewAtom, a: TitleActions): TableViewAtom {
-  const prop = v.properties[a.id] as Column<TitlePlugin>;
-  prop.config.showIcon = getState(a.updater, prop.config.showIcon ?? true);
-  return { ...v, properties: { ...v.properties, [a.id]: prop } };
+function titleReducer(v: TableDataAtom, a: TitleActions): TableDataAtom {
+  const prop = v.properties[a.id] as ColumnInfo<TitlePlugin>;
+  return {
+    ...v,
+    properties: {
+      ...v.properties,
+      [a.id]: {
+        ...prop,
+        config: {
+          showIcon: functionalUpdate(a.updater, prop.config.showIcon ?? true),
+        },
+      },
+    },
+  };
 }
 
 export function title(): TitlePlugin {
   return {
     id: "title",
+    meta: {
+      name: "Title",
+      icon: <DefaultIcon type="title" className="fill-menu-icon" />,
+      desc: "",
+    },
     default: {
       name: "Title",
       icon: <DefaultIcon type="title" />,
@@ -28,13 +44,11 @@ export function title(): TitlePlugin {
       <TitleCell
         value={data.value}
         wrapped={wrapped}
-        icon={config?.showIcon ? data.icon : undefined}
-        onUpdate={(value) => onChange?.({ ...data, value })}
+        icon={config.showIcon ? data.icon : undefined}
+        onUpdate={(value) => onChange({ ...data, value })}
       />
     ),
-    renderConfigMenu: ({ propId, config }) => (
-      <TitleConfig propId={propId} config={config} />
-    ),
+    renderConfigMenu: (props) => <TitleConfig {...props} />,
     reducer: titleReducer,
   };
 }

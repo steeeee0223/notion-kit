@@ -1,4 +1,6 @@
-import React, { useLayoutEffect, useMemo, useRef } from "react";
+"use client";
+
+import React, { useLayoutEffect, useRef } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -13,7 +15,6 @@ import {
   MenuItem,
   MenuItemAction,
   Separator,
-  useMenu,
 } from "@notion-kit/shadcn";
 
 import {
@@ -22,62 +23,44 @@ import {
   MenuHeader,
   VerticalDnd,
 } from "../common";
-import type { Column } from "../lib/types";
-import { CellPlugin } from "../plugins";
-import { useTableActions, useTableViewCtx } from "../table-contexts";
-import { DeletedPropsMenu } from "./deleted-props-menu";
-import { EditPropMenu } from "./edit-prop-menu";
-import { TypesMenu } from "./types-menu";
+import { TableViewMenuPage } from "../features";
+import type { ColumnInfo } from "../lib/types";
+import { useTableViewCtx } from "../table-contexts";
 
 /**
  * @summary The menu of all properties
  */
-export const PropsMenu = () => {
-  const { table, properties } = useTableViewCtx();
-  const { reorder, updateColumn, toggleAllColumns } = useTableActions();
-  const { openMenu } = useMenu();
-
-  const { columnOrder, columnVisibility } = table.getState();
-  const noShownProps = (() => {
-    const count = Object.values(columnVisibility).reduce(
-      (acc, shown) => {
-        const num = Number(shown) as 0 | 1;
-        acc[num]++;
-        return acc;
-      },
-      { [1]: 0, [0]: 0 },
-    );
-    return count[1] === 1;
-  })();
+export function PropsMenu() {
+  const { table } = useTableViewCtx();
+  const { columnOrder } = table.getState();
+  const noShownProps = table.countVisibleColumns() === 1;
   // Search
   const inputRef = useRef<HTMLInputElement>(null);
-  const [props, deletedCount] = useMemo(() => {
-    const props: Column<CellPlugin>[] = [];
-    let deletedCount = 0;
-    columnOrder.forEach((propId) => {
-      const prop = properties[propId];
-      if (prop && !prop.isDeleted) {
-        props.push(prop);
+  const { props, deletedCount } = columnOrder.reduce(
+    (acc, propId) => {
+      const info = table.getColumnInfo(propId);
+      if (!info.isDeleted) {
+        acc.props.push({ ...info, id: propId });
       } else {
-        deletedCount++;
+        acc.deletedCount++;
       }
-    });
-    return [props, deletedCount];
-  }, [properties, columnOrder]);
+      return acc;
+    },
+    { deletedCount: 0, props: [] as ColumnInfo[] },
+  );
+
   const { search, results, updateSearch } = useFilter(
     props,
     (prop, v) => prop.name.toLowerCase().includes(v),
     { default: "empty" },
   );
   // Menu actions
-  const openTypesMenu = () =>
-    openMenu(<TypesMenu propId={null} />, { x: -12, y: -12 });
   const openEditPropMenu = (propId: string) =>
-    openMenu(<EditPropMenu propId={propId} />, { x: -12, y: -12 });
-  const toggleVisibility = (propId: string, hidden: boolean) =>
-    updateColumn(propId, { hidden });
-  const openDeletedPropsMenu = () =>
-    openMenu(<DeletedPropsMenu />, { x: -12, y: -12 });
+    table.setTableMenuState({
+      open: true,
+      page: TableViewMenuPage.EditProp,
+      id: propId,
+    });
 
   useLayoutEffect(() => {
     inputRef.current?.focus();
@@ -85,7 +68,10 @@ export const PropsMenu = () => {
 
   return (
     <>
-      <MenuHeader title="Properties" />
+      <MenuHeader
+        title="Properties"
+        onBack={() => table.setTableMenuState({ open: true, page: null })}
+      />
       <div className="flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2">
         <Input
           ref={inputRef}
@@ -100,59 +86,70 @@ export const PropsMenu = () => {
         <MenuGroupHeader
           title={search && !results ? "No results" : "Properties"}
           action={search ? null : noShownProps ? "Show all" : "Hide all"}
-          onActionClick={() => toggleAllColumns(!noShownProps)}
+          onActionClick={table.toggleAllColumnsVisible}
         />
         <div className="flex flex-col">
-          <VerticalDnd items={columnOrder} onDragEnd={(e) => reorder(e, "col")}>
+          <VerticalDnd
+            items={columnOrder}
+            onDragEnd={table.handleColumnDragEnd}
+          >
             {search.length === 0
               ? props.map((prop) => (
                   <PropertyItem
                     key={prop.id}
                     draggable
-                    property={prop}
+                    info={prop}
                     onClick={() => openEditPropMenu(prop.id)}
-                    onVisibilityChange={(hidden) =>
-                      toggleVisibility(prop.id, hidden)
+                    onVisibilityChange={() =>
+                      table.setColumnInfo(prop.id, { hidden: !prop.hidden })
                     }
                   />
                 ))
               : (results ?? []).map((prop) => (
                   <PropertyItem
                     key={prop.id}
-                    property={prop}
+                    info={prop}
                     onClick={() => openEditPropMenu(prop.id)}
-                    onVisibilityChange={(hidden) =>
-                      toggleVisibility(prop.id, hidden)
+                    onVisibilityChange={() =>
+                      table.setColumnInfo(prop.id, { hidden: !prop.hidden })
                     }
                   />
                 ))}
           </VerticalDnd>
         </div>
       </MenuGroup>
-      <MenuGroup>
-        {deletedCount > 0 && (
-          <MenuItem
-            variant="secondary"
-            tabIndex={0}
-            onClick={openDeletedPropsMenu}
-            Icon={<Icon.Trash className="size-4" />}
-            Body="Deleted properties"
-          >
-            <MenuItemAction className="flex items-center text-muted">
-              <div className="flex truncate">{deletedCount}</div>
-              <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-current" />
-            </MenuItemAction>
-          </MenuItem>
-        )}
-      </MenuGroup>
       <Separator />
       <MenuGroup>
         <MenuItem
           variant="secondary"
-          onClick={openTypesMenu}
+          onClick={() =>
+            table.setTableMenuState({
+              open: true,
+              page: TableViewMenuPage.CreateProp,
+            })
+          }
           Icon={<Icon.Plus className="size-4" />}
           Body="New property"
         />
+        {deletedCount > 0 && (
+          <MenuItem
+            variant="secondary"
+            tabIndex={0}
+            onClick={() =>
+              table.setTableMenuState({
+                open: true,
+                page: TableViewMenuPage.DeletedProps,
+              })
+            }
+            Icon={<Icon.Trash />}
+            Body="Deleted properties"
+          >
+            <MenuItemAction className="flex items-center text-muted">
+              <div className="flex truncate">{deletedCount}</div>
+              <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-icon" />
+            </MenuItemAction>
+          </MenuItem>
+        )}
         <MenuItem
           variant="secondary"
           onClick={() =>
@@ -164,22 +161,22 @@ export const PropsMenu = () => {
       </MenuGroup>
     </>
   );
-};
+}
 
 interface PropertyItemProps {
   draggable?: boolean;
-  property: Column<CellPlugin>;
+  info: ColumnInfo;
   onClick: () => void;
-  onVisibilityChange: (hidden: boolean) => void;
+  onVisibilityChange: () => void;
 }
 
-const PropertyItem: React.FC<PropertyItemProps> = ({
+function PropertyItem({
   draggable,
-  property,
+  info,
   onClick,
   onVisibilityChange,
-}) => {
-  const { id, name, icon, type, hidden } = property;
+}: PropertyItemProps) {
+  const { id, name, icon, hidden, type } = info;
 
   /** DND */
   const {
@@ -208,7 +205,7 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
         <div
           key="drag-handle"
           className={cn(
-            "mr-2 hidden h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-default/45",
+            "mr-2 hidden h-6 w-4.5 shrink-0 cursor-grab items-center justify-center fill-icon!",
             draggable && "flex",
           )}
           {...attributes}
@@ -232,13 +229,13 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
           className="size-6 p-0 disabled:opacity-40"
           onClick={(e) => {
             e.stopPropagation();
-            onVisibilityChange(!hidden);
+            onVisibilityChange();
           }}
         >
           {hidden ? <Icon.EyeHide /> : <Icon.Eye />}
         </Button>
-        <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3" />
+        <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-icon" />
       </MenuItemAction>
     </MenuItem>
   );
-};
+}

@@ -1,19 +1,26 @@
 import React from "react";
+import { Updater } from "@tanstack/react-table";
 
-import type { Column, Rows } from "../lib/types";
-import type { TableViewAtom } from "../table-contexts";
+import type { ColumnInfo, Row } from "../lib/types";
 
 export interface CellProps<Data, Config = undefined> {
   propId: string;
   data: Data;
-  config?: Config;
+  config: Config;
   wrapped?: boolean;
-  onChange?: (data: Data) => void;
+  onChange: (data: Data) => void;
 }
 
 export interface ConfigMenuProps<Config = unknown> {
   propId: string;
-  config?: Config;
+  config: Config;
+  onChange: (updater: Updater<Config>) => void;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export interface TableDataAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {
+  properties: Record<string, ColumnInfo<InferPlugin<TPlugins>>>;
+  data: Row<TPlugins>[];
 }
 
 export interface CellPlugin<
@@ -26,6 +33,23 @@ export interface CellPlugin<
   Actions extends { id: string } = any,
 > {
   id: Key;
+  /**
+   * @prop Metadata about the plugin. Displayed in <TypesMenu />.
+   */
+  meta: {
+    /**
+     * @prop Name of the plugin.
+     */
+    name: string;
+    /**
+     * @prop Description of the plugin.
+     */
+    desc: string;
+    /**
+     * @prop Icon representing the plugin in the UI.
+     */
+    icon: React.ReactNode;
+  };
   default: {
     /**
      * @prop Default property name when a new property is created.
@@ -52,13 +76,16 @@ export interface CellPlugin<
   toReadableValue: (data: Data) => string;
   toTextValue: (data: Data) => string;
   transferConfig?: <TPlugin extends CellPlugin>(
-    column: Column<TPlugin>,
-    data: Rows,
+    column: ColumnInfo<TPlugin>,
+    data: Row<TPlugin[]>[],
   ) => Config;
+  /**
+   * @prop A reducer to handle actions related to other cells within this table.
+   */
   reducer: <TPlugins extends CellPlugin[]>(
-    v: TableViewAtom<TPlugins>,
+    v: TableDataAtom<TPlugins>,
     a: Actions,
-  ) => TableViewAtom<TPlugins>;
+  ) => TableDataAtom<TPlugins>;
   renderCell: (props: CellProps<Data, Config>) => React.ReactNode;
   renderConfigMenu?: (props: ConfigMenuProps<Config>) => React.ReactNode;
 }

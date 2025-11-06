@@ -1,9 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Home, SearchIcon, SettingsIcon } from "lucide-react";
 import { useHotkeys } from "react-hotkeys-hook";
 
+import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
 import {
   DocList,
@@ -62,20 +62,19 @@ export function AppSidebar() {
         </div>
         <SidebarGroup>
           <SidebarMenuItem
-            icon={SearchIcon}
+            icon={<Icon.MagnifyingGlass className="size-5.5" />}
             label="Search"
             hint="Search and quickly jump to a page"
             shortcut="⌘K"
           />
           <SidebarMenuItem
-            icon={SettingsIcon}
+            icon={<Icon.Gear className="size-5.5" />}
             label="Settings"
             hint="Manage your account and settings"
             shortcut="⌘,"
-            onClick={openSettings}
           />
           <SidebarMenuItem
-            icon={Home}
+            icon={<Icon.Home className="size-5.5" />}
             label="Home"
             hint="View recent pages and more"
             shortcut="⌘^H"

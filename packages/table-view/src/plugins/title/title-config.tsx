@@ -3,22 +3,16 @@
 import { Icon } from "@notion-kit/icons";
 import { DropdownMenuItem, MenuItemAction, Switch } from "@notion-kit/shadcn";
 
-import { useTableActions } from "../../table-contexts";
+import { useTableViewCtx } from "../../table-contexts";
 import type { ConfigMenuProps } from "../types";
-import type { TitleActions, TitleConfig } from "./types";
+import type { TitleConfig, TitlePlugin } from "./types";
 
 export function TitleConfig({ propId, config }: ConfigMenuProps<TitleConfig>) {
-  const { dispatch } = useTableActions();
+  const { table } = useTableViewCtx();
   const toggleIconVisibility = () =>
-    dispatch({
-      type: "update:col:meta",
-      payload: {
-        type: "title",
-        actions: {
-          id: propId,
-          updater: (prev) => !prev,
-        } satisfies TitleActions,
-      },
+    table.setColumnTypeConfig<TitlePlugin>(propId, {
+      id: propId,
+      updater: (prev) => !prev,
     });
 
   return (
@@ -28,7 +22,7 @@ export function TitleConfig({ propId, config }: ConfigMenuProps<TitleConfig>) {
       Body="Show page icon"
     >
       <MenuItemAction className="flex items-center">
-        <Switch size="sm" checked={config?.showIcon ?? true} />
+        <Switch size="sm" checked={config.showIcon} />
       </MenuItemAction>
     </DropdownMenuItem>
   );

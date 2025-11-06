@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/tree",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -31,9 +31,9 @@
   "dependencies": {
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/icon-block": "workspace:*",
+    "@notion-kit/icons": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
-    "@notion-kit/spinner": "workspace:*",
-    "lucide-react": "catalog:ui"
+    "@notion-kit/spinner": "workspace:*"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",

@@ -3,9 +3,8 @@ import { v4 } from "uuid";
 import { getRandomColor } from "@notion-kit/utils";
 
 import { DefaultIcon } from "../../common";
-import type { Cell, Column, Row } from "../../lib/types";
-import type { TableViewAtom } from "../../table-contexts";
-import type { CellPlugin } from "../types";
+import type { Cell, ColumnInfo, Row } from "../../lib/types";
+import type { CellPlugin, TableDataAtom } from "../types";
 import { SelectCell } from "./select-cell";
 import { SelectConfigMenu } from "./select-config-menu";
 import { selectConfigReducer } from "./select-config-reducer";
@@ -17,8 +16,20 @@ import type {
   SelectPlugin,
 } from "./types";
 
-function selectReducer(v: TableViewAtom, a: SelectActions): TableViewAtom {
-  const prop = v.properties[a.id] as Column<SelectPlugin | MultiSelectPlugin>;
+function getDefaultConfig(): SelectConfig {
+  return {
+    options: { names: [], items: {} },
+    sort: "manual",
+  };
+}
+
+export function selectReducer(
+  v: TableDataAtom,
+  a: SelectActions,
+): TableDataAtom {
+  const prop = v.properties[a.id] as ColumnInfo<
+    SelectPlugin | MultiSelectPlugin
+  >;
   const { config, nextEvent } = selectConfigReducer(prop.config, a);
   const properties = {
     ...v.properties,
@@ -29,12 +40,8 @@ function selectReducer(v: TableViewAtom, a: SelectActions): TableViewAtom {
   switch (nextEvent.type) {
     case "update:name": {
       const { originalName, name } = nextEvent.payload;
-      const data = { ...v.data };
-      v.dataOrder.forEach((rowId) => {
-        const cell = data[rowId]?.properties[a.id] as
-          | SelectCellModel
-          | undefined;
-        if (!cell) return;
+      const data = v.data.map((row) => {
+        const cell = { ...row.properties[a.id] } as SelectCellModel;
         if (prop.type === "multi-select") {
           cell.value = (cell.value as string[]).map((option) =>
             option === originalName ? name : option,
@@ -42,17 +49,15 @@ function selectReducer(v: TableViewAtom, a: SelectActions): TableViewAtom {
         } else if (cell.value === originalName) {
           cell.value = name;
         }
+        return { ...row, properties: { ...row.properties, [a.id]: cell } };
       });
-      return { ...v, properties, data };
+      return { properties, data };
     }
     case "delete": {
       const name = nextEvent.payload;
-      const data = { ...v.data };
-      v.dataOrder.forEach((rowId) => {
-        const cell = data[rowId]?.properties[a.id] as
-          | SelectCellModel
-          | undefined;
-        if (!cell) return;
+      const data = v.data.map((row) => {
+        const cell = { ...row.properties[a.id] } as SelectCellModel;
+
         if (prop.type === "multi-select") {
           cell.value = (cell.value as string[]).filter(
             (option) => option !== name,
@@ -60,8 +65,9 @@ function selectReducer(v: TableViewAtom, a: SelectActions): TableViewAtom {
         } else if (cell.value === name) {
           cell.value = null;
         }
+        return { ...row, properties: { ...row.properties, [a.id]: cell } };
       });
-      return { ...v, properties, data };
+      return { properties, data };
     }
     default:
       return v as never;
@@ -72,15 +78,15 @@ function selectReducer(v: TableViewAtom, a: SelectActions): TableViewAtom {
  * Transfers the property configuration to "select" or "multi-select"
  */
 function toSelectConfig<TPlugin extends CellPlugin>(
-  column: Column<TPlugin>,
-  data: Record<string, Row<TPlugin[]>>,
+  column: ColumnInfo<TPlugin>,
+  data: Row<TPlugin[]>[],
 ): SelectConfig {
   switch (column.type) {
     case "select":
     case "multi-select":
-      return (column as Column<SelectPlugin>).config;
+      return (column as ColumnInfo<SelectPlugin>).config;
     case "text": {
-      const options = Object.values(data).reduce<SelectConfig["options"]>(
+      const options = data.reduce<SelectConfig["options"]>(
         (acc, row) => {
           const cell = row.properties[column.id]! as Cell<
             CellPlugin<string, string>
@@ -98,7 +104,7 @@ function toSelectConfig<TPlugin extends CellPlugin>(
       return { sort: "manual", options };
     }
     default:
-      return { options: { names: [], items: {} }, sort: "manual" };
+      return getDefaultConfig();
   }
 }
 
@@ -122,14 +128,16 @@ function fromReadableValue(
 export function select(): SelectPlugin {
   return {
     id: "select",
+    meta: {
+      name: "Select",
+      icon: <DefaultIcon type="select" className="fill-menu-icon" />,
+      desc: "Use a select property to choose one option from a predefined list. Great for categorization.",
+    },
     default: {
       name: "Select",
       icon: <DefaultIcon type="select" />,
       data: null,
-      config: {
-        options: { names: [], items: {} },
-        sort: "manual",
-      },
+      config: getDefaultConfig(),
     },
     fromReadableValue: (value, config) => {
       const options = fromReadableValue(value, config, "select");
@@ -138,21 +146,14 @@ export function select(): SelectPlugin {
     toReadableValue: (data) => data ?? "",
     toTextValue: (data) => data ?? "",
     transferConfig: toSelectConfig,
-    renderCell: ({ propId, data, config, wrapped, onChange }) => (
+    renderCell: ({ data, onChange, ...props }) => (
       <SelectCell
-        propId={propId}
         options={data ? [data] : []}
-        meta={{ type: "select", config: config! }}
-        wrapped={wrapped}
-        onChange={(options) => onChange?.(options.at(0) ?? null)}
+        onChange={(options) => onChange(options.at(0) ?? null)}
+        {...props}
       />
     ),
-    renderConfigMenu: ({ propId, config }) => (
-      <SelectConfigMenu
-        propId={propId}
-        meta={{ type: "multi-select", config: config! }}
-      />
-    ),
+    renderConfigMenu: (props) => <SelectConfigMenu {...props} />,
     reducer: selectReducer,
   };
 }
@@ -160,35 +161,26 @@ export function select(): SelectPlugin {
 export function multiSelect(): MultiSelectPlugin {
   return {
     id: "multi-select",
+    meta: {
+      name: "Multi-Select",
+      icon: <DefaultIcon type="multi-select" className="fill-menu-icon" />,
+      desc: "Use a multi-select property to choose multiple options from a predefined list. Useful for tagging or categorization.",
+    },
     default: {
       name: "Multi-Select",
       icon: <DefaultIcon type="multi-select" />,
       data: [],
-      config: {
-        options: { names: [], items: {} },
-        sort: "manual",
-      },
+      config: getDefaultConfig(),
     },
     fromReadableValue: (value, config) =>
       fromReadableValue(value, config, "multi-select"),
     toReadableValue: (data) => data.join(","),
     toTextValue: (data) => data.join(","),
     transferConfig: toSelectConfig,
-    renderCell: ({ propId, data, config, wrapped, onChange }) => (
-      <SelectCell
-        propId={propId}
-        options={data}
-        meta={{ type: "multi-select", config: config! }}
-        wrapped={wrapped}
-        onChange={(options) => onChange?.(options)}
-      />
+    renderCell: ({ data, ...props }) => (
+      <SelectCell options={data} {...props} />
     ),
-    renderConfigMenu: ({ propId, config }) => (
-      <SelectConfigMenu
-        propId={propId}
-        meta={{ type: "multi-select", config: config! }}
-      />
-    ),
+    renderConfigMenu: (props) => <SelectConfigMenu {...props} />,
     reducer: selectReducer,
   };
 }

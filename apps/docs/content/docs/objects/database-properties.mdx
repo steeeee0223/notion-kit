@@ -5,24 +5,24 @@ description: Database property objects are rendered in the Notion UI as database
 
 Database properties are represented as columns in the Notion database. They are defined by [`CellPlugin`](/docs/blocks/table-view/cell-plugins)'s that specify how the property behaves and renders in the Notion UI.
 
-## Column
+## ColumnInfo
 
-A database column object `Column<TPlugin>` consists of the common properties and the plugin-specific configuration.
+A database column object `ColumnInfo<TPlugin>` consists of the common properties and the plugin-specific configuration.
 
 ### Common Properties
 
-| Prop            | Type                                                | Description                                        |
-| --------------- | --------------------------------------------------- | -------------------------------------------------- |
-| `id`\*          | `string`                                            | Unique identifier of the column.                   |
-| `name`\*        | `string`                                            | Name of the column.                                |
-| `icon`          | [`IconData`](/docs/blocks/icon-block#type-icondata) | Displayed icon of the column.                      |
-| `width`         | `string`                                            | Width of the column.                               |
-| `description`   | `string`                                            | Description of the column.                         |
-| `wrapped`       | `boolean`                                           | Whether each cell in the column should be wrapped. |
-| `hidden`        | `boolean`                                           | Whether the column is hidden.                      |
-| `isDeleted`     | `boolean`                                           | Whether the column is deleted.                     |
-| `isCountCapped` | `boolean`                                           | Whether the count of the column should be capped.  |
-| `countMethod`   | `CountMethod`                                       | The count method of the column.                    |
+| Prop                         | Type                                                | Description                                        |
+| ---------------------------- | --------------------------------------------------- | -------------------------------------------------- |
+| `id`\*                       | `string`                                            | Unique identifier of the column.                   |
+| `name`\*                     | `string`                                            | Name of the column.                                |
+| `icon`                       | [`IconData`](/docs/blocks/icon-block#type-icondata) | Displayed icon of the column.                      |
+| `width`                      | `string`                                            | Width of the column.                               |
+| `description`                | `string`                                            | Description of the column.                         |
+| `wrapped`                    | `boolean`                                           | Whether each cell in the column should be wrapped. |
+| `hidden`                     | `boolean`                                           | Whether the column is hidden.                      |
+| `isDeleted`                  | `boolean`                                           | Whether the column is deleted.                     |
+| (deprecated) `isCountCapped` | `boolean`                                           | Whether the count of the column should be capped.  |
+| (deprecated) `countMethod`   | `CountMethod`                                       | The count method of the column.                    |
 
 ### Plugin Configuration
 
@@ -30,12 +30,12 @@ The plugin-specific configuration `ColumnConfig<TPlugin>` for the column.
 
 | Prop       | Type                   | Description                        |
 | ---------- | ---------------------- | ---------------------------------- |
-| `type`\*   | `PluginType<TPlugins>` | Plugin type ID for the column.     |
+| `type`\*   | `TPlugin['id']`        | Plugin type ID for the column.     |
 | `config`\* | `InferConfig<TPlugin>` | Plugin-specific config for column. |
 
 ## ColumnDefs
 
-`ColumnDefs<TPlugins>` is an array of column definitions `Column<TPlugin>` where the `config` property is optional.
+A `ColumnDefs` is an array of column definitions `ColumnInfo<TPlugin>` where the `config` property may be optional.
 
 ```ts
 const columnDefs: ColumnDefs = [

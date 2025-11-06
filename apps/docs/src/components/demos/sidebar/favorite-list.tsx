@@ -1,13 +1,13 @@
 "use client";
 
 import { Page } from "@notion-kit/schemas";
-import { FavoriteList } from "@notion-kit/sidebar";
+import { FavoriteList, usePages } from "@notion-kit/sidebar";
 import { randomInt } from "@notion-kit/utils";
 
 const getRandomTs = () =>
   randomInt(Date.UTC(2024, 1, 1), Date.UTC(2024, 10, 31));
 
-export const pages: Page[] = [
+export const data: Page[] = [
   {
     type: "document",
     id: "page1",
@@ -153,5 +153,6 @@ export const pages: Page[] = [
 ];
 
 export default function Demo() {
-  return <FavoriteList pages={pages} />;
+  const pages = usePages({ pages: data });
+  return <FavoriteList pages={pages.favorites()} />;
 }

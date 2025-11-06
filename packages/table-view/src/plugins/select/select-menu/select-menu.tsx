@@ -5,15 +5,13 @@ import { TagsInput } from "@notion-kit/tags-input";
 
 import { OptionTag, VerticalDnd } from "../../../common";
 import { OptionItem } from "./option-item";
-import { useSelectMenu } from "./use-select-menu";
+import { SelectMenuApi } from "./use-select-menu";
 
 interface SelectMenuProps {
-  propId: string;
-  options: string[];
-  onUpdate: (options: string[]) => void;
+  menu: SelectMenuApi;
 }
 
-export function SelectMenu(props: SelectMenuProps) {
+export function SelectMenu({ menu }: SelectMenuProps) {
   const {
     config,
     tags,
@@ -28,13 +26,14 @@ export function SelectMenu(props: SelectMenuProps) {
     validateOptionName,
     updateOption,
     deleteOption,
-  } = useSelectMenu(props);
+    commitChange,
+  } = menu;
 
   return (
     <>
       <div className="z-10 max-h-[240px] flex-shrink-0 overflow-hidden overflow-y-auto border-b border-border">
         <div className="flex min-w-0 flex-1 flex-col items-stretch">
-          <div className="z-10 mr-0 mb-0 flex min-h-[34px] w-full cursor-text flex-nowrap items-start overflow-auto bg-input/60 p-[4px_9px] text-sm dark:bg-input/5">
+          <div className="z-10 mr-0 mb-0 flex min-h-[34px] w-full cursor-text flex-nowrap items-start overflow-auto bg-input p-[4px_9px] text-sm">
             <TagsInput
               role="combobox"
               size={1}
@@ -61,6 +60,7 @@ export function SelectMenu(props: SelectMenuProps) {
                   onSelect={selectTag}
                   onUpdate={(data) => updateOption(name, data)}
                   onDelete={() => deleteOption(name)}
+                  onMenuClose={commitChange}
                   validateName={validateOptionName}
                 />
               );

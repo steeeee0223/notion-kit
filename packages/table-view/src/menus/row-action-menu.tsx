@@ -1,6 +1,5 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { useFilter } from "@notion-kit/hooks";
@@ -8,16 +7,17 @@ import type { IconData } from "@notion-kit/icon-block";
 import { IconMenu } from "@notion-kit/icon-menu";
 import { Icon } from "@notion-kit/icons";
 import {
-  Input,
-  MenuGroup,
+  Command,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
   MenuItem,
   MenuItemShortcut,
-  Separator,
-  useMenu,
 } from "@notion-kit/shadcn";
 
-import { MenuGroupHeader } from "../common";
-import { useTableActions } from "../table-contexts";
+import { useTableViewCtx } from "../table-contexts";
 
 interface RowActionMenuProps {
   rowId: string;
@@ -39,93 +39,87 @@ interface RowActionMenuProps {
  * 8. 🚧 Comment
  */
 export function RowActionMenu({ rowId }: RowActionMenuProps) {
-  const { closeMenu } = useMenu();
-  const { duplicate, remove, updateRowIcon } = useTableActions();
+  const { table } = useTableViewCtx();
   // 1. Edit icon
   const selectIcon = (icon: IconData) => {
-    updateRowIcon(rowId, icon);
-    closeMenu();
+    table.updateRowIcon(rowId, icon);
   };
   const removeIcon = () => {
-    updateRowIcon(rowId, null);
-    closeMenu();
+    table.updateRowIcon(rowId, null);
   };
   const uploadIcon = (file: File) => {
-    updateRowIcon(rowId, {
+    table.updateRowIcon(rowId, {
       type: "url",
       src: URL.createObjectURL(file),
     });
-    closeMenu();
   };
   // 5. Duplicate
-  const duplicateRow = () => {
-    duplicate(rowId, "row");
-    closeMenu();
-  };
+  const duplicateRow = () => table.duplicateRow(rowId);
   // 7. Delete
-  const deleteRow = () => {
-    remove(rowId, "row");
-    closeMenu();
-  };
+  const deleteRow = () => table.deleteRow(rowId);
 
   /** Search */
-  const inputRef = useRef<HTMLInputElement>(null);
-  const actions = ["edit-icon", "duplicate", "delete"];
-  // TODO implement search
-  const { search, updateSearch } = useFilter(actions, (prop, v) =>
-    prop.includes(v),
+  const actions = [
+    {
+      value: "duplicate",
+      name: "Duplicate",
+      icon: <Icon.Duplicate />,
+      shortcut: "⌘D",
+      onSelect: duplicateRow,
+    },
+    {
+      value: "delete",
+      name: "Delete",
+      icon: <Icon.Trash />,
+      shortcut: "Del",
+      onSelect: deleteRow,
+    },
+  ];
+  const { search, results, updateSearch } = useFilter(actions, (prop, v) =>
+    prop.value.includes(v),
   );
-
-  useLayoutEffect(() => {
-    inputRef.current?.focus();
-  }, []);
 
   /** Keyboard shortcut */
   useHotkeys("meta+d", duplicateRow, { preventDefault: true });
   useHotkeys("backspace", deleteRow);
 
   return (
-    <>
-      <div className="flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2">
-        <Input
-          ref={inputRef}
-          value={search}
-          onChange={(e) => updateSearch(e.target.value)}
-          placeholder="Search actions..."
-        />
-      </div>
-      <MenuGroup>
-        <MenuGroupHeader title="Page" />
-        <IconMenu
-          className="w-full border-none text-start hover:bg-transparent"
-          onSelect={selectIcon}
-          onRemove={removeIcon}
-          onUpload={uploadIcon}
-        >
-          <MenuItem
-            Icon={<Icon.EmojiFace className="size-5" />}
-            Body="Edit icon"
-          />
-        </IconMenu>
-      </MenuGroup>
-      <Separator />
-      <MenuGroup>
-        <MenuItem
-          Icon={<Icon.Duplicate className="size-4" />}
-          Body="Duplicate"
-          onClick={duplicateRow}
-        >
-          <MenuItemShortcut>⌘D</MenuItemShortcut>
-        </MenuItem>
-        <MenuItem
-          Icon={<Icon.Trash className="size-4" />}
-          Body="Delete"
-          variant="warning"
-          onClick={deleteRow}
-        >
-          <MenuItemShortcut>Del</MenuItemShortcut>
-        </MenuItem>
-      </MenuGroup>
-    </>
+    <Command shouldFilter={false}>
+      <CommandInput
+        value={search}
+        onValueChange={updateSearch}
+        placeholder="Search actions..."
+      />
+      <CommandList>
+        <CommandGroup heading="Page">
+          <IconMenu
+            className="w-full border-none text-start hover:bg-transparent"
+            onSelect={selectIcon}
+            onRemove={removeIcon}
+            onUpload={uploadIcon}
+          >
+            <MenuItem
+              Icon={<Icon.EmojiFace className="size-5" />}
+              Body="Edit icon"
+            />
+          </IconMenu>
+        </CommandGroup>
+        <CommandSeparator />
+        <CommandGroup>
+          {results?.map((prop) => (
+            <CommandItem
+              asChild
+              key={prop.value}
+              value={prop.value}
+              onSelect={prop.onSelect}
+            >
+              <MenuItem Icon={prop.icon} Body={prop.name}>
+                <MenuItemShortcut>{prop.shortcut}</MenuItemShortcut>
+              </MenuItem>
+            </CommandItem>
+          ))}
+        </CommandGroup>
+      </CommandList>
+    </Command>
   );
 }

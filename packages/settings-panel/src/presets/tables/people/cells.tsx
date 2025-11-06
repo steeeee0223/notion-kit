@@ -42,7 +42,7 @@ export const TeamspacesCell = ({
               <span className="text-primary">
                 {teamspaces.length} teamspaces
               </span>
-              <Icon.ChevronDown className="size-3 fill-current" />
+              <Icon.ChevronDown className="size-2.5 fill-icon" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>

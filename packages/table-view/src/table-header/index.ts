@@ -1,2 +1,2 @@
 export { TableHeaderCell } from "./table-header-cell";
-export { TableHeaderRow } from "./table-header-row";
+export { TableHeader } from "./table-header";

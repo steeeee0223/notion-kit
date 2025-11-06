@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { CirclePlus, Home, SearchIcon, SettingsIcon } from "lucide-react";
 import { useHotkeys } from "react-hotkeys-hook";
 
+import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
-import type { Page } from "@notion-kit/schemas";
 import {
   DocList,
   FavoriteList,
@@ -22,10 +21,17 @@ import {
   SidebarProvider,
   SidebarRail,
   TrashBox,
+  usePages,
   WorkspaceSwitcher,
 } from "@notion-kit/sidebar";
 
-import { GROUPS, pages, SHORTCUT_OPTIONS, user, workspaces } from "./data";
+import {
+  pages as allPages,
+  GROUPS,
+  SHORTCUT_OPTIONS,
+  user,
+  workspaces,
+} from "./data";
 
 export const SidebarDemo = () => {
   return (
@@ -42,8 +48,8 @@ export const SidebarDemo = () => {
 };
 
 const AppSidebar = () => {
-  const [activePage, setActivePage] = useState<string | null>(null);
-  const selectPage = (page: Page) => setActivePage(page.id);
+  const pages = usePages({ pages: allPages });
+
   /** Modals */
   const { openModal } = useModal();
   const [trashOpen, setTrashOpen] = useState(false);
@@ -51,8 +57,8 @@ const AppSidebar = () => {
     openModal(
       <SearchCommand
         workspaceName={workspaces[0]!.name}
-        pages={pages}
-        onSelect={selectPage}
+        pages={allPages}
+        onSelect={(page) => pages.setActive(page.id)}
         onOpenTrash={() => setTrashOpen(true)}
       />,
     );
@@ -72,56 +78,51 @@ const AppSidebar = () => {
         </div>
         <SidebarGroup>
           <SidebarMenuItem
-            icon={SearchIcon}
+            icon={<Icon.MagnifyingGlass className="size-5.5" />}
             label="Search"
             hint="Search and quickly jump to a page"
             shortcut="⌘K"
             onClick={onOpenSearch}
           />
           <SidebarMenuItem
-            icon={SettingsIcon}
+            icon={<Icon.Gear className="size-5.5" />}
             label="Settings"
             hint="Manage your account and settings"
             shortcut="⌘,"
           />
           <SidebarMenuItem
-            icon={Home}
+            icon={<Icon.Home className="size-5.5" />}
             label="Home"
             hint="View recent pages and more"
             shortcut="⌘^H"
-          />
-          <SidebarMenuItem
-            icon={CirclePlus}
-            label="New page"
-            hint="Create a new document"
           />
         </SidebarGroup>
       </SidebarHeader>
       <SidebarContent>
         <FavoriteList
-          pages={pages}
-          activePage={activePage}
-          onSelect={selectPage}
+          pages={pages.favorites()}
+          activePage={pages.state.active}
+          onSelect={(page) => pages.setActive(page.id)}
         />
         {Object.entries(GROUPS).map(([group, title]) => (
           <DocList
             key={group}
             group={group}
             title={title}
-            pages={pages.filter(
-              (page) => page.type === group && !page.isArchived,
-            )}
-            activePage={activePage}
-            onSelect={selectPage}
+            pages={pages.visibleByGroup(group)}
+            activePage={pages.state.active}
+            onSelect={(page) => pages.setActive(page.id)}
+            onUpdate={pages.update}
           />
         ))}
       </SidebarContent>
       <SidebarFooter className="mb-10">
         <TrashBox
           isOpen={trashOpen}
-          pages={pages}
+          pages={pages.archivedPages()}
           onOpenChange={setTrashOpen}
-          onSelect={selectPage}
+          onRestore={(id) => pages.update(id, { isArchived: false })}
+          onSelect={(page) => pages.setActive(page.id)}
         />
       </SidebarFooter>
       <SidebarRail />

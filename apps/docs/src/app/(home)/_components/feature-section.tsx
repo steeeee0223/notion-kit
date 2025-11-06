@@ -22,7 +22,7 @@ export function FeatureSection() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Card className="h-40 bg-input/60 dark:bg-input/10">
+          <Card className="h-40 bg-input">
             <CardHeader className="pb-2">
               <Lock className="h-6 w-6 text-primary" />
               <CardTitle className="mt-2">Secure</CardTitle>
@@ -32,7 +32,7 @@ export function FeatureSection() {
             </CardHeader>
           </Card>
 
-          <Card className="h-40 bg-input/60 dark:bg-input/10">
+          <Card className="h-40 bg-input">
             <CardHeader className="pb-2">
               <Zap className="h-6 w-6 text-primary" />
               <CardTitle className="mt-2">Fast</CardTitle>
@@ -42,7 +42,7 @@ export function FeatureSection() {
             </CardHeader>
           </Card>
 
-          <Card className="h-40 bg-input/60 dark:bg-input/10">
+          <Card className="h-40 bg-input">
             <CardHeader className="pb-2">
               <Database className="h-6 w-6 text-primary" />
               <CardTitle className="mt-2">Scalable</CardTitle>
@@ -52,7 +52,7 @@ export function FeatureSection() {
             </CardHeader>
           </Card>
 
-          <Card className="h-40 bg-input/60 dark:bg-input/10">
+          <Card className="h-40 bg-input">
             <CardHeader className="pb-2">
               <Code className="h-6 w-6 text-primary" />
               <CardTitle className="mt-2">Developer-First</CardTitle>
@@ -62,7 +62,7 @@ export function FeatureSection() {
             </CardHeader>
           </Card>
 
-          <Card className="h-40 bg-input/60 dark:bg-input/10">
+          <Card className="h-40 bg-input">
             <CardHeader className="pb-2">
               <FileText className="h-6 w-6 text-primary" />
               <CardTitle className="mt-2">Well Documented</CardTitle>
@@ -72,7 +72,7 @@ export function FeatureSection() {
             </CardHeader>
           </Card>
 
-          <Card className="h-40 bg-input/60 dark:bg-input/10">
+          <Card className="h-40 bg-input">
             <CardHeader className="pb-2">
               <Globe className="h-6 w-6 text-primary" />
               <CardTitle className="mt-2">Global Support</CardTitle>

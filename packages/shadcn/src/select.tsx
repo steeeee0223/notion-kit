@@ -2,10 +2,10 @@
 
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
-import { ChevronDown, ChevronUp } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
 
+import * as Icon from "./icons";
 import { MenuItem, MenuItemCheck } from "./menu";
 import {
   buttonVariants,
@@ -49,7 +49,7 @@ function SelectTrigger({
       className={cn(
         buttonVariants({ variant: null }),
         "relative flex h-7 w-full min-w-0 shrink-0 justify-normal p-2 text-primary",
-        "focus-within:shadow-notion",
+        "focus-within:shadow-notion disabled:opacity-30",
         "placeholder:text-secondary data-placeholder:text-secondary",
         "[&>span]:line-clamp-1",
         className,
@@ -58,7 +58,7 @@ function SelectTrigger({
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDown className="ml-auto size-4 text-default/45" />
+        <Icon.ChevronDown className="ml-auto fill-icon" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );
@@ -77,7 +77,7 @@ function SelectScrollUpButton({
       )}
       {...props}
     >
-      <ChevronUp className="size-4" />
+      <Icon.ChevronDown className="rotate-180" />
     </SelectPrimitive.ScrollUpButton>
   );
 }
@@ -95,7 +95,7 @@ function SelectScrollDownButton({
       )}
       {...props}
     >
-      <ChevronDown className="size-4" />
+      <Icon.ChevronDown />
     </SelectPrimitive.ScrollDownButton>
   );
 }

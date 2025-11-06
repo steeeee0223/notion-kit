@@ -1,17 +1,23 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import { cn } from "@notion-kit/cn";
-import { MenuProvider, TooltipPreset, useMenu } from "@notion-kit/shadcn";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  TooltipPreset,
+} from "@notion-kit/shadcn";
 
 import { CellTrigger, OptionTag, useTriggerPosition } from "../../common";
 import { SelectMenu } from "./select-menu";
-import type { SelectMeta } from "./types";
+import { useSelectMenu } from "./select-menu/use-select-menu";
+import type { SelectConfig } from "./types";
 
 interface SelectCellProps {
   propId: string;
-  meta: SelectMeta;
+  config: SelectConfig;
   options: string[];
   wrapped?: boolean;
   onChange: (options: string[]) => void;
@@ -19,64 +25,64 @@ interface SelectCellProps {
 
 export function SelectCell({
   propId,
-  meta,
+  config,
   options,
   wrapped,
   onChange,
 }: SelectCellProps) {
-  const { openMenu } = useMenu();
+  const [open, setOpen] = useState(false);
   const { ref, position } = useTriggerPosition<HTMLDivElement>();
-
-  const openSelectMenu = () => {
-    openMenu(
-      <MenuProvider>
-        <SelectMenu propId={propId} options={options} onUpdate={onChange} />
-      </MenuProvider>,
-      {
-        x: position.left,
-        y: position.top,
-        className:
-          "max-h-[773px] min-h-[34px] w-[300px] overflow-visible backdrop-filter-none",
-      },
-    );
+  const menu = useSelectMenu({ propId, options, onChange });
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      menu.commitChange();
+    }
   };
 
   return (
-    <CellTrigger
-      ref={ref}
-      className="py-1.5"
-      wrapped={wrapped}
-      onPointerDown={openSelectMenu}
-    >
-      <div className="flex items-center justify-between">
-        <div
-          className={cn(
-            "flex flex-nowrap gap-x-2 gap-y-1.5",
-            wrapped && "flex-wrap",
-          )}
-        >
-          {options.map((name) => {
-            const option = meta.config.options.items[name];
-            if (!option) return;
-            return (
-              <TooltipPreset
-                key={option.id}
-                description={
-                  option.description
-                    ? [
-                        { type: "default", text: option.name },
-                        { type: "secondary", text: option.description },
-                      ]
-                    : option.name
-                }
-                side="top"
-              >
-                <OptionTag {...option} />
-              </TooltipPreset>
-            );
-          })}
-        </div>
-      </div>
-    </CellTrigger>
+    <Popover open={open} onOpenChange={handleOpenChange}>
+      <PopoverTrigger asChild>
+        <CellTrigger ref={ref} wrapped={wrapped}>
+          <div className="flex items-center justify-between">
+            <div
+              className={cn(
+                "flex flex-nowrap gap-x-2 gap-y-1.5",
+                wrapped && "flex-wrap",
+              )}
+            >
+              {options.map((name) => {
+                const option = config.options.items[name];
+                if (!option) return;
+                return (
+                  <TooltipPreset
+                    key={option.id}
+                    description={
+                      option.description
+                        ? [
+                            { type: "default", text: option.name },
+                            { type: "secondary", text: option.description },
+                          ]
+                        : option.name
+                    }
+                    side="top"
+                  >
+                    <OptionTag {...option} />
+                  </TooltipPreset>
+                );
+              })}
+            </div>
+          </div>
+        </CellTrigger>
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        side="bottom"
+        sideOffset={-position.h}
+        className="max-h-[773px] min-h-[34px] w-[300px] overflow-visible backdrop-filter-none"
+      >
+        <SelectMenu menu={menu} />
+      </PopoverContent>
+    </Popover>
   );
 }

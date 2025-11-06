@@ -99,7 +99,7 @@ export const AddMembers: React.FC<AddMembersProps> = ({
     >
       <div className="z-10 max-h-[240px] flex-shrink-0 overflow-hidden overflow-y-auto border-b border-border">
         <div className="flex min-w-0 flex-1 flex-col items-stretch">
-          <div className="z-10 mr-0 mb-0 flex min-h-[34px] w-full cursor-text flex-nowrap items-start overflow-auto bg-input/60 p-[4px_9px] text-sm dark:bg-input/5">
+          <div className="z-10 mr-0 mb-0 flex min-h-[34px] w-full cursor-text flex-nowrap items-start overflow-auto bg-input p-[4px_9px] text-sm">
             <TagsInput
               role="combobox"
               type="email"

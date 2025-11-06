@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -19,8 +20,9 @@ import {
   MenuItemAction,
 } from "@notion-kit/shadcn";
 
-import { useInputField, VerticalDnd } from "../../../common";
-import type { SelectMeta, SelectSort } from "../types";
+import { VerticalDnd } from "../../../common";
+import type { ConfigMenuProps } from "../../types";
+import type { SelectConfig, SelectSort } from "../types";
 import { OptionItem } from "./option-item";
 import { useSelectConfigMenu } from "./use-select-config-menu";
 
@@ -30,14 +32,10 @@ const sortOptions: { label: string; value: SelectSort }[] = [
   { label: "Reverse alphabetical", value: "reverse-alphabetical" },
 ];
 
-interface SelectConfigMenuProps {
-  propId: string;
-  meta: SelectMeta;
-}
-
-export function SelectConfigMenu({ propId, meta }: SelectConfigMenuProps) {
-  const { config } = meta;
-
+export function SelectConfigMenu({
+  config,
+  ...props
+}: ConfigMenuProps<SelectConfig>) {
   const {
     addOption,
     reorderOptions,
@@ -45,7 +43,7 @@ export function SelectConfigMenu({ propId, meta }: SelectConfigMenuProps) {
     updateOption,
     updateSort,
     deleteOption,
-  } = useSelectConfigMenu({ propId, meta });
+  } = useSelectConfigMenu({ config, ...props });
 
   const [showInput, setShowInput] = useState(false);
   const nameField = useInputField({
@@ -71,10 +69,7 @@ export function SelectConfigMenu({ propId, meta }: SelectConfigMenuProps) {
 
   return (
     <DropdownMenuSub>
-      <DropdownMenuSubTrigger
-        Icon={<Icon.Sliders className="fill-icon" />}
-        Body="Edit property"
-      />
+      <DropdownMenuSubTrigger Icon={<Icon.Sliders />} Body="Edit property" />
       <DropdownMenuSubContent className="w-[250px]">
         <DropdownMenuGroup>
           <DropdownMenu>
@@ -82,7 +77,7 @@ export function SelectConfigMenu({ propId, meta }: SelectConfigMenuProps) {
               <MenuItem Icon={<Icon.ArrowUpDown />} Body="Sort">
                 <MenuItemAction className="flex items-center text-muted">
                   {sortOptions.find((o) => o.value === config.sort)?.label}
-                  <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-current" />
+                  <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-icon" />
                 </MenuItemAction>
               </MenuItem>
             </DropdownMenuTrigger>

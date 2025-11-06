@@ -9,13 +9,15 @@ interface MenuHeaderProps {
 export function MenuHeader({ title, onBack }: MenuHeaderProps) {
   return (
     <div className="flex h-[42px] shrink-0 items-center px-4 pt-3.5 pb-1.5">
-      <Button
-        variant="hint"
-        className="mr-2 -ml-0.5 h-[22px] w-6 shrink-0 rounded-md p-0"
-        onClick={onBack}
-      >
-        <Icon.ArrowLeftThick className="fill-default/45" />
-      </Button>
+      {onBack !== undefined && (
+        <Button
+          variant="hint"
+          className="mr-2 -ml-0.5 h-[22px] w-6 shrink-0 rounded-md p-0"
+          onClick={onBack}
+        >
+          <Icon.ArrowLeftThick className="fill-default/45" />
+        </Button>
+      )}
       <span className="grow truncate text-sm font-semibold" aria-label={title}>
         {title}
       </span>

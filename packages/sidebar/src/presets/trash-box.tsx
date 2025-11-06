@@ -1,11 +1,9 @@
 "use client";
 
-import React, { useMemo } from "react";
-import { HelpCircle, Trash, Undo } from "lucide-react";
-
 import { BaseModal } from "@notion-kit/common";
 import { useFilter } from "@notion-kit/hooks";
 import { IconBlock } from "@notion-kit/icon-block";
+import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
 import type { Page } from "@notion-kit/schemas";
 import {
@@ -35,22 +33,18 @@ interface TrashBoxProps {
  * @description Notion Trash Box
  * @note Must be used within `ModalProvider` and `TooltipProvider`
  */
-export const TrashBox: React.FC<TrashBoxProps> = ({
+export function TrashBox({
   isOpen,
   pages,
   onOpenChange,
   onRestore,
   onDelete,
   onSelect,
-}) => {
+}: TrashBoxProps) {
   const { openModal } = useModal();
 
-  const archivedPages = useMemo(
-    () => pages.filter((p) => p.isArchived),
-    [pages],
-  );
   const { search, results, updateSearch } = useFilter(
-    archivedPages,
+    pages,
     (page, v) => page.title.toLowerCase().includes(v),
     { default: "all" },
   );
@@ -84,7 +78,7 @@ export const TrashBox: React.FC<TrashBoxProps> = ({
         <PopoverTrigger asChild>
           <SidebarMenuItem
             label="Trash"
-            icon={Trash}
+            icon={<Icon.Trash className="size-5.5" />}
             hint="Restore deleted pages"
           />
         </PopoverTrigger>
@@ -106,9 +100,9 @@ export const TrashBox: React.FC<TrashBoxProps> = ({
           </div>
           <div className="flex h-full grow overflow-y-auto py-1.5">
             {!results || results.length === 0 ? (
-              <div className="flex w-full flex-col items-center justify-center gap-2">
-                <Trash className="block size-9 shrink-0 text-[#c7c6c4]" />
-                <div className="flex flex-col text-center text-sm text-[#787774]">
+              <div className="flex w-full flex-col items-center justify-center gap-2 text-secondary">
+                <Icon.Trash className="block size-9 shrink-0 fill-current" />
+                <div className="flex flex-col text-center text-sm">
                   <span className="font-semibold">No results</span>
                 </div>
               </div>
@@ -135,7 +129,7 @@ export const TrashBox: React.FC<TrashBoxProps> = ({
                           className="size-5"
                           onClick={(e) => handleRestore(e, page.id)}
                         >
-                          <Undo className="size-4" />
+                          <Icon.Undo className="size-4" />
                         </Button>
                       </TooltipPreset>
                       <TooltipPreset description="Delete from Trash">
@@ -144,7 +138,7 @@ export const TrashBox: React.FC<TrashBoxProps> = ({
                           className="size-5"
                           onClick={(e) => handleDelete(e, page.id)}
                         >
-                          <Trash className="size-4" />
+                          <Icon.Trash className="size-4" />
                         </Button>
                       </TooltipPreset>
                     </MenuItemAction>
@@ -165,7 +159,7 @@ export const TrashBox: React.FC<TrashBoxProps> = ({
                 className="ml-0.5 no-underline select-none"
               >
                 <Button variant="hint" className="size-5">
-                  <HelpCircle className="size-3.5 shrink-0" />
+                  <Icon.QuestionMarkCircled className="size-3.5 shrink-0 fill-secondary" />
                 </Button>
               </a>
             </div>
@@ -174,4 +168,4 @@ export const TrashBox: React.FC<TrashBoxProps> = ({
       </Popover>
     </TooltipProvider>
   );
-};
+}

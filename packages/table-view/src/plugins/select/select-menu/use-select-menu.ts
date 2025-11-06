@@ -1,34 +1,32 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 
 import { useFilter } from "@notion-kit/hooks";
 import { getRandomColor, type Color } from "@notion-kit/utils";
 
-import type { Column } from "../../../lib/types";
-import { extractColumnConfig } from "../../../lib/utils";
-import { useTableActions, useTableViewCtx } from "../../../table-contexts";
-import type { MultiSelectPlugin, SelectActions, SelectPlugin } from "../types";
+import type { ColumnInfo } from "../../../lib/types";
+import { useTableViewCtx } from "../../../table-contexts";
+import type { MultiSelectPlugin, SelectPlugin } from "../types";
 
 interface UseSelectMenuOptions {
   propId: string;
   options: string[];
-  onUpdate: (options: string[]) => void;
+  onChange?: (options: string[]) => void;
 }
 
 export function useSelectMenu({
   propId,
   options,
-  onUpdate,
+  onChange,
 }: UseSelectMenuOptions) {
-  const { properties } = useTableViewCtx();
-  const { dispatch } = useTableActions();
+  const { table } = useTableViewCtx();
 
-  const { type, config } = extractColumnConfig(
-    properties[propId]! as Column<SelectPlugin | MultiSelectPlugin>,
-  );
+  const { type, config } = table.getColumnInfo(propId) as ColumnInfo<
+    SelectPlugin | MultiSelectPlugin
+  >;
 
   const [currentOptions, setCurrentOptions] = useState(
     new Map<string, Color | undefined>(
@@ -47,45 +45,33 @@ export function useSelectMenu({
   const addOption = useCallback(() => {
     if (!optionSuggestion) return;
     updateSearch("");
-    dispatch({
-      type: "update:col:meta",
-      payload: {
-        type,
-        actions: {
-          id: propId,
-          action: "add:option",
-          payload: optionSuggestion,
-        } satisfies SelectActions,
-      },
+    table.setColumnTypeConfig<SelectPlugin>(propId, {
+      id: propId,
+      action: "add:option",
+      payload: optionSuggestion,
     });
     setCurrentOptions((prev) => {
       const options = type === "multi-select" ? new Map(prev) : new Map();
       return options.set(optionSuggestion.name, optionSuggestion.color);
     });
     setOptionSuggestion(undefined);
-  }, [dispatch, optionSuggestion, propId, type, updateSearch]);
+  }, [optionSuggestion, propId, table, type, updateSearch]);
 
   const reorderOptions = useCallback(
     (e: DragEndEvent) => {
       const { active, over } = e;
       if (!over || active.id === over.id) return;
-      dispatch({
-        type: "update:col:meta",
-        payload: {
-          type,
-          actions: {
-            id: propId,
-            action: "update:sort:manual",
-            updater: (prev: string[]) => {
-              const oldIndex = prev.indexOf(active.id as string);
-              const newIndex = prev.indexOf(over.id as string);
-              return arrayMove(prev, oldIndex, newIndex);
-            },
-          } satisfies SelectActions,
+      table.setColumnTypeConfig<SelectPlugin>(propId, {
+        id: propId,
+        action: "update:sort:manual",
+        updater: (prev: string[]) => {
+          const oldIndex = prev.indexOf(active.id as string);
+          const newIndex = prev.indexOf(over.id as string);
+          return arrayMove(prev, oldIndex, newIndex);
         },
       });
     },
-    [dispatch, type, propId],
+    [table, propId],
   );
 
   const validateOptionName = useCallback(
@@ -107,16 +93,10 @@ export function useSelectMenu({
         color?: Color;
       },
     ) => {
-      dispatch({
-        type: "update:col:meta",
-        payload: {
-          type,
-          actions: {
-            id: propId,
-            action: "update:option",
-            payload: { originalName, ...data },
-          } satisfies SelectActions,
-        },
+      table.setColumnTypeConfig<SelectPlugin>(propId, {
+        id: propId,
+        action: "update:option",
+        payload: { originalName, ...data },
       });
       setCurrentOptions((prev) => {
         if (!prev.has(originalName)) return prev;
@@ -130,21 +110,15 @@ export function useSelectMenu({
         return options;
       });
     },
-    [dispatch, type, propId],
+    [table, propId],
   );
 
   const deleteOption = useCallback(
     (name: string) => {
-      dispatch({
-        type: "update:col:meta",
-        payload: {
-          type,
-          actions: {
-            id: propId,
-            action: "delete:option",
-            payload: name,
-          } satisfies SelectActions,
-        },
+      table.setColumnTypeConfig<SelectPlugin>(propId, {
+        id: propId,
+        action: "delete:option",
+        payload: name,
       });
       setCurrentOptions((prev) => {
         const options = new Map(prev);
@@ -153,7 +127,7 @@ export function useSelectMenu({
       });
       setOptionSuggestion(undefined);
     },
-    [dispatch, type, propId],
+    [table, propId],
   );
 
   /** Search & Filter */
@@ -213,9 +187,9 @@ export function useSelectMenu({
     [currentOptions],
   );
 
-  useEffect(() => {
-    onUpdate([...currentOptions.keys()]);
-  }, [currentOptions, onUpdate]);
+  const commitChange = useCallback(() => {
+    onChange?.(Array.from(currentOptions.keys()));
+  }, [onChange, currentOptions]);
 
   return {
     config,
@@ -231,5 +205,8 @@ export function useSelectMenu({
     validateOptionName,
     updateOption,
     deleteOption,
+    commitChange,
   };
 }
+
+export type SelectMenuApi = ReturnType<typeof useSelectMenu>;

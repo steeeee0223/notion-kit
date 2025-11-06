@@ -5,13 +5,13 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { ModalProvider, useModal } from "@notion-kit/modal";
 import { Page } from "@notion-kit/schemas";
 import { Button } from "@notion-kit/shadcn";
-import { SearchCommand } from "@notion-kit/sidebar";
+import { SearchCommand, usePages } from "@notion-kit/sidebar";
 import { randomInt } from "@notion-kit/utils";
 
 const getRandomTs = () =>
   randomInt(Date.UTC(2024, 1, 1), Date.UTC(2024, 10, 31));
 
-export const pages: Page[] = [
+export const data: Page[] = [
   {
     type: "document",
     id: "page1",
@@ -165,9 +165,12 @@ export default function Demo() {
 }
 
 function Trigger() {
+  const pages = usePages({ pages: data });
   const { openModal } = useModal();
   const openSearch = () =>
-    openModal(<SearchCommand workspaceName="Workspace" pages={pages} />);
+    openModal(
+      <SearchCommand workspaceName="Workspace" pages={pages.visiblePages()} />,
+    );
   /** Keyboard shortcut */
   useHotkeys(["meta+k", "shift+meta+k"], openSearch, { preventDefault: true });
 
