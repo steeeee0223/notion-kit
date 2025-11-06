@@ -75,7 +75,7 @@ function getHref(type: LinkCellProps["type"], value: string) {
       return `tel:${value}`;
     default:
       //* for url, prevent javascript injection
-      if (value.startsWith("javascript:")) return "";
+      if (value.trimStart().toLowerCase().startsWith("javascript:")) return "";
       return value;
   }
 }
