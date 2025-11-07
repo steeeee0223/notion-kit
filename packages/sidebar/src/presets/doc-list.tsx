@@ -3,34 +3,36 @@
 import React, { useState } from "react";
 
 import type { IconData, Page, UpdatePageParams } from "@notion-kit/schemas";
-import { TreeItem, TreeList, TreeNode } from "@notion-kit/tree";
+import { DropItemsHandler, Tree, TreeItemBase } from "@notion-kit/shadcn";
 
 import { SidebarGroup, SidebarMenuItem } from "../core";
-import { DocGroupActions } from "./_components";
-import { DocItemActions } from "./_components/doc-item-actions";
+import { DocGroupActions, DocItem } from "./_components";
+import { PageItems } from "./_lib";
 
 interface DocListProps {
   group: string;
   title: string;
-  pages: TreeNode<Page>[];
+  pages: PageItems;
   activePage?: string | null;
   defaultIcon?: IconData;
   onSelect?: (page: Page) => void;
   onCreate?: (group: string, parentId?: string) => void;
   onDuplicate?: (id: string) => void;
   onUpdate?: (id: string, data: UpdatePageParams) => void;
+  onItemsDrop?: DropItemsHandler<Page & TreeItemBase>;
 }
 
 export function DocList({
   group,
   title,
-  pages: nodes,
+  pages,
   activePage,
   defaultIcon = { type: "lucide", src: "file" },
   onSelect,
   onCreate,
   onDuplicate,
   onUpdate,
+  onItemsDrop,
 }: DocListProps) {
   const [showList, setShowList] = useState(true);
 
@@ -45,33 +47,24 @@ export function DocList({
         <DocGroupActions onCreate={() => onCreate?.(group)} />
       </SidebarMenuItem>
       {showList && (
-        <TreeList
+        <Tree
           indent={8}
-          nodes={nodes}
-          defaultIcon={defaultIcon}
-          showEmptyChild={group === "document"}
-          selectedId={activePage}
-          renderItem={({ node, ...props }) => (
-            <TreeItem
-              {...props}
-              node={node}
-              onSelect={() => onSelect?.(node)}
-              className="group/doc-item"
-              expandable={group === "document"}
-            >
-              <DocItemActions
-                type="normal"
-                title={node.title}
-                icon={node.icon ?? defaultIcon}
-                pageLink={node.url ?? "#"}
-                isFavorite={node.isFavorite}
-                lastEditedBy={node.lastEditedBy}
-                lastEditedAt={node.lastEditedAt}
-                onCreate={() => onCreate?.(group, node.id)}
-                onDuplicate={() => onDuplicate?.(node.id)}
-                onUpdate={(data) => onUpdate?.(node.id, data)}
-              />
-            </TreeItem>
+          initialState={{ selectedItems: activePage ? [activePage] : [] }}
+          rootItemId={group}
+          items={pages}
+          isItemFolder={() => true}
+          onItemsDrop={onItemsDrop}
+          renderItem={(item) => (
+            <DocItem
+              key={item.getId()}
+              item={item}
+              type="normal"
+              defaultIcon={defaultIcon}
+              onSelect={onSelect}
+              onCreate={onCreate}
+              onDuplicate={onDuplicate}
+              onUpdate={onUpdate}
+            />
           )}
         />
       )}
