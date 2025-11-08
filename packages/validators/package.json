@@ -1,17 +1,19 @@
 {
   "name": "@notion-kit/validators",
   "private": true,
-  "version": "0.11.0",
-  "type": "module",
+  "version": "0.11.1-beta.2",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "module": "./dist/index.mjs",
+      "require": "./dist/index.js",
       "default": "./src/index.ts"
     }
   },
   "license": "MIT",
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build": "tsup src/index.ts --config=../../tooling/config/tsup.config.ts",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
