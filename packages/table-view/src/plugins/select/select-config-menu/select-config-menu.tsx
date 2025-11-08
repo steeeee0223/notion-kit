@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
   Input,
   MenuItem,
-  MenuItemAction,
+  MenuItemSelect,
 } from "@notion-kit/shadcn";
 
 import { VerticalDnd } from "../../../common";
@@ -75,10 +75,9 @@ export function SelectConfigMenu({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <MenuItem Icon={<Icon.ArrowUpDown />} Body="Sort">
-                <MenuItemAction className="flex items-center text-muted">
+                <MenuItemSelect>
                   {sortOptions.find((o) => o.value === config.sort)?.label}
-                  <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-icon" />
-                </MenuItemAction>
+                </MenuItemSelect>
               </MenuItem>
             </DropdownMenuTrigger>
             <DropdownMenuContent

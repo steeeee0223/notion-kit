@@ -52,7 +52,7 @@ export function DndTableBody() {
         {/* Drag and Fill handle */}
         <div
           id="notion-table-view-drag-and-fill-handle"
-          className="relative z-[850] flex"
+          className="relative z-850 flex"
         >
           <div className="flex w-[calc(100%-64px)]">
             {/* The blue circle */}

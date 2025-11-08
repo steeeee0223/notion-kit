@@ -1,4 +1,3 @@
-import { Icon } from "@notion-kit/icons";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -6,7 +5,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuTrigger,
   MenuItem,
-  MenuItemAction,
+  MenuItemSelect,
 } from "@notion-kit/shadcn";
 
 import type { NumberFormat } from "../types";
@@ -27,14 +26,13 @@ export function FormatMenu({ format, onUpdate }: FormatMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <MenuItem className="group/format" Body="Number format">
-          <MenuItemAction className="flex items-center text-muted">
+        <MenuItem Body="Number format">
+          <MenuItemSelect>
             {options.find((option) => option.value === format)?.label}
-            <Icon.ChevronRight className="ml-1.5 h-full w-3 fill-icon transition-[rotate] group-data-[state='open']/format:rotate-90" />
-          </MenuItemAction>
+          </MenuItemSelect>
         </MenuItem>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[192px]">
+      <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuGroup>
           {options.map((option) => (
             <DropdownMenuCheckboxItem
