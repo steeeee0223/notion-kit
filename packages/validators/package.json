@@ -1,8 +1,7 @@
 {
   "name": "@notion-kit/validators",
   "private": true,
-  "version": "0.11.0",
-  "type": "module",
+  "version": "0.11.1-canary.25",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -11,9 +10,9 @@
   },
   "license": "MIT",
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build": "tsup",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "dev": "tsup --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
