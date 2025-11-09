@@ -1,11 +1,9 @@
 "use client";
 
 import { cn } from "@notion-kit/cn";
-import { useCopyToClipboard } from "@notion-kit/hooks";
-import { Icon } from "@notion-kit/icons";
-import { Button, TooltipPreset } from "@notion-kit/shadcn";
+import { TooltipPreset } from "@notion-kit/shadcn";
 
-import { CellTrigger, TextInputPopover } from "../../common";
+import { CellTrigger, CopyButton, TextInputPopover } from "../../common";
 import { wrappedClassName } from "../../lib/utils";
 import { ProgressBar, ProgressRing } from "./common";
 import type { NumberConfig } from "./types";
@@ -23,7 +21,6 @@ export function NumberCell({
   wrapped,
   onUpdate,
 }: NumberCellProps) {
-  const [, copy] = useCopyToClipboard();
   const handleUpdate = (newValue: string) => {
     if (newValue === "") return onUpdate("");
     const num = Number(newValue);
@@ -37,31 +34,10 @@ export function NumberCell({
       onUpdate={handleUpdate}
       renderTrigger={() => (
         <CellTrigger className="group/number-cell h-9" wrapped={wrapped}>
-          <div className="pointer-events-none absolute top-1.5 right-0 left-0 z-20 mx-1 my-0 hidden justify-start group-hover/number-cell:flex">
-            <div
-              id="quick-action-container"
-              className="pointer-events-auto sticky left-1 flex bg-transparent"
-            >
-              <TooltipPreset
-                description="Copy to Clipboard"
-                side="top"
-                className="z-9990"
-              >
-                <Button
-                  tabIndex={0}
-                  aria-label="Copy to Clipboard"
-                  size="xs"
-                  className="rounded-md bg-main fill-secondary leading-[1.2] font-medium tracking-[0.5px] text-secondary uppercase shadow-sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    void copy(value);
-                  }}
-                >
-                  <Icon.Copy className="size-3.5" />
-                </Button>
-              </TooltipPreset>
-            </div>
-          </div>
+          <CopyButton
+            className="hidden justify-start group-hover/number-cell:flex"
+            value={value}
+          />
           <div
             className={cn(
               "flex justify-end gap-x-2 gap-y-1.5",
@@ -89,7 +65,7 @@ function NumberDisplay({ value, config, wrapped }: NumberDisplayProps) {
       return (
         <div
           className={cn(
-            "inline-flex flex-[1_0_auto] items-center justify-end gap-x-2 gap-y-1.5 leading-[1.5]",
+            "inline-flex flex-[1_0_auto] items-center justify-end gap-x-2 gap-y-1.5 leading-normal",
             wrapped ? "whitespace-pre-wrap" : "text-nowrap break-normal",
           )}
           // NO WRAP: white-space-collapse: collapse;
@@ -101,7 +77,7 @@ function NumberDisplay({ value, config, wrapped }: NumberDisplayProps) {
           >
             <span className="inline-flex w-24">
               <ProgressBar
-                className="h-[21px] max-w-40 min-w-12 grow-1"
+                className="h-[21px] max-w-40 min-w-12 grow"
                 value={cappedValue}
                 color={config.options.color}
               />
@@ -113,7 +89,7 @@ function NumberDisplay({ value, config, wrapped }: NumberDisplayProps) {
       return (
         <div
           className={cn(
-            "inline-flex flex-[1_0_auto] items-center justify-end gap-x-2 gap-y-1.5 leading-[1.5]",
+            "inline-flex flex-[1_0_auto] items-center justify-end gap-x-2 gap-y-1.5 leading-normal",
             wrapped ? "whitespace-pre-wrap" : "text-nowrap break-normal",
           )}
           // NO WRAP: white-space-collapse: collapse;
@@ -137,13 +113,13 @@ function NumberDisplay({ value, config, wrapped }: NumberDisplayProps) {
       return (
         <div
           className={cn(
-            "justify-end text-end leading-[1.5]",
+            "justify-end text-end leading-normal",
             wrappedClassName(wrapped),
           )}
         >
           <div
             className={cn(
-              "flex items-center justify-start gap-x-8 gap-y-1.5 leading-[1.5]",
+              "flex items-center justify-start gap-x-8 gap-y-1.5 leading-normal",
               wrappedClassName(wrapped),
             )}
           >
