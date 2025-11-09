@@ -48,4 +48,6 @@ export interface Row<TPlugins extends CellPlugin[] = CellPlugin[]> {
   id: string;
   properties: Record<string, Cell<TPlugins[number]>>;
   icon?: IconData;
+  createdAt: number;
+  lastEditedAt: number;
 }

@@ -60,11 +60,13 @@ export const RowActionsFeature: TableFeature = {
     };
     table.updateCell = (rowId, colId, data) => {
       table.setTableData((prev) => {
+        const now = Date.now();
         return prev.map((row) => {
           if (row.id !== rowId) return row;
           return {
             ...row,
             properties: { ...row.properties, [colId]: data },
+            lastEditedAt: now,
           };
         });
       });
@@ -82,7 +84,13 @@ export const RowActionsFeature: TableFeature = {
       });
       // Update table data
       table.setTableData((prev) => {
-        const row: Row = { id: rowId, properties: {} };
+        const now = Date.now();
+        const row: Row = {
+          id: rowId,
+          properties: {},
+          createdAt: now,
+          lastEditedAt: now,
+        };
         table.getState().columnOrder.forEach((colId) => {
           const plugin = table.getColumnPlugin(colId);
           row.properties[colId] = getDefaultCell(plugin);
@@ -106,6 +114,7 @@ export const RowActionsFeature: TableFeature = {
       table.setTableData((prev) => {
         const idx = prev.findIndex((row) => row.id === id);
         if (idx < 0) return prev;
+        const now = Date.now();
         const src = prev[idx]!;
         const properties = Object.fromEntries(
           Object.entries(src.properties).map(([colId, cell]) => [
@@ -113,7 +122,11 @@ export const RowActionsFeature: TableFeature = {
             { ...cell, id: v4() },
           ]),
         );
-        return insertAt(prev, { ...src, id: rowId, properties }, idx + 1);
+        return insertAt(
+          prev,
+          { ...src, id: rowId, properties, createdAt: now, lastEditedAt: now },
+          idx + 1,
+        );
       });
     };
     table.deleteRow = (id) => {
@@ -129,6 +142,7 @@ export const RowActionsFeature: TableFeature = {
           (propId) => table.getColumnPlugin(propId).id === "title",
         )!;
       table.setTableData((prev) => {
+        const now = Date.now();
         return prev.map((row) => {
           if (row.id !== id) return row;
           const cell = row.properties[colId] as Cell<TitlePlugin> | undefined;
@@ -145,6 +159,7 @@ export const RowActionsFeature: TableFeature = {
             ...row,
             icon: icon ?? undefined,
             properties: { ...row.properties, [colId]: updatedCell },
+            lastEditedAt: now,
           };
         });
       });

@@ -5,6 +5,7 @@ import type { ColumnInfo, Row } from "../lib/types";
 
 export interface CellProps<Data, Config = undefined> {
   propId: string;
+  row: Row;
   data: Data;
   config: Config;
   wrapped?: boolean;

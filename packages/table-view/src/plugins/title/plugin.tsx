@@ -40,11 +40,11 @@ export function title(): TitlePlugin {
     fromReadableValue: (value) => ({ value }),
     toReadableValue: (data) => data.value,
     toTextValue: (data) => data.value,
-    renderCell: ({ data, config, wrapped, onChange }) => (
+    renderCell: ({ row, data, config, wrapped, onChange }) => (
       <TitleCell
         value={data.value}
         wrapped={wrapped}
-        icon={config.showIcon ? data.icon : undefined}
+        icon={config.showIcon ? row.icon : undefined}
         onUpdate={(value) => onChange({ ...data, value })}
       />
     ),

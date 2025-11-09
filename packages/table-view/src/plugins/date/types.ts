@@ -25,9 +25,13 @@ export interface DateConfig {
 }
 
 export type DatePlugin = CellPlugin<"date", DateData, DateConfig>;
-export type CreatedTimePlugin = CellPlugin<"created-time", number, DateConfig>;
+export type CreatedTimePlugin = CellPlugin<
+  "created-time",
+  number | null,
+  DateConfig
+>;
 export type LastEditedTimePlugin = CellPlugin<
   "last-edited-time",
-  number,
+  number | null,
   DateConfig
 >;

@@ -45,6 +45,7 @@ export function TableRowCell<TPlugin extends CellPlugin>({
       <div className="flex h-full overflow-x-clip" style={{ width }}>
         {flexRender<CellProps<TPlugin>>(plugin.renderCell, {
           propId: column.id,
+          row: row.original,
           data: cell.value,
           config: info.config,
           wrapped: info.wrapped,
@@ -53,7 +54,7 @@ export function TableRowCell<TPlugin extends CellPlugin>({
         })}
       </div>
       {mode === CellMode.Select && (
-        <div className="pointer-events-none absolute top-0 left-0 z-[840] h-full w-full rounded-[3px] bg-blue/5 shadow-cell-focus" />
+        <div className="pointer-events-none absolute top-0 left-0 z-840 h-full w-full rounded-[3px] bg-blue/5 shadow-cell-focus" />
       )}
     </div>
   );

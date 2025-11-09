@@ -38,6 +38,7 @@ export const mockProps: ColumnDefs = [
   },
 ];
 
+const timeData = { createdAt: Date.now(), lastEditedAt: Date.now() };
 export const mockData: Row[] = [
   {
     id: "row-1",
@@ -47,6 +48,7 @@ export const mockData: Row[] = [
       "col-3": { id: "cell-1-3", value: true },
       "col-4": { id: "cell-1-4", value: ["Done"] },
     },
+    ...timeData,
   },
   {
     id: "row-2",
@@ -56,6 +58,7 @@ export const mockData: Row[] = [
       "col-3": { id: "cell-2-3", value: false },
       "col-4": { id: "cell-2-4", value: ["Not Started"] },
     },
+    ...timeData,
   },
   {
     id: "row-3",
@@ -65,6 +68,7 @@ export const mockData: Row[] = [
       "col-3": { id: "cell-3-3", value: false },
       "col-4": { id: "cell-3-4", value: ["Pending"] },
     },
+    ...timeData,
   },
   {
     id: "row-4",
@@ -74,6 +78,7 @@ export const mockData: Row[] = [
       "col-3": { id: "cell-4-3", value: true },
       "col-4": { id: "cell-4-4", value: ["Done"] },
     },
+    ...timeData,
   },
   {
     id: "row-5",
@@ -83,5 +88,6 @@ export const mockData: Row[] = [
       "col-3": { id: "cell-5-3", value: false },
       "col-4": { id: "cell-5-4", value: ["In Progress"] },
     },
+    ...timeData,
   },
 ];
