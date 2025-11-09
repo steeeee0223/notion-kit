@@ -2,8 +2,7 @@ import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { Calendar, type DateRange } from "@notion-kit/shadcn";
-
-import { DateTimePicker } from "./date-time-picker";
+import { DateTimePicker } from "@notion-kit/table-view";
 
 const meta = {
   title: "Shadcn/Calendar",

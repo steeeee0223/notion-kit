@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 
 import { cn } from "@notion-kit/cn";
 import {
@@ -8,6 +8,8 @@ import {
 } from "@notion-kit/shadcn";
 
 import * as Icon from "./icons";
+import { Label } from "./label";
+import { Switch } from "./switch";
 import { typography } from "./variants";
 
 function MenuGroup({ className, ...props }: React.ComponentProps<"div">) {
@@ -146,6 +148,33 @@ function MenuItemShortcut({
   );
 }
 
+interface MenuItemSwitchProps extends MenuItemProps {
+  checked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
+}
+
+function MenuItemSwitch({
+  checked = false,
+  onCheckedChange,
+  ...props
+}: MenuItemSwitchProps) {
+  const id = useId();
+  return (
+    <Label htmlFor={id}>
+      <MenuItem {...props}>
+        <MenuItemAction>
+          <Switch
+            id={id}
+            size="sm"
+            checked={checked}
+            onCheckedChange={onCheckedChange}
+          />
+        </MenuItemAction>
+      </MenuItem>
+    </Label>
+  );
+}
+
 export {
   MenuGroup,
   MenuLabel,
@@ -154,4 +183,5 @@ export {
   MenuItemCheck,
   MenuItemSelect,
   MenuItemShortcut,
+  MenuItemSwitch,
 };
