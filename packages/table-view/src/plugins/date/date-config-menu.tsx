@@ -1,5 +1,6 @@
 import { Icon } from "@notion-kit/icons";
 import {
+  DropdownMenuGroup,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -17,16 +18,18 @@ export function DateConfigMenu({
     <DropdownMenuSub>
       <DropdownMenuSubTrigger Icon={<Icon.Sliders />} Body="Edit property" />
       <DropdownMenuSubContent className="w-75">
-        <DateFormatMenu
-          showIcon
-          format={config.dateFormat}
-          onChange={(dateFormat) => onChange({ ...config, dateFormat })}
-        />
-        <TimeFormatMenu
-          showIcon
-          format={config.timeFormat}
-          onChange={(timeFormat) => onChange({ ...config, timeFormat })}
-        />
+        <DropdownMenuGroup>
+          <DateFormatMenu
+            showIcon
+            format={config.dateFormat}
+            onChange={(dateFormat) => onChange({ ...config, dateFormat })}
+          />
+          <TimeFormatMenu
+            showIcon
+            format={config.timeFormat}
+            onChange={(timeFormat) => onChange({ ...config, timeFormat })}
+          />
+        </DropdownMenuGroup>
       </DropdownMenuSubContent>
     </DropdownMenuSub>
   );

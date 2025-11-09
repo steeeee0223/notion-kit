@@ -1,3 +1,4 @@
+import { Icon } from "@notion-kit/icons";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -23,12 +24,19 @@ interface DateFormatMenuProps {
   format: DateFormat;
   onChange: (format: DateFormat) => void;
 }
-// TODO add icon
-export function DateFormatMenu({ format, onChange }: DateFormatMenuProps) {
+
+export function DateFormatMenu({
+  showIcon,
+  format,
+  onChange,
+}: DateFormatMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <MenuItem Body="Date format">
+        <MenuItem
+          Icon={showIcon ? <Icon.ViewCalendar /> : undefined}
+          Body="Date format"
+        >
           <MenuItemSelect>
             {options.find((option) => option.value === format)?.label}
           </MenuItemSelect>

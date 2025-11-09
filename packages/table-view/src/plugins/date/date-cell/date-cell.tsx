@@ -47,7 +47,7 @@ export function DateCell({ data, config, wrapped }: DateCellProps) {
           </TooltipPreset>
         </div>
       </div>
-      <div className={cn("leading-[1.5]", wrappedClassName(wrapped))}>
+      <div className={cn("leading-normal", wrappedClassName(wrapped))}>
         {dateStr}
       </div>
     </CellTrigger>

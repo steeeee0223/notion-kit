@@ -9,7 +9,6 @@ export function date(): DatePlugin {
     id: "date",
     meta: {
       name: "Date",
-      // TODO
       icon: <DefaultIcon type="date" className="fill-menu-icon" />,
       desc: "Accepts a date or a date range (time optional). Useful for deadlines, especially with calendar and timeline views.",
     },

@@ -1,3 +1,4 @@
+import { Icon } from "@notion-kit/icons";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -22,11 +23,18 @@ interface TimeFormatMenuProps {
   onChange: (format: TimeFormat) => void;
 }
 
-export function TimeFormatMenu({ format, onChange }: TimeFormatMenuProps) {
+export function TimeFormatMenu({
+  showIcon,
+  format,
+  onChange,
+}: TimeFormatMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <MenuItem Body="Time format">
+        <MenuItem
+          Body="Time format"
+          Icon={showIcon ? <Icon.Clock /> : undefined}
+        >
           <MenuItemSelect>
             {options.find((option) => option.value === format)?.label}
           </MenuItemSelect>
