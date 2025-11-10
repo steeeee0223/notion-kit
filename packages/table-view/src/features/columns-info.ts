@@ -15,7 +15,12 @@ import {
   getUniqueName,
   type Entity,
 } from "../lib/utils";
-import type { CellPlugin, InferActions, InferPlugin } from "../plugins";
+import type {
+  CellPlugin,
+  InferActions,
+  InferConfig,
+  InferPlugin,
+} from "../plugins";
 import { DEFAULT_PLUGINS } from "../plugins";
 import { createIdsUpdater } from "./utils";
 
@@ -75,7 +80,9 @@ export interface ColumnInfoColumnApi {
   getWidth: () => string;
   getPlugin: () => CellPlugin;
   handleResizeEnd: () => void;
-  setInfo: OnChangeFn<ColumnInfo>;
+  updateConfig: <TPlugin extends CellPlugin>(
+    updater: Updater<InferConfig<TPlugin>>,
+  ) => void;
 }
 
 export const ColumnsInfoFeature: TableFeature<Row> = {
@@ -313,6 +320,10 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     column.handleResizeEnd = () =>
       table.setColumnInfo(column.id, { width: `${column.getSize()}px` });
     /** Setter */
-    column.setInfo = (updater) => table._setColumnInfo(column.id, updater);
+    column.updateConfig = (updater) =>
+      table._setColumnInfo(column.id, (v) => ({
+        ...v,
+        config: functionalUpdate(updater, v.config),
+      }));
   },
 };

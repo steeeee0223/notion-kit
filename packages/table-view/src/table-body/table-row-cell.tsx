@@ -3,7 +3,6 @@
 import { useState } from "react";
 import {
   flexRender,
-  functionalUpdate,
   type Column,
   type Row as RowModel,
 } from "@tanstack/react-table";
@@ -51,11 +50,7 @@ export function TableRowCell<TPlugin extends CellPlugin>({
           config: info.config,
           wrapped: info.wrapped,
           onChange: (updater) => column.updateCell(row.id, updater),
-          onConfigChange: (updater) =>
-            column.setInfo((prev) => ({
-              ...prev,
-              config: functionalUpdate(updater, prev.config),
-            })),
+          onConfigChange: column.updateConfig,
         })}
       </div>
       {mode === CellMode.Select && (
