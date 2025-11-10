@@ -1,5 +1,5 @@
 import { DefaultIcon } from "../../common";
-import { DateCell } from "./date-cell";
+import { DateCell, DatePickerCell } from "./date-cell";
 import { DateConfigMenu } from "./date-config-menu";
 import type {
   CreatedTimePlugin,
@@ -40,7 +40,7 @@ export function date(): DatePlugin {
         timeFormat: "12-hour",
         tz: "GMT",
       }),
-    renderCell: (props) => <DateCell {...props} />,
+    renderCell: (props) => <DatePickerCell {...props} />,
     renderConfigMenu: (props) => <DateConfigMenu {...props} />,
     reducer: (v) => v,
   };
@@ -78,16 +78,13 @@ export function createdTime(): CreatedTimePlugin {
           tz: "GMT",
         },
       ),
-    renderCell: ({ row, config, wrapped }) => {
-      console.log(row);
-      return (
-        <DateCell
-          data={{ start: row.createdAt }}
-          config={config}
-          wrapped={wrapped}
-        />
-      );
-    },
+    renderCell: ({ row, config, wrapped }) => (
+      <DateCell
+        data={{ start: row.createdAt }}
+        config={config}
+        wrapped={wrapped}
+      />
+    ),
     renderConfigMenu: (props) => <DateConfigMenu {...props} />,
     reducer: (v) => v,
   };

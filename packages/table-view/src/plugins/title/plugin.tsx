@@ -45,7 +45,7 @@ export function title(): TitlePlugin {
         value={data.value}
         wrapped={wrapped}
         icon={config.showIcon ? row.icon : undefined}
-        onUpdate={(value) => onChange({ ...data, value })}
+        onUpdate={(value) => onChange((v) => ({ ...v, value }))}
       />
     ),
     renderConfigMenu: (props) => <TitleConfig {...props} />,

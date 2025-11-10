@@ -75,6 +75,7 @@ export interface ColumnInfoColumnApi {
   getWidth: () => string;
   getPlugin: () => CellPlugin;
   handleResizeEnd: () => void;
+  setInfo: OnChangeFn<ColumnInfo>;
 }
 
 export const ColumnsInfoFeature: TableFeature<Row> = {
@@ -311,5 +312,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     column.getWidth = () => `calc(var(--col-${column.id}-size) * 1px)`;
     column.handleResizeEnd = () =>
       table.setColumnInfo(column.id, { width: `${column.getSize()}px` });
+    /** Setter */
+    column.setInfo = (updater) => table._setColumnInfo(column.id, updater);
   },
 };

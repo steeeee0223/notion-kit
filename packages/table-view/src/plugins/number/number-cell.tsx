@@ -12,19 +12,19 @@ interface NumberCellProps {
   value: string;
   config: NumberConfig;
   wrapped?: boolean;
-  onUpdate: (value: string) => void;
+  onChange: (value: string) => void;
 }
 
 export function NumberCell({
   value,
   config,
   wrapped,
-  onUpdate,
+  onChange,
 }: NumberCellProps) {
   const handleUpdate = (newValue: string) => {
-    if (newValue === "") return onUpdate("");
+    if (newValue === "") return onChange("");
     const num = Number(newValue);
-    onUpdate(isNaN(num) ? "" : String(num));
+    onChange(isNaN(num) ? "" : String(num));
   };
 
   return (

@@ -13,8 +13,8 @@ import { TimeFormat } from "../types";
 
 const options: { label: string; value: TimeFormat }[] = [
   { label: "Hidden", value: "hidden" },
-  { label: "12-hour", value: "12-hour" },
-  { label: "24-hour", value: "24-hour" },
+  { label: "12 hour", value: "12-hour" },
+  { label: "24 hour", value: "24-hour" },
 ];
 
 interface TimeFormatMenuProps {

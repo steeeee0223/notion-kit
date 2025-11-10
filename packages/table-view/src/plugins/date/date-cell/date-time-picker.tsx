@@ -14,22 +14,27 @@ import {
 } from "@notion-kit/shadcn";
 import { formatDate } from "@notion-kit/utils";
 
+import type { InferCellProps } from "../../types";
 import { DateFormatMenu, TimeFormatMenu } from "../common";
-import type { DateConfig, DateData } from "../types";
+import type { DatePlugin } from "../types";
 
 interface DataOptions {
   endDate?: boolean;
   includeTime?: boolean;
 }
 
-export function DateTimePicker() {
-  const [data, setData] = useState<DateData>({});
+type DateTimePickerProps = Pick<
+  InferCellProps<DatePlugin>,
+  "data" | "config" | "onChange" | "onConfigChange"
+>;
+
+export function DateTimePicker({
+  data,
+  config,
+  onChange,
+  onConfigChange,
+}: DateTimePickerProps) {
   const [options, setOptions] = useState<DataOptions>({});
-  const [config, setConfig] = useState<DateConfig>({
-    dateFormat: "full",
-    timeFormat: "12-hour",
-    tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-  });
 
   return (
     <div className="flex w-62 flex-col gap-2">
@@ -52,7 +57,7 @@ export function DateTimePicker() {
             to: data.end ? new Date(data.end) : undefined,
           }}
           onSelect={(selected) => {
-            setData((prev) => ({
+            onChange((prev) => ({
               start:
                 selected?.from !== undefined
                   ? selected.from.getTime()
@@ -68,7 +73,7 @@ export function DateTimePicker() {
           defaultMonth={data.start ? new Date(data.start) : undefined}
           selected={data.start ? new Date(data.start) : undefined}
           onSelect={(selected) => {
-            setData((prev) => ({
+            onChange((prev) => ({
               start: selected !== undefined ? selected.getTime() : prev.start,
             }));
           }}
@@ -81,13 +86,13 @@ export function DateTimePicker() {
           checked={options.endDate}
           onCheckedChange={() => {
             setOptions((prev) => ({ ...prev, endDate: !prev.endDate }));
-            setData((prev) => ({ ...prev, end: undefined }));
+            onChange((prev) => ({ ...prev, end: undefined }));
           }}
         />
         <DateFormatMenu
           format={config.dateFormat}
           onChange={(dateFormat) =>
-            setConfig((prev) => ({ ...prev, dateFormat }))
+            onConfigChange?.((prev) => ({ ...prev, dateFormat }))
           }
         />
         <MenuItemSwitch
@@ -105,12 +110,12 @@ export function DateTimePicker() {
             <TimeFormatMenu
               format={config.timeFormat}
               onChange={(timeFormat) =>
-                setConfig((prev) => ({ ...prev, timeFormat }))
+                onConfigChange?.((prev) => ({ ...prev, timeFormat }))
               }
             />
             <TimezoneMenu
               currentTz={config.tz}
-              onChange={(tz) => setConfig((prev) => ({ ...prev, tz }))}
+              onChange={(tz) => onConfigChange?.((prev) => ({ ...prev, tz }))}
               renderTrigger={({ gmt }) => (
                 <MenuItem Body="Timezone">
                   <MenuItemSelect>{gmt}</MenuItemSelect>
@@ -125,7 +130,7 @@ export function DateTimePicker() {
         <MenuItem
           Body="Clear"
           onClick={() =>
-            setData((prev) => ({ ...prev, start: undefined, end: undefined }))
+            onChange((prev) => ({ ...prev, start: undefined, end: undefined }))
           }
         />
       </MenuGroup>

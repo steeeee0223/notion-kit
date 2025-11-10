@@ -4,26 +4,21 @@ import { cn } from "@notion-kit/cn";
 
 import { CellTrigger, CopyButton, TextInputPopover } from "../../common";
 import { wrappedClassName } from "../../lib/utils";
+import type { CellProps } from "../types";
 
-interface TextCellProps {
-  value: string;
-  wrapped?: boolean;
-  onUpdate: (value: string) => void;
-}
-
-export function TextCell({ value, wrapped, onUpdate }: TextCellProps) {
+export function TextCell({ data, wrapped, onChange }: CellProps<string>) {
   return (
     <TextInputPopover
-      value={value}
-      onUpdate={onUpdate}
+      value={data}
+      onUpdate={onChange}
       renderTrigger={() => (
         <CellTrigger className="group/text-cell" wrapped={wrapped}>
           <CopyButton
             className="hidden group-hover/text-cell:flex"
-            value={value}
+            value={data}
           />
           <div className={cn("leading-normal", wrappedClassName(wrapped))}>
-            <span>{value}</span>
+            <span>{data}</span>
           </div>
         </CellTrigger>
       )}

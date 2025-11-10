@@ -4,33 +4,31 @@ import { cn } from "@notion-kit/cn";
 
 import { CellTrigger, CopyButton, TextInputPopover } from "../../common";
 import { wrappedClassName } from "../../lib/utils";
+import type { CellProps } from "../types";
 
-interface LinkCellProps {
+interface LinkCellProps extends CellProps<string> {
   type: "email" | "phone" | "url";
-  value: string;
-  wrapped?: boolean;
-  onUpdate: (value: string) => void;
 }
 
-export function LinkCell({ type, value, wrapped, onUpdate }: LinkCellProps) {
+export function LinkCell({ type, data, wrapped, onChange }: LinkCellProps) {
   return (
     <TextInputPopover
-      value={value}
-      onUpdate={onUpdate}
+      value={data}
+      onUpdate={onChange}
       renderTrigger={() => (
         <CellTrigger className="group/link-cell" wrapped={wrapped}>
           <CopyButton
             className="hidden group-hover/link-cell:flex"
-            value={value}
+            value={data}
           />
           <div className={cn("leading-normal", wrappedClassName(wrapped))}>
             <a
-              href={getHref(type, value)}
+              href={getHref(type, data)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline animate-bg-in cursor-pointer text-inherit underline decoration-muted underline-offset-2 select-none"
             >
-              {value}
+              {data}
             </a>
           </div>
         </CellTrigger>

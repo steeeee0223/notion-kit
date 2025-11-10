@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { Calendar, type DateRange } from "@notion-kit/shadcn";
-import { DateTimePicker } from "@notion-kit/table-view";
+import { DateConfig, DateData, DateTimePicker } from "@notion-kit/table-view";
 
 const meta = {
   title: "Shadcn/Calendar",
@@ -53,5 +53,22 @@ export const RangeCalendar: Story = {
 };
 
 export const EnhancedDateTimePicker: Story = {
-  decorators: [() => <DateTimePicker />],
+  decorators: [
+    () => {
+      const [data, setData] = useState<DateData>({});
+      const [config, setConfig] = useState<DateConfig>({
+        dateFormat: "full",
+        timeFormat: "12-hour",
+        tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      });
+      return (
+        <DateTimePicker
+          data={data}
+          config={config}
+          onChange={setData}
+          onConfigChange={setConfig}
+        />
+      );
+    },
+  ],
 };

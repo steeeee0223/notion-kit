@@ -1,5 +1,5 @@
 import React from "react";
-import { Updater } from "@tanstack/react-table";
+import type { OnChangeFn } from "@tanstack/react-table";
 
 import type { ColumnInfo, Row } from "../lib/types";
 
@@ -9,13 +9,14 @@ export interface CellProps<Data, Config = undefined> {
   data: Data;
   config: Config;
   wrapped?: boolean;
-  onChange: (data: Data) => void;
+  onChange: OnChangeFn<Data>;
+  onConfigChange?: OnChangeFn<Config>;
 }
 
 export interface ConfigMenuProps<Config = unknown> {
   propId: string;
   config: Config;
-  onChange: (updater: Updater<Config>) => void;
+  onChange: OnChangeFn<Config>;
   onOpenChange?: (open: boolean) => void;
 }
 
@@ -116,4 +117,9 @@ export type InferPlugin<TPlugins extends CellPlugin[]> = CellPlugin<
   InferData<TPlugins[number]>,
   InferConfig<TPlugins[number]>,
   InferActions<TPlugins[number]>
+>;
+
+export type InferCellProps<TPlugin> = CellProps<
+  InferData<TPlugin>,
+  InferConfig<TPlugin>
 >;
