@@ -2,20 +2,22 @@
 
 import { useState } from "react";
 
+import { TimezoneMenu } from "@notion-kit/common";
 import {
   Calendar,
   Input,
   MenuGroup,
   MenuItem,
+  MenuItemSelect,
   MenuItemSwitch,
   Separator,
 } from "@notion-kit/shadcn";
 import { formatDate } from "@notion-kit/utils";
 
 import { DateFormatMenu, TimeFormatMenu } from "../common";
-import { DateConfig, DateData } from "../types";
+import type { DateConfig, DateData } from "../types";
 
-export interface DataOptions {
+interface DataOptions {
   endDate?: boolean;
   includeTime?: boolean;
 }
@@ -26,7 +28,7 @@ export function DateTimePicker() {
   const [config, setConfig] = useState<DateConfig>({
     dateFormat: "full",
     timeFormat: "12-hour",
-    tz: "GMT",
+    tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
   });
 
   return (
@@ -99,12 +101,23 @@ export function DateTimePicker() {
           }
         />
         {options.includeTime && (
-          <TimeFormatMenu
-            format={config.timeFormat}
-            onChange={(timeFormat) =>
-              setConfig((prev) => ({ ...prev, timeFormat }))
-            }
-          />
+          <>
+            <TimeFormatMenu
+              format={config.timeFormat}
+              onChange={(timeFormat) =>
+                setConfig((prev) => ({ ...prev, timeFormat }))
+              }
+            />
+            <TimezoneMenu
+              currentTz={config.tz}
+              onChange={(tz) => setConfig((prev) => ({ ...prev, tz }))}
+              renderTrigger={({ gmt }) => (
+                <MenuItem Body="Timezone">
+                  <MenuItemSelect>{gmt}</MenuItemSelect>
+                </MenuItem>
+              )}
+            />
+          </>
         )}
       </MenuGroup>
       <Separator />

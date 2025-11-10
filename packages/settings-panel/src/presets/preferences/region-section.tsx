@@ -2,14 +2,14 @@
 
 import { useLocalStorage } from "usehooks-ts";
 
-import { BaseModal } from "@notion-kit/common";
+import { BaseModal, TimezoneMenu } from "@notion-kit/common";
 import { LOCALE, useTranslation } from "@notion-kit/i18n";
+import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
-import { SelectPreset as Select, Switch } from "@notion-kit/shadcn";
+import { Button, SelectPreset as Select, Switch } from "@notion-kit/shadcn";
 
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
 import { LOCALSTORAGE_KEYS } from "../../lib";
-import { TimezoneMenu } from "./timezone-menu";
 
 export function RegionSection() {
   const {
@@ -83,7 +83,20 @@ export function RegionSection() {
         />
       </SettingsRule>
       <SettingsRule {...trans.region.timezone}>
-        <TimezoneMenu currentTz={timezone} onChange={changeTimzone} />
+        <TimezoneMenu
+          currentTz={timezone}
+          onChange={changeTimzone}
+          renderTrigger={({ tz, gmt }) => (
+            <Button
+              variant="hint"
+              className="h-7 p-2 font-normal text-primary"
+              disabled={!tz}
+            >
+              {`(${gmt}) ${tz}`}
+              <Icon.ChevronDown className="fill-icon" />
+            </Button>
+          )}
+        />
       </SettingsRule>
     </SettingsSection>
   );

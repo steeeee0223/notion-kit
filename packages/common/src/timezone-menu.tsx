@@ -1,12 +1,11 @@
 "use client";
 
+import React from "react";
 import { tzOffset } from "@date-fns/tz";
-import { ChevronDown } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
 import { useFilter } from "@notion-kit/hooks";
 import {
-  Button,
   Command,
   CommandGroup,
   CommandInput,
@@ -19,12 +18,17 @@ import {
   PopoverTrigger,
 } from "@notion-kit/shadcn";
 
-interface TimezoneMenuProps {
+interface TimezoneMenuProps extends React.PropsWithChildren {
   currentTz?: string;
   onChange: (tz: string) => void;
+  renderTrigger: (props: { tz: string; gmt: string }) => React.ReactNode;
 }
 
-export function TimezoneMenu({ currentTz, onChange }: TimezoneMenuProps) {
+export function TimezoneMenu({
+  currentTz,
+  onChange,
+  renderTrigger,
+}: TimezoneMenuProps) {
   const defaultTz =
     currentTz ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
   const { search, results, updateSearch } = useFilter(
@@ -35,14 +39,7 @@ export function TimezoneMenu({ currentTz, onChange }: TimezoneMenuProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button
-          variant="hint"
-          className="h-7 p-2 font-normal text-primary"
-          disabled={!currentTz}
-        >
-          {`(${getGmtStr(defaultTz)}) ${defaultTz}`}
-          <ChevronDown className="ml-1 text-default/45" />
-        </Button>
+        {renderTrigger({ tz: defaultTz, gmt: getGmtStr(defaultTz) })}
       </PopoverTrigger>
       <PopoverContent className="w-[342px]">
         <Command shouldFilter={false}>
@@ -55,7 +52,7 @@ export function TimezoneMenu({ currentTz, onChange }: TimezoneMenuProps) {
             <CommandGroup
               className={cn(
                 "flex flex-col gap-px px-0",
-                "[&_[cmdk-group-heading]]:mt-1.5 [&_[cmdk-group-heading]]:mb-2 [&_[cmdk-group-heading]]:flex [&_[cmdk-group-heading]]:items-center [&_[cmdk-group-heading]]:truncate [&_[cmdk-group-heading]]:px-3.5 [&_[cmdk-group-heading]]:py-0 [&_[cmdk-group-heading]]:leading-[1.2] [&_[cmdk-group-heading]]:text-secondary [&_[cmdk-group-heading]]:select-none",
+                "**:[[cmdk-group-heading]]:mt-1.5 **:[[cmdk-group-heading]]:mb-2 **:[[cmdk-group-heading]]:flex **:[[cmdk-group-heading]]:items-center **:[[cmdk-group-heading]]:truncate **:[[cmdk-group-heading]]:px-3.5 **:[[cmdk-group-heading]]:py-0 **:[[cmdk-group-heading]]:leading-[1.2] **:[[cmdk-group-heading]]:text-secondary **:[[cmdk-group-heading]]:select-none",
               )}
               heading="Current timezone"
             >
@@ -65,7 +62,7 @@ export function TimezoneMenu({ currentTz, onChange }: TimezoneMenuProps) {
               <CommandGroup
                 className={cn(
                   "flex flex-col gap-px px-0",
-                  "[&_[cmdk-group-heading]]:mt-1.5 [&_[cmdk-group-heading]]:mb-2 [&_[cmdk-group-heading]]:flex [&_[cmdk-group-heading]]:items-center [&_[cmdk-group-heading]]:truncate [&_[cmdk-group-heading]]:px-3.5 [&_[cmdk-group-heading]]:py-0 [&_[cmdk-group-heading]]:leading-[1.2] [&_[cmdk-group-heading]]:text-secondary [&_[cmdk-group-heading]]:select-none",
+                  "**:[[cmdk-group-heading]]:mt-1.5 **:[[cmdk-group-heading]]:mb-2 **:[[cmdk-group-heading]]:flex **:[[cmdk-group-heading]]:items-center **:[[cmdk-group-heading]]:truncate **:[[cmdk-group-heading]]:px-3.5 **:[[cmdk-group-heading]]:py-0 **:[[cmdk-group-heading]]:leading-[1.2] **:[[cmdk-group-heading]]:text-secondary **:[[cmdk-group-heading]]:select-none",
                 )}
                 heading="Select a timezone"
               >
