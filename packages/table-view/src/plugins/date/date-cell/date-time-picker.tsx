@@ -12,7 +12,7 @@ import {
   MenuItemSwitch,
   Separator,
 } from "@notion-kit/shadcn";
-import { formatDate } from "@notion-kit/utils";
+import { formatDate, type FormatOptions } from "@notion-kit/utils";
 
 import type { InferCellProps } from "../../types";
 import { DateFormatMenu, TimeFormatMenu } from "../common";
@@ -36,16 +36,18 @@ export function DateTimePicker({
 }: DateTimePickerProps) {
   const [options, setOptions] = useState<DataOptions>({});
 
+  const inputOptions: FormatOptions = {
+    dateFormat: "_edit_mode",
+    timeFormat: "_edit_mode",
+    tz: config.tz,
+  };
+
   return (
     <div className="flex w-62 flex-col gap-2">
       <div className="flex h-8 gap-3 p-2">
-        <Input
-          value={data.start ? formatDate(data.start, "_display_mode") : ""}
-        />
+        <Input value={data.start ? formatDate(data.start, inputOptions) : ""} />
         {options.endDate && (
-          <Input
-            value={data.end ? formatDate(data.end, "_display_mode") : ""}
-          />
+          <Input value={data.end ? formatDate(data.end, inputOptions) : ""} />
         )}
       </div>
       {options.endDate ? (
@@ -98,12 +100,16 @@ export function DateTimePicker({
         <MenuItemSwitch
           Body="Include time"
           checked={options.includeTime}
-          onCheckedChange={() =>
+          onCheckedChange={(checked) => {
+            onConfigChange?.((prev) => ({
+              ...prev,
+              timeFormat: checked ? "12-hour" : "hidden",
+            }));
             setOptions((prev) => ({
               ...prev,
               includeTime: !prev.includeTime,
-            }))
-          }
+            }));
+          }}
         />
         {options.includeTime && (
           <>
@@ -127,12 +133,7 @@ export function DateTimePicker({
       </MenuGroup>
       <Separator />
       <MenuGroup>
-        <MenuItem
-          Body="Clear"
-          onClick={() =>
-            onChange((prev) => ({ ...prev, start: undefined, end: undefined }))
-          }
-        />
+        <MenuItem Body="Clear" onClick={() => onChange({})} />
       </MenuGroup>
     </div>
   );

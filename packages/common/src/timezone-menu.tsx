@@ -19,6 +19,10 @@ import {
 } from "@notion-kit/shadcn";
 
 interface TimezoneMenuProps extends React.PropsWithChildren {
+  /**
+   * @prop timezone
+   * @example Asia/Taipei
+   */
   currentTz?: string;
   onChange: (tz: string) => void;
   renderTrigger: (props: { tz: string; gmt: string }) => React.ReactNode;

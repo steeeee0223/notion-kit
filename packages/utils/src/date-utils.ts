@@ -7,39 +7,78 @@ export type DateFormat =
   | "dd/MM/yyyy"
   | "yyyy/MM/dd"
   | "relative" // e.g. 3 days ago
-  | "_display_mode"; // e.g. Nov 5, 2025
+  | "_edit_mode"; // e.g. Nov 5, 2025
+export type TimeFormat = "hidden" | "12-hour" | "24-hour" | "_edit_mode";
+export interface FormatOptions {
+  dateFormat: DateFormat;
+  timeFormat: TimeFormat;
+  /**
+   * @prop GMT timezone string
+   * @example Asia/Taipei
+   */
+  tz: string;
+}
+
+function getDateFormatStr(format: DateFormat) {
+  switch (format) {
+    case "full":
+      return "MMMM d, yyyy";
+    case "short":
+      return "MMM d";
+    case "MM/dd/yyyy":
+    case "dd/MM/yyyy":
+    case "yyyy/MM/dd":
+      return format;
+    case "_edit_mode":
+      return "MMM d, yyyy";
+    default:
+      return "";
+  }
+}
+
+function getTimeFormatStr(format: TimeFormat) {
+  switch (format) {
+    case "12-hour":
+    case "_edit_mode":
+      return "hh:mm aa";
+    case "24-hour":
+      return "HH:mm";
+    default:
+      return "";
+  }
+}
 
 /**
  * Format a timestamp into a date string based on the specified format.
  * @param ts timestamp in ms
+ * @todo format with timezone
  */
-export function formatDate(ts: number, dateFormat: DateFormat): string {
-  switch (dateFormat) {
-    case "full":
-      return format(ts, "MMMM d, yyyy");
-    case "short":
-      return format(ts, "MMM d");
-    case "MM/dd/yyyy":
-    case "dd/MM/yyyy":
-    case "yyyy/MM/dd":
-      return format(ts, dateFormat);
-    case "relative": {
-      const today = startOfDay(new Date());
-      const target = startOfDay(ts);
-      const diffDays = differenceInDays(today, target);
-
-      if (diffDays === 0) return "Today";
-      if (diffDays === 1) return "Yesterday";
-      if (diffDays === -1) return "Tomorrow";
-
-      return formatDistance(target, today, {
-        addSuffix: true,
-        includeSeconds: false,
-      });
-    }
-    case "_display_mode":
-      return format(ts, "MMM d, yyyy");
-    default:
-      return new Date(ts).toDateString();
+export function formatDate(ts: number, options: FormatOptions): string {
+  const timeStr = getTimeFormatStr(options.timeFormat);
+  if (options.dateFormat !== "relative") {
+    const formatStr =
+      getDateFormatStr(options.dateFormat) + (timeStr ? ` ${timeStr}` : "");
+    return format(ts, formatStr);
   }
+
+  const now = new Date();
+  if (timeStr) {
+    return formatDistance(ts, now, {
+      addSuffix: true,
+      includeSeconds: false,
+    });
+  }
+
+  const today = startOfDay(now);
+  const target = startOfDay(ts);
+  const diffDays = differenceInDays(today, target);
+
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays === -1) return "Tomorrow";
+
+  return formatDistance(target, today, {
+    addSuffix: true,
+    includeSeconds: false,
+  });
 }

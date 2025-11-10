@@ -8,8 +8,7 @@ import {
   MenuItem,
   MenuItemSelect,
 } from "@notion-kit/shadcn";
-
-import { TimeFormat } from "../types";
+import type { TimeFormat } from "@notion-kit/utils";
 
 const options: { label: string; value: TimeFormat }[] = [
   { label: "Hidden", value: "hidden" },

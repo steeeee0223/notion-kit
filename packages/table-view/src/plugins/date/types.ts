@@ -1,8 +1,6 @@
-import type { DateFormat } from "@notion-kit/utils";
+import type { FormatOptions } from "@notion-kit/utils";
 
 import type { CellPlugin } from "../types";
-
-export type TimeFormat = "hidden" | "12-hour" | "24-hour";
 
 export interface DateData {
   /**
@@ -15,14 +13,7 @@ export interface DateData {
   end?: number;
 }
 
-export interface DateConfig {
-  dateFormat: DateFormat;
-  timeFormat: TimeFormat;
-  /**
-   * @prop GMT timezone string, e.g. "GMT+8", "GMT-5"
-   */
-  tz: string;
-}
+export type DateConfig = FormatOptions;
 
 export type DatePlugin = CellPlugin<"date", DateData, DateConfig>;
 export type CreatedTimePlugin = CellPlugin<

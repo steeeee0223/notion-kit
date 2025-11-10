@@ -11,6 +11,7 @@ import { toDateString } from "./utils";
 export function date(): DatePlugin {
   const id = "date";
   const name = "Date";
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return {
     id,
     meta: {
@@ -22,12 +23,7 @@ export function date(): DatePlugin {
       name,
       icon: <DefaultIcon type={id} />,
       data: {},
-      config: {
-        dateFormat: "full",
-        timeFormat: "12-hour",
-        // TODO
-        tz: "GMT",
-      },
+      config: { dateFormat: "full", timeFormat: "hidden", tz },
     },
     fromReadableValue: () => ({}),
     toReadableValue: (data) => {
@@ -35,11 +31,7 @@ export function date(): DatePlugin {
       return data.start.toString();
     },
     toTextValue: (data) =>
-      toDateString(data, {
-        dateFormat: "full",
-        timeFormat: "12-hour",
-        tz: "GMT",
-      }),
+      toDateString(data, { dateFormat: "full", timeFormat: "hidden", tz }),
     renderCell: (props) => <DatePickerCell {...props} />,
     renderConfigMenu: (props) => <DateConfigMenu {...props} />,
     reducer: (v) => v,
@@ -49,6 +41,7 @@ export function date(): DatePlugin {
 export function createdTime(): CreatedTimePlugin {
   const id = "created-time";
   const name = "Created Time";
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return {
     id,
     meta: {
@@ -60,23 +53,14 @@ export function createdTime(): CreatedTimePlugin {
       name,
       icon: <DefaultIcon type={id} />,
       data: null,
-      config: {
-        dateFormat: "full",
-        timeFormat: "12-hour",
-        // TODO
-        tz: "GMT",
-      },
+      config: { dateFormat: "full", timeFormat: "12-hour", tz },
     },
     fromReadableValue: () => null,
     toReadableValue: (data) => (data === null ? "" : data.toString()),
     toTextValue: (data) =>
       toDateString(
         { start: data ?? undefined },
-        {
-          dateFormat: "full",
-          timeFormat: "12-hour",
-          tz: "GMT",
-        },
+        { dateFormat: "full", timeFormat: "12-hour", tz },
       ),
     renderCell: ({ row, config, wrapped }) => (
       <DateCell
@@ -93,6 +77,7 @@ export function createdTime(): CreatedTimePlugin {
 export function lastEditedTime(): LastEditedTimePlugin {
   const id = "last-edited-time";
   const name = "Last Edited Time";
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return {
     id,
     meta: {
@@ -104,23 +89,14 @@ export function lastEditedTime(): LastEditedTimePlugin {
       name,
       icon: <DefaultIcon type={id} />,
       data: null,
-      config: {
-        dateFormat: "full",
-        timeFormat: "12-hour",
-        // TODO
-        tz: "GMT",
-      },
+      config: { dateFormat: "full", timeFormat: "12-hour", tz },
     },
     fromReadableValue: () => null,
     toReadableValue: (data) => (data === null ? "" : data.toString()),
     toTextValue: (data) =>
       toDateString(
         { start: data ?? undefined },
-        {
-          dateFormat: "full",
-          timeFormat: "12-hour",
-          tz: "GMT",
-        },
+        { dateFormat: "full", timeFormat: "12-hour", tz },
       ),
     renderCell: ({ row, config, wrapped }) => (
       <DateCell

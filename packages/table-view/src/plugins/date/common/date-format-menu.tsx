@@ -8,7 +8,7 @@ import {
   MenuItem,
   MenuItemSelect,
 } from "@notion-kit/shadcn";
-import { type DateFormat } from "@notion-kit/utils";
+import type { DateFormat } from "@notion-kit/utils";
 
 const options: { label: string; value: DateFormat }[] = [
   { label: "Full date", value: "full" },

@@ -29,7 +29,12 @@ export function DatePickerCell({
           </div>
         </CellTrigger>
       </PopoverTrigger>
-      <PopoverContent align="start" side="bottom" sideOffset={0}>
+      <PopoverContent
+        align="start"
+        side="bottom"
+        sideOffset={0}
+        className="w-62"
+      >
         <DateTimePicker data={data} config={config} {...props} />
       </PopoverContent>
     </Popover>
