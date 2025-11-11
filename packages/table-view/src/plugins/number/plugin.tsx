@@ -18,7 +18,7 @@ export function number(): NumberPlugin {
     default: {
       name: "Number",
       icon: <DefaultIcon type="number" />,
-      data: "",
+      data: null,
       config: {
         format: "number",
         round: "default",
@@ -32,9 +32,7 @@ export function number(): NumberPlugin {
     },
     toReadableValue: (data) => data ?? "",
     toTextValue: (data) => data ?? "",
-    renderCell: ({ data, ...props }) => (
-      <NumberCell value={data ?? ""} {...props} />
-    ),
+    renderCell: (props) => <NumberCell {...props} />,
     renderConfigMenu: (props) => <NumberConfigMenu {...props} />,
     reducer: (v) => v,
   };

@@ -5,26 +5,21 @@ import { TooltipPreset } from "@notion-kit/shadcn";
 
 import { CellTrigger, CopyButton, TextInputPopover } from "../../common";
 import { wrappedClassName } from "../../lib/utils";
+import type { InferCellProps } from "../types";
 import { ProgressBar, ProgressRing } from "./common";
-import type { NumberConfig } from "./types";
-
-interface NumberCellProps {
-  value: string;
-  config: NumberConfig;
-  wrapped?: boolean;
-  onChange: (value: string) => void;
-}
+import type { NumberConfig, NumberPlugin } from "./types";
 
 export function NumberCell({
-  value,
+  data,
   config,
   wrapped,
   onChange,
-}: NumberCellProps) {
+}: InferCellProps<NumberPlugin>) {
+  const value = data ?? "";
   const handleUpdate = (newValue: string) => {
-    if (newValue === "") return onChange("");
+    if (newValue === "") return onChange(null);
     const num = Number(newValue);
-    onChange(isNaN(num) ? "" : String(num));
+    onChange(isNaN(num) ? null : String(num));
   };
 
   return (
@@ -44,7 +39,7 @@ export function NumberCell({
               wrapped ? "flex-wrap" : "flex-nowrap",
             )}
           >
-            <NumberDisplay value={value} config={config} wrapped={wrapped} />
+            <NumberDisplay value={data} config={config} wrapped={wrapped} />
           </div>
         </CellTrigger>
       )}
@@ -53,13 +48,13 @@ export function NumberCell({
 }
 
 interface NumberDisplayProps {
-  value: string;
+  value: string | null;
   config: NumberConfig;
   wrapped?: boolean;
 }
 
 function NumberDisplay({ value, config, wrapped }: NumberDisplayProps) {
-  const [displayedValue, cappedValue] = getNumberValue(value, config);
+  const [displayedValue, cappedValue] = getNumberValue(value ?? "", config);
   switch (config.showAs) {
     case "bar":
       return (
@@ -71,18 +66,20 @@ function NumberDisplay({ value, config, wrapped }: NumberDisplayProps) {
           // NO WRAP: white-space-collapse: collapse;
         >
           {config.options.showNumber && displayedValue}
-          <TooltipPreset
-            side="top"
-            description={`${value || 0} / ${config.options.divideBy}`}
-          >
-            <span className="inline-flex w-24">
-              <ProgressBar
-                className="h-[21px] max-w-40 min-w-12 grow"
-                value={cappedValue}
-                color={config.options.color}
-              />
-            </span>
-          </TooltipPreset>
+          {value !== null && (
+            <TooltipPreset
+              side="top"
+              description={`${value} / ${config.options.divideBy}`}
+            >
+              <span className="inline-flex w-24">
+                <ProgressBar
+                  className="h-[21px] max-w-40 min-w-12 grow"
+                  value={(cappedValue / config.options.divideBy) * 100}
+                  color={config.options.color}
+                />
+              </span>
+            </TooltipPreset>
+          )}
         </div>
       );
     case "ring":
@@ -95,18 +92,20 @@ function NumberDisplay({ value, config, wrapped }: NumberDisplayProps) {
           // NO WRAP: white-space-collapse: collapse;
         >
           {config.options.showNumber && displayedValue}
-          <TooltipPreset
-            side="top"
-            description={`${value || 0} / ${config.options.divideBy}`}
-          >
-            <span className="inline-flex">
-              <ProgressRing
-                value={cappedValue}
-                valueMax={config.options.divideBy}
-                color={config.options.color}
-              />
-            </span>
-          </TooltipPreset>
+          {value !== null && (
+            <TooltipPreset
+              side="top"
+              description={`${value} / ${config.options.divideBy}`}
+            >
+              <span className="inline-flex">
+                <ProgressRing
+                  value={cappedValue}
+                  valueMax={config.options.divideBy}
+                  color={config.options.color}
+                />
+              </span>
+            </TooltipPreset>
+          )}
         </div>
       );
     default:
@@ -133,8 +132,11 @@ function NumberDisplay({ value, config, wrapped }: NumberDisplayProps) {
 /**
  * @returns [displayedValue, cappedValue]
  */
-function getNumberValue(value: string, config: NumberConfig): [string, number] {
-  if (value === "") return ["", 0];
+function getNumberValue(
+  value: string | null,
+  config: NumberConfig,
+): [string, number] {
+  if (!value) return ["", 0];
   const num = Number(value);
   if (isNaN(num)) return ["", 0];
 
@@ -146,8 +148,6 @@ function getNumberValue(value: string, config: NumberConfig): [string, number] {
     // Handle rounding
     const roundDigits =
       config.round === "default" ? undefined : Number(config.round);
-    // const rounded =
-    //   config.round === "default" ? num : Number(num.toFixed(roundDigits));
 
     switch (config.format) {
       case "number_with_commas":
