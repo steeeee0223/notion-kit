@@ -11,6 +11,14 @@ export interface DateData {
    * @prop timestamp in milliseconds
    */
   end?: number;
+  /**
+   * @prop should include end date(time)
+   */
+  endDate?: boolean;
+  /**
+   * @prop should include time
+   */
+  includeTime?: boolean;
 }
 
 export type DateConfig = FormatOptions;

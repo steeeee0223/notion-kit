@@ -4,8 +4,12 @@ import { DateConfig, DateData } from "./types";
 
 export function toDateString(data: DateData, config: DateConfig) {
   if (data.start === undefined) return "";
-  const startStr = formatDate(data.start, config);
+  const options = {
+    ...config,
+    timeFormat: data.includeTime ? config.timeFormat : "hidden",
+  };
+  const startStr = formatDate(data.start, options);
   if (data.end === undefined) return startStr;
-  const endStr = formatDate(data.end, config);
+  const endStr = formatDate(data.end, options);
   return `${startStr} → ${endStr}`;
 }

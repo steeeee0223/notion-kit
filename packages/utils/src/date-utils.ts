@@ -1,4 +1,10 @@
-import { differenceInDays, format, formatDistance, startOfDay } from "date-fns";
+import {
+  differenceInDays,
+  format,
+  formatDistance,
+  parse,
+  startOfDay,
+} from "date-fns";
 
 export type DateFormat =
   | "full" // e.g. November 5, 2025
@@ -16,7 +22,7 @@ export interface FormatOptions {
    * @prop GMT timezone string
    * @example Asia/Taipei
    */
-  tz: string;
+  tz?: string;
 }
 
 function getDateFormatStr(format: DateFormat) {
@@ -30,7 +36,7 @@ function getDateFormatStr(format: DateFormat) {
     case "yyyy/MM/dd":
       return format;
     case "_edit_mode":
-      return "MMM d, yyyy";
+      return "yyyy-MM-dd";
     default:
       return "";
   }
@@ -39,10 +45,11 @@ function getDateFormatStr(format: DateFormat) {
 function getTimeFormatStr(format: TimeFormat) {
   switch (format) {
     case "12-hour":
-    case "_edit_mode":
       return "hh:mm aa";
     case "24-hour":
       return "HH:mm";
+    case "_edit_mode":
+      return "HH:mm:ss";
     default:
       return "";
   }
@@ -54,6 +61,7 @@ function getTimeFormatStr(format: TimeFormat) {
  * @todo format with timezone
  */
 export function formatDate(ts: number, options: FormatOptions): string {
+  if (ts < 0) return "";
   const timeStr = getTimeFormatStr(options.timeFormat);
   if (options.dateFormat !== "relative") {
     const formatStr =
@@ -81,4 +89,11 @@ export function formatDate(ts: number, options: FormatOptions): string {
     addSuffix: true,
     includeSeconds: false,
   });
+}
+
+export function isoToTs(iso: { date: string; time: string }): number {
+  if (!iso.date) return -1;
+  const dateStr = `${iso.date} ${iso.time || "00:00:00"}`;
+  const date = parse(dateStr, "yyyy-MM-dd HH:mm:ss", new Date());
+  return date.getTime();
 }
