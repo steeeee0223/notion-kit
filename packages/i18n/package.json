@@ -13,10 +13,10 @@
   },
   "license": "MIT",
   "scripts": {
-    "build": "tsup src/index.ts --config=../../tooling/config/tsup.config.ts",
+    "build": "tsup --config=../../tooling/config/tsup.config.ts",
     "build:types": "i18next-resources-for-ts interface -i ./src/resources/en -o ./src/resources/types.ts && pnpm format -w",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "dev": "tsup --config=../../tooling/config/tsup.config.ts --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"

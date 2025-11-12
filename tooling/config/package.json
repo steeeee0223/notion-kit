@@ -4,19 +4,17 @@
   "version": "0.11.0",
   "type": "module",
   "exports": {
-    "./tsup.config.ts": "./tsup.config.ts"
+    "./tsup": "./tsup.config.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "format": "prettier --check . --ignore-path ../../.gitignore",
-    "lint": "eslint",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "tsup": "catalog:"
   },
   "devDependencies": {
-    "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "@types/node": "catalog:node22",
