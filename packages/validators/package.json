@@ -1,21 +1,18 @@
 {
   "name": "@notion-kit/validators",
   "private": true,
-  "version": "0.11.1-beta.5",
+  "version": "0.11.1-beta.8",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "module": "./dist/index.mjs",
-      "require": "./dist/index.js",
       "default": "./src/index.ts"
     }
   },
   "license": "MIT",
   "scripts": {
-    "build": "tsup --config=../../tooling/config/tsup.config.ts",
+    "build": "tsup",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsup --config=../../tooling/config/tsup.config.ts --watch",
+    "dev": "tsup --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
@@ -24,6 +21,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@notion-kit/config": "workspace:*",
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",

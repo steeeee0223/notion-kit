@@ -1,13 +1,10 @@
 {
   "name": "@notion-kit/i18n",
   "private": true,
-  "version": "0.11.1-beta.5",
+  "version": "0.11.1-beta.8",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "module": "./dist/index.mjs",
-      "require": "./dist/index.js",
       "default": "./src/index.ts"
     }
   },

@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/tags-input",
-  "version": "0.11.1-beta.5",
+  "version": "0.11.1-beta.8",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
   },
@@ -12,14 +12,12 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "module": "./dist/index.mjs",
-      "require": "./dist/index.js",
       "default": "./src/index.ts"
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
