@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/docs",
-  "version": "0.11.1-beta.5",
+  "version": "0.11.1-beta.8",
   "private": true,
   "scripts": {
     "build": "next build",
