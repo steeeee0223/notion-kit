@@ -747,9 +747,6 @@ importers:
         specifier: ^3.0.2
         version: 3.0.2
     devDependencies:
-      '@notion-kit/config':
-        specifier: workspace:*
-        version: link:../../tooling/config
       '@notion-kit/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint
@@ -1189,9 +1186,6 @@ importers:
         specifier: 'catalog:'
         version: 4.1.5
     devDependencies:
-      '@notion-kit/config':
-        specifier: workspace:*
-        version: link:../../tooling/config
       '@notion-kit/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint
@@ -1772,9 +1766,6 @@ importers:
         specifier: 4.1.0
         version: 4.1.0
     devDependencies:
-      '@notion-kit/config':
-        specifier: workspace:*
-        version: link:../../tooling/config
       '@notion-kit/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint
@@ -1803,9 +1794,6 @@ importers:
         specifier: 'catalog:'
         version: 4.1.5
     devDependencies:
-      '@notion-kit/config':
-        specifier: workspace:*
-        version: link:../../tooling/config
       '@notion-kit/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint
