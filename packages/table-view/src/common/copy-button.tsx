@@ -14,7 +14,12 @@ export function CopyButton({ className, value }: CopyButtonProps) {
   const [, copy] = useCopyToClipboard();
 
   return (
-    <div className={cn("pointer-events-none absolute top-1.5 right-0 left-0 z-20 mx-1 my-0 flex justify-end", className)}>
+    <div
+      className={cn(
+        "pointer-events-none absolute top-1.5 right-0 left-0 z-20 mx-1 my-0 flex justify-end",
+        className,
+      )}
+    >
       <div
         id="quick-action-container"
         className="pointer-events-auto sticky right-1 flex bg-transparent"
