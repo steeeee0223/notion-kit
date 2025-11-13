@@ -23,7 +23,7 @@ export function date(): DatePlugin {
       name,
       icon: <DefaultIcon type={id} />,
       data: {},
-      config: { dateFormat: "full", timeFormat: "hidden", tz },
+      config: { dateFormat: "full", timeFormat: "24-hour", tz },
     },
     fromReadableValue: () => ({}),
     toReadableValue: (data) => {
@@ -31,7 +31,7 @@ export function date(): DatePlugin {
       return data.start.toString();
     },
     toTextValue: (data) =>
-      toDateString(data, { dateFormat: "full", timeFormat: "hidden", tz }),
+      toDateString(data, { dateFormat: "full", timeFormat: "24-hour", tz }),
     renderCell: (props) => <DatePickerCell {...props} />,
     renderConfigMenu: (props) => <DateConfigMenu {...props} />,
     reducer: (v) => v,
@@ -53,18 +53,18 @@ export function createdTime(): CreatedTimePlugin {
       name,
       icon: <DefaultIcon type={id} />,
       data: null,
-      config: { dateFormat: "full", timeFormat: "12-hour", tz },
+      config: { dateFormat: "full", timeFormat: "24-hour", tz },
     },
     fromReadableValue: () => null,
     toReadableValue: (data) => (data === null ? "" : data.toString()),
     toTextValue: (data) =>
       toDateString(
         { start: data ?? undefined },
-        { dateFormat: "full", timeFormat: "12-hour", tz },
+        { dateFormat: "full", timeFormat: "24-hour", tz },
       ),
     renderCell: ({ row, config, wrapped }) => (
       <DateCell
-        data={{ start: row.createdAt }}
+        data={{ start: row.lastEditedAt, includeTime: true }}
         config={config}
         wrapped={wrapped}
       />
@@ -89,18 +89,18 @@ export function lastEditedTime(): LastEditedTimePlugin {
       name,
       icon: <DefaultIcon type={id} />,
       data: null,
-      config: { dateFormat: "full", timeFormat: "12-hour", tz },
+      config: { dateFormat: "full", timeFormat: "24-hour", tz },
     },
     fromReadableValue: () => null,
     toReadableValue: (data) => (data === null ? "" : data.toString()),
     toTextValue: (data) =>
       toDateString(
         { start: data ?? undefined },
-        { dateFormat: "full", timeFormat: "12-hour", tz },
+        { dateFormat: "full", timeFormat: "24-hour", tz },
       ),
     renderCell: ({ row, config, wrapped }) => (
       <DateCell
-        data={{ start: row.lastEditedAt }}
+        data={{ start: row.lastEditedAt, includeTime: true }}
         config={config}
         wrapped={wrapped}
       />
