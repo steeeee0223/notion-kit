@@ -1,5 +1,0 @@
-{
-  "extends": "@notion-kit/tsconfig/internal-package.json",
-  "include": ["src"],
-  "exclude": ["node_modules"]
-}

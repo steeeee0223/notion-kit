@@ -1,5 +1,6 @@
 {
   "name": "notion-kit",
+  "version": "0.11.1-beta.1",
   "private": true,
   "engines": {
     "node": ">=22.10.0",
@@ -18,7 +19,7 @@
     "lint:fix": "turbo run lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
     "lint:ws": "pnpm dlx sherif@latest",
     "postinstall": "pnpm lint:ws",
-    "publish-packages": "pnpm build:packages && changeset version && changeset publish --no-private",
+    "publish-packages": "changeset publish --no-private",
     "typecheck": "turbo run typecheck",
     "ui-add": "turbo run ui-add"
   },

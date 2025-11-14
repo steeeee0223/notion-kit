@@ -2,7 +2,7 @@
   "name": "@notion-kit/{{ name }}",
   "private": true,
   "version": "0.1.0",
-  "type": "module",
+
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
   },
@@ -14,17 +14,19 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+
       "default": "./src/index.ts"
     }
   },
+  "files": ["dist"],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build": "tsup --config=../../tooling/config/tsup.config.ts",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "dev": "tsup --config=../../tooling/config/tsup.config.ts --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
