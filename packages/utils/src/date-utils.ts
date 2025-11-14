@@ -1,3 +1,4 @@
+import { TZDate } from "@date-fns/tz";
 import {
   differenceInDays,
   format,
@@ -13,7 +14,7 @@ export type DateFormat =
   | "dd/MM/yyyy"
   | "yyyy/MM/dd"
   | "relative" // e.g. 3 days ago
-  | "_edit_mode"; // e.g. Nov 5, 2025
+  | "_edit_mode"; // e.g. 2025-11-05
 export type TimeFormat = "hidden" | "12-hour" | "24-hour" | "_edit_mode";
 export interface FormatOptions {
   dateFormat: DateFormat;
@@ -66,7 +67,8 @@ export function formatDate(ts: number, options: FormatOptions): string {
   if (options.dateFormat !== "relative") {
     const formatStr =
       getDateFormatStr(options.dateFormat) + (timeStr ? ` ${timeStr}` : "");
-    return format(ts, formatStr);
+    const date = new TZDate(ts, options.tz);
+    return format(date, formatStr);
   }
 
   const now = new Date();

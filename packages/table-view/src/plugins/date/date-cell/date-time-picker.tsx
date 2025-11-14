@@ -26,17 +26,17 @@ export function DateTimePicker({
   onChange,
   onConfigChange,
 }: DateTimePickerProps) {
+  const start = data.start ? new Date(data.start) : undefined;
+  const end = data.end ? new Date(data.end) : undefined;
+
   return (
     <div className="flex w-62 flex-col">
       <DateRangeInput className="pb-0" value={data} onChange={onChange} />
       {data.endDate ? (
         <Calendar
           mode="range"
-          defaultMonth={data.start ? new Date(data.start) : undefined}
-          selected={{
-            from: data.start ? new Date(data.start) : undefined,
-            to: data.end ? new Date(data.end) : undefined,
-          }}
+          defaultMonth={start}
+          selected={{ from: start, to: end }}
           onSelect={(selected) => {
             onChange((v) => ({
               ...v,
@@ -51,8 +51,8 @@ export function DateTimePicker({
       ) : (
         <Calendar
           mode="single"
-          defaultMonth={data.start ? new Date(data.start) : undefined}
-          selected={data.start ? new Date(data.start) : undefined}
+          defaultMonth={start}
+          selected={start}
           onSelect={(selected) => {
             onChange((v) => ({
               ...v,
@@ -67,12 +67,8 @@ export function DateTimePicker({
         <MenuItemSwitch
           Body="End date"
           checked={data.endDate}
-          onCheckedChange={(checked) =>
-            onChange((v) => ({
-              ...v,
-              end: undefined,
-              endDate: checked,
-            }))
+          onCheckedChange={(endDate) =>
+            onChange((v) => ({ ...v, end: undefined, endDate }))
           }
         />
         <DateFormatMenu
@@ -84,13 +80,9 @@ export function DateTimePicker({
         <MenuItemSwitch
           Body="Include time"
           checked={data.includeTime}
-          onCheckedChange={(checked) => {
-            onConfigChange?.((v) => ({
-              ...v,
-              // timeFormat: checked ? "12-hour" : "hidden",
-            }));
-            onChange((v) => ({ ...v, includeTime: checked }));
-          }}
+          onCheckedChange={(includeTime) =>
+            onChange((v) => ({ ...v, includeTime }))
+          }
         />
         {data.includeTime && (
           <>
