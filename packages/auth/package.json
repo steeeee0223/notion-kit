@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/auth",
-  "version": "0.11.1-beta.9",
+  "version": "0.11.1-canary.11",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
   },
@@ -9,19 +9,30 @@
     "url": "https://github.com/steeeee0223/notion-kit.git",
     "directory": "packages/auth"
   },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
+  "publishConfig": {
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./src/index.ts",
+    "exports": {
+      ".": {
+        "import": {
+          "types": "./src/index.ts",
+          "default": "./dist/index.mjs"
+        },
+        "require": {
+          "types": "./src/index.ts",
+          "default": "./dist/index.js"
+        }
+      }
     }
   },
   "files": [
     "dist",
     "src"
   ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "source": "./src/index.ts",
   "license": "MIT",
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm",

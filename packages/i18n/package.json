@@ -1,7 +1,7 @@
 {
   "name": "@notion-kit/i18n",
   "private": true,
-  "version": "0.11.1-beta.9",
+  "version": "0.11.1-canary.11",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
