@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/storybook",
-  "version": "0.11.1-canary.18",
+  "version": "0.11.1-canary.21",
   "private": true,
   "type": "module",
   "scripts": {

@@ -11,7 +11,7 @@ export default defineConfig((opts) => {
       format: ["cjs", "esm"],
       sourcemap: true,
       splitting: false,
-      external: ["react", "react-dom"],
+      external: [/@notion-kit\/.+/],
       ...(silent
         ? {
             silent: true,

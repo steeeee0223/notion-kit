@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/settings-panel",
-  "version": "0.11.1-canary.15",
+  "version": "0.11.1-canary.18",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
   },
@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@date-fns/tz": "^1.3.1",
+    "@hookform/resolvers": "catalog:ui",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/common": "workspace:*",
     "@notion-kit/hooks": "workspace:*",
@@ -60,6 +61,7 @@
     "@tanstack/react-table": "catalog:ui",
     "file-saver": "^2.0.5",
     "lucide-react": "catalog:ui",
+    "react-hook-form": "catalog:ui",
     "usehooks-ts": "catalog:ui"
   },
   "devDependencies": {
