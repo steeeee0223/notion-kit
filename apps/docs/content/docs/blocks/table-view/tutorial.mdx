@@ -44,6 +44,11 @@ export const tagPlugin: TagPlugin = {
     config: { options: [] },
     data: [],
   },
+  meta: {
+    name: 'Tag',
+    desc: 'A multi-select tag property',
+    icon: <TagIcon />, // Your own icon component
+  },
   fromReadableValue: (value, config) => value.split(',').map(tag => tag.trim()),
   toReadableValue: data => data.join(', '),
   toTextValue: data => data.join(', '),

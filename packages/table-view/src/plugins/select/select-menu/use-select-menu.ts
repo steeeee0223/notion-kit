@@ -14,7 +14,7 @@ import type { MultiSelectPlugin, SelectPlugin } from "../types";
 interface UseSelectMenuOptions {
   propId: string;
   options: string[];
-  onChange?: (options: string[]) => void;
+  onChange: (options: string[]) => void;
 }
 
 export function useSelectMenu({
@@ -188,7 +188,7 @@ export function useSelectMenu({
   );
 
   const commitChange = useCallback(() => {
-    onChange?.(Array.from(currentOptions.keys()));
+    onChange(Array.from(currentOptions.keys()));
   }, [onChange, currentOptions]);
 
   return {

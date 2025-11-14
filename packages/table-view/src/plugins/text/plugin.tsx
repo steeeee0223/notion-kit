@@ -20,9 +20,7 @@ export function text(): TextPlugin {
     fromReadableValue: (value) => value,
     toReadableValue: (data) => data,
     toTextValue: (data) => data,
-    renderCell: ({ data, wrapped, onChange }) => (
-      <TextCell value={data} wrapped={wrapped} onUpdate={onChange} />
-    ),
+    renderCell: (props) => <TextCell {...props} />,
     reducer: (v) => v,
   };
 }

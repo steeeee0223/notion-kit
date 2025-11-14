@@ -21,24 +21,29 @@ export function createInitialTable(): TableState<CellPlugin[]> {
   const columns: ColumnInfo<TitlePlugin>[] = [
     { id: titleId, name: "Name", type: "title", config: { showIcon: true } },
   ];
+  const now = Date.now();
+  const timeData = { createdAt: now, lastEditedAt: now };
   const data: Row<TitlePlugin[]>[] = [
     {
       id: v4(),
       properties: {
         [titleId]: { id: v4(), value: { value: "" } },
       },
+      ...timeData,
     },
     {
       id: v4(),
       properties: {
         [titleId]: { id: v4(), value: { value: "" } },
       },
+      ...timeData,
     },
     {
       id: v4(),
       properties: {
         [titleId]: { id: v4(), value: { value: "" } },
       },
+      ...timeData,
     },
   ];
 

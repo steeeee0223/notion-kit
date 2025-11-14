@@ -29,6 +29,11 @@ export function DefaultIcon({ type, className }: DefaultIconProps) {
       return <Icon.PhoneCall className={iconClassName} />;
     case "url":
       return <Icon.Link className={iconClassName} />;
+    case "date":
+      return <Icon.TypesDate className={iconClassName} />;
+    case "created-time":
+    case "last-edited-time":
+      return <Icon.TypesClock className={iconClassName} />;
     default:
       return <div className={iconClassName} />;
   }

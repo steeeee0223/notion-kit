@@ -28,5 +28,5 @@ export function getRandomColor() {
   return randomItem(Object.keys(COLOR)) as Color;
 }
 
-export { COLOR, Color };
 export * from "./constants";
+export * from "./date-utils";

@@ -20,14 +20,7 @@ export function email(): EmailPlugin {
     fromReadableValue: (value) => value,
     toReadableValue: (data) => data,
     toTextValue: (data) => data,
-    renderCell: ({ data, wrapped, onChange }) => (
-      <LinkCell
-        type="email"
-        value={data}
-        wrapped={wrapped}
-        onUpdate={onChange}
-      />
-    ),
+    renderCell: (props) => <LinkCell type="email" {...props} />,
     reducer: (v) => v,
   };
 }
@@ -49,14 +42,7 @@ export function phone(): PhonePlugin {
     fromReadableValue: (value) => value,
     toReadableValue: (data) => data,
     toTextValue: (data) => data,
-    renderCell: ({ data, wrapped, onChange }) => (
-      <LinkCell
-        type="phone"
-        value={data}
-        wrapped={wrapped}
-        onUpdate={onChange}
-      />
-    ),
+    renderCell: (props) => <LinkCell type="phone" {...props} />,
     reducer: (v) => v,
   };
 }
@@ -78,9 +64,7 @@ export function url(): UrlPlugin {
     fromReadableValue: (value) => value,
     toReadableValue: (data) => data,
     toTextValue: (data) => data,
-    renderCell: ({ data, wrapped, onChange }) => (
-      <LinkCell type="url" value={data} wrapped={wrapped} onUpdate={onChange} />
-    ),
+    renderCell: (props) => <LinkCell type="url" {...props} />,
     reducer: (v) => v,
   };
 }

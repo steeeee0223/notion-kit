@@ -14,6 +14,7 @@ import {
   MenuGroup,
   MenuItem,
   MenuItemAction,
+  MenuItemSelect,
   Separator,
 } from "@notion-kit/shadcn";
 
@@ -144,10 +145,7 @@ export function PropsMenu() {
             Icon={<Icon.Trash />}
             Body="Deleted properties"
           >
-            <MenuItemAction className="flex items-center text-muted">
-              <div className="flex truncate">{deletedCount}</div>
-              <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-icon" />
-            </MenuItemAction>
+            <MenuItemSelect>{deletedCount}</MenuItemSelect>
           </MenuItem>
         )}
         <MenuItem

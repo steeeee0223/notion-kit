@@ -1,3 +1,4 @@
+import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import { getRandomColor } from "@notion-kit/utils";
@@ -148,8 +149,13 @@ export function select(): SelectPlugin {
     transferConfig: toSelectConfig,
     renderCell: ({ data, onChange, ...props }) => (
       <SelectCell
-        options={data ? [data] : []}
-        onChange={(options) => onChange(options.at(0) ?? null)}
+        data={data ? [data] : []}
+        onChange={(updater) =>
+          onChange((prev) => {
+            const res = functionalUpdate(updater, prev ? [prev] : []);
+            return res.at(0) ?? null;
+          })
+        }
         {...props}
       />
     ),
@@ -177,9 +183,7 @@ export function multiSelect(): MultiSelectPlugin {
     toReadableValue: (data) => data.join(","),
     toTextValue: (data) => data.join(","),
     transferConfig: toSelectConfig,
-    renderCell: ({ data, ...props }) => (
-      <SelectCell options={data} {...props} />
-    ),
+    renderCell: (props) => <SelectCell {...props} />,
     renderConfigMenu: (props) => <SelectConfigMenu {...props} />,
     reducer: selectReducer,
   };

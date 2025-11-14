@@ -1,4 +1,5 @@
 export { CellTrigger } from "./cell-trigger";
+export { CopyButton } from "./copy-button";
 export { DefaultIcon, ColorIcon } from "./default-icon";
 export * from "./menu";
 export { OptionTag } from "./option-tag";

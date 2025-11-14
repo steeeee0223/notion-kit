@@ -8,9 +8,6 @@ import { Icon } from "@notion-kit/icons";
 import { Button, TooltipPreset } from "@notion-kit/shadcn";
 
 import { CellTrigger, TextInputPopover } from "../../common";
-
-import "../../view.css";
-
 import { wrappedClassName } from "../../lib/utils";
 
 interface TitleCellProps {
@@ -56,7 +53,7 @@ export function TitleCell({ icon, value, wrapped, onUpdate }: TitleCellProps) {
             {icon && <IconBlock icon={icon} className="contents" />}
             <span
               className={cn(
-                "title-cell-bg-img mr-[5px] ml-1 inline leading-[1.5] font-medium underline",
+                "mr-[5px] ml-1 inline leading-normal font-medium underline decoration-muted underline-offset-2",
                 wrappedClassName(wrapped),
               )}
             >

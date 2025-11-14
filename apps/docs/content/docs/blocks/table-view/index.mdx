@@ -21,7 +21,12 @@ description: An composable, editable data table.
 
 - Table sorting
 
-- Cells plugins: title, text, checkbox, select, multi-select, number, email, phone, URL
+- Cells plugins
+  - Required plugins: `title`, `text`
+  - Selectable: `checkbox`, `select`, `multi-select`
+  - Numeric inputs: `number`
+  - External links: `email`, `phone`, `url`
+  - Date & time: `date`, `created-time`, `last-edited-time`
 
 ## Installation
 
@@ -83,7 +88,7 @@ It provides a table view with editable cells and supports various plugins for ce
 
 A `TableState` is a generic type `TableState<TPlugins>` that represents the state of a table, including its column definitions and row data.
 
-| Prop         | Type                                                                   | Default | Description                          |
-| ------------ | ---------------------------------------------------------------------- | ------- | ------------------------------------ |
-| `properties` | [`ColumnDefs<TPlugins>`](/docs/objects/database-properties#columndefs) | -       | The column definitions of the table. |
-| `data`       | [`Row<TPlugins>[]`](/docs/objects/database-properties#row)             | -       | The rows of the table.               |
+| Prop           | Type                                                                   | Default | Description                          |
+| -------------- | ---------------------------------------------------------------------- | ------- | ------------------------------------ |
+| `properties`\* | [`ColumnDefs<TPlugins>`](/docs/objects/database-properties#columndefs) | -       | The column definitions of the table. |
+| `data`\*       | [`Row<TPlugins>[]`](/docs/objects/database-properties#row)             | -       | The rows of the table.               |

@@ -1,11 +1,17 @@
-import type { OnChangeFn, Table, TableFeature } from "@tanstack/react-table";
+import {
+  functionalUpdate,
+  type OnChangeFn,
+  type Table,
+  type TableFeature,
+  type Updater,
+} from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { IconData } from "@notion-kit/icon-block";
 
 import type { Cell, Row } from "../lib/types";
 import { getDefaultCell, insertAt } from "../lib/utils";
-import type { CellPlugin } from "../plugins";
+import type { CellPlugin, InferData } from "../plugins";
 import { TitlePlugin } from "../plugins/title";
 
 export interface RowActionsOptions {
@@ -23,7 +29,7 @@ export interface RowActionsTableApi {
   updateCell: <TPlugin extends CellPlugin>(
     rowId: string,
     colId: string,
-    data: Cell<TPlugin>,
+    updater: Updater<Cell<TPlugin>>,
   ) => void;
   // Row API
   addRow: (payload?: { id: string; at?: "prev" | "next" }) => void;
@@ -37,7 +43,7 @@ export interface RowActionsColumnApi {
   getCell: <TPlugin extends CellPlugin>(rowId: string) => Cell<TPlugin>;
   updateCell: <TPlugin extends CellPlugin>(
     rowId: string,
-    data: Cell<TPlugin>,
+    updater: Updater<InferData<TPlugin>>,
   ) => void;
 }
 
@@ -58,13 +64,16 @@ export const RowActionsFeature: TableFeature = {
       }
       return cell;
     };
-    table.updateCell = (rowId, colId, data) => {
+    table.updateCell = (rowId, colId, updater) => {
       table.setTableData((prev) => {
+        const now = Date.now();
         return prev.map((row) => {
           if (row.id !== rowId) return row;
+          const data = functionalUpdate(updater, row.properties[colId]!);
           return {
             ...row,
             properties: { ...row.properties, [colId]: data },
+            lastEditedAt: now,
           };
         });
       });
@@ -82,7 +91,13 @@ export const RowActionsFeature: TableFeature = {
       });
       // Update table data
       table.setTableData((prev) => {
-        const row: Row = { id: rowId, properties: {} };
+        const now = Date.now();
+        const row: Row = {
+          id: rowId,
+          properties: {},
+          createdAt: now,
+          lastEditedAt: now,
+        };
         table.getState().columnOrder.forEach((colId) => {
           const plugin = table.getColumnPlugin(colId);
           row.properties[colId] = getDefaultCell(plugin);
@@ -106,6 +121,7 @@ export const RowActionsFeature: TableFeature = {
       table.setTableData((prev) => {
         const idx = prev.findIndex((row) => row.id === id);
         if (idx < 0) return prev;
+        const now = Date.now();
         const src = prev[idx]!;
         const properties = Object.fromEntries(
           Object.entries(src.properties).map(([colId, cell]) => [
@@ -113,7 +129,11 @@ export const RowActionsFeature: TableFeature = {
             { ...cell, id: v4() },
           ]),
         );
-        return insertAt(prev, { ...src, id: rowId, properties }, idx + 1);
+        return insertAt(
+          prev,
+          { ...src, id: rowId, properties, createdAt: now, lastEditedAt: now },
+          idx + 1,
+        );
       });
     };
     table.deleteRow = (id) => {
@@ -129,6 +149,7 @@ export const RowActionsFeature: TableFeature = {
           (propId) => table.getColumnPlugin(propId).id === "title",
         )!;
       table.setTableData((prev) => {
+        const now = Date.now();
         return prev.map((row) => {
           if (row.id !== id) return row;
           const cell = row.properties[colId] as Cell<TitlePlugin> | undefined;
@@ -145,6 +166,7 @@ export const RowActionsFeature: TableFeature = {
             ...row,
             icon: icon ?? undefined,
             properties: { ...row.properties, [colId]: updatedCell },
+            lastEditedAt: now,
           };
         });
       });
@@ -153,8 +175,13 @@ export const RowActionsFeature: TableFeature = {
   createColumn: (column, table): void => {
     /** Cell */
     column.getCell = (rowId) => table.getCell(column.id, rowId);
-    column.updateCell = (rowId, data) => {
-      table.updateCell(rowId, column.id, data);
-    };
+    column.updateCell = <TPlugin extends CellPlugin>(
+      rowId: string,
+      updater: Updater<InferData<TPlugin>>,
+    ) =>
+      table.updateCell<TPlugin>(rowId, column.id, (prev) => ({
+        ...prev,
+        value: functionalUpdate(updater, prev.value),
+      }));
   },
 };

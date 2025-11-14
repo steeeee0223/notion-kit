@@ -2,7 +2,7 @@ import { Icon } from "@notion-kit/icons";
 import {
   MenuGroup,
   MenuItem,
-  MenuItemAction,
+  MenuItemSelect,
   Separator,
 } from "@notion-kit/shadcn";
 
@@ -64,9 +64,7 @@ export function TableViewMenu() {
                 })
               }
             >
-              <MenuItemAction className="flex items-center">
-                <Icon.ChevronRight className="h-full w-3 fill-icon" />
-              </MenuItemAction>
+              <MenuItemSelect />
             </MenuItem>
           </MenuGroup>
           <Separator />
@@ -82,9 +80,7 @@ export function TableViewMenu() {
                 })
               }
             >
-              <MenuItemAction className="flex items-center">
-                <Icon.ChevronRight className="h-full w-3 fill-icon" />
-              </MenuItemAction>
+              <MenuItemSelect />
             </MenuItem>
           </MenuGroup>
         </>

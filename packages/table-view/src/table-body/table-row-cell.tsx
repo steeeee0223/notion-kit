@@ -8,7 +8,7 @@ import {
 } from "@tanstack/react-table";
 
 import type { ColumnInfo, Row } from "../lib/types";
-import type { CellPlugin, CellProps } from "../plugins";
+import type { CellPlugin, InferCellProps } from "../plugins";
 
 enum CellMode {
   Normal = "normal",
@@ -43,17 +43,18 @@ export function TableRowCell<TPlugin extends CellPlugin>({
       style={{ width }}
     >
       <div className="flex h-full overflow-x-clip" style={{ width }}>
-        {flexRender<CellProps<TPlugin>>(plugin.renderCell, {
+        {flexRender<InferCellProps<TPlugin>>(plugin.renderCell, {
           propId: column.id,
+          row: row.original,
           data: cell.value,
           config: info.config,
           wrapped: info.wrapped,
-          onChange: (value) =>
-            column.updateCell(row.id, { id: cell.id, value }),
+          onChange: (updater) => column.updateCell(row.id, updater),
+          onConfigChange: column.updateConfig,
         })}
       </div>
       {mode === CellMode.Select && (
-        <div className="pointer-events-none absolute top-0 left-0 z-[840] h-full w-full rounded-[3px] bg-blue/5 shadow-cell-focus" />
+        <div className="pointer-events-none absolute top-0 left-0 z-840 h-full w-full rounded-[3px] bg-blue/5 shadow-cell-focus" />
       )}
     </div>
   );

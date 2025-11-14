@@ -22,6 +22,7 @@ const mockProps: ColumnDefs = [
   },
 ];
 
+const timeData = { createdAt: Date.now(), lastEditedAt: Date.now() };
 const mockData: Row[] = [
   {
     id: "row-1",
@@ -30,6 +31,7 @@ const mockData: Row[] = [
       "prop-2": { id: "prop-1-2", value: "desc1" },
       "prop-3": { id: "prop-1-3", value: true },
     },
+    ...timeData,
   },
   {
     id: "row-2",
@@ -38,6 +40,7 @@ const mockData: Row[] = [
       "prop-2": { id: "prop-2-2", value: "desc2" },
       "prop-3": { id: "prop-2-3", value: false },
     },
+    ...timeData,
   },
 ];
 

@@ -324,6 +324,18 @@ export const TypesMultiSelect = (props: IconProps) => (
   </svg>
 );
 
+export const TypesDate = (props: IconProps) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" {...props}>
+    <path d="M15 3.75V1.875h-1.875V3.75h-6.25V1.875H5V3.75H2.5v12.5h15V3.75zm.625 10.938H4.375V8.75h11.25z" />
+  </svg>
+);
+
+export const TypesClock = (props: IconProps) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" {...props}>
+    <path d="M10 2.5c-4.14 0-7.5 3.36-7.5 7.5s3.36 7.5 7.5 7.5 7.5-3.36 7.5-7.5-3.36-7.5-7.5-7.5m4.375 8.75H9.063V5h1.874v4.375h3.438z" />
+  </svg>
+);
+
 export const HashTag = (props: IconProps) => (
   <svg
     aria-hidden="true"
@@ -701,5 +713,19 @@ export const Compose = (props: IconProps) => (
 export const Menu = (props: IconProps) => (
   <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 20 20" {...props}>
     <path d="M2.275 5c0-.345.28-.625.625-.625h14.2a.625.625 0 1 1 0 1.25H2.9A.625.625 0 0 1 2.275 5m0 5c0-.345.28-.625.625-.625h14.2a.625.625 0 1 1 0 1.25H2.9A.625.625 0 0 1 2.275 10m.625 4.375a.625.625 0 1 0 0 1.25h14.2a.625.625 0 1 0 0-1.25z" />
+  </svg>
+);
+
+export const ViewCalendar = (props: IconProps) => (
+  <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 20 20" {...props}>
+    <path d="M9.537 8.843a.694.694 0 1 1-1.39 0 .694.694 0 0 1 1.39 0m-.695 3.009a.694.694 0 1 0 0-1.389.694.694 0 0 0 0 1.389m.695 1.62a.695.695 0 1 1-1.39 0 .695.695 0 0 1 1.39 0m1.62-3.935a.694.694 0 1 0 0-1.389.694.694 0 0 0 0 1.389m.695 1.621a.694.694 0 1 1-1.39 0 .694.694 0 0 1 1.39 0m-.695 3.009a.695.695 0 1 0 0-1.39.695.695 0 0 0 0 1.39m3.01-5.324a.694.694 0 1 1-1.39 0 .694.694 0 0 1 1.39 0m-7.639 3.009a.694.694 0 1 0 0-1.389.694.694 0 0 0 0 1.389m.694 1.62a.695.695 0 1 1-1.389 0 .695.695 0 0 1 1.39 0m6.249-1.62a.694.694 0 1 0 0-1.389.694.694 0 0 0 0 1.389" />
+    <path d="M5.25 3.125A2.125 2.125 0 0 0 3.125 5.25v9.5c0 1.174.951 2.125 2.125 2.125h9.5a2.125 2.125 0 0 0 2.125-2.125v-9.5a2.125 2.125 0 0 0-2.125-2.125zm-.875 3.69h11.25v7.935a.875.875 0 0 1-.875.875h-9.5a.875.875 0 0 1-.875-.875z" />
+  </svg>
+);
+
+export const Clock = (props: IconProps) => (
+  <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 20 20" {...props}>
+    <path d="M10.625 5.725a.625.625 0 1 0-1.25 0v3.65H6.4a.625.625 0 1 0 0 1.25H10c.345 0 .625-.28.625-.625z" />
+    <path d="M10 2.375a7.625 7.625 0 1 0 0 15.25 7.625 7.625 0 0 0 0-15.25M3.625 10a6.375 6.375 0 1 1 12.75 0 6.375 6.375 0 0 1-12.75 0" />
   </svg>
 );
