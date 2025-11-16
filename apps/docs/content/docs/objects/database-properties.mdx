@@ -55,11 +55,13 @@ A `Row<TPlugins>` represents a row of data in the table.
 
 ### API Reference
 
-| Prop           | Type                                                | Description                      |
-| -------------- | --------------------------------------------------- | -------------------------------- |
-| `id`\*         | `string`                                            | Unique identifier of the row.    |
-| `properties`\* | `Record<string, Cell<TPlugin>>`                     | The row data keyed by column ID. |
-| `icon`         | [`IconData`](/docs/blocks/icon-block#type-icondata) | Displayed icon of the row.       |
+| Prop             | Type                                                | Description                                     |
+| ---------------- | --------------------------------------------------- | ----------------------------------------------- |
+| `id`\*           | `string`                                            | Unique identifier of the row.                   |
+| `properties`\*   | `Record<string, Cell<TPlugin>>`                     | The row data keyed by column ID.                |
+| `icon`           | [`IconData`](/docs/blocks/icon-block#type-icondata) | Displayed icon of the row.                      |
+| `createdAt`\*    | `number`                                            | The row creation timestamp (in milliseconds).    |
+| `lastEditedAt`\* | `number`                                            | The row last edited timestamp (in milliseconds). |
 
 ## Cell
 

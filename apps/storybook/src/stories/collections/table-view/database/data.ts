@@ -21,6 +21,7 @@ export const mockProps: ColumnDefs = [
   },
 ];
 
+const timeData = { createdAt: Date.now(), lastEditedAt: Date.now() };
 export const mockData: Row[] = [
   {
     id: "row-1",
@@ -38,6 +39,7 @@ export const mockData: Row[] = [
         value: true,
       },
     },
+    ...timeData,
   },
   {
     id: "row-2",
@@ -55,5 +57,6 @@ export const mockData: Row[] = [
         value: false,
       },
     },
+    ...timeData,
   },
 ];

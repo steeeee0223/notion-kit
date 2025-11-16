@@ -3,6 +3,9 @@ import { COLOR, type Color } from "@notion-kit/utils";
 
 interface ProgressBarProps {
   className?: string;
+  /**
+   * @prop percentage value between 0~100
+   */
   value: number;
   color: Color;
 }

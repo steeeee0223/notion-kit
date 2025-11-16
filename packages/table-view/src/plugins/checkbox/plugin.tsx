@@ -20,9 +20,7 @@ export function checkbox(): CheckboxPlugin {
     fromReadableValue: () => false,
     toReadableValue: (data) => (data ? "v" : ""),
     toTextValue: (data) => (data ? "✅" : ""),
-    renderCell: ({ data, wrapped, onChange }) => (
-      <CheckboxCell checked={data} wrapped={wrapped} onChange={onChange} />
-    ),
+    renderCell: (props) => <CheckboxCell {...props} />,
     reducer: (v) => v,
   };
 }

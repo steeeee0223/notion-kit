@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 
 import { cn } from "@notion-kit/cn";
 import {
@@ -7,6 +7,9 @@ import {
   type MenuItemVariants,
 } from "@notion-kit/shadcn";
 
+import * as Icon from "./icons";
+import { Label } from "./label";
+import { Switch } from "./switch";
 import { typography } from "./variants";
 
 function MenuGroup({ className, ...props }: React.ComponentProps<"div">) {
@@ -62,7 +65,11 @@ function MenuItem({
   return (
     <div
       data-slot="menu-item"
-      className={cn(menuItemVariants({ variant, disabled, inset, className }))}
+      className={cn(
+        menuItemVariants({ variant, disabled, inset }),
+        "group/item",
+        className,
+      )}
       {...props}
       data-disabled={disabled}
       aria-disabled={Boolean(disabled)}
@@ -121,6 +128,15 @@ function MenuItemCheck() {
   );
 }
 
+function MenuItemSelect({ className, children }: MenuItemActionProps) {
+  return (
+    <MenuItemAction className={cn("flex items-center text-muted", className)}>
+      {children}
+      <Icon.ChevronDown className="ml-1.5 h-full w-3 -rotate-90 fill-icon transition-[rotate] group-data-[state='open']/item:rotate-0" />
+    </MenuItemAction>
+  );
+}
+
 function MenuItemShortcut({
   children,
   ...props
@@ -132,11 +148,40 @@ function MenuItemShortcut({
   );
 }
 
+interface MenuItemSwitchProps extends MenuItemProps {
+  checked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
+}
+
+function MenuItemSwitch({
+  checked = false,
+  onCheckedChange,
+  ...props
+}: MenuItemSwitchProps) {
+  const id = useId();
+  return (
+    <Label htmlFor={id}>
+      <MenuItem {...props}>
+        <MenuItemAction>
+          <Switch
+            id={id}
+            size="sm"
+            checked={checked}
+            onCheckedChange={onCheckedChange}
+          />
+        </MenuItemAction>
+      </MenuItem>
+    </Label>
+  );
+}
+
 export {
   MenuGroup,
   MenuLabel,
   MenuItem,
   MenuItemAction,
   MenuItemCheck,
+  MenuItemSelect,
   MenuItemShortcut,
+  MenuItemSwitch,
 };

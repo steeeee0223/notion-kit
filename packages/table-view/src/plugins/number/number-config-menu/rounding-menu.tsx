@@ -1,4 +1,3 @@
-import { Icon } from "@notion-kit/icons";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -6,7 +5,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuTrigger,
   MenuItem,
-  MenuItemAction,
+  MenuItemSelect,
 } from "@notion-kit/shadcn";
 
 import type { NumberRound } from "../types";
@@ -30,11 +29,10 @@ export function RoundingMenu({ round, onUpdate }: RoundingMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <MenuItem className="group/round" Body="Decimal places">
-          <MenuItemAction className="flex items-center text-muted">
+        <MenuItem Body="Decimal places">
+          <MenuItemSelect>
             {options.find((option) => option.value === round)?.label}
-            <Icon.ChevronRight className="ml-1.5 h-full w-3 fill-icon transition-[rotate] group-data-[state='open']/round:rotate-90" />
-          </MenuItemAction>
+          </MenuItemSelect>
         </MenuItem>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

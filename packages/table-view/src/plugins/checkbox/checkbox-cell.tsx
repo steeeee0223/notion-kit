@@ -3,26 +3,17 @@
 import { Checkbox } from "@notion-kit/shadcn";
 
 import { CellTrigger } from "../../common";
+import type { CellProps } from "../types";
 
-interface CheckboxCellProps {
-  checked: boolean;
-  wrapped?: boolean;
-  onChange?: (check: boolean) => void;
-}
-
-export function CheckboxCell({
-  checked,
-  wrapped,
-  onChange,
-}: CheckboxCellProps) {
+export function CheckboxCell({ data, wrapped, onChange }: CellProps<boolean>) {
   return (
     <CellTrigger
       className="py-2.5"
       wrapped={wrapped}
-      onPointerDown={() => onChange?.(!checked)}
+      onPointerDown={() => onChange((v) => !v)}
     >
       <div className="h-4 max-w-full">
-        <Checkbox className="rounded-[3px]" checked={checked} />
+        <Checkbox className="rounded-[3px]" checked={data} />
       </div>
     </CellTrigger>
   );

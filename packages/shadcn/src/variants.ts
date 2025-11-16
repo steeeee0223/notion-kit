@@ -106,11 +106,17 @@ export const inputVariants = cva(
   {
     variants: {
       variant: {
-        default: "ring-1 ring-ring ring-inset focus-within:shadow-notion",
+        default: [
+          "ring-1 ring-ring ring-inset focus-within:shadow-notion",
+          "has-[input[aria-invalid='true']]:bg-red/15 has-[input[aria-invalid='true']]:ring-2 has-[input[aria-invalid='true']]:ring-red",
+        ],
         /**
          * default style but not focusable
          */
-        plain: "ring-1 ring-ring ring-inset",
+        plain: [
+          "ring-1 ring-ring ring-inset",
+          "has-[input[aria-invalid='true']]:bg-red/15 has-[input[aria-invalid='true']]:ring-2 has-[input[aria-invalid='true']]:ring-red",
+        ],
         /**
          * transparent and without border
          */

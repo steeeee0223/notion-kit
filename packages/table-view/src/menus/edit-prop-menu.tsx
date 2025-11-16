@@ -7,6 +7,7 @@ import {
   MenuGroup,
   MenuItem,
   MenuItemAction,
+  MenuItemSelect,
   Separator,
   Switch,
   TooltipPreset,
@@ -74,14 +75,13 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
               Icon={<Icon.ArrowSquarePathUpDown />}
               Body="Type"
             >
-              <MenuItemAction className="flex items-center text-muted">
+              <MenuItemSelect>
                 <div className="flex items-center truncate">
                   <Icon.LockedFilled className="h-full w-3.5 fill-icon" />
                   <div className="inline-block min-h-1 min-w-1" />
                   <span>Title</span>
                 </div>
-                <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-current" />
-              </MenuItemAction>
+              </MenuItemSelect>
             </MenuItem>
           </TooltipPreset>
         ) : (
@@ -91,14 +91,13 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
               Icon={<Icon.ArrowSquarePathUpDown />}
               Body="Type"
             >
-              <MenuItemAction className="flex items-center text-muted">
+              <MenuItemSelect>
                 <div className="flex truncate">
                   <DefaultIcon type={info.type} className="fill-current" />
                   <div className="inline-block min-h-1 min-w-1" />
                   <span>{plugin.meta.name}</span>
                 </div>
-                <Icon.ChevronRight className="transition-out h-full w-3 fill-current" />
-              </MenuItemAction>
+              </MenuItemSelect>
             </MenuItem>
             <MenuItem
               // TODO
@@ -113,10 +112,9 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
                 </div>
               }
             >
-              <MenuItemAction className="flex items-center text-muted">
+              <MenuItemSelect>
                 <div className="flex truncate">Off</div>
-                <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-current" />
-              </MenuItemAction>
+              </MenuItemSelect>
             </MenuItem>
           </>
         )}

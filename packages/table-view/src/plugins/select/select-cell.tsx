@@ -11,25 +11,18 @@ import {
 } from "@notion-kit/shadcn";
 
 import { CellTrigger, OptionTag, useTriggerPosition } from "../../common";
+import { CellProps } from "../types";
 import { SelectMenu } from "./select-menu";
 import { useSelectMenu } from "./select-menu/use-select-menu";
 import type { SelectConfig } from "./types";
 
-interface SelectCellProps {
-  propId: string;
-  config: SelectConfig;
-  options: string[];
-  wrapped?: boolean;
-  onChange: (options: string[]) => void;
-}
-
 export function SelectCell({
   propId,
   config,
-  options,
+  data: options,
   wrapped,
   onChange,
-}: SelectCellProps) {
+}: CellProps<string[], SelectConfig>) {
   const [open, setOpen] = useState(false);
   const { ref, position } = useTriggerPosition<HTMLDivElement>();
   const menu = useSelectMenu({ propId, options, onChange });
