@@ -64,7 +64,7 @@ export function createdTime(): CreatedTimePlugin {
       ),
     renderCell: ({ row, config, wrapped }) => (
       <DateCell
-+        data={{ start: row.createdAt, includeTime: true }}
+        data={{ start: row.createdAt, includeTime: true }}
         config={config}
         wrapped={wrapped}
       />
