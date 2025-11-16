@@ -7,8 +7,6 @@ import { CountMethod } from "../features";
 import type { CellPlugin, InferData } from "../plugins";
 import type { Cell, Row } from "./types";
 
-export const NEVER = undefined as never;
-
 export interface Entity<T extends { id: string }> {
   ids: string[];
   items: Record<string, T>;

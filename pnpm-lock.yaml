@@ -511,6 +511,9 @@ importers:
       '@notion-kit/sidebar':
         specifier: workspace:*
         version: link:../../packages/sidebar
+      '@notion-kit/table-view':
+        specifier: workspace:*
+        version: link:../../packages/table-view
       '@t3-oss/env-nextjs':
         specifier: catalog:env
         version: 0.13.6(typescript@5.9.2)(zod@4.1.5)
