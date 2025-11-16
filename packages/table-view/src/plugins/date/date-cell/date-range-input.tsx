@@ -8,7 +8,7 @@ import { cn } from "@notion-kit/cn";
 import { Input, Separator } from "@notion-kit/shadcn";
 import { formatDate, isoToTs } from "@notion-kit/utils";
 
-import { DateData } from "../types";
+import type { DateData } from "../types";
 
 const dateTimeSchema = z.object({
   date: z.iso.date().or(z.literal("")),
