@@ -1,5 +1,7 @@
 import type { Page } from "@notion-kit/schemas";
-import { buildTree, type TreeNode } from "@notion-kit/tree";
+import { TreeItemBase } from "@notion-kit/shadcn";
+
+import type { PageItems } from "./types";
 
 export interface PagesState {
   pages: Record<string, Page>;
@@ -82,25 +84,78 @@ export class PagesStore {
   };
 
   visibleByGroup = (group: string) => {
-    const pages = Object.values(this.state.pages).filter(
-      (page) => !page.isArchived && page.type === group,
-    );
-    return buildTree(pages);
+    const childrenMap = this.buildChildrenMap(group);
+    const result: PageItems = {};
+
+    const dfs = (id: string) => {
+      const page = this.state.pages[id];
+      if (!page || page.isArchived || page.type !== group) return [];
+
+      const childrenIds: string[] = [];
+      for (const childId of childrenMap[id] ?? []) {
+        const subtree = dfs(childId);
+        if (subtree.length > 0) childrenIds.push(...subtree);
+      }
+
+      result[id] = { ...page, name: page.title, children: childrenIds };
+      return [id];
+    };
+
+    // Add artificial root
+    const rootChildren: string[] = [];
+    for (const rootId of childrenMap[group]!) {
+      const subtree = dfs(rootId);
+      if (subtree.length > 0) rootChildren.push(...subtree);
+    }
+    result[group] = {
+      id: group,
+      name: "root",
+      type: group,
+      parentId: null,
+      children: rootChildren,
+    } as Page & TreeItemBase;
+
+    return result;
   };
 
   favorites = () => {
-    const pages = Object.values(this.state.pages).filter(
-      (page) => !page.isArchived,
-    );
-    return pages.reduce<TreeNode<Page>[]>((acc, page) => {
-      if (!page.isFavorite) return acc;
-      acc.push({
-        ...page,
-        parentId: null,
-        children: buildTree(pages, page.id),
-      });
-      return acc;
-    }, []);
+    const rootId = "favorites";
+    const childrenMap = this.buildChildrenMap(rootId);
+    const result: PageItems = {};
+
+    const dfs = (id: string, include: boolean) => {
+      const page = this.state.pages[id];
+      if (!page) return [];
+
+      const isFav = include || page.isFavorite;
+      const childrenIds: string[] = [];
+
+      for (const childId of childrenMap[id] ?? []) {
+        const subtree = dfs(childId, isFav);
+        if (subtree.length) childrenIds.push(...subtree);
+      }
+
+      if (isFav) {
+        result[id] = { ...page, name: page.title, children: childrenIds };
+        return [id];
+      }
+      return [];
+    };
+
+    const rootChildren: string[] = [];
+    for (const id of childrenMap[rootId]!) {
+      const subtree = dfs(id, false);
+      if (subtree.length) rootChildren.push(...subtree);
+    }
+
+    result[rootId] = {
+      id: rootId,
+      title: "root",
+      parentId: null,
+      children: rootChildren,
+    } as Page & TreeItemBase;
+
+    return result;
   };
 
   archivedPages = () => {
