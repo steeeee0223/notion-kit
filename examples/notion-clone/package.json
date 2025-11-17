@@ -25,7 +25,7 @@
     "@notion-kit/sidebar": "workspace:*",
     "@notion-kit/table-view": "workspace:*",
     "@t3-oss/env-nextjs": "catalog:env",
-    "next": "catalog:next15",
+    "next": "catalog:next16",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
     "react-hotkeys-hook": "catalog:ui"

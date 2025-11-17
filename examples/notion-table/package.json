@@ -16,7 +16,7 @@
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/table-view": "workspace:*",
     "lucide-react": "catalog:ui",
-    "next": "catalog:next15",
+    "next": "catalog:next16",
     "react": "catalog:react19",
     "react-dom": "catalog:react19"
   },

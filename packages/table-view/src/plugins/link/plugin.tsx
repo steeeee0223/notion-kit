@@ -1,5 +1,4 @@
 import { DefaultIcon } from "../../common";
-
 import { LinkCell } from "./link-cell";
 import type { EmailPlugin, PhonePlugin, UrlPlugin } from "./types";
 
