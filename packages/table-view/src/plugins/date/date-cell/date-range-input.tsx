@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { OnChangeFn } from "@tanstack/react-table";
 import z from "zod/v4";
 

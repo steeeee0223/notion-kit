@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 import { useCopyToClipboard } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import type { IconData, UpdatePageParams } from "@notion-kit/schemas";

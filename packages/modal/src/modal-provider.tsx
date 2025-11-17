@@ -1,13 +1,6 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { createContext, useContext, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 
 export interface ModalContextInterface {
@@ -30,33 +23,23 @@ export type ModalProviderProps = React.PropsWithChildren;
 export function ModalProvider({ children }: ModalProviderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showingModal, setShowingModal] = useState<React.ReactNode>(null);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useLayoutEffect(() => {
-    setIsMounted(true);
-    return () => setIsMounted(false);
-  }, []);
-
-  const openModalFn = useRef((modal: React.ReactNode) => {
-    if (!modal) return;
-    setShowingModal(modal);
-    setIsOpen(true);
-  });
-  const closeModalFn = useRef(() => {
-    setShowingModal(null);
-    setIsOpen(false);
-  });
 
   const contextValue = useMemo<ModalContextInterface>(
     () => ({
       isOpen,
-      openModal: openModalFn.current,
-      closeModal: closeModalFn.current,
+      openModal: (modal) => {
+        if (!modal) return;
+        setShowingModal(modal);
+        setIsOpen(true);
+      },
+      closeModal: () => {
+        setShowingModal(null);
+        setIsOpen(false);
+      },
     }),
     [isOpen],
   );
 
-  if (!isMounted) return null;
   return (
     <ModalContext.Provider value={contextValue}>
       {children}

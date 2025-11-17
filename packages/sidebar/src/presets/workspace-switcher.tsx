@@ -1,5 +1,3 @@
-import React from "react";
-
 import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import type { User, Workspace } from "@notion-kit/schemas";

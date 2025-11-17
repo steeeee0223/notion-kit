@@ -1,7 +1,6 @@
 import storybookPlugin from "eslint-plugin-storybook";
-import { defineConfig } from "eslint/config";
 
-export const storybookConfig = defineConfig({
+export const storybookConfig = [
   ...storybookPlugin.configs["flat/recommended"],
-  files: ["**/*.stories.@(ts|tsx|js|jsx|mjs|cjs)"],
-});
+  { files: ["**/*.stories.@(ts|tsx|js|jsx|mjs|cjs)"] },
+];

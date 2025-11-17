@@ -232,7 +232,7 @@ function MultiSelect({
   );
 
   /** Avoid Creatable Selector freezing or lagging when paste a long string. */
-  const commandFilter = React.useCallback(() => {
+  const commandFilter = () => {
     if (commandProps?.filter) return commandProps.filter;
 
     if (creatable) {
@@ -241,7 +241,7 @@ function MultiSelect({
     }
     // Using default filter in `cmdk`. We don't have to provide it.
     return undefined;
-  }, [creatable, commandProps?.filter]);
+  };
 
   return (
     <Command

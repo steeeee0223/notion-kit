@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 import { Icon } from "@notion-kit/icons";
 import { Button, MenuItemAction, TooltipPreset } from "@notion-kit/shadcn";
 

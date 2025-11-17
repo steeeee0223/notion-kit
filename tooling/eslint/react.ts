@@ -14,7 +14,6 @@ export const reactConfig = defineConfig(
       "jsx-a11y": jsxA11yPlugin,
     },
     rules: {
-      ...reactPlugin.configs.flat.recommended?.rules,
       ...reactPlugin.configs.flat["jsx-runtime"]?.rules,
       ...jsxA11yPlugin.flatConfigs.recommended.rules,
       "@typescript-eslint/no-non-null-assertion": "off",

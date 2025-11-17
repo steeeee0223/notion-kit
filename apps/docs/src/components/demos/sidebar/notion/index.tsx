@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { Icon } from "@notion-kit/icons";

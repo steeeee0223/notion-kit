@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 
 import type { Connection } from "../../../lib";
