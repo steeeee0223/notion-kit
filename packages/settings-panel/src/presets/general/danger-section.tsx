@@ -8,33 +8,30 @@ import { Button } from "@notion-kit/shadcn";
 import { Content } from "../_components";
 import { SettingsSection, useSettings } from "../../core";
 import { Scope } from "../../lib";
+import { useAccount, useWorkspace, useWorkspaceActions } from "../hooks";
 import { DeleteWorkspace } from "../modals";
 
 export function DangerSection() {
   const { openModal } = useModal();
-  const {
-    scopes,
-    settings: { account, workspace },
-    workspace: actions,
-  } = useSettings();
+  const { data: account } = useAccount();
+  const { data: workspace } = useWorkspace();
+  const { scopes } = useSettings();
   /** i18n */
   const { t } = useTranslation("settings");
   const trans = t("general.danger", { returnObjects: true });
   const modalsTrans = t("general.modals", { returnObjects: true });
   /** handlers */
+  const { remove, leave } = useWorkspaceActions();
   const deleteWorkspace = () =>
     openModal(
       <DeleteWorkspace
         name={workspace.name}
-        onSubmit={() => actions?.delete?.(workspace.id)}
+        onSubmit={() => remove(workspace.id)}
       />,
     );
   const leaveWorkspace = () =>
     openModal(
-      <BaseModal
-        {...modalsTrans.leave}
-        onTrigger={() => actions?.leave?.(account.id)}
-      />,
+      <BaseModal {...modalsTrans.leave} onTrigger={() => leave(account.id)} />,
     );
 
   return (

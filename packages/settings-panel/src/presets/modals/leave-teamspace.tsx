@@ -1,6 +1,7 @@
 "use client";
 
-import { useTransition } from "@notion-kit/hooks";
+import { useTransition } from "react";
+
 import {
   Button,
   DialogContent,
@@ -25,10 +26,12 @@ export function LeaveTeamspace({
   onLeave,
   onClose,
 }: LeaveTeamspaceProps) {
-  const [leave, isLeaving] = useTransition(async () => {
-    await onLeave?.();
-    onClose?.();
-  });
+  const [isLeaving, startTransition] = useTransition();
+  const leave = () =>
+    startTransition(async () => {
+      await onLeave?.();
+      onClose?.();
+    });
 
   return (
     <DialogContent

@@ -1,19 +1,15 @@
 "use client";
 
 import { useCallback } from "react";
-import { useMutation } from "@tanstack/react-query";
 
 import { useCopyToClipboard } from "@notion-kit/hooks";
 import { toast } from "@notion-kit/shadcn";
 
-import { useSettings } from "../../core";
-import { createDefaultFn } from "../../lib";
+import { useWorkspace, useWorkspaceActions } from "../hooks";
 
 export function useLinkActions() {
-  const {
-    settings: { workspace },
-    workspace: actions,
-  } = useSettings();
+  const { data: workspace } = useWorkspace();
+  const { isResettingLink, resetLink } = useWorkspaceActions();
 
   const [, copy] = useCopyToClipboard();
   const copyLink = useCallback(async () => {
@@ -21,15 +17,5 @@ export function useLinkActions() {
     toast.success("Copied link to clipboard");
   }, [copy, workspace.inviteLink]);
 
-  const { mutateAsync: updateLink, isPending: isResetting } = useMutation({
-    mutationFn: actions?.resetLink ?? createDefaultFn(),
-    onSuccess: () => toast.success("Workspace link updated"),
-    onError: (error) => {
-      toast.error("Update workspace link failed", {
-        description: error.message,
-      });
-    },
-  });
-
-  return { isResetting, copyLink, updateLink };
+  return { isResetting: isResettingLink, copyLink, resetLink };
 }

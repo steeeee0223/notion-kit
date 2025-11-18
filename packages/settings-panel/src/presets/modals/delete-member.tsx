@@ -42,7 +42,7 @@ export const DeleteMember = ({ onDelete }: DeleteMemberProps) => {
       >
         <DialogHeader>
           <div className="flex items-center justify-center">
-            <Icon.UserX className="size-9 flex-shrink-0 fill-default/45 p-1" />
+            <Icon.UserX className="size-9 shrink-0 fill-default/45 p-1" />
           </div>
           <DialogTitle className="px-6 text-lg/[22px]">
             Why are you removing this member from your workspace?

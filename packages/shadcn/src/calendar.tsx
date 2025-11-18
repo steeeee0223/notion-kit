@@ -40,8 +40,8 @@ function Calendar({
       captionLayout={captionLayout}
       className={cn(
         "group/calendar bg-transparent p-3",
-        String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
-        String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
+        "rtl:**:[.rdp-button_next>svg]:rotate-180",
+        "rtl:**:[.rdp-button_previous>svg]:rotate-180",
         // css variables
         "[--caption-height:--spacing(7)] [--cell-size:--spacing(8)]",
         className,

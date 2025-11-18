@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, use, useMemo, useRef } from "react";
+import React, { createContext, use, useMemo, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { I18nProvider } from "@notion-kit/i18n";
@@ -32,6 +32,7 @@ export interface SettingsActions {
   uploadFile?: (file: File) => Promise<void>;
   /** Account */
   account?: {
+    get?: () => Promise<AccountStore>;
     update?: (data: Partial<Omit<AccountStore, "id">>) => Promise<void>;
     delete?: (data: { accountId: string; email: string }) => Promise<void>;
     sendEmailVerification?: (email: string) => Promise<void>;
@@ -54,6 +55,7 @@ export interface SettingsActions {
   };
   /** Workspace */
   workspace?: {
+    get?: () => Promise<WorkspaceStore>;
     update?: (data: Partial<Omit<WorkspaceStore, "id">>) => Promise<void>;
     delete?: (id: string) => Promise<void>;
     leave?: (id: string) => Promise<void>;
@@ -131,7 +133,13 @@ export function useSettings() {
   return object;
 }
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 export interface SettingsProviderProps
   extends React.PropsWithChildren,
@@ -146,16 +154,16 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
 }) => {
   const { theme, setTheme } = useTheme();
 
-  const actionsRef = useRef(actions);
+  const [actionsApi] = useState(actions);
   const contextValue = useMemo(
     () => ({
       theme,
       setTheme,
       settings,
       scopes: getScopes(settings.workspace.plan, settings.workspace.role),
-      ...actionsRef.current,
+      ...actionsApi,
     }),
-    [theme, setTheme, settings],
+    [theme, setTheme, settings, actionsApi],
   );
   return (
     <I18nProvider language={settings.account.language} defaultNS="settings">

@@ -3,12 +3,11 @@
 import { Trans, useTranslation } from "@notion-kit/i18n";
 import { Button } from "@notion-kit/shadcn";
 
-import { SettingsRule, SettingsSection, useSettings } from "../../core";
+import { SettingsRule, SettingsSection } from "../../core";
+import { useWorkspace } from "../hooks";
 
 export function ExportSection() {
-  const {
-    settings: { workspace },
-  } = useSettings();
+  const { data: workspace } = useWorkspace();
   /** i18n */
   const { t } = useTranslation("settings");
   const trans = t("general.export", { returnObjects: true });

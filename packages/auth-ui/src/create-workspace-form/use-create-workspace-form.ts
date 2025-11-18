@@ -52,6 +52,7 @@ export function useCreateWorkspaceForm({
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/incompatible-library
     const sub = watch((value, info) => {
       if (info.name !== "name") return;
       if (value.icon?.type !== "text") return;

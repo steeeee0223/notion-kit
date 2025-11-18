@@ -7,17 +7,18 @@ import { Role } from "@notion-kit/schemas";
 import { useSettings } from "../../core";
 import type { TeamMemberRow } from "../../lib";
 import { TeamspaceDetail } from "../modals";
-import { usePeople, useTeamspaces } from "./queries";
+import { usePeople, useTeamspaces, useWorkspace } from "./queries";
 import { useTeamspaceActions } from "./use-teamspace-actions";
 
 export function useTeamspaceDetail() {
   const {
-    settings: { account, workspace },
+    settings: { account },
   } = useSettings();
   const [selectedTeamspace, setSelectedTeamspace] = useState<string | null>(
     null,
   );
 
+  const { data: workspace } = useWorkspace();
   const { data: people, refetch: refetchPeople } = usePeople();
   const { data: teamspaces } = useTeamspaces();
   const { leave, addMembers, updateMember, removeMember } =

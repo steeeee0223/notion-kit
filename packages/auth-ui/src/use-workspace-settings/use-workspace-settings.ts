@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useMemo, useState } from "react";
 import { v4 } from "uuid";
 
 import type { Team, WorkspaceMetadata } from "@notion-kit/auth";
@@ -31,8 +31,7 @@ export function useWorkspaceSettings() {
   const { baseURL, auth, redirect } = useAuth();
   const { data: session } = useSession();
   const { data: workspace } = useActiveWorkspace();
-
-  const orgApi = useRef(auth.organization);
+  const [orgApi] = useState(auth.organization);
 
   const workspaceStore = useMemo<WorkspaceStore>(() => {
     if (!workspace) return initialWorkspaceStore;
@@ -73,7 +72,7 @@ export function useWorkspaceSettings() {
     return {
       workspace: {
         update: async ({ name, icon }) => {
-          await orgApi.current.update(
+          await orgApi.update(
             {
               organizationId,
               data: {
@@ -88,7 +87,7 @@ export function useWorkspaceSettings() {
           );
         },
         delete: async () => {
-          await orgApi.current.delete(
+          await orgApi.delete(
             { organizationId },
             {
               onSuccess: () => {
@@ -100,7 +99,7 @@ export function useWorkspaceSettings() {
           );
         },
         leave: async () => {
-          await orgApi.current.leave(
+          await orgApi.leave(
             { organizationId },
             {
               onSuccess: () => redirect?.("/"),
@@ -109,7 +108,7 @@ export function useWorkspaceSettings() {
           );
         },
         resetLink: async () => {
-          await orgApi.current.update(
+          await orgApi.update(
             {
               organizationId,
               data: {
@@ -122,7 +121,7 @@ export function useWorkspaceSettings() {
       },
       people: {
         getAll: async () => {
-          const result = await orgApi.current.listMembers({
+          const result = await orgApi.listMembers({
             query: { organizationId },
           });
           if (!result.data) {
@@ -144,13 +143,13 @@ export function useWorkspaceSettings() {
           }, {});
         },
         update: async ({ memberId, role }) => {
-          await orgApi.current.updateMemberRole(
+          await orgApi.updateMemberRole(
             { organizationId, memberId, role },
             { throw: true },
           );
         },
         delete: async ({ memberId }) => {
-          await orgApi.current.removeMember(
+          await orgApi.removeMember(
             { organizationId, memberIdOrEmail: memberId },
             { throw: true },
           );
@@ -158,7 +157,7 @@ export function useWorkspaceSettings() {
       },
       invitations: {
         getAll: async () => {
-          const res = await orgApi.current.listInvitations({
+          const res = await orgApi.listInvitations({
             query: { organizationId },
           });
           if (res.error) {
@@ -187,7 +186,7 @@ export function useWorkspaceSettings() {
               },
             };
           });
-          const members = await orgApi.current.listMembers({
+          const members = await orgApi.listMembers({
             query: { organizationId },
           });
           if (members.error) {
@@ -211,7 +210,7 @@ export function useWorkspaceSettings() {
         add: async ({ emails, role }) => {
           await Promise.all(
             emails.map((email) =>
-              orgApi.current.inviteMember(
+              orgApi.inviteMember(
                 { organizationId, email, role, resend: true },
                 { throw: true },
               ),
@@ -219,15 +218,12 @@ export function useWorkspaceSettings() {
           );
         },
         cancel: async (invitationId) => {
-          await orgApi.current.cancelInvitation(
-            { invitationId },
-            { throw: true },
-          );
+          await orgApi.cancelInvitation({ invitationId }, { throw: true });
         },
       },
       teamspaces: {
         getAll: async () => {
-          const teams = await orgApi.current.listTeams({
+          const teams = await orgApi.listTeams({
             query: { organizationId },
           });
 
@@ -238,7 +234,7 @@ export function useWorkspaceSettings() {
           const data: Teamspaces = {};
           const results = await Promise.all(
             teams.data.map((team) =>
-              orgApi.current.listTeamMembers({
+              orgApi.listTeamMembers({
                 query: { teamId: team.id },
               }),
             ),
@@ -263,14 +259,14 @@ export function useWorkspaceSettings() {
           return data;
         },
         add: async ({ icon, ...data }) => {
-          const res = await orgApi.current.createTeam(
+          const res = await orgApi.createTeam(
             { ...data, icon: JSON.stringify(icon), ownedBy: userId },
             { throw: true },
           );
-          await orgApi.current.addTeamMember({ teamId: res.id, userId });
+          await orgApi.addTeamMember({ teamId: res.id, userId });
         },
         update: async ({ id, icon, ...data }) => {
-          await orgApi.current.updateTeam(
+          await orgApi.updateTeam(
             {
               teamId: id,
               data: {
@@ -282,19 +278,16 @@ export function useWorkspaceSettings() {
           );
         },
         delete: async (teamId) => {
-          await orgApi.current.removeTeam({ teamId }, { throw: true });
+          await orgApi.removeTeam({ teamId }, { throw: true });
         },
         leave: async (teamId) => {
-          await orgApi.current.removeTeamMember(
-            { teamId, userId },
-            { throw: true },
-          );
+          await orgApi.removeTeamMember({ teamId, userId }, { throw: true });
         },
         addMembers: async ({ teamspaceId, userIds }) => {
           // TODO cannot add role
           await Promise.all(
             userIds.map((userId) =>
-              orgApi.current.addTeamMember(
+              orgApi.addTeamMember(
                 { teamId: teamspaceId, userId },
                 { throw: true },
               ),
@@ -307,14 +300,14 @@ export function useWorkspaceSettings() {
           await Promise.resolve();
         },
         deleteMember: async ({ teamspaceId, userId }) => {
-          await orgApi.current.removeTeamMember(
+          await orgApi.removeTeamMember(
             { teamId: teamspaceId, userId },
             { throw: true },
           );
         },
       },
     };
-  }, [redirect, session?.user.id, workspace?.id]);
+  }, [orgApi, redirect, session?.user.id, workspace?.id]);
 
   return {
     workspaceStore,

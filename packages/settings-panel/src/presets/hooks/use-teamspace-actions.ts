@@ -6,17 +6,20 @@ import { toast } from "@notion-kit/shadcn";
 
 import { useSettings } from "../../core";
 import { createDefaultFn, QUERY_KEYS, type Teamspaces } from "../../lib";
+import { useAccount, useWorkspace } from "./queries";
 
 export function useTeamspaceActions() {
   const queryClient = useQueryClient();
-  const { settings, teamspaces: actions } = useSettings();
-  const queryKey = QUERY_KEYS.teamspaces(settings.workspace.id);
+  const { teamspaces: actions } = useSettings();
+  const { data: account } = useAccount();
+  const { data: workspace } = useWorkspace();
+  const queryKey = QUERY_KEYS.teamspaces(workspace.id);
 
   const { mutateAsync: create } = useMutation({
     mutationFn: actions?.add ?? createDefaultFn(),
     onSuccess: () => toast.success("Teamspace created"),
-    onError: (error) =>
-      toast.error("Create teamspace failed", { description: error.message }),
+    onError: (e) =>
+      toast.error("Create teamspace failed", { description: e.message }),
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
@@ -24,19 +27,19 @@ export function useTeamspaceActions() {
     mutationFn: actions?.update ?? createDefaultFn(),
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<Teamspaces>(queryKey);
-      queryClient.setQueryData<Teamspaces>(queryKey, (prev) => {
-        if (!prev) return {};
-        const { [payload.id]: teamspace, ...rest } = prev;
-        if (!teamspace) return prev;
-        return { ...rest, [payload.id]: { ...teamspace, ...payload } };
+      const prev = queryClient.getQueryData<Teamspaces>(queryKey);
+      queryClient.setQueryData<Teamspaces>(queryKey, (v) => {
+        if (!v) return {};
+        const teamspace = v[payload.id];
+        if (!teamspace) return v;
+        return { ...v, [payload.id]: { ...teamspace, ...payload } };
       });
-      return { previous };
+      return { prev };
     },
     onSuccess: () => toast.success("Teamspace updated"),
-    onError: (error, _, context) => {
-      queryClient.setQueryData(queryKey, context?.previous);
-      toast.error("Update teamspace failed", { description: error.message });
+    onError: (e, _, ctx) => {
+      queryClient.setQueryData(queryKey, ctx?.prev);
+      toast.error("Update teamspace failed", { description: e.message });
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
@@ -45,18 +48,19 @@ export function useTeamspaceActions() {
     mutationFn: actions?.delete ?? createDefaultFn(),
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<Teamspaces>(queryKey);
-      queryClient.setQueryData<Teamspaces>(queryKey, (prev) => {
-        if (!prev) return {};
-        const { [payload]: _, ...rest } = prev;
-        return rest;
+      const prev = queryClient.getQueryData<Teamspaces>(queryKey);
+      queryClient.setQueryData<Teamspaces>(queryKey, (v) => {
+        if (!v) return {};
+        const updated = { ...v };
+        delete updated[payload];
+        return updated;
       });
-      return { previous };
+      return { prev };
     },
     onSuccess: () => toast.success("Teamspace deleted"),
-    onError: (error, _, context) => {
-      queryClient.setQueryData(queryKey, context?.previous);
-      toast.error("Delete teamspace failed", { description: error.message });
+    onError: (e, _, ctx) => {
+      queryClient.setQueryData(queryKey, ctx?.prev);
+      toast.error("Delete teamspace failed", { description: e.message });
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
@@ -65,26 +69,24 @@ export function useTeamspaceActions() {
     mutationFn: actions?.leave ?? createDefaultFn(),
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<Teamspaces>(queryKey);
-      queryClient.setQueryData<Teamspaces>(queryKey, (prev) => {
-        if (!prev) return {};
-        const { [payload]: teamspace, ...rest } = prev;
-        if (!teamspace) return prev;
+      const prev = queryClient.getQueryData<Teamspaces>(queryKey);
+      queryClient.setQueryData<Teamspaces>(queryKey, (v) => {
+        if (!v) return {};
+        const teamspace = v[payload];
+        if (!teamspace) return v;
         return {
-          ...rest,
+          ...v,
           [payload]: {
             ...teamspace,
-            members: teamspace.members.filter(
-              (m) => m.userId !== settings.account.id,
-            ),
+            members: teamspace.members.filter((m) => m.userId !== account.id),
           },
         };
       });
-      return { previous };
+      return { prev };
     },
-    onError: (error, _, context) => {
-      queryClient.setQueryData(queryKey, context?.previous);
-      toast.error("Leave teamspace failed", { description: error.message });
+    onError: (e, _, ctx) => {
+      queryClient.setQueryData(queryKey, ctx?.prev);
+      toast.error("Leave teamspace failed", { description: e.message });
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
@@ -103,13 +105,13 @@ export function useTeamspaceActions() {
     mutationFn: actions?.updateMember ?? createDefaultFn(),
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<Teamspaces>(queryKey);
-      queryClient.setQueryData<Teamspaces>(queryKey, (prev) => {
-        if (!prev) return {};
-        const { [payload.teamspaceId]: teamspace, ...rest } = prev;
-        if (!teamspace) return prev;
+      const prev = queryClient.getQueryData<Teamspaces>(queryKey);
+      queryClient.setQueryData<Teamspaces>(queryKey, (v) => {
+        if (!v) return {};
+        const teamspace = v[payload.teamspaceId];
+        if (!teamspace) return v;
         return {
-          ...rest,
+          ...v,
           [payload.teamspaceId]: {
             ...teamspace,
             members: teamspace.members.map((m) => {
@@ -119,13 +121,13 @@ export function useTeamspaceActions() {
           },
         };
       });
-      return { previous };
+      return { prev };
     },
     onSuccess: () => toast.success("Teamspace member updated"),
-    onError: (error, _, context) => {
-      queryClient.setQueryData(queryKey, context?.previous);
+    onError: (e, _, ctx) => {
+      queryClient.setQueryData(queryKey, ctx?.prev);
       toast.error("Update teamspace member failed", {
-        description: error.message,
+        description: e.message,
       });
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
@@ -135,13 +137,13 @@ export function useTeamspaceActions() {
     mutationFn: actions?.deleteMember ?? createDefaultFn(),
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<Teamspaces>(queryKey);
-      queryClient.setQueryData<Teamspaces>(queryKey, (prev) => {
-        if (!prev) return {};
-        const { [payload.teamspaceId]: teamspace, ...rest } = prev;
-        if (!teamspace) return prev;
+      const prev = queryClient.getQueryData<Teamspaces>(queryKey);
+      queryClient.setQueryData<Teamspaces>(queryKey, (v) => {
+        if (!v) return {};
+        const teamspace = v[payload.teamspaceId];
+        if (!teamspace) return v;
         return {
-          ...rest,
+          ...v,
           [payload.teamspaceId]: {
             ...teamspace,
             members: teamspace.members.filter(
@@ -150,13 +152,13 @@ export function useTeamspaceActions() {
           },
         };
       });
-      return { previous };
+      return { prev };
     },
     onSuccess: () => toast.success("Teamspace member deleted"),
-    onError: (error, _, context) => {
-      queryClient.setQueryData(queryKey, context?.previous);
+    onError: (e, _, ctx) => {
+      queryClient.setQueryData(queryKey, ctx?.prev);
       toast.error("Delete teamspace member failed", {
-        description: error.message,
+        description: e.message,
       });
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),

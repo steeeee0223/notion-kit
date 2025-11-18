@@ -27,7 +27,12 @@ import {
 import { TextLinks } from "../_components";
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
 import { generateGuestsCsv, GuestRow, MemberRow, Scope } from "../../lib";
-import { useInvitations, useTeamspaceDetail } from "../hooks";
+import {
+  useAccount,
+  useInvitations,
+  useTeamspaceDetail,
+  useWorkspace,
+} from "../hooks";
 import { AddMembers, DeleteGuest, DeleteMember } from "../modals";
 import {
   GroupsTable,
@@ -48,10 +53,9 @@ enum PeopleTabs {
 }
 
 export function People() {
-  const {
-    scopes,
-    settings: { account, workspace },
-  } = useSettings();
+  const { scopes } = useSettings();
+  const { data: account } = useAccount();
+  const { data: workspace } = useWorkspace();
   /** i18n */
   const { t } = useTranslation("settings");
   const common = t("common", { returnObjects: true });
@@ -93,7 +97,7 @@ export function People() {
       />,
     );
   /** Handlers */
-  const { isResetting, copyLink, updateLink } = useLinkActions();
+  const { isResetting, copyLink, resetLink: updateLink } = useLinkActions();
   const resetLink = () =>
     openModal(<BaseModal {...modals["reset-link"]} onTrigger={updateLink} />);
   const invitedMembers = useInvitedMembers();
@@ -231,7 +235,7 @@ export function People() {
               workspace.plan === Plan.EDUCATION) && (
               <>
                 <section className="max-w-[300px] text-sm">
-                  <Icon.Group className="mb-2 h-auto w-8 flex-shrink-0 fill-default/45" />
+                  <Icon.Group className="mb-2 h-auto w-8 shrink-0 fill-default/45" />
                   <header className="font-semibold">{upgrade.title}</header>
                   <p className="mt-1 mb-4 text-secondary">
                     {upgrade.description}

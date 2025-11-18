@@ -3,14 +3,11 @@
 import type { MultiSelectOption } from "@notion-kit/shadcn";
 import { idToColor } from "@notion-kit/utils";
 
-import { useSettings } from "../../core";
 import type { TeamspaceRow } from "../../lib";
-import { usePeople, useTeamspaces } from "../hooks";
+import { useAccount, usePeople, useTeamspaces } from "../hooks";
 
 export function useTeamspacesTable() {
-  const {
-    settings: { account },
-  } = useSettings();
+  const { data: account } = useAccount();
   const { data: people } = usePeople();
   const { data } = useTeamspaces<TeamspaceRow[]>((teamspaces) =>
     Object.values(teamspaces).map((teamspace) => {

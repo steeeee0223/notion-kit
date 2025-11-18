@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod/v4";
@@ -33,19 +33,18 @@ export function useAcceptInvitationForm({
 }: UseAcceptInvitationFormOptions) {
   const { auth } = useAuth();
 
-  const getInvitationFn = useRef(auth.organization.getInvitation);
-  const [isFetching, setIsFetching] = useState(false);
+  const [getInvitationFn] = useState(() => auth.organization.getInvitation);
+  const [isFetching, startTransition] = useTransition();
   const [workspace, setWorkspace] = useState<Workspace>({
     id: "",
     name: "Acme Inc.",
     icon: { type: "text", src: "A" },
     slug: "",
   });
+
   useEffect(() => {
-    setIsFetching(true);
-    void getInvitationFn
-      .current({ query: { id: invitationId } })
-      .then((res) => {
+    startTransition(async () => {
+      await getInvitationFn({ query: { id: invitationId } }).then((res) => {
         if (res.error) {
           handleError(res, "Fetch invitation failed");
           return;
@@ -56,9 +55,9 @@ export function useAcceptInvitationForm({
           icon: { type: "text", src: res.data.organizationName },
           slug: res.data.organizationSlug,
         });
-        setIsFetching(false);
       });
-  }, [invitationId]);
+    });
+  }, [getInvitationFn, invitationId]);
 
   const form = useForm<AcceptInvitationSchema>({
     resolver: zodResolver(acceptInvitationSchema),

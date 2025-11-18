@@ -9,7 +9,7 @@ catalog:
   prettier: ^3.6.2
   tsup: ^8.5.0
   typescript: ^5.9.3
-  zod: ^4.0.15
+  zod: ^4.1.12
 
 catalogs:
   node22:
