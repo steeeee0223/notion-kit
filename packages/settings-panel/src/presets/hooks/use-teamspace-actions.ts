@@ -4,13 +4,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { toast } from "@notion-kit/shadcn";
 
-import { useSettings } from "../../core";
+import { useSettingsApi } from "../../core";
 import { createDefaultFn, QUERY_KEYS, type Teamspaces } from "../../lib";
 import { useAccount, useWorkspace } from "./queries";
 
 export function useTeamspaceActions() {
   const queryClient = useQueryClient();
-  const { teamspaces: actions } = useSettings();
+  const { teamspaces: actions } = useSettingsApi();
   const { data: account } = useAccount();
   const { data: workspace } = useWorkspace();
   const queryKey = QUERY_KEYS.teamspaces(workspace.id);

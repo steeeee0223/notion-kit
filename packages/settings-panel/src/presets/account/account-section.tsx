@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useRef, useTransition } from "react";
 import { X } from "lucide-react";
 import { useHover } from "usehooks-ts";
 
 import { cn } from "@notion-kit/cn";
+import { useInputField } from "@notion-kit/hooks";
 import { useTranslation } from "@notion-kit/i18n";
 import {
   Avatar,
@@ -32,26 +33,24 @@ export function AccountSection() {
   const trans = t("account", { returnObjects: true });
   /** handlers */
   const { data: account } = useAccount();
-  const { update } = useAccountActions();
+  const { updateSync } = useAccountActions();
   const { upload } = useFileActions();
   const updateAvatar = () => avatarInputRef.current?.click();
   const [isPending, startTransition] = useTransition();
   const removeAvatar = () =>
-    startTransition(async () => await update({ avatarUrl: "" }));
+    startTransition(() => updateSync({ avatarUrl: "" }));
   const uploadAvatar = () =>
     startTransition(async () => {
       const file = avatarInputRef.current?.files?.[0];
       if (file) await upload(file);
     });
 
-  const [preferredName, setPreferredName] = useState(account.preferredName);
-  const updatePreferredName = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setPreferredName(e.target.value);
-  const savePreferredName = () => {
-    if (preferredName !== account.preferredName) {
-      void update({ preferredName });
-    }
-  };
+  const { props: preferredNameProps } = useInputField({
+    id: "preferred-name",
+    initialValue: account.preferredName,
+    onUpdate: (preferredName) => updateSync({ preferredName }),
+    validate: (value) => value.length > 0,
+  });
 
   return (
     <SettingsSection title={trans.title}>
@@ -102,21 +101,11 @@ export function AccountSection() {
           <div className="ml-5 w-[250px]">
             <Label
               className="mb-1 block text-xs text-secondary"
-              htmlFor="username"
+              htmlFor="preferred-name"
             >
               {trans["preferred-name"]}
             </Label>
-            <Input
-              type="username"
-              id="username"
-              value={preferredName}
-              onChange={updatePreferredName}
-              onBlur={savePreferredName}
-              onKeyDown={(e) => {
-                if (e.key !== "Enter") return;
-                savePreferredName();
-              }}
-            />
+            <Input {...preferredNameProps} />
           </div>
         </div>
       </div>

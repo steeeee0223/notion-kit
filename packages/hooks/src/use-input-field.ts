@@ -44,6 +44,10 @@ export function useInputField({
   const [value, setValue] = useState(initialValue);
   const [error, setError] = useState(false);
 
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
   const props = useMemo<UseInputFieldResults["props"]>(
     () => ({
       ref,

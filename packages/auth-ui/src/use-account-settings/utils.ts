@@ -1,4 +1,9 @@
-import type { AuthClient, Passkey, Session } from "@notion-kit/auth";
+import type {
+  AuthClient,
+  OAuth2UserInfo,
+  Passkey,
+  Session,
+} from "@notion-kit/auth";
 import type {
   Connection,
   ConnectionStrategy,
@@ -64,6 +69,8 @@ export async function loadConnections(auth: AuthClient) {
       console.error(`Fetch ${type} info failed`, info.error);
       return acc;
     }
+    // TODO Remove this type assertion. This is added due to issues in `better-auth`
+    const user = info.data.user as OAuth2UserInfo;
     acc.push({
       id: account.id,
       connection: {
@@ -71,7 +78,7 @@ export async function loadConnections(auth: AuthClient) {
         /**
          * @note Currently, `better-auth` does not return custom fields of `account`.
          */
-        account: info.data.user.name ?? info.data.user.email ?? "Account",
+        account: user.name ?? user.email ?? "Account",
         accountId: account.accountId,
       },
       scopes: account.scopes,

@@ -4,11 +4,11 @@ import { useMutation } from "@tanstack/react-query";
 
 import { toast } from "@notion-kit/shadcn";
 
-import { useSettings } from "../../core";
+import { useSettingsApi } from "../../core";
 import { createDefaultFn } from "../../lib";
 
 export function useFileActions() {
-  const { uploadFile } = useSettings();
+  const { uploadFile } = useSettingsApi();
 
   const { mutateAsync: upload, isPending: isUploading } = useMutation({
     mutationFn: uploadFile ?? createDefaultFn(),

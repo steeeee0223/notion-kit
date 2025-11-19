@@ -5,14 +5,16 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { toast } from "@notion-kit/shadcn";
 
-import { useSettings } from "../../core";
+import { useSettingsApi } from "../../core";
 import { createDefaultFn, logError, QUERY_KEYS, type Passkey } from "../../lib";
+import { useAccount } from "../hooks";
 
 export function usePasskeys() {
-  const { settings, passkeys: actions } = useSettings();
+  const { passkeys: actions } = useSettingsApi();
+  const { data: account } = useAccount();
   const queryClient = useQueryClient();
 
-  const queryKey = QUERY_KEYS.passkeys(settings.account.id);
+  const queryKey = QUERY_KEYS.passkeys(account.id);
   const { data: passkeys } = useQuery({
     initialData: [],
     queryKey,

@@ -4,13 +4,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { toast } from "@notion-kit/shadcn";
 
-import { useSettings } from "../../core";
+import { useSettingsApi } from "../../core";
 import { createDefaultFn, QUERY_KEYS, type Connection } from "../../lib";
+import { useAccount } from "../hooks";
 
 export function useConnectionsActions() {
   const queryClient = useQueryClient();
-  const { settings, connections: actions } = useSettings();
-  const queryKey = QUERY_KEYS.connections(settings.account.id);
+  const { connections: actions } = useSettingsApi();
+  const { data: account } = useAccount();
+  const queryKey = QUERY_KEYS.connections(account.id);
 
   const { mutateAsync: connect, isPending: isConnecting } = useMutation({
     mutationFn: actions?.add ?? createDefaultFn(),

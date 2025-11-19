@@ -4,13 +4,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { toast } from "@notion-kit/shadcn";
 
-import { useSettings } from "../../core";
+import { useSettingsApi } from "../../core";
 import { createDefaultFn, Memberships, QUERY_KEYS } from "../../lib";
+import { useWorkspace } from "../hooks";
 
 export function usePeopleActions() {
   const queryClient = useQueryClient();
-  const { settings, people: actions } = useSettings();
-  const queryKey = QUERY_KEYS.members(settings.workspace.id);
+  const { people: actions } = useSettingsApi();
+  const { data: workspace } = useWorkspace();
+  const queryKey = QUERY_KEYS.members(workspace.id);
 
   const { mutateAsync: update } = useMutation({
     mutationFn: actions?.update ?? createDefaultFn(),

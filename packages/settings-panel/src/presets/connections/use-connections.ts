@@ -3,15 +3,17 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import { useSettings } from "../../core";
+import { useSettingsApi } from "../../core";
 import { createDefaultFn, QUERY_KEYS } from "../../lib";
+import { useAccount } from "../hooks";
 import { connectionCardData } from "./data";
 
 export function useConnections() {
-  const { settings, connections: actions } = useSettings();
+  const { connections: actions } = useSettingsApi();
+  const { data: account } = useAccount();
   const { data: connections } = useQuery({
     initialData: [],
-    queryKey: QUERY_KEYS.connections(settings.account.id),
+    queryKey: QUERY_KEYS.connections(account.id),
     queryFn: actions?.getAll ?? createDefaultFn([]),
   });
 

@@ -9,7 +9,7 @@ import {
   createDefaultFn,
   LOCALSTORAGE_KEYS,
   QUERY_KEYS,
-  useSettings,
+  useSettingsApi,
   type AccountStore,
 } from "../..";
 import { initialAccountStore } from "./constants";
@@ -17,9 +17,9 @@ import { useAccount } from "./queries";
 
 export function useAccountActions() {
   const queryClient = useQueryClient();
+  const { account: actions } = useSettingsApi();
   const { data: account } = useAccount();
-  const { settings, account: actions } = useSettings();
-  const queryKey = QUERY_KEYS.account(settings.account.id);
+  const queryKey = QUERY_KEYS.account(account.id);
 
   /** Localstorage */
   const [locale, setLocale] = useLocalStorage(
@@ -31,7 +31,7 @@ export function useAccountActions() {
     account.timezone,
   );
 
-  const { mutateAsync: update } = useMutation({
+  const { mutateAsync: update, mutate: updateSync } = useMutation({
     mutationFn: actions?.update ?? createDefaultFn(),
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
@@ -107,6 +107,7 @@ export function useAccountActions() {
     locale,
     timezone,
     update,
+    updateSync,
     remove,
     sendEmailVerification,
     changePassword,

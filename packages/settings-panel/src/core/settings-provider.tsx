@@ -6,11 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { I18nProvider } from "@notion-kit/i18n";
 import { ModalProvider } from "@notion-kit/modal";
 import { Role, type IconData } from "@notion-kit/schemas";
-import {
-  TooltipProvider,
-  useTheme,
-  type UseThemeProps,
-} from "@notion-kit/shadcn";
+import { TooltipProvider } from "@notion-kit/shadcn";
 
 import type {
   AccountStore,
@@ -32,7 +28,6 @@ export interface SettingsActions {
   uploadFile?: (file: File) => Promise<void>;
   /** Account */
   account?: {
-    get?: () => Promise<AccountStore>;
     update?: (data: Partial<Omit<AccountStore, "id">>) => Promise<void>;
     delete?: (data: { accountId: string; email: string }) => Promise<void>;
     sendEmailVerification?: (email: string) => Promise<void>;
@@ -55,7 +50,6 @@ export interface SettingsActions {
   };
   /** Workspace */
   workspace?: {
-    get?: () => Promise<WorkspaceStore>;
     update?: (data: Partial<Omit<WorkspaceStore, "id">>) => Promise<void>;
     delete?: (id: string) => Promise<void>;
     leave?: (id: string) => Promise<void>;
@@ -117,20 +111,25 @@ export interface SettingsActions {
   };
 }
 
-interface SettingsContextInterface
-  extends Pick<UseThemeProps, "theme" | "setTheme">,
-    SettingsActions {
+interface SettingsContextInterface {
   settings: SettingsStore;
   scopes: Set<Scope>;
 }
 
 const SettingsContext = createContext<SettingsContextInterface | null>(null);
+const SettingsApiContext = createContext<SettingsActions | null>(null);
 
 export function useSettings() {
-  const object = use(SettingsContext);
-  if (!object)
-    throw new Error("useSettings must be used within SettingsProvider");
-  return object;
+  const ctx = use(SettingsContext);
+  if (!ctx) throw new Error("useSettings must be used within SettingsProvider");
+  return ctx;
+}
+
+export function useSettingsApi() {
+  const ctx = use(SettingsApiContext);
+  if (!ctx)
+    throw new Error("useSettingsApi must be used within SettingsProvider");
+  return ctx;
 }
 
 const queryClient = new QueryClient({
@@ -147,33 +146,30 @@ export interface SettingsProviderProps
   settings: SettingsStore;
 }
 
-export const SettingsProvider: React.FC<SettingsProviderProps> = ({
+export function SettingsProvider({
   settings,
   children,
   ...actions
-}) => {
-  const { theme, setTheme } = useTheme();
-
+}: SettingsProviderProps) {
   const [actionsApi] = useState(actions);
   const contextValue = useMemo(
     () => ({
-      theme,
-      setTheme,
       settings,
       scopes: getScopes(settings.workspace.plan, settings.workspace.role),
-      ...actionsApi,
     }),
-    [theme, setTheme, settings, actionsApi],
+    [settings],
   );
   return (
     <I18nProvider language={settings.account.language} defaultNS="settings">
       <TooltipProvider delayDuration={500}>
         <SettingsContext value={contextValue}>
-          <QueryClientProvider client={queryClient}>
-            <ModalProvider>{children}</ModalProvider>
-          </QueryClientProvider>
+          <SettingsApiContext value={actionsApi}>
+            <QueryClientProvider client={queryClient}>
+              <ModalProvider>{children}</ModalProvider>
+            </QueryClientProvider>
+          </SettingsApiContext>
         </SettingsContext>
       </TooltipProvider>
     </I18nProvider>
   );
-};
+}

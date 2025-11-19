@@ -12,7 +12,6 @@ import type {
   Teamspaces,
   WorkspaceStore,
 } from "@notion-kit/settings-panel";
-import { toast } from "@notion-kit/shadcn";
 
 import { useActiveWorkspace, useAuth, useSession } from "../auth-provider";
 import { handleError } from "../lib";
@@ -80,21 +79,15 @@ export function useWorkspaceSettings() {
                 logo: icon ? JSON.stringify(icon) : undefined,
               },
             },
-            {
-              onSuccess: () => void toast.success("Workspace updated"),
-              onError: (e) => handleError(e, "Update workspace failed"),
-            },
+            { throw: true },
           );
         },
         delete: async () => {
           await orgApi.delete(
             { organizationId },
             {
-              onSuccess: () => {
-                toast.success("Workspace deleted");
-                redirect?.("/");
-              },
-              onError: (e) => handleError(e, "Delete workspace failed"),
+              onSuccess: () => redirect?.("/"),
+              throw: true,
             },
           );
         },
@@ -103,7 +96,7 @@ export function useWorkspaceSettings() {
             { organizationId },
             {
               onSuccess: () => redirect?.("/"),
-              onError: (e) => handleError(e, "Leave workspace failed"),
+              throw: true,
             },
           );
         },
