@@ -4,7 +4,6 @@ export * from "./use-filter";
 export * from "./use-input-field";
 export * from "./use-is-client";
 export * from "./use-is-mobile";
-export * from "./use-mounted";
 export * from "./use-origin";
 export * from "./use-rect";
 export * from "./use-scroll";
