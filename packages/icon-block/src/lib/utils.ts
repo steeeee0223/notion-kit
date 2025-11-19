@@ -1,13 +1,17 @@
 import { z } from "zod/v4";
 
-import type { LucideName } from "../types";
+import type { IconData } from "../types";
 import { iconNodes } from "./data";
 
-export const isEmoji = (text: string) => z.emoji().safeParse(text).success;
+export function isEmoji(icon: IconData) {
+  return icon.type === "emoji" && z.emoji().safeParse(icon.src).success;
+}
 
-export const isLucideIcon = (name: string): name is LucideName => {
-  return name in iconNodes;
-};
+export function isLucideIcon(
+  icon: IconData,
+): icon is Extract<IconData, { type: "lucide" }> {
+  return icon.type === "lucide" && icon.src in iconNodes;
+}
 
 export function getLetter(src: string, fallbackText: string) {
   const letter = src.length > 0 ? src[0]! : fallbackText;

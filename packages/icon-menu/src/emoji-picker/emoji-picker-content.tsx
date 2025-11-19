@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 
 import { TooltipProvider } from "@notion-kit/shadcn";
 
@@ -21,7 +21,7 @@ type EmojiPickerContentProps = Pick<
   | "onSelectEmoji"
 >;
 
-export const EmojiPickerContent: React.FC<EmojiPickerContentProps> = ({
+export function EmojiPickerContent({
   emojiLibrary,
   skin,
   i18n,
@@ -31,7 +31,7 @@ export const EmojiPickerContent: React.FC<EmojiPickerContentProps> = ({
   settings,
   visibleCategories,
   onSelectEmoji,
-}) => {
+}: EmojiPickerContentProps) {
   const isCategoryVisible = useCallback(
     (categoryId: EmojiCategoryList) =>
       visibleCategories.has(categoryId)
@@ -56,7 +56,7 @@ export const EmojiPickerContent: React.FC<EmojiPickerContentProps> = ({
           >
             <MenuSectionTitle
               title={i18n.categories[categoryId]}
-              className="sticky -top-px z-[1] bg-popover"
+              className="sticky -top-px z-1 bg-popover"
             />
             <div
               className="relative flex flex-wrap"
@@ -92,7 +92,7 @@ export const EmojiPickerContent: React.FC<EmojiPickerContentProps> = ({
       <div className="mr-3 w-full" data-id="search">
         <MenuSectionTitle
           title={searchResult.length > 0 ? i18n.searchResult : "No results"}
-          className="sticky -top-px z-[1] bg-popover"
+          className="sticky -top-px z-1 bg-popover"
         />
         <div className="relative flex flex-wrap">
           {searchResult.map((emoji, index) => (
@@ -112,14 +112,19 @@ export const EmojiPickerContent: React.FC<EmojiPickerContentProps> = ({
   return (
     <TooltipProvider delayDuration={500}>
       <div
+        // eslint-disable-next-line react-hooks/refs
         ref={refs.current.contentRoot}
         className="-mr-3 notion-scrollbar h-[214px] overflow-x-hidden overflow-y-auto"
         data-id="scroll"
       >
-        <div ref={refs.current.content} className="h-full">
+        <div
+          // eslint-disable-next-line react-hooks/refs
+          ref={refs.current.content}
+          className="h-full"
+        >
           {isSearching ? SearchList() : EmojiList()}
         </div>
       </div>
     </TooltipProvider>
   );
-};
+}
