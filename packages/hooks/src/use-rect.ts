@@ -23,20 +23,21 @@ export function useRect<E extends Element = Element>() {
   const [element, ref] = useState<E | null>(null);
   const [rect, setRect] = useState<Rect>(defaultState);
 
-  const observer = useMemo(
-    () =>
-      new ResizeObserver((entries) => {
-        if (entries[0]) {
-          const { x, y, width, height, top, left, bottom, right } =
-            entries[0].target.getBoundingClientRect();
-          setRect({ x, y, width, height, top, left, bottom, right });
-        }
-      }),
-    [],
-  );
+  const observer = useMemo(() => {
+    if (typeof window === "undefined") {
+      return null;
+    }
+    return new ResizeObserver((entries) => {
+      if (entries[0]) {
+        const { x, y, width, height, top, left, bottom, right } =
+          entries[0].target.getBoundingClientRect();
+        setRect({ x, y, width, height, top, left, bottom, right });
+      }
+    });
+  }, []);
 
   useLayoutEffect(() => {
-    if (!element) return;
+    if (!element || !observer) return;
     observer.observe(element);
     return () => {
       observer.disconnect();
