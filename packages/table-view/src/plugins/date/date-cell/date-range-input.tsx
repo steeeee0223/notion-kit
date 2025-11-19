@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { OnChangeFn } from "@tanstack/react-table";
 import z from "zod/v4";
 
@@ -36,12 +36,14 @@ export function DateRangeInput({
         <>
           <DateTimeInput
             id="start"
+            key={value.start}
             value={value.start}
             onChange={(ts) => onChange((v) => ({ ...v, start: ts }))}
           />
           {value.endDate && (
             <DateTimeInput
               id="end"
+              key={value.end}
               value={value.end}
               onChange={(ts) => onChange((v) => ({ ...v, end: ts }))}
             />
@@ -51,12 +53,14 @@ export function DateRangeInput({
         <div className="flex gap-3">
           <DateInput
             id="start"
+            key={value.start}
             value={value.start}
             onChange={(ts) => onChange((prev) => ({ ...prev, start: ts }))}
           />
           {value.endDate && (
             <DateInput
               id="end"
+              key={value.end}
               value={value.end}
               onChange={(ts) => onChange((prev) => ({ ...prev, end: ts }))}
             />
@@ -75,22 +79,19 @@ interface DateTimeInputProps {
 
 function DateTimeInput({ id, value: ts, onChange }: DateTimeInputProps) {
   const [error, setError] = useState(false);
-  const [value, setValue] = useState<DateTimeSchema>({ date: "", time: "" });
+  const [value, setValue] = useState<DateTimeSchema>(() => {
+    if (ts === undefined || ts < 0) return { date: "", time: "" };
+    const [date, time] = formatDate(ts, {
+      dateFormat: "_edit_mode",
+      timeFormat: "_edit_mode",
+    }).split(" ");
+    return { date: date!, time: time! };
+  });
   const handleBlur = () => {
     const res = dateTimeSchema.safeParse(value);
     setError(!res.success);
     onChange(res.success ? isoToTs(res.data) : -1);
   };
-
-  useEffect(() => {
-    if (ts === undefined || ts < 0) return;
-    const [date, time] = formatDate(ts, {
-      dateFormat: "_edit_mode",
-      timeFormat: "_edit_mode",
-    }).split(" ");
-
-    setValue({ date: date!, time: time! });
-  }, [ts]);
 
   return (
     <div
@@ -134,21 +135,19 @@ interface DateInputProps {
 
 function DateInput({ id, value: ts, onChange }: DateInputProps) {
   const [error, setError] = useState(false);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(() => {
+    if (ts === undefined || ts < 0) return "";
+    return formatDate(ts, {
+      dateFormat: "_edit_mode",
+      timeFormat: "hidden",
+    });
+  });
+
   const handleBlur = () => {
     const res = dateTimeSchema.safeParse({ date: value, time: "" });
     setError(!res.success);
     onChange(res.success ? isoToTs(res.data) : -1);
   };
-
-  useEffect(() => {
-    if (ts === undefined || ts < 0) return;
-    const dateStr = formatDate(ts, {
-      dateFormat: "_edit_mode",
-      timeFormat: "hidden",
-    });
-    setValue(dateStr);
-  }, [ts]);
 
   return (
     <Input

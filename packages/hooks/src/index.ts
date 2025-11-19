@@ -6,6 +6,7 @@ export * from "./use-is-client";
 export * from "./use-is-mobile";
 export * from "./use-mounted";
 export * from "./use-origin";
+export * from "./use-rect";
 export * from "./use-scroll";
 export * from "./use-transition";
 /** Temp. */

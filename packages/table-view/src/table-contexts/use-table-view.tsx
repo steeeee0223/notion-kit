@@ -36,10 +36,6 @@ interface UseTableViewOptions<TPlugins extends CellPlugin[]>
   onPropertiesChange?: OnChangeFn<ColumnDefs<TPlugins>>;
 }
 
-/**
- * useTableView
- * @returns [table context, table dispatcher]
- */
 export function useTableView<TPlugins extends CellPlugin[]>({
   plugins,
   data,
@@ -106,6 +102,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   });
 
   /** table instance */
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     columns,
     data: dataEntity,

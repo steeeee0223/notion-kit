@@ -342,6 +342,9 @@ importers:
       '@notion-kit/cover':
         specifier: workspace:*
         version: link:../../packages/cover
+      '@notion-kit/hooks':
+        specifier: workspace:*
+        version: link:../../packages/hooks
       '@notion-kit/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
