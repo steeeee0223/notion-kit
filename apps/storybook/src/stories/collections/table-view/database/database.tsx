@@ -34,7 +34,7 @@ export const Database = () => {
       <div className="flex w-full items-center justify-between pt-2">
         <div className="mx-1 flex items-center gap-1">
           <DatabaseIcon className="relative size-6 shrink-0" />
-          <div className="w-full max-w-full text-[22px] font-bold break-words whitespace-pre-wrap caret-primary">
+          <div className="w-full max-w-full text-[22px] font-bold wrap-break-word whitespace-pre-wrap caret-primary">
             Title
           </div>
           <Button

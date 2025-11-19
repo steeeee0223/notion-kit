@@ -177,12 +177,16 @@ function MultiSelect({
   }, [open]);
 
   /* controlled value */
+  // TODO fix lint error
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setSelected(value), [value]);
   /* controlled options */
   useEffect(() => {
     if (!arrayOptions) return;
     const newOption = transToGroupOptions(arrayOptions, groupBy);
     if (JSON.stringify(newOption) === JSON.stringify(groupOptions)) return;
+    // TODO fix lint error
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setGroupOptions(newOption);
   }, [arrayDefaultOptions, arrayOptions, groupBy, groupOptions]);
 

@@ -134,7 +134,7 @@ function getPercentage(a: number, b: number) {
 export function wrappedClassName(wrapped?: boolean) {
   return cn(
     wrapped
-      ? "break-words whitespace-pre-wrap"
+      ? "wrap-break-word whitespace-pre-wrap"
       : "break-normal whitespace-nowrap",
   );
 }
