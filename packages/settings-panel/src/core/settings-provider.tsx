@@ -151,7 +151,7 @@ export function SettingsProvider({
   children,
   ...actions
 }: SettingsProviderProps) {
-  const [actionsApi] = useState(actions);
+  const actionsApi = useMemo(() => actions, [actions]);
   const contextValue = useMemo(
     () => ({
       settings,
