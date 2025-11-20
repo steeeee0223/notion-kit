@@ -9,18 +9,25 @@ import { iconNodes } from "./data";
 import { toPascalCase } from "./utils";
 
 /**
- * Create a Lucide icon component
+ * Create a Lucide icon nodes
  */
-export const createLucideIcon = (name: LucideName) => {
-  const nodeWithKeys = iconNodes[name].map(([elem, attrs], i) => [
+export function createLucideNode(name: LucideName) {
+  return iconNodes[name].map(([elem, attrs], i) => [
     elem,
     { ...attrs, key: `${name}-${i}` },
   ]) as IconNode;
+}
+
+/**
+ * Create a Lucide icon component
+ */
+export function createLucideIcon(name: LucideName) {
+  const iconNode = createLucideNode(name);
   const Component = forwardRef<SVGSVGElement, LucideProps>(
     ({ className, ...props }, ref) =>
       createElement(Icon, {
         ref,
-        iconNode: nodeWithKeys,
+        iconNode,
         className: cn(`lucide-${name}`, className),
         ...props,
       }),
@@ -28,4 +35,4 @@ export const createLucideIcon = (name: LucideName) => {
 
   Component.displayName = toPascalCase(name);
   return Component;
-};
+}

@@ -1,11 +1,10 @@
 "use client";
 
-import { memo, useMemo } from "react";
+import { memo } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 import { COLOR } from "@notion-kit/common";
-import type { LucideName } from "@notion-kit/icon-block";
-import { createLucideIcon } from "@notion-kit/icon-block";
+import { LucideIcon, type LucideName } from "@notion-kit/icon-block";
 import { Button, TooltipPreset, TooltipProvider } from "@notion-kit/shadcn";
 import { Spinner } from "@notion-kit/spinner";
 
@@ -14,21 +13,24 @@ import { ColorPicker } from "./color-picker";
 import { useLucideIcons } from "./use-lucide-icons";
 
 interface IconProps {
-  onClick: (name: LucideName) => void;
-  name: LucideName;
+  src: LucideName;
   color: string;
+  onClick: (src: LucideName) => void;
 }
 
-function Icon({ name, color, onClick }: IconProps) {
-  const renderIcon = useMemo(() => createLucideIcon(name), [name]);
+function Icon({ src, color, onClick }: IconProps) {
   return (
-    <TooltipPreset side="top" description={name}>
+    <TooltipPreset side="top" description={src}>
       <Button
         variant="hint"
-        onClick={() => onClick(name)}
-        className="size-[30px] p-0"
+        onClick={() => onClick(src)}
+        className="size-[30px]"
       >
-        {renderIcon({ color, size: 20, strokeWidth: 2.2 })}
+        <LucideIcon
+          icon={{ type: "lucide", src, color }}
+          size={20}
+          strokeWidth={2.2}
+        />
       </Button>
     </TooltipPreset>
   );
@@ -83,7 +85,7 @@ export const LucidePicker = memo(function LucidePicker({
                     {recentIcons.map((name, i) => (
                       <Icon
                         key={i}
-                        name={name}
+                        src={name}
                         color={color}
                         onClick={selectIcon}
                       />
@@ -94,12 +96,7 @@ export const LucidePicker = memo(function LucidePicker({
               <MenuSectionTitle title="Icons" />
               <div className="grid grid-cols-12 gap-0">
                 {icons.map((name, i) => (
-                  <Icon
-                    key={i}
-                    name={name}
-                    color={color}
-                    onClick={selectIcon}
-                  />
+                  <Icon key={i} src={name} color={color} onClick={selectIcon} />
                 ))}
               </div>
             </InfiniteScroll>
