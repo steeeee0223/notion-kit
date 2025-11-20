@@ -1,5 +1,4 @@
 import { DefaultIcon } from "../../common";
-import { NEVER } from "../../lib/utils";
 import { TextCell } from "./text-cell";
 import type { TextPlugin } from "./types";
 
@@ -15,7 +14,7 @@ export function text(): TextPlugin {
       name: "Text",
       icon: <DefaultIcon type="text" />,
       data: "",
-      config: NEVER,
+      config: undefined,
     },
     fromReadableValue: (value) => value,
     toReadableValue: (data) => data,

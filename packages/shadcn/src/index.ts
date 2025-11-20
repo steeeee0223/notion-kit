@@ -30,7 +30,6 @@ export * from "./tooltip";
 export * from "./visually-hidden";
 /** Custom */
 export * from "./menu";
-export * from "./menu-provider";
 /** origin ui */
 export * from "./multi-select";
 export * from "./tree";

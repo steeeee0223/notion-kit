@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 
-import { useTransition } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
 import {
@@ -68,13 +67,15 @@ export const Add2FAForm = ({
     if (ok) openModal(<Enable2FAMethod />);
   });
 
-  const [sendEmail, isSendingEmail] = useTransition(() => onPasswordForgot?.());
-  const handlePasswordForgot = async () => {
-    await sendEmail();
-    form.setError("root", {
-      message: `A password reset link has been sent to ${email}.`,
+  const [isSendingEmail, startTransition] = useTransition();
+
+  const handlePasswordForgot = () =>
+    startTransition(async () => {
+      await onPasswordForgot?.();
+      form.setError("root", {
+        message: `A password reset link has been sent to ${email}.`,
+      });
     });
-  };
 
   useEffect(() => {
     setFocus("password");

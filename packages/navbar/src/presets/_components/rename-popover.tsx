@@ -62,7 +62,7 @@ export const RenamePopover: React.FC<RenamePopoverProps> = ({
         <Input
           ref={inputRef}
           variant="plain"
-          className="break-words whitespace-pre-wrap"
+          className="wrap-break-word whitespace-pre-wrap"
           value={title}
           onChange={(e) => onChange({ title: e.target.value, icon })}
           onKeyDown={onKeyDown}

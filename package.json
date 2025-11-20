@@ -2,7 +2,7 @@
   "name": "notion-kit",
   "private": true,
   "engines": {
-    "node": ">=22.10.0",
+    "node": ">=24.11.0",
     "pnpm": "^10.4.1"
   },
   "packageManager": "pnpm@10.4.1",

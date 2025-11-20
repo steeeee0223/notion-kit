@@ -1,6 +1,7 @@
 "use client";
 
-import { useTransition } from "@notion-kit/hooks";
+import { useTransition } from "react";
+
 import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
 import {
@@ -28,7 +29,8 @@ export const LogoutConfirm = ({
 }: LogoutConfirmProps) => {
   const { isOpen, closeModal } = useModal();
 
-  const [logout, isPending] = useTransition(() => onConfirm?.());
+  const [isPending, startTransition] = useTransition();
+  const logout = () => startTransition(async () => await onConfirm?.());
 
   return (
     <Dialog open={isOpen} onOpenChange={closeModal}>

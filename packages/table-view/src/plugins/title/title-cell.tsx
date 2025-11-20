@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 import { cn } from "@notion-kit/cn";
 import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";

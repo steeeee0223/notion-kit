@@ -4,7 +4,8 @@ import { useTranslation } from "@notion-kit/i18n";
 import { useModal } from "@notion-kit/modal";
 import { Button, Switch } from "@notion-kit/shadcn";
 
-import { SettingsRule, SettingsSection, useSettings } from "../../core";
+import { SettingsRule, SettingsSection } from "../../core";
+import { useAccount, useAccountActions } from "../hooks";
 import { EmailSettings, PasskeysModal, PasswordForm } from "../modals";
 
 export function SecuritySection() {
@@ -12,30 +13,26 @@ export function SecuritySection() {
   const { t } = useTranslation("settings", { keyPrefix: "account" });
   const trans = t("account-security", { returnObjects: true });
   /** Handlers */
-  const {
-    settings: { account },
-    account: actions,
-  } = useSettings();
+  const { data: account } = useAccount();
+  const { sendEmailVerification, changePassword, setPassword } =
+    useAccountActions();
   const { openModal } = useModal();
   const setEmail = () =>
     openModal(
       <EmailSettings
         email={account.email}
-        onSendVerification={() =>
-          actions?.sendEmailVerification?.(account.email)
-        }
+        onSendVerification={() => sendEmailVerification(account.email)}
       />,
     );
-  const setPassword = () =>
+  const updatePassword = () =>
     openModal(
       <PasswordForm
         hasPassword={account.hasPassword}
         onSubmit={async (newPassword, currentPassword) => {
-          await actions?.update?.({ hasPassword: true });
           if (currentPassword) {
-            await actions?.changePassword?.({ newPassword, currentPassword });
+            await changePassword({ newPassword, currentPassword });
           } else {
-            await actions?.setPassword?.(newPassword);
+            await setPassword(newPassword);
           }
         }}
       />,
@@ -51,11 +48,11 @@ export function SecuritySection() {
       </SettingsRule>
       <SettingsRule {...trans.password}>
         {account.hasPassword ? (
-          <Button size="sm" onClick={setPassword}>
+          <Button size="sm" onClick={updatePassword}>
             {trans.password.button}
           </Button>
         ) : (
-          <Switch size="sm" onCheckedChange={setPassword} checked={false} />
+          <Switch size="sm" onCheckedChange={updatePassword} checked={false} />
         )}
       </SettingsRule>
       <SettingsRule {...trans.verification}>

@@ -4,7 +4,8 @@ import { useTranslation } from "@notion-kit/i18n";
 import { useModal } from "@notion-kit/modal";
 import { Button } from "@notion-kit/shadcn";
 
-import { SettingsRule, SettingsSection, useSettings } from "../../core";
+import { SettingsRule, SettingsSection } from "../../core";
+import { useAccount } from "../hooks";
 import { LogoutConfirm } from "../modals";
 import { SessionsTable } from "../tables";
 import { useSessions } from "./use-sessions";
@@ -15,7 +16,7 @@ export function DevicesSection() {
   const { t } = useTranslation("settings", { keyPrefix: "account" });
   const trans = t("devices", { returnObjects: true });
   /** handlers */
-  const { settings } = useSettings();
+  const { data: account } = useAccount();
   const { sessions, revoke, revokeOthers } = useSessions();
   const openLogoutAllConfirmModal = () =>
     openModal(
@@ -46,7 +47,7 @@ export function DevicesSection() {
         </Button>
       </SettingsRule>
       <SessionsTable
-        currentSessionId={settings.account.currentSessionId}
+        currentSessionId={account.currentSessionId}
         data={sessions}
         onLogout={openLogoutConfirmModal}
       />

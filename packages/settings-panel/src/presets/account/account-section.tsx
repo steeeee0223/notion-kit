@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useTransition } from "react";
 import { X } from "lucide-react";
 import { useHover } from "usehooks-ts";
 
 import { cn } from "@notion-kit/cn";
-import { useTransition } from "@notion-kit/hooks";
+import { useInputField } from "@notion-kit/hooks";
 import { useTranslation } from "@notion-kit/i18n";
 import {
   Avatar,
@@ -17,7 +17,8 @@ import {
   TooltipPreset,
 } from "@notion-kit/shadcn";
 
-import { SettingsSection, useSettings } from "../../core";
+import { SettingsSection } from "../../core";
+import { useAccount, useAccountActions, useFileActions } from "../hooks";
 
 export function AccountSection() {
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -31,33 +32,25 @@ export function AccountSection() {
   const { t } = useTranslation("settings", { keyPrefix: "account" });
   const trans = t("account", { returnObjects: true });
   /** handlers */
-  const {
-    settings: { account },
-    account: actions,
-    uploadFile,
-  } = useSettings();
+  const { data: account } = useAccount();
+  const { updateSync } = useAccountActions();
+  const { upload } = useFileActions();
   const updateAvatar = () => avatarInputRef.current?.click();
-  const [removeAvatar, isRemoving] = useTransition(() =>
-    actions?.update?.({ avatarUrl: "" }),
-  );
-  const [selectImage, isUploading] = useTransition(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) await uploadFile?.(file);
-    },
-  );
-  const [preferredName, setPreferredName] = useState("");
-  const updatePreferredName = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setPreferredName(e.target.value);
-  const savePreferredName = () => {
-    if (preferredName !== account.preferredName) {
-      void actions?.update?.({ preferredName });
-    }
-  };
+  const [isPending, startTransition] = useTransition();
+  const removeAvatar = () =>
+    startTransition(() => updateSync({ avatarUrl: "" }));
+  const uploadAvatar = () =>
+    startTransition(async () => {
+      const file = avatarInputRef.current?.files?.[0];
+      if (file) await upload(file);
+    });
 
-  useEffect(() => {
-    setPreferredName(account.preferredName);
-  }, [account.preferredName]);
+  const { props: preferredNameProps } = useInputField({
+    id: "preferred-name",
+    initialValue: account.preferredName,
+    onUpdate: (preferredName) => updateSync({ preferredName }),
+    validate: (value) => value.length > 0,
+  });
 
   return (
     <SettingsSection title={trans.title}>
@@ -90,7 +83,7 @@ export function AccountSection() {
                     "absolute -top-0.5 -right-0.5 z-10 hidden size-auto border border-border-button bg-main p-1 text-secondary",
                     (avatarIsHover || avatarCancelIsHover) && "block",
                   )}
-                  aria-disabled={isRemoving || isUploading}
+                  aria-disabled={isPending}
                 >
                   <X size={8} strokeWidth={2} />
                 </Button>
@@ -101,28 +94,18 @@ export function AccountSection() {
               ref={avatarInputRef}
               className="hidden"
               accept="image/*"
-              onChange={selectImage}
-              disabled={isRemoving || isUploading}
+              onChange={uploadAvatar}
+              disabled={isPending}
             />
           </div>
           <div className="ml-5 w-[250px]">
             <Label
               className="mb-1 block text-xs text-secondary"
-              htmlFor="username"
+              htmlFor="preferred-name"
             >
               {trans["preferred-name"]}
             </Label>
-            <Input
-              type="username"
-              id="username"
-              value={preferredName}
-              onChange={updatePreferredName}
-              onBlur={savePreferredName}
-              onKeyDown={(e) => {
-                if (e.key !== "Enter") return;
-                savePreferredName();
-              }}
-            />
+            <Input {...preferredNameProps} />
           </div>
         </div>
       </div>

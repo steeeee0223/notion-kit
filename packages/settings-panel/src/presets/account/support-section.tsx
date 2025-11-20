@@ -6,7 +6,8 @@ import { useTranslation } from "@notion-kit/i18n";
 import { useModal } from "@notion-kit/modal";
 import { Button, Switch } from "@notion-kit/shadcn";
 
-import { SettingsRule, SettingsSection, useSettings } from "../../core";
+import { SettingsRule, SettingsSection } from "../../core";
+import { useAccount, useAccountActions } from "../hooks";
 import { DeleteAccount } from "../modals";
 
 export function SupportSection() {
@@ -14,18 +15,14 @@ export function SupportSection() {
   const { t } = useTranslation("settings", { keyPrefix: "account" });
   const trans = t("support", { returnObjects: true });
   /** handlers */
-  const {
-    settings: { account },
-    account: actions,
-  } = useSettings();
+  const { data: account } = useAccount();
+  const { remove } = useAccountActions();
   const { openModal } = useModal();
   const deleteAccount = () =>
     openModal(
       <DeleteAccount
         email={account.email}
-        onSubmit={(email) =>
-          actions?.delete?.({ accountId: account.id, email })
-        }
+        onSubmit={(email) => remove({ accountId: account.id, email })}
       />,
     );
 

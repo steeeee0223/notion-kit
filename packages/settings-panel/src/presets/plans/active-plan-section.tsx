@@ -17,11 +17,13 @@ import {
 
 import { SettingsSection, useSettings } from "../../core";
 import { Scope } from "../../lib";
+import { useWorkspace } from "../hooks";
 
 export function ActivePlanSection() {
-  const { scopes, settings } = useSettings();
+  const { scopes } = useSettings();
+  const { data: workspace } = useWorkspace();
   const canUpgrade = scopes.has(Scope.Upgrade);
-  const activePlan = settings.workspace.plan;
+  const activePlan = workspace.plan;
   const isMd = useMediaQuery("(min-width: 900px)");
   /** i18n */
   const { t } = useTranslation("settings");

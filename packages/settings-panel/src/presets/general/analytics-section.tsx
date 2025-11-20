@@ -6,12 +6,11 @@ import { useTranslation } from "@notion-kit/i18n";
 import { Switch } from "@notion-kit/shadcn";
 
 import { HintButton, TextLinks } from "../_components";
-import { SettingsRule, SettingsSection, useSettings } from "../../core";
+import { SettingsRule, SettingsSection } from "../../core";
+import { useWorkspace } from "../hooks";
 
 export function AnalyticsSection() {
-  const {
-    settings: { workspace },
-  } = useSettings();
+  const { data: workspace } = useWorkspace();
   /** i18n */
   const { t } = useTranslation("settings");
   const trans = t("general.analytics", { returnObjects: true });

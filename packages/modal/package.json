@@ -29,7 +29,8 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "react": "catalog:react19"
+    "react": "catalog:react19",
+    "usehooks-ts": "catalog:ui"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",

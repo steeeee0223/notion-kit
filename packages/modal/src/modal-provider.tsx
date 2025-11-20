@@ -1,14 +1,8 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { createContext, use, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
+import { useIsMounted } from "usehooks-ts";
 
 export interface ModalContextInterface {
   isOpen: boolean;
@@ -16,10 +10,10 @@ export interface ModalContextInterface {
   closeModal: () => void;
 }
 
-export const ModalContext = createContext<ModalContextInterface | null>(null);
+const ModalContext = createContext<ModalContextInterface | null>(null);
 
-export function useModal(): ModalContextInterface {
-  const object = useContext(ModalContext);
+export function useModal() {
+  const object = use(ModalContext);
   if (!object)
     throw new Error("`useModal` must be used within `ModalProvider`");
   return object;
@@ -28,39 +22,31 @@ export function useModal(): ModalContextInterface {
 export type ModalProviderProps = React.PropsWithChildren;
 
 export function ModalProvider({ children }: ModalProviderProps) {
+  const isMounted = useIsMounted();
   const [isOpen, setIsOpen] = useState(false);
   const [showingModal, setShowingModal] = useState<React.ReactNode>(null);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useLayoutEffect(() => {
-    setIsMounted(true);
-    return () => setIsMounted(false);
-  }, []);
-
-  const openModalFn = useRef((modal: React.ReactNode) => {
-    if (!modal) return;
-    setShowingModal(modal);
-    setIsOpen(true);
-  });
-  const closeModalFn = useRef(() => {
-    setShowingModal(null);
-    setIsOpen(false);
-  });
 
   const contextValue = useMemo<ModalContextInterface>(
     () => ({
       isOpen,
-      openModal: openModalFn.current,
-      closeModal: closeModalFn.current,
+      openModal: (modal) => {
+        if (!modal) return;
+        setShowingModal(modal);
+        setIsOpen(true);
+      },
+      closeModal: () => {
+        setShowingModal(null);
+        setIsOpen(false);
+      },
     }),
     [isOpen],
   );
 
-  if (!isMounted) return null;
+  if (!isMounted()) return null;
   return (
-    <ModalContext.Provider value={contextValue}>
+    <ModalContext value={contextValue}>
       {children}
       {isOpen && createPortal(showingModal, document.body)}
-    </ModalContext.Provider>
+    </ModalContext>
   );
 }

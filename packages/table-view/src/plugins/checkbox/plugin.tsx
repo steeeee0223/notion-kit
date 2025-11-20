@@ -1,5 +1,4 @@
 import { DefaultIcon } from "../../common";
-import { NEVER } from "../../lib/utils";
 import { CheckboxCell } from "./checkbox-cell";
 import type { CheckboxPlugin } from "./types";
 
@@ -15,7 +14,7 @@ export function checkbox(): CheckboxPlugin {
       name: "Checkbox",
       icon: <DefaultIcon type="checkbox" />,
       data: false,
-      config: NEVER,
+      config: undefined,
     },
     fromReadableValue: () => false,
     toReadableValue: (data) => (data ? "v" : ""),

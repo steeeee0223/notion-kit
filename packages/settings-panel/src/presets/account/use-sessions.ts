@@ -5,25 +5,27 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useModal } from "@notion-kit/modal";
 import { toast } from "@notion-kit/shadcn";
 
-import { useSettings } from "../../core";
+import { useSettingsApi } from "../../core";
 import {
   createDefaultFn,
   logError,
   QUERY_KEYS,
   type SessionRow,
 } from "../../lib";
+import { useAccount } from "../hooks";
 
 export function useSessions() {
-  const { settings, sessions: actions } = useSettings();
+  const { sessions: actions } = useSettingsApi();
+  const { data: account } = useAccount();
   const { closeModal } = useModal();
   const queryClient = useQueryClient();
 
-  const queryKey = QUERY_KEYS.sessions(settings.account.id);
+  const queryKey = QUERY_KEYS.sessions(account.id);
   const { data: sessions } = useQuery({
     initialData: [],
     queryKey,
     queryFn: actions?.getAll ?? createDefaultFn([]),
-    enabled: !!settings.account.currentSessionId,
+    enabled: !!account.currentSessionId,
   });
 
   const { mutate: revoke } = useMutation({
@@ -58,7 +60,7 @@ export function useSessions() {
       queryClient.setQueryData<SessionRow[]>(queryKey, (prev) => {
         if (!prev) return [];
         return prev.filter(
-          (session) => session.token === settings.account.currentSessionId,
+          (session) => session.token === account.currentSessionId,
         );
       });
       return { previous };

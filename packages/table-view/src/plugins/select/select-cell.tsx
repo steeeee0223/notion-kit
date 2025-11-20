@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { cn } from "@notion-kit/cn";
+import { useRect } from "@notion-kit/hooks";
 import {
   Popover,
   PopoverContent,
@@ -10,7 +11,7 @@ import {
   TooltipPreset,
 } from "@notion-kit/shadcn";
 
-import { CellTrigger, OptionTag, useTriggerPosition } from "../../common";
+import { CellTrigger, OptionTag } from "../../common";
 import { CellProps } from "../types";
 import { SelectMenu } from "./select-menu";
 import { useSelectMenu } from "./select-menu/use-select-menu";
@@ -24,7 +25,7 @@ export function SelectCell({
   onChange,
 }: CellProps<string[], SelectConfig>) {
   const [open, setOpen] = useState(false);
-  const { ref, position } = useTriggerPosition<HTMLDivElement>();
+  const { ref, rect } = useRect<HTMLDivElement>();
   const menu = useSelectMenu({ propId, options, onChange });
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
@@ -71,7 +72,7 @@ export function SelectCell({
       <PopoverContent
         align="start"
         side="bottom"
-        sideOffset={-position.h}
+        sideOffset={-rect.height}
         className="max-h-[773px] min-h-[34px] w-[300px] overflow-visible backdrop-filter-none"
       >
         <SelectMenu menu={menu} />

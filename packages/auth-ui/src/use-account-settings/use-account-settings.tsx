@@ -3,7 +3,6 @@
 import { useMemo } from "react";
 
 import type { AccountStore, SettingsActions } from "@notion-kit/settings-panel";
-import { toast } from "@notion-kit/shadcn";
 
 import { useAuth, useSession } from "../auth-provider";
 import { handleError } from "../lib";
@@ -57,36 +56,19 @@ export function useAccountSettings() {
               lang: data.language,
               tz: data.timezone,
             },
-            { onError: (e) => handleError(e, "Update user error") },
+            { throw: true },
           );
         },
         delete: async () => {
-          await auth.deleteUser(
-            { callbackURL: "/" },
-            {
-              onSuccess: () =>
-                void toast.success("Account deleted successfully"),
-              onError: (e) => handleError(e, "Delete account error"),
-            },
-          );
+          await auth.deleteUser({ callbackURL: "/" }, { throw: true });
         },
         sendEmailVerification: async (email) => {
-          await auth.sendVerificationEmail(
-            { email },
-            {
-              onSuccess: () => void toast.success("Verification email sent"),
-              onError: (e) => handleError(e, "Send verification email error"),
-            },
-          );
+          await auth.sendVerificationEmail({ email }, { throw: true });
         },
         changePassword: async (data) => {
           await auth.changePassword(
             { ...data, revokeOtherSessions: true },
-            {
-              onSuccess: () =>
-                void toast.success("Password changed successfully"),
-              onError: (e) => handleError(e, "Change password error"),
-            },
+            { throw: true },
           );
         },
       },

@@ -4,13 +4,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { toast } from "@notion-kit/shadcn";
 
-import { useSettings } from "../../core";
+import { useSettingsApi } from "../../core";
 import { createDefaultFn, QUERY_KEYS, type Invitations } from "../../lib";
+import { useWorkspace } from "../hooks";
 
 export function useInvitationsActions() {
   const queryClient = useQueryClient();
-  const { settings, invitations: actions } = useSettings();
-  const queryKey = QUERY_KEYS.invitations(settings.workspace.id);
+  const { invitations: actions } = useSettingsApi();
+  const { data: workspace } = useWorkspace();
+  const queryKey = QUERY_KEYS.invitations(workspace.id);
 
   const { mutateAsync: invite } = useMutation({
     mutationFn: actions?.add ?? createDefaultFn(),

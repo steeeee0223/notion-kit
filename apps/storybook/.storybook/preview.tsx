@@ -1,11 +1,11 @@
-import type { Preview } from "@storybook/react";
+import type { Preview } from "@storybook/nextjs";
 import { initialize, mswLoader } from "msw-storybook-addon";
-
-import "@/app/globals.css";
 
 import { locales } from "@notion-kit/i18n";
 
 import { withI18next, withTheme, withToast } from "./decorators";
+
+import "@/app/globals.css";
 
 // Initialize MSW
 initialize({ onUnhandledRequest: "bypass" });
@@ -19,7 +19,7 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
-    backgrounds: { disable: true },
+    backgrounds: { disabled: true },
   },
   loaders: [mswLoader],
   decorators: [withTheme, withI18next, withToast],

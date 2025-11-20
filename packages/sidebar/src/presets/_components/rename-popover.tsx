@@ -31,7 +31,7 @@ export function RenamePopover({ title, icon, onChange }: RenamePopoverProps) {
       </IconMenu>
       <Input
         variant="plain"
-        className="break-words whitespace-pre-wrap"
+        className="wrap-break-word whitespace-pre-wrap"
         {...props}
       />
     </DropdownMenuSubContent>

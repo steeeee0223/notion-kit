@@ -1,58 +1,102 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { useSettings } from "../../core";
+import { useSettings, useSettingsApi } from "../../core";
 import { createDefaultFn, QUERY_KEYS } from "../../lib";
-import type { Invitations, Memberships, Teamspaces } from "../../lib";
+import type {
+  AccountStore,
+  Invitations,
+  Memberships,
+  Teamspaces,
+  WorkspaceStore,
+} from "../../lib";
+import { initialAccountStore, initialWorkspaceStore } from "./constants";
+
+export function useAccount<T = AccountStore>(
+  selector?: (data: AccountStore) => T,
+) {
+  const queryClient = useQueryClient();
+  const {
+    settings: { account },
+  } = useSettings();
+  const initialData = { ...initialAccountStore, id: account.id };
+
+  const queryResult = useQuery<AccountStore, Error, T>({
+    initialData,
+    queryKey: QUERY_KEYS.account(account.id),
+    queryFn: createDefaultFn(initialData),
+    select: selector,
+    enabled: false,
+  });
+  useEffect(() => {
+    queryClient.setQueryData(QUERY_KEYS.account(account.id), account);
+  }, [account, queryClient]);
+
+  return queryResult;
+}
+
+export function useWorkspace<T = WorkspaceStore>(
+  selector?: (data: WorkspaceStore) => T,
+) {
+  const queryClient = useQueryClient();
+  const {
+    settings: { workspace },
+  } = useSettings();
+  const initialData = { ...initialWorkspaceStore, id: workspace.id };
+
+  const queryResult = useQuery<WorkspaceStore, Error, T>({
+    initialData,
+    queryKey: QUERY_KEYS.workspace(workspace.id),
+    queryFn: createDefaultFn(initialData),
+    select: selector,
+  });
+  useEffect(() => {
+    queryClient.setQueryData(QUERY_KEYS.workspace(workspace.id), workspace);
+  }, [workspace, queryClient]);
+
+  return queryResult;
+}
 
 export function usePeople<T = Memberships>(
   selector?: (data: Memberships) => T,
 ) {
-  const {
-    settings: { workspace },
-    people: actions,
-  } = useSettings();
+  const { people: actions } = useSettingsApi();
+  const { data: workspace } = useWorkspace();
 
   return useQuery<Memberships, Error, T>({
     initialData: {},
     queryKey: QUERY_KEYS.members(workspace.id),
     queryFn: actions?.getAll ?? createDefaultFn({}),
     select: selector,
-    retry: false,
   });
 }
 
 export function useInvitations<T = Invitations>(
   selector?: (data: Invitations) => T,
 ) {
-  const {
-    settings: { workspace },
-    invitations: actions,
-  } = useSettings();
+  const { invitations: actions } = useSettingsApi();
+  const { data: workspace } = useWorkspace();
 
   return useQuery<Invitations, Error, T>({
     initialData: {},
     queryKey: QUERY_KEYS.invitations(workspace.id),
     queryFn: actions?.getAll ?? createDefaultFn({}),
     select: selector,
-    retry: false,
   });
 }
 
 export function useTeamspaces<T = Teamspaces>(
   selector?: (data: Teamspaces) => T,
 ) {
-  const {
-    settings: { workspace },
-    teamspaces: actions,
-  } = useSettings();
+  const { teamspaces: actions } = useSettingsApi();
+  const { data: workspace } = useWorkspace();
 
   return useQuery<Teamspaces, Error, T>({
     initialData: {},
     queryKey: QUERY_KEYS.teamspaces(workspace.id),
     queryFn: actions?.getAll ?? createDefaultFn({}),
     select: selector,
-    retry: false,
   });
 }

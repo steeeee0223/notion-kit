@@ -1,3 +1,5 @@
+"use client";
+
 import { TableView } from "@notion-kit/table-view";
 import type { ColumnDefs, Row } from "@notion-kit/table-view";
 

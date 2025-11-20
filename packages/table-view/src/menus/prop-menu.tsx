@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { flexRender, functionalUpdate } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";

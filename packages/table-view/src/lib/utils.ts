@@ -7,8 +7,6 @@ import { CountMethod } from "../features";
 import type { CellPlugin, InferData } from "../plugins";
 import type { Cell, Row } from "./types";
 
-export const NEVER = undefined as never;
-
 export interface Entity<T extends { id: string }> {
   ids: string[];
   items: Record<string, T>;
@@ -136,7 +134,7 @@ function getPercentage(a: number, b: number) {
 export function wrappedClassName(wrapped?: boolean) {
   return cn(
     wrapped
-      ? "break-words whitespace-pre-wrap"
+      ? "wrap-break-word whitespace-pre-wrap"
       : "break-normal whitespace-nowrap",
   );
 }

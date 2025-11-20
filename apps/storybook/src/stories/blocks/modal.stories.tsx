@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs";
 
 import { BaseModal } from "@notion-kit/common";
 import { ModalProvider, useModal } from "@notion-kit/modal";

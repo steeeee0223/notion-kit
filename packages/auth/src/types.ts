@@ -1,5 +1,6 @@
 import type { Team as TeamBase } from "better-auth/plugins";
 
+export type { OAuth2UserInfo } from "better-auth/oauth2";
 export type {
   Organization,
   TeamMember,

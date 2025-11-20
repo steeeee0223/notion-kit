@@ -90,8 +90,8 @@ export const ArrowDown = (props: IconProps) => (
   </svg>
 );
 
-export const ArrowUp = (props: IconProps) => (
-  <ArrowDown {...props} className={cn("rotate-180", props.className)} />
+export const ArrowUp = ({ className, ...props }: IconProps) => (
+  <ArrowDown {...props} className={cn("rotate-180", className)} />
 );
 
 export const ArrowUpCircled = (props: IconProps) => (

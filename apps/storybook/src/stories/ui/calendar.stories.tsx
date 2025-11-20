@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs";
 
 import { Calendar, type DateRange } from "@notion-kit/shadcn";
 import { DateConfig, DateData, DateTimePicker } from "@notion-kit/table-view";

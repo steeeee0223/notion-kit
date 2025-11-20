@@ -8,12 +8,11 @@ import { useTranslation } from "react-i18next";
 import { useCopyToClipboard } from "@notion-kit/hooks";
 import { toast, TooltipPreset } from "@notion-kit/shadcn";
 
-import { SettingsRule, SettingsSection, useSettings } from "../../core";
+import { SettingsRule, SettingsSection } from "../../core";
+import { useWorkspace } from "../hooks";
 
 export function SetupSection() {
-  const {
-    settings: { workspace },
-  } = useSettings();
+  const { data: workspace } = useWorkspace();
   /** i18n */
   const { t } = useTranslation("settings");
   const trans = t("identity.setup", { returnObjects: true });

@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
-import { useTemporaryFix, useTransition } from "@notion-kit/hooks";
+import { useTemporaryFix } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
 import {
@@ -114,26 +114,22 @@ function PasskeyCard({
   onDelete,
 }: PasskeyCardProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [name, setName] = useState("");
+  const [name, setName] = useState(passkey.name);
   const [isEditing, setIsEditing] = useState(false);
 
   const enterEditName = () => {
     setIsEditing(true);
     onEnterRename?.();
   };
-  const [saveName] = useTransition(() => {
+  const saveName = () => {
     if (name !== passkey.name) {
       onRename?.({ id: passkey.id, name });
     }
     setIsEditing(false);
-  });
-
-  useEffect(() => {
-    setName(passkey.name);
-  }, [passkey.name]);
+  };
 
   return (
-    <div className="flex h-[56px] items-center gap-2.5 rounded-sm border border-border px-4 py-2.5">
+    <div className="flex h-14 items-center gap-2.5 rounded-sm border border-border px-4 py-2.5">
       <Icon.Key className="size-8 fill-blue" />
       <div className="flex min-w-0 flex-col">
         {isEditing ? (
@@ -172,12 +168,12 @@ function PasskeyCard({
         >
           <DropdownMenuGroup>
             <DropdownMenuItem
-              Icon={<Icon.PencilLine className="size-5 fill-current" />}
+              Icon={<Icon.PencilLine />}
               Body="Rename passkey"
               onSelect={enterEditName}
             />
             <DropdownMenuItem
-              Icon={<Icon.Trash className="size-4 fill-current" />}
+              Icon={<Icon.Trash />}
               Body="Delete passkey"
               onSelect={() => onDelete?.(passkey.id)}
             />
