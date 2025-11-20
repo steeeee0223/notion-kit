@@ -18,7 +18,6 @@ export const reactConfig = defineConfig(
       ...jsxA11yPlugin.flatConfigs.recommended.rules,
       "@typescript-eslint/no-non-null-assertion": "off",
       "react/jsx-no-constructed-context-values": "warn",
-      "react-hooks/exhaustive-deps": "warn",
     },
     languageOptions: {
       ...reactPlugin.configs.flat.recommended?.languageOptions,
