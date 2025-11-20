@@ -5,7 +5,6 @@ export default defineConfig((opts) => {
     {
       ...opts,
       dts: true,
-      treeshake: true,
       sourcemap: true,
       external: [/@notion-kit\/.+/],
       logLevel: "warn",
