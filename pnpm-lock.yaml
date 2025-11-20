@@ -1110,6 +1110,9 @@ importers:
       react:
         specifier: catalog:react19
         version: 19.2.0
+      usehooks-ts:
+        specifier: catalog:ui
+        version: 3.1.1(react@19.2.0)
     devDependencies:
       '@notion-kit/eslint-config':
         specifier: workspace:*
