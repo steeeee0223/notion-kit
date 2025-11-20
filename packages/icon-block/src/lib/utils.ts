@@ -10,7 +10,7 @@ export function isEmoji(icon: IconData) {
 export function isLucideIcon(
   icon: IconData,
 ): icon is Extract<IconData, { type: "lucide" }> {
-  return icon.type === "lucide" && icon.src in iconNodes;
+  return icon.type === "lucide" && Object.hasOwn(iconNodes, icon.src);
 }
 
 export function getLetter(src: string, fallbackText: string) {
