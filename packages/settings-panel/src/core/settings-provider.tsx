@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, use, useMemo, useState } from "react";
+import React, { createContext, use, useMemo } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { I18nProvider } from "@notion-kit/i18n";
