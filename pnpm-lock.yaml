@@ -1815,6 +1815,9 @@ importers:
       prettier:
         specifier: 'catalog:'
         version: 3.6.2
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.16.6(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
