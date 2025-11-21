@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/validators",
-  "version": "0.11.1-alpha.15",
+  "version": "0.11.1-alpha.16",
   "private": true,
   "type": "module",
   "exports": {
