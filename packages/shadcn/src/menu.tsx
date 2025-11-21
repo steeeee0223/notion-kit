@@ -1,16 +1,16 @@
 import React, { useId } from "react";
 
 import { cn } from "@notion-kit/cn";
-import {
-  groupVariants,
-  menuItemVariants,
-  type MenuItemVariants,
-} from "@notion-kit/shadcn";
 
 import * as Icon from "./icons";
 import { Label } from "./label";
 import { Switch } from "./switch";
-import { typography } from "./variants";
+import {
+  groupVariants,
+  menuItemVariants,
+  typography,
+  type MenuItemVariants,
+} from "./variants";
 
 function MenuGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (

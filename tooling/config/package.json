@@ -1,0 +1,24 @@
+{
+  "name": "@notion-kit/config",
+  "private": true,
+  "version": "0.11.0",
+  "type": "module",
+  "exports": {
+    "./tsdown": "./tsdown.config.ts"
+  },
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "tsdown": "catalog:"
+  },
+  "devDependencies": {
+    "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tsconfig": "workspace:*",
+    "@types/node": "catalog:node22",
+    "typescript": "catalog:"
+  },
+  "prettier": "@notion-kit/prettier-config"
+}

@@ -10,18 +10,25 @@
     "url": "https://github.com/steeeee0223/notion-kit.git",
     "directory": "packages/auth"
   },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
+  "publishConfig": {
+    "main": "./dist/index.mjs",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.mts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
   "license": "MIT",
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm",
+    "build": "tsdown --config=../../tooling/config/tsdown.config.ts",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "db:push": "pnpm with-env drizzle-kit push",
     "dev": "pnpm with-env drizzle-kit studio",
@@ -50,7 +57,7 @@
     "drizzle-kit": "^0.31.1",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "tsup": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "prettier": "@notion-kit/prettier-config"
