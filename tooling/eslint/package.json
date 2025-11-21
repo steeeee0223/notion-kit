@@ -1,7 +1,7 @@
 {
   "name": "@notion-kit/eslint-config",
   "private": true,
-  "version": "0.11.0",
+  "version": "0.11.1-alpha.15",
   "type": "module",
   "exports": {
     "./base": "./base.ts",

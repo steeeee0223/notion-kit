@@ -9,7 +9,7 @@
   "packageManager": "pnpm@10.4.1",
   "scripts": {
     "build": "turbo run build",
-    "build:packages": "turbo run build lint --filter=./packages/*",
+    "build:packages": "turbo run build --filter=./packages/*",
     "clean": "git clean -xdf .turbo node_modules",
     "clean:workspaces": "turbo run clean",
     "dev": "turbo watch dev --continue",

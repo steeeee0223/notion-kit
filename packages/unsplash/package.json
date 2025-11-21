@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/unsplash",
-  "version": "0.11.0",
+  "version": "0.11.1-alpha.15",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"

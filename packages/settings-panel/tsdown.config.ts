@@ -10,8 +10,15 @@ export default defineConfig((opts) => {
         },
       },
       dts: true,
-      sourcemap: true,
-      external: [/@notion-kit\/.+/],
+      platform: "browser",
+      outExtensions: () => {
+        return {
+          js: ".mjs",
+          dts: ".mts",
+        };
+      },
+      external: [/@notion-kit\/.+/, "react", "react/jsx-runtime"],
+      banner: { js: '"use client";' },
       logLevel: "warn",
       onSuccess: async () => {
         if (opts.watch) {

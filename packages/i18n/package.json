@@ -1,7 +1,7 @@
 {
   "name": "@notion-kit/i18n",
   "private": true,
-  "version": "0.11.0",
+  "version": "0.11.1-alpha.15",
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
