@@ -16,7 +16,7 @@ import { DEFAULT_FEATURES } from "../features";
 import type { ColumnDefs, ColumnInfo, Row } from "../lib/types";
 import { type Entity } from "../lib/utils";
 import type { CellPlugin } from "../plugins";
-import { TableRowCell } from "../table-body";
+import { TableAggregatedCell, TableRowCell } from "../table-body";
 import { TableFooterCell } from "../table-footer";
 import { TableHeaderCell } from "../table-header";
 import type { SyncedState, TableState } from "./types";
@@ -27,8 +27,9 @@ const defaultColumn: Partial<ColumnDef<Row>> = {
   minSize: 100,
   maxSize: Number.MAX_SAFE_INTEGER,
   header: ({ header }) => <TableHeaderCell header={header} />,
-  cell: ({ row, column }) => <TableRowCell column={column} row={row} />,
+  cell: (props) => <TableRowCell {...props} />,
   footer: ({ column }) => <TableFooterCell column={column} />,
+  aggregatedCell: (props) => <TableAggregatedCell {...props} />,
 };
 
 interface UseTableViewOptions<TPlugins extends CellPlugin[]>
@@ -70,6 +71,8 @@ export function useTableView<TPlugins extends CellPlugin[]>({
           accessorKey: property.name,
           minSize: getMinWidth(property.type),
           sortingFn,
+          getGroupingValue: (row) =>
+            plugin.toReadableValue(row.properties[colId]?.value),
         };
       }),
     [columnEntity, plugins.items],
@@ -111,6 +114,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     defaultColumn,
     columnResizeMode: "onChange",
     getRowId: (row) => row.id,
+    groupedColumnMode: false,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getGroupedRowModel: getGroupedRowModel(),

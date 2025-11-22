@@ -27,13 +27,12 @@ export function TableRowCell<TPlugin extends CellPlugin>({
 }: TableRowCellProps<TPlugin>) {
   const [mode] = useState<CellMode>(CellMode.Normal);
 
-  const cell = row.original.properties[column.id];
+  const data = row.original.properties[column.id];
 
   const width = column.getWidth();
   const info = column.getInfo() as ColumnInfo<TPlugin>;
   const plugin = column.getPlugin() as TPlugin;
 
-  if (!cell) return null;
   return (
     <div
       id="notion-table-view-cell"
@@ -43,19 +42,38 @@ export function TableRowCell<TPlugin extends CellPlugin>({
       style={{ width }}
     >
       <div className="flex h-full overflow-x-clip" style={{ width }}>
-        {flexRender<InferCellProps<TPlugin>>(plugin.renderCell, {
-          propId: column.id,
-          row: row.original,
-          data: cell.value,
-          config: info.config,
-          wrapped: info.wrapped,
-          onChange: (updater) => column.updateCell(row.id, updater),
-          onConfigChange: column.updateConfig,
-        })}
+        {data !== undefined &&
+          flexRender<InferCellProps<TPlugin>>(plugin.renderCell, {
+            propId: column.id,
+            row: row.original,
+            data: data.value,
+            config: info.config,
+            wrapped: info.wrapped,
+            onChange: (updater) => column.updateCell(row.id, updater),
+            onConfigChange: column.updateConfig,
+          })}
       </div>
       {mode === CellMode.Select && (
         <div className="pointer-events-none absolute top-0 left-0 z-840 h-full w-full rounded-[3px] bg-blue/5 shadow-cell-focus" />
       )}
+    </div>
+  );
+}
+
+export function TableAggregatedCell<TPlugin extends CellPlugin>({
+  column,
+  row,
+}: TableRowCellProps<TPlugin>) {
+  const width = column.getWidth();
+  return (
+    <div
+      id="notion-table-view-aggregated-cell"
+      data-row-index={row.index}
+      data-col-index={column.getIndex()}
+      className="relative flex h-full border-r border-r-border-cell"
+      style={{ width }}
+    >
+      <div className="flex h-full overflow-x-clip" style={{ width }} />
     </div>
   );
 }

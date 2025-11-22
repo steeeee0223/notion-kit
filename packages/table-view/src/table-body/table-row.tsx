@@ -3,7 +3,7 @@
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { flexRender, Row } from "@tanstack/react-table";
+import { Cell, flexRender, Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
@@ -129,52 +129,74 @@ export function TableRow({ row }: TableRowProps) {
               </label>
             </TableRowActionGroup>
             {/* Left pinned columns */}
-            {row.getLeftVisibleCells().map((cell) => (
-              <React.Fragment key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </React.Fragment>
-            ))}
+            <TableCells row={row} cells={row.getLeftVisibleCells()} />
           </div>
           {/* Center unpinned columns */}
-          {row.getCenterVisibleCells().map((cell) => (
-            <React.Fragment key={cell.id}>
-              {/* {cell.getIsGrouped() ? (
-                // If it's a grouped cell, add an expander and row count
-                <>
-                  <button
-                    {...{
-                      onClick: row.getToggleExpandedHandler(),
-                      style: {
-                        cursor: row.getCanExpand() ? "pointer" : "normal",
-                      },
-                    }}
-                  >
-                    {row.getIsExpanded() ? "👇" : "👉"}{" "}
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}{" "}
-                    ({row.subRows.length})
-                  </button>
-                </>
-              ) : cell.getIsAggregated() ? (
-                // If the cell is aggregated, use the Aggregated
-                // renderer for cell
-                flexRender(
-                  cell.column.columnDef.aggregatedCell ??
-                    cell.column.columnDef.cell,
-                  cell.getContext(),
-                )
-              ) : cell.getIsPlaceholder() ? null : ( // For cells with repeated values, render null
-                // Otherwise, just render the regular cell
-                flexRender(cell.column.columnDef.cell, cell.getContext())
-              )} */}
-              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-            </React.Fragment>
-          ))}
+          <TableCells row={row} cells={row.getCenterVisibleCells()} />
         </div>
       </div>
       {/* Bottom line at row end */}
       <div className="flex w-16 grow justify-start border-b border-b-border-cell" />
     </div>
   );
+}
+
+interface TableCellsProps {
+  row: Row<RowModel>;
+  cells: Cell<RowModel, unknown>[];
+}
+
+function TableCells({ row, cells }: TableCellsProps) {
+  return cells.map((cell) => {
+    if (cell.getIsGrouped()) {
+      return (
+        <div key={cell.id} className="relative flex h-full w-full">
+          <div
+            role="button"
+            tabIndex={0}
+            aria-expanded={row.getIsExpanded()}
+            aria-label={row.getIsExpanded() ? "Close" : "Open"}
+            className="relative flex size-6 animate-bg-in cursor-pointer items-center justify-center rounded-sm select-none"
+            onPointerDown={row.getToggleExpandedHandler()}
+          >
+            <svg
+              aria-hidden="true"
+              role="graphics-symbol"
+              viewBox="0 0 16 16"
+              key="arrowCaretDownFillSmall"
+              className={cn(
+                "block size-[0.8em] shrink-0 transition-[rotate]",
+                row.getIsExpanded() ? "rotate-0" : "-rotate-90",
+              )}
+            >
+              <path d="M2.835 3.25a.8.8 0 0 0-.69 1.203l5.164 8.854a.8.8 0 0 0 1.382 0l5.165-8.854a.8.8 0 0 0-.691-1.203z" />
+            </svg>
+          </div>
+          <div className="flex h-full overflow-x-clip">
+            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          </div>
+        </div>
+      );
+    }
+    if (cell.getIsAggregated()) {
+      // If the cell is aggregated, use the Aggregated renderer for cell
+      return (
+        <React.Fragment key={cell.id}>
+          {flexRender(
+            cell.column.columnDef.aggregatedCell ?? cell.column.columnDef.cell,
+            cell.getContext(),
+          )}
+        </React.Fragment>
+      );
+    }
+
+    // Otherwise, just render the regular cell
+    return (
+      <React.Fragment key={cell.id}>
+        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+      </React.Fragment>
+    );
+  });
 }
 
 interface TableRowActionGroupProps extends React.ComponentProps<"div"> {
