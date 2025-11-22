@@ -4,31 +4,35 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { toast } from "@notion-kit/shadcn";
 
-import { useSettings } from "../../core";
+import { useSettingsApi } from "../../core";
 import { createDefaultFn, Memberships, QUERY_KEYS } from "../../lib";
+import { useWorkspace } from "../hooks";
 
 export function usePeopleActions() {
   const queryClient = useQueryClient();
-  const { settings, people: actions } = useSettings();
-  const queryKey = QUERY_KEYS.members(settings.workspace.id);
+  const { people: actions } = useSettingsApi();
+  const { data: workspace } = useWorkspace();
+  const queryKey = QUERY_KEYS.members(workspace.id);
 
   const { mutateAsync: update } = useMutation({
     mutationFn: actions?.update ?? createDefaultFn(),
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<Memberships>(queryKey);
-      queryClient.setQueryData<Memberships>(queryKey, (prev) => {
-        if (!prev) return {};
-        const { [payload.id]: member, ...rest } = prev;
-        if (!member) return prev;
-        return { ...rest, [payload.id]: { ...member, role: payload.role } };
+      const prev = queryClient.getQueryData<Memberships>(queryKey);
+      queryClient.setQueryData<Memberships>(queryKey, (v) => {
+        if (!v) return {};
+        const member = v[payload.id];
+        if (!member) return v;
+        const updated = { ...v };
+        updated[payload.id] = { ...member, role: payload.role };
+        return updated;
       });
-      return { previous };
+      return { prev };
     },
     onSuccess: () => toast.success("Member updated"),
-    onError: (error, _, context) => {
-      queryClient.setQueryData(queryKey, context?.previous);
-      toast.error("Update member failed", { description: error.message });
+    onError: (e, _, ctx) => {
+      queryClient.setQueryData(queryKey, ctx?.prev);
+      toast.error("Update member failed", { description: e.message });
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
@@ -37,18 +41,19 @@ export function usePeopleActions() {
     mutationFn: actions?.delete ?? createDefaultFn(),
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<Memberships>(queryKey);
-      queryClient.setQueryData<Memberships>(queryKey, (prev) => {
-        if (!prev) return {};
-        const { [payload.id]: _, ...rest } = prev;
-        return rest;
+      const prev = queryClient.getQueryData<Memberships>(queryKey);
+      queryClient.setQueryData<Memberships>(queryKey, (v) => {
+        if (!v) return {};
+        const updated = { ...v };
+        delete updated[payload.id];
+        return updated;
       });
-      return { previous };
+      return { prev };
     },
     onSuccess: () => toast.success("Member removed"),
-    onError: (error, _, context) => {
-      queryClient.setQueryData(queryKey, context?.previous);
-      toast.error("Remove member failed", { description: error.message });
+    onError: (e, _, ctx) => {
+      queryClient.setQueryData(queryKey, ctx?.prev);
+      toast.error("Remove member failed", { description: e.message });
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });

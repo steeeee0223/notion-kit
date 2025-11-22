@@ -1,12 +1,12 @@
 "use client";
 
 import { useTranslation } from "@notion-kit/i18n";
-import { SelectPreset as Select } from "@notion-kit/shadcn";
+import { SelectPreset as Select, useTheme } from "@notion-kit/shadcn";
 
-import { SettingsRule, SettingsSection, useSettings } from "../../core";
+import { SettingsRule, SettingsSection } from "../../core";
 
 export function PreferencesSection() {
-  const { theme, setTheme } = useSettings();
+  const { theme, setTheme } = useTheme();
   /** i18n */
   const { t } = useTranslation("settings");
   const trans = t("preferences", {

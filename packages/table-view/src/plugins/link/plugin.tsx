@@ -1,5 +1,4 @@
 import { DefaultIcon } from "../../common";
-import { NEVER } from "../../lib/utils";
 import { LinkCell } from "./link-cell";
 import type { EmailPlugin, PhonePlugin, UrlPlugin } from "./types";
 
@@ -15,7 +14,7 @@ export function email(): EmailPlugin {
       name: "Email",
       icon: <DefaultIcon type="email" />,
       data: "",
-      config: NEVER,
+      config: undefined,
     },
     fromReadableValue: (value) => value,
     toReadableValue: (data) => data,
@@ -37,7 +36,7 @@ export function phone(): PhonePlugin {
       name: "Phone",
       icon: <DefaultIcon type="phone" />,
       data: "",
-      config: NEVER,
+      config: undefined,
     },
     fromReadableValue: (value) => value,
     toReadableValue: (data) => data,
@@ -59,7 +58,7 @@ export function url(): UrlPlugin {
       name: "URL",
       icon: <DefaultIcon type="url" />,
       data: "",
-      config: NEVER,
+      config: undefined,
     },
     fromReadableValue: (value) => value,
     toReadableValue: (data) => data,

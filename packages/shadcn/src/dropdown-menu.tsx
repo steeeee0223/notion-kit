@@ -85,7 +85,7 @@ function DropdownMenuSubContent({
       data-slot="dropdown-menu-sub-content"
       // data-side="bottom"
       className={cn(
-        "min-w-[8rem] overflow-hidden",
+        "min-w-32 overflow-hidden",
         contentVariants({ variant: "popover", sideAnimation: true }),
         className,
       )}
@@ -105,7 +105,7 @@ function DropdownMenuContent({
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
         className={cn(
-          "min-w-[8rem] overflow-hidden",
+          "min-w-32 overflow-hidden",
           contentVariants({ variant: "popover", sideAnimation: true }),
           className,
         )}

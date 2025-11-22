@@ -33,7 +33,7 @@ export function Info() {
   const trans = t("security.cards", { returnObjects: true });
 
   return (
-    <div className="space-y-[18px] rounded-sm border-[1px] border-solid border-border p-4">
+    <div className="space-y-[18px] rounded-sm border border-solid border-border p-4">
       <CardItem {...trans.sso} />
       <CardItem {...trans.scim} />
     </div>

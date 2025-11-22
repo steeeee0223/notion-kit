@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import { CircleHelp, Mail } from "lucide-react";
 import { z } from "zod/v4";
 
-import { useFilter, useTransition } from "@notion-kit/hooks";
+import { useFilter } from "@notion-kit/hooks";
 import { useModal } from "@notion-kit/modal";
 import { Role, type User } from "@notion-kit/schemas";
 import {
@@ -36,10 +36,7 @@ interface AddMembersProps {
   onAdd?: (data: { emails: string[]; role: Role }) => void;
 }
 
-export const AddMembers: React.FC<AddMembersProps> = ({
-  invitedMembers,
-  onAdd,
-}) => {
+export function AddMembers({ invitedMembers, onAdd }: AddMembersProps) {
   const { isOpen, closeModal } = useModal();
 
   const [heading, setHeading] = useState(Heading.Select);
@@ -64,10 +61,12 @@ export const AddMembers: React.FC<AddMembersProps> = ({
         ]
       : null;
   /** Actions */
-  const [invite, loading] = useTransition(() => {
-    onAdd?.({ emails, role });
-    onClose();
-  });
+  const [loading, startTransition] = useTransition();
+  const invite = () =>
+    startTransition(() => {
+      onAdd?.({ emails, role });
+      onClose();
+    });
   const onInputChange = (input: string) => {
     if (input.length > 0) {
       const result = emailSchema.safeParse(input);
@@ -97,7 +96,7 @@ export const AddMembers: React.FC<AddMembersProps> = ({
       className="flex w-[480px] min-w-[180px] flex-col"
       shouldFilter={false}
     >
-      <div className="z-10 max-h-[240px] flex-shrink-0 overflow-hidden overflow-y-auto border-b border-border">
+      <div className="z-10 max-h-60 shrink-0 overflow-hidden overflow-y-auto border-b border-border">
         <div className="flex min-w-0 flex-1 flex-col items-stretch">
           <div className="z-10 mr-0 mb-0 flex min-h-[34px] w-full cursor-text flex-nowrap items-start overflow-auto bg-input p-[4px_9px] text-sm">
             <TagsInput
@@ -110,9 +109,9 @@ export const AddMembers: React.FC<AddMembersProps> = ({
               inputSchema={emailSchema}
               onTagsChange={setEmails}
               onInputChange={onInputChange}
-              className="min-h-[34px] min-w-0 flex-grow border-none bg-transparent px-0"
+              className="min-h-[34px] min-w-0 grow border-none bg-transparent px-0"
             />
-            <div className="ml-2 flex flex-shrink-0 items-center gap-2 py-0.5">
+            <div className="ml-2 flex shrink-0 items-center gap-2 py-0.5">
               <Select
                 value={role}
                 onChange={setRole}
@@ -138,7 +137,7 @@ export const AddMembers: React.FC<AddMembersProps> = ({
           </div>
         </div>
       </div>
-      <CommandList className="max-h-[300px] min-h-0 flex-grow transform overflow-auto overflow-x-hidden">
+      <CommandList className="max-h-[300px] min-h-0 grow transform overflow-auto overflow-x-hidden">
         <CommandGroup className="min-h-[200px]">
           <div className="my-1.5 flex fill-current px-2 text-xs leading-5 font-medium text-default/45 select-none">
             <div className="self-center overflow-hidden overflow-ellipsis whitespace-nowrap">
@@ -168,7 +167,7 @@ export const AddMembers: React.FC<AddMembersProps> = ({
       </a>
     </CommandDialog>
   );
-};
+}
 
 interface ItemProps {
   user: DetailedAccount;
@@ -191,7 +190,7 @@ const Item: React.FC<ItemProps> = ({
         {invited ? (
           <Avatar src={avatarUrl} fallback={name} />
         ) : (
-          <Mail className="size-5 flex-shrink-0 text-primary" />
+          <Mail className="size-5 shrink-0 text-primary" />
         )}
       </div>
       <div className="mr-3 min-w-0 flex-auto truncate">

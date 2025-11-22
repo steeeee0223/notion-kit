@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 
 import { Icon } from "@notion-kit/icons";
 import { Button, Separator } from "@notion-kit/shadcn";

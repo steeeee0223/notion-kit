@@ -1,15 +1,21 @@
 export const QUERY_KEYS = {
-  sessions: (accountId: string) => ["account", accountId, "sessions"],
-  passkeys: (accountId: string) => ["account", accountId, "passkeys"],
-  connections: (accountId: string) => ["account", accountId, "connections"],
-  members: (workspaceId: string) => ["workspace", workspaceId, "members"],
+  account: (accountId: string) => ["nk:account", accountId, "user"],
+  sessions: (accountId: string) => ["nk:account", accountId, "sessions"],
+  passkeys: (accountId: string) => ["nk:account", accountId, "passkeys"],
+  connections: (accountId: string) => ["nk:account", accountId, "connections"],
+  workspace: (workspaceId: string) => ["nk:workspace", workspaceId, "general"],
+  members: (workspaceId: string) => ["nk:workspace", workspaceId, "members"],
   invitations: (workspaceId: string) => [
-    "workspace",
+    "nk:workspace",
     workspaceId,
     "members",
     "invitations",
   ],
-  teamspaces: (workspaceId: string) => ["workspace", workspaceId, "teamspaces"],
+  teamspaces: (workspaceId: string) => [
+    "nk:workspace",
+    workspaceId,
+    "teamspaces",
+  ],
 };
 
 export function createDefaultFn(data: void): () => Promise<void>;
@@ -19,6 +25,6 @@ export function createDefaultFn<T>(data: T | void) {
 }
 
 export const LOCALSTORAGE_KEYS = {
-  locale: "notion-kit:preferences:locale",
-  timezone: "notion-kit:preferences:timezone",
+  locale: "nk:preferences:locale",
+  timezone: "nk:preferences:timezone",
 };

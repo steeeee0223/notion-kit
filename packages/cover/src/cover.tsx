@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { ImageIcon, X } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
@@ -15,7 +14,7 @@ export interface CoverProps extends CoverPickerProps {
   preview?: boolean;
 }
 
-const Cover = ({ url, alt, preview, ...props }: CoverProps) => {
+function Cover({ url, alt, preview, ...props }: CoverProps) {
   return (
     <div
       className={cn(
@@ -50,7 +49,7 @@ const Cover = ({ url, alt, preview, ...props }: CoverProps) => {
       )}
     </div>
   );
-};
+}
 
 Cover.Skeleton = function CoverSkeleton() {
   return <Skeleton className="h-[35vh] w-full" />;

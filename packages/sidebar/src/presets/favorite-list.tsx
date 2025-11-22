@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 import type { Page, UpdatePageParams } from "@notion-kit/schemas";
 import { TreeItem, TreeList, TreeNode } from "@notion-kit/tree";

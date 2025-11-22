@@ -1,13 +1,13 @@
 {
   "name": "@notion-kit/eslint-config",
   "private": true,
-  "version": "0.11.0",
+  "version": "0.12.0",
   "type": "module",
   "exports": {
-    "./base": "./base.js",
-    "./nextjs": "./nextjs.js",
-    "./react": "./react.js",
-    "./storybook": "./storybook.js"
+    "./base": "./base.ts",
+    "./nextjs": "./nextjs.ts",
+    "./react": "./react.ts",
+    "./storybook": "./storybook.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo node_modules",
@@ -15,15 +15,16 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@eslint/compat": "^1.3.1",
-    "@next/eslint-plugin-next": "catalog:next15",
+    "@eslint/compat": "^2.0.0",
+    "@eslint/js": "^9.39.1",
+    "@next/eslint-plugin-next": "catalog:next16",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-storybook": "^0.12.0",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-storybook": "^10.0.7",
     "eslint-plugin-turbo": "catalog:turbo",
-    "typescript-eslint": "^8.39.0"
+    "typescript-eslint": "^8.46.4"
   },
   "devDependencies": {
     "@notion-kit/prettier-config": "workspace:*",

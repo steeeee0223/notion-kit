@@ -150,7 +150,7 @@ function DialogTitle({
       data-slot="dialog-title"
       className={cn(
         typography(type),
-        "text-center break-words text-primary",
+        "text-center wrap-break-word text-primary",
         className,
       )}
       style={{ marginTop: 0 }}

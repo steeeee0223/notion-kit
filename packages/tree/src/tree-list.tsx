@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 
 import { cn } from "@notion-kit/cn";
 import type { IconData } from "@notion-kit/icon-block";
@@ -30,67 +30,67 @@ function TreeList<T extends TreeItemData>(props: TreeListProps<T>) {
   const onExpand = (itemId: string) =>
     setExpanded((prev) => ({ ...prev, [itemId]: !prev[itemId] }));
 
-  const Tree = useCallback(
-    ({
-      level = 0,
-      nodes,
-      defaultIcon,
-      showEmptyChild,
-      expanded,
-      selectedId,
-      indent = 12,
-      onSelect,
-      renderItem = TreeItem,
-    }: TreeProps<T>) => {
-      return (
-        <>
-          {showEmptyChild && (
-            <p
-              style={{
-                paddingLeft: level ? `${level * indent + 25}px` : undefined,
-              }}
-              className={cn(
-                "hidden pl-4 text-sm font-medium text-muted",
-                !Object.is(expanded, {}) && "last:block",
-                level === 0 && "hidden",
-              )}
-            >
-              No pages inside
-            </p>
-          )}
-          {nodes.map((node) => (
-            <div key={node.id}>
-              {renderItem({
-                level,
-                node: fromNode({ ...node, icon: node.icon ?? defaultIcon }),
-                isSelected: selectedId === node.id,
-                onSelect: () => onSelect?.(node.id),
-                expandable: true,
-                expanded: expanded[node.id],
-                indent,
-                onExpand: () => onExpand(node.id),
-              })}
-              {expanded[node.id] &&
-                Tree({
-                  level: level + 1,
-                  nodes: node.children,
-                  showEmptyChild,
-                  defaultIcon,
-                  expanded,
-                  selectedId,
-                  indent,
-                  onSelect,
-                  renderItem,
-                })}
-            </div>
-          ))}
-        </>
-      );
-    },
-    [],
-  );
+  return <TreeComp {...props} expanded={expanded} onExpand={onExpand} />;
+}
 
-  return <Tree {...props} expanded={expanded} />;
+function TreeComp<T extends TreeItemData>({
+  level = 0,
+  nodes,
+  defaultIcon,
+  showEmptyChild,
+  expanded,
+  selectedId,
+  indent = 12,
+  onSelect,
+  onExpand,
+  renderItem = TreeItem,
+}: TreeProps<T> & { onExpand: (id: string) => void }) {
+  return (
+    <>
+      {showEmptyChild && (
+        <p
+          style={{
+            paddingLeft: level ? `${level * indent + 25}px` : undefined,
+          }}
+          className={cn(
+            "hidden pl-4 text-sm font-medium text-muted",
+            !Object.is(expanded, {}) && "last:block",
+            level === 0 && "hidden",
+          )}
+        >
+          No pages inside
+        </p>
+      )}
+      {nodes.map((node) => (
+        <div key={node.id}>
+          {renderItem({
+            level,
+            node: fromNode({ ...node, icon: node.icon ?? defaultIcon }),
+            isSelected: selectedId === node.id,
+            onSelect: () => onSelect?.(node.id),
+            expandable: true,
+            expanded: expanded[node.id],
+            indent,
+            onExpand: () => onExpand(node.id),
+          })}
+          {expanded[node.id] && (
+            <TreeComp
+              level={level + 1}
+              nodes={node.children}
+              showEmptyChild={showEmptyChild}
+              defaultIcon={defaultIcon}
+              expanded={expanded}
+              selectedId={selectedId}
+              indent={indent}
+              onSelect={onSelect}
+              onExpand={onExpand}
+              renderItem={renderItem}
+            />
+          )}
+        </div>
+      ))}
+    </>
+  );
 }
 
 export { TreeList };

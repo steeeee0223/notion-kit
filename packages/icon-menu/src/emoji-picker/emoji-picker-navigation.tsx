@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 import { cn } from "@notion-kit/cn";
 import { Button, TooltipPreset, TooltipProvider } from "@notion-kit/shadcn";
 
@@ -12,12 +10,12 @@ export type EmojiPickerNavigationProps = {
   onClick: (id: EmojiCategoryList) => void;
 } & Pick<UseEmojiPickerType, "emojiLibrary" | "focusedCategory" | "i18n">;
 
-export const EmojiPickerNavigation: React.FC<EmojiPickerNavigationProps> = ({
+export function EmojiPickerNavigation({
   emojiLibrary,
   focusedCategory,
   i18n,
   onClick,
-}) => {
+}: EmojiPickerNavigationProps) {
   return (
     <TooltipProvider delayDuration={500}>
       <nav
@@ -52,7 +50,7 @@ export const EmojiPickerNavigation: React.FC<EmojiPickerNavigationProps> = ({
           <TooltipPreset align="start" description="Add emoji">
             <Button variant="hint" className="size-8 p-0" aria-label="add">
               <span className="inline-flex size-5 items-center justify-center">
-                <CirclePlus className="block size-7 flex-shrink-0 scale-110 fill-[#91918e] dark:fill-default/45" />
+                <CirclePlus className="block size-7 shrink-0 scale-110 fill-[#91918e] dark:fill-default/45" />
               </span>
             </Button>
           </TooltipPreset>
@@ -60,4 +58,4 @@ export const EmojiPickerNavigation: React.FC<EmojiPickerNavigationProps> = ({
       </nav>
     </TooltipProvider>
   );
-};
+}

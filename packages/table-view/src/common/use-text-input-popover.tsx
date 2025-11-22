@@ -1,16 +1,15 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { cn } from "@notion-kit/cn";
+import { useRect } from "@notion-kit/hooks";
 import {
   Input,
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@notion-kit/shadcn";
-
-import { useTriggerPosition } from "../common";
 
 interface TextInputPopoverProps extends TextInputContentProps {
   renderTrigger: ({ width }: { width: number }) => React.ReactNode;
@@ -21,16 +20,16 @@ export function TextInputPopover({
   onUpdate,
   ...props
 }: TextInputPopoverProps) {
-  const { ref, position, width } = useTriggerPosition<HTMLButtonElement>();
+  const { ref, rect } = useRect<HTMLButtonElement>();
   const [open, setOpen] = useState(false);
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger ref={ref} asChild>
-        {renderTrigger({ width })}
+        {renderTrigger({ width: rect.width })}
       </PopoverTrigger>
       <PopoverContent
         side="bottom"
-        sideOffset={-position.h}
+        sideOffset={-rect.height}
         align="start"
         className="max-h-[773px] min-h-[38px] w-60 overflow-visible backdrop-filter-none"
       >
@@ -58,10 +57,6 @@ function TextInputContent({
   onUpdate,
 }: TextInputContentProps) {
   const [value, setValue] = useState(initialValue);
-
-  useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
 
   return (
     <Input

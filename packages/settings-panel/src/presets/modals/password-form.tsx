@@ -70,6 +70,7 @@ export const PasswordForm = ({ hasPassword, onSubmit }: PasswordFormProps) => {
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/incompatible-library
     const sub = watch((_data, info) => {
       if (info.type !== "change" || info.name === "currentPassword") return;
       void trigger("confirmPassword");

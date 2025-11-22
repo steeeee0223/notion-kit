@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/auth",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -10,18 +10,25 @@
     "url": "https://github.com/steeeee0223/notion-kit.git",
     "directory": "packages/auth"
   },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
+  "publishConfig": {
+    "main": "./dist/index.mjs",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.mts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
   "license": "MIT",
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm",
+    "build": "tsdown --config=../../tooling/config/tsdown.config.ts",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "db:push": "pnpm with-env drizzle-kit push",
     "dev": "pnpm with-env drizzle-kit studio",
@@ -32,11 +39,12 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
+    "@better-auth/passkey": "^1.4.0",
     "@better-fetch/fetch": "1.1.18",
     "@t3-oss/env-nextjs": "catalog:env",
     "@vercel/postgres": "^0.10.0",
     "axios": "^1.11.0",
-    "better-auth": "v1.3.9-beta.1",
+    "better-auth": "^1.4.0",
     "drizzle-orm": "^0.44.2",
     "ua-parser-js": "^2.0.4",
     "zod": "catalog:"
@@ -50,6 +58,7 @@
     "drizzle-kit": "^0.31.1",
     "eslint": "catalog:",
     "prettier": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "prettier": "@notion-kit/prettier-config"

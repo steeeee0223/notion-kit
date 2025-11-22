@@ -4,20 +4,18 @@ import { useCallback, useState } from "react";
 
 import { Role } from "@notion-kit/schemas";
 
-import { useSettings } from "../../core";
 import type { TeamMemberRow } from "../../lib";
 import { TeamspaceDetail } from "../modals";
-import { usePeople, useTeamspaces } from "./queries";
+import { useAccount, usePeople, useTeamspaces, useWorkspace } from "./queries";
 import { useTeamspaceActions } from "./use-teamspace-actions";
 
 export function useTeamspaceDetail() {
-  const {
-    settings: { account, workspace },
-  } = useSettings();
   const [selectedTeamspace, setSelectedTeamspace] = useState<string | null>(
     null,
   );
 
+  const { data: account } = useAccount();
+  const { data: workspace } = useWorkspace();
   const { data: people, refetch: refetchPeople } = usePeople();
   const { data: teamspaces } = useTeamspaces();
   const { leave, addMembers, updateMember, removeMember } =

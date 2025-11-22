@@ -53,7 +53,7 @@ export async function loadConnections(auth: AuthClient) {
     return [];
   }
   const infos = await Promise.all(
-    res.data.map(({ accountId }) => auth.accountInfo({ accountId })),
+    res.data.map(({ accountId }) => auth.accountInfo({ query: { accountId } })),
   );
   return res.data.reduce<Connection[]>((acc, account, i) => {
     if (account.providerId === "credential") return acc;
@@ -64,6 +64,7 @@ export async function loadConnections(auth: AuthClient) {
       console.error(`Fetch ${type} info failed`, info.error);
       return acc;
     }
+    const user = info.data.user;
     acc.push({
       id: account.id,
       connection: {
@@ -71,7 +72,7 @@ export async function loadConnections(auth: AuthClient) {
         /**
          * @note Currently, `better-auth` does not return custom fields of `account`.
          */
-        account: info.data.user.name ?? info.data.user.email ?? "Account",
+        account: user.name ?? user.email ?? "Account",
         accountId: account.accountId,
       },
       scopes: account.scopes,

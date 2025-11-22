@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/auth-server",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "private": true,
   "scripts": {
     "build": "pnpm with-env next build",
@@ -20,7 +20,7 @@
     "@notion-kit/settings-panel": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@t3-oss/env-nextjs": "catalog:env",
-    "next": "catalog:next15",
+    "next": "catalog:next16",
     "react": "catalog:react19",
     "react-dom": "catalog:react19"
   },

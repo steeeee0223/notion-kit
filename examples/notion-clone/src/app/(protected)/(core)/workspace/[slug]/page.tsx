@@ -2,6 +2,7 @@
 
 import { IconBlock } from "@notion-kit/icon-block";
 
+import { DatabaseView } from "@/components/database-view";
 import { useSettings } from "@/hooks/use-settings";
 
 export default function Page() {
@@ -17,6 +18,7 @@ export default function Page() {
           {settings.workspace.name}
         </div>
       </div>
+      <DatabaseView />
     </main>
   );
 }

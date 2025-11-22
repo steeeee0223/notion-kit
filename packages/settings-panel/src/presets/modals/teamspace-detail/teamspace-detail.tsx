@@ -86,7 +86,7 @@ export function TeamspaceDetail({
           <div className="truncate text-base font-semibold">
             {teamspace.name}
           </div>
-          <div className="grow-1" />
+          <div className="grow" />
           {teamspace.role ? (
             <Dialog open={openLeave} onOpenChange={setOpenLeave}>
               <TooltipPreset side="top" description="Click to leave teamspace">

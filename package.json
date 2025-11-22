@@ -1,14 +1,15 @@
 {
   "name": "notion-kit",
+  "version": "0.11.1-beta.1",
   "private": true,
   "engines": {
-    "node": ">=22.10.0",
+    "node": ">=24.11.0",
     "pnpm": "^10.4.1"
   },
   "packageManager": "pnpm@10.4.1",
   "scripts": {
     "build": "turbo run build",
-    "build:packages": "turbo run build lint --filter=./packages/*",
+    "build:packages": "turbo run build --filter=./packages/*",
     "clean": "git clean -xdf .turbo node_modules",
     "clean:workspaces": "turbo run clean",
     "dev": "turbo watch dev --continue",
@@ -18,7 +19,7 @@
     "lint:fix": "turbo run lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
     "lint:ws": "pnpm dlx sherif@latest",
     "postinstall": "pnpm lint:ws",
-    "publish-packages": "pnpm build:packages && changeset version && changeset publish --no-private",
+    "publish-packages": "changeset publish --no-private",
     "typecheck": "turbo run typecheck",
     "ui-add": "turbo run ui-add"
   },

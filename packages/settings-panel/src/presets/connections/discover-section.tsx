@@ -1,19 +1,15 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowUpRight, CircleHelp } from "lucide-react";
 
 import { useTranslation } from "@notion-kit/i18n";
-import { Button, toast } from "@notion-kit/shadcn";
+import { Button } from "@notion-kit/shadcn";
 
 import { HintButton } from "../_components";
-import { SettingsSection, useSettings } from "../../core";
-import {
-  createDefaultFn,
-  QUERY_KEYS,
-  type ConnectionStrategy,
-} from "../../lib";
+import { SettingsSection } from "../../core";
+import type { ConnectionStrategy } from "../../lib";
 import { ConnectionCard, type ConnectionCardProps } from "./connection-card";
+import { useConnectionsActions } from "./use-connections-actions";
 
 interface DiscoverSectionProps {
   displayCards: ConnectionCardProps[];
@@ -26,24 +22,13 @@ export function DiscoverSection({
   isToggle,
   toggle,
 }: DiscoverSectionProps) {
-  const { settings, connections: actions } = useSettings();
-  const queryKey = QUERY_KEYS.connections(settings.account.id);
   /** i18n */
   const { t } = useTranslation("settings");
   const trans = t("my-connections", {
     returnObjects: true,
   });
   /** Actions */
-  const queryClient = useQueryClient();
-  const { mutateAsync: connect, isPending } = useMutation({
-    mutationFn: actions?.add ?? createDefaultFn(),
-    onSuccess: async (_, payload) => {
-      toast.success(`Connected ${payload} successfully`);
-      await queryClient.invalidateQueries({ queryKey });
-    },
-    onError: (error, payload) =>
-      toast.error(`Connect ${payload} failed`, { description: error.message }),
-  });
+  const { connect, isConnecting } = useConnectionsActions();
 
   return (
     <SettingsSection
@@ -56,7 +41,7 @@ export function DiscoverSection({
           <ConnectionCard
             key={i}
             {...card}
-            isConnecting={isPending}
+            isConnecting={isConnecting}
             onConnect={() => connect(card.id as ConnectionStrategy)}
           />
         ))}

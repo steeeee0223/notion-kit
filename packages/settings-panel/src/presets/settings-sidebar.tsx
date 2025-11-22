@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 import { useTranslation } from "@notion-kit/i18n";
 import { Separator } from "@notion-kit/shadcn";
 
@@ -20,20 +18,19 @@ import {
   plansTabs,
   type TabType,
 } from "./data";
+import { useAccount } from "./hooks";
 
 interface SettingsSidebarPresetProps {
   tab: TabType;
   onTabChange: (tab: TabType) => void;
 }
 
-export const SettingsSidebarPreset: React.FC<SettingsSidebarPresetProps> = ({
+export function SettingsSidebarPreset({
   tab,
   onTabChange,
-}) => {
-  const {
-    settings: { account },
-    scopes,
-  } = useSettings();
+}: SettingsSidebarPresetProps) {
+  const { scopes } = useSettings();
+  const { data: account } = useAccount();
   const { t } = useTranslation("settings");
   const workspaceTabs = _workspaceTabs.filter((tab) => {
     switch (tab.value) {
@@ -107,4 +104,4 @@ export const SettingsSidebarPreset: React.FC<SettingsSidebarPresetProps> = ({
       </SettingsSidebarGroup>
     </>
   );
-};
+}

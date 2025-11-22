@@ -15,17 +15,19 @@ import {
 import { HintButton } from "../_components";
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
 import { Scope } from "../../lib";
-import { useTeamspaceActions, useTeamspaceDetail } from "../hooks";
+import {
+  useTeamspaceActions,
+  useTeamspaceDetail,
+  useWorkspace,
+} from "../hooks";
 import { CreateTeamspace } from "../modals";
 import { TeamspacesTable } from "../tables";
 import { DefaultTeamspace } from "./default-teamspace";
 import { useTeamspacesTable } from "./use-teamspaces";
 
 export function TeamspacesSection() {
-  const {
-    scopes,
-    settings: { workspace },
-  } = useSettings();
+  const { scopes } = useSettings();
+  const { data: workspace } = useWorkspace();
   /** i18n */
   const { t } = useTranslation("settings");
   const trans = t("teamspaces.teamspaces", { returnObjects: true });

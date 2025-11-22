@@ -112,7 +112,7 @@ function SelectContent({
       <SelectPrimitive.Content
         data-slot="select-content"
         className={cn(
-          "relative max-h-96 min-w-[8rem] overflow-hidden",
+          "relative max-h-96 min-w-32 overflow-hidden",
           position === "popper" &&
             "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
           contentVariants({ variant: "popover", sideAnimation: true }),

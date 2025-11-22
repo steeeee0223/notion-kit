@@ -29,7 +29,7 @@ function TooltipTrigger({
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />;
 }
 
-const tooltipVariants = cva("max-w-[220px] font-medium break-words", {
+const tooltipVariants = cva("max-w-[220px] font-medium wrap-break-word", {
   variants: {
     size: {
       sm: "rounded-sm px-2 py-1 text-xs/[1.4]",

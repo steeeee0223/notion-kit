@@ -1,20 +1,20 @@
 {
   "name": "@notion-kit/i18n",
   "private": true,
-  "version": "0.11.0",
-  "type": "module",
+  "version": "0.12.0",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
+      "types": "./dist/index.d.mts",
+      "default": "./src/index.ts",
+      "import": "./dist/index.mjs"
     }
   },
   "license": "MIT",
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build": "tsdown --config=../../tooling/config/tsdown.config.ts",
     "build:types": "i18next-resources-for-ts interface -i ./src/resources/en -o ./src/resources/types.ts && pnpm format -w",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "dev": "tsdown --config=../../tooling/config/tsdown.config.ts --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
@@ -30,7 +30,7 @@
     "eslint": "catalog:",
     "i18next-resources-for-ts": "^1.6.0",
     "prettier": "catalog:",
-    "tsup": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "prettier": "@notion-kit/prettier-config"

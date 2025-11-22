@@ -181,7 +181,7 @@ function TreeItem<T>({
         style={mergedStyle}
         className={cn(
           "z-10 ps-(--tree-padding) outline-hidden select-none focus:z-20",
-          "data-[disabled]:pointer-events-none data-[disabled]:opacity-40",
+          "data-disabled:pointer-events-none data-disabled:opacity-40",
           className,
         )}
         data-focus={item.isFocused() || false}
