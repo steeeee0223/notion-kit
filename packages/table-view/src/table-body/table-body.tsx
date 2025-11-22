@@ -113,21 +113,6 @@ interface TableBodyProps {
  * un-memoized normal table body component - see memoized version below
  */
 function TableBody({ table }: TableBodyProps) {
-  const isSorted = table.getState().sorting.length > 0;
-  if (isSorted) {
-    const rows = table.getRowModel().rows;
-    return (
-      <SortableContext
-        items={rows.map((row) => row.id)}
-        strategy={verticalListSortingStrategy}
-      >
-        {rows.map((row) => (
-          <TableRow key={row.id} row={row} />
-        ))}
-      </SortableContext>
-    );
-  }
-
   const rows = table.getRowModel().rows;
   return (
     <SortableContext

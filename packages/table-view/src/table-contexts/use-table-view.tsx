@@ -4,6 +4,8 @@ import { useCallback, useMemo, useState } from "react";
 import {
   functionalUpdate,
   getCoreRowModel,
+  getExpandedRowModel,
+  getGroupedRowModel,
   getSortedRowModel,
   useReactTable,
   type ColumnDef,
@@ -111,6 +113,8 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     getRowId: (row) => row.id,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getGroupedRowModel: getGroupedRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
     state: {
       rowOrder: dataEntity.map((row) => row.id),
       columnOrder: columnEntity.ids,

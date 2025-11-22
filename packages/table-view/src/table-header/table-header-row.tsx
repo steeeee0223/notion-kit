@@ -91,7 +91,7 @@ function TableHeaderRow() {
           {isLeftPinned && (
             <div
               id="draggable-ghost-section-left"
-              className="sticky left-8 z-[830] flex bg-main shadow-header-sticky"
+              className="sticky left-8 z-830 flex bg-main shadow-header-sticky"
             >
               {leftPinnedHeaders.map((header) => (
                 <React.Fragment key={header.id}>

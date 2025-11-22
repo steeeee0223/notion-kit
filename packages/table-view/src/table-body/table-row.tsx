@@ -138,6 +138,34 @@ export function TableRow({ row }: TableRowProps) {
           {/* Center unpinned columns */}
           {row.getCenterVisibleCells().map((cell) => (
             <React.Fragment key={cell.id}>
+              {/* {cell.getIsGrouped() ? (
+                // If it's a grouped cell, add an expander and row count
+                <>
+                  <button
+                    {...{
+                      onClick: row.getToggleExpandedHandler(),
+                      style: {
+                        cursor: row.getCanExpand() ? "pointer" : "normal",
+                      },
+                    }}
+                  >
+                    {row.getIsExpanded() ? "👇" : "👉"}{" "}
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}{" "}
+                    ({row.subRows.length})
+                  </button>
+                </>
+              ) : cell.getIsAggregated() ? (
+                // If the cell is aggregated, use the Aggregated
+                // renderer for cell
+                flexRender(
+                  cell.column.columnDef.aggregatedCell ??
+                    cell.column.columnDef.cell,
+                  cell.getContext(),
+                )
+              ) : cell.getIsPlaceholder() ? null : ( // For cells with repeated values, render null
+                // Otherwise, just render the regular cell
+                flexRender(cell.column.columnDef.cell, cell.getContext())
+              )} */}
               {flexRender(cell.column.columnDef.cell, cell.getContext())}
             </React.Fragment>
           ))}

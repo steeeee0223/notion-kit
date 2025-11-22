@@ -9,6 +9,7 @@ import { TooltipProvider } from "@notion-kit/shadcn";
 import type { Row } from "../lib/types";
 import { arrayToEntity } from "../lib/utils";
 import { DEFAULT_PLUGINS, DefaultPlugins, type CellPlugin } from "../plugins";
+import { TableViewContent } from "./table-view-content";
 import type { SyncedState, TableProps } from "./types";
 import { useTableView } from "./use-table-view";
 
@@ -22,22 +23,14 @@ const TableViewContext = createContext<TableViewCtx | null>(null);
 export function useTableViewCtx() {
   const ctx = use(TableViewContext);
   if (!ctx)
-    throw new Error(
-      "`useTableViewCtx` must be used within `TableViewProvider`",
-    );
+    throw new Error("`useTableViewCtx` must be used within `TableView`");
   return ctx;
 }
 
-type TableViewProviderProps<TPlugins extends CellPlugin[]> =
-  React.PropsWithChildren<TableProps<TPlugins>>;
-
-export function TableViewProvider<
-  TPlugins extends CellPlugin[] = DefaultPlugins,
->({
-  children,
+export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
   plugins = DEFAULT_PLUGINS as TPlugins,
   ...props
-}: TableViewProviderProps<TPlugins>) {
+}: TableProps<TPlugins>) {
   const ctx = useTableView({
     plugins: arrayToEntity(plugins),
     ...props,
@@ -46,7 +39,9 @@ export function TableViewProvider<
   return (
     <TableViewContext value={ctx}>
       <TooltipProvider delayDuration={500}>
-        <ModalProvider>{children}</ModalProvider>
+        <ModalProvider>
+          <TableViewContent table={ctx.table} />
+        </ModalProvider>
       </TooltipProvider>
     </TableViewContext>
   );

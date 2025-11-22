@@ -44,6 +44,7 @@ interface PropMenuProps {
 export function PropMenu({ propId }: PropMenuProps) {
   const { table } = useTableViewCtx();
 
+  const column = table.getColumn(propId)!;
   const info = table.getColumnInfo(propId);
   const plugin = table.getColumnPlugin(propId);
 
@@ -115,6 +116,11 @@ export function PropMenu({ propId }: PropMenuProps) {
             </DropdownMenuGroup>
           </DropdownMenuSubContent>
         </DropdownMenuSub>
+        <DropdownMenuItem
+          Icon={<Icon.SquareGridBelowLines />}
+          Body={column.getIsGrouped() ? "Ungroup" : "Group"}
+          onSelect={column.getToggleGroupingHandler()}
+        />
         <DropdownMenuSub>
           <DropdownMenuSubTrigger Icon={<Icon.Sum />} Body="Calculate" />
           <DropdownMenuSubContent
