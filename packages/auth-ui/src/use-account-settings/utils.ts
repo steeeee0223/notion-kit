@@ -1,9 +1,4 @@
-import type {
-  AuthClient,
-  OAuth2UserInfo,
-  Passkey,
-  Session,
-} from "@notion-kit/auth";
+import type { AuthClient, Passkey, Session } from "@notion-kit/auth";
 import type {
   Connection,
   ConnectionStrategy,
@@ -58,7 +53,7 @@ export async function loadConnections(auth: AuthClient) {
     return [];
   }
   const infos = await Promise.all(
-    res.data.map(({ accountId }) => auth.accountInfo({ accountId })),
+    res.data.map(({ accountId }) => auth.accountInfo({ query: { accountId } })),
   );
   return res.data.reduce<Connection[]>((acc, account, i) => {
     if (account.providerId === "credential") return acc;
@@ -69,8 +64,7 @@ export async function loadConnections(auth: AuthClient) {
       console.error(`Fetch ${type} info failed`, info.error);
       return acc;
     }
-    // TODO Remove this type assertion. This is added due to issues in `better-auth`
-    const user = info.data.user as OAuth2UserInfo;
+    const user = info.data.user;
     acc.push({
       id: account.id,
       connection: {
