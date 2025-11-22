@@ -1,7 +1,7 @@
+import { passkeyClient } from "@better-auth/passkey/client";
 import {
   inferAdditionalFields,
   organizationClient,
-  passkeyClient,
   twoFactorClient,
 } from "better-auth/client/plugins";
 import { createAuthClient as createReactClient } from "better-auth/react";

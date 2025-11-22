@@ -1,7 +1,7 @@
+import { passkey } from "@better-auth/passkey";
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { openAPI, organization, twoFactor } from "better-auth/plugins";
-import { passkey } from "better-auth/plugins/passkey";
 
 import { db, updateSessionData } from "./db";
 import { AuthEnv } from "./env";

@@ -7,7 +7,7 @@ export type {
   Member,
   Invitation,
 } from "better-auth/plugins";
-export type { Passkey } from "better-auth/plugins/passkey";
+export type { Passkey } from "@better-auth/passkey";
 export type { ErrorContext } from "better-auth/react";
 export type {
   GithubProfile,
