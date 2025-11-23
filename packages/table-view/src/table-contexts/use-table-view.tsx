@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   functionalUpdate,
   getCoreRowModel,
@@ -19,7 +19,7 @@ import type { CellPlugin } from "../plugins";
 import { TableAggregatedCell, TableRowCell } from "../table-body";
 import { TableFooterCell } from "../table-footer";
 import { TableHeaderCell } from "../table-header";
-import type { SyncedState, TableState } from "./types";
+import type { TableState } from "./types";
 import { createColumnSortingFn, getMinWidth, toPropertyEntity } from "./utils";
 
 const defaultColumn: Partial<ColumnDef<Row>> = {
@@ -77,7 +77,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       }),
     [columnEntity, plugins.items],
   );
-  const handleColumnChange: OnChangeFn<Entity<ColumnInfo>> = useCallback(
+  const handleColumnChange = useCallback<OnChangeFn<Entity<ColumnInfo>>>(
     (updater) => {
       if (!onPropertiesChange) {
         setColumnEntity(updater);
@@ -100,11 +100,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     [isDataControlled, data, _dataEntity],
   );
 
-  const [synced, setSynced] = useState<SyncedState>({
-    header: -1,
-    body: -1,
-    footer: -1,
-  });
+  const [synced, setSynced] = useState(-1);
 
   /** table instance */
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -127,14 +123,13 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     },
     onColumnInfoChange: handleColumnChange,
     onTableDataChange: onDataChange ?? setDataEntity,
-    sync: (keys) =>
-      setSynced((prev) =>
-        keys.reduce((acc, key) => ({ ...acc, [key]: Date.now() }), {
-          ...prev,
-        }),
-      ),
+    sync: () => setSynced(Date.now()),
     _features: DEFAULT_FEATURES,
   });
+
+  useEffect(() => {
+    setSynced(Date.now());
+  }, [table]);
 
   return useMemo(
     () => ({

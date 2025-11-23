@@ -14,9 +14,3 @@ export interface TableProps<TPlugins extends CellPlugin[]>
   onDataChange?: OnChangeFn<Row<TPlugins>[]>;
   onPropertiesChange?: OnChangeFn<ColumnDefs<TPlugins>>;
 }
-
-export interface SyncedState {
-  header: number;
-  body: number;
-  footer: number;
-}

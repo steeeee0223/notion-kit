@@ -157,7 +157,7 @@ function getNumberValue(
         });
 
       case "percent":
-        return num.toLocaleString(undefined, {
+        return (num / 100).toLocaleString(undefined, {
           style: "percent",
           minimumFractionDigits: roundDigits,
           maximumFractionDigits: roundDigits,

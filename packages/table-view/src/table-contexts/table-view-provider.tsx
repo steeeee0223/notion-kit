@@ -10,12 +10,12 @@ import type { Row } from "../lib/types";
 import { arrayToEntity } from "../lib/utils";
 import { DEFAULT_PLUGINS, DefaultPlugins, type CellPlugin } from "../plugins";
 import { TableViewContent } from "./table-view-content";
-import type { SyncedState, TableProps } from "./types";
+import type { TableProps } from "./types";
 import { useTableView } from "./use-table-view";
 
 interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
   table: Table<Row<TPlugins>>;
-  __synced: SyncedState;
+  __synced: number;
 }
 
 const TableViewContext = createContext<TableViewCtx | null>(null);
