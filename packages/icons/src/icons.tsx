@@ -6,6 +6,9 @@ import { SIDE } from "./utils";
 
 export type IconProps = React.SVGProps<SVGSVGElement>;
 
+/**
+ * @default side "right"
+ */
 export interface IconWithSideProps extends IconProps {
   side: keyof typeof SIDE;
 }
@@ -456,6 +459,23 @@ export const ArrowChevronDoubleBackward = (props: IconProps) => (
   <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 20 20" {...props}>
     <path d="M3.608 10.442a.625.625 0 0 1 0-.884l5.4-5.4a.625.625 0 0 1 .884.884L4.934 10l4.958 4.958a.625.625 0 1 1-.884.884z" />
     <path d="m14.508 4.158-5.4 5.4a.625.625 0 0 0 0 .884l5.4 5.4a.625.625 0 1 0 .884-.884L10.434 10l4.958-4.958a.625.625 0 1 0-.884-.884" />
+  </svg>
+);
+
+export const ArrowCaretFillSmall = ({
+  side = "right",
+  className,
+  ...props
+}: IconWithSideProps) => (
+  <svg
+    aria-hidden="true"
+    role="graphics-symbol"
+    viewBox="0 0 16 16"
+    key="arrowCaretDownFillSmall"
+    className={cn(SIDE[side], className)}
+    {...props}
+  >
+    <path d="M2.835 3.25a.8.8 0 0 0-.69 1.203l5.164 8.854a.8.8 0 0 0 1.382 0l5.165-8.854a.8.8 0 0 0-.691-1.203z" />
   </svg>
 );
 

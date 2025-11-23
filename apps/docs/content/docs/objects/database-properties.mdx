@@ -55,11 +55,11 @@ A `Row<TPlugins>` represents a row of data in the table.
 
 ### API Reference
 
-| Prop             | Type                                                | Description                                     |
-| ---------------- | --------------------------------------------------- | ----------------------------------------------- |
-| `id`\*           | `string`                                            | Unique identifier of the row.                   |
-| `properties`\*   | `Record<string, Cell<TPlugin>>`                     | The row data keyed by column ID.                |
-| `icon`           | [`IconData`](/docs/blocks/icon-block#type-icondata) | Displayed icon of the row.                      |
+| Prop             | Type                                                | Description                                      |
+| ---------------- | --------------------------------------------------- | ------------------------------------------------ |
+| `id`\*           | `string`                                            | Unique identifier of the row.                    |
+| `properties`\*   | `Record<string, Cell<TPlugin>>`                     | The row data keyed by column ID.                 |
+| `icon`           | [`IconData`](/docs/blocks/icon-block#type-icondata) | Displayed icon of the row.                       |
 | `createdAt`\*    | `number`                                            | The row creation timestamp (in milliseconds).    |
 | `lastEditedAt`\* | `number`                                            | The row last edited timestamp (in milliseconds). |
 
@@ -82,7 +82,7 @@ A `Cell<TPlugin>` contains the `id` and `value`, where the value is determined b
 // Cell<TitlePlugin>
 {
   id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
-  value: { value: "New title", icon: { type: "emoji", src: "📄" } },
+  value:  "New title",
 }
 ```
 

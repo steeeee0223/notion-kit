@@ -154,18 +154,9 @@ export const RowActionsFeature: TableFeature = {
           if (row.id !== id) return row;
           const cell = row.properties[colId] as Cell<TitlePlugin> | undefined;
           if (!cell) return row;
-          // Create a new cell with updated icon value
-          const updatedCell: Cell<TitlePlugin> = {
-            ...cell,
-            value: {
-              ...cell.value,
-              icon: icon ?? undefined,
-            },
-          };
           return {
             ...row,
             icon: icon ?? undefined,
-            properties: { ...row.properties, [colId]: updatedCell },
             lastEditedAt: now,
           };
         });

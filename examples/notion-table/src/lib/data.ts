@@ -65,7 +65,7 @@ export const mockData: Row[] = [
   {
     id: "row-1",
     properties: {
-      "col-1": { id: "col-1-1", value: { value: "TODO 1" } },
+      "col-1": { id: "col-1-1", value: "TODO 1" },
       "col-2": { id: "cell-1-2", value: "desc1" },
       "col-3": { id: "cell-1-3", value: true },
       "col-4": { id: "cell-1-4", value: ["Done"] },
@@ -77,7 +77,7 @@ export const mockData: Row[] = [
   {
     id: "row-2",
     properties: {
-      "col-1": { id: "cell-2-1", value: { value: "TODO 2" } },
+      "col-1": { id: "cell-2-1", value: "TODO 2" },
       "col-2": { id: "cell-2-2", value: "desc2" },
       "col-3": { id: "cell-2-3", value: false },
       "col-4": { id: "cell-2-4", value: ["Not Started"] },
@@ -89,7 +89,7 @@ export const mockData: Row[] = [
   {
     id: "row-3",
     properties: {
-      "col-1": { id: "cell-3-1", value: { value: "TODO 3" } },
+      "col-1": { id: "cell-3-1", value: "TODO 3" },
       "col-2": { id: "cell-3-2", value: "desc3" },
       "col-3": { id: "cell-3-3", value: false },
       "col-4": { id: "cell-3-4", value: ["Pending"] },
@@ -101,7 +101,7 @@ export const mockData: Row[] = [
   {
     id: "row-4",
     properties: {
-      "col-1": { id: "cell-4-1", value: { value: "TODO 4" } },
+      "col-1": { id: "cell-4-1", value: "TODO 4" },
       "col-2": { id: "cell-4-2", value: "desc4" },
       "col-3": { id: "cell-4-3", value: true },
       "col-4": { id: "cell-4-4", value: ["Under Review"] },
@@ -113,7 +113,7 @@ export const mockData: Row[] = [
   {
     id: "row-5",
     properties: {
-      "col-1": { id: "cell-5-1", value: { value: "TODO 5" } },
+      "col-1": { id: "cell-5-1", value: "TODO 5" },
       "col-2": { id: "cell-5-2", value: "desc5" },
       "col-3": { id: "cell-5-3", value: false },
       "col-4": { id: "cell-5-4", value: ["In Progress"] },

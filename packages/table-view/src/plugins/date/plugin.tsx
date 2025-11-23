@@ -56,10 +56,10 @@ export function createdTime(): CreatedTimePlugin {
       config: { dateFormat: "full", timeFormat: "24-hour", tz },
     },
     fromReadableValue: () => null,
-    toReadableValue: (data) => (data === null ? "" : data.toString()),
-    toTextValue: (data) =>
+    toReadableValue: (_, row) => row.createdAt.toString(),
+    toTextValue: (_, row) =>
       toDateString(
-        { start: data ?? undefined },
+        { start: row.createdAt, includeTime: true },
         { dateFormat: "full", timeFormat: "24-hour", tz },
       ),
     renderCell: ({ row, config, wrapped }) => (
@@ -92,10 +92,10 @@ export function lastEditedTime(): LastEditedTimePlugin {
       config: { dateFormat: "full", timeFormat: "24-hour", tz },
     },
     fromReadableValue: () => null,
-    toReadableValue: (data) => (data === null ? "" : data.toString()),
-    toTextValue: (data) =>
+    toReadableValue: (_, row) => row.lastEditedAt.toString(),
+    toTextValue: (_, row) =>
       toDateString(
-        { start: data ?? undefined },
+        { start: row.lastEditedAt, includeTime: true },
         { dateFormat: "full", timeFormat: "24-hour", tz },
       ),
     renderCell: ({ row, config, wrapped }) => (

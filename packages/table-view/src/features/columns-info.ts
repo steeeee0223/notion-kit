@@ -66,6 +66,9 @@ export interface ColumnsInfoTableApi {
     colId: string,
     type: PluginType<TPlugins>,
   ) => void;
+  /**
+   * @deprecated
+   */
   setColumnTypeConfig: <TPlugin extends CellPlugin>(
     colId: string,
     actions: InferActions<TPlugin>,
@@ -146,7 +149,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
           [colId]: functionalUpdate(updater, prev.items[colId]!),
         },
       }));
-      table.options.sync?.(["header"]);
+      table.options.sync?.();
       // Sync column visibility
       const info = functionalUpdate(updater, table.getColumnInfo(colId));
       if (info.hidden !== undefined || info.isDeleted !== undefined)
@@ -165,7 +168,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
           items: { ...prev.items, [info.id]: info },
         };
       });
-      table.options.sync?.(["header"]);
+      table.options.sync?.();
     };
     table.addColumnInfo = (payload) => {
       const { cellPlugins } = table.getState();
@@ -274,7 +277,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
               [colId]: {
                 ...cell,
                 value: destPlugin.fromReadableValue(
-                  srcPlugin.toReadableValue(cell.value),
+                  srcPlugin.toReadableValue(cell.value, row),
                   config,
                 ),
               },
