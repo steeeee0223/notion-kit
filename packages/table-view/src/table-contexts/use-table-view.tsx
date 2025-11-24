@@ -115,7 +115,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     getGroupedRowModel: getGroupedRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     state: {
-      rowOrder: dataEntity.map((row) => row.id),
       columnOrder: columnEntity.ids,
       columnsInfo: columnEntity.items,
       cellPlugins: plugins.items,

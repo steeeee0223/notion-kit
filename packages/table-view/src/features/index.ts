@@ -26,12 +26,7 @@ import {
   type TableMenuTableApi,
   type TableMenuTableState,
 } from "./menu";
-import {
-  OrderingFeature,
-  type OrderingOptions,
-  type OrderingTableApi,
-  type OrderingTableState,
-} from "./ordering";
+import { OrderingFeature, type OrderingTableApi } from "./ordering";
 import {
   RowActionsFeature,
   type RowActionsColumnApi,
@@ -46,7 +41,6 @@ declare module "@tanstack/react-table" {
     extends CountingTableState,
       ColumnsInfoTableState,
       FreezingTableState,
-      OrderingTableState,
       TableMenuTableState {}
 
   // merge our new feature's options with the existing table options
@@ -54,7 +48,6 @@ declare module "@tanstack/react-table" {
     extends CountingOptions,
       ColumnsInfoOptions,
       FreezingOptions,
-      OrderingOptions,
       RowActionsOptions,
       TableMenuOptions,
       SyncOptions {}

@@ -37,13 +37,13 @@ export const SyncFeature: TableFeature = {
       table.options.onSortingChange?.(updater);
       table.options.sync?.();
     };
+    table.setGrouping = (updater) => {
+      table.options.onGroupingChange?.(updater);
+      table.options.sync?.();
+    };
     /** Overrides for custom features */
     table.setColumnCounting = (updater) => {
       table.options.onColumnCountingChange?.(updater);
-      table.options.sync?.();
-    };
-    table.setRowOrder = (updater) => {
-      table.options.onRowOrderChange?.(updater);
       table.options.sync?.();
     };
     table.setTableData = (updater) => {

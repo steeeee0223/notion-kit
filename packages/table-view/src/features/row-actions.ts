@@ -81,14 +81,6 @@ export const RowActionsFeature: TableFeature = {
     /** Row API */
     table.addRow = (payload) => {
       const rowId = v4();
-      // Update row order
-      table.setRowOrder((prev) => {
-        if (payload === undefined) return [...prev, rowId];
-        const idx = prev.indexOf(payload.id);
-        return payload.at === "next"
-          ? insertAt(prev, rowId, idx + 1)
-          : insertAt(prev, rowId, idx);
-      });
       // Update table data
       table.setTableData((prev) => {
         const now = Date.now();
@@ -111,12 +103,6 @@ export const RowActionsFeature: TableFeature = {
     };
     table.duplicateRow = (id) => {
       const rowId = v4();
-      // Update row order
-      table.setRowOrder((prev) => {
-        const idx = prev.indexOf(id);
-        if (idx < 0) return prev;
-        return insertAt(prev, rowId, idx + 1);
-      });
       // Update table data
       table.setTableData((prev) => {
         const idx = prev.findIndex((row) => row.id === id);
@@ -137,8 +123,6 @@ export const RowActionsFeature: TableFeature = {
       });
     };
     table.deleteRow = (id) => {
-      // Update row order
-      table.setRowOrder((prev) => prev.filter((rowId) => rowId !== id));
       // Update table data
       table.setTableData((prev) => prev.filter((row) => row.id !== id));
     };

@@ -2,7 +2,7 @@ import React from "react";
 
 import { cn } from "@notion-kit/cn";
 
-import { SIDE } from "./utils";
+import { SIDE, SIDE_DEFAULT_DOWN } from "./utils";
 
 export type IconProps = React.SVGProps<SVGSVGElement>;
 
@@ -463,7 +463,7 @@ export const ArrowChevronDoubleBackward = (props: IconProps) => (
 );
 
 export const ArrowCaretFillSmall = ({
-  side = "right",
+  side = "down",
   className,
   ...props
 }: IconWithSideProps) => (
@@ -471,8 +471,7 @@ export const ArrowCaretFillSmall = ({
     aria-hidden="true"
     role="graphics-symbol"
     viewBox="0 0 16 16"
-    key="arrowCaretDownFillSmall"
-    className={cn(SIDE[side], className)}
+    className={cn(SIDE_DEFAULT_DOWN[side], className)}
     {...props}
   >
     <path d="M2.835 3.25a.8.8 0 0 0-.69 1.203l5.164 8.854a.8.8 0 0 0 1.382 0l5.165-8.854a.8.8 0 0 0-.691-1.203z" />
