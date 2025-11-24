@@ -9,6 +9,7 @@ export interface CellProps<Data, Config = undefined> {
   data: Data;
   config: Config;
   wrapped?: boolean;
+  disabled?: boolean;
   onChange: OnChangeFn<Data>;
   onConfigChange?: OnChangeFn<Config>;
 }

@@ -149,15 +149,7 @@ function TableCells({ cells }: TableCellsProps) {
   return cells.map((cell) => {
     return (
       <React.Fragment key={cell.id}>
-        {flexRender(
-          // If the cell is aggregated, use the Aggregated renderer for cell
-          // Otherwise, just render the regular cell
-          // !cell.getIsGrouped() && cell.getIsAggregated()
-          // ? cell.column.columnDef.aggregatedCell
-          // :
-          cell.column.columnDef.cell,
-          cell.getContext(),
-        )}
+        {flexRender(cell.column.columnDef.cell, cell.getContext())}
       </React.Fragment>
     );
   });

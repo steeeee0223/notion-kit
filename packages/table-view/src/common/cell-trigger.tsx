@@ -19,6 +19,7 @@ export function CellTrigger({
       className={cn(
         buttonVariants({ variant: "cell" }),
         "relative block min-h-9 w-full overflow-clip px-2 py-[7.5px] text-sm/normal",
+        "aria-disabled:pointer-events-none",
         wrapped && "whitespace-normal",
         className,
       )}

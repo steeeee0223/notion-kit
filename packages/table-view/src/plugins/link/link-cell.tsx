@@ -10,13 +10,23 @@ interface LinkCellProps extends CellProps<string> {
   type: "email" | "phone" | "url";
 }
 
-export function LinkCell({ type, data, wrapped, onChange }: LinkCellProps) {
+export function LinkCell({
+  type,
+  data,
+  wrapped,
+  disabled,
+  onChange,
+}: LinkCellProps) {
   return (
     <TextInputPopover
       value={data}
       onUpdate={onChange}
       renderTrigger={() => (
-        <CellTrigger className="group/link-cell" wrapped={wrapped}>
+        <CellTrigger
+          className="group/link-cell"
+          wrapped={wrapped}
+          aria-disabled={disabled}
+        >
           <CopyButton
             className="hidden group-hover/link-cell:flex"
             value={data}

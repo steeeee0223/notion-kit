@@ -20,12 +20,11 @@ export function title(): TitlePlugin {
     fromReadableValue: (value) => value,
     toReadableValue: (data) => data,
     toTextValue: (data) => data,
-    renderCell: ({ row, data, config, wrapped, onChange }) => (
+    renderCell: ({ row, data, config, ...props }) => (
       <TitleCell
         value={data}
-        wrapped={wrapped}
         icon={config.showIcon ? row.icon : undefined}
-        onUpdate={onChange}
+        {...props}
       />
     ),
     renderConfigMenu: (props) => <TitleConfig {...props} />,

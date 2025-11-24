@@ -12,6 +12,7 @@ export function DatePickerCell({
   wrapped,
   data,
   config,
+  disabled,
   ...props
 }: InferCellProps<DatePlugin>) {
   const dateStr = toDateString(data, config);
@@ -19,7 +20,11 @@ export function DatePickerCell({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <CellTrigger className="group/date-cell" wrapped={wrapped}>
+        <CellTrigger
+          className="group/date-cell"
+          wrapped={wrapped}
+          aria-disabled={disabled}
+        >
           <CopyButton
             className="hidden group-hover/date-cell:flex"
             value={dateStr}

@@ -22,6 +22,7 @@ export function SelectCell({
   config,
   data: options,
   wrapped,
+  disabled,
   onChange,
 }: CellProps<string[], SelectConfig>) {
   const [open, setOpen] = useState(false);
@@ -37,7 +38,7 @@ export function SelectCell({
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
-        <CellTrigger ref={ref} wrapped={wrapped}>
+        <CellTrigger ref={ref} wrapped={wrapped} aria-disabled={disabled}>
           <div className="flex items-center justify-between">
             <div
               className={cn(

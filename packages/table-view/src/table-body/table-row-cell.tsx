@@ -77,6 +77,7 @@ export function TableRowCell<TPlugin extends CellPlugin>({
             data: data.value,
             config: info.config,
             wrapped: info.wrapped,
+            disabled: row.getIsGrouped(),
             onChange: (updater) => column.updateCell(row.id, updater),
             onConfigChange: column.updateConfig,
           })}

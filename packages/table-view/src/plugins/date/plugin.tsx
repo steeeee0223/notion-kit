@@ -62,11 +62,12 @@ export function createdTime(): CreatedTimePlugin {
         { start: row.createdAt, includeTime: true },
         { dateFormat: "full", timeFormat: "24-hour", tz },
       ),
-    renderCell: ({ row, config, wrapped }) => (
+    renderCell: ({ row, config, wrapped, disabled }) => (
       <DateCell
         data={{ start: row.createdAt, includeTime: true }}
         config={config}
         wrapped={wrapped}
+        disabled={disabled}
       />
     ),
     renderConfigMenu: (props) => <DateConfigMenu {...props} />,
@@ -98,11 +99,12 @@ export function lastEditedTime(): LastEditedTimePlugin {
         { start: row.lastEditedAt, includeTime: true },
         { dateFormat: "full", timeFormat: "24-hour", tz },
       ),
-    renderCell: ({ row, config, wrapped }) => (
+    renderCell: ({ row, config, wrapped, disabled }) => (
       <DateCell
         data={{ start: row.lastEditedAt, includeTime: true }}
         config={config}
         wrapped={wrapped}
+        disabled={disabled}
       />
     ),
     renderConfigMenu: (props) => <DateConfigMenu {...props} />,

@@ -12,16 +12,23 @@ interface TitleCellProps {
   icon?: IconData;
   value: string;
   wrapped?: boolean;
-  onUpdate: (value: string) => void;
+  disabled?: boolean;
+  onChange: (value: string) => void;
 }
 
-export function TitleCell({ icon, value, wrapped, onUpdate }: TitleCellProps) {
+export function TitleCell({
+  icon,
+  value,
+  wrapped,
+  disabled,
+  onChange,
+}: TitleCellProps) {
   return (
     <TextInputPopover
       value={value}
-      onUpdate={onUpdate}
+      onUpdate={onChange}
       renderTrigger={({ width }) => (
-        <CellTrigger wrapped={wrapped}>
+        <CellTrigger wrapped={wrapped} aria-disabled={disabled}>
           <div className="pointer-events-none absolute top-1.5 right-0 left-0 z-20 mx-1 my-0 hidden justify-end group-hover/row:flex">
             <div
               id="quick-action-container"
