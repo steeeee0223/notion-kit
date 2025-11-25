@@ -58,7 +58,7 @@ export const TableMenuFeature: TableFeature = {
     table.getTableMenuState = () => table.getState().menu;
     table.setTableMenuState = (menu) => {
       table.options.onTableMenuChange?.(menu);
-      table.options.sync?.();
+      table.options.sync?.("table.setTableMenuState");
     };
   },
 };

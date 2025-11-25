@@ -119,7 +119,9 @@ export function PropMenu({ propId }: PropMenuProps) {
         <DropdownMenuItem
           Icon={<Icon.SquareGridBelowLines />}
           Body={column.getIsGrouped() ? "Ungroup" : "Group"}
-          onSelect={column.getToggleGroupingHandler()}
+          onSelect={() =>
+            table.setGrouping((v) => (v[0] === propId ? [] : [propId]))
+          }
         />
         <DropdownMenuSub>
           <DropdownMenuSubTrigger Icon={<Icon.Sum />} Body="Calculate" />

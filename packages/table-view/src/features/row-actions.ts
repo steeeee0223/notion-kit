@@ -50,6 +50,11 @@ export interface RowActionsColumnApi {
   ) => void;
 }
 
+export interface RowActionsRowApi {
+  getIsFirstChild: () => boolean;
+  getIsLastChild: () => boolean;
+}
+
 export const RowActionsFeature: TableFeature = {
   getDefaultOptions: (): RowActionsOptions => {
     return {};
@@ -161,5 +166,17 @@ export const RowActionsFeature: TableFeature = {
         ...prev,
         value: functionalUpdate(updater, prev.value),
       }));
+  },
+  createRow: (row): void => {
+    row.getIsFirstChild = () => {
+      const parent = row.getParentRow();
+      if (!parent) return false;
+      return parent.subRows[0]?.id === row.id;
+    };
+    row.getIsLastChild = () => {
+      const parent = row.getParentRow();
+      if (!parent) return false;
+      return parent.subRows.at(-1)?.id === row.id;
+    };
   },
 };

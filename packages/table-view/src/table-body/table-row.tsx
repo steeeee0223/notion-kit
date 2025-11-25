@@ -61,7 +61,10 @@ export function TableRow({ row }: TableRowProps) {
       <div
         id="notion-table-view-row"
         dir="ltr"
-        className="flex w-full border-b border-b-border-cell"
+        className={cn(
+          "flex w-full border-b border-b-border-cell",
+          row.getIsFirstChild() && "border-t border-t-border-cell",
+        )}
       >
         <div className="flex">
           <div className="sticky left-8 z-850 flex items-center bg-main">

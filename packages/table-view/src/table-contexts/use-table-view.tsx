@@ -107,6 +107,8 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     data: dataEntity,
     defaultColumn,
     columnResizeMode: "onChange",
+    groupedColumnMode: false,
+    autoResetExpanded: false,
     getRowId: (row) => row.id,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -119,7 +121,10 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     },
     onColumnInfoChange: handleColumnChange,
     onTableDataChange: onDataChange ?? setDataEntity,
-    sync: () => setSynced(Date.now()),
+    sync: (debugValue) => {
+      setSynced(Date.now());
+      console.log(`[${debugValue}] table synced`);
+    },
     _features: DEFAULT_FEATURES,
   });
 

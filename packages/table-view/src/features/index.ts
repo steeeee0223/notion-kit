@@ -30,6 +30,7 @@ import {
   RowActionsFeature,
   type RowActionsColumnApi,
   type RowActionsOptions,
+  type RowActionsRowApi,
   type RowActionsTableApi,
 } from "./row-actions";
 
@@ -48,7 +49,7 @@ declare module "@tanstack/react-table" {
       FreezingOptions,
       RowActionsOptions,
       TableMenuOptions {
-    sync?: () => void;
+    sync?: (debugValue?: string) => void;
   }
 
   // merge our new feature's instance APIs with the existing table instance APIs
@@ -62,6 +63,9 @@ declare module "@tanstack/react-table" {
   interface Column<TData extends RowData>
     extends ColumnInfoColumnApi,
       RowActionsColumnApi {}
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  interface Row<TData extends RowData> extends RowActionsRowApi {}
 }
 
 export * from "./columns-info";

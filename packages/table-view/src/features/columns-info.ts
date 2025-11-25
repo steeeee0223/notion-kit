@@ -151,7 +151,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
           [colId]: functionalUpdate(updater, prev.items[colId]!),
         },
       }));
-      table.options.sync?.();
+      table.options.sync?.("table._setColumnInfo");
       // Sync column visibility
       const info = functionalUpdate(updater, table.getColumnInfo(colId));
       if (info.hidden !== undefined || info.isDeleted !== undefined)
@@ -171,7 +171,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
           ids: functionalUpdate(updater, prev.ids),
         };
       });
-      table.options.sync?.();
+      table.options.sync?.("table.handleColumnDragEnd");
     };
     table._addColumnInfo = (info, idsUpdater) => {
       table.options.onColumnInfoChange?.((prev) => {
@@ -180,7 +180,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
           items: { ...prev.items, [info.id]: info },
         };
       });
-      table.options.sync?.();
+      table.options.sync?.("table._addColumnInfo");
     };
     table.addColumnInfo = (payload) => {
       const { cellPlugins } = table.getState();

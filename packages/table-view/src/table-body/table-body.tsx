@@ -20,6 +20,7 @@ import { Button } from "@notion-kit/shadcn";
 import { useDndSensors } from "../common";
 import type { Row } from "../lib/types";
 import { useTableViewCtx } from "../table-contexts";
+import { TableGroupedRow } from "./table-grouped-row";
 import { TableRow } from "./table-row";
 
 export function DndTableBody() {
@@ -119,9 +120,13 @@ function TableBody({ table }: TableBodyProps) {
       items={rows.map((row) => row.id)}
       strategy={verticalListSortingStrategy}
     >
-      {rows.map((row) => (
-        <TableRow key={row.id} row={row} />
-      ))}
+      {rows.map((row) =>
+        row.getIsGrouped() ? (
+          <TableGroupedRow key={row.id} row={row} />
+        ) : (
+          <TableRow key={row.id} row={row} />
+        ),
+      )}
     </SortableContext>
   );
 }
