@@ -120,7 +120,7 @@ function TableHeaderRow() {
         <PopoverTrigger asChild>
           <TableHeaderActionCell icon={<Icon.Plus />} />
         </PopoverTrigger>
-        <PopoverContent sideOffset={0} collisionPadding={12}>
+        <PopoverContent className="z-990" sideOffset={0} collisionPadding={12}>
           <TypesMenu menu={TableViewMenuPage.CreateProp} />
         </PopoverContent>
       </Popover>
@@ -131,7 +131,12 @@ function TableHeaderRow() {
         <PopoverTrigger asChild>
           <TableHeaderActionCell icon={<Icon.Dots />} />
         </PopoverTrigger>
-        <PopoverContent sideOffset={0} collisionPadding={12} sticky="always">
+        <PopoverContent
+          className="z-990"
+          sideOffset={0}
+          collisionPadding={12}
+          sticky="always"
+        >
           <TableViewMenu />
         </PopoverContent>
       </Popover>

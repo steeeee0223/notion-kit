@@ -74,7 +74,7 @@ export function SelectCell({
         align="start"
         side="bottom"
         sideOffset={-rect.height}
-        className="max-h-[773px] min-h-[34px] w-[300px] overflow-visible backdrop-filter-none"
+        className="z-990 max-h-[773px] min-h-[34px] w-[300px] overflow-visible backdrop-filter-none"
       >
         <SelectMenu menu={menu} />
       </PopoverContent>

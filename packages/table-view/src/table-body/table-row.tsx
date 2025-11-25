@@ -103,7 +103,7 @@ export function TableRow({ row }: TableRowProps) {
                   </PopoverTrigger>
                 </TooltipPreset>
                 <PopoverContent
-                  className="w-[265px]"
+                  className="z-990 w-[265px]"
                   side="right"
                   align="start"
                 >

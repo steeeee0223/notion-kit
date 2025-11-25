@@ -39,7 +39,11 @@ export function TableFooterCell({ column }: TableFooterCellProps) {
             <CountDisplay {...props} />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-50" align="start" alignOffset={-4}>
+        <DropdownMenuContent
+          className="z-990 w-50"
+          align="start"
+          alignOffset={-4}
+        >
           <CalcMenu {...props} />
         </DropdownMenuContent>
       </DropdownMenu>
