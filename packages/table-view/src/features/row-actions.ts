@@ -37,7 +37,7 @@ export interface RowActionsTableApi {
   addRow: (payload?: { id: string; at?: "prev" | "next" }) => void;
   duplicateRow: (id: string) => void;
   deleteRow: (id: string) => void;
-  handleColumnDragEnd: (e: DragEndEvent) => void;
+  handleRowDragEnd: (e: DragEndEvent) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
 }
 

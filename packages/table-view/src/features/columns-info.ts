@@ -50,7 +50,7 @@ export interface ColumnsInfoTableApi {
   // Column Setters
   _setColumnInfo: (colId: string, updater: Updater<ColumnInfo>) => void;
   setColumnInfo: (colId: string, info: Partial<Omit<ColumnInfo, "id">>) => void;
-  handleRowDragEnd: (e: DragEndEvent) => void;
+  handleColumnDragEnd: (e: DragEndEvent) => void;
   _addColumnInfo: (info: ColumnInfo, idsUpdater: Updater<string[]>) => void;
   addColumnInfo: (payload: {
     id: string;
