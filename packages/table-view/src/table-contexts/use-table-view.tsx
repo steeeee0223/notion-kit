@@ -45,6 +45,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   onDataChange,
   onPropertiesChange,
 }: UseTableViewOptions<TPlugins>) {
+  const [synced, setSynced] = useState(-1);
   const isPropertiesControlled = typeof onPropertiesChange !== "undefined";
   const isDataControlled = typeof onDataChange !== "undefined";
   /** columns states */
@@ -99,8 +100,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     [isDataControlled, data, _dataEntity],
   );
 
-  const [synced, setSynced] = useState(-1);
-
   /** table instance */
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -109,7 +108,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     defaultColumn,
     columnResizeMode: "onChange",
     getRowId: (row) => row.id,
-    groupedColumnMode: "reorder",
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getGroupedRowModel: getGroupedRowModel(),

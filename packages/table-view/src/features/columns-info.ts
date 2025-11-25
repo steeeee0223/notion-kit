@@ -1,3 +1,4 @@
+import type { DragEndEvent } from "@dnd-kit/core";
 import type {
   Column,
   OnChangeFn,
@@ -22,7 +23,7 @@ import type {
   InferPlugin,
 } from "../plugins";
 import { DEFAULT_PLUGINS } from "../plugins";
-import { createIdsUpdater } from "./utils";
+import { createDragEndUpdater, createIdsUpdater } from "./utils";
 
 export type ColumnsInfoState<TPlugins extends CellPlugin[] = CellPlugin[]> =
   Record<string, ColumnInfo<InferPlugin<TPlugins>>>;
@@ -49,6 +50,7 @@ export interface ColumnsInfoTableApi {
   // Column Setters
   _setColumnInfo: (colId: string, updater: Updater<ColumnInfo>) => void;
   setColumnInfo: (colId: string, info: Partial<Omit<ColumnInfo, "id">>) => void;
+  handleRowDragEnd: (e: DragEndEvent) => void;
   _addColumnInfo: (info: ColumnInfo, idsUpdater: Updater<string[]>) => void;
   addColumnInfo: (payload: {
     id: string;
@@ -161,6 +163,16 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     table.setColumnInfo = (colId, info) => {
       table._setColumnInfo(colId, (prev) => ({ ...prev, ...info }));
     };
+    table.handleColumnDragEnd = (e) => {
+      table.options.onColumnInfoChange?.((prev) => {
+        const updater = createDragEndUpdater<string>(e, (v) => v);
+        return {
+          ...prev,
+          ids: functionalUpdate(updater, prev.ids),
+        };
+      });
+      table.options.sync?.();
+    };
     table._addColumnInfo = (info, idsUpdater) => {
       table.options.onColumnInfoChange?.((prev) => {
         return {
@@ -182,8 +194,6 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         { id, name, type, config: plugin.default.config },
         idsUpdater,
       );
-      // Update column order
-      table.setColumnOrder(idsUpdater);
       // Update all rows
       table.setTableData((prev) =>
         prev.map((row) => {
@@ -213,8 +223,6 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         },
         idsUpdater,
       );
-      // Update column order
-      table.setColumnOrder(idsUpdater);
       // Update all rows
       table.setTableData((prev) =>
         prev.map((row) => {
@@ -233,8 +241,6 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         const { [colId]: _, ...items } = prev.items;
         return { ids: prev.ids.filter((id) => id !== colId), items };
       });
-      // Update column order
-      table.setColumnOrder((prev) => prev.filter((id) => id !== colId));
       // Update all rows
       table.setTableData((prev) =>
         prev.map((row) => {

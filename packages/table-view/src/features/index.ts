@@ -26,14 +26,12 @@ import {
   type TableMenuTableApi,
   type TableMenuTableState,
 } from "./menu";
-import { OrderingFeature, type OrderingTableApi } from "./ordering";
 import {
   RowActionsFeature,
   type RowActionsColumnApi,
   type RowActionsOptions,
   type RowActionsTableApi,
 } from "./row-actions";
-import { SyncFeature, type SyncOptions } from "./sync";
 
 declare module "@tanstack/react-table" {
   // merge our new feature's state with the existing table state
@@ -49,15 +47,15 @@ declare module "@tanstack/react-table" {
       ColumnsInfoOptions,
       FreezingOptions,
       RowActionsOptions,
-      TableMenuOptions,
-      SyncOptions {}
+      TableMenuOptions {
+    sync?: () => void;
+  }
 
   // merge our new feature's instance APIs with the existing table instance APIs
   interface Table<TData extends RowData>
     extends CountingTableApi,
       ColumnsInfoTableApi,
       FreezingTableApi,
-      OrderingTableApi,
       RowActionsTableApi,
       TableMenuTableApi {}
 
@@ -70,16 +68,12 @@ export * from "./columns-info";
 export * from "./counting";
 export * from "./freezing";
 export * from "./menu";
-export * from "./ordering";
 export * from "./row-actions";
-export * from "./sync";
 
 export const DEFAULT_FEATURES = [
   ColumnsInfoFeature,
   CountingFeature,
   FreezingFeature,
-  OrderingFeature,
   TableMenuFeature,
   RowActionsFeature,
-  SyncFeature,
 ];

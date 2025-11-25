@@ -1,3 +1,4 @@
+import type { DragEndEvent } from "@dnd-kit/core";
 import {
   functionalUpdate,
   type OnChangeFn,
@@ -13,6 +14,7 @@ import type { Cell, Row } from "../lib/types";
 import { getDefaultCell, insertAt } from "../lib/utils";
 import type { CellPlugin, InferData } from "../plugins";
 import { TitlePlugin } from "../plugins/title";
+import { createDragEndUpdater } from "./utils";
 
 export interface RowActionsOptions {
   onTableDataChange?: OnChangeFn<Row[]>;
@@ -35,6 +37,7 @@ export interface RowActionsTableApi {
   addRow: (payload?: { id: string; at?: "prev" | "next" }) => void;
   duplicateRow: (id: string) => void;
   deleteRow: (id: string) => void;
+  handleColumnDragEnd: (e: DragEndEvent) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
 }
 
@@ -81,7 +84,6 @@ export const RowActionsFeature: TableFeature = {
     /** Row API */
     table.addRow = (payload) => {
       const rowId = v4();
-      // Update table data
       table.setTableData((prev) => {
         const now = Date.now();
         const row: Row = {
@@ -103,7 +105,6 @@ export const RowActionsFeature: TableFeature = {
     };
     table.duplicateRow = (id) => {
       const rowId = v4();
-      // Update table data
       table.setTableData((prev) => {
         const idx = prev.findIndex((row) => row.id === id);
         if (idx < 0) return prev;
@@ -123,8 +124,10 @@ export const RowActionsFeature: TableFeature = {
       });
     };
     table.deleteRow = (id) => {
-      // Update table data
       table.setTableData((prev) => prev.filter((row) => row.id !== id));
+    };
+    table.handleRowDragEnd = (e) => {
+      table.setTableData(createDragEndUpdater(e, (v) => v.id));
     };
     table.updateRowIcon = (id, icon) => {
       const colId = table

@@ -30,9 +30,9 @@ export const mockProps: ColumnDefs = [
         items: {
           Done: { id: "tag1", name: "Done", color: "blue" },
           Pending: { id: "tag2", name: "Pending", color: "green" },
-          "Under Review": { id: "tag2", name: "Under Review", color: "purple" },
           "In Progress": { id: "tag3", name: "In Progress", color: "red" },
           "Not Started": { id: "tag4", name: "Not Started", color: "gray" },
+          "Under Review": { id: "tag5", name: "Under Review", color: "purple" },
         },
       },
     },
