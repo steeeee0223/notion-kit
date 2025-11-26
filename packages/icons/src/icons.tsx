@@ -703,6 +703,13 @@ export const Lock = (props: IconProps) => (
   </svg>
 );
 
+export const LockOpen = (props: IconProps) => (
+  <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 20 20" {...props}>
+    <path d="M10.55 12.808a1.35 1.35 0 1 0-1.1 0v1.242a.55.55 0 1 0 1.1 0z" />
+    <path d="M15.4 1.95a3.48 3.48 0 0 0-3.48 3.48v1.92H6.4a2.425 2.425 0 0 0-2.425 2.425v5.4A2.425 2.425 0 0 0 6.4 17.6h7.2a2.425 2.425 0 0 0 2.425-2.425v-5.4A2.425 2.425 0 0 0 13.6 7.35h-.43V5.43a2.23 2.23 0 1 1 4.46 0v2.095a.625.625 0 1 0 1.25 0V5.43a3.48 3.48 0 0 0-3.48-3.48M5.225 9.775c0-.649.526-1.175 1.175-1.175h7.2c.649 0 1.175.526 1.175 1.175v5.4c0 .649-.526 1.175-1.175 1.175H6.4a1.175 1.175 0 0 1-1.175-1.175z" />
+  </svg>
+);
+
 export const ArchiveBox = (props: IconProps) => (
   <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 20 20" {...props}>
     <path d="M8 9.875a.625.625 0 1 0 0 1.25h4a.625.625 0 1 0 0-1.25z" />

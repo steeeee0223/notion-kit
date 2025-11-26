@@ -2,7 +2,7 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { Header } from "@tanstack/react-table";
+import type { Header, Table } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { IconBlock } from "@notion-kit/icon-block";
@@ -21,6 +21,7 @@ import { PropMenu } from "../menus";
 
 interface TableHeaderCellProps {
   header: Header<Row, unknown>;
+  table: Table<Row>;
 }
 
 /**
@@ -28,10 +29,11 @@ interface TableHeaderCellProps {
  *
  * @requires SortableContext
  */
-export function TableHeaderCell({ header }: TableHeaderCellProps) {
+export function TableHeaderCell({ header, table }: TableHeaderCellProps) {
   const info = header.column.getInfo();
   const isResizing = header.column.getIsResizing();
   const onResizeStart = header.getResizeHandler();
+  const { locked } = table.getTableGlobalState();
 
   /** DND */
   const {
@@ -41,7 +43,7 @@ export function TableHeaderCell({ header }: TableHeaderCellProps) {
     setNodeRef,
     transform,
     transition,
-  } = useSortable({ id: header.column.id });
+  } = useSortable({ id: header.column.id, disabled: locked });
 
   const style: React.CSSProperties = {
     width: header.column.getWidth(),
@@ -70,7 +72,7 @@ export function TableHeaderCell({ header }: TableHeaderCellProps) {
           side="top"
           className="z-990"
         >
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger asChild disabled={locked}>
             <div
               id="notion-table-view-header-cell"
               className="flex shrink-0 overflow-hidden p-0 text-sm"

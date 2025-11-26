@@ -29,6 +29,7 @@ export function TableRow({ row }: TableRowProps) {
   const isMobile = useIsMobile();
   /** Add row */
   const { table } = useTableViewCtx();
+  const { locked } = table.getTableGlobalState();
   const addNextRow = (e: React.MouseEvent) => {
     if (e.altKey) {
       table.addRow({ id: row.id, at: "prev" });
@@ -44,7 +45,7 @@ export function TableRow({ row }: TableRowProps) {
     setNodeRef,
     transform,
     transition,
-  } = useSortable({ id: row.id });
+  } = useSortable({ id: row.id, disabled: locked });
   const style: React.CSSProperties = {
     opacity: isDragging ? 0.8 : 1,
     transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
@@ -67,73 +68,79 @@ export function TableRow({ row }: TableRowProps) {
         )}
       >
         <div className="flex">
-          <div className="sticky left-8 z-850 flex items-center bg-main">
-            {/* Row actions */}
-            <TableRowActionGroup
-              className="absolute -left-20"
-              isDragging={isDragging}
-              isMobile={isMobile}
-            >
-              <TooltipPreset
-                description={[
-                  { type: "default", text: "Click to add below" },
-                  { type: "secondary", text: "Option-click to add above" },
-                ]}
-                className="z-999 text-center"
+          {!locked && (
+            <div className="sticky left-8 z-850 flex items-center bg-main">
+              {/* Row actions */}
+              <TableRowActionGroup
+                className="absolute -left-20"
+                isDragging={isDragging}
+                isMobile={isMobile}
               >
-                <Button variant="hint" className="size-6" onClick={addNextRow}>
-                  <Icon.Plus className="size-3.5 fill-icon" />
-                </Button>
-              </TooltipPreset>
-              <Popover>
                 <TooltipPreset
                   description={[
-                    { type: "default", text: "Drag to move" },
-                    { type: "default", text: "Click to open menu" },
+                    { type: "default", text: "Click to add below" },
+                    { type: "secondary", text: "Option-click to add above" },
                   ]}
-                  disabled={isDragging}
                   className="z-999 text-center"
                 >
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="hint"
-                      className="h-6 w-4.5"
-                      {...attributes}
-                      {...listeners}
-                    >
-                      <Icon.DragHandle className="size-3.5 fill-icon" />
-                    </Button>
-                  </PopoverTrigger>
+                  <Button
+                    variant="hint"
+                    className="size-6"
+                    onClick={addNextRow}
+                  >
+                    <Icon.Plus className="size-3.5 fill-icon" />
+                  </Button>
                 </TooltipPreset>
-                <PopoverContent
-                  className="z-990 w-[265px]"
-                  side="right"
-                  align="start"
-                >
-                  <RowActionMenu rowId={row.id} />
-                </PopoverContent>
-              </Popover>
-            </TableRowActionGroup>
-            {/* Row selection */}
-            <TableRowActionGroup
-              className="absolute -left-8 *:has-data-[state=checked]:opacity-100"
-              isDragging={isDragging}
-              isMobile={isMobile}
-            >
-              <label
-                htmlFor="row-select"
-                className="z-10 flex size-8 cursor-pointer items-center justify-center"
+                <Popover>
+                  <TooltipPreset
+                    description={[
+                      { type: "default", text: "Drag to move" },
+                      { type: "default", text: "Click to open menu" },
+                    ]}
+                    disabled={isDragging}
+                    className="z-999 text-center"
+                  >
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="hint"
+                        className="h-6 w-4.5"
+                        {...attributes}
+                        {...listeners}
+                      >
+                        <Icon.DragHandle className="size-3.5 fill-icon" />
+                      </Button>
+                    </PopoverTrigger>
+                  </TooltipPreset>
+                  <PopoverContent
+                    className="z-990 w-[265px]"
+                    side="right"
+                    align="start"
+                  >
+                    <RowActionMenu rowId={row.id} />
+                  </PopoverContent>
+                </Popover>
+              </TableRowActionGroup>
+              {/* Row selection */}
+              <TableRowActionGroup
+                className="absolute -left-8 *:has-data-[state=checked]:opacity-100"
+                isDragging={isDragging}
+                isMobile={isMobile}
               >
-                <Checkbox
-                  id="row-select"
-                  size="sm"
-                  className="cursor-pointer rounded-[2px] accent-blue"
-                />
-              </label>
-            </TableRowActionGroup>
-            {/* Left pinned columns */}
-            <TableCells cells={row.getLeftVisibleCells()} />
-          </div>
+                <label
+                  htmlFor="row-select"
+                  className="z-10 flex size-8 cursor-pointer items-center justify-center"
+                >
+                  <Checkbox
+                    id="row-select"
+                    size="sm"
+                    className="cursor-pointer rounded-[2px] accent-blue"
+                  />
+                </label>
+              </TableRowActionGroup>
+              {/* Left pinned columns */}
+              <TableCells cells={row.getLeftVisibleCells()} />
+            </div>
+          )}
           {/* Center unpinned columns */}
           <TableCells cells={row.getCenterVisibleCells()} />
         </div>

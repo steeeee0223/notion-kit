@@ -24,24 +24,33 @@ export interface TableMenuState {
   id?: string;
   data?: Record<string, unknown>;
 }
+export interface TableGlobalState {
+  locked?: boolean;
+}
 
 export interface TableMenuTableState {
   menu: TableMenuState;
+  tableGlobal: TableGlobalState;
 }
 
 export interface TableMenuOptions {
   onTableMenuChange?: OnChangeFn<TableMenuState>;
+  onTableGlobalChange?: OnChangeFn<TableGlobalState>;
 }
 
 export interface TableMenuTableApi {
   getTableMenuState: () => TableMenuState;
   setTableMenuState: (state: TableMenuState) => void;
+  getTableGlobalState: () => TableGlobalState;
+  setTableGlobalState: OnChangeFn<TableGlobalState>;
+  toggleTableLocked: () => void;
 }
 
 export const TableMenuFeature: TableFeature = {
   getInitialState: (state): TableMenuTableState => {
     return {
       menu: { open: false, page: null },
+      tableGlobal: { locked: false },
       ...state,
     };
   },
@@ -51,6 +60,7 @@ export const TableMenuFeature: TableFeature = {
   ): TableMenuOptions => {
     return {
       onTableMenuChange: makeStateUpdater("menu", table),
+      onTableGlobalChange: makeStateUpdater("tableGlobal", table),
     };
   },
 
@@ -59,6 +69,14 @@ export const TableMenuFeature: TableFeature = {
     table.setTableMenuState = (menu) => {
       table.options.onTableMenuChange?.(menu);
       table.options.sync?.("table.setTableMenuState");
+    };
+    table.getTableGlobalState = () => table.getState().tableGlobal;
+    table.setTableGlobalState = (updater) => {
+      table.options.onTableGlobalChange?.(updater);
+      table.options.sync?.("table.setTableGlobalState");
+    };
+    table.toggleTableLocked = () => {
+      table.setTableGlobalState((v) => ({ ...v, locked: !v.locked }));
     };
   },
 };

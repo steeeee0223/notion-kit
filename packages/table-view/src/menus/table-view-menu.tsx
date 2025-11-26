@@ -49,7 +49,8 @@ export function TableViewMenu() {
       );
     case TableViewMenuPage.DeletedProps:
       return <DeletedPropsMenu />;
-    default:
+    default: {
+      const { locked } = table.getTableGlobalState();
       return (
         <>
           <MenuHeader title="View Settings" />
@@ -83,7 +84,17 @@ export function TableViewMenu() {
               <MenuItemSelect />
             </MenuItem>
           </MenuGroup>
+          <Separator />
+          <MenuGroup>
+            <MenuItem
+              {...(locked
+                ? { Icon: <Icon.LockOpen />, Body: "Unlock database" }
+                : { Icon: <Icon.Lock />, Body: "Lock database" })}
+              onClick={table.toggleTableLocked}
+            />
+          </MenuGroup>
         </>
       );
+    }
   }
 }

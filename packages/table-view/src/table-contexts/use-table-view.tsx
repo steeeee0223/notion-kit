@@ -12,7 +12,7 @@ import {
   type OnChangeFn,
 } from "@tanstack/react-table";
 
-import { DEFAULT_FEATURES } from "../features";
+import { DEFAULT_FEATURES, type TableGlobalState } from "../features";
 import type { ColumnDefs, ColumnInfo, Row } from "../lib/types";
 import { type Entity } from "../lib/utils";
 import type { CellPlugin } from "../plugins";
@@ -26,7 +26,7 @@ const defaultColumn: Partial<ColumnDef<Row>> = {
   size: 200,
   minSize: 100,
   maxSize: Number.MAX_SAFE_INTEGER,
-  header: ({ header }) => <TableHeaderCell header={header} />,
+  header: (props) => <TableHeaderCell {...props} />,
   cell: (props) => <TableRowCell {...props} />,
   footer: ({ column }) => <TableFooterCell column={column} />,
 };
@@ -34,16 +34,20 @@ const defaultColumn: Partial<ColumnDef<Row>> = {
 interface UseTableViewOptions<TPlugins extends CellPlugin[]>
   extends TableState<TPlugins> {
   plugins: Entity<TPlugins[number]>;
+  table?: TableGlobalState;
   onDataChange?: OnChangeFn<Row<TPlugins>[]>;
   onPropertiesChange?: OnChangeFn<ColumnDefs<TPlugins>>;
+  onTableChange?: OnChangeFn<TableGlobalState>;
 }
 
 export function useTableView<TPlugins extends CellPlugin[]>({
   plugins,
   data,
   properties,
+  table: tableGlobal,
   onDataChange,
   onPropertiesChange,
+  onTableChange,
 }: UseTableViewOptions<TPlugins>) {
   const [synced, setSynced] = useState(-1);
   const isPropertiesControlled = typeof onPropertiesChange !== "undefined";
@@ -127,6 +131,14 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     },
     _features: DEFAULT_FEATURES,
   });
+
+  if (tableGlobal) {
+    table.setOptions((v) => ({
+      ...v,
+      state: { ...v.state, tableGlobal },
+      onTableGlobalChange: onTableChange,
+    }));
+  }
 
   useEffect(() => {
     setSynced(Date.now());

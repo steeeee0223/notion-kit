@@ -5,6 +5,7 @@ import {
   flexRender,
   type Column,
   type Row as RowModel,
+  type Table,
 } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
@@ -22,21 +23,24 @@ enum CellMode {
 interface TableRowCellProps<TPlugin extends CellPlugin> {
   column: Column<Row<TPlugin[]>>;
   row: RowModel<Row<TPlugin[]>>;
+  table: Table<Row<TPlugin[]>>;
 }
 
 export function TableRowCell<TPlugin extends CellPlugin>({
   column,
   row,
+  table,
 }: TableRowCellProps<TPlugin>) {
   const [mode] = useState<CellMode>(CellMode.Normal);
 
+  const { locked } = table.getTableGlobalState();
   const data = row.original.properties[column.id];
 
   const width = column.getWidth();
   const info = column.getInfo() as ColumnInfo<TPlugin>;
   const plugin = column.getPlugin() as TPlugin;
 
-  if (!data) return;
+  if (!data) return null;
   return (
     <div
       id="notion-table-view-cell"
@@ -69,7 +73,7 @@ export function TableRowCell<TPlugin extends CellPlugin>({
           data: data.value,
           config: info.config,
           wrapped: info.wrapped,
-          disabled: row.getIsGrouped(),
+          disabled: locked,
           onChange: (updater) => column.updateCell(row.id, updater),
           onConfigChange: column.updateConfig,
         })}

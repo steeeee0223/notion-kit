@@ -26,6 +26,7 @@ import { TableRow } from "./table-row";
 export function DndTableBody() {
   const { openModal } = useModal();
   const { table } = useTableViewCtx();
+  const { locked } = table.getTableGlobalState();
   const sensors = useDndSensors();
 
   const handleRowDragEnd = useCallback(
@@ -90,18 +91,20 @@ export function DndTableBody() {
         </DndContext>
       </div>
       <div className="w-[438px]" />
-      <Button
-        id="notion-table-view-add-row"
-        tabIndex={0}
-        variant="cell"
-        className="h-[33px] w-full bg-main pl-2 leading-5"
-        onClick={() => table.addRow()}
-      >
-        <span className="sticky left-10 inline-flex items-center text-sm text-muted opacity-100 transition-opacity duration-200">
-          <Icon.Plus className="mr-[7px] ml-px size-3.5 fill-default/35" />
-          New page
-        </span>
-      </Button>
+      {!locked && (
+        <Button
+          id="notion-table-view-add-row"
+          tabIndex={0}
+          variant="cell"
+          className="h-[33px] w-full bg-main pl-2 leading-5"
+          onClick={() => table.addRow()}
+        >
+          <span className="sticky left-10 inline-flex items-center text-sm text-muted opacity-100 transition-opacity duration-200">
+            <Icon.Plus className="mr-[7px] ml-px size-3.5 fill-default/35" />
+            New page
+          </span>
+        </Button>
+      )}
     </>
   );
 }

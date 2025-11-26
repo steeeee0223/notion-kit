@@ -50,7 +50,7 @@ function TableHeaderRow() {
   const { table } = useTableViewCtx();
   const isMobile = useIsMobile();
 
-  const { columnOrder, menu } = table.getState();
+  const { columnOrder, menu, tableGlobal } = table.getState();
   const headers = table.getCenterLeafHeaders();
   const leftPinnedHeaders = table.getLeftLeafHeaders();
   const isLeftPinned = leftPinnedHeaders.length > 0;
@@ -116,14 +116,20 @@ function TableHeaderRow() {
           </div>
         </SortableContext>
       </div>
-      <Popover>
-        <PopoverTrigger asChild>
-          <TableHeaderActionCell icon={<Icon.Plus />} />
-        </PopoverTrigger>
-        <PopoverContent className="z-990" sideOffset={0} collisionPadding={12}>
-          <TypesMenu menu={TableViewMenuPage.CreateProp} />
-        </PopoverContent>
-      </Popover>
+      {!tableGlobal.locked && (
+        <Popover>
+          <PopoverTrigger asChild>
+            <TableHeaderActionCell icon={<Icon.Plus />} />
+          </PopoverTrigger>
+          <PopoverContent
+            className="z-990"
+            sideOffset={0}
+            collisionPadding={12}
+          >
+            <TypesMenu menu={TableViewMenuPage.CreateProp} />
+          </PopoverContent>
+        </Popover>
+      )}
       <Popover
         open={menu.open}
         onOpenChange={(open) => table.setTableMenuState({ open, page: null })}
