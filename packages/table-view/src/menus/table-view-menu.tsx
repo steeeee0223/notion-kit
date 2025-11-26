@@ -12,6 +12,7 @@ import { useTableViewCtx } from "../table-contexts";
 import { DeletedPropsMenu } from "./deleted-props-menu";
 import { EditPropMenu } from "./edit-prop-menu";
 import { PropsMenu } from "./props-menu";
+import { SelectGroupMenu } from "./select-group-menu";
 import { SortMenu } from "./sort-menu";
 import { TypesMenu } from "./types-menu";
 
@@ -49,52 +50,71 @@ export function TableViewMenu() {
       );
     case TableViewMenuPage.DeletedProps:
       return <DeletedPropsMenu />;
-    default: {
-      const { locked } = table.getTableGlobalState();
-      return (
-        <>
-          <MenuHeader title="View Settings" />
-          <MenuGroup>
-            <MenuItem
-              Icon={<Icon.ArrowUpDown />}
-              Body="Sort"
-              onClick={() =>
-                table.setTableMenuState({
-                  open: true,
-                  page: TableViewMenuPage.Sort,
-                })
-              }
-            >
-              <MenuItemSelect />
-            </MenuItem>
-          </MenuGroup>
-          <Separator />
-          <MenuGroup>
-            <MenuGroupHeader title="Data source settings" />
-            <MenuItem
-              Icon={<Icon.Sliders />}
-              Body="Edit properties"
-              onClick={() =>
-                table.setTableMenuState({
-                  open: true,
-                  page: TableViewMenuPage.Props,
-                })
-              }
-            >
-              <MenuItemSelect />
-            </MenuItem>
-          </MenuGroup>
-          <Separator />
-          <MenuGroup>
-            <MenuItem
-              {...(locked
-                ? { Icon: <Icon.LockOpen />, Body: "Unlock database" }
-                : { Icon: <Icon.Lock />, Body: "Lock database" })}
-              onClick={table.toggleTableLocked}
-            />
-          </MenuGroup>
-        </>
-      );
-    }
+    case TableViewMenuPage.SelectGroupBy:
+      return <SelectGroupMenu />;
+    default:
+      return <TableMenu />;
   }
+}
+
+function TableMenu() {
+  const { table } = useTableViewCtx();
+  const { locked } = table.getTableGlobalState();
+
+  return (
+    <>
+      <MenuHeader title="View Settings" />
+      <MenuGroup>
+        <MenuItem
+          Icon={<Icon.ArrowUpDown />}
+          Body="Sort"
+          onClick={() =>
+            table.setTableMenuState({
+              open: true,
+              page: TableViewMenuPage.Sort,
+            })
+          }
+        >
+          <MenuItemSelect />
+        </MenuItem>
+        <MenuItem
+          Icon={<Icon.SquareGridBelowLines />}
+          Body="Group"
+          onClick={() =>
+            table.setTableMenuState({
+              open: true,
+              page: TableViewMenuPage.SelectGroupBy,
+            })
+          }
+        >
+          <MenuItemSelect />
+        </MenuItem>
+      </MenuGroup>
+      <Separator />
+      <MenuGroup>
+        <MenuGroupHeader title="Data source settings" />
+        <MenuItem
+          Icon={<Icon.Sliders />}
+          Body="Edit properties"
+          onClick={() =>
+            table.setTableMenuState({
+              open: true,
+              page: TableViewMenuPage.Props,
+            })
+          }
+        >
+          <MenuItemSelect />
+        </MenuItem>
+      </MenuGroup>
+      <Separator />
+      <MenuGroup>
+        <MenuItem
+          {...(locked
+            ? { Icon: <Icon.LockOpen />, Body: "Unlock database" }
+            : { Icon: <Icon.Lock />, Body: "Lock database" })}
+          onClick={table.toggleTableLocked}
+        />
+      </MenuGroup>
+    </>
+  );
 }

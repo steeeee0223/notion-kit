@@ -16,6 +16,8 @@ export enum TableViewMenuPage {
   CreateProp,
   EditProp,
   ChangePropType,
+  EditGroupBy,
+  SelectGroupBy,
 }
 
 export interface TableMenuState {

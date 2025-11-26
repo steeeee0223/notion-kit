@@ -64,7 +64,7 @@ export function SortMenu() {
               Body="Add sort"
             />
           </PopoverTrigger>
-          <PopoverContent align="start">
+          <PopoverContent className="z-990" align="start">
             <PropSelectMenu />
           </PopoverContent>
         </Popover>
