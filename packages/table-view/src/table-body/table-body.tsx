@@ -20,11 +20,13 @@ import { Button } from "@notion-kit/shadcn";
 import { useDndSensors } from "../common";
 import type { Row } from "../lib/types";
 import { useTableViewCtx } from "../table-contexts";
+import { TableGroupedRow } from "./table-grouped-row";
 import { TableRow } from "./table-row";
 
 export function DndTableBody() {
   const { openModal } = useModal();
   const { table } = useTableViewCtx();
+  const { locked } = table.getTableGlobalState();
   const sensors = useDndSensors();
 
   const handleRowDragEnd = useCallback(
@@ -89,18 +91,20 @@ export function DndTableBody() {
         </DndContext>
       </div>
       <div className="w-[438px]" />
-      <Button
-        id="notion-table-view-add-row"
-        tabIndex={0}
-        variant="cell"
-        className="h-[33px] w-full bg-main pl-2 leading-5"
-        onClick={() => table.addRow()}
-      >
-        <span className="sticky left-10 inline-flex items-center text-sm text-muted opacity-100 transition-opacity duration-200">
-          <Icon.Plus className="mr-[7px] ml-px size-3.5 fill-default/35" />
-          New page
-        </span>
-      </Button>
+      {!locked && (
+        <Button
+          id="notion-table-view-add-row"
+          tabIndex={0}
+          variant="cell"
+          className="h-[33px] w-full bg-main pl-2 leading-5"
+          onClick={() => table.addRow()}
+        >
+          <span className="sticky left-10 inline-flex items-center text-sm text-muted opacity-100 transition-opacity duration-200">
+            <Icon.Plus className="mr-[7px] ml-px size-3.5 fill-default/35" />
+            New page
+          </span>
+        </Button>
+      )}
     </>
   );
 }
@@ -113,30 +117,19 @@ interface TableBodyProps {
  * un-memoized normal table body component - see memoized version below
  */
 function TableBody({ table }: TableBodyProps) {
-  const isSorted = table.getState().sorting.length > 0;
-  if (isSorted) {
-    const rows = table.getRowModel().rows;
-    return (
-      <SortableContext
-        items={rows.map((row) => row.id)}
-        strategy={verticalListSortingStrategy}
-      >
-        {rows.map((row) => (
-          <TableRow key={row.id} row={row} />
-        ))}
-      </SortableContext>
-    );
-  }
-
   const rows = table.getRowModel().rows;
   return (
     <SortableContext
       items={rows.map((row) => row.id)}
       strategy={verticalListSortingStrategy}
     >
-      {rows.map((row) => (
-        <TableRow key={row.id} row={row} />
-      ))}
+      {rows.map((row) =>
+        row.getIsGrouped() ? (
+          <TableGroupedRow key={row.id} row={row} />
+        ) : (
+          <TableRow key={row.id} row={row} />
+        ),
+      )}
     </SortableContext>
   );
 }

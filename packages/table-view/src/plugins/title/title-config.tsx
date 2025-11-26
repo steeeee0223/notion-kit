@@ -1,29 +1,38 @@
 "use client";
 
+import { useId } from "react";
+
 import { Icon } from "@notion-kit/icons";
-import { DropdownMenuItem, MenuItemAction, Switch } from "@notion-kit/shadcn";
+import {
+  DropdownMenuItem,
+  Label,
+  MenuItemAction,
+  Switch,
+} from "@notion-kit/shadcn";
 
-import { useTableViewCtx } from "../../table-contexts";
 import type { ConfigMenuProps } from "../types";
-import type { TitleConfig, TitlePlugin } from "./types";
+import type { TitleConfig } from "./types";
 
-export function TitleConfig({ propId, config }: ConfigMenuProps<TitleConfig>) {
-  const { table } = useTableViewCtx();
-  const toggleIconVisibility = () =>
-    table.setColumnTypeConfig<TitlePlugin>(propId, {
-      id: propId,
-      updater: (prev) => !prev,
-    });
+export function TitleConfig({
+  config,
+  onChange,
+}: ConfigMenuProps<TitleConfig>) {
+  const id = useId();
 
   return (
-    <DropdownMenuItem
-      onSelect={toggleIconVisibility}
-      Icon={<Icon.EmojiFace />}
-      Body="Show page icon"
-    >
-      <MenuItemAction className="flex items-center">
-        <Switch size="sm" checked={config.showIcon} />
-      </MenuItemAction>
-    </DropdownMenuItem>
+    <Label htmlFor={id}>
+      <DropdownMenuItem Icon={<Icon.EmojiFace />} Body="Show page icon">
+        <MenuItemAction className="flex items-center">
+          <Switch
+            id={id}
+            size="sm"
+            checked={config.showIcon}
+            onCheckedChange={(showIcon) =>
+              onChange((v) => ({ ...v, showIcon }))
+            }
+          />
+        </MenuItemAction>
+      </DropdownMenuItem>
+    </Label>
   );
 }

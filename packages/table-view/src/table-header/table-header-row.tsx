@@ -50,7 +50,7 @@ function TableHeaderRow() {
   const { table } = useTableViewCtx();
   const isMobile = useIsMobile();
 
-  const { columnOrder, menu } = table.getState();
+  const { columnOrder, menu, tableGlobal } = table.getState();
   const headers = table.getCenterLeafHeaders();
   const leftPinnedHeaders = table.getLeftLeafHeaders();
   const isLeftPinned = leftPinnedHeaders.length > 0;
@@ -91,7 +91,7 @@ function TableHeaderRow() {
           {isLeftPinned && (
             <div
               id="draggable-ghost-section-left"
-              className="sticky left-8 z-[830] flex bg-main shadow-header-sticky"
+              className="sticky left-8 z-830 flex bg-main shadow-header-sticky"
             >
               {leftPinnedHeaders.map((header) => (
                 <React.Fragment key={header.id}>
@@ -116,14 +116,20 @@ function TableHeaderRow() {
           </div>
         </SortableContext>
       </div>
-      <Popover>
-        <PopoverTrigger asChild>
-          <TableHeaderActionCell icon={<Icon.Plus />} />
-        </PopoverTrigger>
-        <PopoverContent sideOffset={0} collisionPadding={12}>
-          <TypesMenu menu={TableViewMenuPage.CreateProp} />
-        </PopoverContent>
-      </Popover>
+      {!tableGlobal.locked && (
+        <Popover>
+          <PopoverTrigger asChild>
+            <TableHeaderActionCell icon={<Icon.Plus />} />
+          </PopoverTrigger>
+          <PopoverContent
+            className="z-990"
+            sideOffset={0}
+            collisionPadding={12}
+          >
+            <TypesMenu menu={TableViewMenuPage.CreateProp} />
+          </PopoverContent>
+        </Popover>
+      )}
       <Popover
         open={menu.open}
         onOpenChange={(open) => table.setTableMenuState({ open, page: null })}
@@ -131,7 +137,12 @@ function TableHeaderRow() {
         <PopoverTrigger asChild>
           <TableHeaderActionCell icon={<Icon.Dots />} />
         </PopoverTrigger>
-        <PopoverContent sideOffset={0} collisionPadding={12} sticky="always">
+        <PopoverContent
+          className="z-990"
+          sideOffset={0}
+          collisionPadding={12}
+          sticky="always"
+        >
           <TableViewMenu />
         </PopoverContent>
       </Popover>

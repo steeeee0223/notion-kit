@@ -28,7 +28,7 @@ export const mockData: Row[] = [
     properties: {
       "prop-1": {
         id: "prop-1-1",
-        value: { value: "page 1" },
+        value: "page 1",
       },
       "prop-2": {
         id: "prop-1-2",
@@ -46,7 +46,7 @@ export const mockData: Row[] = [
     properties: {
       "prop-1": {
         id: "prop-2-1",
-        value: { value: "page 2" },
+        value: "page 2",
       },
       "prop-2": {
         id: "prop-2-2",

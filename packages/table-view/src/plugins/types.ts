@@ -9,6 +9,7 @@ export interface CellProps<Data, Config = undefined> {
   data: Data;
   config: Config;
   wrapped?: boolean;
+  disabled?: boolean;
   onChange: OnChangeFn<Data>;
   onConfigChange?: OnChangeFn<Config>;
 }
@@ -75,13 +76,14 @@ export interface CellPlugin<
     data: Data;
   };
   fromReadableValue: (value: string, config: Config) => Data;
-  toReadableValue: (data: Data) => string;
-  toTextValue: (data: Data) => string;
+  toReadableValue: (data: Data, row: Row) => string;
+  toTextValue: (data: Data, row: Row) => string;
   transferConfig?: <TPlugin extends CellPlugin>(
     column: ColumnInfo<TPlugin>,
     data: Row<TPlugin[]>[],
   ) => Config;
   /**
+   * @deprecated
    * @prop A reducer to handle actions related to other cells within this table.
    */
   reducer: <TPlugins extends CellPlugin[]>(

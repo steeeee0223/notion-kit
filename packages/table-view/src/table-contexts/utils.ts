@@ -27,21 +27,21 @@ export function createInitialTable(): TableState<CellPlugin[]> {
     {
       id: v4(),
       properties: {
-        [titleId]: { id: v4(), value: { value: "" } },
+        [titleId]: { id: v4(), value: "" },
       },
       ...timeData,
     },
     {
       id: v4(),
       properties: {
-        [titleId]: { id: v4(), value: { value: "" } },
+        [titleId]: { id: v4(), value: "" },
       },
       ...timeData,
     },
     {
       id: v4(),
       properties: {
-        [titleId]: { id: v4(), value: { value: "" } },
+        [titleId]: { id: v4(), value: "" },
       },
       ...timeData,
     },
@@ -71,9 +71,11 @@ export function createColumnSortingFn(plugin: CellPlugin): SortingFn<Row> {
   return (rowA, rowB, colId) => {
     const dataA = plugin.toReadableValue(
       rowA.original.properties[colId]?.value,
+      rowA.original,
     );
     const dataB = plugin.toReadableValue(
       rowB.original.properties[colId]?.value,
+      rowB.original,
     );
     return dataA.localeCompare(dataB);
   };

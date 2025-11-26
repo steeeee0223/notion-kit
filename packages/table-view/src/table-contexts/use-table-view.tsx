@@ -1,48 +1,55 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   functionalUpdate,
   getCoreRowModel,
+  getExpandedRowModel,
+  getGroupedRowModel,
   getSortedRowModel,
   useReactTable,
   type ColumnDef,
   type OnChangeFn,
 } from "@tanstack/react-table";
 
-import { DEFAULT_FEATURES } from "../features";
+import { DEFAULT_FEATURES, type TableGlobalState } from "../features";
 import type { ColumnDefs, ColumnInfo, Row } from "../lib/types";
 import { type Entity } from "../lib/utils";
 import type { CellPlugin } from "../plugins";
 import { TableRowCell } from "../table-body";
 import { TableFooterCell } from "../table-footer";
 import { TableHeaderCell } from "../table-header";
-import type { SyncedState, TableState } from "./types";
+import type { TableState } from "./types";
 import { createColumnSortingFn, getMinWidth, toPropertyEntity } from "./utils";
 
 const defaultColumn: Partial<ColumnDef<Row>> = {
   size: 200,
   minSize: 100,
   maxSize: Number.MAX_SAFE_INTEGER,
-  header: ({ header }) => <TableHeaderCell header={header} />,
-  cell: ({ row, column }) => <TableRowCell column={column} row={row} />,
+  header: (props) => <TableHeaderCell {...props} />,
+  cell: (props) => <TableRowCell {...props} />,
   footer: ({ column }) => <TableFooterCell column={column} />,
 };
 
 interface UseTableViewOptions<TPlugins extends CellPlugin[]>
   extends TableState<TPlugins> {
   plugins: Entity<TPlugins[number]>;
+  table?: TableGlobalState;
   onDataChange?: OnChangeFn<Row<TPlugins>[]>;
   onPropertiesChange?: OnChangeFn<ColumnDefs<TPlugins>>;
+  onTableChange?: OnChangeFn<TableGlobalState>;
 }
 
 export function useTableView<TPlugins extends CellPlugin[]>({
   plugins,
   data,
   properties,
+  table: tableGlobal,
   onDataChange,
   onPropertiesChange,
+  onTableChange,
 }: UseTableViewOptions<TPlugins>) {
+  const [synced, setSynced] = useState(-1);
   const isPropertiesControlled = typeof onPropertiesChange !== "undefined";
   const isDataControlled = typeof onDataChange !== "undefined";
   /** columns states */
@@ -68,11 +75,13 @@ export function useTableView<TPlugins extends CellPlugin[]>({
           accessorKey: property.name,
           minSize: getMinWidth(property.type),
           sortingFn,
+          getGroupingValue: (row) =>
+            plugin.toReadableValue(row.properties[colId]?.value, row),
         };
       }),
     [columnEntity, plugins.items],
   );
-  const handleColumnChange: OnChangeFn<Entity<ColumnInfo>> = useCallback(
+  const handleColumnChange = useCallback<OnChangeFn<Entity<ColumnInfo>>>(
     (updater) => {
       if (!onPropertiesChange) {
         setColumnEntity(updater);
@@ -95,12 +104,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     [isDataControlled, data, _dataEntity],
   );
 
-  const [synced, setSynced] = useState<SyncedState>({
-    header: -1,
-    body: -1,
-    footer: -1,
-  });
-
   /** table instance */
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -108,25 +111,38 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     data: dataEntity,
     defaultColumn,
     columnResizeMode: "onChange",
+    groupedColumnMode: false,
+    autoResetExpanded: false,
     getRowId: (row) => row.id,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getGroupedRowModel: getGroupedRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
     state: {
-      rowOrder: dataEntity.map((row) => row.id),
       columnOrder: columnEntity.ids,
       columnsInfo: columnEntity.items,
       cellPlugins: plugins.items,
     },
     onColumnInfoChange: handleColumnChange,
     onTableDataChange: onDataChange ?? setDataEntity,
-    sync: (keys) =>
-      setSynced((prev) =>
-        keys.reduce((acc, key) => ({ ...acc, [key]: Date.now() }), {
-          ...prev,
-        }),
-      ),
+    sync: (debugValue) => {
+      setSynced(Date.now());
+      console.log(`[${debugValue}] table synced`);
+    },
     _features: DEFAULT_FEATURES,
   });
+
+  if (tableGlobal) {
+    table.setOptions((v) => ({
+      ...v,
+      state: { ...v.state, tableGlobal },
+      onTableGlobalChange: onTableChange,
+    }));
+  }
+
+  useEffect(() => {
+    setSynced(Date.now());
+  }, [table]);
 
   return useMemo(
     () => ({

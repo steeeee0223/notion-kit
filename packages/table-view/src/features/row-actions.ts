@@ -1,3 +1,4 @@
+import type { DragEndEvent } from "@dnd-kit/core";
 import {
   functionalUpdate,
   type OnChangeFn,
@@ -13,6 +14,7 @@ import type { Cell, Row } from "../lib/types";
 import { getDefaultCell, insertAt } from "../lib/utils";
 import type { CellPlugin, InferData } from "../plugins";
 import { TitlePlugin } from "../plugins/title";
+import { createDragEndUpdater } from "./utils";
 
 export interface RowActionsOptions {
   onTableDataChange?: OnChangeFn<Row[]>;
@@ -35,6 +37,7 @@ export interface RowActionsTableApi {
   addRow: (payload?: { id: string; at?: "prev" | "next" }) => void;
   duplicateRow: (id: string) => void;
   deleteRow: (id: string) => void;
+  handleRowDragEnd: (e: DragEndEvent) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
 }
 
@@ -45,6 +48,11 @@ export interface RowActionsColumnApi {
     rowId: string,
     updater: Updater<InferData<TPlugin>>,
   ) => void;
+}
+
+export interface RowActionsRowApi {
+  getIsFirstChild: () => boolean;
+  getIsLastChild: () => boolean;
 }
 
 export const RowActionsFeature: TableFeature = {
@@ -81,15 +89,6 @@ export const RowActionsFeature: TableFeature = {
     /** Row API */
     table.addRow = (payload) => {
       const rowId = v4();
-      // Update row order
-      table.setRowOrder((prev) => {
-        if (payload === undefined) return [...prev, rowId];
-        const idx = prev.indexOf(payload.id);
-        return payload.at === "next"
-          ? insertAt(prev, rowId, idx + 1)
-          : insertAt(prev, rowId, idx);
-      });
-      // Update table data
       table.setTableData((prev) => {
         const now = Date.now();
         const row: Row = {
@@ -111,13 +110,6 @@ export const RowActionsFeature: TableFeature = {
     };
     table.duplicateRow = (id) => {
       const rowId = v4();
-      // Update row order
-      table.setRowOrder((prev) => {
-        const idx = prev.indexOf(id);
-        if (idx < 0) return prev;
-        return insertAt(prev, rowId, idx + 1);
-      });
-      // Update table data
       table.setTableData((prev) => {
         const idx = prev.findIndex((row) => row.id === id);
         if (idx < 0) return prev;
@@ -137,10 +129,10 @@ export const RowActionsFeature: TableFeature = {
       });
     };
     table.deleteRow = (id) => {
-      // Update row order
-      table.setRowOrder((prev) => prev.filter((rowId) => rowId !== id));
-      // Update table data
       table.setTableData((prev) => prev.filter((row) => row.id !== id));
+    };
+    table.handleRowDragEnd = (e) => {
+      table.setTableData(createDragEndUpdater(e, (v) => v.id));
     };
     table.updateRowIcon = (id, icon) => {
       const colId = table
@@ -154,18 +146,9 @@ export const RowActionsFeature: TableFeature = {
           if (row.id !== id) return row;
           const cell = row.properties[colId] as Cell<TitlePlugin> | undefined;
           if (!cell) return row;
-          // Create a new cell with updated icon value
-          const updatedCell: Cell<TitlePlugin> = {
-            ...cell,
-            value: {
-              ...cell.value,
-              icon: icon ?? undefined,
-            },
-          };
           return {
             ...row,
             icon: icon ?? undefined,
-            properties: { ...row.properties, [colId]: updatedCell },
             lastEditedAt: now,
           };
         });
@@ -183,5 +166,17 @@ export const RowActionsFeature: TableFeature = {
         ...prev,
         value: functionalUpdate(updater, prev.value),
       }));
+  },
+  createRow: (row): void => {
+    row.getIsFirstChild = () => {
+      const parent = row.getParentRow();
+      if (!parent) return false;
+      return parent.subRows[0]?.id === row.id;
+    };
+    row.getIsLastChild = () => {
+      const parent = row.getParentRow();
+      if (!parent) return false;
+      return parent.subRows.at(-1)?.id === row.id;
+    };
   },
 };

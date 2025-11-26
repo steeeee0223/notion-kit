@@ -1,33 +1,22 @@
 "use client";
 
 import { useMemo } from "react";
+import type { Table } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
 import { Button, Separator } from "@notion-kit/shadcn";
 
-import type { CellPlugin } from "./plugins";
-import { DndTableBody } from "./table-body";
-import {
-  TableViewProvider,
-  useTableViewCtx,
-  type TableProps,
-} from "./table-contexts";
-import { TableFooter } from "./table-footer";
-import { TableHeader } from "./table-header";
-import { SortSelector } from "./tools";
+import type { Row } from "../lib/types";
+import { DndTableBody } from "../table-body";
+import { TableFooter } from "../table-footer";
+import { TableHeader } from "../table-header";
+import { SortSelector } from "../tools";
 
-export function TableView<TPlugins extends CellPlugin[] = CellPlugin[]>(
-  props: TableProps<TPlugins>,
-) {
-  return (
-    <TableViewProvider {...props}>
-      <TableViewContent />
-    </TableViewProvider>
-  );
+interface TableViewContentProps {
+  table: Table<Row>;
 }
 
-export function TableViewContent() {
-  const { table } = useTableViewCtx();
+export function TableViewContent({ table }: TableViewContentProps) {
   const { sorting, columnSizingInfo, columnSizing } = table.getState();
   const isSorted = sorting.length > 0;
 
@@ -62,7 +51,7 @@ export function TableViewContent() {
       id="notion-table-view"
       className="relative float-left min-w-full px-24 pb-0 lining-nums tabular-nums select-none"
     >
-      <div className="absolute z-[9990] w-full" />
+      <div className="absolute z-9990 w-full" />
       <div className="pointer-events-none mt-0 h-0" />
       {isSorted && (
         <div className="flex pt-1">
@@ -97,7 +86,7 @@ export function TableViewContent() {
         <TableFooter />
       </div>
       <div className="pointer-events-none clear-both mt-0 h-0 translate-y-0" />
-      <div className="absolute z-[9990] w-full translate-y-[-34px]" />
+      <div className="absolute z-9990 w-full translate-y-[-34px]" />
     </div>
   );
 }

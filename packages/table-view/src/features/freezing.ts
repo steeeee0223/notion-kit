@@ -69,6 +69,7 @@ export const FreezingFeature: TableFeature = {
           ? table.getState().columnOrder.slice(0, nextState.index + 1)
           : [],
       });
+      table.options.sync?.("table.setColumnFreezing");
     };
     table.toggleColumnFreezed = (colId) => {
       const index = table.getColumn(colId)?.getIndex();

@@ -27,18 +27,12 @@ import {
   type TableMenuTableState,
 } from "./menu";
 import {
-  OrderingFeature,
-  type OrderingOptions,
-  type OrderingTableApi,
-  type OrderingTableState,
-} from "./ordering";
-import {
   RowActionsFeature,
   type RowActionsColumnApi,
   type RowActionsOptions,
+  type RowActionsRowApi,
   type RowActionsTableApi,
 } from "./row-actions";
-import { SyncFeature, type SyncOptions } from "./sync";
 
 declare module "@tanstack/react-table" {
   // merge our new feature's state with the existing table state
@@ -46,7 +40,6 @@ declare module "@tanstack/react-table" {
     extends CountingTableState,
       ColumnsInfoTableState,
       FreezingTableState,
-      OrderingTableState,
       TableMenuTableState {}
 
   // merge our new feature's options with the existing table options
@@ -54,39 +47,37 @@ declare module "@tanstack/react-table" {
     extends CountingOptions,
       ColumnsInfoOptions,
       FreezingOptions,
-      OrderingOptions,
       RowActionsOptions,
-      TableMenuOptions,
-      SyncOptions {}
+      TableMenuOptions {
+    sync?: (debugValue?: string) => void;
+  }
 
   // merge our new feature's instance APIs with the existing table instance APIs
   interface Table<TData extends RowData>
     extends CountingTableApi,
       ColumnsInfoTableApi,
       FreezingTableApi,
-      OrderingTableApi,
       RowActionsTableApi,
       TableMenuTableApi {}
 
   interface Column<TData extends RowData>
     extends ColumnInfoColumnApi,
       RowActionsColumnApi {}
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  interface Row<TData extends RowData> extends RowActionsRowApi {}
 }
 
 export * from "./columns-info";
 export * from "./counting";
 export * from "./freezing";
 export * from "./menu";
-export * from "./ordering";
 export * from "./row-actions";
-export * from "./sync";
 
 export const DEFAULT_FEATURES = [
   ColumnsInfoFeature,
   CountingFeature,
   FreezingFeature,
-  OrderingFeature,
   TableMenuFeature,
   RowActionsFeature,
-  SyncFeature,
 ];
