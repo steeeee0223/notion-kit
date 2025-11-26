@@ -80,5 +80,17 @@ export const TableMenuFeature: TableFeature = {
     table.toggleTableLocked = () => {
       table.setTableGlobalState((v) => ({ ...v, locked: !v.locked }));
     };
+
+    /**
+     * override
+     */
+    table.setSorting = (updater) => {
+      table.options.onSortingChange?.(updater);
+      table.options.sync?.("table.setSorting");
+    };
+    table.setGrouping = (updater) => {
+      table.options.onGroupingChange?.(updater);
+      table.options.sync?.("table.setGrouping");
+    };
   },
 };

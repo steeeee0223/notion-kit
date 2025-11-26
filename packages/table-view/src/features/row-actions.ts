@@ -39,6 +39,11 @@ export interface RowActionsTableApi {
   deleteRow: (id: string) => void;
   handleRowDragEnd: (e: DragEndEvent) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
+  // With Grouping API
+  addRowToGroup: <TPlugin extends CellPlugin>(payload: {
+    groupId: string;
+    value: InferData<TPlugin>;
+  }) => void;
 }
 
 export interface RowActionsColumnApi {
@@ -152,6 +157,30 @@ export const RowActionsFeature: TableFeature = {
             lastEditedAt: now,
           };
         });
+      });
+    };
+    // With Grouping API
+    table.addRowToGroup = (payload) => {
+      const rowId = v4();
+      const { groupId, value } = payload;
+      table.setTableData((prev) => {
+        const now = Date.now();
+        const row: Row = {
+          id: rowId,
+          properties: {},
+          createdAt: now,
+          lastEditedAt: now,
+        };
+        table.getState().columnOrder.forEach((colId) => {
+          const plugin = table.getColumnPlugin(colId);
+          row.properties[colId] =
+            colId === groupId
+              ? { id: v4(), value: structuredClone(value) }
+              : getDefaultCell(plugin);
+        });
+        // Here we simply append the new row to the end.
+        // Actual implementation may vary based on grouping logic.
+        return [...prev, row];
       });
     };
   },
