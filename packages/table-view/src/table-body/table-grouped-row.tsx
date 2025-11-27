@@ -1,7 +1,17 @@
 import type { Row } from "@tanstack/react-table";
 
+import { BaseModal } from "@notion-kit/common";
 import { Icon } from "@notion-kit/icons";
-import { Button, TooltipPreset } from "@notion-kit/shadcn";
+import { useModal } from "@notion-kit/modal";
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  TooltipPreset,
+} from "@notion-kit/shadcn";
 
 import type { Row as RowModel } from "../lib/types";
 import { useTableViewCtx } from "../table-contexts";
@@ -12,19 +22,32 @@ interface TableGroupedRowProps {
 
 export function TableGroupedRow({ row }: TableGroupedRowProps) {
   const { table } = useTableViewCtx();
+  const { openModal } = useModal();
 
-  const value = String(row.getGroupingValue(row.groupingColumnId ?? ""));
+  const groupId = row.groupingColumnId;
+  if (!groupId) {
+    console.error(`No grouping column id found for the grouped row ${row.id}`);
+    return null;
+  }
+  // TODO render grouning value with `row.original.properties[row.groupingColumnId]!.value`
+  const value = String(row.getGroupingValue(groupId));
+
   const addRow = () => {
-    if (!row.groupingColumnId) {
-      console.error(
-        `No grouping column id found for the grouped row ${row.id}`,
-      );
-      return;
-    }
     table.addRowToGroup({
-      groupId: row.groupingColumnId,
-      value: row.original.properties[row.groupingColumnId]!.value as unknown,
+      groupId,
+      value: row.original.properties[groupId]!.value as unknown,
     });
+  };
+  const deleteRows = () => {
+    const rowIds = row.subRows.map((subRow) => subRow.id);
+    openModal(
+      <BaseModal
+        title="Are you sure? All rows inside this group will be deleted."
+        primary="Delete"
+        secondary="Cancel"
+        onTrigger={() => table.deleteRows(rowIds)}
+      />,
+    );
   };
 
   return (
@@ -53,12 +76,25 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
           {row.subRows.length}
         </Button>
         {/* Group settings */}
-        <Button
-          variant="hint"
-          className="size-6 opacity-0 transition-opacity group-hover/grouped-row:opacity-100"
-        >
-          <Icon.Dots className="size-3.5 fill-current" />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="hint"
+              className="size-6 opacity-0 transition-opacity group-hover/grouped-row:opacity-100 aria-expanded:opacity-100"
+            >
+              <Icon.Dots className="size-3.5 fill-current" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-50">
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                Icon={<Icon.Trash />}
+                Body="Delete rows"
+                onClick={deleteRows}
+              />
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
         {/* Create button */}
         <TooltipPreset description="Create new" side="top">
           <Button

@@ -37,6 +37,7 @@ export interface RowActionsTableApi {
   addRow: (payload?: { id: string; at?: "prev" | "next" }) => void;
   duplicateRow: (id: string) => void;
   deleteRow: (id: string) => void;
+  deleteRows: (ids: string[]) => void;
   handleRowDragEnd: (e: DragEndEvent) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
   // With Grouping API
@@ -135,6 +136,10 @@ export const RowActionsFeature: TableFeature = {
     };
     table.deleteRow = (id) => {
       table.setTableData((prev) => prev.filter((row) => row.id !== id));
+    };
+    table.deleteRows = (ids) => {
+      const idSet = new Set(ids);
+      table.setTableData((prev) => prev.filter((row) => !idSet.has(row.id)));
     };
     table.handleRowDragEnd = (e) => {
       table.setTableData(createDragEndUpdater(e, (v) => v.id));
