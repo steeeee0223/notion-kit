@@ -37,8 +37,14 @@ export interface RowActionsTableApi {
   addRow: (payload?: { id: string; at?: "prev" | "next" }) => void;
   duplicateRow: (id: string) => void;
   deleteRow: (id: string) => void;
+  deleteRows: (ids: string[]) => void;
   handleRowDragEnd: (e: DragEndEvent) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
+  // With Grouping API
+  addRowToGroup: <TPlugin extends CellPlugin>(payload: {
+    groupId: string;
+    value: InferData<TPlugin>;
+  }) => void;
 }
 
 export interface RowActionsColumnApi {
@@ -59,7 +65,7 @@ export const RowActionsFeature: TableFeature = {
   getDefaultOptions: (): RowActionsOptions => {
     return {};
   },
-  createTable: (table: Table<Row>): void => {
+  createTable: (table: Table<Row>) => {
     table.setTableData = (updater) =>
       table.options.onTableDataChange?.(updater);
     /** Cell API */
@@ -131,6 +137,10 @@ export const RowActionsFeature: TableFeature = {
     table.deleteRow = (id) => {
       table.setTableData((prev) => prev.filter((row) => row.id !== id));
     };
+    table.deleteRows = (ids) => {
+      const idSet = new Set(ids);
+      table.setTableData((prev) => prev.filter((row) => !idSet.has(row.id)));
+    };
     table.handleRowDragEnd = (e) => {
       table.setTableData(createDragEndUpdater(e, (v) => v.id));
     };
@@ -154,8 +164,32 @@ export const RowActionsFeature: TableFeature = {
         });
       });
     };
+    // With Grouping API
+    table.addRowToGroup = (payload) => {
+      const rowId = v4();
+      const { groupId, value } = payload;
+      table.setTableData((prev) => {
+        const now = Date.now();
+        const row: Row = {
+          id: rowId,
+          properties: {},
+          createdAt: now,
+          lastEditedAt: now,
+        };
+        table.getState().columnOrder.forEach((colId) => {
+          const plugin = table.getColumnPlugin(colId);
+          row.properties[colId] =
+            colId === groupId
+              ? { id: v4(), value: structuredClone(value) }
+              : getDefaultCell(plugin);
+        });
+        // Here we simply append the new row to the end.
+        // Actual implementation may vary based on grouping logic.
+        return [...prev, row];
+      });
+    };
   },
-  createColumn: (column, table): void => {
+  createColumn: (column, table) => {
     /** Cell */
     column.getCell = (rowId) => table.getCell(column.id, rowId);
     column.updateCell = <TPlugin extends CellPlugin>(
@@ -167,7 +201,7 @@ export const RowActionsFeature: TableFeature = {
         value: functionalUpdate(updater, prev.value),
       }));
   },
-  createRow: (row): void => {
+  createRow: (row) => {
     row.getIsFirstChild = () => {
       const parent = row.getParentRow();
       if (!parent) return false;

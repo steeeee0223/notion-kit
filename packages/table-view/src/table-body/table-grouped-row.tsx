@@ -1,20 +1,59 @@
 import type { Row } from "@tanstack/react-table";
 
+import { BaseModal } from "@notion-kit/common";
 import { Icon } from "@notion-kit/icons";
-import { Button } from "@notion-kit/shadcn";
+import { useModal } from "@notion-kit/modal";
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  TooltipPreset,
+} from "@notion-kit/shadcn";
 
 import type { Row as RowModel } from "../lib/types";
+import { useTableViewCtx } from "../table-contexts";
 
 interface TableGroupedRowProps {
   row: Row<RowModel>;
 }
 
 export function TableGroupedRow({ row }: TableGroupedRowProps) {
-  const value = String(row.getGroupingValue(row.groupingColumnId ?? ""));
+  const { table } = useTableViewCtx();
+  const { openModal } = useModal();
+
+  const groupId = row.groupingColumnId;
+  if (!groupId) {
+    console.error(`No grouping column id found for the grouped row ${row.id}`);
+    return null;
+  }
+  // TODO render grouning value with `row.original.properties[row.groupingColumnId]!.value`
+  const value = String(row.getGroupingValue(groupId));
+
+  const addRow = () => {
+    table.addRowToGroup({
+      groupId,
+      value: row.original.properties[groupId]!.value as unknown,
+    });
+  };
+  const deleteRows = () => {
+    const rowIds = row.subRows.map((subRow) => subRow.id);
+    openModal(
+      <BaseModal
+        title="Are you sure? All rows inside this group will be deleted."
+        primary="Delete"
+        secondary="Cancel"
+        onTrigger={() => table.deleteRows(rowIds)}
+      />,
+    );
+  };
 
   return (
-    <div className="h-11">
-      <div className="mt-1.5 flex">
+    <div className="group/grouped-row h-11">
+      <div className="flex h-full items-center overflow-hidden">
+        {/* Expand button */}
         <Button
           tabIndex={0}
           variant="hint"
@@ -28,7 +67,63 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
             side={row.getIsExpanded() ? "down" : "right"}
           />
         </Button>
-        <div>{value || "(Empty)"}</div>
+        {/* Grouped value */}
+        <div className="flex max-w-100 items-center overflow-hidden px-2 text-sm/6 font-medium whitespace-nowrap">
+          <span className="truncate">{value || "(Empty)"}</span>
+        </div>
+        {/* Count */}
+        {row.getShouldShowGroupAggregates() && (
+          <Button variant="hint" size="xs" className="text-muted">
+            {row.subRows.length}
+          </Button>
+        )}
+        {/* Group settings */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="hint"
+              className="size-6 opacity-0 transition-opacity group-hover/grouped-row:opacity-100 aria-expanded:opacity-100"
+            >
+              <Icon.Dots className="size-3.5 fill-current" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-50">
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                {...(row.getShouldShowGroupAggregates()
+                  ? {
+                      Icon: <Icon.EyeHideInversePadded className="size-6" />,
+                      Body: "Hide aggregation",
+                    }
+                  : {
+                      Icon: <Icon.Eye />,
+                      Body: "Show aggregation",
+                    })}
+                onClick={row.toggleGroupAggregates}
+              />
+              <DropdownMenuItem
+                Icon={<Icon.EyeHideInversePadded className="size-6" />}
+                Body="Hide group"
+                onClick={row.toggleGroupVisibility}
+              />
+              <DropdownMenuItem
+                Icon={<Icon.Trash />}
+                Body="Delete rows"
+                onClick={deleteRows}
+              />
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        {/* Create button */}
+        <TooltipPreset description="Create new" side="top">
+          <Button
+            variant="hint"
+            className="size-6 opacity-0 transition-opacity group-hover/grouped-row:opacity-100"
+            onClick={addRow}
+          >
+            <Icon.Plus className="size-3.5 fill-current" />
+          </Button>
+        </TooltipPreset>
       </div>
     </div>
   );

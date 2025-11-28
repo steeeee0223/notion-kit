@@ -13,6 +13,7 @@ import {
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon, MenuHeader } from "../common";
+import { TableViewMenuPage } from "../features";
 import type { ColumnInfo } from "../lib/types";
 import { useTableViewCtx } from "../table-contexts";
 
@@ -32,6 +33,14 @@ export function SelectGroupMenu() {
     options,
     (col, v) => col.name.toLowerCase().includes(v) || "none".includes(v),
   );
+
+  const selectGroup = (colId: string | null) => {
+    table.setGroupingColumn(colId);
+    table.setTableMenuState({
+      open: true,
+      page: TableViewMenuPage.EditGroupBy,
+    });
+  };
 
   return (
     <>
@@ -53,7 +62,7 @@ export function SelectGroupMenu() {
         <CommandList>
           <CommandGroup className="h-40 overflow-y-auto">
             <CommandItem value="none" asChild>
-              <MenuItem Body="None" onClick={() => table.resetGrouping()}>
+              <MenuItem Body="None" onClick={() => selectGroup(null)}>
                 {groupingColId === undefined && <MenuItemCheck />}
               </MenuItem>
             </CommandItem>
@@ -61,7 +70,7 @@ export function SelectGroupMenu() {
               <CommandItem
                 key={id}
                 value={name}
-                onSelect={() => table.setGrouping([id])}
+                onSelect={() => selectGroup(id)}
                 asChild
               >
                 <MenuItem

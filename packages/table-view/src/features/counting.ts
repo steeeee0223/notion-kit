@@ -1,6 +1,5 @@
 import type {
   OnChangeFn,
-  RowData,
   Table,
   TableFeature,
   Updater,
@@ -63,9 +62,7 @@ export const CountingFeature: TableFeature = {
   },
 
   // define the new feature's default options
-  getDefaultOptions: <TData extends RowData>(
-    table: Table<TData>,
-  ): CountingOptions => {
+  getDefaultOptions: (table) => {
     return {
       enableColumnCounting: true,
       onColumnCountingChange: makeStateUpdater("columnCounting", table),
@@ -73,7 +70,7 @@ export const CountingFeature: TableFeature = {
   },
 
   // define the new feature's table instance methods
-  createTable: (table: Table<Row>): void => {
+  createTable: (table: Table<Row>) => {
     table.getColumnCounting = (colId) => {
       if (!table.options.enableColumnCounting) {
         throw new Error(
