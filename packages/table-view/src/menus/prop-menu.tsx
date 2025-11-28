@@ -120,7 +120,7 @@ export function PropMenu({ propId }: PropMenuProps) {
           Icon={<Icon.SquareGridBelowLines />}
           Body={column.getIsGrouped() ? "Ungroup" : "Group"}
           onSelect={() =>
-            table.setGrouping((v) => (v[0] === propId ? [] : [propId]))
+            table.setGroupingColumn((v) => (v === propId ? null : propId))
           }
         />
         <DropdownMenuSub>

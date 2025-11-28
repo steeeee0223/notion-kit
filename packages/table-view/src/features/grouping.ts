@@ -1,13 +1,15 @@
 import type { DragEndEvent } from "@dnd-kit/core";
-import type { OnChangeFn, TableFeature } from "@tanstack/react-table";
+import type { OnChangeFn, TableFeature, Updater } from "@tanstack/react-table";
 import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
 
+import type { ColumnInfo } from "../lib/types";
 import { createDragEndUpdater } from "./utils";
 
-export interface ExtendedGroupingState {
+interface ExtendedGroupingState {
   groupOrder: string[];
   groupVisibility: Record<string, boolean>;
   showAggregates: boolean;
+  hideEmptyGroups: boolean;
 }
 
 export interface ExtendedGroupingTableState {
@@ -19,9 +21,15 @@ export interface ExtendedGroupingOptions {
 }
 
 export interface ExtendedGroupingTableApi {
-  setGroupingState: OnChangeFn<ExtendedGroupingState>;
+  getGroupedColumnInfo: () => ColumnInfo | null;
+  getIsSomeGroupVisible: () => boolean;
+  _setGroupingState: OnChangeFn<ExtendedGroupingState>;
+  setGroupingColumn: (updater: Updater<string | null>) => void;
+  toggleHideEmptyGroups: () => void;
+  toggleGroupVisible: (groupId: string) => void;
+  toggleAllGroupsVisible: () => void;
   handleGroupedRowDragEnd: (e: DragEndEvent) => void;
-  resetGroupingState: () => void;
+  _resetGroupingState: () => void;
 }
 
 export interface ExtendedGroupingRowApi {
@@ -38,6 +46,7 @@ export const ExtendedGroupingFeature: TableFeature = {
         groupOrder: [],
         groupVisibility: {},
         showAggregates: false,
+        hideEmptyGroups: true,
       },
       ...state,
     };
@@ -50,23 +59,74 @@ export const ExtendedGroupingFeature: TableFeature = {
   },
 
   createTable: (table) => {
-    table.setGroupingState = (updater) => {
+    table.getGroupedColumnInfo = () => {
+      const { grouping } = table.getState();
+      if (grouping.length === 0) return null;
+      return table.getColumnInfo(grouping[0]!);
+    };
+    table.getIsSomeGroupVisible = () => {
+      const { groupOrder, groupVisibility } = table.getState().groupingState;
+      return groupOrder.some((groupId) => groupVisibility[groupId] ?? true);
+    };
+    table._setGroupingState = (updater) => {
       table.options.onGroupingStateChange?.(updater);
-      table.options.sync?.("table.setGroupingState");
+      table.options.sync?.("table._setGroupingState");
+    };
+    table.setGroupingColumn = (updater) => {
+      table.setGrouping((v) => {
+        const colId = functionalUpdate(updater, v.length > 0 ? v[0]! : null);
+        return colId ? [colId] : [];
+      });
+      table._resetGroupingState();
+    };
+    table.toggleHideEmptyGroups = () => {
+      table._setGroupingState((v) => ({
+        ...v,
+        hideEmptyGroups: !v.hideEmptyGroups,
+      }));
+    };
+    table.toggleGroupVisible = (groupId) => {
+      table._setGroupingState((v) => ({
+        ...v,
+        groupVisibility: {
+          ...v.groupVisibility,
+          [groupId]: !(v.groupVisibility[groupId] ?? true),
+        },
+      }));
+    };
+    table.toggleAllGroupsVisible = () => {
+      const someVisible = table.getIsSomeGroupVisible();
+      table._setGroupingState((v) => {
+        return {
+          ...v,
+          groupVisibility: v.groupOrder.reduce<Record<string, boolean>>(
+            (acc, groupId) => {
+              acc[groupId] = !someVisible;
+              return acc;
+            },
+            {},
+          ),
+        };
+      });
     };
     table.handleGroupedRowDragEnd = (e) => {
       const updater = createDragEndUpdater<string>(e, (v) => v);
-      table.setGroupingState((v) => ({
+      table._setGroupingState((v) => ({
         ...v,
-        groupOrder: functionalUpdate(updater, v.groupOrder),
+        groupOrder: functionalUpdate(
+          updater,
+          v.groupOrder.length > 0
+            ? v.groupOrder
+            : table.getGroupedRowModel().rows.map((row) => row.id),
+        ),
       }));
     };
-    table.resetGroupingState = () => {
-      table.setGroupingState({
+    table._resetGroupingState = () => {
+      table._setGroupingState((v) => ({
+        ...v,
         groupOrder: [],
         groupVisibility: {},
-        showAggregates: false,
-      });
+      }));
     };
   },
 
@@ -75,25 +135,22 @@ export const ExtendedGroupingFeature: TableFeature = {
       return table.getState().groupingState.showAggregates;
     };
     row.toggleGroupAggregates = () => {
-      table.setGroupingState((v) => ({
+      table._setGroupingState((v) => ({
         ...v,
         showAggregates: !v.showAggregates,
       }));
     };
     row.getIsGroupVisible = () => {
       if (!row.groupingColumnId || !row.getIsGrouped()) return true;
-      const { groupVisibility } = table.getState().groupingState;
-      return groupVisibility[row.id] ?? true;
+      const { groupVisibility, hideEmptyGroups } =
+        table.getState().groupingState;
+      const visible = groupVisibility[row.id] ?? true;
+      if (!visible) return false;
+      return !hideEmptyGroups || row.subRows.length > 0;
     };
     row.toggleGroupVisibility = () => {
       if (!row.groupingColumnId || !row.getIsGrouped()) return;
-      table.setGroupingState((v) => ({
-        ...v,
-        groupVisibility: {
-          ...v.groupVisibility,
-          [row.id]: !(v.groupVisibility[row.id] ?? true),
-        },
-      }));
+      table.toggleGroupVisible(row.id);
     };
   },
 };

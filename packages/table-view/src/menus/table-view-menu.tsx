@@ -10,6 +10,7 @@ import { MenuGroupHeader, MenuHeader } from "../common";
 import { TableViewMenuPage } from "../features";
 import { useTableViewCtx } from "../table-contexts";
 import { DeletedPropsMenu } from "./deleted-props-menu";
+import { EditGroupMenu } from "./edit-group-menu";
 import { EditPropMenu } from "./edit-prop-menu";
 import { PropsMenu } from "./props-menu";
 import { SelectGroupMenu } from "./select-group-menu";
@@ -52,6 +53,8 @@ export function TableViewMenu() {
       return <DeletedPropsMenu />;
     case TableViewMenuPage.SelectGroupBy:
       return <SelectGroupMenu />;
+    case TableViewMenuPage.EditGroupBy:
+      return <EditGroupMenu />;
     default:
       return <TableMenu />;
   }
@@ -60,6 +63,7 @@ export function TableViewMenu() {
 function TableMenu() {
   const { table } = useTableViewCtx();
   const { locked } = table.getTableGlobalState();
+  const groupedColumn = table.getGroupedColumnInfo();
 
   return (
     <>
@@ -83,11 +87,13 @@ function TableMenu() {
           onClick={() =>
             table.setTableMenuState({
               open: true,
-              page: TableViewMenuPage.SelectGroupBy,
+              page: groupedColumn
+                ? TableViewMenuPage.EditGroupBy
+                : TableViewMenuPage.SelectGroupBy,
             })
           }
         >
-          <MenuItemSelect />
+          <MenuItemSelect>{groupedColumn?.name ?? ""}</MenuItemSelect>
         </MenuItem>
       </MenuGroup>
       <Separator />

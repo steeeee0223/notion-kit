@@ -82,9 +82,5 @@ export const TableMenuFeature: TableFeature = {
       table.options.onSortingChange?.(updater);
       table.options.sync?.("table.setSorting");
     };
-    table.setGrouping = (updater) => {
-      table.options.onGroupingChange?.(updater);
-      table.options.sync?.("table.setGrouping");
-    };
   },
 };
