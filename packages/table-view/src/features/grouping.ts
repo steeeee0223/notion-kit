@@ -113,12 +113,7 @@ export const ExtendedGroupingFeature: TableFeature = {
       const updater = createDragEndUpdater<string>(e, (v) => v);
       table._setGroupingState((v) => ({
         ...v,
-        groupOrder: functionalUpdate(
-          updater,
-          v.groupOrder.length > 0
-            ? v.groupOrder
-            : table.getGroupedRowModel().rows.map((row) => row.id),
-        ),
+        groupOrder: functionalUpdate(updater, v.groupOrder),
       }));
     };
     table._resetGroupingState = () => {

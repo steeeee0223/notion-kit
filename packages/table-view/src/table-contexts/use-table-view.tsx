@@ -144,6 +144,16 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     setSynced(Date.now());
   }, [table]);
 
+  if (
+    table.getGroupedColumnInfo() &&
+    table.getState().groupingState.groupOrder.length === 0
+  ) {
+    table._setGroupingState((v) => ({
+      ...v,
+      groupOrder: table.getGroupedRowModel().rows.map((r) => r.id),
+    }));
+  }
+
   return useMemo(
     () => ({
       table,

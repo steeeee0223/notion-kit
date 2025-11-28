@@ -69,6 +69,8 @@ export function toPropertyEntity<TPlugins extends CellPlugin[]>(
 
 export function createColumnSortingFn(plugin: CellPlugin): SortingFn<Row> {
   return (rowA, rowB, colId) => {
+    // TODO handle grouped rows sorting
+
     const dataA = plugin.toReadableValue(
       rowA.original.properties[colId]?.value,
       rowA.original,
