@@ -21,6 +21,13 @@ import {
   type FreezingTableState,
 } from "./freezing";
 import {
+  ExtendedGroupingFeature,
+  ExtendedGroupingRowApi,
+  type ExtendedGroupingOptions,
+  type ExtendedGroupingTableApi,
+  type ExtendedGroupingTableState,
+} from "./grouping";
+import {
   TableMenuFeature,
   type TableMenuOptions,
   type TableMenuTableApi,
@@ -40,6 +47,7 @@ declare module "@tanstack/react-table" {
     extends CountingTableState,
       ColumnsInfoTableState,
       FreezingTableState,
+      ExtendedGroupingTableState,
       TableMenuTableState {}
 
   // merge our new feature's options with the existing table options
@@ -48,6 +56,7 @@ declare module "@tanstack/react-table" {
       ColumnsInfoOptions,
       FreezingOptions,
       RowActionsOptions,
+      ExtendedGroupingOptions,
       TableMenuOptions {
     sync?: (debugValue?: string) => void;
   }
@@ -58,14 +67,16 @@ declare module "@tanstack/react-table" {
       ColumnsInfoTableApi,
       FreezingTableApi,
       RowActionsTableApi,
+      ExtendedGroupingTableApi,
       TableMenuTableApi {}
 
   interface Column<TData extends RowData>
     extends ColumnInfoColumnApi,
       RowActionsColumnApi {}
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface Row<TData extends RowData> extends RowActionsRowApi {}
+  interface Row<TData extends RowData>
+    extends RowActionsRowApi,
+      ExtendedGroupingRowApi {}
 }
 
 export * from "./columns-info";
@@ -80,4 +91,5 @@ export const DEFAULT_FEATURES = [
   FreezingFeature,
   TableMenuFeature,
   RowActionsFeature,
+  ExtendedGroupingFeature,
 ];

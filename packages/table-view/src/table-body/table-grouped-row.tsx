@@ -72,9 +72,11 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
           <span className="truncate">{value || "(Empty)"}</span>
         </div>
         {/* Count */}
-        <Button variant="hint" size="xs" className="text-muted">
-          {row.subRows.length}
-        </Button>
+        {row.getShouldShowGroupAggregates() && (
+          <Button variant="hint" size="xs" className="text-muted">
+            {row.subRows.length}
+          </Button>
+        )}
         {/* Group settings */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -87,6 +89,23 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-50">
             <DropdownMenuGroup>
+              <DropdownMenuItem
+                {...(row.getShouldShowGroupAggregates()
+                  ? {
+                      Icon: <Icon.EyeHideInversePadded className="size-6" />,
+                      Body: "Hide aggregation",
+                    }
+                  : {
+                      Icon: <Icon.Eye />,
+                      Body: "Show aggregation",
+                    })}
+                onClick={row.toggleGroupAggregates}
+              />
+              <DropdownMenuItem
+                Icon={<Icon.EyeHideInversePadded className="size-6" />}
+                Body="Hide group"
+                onClick={row.toggleGroupVisibility}
+              />
               <DropdownMenuItem
                 Icon={<Icon.Trash />}
                 Body="Delete rows"

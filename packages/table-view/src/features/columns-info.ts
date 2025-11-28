@@ -99,7 +99,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     };
   },
 
-  createTable: (table: Table<Row>): void => {
+  createTable: (table: Table<Row>) => {
     /** Column Getters */
     table.getColumnInfo = (colId) => {
       const info = table.getState().columnsInfo[colId];
@@ -321,7 +321,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
   createColumn: <TPlugins extends CellPlugin[]>(
     column: Column<Row<TPlugins>>,
     table: Table<Row<TPlugins>>,
-  ): void => {
+  ) => {
     column.getInfo = () => table.getColumnInfo(column.id);
     column.getPlugin = () => table.getColumnPlugin(column.id);
     /** Column width */

@@ -1,12 +1,8 @@
 import {
   makeStateUpdater,
   type OnChangeFn,
-  type RowData,
-  type Table,
   type TableFeature,
 } from "@tanstack/react-table";
-
-import type { Row } from "../lib/types";
 
 export enum TableViewMenuPage {
   Sort,
@@ -57,16 +53,14 @@ export const TableMenuFeature: TableFeature = {
     };
   },
 
-  getDefaultOptions: <TData extends RowData>(
-    table: Table<TData>,
-  ): TableMenuOptions => {
+  getDefaultOptions: (table) => {
     return {
       onTableMenuChange: makeStateUpdater("menu", table),
       onTableGlobalChange: makeStateUpdater("tableGlobal", table),
     };
   },
 
-  createTable: (table: Table<Row>): void => {
+  createTable: (table) => {
     table.getTableMenuState = () => table.getState().menu;
     table.setTableMenuState = (menu) => {
       table.options.onTableMenuChange?.(menu);

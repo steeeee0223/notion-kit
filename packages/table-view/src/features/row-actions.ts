@@ -65,7 +65,7 @@ export const RowActionsFeature: TableFeature = {
   getDefaultOptions: (): RowActionsOptions => {
     return {};
   },
-  createTable: (table: Table<Row>): void => {
+  createTable: (table: Table<Row>) => {
     table.setTableData = (updater) =>
       table.options.onTableDataChange?.(updater);
     /** Cell API */
@@ -189,7 +189,7 @@ export const RowActionsFeature: TableFeature = {
       });
     };
   },
-  createColumn: (column, table): void => {
+  createColumn: (column, table) => {
     /** Cell */
     column.getCell = (rowId) => table.getCell(column.id, rowId);
     column.updateCell = <TPlugin extends CellPlugin>(
@@ -201,7 +201,7 @@ export const RowActionsFeature: TableFeature = {
         value: functionalUpdate(updater, prev.value),
       }));
   },
-  createRow: (row): void => {
+  createRow: (row) => {
     row.getIsFirstChild = () => {
       const parent = row.getParentRow();
       if (!parent) return false;
