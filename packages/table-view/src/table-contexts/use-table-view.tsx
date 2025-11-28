@@ -5,7 +5,6 @@ import {
   functionalUpdate,
   getCoreRowModel,
   getExpandedRowModel,
-  getGroupedRowModel,
   getSortedRowModel,
   useReactTable,
   type ColumnDef,
@@ -13,6 +12,7 @@ import {
 } from "@tanstack/react-table";
 
 import { DEFAULT_FEATURES, type TableGlobalState } from "../features";
+import { getExtendedGroupedRowModel } from "../lib/extended-grouped-row-model";
 import type { ColumnDefs, ColumnInfo, Row } from "../lib/types";
 import { type Entity } from "../lib/utils";
 import type { CellPlugin } from "../plugins";
@@ -116,7 +116,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     getRowId: (row) => row.id,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getGroupedRowModel: getGroupedRowModel(),
+    getGroupedRowModel: getExtendedGroupedRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     state: {
       columnOrder: columnEntity.ids,

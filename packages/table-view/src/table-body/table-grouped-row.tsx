@@ -87,7 +87,7 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
               <Icon.Dots className="size-3.5 fill-current" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-50">
+          <DropdownMenuContent className="z-990 w-50">
             <DropdownMenuGroup>
               <DropdownMenuItem
                 {...(row.getShouldShowGroupAggregates()

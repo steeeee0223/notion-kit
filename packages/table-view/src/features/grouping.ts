@@ -34,7 +34,6 @@ export interface ExtendedGroupingTableApi {
 
 export interface ExtendedGroupingRowApi {
   getShouldShowGroupAggregates: () => boolean;
-  getIsGroupVisible: () => boolean;
   toggleGroupAggregates: () => void;
   toggleGroupVisibility: () => void;
 }
@@ -134,14 +133,6 @@ export const ExtendedGroupingFeature: TableFeature = {
         ...v,
         showAggregates: !v.showAggregates,
       }));
-    };
-    row.getIsGroupVisible = () => {
-      if (!row.groupingColumnId || !row.getIsGrouped()) return true;
-      const { groupVisibility, hideEmptyGroups } =
-        table.getState().groupingState;
-      const visible = groupVisibility[row.id] ?? true;
-      if (!visible) return false;
-      return !hideEmptyGroups || row.subRows.length > 0;
     };
     row.toggleGroupVisibility = () => {
       if (!row.groupingColumnId || !row.getIsGrouped()) return;
