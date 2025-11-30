@@ -42,7 +42,7 @@ export function SelectOptionMenu({
         <MenuItem
           variant="warning"
           onClick={onDelete}
-          Icon={<Icon.Trash className="size-4" />}
+          Icon={<Icon.Trash />}
           Body="Delete"
         />
       </MenuGroup>

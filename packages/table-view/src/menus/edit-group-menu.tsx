@@ -1,7 +1,9 @@
 "use client";
 
+import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { flexRender } from "@tanstack/react-table";
 
 import { useIsClient } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
@@ -64,13 +66,19 @@ export function EditGroupMenu() {
             items={groupOrder}
             onDragEnd={table.handleGroupedRowDragEnd}
           >
-            {groupOrder.map((groupId) => (
-              <GroupItem
-                key={groupId}
-                info={{ id: groupId, show: groupVisibility[groupId] ?? true }}
-                onVisibilityChange={() => table.toggleGroupVisible(groupId)}
-              />
-            ))}
+            {groupOrder.map((groupId) => {
+              const renderer = table.getGroupingValueRenderer(groupId);
+              return (
+                <GroupItem
+                  key={groupId}
+                  id={groupId}
+                  visible={groupVisibility[groupId] ?? true}
+                  onVisibilityChange={() => table.toggleGroupVisible(groupId)}
+                >
+                  {flexRender(renderer, {})}
+                </GroupItem>
+              );
+            })}
           </VerticalDnd>
         </div>
       </MenuGroup>
@@ -98,13 +106,17 @@ export function EditGroupMenu() {
 }
 
 interface GroupItemProps {
-  info: { id: string; show: boolean };
+  id: string;
+  visible: boolean;
   onVisibilityChange: () => void;
 }
 
-function GroupItem({ info, onVisibilityChange }: GroupItemProps) {
-  const { id, show } = info;
-
+function GroupItem({
+  id,
+  visible,
+  children,
+  onVisibilityChange,
+}: React.PropsWithChildren<GroupItemProps>) {
   /** DND */
   const {
     attributes,
@@ -137,7 +149,7 @@ function GroupItem({ info, onVisibilityChange }: GroupItemProps) {
           <Icon.DragHandle className="size-3" />
         </div>
       }
-      Body={id}
+      Body={children}
       className="*:data-[slot=menu-item-body]:leading-normal"
     >
       <MenuItemAction className="flex items-center text-muted [&_svg]:fill-current">
@@ -151,7 +163,7 @@ function GroupItem({ info, onVisibilityChange }: GroupItemProps) {
             onVisibilityChange();
           }}
         >
-          {show ? <Icon.Eye /> : <Icon.EyeHide />}
+          {visible ? <Icon.Eye /> : <Icon.EyeHide />}
         </Button>
       </MenuItemAction>
     </MenuItem>

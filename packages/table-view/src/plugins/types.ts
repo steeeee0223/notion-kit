@@ -1,5 +1,5 @@
 import React from "react";
-import type { OnChangeFn } from "@tanstack/react-table";
+import type { OnChangeFn, Table } from "@tanstack/react-table";
 
 import type { ColumnInfo, Row } from "../lib/types";
 
@@ -19,6 +19,14 @@ export interface ConfigMenuProps<Config = unknown> {
   config: Config;
   onChange: OnChangeFn<Config>;
   onOpenChange?: (open: boolean) => void;
+}
+
+export type ComparableValue = string | number | boolean | null | undefined;
+
+export interface GroupingValueProps {
+  className?: string;
+  value: ComparableValue;
+  table: Table<Row>;
 }
 
 export interface TableDataAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {
@@ -75,6 +83,7 @@ export interface CellPlugin<
      */
     data: Data;
   };
+  // getComparableValue: (data: Data, row: Row) => ComparableValue;
   fromReadableValue: (value: string, config: Config) => Data;
   toReadableValue: (data: Data, row: Row) => string;
   toTextValue: (data: Data, row: Row) => string;
@@ -92,6 +101,7 @@ export interface CellPlugin<
   ) => TableDataAtom<TPlugins>;
   renderCell: (props: CellProps<Data, Config>) => React.ReactNode;
   renderConfigMenu?: (props: ConfigMenuProps<Config>) => React.ReactNode;
+  renderGroupingValue?: (props: GroupingValueProps) => React.ReactNode;
 }
 
 export type InferKey<TPlugin> =

@@ -51,6 +51,7 @@ export function SelectCell({
                 if (!option) return;
                 return (
                   <TooltipPreset
+                    asChild={false}
                     key={option.id}
                     description={
                       option.description

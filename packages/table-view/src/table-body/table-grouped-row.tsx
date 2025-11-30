@@ -29,8 +29,6 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
     console.error(`No grouping column id found for the grouped row ${row.id}`);
     return null;
   }
-  // TODO render grouning value with `row.original.properties[row.groupingColumnId]!.value`
-  const value = String(row.getGroupingValue(groupId));
 
   const addRow = () => {
     table.addRowToGroup({
@@ -69,7 +67,7 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
         </Button>
         {/* Grouped value */}
         <div className="flex max-w-100 items-center overflow-hidden px-2 text-sm/6 font-medium whitespace-nowrap">
-          <span className="truncate">{value || "(Empty)"}</span>
+          {row.renderGroupingValue({})}
         </div>
         {/* Count */}
         {row.getShouldShowGroupAggregates() && (
@@ -87,7 +85,7 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
               <Icon.Dots className="size-3.5 fill-current" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-50">
+          <DropdownMenuContent className="z-990 w-50">
             <DropdownMenuGroup>
               <DropdownMenuItem
                 {...(row.getShouldShowGroupAggregates()

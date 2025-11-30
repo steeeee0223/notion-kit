@@ -125,9 +125,7 @@ function TableBody({ table }: TableBodyProps) {
     >
       {rows.map((row) =>
         row.getIsGrouped() ? (
-          row.getIsGroupVisible() ? (
-            <TableGroupedRow key={row.id} row={row} />
-          ) : null
+          <TableGroupedRow key={row.id} row={row} />
         ) : (
           <TableRow key={row.id} row={row} />
         ),

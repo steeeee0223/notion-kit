@@ -26,7 +26,13 @@ export const mockProps: ColumnDefs = [
     width: "300px",
     config: {
       options: {
-        names: ["Done", "Pending", "In Progress", "Not Started"],
+        names: [
+          "Done",
+          "Pending",
+          "In Progress",
+          "Not Started",
+          "Under Review",
+        ],
         items: {
           Done: { id: "tag1", name: "Done", color: "blue" },
           Pending: { id: "tag2", name: "Pending", color: "green" },
