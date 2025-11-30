@@ -56,7 +56,7 @@ export function OptionMeta({
                   className="ml-1 grow-0"
                   onClick={toggleDesc}
                 >
-                  <Icon.InfoFilled className="fill-icon hover:fill-default/5" />
+                  <Icon.InfoFilled className="fill-default/45 hover:fill-icon" />
                 </Button>
               </TooltipPreset>
             }
@@ -69,7 +69,7 @@ export function OptionMeta({
       {showDesc && (
         <div className="flex min-h-7 w-full min-w-0 flex-auto items-center px-3 py-1 leading-[1.2] select-none">
           <Input
-            className="h-auto text-[13px]/[20px]"
+            className="text-[13px]/[20px]"
             placeholder="Add a description..."
             {...descField.props}
           />

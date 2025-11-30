@@ -1,13 +1,29 @@
 import type { DragEndEvent } from "@dnd-kit/core";
 import type { OnChangeFn, TableFeature } from "@tanstack/react-table";
-import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
+import {
+  flexRender,
+  functionalUpdate,
+  makeStateUpdater,
+} from "@tanstack/react-table";
 
 import type { ColumnInfo } from "../lib/types";
+import { ComparableValue, DefaultGroupingValue } from "../plugins";
 import { createDragEndUpdater } from "./utils";
 
 interface ExtendedGroupingState {
   groupOrder: string[];
+  /**
+   * @prop groupVisibility Mapping of group IDs to their visibility status.
+   * key: group ID
+   * value: boolean (true = visible, false = hidden)
+   */
   groupVisibility: Record<string, boolean>;
+  /**
+   * @prop groupValues Mapping of group IDs to their corresponding grouping values.
+   * key: group ID
+   * value: grouping value
+   */
+  groupValues: Record<string, ComparableValue>;
   showAggregates: boolean;
   hideEmptyGroups: boolean;
 }
@@ -30,12 +46,16 @@ export interface ExtendedGroupingTableApi {
   toggleAllGroupsVisible: () => void;
   handleGroupedRowDragEnd: (e: DragEndEvent) => void;
   _resetGroupingState: () => void;
+  getGroupingValueRenderer: (
+    groupId: string,
+  ) => (props: { className?: string }) => React.ReactNode;
 }
 
 export interface ExtendedGroupingRowApi {
   getShouldShowGroupAggregates: () => boolean;
   toggleGroupAggregates: () => void;
   toggleGroupVisibility: () => void;
+  renderGroupingValue: (props: { className?: string }) => React.ReactNode;
 }
 
 export const ExtendedGroupingFeature: TableFeature = {
@@ -44,6 +64,7 @@ export const ExtendedGroupingFeature: TableFeature = {
       groupingState: {
         groupOrder: [],
         groupVisibility: {},
+        groupValues: {},
         showAggregates: false,
         hideEmptyGroups: true,
       },
@@ -122,6 +143,29 @@ export const ExtendedGroupingFeature: TableFeature = {
         groupVisibility: {},
       }));
     };
+    table.getGroupingValueRenderer = (groupId) => {
+      return function Renderer(props) {
+        const { groupValues } = table.getState().groupingState;
+        const info = table.getGroupedColumnInfo();
+        if (!info) {
+          console.error(
+            `No grouping column id found for the grouped row ${groupId}`,
+          );
+          return null;
+        }
+        const plugin = table.getColumnPlugin(info.id);
+        const resolvedProps = {
+          ...props,
+          value: groupValues[groupId],
+          table,
+        };
+        if (plugin.renderGroupingValue) {
+          return flexRender(plugin.renderGroupingValue, resolvedProps);
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        return flexRender(DefaultGroupingValue, resolvedProps);
+      };
+    };
   },
 
   createRow: (row, table) => {
@@ -137,6 +181,16 @@ export const ExtendedGroupingFeature: TableFeature = {
     row.toggleGroupVisibility = () => {
       if (!row.groupingColumnId || !row.getIsGrouped()) return;
       table.toggleGroupVisible(row.id);
+    };
+    row.renderGroupingValue = (props) => {
+      const groupId = row.groupingColumnId;
+      if (!groupId) {
+        console.error(
+          `No grouping column id found for the grouped row ${row.id}`,
+        );
+        return null;
+      }
+      return flexRender(table.getGroupingValueRenderer(row.id), props);
     };
   },
 };

@@ -18,7 +18,7 @@ import {
 } from "../features";
 import type { ColumnDefs, ColumnInfo, Row } from "../lib/types";
 import { type Entity } from "../lib/utils";
-import type { CellPlugin } from "../plugins";
+import type { CellPlugin, ComparableValue } from "../plugins";
 import { TableRowCell } from "../table-body";
 import { TableFooterCell } from "../table-footer";
 import { TableHeaderCell } from "../table-header";
@@ -151,10 +151,15 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     table.getGroupedColumnInfo() &&
     table.getState().groupingState.groupOrder.length === 0
   ) {
-    table._setGroupingState((v) => ({
-      ...v,
-      groupOrder: table.getGroupedRowModel().rows.map((r) => r.id),
-    }));
+    table._setGroupingState((v) =>
+      table.getGroupedRowModel().rows.reduce((acc, r) => {
+        acc.groupOrder.push(r.id);
+        acc.groupValues[r.id] = r.getGroupingValue(
+          r.groupingColumnId!,
+        ) as ComparableValue;
+        return acc;
+      }, v),
+    );
   }
 
   return useMemo(

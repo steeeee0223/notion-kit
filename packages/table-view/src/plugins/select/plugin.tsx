@@ -9,6 +9,7 @@ import type { CellPlugin, TableDataAtom } from "../types";
 import { SelectCell } from "./select-cell";
 import { SelectConfigMenu } from "./select-config-menu";
 import { selectConfigReducer } from "./select-config-reducer";
+import { SelectGroupingValue } from "./select-grouping-value";
 import type {
   MultiSelectPlugin,
   SelectActions,
@@ -160,6 +161,7 @@ export function select(): SelectPlugin {
       />
     ),
     renderConfigMenu: (props) => <SelectConfigMenu {...props} />,
+    renderGroupingValue: (props) => <SelectGroupingValue {...props} />,
     reducer: selectReducer,
   };
 }
@@ -185,6 +187,7 @@ export function multiSelect(): MultiSelectPlugin {
     transferConfig: toSelectConfig,
     renderCell: (props) => <SelectCell {...props} />,
     renderConfigMenu: (props) => <SelectConfigMenu {...props} />,
+    renderGroupingValue: (props) => <SelectGroupingValue {...props} />,
     reducer: selectReducer,
   };
 }

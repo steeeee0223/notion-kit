@@ -38,6 +38,7 @@ export {
   lastEditedTime,
 };
 export type * from "./types";
+export * from "./utils";
 
 // TMP export for storybook
 export * from "./date/date-cell";

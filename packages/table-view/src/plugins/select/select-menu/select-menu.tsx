@@ -31,7 +31,7 @@ export function SelectMenu({ menu }: SelectMenuProps) {
 
   return (
     <>
-      <div className="z-10 max-h-[240px] flex-shrink-0 overflow-hidden overflow-y-auto border-b border-border">
+      <div className="z-10 max-h-60 shrink-0 overflow-hidden overflow-y-auto border-b border-border">
         <div className="flex min-w-0 flex-1 flex-col items-stretch">
           <div className="z-10 mr-0 mb-0 flex min-h-[34px] w-full cursor-text flex-nowrap items-start overflow-auto bg-input p-[4px_9px] text-sm">
             <TagsInput
@@ -41,7 +41,7 @@ export function SelectMenu({ menu }: SelectMenuProps) {
               value={{ tags, input: search }}
               onTagsChange={handleTagsChange}
               onInputChange={handleInputChange}
-              className="min-h-[34px] min-w-0 flex-grow border-none bg-transparent px-0"
+              className="min-h-[34px] min-w-0 grow border-none bg-transparent px-0"
             />
           </div>
         </div>
