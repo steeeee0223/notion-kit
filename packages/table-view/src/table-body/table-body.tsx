@@ -123,12 +123,13 @@ function TableBody({ table }: TableBodyProps) {
       items={rows.map((row) => row.id)}
       strategy={verticalListSortingStrategy}
     >
-      {rows.map((row) => {
-        // if (!row.getIsVisible()) return null;
-        if (row.getIsGrouped())
-          return <TableGroupedRow key={row.id} row={row} />;
-        return <TableRow key={row.id} row={row} />;
-      })}
+      {rows.map((row) =>
+        row.getIsGrouped() ? (
+          <TableGroupedRow key={row.id} row={row} />
+        ) : (
+          <TableRow key={row.id} row={row} />
+        ),
+      )}
     </SortableContext>
   );
 }
