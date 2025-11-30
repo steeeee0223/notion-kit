@@ -1,5 +1,5 @@
 import type { DragEndEvent } from "@dnd-kit/core";
-import type { OnChangeFn, TableFeature, Updater } from "@tanstack/react-table";
+import type { OnChangeFn, TableFeature } from "@tanstack/react-table";
 import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
 
 import type { ColumnInfo } from "../lib/types";
@@ -24,7 +24,7 @@ export interface ExtendedGroupingTableApi {
   getGroupedColumnInfo: () => ColumnInfo | null;
   getIsSomeGroupVisible: () => boolean;
   _setGroupingState: OnChangeFn<ExtendedGroupingState>;
-  setGroupingColumn: (updater: Updater<string | null>) => void;
+  setGroupingColumn: OnChangeFn<string | null>;
   toggleHideEmptyGroups: () => void;
   toggleGroupVisible: (groupId: string) => void;
   toggleAllGroupsVisible: () => void;

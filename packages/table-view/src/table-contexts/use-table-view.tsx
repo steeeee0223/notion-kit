@@ -11,8 +11,11 @@ import {
   type OnChangeFn,
 } from "@tanstack/react-table";
 
-import { DEFAULT_FEATURES, type TableGlobalState } from "../features";
-import { getExtendedGroupedRowModel } from "../lib/extended-grouped-row-model";
+import {
+  DEFAULT_FEATURES,
+  getExtendedGroupedRowModel,
+  type TableGlobalState,
+} from "../features";
 import type { ColumnDefs, ColumnInfo, Row } from "../lib/types";
 import { type Entity } from "../lib/utils";
 import type { CellPlugin } from "../plugins";

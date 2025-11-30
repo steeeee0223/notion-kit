@@ -81,6 +81,7 @@ declare module "@tanstack/react-table" {
 
 export * from "./columns-info";
 export * from "./counting";
+export * from "./extended-grouped-row-model";
 export * from "./freezing";
 export * from "./menu";
 export * from "./row-actions";
