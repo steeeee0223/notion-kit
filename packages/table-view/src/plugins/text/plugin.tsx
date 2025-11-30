@@ -1,4 +1,5 @@
 import { DefaultIcon } from "../../common";
+import { compareStrings, createCompareFn } from "../utils";
 import { TextCell } from "./text-cell";
 import type { TextPlugin } from "./types";
 
@@ -19,6 +20,7 @@ export function text(): TextPlugin {
     fromReadableValue: (value) => value,
     toReadableValue: (data) => data,
     toTextValue: (data) => data,
+    compare: createCompareFn(compareStrings),
     renderCell: (props) => <TextCell {...props} />,
     reducer: (v) => v,
   };

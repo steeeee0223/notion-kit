@@ -1,6 +1,7 @@
 import { z } from "zod/v4";
 
 import { DefaultIcon } from "../../common";
+import { compareNumbers, createCompareFn } from "../utils";
 import { NumberCell } from "./number-cell";
 import { NumberConfigMenu } from "./number-config-menu";
 import type { NumberPlugin } from "./types";
@@ -32,6 +33,13 @@ export function number(): NumberPlugin {
     },
     toReadableValue: (data) => data ?? "",
     toTextValue: (data) => data ?? "",
+    compare: createCompareFn<NumberPlugin>((a, b) => {
+      if (a === null && b === null) return 0;
+      // undefined sorts after defined values
+      if (a === null) return 1;
+      if (b === null) return -1;
+      return compareNumbers(Number(a), Number(b));
+    }),
     renderCell: (props) => <NumberCell {...props} />,
     renderConfigMenu: (props) => <NumberConfigMenu {...props} />,
     reducer: (v) => v,

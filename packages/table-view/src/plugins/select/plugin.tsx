@@ -3,6 +3,7 @@ import { v4 } from "uuid";
 
 import { getRandomColor } from "@notion-kit/utils";
 
+import { compareStrings, createCompareFn } from "../..";
 import { DefaultIcon } from "../../common";
 import type { Cell, ColumnInfo, Row } from "../../lib/types";
 import type { CellPlugin, TableDataAtom } from "../types";
@@ -148,6 +149,13 @@ export function select(): SelectPlugin {
     toReadableValue: (data) => data ?? "",
     toTextValue: (data) => data ?? "",
     transferConfig: toSelectConfig,
+    compare: createCompareFn<SelectPlugin>((a, b) => {
+      if (a === null && b === null) return 0;
+      // undefined sorts after defined values
+      if (a === null) return 1;
+      if (b === null) return -1;
+      return compareStrings(a, b);
+    }),
     renderCell: ({ data, onChange, ...props }) => (
       <SelectCell
         data={data ? [data] : []}
@@ -184,6 +192,13 @@ export function multiSelect(): MultiSelectPlugin {
       fromReadableValue(value, config, "multi-select"),
     toReadableValue: (data) => data.join(","),
     toTextValue: (data) => data.join(","),
+    compare: createCompareFn<MultiSelectPlugin>((a, b) => {
+      if (a.length === 0 && b.length === 0) return 0;
+      // empty sorts after defined values
+      if (a.length === 0) return 1;
+      if (b.length === 0) return -1;
+      return compareStrings(a[0]!, b[0]!);
+    }),
     transferConfig: toSelectConfig,
     renderCell: (props) => <SelectCell {...props} />,
     renderConfigMenu: (props) => <SelectConfigMenu {...props} />,

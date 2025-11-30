@@ -1,4 +1,5 @@
 import { DefaultIcon } from "../../common";
+import { compareNumbers, createCompareFn } from "../utils";
 import { DateCell, DatePickerCell } from "./date-cell";
 import { DateConfigMenu } from "./date-config-menu";
 import type {
@@ -32,6 +33,13 @@ export function date(): DatePlugin {
     },
     toTextValue: (data) =>
       toDateString(data, { dateFormat: "full", timeFormat: "24-hour", tz }),
+    compare: createCompareFn<DatePlugin>((a, b) => {
+      if (a.start === undefined && b.start === undefined) return 0;
+      // undefined sorts after defined values
+      if (a.start === undefined) return 1;
+      if (b.start === undefined) return -1;
+      return compareNumbers(a.start, b.start);
+    }),
     renderCell: (props) => <DatePickerCell {...props} />,
     renderConfigMenu: (props) => <DateConfigMenu {...props} />,
     reducer: (v) => v,
@@ -62,6 +70,7 @@ export function createdTime(): CreatedTimePlugin {
         { start: row.createdAt, includeTime: true },
         { dateFormat: "full", timeFormat: "24-hour", tz },
       ),
+    compare: (rowA, rowB) => compareNumbers(rowA.createdAt, rowB.createdAt),
     renderCell: ({ row, config, wrapped, disabled }) => (
       <DateCell
         data={{ start: row.createdAt, includeTime: true }}
@@ -99,6 +108,8 @@ export function lastEditedTime(): LastEditedTimePlugin {
         { start: row.lastEditedAt, includeTime: true },
         { dateFormat: "full", timeFormat: "24-hour", tz },
       ),
+    compare: (rowA, rowB) =>
+      compareNumbers(rowA.lastEditedAt, rowB.lastEditedAt),
     renderCell: ({ row, config, wrapped, disabled }) => (
       <DateCell
         data={{ start: row.lastEditedAt, includeTime: true }}
