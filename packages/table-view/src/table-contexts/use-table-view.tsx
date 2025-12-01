@@ -23,7 +23,7 @@ import { TableRowCell } from "../table-body";
 import { TableFooterCell } from "../table-footer";
 import { TableHeaderCell } from "../table-header";
 import type { TableState } from "./types";
-import { createColumnSortingFn, getMinWidth, toPropertyEntity } from "./utils";
+import { getMinWidth, toPropertyEntity } from "./utils";
 
 const defaultColumn: Partial<ColumnDef<Row>> = {
   size: 200,
@@ -72,14 +72,17 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       columnEntity.ids.map<ColumnDef<Row<TPlugins>>>((colId) => {
         const property = columnEntity.items[colId]!;
         const plugin = plugins.items[property.type]!;
-        const sortingFn = createColumnSortingFn(plugin);
         return {
           id: property.id,
           accessorKey: property.name,
           minSize: getMinWidth(property.type),
-          sortingFn,
+          sortingFn: (rowA, rowB, colId) =>
+            plugin.compare(rowA.original, rowB.original, colId),
           getGroupingValue: (row) =>
-            plugin.toReadableValue(row.properties[colId]?.value, row),
+            (plugin.toGroupValue ?? plugin.toValue)(
+              row.properties[colId]?.value,
+              row,
+            ),
         };
       }),
     [columnEntity, plugins.items],

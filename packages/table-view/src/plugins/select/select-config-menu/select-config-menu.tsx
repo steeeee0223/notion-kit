@@ -84,7 +84,7 @@ export function SelectConfigMenu({
               align="start"
               alignOffset={4}
               sideOffset={0}
-              className="w-[250px]"
+              className="z-990 w-[250px]"
               onCloseAutoFocus={(e) => e.preventDefault()}
             >
               <DropdownMenuGroup>

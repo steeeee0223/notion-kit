@@ -99,3 +99,7 @@ export function isoToTs(iso: { date: string; time: string }): number {
   const date = parse(dateStr, "yyyy-MM-dd HH:mm:ss", new Date());
   return date.getTime();
 }
+
+export function trimTs(ts: number, _by: "date") {
+  return startOfDay(ts).getTime();
+}

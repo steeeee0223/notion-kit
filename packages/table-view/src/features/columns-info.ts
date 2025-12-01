@@ -282,8 +282,8 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
               ...row.properties,
               [colId]: {
                 ...cell,
-                value: destPlugin.fromReadableValue(
-                  srcPlugin.toReadableValue(cell.value, row),
+                value: destPlugin.fromValue(
+                  srcPlugin.toValue(cell.value, row),
                   config,
                 ),
               },

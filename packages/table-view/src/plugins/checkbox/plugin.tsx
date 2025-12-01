@@ -1,4 +1,5 @@
 import { DefaultIcon } from "../../common";
+import { compareBooleans, createCompareFn } from "../utils";
 import { CheckboxCell } from "./checkbox-cell";
 import { CheckboxGroupingValue } from "./checkbox-grouping-value";
 import type { CheckboxPlugin } from "./types";
@@ -17,9 +18,10 @@ export function checkbox(): CheckboxPlugin {
       data: false,
       config: undefined,
     },
-    fromReadableValue: () => false,
-    toReadableValue: (data) => (data ? "v" : ""),
+    fromValue: () => false,
+    toValue: (data) => data,
     toTextValue: (data) => (data ? "✅" : ""),
+    compare: createCompareFn(compareBooleans),
     renderCell: (props) => <CheckboxCell {...props} />,
     renderGroupingValue: (props) => <CheckboxGroupingValue {...props} />,
     reducer: (v) => v,

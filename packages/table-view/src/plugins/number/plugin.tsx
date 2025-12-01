@@ -1,11 +1,15 @@
 import { z } from "zod/v4";
 
 import { DefaultIcon } from "../../common";
+import { compareNumbers, createCompareFn } from "../utils";
 import { NumberCell } from "./number-cell";
 import { NumberConfigMenu } from "./number-config-menu";
 import type { NumberPlugin } from "./types";
 
-const numberSchema = z.string().refine((val) => !isNaN(Number(val)));
+const numberSchema = z
+  .any()
+  .refine((val) => !isNaN(Number(val)))
+  .transform(String);
 
 export function number(): NumberPlugin {
   return {
@@ -26,12 +30,19 @@ export function number(): NumberPlugin {
         options: { color: "green", divideBy: 100, showNumber: true },
       },
     },
-    fromReadableValue: (value) => {
+    fromValue: (value) => {
       const res = numberSchema.safeParse(value);
-      return res.success ? value : null;
+      return res.success ? res.data : null;
     },
-    toReadableValue: (data) => data ?? "",
+    toValue: (data) => (data ? Number(data) : null),
     toTextValue: (data) => data ?? "",
+    compare: createCompareFn<NumberPlugin>((a, b) => {
+      if (a === null && b === null) return 0;
+      // undefined sorts after defined values
+      if (a === null) return 1;
+      if (b === null) return -1;
+      return compareNumbers(Number(a), Number(b));
+    }),
     renderCell: (props) => <NumberCell {...props} />,
     renderConfigMenu: (props) => <NumberConfigMenu {...props} />,
     reducer: (v) => v,

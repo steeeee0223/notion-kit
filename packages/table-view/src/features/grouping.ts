@@ -156,13 +156,12 @@ export const ExtendedGroupingFeature: TableFeature = {
         const plugin = table.getColumnPlugin(info.id);
         const resolvedProps = {
           ...props,
-          value: groupValues[groupId],
+          value: groupValues[groupId] ?? null,
           table,
         };
         if (plugin.renderGroupingValue) {
           return flexRender(plugin.renderGroupingValue, resolvedProps);
         }
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         return flexRender(DefaultGroupingValue, resolvedProps);
       };
     };

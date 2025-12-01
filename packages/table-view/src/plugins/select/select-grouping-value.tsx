@@ -4,6 +4,7 @@ import { TooltipPreset } from "@notion-kit/shadcn";
 import { OptionTag } from "../../common";
 import { ColumnInfo } from "../../lib/types";
 import type { GroupingValueProps } from "../types";
+import { DefaultGroupingValue } from "../utils";
 import { MultiSelectPlugin, SelectPlugin } from "./types";
 
 export function SelectGroupingValue({
@@ -11,8 +12,7 @@ export function SelectGroupingValue({
   table,
   className,
 }: GroupingValueProps) {
-  // TODO fix later
-  if (!value) return null;
+  if (!value) return <DefaultGroupingValue value="" table={table} />;
 
   const name = (value as string).split(",")[0];
   if (name === undefined) return null;

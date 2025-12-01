@@ -19,6 +19,7 @@ import {
 } from "@notion-kit/shadcn";
 
 interface TimezoneMenuProps extends React.PropsWithChildren {
+  className?: string;
   /**
    * @prop timezone
    * @example Asia/Taipei
@@ -29,6 +30,7 @@ interface TimezoneMenuProps extends React.PropsWithChildren {
 }
 
 export function TimezoneMenu({
+  className,
   currentTz,
   onChange,
   renderTrigger,
@@ -45,7 +47,7 @@ export function TimezoneMenu({
       <PopoverTrigger asChild>
         {renderTrigger({ tz: defaultTz, gmt: getGmtStr(defaultTz) })}
       </PopoverTrigger>
-      <PopoverContent className="w-[342px]">
+      <PopoverContent className={cn("w-[342px]", className)}>
         <Command shouldFilter={false}>
           <CommandInput
             value={search}
