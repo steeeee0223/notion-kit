@@ -55,7 +55,7 @@ export function getCount(table: Table<Row>, colId: string): string {
 
   const toString = (plugin: CellPlugin, r: Row) => {
     const value = plugin.toValue(r.properties[colId]?.value, r);
-    return value === null ? "" : value.toString();
+    return value === null || value === false ? "" : value.toString();
   };
 
   switch (method) {
