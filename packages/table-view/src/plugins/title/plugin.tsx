@@ -18,8 +18,8 @@ export function title(): TitlePlugin {
       data: "",
       config: { showIcon: true },
     },
-    fromReadableValue: (value) => value,
-    toReadableValue: (data) => data,
+    fromValue: (value) => value?.toString() ?? "",
+    toValue: (data) => data,
     toTextValue: (data) => data,
     compare: createCompareFn(compareStrings),
     renderCell: ({ row, data, config, ...props }) => (

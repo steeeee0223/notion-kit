@@ -26,11 +26,8 @@ export function date(): DatePlugin {
       data: {},
       config: { dateFormat: "full", timeFormat: "24-hour", tz },
     },
-    fromReadableValue: () => ({}),
-    toReadableValue: (data) => {
-      if (data.start === undefined) return "";
-      return data.start.toString();
-    },
+    fromValue: () => ({}),
+    toValue: (data) => data.start ?? null,
     toTextValue: (data) =>
       toDateString(data, { dateFormat: "full", timeFormat: "24-hour", tz }),
     compare: createCompareFn<DatePlugin>((a, b) => {
@@ -63,8 +60,8 @@ export function createdTime(): CreatedTimePlugin {
       data: null,
       config: { dateFormat: "full", timeFormat: "24-hour", tz },
     },
-    fromReadableValue: () => null,
-    toReadableValue: (_, row) => row.createdAt.toString(),
+    fromValue: () => null,
+    toValue: (_, row) => row.createdAt,
     toTextValue: (_, row) =>
       toDateString(
         { start: row.createdAt, includeTime: true },
@@ -101,8 +98,8 @@ export function lastEditedTime(): LastEditedTimePlugin {
       data: null,
       config: { dateFormat: "full", timeFormat: "24-hour", tz },
     },
-    fromReadableValue: () => null,
-    toReadableValue: (_, row) => row.lastEditedAt.toString(),
+    fromValue: () => null,
+    toValue: (_, row) => row.lastEditedAt,
     toTextValue: (_, row) =>
       toDateString(
         { start: row.lastEditedAt, includeTime: true },

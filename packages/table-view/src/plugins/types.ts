@@ -22,7 +22,7 @@ export interface ConfigMenuProps<Config = unknown> {
 }
 
 export type CompareFn<T> = (a: T, b: T) => number;
-export type ComparableValue = string | number | boolean | null | undefined;
+export type ComparableValue = string | number | boolean | null;
 
 export interface GroupingValueProps {
   className?: string;
@@ -84,8 +84,8 @@ export interface CellPlugin<
      */
     data: Data;
   };
-  fromReadableValue: (value: string, config: Config) => Data;
-  toReadableValue: (data: Data, row: Row) => string;
+  fromValue: (value: ComparableValue, config: Config) => Data;
+  toValue: (data: Data, row: Row) => ComparableValue;
   toTextValue: (data: Data, row: Row) => string;
   compare: (rowA: Row, rowB: Row, colId: string) => number;
   transferConfig?: <TPlugin extends CellPlugin>(
