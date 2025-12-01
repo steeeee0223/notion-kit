@@ -79,7 +79,10 @@ export function useTableView<TPlugins extends CellPlugin[]>({
           sortingFn: (rowA, rowB, colId) =>
             plugin.compare(rowA.original, rowB.original, colId),
           getGroupingValue: (row) =>
-            plugin.toValue(row.properties[colId]?.value, row),
+            (plugin.toGroupValue ?? plugin.toValue)(
+              row.properties[colId]?.value,
+              row,
+            ),
         };
       }),
     [columnEntity, plugins.items],

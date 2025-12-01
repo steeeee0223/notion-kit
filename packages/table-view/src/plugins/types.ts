@@ -84,8 +84,19 @@ export interface CellPlugin<
      */
     data: Data;
   };
+  /**
+   * @prop Convert a primitive value to cell data.
+   */
   fromValue: (value: ComparableValue, config: Config) => Data;
+  /**
+   * @prop Convert cell data to a primitive value.
+   */
   toValue: (data: Data, row: Row) => ComparableValue;
+  /**
+   * @prop Convert cell data to a primitive value used for grouping.
+   * If not provided, `toValue` will be used instead.
+   */
+  toGroupValue?: (data: Data, row: Row) => ComparableValue;
   toTextValue: (data: Data, row: Row) => string;
   compare: (rowA: Row, rowB: Row, colId: string) => number;
   transferConfig?: <TPlugin extends CellPlugin>(

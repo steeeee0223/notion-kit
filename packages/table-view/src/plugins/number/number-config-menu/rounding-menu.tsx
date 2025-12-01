@@ -35,7 +35,7 @@ export function RoundingMenu({ round, onUpdate }: RoundingMenuProps) {
           </MenuItemSelect>
         </MenuItem>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent className="z-990" align="end">
         <DropdownMenuGroup>
           {options.map((option) => (
             <DropdownMenuCheckboxItem

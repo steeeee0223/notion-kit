@@ -191,6 +191,7 @@ export function multiSelect(): MultiSelectPlugin {
     },
     fromValue: (value, config) => fromValue(value, config, "multi-select"),
     toValue: (data) => data.join(","),
+    toGroupValue: (data) => data[0] ?? null,
     toTextValue: (data) => data.join(","),
     compare: createCompareFn<MultiSelectPlugin>((a, b) => {
       if (a.length === 0 && b.length === 0) return 0;
