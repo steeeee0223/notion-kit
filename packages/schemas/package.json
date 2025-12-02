@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/schemas",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
