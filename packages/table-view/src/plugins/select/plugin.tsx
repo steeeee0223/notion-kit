@@ -3,10 +3,10 @@ import { v4 } from "uuid";
 
 import { getRandomColor } from "@notion-kit/utils";
 
-import { compareStrings, createCompareFn } from "../..";
 import { DefaultIcon } from "../../common";
 import type { Cell, ColumnInfo, Row } from "../../lib/types";
 import type { CellPlugin, ComparableValue, TableDataAtom } from "../types";
+import { compareStrings, createCompareFn } from "../utils";
 import { SelectCell } from "./select-cell";
 import { SelectConfigMenu } from "./select-config-menu";
 import { selectConfigReducer } from "./select-config-reducer";

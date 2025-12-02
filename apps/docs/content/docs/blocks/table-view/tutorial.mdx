@@ -21,43 +21,37 @@ export type TagData = string[];
 export interface TagConfig {
   options: string[];
 }
-export interface TagActions {
-  id: string;
-  type: "add" | "remove";
-  tag: string;
-}
-export type TagPlugin = CellPlugin<"tag", TagData, TagConfig, TagActions>;
+export type TagPlugin = CellPlugin<"tag", TagData, TagConfig>;
 ```
 
 </Step>
 <Step>
 ### Implement the Plugin
 
-```ts
+```tsx
 // tag-plugin.tsx
 import { createCompareFn } from "@notion-kit/table-view";
 
 export const tagPlugin: TagPlugin = {
-  id: 'tag',
+  id: "tag",
   default: {
-    name: 'Tags',
+    name: "Tags",
     icon: <TagIcon />, // Your own icon component
     config: { options: [] },
     data: [],
   },
   meta: {
-    name: 'Tag',
-    desc: 'A multi-select tag property',
+    name: "Tag",
+    desc: "A multi-select tag property",
     icon: <TagIcon />, // Your own icon component
   },
-  fromValue: (value, config) => value.split(',').map(tag => tag.trim()),
-  toValue: data => data.join(', '),
-  toTextValue: data => data.join(', '),
-  compare: createCompareFn<TagData>((a, b) => (a[0] ?? "").localeCompare(b[0] ?? "")),
-  reducer: (view, action) => {
-    // TODO custom reducer logic (if needed)
-    return view;
-  },
+  fromValue: (value, config) => value.split(",").map((tag) => tag.trim()),
+  toValue: (data) => data.join(", "),
+  toTextValue: (data) => data.join(", "),
+  compare: createCompareFn<TagData>((a, b) =>
+    (a[0] ?? "").localeCompare(b[0] ?? ""),
+  ),
+  reducer: (v) => v, // This is deprecated
   renderCell: (props) => <TagCell {...props} />,
   renderConfigMenu: (props) => <TagConfigMenu {...props} />,
 };
@@ -70,7 +64,11 @@ export const tagPlugin: TagPlugin = {
 ```tsx
 // tag-plugin.tsx
 
-function TagCell({ data: tags, config, onChange }: CellProps<TagPlugin>) {
+function TagCell({
+  data: tags,
+  config,
+  onChange,
+}: CellProps<TagData, TagConfig>) {
   const options = config?.options ?? [];
   return (
     <div>
@@ -130,7 +128,7 @@ function TagConfigMenu({
 
 Finally, register your plugin in the table view:
 
-```ts
+```tsx
 import { tagPlugin } from "./tag-plugin";
 
 function DatabaseView() {

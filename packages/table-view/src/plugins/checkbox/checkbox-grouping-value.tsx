@@ -1,5 +1,5 @@
 import { cn } from "@notion-kit/cn";
-import { Checkbox } from "@notion-kit/shadcn/src/checkbox";
+import { Checkbox } from "@notion-kit/shadcn";
 
 import type { GroupingValueProps } from "../types";
 
