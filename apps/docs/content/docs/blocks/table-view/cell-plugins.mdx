@@ -14,24 +14,27 @@ A `CellPlugin` is a generic interface that accepts four type parameters:
 
 ### CellPlugin
 
-| Prop                  | Type                                                              | Description                                                                                                            |
-| --------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `id`\*                | `Key`                                                             | Unique identifier of the plugin.                                                                                       |
-| `meta.name`\*         | `string`                                                          | The name of the plugin. This will be displayed in the UI.                                                              |
-| `meta.desc`\*         | `string`                                                          | The description of the plugin. This will be displayed in the UI.                                                       |
-| `meta.icon`\*         | `React.ReactNode`                                                 | The icon of the plugin. This will be displayed in the UI.                                                              |
-| `default.name`\*      | `string`                                                          | Default name used when a new column of this plugin is created.                                                         |
-| `default.icon`\*      | `React.ReactNode`                                                 | Default icon used when a new column of this plugin is created.                                                         |
-| `default.config`\*    | `Config`                                                          | Default config used when a new column of this plugin is created.                                                       |
-| `default.width`       | `number`                                                          | Default width used when a new column of this plugin is created.                                                        |
-| `default.data`\*      | `Data`                                                            | Default data used when a new cell of this plugin is created.                                                           |
-| `fromReadableValue`\* | `(value: string, config: Config) => Data`                         | Converts a readable value to the plugin's data type.                                                                   |
-| `toReadableValue`\*   | `(data: Data, row: Row) => string`                                | Converts the plugin's data type to a readable value. This is useful for sorting a column.                              |
-| `toTextValue`\*       | `(data: Data, row: Row) => string`                                | Converts the plugin's data type to a text value. This is useful for displaying/exporting the data in a compact format. |
-| `transferConfig`      | `(column: ColumnInfo<TPlugin>, data: Row<TPlugin[]>[]) => Config` | Converts the given column and rows data to this plugin configuration. This is useful for changing column types.        |
-| `reducer`\*           | `React.Reducer<TableDataAtom<TPlugins>, Actions>`                 | The reducer function to handle actions related to this plugin. This is useful for updating the table state.            |
-| `renderCell`\*        | `(props: CellProps<Data, Config>) => React.ReactNode`             | Renders the cell for this plugin. This is where you define how the cell should look and behave in the UI.              |
-| `renderConfigMenu`    | `(props: ConfigMenuProps<Config>) => React.ReactNode`             | Renders the configuration menu for this plugin. This is where you define how the column configuration should look.     |
+| Prop                  | Type                                                              | Description                                                                                                              |
+| --------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `id`\*                | `Key`                                                             | Unique identifier of the plugin.                                                                                         |
+| `meta.name`\*         | `string`                                                          | The name of the plugin. This will be displayed in the UI.                                                                |
+| `meta.desc`\*         | `string`                                                          | The description of the plugin. This will be displayed in the UI.                                                         |
+| `meta.icon`\*         | `React.ReactNode`                                                 | The icon of the plugin. This will be displayed in the UI.                                                                |
+| `default.name`\*      | `string`                                                          | Default name used when a new column of this plugin is created.                                                           |
+| `default.icon`\*      | `React.ReactNode`                                                 | Default icon used when a new column of this plugin is created.                                                           |
+| `default.config`\*    | `Config`                                                          | Default config used when a new column of this plugin is created.                                                         |
+| `default.width`       | `number`                                                          | Default width used when a new column of this plugin is created.                                                          |
+| `default.data`\*      | `Data`                                                            | Default data used when a new cell of this plugin is created.                                                             |
+| `fromValue`\*         | `(value: ComparableValue, config: Config) => Data`                | Converts value to the plugin's data type.                                                                                |
+| `toValue`\*           | `(data: Data, row: Row) => ComparableValue`                       | Converts the plugin's data type to a value. This is useful for sorting a column.                                         |
+| `toGroupValue`        | `(data: Data, row: Row) => ComparableValue`                       | Converts the plugin's data type to a grouping value. This is useful for grouping by a column.                            |
+| `toTextValue`\*       | `(data: Data, row: Row) => string`                                | Converts the plugin's data type to a string value. This is useful for displaying/exporting the data in a compact format. |
+| `transferConfig`      | `(column: ColumnInfo<TPlugin>, data: Row<TPlugin[]>[]) => Config` | Converts the given column and rows data to this plugin configuration. This is useful for changing column types.          |
+| `compare`\*           | `(rowA: Row, rowB: Row, colId: string) => number`                 | Compares two rows based on the plugin's data type. This is useful for sorting a column.                                  |
+| ~`reducer`~\*         | `React.Reducer<TableDataAtom<TPlugins>, Actions>`                 | The reducer function to handle actions related to this plugin. This is useful for updating the table state.              |
+| `renderCell`\*        | `(props: CellProps<Data, Config>) => React.ReactNode`             | Renders the cell for this plugin. This is where you define how the cell should look and behave in the UI.                |
+| `renderConfigMenu`    | `(props: ConfigMenuProps<Config>) => React.ReactNode`             | Renders the configuration menu for this plugin. This is where you define how the column configuration should look.       |
+| `renderGroupingValue` | `(props: GroupingValueProps) => React.ReactNode`                  | Renders the grouping value for this plugin. This is where you define how the grouping value should look.                 |
 
 ### CellProps
 
@@ -52,6 +55,13 @@ A `CellPlugin` is a generic interface that accepts four type parameters:
 | `propId`\*   | `string`             | The ID of the column this configuration menu belongs to. This is useful for identifying the column in the table. |
 | `config`\*   | `Config`             | The configuration of the column. This can be used to customize the column's behavior.                            |
 | `onChange`\* | `OnChangeFn<Config>` | A callback function that is called when the column configuration changes.                                        |
+
+### GroupingValueProps
+
+| Prop      | Type              | Description         |
+| --------- | ----------------- | ------------------- |
+| `value`\* | `ComparableValue` | The grouping value. |
+| `table`\* | `Table<Row>`      | The table instance. |
 
 ### TableDataAtom
 

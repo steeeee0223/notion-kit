@@ -35,6 +35,7 @@ export type TagPlugin = CellPlugin<"tag", TagData, TagConfig, TagActions>;
 
 ```ts
 // tag-plugin.tsx
+import { createCompareFn } from "@notion-kit/table-view";
 
 export const tagPlugin: TagPlugin = {
   id: 'tag',
@@ -49,19 +50,16 @@ export const tagPlugin: TagPlugin = {
     desc: 'A multi-select tag property',
     icon: <TagIcon />, // Your own icon component
   },
-  fromReadableValue: (value, config) => value.split(',').map(tag => tag.trim()),
-  toReadableValue: data => data.join(', '),
+  fromValue: (value, config) => value.split(',').map(tag => tag.trim()),
+  toValue: data => data.join(', '),
   toTextValue: data => data.join(', '),
+  compare: createCompareFn<TagData>((a, b) => a[0].localeCompare(b[0])),
   reducer: (view, action) => {
     // TODO custom reducer logic (if needed)
     return view;
   },
-  renderCell: ({ data, config, onChange }) => {
-    return <TagCell tags={data} options={config?.options ?? []} onChange={onChange} />;
-  },
-  renderConfigMenu: ({ config, propId }) => {
-    return <TagConfigMenu config={config} propId={propId} />;
-  }
+  renderCell: (props) => <TagCell {...props} />,
+  renderConfigMenu: (props) => <TagConfigMenu {...props} />,
 };
 ```
 
@@ -72,15 +70,7 @@ export const tagPlugin: TagPlugin = {
 ```tsx
 // tag-plugin.tsx
 
-function TagCell({
-  tags,
-  options,
-  onChange,
-}: {
-  tags: string[];
-  options: string[];
-  onChange?: (next: string[]) => void;
-}) {
+function TagCell({ tags, options, onChange }: CellProps<TagPlugin>) {
   return (
     <div>
       {options.map((tag) => (
@@ -109,7 +99,11 @@ function TagCell({
 ```tsx
 // tag-plugin.tsx
 
-function TagConfigMenu({ config, propId }: ConfigMenuProps<TagConfig>) {
+function TagConfigMenu({
+  config,
+  propId,
+  onChange,
+}: ConfigMenuProps<TagConfig>) {
   return (
     <div>
       <label htmlFor={`${propId}-options`}>
@@ -121,6 +115,7 @@ function TagConfigMenu({ config, propId }: ConfigMenuProps<TagConfig>) {
         onBlur={(e) => {
           const options = e.target.value.split(",").map((o) => o.trim());
           // persist config change using your system
+          onChange({ options });
         }}
       />
     </div>
