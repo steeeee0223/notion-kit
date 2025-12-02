@@ -70,7 +70,8 @@ export const tagPlugin: TagPlugin = {
 ```tsx
 // tag-plugin.tsx
 
-function TagCell({ tags, options, onChange }: CellProps<TagPlugin>) {
+function TagCell({ data: tags, config, onChange }: CellProps<TagPlugin>) {
+  const options = config?.options ?? [];
   return (
     <div>
       {options.map((tag) => (
