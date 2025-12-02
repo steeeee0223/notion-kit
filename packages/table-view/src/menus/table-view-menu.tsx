@@ -102,6 +102,7 @@ function TableMenu() {
         <MenuItem
           Icon={<Icon.Sliders />}
           Body="Edit properties"
+          disabled={locked}
           onClick={() =>
             table.setTableMenuState({
               open: true,
