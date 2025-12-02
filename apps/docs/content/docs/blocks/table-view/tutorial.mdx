@@ -48,7 +48,7 @@ export const tagPlugin: TagPlugin = {
   fromValue: (value, config) => value.split(",").map((tag) => tag.trim()),
   toValue: (data) => data.join(", "),
   toTextValue: (data) => data.join(", "),
-  compare: createCompareFn<TagData>((a, b) =>
+  compare: createCompareFn<TagPlugin>((a, b) =>
     (a[0] ?? "").localeCompare(b[0] ?? ""),
   ),
   reducer: (v) => v, // This is deprecated
