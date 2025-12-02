@@ -53,7 +53,7 @@ export const tagPlugin: TagPlugin = {
   fromValue: (value, config) => value.split(',').map(tag => tag.trim()),
   toValue: data => data.join(', '),
   toTextValue: data => data.join(', '),
-  compare: createCompareFn<TagData>((a, b) => a[0].localeCompare(b[0])),
+  compare: createCompareFn<TagData>((a, b) => (a[0] ?? "").localeCompare(b[0] ?? "")),
   reducer: (view, action) => {
     // TODO custom reducer logic (if needed)
     return view;
