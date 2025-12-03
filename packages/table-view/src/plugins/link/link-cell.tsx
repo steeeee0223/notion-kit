@@ -5,6 +5,7 @@ import { cn } from "@notion-kit/cn";
 import { CellTrigger, CopyButton, TextInputPopover } from "../../common";
 import { wrappedClassName } from "../../lib/utils";
 import type { CellProps } from "../types";
+import { listCellWidth } from "../utils";
 
 interface LinkCellProps extends CellProps<string> {
   type: "email" | "phone" | "url";
@@ -15,6 +16,7 @@ export function LinkCell({
   data,
   wrapped,
   disabled,
+  layout,
   onChange,
 }: LinkCellProps) {
   return (
@@ -23,14 +25,20 @@ export function LinkCell({
       onUpdate={onChange}
       renderTrigger={() => (
         <CellTrigger
-          className="group/link-cell"
+          className={cn(
+            "group/link-cell",
+            layout === "list" && listCellWidth("link"),
+          )}
           wrapped={wrapped}
           aria-disabled={disabled}
+          layout={layout}
         >
-          <CopyButton
-            className="hidden group-hover/link-cell:flex"
-            value={data}
-          />
+          {layout === "table" && (
+            <CopyButton
+              className="hidden group-hover/link-cell:flex"
+              value={data}
+            />
+          )}
           <div className={cn("leading-normal", wrappedClassName(wrapped))}>
             <a
               href={getHref(type, data)}

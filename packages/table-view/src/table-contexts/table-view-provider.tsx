@@ -8,6 +8,7 @@ import { TooltipProvider } from "@notion-kit/shadcn";
 
 import type { Row } from "../lib/types";
 import { arrayToEntity } from "../lib/utils";
+import { ListViewContent } from "../list-view";
 import { DEFAULT_PLUGINS, DefaultPlugins, type CellPlugin } from "../plugins";
 import { TableViewContent } from "./table-view-content";
 import type { TableProps } from "./types";
@@ -18,7 +19,7 @@ interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
   __synced: number;
 }
 
-const TableViewContext = createContext<TableViewCtx | null>(null);
+export const TableViewContext = createContext<TableViewCtx | null>(null);
 
 export function useTableViewCtx() {
   const ctx = use(TableViewContext);
@@ -35,12 +36,17 @@ export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
     plugins: arrayToEntity(plugins),
     ...props,
   });
+  const { layout } = ctx.table.getTableGlobalState();
 
   return (
     <TableViewContext value={ctx}>
       <TooltipProvider delayDuration={500}>
         <ModalProvider>
-          <TableViewContent table={ctx.table} />
+          {layout === "list" ? (
+            <ListViewContent />
+          ) : (
+            <TableViewContent table={ctx.table} />
+          )}
         </ModalProvider>
       </TooltipProvider>
     </TableViewContext>

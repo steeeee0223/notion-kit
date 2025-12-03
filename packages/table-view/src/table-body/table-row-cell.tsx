@@ -1,12 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  flexRender,
-  type Column,
-  type Row as RowModel,
-  type Table,
-} from "@tanstack/react-table";
+import { CellContext, flexRender } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
 import { Button } from "@notion-kit/shadcn";
@@ -20,17 +15,11 @@ enum CellMode {
   Select = "select",
 }
 
-interface TableRowCellProps<TPlugin extends CellPlugin> {
-  column: Column<Row<TPlugin[]>>;
-  row: RowModel<Row<TPlugin[]>>;
-  table: Table<Row<TPlugin[]>>;
-}
-
 export function TableRowCell<TPlugin extends CellPlugin>({
   column,
   row,
   table,
-}: TableRowCellProps<TPlugin>) {
+}: CellContext<Row<TPlugin[]>, unknown>) {
   const [mode] = useState<CellMode>(CellMode.Normal);
 
   const { locked } = table.getTableGlobalState();

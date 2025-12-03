@@ -9,12 +9,14 @@ export function CheckboxCell({
   data,
   wrapped,
   disabled,
+  layout,
   onChange,
 }: CellProps<boolean>) {
   return (
     <CellTrigger
       className="py-2.5"
       wrapped={wrapped}
+      layout={layout}
       aria-disabled={disabled}
       onPointerDown={() => onChange((v) => !v)}
     >

@@ -7,25 +7,23 @@ import { Button, TooltipPreset } from "@notion-kit/shadcn";
 
 import { CellTrigger, TextInputPopover } from "../../common";
 import { wrappedClassName } from "../../lib/utils";
+import type { CellProps } from "../types";
+import type { TitleConfig } from "./types";
 
-interface TitleCellProps {
+interface TitleCellProps extends CellProps<string, TitleConfig> {
   icon?: IconData;
-  value: string;
-  wrapped?: boolean;
-  disabled?: boolean;
-  onChange: (value: string) => void;
 }
 
 export function TitleCell({
   icon,
-  value,
+  data,
   wrapped,
   disabled,
   onChange,
 }: TitleCellProps) {
   return (
     <TextInputPopover
-      value={value}
+      value={data}
       onUpdate={onChange}
       renderTrigger={({ width }) => (
         <CellTrigger wrapped={wrapped} aria-disabled={disabled}>
@@ -62,7 +60,7 @@ export function TitleCell({
                 wrappedClassName(wrapped),
               )}
             >
-              {value}
+              {data}
             </span>
           </div>
         </CellTrigger>

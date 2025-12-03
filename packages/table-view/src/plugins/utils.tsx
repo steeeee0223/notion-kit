@@ -1,3 +1,5 @@
+import { cn } from "@notion-kit/cn";
+
 import type { Row } from "../lib/types";
 import type {
   CellPlugin,
@@ -44,4 +46,21 @@ export function createCompareFn<TPlugin extends CellPlugin>(
     const dataB = rowB.properties[colId]?.value as InferData<TPlugin>;
     return compareFn(dataA, dataB);
   };
+}
+
+export function listCellWidth(type: string) {
+  switch (type) {
+    case "checkbox":
+      return cn("min-w-fit");
+    case "time":
+    case "number":
+      return cn("max-w-[max(150px,16%)] min-w-25");
+    case "text":
+    case "select":
+      return cn("max-w-[max(200px,16%)] min-w-5");
+    case "link":
+      return cn("max-w-[max(150px,16%)] min-w-5");
+    default:
+      return "";
+  }
 }

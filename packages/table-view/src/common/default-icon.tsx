@@ -1,6 +1,8 @@
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 
+import type { LayoutType } from "../features";
+
 interface DefaultIconProps {
   type: string;
   className?: string;
@@ -48,4 +50,30 @@ export function ColorIcon({ color }: ColorIconProps) {
       style={{ backgroundColor: color }}
     />
   );
+}
+
+interface LayoutIconProps {
+  layout: LayoutType;
+  className?: string;
+}
+
+export function LayoutIcon({ layout, className }: LayoutIconProps) {
+  switch (layout) {
+    case "table":
+      return <Icon.ViewTable className={className} />;
+    case "board":
+      return <Icon.ViewBoard className={className} />;
+    case "timeline":
+      return <Icon.ViewTimeline className={className} />;
+    case "calendar":
+      return <Icon.ViewCalendar className={className} />;
+    case "list":
+      return <Icon.BulletedList className={className} />;
+    case "gallery":
+      return <Icon.SquareGrid2x2 className={className} />;
+    case "chart":
+      return <Icon.ViewChart className={className} />;
+    default:
+      return null;
+  }
 }
