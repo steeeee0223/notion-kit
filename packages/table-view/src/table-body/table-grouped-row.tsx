@@ -82,6 +82,7 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
+                  aria-label="Group options"
                   variant="hint"
                   className="size-6 opacity-0 transition-opacity group-hover/grouped-row:opacity-100 aria-expanded:opacity-100"
                 >
@@ -120,6 +121,7 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
             {/* Create button */}
             <TooltipPreset description="Create new" side="top">
               <Button
+                aria-label="Add row"
                 variant="hint"
                 className="size-6 opacity-0 transition-opacity group-hover/grouped-row:opacity-100"
                 onClick={addRow}
