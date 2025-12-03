@@ -1,4 +1,3 @@
-import type { SortingFn } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { ColumnDefs, ColumnInfo, PluginType, Row } from "../lib/types";
@@ -27,21 +26,21 @@ export function createInitialTable(): TableState<CellPlugin[]> {
     {
       id: v4(),
       properties: {
-        [titleId]: { id: v4(), value: { value: "" } },
+        [titleId]: { id: v4(), value: "" },
       },
       ...timeData,
     },
     {
       id: v4(),
       properties: {
-        [titleId]: { id: v4(), value: { value: "" } },
+        [titleId]: { id: v4(), value: "" },
       },
       ...timeData,
     },
     {
       id: v4(),
       properties: {
-        [titleId]: { id: v4(), value: { value: "" } },
+        [titleId]: { id: v4(), value: "" },
       },
       ...timeData,
     },
@@ -65,16 +64,4 @@ export function toPropertyEntity<TPlugins extends CellPlugin[]>(
     },
     { ids: [], items: {} },
   );
-}
-
-export function createColumnSortingFn(plugin: CellPlugin): SortingFn<Row> {
-  return (rowA, rowB, colId) => {
-    const dataA = plugin.toReadableValue(
-      rowA.original.properties[colId]?.value,
-    );
-    const dataB = plugin.toReadableValue(
-      rowB.original.properties[colId]?.value,
-    );
-    return dataA.localeCompare(dataB);
-  };
 }

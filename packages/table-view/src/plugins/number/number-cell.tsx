@@ -13,6 +13,7 @@ export function NumberCell({
   data,
   config,
   wrapped,
+  disabled,
   onChange,
 }: InferCellProps<NumberPlugin>) {
   const value = data ?? "";
@@ -28,7 +29,11 @@ export function NumberCell({
       value={value}
       onUpdate={handleUpdate}
       renderTrigger={() => (
-        <CellTrigger className="group/number-cell h-9" wrapped={wrapped}>
+        <CellTrigger
+          className="group/number-cell h-9"
+          wrapped={wrapped}
+          aria-disabled={disabled}
+        >
           <CopyButton
             className="hidden justify-start group-hover/number-cell:flex"
             value={value}
@@ -157,7 +162,7 @@ function getNumberValue(
         });
 
       case "percent":
-        return num.toLocaleString(undefined, {
+        return (num / 100).toLocaleString(undefined, {
           style: "percent",
           minimumFractionDigits: roundDigits,
           maximumFractionDigits: roundDigits,

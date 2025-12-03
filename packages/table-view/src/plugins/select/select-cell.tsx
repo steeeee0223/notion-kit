@@ -22,6 +22,7 @@ export function SelectCell({
   config,
   data: options,
   wrapped,
+  disabled,
   onChange,
 }: CellProps<string[], SelectConfig>) {
   const [open, setOpen] = useState(false);
@@ -37,7 +38,7 @@ export function SelectCell({
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
-        <CellTrigger ref={ref} wrapped={wrapped}>
+        <CellTrigger ref={ref} wrapped={wrapped} aria-disabled={disabled}>
           <div className="flex items-center justify-between">
             <div
               className={cn(
@@ -50,6 +51,7 @@ export function SelectCell({
                 if (!option) return;
                 return (
                   <TooltipPreset
+                    asChild={false}
                     key={option.id}
                     description={
                       option.description
@@ -73,7 +75,7 @@ export function SelectCell({
         align="start"
         side="bottom"
         sideOffset={-rect.height}
-        className="max-h-[773px] min-h-[34px] w-[300px] overflow-visible backdrop-filter-none"
+        className="z-990 max-h-[773px] min-h-[34px] w-[300px] overflow-visible backdrop-filter-none"
       >
         <SelectMenu menu={menu} />
       </PopoverContent>

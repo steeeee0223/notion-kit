@@ -6,13 +6,22 @@ import { CellTrigger, CopyButton, TextInputPopover } from "../../common";
 import { wrappedClassName } from "../../lib/utils";
 import type { CellProps } from "../types";
 
-export function TextCell({ data, wrapped, onChange }: CellProps<string>) {
+export function TextCell({
+  data,
+  wrapped,
+  disabled,
+  onChange,
+}: CellProps<string>) {
   return (
     <TextInputPopover
       value={data}
       onUpdate={onChange}
       renderTrigger={() => (
-        <CellTrigger className="group/text-cell" wrapped={wrapped}>
+        <CellTrigger
+          className="group/text-cell"
+          wrapped={wrapped}
+          aria-disabled={disabled}
+        >
           <CopyButton
             className="hidden group-hover/text-cell:flex"
             value={data}

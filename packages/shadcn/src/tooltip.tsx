@@ -81,6 +81,7 @@ function TooltipPreset({
   description,
   disabled,
   side = "bottom",
+  asChild = true,
   ...props
 }: TooltipPresetProps) {
   const body =
@@ -92,7 +93,7 @@ function TooltipPreset({
 
   return (
     <Tooltip>
-      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipTrigger asChild={asChild}>{children}</TooltipTrigger>
       {!disabled && (
         <TooltipContent side={side} {...props}>
           {body}

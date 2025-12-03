@@ -1,6 +1,10 @@
+import { trimTs } from "@notion-kit/utils";
+
 import { DefaultIcon } from "../../common";
+import { compareNumbers, createCompareFn } from "../utils";
 import { DateCell, DatePickerCell } from "./date-cell";
 import { DateConfigMenu } from "./date-config-menu";
+import { DateGroupingValue } from "./date-grouping-value";
 import type {
   CreatedTimePlugin,
   DatePlugin,
@@ -25,22 +29,31 @@ export function date(): DatePlugin {
       data: {},
       config: { dateFormat: "full", timeFormat: "24-hour", tz },
     },
-    fromReadableValue: () => ({}),
-    toReadableValue: (data) => {
-      if (data.start === undefined) return "";
-      return data.start.toString();
-    },
+    fromValue: () => ({}),
+    toValue: (data) => data.start ?? null,
     toTextValue: (data) =>
       toDateString(data, { dateFormat: "full", timeFormat: "24-hour", tz }),
+    toGroupValue: (data) => {
+      if (data.start === undefined) return null;
+      return trimTs(data.start, "date");
+    },
+    compare: createCompareFn<DatePlugin>((a, b) => {
+      if (a.start === undefined && b.start === undefined) return 0;
+      // undefined sorts after defined values
+      if (a.start === undefined) return 1;
+      if (b.start === undefined) return -1;
+      return compareNumbers(a.start, b.start);
+    }),
     renderCell: (props) => <DatePickerCell {...props} />,
     renderConfigMenu: (props) => <DateConfigMenu {...props} />,
+    renderGroupingValue: (props) => <DateGroupingValue {...props} />,
     reducer: (v) => v,
   };
 }
 
 export function createdTime(): CreatedTimePlugin {
   const id = "created-time";
-  const name = "Created Time";
+  const name = "Created time";
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return {
     id,
@@ -55,28 +68,32 @@ export function createdTime(): CreatedTimePlugin {
       data: null,
       config: { dateFormat: "full", timeFormat: "24-hour", tz },
     },
-    fromReadableValue: () => null,
-    toReadableValue: (data) => (data === null ? "" : data.toString()),
-    toTextValue: (data) =>
+    fromValue: () => null,
+    toValue: (_, row) => row.createdAt,
+    toTextValue: (_, row) =>
       toDateString(
-        { start: data ?? undefined },
+        { start: row.createdAt, includeTime: true },
         { dateFormat: "full", timeFormat: "24-hour", tz },
       ),
-    renderCell: ({ row, config, wrapped }) => (
+    toGroupValue: (_, row) => trimTs(row.createdAt, "date"),
+    compare: (rowA, rowB) => compareNumbers(rowA.createdAt, rowB.createdAt),
+    renderCell: ({ row, config, wrapped, disabled }) => (
       <DateCell
         data={{ start: row.createdAt, includeTime: true }}
         config={config}
         wrapped={wrapped}
+        disabled={disabled}
       />
     ),
     renderConfigMenu: (props) => <DateConfigMenu {...props} />,
+    renderGroupingValue: (props) => <DateGroupingValue {...props} />,
     reducer: (v) => v,
   };
 }
 
 export function lastEditedTime(): LastEditedTimePlugin {
   const id = "last-edited-time";
-  const name = "Last Edited Time";
+  const name = "Last edited time";
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return {
     id,
@@ -91,21 +108,26 @@ export function lastEditedTime(): LastEditedTimePlugin {
       data: null,
       config: { dateFormat: "full", timeFormat: "24-hour", tz },
     },
-    fromReadableValue: () => null,
-    toReadableValue: (data) => (data === null ? "" : data.toString()),
-    toTextValue: (data) =>
+    fromValue: () => null,
+    toValue: (_, row) => row.lastEditedAt,
+    toTextValue: (_, row) =>
       toDateString(
-        { start: data ?? undefined },
+        { start: row.lastEditedAt, includeTime: true },
         { dateFormat: "full", timeFormat: "24-hour", tz },
       ),
-    renderCell: ({ row, config, wrapped }) => (
+    toGroupValue: (_, row) => trimTs(row.lastEditedAt, "date"),
+    compare: (rowA, rowB) =>
+      compareNumbers(rowA.lastEditedAt, rowB.lastEditedAt),
+    renderCell: ({ row, config, wrapped, disabled }) => (
       <DateCell
         data={{ start: row.lastEditedAt, includeTime: true }}
         config={config}
         wrapped={wrapped}
+        disabled={disabled}
       />
     ),
     renderConfigMenu: (props) => <DateConfigMenu {...props} />,
+    renderGroupingValue: (props) => <DateGroupingValue {...props} />,
     reducer: (v) => v,
   };
 }

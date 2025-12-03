@@ -51,22 +51,23 @@ export function getUniqueName(name: string, names: string[]) {
 export function getCount(table: Table<Row>, colId: string): string {
   const { isCapped, method } = table.getColumnCounting(colId);
   const plugin = table.getColumnPlugin(colId);
-  const cells = table
-    .getCoreRowModel()
-    .rows.map((r) => r.original.properties[colId]!);
+  const rows = table.getCoreRowModel().rows;
+
+  const toString = (plugin: CellPlugin, r: Row) => {
+    const value = plugin.toValue(r.properties[colId]?.value, r);
+    return value === null || value === false ? "" : value.toString();
+  };
 
   switch (method) {
     case CountMethod.ALL:
-      return capValue(cells.length, isCapped);
+      return capValue(rows.length, isCapped);
     case CountMethod.UNIQUE: {
-      const values = cells.reduce((acc, c) => {
-        plugin
-          .toReadableValue(c.value)
-          .split(",")
-          .forEach((v) => {
-            if (!v.trim()) return;
-            acc.add(v);
-          });
+      const values = rows.reduce((acc, r) => {
+        const value = toString(plugin, r.original);
+        value.split(",").forEach((v) => {
+          if (!v.trim()) return;
+          acc.add(v);
+        });
         return acc;
       }, new Set());
       return capValue(values.size, isCapped);
@@ -74,8 +75,8 @@ export function getCount(table: Table<Row>, colId: string): string {
     case CountMethod.EMPTY:
     case CountMethod.UNCHECKED: {
       // the readable value of a checkbox plugin is "" or "v"
-      const count = cells.reduce(
-        (acc, c) => acc + Number(plugin.toReadableValue(c.value) === ""),
+      const count = rows.reduce(
+        (acc, r) => acc + Number(toString(plugin, r.original) === ""),
         0,
       );
       return capValue(count, isCapped);
@@ -83,18 +84,17 @@ export function getCount(table: Table<Row>, colId: string): string {
     case CountMethod.NONEMPTY:
     case CountMethod.CHECKED: {
       // the readable value of a checkbox plugin is "" or "v"
-      const count = cells.reduce(
-        (acc, c) => acc + Number(plugin.toReadableValue(c.value) !== ""),
+      const count = rows.reduce(
+        (acc, r) => acc + Number(toString(plugin, r.original) !== ""),
         0,
       );
       return capValue(count, isCapped);
     }
     case CountMethod.VALUES: {
-      const count = cells.reduce(
-        (acc, c) =>
+      const count = rows.reduce(
+        (acc, r) =>
           acc +
-          plugin
-            .toReadableValue(c.value)
+          toString(plugin, r.original)
             .split(",")
             .filter((v) => !!v.trim()).length,
         0,
@@ -103,19 +103,19 @@ export function getCount(table: Table<Row>, colId: string): string {
     }
     case CountMethod.PERCENTAGE_EMPTY:
     case CountMethod.PERCENTAGE_UNCHECKED: {
-      const count = cells.reduce(
-        (acc, c) => acc + Number(plugin.toReadableValue(c.value) === ""),
+      const count = rows.reduce(
+        (acc, r) => acc + Number(toString(plugin, r.original) === ""),
         0,
       );
-      return getPercentage(count, cells.length);
+      return getPercentage(count, rows.length);
     }
     case CountMethod.PERCENTAGE_NONEMPTY:
     case CountMethod.PERCENTAGE_CHECKED: {
-      const count = cells.reduce(
-        (acc, c) => acc + Number(plugin.toReadableValue(c.value) !== ""),
+      const count = rows.reduce(
+        (acc, r) => acc + Number(toString(plugin, r.original) !== ""),
         0,
       );
-      return getPercentage(count, cells.length);
+      return getPercentage(count, rows.length);
     }
     default:
       // no op

@@ -31,7 +31,7 @@ interface PropMenuProps {
  * ---
  * 2. 🚧 Filter
  * 3. ✅ Sorting
- * 4. 🚧 Group
+ * 4. ✅ Group
  * 5. ✅ Calculate
  * 6. ✅ Freeze up to column
  * 7. ✅ Hide in view
@@ -44,6 +44,7 @@ interface PropMenuProps {
 export function PropMenu({ propId }: PropMenuProps) {
   const { table } = useTableViewCtx();
 
+  const column = table.getColumn(propId)!;
   const info = table.getColumnInfo(propId);
   const plugin = table.getColumnPlugin(propId);
 
@@ -115,6 +116,13 @@ export function PropMenu({ propId }: PropMenuProps) {
             </DropdownMenuGroup>
           </DropdownMenuSubContent>
         </DropdownMenuSub>
+        <DropdownMenuItem
+          Icon={<Icon.SquareGridBelowLines />}
+          Body={column.getIsGrouped() ? "Ungroup" : "Group"}
+          onSelect={() =>
+            table.setGroupingColumn((v) => (v === propId ? null : propId))
+          }
+        />
         <DropdownMenuSub>
           <DropdownMenuSubTrigger Icon={<Icon.Sum />} Body="Calculate" />
           <DropdownMenuSubContent

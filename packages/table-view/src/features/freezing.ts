@@ -1,10 +1,4 @@
-import type {
-  OnChangeFn,
-  RowData,
-  Table,
-  TableFeature,
-  Updater,
-} from "@tanstack/react-table";
+import type { OnChangeFn, TableFeature, Updater } from "@tanstack/react-table";
 import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
 
 export type FreezingState = {
@@ -33,16 +27,14 @@ export const FreezingFeature: TableFeature = {
     return { columnFreezing: null, ...state };
   },
 
-  getDefaultOptions: <TData extends RowData>(
-    table: Table<TData>,
-  ): FreezingOptions => {
+  getDefaultOptions: (table) => {
     return {
       enableColumnFreezing: true,
       onColumnFreezingChange: makeStateUpdater("columnFreezing", table),
     };
   },
 
-  createTable: <TData extends RowData>(table: Table<TData>): void => {
+  createTable: (table) => {
     const throwIfDisabled = () => {
       if (!table.options.enableColumnFreezing) {
         throw new Error(
@@ -69,6 +61,7 @@ export const FreezingFeature: TableFeature = {
           ? table.getState().columnOrder.slice(0, nextState.index + 1)
           : [],
       });
+      table.options.sync?.("table.setColumnFreezing");
     };
     table.toggleColumnFreezed = (colId) => {
       const index = table.getColumn(colId)?.getIndex();

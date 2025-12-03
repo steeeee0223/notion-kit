@@ -11,13 +11,18 @@ interface DateCellProps {
   data: DateData;
   config: DateConfig;
   wrapped?: boolean;
+  disabled?: boolean;
 }
 
-export function DateCell({ data, config, wrapped }: DateCellProps) {
+export function DateCell({ data, config, wrapped, disabled }: DateCellProps) {
   const dateStr = toDateString(data, config);
 
   return (
-    <CellTrigger className="group/date-cell" wrapped={wrapped}>
+    <CellTrigger
+      className="group/date-cell"
+      wrapped={wrapped}
+      aria-disabled={disabled}
+    >
       <CopyButton
         className="hidden group-hover/date-cell:flex"
         value={dateStr}

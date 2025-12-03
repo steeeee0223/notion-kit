@@ -2,10 +2,13 @@ import React from "react";
 
 import { cn } from "@notion-kit/cn";
 
-import { SIDE } from "./utils";
+import { SIDE, SIDE_DEFAULT_DOWN } from "./utils";
 
 export type IconProps = React.SVGProps<SVGSVGElement>;
 
+/**
+ * @default side "right"
+ */
 export interface IconWithSideProps extends IconProps {
   side: keyof typeof SIDE;
 }
@@ -459,6 +462,22 @@ export const ArrowChevronDoubleBackward = (props: IconProps) => (
   </svg>
 );
 
+export const ArrowCaretFillSmall = ({
+  side = "down",
+  className,
+  ...props
+}: IconWithSideProps) => (
+  <svg
+    aria-hidden="true"
+    role="graphics-symbol"
+    viewBox="0 0 16 16"
+    className={cn(SIDE_DEFAULT_DOWN[side], className)}
+    {...props}
+  >
+    <path d="M2.835 3.25a.8.8 0 0 0-.69 1.203l5.164 8.854a.8.8 0 0 0 1.382 0l5.165-8.854a.8.8 0 0 0-.691-1.203z" />
+  </svg>
+);
+
 export const Undo = (props: IconProps) => (
   <svg role="graphics-symbol" viewBox="0 0 16 16" {...props}>
     <path d="M14.542 10.6826C14.542 7.96875 12.71 6.10254 9.59961 6.10254H5.29297L3.70703 6.1709L4.91016 5.15234L6.67383 3.43652C6.80371 3.30664 6.89258 3.14258 6.89258 2.91699C6.89258 2.5 6.59863 2.19238 6.1543 2.19238C5.96973 2.19238 5.76465 2.28125 5.61426 2.4248L1.69043 6.29395C1.5332 6.4375 1.45117 6.64258 1.45117 6.84766C1.45117 7.05273 1.5332 7.25098 1.69043 7.40137L5.61426 11.2705C5.76465 11.4141 5.96973 11.5029 6.1543 11.5029C6.59863 11.5029 6.89258 11.1953 6.89258 10.7715C6.89258 10.5527 6.80371 10.3887 6.67383 10.252L4.91016 8.53613L3.70703 7.52441L5.29297 7.59277H9.64746C11.8486 7.59277 13.0586 8.84375 13.0586 10.6211C13.0586 12.4053 11.8486 13.7109 9.64746 13.7109H8.05469C7.60352 13.7109 7.2959 14.0459 7.2959 14.4629C7.2959 14.873 7.61035 15.208 8.05469 15.208H9.69531C12.751 15.208 14.542 13.4102 14.542 10.6826Z" />
@@ -684,6 +703,13 @@ export const Lock = (props: IconProps) => (
   </svg>
 );
 
+export const LockOpen = (props: IconProps) => (
+  <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 20 20" {...props}>
+    <path d="M10.55 12.808a1.35 1.35 0 1 0-1.1 0v1.242a.55.55 0 1 0 1.1 0z" />
+    <path d="M15.4 1.95a3.48 3.48 0 0 0-3.48 3.48v1.92H6.4a2.425 2.425 0 0 0-2.425 2.425v5.4A2.425 2.425 0 0 0 6.4 17.6h7.2a2.425 2.425 0 0 0 2.425-2.425v-5.4A2.425 2.425 0 0 0 13.6 7.35h-.43V5.43a2.23 2.23 0 1 1 4.46 0v2.095a.625.625 0 1 0 1.25 0V5.43a3.48 3.48 0 0 0-3.48-3.48M5.225 9.775c0-.649.526-1.175 1.175-1.175h7.2c.649 0 1.175.526 1.175 1.175v5.4c0 .649-.526 1.175-1.175 1.175H6.4a1.175 1.175 0 0 1-1.175-1.175z" />
+  </svg>
+);
+
 export const ArchiveBox = (props: IconProps) => (
   <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 20 20" {...props}>
     <path d="M8 9.875a.625.625 0 1 0 0 1.25h4a.625.625 0 1 0 0-1.25z" />
@@ -727,5 +753,11 @@ export const Clock = (props: IconProps) => (
   <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 20 20" {...props}>
     <path d="M10.625 5.725a.625.625 0 1 0-1.25 0v3.65H6.4a.625.625 0 1 0 0 1.25H10c.345 0 .625-.28.625-.625z" />
     <path d="M10 2.375a7.625 7.625 0 1 0 0 15.25 7.625 7.625 0 0 0 0-15.25M3.625 10a6.375 6.375 0 1 1 12.75 0 6.375 6.375 0 0 1-12.75 0" />
+  </svg>
+);
+
+export const SquareGridBelowLines = (props: IconProps) => (
+  <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 20 20" {...props}>
+    <path d="M3.925 2.95a.55.55 0 0 0 0 1.1h12.15a.55.55 0 1 0 0-1.1zm0 7.767a.55.55 0 1 0 0 1.1h12.15a.55.55 0 0 0 0-1.1zm-.55-4.234a1 1 0 0 1 1-1h1.8a1 1 0 0 1 1 1v1.8a1 1 0 0 1-1 1h-1.8a1 1 0 0 1-1-1zm1.1.1v1.6h1.6v-1.6zm4.625-1.1a1 1 0 0 0-1 1v1.8a1 1 0 0 0 1 1h1.8a1 1 0 0 0 1-1v-1.8a1 1 0 0 0-1-1zm.1 2.7v-1.6h1.6v1.6zm3.625-1.7a1 1 0 0 1 1-1h1.8a1 1 0 0 1 1 1v1.8a1 1 0 0 1-1 1h-1.8a1 1 0 0 1-1-1zm1.1.1v1.6h1.6v-1.6zm-9.55 6.667a1 1 0 0 0-1 1v1.8a1 1 0 0 0 1 1h1.8a1 1 0 0 0 1-1v-1.8a1 1 0 0 0-1-1zm.1 2.7v-1.6h1.6v1.6zm3.625-1.7a1 1 0 0 1 1-1h1.8a1 1 0 0 1 1 1v1.8a1 1 0 0 1-1 1H9.1a1 1 0 0 1-1-1zm1.1.1v1.6h1.6v-1.6zm4.625-1.1a1 1 0 0 0-1 1v1.8a1 1 0 0 0 1 1h1.8a1 1 0 0 0 1-1v-1.8a1 1 0 0 0-1-1zm.1 2.7v-1.6h1.6v1.6z" />
   </svg>
 );

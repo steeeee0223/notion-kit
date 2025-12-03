@@ -5,10 +5,12 @@ import { getRandomColor } from "@notion-kit/utils";
 
 import { DefaultIcon } from "../../common";
 import type { Cell, ColumnInfo, Row } from "../../lib/types";
-import type { CellPlugin, TableDataAtom } from "../types";
+import type { CellPlugin, ComparableValue, TableDataAtom } from "../types";
+import { compareStrings, createCompareFn } from "../utils";
 import { SelectCell } from "./select-cell";
 import { SelectConfigMenu } from "./select-config-menu";
 import { selectConfigReducer } from "./select-config-reducer";
+import { SelectGroupingValue } from "./select-grouping-value";
 import type {
   MultiSelectPlugin,
   SelectActions,
@@ -109,11 +111,12 @@ function toSelectConfig<TPlugin extends CellPlugin>(
   }
 }
 
-function fromReadableValue(
-  value: string,
+function fromValue(
+  value: ComparableValue,
   config: SelectConfig,
   type: "select" | "multi-select",
 ): string[] {
+  if (typeof value !== "string") return [];
   const values = value.split(",").reduce((acc, v) => {
     if (type === "select" && acc.size > 0) return acc;
     const name = v.trim();
@@ -140,13 +143,20 @@ export function select(): SelectPlugin {
       data: null,
       config: getDefaultConfig(),
     },
-    fromReadableValue: (value, config) => {
-      const options = fromReadableValue(value, config, "select");
+    fromValue: (value, config) => {
+      const options = fromValue(value, config, "select");
       return options.at(0) ?? null;
     },
-    toReadableValue: (data) => data ?? "",
+    toValue: (data) => data,
     toTextValue: (data) => data ?? "",
     transferConfig: toSelectConfig,
+    compare: createCompareFn<SelectPlugin>((a, b) => {
+      if (a === null && b === null) return 0;
+      // undefined sorts after defined values
+      if (a === null) return 1;
+      if (b === null) return -1;
+      return compareStrings(a, b);
+    }),
     renderCell: ({ data, onChange, ...props }) => (
       <SelectCell
         data={data ? [data] : []}
@@ -160,6 +170,7 @@ export function select(): SelectPlugin {
       />
     ),
     renderConfigMenu: (props) => <SelectConfigMenu {...props} />,
+    renderGroupingValue: (props) => <SelectGroupingValue {...props} />,
     reducer: selectReducer,
   };
 }
@@ -178,13 +189,21 @@ export function multiSelect(): MultiSelectPlugin {
       data: [],
       config: getDefaultConfig(),
     },
-    fromReadableValue: (value, config) =>
-      fromReadableValue(value, config, "multi-select"),
-    toReadableValue: (data) => data.join(","),
+    fromValue: (value, config) => fromValue(value, config, "multi-select"),
+    toValue: (data) => data.join(","),
+    toGroupValue: (data) => data[0] ?? null,
     toTextValue: (data) => data.join(","),
+    compare: createCompareFn<MultiSelectPlugin>((a, b) => {
+      if (a.length === 0 && b.length === 0) return 0;
+      // empty sorts after defined values
+      if (a.length === 0) return 1;
+      if (b.length === 0) return -1;
+      return compareStrings(a[0]!, b[0]!);
+    }),
     transferConfig: toSelectConfig,
     renderCell: (props) => <SelectCell {...props} />,
     renderConfigMenu: (props) => <SelectConfigMenu {...props} />,
+    renderGroupingValue: (props) => <SelectGroupingValue {...props} />,
     reducer: selectReducer,
   };
 }

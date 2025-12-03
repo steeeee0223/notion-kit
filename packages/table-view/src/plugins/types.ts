@@ -1,5 +1,5 @@
 import React from "react";
-import type { OnChangeFn } from "@tanstack/react-table";
+import type { OnChangeFn, Table } from "@tanstack/react-table";
 
 import type { ColumnInfo, Row } from "../lib/types";
 
@@ -9,6 +9,7 @@ export interface CellProps<Data, Config = undefined> {
   data: Data;
   config: Config;
   wrapped?: boolean;
+  disabled?: boolean;
   onChange: OnChangeFn<Data>;
   onConfigChange?: OnChangeFn<Config>;
 }
@@ -18,6 +19,15 @@ export interface ConfigMenuProps<Config = unknown> {
   config: Config;
   onChange: OnChangeFn<Config>;
   onOpenChange?: (open: boolean) => void;
+}
+
+export type CompareFn<T> = (a: T, b: T) => number;
+export type ComparableValue = string | number | boolean | null;
+
+export interface GroupingValueProps {
+  className?: string;
+  value: ComparableValue;
+  table: Table<Row>;
 }
 
 export interface TableDataAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {
@@ -74,14 +84,27 @@ export interface CellPlugin<
      */
     data: Data;
   };
-  fromReadableValue: (value: string, config: Config) => Data;
-  toReadableValue: (data: Data) => string;
-  toTextValue: (data: Data) => string;
+  /**
+   * @prop Convert a primitive value to cell data.
+   */
+  fromValue: (value: ComparableValue, config: Config) => Data;
+  /**
+   * @prop Convert cell data to a primitive value.
+   */
+  toValue: (data: Data, row: Row) => ComparableValue;
+  /**
+   * @prop Convert cell data to a primitive value used for grouping.
+   * If not provided, `toValue` will be used instead.
+   */
+  toGroupValue?: (data: Data, row: Row) => ComparableValue;
+  toTextValue: (data: Data, row: Row) => string;
+  compare: (rowA: Row, rowB: Row, colId: string) => number;
   transferConfig?: <TPlugin extends CellPlugin>(
     column: ColumnInfo<TPlugin>,
     data: Row<TPlugin[]>[],
   ) => Config;
   /**
+   * @deprecated
    * @prop A reducer to handle actions related to other cells within this table.
    */
   reducer: <TPlugins extends CellPlugin[]>(
@@ -90,6 +113,7 @@ export interface CellPlugin<
   ) => TableDataAtom<TPlugins>;
   renderCell: (props: CellProps<Data, Config>) => React.ReactNode;
   renderConfigMenu?: (props: ConfigMenuProps<Config>) => React.ReactNode;
+  renderGroupingValue?: (props: GroupingValueProps) => React.ReactNode;
 }
 
 export type InferKey<TPlugin> =

@@ -42,7 +42,7 @@ export function DateFormatMenu({
           </MenuItemSelect>
         </MenuItem>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[180px]">
+      <DropdownMenuContent align="end" className="z-990 w-[180px]">
         <DropdownMenuGroup>
           {options.map((option) => (
             <DropdownMenuCheckboxItem

@@ -1,3 +1,4 @@
+import type { DragEndEvent } from "@dnd-kit/core";
 import type {
   Column,
   OnChangeFn,
@@ -22,7 +23,7 @@ import type {
   InferPlugin,
 } from "../plugins";
 import { DEFAULT_PLUGINS } from "../plugins";
-import { createIdsUpdater } from "./utils";
+import { createDragEndUpdater, createIdsUpdater } from "./utils";
 
 export type ColumnsInfoState<TPlugins extends CellPlugin[] = CellPlugin[]> =
   Record<string, ColumnInfo<InferPlugin<TPlugins>>>;
@@ -49,6 +50,7 @@ export interface ColumnsInfoTableApi {
   // Column Setters
   _setColumnInfo: (colId: string, updater: Updater<ColumnInfo>) => void;
   setColumnInfo: (colId: string, info: Partial<Omit<ColumnInfo, "id">>) => void;
+  handleColumnDragEnd: (e: DragEndEvent) => void;
   _addColumnInfo: (info: ColumnInfo, idsUpdater: Updater<string[]>) => void;
   addColumnInfo: (payload: {
     id: string;
@@ -66,6 +68,9 @@ export interface ColumnsInfoTableApi {
     colId: string,
     type: PluginType<TPlugins>,
   ) => void;
+  /**
+   * @deprecated
+   */
   setColumnTypeConfig: <TPlugin extends CellPlugin>(
     colId: string,
     actions: InferActions<TPlugin>,
@@ -94,7 +99,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     };
   },
 
-  createTable: (table: Table<Row>): void => {
+  createTable: (table: Table<Row>) => {
     /** Column Getters */
     table.getColumnInfo = (colId) => {
       const info = table.getState().columnsInfo[colId];
@@ -146,7 +151,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
           [colId]: functionalUpdate(updater, prev.items[colId]!),
         },
       }));
-      table.options.sync?.(["header"]);
+      table.options.sync?.("table._setColumnInfo");
       // Sync column visibility
       const info = functionalUpdate(updater, table.getColumnInfo(colId));
       if (info.hidden !== undefined || info.isDeleted !== undefined)
@@ -158,6 +163,16 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     table.setColumnInfo = (colId, info) => {
       table._setColumnInfo(colId, (prev) => ({ ...prev, ...info }));
     };
+    table.handleColumnDragEnd = (e) => {
+      table.options.onColumnInfoChange?.((prev) => {
+        const updater = createDragEndUpdater<string>(e, (v) => v);
+        return {
+          ...prev,
+          ids: functionalUpdate(updater, prev.ids),
+        };
+      });
+      table.options.sync?.("table.handleColumnDragEnd");
+    };
     table._addColumnInfo = (info, idsUpdater) => {
       table.options.onColumnInfoChange?.((prev) => {
         return {
@@ -165,7 +180,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
           items: { ...prev.items, [info.id]: info },
         };
       });
-      table.options.sync?.(["header"]);
+      table.options.sync?.("table._addColumnInfo");
     };
     table.addColumnInfo = (payload) => {
       const { cellPlugins } = table.getState();
@@ -179,8 +194,6 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         { id, name, type, config: plugin.default.config },
         idsUpdater,
       );
-      // Update column order
-      table.setColumnOrder(idsUpdater);
       // Update all rows
       table.setTableData((prev) =>
         prev.map((row) => {
@@ -210,8 +223,6 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         },
         idsUpdater,
       );
-      // Update column order
-      table.setColumnOrder(idsUpdater);
       // Update all rows
       table.setTableData((prev) =>
         prev.map((row) => {
@@ -230,8 +241,6 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         const { [colId]: _, ...items } = prev.items;
         return { ids: prev.ids.filter((id) => id !== colId), items };
       });
-      // Update column order
-      table.setColumnOrder((prev) => prev.filter((id) => id !== colId));
       // Update all rows
       table.setTableData((prev) =>
         prev.map((row) => {
@@ -273,8 +282,8 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
               ...row.properties,
               [colId]: {
                 ...cell,
-                value: destPlugin.fromReadableValue(
-                  srcPlugin.toReadableValue(cell.value),
+                value: destPlugin.fromValue(
+                  srcPlugin.toValue(cell.value, row),
                   config,
                 ),
               },
@@ -312,7 +321,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
   createColumn: <TPlugins extends CellPlugin[]>(
     column: Column<Row<TPlugins>>,
     table: Table<Row<TPlugins>>,
-  ): void => {
+  ) => {
     column.getInfo = () => table.getColumnInfo(column.id);
     column.getPlugin = () => table.getColumnPlugin(column.id);
     /** Column width */
