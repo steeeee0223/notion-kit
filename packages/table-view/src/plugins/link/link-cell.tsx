@@ -19,6 +19,7 @@ export function LinkCell({
   layout,
   onChange,
 }: LinkCellProps) {
+  if (layout !== "table" && !data) return null;
   return (
     <TextInputPopover
       value={data}

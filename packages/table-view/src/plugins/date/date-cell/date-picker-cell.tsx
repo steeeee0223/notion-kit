@@ -19,6 +19,7 @@ export function DatePickerCell({
 }: InferCellProps<DatePlugin>) {
   const dateStr = toDateString(data, config);
 
+  if (layout !== "table" && data.start === undefined) return null;
   return (
     <Popover>
       <PopoverTrigger asChild>

@@ -37,6 +37,7 @@ export function SelectCell({
     }
   };
 
+  if (layout !== "table" && options.length === 0) return null;
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>

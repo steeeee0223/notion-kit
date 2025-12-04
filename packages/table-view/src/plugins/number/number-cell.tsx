@@ -25,6 +25,7 @@ export function NumberCell({
     onChange(isNaN(num) ? null : String(num));
   };
 
+  if (layout !== "table" && data === null) return null;
   return (
     <TextInputPopover
       className="text-end"
@@ -33,7 +34,8 @@ export function NumberCell({
       renderTrigger={() => (
         <CellTrigger
           className={cn(
-            "group/number-cell h-9",
+            "group/number-cell",
+            layout === "table" && "h-9",
             layout === "list" && listCellWidth("number"),
           )}
           wrapped={wrapped}

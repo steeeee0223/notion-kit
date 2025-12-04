@@ -4,5 +4,6 @@ export { DefaultIcon, ColorIcon, LayoutIcon } from "./default-icon";
 export * from "./menu";
 export { OptionTag } from "./option-tag";
 export { PropMeta } from "./prop-meta";
+export * from "./table-row-action-group";
 export { TextInputPopover } from "./use-text-input-popover";
 export { VerticalDnd, useDndSensors } from "./vertical-dnd";

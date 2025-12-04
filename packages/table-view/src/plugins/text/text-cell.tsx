@@ -14,6 +14,7 @@ export function TextCell({
   layout,
   onChange,
 }: CellProps<string>) {
+  if (layout !== "table" && !data) return null;
   return (
     <TextInputPopover
       value={data}
