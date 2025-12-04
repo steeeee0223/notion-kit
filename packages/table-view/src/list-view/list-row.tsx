@@ -68,27 +68,6 @@ export function ListRow({ row }: ListRowProps) {
             "relative h-7.5 grow overflow-hidden rounded-md px-1 text-inherit no-underline opacity-100",
           )}
         >
-          {/* TODO First cells, cells before Title cell are placed at left part (pinned left) */}
-          <div className="relative m-0 flex min-h-7.5 min-w-30 flex-[1_1_auto] cursor-default items-center overflow-hidden rounded-sm py-0 pe-2 text-sm">
-            <div className="contents">
-              <div className="contents">{/* <!-- IconMenu button --> */}</div>
-              {/* <!-- Title --> */}
-              <div className="contents">
-                <div
-                  spellCheck="true"
-                  aria-placeholder="New page"
-                  contentEditable={false}
-                  data-content-editable-leaf="true"
-                  tabIndex={0}
-                  role="textbox"
-                  aria-label="Start typing to edit text"
-                  className="pointer-events-none mr-1 inline w-auto max-w-full truncate text-sm/normal font-medium wrap-break-word caret-primary"
-                >
-                  a
-                </div>
-              </div>
-            </div>
-          </div>
           {row.getVisibleCells().map((cell) => (
             <React.Fragment key={cell.id}>
               {flexRender(cell.column.columnDef.cell, cell.getContext())}

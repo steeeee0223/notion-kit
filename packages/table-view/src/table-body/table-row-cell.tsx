@@ -63,6 +63,7 @@ export function TableRowCell<TPlugin extends CellPlugin>({
           config: info.config,
           wrapped: info.wrapped,
           disabled: locked,
+          layout: "table",
           onChange: (updater) => column.updateCell(row.id, updater),
           onConfigChange: column.updateConfig,
         })}

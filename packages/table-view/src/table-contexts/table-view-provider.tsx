@@ -10,6 +10,7 @@ import type { Row } from "../lib/types";
 import { arrayToEntity } from "../lib/utils";
 import { ListViewContent } from "../list-view";
 import { DEFAULT_PLUGINS, DefaultPlugins, type CellPlugin } from "../plugins";
+import { Toolbar } from "../tools/toolbar";
 import { TableViewContent } from "./table-view-content";
 import type { TableProps } from "./types";
 import { useTableView } from "./use-table-view";
@@ -42,6 +43,11 @@ export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
     <TableViewContext value={ctx}>
       <TooltipProvider delayDuration={500}>
         <ModalProvider>
+          <div className="relative mb-4 flex h-7 justify-end px-24">
+            <div className="fixed right-24">
+              <Toolbar />
+            </div>
+          </div>
           {layout === "list" ? (
             <ListViewContent />
           ) : (

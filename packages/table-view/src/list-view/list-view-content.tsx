@@ -19,6 +19,7 @@ import { Button } from "@notion-kit/shadcn";
 
 import { useDndSensors } from "../common";
 import type { Row } from "../lib/types";
+import { TableGroupedRow } from "../table-body";
 import { useTableViewCtx } from "../table-contexts";
 import { ListRow } from "./list-row";
 
@@ -80,16 +81,19 @@ interface ListBodyProps {
 
 export function ListBody({ table }: ListBodyProps) {
   const rows = table.getRowModel().rows;
-
   return (
     <div className="relative flex flex-col">
       <SortableContext
         items={rows.map((row) => row.id)}
         strategy={verticalListSortingStrategy}
       >
-        {rows.map((row) => (
-          <ListRow key={row.id} row={row} />
-        ))}
+        {rows.map((row) =>
+          row.getIsGrouped() ? (
+            <TableGroupedRow key={row.id} row={row} />
+          ) : (
+            <ListRow key={row.id} row={row} />
+          ),
+        )}
       </SortableContext>
     </div>
   );
