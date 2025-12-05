@@ -26,7 +26,7 @@ export function DatePickerCell({
         <CellTrigger
           className={cn(
             "group/date-cell",
-            layout === "list" && listCellWidth("date"),
+            layout === "list" && listCellWidth("time"),
           )}
           wrapped={wrapped}
           layout={layout}
