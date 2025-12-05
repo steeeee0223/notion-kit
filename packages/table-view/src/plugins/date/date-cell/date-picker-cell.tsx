@@ -4,6 +4,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@notion-kit/shadcn";
 import { CellTrigger, CopyButton } from "../../../common";
 import { wrappedClassName } from "../../../lib/utils";
 import type { InferCellProps } from "../../types";
+import { listCellWidth } from "../../utils";
 import type { DatePlugin } from "../types";
 import { toDateString } from "../utils";
 import { DateTimePicker } from "./date-time-picker";
@@ -13,22 +14,30 @@ export function DatePickerCell({
   data,
   config,
   disabled,
+  layout,
   ...props
 }: InferCellProps<DatePlugin>) {
   const dateStr = toDateString(data, config);
 
+  if (layout !== "table" && data.start === undefined) return null;
   return (
     <Popover>
       <PopoverTrigger asChild>
         <CellTrigger
-          className="group/date-cell"
+          className={cn(
+            "group/date-cell",
+            layout === "list" && listCellWidth("date"),
+          )}
           wrapped={wrapped}
+          layout={layout}
           aria-disabled={disabled}
         >
-          <CopyButton
-            className="hidden group-hover/date-cell:flex"
-            value={dateStr}
-          />
+          {layout === "table" && (
+            <CopyButton
+              className="hidden group-hover/date-cell:flex"
+              value={dateStr}
+            />
+          )}
           <div className={cn("leading-normal", wrappedClassName(wrapped))}>
             {dateStr}
           </div>

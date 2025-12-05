@@ -2,7 +2,7 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { Header, Table } from "@tanstack/react-table";
+import type { HeaderContext } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { IconBlock } from "@notion-kit/icon-block";
@@ -19,17 +19,15 @@ import { DefaultIcon } from "../common";
 import type { Row } from "../lib/types";
 import { PropMenu } from "../menus";
 
-interface TableHeaderCellProps {
-  header: Header<Row, unknown>;
-  table: Table<Row>;
-}
-
 /**
  * Table Header Cell
  *
  * @requires SortableContext
  */
-export function TableHeaderCell({ header, table }: TableHeaderCellProps) {
+export function TableHeaderCell({
+  header,
+  table,
+}: HeaderContext<Row, unknown>) {
   const info = header.column.getInfo();
   const isResizing = header.column.getIsResizing();
   const onResizeStart = header.getResizeHandler();

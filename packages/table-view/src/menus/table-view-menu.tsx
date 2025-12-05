@@ -6,12 +6,13 @@ import {
   Separator,
 } from "@notion-kit/shadcn";
 
-import { MenuGroupHeader, MenuHeader } from "../common";
-import { TableViewMenuPage } from "../features";
+import { LayoutIcon, MenuGroupHeader, MenuHeader } from "../common";
+import { LAYOUT_OPTIONS, TableViewMenuPage } from "../features";
 import { useTableViewCtx } from "../table-contexts";
 import { DeletedPropsMenu } from "./deleted-props-menu";
 import { EditGroupMenu } from "./edit-group-menu";
 import { EditPropMenu } from "./edit-prop-menu";
+import { LayoutMenu } from "./layout-menu";
 import { PropsMenu } from "./props-menu";
 import { SelectGroupMenu } from "./select-group-menu";
 import { SortMenu } from "./sort-menu";
@@ -22,6 +23,8 @@ export function TableViewMenu() {
   const menu = table.getTableMenuState();
 
   switch (menu.page) {
+    case TableViewMenuPage.Layout:
+      return <LayoutMenu />;
     case TableViewMenuPage.Sort:
       return (
         <>
@@ -62,22 +65,28 @@ export function TableViewMenu() {
 
 function TableMenu() {
   const { table } = useTableViewCtx();
-  const { locked } = table.getTableGlobalState();
+  const { locked, layout } = table.getTableGlobalState();
   const groupedColumn = table.getGroupedColumnInfo();
+  const openMenu = (page: TableViewMenuPage) =>
+    table.setTableMenuState({ open: true, page });
 
   return (
     <>
       <MenuHeader title="View Settings" />
       <MenuGroup>
         <MenuItem
+          Icon={<LayoutIcon layout={layout} />}
+          Body="Layout"
+          onClick={() => openMenu(TableViewMenuPage.Layout)}
+        >
+          <MenuItemSelect>
+            {LAYOUT_OPTIONS.find((l) => l.value === layout)?.label}
+          </MenuItemSelect>
+        </MenuItem>
+        <MenuItem
           Icon={<Icon.ArrowUpDown />}
           Body="Sort"
-          onClick={() =>
-            table.setTableMenuState({
-              open: true,
-              page: TableViewMenuPage.Sort,
-            })
-          }
+          onClick={() => openMenu(TableViewMenuPage.Sort)}
         >
           <MenuItemSelect />
         </MenuItem>
@@ -85,12 +94,11 @@ function TableMenu() {
           Icon={<Icon.SquareGridBelowLines />}
           Body="Group"
           onClick={() =>
-            table.setTableMenuState({
-              open: true,
-              page: groupedColumn
+            openMenu(
+              groupedColumn
                 ? TableViewMenuPage.EditGroupBy
                 : TableViewMenuPage.SelectGroupBy,
-            })
+            )
           }
         >
           <MenuItemSelect>{groupedColumn?.name ?? ""}</MenuItemSelect>
@@ -103,12 +111,7 @@ function TableMenu() {
           Icon={<Icon.Sliders />}
           Body="Edit properties"
           disabled={locked}
-          onClick={() =>
-            table.setTableMenuState({
-              open: true,
-              page: TableViewMenuPage.Props,
-            })
-          }
+          onClick={() => openMenu(TableViewMenuPage.Props)}
         >
           <MenuItemSelect />
         </MenuItem>

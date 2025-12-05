@@ -24,7 +24,7 @@ import {
 
 import { useDndSensors } from "../common";
 import { TableViewMenuPage } from "../features";
-import { TableViewMenu, TypesMenu } from "../menus";
+import { PropsMenu, TypesMenu } from "../menus";
 import { useTableViewCtx } from "../table-contexts";
 import { TableHeaderActionCell } from "./table-header-action-cell";
 
@@ -50,7 +50,7 @@ function TableHeaderRow() {
   const { table } = useTableViewCtx();
   const isMobile = useIsMobile();
 
-  const { columnOrder, menu, tableGlobal } = table.getState();
+  const { columnOrder, tableGlobal } = table.getState();
   const headers = table.getCenterLeafHeaders();
   const leftPinnedHeaders = table.getLeftLeafHeaders();
   const isLeftPinned = leftPinnedHeaders.length > 0;
@@ -130,10 +130,7 @@ function TableHeaderRow() {
           </PopoverContent>
         </Popover>
       )}
-      <Popover
-        open={menu.open}
-        onOpenChange={(open) => table.setTableMenuState({ open, page: null })}
-      >
+      <Popover>
         <PopoverTrigger asChild>
           <TableHeaderActionCell icon={<Icon.Dots />} />
         </PopoverTrigger>
@@ -143,7 +140,7 @@ function TableHeaderRow() {
           collisionPadding={12}
           sticky="always"
         >
-          <TableViewMenu />
+          <PropsMenu />
         </PopoverContent>
       </Popover>
     </div>
