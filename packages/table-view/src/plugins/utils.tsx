@@ -52,7 +52,7 @@ export function listCellWidth(type: string) {
   switch (type) {
     case "checkbox":
       return cn("min-w-fit");
-    case "time":
+    case "date":
     case "number":
       return cn("max-w-[max(150px,16%)] min-w-25");
     case "text":
