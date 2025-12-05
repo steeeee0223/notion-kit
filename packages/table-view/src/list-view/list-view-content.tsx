@@ -79,7 +79,7 @@ interface ListBodyProps {
   table: Table<Row>;
 }
 
-export function ListBody({ table }: ListBodyProps) {
+function ListBody({ table }: ListBodyProps) {
   const rows = table.getRowModel().rows;
   return (
     <div className="relative flex flex-col">

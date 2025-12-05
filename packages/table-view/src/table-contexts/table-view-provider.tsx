@@ -20,7 +20,7 @@ interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
   __synced: number;
 }
 
-export const TableViewContext = createContext<TableViewCtx | null>(null);
+const TableViewContext = createContext<TableViewCtx | null>(null);
 
 export function useTableViewCtx() {
   const ctx = use(TableViewContext);

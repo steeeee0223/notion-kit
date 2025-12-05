@@ -1,8 +1,6 @@
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 
-import type { LayoutType } from "../features";
-
 interface DefaultIconProps {
   type: string;
   className?: string;
@@ -53,7 +51,7 @@ export function ColorIcon({ color }: ColorIconProps) {
 }
 
 interface LayoutIconProps {
-  layout: LayoutType;
+  layout: string;
   className?: string;
 }
 

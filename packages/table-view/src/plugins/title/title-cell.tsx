@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { useInputField } from "@notion-kit/hooks";
@@ -97,8 +97,9 @@ function TitleListCell({
   onChange,
 }: Omit<TitleCellProps, "layout">) {
   const [open, setOpen] = useState(false);
+  const id = useId();
   const { props } = useInputField({
-    id: "title-list-cell",
+    id: `title-list-cell-${id}`,
     initialValue: data,
     onUpdate: (v) => {
       onChange(v);

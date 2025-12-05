@@ -14,7 +14,7 @@ export function LayoutMenu() {
   return (
     <>
       <MenuHeader
-        title="Group"
+        title="Layout"
         onBack={() => table.setTableMenuState({ open: true, page: null })}
       />
       <MenuGroup>

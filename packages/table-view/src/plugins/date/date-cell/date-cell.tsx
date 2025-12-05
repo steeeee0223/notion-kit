@@ -30,7 +30,7 @@ export function DateCell({
     <CellTrigger
       className={cn(
         "group/date-cell",
-        layout === "list" && listCellWidth("date"),
+        layout === "list" && listCellWidth("time"),
       )}
       layout={layout}
       wrapped={wrapped}

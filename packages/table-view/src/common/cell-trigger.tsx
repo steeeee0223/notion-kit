@@ -27,7 +27,7 @@ export function CellTrigger({
           "block min-h-9 w-full overflow-clip py-[7.5px] text-sm/normal",
         "aria-disabled:pointer-events-none",
         layout === "list" &&
-          "min-h-7.5 flex-[0_0_auto] overflow-hidden rounded-md",
+          "min-h-[30px] flex-[0_0_auto] overflow-hidden rounded-md",
         wrapped && "whitespace-normal",
         className,
       )}
