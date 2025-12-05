@@ -48,7 +48,7 @@ export function ListViewContent() {
   );
 
   return (
-    <div key="notion-list-view" className="min-w-[708px] px-[194px] pb-0">
+    <div key="notion-list-view" className="min-w-[708px] px-24 pb-0">
       <div
         data-block-id="1fe35e0f-492c-80fd-8d7c-f7e953641770"
         className="flex flex-col py-1"
