@@ -22,10 +22,11 @@ export function title(): TitlePlugin {
     toValue: (data) => data,
     toTextValue: (data) => data,
     compare: createCompareFn(compareStrings),
-    renderCell: ({ row, data, config, ...props }) => (
+    renderCell: ({ row, config, ...props }) => (
       <TitleCell
-        value={data}
         icon={config.showIcon ? row.icon : undefined}
+        row={row}
+        config={config}
         {...props}
       />
     ),

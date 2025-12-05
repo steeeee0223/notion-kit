@@ -19,20 +19,9 @@ import {
 import type { ColumnDefs, ColumnInfo, Row } from "../lib/types";
 import { type Entity } from "../lib/utils";
 import type { CellPlugin, ComparableValue } from "../plugins";
-import { TableRowCell } from "../table-body";
-import { TableFooterCell } from "../table-footer";
-import { TableHeaderCell } from "../table-header";
+import { defaultColumn } from "./column";
 import type { TableState } from "./types";
 import { getMinWidth, toPropertyEntity } from "./utils";
-
-const defaultColumn: Partial<ColumnDef<Row>> = {
-  size: 200,
-  minSize: 100,
-  maxSize: Number.MAX_SAFE_INTEGER,
-  header: (props) => <TableHeaderCell {...props} />,
-  cell: (props) => <TableRowCell {...props} />,
-  footer: ({ column }) => <TableFooterCell column={column} />,
-};
 
 interface UseTableViewOptions<TPlugins extends CellPlugin[]>
   extends TableState<TPlugins> {

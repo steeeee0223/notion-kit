@@ -7,18 +7,10 @@ import { Cell, flexRender, Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
-import { Icon } from "@notion-kit/icons";
-import {
-  Button,
-  Checkbox,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  TooltipPreset,
-} from "@notion-kit/shadcn";
+import { Checkbox } from "@notion-kit/shadcn";
 
+import { RowActions, TableRowActionGroup } from "../common";
 import type { Row as RowModel } from "../lib/types";
-import { RowActionMenu } from "../menus";
 import { useTableViewCtx } from "../table-contexts";
 
 interface TableRowProps {
@@ -72,55 +64,14 @@ export function TableRow({ row }: TableRowProps) {
             {!locked && (
               <>
                 {/* Row actions */}
-                <TableRowActionGroup
+                <RowActions
                   className="absolute -left-20"
+                  rowId={row.id}
                   isDragging={isDragging}
                   isMobile={isMobile}
-                >
-                  <TooltipPreset
-                    description={[
-                      { type: "default", text: "Click to add below" },
-                      { type: "secondary", text: "Option-click to add above" },
-                    ]}
-                    className="z-999 text-center"
-                  >
-                    <Button
-                      variant="hint"
-                      className="size-6"
-                      onClick={addNextRow}
-                    >
-                      <Icon.Plus className="size-3.5 fill-icon" />
-                    </Button>
-                  </TooltipPreset>
-                  <Popover>
-                    <TooltipPreset
-                      description={[
-                        { type: "default", text: "Drag to move" },
-                        { type: "default", text: "Click to open menu" },
-                      ]}
-                      disabled={isDragging}
-                      className="z-999 text-center"
-                    >
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="hint"
-                          className="h-6 w-4.5"
-                          {...attributes}
-                          {...listeners}
-                        >
-                          <Icon.DragHandle className="size-3.5 fill-icon" />
-                        </Button>
-                      </PopoverTrigger>
-                    </TooltipPreset>
-                    <PopoverContent
-                      className="z-990 w-[265px]"
-                      side="right"
-                      align="start"
-                    >
-                      <RowActionMenu rowId={row.id} />
-                    </PopoverContent>
-                  </Popover>
-                </TableRowActionGroup>
+                  dragHandleProps={{ ...attributes, ...listeners }}
+                  onAddNext={addNextRow}
+                />
                 {/* Row selection */}
                 <TableRowActionGroup
                   className="absolute -left-8 *:has-data-[state=checked]:opacity-100"
@@ -165,32 +116,4 @@ function TableCells({ cells }: TableCellsProps) {
       </React.Fragment>
     );
   });
-}
-
-interface TableRowActionGroupProps extends React.ComponentProps<"div"> {
-  isDragging?: boolean;
-  isMobile?: boolean;
-}
-
-function TableRowActionGroup({
-  className,
-  isDragging,
-  isMobile,
-  ...props
-}: TableRowActionGroupProps) {
-  return (
-    <div className={cn("bg-main", className)}>
-      <div
-        data-slot="table-row-action-group"
-        className={cn(
-          "flex h-full items-center opacity-0 transition-opacity delay-0 duration-200",
-          "group-hover/row:opacity-100",
-          "has-[button[aria-expanded='true']]:opacity-100",
-          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-          (isMobile || isDragging) && "opacity-100",
-        )}
-        {...props}
-      />
-    </div>
-  );
 }

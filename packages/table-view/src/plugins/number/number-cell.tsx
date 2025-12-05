@@ -6,6 +6,7 @@ import { TooltipPreset } from "@notion-kit/shadcn";
 import { CellTrigger, CopyButton, TextInputPopover } from "../../common";
 import { wrappedClassName } from "../../lib/utils";
 import type { InferCellProps } from "../types";
+import { listCellWidth } from "../utils";
 import { ProgressBar, ProgressRing } from "./common";
 import type { NumberConfig, NumberPlugin } from "./types";
 
@@ -14,6 +15,7 @@ export function NumberCell({
   config,
   wrapped,
   disabled,
+  layout,
   onChange,
 }: InferCellProps<NumberPlugin>) {
   const value = data ?? "";
@@ -23,6 +25,7 @@ export function NumberCell({
     onChange(isNaN(num) ? null : String(num));
   };
 
+  if (layout !== "table" && data === null) return null;
   return (
     <TextInputPopover
       className="text-end"
@@ -30,14 +33,21 @@ export function NumberCell({
       onUpdate={handleUpdate}
       renderTrigger={() => (
         <CellTrigger
-          className="group/number-cell h-9"
+          className={cn(
+            "group/number-cell",
+            layout === "table" && "h-9",
+            layout === "list" && listCellWidth("number"),
+          )}
           wrapped={wrapped}
           aria-disabled={disabled}
+          layout={layout}
         >
-          <CopyButton
-            className="hidden justify-start group-hover/number-cell:flex"
-            value={value}
-          />
+          {layout === "table" && (
+            <CopyButton
+              className="hidden justify-start group-hover/number-cell:flex"
+              value={value}
+            />
+          )}
           <div
             className={cn(
               "flex justify-end gap-x-2 gap-y-1.5",
