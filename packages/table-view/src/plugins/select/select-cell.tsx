@@ -13,6 +13,7 @@ import {
 
 import { CellTrigger, OptionTag } from "../../common";
 import { CellProps } from "../types";
+import { listCellWidth } from "../utils";
 import { SelectMenu } from "./select-menu";
 import { useSelectMenu } from "./select-menu/use-select-menu";
 import type { SelectConfig } from "./types";
@@ -23,6 +24,7 @@ export function SelectCell({
   data: options,
   wrapped,
   disabled,
+  layout,
   onChange,
 }: CellProps<string[], SelectConfig>) {
   const [open, setOpen] = useState(false);
@@ -35,10 +37,17 @@ export function SelectCell({
     }
   };
 
+  if (layout !== "table" && options.length === 0) return null;
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
-        <CellTrigger ref={ref} wrapped={wrapped} aria-disabled={disabled}>
+        <CellTrigger
+          ref={ref}
+          wrapped={wrapped}
+          aria-disabled={disabled}
+          layout={layout}
+          className={cn(layout === "list" && listCellWidth("select"))}
+        >
           <div className="flex items-center justify-between">
             <div
               className={cn(
