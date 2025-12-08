@@ -11,6 +11,8 @@ import {
   useSensor,
   useSensors,
   type DragEndEvent,
+  type SensorDescriptor,
+  type SensorOptions,
 } from "@dnd-kit/core";
 import {
   restrictToParentElement,
@@ -23,15 +25,16 @@ import {
 
 interface VerticalDndProps extends React.PropsWithChildren {
   items: string[];
+  sensors?: SensorDescriptor<SensorOptions>[];
   onDragEnd: (event: DragEndEvent) => void;
 }
 
-export function VerticalDnd({ items, children, onDragEnd }: VerticalDndProps) {
+export function VerticalDnd({ items, children, ...props }: VerticalDndProps) {
   return (
     <DndContext
       collisionDetection={closestCenter}
       modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-      onDragEnd={onDragEnd}
+      {...props}
     >
       <SortableContext items={items} strategy={verticalListSortingStrategy}>
         {children}
