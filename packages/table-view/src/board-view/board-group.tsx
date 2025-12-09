@@ -1,6 +1,10 @@
 import type { Row } from "@tanstack/react-table";
 
+import { Button } from "@notion-kit/shadcn";
+
+import { GroupActions } from "../common";
 import type { Row as RowModel } from "../lib/types";
+import { BoardCard } from "./board-card";
 
 interface BoardGroupProps {
   row: Row<RowModel>;
@@ -14,17 +18,35 @@ export function BoardGroup({ row }: BoardGroupProps) {
   }
 
   return (
-    <div className="flex cursor-grab">
-      <div className="mr-3 box-content flex w-[260px] shrink-0 items-center rounded-lg px-2 text-sm">
-        <span className="overflow-hidden pr-1.5 font-medium">
-          <div className="inline-flex h-5 max-w-full min-w-0 shrink items-center rounded-lg bg-(--ca-graBacTerTra) px-2 text-sm/[1.2] text-(--c-graTexPri)">
-            <div className="inline-flex h-5 items-center truncate leading-5">
-              <div className="flex items-center">
-                {row.renderGroupingValue({})}
-              </div>
-            </div>
-          </div>
-        </span>
+    <div
+      data-slot="board-group-header"
+      data-block-id={row.id}
+      className="group/board-group mb-4 box-content flex h-max w-[260px] shrink-0 flex-col items-center gap-2 rounded-lg bg-blue/20 p-2 text-sm"
+    >
+      <div className="flex w-full cursor-grab items-center">
+        {/* Grouping value */}
+        <div className="flex max-w-100 items-center overflow-hidden text-sm/6 font-medium whitespace-nowrap">
+          {row.renderGroupingValue({})}
+        </div>
+        {/* Count */}
+        {row.getShouldShowGroupAggregates() && (
+          <Button variant="hint" size="xs" className="text-muted">
+            {row.subRows.length}
+          </Button>
+        )}
+        {/*  Group actions */}
+        <GroupActions
+          className="ml-auto opacity-0 group-hover/board-group:opacity-100"
+          row={row}
+        />
+      </div>
+      <div
+        data-slot="board-group-content"
+        className="flex w-full flex-col gap-2"
+      >
+        {row.subRows.map((row) => (
+          <BoardCard key={row.id} row={row} />
+        ))}
       </div>
     </div>
   );

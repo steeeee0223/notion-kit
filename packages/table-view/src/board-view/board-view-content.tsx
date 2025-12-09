@@ -18,13 +18,8 @@ export function BoardViewContent() {
           className="relative flex grow pb-0"
         >
           {/* 跳過中間的那串 div */}
-          <div
-            // h-12
-            className="absolute z-850 flex min-w-full bg-main pt-2 shadow-md"
-          >
-            {/* what is this? */}
-            <div className="-mt-4 -ml-5 h-[calc(100%+17px)] w-5 bg-main" />
-            <div className="m-0 inline-flex">
+          <div className="absolute z-850 flex min-w-full bg-main pt-2 shadow-md">
+            <div className="flex gap-3">
               {rows.map((row) => {
                 if (!row.getIsGrouped()) return null;
                 return <BoardGroup key={row.id} row={row} />;

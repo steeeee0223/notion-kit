@@ -28,6 +28,7 @@ export interface RowActionsTableApi {
     colId: string,
     rowId: string,
   ) => Cell<TPlugin>;
+  getTitleCell: (rowId: string) => { colId: string; cell: Cell<TitlePlugin> };
   updateCell: <TPlugin extends CellPlugin>(
     rowId: string,
     colId: string,
@@ -57,6 +58,7 @@ export interface RowActionsColumnApi {
 }
 
 export interface RowActionsRowApi {
+  getTitleCell: () => { colId: string; cell: Cell<TitlePlugin> };
   getIsFirstChild: () => boolean;
   getIsLastChild: () => boolean;
 }
@@ -77,6 +79,17 @@ export const RowActionsFeature: TableFeature = {
         throw new Error(`[TableView] Cell not found: ${rowId}, ${colId}`);
       }
       return cell;
+    };
+    table.getTitleCell = (rowId) => {
+      const { columnOrder } = table.getState();
+      const cells = table.getRow(rowId).original.properties;
+      for (const colId of columnOrder) {
+        const plugin = table.getColumnPlugin(colId);
+        if (plugin.id === "title") {
+          return { colId, cell: cells[colId] as Cell<TitlePlugin> };
+        }
+      }
+      throw new Error(`[TableView] Title cell not found: ${rowId}`);
     };
     table.updateCell = (rowId, colId, updater) => {
       table.setTableData((prev) => {
@@ -201,7 +214,10 @@ export const RowActionsFeature: TableFeature = {
         value: functionalUpdate(updater, prev.value),
       }));
   },
-  createRow: (row) => {
+  createRow: (row, table) => {
+    row.getTitleCell = () => {
+      return table.getTitleCell(row.id);
+    };
     row.getIsFirstChild = () => {
       const parent = row.getParentRow();
       if (!parent) return false;

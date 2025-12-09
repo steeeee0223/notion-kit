@@ -25,6 +25,7 @@ export function EditGroupMenu() {
   const isClient = useIsClient();
   const { table } = useTableViewCtx();
 
+  const { layout } = table.getTableGlobalState();
   const { groupOrder, groupVisibility, hideEmptyGroups } =
     table.getState().groupingState;
   const col = table.getGroupedColumnInfo();
@@ -84,11 +85,13 @@ export function EditGroupMenu() {
       </MenuGroup>
       <Separator />
       <MenuGroup>
-        <MenuItem
-          Icon={<Icon.Trash />}
-          Body="Remove grouping"
-          onClick={() => table.setGroupingColumn(null)}
-        />
+        {layout !== "board" && (
+          <MenuItem
+            Icon={<Icon.Trash />}
+            Body="Remove grouping"
+            onClick={() => table.setGroupingColumn(null)}
+          />
+        )}
         <MenuItem
           Icon={<Icon.QuestionMarkCircled />}
           Body="Learn about grouping"

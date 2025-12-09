@@ -65,7 +65,7 @@ export const ExtendedGroupingFeature: TableFeature = {
         groupOrder: [],
         groupVisibility: {},
         groupValues: {},
-        showAggregates: false,
+        showAggregates: true,
         hideEmptyGroups: true,
       },
       ...state,
