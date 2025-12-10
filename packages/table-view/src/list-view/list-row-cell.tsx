@@ -26,6 +26,7 @@ export function ListRowCell<TPlugin extends CellPlugin>({
             ]
           : info.name
       }
+      asChild={info.type === "title"} // Add this to enable tooltip
     >
       {flexRender<InferCellProps<TPlugin>>(plugin.renderCell, {
         layout: "list",
