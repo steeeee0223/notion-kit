@@ -42,10 +42,7 @@ export interface RowActionsTableApi {
   handleRowDragEnd: (e: DragEndEvent) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
   // With Grouping API
-  addRowToGroup: <TPlugin extends CellPlugin>(payload: {
-    groupId: string;
-    value: InferData<TPlugin>;
-  }) => void;
+  addRowToGroup: (groupId: string) => void;
 }
 
 export interface RowActionsColumnApi {
@@ -155,7 +152,32 @@ export const RowActionsFeature: TableFeature = {
       table.setTableData((prev) => prev.filter((row) => !idSet.has(row.id)));
     };
     table.handleRowDragEnd = (e) => {
-      table.setTableData(createDragEndUpdater(e, (v) => v.id));
+      const { grouping, groupingState } = table.getState();
+
+      table.setTableData((v) => {
+        const updater = createDragEndUpdater<Row>(e, (d) => d.id);
+        const next = functionalUpdate(updater, v);
+
+        const groupId = e.over?.data.current?.groupId as string | undefined;
+        if (!groupId) return next;
+
+        // If moved into a group, we need to update the grouping cell value.
+        const now = Date.now();
+        return next.map((row) => {
+          if (row.id !== e.active.id) return row;
+          return {
+            ...row,
+            properties: {
+              ...row.properties,
+              [grouping[0]!]: {
+                id: v4(),
+                value: structuredClone(groupingState.groupValues[groupId]),
+              },
+            },
+            lastEditedAt: now,
+          };
+        });
+      });
     };
     table.updateRowIcon = (id, icon) => {
       const colId = table
@@ -178,10 +200,10 @@ export const RowActionsFeature: TableFeature = {
       });
     };
     // With Grouping API
-    table.addRowToGroup = (payload) => {
+    table.addRowToGroup = (groupId) => {
+      const { columnOrder, groupingState } = table.getState();
       const rowId = v4();
-      const { groupId, value } = payload;
-      table.setTableData((prev) => {
+      table.setTableData((v) => {
         const now = Date.now();
         const row: Row = {
           id: rowId,
@@ -189,16 +211,19 @@ export const RowActionsFeature: TableFeature = {
           createdAt: now,
           lastEditedAt: now,
         };
-        table.getState().columnOrder.forEach((colId) => {
+        columnOrder.forEach((colId) => {
           const plugin = table.getColumnPlugin(colId);
           row.properties[colId] =
             colId === groupId
-              ? { id: v4(), value: structuredClone(value) }
+              ? {
+                  id: v4(),
+                  value: structuredClone(groupingState.groupValues[groupId]),
+                }
               : getDefaultCell(plugin);
         });
         // Here we simply append the new row to the end.
         // Actual implementation may vary based on grouping logic.
-        return [...prev, row];
+        return [...v, row];
       });
     };
   },

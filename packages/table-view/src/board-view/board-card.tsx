@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { flexRender, type Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
@@ -30,9 +32,10 @@ interface BoardCardProps {
  */
 export function BoardCard({ row }: BoardCardProps) {
   const { table } = useTableViewCtx();
+  const { locked } = table.getTableGlobalState();
+  const titleCell = row.getTitleCell();
 
   const [isEditing, setIsEditing] = useState(false);
-  const titleCell = row.getTitleCell();
   const { props } = useInputField({
     id: row.id,
     initialValue: titleCell.cell.value,
@@ -40,12 +43,41 @@ export function BoardCard({ row }: BoardCardProps) {
       table.updateCell(row.id, titleCell.colId, (v) => ({ ...v, value })),
   });
 
+  /** DND */
+  const {
+    attributes,
+    isDragging,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({
+    id: row.id,
+    disabled: locked,
+    data: { type: "board-card", groupId: row.parentId },
+  });
+
+  const style: React.CSSProperties = {
+    opacity: isDragging ? 0.8 : 1,
+    zIndex: isDragging ? 10 : 0,
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
   return (
-    <div data-slot="board-card" data-block-id={row.id}>
-      <a
-        rel="noopener noreferrer"
-        href={`#${row.id}`}
-        className="group/card static block h-full min-h-10 animate-bg-in cursor-pointer overflow-hidden rounded-lg bg-popover px-2.5 py-2 text-inherit no-underline select-none"
+    <div
+      ref={setNodeRef}
+      data-slot="board-card"
+      data-block-id={row.id}
+      className={cn(
+        isDragging && "rounded-lg shadow-lg ring-2 ring-primary/20",
+      )}
+      style={style}
+    >
+      <div
+        className="group/card static block h-full min-h-10 animate-bg-in cursor-pointer overflow-hidden rounded-lg bg-popover px-2.5 py-2 text-inherit select-none"
+        {...attributes}
+        {...listeners}
       >
         {/* Card actions */}
         <div className="relative z-10">
@@ -124,7 +156,7 @@ export function BoardCard({ row }: BoardCardProps) {
             </React.Fragment>
           ))}
         </div>
-      </a>
+      </div>
     </div>
   );
 }

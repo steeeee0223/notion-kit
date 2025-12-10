@@ -31,12 +31,7 @@ export function GroupActions({ className, row }: GroupActionsProps) {
   const { locked } = table.getState().tableGlobal;
   const groupId = row.groupingColumnId!;
 
-  const addRow = () => {
-    table.addRowToGroup({
-      groupId,
-      value: row.original.properties[groupId]!.value as unknown,
-    });
-  };
+  const addRow = () => table.addRowToGroup(groupId);
   const deleteRows = () => {
     const rowIds = row.subRows.map((subRow) => subRow.id);
     openModal(

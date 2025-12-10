@@ -1,9 +1,20 @@
 "use client";
 
+import React from "react";
+import {
+  closestCorners,
+  DndContext,
+  type DragEndEvent,
+  type DragStartEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+
 import { Icon } from "@notion-kit/icons";
 import { Button } from "@notion-kit/shadcn";
 
-import { VerticalDnd } from "../common";
 import { TableViewMenuPage } from "../features";
 import { useTableViewCtx } from "../table-contexts";
 import { BoardGroup } from "./board-group";
@@ -11,8 +22,38 @@ import { BoardGroup } from "./board-group";
 export function BoardViewContent() {
   const { table } = useTableViewCtx();
 
+  const [_draggedRowId, setDraggedRowId] = React.useState<string | null>(null);
+
   const rows = table.getRowModel().rows;
   const { grouping, groupingState } = table.getState();
+
+  const handleDragStart = (e: DragStartEvent) => {
+    const { data } = e.active;
+    if (data.current?.type === "board-card") {
+      setDraggedRowId(e.active.id.toString());
+    }
+  };
+
+  const handleDragEnd = (e: DragEndEvent) => {
+    const { active, over } = e;
+
+    setDraggedRowId(null);
+    if (over) {
+      const activeData = active.data.current;
+      // Handle group reordering
+      if (activeData?.type === "board-group") {
+        table.handleGroupedRowDragEnd(e);
+        return;
+      }
+      // Handle card reordering
+      if (activeData?.type === "board-card") {
+        table.handleRowDragEnd(e);
+        return;
+      }
+    }
+  };
+
+  const groupedRows = rows.filter((row) => row.getIsGrouped());
 
   return (
     <div data-slot="notion-board-view" className="relative float-start px-24">
@@ -24,7 +65,6 @@ export function BoardViewContent() {
           key="notion-selectable notion-collection_view-block"
           className="relative flex grow pb-0"
         >
-          {/* 跳過中間的那串 div */}
           <div className="absolute z-850 flex min-w-full bg-main pt-2 shadow-md">
             {grouping.length === 0 && (
               <div className="flex justify-center">
@@ -43,18 +83,27 @@ export function BoardViewContent() {
                 </Button>
               </div>
             )}
-            <VerticalDnd
-              orientation="horizontal"
-              items={groupingState.groupOrder}
-              onDragEnd={table.handleGroupedRowDragEnd}
+            <DndContext
+              collisionDetection={closestCorners}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
             >
-              <div className="flex gap-3">
-                {rows.map((row) => {
-                  if (!row.getIsGrouped()) return null;
-                  return <BoardGroup key={row.id} row={row} />;
-                })}
-              </div>
-            </VerticalDnd>
+              <SortableContext
+                items={groupingState.groupOrder}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="flex gap-3">
+                  {groupedRows.map((row) => (
+                    <BoardGroup key={row.id} row={row} />
+                  ))}
+                </div>
+                {/* <DragOverlay>
+                  {draggedRowId && (
+                    <BoardCard row={table.getRow(draggedRowId)} />
+                  )}
+                </DragOverlay> */}
+              </SortableContext>
+            </DndContext>
           </div>
         </div>
       </div>
