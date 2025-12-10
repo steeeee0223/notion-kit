@@ -15,28 +15,48 @@ import {
   type SensorOptions,
 } from "@dnd-kit/core";
 import {
+  restrictToHorizontalAxis,
   restrictToParentElement,
   restrictToVerticalAxis,
 } from "@dnd-kit/modifiers";
 import {
+  horizontalListSortingStrategy,
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 
 interface VerticalDndProps extends React.PropsWithChildren {
   items: string[];
+  orientation?: "vertical" | "horizontal";
   sensors?: SensorDescriptor<SensorOptions>[];
   onDragEnd: (event: DragEndEvent) => void;
 }
 
-export function VerticalDnd({ items, children, ...props }: VerticalDndProps) {
+export function VerticalDnd({
+  items,
+  orientation = "vertical",
+  children,
+  ...props
+}: VerticalDndProps) {
   return (
     <DndContext
       collisionDetection={closestCenter}
-      modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+      modifiers={[
+        restrictToParentElement,
+        orientation === "vertical"
+          ? restrictToVerticalAxis
+          : restrictToHorizontalAxis,
+      ]}
       {...props}
     >
-      <SortableContext items={items} strategy={verticalListSortingStrategy}>
+      <SortableContext
+        items={items}
+        strategy={
+          orientation === "vertical"
+            ? verticalListSortingStrategy
+            : horizontalListSortingStrategy
+        }
+      >
         {children}
       </SortableContext>
     </DndContext>
