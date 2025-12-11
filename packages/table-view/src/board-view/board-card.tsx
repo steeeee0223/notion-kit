@@ -75,7 +75,7 @@ export function BoardCard({ row }: BoardCardProps) {
       style={style}
     >
       <div
-        className="group/card static block h-full min-h-10 animate-bg-in cursor-pointer overflow-hidden rounded-lg bg-popover px-2.5 py-2 text-inherit select-none"
+        className="group/card static block h-full min-h-10 animate-bg-in cursor-pointer overflow-hidden rounded-lg border border-border-button bg-popover px-2.5 py-2 text-inherit select-none dark:border-none"
         {...attributes}
         {...listeners}
       >

@@ -164,14 +164,16 @@ export const RowActionsFeature: TableFeature = {
         // If moved into a group, we need to update the grouping cell value.
         const now = Date.now();
         return next.map((row) => {
-          if (row.id !== e.active.id) return row;
+          if (row.id !== e.active.id || !grouping[0]) return row;
           return {
             ...row,
             properties: {
               ...row.properties,
-              [grouping[0]!]: {
+              [grouping[0]]: {
                 id: v4(),
-                value: structuredClone(groupingState.groupValues[groupId]),
+                value: structuredClone<unknown>(
+                  groupingState.groupValues[groupId]?.original,
+                ),
               },
             },
             lastEditedAt: now,
@@ -217,7 +219,9 @@ export const RowActionsFeature: TableFeature = {
             colId === grouping[0]
               ? {
                   id: v4(),
-                  value: structuredClone(groupingState.groupValues[groupId]),
+                  value: structuredClone<unknown>(
+                    groupingState.groupValues[groupId]?.original,
+                  ),
                 }
               : getDefaultCell(plugin);
         });

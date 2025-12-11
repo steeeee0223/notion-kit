@@ -29,7 +29,7 @@ export function CellTrigger({
         layout === "list" &&
           "min-h-[30px] flex-none overflow-hidden rounded-md",
         layout === "board" &&
-          "min-h-7 flex-none overflow-hidden rounded-md px-1",
+          "min-h-7 w-fit flex-none overflow-hidden rounded-md px-1",
         wrapped && "whitespace-normal",
         className,
       )}
