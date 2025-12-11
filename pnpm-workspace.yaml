@@ -15,16 +15,13 @@ catalogs:
   node22:
     "@types/node": ^22.10.0
   react19:
-    react: ^19.2.0
-    react-dom: ^19.2.0
-    "@types/react": ^19.2.5
+    react: ^19.2.1
+    react-dom: ^19.2.1
+    "@types/react": ^19.2.7
     "@types/react-dom": ^19.2.3
-  next15:
-    next: ^15.3.2
-    "@next/eslint-plugin-next": ^15.3.2
   next16:
-    next: ^16.0.3
-    "@next/eslint-plugin-next": ^16.0.3
+    next: ^16.0.8
+    "@next/eslint-plugin-next": ^16.0.8
   vitest:
     "vitest": ^2.1.8
     "@vitejs/plugin-react": ^4.3.4
