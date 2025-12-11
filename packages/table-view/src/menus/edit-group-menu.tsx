@@ -17,7 +17,7 @@ import {
   Separator,
 } from "@notion-kit/shadcn";
 
-import { MenuGroupHeader, MenuHeader, VerticalDnd } from "../common";
+import { MenuGroupHeader, MenuHeader, SortableDnd } from "../common";
 import { TableViewMenuPage } from "../features";
 import { useTableViewCtx } from "../table-contexts";
 
@@ -25,6 +25,7 @@ export function EditGroupMenu() {
   const isClient = useIsClient();
   const { table } = useTableViewCtx();
 
+  const { layout } = table.getTableGlobalState();
   const { groupOrder, groupVisibility, hideEmptyGroups } =
     table.getState().groupingState;
   const col = table.getGroupedColumnInfo();
@@ -62,7 +63,7 @@ export function EditGroupMenu() {
           onActionClick={table.toggleAllGroupsVisible}
         />
         <div className="flex flex-col">
-          <VerticalDnd
+          <SortableDnd
             items={groupOrder}
             onDragEnd={table.handleGroupedRowDragEnd}
           >
@@ -79,16 +80,18 @@ export function EditGroupMenu() {
                 </GroupItem>
               );
             })}
-          </VerticalDnd>
+          </SortableDnd>
         </div>
       </MenuGroup>
       <Separator />
       <MenuGroup>
-        <MenuItem
-          Icon={<Icon.Trash />}
-          Body="Remove grouping"
-          onClick={() => table.setGroupingColumn(null)}
-        />
+        {layout !== "board" && (
+          <MenuItem
+            Icon={<Icon.Trash />}
+            Body="Remove grouping"
+            onClick={() => table.setGroupingColumn(null)}
+          />
+        )}
         <MenuItem
           Icon={<Icon.QuestionMarkCircled />}
           Body="Learn about grouping"

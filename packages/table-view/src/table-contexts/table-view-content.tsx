@@ -1,22 +1,18 @@
 "use client";
 
 import { useMemo } from "react";
-import type { Table } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
 import { Button, Separator } from "@notion-kit/shadcn";
 
-import type { Row } from "../lib/types";
 import { DndTableBody } from "../table-body";
 import { TableFooter } from "../table-footer";
 import { TableHeader } from "../table-header";
 import { SortSelector } from "../tools";
+import { useTableViewCtx } from "./table-view-provider";
 
-interface TableViewContentProps {
-  table: Table<Row>;
-}
-
-export function TableViewContent({ table }: TableViewContentProps) {
+export function TableViewContent() {
+  const { table } = useTableViewCtx();
   const { sorting, columnSizingInfo, columnSizing } = table.getState();
   const isSorted = sorting.length > 0;
 

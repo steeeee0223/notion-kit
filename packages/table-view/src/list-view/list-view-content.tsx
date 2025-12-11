@@ -1,24 +1,14 @@
 "use client";
 
 import { useCallback } from "react";
-import { closestCenter, DndContext, type DragEndEvent } from "@dnd-kit/core";
-import {
-  restrictToParentElement,
-  restrictToVerticalAxis,
-} from "@dnd-kit/modifiers";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import type { Table } from "@tanstack/react-table";
+import type { DragEndEvent } from "@dnd-kit/core";
 
 import { BaseModal } from "@notion-kit/common";
 import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
 import { Button } from "@notion-kit/shadcn";
 
-import { useDndSensors } from "../common";
-import type { Row } from "../lib/types";
+import { SortableDnd, useDndSensors } from "../common";
 import { TableGroupedRow } from "../table-body";
 import { useTableViewCtx } from "../table-contexts";
 import { ListRow } from "./list-row";
@@ -27,6 +17,8 @@ export function ListViewContent() {
   const { openModal } = useModal();
   const { table } = useTableViewCtx();
   const sensors = useDndSensors();
+
+  const rows = table.getRowModel().rows;
 
   const handleRowDragEnd = useCallback(
     (e: DragEndEvent) => {
@@ -53,14 +45,21 @@ export function ListViewContent() {
         data-block-id="1fe35e0f-492c-80fd-8d7c-f7e953641770"
         className="flex flex-col py-1"
       >
-        <DndContext
-          collisionDetection={closestCenter}
-          modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-          onDragEnd={handleRowDragEnd}
-          sensors={sensors}
-        >
-          <ListBody table={table} />
-        </DndContext>
+        <div className="relative flex flex-col">
+          <SortableDnd
+            items={rows.map((row) => row.id)}
+            sensors={sensors}
+            onDragEnd={handleRowDragEnd}
+          >
+            {rows.map((row) =>
+              row.getIsGrouped() ? (
+                <TableGroupedRow key={row.id} row={row} />
+              ) : (
+                <ListRow key={row.id} row={row} />
+              ),
+            )}
+          </SortableDnd>
+        </div>
         <Button
           tabIndex={0}
           variant="cell"
@@ -71,30 +70,6 @@ export function ListViewContent() {
           New page
         </Button>
       </div>
-    </div>
-  );
-}
-
-interface ListBodyProps {
-  table: Table<Row>;
-}
-
-function ListBody({ table }: ListBodyProps) {
-  const rows = table.getRowModel().rows;
-  return (
-    <div className="relative flex flex-col">
-      <SortableContext
-        items={rows.map((row) => row.id)}
-        strategy={verticalListSortingStrategy}
-      >
-        {rows.map((row) =>
-          row.getIsGrouped() ? (
-            <TableGroupedRow key={row.id} row={row} />
-          ) : (
-            <ListRow key={row.id} row={row} />
-          ),
-        )}
-      </SortableContext>
     </div>
   );
 }

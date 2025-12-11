@@ -7,7 +7,8 @@ import {
 } from "@tanstack/react-table";
 
 import type { ColumnInfo } from "../lib/types";
-import { ComparableValue, DefaultGroupingValue } from "../plugins";
+import type { CellPlugin, ComparableValue, InferData } from "../plugins";
+import { DefaultGroupingValue } from "../plugins";
 import { createDragEndUpdater } from "./utils";
 
 interface ExtendedGroupingState {
@@ -23,7 +24,13 @@ interface ExtendedGroupingState {
    * key: group ID
    * value: grouping value
    */
-  groupValues: Record<string, ComparableValue>;
+  groupValues: Record<
+    string,
+    {
+      value: ComparableValue;
+      original: InferData<CellPlugin>;
+    }
+  >;
   showAggregates: boolean;
   hideEmptyGroups: boolean;
 }
@@ -65,7 +72,7 @@ export const ExtendedGroupingFeature: TableFeature = {
         groupOrder: [],
         groupVisibility: {},
         groupValues: {},
-        showAggregates: false,
+        showAggregates: true,
         hideEmptyGroups: true,
       },
       ...state,
@@ -156,7 +163,7 @@ export const ExtendedGroupingFeature: TableFeature = {
         const plugin = table.getColumnPlugin(info.id);
         const resolvedProps = {
           ...props,
-          value: groupValues[groupId] ?? null,
+          value: groupValues[groupId]?.value ?? null,
           table,
         };
         if (plugin.renderGroupingValue) {

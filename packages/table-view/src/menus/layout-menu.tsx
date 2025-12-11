@@ -29,7 +29,11 @@ export function LayoutMenu() {
                 "aria-selected:text-blue aria-selected:shadow-notion",
               )}
               // TODO Not all layouts are implemented yet
-              disabled={layout.value !== "table" && layout.value !== "list"}
+              disabled={
+                layout.value !== "table" &&
+                layout.value !== "list" &&
+                layout.value !== "board"
+              }
             >
               <LayoutIcon layout={layout.value} />
               <div className="text-center">{layout.label}</div>

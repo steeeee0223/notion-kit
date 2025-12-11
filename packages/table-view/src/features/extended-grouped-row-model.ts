@@ -6,6 +6,9 @@ import {
   memo,
 } from "@tanstack/react-table";
 
+import type { ComparableValue } from "../plugins";
+import { createGroupId } from "./utils";
+
 export function getExtendedGroupedRowModel<TData extends RowData>(): (
   table: Table<TData>,
 ) => () => RowModel<TData> {
@@ -86,7 +89,7 @@ export function getExtendedGroupedRowModel<TData extends RowData>(): (
           const aggregatedGroupedRows: Row<TData>[] = [];
 
           for (const [groupingValue, groupedRows] of rowGroupsMap.entries()) {
-            let id = `${columnId}:${groupingValue}`;
+            let id = createGroupId(columnId, groupingValue);
             id = parentId ? `${parentId}>${id}` : id;
 
             // PRIORITY 1: Check visibility BEFORE processing this group
@@ -202,10 +205,10 @@ export function getExtendedGroupedRowModel<TData extends RowData>(): (
 }
 
 function groupBy<TData extends RowData>(rows: Row<TData>[], columnId: string) {
-  const groupMap = new Map<string, Row<TData>[]>();
+  const groupMap = new Map<ComparableValue, Row<TData>[]>();
 
   return rows.reduce((map, row) => {
-    const resKey = String(row.getGroupingValue(columnId));
+    const resKey = row.getGroupingValue(columnId);
     const previous = map.get(resKey);
     if (!previous) {
       map.set(resKey, [row]);

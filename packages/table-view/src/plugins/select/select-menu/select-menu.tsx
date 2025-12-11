@@ -3,7 +3,7 @@
 import { MenuGroup, MenuItem, MenuLabel } from "@notion-kit/shadcn";
 import { TagsInput } from "@notion-kit/tags-input";
 
-import { OptionTag, VerticalDnd } from "../../../common";
+import { OptionTag, SortableDnd } from "../../../common";
 import { OptionItem } from "./option-item";
 import { SelectMenuApi } from "./use-select-menu";
 
@@ -49,7 +49,7 @@ export function SelectMenu({ menu }: SelectMenuProps) {
       <MenuGroup>
         <MenuLabel title="Select an option or create one" />
         <div className="flex flex-col">
-          <VerticalDnd items={results ?? []} onDragEnd={reorderOptions}>
+          <SortableDnd items={results ?? []} onDragEnd={reorderOptions}>
             {results?.map((name) => {
               const option = config.options.items[name];
               if (!option) return;
@@ -65,7 +65,7 @@ export function SelectMenu({ menu }: SelectMenuProps) {
                 />
               );
             })}
-          </VerticalDnd>
+          </SortableDnd>
           {search && optionSuggestion && (
             <MenuItem
               Body={

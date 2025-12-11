@@ -18,7 +18,7 @@ import {
 } from "../features";
 import type { ColumnDefs, ColumnInfo, Row } from "../lib/types";
 import { type Entity } from "../lib/utils";
-import type { CellPlugin, ComparableValue } from "../plugins";
+import type { CellPlugin } from "../plugins";
 import { defaultColumn } from "./column";
 import type { TableState } from "./types";
 import { getMinWidth, toPropertyEntity } from "./utils";
@@ -145,10 +145,12 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   ) {
     table._setGroupingState((v) =>
       table.getGroupedRowModel().rows.reduce((acc, r) => {
+        const colId = r.groupingColumnId!;
         acc.groupOrder.push(r.id);
-        acc.groupValues[r.id] = r.getGroupingValue(
-          r.groupingColumnId!,
-        ) as ComparableValue;
+        acc.groupValues[r.id] = {
+          value: r.getGroupingValue(colId),
+          original: r.original.properties[colId]?.value as unknown,
+        };
         return acc;
       }, v),
     );

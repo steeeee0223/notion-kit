@@ -64,7 +64,8 @@ export function TableRowCell<TPlugin extends CellPlugin>({
           wrapped: info.wrapped,
           disabled: locked,
           layout: "table",
-          onChange: (updater) => column.updateCell(row.id, updater),
+          onChange: (updater) =>
+            column.updateCell(row.id, updater, row.parentId),
           onConfigChange: column.updateConfig,
         })}
       </div>
