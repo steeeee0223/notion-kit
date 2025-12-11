@@ -43,7 +43,6 @@ export interface RowActionsTableApi {
   handleRowDragEnd: (e: DragEndEvent) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
   // With Grouping API
-  getGroupIdByRow: (rowId: string) => string;
   addRowToGroup: (groupId: string) => void;
 }
 

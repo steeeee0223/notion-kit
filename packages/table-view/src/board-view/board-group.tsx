@@ -87,8 +87,8 @@ export function BoardGroup({ row }: BoardGroupProps) {
         data-slot="board-group-content"
         className="flex min-h-10 w-full flex-col gap-2"
       >
-        {row.subRows.map((row) => (
-          <BoardCard key={row.id} row={row} />
+        {row.subRows.map((subRow) => (
+          <BoardCard key={subRow.id} row={subRow} />
         ))}
       </div>
       <Button
