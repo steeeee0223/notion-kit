@@ -1,11 +1,10 @@
 "use client";
 
 import React from "react";
-import { useSortable } from "@dnd-kit/sortable";
+import { horizontalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { Row } from "@tanstack/react-table";
 
-import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import { Button } from "@notion-kit/shadcn";
 
@@ -34,14 +33,8 @@ export function BoardGroup({ row }: BoardGroupProps) {
     id: row.id,
     disabled: locked,
     data: { type: "board-group" },
+    strategy: horizontalListSortingStrategy,
   });
-
-  /** DND for card dropping */
-  // const { isOver, setNodeRef: setDroppableNodeRef } = useDroppable({
-  //   id: row.id,
-  //   disabled: locked,
-  //   data: { type: "board-group" },
-  // });
 
   const style: React.CSSProperties = {
     opacity: isGroupDragging ? 0.8 : 1,
@@ -50,15 +43,14 @@ export function BoardGroup({ row }: BoardGroupProps) {
     transition, // Warning: it is somehow laggy
   };
 
-  const groupId = row.groupingColumnId;
-  if (!groupId) {
+  if (!row.groupingColumnId) {
     console.error(`No grouping column id found for the grouped row ${row.id}`);
     return null;
   }
 
   const addRow = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    table.addRowToGroup(groupId);
+    table.addRowToGroup(row.id);
   };
 
   return (
@@ -66,10 +58,7 @@ export function BoardGroup({ row }: BoardGroupProps) {
       ref={setGroupNodeRef}
       data-slot="board-group"
       data-block-id={row.id}
-      className={cn(
-        "group/board-group mb-4 box-content flex h-max w-[260px] shrink-0 flex-col items-center gap-2 rounded-lg bg-blue/20 p-2 text-sm",
-        // isOver && "bg-primary/10 ring-2 ring-primary/50",
-      )}
+      className="group/board-group mb-4 box-content flex h-max w-[260px] shrink-0 flex-col items-center gap-2 rounded-lg p-2 text-sm"
       style={style}
     >
       <div
@@ -95,21 +84,16 @@ export function BoardGroup({ row }: BoardGroupProps) {
         />
       </div>
       <div
-        // ref={setDroppableNodeRef}
         data-slot="board-group-content"
         className="flex min-h-10 w-full flex-col gap-2"
       >
         {row.subRows.map((row) => (
           <BoardCard key={row.id} row={row} />
         ))}
-        {/* Drop indicator when dragging over empty area */}
-        {/* {isOver && row.subRows.length === 0 && (
-          <div className="h-2 rounded border-2 border-dashed border-primary/40 bg-primary/20" />
-        )} */}
       </div>
       <Button
         size="sm"
-        className="w-full leading-[1.2] text-secondary"
+        className="w-full rounded-lg leading-[1.2] text-secondary"
         onClick={addRow}
       >
         <Icon.Plus className="fill-current" />

@@ -95,7 +95,7 @@ export function BoardCard({ row }: BoardCardProps) {
                     variant={null}
                     className="flex rounded-none px-1.5 py-1 text-secondary"
                     aria-label="Edit"
-                    onClick={(e) => e.stopPropagation()}
+                    onPointerDown={(e) => e.stopPropagation()}
                   >
                     <Icon.PencilLine className="fill-current" />
                   </Button>
@@ -125,13 +125,17 @@ export function BoardCard({ row }: BoardCardProps) {
                     variant={null}
                     className="flex rounded-none px-1.5 py-1 text-secondary"
                     aria-label="Actions"
-                    onClick={(e) => e.stopPropagation()}
+                    onPointerDown={(e) => e.stopPropagation()}
                   >
                     <Icon.Dots className="size-4 fill-current" />
                   </Button>
                 </PopoverTrigger>
               </TooltipPreset>
-              <PopoverContent className="z-990 w-[265px]" side="bottom">
+              <PopoverContent
+                className="z-990 w-[265px]"
+                side="bottom"
+                onPointerDown={(e) => e.stopPropagation()}
+              >
                 <RowActionMenu rowId={row.id} />
               </PopoverContent>
             </Popover>

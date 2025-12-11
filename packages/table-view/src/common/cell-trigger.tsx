@@ -33,6 +33,7 @@ export function CellTrigger({
         wrapped && "whitespace-normal",
         className,
       )}
+      onPointerDown={(e) => e.stopPropagation()}
       {...props}
     />
   );

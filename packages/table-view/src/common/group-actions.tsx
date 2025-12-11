@@ -29,9 +29,8 @@ export function GroupActions({ className, row }: GroupActionsProps) {
   const { openModal } = useModal();
 
   const { locked } = table.getState().tableGlobal;
-  const groupId = row.groupingColumnId!;
 
-  const addRow = () => table.addRowToGroup(groupId);
+  const addRow = () => table.addRowToGroup(row.id);
   const deleteRows = () => {
     const rowIds = row.subRows.map((subRow) => subRow.id);
     openModal(
@@ -54,12 +53,15 @@ export function GroupActions({ className, row }: GroupActionsProps) {
     >
       {/* Group settings */}
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+        <DropdownMenuTrigger asChild onPointerDown={(e) => e.stopPropagation()}>
           <Button aria-label="Group options" variant="hint" className="size-6">
             <Icon.Dots className="size-3.5 fill-current" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="z-990 w-50">
+        <DropdownMenuContent
+          className="z-990 w-50"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
           <DropdownMenuGroup>
             <DropdownMenuItem
               {...(row.getShouldShowGroupAggregates()
@@ -71,17 +73,17 @@ export function GroupActions({ className, row }: GroupActionsProps) {
                     Icon: <Icon.Eye />,
                     Body: "Show aggregation",
                   })}
-              onClick={row.toggleGroupAggregates}
+              onSelect={row.toggleGroupAggregates}
             />
             <DropdownMenuItem
               Icon={<Icon.EyeHideInversePadded className="size-6" />}
               Body="Hide group"
-              onClick={row.toggleGroupVisibility}
+              onSelect={row.toggleGroupVisibility}
             />
             <DropdownMenuItem
               Icon={<Icon.Trash />}
               Body="Delete rows"
-              onClick={deleteRows}
+              onSelect={deleteRows}
             />
           </DropdownMenuGroup>
         </DropdownMenuContent>
@@ -92,6 +94,7 @@ export function GroupActions({ className, row }: GroupActionsProps) {
           aria-label="Add row"
           variant="hint"
           className="size-6"
+          onPointerDown={(e) => e.stopPropagation()}
           onClick={addRow}
         >
           <Icon.Plus className="size-3.5 fill-current" />

@@ -201,7 +201,7 @@ export const RowActionsFeature: TableFeature = {
     };
     // With Grouping API
     table.addRowToGroup = (groupId) => {
-      const { columnOrder, groupingState } = table.getState();
+      const { columnOrder, grouping, groupingState } = table.getState();
       const rowId = v4();
       table.setTableData((v) => {
         const now = Date.now();
@@ -214,7 +214,7 @@ export const RowActionsFeature: TableFeature = {
         columnOrder.forEach((colId) => {
           const plugin = table.getColumnPlugin(colId);
           row.properties[colId] =
-            colId === groupId
+            colId === grouping[0]
               ? {
                   id: v4(),
                   value: structuredClone(groupingState.groupValues[groupId]),
