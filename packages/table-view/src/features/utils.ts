@@ -3,6 +3,7 @@ import { arrayMove } from "@dnd-kit/sortable";
 import type { Updater } from "@tanstack/react-table";
 
 import { insertAt } from "../lib/utils";
+import type { ComparableValue } from "../plugins";
 
 export function createIdsUpdater(
   targetId: string,
@@ -34,4 +35,8 @@ export function createDragEndUpdater<T>(
     );
     return arrayMove(prev, indexes.old, indexes.new);
   };
+}
+
+export function createGroupId(colId: string, value: ComparableValue): string {
+  return `${colId}:${String(value)}`;
 }

@@ -34,7 +34,7 @@ export function ListRowCell<TPlugin extends CellPlugin>({
         data: data.value,
         config: info.config,
         disabled: locked,
-        onChange: (updater) => column.updateCell(row.id, updater),
+        onChange: (updater) => column.updateCell(row.id, updater, row.parentId),
         onConfigChange: column.updateConfig,
       })}
     </TooltipPreset>

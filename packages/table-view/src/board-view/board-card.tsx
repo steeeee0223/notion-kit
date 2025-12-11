@@ -40,7 +40,12 @@ export function BoardCard({ row }: BoardCardProps) {
     id: row.id,
     initialValue: titleCell.cell.value,
     onUpdate: (value) =>
-      table.updateCell(row.id, titleCell.colId, (v) => ({ ...v, value })),
+      table.updateCell(
+        row.id,
+        titleCell.colId,
+        (v) => ({ ...v, value }),
+        row.parentId,
+      ),
   });
 
   /** DND */

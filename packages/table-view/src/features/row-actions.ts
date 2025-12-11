@@ -1,11 +1,11 @@
 import type { DragEndEvent } from "@dnd-kit/core";
-import {
-  functionalUpdate,
-  type OnChangeFn,
-  type Table,
-  type TableFeature,
-  type Updater,
+import type {
+  OnChangeFn,
+  Table,
+  TableFeature,
+  Updater,
 } from "@tanstack/react-table";
+import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { IconData } from "@notion-kit/icon-block";
@@ -13,8 +13,8 @@ import type { IconData } from "@notion-kit/icon-block";
 import type { Cell, Row } from "../lib/types";
 import { getDefaultCell, insertAt } from "../lib/utils";
 import type { CellPlugin, InferData } from "../plugins";
-import { TitlePlugin } from "../plugins/title";
-import { createDragEndUpdater } from "./utils";
+import type { TitlePlugin } from "../plugins/title";
+import { createDragEndUpdater, createGroupId } from "./utils";
 
 export interface RowActionsOptions {
   onTableDataChange?: OnChangeFn<Row[]>;
@@ -33,6 +33,7 @@ export interface RowActionsTableApi {
     rowId: string,
     colId: string,
     updater: Updater<Cell<TPlugin>>,
+    originalGroupId?: string,
   ) => void;
   // Row API
   addRow: (payload?: { id: string; at?: "prev" | "next" }) => void;
@@ -42,6 +43,7 @@ export interface RowActionsTableApi {
   handleRowDragEnd: (e: DragEndEvent) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
   // With Grouping API
+  getGroupIdByRow: (rowId: string) => string;
   addRowToGroup: (groupId: string) => void;
 }
 
@@ -51,6 +53,7 @@ export interface RowActionsColumnApi {
   updateCell: <TPlugin extends CellPlugin>(
     rowId: string,
     updater: Updater<InferData<TPlugin>>,
+    originalGroupId?: string,
   ) => void;
 }
 
@@ -88,17 +91,63 @@ export const RowActionsFeature: TableFeature = {
       }
       throw new Error(`[TableView] Title cell not found: ${rowId}`);
     };
-    table.updateCell = (rowId, colId, updater) => {
-      table.setTableData((prev) => {
-        const now = Date.now();
-        return prev.map((row) => {
-          if (row.id !== rowId) return row;
-          const data = functionalUpdate(updater, row.properties[colId]!);
-          return {
-            ...row,
-            properties: { ...row.properties, [colId]: data },
-            lastEditedAt: now,
+    table.updateCell = <TPlugin extends CellPlugin>(
+      rowId: string,
+      colId: string,
+      updater: Updater<Cell<TPlugin>>,
+      originalGroupId?: string,
+    ) => {
+      table._queue(() => {
+        table.setTableData((prev) => {
+          const now = Date.now();
+          return prev.map((row) => {
+            if (row.id !== rowId) return row;
+            const data = functionalUpdate(updater, row.properties[colId]!);
+            return {
+              ...row,
+              properties: { ...row.properties, [colId]: data },
+              lastEditedAt: now,
+            };
+          });
+        });
+
+        // Update grouping state if necessary
+        const { grouping } = table.getState();
+        if (grouping[0] !== colId || !originalGroupId) return;
+
+        const getGroupingValue = (value: unknown) => {
+          const plugin = table.getColumnPlugin(colId);
+          const row = {
+            ...table.getRow(rowId).original,
+            properties: {
+              ...table.getRow(rowId).original.properties,
+              [colId]: { id: "", value },
+            },
           };
+          return (plugin.toGroupValue ?? plugin.toValue)(value, row);
+        };
+
+        table._setGroupingState((v) => {
+          const group = v.groupValues[originalGroupId];
+          if (!group) return v;
+          // Compute new group id and group value
+          const newCell = functionalUpdate(updater, {
+            id: "",
+            value: group.original as InferData<TPlugin>,
+          });
+          const groupingValue = getGroupingValue(newCell.value);
+          const groupId = createGroupId(colId, groupingValue);
+          if (v.groupValues[groupId] !== undefined) return v;
+          // Add new group id and value to grouping state
+          const groupOrder = [...v.groupOrder, groupId];
+          const groupValues = {
+            ...v.groupValues,
+            [groupId]: {
+              value: groupingValue,
+              original: newCell.value,
+            },
+          };
+          return { ...v, groupOrder, groupValues };
         });
       });
     };
@@ -237,11 +286,17 @@ export const RowActionsFeature: TableFeature = {
     column.updateCell = <TPlugin extends CellPlugin>(
       rowId: string,
       updater: Updater<InferData<TPlugin>>,
+      originalGroupId?: string,
     ) =>
-      table.updateCell<TPlugin>(rowId, column.id, (prev) => ({
-        ...prev,
-        value: functionalUpdate(updater, prev.value),
-      }));
+      table.updateCell<TPlugin>(
+        rowId,
+        column.id,
+        (prev) => ({
+          ...prev,
+          value: functionalUpdate(updater, prev.value),
+        }),
+        originalGroupId,
+      );
   },
   createRow: (row, table) => {
     row.getTitleCell = () => {
