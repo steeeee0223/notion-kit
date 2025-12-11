@@ -7,4 +7,4 @@ export { OptionTag } from "./option-tag";
 export { PropMeta } from "./prop-meta";
 export * from "./table-row-action-group";
 export { TextInputPopover } from "./text-input-popover";
-export { VerticalDnd, useDndSensors } from "./vertical-dnd";
+export { SortableDnd, useDndSensors } from "./dnd";

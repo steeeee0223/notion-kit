@@ -9,7 +9,7 @@ import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
 import { Button } from "@notion-kit/shadcn";
 
-import { useDndSensors, VerticalDnd } from "../common";
+import { SortableDnd, useDndSensors } from "../common";
 import type { Row } from "../lib/types";
 import { useTableViewCtx } from "../table-contexts";
 import { TableGroupedRow } from "./table-grouped-row";
@@ -106,7 +106,7 @@ function TableBody({ table, onRowDragEnd }: TableBodyProps) {
   const rows = table.getRowModel().rows;
 
   return (
-    <VerticalDnd
+    <SortableDnd
       items={rows.map((row) => row.id)}
       sensors={sensors}
       onDragEnd={onRowDragEnd}
@@ -118,7 +118,7 @@ function TableBody({ table, onRowDragEnd }: TableBodyProps) {
           <TableRow key={row.id} row={row} />
         ),
       )}
-    </VerticalDnd>
+    </SortableDnd>
   );
 }
 

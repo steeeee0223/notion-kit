@@ -25,19 +25,19 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 
-interface VerticalDndProps extends React.PropsWithChildren {
+interface SortableDndProps extends React.PropsWithChildren {
   items: string[];
   orientation?: "vertical" | "horizontal";
   sensors?: SensorDescriptor<SensorOptions>[];
   onDragEnd: (event: DragEndEvent) => void;
 }
 
-export function VerticalDnd({
+export function SortableDnd({
   items,
   orientation = "vertical",
   children,
   ...props
-}: VerticalDndProps) {
+}: SortableDndProps) {
   return (
     <DndContext
       collisionDetection={closestCenter}

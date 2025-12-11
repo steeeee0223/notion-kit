@@ -8,7 +8,7 @@ import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
 import { Button } from "@notion-kit/shadcn";
 
-import { useDndSensors, VerticalDnd } from "../common";
+import { SortableDnd, useDndSensors } from "../common";
 import { TableGroupedRow } from "../table-body";
 import { useTableViewCtx } from "../table-contexts";
 import { ListRow } from "./list-row";
@@ -46,7 +46,7 @@ export function ListViewContent() {
         className="flex flex-col py-1"
       >
         <div className="relative flex flex-col">
-          <VerticalDnd
+          <SortableDnd
             items={rows.map((row) => row.id)}
             sensors={sensors}
             onDragEnd={handleRowDragEnd}
@@ -58,7 +58,7 @@ export function ListViewContent() {
                 <ListRow key={row.id} row={row} />
               ),
             )}
-          </VerticalDnd>
+          </SortableDnd>
         </div>
         <Button
           tabIndex={0}
