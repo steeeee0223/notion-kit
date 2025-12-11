@@ -45,12 +45,7 @@ export function Toolbar({ className }: ToolbarProps) {
             </Button>
           </PopoverTrigger>
         </TooltipPreset>
-        <PopoverContent
-          className="z-990"
-          sideOffset={0}
-          collisionPadding={12}
-          sticky="always"
-        >
+        <PopoverContent className="z-990" collisionPadding={12} sticky="always">
           <TableViewMenu />
         </PopoverContent>
       </Popover>

@@ -6,6 +6,8 @@ import type { Table } from "@tanstack/react-table";
 import { ModalProvider } from "@notion-kit/modal";
 import { TooltipProvider } from "@notion-kit/shadcn";
 
+import { BoardViewContent } from "../board-view";
+import { LayoutType } from "../features";
 import type { Row } from "../lib/types";
 import { arrayToEntity } from "../lib/utils";
 import { ListViewContent } from "../list-view";
@@ -48,13 +50,20 @@ export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
               <Toolbar />
             </div>
           </div>
-          {layout === "list" ? (
-            <ListViewContent />
-          ) : (
-            <TableViewContent table={ctx.table} />
-          )}
+          <Content layout={layout} />
         </ModalProvider>
       </TooltipProvider>
     </TableViewContext>
   );
+}
+
+function Content({ layout }: { layout: LayoutType }) {
+  switch (layout) {
+    case "list":
+      return <ListViewContent />;
+    case "board":
+      return <BoardViewContent />;
+    default:
+      return <TableViewContent />;
+  }
 }

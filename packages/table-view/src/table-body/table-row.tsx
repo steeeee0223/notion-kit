@@ -37,7 +37,14 @@ export function TableRow({ row }: TableRowProps) {
     setNodeRef,
     transform,
     transition,
-  } = useSortable({ id: row.id, disabled: locked });
+  } = useSortable({
+    id: row.id,
+    disabled: locked,
+    data: {
+      type: "table-row",
+      groupId: row.parentId,
+    },
+  });
   const style: React.CSSProperties = {
     opacity: isDragging ? 0.8 : 1,
     transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing

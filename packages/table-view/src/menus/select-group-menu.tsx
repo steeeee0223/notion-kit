@@ -19,7 +19,7 @@ import { useTableViewCtx } from "../table-contexts";
 
 export function SelectGroupMenu() {
   const { table } = useTableViewCtx();
-  const { columnOrder, columnsInfo, grouping } = table.getState();
+  const { columnOrder, columnsInfo, grouping, tableGlobal } = table.getState();
   const groupingColId = grouping.at(0);
 
   const options = columnOrder.reduce<ColumnInfo[]>((acc, colId) => {
@@ -49,7 +49,7 @@ export function SelectGroupMenu() {
         onBack={() =>
           table.setTableMenuState({
             open: true,
-            page: null, // TODO update after adding EditGroupMenu
+            page: grouping.length > 0 ? TableViewMenuPage.EditGroupBy : null,
           })
         }
       />
@@ -61,11 +61,13 @@ export function SelectGroupMenu() {
         />
         <CommandList>
           <CommandGroup className="h-40 overflow-y-auto">
-            <CommandItem value="none" asChild>
-              <MenuItem Body="None" onClick={() => selectGroup(null)}>
-                {groupingColId === undefined && <MenuItemCheck />}
-              </MenuItem>
-            </CommandItem>
+            {tableGlobal.layout !== "board" && (
+              <CommandItem value="none" asChild>
+                <MenuItem Body="None" onClick={() => selectGroup(null)}>
+                  {groupingColId === undefined && <MenuItemCheck />}
+                </MenuItem>
+              </CommandItem>
+            )}
             {results?.map(({ id, name, type, icon }) => (
               <CommandItem
                 key={id}

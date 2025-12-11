@@ -35,7 +35,11 @@ export function ListRow({ row }: ListRowProps) {
     setNodeRef,
     transform,
     transition,
-  } = useSortable({ id: row.id, disabled: locked });
+  } = useSortable({
+    id: row.id,
+    disabled: locked,
+    data: { type: "list-row", groupId: row.parentId },
+  });
   const style: React.CSSProperties = {
     opacity: isDragging ? 0.8 : 1,
     transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing

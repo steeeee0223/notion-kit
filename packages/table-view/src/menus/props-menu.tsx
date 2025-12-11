@@ -22,7 +22,7 @@ import {
   DefaultIcon,
   MenuGroupHeader,
   MenuHeader,
-  VerticalDnd,
+  SortableDnd,
 } from "../common";
 import { TableViewMenuPage } from "../features";
 import type { ColumnInfo } from "../lib/types";
@@ -90,7 +90,7 @@ export function PropsMenu() {
           onActionClick={table.toggleAllColumnsVisible}
         />
         <div className="flex flex-col">
-          <VerticalDnd
+          <SortableDnd
             items={columnOrder}
             onDragEnd={table.handleColumnDragEnd}
           >
@@ -116,7 +116,7 @@ export function PropsMenu() {
                     }
                   />
                 ))}
-          </VerticalDnd>
+          </SortableDnd>
         </div>
       </MenuGroup>
       <Separator />
