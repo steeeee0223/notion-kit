@@ -283,7 +283,7 @@ function MultiSelect({
               aria-label={option.value}
               variant="tag"
               size="md"
-              className="my-0.5 h-5 max-w-full min-w-0 shrink-0 rounded pr-0 text-sm/[1.2]"
+              className="my-0.5 h-5 max-w-full min-w-0 shrink-0 rounded pr-0 text-sm/tight"
               style={{ backgroundColor: option.color }}
             >
               <span className="truncate">{option.label}</span>

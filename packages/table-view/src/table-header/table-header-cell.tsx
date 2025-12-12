@@ -82,7 +82,7 @@ export function TableHeaderCell({
                 variant="cell"
                 className={cn("size-full px-2", isResizing && "bg-transparent")}
               >
-                <div className="flex min-w-0 flex-auto items-center text-sm/[1.2]">
+                <div className="flex min-w-0 flex-auto items-center text-sm/tight">
                   <div className="mr-1 grid items-center justify-center">
                     <div className="col-start-1 row-start-1 opacity-100 transition-opacity duration-150">
                       {info.icon ? (

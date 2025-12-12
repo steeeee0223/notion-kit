@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 
+import { cn } from "@notion-kit/cn";
 import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
-import { Button, Input, TooltipPreset } from "@notion-kit/shadcn";
+import { Button, Input, TooltipPreset, typography } from "@notion-kit/shadcn";
 
 import type { OptionConfig } from "../types";
 
@@ -67,9 +68,9 @@ export function OptionMeta({
         )}
       </div>
       {showDesc && (
-        <div className="flex min-h-7 w-full min-w-0 flex-auto items-center px-3 py-1 leading-[1.2] select-none">
+        <div className="flex min-h-7 w-full min-w-0 flex-auto items-center px-3 py-1 leading-tight select-none">
           <Input
-            className="text-[13px]/[20px]"
+            className={cn(typography("body"))}
             placeholder="Add a description..."
             {...descField.props}
           />
