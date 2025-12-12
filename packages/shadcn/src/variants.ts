@@ -73,7 +73,7 @@ export type ButtonVariants = VariantProps<typeof buttonVariants>;
 
 export const menuItemVariants = cva(
   [
-    "mx-1 flex min-h-7 w-[calc(100%-8px)] animate-bg-in cursor-pointer items-center rounded-md px-2 text-sm/[1.2] select-none hover:bg-default/5 focus-visible:outline-hidden",
+    "mx-1 flex min-h-7 w-[calc(100%-8px)] animate-bg-in cursor-pointer items-center rounded-md px-2 text-sm/tight select-none hover:bg-default/5 focus-visible:outline-hidden",
     "fill-menu-icon [&_svg]:block [&_svg]:shrink-0",
   ],
   {

@@ -93,7 +93,7 @@ export function BoardGroup({ row }: BoardGroupProps) {
       </div>
       <Button
         size="sm"
-        className="w-full rounded-lg leading-[1.2] text-secondary"
+        className="w-full rounded-lg leading-tight text-secondary"
         onClick={addRow}
       >
         <Icon.Plus className="fill-current" />

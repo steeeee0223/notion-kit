@@ -38,14 +38,14 @@ export function MenuGroupHeader({
   onActionClick,
 }: MenuGroupHeaderProps) {
   return (
-    <div className="mt-1.5 mb-2 flex h-[19px] fill-default/45 px-3.5 text-xs/[1.2] font-medium text-secondary select-none">
+    <div className="mt-1.5 mb-2 flex h-[19px] fill-default/45 px-3.5 text-xs/tight font-medium text-secondary select-none">
       <div className="flex self-center">{title}</div>
       {action && (
         <div className="ml-auto">
           <Button
             tabIndex={0}
             variant="soft-blue"
-            className="h-[initial] min-w-0 shrink bg-transparent px-1.5 py-0.5 text-xs/[1.2] shadow-none"
+            className="h-[initial] min-w-0 shrink bg-transparent px-1.5 py-0.5 text-xs/tight shadow-none"
             onClick={onActionClick}
           >
             {action}

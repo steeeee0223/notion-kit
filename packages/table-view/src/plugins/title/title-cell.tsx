@@ -62,7 +62,7 @@ function TitleTableCell({
                   tabIndex={0}
                   aria-label="Open in side peek"
                   size="xs"
-                  className="rounded-md bg-main fill-secondary leading-[1.2] font-medium tracking-[0.5px] text-secondary uppercase shadow-sm"
+                  className="rounded-md bg-main fill-secondary leading-tight font-medium tracking-[0.5px] text-secondary uppercase shadow-sm"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <Icon.PeekModeSide
