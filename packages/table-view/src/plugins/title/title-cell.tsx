@@ -17,6 +17,7 @@ import {
 
 import { CellTrigger, TextInputPopover } from "../../common";
 import { wrappedClassName } from "../../lib/utils";
+import { useTableViewCtx } from "../../table-contexts";
 import type { CellProps } from "../types";
 import type { TitleConfig } from "./types";
 
@@ -38,10 +39,13 @@ export function TitleCell({ layout, ...props }: TitleCellProps) {
 function TitleTableCell({
   icon,
   data,
+  row,
   wrapped,
   disabled,
   onChange,
 }: Omit<TitleCellProps, "layout">) {
+  const { table } = useTableViewCtx();
+
   return (
     <TextInputPopover
       value={data}
@@ -63,7 +67,10 @@ function TitleTableCell({
                   aria-label="Open in side peek"
                   size="xs"
                   className="rounded-md bg-main fill-secondary leading-tight font-medium tracking-[0.5px] text-secondary uppercase shadow-sm"
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    table.openRow(row.id);
+                  }}
                 >
                   <Icon.PeekModeSide
                     className={cn("size-3.5", width > 110 && "mr-1.5")}
@@ -112,6 +119,7 @@ function TitleListCell({
       className="min-w-30 flex-[1_1_auto] cursor-default hover:bg-transparent"
       layout="list"
       aria-disabled={disabled}
+      stopPropagation={false}
     >
       <div className="pointer-events-none top-1.5 z-20 order-3 mx-1 my-0 hidden justify-end group-hover/row:flex has-aria-expanded:flex">
         <div

@@ -46,6 +46,7 @@ interface CellTriggerProps extends React.ComponentProps<"div"> {
     title: string;
     description?: string;
   };
+  stopPropagation?: boolean;
 }
 
 export function CellTrigger({
@@ -54,6 +55,7 @@ export function CellTrigger({
   layout = "table",
   widthType,
   tooltip,
+  stopPropagation = true,
   ...props
 }: CellTriggerProps) {
   return (
@@ -85,8 +87,15 @@ export function CellTrigger({
           }),
           className,
         )}
-        onPointerDown={(e) => e.stopPropagation()}
         {...props}
+        onClick={(e) => {
+          if (stopPropagation) e.stopPropagation();
+          props.onClick?.(e);
+        }}
+        onKeyDown={(e) => {
+          if (stopPropagation) e.stopPropagation();
+          props.onKeyDown?.(e);
+        }}
       />
     </TooltipPreset>
   );

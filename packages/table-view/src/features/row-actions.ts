@@ -18,10 +18,12 @@ import { createDragEndUpdater, createGroupId } from "./utils";
 
 export interface RowActionsOptions {
   onTableDataChange?: OnChangeFn<Row[]>;
+  onRowOpen?: (rowId: string) => void;
 }
 
 export interface RowActionsTableApi {
   setTableData: OnChangeFn<Row[]>;
+  openRow: (id: string) => void;
   // Cell API
   getCellValues: <TPlugins extends CellPlugin[]>() => Row<TPlugins>[];
   getCell: <TPlugin extends CellPlugin>(
@@ -64,11 +66,14 @@ export interface RowActionsRowApi {
 
 export const RowActionsFeature: TableFeature = {
   getDefaultOptions: (): RowActionsOptions => {
-    return {};
+    return {
+      onRowOpen: (id) => console.log(`[TableView] Row open: ${id}`),
+    };
   },
   createTable: (table: Table<Row>) => {
     table.setTableData = (updater) =>
       table.options.onTableDataChange?.(updater);
+    table.openRow = (id) => table.options.onRowOpen?.(id);
     /** Cell API */
     table.getCellValues = () =>
       table.getCoreRowModel().rows.map((row) => row.original);

@@ -93,6 +93,11 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
         )}
         {...attributes}
         {...listeners}
+        role={attributes.role}
+        onClick={() => table.openRow(row.id)}
+        onKeyDown={() => {
+          // noop
+        }}
       >
         {/* Card actions */}
         <div className="relative z-10">
@@ -110,7 +115,7 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
                     variant={null}
                     className="flex rounded-none px-1.5 py-1 text-secondary"
                     aria-label="Edit"
-                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <Icon.PencilLine className="fill-current" />
                   </Button>
@@ -119,6 +124,7 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
               <PopoverContent
                 side="left"
                 className="z-990 max-h-[773px] min-h-[38px] w-46 overflow-visible backdrop-filter-none"
+                onClick={(e) => e.stopPropagation()}
               >
                 <Input
                   spellCheck
@@ -140,7 +146,7 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
                     variant={null}
                     className="flex rounded-none px-1.5 py-1 text-secondary"
                     aria-label="Actions"
-                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <Icon.Dots className="size-4 fill-current" />
                   </Button>
@@ -149,7 +155,7 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
               <PopoverContent
                 className="z-990 w-[265px]"
                 side="bottom"
-                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => e.stopPropagation()}
               >
                 <RowActionMenu rowId={row.id} />
               </PopoverContent>

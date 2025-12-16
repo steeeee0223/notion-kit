@@ -64,20 +64,24 @@ export function ListRow({ row }: ListRowProps) {
             onAddNext={addNextRow}
           />
         )}
-        <a
-          href={`#${row.id}`}
-          rel="noopener noreferrer"
+        <div
+          role="button"
+          tabIndex={0}
           className={cn(
             buttonVariants({ variant: "cell" }),
-            "relative h-7.5 grow overflow-hidden rounded-md px-1 text-inherit no-underline opacity-100",
+            "relative h-7.5 grow overflow-hidden rounded-md px-1 text-inherit opacity-100",
           )}
+          onClick={() => table.openRow(row.id)}
+          onKeyDown={() => {
+            // noop
+          }}
         >
           {row.getVisibleCells().map((cell) => (
             <React.Fragment key={cell.id}>
               {flexRender(cell.column.columnDef.cell, cell.getContext())}
             </React.Fragment>
           ))}
-        </a>
+        </div>
         <div className="absolute -end-7 top-1/2 h-full w-7 -translate-y-1/2 cursor-pointer" />
       </div>
     </div>
