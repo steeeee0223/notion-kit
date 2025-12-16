@@ -12,6 +12,10 @@ export interface CellProps<Data, Config = undefined> {
   wrapped?: boolean;
   disabled?: boolean;
   layout?: LayoutType;
+  tooltip?: {
+    title: string;
+    description?: string;
+  };
   onChange: OnChangeFn<Data>;
   onConfigChange?: OnChangeFn<Config>;
 }

@@ -11,6 +11,7 @@ export function CheckboxCell({
   wrapped,
   disabled,
   layout,
+  tooltip,
   onChange,
 }: CellProps<boolean>) {
   return (
@@ -19,6 +20,7 @@ export function CheckboxCell({
       wrapped={wrapped}
       layout={layout}
       aria-disabled={disabled}
+      tooltip={tooltip}
       onPointerDown={() => onChange((v) => !v)}
     >
       <div className="h-4 max-w-full">

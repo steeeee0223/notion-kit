@@ -6,7 +6,6 @@ import { TooltipPreset } from "@notion-kit/shadcn";
 import { CellTrigger, CopyButton, TextInputPopover } from "../../common";
 import { wrappedClassName } from "../../lib/utils";
 import type { InferCellProps } from "../types";
-import { listCellWidth } from "../utils";
 import { ProgressBar, ProgressRing } from "./common";
 import type { NumberConfig, NumberPlugin } from "./types";
 
@@ -16,6 +15,7 @@ export function NumberCell({
   wrapped,
   disabled,
   layout,
+  tooltip,
   onChange,
 }: InferCellProps<NumberPlugin>) {
   const value = data ?? "";
@@ -33,14 +33,12 @@ export function NumberCell({
       onUpdate={handleUpdate}
       renderTrigger={() => (
         <CellTrigger
-          className={cn(
-            "group/number-cell",
-            layout === "table" && "h-9",
-            layout === "list" && listCellWidth("number"),
-          )}
+          className={cn("group/number-cell", layout === "table" && "h-9")}
           wrapped={wrapped}
           aria-disabled={disabled}
           layout={layout}
+          widthType="number"
+          tooltip={tooltip}
         >
           {layout === "table" && (
             <CopyButton

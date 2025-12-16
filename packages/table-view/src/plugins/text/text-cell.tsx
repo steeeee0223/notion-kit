@@ -5,13 +5,13 @@ import { cn } from "@notion-kit/cn";
 import { CellTrigger, CopyButton, TextInputPopover } from "../../common";
 import { wrappedClassName } from "../../lib/utils";
 import type { CellProps } from "../types";
-import { listCellWidth } from "../utils";
 
 export function TextCell({
   data,
   wrapped,
   disabled,
   layout,
+  tooltip,
   onChange,
 }: CellProps<string>) {
   if (layout !== "table" && !data) return null;
@@ -21,13 +21,12 @@ export function TextCell({
       onUpdate={onChange}
       renderTrigger={() => (
         <CellTrigger
-          className={cn(
-            "group/text-cell",
-            layout === "list" && listCellWidth("text"),
-          )}
+          className="group/text-cell"
           wrapped={wrapped}
           layout={layout}
+          widthType="text"
           aria-disabled={disabled}
+          tooltip={tooltip}
         >
           {layout === "table" && (
             <CopyButton

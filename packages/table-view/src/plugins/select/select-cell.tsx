@@ -13,7 +13,6 @@ import {
 
 import { CellTrigger, OptionTag } from "../../common";
 import { CellProps } from "../types";
-import { listCellWidth } from "../utils";
 import { SelectMenu } from "./select-menu";
 import { useSelectMenu } from "./select-menu/use-select-menu";
 import type { SelectConfig } from "./types";
@@ -25,6 +24,7 @@ export function SelectCell({
   wrapped,
   disabled,
   layout,
+  tooltip,
   onChange,
 }: CellProps<string[], SelectConfig>) {
   const [open, setOpen] = useState(false);
@@ -46,7 +46,8 @@ export function SelectCell({
           wrapped={wrapped}
           aria-disabled={disabled}
           layout={layout}
-          className={cn(layout === "list" && listCellWidth("select"))}
+          tooltip={tooltip}
+          widthType="select"
         >
           <div className="flex items-center justify-between">
             <div
@@ -62,6 +63,7 @@ export function SelectCell({
                   <TooltipPreset
                     asChild={false}
                     key={option.id}
+                    disabled={layout !== "table"}
                     description={
                       option.description
                         ? [
