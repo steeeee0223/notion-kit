@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useId, useState } from "react";
+import { useDroppable } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { flexRender, type Row } from "@tanstack/react-table";
@@ -25,12 +26,13 @@ import { useTableViewCtx } from "../table-contexts";
 
 interface BoardCardProps {
   row: Row<RowModel>;
+  overlay?: boolean;
 }
 
 /**
  * A BoardCard is displayed as a table row
  */
-export function BoardCard({ row }: BoardCardProps) {
+export function BoardCard({ row, overlay }: BoardCardProps) {
   const { table } = useTableViewCtx();
   const { locked } = table.getTableGlobalState();
   const titleCell = row.getTitleCell();
@@ -52,6 +54,7 @@ export function BoardCard({ row }: BoardCardProps) {
   const {
     attributes,
     isDragging,
+    isOver,
     listeners,
     setNodeRef,
     transform,
@@ -63,8 +66,6 @@ export function BoardCard({ row }: BoardCardProps) {
   });
 
   const style: React.CSSProperties = {
-    opacity: isDragging ? 0.8 : 1,
-    zIndex: isDragging ? 10 : 0,
     transform: CSS.Transform.toString(transform),
     transition,
   };
@@ -75,12 +76,21 @@ export function BoardCard({ row }: BoardCardProps) {
       data-slot="board-card"
       data-block-id={row.id}
       className={cn(
-        isDragging && "rounded-lg shadow-lg ring-2 ring-primary/20",
+        "relative cursor-grab",
+        overlay
+          ? "cursor-grabbing opacity-80"
+          : isDragging
+            ? "z-10 rounded-lg opacity-80 shadow-lg ring-2 ring-ring"
+            : null,
       )}
       style={style}
     >
       <div
-        className="group/card static block h-full min-h-10 animate-bg-in cursor-pointer overflow-hidden rounded-lg border border-border-button bg-popover px-2.5 py-2 text-inherit select-none dark:border-none"
+        className={cn(
+          "group/card static block h-full min-h-10 animate-bg-in overflow-hidden rounded-lg border border-border-button bg-popover px-2.5 py-2 text-inherit select-none hover:bg-default/5 dark:border-none",
+          isOver && "bg-default/10",
+          overlay && "pointer-events-none",
+        )}
         {...attributes}
         {...listeners}
       >
@@ -166,6 +176,33 @@ export function BoardCard({ row }: BoardCardProps) {
           ))}
         </div>
       </div>
+      {isOver && <div className="absolute inset-x-0 h-1.5 bg-blue/30" />}
+    </div>
+  );
+}
+
+export function PlaceholderBoardCard({ groupId }: { groupId: string }) {
+  const cardId = useId();
+
+  const { table } = useTableViewCtx();
+  const { locked } = table.getTableGlobalState();
+
+  /** DND */
+  const { isOver, active, setNodeRef } = useDroppable({
+    id: groupId,
+    disabled: locked,
+    data: { type: "board-card", groupId },
+  });
+  const isCardOver = isOver && active?.data.current?.type === "board-card";
+
+  return (
+    <div
+      ref={setNodeRef}
+      data-slot="placeholder-board-card"
+      data-block-id={cardId}
+      className="relative h-0 w-full"
+    >
+      {isCardOver && <div className="absolute inset-x-0 h-1.5 bg-blue/30" />}
     </div>
   );
 }
