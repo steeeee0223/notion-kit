@@ -49,6 +49,7 @@ function MenuLabel({
 interface MenuItemProps extends React.ComponentProps<"div">, MenuItemVariants {
   Icon?: React.ReactNode;
   Body?: React.ReactNode;
+  desc?: string;
 }
 
 function MenuItem({
@@ -58,6 +59,7 @@ function MenuItem({
   inset,
   Icon,
   Body,
+  desc,
   children,
   ...props
 }: MenuItemProps) {
@@ -70,6 +72,8 @@ function MenuItem({
         "group/item",
         className,
       )}
+      aria-label={typeof Body === "string" ? Body : undefined}
+      aria-describedby="menu-item-desc"
       {...props}
       data-disabled={disabled}
       aria-disabled={Boolean(disabled)}
@@ -87,7 +91,19 @@ function MenuItem({
         data-slot="menu-item-body"
         className="mx-1.5 min-w-0 flex-auto truncate peer-empty:mx-0"
       >
-        {Body}
+        {desc ? (
+          <div className="my-1 space-y-0.5">
+            <div className="truncate">{Body}</div>
+            <div
+              id="menu-item-desc"
+              className="overflow-hidden text-xs text-ellipsis whitespace-normal text-secondary"
+            >
+              {desc}
+            </div>
+          </div>
+        ) : (
+          Body
+        )}
       </div>
       {children}
     </div>

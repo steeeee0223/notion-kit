@@ -12,6 +12,7 @@ import type { Row } from "../lib/types";
 import { arrayToEntity } from "../lib/utils";
 import { ListViewContent } from "../list-view";
 import { DEFAULT_PLUGINS, DefaultPlugins, type CellPlugin } from "../plugins";
+import { RowView } from "../row-view";
 import { Toolbar } from "../tools/toolbar";
 import { TableViewContent } from "./table-view-content";
 import type { TableProps } from "./types";
@@ -33,6 +34,7 @@ export function useTableViewCtx() {
 
 export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
   plugins = DEFAULT_PLUGINS as TPlugins,
+  children,
   ...props
 }: TableProps<TPlugins>) {
   const ctx = useTableView({
@@ -51,6 +53,8 @@ export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
             </div>
           </div>
           <Content layout={layout} />
+          <RowView />
+          {children}
         </ModalProvider>
       </TooltipProvider>
     </TableViewContext>

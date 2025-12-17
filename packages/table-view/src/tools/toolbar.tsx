@@ -30,6 +30,10 @@ export function Toolbar({ className }: ToolbarProps) {
         label="Create and view automations"
       />
       <ToolbarItem icon={<Icon.MagnifyingGlassSmall />} label="Search" />
+      <ToolbarItem
+        icon={<Icon.ArrowExpandDiagonalSmall className="rotate-90" />}
+        label="Open as full page"
+      />
       <Popover
         open={menu.open}
         onOpenChange={(open) => table.setTableMenuState({ open, page: null })}

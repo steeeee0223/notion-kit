@@ -15,10 +15,10 @@ export interface BaseTableProps<TPlugins extends CellPlugin[]>
   onDataChange?: OnChangeFn<Row<TPlugins>[]>;
   onPropertiesChange?: OnChangeFn<ColumnDefs<TPlugins>>;
   onTableChange?: OnChangeFn<TableGlobalState>;
-  onRowOpen?: (rowId: string) => void;
 }
 
 export interface TableProps<TPlugins extends CellPlugin[]>
   extends BaseTableProps<TPlugins> {
   plugins?: TPlugins;
+  children?: React.ReactNode;
 }

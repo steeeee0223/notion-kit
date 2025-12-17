@@ -88,6 +88,7 @@ export * from "./extended-grouped-row-model";
 export * from "./freezing";
 export * from "./menu";
 export * from "./row-actions";
+export * from "./constants";
 
 export const DEFAULT_FEATURES = [
   ColumnsInfoFeature,

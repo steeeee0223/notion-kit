@@ -32,7 +32,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   onDataChange,
   onPropertiesChange,
   onTableChange,
-  onRowOpen,
 }: UseTableViewOptions<TPlugins>) {
   const [synced, setSynced] = useState(-1);
   const isPropertiesControlled = typeof onPropertiesChange !== "undefined";
@@ -113,7 +112,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     },
     onColumnInfoChange: handleColumnChange,
     onTableDataChange: onDataChange ?? setDataEntity,
-    onRowOpen,
     sync: (debugValue) => {
       setSynced(Date.now());
       console.log(`[${debugValue}] table synced`);

@@ -1,6 +1,11 @@
 export { CellTrigger } from "./cell-trigger";
 export { CopyButton } from "./copy-button";
-export { DefaultIcon, ColorIcon, LayoutIcon } from "./default-icon";
+export {
+  DefaultIcon,
+  ColorIcon,
+  LayoutIcon,
+  RowViewIcon,
+} from "./default-icon";
 export { GroupActions } from "./group-actions";
 export * from "./menu";
 export { OptionTag } from "./option-tag";

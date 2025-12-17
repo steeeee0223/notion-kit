@@ -4,6 +4,7 @@ import { cva } from "class-variance-authority";
 const typographyVariants = cva("", {
   variants: {
     type: {
+      h1: "text-[40px]/tight font-bold",
       /**
        * @prop h2
        * @note tx-heading-17-semi
@@ -155,6 +156,10 @@ export const contentVariants = cva(
          * @note Used with: `openAnimation`, `sideAnimation`
          */
         popover: "z-50 rounded-md bg-popover shadow-md",
+        /**
+         * @prop sheet
+         */
+        sheet: "fixed z-50 bg-main shadow-lg",
         /**
          * @prop tab
          * @note Used by: Tabs

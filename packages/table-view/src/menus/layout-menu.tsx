@@ -1,10 +1,20 @@
 "use client";
 
 import { cn } from "@notion-kit/cn";
-import { Button, MenuGroup } from "@notion-kit/shadcn";
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuTrigger,
+  MenuGroup,
+  MenuItem,
+  MenuItemSelect,
+} from "@notion-kit/shadcn";
 
-import { LayoutIcon, MenuHeader } from "../common";
-import { LAYOUT_OPTIONS } from "../features";
+import { LayoutIcon, MenuHeader, RowViewIcon } from "../common";
+import { LAYOUT_OPTIONS, ROW_VIEW_OPTIONS, RowViewType } from "../features";
 import { useTableViewCtx } from "../table-contexts";
 
 export function LayoutMenu() {
@@ -41,6 +51,43 @@ export function LayoutMenu() {
           ))}
         </div>
       </MenuGroup>
+      <MenuGroup>
+        <RowViewMenu />
+      </MenuGroup>
     </>
+  );
+}
+
+function RowViewMenu() {
+  const { table } = useTableViewCtx();
+  const { rowView: current } = table.getTableGlobalState();
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <MenuItem Body="Open pages in">
+          <MenuItemSelect>{ROW_VIEW_OPTIONS[current].label}</MenuItemSelect>
+        </MenuItem>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" sideOffset={0} className="z-990 w-68">
+        <DropdownMenuGroup>
+          {Object.entries(ROW_VIEW_OPTIONS).map(([value, option]) => {
+            const rowView = value as RowViewType;
+            return (
+              <DropdownMenuCheckboxItem
+                key={rowView}
+                Icon={<RowViewIcon rowView={rowView} />}
+                Body={option.label}
+                desc={option.desc}
+                checked={rowView === current}
+                onCheckedChange={() =>
+                  table.setTableGlobalState((v) => ({ ...v, rowView }))
+                }
+              />
+            );
+          })}
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

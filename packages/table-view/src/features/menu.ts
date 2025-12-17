@@ -46,9 +46,13 @@ export const LAYOUT_OPTIONS: {
   { label: "Chart", value: "chart" },
 ];
 
+export type RowViewType = "center" | "side" | "full";
+
 export interface TableGlobalState {
   locked?: boolean;
   layout: LayoutType;
+  rowView: RowViewType;
+  openedRowId: string | null;
 }
 
 export interface TableMenuTableState {
@@ -68,13 +72,19 @@ export interface TableMenuTableApi {
   setTableGlobalState: OnChangeFn<TableGlobalState>;
   toggleTableLocked: () => void;
   setTableLayout: (layout: LayoutType) => void;
+  openRow: (id: string | null) => void;
 }
 
 export const TableMenuFeature: TableFeature = {
   getInitialState: (state): TableMenuTableState => {
     return {
       menu: { open: false, page: null },
-      tableGlobal: { locked: false, layout: "table" },
+      tableGlobal: {
+        locked: false,
+        layout: "table",
+        rowView: "side",
+        openedRowId: null,
+      },
       ...state,
     };
   },
@@ -102,6 +112,9 @@ export const TableMenuFeature: TableFeature = {
     };
     table.setTableLayout = (layout) => {
       table.setTableGlobalState((v) => ({ ...v, layout }));
+    };
+    table.openRow = (id) => {
+      table.setTableGlobalState((v) => ({ ...v, openedRowId: id }));
     };
 
     /**
