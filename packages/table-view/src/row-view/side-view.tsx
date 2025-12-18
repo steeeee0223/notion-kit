@@ -8,6 +8,7 @@ import { Sheet, SheetContent, SheetTitle } from "@notion-kit/shadcn";
 import { useTableViewCtx } from "../table-contexts";
 import { rowViewContentVariants } from "./utils";
 import { ViewNav } from "./view-nav";
+import { ViewProps } from "./view-props";
 
 export function SideView({ children }: React.PropsWithChildren) {
   const { table } = useTableViewCtx();
@@ -22,16 +23,18 @@ export function SideView({ children }: React.PropsWithChildren) {
       <SheetContent
         hideClose
         side="right"
-        className="z-999 w-150 overflow-y-auto sm:max-w-150"
+        className="z-990 w-150 overflow-x-hidden overflow-y-auto sm:max-w-150"
       >
         <ViewNav />
         {openedRowId && (
           <div className={cn(rowViewContentVariants({ mode: "side" }))}>
-            <SheetTitle typography="h1" className="col-[content] mb-2">
+            <SheetTitle typography="h1" className="col-start-2 mb-2">
               {titleCell?.cell.value}
             </SheetTitle>
-            {/* TODO display properties */}
-            <div className="col-[content]">{children}</div>
+            <div className="col-start-2 mb-3 min-w-0">
+              <ViewProps rowId={openedRowId} />
+            </div>
+            <div className="col-start-2">{children}</div>
           </div>
         )}
       </SheetContent>

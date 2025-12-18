@@ -13,3 +13,4 @@ export { PropMeta } from "./prop-meta";
 export * from "./table-row-action-group";
 export { TextInputPopover } from "./text-input-popover";
 export { SortableDnd, useDndSensors } from "./dnd";
+export { TableCell } from "./table-cell";

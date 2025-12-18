@@ -19,7 +19,8 @@ export function DatePickerCell({
 }: InferCellProps<DatePlugin>) {
   const dateStr = toDateString(data, config);
 
-  if (layout !== "table" && data.start === undefined) return null;
+  if (layout !== "table" && layout !== "row-view" && data.start === undefined)
+    return null;
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -31,14 +32,17 @@ export function DatePickerCell({
           aria-disabled={disabled}
           tooltip={tooltip}
         >
-          {layout === "table" && (
+          {(layout === "table" || layout === "row-view") && (
             <CopyButton
               className="hidden group-hover/date-cell:flex"
               value={dateStr}
             />
           )}
           <div className={cn("leading-normal", wrappedClassName(wrapped))}>
-            {dateStr}
+            {dateStr ||
+              (layout === "row-view" ? (
+                <span className="text-muted">Empty</span>
+              ) : null)}
           </div>
         </CellTrigger>
       </PopoverTrigger>

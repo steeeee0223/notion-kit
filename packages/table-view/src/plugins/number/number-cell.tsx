@@ -25,7 +25,7 @@ export function NumberCell({
     onChange(isNaN(num) ? null : String(num));
   };
 
-  if (layout !== "table" && data === null) return null;
+  if (layout !== "table" && layout !== "row-view" && data === null) return null;
   return (
     <TextInputPopover
       className="text-end"
@@ -52,7 +52,12 @@ export function NumberCell({
               wrapped ? "flex-wrap" : "flex-nowrap",
             )}
           >
-            <NumberDisplay value={data} config={config} wrapped={wrapped} />
+            <NumberDisplay
+              view={layout}
+              value={data}
+              config={config}
+              wrapped={wrapped}
+            />
           </div>
         </CellTrigger>
       )}
@@ -61,13 +66,19 @@ export function NumberCell({
 }
 
 interface NumberDisplayProps {
+  view: InferCellProps<NumberPlugin>["layout"];
   value: string | null;
   config: NumberConfig;
   wrapped?: boolean;
 }
 
-function NumberDisplay({ value, config, wrapped }: NumberDisplayProps) {
+function NumberDisplay({ view, value, config, wrapped }: NumberDisplayProps) {
   const [displayedValue, cappedValue] = getNumberValue(value ?? "", config);
+
+  if (view === "row-view" && !displayedValue) {
+    return <span className="text-muted">Empty</span>;
+  }
+
   switch (config.showAs) {
     case "bar":
       return (

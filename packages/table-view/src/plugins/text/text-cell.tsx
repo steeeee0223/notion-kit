@@ -14,7 +14,7 @@ export function TextCell({
   tooltip,
   onChange,
 }: CellProps<string>) {
-  if (layout !== "table" && !data) return null;
+  if (layout !== "table" && layout !== "row-view" && !data) return null;
   return (
     <TextInputPopover
       value={data}
@@ -28,14 +28,18 @@ export function TextCell({
           aria-disabled={disabled}
           tooltip={tooltip}
         >
-          {layout === "table" && (
+          {(layout === "table" || layout === "row-view") && (
             <CopyButton
               className="hidden group-hover/text-cell:flex"
               value={data}
             />
           )}
           <div className={cn("leading-normal", wrappedClassName(wrapped))}>
-            <span>{data}</span>
+            {data ? (
+              <span>{data}</span>
+            ) : layout === "row-view" ? (
+              <span className="text-muted">Empty</span>
+            ) : null}
           </div>
         </CellTrigger>
       )}

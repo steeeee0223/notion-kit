@@ -11,6 +11,7 @@ const cellVariant = cva("relative px-2 aria-disabled:pointer-events-none", {
       table: "block min-h-9 w-full overflow-clip py-[7.5px] text-sm/normal",
       list: "min-h-[30px] flex-none overflow-hidden rounded-md",
       board: "min-h-7 w-fit flex-none overflow-hidden rounded-md px-1",
+      "row-view": "min-h-[34px] w-full overflow-hidden rounded-sm p-1.5",
       /**
        * @todo not implemented
        */
@@ -40,7 +41,7 @@ type CellVariant = VariantProps<typeof cellVariant>;
 
 interface CellTriggerProps extends React.ComponentProps<"div"> {
   wrapped?: boolean;
-  layout?: LayoutType;
+  layout?: LayoutType | "row-view";
   widthType?: CellVariant["widthType"];
   tooltip?: {
     title: string;

@@ -82,38 +82,29 @@ export function TableHeaderCell({
                 variant="cell"
                 className={cn("size-full px-2", isResizing && "bg-transparent")}
               >
-                <div className="flex min-w-0 flex-auto items-center text-sm/tight">
-                  <div className="mr-1 grid items-center justify-center">
-                    <div className="col-start-1 row-start-1 opacity-100 transition-opacity duration-150">
-                      {info.icon ? (
-                        <IconBlock
-                          icon={info.icon}
-                          className="size-4 p-0 opacity-60 dark:opacity-45"
-                        />
-                      ) : (
-                        <DefaultIcon
-                          type={info.type}
-                          className="fill-default/45"
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <div className="truncate">{info.name}</div>
-                  {info.description && (
-                    <Icon.Info className="ml-1 size-3 fill-icon" />
-                  )}
-                </div>
+                {info.icon ? (
+                  <IconBlock
+                    icon={info.icon}
+                    className="size-4 p-0 opacity-60 dark:opacity-45"
+                  />
+                ) : (
+                  <DefaultIcon type={info.type} className="fill-default/45" />
+                )}
+                <div className="truncate">{info.name}</div>
+                {info.description && <Icon.Info className="size-3 fill-icon" />}
               </Button>
             </div>
           </DropdownMenuTrigger>
         </TooltipPreset>
-        <DropdownMenuContent
-          align="start"
-          sideOffset={0}
-          className={cn("z-990 w-[220px]", isDragging && "hidden")}
-        >
-          <PropMenu propId={header.column.id} />
-        </DropdownMenuContent>
+        {!isDragging && (
+          <DropdownMenuContent
+            align="start"
+            sideOffset={0}
+            className="z-990 w-[220px]"
+          >
+            <PropMenu view="table" propId={header.column.id} />
+          </DropdownMenuContent>
+        )}
       </DropdownMenu>
       {/* Resize handle */}
       <div className="absolute right-0 z-10 w-0 grow-0">

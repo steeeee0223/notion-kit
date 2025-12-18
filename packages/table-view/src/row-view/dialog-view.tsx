@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogTitle } from "@notion-kit/shadcn";
 import { useTableViewCtx } from "../table-contexts";
 import { rowViewContentVariants } from "./utils";
 import { ViewNav } from "./view-nav";
+import { ViewProps } from "./view-props";
 
 export function DialogView({ children }: React.PropsWithChildren) {
   const { table } = useTableViewCtx();
@@ -21,19 +22,18 @@ export function DialogView({ children }: React.PropsWithChildren) {
     >
       <DialogContent
         hideClose
-        className="z-990 m-auto flex h-[calc(100%-144px)] max-w-[calc(100%-144px)] flex-col overflow-hidden rounded-xl"
+        className="z-990 m-auto flex h-[calc(100%-144px)] max-w-[calc(100%-144px)] flex-col overflow-hidden rounded-xl p-0"
       >
         <ViewNav />
         {openedRowId && (
           <div className={cn(rowViewContentVariants({ mode: "center" }))}>
-            <DialogTitle
-              typography="h1"
-              className="col-[content] mb-2 text-left"
-            >
+            <DialogTitle typography="h1" className="col-start-2 mb-2 text-left">
               {titleCell?.cell.value}
             </DialogTitle>
-            {/* TODO display properties */}
-            <div className="col-[content]">{children}</div>
+            <div className="col-start-2 mb-3 min-w-0">
+              <ViewProps rowId={openedRowId} />
+            </div>
+            <div className="col-start-2">{children}</div>
           </div>
         )}
       </DialogContent>

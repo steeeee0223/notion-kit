@@ -37,7 +37,8 @@ export function SelectCell({
     }
   };
 
-  if (layout !== "table" && options.length === 0) return null;
+  if (layout !== "table" && layout !== "row-view" && options.length === 0)
+    return null;
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
@@ -56,28 +57,32 @@ export function SelectCell({
                 wrapped && "flex-wrap",
               )}
             >
-              {options.map((name) => {
-                const option = config.options.items[name];
-                if (!option) return;
-                return (
-                  <TooltipPreset
-                    asChild={false}
-                    key={option.id}
-                    disabled={layout !== "table"}
-                    description={
-                      option.description
-                        ? [
-                            { type: "default", text: option.name },
-                            { type: "secondary", text: option.description },
-                          ]
-                        : option.name
-                    }
-                    side="top"
-                  >
-                    <OptionTag {...option} />
-                  </TooltipPreset>
-                );
-              })}
+              {options.length > 0 ? (
+                options.map((name) => {
+                  const option = config.options.items[name];
+                  if (!option) return;
+                  return (
+                    <TooltipPreset
+                      asChild={false}
+                      key={option.id}
+                      disabled={layout !== "table"}
+                      description={
+                        option.description
+                          ? [
+                              { type: "default", text: option.name },
+                              { type: "secondary", text: option.description },
+                            ]
+                          : option.name
+                      }
+                      side="top"
+                    >
+                      <OptionTag {...option} />
+                    </TooltipPreset>
+                  );
+                })
+              ) : layout === "row-view" ? (
+                <span className="text-muted">Empty</span>
+              ) : null}
             </div>
           </div>
         </CellTrigger>
