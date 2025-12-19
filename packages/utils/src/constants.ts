@@ -31,4 +31,5 @@ export const KEYBOARD = {
   SHIFT: "⇧",
   ENTER: "↵",
   BACKSPACE: "⌫",
+  DEL: "Del",
 } as const;

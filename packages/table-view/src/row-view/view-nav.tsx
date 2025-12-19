@@ -1,5 +1,7 @@
 "use client";
 
+import { useHotkeys } from "react-hotkeys-hook";
+
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -17,15 +19,26 @@ import { RowViewIcon } from "../common";
 import { ROW_VIEW_OPTIONS, RowViewType } from "../features";
 import { useTableViewCtx } from "../table-contexts";
 
-export function ViewNav() {
+interface ViewNavProps {
+  rowId: string;
+}
+
+export function ViewNav({ rowId }: ViewNavProps) {
   const { table } = useTableViewCtx();
   const { rowView } = table.getTableGlobalState();
+
+  const openInFullPage = () => table.openRowInFullPage(rowId);
+
+  /** Keyboard shortcut */
+  useHotkeys("esc", () => table.openRow(null), { preventDefault: true });
+  useHotkeys("meta+enter", openInFullPage, { preventDefault: true });
 
   return (
     <div className="flex h-11 items-center justify-between px-3">
       <div className="grid grid-flow-col items-center gap-0.5">
-        {rowView === "side" && (
+        {rowView !== "center" && (
           <TooltipPreset
+            className="z-999"
             description={[
               { type: "default", text: "Close" },
               { type: "secondary", text: "Escape" },
@@ -40,17 +53,19 @@ export function ViewNav() {
             </Button>
           </TooltipPreset>
         )}
-        <TooltipPreset
-          className="z-999"
-          description={[
-            { type: "default", text: "Open in full page" },
-            { type: "secondary", text: KEYBOARD.CMD + KEYBOARD.ENTER },
-          ]}
-        >
-          <Button variant="hint" className="size-6">
-            <Icon.ArrowExpandDiagonalSmall className="size-5 fill-icon" />
-          </Button>
-        </TooltipPreset>
+        {rowView !== "full" && (
+          <TooltipPreset
+            className="z-999"
+            description={[
+              { type: "default", text: "Open in full page" },
+              { type: "secondary", text: KEYBOARD.CMD + KEYBOARD.ENTER },
+            ]}
+          >
+            <Button variant="hint" className="size-6" onClick={openInFullPage}>
+              <Icon.ArrowExpandDiagonalSmall className="size-5 fill-icon" />
+            </Button>
+          </TooltipPreset>
+        )}
         <Separator
           orientation="vertical"
           className="mx-1 data-[orientation=vertical]:h-4"

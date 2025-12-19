@@ -61,11 +61,13 @@ export interface TableMenuTableState {
 }
 
 export interface TableMenuOptions {
+  getRowUrl?: (rowId: string) => string;
   onTableMenuChange?: OnChangeFn<TableMenuState>;
   onTableGlobalChange?: OnChangeFn<TableGlobalState>;
 }
 
 export interface TableMenuTableApi {
+  getRowUrl: (rowId: string) => string;
   getTableMenuState: () => TableMenuState;
   setTableMenuState: (state: TableMenuState) => void;
   getTableGlobalState: () => TableGlobalState;
@@ -73,6 +75,8 @@ export interface TableMenuTableApi {
   toggleTableLocked: () => void;
   setTableLayout: (layout: LayoutType) => void;
   openRow: (id: string | null) => void;
+  openRowInFullPage: (id: string) => void;
+  openRowInTab: (id: string) => void;
 }
 
 export const TableMenuFeature: TableFeature = {
@@ -97,6 +101,7 @@ export const TableMenuFeature: TableFeature = {
   },
 
   createTable: (table) => {
+    table.getRowUrl = (rowId: string) => table.options.getRowUrl?.(rowId) ?? "";
     table.getTableMenuState = () => table.getState().menu;
     table.setTableMenuState = (menu) => {
       table.options.onTableMenuChange?.(menu);
@@ -113,8 +118,28 @@ export const TableMenuFeature: TableFeature = {
     table.setTableLayout = (layout) => {
       table.setTableGlobalState((v) => ({ ...v, layout }));
     };
+    /** Row view */
     table.openRow = (id) => {
       table.setTableGlobalState((v) => ({ ...v, openedRowId: id }));
+      const { rowView } = table.getTableGlobalState();
+      if (!id || rowView !== "full") return;
+      table.openRowInFullPage(id);
+    };
+    table.openRowInFullPage = (id) => {
+      table.setTableGlobalState((v) => ({
+        ...v,
+        openedRowId: id,
+        rowView: "full",
+      }));
+      const url = table.getRowUrl(id);
+      if (!url || typeof window === "undefined") return;
+      window.open(url, "_self");
+      table.setTableGlobalState((v) => ({ ...v, openedRowId: null }));
+    };
+    table.openRowInTab = (id) => {
+      const url = table.getRowUrl(id);
+      if (typeof window === "undefined") return;
+      window.open(url || "#", "_blank", "noopener,noreferrer");
     };
 
     /**

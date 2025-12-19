@@ -159,7 +159,9 @@ function MenuItemShortcut({
 }: React.ComponentProps<"span">) {
   return (
     <MenuItemAction data-slot="menu-item-shortcut" {...props}>
-      <span className="text-xs whitespace-nowrap text-muted">{children}</span>
+      <span className="font-sans text-xs whitespace-nowrap text-muted">
+        {children}
+      </span>
     </MenuItemAction>
   );
 }

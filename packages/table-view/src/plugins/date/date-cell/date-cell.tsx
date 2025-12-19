@@ -13,7 +13,7 @@ interface DateCellProps {
   config: DateConfig;
   wrapped?: boolean;
   disabled?: boolean;
-  layout?: LayoutType;
+  layout?: LayoutType | "row-view";
   tooltip?: {
     title: string;
     description?: string;

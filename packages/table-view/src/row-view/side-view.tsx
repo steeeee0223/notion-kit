@@ -22,20 +22,23 @@ export function SideView({ children }: React.PropsWithChildren) {
     >
       <SheetContent
         hideClose
+        id={openedRowId ?? undefined}
         side="right"
         className="z-990 w-150 overflow-x-hidden overflow-y-auto sm:max-w-150"
       >
-        <ViewNav />
         {openedRowId && (
-          <div className={cn(rowViewContentVariants({ mode: "side" }))}>
-            <SheetTitle typography="h1" className="col-start-2 mb-2">
-              {titleCell?.cell.value}
-            </SheetTitle>
-            <div className="col-start-2 mb-3 min-w-0">
-              <ViewProps rowId={openedRowId} />
+          <>
+            <ViewNav rowId={openedRowId} />
+            <div className={cn(rowViewContentVariants({ mode: "side" }))}>
+              <SheetTitle typography="h1" className="col-start-2 mb-2">
+                {titleCell?.cell.value}
+              </SheetTitle>
+              <div className="col-start-2 mb-3 min-w-0">
+                <ViewProps rowId={openedRowId} />
+              </div>
+              <div className="col-start-2">{children}</div>
             </div>
-            <div className="col-start-2">{children}</div>
-          </div>
+          </>
         )}
       </SheetContent>
     </Sheet>
