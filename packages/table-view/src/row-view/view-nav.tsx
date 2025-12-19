@@ -27,11 +27,14 @@ export function ViewNav({ rowId }: ViewNavProps) {
   const { table } = useTableViewCtx();
   const { rowView } = table.getTableGlobalState();
 
-  const openInFullPage = () => table.openRowInFullPage(rowId);
-
   /** Keyboard shortcut */
   useHotkeys("esc", () => table.openRow(null), { preventDefault: true });
-  useHotkeys("meta+enter", openInFullPage, { preventDefault: true });
+  useHotkeys(
+    "meta+enter",
+    () => table.openRowInFullPage(rowId),
+    { preventDefault: true },
+    [rowId],
+  );
 
   return (
     <div className="flex h-11 items-center justify-between px-3">
@@ -61,7 +64,11 @@ export function ViewNav({ rowId }: ViewNavProps) {
               { type: "secondary", text: KEYBOARD.CMD + KEYBOARD.ENTER },
             ]}
           >
-            <Button variant="hint" className="size-6" onClick={openInFullPage}>
+            <Button
+              variant="hint"
+              className="size-6"
+              onClick={() => table.openRowInFullPage(rowId)}
+            >
               <Icon.ArrowExpandDiagonalSmall className="size-5 fill-icon" />
             </Button>
           </TooltipPreset>
