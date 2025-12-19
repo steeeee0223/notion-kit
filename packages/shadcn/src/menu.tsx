@@ -73,7 +73,7 @@ function MenuItem({
         className,
       )}
       aria-label={typeof Body === "string" ? Body : undefined}
-      aria-describedby="menu-item-desc"
+      aria-describedby={desc ? "menu-item-desc" : undefined}
       {...props}
       data-disabled={disabled}
       aria-disabled={Boolean(disabled)}
