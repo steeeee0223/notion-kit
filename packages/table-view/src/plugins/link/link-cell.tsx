@@ -5,7 +5,6 @@ import { cn } from "@notion-kit/cn";
 import { CellTrigger, CopyButton, TextInputPopover } from "../../common";
 import { wrappedClassName } from "../../lib/utils";
 import type { CellProps } from "../types";
-import { listCellWidth } from "../utils";
 
 interface LinkCellProps extends CellProps<string> {
   type: "email" | "phone" | "url";
@@ -17,38 +16,42 @@ export function LinkCell({
   wrapped,
   disabled,
   layout,
+  tooltip,
   onChange,
 }: LinkCellProps) {
-  if (layout !== "table" && !data) return null;
+  if (layout !== "table" && layout !== "row-view" && !data) return null;
   return (
     <TextInputPopover
       value={data}
       onUpdate={onChange}
       renderTrigger={() => (
         <CellTrigger
-          className={cn(
-            "group/link-cell",
-            layout === "list" && listCellWidth("link"),
-          )}
+          className="group/link-cell"
           wrapped={wrapped}
           aria-disabled={disabled}
           layout={layout}
+          widthType="link"
+          tooltip={tooltip}
         >
-          {layout === "table" && (
+          {(layout === "table" || layout === "row-view") && (
             <CopyButton
               className="hidden group-hover/link-cell:flex"
               value={data}
             />
           )}
           <div className={cn("leading-normal", wrappedClassName(wrapped))}>
-            <a
-              href={getHref(type, data)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline animate-bg-in cursor-pointer text-inherit underline decoration-muted underline-offset-2 select-none"
-            >
-              {data}
-            </a>
+            {data ? (
+              <a
+                href={getHref(type, data)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline animate-bg-in cursor-pointer text-inherit underline decoration-muted underline-offset-2 select-none"
+              >
+                {data}
+              </a>
+            ) : layout === "row-view" ? (
+              <span className="text-muted">Empty</span>
+            ) : null}
           </div>
         </CellTrigger>
       )}

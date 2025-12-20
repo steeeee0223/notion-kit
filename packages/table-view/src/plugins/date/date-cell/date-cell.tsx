@@ -5,7 +5,6 @@ import { cn } from "@notion-kit/cn";
 import { CellTrigger, CopyButton } from "../../../common";
 import type { LayoutType } from "../../../features";
 import { wrappedClassName } from "../../../lib/utils";
-import { listCellWidth } from "../../utils";
 import type { DateConfig, DateData } from "../types";
 import { toDateString } from "../utils";
 
@@ -14,7 +13,11 @@ interface DateCellProps {
   config: DateConfig;
   wrapped?: boolean;
   disabled?: boolean;
-  layout?: LayoutType;
+  layout?: LayoutType | "row-view";
+  tooltip?: {
+    title: string;
+    description?: string;
+  };
 }
 
 export function DateCell({
@@ -23,18 +26,18 @@ export function DateCell({
   wrapped,
   disabled,
   layout,
+  tooltip,
 }: DateCellProps) {
   const dateStr = toDateString(data, config);
 
   return (
     <CellTrigger
-      className={cn(
-        "group/date-cell",
-        layout === "list" && listCellWidth("date"),
-      )}
+      className="group/date-cell"
       layout={layout}
+      widthType="date"
       wrapped={wrapped}
       aria-disabled={disabled}
+      tooltip={tooltip}
     >
       {layout === "table" && (
         <CopyButton

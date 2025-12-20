@@ -4,7 +4,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@notion-kit/shadcn";
 import { CellTrigger, CopyButton } from "../../../common";
 import { wrappedClassName } from "../../../lib/utils";
 import type { InferCellProps } from "../../types";
-import { listCellWidth } from "../../utils";
 import type { DatePlugin } from "../types";
 import { toDateString } from "../utils";
 import { DateTimePicker } from "./date-time-picker";
@@ -15,31 +14,35 @@ export function DatePickerCell({
   config,
   disabled,
   layout,
+  tooltip,
   ...props
 }: InferCellProps<DatePlugin>) {
   const dateStr = toDateString(data, config);
 
-  if (layout !== "table" && data.start === undefined) return null;
+  if (layout !== "table" && layout !== "row-view" && data.start === undefined)
+    return null;
   return (
     <Popover>
       <PopoverTrigger asChild>
         <CellTrigger
-          className={cn(
-            "group/date-cell",
-            layout === "list" && listCellWidth("date"),
-          )}
+          className="group/date-cell"
           wrapped={wrapped}
           layout={layout}
+          widthType="date"
           aria-disabled={disabled}
+          tooltip={tooltip}
         >
-          {layout === "table" && (
+          {(layout === "table" || layout === "row-view") && (
             <CopyButton
               className="hidden group-hover/date-cell:flex"
               value={dateStr}
             />
           )}
           <div className={cn("leading-normal", wrappedClassName(wrapped))}>
-            {dateStr}
+            {dateStr ||
+              (layout === "row-view" ? (
+                <span className="text-muted">Empty</span>
+              ) : null)}
           </div>
         </CellTrigger>
       </PopoverTrigger>

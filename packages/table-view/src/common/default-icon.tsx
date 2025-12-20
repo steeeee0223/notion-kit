@@ -1,6 +1,8 @@
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 
+import type { RowViewType } from "../features";
+
 interface DefaultIconProps {
   type: string;
   className?: string;
@@ -73,5 +75,24 @@ export function LayoutIcon({ layout, className }: LayoutIconProps) {
       return <Icon.ViewChart className={className} />;
     default:
       return null;
+  }
+}
+
+interface RowViewIconProps {
+  rowView: RowViewType;
+  className?: string;
+}
+
+export function RowViewIcon({ rowView, className }: RowViewIconProps) {
+  const iconClassName = cn("size-5", className);
+  switch (rowView) {
+    case "center":
+      return <Icon.PeekCenter className={iconClassName} />;
+    case "side":
+      return <Icon.PeekSide className={iconClassName} />;
+    case "full":
+      return <Icon.PeekFull className={iconClassName} />;
+    default:
+      return null as never;
   }
 }

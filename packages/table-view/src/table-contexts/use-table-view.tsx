@@ -11,25 +11,17 @@ import {
   type OnChangeFn,
 } from "@tanstack/react-table";
 
-import {
-  DEFAULT_FEATURES,
-  getExtendedGroupedRowModel,
-  type TableGlobalState,
-} from "../features";
+import { DEFAULT_FEATURES, getExtendedGroupedRowModel } from "../features";
 import type { ColumnDefs, ColumnInfo, Row } from "../lib/types";
 import { type Entity } from "../lib/utils";
 import type { CellPlugin } from "../plugins";
 import { defaultColumn } from "./column";
-import type { TableState } from "./types";
+import type { BaseTableProps } from "./types";
 import { getMinWidth, toPropertyEntity } from "./utils";
 
 interface UseTableViewOptions<TPlugins extends CellPlugin[]>
-  extends TableState<TPlugins> {
+  extends BaseTableProps<TPlugins> {
   plugins: Entity<TPlugins[number]>;
-  table?: TableGlobalState;
-  onDataChange?: OnChangeFn<Row<TPlugins>[]>;
-  onPropertiesChange?: OnChangeFn<ColumnDefs<TPlugins>>;
-  onTableChange?: OnChangeFn<TableGlobalState>;
 }
 
 export function useTableView<TPlugins extends CellPlugin[]>({
