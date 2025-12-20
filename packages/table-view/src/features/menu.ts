@@ -134,7 +134,6 @@ export const TableMenuFeature: TableFeature = {
       const url = table.getRowUrl(id);
       if (!url || typeof window === "undefined") return;
       window.open(url, "_self");
-      table.setTableGlobalState((v) => ({ ...v, openedRowId: null }));
     };
     table.openRowInTab = (id) => {
       const url = table.getRowUrl(id);
