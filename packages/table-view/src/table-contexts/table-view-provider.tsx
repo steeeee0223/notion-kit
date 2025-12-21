@@ -48,7 +48,7 @@ export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
       <TooltipProvider delayDuration={500}>
         <ModalProvider>
           <div className="relative flex flex-col gap-4">
-            <div className="sticky top-0 z-(--z-row) justify-end bg-main px-24 pb-2">
+            <div className="sticky top-0 z-(--z-row) bg-main px-24 pb-2">
               <Toolbar />
             </div>
             <Content layout={layout} />
