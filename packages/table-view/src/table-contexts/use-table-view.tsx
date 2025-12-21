@@ -122,7 +122,13 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   if (tableGlobal) {
     table.setOptions((v) => ({
       ...v,
-      state: { ...v.state, tableGlobal },
+      state: {
+        ...v.state,
+        tableGlobal: {
+          ...table.initialState.tableGlobal,
+          ...tableGlobal,
+        },
+      },
       onTableGlobalChange: onTableChange,
     }));
   }

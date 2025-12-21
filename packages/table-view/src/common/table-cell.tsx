@@ -32,10 +32,13 @@ export function TableCell<TPlugin extends CellPlugin>({
     data: data.value,
     config: info.config,
     disabled: locked,
-    tooltip: {
-      title: info.name,
-      description: info.description,
-    },
+    tooltip:
+      view === "board" || view === "list"
+        ? {
+            title: info.name,
+            description: info.description,
+          }
+        : undefined,
     onChange: (updater) => column.updateCell(row.id, updater, row.parentId),
     onConfigChange: column.updateConfig,
   });

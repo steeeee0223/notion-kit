@@ -32,7 +32,7 @@ export function FormatMenu({ format, onUpdate }: FormatMenuProps) {
           </MenuItemSelect>
         </MenuItem>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="z-990 w-48">
+      <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuGroup>
           {options.map((option) => (
             <DropdownMenuCheckboxItem

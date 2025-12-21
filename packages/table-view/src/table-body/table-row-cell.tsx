@@ -70,7 +70,7 @@ export function TableRowCell<TPlugin extends CellPlugin>({
         })}
       </div>
       {mode === CellMode.Select && (
-        <div className="pointer-events-none absolute top-0 left-0 z-840 h-full w-full rounded-[3px] bg-blue/5 shadow-cell-focus" />
+        <div className="pointer-events-none absolute top-0 left-0 z-(--z-col) h-full w-full rounded-[3px] bg-blue/5 shadow-cell-focus" />
       )}
     </div>
   );

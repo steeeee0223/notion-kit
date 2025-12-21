@@ -21,10 +21,7 @@ export function FullView({ children }: React.PropsWithChildren) {
 
   if (rowUrl) return null;
   return (
-    <section
-      id={openedRowId}
-      className="fixed inset-0 z-990 overflow-y-auto bg-main"
-    >
+    <section id={openedRowId} className="fixed inset-0 overflow-y-auto bg-main">
       <div className="sticky top-0 bg-main shadow-md">
         <ViewNav rowId={openedRowId} />
       </div>

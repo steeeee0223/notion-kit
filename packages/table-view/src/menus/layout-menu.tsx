@@ -69,7 +69,7 @@ function RowViewMenu() {
           <MenuItemSelect>{ROW_VIEW_OPTIONS[current].label}</MenuItemSelect>
         </MenuItem>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" sideOffset={0} className="z-990 w-68">
+      <DropdownMenuContent align="end" sideOffset={0} className="w-68">
         <DropdownMenuGroup>
           {Object.entries(ROW_VIEW_OPTIONS).map(([value, option]) => {
             const rowView = value as RowViewType;

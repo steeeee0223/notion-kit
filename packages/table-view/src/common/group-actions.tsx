@@ -59,7 +59,7 @@ export function GroupActions({ className, row }: GroupActionsProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          className="z-990 w-50"
+          className="w-50"
           onPointerDown={(e) => e.stopPropagation()}
         >
           <DropdownMenuGroup>
