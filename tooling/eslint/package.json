@@ -1,7 +1,7 @@
 {
   "name": "@notion-kit/eslint-config",
   "private": true,
-  "version": "0.13.1",
+  "version": "0.13.2",
   "type": "module",
   "exports": {
     "./base": "./base.ts",
@@ -22,7 +22,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-storybook": "^10.0.7",
+    "eslint-plugin-storybook": "^10.1.10",
     "eslint-plugin-turbo": "catalog:turbo",
     "typescript-eslint": "^8.46.4"
   },

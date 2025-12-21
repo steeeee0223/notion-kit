@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/storybook",
-  "version": "0.13.1",
+  "version": "0.13.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,7 +10,8 @@
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "start": "pnpx http-server storybook-static",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "upgrade": "pnpx storybook@latest upgrade"
   },
   "dependencies": {
     "@notion-kit/auth-ui": "workspace:*",
@@ -47,18 +48,18 @@
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tailwind-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
-    "@storybook/addon-docs": "^10.0.7",
-    "@storybook/addon-links": "^10.0.7",
-    "@storybook/nextjs": "^10.0.7",
+    "@storybook/addon-docs": "^10.1.10",
+    "@storybook/addon-links": "^10.1.10",
+    "@storybook/nextjs": "^10.1.10",
     "@tailwindcss/postcss": "catalog:tailwind-v4",
     "@types/node": "catalog:node22",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",
     "eslint": "catalog:",
-    "msw": "^2.7.3",
+    "msw": "^2.12.4",
     "msw-storybook-addon": "^2.0.6",
     "prettier": "catalog:",
-    "storybook": "^10.0.7",
+    "storybook": "^10.1.10",
     "tailwindcss": "catalog:tailwind-v4",
     "typescript": "catalog:"
   },
