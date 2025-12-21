@@ -15,8 +15,11 @@ export function LinkCell({
   data,
   wrapped,
   disabled,
+  layout,
+  tooltip,
   onChange,
 }: LinkCellProps) {
+  if (layout !== "table" && layout !== "row-view" && !data) return null;
   return (
     <TextInputPopover
       value={data}
@@ -26,20 +29,29 @@ export function LinkCell({
           className="group/link-cell"
           wrapped={wrapped}
           aria-disabled={disabled}
+          layout={layout}
+          widthType="link"
+          tooltip={tooltip}
         >
-          <CopyButton
-            className="hidden group-hover/link-cell:flex"
-            value={data}
-          />
+          {(layout === "table" || layout === "row-view") && (
+            <CopyButton
+              className="hidden group-hover/link-cell:flex"
+              value={data}
+            />
+          )}
           <div className={cn("leading-normal", wrappedClassName(wrapped))}>
-            <a
-              href={getHref(type, data)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline animate-bg-in cursor-pointer text-inherit underline decoration-muted underline-offset-2 select-none"
-            >
-              {data}
-            </a>
+            {data ? (
+              <a
+                href={getHref(type, data)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline animate-bg-in cursor-pointer text-inherit underline decoration-muted underline-offset-2 select-none"
+              >
+                {data}
+              </a>
+            ) : layout === "row-view" ? (
+              <span className="text-muted">Empty</span>
+            ) : null}
           </div>
         </CellTrigger>
       )}

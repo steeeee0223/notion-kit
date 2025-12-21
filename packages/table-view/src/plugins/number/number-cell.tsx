@@ -14,6 +14,8 @@ export function NumberCell({
   config,
   wrapped,
   disabled,
+  layout,
+  tooltip,
   onChange,
 }: InferCellProps<NumberPlugin>) {
   const value = data ?? "";
@@ -23,6 +25,7 @@ export function NumberCell({
     onChange(isNaN(num) ? null : String(num));
   };
 
+  if (layout !== "table" && layout !== "row-view" && data === null) return null;
   return (
     <TextInputPopover
       className="text-end"
@@ -30,21 +33,31 @@ export function NumberCell({
       onUpdate={handleUpdate}
       renderTrigger={() => (
         <CellTrigger
-          className="group/number-cell h-9"
+          className={cn("group/number-cell", layout === "table" && "h-9")}
           wrapped={wrapped}
           aria-disabled={disabled}
+          layout={layout}
+          widthType="number"
+          tooltip={tooltip}
         >
-          <CopyButton
-            className="hidden justify-start group-hover/number-cell:flex"
-            value={value}
-          />
+          {layout === "table" && (
+            <CopyButton
+              className="hidden justify-start group-hover/number-cell:flex"
+              value={value}
+            />
+          )}
           <div
             className={cn(
               "flex justify-end gap-x-2 gap-y-1.5",
               wrapped ? "flex-wrap" : "flex-nowrap",
             )}
           >
-            <NumberDisplay value={data} config={config} wrapped={wrapped} />
+            <NumberDisplay
+              view={layout}
+              value={data}
+              config={config}
+              wrapped={wrapped}
+            />
           </div>
         </CellTrigger>
       )}
@@ -53,13 +66,19 @@ export function NumberCell({
 }
 
 interface NumberDisplayProps {
+  view: InferCellProps<NumberPlugin>["layout"];
   value: string | null;
   config: NumberConfig;
   wrapped?: boolean;
 }
 
-function NumberDisplay({ value, config, wrapped }: NumberDisplayProps) {
+function NumberDisplay({ view, value, config, wrapped }: NumberDisplayProps) {
   const [displayedValue, cappedValue] = getNumberValue(value ?? "", config);
+
+  if (view === "row-view" && !displayedValue) {
+    return <span className="text-muted">Empty</span>;
+  }
+
   switch (config.showAs) {
     case "bar":
       return (

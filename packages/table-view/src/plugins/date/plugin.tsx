@@ -77,13 +77,8 @@ export function createdTime(): CreatedTimePlugin {
       ),
     toGroupValue: (_, row) => trimTs(row.createdAt, "date"),
     compare: (rowA, rowB) => compareNumbers(rowA.createdAt, rowB.createdAt),
-    renderCell: ({ row, config, wrapped, disabled }) => (
-      <DateCell
-        data={{ start: row.createdAt, includeTime: true }}
-        config={config}
-        wrapped={wrapped}
-        disabled={disabled}
-      />
+    renderCell: ({ row, data: _data, ...props }) => (
+      <DateCell data={{ start: row.createdAt, includeTime: true }} {...props} />
     ),
     renderConfigMenu: (props) => <DateConfigMenu {...props} />,
     renderGroupingValue: (props) => <DateGroupingValue {...props} />,
@@ -118,12 +113,10 @@ export function lastEditedTime(): LastEditedTimePlugin {
     toGroupValue: (_, row) => trimTs(row.lastEditedAt, "date"),
     compare: (rowA, rowB) =>
       compareNumbers(rowA.lastEditedAt, rowB.lastEditedAt),
-    renderCell: ({ row, config, wrapped, disabled }) => (
+    renderCell: ({ row, data: _data, ...props }) => (
       <DateCell
         data={{ start: row.lastEditedAt, includeTime: true }}
-        config={config}
-        wrapped={wrapped}
-        disabled={disabled}
+        {...props}
       />
     ),
     renderConfigMenu: (props) => <DateConfigMenu {...props} />,

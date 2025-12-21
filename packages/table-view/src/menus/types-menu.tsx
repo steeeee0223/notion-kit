@@ -108,7 +108,7 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
             <CommandGroup
               className={cn(
                 "flex flex-col gap-px px-0",
-                "**:[[cmdk-group-heading]]:mt-1.5 **:[[cmdk-group-heading]]:mb-2 **:[[cmdk-group-heading]]:flex **:[[cmdk-group-heading]]:items-center **:[[cmdk-group-heading]]:truncate **:[[cmdk-group-heading]]:px-3.5 **:[[cmdk-group-heading]]:py-0 **:[[cmdk-group-heading]]:leading-[1.2] **:[[cmdk-group-heading]]:text-secondary **:[[cmdk-group-heading]]:select-none",
+                "**:[[cmdk-group-heading]]:mt-1.5 **:[[cmdk-group-heading]]:mb-2 **:[[cmdk-group-heading]]:flex **:[[cmdk-group-heading]]:items-center **:[[cmdk-group-heading]]:truncate **:[[cmdk-group-heading]]:px-3.5 **:[[cmdk-group-heading]]:py-0 **:[[cmdk-group-heading]]:leading-tight **:[[cmdk-group-heading]]:text-secondary **:[[cmdk-group-heading]]:select-none",
               )}
               heading="Type"
             >
@@ -138,7 +138,7 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
             <CommandGroup
               className={cn(
                 "flex flex-col gap-px px-0",
-                "**:[[cmdk-group-heading]]:mt-1.5 **:[[cmdk-group-heading]]:mb-2 **:[[cmdk-group-heading]]:flex **:[[cmdk-group-heading]]:items-center **:[[cmdk-group-heading]]:truncate **:[[cmdk-group-heading]]:px-3.5 **:[[cmdk-group-heading]]:py-0 **:[[cmdk-group-heading]]:leading-[1.2] **:[[cmdk-group-heading]]:text-secondary **:[[cmdk-group-heading]]:select-none",
+                "**:[[cmdk-group-heading]]:mt-1.5 **:[[cmdk-group-heading]]:mb-2 **:[[cmdk-group-heading]]:flex **:[[cmdk-group-heading]]:items-center **:[[cmdk-group-heading]]:truncate **:[[cmdk-group-heading]]:px-3.5 **:[[cmdk-group-heading]]:py-0 **:[[cmdk-group-heading]]:leading-tight **:[[cmdk-group-heading]]:text-secondary **:[[cmdk-group-heading]]:select-none",
               )}
               heading="Select to add"
             >

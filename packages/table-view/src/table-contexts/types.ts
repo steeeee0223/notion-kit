@@ -9,11 +9,17 @@ export interface TableState<TPlugins extends CellPlugin[]> {
   data: Row<TPlugins>[];
 }
 
-export interface TableProps<TPlugins extends CellPlugin[]>
+export interface BaseTableProps<TPlugins extends CellPlugin[]>
   extends TableState<TPlugins> {
-  plugins?: TPlugins;
-  table?: TableGlobalState;
+  table?: Partial<TableGlobalState>;
+  getRowUrl?: (rowId: string) => string;
   onDataChange?: OnChangeFn<Row<TPlugins>[]>;
   onPropertiesChange?: OnChangeFn<ColumnDefs<TPlugins>>;
   onTableChange?: OnChangeFn<TableGlobalState>;
+}
+
+export interface TableProps<TPlugins extends CellPlugin[]>
+  extends BaseTableProps<TPlugins> {
+  plugins?: TPlugins;
+  children?: React.ReactNode;
 }

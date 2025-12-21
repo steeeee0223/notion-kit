@@ -11,36 +11,17 @@ import {
   type OnChangeFn,
 } from "@tanstack/react-table";
 
-import {
-  DEFAULT_FEATURES,
-  getExtendedGroupedRowModel,
-  type TableGlobalState,
-} from "../features";
+import { DEFAULT_FEATURES, getExtendedGroupedRowModel } from "../features";
 import type { ColumnDefs, ColumnInfo, Row } from "../lib/types";
 import { type Entity } from "../lib/utils";
-import type { CellPlugin, ComparableValue } from "../plugins";
-import { TableRowCell } from "../table-body";
-import { TableFooterCell } from "../table-footer";
-import { TableHeaderCell } from "../table-header";
-import type { TableState } from "./types";
+import type { CellPlugin } from "../plugins";
+import { defaultColumn } from "./column";
+import type { BaseTableProps } from "./types";
 import { getMinWidth, toPropertyEntity } from "./utils";
 
-const defaultColumn: Partial<ColumnDef<Row>> = {
-  size: 200,
-  minSize: 100,
-  maxSize: Number.MAX_SAFE_INTEGER,
-  header: (props) => <TableHeaderCell {...props} />,
-  cell: (props) => <TableRowCell {...props} />,
-  footer: ({ column }) => <TableFooterCell column={column} />,
-};
-
 interface UseTableViewOptions<TPlugins extends CellPlugin[]>
-  extends TableState<TPlugins> {
+  extends BaseTableProps<TPlugins> {
   plugins: Entity<TPlugins[number]>;
-  table?: TableGlobalState;
-  onDataChange?: OnChangeFn<Row<TPlugins>[]>;
-  onPropertiesChange?: OnChangeFn<ColumnDefs<TPlugins>>;
-  onTableChange?: OnChangeFn<TableGlobalState>;
 }
 
 export function useTableView<TPlugins extends CellPlugin[]>({
@@ -141,7 +122,13 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   if (tableGlobal) {
     table.setOptions((v) => ({
       ...v,
-      state: { ...v.state, tableGlobal },
+      state: {
+        ...v.state,
+        tableGlobal: {
+          ...table.initialState.tableGlobal,
+          ...tableGlobal,
+        },
+      },
       onTableGlobalChange: onTableChange,
     }));
   }
@@ -156,10 +143,12 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   ) {
     table._setGroupingState((v) =>
       table.getGroupedRowModel().rows.reduce((acc, r) => {
+        const colId = r.groupingColumnId!;
         acc.groupOrder.push(r.id);
-        acc.groupValues[r.id] = r.getGroupingValue(
-          r.groupingColumnId!,
-        ) as ComparableValue;
+        acc.groupValues[r.id] = {
+          value: r.getGroupingValue(colId),
+          original: r.original.properties[colId]?.value as unknown,
+        };
         return acc;
       }, v),
     );

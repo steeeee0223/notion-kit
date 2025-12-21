@@ -1,6 +1,6 @@
 "use client";
 
-import { Column } from "@tanstack/react-table";
+import type { HeaderContext } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
 import {
@@ -16,11 +16,7 @@ import { CalcMenu, countMethodHint } from "../menus";
 import type { CellPlugin, InferKey } from "../plugins";
 import { useTableViewCtx } from "../table-contexts";
 
-interface TableFooterCellProps {
-  column: Column<Row>;
-}
-
-export function TableFooterCell({ column }: TableFooterCellProps) {
+export function TableFooterCell({ column }: HeaderContext<Row, unknown>) {
   const props = {
     id: column.id,
     type: column.getInfo().type,
@@ -39,11 +35,7 @@ export function TableFooterCell({ column }: TableFooterCellProps) {
             <CountDisplay {...props} />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent
-          className="z-990 w-50"
-          align="start"
-          alignOffset={-4}
-        >
+        <DropdownMenuContent className="w-50" align="start" alignOffset={-4}>
           <CalcMenu {...props} />
         </DropdownMenuContent>
       </DropdownMenu>

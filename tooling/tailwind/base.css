@@ -28,7 +28,7 @@
   --color-popover: var(--bg-popover);
   --color-tooltip: var(--bg-tooltip);
   --color-input: var(--bg-input);
-  /* Border color */
+  /* Border */
   --color-border: var(--border);
   --color-border-button: var(--border-button);
   --color-border-cell: var(--border-cell);
@@ -49,6 +49,8 @@
   --shadow-cell-focus:
     --alpha(var(--blue) / 57%) 0px 0px 0px 2px inset,
     --alpha(var(--blue) / 35%) 0px 0px 0px 1px inset;
+  /* Text size */
+  --leading-tight: 1.2;
   /* Animate */
   --animate-bg: background 200ms ease;
   --animate-bg-in: background 20ms ease-in;
@@ -56,6 +58,10 @@
   /* Unused */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  /* Z indexes */
+  --z-col: 30;
+  --z-row: 40;
+  --z-menu: 50;
 }
 
 :root {

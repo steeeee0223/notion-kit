@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useId, useState } from "react";
 
 import { cn } from "@notion-kit/cn";
-import { useRect } from "@notion-kit/hooks";
+import { useInputField, useRect } from "@notion-kit/hooks";
 import {
   Input,
   Popover,
@@ -31,7 +31,7 @@ export function TextInputPopover({
         side="bottom"
         sideOffset={-rect.height}
         align="start"
-        className="z-990 max-h-[773px] min-h-[38px] w-60 overflow-visible backdrop-filter-none"
+        className="max-h-[773px] min-h-[38px] w-60 overflow-visible backdrop-filter-none"
       >
         <TextInputContent
           {...props}
@@ -53,28 +53,21 @@ interface TextInputContentProps {
 
 function TextInputContent({
   className,
-  value: initialValue,
+  value,
   onUpdate,
 }: TextInputContentProps) {
-  const [value, setValue] = useState(initialValue);
+  const id = useId();
+  const { props } = useInputField({ id, initialValue: value, onUpdate });
 
   return (
     <Input
       spellCheck
       variant="flat"
-      value={value}
-      onChange={(e) => {
-        e.preventDefault();
-        setValue(e.target.value);
-      }}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") onUpdate(value);
-      }}
-      onBlur={() => onUpdate(value)}
       className={cn(
         "max-h-[771px] min-h-9 border-none bg-transparent word-break whitespace-pre-wrap caret-primary",
         className,
       )}
+      {...props}
     />
   );
 }

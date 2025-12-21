@@ -33,13 +33,13 @@ export function CopyButton({ className, value }: CopyButtonProps) {
             tabIndex={0}
             aria-label="Copy to Clipboard"
             size="xs"
-            className="rounded-md bg-main fill-secondary leading-[1.2] font-medium tracking-[0.5px] text-secondary uppercase shadow-sm"
+            className="rounded-md bg-main text-secondary shadow-sm"
             onClick={(e) => {
               e.stopPropagation();
               void copy(value);
             }}
           >
-            <Icon.Copy className="size-3.5" />
+            <Icon.Copy className="size-3.5 fill-current" />
           </Button>
         </TooltipPreset>
       </div>

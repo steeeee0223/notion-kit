@@ -1,15 +1,7 @@
 "use client";
 
 import React, { useCallback } from "react";
-import { closestCenter, DndContext, DragEndEvent } from "@dnd-kit/core";
-import {
-  restrictToParentElement,
-  restrictToVerticalAxis,
-} from "@dnd-kit/modifiers";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { type DragEndEvent } from "@dnd-kit/core";
 import type { Table } from "@tanstack/react-table";
 
 import { BaseModal } from "@notion-kit/common";
@@ -17,7 +9,7 @@ import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
 import { Button } from "@notion-kit/shadcn";
 
-import { useDndSensors } from "../common";
+import { SortableDnd, useDndSensors } from "../common";
 import type { Row } from "../lib/types";
 import { useTableViewCtx } from "../table-contexts";
 import { TableGroupedRow } from "./table-grouped-row";
@@ -27,7 +19,6 @@ export function DndTableBody() {
   const { openModal } = useModal();
   const { table } = useTableViewCtx();
   const { locked } = table.getTableGlobalState();
-  const sensors = useDndSensors();
 
   const handleRowDragEnd = useCallback(
     (e: DragEndEvent) => {
@@ -54,7 +45,7 @@ export function DndTableBody() {
         {/* Drag and Fill handle */}
         <div
           id="notion-table-view-drag-and-fill-handle"
-          className="relative z-850 flex"
+          className="relative z-(--z-row) flex"
         >
           <div className="flex w-[calc(100%-64px)]">
             {/* The blue circle */}
@@ -75,20 +66,13 @@ export function DndTableBody() {
           />
         </div>
         {/* Rows */}
-        <DndContext
-          collisionDetection={closestCenter}
-          modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-          onDragEnd={handleRowDragEnd}
-          sensors={sensors}
-        >
-          <div className="relative">
-            {table.getState().columnSizingInfo.isResizingColumn ? (
-              <MemoizedTableBody table={table} />
-            ) : (
-              <TableBody table={table} />
-            )}
-          </div>
-        </DndContext>
+        <div className="relative">
+          {table.getState().columnSizingInfo.isResizingColumn ? (
+            <MemoizedTableBody table={table} onRowDragEnd={handleRowDragEnd} />
+          ) : (
+            <TableBody table={table} onRowDragEnd={handleRowDragEnd} />
+          )}
+        </div>
       </div>
       <div className="w-[438px]" />
       {!locked && (
@@ -111,17 +95,21 @@ export function DndTableBody() {
 
 interface TableBodyProps {
   table: Table<Row>;
+  onRowDragEnd: (e: DragEndEvent) => void;
 }
 
 /**
  * un-memoized normal table body component - see memoized version below
  */
-function TableBody({ table }: TableBodyProps) {
+function TableBody({ table, onRowDragEnd }: TableBodyProps) {
+  const sensors = useDndSensors();
   const rows = table.getRowModel().rows;
+
   return (
-    <SortableContext
+    <SortableDnd
       items={rows.map((row) => row.id)}
-      strategy={verticalListSortingStrategy}
+      sensors={sensors}
+      onDragEnd={onRowDragEnd}
     >
       {rows.map((row) =>
         row.getIsGrouped() ? (
@@ -130,7 +118,7 @@ function TableBody({ table }: TableBodyProps) {
           <TableRow key={row.id} row={row} />
         ),
       )}
-    </SortableContext>
+    </SortableDnd>
   );
 }
 

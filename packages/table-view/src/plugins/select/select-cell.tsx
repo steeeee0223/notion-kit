@@ -23,6 +23,8 @@ export function SelectCell({
   data: options,
   wrapped,
   disabled,
+  layout,
+  tooltip,
   onChange,
 }: CellProps<string[], SelectConfig>) {
   const [open, setOpen] = useState(false);
@@ -35,10 +37,19 @@ export function SelectCell({
     }
   };
 
+  if (layout !== "table" && layout !== "row-view" && options.length === 0)
+    return null;
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
-        <CellTrigger ref={ref} wrapped={wrapped} aria-disabled={disabled}>
+        <CellTrigger
+          ref={ref}
+          wrapped={wrapped}
+          aria-disabled={disabled}
+          layout={layout}
+          tooltip={tooltip}
+          widthType="select"
+        >
           <div className="flex items-center justify-between">
             <div
               className={cn(
@@ -46,27 +57,32 @@ export function SelectCell({
                 wrapped && "flex-wrap",
               )}
             >
-              {options.map((name) => {
-                const option = config.options.items[name];
-                if (!option) return;
-                return (
-                  <TooltipPreset
-                    asChild={false}
-                    key={option.id}
-                    description={
-                      option.description
-                        ? [
-                            { type: "default", text: option.name },
-                            { type: "secondary", text: option.description },
-                          ]
-                        : option.name
-                    }
-                    side="top"
-                  >
-                    <OptionTag {...option} />
-                  </TooltipPreset>
-                );
-              })}
+              {options.length > 0 ? (
+                options.map((name) => {
+                  const option = config.options.items[name];
+                  if (!option) return;
+                  return (
+                    <TooltipPreset
+                      asChild={false}
+                      key={option.id}
+                      disabled={layout !== "table"}
+                      description={
+                        option.description
+                          ? [
+                              { type: "default", text: option.name },
+                              { type: "secondary", text: option.description },
+                            ]
+                          : option.name
+                      }
+                      side="top"
+                    >
+                      <OptionTag {...option} />
+                    </TooltipPreset>
+                  );
+                })
+              ) : layout === "row-view" ? (
+                <span className="text-muted">Empty</span>
+              ) : null}
             </div>
           </div>
         </CellTrigger>
@@ -75,7 +91,7 @@ export function SelectCell({
         align="start"
         side="bottom"
         sideOffset={-rect.height}
-        className="z-990 max-h-[773px] min-h-[34px] w-[300px] overflow-visible backdrop-filter-none"
+        className="max-h-[773px] min-h-[34px] w-[300px] overflow-visible backdrop-filter-none"
       >
         <SelectMenu menu={menu} />
       </PopoverContent>

@@ -93,7 +93,6 @@ export function DateTimePicker({
               }
             />
             <TimezoneMenu
-              className="z-990"
               currentTz={config.tz}
               onChange={(tz) => onConfigChange?.((v) => ({ ...v, tz }))}
               renderTrigger={({ gmt }) => (

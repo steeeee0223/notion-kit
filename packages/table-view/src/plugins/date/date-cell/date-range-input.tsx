@@ -97,7 +97,7 @@ function DateTimeInput({ id, value: ts, onChange }: DateTimeInputProps) {
     <div
       data-slot="date-time-input"
       className={cn(
-        "flex h-7 grow basis-1/2 items-center rounded-sm bg-input px-2 text-sm/[1.2] ring-inset focus-within:shadow-notion",
+        "flex h-7 grow basis-1/2 items-center rounded-sm bg-input px-2 text-sm/tight ring-inset focus-within:shadow-notion",
         error ? "bg-red/15 ring-2 ring-red" : "ring-1 ring-ring",
       )}
     >

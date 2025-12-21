@@ -1,13 +1,20 @@
 import type { DragEndEvent } from "@dnd-kit/core";
-import type { OnChangeFn, TableFeature } from "@tanstack/react-table";
+import type {
+  OnChangeFn,
+  Row,
+  Table,
+  TableFeature,
+} from "@tanstack/react-table";
 import {
+  createRow,
   flexRender,
   functionalUpdate,
   makeStateUpdater,
 } from "@tanstack/react-table";
 
-import type { ColumnInfo } from "../lib/types";
-import { ComparableValue, DefaultGroupingValue } from "../plugins";
+import type { ColumnInfo, Row as RowModel } from "../lib/types";
+import type { CellPlugin, ComparableValue, InferData } from "../plugins";
+import { DefaultGroupingValue } from "../plugins";
 import { createDragEndUpdater } from "./utils";
 
 interface ExtendedGroupingState {
@@ -23,7 +30,13 @@ interface ExtendedGroupingState {
    * key: group ID
    * value: grouping value
    */
-  groupValues: Record<string, ComparableValue>;
+  groupValues: Record<
+    string,
+    {
+      value: ComparableValue;
+      original: InferData<CellPlugin>;
+    }
+  >;
   showAggregates: boolean;
   hideEmptyGroups: boolean;
 }
@@ -49,6 +62,10 @@ export interface ExtendedGroupingTableApi {
   getGroupingValueRenderer: (
     groupId: string,
   ) => (props: { className?: string }) => React.ReactNode;
+  /**
+   * Use this to render the empty group
+   */
+  getPlaceholderGroupedRow: (groupId: string) => Row<RowModel>;
 }
 
 export interface ExtendedGroupingRowApi {
@@ -65,7 +82,7 @@ export const ExtendedGroupingFeature: TableFeature = {
         groupOrder: [],
         groupVisibility: {},
         groupValues: {},
-        showAggregates: false,
+        showAggregates: true,
         hideEmptyGroups: true,
       },
       ...state,
@@ -78,7 +95,7 @@ export const ExtendedGroupingFeature: TableFeature = {
     };
   },
 
-  createTable: (table) => {
+  createTable: (table: Table<RowModel>) => {
     table.getGroupedColumnInfo = () => {
       const { grouping } = table.getState();
       if (grouping.length === 0) return null;
@@ -156,7 +173,7 @@ export const ExtendedGroupingFeature: TableFeature = {
         const plugin = table.getColumnPlugin(info.id);
         const resolvedProps = {
           ...props,
-          value: groupValues[groupId] ?? null,
+          value: groupValues[groupId]?.value ?? null,
           table,
         };
         if (plugin.renderGroupingValue) {
@@ -164,6 +181,17 @@ export const ExtendedGroupingFeature: TableFeature = {
         }
         return flexRender(DefaultGroupingValue, resolvedProps);
       };
+    };
+    table.getPlaceholderGroupedRow = (groupId) => {
+      const { groupValues } = table.getState().groupingState;
+      return createRow<RowModel>(
+        table,
+        groupId,
+        groupValues[groupId]?.original as RowModel,
+        0,
+        0,
+        [],
+      );
     };
   },
 
@@ -182,13 +210,6 @@ export const ExtendedGroupingFeature: TableFeature = {
       table.toggleGroupVisible(row.id);
     };
     row.renderGroupingValue = (props) => {
-      const groupId = row.groupingColumnId;
-      if (!groupId) {
-        console.error(
-          `No grouping column id found for the grouped row ${row.id}`,
-        );
-        return null;
-      }
       return flexRender(table.getGroupingValueRenderer(row.id), props);
     };
   },

@@ -1,12 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  flexRender,
-  type Column,
-  type Row as RowModel,
-  type Table,
-} from "@tanstack/react-table";
+import { CellContext, flexRender } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
 import { Button } from "@notion-kit/shadcn";
@@ -20,17 +15,11 @@ enum CellMode {
   Select = "select",
 }
 
-interface TableRowCellProps<TPlugin extends CellPlugin> {
-  column: Column<Row<TPlugin[]>>;
-  row: RowModel<Row<TPlugin[]>>;
-  table: Table<Row<TPlugin[]>>;
-}
-
 export function TableRowCell<TPlugin extends CellPlugin>({
   column,
   row,
   table,
-}: TableRowCellProps<TPlugin>) {
+}: CellContext<Row<TPlugin[]>, unknown>) {
   const [mode] = useState<CellMode>(CellMode.Normal);
 
   const { locked } = table.getTableGlobalState();
@@ -74,12 +63,14 @@ export function TableRowCell<TPlugin extends CellPlugin>({
           config: info.config,
           wrapped: info.wrapped,
           disabled: locked,
-          onChange: (updater) => column.updateCell(row.id, updater),
+          layout: "table",
+          onChange: (updater) =>
+            column.updateCell(row.id, updater, row.parentId),
           onConfigChange: column.updateConfig,
         })}
       </div>
       {mode === CellMode.Select && (
-        <div className="pointer-events-none absolute top-0 left-0 z-840 h-full w-full rounded-[3px] bg-blue/5 shadow-cell-focus" />
+        <div className="pointer-events-none absolute top-0 left-0 z-(--z-col) h-full w-full rounded-[3px] bg-blue/5 shadow-cell-focus" />
       )}
     </div>
   );

@@ -23,3 +23,13 @@ export const COLOR_OPTIONS = Object.entries(COLOR).reduce<
   options[value] = name;
   return options;
 }, {});
+
+export const KEYBOARD = {
+  CMD: "⌘",
+  CTRL: "⌃",
+  OPTION: "⌥",
+  SHIFT: "⇧",
+  ENTER: "↵",
+  BACKSPACE: "⌫",
+  DEL: "Del",
+} as const;

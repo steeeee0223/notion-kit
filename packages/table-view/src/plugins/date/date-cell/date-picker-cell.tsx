@@ -13,24 +13,36 @@ export function DatePickerCell({
   data,
   config,
   disabled,
+  layout,
+  tooltip,
   ...props
 }: InferCellProps<DatePlugin>) {
   const dateStr = toDateString(data, config);
 
+  if (layout !== "table" && layout !== "row-view" && data.start === undefined)
+    return null;
   return (
     <Popover>
       <PopoverTrigger asChild>
         <CellTrigger
           className="group/date-cell"
           wrapped={wrapped}
+          layout={layout}
+          widthType="date"
           aria-disabled={disabled}
+          tooltip={tooltip}
         >
-          <CopyButton
-            className="hidden group-hover/date-cell:flex"
-            value={dateStr}
-          />
+          {(layout === "table" || layout === "row-view") && (
+            <CopyButton
+              className="hidden group-hover/date-cell:flex"
+              value={dateStr}
+            />
+          )}
           <div className={cn("leading-normal", wrappedClassName(wrapped))}>
-            {dateStr}
+            {dateStr ||
+              (layout === "row-view" ? (
+                <span className="text-muted">Empty</span>
+              ) : null)}
           </div>
         </CellTrigger>
       </PopoverTrigger>
@@ -38,7 +50,7 @@ export function DatePickerCell({
         align="start"
         side="bottom"
         sideOffset={0}
-        className="z-990 w-62"
+        className="w-62"
       >
         <DateTimePicker data={data} config={config} {...props} />
       </PopoverContent>

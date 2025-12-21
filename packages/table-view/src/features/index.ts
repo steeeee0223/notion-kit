@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { RowData } from "@tanstack/react-table";
 
+import type { ComparableValue } from "../plugins";
 import {
   ColumnsInfoFeature,
   type ColumnInfoColumnApi,
@@ -76,7 +77,9 @@ declare module "@tanstack/react-table" {
 
   interface Row<TData extends RowData>
     extends RowActionsRowApi,
-      ExtendedGroupingRowApi {}
+      ExtendedGroupingRowApi {
+    getGroupingValue: (colId: string) => ComparableValue;
+  }
 }
 
 export * from "./columns-info";
@@ -85,6 +88,7 @@ export * from "./extended-grouped-row-model";
 export * from "./freezing";
 export * from "./menu";
 export * from "./row-actions";
+export * from "./constants";
 
 export const DEFAULT_FEATURES = [
   ColumnsInfoFeature,

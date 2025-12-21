@@ -19,7 +19,7 @@ export function TableFooter() {
   ).some((v) => v.method !== CountMethod.NONE);
 
   return (
-    <div className="group/footer left-0 z-850 box-border flex h-8 min-w-full border-t border-t-border-cell bg-main text-sm select-none">
+    <div className="group/footer left-0 z-(--z-row) box-border flex h-8 min-w-full border-t border-t-border-cell bg-main text-sm select-none">
       <div
         className={cn(
           "pr-8 opacity-0 transition-opacity",
@@ -30,7 +30,7 @@ export function TableFooter() {
         <div className={cn("m-0 inline-flex", isLeftPinned && "flex")}>
           {/* Pinned Columns */}
           {isLeftPinned && (
-            <div className="sticky left-8 z-830 flex bg-main">
+            <div className="sticky left-8 z-(--z-col) flex bg-main">
               {leftPinnedHeaders.map((header) => (
                 <React.Fragment key={header.id}>
                   {flexRender(

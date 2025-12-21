@@ -20,7 +20,7 @@ import {
   MenuItemSelect,
 } from "@notion-kit/shadcn";
 
-import { VerticalDnd } from "../../../common";
+import { SortableDnd } from "../../../common";
 import type { ConfigMenuProps } from "../../types";
 import type { SelectConfig, SelectSort } from "../types";
 import { OptionItem } from "./option-item";
@@ -84,7 +84,7 @@ export function SelectConfigMenu({
               align="start"
               alignOffset={4}
               sideOffset={0}
-              className="z-990 w-[250px]"
+              className="w-[250px]"
               onCloseAutoFocus={(e) => e.preventDefault()}
             >
               <DropdownMenuGroup>
@@ -121,7 +121,7 @@ export function SelectConfigMenu({
             </div>
           )}
           <div className="flex flex-col">
-            <VerticalDnd
+            <SortableDnd
               items={config.options.names}
               onDragEnd={reorderOptions}
             >
@@ -138,7 +138,7 @@ export function SelectConfigMenu({
                   />
                 );
               })}
-            </VerticalDnd>
+            </SortableDnd>
           </div>
         </DropdownMenuGroup>
       </DropdownMenuSubContent>

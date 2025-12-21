@@ -28,7 +28,7 @@ import {
   SelectValue,
 } from "@notion-kit/shadcn";
 
-import { DefaultIcon, VerticalDnd } from "../common";
+import { DefaultIcon, SortableDnd } from "../common";
 import { useTableViewCtx } from "../table-contexts";
 
 export function SortMenu() {
@@ -49,11 +49,11 @@ export function SortMenu() {
   return (
     <>
       <MenuGroup>
-        <VerticalDnd items={sorting.map((s) => s.id)} onDragEnd={reorderRules}>
+        <SortableDnd items={sorting.map((s) => s.id)} onDragEnd={reorderRules}>
           {sorting.map((prop) => (
             <SortRule key={prop.id} {...prop} />
           ))}
-        </VerticalDnd>
+        </SortableDnd>
       </MenuGroup>
       <MenuGroup>
         <Popover>
@@ -64,7 +64,7 @@ export function SortMenu() {
               Body="Add sort"
             />
           </PopoverTrigger>
-          <PopoverContent className="z-990" align="start">
+          <PopoverContent align="start">
             <PropSelectMenu />
           </PopoverContent>
         </Popover>
