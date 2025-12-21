@@ -120,7 +120,7 @@ interface HintItemProps {
 function HintItem({ title, desc, imgSrc, ...props }: HintItemProps) {
   return (
     <TooltipPreset
-      className="z-990 w-[156px]"
+      className="w-[156px]"
       side="right"
       description={[
         { type: "image", text: imgSrc },

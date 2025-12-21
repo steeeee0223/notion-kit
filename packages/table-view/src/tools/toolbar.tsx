@@ -10,7 +10,7 @@ import {
   TooltipPreset,
 } from "@notion-kit/shadcn";
 
-import { TableViewMenu } from "../menus";
+import { SortMenu, TableViewMenu } from "../menus";
 import { useTableViewCtx } from "../table-contexts";
 
 interface ToolbarProps {
@@ -24,7 +24,22 @@ export function Toolbar({ className }: ToolbarProps) {
   return (
     <div className={cn("flex items-center justify-end gap-0.5", className)}>
       <ToolbarItem icon={<Icon.FilterSmall />} label="Filter" />
-      <ToolbarItem icon={<Icon.ArrowUpDownSmall />} label="Sort" />
+      <Popover>
+        <TooltipPreset description="Sort" side="top">
+          <PopoverTrigger asChild>
+            <Button
+              variant="nav-icon"
+              aria-label="Sort"
+              className="[&_svg]:fill-current"
+            >
+              <Icon.ArrowUpDownSmall />
+            </Button>
+          </PopoverTrigger>
+        </TooltipPreset>
+        <PopoverContent>
+          <SortMenu />
+        </PopoverContent>
+      </Popover>
       <ToolbarItem
         icon={<Icon.LightningSmall />}
         label="Create and view automations"
@@ -49,7 +64,7 @@ export function Toolbar({ className }: ToolbarProps) {
             </Button>
           </PopoverTrigger>
         </TooltipPreset>
-        <PopoverContent className="z-990" collisionPadding={12} sticky="always">
+        <PopoverContent collisionPadding={12} sticky="always">
           <TableViewMenu />
         </PopoverContent>
       </Popover>

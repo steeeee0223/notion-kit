@@ -62,7 +62,6 @@ function TitleTableCell({
               <TooltipPreset
                 description={ROW_VIEW_OPTIONS[rowView].tooltip}
                 side="top"
-                className="z-990"
               >
                 <Button
                   tabIndex={0}
@@ -127,7 +126,7 @@ function TitleListCell({
           className="pointer-events-auto relative flex bg-transparent p-0.5"
         >
           <Popover open={open} onOpenChange={setOpen}>
-            <TooltipPreset description="Edit" side="top" className="z-990">
+            <TooltipPreset description="Edit" side="top">
               <PopoverTrigger asChild>
                 <Button
                   tabIndex={0}
@@ -142,7 +141,7 @@ function TitleListCell({
             </TooltipPreset>
             <PopoverContent
               side="bottom"
-              className="z-990 max-h-[773px] min-h-[38px] w-60 overflow-visible backdrop-filter-none"
+              className="max-h-[773px] min-h-[38px] w-60 overflow-visible backdrop-filter-none"
             >
               <Input
                 spellCheck

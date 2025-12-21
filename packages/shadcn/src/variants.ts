@@ -149,17 +149,17 @@ export const contentVariants = cva(
          * @note Used with: `openAnimation`
          */
         modal:
-          "fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 bg-modal p-6 shadow-lg duration-200",
+          "fixed top-[50%] left-[50%] z-(--z-menu) grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 bg-modal p-6 shadow-lg duration-200",
         /**
          * @prop popover
          * @note Used by: DropdownMenu, Popover, Select
          * @note Used with: `openAnimation`, `sideAnimation`
          */
-        popover: "z-50 rounded-md bg-popover shadow-md",
+        popover: "z-(--z-menu) rounded-md bg-popover shadow-md",
         /**
          * @prop sheet
          */
-        sheet: "fixed z-50 bg-main shadow-lg",
+        sheet: "fixed z-(--z-menu) bg-main shadow-lg",
         /**
          * @prop tab
          * @note Used by: Tabs
@@ -172,7 +172,7 @@ export const contentVariants = cva(
          * @note Used with: `openAnimation`, `sideAnimation`
          */
         tooltip:
-          "relative z-50 animate-in overflow-hidden border-none bg-tooltip font-medium text-tooltip-primary shadow-md backdrop-filter-none fade-in-0 zoom-in-95",
+          "relative z-(--z-menu) animate-in overflow-hidden border-none bg-tooltip font-medium text-tooltip-primary shadow-md backdrop-filter-none fade-in-0 zoom-in-95",
       },
       openAnimation: {
         true: [

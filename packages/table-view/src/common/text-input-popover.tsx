@@ -31,7 +31,7 @@ export function TextInputPopover({
         side="bottom"
         sideOffset={-rect.height}
         align="start"
-        className="z-990 max-h-[773px] min-h-[38px] w-60 overflow-visible backdrop-filter-none"
+        className="max-h-[773px] min-h-[38px] w-60 overflow-visible backdrop-filter-none"
       >
         <TextInputContent
           {...props}

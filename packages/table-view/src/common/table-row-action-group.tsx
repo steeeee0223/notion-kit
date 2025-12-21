@@ -88,7 +88,7 @@ export function RowActions({
             </Button>
           </PopoverTrigger>
         </TooltipPreset>
-        <PopoverContent className="z-990 w-[265px]" side="right" align="start">
+        <PopoverContent className="w-[265px]" side="right" align="start">
           <RowActionMenu rowId={rowId} />
         </PopoverContent>
       </Popover>

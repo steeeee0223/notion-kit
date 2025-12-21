@@ -107,7 +107,7 @@ export function OptionItem({
             <PopoverContent
               align="center"
               sideOffset={0}
-              className="z-990 w-[220px]"
+              className="w-[220px]"
               collisionPadding={12}
               onClick={(e) => e.stopPropagation()}
               onCloseAutoFocus={() => onMenuClose()}

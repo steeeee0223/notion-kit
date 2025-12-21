@@ -109,7 +109,7 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
           >
             {/* Title Edit Popover */}
             <Popover open={isEditing} onOpenChange={setIsEditing}>
-              <TooltipPreset description="Edit" side="top" className="z-990">
+              <TooltipPreset description="Edit" side="top">
                 <PopoverTrigger asChild>
                   <Button
                     variant={null}
@@ -123,7 +123,7 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
               </TooltipPreset>
               <PopoverContent
                 side="left"
-                className="z-990 max-h-[773px] min-h-[38px] w-46 overflow-visible backdrop-filter-none"
+                className="max-h-[773px] min-h-[38px] w-46 overflow-visible backdrop-filter-none"
                 onClick={(e) => e.stopPropagation()}
               >
                 <Input
@@ -153,7 +153,7 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
                 </PopoverTrigger>
               </TooltipPreset>
               <PopoverContent
-                className="z-990 w-[265px]"
+                className="w-[265px]"
                 side="bottom"
                 onClick={(e) => e.stopPropagation()}
               >

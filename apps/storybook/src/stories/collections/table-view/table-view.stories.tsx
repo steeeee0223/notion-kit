@@ -41,3 +41,31 @@ export const Controlled: Story = {
     },
   ],
 };
+
+export const ListView: Story = {
+  decorators: [
+    () => (
+      <div className="px-60 py-24">
+        <TableView
+          table={{ layout: "list" }}
+          properties={mockProps}
+          data={mockData}
+        />
+      </div>
+    ),
+  ],
+};
+
+export const BoardView: Story = {
+  decorators: [
+    () => (
+      <div className="px-60 py-24">
+        <TableView
+          table={{ layout: "board" }}
+          properties={mockProps}
+          data={mockData}
+        />
+      </div>
+    ),
+  ],
+};

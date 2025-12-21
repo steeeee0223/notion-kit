@@ -67,7 +67,7 @@ export function TableRow({ row }: TableRowProps) {
         )}
       >
         <div className="flex">
-          <div className="sticky left-8 z-850 flex items-center bg-main">
+          <div className="sticky left-8 z-(--z-row) flex items-center bg-main">
             {!locked && (
               <>
                 {/* Row actions */}

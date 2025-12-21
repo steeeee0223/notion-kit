@@ -47,7 +47,7 @@ function DrawerOverlay({
     <DrawerPrimitive.Overlay
       data-slot="drawer-overlay"
       className={cn(
-        "fixed inset-0 z-50 bg-black/80 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
+        "fixed inset-0 z-(--z-menu) bg-black/80 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
         className,
       )}
       {...props}
@@ -74,7 +74,7 @@ function DrawerContent({
         data-slot="drawer-content"
         className={cn(
           // TODO check and update these styles
-          "fixed inset-x-0 bottom-0 z-50 mt-24 flex flex-col rounded-t-[10px]",
+          "fixed inset-x-0 bottom-0 z-(--z-menu) mt-24 flex flex-col rounded-t-[10px]",
           contentVariants({ variant: "default", openAnimation: false }),
           side === "right" &&
             "inset-y-0 right-0 left-auto mt-0 h-screen rounded-none border-t-0 border-r-0",

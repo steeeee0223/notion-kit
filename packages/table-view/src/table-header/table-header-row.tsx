@@ -61,7 +61,7 @@ function TableHeaderRow() {
       dir="ltr"
       className="relative right-0 left-0 box-border flex h-[34px] min-w-[708px] bg-main text-default/65 shadow-header-row"
     >
-      <div className="sticky left-8 z-830 flex">
+      <div className="sticky left-8 z-(--z-col) flex">
         {/* Hovered actions */}
         <div className="absolute -left-8">
           <div className="flex h-full justify-end border-b-border-cell bg-main">
@@ -91,7 +91,7 @@ function TableHeaderRow() {
           {isLeftPinned && (
             <div
               id="draggable-ghost-section-left"
-              className="sticky left-8 z-830 flex bg-main shadow-header-sticky"
+              className="sticky left-8 z-(--z-col) flex bg-main shadow-header-sticky"
             >
               {leftPinnedHeaders.map((header) => (
                 <React.Fragment key={header.id}>
@@ -121,11 +121,7 @@ function TableHeaderRow() {
           <PopoverTrigger asChild>
             <TableHeaderActionCell icon={<Icon.Plus />} />
           </PopoverTrigger>
-          <PopoverContent
-            className="z-990"
-            sideOffset={0}
-            collisionPadding={12}
-          >
+          <PopoverContent sideOffset={0} collisionPadding={12}>
             <TypesMenu menu={TableViewMenuPage.CreateProp} />
           </PopoverContent>
         </Popover>
@@ -134,12 +130,7 @@ function TableHeaderRow() {
         <PopoverTrigger asChild>
           <TableHeaderActionCell icon={<Icon.Dots />} />
         </PopoverTrigger>
-        <PopoverContent
-          className="z-990"
-          sideOffset={0}
-          collisionPadding={12}
-          sticky="always"
-        >
+        <PopoverContent sideOffset={0} collisionPadding={12} sticky="always">
           <PropsMenu />
         </PopoverContent>
       </Popover>

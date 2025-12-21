@@ -68,7 +68,6 @@ export function TableHeaderCell({
               : info.name
           }
           side="top"
-          className="z-990"
         >
           <DropdownMenuTrigger asChild disabled={locked}>
             <div
@@ -100,7 +99,7 @@ export function TableHeaderCell({
           <DropdownMenuContent
             align="start"
             sideOffset={0}
-            className="z-990 w-[220px]"
+            className="w-[220px]"
           >
             <PropMenu view="table" propId={header.column.id} />
           </DropdownMenuContent>

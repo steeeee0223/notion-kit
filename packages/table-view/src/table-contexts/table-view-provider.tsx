@@ -47,12 +47,12 @@ export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
     <TableViewContext value={ctx}>
       <TooltipProvider delayDuration={500}>
         <ModalProvider>
-          <div className="relative mb-4 flex h-7 justify-end px-24">
-            <div className="fixed right-24">
+          <div className="relative flex flex-col gap-4">
+            <div className="sticky top-0 z-(--z-row) bg-main px-24 pb-2">
               <Toolbar />
             </div>
+            <Content layout={layout} />
           </div>
-          <Content layout={layout} />
           <RowView />
           {children}
         </ModalProvider>

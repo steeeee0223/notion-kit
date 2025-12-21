@@ -21,12 +21,16 @@ description: An composable, editable data table.
 
 - Table: sorting, grouping
 
+- Table Views: Table, List, Board
+
 - Cells plugins
   - Required plugins: `title`, `text`
   - Selectable: `checkbox`, `select`, `multi-select`
   - Numeric inputs: `number`
   - External links: `email`, `phone`, `url`
   - Date & time: `date`, `created-time`, `last-edited-time`
+
+- Open row as: center dialog, side peek, or full page
 
 ## Installation
 
@@ -81,8 +85,10 @@ It provides a table view with editable cells and supports various plugins for ce
 | `plugins`            | `TPlugins`                                                             | The plugins to use for the table. Each table should contain at least `title()` and `text()` plugins. |
 | `properties`\*       | [`ColumnDefs<TPlugins>`](/docs/objects/database-properties#columndefs) | The column definitions of the table.                                                                 |
 | `data`\*             | [`Row<TPlugins>[]`](/docs/objects/database-properties#row)             | The rows of the table.                                                                               |
+| `table`              | [`Partial<TableGlobalState>`](#type-tableglobalstate)                  | The global state of the table.                                                                       |
 | `onDataChange`       | `OnChangeFn<Row<TPlugins>[]>`                                          | Callback function that is called when the table data changes.                                        |
 | `onPropertiesChange` | `OnChangeFn<ColumnDefs<TPlugins>>`                                     | Callback function that is called when the table properties change.                                   |
+| `onTableChange`      | `OnChangeFn<TableGlobalState>`                                         | Callback function that is called when the table global state changes.                                |
 
 ### `type` TableState
 
@@ -92,3 +98,12 @@ A `TableState` is a generic type `TableState<TPlugins>` that represents the stat
 | -------------- | ---------------------------------------------------------------------- | ------- | ------------------------------------ |
 | `properties`\* | [`ColumnDefs<TPlugins>`](/docs/objects/database-properties#columndefs) | -       | The column definitions of the table. |
 | `data`\*       | [`Row<TPlugins>[]`](/docs/objects/database-properties#row)             | -       | The rows of the table.               |
+
+### `type` TableGlobalState
+
+| Prop          | Type                           | Default   | Description                              |
+| ------------- | ------------------------------ | --------- | ---------------------------------------- |
+| `layout`      | `"table" \| "list" \| "board"` | `"table"` | The layout view of the table.            |
+| `locked`      | `boolean`                      | `false`   | Whether the table is locked (non-editable). |
+| `rowView`     | `"center" \| "side" \| "full"` | `"side"`  | The view type of the opened row.         |
+| `openedRowId` | `string \| null`               | `null`    | The unique identifier of the opened row. |

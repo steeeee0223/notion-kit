@@ -44,7 +44,6 @@ export function ViewProps({ rowId }: ViewPropsProps) {
                 <DropdownMenu>
                   <TooltipPreset
                     side="left"
-                    className="z-990"
                     description={
                       info.description
                         ? [
@@ -77,7 +76,7 @@ export function ViewProps({ rowId }: ViewPropsProps) {
                   <DropdownMenuContent
                     align="start"
                     sideOffset={0}
-                    className="z-990 w-60"
+                    className="w-60"
                   >
                     <PropMenu view="row" propId={colId} />
                   </DropdownMenuContent>
