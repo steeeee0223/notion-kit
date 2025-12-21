@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/auth",
-  "version": "0.13.2",
+  "version": "0.14.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
