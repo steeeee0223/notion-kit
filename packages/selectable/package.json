@@ -1,0 +1,56 @@
+{
+  "name": "@notion-kit/selectable",
+  "version": "0.13.2",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/steeeee0223/notion-kit/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/steeeee0223/notion-kit.git",
+    "directory": "packages/selectable"
+  },
+  "publishConfig": {
+    "main": "./dist/index.mjs",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.mts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsdown --config=../../tooling/config/tsdown.config.ts",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsdown --config=../../tooling/config/tsdown.config.ts --watch",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@notion-kit/cn": "workspace:*",
+    "@radix-ui/react-slot": "^1.2.4"
+  },
+  "devDependencies": {
+    "@notion-kit/eslint-config": "workspace:*",
+    "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19"
+  },
+  "prettier": "@notion-kit/prettier-config"
+}
