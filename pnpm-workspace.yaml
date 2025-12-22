@@ -19,6 +19,9 @@ catalogs:
     react-dom: ^19.2.3
     "@types/react": ^19.2.7
     "@types/react-dom": ^19.2.3
+  react-compiler:
+    babel-plugin-react-compiler: ^1.0.0
+    react-compiler-runtime: ^1.0.0
   next16:
     next: ^16.1.0
     "@next/eslint-plugin-next": ^16.1.0

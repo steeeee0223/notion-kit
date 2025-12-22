@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/selectable",
-  "version": "0.13.2",
+  "version": "0.14.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -28,9 +28,9 @@
   "module": "./src/index.ts",
   "license": "MIT",
   "scripts": {
-    "build": "tsdown --config=../../tooling/config/tsdown.config.ts",
+    "build": "tsdown",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsdown --config=../../tooling/config/tsdown.config.ts --watch",
+    "dev": "tsdown --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
@@ -43,8 +43,11 @@
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "@rollup/plugin-babel": "^6.1.0",
+    "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",
     "prettier": "catalog:",
+    "react-compiler-runtime": "catalog:react-compiler",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
@@ -52,5 +55,10 @@
     "react": "catalog:react19",
     "react-dom": "catalog:react19"
   },
-  "prettier": "@notion-kit/prettier-config"
+  "prettier": "@notion-kit/prettier-config",
+  "babel": {
+    "plugins": [
+      "babel-plugin-react-compiler"
+    ]
+  }
 }

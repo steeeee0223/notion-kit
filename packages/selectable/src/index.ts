@@ -1,1 +1,1 @@
-export const name = "selectable";
+export * from "./selectable";

@@ -16,6 +16,9 @@
     "upgrade": "pnpx storybook@latest upgrade"
   },
   "dependencies": {
+    "@dnd-kit/core": "catalog:ui",
+    "@dnd-kit/modifiers": "catalog:ui",
+    "@dnd-kit/sortable": "catalog:ui",
     "@notion-kit/auth-ui": "workspace:*",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/common": "workspace:*",
@@ -28,6 +31,7 @@
     "@notion-kit/modal": "workspace:*",
     "@notion-kit/navbar": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
+    "@notion-kit/selectable": "workspace:*",
     "@notion-kit/settings-panel": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/sidebar": "workspace:*",
