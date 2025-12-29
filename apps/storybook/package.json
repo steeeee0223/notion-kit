@@ -10,6 +10,7 @@
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "start": "pnpx http-server storybook-static",
+    "test": "vitest --project=storybook --silent=passed-only --run",
     "typecheck": "tsc --noEmit",
     "addon": "storybook add",
     "upgrade": "pnpx storybook@latest upgrade"
@@ -45,7 +46,6 @@
     "uuid": "catalog:uuid"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^4.1.3",
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tailwind-config": "workspace:*",

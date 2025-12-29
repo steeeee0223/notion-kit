@@ -13,9 +13,11 @@ const config: StorybookConfig = {
     getAbsolutePath("@storybook/addon-links"),
     getAbsolutePath("@storybook/addon-docs"),
     getAbsolutePath("@storybook/addon-vitest"),
-    getAbsolutePath("@storybook/addon-a11y"),
-    getAbsolutePath("@chromatic-com/storybook"),
+    getAbsolutePath("@storybook/addon-a11y")
   ],
+  features: {
+    backgrounds: false, // 👈 disable the backgrounds feature
+  },
   framework: {
     name: getAbsolutePath("@storybook/nextjs-vite"),
     options: {},

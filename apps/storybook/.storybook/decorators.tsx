@@ -1,4 +1,3 @@
-import React, { useLayoutEffect } from "react";
 import type { Decorator } from "@storybook/nextjs-vite";
 
 import { I18nProvider } from "@notion-kit/i18n";
@@ -12,10 +11,10 @@ const StorybookThemeWrapper = ({
   theme,
   children,
 }: StorybookThemeWrapperProps) => {
-  const { setTheme } = useTheme();
-  useLayoutEffect(() => {
+  const { resolvedTheme, setTheme } = useTheme();
+  if (resolvedTheme !== theme) {
     setTheme(theme);
-  }, [setTheme, theme]);
+  }
 
   return children;
 };

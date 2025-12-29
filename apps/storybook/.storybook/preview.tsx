@@ -19,7 +19,9 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
-    backgrounds: { disabled: true },
+    a11y: {
+      test: "todo",
+    },
   },
   loaders: [mswLoader],
   decorators: [withTheme, withI18next, withToast],

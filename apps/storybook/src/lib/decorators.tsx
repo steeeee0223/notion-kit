@@ -4,7 +4,7 @@ import { AuthProvider } from "@notion-kit/auth-ui";
 
 export const withAuth: Decorator = (Story) => {
   return (
-    <AuthProvider baseURL="localhost:3000">
+    <AuthProvider>
       <Story />
     </AuthProvider>
   );
