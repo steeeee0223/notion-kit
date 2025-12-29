@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Meta, StoryObj } from "@storybook/nextjs";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 import { TagsInput } from "@notion-kit/tags-input";
 

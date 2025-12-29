@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Meta, StoryObj } from "@storybook/nextjs";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 import { cn } from "@notion-kit/cn";
 import { useRect } from "@notion-kit/hooks";

@@ -9,5 +9,5 @@
     "plugins": [{ "name": "next" }]
   },
   "include": ["src", ".storybook/**/*.ts", ".storybook/**/*.tsx"],
-  "exclude": ["node_modules", "next-env.d.ts"]
+  "exclude": ["node_modules"]
 }

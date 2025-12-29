@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Meta, StoryObj } from "@storybook/nextjs";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import { IconMenu } from "@notion-kit/icon-menu";
