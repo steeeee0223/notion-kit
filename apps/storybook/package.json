@@ -11,6 +11,7 @@
     "lint": "eslint",
     "start": "pnpx http-server storybook-static",
     "typecheck": "tsc --noEmit",
+    "addon": "storybook add",
     "upgrade": "pnpx storybook@latest upgrade"
   },
   "dependencies": {
@@ -44,24 +45,32 @@
     "uuid": "catalog:uuid"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^4.1.3",
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tailwind-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "@storybook/addon-a11y": "^10.1.10",
     "@storybook/addon-docs": "^10.1.10",
     "@storybook/addon-links": "^10.1.10",
-    "@storybook/nextjs": "^10.1.10",
+    "@storybook/addon-vitest": "^10.1.10",
+    "@storybook/nextjs-vite": "^10.1.10",
     "@tailwindcss/postcss": "catalog:tailwind-v4",
     "@types/node": "catalog:node22",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",
+    "@vitest/browser-playwright": "catalog:test",
+    "@vitest/coverage-v8": "catalog:test",
     "eslint": "catalog:",
-    "msw": "^2.12.4",
-    "msw-storybook-addon": "^2.0.6",
+    "msw": "catalog:test",
+    "msw-storybook-addon": "catalog:test",
+    "playwright": "catalog:test",
     "prettier": "catalog:",
     "storybook": "^10.1.10",
     "tailwindcss": "catalog:tailwind-v4",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vite": "^7.3.0",
+    "vitest": "catalog:test"
   },
   "prettier": "@notion-kit/prettier-config",
   "msw": {

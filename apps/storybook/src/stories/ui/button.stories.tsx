@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/nextjs";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ChevronRight, CircleHelp, RefreshCw } from "lucide-react";
 
 import { Button } from "@notion-kit/shadcn";

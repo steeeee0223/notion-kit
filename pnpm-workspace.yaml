@@ -22,10 +22,14 @@ catalogs:
   next16:
     next: ^16.1.0
     "@next/eslint-plugin-next": ^16.1.0
-  vitest:
-    "vitest": ^2.1.8
+  test:
+    msw: ^2.12.4
+    msw-storybook-addon: ^2.0.6
+    playwright: ^1.57.0
+    vitest: ^4.0.16
     "@vitejs/plugin-react": ^4.3.4
-    "@vitest/coverage-v8": ^2.1.8
+    "@vitest/browser-playwright": ^4.0.16
+    "@vitest/coverage-v8": ^4.0.16
     "@vitest/ui": ^2.1.8
   rtl:
     jsdom: ^25.0.1
