@@ -5,7 +5,7 @@ import { locales } from "@notion-kit/i18n";
 
 import { withI18next, withTheme, withToast } from "./decorators";
 
-import "@/app/globals.css";
+import "@/globals.css";
 
 // Initialize MSW
 initialize({ onUnhandledRequest: "bypass" });
