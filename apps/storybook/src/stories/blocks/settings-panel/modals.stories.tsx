@@ -2,14 +2,12 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 import { ModalProvider, useModal } from "@notion-kit/modal";
 import {
-  Add2FAForm,
   AddMembers,
   DeleteAccount,
   DeleteGuest,
   DeleteMember,
   DeleteWorkspace,
   EmailSettings,
-  Enable2FAMethod,
   PasskeysModal,
   PasswordForm,
   SettingsProvider,
@@ -115,27 +113,6 @@ export const ChangePasswordModal: Story = {
   args: {
     children: <PasswordForm hasPassword />,
     text: "Change Password",
-  },
-};
-
-export const Add2FAModal: Story = {
-  args: {
-    children: (
-      <Add2FAForm
-        preferredName="john"
-        email="john@example.com"
-        avatarUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Go_gopher_favicon.svg/1200px-Go_gopher_favicon.svg.png"
-        onSubmit={() => true}
-      />
-    ),
-    text: "Add verification method",
-  },
-};
-
-export const Enable2FAMethodModal: Story = {
-  args: {
-    children: <Enable2FAMethod />,
-    text: "Enable 2FA Method",
   },
 };
 

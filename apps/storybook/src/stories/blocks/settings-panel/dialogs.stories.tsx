@@ -3,8 +3,10 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { delay } from "msw";
 
 import {
+  Add2FAForm,
   AddTeamMembers,
   CreateTeamspace,
+  Enable2FAMethod,
   TeamspaceDetail,
 } from "@notion-kit/settings-panel";
 import { Dialog } from "@notion-kit/shadcn";
@@ -26,6 +28,28 @@ const meta = {
 export default meta;
 
 type Story = StoryObj<typeof meta>;
+
+export const Enable2FAModal: Story = {
+  args: {
+    children: <Enable2FAMethod />,
+  },
+};
+
+export const Add2FAModal: Story = {
+  args: {
+    children: (
+      <Add2FAForm
+        preferredName="Acme User"
+        email="acme@example.com"
+        avatarUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Go_gopher_favicon.svg/1200px-Go_gopher_favicon.svg.png"
+        onSubmit={async () => {
+          await delay(1000);
+          console.log("submit: ******");
+        }}
+      />
+    ),
+  },
+};
 
 export const CreateTeamspaceModal: Story = {
   args: {

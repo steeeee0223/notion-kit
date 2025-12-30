@@ -51,11 +51,11 @@
     "@notion-kit/spinner": "workspace:*",
     "@notion-kit/tags-input": "workspace:*",
     "@notion-kit/utils": "workspace:*",
+    "@tanstack/react-form": "catalog:ui",
     "@tanstack/react-query": "catalog:ui",
     "@tanstack/react-table": "catalog:ui",
     "file-saver": "^2.0.5",
     "lucide-react": "catalog:ui",
-    "react-hook-form": "catalog:ui",
     "usehooks-ts": "catalog:ui"
   },
   "devDependencies": {

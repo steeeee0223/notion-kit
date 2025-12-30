@@ -134,12 +134,11 @@ interface AvatarProps {
 }
 
 export function Avatar({ className, src, fallback }: AvatarProps) {
+  const first = fallback.at(0) ?? "";
   return (
     <AvatarRoot className={cn("size-5", className)}>
-      <AvatarImage src={src} alt="" />
-      <AvatarFallback className="uppercase">
-        {fallback.at(0) ?? ""}
-      </AvatarFallback>
+      <AvatarImage src={src} alt={first} />
+      <AvatarFallback className="uppercase">{first}</AvatarFallback>
     </AvatarRoot>
   );
 }
