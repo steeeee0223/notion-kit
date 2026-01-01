@@ -27,7 +27,7 @@ export const Basic: Story = {
             <Selectable.Item
               key={item.id}
               id={item.id}
-              className="rounded-lg bg-default/10 p-4 text-sm font-medium transition-[background] aria-selected:bg-blue/30 aria-selected:shadow-notion data-[selecting=true]:bg-blue/15"
+              className="rounded-lg bg-default/10 p-4 text-sm font-medium transition-[background] data-[selected=true]:bg-blue/30 data-[selected=true]:shadow-notion data-[selecting=true]:bg-blue/15"
             >
               {item.label}
             </Selectable.Item>
@@ -52,7 +52,7 @@ export const SelectContain: Story = {
             <Selectable.Item
               key={item.id}
               id={item.id}
-              className="rounded-lg bg-default/10 p-4 text-sm font-medium transition-[background] aria-selected:bg-blue/30 aria-selected:shadow-notion data-[selecting=true]:bg-blue/15"
+              className="rounded-lg bg-default/10 p-4 text-sm font-medium transition-[background] data-[selected=true]:bg-blue/30 data-[selected=true]:shadow-notion data-[selecting=true]:bg-blue/15"
             >
               {item.label}
             </Selectable.Item>
@@ -77,7 +77,7 @@ export const MultiSelect: Story = {
             <Selectable.Item
               key={item.id}
               id={item.id}
-              className="rounded-lg bg-default/10 p-4 text-sm font-medium transition-[background] aria-selected:bg-blue/30 aria-selected:shadow-notion data-[selecting=true]:bg-blue/15"
+              className="rounded-lg bg-default/10 p-4 text-sm font-medium transition-[background] data-[selected=true]:bg-blue/30 data-[selected=true]:shadow-notion data-[selecting=true]:bg-blue/15"
             >
               {item.label}
             </Selectable.Item>
@@ -100,7 +100,7 @@ export const NoOverlay: Story = {
             <Selectable.Item
               key={item.id}
               id={item.id}
-              className="rounded-lg bg-default/10 p-4 text-sm font-medium transition-[background] aria-selected:bg-blue/30 aria-selected:shadow-notion data-[selecting=true]:bg-blue/15"
+              className="rounded-lg bg-default/10 p-4 text-sm font-medium transition-[background] data-[selected=true]:bg-blue/30 data-[selected=true]:shadow-notion data-[selecting=true]:bg-blue/15"
             >
               {item.label}
             </Selectable.Item>

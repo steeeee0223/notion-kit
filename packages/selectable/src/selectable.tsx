@@ -513,7 +513,6 @@ Selectable.Item = function SelectableItem({
     <Comp
       ref={ref as React.Ref<HTMLDivElement>}
       data-selectable-item
-      aria-selected={isSelected}
       data-selected={isSelected}
       data-selecting={isSelecting}
       className={cn(!asChild && className)}

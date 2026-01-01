@@ -60,8 +60,8 @@ export function DraggableItem({ id, label, overlay }: DraggableItemProps) {
     <Selectable.Item key={id} id={id} asChild>
       <div
         className={cn(
-          "rounded-lg bg-default/10 p-4 text-sm font-medium transition-[background]",
-          "aria-selected:bg-blue/30 aria-selected:shadow-notion data-[selecting=true]:bg-blue/15",
+          "rounded-lg bg-default/10 p-4 text-sm font-medium",
+          "data-[selected=true]:bg-blue/30 data-[selected=true]:shadow-notion data-[selecting=true]:bg-blue/15",
           (isDragging || (active !== null && isSelected)) && "opacity-0",
           overlay && "pointer-events-none bg-red/30 shadow-lg",
         )}
