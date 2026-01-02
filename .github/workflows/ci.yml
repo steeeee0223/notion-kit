@@ -31,6 +31,9 @@ jobs:
         shell: bash
         run: cp .env.example .env
 
+      - name: Build
+        run: pnpm build:packages
+
       - name: Lint
         run: pnpm lint && pnpm lint:ws
 
@@ -53,8 +56,11 @@ jobs:
       - name: Setup
         uses: ./tooling/github/setup
 
+      - name: Build
+        run: pnpm build:packages
+
       - name: Typecheck
-        run: pnpm typecheck
+        run: turbo typecheck
 
   test:
     runs-on: ubuntu-latest
@@ -67,6 +73,9 @@ jobs:
 
       - name: Setup
         uses: ./tooling/github/setup
+
+      - name: Build
+        run: pnpm build:packages
 
       - name: Run tests
         run: pnpm -F storybook test
