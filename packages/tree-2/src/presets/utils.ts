@@ -1,3 +1,5 @@
+import type { TreeNode } from "../core";
+
 export interface TreeItemData {
   id: string;
   title: string;
@@ -5,10 +7,6 @@ export interface TreeItemData {
   group?: string | null;
   icon?: React.ReactNode | null;
 }
-
-export type TreeNode<T extends TreeItemData> = TreeItemData & {
-  children: TreeNode<T>[];
-};
 
 export function buildTree<T extends TreeItemData>(
   items: T[],

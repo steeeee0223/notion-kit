@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 import { Tree, useTree } from "@notion-kit/tree-2";
-import { TreeList } from "@notion-kit/tree-2/presets";
+import { CommandTree, TreeList } from "@notion-kit/tree-2/presets";
 
 import { folderNodes } from "./data";
 
@@ -43,8 +43,16 @@ export const MultiSelect: Story = {
 
     return (
       <Tree tree={tree}>
-        <TreeList nodes={folderNodes} withCheckbox />
+        <TreeList nodes={folderNodes} />
       </Tree>
     );
+  },
+};
+
+export const Command: Story = {
+  render: () => {
+    const tree = useTree(folderNodes, {});
+
+    return <CommandTree tree={tree} />;
   },
 };

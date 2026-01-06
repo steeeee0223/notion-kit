@@ -8,43 +8,27 @@ import {
   useRef,
   useState,
 } from "react";
-import * as Roving from "@radix-ui/react-roving-focus";
 import { Slot } from "@radix-ui/react-slot";
 
-import { TreeIndexes, TreeInstance, TreeNode } from "./types";
-import { createTreeNavigation } from "./utils";
+import type { TreeInstance, TreeItemData, TreeNode } from "./types";
+import { buildTree, createTreeNavigation } from "./utils";
 
 interface TreeOptions {
   selectionMode?: "single" | "multiple";
   collapsible?: boolean;
+  indent?: number;
+  showEmptyChild?: boolean;
   onSelectionChange?: (ids: Set<string>) => void;
   onExpandedChange?: (ids: Set<string>) => void;
 }
 
-function buildTreeIndex(
-  nodes: TreeNode[],
-  expanded: Set<string>,
-  parentId: string | null = null,
-  acc: TreeIndexes = {
-    visibleIds: [],
-    parentMap: new Map(),
-    childrenMap: new Map(),
-  },
+function useTree<T extends TreeItemData>(
+  data: TreeNode<T>[],
+  options: TreeOptions = {},
 ) {
-  for (const node of nodes) {
-    acc.visibleIds.push(node.id);
-    acc.parentMap.set(node.id, parentId);
-    acc.childrenMap.set(node.id, node.children?.map((c) => c.id) ?? []);
-
-    if (node.children && expanded.has(node.id)) {
-      buildTreeIndex(node.children, expanded, node.id, acc);
-    }
-  }
-  return acc;
-}
-
-function useTree(data: TreeNode[], options: TreeOptions = {}) {
   const {
+    indent = 12,
+    showEmptyChild = false,
     selectionMode = "single",
     collapsible = true,
     onSelectionChange,
@@ -62,14 +46,15 @@ function useTree(data: TreeNode[], options: TreeOptions = {}) {
   }, []);
 
   const focusItem = useCallback((id: string) => {
-    itemRefs.current.get(id)?.focus();
+    const el = itemRefs.current.get(id);
+    el?.focus();
   }, []);
 
   const expand = useCallback(
     (id: string) => {
       if (!collapsible) return;
-      setExpanded((prev) => {
-        const next = new Set(prev);
+      setExpanded((v) => {
+        const next = new Set(v);
         if (next.has(id)) {
           next.delete(id);
         } else {
@@ -84,8 +69,8 @@ function useTree(data: TreeNode[], options: TreeOptions = {}) {
 
   const select = useCallback(
     (id: string) => {
-      setSelected((prev) => {
-        const next = selectionMode === "single" ? new Set([id]) : new Set(prev);
+      setSelected((v) => {
+        const next = new Set(selectionMode === "single" ? [id] : v);
 
         if (selectionMode === "multiple") {
           if (next.has(id)) {
@@ -102,13 +87,13 @@ function useTree(data: TreeNode[], options: TreeOptions = {}) {
     [selectionMode, onSelectionChange],
   );
 
-  const indexes = useMemo(
-    () => buildTreeIndex(data, expanded),
-    [data, expanded],
-  );
+  const entity = useMemo(() => buildTree(data, expanded), [data, expanded]);
 
   return {
-    indexes,
+    indent,
+    showEmptyChild,
+    original: data,
+    entity,
     expanded,
     selected,
     collapsible,
@@ -116,29 +101,29 @@ function useTree(data: TreeNode[], options: TreeOptions = {}) {
     select,
     registerItem,
     focusItem,
-  } satisfies TreeInstance;
+  } satisfies TreeInstance<T>;
 }
 
-const TreeContext = createContext<TreeInstance | null>(null);
-function useTreeContext() {
+const TreeContext = createContext<TreeInstance<TreeItemData> | null>(null);
+function useTreeContext<T extends TreeItemData>() {
   const ctx = use(TreeContext);
   if (!ctx) {
     throw new Error("`useTreeContext` must be used inside `Tree`");
   }
-  return ctx;
+  return ctx as TreeInstance<T>;
 }
 
-interface TreeProps
+interface TreeProps<T extends TreeItemData>
   extends React.RefAttributes<HTMLDivElement>,
     React.PropsWithChildren {
   asChild?: boolean;
-  tree: TreeInstance;
+  tree: TreeInstance<T>;
 }
 
-function Tree({ tree, ...props }: TreeProps) {
+function Tree<T extends TreeItemData>({ tree, ...props }: TreeProps<T>) {
   return (
     <TreeContext value={tree}>
-      <Roving.Root role="tree" orientation="vertical" {...props} />
+      <div role="tree" {...props} />
     </TreeContext>
   );
 }
@@ -160,6 +145,7 @@ Tree.Item = function TreeItem({
   level,
   hasChildren,
   expanded,
+  children,
   ...props
 }: TreeItemProps) {
   const Comp = asChild ? Slot : "div";
@@ -167,20 +153,20 @@ Tree.Item = function TreeItem({
   const nav = createTreeNavigation(id, tree);
 
   return (
-    <Roving.Item asChild>
-      <Comp
-        role="treeitem"
-        ref={(el) => tree.registerItem(id, el)}
-        id={id}
-        aria-level={level}
-        aria-expanded={hasChildren ? expanded : undefined}
-        aria-selected={tree.selected.has(id)}
-        tabIndex={-1}
-        onClick={() => tree.select(id)}
-        onKeyDown={nav.onKeyDown}
-        {...props}
-      />
-    </Roving.Item>
+    <Comp
+      role="treeitem"
+      ref={(el) => tree.registerItem(id, el)}
+      id={id}
+      aria-level={level}
+      aria-expanded={hasChildren ? expanded : undefined}
+      aria-selected={tree.selected.has(id)}
+      tabIndex={-1}
+      onClick={() => tree.select(id)}
+      onKeyDown={nav.onKeyDown}
+      {...props}
+    >
+      {asChild ? children : tree.entity.nodes.get(id)?.title}
+    </Comp>
   );
 };
 
@@ -208,15 +194,87 @@ Tree.ExpandIndicator = function TreeExpandIndicator({
     />
   );
 };
-
-interface TreeGroupProps extends React.ComponentProps<"div"> {
+interface DivSlotProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-Tree.Group = function TreeGroup({ asChild, ...props }: TreeGroupProps) {
+Tree.Group = function TreeGroup({ asChild, ...props }: DivSlotProps) {
   const Comp = asChild ? Slot : "div";
   return <Comp role="group" {...props} />;
 };
 
+Tree.EmptyIndicator = function TreeEmptyIndicator({
+  asChild,
+  children,
+  ...props
+}: DivSlotProps) {
+  const Comp = asChild ? Slot : "div";
+  return <Comp {...props}>{asChild ? children : "No items"}</Comp>;
+};
+
+interface TreeListProps<T extends TreeItemData> {
+  nodes: TreeNode<T>[];
+  level?: number;
+  renderItem?: (props: {
+    node: TreeNode<T>;
+    tree: TreeInstance<T>;
+    level: number;
+    expanded: boolean;
+  }) => React.ReactNode;
+  renderEmpty?: () => React.ReactNode;
+}
+
+Tree.List = function TreeList<T extends TreeItemData>({
+  nodes,
+  level = 1,
+  renderItem,
+  renderEmpty,
+}: TreeListProps<T>) {
+  const tree = useTreeContext<T>();
+
+  return nodes.map((node) => {
+    const hasChildren = tree.showEmptyChild || !!node.children.length;
+    const expanded = (() => {
+      if (!hasChildren) return false;
+      if (!tree.collapsible) return true;
+      return tree.expanded.has(node.id);
+    })();
+
+    return (
+      <div key={node.id}>
+        <Tree.Item
+          id={node.id}
+          level={level}
+          hasChildren={hasChildren}
+          expanded={expanded}
+          {...(renderItem && {
+            asChild: true,
+            children: renderItem({ node, tree, level, expanded }),
+          })}
+        />
+        {!expanded ? null : node.children.length > 0 ? (
+          <Tree.Group>
+            <TreeList
+              nodes={node.children}
+              level={level + 1}
+              renderItem={renderItem}
+            />
+          </Tree.Group>
+        ) : (
+          <Tree.EmptyIndicator
+            style={{ paddingLeft: (level + 1) * tree.indent }}
+            {...(renderEmpty && { asChild: true, children: renderEmpty() })}
+          />
+        )}
+      </div>
+    );
+  });
+};
+
 export { Tree, useTree, useTreeContext };
-export type { TreeOptions, TreeProps, TreeItemProps, TreeGroupProps };
+export type {
+  TreeOptions,
+  TreeProps,
+  TreeItemProps,
+  DivSlotProps as TreeGroupProps,
+};

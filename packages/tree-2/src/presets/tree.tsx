@@ -1,85 +1,67 @@
+import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
-import { Button } from "@notion-kit/shadcn";
+import { Button, MenuItem } from "@notion-kit/shadcn";
 
-import { Tree as TreePrimitive, useTreeContext } from "../core/";
-// import { Tree as TreePrimitive, useTreeContext } from "@notion-kit/tree-2";
-
-import { TreeItemData, TreeNode } from "./utils";
+import { Tree as TreePrimitive, type TreeNode } from "../core";
+import type { TreeItemData } from "./utils";
 
 interface TreeListProps<T extends TreeItemData> {
   nodes: TreeNode<T>[];
-  level?: number;
-  withCheckbox?: boolean;
+  renderAction?: ({ node }: { node: TreeNode<T> }) => React.ReactNode;
+  renderEmpty?: () => React.ReactNode;
 }
 
 function TreeList<T extends TreeItemData>({
   nodes,
-  level = 1,
-  withCheckbox = false,
+  renderAction,
+  renderEmpty,
 }: TreeListProps<T>) {
-  const tree = useTreeContext();
-
   return (
-    <>
-      {nodes.map((node) => {
-        const groupId = `group:${node.id}`;
-
-        const hasChildren = !!node.children.length;
-        const expanded = (() => {
-          if (!hasChildren) return false;
-          if (!tree.collapsible) return true;
-          return tree.expanded.has(node.id);
-        })();
-
+    <TreePrimitive.List<T>
+      nodes={nodes}
+      renderItem={({ node, tree, level, expanded }) => {
         return (
-          <div key={node.id}>
-            <TreePrimitive.Item
-              style={{ paddingLeft: `${level * 16}px` }}
-              className="inline-flex h-7 w-100 items-center gap-1.5 px-2 outline-none focus-within:shadow-notion aria-selected:bg-blue/30"
-              id={node.id}
-              level={level}
-              hasChildren={hasChildren}
-              expanded={expanded}
-              aria-owns={groupId}
-            >
-              <TreePrimitive.ExpandIndicator
-                asChild
-                onToggle={() => tree.expand(node.id)}
-              >
-                <Button
-                  variant="hint"
-                  className="size-5 [&_svg]:size-3 [&_svg]:fill-icon"
+          <MenuItem
+            data-slot="tree-item"
+            variant="sidebar"
+            className="focus:shadow-notion"
+            style={{ paddingLeft: level * tree.indent }}
+            Icon={
+              <div className="group/icon">
+                <TreePrimitive.ExpandIndicator
+                  asChild
+                  onToggle={() => tree.expand(node.id)}
                 >
-                  {!hasChildren || !tree.collapsible ? (
-                    <Icon.EmojiFace />
-                  ) : expanded ? (
-                    <Icon.ChevronDown />
-                  ) : (
-                    <Icon.ChevronRight />
-                  )}
-                </Button>
-              </TreePrimitive.ExpandIndicator>
-
-              {node.title}
-
-              {withCheckbox && tree.selected.has(node.id) && (
-                <Icon.Check className="ml-auto size-3 fill-primary" />
-              )}
-            </TreePrimitive.Item>
-
-            {expanded && (
-              <TreePrimitive.Group id={groupId}>
-                <TreeList
-                  nodes={node.children}
-                  level={level + 1}
-                  withCheckbox={withCheckbox}
-                />
-              </TreePrimitive.Group>
-            )}
-          </div>
+                  <Button
+                    variant="hint"
+                    className={cn(
+                      "relative size-5",
+                      node.icon && "hidden group-hover/icon:flex",
+                    )}
+                    aria-label={expanded ? "collapse" : "expand"}
+                  >
+                    <Icon.ChevronDown
+                      className={cn(
+                        "size-3 rotate-0 transition-[rotate]",
+                        !expanded && "-rotate-90",
+                      )}
+                    />
+                  </Button>
+                </TreePrimitive.ExpandIndicator>
+                {node.icon && (
+                  <div className="flex size-5 items-center group-hover/icon:hidden">
+                    {node.icon}
+                  </div>
+                )}
+              </div>
+            }
+            Body={node.title}
+            children={renderAction?.({ node }) ?? null}
+          />
         );
-      })}
-    </>
+      }}
+      renderEmpty={renderEmpty}
+    />
   );
 }
 
