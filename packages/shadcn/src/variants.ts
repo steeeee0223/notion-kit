@@ -1,5 +1,4 @@
-import type { VariantProps } from "class-variance-authority";
-import { cva } from "class-variance-authority";
+import { cva, type VariantProps } from "@notion-kit/cn";
 
 const typographyVariants = cva("", {
   variants: {
