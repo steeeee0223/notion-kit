@@ -1,3 +1,4 @@
+import pluginBabel from "@rollup/plugin-babel";
 import { defineConfig } from "tsdown";
 
 export default defineConfig((opts) => {
@@ -5,14 +6,6 @@ export default defineConfig((opts) => {
     {
       ...opts,
       dts: true,
-      platform: "browser",
-      outExtensions: () => {
-        return {
-          js: ".mjs",
-          dts: ".mts",
-        };
-      },
-      external: [/@notion-kit\/.+/, "react", "react/jsx-runtime"],
       banner: { js: '"use client";' },
       logLevel: "warn",
       onSuccess: async () => {
@@ -23,6 +16,17 @@ export default defineConfig((opts) => {
         console.info("Build successfully!");
       },
       entry: ["src/index.ts"],
+      plugins: [
+        pluginBabel({
+          babelHelpers: "bundled",
+          parserOpts: {
+            sourceType: "module",
+            plugins: ["jsx", "typescript"],
+          },
+          // plugins: ["babel-plugin-react-compiler"],
+          extensions: [".js", ".jsx", ".ts", ".tsx"],
+        }),
+      ],
     },
   ];
 });
