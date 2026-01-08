@@ -1,10 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { cva } from "class-variance-authority";
 import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker";
 
-import { cn } from "@notion-kit/cn";
+import { cn, cva } from "@notion-kit/cn";
 
 import { Button } from "./button";
 import * as Icon from "./icons";

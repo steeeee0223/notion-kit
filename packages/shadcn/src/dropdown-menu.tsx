@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { ChevronRightIcon, DotFilledIcon } from "@radix-ui/react-icons";
+import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui";
 
 import { cn } from "@notion-kit/cn";
 
@@ -83,7 +83,6 @@ function DropdownMenuSubContent({
   return (
     <DropdownMenuPrimitive.SubContent
       data-slot="dropdown-menu-sub-content"
-      // data-side="bottom"
       className={cn(
         "min-w-32 overflow-hidden",
         contentVariants({ variant: "popover", sideAnimation: true }),

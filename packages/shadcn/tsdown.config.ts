@@ -20,7 +20,7 @@ export default defineConfig((opts) => ({
         sourceType: "module",
         plugins: ["jsx", "typescript"],
       },
-      plugins: ["babel-plugin-react-compiler"],
+      // plugins: ["babel-plugin-react-compiler"],
       extensions: [".js", ".jsx", ".ts", ".tsx"],
     }),
   ],

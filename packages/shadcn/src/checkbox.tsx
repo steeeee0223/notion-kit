@@ -1,11 +1,11 @@
 "use client";
 
 import * as React from "react";
-import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
-import { cva, type VariantProps } from "class-variance-authority";
-import { Check } from "lucide-react";
+import { Checkbox as CheckboxPrimitive } from "radix-ui";
 
-import { cn } from "@notion-kit/cn";
+import { cn, cva, type VariantProps } from "@notion-kit/cn";
+
+import * as Icon from "./icons";
 
 const checkboxVariants = cva(
   [
@@ -40,7 +40,7 @@ function Checkbox({ className, size, ...props }: CheckboxProps) {
         data-slot="checkbox-indicator"
         className="flex items-center justify-center"
       >
-        <Check className="size-full" />
+        <Icon.Check className="size-full" />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   );
