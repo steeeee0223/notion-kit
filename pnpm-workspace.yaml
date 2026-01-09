@@ -63,3 +63,5 @@ catalogs:
   env:
     dotenv-cli: ^8.0.0
     "@t3-oss/env-nextjs": ^0.13.6
+  build:
+    "@rollup/plugin-babel": ^6.1.0
