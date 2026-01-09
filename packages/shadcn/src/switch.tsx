@@ -1,10 +1,9 @@
 "use client";
 
 import * as React from "react";
-import * as SwitchPrimitives from "@radix-ui/react-switch";
-import { cva, type VariantProps } from "class-variance-authority";
+import { Switch as SwitchPrimitives } from "radix-ui";
 
-import { cn } from "@notion-kit/cn";
+import { cn, cva, type VariantProps } from "@notion-kit/cn";
 
 const switchVariants = cva(
   [

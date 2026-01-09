@@ -1,10 +1,9 @@
 "use client";
 
 import * as React from "react";
-import * as TooltipPrimitive from "@radix-ui/react-tooltip";
-import { cva, type VariantProps } from "class-variance-authority";
+import { Tooltip as TooltipPrimitive } from "radix-ui";
 
-import { cn } from "@notion-kit/cn";
+import { cn, cva, type VariantProps } from "@notion-kit/cn";
 
 import { contentVariants } from "./variants";
 

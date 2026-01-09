@@ -19,13 +19,20 @@ catalogs:
     react-dom: ^19.2.3
     "@types/react": ^19.2.7
     "@types/react-dom": ^19.2.3
+  react-compiler:
+    babel-plugin-react-compiler: ^1.0.0
+    react-compiler-runtime: ^1.0.0
   next16:
     next: ^16.1.0
     "@next/eslint-plugin-next": ^16.1.0
-  vitest:
-    "vitest": ^2.1.8
+  test:
+    msw: ^2.12.4
+    msw-storybook-addon: ^2.0.6
+    playwright: ^1.57.0
+    vitest: ^4.0.16
     "@vitejs/plugin-react": ^4.3.4
-    "@vitest/coverage-v8": ^2.1.8
+    "@vitest/browser-playwright": ^4.0.16
+    "@vitest/coverage-v8": ^4.0.16
     "@vitest/ui": ^2.1.8
   rtl:
     jsdom: ^25.0.1
@@ -56,3 +63,5 @@ catalogs:
   env:
     dotenv-cli: ^8.0.0
     "@t3-oss/env-nextjs": ^0.13.6
+  build:
+    "@rollup/plugin-babel": ^6.1.0

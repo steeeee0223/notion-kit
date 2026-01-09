@@ -1,11 +1,11 @@
-import type { Preview } from "@storybook/nextjs";
+import type { Preview } from "@storybook/nextjs-vite";
 import { initialize, mswLoader } from "msw-storybook-addon";
 
 import { locales } from "@notion-kit/i18n";
 
 import { withI18next, withTheme, withToast } from "./decorators";
 
-import "@/app/globals.css";
+import "@/globals.css";
 
 // Initialize MSW
 initialize({ onUnhandledRequest: "bypass" });
@@ -19,7 +19,12 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
-    backgrounds: { disabled: true },
+    a11y: {
+      config: {
+        rules: [{ id: "color-contrast", enabled: false }],
+      },
+      test: "todo",
+    },
   },
   loaders: [mswLoader],
   decorators: [withTheme, withI18next, withToast],

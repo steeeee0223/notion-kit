@@ -1,7 +1,6 @@
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "@notion-kit/cn";
+import { cn, cva, type VariantProps } from "@notion-kit/cn";
 
 import { contentVariants, ContentVariants } from "./variants";
 

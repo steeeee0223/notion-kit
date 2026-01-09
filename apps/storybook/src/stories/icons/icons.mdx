@@ -1,0 +1,15 @@
+import { IconGallery, IconItem, Meta } from "@storybook/addon-docs/blocks";
+
+import { Icon } from "@notion-kit/icons";
+
+<Meta title="Icons/Notion" />
+
+# Iconography
+
+<IconGallery>
+  {Object.entries(Icon).map(([name, Comp]) => (
+    <IconItem key={name} name={name}>
+      <Comp side="down" className="size-5 fill-menu-icon" />
+    </IconItem>
+  ))}
+</IconGallery>
