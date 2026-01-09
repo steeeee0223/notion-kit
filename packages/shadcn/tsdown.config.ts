@@ -1,4 +1,3 @@
-import pluginBabel from "@rollup/plugin-babel";
 import { defineConfig } from "tsdown";
 
 export default defineConfig((opts) => ({
@@ -13,15 +12,4 @@ export default defineConfig((opts) => ({
     }
     console.info("Build successfully!");
   },
-  plugins: [
-    pluginBabel({
-      babelHelpers: "bundled",
-      parserOpts: {
-        sourceType: "module",
-        plugins: ["jsx", "typescript"],
-      },
-      // plugins: ["babel-plugin-react-compiler"],
-      extensions: [".js", ".jsx", ".ts", ".tsx"],
-    }),
-  ],
 }));
