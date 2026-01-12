@@ -3,13 +3,16 @@
 import { useState } from "react";
 
 import type { Page, UpdatePageParams } from "@notion-kit/schemas";
-import { TreeItem, TreeList, TreeNode } from "@notion-kit/tree";
+import { Tree } from "@notion-kit/shadcn";
 
 import { SidebarGroup, SidebarMenuItem } from "../core";
-import { DocItemActions } from "./_components/doc-item-actions";
+import { DocItem } from "./_components";
+import type { PageItems } from "./_lib";
+
+const ROOT_ID = "favorites";
 
 interface FavoriteListProps {
-  pages: TreeNode<Page>[];
+  pages: PageItems;
   activePage?: string | null;
   onSelect?: (page: Page) => void;
   onCreate?: (group: string, parentId?: string) => void;
@@ -18,7 +21,7 @@ interface FavoriteListProps {
 }
 
 export function FavoriteList({
-  pages: nodes,
+  pages,
   activePage,
   onSelect,
   onCreate,
@@ -36,33 +39,22 @@ export function FavoriteList({
         onClick={() => setShowList((prev) => !prev)}
       />
       {showList && (
-        <TreeList
+        <Tree
           indent={8}
-          nodes={nodes}
-          defaultIcon={{ type: "lucide", src: "file" }}
-          showEmptyChild
-          selectedId={activePage}
-          renderItem={({ node, ...props }) => (
-            <TreeItem
-              {...props}
-              node={node}
-              onSelect={() => onSelect?.(node)}
-              className="group/doc-item"
-              expandable
-            >
-              <DocItemActions
-                type="normal"
-                title={node.title}
-                icon={node.icon ?? { type: "lucide", src: "file" }}
-                pageLink={node.url ?? "#"}
-                isFavorite={node.isFavorite}
-                lastEditedBy={node.lastEditedBy}
-                lastEditedAt={node.lastEditedAt}
-                onCreate={() => onCreate?.(node.type, node.id)}
-                onDuplicate={() => onDuplicate?.(node.id)}
-                onUpdate={(data) => onUpdate?.(node.id, data)}
-              />
-            </TreeItem>
+          state={{ selectedItems: activePage ? [activePage] : [] }}
+          rootItemId={ROOT_ID}
+          items={pages}
+          isItemFolder={() => true}
+          renderItem={(item) => (
+            <DocItem
+              key={item.getId()}
+              item={item}
+              type="favorites"
+              onSelect={onSelect}
+              onCreate={onCreate}
+              onDuplicate={onDuplicate}
+              onUpdate={onUpdate}
+            />
           )}
         />
       )}
