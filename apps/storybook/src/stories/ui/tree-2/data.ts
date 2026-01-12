@@ -1,4 +1,5 @@
-import { TreeItemData, TreeNode } from "@notion-kit/tree-2/presets";
+import { TreeNode } from "@notion-kit/tree-2";
+import { TreeItemData } from "@notion-kit/tree-2/presets";
 
 // treeData.ts
 export interface Node {

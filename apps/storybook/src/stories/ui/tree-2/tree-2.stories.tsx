@@ -18,7 +18,7 @@ export const Default: Story = {
     const tree = useTree(folderNodes, {});
 
     return (
-      <Tree tree={tree}>
+      <Tree tree={tree} className="w-40">
         <TreeList nodes={folderNodes} />
       </Tree>
     );
@@ -30,7 +30,7 @@ export const NonCollapsible: Story = {
     const tree = useTree(folderNodes, { collapsible: false });
 
     return (
-      <Tree tree={tree}>
+      <Tree tree={tree} className="w-40">
         <TreeList nodes={folderNodes} />
       </Tree>
     );
@@ -42,7 +42,7 @@ export const MultiSelect: Story = {
     const tree = useTree(folderNodes, { selectionMode: "multiple" });
 
     return (
-      <Tree tree={tree}>
+      <Tree tree={tree} className="w-40">
         <TreeList nodes={folderNodes} />
       </Tree>
     );

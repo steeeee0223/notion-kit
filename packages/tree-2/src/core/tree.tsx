@@ -1,6 +1,6 @@
 "use client";
 
-import {
+import React, {
   createContext,
   use,
   useCallback,
@@ -9,6 +9,8 @@ import {
   useState,
 } from "react";
 import { Slot } from "@radix-ui/react-slot";
+
+import { cn } from "@notion-kit/cn";
 
 import type { TreeInstance, TreeItemData, TreeNode } from "./types";
 import { buildTree, createTreeNavigation } from "./utils";
@@ -113,10 +115,11 @@ function useTreeContext<T extends TreeItemData>() {
   return ctx as TreeInstance<T>;
 }
 
-interface TreeProps<T extends TreeItemData>
-  extends React.RefAttributes<HTMLDivElement>,
-    React.PropsWithChildren {
+interface DivSlotProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
+}
+
+interface TreeProps<T extends TreeItemData> extends DivSlotProps {
   tree: TreeInstance<T>;
 }
 
@@ -128,8 +131,7 @@ function Tree<T extends TreeItemData>({ tree, ...props }: TreeProps<T>) {
   );
 }
 
-interface TreeItemProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
+interface TreeItemProps extends DivSlotProps {
   id: string;
   /**
    * @prop The hierarchical level of the tree item (1-based index).
@@ -139,8 +141,21 @@ interface TreeItemProps extends React.ComponentProps<"div"> {
   expanded?: boolean;
 }
 
+const composeRefs =
+  <T,>(...refs: (React.Ref<T> | undefined)[]) =>
+  (node: T | null) => {
+    refs.forEach((ref) => {
+      if (typeof ref === "function") {
+        ref(node);
+      } else if (ref != null) {
+        ref.current = node;
+      }
+    });
+  };
+
 Tree.Item = function TreeItem({
   asChild,
+  ref,
   id,
   level,
   hasChildren,
@@ -151,11 +166,12 @@ Tree.Item = function TreeItem({
   const Comp = asChild ? Slot : "div";
   const tree = useTreeContext();
   const nav = createTreeNavigation(id, tree);
+  const composedRef = composeRefs((el) => tree.registerItem(id, el), ref);
 
   return (
     <Comp
       role="treeitem"
-      ref={(el) => tree.registerItem(id, el)}
+      ref={composedRef}
       id={id}
       aria-level={level}
       aria-expanded={hasChildren ? expanded : undefined}
@@ -194,9 +210,6 @@ Tree.ExpandIndicator = function TreeExpandIndicator({
     />
   );
 };
-interface DivSlotProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
 
 Tree.Group = function TreeGroup({ asChild, ...props }: DivSlotProps) {
   const Comp = asChild ? Slot : "div";
@@ -205,22 +218,32 @@ Tree.Group = function TreeGroup({ asChild, ...props }: DivSlotProps) {
 
 Tree.EmptyIndicator = function TreeEmptyIndicator({
   asChild,
+  className,
   children,
   ...props
 }: DivSlotProps) {
-  const Comp = asChild ? Slot : "div";
-  return <Comp {...props}>{asChild ? children : "No items"}</Comp>;
+  return asChild ? (
+    <Slot {...props} className={className}>
+      {children}
+    </Slot>
+  ) : (
+    <div {...props} className={cn("text-muted", className)}>
+      No items
+    </div>
+  );
 };
+
+interface TreeListItemProps<T extends TreeItemData> {
+  node: TreeNode<T>;
+  tree: TreeInstance<T>;
+  level: number;
+  expanded: boolean;
+}
 
 interface TreeListProps<T extends TreeItemData> {
   nodes: TreeNode<T>[];
   level?: number;
-  renderItem?: (props: {
-    node: TreeNode<T>;
-    tree: TreeInstance<T>;
-    level: number;
-    expanded: boolean;
-  }) => React.ReactNode;
+  renderItem?: (props: TreeListItemProps<T>) => React.ReactNode;
   renderEmpty?: () => React.ReactNode;
 }
 
@@ -254,10 +277,11 @@ Tree.List = function TreeList<T extends TreeItemData>({
         />
         {!expanded ? null : node.children.length > 0 ? (
           <Tree.Group>
-            <TreeList
+            <Tree.List
               nodes={node.children}
               level={level + 1}
               renderItem={renderItem}
+              renderEmpty={renderEmpty}
             />
           </Tree.Group>
         ) : (
@@ -276,5 +300,7 @@ export type {
   TreeOptions,
   TreeProps,
   TreeItemProps,
+  TreeListProps,
+  TreeListItemProps,
   DivSlotProps as TreeGroupProps,
 };
