@@ -1,39 +1,6 @@
 import { TreeNode } from "@notion-kit/tree-2";
 import { TreeItemData } from "@notion-kit/tree-2/presets";
 
-// treeData.ts
-export interface Node {
-  id: string;
-  label: string;
-  children?: Node[];
-}
-
-export const data: Node[] = [
-  {
-    id: "1",
-    label: "Applications",
-    children: [
-      { id: "1-1", label: "Calendar" },
-      {
-        id: "1-2",
-        label: "Mail",
-        children: [
-          { id: "1-2-1", label: "Inbox" },
-          { id: "1-2-2", label: "Sent" },
-        ],
-      },
-    ],
-  },
-  {
-    id: "2",
-    label: "Documents",
-    children: [
-      { id: "2-1", label: "Resume.pdf" },
-      { id: "2-2", label: "CoverLetter.docx" },
-    ],
-  },
-];
-
 export const folderNodes: TreeNode<TreeItemData>[] = [
   {
     id: "1",

@@ -3,26 +3,28 @@ import type { TreeEntity, TreeInstance, TreeItemData, TreeNode } from "./types";
 export function buildTree<T extends TreeItemData>(
   nodes: TreeNode<T>[],
   expanded: Set<string>,
-  parentId: string | null = null,
+  _parentId: string | null = null,
+  level = 1,
   acc: TreeEntity<T> = {
     visibleIds: [],
+    flatIds: [],
     nodes: new Map(),
-    parentMap: new Map(),
-    childrenMap: new Map(),
   },
 ) {
   for (const node of nodes) {
     const { children, ...data } = node;
+    const childIds = children.map((c) => c.id);
+
     acc.visibleIds.push(node.id);
-    acc.nodes.set(node.id, data as unknown as T);
-    acc.parentMap.set(node.id, parentId);
-    acc.childrenMap.set(
-      node.id,
-      children.map((c) => c.id),
-    );
+    acc.flatIds.push(node.id);
+    acc.nodes.set(node.id, {
+      ...(data as unknown as T),
+      level,
+      children: childIds,
+    });
 
     if (children.length > 0 && expanded.has(node.id)) {
-      buildTree(children, expanded, node.id, acc);
+      buildTree(children, expanded, node.id, level + 1, acc);
     }
   }
   return acc;
@@ -32,9 +34,17 @@ export function createTreeNavigation<T extends TreeItemData>(
   id: string,
   tree: TreeInstance<T>,
 ) {
-  const { entity, expanded, expand, focusItem } = tree;
+  const { entity, state, expand, focusItem } = tree;
 
   const index = entity.visibleIds.indexOf(id);
+
+  // Helper to find parent by checking which node has this id in its children
+  const findParent = (nodeId: string): string | null => {
+    for (const [parentId, node] of entity.nodes.entries()) {
+      if (node.children.includes(nodeId)) return parentId;
+    }
+    return null;
+  };
 
   return {
     onKeyDown: (e: React.KeyboardEvent) => {
@@ -55,12 +65,12 @@ export function createTreeNavigation<T extends TreeItemData>(
 
         case "ArrowRight": {
           e.preventDefault();
-          const firstChild = entity.childrenMap.get(id)?.[0];
-          if (!firstChild) return;
+          const node = entity.nodes.get(id);
+          const firstChild = node?.children[0];
 
-          if (!expanded.has(id)) {
+          if (!state.expanded.has(id)) {
             expand(id);
-          } else {
+          } else if (firstChild) {
             focusItem(firstChild);
           }
           break;
@@ -68,10 +78,10 @@ export function createTreeNavigation<T extends TreeItemData>(
 
         case "ArrowLeft": {
           e.preventDefault();
-          if (expanded.has(id)) {
+          if (state.expanded.has(id)) {
             expand(id);
           } else {
-            const parent = entity.parentMap.get(id);
+            const parent = findParent(id);
             if (parent) focusItem(parent);
           }
           break;

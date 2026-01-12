@@ -1,5 +1,6 @@
 export interface TreeItemData {
   id: string;
+  parentId?: string | null;
   title: string;
 }
 
@@ -9,9 +10,13 @@ export type TreeNode<T extends TreeItemData> = T & {
 
 export interface TreeEntity<T extends TreeItemData> {
   visibleIds: string[];
-  nodes: Map<string, T>;
-  parentMap: Map<string, string | null>;
-  childrenMap: Map<string, string[]>;
+  flatIds: string[];
+  nodes: Map<string, T & { level: number; children: string[] }>;
+}
+
+export interface TreeState {
+  expanded: Set<string>;
+  selected: Set<string>;
 }
 
 export interface TreeInstance<T extends TreeItemData> {
@@ -22,8 +27,7 @@ export interface TreeInstance<T extends TreeItemData> {
   // state
   original: TreeNode<T>[];
   entity: TreeEntity<T>;
-  expanded: Set<string>;
-  selected: Set<string>;
+  state: TreeState;
   expand: (id: string) => void;
   select: (id: string) => void;
   registerItem: (id: string, el: HTMLElement | null) => void;

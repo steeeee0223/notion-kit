@@ -52,23 +52,6 @@ function useTree<T extends TreeItemData>(
     el?.focus();
   }, []);
 
-  const expand = useCallback(
-    (id: string) => {
-      if (!collapsible) return;
-      setExpanded((v) => {
-        const next = new Set(v);
-        if (next.has(id)) {
-          next.delete(id);
-        } else {
-          next.add(id);
-        }
-        onExpandedChange?.(next);
-        return next;
-      });
-    },
-    [collapsible, onExpandedChange],
-  );
-
   const select = useCallback(
     (id: string) => {
       setSelected((v) => {
@@ -91,13 +74,46 @@ function useTree<T extends TreeItemData>(
 
   const entity = useMemo(() => buildTree(data, expanded), [data, expanded]);
 
+  const expand = useCallback(
+    (id: string) => {
+      if (!collapsible) return;
+
+      // Check if node has children
+      const node = entity.nodes.get(id);
+      const hasChildren = showEmptyChild || (node?.children.length ?? 0) > 0;
+      if (!hasChildren) return;
+
+      setExpanded((v) => {
+        const next = new Set(v);
+        if (next.has(id)) {
+          next.delete(id);
+        } else {
+          next.add(id);
+        }
+        onExpandedChange?.(next);
+        return next;
+      });
+    },
+    [collapsible, onExpandedChange, entity, showEmptyChild],
+  );
+
+  const state = useMemo(() => {
+    const visible = new Set(entity.flatIds);
+    const levels = new Map<string, number>();
+    entity.nodes.forEach((node, id) => {
+      if ("level" in node) {
+        levels.set(id, node.level);
+      }
+    });
+    return { expanded, selected, visible, levels };
+  }, [expanded, selected, entity]);
+
   return {
     indent,
     showEmptyChild,
     original: data,
     entity,
-    expanded,
-    selected,
+    state,
     collapsible,
     expand,
     select,
@@ -175,7 +191,7 @@ Tree.Item = function TreeItem({
       id={id}
       aria-level={level}
       aria-expanded={hasChildren ? expanded : undefined}
-      aria-selected={tree.selected.has(id)}
+      aria-selected={tree.state.selected.has(id)}
       tabIndex={-1}
       onClick={() => tree.select(id)}
       onKeyDown={nav.onKeyDown}
@@ -260,7 +276,7 @@ Tree.List = function TreeList<T extends TreeItemData>({
     const expanded = (() => {
       if (!hasChildren) return false;
       if (!tree.collapsible) return true;
-      return tree.expanded.has(node.id);
+      return tree.state.expanded.has(node.id);
     })();
 
     return (
