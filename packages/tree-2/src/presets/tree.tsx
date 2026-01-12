@@ -2,12 +2,16 @@ import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import { Button, MenuItem } from "@notion-kit/shadcn";
 
-import { Tree as TreePrimitive, type TreeNode } from "../core";
+import {
+  Tree as TreePrimitive,
+  type TreeNode,
+  type TreeNodeInternal,
+} from "../core";
 import type { TreeItemData } from "./utils";
 
 interface TreeListProps<T extends TreeItemData> {
   nodes: TreeNode<T>[];
-  renderAction?: ({ node }: { node: TreeNode<T> }) => React.ReactNode;
+  renderAction?: ({ node }: { node: TreeNodeInternal<T> }) => React.ReactNode;
   renderEmpty?: () => React.ReactNode;
 }
 
@@ -19,7 +23,7 @@ function TreeList<T extends TreeItemData>({
   return (
     <TreePrimitive.List<T>
       nodes={nodes}
-      renderItem={({ node, tree, expanded }) => {
+      renderItem={({ node, tree, state }) => {
         return (
           <MenuItem
             data-slot="tree-item"
@@ -37,12 +41,12 @@ function TreeList<T extends TreeItemData>({
                       "relative size-5",
                       node.icon && "hidden group-hover/icon:flex",
                     )}
-                    aria-label={expanded ? "collapse" : "expand"}
+                    aria-label={state.expanded ? "collapse" : "expand"}
                   >
                     <Icon.ChevronDown
                       className={cn(
                         "size-3 rotate-0 transition-[rotate]",
-                        !expanded && "-rotate-90",
+                        !state.expanded && "-rotate-90",
                       )}
                     />
                   </Button>

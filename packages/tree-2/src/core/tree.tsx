@@ -12,7 +12,12 @@ import { Slot } from "@radix-ui/react-slot";
 
 import { cn } from "@notion-kit/cn";
 
-import type { TreeInstance, TreeItemData, TreeNode } from "./types";
+import type {
+  TreeInstance,
+  TreeItemData,
+  TreeNode,
+  TreeNodeInternal,
+} from "./types";
 import { buildTree, createTreeNavigation } from "./utils";
 
 interface TreeOptions {
@@ -72,7 +77,23 @@ function useTree<T extends TreeItemData>(
     [selectionMode, onSelectionChange],
   );
 
-  const entity = useMemo(() => buildTree(data, expanded), [data, expanded]);
+  const entity = useMemo(() => {
+    // When not collapsible, treat all nodes as expanded
+    if (!collapsible) {
+      const allExpanded = new Set<string>();
+      const collectIds = (nodes: TreeNode<T>[]) => {
+        nodes.forEach((node) => {
+          allExpanded.add(node.id);
+          if (node.children.length > 0) {
+            collectIds(node.children);
+          }
+        });
+      };
+      collectIds(data);
+      return buildTree(data, allExpanded);
+    }
+    return buildTree(data, expanded);
+  }, [data, expanded, collapsible]);
 
   const expand = useCallback(
     (id: string) => {
@@ -245,9 +266,9 @@ Tree.EmptyIndicator = function TreeEmptyIndicator({
 };
 
 interface TreeListItemProps<T extends TreeItemData> {
-  node: TreeNode<T>;
+  node: TreeNodeInternal<T>;
   tree: TreeInstance<T>;
-  expanded?: boolean;
+  state: { expanded?: boolean; selected?: boolean };
 }
 
 interface TreeListProps<T extends TreeItemData> {
@@ -265,9 +286,12 @@ Tree.List = function TreeList<T extends TreeItemData>({
 
   return nodes.map((node) => {
     const expanded = tree.state.expanded.has(node.id);
+    const selected = tree.state.selected.has(node.id);
     const data = tree.entity.nodes.get(node.id)!;
 
-    console.log(node.id, data.level);
+    // Determine if we should show children area
+    const hasChildren = tree.showEmptyChild || node.children.length > 0;
+    const shouldShowChildren = hasChildren && (!tree.collapsible || expanded);
 
     return (
       <div key={node.id}>
@@ -276,10 +300,14 @@ Tree.List = function TreeList<T extends TreeItemData>({
           style={{ paddingLeft: data.level * tree.indent }}
           {...(renderItem && {
             asChild: true,
-            children: renderItem({ node, tree, expanded }),
+            children: renderItem({
+              node: data,
+              tree,
+              state: { expanded, selected },
+            }),
           })}
         />
-        {!expanded ? null : node.children.length > 0 ? (
+        {!shouldShowChildren ? null : node.children.length > 0 ? (
           <Tree.Group>
             <Tree.List
               nodes={node.children}

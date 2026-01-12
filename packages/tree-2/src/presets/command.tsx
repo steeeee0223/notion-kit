@@ -49,7 +49,7 @@ function CommandTree<T extends TreeItemData>({ tree }: CommandTreeProps<T>) {
                     className="focus:shadow-notion"
                     Icon={
                       <Button variant="hint" className="relative size-5">
-                        <Icon.EmojiFace />
+                        {node.icon}
                       </Button>
                     }
                     Body={node.title}
@@ -110,7 +110,7 @@ function CommandTreeList<T extends TreeItemData>({
   return (
     <TreePrimitive.List<T>
       nodes={nodes}
-      renderItem={({ node, tree, expanded }) => {
+      renderItem={({ node, tree, state }) => {
         return (
           <CommandItem key={node.id} value={node.title} asChild>
             <MenuItem
@@ -130,12 +130,12 @@ function CommandTreeList<T extends TreeItemData>({
                         "relative size-5",
                         node.icon && "hidden group-hover/icon:flex",
                       )}
-                      aria-label={expanded ? "collapse" : "expand"}
+                      aria-label={state.expanded ? "collapse" : "expand"}
                     >
                       <Icon.ChevronDown
                         className={cn(
                           "size-3 rotate-0 transition-[rotate]",
-                          !expanded && "-rotate-90",
+                          !state.expanded && "-rotate-90",
                         )}
                       />
                     </Button>

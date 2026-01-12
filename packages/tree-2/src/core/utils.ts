@@ -3,19 +3,19 @@ import type { TreeEntity, TreeInstance, TreeItemData, TreeNode } from "./types";
 export function buildTree<T extends TreeItemData>(
   nodes: TreeNode<T>[],
   expanded: Set<string>,
-  _parentId: string | null = null,
   level = 1,
   acc: TreeEntity<T> = {
     visibleIds: [],
     flatIds: [],
     nodes: new Map(),
   },
+  isVisible = true,
 ) {
   for (const node of nodes) {
     const { children, ...data } = node;
     const childIds = children.map((c) => c.id);
 
-    acc.visibleIds.push(node.id);
+    // Always add to flatIds and nodes (full tree)
     acc.flatIds.push(node.id);
     acc.nodes.set(node.id, {
       ...(data as unknown as T),
@@ -23,8 +23,16 @@ export function buildTree<T extends TreeItemData>(
       children: childIds,
     });
 
-    if (children.length > 0 && expanded.has(node.id)) {
-      buildTree(children, expanded, node.id, level + 1, acc);
+    // Only add to visibleIds if this node is visible
+    if (isVisible) {
+      acc.visibleIds.push(node.id);
+    }
+
+    // Always recurse for all children (to build full tree)
+    // but children are only visible if this node is both visible and expanded
+    if (children.length > 0) {
+      const childrenVisible = isVisible && expanded.has(node.id);
+      buildTree(children, expanded, level + 1, acc, childrenVisible);
     }
   }
   return acc;

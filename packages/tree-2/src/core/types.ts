@@ -8,10 +8,15 @@ export type TreeNode<T extends TreeItemData> = T & {
   children: TreeNode<T>[];
 };
 
+export type TreeNodeInternal<T extends TreeItemData> = T & {
+  level: number;
+  children: string[];
+};
+
 export interface TreeEntity<T extends TreeItemData> {
   visibleIds: string[];
   flatIds: string[];
-  nodes: Map<string, T & { level: number; children: string[] }>;
+  nodes: Map<string, TreeNodeInternal<T>>;
 }
 
 export interface TreeState {
