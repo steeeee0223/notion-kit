@@ -49,6 +49,18 @@ export const MultiSelect: Story = {
   },
 };
 
+export const ShowingEmptyChild: Story = {
+  render: () => {
+    const tree = useTree(folderNodes, { showEmptyChild: true });
+
+    return (
+      <Tree tree={tree} className="w-40">
+        <TreeList nodes={folderNodes} />
+      </Tree>
+    );
+  },
+};
+
 export const Command: Story = {
   render: () => {
     const tree = useTree(folderNodes, {});

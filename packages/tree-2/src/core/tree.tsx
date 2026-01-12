@@ -149,12 +149,6 @@ function Tree<T extends TreeItemData>({ tree, ...props }: TreeProps<T>) {
 
 interface TreeItemProps extends DivSlotProps {
   id: string;
-  /**
-   * @prop The hierarchical level of the tree item (1-based index).
-   */
-  level: number;
-  hasChildren?: boolean;
-  expanded?: boolean;
 }
 
 const composeRefs =
@@ -173,14 +167,15 @@ Tree.Item = function TreeItem({
   asChild,
   ref,
   id,
-  level,
-  hasChildren,
-  expanded,
   children,
   ...props
 }: TreeItemProps) {
   const Comp = asChild ? Slot : "div";
   const tree = useTreeContext();
+  const node = tree.entity.nodes.get(id);
+
+  if (!node) return;
+
   const nav = createTreeNavigation(id, tree);
   const composedRef = composeRefs((el) => tree.registerItem(id, el), ref);
 
@@ -189,8 +184,8 @@ Tree.Item = function TreeItem({
       role="treeitem"
       ref={composedRef}
       id={id}
-      aria-level={level}
-      aria-expanded={hasChildren ? expanded : undefined}
+      aria-level={node.level}
+      aria-expanded={tree.state.expanded.has(id)}
       aria-selected={tree.state.selected.has(id)}
       tabIndex={-1}
       onClick={() => tree.select(id)}
@@ -252,57 +247,49 @@ Tree.EmptyIndicator = function TreeEmptyIndicator({
 interface TreeListItemProps<T extends TreeItemData> {
   node: TreeNode<T>;
   tree: TreeInstance<T>;
-  level: number;
-  expanded: boolean;
+  expanded?: boolean;
 }
 
 interface TreeListProps<T extends TreeItemData> {
   nodes: TreeNode<T>[];
-  level?: number;
   renderItem?: (props: TreeListItemProps<T>) => React.ReactNode;
   renderEmpty?: () => React.ReactNode;
 }
 
 Tree.List = function TreeList<T extends TreeItemData>({
   nodes,
-  level = 1,
   renderItem,
   renderEmpty,
 }: TreeListProps<T>) {
   const tree = useTreeContext<T>();
 
   return nodes.map((node) => {
-    const hasChildren = tree.showEmptyChild || !!node.children.length;
-    const expanded = (() => {
-      if (!hasChildren) return false;
-      if (!tree.collapsible) return true;
-      return tree.state.expanded.has(node.id);
-    })();
+    const expanded = tree.state.expanded.has(node.id);
+    const data = tree.entity.nodes.get(node.id)!;
+
+    console.log(node.id, data.level);
 
     return (
       <div key={node.id}>
         <Tree.Item
           id={node.id}
-          level={level}
-          hasChildren={hasChildren}
-          expanded={expanded}
+          style={{ paddingLeft: data.level * tree.indent }}
           {...(renderItem && {
             asChild: true,
-            children: renderItem({ node, tree, level, expanded }),
+            children: renderItem({ node, tree, expanded }),
           })}
         />
         {!expanded ? null : node.children.length > 0 ? (
           <Tree.Group>
             <Tree.List
               nodes={node.children}
-              level={level + 1}
               renderItem={renderItem}
               renderEmpty={renderEmpty}
             />
           </Tree.Group>
         ) : (
           <Tree.EmptyIndicator
-            style={{ paddingLeft: (level + 1) * tree.indent }}
+            style={{ paddingLeft: (data.level + 1) * tree.indent }}
             {...(renderEmpty && { asChild: true, children: renderEmpty() })}
           />
         )}

@@ -88,12 +88,12 @@ function CommandTreeInput({
 
         switch (e.key) {
           case "ArrowLeft":
-            if (tree.expanded.has(id)) tree.expand(id);
+            if (tree.state.expanded.has(id)) tree.expand(id);
             break;
           case "ArrowRight": {
-            const firstChild = tree.entity.childrenMap.get(id)?.[0];
+            const firstChild = tree.entity.nodes.get(id)?.children[0];
             if (!firstChild) return;
-            if (!tree.expanded.has(id)) tree.expand(id);
+            if (!tree.state.expanded.has(id)) tree.expand(id);
             break;
           }
         }
@@ -110,7 +110,7 @@ function CommandTreeList<T extends TreeItemData>({
   return (
     <TreePrimitive.List<T>
       nodes={nodes}
-      renderItem={({ node, tree, level, expanded }) => {
+      renderItem={({ node, tree, expanded }) => {
         return (
           <CommandItem key={node.id} value={node.title} asChild>
             <MenuItem
@@ -118,7 +118,6 @@ function CommandTreeList<T extends TreeItemData>({
               data-slot="tree-item"
               variant="sidebar"
               className="focus:bg-default/5"
-              style={{ paddingLeft: level * tree.indent }}
               Icon={
                 <div className="group/icon">
                   <TreePrimitive.ExpandIndicator
@@ -142,7 +141,7 @@ function CommandTreeList<T extends TreeItemData>({
                     </Button>
                   </TreePrimitive.ExpandIndicator>
                   {node.icon && (
-                    <div className="flex size-5 items-center group-hover/icon:hidden">
+                    <div className="flex size-5 items-center justify-center group-hover/icon:hidden">
                       {node.icon}
                     </div>
                   )}

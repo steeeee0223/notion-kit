@@ -19,13 +19,12 @@ function TreeList<T extends TreeItemData>({
   return (
     <TreePrimitive.List<T>
       nodes={nodes}
-      renderItem={({ node, tree, level, expanded }) => {
+      renderItem={({ node, tree, expanded }) => {
         return (
           <MenuItem
             data-slot="tree-item"
             variant="sidebar"
             className="focus:shadow-notion"
-            style={{ paddingLeft: level * tree.indent }}
             Icon={
               <div className="group/icon">
                 <TreePrimitive.ExpandIndicator
@@ -49,7 +48,7 @@ function TreeList<T extends TreeItemData>({
                   </Button>
                 </TreePrimitive.ExpandIndicator>
                 {node.icon && (
-                  <div className="flex size-5 items-center group-hover/icon:hidden">
+                  <div className="flex size-5 items-center justify-center group-hover/icon:hidden">
                     {node.icon}
                   </div>
                 )}
