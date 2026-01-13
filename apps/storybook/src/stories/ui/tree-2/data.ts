@@ -1,65 +1,56 @@
-import { TreeNode } from "@notion-kit/tree-2";
 import { TreeItemData } from "@notion-kit/tree-2/presets";
 
-export const folderNodes: TreeNode<TreeItemData>[] = [
+export const folderNodes: TreeItemData[] = [
   {
     id: "1",
+    parentId: null,
     title: "Folder 1",
     group: "default",
     icon: "F",
-    children: [
-      {
-        parentId: "1",
-        id: "1.a",
-        title: "Folder A",
-        group: "default",
-        icon: "F",
-        children: [
-          {
-            parentId: "1.a",
-            id: "1.a.1",
-            title: "File 1 in folder A",
-            group: "default",
-            children: [],
-          },
-        ],
-      },
-      {
-        parentId: "1",
-        id: "1.b",
-        title: "File B",
-        group: "default",
-        children: [],
-      },
-    ],
+  },
+  {
+    id: "1.a",
+    parentId: "1",
+    title: "Folder A",
+    group: "default",
+    icon: "F",
+  },
+  {
+    id: "1.a.1",
+    parentId: "1.a",
+    title: "File 1 in folder A",
+    group: "default",
+  },
+  {
+    id: "1.b",
+    parentId: "1",
+    title: "File B",
+    group: "default",
   },
   {
     id: "2",
+    parentId: null,
     title: "Folder 2",
     group: "default",
     icon: "F",
-    children: [
-      {
-        parentId: "2",
-        id: "2.c",
-        title: "File C",
-        group: "default",
-        children: [],
-      },
-      {
-        parentId: "2",
-        id: "2.d",
-        title: "File D",
-        group: "default",
-        children: [],
-      },
-    ],
+  },
+  {
+    id: "2.c",
+    parentId: "2",
+    title: "File C",
+    group: "default",
+  },
+  {
+    id: "2.d",
+    parentId: "2",
+    title: "File D",
+    group: "default",
   },
   {
     id: "3",
+    parentId: null,
     title: "Folder 3",
     group: "default",
     icon: "F",
-    children: [],
   },
 ];

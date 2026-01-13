@@ -2,27 +2,23 @@ import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import { Button, MenuItem } from "@notion-kit/shadcn";
 
-import {
-  Tree as TreePrimitive,
-  type TreeNode,
-  type TreeNodeInternal,
-} from "../core";
+import { Tree as TreePrimitive, type TreeNode } from "../core";
 import type { TreeItemData } from "./utils";
 
 interface TreeListProps<T extends TreeItemData> {
-  nodes: TreeNode<T>[];
-  renderAction?: ({ node }: { node: TreeNodeInternal<T> }) => React.ReactNode;
+  nodeIds: string[];
+  renderAction?: ({ node }: { node: TreeNode<T> }) => React.ReactNode;
   renderEmpty?: () => React.ReactNode;
 }
 
 function TreeList<T extends TreeItemData>({
-  nodes,
+  nodeIds,
   renderAction,
   renderEmpty,
 }: TreeListProps<T>) {
   return (
     <TreePrimitive.List<T>
-      nodes={nodes}
+      nodeIds={nodeIds}
       renderItem={({ node, tree, state }) => {
         return (
           <MenuItem

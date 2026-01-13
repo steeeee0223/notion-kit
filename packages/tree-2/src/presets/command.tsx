@@ -13,11 +13,7 @@ import {
   useCommandState,
 } from "@notion-kit/shadcn";
 
-import {
-  Tree as TreePrimitive,
-  type TreeInstance,
-  type TreeNode,
-} from "../core";
+import { Tree as TreePrimitive, type TreeInstance } from "../core";
 import type { TreeItemData } from "./utils";
 
 interface CommandTreeProps<T extends TreeItemData> {
@@ -35,7 +31,7 @@ function CommandTree<T extends TreeItemData>({ tree }: CommandTreeProps<T>) {
         {mode === "browse" ? (
           <CommandList>
             <TreePrimitive tree={tree}>
-              <CommandTreeList nodes={tree.original} />
+              <CommandTreeList nodeIds={tree.entity.rootIds} />
             </TreePrimitive>
           </CommandList>
         ) : (
@@ -103,13 +99,13 @@ function CommandTreeInput({
 }
 
 function CommandTreeList<T extends TreeItemData>({
-  nodes,
+  nodeIds,
 }: {
-  nodes: TreeNode<T>[];
+  nodeIds: string[];
 }) {
   return (
     <TreePrimitive.List<T>
-      nodes={nodes}
+      nodeIds={nodeIds}
       renderItem={({ node, tree, state }) => {
         return (
           <CommandItem key={node.id} value={node.title} asChild>

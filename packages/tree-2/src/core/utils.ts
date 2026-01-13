@@ -1,50 +1,72 @@
-import type { TreeEntity, TreeInstance, TreeItemData, TreeNode } from "./types";
+import type { TreeEntity, TreeInstance, TreeItemData } from "./types";
 
 export function buildTree<T extends TreeItemData>(
-  nodes: TreeNode<T>[],
-  expanded: Set<string>,
-  level = 1,
-  acc: TreeEntity<T> = {
-    visibleIds: [],
+  data: T[],
+  _expanded: Set<string>,
+): TreeEntity<T> {
+  const entity: TreeEntity<T> = {
+    rootIds: [],
     flatIds: [],
     nodes: new Map(),
-  },
-  isVisible = true,
-) {
-  for (const node of nodes) {
-    const { children, ...data } = node;
-    const childIds = children.map((c) => c.id);
+  };
 
-    // Always add to flatIds and nodes (full tree)
-    acc.flatIds.push(node.id);
-    acc.nodes.set(node.id, {
-      ...(data as unknown as T),
-      level,
-      children: childIds,
-    });
+  if (data.length === 0) return entity;
 
-    // Only add to visibleIds if this node is visible
-    if (isVisible) {
-      acc.visibleIds.push(node.id);
+  // First pass: Create lookup map and build parent->children mapping
+  const dataMap = new Map<string, T>();
+  const childrenMap = new Map<string, string[]>();
+
+  data.forEach((item) => {
+    entity.flatIds.push(item.id);
+    dataMap.set(item.id, item);
+
+    // Initialize children array for this node
+    if (!childrenMap.has(item.id)) {
+      childrenMap.set(item.id, []);
     }
 
-    // Always recurse for all children (to build full tree)
-    // but children are only visible if this node is both visible and expanded
-    if (children.length > 0) {
-      const childrenVisible = isVisible && expanded.has(node.id);
-      buildTree(children, expanded, level + 1, acc, childrenVisible);
+    // Add this node to its parent's children
+    if (item.parentId) {
+      if (!childrenMap.has(item.parentId)) {
+        childrenMap.set(item.parentId, []);
+      }
+      childrenMap.get(item.parentId)!.push(item.id);
+    } else {
+      // This is a root node
+      entity.rootIds.push(item.id);
     }
+  });
+
+  // Second pass: Calculate levels using BFS
+  const queue: { id: string; level: number }[] = [];
+
+  // Start with root nodes
+  entity.rootIds.forEach((id) => {
+    queue.push({ id, level: 1 });
+  });
+
+  while (queue.length > 0) {
+    const { id, level } = queue.shift()!;
+    const item = dataMap.get(id)!; // O(1) lookup
+    const children = childrenMap.get(id) ?? [];
+
+    // Store node with computed metadata
+    entity.nodes.set(id, { ...item, level, children });
+
+    // Queue children for level calculation
+    children.forEach((childId) =>
+      queue.push({ id: childId, level: level + 1 }),
+    );
   }
-  return acc;
+
+  return entity;
 }
 
 export function createTreeNavigation<T extends TreeItemData>(
   id: string,
   tree: TreeInstance<T>,
 ) {
-  const { entity, state, expand, focusItem } = tree;
-
-  const index = entity.visibleIds.indexOf(id);
+  const { entity, state, expand, focusItem, getVisibleIds } = tree;
 
   // Helper to find parent by checking which node has this id in its children
   const findParent = (nodeId: string): string | null => {
@@ -59,14 +81,18 @@ export function createTreeNavigation<T extends TreeItemData>(
       switch (e.key) {
         case "ArrowDown": {
           e.preventDefault();
-          const next = entity.visibleIds[index + 1];
+          const visibleIds = getVisibleIds();
+          const index = visibleIds.indexOf(id);
+          const next = visibleIds[index + 1];
           if (next) focusItem(next);
           break;
         }
 
         case "ArrowUp": {
           e.preventDefault();
-          const prev = entity.visibleIds[index - 1];
+          const visibleIds = getVisibleIds();
+          const index = visibleIds.indexOf(id);
+          const prev = visibleIds[index - 1];
           if (prev) focusItem(prev);
           break;
         }

@@ -12,12 +12,7 @@ import { Slot } from "@radix-ui/react-slot";
 
 import { cn } from "@notion-kit/cn";
 
-import type {
-  TreeInstance,
-  TreeItemData,
-  TreeNode,
-  TreeNodeInternal,
-} from "./types";
+import type { TreeInstance, TreeItemData, TreeNode } from "./types";
 import { buildTree, createTreeNavigation } from "./utils";
 
 interface TreeOptions {
@@ -29,10 +24,7 @@ interface TreeOptions {
   onExpandedChange?: (ids: Set<string>) => void;
 }
 
-function useTree<T extends TreeItemData>(
-  data: TreeNode<T>[],
-  options: TreeOptions = {},
-) {
+function useTree<T extends TreeItemData>(data: T[], options: TreeOptions = {}) {
   const {
     indent = 12,
     showEmptyChild = false,
@@ -42,7 +34,9 @@ function useTree<T extends TreeItemData>(
     onExpandedChange,
   } = options;
 
-  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [expanded, setExpanded] = useState<Set<string>>(() =>
+    collapsible ? new Set() : new Set(data.map((item) => item.id)),
+  );
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const itemRefs = useRef(new Map<string, HTMLElement>());
@@ -77,23 +71,8 @@ function useTree<T extends TreeItemData>(
     [selectionMode, onSelectionChange],
   );
 
-  const entity = useMemo(() => {
-    // When not collapsible, treat all nodes as expanded
-    if (!collapsible) {
-      const allExpanded = new Set<string>();
-      const collectIds = (nodes: TreeNode<T>[]) => {
-        nodes.forEach((node) => {
-          allExpanded.add(node.id);
-          if (node.children.length > 0) {
-            collectIds(node.children);
-          }
-        });
-      };
-      collectIds(data);
-      return buildTree(data, allExpanded);
-    }
-    return buildTree(data, expanded);
-  }, [data, expanded, collapsible]);
+  const entity = useMemo(() => buildTree(data, expanded), [data, expanded]);
+  const state = useMemo(() => ({ expanded, selected }), [expanded, selected]);
 
   const expand = useCallback(
     (id: string) => {
@@ -118,16 +97,25 @@ function useTree<T extends TreeItemData>(
     [collapsible, onExpandedChange, entity, showEmptyChild],
   );
 
-  const state = useMemo(() => {
-    const visible = new Set(entity.flatIds);
-    const levels = new Map<string, number>();
-    entity.nodes.forEach((node, id) => {
-      if ("level" in node) {
-        levels.set(id, node.level);
+  const getVisibleIds = useCallback(() => {
+    const visibleIds: string[] = [];
+    const queue = [...entity.rootIds];
+
+    while (queue.length > 0) {
+      const id = queue.shift()!;
+      visibleIds.push(id);
+
+      // Add children to queue if this node is expanded
+      if (state.expanded.has(id)) {
+        const node = entity.nodes.get(id);
+        if (node?.children) {
+          queue.unshift(...node.children);
+        }
       }
-    });
-    return { expanded, selected, visible, levels };
-  }, [expanded, selected, entity]);
+    }
+
+    return visibleIds;
+  }, [entity, state.expanded]);
 
   return {
     indent,
@@ -140,6 +128,7 @@ function useTree<T extends TreeItemData>(
     select,
     registerItem,
     focusItem,
+    getVisibleIds,
   } satisfies TreeInstance<T>;
 }
 
@@ -266,58 +255,56 @@ Tree.EmptyIndicator = function TreeEmptyIndicator({
 };
 
 interface TreeListItemProps<T extends TreeItemData> {
-  node: TreeNodeInternal<T>;
+  node: TreeNode<T>;
   tree: TreeInstance<T>;
   state: { expanded?: boolean; selected?: boolean };
 }
 
 interface TreeListProps<T extends TreeItemData> {
-  nodes: TreeNode<T>[];
+  nodeIds: string[];
   renderItem?: (props: TreeListItemProps<T>) => React.ReactNode;
   renderEmpty?: () => React.ReactNode;
 }
 
 Tree.List = function TreeList<T extends TreeItemData>({
-  nodes,
+  nodeIds,
   renderItem,
   renderEmpty,
 }: TreeListProps<T>) {
   const tree = useTreeContext<T>();
 
-  return nodes.map((node) => {
-    const expanded = tree.state.expanded.has(node.id);
-    const selected = tree.state.selected.has(node.id);
-    const data = tree.entity.nodes.get(node.id)!;
+  return nodeIds.map((nodeId) => {
+    const node = tree.entity.nodes.get(nodeId);
+    if (!node) return null;
+
+    const expanded = tree.state.expanded.has(nodeId);
+    const selected = tree.state.selected.has(nodeId);
 
     // Determine if we should show children area
     const hasChildren = tree.showEmptyChild || node.children.length > 0;
     const shouldShowChildren = hasChildren && (!tree.collapsible || expanded);
 
     return (
-      <div key={node.id}>
+      <div key={nodeId}>
         <Tree.Item
-          id={node.id}
-          style={{ paddingLeft: data.level * tree.indent }}
+          id={nodeId}
+          style={{ paddingLeft: node.level * tree.indent }}
           {...(renderItem && {
             asChild: true,
-            children: renderItem({
-              node: data,
-              tree,
-              state: { expanded, selected },
-            }),
+            children: renderItem({ node, tree, state: { expanded, selected } }),
           })}
         />
         {!shouldShowChildren ? null : node.children.length > 0 ? (
           <Tree.Group>
             <Tree.List
-              nodes={node.children}
+              nodeIds={node.children}
               renderItem={renderItem}
               renderEmpty={renderEmpty}
             />
           </Tree.Group>
         ) : (
           <Tree.EmptyIndicator
-            style={{ paddingLeft: (data.level + 1) * tree.indent }}
+            style={{ paddingLeft: (node.level + 1) * tree.indent }}
             {...(renderEmpty && { asChild: true, children: renderEmpty() })}
           />
         )}

@@ -3,5 +3,5 @@ export interface TreeItemData {
   title: string;
   parentId?: string | null;
   group?: string | null;
-  icon?: React.ReactNode | null;
+  icon?: React.ReactNode;
 }

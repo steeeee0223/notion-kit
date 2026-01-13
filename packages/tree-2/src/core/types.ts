@@ -5,18 +5,14 @@ export interface TreeItemData {
 }
 
 export type TreeNode<T extends TreeItemData> = T & {
-  children: TreeNode<T>[];
-};
-
-export type TreeNodeInternal<T extends TreeItemData> = T & {
   level: number;
   children: string[];
 };
 
 export interface TreeEntity<T extends TreeItemData> {
-  visibleIds: string[];
+  rootIds: string[];
   flatIds: string[];
-  nodes: Map<string, TreeNodeInternal<T>>;
+  nodes: Map<string, TreeNode<T>>;
 }
 
 export interface TreeState {
@@ -30,11 +26,12 @@ export interface TreeInstance<T extends TreeItemData> {
   showEmptyChild: boolean;
   collapsible: boolean;
   // state
-  original: TreeNode<T>[];
+  original: T[];
   entity: TreeEntity<T>;
   state: TreeState;
   expand: (id: string) => void;
   select: (id: string) => void;
   registerItem: (id: string, el: HTMLElement | null) => void;
   focusItem: (id: string) => void;
+  getVisibleIds: () => string[];
 }
