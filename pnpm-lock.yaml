@@ -432,6 +432,9 @@ importers:
       '@notion-kit/tree':
         specifier: workspace:*
         version: link:../../packages/tree
+      '@notion-kit/tree-2':
+        specifier: workspace:*
+        version: link:../../packages/tree-2
       '@notion-kit/unsplash':
         specifier: workspace:*
         version: link:../../packages/unsplash
@@ -1822,6 +1825,58 @@ importers:
       prettier:
         specifier: 'catalog:'
         version: 3.6.2
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.16.6(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  packages/tree-2:
+    dependencies:
+      '@notion-kit/cn':
+        specifier: workspace:*
+        version: link:../cn
+      '@notion-kit/icons':
+        specifier: workspace:*
+        version: link:../icons
+      '@notion-kit/shadcn':
+        specifier: workspace:*
+        version: link:../shadcn
+      '@radix-ui/react-slot':
+        specifier: ^1.2.4
+        version: 1.2.4(@types/react@19.2.7)(react@19.2.3)
+      react:
+        specifier: catalog:react19
+        version: 19.2.3
+      react-dom:
+        specifier: catalog:react19
+        version: 19.2.3(react@19.2.3)
+    devDependencies:
+      '@notion-kit/eslint-config':
+        specifier: workspace:*
+        version: link:../../tooling/eslint
+      '@notion-kit/prettier-config':
+        specifier: workspace:*
+        version: link:../../tooling/prettier
+      '@notion-kit/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
+      '@rollup/plugin-babel':
+        specifier: catalog:build
+        version: 6.1.0(@babel/core@7.28.5)(@types/babel__core@7.20.5)(rollup@4.54.0)
+      babel-plugin-react-compiler:
+        specifier: catalog:react-compiler
+        version: 1.0.0
+      eslint:
+        specifier: 'catalog:'
+        version: 9.39.1(jiti@2.6.1)
+      prettier:
+        specifier: 'catalog:'
+        version: 3.6.2
+      react-compiler-runtime:
+        specifier: catalog:react-compiler
+        version: 1.0.0(react@19.2.3)
       tsdown:
         specifier: 'catalog:'
         version: 0.16.6(typescript@5.9.3)
