@@ -3,16 +3,17 @@
 import { useState } from "react";
 
 import type { IconData, Page, UpdatePageParams } from "@notion-kit/schemas";
-import { TreeItem, TreeList, TreeNode } from "@notion-kit/tree";
+import { MenuItem } from "@notion-kit/shadcn";
+import { Tree, useTree } from "@notion-kit/tree-2";
 
 import { SidebarGroup, SidebarMenuItem } from "../core";
-import { DocGroupActions } from "./_components";
-import { DocItemActions } from "./_components/doc-item-actions";
+import { DocGroupActions, DocIcon, DocItemActions } from "./_components";
+import type { TreeData } from "./_lib";
 
 interface DocListProps {
   group: string;
   title: string;
-  pages: TreeNode<Page>[];
+  pages: Page[];
   activePage?: string | null;
   defaultIcon?: IconData;
   onSelect?: (page: Page) => void;
@@ -24,7 +25,7 @@ interface DocListProps {
 export function DocList({
   group,
   title,
-  pages: nodes,
+  pages,
   activePage,
   defaultIcon = { type: "lucide", src: "file" },
   onSelect,
@@ -34,46 +35,58 @@ export function DocList({
 }: DocListProps) {
   const [showList, setShowList] = useState(true);
 
+  const treeData = pages.map((page) => ({
+    ...page,
+    iconData: page.icon ?? defaultIcon,
+  }));
+
+  const tree = useTree(treeData, {
+    showEmptyChild: true,
+    collapsible: true,
+    initialSelected: activePage ? [activePage] : [],
+    onSelectionChange: (id) =>
+      onSelect?.(pages.find((page) => page.id === id)!),
+  });
+
   return (
     <SidebarGroup>
       <SidebarMenuItem
         className="group/doc-list"
         label={<span className="text-xs/none font-medium">{title}</span>}
         aria-expanded={showList}
-        onClick={() => setShowList((prev) => !prev)}
+        onClick={() => setShowList((v) => !v)}
       >
         <DocGroupActions onCreate={() => onCreate?.(group)} />
       </SidebarMenuItem>
       {showList && (
-        <TreeList
-          indent={8}
-          nodes={nodes}
-          defaultIcon={defaultIcon}
-          showEmptyChild={group === "document"}
-          selectedId={activePage}
-          renderItem={({ node, ...props }) => (
-            <TreeItem
-              {...props}
-              node={node}
-              onSelect={() => onSelect?.(node)}
-              className="group/doc-item"
-              expandable={group === "document"}
-            >
-              <DocItemActions
-                type="normal"
-                title={node.title}
-                icon={node.icon ?? defaultIcon}
-                pageLink={node.url ?? "#"}
-                isFavorite={node.isFavorite}
-                lastEditedBy={node.lastEditedBy}
-                lastEditedAt={node.lastEditedAt}
-                onCreate={() => onCreate?.(group, node.id)}
-                onDuplicate={() => onDuplicate?.(node.id)}
-                onUpdate={(data) => onUpdate?.(node.id, data)}
-              />
-            </TreeItem>
-          )}
-        />
+        <Tree tree={tree}>
+          <Tree.List<TreeData>
+            nodeIds={tree.entity.rootIds}
+            renderItem={({ node }) => {
+              return (
+                <MenuItem
+                  variant="sidebar"
+                  className="group/doc-item focus:shadow-notion"
+                  Icon={<DocIcon node={node} defaultIcon={defaultIcon} />}
+                  Body={node.title}
+                >
+                  <DocItemActions
+                    type="normal"
+                    title={node.title}
+                    icon={node.icon ?? defaultIcon}
+                    pageLink={node.url ?? "#"}
+                    isFavorite={node.isFavorite}
+                    lastEditedBy={node.lastEditedBy}
+                    lastEditedAt={node.lastEditedAt}
+                    onCreate={() => onCreate?.(group, node.id)}
+                    onDuplicate={() => onDuplicate?.(node.id)}
+                    onUpdate={(data) => onUpdate?.(node.id, data)}
+                  />
+                </MenuItem>
+              );
+            }}
+          />
+        </Tree>
       )}
     </SidebarGroup>
   );

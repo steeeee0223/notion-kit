@@ -20,7 +20,8 @@ interface TreeOptions {
   collapsible?: boolean;
   indent?: number;
   showEmptyChild?: boolean;
-  onSelectionChange?: (ids: Set<string>) => void;
+  initialSelected?: string[];
+  onSelectionChange?: (id: string, selectedIds: Set<string>) => void;
   onExpandedChange?: (ids: Set<string>) => void;
 }
 
@@ -30,6 +31,7 @@ function useTree<T extends TreeItemData>(data: T[], options: TreeOptions = {}) {
     showEmptyChild = false,
     selectionMode = "single",
     collapsible = true,
+    initialSelected,
     onSelectionChange,
     onExpandedChange,
   } = options;
@@ -37,7 +39,7 @@ function useTree<T extends TreeItemData>(data: T[], options: TreeOptions = {}) {
   const [expanded, setExpanded] = useState<Set<string>>(() =>
     collapsible ? new Set() : new Set(data.map((item) => item.id)),
   );
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [selected, setSelected] = useState<Set<string>>(() => new Set());
 
   const itemRefs = useRef(new Map<string, HTMLElement>());
 
@@ -64,7 +66,7 @@ function useTree<T extends TreeItemData>(data: T[], options: TreeOptions = {}) {
           }
         }
 
-        onSelectionChange?.(next);
+        onSelectionChange?.(id, next);
         return next;
       });
     },
@@ -72,7 +74,13 @@ function useTree<T extends TreeItemData>(data: T[], options: TreeOptions = {}) {
   );
 
   const entity = useMemo(() => buildTree(data), [data]);
-  const state = useMemo(() => ({ expanded, selected }), [expanded, selected]);
+  const state = useMemo(
+    () => ({
+      expanded,
+      selected: initialSelected ? new Set(initialSelected) : selected,
+    }),
+    [expanded, initialSelected, selected],
+  );
 
   const expand = useCallback(
     (id: string) => {

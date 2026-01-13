@@ -57,7 +57,7 @@ export function DocItemActions({
               className="size-5"
               onClick={(e) => e.stopPropagation()}
             >
-              <Icon.Dots className="size-3 fill-secondary" />
+              <Icon.Dots className="size-3 fill-current" />
             </Button>
           </DropdownMenuTrigger>
         </TooltipPreset>
@@ -133,7 +133,7 @@ export function DocItemActions({
             onCreate?.();
           }}
         >
-          <Icon.Plus className="size-3 fill-secondary" />
+          <Icon.Plus className="size-3 fill-current" />
         </Button>
       </TooltipPreset>
     </MenuItemAction>

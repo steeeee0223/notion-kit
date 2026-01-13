@@ -4,7 +4,6 @@ import { cn } from "@notion-kit/cn";
 import { useFilter } from "@notion-kit/hooks";
 import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
-import { useModal } from "@notion-kit/modal";
 import type { Page } from "@notion-kit/schemas";
 import {
   CommandDialog,
@@ -20,7 +19,9 @@ import { toDateString } from "@notion-kit/utils";
 interface SearchCommandProps {
   workspaceName: string;
   pages: Page[];
+  open?: boolean;
   onSelect?: (page: Page) => void;
+  onOpenChange?: (open: boolean) => void;
   onOpenTrash?: () => void;
 }
 
@@ -31,28 +32,29 @@ interface SearchCommandProps {
 export function SearchCommand({
   workspaceName,
   pages,
+  open,
+  onOpenChange,
   onSelect,
   onOpenTrash,
 }: SearchCommandProps) {
-  const { isOpen, closeModal } = useModal();
   const { search, results, updateSearch } = useFilter(pages, (page, v) =>
     page.title.toLowerCase().includes(v),
   );
   /** Search */
   const jumpToTrash = () => {
-    closeModal();
+    onOpenChange?.(false);
     onOpenTrash?.();
   };
   const handleSelect = (page: Page) => {
     onSelect?.(page);
-    closeModal();
+    onOpenChange?.(false);
   };
 
   return (
     <CommandDialog
       className="max-h-[max(50vh,570px)] min-h-[max(50vh,570px)] w-full max-w-[755px] rounded-[12px]"
-      open={isOpen}
-      onOpenChange={closeModal}
+      open={open}
+      onOpenChange={onOpenChange}
       shouldFilter={false}
     >
       <CommandInput
