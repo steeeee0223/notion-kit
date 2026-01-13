@@ -1,9 +1,6 @@
 import type { TreeEntity, TreeInstance, TreeItemData } from "./types";
 
-export function buildTree<T extends TreeItemData>(
-  data: T[],
-  _expanded: Set<string>,
-): TreeEntity<T> {
+export function buildTree<T extends TreeItemData>(data: T[]): TreeEntity<T> {
   const entity: TreeEntity<T> = {
     rootIds: [],
     flatIds: [],

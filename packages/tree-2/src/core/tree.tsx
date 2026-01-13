@@ -71,7 +71,7 @@ function useTree<T extends TreeItemData>(data: T[], options: TreeOptions = {}) {
     [selectionMode, onSelectionChange],
   );
 
-  const entity = useMemo(() => buildTree(data, expanded), [data, expanded]);
+  const entity = useMemo(() => buildTree(data), [data]);
   const state = useMemo(() => ({ expanded, selected }), [expanded, selected]);
 
   const expand = useCallback(
