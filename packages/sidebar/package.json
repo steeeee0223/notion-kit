@@ -47,7 +47,7 @@
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/spinner": "workspace:*",
-    "@notion-kit/tree-2": "workspace:*",
+    "@notion-kit/tree": "workspace:*",
     "@notion-kit/utils": "workspace:*"
   },
   "devDependencies": {

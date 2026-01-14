@@ -1,4 +1,7 @@
-import { TreeItemData } from "@notion-kit/tree-2/presets";
+"use client";
+
+import { useTree } from "@notion-kit/tree";
+import { CommandTree, TreeItemData } from "@notion-kit/tree/presets";
 
 export const folderNodes: TreeItemData[] = [
   {
@@ -54,3 +57,9 @@ export const folderNodes: TreeItemData[] = [
     icon: "F",
   },
 ];
+
+export default function Command() {
+  const tree = useTree(folderNodes, {});
+
+  return <CommandTree tree={tree} />;
+}

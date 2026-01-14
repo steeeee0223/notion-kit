@@ -4,7 +4,7 @@ import { cn } from "@notion-kit/cn";
 import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import { Button } from "@notion-kit/shadcn";
-import { Tree, useTreeContext } from "@notion-kit/tree-2";
+import { Tree, useTreeContext } from "@notion-kit/tree";
 
 import type { TreeData } from "../_lib";
 

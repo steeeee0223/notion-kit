@@ -310,21 +310,13 @@ export const Index: Record<
     files: ["components/demos/tooltip/demo.tsx"],
     component: React.lazy(() => import("@/components/demos/tooltip/demo")),
   },
-  "tree/custom": {
-    files: [
-      "components/demos/tree/custom/custom-item.tsx",
-      "components/demos/tree/custom/data.ts",
-      "components/demos/tree/custom/index.tsx",
-    ],
-    component: React.lazy(() => import("@/components/demos/tree/custom")),
+  "tree/command": {
+    files: ["components/demos/tree/command.tsx"],
+    component: React.lazy(() => import("@/components/demos/tree/command")),
   },
   "tree/default": {
     files: ["components/demos/tree/default.tsx"],
     component: React.lazy(() => import("@/components/demos/tree/default")),
-  },
-  "tree/group": {
-    files: ["components/demos/tree/group.tsx"],
-    component: React.lazy(() => import("@/components/demos/tree/group")),
   },
   "unsplash/default": {
     files: ["components/demos/unsplash/default.tsx"],

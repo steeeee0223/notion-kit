@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import type { IconData, Page, UpdatePageParams } from "@notion-kit/schemas";
 import { MenuItem } from "@notion-kit/shadcn";
-import { Tree, useTree } from "@notion-kit/tree-2";
+import { Tree, useTree } from "@notion-kit/tree";
 
 import { SidebarGroup, SidebarMenuItem } from "../core";
 import { DocGroupActions, DocIcon, DocItemActions } from "./_components";

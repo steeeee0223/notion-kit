@@ -6,7 +6,7 @@ import { items } from "./constants";
 import { SelectWithDraggableItems } from "./draggable";
 
 const meta = {
-  title: "Shadcn/Selectable",
+  title: "Notion UI/Selectable",
   component: Selectable,
   parameters: { layout: "centered" },
 } satisfies Meta<typeof Selectable>;
