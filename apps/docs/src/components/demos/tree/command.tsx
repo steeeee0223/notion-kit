@@ -61,5 +61,9 @@ export const folderNodes: TreeItemData[] = [
 export default function Command() {
   const tree = useTree(folderNodes, {});
 
-  return <CommandTree tree={tree} />;
+  return (
+    <div className="w-40">
+      <CommandTree tree={tree} />
+    </div>
+  );
 }

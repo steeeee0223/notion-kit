@@ -6,13 +6,12 @@ description: A collapsible, hierarchical tree component for organizing nested it
 <ComponentPreview
   name="tree/default"
   preview={`const tree = useTree(folderNodes, {});
-
-return (
-
-<Tree tree={tree}>
-  <TreeList nodeIds={tree.entity.rootIds} />
-</Tree>
-);`} />
+  return (
+    <Tree tree={tree}>
+      <TreeList nodeIds={tree.entity.rootIds} />
+    </Tree>
+  );`}
+/>
 
 ## Installation
 
@@ -84,7 +83,7 @@ A searchable tree interface for command palettes.
 
 ## API Reference
 
-### useTree Hook
+### useTree
 
 Creates a tree instance from flat data.
 
@@ -120,7 +119,7 @@ The tree instance exposes:
 - `select(id)`: Select a node
 - `getVisibleIds()`: Get currently visible node IDs
 
-### Tree Component
+### Tree
 
 Root container providing tree context.
 
@@ -129,6 +128,26 @@ Root container providing tree context.
 | `tree`\*    | `TreeInstance<T>` | Tree instance from `useTree`         |
 | `children`  | `React.ReactNode` | Tree content (typically `Tree.List`) |
 | `className` | `string`          | Additional CSS classes               |
+
+### Tree.Item
+
+A slottable tree item.
+
+### Tree.ExpandIndicator
+
+A slottable button to expand/collapse a node.
+
+| Prop       | Type         | Description                                       |
+| ---------- | ------------ | ------------------------------------------------- |
+| `onToggle` | `() => void` | A handler that is called when the node is toggled |
+
+### Tree.EmptyIndicator
+
+A slottable indicator to show when a node has no children.
+
+### Tree.Group
+
+A slottable tree group.
 
 ### Tree.List
 
@@ -156,7 +175,7 @@ Searchable tree component for command interfaces.
 | -------- | ----------------- | ---------------------------- |
 | `tree`\* | `TreeInstance<T>` | Tree instance from `useTree` |
 
-### TreeItemData Type (Preset)
+### `type` TreeItemData (Preset)
 
 Base interface for tree item data.
 

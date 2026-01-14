@@ -318,6 +318,20 @@ export const Index: Record<
     files: ["components/demos/tree/default.tsx"],
     component: React.lazy(() => import("@/components/demos/tree/default")),
   },
+  "tree/multi-select": {
+    files: ["components/demos/tree/multi-select.tsx"],
+    component: React.lazy(() => import("@/components/demos/tree/multi-select")),
+  },
+  "tree/non-collapsible": {
+    files: ["components/demos/tree/non-collapsible.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/tree/non-collapsible"),
+    ),
+  },
+  "tree/show-empty": {
+    files: ["components/demos/tree/show-empty.tsx"],
+    component: React.lazy(() => import("@/components/demos/tree/show-empty")),
+  },
   "unsplash/default": {
     files: ["components/demos/unsplash/default.tsx"],
     component: React.lazy(() => import("@/components/demos/unsplash/default")),
