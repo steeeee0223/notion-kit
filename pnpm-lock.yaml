@@ -1513,6 +1513,9 @@ importers:
       '@notion-kit/icon-block':
         specifier: workspace:*
         version: link:../icon-block
+      '@notion-kit/icon-menu':
+        specifier: workspace:*
+        version: link:../icon-menu
       '@notion-kit/icons':
         specifier: workspace:*
         version: link:../icons
