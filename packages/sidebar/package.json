@@ -13,11 +13,11 @@
   "exports": {
     ".": {
       "types": "./dist/core/index.d.mts",
-      "default": "./src/core/index.ts"
+      "default": "./dist/core/index.mjs"
     },
     "./presets": {
       "types": "./dist/presets/index.d.mts",
-      "default": "./src/presets/index.ts"
+      "default": "./dist/presets/index.mjs"
     }
   },
   "files": [
