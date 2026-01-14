@@ -1,12 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { Icon } from "@notion-kit/icons";
-import { useModal } from "@notion-kit/modal";
 import {
-  DocList,
   Sidebar,
   SidebarClose,
   SidebarContent,
@@ -15,8 +14,8 @@ import {
   SidebarHeader,
   SidebarMenuItem,
   SidebarRail,
-  WorkspaceSwitcher,
 } from "@notion-kit/sidebar";
+import { DocList, WorkspaceSwitcher } from "@notion-kit/sidebar/presets";
 
 import { useSettings } from "@/hooks/use-settings";
 import { useWorkspaceList } from "@/hooks/use-workspace-list";
@@ -33,12 +32,15 @@ export function AppSidebar() {
     useWorkspaceList();
 
   /** Actions */
-  const { openModal } = useModal();
-  const openSettings = () => openModal(<SettingsModal />);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   /** Keyboard shortcut */
   const shortcutOptions = { preventDefault: true };
-  useHotkeys(["meta+comma", "shift+meta+comma"], openSettings, shortcutOptions);
+  useHotkeys(
+    ["meta+comma", "shift+meta+comma"],
+    () => setSettingsOpen(true),
+    shortcutOptions,
+  );
 
   return (
     <Sidebar>
@@ -57,7 +59,7 @@ export function AppSidebar() {
             onCreateWorkspace={() => router.push("/onboarding")}
             onSelect={selectWorkspace}
             onLogout={signOut}
-            onOpenSettings={openSettings}
+            onOpenSettings={() => setSettingsOpen(true)}
           />
         </div>
         <SidebarGroup>
@@ -72,7 +74,9 @@ export function AppSidebar() {
             label="Settings"
             hint="Manage your account and settings"
             shortcut="⌘,"
+            onClick={() => setSettingsOpen(true)}
           />
+          <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
           <SidebarMenuItem
             icon={<Icon.Home className="size-5.5" />}
             label="Home"

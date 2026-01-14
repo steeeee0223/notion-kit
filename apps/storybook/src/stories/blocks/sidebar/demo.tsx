@@ -85,7 +85,7 @@ const AppSidebar = () => {
             open={cmdOpen}
             onOpenChange={setCmdOpen}
             workspaceName={workspaces[0]!.name}
-            pages={allPages}
+            pages={pages.visiblePages()}
             onSelect={(page) => pages.setActive(page.id)}
             onOpenTrash={() => setTrashOpen(true)}
           />
