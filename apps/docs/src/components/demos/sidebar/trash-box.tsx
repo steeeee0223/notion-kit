@@ -2,7 +2,7 @@
 
 import { ModalProvider } from "@notion-kit/modal";
 import { Page } from "@notion-kit/schemas";
-import { TrashBox, usePages } from "@notion-kit/sidebar";
+import { TrashBox, usePages } from "@notion-kit/sidebar/presets";
 import { randomInt } from "@notion-kit/utils";
 
 const getRandomTs = () =>

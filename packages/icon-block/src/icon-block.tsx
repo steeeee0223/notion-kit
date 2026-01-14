@@ -1,8 +1,6 @@
 "use client";
 
-import { cva, type VariantProps } from "class-variance-authority";
-
-import { cn } from "@notion-kit/cn";
+import { cn, cva, type VariantProps } from "@notion-kit/cn";
 import { Avatar, AvatarFallback, AvatarImage } from "@notion-kit/shadcn";
 import { Spinner } from "@notion-kit/spinner";
 

@@ -2,7 +2,7 @@
 
 import type { User, Workspace } from "@notion-kit/schemas";
 import { Plan, Role } from "@notion-kit/schemas";
-import { WorkspaceSwitcher } from "@notion-kit/sidebar";
+import { WorkspaceSwitcher } from "@notion-kit/sidebar/presets";
 
 export const user: User = {
   id: "u1",

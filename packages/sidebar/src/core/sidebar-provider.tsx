@@ -1,5 +1,3 @@
-"use client";
-
 import React, {
   createContext,
   useCallback,
@@ -11,7 +9,6 @@ import React, {
 
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
-import { ModalProvider } from "@notion-kit/modal";
 import { TooltipProvider } from "@notion-kit/shadcn";
 
 import { DEFAULT_CONFIG, type SidebarConfig } from "./constants";
@@ -34,14 +31,14 @@ interface SidebarContextProps {
 
 const SidebarContext = createContext<SidebarContextProps | null>(null);
 
-const useSidebar = () => {
+function useSidebar() {
   const context = useContext(SidebarContext);
   if (!context) {
     throw new Error("useSidebar must be used within a SidebarProvider.");
   }
 
   return context;
-};
+}
 
 interface SidebarProviderProps extends React.ComponentProps<"div"> {
   config?: Partial<SidebarConfig>;
@@ -50,7 +47,7 @@ interface SidebarProviderProps extends React.ComponentProps<"div"> {
   onOpenChange?: (open: boolean) => void;
 }
 
-const SidebarProvider: React.FC<SidebarProviderProps> = ({
+function SidebarProvider({
   config = DEFAULT_CONFIG,
   defaultOpen = true,
   open: openProp,
@@ -59,7 +56,7 @@ const SidebarProvider: React.FC<SidebarProviderProps> = ({
   style,
   children,
   ...props
-}) => {
+}: SidebarProviderProps) {
   const isMobile = useIsMobile();
   const [openMobile, setOpenMobile] = useState(false);
   //* Config
@@ -144,29 +141,27 @@ const SidebarProvider: React.FC<SidebarProviderProps> = ({
   );
 
   return (
-    <SidebarContext.Provider value={contextValue}>
+    <SidebarContext value={contextValue}>
       <TooltipProvider>
-        <ModalProvider>
-          <div
-            data-slot="sidebar-wrapper"
-            style={
-              {
-                "--sidebar-width": width,
-                ...style,
-              } as React.CSSProperties
-            }
-            className={cn(
-              "group/sidebar-wrapper flex min-h-svh w-full",
-              className,
-            )}
-            {...props}
-          >
-            {children}
-          </div>
-        </ModalProvider>
+        <div
+          data-slot="sidebar-wrapper"
+          style={
+            {
+              "--sidebar-width": width,
+              ...style,
+            } as React.CSSProperties
+          }
+          className={cn(
+            "group/sidebar-wrapper flex min-h-svh w-full",
+            className,
+          )}
+          {...props}
+        >
+          {children}
+        </div>
       </TooltipProvider>
-    </SidebarContext.Provider>
+    </SidebarContext>
   );
-};
+}
 
 export { useSidebar, SidebarProvider };

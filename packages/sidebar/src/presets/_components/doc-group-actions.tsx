@@ -19,7 +19,7 @@ export function DocGroupActions({ onCreate }: DocGroupActionsProps) {
             onCreate?.();
           }}
         >
-          <Icon.Plus className="size-3" />
+          <Icon.Plus className="size-3 fill-current" />
         </Button>
       </TooltipPreset>
     </MenuItemAction>

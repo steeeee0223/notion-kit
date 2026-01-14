@@ -4,11 +4,7 @@ import { useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { Icon } from "@notion-kit/icons";
-import { useModal } from "@notion-kit/modal";
 import {
-  DocList,
-  FavoriteList,
-  SearchCommand,
   Sidebar,
   SidebarClose,
   SidebarContent,
@@ -20,10 +16,15 @@ import {
   SidebarOpen,
   SidebarProvider,
   SidebarRail,
+} from "@notion-kit/sidebar";
+import {
+  DocList,
+  FavoriteList,
+  SearchCommand,
   TrashBox,
   usePages,
   WorkspaceSwitcher,
-} from "@notion-kit/sidebar";
+} from "@notion-kit/sidebar/presets";
 
 import {
   pages as data,
@@ -50,19 +51,16 @@ export default function NotionLayout() {
 const AppSidebar = () => {
   const pages = usePages({ pages: data });
   /** Modals */
-  const { openModal } = useModal();
+
+  const [cmdOpen, setCmdOpen] = useState(false);
   const [trashOpen, setTrashOpen] = useState(false);
-  const openSearch = () =>
-    openModal(
-      <SearchCommand
-        workspaceName={workspaces[0]!.name}
-        pages={pages.visiblePages()}
-        onSelect={(p) => pages.setActive(p.id)}
-        onOpenTrash={() => setTrashOpen(true)}
-      />,
-    );
+
   /** Keyboard shortcut */
-  useHotkeys(["meta+k", "shift+meta+k"], openSearch, SHORTCUT_OPTIONS);
+  useHotkeys(
+    ["meta+k", "shift+meta+k"],
+    () => setCmdOpen(true),
+    SHORTCUT_OPTIONS,
+  );
 
   return (
     <Sidebar className="absolute z-0 h-full">
@@ -81,7 +79,15 @@ const AppSidebar = () => {
             label="Search"
             hint="Search and quickly jump to a page"
             shortcut="⌘K"
-            onClick={openSearch}
+            onClick={() => setCmdOpen(true)}
+          />
+          <SearchCommand
+            open={cmdOpen}
+            onOpenChange={setCmdOpen}
+            workspaceName={workspaces[0]!.name}
+            pages={pages.visiblePages()}
+            onSelect={(p) => pages.setActive(p.id)}
+            onOpenTrash={() => setTrashOpen(true)}
           />
           <SidebarMenuItem
             icon={<Icon.Gear className="size-5.5" />}

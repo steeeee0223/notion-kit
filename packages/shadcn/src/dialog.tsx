@@ -29,14 +29,20 @@ function DialogPortal({
 }
 
 function DialogClose({
+  asChild,
+  children,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Close>) {
   return (
     <DialogPrimitive.Close data-slot="dialog-close" asChild>
-      <Button type="button" variant="close" size="circle" {...props}>
-        <Icon.Close className="h-full w-3.5 fill-secondary dark:fill-default/45" />
-        <span className="sr-only">Close</span>
-      </Button>
+      {asChild ? (
+        children
+      ) : (
+        <Button type="button" variant="close" size="circle" {...props}>
+          <Icon.Close className="h-full w-3.5 fill-secondary dark:fill-default/45" />
+          <span className="sr-only">Close</span>
+        </Button>
+      )}
     </DialogPrimitive.Close>
   );
 }

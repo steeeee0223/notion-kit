@@ -7,6 +7,7 @@ export default defineConfig((opts) => ({
   banner: { js: '"use client";' },
   dts: true,
   logLevel: "warn",
+  external: [/^@dnd-kit\//],
   onSuccess: async () => {
     if (opts.watch) {
       console.info("Watching for changes...");

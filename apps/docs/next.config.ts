@@ -1,16 +1,14 @@
+import type { NextConfig } from "next";
 import { createMDX } from "fumadocs-mdx/next";
 
 const withMDX = createMDX();
 
-/** @type {import('next').NextConfig} */
 const config = {
   reactStrictMode: true,
-
-  /** Enables hot reloading for local packages without a build step */
-  transpilePackages: ["@notion-kit/shadcn"],
+  reactCompiler: true,
 
   /** We already do typechecking as separate tasks in CI */
   typescript: { ignoreBuildErrors: true },
-};
+} satisfies NextConfig;
 
 export default withMDX(config);
