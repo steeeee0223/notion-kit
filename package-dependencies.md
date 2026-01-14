@@ -38,7 +38,7 @@ graph TD
     common --> spinner
     
     %% Level 3 - depends on Level 2
-    tree-2 --> cn
+    tree --> cn
     
     icon-menu --> cn
     icon-menu --> common
@@ -89,10 +89,10 @@ graph TD
     sidebar --> shadcn
     sidebar --> spinner
     
-    %% tree-2/presets subpackage (virtual node for documentation)
-    tree-2-presets[tree-2/presets] --> cn
-    tree-2-presets --> icons
-    tree-2-presets --> shadcn
+    %% tree/presets subpackage (virtual node for documentation)
+    tree-presets[tree/presets] --> cn
+    tree-presets --> icons
+    tree-presets --> shadcn
     
     %% sidebar/presets subpackage (virtual node for documentation)
     sidebar-presets[sidebar/presets] --> cn
@@ -103,7 +103,7 @@ graph TD
     sidebar-presets --> schemas
     sidebar-presets --> shadcn
     sidebar-presets --> spinner
-    sidebar-presets --> tree-2
+    sidebar-presets --> tree
     sidebar-presets --> utils
 ```
 
@@ -125,7 +125,7 @@ graph TD
 - `spinner` → cn
 - `selectable` → cn
 - `shadcn` → cn
-- `tree-2` → cn
+- `tree` → cn
 
 ### Level 2 (Depends on Level 0-1)
 
@@ -133,7 +133,7 @@ graph TD
 - `single-image-dropzone` → cn, spinner
 - `tags-input` → cn, shadcn, utils
 - `common` → cn, hooks, modal, shadcn, spinner
-- `tree-2/presets` → cn, icons, shadcn
+- `tree/presets` → cn, icons, shadcn
 - `sidebar` → cn, hooks, icons, shadcn, spinner
 
 ### Level 3 (Depends on Level 0-2)
@@ -145,4 +145,4 @@ graph TD
 
 ### Level 4 (Depends on Level 0-3)
 
-- `sidebar/presets` → cn, hooks, icon-block, icon-menu, icons, schemas, shadcn, spinner, tree-2, utils
+- `sidebar/presets` → cn, hooks, icon-block, icon-menu, icons, schemas, shadcn, spinner, tree, utils
