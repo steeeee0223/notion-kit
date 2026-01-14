@@ -4,6 +4,7 @@ import { defineConfig } from "tsdown";
 export default defineConfig((opts) => ({
   ...opts,
   entry: ["./src/core/index.ts", "./src/presets/index.ts"],
+  banner: { js: '"use client";' },
   dts: true,
   logLevel: "warn",
   onSuccess: async () => {

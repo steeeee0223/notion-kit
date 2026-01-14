@@ -4,8 +4,10 @@ import { defineConfig } from "tsdown";
 export default defineConfig((opts) => ({
   ...opts,
   entry: ["./src/core/index.ts", "./src/presets/index.ts"],
+  banner: { js: '"use client";' },
   dts: true,
   logLevel: "warn",
+  external: [/^@dnd-kit\//],
   onSuccess: async () => {
     if (opts.watch) {
       console.info("Watching for changes...");
@@ -20,7 +22,7 @@ export default defineConfig((opts) => ({
         sourceType: "module",
         plugins: ["jsx", "typescript"],
       },
-      // plugins: ["babel-plugin-react-compiler"],
+      plugins: ["babel-plugin-react-compiler"],
       extensions: [".js", ".jsx", ".ts", ".tsx"],
     }),
   ],

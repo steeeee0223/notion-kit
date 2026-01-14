@@ -3,6 +3,7 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig((opts) => ({
   ...opts,
+  banner: { js: '"use client";' },
   dts: true,
   logLevel: "warn",
   onSuccess: async () => {

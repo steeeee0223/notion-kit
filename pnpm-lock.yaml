@@ -1015,9 +1015,6 @@ importers:
       '@notion-kit/spinner':
         specifier: workspace:*
         version: link:../spinner
-      class-variance-authority:
-        specifier: catalog:ui
-        version: 0.7.1
       lucide-react:
         specifier: catalog:ui
         version: 0.456.0(react@19.2.3)

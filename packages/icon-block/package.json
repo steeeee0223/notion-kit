@@ -35,7 +35,6 @@
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/spinner": "workspace:*",
-    "class-variance-authority": "catalog:ui",
     "lucide-react": "catalog:ui"
   },
   "devDependencies": {
