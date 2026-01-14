@@ -1,7 +1,7 @@
 "use client";
 
-import { useTree } from "@notion-kit/tree";
-import { CommandTree, type TreeItemData } from "@notion-kit/tree/presets";
+import { Tree, useTree } from "@notion-kit/tree";
+import { TreeList, type TreeItemData } from "@notion-kit/tree/presets";
 
 export const folderNodes: TreeItemData[] = [
   {
@@ -58,8 +58,12 @@ export const folderNodes: TreeItemData[] = [
   },
 ];
 
-export default function Command() {
-  const tree = useTree(folderNodes, {});
+export default function NonCollapsible() {
+  const tree = useTree(folderNodes, { collapsible: false });
 
-  return <CommandTree tree={tree} />;
+  return (
+    <Tree tree={tree} className="w-40">
+      <TreeList nodeIds={tree.entity.rootIds} />
+    </Tree>
+  );
 }
