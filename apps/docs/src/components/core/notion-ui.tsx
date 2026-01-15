@@ -36,4 +36,4 @@ export {
 export { SingleImageDropzone } from "@notion-kit/single-image-dropzone";
 export { Spinner } from "@notion-kit/spinner";
 export { TagsInput } from "@notion-kit/tags-input";
-export { TreeGroup, TreeList, TreeItem } from "@notion-kit/tree";
+export { Tree, useTree } from "@notion-kit/tree";

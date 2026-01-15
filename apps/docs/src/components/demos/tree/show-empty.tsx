@@ -58,8 +58,8 @@ export const folderNodes: TreeItemData[] = [
   },
 ];
 
-export default function Default() {
-  const tree = useTree(folderNodes, {});
+export default function ShowEmpty() {
+  const tree = useTree(folderNodes, { showEmptyChild: true });
 
   return (
     <Tree tree={tree} className="w-40">

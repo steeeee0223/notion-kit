@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "navbar",
-  "type": "registry:component",
   "title": "Navbar",
   "dependencies": [
     "@notion-kit/icons",
@@ -18,5 +17,6 @@
       "type": "registry:component",
       "target": "components/core/navbar.tsx"
     }
-  ]
+  ],
+  "type": "registry:component"
 }

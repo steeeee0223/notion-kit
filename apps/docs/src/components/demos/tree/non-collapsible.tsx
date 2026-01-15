@@ -58,8 +58,8 @@ export const folderNodes: TreeItemData[] = [
   },
 ];
 
-export default function Default() {
-  const tree = useTree(folderNodes, {});
+export default function NonCollapsible() {
+  const tree = useTree(folderNodes, { collapsible: false });
 
   return (
     <Tree tree={tree} className="w-40">

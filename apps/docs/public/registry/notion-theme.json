@@ -2,7 +2,6 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "extends": "none",
   "name": "notion-theme",
-  "type": "registry:style",
   "title": "Notion Theme",
   "dependencies": ["tailwind-merge", "clsx"],
   "registryDependencies": ["utils"],
@@ -59,5 +58,6 @@
       "border-cell": "rgb(47, 47, 47)",
       "ring": "rgba(255, 255, 255, 0.075)"
     }
-  }
+  },
+  "type": "registry:style"
 }

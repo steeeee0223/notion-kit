@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "table-view",
-  "type": "registry:component",
   "title": "Settings Panel",
   "dependencies": ["@notion-kit/table-view"],
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:component",
       "target": "components/core/table-view.tsx"
     }
-  ]
+  ],
+  "type": "registry:component"
 }

@@ -1,7 +1,4 @@
-"use client";
-
-import { Tree, useTree } from "@notion-kit/tree";
-import { TreeList, type TreeItemData } from "@notion-kit/tree/presets";
+import { TreeItemData } from "@notion-kit/tree/presets";
 
 export const folderNodes: TreeItemData[] = [
   {
@@ -57,13 +54,3 @@ export const folderNodes: TreeItemData[] = [
     icon: "F",
   },
 ];
-
-export default function Default() {
-  const tree = useTree(folderNodes, {});
-
-  return (
-    <Tree tree={tree} className="w-40">
-      <TreeList nodeIds={tree.entity.rootIds} />
-    </Tree>
-  );
-}

@@ -328,5 +328,4 @@ export type {
   TreeItemProps,
   TreeListProps,
   TreeListItemProps,
-  DivSlotProps as TreeGroupProps,
 };

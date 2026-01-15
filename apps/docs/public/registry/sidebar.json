@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "sidebar",
-  "type": "registry:component",
   "title": "Sidebar",
   "dependencies": ["@notion-kit/sidebar"],
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:component",
       "target": "components/core/sidebar.tsx"
     }
-  ]
+  ],
+  "type": "registry:component"
 }

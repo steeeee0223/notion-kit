@@ -40,7 +40,6 @@
     "@notion-kit/table-view": "workspace:*",
     "@notion-kit/tags-input": "workspace:*",
     "@notion-kit/tree": "workspace:*",
-    "@notion-kit/tree-2": "workspace:*",
     "@notion-kit/unsplash": "workspace:*",
     "@notion-kit/utils": "workspace:*",
     "lucide-react": "catalog:ui",

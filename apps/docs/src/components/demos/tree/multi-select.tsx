@@ -1,4 +1,7 @@
-import { TreeItemData } from "@notion-kit/tree-2/presets";
+"use client";
+
+import { Tree, useTree } from "@notion-kit/tree";
+import { TreeList, type TreeItemData } from "@notion-kit/tree/presets";
 
 export const folderNodes: TreeItemData[] = [
   {
@@ -54,3 +57,13 @@ export const folderNodes: TreeItemData[] = [
     icon: "F",
   },
 ];
+
+export default function MultiSelect() {
+  const tree = useTree(folderNodes, { selectionMode: "multiple" });
+
+  return (
+    <Tree tree={tree} className="w-40">
+      <TreeList nodeIds={tree.entity.rootIds} />
+    </Tree>
+  );
+}
