@@ -53,7 +53,6 @@ export function DocList({
       <SidebarMenuItem
         className="group/doc-list"
         label={<span className="text-xs/none font-medium">{title}</span>}
-        aria-expanded={showList}
         onClick={() => setShowList((v) => !v)}
       >
         <DocGroupActions onCreate={() => onCreate?.(group)} />

@@ -20,7 +20,11 @@ export function HeaderDropdown({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant={null} className="relative flex size-5 text-secondary">
+        <Button
+          variant={null}
+          className="relative flex size-5 text-secondary"
+          aria-label="More actions"
+        >
           <Icon.Dots className="size-3 fill-current" />
         </Button>
       </DropdownMenuTrigger>

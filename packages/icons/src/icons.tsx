@@ -376,7 +376,7 @@ export const Username = (props: IconProps) => (
 );
 
 export const Plus = (props: IconProps) => (
-  <svg role="graphics-symbol" viewBox="0 0 16 16" {...props}>
+  <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 16 16" {...props}>
     <path d="M7.977 14.963c.407 0 .747-.324.747-.723V8.72h5.362c.399 0 .74-.34.74-.747a.746.746 0 00-.74-.738H8.724V1.706c0-.398-.34-.722-.747-.722a.732.732 0 00-.739.722v5.529h-5.37a.746.746 0 00-.74.738c0 .407.341.747.74.747h5.37v5.52c0 .399.332.723.739.723z" />
   </svg>
 );
@@ -388,7 +388,7 @@ export const SquarePlus = (props: IconProps) => (
 );
 
 export const Dots = (props: IconProps) => (
-  <svg role="graphics-symbol" viewBox="0 0 13 3" {...props}>
+  <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 13 3" {...props}>
     <path d="M3,1.5A1.5,1.5,0,1,1,1.5,0,1.5,1.5,0,0,1,3,1.5Z" />
     <path d="M8,1.5A1.5,1.5,0,1,1,6.5,0,1.5,1.5,0,0,1,8,1.5Z" />
     <path d="M13,1.5A1.5,1.5,0,1,1,11.5,0,1.5,1.5,0,0,1,13,1.5Z" />

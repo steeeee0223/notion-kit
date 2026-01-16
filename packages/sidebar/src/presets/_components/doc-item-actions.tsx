@@ -55,6 +55,7 @@ export function DocItemActions({
             <Button
               variant="hint"
               className="size-5"
+              aria-label="More actions"
               onClick={(e) => e.stopPropagation()}
             >
               <Icon.Dots className="size-3 fill-current" />
@@ -128,6 +129,7 @@ export function DocItemActions({
         <Button
           variant="hint"
           className="size-5"
+          aria-label="Add a page inside"
           onClick={(e) => {
             e.stopPropagation();
             onCreate?.();

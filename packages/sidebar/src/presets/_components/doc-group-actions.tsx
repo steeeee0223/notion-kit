@@ -14,6 +14,7 @@ export function DocGroupActions({ onCreate }: DocGroupActionsProps) {
         <Button
           variant="hint"
           className="size-5"
+          aria-label="Add a page"
           onClick={(e) => {
             e.stopPropagation();
             onCreate?.();

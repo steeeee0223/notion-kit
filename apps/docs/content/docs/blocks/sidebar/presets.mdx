@@ -93,13 +93,14 @@ A `FavoriteList` is a group of pages that are marked as your `Favorite`.
 
 ### Search Command
 
-A `SearchCommand` is a command menu for searching all non-archived pages.
+A `SearchCommand` is a command dialog for searching all non-archived pages.
 
 <ComponentPreview name="sidebar/search-command" />
 
 <Callout title="Note">
-  - It must be used within `<ModalProvider>`.
-  - It searches only for **non-archived** pages.
+
+- It searches only for **non-archived** pages.
+
 </Callout>
 
 #### API Reference
@@ -117,16 +118,13 @@ A `TrashBox` is a popover menu for searching archived pages.
 
 <ComponentPreview
   name="sidebar/trash-box"
-  preview={`<ModalProvider>
-    <div className="w-[200px]">
-      <TrashBox pages={pages} />
-    </div>
-  </ModalProvider>`}
+  preview={`<TrashBox pages={pages} />`}
 />
 
 <Callout title="Note">
-  - It must be used within `<ModalProvider>`.
-  - It searches only for **archived** pages.
+
+- It searches only for **archived** pages.
+
 </Callout>
 
 #### API Reference

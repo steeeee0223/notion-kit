@@ -76,6 +76,7 @@ function SidebarClose({
       <Button
         data-slot="sidebar-close"
         variant="hint"
+        aria-label="Close sidebar"
         onClick={(e) => {
           onClick?.(e);
           toggleSidebar();
@@ -115,6 +116,7 @@ function SidebarOpen({
           onClick?.(e);
           toggleSidebar();
         }}
+        aria-label="Open sidebar"
         className={cn("size-6 p-0 transition", className)}
         {...props}
       >

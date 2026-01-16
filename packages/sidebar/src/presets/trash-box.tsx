@@ -60,6 +60,7 @@ export function TrashBox({
       <Popover open={isOpen} onOpenChange={onOpenChange}>
         <PopoverTrigger asChild>
           <SidebarMenuItem
+            role="button"
             label="Trash"
             icon={<Icon.Trash className="size-5.5" />}
             hint="Restore deleted pages"
@@ -110,6 +111,7 @@ export function TrashBox({
                         <Button
                           variant="hint"
                           className="size-5"
+                          aria-label="Restore"
                           onClick={(e) => handleRestore(e, page.id)}
                         >
                           <Icon.Undo className="size-4" />
@@ -121,6 +123,7 @@ export function TrashBox({
                             <Button
                               variant="hint"
                               className="size-5"
+                              aria-label="Delete from Trash"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <Icon.Trash className="size-4" />
@@ -151,7 +154,7 @@ export function TrashBox({
                 rel="noopener noreferrer"
                 className="ml-0.5 no-underline select-none"
               >
-                <Button variant="hint" className="size-5">
+                <Button variant="hint" className="size-5" aria-label="Help">
                   <Icon.QuestionMarkCircled className="size-3.5 shrink-0 fill-secondary" />
                 </Button>
               </a>

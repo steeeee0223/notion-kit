@@ -1,8 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { ModalProvider, useModal } from "@notion-kit/modal";
 import { Page } from "@notion-kit/schemas";
 import { Button } from "@notion-kit/shadcn";
 import { SearchCommand, usePages } from "@notion-kit/sidebar/presets";
@@ -157,26 +157,23 @@ export const data: Page[] = [
 ];
 
 export default function Demo() {
-  return (
-    <ModalProvider>
-      <Trigger />
-    </ModalProvider>
-  );
-}
-
-function Trigger() {
   const pages = usePages({ pages: data });
-  const { openModal } = useModal();
-  const openSearch = () =>
-    openModal(
-      <SearchCommand workspaceName="Workspace" pages={pages.visiblePages()} />,
-    );
+  const [open, setOpen] = useState(false);
+  const openSearch = () => setOpen(true);
   /** Keyboard shortcut */
   useHotkeys(["meta+k", "shift+meta+k"], openSearch, { preventDefault: true });
 
   return (
-    <Button size="md" onClick={openSearch}>
-      ⌘K
-    </Button>
+    <>
+      <Button size="md" onClick={openSearch}>
+        ⌘K
+      </Button>
+      <SearchCommand
+        workspaceName="Workspace"
+        pages={pages.visiblePages()}
+        open={open}
+        onOpenChange={setOpen}
+      />
+    </>
   );
 }

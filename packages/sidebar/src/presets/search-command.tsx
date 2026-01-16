@@ -27,7 +27,6 @@ interface SearchCommandProps {
 
 /**
  * @description Notion Search Command
- * @note Must be used within `ModalProvider`
  */
 export function SearchCommand({
   workspaceName,

@@ -49,7 +49,6 @@ export function FavoriteList({
       <SidebarMenuItem
         className="group/doc-list"
         label={<span className="text-xs/none font-medium">Favorites</span>}
-        aria-expanded={showList}
         onClick={() => setShowList((v) => !v)}
       />
       {showList && (
