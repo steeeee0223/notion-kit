@@ -871,12 +871,21 @@ importers:
       '@notion-kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
+      '@rollup/plugin-babel':
+        specifier: catalog:build
+        version: 6.1.0(@babel/core@7.28.5)(@types/babel__core@7.20.5)(rollup@4.54.0)
+      babel-plugin-react-compiler:
+        specifier: catalog:react-compiler
+        version: 1.0.0
       eslint:
         specifier: 'catalog:'
         version: 9.39.1(jiti@2.6.1)
       prettier:
         specifier: 'catalog:'
         version: 3.6.2
+      react-compiler-runtime:
+        specifier: catalog:react-compiler
+        version: 1.0.0(react@19.2.3)
       tsdown:
         specifier: 'catalog:'
         version: 0.16.6(typescript@5.9.3)
