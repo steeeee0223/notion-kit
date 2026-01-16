@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import dynamicIconImports from "lucide-react/dynamicIconImports";
 import { useLocalStorage } from "usehooks-ts";
 
-import { COLOR } from "@notion-kit/common";
+import { COLOR } from "@notion-kit/common/colors";
 import type { LucideName } from "@notion-kit/icon-block";
 import { randomItem } from "@notion-kit/utils";
 

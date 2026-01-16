@@ -3,7 +3,7 @@
 import { memo } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-import { COLOR } from "@notion-kit/common";
+import { COLOR } from "@notion-kit/common/colors";
 import { LucideIcon, type LucideName } from "@notion-kit/icon-block";
 import { Button, TooltipPreset, TooltipProvider } from "@notion-kit/shadcn";
 import { Spinner } from "@notion-kit/spinner";

@@ -10,19 +10,15 @@
     "url": "https://github.com/steeeee0223/notion-kit.git",
     "directory": "packages/common"
   },
-  "publishConfig": {
-    "exports": {
-      "./*": {
-        "types": "./dist/*.d.mts",
-        "default": "./dist/*.mjs"
-      }
+  "exports": {
+    "./*": {
+      "types": "./dist/*.d.mts",
+      "default": "./dist/*.mjs"
     }
   },
   "files": [
     "dist"
   ],
-  "main": "./src/index.ts",
-  "module": "./src/index.ts",
   "license": "MIT",
   "scripts": {
     "build": "tsdown",

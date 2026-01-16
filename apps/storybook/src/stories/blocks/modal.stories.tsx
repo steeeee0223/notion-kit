@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
-import { BaseModal } from "@notion-kit/common";
+import { BaseModal } from "@notion-kit/common/base-modal";
 import { ModalProvider, useModal } from "@notion-kit/modal";
 import { Button } from "@notion-kit/shadcn";
 

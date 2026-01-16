@@ -1,6 +1,6 @@
 "use client";
 
-import { BaseModal } from "@notion-kit/common";
+import { BaseModal } from "@notion-kit/common/base-modal";
 import { useTranslation } from "@notion-kit/i18n";
 import { useModal } from "@notion-kit/modal";
 import { Button } from "@notion-kit/shadcn";

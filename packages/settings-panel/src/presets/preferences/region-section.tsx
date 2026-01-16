@@ -1,6 +1,7 @@
 "use client";
 
-import { BaseModal, TimezoneMenu } from "@notion-kit/common";
+import { BaseModal } from "@notion-kit/common/base-modal";
+import { TimezoneMenu } from "@notion-kit/common/timezone-menu";
 import { LOCALE, useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";

@@ -3,7 +3,7 @@
 import type { Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
-import { BaseModal } from "@notion-kit/common";
+import { BaseModal } from "@notion-kit/common/base-modal";
 import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
 import {

@@ -6,7 +6,7 @@ import { ChevronDown } from "lucide-react";
 import { useOnClickOutside } from "usehooks-ts";
 
 import { cn } from "@notion-kit/cn";
-import { BaseModal } from "@notion-kit/common";
+import { BaseModal } from "@notion-kit/common/base-modal";
 import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";

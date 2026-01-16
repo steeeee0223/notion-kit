@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import type { DragEndEvent } from "@dnd-kit/core";
 
-import { BaseModal } from "@notion-kit/common";
+import { BaseModal } from "@notion-kit/common/base-modal";
 import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
 import { Button } from "@notion-kit/shadcn";
