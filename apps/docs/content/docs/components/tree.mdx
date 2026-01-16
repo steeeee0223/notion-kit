@@ -1,99 +1,202 @@
 ---
 title: Tree
-description: A collapsible, hierarchical list for organizing nested items like folders and files.
+description: A collapsible, hierarchical tree component for organizing nested items like folders and files.
 ---
 
 <ComponentPreview
   name="tree/default"
-  preview={`<TreeList
-    nodes={folderNodes}
-    defaultIcon={{ type: "lucide", name: "file-text" }}
-    showEmptyChild
-  />`}
+  preview={`const tree = useTree(folderNodes, {});
+  return (
+    <Tree tree={tree}>
+      <TreeList nodeIds={tree.entity.rootIds} />
+    </Tree>
+  );`}
 />
 
 ## Installation
 
 <Installation packages="@notion-kit/tree" registryName="notion-ui" />
 
+## Usage
+
+The new tree package uses a modern, optimized architecture that accepts **flat data** (arrays with `parentId` relationships) and handles tree construction internally.
+
+### Basic Example
+
+```tsx
+import { Tree, useTree } from "@notion-kit/tree";
+import { TreeList } from "@notion-kit/tree/presets";
+
+const data = [
+  { id: "1", parentId: null, title: "Folder 1" },
+  { id: "1.a", parentId: "1", title: "File A" },
+  { id: "2", parentId: null, title: "Folder 2" },
+];
+
+export default function MyTree() {
+  const tree = useTree(data, {});
+
+  return (
+    <Tree tree={tree}>
+      <TreeList nodeIds={tree.entity.rootIds} />
+    </Tree>
+  );
+}
+```
+
 ## Examples
 
 ---
 
-### Group
+### Non-Collapsible Tree
+
+Disable collapsing to show all nodes expanded by default.
 
 <ComponentPreview
-  name="tree/group"
-  preview={`<TreeGroup title="Workspace" description="Add a file">
-    <TreeList
-      nodes={folderNodes}
-      defaultIcon={{ type: "lucide", name: "file-text" }}
-      selectedId={activeFile}
-      onSelect={setActiveFile}
-      showEmptyChild
-    />
-  </TreeGroup>`}
+  name="tree/non-collapsible"
+  preview={`useTree(data, { collapsible: false })`}
 />
 
-### Custom Tree Item
+### Multi-Select
 
-<ComponentPreview name="tree/custom" />
+Enable selection of multiple tree items.
+
+<ComponentPreview
+  name="tree/multi-select"
+  preview={`useTree(data, { selectionMode: "multiple" })`}
+/>
+
+### Show Empty Children
+
+Display an indicator when a folder has no children.
+
+<ComponentPreview
+  name="tree/show-empty"
+  preview={`useTree(data, { showEmptyChild: true })`}
+/>
+
+### Command Tree
+
+A searchable tree interface for command palettes.
+
+<ComponentPreview name="tree/command" preview={`<CommandTree tree={tree} />`} />
 
 ## API Reference
 
-### TreeList
+### useTree
 
-A `TreeList` is a generic component `TreeList<T>`, where `T` extends `TreeItemData`.
+Creates a tree instance from flat data.
 
-| Prop             | Type                                                | Default    | Description                                         |
-| ---------------- | --------------------------------------------------- | ---------- | --------------------------------------------------- |
-| `level`          | `number`                                            | `0`        | Current tree depth.                                 |
-| `nodes`\*        | `TreeNode<T>[]`                                     | -          | The recursive tree list data.                       |
-| `defaultIcon`    | [`IconInfo`](/docs/blocks/icon-block#type-iconinfo) | -          | Default icon for tree item.                         |
-| `showEmptyChild` | `boolean`                                           | `false`    | Whether the empty child should be displayed.        |
-| `selectedId`     | `string \| null`                                    | -          | The focused tree item ID.                           |
-| `onSelect`       | `(id: string) => void`                              | -          | Handler that is called when a tree item is focused. |
-| `Item`           | `(props: TreeItemProps<T>) => React.ReactNode`      | `TreeItem` | A custom renderer for each tree item.               |
+```tsx
+const tree = useTree<T>(data, options);
+```
 
-### TreeGroup
+**Parameters:**
 
-| Prop          | Type              | Default | Description                                                   |
-| ------------- | ----------------- | ------- | ------------------------------------------------------------- |
-| `title`\*     | `string`          | -       | The name of the group.                                        |
-| `description` | `string`          | -       | The description of the group that will be shown as a tooltip. |
-| `isLoading`   | `boolean`         | -       | Whether the group is loading.                                 |
-| `children`    | `React.ReactNode` | -       |                                                               |
-| `onCreate`    | `() => void`      | -       | Handler that is called when the "➕" button is clicked.       |
+| Parameter | Type          | Description                                  |
+| --------- | ------------- | -------------------------------------------- |
+| `data`    | `T[]`         | Flat array of items with `id` and `parentId` |
+| `options` | `TreeOptions` | Configuration options for the tree           |
 
-### TreeItem
+**TreeOptions:**
 
-A `TreeItem` is a generic component `TreeItem<T>`, where `T` extends `TreeItemData`.
+| Option              | Type                     | Default    | Description                      |
+| ------------------- | ------------------------ | ---------- | -------------------------------- |
+| `collapsible`       | `boolean`                | `true`     | Whether nodes can be collapsed   |
+| `showEmptyChild`    | `boolean`                | `false`    | Show indicator for empty folders |
+| `selectionMode`     | `"single" \| "multiple"` | `"single"` | Selection behavior               |
+| `initialExpanded`   | `string[]`               | `[]`       | IDs of initially expanded nodes  |
+| `initialSelected`   | `string[]`               | `[]`       | IDs of initially selected nodes  |
+| `onSelectionChange` | `(id: string) => void`   | -          | Called when selection changes    |
 
-| Prop         | Type              | Default | Description                                                      |
-| ------------ | ----------------- | ------- | ---------------------------------------------------------------- |
-| `node`\*     | `T`               | -       | The item data.                                                   |
-| `level`      | `number`          | `0`     | The current depth of the item in the tree.                       |
-| `expandable` | `boolean`         | -       | Whether the item is expandable.                                  |
-| `expanded`   | `boolean`         | -       | Whether the item is expanded.                                    |
-| `isSelected` | `boolean`         | -       | Whether the item is focused.                                     |
-| `children`   | `React.ReactNode` | -       |                                                                  |
-| `onSelect`   | `() => void`      | -       | Handler that is called when the item is focused.                 |
-| `onExpand`   | `() => void`      | -       | Handler that is called when the expand/collapse icon is clicked. |
+**Returns:** `TreeInstance<T>`
 
-### `type` TreeItemData
+The tree instance exposes:
 
-| Prop       | Type                                                | Default | Description                    |
-| ---------- | --------------------------------------------------- | ------- | ------------------------------ |
-| `id`\*     | `string`                                            | -       | The ID of the tree item.       |
-| `nodes`\*  | `string`                                            | -       | The name of the tree item.     |
-| `parentId` | `string \| null`                                    | -       | The ID of its parent.          |
-| `icon`     | [`IconData`](/docs/blocks/icon-block#type-icondata) | -       | The icon of the tree item.     |
-| `group`    | `string \| null`                                    | -       | The group the item belongs to. |
+- `entity`: The tree entity with `rootIds`, `nodes`, etc.
+- `state`: Current tree state (expanded, selected nodes)
+- `expand(id)`: Expand/collapse a node
+- `select(id)`: Select a node
+- `getVisibleIds()`: Get currently visible node IDs
 
-### `type` TreeNode
+### Tree
 
-A tree node is simply a tree item with its children.
+Root container providing tree context.
+
+| Prop        | Type              | Description                          |
+| ----------- | ----------------- | ------------------------------------ |
+| `tree`\*    | `TreeInstance<T>` | Tree instance from `useTree`         |
+| `children`  | `React.ReactNode` | Tree content (typically `Tree.List`) |
+| `className` | `string`          | Additional CSS classes               |
+
+### Tree.Item
+
+A slottable tree item.
+
+### Tree.ExpandIndicator
+
+A slottable button to expand/collapse a node.
+
+| Prop       | Type         | Description                                       |
+| ---------- | ------------ | ------------------------------------------------- |
+| `onToggle` | `() => void` | A handler that is called when the node is toggled |
+
+### Tree.EmptyIndicator
+
+A slottable indicator to show when a node has no children.
+
+### Tree.Group
+
+A slottable tree group.
+
+### Tree.List
+
+Renders tree nodes recursively.
+
+| Prop          | Type             | Description                                   |
+| ------------- | ---------------- | --------------------------------------------- |
+| `nodeIds`\*   | `string[]`       | Array of node IDs to render                   |
+| `renderItem`  | `(props) => JSX` | Custom renderer for tree items (optional)     |
+| `renderEmpty` | `(props) => JSX` | Custom renderer for empty children (optional) |
+
+### TreeList (Preset)
+
+Pre-styled tree list component from `@notion-kit/tree/presets`.
+
+| Prop        | Type       | Description                 |
+| ----------- | ---------- | --------------------------- |
+| `nodeIds`\* | `string[]` | Array of node IDs to render |
+
+### CommandTree (Preset)
+
+Searchable tree component for command interfaces.
+
+| Prop     | Type              | Description                  |
+| -------- | ----------------- | ---------------------------- |
+| `tree`\* | `TreeInstance<T>` | Tree instance from `useTree` |
+
+### `type` TreeItemData (Preset)
+
+Base interface for tree item data.
 
 ```ts
-type TreeNode<T extends TreeItemData> = T & { children: TreeNode<T>[] };
+interface TreeItemData {
+  id: string;
+  parentId: string | null;
+  title: string;
+  icon?: IconData;
+  group?: string | null;
+}
 ```
+
+## Architecture
+
+The tree package uses an optimized O(N) architecture:
+
+1. **Flat Data Input**: Accepts arrays with `parentId` relationships (e.g., from database queries)
+2. **Automatic Tree Building**: Constructs tree structure internally via BFS traversal
+3. **ID-Based Rendering**: Uses node IDs for efficient recursive rendering
+4. **Derived Visibility**: Computes visible nodes on-demand via `getVisibleIds()`
+5. **Smart State Management**: Handles expand/collapse, selection via tree instance
+
+This design eliminates the need for pre-structured tree data and provides better performance.

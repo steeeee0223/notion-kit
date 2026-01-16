@@ -1,13 +1,13 @@
 "use client";
 
-import { BaseModal } from "@notion-kit/common";
 import { useFilter } from "@notion-kit/hooks";
 import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
-import { useModal } from "@notion-kit/modal";
 import type { Page } from "@notion-kit/schemas";
 import {
   Button,
+  Dialog,
+  DialogTrigger,
   Input,
   MenuItem,
   MenuItemAction,
@@ -18,7 +18,7 @@ import {
   TooltipProvider,
 } from "@notion-kit/shadcn";
 
-import { SidebarMenuItem } from "../core";
+import { AlertModal, SidebarMenuItem } from "../core";
 
 interface TrashBoxProps {
   pages: Page[];
@@ -29,10 +29,6 @@ interface TrashBoxProps {
   onSelect?: (page: Page) => void;
 }
 
-/**
- * @description Notion Trash Box
- * @note Must be used within `ModalProvider` and `TooltipProvider`
- */
 export function TrashBox({
   isOpen,
   pages,
@@ -41,8 +37,6 @@ export function TrashBox({
   onDelete,
   onSelect,
 }: TrashBoxProps) {
-  const { openModal } = useModal();
-
   const { search, results, updateSearch } = useFilter(
     pages,
     (page, v) => page.title.toLowerCase().includes(v),
@@ -60,23 +54,13 @@ export function TrashBox({
     e.stopPropagation();
     onRestore?.(id);
   };
-  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
-    e.stopPropagation();
-    openModal(
-      <BaseModal
-        title="Are you sure you want to delete this page from Trash?"
-        primary="Yes. Delete this page"
-        secondary="Cancel"
-        onTrigger={() => onDelete?.(id)}
-      />,
-    );
-  };
 
   return (
     <TooltipProvider>
       <Popover open={isOpen} onOpenChange={onOpenChange}>
         <PopoverTrigger asChild>
           <SidebarMenuItem
+            role="button"
             label="Trash"
             icon={<Icon.Trash className="size-5.5" />}
             hint="Restore deleted pages"
@@ -127,20 +111,32 @@ export function TrashBox({
                         <Button
                           variant="hint"
                           className="size-5"
+                          aria-label="Restore"
                           onClick={(e) => handleRestore(e, page.id)}
                         >
                           <Icon.Undo className="size-4" />
                         </Button>
                       </TooltipPreset>
-                      <TooltipPreset description="Delete from Trash">
-                        <Button
-                          variant="hint"
-                          className="size-5"
-                          onClick={(e) => handleDelete(e, page.id)}
-                        >
-                          <Icon.Trash className="size-4" />
-                        </Button>
-                      </TooltipPreset>
+                      <Dialog>
+                        <TooltipPreset description="Delete from Trash">
+                          <DialogTrigger asChild>
+                            <Button
+                              variant="hint"
+                              className="size-5"
+                              aria-label="Delete from Trash"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Icon.Trash className="size-4" />
+                            </Button>
+                          </DialogTrigger>
+                        </TooltipPreset>
+                        <AlertModal
+                          title="Are you sure you want to delete this page from Trash?"
+                          primary="Yes. Delete this page"
+                          secondary="Cancel"
+                          onTrigger={() => onDelete?.(page.id)}
+                        />
+                      </Dialog>
                     </MenuItemAction>
                   </MenuItem>
                 ))}
@@ -158,7 +154,7 @@ export function TrashBox({
                 rel="noopener noreferrer"
                 className="ml-0.5 no-underline select-none"
               >
-                <Button variant="hint" className="size-5">
+                <Button variant="hint" className="size-5" aria-label="Help">
                   <Icon.QuestionMarkCircled className="size-3.5 shrink-0 fill-secondary" />
                 </Button>
               </a>

@@ -310,21 +310,27 @@ export const Index: Record<
     files: ["components/demos/tooltip/demo.tsx"],
     component: React.lazy(() => import("@/components/demos/tooltip/demo")),
   },
-  "tree/custom": {
-    files: [
-      "components/demos/tree/custom/custom-item.tsx",
-      "components/demos/tree/custom/data.ts",
-      "components/demos/tree/custom/index.tsx",
-    ],
-    component: React.lazy(() => import("@/components/demos/tree/custom")),
+  "tree/command": {
+    files: ["components/demos/tree/command.tsx"],
+    component: React.lazy(() => import("@/components/demos/tree/command")),
   },
   "tree/default": {
     files: ["components/demos/tree/default.tsx"],
     component: React.lazy(() => import("@/components/demos/tree/default")),
   },
-  "tree/group": {
-    files: ["components/demos/tree/group.tsx"],
-    component: React.lazy(() => import("@/components/demos/tree/group")),
+  "tree/multi-select": {
+    files: ["components/demos/tree/multi-select.tsx"],
+    component: React.lazy(() => import("@/components/demos/tree/multi-select")),
+  },
+  "tree/non-collapsible": {
+    files: ["components/demos/tree/non-collapsible.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/tree/non-collapsible"),
+    ),
+  },
+  "tree/show-empty": {
+    files: ["components/demos/tree/show-empty.tsx"],
+    component: React.lazy(() => import("@/components/demos/tree/show-empty")),
   },
   "unsplash/default": {
     files: ["components/demos/unsplash/default.tsx"],

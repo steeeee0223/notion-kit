@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "settings-panel",
-  "type": "registry:component",
   "title": "Settings Panel",
   "dependencies": [
     "@notion-kit/settings-panel",
@@ -18,5 +17,6 @@
       "type": "registry:component",
       "target": "components/core/settings-panel.tsx"
     }
-  ]
+  ],
+  "type": "registry:component"
 }

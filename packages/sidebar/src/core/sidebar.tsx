@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 
 import { cn } from "@notion-kit/cn";
@@ -13,7 +11,7 @@ interface SidebarProps extends React.ComponentProps<"div"> {
   collapsible?: "offcanvas" | "none";
 }
 
-const Sidebar: React.FC<SidebarProps> = ({
+function Sidebar({
   ref,
   side = "left",
   variant = "sidebar",
@@ -21,7 +19,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   className,
   children,
   ...props
-}) => {
+}: SidebarProps) {
   const { config, isMobile, state, openMobile, setOpenMobile, isDraggingRail } =
     useSidebar();
 
@@ -105,6 +103,6 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export { Sidebar };

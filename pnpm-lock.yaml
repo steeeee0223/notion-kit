@@ -1012,9 +1012,6 @@ importers:
       '@notion-kit/spinner':
         specifier: workspace:*
         version: link:../spinner
-      class-variance-authority:
-        specifier: catalog:ui
-        version: 0.7.1
       lucide-react:
         specifier: catalog:ui
         version: 0.456.0(react@19.2.3)
@@ -1037,12 +1034,18 @@ importers:
       '@notion-kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
+      babel-plugin-react-compiler:
+        specifier: catalog:react-compiler
+        version: 1.0.0
       eslint:
         specifier: 'catalog:'
         version: 9.39.1(jiti@2.6.1)
       prettier:
         specifier: 'catalog:'
         version: 3.6.2
+      react-compiler-runtime:
+        specifier: catalog:react-compiler
+        version: 1.0.0(react@19.2.3)
       tsdown:
         specifier: 'catalog:'
         version: 0.16.6(typescript@5.9.3)
@@ -1504,9 +1507,6 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../cn
-      '@notion-kit/common':
-        specifier: workspace:*
-        version: link:../common
       '@notion-kit/hooks':
         specifier: workspace:*
         version: link:../hooks
@@ -1519,15 +1519,15 @@ importers:
       '@notion-kit/icons':
         specifier: workspace:*
         version: link:../icons
-      '@notion-kit/modal':
-        specifier: workspace:*
-        version: link:../modal
       '@notion-kit/schemas':
         specifier: workspace:*
         version: link:../schemas
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../shadcn
+      '@notion-kit/spinner':
+        specifier: workspace:*
+        version: link:../spinner
       '@notion-kit/tree':
         specifier: workspace:*
         version: link:../tree
@@ -1550,12 +1550,18 @@ importers:
       '@notion-kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
+      babel-plugin-react-compiler:
+        specifier: catalog:react-compiler
+        version: 1.0.0
       eslint:
         specifier: 'catalog:'
         version: 9.39.1(jiti@2.6.1)
       prettier:
         specifier: 'catalog:'
         version: 3.6.2
+      react-compiler-runtime:
+        specifier: catalog:react-compiler
+        version: 1.0.0(react@19.2.3)
       tsdown:
         specifier: 'catalog:'
         version: 0.16.6(typescript@5.9.3)
@@ -1788,18 +1794,15 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../cn
-      '@notion-kit/icon-block':
-        specifier: workspace:*
-        version: link:../icon-block
       '@notion-kit/icons':
         specifier: workspace:*
         version: link:../icons
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../shadcn
-      '@notion-kit/spinner':
-        specifier: workspace:*
-        version: link:../spinner
+      '@radix-ui/react-slot':
+        specifier: ^1.2.4
+        version: 1.2.4(@types/react@19.2.7)(react@19.2.3)
       react:
         specifier: catalog:react19
         version: 19.2.3
@@ -1816,12 +1819,21 @@ importers:
       '@notion-kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
+      '@rollup/plugin-babel':
+        specifier: catalog:build
+        version: 6.1.0(@babel/core@7.28.5)(@types/babel__core@7.20.5)(rollup@4.54.0)
+      babel-plugin-react-compiler:
+        specifier: catalog:react-compiler
+        version: 1.0.0
       eslint:
         specifier: 'catalog:'
         version: 9.39.1(jiti@2.6.1)
       prettier:
         specifier: 'catalog:'
         version: 3.6.2
+      react-compiler-runtime:
+        specifier: catalog:react-compiler
+        version: 1.0.0(react@19.2.3)
       tsdown:
         specifier: 'catalog:'
         version: 0.16.6(typescript@5.9.3)

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Command as CommandPrimitive } from "cmdk";
+import { Command as CommandPrimitive, useCommandState } from "cmdk";
 
 import { cn } from "@notion-kit/cn";
 
@@ -201,4 +201,5 @@ export {
   CommandItem,
   CommandShortcut,
   CommandSeparator,
+  useCommandState,
 };

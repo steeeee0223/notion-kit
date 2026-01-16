@@ -1,6 +1,5 @@
 "use client";
 
-import { useModal } from "@notion-kit/modal";
 import {
   SettingsBodyPreset,
   SettingsContent,
@@ -13,12 +12,16 @@ import { Dialog, DialogContent } from "@notion-kit/shadcn";
 
 import { useSettings } from "@/hooks/use-settings";
 
-export function SettingsModal() {
-  const { isOpen, closeModal } = useModal();
+interface SettingsModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   const { tab, setTab, settings, actions } = useSettings();
 
   return (
-    <Dialog open={isOpen} onOpenChange={closeModal}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         noTitle
         className="flex h-[calc(100vh-100px)] max-h-[720px] w-[calc(100vw-100px)] max-w-[1150px] rounded border-none p-0 shadow"

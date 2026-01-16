@@ -1,76 +1,69 @@
-import { TreeList, type TreeItemData, type TreeNode } from "@notion-kit/tree";
+"use client";
 
-const folderNodes: TreeNode<TreeItemData>[] = [
+import { Tree, useTree } from "@notion-kit/tree";
+import { TreeList, type TreeItemData } from "@notion-kit/tree/presets";
+
+export const folderNodes: TreeItemData[] = [
   {
     id: "1",
+    parentId: null,
     title: "Folder 1",
     group: "default",
-    icon: { type: "lucide", src: "folder" },
-    children: [
-      {
-        parentId: "1",
-        id: "1.a",
-        title: "Folder A",
-        group: "default",
-        icon: { type: "lucide", src: "folder" },
-        children: [
-          {
-            parentId: "1.a",
-            id: "1.a.1",
-            title: "File 1 in folder A",
-            group: "default",
-            children: [],
-          },
-        ],
-      },
-      {
-        parentId: "1",
-        id: "1.b",
-        title: "File B",
-        group: "default",
-        children: [],
-      },
-    ],
+    icon: "F",
+  },
+  {
+    id: "1.a",
+    parentId: "1",
+    title: "Folder A",
+    group: "default",
+    icon: "F",
+  },
+  {
+    id: "1.a.1",
+    parentId: "1.a",
+    title: "File 1 in folder A",
+    group: "default",
+  },
+  {
+    id: "1.b",
+    parentId: "1",
+    title: "File B",
+    group: "default",
   },
   {
     id: "2",
+    parentId: null,
     title: "Folder 2",
     group: "default",
-    icon: { type: "lucide", src: "folder" },
-    children: [
-      {
-        parentId: "2",
-        id: "2.c",
-        title: "File C",
-        group: "default",
-        children: [],
-      },
-      {
-        parentId: "2",
-        id: "2.d",
-        title: "File D",
-        group: "default",
-        children: [],
-      },
-    ],
+    icon: "F",
+  },
+  {
+    id: "2.c",
+    parentId: "2",
+    title: "File C",
+    group: "default",
+  },
+  {
+    id: "2.d",
+    parentId: "2",
+    title: "File D",
+    group: "default",
   },
   {
     id: "3",
+    parentId: null,
     title: "Folder 3",
     group: "default",
-    icon: { type: "lucide", src: "folder" },
-    children: [],
+    icon: "F",
   },
 ];
 
 export default function Default() {
+  const tree = useTree(folderNodes, {});
+
   return (
-    <div className="flex w-40 flex-col">
-      <TreeList
-        nodes={folderNodes}
-        defaultIcon={{ type: "lucide", src: "file-text" }}
-        showEmptyChild
-      />
-    </div>
+    <Tree tree={tree} className="w-40">
+      <TreeList nodeIds={tree.entity.rootIds} />
+    </Tree>
   );
 }

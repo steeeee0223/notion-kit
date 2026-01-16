@@ -1,8 +1,7 @@
 "use client";
 
-import { ModalProvider } from "@notion-kit/modal";
 import { Page } from "@notion-kit/schemas";
-import { TrashBox, usePages } from "@notion-kit/sidebar";
+import { TrashBox, usePages } from "@notion-kit/sidebar/presets";
 import { randomInt } from "@notion-kit/utils";
 
 const getRandomTs = () =>
@@ -156,10 +155,8 @@ export const data: Page[] = [
 export default function Demo() {
   const pages = usePages({ pages: data });
   return (
-    <ModalProvider>
-      <div className="w-[200px]">
-        <TrashBox pages={pages.archivedPages()} />
-      </div>
-    </ModalProvider>
+    <div className="w-50">
+      <TrashBox pages={pages.archivedPages()} />
+    </div>
   );
 }

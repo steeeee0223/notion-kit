@@ -55,9 +55,10 @@ export function DocItemActions({
             <Button
               variant="hint"
               className="size-5"
+              aria-label="More actions"
               onClick={(e) => e.stopPropagation()}
             >
-              <Icon.Dots className="size-3 fill-secondary" />
+              <Icon.Dots className="size-3 fill-current" />
             </Button>
           </DropdownMenuTrigger>
         </TooltipPreset>
@@ -128,12 +129,13 @@ export function DocItemActions({
         <Button
           variant="hint"
           className="size-5"
+          aria-label="Add a page inside"
           onClick={(e) => {
             e.stopPropagation();
             onCreate?.();
           }}
         >
-          <Icon.Plus className="size-3 fill-secondary" />
+          <Icon.Plus className="size-3 fill-current" />
         </Button>
       </TooltipPreset>
     </MenuItemAction>

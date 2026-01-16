@@ -2,15 +2,18 @@
 
 import { useState } from "react";
 
-import type { Page, UpdatePageParams } from "@notion-kit/schemas";
-import { TreeItem, TreeList, TreeNode } from "@notion-kit/tree";
+import type { IconData, Page, UpdatePageParams } from "@notion-kit/schemas";
+import { MenuItem } from "@notion-kit/shadcn";
+import { Tree, useTree } from "@notion-kit/tree";
 
 import { SidebarGroup, SidebarMenuItem } from "../core";
-import { DocItemActions } from "./_components/doc-item-actions";
+import { DocIcon, DocItemActions } from "./_components";
+import type { TreeData } from "./_lib";
 
 interface FavoriteListProps {
-  pages: TreeNode<Page>[];
+  pages: Page[];
   activePage?: string | null;
+  defaultIcon?: IconData;
   onSelect?: (page: Page) => void;
   onCreate?: (group: string, parentId?: string) => void;
   onDuplicate?: (id: string) => void;
@@ -18,8 +21,9 @@ interface FavoriteListProps {
 }
 
 export function FavoriteList({
-  pages: nodes,
+  pages,
   activePage,
+  defaultIcon = { type: "lucide", src: "file" },
   onSelect,
   onCreate,
   onDuplicate,
@@ -27,44 +31,55 @@ export function FavoriteList({
 }: FavoriteListProps) {
   const [showList, setShowList] = useState(true);
 
+  const treeData = pages.map((page) => ({
+    ...page,
+    iconData: page.icon ?? defaultIcon,
+  }));
+
+  const tree = useTree(treeData, {
+    showEmptyChild: true,
+    collapsible: true,
+    initialSelected: activePage ? [activePage] : [],
+    onSelectionChange: (id) =>
+      onSelect?.(pages.find((page) => page.id === id)!),
+  });
+
   return (
     <SidebarGroup>
       <SidebarMenuItem
         className="group/doc-list"
         label={<span className="text-xs/none font-medium">Favorites</span>}
-        aria-expanded={showList}
-        onClick={() => setShowList((prev) => !prev)}
+        onClick={() => setShowList((v) => !v)}
       />
       {showList && (
-        <TreeList
-          indent={8}
-          nodes={nodes}
-          defaultIcon={{ type: "lucide", src: "file" }}
-          showEmptyChild
-          selectedId={activePage}
-          renderItem={({ node, ...props }) => (
-            <TreeItem
-              {...props}
-              node={node}
-              onSelect={() => onSelect?.(node)}
-              className="group/doc-item"
-              expandable
-            >
-              <DocItemActions
-                type="normal"
-                title={node.title}
-                icon={node.icon ?? { type: "lucide", src: "file" }}
-                pageLink={node.url ?? "#"}
-                isFavorite={node.isFavorite}
-                lastEditedBy={node.lastEditedBy}
-                lastEditedAt={node.lastEditedAt}
-                onCreate={() => onCreate?.(node.type, node.id)}
-                onDuplicate={() => onDuplicate?.(node.id)}
-                onUpdate={(data) => onUpdate?.(node.id, data)}
-              />
-            </TreeItem>
-          )}
-        />
+        <Tree tree={tree}>
+          <Tree.List<TreeData>
+            nodeIds={tree.entity.rootIds}
+            renderItem={({ node }) => {
+              return (
+                <MenuItem
+                  variant="sidebar"
+                  className="group/doc-item focus:shadow-notion"
+                  Icon={<DocIcon node={node} defaultIcon={defaultIcon} />}
+                  Body={node.title}
+                >
+                  <DocItemActions
+                    type="normal"
+                    title={node.title}
+                    icon={node.icon ?? defaultIcon}
+                    pageLink={node.url ?? "#"}
+                    isFavorite={node.isFavorite}
+                    lastEditedBy={node.lastEditedBy}
+                    lastEditedAt={node.lastEditedAt}
+                    onCreate={() => onCreate?.(node.type, node.id)}
+                    onDuplicate={() => onDuplicate?.(node.id)}
+                    onUpdate={(data) => onUpdate?.(node.id, data)}
+                  />
+                </MenuItem>
+              );
+            }}
+          />
+        </Tree>
       )}
     </SidebarGroup>
   );
