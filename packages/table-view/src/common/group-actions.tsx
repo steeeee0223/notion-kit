@@ -3,11 +3,12 @@
 import type { Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
-import { BaseModal } from "@notion-kit/common/base-modal";
+import { AlertModal } from "@notion-kit/common/alert-modal";
 import { Icon } from "@notion-kit/icons";
-import { useModal } from "@notion-kit/modal";
 import {
   Button,
+  Dialog,
+  DialogTrigger,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -26,21 +27,13 @@ interface GroupActionsProps {
 
 export function GroupActions({ className, row }: GroupActionsProps) {
   const { table } = useTableViewCtx();
-  const { openModal } = useModal();
 
   const { locked } = table.getState().tableGlobal;
 
   const addRow = () => table.addRowToGroup(row.id);
-  const deleteRows = () => {
+  const handleDeleteRows = () => {
     const rowIds = row.subRows.map((subRow) => subRow.id);
-    openModal(
-      <BaseModal
-        title="Are you sure? All rows inside this group will be deleted."
-        primary="Delete"
-        secondary="Cancel"
-        onTrigger={() => table.deleteRows(rowIds)}
-      />,
-    );
+    table.deleteRows(rowIds);
   };
 
   if (locked) return null;
@@ -80,11 +73,17 @@ export function GroupActions({ className, row }: GroupActionsProps) {
               Body="Hide group"
               onSelect={row.toggleGroupVisibility}
             />
-            <DropdownMenuItem
-              Icon={<Icon.Trash />}
-              Body="Delete rows"
-              onSelect={deleteRows}
-            />
+            <Dialog>
+              <DialogTrigger asChild>
+                <DropdownMenuItem Icon={<Icon.Trash />} Body="Delete rows" />
+              </DialogTrigger>
+              <AlertModal
+                title="Are you sure? All rows inside this group will be deleted."
+                primary="Delete"
+                secondary="Cancel"
+                onTrigger={handleDeleteRows}
+              />
+            </Dialog>
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>

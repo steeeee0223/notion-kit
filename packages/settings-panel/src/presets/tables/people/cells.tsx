@@ -1,12 +1,15 @@
 "use client";
 
 import { cn } from "@notion-kit/cn";
+import { AlertModal } from "@notion-kit/common/alert-modal";
 import { useTransition } from "@notion-kit/hooks";
 import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import { Role } from "@notion-kit/schemas";
 import {
   Button,
+  Dialog,
+  DialogTrigger,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -138,23 +141,34 @@ export const MemberActionCell = ({
   isSelf,
   onDelete,
 }: MemberActionCellProps) => {
-  const [remove, isRemoving] = useTransition(() => onDelete?.());
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="hint" className="size-5" disabled={isRemoving}>
+        <Button variant="hint" className="size-5">
           <Icon.Dots className="size-4 fill-current" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-50">
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            variant="error"
-            onClick={remove}
-            Icon={<Icon.Bye className="size-4" />}
-            Body={isSelf ? "Leave workspace" : "Remove from workspace"}
-          />
+          <Dialog>
+            <DialogTrigger asChild>
+              <DropdownMenuItem
+                variant="error"
+                Icon={<Icon.Bye className="size-4" />}
+                Body={isSelf ? "Leave workspace" : "Remove from workspace"}
+              />
+            </DialogTrigger>
+            <AlertModal
+              title={
+                isSelf
+                  ? "Are you sure you want to leave this workspace?"
+                  : "Are you sure you want to remove this member?"
+              }
+              primary="Remove"
+              secondary="Cancel"
+              onTrigger={onDelete}
+            />
+          </Dialog>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -206,16 +220,11 @@ export const GuestActionCell = ({
   onDelete,
 }: GuestActionCellProps) => {
   const [upgrade, isUpgrading] = useTransition(() => onUpdate?.());
-  const [remove, isRemoving] = useTransition(() => onDelete?.());
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="hint"
-          className="size-5"
-          disabled={isUpgrading || isRemoving}
-        >
+        <Button variant="hint" className="size-5" disabled={isUpgrading}>
           <Icon.Dots className="size-4 fill-current" />
         </Button>
       </DropdownMenuTrigger>
@@ -229,12 +238,21 @@ export const GuestActionCell = ({
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            variant="error"
-            Icon={<Icon.Bye className="size-4" />}
-            Body="Remove from workspace"
-            onSelect={remove}
-          />
+          <Dialog>
+            <DialogTrigger asChild>
+              <DropdownMenuItem
+                variant="error"
+                Icon={<Icon.Bye className="size-4" />}
+                Body="Remove from workspace"
+              />
+            </DialogTrigger>
+            <AlertModal
+              title="Are you sure you want to remove this guest?"
+              primary="Remove"
+              secondary="Cancel"
+              onTrigger={onDelete}
+            />
+          </Dialog>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
