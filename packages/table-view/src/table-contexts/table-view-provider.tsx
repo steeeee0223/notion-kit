@@ -3,7 +3,6 @@
 import { createContext, use } from "react";
 import type { Table } from "@tanstack/react-table";
 
-import { ModalProvider } from "@notion-kit/modal";
 import { TooltipProvider } from "@notion-kit/shadcn";
 
 import { BoardViewContent } from "../board-view";
@@ -46,16 +45,14 @@ export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
   return (
     <TableViewContext value={ctx}>
       <TooltipProvider delayDuration={500}>
-        <ModalProvider>
-          <div className="relative flex flex-col gap-4">
-            <div className="sticky top-0 z-(--z-row) bg-main px-24 pb-2">
-              <Toolbar />
-            </div>
-            <Content layout={layout} />
+        <div className="relative flex flex-col gap-4">
+          <div className="sticky top-0 z-(--z-row) bg-main px-24 pb-2">
+            <Toolbar />
           </div>
-          <RowView />
-          {children}
-        </ModalProvider>
+          <Content layout={layout} />
+        </div>
+        <RowView />
+        {children}
       </TooltipProvider>
     </TableViewContext>
   );

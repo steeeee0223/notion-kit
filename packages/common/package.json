@@ -32,7 +32,6 @@
     "@hookform/resolvers": "catalog:ui",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/hooks": "workspace:*",
-    "@notion-kit/modal": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/spinner": "workspace:*",
     "react-hook-form": "catalog:ui"

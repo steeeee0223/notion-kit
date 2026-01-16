@@ -18,7 +18,6 @@
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/icon-block": "workspace:*",
     "@notion-kit/icons": "workspace:*",
-    "@notion-kit/modal": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/settings-panel": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
