@@ -75,7 +75,11 @@ export function GroupActions({ className, row }: GroupActionsProps) {
             />
             <Dialog>
               <DialogTrigger asChild>
-                <DropdownMenuItem Icon={<Icon.Trash />} Body="Delete rows" />
+                <DropdownMenuItem
+                  Icon={<Icon.Trash />}
+                  Body="Delete rows"
+                  onSelect={(e) => e.preventDefault()}
+                />
               </DialogTrigger>
               <AlertModal
                 title="Are you sure? All rows inside this group will be deleted."
