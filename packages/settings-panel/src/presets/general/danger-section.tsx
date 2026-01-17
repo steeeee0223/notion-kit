@@ -1,9 +1,9 @@
 "use client";
 
-import { BaseModal } from "@notion-kit/common";
+import { AlertModal } from "@notion-kit/common/alert-modal";
 import { useTranslation } from "@notion-kit/i18n";
 import { useModal } from "@notion-kit/modal";
-import { Button } from "@notion-kit/shadcn";
+import { Button, Dialog, DialogTrigger } from "@notion-kit/shadcn";
 
 import { Content } from "../_components";
 import { SettingsSection, useSettings } from "../../core";
@@ -29,10 +29,6 @@ export function DangerSection() {
         onSubmit={() => remove(workspace.id)}
       />,
     );
-  const leaveWorkspace = () =>
-    openModal(
-      <BaseModal {...modalsTrans.leave} onTrigger={() => leave(account.id)} />,
-    );
 
   return (
     <SettingsSection title={trans.title}>
@@ -46,11 +42,19 @@ export function DangerSection() {
           </Button>
         </Content>
       ) : (
-        <Content>
-          <Button variant="red" size="sm" onClick={leaveWorkspace}>
-            {trans.leave}
-          </Button>
-        </Content>
+        <Dialog>
+          <Content>
+            <DialogTrigger asChild>
+              <Button variant="red" size="sm">
+                {trans.leave}
+              </Button>
+            </DialogTrigger>
+          </Content>
+          <AlertModal
+            {...modalsTrans.leave}
+            onTrigger={() => leave(account.id)}
+          />
+        </Dialog>
       )}
     </SettingsSection>
   );

@@ -45,7 +45,6 @@
     "@notion-kit/icon-block": "workspace:*",
     "@notion-kit/icon-menu": "workspace:*",
     "@notion-kit/icons": "workspace:*",
-    "@notion-kit/modal": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/tags-input": "workspace:*",
     "@notion-kit/utils": "workspace:*",

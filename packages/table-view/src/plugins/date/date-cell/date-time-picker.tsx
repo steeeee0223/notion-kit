@@ -1,6 +1,6 @@
 "use client";
 
-import { TimezoneMenu } from "@notion-kit/common";
+import { TimezoneMenu } from "@notion-kit/common/timezone-menu";
 import {
   Calendar,
   MenuGroup,

@@ -3,7 +3,7 @@
 import React, { useState, useTransition } from "react";
 
 import { cn } from "@notion-kit/cn";
-import { UrlForm } from "@notion-kit/common";
+import { UrlForm } from "@notion-kit/common/url-form";
 import type { IconData, LucideName } from "@notion-kit/icon-block";
 import {
   Button,

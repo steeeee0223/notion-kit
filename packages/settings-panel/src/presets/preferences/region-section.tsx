@@ -1,10 +1,17 @@
 "use client";
 
-import { BaseModal, TimezoneMenu } from "@notion-kit/common";
+import { useState } from "react";
+
+import { AlertModal } from "@notion-kit/common/alert-modal";
+import { TimezoneMenu } from "@notion-kit/common/timezone-menu";
 import { LOCALE, useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
-import { useModal } from "@notion-kit/modal";
-import { Button, SelectPreset as Select, Switch } from "@notion-kit/shadcn";
+import {
+  Button,
+  Dialog,
+  SelectPreset as Select,
+  Switch,
+} from "@notion-kit/shadcn";
 
 import { SettingsRule, SettingsSection } from "../../core";
 import { useAccountActions } from "../hooks";
@@ -15,21 +22,21 @@ export function RegionSection() {
   const { t, i18n } = useTranslation("settings");
   const trans = t("preferences", { returnObjects: true });
   /** Actions */
-  const { openModal } = useModal();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState<LOCALE | null>(null);
+
   const switchLanguage = (language: LOCALE) => {
-    const langLabel = trans.region.language.options[language].label;
-    openModal(
-      <BaseModal
-        {...trans.modals.language}
-        title={t("preferences.modals.language.title", {
-          language: langLabel,
-        })}
-        onTrigger={async () => {
-          await i18n.changeLanguage(language);
-          await update({ language });
-        }}
-      />,
-    );
+    setSelectedLanguage(language);
+    setDialogOpen(true);
+  };
+
+  const handleConfirmLanguageChange = async () => {
+    if (selectedLanguage) {
+      await i18n.changeLanguage(selectedLanguage);
+      await update({ language: selectedLanguage });
+      setSelectedLanguage(null);
+    }
+    setDialogOpen(false);
   };
 
   const toggleAutoSetTimezone = async (checked: boolean) => {
@@ -39,6 +46,10 @@ export function RegionSection() {
         : Intl.DateTimeFormat().resolvedOptions().timeZone,
     });
   };
+
+  const langLabel = selectedLanguage
+    ? trans.region.language.options[selectedLanguage].label
+    : "";
 
   return (
     <SettingsSection title={trans.region.title}>
@@ -82,6 +93,15 @@ export function RegionSection() {
           )}
         />
       </SettingsRule>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <AlertModal
+          {...trans.modals.language}
+          title={t("preferences.modals.language.title", {
+            language: langLabel,
+          })}
+          onTrigger={handleConfirmLanguageChange}
+        />
+      </Dialog>
     </SettingsSection>
   );
 }

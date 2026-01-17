@@ -6,7 +6,7 @@ import { ChevronDown } from "lucide-react";
 import { useOnClickOutside } from "usehooks-ts";
 
 import { cn } from "@notion-kit/cn";
-import { BaseModal } from "@notion-kit/common";
+import { AlertModal } from "@notion-kit/common/alert-modal";
 import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import { useModal } from "@notion-kit/modal";
@@ -14,6 +14,7 @@ import { Plan } from "@notion-kit/schemas";
 import {
   Button,
   Dialog,
+  DialogTrigger,
   Input,
   Separator,
   Switch,
@@ -98,8 +99,7 @@ export function People() {
     );
   /** Handlers */
   const { isResetting, copyLink, resetLink: updateLink } = useLinkActions();
-  const resetLink = () =>
-    openModal(<BaseModal {...modals["reset-link"]} onTrigger={updateLink} />);
+
   const invitedMembers = useInvitedMembers();
   const addMembers = () =>
     openModal(
@@ -121,11 +121,15 @@ export function People() {
           <SettingsRule
             title={invite.title}
             description={
-              <TextLinks
-                i18nKey="people.invite.description"
-                values={{ guests: guests.length }}
-                onClick={resetLink}
-              />
+              <Dialog>
+                <DialogTrigger asChild>
+                  <TextLinks
+                    i18nKey="people.invite.description"
+                    values={{ guests: guests.length }}
+                  />
+                </DialogTrigger>
+                <AlertModal {...modals["reset-link"]} onTrigger={updateLink} />
+              </Dialog>
             }
           >
             <div className="flex items-center gap-4">
