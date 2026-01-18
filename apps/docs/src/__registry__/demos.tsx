@@ -117,14 +117,6 @@ export const Index: Record<
       () => import("@/components/demos/login-form/default"),
     ),
   },
-  "modal/basic": {
-    files: [
-      "components/demos/modal/basic/index.tsx",
-      "components/demos/modal/basic/modal.tsx",
-      "components/demos/modal/basic/trigger.tsx",
-    ],
-    component: React.lazy(() => import("@/components/demos/modal/basic")),
-  },
   "navbar/menu": {
     files: ["components/demos/navbar/menu.tsx"],
     component: React.lazy(() => import("@/components/demos/navbar/menu")),

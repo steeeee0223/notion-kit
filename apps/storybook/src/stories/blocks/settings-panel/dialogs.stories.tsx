@@ -3,13 +3,33 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { delay } from "msw";
 
 import {
+  Add2FAForm,
+  AddMembers,
   AddTeamMembers,
   CreateTeamspace,
+  DeleteAccount,
+  DeleteGuest,
+  DeleteMember,
+  DeleteWorkspace,
+  EmailSettings,
+  Enable2FAMethod,
+  PasskeysModal,
+  PasswordForm,
+  SettingsProvider,
   TeamspaceDetail,
 } from "@notion-kit/settings-panel";
 import { Dialog } from "@notion-kit/shadcn";
 
-import { mockTeamMemberRows, mockUsers } from "./data";
+import {
+  mockGuests,
+  mockMembers,
+  mockPasskeys,
+  mockSettings,
+  mockTeamMemberRows,
+  mockUser,
+  mockUsers,
+  mockWorkspaces,
+} from "./data";
 
 const Portal = ({ children }: React.PropsWithChildren) => (
   <Dialog open>{children}</Dialog>
@@ -71,4 +91,93 @@ export const AddTeamMembersModal: Story = {
       />
     ),
   },
+};
+
+// Migrated stories from modals.stories.tsx
+export const AddMembersModal: Story = {
+  render: () => (
+    <AddMembers
+      open
+      invitedMembers={[
+        ...mockMembers.map(({ user }) => user),
+        ...mockGuests.map(({ user }) => user),
+      ]}
+      onAdd={({ emails, role }) => console.log(`Adding ${role}s: `, emails)}
+    />
+  ),
+};
+
+export const DeleteAccountModal: Story = {
+  args: {
+    children: <DeleteAccount email={mockUser.email} />,
+  },
+};
+
+export const DeleteGuestModal: Story = {
+  args: {
+    children: <DeleteGuest name={mockUser.name} />,
+  },
+};
+
+export const DeleteMemberModal: Story = {
+  args: {
+    children: <DeleteMember />,
+  },
+};
+
+export const DeleteWorkspaceModal: Story = {
+  args: {
+    children: <DeleteWorkspace name={mockWorkspaces[0]!.name} />,
+  },
+};
+
+export const EmailSettingsModal: Story = {
+  args: {
+    children: <EmailSettings email={mockUser.email} />,
+  },
+};
+
+export const SetPasswordModal: Story = {
+  args: {
+    children: <PasswordForm hasPassword={false} />,
+  },
+};
+
+export const ChangePasswordModal: Story = {
+  args: {
+    children: <PasswordForm hasPassword />,
+  },
+};
+
+export const Add2FAModal: Story = {
+  args: {
+    children: (
+      <Add2FAForm
+        preferredName="john"
+        email="john@example.com"
+        avatarUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Go_gopher_favicon.svg/1200px-Go_gopher_favicon.svg.png"
+        onSubmit={() => true}
+      />
+    ),
+  },
+};
+
+export const Enable2FAMethodModal: Story = {
+  args: {
+    children: <Enable2FAMethod />,
+  },
+};
+
+export const PasskeysManagement: Story = {
+  args: {
+    children: <PasskeysModal />,
+  },
+  render: (props) => (
+    <SettingsProvider
+      settings={mockSettings}
+      passkeys={{ getAll: () => Promise.resolve(mockPasskeys) }}
+    >
+      <Portal {...props} />
+    </SettingsProvider>
+  ),
 };

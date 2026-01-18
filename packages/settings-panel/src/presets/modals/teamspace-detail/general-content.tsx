@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { CircleHelp } from "lucide-react";
 
 import { IconBlock, type IconData } from "@notion-kit/icon-block";
@@ -42,8 +41,6 @@ export function GeneralContent({
 }: GeneralContentProps) {
   const options = { ...permissions };
   options.default.description = permissions.default.getDescription(workspace);
-
-  const [openLeave, setOpenLeave] = useState(false);
 
   return (
     <div className="space-y-5">
@@ -93,7 +90,7 @@ export function GeneralContent({
       <section>
         <Title title="Danger zone" />
         <Card className="mb-2.5 flex flex-col hover:bg-red/10">
-          <Dialog open={openLeave} onOpenChange={setOpenLeave}>
+          <Dialog>
             <DialogTrigger asChild>
               <Button
                 tabIndex={-1}
@@ -111,11 +108,7 @@ export function GeneralContent({
                 </div>
               </Button>
             </DialogTrigger>
-            <LeaveTeamspace
-              name={teamspace.name}
-              onLeave={onLeave}
-              onClose={() => setOpenLeave(false)}
-            />
+            <LeaveTeamspace name={teamspace.name} onLeave={onLeave} />
           </Dialog>
         </Card>
         <HintButton

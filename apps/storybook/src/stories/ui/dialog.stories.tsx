@@ -1,11 +1,12 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { delay } from "msw";
 
 import { AlertModal } from "@notion-kit/common/alert-modal";
 import { Button, Dialog, DialogTrigger } from "@notion-kit/shadcn";
 
 const meta = {
-  title: "blocks/Modal",
+  title: "shadcn/Dialog",
   parameters: { layout: "centered" },
 } satisfies Meta;
 export default meta;
@@ -24,7 +25,10 @@ export const Default: Story = {
           title="This action cannot be undone. This will permanently delete your account and remove your data from our servers."
           primary="Continue"
           secondary="Cancel"
-          onTrigger={() => setOpen(false)}
+          onTrigger={async () => {
+            await delay(1500);
+            setOpen(false);
+          }}
         />
       </Dialog>
     );

@@ -10,22 +10,18 @@
     "url": "https://github.com/steeeee0223/notion-kit.git",
     "directory": "packages/settings-panel"
   },
-  "publishConfig": {
-    "main": "./dist/index.mjs",
-    "module": "./dist/index.mjs",
-    "types": "./dist/index.d.mts",
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
-      }
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
     }
   },
   "files": [
     "dist"
   ],
-  "main": "./src/index.ts",
-  "module": "./src/index.ts",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "license": "MIT",
   "scripts": {
     "build": "tsdown",
@@ -45,7 +41,6 @@
     "@notion-kit/icon-block": "workspace:*",
     "@notion-kit/icon-menu": "workspace:*",
     "@notion-kit/icons": "workspace:*",
-    "@notion-kit/modal": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/spinner": "workspace:*",
@@ -63,8 +58,10 @@
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "@types/file-saver": "^2.0.7",
+    "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",
     "prettier": "catalog:",
+    "react-compiler-runtime": "catalog:react-compiler",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
@@ -75,5 +72,10 @@
   "bundleDependencies": [
     "@notion-kit/i18n"
   ],
-  "prettier": "@notion-kit/prettier-config"
+  "prettier": "@notion-kit/prettier-config",
+  "babel": {
+    "plugins": [
+      "babel-plugin-react-compiler"
+    ]
+  }
 }

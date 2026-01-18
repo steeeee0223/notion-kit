@@ -38,7 +38,13 @@ function DialogClose({
       {asChild ? (
         children
       ) : (
-        <Button type="button" variant="close" size="circle" {...props}>
+        <Button
+          type="button"
+          variant="close"
+          size="circle"
+          aria-label="Close"
+          {...props}
+        >
           <Icon.Close className="h-full w-3.5 fill-secondary dark:fill-default/45" />
           <span className="sr-only">Close</span>
         </Button>

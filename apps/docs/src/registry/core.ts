@@ -31,7 +31,6 @@ export const core = [
       "@notion-kit/cover",
       "@notion-kit/icon-block",
       "@notion-kit/icon-menu",
-      "@notion-kit/modal",
     ],
   },
   {

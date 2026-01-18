@@ -2,7 +2,6 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { useModal } from "@notion-kit/modal";
 import { toast } from "@notion-kit/shadcn";
 
 import { useSettingsApi } from "../../core";
@@ -17,7 +16,6 @@ import { useAccount } from "../hooks";
 export function useSessions() {
   const { sessions: actions } = useSettingsApi();
   const { data: account } = useAccount();
-  const { closeModal } = useModal();
   const queryClient = useQueryClient();
 
   const queryKey = QUERY_KEYS.sessions(account.id);
@@ -42,7 +40,6 @@ export function useSessions() {
     },
     onSuccess: () => {
       toast.success("Session logged out successfully");
-      closeModal();
     },
     onError: (error, _, context) => {
       queryClient.setQueryData(queryKey, context?.previous);
@@ -67,7 +64,6 @@ export function useSessions() {
     },
     onSuccess: () => {
       toast.success("All sessions logged out successfully");
-      closeModal();
     },
     onError: (error, _, context) => {
       queryClient.setQueryData(queryKey, context?.previous);

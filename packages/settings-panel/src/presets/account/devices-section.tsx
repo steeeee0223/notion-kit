@@ -1,8 +1,7 @@
 "use client";
 
 import { useTranslation } from "@notion-kit/i18n";
-import { useModal } from "@notion-kit/modal";
-import { Button } from "@notion-kit/shadcn";
+import { Button, Dialog, DialogTrigger } from "@notion-kit/shadcn";
 
 import { SettingsRule, SettingsSection } from "../../core";
 import { useAccount } from "../hooks";
@@ -11,45 +10,33 @@ import { SessionsTable } from "../tables";
 import { useSessions } from "./use-sessions";
 
 export function DevicesSection() {
-  const { openModal } = useModal();
   /** i18n */
   const { t } = useTranslation("settings", { keyPrefix: "account" });
   const trans = t("devices", { returnObjects: true });
   /** handlers */
   const { data: account } = useAccount();
   const { sessions, revoke, revokeOthers } = useSessions();
-  const openLogoutAllConfirmModal = () =>
-    openModal(
-      <LogoutConfirm
-        title="Log out of all devices?"
-        description="You will be logged out of all other active sessions on other devices except this one."
-        onConfirm={revokeOthers}
-      />,
-    );
-  const openLogoutConfirmModal = (deviceName: string, token: string) =>
-    openModal(
-      <LogoutConfirm
-        title={`Log out of ${deviceName}?`}
-        description="You will be logged out of this device."
-        onConfirm={() => revoke(token)}
-      />,
-    );
 
   return (
     <SettingsSection title={trans.title}>
       <SettingsRule {...trans.logout}>
-        <Button
-          size="xs"
-          className="text-secondary"
-          onClick={openLogoutAllConfirmModal}
-        >
-          {trans.logout.button}
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button size="xs" className="text-secondary">
+              {trans.logout.button}
+            </Button>
+          </DialogTrigger>
+          <LogoutConfirm
+            title="Log out of all devices?"
+            description="You will be logged out of all other active sessions on other devices except this one."
+            onConfirm={revokeOthers}
+          />
+        </Dialog>
       </SettingsRule>
       <SessionsTable
         currentSessionId={account.currentSessionId}
         data={sessions}
-        onLogout={openLogoutConfirmModal}
+        onLogout={revoke}
       />
     </SettingsSection>
   );

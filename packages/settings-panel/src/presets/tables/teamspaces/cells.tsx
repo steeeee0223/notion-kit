@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useTransition } from "react";
 
-import { useTemporaryFix, useTransition } from "@notion-kit/hooks";
 import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import {
@@ -62,9 +61,10 @@ export function AccessSelectCell({
   const options = { ...permissions };
   options.default.description = permissions.default.getDescription(workspace);
 
-  const [select, isUpdating] = useTransition(
-    (permission: TeamspacePermission) => onSelect?.(permission),
-  );
+  const [isUpdating, startTransition] = useTransition();
+  const select = (permission: TeamspacePermission) => {
+    startTransition(() => onSelect?.(permission));
+  };
 
   return (
     <div className="flex items-center px-1">
@@ -127,63 +127,62 @@ export function TeamspaceActionCell({
   onLeave,
   onArchive,
 }: TeamspaceActionCellProps) {
-  const { onCloseAutoFocus } = useTemporaryFix();
-  const [openLeave, setOpenLeave] = useState(false);
-  const [archive, isArchiving] = useTransition(() => onArchive?.());
+  const [isArchiving, startTransition] = useTransition();
+  const archive = () => startTransition(() => onArchive?.());
 
   return (
-    <Dialog open={openLeave} onOpenChange={setOpenLeave}>
-      <DropdownMenu>
-        <TooltipPreset description="Teamspace settings and members...">
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="hint"
-              className="size-5"
-              disabled={isArchiving}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Icon.Dots className="size-4 fill-current" />
-            </Button>
-          </DropdownMenuTrigger>
-        </TooltipPreset>
-        <DropdownMenuContent
-          className="w-[282px]"
-          onClick={(e) => e.stopPropagation()}
-          onCloseAutoFocus={onCloseAutoFocus}
-        >
-          <DropdownMenuGroup>
-            <DropdownMenuItem
-              onClick={onViewDetail}
-              Icon={<Icon.Gear />}
-              Body="Teamspace settings"
-            />
-            {!!role && (
-              <>
+    <DropdownMenu>
+      <TooltipPreset description="Teamspace settings and members...">
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="hint"
+            className="size-5"
+            aria-label="More options"
+            disabled={isArchiving}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Icon.Dots className="size-4 fill-current" />
+          </Button>
+        </DropdownMenuTrigger>
+      </TooltipPreset>
+      <DropdownMenuContent
+        className="w-[282px]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <DropdownMenuGroup>
+          <DropdownMenuItem
+            onClick={onViewDetail}
+            Icon={<Icon.Gear />}
+            Body="Teamspace settings"
+          />
+          {!!role && (
+            <>
+              <Dialog>
                 <DialogTrigger asChild>
                   <DropdownMenuItem
                     variant="error"
                     Icon={<Icon.Bye className="size-4" />}
                     Body="Leave teamspace"
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
                   />
                 </DialogTrigger>
-                <DropdownMenuItem
-                  variant="error"
-                  onClick={archive}
-                  disabled={role !== "owner"}
-                  Icon={<Icon.ArchiveBox />}
-                  Body="Archive teamspace"
-                />
-              </>
-            )}
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <LeaveTeamspace
-        name={name}
-        onLeave={onLeave}
-        onClose={() => setOpenLeave(false)}
-      />
-    </Dialog>
+                <LeaveTeamspace name={name} onLeave={onLeave} />
+              </Dialog>
+              <DropdownMenuItem
+                variant="error"
+                onClick={archive}
+                disabled={role !== "owner"}
+                Icon={<Icon.ArchiveBox />}
+                Body="Archive teamspace"
+              />
+            </>
+          )}
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -211,17 +210,16 @@ export function TeamMemberActionCell({
   onUpdate,
   onRemove,
 }: TeamMemberActionCellProps) {
-  const [update, isUpdating] = useTransition((role: TeamspaceRole) =>
-    onUpdate?.(role),
-  );
-  const [remove, isRemoving] = useTransition(() => onRemove?.());
-  const disabled = isUpdating || isRemoving;
+  const [isPending, startTransition] = useTransition();
+  const update = (role: TeamspaceRole) =>
+    startTransition(() => onUpdate?.(role));
+  const remove = () => startTransition(() => onRemove?.());
 
   return (
     <DropdownMenu>
       <TooltipPreset description="Teamspace settings and members...">
         <DropdownMenuTrigger asChild>
-          <Button variant="hint" size="xs" disabled={disabled}>
+          <Button variant="hint" size="xs" disabled={isPending}>
             <span className="text-primary">{teamspaceRoles[role].label}</span>
             <Icon.ChevronDown className="size-2.5 fill-icon" />
           </Button>
