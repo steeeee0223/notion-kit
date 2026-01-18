@@ -114,8 +114,7 @@
       "dependencies": [
         "@notion-kit/cover",
         "@notion-kit/icon-block",
-        "@notion-kit/icon-menu",
-        "@notion-kit/modal"
+        "@notion-kit/icon-menu"
       ],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
