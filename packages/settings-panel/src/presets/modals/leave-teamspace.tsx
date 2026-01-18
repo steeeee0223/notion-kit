@@ -10,8 +10,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  Spinner,
 } from "@notion-kit/shadcn";
-import { Spinner } from "@notion-kit/spinner";
 
 interface LeaveTeamspaceProps {
   name: string;
@@ -43,7 +43,7 @@ export function LeaveTeamspace({ name, onLeave }: LeaveTeamspaceProps) {
           disabled={isLeaving}
         >
           Remove
-          {isLeaving && <Spinner className="text-current" />}
+          {isLeaving && <Spinner />}
         </Button>
         <DialogClose asChild>
           <Button variant="hint" size="sm" className="h-7 w-fit">

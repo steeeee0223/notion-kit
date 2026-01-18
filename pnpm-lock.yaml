@@ -266,9 +266,6 @@ importers:
       '@notion-kit/single-image-dropzone':
         specifier: workspace:*
         version: link:../../packages/single-image-dropzone
-      '@notion-kit/spinner':
-        specifier: workspace:*
-        version: link:../../packages/spinner
       '@notion-kit/table-view':
         specifier: workspace:*
         version: link:../../packages/table-view
@@ -414,9 +411,6 @@ importers:
       '@notion-kit/single-image-dropzone':
         specifier: workspace:*
         version: link:../../packages/single-image-dropzone
-      '@notion-kit/spinner':
-        specifier: workspace:*
-        version: link:../../packages/spinner
       '@notion-kit/table-view':
         specifier: workspace:*
         version: link:../../packages/table-view
@@ -751,9 +745,6 @@ importers:
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../shadcn
-      '@notion-kit/spinner':
-        specifier: workspace:*
-        version: link:../spinner
       react:
         specifier: catalog:react19
         version: 19.2.3
@@ -837,9 +828,6 @@ importers:
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../shadcn
-      '@notion-kit/spinner':
-        specifier: workspace:*
-        version: link:../spinner
       react:
         specifier: catalog:react19
         version: 19.2.3
@@ -895,9 +883,6 @@ importers:
       '@notion-kit/single-image-dropzone':
         specifier: workspace:*
         version: link:../single-image-dropzone
-      '@notion-kit/spinner':
-        specifier: workspace:*
-        version: link:../spinner
       '@notion-kit/unsplash':
         specifier: workspace:*
         version: link:../unsplash
@@ -1006,9 +991,6 @@ importers:
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../shadcn
-      '@notion-kit/spinner':
-        specifier: workspace:*
-        version: link:../spinner
       lucide-react:
         specifier: catalog:ui
         version: 0.456.0(react@19.2.3)
@@ -1070,9 +1052,6 @@ importers:
       '@notion-kit/single-image-dropzone':
         specifier: workspace:*
         version: link:../single-image-dropzone
-      '@notion-kit/spinner':
-        specifier: workspace:*
-        version: link:../spinner
       '@notion-kit/utils':
         specifier: workspace:*
         version: link:../utils
@@ -1171,9 +1150,6 @@ importers:
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../shadcn
-      '@notion-kit/spinner':
-        specifier: workspace:*
-        version: link:../spinner
       '@notion-kit/utils':
         specifier: workspace:*
         version: link:../utils
@@ -1315,9 +1291,6 @@ importers:
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../shadcn
-      '@notion-kit/spinner':
-        specifier: workspace:*
-        version: link:../spinner
       '@notion-kit/tags-input':
         specifier: workspace:*
         version: link:../tags-input
@@ -1470,6 +1443,9 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../cn
+      '@notion-kit/common':
+        specifier: workspace:*
+        version: link:../common
       '@notion-kit/hooks':
         specifier: workspace:*
         version: link:../hooks
@@ -1488,9 +1464,6 @@ importers:
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../shadcn
-      '@notion-kit/spinner':
-        specifier: workspace:*
-        version: link:../spinner
       '@notion-kit/tree':
         specifier: workspace:*
         version: link:../tree
@@ -1537,9 +1510,9 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../cn
-      '@notion-kit/spinner':
+      '@notion-kit/shadcn':
         specifier: workspace:*
-        version: link:../spinner
+        version: link:../shadcn
       lucide-react:
         specifier: catalog:ui
         version: 0.456.0(react@19.2.3)
@@ -1555,46 +1528,6 @@ importers:
       tailwind-merge:
         specifier: ^3.0.2
         version: 3.4.0
-    devDependencies:
-      '@notion-kit/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@notion-kit/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@notion-kit/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      eslint:
-        specifier: 'catalog:'
-        version: 9.39.1(jiti@2.6.1)
-      prettier:
-        specifier: 'catalog:'
-        version: 3.6.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.16.6(typescript@5.9.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-
-  packages/spinner:
-    dependencies:
-      '@notion-kit/cn':
-        specifier: workspace:*
-        version: link:../cn
-      class-variance-authority:
-        specifier: catalog:ui
-        version: 0.7.1
-      lucide-react:
-        specifier: catalog:ui
-        version: 0.456.0(react@19.2.3)
-      react:
-        specifier: catalog:react19
-        version: 19.2.3
-      react-dom:
-        specifier: catalog:react19
-        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@notion-kit/eslint-config':
         specifier: workspace:*
@@ -1809,9 +1742,6 @@ importers:
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../shadcn
-      '@notion-kit/spinner':
-        specifier: workspace:*
-        version: link:../spinner
       react:
         specifier: catalog:react19
         version: 19.2.3

@@ -22,9 +22,9 @@ import {
   FormLabel,
   Input,
   Label,
+  Spinner,
   Textarea,
 } from "@notion-kit/shadcn";
-import { Spinner } from "@notion-kit/spinner";
 
 import { HintButton } from "../../_components";
 import { PermissionSelect } from "./permission-select";

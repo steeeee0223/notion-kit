@@ -9,8 +9,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  Spinner,
 } from "@notion-kit/shadcn";
-import { Spinner } from "@notion-kit/spinner";
 
 interface AlertModalProps {
   title: string;
@@ -56,7 +56,7 @@ export function AlertModal({
           className="w-full"
         >
           {primary}
-          {loading && <Spinner className="text-current" />}
+          {loading && <Spinner />}
         </Button>
         <DialogClose asChild>
           <Button size="sm" className="w-full">

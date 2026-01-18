@@ -43,7 +43,6 @@
     "@notion-kit/icons": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
-    "@notion-kit/spinner": "workspace:*",
     "@notion-kit/tags-input": "workspace:*",
     "@notion-kit/utils": "workspace:*",
     "@tanstack/react-query": "catalog:ui",

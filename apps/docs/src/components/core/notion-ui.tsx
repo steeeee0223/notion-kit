@@ -21,6 +21,7 @@ export {
   SelectPreset as Select,
   Separator,
   Skeleton,
+  Spinner,
   Switch,
   Tabs,
   TabsContent,
@@ -34,6 +35,5 @@ export {
 } from "@notion-kit/shadcn";
 
 export { SingleImageDropzone } from "@notion-kit/single-image-dropzone";
-export { Spinner } from "@notion-kit/spinner";
 export { TagsInput } from "@notion-kit/tags-input";
 export { Tree, useTree } from "@notion-kit/tree";

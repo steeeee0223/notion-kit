@@ -5,8 +5,12 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 import { COLOR } from "@notion-kit/common/colors";
 import { LucideIcon, type LucideName } from "@notion-kit/icon-block";
-import { Button, TooltipPreset, TooltipProvider } from "@notion-kit/shadcn";
-import { Spinner } from "@notion-kit/spinner";
+import {
+  Button,
+  Spinner,
+  TooltipPreset,
+  TooltipProvider,
+} from "@notion-kit/shadcn";
 
 import { MenuSearchBar, MenuSectionTitle } from "../_components";
 import { ColorPicker } from "./color-picker";
@@ -68,7 +72,7 @@ export const LucidePicker = memo(function LucidePicker({
       <TooltipProvider delayDuration={500}>
         <div className="mt-0 py-1.5">
           {isLoading ? (
-            <Spinner className="mx-1 my-2" />
+            <Spinner className="mx-1 my-2 fill-icon" />
           ) : icons.length ? (
             <InfiniteScroll
               dataLength={icons.length}

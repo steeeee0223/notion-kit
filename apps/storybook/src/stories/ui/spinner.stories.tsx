@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
-import { Spinner } from "@notion-kit/spinner";
+import { Spinner } from "@notion-kit/shadcn";
 
 const meta = {
-  title: "blocks/Spinner",
+  title: "shadcn/Spinner",
   component: Spinner,
   parameters: { layout: "centered" },
 } satisfies Meta<typeof Spinner>;

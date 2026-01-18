@@ -8,6 +8,7 @@ import {
   Drawer,
   DrawerContent,
   DrawerTrigger,
+  Spinner,
   Tabs,
   TabsContent,
   TabsList,
@@ -15,7 +16,6 @@ import {
   toast,
   TooltipPreset,
 } from "@notion-kit/shadcn";
-import { Spinner } from "@notion-kit/spinner";
 
 import { NavbarItem } from "../core";
 
@@ -72,7 +72,7 @@ export const History: React.FC<HistoryProps> = ({ pageId, fetchLogs }) => {
             <TabsContent value="updates" className="bg-main pt-3">
               {isLoading ? (
                 <div className="inset-0 flex items-center justify-center py-4">
-                  <Spinner />
+                  <Spinner className="fill-icon" />
                 </div>
               ) : (
                 <div className="flex flex-col gap-y-0 overflow-x-auto">

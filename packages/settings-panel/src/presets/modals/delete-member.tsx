@@ -15,8 +15,8 @@ import {
   DialogHeader,
   DialogTitle,
   Label,
+  Spinner,
 } from "@notion-kit/shadcn";
-import { Spinner } from "@notion-kit/spinner";
 
 interface DeleteMemberProps {
   onDelete?: () => void;
@@ -58,7 +58,7 @@ export function DeleteMember({ onDelete }: DeleteMemberProps) {
           className="w-full font-semibold"
         >
           Continue
-          {loading && <Spinner className="text-current" />}
+          {loading && <Spinner />}
         </Button>
         <DialogClose asChild>
           <Button variant="hint" size="sm" className="h-7 w-fit">

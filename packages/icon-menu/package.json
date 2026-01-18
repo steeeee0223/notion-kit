@@ -42,7 +42,6 @@
     "@notion-kit/icon-block": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/single-image-dropzone": "workspace:*",
-    "@notion-kit/spinner": "workspace:*",
     "@notion-kit/utils": "workspace:*",
     "lucide-react": "catalog:ui",
     "react-infinite-scroll-component": "^6.1.0",
