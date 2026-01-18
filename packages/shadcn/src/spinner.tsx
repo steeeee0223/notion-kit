@@ -2,7 +2,6 @@ import { cn } from "@notion-kit/cn";
 
 export interface SpinnerProps extends React.SVGProps<SVGSVGElement> {
   variant?: "solid" | "dashed";
-  size?: "sm" | "md" | "lg";
 }
 
 function LoaderDashed(props: React.SVGProps<SVGSVGElement>) {
