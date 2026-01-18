@@ -12,8 +12,8 @@ import {
   DialogHeader,
   DialogIcon,
   DialogTitle,
+  Spinner,
 } from "@notion-kit/shadcn";
-import { Spinner } from "@notion-kit/spinner";
 
 interface LogoutConfirmProps {
   title: string;
@@ -49,7 +49,7 @@ export function LogoutConfirm({
           onClick={logout}
           disabled={isPending}
         >
-          {isPending && <Spinner className="text-current" />}
+          {isPending && <Spinner />}
           Log out
         </Button>
         <DialogClose asChild>

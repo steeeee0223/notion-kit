@@ -3,8 +3,7 @@
 import React from "react";
 
 import { cn } from "@notion-kit/cn";
-import { Input } from "@notion-kit/shadcn";
-import { Spinner } from "@notion-kit/spinner";
+import { Input, Spinner } from "@notion-kit/shadcn";
 
 import { useUnsplash } from "./use-unsplash";
 
@@ -39,7 +38,7 @@ export const Unsplash: React.FC<UnsplashProps> = ({
       </div>
       <div className="mx-0 mt-4 flex items-center justify-center">
         {isLoading || !images ? (
-          <Spinner />
+          <Spinner className="fill-icon" />
         ) : images.length > 0 ? (
           <div className="grid w-full grid-cols-4">
             {images.map(({ id, urls, user, description }) => (

@@ -2,6 +2,7 @@ import { cn } from "@notion-kit/cn";
 
 export interface SpinnerProps extends React.SVGProps<SVGSVGElement> {
   variant?: "solid" | "dashed";
+  size?: "sm" | "md" | "lg";
 }
 
 function LoaderDashed(props: React.SVGProps<SVGSVGElement>) {
@@ -56,7 +57,10 @@ function Spinner({ variant, className, ...props }: SpinnerProps) {
     <Icon
       role="status"
       aria-label="Loading"
-      className={cn("block size-4 shrink-0 animate-spin fill-muted", className)}
+      className={cn(
+        "block size-4 shrink-0 animate-spin fill-current",
+        className,
+      )}
       {...props}
     />
   );

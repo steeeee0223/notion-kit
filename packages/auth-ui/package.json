@@ -45,7 +45,6 @@
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/settings-panel": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
-    "@notion-kit/spinner": "workspace:*",
     "react-hook-form": "catalog:ui",
     "uuid": "catalog:uuid"
   },

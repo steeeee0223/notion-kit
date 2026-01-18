@@ -1,8 +1,7 @@
 "use client";
 
 import { IconBlock } from "@notion-kit/icon-block";
-import { Button, Form } from "@notion-kit/shadcn";
-import { Spinner } from "@notion-kit/spinner";
+import { Button, Form, Spinner } from "@notion-kit/shadcn";
 
 import { useAcceptInvitationForm } from "./use-accept-invitation-form";
 
@@ -37,9 +36,7 @@ export function AcceptInvitationForm({
             className="w-full"
             disabled={form.formState.isSubmitting || isFetching}
           >
-            {form.formState.isSubmitting && (
-              <Spinner className="text-current" />
-            )}
+            {form.formState.isSubmitting && <Spinner />}
             Continue
           </Button>
         </form>

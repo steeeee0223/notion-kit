@@ -12,8 +12,8 @@ import {
   DialogHeader,
   DialogIcon,
   DialogTitle,
+  Spinner,
 } from "@notion-kit/shadcn";
-import { Spinner } from "@notion-kit/spinner";
 
 interface DeleteGuestProps {
   name: string;
@@ -47,7 +47,7 @@ export function DeleteGuest({ name, onDelete }: DeleteGuestProps) {
           className="w-full font-semibold"
         >
           Remove
-          {loading && <Spinner className="text-current" />}
+          {loading && <Spinner />}
         </Button>
         <DialogClose asChild>
           <Button variant="hint" size="sm" className="h-7 w-fit">

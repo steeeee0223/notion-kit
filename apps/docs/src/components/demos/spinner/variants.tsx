@@ -1,4 +1,4 @@
-import { Spinner } from "@notion-kit/spinner";
+import { Spinner } from "@notion-kit/shadcn";
 
 const variants = ["solid", "dashed"] as const;
 

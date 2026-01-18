@@ -8,7 +8,7 @@ import type { DropzoneOptions } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 import { twMerge } from "tailwind-merge";
 
-import { Spinner } from "@notion-kit/spinner";
+import { Spinner } from "@notion-kit/shadcn";
 
 const variants = {
   base: "relative rounded-md flex justify-center items-center flex-col cursor-pointer min-h-[150px] min-w-[200px] border border-border transition-colors duration-200 ease-in-out",
@@ -135,7 +135,7 @@ const SingleImageDropzone: React.FC<SingleImageDropzoneProps> = ({
     <div className="relative">
       {disabled && (
         <div className="absolute inset-y-0 z-50 flex h-full w-full items-center justify-center bg-main/80">
-          <Spinner size="lg" />
+          <Spinner className="size-6 fill-icon" />
         </div>
       )}
       <div

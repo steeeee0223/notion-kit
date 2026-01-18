@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@notion-kit/cn": "workspace:*",
-    "@notion-kit/spinner": "workspace:*",
+    "@notion-kit/shadcn": "workspace:*",
     "lucide-react": "catalog:ui",
     "react-dropzone": "^14.3.8",
     "tailwind-merge": "^3.0.2"

@@ -16,8 +16,8 @@ import {
   CommandList,
   CommandSeparator,
   SelectPreset as Select,
+  Spinner,
 } from "@notion-kit/shadcn";
-import { Spinner } from "@notion-kit/spinner";
 import { TagsInput } from "@notion-kit/tags-input";
 
 import { Avatar, HintButton } from "../_components";
@@ -136,7 +136,7 @@ export function AddMembers({
                 className="h-7 min-w-[70px] font-medium"
               >
                 Invite
-                {loading && <Spinner className="text-current" />}
+                {loading && <Spinner />}
               </Button>
             </div>
           </div>

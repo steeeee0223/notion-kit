@@ -5,7 +5,6 @@
   "dependencies": [
     "@notion-kit/shadcn",
     "@notion-kit/single-image-dropzone",
-    "@notion-kit/spinner",
     "@notion-kit/tags-input",
     "@notion-kit/tree"
   ],
@@ -15,7 +14,7 @@
   "files": [
     {
       "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/notion-ui.tsx",
-      "content": "export {\n  Avatar,\n  AvatarFallback,\n  AvatarImage,\n  Badge,\n  Button,\n  Checkbox,\n  DropdownMenu,\n  DropdownMenuContent,\n  DropdownMenuGroup,\n  DropdownMenuItem,\n  DropdownMenuTrigger,\n  Input,\n  MultiSelect,\n  Popover,\n  PopoverTrigger,\n  PopoverContent,\n  ResizableHandle,\n  ResizablePanel,\n  ResizablePanelGroup,\n  SelectPreset as Select,\n  Separator,\n  Skeleton,\n  Switch,\n  Tabs,\n  TabsContent,\n  TabsList,\n  TabsTrigger,\n  ThemeProvider,\n  useTheme,\n  Toaster,\n  TooltipProvider,\n  TooltipPreset,\n} from \"@notion-kit/shadcn\";\n\nexport { SingleImageDropzone } from \"@notion-kit/single-image-dropzone\";\nexport { Spinner } from \"@notion-kit/spinner\";\nexport { TagsInput } from \"@notion-kit/tags-input\";\nexport { Tree, useTree } from \"@notion-kit/tree\";\n",
+      "content": "export {\n  Avatar,\n  AvatarFallback,\n  AvatarImage,\n  Badge,\n  Button,\n  Checkbox,\n  DropdownMenu,\n  DropdownMenuContent,\n  DropdownMenuGroup,\n  DropdownMenuItem,\n  DropdownMenuTrigger,\n  Input,\n  MultiSelect,\n  Popover,\n  PopoverTrigger,\n  PopoverContent,\n  ResizableHandle,\n  ResizablePanel,\n  ResizablePanelGroup,\n  SelectPreset as Select,\n  Separator,\n  Skeleton,\n  Spinner,\n  Switch,\n  Tabs,\n  TabsContent,\n  TabsList,\n  TabsTrigger,\n  ThemeProvider,\n  useTheme,\n  Toaster,\n  TooltipProvider,\n  TooltipPreset,\n} from \"@notion-kit/shadcn\";\n\nexport { SingleImageDropzone } from \"@notion-kit/single-image-dropzone\";\nexport { TagsInput } from \"@notion-kit/tags-input\";\nexport { Tree, useTree } from \"@notion-kit/tree\";\n",
       "type": "registry:component",
       "target": "components/core/notion-ui.tsx"
     }

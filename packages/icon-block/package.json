@@ -34,7 +34,6 @@
   "dependencies": {
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
-    "@notion-kit/spinner": "workspace:*",
     "lucide-react": "catalog:ui"
   },
   "devDependencies": {

@@ -1,8 +1,12 @@
 "use client";
 
 import { cn, cva, type VariantProps } from "@notion-kit/cn";
-import { Avatar, AvatarFallback, AvatarImage } from "@notion-kit/shadcn";
-import { Spinner } from "@notion-kit/spinner";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Spinner,
+} from "@notion-kit/shadcn";
 
 import { getLetter, isEmoji, isLucideIcon } from "./lib";
 import { LucideIcon } from "./lucide-icon";
@@ -44,7 +48,7 @@ function Icon({
     return (
       <Avatar className={className}>
         <AvatarFallback className="bg-transparent">
-          <Spinner className={className} />
+          <Spinner className={cn("fill-icon", className)} />
         </AvatarFallback>
         <AvatarImage src={icon.src} alt="icon" />
       </Avatar>

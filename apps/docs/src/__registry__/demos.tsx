@@ -260,10 +260,6 @@ export const Index: Record<
     files: ["components/demos/spinner/default.tsx"],
     component: React.lazy(() => import("@/components/demos/spinner/default")),
   },
-  "spinner/sizes": {
-    files: ["components/demos/spinner/sizes.tsx"],
-    component: React.lazy(() => import("@/components/demos/spinner/sizes")),
-  },
   "spinner/variants": {
     files: ["components/demos/spinner/variants.tsx"],
     component: React.lazy(() => import("@/components/demos/spinner/variants")),

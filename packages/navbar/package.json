@@ -43,7 +43,6 @@
     "@notion-kit/icons": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
-    "@notion-kit/spinner": "workspace:*",
     "@notion-kit/utils": "workspace:*",
     "lucide-react": "catalog:ui"
   },
