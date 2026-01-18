@@ -9,7 +9,6 @@ graph TD
     utils[utils]
     hooks[hooks]
     schemas[schemas]
-    modal[modal]
     i18n[i18n]
     auth[auth]
     
@@ -33,7 +32,6 @@ graph TD
     
     common --> cn
     common --> hooks
-    common --> modal
     common --> shadcn
     common --> spinner
     
@@ -54,7 +52,6 @@ graph TD
     settings-panel --> icon-block
     settings-panel --> icon-menu
     settings-panel --> icons
-    settings-panel --> modal
     settings-panel --> schemas
     settings-panel --> shadcn
     settings-panel --> spinner
@@ -66,7 +63,6 @@ graph TD
     navbar --> icon-block
     navbar --> icon-menu
     navbar --> icons
-    navbar --> modal
     navbar --> schemas
     navbar --> shadcn
     navbar --> spinner
@@ -115,7 +111,6 @@ graph TD
 - `utils` - Date/time utilities
 - `hooks` - React hooks
 - `schemas` - Zod schemas
-- `modal` - Modal state management
 - `i18n` - Internationalization
 - `auth` - Authentication logic
 
@@ -132,15 +127,15 @@ graph TD
 - `icon-block` → cn, shadcn, spinner
 - `single-image-dropzone` → cn, spinner
 - `tags-input` → cn, shadcn, utils
-- `common` → cn, hooks, modal, shadcn, spinner
+- `common` → cn, hooks, shadcn, spinner
 - `tree/presets` → cn, icons, shadcn
 - `sidebar` → cn, hooks, icons, shadcn, spinner
 
 ### Level 3 (Depends on Level 0-2)
 
 - `icon-menu` → cn, common, icon-block, shadcn, spinner, utils
-- `settings-panel` → cn, common, hooks, i18n, icon-block, icon-menu, icons, modal, schemas, shadcn, spinner, tags-input, utils
-- `navbar` → cn, hooks, icon-block, icon-menu, icons, modal, schemas, shadcn, spinner, utils
+- `settings-panel` → cn, common, hooks, i18n, icon-block, icon-menu, icons, schemas, shadcn, spinner, tags-input, utils
+- `navbar` → cn, hooks, icon-block, icon-menu, icons, schemas, shadcn, spinner, utils
 - `auth-ui` → cn, auth, icon-block, icon-menu, icons, schemas, settings-panel, shadcn, spinner
 
 ### Level 4 (Depends on Level 0-3)
