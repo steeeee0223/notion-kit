@@ -2,12 +2,10 @@
 
 import { useRef, useState } from "react";
 
-import { useTemporaryFix } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
-import { useModal } from "@notion-kit/modal";
 import {
   Button,
-  Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -27,76 +25,68 @@ import type { Passkey } from "../../lib";
 import { usePasskeys } from "../account/use-passkeys";
 
 export function PasskeysModal() {
-  const { onCloseAutoFocus } = useTemporaryFix();
-  const { isOpen, closeModal } = useModal();
   const { passkeys, error, isPending, create, update, remove, clearError } =
     usePasskeys();
 
   return (
-    <Dialog open={isOpen} onOpenChange={closeModal}>
-      <DialogContent
-        forceMount
-        className="w-100 p-5"
-        onClick={(e) => e.stopPropagation()}
-        onCloseAutoFocus={onCloseAutoFocus}
-      >
-        <DialogHeader>
-          <DialogIcon>
-            <Icon.LockShield className="size-8 fill-primary/45" />
-          </DialogIcon>
-          <DialogTitle>Manage Passkeys</DialogTitle>
-          <DialogDescription className="text-primary">
-            Use your device's built-in security features like Face ID to sign in
-            instead of remembering passwords.
-          </DialogDescription>
-          {error && (
-            <div className="text-xs text-red">
-              The passkey could not be saved; please try again.
-            </div>
-          )}
-        </DialogHeader>
-        {passkeys.length > 0 && (
-          <div className="space-y-2">
-            <div className="text-xs">Active passkeys</div>
-            {passkeys.map((passkey) => (
-              <PasskeyCard
-                key={passkey.id}
-                passkey={passkey}
-                onEnterRename={clearError}
-                onRename={update}
-                onDelete={remove}
-              />
-            ))}
+    <DialogContent className="w-100 p-5">
+      <DialogHeader>
+        <DialogIcon>
+          <Icon.LockShield className="size-8 fill-primary/45" />
+        </DialogIcon>
+        <DialogTitle>Manage Passkeys</DialogTitle>
+        <DialogDescription className="text-primary">
+          Use your device's built-in security features like Face ID to sign in
+          instead of remembering passwords.
+        </DialogDescription>
+        {error && (
+          <div className="text-xs text-red">
+            The passkey could not be saved; please try again.
           </div>
         )}
-        <DialogFooter>
-          <Button
-            type="submit"
-            variant="blue"
-            size="sm"
-            className="w-full"
-            onClick={() => create()}
-            disabled={isPending}
-          >
-            {passkeys.length > 0 ? (
-              <Icon.Plus className="mr-1.5 size-3.5 fill-current" />
-            ) : (
-              <Icon.PersonWithKey className="mr-1.5 size-3.5 fill-current" />
-            )}
-            Add new passkey
-          </Button>
+      </DialogHeader>
+      {passkeys.length > 0 && (
+        <div className="space-y-2">
+          <div className="text-xs">Active passkeys</div>
+          {passkeys.map((passkey) => (
+            <PasskeyCard
+              key={passkey.id}
+              passkey={passkey}
+              onEnterRename={clearError}
+              onRename={update}
+              onDelete={remove}
+            />
+          ))}
+        </div>
+      )}
+      <DialogFooter>
+        <Button
+          type="submit"
+          variant="blue"
+          size="sm"
+          className="w-full"
+          onClick={() => create()}
+          disabled={isPending}
+        >
+          {passkeys.length > 0 ? (
+            <Icon.Plus className="mr-1.5 size-3.5 fill-current" />
+          ) : (
+            <Icon.PersonWithKey className="mr-1.5 size-3.5 fill-current" />
+          )}
+          Add new passkey
+        </Button>
+        <DialogClose asChild>
           <Button
             type="button"
             size="sm"
             className="w-full"
-            onClick={closeModal}
             disabled={isPending}
           >
             Cancel
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </DialogClose>
+      </DialogFooter>
+    </DialogContent>
   );
 }
 
@@ -153,7 +143,11 @@ function PasskeyCard({
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="hint" className="ml-auto size-6">
+          <Button
+            variant="hint"
+            className="ml-auto size-6"
+            aria-label="More options"
+          >
             <Icon.Dots className="fill-muted" />
           </Button>
         </DropdownMenuTrigger>

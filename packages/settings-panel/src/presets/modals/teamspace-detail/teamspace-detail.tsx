@@ -40,7 +40,6 @@ interface TeamspaceDetailProps {
     role?: TeamspaceRole | false;
   };
   teamMembers: TeamMemberRow[];
-  onClose?: () => void;
   onLeave?: () => void | Promise<void>;
   onJoin?: () => void | Promise<void>;
   onAddMembers?: (data: {
@@ -59,7 +58,6 @@ export function TeamspaceDetail({
   workspace,
   teamspace,
   teamMembers,
-  onClose,
   onLeave,
   onJoin,
   onAddMembers,
@@ -69,8 +67,6 @@ export function TeamspaceDetail({
 }: TeamspaceDetailProps) {
   const { onCloseAutoFocus } = useTemporaryFix();
   const [tab, setTab] = useState(Tab.Members);
-
-  const [openLeave, setOpenLeave] = useState(false);
 
   return (
     <TooltipProvider>
@@ -88,7 +84,7 @@ export function TeamspaceDetail({
           </div>
           <div className="grow" />
           {teamspace.role ? (
-            <Dialog open={openLeave} onOpenChange={setOpenLeave}>
+            <Dialog>
               <TooltipPreset side="top" description="Click to leave teamspace">
                 <DialogTrigger asChild>
                   <Button
@@ -101,14 +97,7 @@ export function TeamspaceDetail({
                   </Button>
                 </DialogTrigger>
               </TooltipPreset>
-              <LeaveTeamspace
-                name={teamspace.name}
-                onLeave={onLeave}
-                onClose={() => {
-                  setOpenLeave(false);
-                  onClose?.();
-                }}
-              />
+              <LeaveTeamspace name={teamspace.name} onLeave={onLeave} />
             </Dialog>
           ) : (
             <Button

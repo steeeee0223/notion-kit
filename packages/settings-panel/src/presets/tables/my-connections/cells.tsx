@@ -43,7 +43,7 @@ export function ActionCell({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="hint" className="size-5">
+        <Button variant="hint" className="size-5" aria-label="More options">
           <Icon.Dots className="size-4 fill-current" />
         </Button>
       </DropdownMenuTrigger>

@@ -1349,9 +1349,6 @@ importers:
       '@notion-kit/icons':
         specifier: workspace:*
         version: link:../icons
-      '@notion-kit/modal':
-        specifier: workspace:*
-        version: link:../modal
       '@notion-kit/schemas':
         specifier: workspace:*
         version: link:../schemas

@@ -4,7 +4,6 @@ import React, { createContext, use, useMemo } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { I18nProvider } from "@notion-kit/i18n";
-import { ModalProvider } from "@notion-kit/modal";
 import { Role, type IconData } from "@notion-kit/schemas";
 import { TooltipProvider } from "@notion-kit/shadcn";
 
@@ -165,7 +164,7 @@ export function SettingsProvider({
         <SettingsContext value={contextValue}>
           <SettingsApiContext value={actionsApi}>
             <QueryClientProvider client={queryClient}>
-              <ModalProvider>{children}</ModalProvider>
+              {children}
             </QueryClientProvider>
           </SettingsApiContext>
         </SettingsContext>

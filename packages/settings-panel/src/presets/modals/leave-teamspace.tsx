@@ -4,6 +4,7 @@ import { useTransition } from "react";
 
 import {
   Button,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -14,31 +15,18 @@ import { Spinner } from "@notion-kit/spinner";
 
 interface LeaveTeamspaceProps {
   name: string;
-  onLeave?: () => Promise<void> | void;
-  onClose?: () => void;
+  onLeave?: () => void;
 }
 
 /**
  * @note cloned from `DeleteGuest`
  */
-export function LeaveTeamspace({
-  name,
-  onLeave,
-  onClose,
-}: LeaveTeamspaceProps) {
+export function LeaveTeamspace({ name, onLeave }: LeaveTeamspaceProps) {
   const [isLeaving, startTransition] = useTransition();
-  const leave = () =>
-    startTransition(async () => {
-      await onLeave?.();
-      onClose?.();
-    });
+  const leave = () => startTransition(() => onLeave?.());
 
   return (
-    <DialogContent
-      forceMount
-      className="w-[300px] p-5"
-      onClick={(e) => e.stopPropagation()}
-    >
+    <DialogContent className="w-[300px] p-5">
       <DialogHeader>
         <DialogTitle typography="h2">Leave {name}?</DialogTitle>
       </DialogHeader>
@@ -57,14 +45,11 @@ export function LeaveTeamspace({
           Remove
           {isLeaving && <Spinner className="text-current" />}
         </Button>
-        <Button
-          onClick={onClose}
-          variant="hint"
-          size="sm"
-          className="h-7 w-fit"
-        >
-          Cancel
-        </Button>
+        <DialogClose asChild>
+          <Button variant="hint" size="sm" className="h-7 w-fit">
+            Cancel
+          </Button>
+        </DialogClose>
       </DialogFooter>
     </DialogContent>
   );

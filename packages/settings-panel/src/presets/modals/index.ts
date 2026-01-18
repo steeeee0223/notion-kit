@@ -1,9 +1,8 @@
 /** Account */
 export { EmailSettings } from "./email-settings";
-export { PasswordForm } from "./password-form";
+export { PasswordForm } from "./password";
 export { DeleteAccount } from "./delete-account";
-export { Add2FAForm } from "./add-2fa-form";
-export { Enable2FAMethod } from "./enable-2fa-method";
+export { Add2FAForm, Enable2FAMethod } from "./2fa";
 export { PasskeysModal } from "./passkeys-modal";
 export { LogoutConfirm } from "./logout-confirm";
 /** General */
