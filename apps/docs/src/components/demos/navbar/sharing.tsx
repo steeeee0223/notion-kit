@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { Publish } from "@notion-kit/navbar";
+import { Publish } from "@notion-kit/navbar/presets";
 import { Page } from "@notion-kit/schemas";
 import { TooltipProvider } from "@notion-kit/shadcn";
 
