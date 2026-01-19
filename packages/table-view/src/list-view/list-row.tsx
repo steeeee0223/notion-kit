@@ -1,6 +1,7 @@
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Selectable } from "@notion-kit/selectable";
 import { flexRender, type Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
@@ -47,12 +48,13 @@ export function ListRow({ row }: ListRowProps) {
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      data-block-id={row.id}
-      className="group/row my-1"
-      style={style}
-    >
+    <Selectable.Item id={row.id} asChild>
+      <div
+        ref={setNodeRef}
+        data-block-id={row.id}
+        className="group/row my-1"
+        style={style}
+      >
       <div
         className="relative flex items-center"
         data-selected={row.getIsSelected()}
@@ -87,6 +89,7 @@ export function ListRow({ row }: ListRowProps) {
         </div>
         <div className="absolute -end-7 top-1/2 h-full w-7 -translate-y-1/2 cursor-pointer" />
       </div>
-    </div>
+      </div>
+    </Selectable.Item>
   );
 }

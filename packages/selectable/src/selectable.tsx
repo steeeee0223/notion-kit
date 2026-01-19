@@ -140,6 +140,8 @@ interface SelectableProps extends React.PropsWithChildren {
     item: Rect,
     mode: SelectionMode,
   ) => boolean;
+  value?: Set<string>;
+  onValueChange?: (value: Set<string>) => void;
 }
 
 function Selectable({
@@ -155,9 +157,28 @@ function Selectable({
   className,
   activationConstraint,
   isSelectableIntersect,
+  value,
+  onValueChange,
 }: SelectableProps) {
   const containerRef = useRef<HTMLElement>(null);
-  const [selectedIds, setSelectedIds] = useState(new Set<string>());
+  const [uncontrolledSelectedIds, setUncontrolledSelectedIds] = useState(
+    new Set<string>(),
+  );
+  const selectedIds = value ?? uncontrolledSelectedIds;
+
+  const handleSetSelectedIds = useCallback(
+    (next: Set<string> | ((prev: Set<string>) => Set<string>)) => {
+      if (onValueChange) {
+        const nextSet =
+          typeof next === "function" ? next(value ?? new Set()) : next;
+        onValueChange(nextSet);
+      } else {
+        setUncontrolledSelectedIds(next);
+      }
+    },
+    [onValueChange, value],
+  );
+
   const [selectingIds, setSelectingIds] = useState(new Set<string>());
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectionRect, setSelectionRect] = useState<Rect | null>(null);
@@ -177,7 +198,7 @@ function Selectable({
 
   const toggleSelection = useCallback(
     (id: string) => {
-      setSelectedIds((prev) => {
+      handleSetSelectedIds((prev) => {
         const next = new Set(prev);
         if (next.has(id)) {
           next.delete(id);
@@ -192,8 +213,8 @@ function Selectable({
   );
 
   const clearSelection = useCallback(() => {
-    setSelectedIds(new Set());
-  }, []);
+    handleSetSelectedIds(new Set());
+  }, [handleSetSelectedIds]);
 
   const updateSelection = useCallback(
     (currentPoint: Point) => {
@@ -272,7 +293,7 @@ function Selectable({
         setSelectingIds(new Set());
 
         if (!multiple) {
-          setSelectedIds(new Set());
+          handleSetSelectedIds(new Set());
         }
 
         onSelectStart?.(e);
@@ -287,7 +308,7 @@ function Selectable({
             setSelectingIds(new Set());
 
             if (!multiple) {
-              setSelectedIds(new Set());
+              handleSetSelectedIds(new Set());
             }
 
             onSelectStart?.(e);
@@ -328,7 +349,7 @@ function Selectable({
           setSelectingIds(new Set());
 
           if (!multiple) {
-            setSelectedIds(new Set());
+            handleSetSelectedIds(new Set());
           }
 
           onSelectStart?.(e);
@@ -372,7 +393,7 @@ function Selectable({
       setPointerDownPoint(null);
 
       const newSelected = new Set([...selectedIds, ...selectingIds]);
-      setSelectedIds(newSelected);
+      handleSetSelectedIds(newSelected);
       setSelectingIds(new Set());
 
       onSelectEnd?.(newSelected);
@@ -413,7 +434,7 @@ function Selectable({
       subscribeItem,
       toggleSelection,
       clearSelection,
-      setSelectedIds,
+      setSelectedIds: handleSetSelectedIds,
     }),
     [
       clearSelection,

@@ -83,7 +83,7 @@ export function RowActions({
           className="z-999 text-center"
         >
           <PopoverTrigger asChild>
-            <Button variant="hint" className="h-6 w-4.5" {...dragHandleProps}>
+            <Button variant="hint" className="h-6 w-4.5" data-draggable-handle {...dragHandleProps}>
               <Icon.DragHandle className="size-3.5 fill-icon" />
             </Button>
           </PopoverTrigger>

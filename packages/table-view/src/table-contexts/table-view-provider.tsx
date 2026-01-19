@@ -3,6 +3,7 @@
 import { createContext, use } from "react";
 import type { Table } from "@tanstack/react-table";
 
+import { Selectable } from "@notion-kit/selectable";
 import { TooltipProvider } from "@notion-kit/shadcn";
 
 import { BoardViewContent } from "../board-view";
@@ -41,6 +42,8 @@ export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
     ...props,
   });
   const { layout } = ctx.table.getTableGlobalState();
+  const { rowSelection } = ctx.table.getState();
+  const selectionSet = new Set(Object.keys(rowSelection));
 
   return (
     <TableViewContext value={ctx}>
@@ -49,7 +52,21 @@ export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
           <div className="sticky top-0 z-(--z-row) bg-main px-24 pb-2">
             <Toolbar />
           </div>
-          <Content layout={layout} />
+          <Selectable
+            multiple
+            value={selectionSet}
+            onValueChange={(selected) => {
+              ctx.table.setRowSelection(
+                Object.fromEntries(
+                  Array.from(selected).map((id) => [id, true]),
+                ),
+              );
+            }}
+            className="flex grow flex-col gap-4"
+          >
+            <Selectable.Overlay className="z-50 border border-blue bg-blue/20" />
+            <Content layout={layout} />
+          </Selectable>
         </div>
         <RowView />
         {children}

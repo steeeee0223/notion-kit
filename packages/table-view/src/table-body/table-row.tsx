@@ -5,6 +5,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Cell, flexRender, Row } from "@tanstack/react-table";
 
+import { Selectable } from "@notion-kit/selectable";
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
 import { Checkbox } from "@notion-kit/shadcn";
@@ -52,12 +53,13 @@ export function TableRow({ row }: TableRowProps) {
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      data-block-id={row.id}
-      className="group/row flex h-[calc(100%+2px)]"
-      style={style}
-    >
+    <Selectable.Item id={row.id} asChild>
+      <div
+        ref={setNodeRef}
+        data-block-id={row.id}
+        className="group/row flex h-[calc(100%+2px)]"
+        style={style}
+      >
       <div
         id="notion-table-view-row"
         dir="ltr"
@@ -107,9 +109,10 @@ export function TableRow({ row }: TableRowProps) {
           <TableCells cells={row.getCenterVisibleCells()} />
         </div>
       </div>
-      {/* Bottom line at row end */}
-      <div className="flex w-16 grow justify-start border-b border-b-border-cell" />
-    </div>
+        {/* Bottom line at row end */}
+        <div className="flex w-16 grow justify-start border-b border-b-border-cell" />
+      </div>
+    </Selectable.Item>
   );
 }
 

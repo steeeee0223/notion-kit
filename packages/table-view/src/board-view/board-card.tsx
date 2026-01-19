@@ -4,6 +4,7 @@ import React, { useId, useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Selectable } from "@notion-kit/selectable";
 import { flexRender, type Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
@@ -70,7 +71,7 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
     transition,
   };
 
-  return (
+  const content = (
     <div
       ref={setNodeRef}
       data-slot="board-card"
@@ -185,6 +186,14 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
       </div>
       {isOver && <div className="absolute inset-x-0 h-1.5 bg-blue/30" />}
     </div>
+  );
+
+  if (overlay) return content;
+
+  return (
+    <Selectable.Item id={row.id} asChild>
+      {content}
+    </Selectable.Item>
   );
 }
 
