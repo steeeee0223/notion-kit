@@ -10,27 +10,27 @@
     "url": "https://github.com/steeeee0223/notion-kit.git",
     "directory": "packages/navbar"
   },
-  "publishConfig": {
-    "main": "./dist/index.mjs",
-    "module": "./dist/index.mjs",
-    "types": "./dist/index.d.mts",
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
-      }
+  "exports": {
+    ".": {
+      "types": "./dist/core/index.d.mts",
+      "default": "./dist/core/index.mjs"
+    },
+    "./presets": {
+      "types": "./dist/presets/index.d.mts",
+      "default": "./dist/presets/index.mjs"
     }
   },
   "files": [
     "dist"
   ],
-  "main": "./src/index.ts",
-  "module": "./src/index.ts",
+  "main": "./dist/core/index.mjs",
+  "module": "./dist/core/index.mjs",
+  "types": "./dist/core/index.d.mts",
   "license": "MIT",
   "scripts": {
-    "build": "tsdown --config=../../tooling/config/tsdown.config.ts",
+    "build": "tsdown",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsdown --config=../../tooling/config/tsdown.config.ts --watch",
+    "dev": "tsdown --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
@@ -43,15 +43,17 @@
     "@notion-kit/icons": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
-    "@notion-kit/utils": "workspace:*",
-    "lucide-react": "catalog:ui"
+    "@notion-kit/utils": "workspace:*"
   },
   "devDependencies": {
+    "@notion-kit/config": "workspace:*",
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",
     "prettier": "catalog:",
+    "react-compiler-runtime": "catalog:react-compiler",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
@@ -59,5 +61,10 @@
     "react": "catalog:react19",
     "react-dom": "catalog:react19"
   },
-  "prettier": "@notion-kit/prettier-config"
+  "prettier": "@notion-kit/prettier-config",
+  "babel": {
+    "plugins": [
+      "babel-plugin-react-compiler"
+    ]
+  }
 }

@@ -13,10 +13,10 @@ interface ParticipantsProps {
   otherUsers?: User[];
 }
 
-export const Participants: React.FC<ParticipantsProps> = ({
+export function Participants({
   currentUser,
   otherUsers = [],
-}) => {
+}: ParticipantsProps) {
   const hasMoreUsers = otherUsers.length > MAX_SHOWN_USERS;
 
   return (
@@ -25,7 +25,7 @@ export const Participants: React.FC<ParticipantsProps> = ({
         <UserAvatar
           borderColor={idToColor(currentUser.id)}
           user={currentUser}
-          className="ml-[-8px]"
+          className="-ml-2"
         />
       )}
       {otherUsers.slice(0, MAX_SHOWN_USERS).map((user) => (
@@ -33,7 +33,7 @@ export const Participants: React.FC<ParticipantsProps> = ({
           borderColor={idToColor(user.id)}
           key={user.id}
           user={user}
-          className="ml-[-8px]"
+          className="-ml-2"
         />
       ))}
       {hasMoreUsers && (
@@ -46,4 +46,4 @@ export const Participants: React.FC<ParticipantsProps> = ({
       )}
     </div>
   );
-};
+}

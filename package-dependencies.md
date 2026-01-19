@@ -31,6 +31,9 @@ graph TD
     common --> cn
     common --> hooks
     common --> shadcn
+        
+    navbar --> cn
+    navbar --> shadcn
     
     %% Level 3 - depends on Level 2
     tree --> cn
@@ -60,15 +63,6 @@ graph TD
     settings-panel --> tags-input
     settings-panel --> utils
     
-    navbar --> cn
-    navbar --> hooks
-    navbar --> icon-block
-    navbar --> icon-menu
-    navbar --> icons
-    navbar --> schemas
-    navbar --> shadcn
-    navbar --> utils
-    
     auth-ui --> cn
     auth-ui --> auth
     auth-ui --> icon-block
@@ -91,6 +85,16 @@ graph TD
     tree-presets[tree/presets] --> cn
     tree-presets --> icons
     tree-presets --> shadcn
+
+    %% navbar/presets subpackage (virtual node for documentation)
+    navbar/presets[navbar/presets] --> cn
+    navbar/presets --> hooks
+    navbar/presets --> icon-block
+    navbar/presets --> icon-menu
+    navbar/presets --> icons
+    navbar/presets --> schemas
+    navbar/presets --> shadcn
+    navbar/presets --> utils
     
     %% sidebar/presets subpackage (virtual node for documentation)
     sidebar-presets[sidebar/presets] --> cn
@@ -131,15 +135,16 @@ graph TD
 - `tree/presets` → cn, icons, shadcn
 - `sidebar` → cn, hooks, icons, shadcn
 - `unsplash` → cn, shadcn
+- `navbar` → cn, shadcn
 
 ### Level 3 (Depends on Level 0-2)
 
 - `icon-menu` → cn, common, icon-block, shadcn, utils
 - `cover` → cn, shadcn, unsplash
 - `settings-panel` → cn, common, hooks, i18n, icon-block, icon-menu, icons, schemas, shadcn, tags-input, utils
-- `navbar` → cn, hooks, icon-block, icon-menu, icons, schemas, shadcn, utils
 - `auth-ui` → cn, auth, icon-block, icon-menu, icons, schemas, settings-panel, shadcn
 
 ### Level 4 (Depends on Level 0-3)
 
+- `navbar/presets` → cn, hooks, icon-block, icon-menu, icons, schemas, shadcn, utils
 - `sidebar/presets` → cn, hooks, icon-block, icon-menu, icons, schemas, shadcn, tree, utils
