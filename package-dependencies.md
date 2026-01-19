@@ -87,7 +87,7 @@ graph TD
     tree-presets --> shadcn
 
     %% navbar/presets subpackage (virtual node for documentation)
-    navbar/presets --> cn
+    navbar/presets[navbar/presets] --> cn
     navbar/presets --> hooks
     navbar/presets --> icon-block
     navbar/presets --> icon-menu
