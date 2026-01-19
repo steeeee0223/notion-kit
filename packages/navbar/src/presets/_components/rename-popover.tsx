@@ -17,12 +17,12 @@ interface RenamePopoverProps extends React.PropsWithChildren {
   onChange: (value: { title: string; icon: IconData }) => void;
 }
 
-export const RenamePopover: React.FC<RenamePopoverProps> = ({
+export function RenamePopover({
   children,
   title,
   icon,
   onChange,
-}) => {
+}: RenamePopoverProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [open, setOpen] = useState(false);
@@ -70,4 +70,4 @@ export const RenamePopover: React.FC<RenamePopoverProps> = ({
       </PopoverContent>
     </Popover>
   );
-};
+}

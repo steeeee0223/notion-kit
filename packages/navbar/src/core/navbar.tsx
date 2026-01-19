@@ -23,10 +23,15 @@ interface NavbarItemProps extends React.ComponentProps<typeof Button> {
   hint: string;
 }
 
-function NavbarItem({ hint, ...props }: NavbarItemProps) {
+function NavbarItem({ hint, className, ...props }: NavbarItemProps) {
   return (
     <TooltipPreset description={hint}>
-      <Button variant="nav-icon" {...props} />
+      <Button
+        variant={null}
+        aria-label={hint}
+        className={cn("h-7 px-2 text-primary", className)}
+        {...props}
+      />
     </TooltipPreset>
   );
 }

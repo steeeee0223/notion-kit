@@ -1159,9 +1159,6 @@ importers:
       '@notion-kit/utils':
         specifier: workspace:*
         version: link:../utils
-      lucide-react:
-        specifier: catalog:ui
-        version: 0.456.0(react@19.2.3)
       react:
         specifier: catalog:react19
         version: 19.2.3

@@ -43,8 +43,7 @@
     "@notion-kit/icons": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
-    "@notion-kit/utils": "workspace:*",
-    "lucide-react": "catalog:ui"
+    "@notion-kit/utils": "workspace:*"
   },
   "devDependencies": {
     "@notion-kit/config": "workspace:*",
