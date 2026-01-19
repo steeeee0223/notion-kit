@@ -75,6 +75,7 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
       ref={setNodeRef}
       data-slot="board-card"
       data-block-id={row.id}
+      data-selected={row.getIsSelected()}
       className={cn(
         "relative cursor-grab",
         overlay

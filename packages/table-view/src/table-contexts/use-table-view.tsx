@@ -100,6 +100,8 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     columnResizeMode: "onChange",
     groupedColumnMode: false,
     autoResetExpanded: false,
+    enableRowSelection: true,
+    enableMultiRowSelection: true,
     getRowId: (row) => row.id,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),

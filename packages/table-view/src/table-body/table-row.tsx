@@ -93,6 +93,8 @@ export function TableRow({ row }: TableRowProps) {
                       id="row-select"
                       size="sm"
                       className="cursor-pointer rounded-[2px] accent-blue"
+                      checked={row.getIsSelected()}
+                      onCheckedChange={(value) => row.toggleSelected(!!value)}
                     />
                   </label>
                 </TableRowActionGroup>

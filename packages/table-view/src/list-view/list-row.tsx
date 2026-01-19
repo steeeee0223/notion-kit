@@ -53,7 +53,10 @@ export function ListRow({ row }: ListRowProps) {
       className="group/row my-1"
       style={style}
     >
-      <div className="relative flex items-center">
+      <div
+        className="relative flex items-center"
+        data-selected={row.getIsSelected()}
+      >
         {!locked && (
           <RowActions
             className="absolute -left-12"
