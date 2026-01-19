@@ -1,6 +1,7 @@
 import { readdir } from "node:fs/promises";
-import pluginBabel from "@rollup/plugin-babel";
 import { defineConfig } from "tsdown";
+
+import { withReactCompiler } from "@notion-kit/config/tsdown";
 
 export default defineConfig(async (opts) => {
   // Automatically discover all source files except index.ts
@@ -12,26 +13,6 @@ export default defineConfig(async (opts) => {
   return {
     ...opts,
     entry: entries,
-    banner: { js: '"use client";' },
-    dts: true,
-    logLevel: "warn",
-    onSuccess: async () => {
-      if (opts.watch) {
-        console.info("Watching for changes...");
-        return;
-      }
-      console.info("Build successfully!");
-    },
-    plugins: [
-      pluginBabel({
-        babelHelpers: "bundled",
-        parserOpts: {
-          sourceType: "module",
-          plugins: ["jsx", "typescript"],
-        },
-        plugins: ["babel-plugin-react-compiler"],
-        extensions: [".js", ".jsx", ".ts", ".tsx"],
-      }),
-    ],
+    ...withReactCompiler(opts),
   };
 });
