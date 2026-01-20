@@ -1,0 +1,16 @@
+{
+  "extends": "@notion-kit/tsconfig/base.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    "plugins": [{ "name": "next" }]
+  },
+  "include": [
+    "next-env.d.ts",
+    "next.config.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}

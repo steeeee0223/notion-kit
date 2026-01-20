@@ -64,10 +64,6 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    container:
-      # Make sure to grab the latest version of the Playwright image
-      # https://playwright.dev/docs/docker#pull-the-image
-      image: mcr.microsoft.com/playwright:v1.57.0-noble
     steps:
       - uses: actions/checkout@v4
 
@@ -77,6 +73,5 @@ jobs:
       - name: Build
         run: pnpm build:packages
 
-      - name: Run tests
-        # run: pnpm -F storybook test
-        run: echo "Skipping tests since storybook is not well-configured"
+      - name: Test
+        run: pnpm test --project e2e
