@@ -33,6 +33,10 @@
     "dev": "tsdown --config=../../tooling/config/tsdown.config.ts --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
@@ -57,11 +61,18 @@
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tailwind-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "@testing-library/react": "catalog:rtl",
+    "@types/react": "catalog:react19",
+    "@vitejs/plugin-react": "catalog:test",
+    "@vitest/coverage-v8": "catalog:test",
+    "@vitest/ui": "catalog:test",
     "eslint": "catalog:",
+    "jsdom": "catalog:rtl",
     "prettier": "catalog:",
     "tailwindcss": "catalog:tailwind-v4",
     "tsdown": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:test"
   },
   "peerDependencies": {
     "react": "catalog:react19",

@@ -1,4 +1,4 @@
-import { CountMethod } from "../features";
+import { CountMethod } from "../features/counting";
 
 export const countMethodHint: Record<
   CountMethod,
