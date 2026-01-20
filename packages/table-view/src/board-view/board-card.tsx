@@ -4,13 +4,13 @@ import React, { useId, useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Selectable } from "@notion-kit/selectable";
 import { flexRender, type Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { useInputField } from "@notion-kit/hooks";
 import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
+import { Selectable } from "@notion-kit/selectable";
 import {
   Button,
   Input,

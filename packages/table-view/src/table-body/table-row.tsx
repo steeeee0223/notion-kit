@@ -5,9 +5,9 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Cell, flexRender, Row } from "@tanstack/react-table";
 
-import { Selectable } from "@notion-kit/selectable";
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
+import { Selectable } from "@notion-kit/selectable";
 import { Checkbox } from "@notion-kit/shadcn";
 
 import { RowActions, TableRowActionGroup } from "../common";
@@ -60,55 +60,55 @@ export function TableRow({ row }: TableRowProps) {
         className="group/row flex h-[calc(100%+2px)]"
         style={style}
       >
-      <div
-        id="notion-table-view-row"
-        dir="ltr"
-        className={cn(
-          "flex w-full border-b border-b-border-cell",
-          row.getIsFirstChild() && "border-t border-t-border-cell",
-        )}
-      >
-        <div className="flex">
-          <div className="sticky left-8 z-(--z-row) flex items-center bg-main">
-            {!locked && (
-              <>
-                {/* Row actions */}
-                <RowActions
-                  className="absolute -left-20"
-                  rowId={row.id}
-                  isDragging={isDragging}
-                  isMobile={isMobile}
-                  dragHandleProps={{ ...attributes, ...listeners }}
-                  onAddNext={addNextRow}
-                />
-                {/* Row selection */}
-                <TableRowActionGroup
-                  className="absolute -left-8 *:has-data-[state=checked]:opacity-100"
-                  isDragging={isDragging}
-                  isMobile={isMobile}
-                >
-                  <label
-                    htmlFor="row-select"
-                    className="z-10 flex size-8 cursor-pointer items-center justify-center"
+        <div
+          id="notion-table-view-row"
+          dir="ltr"
+          className={cn(
+            "flex w-full border-b border-b-border-cell",
+            row.getIsFirstChild() && "border-t border-t-border-cell",
+          )}
+        >
+          <div className="flex">
+            <div className="sticky left-8 z-(--z-row) flex items-center bg-main">
+              {!locked && (
+                <>
+                  {/* Row actions */}
+                  <RowActions
+                    className="absolute -left-20"
+                    rowId={row.id}
+                    isDragging={isDragging}
+                    isMobile={isMobile}
+                    dragHandleProps={{ ...attributes, ...listeners }}
+                    onAddNext={addNextRow}
+                  />
+                  {/* Row selection */}
+                  <TableRowActionGroup
+                    className="absolute -left-8 *:has-data-[state=checked]:opacity-100"
+                    isDragging={isDragging}
+                    isMobile={isMobile}
                   >
-                    <Checkbox
-                      id="row-select"
-                      size="sm"
-                      className="cursor-pointer rounded-[2px] accent-blue"
-                      checked={row.getIsSelected()}
-                      onCheckedChange={(value) => row.toggleSelected(!!value)}
-                    />
-                  </label>
-                </TableRowActionGroup>
-              </>
-            )}
-            {/* Left pinned columns */}
-            <TableCells cells={row.getLeftVisibleCells()} />
+                    <label
+                      htmlFor="row-select"
+                      className="z-10 flex size-8 cursor-pointer items-center justify-center"
+                    >
+                      <Checkbox
+                        id="row-select"
+                        size="sm"
+                        className="cursor-pointer rounded-[2px] accent-blue"
+                        checked={row.getIsSelected()}
+                        onCheckedChange={(value) => row.toggleSelected(!!value)}
+                      />
+                    </label>
+                  </TableRowActionGroup>
+                </>
+              )}
+              {/* Left pinned columns */}
+              <TableCells cells={row.getLeftVisibleCells()} />
+            </div>
+            {/* Center unpinned columns */}
+            <TableCells cells={row.getCenterVisibleCells()} />
           </div>
-          {/* Center unpinned columns */}
-          <TableCells cells={row.getCenterVisibleCells()} />
         </div>
-      </div>
         {/* Bottom line at row end */}
         <div className="flex w-16 grow justify-start border-b border-b-border-cell" />
       </div>

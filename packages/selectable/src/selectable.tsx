@@ -209,7 +209,7 @@ function Selectable({
         return next;
       });
     },
-    [multiple],
+    [multiple, handleSetSelectedIds],
   );
 
   const clearSelection = useCallback(() => {
@@ -321,7 +321,13 @@ function Selectable({
         }
       }
     },
-    [disabled, multiple, onSelectStart, activationConstraint],
+    [
+      disabled,
+      multiple,
+      onSelectStart,
+      activationConstraint,
+      handleSetSelectedIds,
+    ],
   );
 
   const handlePointerMove = useCallback(
@@ -375,6 +381,7 @@ function Selectable({
       cancelActivation,
       multiple,
       onSelectStart,
+      handleSetSelectedIds,
     ],
   );
 
@@ -400,7 +407,14 @@ function Selectable({
 
       e.currentTarget.releasePointerCapture(e.pointerId);
     },
-    [isSelecting, selectedIds, selectingIds, onSelectEnd, cancelActivation],
+    [
+      isSelecting,
+      selectedIds,
+      selectingIds,
+      onSelectEnd,
+      cancelActivation,
+      handleSetSelectedIds,
+    ],
   );
 
   const handlePointerCancel = useCallback(
@@ -444,6 +458,7 @@ function Selectable({
       selectionRect,
       subscribeItem,
       toggleSelection,
+      handleSetSelectedIds,
     ],
   );
 

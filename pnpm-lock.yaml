@@ -1816,6 +1816,9 @@ importers:
       '@notion-kit/icons':
         specifier: workspace:*
         version: link:../icons
+      '@notion-kit/selectable':
+        specifier: workspace:*
+        version: link:../selectable
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../shadcn

@@ -1,11 +1,11 @@
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Selectable } from "@notion-kit/selectable";
 import { flexRender, type Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
+import { Selectable } from "@notion-kit/selectable";
 import { buttonVariants } from "@notion-kit/shadcn";
 
 import { RowActions } from "../common";
@@ -55,40 +55,40 @@ export function ListRow({ row }: ListRowProps) {
         className="group/row my-1"
         style={style}
       >
-      <div
-        className="relative flex items-center"
-        data-selected={row.getIsSelected()}
-      >
-        {!locked && (
-          <RowActions
-            className="absolute -left-12"
-            rowId={row.id}
-            isDragging={isDragging}
-            isMobile={isMobile}
-            dragHandleProps={{ ...attributes, ...listeners }}
-            onAddNext={addNextRow}
-          />
-        )}
         <div
-          role="button"
-          tabIndex={0}
-          className={cn(
-            buttonVariants({ variant: "cell" }),
-            "relative h-7.5 grow overflow-hidden rounded-md px-1 text-inherit opacity-100",
-          )}
-          onClick={() => table.openRow(row.id)}
-          onKeyDown={() => {
-            // noop
-          }}
+          className="relative flex items-center"
+          data-selected={row.getIsSelected()}
         >
-          {row.getVisibleCells().map((cell) => (
-            <React.Fragment key={cell.id}>
-              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-            </React.Fragment>
-          ))}
+          {!locked && (
+            <RowActions
+              className="absolute -left-12"
+              rowId={row.id}
+              isDragging={isDragging}
+              isMobile={isMobile}
+              dragHandleProps={{ ...attributes, ...listeners }}
+              onAddNext={addNextRow}
+            />
+          )}
+          <div
+            role="button"
+            tabIndex={0}
+            className={cn(
+              buttonVariants({ variant: "cell" }),
+              "relative h-7.5 grow overflow-hidden rounded-md px-1 text-inherit opacity-100",
+            )}
+            onClick={() => table.openRow(row.id)}
+            onKeyDown={() => {
+              // noop
+            }}
+          >
+            {row.getVisibleCells().map((cell) => (
+              <React.Fragment key={cell.id}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </React.Fragment>
+            ))}
+          </div>
+          <div className="absolute -end-7 top-1/2 h-full w-7 -translate-y-1/2 cursor-pointer" />
         </div>
-        <div className="absolute -end-7 top-1/2 h-full w-7 -translate-y-1/2 cursor-pointer" />
-      </div>
       </div>
     </Selectable.Item>
   );
