@@ -7,7 +7,6 @@ import type { DragEndEvent } from "@dnd-kit/core";
 import { act } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-
 import { mockData, mockProperties, renderTableHook } from "./mock";
 
 describe("useTableView - Column Custom APIs", () => {
