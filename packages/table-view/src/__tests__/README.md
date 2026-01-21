@@ -20,28 +20,13 @@ This directory contains comprehensive unit tests for the `@notion-kit/table-view
   - `test` - Run tests once
   - `test:watch` - Run tests in watch mode
   - `test:ui` - Open Vitest UI
-  - `test:coverage` - Run tests with coverage report
+  - `coverage` - Run tests with coverage report
 
-### 2. Centralized Mocks ✅
-
-All tests now use shared mocks from `mock.ts`:
-
-```typescript
-import { plugins, mockProperties, mockData } from "./mock";
-
-// Uses actual DEFAULT_PLUGINS from the package
-export const plugins = arrayToEntity(DEFAULT_PLUGINS);
-
-// Standardized test data
-export const mockProperties: ColumnInfo[];
-export const mockData: Row[];
-```
-
-### 3. Test Files
+### 2. Test Files
 
 All tests are comprehensive and passing:
 
-#### `column-apis.test.tsx` ✅ Column Custom APIs
+#### `columns-info.test.tsx` ✅ Column Custom APIs
 
 - ✅ `table.addColumnInfo({ id, name, type, at })` - Add with positioning
 - ✅ `table.removeColumnInfo(colId)` - Remove column
@@ -50,7 +35,7 @@ All tests are comprehensive and passing:
 - ✅ Column info getters
 - **Status**: All tests passing! ✅
 
-#### `row-apis.test.tsx` ✅ Row Custom APIs
+#### `row-actions.test.tsx` ✅ Row Custom APIs
 
 - ✅ `table.addRow({ id, at })` - Add with positioning (prev/next)
 - ✅ `table.deleteRow(rowId)` - Delete single row
@@ -76,9 +61,8 @@ All tests are comprehensive and passing:
 - ✅ Group by column
 - ✅ Get grouped values
 - ✅ Clear grouping
-- ⚠️ Needs mock plugin fix: `default.config`
 
-#### `grouping-extended.test.tsx` - **NEW** ✅ Extended Grouping
+#### `grouping.test.tsx` ✅ Extended Grouping
 
 **Grouping State (`src/features/grouping.ts`):**
 
@@ -93,7 +77,7 @@ All tests are comprehensive and passing:
 - ✅ `table.toggleGroupVisible(groupId)` - Toggle individual group
 - ✅ `table.toggleAllGroupsVisible()` - Toggle all groups
 - ✅ `table.toggleHideEmptyGroups()` - Toggle empty groups filter
-- ✅ `table.handleGroupedRowDragEnd(event)` - Group DnD reordering
+- ⚠️ `table.handleGroupedRowDragEnd(event)` - Group DnD (skipped - not fully implemented)
 - ✅ `table.getIsSomeGroupVisible()` - Check if any group visible
 - ✅ `table.setGroupingColumn(colId)` - Set grouping column
 - ✅ `table.getGroupedColumnInfo()` - Get grouped column info
@@ -105,7 +89,7 @@ All tests are comprehensive and passing:
 
 **Status**: All tests passing! ✅
 
-#### `counting.test.tsx` - **NEW** ✅ Counting Feature
+#### `counting.test.tsx` ✅ Counting Feature
 
 **From `src/features/counting.ts`:**
 
@@ -131,7 +115,7 @@ All tests are comprehensive and passing:
 
 **Status**: All tests passing! ✅
 
-#### `freezing.test.tsx` - **NEW** ✅ Column Freezing Feature
+#### `freezing.test.tsx` ✅ Column Freezing Feature
 
 **From `src/features/freezing.ts`:**
 
@@ -218,19 +202,13 @@ pnpm -F @notion-kit/table-view test:coverage
 
 ```typescript
 it("should update in uncontrolled mode", () => {
-  const { result } = renderHook(() =>
-    useTableView({
-      plugins,
-      data: mockData,
-      properties: mockProperties,
-    }),
-  );
-
-  const table = result.current.table;
+  const { table } = renderTableHook({
+    data: mockData,
+    properties: mockProperties,
+  });
 
   act(() => {
-    // Perform action
-    table.onTableDataChange?.((prev) => [...prev, newRow]);
+    table.addRow();
   });
 
   // Assert state changed
@@ -242,25 +220,20 @@ it("should update in uncontrolled mode", () => {
 
 ```typescript
 it("should use controlled state", () => {
-  const onDataChange = vi.fn();
+  const onTableDataChange = vi.fn();
 
-  const { result } = renderHook(() =>
-    useTableView({
-      plugins,
-      data: mockData,
-      properties: mockProperties,
-      onDataChange,
-    }),
-  );
-
-  const table = result.current.table;
+  const { table } = renderTableHook({
+    data: mockData,
+    properties: mockProperties,
+    options: { onTableDataChange },
+  });
 
   act(() => {
-    table.onTableDataChange?.((prev) => [...prev, newRow]);
+    table.addRow();
   });
 
   // Assert callback was called
-  expect(onDataChange).toHaveBeenCalled();
+  expect(onTableDataChange).toHaveBeenCalled();
 
   // State should NOT change without external update
   expect(table.getRowModel().rows).toHaveLength(2);
