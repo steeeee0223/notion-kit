@@ -3,44 +3,19 @@
  * Tests for row CRUD operations using direct table APIs
  */
 
-import { act, renderHook } from "@testing-library/react";
+import type { DragEndEvent } from "@dnd-kit/core";
+import { act, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import type { ColumnInfo, Row } from "../lib/types";
-import type { Entity } from "../lib/utils";
-import { useTableView } from "../table-contexts/use-table-view";
-
-// Mock plugins with proper structure
-const mockPlugins: Entity<any> = {
-  ids: ["text", "number"],
-  items: {
-    text: {
-      id: "text",
-      type: "text",
-      name: "Text",
-      default: { config: {}, data: "" },
-      compare: (_a: any, _b: any, _colId: string) => 0,
-      toValue: (value: any) => String(value ?? ""),
-      fromValue: (value: any) => String(value ?? ""),
-    },
-    number: {
-      id: "number",
-      type: "number",
-      name: "Number",
-      default: { config: {}, data: 0 },
-      compare: (_a: any, _b: any, _colId: string) => 0,
-      toValue: (value: any) => Number(value ?? 0),
-      fromValue: (value: any) => Number(value ?? 0),
-    },
-  },
-};
+import { renderTableHook } from "./mock";
 
 const mockProperties: ColumnInfo[] = [
-  { id: "col1", name: "Name", type: "text", width: 200 },
-  { id: "col2", name: "Age", type: "number", width: 100 },
+  { id: "col1", name: "Name", type: "text", width: "200", config: undefined },
+  { id: "col2", name: "Age", type: "number", width: "100", config: undefined },
 ];
 
-const mockData: Row<any>[] = [
+const mockData: Row[] = [
   {
     id: "row1",
     createdAt: Date.now(),
@@ -64,15 +39,10 @@ const mockData: Row<any>[] = [
 describe("useTableView - Row Custom APIs", () => {
   describe("addRow", () => {
     it("should add a new row at the end by default", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
       const initialLength = table.getRowModel().rows.length;
 
       act(() => {
@@ -84,15 +54,10 @@ describe("useTableView - Row Custom APIs", () => {
     });
 
     it("should add row with default cell values for all columns", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.addRow();
@@ -106,15 +71,10 @@ describe("useTableView - Row Custom APIs", () => {
     });
 
     it("should add row after specified row (next)", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.addRow({ id: "row1", at: "next" });
@@ -130,15 +90,10 @@ describe("useTableView - Row Custom APIs", () => {
     });
 
     it("should add row before specified row (prev)", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.addRow({ id: "row2", at: "prev" });
@@ -154,15 +109,10 @@ describe("useTableView - Row Custom APIs", () => {
     });
 
     it("should set createdAt and lastEditedAt timestamps", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
       const beforeAdd = Date.now();
 
       act(() => {
@@ -179,15 +129,10 @@ describe("useTableView - Row Custom APIs", () => {
 
   describe("deleteRow", () => {
     it("should remove row by id", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
       const initialLength = table.getRowModel().rows.length;
 
       act(() => {
@@ -200,15 +145,10 @@ describe("useTableView - Row Custom APIs", () => {
     });
 
     it("should not affect other rows", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.deleteRow("row1");
@@ -221,15 +161,10 @@ describe("useTableView - Row Custom APIs", () => {
 
   describe("deleteRows", () => {
     it("should delete multiple rows by ids", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.deleteRows(["row1", "row2"]);
@@ -240,15 +175,10 @@ describe("useTableView - Row Custom APIs", () => {
     });
 
     it("should handle partial deletion", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.deleteRows(["row1"]);
@@ -262,15 +192,10 @@ describe("useTableView - Row Custom APIs", () => {
 
   describe("duplicateRow", () => {
     it("should create a copy of the row", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
       const initialLength = table.getRowModel().rows.length;
 
       act(() => {
@@ -282,15 +207,10 @@ describe("useTableView - Row Custom APIs", () => {
     });
 
     it("should place duplicated row right after original", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.duplicateRow("row1");
@@ -305,15 +225,10 @@ describe("useTableView - Row Custom APIs", () => {
     });
 
     it("should copy cell values from original row", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.duplicateRow("row1");
@@ -332,15 +247,10 @@ describe("useTableView - Row Custom APIs", () => {
     });
 
     it("should generate new cell ids for duplicated row", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.duplicateRow("row1");
@@ -356,15 +266,10 @@ describe("useTableView - Row Custom APIs", () => {
     });
 
     it("should update timestamps for duplicated row", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
       const beforeDuplicate = Date.now();
 
       act(() => {
@@ -385,20 +290,15 @@ describe("useTableView - Row Custom APIs", () => {
 
   describe("handleRowDragEnd", () => {
     it("should reorder rows on drag end", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       const dragEvent = {
         active: { id: "row1", data: { current: {} } },
         over: { id: "row2", data: { current: {} } },
-      } as any;
+      } as DragEndEvent;
 
       act(() => {
         table.handleRowDragEnd(dragEvent);
@@ -413,20 +313,15 @@ describe("useTableView - Row Custom APIs", () => {
     });
 
     it("should handle drag to beginning", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       const dragEvent = {
         active: { id: "row2", data: { current: {} } },
         over: { id: "row1", data: { current: {} } },
-      } as any;
+      } as DragEndEvent;
 
       act(() => {
         table.handleRowDragEnd(dragEvent);
@@ -439,31 +334,21 @@ describe("useTableView - Row Custom APIs", () => {
 
   describe("Cell APIs", () => {
     it("should get cell by column and row id", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
       const cell = table.getCell("col1", "row1");
 
       expect(cell).toBeDefined();
       expect(cell.value).toBe("John");
     });
 
-    it("should update cell value", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+    it("should update cell value", async () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.updateCell("row1", "col1", (prev) => ({
@@ -472,20 +357,18 @@ describe("useTableView - Row Custom APIs", () => {
         }));
       });
 
-      const cell = table.getCell("col1", "row1");
-      expect(cell.value).toBe("Updated");
+      // Wait for queued update to complete
+      await waitFor(() => {
+        const cell = table.getCell("col1", "row1");
+        expect(cell.value).toBe("Updated");
+      });
     });
 
-    it("should update lastEditedAt timestamp when cell changes", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+    it("should update lastEditedAt timestamp when cell changes", async () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
       const beforeUpdate = Date.now();
 
       act(() => {
@@ -495,8 +378,11 @@ describe("useTableView - Row Custom APIs", () => {
         }));
       });
 
-      const row = table.getRow("row1");
-      expect(row.original.lastEditedAt).toBeGreaterThanOrEqual(beforeUpdate);
+      // Wait for queued update to complete
+      await waitFor(() => {
+        const row = table.getRow("row1");
+        expect(row.original.lastEditedAt).toBeGreaterThanOrEqual(beforeUpdate);
+      });
     });
   });
 });

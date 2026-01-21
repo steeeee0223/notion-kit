@@ -3,109 +3,77 @@
  * Tests for table sorting and grouping functionality
  */
 
-import { act, renderHook } from "@testing-library/react";
+import { act } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import type { ColumnInfo, Row } from "../lib/types";
-import type { Entity } from "../lib/utils";
-import { useTableView } from "../table-contexts/use-table-view";
-
-// Mock plugins with proper compare functions
-const mockPlugins: Entity<any> = {
-  ids: ["text", "number"],
-  items: {
-    text: {
-      type: "text",
-      name: "Text",
-      compare: (a: Row<any>, b: Row<any>, colId: string) => {
-        const aVal = String(a.properties[colId]?.value ?? "");
-        const bVal = String(b.properties[colId]?.value ?? "");
-        return aVal.localeCompare(bVal);
-      },
-      toValue: (value: any) => String(value ?? ""),
-      toGroupValue: (value: any) => String(value ?? ""),
-    },
-    number: {
-      type: "number",
-      name: "Number",
-      compare: (a: Row<any>, b: Row<any>, colId: string) => {
-        const aVal = Number(a.properties[colId]?.value ?? 0);
-        const bVal = Number(b.properties[colId]?.value ?? 0);
-        return aVal - bVal;
-      },
-      toValue: (value: any) => Number(value ?? 0),
-      toGroupValue: (value: any) => Number(value ?? 0),
-    },
-  },
-};
+import { renderTableHook } from "./mock";
 
 const mockProperties: ColumnInfo[] = [
-  { id: "col1", name: "Name", type: "text", width: 200 },
-  { id: "col2", name: "Age", type: "number", width: 100 },
-  { id: "col3", name: "City", type: "text", width: 150 },
+  { id: "col1", name: "Name", type: "text", width: "200", config: undefined },
+  { id: "col2", name: "Age", type: "number", width: "100", config: undefined },
+  { id: "col3", name: "City", type: "text", width: "150", config: undefined },
 ];
 
-const mockData: Row<any>[] = [
+const mockData: Row[] = [
   {
     id: "row1",
     properties: {
-      col1: { value: "John" },
-      col2: { value: 25 },
-      col3: { value: "New York" },
+      col1: { value: "John", id: "row1-1" },
+      col2: { value: 25, id: "row1-2" },
+      col3: { value: "New York", id: "row1-3" },
     },
+    createdAt: 0,
+    lastEditedAt: 0,
   },
   {
     id: "row2",
     properties: {
-      col1: { value: "Alice" },
-      col2: { value: 30 },
-      col3: { value: "London" },
+      col1: { value: "Alice", id: "row2-1" },
+      col2: { value: 30, id: "row2-2" },
+      col3: { value: "London", id: "row2-3" },
     },
+    createdAt: 0,
+    lastEditedAt: 0,
   },
   {
     id: "row3",
     properties: {
-      col1: { value: "Bob" },
-      col2: { value: 20 },
-      col3: { value: "New York" },
+      col1: { value: "Bob", id: "row3-1" },
+      col2: { value: 20, id: "row3-2" },
+      col3: { value: "New York", id: "row3-3" },
     },
+    createdAt: 0,
+    lastEditedAt: 0,
   },
   {
     id: "row4",
     properties: {
-      col1: { value: "Jane" },
-      col2: { value: 28 },
-      col3: { value: "Paris" },
+      col1: { value: "Jane", id: "row4-1" },
+      col2: { value: 28, id: "row4-2" },
+      col3: { value: "Paris", id: "row4-3" },
     },
+    createdAt: 0,
+    lastEditedAt: 0,
   },
 ];
 
 describe("useTableView - Sorting", () => {
   it("should initialize without sorting", () => {
-    const { result } = renderHook(() =>
-      useTableView({
-        plugins: mockPlugins,
-        data: mockData,
-        properties: mockProperties,
-      }),
-    );
-
-    const table = result.current.table;
+    const { table } = renderTableHook({
+      data: mockData,
+      properties: mockProperties,
+    });
     const sorting = table.getState().sorting;
 
     expect(sorting).toEqual([]);
   });
 
   it("should sort by text column ascending", () => {
-    const { result } = renderHook(() =>
-      useTableView({
-        plugins: mockPlugins,
-        data: mockData,
-        properties: mockProperties,
-      }),
-    );
-
-    const table = result.current.table;
+    const { table } = renderTableHook({
+      data: mockData,
+      properties: mockProperties,
+    });
 
     act(() => {
       table.setSorting([{ id: "col1", desc: false }]);
@@ -119,15 +87,10 @@ describe("useTableView - Sorting", () => {
   });
 
   it("should sort by text column descending", () => {
-    const { result } = renderHook(() =>
-      useTableView({
-        plugins: mockPlugins,
-        data: mockData,
-        properties: mockProperties,
-      }),
-    );
-
-    const table = result.current.table;
+    const { table } = renderTableHook({
+      data: mockData,
+      properties: mockProperties,
+    });
 
     act(() => {
       table.setSorting([{ id: "col1", desc: true }]);
@@ -141,15 +104,10 @@ describe("useTableView - Sorting", () => {
   });
 
   it("should sort by number column ascending", () => {
-    const { result } = renderHook(() =>
-      useTableView({
-        plugins: mockPlugins,
-        data: mockData,
-        properties: mockProperties,
-      }),
-    );
-
-    const table = result.current.table;
+    const { table } = renderTableHook({
+      data: mockData,
+      properties: mockProperties,
+    });
 
     act(() => {
       table.setSorting([{ id: "col2", desc: false }]);
@@ -163,15 +121,10 @@ describe("useTableView - Sorting", () => {
   });
 
   it("should sort by number column descending", () => {
-    const { result } = renderHook(() =>
-      useTableView({
-        plugins: mockPlugins,
-        data: mockData,
-        properties: mockProperties,
-      }),
-    );
-
-    const table = result.current.table;
+    const { table } = renderTableHook({
+      data: mockData,
+      properties: mockProperties,
+    });
 
     act(() => {
       table.setSorting([{ id: "col2", desc: true }]);
@@ -185,15 +138,10 @@ describe("useTableView - Sorting", () => {
   });
 
   it("should toggle sorting on same column", () => {
-    const { result } = renderHook(() =>
-      useTableView({
-        plugins: mockPlugins,
-        data: mockData,
-        properties: mockProperties,
-      }),
-    );
-
-    const table = result.current.table;
+    const { table } = renderTableHook({
+      data: mockData,
+      properties: mockProperties,
+    });
 
     // First sort: ascending
     act(() => {
@@ -220,15 +168,10 @@ describe("useTableView - Sorting", () => {
   });
 
   it("should support multi-column sorting", () => {
-    const { result } = renderHook(() =>
-      useTableView({
-        plugins: mockPlugins,
-        data: mockData,
-        properties: mockProperties,
-      }),
-    );
-
-    const table = result.current.table;
+    const { table } = renderTableHook({
+      data: mockData,
+      properties: mockProperties,
+    });
 
     act(() => {
       table.setSorting([
@@ -247,15 +190,10 @@ describe("useTableView - Sorting", () => {
   });
 
   it("should clear all sorting", () => {
-    const { result } = renderHook(() =>
-      useTableView({
-        plugins: mockPlugins,
-        data: mockData,
-        properties: mockProperties,
-      }),
-    );
-
-    const table = result.current.table;
+    const { table } = renderTableHook({
+      data: mockData,
+      properties: mockProperties,
+    });
 
     act(() => {
       table.setSorting([{ id: "col1", desc: false }]);
@@ -273,30 +211,20 @@ describe("useTableView - Sorting", () => {
 
 describe("useTableView - Grouping", () => {
   it("should initialize without grouping", () => {
-    const { result } = renderHook(() =>
-      useTableView({
-        plugins: mockPlugins,
-        data: mockData,
-        properties: mockProperties,
-      }),
-    );
-
-    const table = result.current.table;
+    const { table } = renderTableHook({
+      data: mockData,
+      properties: mockProperties,
+    });
     const grouping = table.getState().grouping;
 
     expect(grouping).toEqual([]);
   });
 
   it("should group by a column", () => {
-    const { result } = renderHook(() =>
-      useTableView({
-        plugins: mockPlugins,
-        data: mockData,
-        properties: mockProperties,
-      }),
-    );
-
-    const table = result.current.table;
+    const { table } = renderTableHook({
+      data: mockData,
+      properties: mockProperties,
+    });
 
     act(() => {
       table.setGrouping(["col3"]); // Group by city
@@ -310,15 +238,10 @@ describe("useTableView - Grouping", () => {
   });
 
   it("should get grouped row values", () => {
-    const { result } = renderHook(() =>
-      useTableView({
-        plugins: mockPlugins,
-        data: mockData,
-        properties: mockProperties,
-      }),
-    );
-
-    const table = result.current.table;
+    const { table } = renderTableHook({
+      data: mockData,
+      properties: mockProperties,
+    });
 
     act(() => {
       table.setGrouping(["col3"]);
@@ -335,15 +258,10 @@ describe("useTableView - Grouping", () => {
   });
 
   it("should clear grouping", () => {
-    const { result } = renderHook(() =>
-      useTableView({
-        plugins: mockPlugins,
-        data: mockData,
-        properties: mockProperties,
-      }),
-    );
-
-    const table = result.current.table;
+    const { table } = renderTableHook({
+      data: mockData,
+      properties: mockProperties,
+    });
 
     act(() => {
       table.setGrouping(["col3"]);

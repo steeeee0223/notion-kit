@@ -3,96 +3,31 @@
  * Tests for column counting functionality with all count methods
  */
 
-import { act, renderHook } from "@testing-library/react";
+import { act } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import type { ColumnInfo, Row } from "../lib/types";
-import type { Entity } from "../lib/utils";
-import { CountMethod, useTableView } from "../table-contexts/use-table-view";
-
-// Mock plugins
-const mockPlugins: Entity<any> = {
-  ids: ["text", "checkbox"],
-  items: {
-    text: {
-      type: "text",
-      name: "Text",
-      default: { config: {} },
-      compare: (_a: any, _b: any, _colId: string) => 0,
-      toValue: (value: any) => String(value ?? ""),
-    },
-    checkbox: {
-      type: "checkbox",
-      name: "Checkbox",
-      default: { config: {} },
-      compare: (_a: any, _b: any, _colId: string) => 0,
-      toValue: (value: any) => Boolean(value),
-    },
-  },
-};
-
-const mockProperties: ColumnInfo[] = [
-  { id: "col1", name: "Name", type: "text", width: 200 },
-  { id: "col2", name: "Done", type: "checkbox", width: 100 },
-];
-
-const mockData: Row<any>[] = [
-  {
-    id: "row1",
-    createdAt: Date.now(),
-    lastEditedAt: Date.now(),
-    properties: {
-      col1: { id: "cell1", value: "Task 1" },
-      col2: { id: "cell2", value: true },
-    },
-  },
-  {
-    id: "row2",
-    createdAt: Date.now(),
-    lastEditedAt: Date.now(),
-    properties: {
-      col1: { id: "cell3", value: "" },
-      col2: { id: "cell4", value: false },
-    },
-  },
-  {
-    id: "row3",
-    createdAt: Date.now(),
-    lastEditedAt: Date.now(),
-    properties: {
-      col1: { id: "cell5", value: "Task 3" },
-      col2: { id: "cell6", value: true },
-    },
-  },
-];
+import { CountMethod } from "../features";
+import type { Row } from "../lib/types";
+import { mockData, mockProperties, renderTableHook } from "./mock";
 
 describe("useTableView - Counting Feature", () => {
   describe("Column Counting State", () => {
     it("should get default counting state", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
-      const table = result.current.table;
       const counting = table.getColumnCounting("col1");
 
       expect(counting).toEqual({ method: CountMethod.NONE });
     });
 
     it("should set column count method", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.setColumnCountMethod("col1", CountMethod.ALL);
@@ -103,15 +38,10 @@ describe("useTableView - Counting Feature", () => {
     });
 
     it("should toggle column count capped", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.setColumnCountCapped("col1", true);
@@ -131,15 +61,10 @@ describe("useTableView - Counting Feature", () => {
 
   describe("Count Methods", () => {
     it("should count all rows (COUNT_ALL)", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.setColumnCountMethod("col1", CountMethod.ALL);
@@ -150,15 +75,10 @@ describe("useTableView - Counting Feature", () => {
     });
 
     it("should count non-empty values (COUNT_VALUES)", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.setColumnCountMethod("col1", CountMethod.VALUES);
@@ -169,15 +89,10 @@ describe("useTableView - Counting Feature", () => {
     });
 
     it("should count empty values (COUNT_EMPTY)", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.setColumnCountMethod("col1", CountMethod.EMPTY);
@@ -188,15 +103,10 @@ describe("useTableView - Counting Feature", () => {
     });
 
     it("should count non-empty values (COUNT_NONEMPTY)", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.setColumnCountMethod("col1", CountMethod.NONEMPTY);
@@ -207,15 +117,10 @@ describe("useTableView - Counting Feature", () => {
     });
 
     it("should count checked checkboxes (COUNT_CHECKED)", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.setColumnCountMethod("col2", CountMethod.CHECKED);
@@ -226,15 +131,10 @@ describe("useTableView - Counting Feature", () => {
     });
 
     it("should count unchecked checkboxes (COUNT_UNCHECKED)", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.setColumnCountMethod("col2", CountMethod.UNCHECKED);
@@ -245,15 +145,10 @@ describe("useTableView - Counting Feature", () => {
     });
 
     it("should calculate percentage checked (PERCENTAGE_CHECKED)", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.setColumnCountMethod("col2", CountMethod.PERCENTAGE_CHECKED);
@@ -264,15 +159,10 @@ describe("useTableView - Counting Feature", () => {
     });
 
     it("should calculate percentage unchecked (PERCENTAGE_UNCHECKED)", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.setColumnCountMethod("col2", CountMethod.PERCENTAGE_UNCHECKED);
@@ -283,15 +173,10 @@ describe("useTableView - Counting Feature", () => {
     });
 
     it("should calculate percentage empty (PERCENTAGE_EMPTY)", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.setColumnCountMethod("col1", CountMethod.PERCENTAGE_EMPTY);
@@ -302,15 +187,10 @@ describe("useTableView - Counting Feature", () => {
     });
 
     it("should calculate percentage not empty (PERCENTAGE_NONEMPTY)", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.setColumnCountMethod("col1", CountMethod.PERCENTAGE_NONEMPTY);
@@ -321,7 +201,7 @@ describe("useTableView - Counting Feature", () => {
     });
 
     it("should count unique values (COUNT_UNIQUE)", () => {
-      const dataWithDuplicates: Row<any>[] = [
+      const dataWithDuplicates: Row[] = [
         ...mockData,
         {
           id: "row4",
@@ -334,36 +214,26 @@ describe("useTableView - Counting Feature", () => {
         },
       ];
 
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: dataWithDuplicates,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: dataWithDuplicates,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.setColumnCountMethod("col1", CountMethod.UNIQUE);
       });
 
       const countResult = table.getColumnCountResult("col1");
-      expect(countResult).toBe("3"); // 3 unique values: "Task 1", "Task 3", ""
+      expect(countResult).toBe("2"); // 2 unique non-empty values: "Task 1", "Task 3"
     });
   });
 
   describe("Count Method with NONE", () => {
     it("should return empty string for NONE method", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       const countResult = table.getColumnCountResult("col1");
       expect(countResult).toBe("");

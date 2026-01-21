@@ -3,76 +3,20 @@
  * Tests for column CRUD operations using direct table APIs
  */
 
-import { act, renderHook } from "@testing-library/react";
+import type { DragEndEvent } from "@dnd-kit/core";
+import { act } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import type { ColumnInfo, Row } from "../lib/types";
-import type { Entity } from "../lib/utils";
-import { useTableView } from "../table-contexts/use-table-view";
 
-// Mock plugins with proper structure
-const mockPlugins: Entity<any> = {
-  ids: ["text", "number"],
-  items: {
-    text: {
-      id: "text",
-      type: "text",
-      name: "Text",
-      default: { config: {} },
-      compare: (_a: any, _b: any, _colId: string) => 0,
-      toValue: (value: any) => String(value ?? ""),
-      fromValue: (value: any) => String(value ?? ""),
-    },
-    number: {
-      id: "number",
-      type: "number",
-      name: "Number",
-      default: { config: {} },
-      compare: (_a: any, _b: any, _colId: string) => 0,
-      toValue: (value: any) => Number(value ?? 0),
-      fromValue: (value: any) => Number(value ?? 0),
-    },
-  },
-};
-
-const mockProperties: ColumnInfo[] = [
-  { id: "col1", name: "Name", type: "text", width: 200 },
-  { id: "col2", name: "Age", type: "number", width: 100 },
-];
-
-const mockData: Row<any>[] = [
-  {
-    id: "row1",
-    createdAt: Date.now(),
-    lastEditedAt: Date.now(),
-    properties: {
-      col1: { id: "cell1", value: "John" },
-      col2: { id: "cell2", value: 25 },
-    },
-  },
-  {
-    id: "row2",
-    createdAt: Date.now(),
-    lastEditedAt: Date.now(),
-    properties: {
-      col1: { id: "cell3", value: "Jane" },
-      col2: { id: "cell4", value: 30 },
-    },
-  },
-];
+import { mockData, mockProperties, renderTableHook } from "./mock";
 
 describe("useTableView - Column Custom APIs", () => {
   describe("addColumnInfo", () => {
     it("should add a new column at the end by default", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.addColumnInfo({
@@ -88,15 +32,10 @@ describe("useTableView - Column Custom APIs", () => {
     });
 
     it("should add column to the right of specified column", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.addColumnInfo({
@@ -115,15 +54,10 @@ describe("useTableView - Column Custom APIs", () => {
     });
 
     it("should add column to the left of specified column", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.addColumnInfo({
@@ -142,15 +76,10 @@ describe("useTableView - Column Custom APIs", () => {
     });
 
     it("should add default cell to all existing rows", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.addColumnInfo({
@@ -170,15 +99,10 @@ describe("useTableView - Column Custom APIs", () => {
 
   describe("removeColumnInfo", () => {
     it("should remove column from column order", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.removeColumnInfo("col2");
@@ -189,15 +113,10 @@ describe("useTableView - Column Custom APIs", () => {
     });
 
     it("should remove column from columnsInfo state", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.removeColumnInfo("col2");
@@ -208,15 +127,10 @@ describe("useTableView - Column Custom APIs", () => {
     });
 
     it("should remove column data from all rows", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.removeColumnInfo("col2");
@@ -231,15 +145,10 @@ describe("useTableView - Column Custom APIs", () => {
 
   describe("duplicateColumnInfo", () => {
     it("should create a new column with duplicated config", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
       const originalLength = table.getState().columnOrder.length;
 
       act(() => {
@@ -251,15 +160,10 @@ describe("useTableView - Column Custom APIs", () => {
     });
 
     it("should place duplicated column to the right of original", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.duplicateColumnInfo("col1");
@@ -274,15 +178,10 @@ describe("useTableView - Column Custom APIs", () => {
     });
 
     it("should generate unique name for duplicated column", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.duplicateColumnInfo("col1");
@@ -297,15 +196,10 @@ describe("useTableView - Column Custom APIs", () => {
     });
 
     it("should copy column type and config", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
       const originalInfo = table.getColumnInfo("col1");
 
       act(() => {
@@ -320,15 +214,10 @@ describe("useTableView - Column Custom APIs", () => {
     });
 
     it("should add default cells to all rows for duplicated column", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       act(() => {
         table.duplicateColumnInfo("col1");
@@ -346,20 +235,15 @@ describe("useTableView - Column Custom APIs", () => {
 
   describe("handleColumnDragEnd", () => {
     it("should reorder columns on drag end", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       const dragEvent = {
         active: { id: "col1", data: { current: {} } },
         over: { id: "col2", data: { current: {} } },
-      } as any;
+      } as DragEndEvent;
 
       act(() => {
         table.handleColumnDragEnd(dragEvent);
@@ -374,20 +258,15 @@ describe("useTableView - Column Custom APIs", () => {
     });
 
     it("should handle drag to beginning", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
 
       const dragEvent = {
         active: { id: "col2", data: { current: {} } },
         over: { id: "col1", data: { current: {} } },
-      } as any;
+      } as DragEndEvent;
 
       act(() => {
         table.handleColumnDragEnd(dragEvent);
@@ -400,15 +279,10 @@ describe("useTableView - Column Custom APIs", () => {
 
   describe("Column Info Getters", () => {
     it("should get column info by id", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
       const info = table.getColumnInfo("col1");
 
       expect(info).toBeDefined();
@@ -418,31 +292,21 @@ describe("useTableView - Column Custom APIs", () => {
     });
 
     it("should get column plugin by id", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
       const plugin = table.getColumnPlugin("col1");
 
       expect(plugin).toBeDefined();
-      expect(plugin.type).toBe("text");
+      expect(plugin.id).toBe("text");
     });
 
     it("should count visible columns", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: mockPlugins,
-          data: mockData,
-          properties: mockProperties,
-        }),
-      );
-
-      const table = result.current.table;
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
       const count = table.countVisibleColumns();
 
       expect(count).toBe(2);
