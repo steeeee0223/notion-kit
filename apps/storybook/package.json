@@ -43,6 +43,7 @@
     "lucide-react": "catalog:ui",
     "next": "catalog:next16",
     "react": "catalog:react19",
+    "react-compiler-runtime": "catalog:react-compiler",
     "react-dom": "catalog:react19",
     "react-hotkeys-hook": "catalog:ui",
     "uuid": "catalog:uuid"

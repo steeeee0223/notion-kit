@@ -1,82 +1,66 @@
 {
-  "name": "@notion-kit/table-view",
+  "name": "@notion-kit/e2e",
   "version": "0.14.0",
+  "private": true,
   "type": "module",
-  "bugs": {
-    "url": "https://github.com/steeeee0223/notion-kit/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/steeeee0223/notion-kit.git",
-    "directory": "packages/table-view"
-  },
-  "publishConfig": {
-    "main": "./dist/index.mjs",
-    "module": "./dist/index.mjs",
-    "types": "./dist/index.d.mts",
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
-      }
-    }
-  },
-  "files": [
-    "dist"
-  ],
-  "main": "./src/index.ts",
-  "module": "./src/index.ts",
-  "license": "MIT",
   "scripts": {
-    "build": "tsdown --config=../../tooling/config/tsdown.config.ts",
-    "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsdown --config=../../tooling/config/tsdown.config.ts --watch",
+    "build": "next build",
+    "clean": "git clean -xdf .next .turbo node_modules",
+    "dev": "next dev -p 3001",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
+    "start": "next start -p 3001",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:ui": "vitest --ui",
-    "coverage": "vitest run --coverage",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@dnd-kit/core": "catalog:ui",
     "@dnd-kit/modifiers": "catalog:ui",
     "@dnd-kit/sortable": "catalog:ui",
+    "@notion-kit/auth-ui": "workspace:*",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/common": "workspace:*",
+    "@notion-kit/cover": "workspace:*",
     "@notion-kit/hooks": "workspace:*",
+    "@notion-kit/i18n": "workspace:*",
     "@notion-kit/icon-block": "workspace:*",
     "@notion-kit/icon-menu": "workspace:*",
     "@notion-kit/icons": "workspace:*",
+    "@notion-kit/navbar": "workspace:*",
+    "@notion-kit/schemas": "workspace:*",
+    "@notion-kit/selectable": "workspace:*",
+    "@notion-kit/settings-panel": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
+    "@notion-kit/sidebar": "workspace:*",
+    "@notion-kit/single-image-dropzone": "workspace:*",
+    "@notion-kit/table-view": "workspace:*",
     "@notion-kit/tags-input": "workspace:*",
+    "@notion-kit/tree": "workspace:*",
+    "@notion-kit/unsplash": "workspace:*",
     "@notion-kit/utils": "workspace:*",
-    "@tanstack/react-table": "catalog:ui",
-    "react-hotkeys-hook": "catalog:ui",
-    "uuid": "catalog:uuid"
+    "next": "catalog:next16",
+    "react": "catalog:react19",
+    "react-compiler-runtime": "catalog:react-compiler",
+    "react-dom": "catalog:react19"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tailwind-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "@tailwindcss/postcss": "catalog:tailwind-v4",
     "@testing-library/react": "catalog:rtl",
+    "@types/node": "catalog:node22",
     "@types/react": "catalog:react19",
+    "@types/react-dom": "catalog:react19",
     "@vitejs/plugin-react": "catalog:test",
-    "@vitest/coverage-v8": "catalog:test",
-    "@vitest/ui": "catalog:test",
     "eslint": "catalog:",
     "jsdom": "catalog:rtl",
     "prettier": "catalog:",
     "tailwindcss": "catalog:tailwind-v4",
-    "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:test"
-  },
-  "peerDependencies": {
-    "react": "catalog:react19",
-    "react-dom": "catalog:react19"
   },
   "prettier": "@notion-kit/prettier-config"
 }
