@@ -18,6 +18,7 @@
     "@dnd-kit/core": "catalog:ui",
     "@dnd-kit/modifiers": "catalog:ui",
     "@dnd-kit/sortable": "catalog:ui",
+    "@notion-kit/auth": "workspace:*",
     "@notion-kit/auth-ui": "workspace:*",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/common": "workspace:*",

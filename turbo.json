@@ -1,6 +1,5 @@
 {
   "$schema": "https://turborepo.org/schema.json",
-  "ui": "tui",
   "tasks": {
     "topo": {
       "dependsOn": ["^topo"]
@@ -8,6 +7,7 @@
     "build": {
       "dependsOn": ["^build"],
       "outputs": [".next/**", "dist/**", "storybook-static/**"],
+      "outputLogs": "errors-only",
       "env": [
         "POSTGRES_URL",
         "BETTER_AUTH_URL",
@@ -29,21 +29,25 @@
     },
     "format": {
       "outputs": [".cache/.prettiercache"],
-      "outputLogs": "new-only"
+      "outputLogs": "errors-only"
     },
     "lint": {
       "dependsOn": ["^topo"],
-      "outputs": [".cache/.eslintcache"]
+      "outputs": [".cache/.eslintcache"],
+      "outputLogs": "errors-only"
     },
     "typecheck": {
       "dependsOn": ["^topo"],
-      "outputs": [".cache/tsbuildinfo.json"]
+      "outputs": [".cache/tsbuildinfo.json"],
+      "outputLogs": "errors-only"
     },
     "clean": {
-      "cache": false
+      "cache": false,
+      "outputLogs": "errors-only"
     },
     "//#clean": {
-      "cache": false
+      "cache": false,
+      "outputLogs": "errors-only"
     },
     "ui-add": {
       "cache": false,

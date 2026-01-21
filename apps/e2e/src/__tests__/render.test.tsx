@@ -22,10 +22,10 @@ describe("Package Render Tests", () => {
       expect(container.firstChild).toBeInTheDocument();
     });
 
-    it("should render Label", async () => {
-      const { Label } = await import("@notion-kit/shadcn");
-      const { container } = render(<Label>Test Label</Label>);
-      expect(container.firstChild).toBeInTheDocument();
+    it("should render Calendar", async () => {
+      const { Calendar } = await import("@notion-kit/shadcn");
+      const { container } = render(<Calendar />);
+      expect(container).toBeInTheDocument();
     });
 
     it("should render Separator", async () => {

@@ -5,7 +5,27 @@
 import { describe, expect, it } from "vitest";
 
 describe("Package Import Tests", () => {
-  it.skip("should import @notion-kit/auth-ui without errors", async () => {
+  it("should import @notion-kit/auth without errors", async () => {
+    const { createAuth, createAuthClient } = await import("@notion-kit/auth");
+    const auth = createAuth({
+      POSTGRES_URL: "API_KEY",
+      BETTER_AUTH_URL: "API_KEY",
+      BETTER_AUTH_SECRET: "API_KEY",
+      TRUSTED_ORIGINS: [],
+      GOOGLE_CLIENT_ID: "API_KEY",
+      GOOGLE_CLIENT_SECRET: "API_KEY",
+      GITHUB_CLIENT_ID: "API_KEY",
+      GITHUB_CLIENT_SECRET: "API_KEY",
+      NODE_ENV: "test",
+      MAILTRAP_API_KEY: "API_KEY",
+    });
+    expect(auth).toBeDefined();
+
+    const authClient = createAuthClient();
+    expect(authClient).toBeDefined();
+  });
+
+  it("should import @notion-kit/auth-ui without errors", async () => {
     const { LoginForm } = await import("@notion-kit/auth-ui");
     expect(LoginForm).toBeDefined();
   });
@@ -15,7 +35,7 @@ describe("Package Import Tests", () => {
     expect(cn).toBeDefined();
   });
 
-  it.skip("should import @notion-kit/cover without errors", async () => {
+  it("should import @notion-kit/cover without errors", async () => {
     const { Cover } = await import("@notion-kit/cover");
     expect(Cover).toBeDefined();
   });
@@ -26,8 +46,8 @@ describe("Package Import Tests", () => {
   });
 
   it("should import @notion-kit/i18n without errors", async () => {
-    const i18n = await import("@notion-kit/i18n");
-    expect(i18n).toBeDefined();
+    const { I18nProvider } = await import("@notion-kit/i18n");
+    expect(I18nProvider).toBeDefined();
   });
 
   it("should import @notion-kit/icon-block without errors", async () => {
@@ -65,8 +85,9 @@ describe("Package Import Tests", () => {
   });
 
   it("should import @notion-kit/shadcn without errors", async () => {
-    const { Button } = await import("@notion-kit/shadcn");
+    const { Button, Calendar } = await import("@notion-kit/shadcn");
     expect(Button).toBeDefined();
+    expect(Calendar).toBeDefined();
   });
 
   it("should import @notion-kit/sidebar without errors", async () => {
