@@ -6,8 +6,8 @@ import * as React from "react";
 import { UploadCloudIcon, X } from "lucide-react";
 import type { DropzoneOptions } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
-import { twMerge } from "tailwind-merge";
 
+import { cn } from "@notion-kit/cn";
 import { Spinner } from "@notion-kit/shadcn";
 
 const variants = {
@@ -93,7 +93,7 @@ const SingleImageDropzone: React.FC<SingleImageDropzoneProps> = ({
   // styling
   const dropZoneClassName = React.useMemo(
     () =>
-      twMerge(
+      cn(
         variants.base,
         isFocused && variants.active,
         disabled && variants.disabled,
@@ -102,7 +102,7 @@ const SingleImageDropzone: React.FC<SingleImageDropzoneProps> = ({
         (isDragReject ?? fileRejections[0]) && variants.reject,
         isDragAccept && variants.accept,
         className,
-      ).trim(),
+      ),
     [
       isFocused,
       imageUrl,
@@ -198,7 +198,7 @@ const Button = React.forwardRef<
 >(({ className, ...props }, ref) => {
   return (
     <button
-      className={twMerge(
+      className={cn(
         // base
         "inline-flex cursor-pointer items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
         // color

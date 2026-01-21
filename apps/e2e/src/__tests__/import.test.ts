@@ -5,7 +5,7 @@
 import { describe, expect, it } from "vitest";
 
 describe("Package Import Tests", () => {
-  it.skip("should import @notion-kit/auth-ui without errors", async () => {
+  it("should import @notion-kit/auth-ui without errors", async () => {
     const { LoginForm } = await import("@notion-kit/auth-ui");
     expect(LoginForm).toBeDefined();
   });
