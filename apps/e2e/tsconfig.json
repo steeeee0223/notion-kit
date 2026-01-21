@@ -5,6 +5,6 @@
     "lib": ["ES2022", "dom", "dom.iterable"],
     "plugins": [{ "name": "next" }]
   },
-  "include": ["src"],
+  "include": ["src", "vitest.*.ts"],
   "exclude": ["node_modules"]
 }
