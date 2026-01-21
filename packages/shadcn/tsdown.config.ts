@@ -5,4 +5,5 @@ import { withReactClient } from "@notion-kit/config/tsdown";
 export default defineConfig((opts) => ({
   ...opts,
   ...withReactClient(opts),
+  external: ["react-day-picker"],
 }));

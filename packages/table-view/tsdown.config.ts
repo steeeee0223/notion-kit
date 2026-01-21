@@ -1,8 +1,13 @@
 import { defineConfig } from "tsdown";
 
-import { withReactCompiler } from "@notion-kit/config/tsdown";
+import { withReactClient } from "@notion-kit/config/tsdown";
 
 export default defineConfig((opts) => ({
   ...opts,
-  ...withReactCompiler(opts),
+  /**
+   * Not using `withReactCompiler`
+   * since @tanstack/react-table is not compatible with react-compiler yet
+   */
+  ...withReactClient(opts),
+  external: [/^@dnd-kit\//],
 }));

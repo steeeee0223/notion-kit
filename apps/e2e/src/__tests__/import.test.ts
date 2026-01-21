@@ -85,8 +85,9 @@ describe("Package Import Tests", () => {
   });
 
   it("should import @notion-kit/shadcn without errors", async () => {
-    const { Button } = await import("@notion-kit/shadcn");
+    const { Button, Calendar } = await import("@notion-kit/shadcn");
     expect(Button).toBeDefined();
+    expect(Calendar).toBeDefined();
   });
 
   it("should import @notion-kit/sidebar without errors", async () => {

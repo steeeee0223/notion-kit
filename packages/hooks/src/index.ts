@@ -7,6 +7,5 @@ export * from "./use-is-mobile";
 export * from "./use-origin";
 export * from "./use-rect";
 export * from "./use-scroll";
-export * from "./use-transition";
 /** Temp. */
 export * from "./use-temporary-fix";
