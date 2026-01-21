@@ -11,11 +11,11 @@ export interface I18nProviderProps extends React.PropsWithChildren {
   defaultNS?: CustomTypeOptions["defaultNS"];
 }
 
-export const I18nProvider: React.FC<I18nProviderProps> = ({
+export function I18nProvider({
   children,
   language,
   defaultNS,
-}) => {
+}: I18nProviderProps) {
   const i18n = useMemo(() => createI18n(), []);
 
   useEffect(() => {
@@ -27,4 +27,4 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({
       {children}
     </I18nextProvider>
   );
-};
+}

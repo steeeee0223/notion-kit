@@ -24,7 +24,7 @@
   "types": "./dist/index.d.mts",
   "license": "MIT",
   "scripts": {
-    "build": "tsdown --config=../../tooling/config/tsdown.config.ts",
+    "build": "tsdown",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "db:push": "pnpm with-env drizzle-kit push",
     "dev": "pnpm with-env drizzle-kit studio",

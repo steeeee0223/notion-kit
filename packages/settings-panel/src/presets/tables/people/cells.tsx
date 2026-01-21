@@ -1,7 +1,8 @@
 "use client";
 
+import { useTransition } from "react";
+
 import { cn } from "@notion-kit/cn";
-import { useTransition } from "@notion-kit/hooks";
 import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import { Role } from "@notion-kit/schemas";
@@ -103,9 +104,9 @@ export function RoleSelectCell({
   scopes,
   onSelect,
 }: RoleSelectCellProps) {
-  const [select, isUpdating] = useTransition((role: PartialRole) =>
-    onSelect?.(role),
-  );
+  const [isUpdating, startTransition] = useTransition();
+  const select = (role: PartialRole) =>
+    startTransition(async () => await onSelect?.(role));
 
   return (
     <div className="flex items-center">
@@ -210,7 +211,8 @@ export function GuestActionCell({
   onUpdate,
   onDelete,
 }: GuestActionCellProps) {
-  const [upgrade, isUpgrading] = useTransition(() => onUpdate?.());
+  const [isUpgrading, startTransition] = useTransition();
+  const upgrade = () => startTransition(async () => await onUpdate?.());
 
   return (
     <DropdownMenu>
@@ -256,7 +258,8 @@ interface InvitationActionCellProps {
 }
 
 export function InvitationActionCell({ onCancel }: InvitationActionCellProps) {
-  const [cancel, isCancelling] = useTransition(() => onCancel?.());
+  const [isCancelling, startTransition] = useTransition();
+  const cancel = () => startTransition(async () => await onCancel?.());
 
   return (
     <DropdownMenu>

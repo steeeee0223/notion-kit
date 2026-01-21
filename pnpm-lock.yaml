@@ -1142,10 +1142,19 @@ importers:
       i18next:
         specifier: ^25.0.1
         version: 25.0.1(typescript@5.9.3)
+      react:
+        specifier: catalog:react19
+        version: 19.2.3
+      react-dom:
+        specifier: catalog:react19
+        version: 19.2.3(react@19.2.3)
       react-i18next:
         specifier: ^15.4.1
-        version: 15.4.1(i18next@25.0.1(typescript@5.9.3))(react@19.2.3)
+        version: 15.4.1(i18next@25.0.1(typescript@5.9.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
     devDependencies:
+      '@notion-kit/config':
+        specifier: workspace:*
+        version: link:../../tooling/config
       '@notion-kit/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint
@@ -15842,12 +15851,14 @@ snapshots:
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
 
-  react-i18next@15.4.1(i18next@25.0.1(typescript@5.9.3))(react@19.2.3):
+  react-i18next@15.4.1(i18next@25.0.1(typescript@5.9.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
       '@babel/runtime': 7.27.0
       html-parse-stringify: 3.0.1
       i18next: 25.0.1(typescript@5.9.3)
       react: 19.2.3
+    optionalDependencies:
+      react-dom: 19.2.3(react@19.2.3)
 
   react-infinite-scroll-component@6.1.0(react@19.2.3):
     dependencies:
