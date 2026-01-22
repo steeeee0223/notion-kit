@@ -33,18 +33,32 @@ function LoaderDashed(props: React.SVGProps<SVGSVGElement>) {
 function LoaderCircle(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      viewBox="0 0 14 14"
+      width="1em"
+      height="1em"
+      aria-hidden="true"
+      focusable="false"
       {...props}
     >
-      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+      <circle
+        cx="7"
+        cy="7"
+        r="6.25"
+        fill="none"
+        strokeWidth="1.5"
+        className="stroke-border"
+      />
+      <circle
+        cx="7"
+        cy="7"
+        r="6.25"
+        fill="none"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeDasharray="39.269908169872416"
+        strokeDashoffset="26.31083847381452"
+        className="stroke-current"
+      />
     </svg>
   );
 }
