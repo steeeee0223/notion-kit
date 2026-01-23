@@ -23,7 +23,7 @@ export function createSessionColumns({
       header: ({ column }) => {
         const isSorted = column.getIsSorted();
         return (
-          <div className="flex w-3/10 min-w-50 items-center">
+          <div className="flex min-w-50 items-center">
             <SortingToggle
               title="Device Name"
               isSorted={isSorted}
@@ -48,7 +48,7 @@ export function createSessionColumns({
       header: ({ column }) => {
         const isSorted = column.getIsSorted();
         return (
-          <div className="flex w-1/4 items-center">
+          <div className="flex items-center">
             <SortingToggle
               title="Last Active"
               isSorted={isSorted}
@@ -67,7 +67,7 @@ export function createSessionColumns({
       header: ({ column }) => {
         const isSorted = column.getIsSorted();
         return (
-          <div className="flex w-3/10 items-center">
+          <div className="flex items-center">
             <SortingToggle
               title="Location"
               isSorted={isSorted}
@@ -82,7 +82,6 @@ export function createSessionColumns({
     },
     {
       id: "action",
-      header: () => <div className="w-1/10" />,
       cell: ({ row }) => {
         return (
           <Dialog>

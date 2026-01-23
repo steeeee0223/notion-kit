@@ -40,11 +40,14 @@ const TableRow = ({ className, ...props }: React.ComponentProps<"tr">) => (
 );
 
 const TableHead = ({ className, ...props }: React.ComponentProps<"th">) => (
-  <th className={cn("py-2 text-start", className)} {...props} />
+  <th
+    className={cn("sticky top-0 h-8 bg-transparent text-start", className)}
+    {...props}
+  />
 );
 
 const TableCell = ({ className, ...props }: React.ComponentProps<"td">) => (
-  <td className={cn("py-2", className)} {...props} />
+  <td className={cn("h-[42px] bg-transparent pr-3", className)} {...props} />
 );
 
 const TableCaption = ({

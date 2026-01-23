@@ -52,7 +52,7 @@ interface UserCellProps {
 }
 export function UserCell({ user }: UserCellProps) {
   return (
-    <div className="z-20 flex h-full min-h-[42px] w-[220px] items-center justify-between pr-3">
+    <div className="z-20 flex h-full min-h-[42px] w-[220px] items-center justify-between">
       <div className="flex w-full items-center gap-2.5">
         <Avatar src={user.avatarUrl} fallback={user.name} className="size-7" />
         <div className="max-w-[164px]">
