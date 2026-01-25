@@ -3,7 +3,6 @@
 import { useCallback, useRef, useState } from "react";
 import { saveAs } from "file-saver";
 import { ChevronDown } from "lucide-react";
-import { useOnClickOutside } from "usehooks-ts";
 
 import { cn } from "@notion-kit/cn";
 import { AlertModal } from "@notion-kit/common/alert-modal";
@@ -74,9 +73,6 @@ export function People() {
     setOpen((prev) => !prev);
     inputRef.current?.focus();
   };
-  useOnClickOutside(searchRef as React.RefObject<HTMLElement>, () =>
-    setOpen(false),
-  );
   /** Modals */
   /** Tables */
   const { members, guests } = useWorkspaceMemberships();
@@ -164,9 +160,7 @@ export function People() {
                 variant="flat"
                 className={cn(
                   "transition-[width,opacity] duration-200 ease-in-out",
-                  open
-                    ? "w-[150px] opacity-100"
-                    : "w-0 p-0 opacity-0 [&_input]:hidden",
+                  open ? "w-[150px] opacity-100" : "w-0 p-0 opacity-0",
                 )}
                 placeholder={tabs.search}
                 value={search}
@@ -262,6 +256,7 @@ export function People() {
           className="mt-0 bg-transparent"
         >
           <InvitationsTable
+            search={search}
             scopes={scopes}
             data={invitations}
             onCancel={cancel}

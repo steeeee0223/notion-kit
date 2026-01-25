@@ -179,7 +179,7 @@ export function AccessCell({ access }: AccessCellProps) {
   return (
     <div className="flex items-center">
       {access.length < 1 ? (
-        <div className="w-auto cursor-default p-2 text-sm text-muted">
+        <div className="min-w-30 cursor-default pl-2 text-sm text-muted">
           No access
         </div>
       ) : (

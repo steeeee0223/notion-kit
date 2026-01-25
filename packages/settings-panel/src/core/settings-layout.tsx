@@ -51,7 +51,7 @@ const SettingsContent = ({
 }: React.ComponentProps<"div">) => (
   <div
     className={cn(
-      "w-full grow-1 overflow-y-scroll rounded-r-lg bg-modal px-[60px] py-9",
+      "w-full grow-1 overflow-x-hidden overflow-y-scroll rounded-r-lg bg-modal px-15 py-9",
       className,
     )}
     {...props}

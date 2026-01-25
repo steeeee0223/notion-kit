@@ -8,6 +8,7 @@ import {
   getSortedRowModel,
   useReactTable,
   type ColumnDef,
+  type ColumnFilter,
   type ColumnFiltersState,
   type OnChangeFn,
   type Row,
@@ -29,18 +30,14 @@ export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   emptyResult?: string;
-  /** Enable sorting functionality */
-  enableSorting?: boolean;
-  /** Enable filtering functionality */
-  enableFiltering?: boolean;
   /** External column filters state (controlled) */
   columnFilters?: ColumnFiltersState;
   /** Callback when column filters change */
   onColumnFiltersChange?: OnChangeFn<ColumnFiltersState>;
+  /** Initial column pinning state (set once on mount, not controlled) */
+  initialColumnPinning?: string[];
   /** Search configuration - applies filter to a specific column */
-  search?:
-    | string // Simple string search (assumes column id is "user" for backward compatibility)
-    | { colId: string; value: string }; // Specific column search
+  search?: ColumnFilter;
   /** Row click handler */
   onRowClick?: (row: Row<TData>) => void;
   /**
@@ -57,10 +54,9 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   emptyResult = "No results.",
-  enableSorting = true,
-  enableFiltering = true,
   columnFilters: externalColumnFilters,
   onColumnFiltersChange,
+  initialColumnPinning,
   search,
   onRowClick,
   getCellClassName,
@@ -75,56 +71,59 @@ export function DataTable<TData, TValue>({
   const handleColumnFiltersChange =
     onColumnFiltersChange ?? setInternalColumnFilters;
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    ...(enableSorting && {
-      onSortingChange: setSorting,
-      getSortedRowModel: getSortedRowModel(),
-    }),
-    ...(enableFiltering && {
-      onColumnFiltersChange: handleColumnFiltersChange,
-      getFilteredRowModel: getFilteredRowModel(),
-    }),
     state: {
-      ...(enableSorting && { sorting }),
-      ...(enableFiltering && { columnFilters }),
+      sorting,
+      columnFilters,
+      columnPinning: { left: initialColumnPinning },
     },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: handleColumnFiltersChange,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
   // Handle search prop
   useEffect(() => {
-    if (!search || !enableFiltering) return;
+    if (!search) return;
 
-    if (typeof search === "string") {
-      // Backward compatibility: assume "user" column
-      table.getColumn("user")?.setFilterValue(search);
-    } else {
-      // New approach: specify column id
-      table.getColumn(search.colId)?.setFilterValue(search.value);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, enableFiltering]);
+    table.getColumn(search.id)?.setFilterValue(search.value);
+  }, [search, table]);
 
   return (
     <Table className={cn("border-t-0", className)}>
       <TableHeader>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id} className="border-none">
-            {headerGroup.headers.map((header) => (
-              <TableHead
-                key={header.id}
-                className={cn(getHeaderClassName?.(header.id))}
-              >
-                {header.isPlaceholder
-                  ? null
-                  : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-              </TableHead>
-            ))}
+            {headerGroup.headers.map((header) => {
+              const isPinned = header.column.getIsPinned();
+              const pinnedStyles = isPinned
+                ? { left: `${header.column.getStart("left")}px` }
+                : {};
+
+              return (
+                <TableHead
+                  key={header.id}
+                  style={pinnedStyles}
+                  className={cn(
+                    isPinned &&
+                      "sticky z-40 bg-modal inset-shadow-[-1px_0_0_#e9e9e7] dark:inset-shadow-[-1px_0_0_#2f2f2f]",
+                    getHeaderClassName?.(header.id),
+                  )}
+                >
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                </TableHead>
+              );
+            })}
           </TableRow>
         ))}
       </TableHeader>
@@ -137,21 +136,33 @@ export function DataTable<TData, TValue>({
               onClick={() => onRowClick?.(row)}
               className={cn(onRowClick && "cursor-pointer hover:bg-default/5")}
             >
-              {row.getVisibleCells().map((cell) => (
-                <TableCell
-                  key={cell.id}
-                  className={cn(getCellClassName?.(cell.column.id))}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
+              {row.getVisibleCells().map((cell) => {
+                const isPinned = cell.column.getIsPinned();
+                const pinnedStyles = isPinned
+                  ? { left: `${cell.column.getStart("left")}px` }
+                  : {};
+
+                return (
+                  <TableCell
+                    key={cell.id}
+                    style={pinnedStyles}
+                    className={cn(
+                      isPinned &&
+                        "sticky z-20 bg-modal inset-shadow-[-1px_0_0_#e9e9e7] dark:inset-shadow-[-1px_0_0_#2f2f2f]",
+                      getCellClassName?.(cell.column.id),
+                    )}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                );
+              })}
             </TableRow>
           ))
         ) : (
           <TableRow>
             <TableCell
               colSpan={columns.length}
-              className="sticky left-0 h-6 text-start text-secondary"
+              className="sticky left-0 h-8 text-start text-secondary"
             >
               {emptyResult}
             </TableCell>

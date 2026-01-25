@@ -92,7 +92,7 @@ export function createMemberColumns({
             cell: ({ row }: { row: Row<MemberRow> }) => {
               const id = row.original.user.id;
               return (
-                <div className="flex min-w-[52px] items-center justify-end">
+                <div className="flex min-w-13 items-center justify-end">
                   <MemberActionCell
                     isSelf={id === userId}
                     onDelete={() => onDelete?.(row.original)}
