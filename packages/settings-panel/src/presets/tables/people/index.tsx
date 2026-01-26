@@ -62,8 +62,8 @@ export function MembersTable({
       getHeaderClassName={(headerId) =>
         cn(
           headerId === "user" && "w-55",
-          headerId === "teamspaces" && "w-[175px]",
-          headerId === "groups" && "w-30",
+          headerId === "teamspaces" && "min-w-[175px]",
+          headerId === "groups" && "min-w-30",
           headerId === "role" && "min-w-30",
           headerId === "actions" && "w-13",
         )

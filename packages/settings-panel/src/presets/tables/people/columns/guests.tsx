@@ -72,7 +72,7 @@ export function createGuestColumns({
           {
             id: "actions",
             cell: ({ row }: { row: Row<GuestRow> }) => (
-              <div className="flex min-w-[52px] items-center justify-end">
+              <div className="flex items-center justify-end">
                 <GuestActionCell
                   name={row.original.user.name}
                   onUpdate={() =>

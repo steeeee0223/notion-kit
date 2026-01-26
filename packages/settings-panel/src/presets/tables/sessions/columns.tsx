@@ -23,7 +23,7 @@ export function createSessionColumns({
       header: ({ column }) => {
         const isSorted = column.getIsSorted();
         return (
-          <div className="flex min-w-50 items-center">
+          <div className="flex items-center">
             <SortingToggle
               title="Device Name"
               isSorted={isSorted}

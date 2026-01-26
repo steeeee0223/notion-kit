@@ -15,13 +15,7 @@ interface TextCellProps {
 
 export function TextCell({ header, value, className }: TextCellProps) {
   return (
-    <div
-      className={cn(
-        "truncate text-xs font-normal text-secondary",
-        header && "text-sm",
-        className,
-      )}
-    >
+    <div className={cn("truncate text-xs", header && "text-sm", className)}>
       {value}
     </div>
   );

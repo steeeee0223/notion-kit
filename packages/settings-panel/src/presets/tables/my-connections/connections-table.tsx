@@ -21,8 +21,6 @@ export function ConnectionsTable({ data, ...actions }: ConnectionsTableProps) {
     <DataTable
       columns={columns}
       data={data}
-      enableSorting={false}
-      enableFiltering={false}
       getHeaderClassName={(headerId) =>
         cn(headerId === "actions" ? "w-[5%]" : "w-2/5")
       }

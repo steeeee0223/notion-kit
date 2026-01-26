@@ -20,6 +20,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableEmptyCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -108,12 +109,9 @@ export function DataTable<TData, TValue>({
               return (
                 <TableHead
                   key={header.id}
+                  data-pinned={isPinned}
                   style={pinnedStyles}
-                  className={cn(
-                    isPinned &&
-                      "sticky z-40 bg-modal inset-shadow-[-1px_0_0_#e9e9e7] dark:inset-shadow-[-1px_0_0_#2f2f2f]",
-                    getHeaderClassName?.(header.id),
-                  )}
+                  className={cn(getHeaderClassName?.(header.id))}
                 >
                   {header.isPlaceholder
                     ? null
@@ -146,11 +144,8 @@ export function DataTable<TData, TValue>({
                   <TableCell
                     key={cell.id}
                     style={pinnedStyles}
-                    className={cn(
-                      isPinned &&
-                        "sticky z-20 bg-modal inset-shadow-[-1px_0_0_#e9e9e7] dark:inset-shadow-[-1px_0_0_#2f2f2f]",
-                      getCellClassName?.(cell.column.id),
-                    )}
+                    data-pinned={isPinned}
+                    className={cn(getCellClassName?.(cell.column.id))}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
@@ -160,12 +155,9 @@ export function DataTable<TData, TValue>({
           ))
         ) : (
           <TableRow>
-            <TableCell
-              colSpan={columns.length}
-              className="sticky left-0 h-8 text-start text-secondary"
-            >
+            <TableEmptyCell colSpan={columns.length} className="sticky left-0">
               {emptyResult}
-            </TableCell>
+            </TableEmptyCell>
           </TableRow>
         )}
       </TableBody>
