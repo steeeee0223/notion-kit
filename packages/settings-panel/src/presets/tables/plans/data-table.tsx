@@ -42,16 +42,14 @@ export function DataTable<TData, TValue>({
   const tableRows = table.getRowModel().rows;
 
   return (
-    <Table className="border-y-0">
-      <TableHeader>
+    <Table variant="striped">
+      <TableHeader className={cn(type === "highlight" && "border-none")}>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow
             key={headerGroup.id}
-            variant="striped"
             className={cn(
               "flex",
               type === "highlight" && "bg-main! py-5 shadow-sm dark:bg-main!",
-              type === "content" && "border-b border-border",
             )}
           >
             {headerGroup.headers.map((header) => (
@@ -78,7 +76,6 @@ export function DataTable<TData, TValue>({
           <TableRow
             key={row.id}
             data-state={row.getIsSelected() && "selected"}
-            variant="striped"
             className="flex"
           >
             {row.getVisibleCells().map((cell) => (

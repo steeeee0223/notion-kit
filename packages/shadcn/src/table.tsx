@@ -2,43 +2,54 @@ import * as React from "react";
 
 import { cn, cva } from "@notion-kit/cn";
 
-const tableVariants = cva("", {
+type TableVariant = "default" | "striped";
+const TableContext = React.createContext<{
+  variant: TableVariant;
+}>({
+  variant: "default",
+});
+
+const tableVariants = cva("w-full text-[13px]", {
   variants: {
-    "table-row": {
-      default: "border-t border-t-default/10",
-      striped: "odd:bg-[#f7f7f5] dark:odd:bg-modal",
+    variant: {
+      default: "border-y border-y-default/10",
+      striped: "",
     },
   },
   defaultVariants: {
-    "table-row": "default",
+    variant: "default",
   },
 });
 
-type TableVariant = "default" | "striped";
-
-function tableClasses(
-  slot: "table-row" | "table-cell",
-  variant?: TableVariant,
-) {
-  return tableVariants({ [slot]: variant });
+interface TableProps extends React.ComponentProps<"table"> {
+  variant?: TableVariant;
 }
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+function Table({ className, variant = "default", ...props }: TableProps) {
+  const ctx = React.useMemo(() => ({ variant }), [variant]);
   return (
-    <div className="relative w-full overflow-auto">
-      <table
-        className={cn(
-          "w-full border-y border-y-default/10 text-[13px]",
-          className,
-        )}
-        {...props}
-      />
-    </div>
+    <TableContext value={ctx}>
+      <div className="relative w-full overflow-auto">
+        <table
+          className={cn(tableVariants({ variant, className }))}
+          {...props}
+        />
+      </div>
+    </TableContext>
   );
 }
 
-function TableHeader(props: React.ComponentProps<"thead">) {
-  return <thead {...props} />;
+function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
+  const { variant } = React.useContext(TableContext);
+  return (
+    <thead
+      className={cn(
+        variant === "striped" && "border-b border-border",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 function TableBody(props: React.ComponentProps<"tbody">) {
@@ -57,16 +68,22 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
   );
 }
 
-interface TableRowProps extends React.ComponentProps<"tr"> {
-  variant?: TableVariant;
-}
+const tableRowVariants = cva("", {
+  variants: {
+    variant: {
+      default: "border-t border-t-default/10",
+      striped: "odd:bg-[#f7f7f5] dark:odd:bg-modal",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+});
 
-function TableRow({ className, variant, ...props }: TableRowProps) {
+function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
+  const { variant } = React.useContext(TableContext);
   return (
-    <tr
-      className={cn(tableClasses("table-row", variant), className)}
-      {...props}
-    />
+    <tr className={cn(tableRowVariants({ variant, className }))} {...props} />
   );
 }
 

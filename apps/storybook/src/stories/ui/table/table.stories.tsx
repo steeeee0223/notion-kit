@@ -36,12 +36,10 @@ export const Default: Story = {
     return (
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead className="w-9">#</TableHead>
-            <TableHead className="min-w-20">Name</TableHead>
-            <TableHead className="w-40">Status</TableHead>
-            <TableHead className="min-w-20">User</TableHead>
-          </TableRow>
+          <TableHead className="w-9">#</TableHead>
+          <TableHead className="min-w-20">Name</TableHead>
+          <TableHead className="w-40">Status</TableHead>
+          <TableHead className="min-w-20">User</TableHead>
         </TableHeader>
         <TableBody>
           {(data as Todo[]).map((todo) => (
@@ -65,12 +63,10 @@ export const Empty: Story = {
     return (
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead className="w-9">#</TableHead>
-            <TableHead className="min-w-20">Name</TableHead>
-            <TableHead className="w-40">Status</TableHead>
-            <TableHead className="min-w-20">User</TableHead>
-          </TableRow>
+          <TableHead className="w-9">#</TableHead>
+          <TableHead className="min-w-20">Name</TableHead>
+          <TableHead className="w-40">Status</TableHead>
+          <TableHead className="min-w-20">User</TableHead>
         </TableHeader>
         <TableBody>
           <TableRow>
@@ -87,19 +83,44 @@ export const Pinned: Story = {
     return (
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead data-pinned="left" className="w-9">
-              #
-            </TableHead>
-            <TableHead className="min-w-20">Name</TableHead>
-            <TableHead className="w-40">Status</TableHead>
-            <TableHead className="min-w-20">User</TableHead>
-          </TableRow>
+          <TableHead data-pinned="left" className="w-9">
+            #
+          </TableHead>
+          <TableHead className="min-w-20">Name</TableHead>
+          <TableHead className="w-40">Status</TableHead>
+          <TableHead className="min-w-20">User</TableHead>
         </TableHeader>
         <TableBody>
           {(data as Todo[]).map((todo) => (
             <TableRow key={todo.id}>
               <TableCell data-pinned="left">{todo.id}</TableCell>
+              <TableCell>{todo.title}</TableCell>
+              <TableCell>
+                {todo.completed ? "Completed" : "Not Completed"}
+              </TableCell>
+              <TableCell>{users[todo.userId]}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    );
+  },
+};
+
+export const Striped: Story = {
+  render: (_, { loaded: { data } }) => {
+    return (
+      <Table variant="striped">
+        <TableHeader>
+          <TableHead className="w-9">#</TableHead>
+          <TableHead className="min-w-20">Name</TableHead>
+          <TableHead className="w-40">Status</TableHead>
+          <TableHead className="min-w-20">User</TableHead>
+        </TableHeader>
+        <TableBody>
+          {(data as Todo[]).map((todo) => (
+            <TableRow key={todo.id}>
+              <TableCell>{todo.id}</TableCell>
               <TableCell>{todo.title}</TableCell>
               <TableCell>
                 {todo.completed ? "Completed" : "Not Completed"}
