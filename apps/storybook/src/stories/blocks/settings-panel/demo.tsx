@@ -4,15 +4,16 @@ import { useState } from "react";
 
 import { Role } from "@notion-kit/schemas";
 import {
-  Memberships,
   SettingsBodyPreset,
   SettingsContent,
   SettingsPanel,
   SettingsProvider,
   SettingsSidebar,
   SettingsSidebarPreset,
-  Teamspaces,
+  type Invitations,
+  type Memberships,
   type TabType,
+  type Teamspaces,
 } from "@notion-kit/settings-panel";
 
 import { delay } from "@/lib/utils";
@@ -20,6 +21,7 @@ import { delay } from "@/lib/utils";
 import {
   mockConnections,
   mockGuests,
+  mockInvitations,
   mockMembers,
   mockSessions,
   mockSettings,
@@ -71,6 +73,15 @@ export const Demo = () => {
               },
               {},
             ),
+          ),
+      }}
+      invitations={{
+        getAll: () =>
+          Promise.resolve(
+            mockInvitations.reduce<Invitations>((acc, i) => {
+              acc[i.id] = i;
+              return acc;
+            }, {}),
           ),
       }}
       teamspaces={{

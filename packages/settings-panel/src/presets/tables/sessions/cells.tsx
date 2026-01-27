@@ -12,7 +12,7 @@ interface DeviceCellProps {
 
 export function DeviceCell({ device, type, isCurrent }: DeviceCellProps) {
   return (
-    <div className="ml-1 flex items-center gap-2">
+    <div className="flex items-center gap-2">
       <DeviceIcon
         type={type}
         className="block size-6 shrink-0 fill-[rgba(81,73,60,0.32)] dark:fill-primary/30"

@@ -30,9 +30,9 @@ interface TeamspaceCellProps {
 
 export function TeamspaceCell({ name, icon, memberCount }: TeamspaceCellProps) {
   return (
-    <div className="flex h-14 min-w-[30px] items-center px-1 text-sm text-primary">
+    <div className="flex h-14 min-w-[30px] items-center text-sm text-primary">
       <div className="flex items-center gap-3 overflow-hidden">
-        <IconBlock icon={icon} size="md" />
+        <IconBlock icon={icon} className="size-7 rounded-md p-1 text-xl/6" />
         <div className="flex min-w-0 flex-col">
           <div className="flex">
             <div className="truncate leading-[18px]">{name}</div>
@@ -100,7 +100,7 @@ interface OwnersCellProps {
 
 export function OwnersCell({ ownedBy, count }: OwnersCellProps) {
   return (
-    <div className="flex h-14 min-w-15 items-center gap-1.5 overflow-hidden px-2 text-sm text-primary">
+    <div className="flex h-14 min-w-15 items-center gap-1.5 overflow-hidden text-sm text-primary">
       <Avatar src={ownedBy.avatarUrl} fallback={ownedBy.name} />
       <div className="contents">
         <div className="shrink truncate">{ownedBy.name}</div>

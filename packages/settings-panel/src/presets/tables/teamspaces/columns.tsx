@@ -46,7 +46,7 @@ export function createTeamspaceColumns({
       header: ({ column }) => {
         const isSorted = column.getIsSorted();
         return (
-          <div className="flex w-[35%] items-center">
+          <div className="flex items-center">
             <SortingToggle
               title="Teamspace"
               isSorted={isSorted}
@@ -66,8 +66,8 @@ export function createTeamspaceColumns({
     {
       accessorKey: "ownedBy",
       header: () => (
-        <div className="flex w-1/4 min-w-20 items-center px-2">
-          <TextCell header value="Owners" />
+        <div className="flex items-center">
+          <TextCell value="Owners" />
         </div>
       ),
       cell: ({ row }) => (
@@ -82,7 +82,7 @@ export function createTeamspaceColumns({
       header: ({ column }) => {
         const isSorted = column.getIsSorted();
         return (
-          <div className="flex w-[90px] items-center px-2">
+          <div className="flex items-center">
             <SortingToggle
               title="Access"
               isSorted={isSorted}
@@ -107,7 +107,7 @@ export function createTeamspaceColumns({
       header: ({ column }) => {
         const isSorted = column.getIsSorted();
         return (
-          <div className="flex w-[15%] items-center">
+          <div className="flex items-center">
             <SortingToggle
               title="Updated"
               isSorted={isSorted}
@@ -124,7 +124,7 @@ export function createTeamspaceColumns({
     {
       id: "actions",
       cell: ({ row }) => (
-        <div className="flex min-w-[52px] items-center justify-end pr-3">
+        <div className="flex items-center">
           <TeamspaceActionCell
             name={row.original.name}
             role={row.original.role}
@@ -156,7 +156,7 @@ export function createTeamMembersColumns({
       header: ({ column }) => {
         const isSorted = column.getIsSorted();
         return (
-          <div className="flex w-3/4 items-center">
+          <div className="flex items-center">
             <SortingToggle
               title="User"
               isSorted={isSorted}
@@ -173,7 +173,7 @@ export function createTeamMembersColumns({
       header: ({ column }) => {
         const isSorted = column.getIsSorted();
         return (
-          <div className="flex w-1/4 items-center">
+          <div className="flex items-center">
             <SortingToggle
               title="Role"
               isSorted={isSorted}

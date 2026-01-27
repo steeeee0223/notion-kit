@@ -8,6 +8,7 @@ import {
   PlansTable,
   SCOPES,
   SessionsTable,
+  TeamMembersTable,
   TeamspacesTable,
 } from "@notion-kit/settings-panel";
 
@@ -17,6 +18,7 @@ import {
   mockInvitations,
   mockMembers,
   mockSessions,
+  mockTeamMemberRows,
   mockTeamspaces,
 } from "./data";
 
@@ -61,6 +63,10 @@ export const Invitations: Story = {
 
 export const Teamspaces: Story = {
   render: () => <TeamspacesTable workspace="Acme Inc." data={mockTeamspaces} />,
+};
+
+export const TeamMembers: Story = {
+  render: () => <TeamMembersTable data={mockTeamMemberRows} />,
 };
 
 export const Plans: Story = {

@@ -21,7 +21,7 @@ export function ConnectionCell({ type, account }: ConnectionCellProps) {
 
   if (!connection) return null;
   return (
-    <div className="mr-3 flex items-center">
+    <div className="flex items-center">
       <Avatar src={connection.imageUrl} fallback={type} className="size-7" />
       <div className="ml-[15px]">
         <div className="truncate text-sm text-primary">{connection.title}</div>

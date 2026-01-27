@@ -9,12 +9,12 @@ interface SettingsTabProps {
   onClick?: () => void;
 }
 
-const SettingsTab: React.FC<SettingsTabProps> = ({
+function SettingsTab({
   name,
   isActive,
   className,
   ...props
-}) => {
+}: SettingsTabProps) {
   return (
     <MenuItem
       tabIndex={-1}
@@ -28,6 +28,6 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
       {...props}
     />
   );
-};
+}
 
 export { SettingsTab };

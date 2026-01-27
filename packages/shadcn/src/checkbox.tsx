@@ -40,7 +40,7 @@ function Checkbox({ className, size, ...props }: CheckboxProps) {
         data-slot="checkbox-indicator"
         className="flex items-center justify-center"
       >
-        <Icon.Check className="size-full" />
+        <Icon.Check className="size-full fill-white" />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   );
