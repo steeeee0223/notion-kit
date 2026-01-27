@@ -1,10 +1,10 @@
 "use client";
 
-import { ChevronRight } from "lucide-react";
+import { useState } from "react";
 
 import { useTranslation } from "@notion-kit/i18n";
-import { useModal } from "@notion-kit/modal";
-import { Button, Switch } from "@notion-kit/shadcn";
+import { Icon } from "@notion-kit/icons";
+import { Button, Dialog, DialogTrigger, Switch } from "@notion-kit/shadcn";
 
 import { SettingsRule, SettingsSection } from "../../core";
 import { useAccount, useAccountActions } from "../hooks";
@@ -16,15 +16,8 @@ export function SupportSection() {
   const trans = t("support", { returnObjects: true });
   /** handlers */
   const { data: account } = useAccount();
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const { remove } = useAccountActions();
-  const { openModal } = useModal();
-  const deleteAccount = () =>
-    openModal(
-      <DeleteAccount
-        email={account.email}
-        onSubmit={(email) => remove({ accountId: account.id, email })}
-      />,
-    );
 
   return (
     <SettingsSection title={trans.title}>
@@ -35,9 +28,20 @@ export function SupportSection() {
         {...trans.delete}
         className="**:data-[slot=settings-rule-title]:text-red"
       >
-        <Button variant="hint" className="size-5" onClick={deleteAccount}>
-          <ChevronRight className="size-4 text-default/35" />
-        </Button>
+        <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+          <DialogTrigger asChild>
+            <Button variant="hint" className="size-5">
+              <Icon.ChevronRight className="size-3 fill-default/35" />
+            </Button>
+          </DialogTrigger>
+          <DeleteAccount
+            email={account.email}
+            onSubmit={async (email) => {
+              await remove({ accountId: account.id, email });
+              setDeleteOpen(false);
+            }}
+          />
+        </Dialog>
       </SettingsRule>
     </SettingsSection>
   );

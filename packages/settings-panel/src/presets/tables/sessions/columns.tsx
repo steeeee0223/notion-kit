@@ -1,15 +1,16 @@
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Button } from "@notion-kit/shadcn";
+import { Button, Dialog, DialogTrigger } from "@notion-kit/shadcn";
 import { toDateString } from "@notion-kit/utils";
 
 import type { SessionRow } from "../../../lib";
+import { LogoutConfirm } from "../../modals";
 import { SortingToggle, TextCell } from "../common-cells";
 import { DeviceCell } from "./cells";
 
 interface CreateSessionColumnsOptions {
   currentSessionId?: string;
-  onLogout?: (deviceName: string, token: string) => void;
+  onLogout?: (token: string) => void;
 }
 
 export function createSessionColumns({
@@ -22,7 +23,7 @@ export function createSessionColumns({
       header: ({ column }) => {
         const isSorted = column.getIsSorted();
         return (
-          <div className="flex w-3/10 min-w-50 items-center">
+          <div className="flex items-center">
             <SortingToggle
               title="Device Name"
               isSorted={isSorted}
@@ -47,7 +48,7 @@ export function createSessionColumns({
       header: ({ column }) => {
         const isSorted = column.getIsSorted();
         return (
-          <div className="flex w-1/4 items-center">
+          <div className="flex items-center">
             <SortingToggle
               title="Last Active"
               isSorted={isSorted}
@@ -66,7 +67,7 @@ export function createSessionColumns({
       header: ({ column }) => {
         const isSorted = column.getIsSorted();
         return (
-          <div className="flex w-3/10 items-center">
+          <div className="flex items-center">
             <SortingToggle
               title="Location"
               isSorted={isSorted}
@@ -81,16 +82,20 @@ export function createSessionColumns({
     },
     {
       id: "action",
-      header: () => <div className="w-1/10" />,
       cell: ({ row }) => {
         return (
-          <Button
-            size="xs"
-            className="h-7 px-2 text-secondary"
-            onClick={() => onLogout?.(row.original.device, row.original.token)}
-          >
-            Logout
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button size="xs" className="h-7 px-2 text-secondary">
+                Logout
+              </Button>
+            </DialogTrigger>
+            <LogoutConfirm
+              title={`Log out of ${row.original.device}?`}
+              description="You will be logged out of this device."
+              onConfirm={() => onLogout?.(row.original.token)}
+            />
+          </Dialog>
         );
       },
     },

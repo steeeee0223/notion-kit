@@ -7,11 +7,11 @@ export const groupColumns: ColumnDef<GroupOption>[] = [
   {
     id: "group",
     accessorKey: "group",
-    header: () => <TextCell value="Group" header />,
+    header: () => <TextCell value="Group" />,
   },
   {
     id: "members",
     accessorKey: "members",
-    header: () => <TextCell value="Members" header />,
+    header: () => <TextCell value="Members" />,
   },
 ];

@@ -5,7 +5,6 @@ import { CircleHelp, Mail } from "lucide-react";
 import { z } from "zod/v4";
 
 import { useFilter } from "@notion-kit/hooks";
-import { useModal } from "@notion-kit/modal";
 import { Role, type User } from "@notion-kit/schemas";
 import {
   Badge,
@@ -17,8 +16,8 @@ import {
   CommandList,
   CommandSeparator,
   SelectPreset as Select,
+  Spinner,
 } from "@notion-kit/shadcn";
-import { Spinner } from "@notion-kit/spinner";
 import { TagsInput } from "@notion-kit/tags-input";
 
 import { Avatar, HintButton } from "../_components";
@@ -31,14 +30,20 @@ enum Heading {
 const emailSchema = z.email();
 
 type DetailedAccount = User & { invited?: boolean };
+
 interface AddMembersProps {
   invitedMembers: User[];
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   onAdd?: (data: { emails: string[]; role: Role }) => void;
 }
 
-export function AddMembers({ invitedMembers, onAdd }: AddMembersProps) {
-  const { isOpen, closeModal } = useModal();
-
+export function AddMembers({
+  invitedMembers,
+  open,
+  onOpenChange,
+  onAdd,
+}: AddMembersProps) {
   const [heading, setHeading] = useState(Heading.Select);
   const [role, setRole] = useState<Exclude<Role, Role.ADMIN>>(Role.OWNER);
   /** Input & Filter */
@@ -82,7 +87,7 @@ export function AddMembers({ invitedMembers, onAdd }: AddMembersProps) {
     }
   };
   const onClose = () => {
-    closeModal();
+    onOpenChange?.(false);
     setHeading(Heading.Select);
     updateSearch("");
     setEmails([]);
@@ -91,7 +96,7 @@ export function AddMembers({ invitedMembers, onAdd }: AddMembersProps) {
 
   return (
     <CommandDialog
-      open={isOpen}
+      open={open}
       onOpenChange={onClose}
       className="flex w-[480px] min-w-[180px] flex-col"
       shouldFilter={false}
@@ -131,7 +136,7 @@ export function AddMembers({ invitedMembers, onAdd }: AddMembersProps) {
                 className="h-7 min-w-[70px] font-medium"
               >
                 Invite
-                {loading && <Spinner className="text-current" />}
+                {loading && <Spinner />}
               </Button>
             </div>
           </div>

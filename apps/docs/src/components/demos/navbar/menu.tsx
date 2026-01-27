@@ -1,4 +1,4 @@
-import { Menu } from "@notion-kit/navbar";
+import { Menu } from "@notion-kit/navbar/presets";
 import type { Page } from "@notion-kit/schemas";
 import { TooltipProvider } from "@notion-kit/shadcn";
 

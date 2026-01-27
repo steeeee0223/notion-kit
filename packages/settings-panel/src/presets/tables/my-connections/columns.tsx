@@ -18,12 +18,12 @@ export function createConnectionColumns({
   return [
     {
       accessorKey: "connection",
-      header: () => <TextCell header value="Connection" />,
+      header: () => <TextCell value="Connection" />,
       cell: ({ row }) => <ConnectionCell {...row.original.connection} />,
     },
     {
       accessorKey: "scopes",
-      header: () => <TextCell header value="Access" />,
+      header: () => <TextCell value="Access" />,
       cell: ({ row }) => (
         <div className="flex flex-col text-xs">
           {row.original.scopes.map((scope, i) => (

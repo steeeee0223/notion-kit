@@ -1,27 +1,28 @@
 "use client";
 
-import { memo, useMemo } from "react";
+import { useMemo } from "react";
 
-import { Role } from "@notion-kit/schemas";
+import { cn } from "@notion-kit/cn";
+import type { Role } from "@notion-kit/schemas";
 
-import { Scope } from "../../../lib";
 import type {
   GroupOption,
   GuestRow,
   InvitationRow,
   MemberRow,
+  Scope,
 } from "../../../lib";
+import { DataTable } from "../data-table";
 import {
   createGuestColumns,
+  createInvitationColumns,
   createMemberColumns,
   groupColumns,
 } from "./columns";
-import { createInvitationColumns } from "./columns/invitations";
-import { DataTable } from "./data-table";
 
 interface MembersTableProps {
   /**
-   * @prop userId
+   * @prop userId of the current user
    */
   userId?: string;
   scopes: Set<Scope>;
@@ -32,22 +33,45 @@ interface MembersTableProps {
   onTeamspaceSelect?: (teamspaceId: string) => void;
 }
 
-export const MembersTable = memo<MembersTableProps>(
-  ({ userId, scopes, onUpdate, onDelete, onTeamspaceSelect, ...props }) => {
-    const columns = useMemo(
-      () =>
-        createMemberColumns({
-          scopes,
-          userId,
-          onUpdate,
-          onDelete,
-          onTeamspaceSelect,
-        }),
-      [userId, scopes, onUpdate, onDelete, onTeamspaceSelect],
-    );
-    return <DataTable columns={columns} emptyResult="No members" {...props} />;
-  },
-);
+export function MembersTable({
+  userId,
+  scopes,
+  search,
+  onUpdate,
+  onDelete,
+  onTeamspaceSelect,
+  ...props
+}: MembersTableProps) {
+  const columns = useMemo(
+    () =>
+      createMemberColumns({
+        scopes,
+        userId,
+        onUpdate,
+        onDelete,
+        onTeamspaceSelect,
+      }),
+    [userId, scopes, onUpdate, onDelete, onTeamspaceSelect],
+  );
+  return (
+    <DataTable
+      columns={columns}
+      initialColumnPinning={["user"]}
+      search={{ id: "user", value: search }}
+      emptyResult="No members"
+      getHeaderClassName={(headerId) =>
+        cn(
+          headerId === "user" && "w-55",
+          headerId === "teamspaces" && "min-w-[175px]",
+          headerId === "groups" && "min-w-30",
+          headerId === "role" && "min-w-30",
+          headerId === "actions" && "w-13",
+        )
+      }
+      {...props}
+    />
+  );
+}
 
 interface GuestsTableProps {
   scopes: Set<Scope>;
@@ -57,38 +81,80 @@ interface GuestsTableProps {
   onDelete?: (data: GuestRow) => void;
 }
 
-export const GuestsTable = memo<GuestsTableProps>(
-  ({ scopes, onUpdate, onDelete, ...props }) => {
-    const columns = useMemo(
-      () => createGuestColumns({ scopes: new Set(scopes), onUpdate, onDelete }),
-      [scopes, onUpdate, onDelete],
-    );
-    return <DataTable columns={columns} emptyResult="No guests" {...props} />;
-  },
-);
+export function GuestsTable({
+  scopes,
+  search,
+  onUpdate,
+  onDelete,
+  ...props
+}: GuestsTableProps) {
+  const columns = useMemo(
+    () => createGuestColumns({ scopes: new Set(scopes), onUpdate, onDelete }),
+    [scopes, onUpdate, onDelete],
+  );
+  return (
+    <DataTable
+      columns={columns}
+      initialColumnPinning={["user"]}
+      search={{ id: "user", value: search }}
+      emptyResult="No guests"
+      getHeaderClassName={(headerId) =>
+        cn(
+          headerId === "user" && "w-55",
+          headerId === "access" && "w-[180px]",
+          headerId === "actions" && "w-13",
+        )
+      }
+      {...props}
+    />
+  );
+}
 
 interface GroupsTableProps {
   data: GroupOption[];
   search?: string;
 }
 
-export const GroupsTable = memo<GroupsTableProps>(({ ...props }) => {
+export function GroupsTable({ search, ...props }: GroupsTableProps) {
   return (
-    <DataTable columns={groupColumns} emptyResult="No groups" {...props} />
+    <DataTable
+      columns={groupColumns}
+      emptyResult="No groups"
+      search={{ id: "group", value: search }}
+      {...props}
+    />
   );
-});
+}
 
 interface InvitationsTableProps {
+  search?: string;
   scopes: Set<Scope>;
   data: InvitationRow[];
   onCancel?: (id: string) => void;
 }
 
-export const InvitationsTable = memo<InvitationsTableProps>(
-  ({ data, ...props }) => {
-    const columns = useMemo(() => createInvitationColumns(props), [props]);
-    return (
-      <DataTable columns={columns} data={data} emptyResult="No invitations" />
-    );
-  },
-);
+export function InvitationsTable({
+  data,
+  search,
+  ...props
+}: InvitationsTableProps) {
+  const columns = useMemo(() => createInvitationColumns(props), [props]);
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
+      initialColumnPinning={["email"]}
+      search={{ id: "email", value: search }}
+      emptyResult="No invitations"
+      getHeaderClassName={(headerId) =>
+        cn(
+          headerId === "email" && "w-55",
+          headerId === "invitedBy" && "w-55",
+          headerId === "role" && "min-w-40",
+          headerId === "status" && "min-w-30",
+          headerId === "actions" && "w-13",
+        )
+      }
+    />
+  );
+}

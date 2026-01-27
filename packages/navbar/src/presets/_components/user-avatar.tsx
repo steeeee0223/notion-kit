@@ -14,11 +14,7 @@ interface UserAvatarProps {
   className?: string;
 }
 
-export const UserAvatar: React.FC<UserAvatarProps> = ({
-  user,
-  borderColor,
-  className,
-}) => {
+export function UserAvatar({ user, borderColor, className }: UserAvatarProps) {
   return (
     <TooltipProvider delayDuration={0}>
       <TooltipPreset
@@ -41,4 +37,4 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
       </TooltipPreset>
     </TooltipProvider>
   );
-};
+}

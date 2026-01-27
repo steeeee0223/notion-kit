@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertModal } from "@notion-kit/common/alert-modal";
 import { useFilter } from "@notion-kit/hooks";
 import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
@@ -18,7 +19,7 @@ import {
   TooltipProvider,
 } from "@notion-kit/shadcn";
 
-import { AlertModal, SidebarMenuItem } from "../core";
+import { SidebarMenuItem } from "../core";
 
 interface TrashBoxProps {
   pages: Page[];

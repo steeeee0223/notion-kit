@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/shadcn",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -50,6 +50,7 @@
     "vaul": "^1.1.2"
   },
   "devDependencies": {
+    "@notion-kit/config": "workspace:*",
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",

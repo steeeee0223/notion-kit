@@ -12,8 +12,8 @@ import {
   FormItem,
   FormLabel,
   Input,
+  Spinner,
 } from "@notion-kit/shadcn";
-import { Spinner } from "@notion-kit/spinner";
 
 import {
   defaultIcon,
@@ -82,9 +82,7 @@ export function CreateWorkspaceForm({ ...props }: CreateWorkspaceFormProps) {
             className="w-full"
             disabled={form.formState.isSubmitting || !form.formState.isValid}
           >
-            {form.formState.isSubmitting && (
-              <Spinner className="text-current" />
-            )}
+            {form.formState.isSubmitting && <Spinner />}
             Continue
           </Button>
         </form>

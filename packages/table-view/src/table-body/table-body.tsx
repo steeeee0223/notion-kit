@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { type DragEndEvent } from "@dnd-kit/core";
 import type { Table } from "@tanstack/react-table";
 
-import { BaseModal } from "@notion-kit/common";
+import { AlertModal } from "@notion-kit/common/alert-modal";
 import { Icon } from "@notion-kit/icons";
-import { useModal } from "@notion-kit/modal";
-import { Button } from "@notion-kit/shadcn";
+import { Button, Dialog } from "@notion-kit/shadcn";
 
 import { SortableDnd, useDndSensors } from "../common";
 import type { Row } from "../lib/types";
@@ -16,7 +15,10 @@ import { TableGroupedRow } from "./table-grouped-row";
 import { TableRow } from "./table-row";
 
 export function DndTableBody() {
-  const { openModal } = useModal();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [pendingDragEvent, setPendingDragEvent] = useState<DragEndEvent | null>(
+    null,
+  );
   const { table } = useTableViewCtx();
   const { locked } = table.getTableGlobalState();
 
@@ -24,20 +26,20 @@ export function DndTableBody() {
     (e: DragEndEvent) => {
       const isSorted = table.getState().sorting.length > 0;
       if (!isSorted) return table.handleRowDragEnd(e);
-      openModal(
-        <BaseModal
-          title="Would you like to remove sorting?"
-          primary="Remove"
-          secondary="Don't remove"
-          onTrigger={() => {
-            table.resetSorting();
-            table.handleRowDragEnd(e);
-          }}
-        />,
-      );
+      setPendingDragEvent(e);
+      setDialogOpen(true);
     },
-    [openModal, table],
+    [table],
   );
+
+  const handleConfirmRemoveSorting = () => {
+    if (pendingDragEvent) {
+      table.resetSorting();
+      table.handleRowDragEnd(pendingDragEvent);
+      setPendingDragEvent(null);
+    }
+    setDialogOpen(false);
+  };
 
   return (
     <>
@@ -89,6 +91,14 @@ export function DndTableBody() {
           </span>
         </Button>
       )}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <AlertModal
+          title="Would you like to remove sorting?"
+          primary="Remove"
+          secondary="Don't remove"
+          onTrigger={handleConfirmRemoveSorting}
+        />
+      </Dialog>
     </>
   );
 }

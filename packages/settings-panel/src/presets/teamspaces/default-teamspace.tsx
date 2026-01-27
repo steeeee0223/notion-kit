@@ -13,8 +13,8 @@ import {
   FormField,
   FormItem,
   MultiSelect,
+  Spinner,
 } from "@notion-kit/shadcn";
-import { Spinner } from "@notion-kit/spinner";
 
 import { useTeamspaceOptions } from "./use-teamspaces";
 

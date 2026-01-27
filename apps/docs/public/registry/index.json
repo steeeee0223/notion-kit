@@ -74,7 +74,6 @@
       "dependencies": [
         "@notion-kit/shadcn",
         "@notion-kit/single-image-dropzone",
-        "@notion-kit/spinner",
         "@notion-kit/tags-input",
         "@notion-kit/tree"
       ],
@@ -114,8 +113,7 @@
       "dependencies": [
         "@notion-kit/cover",
         "@notion-kit/icon-block",
-        "@notion-kit/icon-menu",
-        "@notion-kit/modal"
+        "@notion-kit/icon-menu"
       ],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"

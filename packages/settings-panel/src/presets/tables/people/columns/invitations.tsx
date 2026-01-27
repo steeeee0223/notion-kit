@@ -62,7 +62,7 @@ export function createInvitationColumns({
         );
       },
       cell: ({ row }) => (
-        <div className="min-w-30 cursor-default">
+        <div className="cursor-default">
           <Badge variant="orange">{statusLabels[row.original.status]}</Badge>
         </div>
       ),
@@ -91,7 +91,7 @@ export function createInvitationColumns({
             id: "actions",
             cell: ({ row }: { row: Row<InvitationRow> }) =>
               row.original.status === "pending" && (
-                <div className="flex min-w-[52px] items-center justify-end">
+                <div className="flex items-center justify-end">
                   <InvitationActionCell
                     onCancel={() => onCancel?.(row.original.id)}
                   />

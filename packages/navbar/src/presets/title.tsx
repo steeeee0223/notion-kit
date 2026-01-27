@@ -10,7 +10,7 @@ export interface TitleProps {
   onUpdate?: (page: Pick<UpdatePageParams, "title" | "icon">) => void;
 }
 
-export const Title: React.FC<TitleProps> = ({ page, readOnly, onUpdate }) => {
+export function Title({ page, readOnly, onUpdate }: TitleProps) {
   const icon = page.icon ?? { type: "lucide", src: "file" };
 
   return (
@@ -23,11 +23,11 @@ export const Title: React.FC<TitleProps> = ({ page, readOnly, onUpdate }) => {
         variant="hint"
         size="xs"
         disabled={readOnly}
-        className="gap-1.5 text-sm/[1.2] text-inherit"
+        className="leading-tight text-inherit"
       >
         <IconBlock icon={icon} />
         <span className="truncate">{page.title}</span>
       </Button>
     </RenamePopover>
   );
-};
+}

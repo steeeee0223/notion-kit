@@ -1,7 +1,6 @@
 "use client";
 
-import { MoreHorizontal, Trash } from "lucide-react";
-
+import { Icon } from "@notion-kit/icons";
 import type { Page } from "@notion-kit/schemas";
 import {
   DropdownMenu,
@@ -21,24 +20,19 @@ interface MenuProps {
   onChangeState?: StateChangeEvent;
 }
 
-export const Menu: React.FC<MenuProps> = ({ page, onChangeState }) => {
+export function Menu({ page, onChangeState }: MenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <NavbarItem hint="Style, export, and more...">
-          <MoreHorizontal className="size-4" />
+          <Icon.Dots className="size-4 fill-current" />
         </NavbarItem>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="w-60"
-        align="end"
-        alignOffset={8}
-        forceMount
-      >
+      <DropdownMenuContent className="w-60" align="end" alignOffset={8}>
         <DropdownMenuGroup>
           <DropdownMenuItem
             variant="warning"
-            Icon={<Trash className="size-4" />}
+            Icon={<Icon.Trash />}
             Body="Delete"
             onSelect={() => onChangeState?.(page.id, "archive")}
           />
@@ -51,4 +45,4 @@ export const Menu: React.FC<MenuProps> = ({ page, onChangeState }) => {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-};
+}

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Check, Copy, Globe } from "lucide-react";
 
 import { useCopyToClipboard, useOrigin } from "@notion-kit/hooks";
+import { Icon } from "@notion-kit/icons";
 import type { Page } from "@notion-kit/schemas";
 import {
   Button,
@@ -25,7 +25,7 @@ interface PublishProps {
   onUpdate?: (id: string, isPublished: boolean) => void;
 }
 
-export const Publish: React.FC<PublishProps> = ({ page, onUpdate }) => {
+export function Publish({ page, onUpdate }: PublishProps) {
   const [isPublished, setIsPublished] = useState(page.isPublished);
 
   /** Url */
@@ -53,12 +53,9 @@ export const Publish: React.FC<PublishProps> = ({ page, onUpdate }) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <NavbarItem
-          hint="Share or publish to the web"
-          className="ml-1 h-7 w-[initial] px-2"
-        >
+        <NavbarItem hint="Share or publish to the web" className="ml-1">
           Share
-          {isPublished && <Globe className="ml-2 size-4 text-blue" />}
+          {isPublished && <Icon.Globe className="fill-blue" />}
         </NavbarItem>
       </PopoverTrigger>
       <PopoverContent
@@ -74,8 +71,8 @@ export const Publish: React.FC<PublishProps> = ({ page, onUpdate }) => {
           <TabsContent value="publish" className="p-5 pt-3">
             {isPublished ? (
               <div className="space-y-4">
-                <div className="flex items-center gap-x-2 text-sm text-blue">
-                  <Globe className="size-4 animate-pulse" />
+                <div className="flex items-center gap-1 text-sm text-blue">
+                  <Icon.Globe className="size-4 animate-pulse fill-current" />
                   <p className="font-medium">This note is live on web.</p>
                 </div>
                 <div className="flex items-center">
@@ -91,11 +88,7 @@ export const Publish: React.FC<PublishProps> = ({ page, onUpdate }) => {
                     disabled={isCopied}
                     className="size-7 rounded-l-none"
                   >
-                    {isCopied ? (
-                      <Check className="size-4" />
-                    ) : (
-                      <Copy className="size-4" />
-                    )}
+                    {isCopied ? <Icon.Check /> : <Icon.Duplicate />}
                   </Button>
                 </div>
                 <Button
@@ -110,7 +103,7 @@ export const Publish: React.FC<PublishProps> = ({ page, onUpdate }) => {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center gap-2">
-                <Globe className="size-8 text-secondary" />
+                <Icon.Globe className="size-8 text-secondary" />
                 <p className="text-sm font-medium">Publish to web</p>
                 <span className="text-xs text-muted">
                   Create a website with Notion
@@ -131,4 +124,4 @@ export const Publish: React.FC<PublishProps> = ({ page, onUpdate }) => {
       </PopoverContent>
     </Popover>
   );
-};
+}

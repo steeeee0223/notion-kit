@@ -1,6 +1,6 @@
 {
   "name": "notion-kit",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "private": true,
   "engines": {
     "node": ">=24.11.0",
@@ -20,6 +20,8 @@
     "lint:ws": "pnpm dlx sherif@latest",
     "postinstall": "pnpm lint:ws",
     "publish-packages": "changeset publish --no-private",
+    "test": "vitest run",
+    "test:ui": "vitest --ui",
     "typecheck": "turbo run typecheck",
     "ui-add": "turbo run ui-add"
   },

@@ -1,4 +1,4 @@
-import { Participants } from "@notion-kit/navbar";
+import { Participants } from "@notion-kit/navbar/presets";
 import type { User } from "@notion-kit/schemas";
 import { TooltipProvider } from "@notion-kit/shadcn";
 

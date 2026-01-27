@@ -1,20 +1,20 @@
 {
   "name": "@notion-kit/i18n",
   "private": true,
-  "version": "0.14.0",
+  "version": "0.15.0",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
-      "default": "./src/index.ts",
-      "import": "./dist/index.mjs"
+      "default": "./dist/index.mjs"
     }
   },
   "license": "MIT",
   "scripts": {
-    "build": "tsdown --config=../../tooling/config/tsdown.config.ts",
+    "build": "tsdown",
     "build:types": "i18next-resources-for-ts interface -i ./src/resources/en -o ./src/resources/types.ts && pnpm format -w",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsdown --config=../../tooling/config/tsdown.config.ts --watch",
+    "dev": "tsdown --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
@@ -24,6 +24,7 @@
     "react-i18next": "^15.4.1"
   },
   "devDependencies": {
+    "@notion-kit/config": "workspace:*",
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
@@ -32,6 +33,10 @@
     "prettier": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19"
   },
   "prettier": "@notion-kit/prettier-config"
 }

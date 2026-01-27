@@ -5,8 +5,7 @@
   "dependencies": [
     "@notion-kit/cover",
     "@notion-kit/icon-block",
-    "@notion-kit/icon-menu",
-    "@notion-kit/modal"
+    "@notion-kit/icon-menu"
   ],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
@@ -14,7 +13,7 @@
   "files": [
     {
       "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/blocks.tsx",
-      "content": "export { Cover, CoverPicker } from \"@notion-kit/cover\";\nexport { IconBlock } from \"@notion-kit/icon-block\";\nexport { IconMenu } from \"@notion-kit/icon-menu\";\nexport { ModalProvider, useModal } from \"@notion-kit/modal\";\n",
+      "content": "export { Cover, CoverPicker } from \"@notion-kit/cover\";\nexport { IconBlock } from \"@notion-kit/icon-block\";\nexport { IconMenu } from \"@notion-kit/icon-menu\";\n",
       "type": "registry:component",
       "target": "components/core/blocks.tsx"
     }

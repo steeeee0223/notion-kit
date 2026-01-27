@@ -42,9 +42,7 @@ export function createMemberColumns({
     },
     {
       accessorKey: "teamspaces",
-      header: () => (
-        <TextCell header value="Teamspaces" className="min-w-[175px] pl-2" />
-      ),
+      header: () => <TextCell value="Teamspaces" className="pl-2" />,
       cell: ({ row }) => (
         <TeamspacesCell
           teamspaces={row.original.teamspaces}
@@ -54,10 +52,8 @@ export function createMemberColumns({
     },
     {
       accessorKey: "groups",
-      header: () => <TextCell header value="Groups" className="min-w-30" />,
-      cell: () => (
-        <div className="min-w-30 cursor-default text-sm text-muted">None</div>
-      ),
+      header: () => <TextCell value="Groups" />,
+      cell: () => <div className="cursor-default text-sm text-muted">None</div>,
     },
     {
       accessorKey: "role",
@@ -92,7 +88,7 @@ export function createMemberColumns({
             cell: ({ row }: { row: Row<MemberRow> }) => {
               const id = row.original.user.id;
               return (
-                <div className="flex min-w-[52px] items-center justify-end">
+                <div className="flex items-center justify-end">
                   <MemberActionCell
                     isSelf={id === userId}
                     onDelete={() => onDelete?.(row.original)}

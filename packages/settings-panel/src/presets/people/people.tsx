@@ -3,17 +3,16 @@
 import { useCallback, useRef, useState } from "react";
 import { saveAs } from "file-saver";
 import { ChevronDown } from "lucide-react";
-import { useOnClickOutside } from "usehooks-ts";
 
 import { cn } from "@notion-kit/cn";
-import { BaseModal } from "@notion-kit/common";
+import { AlertModal } from "@notion-kit/common/alert-modal";
 import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
-import { useModal } from "@notion-kit/modal";
 import { Plan } from "@notion-kit/schemas";
 import {
   Button,
   Dialog,
+  DialogTrigger,
   Input,
   Separator,
   Switch,
@@ -26,14 +25,14 @@ import {
 
 import { TextLinks } from "../_components";
 import { SettingsRule, SettingsSection, useSettings } from "../../core";
-import { generateGuestsCsv, GuestRow, MemberRow, Scope } from "../../lib";
+import { generateGuestsCsv, Scope } from "../../lib";
 import {
   useAccount,
   useInvitations,
   useTeamspaceDetail,
   useWorkspace,
 } from "../hooks";
-import { AddMembers, DeleteGuest, DeleteMember } from "../modals";
+import { AddMembers } from "../modals";
 import {
   GroupsTable,
   GuestsTable,
@@ -56,6 +55,9 @@ export function People() {
   const { scopes } = useSettings();
   const { data: account } = useAccount();
   const { data: workspace } = useWorkspace();
+
+  const [addMembersOpen, setAddMembersOpen] = useState(false);
+
   /** i18n */
   const { t } = useTranslation("settings");
   const common = t("common", { returnObjects: true });
@@ -71,11 +73,7 @@ export function People() {
     setOpen((prev) => !prev);
     inputRef.current?.focus();
   };
-  useOnClickOutside(searchRef as React.RefObject<HTMLElement>, () =>
-    setOpen(false),
-  );
   /** Modals */
-  const { openModal } = useModal();
   /** Tables */
   const { members, guests } = useWorkspaceMemberships();
   const { selectedTeamspace, setSelectedTeamspace, renderTeamspaceDetail } =
@@ -83,28 +81,9 @@ export function People() {
   const { update, remove } = usePeopleActions();
   const { data: invitations } = useInvitations((res) => Object.values(res));
   const { invite: inviteMember, cancel } = useInvitationsActions();
-  const deleteMember = (data: MemberRow) =>
-    openModal(
-      <DeleteMember
-        onDelete={() => remove({ id: data.user.id, memberId: data.id })}
-      />,
-    );
-  const deleteGuest = (data: GuestRow) =>
-    openModal(
-      <DeleteGuest
-        name={data.user.name}
-        onDelete={() => remove({ id: data.user.id, memberId: data.id })}
-      />,
-    );
   /** Handlers */
   const { isResetting, copyLink, resetLink: updateLink } = useLinkActions();
-  const resetLink = () =>
-    openModal(<BaseModal {...modals["reset-link"]} onTrigger={updateLink} />);
   const invitedMembers = useInvitedMembers();
-  const addMembers = () =>
-    openModal(
-      <AddMembers invitedMembers={invitedMembers} onAdd={inviteMember} />,
-    );
   const downloadCsv = useCallback(() => {
     const csv = generateGuestsCsv(guests);
     saveAs(csv, "guests.csv");
@@ -121,11 +100,15 @@ export function People() {
           <SettingsRule
             title={invite.title}
             description={
-              <TextLinks
-                i18nKey="people.invite.description"
-                values={{ guests: guests.length }}
-                onClick={resetLink}
-              />
+              <Dialog>
+                <DialogTrigger asChild>
+                  <TextLinks
+                    i18nKey="people.invite.description"
+                    values={{ guests: guests.length }}
+                  />
+                </DialogTrigger>
+                <AlertModal {...modals["reset-link"]} onTrigger={updateLink} />
+              </Dialog>
             }
           >
             <div className="flex items-center gap-4">
@@ -163,7 +146,12 @@ export function People() {
           </div>
           <div ref={searchRef} className="flex items-center justify-end gap-1">
             <div className="flex items-center">
-              <Button variant="hint" className="size-7" onClick={toggleSearch}>
+              <Button
+                variant="hint"
+                className="size-7"
+                aria-label="Search"
+                onClick={toggleSearch}
+              >
                 <Icon.CollectionSearch className="block size-4 shrink-0 fill-[#787774]" />
               </Button>
               <Input
@@ -172,9 +160,7 @@ export function People() {
                 variant="flat"
                 className={cn(
                   "transition-[width,opacity] duration-200 ease-in-out",
-                  open
-                    ? "w-[150px] opacity-100"
-                    : "w-0 p-0 opacity-0 [&_input]:hidden",
+                  open ? "w-[150px] opacity-100" : "w-0 p-0 opacity-0",
                 )}
                 placeholder={tabs.search}
                 value={search}
@@ -183,7 +169,12 @@ export function People() {
               />
             </div>
             <TooltipPreset description="Export guests as CSV" side="top">
-              <Button variant="hint" className="size-7" onClick={downloadCsv}>
+              <Button
+                variant="hint"
+                className="size-7"
+                aria-label="Export guests as CSV"
+                onClick={downloadCsv}
+              >
                 <Icon.ArrowDownPage className="block size-5 shrink-0 fill-[#787774]" />
               </Button>
             </TooltipPreset>
@@ -193,11 +184,17 @@ export function People() {
               className="h-7 px-2"
               // TODO Member can send a request to invite member
               disabled={!scopes.has(Scope.MemberAdd)}
-              onClick={addMembers}
+              onClick={() => setAddMembersOpen(true)}
             >
               {tabs["add-members"]}
               <ChevronDown className="ml-1 size-4" />
             </Button>
+            <AddMembers
+              open={addMembersOpen}
+              onOpenChange={setAddMembersOpen}
+              invitedMembers={invitedMembers}
+              onAdd={inviteMember}
+            />
           </div>
         </TabsList>
         <TabsContent value={PeopleTabs.Members} className="mt-0 bg-transparent">
@@ -216,7 +213,7 @@ export function People() {
             data={members}
             scopes={scopes}
             onUpdate={update}
-            onDelete={deleteMember}
+            onDelete={(m) => remove({ id: m.user.id, memberId: m.id })}
             onTeamspaceSelect={setSelectedTeamspace}
           />
         </TabsContent>
@@ -226,7 +223,7 @@ export function People() {
             data={guests}
             scopes={scopes}
             onUpdate={update}
-            onDelete={deleteGuest}
+            onDelete={(g) => remove({ id: g.user.id, memberId: g.id })}
           />
         </TabsContent>
         <TabsContent value={PeopleTabs.Groups} className="mt-0 bg-transparent">
@@ -259,6 +256,7 @@ export function People() {
           className="mt-0 bg-transparent"
         >
           <InvitationsTable
+            search={search}
             scopes={scopes}
             data={invitations}
             onCancel={cancel}

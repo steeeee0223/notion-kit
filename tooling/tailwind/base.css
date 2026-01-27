@@ -49,6 +49,7 @@
   --shadow-cell-focus:
     --alpha(var(--blue) / 57%) 0px 0px 0px 2px inset,
     --alpha(var(--blue) / 35%) 0px 0px 0px 1px inset;
+  --shadow-l-pinned: -1px 0 0 var(--border-cell) inset;
   /* Text size */
   --leading-tight: 1.2;
   /* Animate */

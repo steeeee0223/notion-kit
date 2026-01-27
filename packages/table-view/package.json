@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/table-view",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -10,29 +10,29 @@
     "url": "https://github.com/steeeee0223/notion-kit.git",
     "directory": "packages/table-view"
   },
-  "publishConfig": {
-    "main": "./dist/index.mjs",
-    "module": "./dist/index.mjs",
-    "types": "./dist/index.d.mts",
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
-      }
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
     }
   },
   "files": [
     "dist"
   ],
-  "main": "./src/index.ts",
-  "module": "./src/index.ts",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "license": "MIT",
   "scripts": {
-    "build": "tsdown --config=../../tooling/config/tsdown.config.ts",
+    "build": "tsdown",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsdown --config=../../tooling/config/tsdown.config.ts --watch",
+    "dev": "tsdown --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
@@ -45,7 +45,6 @@
     "@notion-kit/icon-block": "workspace:*",
     "@notion-kit/icon-menu": "workspace:*",
     "@notion-kit/icons": "workspace:*",
-    "@notion-kit/modal": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/tags-input": "workspace:*",
     "@notion-kit/utils": "workspace:*",
@@ -54,15 +53,25 @@
     "uuid": "catalog:uuid"
   },
   "devDependencies": {
+    "@notion-kit/config": "workspace:*",
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tailwind-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "@testing-library/react": "catalog:rtl",
+    "@types/react": "catalog:react19",
+    "@vitejs/plugin-react": "catalog:test",
+    "@vitest/coverage-v8": "catalog:test",
+    "@vitest/ui": "catalog:test",
+    "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",
+    "jsdom": "catalog:rtl",
     "prettier": "catalog:",
+    "react-compiler-runtime": "catalog:react-compiler",
     "tailwindcss": "catalog:tailwind-v4",
     "tsdown": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:test"
   },
   "peerDependencies": {
     "react": "catalog:react19",

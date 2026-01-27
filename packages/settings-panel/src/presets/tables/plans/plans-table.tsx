@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { Button } from "@notion-kit/shadcn";
 
@@ -12,7 +12,7 @@ interface PlansTableProps {
   canUpgrade?: boolean;
 }
 
-export const PlansTable: React.FC<PlansTableProps> = ({ canUpgrade }) => {
+export function PlansTable({ canUpgrade }: PlansTableProps) {
   const [toggle, setToggle] = useState(true);
   const highlightTable = useMemo(() => {
     const column = getHighlightColumns(canUpgrade);
@@ -44,4 +44,4 @@ export const PlansTable: React.FC<PlansTableProps> = ({ canUpgrade }) => {
       </Button>
     </div>
   );
-};
+}

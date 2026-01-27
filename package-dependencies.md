@@ -9,23 +9,20 @@ graph TD
     utils[utils]
     hooks[hooks]
     schemas[schemas]
-    modal[modal]
     i18n[i18n]
     auth[auth]
     
     %% Level 1 - depends on base packages
     icons --> cn
-    spinner --> cn
     selectable --> cn
     shadcn --> cn
     
     %% Level 2 - depends on Level 1
     single-image-dropzone --> cn
-    single-image-dropzone --> spinner
+    single-image-dropzone --> shadcn
     
     icon-block --> cn
     icon-block --> shadcn
-    icon-block --> spinner
     
     tags-input --> cn
     tags-input --> shadcn
@@ -33,9 +30,10 @@ graph TD
     
     common --> cn
     common --> hooks
-    common --> modal
     common --> shadcn
-    common --> spinner
+        
+    navbar --> cn
+    navbar --> shadcn
     
     %% Level 3 - depends on Level 2
     tree --> cn
@@ -44,8 +42,14 @@ graph TD
     icon-menu --> common
     icon-menu --> icon-block
     icon-menu --> shadcn
-    icon-menu --> spinner
     icon-menu --> utils
+    
+    unsplash --> cn
+    unsplash --> shadcn
+    
+    cover --> cn
+    cover --> shadcn
+    cover --> unsplash
     
     settings-panel --> cn
     settings-panel --> common
@@ -54,23 +58,10 @@ graph TD
     settings-panel --> icon-block
     settings-panel --> icon-menu
     settings-panel --> icons
-    settings-panel --> modal
     settings-panel --> schemas
     settings-panel --> shadcn
-    settings-panel --> spinner
     settings-panel --> tags-input
     settings-panel --> utils
-    
-    navbar --> cn
-    navbar --> hooks
-    navbar --> icon-block
-    navbar --> icon-menu
-    navbar --> icons
-    navbar --> modal
-    navbar --> schemas
-    navbar --> shadcn
-    navbar --> spinner
-    navbar --> utils
     
     auth-ui --> cn
     auth-ui --> auth
@@ -80,19 +71,30 @@ graph TD
     auth-ui --> schemas
     auth-ui --> settings-panel
     auth-ui --> shadcn
-    auth-ui --> spinner
     
     %% Level 4 - depends on Level 3
     sidebar --> cn
+    sidebar --> common
     sidebar --> hooks
     sidebar --> icons
     sidebar --> shadcn
-    sidebar --> spinner
+    sidebar --> tree
+    sidebar --> utils
     
     %% tree/presets subpackage (virtual node for documentation)
     tree-presets[tree/presets] --> cn
     tree-presets --> icons
     tree-presets --> shadcn
+
+    %% navbar/presets subpackage (virtual node for documentation)
+    navbar/presets[navbar/presets] --> cn
+    navbar/presets --> hooks
+    navbar/presets --> icon-block
+    navbar/presets --> icon-menu
+    navbar/presets --> icons
+    navbar/presets --> schemas
+    navbar/presets --> shadcn
+    navbar/presets --> utils
     
     %% sidebar/presets subpackage (virtual node for documentation)
     sidebar-presets[sidebar/presets] --> cn
@@ -102,7 +104,6 @@ graph TD
     sidebar-presets --> icons
     sidebar-presets --> schemas
     sidebar-presets --> shadcn
-    sidebar-presets --> spinner
     sidebar-presets --> tree
     sidebar-presets --> utils
 ```
@@ -115,34 +116,35 @@ graph TD
 - `utils` - Date/time utilities
 - `hooks` - React hooks
 - `schemas` - Zod schemas
-- `modal` - Modal state management
 - `i18n` - Internationalization
 - `auth` - Authentication logic
 
 ### Level 1 (Depends only on Level 0)
 
 - `icons` → cn
-- `spinner` → cn
 - `selectable` → cn
 - `shadcn` → cn
 - `tree` → cn
 
 ### Level 2 (Depends on Level 0-1)
 
-- `icon-block` → cn, shadcn, spinner
-- `single-image-dropzone` → cn, spinner
+- `icon-block` → cn, shadcn
+- `single-image-dropzone` → cn, shadcn
 - `tags-input` → cn, shadcn, utils
-- `common` → cn, hooks, modal, shadcn, spinner
+- `common` → cn, hooks, shadcn
 - `tree/presets` → cn, icons, shadcn
-- `sidebar` → cn, hooks, icons, shadcn, spinner
+- `sidebar` → cn, hooks, icons, shadcn
+- `unsplash` → cn, shadcn
+- `navbar` → cn, shadcn
 
 ### Level 3 (Depends on Level 0-2)
 
-- `icon-menu` → cn, common, icon-block, shadcn, spinner, utils
-- `settings-panel` → cn, common, hooks, i18n, icon-block, icon-menu, icons, modal, schemas, shadcn, spinner, tags-input, utils
-- `navbar` → cn, hooks, icon-block, icon-menu, icons, modal, schemas, shadcn, spinner, utils
-- `auth-ui` → cn, auth, icon-block, icon-menu, icons, schemas, settings-panel, shadcn, spinner
+- `icon-menu` → cn, common, icon-block, shadcn, utils
+- `cover` → cn, shadcn, unsplash
+- `settings-panel` → cn, common, hooks, i18n, icon-block, icon-menu, icons, schemas, shadcn, tags-input, utils
+- `auth-ui` → cn, auth, icon-block, icon-menu, icons, schemas, settings-panel, shadcn
 
 ### Level 4 (Depends on Level 0-3)
 
-- `sidebar/presets` → cn, hooks, icon-block, icon-menu, icons, schemas, shadcn, spinner, tree, utils
+- `navbar/presets` → cn, hooks, icon-block, icon-menu, icons, schemas, shadcn, utils
+- `sidebar/presets` → cn, hooks, icon-block, icon-menu, icons, schemas, shadcn, tree, utils

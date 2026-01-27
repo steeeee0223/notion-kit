@@ -8,7 +8,5 @@ export function userFilterFn<T extends { user: User }>(
   filterValue: unknown,
 ) {
   const { name, email } = row.original.user;
-  return `${name}-${email}`
-    .toLowerCase()
-    .includes((filterValue as string).trim());
+  return `${name}-${email}`.toLowerCase().includes(String(filterValue).trim());
 }

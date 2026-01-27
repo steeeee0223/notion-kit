@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { ChevronsRight, HistoryIcon } from "lucide-react";
 
+import { Icon } from "@notion-kit/icons";
 import {
   Button,
   Drawer,
   DrawerContent,
   DrawerTrigger,
+  Spinner,
   Tabs,
   TabsContent,
   TabsList,
@@ -15,7 +16,6 @@ import {
   toast,
   TooltipPreset,
 } from "@notion-kit/shadcn";
-import { Spinner } from "@notion-kit/spinner";
 
 import { NavbarItem } from "../core";
 
@@ -32,7 +32,7 @@ interface HistoryProps {
 /**
  * @deprecated
  */
-export const History: React.FC<HistoryProps> = ({ pageId, fetchLogs }) => {
+export function History({ pageId, fetchLogs }: HistoryProps) {
   const [open, setOpen] = useState(false);
   const [logs, setLogs] = useState<Log[]>([]);
   const [isLoading, startTransition] = useTransition();
@@ -48,19 +48,19 @@ export const History: React.FC<HistoryProps> = ({ pageId, fetchLogs }) => {
   return (
     <Drawer direction="right" open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <NavbarItem hint={hint} onClick={handleClick}>
-          <HistoryIcon className="size-5" />
+        <NavbarItem hint={hint} className="w-7" onClick={handleClick}>
+          <Icon.Clock className="size-5 fill-current" />
         </NavbarItem>
       </DrawerTrigger>
-      <DrawerContent side="right" noTitle className="w-[360px]">
+      <DrawerContent side="right" noTitle className="w-90">
         <div className="absolute top-0 left-0 ml-2.5 flex h-12 items-center">
           <TooltipPreset description="Close panel">
             <Button
               variant="hint"
               onClick={() => setOpen(false)}
-              className="size-6 p-0 transition"
+              className="size-6"
             >
-              <ChevronsRight className="size-4" />
+              <Icon.ArrowChevronDoubleBackward className="size-5 rotate-180 fill-current" />
             </Button>
           </TooltipPreset>
         </div>
@@ -72,7 +72,7 @@ export const History: React.FC<HistoryProps> = ({ pageId, fetchLogs }) => {
             <TabsContent value="updates" className="bg-main pt-3">
               {isLoading ? (
                 <div className="inset-0 flex items-center justify-center py-4">
-                  <Spinner />
+                  <Spinner className="fill-icon" />
                 </div>
               ) : (
                 <div className="flex flex-col gap-y-0 overflow-x-auto">
@@ -89,4 +89,4 @@ export const History: React.FC<HistoryProps> = ({ pageId, fetchLogs }) => {
       </DrawerContent>
     </Drawer>
   );
-};
+}

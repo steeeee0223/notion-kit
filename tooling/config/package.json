@@ -1,10 +1,10 @@
 {
   "name": "@notion-kit/config",
   "private": true,
-  "version": "0.14.0",
+  "version": "0.15.0",
   "type": "module",
   "exports": {
-    "./tsdown": "./tsdown.config.ts"
+    "./tsdown": "./tsdown.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
@@ -17,6 +17,7 @@
   "devDependencies": {
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "@rollup/plugin-babel": "catalog:build",
     "@types/node": "catalog:node22",
     "typescript": "catalog:"
   },

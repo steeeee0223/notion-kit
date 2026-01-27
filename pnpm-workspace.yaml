@@ -29,11 +29,11 @@ catalogs:
     msw: ^2.12.4
     msw-storybook-addon: ^2.0.6
     playwright: ^1.57.0
-    vitest: ^4.0.16
+    vitest: ^4.0.17
     "@vitejs/plugin-react": ^4.3.4
-    "@vitest/browser-playwright": ^4.0.16
-    "@vitest/coverage-v8": ^4.0.16
-    "@vitest/ui": ^2.1.8
+    "@vitest/browser-playwright": ^4.0.17
+    "@vitest/coverage-v8": ^4.0.17
+    "@vitest/ui": ^4.0.17
   rtl:
     jsdom: ^25.0.1
     "@testing-library/jest-dom": ^6.6.3

@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/icon-menu",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -10,22 +10,18 @@
     "url": "https://github.com/steeeee0223/notion-kit.git",
     "directory": "packages/icon-menu"
   },
-  "publishConfig": {
-    "main": "./dist/index.mjs",
-    "module": "./dist/index.mjs",
-    "types": "./dist/index.d.mts",
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
-      }
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
     }
   },
   "files": [
     "dist"
   ],
-  "main": "./src/index.ts",
-  "module": "./src/index.ts",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "license": "MIT",
   "scripts": {
     "build": "tsdown",
@@ -42,18 +38,20 @@
     "@notion-kit/icon-block": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/single-image-dropzone": "workspace:*",
-    "@notion-kit/spinner": "workspace:*",
     "@notion-kit/utils": "workspace:*",
     "lucide-react": "catalog:ui",
     "react-infinite-scroll-component": "^6.1.0",
     "usehooks-ts": "catalog:ui"
   },
   "devDependencies": {
+    "@notion-kit/config": "workspace:*",
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",
     "prettier": "catalog:",
+    "react-compiler-runtime": "catalog:react-compiler",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },

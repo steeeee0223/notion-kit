@@ -6,9 +6,9 @@ import * as React from "react";
 import { UploadCloudIcon, X } from "lucide-react";
 import type { DropzoneOptions } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
-import { twMerge } from "tailwind-merge";
 
-import { Spinner } from "@notion-kit/spinner";
+import { cn } from "@notion-kit/cn";
+import { Spinner } from "@notion-kit/shadcn";
 
 const variants = {
   base: "relative rounded-md flex justify-center items-center flex-col cursor-pointer min-h-[150px] min-w-[200px] border border-border transition-colors duration-200 ease-in-out",
@@ -93,7 +93,7 @@ const SingleImageDropzone: React.FC<SingleImageDropzoneProps> = ({
   // styling
   const dropZoneClassName = React.useMemo(
     () =>
-      twMerge(
+      cn(
         variants.base,
         isFocused && variants.active,
         disabled && variants.disabled,
@@ -102,7 +102,7 @@ const SingleImageDropzone: React.FC<SingleImageDropzoneProps> = ({
         (isDragReject ?? fileRejections[0]) && variants.reject,
         isDragAccept && variants.accept,
         className,
-      ).trim(),
+      ),
     [
       isFocused,
       imageUrl,
@@ -135,7 +135,7 @@ const SingleImageDropzone: React.FC<SingleImageDropzoneProps> = ({
     <div className="relative">
       {disabled && (
         <div className="absolute inset-y-0 z-50 flex h-full w-full items-center justify-center bg-main/80">
-          <Spinner size="lg" />
+          <Spinner className="size-6 fill-icon" />
         </div>
       )}
       <div
@@ -198,7 +198,7 @@ const Button = React.forwardRef<
 >(({ className, ...props }, ref) => {
   return (
     <button
-      className={twMerge(
+      className={cn(
         // base
         "inline-flex cursor-pointer items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
         // color

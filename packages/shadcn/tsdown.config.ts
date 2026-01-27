@@ -1,15 +1,9 @@
 import { defineConfig } from "tsdown";
 
+import { withReactClient } from "@notion-kit/config/tsdown";
+
 export default defineConfig((opts) => ({
   ...opts,
-  dts: true,
-  banner: { js: '"use client";' },
-  logLevel: "warn",
-  onSuccess: async () => {
-    if (opts.watch) {
-      console.info("Watching for changes...");
-      return;
-    }
-    console.info("Build successfully!");
-  },
+  ...withReactClient(opts),
+  external: ["react-day-picker"],
 }));

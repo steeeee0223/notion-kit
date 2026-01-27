@@ -3,15 +3,14 @@
 import { useState } from "react";
 
 import { Icon } from "@notion-kit/icons";
+import { Navbar, NavbarItem } from "@notion-kit/navbar";
 import {
   History,
   Menu,
-  Navbar,
-  NavbarItem,
   Participants,
   Publish,
   Title,
-} from "@notion-kit/navbar";
+} from "@notion-kit/navbar/presets";
 import type { Page, User } from "@notion-kit/schemas";
 
 const defaultPage: Page = {

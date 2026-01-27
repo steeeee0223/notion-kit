@@ -12,7 +12,6 @@ export const core = [
     dependencies: [
       "@notion-kit/shadcn",
       "@notion-kit/single-image-dropzone",
-      "@notion-kit/spinner",
       "@notion-kit/tags-input",
       "@notion-kit/tree",
     ],
@@ -31,7 +30,6 @@ export const core = [
       "@notion-kit/cover",
       "@notion-kit/icon-block",
       "@notion-kit/icon-menu",
-      "@notion-kit/modal",
     ],
   },
   {

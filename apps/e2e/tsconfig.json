@@ -1,0 +1,10 @@
+{
+  "extends": "@notion-kit/tsconfig/base.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    "plugins": [{ "name": "next" }]
+  },
+  "include": ["src", "vitest.*.ts"],
+  "exclude": ["node_modules"]
+}

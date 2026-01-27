@@ -19,8 +19,8 @@ import {
   MultiSelect,
   MultiSelectOption,
   SelectPreset,
+  Spinner,
 } from "@notion-kit/shadcn";
-import { Spinner } from "@notion-kit/spinner";
 import { idToColor } from "@notion-kit/utils";
 
 import { Avatar } from "../../_components";

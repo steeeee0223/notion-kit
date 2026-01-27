@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-import { UrlForm } from "@notion-kit/common";
+import { UrlForm } from "@notion-kit/common/url-form";
 import {
   Button,
   Popover,

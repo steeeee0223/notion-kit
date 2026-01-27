@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslation } from "@notion-kit/i18n";
-import { Separator } from "@notion-kit/shadcn";
 
 import {
   SettingsSidebarGroup,
@@ -77,9 +76,6 @@ export function SettingsSidebarPreset({
             onClick={() => onTabChange(value)}
           />
         ))}
-      </SettingsSidebarGroup>
-      <Separator />
-      <SettingsSidebarGroup>
         {miscTabs.map(({ value, Icon }) => (
           <SettingsTab
             key={value}
@@ -89,9 +85,6 @@ export function SettingsSidebarPreset({
             onClick={() => onTabChange(value)}
           />
         ))}
-      </SettingsSidebarGroup>
-      <Separator />
-      <SettingsSidebarGroup>
         {plansTabs.map(({ value, Icon }) => (
           <SettingsTab
             key={value}

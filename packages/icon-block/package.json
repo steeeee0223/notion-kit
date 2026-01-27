@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/icon-block",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -34,10 +34,10 @@
   "dependencies": {
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
-    "@notion-kit/spinner": "workspace:*",
     "lucide-react": "catalog:ui"
   },
   "devDependencies": {
+    "@notion-kit/config": "workspace:*",
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",

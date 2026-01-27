@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/notion-clone",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "private": true,
   "scripts": {
     "build": "pnpm with-env next build",
@@ -18,7 +18,6 @@
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/icon-block": "workspace:*",
     "@notion-kit/icons": "workspace:*",
-    "@notion-kit/modal": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/settings-panel": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
