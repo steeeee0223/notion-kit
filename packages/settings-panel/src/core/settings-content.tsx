@@ -9,40 +9,44 @@ interface SettingsSectionProps extends React.PropsWithChildren {
   className?: string;
   hideSeparator?: boolean;
 }
-const SettingsSection: React.FC<SettingsSectionProps> = ({
+function SettingsSection({
   title,
   className,
   hideSeparator = false,
   children,
-}) => (
-  <div className="p-0">
-    <h3 className="pb-3 text-base font-medium">{title}</h3>
-    {!hideSeparator && <Separator className="mb-4" />}
-    <div className={cn("space-y-[18px]", className)}>{children}</div>
-  </div>
-);
+}: SettingsSectionProps) {
+  return (
+    <div className="p-0">
+      <h3 className="pb-3 text-base font-medium">{title}</h3>
+      {!hideSeparator && <Separator className="mb-4" />}
+      <div className={cn("space-y-[18px]", className)}>{children}</div>
+    </div>
+  );
+}
 
 interface SettingsPlanProps {
   plan: string;
   onClick?: () => void;
 }
-const SettingsPlan: React.FC<SettingsPlanProps> = ({ plan, onClick }) => (
-  <TooltipPreset
-    description="Upgrade to use this feature. Click to learn more."
-    className="w-[174px]"
-  >
-    <Button
-      tabIndex={0}
-      variant="hint"
-      className="ml-2 flex size-auto"
-      onClick={onClick}
+function SettingsPlan({ plan, onClick }: SettingsPlanProps) {
+  return (
+    <TooltipPreset
+      description="Upgrade to use this feature. Click to learn more."
+      className="w-[174px]"
     >
-      <Badge variant="blue" size="sm" className="whitespace-nowrap uppercase">
-        {plan} ↗
-      </Badge>
-    </Button>
-  </TooltipPreset>
-);
+      <Button
+        tabIndex={0}
+        variant="hint"
+        className="ml-2 flex size-auto"
+        onClick={onClick}
+      >
+        <Badge variant="blue" size="sm" className="whitespace-nowrap uppercase">
+          {plan} ↗
+        </Badge>
+      </Button>
+    </TooltipPreset>
+  );
+}
 
 interface SettingsRuleProps extends React.PropsWithChildren {
   title: string;
@@ -51,14 +55,14 @@ interface SettingsRuleProps extends React.PropsWithChildren {
   plan?: string;
   href?: string;
 }
-const SettingsRule: React.FC<SettingsRuleProps> = ({
+function SettingsRule({
   children,
   title,
   description,
   className,
   plan,
   href,
-}) => {
+}: SettingsRuleProps) {
   return (
     <div
       data-slot="settings-rule"
@@ -92,6 +96,6 @@ const SettingsRule: React.FC<SettingsRuleProps> = ({
       <div>{children}</div>
     </div>
   );
-};
+}
 
 export { SettingsSection, SettingsRule, SettingsPlan };

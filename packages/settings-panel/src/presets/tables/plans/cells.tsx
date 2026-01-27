@@ -16,12 +16,12 @@ interface PlanHeaderProps extends React.PropsWithChildren {
   description: string;
   subtext?: string;
 }
-export const PlanHeader = ({
+export function PlanHeader({
   title,
   description,
   subtext,
   children,
-}: PlanHeaderProps) => {
+}: PlanHeaderProps) {
   return (
     <div className="w-[150px]">
       <div className={cn(styles.layout, "gap-2.5")}>
@@ -38,30 +38,32 @@ export const PlanHeader = ({
       </div>
     </div>
   );
-};
+}
 
 interface ListCellProps {
   items: string[];
 }
-export const ListCell = ({ items }: ListCellProps) => (
-  <div className="py-3">
-    <ul className="my-0 list-none pl-0">
-      {items.map((item, i) => (
-        <li key={i} className="flex min-h-6 items-center">
-          <span className="flex gap-1">
-            <div className={styles.bullet}>·</div>
-            <div className={styles.item}>{item}</div>
-          </span>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
+export function ListCell({ items }: ListCellProps) {
+  return (
+    <div className="py-3">
+      <ul className="my-0 list-none pl-0">
+        {items.map((item, i) => (
+          <li key={i} className="flex min-h-6 items-center">
+            <span className="flex gap-1">
+              <div className={styles.bullet}>·</div>
+              <div className={styles.item}>{item}</div>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export type ContentCellProps =
   | { type: "value"; value?: string }
   | { type: "check"; checked?: boolean };
-export const ContentCell = (props: ContentCellProps) => {
+export function ContentCell(props: ContentCellProps) {
   return (
     <div className={cn(styles.item, "py-3")}>
       {props.type === "value" && (
@@ -75,4 +77,4 @@ export const ContentCell = (props: ContentCellProps) => {
         ))}
     </div>
   );
-};
+}

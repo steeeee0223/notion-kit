@@ -1,10 +1,10 @@
 "use client";
 
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
+  type ColumnDef,
 } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
@@ -23,6 +23,11 @@ export interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
+/**
+ * Plans DataTable - Uses a unique flexbox layout that differs from other tables
+ * This table has a specific design requirement with highlight/content types,
+ * so it maintains its own implementation rather than using the base DataTable.
+ */
 export function DataTable<TData, TValue>({
   type,
   columns,
@@ -42,9 +47,10 @@ export function DataTable<TData, TValue>({
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow
             key={headerGroup.id}
+            variant="striped"
             className={cn(
-              "flex gap-3 border-t-0",
-              type === "highlight" && "bg-main py-5 shadow-sm",
+              "flex",
+              type === "highlight" && "bg-main! py-5 shadow-sm dark:bg-main!",
               type === "content" && "border-b border-border",
             )}
           >
@@ -52,7 +58,7 @@ export function DataTable<TData, TValue>({
               <TableHead
                 key={header.id}
                 className={cn(
-                  "w-full max-w-[150px] py-0",
+                  "h-[unset] w-full max-w-[150px] text-primary",
                   header.id === "title" && "max-w-[118px]",
                 )}
               >
@@ -68,39 +74,26 @@ export function DataTable<TData, TValue>({
         ))}
       </TableHeader>
       <TableBody>
-        {tableRows.length > 0 ? (
-          tableRows.map((row, i) => (
-            <TableRow
-              key={row.id}
-              data-state={row.getIsSelected() && "selected"}
-              className={cn(
-                "flex gap-3 border-t-0",
-                type === "highlight" && "bg-[#f7f7f5] dark:bg-modal",
-                type === "content" &&
-                  i % 2 === 1 &&
-                  "bg-[#f7f7f5] dark:bg-modal",
-              )}
-            >
-              {row.getVisibleCells().map((cell) => (
-                <TableCell
-                  key={cell.id}
-                  className={cn(
-                    "w-[150px] py-0",
-                    cell.column.id === "title" && "w-[118px]",
-                  )}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell colSpan={columns.length} className="h-6 text-center">
-              No results.
-            </TableCell>
+        {tableRows.map((row) => (
+          <TableRow
+            key={row.id}
+            data-state={row.getIsSelected() && "selected"}
+            variant="striped"
+            className="flex"
+          >
+            {row.getVisibleCells().map((cell) => (
+              <TableCell
+                key={cell.id}
+                className={cn(
+                  "h-[unset] w-[150px]",
+                  cell.column.id === "title" && "w-[118px]",
+                )}
+              >
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </TableCell>
+            ))}
           </TableRow>
-        )}
+        ))}
       </TableBody>
     </Table>
   );

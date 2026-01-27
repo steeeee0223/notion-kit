@@ -1,6 +1,27 @@
 import * as React from "react";
 
-import { cn } from "@notion-kit/cn";
+import { cn, cva } from "@notion-kit/cn";
+
+const tableVariants = cva("", {
+  variants: {
+    "table-row": {
+      default: "border-t border-t-default/10",
+      striped: "odd:bg-[#f7f7f5] dark:odd:bg-modal",
+    },
+  },
+  defaultVariants: {
+    "table-row": "default",
+  },
+});
+
+type TableVariant = "default" | "striped";
+
+function tableClasses(
+  slot: "table-row" | "table-cell",
+  variant?: TableVariant,
+) {
+  return tableVariants({ [slot]: variant });
+}
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (
@@ -36,9 +57,16 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
   );
 }
 
-function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
+interface TableRowProps extends React.ComponentProps<"tr"> {
+  variant?: TableVariant;
+}
+
+function TableRow({ className, variant, ...props }: TableRowProps) {
   return (
-    <tr className={cn("border-t border-t-default/10", className)} {...props} />
+    <tr
+      className={cn(tableClasses("table-row", variant), className)}
+      {...props}
+    />
   );
 }
 
