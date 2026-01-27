@@ -42,7 +42,7 @@ export function createMemberColumns({
     },
     {
       accessorKey: "teamspaces",
-      header: () => <TextCell header value="Teamspaces" className="pl-2" />,
+      header: () => <TextCell value="Teamspaces" className="pl-2" />,
       cell: ({ row }) => (
         <TeamspacesCell
           teamspaces={row.original.teamspaces}
@@ -52,7 +52,7 @@ export function createMemberColumns({
     },
     {
       accessorKey: "groups",
-      header: () => <TextCell header value="Groups" />,
+      header: () => <TextCell value="Groups" />,
       cell: () => <div className="cursor-default text-sm text-muted">None</div>,
     },
     {

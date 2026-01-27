@@ -8,17 +8,12 @@ import { Button } from "@notion-kit/shadcn";
 import { Avatar } from "../_components";
 
 interface TextCellProps {
-  header?: boolean;
   value: string;
   className?: string;
 }
 
-export function TextCell({ header, value, className }: TextCellProps) {
-  return (
-    <div className={cn("truncate text-xs", header && "text-sm", className)}>
-      {value}
-    </div>
-  );
+export function TextCell({ value, className }: TextCellProps) {
+  return <div className={cn("truncate text-xs", className)}>{value}</div>;
 }
 
 interface SortingToggleProps {
@@ -29,8 +24,13 @@ interface SortingToggleProps {
 
 export function SortingToggle({ title, isSorted, toggle }: SortingToggleProps) {
   return (
-    <Button variant="hint" size="xs" onClick={toggle} className="px-1">
-      <TextCell header value={title} />
+    <Button
+      variant="hint"
+      size="xs"
+      onClick={toggle}
+      className="px-1 text-secondary"
+    >
+      <TextCell value={title} />
       {isSorted &&
         (isSorted === "asc" ? (
           <Icon.ArrowUp className="size-3 shrink-0 fill-icon" />

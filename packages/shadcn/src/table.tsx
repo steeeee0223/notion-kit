@@ -46,7 +46,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
       className={cn(
-        "sticky top-0 h-8 bg-transparent text-start text-sm font-normal text-secondary",
+        "sticky top-0 h-8 bg-transparent text-start text-xs font-normal text-secondary",
         "data-[pinned=left]:left-0 data-[pinned=left]:z-40 data-[pinned=left]:bg-modal data-[pinned=left]:shadow-l-pinned",
         className,
       )}

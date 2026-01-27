@@ -64,7 +64,7 @@ export function createGuestColumns({
       ? [
           {
             accessorKey: "access",
-            header: () => <TextCell header value="Access" className="pl-2" />,
+            header: () => <TextCell value="Access" className="pl-2" />,
             cell: ({ row }: { row: Row<GuestRow> }) => (
               <AccessCell access={row.original.access} />
             ),

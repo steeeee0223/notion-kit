@@ -41,11 +41,6 @@ export interface DataTableProps<TData, TValue> {
   search?: ColumnFilter;
   /** Row click handler */
   onRowClick?: (row: Row<TData>) => void;
-  /**
-   * @deprecated
-   * Custom cell className function based on column id
-   */
-  getCellClassName?: (columnId: string) => string;
   /** Custom header className function based on column id */
   getHeaderClassName?: (columnId: string) => string;
 }
@@ -60,7 +55,6 @@ export function DataTable<TData, TValue>({
   initialColumnPinning,
   search,
   onRowClick,
-  getCellClassName,
   getHeaderClassName,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -96,7 +90,7 @@ export function DataTable<TData, TValue>({
   }, [search, table]);
 
   return (
-    <Table className={cn("border-t-0", className)}>
+    <Table className={className}>
       <TableHeader>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id} className="border-none">
@@ -145,7 +139,6 @@ export function DataTable<TData, TValue>({
                     key={cell.id}
                     style={pinnedStyles}
                     data-pinned={isPinned}
-                    className={cn(getCellClassName?.(cell.column.id))}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
