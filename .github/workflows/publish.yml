@@ -1,0 +1,86 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - "v*" # Triggers on version tags like v1.0.0, v2.1.3, etc.
+
+# Prevent concurrent publish runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  FORCE_COLOR: 3
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required for creating releases
+      id-token: write # Required for npm provenance
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Get full git history for changeset
+
+      - name: Setup
+        uses: ./tooling/github/setup
+
+      - name: Setup npm authentication
+        run: |
+          npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
+
+          # Verify authentication is configured
+          if npm config get '//registry.npmjs.org/:_authToken' | grep -q 'npm_'; then
+            echo "✅ npm authentication configured"
+          else
+            echo "❌ npm authentication failed"
+            exit 1
+          fi
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Build packages
+        run: pnpm build:packages
+
+      - name: Publish to npm
+        run: pnpm publish-packages
+
+      - name: Extract release notes
+        id: extract_notes
+        run: |
+          # Extract the version number from the tag (e.g., v0.15.0 -> 0.15.0)
+          VERSION="${GITHUB_REF_NAME#v}"
+
+          # Try to extract changelog content for this version
+          if [ -f "CHANGELOG.md" ]; then
+            # Extract content between version headers
+            NOTES=$(sed -n "/## ${VERSION}/,/## [0-9]/p" CHANGELOG.md | sed '1!d;$d' || echo "")
+            
+            # If no notes found, use a default message
+            if [ -z "$NOTES" ]; then
+              NOTES="Release ${VERSION}"
+            fi
+          else
+            NOTES="Release ${VERSION}"
+          fi
+
+          # Write to output using heredoc to handle multi-line content
+          {
+            echo 'notes<<EOF'
+            echo "$NOTES"
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Publish summary
+        run: |
+          echo "## 🚀 Published to npm" >> $GITHUB_STEP_SUMMARY
+          echo "Tag: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "Commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📝 Release Notes" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.extract_notes.outputs.notes }}" >> $GITHUB_STEP_SUMMARY
