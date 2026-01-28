@@ -5,6 +5,10 @@ node_modules
 .pnp
 .pnp.js
 
+# development
+.devcontainer
+.pnpm-store
+
 # testing
 coverage
 
