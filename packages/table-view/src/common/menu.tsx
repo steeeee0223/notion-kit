@@ -14,6 +14,7 @@ export function MenuHeader({ title, onBack }: MenuHeaderProps) {
           variant="hint"
           className="mr-2 -ml-0.5 h-[22px] w-6 shrink-0 rounded-md p-0"
           onClick={onBack}
+          aria-label="Back"
         >
           <Icon.ArrowLeftThick className="fill-default/45" />
         </Button>

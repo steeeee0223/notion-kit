@@ -55,10 +55,11 @@ export function SortMenu() {
           ))}
         </SortableDnd>
       </MenuGroup>
-      <MenuGroup>
+      <MenuGroup role="menu">
         <Popover>
           <PopoverTrigger asChild>
             <MenuItem
+              role="menuitem"
               variant="secondary"
               Icon={<Icon.Plus className="size-4" />}
               Body="Add sort"
@@ -69,6 +70,7 @@ export function SortMenu() {
           </PopoverContent>
         </Popover>
         <MenuItem
+          role="menuitem"
           variant="warning"
           className="text-secondary"
           Icon={<Icon.Trash />}
