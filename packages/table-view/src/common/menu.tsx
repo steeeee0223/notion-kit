@@ -2,11 +2,12 @@ import { Icon } from "@notion-kit/icons";
 import { Button, PopoverClose } from "@notion-kit/shadcn";
 
 interface MenuHeaderProps {
+  id: string;
   title: string;
   onBack?: () => void;
 }
 
-export function MenuHeader({ title, onBack }: MenuHeaderProps) {
+export function MenuHeader({ id, title, onBack }: MenuHeaderProps) {
   return (
     <div className="flex h-[42px] shrink-0 items-center px-4 pt-3.5 pb-1.5">
       {onBack !== undefined && (
@@ -19,7 +20,11 @@ export function MenuHeader({ title, onBack }: MenuHeaderProps) {
           <Icon.ArrowLeftThick className="fill-default/45" />
         </Button>
       )}
-      <span className="grow truncate text-sm font-semibold" aria-label={title}>
+      <span
+        id={id}
+        className="grow truncate text-sm font-semibold"
+        aria-label={title}
+      >
         {title}
       </span>
       <PopoverClose />

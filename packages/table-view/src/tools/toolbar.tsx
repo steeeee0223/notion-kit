@@ -36,7 +36,7 @@ export function Toolbar({ className }: ToolbarProps) {
             </Button>
           </PopoverTrigger>
         </TooltipPreset>
-        <PopoverContent>
+        <PopoverContent role="menu">
           <SortMenu />
         </PopoverContent>
       </Popover>
@@ -64,7 +64,12 @@ export function Toolbar({ className }: ToolbarProps) {
             </Button>
           </PopoverTrigger>
         </TooltipPreset>
-        <PopoverContent collisionPadding={12} sticky="always">
+        <PopoverContent
+          role="menu"
+          collisionPadding={12}
+          sticky="always"
+          aria-labelledby="view-settings"
+        >
           <TableViewMenu />
         </PopoverContent>
       </Popover>

@@ -1,40 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { TableView } from "../table-contexts";
-import { mockData, mockProperties } from "./mock";
+import { mockData, mockProperties, mockResizeObserver } from "./mock";
 
-// Mock ResizeObserver for Radix UI components
-class ResizeObserverMock {
-  observe() {
-    /* noop */
-  }
-  unobserve() {
-    /* noop */
-  }
-  disconnect() {
-    /* noop */
-  }
-}
-
-beforeEach(() => {
-  global.ResizeObserver = ResizeObserverMock;
-  // Also mock window.matchMedia for Radix UI
-  Object.defineProperty(window, "matchMedia", {
-    writable: true,
-    value: vi.fn().mockImplementation((query: string) => ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    })),
-  });
-});
+mockResizeObserver();
 
 function renderToolbar() {
   return render(<TableView properties={mockProperties} data={mockData} />);
