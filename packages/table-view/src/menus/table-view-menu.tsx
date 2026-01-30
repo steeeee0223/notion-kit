@@ -29,7 +29,7 @@ export function TableViewMenu() {
       return (
         <>
           <MenuHeader
-            id="view-settings"
+            id="sort"
             title="Sort"
             onBack={() => table.setTableMenuState({ open: true, page: null })}
           />

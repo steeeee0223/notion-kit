@@ -2,8 +2,12 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
+import {
+  mockData,
+  mockProperties,
+  mockResizeObserver,
+} from "../__tests__/mock";
 import { TableView } from "../table-contexts";
-import { mockData, mockProperties, mockResizeObserver } from "./mock";
 
 mockResizeObserver();
 
