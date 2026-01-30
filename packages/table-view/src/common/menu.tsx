@@ -2,7 +2,7 @@ import { Icon } from "@notion-kit/icons";
 import { Button, PopoverClose } from "@notion-kit/shadcn";
 
 interface MenuHeaderProps {
-  id: string;
+  id?: string;
   title: string;
   onBack?: () => void;
 }
@@ -20,13 +20,9 @@ export function MenuHeader({ id, title, onBack }: MenuHeaderProps) {
           <Icon.ArrowLeftThick className="fill-default/45" />
         </Button>
       )}
-      <span
-        id={id}
-        className="grow truncate text-sm font-semibold"
-        aria-label={title}
-      >
+      <h1 id={id} className="grow truncate text-sm font-semibold">
         {title}
-      </span>
+      </h1>
       <PopoverClose />
     </div>
   );

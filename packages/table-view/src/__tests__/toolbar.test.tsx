@@ -64,7 +64,9 @@ describe("Toolbar", () => {
       await user.click(settingsButton);
 
       // TableViewMenu shows "View Settings" header
-      expect(screen.getByText("View Settings")).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "View Settings" }),
+      ).toBeInTheDocument();
     });
 
     it("should close the settings menu when clicking outside", async () => {
@@ -76,13 +78,17 @@ describe("Toolbar", () => {
       await user.click(settingsButton);
 
       // Verify menu is open
-      expect(screen.getByText("View Settings")).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "View Settings" }),
+      ).toBeInTheDocument();
 
       // Click outside (on the body)
       await user.click(document.body);
 
       // Menu should be closed
-      expect(screen.queryByText("View Settings")).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("heading", { name: "View Settings" }),
+      ).not.toBeInTheDocument();
     });
 
     it("should toggle menu state correctly", async () => {
@@ -93,15 +99,21 @@ describe("Toolbar", () => {
 
       // First click: open
       await user.click(settingsButton);
-      expect(screen.getByText("View Settings")).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "View Settings" }),
+      ).toBeInTheDocument();
 
       // Second click: close
       await user.click(settingsButton);
-      expect(screen.queryByText("View Settings")).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("heading", { name: "View Settings" }),
+      ).not.toBeInTheDocument();
 
       // Third click: re-open
       await user.click(settingsButton);
-      expect(screen.getByText("View Settings")).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "View Settings" }),
+      ).toBeInTheDocument();
     });
   });
 });

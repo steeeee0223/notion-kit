@@ -35,6 +35,9 @@ describe("TableViewMenu", () => {
       });
       await user.click(layoutMenuItem);
 
+      expect(
+        screen.getByRole("heading", { name: "Layout" }),
+      ).toBeInTheDocument();
       // Should show Layout menu with layout options
       expect(screen.getByText("Table")).toBeInTheDocument();
     });
@@ -50,7 +53,7 @@ describe("TableViewMenu", () => {
       await user.click(sortMenuItem);
 
       // Should show Sort menu with "Sort" header
-      expect(screen.getByText("Sort")).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "Sort" })).toBeInTheDocument();
     });
 
     it("should navigate to Group menu when clicking Group", async () => {
@@ -66,7 +69,9 @@ describe("TableViewMenu", () => {
       await user.click(groupMenuItem);
 
       // Should show Group selection menu with "Group by" header
-      expect(screen.getByText("Group by")).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "Group by" }),
+      ).toBeInTheDocument();
     });
 
     it("should navigate to Edit properties menu when clicking Edit properties", async () => {
@@ -162,7 +167,9 @@ describe("TableViewMenu", () => {
       await user.click(backButton);
 
       // Should return to main menu with "View Settings"
-      expect(screen.getByText("View Settings")).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "View Settings" }),
+      ).toBeInTheDocument();
     });
   });
 });
