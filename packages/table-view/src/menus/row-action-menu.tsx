@@ -2,7 +2,7 @@
 
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { useCopyToClipboard, useFilter } from "@notion-kit/hooks";
+import { useCopyToClipboard } from "@notion-kit/hooks";
 import type { IconData } from "@notion-kit/icon-block";
 import { IconMenu } from "@notion-kit/icon-menu";
 import { Icon } from "@notion-kit/icons";
@@ -109,9 +109,6 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
       onSelect: deleteRow,
     },
   ];
-  const { search, results, updateSearch } = useFilter(actions, (prop, v) =>
-    prop.value.includes(v),
-  );
 
   /** Keyboard shortcut */
   useHotkeys("meta+shift+enter", openInNewTab, { preventDefault: true });
@@ -119,12 +116,8 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
   useHotkeys("backspace", deleteRow);
 
   return (
-    <Command shouldFilter={false}>
-      <CommandInput
-        value={search}
-        onValueChange={updateSearch}
-        placeholder="Search actions..."
-      />
+    <Command shouldFilter>
+      <CommandInput placeholder="Search actions..." />
       <CommandList>
         <CommandGroup heading="Page">
           <IconMenu
@@ -141,7 +134,7 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup>
-          {results?.map((prop) => (
+          {actions.map((prop) => (
             <CommandItem
               asChild
               key={prop.value}

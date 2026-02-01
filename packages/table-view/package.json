@@ -59,6 +59,7 @@
     "@notion-kit/tailwind-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "@testing-library/react": "catalog:rtl",
+    "@testing-library/user-event": "catalog:rtl",
     "@types/react": "catalog:react19",
     "@vitejs/plugin-react": "catalog:test",
     "@vitest/coverage-v8": "catalog:test",
