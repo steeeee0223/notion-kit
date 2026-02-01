@@ -26,7 +26,7 @@ function PopoverClose({
 }: React.ComponentProps<typeof PopoverPrimitive.Close>) {
   return (
     <PopoverPrimitive.Close data-slot="popover-close" asChild>
-      <Button variant="close" size="circle" aria-label="Close" {...props}>
+      <Button variant="close" size="circle" {...props}>
         <Icon.Close className="h-full w-3.5 fill-secondary dark:fill-default/45" />
       </Button>
     </PopoverPrimitive.Close>

@@ -67,7 +67,6 @@ function MenuItem({
   return (
     <div
       data-slot="menu-item"
-      role="menuitem"
       className={cn(
         menuItemVariants({ variant, disabled, inset }),
         "group/item",

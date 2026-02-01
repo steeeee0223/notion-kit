@@ -29,7 +29,6 @@ export function TableViewMenu() {
       return (
         <>
           <MenuHeader
-            id="sort"
             title="Sort"
             onBack={() => table.setTableMenuState({ open: true, page: null })}
           />
@@ -73,7 +72,7 @@ function TableMenu() {
 
   return (
     <>
-      <MenuHeader id="view-settings" title="View Settings" />
+      <MenuHeader title="View Settings" />
       <MenuGroup>
         <MenuItem
           Icon={<LayoutIcon layout={layout} />}

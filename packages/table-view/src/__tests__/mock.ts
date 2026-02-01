@@ -1,5 +1,4 @@
 import { renderHook } from "@testing-library/react";
-import { beforeEach, vi } from "vitest";
 
 import type { ColumnInfo, Row } from "../lib/types";
 import { arrayToEntity } from "../lib/utils";
@@ -63,38 +62,4 @@ export const mockData: Row[] = [
 export function renderTableHook(options: BaseTableProps<CellPlugin[]>) {
   const { result } = renderHook(() => useTableView({ ...options, plugins }));
   return result.current;
-}
-
-export function mockResizeObserver() {
-  // Mock ResizeObserver for Radix UI components
-  class ResizeObserverMock {
-    observe() {
-      /* noop */
-    }
-    unobserve() {
-      /* noop */
-    }
-    disconnect() {
-      /* noop */
-    }
-  }
-
-  beforeEach(() => {
-    global.ResizeObserver = ResizeObserverMock;
-    // Mock scrollIntoView for cmdk
-    Element.prototype.scrollIntoView = vi.fn();
-    Object.defineProperty(window, "matchMedia", {
-      writable: true,
-      value: vi.fn().mockImplementation((query: string) => ({
-        matches: false,
-        media: query,
-        onchange: null,
-        addListener: vi.fn(),
-        removeListener: vi.fn(),
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        dispatchEvent: vi.fn(),
-      })),
-    });
-  });
 }

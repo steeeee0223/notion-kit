@@ -29,7 +29,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   data,
   properties,
   table: tableGlobal,
-  getRowUrl,
   onDataChange,
   onPropertiesChange,
   onTableChange,
@@ -113,7 +112,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     },
     onColumnInfoChange: handleColumnChange,
     onTableDataChange: onDataChange ?? setDataEntity,
-    getRowUrl,
     sync: (debugValue) => {
       setSynced(Date.now());
       console.log(`[${debugValue}] table synced`);

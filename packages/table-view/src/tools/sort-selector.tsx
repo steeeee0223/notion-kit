@@ -50,7 +50,7 @@ export function SortSelector() {
           <Icon.ChevronDown className="size-3" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent role="menu" className="w-80">
+      <PopoverContent className="w-80">
         <SortMenu />
       </PopoverContent>
     </Popover>

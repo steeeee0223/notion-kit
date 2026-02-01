@@ -1,9 +1,9 @@
 "use client";
 
+import { useFilter } from "@notion-kit/hooks";
 import { IconBlock } from "@notion-kit/icon-block";
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
@@ -29,6 +29,11 @@ export function SelectGroupMenu() {
     return acc;
   }, []);
 
+  const { search, results, updateSearch } = useFilter(
+    options,
+    (col, v) => col.name.toLowerCase().includes(v) || "none".includes(v),
+  );
+
   const selectGroup = (colId: string | null) => {
     table.setGroupingColumn(colId);
     table.setTableMenuState({
@@ -48,8 +53,12 @@ export function SelectGroupMenu() {
           })
         }
       />
-      <Command shouldFilter>
-        <CommandInput placeholder="Search for a property" />
+      <Command shouldFilter={false}>
+        <CommandInput
+          value={search}
+          onValueChange={updateSearch}
+          placeholder="Search for a property"
+        />
         <CommandList>
           <CommandGroup className="h-40 overflow-y-auto">
             {tableGlobal.layout !== "board" && (
@@ -59,7 +68,7 @@ export function SelectGroupMenu() {
                 </MenuItem>
               </CommandItem>
             )}
-            {options.map(({ id, name, type, icon }) => (
+            {results?.map(({ id, name, type, icon }) => (
               <CommandItem
                 key={id}
                 value={name}
@@ -80,11 +89,8 @@ export function SelectGroupMenu() {
                   {groupingColId === id && <MenuItemCheck />}
                 </MenuItem>
               </CommandItem>
-            ))}
+            )) ?? <span className="px-3 text-xs text-muted">No results</span>}
           </CommandGroup>
-          <CommandEmpty className="px-3 text-start text-muted">
-            No results
-          </CommandEmpty>
         </CommandList>
       </Command>
     </>

@@ -44,7 +44,6 @@ export function TableViewContent() {
 
   return (
     <div
-      role="table"
       id="notion-table-view"
       className="relative float-left min-w-full px-24 pb-0 lining-nums tabular-nums select-none"
     >

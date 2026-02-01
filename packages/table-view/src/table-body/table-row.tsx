@@ -59,7 +59,6 @@ export function TableRow({ row }: TableRowProps) {
       style={style}
     >
       <div
-        role="row"
         id="notion-table-view-row"
         dir="ltr"
         className={cn(

@@ -5,12 +5,12 @@ import { arrayMove, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { ColumnSort } from "@tanstack/react-table";
 
+import { useFilter } from "@notion-kit/hooks";
 import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
   Command,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
@@ -190,18 +190,28 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
 
 function PropSelectMenu() {
   const { table } = useTableViewCtx();
-  const columns = Object.values(table.getState().columnsInfo);
+
+  /** Search */
+  const { search, results, updateSearch } = useFilter(
+    Object.values(table.getState().columnsInfo),
+    (prop, v) => prop.name.toLowerCase().includes(v),
+  );
   /** Select */
   const sortedProps = new Set(table.getState().sorting.map((s) => s.id));
   const selectProp = (id: string) =>
     table.setSorting((prev) => [...prev, { id, desc: false }]);
 
   return (
-    <Command shouldFilter>
-      <CommandInput clear placeholder="Search for a property..." />
+    <Command shouldFilter={false}>
+      <CommandInput
+        clear
+        value={search}
+        onValueChange={updateSearch}
+        placeholder="Search for a property..."
+      />
       <CommandList>
         <CommandGroup className="h-40 overflow-y-auto">
-          {columns.map(({ id, name, type, icon }) => (
+          {results?.map(({ id, name, type, icon }) => (
             <CommandItem
               key={id}
               value={name}
@@ -217,11 +227,8 @@ function PropSelectMenu() {
                 Body={name}
               />
             </CommandItem>
-          ))}
+          )) ?? <span className="px-3 text-xs text-muted">No results</span>}
         </CommandGroup>
-        <CommandEmpty className="px-3 text-start text-muted">
-          No results
-        </CommandEmpty>
       </CommandList>
     </Command>
   );
