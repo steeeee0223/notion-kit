@@ -1,40 +1,27 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { screen } from "@testing-library/react";
+import userEvent, { UserEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
-import {
-  mockData,
-  mockProperties,
-  mockResizeObserver,
-} from "../__tests__/mock";
-import { TableView } from "../table-contexts";
+import { mockResizeObserver } from "../__tests__/mock";
+import { openSettingsMenu } from "../__tests__/utils";
 
 mockResizeObserver();
 
-function renderTableView() {
-  return render(<TableView properties={mockProperties} data={mockData} />);
-}
-
-async function openSelectGroupMenu(user: ReturnType<typeof userEvent.setup>) {
-  const settingsButton = screen.getByRole("button", { name: "Settings" });
-  await user.click(settingsButton);
-
-  expect(
-    screen.getByRole("heading", { name: "View Settings" }),
-  ).toBeInTheDocument();
+async function openSelectGroupMenu(user: UserEvent) {
+  const menu = await openSettingsMenu(user);
 
   // Click Group menu item
   const groupMenuItem = screen.getByRole("menuitem", { name: /group/i });
   await user.click(groupMenuItem);
 
   expect(screen.getByRole("heading", { name: "Group by" })).toBeInTheDocument();
+
+  return menu;
 }
 
 describe("SelectGroupMenu", () => {
   it("should display the Group by menu", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     await openSelectGroupMenu(user);
 
     // Should show "Group by" header
@@ -52,8 +39,6 @@ describe("SelectGroupMenu", () => {
 
   it("should show search input for filtering properties", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     await openSelectGroupMenu(user);
 
     // Should have search input
@@ -63,8 +48,6 @@ describe("SelectGroupMenu", () => {
 
   it("should filter properties when typing in search", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     await openSelectGroupMenu(user);
 
     // Type in search
@@ -82,8 +65,6 @@ describe("SelectGroupMenu", () => {
 
   it("should navigate to Edit Group menu after selecting a property", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     await openSelectGroupMenu(user);
 
     // Select a property to group by (use the option)
@@ -99,8 +80,6 @@ describe("SelectGroupMenu", () => {
 
   it("should have 'None' option available when no grouping is selected", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     await openSelectGroupMenu(user);
 
     // None option should be present
@@ -110,8 +89,6 @@ describe("SelectGroupMenu", () => {
 
   it("should navigate back to View Settings when clicking back button (no grouping)", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     await openSelectGroupMenu(user);
 
     // Click back button

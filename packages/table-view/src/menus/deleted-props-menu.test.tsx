@@ -1,5 +1,5 @@
 import { render, screen, within } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import userEvent, { UserEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import { mockResizeObserver } from "../__tests__/mock";
@@ -56,16 +56,14 @@ const mockDataWithDeleted: Row[] = [
   },
 ];
 
-function renderTableView() {
-  return render(
+async function openSettingsMenu(user: UserEvent) {
+  render(
     <TableView
       properties={mockPropertiesWithDeleted}
       data={mockDataWithDeleted}
     />,
   );
-}
 
-async function openSettingsMenu(user: ReturnType<typeof userEvent.setup>) {
   const settingsButton = screen.getByRole("button", { name: /settings/i });
   await user.click(settingsButton);
 
@@ -74,7 +72,7 @@ async function openSettingsMenu(user: ReturnType<typeof userEvent.setup>) {
   return menu;
 }
 
-async function openPropsMenu(user: ReturnType<typeof userEvent.setup>) {
+async function openPropsMenu(user: UserEvent) {
   const menu = await openSettingsMenu(user);
 
   // Click on "Edit properties" menu item
@@ -90,7 +88,7 @@ async function openPropsMenu(user: ReturnType<typeof userEvent.setup>) {
   return menu;
 }
 
-async function openDeletedPropsMenu(user: ReturnType<typeof userEvent.setup>) {
+async function openDeletedPropsMenu(user: UserEvent) {
   const menu = await openPropsMenu(user);
 
   // Click on "Deleted properties" menu item
@@ -107,8 +105,6 @@ async function openDeletedPropsMenu(user: ReturnType<typeof userEvent.setup>) {
 describe("DeletedPropsMenu", () => {
   it("should display deleted properties count in Props menu", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     const menu = await openPropsMenu(user);
 
     // Should show "Deleted properties" with count badge
@@ -119,8 +115,6 @@ describe("DeletedPropsMenu", () => {
 
   it("should navigate to Deleted Properties menu and show deleted properties", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     const menu = await openDeletedPropsMenu(user);
 
     // Should show both deleted properties
@@ -130,8 +124,6 @@ describe("DeletedPropsMenu", () => {
 
   it("should have restore button for each deleted property", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     const menu = await openDeletedPropsMenu(user);
 
     // Should show restore buttons
@@ -143,8 +135,6 @@ describe("DeletedPropsMenu", () => {
 
   it("should have delete button for each deleted property", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     const menu = await openDeletedPropsMenu(user);
 
     // Should show delete buttons
@@ -156,8 +146,6 @@ describe("DeletedPropsMenu", () => {
 
   it("should restore property when clicking restore button", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     const menu = await openDeletedPropsMenu(user);
 
     // Get initial count
@@ -178,8 +166,6 @@ describe("DeletedPropsMenu", () => {
 
   it("should permanently delete property when clicking delete button", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     const menu = await openDeletedPropsMenu(user);
 
     // Get initial count
@@ -199,8 +185,6 @@ describe("DeletedPropsMenu", () => {
 
   it("should navigate back to Properties menu when clicking back button", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     const menu = await openDeletedPropsMenu(user);
 
     // Click back button

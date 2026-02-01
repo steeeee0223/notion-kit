@@ -1,27 +1,14 @@
-import { render, screen, within } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
-import {
-  mockData,
-  mockProperties,
-  mockResizeObserver,
-} from "../__tests__/mock";
-import { TableView } from "../table-contexts";
+import { mockResizeObserver } from "../__tests__/mock";
+import { openSettingsMenu } from "../__tests__/utils";
 
 mockResizeObserver();
 
-function renderTableView() {
-  return render(<TableView properties={mockProperties} data={mockData} />);
-}
-
 async function openEditGroupMenu(user: ReturnType<typeof userEvent.setup>) {
-  const settingsButton = screen.getByRole("button", { name: "Settings" });
-  await user.click(settingsButton);
-
-  expect(
-    screen.getByRole("heading", { name: "View Settings" }),
-  ).toBeInTheDocument();
+  await openSettingsMenu(user);
 
   // Click Group menu item
   const groupMenuItem = screen.getByRole("menuitem", { name: /group/i });
@@ -39,8 +26,6 @@ async function openEditGroupMenu(user: ReturnType<typeof userEvent.setup>) {
 describe("EditGroupMenu", () => {
   it("should display the Edit Group menu with selected property", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     await openEditGroupMenu(user);
 
     // Should show "Group" header
@@ -56,8 +41,6 @@ describe("EditGroupMenu", () => {
 
   it("should show 'Hide empty groups' switch", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     await openEditGroupMenu(user);
 
     // Should show "Hide empty groups" switch
@@ -70,8 +53,6 @@ describe("EditGroupMenu", () => {
 
   it("should toggle 'Hide empty groups' when clicking the switch", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     await openEditGroupMenu(user);
 
     // Get the switch
@@ -88,8 +69,6 @@ describe("EditGroupMenu", () => {
 
   it("should show 'Groups' section header with visibility toggle", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     await openEditGroupMenu(user);
 
     // Should show "Groups" header
@@ -103,8 +82,6 @@ describe("EditGroupMenu", () => {
 
   it("should show 'Remove grouping' option", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     await openEditGroupMenu(user);
 
     // Should show "Remove grouping" menu item
@@ -115,8 +92,6 @@ describe("EditGroupMenu", () => {
 
   it("should remove grouping when clicking 'Remove grouping'", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     await openEditGroupMenu(user);
 
     // Click "Remove grouping"
@@ -143,8 +118,6 @@ describe("EditGroupMenu", () => {
 
   it("should show 'Learn about grouping' option", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     await openEditGroupMenu(user);
 
     // Should show "Learn about grouping" menu item
@@ -155,8 +128,6 @@ describe("EditGroupMenu", () => {
 
   it("should navigate to Select Group menu when clicking 'Group by'", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     await openEditGroupMenu(user);
 
     // Click "Group by" to change grouping property
@@ -171,8 +142,6 @@ describe("EditGroupMenu", () => {
 
   it("should navigate back to View Settings when clicking back button", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     await openEditGroupMenu(user);
 
     // Click back button

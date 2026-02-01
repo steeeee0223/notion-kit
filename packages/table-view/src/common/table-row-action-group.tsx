@@ -69,7 +69,12 @@ export function RowActions({
         ]}
         className="z-999 text-center"
       >
-        <Button variant="hint" className="size-6" onClick={onAddNext}>
+        <Button
+          variant="hint"
+          aria-label="Add row"
+          className="size-6"
+          onClick={onAddNext}
+        >
           <Icon.Plus className="size-3.5 fill-icon" />
         </Button>
       </TooltipPreset>
@@ -83,7 +88,12 @@ export function RowActions({
           className="z-999 text-center"
         >
           <PopoverTrigger asChild>
-            <Button variant="hint" className="h-6 w-4.5" {...dragHandleProps}>
+            <Button
+              variant="hint"
+              aria-label="Row actions"
+              className="h-6 w-4.5"
+              {...dragHandleProps}
+            >
               <Icon.DragHandle className="size-3.5 fill-icon" />
             </Button>
           </PopoverTrigger>

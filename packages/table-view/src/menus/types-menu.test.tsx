@@ -1,30 +1,13 @@
-import { render, screen, within } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { screen, within } from "@testing-library/react";
+import userEvent, { UserEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
-import {
-  mockData,
-  mockProperties,
-  mockResizeObserver,
-} from "../__tests__/mock";
-import { TableView } from "../table-contexts";
+import { mockResizeObserver } from "../__tests__/mock";
+import { openSettingsMenu } from "../__tests__/utils";
 
 mockResizeObserver();
 
-function renderTableView() {
-  return render(<TableView properties={mockProperties} data={mockData} />);
-}
-
-async function openSettingsMenu(user: ReturnType<typeof userEvent.setup>) {
-  const settingsButton = screen.getByRole("button", { name: /settings/i });
-  await user.click(settingsButton);
-
-  const menu = screen.getByRole("menu", { name: "View Settings" });
-  expect(menu).toBeInTheDocument();
-  return menu;
-}
-
-async function openPropsMenu(user: ReturnType<typeof userEvent.setup>) {
+async function openNewPropertyMenu(user: UserEvent) {
   const menu = await openSettingsMenu(user);
 
   // Click on "Edit properties" menu item
@@ -36,12 +19,6 @@ async function openPropsMenu(user: ReturnType<typeof userEvent.setup>) {
   expect(
     screen.getByRole("heading", { name: "Properties" }),
   ).toBeInTheDocument();
-
-  return menu;
-}
-
-async function openNewPropertyMenu(user: ReturnType<typeof userEvent.setup>) {
-  const menu = await openPropsMenu(user);
 
   const newPropertyItem = within(menu).getByRole("menuitem", {
     name: "New property",
@@ -58,8 +35,6 @@ async function openNewPropertyMenu(user: ReturnType<typeof userEvent.setup>) {
 describe("TypesMenu", () => {
   it("should display 'New property' header and search placeholder", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     await openNewPropertyMenu(user);
 
     expect(
@@ -72,8 +47,6 @@ describe("TypesMenu", () => {
 
   it("should display available property types", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     const menu = await openNewPropertyMenu(user);
 
     // Should show common property types
@@ -86,8 +59,6 @@ describe("TypesMenu", () => {
 
   it("should navigate back to Properties menu when clicking back button", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     const menu = await openNewPropertyMenu(user);
 
     // Click back button
@@ -102,8 +73,6 @@ describe("TypesMenu", () => {
 
   it("should show 'Type' heading in the types list", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     const menu = await openNewPropertyMenu(user);
 
     expect(within(menu).getByText("Type")).toBeInTheDocument();

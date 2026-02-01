@@ -1,30 +1,13 @@
-import { render, screen, within } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { screen, within } from "@testing-library/react";
+import userEvent, { UserEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
-import {
-  mockData,
-  mockProperties,
-  mockResizeObserver,
-} from "../__tests__/mock";
-import { TableView } from "../table-contexts";
+import { mockResizeObserver } from "../__tests__/mock";
+import { openSettingsMenu } from "../__tests__/utils";
 
 mockResizeObserver();
 
-function renderTableView() {
-  return render(<TableView properties={mockProperties} data={mockData} />);
-}
-
-async function openSettingsMenu(user: ReturnType<typeof userEvent.setup>) {
-  const settingsButton = screen.getByRole("button", { name: /settings/i });
-  await user.click(settingsButton);
-
-  const menu = screen.getByRole("menu", { name: "View Settings" });
-  expect(menu).toBeInTheDocument();
-  return menu;
-}
-
-async function openPropsMenu(user: ReturnType<typeof userEvent.setup>) {
+async function openPropsMenu(user: UserEvent) {
   const menu = await openSettingsMenu(user);
 
   // Click on "Edit properties" menu item
@@ -43,20 +26,16 @@ async function openPropsMenu(user: ReturnType<typeof userEvent.setup>) {
 describe("PropsMenu", () => {
   it("should display Properties menu with search input", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
-    await openPropsMenu(user);
+    const menu = await openPropsMenu(user);
 
     // Should show search placeholder
     expect(
-      screen.getByPlaceholderText("Search for a property..."),
+      within(menu).getByPlaceholderText("Search for a property..."),
     ).toBeInTheDocument();
   });
 
   it("should display all properties in the menu", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     const menu = await openPropsMenu(user);
 
     // Should show both Name and Done properties
@@ -66,8 +45,6 @@ describe("PropsMenu", () => {
 
   it("should show 'New property' menu item", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     const menu = await openPropsMenu(user);
 
     expect(
@@ -77,8 +54,6 @@ describe("PropsMenu", () => {
 
   it("should show 'Learn about properties' menu item", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     const menu = await openPropsMenu(user);
 
     expect(
@@ -88,8 +63,6 @@ describe("PropsMenu", () => {
 
   it("should filter properties when searching", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     const menu = await openPropsMenu(user);
 
     const searchInput = screen.getByPlaceholderText("Search for a property...");
@@ -105,8 +78,6 @@ describe("PropsMenu", () => {
 
   it("should show 'No results' when search has no matches", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     const menu = await openPropsMenu(user);
 
     const searchInput = screen.getByPlaceholderText("Search for a property...");
@@ -117,8 +88,6 @@ describe("PropsMenu", () => {
 
   it("should toggle property visibility when clicking eye icon", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     const menu = await openPropsMenu(user);
 
     // Click visibility toggle for "Done" property
@@ -138,8 +107,6 @@ describe("PropsMenu", () => {
 
   it("should navigate back to View Settings when clicking back button", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     const menu = await openPropsMenu(user);
 
     // Click back button
@@ -154,8 +121,6 @@ describe("PropsMenu", () => {
 
   it("should navigate to New Property menu when clicking 'New property'", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
     const menu = await openPropsMenu(user);
 
     const newPropertyItem = within(menu).getByText("New property");

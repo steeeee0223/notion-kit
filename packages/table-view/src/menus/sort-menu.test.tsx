@@ -1,5 +1,5 @@
-import { render, screen, waitFor, within } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { render, screen, within } from "@testing-library/react";
+import userEvent, { UserEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -15,10 +15,9 @@ function renderTableView() {
   return render(<TableView properties={mockProperties} data={mockData} />);
 }
 
-async function addSortRule(
-  user: ReturnType<typeof userEvent.setup>,
-  propertyName: string,
-) {
+async function addSortRule(user: UserEvent, propertyName: string) {
+  renderTableView();
+
   const sortButton = screen.getByRole("button", { name: "Sort" });
   await user.click(sortButton);
 
@@ -62,21 +61,15 @@ describe("SortMenu", () => {
     await user.keyboard("{Escape}");
 
     // Verify popovers are closed
-    await waitFor(() => {
-      expect(
-        screen.queryByPlaceholderText("Search for a property..."),
-      ).not.toBeInTheDocument();
-    });
+    expect(
+      screen.queryByPlaceholderText("Search for a property..."),
+    ).not.toBeInTheDocument();
 
     // Re-open sort menu to verify the rule was added
     await user.click(sortButton);
-
-    // Wait for menu to be open
-    await waitFor(() => {
-      expect(
-        screen.getByRole("menuitem", { name: "Add sort" }),
-      ).toBeInTheDocument();
-    });
+    expect(
+      screen.getByRole("menuitem", { name: "Add sort" }),
+    ).toBeInTheDocument();
 
     // Should display the sort rule with "Ascending" direction
     expect(screen.getByText("Ascending")).toBeInTheDocument();
@@ -84,20 +77,14 @@ describe("SortMenu", () => {
 
   it("should delete all sort rules when clicking 'Delete sort'", async () => {
     const user = userEvent.setup();
-    renderTableView();
-
-    // Add a sort rule
     await addSortRule(user, "Name");
 
     // Open sort menu and verify rule exists
     const sortButton = screen.getByRole("button", { name: "Sort" });
     await user.click(sortButton);
-
-    await waitFor(() => {
-      expect(
-        screen.getByRole("menuitem", { name: "Add sort" }),
-      ).toBeInTheDocument();
-    });
+    expect(
+      screen.getByRole("menuitem", { name: "Add sort" }),
+    ).toBeInTheDocument();
 
     expect(screen.getByText("Ascending")).toBeInTheDocument();
 
@@ -112,13 +99,9 @@ describe("SortMenu", () => {
 
     // Re-open sort menu
     await user.click(sortButton);
-
-    // Wait for menu to be open
-    await waitFor(() => {
-      expect(
-        screen.getByRole("menuitem", { name: "Add sort" }),
-      ).toBeInTheDocument();
-    });
+    expect(
+      screen.getByRole("menuitem", { name: "Add sort" }),
+    ).toBeInTheDocument();
 
     // Verify no rules exist (no "Ascending" text)
     expect(screen.queryByText("Ascending")).not.toBeInTheDocument();

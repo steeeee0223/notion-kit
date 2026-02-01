@@ -1,36 +1,16 @@
-import { render, screen, within } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
-import {
-  mockData,
-  mockProperties,
-  mockResizeObserver,
-} from "../__tests__/mock";
-import { TableView } from "../table-contexts";
+import { mockResizeObserver } from "../__tests__/mock";
+import { openSettingsMenu } from "../__tests__/utils";
 
 mockResizeObserver();
-
-function renderTableView() {
-  return render(<TableView properties={mockProperties} data={mockData} />);
-}
-
-async function openSettingsMenu(user: ReturnType<typeof userEvent.setup>) {
-  const settingsButton = screen.getByRole("button", { name: "Settings" });
-  await user.click(settingsButton);
-
-  const menu = screen.getByRole("menu", { name: "View Settings" });
-  expect(menu).toBeInTheDocument();
-
-  return menu;
-}
 
 describe("TableViewMenu", () => {
   describe("Navigation", () => {
     it("should navigate to Layout menu when clicking Layout", async () => {
       const user = userEvent.setup();
-      renderTableView();
-
       const menu = await openSettingsMenu(user);
 
       // Click Layout menu item
@@ -48,8 +28,6 @@ describe("TableViewMenu", () => {
 
     it("should navigate to Sort menu when clicking Sort", async () => {
       const user = userEvent.setup();
-      renderTableView();
-
       const menu = await openSettingsMenu(user);
 
       // Click Sort menu item (within the popover content)
@@ -62,8 +40,6 @@ describe("TableViewMenu", () => {
 
     it("should navigate to Group menu when clicking Group", async () => {
       const user = userEvent.setup();
-      renderTableView();
-
       const menu = await openSettingsMenu(user);
 
       // Click Group menu item
@@ -80,8 +56,6 @@ describe("TableViewMenu", () => {
 
     it("should navigate to Edit properties menu when clicking Edit properties", async () => {
       const user = userEvent.setup();
-      renderTableView();
-
       const menu = await openSettingsMenu(user);
 
       // Click Edit properties menu item
@@ -106,8 +80,6 @@ describe("TableViewMenu", () => {
   describe("Lock Database", () => {
     it("should toggle database lock state when clicking Lock database", async () => {
       const user = userEvent.setup();
-      renderTableView();
-
       const menu = await openSettingsMenu(user);
 
       // Initially should show "Lock database"
@@ -127,8 +99,6 @@ describe("TableViewMenu", () => {
 
     it("should disable Edit properties when database is locked", async () => {
       const user = userEvent.setup();
-      renderTableView();
-
       const menu = await openSettingsMenu(user);
 
       // Lock the database first - menu stays open
@@ -153,8 +123,6 @@ describe("TableViewMenu", () => {
   describe("Back Navigation", () => {
     it("should return to main menu when clicking back from Sort menu", async () => {
       const user = userEvent.setup();
-      renderTableView();
-
       const menu = await openSettingsMenu(user);
 
       // Navigate to Sort menu
