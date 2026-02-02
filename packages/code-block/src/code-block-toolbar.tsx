@@ -1,8 +1,17 @@
 import { cn } from "@notion-kit/cn";
 import { useCopyToClipboard } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
-import { Button, toast } from "@notion-kit/shadcn";
+import {
+  Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  toast,
+  TooltipPreset,
+  TooltipProvider,
+} from "@notion-kit/shadcn";
 
+import { CodeBlockActions } from "./code-block-actions";
 import { useCodeBlock } from "./code-block-provider";
 
 export function CodeBlockToolbar() {
@@ -12,37 +21,54 @@ export function CodeBlockToolbar() {
   const { state } = useCodeBlock();
 
   return (
-    <div
-      className={cn(
-        "absolute end-px top-[3px] z-10 flex h-[25px] items-center justify-end bg-popover",
-        "opacity-0 transition-opacity group-hover/code-block:opacity-100 focus-within:opacity-100",
-      )}
-    >
-      <div className="mt-1 mr-1 flex items-center justify-center text-primary">
-        <Button
-          tabIndex={0}
-          variant={null}
-          className="h-[25px] min-w-0 shrink-0 gap-1 rounded-e-none px-1.5 text-[11.5px]/[1.2]"
-          onClick={() => copy(state.code)}
-        >
-          <Icon.Copy className="size-4 fill-current" />
-          Copy
-        </Button>
-        <Button
-          tabIndex={0}
-          variant={null}
-          className="mx-px h-[25px] min-w-0 shrink-0 rounded-none px-1.5 text-[11.5px]/[1.2]"
-        >
-          Caption
-        </Button>
-        <Button
-          tabIndex={0}
-          variant={null}
-          className="h-[25px] w-[26px] shrink-0 rounded-s-none px-1.5"
-        >
-          <Icon.EllipsisSmall className="size-4 fill-icon" />
-        </Button>
+    <TooltipProvider>
+      <div
+        className={cn(
+          "absolute end-1.5 top-1.5 z-10 flex h-6 items-center justify-end rounded-sm bg-popover",
+          "opacity-0 transition-opacity group-hover/code-block:opacity-100 focus-within:opacity-100",
+        )}
+      >
+        <div className="flex items-center justify-center text-primary">
+          <TooltipPreset side="top" description="Copy">
+            <Button
+              tabIndex={0}
+              variant={null}
+              aria-label="Copy"
+              className="size-6 shrink-0 rounded-r-none"
+              onClick={() => copy(state.code)}
+            >
+              <Icon.Duplicate className="size-4 fill-secondary" />
+            </Button>
+          </TooltipPreset>
+          <TooltipPreset side="top" description="Caption">
+            <Button
+              tabIndex={0}
+              variant={null}
+              aria-label="Caption"
+              className="size-6 shrink-0 rounded-none"
+            >
+              <Icon.Caption className="size-4 fill-secondary" />
+            </Button>
+          </TooltipPreset>
+          <Popover>
+            <TooltipPreset side="top" description="More">
+              <PopoverTrigger asChild>
+                <Button
+                  tabIndex={0}
+                  variant={null}
+                  aria-label="More"
+                  className="size-6 shrink-0 rounded-s-none"
+                >
+                  <Icon.EllipsisSmall className="size-4 fill-secondary" />
+                </Button>
+              </PopoverTrigger>
+            </TooltipPreset>
+            <PopoverContent className="w-65">
+              <CodeBlockActions />
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 }

@@ -36,6 +36,7 @@
     "@notion-kit/hooks": "workspace:*",
     "@notion-kit/icons": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
+    "@notion-kit/utils": "workspace:*",
     "shiki": "^3.13.0"
   },
   "devDependencies": {

@@ -4,13 +4,6 @@ import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
-  Command,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  MenuItem,
-  MenuItemCheck,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -18,13 +11,14 @@ import {
 
 import { useCodeBlock } from "./code-block-provider";
 import { CODE_BLOCK_LANGUAGES } from "./constant";
+import { LangMenu } from "./menus";
 
 interface CodeBlockCaptionProps {
   className?: string;
 }
 
 export function CodeBlockLang({ className }: CodeBlockCaptionProps) {
-  const { state, store } = useCodeBlock();
+  const { state } = useCodeBlock();
   return (
     <div
       className={cn(
@@ -47,25 +41,7 @@ export function CodeBlockLang({ className }: CodeBlockCaptionProps) {
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-60">
-          <Command className="bg-popover">
-            <CommandInput placeholder="Search for a language..." />
-            <CommandList className="max-h-100 overflow-y-auto">
-              <CommandGroup className="flex flex-col gap-px px-0">
-                {CODE_BLOCK_LANGUAGES.map((lang) => (
-                  <CommandItem
-                    asChild
-                    key={lang.value}
-                    value={lang.value}
-                    onSelect={(lang) => store.setLang(lang)}
-                  >
-                    <MenuItem Body={lang.label}>
-                      {lang.value === state.lang && <MenuItemCheck />}
-                    </MenuItem>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
+          <LangMenu />
         </PopoverContent>
       </Popover>
     </div>

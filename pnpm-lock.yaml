@@ -1004,6 +1004,9 @@ importers:
       '@notion-kit/shadcn':
         specifier: workspace:*
         version: link:../shadcn
+      '@notion-kit/utils':
+        specifier: workspace:*
+        version: link:../utils
       shiki:
         specifier: ^3.13.0
         version: 3.13.0

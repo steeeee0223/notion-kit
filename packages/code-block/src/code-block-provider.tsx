@@ -84,6 +84,10 @@ class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
     this.setState((prev) => ({ ...prev, html }));
   };
 
+  setTheme = (theme: string) => {
+    this.setState((prev) => ({ ...prev, theme }));
+  };
+
   setCaption = (caption: string) => {
     this.setState((prev) => ({ ...prev, caption }));
   };
