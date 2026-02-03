@@ -4,6 +4,7 @@ import { Command } from "@notion-kit/shadcn";
 
 import { CommandDefault } from "./command/default";
 import { CommandSubFloating } from "./command/floating";
+import { CommandNested } from "./command/nested";
 import { CommandSubDemo } from "./command/sub-menu";
 
 const meta = {
@@ -17,6 +18,10 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => <CommandDefault />,
+};
+
+export const Nested: Story = {
+  render: () => <CommandNested />,
 };
 
 export const SubMenu: Story = {

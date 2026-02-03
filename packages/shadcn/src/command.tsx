@@ -587,6 +587,14 @@ function CommandSubContent({
   );
 }
 
+function CommandSubItem({
+  ...props
+}: React.ComponentProps<typeof CommandPrimitive.Item>) {
+  const search = useCommandState((state) => state.search);
+  if (!search) return null;
+  return <CommandItem data-slot="command-sub-item" {...props} />;
+}
+
 export {
   Command,
   CommandDialog,
@@ -600,5 +608,6 @@ export {
   CommandSub,
   CommandSubTrigger,
   CommandSubContent,
+  CommandSubItem,
   useCommandState,
 };
