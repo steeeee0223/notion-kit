@@ -1,12 +1,58 @@
-"use client";
-
 import React from "react";
 
+import type {
+  CodeBlockProviderProps,
+  CodeBlockValue,
+} from "./code-block-provider";
 import { CodeBlockProvider } from "./code-block-provider";
 
-function CodeBlock({ children, ...props }: React.ComponentProps<"div">) {
+interface CodeBlockProps
+  extends Omit<React.ComponentProps<"div">, "onChange" | "defaultValue">,
+    CodeBlockProviderProps {}
+
+/**
+ * Code block component with syntax highlighting.
+ *
+ * Supports both controlled and uncontrolled modes:
+ *
+ * @example Uncontrolled (default)
+ * ```tsx
+ * <CodeBlock defaultValue={{ code: "const x = 1;", lang: "javascript" }}>
+ *   <CodeBlockLang />
+ *   <CodeBlockToolbar />
+ *   <CodeBlockContent />
+ *   <CodeBlockCaption />
+ * </CodeBlock>
+ * ```
+ *
+ * @example Controlled
+ * ```tsx
+ * const [value, setValue] = useState<CodeBlockValue>({
+ *   code: "const x = 1;",
+ *   lang: "javascript",
+ * });
+ *
+ * <CodeBlock value={value} onChange={setValue}>
+ *   <CodeBlockLang />
+ *   <CodeBlockToolbar />
+ *   <CodeBlockContent />
+ *   <CodeBlockCaption />
+ * </CodeBlock>
+ * ```
+ */
+function CodeBlock({
+  children,
+  value,
+  defaultValue,
+  onChange,
+  ...props
+}: CodeBlockProps) {
   return (
-    <CodeBlockProvider>
+    <CodeBlockProvider
+      value={value}
+      defaultValue={defaultValue}
+      onChange={onChange}
+    >
       <div className="flex">
         <div
           contentEditable={false}
@@ -23,16 +69,5 @@ function CodeBlock({ children, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-/**
- * @usage
- * import { CodeBlock } from "@notion-kit/code-block"
- * ...
- * <CodeBlock>
- * <CodeBlockLang />
- * <CodeBlockToolbar />
- * <CodeBlockContent />
- * <CodeBlockCaption />
- * </CodeBlock>
- */
-
 export { CodeBlock };
+export type { CodeBlockValue, CodeBlockProps };

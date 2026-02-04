@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useCallback, useRef } from "react";
 
 import { useCodeBlock } from "./code-block-provider";

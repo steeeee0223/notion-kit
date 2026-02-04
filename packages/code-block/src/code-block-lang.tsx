@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import {
