@@ -23,30 +23,6 @@ function CodeBlock({ children, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function CodeBlockCaption({ children, ...props }: React.ComponentProps<"div">) {
-  if (!children) return null;
-  return (
-    <div className="pr-[105px]">
-      <div className="relative">
-        <div
-          role="textbox"
-          id={props.id}
-          spellCheck="true"
-          aria-placeholder="Write a caption…"
-          contentEditable="true"
-          data-content-editable-leaf="true"
-          tabIndex={0}
-          aria-label="Start typing to edit text"
-          className="w-full max-w-full py-1.5 pl-0.5 text-sm/[1.4] word-break whitespace-break-spaces text-[rgb(168,164,156)] caret-primary focus-visible:outline-none"
-          {...props}
-        >
-          {children}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /**
  * @usage
  * import { CodeBlock } from "@notion-kit/code-block"
@@ -59,4 +35,4 @@ function CodeBlockCaption({ children, ...props }: React.ComponentProps<"div">) {
  * </CodeBlock>
  */
 
-export { CodeBlock, CodeBlockCaption };
+export { CodeBlock };

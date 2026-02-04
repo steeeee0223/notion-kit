@@ -23,7 +23,7 @@ import { useCodeBlock } from "./code-block-provider";
 import { LangMenu, ThemeMenu } from "./menus";
 
 export function CodeBlockActions() {
-  const { state } = useCodeBlock();
+  const { state, store } = useCodeBlock();
   const { copy } = useCopyToClipboard({
     onSuccess: () => toast.success("Code copied to clipboard"),
   });
@@ -36,7 +36,11 @@ export function CodeBlockActions() {
       <CommandInput placeholder="Search actions..." />
       <CommandList>
         <CommandGroup heading="Code">
-          <CommandItem asChild value="caption">
+          <CommandItem
+            asChild
+            value="caption"
+            onSelect={() => store.enableCaption()}
+          >
             <MenuItem Icon={<Icon.Caption />} Body="Caption">
               <MenuItemShortcut>
                 {KEYBOARD.CMD}

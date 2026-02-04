@@ -58,7 +58,7 @@ class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
    * Update code and trigger re-highlight
    */
   updateCode = (code: string) => {
-    this.setState((prev) => ({ ...prev, code }));
+    this.setState((v) => ({ ...v, code }));
 
     // Debounce highlighting
     if (this.highlightTimeout) {
@@ -70,26 +70,31 @@ class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
     }, 50);
   };
 
-  /**
-   * Update language and trigger re-highlight
-   */
   setLang = (lang: string) => {
-    this.setState((prev) => ({ ...prev, lang }));
+    this.setState((v) => ({ ...v, lang }));
   };
 
-  /**
-   * Update highlighted HTML
-   */
   setHtml = (html: string) => {
-    this.setState((prev) => ({ ...prev, html }));
+    this.setState((v) => ({ ...v, html }));
   };
 
   setTheme = (theme: string) => {
-    this.setState((prev) => ({ ...prev, theme }));
+    this.setState((v) => ({ ...v, theme }));
   };
 
-  setCaption = (caption: string) => {
-    this.setState((prev) => ({ ...prev, caption }));
+  setCaption = (caption?: string) => {
+    this.setState((v) => ({ ...v, caption }));
+  };
+
+  enableCaption = () => {
+    const { caption } = this.getSnapshot();
+    if (caption === undefined) {
+      this.setState((v) => ({ ...v, caption: "" }));
+      // Use setTimeout to allow the caption textarea to render first
+      setTimeout(() => {
+        document.dispatchEvent(new CustomEvent("code-block:focus-caption"));
+      }, 0);
+    }
   };
 }
 

@@ -23,7 +23,7 @@ function Demo() {
         <CodeBlockLang />
         <CodeBlockToolbar />
         <CodeBlockContent />
-        <CodeBlockCaption>Caption</CodeBlockCaption>
+        <CodeBlockCaption />
       </CodeBlock>
     </div>
   );

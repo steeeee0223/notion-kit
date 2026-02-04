@@ -18,7 +18,7 @@ export function CodeBlockToolbar() {
   const { copy } = useCopyToClipboard({
     onSuccess: () => toast.success("Code copied to clipboard"),
   });
-  const { state } = useCodeBlock();
+  const { state, store } = useCodeBlock();
 
   return (
     <TooltipProvider>
@@ -46,6 +46,7 @@ export function CodeBlockToolbar() {
               variant={null}
               aria-label="Caption"
               className="size-6 shrink-0 rounded-none"
+              onClick={() => store.enableCaption()}
             >
               <Icon.Caption className="size-4 fill-secondary" />
             </Button>
