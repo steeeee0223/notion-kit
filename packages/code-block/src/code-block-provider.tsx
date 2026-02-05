@@ -12,6 +12,8 @@ import { codeToHtml } from "shiki";
 
 import { Store, useStore } from "@notion-kit/hooks";
 
+import { createWrapTransformer } from "./transformers/wrap";
+
 /** Public state that can be controlled externally */
 export interface CodeBlockValue {
   /** The source code content */
@@ -22,6 +24,8 @@ export interface CodeBlockValue {
   theme?: string;
   /** Optional caption text (HTML supported) */
   caption?: string;
+  /** Whether to wrap code */
+  wrap?: boolean;
 }
 
 /** Internal state including derived values */
@@ -52,6 +56,7 @@ class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
       lang: "text",
       theme: "github-dark",
       html: "",
+      wrap: false,
       ...initialState,
     });
     this.onChange = onChange;
@@ -65,11 +70,13 @@ class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
     }
   };
 
-  highlight = async (code: string, lang: string, theme: string) => {
+  highlight = async (data: Partial<CodeBlockValue>) => {
+    const { code, lang, theme, wrap } = { ...this.getSnapshot(), ...data };
     try {
       const html = await codeToHtml(code, {
         lang: lang as BundledLanguage,
         theme,
+        transformers: [createWrapTransformer(wrap)],
       }).then((html) =>
         // Add a trailing <br> to prevent the last empty line from collapsing
         // This ensures the textarea and highlighted code stay in sync
@@ -94,8 +101,7 @@ class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
       clearTimeout(this.highlightTimeout);
     }
     this.highlightTimeout = setTimeout(() => {
-      const { lang, theme } = this.getSnapshot();
-      void this.highlight(code, lang, theme);
+      void this.highlight({ code });
     }, 50);
   };
 
@@ -103,8 +109,7 @@ class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
     this.setState((v) => ({ ...v, lang }));
     this.notifyChange();
     // Trigger re-highlight with new language
-    const { code, theme } = this.getSnapshot();
-    void this.highlight(code, lang, theme);
+    void this.highlight({ lang });
   };
 
   setHtml = (html: string) => {
@@ -115,8 +120,15 @@ class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
     this.setState((v) => ({ ...v, theme }));
     this.notifyChange();
     // Trigger re-highlight with new theme
-    const { code, lang } = this.getSnapshot();
-    void this.highlight(code, lang, theme);
+    void this.highlight({ theme });
+  };
+
+  toggleWrap = () => {
+    const newWrap = !this.getSnapshot().wrap;
+    this.setState((v) => ({ ...v, wrap: newWrap }));
+    this.notifyChange();
+    // Trigger re-highlight with new wrap state
+    void this.highlight({ wrap: newWrap });
   };
 
   setCaption = (caption?: string) => {
@@ -163,8 +175,7 @@ class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
     }
 
     if (needsHighlight) {
-      const newState = { ...current, ...updates };
-      void this.highlight(newState.code, newState.lang, newState.theme);
+      void this.highlight(updates);
     }
   };
 }
@@ -231,12 +242,15 @@ export function CodeBlockProvider({
     }
   }, [isControlled, value, store]);
 
-  // Re-highlight when language or theme changes (uncontrolled mode)
+  // Highlight when code, language, theme or wrap changes
   useEffect(() => {
-    if (!isControlled) {
-      void store.highlight(state.code, state.lang, state.theme);
-    }
-  }, [isControlled, store, state.lang, state.theme, state.code]);
+    void store.highlight({
+      code: state.code,
+      lang: state.lang,
+      theme: state.theme,
+      wrap: state.wrap ?? false,
+    });
+  }, [store, state.lang, state.theme, state.code, state.wrap]);
 
   const ctx = useMemo(() => ({ state, store }), [state, store]);
 

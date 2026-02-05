@@ -1,5 +1,7 @@
 import React, { useCallback, useRef } from "react";
 
+import { cn } from "@notion-kit/cn";
+
 import { useCodeBlock } from "./code-block-provider";
 
 /**
@@ -7,6 +9,9 @@ import { useCodeBlock } from "./code-block-provider";
  * - A <span> displays the syntax-highlighted HTML
  * - A transparent <textarea> overlays it for editing
  * - The user types in the textarea but sees the highlighted code
+ *
+ * Code wrapping is handled via Shiki transformer which applies inline styles
+ * directly to the pre/code elements when wrap mode is enabled.
  */
 export function CodeBlockContent({ ...props }: React.ComponentProps<"div">) {
   const { state, store } = useCodeBlock();
@@ -43,18 +48,26 @@ export function CodeBlockContent({ ...props }: React.ComponentProps<"div">) {
     >
       <div
         key="line-numbers notion-code-block"
-        className="flex overflow-x-auto py-3"
+        className={cn(
+          "flex py-3",
+          // In normal mode: horizontal scroll; in wrap mode: hidden overflow to constrain width
+          state.wrap ? "overflow-hidden" : "overflow-x-auto",
+        )}
       >
         {/* Container for overlay pattern */}
         <div
-          className="relative min-h-[1em] shrink grow text-start text-[85%] whitespace-pre text-primary"
+          className={cn(
+            "relative min-h-[1em] shrink grow text-start text-[85%] text-primary",
+            // In wrap mode: constrain width so content wraps
+            state.wrap && "min-w-0",
+          )}
           style={fontStyle}
         >
-          {/* Highlighted code display */}
+          {/* Highlighted code display - wrap styles applied via Shiki transformer */}
           <span
             ref={highlightRef}
             aria-hidden="true"
-            className="pointer-events-none [&>pre]:m-0 [&>pre]:bg-transparent! [&>pre]:p-0 [&>pre]:leading-[inherit] [&>pre>code]:block"
+            className="pointer-events-none"
             dangerouslySetInnerHTML={{ __html: state.html }}
           />
 
@@ -69,12 +82,12 @@ export function CodeBlockContent({ ...props }: React.ComponentProps<"div">) {
             autoCapitalize="off"
             autoComplete="off"
             aria-label="Code editor"
-            className="absolute inset-0 h-full w-full resize-none bg-transparent text-transparent caret-primary focus-visible:outline-none"
-            style={{
-              ...fontStyle,
-              // Match Shiki's default code block padding
-              padding: "inherit",
-            }}
+            className={cn(
+              "absolute inset-0 h-full w-full resize-none bg-transparent p-[inherit] text-transparent caret-primary focus-visible:outline-none",
+              state.wrap &&
+                "overflow-hidden wrap-anywhere break-all whitespace-pre-wrap",
+            )}
+            style={fontStyle}
           />
         </div>
       </div>

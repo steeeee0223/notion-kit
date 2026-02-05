@@ -12,6 +12,7 @@ import {
   MenuItem,
   MenuItemSelect,
   MenuItemShortcut,
+  MenuItemSwitch,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -56,7 +57,12 @@ export function CodeBlockActions() {
             <MenuItem Icon={<Icon.CopyCode />} Body="Copy code" />
           </CommandItem>
           <CommandItem asChild value="wrap-code">
-            <MenuItem Icon={<Icon.ArrowTurnDownLeft />} Body="Wrap code" />
+            <MenuItemSwitch
+              Icon={<Icon.ArrowTurnDownLeft />}
+              Body="Wrap code"
+              checked={state.wrap}
+              onCheckedChange={store.toggleWrap}
+            />
           </CommandItem>
           <Popover open={openLangSelect} onOpenChange={setOpenLangSelect}>
             <PopoverTrigger asChild>
