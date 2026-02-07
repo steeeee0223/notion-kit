@@ -27,11 +27,12 @@ export interface CodeBlockValue {
   /** Whether to wrap code */
   wrap?: boolean;
   /** Last edited timestamp in milliseconds */
-  ts: number;
+  ts?: number;
 }
 
 /** Internal state including derived values */
 export interface CodeBlockState extends CodeBlockValue {
+  ts: number;
   blockId: string;
   /** Highlighted HTML output */
   html: string;

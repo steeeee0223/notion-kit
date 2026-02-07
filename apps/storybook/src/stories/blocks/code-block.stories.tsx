@@ -122,7 +122,6 @@ export const Controlled: Story = {
     const [value, setValue] = useState<CodeBlockValue>({
       code: sampleCode,
       lang: "typescript",
-      ts: Date.now(),
     });
 
     return (
