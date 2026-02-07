@@ -9,22 +9,24 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
+  MenuFooter,
   MenuItem,
+  MenuItemAction,
   MenuItemSelect,
   MenuItemShortcut,
-  MenuItemSwitch,
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Switch,
   toast,
 } from "@notion-kit/shadcn";
-import { KEYBOARD } from "@notion-kit/utils";
+import { KEYBOARD, toDateString } from "@notion-kit/utils";
 
 import { useCodeBlock } from "./code-block-provider";
 import { LangMenu, ThemeMenu } from "./menus";
 
 export function CodeBlockActions() {
-  const { state, store } = useCodeBlock();
+  const { state, store, lastEditedBy } = useCodeBlock();
   const { copy } = useCopyToClipboard({
     onSuccess: () => toast.success("Code copied to clipboard"),
   });
@@ -56,13 +58,12 @@ export function CodeBlockActions() {
           >
             <MenuItem Icon={<Icon.CopyCode />} Body="Copy code" />
           </CommandItem>
-          <CommandItem asChild value="wrap-code">
-            <MenuItemSwitch
-              Icon={<Icon.ArrowTurnDownLeft />}
-              Body="Wrap code"
-              checked={state.wrap}
-              onCheckedChange={store.toggleWrap}
-            />
+          <CommandItem asChild value="wrap-code" onSelect={store.toggleWrap}>
+            <MenuItem Icon={<Icon.ArrowTurnDownLeft />} Body="Wrap code">
+              <MenuItemAction>
+                <Switch size="sm" checked={state.wrap} />
+              </MenuItemAction>
+            </MenuItem>
           </CommandItem>
           <Popover open={openLangSelect} onOpenChange={setOpenLangSelect}>
             <PopoverTrigger asChild>
@@ -103,7 +104,12 @@ export function CodeBlockActions() {
           </Popover>
         </CommandGroup>
         <CommandSeparator />
-        {/* TODO footer */}
+        <MenuFooter>
+          {lastEditedBy && (
+            <div className="w-full">Last edited by {lastEditedBy}</div>
+          )}
+          <div className="w-full">{toDateString(state.ts)}</div>
+        </MenuFooter>
       </CommandList>
     </Command>
   );

@@ -13,6 +13,7 @@ import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
+  MenuFooter,
   MenuItemAction,
   TooltipPreset,
 } from "@notion-kit/shadcn";
@@ -119,10 +120,10 @@ export function DocItemActions({
             />
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <div className="flex flex-col items-center p-2 text-xs text-muted">
+          <MenuFooter>
             <div className="w-full">Last edited by: {lastEditedBy}</div>
             <div className="w-full">{toDateString(lastEditedAt)}</div>
-          </div>
+          </MenuFooter>
         </DropdownMenuContent>
       </DropdownMenu>
       <TooltipPreset description="Add a page inside">

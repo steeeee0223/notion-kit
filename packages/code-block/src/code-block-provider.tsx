@@ -26,6 +26,8 @@ export interface CodeBlockValue {
   caption?: string;
   /** Whether to wrap code */
   wrap?: boolean;
+  /** Last edited timestamp in milliseconds */
+  ts: number;
 }
 
 /** Internal state including derived values */
@@ -57,6 +59,7 @@ class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
       theme: "github-dark",
       html: "",
       wrap: false,
+      ts: Date.now(),
       ...initialState,
     });
     this.onChange = onChange;
@@ -64,10 +67,8 @@ class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
 
   /** Notify external onChange handler */
   private notifyChange = () => {
-    if (this.onChange) {
-      const { code, lang, theme, caption } = this.getSnapshot();
-      this.onChange({ code, lang, theme, caption });
-    }
+    const { code, lang, theme, caption, wrap, ts } = this.getSnapshot();
+    this.onChange?.({ code, lang, theme, caption, wrap, ts });
   };
 
   highlight = async (data: Partial<CodeBlockValue>) => {
@@ -93,7 +94,7 @@ class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
 
   /** Update code and trigger re-highlight */
   updateCode = (code: string) => {
-    this.setState((v) => ({ ...v, code }));
+    this.setState((v) => ({ ...v, code, ts: Date.now() }));
     this.notifyChange();
 
     // Debounce highlighting
@@ -106,7 +107,7 @@ class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
   };
 
   setLang = (lang: string) => {
-    this.setState((v) => ({ ...v, lang }));
+    this.setState((v) => ({ ...v, lang, ts: Date.now() }));
     this.notifyChange();
     // Trigger re-highlight with new language
     void this.highlight({ lang });
@@ -117,7 +118,7 @@ class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
   };
 
   setTheme = (theme: string) => {
-    this.setState((v) => ({ ...v, theme }));
+    this.setState((v) => ({ ...v, theme, ts: Date.now() }));
     this.notifyChange();
     // Trigger re-highlight with new theme
     void this.highlight({ theme });
@@ -125,14 +126,14 @@ class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
 
   toggleWrap = () => {
     const newWrap = !this.getSnapshot().wrap;
-    this.setState((v) => ({ ...v, wrap: newWrap }));
+    this.setState((v) => ({ ...v, wrap: newWrap, ts: Date.now() }));
     this.notifyChange();
     // Trigger re-highlight with new wrap state
     void this.highlight({ wrap: newWrap });
   };
 
   setCaption = (caption?: string) => {
-    this.setState((v) => ({ ...v, caption }));
+    this.setState((v) => ({ ...v, caption, ts: Date.now() }));
     this.notifyChange();
   };
 
@@ -183,6 +184,7 @@ class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
 const CodeBlockContext = createContext<{
   state: CodeBlockState;
   store: CodeBlockStore;
+  lastEditedBy?: string;
 } | null>(null);
 
 export function useCodeBlock() {
@@ -198,6 +200,7 @@ export interface CodeBlockProviderProps extends React.PropsWithChildren {
   value?: CodeBlockValue;
   /** Default value for uncontrolled mode */
   defaultValue?: Partial<CodeBlockValue>;
+  lastEditedBy?: string;
   /** Callback when value changes (for controlled mode) */
   onChange?: (value: CodeBlockValue) => void;
 }
@@ -206,6 +209,7 @@ export function CodeBlockProvider({
   children,
   value,
   defaultValue,
+  lastEditedBy,
   onChange,
 }: CodeBlockProviderProps) {
   const blockId = useId();
@@ -252,7 +256,10 @@ export function CodeBlockProvider({
     });
   }, [store, state.lang, state.theme, state.code, state.wrap]);
 
-  const ctx = useMemo(() => ({ state, store }), [state, store]);
+  const ctx = useMemo(
+    () => ({ state, store, lastEditedBy }),
+    [state, store, lastEditedBy],
+  );
 
   return <CodeBlockContext value={ctx}>{children}</CodeBlockContext>;
 }
