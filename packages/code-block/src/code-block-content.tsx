@@ -3,6 +3,7 @@ import React, { useCallback, useRef } from "react";
 import { cn } from "@notion-kit/cn";
 
 import { useCodeBlock } from "./code-block-provider";
+import { MermaidPreview } from "./mermaid-preview";
 
 /**
  * CodeBlockContent uses the Shiki playground pattern:
@@ -91,6 +92,9 @@ export function CodeBlockContent({ ...props }: React.ComponentProps<"div">) {
           />
         </div>
       </div>
+
+      {/* Live mermaid diagram preview */}
+      {state.lang === "mermaid" && <MermaidPreview />}
     </div>
   );
 }

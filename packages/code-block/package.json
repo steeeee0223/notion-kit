@@ -39,7 +39,8 @@
     "@notion-kit/icons": "workspace:*",
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/utils": "workspace:*",
-    "shiki": "^3.13.0"
+    "mermaid": "^11.12.2",
+    "shiki": "^3.22.0"
   },
   "devDependencies": {
     "@notion-kit/config": "workspace:*",

@@ -8,6 +8,7 @@ import {
   CodeBlockContent,
   CodeBlockLang,
   CodeBlockToolbar,
+  MermaidPreview,
 } from "@notion-kit/code-block";
 
 const meta = {
@@ -100,19 +101,18 @@ function combine<T, U>(first: T, second: U): [T, U] {
 export const Default: Story = {
   render: () => {
     return (
-      <div className="w-150">
-        <CodeBlock
-          defaultValue={{
-            code: sampleCode,
-            lang: "typescript",
-          }}
-        >
-          <CodeBlockLang />
-          <CodeBlockToolbar />
-          <CodeBlockContent />
-          <CodeBlockCaption />
-        </CodeBlock>
-      </div>
+      <CodeBlock
+        className="w-150"
+        defaultValue={{
+          code: sampleCode,
+          lang: "typescript",
+        }}
+      >
+        <CodeBlockLang />
+        <CodeBlockToolbar />
+        <CodeBlockContent />
+        <CodeBlockCaption />
+      </CodeBlock>
     );
   },
 };
@@ -122,6 +122,7 @@ export const Controlled: Story = {
     const [value, setValue] = useState<CodeBlockValue>({
       code: sampleCode,
       lang: "typescript",
+      ts: Date.now(),
     });
 
     return (
@@ -141,6 +142,61 @@ export const Controlled: Story = {
           </pre>
         </div>
       </div>
+    );
+  },
+};
+
+const sampleMermaidCode = `graph TD
+    A[Start] --> B{Is it working?}
+    B -->|Yes| C[Great!]
+    B -->|No| D[Debug]
+    D --> B
+    C --> E[Deploy]
+    E --> F[Monitor]
+    F --> G{Issues?}
+    G -->|Yes| D
+    G -->|No| H[Success! 🎉]
+`;
+
+export const Mermaid: Story = {
+  render: () => {
+    return (
+      <CodeBlock
+        className="w-150"
+        defaultValue={{ code: sampleMermaidCode, lang: "mermaid" }}
+      >
+        <CodeBlockLang />
+        <CodeBlockToolbar />
+        <CodeBlockContent />
+        <CodeBlockCaption />
+      </CodeBlock>
+    );
+  },
+};
+
+const sampleMermaidSequence = `sequenceDiagram
+    participant U as User
+    participant C as Client
+    participant S as Server
+    participant DB as Database
+    
+    U->>C: Enter credentials
+    C->>S: POST /api/login
+    S->>DB: Query user
+    DB-->>S: User data
+    S-->>C: JWT Token
+    C-->>U: Redirect to dashboard
+`;
+
+export const MermaidPreviewing: Story = {
+  render: () => {
+    return (
+      <CodeBlock
+        className="w-150"
+        defaultValue={{ code: sampleMermaidSequence, lang: "mermaid" }}
+      >
+        <MermaidPreview />
+      </CodeBlock>
     );
   },
 };
