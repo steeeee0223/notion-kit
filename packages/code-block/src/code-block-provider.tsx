@@ -186,6 +186,7 @@ const CodeBlockContext = createContext<{
   state: CodeBlockState;
   store: CodeBlockStore;
   lastEditedBy?: string;
+  readonly?: boolean;
 } | null>(null);
 
 export function useCodeBlock() {
@@ -204,6 +205,8 @@ export interface CodeBlockProviderProps extends React.PropsWithChildren {
   lastEditedBy?: string;
   /** Callback when value changes (for controlled mode) */
   onChange?: (value: CodeBlockValue) => void;
+  /** When true, prevents editing code, language, and caption */
+  readonly?: boolean;
 }
 
 export function CodeBlockProvider({
@@ -212,6 +215,7 @@ export function CodeBlockProvider({
   defaultValue,
   lastEditedBy,
   onChange,
+  readonly,
 }: CodeBlockProviderProps) {
   const blockId = useId();
   const isControlled = value !== undefined;
@@ -258,8 +262,8 @@ export function CodeBlockProvider({
   }, [store, state.lang, state.theme, state.code, state.wrap]);
 
   const ctx = useMemo(
-    () => ({ state, store, lastEditedBy }),
-    [state, store, lastEditedBy],
+    () => ({ state, store, lastEditedBy, readonly }),
+    [state, store, lastEditedBy, readonly],
   );
 
   return <CodeBlockContext value={ctx}>{children}</CodeBlockContext>;

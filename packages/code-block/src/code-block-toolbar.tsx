@@ -18,11 +18,12 @@ export function CodeBlockToolbar() {
   const { copy } = useCopyToClipboard({
     onSuccess: () => toast.success("Code copied to clipboard"),
   });
-  const { state, store } = useCodeBlock();
+  const { state, store, readonly } = useCodeBlock();
 
   return (
     <TooltipProvider>
       <div
+        data-slot="code-block-toolbar"
         className={cn(
           "absolute end-1.5 top-1.5 z-10 flex h-6 items-center justify-end rounded-sm bg-popover",
           "opacity-0 transition-opacity group-hover/code-block:opacity-100 focus-within:opacity-100",
@@ -40,17 +41,19 @@ export function CodeBlockToolbar() {
               <Icon.Duplicate className="size-4 fill-secondary" />
             </Button>
           </TooltipPreset>
-          <TooltipPreset side="top" description="Caption">
-            <Button
-              tabIndex={0}
-              variant={null}
-              aria-label="Caption"
-              className="size-6 shrink-0 rounded-none"
-              onClick={() => store.enableCaption()}
-            >
-              <Icon.Caption className="size-4 fill-secondary" />
-            </Button>
-          </TooltipPreset>
+          {!readonly && (
+            <TooltipPreset side="top" description="Caption">
+              <Button
+                tabIndex={0}
+                variant={null}
+                aria-label="Caption"
+                className="size-6 shrink-0 rounded-none"
+                onClick={() => store.enableCaption()}
+              >
+                <Icon.Caption className="size-4 fill-secondary" />
+              </Button>
+            </TooltipPreset>
+          )}
           <Popover>
             <TooltipPreset side="top" description="More">
               <PopoverTrigger asChild>

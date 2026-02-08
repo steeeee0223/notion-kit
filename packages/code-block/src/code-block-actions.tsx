@@ -26,7 +26,7 @@ import { useCodeBlock } from "./code-block-provider";
 import { LangMenu, ThemeMenu } from "./menus";
 
 export function CodeBlockActions() {
-  const { state, store, lastEditedBy } = useCodeBlock();
+  const { state, store, lastEditedBy, readonly } = useCodeBlock();
   const { copy } = useCopyToClipboard({
     onSuccess: () => toast.success("Code copied to clipboard"),
   });
@@ -39,18 +39,20 @@ export function CodeBlockActions() {
       <CommandInput placeholder="Search actions..." />
       <CommandList>
         <CommandGroup heading="Code">
-          <CommandItem
-            asChild
-            value="caption"
-            onSelect={() => store.enableCaption()}
-          >
-            <MenuItem Icon={<Icon.Caption />} Body="Caption">
-              <MenuItemShortcut>
-                {KEYBOARD.CMD}
-                {KEYBOARD.OPTION}M
-              </MenuItemShortcut>
-            </MenuItem>
-          </CommandItem>
+          {!readonly && (
+            <CommandItem
+              asChild
+              value="caption"
+              onSelect={() => store.enableCaption()}
+            >
+              <MenuItem Icon={<Icon.Caption />} Body="Caption">
+                <MenuItemShortcut>
+                  {KEYBOARD.CMD}
+                  {KEYBOARD.OPTION}M
+                </MenuItemShortcut>
+              </MenuItem>
+            </CommandItem>
+          )}
           <CommandItem
             asChild
             value="copy-code"
@@ -65,26 +67,30 @@ export function CodeBlockActions() {
               </MenuItemAction>
             </MenuItem>
           </CommandItem>
-          <Popover open={openLangSelect} onOpenChange={setOpenLangSelect}>
-            <PopoverTrigger asChild>
-              <CommandItem
-                asChild
-                value="language"
-                onPointerEnter={() => setOpenLangSelect(true)}
-                onSelect={() => setOpenLangSelect((v) => !v)}
-              >
-                <MenuItem Icon={<Icon.CurlyBraces />} Body="Language">
-                  <MenuItemSelect />
-                </MenuItem>
-              </CommandItem>
-            </PopoverTrigger>
-            <PopoverContent side="left" className="w-60">
-              <LangMenu />
-            </PopoverContent>
-          </Popover>
-          <CommandItem asChild value="format-code">
-            <MenuItem Icon={<Icon.Lightning />} Body="Format code" />
-          </CommandItem>
+          {!readonly && (
+            <Popover open={openLangSelect} onOpenChange={setOpenLangSelect}>
+              <PopoverTrigger asChild>
+                <CommandItem
+                  asChild
+                  value="language"
+                  onPointerEnter={() => setOpenLangSelect(true)}
+                  onSelect={() => setOpenLangSelect((v) => !v)}
+                >
+                  <MenuItem Icon={<Icon.CurlyBraces />} Body="Language">
+                    <MenuItemSelect />
+                  </MenuItem>
+                </CommandItem>
+              </PopoverTrigger>
+              <PopoverContent side="left" className="w-60">
+                <LangMenu />
+              </PopoverContent>
+            </Popover>
+          )}
+          {!readonly && (
+            <CommandItem asChild value="format-code">
+              <MenuItem Icon={<Icon.Lightning />} Body="Format code" />
+            </CommandItem>
+          )}
           <Popover open={openThemeSelect} onOpenChange={setOpenThemeSelect}>
             <PopoverTrigger asChild>
               <CommandItem

@@ -7,6 +7,15 @@ interface UseContentEditableOptions {
   onChange: (html: string) => void;
   /** Callback when element is blurred */
   onBlur?: () => void;
+  /** When true, the element is not editable */
+  readonly?: boolean;
+}
+
+interface UseContentEditableReturn<T extends HTMLElement> {
+  /** Ref to attach to the contentEditable element */
+  ref: React.RefObject<T | null>;
+  /** Props to spread onto the contentEditable element */
+  props: React.ComponentProps<"div">;
 }
 
 interface CursorPosition {
@@ -132,21 +141,27 @@ function restoreByTextOffset(
  *
  * @example
  * ```tsx
- * const { ref } = useContentEditable({
+ * const { ref, props } = useContentEditable({
  *   value: caption,
  *   onChange: setCaption,
  * });
  *
- * return (
- *   <div
- *     ref={ref}
- *     contentEditable
- *     dangerouslySetInnerHTML={{ __html: caption }}
- *   />
- * );
+ * return <div ref={ref} {...props} />;
+ * ```
+ *
+ * @example Readonly mode
+ * ```tsx
+ * const { ref, props } = useContentEditable({
+ *   value: caption,
+ *   onChange: setCaption,
+ *   readonly: true,
+ * });
+ *
+ * return <div ref={ref} {...props} />;
  * ```
  */
 export function useContentEditable<T extends HTMLElement = HTMLDivElement>({
+  readonly,
   value,
   onChange,
   onBlur,
@@ -175,7 +190,7 @@ export function useContentEditable<T extends HTMLElement = HTMLDivElement>({
   // Restore cursor position after React re-renders
   useEffect(() => {
     const element = ref.current;
-    if (!element) return;
+    if (!element || readonly) return;
 
     // Only restore if we have a saved position and the element is focused
     if (cursorPositionRef.current && document.activeElement === element) {
@@ -183,7 +198,7 @@ export function useContentEditable<T extends HTMLElement = HTMLDivElement>({
       restoreCursorPosition(element, cursorPositionRef.current);
       isUpdatingRef.current = false;
     }
-  }, [value]);
+  }, [value, readonly]);
 
   // Sync initial content and subsequent external updates
   useEffect(() => {
@@ -198,11 +213,19 @@ export function useContentEditable<T extends HTMLElement = HTMLDivElement>({
 
   return {
     ref,
-    handleInput,
-    handleBlur,
-    props: {
-      onInput: handleInput,
-      onBlur: handleBlur,
-    },
-  };
+    props: readonly
+      ? {
+          contentEditable: false as const,
+          tabIndex: -1,
+          spellCheck: false,
+          "aria-readonly": true as const,
+        }
+      : {
+          contentEditable: true as const,
+          tabIndex: 0,
+          spellCheck: true,
+          onInput: handleInput,
+          onBlur: handleBlur,
+        },
+  } satisfies UseContentEditableReturn<T>;
 }

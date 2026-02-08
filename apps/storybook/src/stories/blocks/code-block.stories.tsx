@@ -199,3 +199,24 @@ export const MermaidPreviewing: Story = {
     );
   },
 };
+
+export const Readonly: Story = {
+  render: () => {
+    return (
+      <CodeBlock
+        className="w-150"
+        readonly
+        defaultValue={{
+          code: sampleCode,
+          lang: "typescript",
+          caption: "This code block is readonly",
+        }}
+      >
+        <CodeBlockLang />
+        <CodeBlockToolbar />
+        <CodeBlockContent />
+        <CodeBlockCaption />
+      </CodeBlock>
+    );
+  },
+};

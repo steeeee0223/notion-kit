@@ -1,5 +1,7 @@
 import React from "react";
 
+import { cn } from "@notion-kit/cn";
+
 import type {
   CodeBlockProviderProps,
   CodeBlockValue,
@@ -41,24 +43,28 @@ interface CodeBlockProps
  * ```
  */
 function CodeBlock({
-  children,
   value,
   defaultValue,
+  readonly,
+  className,
+  children,
   onChange,
   ...props
 }: CodeBlockProps) {
   return (
     <CodeBlockProvider
+      readonly={readonly}
       value={value}
       defaultValue={defaultValue}
       onChange={onChange}
     >
-      <div className="flex">
+      <div data-slot="code-block-wrapper" className={cn("flex", className)}>
         <div
           contentEditable={false}
           data-content-editable-void="true"
           role="figure"
           aria-labelledby={props.id}
+          data-slot="code-block"
           className="group/code-block relative w-full min-w-0 grow rounded-[10px] text-start"
           {...props}
         >

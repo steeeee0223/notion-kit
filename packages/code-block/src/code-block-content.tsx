@@ -15,7 +15,7 @@ import { MermaidPreview } from "./mermaid-preview";
  * directly to the pre/code elements when wrap mode is enabled.
  */
 export function CodeBlockContent({ ...props }: React.ComponentProps<"div">) {
-  const { state, store } = useCodeBlock();
+  const { state, store, readonly } = useCodeBlock();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const highlightRef = useRef<HTMLSpanElement>(null);
 
@@ -44,6 +44,7 @@ export function CodeBlockContent({ ...props }: React.ComponentProps<"div">) {
 
   return (
     <div
+      data-slot="code-block-content"
       className="rounded-[10px] bg-[rgba(66,35,3,.031)] p-[22px] dark:bg-default/5"
       {...props}
     >
@@ -73,23 +74,25 @@ export function CodeBlockContent({ ...props }: React.ComponentProps<"div">) {
           />
 
           {/* Editable textarea overlay */}
-          <textarea
-            ref={textareaRef}
-            value={state.code}
-            onChange={handleInput}
-            onScroll={syncScroll}
-            spellCheck={false}
-            autoCorrect="off"
-            autoCapitalize="off"
-            autoComplete="off"
-            aria-label="Code editor"
-            className={cn(
-              "absolute inset-0 h-full w-full resize-none bg-transparent p-[inherit] text-transparent caret-primary focus-visible:outline-none",
-              state.wrap &&
-                "overflow-hidden wrap-anywhere break-all whitespace-pre-wrap",
-            )}
-            style={fontStyle}
-          />
+          {!readonly && (
+            <textarea
+              ref={textareaRef}
+              value={state.code}
+              onChange={handleInput}
+              onScroll={syncScroll}
+              spellCheck={false}
+              autoCorrect="off"
+              autoCapitalize="off"
+              autoComplete="off"
+              aria-label="Code editor"
+              className={cn(
+                "absolute inset-0 h-full w-full resize-none bg-transparent p-[inherit] text-transparent caret-primary focus-visible:outline-none",
+                state.wrap &&
+                  "overflow-hidden wrap-anywhere break-all whitespace-pre-wrap",
+              )}
+              style={fontStyle}
+            />
+          )}
         </div>
       </div>
 
