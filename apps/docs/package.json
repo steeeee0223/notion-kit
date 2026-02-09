@@ -17,6 +17,7 @@
   "dependencies": {
     "@notion-kit/auth-ui": "workspace:*",
     "@notion-kit/cn": "workspace:*",
+    "@notion-kit/code-block": "workspace:*",
     "@notion-kit/cover": "workspace:*",
     "@notion-kit/icon-block": "workspace:*",
     "@notion-kit/icon-menu": "workspace:*",

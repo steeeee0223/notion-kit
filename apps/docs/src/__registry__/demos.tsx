@@ -63,6 +63,30 @@ export const Index: Record<
     files: ["components/demos/checkbox/sizes.tsx"],
     component: React.lazy(() => import("@/components/demos/checkbox/sizes")),
   },
+  "code-block/controlled": {
+    files: ["components/demos/code-block/controlled.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/code-block/controlled"),
+    ),
+  },
+  "code-block/default": {
+    files: ["components/demos/code-block/default.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/code-block/default"),
+    ),
+  },
+  "code-block/mermaid": {
+    files: ["components/demos/code-block/mermaid.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/code-block/mermaid"),
+    ),
+  },
+  "code-block/readonly": {
+    files: ["components/demos/code-block/readonly.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/code-block/readonly"),
+    ),
+  },
   "cover/default": {
     files: ["components/demos/cover/default.tsx"],
     component: React.lazy(() => import("@/components/demos/cover/default")),

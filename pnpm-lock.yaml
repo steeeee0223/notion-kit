@@ -255,6 +255,9 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../../packages/cn
+      '@notion-kit/code-block':
+        specifier: workspace:*
+        version: link:../../packages/code-block
       '@notion-kit/cover':
         specifier: workspace:*
         version: link:../../packages/cover
