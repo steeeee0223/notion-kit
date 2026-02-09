@@ -12,7 +12,7 @@ import { codeToHtml } from "shiki";
 
 import { Store, useStore } from "@notion-kit/hooks";
 
-import { createWrapTransformer } from "./transformers/wrap";
+import { createWrapTransformer, formatCode } from "./transformers";
 
 /** Public state that can be controlled externally */
 export interface CodeBlockValue {
@@ -43,6 +43,7 @@ interface CodeBlockActions {
   setCaption: (caption?: string) => void;
   updateCode: (code: string) => void;
   setLang: (lang: string) => void;
+  formatCode: () => Promise<void>;
 }
 
 class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
@@ -147,6 +148,17 @@ class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
       setTimeout(() => {
         document.dispatchEvent(new CustomEvent("code-block:focus-caption"));
       }, 0);
+    }
+  };
+
+  /** Format current code using Prettier */
+  formatCode = async () => {
+    const { code, lang } = this.getSnapshot();
+    const formatted = await formatCode(code, lang);
+    if (formatted !== code) {
+      this.setState((v) => ({ ...v, code: formatted, ts: Date.now() }));
+      this.notifyChange();
+      await this.highlight({ code: formatted });
     }
   };
 

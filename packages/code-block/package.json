@@ -40,6 +40,7 @@
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/utils": "workspace:*",
     "mermaid": "^11.12.2",
+    "prettier": "catalog:",
     "shiki": "^3.22.0"
   },
   "devDependencies": {
@@ -55,7 +56,6 @@
     "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",
     "jsdom": "catalog:rtl",
-    "prettier": "catalog:",
     "react": "catalog:react19",
     "react-compiler-runtime": "catalog:react-compiler",
     "react-dom": "catalog:react19",

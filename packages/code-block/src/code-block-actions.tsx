@@ -24,6 +24,7 @@ import { KEYBOARD, toDateString } from "@notion-kit/utils";
 
 import { useCodeBlock } from "./code-block-provider";
 import { LangMenu, ThemeMenu } from "./menus";
+import { isFormattable } from "./transformers";
 
 export function CodeBlockActions() {
   const { state, store, lastEditedBy, readonly } = useCodeBlock();
@@ -86,8 +87,12 @@ export function CodeBlockActions() {
               </PopoverContent>
             </Popover>
           )}
-          {!readonly && (
-            <CommandItem asChild value="format-code">
+          {!readonly && isFormattable(state.lang) && (
+            <CommandItem
+              asChild
+              value="format-code"
+              onSelect={store.formatCode}
+            >
               <MenuItem Icon={<Icon.Lightning />} Body="Format code" />
             </CommandItem>
           )}

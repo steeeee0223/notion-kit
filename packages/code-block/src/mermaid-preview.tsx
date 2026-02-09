@@ -50,13 +50,6 @@ export function MermaidPreview({
       }
 
       try {
-        // Validate the syntax first
-        const isValid = await mermaid.parse(source);
-        if (!isValid) {
-          setError("Invalid mermaid syntax");
-          return;
-        }
-
         const { svg: renderedSvg } = await mermaid.render(mermaidId, source);
         setSvg(renderedSvg);
         setError(null);

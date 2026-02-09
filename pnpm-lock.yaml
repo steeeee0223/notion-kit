@@ -1013,6 +1013,9 @@ importers:
       mermaid:
         specifier: ^11.12.2
         version: 11.12.2
+      prettier:
+        specifier: 'catalog:'
+        version: 3.6.2
       shiki:
         specifier: ^3.22.0
         version: 3.22.0
@@ -1053,9 +1056,6 @@ importers:
       jsdom:
         specifier: catalog:rtl
         version: 25.0.1(bufferutil@4.0.9)
-      prettier:
-        specifier: 'catalog:'
-        version: 3.6.2
       react:
         specifier: catalog:react19
         version: 19.2.3

@@ -58,6 +58,7 @@ export function CodeBlockCaption({
           }
         }}
         {...editableProps}
+        tabIndex={editableProps.tabIndex}
         {...props}
       />
     </div>
