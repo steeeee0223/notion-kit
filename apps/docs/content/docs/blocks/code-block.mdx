@@ -29,6 +29,17 @@ description: A composable code block with syntax highlighting, language selectio
 
 <Installation packages="@notion-kit/code-block" registryName="blocks" />
 
+## Anatomy
+
+```
+<CodeBlock>
+  <CodeBlockLang />
+  <CodeBlockToolbar />
+  <CodeBlockContent />
+  <CodeBlockCaption />
+</CodeBlock>
+```
+
 ## Examples
 
 ---
@@ -41,16 +52,16 @@ Use `defaultValue` to set the initial code and language.
 <ComponentPreview
   name="code-block/default"
   preview={`<CodeBlock
-  defaultValue={{
-    code: sampleCode,
-    lang: "typescript",
-  }}
->
-  <CodeBlockLang />
-  <CodeBlockToolbar />
-  <CodeBlockContent />
-  <CodeBlockCaption />
-</CodeBlock>`}
+    defaultValue={{
+      code: sampleCode,
+      lang: "typescript",
+    }}
+  >
+    <CodeBlockLang />
+    <CodeBlockToolbar />
+    <CodeBlockContent />
+    <CodeBlockCaption />
+  </CodeBlock>`}
 />
 
 ### Controlled
@@ -60,11 +71,11 @@ In controlled mode, use `value` and `onChange` to manage state externally.
 <ComponentPreview
   name="code-block/controlled"
   preview={`<CodeBlock value={value} onChange={setValue}>
-  <CodeBlockLang />
-  <CodeBlockToolbar />
-  <CodeBlockContent />
-  <CodeBlockCaption />
-</CodeBlock>`}
+    <CodeBlockLang />
+    <CodeBlockToolbar />
+    <CodeBlockContent />
+    <CodeBlockCaption />
+  </CodeBlock>`}
 />
 
 ### Readonly
@@ -74,18 +85,18 @@ Use the `readonly` prop to prevent editing code, changing language, and editing 
 <ComponentPreview
   name="code-block/readonly"
   preview={`<CodeBlock
-  readonly
-  defaultValue={{
-    code: sampleCode,
-    lang: "typescript",
-    caption: "This code block is readonly",
-  }}
->
-  <CodeBlockLang />
-  <CodeBlockToolbar />
-  <CodeBlockContent />
-  <CodeBlockCaption />
-</CodeBlock>`}
+    readonly
+    defaultValue={{
+      code: sampleCode,
+      lang: "typescript",
+      caption: "This code block is readonly",
+    }}
+  >
+    <CodeBlockLang />
+    <CodeBlockToolbar />
+    <CodeBlockContent />
+    <CodeBlockCaption />
+  </CodeBlock>`}
 />
 
 ### Mermaid Diagrams
@@ -95,13 +106,13 @@ When language is set to `mermaid`, a live diagram preview is rendered alongside 
 <ComponentPreview
   name="code-block/mermaid"
   preview={`<CodeBlock
-  defaultValue={{ code: mermaidCode, lang: "mermaid" }}
->
-  <CodeBlockLang />
-  <CodeBlockToolbar />
-  <CodeBlockContent />
-  <CodeBlockCaption />
-</CodeBlock>`}
+    defaultValue={{ code: mermaidCode, lang: "mermaid" }}
+  >
+    <CodeBlockLang />
+    <CodeBlockToolbar />
+    <CodeBlockContent />
+    <CodeBlockCaption />
+  </CodeBlock>`}
 />
 
 ## API Reference

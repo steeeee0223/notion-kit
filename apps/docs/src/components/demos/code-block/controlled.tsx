@@ -26,20 +26,11 @@ export default function Controlled() {
   });
 
   return (
-    <div className="w-full space-y-4">
-      <CodeBlock value={value} onChange={setValue}>
-        <CodeBlockLang />
-        <CodeBlockToolbar />
-        <CodeBlockContent />
-        <CodeBlockCaption />
-      </CodeBlock>
-
-      <div className="rounded-lg bg-muted p-4 text-sm">
-        <h4 className="mb-2 font-semibold">Current State:</h4>
-        <pre className="text-xs text-muted">
-          {JSON.stringify(value, null, 2)}
-        </pre>
-      </div>
-    </div>
+    <CodeBlock className="w-full" value={value} onChange={setValue}>
+      <CodeBlockLang />
+      <CodeBlockToolbar />
+      <CodeBlockContent />
+      <CodeBlockCaption />
+    </CodeBlock>
   );
 }
