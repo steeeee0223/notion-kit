@@ -30,18 +30,16 @@ jobs:
       - name: Setup
         uses: ./tooling/github/setup
 
-      - name: Setup npm authentication
-        run: |
-          npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
-          echo "✅ npm authentication configured"
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: Build packages
         run: pnpm build:packages
 
       - name: Publish to npm
-        run: pnpm publish-packages
+        run: |
+          npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
+          echo "✅ npm authentication configured"     
+          pnpm publish-packages
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Extract release notes
         id: extract_notes
