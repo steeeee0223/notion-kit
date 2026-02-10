@@ -60,7 +60,7 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
   const openRowView = () => table.openRow(rowId);
   const openInNewTab = () => table.openRowInTab(rowId);
   // 4. Copy link
-  const [, copy] = useCopyToClipboard();
+  const { copy } = useCopyToClipboard();
   const copyLink = () => {
     const url = table.getRowUrl(rowId);
     const link =

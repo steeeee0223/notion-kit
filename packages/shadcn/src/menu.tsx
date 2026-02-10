@@ -194,6 +194,19 @@ function MenuItemSwitch({
   );
 }
 
+function MenuFooter({ className, ...props }: React.ComponentProps<"footer">) {
+  return (
+    <footer
+      data-slot="menu-footer"
+      className={cn(
+        "flex min-h-7 w-full flex-col items-center px-3 py-1 text-xs text-muted",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 export {
   MenuGroup,
   MenuLabel,
@@ -203,4 +216,5 @@ export {
   MenuItemSelect,
   MenuItemShortcut,
   MenuItemSwitch,
+  MenuFooter,
 };

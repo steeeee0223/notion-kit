@@ -17,11 +17,9 @@ export function SetupSection() {
   const { t } = useTranslation("settings");
   const trans = t("identity.setup", { returnObjects: true });
   /** Handlers */
-  const [, copy] = useCopyToClipboard();
-  const handleCopy = async () => {
-    await copy(workspace.id);
-    toast.success("Copied property to clipboard");
-  };
+  const { copy } = useCopyToClipboard({
+    onSuccess: () => toast.success("Copied property to clipboard"),
+  });
 
   return (
     <SettingsSection title={trans.title}>
@@ -34,7 +32,7 @@ export function SetupSection() {
         >
           <div className="min-w-max px-[60px] text-xs/4 text-secondary">
             <a
-              onClick={handleCopy}
+              onClick={() => copy(workspace.id)}
               rel="noopener noreferrer"
               className="inline cursor-pointer underline select-none hover:text-red-600"
             >

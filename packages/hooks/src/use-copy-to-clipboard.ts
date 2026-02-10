@@ -4,7 +4,12 @@ import { useCallback, useState } from "react";
 
 import { useIsClient } from "./use-is-client";
 
-export function useCopyToClipboard() {
+interface UseCopyToClipboardOptions {
+  onSuccess?: () => void;
+  onError?: (msg: string) => void;
+}
+
+export function useCopyToClipboard(options: UseCopyToClipboardOptions = {}) {
   const isClient = useIsClient();
   const [copiedText, setCopiedText] = useState<string | null>(null);
 
@@ -12,22 +17,23 @@ export function useCopyToClipboard() {
     async (text: string) => {
       if (!isClient) {
         console.warn("Clipboard not supported");
-        return false;
+        return options.onError?.("Clipboard not supported");
       }
 
       // Try to save to clipboard then save it in the state if worked
       try {
         await navigator.clipboard.writeText(text);
         setCopiedText(text);
-        return true;
+        return options.onSuccess?.();
       } catch (error) {
         console.warn("Copy failed", error);
         setCopiedText(null);
-        return false;
+        const msg = error instanceof Error ? error.message : String(error);
+        return options.onError?.(msg);
       }
     },
-    [isClient],
+    [isClient, options],
   );
 
-  return [copiedText, copy] as const;
+  return { copiedText, copy };
 }
