@@ -1,7 +1,7 @@
 {
   "name": "@notion-kit/i18n",
   "private": true,
-  "version": "0.15.1",
+  "version": "0.16.0-beta.0",
   "type": "module",
   "exports": {
     ".": {
