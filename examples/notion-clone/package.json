@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/notion-clone",
-  "version": "0.16.0-beta.0",
+  "version": "0.16.0-beta.1",
   "private": true,
   "scripts": {
     "build": "pnpm with-env next build",

@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/tailwind-config",
-  "version": "0.16.0-beta.0",
+  "version": "0.16.0-beta.1",
   "private": true,
   "type": "module",
   "exports": {
