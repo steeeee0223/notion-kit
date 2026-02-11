@@ -37,7 +37,8 @@ jobs:
 
       - name: Publish to npm
         run: |
-          npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
+          pnpm config set "@notion-kit:registry" "https://registry.npmjs.org/"
+          pnpm config set "//registry.npmjs.org/:_authToken" "${NPM_TOKEN}"
           echo "✅ npm authentication configured"     
           pnpm publish-packages
         env:
