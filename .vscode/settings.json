@@ -15,11 +15,13 @@
     { "pattern": "tooling/*/" }
   ],
   "prettier.ignorePath": ".gitignore",
+  "prettier.configPath": "./tooling/prettier/index.js",
+  "tailwindCSS.classFunctions": ["cva", "cn", "tv", "clsx"],
   "tailwindCSS.experimental.classRegex": [
     ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
     ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
   ],
-  "tailwindCSS.experimental.configFile": "./tooling/tailwind/web.ts",
+  "tailwindCSS.experimental.configFile": "./tooling/tailwind/base.css",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.preferences.autoImportFileExcludePatterns": [
     "next/router.d.ts",
