@@ -8,7 +8,6 @@ A `CellPlugin` is a generic interface that accepts four type parameters:
 - `Key`: The unique identifier for the plugin.
 - `Data`: The data type stored in the cell.
 - `Config` (optional): The configuration type for the plugin.
-- `Actions` (optional): The actions that can be performed on the cell.
 
 ## API Reference
 
@@ -31,7 +30,6 @@ A `CellPlugin` is a generic interface that accepts four type parameters:
 | `toTextValue`\*       | `(data: Data, row: Row) => string`                                | Converts the plugin's data type to a string value. This is useful for displaying/exporting the data in a compact format. |
 | `transferConfig`      | `(column: ColumnInfo<TPlugin>, data: Row<TPlugin[]>[]) => Config` | Converts the given column and rows data to this plugin configuration. This is useful for changing column types.          |
 | `compare`\*           | `(rowA: Row, rowB: Row, colId: string) => number`                 | Compares two rows based on the plugin's data type. This is useful for sorting a column.                                  |
-| ~`reducer`~\*         | `React.Reducer<TableDataAtom<TPlugins>, Actions>`                 | The reducer function to handle actions related to this plugin. This is useful for updating the table state.              |
 | `renderCell`\*        | `(props: CellProps<Data, Config>) => React.ReactNode`             | Renders the cell for this plugin. This is where you define how the cell should look and behave in the UI.                |
 | `renderConfigMenu`    | `(props: ConfigMenuProps<Config>) => React.ReactNode`             | Renders the configuration menu for this plugin. This is where you define how the column configuration should look.       |
 | `renderGroupingValue` | `(props: GroupingValueProps) => React.ReactNode`                  | Renders the grouping value for this plugin. This is where you define how the grouping value should look.                 |
@@ -79,7 +77,6 @@ A `TableDataAtom` represents the atom state of a table, including its column inf
 | `InferKey<TPlugin>`     | Infers the plugin ID from `CellPlugin`.          |
 | `InferData<TPlugin>`    | Infers the cell data type.                       |
 | `InferConfig<TPlugin>`  | Infers the column config type.                   |
-| `InferActions<TPlugin>` | Infers the plugin action type.                   |
 | `InferPlugin<TPlugins>` | Merges plugin types into a unified `CellPlugin`. |
 
 ---

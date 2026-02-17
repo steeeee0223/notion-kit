@@ -141,6 +141,30 @@ export const Index: Record<
       () => import("@/components/demos/login-form/default"),
     ),
   },
+  "multi-select/creatable": {
+    files: ["components/demos/multi-select/creatable.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/multi-select/creatable"),
+    ),
+  },
+  "multi-select/default": {
+    files: ["components/demos/multi-select/default.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/multi-select/default"),
+    ),
+  },
+  "multi-select/inline": {
+    files: ["components/demos/multi-select/inline.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/multi-select/inline"),
+    ),
+  },
+  "multi-select/max-selected": {
+    files: ["components/demos/multi-select/max-selected.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/multi-select/max-selected"),
+    ),
+  },
   "navbar/menu": {
     files: ["components/demos/navbar/menu.tsx"],
     component: React.lazy(() => import("@/components/demos/navbar/menu")),

@@ -1,0 +1,96 @@
+---
+title: MultiSelect
+description: A multi-select component built on top of cmdk, with badge-styled tags, creatable options, and keyboard support.
+---
+
+<ComponentPreview
+  name="multi-select/default"
+  preview={`<MultiSelect defaultOptions={options} />`}
+/>
+
+## Installation
+
+<Installation packages="@notion-kit/shadcn" registryName="notion-ui" />
+
+## Options
+
+---
+
+### Variant
+
+Use the `variant` prop to control the layout of the dropdown.<br/>
+The default variant is `"floating"`.
+
+<ComponentPreview
+  name="multi-select/inline"
+  preview={`<MultiSelect variant="inline" {...} />`}
+/>
+
+## Examples
+
+---
+
+### Creatable
+
+Allow users to create new options on-the-fly by typing a name that doesn't exist.
+
+<ComponentPreview
+  name="multi-select/creatable"
+  preview={`<MultiSelect creatable {...} />`}
+/>
+
+### Max Selected
+
+Limit the number of selections with the `maxSelected` prop.
+
+<ComponentPreview
+  name="multi-select/max-selected"
+  preview={`<MultiSelect maxSelected={3} {...} />`}
+/>
+
+## API Reference
+
+### MultiSelect
+
+| Prop                          | Type                                                  | Default      | Description                                                                                                    |
+| ----------------------------- | ----------------------------------------------------- | ------------ | -------------------------------------------------------------------------------------------------------------- |
+| `variant`                     | `"floating" \| "inline"`                              | `"floating"` | Layout variant. `"floating"` renders a dropdown popover; `"inline"` renders the list directly below the input. |
+| `value`                       | `MultiSelectOption[]`                                 | `[]`         | Controlled selected options.                                                                                   |
+| `defaultOptions`              | `MultiSelectOption[]`                                 | `[]`         | Default list of options to display.                                                                            |
+| `options`                     | `MultiSelectOption[]`                                 | -            | Manually controlled options. Overrides `defaultOptions` when provided.                                         |
+| `placeholder`                 | `string`                                              | -            | Placeholder text for the input.                                                                                |
+| `emptyIndicator`              | `React.ReactNode`                                     | -            | Content shown when no options match the search.                                                                |
+| `onChange`                    | `(options: MultiSelectOption[]) => void`              | -            | Called when the selection changes.                                                                             |
+| `maxSelected`                 | `number`                                              | `Infinity`   | Maximum number of selectable options.                                                                          |
+| `onMaxSelected`               | `(maxLimit: number) => void`                          | -            | Called when the user tries to exceed `maxSelected`.                                                            |
+| `hidePlaceholderWhenSelected` | `boolean`                                             | `false`      | Hide the placeholder when options are selected.                                                                |
+| `hideClearAllButton`          | `boolean`                                             | `false`      | Hide the "clear all" button.                                                                                   |
+| `disabled`                    | `boolean`                                             | `false`      | Disable the entire component.                                                                                  |
+| `groupBy`                     | `string`                                              | -            | Group options by a key on `MultiSelectOption`.                                                                 |
+| `className`                   | `string`                                              | -            | Class name for the root element.                                                                               |
+| `classNames`                  | `{ badge?, input?, content?, group?, item? }`         | -            | Class names for individual slots.                                                                              |
+| `selectFirstItem`             | `boolean`                                             | `true`       | Whether the first item is auto-selected (cmdk default). Set `false` to disable.                                |
+| `creatable`                   | `boolean`                                             | `false`      | Allow creating new options when no match is found.                                                             |
+| `keepSelectedInList`          | `boolean`                                             | `false`      | Keep selected options visible in the dropdown. Clicking toggles selection.                                     |
+| `commandProps`                | `CommandProps`                                        | -            | Props forwarded to the inner `Command` component.                                                              |
+| `inputProps`                  | `CommandInputProps`                                   | -            | Props forwarded to the inner `CommandPrimitive.Input`.                                                         |
+| `renderOption`                | `(props: { option, isSearching }) => React.ReactNode` | -            | Custom renderer for each option in the dropdown list.                                                          |
+
+### `type` MultiSelectOption
+
+| Prop       | Type      | Description                            |
+| ---------- | --------- | -------------------------------------- |
+| `value`\*  | `string`  | Unique value identifier.               |
+| `label`\*  | `string`  | Display label.                         |
+| `disabled` | `boolean` | Whether the option is disabled.        |
+| `fixed`    | `boolean` | Fixed options cannot be removed.       |
+| `color`    | `string`  | Background color for the option badge. |
+
+## Keyboard Navigation
+
+| Key                    | Action                                              |
+| ---------------------- | --------------------------------------------------- |
+| `Backspace` / `Delete` | Remove the last selected tag (when input is empty). |
+| `Escape`               | Blur the input and close the dropdown.              |
+| `Enter`                | Select the highlighted option.                      |
+| `↑` / `↓`              | Navigate between options (handled by cmdk).         |
