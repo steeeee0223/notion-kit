@@ -21,7 +21,7 @@ export function OptionMeta({
   onUpdate,
 }: OptionMetaProps) {
   const [showDesc, setShowDesc] = useState(false);
-  const toggleDesc = () => setShowDesc((prev) => !prev);
+  const toggleDesc = () => setShowDesc((v) => !v);
 
   const nameField = useInputField({
     id: "name",
@@ -56,6 +56,7 @@ export function OptionMeta({
                   variant="close"
                   className="ml-1 grow-0"
                   onClick={toggleDesc}
+                  aria-label="Add property description"
                 >
                   <Icon.InfoFilled className="fill-default/45 hover:fill-icon" />
                 </Button>

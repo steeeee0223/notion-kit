@@ -3,36 +3,54 @@
 import { useCallback, useMemo, useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
+import type { OnChangeFn } from "@tanstack/react-table";
 
 import { useFilter } from "@notion-kit/hooks";
 import { getRandomColor, type Color } from "@notion-kit/utils";
 
-import type { ColumnInfo } from "../../../lib/types";
 import { useTableViewCtx } from "../../../table-contexts";
-import type { MultiSelectPlugin, SelectPlugin } from "../types";
+import {
+  propagateSelectEvent,
+  selectConfigReducer,
+  type SelectConfigActionPayload,
+} from "../select-config-reducer";
+import type { SelectConfig } from "../types";
 
 interface UseSelectMenuOptions {
+  multi?: boolean;
   propId: string;
+  config: SelectConfig;
   options: string[];
   onChange: (options: string[]) => void;
+  onConfigChange?: OnChangeFn<SelectConfig>;
 }
 
 export function useSelectMenu({
+  multi,
   propId,
+  config,
   options,
   onChange,
+  onConfigChange,
 }: UseSelectMenuOptions) {
   const { table } = useTableViewCtx();
 
-  const { type, config } = table.getColumnInfo(propId) as ColumnInfo<
-    SelectPlugin | MultiSelectPlugin
-  >;
-
-  const [currentOptions, setCurrentOptions] = useState(
-    new Map<string, Color | undefined>(
-      options.map((option) => [option, config.options.items[option]?.color]),
-    ),
+  /** Dispatch a config action via onConfigChange, propagating rename/delete */
+  const dispatchConfig = useCallback(
+    (action: SelectConfigActionPayload) => {
+      const { config: newConfig, nextEvent } = selectConfigReducer(
+        config,
+        action,
+      );
+      onConfigChange?.(newConfig);
+      if (nextEvent) {
+        const type = multi ? "multi-select" : "select";
+        propagateSelectEvent(table, propId, type, nextEvent);
+      }
+    },
+    [config, onConfigChange, table, propId, multi],
   );
+
   const [optionSuggestion, setOptionSuggestion] = useState<{
     name: string;
     color: Color;
@@ -41,28 +59,33 @@ export function useSelectMenu({
     config.options.names,
     (option, v) => option.includes(v),
   );
+
   /** Config Actions */
   const addOption = useCallback(() => {
     if (!optionSuggestion) return;
     updateSearch("");
-    table.setColumnTypeConfig<SelectPlugin>(propId, {
-      id: propId,
+    dispatchConfig({
       action: "add:option",
       payload: optionSuggestion,
     });
-    setCurrentOptions((prev) => {
-      const options = type === "multi-select" ? new Map(prev) : new Map();
-      return options.set(optionSuggestion.name, optionSuggestion.color);
-    });
+    onChange(
+      multi ? [...options, optionSuggestion.name] : [optionSuggestion.name],
+    );
     setOptionSuggestion(undefined);
-  }, [optionSuggestion, propId, table, type, updateSearch]);
+  }, [
+    optionSuggestion,
+    dispatchConfig,
+    multi,
+    options,
+    onChange,
+    updateSearch,
+  ]);
 
   const reorderOptions = useCallback(
     (e: DragEndEvent) => {
       const { active, over } = e;
       if (!over || active.id === over.id) return;
-      table.setColumnTypeConfig<SelectPlugin>(propId, {
-        id: propId,
+      dispatchConfig({
         action: "update:sort:manual",
         updater: (prev: string[]) => {
           const oldIndex = prev.indexOf(active.id as string);
@@ -71,7 +94,7 @@ export function useSelectMenu({
         },
       });
     },
-    [table, propId],
+    [dispatchConfig],
   );
 
   const validateOptionName = useCallback(
@@ -93,41 +116,29 @@ export function useSelectMenu({
         color?: Color;
       },
     ) => {
-      table.setColumnTypeConfig<SelectPlugin>(propId, {
-        id: propId,
+      dispatchConfig({
         action: "update:option",
         payload: { originalName, ...data },
       });
-      setCurrentOptions((prev) => {
-        if (!prev.has(originalName)) return prev;
-        const options = new Map(prev);
-        if (data.name) {
-          options.set(data.name, options.get(originalName));
-          options.delete(originalName);
-        } else if (data.color) {
-          options.set(originalName, data.color);
-        }
-        return options;
-      });
+      if (data.name && options.includes(originalName)) {
+        onChange(options.map((n) => (n === originalName ? data.name! : n)));
+      }
     },
-    [table, propId],
+    [dispatchConfig, options, onChange],
   );
 
   const deleteOption = useCallback(
     (name: string) => {
-      table.setColumnTypeConfig<SelectPlugin>(propId, {
-        id: propId,
+      dispatchConfig({
         action: "delete:option",
         payload: name,
       });
-      setCurrentOptions((prev) => {
-        const options = new Map(prev);
-        options.delete(name);
-        return options;
-      });
+      if (options.includes(name)) {
+        onChange(options.filter((n) => n !== name));
+      }
       setOptionSuggestion(undefined);
     },
-    [table, propId],
+    [dispatchConfig, options, onChange],
   );
 
   /** Search & Filter */
@@ -154,42 +165,29 @@ export function useSelectMenu({
         return;
       }
       setOptionSuggestion(undefined);
-      setCurrentOptions(
-        new Map(
-          tags
-            .slice(type === "multi-select" ? 0 : -1)
-            .map((tag) => [tag, config.options.items[tag]?.color]),
-        ),
-      );
+      onChange(tags.slice(multi ? 0 : -1));
     },
-    [type, config.options.items, addOption],
+    [multi, config.options.items, addOption, onChange],
   );
 
   const selectTag = useCallback(
     (value: string) => {
       updateSearch("");
       setOptionSuggestion(undefined);
-      setCurrentOptions((prev) => {
-        if (prev.has(value)) return prev;
-        const options = type === "multi-select" ? new Map(prev) : new Map();
-        return options.set(value, config.options.items[value]?.color);
-      });
+      if (options.includes(value)) return;
+      onChange(multi ? [...options, value] : [value]);
     },
-    [config.options.items, type, updateSearch],
+    [options, multi, onChange, updateSearch],
   );
 
   const tags = useMemo(
     () =>
-      Array.from(currentOptions.entries()).map(([value, color]) => ({
-        value,
-        color,
+      options.map((name) => ({
+        value: name,
+        color: config.options.items[name]?.color,
       })),
-    [currentOptions],
+    [options, config.options.items],
   );
-
-  const commitChange = useCallback(() => {
-    onChange(Array.from(currentOptions.keys()));
-  }, [onChange, currentOptions]);
 
   return {
     config,
@@ -205,7 +203,6 @@ export function useSelectMenu({
     validateOptionName,
     updateOption,
     deleteOption,
-    commitChange,
   };
 }
 

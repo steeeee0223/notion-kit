@@ -45,6 +45,5 @@ export function number(): NumberPlugin {
     }),
     renderCell: (props) => <NumberCell {...props} />,
     renderConfigMenu: (props) => <NumberConfigMenu {...props} />,
-    reducer: (v) => v,
   };
 }

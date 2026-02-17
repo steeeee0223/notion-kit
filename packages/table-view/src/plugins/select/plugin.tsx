@@ -5,76 +5,18 @@ import { getRandomColor } from "@notion-kit/utils";
 
 import { DefaultIcon } from "../../common";
 import type { Cell, ColumnInfo, Row } from "../../lib/types";
-import type { CellPlugin, ComparableValue, TableDataAtom } from "../types";
+import type { CellPlugin, ComparableValue } from "../types";
 import { compareStrings, createCompareFn } from "../utils";
 import { SelectCell } from "./select-cell";
 import { SelectConfigMenu } from "./select-config-menu";
-import { selectConfigReducer } from "./select-config-reducer";
 import { SelectGroupingValue } from "./select-grouping-value";
-import type {
-  MultiSelectPlugin,
-  SelectActions,
-  SelectCell as SelectCellModel,
-  SelectConfig,
-  SelectPlugin,
-} from "./types";
+import type { MultiSelectPlugin, SelectConfig, SelectPlugin } from "./types";
 
 function getDefaultConfig(): SelectConfig {
   return {
     options: { names: [], items: {} },
     sort: "manual",
   };
-}
-
-export function selectReducer(
-  v: TableDataAtom,
-  a: SelectActions,
-): TableDataAtom {
-  const prop = v.properties[a.id] as ColumnInfo<
-    SelectPlugin | MultiSelectPlugin
-  >;
-  const { config, nextEvent } = selectConfigReducer(prop.config, a);
-  const properties = {
-    ...v.properties,
-    [a.id]: { ...prop, config },
-  };
-  if (!nextEvent) return { ...v, properties };
-
-  switch (nextEvent.type) {
-    case "update:name": {
-      const { originalName, name } = nextEvent.payload;
-      const data = v.data.map((row) => {
-        const cell = { ...row.properties[a.id] } as SelectCellModel;
-        if (prop.type === "multi-select") {
-          cell.value = (cell.value as string[]).map((option) =>
-            option === originalName ? name : option,
-          );
-        } else if (cell.value === originalName) {
-          cell.value = name;
-        }
-        return { ...row, properties: { ...row.properties, [a.id]: cell } };
-      });
-      return { properties, data };
-    }
-    case "delete": {
-      const name = nextEvent.payload;
-      const data = v.data.map((row) => {
-        const cell = { ...row.properties[a.id] } as SelectCellModel;
-
-        if (prop.type === "multi-select") {
-          cell.value = (cell.value as string[]).filter(
-            (option) => option !== name,
-          );
-        } else if (cell.value === name) {
-          cell.value = null;
-        }
-        return { ...row, properties: { ...row.properties, [a.id]: cell } };
-      });
-      return { properties, data };
-    }
-    default:
-      return v as never;
-  }
 }
 
 /**
@@ -171,7 +113,6 @@ export function select(): SelectPlugin {
     ),
     renderConfigMenu: (props) => <SelectConfigMenu {...props} />,
     renderGroupingValue: (props) => <SelectGroupingValue {...props} />,
-    reducer: selectReducer,
   };
 }
 
@@ -201,9 +142,8 @@ export function multiSelect(): MultiSelectPlugin {
       return compareStrings(a[0]!, b[0]!);
     }),
     transferConfig: toSelectConfig,
-    renderCell: (props) => <SelectCell {...props} />,
-    renderConfigMenu: (props) => <SelectConfigMenu {...props} />,
+    renderCell: (props) => <SelectCell multi {...props} />,
+    renderConfigMenu: (props) => <SelectConfigMenu multi {...props} />,
     renderGroupingValue: (props) => <SelectGroupingValue {...props} />,
-    reducer: selectReducer,
   };
 }

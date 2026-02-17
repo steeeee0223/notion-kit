@@ -17,7 +17,12 @@ import { SelectMenu } from "./select-menu";
 import { useSelectMenu } from "./select-menu/use-select-menu";
 import type { SelectConfig } from "./types";
 
+interface SelectCellProps extends CellProps<string[], SelectConfig> {
+  multi?: boolean;
+}
+
 export function SelectCell({
+  multi,
   propId,
   config,
   data: options,
@@ -26,15 +31,20 @@ export function SelectCell({
   layout,
   tooltip,
   onChange,
-}: CellProps<string[], SelectConfig>) {
+  onConfigChange,
+}: SelectCellProps) {
   const [open, setOpen] = useState(false);
   const { ref, rect } = useRect<HTMLDivElement>();
-  const menu = useSelectMenu({ propId, options, onChange });
+  const menu = useSelectMenu({
+    multi,
+    propId,
+    config,
+    options,
+    onChange,
+    onConfigChange,
+  });
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
-    if (!isOpen) {
-      menu.commitChange();
-    }
   };
 
   if (layout !== "table" && layout !== "row-view" && options.length === 0)

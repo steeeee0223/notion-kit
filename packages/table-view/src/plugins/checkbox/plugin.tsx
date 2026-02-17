@@ -24,6 +24,5 @@ export function checkbox(): CheckboxPlugin {
     compare: createCompareFn(compareBooleans),
     renderCell: (props) => <CheckboxCell {...props} />,
     renderGroupingValue: (props) => <CheckboxGroupingValue {...props} />,
-    reducer: (v) => v,
   };
 }

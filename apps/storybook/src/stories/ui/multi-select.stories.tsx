@@ -1,6 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
-import { MultiSelect, type MultiSelectOption } from "@notion-kit/shadcn";
+import {
+  Badge,
+  MenuItem,
+  MultiSelect,
+  type MultiSelectOption,
+} from "@notion-kit/shadcn";
 
 const frameworks: MultiSelectOption[] = [
   {
@@ -80,7 +85,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Example: Story = {
+export const Default: Story = {
   args: {
     commandProps: {
       label: "Select frameworks",
@@ -91,5 +96,56 @@ export const Example: Story = {
     placeholder: "Select frameworks",
     hidePlaceholderWhenSelected: true,
     emptyIndicator: <p className="text-center text-sm">No results found</p>,
+  },
+};
+
+const selectOptions: MultiSelectOption[] = [
+  {
+    value: "Option A",
+    label: "Option A",
+    color: "rgba(227,226,224,0.5)",
+    group: "Group",
+  },
+  {
+    value: "Option B",
+    label: "Option B",
+    color: "rgba(255,226,221,0.5)",
+    group: "Group",
+  },
+  {
+    value: "Option C",
+    label: "Option C",
+    color: "rgba(253,236,200,0.5)",
+    group: "Group",
+  },
+  {
+    value: "Option D",
+    label: "Option D",
+    color: "rgba(219,237,219,0.5)",
+    group: "Group",
+  },
+];
+
+export const Inline: Story = {
+  args: {
+    variant: "inline",
+    className: "w-70",
+    value: [],
+    groupBy: "group",
+    defaultOptions: selectOptions,
+    placeholder: "Search for an option...",
+    hidePlaceholderWhenSelected: true,
+    hideClearAllButton: true,
+    selectFirstItem: false,
+    creatable: true,
+    renderOption: ({ option }) => (
+      <MenuItem
+        Body={
+          <Badge variant="tag" style={{ backgroundColor: option.color }}>
+            {option.label}
+          </Badge>
+        }
+      />
+    ),
   },
 };

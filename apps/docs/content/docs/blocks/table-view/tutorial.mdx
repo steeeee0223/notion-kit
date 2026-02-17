@@ -51,7 +51,6 @@ export const tagPlugin: TagPlugin = {
   compare: createCompareFn<TagPlugin>((a, b) =>
     (a[0] ?? "").localeCompare(b[0] ?? ""),
   ),
-  reducer: (v) => v, // This is deprecated
   renderCell: (props) => <TagCell {...props} />,
   renderConfigMenu: (props) => <TagConfigMenu {...props} />,
 };

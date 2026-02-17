@@ -16,12 +16,7 @@ import {
   getUniqueName,
   type Entity,
 } from "../lib/utils";
-import type {
-  CellPlugin,
-  InferActions,
-  InferConfig,
-  InferPlugin,
-} from "../plugins";
+import type { CellPlugin, InferConfig, InferPlugin } from "../plugins";
 import { DEFAULT_PLUGINS } from "../plugins";
 import { createDragEndUpdater, createIdsUpdater } from "./utils";
 
@@ -67,13 +62,6 @@ export interface ColumnsInfoTableApi {
   setColumnType: <TPlugins extends CellPlugin[]>(
     colId: string,
     type: PluginType<TPlugins>,
-  ) => void;
-  /**
-   * @deprecated
-   */
-  setColumnTypeConfig: <TPlugin extends CellPlugin>(
-    colId: string,
-    actions: InferActions<TPlugin>,
   ) => void;
   // Column name checkers
   checkIsUniqueColumnName: (name: string) => boolean;
@@ -291,19 +279,6 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
           };
         }),
       );
-    };
-    table.setColumnTypeConfig = (colId, action) => {
-      const plugin = table.getColumnPlugin(colId);
-      const { properties, data } = plugin.reducer(
-        {
-          properties: table.getState().columnsInfo,
-          data: table.getCellValues(),
-        },
-        action,
-      );
-      table._setColumnInfo(colId, properties[colId]!);
-      // Update all cells
-      table.setTableData(data);
     };
     /** Column name */
     table.checkIsUniqueColumnName = (name) => {
