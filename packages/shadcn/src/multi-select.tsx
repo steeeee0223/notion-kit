@@ -73,6 +73,7 @@ function isOptionsExist(
 }
 
 interface MultiSelectProps {
+  variant?: "floating" | "inline";
   value?: MultiSelectOption[];
   defaultOptions?: MultiSelectOption[];
   /** @prop Manually controlled options */
@@ -109,6 +110,8 @@ interface MultiSelectProps {
   selectFirstItem?: boolean;
   /** @prop Allow user to create option when there is no option matched. */
   creatable?: boolean;
+  /** @prop Keep selected options visible in the dropdown list. Clicking toggles selection. */
+  keepSelectedInList?: boolean;
   /** @prop Props of `Command` */
   commandProps?: React.ComponentPropsWithoutRef<typeof Command>;
   /** @prop Props of `CommandInput` */
@@ -116,10 +119,14 @@ interface MultiSelectProps {
     React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>,
     "value" | "placeholder" | "disabled" | "className"
   >;
-  renderOption?: ({ option }: { option: MultiSelectOption }) => React.ReactNode;
+  renderOption?: (ctx: {
+    option: MultiSelectOption;
+    isSearching: boolean;
+  }) => React.ReactNode;
 }
 
 function MultiSelect({
+  variant = "floating",
   value = [],
   onChange,
   placeholder,
@@ -139,11 +146,13 @@ function MultiSelect({
   inputProps,
   hideClearAllButton = false,
   renderOption,
+  keepSelectedInList = false,
 }: MultiSelectProps) {
+  const isInline = variant === "inline";
   const inputRef = React.useRef<HTMLInputElement>(null);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(isInline);
   const [onScrollbar, setOnScrollbar] = React.useState(false);
 
   const [inputValue, setInputValue] = React.useState("");
@@ -155,6 +164,7 @@ function MultiSelect({
   /* outside click to close */
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (isInline) return;
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node) &&
@@ -174,7 +184,7 @@ function MultiSelect({
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("touchend", handleClickOutside);
     };
-  }, [open]);
+  }, [isInline, open]);
 
   /* controlled value */
   // TODO fix lint error
@@ -231,8 +241,11 @@ function MultiSelect({
     !selected.find((s) => s.value === inputValue);
 
   const selectables = React.useMemo(
-    () => removePickedOption(groupOptions, selected),
-    [groupOptions, selected],
+    () =>
+      keepSelectedInList
+        ? groupOptions
+        : removePickedOption(groupOptions, selected),
+    [groupOptions, selected, keepSelectedInList],
   );
 
   /** Avoid Creatable Selector freezing or lagging when paste a long string. */
@@ -264,7 +277,10 @@ function MultiSelect({
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         onKeyDown={() => {}}
         className={cn(
-          "relative min-h-[34px] rounded-md border border-border bg-input text-sm transition-[color,box-shadow] outline-none focus-within:shadow-notion",
+          "relative min-h-[34px] border-border bg-input text-sm transition-[color,box-shadow] outline-none",
+          isInline
+            ? "rounded-none border-b p-1"
+            : "rounded-md border focus-within:shadow-notion",
           selected.length > 0 && "cursor-text py-1 pl-2",
           !disabled && "cursor-text",
           !hideClearAllButton && "pe-9",
@@ -323,13 +339,11 @@ function MultiSelect({
               inputProps?.onValueChange?.(value);
             }}
             onBlur={(event) => {
-              if (!onScrollbar) {
-                setOpen(false);
-              }
+              if (!onScrollbar && !isInline) setOpen(false);
               inputProps?.onBlur?.(event);
             }}
             onFocus={(event) => {
-              setOpen(true);
+              if (!isInline) setOpen(true);
               inputProps?.onFocus?.(event);
             }}
             placeholder={
@@ -363,11 +377,18 @@ function MultiSelect({
           </div>
         </div>
       </div>
-      <div className="relative">
+      <div className={cn(!isInline && "relative")}>
         <div
           className={cn(
-            contentVariants({ variant: "default", openAnimation: true }),
-            "absolute top-2 z-10 w-full overflow-hidden rounded-md bg-modal",
+            isInline
+              ? "w-full overflow-hidden"
+              : cn(
+                  contentVariants({
+                    variant: "default",
+                    openAnimation: true,
+                  }),
+                  "absolute top-2 z-10 w-full overflow-hidden rounded-md bg-modal",
+                ),
             !open && "hidden",
             classNames?.content,
           )}
@@ -404,8 +425,14 @@ function MultiSelect({
                           e.stopPropagation();
                         }}
                         onSelect={() => handleSelect(option)}
+                        asChild={!!renderOption}
                       >
-                        {renderOption ? renderOption({ option }) : option.label}
+                        {renderOption
+                          ? renderOption({
+                              option,
+                              isSearching: inputValue.length > 0,
+                            })
+                          : option.label}
                       </CommandItem>
                     ))}
                   </>
