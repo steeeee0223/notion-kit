@@ -4,8 +4,6 @@ import {
   Badge,
   MenuItem,
   MultiSelect,
-  TooltipPreset,
-  TooltipProvider,
   type MultiSelectOption,
 } from "@notion-kit/shadcn";
 
