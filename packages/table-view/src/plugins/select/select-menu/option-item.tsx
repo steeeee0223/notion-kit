@@ -100,6 +100,7 @@ export function OptionItem({
                 variant="hint"
                 className="size-5"
                 onClick={(e) => e.stopPropagation()}
+                aria-label="More"
               >
                 <Icon.Dots className="size-3.5 fill-current" />
               </Button>

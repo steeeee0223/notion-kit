@@ -74,7 +74,11 @@ export function SelectConfigMenu({
         <DropdownMenuGroup>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <MenuItem Icon={<Icon.ArrowUpDown />} Body="Sort">
+              <MenuItem
+                Icon={<Icon.ArrowUpDown />}
+                Body="Sort"
+                aria-label="Sort options"
+              >
                 <MenuItemSelect>
                   {sortOptions.find((o) => o.value === config.sort)?.label}
                 </MenuItemSelect>
@@ -104,10 +108,15 @@ export function SelectConfigMenu({
           <DropdownMenuLabel title="Options" className="relative">
             <Button
               variant="hint"
-              className="absolute top-0 right-2 size-5 [&_svg]:size-3.5"
+              className="absolute top-0 right-2 size-5"
               onClick={toggleInput}
+              aria-label={showInput ? "Close" : "Add"}
             >
-              {!showInput ? <Icon.Plus /> : <Icon.Close />}
+              {!showInput ? (
+                <Icon.Plus className="size-3.5" />
+              ) : (
+                <Icon.Close className="size-3.5" />
+              )}
             </Button>
           </DropdownMenuLabel>
           {showInput && (
