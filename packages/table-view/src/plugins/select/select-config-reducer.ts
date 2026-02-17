@@ -1,19 +1,16 @@
-import { functionalUpdate, type Updater } from "@tanstack/react-table";
-import type { Table } from "@tanstack/react-table";
+import {
+  functionalUpdate,
+  type Table,
+  type Updater,
+} from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { Color } from "@notion-kit/utils";
 
-import type { ColumnInfo, Row } from "../../lib/types";
-import type {
-  MultiSelectPlugin,
-  SelectCell,
-  SelectConfig,
-  SelectPlugin,
-  SelectSort,
-} from "./types";
+import type { Row } from "../../lib/types";
+import type { SelectCell, SelectConfig, SelectSort } from "./types";
 
-type SelectConfigActionPayload =
+export type SelectConfigActionPayload =
   | { action: "add:option"; payload: { name: string; color: Color } }
   | {
       action: "update:option";
@@ -35,16 +32,24 @@ interface SelectConfigReducerResult {
     | { type: "delete"; payload: string };
 }
 
-function selectConfigReducer(
+export function selectConfigReducer(
   v: SelectConfig,
   a: SelectConfigActionPayload,
 ): SelectConfigReducerResult {
   switch (a.action) {
     case "add:option": {
-      const options = { ...v.options };
-      options.names.push(a.payload.name);
-      options.items[a.payload.name] = { id: v4(), ...a.payload };
-      return { config: { ...v, options } };
+      return {
+        config: {
+          ...v,
+          options: {
+            names: [...v.options.names, a.payload.name],
+            items: {
+              ...v.options.items,
+              [a.payload.name]: { id: v4(), ...a.payload },
+            },
+          },
+        },
+      };
     }
     case "update:option": {
       const { originalName, name, ...payload } = a.payload;
@@ -94,59 +99,76 @@ function selectConfigReducer(
 }
 
 /**
- * Dispatch a select config action directly via table APIs.
+ * Propagate a select config event (rename/delete) to cell data.
  *
- * 1. Runs `selectConfigReducer` to compute new config
- * 2. Updates column info via `table._setColumnInfo`
- * 3. Propagates rename/delete events to cell data via `table.setTableData`
+ * Call this after `selectConfigReducer` returns a `nextEvent` to update
+ * all rows that reference the renamed/deleted option.
  */
-export function dispatchSelectConfig(
+export function propagateSelectEvent(
   table: Table<Row>,
   propId: string,
-  action: SelectConfigActionPayload,
+  type: "select" | "multi-select",
+  event: NonNullable<SelectConfigReducerResult["nextEvent"]>,
 ): void {
-  const info = table.getColumnInfo(propId) as ColumnInfo<
-    SelectPlugin | MultiSelectPlugin
-  >;
-  const { config, nextEvent } = selectConfigReducer(info.config, action);
-
-  // 1. Update column config
-  table._setColumnInfo(propId, { ...info, config });
-
-  // 2. Propagate rename/delete to cell data
-  if (!nextEvent) return;
-
-  switch (nextEvent.type) {
+  switch (event.type) {
     case "update:name": {
-      const { originalName, name } = nextEvent.payload;
+      const { originalName, name } = event.payload;
       table.setTableData((prev) =>
         prev.map((row) => {
-          const cell = { ...row.properties[propId] } as SelectCell;
-          if (info.type === "multi-select") {
-            cell.value = (cell.value as string[]).map((option) =>
-              option === originalName ? name : option,
-            );
-          } else if (cell.value === originalName) {
-            cell.value = name;
+          const cell = row.properties[propId] as SelectCell;
+          if (type === "multi-select") {
+            const arr = cell.value as string[];
+            if (!arr.includes(originalName)) return row;
+            return {
+              ...row,
+              properties: {
+                ...row.properties,
+                [propId]: {
+                  ...cell,
+                  value: arr.map((o) => (o === originalName ? name : o)),
+                },
+              },
+            };
           }
-          return { ...row, properties: { ...row.properties, [propId]: cell } };
+          if (cell.value !== originalName) return row;
+          return {
+            ...row,
+            properties: {
+              ...row.properties,
+              [propId]: { ...cell, value: name },
+            },
+          };
         }),
       );
       break;
     }
     case "delete": {
-      const name = nextEvent.payload;
+      const name = event.payload;
       table.setTableData((prev) =>
         prev.map((row) => {
-          const cell = { ...row.properties[propId] } as SelectCell;
-          if (info.type === "multi-select") {
-            cell.value = (cell.value as string[]).filter(
-              (option) => option !== name,
-            );
-          } else if (cell.value === name) {
-            cell.value = null;
+          const cell = row.properties[propId] as SelectCell;
+          if (type === "multi-select") {
+            const arr = cell.value as string[];
+            if (!arr.includes(name)) return row;
+            return {
+              ...row,
+              properties: {
+                ...row.properties,
+                [propId]: {
+                  ...cell,
+                  value: arr.filter((o) => o !== name),
+                },
+              },
+            };
           }
-          return { ...row, properties: { ...row.properties, [propId]: cell } };
+          if (cell.value !== name) return row;
+          return {
+            ...row,
+            properties: {
+              ...row.properties,
+              [propId]: { ...cell, value: null },
+            },
+          };
         }),
       );
       break;

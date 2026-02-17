@@ -8,39 +8,63 @@ import { getRandomColor, type Color } from "@notion-kit/utils";
 
 import { useTableViewCtx } from "../../../table-contexts";
 import type { ConfigMenuProps } from "../../types";
-import { dispatchSelectConfig } from "../select-config-reducer";
+import {
+  propagateSelectEvent,
+  selectConfigReducer,
+  type SelectConfigActionPayload,
+} from "../select-config-reducer";
 import type { SelectConfig, SelectSort } from "../types";
 
+interface UseSelectConfigMenuOptions extends ConfigMenuProps<SelectConfig> {
+  multi?: boolean;
+}
+
 export function useSelectConfigMenu({
+  multi,
   propId,
   config,
-}: ConfigMenuProps<SelectConfig>) {
+  onChange,
+}: UseSelectConfigMenuOptions) {
   const { table } = useTableViewCtx();
 
+  /** Dispatch a config action, propagating rename/delete to cell data */
+  const dispatch = useCallback(
+    (action: SelectConfigActionPayload) => {
+      const { config: newConfig, nextEvent } = selectConfigReducer(
+        config,
+        action,
+      );
+      onChange(newConfig);
+      if (nextEvent)
+        propagateSelectEvent(
+          table,
+          propId,
+          multi ? "multi-select" : "select",
+          nextEvent,
+        );
+    },
+    [config, onChange, table, propId, multi],
+  );
+
   const updateSort = useCallback(
-    (sort: SelectSort) =>
-      dispatchSelectConfig(table, propId, {
-        action: "update:sort",
-        payload: sort,
-      }),
-    [table, propId],
+    (sort: SelectSort) => dispatch({ action: "update:sort", payload: sort }),
+    [dispatch],
   );
 
   const addOption = useCallback(
-    (name: string) => {
-      dispatchSelectConfig(table, propId, {
+    (name: string) =>
+      dispatch({
         action: "add:option",
         payload: { name, color: getRandomColor() },
-      });
-    },
-    [table, propId],
+      }),
+    [dispatch],
   );
 
   const reorderOptions = useCallback(
     (e: DragEndEvent) => {
       const { active, over } = e;
       if (!over || active.id === over.id) return;
-      dispatchSelectConfig(table, propId, {
+      dispatch({
         action: "update:sort:manual",
         updater: (prev) => {
           const oldIndex = prev.indexOf(active.id as string);
@@ -49,7 +73,7 @@ export function useSelectConfigMenu({
         },
       });
     },
-    [table, propId],
+    [dispatch],
   );
 
   const validateOptionName = useCallback(
@@ -69,20 +93,20 @@ export function useSelectConfigMenu({
         color?: Color;
       },
     ) =>
-      dispatchSelectConfig(table, propId, {
+      dispatch({
         action: "update:option",
         payload: { originalName, ...data },
       }),
-    [table, propId],
+    [dispatch],
   );
 
   const deleteOption = useCallback(
     (name: string) =>
-      dispatchSelectConfig(table, propId, {
+      dispatch({
         action: "delete:option",
         payload: name,
       }),
-    [table, propId],
+    [dispatch],
   );
 
   return {

@@ -142,8 +142,8 @@ export function multiSelect(): MultiSelectPlugin {
       return compareStrings(a[0]!, b[0]!);
     }),
     transferConfig: toSelectConfig,
-    renderCell: (props) => <SelectCell {...props} />,
-    renderConfigMenu: (props) => <SelectConfigMenu {...props} />,
+    renderCell: (props) => <SelectCell multi {...props} />,
+    renderConfigMenu: (props) => <SelectConfigMenu multi {...props} />,
     renderGroupingValue: (props) => <SelectGroupingValue {...props} />,
   };
 }

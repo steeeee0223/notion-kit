@@ -3,31 +3,53 @@
 import { useCallback, useMemo, useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
+import type { OnChangeFn } from "@tanstack/react-table";
 
 import { useFilter } from "@notion-kit/hooks";
 import { getRandomColor, type Color } from "@notion-kit/utils";
 
-import type { ColumnInfo } from "../../../lib/types";
 import { useTableViewCtx } from "../../../table-contexts";
-import { dispatchSelectConfig } from "../select-config-reducer";
-import type { MultiSelectPlugin, SelectPlugin } from "../types";
+import {
+  propagateSelectEvent,
+  selectConfigReducer,
+  type SelectConfigActionPayload,
+} from "../select-config-reducer";
+import type { SelectConfig } from "../types";
 
 interface UseSelectMenuOptions {
+  multi?: boolean;
   propId: string;
+  config: SelectConfig;
   options: string[];
   onChange: (options: string[]) => void;
+  onConfigChange?: OnChangeFn<SelectConfig>;
 }
 
 export function useSelectMenu({
+  multi,
   propId,
+  config,
   options,
   onChange,
+  onConfigChange,
 }: UseSelectMenuOptions) {
   const { table } = useTableViewCtx();
 
-  const { type, config } = table.getColumnInfo(propId) as ColumnInfo<
-    SelectPlugin | MultiSelectPlugin
-  >;
+  /** Dispatch a config action via onConfigChange, propagating rename/delete */
+  const dispatchConfig = useCallback(
+    (action: SelectConfigActionPayload) => {
+      const { config: newConfig, nextEvent } = selectConfigReducer(
+        config,
+        action,
+      );
+      onConfigChange?.(newConfig);
+      if (nextEvent) {
+        const type = multi ? "multi-select" : "select";
+        propagateSelectEvent(table, propId, type, nextEvent);
+      }
+    },
+    [config, onConfigChange, table, propId, multi],
+  );
 
   const [currentOptions, setCurrentOptions] = useState(
     new Map<string, Color | undefined>(
@@ -46,22 +68,22 @@ export function useSelectMenu({
   const addOption = useCallback(() => {
     if (!optionSuggestion) return;
     updateSearch("");
-    dispatchSelectConfig(table, propId, {
+    dispatchConfig({
       action: "add:option",
       payload: optionSuggestion,
     });
     setCurrentOptions((prev) => {
-      const options = type === "multi-select" ? new Map(prev) : new Map();
+      const options = multi ? new Map(prev) : new Map();
       return options.set(optionSuggestion.name, optionSuggestion.color);
     });
     setOptionSuggestion(undefined);
-  }, [optionSuggestion, propId, table, type, updateSearch]);
+  }, [optionSuggestion, dispatchConfig, multi, updateSearch]);
 
   const reorderOptions = useCallback(
     (e: DragEndEvent) => {
       const { active, over } = e;
       if (!over || active.id === over.id) return;
-      dispatchSelectConfig(table, propId, {
+      dispatchConfig({
         action: "update:sort:manual",
         updater: (prev: string[]) => {
           const oldIndex = prev.indexOf(active.id as string);
@@ -70,7 +92,7 @@ export function useSelectMenu({
         },
       });
     },
-    [table, propId],
+    [dispatchConfig],
   );
 
   const validateOptionName = useCallback(
@@ -92,7 +114,7 @@ export function useSelectMenu({
         color?: Color;
       },
     ) => {
-      dispatchSelectConfig(table, propId, {
+      dispatchConfig({
         action: "update:option",
         payload: { originalName, ...data },
       });
@@ -108,12 +130,12 @@ export function useSelectMenu({
         return options;
       });
     },
-    [table, propId],
+    [dispatchConfig],
   );
 
   const deleteOption = useCallback(
     (name: string) => {
-      dispatchSelectConfig(table, propId, {
+      dispatchConfig({
         action: "delete:option",
         payload: name,
       });
@@ -124,7 +146,7 @@ export function useSelectMenu({
       });
       setOptionSuggestion(undefined);
     },
-    [table, propId],
+    [dispatchConfig],
   );
 
   /** Search & Filter */
@@ -154,12 +176,12 @@ export function useSelectMenu({
       setCurrentOptions(
         new Map(
           tags
-            .slice(type === "multi-select" ? 0 : -1)
+            .slice(multi ? 0 : -1)
             .map((tag) => [tag, config.options.items[tag]?.color]),
         ),
       );
     },
-    [type, config.options.items, addOption],
+    [multi, config.options.items, addOption],
   );
 
   const selectTag = useCallback(
@@ -168,11 +190,11 @@ export function useSelectMenu({
       setOptionSuggestion(undefined);
       setCurrentOptions((prev) => {
         if (prev.has(value)) return prev;
-        const options = type === "multi-select" ? new Map(prev) : new Map();
+        const options = multi ? new Map(prev) : new Map();
         return options.set(value, config.options.items[value]?.color);
       });
     },
-    [config.options.items, type, updateSearch],
+    [config.options.items, multi, updateSearch],
   );
 
   const tags = useMemo(

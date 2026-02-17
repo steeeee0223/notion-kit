@@ -70,7 +70,6 @@ describe("SelectConfigMenu", () => {
   // 3. Flows 15-15b: Nested DropdownMenu cannot open from within SubContent.
   //
   // These flows work correctly in the browser. Verify via Storybook or E2E tests.
-
   it.skip("Flow 9: add option via '+' button — SubContent dismisses on Button click", async () => {
     const user = userEvent.setup();
     await openSelectConfigMenu(user);
@@ -169,12 +168,12 @@ describe("SelectConfigMenu", () => {
 
     const menuItems = screen.getAllByRole("menuitem");
     const optionTexts = menuItems
-      .map((el) => el.textContent?.trim())
+      .map((el) => el.textContent.trim())
       .filter(
         (t) =>
-          t?.includes("Option A") ||
-          t?.includes("Option B") ||
-          t?.includes("Option C"),
+          t.includes("Option A") ||
+          t.includes("Option B") ||
+          t.includes("Option C"),
       );
     expect(optionTexts[0]).toContain("Option A");
     expect(optionTexts[1]).toContain("Option B");

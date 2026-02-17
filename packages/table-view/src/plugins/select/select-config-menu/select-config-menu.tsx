@@ -32,10 +32,15 @@ const sortOptions: { label: string; value: SelectSort }[] = [
   { label: "Reverse alphabetical", value: "reverse-alphabetical" },
 ];
 
+interface SelectConfigMenuProps extends ConfigMenuProps<SelectConfig> {
+  multi?: boolean;
+}
+
 export function SelectConfigMenu({
+  multi,
   config,
   ...props
-}: ConfigMenuProps<SelectConfig>) {
+}: SelectConfigMenuProps) {
   const {
     addOption,
     reorderOptions,
@@ -43,7 +48,7 @@ export function SelectConfigMenu({
     updateOption,
     updateSort,
     deleteOption,
-  } = useSelectConfigMenu({ config, ...props });
+  } = useSelectConfigMenu({ multi, config, ...props });
 
   const [showInput, setShowInput] = useState(false);
   const nameField = useInputField({
