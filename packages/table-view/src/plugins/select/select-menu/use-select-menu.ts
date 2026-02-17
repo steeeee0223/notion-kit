@@ -51,11 +51,6 @@ export function useSelectMenu({
     [config, onConfigChange, table, propId, multi],
   );
 
-  const [currentOptions, setCurrentOptions] = useState(
-    new Map<string, Color | undefined>(
-      options.map((option) => [option, config.options.items[option]?.color]),
-    ),
-  );
   const [optionSuggestion, setOptionSuggestion] = useState<{
     name: string;
     color: Color;
@@ -64,6 +59,7 @@ export function useSelectMenu({
     config.options.names,
     (option, v) => option.includes(v),
   );
+
   /** Config Actions */
   const addOption = useCallback(() => {
     if (!optionSuggestion) return;
@@ -72,12 +68,18 @@ export function useSelectMenu({
       action: "add:option",
       payload: optionSuggestion,
     });
-    setCurrentOptions((prev) => {
-      const options = multi ? new Map(prev) : new Map();
-      return options.set(optionSuggestion.name, optionSuggestion.color);
-    });
+    onChange(
+      multi ? [...options, optionSuggestion.name] : [optionSuggestion.name],
+    );
     setOptionSuggestion(undefined);
-  }, [optionSuggestion, dispatchConfig, multi, updateSearch]);
+  }, [
+    optionSuggestion,
+    dispatchConfig,
+    multi,
+    options,
+    onChange,
+    updateSearch,
+  ]);
 
   const reorderOptions = useCallback(
     (e: DragEndEvent) => {
@@ -118,19 +120,11 @@ export function useSelectMenu({
         action: "update:option",
         payload: { originalName, ...data },
       });
-      setCurrentOptions((prev) => {
-        if (!prev.has(originalName)) return prev;
-        const options = new Map(prev);
-        if (data.name) {
-          options.set(data.name, options.get(originalName));
-          options.delete(originalName);
-        } else if (data.color) {
-          options.set(originalName, data.color);
-        }
-        return options;
-      });
+      if (data.name && options.includes(originalName)) {
+        onChange(options.map((n) => (n === originalName ? data.name! : n)));
+      }
     },
-    [dispatchConfig],
+    [dispatchConfig, options, onChange],
   );
 
   const deleteOption = useCallback(
@@ -139,14 +133,12 @@ export function useSelectMenu({
         action: "delete:option",
         payload: name,
       });
-      setCurrentOptions((prev) => {
-        const options = new Map(prev);
-        options.delete(name);
-        return options;
-      });
+      if (options.includes(name)) {
+        onChange(options.filter((n) => n !== name));
+      }
       setOptionSuggestion(undefined);
     },
-    [dispatchConfig],
+    [dispatchConfig, options, onChange],
   );
 
   /** Search & Filter */
@@ -173,42 +165,29 @@ export function useSelectMenu({
         return;
       }
       setOptionSuggestion(undefined);
-      setCurrentOptions(
-        new Map(
-          tags
-            .slice(multi ? 0 : -1)
-            .map((tag) => [tag, config.options.items[tag]?.color]),
-        ),
-      );
+      onChange(tags.slice(multi ? 0 : -1));
     },
-    [multi, config.options.items, addOption],
+    [multi, config.options.items, addOption, onChange],
   );
 
   const selectTag = useCallback(
     (value: string) => {
       updateSearch("");
       setOptionSuggestion(undefined);
-      setCurrentOptions((prev) => {
-        if (prev.has(value)) return prev;
-        const options = multi ? new Map(prev) : new Map();
-        return options.set(value, config.options.items[value]?.color);
-      });
+      if (options.includes(value)) return;
+      onChange(multi ? [...options, value] : [value]);
     },
-    [config.options.items, multi, updateSearch],
+    [options, multi, onChange, updateSearch],
   );
 
   const tags = useMemo(
     () =>
-      Array.from(currentOptions.entries()).map(([value, color]) => ({
-        value,
-        color,
+      options.map((name) => ({
+        value: name,
+        color: config.options.items[name]?.color,
       })),
-    [currentOptions],
+    [options, config.options.items],
   );
-
-  const commitChange = useCallback(() => {
-    onChange(Array.from(currentOptions.keys()));
-  }, [onChange, currentOptions]);
 
   return {
     config,
@@ -224,7 +203,6 @@ export function useSelectMenu({
     validateOptionName,
     updateOption,
     deleteOption,
-    commitChange,
   };
 }
 

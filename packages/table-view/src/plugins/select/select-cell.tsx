@@ -45,9 +45,6 @@ export function SelectCell({
   });
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
-    if (!isOpen) {
-      menu.commitChange();
-    }
   };
 
   if (layout !== "table" && layout !== "row-view" && options.length === 0)

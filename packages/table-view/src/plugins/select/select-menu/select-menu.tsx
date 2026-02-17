@@ -26,7 +26,6 @@ export function SelectMenu({ menu }: SelectMenuProps) {
     validateOptionName,
     updateOption,
     deleteOption,
-    commitChange,
   } = menu;
 
   return (
@@ -57,10 +56,10 @@ export function SelectMenu({ menu }: SelectMenuProps) {
                 <OptionItem
                   key={option.name}
                   option={option}
+                  draggable={search === ""}
                   onSelect={selectTag}
                   onUpdate={(data) => updateOption(name, data)}
                   onDelete={() => deleteOption(name)}
-                  onMenuClose={commitChange}
                   validateName={validateOptionName}
                 />
               );

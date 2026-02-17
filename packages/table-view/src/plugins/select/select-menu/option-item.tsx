@@ -21,6 +21,7 @@ import type { OptionConfig } from "../types";
 
 interface OptionItemProps {
   option: OptionConfig;
+  draggable?: boolean;
   onSelect: (value: string) => void;
   onUpdate: (data: {
     name?: string;
@@ -28,16 +29,15 @@ interface OptionItemProps {
     color?: Color;
   }) => void;
   onDelete: () => void;
-  onMenuClose: () => void;
   validateName: (name: string) => boolean;
 }
 
 export function OptionItem({
   option,
+  draggable,
   onSelect,
   onUpdate,
   onDelete,
-  onMenuClose,
   validateName,
 }: OptionItemProps) {
   /** DND */
@@ -76,24 +76,20 @@ export function OptionItem({
         style={style}
         onClick={() => onSelect(option.name)}
         Icon={
-          <div
-            key="drag-handle"
-            className="flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-default/45"
-            {...attributes}
-            {...listeners}
-          >
-            <Icon.DragHandle className="size-3" />
-          </div>
+          draggable ? (
+            <div
+              className="flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-icon"
+              {...attributes}
+              {...listeners}
+            >
+              <Icon.DragHandle className="size-3" />
+            </div>
+          ) : null
         }
         Body={<OptionTag {...option} />}
       >
         <MenuItemAction className="flex items-center text-muted">
-          <Popover
-            onOpenChange={(open) => {
-              if (open) return;
-              onMenuClose();
-            }}
-          >
+          <Popover>
             <PopoverTrigger asChild>
               <Button
                 tabIndex={0}
@@ -111,7 +107,6 @@ export function OptionItem({
               className="w-[220px]"
               collisionPadding={12}
               onClick={(e) => e.stopPropagation()}
-              onCloseAutoFocus={() => onMenuClose()}
             >
               <SelectOptionMenu
                 option={option}
