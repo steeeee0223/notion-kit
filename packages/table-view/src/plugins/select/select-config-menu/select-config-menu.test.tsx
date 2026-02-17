@@ -58,11 +58,20 @@ describe("SelectConfigMenu", () => {
     expect(remainingItems).not.toBeInTheDocument();
   });
 
-  // --- Tests skipped due to jsdom limitations ---
-  // These tests involve Popover or nested DropdownMenu components
-  // inside DropdownMenuSubContent, which don't fully render in jsdom.
-  // They should be verified in Storybook or integration tests instead.
-  it.skip("Flow 9: should add an option via config '+' button — Popover doesn't re-render in jsdom", async () => {
+  // --- Tests skipped due to Radix DropdownMenuSubContent behavior in jsdom ---
+  //
+  // Root cause: In jsdom, clicking non-DropdownMenu interactive elements (Button,
+  // PopoverTrigger, nested DropdownMenuTrigger) inside DropdownMenuSubContent causes
+  // the SubContent to dismiss/unmount. This prevents testing:
+  //
+  // 1. Flows 9-10: Clicking the "Add" Button unmounts the SubContent before the
+  //    input can render.
+  // 2. Flows 11-13: Popover portals cannot open from within SubContent.
+  // 3. Flows 15-15b: Nested DropdownMenu cannot open from within SubContent.
+  //
+  // These flows work correctly in the browser. Verify via Storybook or E2E tests.
+
+  it.skip("Flow 9: add option via '+' button — SubContent dismisses on Button click", async () => {
     const user = userEvent.setup();
     await openSelectConfigMenu(user);
 
@@ -76,7 +85,7 @@ describe("SelectConfigMenu", () => {
     expect(screen.getByText("New Status")).toBeInTheDocument();
   });
 
-  it.skip("Flow 10: should show error when adding duplicate option name — Popover doesn't re-render in jsdom", async () => {
+  it.skip("Flow 10: duplicate option error — SubContent dismisses on Button click", async () => {
     const user = userEvent.setup();
     await openSelectConfigMenu(user);
 
@@ -88,7 +97,7 @@ describe("SelectConfigMenu", () => {
     expect(screen.getByText("Option already exists.")).toBeInTheDocument();
   });
 
-  it.skip("Flow 11: option edit popover — Popover inside DropdownMenuSubContent doesn't render in jsdom", async () => {
+  it.skip("Flow 11: option edit popover — Popover cannot portal from SubContent", async () => {
     const user = userEvent.setup();
     await openSelectConfigMenu(user);
 
@@ -100,7 +109,7 @@ describe("SelectConfigMenu", () => {
     });
   });
 
-  it.skip("Flow 12: should edit option name — Popover inside DropdownMenuSubContent doesn't render in jsdom", async () => {
+  it.skip("Flow 12: edit option name — Popover cannot portal from SubContent", async () => {
     const user = userEvent.setup();
     await openSelectConfigMenu(user);
 
@@ -119,7 +128,7 @@ describe("SelectConfigMenu", () => {
     });
   });
 
-  it.skip("Flow 13: should change option color — Popover inside DropdownMenuSubContent doesn't render in jsdom", async () => {
+  it.skip("Flow 13: change option color — Popover cannot portal from SubContent", async () => {
     const user = userEvent.setup();
     await openSelectConfigMenu(user);
 
@@ -134,7 +143,7 @@ describe("SelectConfigMenu", () => {
     await user.click(redColor);
   });
 
-  it.skip("Flow 15: should open sort dropdown — nested DropdownMenuContent doesn't render in jsdom", async () => {
+  it.skip("Flow 15: sort dropdown — nested DropdownMenu cannot open from SubContent", async () => {
     const user = userEvent.setup();
     await openSelectConfigMenu(user);
 
@@ -146,7 +155,7 @@ describe("SelectConfigMenu", () => {
     ).toBeInTheDocument();
   });
 
-  it.skip("Flow 15b: should change sort to alphabetical — nested DropdownMenuContent doesn't render in jsdom", async () => {
+  it.skip("Flow 15b: sort alphabetical — nested DropdownMenu cannot open from SubContent", async () => {
     const user = userEvent.setup();
     await openSelectConfigMenu(user);
 

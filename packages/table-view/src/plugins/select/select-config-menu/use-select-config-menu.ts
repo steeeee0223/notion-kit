@@ -8,7 +8,8 @@ import { getRandomColor, type Color } from "@notion-kit/utils";
 
 import { useTableViewCtx } from "../../../table-contexts";
 import type { ConfigMenuProps } from "../../types";
-import type { SelectConfig, SelectPlugin, SelectSort } from "../types";
+import { dispatchSelectConfig } from "../select-config-reducer";
+import type { SelectConfig, SelectSort } from "../types";
 
 export function useSelectConfigMenu({
   propId,
@@ -18,8 +19,7 @@ export function useSelectConfigMenu({
 
   const updateSort = useCallback(
     (sort: SelectSort) =>
-      table.setColumnTypeConfig<SelectPlugin>(propId, {
-        id: propId,
+      dispatchSelectConfig(table, propId, {
         action: "update:sort",
         payload: sort,
       }),
@@ -28,8 +28,7 @@ export function useSelectConfigMenu({
 
   const addOption = useCallback(
     (name: string) => {
-      table.setColumnTypeConfig<SelectPlugin>(propId, {
-        id: propId,
+      dispatchSelectConfig(table, propId, {
         action: "add:option",
         payload: { name, color: getRandomColor() },
       });
@@ -41,8 +40,7 @@ export function useSelectConfigMenu({
     (e: DragEndEvent) => {
       const { active, over } = e;
       if (!over || active.id === over.id) return;
-      table.setColumnTypeConfig<SelectPlugin>(propId, {
-        id: propId,
+      dispatchSelectConfig(table, propId, {
         action: "update:sort:manual",
         updater: (prev) => {
           const oldIndex = prev.indexOf(active.id as string);
@@ -71,8 +69,7 @@ export function useSelectConfigMenu({
         color?: Color;
       },
     ) =>
-      table.setColumnTypeConfig<SelectPlugin>(propId, {
-        id: propId,
+      dispatchSelectConfig(table, propId, {
         action: "update:option",
         payload: { originalName, ...data },
       }),
@@ -81,8 +78,7 @@ export function useSelectConfigMenu({
 
   const deleteOption = useCallback(
     (name: string) =>
-      table.setColumnTypeConfig<SelectPlugin>(propId, {
-        id: propId,
+      dispatchSelectConfig(table, propId, {
         action: "delete:option",
         payload: name,
       }),

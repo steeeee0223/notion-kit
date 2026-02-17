@@ -22,6 +22,5 @@ export function text(): TextPlugin {
     toTextValue: (data) => data,
     compare: createCompareFn(compareStrings),
     renderCell: (props) => <TextCell {...props} />,
-    reducer: (v) => v,
   };
 }

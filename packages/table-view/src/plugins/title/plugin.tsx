@@ -31,6 +31,5 @@ export function title(): TitlePlugin {
       />
     ),
     renderConfigMenu: (props) => <TitleConfig {...props} />,
-    reducer: (v) => v,
   };
 }

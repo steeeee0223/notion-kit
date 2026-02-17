@@ -47,8 +47,6 @@ export interface CellPlugin<
   Data = any,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Config = any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Actions extends { id: string } = any,
 > {
   id: Key;
   /**
@@ -109,44 +107,24 @@ export interface CellPlugin<
     column: ColumnInfo<TPlugin>,
     data: Row<TPlugin[]>[],
   ) => Config;
-  /**
-   * @deprecated
-   * @prop A reducer to handle actions related to other cells within this table.
-   */
-  reducer: <TPlugins extends CellPlugin[]>(
-    v: TableDataAtom<TPlugins>,
-    a: Actions,
-  ) => TableDataAtom<TPlugins>;
   renderCell: (props: CellProps<Data, Config>) => React.ReactNode;
   renderConfigMenu?: (props: ConfigMenuProps<Config>) => React.ReactNode;
   renderGroupingValue?: (props: GroupingValueProps) => React.ReactNode;
 }
 
 export type InferKey<TPlugin> =
-  TPlugin extends CellPlugin<infer Key, infer _D, infer _C, infer _A>
-    ? Key
-    : never;
+  TPlugin extends CellPlugin<infer Key, infer _D, infer _C> ? Key : never;
 
 export type InferData<TPlugin> =
-  TPlugin extends CellPlugin<infer _K, infer Data, infer _C, infer _A>
-    ? Data
-    : never;
+  TPlugin extends CellPlugin<infer _K, infer Data, infer _C> ? Data : never;
 
 export type InferConfig<TPlugin> =
-  TPlugin extends CellPlugin<infer _K, infer _D, infer Config, infer _A>
-    ? Config
-    : never;
-
-export type InferActions<TPlugin> =
-  TPlugin extends CellPlugin<infer _K, infer _D, infer _C, infer Actions>
-    ? Actions
-    : never;
+  TPlugin extends CellPlugin<infer _K, infer _D, infer Config> ? Config : never;
 
 export type InferPlugin<TPlugins extends CellPlugin[]> = CellPlugin<
   InferKey<TPlugins[number]>,
   InferData<TPlugins[number]>,
-  InferConfig<TPlugins[number]>,
-  InferActions<TPlugins[number]>
+  InferConfig<TPlugins[number]>
 >;
 
 export type InferCellProps<TPlugin> = CellProps<

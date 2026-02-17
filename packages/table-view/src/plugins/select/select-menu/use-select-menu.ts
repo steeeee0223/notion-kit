@@ -9,6 +9,7 @@ import { getRandomColor, type Color } from "@notion-kit/utils";
 
 import type { ColumnInfo } from "../../../lib/types";
 import { useTableViewCtx } from "../../../table-contexts";
+import { dispatchSelectConfig } from "../select-config-reducer";
 import type { MultiSelectPlugin, SelectPlugin } from "../types";
 
 interface UseSelectMenuOptions {
@@ -45,8 +46,7 @@ export function useSelectMenu({
   const addOption = useCallback(() => {
     if (!optionSuggestion) return;
     updateSearch("");
-    table.setColumnTypeConfig<SelectPlugin>(propId, {
-      id: propId,
+    dispatchSelectConfig(table, propId, {
       action: "add:option",
       payload: optionSuggestion,
     });
@@ -61,8 +61,7 @@ export function useSelectMenu({
     (e: DragEndEvent) => {
       const { active, over } = e;
       if (!over || active.id === over.id) return;
-      table.setColumnTypeConfig<SelectPlugin>(propId, {
-        id: propId,
+      dispatchSelectConfig(table, propId, {
         action: "update:sort:manual",
         updater: (prev: string[]) => {
           const oldIndex = prev.indexOf(active.id as string);
@@ -93,8 +92,7 @@ export function useSelectMenu({
         color?: Color;
       },
     ) => {
-      table.setColumnTypeConfig<SelectPlugin>(propId, {
-        id: propId,
+      dispatchSelectConfig(table, propId, {
         action: "update:option",
         payload: { originalName, ...data },
       });
@@ -115,8 +113,7 @@ export function useSelectMenu({
 
   const deleteOption = useCallback(
     (name: string) => {
-      table.setColumnTypeConfig<SelectPlugin>(propId, {
-        id: propId,
+      dispatchSelectConfig(table, propId, {
         action: "delete:option",
         payload: name,
       });

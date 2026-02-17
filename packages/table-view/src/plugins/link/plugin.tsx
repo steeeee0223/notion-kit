@@ -25,7 +25,6 @@ function createLinkPlugin<T extends "email" | "phone" | "url">(
     toValue: (data) => data,
     toTextValue: (data) => data,
     renderCell: (props) => <LinkCell type={type} {...props} />,
-    reducer: (v) => v,
   };
 }
 

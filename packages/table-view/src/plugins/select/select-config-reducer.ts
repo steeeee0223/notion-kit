@@ -1,18 +1,19 @@
 import { functionalUpdate, type Updater } from "@tanstack/react-table";
+import type { Table } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { Color } from "@notion-kit/utils";
 
-import type { SelectConfig, SelectSort } from "./types";
+import type { ColumnInfo, Row } from "../../lib/types";
+import type {
+  MultiSelectPlugin,
+  SelectCell,
+  SelectConfig,
+  SelectPlugin,
+  SelectSort,
+} from "./types";
 
-export type SelectConfigAction =
-  | "add:option"
-  | "update:option"
-  | "update:sort"
-  | "update:sort:manual"
-  | "delete:option";
-
-export type SelectConfigActionPayload =
+type SelectConfigActionPayload =
   | { action: "add:option"; payload: { name: string; color: Color } }
   | {
       action: "update:option";
@@ -34,7 +35,7 @@ interface SelectConfigReducerResult {
     | { type: "delete"; payload: string };
 }
 
-export function selectConfigReducer(
+function selectConfigReducer(
   v: SelectConfig,
   a: SelectConfigActionPayload,
 ): SelectConfigReducerResult {
@@ -88,6 +89,67 @@ export function selectConfigReducer(
         },
         nextEvent: { type: "delete", payload: a.payload },
       };
+    }
+  }
+}
+
+/**
+ * Dispatch a select config action directly via table APIs.
+ *
+ * 1. Runs `selectConfigReducer` to compute new config
+ * 2. Updates column info via `table._setColumnInfo`
+ * 3. Propagates rename/delete events to cell data via `table.setTableData`
+ */
+export function dispatchSelectConfig(
+  table: Table<Row>,
+  propId: string,
+  action: SelectConfigActionPayload,
+): void {
+  const info = table.getColumnInfo(propId) as ColumnInfo<
+    SelectPlugin | MultiSelectPlugin
+  >;
+  const { config, nextEvent } = selectConfigReducer(info.config, action);
+
+  // 1. Update column config
+  table._setColumnInfo(propId, { ...info, config });
+
+  // 2. Propagate rename/delete to cell data
+  if (!nextEvent) return;
+
+  switch (nextEvent.type) {
+    case "update:name": {
+      const { originalName, name } = nextEvent.payload;
+      table.setTableData((prev) =>
+        prev.map((row) => {
+          const cell = { ...row.properties[propId] } as SelectCell;
+          if (info.type === "multi-select") {
+            cell.value = (cell.value as string[]).map((option) =>
+              option === originalName ? name : option,
+            );
+          } else if (cell.value === originalName) {
+            cell.value = name;
+          }
+          return { ...row, properties: { ...row.properties, [propId]: cell } };
+        }),
+      );
+      break;
+    }
+    case "delete": {
+      const name = nextEvent.payload;
+      table.setTableData((prev) =>
+        prev.map((row) => {
+          const cell = { ...row.properties[propId] } as SelectCell;
+          if (info.type === "multi-select") {
+            cell.value = (cell.value as string[]).filter(
+              (option) => option !== name,
+            );
+          } else if (cell.value === name) {
+            cell.value = null;
+          }
+          return { ...row, properties: { ...row.properties, [propId]: cell } };
+        }),
+      );
+      break;
     }
   }
 }

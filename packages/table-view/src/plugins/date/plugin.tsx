@@ -47,7 +47,6 @@ export function date(): DatePlugin {
     renderCell: (props) => <DatePickerCell {...props} />,
     renderConfigMenu: (props) => <DateConfigMenu {...props} />,
     renderGroupingValue: (props) => <DateGroupingValue {...props} />,
-    reducer: (v) => v,
   };
 }
 
@@ -82,7 +81,6 @@ export function createdTime(): CreatedTimePlugin {
     ),
     renderConfigMenu: (props) => <DateConfigMenu {...props} />,
     renderGroupingValue: (props) => <DateGroupingValue {...props} />,
-    reducer: (v) => v,
   };
 }
 
@@ -121,6 +119,5 @@ export function lastEditedTime(): LastEditedTimePlugin {
     ),
     renderConfigMenu: (props) => <DateConfigMenu {...props} />,
     renderGroupingValue: (props) => <DateGroupingValue {...props} />,
-    reducer: (v) => v,
   };
 }
