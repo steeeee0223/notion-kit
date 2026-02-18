@@ -11,7 +11,7 @@ import { cn } from "@notion-kit/cn";
 import { Spinner } from "@notion-kit/shadcn";
 
 const variants = {
-  base: "relative rounded-md flex justify-center items-center flex-col cursor-pointer min-h-[150px] min-w-[200px] border border-border transition-colors duration-200 ease-in-out",
+  base: "relative rounded-md flex justify-center items-center flex-col cursor-pointer min-h-[150px] min-w-[200px] bg-input hover:bg-input/80 transition-colors duration-200 ease-in-out",
   image:
     "border-0 p-0 min-h-0 min-w-0 relative shadow-md bg-slate-200 dark:bg-slate-900 rounded-md",
   active: "border-2",
@@ -47,7 +47,7 @@ const ERROR_MESSAGES = {
   },
 };
 
-const SingleImageDropzone: React.FC<SingleImageDropzoneProps> = ({
+function SingleImageDropzone({
   ref,
   dropzoneOptions,
   width,
@@ -56,7 +56,7 @@ const SingleImageDropzone: React.FC<SingleImageDropzoneProps> = ({
   className,
   disabled,
   onChange,
-}) => {
+}: SingleImageDropzoneProps) {
   const imageUrl = React.useMemo(() => {
     if (typeof value === "string") {
       // in case a url is passed in, use it to display the image
@@ -141,10 +141,7 @@ const SingleImageDropzone: React.FC<SingleImageDropzoneProps> = ({
       <div
         {...getRootProps({
           className: dropZoneClassName,
-          style: {
-            width,
-            height,
-          },
+          style: { width, height },
         })}
       >
         {/* Main File Input */}
@@ -159,9 +156,9 @@ const SingleImageDropzone: React.FC<SingleImageDropzoneProps> = ({
           />
         ) : (
           // Upload Icon
-          <div className="flex flex-col items-center justify-center text-xs text-gray-400">
-            <UploadCloudIcon className="mb-2 h-7 w-7" />
-            <div className="text-gray-400">Click or drag file to this area</div>
+          <div className="flex flex-col items-center justify-center gap-2 text-xs text-default/45">
+            <UploadCloudIcon className="size-7" />
+            Click or drag file to this area
           </div>
         )}
 
@@ -174,7 +171,7 @@ const SingleImageDropzone: React.FC<SingleImageDropzoneProps> = ({
               void onChange?.(undefined);
             }}
           >
-            <div className="flex h-5 w-5 items-center justify-center rounded-md border border-solid border-gray-500 bg-white transition-all duration-300 hover:h-6 hover:w-6 dark:border-gray-400 dark:bg-black">
+            <div className="flex size-5 items-center justify-center rounded-md border border-solid border-gray-500 bg-white transition-all duration-300 hover:h-6 hover:w-6 dark:border-gray-400 dark:bg-black">
               <X
                 className="text-gray-500 dark:text-gray-400"
                 width={16}
@@ -189,30 +186,7 @@ const SingleImageDropzone: React.FC<SingleImageDropzoneProps> = ({
       <div className="mt-1 text-xs text-red-500">{errorMessage}</div>
     </div>
   );
-};
-SingleImageDropzone.displayName = "SingleImageDropzone";
-
-const Button = React.forwardRef<
-  HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ className, ...props }, ref) => {
-  return (
-    <button
-      className={cn(
-        // base
-        "inline-flex cursor-pointer items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
-        // color
-        "border border-gray-400 text-gray-400 shadow hover:bg-gray-100 hover:text-gray-500 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700",
-        // size
-        "h-6 rounded-md px-2 text-xs",
-        className,
-      )}
-      ref={ref}
-      {...props}
-    />
-  );
-});
-Button.displayName = "Button";
+}
 
 function formatFileSize(bytes?: number) {
   if (!bytes) {

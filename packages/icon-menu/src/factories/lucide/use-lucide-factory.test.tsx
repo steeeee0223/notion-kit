@@ -11,7 +11,6 @@ describe("useLucideFactory", () => {
     expect(factory.id).toBe("lucide");
     expect(factory.label).toBe("Icons");
     expect(factory.sections.length).toBeGreaterThan(0);
-    expect(factory.frequentKey).toBe("recent:lucide");
   });
 
   it("should have an 'all' section with icons", () => {

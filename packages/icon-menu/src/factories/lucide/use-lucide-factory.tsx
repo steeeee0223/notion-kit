@@ -173,7 +173,6 @@ export function useLucideFactory(
     renderIcon,
     toIconData,
     toolbar,
-    frequentKey: "recent:lucide",
     isLoading,
     onSelect,
     getRandomIcon,

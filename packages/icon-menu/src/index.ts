@@ -8,6 +8,7 @@ export {
   useLucideFactory,
   useNotionIconsFactory,
   useCustomFactory,
+  useUploadFactory,
 } from "./factories";
 export type {
   IconFactoryConfig,
@@ -22,4 +23,5 @@ export type {
   UseLucideFactoryOptions,
   UseNotionIconsFactoryOptions,
   UseCustomFactoryOptions,
+  UseUploadFactoryOptions,
 } from "./factories";

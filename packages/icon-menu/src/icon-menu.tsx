@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useState } from "react";
 
 import { cn } from "@notion-kit/cn";
-import { UrlForm } from "@notion-kit/common/url-form";
 import type { IconData } from "@notion-kit/icon-block";
 import {
   Button,
@@ -16,10 +15,10 @@ import {
   TabsList,
   TabsTrigger,
 } from "@notion-kit/shadcn";
-import { SingleImageDropzone } from "@notion-kit/single-image-dropzone";
 
 import {
   MenuSearchBar,
+  UploadForm,
   useDefaultFactories,
   VirtualizedIconGrid,
 } from "./_components";
@@ -52,24 +51,12 @@ function IconMenuContent({
 
   const activeFactory = factories.find((f) => f.id === activeTab);
 
-  // Find the upload factory to persist submitted URLs
+  // Find the upload factory to persist submitted URLs / uploads
   const uploadFactory = factories.find((f) => f.id === "upload");
 
-  const submitUrl = (src: string) => {
-    uploadFactory?.onSelect?.({ id: src, name: src, keywords: [] });
-    onSelect?.({ type: "url", src });
-  };
-
-  const [isPending, startTransition] = useTransition();
-  const [file, setFile] = useState<File>();
-  const handleUpload = (uploadedFile?: File) => {
-    if (uploadedFile) {
-      startTransition(() => {
-        setFile(uploadedFile);
-        onUpload?.(uploadedFile);
-      });
-    }
-    setFile(undefined);
+  const handleUploadSubmit = ({ name, url }: { name: string; url: string }) => {
+    uploadFactory?.onSelect?.({ id: url, name, keywords: [name] });
+    onSelect?.({ type: "url", src: url });
   };
 
   const handleRandomSelect = () => {
@@ -114,7 +101,7 @@ function IconMenuContent({
         <TabsContent
           key={factory.id}
           value={factory.id}
-          className="bg-transparent px-3 pt-4 pb-2"
+          className="bg-transparent p-3"
         >
           <MenuSearchBar
             search={searchQuery}
@@ -134,17 +121,11 @@ function IconMenuContent({
         </TabsContent>
       ))}
       {onUpload && (
-        <TabsContent value="file" className="px-5 pt-4 pb-2">
-          <UrlForm disabled={isPending} onUrlSubmit={submitUrl} />
-          <SingleImageDropzone
-            className="mt-6 w-full"
-            disabled={isPending}
-            value={file}
-            onChange={handleUpload}
+        <TabsContent value="file" className="p-3">
+          <UploadForm
+            onSubmit={handleUploadSubmit}
+            onCancel={() => setActiveTab(visibleFactories[0]?.id ?? "")}
           />
-          <p className="p-4 text-center text-xs text-muted">
-            Recommended size is 280 × 280 pixels
-          </p>
         </TabsContent>
       )}
     </Tabs>

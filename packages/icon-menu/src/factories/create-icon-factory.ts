@@ -26,7 +26,6 @@ interface CreateIconFactoryConfig {
     scrollToSection: (sectionId: string) => void,
     activeSectionId: string | null,
   ) => React.ReactNode;
-  frequentKey?: string;
 }
 
 export function createIconFactory(
@@ -76,6 +75,5 @@ export function createIconFactory(
     toIconData: config.toIconData,
     toolbar: config.toolbar,
     navigation: config.navigation,
-    frequentKey: config.frequentKey,
   };
 }

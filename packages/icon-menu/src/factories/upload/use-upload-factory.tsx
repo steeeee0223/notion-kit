@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useMemo } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
@@ -9,6 +7,7 @@ import type { IconFactoryResult, IconItem } from "../types";
 interface StoredUploadIcon {
   id: string;
   url: string;
+  name?: string;
 }
 
 export interface UseUploadFactoryOptions {
@@ -46,7 +45,7 @@ export function useUploadFactory(
     () =>
       storedIcons.map((icon) => ({
         id: icon.id,
-        name: icon.id,
+        name: icon.name ?? icon.id,
         url: icon.url,
       })),
     [storedIcons],
@@ -63,9 +62,12 @@ export function useUploadFactory(
   const onSelect = useCallback(
     (item: IconItem) => {
       base.onSelect?.(item);
-      setStoredIcons((prev) => {
-        if (prev.some((i) => i.id === item.id)) return prev;
-        return [{ id: item.id, url: item.id }, ...prev].slice(0, maxStored);
+      setStoredIcons((v) => {
+        if (v.some((i) => i.id === item.id)) return v;
+        return [{ id: item.id, url: item.id, name: item.name }, ...v].slice(
+          0,
+          maxStored,
+        );
       });
     },
     [base, setStoredIcons, maxStored],

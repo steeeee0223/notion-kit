@@ -38,7 +38,6 @@ export interface IconFactoryResult {
     scrollToSection: (sectionId: string) => void,
     activeSectionId: string | null,
   ) => React.ReactNode;
-  frequentKey?: string;
   isLoading?: boolean;
   /** When true, the tab is not rendered in the menu */
   hidden?: boolean;

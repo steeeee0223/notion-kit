@@ -128,7 +128,6 @@ export function useCustomFactory(
     search,
     renderIcon,
     toIconData,
-    frequentKey: `recent:${id}`,
     onSelect: useCallback(
       (item: IconItem) => trackRecent(item.id),
       [trackRecent],
