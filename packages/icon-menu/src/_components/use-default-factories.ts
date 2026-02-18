@@ -1,8 +1,13 @@
-import { useEmojiFactory, useLucideFactory } from "../factories";
+import {
+  useEmojiFactory,
+  useLucideFactory,
+  useUploadFactory,
+} from "../factories";
 import type { IconFactoryResult } from "../factories";
 
 export function useDefaultFactories(): IconFactoryResult[] {
   const emoji = useEmojiFactory();
   const lucide = useLucideFactory();
-  return [emoji, lucide];
+  const upload = useUploadFactory();
+  return [emoji, lucide, upload];
 }

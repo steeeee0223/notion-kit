@@ -49,10 +49,3 @@ export const NotionIcons: Story = {
     return <IconPicker factories={[emoji, lucide, notion]} />;
   },
 };
-
-export const WithUpload: Story = {
-  render: () => {
-    const emoji = useEmojiFactory();
-    return <IconPicker factories={[emoji]} />;
-  },
-};

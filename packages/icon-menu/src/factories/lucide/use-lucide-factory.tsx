@@ -131,7 +131,7 @@ export function useLucideFactory(
           src: item.id as LucideName,
           color: opts.variantValue ?? color,
         }}
-        size={20}
+        className="size-4.5"
         strokeWidth={2.2}
       />
     ),

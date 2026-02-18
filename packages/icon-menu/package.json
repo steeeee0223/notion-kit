@@ -53,6 +53,7 @@
     "@notion-kit/tsconfig": "workspace:*",
     "@testing-library/jest-dom": "catalog:rtl",
     "@testing-library/react": "catalog:rtl",
+    "@testing-library/user-event": "catalog:rtl",
     "@vitejs/plugin-react": "catalog:test",
     "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",

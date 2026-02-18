@@ -12,4 +12,5 @@ export {
   type UseNotionIconsFactoryOptions,
 } from "./notion-icons";
 export { useCustomFactory, type UseCustomFactoryOptions } from "./custom";
+export { useUploadFactory, type UseUploadFactoryOptions } from "./upload";
 export type * from "./types";

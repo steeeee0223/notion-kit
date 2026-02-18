@@ -7,7 +7,6 @@ import {
   useState,
   useTransition,
 } from "react";
-import { betterFetch } from "@better-fetch/fetch";
 
 import { randomItem } from "@notion-kit/utils";
 
@@ -68,22 +67,11 @@ const LIGHT_PALETTE: Record<string, string> = Object.fromEntries(
   NOTION_ICON_COLORS.map((c) => [c, LIGHT_THEME_COLORS[c]]),
 );
 
-interface RawNotionIcon {
-  dark: Record<NotionIconColor, string>;
-  light: Record<NotionIconColor, string>;
-  tooltip: string;
-  tags: string[];
-}
 interface NotionIconData {
   id: string;
   name: string;
   pathData: string;
   tags: string[];
-}
-
-function extractPathD(svgString: string): string {
-  const match = / d="([^"]+)"/.exec(svgString);
-  return match?.[1] ?? "";
 }
 
 export interface UseNotionIconsFactoryOptions {
@@ -110,35 +98,14 @@ export function useNotionIconsFactory(
   const [color, setColor] = useState<NotionIconColor>(defaultColor);
   const [icons, setIcons] = useState<NotionIconData[]>([]);
 
-  // Fetch and process icon data
+  // Lazy-load icon data from static JSON (avoids CORS issues)
   useEffect(() => {
-    const load = async () => {
-      const { data, error } = await betterFetch<Record<string, RawNotionIcon>>(
-        "https://www.notion.so/icons/all",
-      );
-      if (error) {
-        console.error("Failed to fetch Notion icons", error);
-        return;
-      }
-
-      const processed: NotionIconData[] = [];
-      for (const [id, entry] of Object.entries(data)) {
-        // Extract path from the gray (first) variant of the current theme
-        const svgString = entry[theme].gray;
-        const pathData = extractPathD(svgString);
-        if (!pathData) continue;
-        processed.push({
-          id,
-          name: entry.tooltip,
-          pathData,
-          tags: entry.tags,
-        });
-      }
-      setIcons(processed);
-    };
-
-    startTransition(() => void load());
-  }, [theme]);
+    startTransition(() => {
+      void import("./notion-icons-data.json").then((mod) => {
+        setIcons(mod.default as NotionIconData[]);
+      });
+    });
+  }, []);
 
   const iconMap = useMemo(() => {
     const map = new Map<string, NotionIconData>();
@@ -207,8 +174,7 @@ export function useNotionIconsFactory(
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           fill={fillColor}
-          width={20}
-          height={20}
+          className="size-5"
         >
           <path d={icon.pathData} fill={fillColor} />
         </svg>
@@ -236,7 +202,7 @@ export function useNotionIconsFactory(
       <ColorPicker
         palette={palette}
         value={colorMap[color]}
-        onSelect={(hex: string) => {
+        onSelect={(hex) => {
           // Find back the color name from the hex
           const entry = Object.entries(colorMap).find(([, v]) => v === hex) as
             | [NotionIconColor, string]
@@ -250,7 +216,7 @@ export function useNotionIconsFactory(
 
   return {
     id: "notion",
-    label: "Icons",
+    label: "Notion",
     sections,
     getItem,
     search,

@@ -40,6 +40,8 @@ export interface IconFactoryResult {
   ) => React.ReactNode;
   frequentKey?: string;
   isLoading?: boolean;
+  /** When true, the tab is not rendered in the menu */
+  hidden?: boolean;
   onSelect?: (item: IconItem) => void;
   getRandomIcon?: () => IconItem;
 }

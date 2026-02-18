@@ -45,12 +45,20 @@ function IconMenuContent({
   onRemove?: () => void;
   onUpload?: (file: File) => void;
 }) {
+  // Filter out factories that are hidden (e.g. upload factory with no stored icons)
+  const visibleFactories = factories.filter((f) => !f.hidden);
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState(factories[0]?.id ?? "");
+  const [activeTab, setActiveTab] = useState(visibleFactories[0]?.id ?? "");
 
   const activeFactory = factories.find((f) => f.id === activeTab);
 
-  const submitUrl = (src: string) => onSelect?.({ type: "url", src });
+  // Find the upload factory to persist submitted URLs
+  const uploadFactory = factories.find((f) => f.id === "upload");
+
+  const submitUrl = (src: string) => {
+    uploadFactory?.onSelect?.({ id: src, name: src, keywords: [] });
+    onSelect?.({ type: "url", src });
+  };
 
   const [isPending, startTransition] = useTransition();
   const [file, setFile] = useState<File>();
@@ -62,10 +70,6 @@ function IconMenuContent({
       });
     }
     setFile(undefined);
-  };
-
-  const handleSelect = (iconData: IconData) => {
-    onSelect?.(iconData);
   };
 
   const handleRandomSelect = () => {
@@ -88,7 +92,7 @@ function IconMenuContent({
     >
       <TabsList>
         <div className="flex grow">
-          {factories.map((f) => (
+          {visibleFactories.map((f) => (
             <TabsTrigger key={f.id} value={f.id}>
               {f.label}
             </TabsTrigger>
@@ -106,7 +110,7 @@ function IconMenuContent({
           </Button>
         </div>
       </TabsList>
-      {factories.map((factory) => (
+      {visibleFactories.map((factory) => (
         <TabsContent
           key={factory.id}
           value={factory.id}
@@ -124,7 +128,7 @@ function IconMenuContent({
             <VirtualizedIconGrid
               factory={factory}
               searchQuery={searchQuery}
-              onSelect={handleSelect}
+              onSelect={(data) => onSelect?.(data)}
             />
           )}
         </TabsContent>
@@ -176,7 +180,7 @@ export function IconMenu({
         <Button
           variant={null}
           className={cn(
-            "size-fit rounded-md border p-0 text-secondary disabled:opacity-100",
+            "size-fit rounded-md border text-secondary disabled:opacity-100",
             className,
           )}
         >

@@ -58,14 +58,16 @@ export function VirtualizedIconGrid({
         })),
       ];
     }
-    return factory.sections.flatMap((section) => [
-      { type: "header" as const, label: section.label, id: section.id },
-      ...chunk(section.iconIds, ICONS_PER_ROW).map((row, i) => ({
-        type: "row" as const,
-        id: `${section.id}-${i}`,
-        iconIds: row,
-      })),
-    ]);
+    return factory.sections
+      .filter((section) => section.iconIds.length > 0)
+      .flatMap((section) => [
+        { type: "header" as const, label: section.label, id: section.id },
+        ...chunk(section.iconIds, ICONS_PER_ROW).map((row, i) => ({
+          type: "row" as const,
+          id: `${section.id}-${i}`,
+          iconIds: row,
+        })),
+      ]);
   }, [factory, searchQuery]);
 
   /**
