@@ -29,9 +29,12 @@
     "dev": "tsdown --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
+    "@better-fetch/fetch": "1.1.18",
     "@emoji-mart/data": "^1.2.1",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/common": "workspace:*",
@@ -39,8 +42,8 @@
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/single-image-dropzone": "workspace:*",
     "@notion-kit/utils": "workspace:*",
+    "@tanstack/react-virtual": "^3.11.3",
     "lucide-react": "catalog:ui",
-    "react-infinite-scroll-component": "^6.1.0",
     "usehooks-ts": "catalog:ui"
   },
   "devDependencies": {
@@ -48,12 +51,16 @@
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "@testing-library/jest-dom": "catalog:rtl",
+    "@testing-library/react": "catalog:rtl",
+    "@vitejs/plugin-react": "catalog:test",
     "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "react-compiler-runtime": "catalog:react-compiler",
     "tsdown": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:test"
   },
   "peerDependencies": {
     "react": "catalog:react19",
