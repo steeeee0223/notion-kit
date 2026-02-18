@@ -5,6 +5,7 @@ import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import {
   IconFactoryResult,
   IconMenu,
+  useCustomFactory,
   useEmojiFactory,
   useLucideFactory,
   useNotionIconsFactory,
@@ -47,5 +48,51 @@ export const NotionIcons: Story = {
     const notion = useNotionIconsFactory();
 
     return <IconPicker factories={[emoji, lucide, notion]} />;
+  },
+};
+
+const iconsData = [
+  {
+    id: "github",
+    name: "GitHub",
+    url: "https://cdn.simpleicons.org/github/white",
+    keywords: ["git", "code", "repo"],
+  },
+  {
+    id: "slack",
+    name: "Slack",
+    url: "https://cdn.simpleicons.org/slack",
+    keywords: ["chat", "messaging"],
+  },
+  {
+    id: "figma",
+    name: "Figma",
+    url: "https://cdn.simpleicons.org/figma",
+    keywords: ["design", "ui"],
+  },
+  {
+    id: "notion",
+    name: "Notion",
+    url: "https://cdn.simpleicons.org/notion/white",
+    keywords: ["wiki", "docs"],
+  },
+  {
+    id: "linear",
+    name: "Linear",
+    url: "https://cdn.simpleicons.org/linear",
+    keywords: ["project", "issues"],
+  },
+];
+
+export const CustomFactory: Story = {
+  render: () => {
+    const emoji = useEmojiFactory();
+    const brands = useCustomFactory({
+      id: "brands",
+      label: "Brands",
+      icons: iconsData,
+    });
+
+    return <IconPicker factories={[emoji, brands]} />;
   },
 };

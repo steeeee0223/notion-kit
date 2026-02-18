@@ -115,9 +115,21 @@ export const Index: Record<
     files: ["components/demos/icon-block/url.tsx"],
     component: React.lazy(() => import("@/components/demos/icon-block/url")),
   },
+  "icon-menu/custom-factory": {
+    files: ["components/demos/icon-menu/custom-factory.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/icon-menu/custom-factory"),
+    ),
+  },
   "icon-menu/default": {
     files: ["components/demos/icon-menu/default.tsx"],
     component: React.lazy(() => import("@/components/demos/icon-menu/default")),
+  },
+  "icon-menu/notion-icons": {
+    files: ["components/demos/icon-menu/notion-icons.tsx"],
+    component: React.lazy(
+      () => import("@/components/demos/icon-menu/notion-icons"),
+    ),
   },
   "input/default": {
     files: ["components/demos/input/default.tsx"],
