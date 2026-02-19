@@ -17,15 +17,111 @@ description: A controlled popover menu for icon selection and upload.
 
 <ComponentPreview name="icon-menu/default" />
 
+### Notion Icons
+
+Including all icon sources — emoji, lucide, and notion icons.
+
+<ComponentPreview name="icon-menu/notion-icons" />
+
+### Custom Factory
+
+Use `useCustomFactory` to add your own icon sets.
+
+<ComponentPreview name="icon-menu/custom-factory" />
+
+## Factories
+
+Icon Menu uses a factory pattern that lets you compose any combination of icon sources.
+
+| Factory                   | Description                                      |
+| ------------------------- | ------------------------------------------------ |
+| `useEmojiFactory()`       | Built-in emoji picker with skin tone support.    |
+| `useLucideFactory()`      | Full Lucide icon set with color picking.         |
+| `useNotionIconsFactory()` | Notion-style icons (outline/solid in 10 colors). |
+| `useCustomFactory()`      | Bring your own icon set via an `icons` array.    |
+| `useUploadFactory()`      | Persists user-uploaded icons in localStorage.    |
+
 ## API Reference
 
 ### IconMenu
 
-| Prop       | Type                       | Default | Description                                                                          |
-| ---------- | -------------------------- | ------- | ------------------------------------------------------------------------------------ |
-| `disabled` | `boolean`                  | -       | Whether the menu is disabled.                                                        |
-| `onSelect` | `(icon: IconData) => void` | -       | Handler that is called when an icon or emoji is selected or when a URL is submitted. |
-| `onUpload` | `(file: File) => void`     | -       | Handler that is called when an image file is submitted.                              |
-| `onRemove` | `() => void`               | -       | Handler that is called when the remove button is clicked.                            |
+| Prop        | Type                       | Default | Description                                                                          |
+| ----------- | -------------------------- | ------- | ------------------------------------------------------------------------------------ |
+| `factories` | `IconFactoryResult[]`      | -       | Icon factory hooks to use. Falls back to built-in defaults when omitted.             |
+| `disabled`  | `boolean`                  | -       | Whether the menu is disabled.                                                        |
+| `onSelect`  | `(icon: IconData) => void` | -       | Handler that is called when an icon or emoji is selected or when a URL is submitted. |
+| `onUpload`  | `(file: File) => void`     | -       | Handler that is called when an image file is submitted.                              |
+| `onRemove`  | `() => void`               | -       | Handler that is called when the remove button is clicked.                            |
 
 - See [`IconData`](/docs/blocks/icon-block#type-icondata)
+
+## Creating a Custom Factory
+
+Use `useCustomFactory` to register your own icon set with the menu.
+
+### 1. Define your icons
+
+Each icon needs an `id`, `name`, `url`, and optional `keywords` for search:
+
+```tsx
+const brands = useCustomFactory({
+  id: "brands",
+  label: "Brands",
+  icons: [
+    {
+      id: "github",
+      name: "GitHub",
+      url: "https://cdn.simpleicons.org/github/white",
+      keywords: ["git", "code", "repo"],
+    },
+    {
+      id: "slack",
+      name: "Slack",
+      url: "https://cdn.simpleicons.org/slack",
+      keywords: ["chat", "messaging"],
+    },
+  ],
+});
+```
+
+### 2. Pass factories to `IconMenu`
+
+Combine your factory with built-in ones and pass them via the `factories` prop:
+
+```tsx
+const emoji = useEmojiFactory();
+const brands = useCustomFactory({ ... });
+
+<IconMenu
+  factories={[emoji, brands]}
+  onSelect={setIcon}
+>
+  <IconBlock icon={icon} size="lg" />
+</IconMenu>
+```
+
+### 3. Upload factory
+
+Use `useUploadFactory` to let users submit icons via URL or file upload. Uploaded icons are persisted in `localStorage`:
+
+```tsx
+const emoji = useEmojiFactory();
+const upload = useUploadFactory();
+
+<IconMenu
+  factories={[emoji, upload]}
+  onSelect={setIcon}
+  onUpload={(file) => setIcon({ type: "url", src: URL.createObjectURL(file) })}
+>
+  <IconBlock icon={icon} size="lg" />
+</IconMenu>;
+```
+
+### Factory options
+
+| Option        | Type           | Description                              |
+| ------------- | -------------- | ---------------------------------------- |
+| `id`          | `string`       | Unique ID for the factory tab.           |
+| `label`       | `string`       | Tab label shown in the menu.             |
+| `icons`       | `CustomIcon[]` | Array of icon definitions.               |
+| `recentLimit` | `number`       | Max recent icons to track (default: 20). |

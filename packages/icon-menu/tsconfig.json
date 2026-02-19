@@ -5,6 +5,6 @@
     "jsx": "react-jsx",
     "rootDir": "."
   },
-  "include": ["src"],
+  "include": ["src", "scripts", "vitest.*.ts"],
   "exclude": ["node_modules"]
 }
