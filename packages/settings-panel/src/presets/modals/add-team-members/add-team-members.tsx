@@ -16,6 +16,8 @@ import {
   FormControl,
   FormField,
   FormItem,
+  MenuItem,
+  MenuItemAction,
   MultiSelect,
   MultiSelectOption,
   SelectPreset,
@@ -122,8 +124,8 @@ export function AddTeamMembers({
                         )
                       }
                       renderOption={({ option }) => (
-                        <>
-                          <div className="mr-2.5 flex items-center justify-center">
+                        <MenuItem
+                          Icon={
                             <Avatar
                               src={
                                 "avatarUrl" in option
@@ -132,20 +134,21 @@ export function AddTeamMembers({
                               }
                               fallback={option.label}
                             />
-                          </div>
-                          <div className="mr-3 min-w-0 flex-auto truncate">
-                            {option.label}
-                          </div>
+                          }
+                          Body={option.label}
+                        >
                           {option.disabled && (
-                            <Badge
-                              variant="gray"
-                              size="sm"
-                              className="ml-auto tracking-wide uppercase"
-                            >
-                              Invited
-                            </Badge>
+                            <MenuItemAction>
+                              <Badge
+                                variant="gray"
+                                size="sm"
+                                className="ml-auto tracking-wide uppercase"
+                              >
+                                Invited
+                              </Badge>
+                            </MenuItemAction>
                           )}
-                        </>
+                        </MenuItem>
                       )}
                     />
                   </FormControl>

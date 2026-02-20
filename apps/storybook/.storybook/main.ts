@@ -22,5 +22,9 @@ const config: StorybookConfig = {
     name: getAbsolutePath("@storybook/nextjs-vite"),
     options: {},
   },
+  viteFinal: (config) => ({
+    ...config,
+    envPrefix: ["VITE_", "STORYBOOK_"],
+  }),
 };
 export default config;
