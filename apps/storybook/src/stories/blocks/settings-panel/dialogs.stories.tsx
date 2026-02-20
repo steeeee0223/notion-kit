@@ -1,5 +1,7 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import { delay } from "msw";
 
 import {
@@ -17,8 +19,11 @@ import {
   PasswordForm,
   SettingsProvider,
   TeamspaceDetail,
+  Upgrade,
 } from "@notion-kit/settings-panel";
 import { Dialog } from "@notion-kit/shadcn";
+
+import { env } from "@/env";
 
 import {
   mockGuests,
@@ -179,5 +184,27 @@ export const PasskeysManagement: Story = {
     >
       <Portal {...props} />
     </SettingsProvider>
+  ),
+};
+
+const stripePromise = loadStripe(env.STORYBOOK_STRIPE_PUBLISHABLE_KEY);
+
+export const UpgradeModal: Story = {
+  render: () => (
+    <Elements
+      stripe={stripePromise}
+      options={{
+        mode: "setup",
+        currency: "usd",
+      }}
+    >
+      <Portal>
+        <Upgrade
+          plan={{ name: "Plus", monthly: 12, annual: 10 }}
+          description="Do more with unlimited charts, files, automations & integrations"
+          defaultName="Steve Yu"
+        />
+      </Portal>
+    </Elements>
   ),
 };

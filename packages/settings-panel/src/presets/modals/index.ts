@@ -16,3 +16,5 @@ export { AddTeamMembers } from "./add-team-members";
 export { CreateTeamspace } from "./create-teamspace";
 export { LeaveTeamspace } from "./leave-teamspace";
 export { TeamspaceDetail } from "./teamspace-detail";
+/** Billing */
+export { Upgrade } from "./upgrade";
