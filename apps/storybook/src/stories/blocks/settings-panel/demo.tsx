@@ -29,8 +29,12 @@ import {
   mockTeamspaces,
 } from "./data";
 
-export const Demo = () => {
-  const [tab, setTab] = useState<TabType>("preferences");
+interface DemoProps {
+  tab: TabType;
+}
+
+export function Demo({ tab: initialTab }: DemoProps) {
+  const [tab, setTab] = useState(initialTab);
   const [settings, setSettings] = useState(mockSettings);
   return (
     <SettingsProvider
@@ -108,4 +112,4 @@ export const Demo = () => {
       </SettingsPanel>
     </SettingsProvider>
   );
-};
+}

@@ -345,7 +345,45 @@
       "button": "Frag unseren Support"
     }
   },
-  "billing": { "title": "Abrechnung" },
+  "billing": {
+    "title": "Abrechnung",
+    "plan": {
+      "title": "Plan",
+      "button": "Plan ändern"
+    },
+    "payment-details": {
+      "title": "Zahlungsdetails",
+      "payment-method": {
+        "title": "Zahlungsmethode",
+        "none": "Keine",
+        "button": "Methode bearbeiten"
+      },
+      "billed-to": {
+        "title": "Rechnungsempfänger",
+        "button": "Informationen bearbeiten"
+      },
+      "billing-email": {
+        "title": "Rechnungs-E-Mail",
+        "button": "E-Mail bearbeiten"
+      },
+      "invoice-emails": {
+        "title": "Rechnungs-E-Mails",
+        "description": "Erhalte eine Kopie deiner Rechnung per E-Mail in jedem Abrechnungszeitraum"
+      },
+      "vat": {
+        "title": "USt-IdNr.",
+        "none": "-",
+        "button": "Nummer bearbeiten"
+      }
+    },
+    "invoices": {
+      "title": "Rechnungen",
+      "upcoming": {
+        "title": "Nächste Rechnung",
+        "button": "Rechnung anzeigen"
+      }
+    }
+  },
   "notion-ai": {
     "title": "Notion KI",
     "notion-ai": {

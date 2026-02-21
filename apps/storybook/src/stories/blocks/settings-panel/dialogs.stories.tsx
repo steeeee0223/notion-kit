@@ -1,6 +1,5 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { delay } from "msw";
 
@@ -187,24 +186,21 @@ export const PasskeysManagement: Story = {
   ),
 };
 
-const stripePromise = loadStripe(env.STORYBOOK_STRIPE_PUBLISHABLE_KEY);
+const stripePromise = loadStripe(env.STORYBOOK_STRIPE_PUBLISHABLE_KEY, {});
 
 export const UpgradeModal: Story = {
-  render: () => (
-    <Elements
-      stripe={stripePromise}
-      options={{
-        mode: "setup",
-        currency: "usd",
-      }}
-    >
-      <Portal>
+  render: (props, ctx) => {
+    const { theme = "light" } = ctx.globals;
+    return (
+      <Portal {...props}>
         <Upgrade
           plan={{ name: "Plus", monthly: 12, annual: 10 }}
           description="Do more with unlimited charts, files, automations & integrations"
           defaultName="Steve Yu"
+          stripePromise={stripePromise}
+          theme={theme as "light" | "dark"}
         />
       </Portal>
-    </Elements>
-  ),
+    );
+  },
 };

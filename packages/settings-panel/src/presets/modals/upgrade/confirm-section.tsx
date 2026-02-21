@@ -66,7 +66,7 @@ export function ConfirmSection({ plan }: ConfirmSectionProps) {
                 </a>
                 )
               </label>
-              <FormMessage />
+              <FormMessage className="col-span-2" />
             </FormItem>
           )}
         />

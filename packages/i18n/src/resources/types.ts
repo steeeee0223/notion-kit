@@ -362,6 +362,42 @@ interface Resources {
     };
     billing: {
       title: "Billing";
+      plan: {
+        title: "Plan";
+        button: "Change plan";
+      };
+      "payment-details": {
+        title: "Payment details";
+        "payment-method": {
+          title: "Payment method";
+          none: "None";
+          button: "Edit method";
+        };
+        "billed-to": {
+          title: "Billed to";
+          button: "Edit information";
+        };
+        "billing-email": {
+          title: "Billing email";
+          button: "Edit email";
+        };
+        "invoice-emails": {
+          title: "Invoice emails";
+          description: "Receive a copy of your invoice via email each billing period";
+        };
+        vat: {
+          title: "VAT/GST number";
+          none: "-";
+          button: "Edit number";
+        };
+      };
+      invoices: {
+        title: "Invoices";
+        upcoming: {
+          title: "Upcoming invoice";
+          button: "View invoice";
+        };
+      };
     };
     "notion-ai": {
       title: "Notion AI";

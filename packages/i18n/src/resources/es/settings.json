@@ -349,7 +349,45 @@
       "button": "Escribir a Soporte técnico"
     }
   },
-  "billing": { "title": "Facturación" },
+  "billing": {
+    "title": "Facturación",
+    "plan": {
+      "title": "Plan",
+      "button": "Cambiar plan"
+    },
+    "payment-details": {
+      "title": "Detalles de pago",
+      "payment-method": {
+        "title": "Método de pago",
+        "none": "Ninguno",
+        "button": "Editar método"
+      },
+      "billed-to": {
+        "title": "Facturado a",
+        "button": "Editar información"
+      },
+      "billing-email": {
+        "title": "Correo de facturación",
+        "button": "Editar correo"
+      },
+      "invoice-emails": {
+        "title": "Correos de factura",
+        "description": "Recibe una copia de tu factura por correo electrónico en cada período de facturación"
+      },
+      "vat": {
+        "title": "Número de IVA",
+        "none": "-",
+        "button": "Editar número"
+      }
+    },
+    "invoices": {
+      "title": "Facturas",
+      "upcoming": {
+        "title": "Próxima factura",
+        "button": "Ver factura"
+      }
+    }
+  },
   "notion-ai": {
     "title": "IA de Notion",
     "notion-ai": {
