@@ -1,31 +1,34 @@
 "use client";
 
 import { useTranslation } from "@notion-kit/i18n";
-import { Plan } from "@notion-kit/schemas";
 import { Button, Dialog, DialogTrigger, Separator } from "@notion-kit/shadcn";
 
 import { SettingsRule, SettingsSection } from "@/core";
-import { ChangePlan } from "@/presets/modals/change-plan";
+import { useSettings, useSettingsApi } from "@/core/settings-provider";
+import { ChangePlan } from "@/presets/modals";
 
-interface PlanSectionProps {
-  plan: Plan;
-  onChangePlan?: (plan: Plan) => Promise<void>;
-}
-
-export function PlanSection({ plan, onChangePlan }: PlanSectionProps) {
+export function PlanSection() {
+  const {
+    settings: { workspace },
+  } = useSettings();
+  const { billing } = useSettingsApi();
+  /** i18n */
   const { t } = useTranslation("settings", { keyPrefix: "billing" });
   const trans = t("plan", { returnObjects: true });
 
   return (
     <SettingsSection title={t("title")}>
-      <SettingsRule title={trans.title} description={plan}>
+      <SettingsRule title={trans.title} description={workspace.plan}>
         <Dialog>
           <DialogTrigger asChild>
             <Button size="sm" className="w-36">
               {trans.button}
             </Button>
           </DialogTrigger>
-          <ChangePlan currentPlan={plan} onConfirm={onChangePlan} />
+          <ChangePlan
+            currentPlan={workspace.plan}
+            onConfirm={billing?.changePlan}
+          />
         </Dialog>
       </SettingsRule>
       <Separator />

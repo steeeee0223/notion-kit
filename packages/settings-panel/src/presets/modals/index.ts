@@ -19,5 +19,6 @@ export { TeamspaceDetail } from "./teamspace-detail";
 /** Billing */
 export { ChangeBillingAddress } from "./change-billing-address";
 export { ChangeBillingEmail } from "./change-billing-email";
+export { ChangePaymentMethod } from "./change-payment-method";
 export { ChangePlan } from "./change-plan";
 export { Upgrade } from "./upgrade";

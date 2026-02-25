@@ -15,7 +15,9 @@ import {
   type TabType,
   type Teamspaces,
 } from "@notion-kit/settings-panel";
+import { toast } from "@notion-kit/shadcn";
 
+import { env } from "@/env";
 import { delay } from "@/lib/utils";
 
 import {
@@ -100,6 +102,24 @@ export function Demo({ tab: initialTab }: DemoProps) {
               return acc;
             }, {}),
           ),
+      }}
+      stripePublishableKey={env.STORYBOOK_STRIPE_PUBLISHABLE_KEY}
+      billing={{
+        editMethod: async () => {
+          await delay(1000);
+          toast.success("Payment method updated");
+        },
+        editBilledTo: async (address) => {
+          await delay(1000);
+          toast.success(`Billing address updated: ${address}`);
+        },
+        editEmail: async (email) => {
+          await delay(1000);
+          toast.success(`Billing email updated: ${email}`);
+        },
+        toggleInvoiceEmails: () => {
+          toast.success(`Invoice emails toggled`);
+        },
       }}
     >
       <SettingsPanel>

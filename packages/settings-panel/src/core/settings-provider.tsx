@@ -1,14 +1,18 @@
 "use client";
 
 import React, { createContext, use, useMemo } from "react";
+import { loadStripe, type Stripe } from "@stripe/stripe-js";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { I18nProvider } from "@notion-kit/i18n";
-import { Role, type IconData } from "@notion-kit/schemas";
+import { Plan, Role, type IconData } from "@notion-kit/schemas";
 import { TooltipProvider } from "@notion-kit/shadcn";
+
+import type { BillingAddress } from "@/presets/modals/change-billing-address";
 
 import type {
   AccountStore,
+  BillingStore,
   Connection,
   ConnectionStrategy,
   Invitations,
@@ -108,6 +112,19 @@ export interface SettingsActions {
       userId: string;
     }) => Promise<void>;
   };
+  /** Billing */
+  billing?: {
+    getAll?: () => Promise<BillingStore>;
+    changePlan?: (plan: Plan) => Promise<void>;
+    editMethod?: () => Promise<void>;
+    editBilledTo?: (
+      address: BillingAddress & { businessName: string },
+    ) => Promise<void>;
+    editEmail?: (email: string) => Promise<void>;
+    toggleInvoiceEmails?: (checked: boolean) => void;
+    editVat?: () => void;
+    viewInvoice?: () => void;
+  };
 }
 
 interface SettingsContextInterface {
@@ -117,6 +134,7 @@ interface SettingsContextInterface {
 
 const SettingsContext = createContext<SettingsContextInterface | null>(null);
 const SettingsApiContext = createContext<SettingsActions | null>(null);
+const StripeContext = createContext<Promise<Stripe | null> | null>(null);
 
 export function useSettings() {
   const ctx = use(SettingsContext);
@@ -128,6 +146,13 @@ export function useSettingsApi() {
   const ctx = use(SettingsApiContext);
   if (!ctx)
     throw new Error("useSettingsApi must be used within SettingsProvider");
+  return ctx;
+}
+
+export function useStripePromise() {
+  const ctx = use(StripeContext);
+  if (!ctx)
+    throw new Error("useStripePromise must be used within SettingsProvider");
   return ctx;
 }
 
@@ -143,10 +168,12 @@ export interface SettingsProviderProps
   extends React.PropsWithChildren,
     SettingsActions {
   settings: SettingsStore;
+  stripePublishableKey: string;
 }
 
 export function SettingsProvider({
   settings,
+  stripePublishableKey,
   children,
   ...actions
 }: SettingsProviderProps) {
@@ -158,14 +185,20 @@ export function SettingsProvider({
     }),
     [settings],
   );
+  const stripePromise = useMemo(
+    () => loadStripe(stripePublishableKey),
+    [stripePublishableKey],
+  );
   return (
     <I18nProvider language={settings.account.language} defaultNS="settings">
       <TooltipProvider delayDuration={500}>
         <SettingsContext value={contextValue}>
           <SettingsApiContext value={actionsApi}>
-            <QueryClientProvider client={queryClient}>
-              {children}
-            </QueryClientProvider>
+            <StripeContext value={stripePromise}>
+              <QueryClientProvider client={queryClient}>
+                {children}
+              </QueryClientProvider>
+            </StripeContext>
           </SettingsApiContext>
         </SettingsContext>
       </TooltipProvider>

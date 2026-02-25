@@ -3,16 +3,22 @@
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { useSettings, useSettingsApi } from "../../core";
-import { createDefaultFn, QUERY_KEYS } from "../../lib";
+import { useSettings, useSettingsApi } from "@/core/settings-provider";
+import { createDefaultFn, QUERY_KEYS } from "@/lib/queries";
 import type {
   AccountStore,
+  BillingStore,
   Invitations,
   Memberships,
   Teamspaces,
   WorkspaceStore,
-} from "../../lib";
-import { initialAccountStore, initialWorkspaceStore } from "./constants";
+} from "@/lib/types";
+
+import {
+  initialAccountStore,
+  initialBillingStore,
+  initialWorkspaceStore,
+} from "./constants";
 
 export function useAccount<T = AccountStore>(
   selector?: (data: AccountStore) => T,
@@ -97,6 +103,20 @@ export function useTeamspaces<T = Teamspaces>(
     initialData: {},
     queryKey: QUERY_KEYS.teamspaces(workspace.id),
     queryFn: actions?.getAll ?? createDefaultFn({}),
+    select: selector,
+  });
+}
+
+export function useBilling<T = BillingStore>(
+  selector?: (data: BillingStore) => T,
+) {
+  const { billing: actions } = useSettingsApi();
+  const { data: workspace } = useWorkspace();
+
+  return useQuery<BillingStore, Error, T>({
+    initialData: initialBillingStore,
+    queryKey: QUERY_KEYS.billing(workspace.id),
+    queryFn: actions?.getAll ?? createDefaultFn(initialBillingStore),
     select: selector,
   });
 }

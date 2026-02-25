@@ -10,42 +10,19 @@ import {
 } from "@notion-kit/shadcn";
 
 import { SettingsRule, SettingsSection } from "@/core";
-import { ChangeBillingAddress } from "@/presets/modals/change-billing-address";
-import { ChangeBillingEmail } from "@/presets/modals/change-billing-email";
+import { useSettingsApi, useStripePromise } from "@/core/settings-provider";
+import { useBilling } from "@/presets/hooks/queries";
+import {
+  ChangeBillingAddress,
+  ChangeBillingEmail,
+  ChangePaymentMethod,
+} from "@/presets/modals";
 
-interface PaymentDetailsSectionProps {
-  paymentMethod?: string;
-  billedTo?: string;
-  billingEmail?: string;
-  invoiceEmails?: boolean;
-  vatNumber?: string;
-  onEditMethod?: () => void;
-  onEditBilledTo?: (address: {
-    country: string;
-    line1: string;
-    line2?: string;
-    city: string;
-    state?: string;
-    postalCode: string;
-    businessName?: string;
-  }) => Promise<void>;
-  onEditEmail?: (email: string) => Promise<void>;
-  onToggleInvoiceEmails?: (checked: boolean) => void;
-  onEditVat?: () => void;
-}
-
-export function PaymentDetailsSection({
-  paymentMethod,
-  billedTo,
-  billingEmail,
-  invoiceEmails = false,
-  vatNumber,
-  onEditMethod,
-  onEditBilledTo,
-  onEditEmail,
-  onToggleInvoiceEmails,
-  onEditVat,
-}: PaymentDetailsSectionProps) {
+export function PaymentDetailsSection() {
+  const { billing: actions } = useSettingsApi();
+  const stripePromise = useStripePromise();
+  const { data: billing } = useBilling();
+  /** i18n */
   const { t } = useTranslation("settings", { keyPrefix: "billing" });
   const trans = t("payment-details", { returnObjects: true });
 
@@ -53,16 +30,24 @@ export function PaymentDetailsSection({
     <SettingsSection title={trans.title}>
       <SettingsRule
         title={trans["payment-method"].title}
-        description={paymentMethod ?? trans["payment-method"].none}
+        description={billing.paymentMethod ?? trans["payment-method"].none}
       >
-        <Button size="sm" className="w-36" onClick={onEditMethod}>
-          {trans["payment-method"].button}
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button size="sm" className="w-36">
+              {trans["payment-method"].button}
+            </Button>
+          </DialogTrigger>
+          <ChangePaymentMethod
+            stripePromise={stripePromise}
+            onConfirm={actions?.editMethod}
+          />
+        </Dialog>
       </SettingsRule>
       <Separator />
       <SettingsRule
         title={trans["billed-to"].title}
-        description={billedTo ?? "-"}
+        description={billing.billedTo ?? "-"}
       >
         <Dialog>
           <DialogTrigger asChild>
@@ -70,13 +55,16 @@ export function PaymentDetailsSection({
               {trans["billed-to"].button}
             </Button>
           </DialogTrigger>
-          <ChangeBillingAddress onConfirm={onEditBilledTo} />
+          <ChangeBillingAddress
+            stripePromise={stripePromise}
+            onConfirm={actions?.editBilledTo}
+          />
         </Dialog>
       </SettingsRule>
       <Separator />
       <SettingsRule
         title={trans["billing-email"].title}
-        description={billingEmail ?? "-"}
+        description={billing.billingEmail ?? "-"}
       >
         <Dialog>
           <DialogTrigger asChild>
@@ -84,7 +72,10 @@ export function PaymentDetailsSection({
               {trans["billing-email"].button}
             </Button>
           </DialogTrigger>
-          <ChangeBillingEmail email={billingEmail} onConfirm={onEditEmail} />
+          <ChangeBillingEmail
+            email={billing.billingEmail}
+            onConfirm={actions?.editEmail}
+          />
         </Dialog>
       </SettingsRule>
       <Separator />
@@ -94,20 +85,20 @@ export function PaymentDetailsSection({
       >
         <Switch
           size="sm"
-          checked={invoiceEmails}
-          onCheckedChange={onToggleInvoiceEmails}
+          checked={billing.invoiceEmails}
+          onCheckedChange={actions?.toggleInvoiceEmails}
         />
       </SettingsRule>
       <Separator />
       <SettingsRule
         title={trans.vat.title}
-        description={vatNumber ?? trans.vat.none}
+        description={billing.vatNumber ?? trans.vat.none}
       >
         <Button
           size="sm"
           className="w-36"
-          disabled={!vatNumber}
-          onClick={onEditVat}
+          disabled={!billing.vatNumber}
+          onClick={actions?.editVat}
         >
           {trans.vat.button}
         </Button>

@@ -16,6 +16,7 @@ export const QUERY_KEYS = {
     workspaceId,
     "teamspaces",
   ],
+  billing: (workspaceId: string) => ["nk:workspace", workspaceId, "billing"],
 };
 
 export function createDefaultFn(data: void): () => Promise<void>;

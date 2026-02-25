@@ -52,7 +52,7 @@ export function Upgrade({
     mode: "setup",
     currency: "usd",
     paymentMethodTypes: ["card"],
-    locale: (i18n.language as StripeElementLocale) || "auto",
+    locale: i18n.language as StripeElementLocale,
     appearance: theme === "dark" ? stripeDark : stripeLight,
   };
 

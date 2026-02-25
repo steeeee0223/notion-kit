@@ -7,6 +7,7 @@ import {
   Add2FAForm,
   AddMembers,
   AddTeamMembers,
+  ChangePaymentMethod,
   CreateTeamspace,
   DeleteAccount,
   DeleteGuest,
@@ -20,7 +21,7 @@ import {
   TeamspaceDetail,
   Upgrade,
 } from "@notion-kit/settings-panel";
-import { Dialog } from "@notion-kit/shadcn";
+import { Dialog, toast } from "@notion-kit/shadcn";
 
 import { env } from "@/env";
 
@@ -179,6 +180,7 @@ export const PasskeysManagement: Story = {
   render: (props) => (
     <SettingsProvider
       settings={mockSettings}
+      stripePublishableKey={env.STORYBOOK_STRIPE_PUBLISHABLE_KEY}
       passkeys={{ getAll: () => Promise.resolve(mockPasskeys) }}
     >
       <Portal {...props} />
@@ -199,6 +201,24 @@ export const UpgradeModal: Story = {
           defaultName="Steve Yu"
           stripePromise={stripePromise}
           theme={theme as "light" | "dark"}
+        />
+      </Portal>
+    );
+  },
+};
+
+export const ChangePaymentMethodModal: Story = {
+  render: (_props, ctx) => {
+    const { theme = "light" } = ctx.globals;
+    return (
+      <Portal>
+        <ChangePaymentMethod
+          stripePromise={stripePromise}
+          theme={theme as "light" | "dark"}
+          onConfirm={async () => {
+            await delay(1000);
+            toast.success("Payment method updated");
+          }}
         />
       </Portal>
     );

@@ -141,6 +141,16 @@ export interface SettingsStore {
   workspace: WorkspaceStore;
   account: AccountStore;
 }
+
+export interface BillingStore {
+  paymentMethod?: string;
+  billedTo?: string;
+  billingEmail?: string;
+  invoiceEmails?: boolean;
+  vatNumber?: string;
+  upcomingInvoice?: string;
+}
+
 export interface WorkspaceMemberships {
   members: MemberRow[];
   guests: GuestRow[];
