@@ -6,6 +6,7 @@ import { v4 } from "uuid";
 import type { Team, WorkspaceMetadata } from "@notion-kit/auth";
 import { IconObject, Plan, Role, type IconData } from "@notion-kit/schemas";
 import type {
+  BillingStore,
   Invitations,
   Memberships,
   SettingsActions,
@@ -31,6 +32,7 @@ export function useWorkspaceSettings() {
   const { data: session } = useSession();
   const { data: workspace } = useActiveWorkspace();
   const [orgApi] = useState(auth.organization);
+  const [subApi] = useState(auth.subscription);
 
   const workspaceStore = useMemo<WorkspaceStore>(() => {
     if (!workspace) return initialWorkspaceStore;
@@ -299,8 +301,47 @@ export function useWorkspaceSettings() {
           );
         },
       },
+      billing: {
+        getAll: async (): Promise<BillingStore> => {
+          const { data: subscriptions } = await subApi.list({
+            query: {
+              referenceId: organizationId,
+              customerType: "organization",
+            },
+          });
+          const active = subscriptions?.find(
+            (s) => s.status === "active" || s.status === "trialing",
+          );
+          return {
+            upcomingInvoice: active ? `${active.plan} plan` : undefined,
+          };
+        },
+        changePlan: async (plan) => {
+          await subApi.upgrade({
+            plan: plan.toLowerCase(),
+            referenceId: organizationId,
+            customerType: "organization",
+            successUrl: `${baseURL}/settings/billing`,
+            cancelUrl: `${baseURL}/settings/billing`,
+          });
+        },
+        editMethod: async () => {
+          await subApi.billingPortal({
+            referenceId: organizationId,
+            customerType: "organization",
+            returnUrl: `${baseURL}/settings/billing`,
+          });
+        },
+        viewInvoice: () => {
+          void subApi.billingPortal({
+            referenceId: organizationId,
+            customerType: "organization",
+            returnUrl: `${baseURL}/settings/billing`,
+          });
+        },
+      },
     };
-  }, [orgApi, redirect, session?.user.id, workspace?.id]);
+  }, [orgApi, subApi, baseURL, redirect, session?.user.id, workspace?.id]);
 
   return {
     workspaceStore,

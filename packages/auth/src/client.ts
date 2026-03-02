@@ -1,4 +1,5 @@
 import { passkeyClient } from "@better-auth/passkey/client";
+import { stripeClient } from "@better-auth/stripe/client";
 import {
   inferAdditionalFields,
   organizationClient,
@@ -6,14 +7,13 @@ import {
 } from "better-auth/client/plugins";
 import { createAuthClient as createReactClient } from "better-auth/react";
 
-import type { Auth } from "./auth";
+import type { Auth } from "@/auth";
+import { ac, roles } from "@/lib/permissions";
 import {
-  ac,
   additionalSessionFields,
   additionalTeamFields,
   additionalUserFields,
-  roles,
-} from "./lib";
+} from "@/lib/utils";
 
 export function createAuthClient(baseURL?: string) {
   return createReactClient({
@@ -34,6 +34,7 @@ export function createAuthClient(baseURL?: string) {
           team: { additionalFields: additionalTeamFields },
         },
       }),
+      stripeClient({ subscription: true }),
     ],
   });
 }

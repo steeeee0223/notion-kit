@@ -34,7 +34,7 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@better-fetch/fetch": "1.1.18",
+    "@better-fetch/fetch": "catalog:",
     "@emoji-mart/data": "^1.2.1",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/common": "workspace:*",

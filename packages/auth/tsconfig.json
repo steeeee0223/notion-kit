@@ -2,7 +2,9 @@
   "extends": "@notion-kit/tsconfig/base.json",
   "compilerOptions": {
     "declaration": false,
-    "composite": false
+    "composite": false,
+    "baseUrl": ".",
+    "paths": { "@/*": ["./src/*"] }
   },
   "include": ["src", "drizzle.config.ts"],
   "exclude": ["node_modules"]

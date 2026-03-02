@@ -35,14 +35,16 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@better-auth/passkey": "^1.4.0",
-    "@better-fetch/fetch": "1.1.18",
+    "@better-auth/passkey": "^1.5.1",
+    "@better-auth/stripe": "^1.5.1",
+    "@better-fetch/fetch": "catalog:",
     "@t3-oss/env-nextjs": "catalog:env",
     "@vercel/postgres": "^0.10.0",
-    "axios": "^1.11.0",
-    "better-auth": "^1.4.0",
-    "drizzle-orm": "^0.44.2",
-    "ua-parser-js": "^2.0.4",
+    "axios": "^1.13.6",
+    "better-auth": "^1.5.1",
+    "drizzle-orm": "^0.45.1",
+    "stripe": "catalog:stripe",
+    "ua-parser-js": "^2.0.9",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -52,7 +54,7 @@
     "@notion-kit/tsconfig": "workspace:*",
     "@types/node": "catalog:node22",
     "dotenv-cli": "catalog:env",
-    "drizzle-kit": "^0.31.1",
+    "drizzle-kit": "^0.31.9",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "tsdown": "catalog:",

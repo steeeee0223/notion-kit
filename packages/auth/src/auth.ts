@@ -1,22 +1,30 @@
 import { passkey } from "@better-auth/passkey";
+import { stripe } from "@better-auth/stripe";
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { openAPI, organization, twoFactor } from "better-auth/plugins";
+import Stripe from "stripe";
 
-import { db, updateSessionData } from "./db";
-import { AuthEnv } from "./env";
+import { authorizeReference, updateSessionData } from "@/db/actions";
+import { db } from "@/db/db";
+import { AuthEnv } from "@/env";
+import { createMailtrapApi, sendEmail } from "@/lib/email";
+import { ac, roles } from "@/lib/permissions";
+import { plans } from "@/lib/plans";
 import {
-  ac,
   additionalSessionFields,
   additionalTeamFields,
   additionalUserFields,
-  createMailtrapApi,
-  roles,
-  sendEmail,
-} from "./lib";
+} from "@/lib/utils";
+
+function createStripeClient(secretKey?: string) {
+  if (!secretKey) return undefined;
+  return new Stripe(secretKey);
+}
 
 export function createAuth(env: AuthEnv) {
   const mailApi = createMailtrapApi(env.MAILTRAP_API_KEY);
+  const stripeClient = createStripeClient(env.STRIPE_SECRET_KEY);
 
   const config = {
     appName: "Notion Auth",
@@ -25,7 +33,7 @@ export function createAuth(env: AuthEnv) {
     user: {
       changeEmail: {
         enabled: true,
-        sendChangeEmailVerification: ({ user, url }) => {
+        sendChangeEmailConfirmation: ({ user, url }) => {
           console.log(
             `Send change email verification to ${user.email} with URL: ${url}`,
           );
@@ -105,6 +113,21 @@ export function createAuth(env: AuthEnv) {
         },
       }),
       openAPI(),
+      ...(stripeClient && env.STRIPE_WEBHOOK_SECRET
+        ? [
+            stripe({
+              stripeClient,
+              stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET,
+              createCustomerOnSignUp: true,
+              subscription: {
+                enabled: true,
+                plans,
+                authorizeReference,
+              },
+              organization: { enabled: true },
+            }),
+          ]
+        : []),
     ],
   } satisfies BetterAuthOptions;
 

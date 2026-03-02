@@ -5,6 +5,7 @@ packages:
   - tooling/*
 
 catalog:
+  "@better-fetch/fetch": ^1.1.21
   eslint: ^9.39.1
   prettier: ^3.6.2
   tsdown: ^0.16.6
@@ -67,5 +68,6 @@ catalogs:
   build:
     "@rollup/plugin-babel": ^6.1.0
   stripe:
+    stripe: ^20.3.1
     "@stripe/react-stripe-js": ^5.6.0
     "@stripe/stripe-js": ^8.7.0
