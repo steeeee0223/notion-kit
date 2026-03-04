@@ -4,14 +4,15 @@ import { useTranslation } from "@notion-kit/i18n";
 import { Button, Dialog, DialogTrigger, Separator } from "@notion-kit/shadcn";
 
 import { SettingsRule, SettingsSection } from "@/core";
-import { useSettings, useSettingsApi } from "@/core/settings-provider";
+import { useSettings } from "@/core/settings-provider";
+import { useBillingActions } from "@/presets/hooks";
 import { ChangePlan } from "@/presets/modals";
 
 export function PlanSection() {
   const {
     settings: { workspace },
   } = useSettings();
-  const { billing } = useSettingsApi();
+  const { changePlan } = useBillingActions();
   /** i18n */
   const { t } = useTranslation("settings", { keyPrefix: "billing" });
   const trans = t("plan", { returnObjects: true });
@@ -25,10 +26,7 @@ export function PlanSection() {
               {trans.button}
             </Button>
           </DialogTrigger>
-          <ChangePlan
-            currentPlan={workspace.plan}
-            onConfirm={billing?.changePlan}
-          />
+          <ChangePlan currentPlan={workspace.plan} onConfirm={changePlan} />
         </Dialog>
       </SettingsRule>
       <Separator />

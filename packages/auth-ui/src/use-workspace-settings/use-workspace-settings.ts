@@ -318,7 +318,7 @@ export function useWorkspaceSettings() {
         },
         upgrade: async (plan, annual) => {
           await subApi.upgrade({
-            plan,
+            plan: plan.toLowerCase(),
             annual,
             referenceId: organizationId,
             customerType: "organization",

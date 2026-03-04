@@ -12,7 +12,7 @@ export interface HighlightPlanRow
 
 export const getHighlightColumns = (
   canUpgrade?: boolean,
-  onUpgrade?: (plan: string) => void,
+  onUpgrade?: (plan: Plan) => void,
 ): ColumnDef<HighlightPlanRow>[] => [
   {
     accessorKey: "title",

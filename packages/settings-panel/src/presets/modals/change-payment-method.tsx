@@ -1,19 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import {
-  Elements,
   PaymentElement,
   useElements,
   useStripe,
 } from "@stripe/react-stripe-js";
-import type {
-  Stripe,
-  StripeElementLocale,
-  StripeElementsOptionsMode,
-} from "@stripe/stripe-js";
+import type { Stripe } from "@stripe/stripe-js";
 
-import { useTranslation } from "@notion-kit/i18n";
 import {
   Button,
   DialogClose,
@@ -22,37 +16,22 @@ import {
   Spinner,
 } from "@notion-kit/shadcn";
 
-import {
-  stripeDark,
-  stripeLight,
-} from "@/presets/_components/stripe-appearance";
+import { StripeElements } from "@/presets/_components";
 
 interface ChangePaymentMethodProps {
   stripePromise: Promise<Stripe | null>;
-  theme?: "light" | "dark";
   onConfirm?: () => Promise<void>;
 }
 
 export function ChangePaymentMethod({
   stripePromise,
-  theme = "light",
   onConfirm,
 }: ChangePaymentMethodProps) {
-  const { i18n } = useTranslation();
-
-  const options: StripeElementsOptionsMode = {
-    mode: "setup",
-    currency: "usd",
-    paymentMethodTypes: ["card"],
-    locale: i18n.language as StripeElementLocale,
-    appearance: theme === "dark" ? stripeDark : stripeLight,
-  };
-
   return (
     <DialogContent className="w-105">
-      <Elements stripe={stripePromise} options={options}>
+      <StripeElements stripePromise={stripePromise}>
         <PaymentMethodForm onConfirm={onConfirm} />
-      </Elements>
+      </StripeElements>
     </DialogContent>
   );
 }
@@ -62,6 +41,7 @@ interface PaymentMethodFormProps {
 }
 
 function PaymentMethodForm({ onConfirm }: PaymentMethodFormProps) {
+  const closeRef = useRef<HTMLButtonElement>(null);
   const stripe = useStripe();
   const elements = useElements();
   const [isPending, startTransition] = useTransition();
@@ -74,6 +54,7 @@ function PaymentMethodForm({ onConfirm }: PaymentMethodFormProps) {
       const { error: submitError } = await elements.submit();
       if (submitError) return;
       await onConfirm?.();
+      closeRef.current?.click();
     });
   };
 
@@ -101,6 +82,7 @@ function PaymentMethodForm({ onConfirm }: PaymentMethodFormProps) {
             Cancel
           </Button>
         </DialogClose>
+        <DialogClose ref={closeRef} className="hidden" />
         <Button
           type="button"
           variant="blue"

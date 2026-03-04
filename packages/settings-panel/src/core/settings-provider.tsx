@@ -115,7 +115,7 @@ export interface SettingsActions {
   /** Billing */
   billing?: {
     getAll?: () => Promise<BillingStore>;
-    upgrade?: (plan: string, annual: boolean) => Promise<void>;
+    upgrade?: (plan: Plan, annual: boolean) => Promise<void>;
     changePlan?: (plan: Plan) => Promise<void>;
     editMethod?: () => Promise<void>;
     editBilledTo?: (

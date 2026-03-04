@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
@@ -31,12 +32,14 @@ export function ChangeBillingEmail({
   email = "",
   onConfirm,
 }: ChangeBillingEmailProps) {
+  const closeRef = useRef<HTMLButtonElement>(null);
   const form = useForm<BillingEmailSchema>({
     resolver: zodResolver(billingEmailSchema),
     defaultValues: { email },
   });
   const submit = form.handleSubmit(async (values) => {
     await onConfirm?.(values.email);
+    closeRef.current?.click();
   });
 
   return (
@@ -68,6 +71,7 @@ export function ChangeBillingEmail({
                 Cancel
               </Button>
             </DialogClose>
+            <DialogClose ref={closeRef} className="hidden" />
             <Button
               type="submit"
               variant="blue"

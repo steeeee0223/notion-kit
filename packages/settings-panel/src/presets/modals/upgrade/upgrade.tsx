@@ -1,15 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Elements, useElements, useStripe } from "@stripe/react-stripe-js";
-import type {
-  Stripe,
-  StripeElementLocale,
-  StripeElementsOptionsMode,
-} from "@stripe/stripe-js";
+import { useElements, useStripe } from "@stripe/react-stripe-js";
+import type { Stripe } from "@stripe/stripe-js";
 import { useForm } from "react-hook-form";
 
-import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import {
   DialogContent,
@@ -24,7 +19,7 @@ import {
   type UpgradePlan,
   type UpgradeSchema,
 } from "@/lib/types";
-import { stripeDark, stripeLight } from "@/presets/_components";
+import { StripeElements } from "@/presets/_components";
 
 import { BillingDetails } from "./billing-details";
 import { BillingOptions } from "./billing-options";
@@ -47,21 +42,10 @@ export function Upgrade({
   defaultName = "",
   defaultBusinessName = "",
   stripePromise,
-  theme = "light",
   onUpgrade,
 }: UpgradeProps) {
-  const { i18n } = useTranslation();
-
-  const options: StripeElementsOptionsMode = {
-    mode: "setup",
-    currency: "usd",
-    paymentMethodTypes: ["card"],
-    locale: i18n.language as StripeElementLocale,
-    appearance: theme === "dark" ? stripeDark : stripeLight,
-  };
-
   return (
-    <Elements stripe={stripePromise} options={options}>
+    <StripeElements stripePromise={stripePromise}>
       <UpgradeForm
         plan={plan}
         description={description}
@@ -69,7 +53,7 @@ export function Upgrade({
         defaultBusinessName={defaultBusinessName}
         onUpgrade={onUpgrade}
       />
-    </Elements>
+    </StripeElements>
   );
 }
 

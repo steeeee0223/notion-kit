@@ -1,18 +1,15 @@
 "use client";
 
-import { useCallback, useState, useTransition } from "react";
+import { useCallback, useRef, useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AddressElement, Elements, useElements } from "@stripe/react-stripe-js";
+import { AddressElement, useElements } from "@stripe/react-stripe-js";
 import type {
   Stripe,
   StripeAddressElementChangeEvent,
-  StripeElementLocale,
-  StripeElementsOptionsMode,
 } from "@stripe/stripe-js";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 
-import { useTranslation } from "@notion-kit/i18n";
 import {
   Button,
   DialogClose,
@@ -28,10 +25,7 @@ import {
   Spinner,
 } from "@notion-kit/shadcn";
 
-import {
-  stripeDark,
-  stripeLight,
-} from "@/presets/_components/stripe-appearance";
+import { StripeElements } from "@/presets/_components";
 
 export interface BillingAddress {
   name: string;
@@ -47,7 +41,7 @@ export interface BillingAddress {
 
 interface ChangeBillingAddressProps {
   stripePromise?: Promise<Stripe | null>;
-  theme?: "light" | "dark";
+  theme?: string;
   defaultCountry?: string;
   defaultBusinessName?: string;
   onConfirm?: (
@@ -57,7 +51,7 @@ interface ChangeBillingAddressProps {
 
 export function ChangeBillingAddress({
   stripePromise,
-  theme = "light",
+  theme,
   defaultCountry = "US",
   defaultBusinessName = "",
   onConfirm,
@@ -83,13 +77,9 @@ export function ChangeBillingAddress({
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/*  Stripe-powered form (with AddressElement)                                 */
-/* -------------------------------------------------------------------------- */
-
 interface StripeFormWrapperProps {
   stripePromise: Promise<Stripe | null>;
-  theme: "light" | "dark";
+  theme?: string;
   defaultCountry: string;
   defaultBusinessName: string;
   onConfirm?: (
@@ -104,25 +94,15 @@ function ChangeBillingAddressStripe({
   defaultBusinessName,
   onConfirm,
 }: StripeFormWrapperProps) {
-  const { i18n } = useTranslation();
-
-  const options: StripeElementsOptionsMode = {
-    mode: "setup",
-    currency: "usd",
-    paymentMethodTypes: ["card"],
-    locale: i18n.language as StripeElementLocale,
-    appearance: theme === "dark" ? stripeDark : stripeLight,
-  };
-
   return (
     <DialogContent className="w-105">
-      <Elements stripe={stripePromise} options={options}>
+      <StripeElements stripePromise={stripePromise}>
         <AddressFormStripe
           defaultCountry={defaultCountry}
           defaultBusinessName={defaultBusinessName}
           onConfirm={onConfirm}
         />
-      </Elements>
+      </StripeElements>
     </DialogContent>
   );
 }
@@ -140,6 +120,7 @@ function AddressFormStripe({
   defaultBusinessName,
   onConfirm,
 }: AddressFormStripeProps) {
+  const closeRef = useRef<HTMLButtonElement>(null);
   const elements = useElements();
   const [isPending, startTransition] = useTransition();
   const [businessName, setBusinessName] = useState(defaultBusinessName);
@@ -160,6 +141,7 @@ function AddressFormStripe({
     if (!elements || !addressComplete || !addressValue) return;
     startTransition(async () => {
       await onConfirm?.({ ...addressValue, businessName });
+      closeRef.current?.click();
     });
   };
 
@@ -199,6 +181,7 @@ function AddressFormStripe({
             Cancel
           </Button>
         </DialogClose>
+        <DialogClose ref={closeRef} className="hidden" />
         <Button
           type="button"
           variant="blue"
@@ -213,10 +196,6 @@ function AddressFormStripe({
     </>
   );
 }
-
-/* -------------------------------------------------------------------------- */
-/*  Native fallback form (no Stripe dependency)                               */
-/* -------------------------------------------------------------------------- */
 
 const nativeFormSchema = z.object({
   name: z.string(),
@@ -234,11 +213,15 @@ interface NativeFormProps {
   ) => Promise<void>;
 }
 
+/**
+ * Native fallback form (no Stripe dependency)
+ */
 function ChangeBillingAddressNative({
   defaultCountry,
   defaultBusinessName,
   onConfirm,
 }: NativeFormProps) {
+  const closeRef = useRef<HTMLButtonElement>(null);
   const form = useForm<NativeFormSchema>({
     resolver: zodResolver(nativeFormSchema),
     defaultValues: {
@@ -262,6 +245,7 @@ function ChangeBillingAddressNative({
       },
       businessName: values.businessName,
     });
+    closeRef.current?.click();
   });
 
   return (
@@ -330,6 +314,7 @@ function ChangeBillingAddressNative({
                 Cancel
               </Button>
             </DialogClose>
+            <DialogClose ref={closeRef} className="hidden" />
             <Button
               type="submit"
               variant="blue"

@@ -3,34 +3,26 @@
 import { useState } from "react";
 
 import { useTranslation } from "@notion-kit/i18n";
+import { Plan } from "@notion-kit/schemas";
 import { Dialog, Separator } from "@notion-kit/shadcn";
 
-import {
-  SettingsSection,
-  useSettings,
-  useSettingsApi,
-  useStripePromise,
-} from "@/core";
+import { SettingsSection, useSettings, useStripePromise } from "@/core";
 import { getUpgradePlan } from "@/lib/plans";
 import { Scope, type UpgradeSchema } from "@/lib/types";
 import { TextLinks } from "@/presets/_components";
+import { useBillingActions } from "@/presets/hooks";
 import { Upgrade } from "@/presets/modals";
 import { PlansTable } from "@/presets/tables";
 
 export function AllPlansSection() {
   const { scopes } = useSettings();
-  const { billing } = useSettingsApi();
+  const { upgrade } = useBillingActions();
   const stripePromise = useStripePromise();
   const canUpgrade = scopes.has(Scope.Upgrade);
 
   const [open, setOpen] = useState(false);
-  const [targetPlan, setTargetPlan] = useState<string | null>(null);
+  const [targetPlan, setTargetPlan] = useState<Plan | null>(null);
   const upgradePlan = targetPlan ? getUpgradePlan(targetPlan) : undefined;
-
-  const handleUpgrade = (plan: string) => {
-    setTargetPlan(plan);
-    setOpen(true);
-  };
 
   /** i18n */
   const { t } = useTranslation("settings");
@@ -46,7 +38,13 @@ export function AllPlansSection() {
         />
       </div>
       <div className="flex w-full flex-col items-center gap-5">
-        <PlansTable canUpgrade={canUpgrade} onUpgrade={handleUpgrade} />
+        <PlansTable
+          canUpgrade={canUpgrade}
+          onUpgrade={(plan) => {
+            setTargetPlan(plan);
+            setOpen(true);
+          }}
+        />
         <Separator />
       </div>
       <Dialog open={open} onOpenChange={setOpen}>
@@ -55,10 +53,11 @@ export function AllPlansSection() {
             plan={upgradePlan}
             stripePromise={stripePromise}
             onUpgrade={async (data: UpgradeSchema) => {
-              await billing?.upgrade?.(
-                targetPlan!.toLowerCase(),
-                data.billingInterval === "year",
-              );
+              if (!targetPlan) return;
+              await upgrade({
+                plan: targetPlan,
+                annual: data.billingInterval === "year",
+              });
               setOpen(false);
             }}
           />

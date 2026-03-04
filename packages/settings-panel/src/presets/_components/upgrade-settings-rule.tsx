@@ -8,29 +8,35 @@ import { Dialog } from "@notion-kit/shadcn";
 import {
   SettingsRule,
   useSettings,
-  useSettingsApi,
   useStripePromise,
   type SettingsRuleProps,
 } from "@/core";
 import { getUpgradePlan, isPlanAbove } from "@/lib/plans";
 import type { UpgradeSchema } from "@/lib/types";
+import { useBillingActions } from "@/presets/hooks";
+import { Upgrade } from "@/presets/modals";
 
-import { Upgrade } from "../modals";
+interface UpgradeSettingsRuleProps extends SettingsRuleProps {
+  plan?: Plan;
+}
 
 /**
  * A context-aware wrapper around `SettingsRule` that:
  * 1. Hides the plan badge when the workspace plan ≥ required plan
  * 2. Opens the `<Upgrade />` modal when the plan badge is clicked
  */
-export function UpgradeSettingsRule({ plan, ...props }: SettingsRuleProps) {
+export function UpgradeSettingsRule({
+  plan,
+  ...props
+}: UpgradeSettingsRuleProps) {
   const {
     settings: { workspace },
   } = useSettings();
-  const { billing } = useSettingsApi();
+  const { upgrade } = useBillingActions();
   const stripePromise = useStripePromise();
   const [open, setOpen] = useState(false);
 
-  const showPlan = plan && !isPlanAbove(workspace.plan, plan as Plan);
+  const showPlan = plan && !isPlanAbove(workspace.plan, plan);
   const upgradePlan = showPlan ? getUpgradePlan(plan) : undefined;
 
   return (
@@ -40,15 +46,15 @@ export function UpgradeSettingsRule({ plan, ...props }: SettingsRuleProps) {
         plan={showPlan ? plan : undefined}
         onPlanClick={showPlan ? () => setOpen(true) : undefined}
       />
-      {upgradePlan && (
+      {upgradePlan && plan && (
         <Upgrade
           plan={upgradePlan}
           stripePromise={stripePromise}
           onUpgrade={async (data: UpgradeSchema) => {
-            await billing?.upgrade?.(
-              plan!.toLowerCase(),
-              data.billingInterval === "year",
-            );
+            await upgrade({
+              plan,
+              annual: data.billingInterval === "year",
+            });
             setOpen(false);
           }}
         />

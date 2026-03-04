@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import type { Plan } from "@notion-kit/schemas";
 import { Button } from "@notion-kit/shadcn";
 
 import { contentColumns, getHighlightColumns } from "./columns";
@@ -10,7 +11,7 @@ import { DataTable } from "./data-table";
 
 interface PlansTableProps {
   canUpgrade?: boolean;
-  onUpgrade?: (plan: string) => void;
+  onUpgrade?: (plan: Plan) => void;
 }
 
 export function PlansTable({ canUpgrade, onUpgrade }: PlansTableProps) {

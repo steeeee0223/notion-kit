@@ -7,11 +7,12 @@ import {
   DialogTrigger,
   Separator,
   Switch,
+  useTheme,
 } from "@notion-kit/shadcn";
 
 import { SettingsRule, SettingsSection } from "@/core";
-import { useSettingsApi, useStripePromise } from "@/core/settings-provider";
-import { useBilling } from "@/presets/hooks/queries";
+import { useStripePromise } from "@/core/settings-provider";
+import { useBilling, useBillingActions } from "@/presets/hooks";
 import {
   ChangeBillingAddress,
   ChangeBillingEmail,
@@ -19,9 +20,10 @@ import {
 } from "@/presets/modals";
 
 export function PaymentDetailsSection() {
-  const { billing: actions } = useSettingsApi();
+  const { theme } = useTheme();
   const stripePromise = useStripePromise();
   const { data: billing } = useBilling();
+  const actions = useBillingActions();
   /** i18n */
   const { t } = useTranslation("settings", { keyPrefix: "billing" });
   const trans = t("payment-details", { returnObjects: true });
@@ -40,7 +42,7 @@ export function PaymentDetailsSection() {
           </DialogTrigger>
           <ChangePaymentMethod
             stripePromise={stripePromise}
-            onConfirm={actions?.editMethod}
+            onConfirm={actions.editMethod}
           />
         </Dialog>
       </SettingsRule>
@@ -56,8 +58,9 @@ export function PaymentDetailsSection() {
             </Button>
           </DialogTrigger>
           <ChangeBillingAddress
+            theme={theme}
             stripePromise={stripePromise}
-            onConfirm={actions?.editBilledTo}
+            onConfirm={actions.editBilledTo}
           />
         </Dialog>
       </SettingsRule>
@@ -74,7 +77,7 @@ export function PaymentDetailsSection() {
           </DialogTrigger>
           <ChangeBillingEmail
             email={billing.billingEmail}
-            onConfirm={actions?.editEmail}
+            onConfirm={actions.editEmail}
           />
         </Dialog>
       </SettingsRule>
@@ -86,7 +89,7 @@ export function PaymentDetailsSection() {
         <Switch
           size="sm"
           checked={billing.invoiceEmails}
-          onCheckedChange={actions?.toggleInvoiceEmails}
+          onCheckedChange={actions.toggleInvoiceEmails}
         />
       </SettingsRule>
       <Separator />
@@ -98,7 +101,7 @@ export function PaymentDetailsSection() {
           size="sm"
           className="w-36"
           disabled={!billing.vatNumber}
-          onClick={actions?.editVat}
+          onClick={actions.editVat}
         >
           {trans.vat.button}
         </Button>
