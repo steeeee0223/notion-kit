@@ -169,7 +169,9 @@ export const team = pgTable(
     icon: text("icon").notNull(),
     description: text("description"),
     permission: text("permission").default("default").notNull(),
-    ownedBy: text("owned_by").notNull(),
+    ownedBy: text("owned_by")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
   },
   (table) => [index("team_organizationId_idx").on(table.organizationId)],
 );
