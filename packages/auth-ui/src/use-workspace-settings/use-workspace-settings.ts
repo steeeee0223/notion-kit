@@ -33,6 +33,7 @@ export function useWorkspaceSettings() {
   const { data: workspace } = useActiveWorkspace();
   const [orgApi] = useState(auth.organization);
   const [subApi] = useState(auth.subscription);
+  const [stripeExtraApi] = useState(auth.stripeExtra);
 
   const workspaceStore = useMemo<WorkspaceStore>(() => {
     if (!workspace) return initialWorkspaceStore;
@@ -303,16 +304,24 @@ export function useWorkspaceSettings() {
       },
       billing: {
         getAll: async (): Promise<BillingStore> => {
-          const { data: subscriptions } = await subApi.list({
-            query: {
-              referenceId: organizationId,
-              customerType: "organization",
-            },
-          });
+          const [{ data: subscriptions }, { data: customer }] =
+            await Promise.all([
+              subApi.list({
+                query: {
+                  referenceId: organizationId,
+                  customerType: "organization",
+                },
+              }),
+              stripeExtraApi.getCustomer({
+                query: { organizationId },
+              }),
+            ]);
           const active = subscriptions?.find(
             (s) => s.status === "active" || s.status === "trialing",
           );
           return {
+            billingEmail: customer?.email ?? undefined,
+            billedTo: customer?.name ?? undefined,
             upcomingInvoice: active ? `${active.plan} plan` : undefined,
           };
         },
@@ -342,6 +351,19 @@ export function useWorkspaceSettings() {
             returnUrl: `${baseURL}/settings/billing`,
           });
         },
+        editEmail: async (email) => {
+          await stripeExtraApi.updateCustomer({
+            organizationId,
+            email,
+          });
+        },
+        editBilledTo: async (address) => {
+          await stripeExtraApi.updateCustomer({
+            organizationId,
+            name: address.businessName,
+            address: address.address,
+          });
+        },
         viewInvoice: () => {
           void subApi.billingPortal({
             referenceId: organizationId,
@@ -351,7 +373,15 @@ export function useWorkspaceSettings() {
         },
       },
     };
-  }, [orgApi, subApi, baseURL, redirect, session?.user.id, workspace?.id]);
+  }, [
+    orgApi,
+    subApi,
+    stripeExtraApi,
+    baseURL,
+    redirect,
+    session?.user.id,
+    workspace?.id,
+  ]);
 
   return {
     workspaceStore,
