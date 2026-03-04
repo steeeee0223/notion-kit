@@ -58,7 +58,7 @@ export function useBillingActions() {
       actions?.toggleInvoiceEmails?.(checked),
     onMutate: async (checked) => {
       await queryClient.cancelQueries({ queryKey });
-      const prev = queryClient.getQueryData<BillingStore>(queryKey);
+      const prev = queryClient.getQueryData(queryKey);
       queryClient.setQueryData<BillingStore>(queryKey, (v) => {
         if (!v) return v;
         return { ...v, invoiceEmails: checked };

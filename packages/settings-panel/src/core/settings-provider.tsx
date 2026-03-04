@@ -169,7 +169,7 @@ export interface SettingsProviderProps
   extends React.PropsWithChildren,
     SettingsActions {
   settings: SettingsStore;
-  stripePublishableKey: string;
+  stripePublishableKey?: string;
 }
 
 export function SettingsProvider({
@@ -187,7 +187,7 @@ export function SettingsProvider({
     [settings],
   );
   const stripePromise = useMemo(
-    () => loadStripe(stripePublishableKey),
+    () => (stripePublishableKey ? loadStripe(stripePublishableKey) : null),
     [stripePublishableKey],
   );
   return (

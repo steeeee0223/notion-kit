@@ -8,7 +8,7 @@ import { Dialog, Separator } from "@notion-kit/shadcn";
 
 import { SettingsSection, useSettings, useStripePromise } from "@/core";
 import { getUpgradePlan } from "@/lib/plans";
-import { Scope, type UpgradeSchema } from "@/lib/types";
+import { Scope } from "@/lib/types";
 import { TextLinks } from "@/presets/_components";
 import { useBillingActions } from "@/presets/hooks";
 import { Upgrade } from "@/presets/modals";
@@ -52,7 +52,7 @@ export function AllPlansSection() {
           <Upgrade
             plan={upgradePlan}
             stripePromise={stripePromise}
-            onUpgrade={async (data: UpgradeSchema) => {
+            onUpgrade={async (data) => {
               if (!targetPlan) return;
               await upgrade({
                 plan: targetPlan,

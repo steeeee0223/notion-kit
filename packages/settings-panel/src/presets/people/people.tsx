@@ -30,7 +30,7 @@ import {
   useStripePromise,
 } from "@/core";
 import { getUpgradePlan } from "@/lib/plans";
-import { Scope, type UpgradeSchema } from "@/lib/types";
+import { Scope } from "@/lib/types";
 import { generateGuestsCsv } from "@/lib/utils";
 import { TextLinks } from "@/presets/_components";
 import {
@@ -279,7 +279,7 @@ export function People() {
             <Upgrade
               plan={upgradePlan}
               stripePromise={stripePromise}
-              onUpgrade={async (data: UpgradeSchema) => {
+              onUpgrade={async (data) => {
                 await upgrade({
                   plan: Plan.PLUS,
                   annual: data.billingInterval === "year",

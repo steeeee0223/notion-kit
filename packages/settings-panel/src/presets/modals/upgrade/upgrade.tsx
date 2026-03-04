@@ -32,7 +32,6 @@ interface UpgradeProps {
   defaultName?: string;
   defaultBusinessName?: string;
   stripePromise: Promise<Stripe | null>;
-  theme?: "light" | "dark";
   onUpgrade?: (data: UpgradeSchema) => Promise<void>;
 }
 

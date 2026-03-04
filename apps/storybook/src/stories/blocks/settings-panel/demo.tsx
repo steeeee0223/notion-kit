@@ -111,7 +111,7 @@ export function Demo({ tab: initialTab }: DemoProps) {
         },
         editBilledTo: async (address) => {
           await delay(1000);
-          toast.success(`Billing address updated: ${address}`);
+          toast.success(`Billing address updated: ${JSON.stringify(address)}`);
         },
         editEmail: async (email) => {
           await delay(1000);

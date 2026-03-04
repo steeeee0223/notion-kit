@@ -98,7 +98,6 @@ export const AddTeamMembersModal: Story = {
   },
 };
 
-// Migrated stories from modals.stories.tsx
 export const AddMembersModal: Story = {
   render: () => (
     <AddMembers
@@ -191,8 +190,7 @@ export const PasskeysManagement: Story = {
 const stripePromise = loadStripe(env.STORYBOOK_STRIPE_PUBLISHABLE_KEY, {});
 
 export const UpgradeModal: Story = {
-  render: (props, ctx) => {
-    const { theme = "light" } = ctx.globals;
+  render: (props) => {
     return (
       <Portal {...props}>
         <Upgrade
@@ -200,7 +198,6 @@ export const UpgradeModal: Story = {
           description="Do more with unlimited charts, files, automations & integrations"
           defaultName="Steve Yu"
           stripePromise={stripePromise}
-          theme={theme as "light" | "dark"}
         />
       </Portal>
     );
@@ -208,13 +205,11 @@ export const UpgradeModal: Story = {
 };
 
 export const ChangePaymentMethodModal: Story = {
-  render: (_props, ctx) => {
-    const { theme = "light" } = ctx.globals;
+  render: () => {
     return (
       <Portal>
         <ChangePaymentMethod
           stripePromise={stripePromise}
-          theme={theme as "light" | "dark"}
           onConfirm={async () => {
             await delay(1000);
             toast.success("Payment method updated");

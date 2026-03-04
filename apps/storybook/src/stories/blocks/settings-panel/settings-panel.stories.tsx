@@ -11,6 +11,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+/** Account */
 export const Default: Story = {
   args: { tab: "account" },
 };
@@ -23,16 +24,18 @@ export const Notifications: Story = {
 export const MyConnections: Story = {
   args: { tab: "my-connections" },
 };
-
+/** Workspace */
 export const Workspace: Story = {
   args: { tab: "general" },
 };
 export const People: Story = {
   args: { tab: "people" },
 };
+/** Admin */
 export const Teamspaces: Story = {
   args: { tab: "teamspaces" },
 };
+/** Billing */
 export const Plans: Story = {
   args: { tab: "plans" },
 };

@@ -20,7 +20,7 @@ export const env = createEnv({
   runtimeEnv: {
     NODE_ENV: import.meta.env.MODE,
     STORYBOOK_STRIPE_PUBLISHABLE_KEY: import.meta.env
-      .STORYBOOK_STRIPE_PUBLISHABLE_KEY,
+      .STORYBOOK_STRIPE_PUBLISHABLE_KEY as string,
   },
   skipValidation: !!import.meta.env.CI || import.meta.env.MODE === "test",
 });
