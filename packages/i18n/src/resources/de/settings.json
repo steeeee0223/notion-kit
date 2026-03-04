@@ -3,6 +3,10 @@
   "common": {
     "account": "Konto",
     "workspace": "Workspace",
+    "features": "Funktionen",
+    "integrations": "Einbindungen",
+    "admin": "Admin",
+    "access-and-billing": "Zugriff & Abrechnung",
     "upgrade": "Upgraden",
     "more": "Weitere Informationen"
   },

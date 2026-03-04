@@ -4,6 +4,10 @@ interface Resources {
     common: {
       account: "Account";
       workspace: "Workspace";
+      features: "Features";
+      integrations: "Integrations";
+      admin: "Admin";
+      "access-and-billing": "Access & billing";
       upgrade: "Upgrade";
       more: "Learn more";
     };
