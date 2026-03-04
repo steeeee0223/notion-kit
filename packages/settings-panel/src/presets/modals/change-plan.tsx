@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
@@ -38,15 +38,11 @@ interface ChangePlanProps {
 }
 
 export function ChangePlan({ currentPlan, onConfirm }: ChangePlanProps) {
-  const closeRef = useRef<HTMLButtonElement>(null);
   const [selected, setSelected] = useState(currentPlan);
   const [isPending, startTransition] = useTransition();
   const submit = () => {
-    startTransition(async () => {
-      if (!selected) return;
-      await onConfirm?.(selected);
-      closeRef.current?.click();
-    });
+    if (!selected) return;
+    startTransition(async () => await onConfirm?.(selected));
   };
 
   return (
@@ -103,7 +99,6 @@ export function ChangePlan({ currentPlan, onConfirm }: ChangePlanProps) {
           Continue
           {isPending && <Spinner />}
         </Button>
-        <DialogClose ref={closeRef} className="hidden" />
         <DialogClose asChild>
           <Button variant="hint" size="sm" className="text-secondary">
             Cancel

@@ -38,7 +38,7 @@ export function useBillingActions() {
 
   const { mutateAsync: editBilledTo, isPending: isEditingBilledTo } =
     useMutation({
-      mutationFn: actions?.editBilledTo ?? (async () => {}),
+      mutationFn: actions?.editBilledTo ?? createDefaultFn(),
       onError: (e) =>
         toast.error("Update billing address failed", {
           description: e.message,
@@ -47,15 +47,17 @@ export function useBillingActions() {
     });
 
   const { mutateAsync: editEmail, isPending: isEditingEmail } = useMutation({
-    mutationFn: actions?.editEmail ?? (async () => {}),
+    mutationFn: actions?.editEmail ?? createDefaultFn(),
     onError: (e) =>
       toast.error("Update billing email failed", { description: e.message }),
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
   const { mutate: toggleInvoiceEmails } = useMutation({
-    mutationFn: async (checked: boolean) =>
-      actions?.toggleInvoiceEmails?.(checked),
+    mutationFn: async (checked: boolean) => {
+      if (!actions?.toggleInvoiceEmails) return;
+      await Promise.resolve(actions.toggleInvoiceEmails(checked));
+    },
     onMutate: async (checked) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);

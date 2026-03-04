@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState, useTransition } from "react";
+import { useCallback, useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddressElement, useElements } from "@stripe/react-stripe-js";
 import type {
@@ -115,7 +115,6 @@ function AddressFormStripe({
   defaultBusinessName,
   onConfirm,
 }: AddressFormStripeProps) {
-  const closeRef = useRef<HTMLButtonElement>(null);
   const elements = useElements();
   const [isPending, startTransition] = useTransition();
   const [businessName, setBusinessName] = useState(defaultBusinessName);
@@ -136,7 +135,6 @@ function AddressFormStripe({
     if (!elements || !addressComplete || !addressValue) return;
     startTransition(async () => {
       await onConfirm?.({ ...addressValue, businessName });
-      closeRef.current?.click();
     });
   };
 
@@ -176,7 +174,6 @@ function AddressFormStripe({
             Cancel
           </Button>
         </DialogClose>
-        <DialogClose ref={closeRef} className="hidden" />
         <Button
           type="button"
           variant="blue"
@@ -216,7 +213,6 @@ function ChangeBillingAddressNative({
   defaultBusinessName,
   onConfirm,
 }: NativeFormProps) {
-  const closeRef = useRef<HTMLButtonElement>(null);
   const form = useForm<NativeFormSchema>({
     resolver: zodResolver(nativeFormSchema),
     defaultValues: {
@@ -240,7 +236,6 @@ function ChangeBillingAddressNative({
       },
       businessName: values.businessName,
     });
-    closeRef.current?.click();
   });
 
   return (
@@ -309,7 +304,6 @@ function ChangeBillingAddressNative({
                 Cancel
               </Button>
             </DialogClose>
-            <DialogClose ref={closeRef} className="hidden" />
             <Button
               type="submit"
               variant="blue"

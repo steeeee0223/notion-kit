@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { useTranslation } from "@notion-kit/i18n";
 import {
   Button,
@@ -26,13 +28,20 @@ export function PaymentDetailsSection() {
   const { t } = useTranslation("settings", { keyPrefix: "billing" });
   const trans = t("payment-details", { returnObjects: true });
 
+  const [openChangePaymentMethod, setOpenChangePaymentMethod] = useState(false);
+  const [openChangeBilledTo, setOpenChangeBilledTo] = useState(false);
+  const [openChangeBillingEmail, setOpenChangeBillingEmail] = useState(false);
+
   return (
     <SettingsSection title={trans.title}>
       <SettingsRule
         title={trans["payment-method"].title}
         description={billing.paymentMethod ?? trans["payment-method"].none}
       >
-        <Dialog>
+        <Dialog
+          open={openChangePaymentMethod}
+          onOpenChange={setOpenChangePaymentMethod}
+        >
           <DialogTrigger asChild>
             <Button size="sm" className="w-36">
               {trans["payment-method"].button}
@@ -40,7 +49,10 @@ export function PaymentDetailsSection() {
           </DialogTrigger>
           <ChangePaymentMethod
             stripePromise={stripePromise}
-            onConfirm={actions.editMethod}
+            onConfirm={async () => {
+              await actions.editMethod();
+              setOpenChangePaymentMethod(false);
+            }}
           />
         </Dialog>
       </SettingsRule>
@@ -49,7 +61,7 @@ export function PaymentDetailsSection() {
         title={trans["billed-to"].title}
         description={billing.billedTo ?? "-"}
       >
-        <Dialog>
+        <Dialog open={openChangeBilledTo} onOpenChange={setOpenChangeBilledTo}>
           <DialogTrigger asChild>
             <Button size="sm" className="w-36">
               {trans["billed-to"].button}
@@ -57,7 +69,10 @@ export function PaymentDetailsSection() {
           </DialogTrigger>
           <ChangeBillingAddress
             stripePromise={stripePromise}
-            onConfirm={actions.editBilledTo}
+            onConfirm={async (addr) => {
+              await actions.editBilledTo(addr);
+              setOpenChangeBilledTo(false);
+            }}
           />
         </Dialog>
       </SettingsRule>
@@ -66,7 +81,10 @@ export function PaymentDetailsSection() {
         title={trans["billing-email"].title}
         description={billing.billingEmail ?? "-"}
       >
-        <Dialog>
+        <Dialog
+          open={openChangeBillingEmail}
+          onOpenChange={setOpenChangeBillingEmail}
+        >
           <DialogTrigger asChild>
             <Button size="sm" className="w-36">
               {trans["billing-email"].button}
@@ -74,7 +92,10 @@ export function PaymentDetailsSection() {
           </DialogTrigger>
           <ChangeBillingEmail
             email={billing.billingEmail}
-            onConfirm={actions.editEmail}
+            onConfirm={async (email) => {
+              await actions.editEmail(email);
+              setOpenChangeBillingEmail(false);
+            }}
           />
         </Dialog>
       </SettingsRule>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import {
   PaymentElement,
   useElements,
@@ -41,7 +41,6 @@ interface PaymentMethodFormProps {
 }
 
 function PaymentMethodForm({ onConfirm }: PaymentMethodFormProps) {
-  const closeRef = useRef<HTMLButtonElement>(null);
   const stripe = useStripe();
   const elements = useElements();
   const [isPending, startTransition] = useTransition();
@@ -54,7 +53,6 @@ function PaymentMethodForm({ onConfirm }: PaymentMethodFormProps) {
       const { error: submitError } = await elements.submit();
       if (submitError) return;
       await onConfirm?.();
-      closeRef.current?.click();
     });
   };
 
@@ -82,7 +80,6 @@ function PaymentMethodForm({ onConfirm }: PaymentMethodFormProps) {
             Cancel
           </Button>
         </DialogClose>
-        <DialogClose ref={closeRef} className="hidden" />
         <Button
           type="button"
           variant="blue"
