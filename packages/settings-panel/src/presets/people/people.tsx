@@ -23,22 +23,31 @@ import {
   TooltipPreset,
 } from "@notion-kit/shadcn";
 
-import { TextLinks } from "../_components";
-import { SettingsRule, SettingsSection, useSettings } from "../../core";
-import { generateGuestsCsv, Scope } from "../../lib";
+import {
+  SettingsRule,
+  SettingsSection,
+  useSettings,
+  useSettingsApi,
+  useStripePromise,
+} from "@/core";
+import { getUpgradePlan } from "@/lib/plans";
+import { Scope, type UpgradeSchema } from "@/lib/types";
+import { generateGuestsCsv } from "@/lib/utils";
+import { TextLinks } from "@/presets/_components";
 import {
   useAccount,
   useInvitations,
   useTeamspaceDetail,
   useWorkspace,
-} from "../hooks";
-import { AddMembers } from "../modals";
+} from "@/presets/hooks";
+import { AddMembers, Upgrade } from "@/presets/modals";
 import {
   GroupsTable,
   GuestsTable,
   InvitationsTable,
   MembersTable,
-} from "../tables";
+} from "@/presets/tables";
+
 import { useInvitationsActions } from "./use-invitations-actions";
 import { useLinkActions } from "./use-link-actions";
 import { useInvitedMembers, useWorkspaceMemberships } from "./use-people";
@@ -53,9 +62,13 @@ enum PeopleTabs {
 
 export function People() {
   const { scopes } = useSettings();
+  const { billing } = useSettingsApi();
+  const stripePromise = useStripePromise();
   const { data: account } = useAccount();
   const { data: workspace } = useWorkspace();
 
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const upgradePlan = getUpgradePlan(Plan.PLUS);
   const [addMembersOpen, setAddMembersOpen] = useState(false);
 
   /** i18n */
@@ -238,7 +251,11 @@ export function People() {
                     {upgrade.description}
                   </p>
                   <footer className="mb-4 flex flex-wrap gap-x-3 gap-y-2">
-                    <Button variant="blue" size="sm">
+                    <Button
+                      variant="blue"
+                      size="sm"
+                      onClick={() => setUpgradeOpen(true)}
+                    >
                       {common.upgrade}
                     </Button>
                     <Button size="sm" onClick={onGroupsLearnMore}>
@@ -251,6 +268,21 @@ export function People() {
             )}
           <GroupsTable search={search} data={[]} />
         </TabsContent>
+        <Dialog open={upgradeOpen} onOpenChange={setUpgradeOpen}>
+          {upgradePlan && (
+            <Upgrade
+              plan={upgradePlan}
+              stripePromise={stripePromise}
+              onUpgrade={async (data: UpgradeSchema) => {
+                await billing?.upgrade?.(
+                  Plan.PLUS,
+                  data.billingInterval === "year",
+                );
+                setUpgradeOpen(false);
+              }}
+            />
+          )}
+        </Dialog>
         <TabsContent
           value={PeopleTabs.Invitations}
           className="mt-0 bg-transparent"

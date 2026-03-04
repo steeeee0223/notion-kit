@@ -10,14 +10,15 @@ import { DataTable } from "./data-table";
 
 interface PlansTableProps {
   canUpgrade?: boolean;
+  onUpgrade?: (plan: string) => void;
 }
 
-export function PlansTable({ canUpgrade }: PlansTableProps) {
+export function PlansTable({ canUpgrade, onUpgrade }: PlansTableProps) {
   const [toggle, setToggle] = useState(true);
   const highlightTable = useMemo(() => {
-    const column = getHighlightColumns(canUpgrade);
+    const column = getHighlightColumns(canUpgrade, onUpgrade);
     return <DataTable type="highlight" columns={column} data={highlightData} />;
-  }, [canUpgrade]);
+  }, [canUpgrade, onUpgrade]);
 
   return (
     <div className="relative flex w-full flex-col items-center">

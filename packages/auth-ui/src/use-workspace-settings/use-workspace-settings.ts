@@ -316,6 +316,16 @@ export function useWorkspaceSettings() {
             upcomingInvoice: active ? `${active.plan} plan` : undefined,
           };
         },
+        upgrade: async (plan, annual) => {
+          await subApi.upgrade({
+            plan,
+            annual,
+            referenceId: organizationId,
+            customerType: "organization",
+            successUrl: `${baseURL}/settings/billing`,
+            cancelUrl: `${baseURL}/settings/billing`,
+          });
+        },
         changePlan: async (plan) => {
           await subApi.upgrade({
             plan: plan.toLowerCase(),

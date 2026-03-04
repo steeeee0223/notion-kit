@@ -11,7 +11,7 @@ import {
   Input,
 } from "@notion-kit/shadcn";
 
-import type { UpgradeSchema } from "./types";
+import type { UpgradeSchema } from "@/lib/types";
 
 export function BillingDetails() {
   const { control } = useFormContext<UpgradeSchema>();

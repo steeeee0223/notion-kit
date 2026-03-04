@@ -11,10 +11,10 @@ import {
   Label,
 } from "@notion-kit/shadcn";
 
-import type { Plan, UpgradeSchema } from "./types";
+import type { UpgradePlan, UpgradeSchema } from "@/lib/types";
 
 interface ConfirmSectionProps {
-  plan: Plan;
+  plan: UpgradePlan;
 }
 
 export function ConfirmSection({ plan }: ConfirmSectionProps) {

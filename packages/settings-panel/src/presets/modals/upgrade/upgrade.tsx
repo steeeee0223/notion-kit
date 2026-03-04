@@ -19,16 +19,20 @@ import {
   Form,
 } from "@notion-kit/shadcn";
 
+import {
+  upgradeSchema,
+  type UpgradePlan,
+  type UpgradeSchema,
+} from "@/lib/types";
 import { stripeDark, stripeLight } from "@/presets/_components";
 
 import { BillingDetails } from "./billing-details";
 import { BillingOptions } from "./billing-options";
 import { ConfirmSection } from "./confirm-section";
 import { PaymentSection } from "./payment-section";
-import { upgradeSchema, type Plan, type UpgradeSchema } from "./types";
 
 interface UpgradeProps {
-  plan: Plan;
+  plan: UpgradePlan;
   description?: string;
   defaultName?: string;
   defaultBusinessName?: string;
@@ -70,7 +74,7 @@ export function Upgrade({
 }
 
 interface UpgradeFormProps {
-  plan: Plan;
+  plan: UpgradePlan;
   description?: string;
   defaultName: string;
   defaultBusinessName: string;

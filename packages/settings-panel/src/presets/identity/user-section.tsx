@@ -3,8 +3,13 @@
 import { CircleHelp } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { HintButton } from "../_components";
-import { SettingsRule, SettingsSection } from "../../core";
+import { Plan } from "@notion-kit/schemas";
+
+import { SettingsSection } from "@/core";
+import {
+  HintButton,
+  UpgradeSettingsRule as SettingsRule,
+} from "@/presets/_components";
 
 export function UserSection() {
   /** i18n */
@@ -21,14 +26,14 @@ export function UserSection() {
         label={trans.buttons.hint}
         href="https://www.notion.com/help/managed-users-dashboard"
       />
-      <SettingsRule {...trans.dashboard} plan="enterprise" />
-      <SettingsRule {...trans.profile} plan="enterprise" />
-      <SettingsRule {...trans.external} plan="enterprise" />
-      <SettingsRule {...trans.support} plan="enterprise" />
-      <SettingsRule {...trans.session} plan="enterprise" />
-      <SettingsRule {...trans.logout} plan="enterprise" />
-      <SettingsRule {...trans.password} plan="enterprise" />
-      <SettingsRule {...trans.mail} plan="enterprise" />
+      <SettingsRule {...trans.dashboard} plan={Plan.ENTERPRISE} />
+      <SettingsRule {...trans.profile} plan={Plan.ENTERPRISE} />
+      <SettingsRule {...trans.external} plan={Plan.ENTERPRISE} />
+      <SettingsRule {...trans.support} plan={Plan.ENTERPRISE} />
+      <SettingsRule {...trans.session} plan={Plan.ENTERPRISE} />
+      <SettingsRule {...trans.logout} plan={Plan.ENTERPRISE} />
+      <SettingsRule {...trans.password} plan={Plan.ENTERPRISE} />
+      <SettingsRule {...trans.mail} plan={Plan.ENTERPRISE} />
     </SettingsSection>
   );
 }

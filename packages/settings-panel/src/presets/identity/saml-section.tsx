@@ -3,10 +3,14 @@
 import { CircleHelp } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
+import { Plan } from "@notion-kit/schemas";
 import { Switch } from "@notion-kit/shadcn";
 
-import { HintButton } from "../_components";
-import { SettingsRule, SettingsSection } from "../../core";
+import { SettingsSection } from "@/core";
+import {
+  HintButton,
+  UpgradeSettingsRule as SettingsRule,
+} from "@/presets/_components";
 
 export function SamlSection() {
   /** i18n */
@@ -20,8 +24,8 @@ export function SamlSection() {
         label={trans.buttons.hint}
         href="https://www.notion.com/help/saml-sso-configuration"
       />
-      <SettingsRule {...trans.saml} plan="business" />
-      <SettingsRule {...trans.login} plan="business" />
+      <SettingsRule {...trans.saml} plan={Plan.BUSINESS} />
+      <SettingsRule {...trans.login} plan={Plan.BUSINESS} />
       <SettingsRule {...trans.creation}>
         <Switch size="sm" disabled />
       </SettingsRule>

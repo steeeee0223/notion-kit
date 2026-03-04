@@ -11,10 +11,10 @@ import {
   FormMessage,
 } from "@notion-kit/shadcn";
 
-import type { Plan, UpgradeSchema } from "./types";
+import type { UpgradePlan, UpgradeSchema } from "@/lib/types";
 
 interface BillingOptionsProps {
-  plan: Plan;
+  plan: UpgradePlan;
 }
 
 export function BillingOptions({ plan }: BillingOptionsProps) {

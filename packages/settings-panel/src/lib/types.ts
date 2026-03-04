@@ -1,3 +1,5 @@
+import { z } from "zod/v4";
+
 import type { LOCALE } from "@notion-kit/i18n";
 import type { IconData, User } from "@notion-kit/schemas";
 import { Plan, Role } from "@notion-kit/schemas";
@@ -194,3 +196,21 @@ export type Teamspaces = Record<
     ownedBy: string;
   }
 >;
+
+export interface UpgradePlan {
+  name: string;
+  monthly: number;
+  annual: number;
+}
+
+export const upgradeSchema = z.object({
+  name: z.string(),
+  businessName: z.string(),
+  vatId: z.string(),
+  billingInterval: z.enum(["month", "year"]),
+  termsAccepted: z.literal(true, {
+    error: "You must accept the terms to continue",
+  }),
+});
+
+export type UpgradeSchema = z.infer<typeof upgradeSchema>;

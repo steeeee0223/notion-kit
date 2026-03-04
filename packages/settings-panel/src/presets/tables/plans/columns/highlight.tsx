@@ -12,6 +12,7 @@ export interface HighlightPlanRow
 
 export const getHighlightColumns = (
   canUpgrade?: boolean,
+  onUpgrade?: (plan: string) => void,
 ): ColumnDef<HighlightPlanRow>[] => [
   {
     accessorKey: "title",
@@ -40,7 +41,12 @@ export const getHighlightColumns = (
             description="Only workspace owners can perform this action."
             className={canUpgrade ? "hidden" : "w-[174px]"}
           >
-            <Button size="sm" className="h-7" disabled={!canUpgrade}>
+            <Button
+              size="sm"
+              className="h-7"
+              disabled={!canUpgrade}
+              onClick={() => onUpgrade?.(Plan.PLUS)}
+            >
               Upgrade
             </Button>
           </TooltipPreset>
@@ -67,6 +73,7 @@ export const getHighlightColumns = (
               size="sm"
               className="h-7"
               disabled={!canUpgrade}
+              onClick={() => onUpgrade?.(Plan.BUSINESS)}
             >
               Upgrade
             </Button>

@@ -7,3 +7,4 @@ export {
 } from "./helper";
 export { permissions, TeamspacePermission } from "./teamspace";
 export { stripeLight, stripeDark } from "./stripe-appearance";
+export { UpgradeSettingsRule } from "./upgrade-settings-rule";

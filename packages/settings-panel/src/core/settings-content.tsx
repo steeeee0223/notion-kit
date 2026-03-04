@@ -40,7 +40,11 @@ function SettingsPlan({ plan, onClick }: SettingsPlanProps) {
         className="ml-2 flex size-auto"
         onClick={onClick}
       >
-        <Badge variant="blue" size="sm" className="whitespace-nowrap uppercase">
+        <Badge
+          variant="blue"
+          size="sm"
+          className="h-3 whitespace-nowrap uppercase"
+        >
           {plan} ↗
         </Badge>
       </Button>
@@ -53,6 +57,7 @@ interface SettingsRuleProps extends React.PropsWithChildren {
   description: React.ReactNode;
   className?: string;
   plan?: string;
+  onPlanClick?: () => void;
   href?: string;
 }
 function SettingsRule({
@@ -61,6 +66,7 @@ function SettingsRule({
   description,
   className,
   plan,
+  onPlanClick,
   href,
 }: SettingsRuleProps) {
   return (
@@ -79,15 +85,14 @@ function SettingsRule({
           >
             {title}
           </h3>
-          {!!plan && <SettingsPlan plan={plan} />}
+          {!!plan && <SettingsPlan plan={plan} onClick={onPlanClick} />}
           {!!href && (
             <Button
               variant="hint"
               size="circle"
-              className="size-4"
               onClick={() => window.open(href)}
             >
-              <HelpCircle className="size-4" />
+              <HelpCircle className="size-3" />
             </Button>
           )}
         </div>
@@ -99,3 +104,4 @@ function SettingsRule({
 }
 
 export { SettingsSection, SettingsRule, SettingsPlan };
+export type { SettingsRuleProps };
