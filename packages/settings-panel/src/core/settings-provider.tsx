@@ -187,7 +187,10 @@ export function SettingsProvider({
     [settings],
   );
   const stripePromise = useMemo(
-    () => (stripePublishableKey ? loadStripe(stripePublishableKey) : null),
+    () =>
+      stripePublishableKey
+        ? loadStripe(stripePublishableKey)
+        : Promise.resolve(null),
     [stripePublishableKey],
   );
   return (
