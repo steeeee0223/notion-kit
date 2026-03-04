@@ -1,7 +1,6 @@
 "use client";
 
-import { useTranslation } from "react-i18next";
-
+import { useTranslation } from "@notion-kit/i18n";
 import { Plan } from "@notion-kit/schemas";
 
 import { SettingsSection } from "@/core";

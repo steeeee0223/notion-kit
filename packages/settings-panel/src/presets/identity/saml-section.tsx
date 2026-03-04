@@ -1,8 +1,8 @@
 "use client";
 
 import { CircleHelp } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
+import { useTranslation } from "@notion-kit/i18n";
 import { Plan } from "@notion-kit/schemas";
 import { Switch } from "@notion-kit/shadcn";
 
