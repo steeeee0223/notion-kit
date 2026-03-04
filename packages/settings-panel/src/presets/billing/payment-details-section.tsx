@@ -7,7 +7,6 @@ import {
   DialogTrigger,
   Separator,
   Switch,
-  useTheme,
 } from "@notion-kit/shadcn";
 
 import { SettingsRule, SettingsSection } from "@/core";
@@ -20,7 +19,6 @@ import {
 } from "@/presets/modals";
 
 export function PaymentDetailsSection() {
-  const { theme } = useTheme();
   const stripePromise = useStripePromise();
   const { data: billing } = useBilling();
   const actions = useBillingActions();
@@ -58,7 +56,6 @@ export function PaymentDetailsSection() {
             </Button>
           </DialogTrigger>
           <ChangeBillingAddress
-            theme={theme}
             stripePromise={stripePromise}
             onConfirm={actions.editBilledTo}
           />

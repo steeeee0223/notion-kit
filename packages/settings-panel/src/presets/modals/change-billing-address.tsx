@@ -41,7 +41,6 @@ export interface BillingAddress {
 
 interface ChangeBillingAddressProps {
   stripePromise?: Promise<Stripe | null>;
-  theme?: string;
   defaultCountry?: string;
   defaultBusinessName?: string;
   onConfirm?: (
@@ -51,7 +50,6 @@ interface ChangeBillingAddressProps {
 
 export function ChangeBillingAddress({
   stripePromise,
-  theme,
   defaultCountry = "US",
   defaultBusinessName = "",
   onConfirm,
@@ -69,7 +67,6 @@ export function ChangeBillingAddress({
   return (
     <ChangeBillingAddressStripe
       stripePromise={stripePromise}
-      theme={theme}
       defaultCountry={defaultCountry}
       defaultBusinessName={defaultBusinessName}
       onConfirm={onConfirm}
@@ -79,7 +76,6 @@ export function ChangeBillingAddress({
 
 interface StripeFormWrapperProps {
   stripePromise: Promise<Stripe | null>;
-  theme?: string;
   defaultCountry: string;
   defaultBusinessName: string;
   onConfirm?: (
@@ -89,7 +85,6 @@ interface StripeFormWrapperProps {
 
 function ChangeBillingAddressStripe({
   stripePromise,
-  theme,
   defaultCountry,
   defaultBusinessName,
   onConfirm,
