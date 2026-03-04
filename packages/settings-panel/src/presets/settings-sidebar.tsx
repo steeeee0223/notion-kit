@@ -88,7 +88,7 @@ export function SettingsSidebarPreset({
         ))}
       </SettingsSidebarGroup>
       {tabGroups.map(({ i18nKey, tabs }) => (
-        <SettingsSidebarGroup>
+        <SettingsSidebarGroup key={i18nKey}>
           <SettingsSidebarTitle>{t(i18nKey)}</SettingsSidebarTitle>
           {tabs.map(({ value, Icon }) => (
             <SettingsTab
