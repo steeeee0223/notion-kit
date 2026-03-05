@@ -2,58 +2,53 @@
 
 import { useMemo } from "react";
 
-import type { Team } from "@notion-kit/auth";
 import type { IconData } from "@notion-kit/schemas";
-import type { Teamspaces, TeamspacesAdapter } from "@notion-kit/settings-panel";
+import type {
+  TeamspacePermission,
+  TeamspaceRole,
+  Teamspaces,
+  TeamspacesAdapter,
+} from "@notion-kit/settings-panel";
 
 import { useActiveWorkspace, useAuth, useSession } from "../auth-provider";
 import { handleError } from "../lib";
 
 export function useTeamspacesAdapter(): TeamspacesAdapter | undefined {
   const { auth } = useAuth();
+  const orgApi = auth.organization;
+  const orgExtraApi = auth.organizationExtra;
+
   const { data: session } = useSession();
   const { data: workspace } = useActiveWorkspace();
   const organizationId = workspace?.id;
   const userId = session?.user.id;
-  const orgApi = auth.organization;
 
   return useMemo<TeamspacesAdapter | undefined>(() => {
     if (!organizationId || !userId) return undefined;
     return {
       getAll: async () => {
-        const teams = await orgApi.listTeams({
+        const res = await orgExtraApi.listTeamsWithMembers({
           query: { organizationId },
         });
-        if (teams.error) {
-          handleError(teams, "Fetch teamspaces failed");
+        if (res.error) {
+          handleError(res, "Fetch teamspaces failed");
           return {};
         }
-        const data: Teamspaces = {};
-        const results = await Promise.all(
-          teams.data.map((team) =>
-            orgApi.listTeamMembers({
-              query: { teamId: team.id },
-            }),
-          ),
-        );
-        results.forEach((res, index) => {
-          const team = teams.data[index]! as Team;
-          data[team.id] = {
+        return res.data.reduce<Teamspaces>((acc, team) => {
+          acc[team.id] = {
             id: team.id,
             name: team.name,
-            updatedAt: (team.updatedAt ?? team.createdAt).getTime(),
+            updatedAt: new Date(team.updatedAt ?? team.createdAt).getTime(),
             icon: JSON.parse(team.icon) as IconData,
-            permission: team.permission,
+            permission: team.permission as TeamspacePermission,
             ownedBy: team.ownedBy,
-            members:
-              res.data?.map((m) => ({
-                userId: m.userId,
-                // TODO update role
-                role: "owner",
-              })) ?? [],
+            members: team.members.map((m) => ({
+              userId: m.userId,
+              role: m.role as TeamspaceRole,
+            })),
           };
-        });
-        return data;
+          return acc;
+        }, {});
       },
       add: async ({ icon, ...data }) => {
         const res = await orgApi.createTeam(
@@ -80,28 +75,30 @@ export function useTeamspacesAdapter(): TeamspacesAdapter | undefined {
       leave: async (teamId) => {
         await orgApi.removeTeamMember({ teamId, userId }, { throw: true });
       },
-      addMembers: async ({ teamspaceId, userIds }) => {
-        // TODO cannot add role
+      addMembers: async ({ teamspaceId, userIds, role }) => {
         await Promise.all(
-          userIds.map((uid) =>
-            orgApi.addTeamMember(
-              { teamId: teamspaceId, userId: uid },
-              { throw: true },
-            ),
+          userIds.map((userId) =>
+            orgExtraApi.addTeamMemberWithRole({
+              teamId: teamspaceId,
+              userId,
+              role,
+            }),
           ),
         );
       },
-      updateMember: async () => {
-        // TODO
-        console.warn("Not implemented");
-        await Promise.resolve();
+      updateMember: async ({ teamspaceId, userId, role }) => {
+        await orgExtraApi.updateTeamMember({
+          teamId: teamspaceId,
+          userId,
+          role,
+        });
       },
-      deleteMember: async ({ teamspaceId, userId: uid }) => {
+      deleteMember: async ({ teamspaceId, userId }) => {
         await orgApi.removeTeamMember(
-          { teamId: teamspaceId, userId: uid },
+          { teamId: teamspaceId, userId },
           { throw: true },
         );
       },
     };
-  }, [orgApi, organizationId, userId]);
+  }, [orgApi, orgExtraApi, organizationId, userId]);
 }

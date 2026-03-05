@@ -5,10 +5,7 @@ import { v4 } from "uuid";
 
 import type { WorkspaceMetadata } from "@notion-kit/auth";
 import { IconObject, Plan, Role, type IconData } from "@notion-kit/schemas";
-import type {
-  WorkspaceAdapter,
-  WorkspaceStore,
-} from "@notion-kit/settings-panel";
+import type { WorkspaceAdapter } from "@notion-kit/settings-panel";
 
 import { useActiveWorkspace, useAuth, useSession } from "../auth-provider";
 
@@ -23,63 +20,66 @@ function planFromString(plan: string): Plan {
   return map[plan.toLowerCase()] ?? Plan.FREE;
 }
 
+function parseIcon(logo: string | null | undefined, name: string): IconData {
+  try {
+    const res = IconObject.safeParse(JSON.parse(logo ?? ""));
+    if (res.success) return res.data;
+  } catch {
+    // use default text icon
+  }
+  return { type: "text", src: name };
+}
+
+function parseInviteLink(
+  metadata: string | null | undefined,
+  baseURL: string,
+): string {
+  try {
+    const parsed = JSON.parse(metadata ?? "") as WorkspaceMetadata;
+    if (parsed.inviteToken) return `${baseURL}/invite/${parsed.inviteToken}`;
+  } catch {
+    // no invite link
+  }
+  return "";
+}
+
 export function useWorkspaceAdapter(): WorkspaceAdapter | undefined {
   const { auth, baseURL, redirect } = useAuth();
+  const orgApi = auth.organization;
+  const orgExtraApi = auth.organizationExtra;
+
   const { data: session } = useSession();
   const { data: workspace } = useActiveWorkspace();
   const organizationId = workspace?.id;
-  const orgApi = auth.organization;
-  const subApi = auth.subscription;
 
   return useMemo<WorkspaceAdapter | undefined>(() => {
     if (!organizationId || !session) return undefined;
 
-    const buildStore = (activePlan?: string): WorkspaceStore => {
-      const user = workspace.members.find((m) => m.userId === session.user.id);
-
-      let icon: IconData = { type: "text", src: workspace.name };
-      try {
-        const res = IconObject.safeParse(JSON.parse(workspace.logo ?? ""));
-        if (res.success) icon = res.data;
-      } catch {
-        // use default text icon
-      }
-
-      let inviteLink = "";
-      try {
-        const metadata = JSON.parse(
-          workspace.metadata as string,
-        ) as WorkspaceMetadata;
-        if (metadata.inviteToken) {
-          inviteLink = `${baseURL}/invite/${metadata.inviteToken}`;
-        }
-      } catch {
-        // no invite link
-      }
-
-      return {
-        id: workspace.id,
-        name: workspace.name,
-        icon,
-        slug: workspace.slug,
-        inviteLink,
-        role: user ? (user.role as Role) : Role.OWNER,
-        plan: activePlan ? planFromString(activePlan) : Plan.FREE,
-      };
-    };
-
     return {
       getAll: async () => {
-        const { data: subscriptions } = await subApi.list({
-          query: {
-            referenceId: organizationId,
-            customerType: "organization",
-          },
+        const { data } = await orgExtraApi.getWorkspaceDetail({
+          query: { organizationId },
         });
-        const active = subscriptions?.find(
-          (s) => s.status === "active" || s.status === "trialing",
-        );
-        return buildStore(active?.plan);
+        if (!data) {
+          return {
+            id: organizationId,
+            name: workspace.name,
+            icon: parseIcon(workspace.logo, workspace.name),
+            slug: workspace.slug,
+            inviteLink: "",
+            role: Role.OWNER,
+            plan: Plan.FREE,
+          };
+        }
+        return {
+          id: data.id,
+          name: data.name,
+          slug: data.slug,
+          icon: parseIcon(data.logo, data.name),
+          inviteLink: parseInviteLink(data.metadata, baseURL),
+          role: data.role as Role,
+          plan: planFromString(data.plan),
+        };
       },
       update: async ({ name, icon }) => {
         await orgApi.update(
@@ -123,5 +123,13 @@ export function useWorkspaceAdapter(): WorkspaceAdapter | undefined {
         );
       },
     };
-  }, [orgApi, subApi, organizationId, workspace, session, baseURL, redirect]);
+  }, [
+    orgApi,
+    orgExtraApi,
+    organizationId,
+    workspace,
+    session,
+    baseURL,
+    redirect,
+  ]);
 }
