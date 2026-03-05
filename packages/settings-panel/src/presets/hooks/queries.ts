@@ -68,55 +68,59 @@ export function useWorkspace<T = WorkspaceStore>(
 export function usePeople<T = Memberships>(
   selector?: (data: Memberships) => T,
 ) {
-  const { people: actions } = useSettingsApi();
+  const { people } = useSettingsApi();
   const { data: workspace } = useWorkspace();
 
   return useQuery<Memberships, Error, T>({
     initialData: {},
     queryKey: QUERY_KEYS.members(workspace.id),
-    queryFn: actions?.getAll ?? createDefaultFn({}),
+    queryFn: people?.getAll ?? createDefaultFn({}),
     select: selector,
+    enabled: !!people,
   });
 }
 
 export function useInvitations<T = Invitations>(
   selector?: (data: Invitations) => T,
 ) {
-  const { invitations: actions } = useSettingsApi();
+  const { invitations } = useSettingsApi();
   const { data: workspace } = useWorkspace();
 
   return useQuery<Invitations, Error, T>({
     initialData: {},
     queryKey: QUERY_KEYS.invitations(workspace.id),
-    queryFn: actions?.getAll ?? createDefaultFn({}),
+    queryFn: invitations?.getAll ?? createDefaultFn({}),
     select: selector,
+    enabled: !!invitations,
   });
 }
 
 export function useTeamspaces<T = Teamspaces>(
   selector?: (data: Teamspaces) => T,
 ) {
-  const { teamspaces: actions } = useSettingsApi();
+  const { teamspaces } = useSettingsApi();
   const { data: workspace } = useWorkspace();
 
   return useQuery<Teamspaces, Error, T>({
     initialData: {},
     queryKey: QUERY_KEYS.teamspaces(workspace.id),
-    queryFn: actions?.getAll ?? createDefaultFn({}),
+    queryFn: teamspaces?.getAll ?? createDefaultFn({}),
     select: selector,
+    enabled: !!teamspaces,
   });
 }
 
 export function useBilling<T = BillingStore>(
   selector?: (data: BillingStore) => T,
 ) {
-  const { billing: actions } = useSettingsApi();
+  const { billing } = useSettingsApi();
   const { data: workspace } = useWorkspace();
 
   return useQuery<BillingStore, Error, T>({
     initialData: initialBillingStore,
     queryKey: QUERY_KEYS.billing(workspace.id),
-    queryFn: actions?.getAll ?? createDefaultFn(initialBillingStore),
+    queryFn: billing?.getAll ?? createDefaultFn(initialBillingStore),
     select: selector,
+    enabled: !!billing,
   });
 }

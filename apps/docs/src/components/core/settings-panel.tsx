@@ -38,7 +38,7 @@ export function SettingsPage() {
   const [tab, setTab] = useState("account");
 
   return (
-    <SettingsProvider settings={mockSettings}>
+    <SettingsProvider settings={mockSettings} adapters={{}}>
       <SettingsPanel className="w-[calc(100%-20px)]">
         <SettingsSidebar>
           <SettingsSidebarGroup>

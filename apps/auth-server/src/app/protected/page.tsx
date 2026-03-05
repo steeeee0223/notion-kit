@@ -13,11 +13,11 @@ import { Button } from "@notion-kit/shadcn";
 import { useSettings } from "@/hooks/use-settings";
 
 export default function Page() {
-  const { tab, setTab, settings, actions, signOut } = useSettings();
+  const { tab, setTab, settings, adapters, signOut } = useSettings();
 
   return (
     <main className="flex h-screen w-screen flex-col items-center justify-center gap-6 bg-popover">
-      <SettingsProvider settings={settings} {...actions}>
+      <SettingsProvider settings={settings} adapters={adapters}>
         <SettingsPanel>
           <SettingsSidebar>
             <SettingsSidebarPreset tab={tab} onTabChange={setTab} />
