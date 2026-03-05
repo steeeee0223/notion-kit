@@ -57,9 +57,11 @@
   "globalPassThroughEnv": [
     "NODE_ENV",
     "CI",
+    "MODE",
     "VERCEL",
     "VERCEL_ENV",
     "VERCEL_URL",
+    "STORYBOOK_STRIPE_PUBLISHABLE_KEY",
     "npm_lifecycle_event"
   ]
 }

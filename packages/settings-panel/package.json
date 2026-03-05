@@ -45,6 +45,8 @@
     "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/tags-input": "workspace:*",
     "@notion-kit/utils": "workspace:*",
+    "@stripe/react-stripe-js": "catalog:stripe",
+    "@stripe/stripe-js": "catalog:stripe",
     "@tanstack/react-query": "catalog:ui",
     "@tanstack/react-table": "catalog:ui",
     "file-saver": "^2.0.5",

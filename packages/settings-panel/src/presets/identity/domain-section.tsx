@@ -1,8 +1,10 @@
 "use client";
 
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@notion-kit/i18n";
+import { Plan } from "@notion-kit/schemas";
 
-import { SettingsRule, SettingsSection } from "../../core";
+import { SettingsSection } from "@/core";
+import { UpgradeSettingsRule as SettingsRule } from "@/presets/_components";
 
 export function DomainSection() {
   /** i18n */
@@ -11,9 +13,9 @@ export function DomainSection() {
 
   return (
     <SettingsSection title={trans.title}>
-      <SettingsRule {...trans.domains} plan="business" />
-      <SettingsRule {...trans.creation} plan="enterprise" />
-      <SettingsRule {...trans.claim} plan="enterprise" />
+      <SettingsRule {...trans.domains} plan={Plan.BUSINESS} />
+      <SettingsRule {...trans.creation} plan={Plan.ENTERPRISE} />
+      <SettingsRule {...trans.claim} plan={Plan.ENTERPRISE} />
     </SettingsSection>
   );
 }

@@ -1,8 +1,10 @@
 "use client";
 
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@notion-kit/i18n";
+import { Plan } from "@notion-kit/schemas";
 
-import { SettingsRule, SettingsSection } from "../../core";
+import { SettingsSection } from "@/core";
+import { UpgradeSettingsRule as SettingsRule } from "@/presets/_components";
 
 export function ScimSection() {
   /** i18n */
@@ -11,7 +13,7 @@ export function ScimSection() {
 
   return (
     <SettingsSection title={trans.title}>
-      <SettingsRule {...trans.scim} plan="enterprise" />
+      <SettingsRule {...trans.scim} plan={Plan.ENTERPRISE} />
     </SettingsSection>
   );
 }

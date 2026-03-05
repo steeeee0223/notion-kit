@@ -19,11 +19,9 @@ function SettingsTab({
     <MenuItem
       tabIndex={-1}
       role="tab"
-      className={cn(
-        "px-3",
-        isActive && "bg-default/10 font-semibold",
-        className,
-      )}
+      variant="sidebar"
+      aria-selected={isActive}
+      className={cn("px-3", className)}
       Body={name}
       {...props}
     />

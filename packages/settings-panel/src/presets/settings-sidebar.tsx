@@ -7,17 +7,46 @@ import {
   SettingsSidebarTitle,
   SettingsTab,
   useSettings,
-} from "../core";
-import { Scope } from "../lib";
-import { Avatar } from "./_components";
+} from "@/core";
+import { Scope } from "@/lib";
+import { Avatar } from "@/presets/_components";
 import {
-  workspaceTabs as _workspaceTabs,
   accountTabs,
-  miscTabs,
-  plansTabs,
+  adminTabs,
+  billingTabs,
+  featuresTabs,
+  integrationsTabs,
+  workspaceTabs,
   type TabType,
-} from "./data";
-import { useAccount } from "./hooks";
+} from "@/presets/data";
+import { useAccount } from "@/presets/hooks";
+
+function createTabGroups(scopes: Set<Scope>) {
+  const filteredWorkspaceTabs = workspaceTabs.filter((item) => {
+    switch (item.value) {
+      case "people":
+        return scopes.has(Scope.MemberRead);
+      default:
+        return true;
+    }
+  });
+  const filteredAdminTabs = adminTabs.filter((item) => {
+    switch (item.value) {
+      case "teamspaces":
+        return scopes.has(Scope.TeamspaceRead);
+      default:
+        return true;
+    }
+  });
+
+  return [
+    { i18nKey: "common.workspace" as const, tabs: filteredWorkspaceTabs },
+    { i18nKey: "common.features" as const, tabs: featuresTabs },
+    { i18nKey: "common.integrations" as const, tabs: integrationsTabs },
+    { i18nKey: "common.admin" as const, tabs: filteredAdminTabs },
+    { i18nKey: "common.access-and-billing" as const, tabs: billingTabs },
+  ];
+}
 
 interface SettingsSidebarPresetProps {
   tab: TabType;
@@ -30,17 +59,10 @@ export function SettingsSidebarPreset({
 }: SettingsSidebarPresetProps) {
   const { scopes } = useSettings();
   const { data: account } = useAccount();
+  /** i18n */
   const { t } = useTranslation("settings");
-  const workspaceTabs = _workspaceTabs.filter((tab) => {
-    switch (tab.value) {
-      case "people":
-        return scopes.has(Scope.MemberRead);
-      case "teamspaces":
-        return scopes.has(Scope.TeamspaceRead);
-      default:
-        return true;
-    }
-  });
+
+  const tabGroups = createTabGroups(scopes);
 
   return (
     <>
@@ -65,36 +87,20 @@ export function SettingsSidebarPreset({
           />
         ))}
       </SettingsSidebarGroup>
-      <SettingsSidebarGroup>
-        <SettingsSidebarTitle>{t("common.workspace")}</SettingsSidebarTitle>
-        {workspaceTabs.map(({ value, Icon }) => (
-          <SettingsTab
-            key={value}
-            name={t(`${value}.title`)}
-            isActive={tab === value}
-            Icon={Icon}
-            onClick={() => onTabChange(value)}
-          />
-        ))}
-        {miscTabs.map(({ value, Icon }) => (
-          <SettingsTab
-            key={value}
-            name={t(`${value}.title`)}
-            isActive={tab === value}
-            Icon={Icon}
-            onClick={() => onTabChange(value)}
-          />
-        ))}
-        {plansTabs.map(({ value, Icon }) => (
-          <SettingsTab
-            key={value}
-            name={t(`${value}.title`)}
-            isActive={tab === value}
-            Icon={Icon}
-            onClick={() => onTabChange(value)}
-          />
-        ))}
-      </SettingsSidebarGroup>
+      {tabGroups.map(({ i18nKey, tabs }) => (
+        <SettingsSidebarGroup key={i18nKey}>
+          <SettingsSidebarTitle>{t(i18nKey)}</SettingsSidebarTitle>
+          {tabs.map(({ value, Icon }) => (
+            <SettingsTab
+              key={value}
+              name={t(`${value}.title`)}
+              isActive={tab === value}
+              Icon={Icon}
+              onClick={() => onTabChange(value)}
+            />
+          ))}
+        </SettingsSidebarGroup>
+      ))}
     </>
   );
 }

@@ -1,12 +1,15 @@
 "use client";
 
-import { useTranslation } from "react-i18next";
-
-import { Role } from "@notion-kit/schemas";
+import { useTranslation } from "@notion-kit/i18n";
+import { Plan, Role } from "@notion-kit/schemas";
 import { Switch } from "@notion-kit/shadcn";
 
-import { TextLinks } from "../_components";
-import { SettingsRule, SettingsSection } from "../../core";
+import { SettingsSection } from "@/core";
+import {
+  UpgradeSettingsRule as SettingsRule,
+  TextLinks,
+} from "@/presets/_components";
+
 import type { TabType } from "../data";
 import { usePeople } from "../hooks";
 
@@ -27,7 +30,7 @@ export function InviteSection({ onTabChange }: InviteSectionProps) {
 
   return (
     <SettingsSection title={trans.title}>
-      <SettingsRule {...trans.access} plan="plus">
+      <SettingsRule {...trans.access} plan={Plan.PLUS}>
         <Switch size="sm" disabled checked />
       </SettingsRule>
       <SettingsRule
@@ -39,17 +42,17 @@ export function InviteSection({ onTabChange }: InviteSectionProps) {
             onClick={() => onTabChange("people")}
           />
         }
-        plan="enterprise"
+        plan={Plan.ENTERPRISE}
       >
         <Switch size="sm" disabled checked />
       </SettingsRule>
-      <SettingsRule {...trans.guest} plan="enterprise">
+      <SettingsRule {...trans.guest} plan={Plan.ENTERPRISE}>
         <Switch size="sm" disabled />
       </SettingsRule>
-      <SettingsRule {...trans.member} plan="plus">
+      <SettingsRule {...trans.member} plan={Plan.PLUS}>
         <Switch size="sm" disabled />
       </SettingsRule>
-      <SettingsRule {...trans.user} plan="plus">
+      <SettingsRule {...trans.user} plan={Plan.PLUS}>
         <Switch size="sm" disabled />
       </SettingsRule>
     </SettingsSection>

@@ -7,6 +7,7 @@ import { useTranslation } from "@notion-kit/i18n";
 import { SettingsSection } from "../core";
 import { NotImplemented } from "./_components";
 import { Account } from "./account";
+import { Billing } from "./billing";
 import { Connections } from "./connections";
 import type { TabType } from "./data";
 import { General } from "./general";
@@ -53,6 +54,8 @@ export const SettingsBody: React.FC<SettingsBodyProps> = ({
       return <NotionAI />;
     case "plans":
       return <Plans />;
+    case "billing":
+      return <Billing />;
     default:
       return (
         <SettingsSection title={t(`${tab}.title`)}>

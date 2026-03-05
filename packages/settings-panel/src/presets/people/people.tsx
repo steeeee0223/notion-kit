@@ -23,22 +23,31 @@ import {
   TooltipPreset,
 } from "@notion-kit/shadcn";
 
-import { TextLinks } from "../_components";
-import { SettingsRule, SettingsSection, useSettings } from "../../core";
-import { generateGuestsCsv, Scope } from "../../lib";
+import {
+  SettingsRule,
+  SettingsSection,
+  useSettings,
+  useStripePromise,
+} from "@/core";
+import { getUpgradePlan } from "@/lib/plans";
+import { Scope } from "@/lib/types";
+import { generateGuestsCsv } from "@/lib/utils";
+import { TextLinks } from "@/presets/_components";
 import {
   useAccount,
+  useBillingActions,
   useInvitations,
   useTeamspaceDetail,
   useWorkspace,
-} from "../hooks";
-import { AddMembers } from "../modals";
+} from "@/presets/hooks";
+import { AddMembers, Upgrade } from "@/presets/modals";
 import {
   GroupsTable,
   GuestsTable,
   InvitationsTable,
   MembersTable,
-} from "../tables";
+} from "@/presets/tables";
+
 import { useInvitationsActions } from "./use-invitations-actions";
 import { useLinkActions } from "./use-link-actions";
 import { useInvitedMembers, useWorkspaceMemberships } from "./use-people";
@@ -53,15 +62,25 @@ enum PeopleTabs {
 
 export function People() {
   const { scopes } = useSettings();
+  const { upgrade } = useBillingActions();
+  const stripePromise = useStripePromise();
   const { data: account } = useAccount();
   const { data: workspace } = useWorkspace();
 
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const upgradePlan = getUpgradePlan(Plan.PLUS);
   const [addMembersOpen, setAddMembersOpen] = useState(false);
 
   /** i18n */
   const { t } = useTranslation("settings");
   const common = t("common", { returnObjects: true });
-  const { title, invite, tabs, upgrade, modals } = t("people", {
+  const {
+    title,
+    invite,
+    tabs,
+    upgrade: upgradeText,
+    modals,
+  } = t("people", {
     returnObjects: true,
   });
   /** Search Field */
@@ -233,12 +252,16 @@ export function People() {
               <>
                 <section className="max-w-[300px] text-sm">
                   <Icon.Group className="mb-2 h-auto w-8 shrink-0 fill-default/45" />
-                  <header className="font-semibold">{upgrade.title}</header>
+                  <header className="font-semibold">{upgradeText.title}</header>
                   <p className="mt-1 mb-4 text-secondary">
-                    {upgrade.description}
+                    {upgradeText.description}
                   </p>
                   <footer className="mb-4 flex flex-wrap gap-x-3 gap-y-2">
-                    <Button variant="blue" size="sm">
+                    <Button
+                      variant="blue"
+                      size="sm"
+                      onClick={() => setUpgradeOpen(true)}
+                    >
                       {common.upgrade}
                     </Button>
                     <Button size="sm" onClick={onGroupsLearnMore}>
@@ -251,6 +274,21 @@ export function People() {
             )}
           <GroupsTable search={search} data={[]} />
         </TabsContent>
+        <Dialog open={upgradeOpen} onOpenChange={setUpgradeOpen}>
+          {upgradePlan && (
+            <Upgrade
+              plan={upgradePlan}
+              stripePromise={stripePromise}
+              onUpgrade={async (data) => {
+                await upgrade({
+                  plan: Plan.PLUS,
+                  annual: data.billingInterval === "year",
+                });
+                setUpgradeOpen(false);
+              }}
+            />
+          )}
+        </Dialog>
         <TabsContent
           value={PeopleTabs.Invitations}
           className="mt-0 bg-transparent"

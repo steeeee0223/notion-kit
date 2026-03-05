@@ -1,6 +1,6 @@
-import type { FieldAttribute } from "better-auth/db";
+import type { DBFieldAttribute } from "better-auth/db";
 
-type AdditionalFields = Record<string, FieldAttribute>;
+type AdditionalFields = Record<string, DBFieldAttribute>;
 
 export const additionalUserFields = {
   preferredName: { type: "string" },

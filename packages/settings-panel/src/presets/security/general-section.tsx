@@ -1,10 +1,11 @@
 "use client";
 
-import { useTranslation } from "react-i18next";
-
+import { useTranslation } from "@notion-kit/i18n";
+import { Plan } from "@notion-kit/schemas";
 import { Switch } from "@notion-kit/shadcn";
 
-import { SettingsRule, SettingsSection } from "../../core";
+import { SettingsSection } from "@/core";
+import { UpgradeSettingsRule as SettingsRule } from "@/presets/_components";
 
 export function GeneralSection() {
   /** i18n */
@@ -13,13 +14,13 @@ export function GeneralSection() {
 
   return (
     <SettingsSection title={trans.title}>
-      <SettingsRule {...trans.publish} plan="enterprise">
+      <SettingsRule {...trans.publish} plan={Plan.ENTERPRISE}>
         <Switch size="sm" disabled />
       </SettingsRule>
-      <SettingsRule {...trans.duplicate} plan="enterprise">
+      <SettingsRule {...trans.duplicate} plan={Plan.ENTERPRISE}>
         <Switch size="sm" disabled />
       </SettingsRule>
-      <SettingsRule {...trans.export} plan="enterprise">
+      <SettingsRule {...trans.export} plan={Plan.ENTERPRISE}>
         <Switch size="sm" disabled />
       </SettingsRule>
     </SettingsSection>

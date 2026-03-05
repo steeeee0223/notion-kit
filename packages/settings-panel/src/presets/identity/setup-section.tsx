@@ -3,9 +3,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 "use client";
 
-import { useTranslation } from "react-i18next";
-
 import { useCopyToClipboard } from "@notion-kit/hooks";
+import { useTranslation } from "@notion-kit/i18n";
 import { toast, TooltipPreset } from "@notion-kit/shadcn";
 
 import { SettingsRule, SettingsSection } from "../../core";

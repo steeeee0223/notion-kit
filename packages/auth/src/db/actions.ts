@@ -1,7 +1,7 @@
 "use server";
 
 import { betterFetch } from "@better-fetch/fetch";
-import type { Session } from "better-auth";
+import type { Session, User } from "better-auth";
 import { eq } from "drizzle-orm";
 import { UAParser } from "ua-parser-js";
 
@@ -90,4 +90,19 @@ async function getGeoLocation(ipAddress: string) {
 
 function joinStr(data: (string | undefined)[]) {
   return data.filter(Boolean).join(", ");
+}
+
+export async function authorizeReference({
+  user,
+  referenceId,
+}: {
+  user: User;
+  referenceId: string;
+}) {
+  // Only org owners/admins can manage subscriptions
+  const member = await db.query.member.findFirst({
+    where: (m, { and, eq }) =>
+      and(eq(m.organizationId, referenceId), eq(m.userId, user.id)),
+  });
+  return member?.role === "owner" || member?.role === "admin";
 }

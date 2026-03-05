@@ -15,7 +15,9 @@ import {
   type TabType,
   type Teamspaces,
 } from "@notion-kit/settings-panel";
+import { toast } from "@notion-kit/shadcn";
 
+import { env } from "@/env";
 import { delay } from "@/lib/utils";
 
 import {
@@ -29,8 +31,12 @@ import {
   mockTeamspaces,
 } from "./data";
 
-export const Demo = () => {
-  const [tab, setTab] = useState<TabType>("preferences");
+interface DemoProps {
+  tab: TabType;
+}
+
+export function Demo({ tab: initialTab }: DemoProps) {
+  const [tab, setTab] = useState(initialTab);
   const [settings, setSettings] = useState(mockSettings);
   return (
     <SettingsProvider
@@ -97,6 +103,24 @@ export const Demo = () => {
             }, {}),
           ),
       }}
+      stripePublishableKey={env.STORYBOOK_STRIPE_PUBLISHABLE_KEY}
+      billing={{
+        editMethod: async () => {
+          await delay(1000);
+          toast.success("Payment method updated");
+        },
+        editBilledTo: async (address) => {
+          await delay(1000);
+          toast.success(`Billing address updated: ${JSON.stringify(address)}`);
+        },
+        editEmail: async (email) => {
+          await delay(1000);
+          toast.success(`Billing email updated: ${email}`);
+        },
+        toggleInvoiceEmails: () => {
+          toast.success(`Invoice emails toggled`);
+        },
+      }}
     >
       <SettingsPanel>
         <SettingsSidebar>
@@ -108,4 +132,4 @@ export const Demo = () => {
       </SettingsPanel>
     </SettingsProvider>
   );
-};
+}

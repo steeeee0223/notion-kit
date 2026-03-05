@@ -6,6 +6,7 @@ import { v4 } from "uuid";
 import type { Team, WorkspaceMetadata } from "@notion-kit/auth";
 import { IconObject, Plan, Role, type IconData } from "@notion-kit/schemas";
 import type {
+  BillingStore,
   Invitations,
   Memberships,
   SettingsActions,
@@ -31,6 +32,8 @@ export function useWorkspaceSettings() {
   const { data: session } = useSession();
   const { data: workspace } = useActiveWorkspace();
   const [orgApi] = useState(auth.organization);
+  const [subApi] = useState(auth.subscription);
+  const [stripeExtraApi] = useState(auth.stripeExtra);
 
   const workspaceStore = useMemo<WorkspaceStore>(() => {
     if (!workspace) return initialWorkspaceStore;
@@ -299,8 +302,86 @@ export function useWorkspaceSettings() {
           );
         },
       },
+      billing: {
+        getAll: async (): Promise<BillingStore> => {
+          const [{ data: subscriptions }, { data: customer }] =
+            await Promise.all([
+              subApi.list({
+                query: {
+                  referenceId: organizationId,
+                  customerType: "organization",
+                },
+              }),
+              stripeExtraApi.getCustomer({
+                query: { organizationId },
+              }),
+            ]);
+          const active = subscriptions?.find(
+            (s) => s.status === "active" || s.status === "trialing",
+          );
+          return {
+            billingEmail: customer?.email ?? undefined,
+            billedTo: customer?.name ?? undefined,
+            upcomingInvoice: active ? `${active.plan} plan` : undefined,
+          };
+        },
+        upgrade: async (plan, annual) => {
+          await subApi.upgrade({
+            plan: plan.toLowerCase(),
+            annual,
+            referenceId: organizationId,
+            customerType: "organization",
+            successUrl: `${baseURL}/settings/billing`,
+            cancelUrl: `${baseURL}/settings/billing`,
+          });
+        },
+        changePlan: async (plan) => {
+          await subApi.upgrade({
+            plan: plan.toLowerCase(),
+            referenceId: organizationId,
+            customerType: "organization",
+            successUrl: `${baseURL}/settings/billing`,
+            cancelUrl: `${baseURL}/settings/billing`,
+          });
+        },
+        editMethod: async () => {
+          await subApi.billingPortal({
+            referenceId: organizationId,
+            customerType: "organization",
+            returnUrl: `${baseURL}/settings/billing`,
+          });
+        },
+        editEmail: async (email) => {
+          await stripeExtraApi.updateCustomer({
+            organizationId,
+            email,
+          });
+        },
+        editBilledTo: async (address) => {
+          await stripeExtraApi.updateCustomer({
+            organizationId,
+            name: address.businessName,
+            address: address.address,
+          });
+        },
+        viewInvoice: () => {
+          void subApi.billingPortal({
+            referenceId: organizationId,
+            customerType: "organization",
+            returnUrl: `${baseURL}/settings/billing`,
+          });
+        },
+      },
     };
-  }, [orgApi, redirect, session?.user.id, workspace?.id]);
+  }, [
+    orgApi,
+    subApi,
+    stripeExtraApi,
+    baseURL,
+    redirect,
+    session?.user.id,
+    workspace?.id,
+  ]);
 
   return {
     workspaceStore,

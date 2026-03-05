@@ -1,6 +1,6 @@
 import { Plan, Role } from "@notion-kit/schemas";
 
-import type { AccountStore, WorkspaceStore } from "../../lib";
+import type { AccountStore, BillingStore, WorkspaceStore } from "@/lib/types";
 
 export const initialAccountStore: AccountStore = {
   preferredName: "",
@@ -19,3 +19,5 @@ export const initialWorkspaceStore: WorkspaceStore = {
   plan: Plan.FREE,
   role: Role.OWNER,
 };
+
+export const initialBillingStore: BillingStore = {};
