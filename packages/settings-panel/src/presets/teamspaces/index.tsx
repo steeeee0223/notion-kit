@@ -1,9 +1,10 @@
-import { useSettings } from "../../core";
-import { Scope } from "../../lib";
+import { useScopes } from "@/core";
+import { Scope } from "@/lib/types";
+
 import { TeamspacesSection } from "./teamspaces-section";
 
 export function Teamspaces() {
-  const { scopes } = useSettings();
+  const scopes = useScopes();
 
   if (!scopes.has(Scope.TeamspaceRead)) return null;
   return (

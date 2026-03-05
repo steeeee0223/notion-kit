@@ -151,11 +151,6 @@ export type Memberships = Record<
   }
 >;
 
-export interface SettingsStore {
-  workspace: WorkspaceStore;
-  account: AccountStore;
-}
-
 export interface BillingStore {
   paymentMethod?: string;
   billedTo?: string;
@@ -166,6 +161,7 @@ export interface BillingStore {
 }
 
 export interface AccountAdapter {
+  getAll: () => Promise<AccountStore>;
   update: (data: Partial<Omit<AccountStore, "id">>) => Promise<void>;
   delete: (data: { accountId: string; email: string }) => Promise<void>;
   sendEmailVerification: (email: string) => Promise<void>;
@@ -196,6 +192,7 @@ export interface ConnectionsAdapter {
 }
 
 export interface WorkspaceAdapter {
+  getAll: () => Promise<WorkspaceStore>;
   update: (data: Partial<Omit<WorkspaceStore, "id">>) => Promise<void>;
   delete: (id: string) => Promise<void>;
   leave: (id: string) => Promise<void>;

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
 
+import { useSession } from "@notion-kit/auth-ui";
 import { Icon } from "@notion-kit/icons";
 import {
   Sidebar,
@@ -24,12 +25,19 @@ import { SettingsModal } from "./settings-modal";
 
 export function AppSidebar() {
   const router = useRouter();
-  const {
-    settings: { account },
-    signOut,
-  } = useSettings();
+  const { signOut } = useSettings();
+  const { data: session } = useSession();
   const { activeWorkspace, workspaceList, selectWorkspace } =
     useWorkspaceList();
+
+  const account = session
+    ? {
+        id: session.user.id,
+        name: session.user.name,
+        avatarUrl: session.user.image ?? "",
+        email: session.user.email,
+      }
+    : { id: "", name: "", avatarUrl: "", email: "" };
 
   /** Actions */
   const [settingsOpen, setSettingsOpen] = useState(false);

@@ -1,15 +1,16 @@
 import { Plan, Role, type User, type Workspace } from "@notion-kit/schemas";
 import type {
+  AccountStore,
   Connection,
   GuestRow,
   InvitationRow,
   MemberRow,
   Passkey,
   SessionRow,
-  SettingsStore,
   TeamMemberRow,
   TeamspaceRole,
   TeamspaceRow,
+  WorkspaceStore,
 } from "@notion-kit/settings-panel";
 import { randomItem } from "@notion-kit/utils";
 
@@ -218,23 +219,22 @@ export const mockGuests: GuestRow[] = mockUsers.slice(2).map((user) => ({
   access: randomItem(pageAccesses),
 }));
 
-export const mockSettings: SettingsStore = {
-  workspace: {
-    ...mockWorkspaces[0]!,
-    icon: mockWorkspaces[0]!.icon ?? {
-      type: "text",
-      src: mockWorkspaces[0]!.name,
-    },
-    plan: Plan.FREE,
-    slug: "fake-slug",
-    inviteLink: "#",
+export const mockWorkspace: WorkspaceStore = {
+  ...mockWorkspaces[0]!,
+  icon: mockWorkspaces[0]!.icon ?? {
+    type: "text",
+    src: mockWorkspaces[0]!.name,
   },
-  account: {
-    ...mockUsers[0]!,
-    preferredName: "Jonathan",
-    language: "en",
-    currentSessionId: mockSessions[0]!.id,
-  },
+  plan: Plan.FREE,
+  slug: "fake-slug",
+  inviteLink: "#",
+};
+
+export const mockAccount: AccountStore = {
+  ...mockUsers[0]!,
+  preferredName: "Jonathan",
+  language: "en",
+  currentSessionId: mockSessions[0]!.id,
 };
 
 export const mockConnections: Connection[] = [

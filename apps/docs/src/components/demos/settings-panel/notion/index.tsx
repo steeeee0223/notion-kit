@@ -13,23 +13,23 @@ import {
   type TabType,
 } from "@notion-kit/settings-panel";
 
-import { mockConnections, mockSettings } from "./data";
+import { mockAccount, mockConnections, mockWorkspace } from "./data";
 
 export default function Demo() {
   const [tab, setTab] = useState<TabType>("preferences");
-  const [settings, setSettings] = useState(mockSettings);
 
   const adapters = useMemo(
     () =>
       createMockAdapters({
-        setSettings,
+        account: mockAccount,
+        workspace: mockWorkspace,
         connections: mockConnections,
       }),
     [],
   );
 
   return (
-    <SettingsProvider settings={settings} adapters={adapters}>
+    <SettingsProvider adapters={adapters}>
       <SettingsPanel className="w-[calc(100%-20px)]">
         <SettingsSidebar>
           <SettingsSidebarPreset tab={tab} onTabChange={setTab} />

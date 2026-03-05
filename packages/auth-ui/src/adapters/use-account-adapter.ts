@@ -2,15 +2,29 @@
 
 import { useMemo } from "react";
 
-import type { AccountAdapter } from "@notion-kit/settings-panel";
+import type { AccountAdapter, AccountStore } from "@notion-kit/settings-panel";
 
-import { useAuth } from "../auth-provider";
+import { useAuth, useSession } from "../auth-provider";
 
-export function useAccountAdapter(): AccountAdapter {
+export function useAccountAdapter(): AccountAdapter | undefined {
   const { auth } = useAuth();
+  const { data: session } = useSession();
 
-  return useMemo<AccountAdapter>(
-    () => ({
+  return useMemo<AccountAdapter | undefined>(() => {
+    if (!session) return undefined;
+    return {
+      getAll: (): Promise<AccountStore> =>
+        Promise.resolve({
+          hasPassword: true,
+          id: session.user.id,
+          name: session.user.name,
+          preferredName: session.user.preferredName || session.user.name,
+          email: session.user.email,
+          avatarUrl: session.user.image ?? "",
+          language: session.user.lang as AccountStore["language"],
+          currentSessionId: session.session.id,
+          timezone: session.user.tz ?? undefined,
+        }),
       update: async (data) => {
         await auth.updateUser(
           {
@@ -35,7 +49,6 @@ export function useAccountAdapter(): AccountAdapter {
           { throw: true },
         );
       },
-    }),
-    [auth],
-  );
+    };
+  }, [auth, session]);
 }

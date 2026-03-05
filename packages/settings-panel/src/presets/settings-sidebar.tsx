@@ -6,7 +6,7 @@ import {
   SettingsSidebarGroup,
   SettingsSidebarTitle,
   SettingsTab,
-  useSettings,
+  useScopes,
 } from "@/core";
 import { Scope } from "@/lib";
 import { Avatar } from "@/presets/_components";
@@ -57,7 +57,7 @@ export function SettingsSidebarPreset({
   tab,
   onTabChange,
 }: SettingsSidebarPresetProps) {
-  const { scopes } = useSettings();
+  const scopes = useScopes();
   const { data: account } = useAccount();
   /** i18n */
   const { t } = useTranslation("settings");

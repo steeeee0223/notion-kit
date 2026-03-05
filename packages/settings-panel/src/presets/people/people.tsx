@@ -26,7 +26,7 @@ import {
 import {
   SettingsRule,
   SettingsSection,
-  useSettings,
+  useScopes,
   useStripePromise,
 } from "@/core";
 import { getUpgradePlan } from "@/lib/plans";
@@ -61,7 +61,7 @@ enum PeopleTabs {
 }
 
 export function People() {
-  const { scopes } = useSettings();
+  const scopes = useScopes();
   const { upgrade } = useBillingActions();
   const stripePromise = useStripePromise();
   const { data: account } = useAccount();
@@ -92,7 +92,6 @@ export function People() {
     setOpen((prev) => !prev);
     inputRef.current?.focus();
   };
-  /** Modals */
   /** Tables */
   const { members, guests } = useWorkspaceMemberships();
   const { selectedTeamspace, setSelectedTeamspace, renderTeamspaceDetail } =

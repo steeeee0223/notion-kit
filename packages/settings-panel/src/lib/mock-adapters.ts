@@ -1,5 +1,6 @@
 import type {
   AccountAdapter,
+  AccountStore,
   BillingAdapter,
   BillingStore,
   Connection,
@@ -13,28 +14,25 @@ import type {
   SessionRow,
   SessionsAdapter,
   SettingsAdapters,
-  SettingsStore,
   Teamspaces,
   TeamspacesAdapter,
   WorkspaceAdapter,
+  WorkspaceStore,
 } from "./types";
-
-type Setter<T> = (fn: (prev: T) => T) => void;
 
 function delay(ms = 300) {
   return new Promise<void>((resolve) => setTimeout(resolve, ms));
 }
 
 export function createMockAccountAdapter(
-  setSettings: Setter<SettingsStore>,
+  initialAccount: AccountStore,
 ): AccountAdapter {
+  let account = { ...initialAccount };
   return {
+    getAll: () => Promise.resolve(account),
     update: async (data) => {
       await delay();
-      setSettings((prev) => ({
-        ...prev,
-        account: { ...prev.account, ...data },
-      }));
+      account = { ...account, ...data };
     },
     delete: async () => {
       await delay();
@@ -115,15 +113,14 @@ export function createMockConnectionsAdapter(
 }
 
 export function createMockWorkspaceAdapter(
-  setSettings: Setter<SettingsStore>,
+  initialWorkspace: WorkspaceStore,
 ): WorkspaceAdapter {
+  let workspace = { ...initialWorkspace };
   return {
+    getAll: () => Promise.resolve(workspace),
     update: async (data) => {
       await delay();
-      setSettings((prev) => ({
-        ...prev,
-        workspace: { ...prev.workspace, ...data },
-      }));
+      workspace = { ...workspace, ...data };
     },
     delete: async () => {
       await delay();
@@ -320,7 +317,8 @@ export function createMockBillingAdapter(): BillingAdapter {
 }
 
 export interface CreateMockAdaptersOptions {
-  setSettings: Setter<SettingsStore>;
+  account: AccountStore;
+  workspace: WorkspaceStore;
   sessions?: SessionRow[];
   passkeys?: Passkey[];
   connections?: Connection[];
@@ -330,7 +328,8 @@ export interface CreateMockAdaptersOptions {
 }
 
 export function createMockAdapters({
-  setSettings,
+  account,
+  workspace,
   sessions = [],
   passkeys = [],
   connections = [],
@@ -339,11 +338,11 @@ export function createMockAdapters({
   teamspaces = {},
 }: CreateMockAdaptersOptions): SettingsAdapters {
   return {
-    account: createMockAccountAdapter(setSettings),
+    account: createMockAccountAdapter(account),
     sessions: createMockSessionsAdapter(sessions),
     passkeys: createMockPasskeysAdapter(passkeys),
     connections: createMockConnectionsAdapter(connections),
-    workspace: createMockWorkspaceAdapter(setSettings),
+    workspace: createMockWorkspaceAdapter(workspace),
     people: createMockPeopleAdapter(memberships),
     invitations: createMockInvitationsAdapter(invitations),
     teamspaces: createMockTeamspacesAdapter(teamspaces),

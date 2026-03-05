@@ -15,12 +15,12 @@ import {
   TooltipPreset,
 } from "@notion-kit/shadcn";
 
-import { SettingsSection, useSettings } from "../../core";
-import { Scope } from "../../lib";
-import { useWorkspace } from "../hooks";
+import { SettingsSection, useScopes } from "@/core";
+import { Scope } from "@/lib/types";
+import { useWorkspace } from "@/presets/hooks";
 
 export function ActivePlanSection() {
-  const { scopes } = useSettings();
+  const scopes = useScopes();
   const { data: workspace } = useWorkspace();
   const canUpgrade = scopes.has(Scope.Upgrade);
   const activePlan = workspace.plan;

@@ -30,7 +30,6 @@ import {
   mockGuests,
   mockMembers,
   mockPasskeys,
-  mockSettings,
   mockTeamMemberRows,
   mockUser,
   mockUsers,
@@ -179,8 +178,6 @@ export const PasskeysManagement: Story = {
   },
   render: (props) => (
     <SettingsProvider
-      settings={mockSettings}
-      stripePublishableKey={env.STORYBOOK_STRIPE_PUBLISHABLE_KEY}
       adapters={{
         passkeys: createMockPasskeysAdapter(mockPasskeys),
       }}

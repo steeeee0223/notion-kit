@@ -6,14 +6,11 @@ import { useTranslation } from "@notion-kit/i18n";
 import { Button, Dialog, DialogTrigger, Separator } from "@notion-kit/shadcn";
 
 import { SettingsRule, SettingsSection } from "@/core";
-import { useSettings } from "@/core/settings-provider";
-import { useBillingActions } from "@/presets/hooks";
+import { useBillingActions, useWorkspace } from "@/presets/hooks";
 import { ChangePlan } from "@/presets/modals";
 
 export function PlanSection() {
-  const {
-    settings: { workspace },
-  } = useSettings();
+  const { data: workspace } = useWorkspace();
   const { changePlan } = useBillingActions();
   /** i18n */
   const { t } = useTranslation("settings", { keyPrefix: "billing" });

@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 
+import type { Role, User } from "@notion-kit/schemas";
 import type { PeopleAdapter } from "@notion-kit/settings-panel";
 
 import { useActiveWorkspace, useAuth } from "../auth-provider";
@@ -25,18 +26,11 @@ export function usePeopleAdapter(): PeopleAdapter | undefined {
           return {};
         }
         return result.data.members.reduce<
-          Record<
-            string,
-            {
-              id: string;
-              role: import("@notion-kit/schemas").Role;
-              user: import("@notion-kit/schemas").User;
-            }
-          >
+          Record<string, { id: string; role: Role; user: User }>
         >((acc, m) => {
           acc[m.user.id] = {
             id: m.id,
-            role: m.role as import("@notion-kit/schemas").Role,
+            role: m.role as Role,
             user: {
               id: m.user.id,
               name: m.user.name,

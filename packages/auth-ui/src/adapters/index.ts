@@ -1,4 +1,4 @@
-export { useSettingsAdapters, useSettingsStore } from "./use-settings-adapters";
+export { useSettingsAdapters } from "./use-settings-adapters";
 export { useAccountAdapter } from "./use-account-adapter";
 export { useSessionsAdapter } from "./use-sessions-adapter";
 export { usePasskeysAdapter } from "./use-passkeys-adapter";

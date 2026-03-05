@@ -20,15 +20,16 @@ import {
 import { env } from "@/env";
 
 import {
+  mockAccount,
   mockConnections,
   mockGuests,
   mockInvitations,
   mockMembers,
   mockPasskeys,
   mockSessions,
-  mockSettings,
   mockTeamMembers,
   mockTeamspaces,
+  mockWorkspace,
 } from "./data";
 
 interface DemoProps {
@@ -66,12 +67,12 @@ function buildTeamspaces() {
 
 export function Demo({ tab: initialTab }: DemoProps) {
   const [tab, setTab] = useState(initialTab);
-  const [settings, setSettings] = useState(mockSettings);
 
   const adapters = useMemo(
     () =>
       createMockAdapters({
-        setSettings,
+        account: mockAccount,
+        workspace: mockWorkspace,
         sessions: mockSessions,
         passkeys: mockPasskeys,
         connections: mockConnections,
@@ -84,7 +85,6 @@ export function Demo({ tab: initialTab }: DemoProps) {
 
   return (
     <SettingsProvider
-      settings={settings}
       adapters={adapters}
       stripePublishableKey={env.STORYBOOK_STRIPE_PUBLISHABLE_KEY}
     >

@@ -3,7 +3,10 @@
 import { useState } from "react";
 
 import { Icon } from "@notion-kit/icons";
+import type { AccountStore, WorkspaceStore } from "@notion-kit/settings-panel";
 import {
+  createMockAccountAdapter,
+  createMockWorkspaceAdapter,
   SettingsContent,
   SettingsPanel,
   SettingsProvider,
@@ -13,21 +16,27 @@ import {
   SettingsSidebarGroup,
   SettingsSidebarTitle,
   SettingsTab,
-  type SettingsStore,
 } from "@notion-kit/settings-panel";
 import { Button, Switch } from "@notion-kit/shadcn";
 
-const mockSettings = {
-  account: {
-    id: "user1",
-    name: "John Wick",
-    avatarUrl: "",
-    email: "john-wick@example.com",
-    preferredName: "Jonathan",
-    language: "en",
-  },
-  workspace: {},
-} as SettingsStore;
+const mockAccount: AccountStore = {
+  id: "user1",
+  name: "John Wick",
+  avatarUrl: "",
+  email: "john-wick@example.com",
+  preferredName: "Jonathan",
+  language: "en",
+};
+
+const mockWorkspace: WorkspaceStore = {
+  id: "workspace1",
+  name: "Workspace",
+  icon: { type: "text", src: "W" },
+  slug: "workspace",
+  inviteLink: "#",
+  plan: "free" as WorkspaceStore["plan"],
+  role: "owner" as WorkspaceStore["role"],
+};
 
 const settingsTabs = [
   { Icon: <Icon.UserX />, value: "account", name: "Account" },
@@ -38,7 +47,12 @@ export function SettingsPage() {
   const [tab, setTab] = useState("account");
 
   return (
-    <SettingsProvider settings={mockSettings} adapters={{}}>
+    <SettingsProvider
+      adapters={{
+        account: createMockAccountAdapter(mockAccount),
+        workspace: createMockWorkspaceAdapter(mockWorkspace),
+      }}
+    >
       <SettingsPanel className="w-[calc(100%-20px)]">
         <SettingsSidebar>
           <SettingsSidebarGroup>
@@ -56,8 +70,8 @@ export function SettingsPage() {
           {tab === "account" ? (
             <SettingsSection title="Account">
               <SettingsRule
-                title={mockSettings.account.preferredName}
-                description={mockSettings.account.email}
+                title={mockAccount.preferredName}
+                description={mockAccount.email}
               />
               <SettingsRule
                 title="Set something"

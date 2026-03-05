@@ -6,7 +6,7 @@ import { useTranslation } from "@notion-kit/i18n";
 import { Plan } from "@notion-kit/schemas";
 import { Dialog, Separator } from "@notion-kit/shadcn";
 
-import { SettingsSection, useSettings, useStripePromise } from "@/core";
+import { SettingsSection, useScopes, useStripePromise } from "@/core";
 import { getUpgradePlan } from "@/lib/plans";
 import { Scope } from "@/lib/types";
 import { TextLinks } from "@/presets/_components";
@@ -15,7 +15,7 @@ import { Upgrade } from "@/presets/modals";
 import { PlansTable } from "@/presets/tables";
 
 export function AllPlansSection() {
-  const { scopes } = useSettings();
+  const scopes = useScopes();
   const { upgrade } = useBillingActions();
   const stripePromise = useStripePromise();
   const canUpgrade = scopes.has(Scope.Upgrade);

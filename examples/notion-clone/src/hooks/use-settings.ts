@@ -3,12 +3,7 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import {
-  handleError,
-  useAuth,
-  useSettingsAdapters,
-  useSettingsStore,
-} from "@notion-kit/auth-ui";
+import { handleError, useAuth, useSettingsAdapters } from "@notion-kit/auth-ui";
 import type { TabType } from "@notion-kit/settings-panel";
 
 export function useSettings() {
@@ -16,7 +11,6 @@ export function useSettings() {
   const router = useRouter();
 
   const [tab, setTab] = useState<TabType>("account");
-  const settings = useSettingsStore();
   const adapters = useSettingsAdapters();
 
   const signOut = useCallback(async () => {
@@ -31,7 +25,6 @@ export function useSettings() {
   return {
     tab,
     setTab,
-    settings,
     adapters,
     signOut,
   };
