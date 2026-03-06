@@ -37,12 +37,10 @@ export function useStripePromise() {
 
 export interface SettingsProviderProps extends React.PropsWithChildren {
   adapters: SettingsAdapters;
-  stripePublishableKey?: string;
 }
 
 export function SettingsProvider({
   adapters,
-  stripePublishableKey,
   children,
 }: SettingsProviderProps) {
   const [queryClient] = useState(
@@ -53,6 +51,7 @@ export function SettingsProvider({
         },
       }),
   );
+  const stripePublishableKey = adapters.billing?.stripePublishableKey;
   const stripePromise = useMemo(
     () =>
       stripePublishableKey

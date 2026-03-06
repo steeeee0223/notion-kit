@@ -79,15 +79,13 @@ export function Demo({ tab: initialTab }: DemoProps) {
         memberships: buildMemberships(),
         invitations: buildInvitations(),
         teamspaces: buildTeamspaces(),
+        stripePublishableKey: env.STORYBOOK_STRIPE_PUBLISHABLE_KEY,
       }),
     [],
   );
 
   return (
-    <SettingsProvider
-      adapters={adapters}
-      stripePublishableKey={env.STORYBOOK_STRIPE_PUBLISHABLE_KEY}
-    >
+    <SettingsProvider adapters={adapters}>
       <SettingsPanel>
         <SettingsSidebar>
           <SettingsSidebarPreset tab={tab} onTabChange={setTab} />

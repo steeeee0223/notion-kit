@@ -290,9 +290,12 @@ export function createMockTeamspacesAdapter(
   };
 }
 
-export function createMockBillingAdapter(): BillingAdapter {
+export function createMockBillingAdapter(
+  stripePublishableKey?: string,
+): BillingAdapter {
   let store: BillingStore = {};
   return {
+    stripePublishableKey,
     getAll: () => Promise.resolve(store),
     upgrade: async () => {
       await delay();
@@ -325,6 +328,7 @@ export interface CreateMockAdaptersOptions {
   memberships?: Memberships;
   invitations?: Invitations;
   teamspaces?: Teamspaces;
+  stripePublishableKey?: string;
 }
 
 export function createMockAdapters({
@@ -336,6 +340,7 @@ export function createMockAdapters({
   memberships = {},
   invitations = {},
   teamspaces = {},
+  stripePublishableKey,
 }: CreateMockAdaptersOptions): SettingsAdapters {
   return {
     account: createMockAccountAdapter(account),
@@ -346,6 +351,6 @@ export function createMockAdapters({
     people: createMockPeopleAdapter(memberships),
     invitations: createMockInvitationsAdapter(invitations),
     teamspaces: createMockTeamspacesAdapter(teamspaces),
-    billing: createMockBillingAdapter(),
+    billing: createMockBillingAdapter(stripePublishableKey),
   };
 }

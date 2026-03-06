@@ -245,6 +245,7 @@ export interface TeamspacesAdapter {
 }
 
 export interface BillingAdapter {
+  stripePublishableKey?: string;
   getAll: () => Promise<BillingStore>;
   upgrade: (plan: Plan, annual: boolean) => Promise<void>;
   changePlan: (plan: Plan) => Promise<void>;
