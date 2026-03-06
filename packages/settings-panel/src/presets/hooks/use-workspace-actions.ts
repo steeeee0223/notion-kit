@@ -5,15 +5,18 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { IconData } from "@notion-kit/schemas";
 import { toast } from "@notion-kit/shadcn";
 
-import { useSettings, useSettingsApi } from "../../core";
-import { createDefaultFn, QUERY_KEYS, type WorkspaceStore } from "../../lib";
+import { useSettingsApi } from "@/core";
+import { createDefaultFn, QUERY_KEYS } from "@/lib/queries";
+import type { WorkspaceStore } from "@/lib/types";
+
 import { initialWorkspaceStore } from "./constants";
+import { useWorkspace } from "./queries";
 
 export function useWorkspaceActions() {
   const queryClient = useQueryClient();
-  const { settings } = useSettings();
+  const { data: workspace } = useWorkspace();
   const { workspace: actions } = useSettingsApi();
-  const queryKey = QUERY_KEYS.workspace(settings.workspace.id);
+  const queryKey = QUERY_KEYS.workspace(workspace.id);
 
   const { mutateAsync: update } = useMutation({
     mutationFn: actions?.update ?? createDefaultFn(),

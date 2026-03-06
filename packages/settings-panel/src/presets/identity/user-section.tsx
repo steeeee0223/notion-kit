@@ -1,7 +1,3 @@
-"use client";
-
-import { CircleHelp } from "lucide-react";
-
 import { useTranslation } from "@notion-kit/i18n";
 import { Plan } from "@notion-kit/schemas";
 
@@ -22,7 +18,7 @@ export function UserSection() {
         {trans.description}
       </div>
       <HintButton
-        icon={CircleHelp}
+        icon="help"
         label={trans.buttons.hint}
         href="https://www.notion.com/help/managed-users-dashboard"
       />

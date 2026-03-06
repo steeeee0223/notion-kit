@@ -8,7 +8,7 @@
   ],
   "files": [
     {
-      "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/icons.tsx",
+      "path": "/Users/awen/Documents/ts-space/notion-kit/apps/docs/src/components/core/icons.tsx",
       "content": "export { Icon } from \"@notion-kit/icons\";\n",
       "type": "registry:component",
       "target": "components/core/icons.tsx"

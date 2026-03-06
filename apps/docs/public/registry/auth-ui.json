@@ -8,8 +8,8 @@
   ],
   "files": [
     {
-      "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/auth-ui.tsx",
-      "content": "export {\n  AuthProvider,\n  LoginForm,\n  useAccountSettings,\n  useWorkspaceSettings,\n  useAuth,\n} from \"@notion-kit/auth-ui\";\n",
+      "path": "/Users/awen/Documents/ts-space/notion-kit/apps/docs/src/components/core/auth-ui.tsx",
+      "content": "export {\n  AuthProvider,\n  LoginForm,\n  useAuth,\n  useSettingsAdapters,\n} from \"@notion-kit/auth-ui\";\n",
       "type": "registry:component",
       "target": "components/core/auth-ui.tsx"
     }

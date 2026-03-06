@@ -11,7 +11,7 @@ import { AuthEnv } from "@/env";
 import { createMailtrapApi, sendEmail } from "@/lib/email";
 import { ac, roles } from "@/lib/permissions";
 import { plans } from "@/lib/plans";
-import { stripeExtra } from "@/lib/plugins";
+import { organizationExtra, stripeExtra } from "@/lib/plugins";
 import {
   additionalSessionFields,
   additionalTeamFields,
@@ -114,6 +114,7 @@ export function createAuth(env: AuthEnv) {
         },
       }),
       openAPI(),
+      organizationExtra(),
       ...(stripeClient && env.STRIPE_WEBHOOK_SECRET
         ? [
             stripe({

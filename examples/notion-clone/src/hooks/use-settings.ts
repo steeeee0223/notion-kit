@@ -1,14 +1,9 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import {
-  handleError,
-  useAccountSettings,
-  useAuth,
-  useWorkspaceSettings,
-} from "@notion-kit/auth-ui";
+import { handleError, useAuth, useSettingsAdapters } from "@notion-kit/auth-ui";
 import type { TabType } from "@notion-kit/settings-panel";
 
 export function useSettings() {
@@ -16,16 +11,7 @@ export function useSettings() {
   const router = useRouter();
 
   const [tab, setTab] = useState<TabType>("account");
-  const { accountStore, actions: accountActions } = useAccountSettings();
-  const { workspaceStore, actions: workspaceActions } = useWorkspaceSettings();
-
-  const actions = useMemo(
-    () => ({
-      ...accountActions,
-      ...workspaceActions,
-    }),
-    [accountActions, workspaceActions],
-  );
+  const adapters = useSettingsAdapters();
 
   const signOut = useCallback(async () => {
     await auth.signOut({
@@ -39,11 +25,7 @@ export function useSettings() {
   return {
     tab,
     setTab,
-    settings: {
-      workspace: workspaceStore,
-      account: accountStore,
-    },
-    actions,
+    adapters,
     signOut,
   };
 }

@@ -1,8 +1,5 @@
-"use client";
-
-import { ArrowUpRight } from "lucide-react";
-
 import { useTranslation } from "@notion-kit/i18n";
+import { Icon } from "@notion-kit/icons";
 import { Button, Switch } from "@notion-kit/shadcn";
 
 import { SettingsRule, SettingsSection } from "../../core";
@@ -22,7 +19,7 @@ export function EmailSection() {
       </SettingsRule>
       <SettingsRule {...trans.announcements}>
         <Button size="sm">
-          <ArrowUpRight className="mr-2 size-4" />
+          <Icon.ArrowDiagonalUpRight className="mr-2 size-4 fill-current" />
           {trans.announcements.button}
         </Button>
       </SettingsRule>

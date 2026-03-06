@@ -1,11 +1,8 @@
-"use client";
-
 import { useMemo } from "react";
-import type { LucideIcon } from "lucide-react";
-import { CircleHelp, Construction } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
 import { Trans, TransProps } from "@notion-kit/i18n";
+import { Icon } from "@notion-kit/icons";
 import {
   AvatarFallback,
   AvatarImage,
@@ -15,21 +12,27 @@ import {
 
 import { SettingsPlan } from "../../core";
 
+const hintIcons = {
+  help: Icon.QuestionMarkCircled,
+  external: Icon.ArrowDiagonalUpRight,
+};
+
 interface HintButtonProps {
   className?: string;
-  icon: LucideIcon;
+  icon: keyof typeof hintIcons;
   label: string;
   href?: string;
   onClick?: () => void;
 }
 
 export function HintButton({
-  icon: Icon,
+  icon,
   label,
   href,
   className,
   onClick,
 }: HintButtonProps) {
+  const IconComponent = hintIcons[icon];
   const click = () => {
     if (!href) return onClick?.();
     window.open(href);
@@ -43,7 +46,7 @@ export function HintButton({
       className={cn("-ml-1.5", className)}
       onClick={click}
     >
-      <Icon className="size-3.5" />
+      <IconComponent className="fill-current" />
       {label}
     </Button>
   );
@@ -79,7 +82,7 @@ export function Content({
       )}
       {hint && (
         <div className="mt-3">
-          <HintButton icon={CircleHelp} label={hint} href={href} />
+          <HintButton icon="help" label={hint} href={href} />
         </div>
       )}
     </div>
@@ -100,7 +103,6 @@ export function TextLinks({
   ...props
 }: TextLinksProps) {
   const Links = useMemo(() => {
-    // if (hrefs === undefined) return;
     const urls = Array.isArray(hrefs) ? hrefs : [hrefs];
     return urls.map((url, i) => (
       <a
@@ -121,7 +123,7 @@ export function TextLinks({
 export function NotImplemented() {
   return (
     <div className="inline-flex w-full items-center rounded-sm bg-default/5 p-4 text-sm font-medium">
-      <Construction color="#b9aa4b" className="mr-2 size-5" />
+      <Icon.Gear className="mr-2 size-5 fill-icon" />
       Under construction
     </div>
   );

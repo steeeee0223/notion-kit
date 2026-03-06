@@ -9,7 +9,7 @@ import { createAuthClient as createReactClient } from "better-auth/react";
 
 import type { Auth } from "@/auth";
 import { ac, roles } from "@/lib/permissions";
-import { stripeExtraClient } from "@/lib/plugins";
+import { organizationExtraClient, stripeExtraClient } from "@/lib/plugins";
 import {
   additionalSessionFields,
   additionalTeamFields,
@@ -37,6 +37,7 @@ export function createAuthClient(baseURL?: string) {
       }),
       stripeClient({ subscription: true }),
       stripeExtraClient(),
+      organizationExtraClient(),
     ],
   });
 }

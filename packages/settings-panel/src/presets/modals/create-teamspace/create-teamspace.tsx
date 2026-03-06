@@ -1,7 +1,4 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CircleHelp } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 
@@ -26,7 +23,8 @@ import {
   Textarea,
 } from "@notion-kit/shadcn";
 
-import { HintButton } from "../../_components";
+import { HintButton } from "@/presets/_components";
+
 import { PermissionSelect } from "./permission-select";
 
 const createTeamspaceSchema = z.object({
@@ -150,7 +148,7 @@ export function CreateTeamspace({
           />
           <DialogFooter className="flex-row justify-between">
             <HintButton
-              icon={CircleHelp}
+              icon="help"
               label="Learn about teamspaces"
               href="https://www.notion.com/help/guides/teamspaces-give-teams-home-for-important-work"
             />

@@ -1,12 +1,10 @@
-"use client";
-
 import { useRef, useTransition } from "react";
-import { X } from "lucide-react";
 import { useHover } from "usehooks-ts";
 
 import { cn } from "@notion-kit/cn";
 import { useInputField } from "@notion-kit/hooks";
 import { useTranslation } from "@notion-kit/i18n";
+import { Icon } from "@notion-kit/icons";
 import {
   Avatar,
   AvatarFallback,
@@ -17,8 +15,8 @@ import {
   TooltipPreset,
 } from "@notion-kit/shadcn";
 
-import { SettingsSection } from "../../core";
-import { useAccount, useAccountActions, useFileActions } from "../hooks";
+import { SettingsSection } from "@/core";
+import { useAccount, useAccountActions, useFileActions } from "@/presets/hooks";
 
 export function AccountSection() {
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -85,7 +83,7 @@ export function AccountSection() {
                   )}
                   aria-disabled={isPending}
                 >
-                  <X size={8} strokeWidth={2} />
+                  <Icon.Close className="size-2 fill-current" />
                 </Button>
               </div>
             </TooltipPreset>

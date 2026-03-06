@@ -17,7 +17,7 @@ export function useBillingActions() {
 
   const { mutateAsync: upgrade, isPending: isUpgrading } = useMutation({
     mutationFn: (params: { plan: Plan; annual: boolean }) =>
-      actions?.upgrade?.(params.plan, params.annual) ?? createDefaultFn()(),
+      actions?.upgrade(params.plan, params.annual) ?? createDefaultFn()(),
     onError: (e) => toast.error("Upgrade failed", { description: e.message }),
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });

@@ -1,7 +1,4 @@
-"use client";
-
 import { useState } from "react";
-import { CircleHelp } from "lucide-react";
 
 import { useTranslation } from "@notion-kit/i18n";
 import {
@@ -12,21 +9,22 @@ import {
   Switch,
 } from "@notion-kit/shadcn";
 
-import { HintButton } from "../_components";
-import { SettingsRule, SettingsSection, useSettings } from "../../core";
-import { Scope } from "../../lib";
+import { SettingsRule, SettingsSection, useScopes } from "@/core";
+import { Scope } from "@/lib/types";
+import { HintButton } from "@/presets/_components";
 import {
   useTeamspaceActions,
   useTeamspaceDetail,
   useWorkspace,
-} from "../hooks";
-import { CreateTeamspace } from "../modals";
-import { TeamspacesTable } from "../tables";
+} from "@/presets/hooks";
+import { CreateTeamspace } from "@/presets/modals";
+import { TeamspacesTable } from "@/presets/tables";
+
 import { DefaultTeamspace } from "./default-teamspace";
 import { useTeamspacesTable } from "./use-teamspaces";
 
 export function TeamspacesSection() {
-  const { scopes } = useSettings();
+  const scopes = useScopes();
   const { data: workspace } = useWorkspace();
   /** i18n */
   const { t } = useTranslation("settings");
@@ -43,7 +41,7 @@ export function TeamspacesSection() {
   return (
     <SettingsSection title={trans.title}>
       <HintButton
-        icon={CircleHelp}
+        icon="help"
         label={trans.info.learn}
         href="https://www.notion.com/help/intro-to-teamspaces#modify-teamspace-settings"
       />

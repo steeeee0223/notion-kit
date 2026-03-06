@@ -6,16 +6,16 @@ import { AlertModal } from "@notion-kit/common/alert-modal";
 import { useTranslation } from "@notion-kit/i18n";
 import { Button, Dialog, DialogTrigger } from "@notion-kit/shadcn";
 
-import { Content } from "../_components";
-import { SettingsSection, useSettings } from "../../core";
-import { Scope } from "../../lib";
-import { useAccount, useWorkspace, useWorkspaceActions } from "../hooks";
-import { DeleteWorkspace } from "../modals";
+import { SettingsSection, useScopes } from "@/core";
+import { Scope } from "@/lib/types";
+import { Content } from "@/presets/_components";
+import { useAccount, useWorkspace, useWorkspaceActions } from "@/presets/hooks";
+import { DeleteWorkspace } from "@/presets/modals";
 
 export function DangerSection() {
+  const scopes = useScopes();
   const { data: account } = useAccount();
   const { data: workspace } = useWorkspace();
-  const { scopes } = useSettings();
   /** i18n */
   const { t } = useTranslation("settings");
   const trans = t("general.danger", { returnObjects: true });

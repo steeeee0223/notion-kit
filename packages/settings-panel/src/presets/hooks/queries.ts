@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
-import { useSettings, useSettingsApi } from "@/core/settings-provider";
+import { useSettingsApi } from "@/core/settings-provider";
 import { createDefaultFn, QUERY_KEYS } from "@/lib/queries";
 import type {
   AccountStore,
@@ -23,100 +22,87 @@ import {
 export function useAccount<T = AccountStore>(
   selector?: (data: AccountStore) => T,
 ) {
-  const queryClient = useQueryClient();
-  const {
-    settings: { account },
-  } = useSettings();
-  const initialData = { ...initialAccountStore, id: account.id };
+  const { account } = useSettingsApi();
 
-  const queryResult = useQuery<AccountStore, Error, T>({
-    initialData,
-    queryKey: QUERY_KEYS.account(account.id),
-    queryFn: createDefaultFn(initialData),
+  return useQuery<AccountStore, Error, T>({
+    initialData: initialAccountStore,
+    queryKey: QUERY_KEYS.account(initialAccountStore.id),
+    queryFn: account?.getAll ?? createDefaultFn(initialAccountStore),
     select: selector,
-    enabled: false,
+    enabled: !!account,
   });
-  useEffect(() => {
-    queryClient.setQueryData(QUERY_KEYS.account(account.id), account);
-  }, [account, queryClient]);
-
-  return queryResult;
 }
 
 export function useWorkspace<T = WorkspaceStore>(
   selector?: (data: WorkspaceStore) => T,
 ) {
-  const queryClient = useQueryClient();
-  const {
-    settings: { workspace },
-  } = useSettings();
-  const initialData = { ...initialWorkspaceStore, id: workspace.id };
+  const { workspace } = useSettingsApi();
 
-  const queryResult = useQuery<WorkspaceStore, Error, T>({
-    initialData,
-    queryKey: QUERY_KEYS.workspace(workspace.id),
-    queryFn: createDefaultFn(initialData),
+  return useQuery<WorkspaceStore, Error, T>({
+    initialData: initialWorkspaceStore,
+    queryKey: QUERY_KEYS.workspace(initialWorkspaceStore.id),
+    queryFn: workspace?.getAll ?? createDefaultFn(initialWorkspaceStore),
     select: selector,
+    enabled: !!workspace,
   });
-  useEffect(() => {
-    queryClient.setQueryData(QUERY_KEYS.workspace(workspace.id), workspace);
-  }, [workspace, queryClient]);
-
-  return queryResult;
 }
 
 export function usePeople<T = Memberships>(
   selector?: (data: Memberships) => T,
 ) {
-  const { people: actions } = useSettingsApi();
+  const { people } = useSettingsApi();
   const { data: workspace } = useWorkspace();
 
   return useQuery<Memberships, Error, T>({
     initialData: {},
     queryKey: QUERY_KEYS.members(workspace.id),
-    queryFn: actions?.getAll ?? createDefaultFn({}),
+    queryFn: people?.getAll ?? createDefaultFn({}),
     select: selector,
+    enabled: !!people,
   });
 }
 
 export function useInvitations<T = Invitations>(
   selector?: (data: Invitations) => T,
 ) {
-  const { invitations: actions } = useSettingsApi();
+  const { invitations } = useSettingsApi();
   const { data: workspace } = useWorkspace();
 
   return useQuery<Invitations, Error, T>({
     initialData: {},
     queryKey: QUERY_KEYS.invitations(workspace.id),
-    queryFn: actions?.getAll ?? createDefaultFn({}),
+    queryFn: invitations?.getAll ?? createDefaultFn({}),
     select: selector,
+    enabled: !!invitations,
   });
 }
 
 export function useTeamspaces<T = Teamspaces>(
   selector?: (data: Teamspaces) => T,
 ) {
-  const { teamspaces: actions } = useSettingsApi();
+  const { teamspaces } = useSettingsApi();
   const { data: workspace } = useWorkspace();
 
   return useQuery<Teamspaces, Error, T>({
     initialData: {},
     queryKey: QUERY_KEYS.teamspaces(workspace.id),
-    queryFn: actions?.getAll ?? createDefaultFn({}),
+    queryFn: teamspaces?.getAll ?? createDefaultFn({}),
     select: selector,
+    enabled: !!teamspaces,
   });
 }
 
 export function useBilling<T = BillingStore>(
   selector?: (data: BillingStore) => T,
 ) {
-  const { billing: actions } = useSettingsApi();
+  const { billing } = useSettingsApi();
   const { data: workspace } = useWorkspace();
 
   return useQuery<BillingStore, Error, T>({
     initialData: initialBillingStore,
     queryKey: QUERY_KEYS.billing(workspace.id),
-    queryFn: actions?.getAll ?? createDefaultFn(initialBillingStore),
+    queryFn: billing?.getAll ?? createDefaultFn(initialBillingStore),
     select: selector,
+    enabled: !!billing,
   });
 }

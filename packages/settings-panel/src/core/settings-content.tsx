@@ -1,7 +1,7 @@
 import React from "react";
-import { HelpCircle } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
+import { Icon } from "@notion-kit/icons";
 import { Badge, Button, Separator, TooltipPreset } from "@notion-kit/shadcn";
 
 interface SettingsSectionProps extends React.PropsWithChildren {
@@ -92,7 +92,7 @@ function SettingsRule({
               size="circle"
               onClick={() => window.open(href)}
             >
-              <HelpCircle className="size-3" />
+              <Icon.QuestionMarkCircled className="fill-current" />
             </Button>
           )}
         </div>

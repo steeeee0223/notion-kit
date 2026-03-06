@@ -12,7 +12,7 @@
   ],
   "files": [
     {
-      "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/blocks.tsx",
+      "path": "/Users/awen/Documents/ts-space/notion-kit/apps/docs/src/components/core/blocks.tsx",
       "content": "export { Cover, CoverPicker } from \"@notion-kit/cover\";\nexport { IconBlock } from \"@notion-kit/icon-block\";\nexport { IconMenu } from \"@notion-kit/icon-menu\";\n",
       "type": "registry:component",
       "target": "components/core/blocks.tsx"

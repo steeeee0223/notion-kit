@@ -8,6 +8,7 @@ import {
   AddMembers,
   AddTeamMembers,
   ChangePaymentMethod,
+  createMockPasskeysAdapter,
   CreateTeamspace,
   DeleteAccount,
   DeleteGuest,
@@ -29,7 +30,6 @@ import {
   mockGuests,
   mockMembers,
   mockPasskeys,
-  mockSettings,
   mockTeamMemberRows,
   mockUser,
   mockUsers,
@@ -178,9 +178,9 @@ export const PasskeysManagement: Story = {
   },
   render: (props) => (
     <SettingsProvider
-      settings={mockSettings}
-      stripePublishableKey={env.STORYBOOK_STRIPE_PUBLISHABLE_KEY}
-      passkeys={{ getAll: () => Promise.resolve(mockPasskeys) }}
+      adapters={{
+        passkeys: createMockPasskeysAdapter(mockPasskeys),
+      }}
     >
       <Portal {...props} />
     </SettingsProvider>

@@ -1,7 +1,6 @@
 export {
   AuthProvider,
   LoginForm,
-  useAccountSettings,
-  useWorkspaceSettings,
   useAuth,
+  useSettingsAdapters,
 } from "@notion-kit/auth-ui";

@@ -18,7 +18,7 @@ interface SettingsModalProps {
 }
 
 export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
-  const { tab, setTab, settings, actions } = useSettings();
+  const { tab, setTab, adapters } = useSettings();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -35,7 +35,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
           document.body.style.pointerEvents = "";
         }}
       >
-        <SettingsProvider settings={settings} {...actions}>
+        <SettingsProvider adapters={adapters}>
           <SettingsPanel>
             <SettingsSidebar>
               <SettingsSidebarPreset tab={tab} onTabChange={setTab} />

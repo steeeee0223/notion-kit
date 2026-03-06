@@ -1,8 +1,5 @@
-"use client";
-
 import { useCallback, useRef, useState } from "react";
 import { saveAs } from "file-saver";
-import { ChevronDown } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
 import { AlertModal } from "@notion-kit/common/alert-modal";
@@ -26,7 +23,7 @@ import {
 import {
   SettingsRule,
   SettingsSection,
-  useSettings,
+  useScopes,
   useStripePromise,
 } from "@/core";
 import { getUpgradePlan } from "@/lib/plans";
@@ -61,7 +58,7 @@ enum PeopleTabs {
 }
 
 export function People() {
-  const { scopes } = useSettings();
+  const scopes = useScopes();
   const { upgrade } = useBillingActions();
   const stripePromise = useStripePromise();
   const { data: account } = useAccount();
@@ -92,7 +89,6 @@ export function People() {
     setOpen((prev) => !prev);
     inputRef.current?.focus();
   };
-  /** Modals */
   /** Tables */
   const { members, guests } = useWorkspaceMemberships();
   const { selectedTeamspace, setSelectedTeamspace, renderTeamspaceDetail } =
@@ -206,7 +202,7 @@ export function People() {
               onClick={() => setAddMembersOpen(true)}
             >
               {tabs["add-members"]}
-              <ChevronDown className="ml-1 size-4" />
+              <Icon.ChevronDown className="size-3 fill-current" />
             </Button>
             <AddMembers
               open={addMembersOpen}

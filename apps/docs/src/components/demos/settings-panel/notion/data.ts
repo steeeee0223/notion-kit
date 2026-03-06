@@ -1,5 +1,9 @@
 import { Plan, Role, Workspace, type User } from "@notion-kit/schemas";
-import type { Connection, SettingsStore } from "@notion-kit/settings-panel";
+import type {
+  AccountStore,
+  Connection,
+  WorkspaceStore,
+} from "@notion-kit/settings-panel";
 
 const mockUsers: User[] = [
   {
@@ -107,21 +111,20 @@ const mockWorkspaces: Workspace[] = [
   },
 ];
 
-export const mockSettings: SettingsStore = {
-  workspace: {
-    ...mockWorkspaces[0]!,
-    icon: mockWorkspaces[0]!.icon ?? {
-      type: "text",
-      src: mockWorkspaces[0]!.name,
-    },
-    slug: "fake-slug",
-    inviteLink: "#",
+export const mockWorkspace: WorkspaceStore = {
+  ...mockWorkspaces[0]!,
+  icon: mockWorkspaces[0]!.icon ?? {
+    type: "text",
+    src: mockWorkspaces[0]!.name,
   },
-  account: {
-    ...mockUsers[0]!,
-    preferredName: "Jonathan",
-    language: "en",
-  },
+  slug: "fake-slug",
+  inviteLink: "#",
+};
+
+export const mockAccount: AccountStore = {
+  ...mockUsers[0]!,
+  preferredName: "Jonathan",
+  language: "en",
 };
 
 export const mockConnections: Connection[] = [

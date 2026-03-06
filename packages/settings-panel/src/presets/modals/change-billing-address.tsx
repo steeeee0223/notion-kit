@@ -25,19 +25,8 @@ import {
   Spinner,
 } from "@notion-kit/shadcn";
 
+import type { BillingAddress } from "@/lib/types";
 import { StripeElements } from "@/presets/_components";
-
-export interface BillingAddress {
-  name: string;
-  address: {
-    line1: string;
-    line2: string | null;
-    city: string;
-    state: string;
-    postal_code: string;
-    country: string;
-  };
-}
 
 interface ChangeBillingAddressProps {
   stripePromise?: Promise<Stripe | null>;

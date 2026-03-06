@@ -1,14 +1,15 @@
 "use client";
 
-import { useSettings } from "../../core";
-import { Scope } from "../../lib";
+import { useScopes } from "@/core";
+import { Scope } from "@/lib/types";
+
 import { AnalyticsSection } from "./analytics-section";
 import { DangerSection } from "./danger-section";
 import { ExportSection } from "./export-section";
 import { WorkspaceSettingsSection } from "./workspace-settings-section";
 
 export function General() {
-  const { scopes } = useSettings();
+  const scopes = useScopes();
 
   return (
     <div className="space-y-[18px]">

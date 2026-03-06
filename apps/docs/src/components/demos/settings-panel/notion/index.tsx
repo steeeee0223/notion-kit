@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import {
+  createMockAdapters,
   SettingsBodyPreset,
   SettingsContent,
   SettingsPanel,
@@ -12,36 +13,23 @@ import {
   type TabType,
 } from "@notion-kit/settings-panel";
 
-import { mockConnections, mockSettings } from "./data";
+import { mockAccount, mockConnections, mockWorkspace } from "./data";
 
 export default function Demo() {
   const [tab, setTab] = useState<TabType>("preferences");
-  const [settings, setSettings] = useState(mockSettings);
+
+  const adapters = useMemo(
+    () =>
+      createMockAdapters({
+        account: mockAccount,
+        workspace: mockWorkspace,
+        connections: mockConnections,
+      }),
+    [],
+  );
+
   return (
-    <SettingsProvider
-      settings={settings}
-      account={{
-        update: (data) => {
-          setSettings((prev) => ({
-            ...prev,
-            account: { ...prev.account, ...data },
-          }));
-          return Promise.resolve();
-        },
-      }}
-      workspace={{
-        update: (data) => {
-          setSettings((prev) => ({
-            ...prev,
-            workspace: { ...prev.workspace, ...data },
-          }));
-          return Promise.resolve();
-        },
-      }}
-      connections={{
-        getAll: () => Promise.resolve(mockConnections),
-      }}
-    >
+    <SettingsProvider adapters={adapters}>
       <SettingsPanel className="w-[calc(100%-20px)]">
         <SettingsSidebar>
           <SettingsSidebarPreset tab={tab} onTabChange={setTab} />
