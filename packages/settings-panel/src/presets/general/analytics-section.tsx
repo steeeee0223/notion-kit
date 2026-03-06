@@ -1,13 +1,9 @@
-"use client";
-
-import { CircleHelp } from "lucide-react";
-
 import { useTranslation } from "@notion-kit/i18n";
 import { Switch } from "@notion-kit/shadcn";
 
-import { HintButton, TextLinks } from "../_components";
-import { SettingsRule, SettingsSection } from "../../core";
-import { useWorkspace } from "../hooks";
+import { SettingsRule, SettingsSection } from "@/core";
+import { HintButton, TextLinks } from "@/presets/_components";
+import { useWorkspace } from "@/presets/hooks";
 
 export function AnalyticsSection() {
   const { data: workspace } = useWorkspace();
@@ -29,7 +25,7 @@ export function AnalyticsSection() {
         <Switch size="sm" />
       </SettingsRule>
       <HintButton
-        icon={CircleHelp}
+        icon="help"
         label={trans.analytics.hint}
         href="https://www.notion.com/help/workspace-analytics"
       />

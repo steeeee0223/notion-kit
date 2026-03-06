@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
-import { CircleHelp, Mail } from "lucide-react";
 import { z } from "zod/v4";
 
 import { useFilter } from "@notion-kit/hooks";
+import { Icon } from "@notion-kit/icons";
 import { Role, type User } from "@notion-kit/schemas";
 import {
   Badge,
@@ -20,7 +20,7 @@ import {
 } from "@notion-kit/shadcn";
 import { TagsInput } from "@notion-kit/tags-input";
 
-import { Avatar, HintButton } from "../_components";
+import { Avatar, HintButton } from "@/presets/_components";
 
 enum Heading {
   Select = "Select a person",
@@ -165,7 +165,7 @@ export function AddMembers({
         className="w-full p-1 text-inherit no-underline select-none"
       >
         <HintButton
-          icon={CircleHelp}
+          icon="help"
           label="Learn how to invite people and set permissions"
           className="w-full justify-start px-3"
         />
@@ -195,7 +195,7 @@ const Item: React.FC<ItemProps> = ({
         {invited ? (
           <Avatar src={avatarUrl} fallback={name} />
         ) : (
-          <Mail className="size-5 shrink-0 text-primary" />
+          <Icon.Envelope className="size-5 shrink-0 fill-primary" />
         )}
       </div>
       <div className="mr-3 min-w-0 flex-auto truncate">

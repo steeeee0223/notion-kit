@@ -1,7 +1,3 @@
-"use client";
-
-import { CircleHelp } from "lucide-react";
-
 import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import {
@@ -12,12 +8,13 @@ import {
   Separator,
 } from "@notion-kit/shadcn";
 
+import type { TeamspacePermission as Permission } from "@/lib/types";
 import {
   HintButton,
   permissions,
   TeamspacePermission,
-} from "../../_components";
-import { TeamspacePermission as Permission } from "../../../lib";
+} from "@/presets/_components";
+
 import { LeaveTeamspace } from "../leave-teamspace";
 import { Card, Tab, Title } from "./common";
 
@@ -112,7 +109,7 @@ export function GeneralContent({
           </Dialog>
         </Card>
         <HintButton
-          icon={CircleHelp}
+          icon="help"
           label="Learn about teamspaces"
           href="https://www.notion.com/help/guides/teamspaces-give-teams-home-for-important-work"
         />

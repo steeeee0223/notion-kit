@@ -1,7 +1,4 @@
-"use client";
-
 import { useState } from "react";
-import { CircleHelp } from "lucide-react";
 
 import { useTranslation } from "@notion-kit/i18n";
 import {
@@ -44,7 +41,7 @@ export function TeamspacesSection() {
   return (
     <SettingsSection title={trans.title}>
       <HintButton
-        icon={CircleHelp}
+        icon="help"
         label={trans.info.learn}
         href="https://www.notion.com/help/intro-to-teamspaces#modify-teamspace-settings"
       />

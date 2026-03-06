@@ -1,8 +1,5 @@
-"use client";
-
 import { useCallback, useRef, useState } from "react";
 import { saveAs } from "file-saver";
-import { ChevronDown } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
 import { AlertModal } from "@notion-kit/common/alert-modal";
@@ -205,7 +202,7 @@ export function People() {
               onClick={() => setAddMembersOpen(true)}
             >
               {tabs["add-members"]}
-              <ChevronDown className="ml-1 size-4" />
+              <Icon.ChevronDown className="size-3 fill-current" />
             </Button>
             <AddMembers
               open={addMembersOpen}

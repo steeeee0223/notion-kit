@@ -1,25 +1,23 @@
-"use client";
-
 import { useState } from "react";
-import { CircleHelp } from "lucide-react";
 
 import { type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import { User } from "@notion-kit/schemas";
 import { Button, Dialog, DialogTrigger, Input } from "@notion-kit/shadcn";
 
-import {
-  HintButton,
-  permissions,
-  TeamspacePermission,
-} from "../../_components";
 import type {
   TeamspacePermission as Permission,
   TeamMemberRow,
   TeamspaceRole,
-} from "../../../lib";
-import { TeamMembersTable } from "../../tables";
-import { AddTeamMembers } from "../add-team-members";
+} from "@/lib/types";
+import {
+  HintButton,
+  permissions,
+  TeamspacePermission,
+} from "@/presets/_components";
+import { AddTeamMembers } from "@/presets/modals";
+import { TeamMembersTable } from "@/presets/tables";
+
 import { Card, Title } from "./common";
 
 interface MembersContentProps {
@@ -89,7 +87,7 @@ export function MembersContent({
           />
         </Card>
         <HintButton
-          icon={CircleHelp}
+          icon="help"
           label="Learn about teamspace permissions"
           href="https://www.notion.com/help/intro-to-teamspaces#modify-teamspace-settings"
         />

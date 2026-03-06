@@ -1,7 +1,5 @@
 "use client";
 
-import { CircleHelp } from "lucide-react";
-
 import { useTranslation } from "@notion-kit/i18n";
 import { Plan } from "@notion-kit/schemas";
 import { Switch } from "@notion-kit/shadcn";
@@ -20,7 +18,7 @@ export function SamlSection() {
   return (
     <SettingsSection title={trans.title}>
       <HintButton
-        icon={CircleHelp}
+        icon="help"
         label={trans.buttons.hint}
         href="https://www.notion.com/help/saml-sso-configuration"
       />

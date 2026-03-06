@@ -1,10 +1,8 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CircleAlert } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 
+import { Icon } from "@notion-kit/icons";
 import {
   Button,
   DialogClose,
@@ -50,7 +48,7 @@ export function DeleteWorkspace({ name, onSubmit }: DeleteWorkspaceProps) {
     <DialogContent className="w-[420px] p-5">
       <DialogHeader>
         <DialogIcon>
-          <CircleAlert className="size-9 text-red" />
+          <Icon.ExclamationMarkCircled className="size-9 fill-red" />
         </DialogIcon>
         <DialogTitle typography="h2">
           Delete this entire workspace permanently?

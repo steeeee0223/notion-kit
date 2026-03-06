@@ -50,7 +50,6 @@
     "@tanstack/react-query": "catalog:ui",
     "@tanstack/react-table": "catalog:ui",
     "file-saver": "^2.0.5",
-    "lucide-react": "catalog:ui",
     "react-hook-form": "catalog:ui",
     "usehooks-ts": "catalog:ui"
   },
