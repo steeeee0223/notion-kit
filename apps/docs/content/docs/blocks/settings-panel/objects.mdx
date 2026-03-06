@@ -386,3 +386,65 @@ An example for `CellOptions<{ id: string, title: string }>`
   scope: 'can edit'
 }
 ```
+
+## Billing Store
+
+### Properties
+
+| Prop              | Type      | Description                     |
+| ----------------- | --------- | ------------------------------- |
+| `paymentMethod`   | `string`  | Current payment method label.   |
+| `billedTo`        | `string`  | Business name / billed to name. |
+| `billingEmail`    | `string`  | Billing email address.          |
+| `invoiceEmails`   | `boolean` | Whether invoice emails are on.  |
+| `vatNumber`       | `string`  | VAT / tax ID number.            |
+| `upcomingInvoice` | `string`  | Upcoming invoice description.   |
+
+### Example
+
+```ts
+{
+  paymentMethod: "Visa ending in 4242",
+  billedTo: "Acme Labs",
+  billingEmail: "billing@acme.com",
+  invoiceEmails: true,
+  vatNumber: "DE123456789",
+  upcomingInvoice: "Plus plan"
+}
+```
+
+## Billing Address
+
+### Properties
+
+| Prop        | Type     | Description              |
+| ----------- | -------- | ------------------------ |
+| `name`\*    | `string` | Full name.               |
+| `address`\* | `object` | Address details (below). |
+
+#### Address Fields
+
+| Prop            | Type             | Description     |
+| --------------- | ---------------- | --------------- |
+| `line1`\*       | `string`         | Address line 1. |
+| `line2`         | `string \| null` | Address line 2. |
+| `city`\*        | `string`         | City.           |
+| `state`\*       | `string`         | State / region. |
+| `postal_code`\* | `string`         | Postal code.    |
+| `country`\*     | `string`         | Country code.   |
+
+### Example
+
+```ts
+{
+  name: "Steve",
+  address: {
+    line1: "123 Main St",
+    line2: null,
+    city: "San Francisco",
+    state: "CA",
+    postal_code: "94105",
+    country: "US"
+  }
+}
+```

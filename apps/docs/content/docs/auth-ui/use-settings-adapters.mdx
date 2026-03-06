@@ -1,0 +1,87 @@
+---
+title: Use Settings Adapters
+description: React hooks for integrating authentication and workspace settings into Notion's Settings Panel.
+---
+
+## Installation
+
+<Installation packages="@notion-kit/auth-ui" registryName="auth-ui" />
+
+## Supported Features
+
+- Account settings
+  - Change password
+  - Logged in sessions
+  - Passkeys management
+  - Link social accounts
+- Theme select
+- Localization support for `EN`, `DE`, `ES`
+- Timezone support
+- Update/delete/leave workspace
+- Members & scopes management
+- Teamspaces management
+- Billing & subscription management
+
+## Usage
+
+---
+
+### Settings Panel
+
+You can see [`Notion Authn`](https://notion-authn.vercel.app/) for a full example.
+
+```tsx
+import { useSettingsAdapters } from "@notion-kit/auth-ui"; // [!code highlight]
+
+function Settings() {
+  const [tab, setTab] = useState<TabType>("account");
+  const adapters = useSettingsAdapters(); // [!code highlight]
+
+  return (
+    <SettingsProvider adapters={adapters}>
+      <SettingsPanel>
+        <SettingsSidebar>
+          <SettingsSidebarPreset tab={tab} onTabChange={setTab} />
+        </SettingsSidebar>
+        <SettingsContent>
+          <SettingsBodyPreset tab={tab} onTabChange={setTab} />
+        </SettingsContent>
+      </SettingsPanel>
+    </SettingsProvider>
+  );
+}
+```
+
+## API Reference
+
+### useSettingsAdapters
+
+<Callout title="Note">
+  It should be used within the `<AuthProvider>` context.
+</Callout>
+
+Returns a [`SettingsAdapters`](/docs/blocks/settings-panel#settings-adapters) object containing domain-specific adapters for account, sessions, passkeys, connections, workspace, people, invitations, teamspaces, and billing.
+
+Each adapter provides query (`getAll`) and mutation methods for its domain. All adapters are optional — include only the ones your application supports.
+
+### Individual Adapter Hooks
+
+You can also use individual adapter hooks for more granular control:
+
+| Hook                    | Returns                                                                 |
+| ----------------------- | ----------------------------------------------------------------------- |
+| `useAccountAdapter`     | [`AccountAdapter`](/docs/blocks/settings-panel#account-adapter)         |
+| `useSessionsAdapter`    | [`SessionsAdapter`](/docs/blocks/settings-panel#sessions-adapter)       |
+| `usePasskeysAdapter`    | [`PasskeysAdapter`](/docs/blocks/settings-panel#passkeys-adapter)       |
+| `useConnectionsAdapter` | [`ConnectionsAdapter`](/docs/blocks/settings-panel#connections-adapter) |
+| `useWorkspaceAdapter`   | [`WorkspaceAdapter`](/docs/blocks/settings-panel#workspace-adapter)     |
+| `usePeopleAdapter`      | [`PeopleAdapter`](/docs/blocks/settings-panel#people-adapter)           |
+| `useInvitationsAdapter` | [`InvitationsAdapter`](/docs/blocks/settings-panel#invitations-adapter) |
+| `useTeamspacesAdapter`  | [`TeamspacesAdapter`](/docs/blocks/settings-panel#teamspaces-adapter)   |
+| `useBillingAdapter`     | [`BillingAdapter`](/docs/blocks/settings-panel#billing-adapter)         |
+
+See schema definitions for:
+
+- [`SettingsAdapters`](/docs/blocks/settings-panel#settings-adapters)
+- [`AccountStore`](/docs/blocks/settings-panel/objects#account-store)
+- [`WorkspaceStore`](/docs/blocks/settings-panel/objects#workspace-store)

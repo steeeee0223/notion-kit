@@ -82,7 +82,7 @@
       ],
       "files": [
         {
-          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/notion-ui.tsx",
+          "path": "/Users/awen/Documents/ts-space/notion-kit/apps/docs/src/components/core/notion-ui.tsx",
           "type": "registry:component",
           "target": "components/core/notion-ui.tsx"
         }
@@ -99,7 +99,7 @@
       ],
       "files": [
         {
-          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/icons.tsx",
+          "path": "/Users/awen/Documents/ts-space/notion-kit/apps/docs/src/components/core/icons.tsx",
           "type": "registry:component",
           "target": "components/core/icons.tsx"
         }
@@ -120,7 +120,7 @@
       ],
       "files": [
         {
-          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/blocks.tsx",
+          "path": "/Users/awen/Documents/ts-space/notion-kit/apps/docs/src/components/core/blocks.tsx",
           "type": "registry:component",
           "target": "components/core/blocks.tsx"
         }
@@ -141,7 +141,7 @@
       ],
       "files": [
         {
-          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/navbar.tsx",
+          "path": "/Users/awen/Documents/ts-space/notion-kit/apps/docs/src/components/core/navbar.tsx",
           "type": "registry:component",
           "target": "components/core/navbar.tsx"
         }
@@ -158,7 +158,7 @@
       ],
       "files": [
         {
-          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/sidebar.tsx",
+          "path": "/Users/awen/Documents/ts-space/notion-kit/apps/docs/src/components/core/sidebar.tsx",
           "type": "registry:component",
           "target": "components/core/sidebar.tsx"
         }
@@ -179,7 +179,7 @@
       ],
       "files": [
         {
-          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/settings-panel.tsx",
+          "path": "/Users/awen/Documents/ts-space/notion-kit/apps/docs/src/components/core/settings-panel.tsx",
           "type": "registry:component",
           "target": "components/core/settings-panel.tsx"
         }
@@ -196,7 +196,7 @@
       ],
       "files": [
         {
-          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/table-view.tsx",
+          "path": "/Users/awen/Documents/ts-space/notion-kit/apps/docs/src/components/core/table-view.tsx",
           "type": "registry:component",
           "target": "components/core/table-view.tsx"
         }
@@ -213,7 +213,7 @@
       ],
       "files": [
         {
-          "path": "/Users/shihwen.yu/Documents/workspace/notion-kit/apps/docs/src/components/core/auth-ui.tsx",
+          "path": "/Users/awen/Documents/ts-space/notion-kit/apps/docs/src/components/core/auth-ui.tsx",
           "type": "registry:component",
           "target": "components/core/auth-ui.tsx"
         }
