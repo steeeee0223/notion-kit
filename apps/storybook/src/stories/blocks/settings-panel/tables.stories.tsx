@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 import {
   ConnectionsTable,
+  EmojisTable,
   GuestsTable,
   InvitationsTable,
   MembersTable,
@@ -14,6 +15,7 @@ import {
 
 import {
   mockConnections,
+  mockEmojis,
   mockGuests,
   mockInvitations,
   mockMembers,
@@ -71,4 +73,8 @@ export const TeamMembers: Story = {
 
 export const Plans: Story = {
   render: () => <PlansTable />,
+};
+
+export const Emojis: Story = {
+  render: () => <EmojisTable data={mockEmojis} />,
 };

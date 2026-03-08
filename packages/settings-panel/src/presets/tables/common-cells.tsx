@@ -30,12 +30,12 @@ export function SortingToggle({ title, isSorted, toggle }: SortingToggleProps) {
       onClick={toggle}
       className="px-1 text-secondary"
     >
-      <TextCell value={title} />
+      <TextCell value={title} className="font-normal" />
       {isSorted &&
         (isSorted === "asc" ? (
-          <Icon.ArrowUp className="size-3 shrink-0 fill-icon" />
+          <Icon.ArrowUp className="size-3 fill-icon" />
         ) : (
-          <Icon.ArrowDown className="size-3 shrink-0 fill-icon" />
+          <Icon.ArrowDown className="size-3 fill-icon" />
         ))}
     </Button>
   );

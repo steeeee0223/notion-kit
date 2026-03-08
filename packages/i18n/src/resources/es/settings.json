@@ -402,7 +402,44 @@
     }
   },
   "sites": { "title": "Sitios" },
-  "emoji": { "title": "Emoji personalizado" },
+  "emoji": {
+    "title": "Emoji personalizado",
+    "limit": {
+      "title": "Limitar la creación de emojis personalizados a los propietarios del espacio de trabajo",
+      "description": "Los emojis existentes aún pueden ser editados o eliminados por la persona que los agregó"
+    },
+    "form": {
+      "add-title": "Agregar emoji personalizado",
+      "edit-title": "Editar emoji personalizado",
+      "description": "Los emojis personalizados pueden ser usados por cualquier persona en tu espacio de trabajo",
+      "upload": "Subir una imagen",
+      "replace": "Reemplazar",
+      "name-label": "Nombre del emoji",
+      "name-placeholder": "diviertete-con-el",
+      "preview": "Vista previa",
+      "cancel": "Cancelar",
+      "save": "Guardar"
+    }
+  },
+  "tables": {
+    "emojis": {
+      "count_one": "{{count}} emoji",
+      "count_other": "{{count}} emojis",
+      "search": "Buscar por nombre o agregado por",
+      "add-emoji": "Agregar emoji",
+      "empty": "Los emojis personalizados están disponibles para todos en tu espacio de trabajo",
+      "delete": {
+        "title": "¿Eliminar este emoji?",
+        "description": "Se eliminará para todos en tu espacio de trabajo",
+        "primary": "Eliminar",
+        "secondary": "Cancelar"
+      },
+      "actions": {
+        "edit": "Editar",
+        "delete": "Eliminar"
+      }
+    }
+  },
   "security": {
     "title": "Seguridad",
     "cards": {

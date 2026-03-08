@@ -11,6 +11,8 @@ export { DeleteWorkspace } from "./delete-workspace";
 export { AddMembers } from "./add-members";
 export { DeleteMember } from "./delete-member";
 export { DeleteGuest } from "./delete-guest";
+/** Emoji */
+export { EmojiForm, type EmojiSchema } from "./emoji-form";
 /** Teamspaces */
 export { AddTeamMembers } from "./add-team-members";
 export { CreateTeamspace } from "./create-teamspace";

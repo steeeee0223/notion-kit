@@ -7,6 +7,7 @@ import { createDefaultFn, QUERY_KEYS } from "@/lib/queries";
 import type {
   AccountStore,
   BillingStore,
+  Emojis,
   Invitations,
   Memberships,
   Teamspaces,
@@ -104,5 +105,18 @@ export function useBilling<T = BillingStore>(
     queryFn: billing?.getAll ?? createDefaultFn(initialBillingStore),
     select: selector,
     enabled: !!billing,
+  });
+}
+
+export function useEmoji<T = Emojis>(selector?: (data: Emojis) => T) {
+  const { emoji } = useSettingsApi();
+  const { data: workspace } = useWorkspace();
+
+  return useQuery<Emojis, Error, T>({
+    initialData: {},
+    queryKey: QUERY_KEYS.emoji(workspace.id),
+    queryFn: emoji?.getAll ?? createDefaultFn({}),
+    select: selector,
+    enabled: !!emoji,
   });
 }

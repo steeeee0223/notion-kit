@@ -31,14 +31,24 @@ export const Workspace: Story = {
 export const People: Story = {
   args: { tab: "people" },
 };
+/** Features */
+export const Emoji: Story = {
+  args: { tab: "emoji" },
+};
 /** Admin */
 export const Teamspaces: Story = {
   args: { tab: "teamspaces" },
 };
-/** Billing */
-export const Plans: Story = {
-  args: { tab: "plans" },
+export const Security: Story = {
+  args: { tab: "security" },
 };
+export const Identity: Story = {
+  args: { tab: "identity" },
+};
+/** Billing */
 export const Billing: Story = {
   args: { tab: "billing" },
+};
+export const Plans: Story = {
+  args: { tab: "plans" },
 };

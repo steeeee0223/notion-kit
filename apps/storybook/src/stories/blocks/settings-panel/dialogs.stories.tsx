@@ -15,6 +15,7 @@ import {
   DeleteMember,
   DeleteWorkspace,
   EmailSettings,
+  EmojiForm,
   Enable2FAMethod,
   PasskeysModal,
   PasswordForm,
@@ -27,6 +28,7 @@ import { Dialog, toast } from "@notion-kit/shadcn";
 import { env } from "@/env";
 
 import {
+  mockEmojis,
   mockGuests,
   mockMembers,
   mockPasskeys,
@@ -217,5 +219,24 @@ export const ChangePaymentMethodModal: Story = {
         />
       </Portal>
     );
+  },
+};
+
+export const AddEmojiModal: Story = {
+  args: {
+    children: (
+      <EmojiForm onSave={(data) => void toast.success(`Added ${data.name}`)} />
+    ),
+  },
+};
+
+export const EditEmojiModal: Story = {
+  args: {
+    children: (
+      <EmojiForm
+        emoji={mockEmojis[0]}
+        onSave={(data) => void toast.success(`Modified ${data.name}`)}
+      />
+    ),
   },
 };

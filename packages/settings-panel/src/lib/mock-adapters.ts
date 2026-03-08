@@ -5,6 +5,8 @@ import type {
   BillingStore,
   Connection,
   ConnectionsAdapter,
+  EmojiAdapter,
+  Emojis,
   Invitations,
   InvitationsAdapter,
   Memberships,
@@ -319,6 +321,48 @@ export function createMockBillingAdapter(
   };
 }
 
+export function createMockEmojiAdapter(initialEmojis: Emojis): EmojiAdapter {
+  let emojis = { ...initialEmojis };
+  let nextId = Object.keys(emojis).length + 1;
+  return {
+    getAll: () => Promise.resolve(emojis),
+    add: async ({ name, file }) => {
+      await delay();
+      const id = `emoji-${nextId++}`;
+      emojis = {
+        ...emojis,
+        [id]: {
+          id,
+          name,
+          src: URL.createObjectURL(file),
+          createdBy: "Mock User",
+          createdAt: Date.now(),
+        },
+      };
+    },
+    update: async ({ id, name, file }) => {
+      await delay();
+      const emoji = emojis[id];
+      if (emoji) {
+        emojis = {
+          ...emojis,
+          [id]: {
+            ...emoji,
+            ...(name !== undefined && { name }),
+            ...(file && { src: URL.createObjectURL(file) }),
+          },
+        };
+      }
+    },
+    delete: async (id) => {
+      await delay();
+      const updated = { ...emojis };
+      delete updated[id];
+      emojis = updated;
+    },
+  };
+}
+
 export interface CreateMockAdaptersOptions {
   account: AccountStore;
   workspace: WorkspaceStore;
@@ -328,6 +372,7 @@ export interface CreateMockAdaptersOptions {
   memberships?: Memberships;
   invitations?: Invitations;
   teamspaces?: Teamspaces;
+  emojis?: Emojis;
   stripePublishableKey?: string;
 }
 
@@ -340,6 +385,7 @@ export function createMockAdapters({
   memberships = {},
   invitations = {},
   teamspaces = {},
+  emojis = {},
   stripePublishableKey,
 }: CreateMockAdaptersOptions): SettingsAdapters {
   return {
@@ -351,6 +397,7 @@ export function createMockAdapters({
     people: createMockPeopleAdapter(memberships),
     invitations: createMockInvitationsAdapter(invitations),
     teamspaces: createMockTeamspacesAdapter(teamspaces),
+    emoji: createMockEmojiAdapter(emojis),
     billing: createMockBillingAdapter(stripePublishableKey),
   };
 }

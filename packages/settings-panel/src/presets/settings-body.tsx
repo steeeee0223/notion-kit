@@ -10,6 +10,7 @@ import { Account } from "./account";
 import { Billing } from "./billing";
 import { Connections } from "./connections";
 import type { TabType } from "./data";
+import { Emoji } from "./emoji";
 import { General } from "./general";
 import { Identity } from "./identity";
 import { Notifications } from "./notifications";
@@ -52,6 +53,8 @@ export const SettingsBody: React.FC<SettingsBodyProps> = ({
       return <Identity />;
     case "notion-ai":
       return <NotionAI />;
+    case "emoji":
+      return <Emoji />;
     case "plans":
       return <Plans />;
     case "billing":

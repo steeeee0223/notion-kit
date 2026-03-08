@@ -2,6 +2,7 @@ import { Plan, Role, type User, type Workspace } from "@notion-kit/schemas";
 import type {
   AccountStore,
   Connection,
+  EmojiRow,
   GuestRow,
   InvitationRow,
   MemberRow,
@@ -329,5 +330,41 @@ export const mockTeamspaces: TeamspaceRow[] = [
     ownedBy: { name: "Bob" },
     ownerCount: 1,
     updatedAt: Date.UTC(2024, 5, 10),
+  },
+];
+
+function createMockEmojiSrc(emoji: string): string {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" font-size="48">${emoji}</text></svg>`;
+  return URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
+}
+
+export const mockEmojis: EmojiRow[] = [
+  {
+    id: "emoji-1",
+    name: "party-parrot",
+    src: createMockEmojiSrc("🎉"),
+    createdBy: "John Wick",
+    createdAt: Date.UTC(2024, 3, 15),
+  },
+  {
+    id: "emoji-2",
+    name: "ship-it",
+    src: createMockEmojiSrc("🚀"),
+    createdBy: "ShadCN",
+    createdAt: Date.UTC(2024, 4, 1),
+  },
+  {
+    id: "emoji-3",
+    name: "thumbs-up-cat",
+    src: createMockEmojiSrc("🐱"),
+    createdBy: "Pong",
+    createdAt: Date.UTC(2024, 5, 10),
+  },
+  {
+    id: "emoji-4",
+    name: "coffee-time",
+    src: createMockEmojiSrc("☕"),
+    createdBy: "John Wick",
+    createdAt: Date.UTC(2024, 6, 20),
   },
 ];

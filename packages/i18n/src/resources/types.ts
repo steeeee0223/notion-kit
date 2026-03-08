@@ -417,6 +417,41 @@ interface Resources {
     };
     emoji: {
       title: "Emoji";
+      limit: {
+        title: "Limit custom emoji creation to workspace owners";
+        description: "Any existing emojis can still be edited or deleted by the person who added them";
+      };
+      form: {
+        "add-title": "Add custom emoji";
+        "edit-title": "Edit custom emoji";
+        description: "Custom emoji can be used by anyone in your workspace";
+        upload: "Upload an image";
+        replace: "Replace";
+        "name-label": "Emoji name";
+        "name-placeholder": "have-fun-with-it";
+        preview: "Preview";
+        cancel: "Cancel";
+        save: "Save";
+      };
+    };
+    tables: {
+      emojis: {
+        count_one: "{{count}} emoji";
+        count_other: "{{count}} emojis";
+        search: "Search by name or added by";
+        "add-emoji": "Add emoji";
+        empty: "Custom emoji are available for everyone in your workspace";
+        delete: {
+          title: "Delete this emoji?";
+          description: "This will delete it for everyone in your workspace";
+          primary: "Delete";
+          secondary: "Cancel";
+        };
+        actions: {
+          edit: "Edit";
+          delete: "Delete";
+        };
+      };
     };
     security: {
       title: "Security";

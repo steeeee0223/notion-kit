@@ -11,6 +11,7 @@ import {
   SettingsProvider,
   SettingsSidebar,
   SettingsSidebarPreset,
+  type Emojis,
   type Invitations,
   type Memberships,
   type TabType,
@@ -22,6 +23,7 @@ import { env } from "@/env";
 import {
   mockAccount,
   mockConnections,
+  mockEmojis,
   mockGuests,
   mockInvitations,
   mockMembers,
@@ -65,6 +67,13 @@ function buildTeamspaces() {
   }, {});
 }
 
+function buildEmojis() {
+  return mockEmojis.reduce<Emojis>((acc, emoji) => {
+    acc[emoji.id] = emoji;
+    return acc;
+  }, {});
+}
+
 export function Demo({ tab: initialTab }: DemoProps) {
   const [tab, setTab] = useState(initialTab);
 
@@ -79,6 +88,7 @@ export function Demo({ tab: initialTab }: DemoProps) {
         memberships: buildMemberships(),
         invitations: buildInvitations(),
         teamspaces: buildTeamspaces(),
+        emojis: buildEmojis(),
         stripePublishableKey: env.STORYBOOK_STRIPE_PUBLISHABLE_KEY,
       }),
     [],
