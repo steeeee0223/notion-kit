@@ -1,8 +1,12 @@
 import type { BetterAuthPlugin } from "better-auth";
 import { createAuthEndpoint } from "better-auth/api";
+import { and, eq, ne } from "drizzle-orm";
 import { z } from "zod/v4";
 
-export function organizationExtra() {
+import type { DB } from "@/db/db";
+import { invitation as invitationTable, team as teamTable } from "@/db/schemas";
+
+export function organizationExtra({ db }: { db: DB }) {
   return {
     id: "organization-extra",
     endpoints: {
@@ -74,47 +78,24 @@ export function organizationExtra() {
           requireHeaders: true,
         },
         async (ctx) => {
-          const orgId = ctx.query.organizationId;
-
-          const teams = await ctx.context.adapter.findMany<{
-            id: string;
-            name: string;
-            icon: string;
-            description: string | null;
-            permission: string;
-            ownedBy: string;
-            createdAt: Date;
-            updatedAt: Date | null;
-          }>({
-            model: "team",
-            where: [{ field: "organizationId", value: orgId }],
+          const teams = await db.query.team.findMany({
+            where: eq(teamTable.organizationId, ctx.query.organizationId),
+            with: {
+              teamMembers: { columns: { userId: true, role: true } },
+            },
           });
 
-          const members = await Promise.all(
-            teams.map((team: { id: string }) =>
-              ctx.context.adapter.findMany<{
-                userId: string;
-                role: string;
-              }>({
-                model: "teamMember",
-                where: [{ field: "teamId", value: team.id }],
-              }),
-            ),
-          );
-
           return ctx.json(
-            teams.map((team: Record<string, unknown>, i: number) => ({
-              id: team.id as string,
-              name: team.name as string,
-              icon: team.icon as string,
-              description: team.description as string | null,
-              permission: team.permission as string,
-              ownedBy: team.ownedBy as string,
-              createdAt: team.createdAt as Date,
-              updatedAt: team.updatedAt as Date | null,
-              members: (
-                (members[i] ?? []) as { userId: string; role: string }[]
-              ).map((m) => ({
+            teams.map((t) => ({
+              id: t.id,
+              name: t.name,
+              icon: t.icon,
+              description: t.description,
+              permission: t.permission,
+              ownedBy: t.ownedBy,
+              createdAt: t.createdAt,
+              updatedAt: t.updatedAt,
+              members: t.teamMembers.map((m) => ({
                 userId: m.userId,
                 role: m.role,
               })),
@@ -163,74 +144,31 @@ export function organizationExtra() {
           requireHeaders: true,
         },
         async (ctx) => {
-          const orgId = ctx.query.organizationId;
-
-          const invitations = await ctx.context.adapter.findMany<{
-            id: string;
-            email: string;
-            role: string | null;
-            status: string;
-            inviterId: string;
-          }>({
-            model: "invitation",
-            where: [{ field: "organizationId", value: orgId }],
+          const rows = await db.query.invitation.findMany({
+            where: and(
+              eq(invitationTable.organizationId, ctx.query.organizationId),
+              ne(invitationTable.status, "accepted"),
+            ),
+            with: {
+              user: {
+                columns: { id: true, name: true, email: true, image: true },
+              },
+            },
           });
 
-          const pending = invitations.filter(
-            (i: { status: string }) => i.status !== "accepted",
-          );
-
-          const inviterIds = [
-            ...new Set(pending.map((i: { inviterId: string }) => i.inviterId)),
-          ];
-          const inviters = await Promise.all(
-            inviterIds.map((id) =>
-              ctx.context.adapter.findOne<{
-                id: string;
-                name: string;
-                email: string;
-                image: string | null;
-              }>({
-                model: "user",
-                where: [{ field: "id", value: id }],
-              }),
-            ),
-          );
-          const inviterMap = new Map(
-            inviterIds.map((id, i) => [id, inviters[i]]),
-          );
-
           return ctx.json(
-            pending.map(
-              (inv: {
-                id: string;
-                email: string;
-                role: string | null;
-                status: string;
-                inviterId: string;
-              }) => {
-                const inviter = inviterMap.get(inv.inviterId);
-                return {
-                  id: inv.id,
-                  email: inv.email,
-                  role: inv.role,
-                  status: inv.status,
-                  inviter: inviter
-                    ? {
-                        id: inviter.id,
-                        name: inviter.name,
-                        email: inviter.email,
-                        avatarUrl: inviter.image ?? "",
-                      }
-                    : {
-                        id: inv.inviterId,
-                        name: "Unknown",
-                        email: "",
-                        avatarUrl: "",
-                      },
-                };
+            rows.map((inv) => ({
+              id: inv.id,
+              email: inv.email,
+              role: inv.role,
+              status: inv.status,
+              inviter: {
+                id: inv.user.id,
+                name: inv.user.name,
+                email: inv.user.email,
+                avatarUrl: inv.user.image ?? "",
               },
-            ),
+            })),
           );
         },
       ),

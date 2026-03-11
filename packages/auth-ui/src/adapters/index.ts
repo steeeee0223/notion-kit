@@ -7,4 +7,5 @@ export { useWorkspaceAdapter } from "./use-workspace-adapter";
 export { usePeopleAdapter } from "./use-people-adapter";
 export { useInvitationsAdapter } from "./use-invitations-adapter";
 export { useTeamspacesAdapter } from "./use-teamspaces-adapter";
+export { useEmojiAdapter } from "./use-emoji-adapter";
 export { useBillingAdapter } from "./use-billing-adapter";

@@ -7,11 +7,17 @@ import Stripe from "stripe";
 
 import { authorizeReference, updateSessionData } from "@/db/actions";
 import { db } from "@/db/db";
+import { createSupabaseStorage } from "@/db/supabase";
 import { AuthEnv } from "@/env";
 import { createMailtrapApi, sendEmail } from "@/lib/email";
 import { ac, roles } from "@/lib/permissions";
 import { plans } from "@/lib/plans";
-import { organizationExtra, stripeExtra } from "@/lib/plugins";
+import {
+  emoji,
+  fileUpload,
+  organizationExtra,
+  stripeExtra,
+} from "@/lib/plugins";
 import {
   additionalSessionFields,
   additionalTeamFields,
@@ -26,6 +32,10 @@ function createStripeClient(secretKey?: string) {
 export function createAuth(env: AuthEnv) {
   const mailApi = createMailtrapApi(env.MAILTRAP_API_KEY);
   const stripeClient = createStripeClient(env.STRIPE_SECRET_KEY);
+  const supabaseStorage =
+    env.SUPABASE_URL && env.SUPABASE_PUBLISHABLE_KEY
+      ? createSupabaseStorage(env.SUPABASE_URL, env.SUPABASE_PUBLISHABLE_KEY)
+      : undefined;
 
   const config = {
     appName: "Notion Auth",
@@ -114,7 +124,7 @@ export function createAuth(env: AuthEnv) {
         },
       }),
       openAPI(),
-      organizationExtra(),
+      organizationExtra({ db }),
       ...(stripeClient && env.STRIPE_WEBHOOK_SECRET
         ? [
             stripe({
@@ -129,6 +139,12 @@ export function createAuth(env: AuthEnv) {
               organization: { enabled: true },
             }),
             stripeExtra({ stripeClient }),
+          ]
+        : []),
+      ...(supabaseStorage
+        ? [
+            emoji({ db, storage: supabaseStorage }),
+            fileUpload({ storage: supabaseStorage }),
           ]
         : []),
     ],

@@ -25,6 +25,8 @@ export function createAuthEnv() {
       MAILTRAP_INBOX_ID: z.string().optional(),
       STRIPE_SECRET_KEY: z.string().optional(),
       STRIPE_WEBHOOK_SECRET: z.string().optional(),
+      SUPABASE_URL: z.string().optional(),
+      SUPABASE_PUBLISHABLE_KEY: z.string().optional(),
     },
     experimental__runtimeEnv: {},
     skipValidation:
