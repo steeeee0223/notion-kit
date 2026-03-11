@@ -40,7 +40,12 @@ export function createAuth(env: AuthEnv) {
   const config = {
     appName: "Notion Auth",
     database: drizzleAdapter(db, { provider: "pg" }),
-    trustedOrigins: [env.BETTER_AUTH_URL, ...env.TRUSTED_ORIGINS],
+    baseURL: {
+      allowedHosts: ["localhost:*", ...env.ALLOWED_HOSTS],
+      fallback: env.BETTER_AUTH_URL,
+      protocol:
+        env.NODE_ENV === "development" ? ("http" as const) : ("https" as const),
+    },
     user: {
       changeEmail: {
         enabled: true,
