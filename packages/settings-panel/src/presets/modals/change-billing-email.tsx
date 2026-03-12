@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod/v4";
+import { z } from "zod/mini";
 
 import { useTranslation } from "@notion-kit/i18n";
 import {

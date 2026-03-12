@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
-import { z } from "zod/v4";
+import { z } from "zod/mini";
 
 import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
@@ -24,8 +24,8 @@ import {
 import type { EmojiRow } from "@/lib/types";
 
 const emojiSchema = z.object({
-  name: z.string().min(1),
-  file: z.file().optional(),
+  name: z.string().check(z.minLength(1)),
+  file: z.optional(z.file()),
 });
 export type EmojiSchema = z.infer<typeof emojiSchema>;
 
