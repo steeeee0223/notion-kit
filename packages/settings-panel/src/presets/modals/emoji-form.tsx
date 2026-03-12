@@ -18,6 +18,7 @@ import {
   FormItem,
   FormLabel,
   Input,
+  Spinner,
 } from "@notion-kit/shadcn";
 
 import type { EmojiRow } from "@/lib/types";
@@ -49,12 +50,20 @@ export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
   const name = useWatch({ control: form.control, name: "name" });
   const canSave = isEdit ? name.length > 0 : name.length > 0 && !!preview;
 
+  const isSubmitting = form.formState.isSubmitting;
   const submit = form.handleSubmit(async (values) => {
     await onSave(values);
   });
 
   return (
-    <DialogContent className="w-70" onCloseAutoFocus={() => form.reset()}>
+    <DialogContent
+      className="w-70"
+      onCloseAutoFocus={() => {
+        form.reset();
+        if (preview) URL.revokeObjectURL(preview);
+        setPreview(null);
+      }}
+    >
       <Form {...form}>
         <form onSubmit={submit} className="space-y-4">
           <DialogHeader className="items-start">
@@ -158,8 +167,14 @@ export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
                 {trans.cancel}
               </Button>
             </DialogClose>
-            <Button type="submit" variant="blue" size="sm" disabled={!canSave}>
+            <Button
+              type="submit"
+              variant="blue"
+              size="sm"
+              disabled={!canSave || isSubmitting}
+            >
               {trans.save}
+              {isSubmitting && <Spinner />}
             </Button>
           </div>
         </form>

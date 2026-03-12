@@ -100,7 +100,7 @@ export function EmojisTable({
       <span className="max-w-50 text-center text-xs text-secondary">
         {trans.empty}
       </span>
-      <AddEmojiDialog>
+      <AddEmojiDialog onCreate={onCreate}>
         <Button size="sm">{trans["add-emoji"]}</Button>
       </AddEmojiDialog>
     </div>
@@ -112,12 +112,15 @@ interface AddEmojiDialogProps extends React.PropsWithChildren {
 }
 
 function AddEmojiDialog({ children, onCreate }: AddEmojiDialogProps) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <EmojiForm
         onSave={async ({ name, file }) => {
           if (file) await onCreate?.({ name, file });
+          setOpen(false);
         }}
       />
     </Dialog>

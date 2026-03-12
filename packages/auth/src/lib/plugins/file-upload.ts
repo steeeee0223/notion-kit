@@ -1,5 +1,5 @@
 import type { BetterAuthPlugin } from "better-auth";
-import { createAuthEndpoint } from "better-auth/api";
+import { createAuthEndpoint, sessionMiddleware } from "better-auth/api";
 import { z } from "zod/v4";
 
 import type { SupabaseStorage } from "../../db/supabase";
@@ -32,11 +32,9 @@ export function fileUpload({ storage }: { storage: SupabaseStorage }) {
             purpose: z.string(),
           }),
           requireHeaders: true,
+          use: [sessionMiddleware],
         },
         async (ctx) => {
-          const session = ctx.context.session;
-          if (!session) throw new Error("Unauthorized");
-
           const fileId = crypto.randomUUID();
           const ext = extFromContentType(ctx.body.contentType);
           const path = `${ctx.body.organizationId}/${ctx.body.purpose}/${fileId}.${ext}`;

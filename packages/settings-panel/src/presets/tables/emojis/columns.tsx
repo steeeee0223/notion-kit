@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { ColumnDef, Row } from "@tanstack/react-table";
 
 import { AlertModal } from "@notion-kit/common/alert-modal";
@@ -99,6 +100,8 @@ interface ActionCellProps {
 function ActionCell({ emoji, onEdit, onDelete }: ActionCellProps) {
   const { t } = useTranslation("settings");
   const trans = t("tables.emojis", { returnObjects: true });
+  const [editOpen, setEditOpen] = useState(false);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -108,7 +111,7 @@ function ActionCell({ emoji, onEdit, onDelete }: ActionCellProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-50">
         <DropdownMenuGroup>
-          <Dialog>
+          <Dialog open={editOpen} onOpenChange={setEditOpen}>
             <DialogTrigger asChild>
               <DropdownMenuItem
                 Icon={<Icon.PencilLine />}
@@ -118,7 +121,10 @@ function ActionCell({ emoji, onEdit, onDelete }: ActionCellProps) {
             </DialogTrigger>
             <EmojiForm
               emoji={emoji}
-              onSave={(data) => Promise.resolve(onEdit?.(emoji, data))}
+              onSave={async (data) => {
+                await Promise.resolve(onEdit?.(emoji, data));
+                setEditOpen(false);
+              }}
             />
           </Dialog>
           <Dialog>

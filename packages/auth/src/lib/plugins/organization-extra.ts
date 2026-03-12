@@ -1,5 +1,5 @@
 import type { BetterAuthPlugin } from "better-auth";
-import { createAuthEndpoint } from "better-auth/api";
+import { createAuthEndpoint, sessionMiddleware } from "better-auth/api";
 import { and, eq, ne } from "drizzle-orm";
 import { z } from "zod/v4";
 
@@ -16,10 +16,10 @@ export function organizationExtra({ db }: { db: DB }) {
           method: "GET",
           query: z.object({ organizationId: z.string() }),
           requireHeaders: true,
+          use: [sessionMiddleware],
         },
         async (ctx) => {
           const session = ctx.context.session;
-          if (!session) throw new Error("Unauthorized");
 
           const userId = session.user.id;
           const orgId = ctx.query.organizationId;
@@ -46,17 +46,23 @@ export function organizationExtra({ db }: { db: DB }) {
             ],
           });
 
-          const subscriptions = await ctx.context.adapter.findMany<{
-            plan: string;
-            status: string | null;
-          }>({
-            model: "subscription",
-            where: [{ field: "referenceId", value: orgId }],
-          });
-          const active = subscriptions.find(
-            (s: { status: string | null }) =>
-              s.status === "active" || s.status === "trialing",
-          );
+          let plan = "free";
+          try {
+            const subscriptions = await ctx.context.adapter.findMany<{
+              plan: string;
+              status: string | null;
+            }>({
+              model: "subscription",
+              where: [{ field: "referenceId", value: orgId }],
+            });
+            const active = subscriptions.find(
+              (s: { status: string | null }) =>
+                s.status === "active" || s.status === "trialing",
+            );
+            if (active) plan = (active as { plan: string }).plan;
+          } catch {
+            // Stripe plugin not loaded — subscription model unavailable
+          }
 
           return ctx.json({
             id: org.id,
@@ -65,7 +71,7 @@ export function organizationExtra({ db }: { db: DB }) {
             logo: org.logo,
             metadata: org.metadata,
             role: member?.role ?? "owner",
-            plan: (active as { plan: string } | undefined)?.plan ?? "free",
+            plan,
           });
         },
       ),
@@ -76,6 +82,7 @@ export function organizationExtra({ db }: { db: DB }) {
           method: "GET",
           query: z.object({ organizationId: z.string() }),
           requireHeaders: true,
+          use: [sessionMiddleware],
         },
         async (ctx) => {
           const teams = await db.query.team.findMany({
@@ -110,6 +117,7 @@ export function organizationExtra({ db }: { db: DB }) {
           method: "GET",
           query: z.object({ teamId: z.string() }),
           requireHeaders: true,
+          use: [sessionMiddleware],
         },
         async (ctx) => {
           const rows = await ctx.context.adapter.findMany<{
@@ -142,6 +150,7 @@ export function organizationExtra({ db }: { db: DB }) {
           method: "GET",
           query: z.object({ organizationId: z.string() }),
           requireHeaders: true,
+          use: [sessionMiddleware],
         },
         async (ctx) => {
           const rows = await db.query.invitation.findMany({
@@ -183,6 +192,7 @@ export function organizationExtra({ db }: { db: DB }) {
             role: z.string(),
           }),
           requireHeaders: true,
+          use: [sessionMiddleware],
         },
         async (ctx) => {
           const existing = await ctx.context.adapter.findOne<{
@@ -226,6 +236,7 @@ export function organizationExtra({ db }: { db: DB }) {
             role: z.string(),
           }),
           requireHeaders: true,
+          use: [sessionMiddleware],
         },
         async (ctx) => {
           const existing = await ctx.context.adapter.findOne<{

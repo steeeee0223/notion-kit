@@ -143,6 +143,32 @@ The row data of the connections table.
 }
 ```
 
+## Emoji Row
+
+The row data of the emojis table.
+
+### Properties
+
+| Prop          | Type     | Description                                              |
+| ------------- | -------- | -------------------------------------------------------- |
+| `id`\*        | `string` | Unique identifier of the emoji.                          |
+| `name`\*      | `string` | Name of the emoji.                                       |
+| `src`\*       | `string` | URL or source of the emoji image.                        |
+| `createdBy`\* | `string` | Name of the user who added the emoji.                    |
+| `createdAt`\* | `number` | Creation time of the emoji. Formatted as timestamp (ms). |
+
+### Example
+
+```ts
+{
+  id: "e79a0b74-3aba-4149-9f74-0bb5791a6ee6",
+  name: "party-parrot",
+  src: "https://storage.example.com/emojis/party-parrot.gif",
+  createdBy: "Steve",
+  createdAt: 1738368000000
+}
+```
+
 ## Member Row
 
 The row data of the members table.

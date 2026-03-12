@@ -40,12 +40,13 @@ export function useEmojiAdapter(): EmojiAdapter | undefined {
               imageUrl: string;
               addedByName: string;
               createdAt: Date;
+              updatedAt: Date;
             }) => [
               e.id,
               {
                 id: e.id,
                 name: e.name,
-                src: e.imageUrl,
+                src: `${e.imageUrl}?v=${new Date(e.updatedAt).valueOf()}`,
                 createdBy: e.addedByName,
                 createdAt: new Date(e.createdAt).valueOf(),
               },

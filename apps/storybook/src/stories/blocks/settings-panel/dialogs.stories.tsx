@@ -1,7 +1,7 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { loadStripe } from "@stripe/stripe-js";
-import { delay } from "msw";
+
 
 import {
   Add2FAForm,
@@ -23,9 +23,10 @@ import {
   TeamspaceDetail,
   Upgrade,
 } from "@notion-kit/settings-panel";
-import { Dialog, toast } from "@notion-kit/shadcn";
+import { Dialog } from "@notion-kit/shadcn";
 
 import { env } from "@/env";
+import { asyncSuccess } from "@/lib/utils";
 
 import {
   mockEmojis,
@@ -57,7 +58,10 @@ type Story = StoryObj<typeof meta>;
 export const CreateTeamspaceModal: Story = {
   args: {
     children: (
-      <CreateTeamspace workspace="Acme Inc." onSubmit={() => delay(2000)} />
+      <CreateTeamspace
+        workspace="Acme Inc."
+        onSubmit={() => asyncSuccess("Teamspace created")}
+      />
     ),
   },
 };
@@ -91,10 +95,7 @@ export const AddTeamMembersModal: Story = {
           ...user,
           invited: i % 2 === 0,
         }))}
-        onAddMembers={async (data) => {
-          await delay(500);
-          console.log("submitted with", data);
-        }}
+        onAddMembers={() => asyncSuccess("Members added")}
       />
     ),
   },
@@ -108,7 +109,7 @@ export const AddMembersModal: Story = {
         ...mockMembers.map(({ user }) => user),
         ...mockGuests.map(({ user }) => user),
       ]}
-      onAdd={({ emails, role }) => console.log(`Adding ${role}s: `, emails)}
+      onAdd={({ role }) => asyncSuccess(`${role}s invited`)}
     />
   ),
 };
@@ -212,10 +213,7 @@ export const ChangePaymentMethodModal: Story = {
       <Portal>
         <ChangePaymentMethod
           stripePromise={stripePromise}
-          onConfirm={async () => {
-            await delay(1000);
-            toast.success("Payment method updated");
-          }}
+          onConfirm={() => asyncSuccess("Payment method updated")}
         />
       </Portal>
     );
@@ -225,7 +223,7 @@ export const ChangePaymentMethodModal: Story = {
 export const AddEmojiModal: Story = {
   args: {
     children: (
-      <EmojiForm onSave={(data) => void toast.success(`Added ${data.name}`)} />
+      <EmojiForm onSave={(data) => asyncSuccess(`Added ${data.name}`)} />
     ),
   },
 };
@@ -235,7 +233,7 @@ export const EditEmojiModal: Story = {
     children: (
       <EmojiForm
         emoji={mockEmojis[0]}
-        onSave={(data) => void toast.success(`Modified ${data.name}`)}
+        onSave={(data) => asyncSuccess(`Modified ${data.name}`)}
       />
     ),
   },

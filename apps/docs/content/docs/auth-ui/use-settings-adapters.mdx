@@ -21,6 +21,8 @@ description: React hooks for integrating authentication and workspace settings i
 - Members & scopes management
 - Teamspaces management
 - Billing & subscription management
+- Custom emoji management
+- Workspace icon upload
 
 ## Usage
 
@@ -60,7 +62,9 @@ function Settings() {
   It should be used within the `<AuthProvider>` context.
 </Callout>
 
-Returns a [`SettingsAdapters`](/docs/blocks/settings-panel#settings-adapters) object containing domain-specific adapters for account, sessions, passkeys, connections, workspace, people, invitations, teamspaces, and billing.
+Returns a [`SettingsAdapters`](/docs/blocks/settings-panel#settings-adapters) object containing domain-specific adapters for account, sessions, passkeys, connections, workspace, people, invitations, teamspaces, emoji, and billing.
+
+It also provides an `uploadFile` handler for workspace icon uploads via Supabase Storage.
 
 Each adapter provides query (`getAll`) and mutation methods for its domain. All adapters are optional — include only the ones your application supports.
 
@@ -79,9 +83,12 @@ You can also use individual adapter hooks for more granular control:
 | `useInvitationsAdapter` | [`InvitationsAdapter`](/docs/blocks/settings-panel#invitations-adapter) |
 | `useTeamspacesAdapter`  | [`TeamspacesAdapter`](/docs/blocks/settings-panel#teamspaces-adapter)   |
 | `useBillingAdapter`     | [`BillingAdapter`](/docs/blocks/settings-panel#billing-adapter)         |
+| `useEmojiAdapter`       | [`EmojiAdapter`](/docs/blocks/settings-panel#emoji-adapter)            |
 
 See schema definitions for:
 
 - [`SettingsAdapters`](/docs/blocks/settings-panel#settings-adapters)
 - [`AccountStore`](/docs/blocks/settings-panel/objects#account-store)
 - [`WorkspaceStore`](/docs/blocks/settings-panel/objects#workspace-store)
+- [`BillingStore`](/docs/blocks/settings-panel/objects#billing-store)
+- [`EmojiRow`](/docs/blocks/settings-panel/objects#emoji-row)

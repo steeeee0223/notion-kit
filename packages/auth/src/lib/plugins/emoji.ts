@@ -1,5 +1,5 @@
 import type { BetterAuthPlugin } from "better-auth";
-import { createAuthEndpoint } from "better-auth/api";
+import { createAuthEndpoint, sessionMiddleware } from "better-auth/api";
 import { eq } from "drizzle-orm";
 import { z } from "zod/v4";
 
@@ -35,11 +35,9 @@ export function emoji({ db, storage }: EmojiPluginConfig) {
           method: "GET",
           query: z.object({ organizationId: z.string() }),
           requireHeaders: true,
+          use: [sessionMiddleware],
         },
         async (ctx) => {
-          const session = ctx.context.session;
-          if (!session) throw new Error("Unauthorized");
-
           const rows = await db.query.emoji.findMany({
             where: eq(emojiTable.organizationId, ctx.query.organizationId),
             with: { user: { columns: { name: true } } },
@@ -67,10 +65,10 @@ export function emoji({ db, storage }: EmojiPluginConfig) {
             contentType: z.string(),
           }),
           requireHeaders: true,
+          use: [sessionMiddleware],
         },
         async (ctx) => {
           const session = ctx.context.session;
-          if (!session) throw new Error("Unauthorized");
 
           const emojiId = crypto.randomUUID();
           const ext = extFromContentType(ctx.body.contentType);
@@ -84,15 +82,12 @@ export function emoji({ db, storage }: EmojiPluginConfig) {
             ctx.body.contentType,
           );
 
-          await ctx.context.adapter.create({
-            model: "emoji",
-            data: {
-              id: emojiId,
-              organizationId: ctx.body.organizationId,
-              name: ctx.body.name,
-              imageUrl,
-              addedBy: session.user.id,
-            },
+          await db.insert(emojiTable).values({
+            id: emojiId,
+            organizationId: ctx.body.organizationId,
+            name: ctx.body.name,
+            imageUrl,
+            addedBy: session.user.id,
           });
           return ctx.json({ id: emojiId, imageUrl });
         },
@@ -108,18 +103,12 @@ export function emoji({ db, storage }: EmojiPluginConfig) {
             contentType: z.string().optional(),
           }),
           requireHeaders: true,
+          use: [sessionMiddleware],
         },
         async (ctx) => {
-          const session = ctx.context.session;
-          if (!session) throw new Error("Unauthorized");
-
-          const existing = await ctx.context.adapter.findOne<{
-            id: string;
-            organizationId: string;
-            imageUrl: string;
-          }>({
-            model: "emoji",
-            where: [{ field: "id", value: ctx.body.id }],
+          const existing = await db.query.emoji.findFirst({
+            where: eq(emojiTable.id, ctx.body.id),
+            columns: { id: true, organizationId: true, imageUrl: true },
           });
           if (!existing) throw new Error("Emoji not found");
 
@@ -140,11 +129,10 @@ export function emoji({ db, storage }: EmojiPluginConfig) {
           }
 
           if (Object.keys(update).length > 0) {
-            await ctx.context.adapter.update({
-              model: "emoji",
-              where: [{ field: "id", value: ctx.body.id }],
-              update,
-            });
+            await db
+              .update(emojiTable)
+              .set(update)
+              .where(eq(emojiTable.id, ctx.body.id));
           }
           return ctx.json({ ok: true });
         },
@@ -155,18 +143,12 @@ export function emoji({ db, storage }: EmojiPluginConfig) {
           method: "POST",
           body: z.object({ id: z.string() }),
           requireHeaders: true,
+          use: [sessionMiddleware],
         },
         async (ctx) => {
-          const session = ctx.context.session;
-          if (!session) throw new Error("Unauthorized");
-
-          const existing = await ctx.context.adapter.findOne<{
-            id: string;
-            organizationId: string;
-            imageUrl: string;
-          }>({
-            model: "emoji",
-            where: [{ field: "id", value: ctx.body.id }],
+          const existing = await db.query.emoji.findFirst({
+            where: eq(emojiTable.id, ctx.body.id),
+            columns: { id: true, organizationId: true, imageUrl: true },
           });
           if (!existing) throw new Error("Emoji not found");
 
@@ -176,13 +158,11 @@ export function emoji({ db, storage }: EmojiPluginConfig) {
             await storage.remove(BUCKET, [storagePath]);
           }
 
-          await ctx.context.adapter.delete({
-            model: "emoji",
-            where: [{ field: "id", value: ctx.body.id }],
-          });
+          await db.delete(emojiTable).where(eq(emojiTable.id, ctx.body.id));
           return ctx.json({ ok: true });
         },
       ),
     },
   } satisfies BetterAuthPlugin;
 }
+
