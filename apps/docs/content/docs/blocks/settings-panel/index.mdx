@@ -24,6 +24,8 @@ description: A composable, themeable and customizable settings panel.
   - Payment method, billing address, billing email
   - Plan upgrade / change
   - Stripe integration
+- Custom emoji management
+- Workspace icon upload
 
 ## Installation
 
@@ -103,8 +105,9 @@ Each adapter is optional; only include the ones your application supports.
 | `people`      | [`PeopleAdapter`](#people-adapter)           | Member management.             |
 | `invitations` | [`InvitationsAdapter`](#invitations-adapter) | Invitation management.         |
 | `teamspaces`  | [`TeamspacesAdapter`](#teamspaces-adapter)   | Teamspace management.          |
-| `billing`     | [`BillingAdapter`](#billing-adapter)         | Billing and subscription.      |
-| `uploadFile`  | `(file: File) => Promise<void>`              | File upload handler.           |
+| `emoji`       | [`EmojiAdapter`](#emoji-adapter)             | Custom emoji management.         |
+| `billing`     | [`BillingAdapter`](#billing-adapter)         | Billing and subscription.        |
+| `uploadFile`  | `(file: File) => Promise<void>`              | File upload handler.             |
 
 ### Account Adapter
 
@@ -181,6 +184,15 @@ Each adapter is optional; only include the ones your application supports.
 | `updateMember`\* | `(data: { teamspaceId: string; userId: string; role: TeamspaceRole }) => Promise<void>`                                           | Update a member's role.  |
 | `deleteMember`\* | `(data: { teamspaceId: string; userId: string }) => Promise<void>`                                                                | Remove a member.         |
 
+### Emoji Adapter
+
+| Method     | Type                                                        | Description               |
+| ---------- | ----------------------------------------------------------- | ------------------------- |
+| `getAll`\* | `() => Promise<Emojis>`                                     | Retrieve all emojis.      |
+| `add`\*    | `(data: { name: string; file: File }) => Promise<void>`     | Add a custom emoji.       |
+| `update`\* | `(data: { id: string; name?: string; file?: File }) => Promise<void>` | Update a custom emoji.    |
+| `delete`\* | `(id: string) => Promise<void>`                             | Delete a custom emoji.    |
+
 ### Billing Adapter
 
 | Prop/Method            | Type                                                                    | Description                          |
@@ -204,6 +216,7 @@ See schema definitions for:
 - [`SessionRow`](/docs/blocks/settings-panel/objects#session-row)
 - [`Passkey`](/docs/blocks/settings-panel/objects#passkey)
 - [`Connection`](/docs/blocks/settings-panel/objects#connection)
+- [`EmojiRow`](/docs/blocks/settings-panel/objects#emoji-row)
 - [`Role`](/docs/objects/workspace#role)
 
 ### SettingsPanel

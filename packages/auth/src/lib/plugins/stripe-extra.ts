@@ -1,5 +1,5 @@
 import type { BetterAuthPlugin } from "better-auth";
-import { createAuthEndpoint } from "better-auth/api";
+import { createAuthEndpoint, sessionMiddleware } from "better-auth/api";
 import type Stripe from "stripe";
 import { z } from "zod/v4";
 
@@ -24,6 +24,7 @@ export function stripeExtra(opts: { stripeClient: Stripe }) {
           method: "GET",
           query: z.object({ organizationId: z.string() }),
           requireHeaders: true,
+          use: [sessionMiddleware],
         },
         async (ctx) => {
           const org = await ctx.context.adapter.findOne<{
@@ -67,6 +68,7 @@ export function stripeExtra(opts: { stripeClient: Stripe }) {
             address: addressSchema.optional(),
           }),
           requireHeaders: true,
+          use: [sessionMiddleware],
         },
         async (ctx) => {
           const org = await ctx.context.adapter.findOne<{

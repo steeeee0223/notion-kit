@@ -398,7 +398,44 @@
     }
   },
   "sites": { "title": "Websites" },
-  "emoji": { "title": "Emoji" },
+  "emoji": {
+    "title": "Emoji",
+    "limit": {
+      "title": "Erstellung benutzerdefinierter Emojis auf Workspace-Besitzer beschränken",
+      "description": "Bestehende Emojis können weiterhin von der Person bearbeitet oder gelöscht werden, die sie hinzugefügt hat"
+    },
+    "form": {
+      "add-title": "Benutzerdefiniertes Emoji hinzufügen",
+      "edit-title": "Benutzerdefiniertes Emoji bearbeiten",
+      "description": "Benutzerdefinierte Emojis können von jedem in deinem Workspace verwendet werden",
+      "upload": "Bild hochladen",
+      "replace": "Ersetzen",
+      "name-label": "Emoji-Name",
+      "name-placeholder": "viel-spass-damit",
+      "preview": "Vorschau",
+      "cancel": "Abbrechen",
+      "save": "Speichern"
+    }
+  },
+  "tables": {
+    "emojis": {
+      "count_one": "{{count}} Emoji",
+      "count_other": "{{count}} Emojis",
+      "search": "Nach Name oder Hinzugefügt von suchen",
+      "add-emoji": "Emoji hinzufügen",
+      "empty": "Benutzerdefinierte Emojis sind für alle in deinem Workspace verfügbar",
+      "delete": {
+        "title": "Dieses Emoji löschen?",
+        "description": "Es wird für alle in deinem Workspace gelöscht",
+        "primary": "Löschen",
+        "secondary": "Abbrechen"
+      },
+      "actions": {
+        "edit": "Bearbeiten",
+        "delete": "Löschen"
+      }
+    }
+  },
   "security": {
     "title": "Sicherheit",
     "cards": {

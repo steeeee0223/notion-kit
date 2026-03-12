@@ -260,6 +260,30 @@ export const subscription = pgTable("subscription", {
   stripeScheduleId: text("stripe_schedule_id"),
 });
 
+export const emoji = pgTable(
+  "emoji",
+  {
+    id: text("id").primaryKey(),
+    organizationId: text("organization_id")
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    imageUrl: text("image_url").notNull(),
+    addedBy: text("added_by")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("emoji_organizationId_idx").on(table.organizationId),
+    index("emoji_addedBy_idx").on(table.addedBy),
+  ],
+);
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
@@ -268,6 +292,7 @@ export const userRelations = relations(user, ({ many }) => ({
   teamMembers: many(teamMember),
   members: many(member),
   invitations: many(invitation),
+  emojis: many(emoji),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -302,6 +327,7 @@ export const organizationRelations = relations(organization, ({ many }) => ({
   teams: many(team),
   members: many(member),
   invitations: many(invitation),
+  emojis: many(emoji),
 }));
 
 export const teamRelations = relations(team, ({ one, many }) => ({
@@ -341,6 +367,17 @@ export const invitationRelations = relations(invitation, ({ one }) => ({
   }),
   user: one(user, {
     fields: [invitation.inviterId],
+    references: [user.id],
+  }),
+}));
+
+export const emojiRelations = relations(emoji, ({ one }) => ({
+  organization: one(organization, {
+    fields: [emoji.organizationId],
+    references: [organization.id],
+  }),
+  user: one(user, {
+    fields: [emoji.addedBy],
     references: [user.id],
   }),
 }));

@@ -244,6 +244,23 @@ export interface TeamspacesAdapter {
   }) => Promise<void>;
 }
 
+export interface EmojiRow {
+  id: string;
+  name: string;
+  src: string;
+  createdBy: string;
+  createdAt: number;
+}
+
+export type Emojis = Record<string, EmojiRow>;
+
+export interface EmojiAdapter {
+  getAll: () => Promise<Emojis>;
+  add: (data: { name: string; file: File }) => Promise<void>;
+  update: (data: { id: string; name?: string; file?: File }) => Promise<void>;
+  delete: (id: string) => Promise<void>;
+}
+
 export interface BillingAdapter {
   stripePublishableKey?: string;
   getAll: () => Promise<BillingStore>;
@@ -268,6 +285,7 @@ export interface SettingsAdapters {
   people?: PeopleAdapter;
   invitations?: InvitationsAdapter;
   teamspaces?: TeamspacesAdapter;
+  emoji?: EmojiAdapter;
   billing?: BillingAdapter;
   /** Shared utilities */
   uploadFile?: (file: File) => Promise<void>;

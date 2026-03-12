@@ -38,6 +38,7 @@
     "@better-auth/passkey": "^1.5.1",
     "@better-auth/stripe": "^1.5.1",
     "@better-fetch/fetch": "catalog:",
+    "@supabase/supabase-js": "catalog:supabase",
     "@t3-oss/env-nextjs": "catalog:env",
     "@vercel/postgres": "^0.10.0",
     "axios": "^1.13.6",
