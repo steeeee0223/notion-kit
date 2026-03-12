@@ -1,17 +1,23 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
-import type { GroupOption } from "../../../../lib";
-import { TextCell } from "../../common-cells";
+import { Trans } from "@notion-kit/i18n";
 
-export const groupColumns: ColumnDef<GroupOption>[] = [
+import type { GroupOption } from "@/lib/types";
+import { TextCell } from "@/presets/tables/common-cells";
+
+export const createGroupColumns = (): ColumnDef<GroupOption>[] => [
   {
     id: "group",
     accessorKey: "group",
-    header: () => <TextCell value="Group" />,
+    header: () => (
+      <TextCell value={<Trans i18nKey="tables.people.columns.group" />} />
+    ),
   },
   {
     id: "members",
     accessorKey: "members",
-    header: () => <TextCell value="Members" />,
+    header: () => (
+      <TextCell value={<Trans i18nKey="tables.people.columns.members" />} />
+    ),
   },
 ];

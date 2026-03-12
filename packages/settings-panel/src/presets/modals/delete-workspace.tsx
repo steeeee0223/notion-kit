@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 
+import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -31,6 +32,10 @@ interface DeleteWorkspaceProps {
 }
 
 export function DeleteWorkspace({ name, onSubmit }: DeleteWorkspaceProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.delete-workspace",
+  });
+
   const form = useForm<WorkspaceSchema>({
     resolver: zodResolver(workspaceSchema),
     defaultValues: { name: "" },
@@ -50,14 +55,8 @@ export function DeleteWorkspace({ name, onSubmit }: DeleteWorkspaceProps) {
         <DialogIcon>
           <Icon.ExclamationMarkCircled className="size-9 fill-red" />
         </DialogIcon>
-        <DialogTitle typography="h2">
-          Delete this entire workspace permanently?
-        </DialogTitle>
-        <DialogDescription>
-          This action cannot be undone. This will permanently delete the
-          workspace, including all pages and files. Please type the name of the
-          workspace to confirm.
-        </DialogDescription>
+        <DialogTitle typography="h2">{t("title")}</DialogTitle>
+        <DialogDescription>{t("description")}</DialogDescription>
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(submit)} className="space-y-4">
@@ -73,7 +72,7 @@ export function DeleteWorkspace({ name, onSubmit }: DeleteWorkspaceProps) {
             )}
           />
           {form.formState.errors.name && (
-            <FormMessage>{`Please type "${name}" to continue`}</FormMessage>
+            <FormMessage>{t("validation", { name })}</FormMessage>
           )}
           <DialogFooter>
             <Button
@@ -83,7 +82,7 @@ export function DeleteWorkspace({ name, onSubmit }: DeleteWorkspaceProps) {
               className="w-full"
               disabled={form.formState.isSubmitting}
             >
-              Permanently delete workspace
+              {t("delete")}
             </Button>
             <DialogClose asChild>
               <Button
@@ -92,7 +91,7 @@ export function DeleteWorkspace({ name, onSubmit }: DeleteWorkspaceProps) {
                 className="h-7 w-fit"
                 disabled={form.formState.isSubmitting}
               >
-                Cancel
+                {t("cancel")}
               </Button>
             </DialogClose>
           </DialogFooter>

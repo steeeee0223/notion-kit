@@ -1,5 +1,6 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
+import { Trans } from "@notion-kit/i18n";
 import type { IconData } from "@notion-kit/icon-block";
 import { toDateString } from "@notion-kit/utils";
 
@@ -8,9 +9,14 @@ import type {
   TeamspacePermission,
   TeamspaceRole,
   TeamspaceRow,
-} from "../../../lib";
-import { SortingToggle, TextCell, UserCell } from "../common-cells";
-import { userFilterFn } from "../utils";
+} from "@/lib/types";
+import {
+  SortingToggle,
+  TextCell,
+  UserCell,
+} from "@/presets/tables/common-cells";
+import { userFilterFn } from "@/presets/tables/utils";
+
 import {
   AccessSelectCell,
   OwnersCell,
@@ -48,7 +54,7 @@ export function createTeamspaceColumns({
         return (
           <div className="flex items-center">
             <SortingToggle
-              title="Teamspace"
+              title={<Trans i18nKey="tables.teamspaces.columns.teamspace" />}
               isSorted={isSorted}
               toggle={() => column.toggleSorting(isSorted === "asc")}
             />
@@ -67,7 +73,9 @@ export function createTeamspaceColumns({
       accessorKey: "ownedBy",
       header: () => (
         <div className="flex items-center">
-          <TextCell value="Owners" />
+          <TextCell
+            value={<Trans i18nKey="tables.teamspaces.columns.owners" />}
+          />
         </div>
       ),
       cell: ({ row }) => (
@@ -84,7 +92,7 @@ export function createTeamspaceColumns({
         return (
           <div className="flex items-center">
             <SortingToggle
-              title="Access"
+              title={<Trans i18nKey="tables.teamspaces.columns.access" />}
               isSorted={isSorted}
               toggle={() => column.toggleSorting(isSorted === "asc")}
             />
@@ -109,7 +117,7 @@ export function createTeamspaceColumns({
         return (
           <div className="flex items-center">
             <SortingToggle
-              title="Updated"
+              title={<Trans i18nKey="tables.teamspaces.columns.updated" />}
               isSorted={isSorted}
               toggle={() => column.toggleSorting(isSorted === "asc")}
             />
@@ -158,7 +166,7 @@ export function createTeamMembersColumns({
         return (
           <div className="flex items-center">
             <SortingToggle
-              title="User"
+              title={<Trans i18nKey="tables.teamspaces.columns.user" />}
               isSorted={isSorted}
               toggle={() => column.toggleSorting(isSorted === "asc")}
             />
@@ -175,7 +183,7 @@ export function createTeamMembersColumns({
         return (
           <div className="flex items-center">
             <SortingToggle
-              title="Role"
+              title={<Trans i18nKey="tables.teamspaces.columns.role" />}
               isSorted={isSorted}
               toggle={() => column.toggleSorting(isSorted === "asc")}
             />

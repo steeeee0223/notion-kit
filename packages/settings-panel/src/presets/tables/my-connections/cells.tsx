@@ -1,3 +1,4 @@
+import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -8,7 +9,8 @@ import {
   DropdownMenuTrigger,
 } from "@notion-kit/shadcn";
 
-import { Avatar } from "../../_components";
+import { Avatar } from "@/presets/_components";
+
 import { connectionCardData } from "../../connections";
 
 interface ConnectionCellProps {
@@ -40,6 +42,9 @@ export function ActionCell({
   onCreateConnection,
   onDisconnect,
 }: ActionCellProps) {
+  const { t } = useTranslation("settings", { keyPrefix: "tables.connections" });
+  const trans = t("actions", { returnObjects: true });
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -52,12 +57,12 @@ export function ActionCell({
           <DropdownMenuItem
             // TODO impl. this
             disabled
-            Body="Connect another account"
+            Body={trans.connect}
             onSelect={onCreateConnection}
           />
           <DropdownMenuItem
             variant="error"
-            Body="Disconnect account"
+            Body={trans.disconnect}
             onSelect={onDisconnect}
           />
         </DropdownMenuGroup>

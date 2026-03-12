@@ -1,8 +1,7 @@
-"use client";
-
 import { useTransition } from "react";
 
 import { cn } from "@notion-kit/cn";
+import { useTranslation } from "@notion-kit/i18n";
 import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import { Role } from "@notion-kit/schemas";
@@ -20,9 +19,10 @@ import {
   type SelectPresetProps,
 } from "@notion-kit/shadcn";
 
-import { Scope } from "../../../lib";
-import type { GuestRow, MemberRow, PartialRole } from "../../../lib";
-import { DeleteGuest, DeleteMember } from "../../modals";
+import { Scope } from "@/lib/types";
+import type { GuestRow, MemberRow, PartialRole } from "@/lib/types";
+import { DeleteGuest, DeleteMember } from "@/presets/modals";
+
 import { roleLabels, roleOptions } from "./constants";
 
 interface TeamspacesCellProps {
@@ -33,39 +33,43 @@ export const TeamspacesCell = ({
   teamspaces,
   onTeamspaceSelect,
 }: TeamspacesCellProps) => {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "tables.people.cells",
+  });
+
   return (
     <div className="flex items-center">
       {teamspaces.length < 1 ? (
         <div className="w-auto cursor-default p-2 text-sm text-muted">
-          No access
+          {t("no-access")}
         </div>
       ) : (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="hint" size="xs">
               <span className="text-primary">
-                {teamspaces.length} teamspaces
+                {t("teamspaces", { count: teamspaces.length })}
               </span>
               <Icon.ChevronDown className="size-2.5 fill-icon" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuGroup>
-              {teamspaces.map((t) => (
+              {teamspaces.map((ts) => (
                 <DropdownMenuItem
-                  key={t.id}
-                  onClick={() => onTeamspaceSelect?.(t.id)}
-                  Icon={<IconBlock icon={t.icon} size="sm" />}
+                  key={ts.id}
+                  onClick={() => onTeamspaceSelect?.(ts.id)}
+                  Icon={<IconBlock icon={ts.icon} size="sm" />}
                   Body={
                     <div className="flex items-center">
                       <div className="max-w-full shrink-0 truncate">
                         <div className="max-w-25 truncate text-sm leading-5 text-primary">
-                          {t.name}
+                          {ts.name}
                         </div>
                       </div>
                       <div className="inline-flex truncate text-xs text-muted">
                         <span className="mx-2">—</span>
-                        {t.memberCount} members
+                        {t("members", { count: ts.memberCount })}
                       </div>
                     </div>
                   }
@@ -139,6 +143,9 @@ interface MemberActionCellProps {
 }
 
 export function MemberActionCell({ isSelf, onDelete }: MemberActionCellProps) {
+  const { t } = useTranslation("settings", { keyPrefix: "tables.people" });
+  const trans = t("actions", { returnObjects: true });
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -153,7 +160,11 @@ export function MemberActionCell({ isSelf, onDelete }: MemberActionCellProps) {
               <DropdownMenuItem
                 variant="error"
                 Icon={<Icon.Bye className="size-4" />}
-                Body={isSelf ? "Leave workspace" : "Remove from workspace"}
+                Body={
+                  isSelf
+                    ? trans["leave-workspace"]
+                    : trans["remove-from-workspace"]
+                }
                 onSelect={(e) => e.preventDefault()}
               />
             </DialogTrigger>
@@ -211,6 +222,9 @@ export function GuestActionCell({
   onUpdate,
   onDelete,
 }: GuestActionCellProps) {
+  const { t } = useTranslation("settings", { keyPrefix: "tables.people" });
+  const trans = t("actions", { returnObjects: true });
+
   const [isUpgrading, startTransition] = useTransition();
   const upgrade = () => startTransition(async () => await onUpdate?.());
 
@@ -230,7 +244,7 @@ export function GuestActionCell({
         <DropdownMenuGroup>
           <DropdownMenuItem
             Icon={<Icon.ArrowUpCircled className="size-4" />}
-            Body="Upgrade to member"
+            Body={trans["upgrade-to-member"]}
             onSelect={upgrade}
           />
         </DropdownMenuGroup>
@@ -241,7 +255,7 @@ export function GuestActionCell({
               <DropdownMenuItem
                 variant="error"
                 Icon={<Icon.Bye className="size-4" />}
-                Body="Remove from workspace"
+                Body={trans["remove-from-workspace"]}
                 onSelect={(e) => e.preventDefault()}
               />
             </DialogTrigger>
@@ -258,6 +272,9 @@ interface InvitationActionCellProps {
 }
 
 export function InvitationActionCell({ onCancel }: InvitationActionCellProps) {
+  const { t } = useTranslation("settings", { keyPrefix: "tables.people" });
+  const trans = t("actions", { returnObjects: true });
+
   const [isCancelling, startTransition] = useTransition();
   const cancel = () => startTransition(async () => await onCancel?.());
 
@@ -278,7 +295,7 @@ export function InvitationActionCell({ onCancel }: InvitationActionCellProps) {
           <DropdownMenuItem
             variant="error"
             Icon={<Icon.Bye className="size-4" />}
-            Body="Cancel invitation"
+            Body={trans["cancel-invitation"]}
             onSelect={cancel}
           />
         </DropdownMenuGroup>

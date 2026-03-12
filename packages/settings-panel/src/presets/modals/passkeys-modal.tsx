@@ -1,7 +1,6 @@
-"use client";
-
 import { useRef, useState } from "react";
 
+import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -21,10 +20,14 @@ import {
 } from "@notion-kit/shadcn";
 import { toDateString } from "@notion-kit/utils";
 
-import type { Passkey } from "../../lib";
-import { usePasskeys } from "../account/use-passkeys";
+import type { Passkey } from "@/lib/types";
+import { usePasskeys } from "@/presets/account/use-passkeys";
 
 export function PasskeysModal() {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.passkeys",
+  });
+
   const { passkeys, error, isPending, create, update, remove, clearError } =
     usePasskeys();
 
@@ -34,20 +37,15 @@ export function PasskeysModal() {
         <DialogIcon>
           <Icon.LockShield className="size-8 fill-primary/45" />
         </DialogIcon>
-        <DialogTitle>Manage Passkeys</DialogTitle>
+        <DialogTitle>{t("title")}</DialogTitle>
         <DialogDescription className="text-primary">
-          Use your device's built-in security features like Face ID to sign in
-          instead of remembering passwords.
+          {t("description")}
         </DialogDescription>
-        {error && (
-          <div className="text-xs text-red">
-            The passkey could not be saved; please try again.
-          </div>
-        )}
+        {error && <div className="text-xs text-red">{t("error")}</div>}
       </DialogHeader>
       {passkeys.length > 0 && (
         <div className="space-y-2">
-          <div className="text-xs">Active passkeys</div>
+          <div className="text-xs">{t("active")}</div>
           {passkeys.map((passkey) => (
             <PasskeyCard
               key={passkey.id}
@@ -73,7 +71,7 @@ export function PasskeysModal() {
           ) : (
             <Icon.PersonWithKey className="mr-1.5 size-3.5 fill-current" />
           )}
-          Add new passkey
+          {t("add")}
         </Button>
         <DialogClose asChild>
           <Button
@@ -82,7 +80,7 @@ export function PasskeysModal() {
             className="w-full"
             disabled={isPending}
           >
-            Cancel
+            {t("cancel")}
           </Button>
         </DialogClose>
       </DialogFooter>
@@ -103,6 +101,8 @@ function PasskeyCard({
   onRename,
   onDelete,
 }: PasskeyCardProps) {
+  const { t } = useTranslation("settings", { keyPrefix: "modals.passkeys" });
+
   const inputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState(passkey.name);
   const [isEditing, setIsEditing] = useState(false);
@@ -138,7 +138,9 @@ function PasskeyCard({
           <div className="text-sm text-primary">{name}</div>
         )}
         <div className="text-xs text-secondary">
-          Created at {toDateString(passkey.createdAt)}
+          {t("created-at", {
+            date: toDateString(passkey.createdAt),
+          })}
         </div>
       </div>
       <DropdownMenu>
@@ -163,12 +165,12 @@ function PasskeyCard({
           <DropdownMenuGroup>
             <DropdownMenuItem
               Icon={<Icon.PencilLine />}
-              Body="Rename passkey"
+              Body={t("rename")}
               onSelect={enterEditName}
             />
             <DropdownMenuItem
               Icon={<Icon.Trash />}
-              Body="Delete passkey"
+              Body={t("delete")}
               onSelect={() => onDelete?.(passkey.id)}
             />
           </DropdownMenuGroup>

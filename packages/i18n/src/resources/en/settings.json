@@ -19,7 +19,10 @@
     },
     "account-security": {
       "title": "Account security",
-      "email": { "title": "Email", "button": "Change email" },
+      "email": {
+        "title": "Email",
+        "button": "Change email"
+      },
       "password": {
         "title": "Password",
         "description": "If you lose access to your school email address, you'll be able to log in using your password.",
@@ -75,9 +78,18 @@
         "title": "Language",
         "description": "Change the language used in the user interface.",
         "options": {
-          "en": { "label": "English", "description": "English" },
-          "de": { "label": "Deutsch", "description": "German" },
-          "es": { "label": "Español", "description": "Spanish" }
+          "en": {
+            "label": "English",
+            "description": "English"
+          },
+          "de": {
+            "label": "Deutsch",
+            "description": "German"
+          },
+          "es": {
+            "label": "Español",
+            "description": "Spanish"
+          }
         }
       },
       "start-week": {
@@ -149,7 +161,9 @@
       "slack": {
         "title": "Slack notifications",
         "description": "Receive notifications in your Slack workspace when you're mentioned in a page, database property, or comment",
-        "options": { "off": "Off" }
+        "options": {
+          "off": "Off"
+        }
       }
     },
     "email": {
@@ -397,7 +411,9 @@
       }
     }
   },
-  "sites": { "title": "Sites" },
+  "sites": {
+    "title": "Sites"
+  },
   "emoji": {
     "title": "Emoji",
     "limit": {
@@ -434,6 +450,119 @@
         "edit": "Edit",
         "delete": "Delete"
       }
+    },
+    "connections": {
+      "columns": {
+        "connection": "Connection",
+        "access": "Access"
+      },
+      "actions": {
+        "connect": "Connect another account",
+        "disconnect": "Disconnect account"
+      }
+    },
+    "people": {
+      "search": "Type to search...",
+      "empty": {
+        "members": "No members",
+        "guests": "No guests",
+        "groups": "No groups",
+        "invitations": "No invitations"
+      },
+      "columns": {
+        "user": "User",
+        "teamspaces": "Teamspaces",
+        "groups": "Groups",
+        "role": "Role",
+        "access": "Access",
+        "status": "Status",
+        "invited-by": "Invited by",
+        "members": "Members",
+        "group": "Group"
+      },
+      "cells": {
+        "none": "None",
+        "no-access": "No access",
+        "teamspaces": "{{count}} teamspaces",
+        "members": "{{count}} members",
+        "pages": "{{count}} pages",
+        "empty": "No results."
+      },
+      "actions": {
+        "leave-workspace": "Leave workspace",
+        "remove-from-workspace": "Remove from workspace",
+        "upgrade-to-member": "Upgrade to member",
+        "cancel-invitation": "Cancel invitation"
+      }
+    },
+    "plans": {
+      "actions": {
+        "compare": "Compare all features",
+        "collapse": "Collapse",
+        "upgrade": "Upgrade",
+        "contact": "Contact sales"
+      },
+      "highlight": {
+        "free": {
+          "title": "Free",
+          "description": "$0 per member / month"
+        },
+        "plus": {
+          "title": "Plus",
+          "description": "$10 per member / month billed annually",
+          "subtext": "$12 billed monthly"
+        },
+        "business": {
+          "title": "Business",
+          "description": "$15 per member / month billed annually",
+          "subtext": "$18 billed monthly"
+        },
+        "enterprise": {
+          "title": "Enterprise",
+          "description": "Contact Sales for pricing"
+        },
+        "tooltip": "Only workspace owners can perform this action."
+      }
+    },
+    "sessions": {
+      "columns": {
+        "device-name": "Device Name",
+        "last-active": "Last Active",
+        "location": "Location"
+      },
+      "actions": {
+        "logout": "Logout",
+        "logout-confirm-title": "Log out of {{device}}?",
+        "logout-confirm-desc": "You will be logged out of this device."
+      }
+    },
+    "teamspaces": {
+      "columns": {
+        "teamspace": "Teamspace",
+        "owners": "Owners",
+        "access": "Access",
+        "updated": "Updated",
+        "user": "User",
+        "role": "Role"
+      },
+      "roles": {
+        "owner": {
+          "label": "Teamspace owner",
+          "description": "Can edit teamspace settings and full access to teamspace pages."
+        },
+        "member": {
+          "label": "Teamspace member",
+          "description": "Cannot edit teamspace settings and can access teamspace pages."
+        }
+      },
+      "actions": {
+        "settings": "Teamspace settings",
+        "leave": "Leave teamspace",
+        "archive": "Archive teamspace",
+        "remove": "Remove"
+      },
+      "members": "members",
+      "joined": "Joined"
     }
   },
   "security": {
@@ -585,6 +714,250 @@
       }
     }
   },
-  "connections": { "title": "Connections" },
-  "import": { "title": "Import" }
+  "connections": {
+    "title": "Connections"
+  },
+  "import": {
+    "title": "Import"
+  },
+  "modals": {
+    "delete-guest": {
+      "title": "Remove {{name}} from the workspace?",
+      "description": "They will lose access to all shared pages. To add them as a guest in the future, a request must be submitted, or an admin must invite them.",
+      "remove": "Remove",
+      "cancel": "Cancel"
+    },
+    "delete-member": {
+      "title": "Why are you removing this member from your workspace?",
+      "description": "We'd love your input to make Notion better",
+      "continue": "Continue",
+      "cancel": "Cancel",
+      "options": {
+        "no-longer-need": "No longer need access to Notion",
+        "not-using-enough": "Not using it enough",
+        "too-expensive": "Too expensive",
+        "switching-tool": "Switching to another tool",
+        "no-longer-works": "No longer works here",
+        "switching-workspace": "Switching to another Notion workspace",
+        "other": "Other"
+      }
+    },
+    "logout-confirm": {
+      "logout": "Log out",
+      "cancel": "Cancel"
+    },
+    "delete-workspace": {
+      "title": "Delete this entire workspace permanently?",
+      "description": "This action cannot be undone. This will permanently delete the workspace, including all pages and files. Please type the name of the workspace to confirm.",
+      "validation": "Please type \"{{name}}\" to continue",
+      "delete": "Permanently delete workspace",
+      "cancel": "Cancel"
+    },
+    "delete-account": {
+      "title": "Delete your entire account permanently?",
+      "description": "This action cannot be undone. This will permanently delete your entire account. All private workspaces will be deleted, and you will be removed from all shared workspaces.",
+      "label": "Please type in your email to confirm.",
+      "validation": "Please type \"{{email}}\" to continue",
+      "delete": "Permanently delete account",
+      "cancel": "Cancel"
+    },
+    "leave-teamspace": {
+      "title": "Leave {{name}}?",
+      "description": "You’ll no longer see this teamspace in your sidebar and you may lose permissions to the teamspace’s pages.",
+      "remove": "Remove",
+      "cancel": "Cancel"
+    },
+    "email-settings": {
+      "description": "Your current email is <1>{{email}}</1>. We'll send a temporary verification code to this email.",
+      "send": "Send verification code"
+    },
+    "change-plan": {
+      "title": "Which plan do you want to change to?",
+      "description": "Pick one of the following Notion plans",
+      "continue": "Continue",
+      "cancel": "Cancel",
+      "plans": {
+        "free": "Free",
+        "plus": "Plus",
+        "business": "Business",
+        "enterprise": "Enterprise"
+      },
+      "prices": {
+        "per-member": "{{price}} per member / month",
+        "contact": "Contact Sales for pricing"
+      }
+    },
+    "change-payment-method": {
+      "title": "Change your payment method",
+      "update": "Update",
+      "cancel": "Cancel"
+    },
+    "change-billing-email": {
+      "title": "Change billing email",
+      "update": "Update",
+      "cancel": "Cancel"
+    },
+    "add-members": {
+      "headings": {
+        "select": "Select a person",
+        "type": "Keep typing to invite email"
+      },
+      "search-placeholder": "Search name or emails",
+      "roles": {
+        "owner": "Workspace Owner",
+        "member": "Member",
+        "guest": "Guest"
+      },
+      "invite": "Invite",
+      "empty": "Type or paste in emails above, separated by commas.",
+      "learn-more": "Learn how to invite people and set permissions",
+      "invited-badge": "Invited"
+    },
+    "passkeys": {
+      "title": "Manage Passkeys",
+      "description": "Use your device's built-in security features like Face ID to sign in instead of remembering passwords.",
+      "error": "The passkey could not be saved; please try again.",
+      "active": "Active passkeys",
+      "add": "Add new passkey",
+      "cancel": "Cancel",
+      "created-at": "Created at {{date}}",
+      "rename": "Rename passkey",
+      "delete": "Delete passkey"
+    },
+    "change-billing-address": {
+      "title": "Change your address",
+      "business-name": "Business name (optional)",
+      "full-name": "Full name",
+      "country": "Country or region",
+      "postal-code": "Postal code",
+      "update": "Update",
+      "cancel": "Cancel"
+    },
+    "add-team-members": {
+      "headings": {
+        "select": "Select a person",
+        "type": "Keep typing to invite member"
+      },
+      "title-prefix": "Invite people to",
+      "search-placeholder": "Search people or groups",
+      "no-results": "No results found",
+      "invited": "Invited",
+      "roles": {
+        "owner": "Teamspace owner",
+        "member": "Teamspace member"
+      },
+      "copy-link": "Copy invite link",
+      "invite": "Invite"
+    },
+    "2fa": {
+      "add-form": {
+        "required": "Required",
+        "title": "To continue, we need to verify your identity",
+        "password-placeholder": "Your password",
+        "continue": "Continue",
+        "forgot": "Forgot password",
+        "email-sent": "A password reset link has been sent to {{email}}."
+      },
+      "enable-method": {
+        "title": "Turn on 2-step verification",
+        "description": "Confirm it's you when you use a password with a verification code",
+        "authenticator": {
+          "title": "Code from authenticator",
+          "description": "Generate a one-time code in your authenticator app"
+        },
+        "text": {
+          "title": "Text me a code",
+          "description": "Add and verify your phone number"
+        }
+      }
+    },
+    "teamspace-detail": {
+      "tabs": {
+        "general": "General",
+        "members": "Members",
+        "security": "Security"
+      },
+      "joined": "Joined",
+      "join": "Join",
+      "general": {
+        "details-title": "Details",
+        "icon-name": "Icon and name",
+        "description": "Description",
+        "no-description": "No description",
+        "permissions-title": "Permissions",
+        "danger-zone-title": "Danger zone",
+        "leave": "Leave teamspace",
+        "leave-description": "Removes teamspace from your sidebar",
+        "learn-more": "Learn about teamspaces"
+      },
+      "security": {
+        "title": "Teamspace Security",
+        "learn-more": "Learn about teamspace security"
+      },
+      "members": {
+        "permissions-title": "Permissions",
+        "learn-more-permissions": "Learn about teamspace permissions",
+        "members-title": "Members",
+        "add-members": "Add members",
+        "copy-link": "Copy link",
+        "search-placeholder": "Search for members or groups"
+      }
+    },
+    "upgrade": {
+      "title": "Upgrade to the {{plan}} plan",
+      "billing-details": {
+        "name-label": "Name",
+        "name-placeholder": "Ada Lovelace",
+        "business-name-label": "Business name (optional)",
+        "business-name-placeholder": "Acme Inc.",
+        "vat-label": "VAT/GST number (optional)",
+        "vat-placeholder": "123456789"
+      },
+      "payment-section": {
+        "title": "Payment method"
+      },
+      "billing-options": {
+        "title": "Billing options",
+        "monthly": "Pay monthly",
+        "monthly-desc": "${{price}} / month / member",
+        "annually": "Pay annually",
+        "annually-desc": "${{price}} / month / member",
+        "save-badge": "Save 17%"
+      },
+      "confirm": {
+        "title": "Confirm upgrade",
+        "per-month": "/ month",
+        "terms-description": "Your Notion subscription will auto-renew each {{interval}} at the above price per seat + taxes unless canceled. Cancel via the Billing tab prior to renewal to avoid future charges ( <1>terms</1> )",
+        "submit": "Upgrade to {{plan}}"
+      }
+    },
+    "create-teamspace": {
+      "title": "Create a new teamspace",
+      "description": "Teamspaces are where your team organizes pages, permissions, and members",
+      "icon-name": "Icon & name",
+      "name-placeholder": "Acme Labs",
+      "description-label": "Description",
+      "description-placeholder": "Details about your teamspace",
+      "permissions": "Permissions",
+      "learn-more": "Learn about teamspaces",
+      "submit": "Create teamspace"
+    },
+    "password": {
+      "errors": {
+        "unique": "Please include additional unique characters.",
+        "mismatch": "Your new password does not match."
+      },
+      "title-change": "Change password",
+      "title-set": "Set a password",
+      "description": "Use a password at least 15 letters long, or at least 8 characters long with both letters and numbers. If you lose access to your school email address, you'll be able to log in using your password.",
+      "current-label": "Enter your current password",
+      "current-placeholder": "Current password",
+      "new-label": "Enter a new password",
+      "new-placeholder": "New password",
+      "confirm-label": "Confirm your new password",
+      "confirm-placeholder": "Confirm password",
+      "success-title": "Your password has been saved",
+      "success-description": "You'll be able to log in, even if you lose access to your school email address."
+    }
+  }
 }

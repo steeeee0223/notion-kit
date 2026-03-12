@@ -1,5 +1,6 @@
 import { useFormContext, useWatch } from "react-hook-form";
 
+import { Trans, useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -18,6 +19,10 @@ interface ConfirmSectionProps {
 }
 
 export function ConfirmSection({ plan }: ConfirmSectionProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.upgrade.confirm",
+  });
+
   const { control, formState } = useFormContext<UpgradeSchema>();
   const billingInterval = useWatch({
     control,
@@ -28,13 +33,13 @@ export function ConfirmSection({ plan }: ConfirmSectionProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <Label>Confirm upgrade</Label>
+      <Label>{t("title")}</Label>
       <div className="flex flex-col gap-4 rounded-lg border border-border p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
             <span className="text-[22px]/[26px] font-semibold">${price}</span>
             <span className="self-end pb-0.5 text-sm/5 font-medium">
-              / month
+              {t("per-month")}
             </span>
           </div>
           <Icon.ChevronDown className="size-3.5 fill-icon" />
@@ -52,19 +57,27 @@ export function ConfirmSection({ plan }: ConfirmSectionProps) {
                   className="mt-0.5"
                 />
               </FormControl>
-              <label className="text-[10px]/[13px] text-secondary">
-                Your Notion subscription will auto-renew each {billingInterval}{" "}
-                at the above price per seat + taxes unless canceled. Cancel via
-                the Billing tab prior to renewal to avoid future charges (
-                <a
-                  href="https://www.notion.so/notion/Terms-and-Privacy-28ffdd083dc3473e9c2da6ec011b58ac"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline"
-                >
-                  terms
-                </a>
-                )
+              <label
+                htmlFor={field.name}
+                className="text-[10px]/[13px] text-secondary"
+              >
+                <Trans
+                  i18nKey="terms-description"
+                  t={t}
+                  values={{ interval: billingInterval }}
+                  components={{
+                    1: (
+                      <a
+                        href="https://www.notion.so/notion/Terms-and-Privacy-28ffdd083dc3473e9c2da6ec011b58ac"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline"
+                      >
+                        terms
+                      </a>
+                    ),
+                  }}
+                />
               </label>
               <FormMessage className="col-span-2" />
             </FormItem>
@@ -77,7 +90,7 @@ export function ConfirmSection({ plan }: ConfirmSectionProps) {
           className="w-full"
           disabled={formState.isSubmitting}
         >
-          Upgrade to {plan.name}
+          {t("submit", { plan: plan.name })}
         </Button>
       </div>
     </div>

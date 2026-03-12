@@ -1,10 +1,9 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 
+import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -26,23 +25,11 @@ import {
 
 import { PasswordSuccess } from "./password-success";
 
-const error = "Please include additional unique characters.";
-const passwordSchema = z
-  .object({
-    password: z.string().min(8, { error }),
-    confirmPassword: z.string().min(1, { error }),
-    currentPassword: z.string().min(1, { error }).optional(),
-  })
-  .superRefine(({ confirmPassword, password }, ctx) => {
-    if (confirmPassword !== password)
-      ctx.issues.push({
-        code: "custom",
-        message: "Your new password does not match.",
-        path: ["confirmPassword"],
-        input: confirmPassword,
-      });
-  });
-type PasswordSchema = z.infer<typeof passwordSchema>;
+interface PasswordSchema {
+  password: string;
+  confirmPassword: string;
+  currentPassword?: string;
+}
 
 interface PasswordFormProps {
   hasPassword?: boolean;
@@ -50,7 +37,27 @@ interface PasswordFormProps {
 }
 
 export function PasswordForm({ hasPassword, onSubmit }: PasswordFormProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.password",
+  });
   const [success, setSuccess] = useState(false);
+
+  const error = t("errors.unique");
+  const passwordSchema = z
+    .object({
+      password: z.string().min(8, { message: error }),
+      confirmPassword: z.string().min(1, { message: error }),
+      currentPassword: z.string().min(1, { message: error }).optional(),
+    })
+    .superRefine(({ confirmPassword, password }, ctx) => {
+      if (confirmPassword !== password)
+        ctx.issues.push({
+          code: z.ZodIssueCode.custom,
+          message: t("errors.mismatch"),
+          path: ["confirmPassword"],
+          input: confirmPassword,
+        });
+    });
 
   const form = useForm<PasswordSchema>({
     resolver: zodResolver(passwordSchema),
@@ -81,14 +88,9 @@ export function PasswordForm({ hasPassword, onSubmit }: PasswordFormProps) {
               <Icon.Password className="size-[27px] fill-icon" />
             </DialogIcon>
             <DialogTitle>
-              {hasPassword ? "Change password" : "Set a password"}
+              {hasPassword ? t("title-change") : t("title-set")}
             </DialogTitle>
-            <DialogDescription>
-              Use a password at least 15 letters long, or at least 8 characters
-              long with both letters and numbers. If you lose access to your
-              school email address, you&apos;ll be able to log in using your
-              password.
-            </DialogDescription>
+            <DialogDescription>{t("description")}</DialogDescription>
           </DialogHeader>
           {hasPassword && (
             <FormField
@@ -96,11 +98,11 @@ export function PasswordForm({ hasPassword, onSubmit }: PasswordFormProps) {
               name="currentPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Enter your current password</FormLabel>
+                  <FormLabel>{t("current-label")}</FormLabel>
                   <FormControl>
                     <Input
                       type="password"
-                      placeholder="Current password"
+                      placeholder={t("current-placeholder")}
                       {...field}
                     />
                   </FormControl>
@@ -113,11 +115,11 @@ export function PasswordForm({ hasPassword, onSubmit }: PasswordFormProps) {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Enter a new password</FormLabel>
+                <FormLabel>{t("new-label")}</FormLabel>
                 <FormControl>
                   <Input
                     type="password"
-                    placeholder="New password"
+                    placeholder={t("new-placeholder")}
                     {...field}
                   />
                 </FormControl>
@@ -129,11 +131,11 @@ export function PasswordForm({ hasPassword, onSubmit }: PasswordFormProps) {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Confirm your new password</FormLabel>
+                <FormLabel>{t("confirm-label")}</FormLabel>
                 <FormControl>
                   <Input
                     type="password"
-                    placeholder="Confirm password"
+                    placeholder={t("confirm-placeholder")}
                     {...field}
                   />
                 </FormControl>
@@ -151,7 +153,7 @@ export function PasswordForm({ hasPassword, onSubmit }: PasswordFormProps) {
               className="w-full"
               disabled={formState.isSubmitting}
             >
-              {hasPassword ? "Change password" : "Set a password"}
+              {hasPassword ? t("title-change") : t("title-set")}
             </Button>
           </DialogFooter>
         </form>

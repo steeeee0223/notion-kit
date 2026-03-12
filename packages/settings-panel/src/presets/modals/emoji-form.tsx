@@ -35,8 +35,9 @@ interface EmojiFormProps {
 }
 
 export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
-  const { t } = useTranslation("settings");
-  const trans = t("emoji.form", { returnObjects: true });
+  const { t } = useTranslation("settings", {
+    keyPrefix: "emoji.form",
+  });
   const isEdit = emoji !== undefined;
 
   const [preview, setPreview] = useState<string | null>(emoji?.src ?? null);
@@ -68,10 +69,10 @@ export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
         <form onSubmit={submit} className="space-y-4">
           <DialogHeader className="items-start">
             <DialogTitle className="text-left">
-              {isEdit ? trans["edit-title"] : trans["add-title"]}
+              {isEdit ? t("edit-title") : t("add-title")}
             </DialogTitle>
             <DialogDescription typography="desc" className="text-left">
-              {trans.description}
+              {t("description")}
             </DialogDescription>
           </DialogHeader>
           <FormField
@@ -82,7 +83,7 @@ export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
                 {preview ? (
                   <div className="flex flex-col items-center gap-1 rounded bg-default/5 p-3 pb-1">
                     <p className="mb-1 text-xs text-secondary">
-                      {trans.preview}
+                      {t("preview")}
                     </p>
                     <div className="flex items-center gap-1.5">
                       <img
@@ -102,7 +103,7 @@ export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
                       size="xs"
                       onClick={() => fileRef.current?.click()}
                     >
-                      {trans.replace}
+                      {t("replace")}
                     </Button>
                   </div>
                 ) : (
@@ -113,7 +114,7 @@ export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
                     onClick={() => fileRef.current?.click()}
                   >
                     <Icon.Photo className="size-5 shrink-0 fill-icon" />
-                    {trans.upload}
+                    {t("upload")}
                   </Button>
                 )}
                 <FormControl>
@@ -144,11 +145,11 @@ export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{trans["name-label"]}</FormLabel>
+                <FormLabel>{t("name-label")}</FormLabel>
                 <FormControl>
                   <Input
                     variant="default"
-                    placeholder={trans["name-placeholder"]}
+                    placeholder={t("name-placeholder")}
                     autoComplete="off"
                     {...field}
                   />
@@ -164,7 +165,7 @@ export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
                 size="sm"
                 className="font-normal"
               >
-                {trans.cancel}
+                {t("cancel")}
               </Button>
             </DialogClose>
             <Button
@@ -173,7 +174,7 @@ export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
               size="sm"
               disabled={!canSave || isSubmitting}
             >
-              {trans.save}
+              {t("save")}
               {isSubmitting && <Spinner />}
             </Button>
           </div>

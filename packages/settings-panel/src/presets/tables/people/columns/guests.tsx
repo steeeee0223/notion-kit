@@ -1,11 +1,17 @@
 import type { ColumnDef, Row } from "@tanstack/react-table";
 
+import { Trans } from "@notion-kit/i18n";
 import { Role } from "@notion-kit/schemas";
 import { Checkbox } from "@notion-kit/shadcn";
 
-import { Scope, type GuestRow } from "../../../../lib";
-import { SortingToggle, TextCell, UserCell } from "../../common-cells";
-import { userFilterFn } from "../../utils";
+import { Scope, type GuestRow } from "@/lib/types";
+import {
+  SortingToggle,
+  TextCell,
+  UserCell,
+} from "@/presets/tables/common-cells";
+import { userFilterFn } from "@/presets/tables/utils";
+
 import { AccessCell, GuestActionCell } from "../cells";
 
 interface CreateGuestColumnsOptions {
@@ -39,7 +45,7 @@ export function createGuestColumns({
               aria-label="Select all"
             />
             <SortingToggle
-              title="User"
+              title={<Trans i18nKey="tables.people.columns.user" />}
               isSorted={isSorted}
               toggle={() => column.toggleSorting(isSorted === "asc")}
             />
@@ -64,7 +70,12 @@ export function createGuestColumns({
       ? [
           {
             accessorKey: "access",
-            header: () => <TextCell value="Access" className="pl-2" />,
+            header: () => (
+              <TextCell
+                value={<Trans i18nKey="tables.people.columns.access" />}
+                className="pl-2"
+              />
+            ),
             cell: ({ row }: { row: Row<GuestRow> }) => (
               <AccessCell access={row.original.access} />
             ),

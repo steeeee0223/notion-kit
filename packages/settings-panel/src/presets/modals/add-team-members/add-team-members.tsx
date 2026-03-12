@@ -1,7 +1,6 @@
-"use client";
-
 import { useMemo } from "react";
 
+import { useTranslation } from "@notion-kit/i18n";
 import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import type { User } from "@notion-kit/schemas";
@@ -25,14 +24,10 @@ import {
 } from "@notion-kit/shadcn";
 import { idToColor } from "@notion-kit/utils";
 
-import { Avatar } from "../../_components";
-import type { TeamspaceRole } from "../../../lib";
-import { useAddTeamMembersForm } from "./use-add-team-members-form";
+import type { TeamspaceRole } from "@/lib/types";
+import { Avatar } from "@/presets/_components";
 
-enum Heading {
-  Select = "Select a person",
-  Type = "Keep typing to invite member",
-}
+import { useAddTeamMembersForm } from "./use-add-team-members-form";
 
 interface WorkspaceMember extends User {
   invited?: boolean;
@@ -55,6 +50,10 @@ export function AddTeamMembers({
   workspaceMembers,
   onAddMembers,
 }: AddTeamMembersProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.add-team-members",
+  });
+
   const multiSelectOptions = useMemo(
     () =>
       workspaceMembers.map<MultiSelectOption>((user) => ({
@@ -63,9 +62,9 @@ export function AddTeamMembers({
         id: user.id,
         disabled: user.invited,
         avatarUrl: user.avatarUrl,
-        header: Heading.Select,
+        header: t("headings.select"),
       })),
-    [workspaceMembers],
+    [workspaceMembers, t],
   );
 
   const { form, members, submit } = useAddTeamMembersForm({
@@ -83,7 +82,7 @@ export function AddTeamMembers({
     >
       <DialogHeader className="items-start text-left">
         <DialogTitle typography="h2" className="flex items-center text-start">
-          <div className="min-w-1/4">Invite people to</div>
+          <div className="min-w-1/4">{t("title-prefix")}</div>
           <IconBlock className="mx-1" size="sm" icon={teamspace.icon} />
           <div className="min-w-60 truncate pr-2.5 font-medium">
             {teamspace.name}
@@ -105,9 +104,9 @@ export function AddTeamMembers({
                       classNames={{ input: "p-0" }}
                       options={multiSelectOptions}
                       disabled={field.disabled}
-                      placeholder="Search people or groups"
+                      placeholder={t("search-placeholder")}
                       hideClearAllButton
-                      emptyIndicator="No results found"
+                      emptyIndicator={t("no-results")}
                       value={field.value.map((user) => ({
                         label: user.name,
                         value: user.name,
@@ -144,7 +143,7 @@ export function AddTeamMembers({
                                 size="sm"
                                 className="ml-auto tracking-wide uppercase"
                               >
-                                Invited
+                                {t("invited")}
                               </Badge>
                             </MenuItemAction>
                           )}
@@ -163,8 +162,8 @@ export function AddTeamMembers({
                   <FormControl>
                     <SelectPreset
                       options={{
-                        owner: "Teamspace owner",
-                        member: "Teamspace member",
+                        owner: t("roles.owner"),
+                        member: t("roles.member"),
                       }}
                       className="mb-0 w-[170px] text-muted"
                       {...field}
@@ -177,11 +176,11 @@ export function AddTeamMembers({
           <DialogFooter className="flex-row justify-between">
             <Button type="button" variant="soft-blue" size="sm" disabled>
               <Icon.Link className="size-3.5 fill-current" />
-              Copy invite link
+              {t("copy-link")}
             </Button>
             <Button type="submit" variant="blue" size="sm" disabled={disabled}>
               {form.formState.isSubmitting && <Spinner />}
-              Invite
+              {t("invite")}
             </Button>
           </DialogFooter>
         </form>

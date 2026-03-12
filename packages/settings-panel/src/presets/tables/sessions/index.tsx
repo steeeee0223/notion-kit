@@ -1,10 +1,9 @@
-"use client";
-
 import { memo, useMemo } from "react";
 
 import { cn } from "@notion-kit/cn";
 
-import type { SessionRow } from "../../../lib";
+import type { SessionRow } from "@/lib/types";
+
 import { DataTable } from "../data-table";
 import { createSessionColumns } from "./columns";
 
@@ -17,7 +16,7 @@ interface SessionsTableProps {
 
 export const SessionsTable = memo<SessionsTableProps>(
   ({ className, data, ...props }) => {
-    const columns = useMemo(() => createSessionColumns(props), [props]);
+    const columns = useMemo(() => createSessionColumns({ ...props }), [props]);
     return (
       <DataTable
         className={className}

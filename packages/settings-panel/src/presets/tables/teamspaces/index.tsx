@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo } from "react";
 
 import { cn } from "@notion-kit/cn";
@@ -10,8 +8,9 @@ import type {
   TeamspacePermission,
   TeamspaceRole,
   TeamspaceRow,
-} from "../../../lib";
-import { DataTable } from "../data-table";
+} from "@/lib/types";
+import { DataTable } from "@/presets/tables/data-table";
+
 import { createTeamMembersColumns, createTeamspaceColumns } from "./columns";
 
 interface TeamspacesTableProps {

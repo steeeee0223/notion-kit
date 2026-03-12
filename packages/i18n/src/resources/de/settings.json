@@ -19,7 +19,10 @@
     },
     "account-security": {
       "title": "Kontosicherheit",
-      "email": { "title": "E-Mail", "button": "E-Mail-Addresse ändern" },
+      "email": {
+        "title": "E-Mail",
+        "button": "E-Mail-Addresse ändern"
+      },
       "password": {
         "title": "Passwort",
         "description": "Wenn du den Zugriff auf deine Hochschul-E-Mail-Adresse verlierst, kannst du dich mit deinem Passwort anmelden.",
@@ -75,9 +78,18 @@
         "title": "Sprache",
         "description": "Ändere die in der Benutzeroberfläche verwendete Sprache.",
         "options": {
-          "en": { "label": "English", "description": "Englisch" },
-          "de": { "label": "Deutsch", "description": "Deutsch" },
-          "es": { "label": "Español", "description": "Spanisch" }
+          "en": {
+            "label": "English",
+            "description": "Englisch"
+          },
+          "de": {
+            "label": "Deutsch",
+            "description": "Deutsch"
+          },
+          "es": {
+            "label": "Español",
+            "description": "Spanisch"
+          }
         }
       },
       "start-week": {
@@ -149,7 +161,9 @@
       "slack": {
         "title": "Slack-Benachrichtigungen",
         "description": "Erhalte Benachrichtigungen in deinem Slack-Workspace, wenn du auf einer Seite, in einer Datenbankeigenschaft oder in einem Kommentar erwähnt wirst",
-        "options": { "off": "Aus" }
+        "options": {
+          "off": "Aus"
+        }
       }
     },
     "email": {
@@ -397,7 +411,9 @@
       }
     }
   },
-  "sites": { "title": "Websites" },
+  "sites": {
+    "title": "Websites"
+  },
   "emoji": {
     "title": "Emoji",
     "limit": {
@@ -434,6 +450,119 @@
         "edit": "Bearbeiten",
         "delete": "Löschen"
       }
+    },
+    "connections": {
+      "columns": {
+        "connection": "Connection",
+        "access": "Access"
+      },
+      "actions": {
+        "connect": "Connect another account",
+        "disconnect": "Disconnect account"
+      }
+    },
+    "people": {
+      "search": "Type to search...",
+      "empty": {
+        "members": "No members",
+        "guests": "No guests",
+        "groups": "No groups",
+        "invitations": "No invitations"
+      },
+      "columns": {
+        "user": "User",
+        "teamspaces": "Teamspaces",
+        "groups": "Groups",
+        "role": "Role",
+        "access": "Access",
+        "status": "Status",
+        "invited-by": "Invited by",
+        "members": "Members",
+        "group": "Group"
+      },
+      "cells": {
+        "none": "None",
+        "no-access": "No access",
+        "teamspaces": "{{count}} teamspaces",
+        "members": "{{count}} members",
+        "pages": "{{count}} pages",
+        "empty": "No results."
+      },
+      "actions": {
+        "leave-workspace": "Leave workspace",
+        "remove-from-workspace": "Remove from workspace",
+        "upgrade-to-member": "Upgrade to member",
+        "cancel-invitation": "Cancel invitation"
+      }
+    },
+    "plans": {
+      "actions": {
+        "compare": "Compare all features",
+        "collapse": "Collapse",
+        "upgrade": "Upgrade",
+        "contact": "Contact sales"
+      },
+      "highlight": {
+        "free": {
+          "title": "Free",
+          "description": "$0 per member / month"
+        },
+        "plus": {
+          "title": "Plus",
+          "description": "$10 per member / month billed annually",
+          "subtext": "$12 billed monthly"
+        },
+        "business": {
+          "title": "Business",
+          "description": "$15 per member / month billed annually",
+          "subtext": "$18 billed monthly"
+        },
+        "enterprise": {
+          "title": "Enterprise",
+          "description": "Contact Sales for pricing"
+        },
+        "tooltip": "Only workspace owners can perform this action."
+      }
+    },
+    "sessions": {
+      "columns": {
+        "device-name": "Device Name",
+        "last-active": "Last Active",
+        "location": "Location"
+      },
+      "actions": {
+        "logout": "Logout",
+        "logout-confirm-title": "Log out of {{device}}?",
+        "logout-confirm-desc": "You will be logged out of this device."
+      }
+    },
+    "teamspaces": {
+      "columns": {
+        "teamspace": "Teamspace",
+        "owners": "Owners",
+        "access": "Access",
+        "updated": "Updated",
+        "user": "User",
+        "role": "Role"
+      },
+      "roles": {
+        "owner": {
+          "label": "Teamspace owner",
+          "description": "Can edit teamspace settings and full access to teamspace pages."
+        },
+        "member": {
+          "label": "Teamspace member",
+          "description": "Cannot edit teamspace settings and can access teamspace pages."
+        }
+      },
+      "actions": {
+        "settings": "Teamspace settings",
+        "leave": "Leave teamspace",
+        "archive": "Archive teamspace",
+        "remove": "Remove"
+      },
+      "members": "members",
+      "joined": "Joined"
     }
   },
   "security": {
@@ -585,6 +714,10 @@
       }
     }
   },
-  "connections": { "title": "Verbindungen" },
-  "import": { "title": "Importieren" }
+  "connections": {
+    "title": "Verbindungen"
+  },
+  "import": {
+    "title": "Importieren"
+  }
 }

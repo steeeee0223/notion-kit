@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useTransition } from "react";
 import {
   PaymentElement,
@@ -8,6 +6,7 @@ import {
 } from "@stripe/react-stripe-js";
 import type { Stripe } from "@stripe/stripe-js";
 
+import { useTranslation } from "@notion-kit/i18n";
 import {
   Button,
   DialogClose,
@@ -41,6 +40,10 @@ interface PaymentMethodFormProps {
 }
 
 function PaymentMethodForm({ onConfirm }: PaymentMethodFormProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.change-payment-method",
+  });
+
   const stripe = useStripe();
   const elements = useElements();
   const [isPending, startTransition] = useTransition();
@@ -59,7 +62,7 @@ function PaymentMethodForm({ onConfirm }: PaymentMethodFormProps) {
   return (
     <>
       <DialogTitle className="text-left" typography="h2">
-        Change your payment method
+        {t("title")}
       </DialogTitle>
       <div className="flex flex-col gap-4">
         {!isReady && <PaymentSkeleton />}
@@ -77,7 +80,7 @@ function PaymentMethodForm({ onConfirm }: PaymentMethodFormProps) {
             size="sm"
             className="text-secondary"
           >
-            Cancel
+            {t("cancel")}
           </Button>
         </DialogClose>
         <Button
@@ -87,7 +90,7 @@ function PaymentMethodForm({ onConfirm }: PaymentMethodFormProps) {
           disabled={!isReady || !isComplete || isPending}
           onClick={handleSubmit}
         >
-          Update
+          {t("update")}
           {isPending && <Spinner />}
         </Button>
       </div>

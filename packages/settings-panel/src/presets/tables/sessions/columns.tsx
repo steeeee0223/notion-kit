@@ -1,11 +1,13 @@
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, Row } from "@tanstack/react-table";
 
+import { Trans, useTranslation } from "@notion-kit/i18n";
 import { Button, Dialog, DialogTrigger } from "@notion-kit/shadcn";
 import { toDateString } from "@notion-kit/utils";
 
-import type { SessionRow } from "../../../lib";
-import { LogoutConfirm } from "../../modals";
-import { SortingToggle, TextCell } from "../common-cells";
+import type { SessionRow } from "@/lib/types";
+import { LogoutConfirm } from "@/presets/modals";
+import { SortingToggle, TextCell } from "@/presets/tables/common-cells";
+
 import { DeviceCell } from "./cells";
 
 interface CreateSessionColumnsOptions {
@@ -25,7 +27,7 @@ export function createSessionColumns({
         return (
           <div className="flex items-center">
             <SortingToggle
-              title="Device Name"
+              title={<Trans i18nKey="tables.sessions.columns.device-name" />}
               isSorted={isSorted}
               toggle={() => column.toggleSorting(isSorted === "asc")}
             />
@@ -50,7 +52,7 @@ export function createSessionColumns({
         return (
           <div className="flex items-center">
             <SortingToggle
-              title="Last Active"
+              title={<Trans i18nKey="tables.sessions.columns.last-active" />}
               isSorted={isSorted}
               toggle={() => column.toggleSorting(isSorted === "asc")}
             />
@@ -69,7 +71,7 @@ export function createSessionColumns({
         return (
           <div className="flex items-center">
             <SortingToggle
-              title="Location"
+              title={<Trans i18nKey="tables.sessions.columns.location" />}
               isSorted={isSorted}
               toggle={() => column.toggleSorting(isSorted === "asc")}
             />
@@ -83,21 +85,34 @@ export function createSessionColumns({
     {
       id: "action",
       cell: ({ row }) => {
-        return (
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button size="xs" className="h-7 px-2 text-secondary">
-                Logout
-              </Button>
-            </DialogTrigger>
-            <LogoutConfirm
-              title={`Log out of ${row.original.device}?`}
-              description="You will be logged out of this device."
-              onConfirm={() => onLogout?.(row.original.token)}
-            />
-          </Dialog>
-        );
+        return <LogoutCell row={row} onLogout={onLogout} />;
       },
     },
   ];
 }
+
+const LogoutCell = ({
+  row,
+  onLogout,
+}: {
+  row: Row<SessionRow>;
+  onLogout?: (token: string) => void;
+}) => {
+  const { t } = useTranslation("settings");
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button size="xs" className="h-7 px-2 text-secondary">
+          {t("tables.sessions.actions.logout")}
+        </Button>
+      </DialogTrigger>
+      <LogoutConfirm
+        title={t("tables.sessions.actions.logout-confirm-title", {
+          device: row.original.device,
+        })}
+        description={t("tables.sessions.actions.logout-confirm-desc")}
+        onConfirm={() => onLogout?.(row.original.token)}
+      />
+    </Dialog>
+  );
+};

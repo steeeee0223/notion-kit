@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { useTranslation } from "@notion-kit/i18n";
 import { type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import { User } from "@notion-kit/schemas";
@@ -50,6 +51,9 @@ export function MembersContent({
   onRemoveMember,
   onFetchWorkspaceMembers,
 }: MembersContentProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.teamspace-detail.members",
+  });
   const options = { ...permissions };
   options.default.description = permissions.default.getDescription(workspace);
   /** Search field */
@@ -79,7 +83,7 @@ export function MembersContent({
   return (
     <div className="h-full space-y-5 overflow-auto">
       <section>
-        <Title title="Permissions" />
+        <Title title={t("permissions-title")} />
         <Card className="mb-2.5 flex flex-col">
           <TeamspacePermission
             className="mx-0 h-11 px-0 hover:bg-transparent"
@@ -88,12 +92,12 @@ export function MembersContent({
         </Card>
         <HintButton
           icon="help"
-          label="Learn about teamspace permissions"
+          label={t("learn-more-permissions")}
           href="https://www.notion.com/help/intro-to-teamspaces#modify-teamspace-settings"
         />
       </section>
       <section>
-        <Title title="Members" />
+        <Title title={t("members-title")} />
         <div className="flex flex-col gap-1.5">
           <div className="sticky top-0 z-10 flex items-center gap-1 bg-modal pb-2">
             <Dialog
@@ -102,7 +106,7 @@ export function MembersContent({
             >
               <DialogTrigger asChild>
                 <Button variant="blue" size="sm">
-                  Add members
+                  {t("add-members")}
                 </Button>
               </DialogTrigger>
               <AddTeamMembers
@@ -116,12 +120,12 @@ export function MembersContent({
             </Dialog>
             <Button variant="soft-blue" size="sm" disabled>
               <Icon.Link className="size-3 fill-current" />
-              Copy link
+              {t("copy-link")}
             </Button>
             <Input
               className="mr-1 ml-auto w-[45%] rounded-full pl-3"
               search
-              placeholder="Search for members or groups"
+              placeholder={t("search-placeholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />

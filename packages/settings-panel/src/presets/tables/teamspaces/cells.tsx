@@ -1,5 +1,6 @@
 import { useTransition } from "react";
 
+import { useTranslation } from "@notion-kit/i18n";
 import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import {
@@ -17,10 +18,10 @@ import {
   TooltipPreset,
 } from "@notion-kit/shadcn";
 
-import { Avatar, permissions } from "../../_components";
-import { TeamspacePermission, TeamspaceRole } from "../../../lib";
-import { LeaveTeamspace } from "../../modals";
-import { TextCell } from "../common-cells";
+import type { TeamspacePermission, TeamspaceRole } from "@/lib/types";
+import { Avatar, permissions } from "@/presets/_components";
+import { LeaveTeamspace } from "@/presets/modals";
+import { TextCell } from "@/presets/tables/common-cells";
 
 interface TeamspaceCellProps {
   name: string;
@@ -29,6 +30,9 @@ interface TeamspaceCellProps {
 }
 
 export function TeamspaceCell({ name, icon, memberCount }: TeamspaceCellProps) {
+  const { t } = useTranslation("settings", { keyPrefix: "tables" });
+  const trans = t("teamspaces", { returnObjects: true });
+
   return (
     <div className="flex h-14 min-w-[30px] items-center text-sm text-primary">
       <div className="flex items-center gap-3 overflow-hidden">
@@ -38,7 +42,7 @@ export function TeamspaceCell({ name, icon, memberCount }: TeamspaceCellProps) {
             <div className="truncate leading-[18px]">{name}</div>
           </div>
           <div className="truncate text-xs text-secondary">
-            {memberCount} members • Joined
+            {memberCount} {trans.members} • {trans.joined}
           </div>
         </div>
       </div>
@@ -127,6 +131,9 @@ export function TeamspaceActionCell({
   onLeave,
   onArchive,
 }: TeamspaceActionCellProps) {
+  const { t } = useTranslation("settings", { keyPrefix: "tables.teamspaces" });
+  const trans = t("actions", { returnObjects: true });
+
   const [isArchiving, startTransition] = useTransition();
   const archive = () => startTransition(() => onArchive?.());
 
@@ -153,7 +160,7 @@ export function TeamspaceActionCell({
           <DropdownMenuItem
             onClick={onViewDetail}
             Icon={<Icon.Gear />}
-            Body="Teamspace settings"
+            Body={trans.settings}
           />
           {!!role && (
             <>
@@ -162,7 +169,7 @@ export function TeamspaceActionCell({
                   <DropdownMenuItem
                     variant="error"
                     Icon={<Icon.Bye className="size-4" />}
-                    Body="Leave teamspace"
+                    Body={trans.leave}
                     onSelect={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -176,7 +183,7 @@ export function TeamspaceActionCell({
                 onClick={archive}
                 disabled={role !== "owner"}
                 Icon={<Icon.ArchiveBox />}
-                Body="Archive teamspace"
+                Body={trans.archive}
               />
             </>
           )}
@@ -210,6 +217,8 @@ export function TeamMemberActionCell({
   onUpdate,
   onRemove,
 }: TeamMemberActionCellProps) {
+  const { t } = useTranslation("settings", { keyPrefix: "tables.teamspaces" });
+
   const [isPending, startTransition] = useTransition();
   const update = (role: TeamspaceRole) =>
     startTransition(() => onUpdate?.(role));
@@ -220,7 +229,11 @@ export function TeamMemberActionCell({
       <TooltipPreset description="Teamspace settings and members...">
         <DropdownMenuTrigger asChild>
           <Button variant="hint" size="xs" disabled={isPending}>
-            <span className="text-primary">{teamspaceRoles[role].label}</span>
+            <span className="text-primary">
+              {t(`roles.${role}.label`, {
+                defaultValue: teamspaceRoles[role].label,
+              })}
+            </span>
             <Icon.ChevronDown className="size-2.5 fill-icon" />
           </Button>
         </DropdownMenuTrigger>
@@ -236,16 +249,26 @@ export function TeamMemberActionCell({
                 onClick={() => update(key as TeamspaceRole)}
                 Body={
                   <div className="flex flex-col items-start gap-0.5 py-1">
-                    <div className="truncate">{label}</div>
+                    <div className="truncate">
+                      {t(`roles.${key}.label`, {
+                        defaultValue: label,
+                      })}
+                    </div>
                     <div className="text-xs whitespace-normal text-secondary">
-                      {description}
+                      {t(`roles.${key}.description`, {
+                        defaultValue: description,
+                      })}
                     </div>
                   </div>
                 }
               />
             ),
           )}
-          <DropdownMenuItem variant="error" onClick={remove} Body="Remove" />
+          <DropdownMenuItem
+            variant="error"
+            onClick={remove}
+            Body={t("actions.remove")}
+          />
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

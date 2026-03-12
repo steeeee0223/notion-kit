@@ -1,10 +1,9 @@
-"use client";
-
 import { useEffect, useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 
+import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -23,13 +22,13 @@ import {
   Input,
 } from "@notion-kit/shadcn";
 
-import { Avatar } from "../../_components";
+import { Avatar } from "@/presets/_components";
+
 import { Enable2FAMethod } from "./enable-2fa-method";
 
-const passwordSchema = z.object({
-  password: z.string().min(1, "Required"),
-});
-type PasswordSchema = z.infer<typeof passwordSchema>;
+interface PasswordSchema {
+  password: string;
+}
 
 interface Add2FAFormProps {
   email: string;
@@ -46,10 +45,18 @@ export function Add2FAForm({
   onPasswordForgot,
   onSubmit,
 }: Add2FAFormProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.2fa.add-form",
+  });
+
   const [enable2FA, setEnable2FA] = useState(false);
 
   const form = useForm<PasswordSchema>({
-    resolver: zodResolver(passwordSchema),
+    resolver: zodResolver(
+      z.object({
+        password: z.string().min(1, { message: t("required") }),
+      }),
+    ),
     defaultValues: { password: "" },
   });
   const { formState, handleSubmit, setFocus } = form;
@@ -67,7 +74,7 @@ export function Add2FAForm({
     startTransition(async () => {
       await onPasswordForgot?.();
       form.setError("root", {
-        message: `A password reset link has been sent to ${email}.`,
+        message: t("email-sent", { email }),
       });
     });
 
@@ -88,9 +95,7 @@ export function Add2FAForm({
               />
               <Icon.LockedFilled className="absolute -right-1 -bottom-1 size-5 fill-red" />
             </DialogIcon>
-            <DialogTitle>
-              To continue, we need to verify your identity
-            </DialogTitle>
+            <DialogTitle>{t("title")}</DialogTitle>
             {!error && (
               <DialogDescription className="text-primary">
                 {email}
@@ -107,7 +112,7 @@ export function Add2FAForm({
                   <Input
                     data-size="lg"
                     type="password"
-                    placeholder="Your password"
+                    placeholder={t("password-placeholder")}
                     {...field}
                   />
                 </FormControl>
@@ -122,7 +127,7 @@ export function Add2FAForm({
               className="w-full"
               disabled={formState.isSubmitting || isSendingEmail}
             >
-              Continue
+              {t("continue")}
             </Button>
             <Button
               type="button"
@@ -132,7 +137,7 @@ export function Add2FAForm({
               disabled={formState.isSubmitting || isSendingEmail}
               onClick={handlePasswordForgot}
             >
-              Forgot password
+              {t("forgot")}
             </Button>
           </DialogFooter>
         </form>

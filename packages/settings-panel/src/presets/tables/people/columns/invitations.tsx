@@ -1,11 +1,11 @@
-"use client";
-
 import type { ColumnDef, Row } from "@tanstack/react-table";
 
+import { Trans } from "@notion-kit/i18n";
 import { Badge } from "@notion-kit/shadcn";
 
-import { Scope, type InvitationRow } from "../../../../lib";
-import { SortingToggle, UserCell } from "../../common-cells";
+import { Scope, type InvitationRow } from "@/lib/types";
+import { SortingToggle, UserCell } from "@/presets/tables/common-cells";
+
 import { InvitationActionCell, RoleCell } from "../cells";
 import { statusLabels } from "../constants";
 
@@ -25,7 +25,7 @@ export function createInvitationColumns({
         const isSorted = column.getIsSorted();
         return (
           <SortingToggle
-            title="User"
+            title={<Trans i18nKey="tables.people.columns.user" />}
             isSorted={isSorted}
             toggle={() => column.toggleSorting(isSorted === "asc")}
           />
@@ -41,7 +41,7 @@ export function createInvitationColumns({
         const isSorted = column.getIsSorted();
         return (
           <SortingToggle
-            title="Role"
+            title={<Trans i18nKey="tables.people.columns.role" />}
             isSorted={isSorted}
             toggle={() => column.toggleSorting(isSorted === "asc")}
           />
@@ -55,7 +55,7 @@ export function createInvitationColumns({
         const isSorted = column.getIsSorted();
         return (
           <SortingToggle
-            title="Status"
+            title={<Trans i18nKey="tables.people.columns.status" />}
             isSorted={isSorted}
             toggle={() => column.toggleSorting(isSorted === "asc")}
           />
@@ -73,7 +73,7 @@ export function createInvitationColumns({
         const isSorted = column.getIsSorted();
         return (
           <SortingToggle
-            title="Invited by"
+            title={<Trans i18nKey="tables.people.columns.invited-by" />}
             isSorted={isSorted}
             toggle={() => column.toggleSorting(isSorted === "asc")}
           />

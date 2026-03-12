@@ -1,7 +1,6 @@
-"use client";
-
 import { useTransition } from "react";
 
+import { useTranslation } from "@notion-kit/i18n";
 import {
   Button,
   DialogClose,
@@ -22,17 +21,20 @@ interface LeaveTeamspaceProps {
  * @note cloned from `DeleteGuest`
  */
 export function LeaveTeamspace({ name, onLeave }: LeaveTeamspaceProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.leave-teamspace",
+  });
+
   const [isLeaving, startTransition] = useTransition();
   const leave = () => startTransition(() => onLeave?.());
 
   return (
     <DialogContent className="w-[300px] p-5">
       <DialogHeader>
-        <DialogTitle typography="h2">Leave {name}?</DialogTitle>
+        <DialogTitle typography="h2">{t("title", { name })}</DialogTitle>
       </DialogHeader>
       <DialogDescription className="text-muted">
-        You’ll no longer see this teamspace in your sidebar and you may lose
-        permissions to the teamspace’s pages.
+        {t("description")}
       </DialogDescription>
       <DialogFooter>
         <Button
@@ -42,12 +44,12 @@ export function LeaveTeamspace({ name, onLeave }: LeaveTeamspaceProps) {
           className="w-full font-semibold"
           disabled={isLeaving}
         >
-          Remove
+          {t("remove")}
           {isLeaving && <Spinner />}
         </Button>
         <DialogClose asChild>
           <Button variant="hint" size="sm" className="h-7 w-fit">
-            Cancel
+            {t("cancel")}
           </Button>
         </DialogClose>
       </DialogFooter>

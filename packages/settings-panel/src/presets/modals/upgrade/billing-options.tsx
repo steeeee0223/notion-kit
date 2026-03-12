@@ -1,8 +1,7 @@
-"use client";
-
 import { useFormContext } from "react-hook-form";
 
 import { cn } from "@notion-kit/cn";
+import { useTranslation } from "@notion-kit/i18n";
 import {
   Badge,
   FormField,
@@ -18,6 +17,10 @@ interface BillingOptionsProps {
 }
 
 export function BillingOptions({ plan }: BillingOptionsProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.upgrade.billing-options",
+  });
+
   const { control } = useFormContext<UpgradeSchema>();
 
   return (
@@ -26,21 +29,23 @@ export function BillingOptions({ plan }: BillingOptionsProps) {
       name="billingInterval"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Billing options</FormLabel>
+          <FormLabel>{t("title")}</FormLabel>
           <BillingOption
             id="billing-monthly"
-            label="Pay monthly"
-            description={`$${String(plan.monthly)} / month / member`}
+            label={t("monthly")}
+            description={t("monthly-desc", {
+              price: String(plan.monthly),
+            })}
             checked={field.value === "month"}
             onChange={() => field.onChange("month")}
           />
           <BillingOption
             id="billing-annual"
-            label="Pay annually"
-            description={`$${String(plan.annual)} / month / member`}
+            label={t("annually")}
+            description={t("annually-desc", { price: plan.annual })}
             checked={field.value === "year"}
             onChange={() => field.onChange("year")}
-            badge="Save 17%"
+            badge={t("save-badge")}
           />
           <FormMessage />
         </FormItem>

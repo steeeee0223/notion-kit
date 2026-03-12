@@ -78,9 +78,18 @@
         "title": "Idioma",
         "description": "Elige el idioma que te gustaría usar en Notion.",
         "options": {
-          "en": { "label": "English", "description": "Inglés" },
-          "de": { "label": "Deutsch", "description": "Alemán" },
-          "es": { "label": "Español", "description": "Español" }
+          "en": {
+            "label": "English",
+            "description": "Inglés"
+          },
+          "de": {
+            "label": "Deutsch",
+            "description": "Alemán"
+          },
+          "es": {
+            "label": "Español",
+            "description": "Español"
+          }
         }
       },
       "start-week": {
@@ -152,7 +161,9 @@
       "slack": {
         "title": "Notificaciones de Slack",
         "description": "Recibe notificaciones en tu espacio de trabajo de Slack cuando te mencionen en una página, propiedad de base de datos o comentario.",
-        "options": { "off": "Desactivadas" }
+        "options": {
+          "off": "Desactivadas"
+        }
       }
     },
     "email": {
@@ -401,7 +412,9 @@
       }
     }
   },
-  "sites": { "title": "Sitios" },
+  "sites": {
+    "title": "Sitios"
+  },
   "emoji": {
     "title": "Emoji personalizado",
     "limit": {
@@ -438,6 +451,119 @@
         "edit": "Editar",
         "delete": "Eliminar"
       }
+    },
+    "connections": {
+      "columns": {
+        "connection": "Connection",
+        "access": "Access"
+      },
+      "actions": {
+        "connect": "Connect another account",
+        "disconnect": "Disconnect account"
+      }
+    },
+    "people": {
+      "search": "Type to search...",
+      "empty": {
+        "members": "No members",
+        "guests": "No guests",
+        "groups": "No groups",
+        "invitations": "No invitations"
+      },
+      "columns": {
+        "user": "User",
+        "teamspaces": "Teamspaces",
+        "groups": "Groups",
+        "role": "Role",
+        "access": "Access",
+        "status": "Status",
+        "invited-by": "Invited by",
+        "members": "Members",
+        "group": "Group"
+      },
+      "cells": {
+        "none": "None",
+        "no-access": "No access",
+        "teamspaces": "{{count}} teamspaces",
+        "members": "{{count}} members",
+        "pages": "{{count}} pages",
+        "empty": "No results."
+      },
+      "actions": {
+        "leave-workspace": "Leave workspace",
+        "remove-from-workspace": "Remove from workspace",
+        "upgrade-to-member": "Upgrade to member",
+        "cancel-invitation": "Cancel invitation"
+      }
+    },
+    "plans": {
+      "actions": {
+        "compare": "Compare all features",
+        "collapse": "Collapse",
+        "upgrade": "Upgrade",
+        "contact": "Contact sales"
+      },
+      "highlight": {
+        "free": {
+          "title": "Free",
+          "description": "$0 per member / month"
+        },
+        "plus": {
+          "title": "Plus",
+          "description": "$10 per member / month billed annually",
+          "subtext": "$12 billed monthly"
+        },
+        "business": {
+          "title": "Business",
+          "description": "$15 per member / month billed annually",
+          "subtext": "$18 billed monthly"
+        },
+        "enterprise": {
+          "title": "Enterprise",
+          "description": "Contact Sales for pricing"
+        },
+        "tooltip": "Only workspace owners can perform this action."
+      }
+    },
+    "sessions": {
+      "columns": {
+        "device-name": "Device Name",
+        "last-active": "Last Active",
+        "location": "Location"
+      },
+      "actions": {
+        "logout": "Logout",
+        "logout-confirm-title": "Log out of {{device}}?",
+        "logout-confirm-desc": "You will be logged out of this device."
+      }
+    },
+    "teamspaces": {
+      "columns": {
+        "teamspace": "Teamspace",
+        "owners": "Owners",
+        "access": "Access",
+        "updated": "Updated",
+        "user": "User",
+        "role": "Role"
+      },
+      "roles": {
+        "owner": {
+          "label": "Teamspace owner",
+          "description": "Can edit teamspace settings and full access to teamspace pages."
+        },
+        "member": {
+          "label": "Teamspace member",
+          "description": "Cannot edit teamspace settings and can access teamspace pages."
+        }
+      },
+      "actions": {
+        "settings": "Teamspace settings",
+        "leave": "Leave teamspace",
+        "archive": "Archive teamspace",
+        "remove": "Remove"
+      },
+      "members": "members",
+      "joined": "Joined"
     }
   },
   "security": {
@@ -589,6 +715,10 @@
       }
     }
   },
-  "connections": { "title": "Conexiones" },
-  "import": { "title": "Importar" }
+  "connections": {
+    "title": "Conexiones"
+  },
+  "import": {
+    "title": "Importar"
+  }
 }
