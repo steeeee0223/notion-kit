@@ -89,6 +89,10 @@
           "es": {
             "label": "Español",
             "description": "Español"
+          },
+          "fr": {
+            "label": "Français",
+            "description": "Francés"
           }
         }
       },

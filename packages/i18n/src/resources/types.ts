@@ -91,6 +91,10 @@ interface Resources {
               label: "Español";
               description: "Spanish";
             };
+            fr: {
+              label: "Français";
+              description: "French";
+            };
           };
         };
         "start-week": {
