@@ -2,7 +2,6 @@ import React from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { loadStripe } from "@stripe/stripe-js";
 
-
 import {
   Add2FAForm,
   AddMembers,

@@ -165,4 +165,3 @@ export function emoji({ db, storage }: EmojiPluginConfig) {
     },
   } satisfies BetterAuthPlugin;
 }
-
