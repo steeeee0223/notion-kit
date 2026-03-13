@@ -1,3 +1,4 @@
+import { useTranslation } from "@notion-kit/i18n";
 import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import {
@@ -36,16 +37,21 @@ export function GeneralContent({
   onTabChange,
   onLeave,
 }: GeneralContentProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.teamspace-detail.general",
+  });
   const options = { ...permissions };
   options.default.description = permissions.default.getDescription(workspace);
 
   return (
     <div className="space-y-5">
       <section>
-        <Title title="Details" />
+        <Title title={t("details-title")} />
         <Card className="flex flex-col">
           <div className="py-2">
-            <div className="truncate text-xs text-secondary">Icon and name</div>
+            <div className="truncate text-xs text-secondary">
+              {t("icon-name")}
+            </div>
             <div className="flex items-center gap-2">
               <IconBlock icon={teamspace.icon} />
               <div className="truncate text-sm text-primary">
@@ -55,19 +61,23 @@ export function GeneralContent({
           </div>
           <Separator />
           <div className="py-2">
-            <div className="truncate text-xs text-secondary">Description</div>
+            <div className="truncate text-xs text-secondary">
+              {t("description")}
+            </div>
             {teamspace.description ? (
               <div className="truncate text-sm text-primary">
                 {teamspace.description}
               </div>
             ) : (
-              <div className="text-sm text-secondary">No description</div>
+              <div className="text-sm text-secondary">
+                {t("no-description")}
+              </div>
             )}
           </div>
         </Card>
       </section>
       <section>
-        <Title title="Permissions" />
+        <Title title={t("permissions-title")} />
         <Card
           role="button"
           tabIndex={-1}
@@ -85,7 +95,7 @@ export function GeneralContent({
         </Card>
       </section>
       <section>
-        <Title title="Danger zone" />
+        <Title title={t("danger-zone-title")} />
         <Card className="mb-2.5 flex flex-col hover:bg-red/10">
           <Dialog>
             <DialogTrigger asChild>
@@ -97,10 +107,10 @@ export function GeneralContent({
                 <Icon.ArrowLineRight className="size-5 fill-current" />
                 <div className="flex flex-col items-start">
                   <div className="truncate text-sm leading-5 text-red">
-                    Leave teamspace
+                    {t("leave")}
                   </div>
                   <div className="overflow-hidden text-xs text-ellipsis whitespace-normal text-secondary">
-                    Removes teamspace from your sidebar
+                    {t("leave-description")}
                   </div>
                 </div>
               </Button>
@@ -110,7 +120,7 @@ export function GeneralContent({
         </Card>
         <HintButton
           icon="help"
-          label="Learn about teamspaces"
+          label={t("learn-more")}
           href="https://www.notion.com/help/guides/teamspaces-give-teams-home-for-important-work"
         />
       </section>

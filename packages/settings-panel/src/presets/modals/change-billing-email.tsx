@@ -1,9 +1,8 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod/v4";
+import { z } from "zod/mini";
 
+import { useTranslation } from "@notion-kit/i18n";
 import {
   Button,
   DialogClose,
@@ -31,6 +30,10 @@ export function ChangeBillingEmail({
   email = "",
   onConfirm,
 }: ChangeBillingEmailProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.change-billing-email",
+  });
+
   const form = useForm<BillingEmailSchema>({
     resolver: zodResolver(billingEmailSchema),
     defaultValues: { email },
@@ -42,7 +45,7 @@ export function ChangeBillingEmail({
   return (
     <DialogContent className="w-105">
       <DialogTitle className="text-left" typography="h2">
-        Change billing email
+        {t("title")}
       </DialogTitle>
       <Form {...form}>
         <form onSubmit={submit} className="space-y-6">
@@ -65,7 +68,7 @@ export function ChangeBillingEmail({
                 size="sm"
                 className="text-secondary"
               >
-                Cancel
+                {t("cancel")}
               </Button>
             </DialogClose>
             <Button
@@ -74,7 +77,7 @@ export function ChangeBillingEmail({
               size="sm"
               disabled={form.formState.isSubmitting}
             >
-              Update
+              {t("update")}
               {form.formState.isSubmitting && <Spinner />}
             </Button>
           </div>

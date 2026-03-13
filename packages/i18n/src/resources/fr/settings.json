@@ -1,3 +1,997 @@
 {
-  "settings": "Paramètres"
+  "settings": "Paramètres",
+  "common": {
+    "account": "Compte",
+    "workspace": "Espace de travail",
+    "features": "Fonctionnalités",
+    "integrations": "Intégrations",
+    "admin": "Administrateur",
+    "access-and-billing": "Accès et facturation",
+    "upgrade": "Mettre à niveau",
+    "more": "En savoir plus"
+  },
+  "account": {
+    "account": {
+      "title": "Compte",
+      "preferred-name": "Nom préféré",
+      "remove-photo": "Supprimer la photo",
+      "replace-photo": "Remplacer la photo"
+    },
+    "account-security": {
+      "title": "Sécurité du compte",
+      "email": {
+        "title": "E-mail",
+        "button": "Changer d'e-mail"
+      },
+      "password": {
+        "title": "Mot de passe",
+        "description": "Si vous perdez l'accès à l'adresse e-mail de votre école, vous pourrez vous connecter avec votre mot de passe.",
+        "button": "Changer le mot de passe"
+      },
+      "verification": {
+        "title": "Vérification en deux étapes",
+        "description": "Ajoutez une couche de sécurité supplémentaire à votre compte lors de la connexion.",
+        "button": "Ajouter une méthode de vérification"
+      },
+      "passkeys": {
+        "title": "Passkeys",
+        "description": "Connectez-vous en toute sécurité avec l'authentification biométrique intégrée à l'appareil.",
+        "button": "Ajouter un passkey"
+      }
+    },
+    "support": {
+      "title": "Support",
+      "support": {
+        "title": "Accès au support",
+        "description": "Accordez au support Notion un accès temporaire à votre compte pour que nous puissions résoudre les problèmes ou récupérer du contenu en votre nom. Vous pouvez révoquer l'accès à tout moment."
+      },
+      "delete": {
+        "title": "Supprimer mon compte",
+        "description": "Supprimer définitivement le compte et supprimer l'accès à tous les espaces de travail."
+      }
+    },
+    "devices": {
+      "title": "Appareils",
+      "logout": {
+        "title": "Se déconnecter de tous les appareils",
+        "description": "Déconnectez-vous de toutes les autres sessions actives sur d'autres appareils à l'exception de celui-ci.",
+        "button": "Se déconnecter de tous les appareils"
+      }
+    }
+  },
+  "preferences": {
+    "title": "Préférences",
+    "preferences": {
+      "appearance": {
+        "title": "Apparence",
+        "description": "Personnalisez l'apparence de Notion sur votre appareil.",
+        "options": {
+          "system": "Utiliser les paramètres du système",
+          "light": "Clair",
+          "dark": "Sombre"
+        }
+      }
+    },
+    "region": {
+      "title": "Langue et de Temps",
+      "language": {
+        "title": "Langue",
+        "description": "Modifiez la langue utilisée dans l'interface utilisateur.",
+        "options": {
+          "en": {
+            "label": "English",
+            "description": "Anglais"
+          },
+          "de": {
+            "label": "Deutsch",
+            "description": "Allemand"
+          },
+          "es": {
+            "label": "Español",
+            "description": "Espagnol"
+          },
+          "fr": {
+            "label": "Français",
+            "description": "Français"
+          }
+        }
+      },
+      "start-week": {
+        "title": "Commencer la semaine le lundi",
+        "description": "Cela modifiera l'apparence de tous les calendriers de votre application."
+      },
+      "set-timezone": {
+        "title": "Définir le fuseau horaire automatiquement en fonction de votre emplacement",
+        "description": "Les rappels, les notifications et les e-mails sont envoyés en fonction de votre fuseau horaire."
+      },
+      "timezone": {
+        "title": "Fuseau horaire",
+        "description": "Paramètre de fuseau horaire actuel."
+      }
+    },
+    "desktop": {
+      "title": "Application de Bureau",
+      "open-links": {
+        "title": "Ouvrir les liens dans l'application de bureau",
+        "description": "Vous devez avoir installé l'<0>application macOS</0>"
+      },
+      "open-on-start": {
+        "title": "Ouvrir au démarrage",
+        "description": "Choisissez ce qu'il faut afficher lorsque Notion démarre ou lorsque vous changez d'espace de travail.",
+        "options": {
+          "last": "Dernière page consultée",
+          "home": "Accueil",
+          "top": "Page supérieure de la barre latérale"
+        }
+      }
+    },
+    "privacy": {
+      "title": "Confidentialité",
+      "cookie": {
+        "title": "Paramètres des cookies",
+        "description": "Personnalisez les cookies. Consultez l'<0>Avis sur les cookies</0> pour plus de détails."
+      },
+      "view-history": {
+        "title": "Afficher mon historique de consultation",
+        "description": "Les personnes avec un accès de modification ou complet pourront voir quand vous avez consulté une page. <0>En savoir plus</0>.",
+        "options": {
+          "yes": "Enregistrer",
+          "no": "Ne pas enregistrer"
+        }
+      },
+      "discover-profile": {
+        "title": "Découvrabilité du profil",
+        "description": "Les utilisateurs disposant de votre adresse e-mail peuvent voir votre nom et votre photo de profil lorsqu'ils vous invitent à rejoindre un nouvel espace de travail. <0>En savoir plus</0>."
+      }
+    },
+    "modals": {
+      "language": {
+        "title": "Voulez-vous vraiment changer la langue en {{language}} ?",
+        "primary": "Mettre à jour",
+        "secondary": "Annuler"
+      }
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "notifications": {
+      "mobile": {
+        "title": "Notifications push mobiles",
+        "description": "Recevez des notifications push pour les mentions et les commentaires via votre application mobile"
+      }
+    },
+    "slack": {
+      "title": "Notifications Slack",
+      "slack": {
+        "title": "Notifications Slack",
+        "description": "Recevez des notifications dans votre espace de travail Slack lorsque vous êtes mentionné dans une page, une propriété de base de données ou un commentaire",
+        "options": {
+          "off": "Désactivé"
+        }
+      }
+    },
+    "email": {
+      "title": "Notifications par e-mail",
+      "activity": {
+        "title": "Activité dans votre espace de travail",
+        "description": "Recevez des e-mails pour les commentaires, mentions, invitations à une page, rappels, demandes d'accès et changements de propriétés"
+      },
+      "digests": {
+        "title": "Récapitulatifs par e-mail",
+        "description": "Recevez des résumés par e-mail toutes les 8 heures pour les modifications apportées aux pages auxquelles vous êtes abonné"
+      },
+      "announcements": {
+        "title": "Annonces et mises à jour par e-mail",
+        "description": "Recevez occasionnellement des e-mails concernant les lancements de produits et les nouvelles fonctionnalités de Notion",
+        "button": "Gérer les paramètres"
+      }
+    },
+    "buttons": {
+      "more": "En savoir plus sur les notifications"
+    }
+  },
+  "my-connections": {
+    "title": "Connexions",
+    "discover": {
+      "title": "Découvrir de nouvelles connexions",
+      "buttons": {
+        "connect": "Connecter",
+        "more": "Voir tout",
+        "less": "Voir moins"
+      }
+    },
+    "buttons": {
+      "browse": "Parcourir les connexions dans la galerie",
+      "integrations": "Développer ou gérer les intégrations",
+      "more": "En savoir plus sur les connexions"
+    }
+  },
+  "general": {
+    "title": "Général",
+    "workspace": {
+      "title": "Paramètres de l'espace de travail",
+      "name": {
+        "title": "Nom",
+        "description": "Vous pouvez utiliser le nom de votre organisation ou de votre entreprise. Restez simple."
+      },
+      "icon": {
+        "title": "Icône",
+        "description": "Téléchargez une image ou choisissez un émoji. Il apparaîtra dans votre barre latérale et vos notifications."
+      }
+    },
+    "public": {
+      "title": "Paramètres publics",
+      "domain": {
+        "title": "Domaine",
+        "description": "Les pages partagées sur le web se trouveront sous <0>{{site}}</0>. Toute personne disposant d'un domaine de messagerie autorisé peut rejoindre cet espace de travail via <0>{{link}}</0>."
+      },
+      "public": {
+        "title": "Page d'accueil publique",
+        "description": "Accédez à votre page d'accueil publique via <0>{{site}}</0>."
+      }
+    },
+    "export": {
+      "title": "Exporter",
+      "content": {
+        "title": "Contenu de l'espace de travail",
+        "description": "Exportez toutes les pages dans {{workspace}} au format HTML, Markdown, CSV ou PDF",
+        "button": "Exporter"
+      },
+      "members": {
+        "title": "Membres",
+        "description": "Exportez une liste des membres et des invités dans {{workspace}}",
+        "button": "Exporter les membres au format CSV"
+      }
+    },
+    "analytics": {
+      "title": "Analytique",
+      "analytics": {
+        "title": "Enregistrer et afficher les données des vues de pages",
+        "description": "Les personnes avec un accès de modification ou complet pourront voir le nombre de vues qu'a une page. Si cela est désactivé, les consultations de page ne seront pas stockées pour toutes les pages dans {{workspace}}.",
+        "hint": "En savoir plus sur l'analyse de l'espace de travail."
+      }
+    },
+    "danger": {
+      "title": "Zone de danger",
+      "hint": "En savoir plus sur la suppression d'espaces de travail.",
+      "delete": "Supprimer l'espace de travail entier",
+      "leave": "Quitter l'espace de travail"
+    },
+    "modals": {
+      "leave": {
+        "title": "Voulez-vous vraiment quitter cet espace de travail ?",
+        "primary": "Quitter",
+        "secondary": "Annuler"
+      }
+    }
+  },
+  "people": {
+    "title": "Personnes",
+    "invite": {
+      "title": "Lien d'invitation pour ajouter des membres",
+      "description": "Seules les personnes autorisées à inviter des membres peuvent voir cela. Vous pouvez également <0>générer un nouveau lien</0>",
+      "button": "Copier le lien"
+    },
+    "tabs": {
+      "members": "Membres",
+      "guests": "Invités",
+      "groups": "Groupes",
+      "invitations": "Invitations",
+      "search": "Tapez pour chercher...",
+      "add-members": "Ajouter des membres"
+    },
+    "upgrade": {
+      "title": "Mettez à niveau pour créer des groupes",
+      "description": "Passez au plan Plus pour configurer des groupes et gérer les autorisations via le menu de partage."
+    },
+    "modals": {
+      "reset-link": {
+        "title": "Voulez-vous vraiment réinitialiser le lien d'invitation pour tous les membres de l'espace ? L'ancien ne pourra plus être utilisé.",
+        "primary": "Réinitialiser",
+        "secondary": "Annuler"
+      }
+    }
+  },
+  "teamspaces": {
+    "title": "Espaces d'équipe",
+    "teamspaces": {
+      "title": "Paramètres des espaces d'équipe",
+      "info": {
+        "learn": "En savoir plus sur les espaces d'équipe"
+      },
+      "default": {
+        "title": "Espaces d'équipe par défaut",
+        "description": "Choisissez les espaces d'équipe que chaque nouveau et actuel membre de l'espace de travail rejoindra automatiquement",
+        "button": "Mettre à jour"
+      },
+      "limit": {
+        "title": "Limiter la création d'espaces d'équipe aux propriétaires",
+        "description": "Autoriser uniquement les propriétaires de l'espace de travail à créer des espaces d'équipe"
+      },
+      "manage": {
+        "title": "Gérer les espaces d'équipe",
+        "description": "Gérez tous les espaces d'équipe auxquels vous avez accès ici",
+        "button": "Nouveau espace d'équipe"
+      }
+    }
+  },
+  "plans": {
+    "title": "Découvrir les forfaits",
+    "active": {
+      "title": "Forfait actif",
+      "plan": {
+        "free": {
+          "title": "Gratuit",
+          "description": "Pour organiser chaque aspect de votre vie et de votre travail",
+          "comment": "0 $ par membre / mois"
+        },
+        "education": {
+          "title": "Education Plus",
+          "description": "Pour les étudiants et le personnel éducatif",
+          "comment": "0 $ par membre / mois"
+        },
+        "plus": {
+          "title": "Plus",
+          "description": "Un espace pour les petits groupes pour planifier et s'organiser",
+          "comment": "0 $ par membre / mois"
+        },
+        "business": {
+          "title": "Business",
+          "description": "",
+          "comment": ""
+        },
+        "enterprise": {
+          "title": "Entreprise",
+          "description": "",
+          "comment": ""
+        }
+      },
+      "ai": {
+        "title": "Notion AI",
+        "description": "Utilisation illimitée de l'IA pour Q&R, Remplissage automatique, Écriture, et plus",
+        "button": "Ajouter au forfait"
+      }
+    },
+    "all-plans": {
+      "title": "Tous les forfaits",
+      "description": "Des questions sur nos forfaits ? <0>Contacter les ventes</0>"
+    },
+    "education": {
+      "title": "Étudiants et enseignants",
+      "description": "Les étudiants et les enseignants peuvent accéder gratuitement aux fonctionnalités du forfait Plus (avec une limite d'un membre) ! Inscrivez-vous avec votre e-mail scolaire ou modifiez votre e-mail actuel dans l'onglet « Mon compte ». <0>Pour plus d'informations, rendez-vous sur notion.com/students.</0>",
+      "button": "Obtenir le forfait Education"
+    },
+    "faq": {
+      "title": "FAQ",
+      "description": "<0>Forfaits, facturation et paiement</0>",
+      "button": "Contacter le support"
+    }
+  },
+  "billing": {
+    "title": "Facturation",
+    "plan": {
+      "title": "Forfait",
+      "button": "Changer de forfait"
+    },
+    "payment-details": {
+      "title": "Détails de paiement",
+      "payment-method": {
+        "title": "Moyen de paiement",
+        "none": "Aucun",
+        "button": "Modifier le moyen de paiement"
+      },
+      "billed-to": {
+        "title": "Facturé à",
+        "button": "Modifier les informations"
+      },
+      "billing-email": {
+        "title": "E-mail de facturation",
+        "button": "Modifier l'e-mail"
+      },
+      "invoice-emails": {
+        "title": "E-mails de facturation",
+        "description": "Recevez une copie de votre facture par e-mail à chaque période de facturation"
+      },
+      "vat": {
+        "title": "Numéro de TVA/TPS",
+        "none": "-",
+        "button": "Modifier le numéro"
+      }
+    },
+    "invoices": {
+      "title": "Factures",
+      "upcoming": {
+        "title": "Facture à venir",
+        "button": "Voir la facture"
+      }
+    }
+  },
+  "notion-ai": {
+    "title": "Notion IA",
+    "notion-ai": {
+      "share": {
+        "title": "Partager des données pour améliorer l'IA de Notion",
+        "description": "Aidez à améliorer les modèles d'IA de Notion en permettant aux données de cet espace de travail d'être partagées avec Notion. En activant l'IA LEAP (Programme d'Aptitude et d'Accès Précoce), vous acceptez les <0>Termes Supplémentaires de la Notion AI LEAP</0>. <1>En savoir plus</1>."
+      }
+    }
+  },
+  "sites": {
+    "title": "Sites"
+  },
+  "emoji": {
+    "title": "Emoji",
+    "limit": {
+      "title": "Limiter la création d'émojis personnalisés aux propriétaires de l'espace de travail",
+      "description": "Tout émoji existant pourra toujours être modifié ou supprimé par la personne qui l'a ajouté"
+    },
+    "form": {
+      "add-title": "Ajouter un émoji personnalisé",
+      "edit-title": "Modifier l'émoji personnalisé",
+      "description": "Les émojis personnalisés peuvent être utilisés par toute personne dans votre espace de travail",
+      "upload": "Télécharger une image",
+      "replace": "Remplacer",
+      "name-label": "Nom de l'émoji",
+      "name-placeholder": "amusez-vous",
+      "preview": "Aperçu",
+      "cancel": "Annuler",
+      "save": "Enregistrer"
+    }
+  },
+  "tables": {
+    "emojis": {
+      "count_one": "{{count}} émoji",
+      "count_other": "{{count}} émojis",
+      "search": "Rechercher par nom ou ajouté par",
+      "add-emoji": "Ajouter un émoji",
+      "empty": "Les émojis personnalisés sont disponibles pour tout le monde dans votre espace de travail",
+      "delete": {
+        "title": "Supprimer cet émoji ?",
+        "description": "Cela le supprimera pour tout le monde dans votre espace de travail",
+        "primary": "Supprimer",
+        "secondary": "Annuler"
+      },
+      "actions": {
+        "edit": "Modifier",
+        "delete": "Supprimer"
+      },
+      "columns": {
+        "image": "Image",
+        "name": "Nom",
+        "added-by": "Ajouté par",
+        "date-added": "Date d'ajout"
+      }
+    },
+    "connections": {
+      "columns": {
+        "connection": "Connexion",
+        "access": "Accès"
+      },
+      "actions": {
+        "connect": "Connecter un autre compte",
+        "disconnect": "Déconnecter le compte"
+      }
+    },
+    "people": {
+      "search": "Tapez pour chercher...",
+      "empty": {
+        "members": "Aucun membre",
+        "guests": "Aucun invité",
+        "groups": "Aucun groupe",
+        "invitations": "Aucune invitation"
+      },
+      "columns": {
+        "user": "Utilisateur",
+        "teamspaces": "Espaces d'équipe",
+        "groups": "Groupes",
+        "role": "Rôle",
+        "access": "Accès",
+        "status": "Statut",
+        "invited-by": "Invité par",
+        "members": "Membres",
+        "group": "Groupe"
+      },
+      "cells": {
+        "none": "Aucun",
+        "no-access": "Aucun accès",
+        "empty": "Aucun résultat.",
+        "teamspaces_one": "{{count}} espace d'équipe",
+        "teamspaces_other": "{{count}} espaces d'équipe",
+        "members_one": "{{count}} membre",
+        "members_other": "{{count}} membres",
+        "pages_one": "{{count}} page",
+        "pages_other": "{{count}} pages"
+      },
+      "actions": {
+        "leave-workspace": "Quitter l'espace de travail",
+        "remove-from-workspace": "Retirer de l'espace de travail",
+        "upgrade-to-member": "Passer à membre",
+        "cancel-invitation": "Annuler l'invitation"
+      },
+      "roles": {
+        "admin": "Administrateur",
+        "owner": "Propriétaire de l'espace de travail",
+        "member": "Membre",
+        "guest": "Invité"
+      },
+      "role-options": {
+        "owner": {
+          "label": "Propriétaire de l'espace de travail",
+          "description": "Peut modifier les paramètres de l'espace de travail et inviter de nouveaux membres."
+        },
+        "member": {
+          "label": "Membre",
+          "description": "Ne peut pas modifier les paramètres de l'espace de travail ni inviter de nouveaux membres."
+        }
+      },
+      "statuses": {
+        "pending": "En attente",
+        "rejected": "Rejeté",
+        "canceled": "Annulé"
+      }
+    },
+    "plans": {
+      "actions": {
+        "compare": "Comparer toutes les fonctionnalités",
+        "collapse": "Réduire",
+        "upgrade": "Mettre à niveau",
+        "contact": "Contacter les ventes"
+      },
+      "highlight": {
+        "free": {
+          "title": "Gratuit",
+          "description": "0 $ par membre / mois"
+        },
+        "plus": {
+          "title": "Plus",
+          "description": "10 $ par membre / mois facturé annuellement",
+          "subtext": "12 $ facturés mensuellement"
+        },
+        "business": {
+          "title": "Business",
+          "description": "15 $ par membre / mois facturé annuellement",
+          "subtext": "18 $ facturés mensuellement"
+        },
+        "enterprise": {
+          "title": "Entreprise",
+          "description": "Contacter les ventes pour les tarifs"
+        },
+        "tooltip": "Seuls les propriétaires de l'espace de travail peuvent effectuer cette action."
+      }
+    },
+    "sessions": {
+      "columns": {
+        "device-name": "Nom de l'appareil",
+        "last-active": "Dernière activité",
+        "location": "Emplacement"
+      },
+      "actions": {
+        "logout": "Se déconnecter",
+        "logout-confirm-title": "Se déconnecter de {{device}} ?",
+        "logout-confirm-desc": "Vous serez déconnecté de cet appareil."
+      }
+    },
+    "teamspaces": {
+      "columns": {
+        "teamspace": "Espace d'équipe",
+        "owners": "Propriétaires",
+        "access": "Accès",
+        "updated": "Mise à jour",
+        "user": "Utilisateur",
+        "role": "Rôle"
+      },
+      "roles": {
+        "owner": {
+          "label": "Propriétaire de l'espace d'équipe",
+          "description": "Peut modifier les paramètres et de l'espace et accès complet aux pages."
+        },
+        "member": {
+          "label": "Membre de l'espace d'équipe",
+          "description": "Ne peut pas modifier les paramètres et a accès aux pages."
+        }
+      },
+      "actions": {
+        "settings": "Paramètres de l'espace",
+        "leave": "Quitter l'espace",
+        "archive": "Archiver l'espace",
+        "remove": "Supprimer"
+      },
+      "members": "membres",
+      "joined": "Rejoint"
+    }
+  },
+  "security": {
+    "title": "Sécurité",
+    "cards": {
+      "sso": {
+        "title": "Mettez à niveau pour le SSO SAML et d'autres outils d'administration",
+        "description": "Le plan Business comprend l'authentification unique (SSO) pour gérer l'accès des employés à l'échelle, des espaces d'équipe privés pour collaborer sur des documents sensibles, et plus.",
+        "action": "Mettre à niveau vers Business",
+        "more": "En savoir plus"
+      },
+      "scim": {
+        "title": "Mettez à niveau pour le SCIM, la sécurité avancée et plus",
+        "description": "Le plan Enterprise vous permet de provisionner automatiquement les utilisateurs et groupes, et donne plus de visibilité à travers l'espace de travail.",
+        "action": "Mettre à niveau vers Entreprise",
+        "more": "En savoir plus"
+      }
+    },
+    "general": {
+      "title": "Général",
+      "publish": {
+        "title": "Désactiver la publication des sites, formulaires et liens publics",
+        "description": "Désactiver les options \"Publier le site\" et \"Quiconque avec le lien\" sur chaque page et dans chaque formulaire."
+      },
+      "duplicate": {
+        "title": "Désactiver la duplication des pages vers d'autres espaces",
+        "description": "Empêchez quiconque de dupliquer des pages vers d'autres espaces de travail."
+      },
+      "export": {
+        "title": "Désactiver l'exportation",
+        "description": "Empêchez quiconque d'exporter des pages au format Markdown, CSV ou PDF."
+      }
+    },
+    "invite": {
+      "title": "Invitation de membres et d'invités",
+      "access": {
+        "title": "Autoriser les demandes d'accès des non-membres",
+        "description": "Cela permet à toute personne ayant le lien de demander l'accès."
+      },
+      "invite": {
+        "title": "Autoriser les membres à inviter d'autres invités",
+        "description_one": "Votre espace de travail a <0>{{count}} invité</0>.",
+        "description_other": "Votre espace de travail a <0>{{count}} invités</0>."
+      },
+      "guest": {
+        "title": "Autoriser les membres à demander l'ajout d'invités",
+        "description": "Les demandes doivent être approuvées par un propriétaire de l'espace."
+      },
+      "member": {
+        "title": "Autoriser les membres à demander l'ajout d'autres membres",
+        "description": "Les membres peuvent soumettre des requêtes aux administrateurs."
+      },
+      "user": {
+        "title": "Autoriser à tous d'être ajoutés en tant que membre de l'espace",
+        "description": "S'il est activé, les utilisateurs peuvent soumettre des demandes aux administrateurs."
+      }
+    }
+  },
+  "identity": {
+    "title": "Identité",
+    "domain": {
+      "title": "Gestion des domaines",
+      "domains": {
+        "title": "Domaines vérifiés",
+        "description": "Vérifiez la propriété pour accéder aux fonctionnalités de sécurité."
+      },
+      "creation": {
+        "title": "Création d'espaces de travail",
+        "description": "Personnalisez qui peut créer de nouveaux espaces."
+      },
+      "claim": {
+        "title": "Récupération d'espaces",
+        "description": "Récupérez les espaces de travail créés par les utilisateurs sous des domaines vérifiés."
+      }
+    },
+    "user": {
+      "title": "Gestion des utilisateurs",
+      "description": "Ces paramètres s'appliquent à tous les utilisateurs d'un domaine vérifié.",
+      "buttons": {
+        "hint": "En savoir plus sur les utilisateurs gérés"
+      },
+      "dashboard": {
+        "title": "Tableau de bord des utilisateurs gérés",
+        "description": "Gérer les utilisateurs qui se servent de vos domaines vérifiés."
+      },
+      "profile": {
+        "title": "Autoriser les utilisateurs gérés à modifier leur profil",
+        "description": "Contrôlez les droits des utilisateurs gérés vis à vis de leur nom et photo de profil."
+      },
+      "external": {
+        "title": "Accès externe à l'espace",
+        "description": "Contrôlez l'accès de vos utilisateurs gérés aux espaces qui ne dépendent pas de l'organisation."
+      },
+      "support": {
+        "title": "Empêcher les utilisateurs gérés d'accorder l'accès au support",
+        "description": "Contrôlez si les utilisateurs gérés peuvent activer le support sur leur compte."
+      },
+      "session": {
+        "title": "Durée de la session",
+        "description": "Contrôlez pendant combien de temps vos utilisateurs gérés peuvent se connecter."
+      },
+      "logout": {
+        "title": "Déconnecter tous les utilisateurs",
+        "description": "Forcez la déconnexion de tous les utilisateurs gérés."
+      },
+      "password": {
+        "title": "Réinitialiser les mots de passe des utilisateurs",
+        "description": "Forcez la réinitialisation de tous les mots de passe des utilisateurs."
+      },
+      "mail": {
+        "title": "Notion Mail",
+        "description": "Activez Notion Mail pour tous les membres via vos domaines d'entreprise."
+      }
+    },
+    "saml": {
+      "title": "SSO SAML",
+      "buttons": {
+        "hint": "En savoir plus sur SSO SAML"
+      },
+      "saml": {
+        "title": "Activer le SSO SAML",
+        "description": "Les membres peuvent se connecter avec le SSO SAML."
+      },
+      "login": {
+        "title": "Méthode de connexion",
+        "description": "Personnalisez l'accès au SSO SAML."
+      },
+      "creation": {
+        "title": "Création automatique",
+        "description": "Créez automatiquement des comptes via SSO SAML."
+      },
+      "linked": {
+        "title": "Espaces liés",
+        "description": "Cette configuration s'applique également aux espaces joints."
+      }
+    },
+    "scim": {
+      "title": "Approvisionnement SCIM",
+      "scim": {
+        "title": "Jetons SCIM",
+        "description": "Générer un jeton pour configurer le SCIM."
+      }
+    },
+    "setup": {
+      "title": "Informations de configuration",
+      "workspace-id": {
+        "description": "ID d'Espace",
+        "tooltip": "Cliquez pour copier l'ID"
+      }
+    }
+  },
+  "connections": {
+    "title": "Connexions"
+  },
+  "import": {
+    "title": "Importation"
+  },
+  "modals": {
+    "delete-guest": {
+      "title": "Retirer {{name}} de cet espace ?",
+      "description": "Ils perdront l'accès aux pages partagées.",
+      "remove": "Retirer",
+      "cancel": "Annuler"
+    },
+    "delete-member": {
+      "title": "Pourquoi supprimez-vous ce membre de l'espace ?",
+      "description": "Nous adorons améliorer Notion",
+      "continue": "Continuer",
+      "cancel": "Annuler",
+      "options": {
+        "no-longer-need": "Plus besoin d'aller sur Notion",
+        "not-using-enough": "Pas assez d'utilisation",
+        "too-expensive": "Trop cher",
+        "switching-tool": "On a changé d'outil",
+        "no-longer-works": "Il ne travaille plus ici",
+        "switching-workspace": "Passer à un autre espace",
+        "other": "Autre"
+      }
+    },
+    "logout-confirm": {
+      "logout": "Se déconnecter",
+      "cancel": "Annuler"
+    },
+    "delete-workspace": {
+      "title": "Supprimer définitivement cet espace de travail entier ?",
+      "description": "Action irréversible. Ceci va supprimer définitivement l'espace. Tapez le nom de l'espace pour confirmer.",
+      "validation": "Veuillez taper \"{{name}}\" pour continuer",
+      "delete": "Supprimer définitivement l'espace de travail",
+      "cancel": "Annuler"
+    },
+    "delete-account": {
+      "title": "Supprimer définitivement votre compte ?",
+      "description": "Action irréversible. Veuillez noter que tous les espaces vont disparaître avec et que vous perdrez tous les accès.",
+      "label": "Veuillez entrer votre courriel pour confirmer.",
+      "validation": "Veuillez taper \"{{email}}\" pour continuer",
+      "delete": "Supprimer le compte",
+      "cancel": "Annuler"
+    },
+    "leave-teamspace": {
+      "title": "Quitter {{name}} ?",
+      "description": "Vous perdez accès au canal d'équipe, et ne verrez probablement plus ce canal.",
+      "remove": "Retirer",
+      "cancel": "Annuler"
+    },
+    "email-settings": {
+      "description": "L'email actuel est <1>{{email}}</1>. Nous allons envoyer un code.",
+      "send": "Envoyer le code"
+    },
+    "change-plan": {
+      "title": "À quel plan voulez-vous passer ?",
+      "description": "Sélectionnez l'un des forfaits",
+      "continue": "Continuer",
+      "cancel": "Annuler",
+      "plans": {
+        "free": "Gratuit",
+        "plus": "Plus",
+        "business": "Business",
+        "enterprise": "Enterprise"
+      },
+      "prices": {
+        "per-member": "{{price}} par membre / mois",
+        "contact": "Contactez l'équipe pour les ventes"
+      }
+    },
+    "change-payment-method": {
+      "title": "Modifier le mode de paiement",
+      "update": "Mettre à jour",
+      "cancel": "Annuler"
+    },
+    "change-billing-email": {
+      "title": "Modifier l'email de facturation",
+      "update": "Mettre à jour",
+      "cancel": "Annuler"
+    },
+    "add-members": {
+      "headings": {
+        "select": "Sélectionner",
+        "type": "Taper pour ajouter"
+      },
+      "search-placeholder": "Nom ou email",
+      "roles": {
+        "owner": "Propriétaire",
+        "member": "Membre",
+        "guest": "Invité"
+      },
+      "invite": "Inviter",
+      "empty": "Tapez les emails.",
+      "learn-more": "Apprenez en plus",
+      "invited-badge": "Invité(s)"
+    },
+    "passkeys": {
+      "title": "Passkeys",
+      "description": "Se connecter avec des passkeys",
+      "error": "L'ajout a raté",
+      "active": "Actif",
+      "add": "Ajouter",
+      "cancel": "Annuler",
+      "created-at": "Créé à {{date}}",
+      "rename": "Renommer le passkey",
+      "delete": "Supprimer le passkey"
+    },
+    "change-billing-address": {
+      "title": "Mise à jour de l'adresse de facturation",
+      "business-name": "Nom de l'entreprise (facultatif)",
+      "full-name": "Nom en entier",
+      "country": "Pays ou région",
+      "postal-code": "Boîte postale",
+      "update": "Mise à jour",
+      "cancel": "Annuler"
+    },
+    "add-team-members": {
+      "headings": {
+        "select": "Veuillez sélectionner une personne",
+        "type": "Ou taper son nom ou email"
+      },
+      "title-prefix": "Inviter à",
+      "search-placeholder": "Rechercher",
+      "no-results": "Aucun résultat",
+      "invited": "Invité(e)",
+      "roles": {
+        "owner": "Proprio.",
+        "member": "Membre"
+      },
+      "copy-link": "Lien de copie",
+      "invite": "Inviter"
+    },
+    "2fa": {
+      "add-form": {
+        "required": "Requis",
+        "title": "Afin de continuer, on doit vérifier votre passeport",
+        "password-placeholder": "Mot de passe",
+        "continue": "Continuer",
+        "forgot": "Passe perdu",
+        "email-sent": "On a envoyé un email à {{email}}."
+      },
+      "enable-method": {
+        "title": "Activer la double vérification en deux étapes",
+        "description": "Veuillez vérifier par ce biais l'étape",
+        "authenticator": {
+          "title": "Authenticator.app",
+          "description": "Générez un code ici"
+        },
+        "text": {
+          "title": "Un texte m'a été envoyé",
+          "description": "Ajoutez le nombre"
+        }
+      }
+    },
+    "teamspace-detail": {
+      "tabs": {
+        "general": "Général",
+        "members": "Membres",
+        "security": "Sécurité"
+      },
+      "joined": "Vous avez rejoint",
+      "join": "Rejoindre",
+      "general": {
+        "details-title": "Détails",
+        "icon-name": "Icône",
+        "description": "Description",
+        "no-description": "Aucune description à donner",
+        "permissions-title": "Autorisation",
+        "danger-zone-title": "Danger zone",
+        "leave": "Laisser la teamspace",
+        "leave-description": "Elle serait retirée de la liste",
+        "learn-more": "Mieux apprendre en fonction"
+      },
+      "security": {
+        "title": "Sécurité de l'espace",
+        "learn-more": "Mieux apprendre d'elle"
+      },
+      "members": {
+        "permissions-title": "Vérifiaction d'autorisations",
+        "learn-more-permissions": "Savoir les accès qu'on a",
+        "members-title": "Membres",
+        "add-members": "Inclure",
+        "copy-link": "Copier un lien",
+        "search-placeholder": "Rechercher par membre"
+      }
+    },
+    "upgrade": {
+      "title": "Mis à jour à {{plan}}",
+      "billing-details": {
+        "name-label": "Nom du titulaire",
+        "name-placeholder": "Ada Lovelace",
+        "business-name-label": "Nom de boîte",
+        "business-name-placeholder": "Acme Inc.",
+        "vat-label": "TVA (facultatif)",
+        "vat-placeholder": "123456789"
+      },
+      "payment-section": {
+        "title": "Méthode de règlement"
+      },
+      "billing-options": {
+        "title": "Options de paiement",
+        "monthly": "Réglé à chaque Mois",
+        "monthly-desc": "${{price}} du mois",
+        "annually": "Règle pour le compte d'année",
+        "annually-desc": "${{price}} pour chaque mois",
+        "save-badge": "17% gardé(e)s"
+      },
+      "confirm": {
+        "title": "Prendre en mis à jour",
+        "per-month": "au mois en général",
+        "terms-description": "On renouvellera automatiquement à : {{interval}} à prix indiqué. Annulez avant l'échéance ( <1>termes et conditions</1> )",
+        "submit": "Update à la {{plan}}"
+      }
+    },
+    "create-teamspace": {
+      "title": "Nouvo",
+      "description": "Veuillez créer une ressource unie.",
+      "icon-name": "Icône",
+      "name-placeholder": "Acme Labs",
+      "description-label": "Description",
+      "description-placeholder": "Détails",
+      "permissions": "Permissions",
+      "learn-more": "Plus",
+      "submit": "Créer un espace d'équipe"
+    },
+    "password": {
+      "errors": {
+        "unique": "Insérer d'autres caractères ici.",
+        "mismatch": "Invalide."
+      },
+      "title-change": "Nouveau mode de passe",
+      "title-set": "Moduler",
+      "description": "15, c'est le nombre de caractères dont on a besoin.",
+      "current-label": "Passe en temps réel",
+      "current-placeholder": "Saisir",
+      "new-label": "Passe nouveau",
+      "new-placeholder": "Passe nouveauté",
+      "confirm-label": "Confiez que vous l'avez bien saisi",
+      "confirm-placeholder": "Confirmé..",
+      "success-title": "Pris en compte par nous",
+      "success-description": "En temps normal, il reste correct."
+    }
+  }
 }

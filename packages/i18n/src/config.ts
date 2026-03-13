@@ -5,14 +5,24 @@ import { ns, resources } from "./resources";
 
 const STORAGE_KEY = "nk:i18n:lng";
 
-export function createI18n(): i18nInstance {
+export function getLanguage(language?: string) {
+  const isClient = typeof globalThis.localStorage !== "undefined";
+  const localStorageLanguage = isClient
+    ? localStorage.getItem(STORAGE_KEY)
+    : null;
+  const navigatorLanguage =
+    typeof navigator !== "undefined" ? navigator.language : "en";
+  return language ?? localStorageLanguage ?? navigatorLanguage;
+}
+
+export function createI18n(language?: string): i18nInstance {
   const i18n = i18next.createInstance();
   i18n
     .use(initReactI18next) // passes i18n down to react-i18next
     .init({
       resources,
       ns,
-      lng: "en", // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
+      lng: getLanguage(language), // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
       // you can use the i18n.changeLanguage function to change the language manually: https://www.i18next.com/overview/api#changelanguage
       // if you're using a language detector, do not define the lng option
       fallbackLng: "en",
@@ -32,9 +42,5 @@ export function createI18n(): i18nInstance {
 }
 
 export function setupLanguage(i: i18nInstance, language?: string) {
-  const localStorageLanguage = localStorage.getItem(STORAGE_KEY);
-  // You can standardize locales here
-  // Refer to https://github.com/toeverything/AFFiNE/blob/canary/packages/frontend/i18n/src/index.ts
-  const lng = language ?? localStorageLanguage ?? navigator.language;
-  return i.changeLanguage(lng);
+  return i.changeLanguage(getLanguage(language));
 }

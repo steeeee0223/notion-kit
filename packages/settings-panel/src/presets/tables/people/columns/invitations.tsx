@@ -1,17 +1,27 @@
-"use client";
-
 import type { ColumnDef, Row } from "@tanstack/react-table";
 
+import { Trans, useTranslation } from "@notion-kit/i18n";
 import { Badge } from "@notion-kit/shadcn";
 
-import { Scope, type InvitationRow } from "../../../../lib";
-import { SortingToggle, UserCell } from "../../common-cells";
+import { Scope, type InvitationRow } from "@/lib/types";
+import { SortingToggle, UserCell } from "@/presets/tables/common-cells";
+
 import { InvitationActionCell, RoleCell } from "../cells";
-import { statusLabels } from "../constants";
 
 interface CreateInvitationColumnsOptions {
   scopes: Set<Scope>;
   onCancel?: (id: string) => void;
+}
+
+function StatusCell({ status }: { status: InvitationRow["status"] }) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "tables.people.statuses",
+  });
+  return (
+    <div className="cursor-default">
+      <Badge variant="orange">{t(status)}</Badge>
+    </div>
+  );
 }
 
 export function createInvitationColumns({
@@ -25,7 +35,7 @@ export function createInvitationColumns({
         const isSorted = column.getIsSorted();
         return (
           <SortingToggle
-            title="User"
+            title={<Trans i18nKey="tables.people.columns.user" />}
             isSorted={isSorted}
             toggle={() => column.toggleSorting(isSorted === "asc")}
           />
@@ -41,7 +51,7 @@ export function createInvitationColumns({
         const isSorted = column.getIsSorted();
         return (
           <SortingToggle
-            title="Role"
+            title={<Trans i18nKey="tables.people.columns.role" />}
             isSorted={isSorted}
             toggle={() => column.toggleSorting(isSorted === "asc")}
           />
@@ -55,17 +65,13 @@ export function createInvitationColumns({
         const isSorted = column.getIsSorted();
         return (
           <SortingToggle
-            title="Status"
+            title={<Trans i18nKey="tables.people.columns.status" />}
             isSorted={isSorted}
             toggle={() => column.toggleSorting(isSorted === "asc")}
           />
         );
       },
-      cell: ({ row }) => (
-        <div className="cursor-default">
-          <Badge variant="orange">{statusLabels[row.original.status]}</Badge>
-        </div>
-      ),
+      cell: ({ row }) => <StatusCell status={row.original.status} />,
     },
     {
       accessorKey: "invitedBy",
@@ -73,7 +79,7 @@ export function createInvitationColumns({
         const isSorted = column.getIsSorted();
         return (
           <SortingToggle
-            title="Invited by"
+            title={<Trans i18nKey="tables.people.columns.invited-by" />}
             isSorted={isSorted}
             toggle={() => column.toggleSorting(isSorted === "asc")}
           />

@@ -1,8 +1,9 @@
-"use client";
-
 import type { ColumnDef } from "@tanstack/react-table";
 
-import type { Connection } from "../../../lib";
+import { Trans } from "@notion-kit/i18n";
+
+import type { Connection } from "@/lib/types";
+
 import { TextCell } from "../common-cells";
 import { ActionCell, ConnectionCell } from "./cells";
 
@@ -18,12 +19,20 @@ export function createConnectionColumns({
   return [
     {
       accessorKey: "connection",
-      header: () => <TextCell value="Connection" />,
+      header: () => (
+        <TextCell
+          value={<Trans i18nKey="tables.connections.columns.connection" />}
+        />
+      ),
       cell: ({ row }) => <ConnectionCell {...row.original.connection} />,
     },
     {
       accessorKey: "scopes",
-      header: () => <TextCell value="Access" />,
+      header: () => (
+        <TextCell
+          value={<Trans i18nKey="tables.connections.columns.access" />}
+        />
+      ),
       cell: ({ row }) => (
         <div className="flex flex-col text-xs">
           {row.original.scopes.map((scope, i) => (

@@ -1,7 +1,6 @@
-"use client";
-
 import { useTransition } from "react";
 
+import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -26,6 +25,10 @@ export function LogoutConfirm({
   description,
   onConfirm,
 }: LogoutConfirmProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.logout-confirm",
+  });
+
   const [isPending, startTransition] = useTransition();
   const logout = () => startTransition(async () => await onConfirm?.());
 
@@ -50,7 +53,7 @@ export function LogoutConfirm({
           disabled={isPending}
         >
           {isPending && <Spinner />}
-          Log out
+          {t("logout")}
         </Button>
         <DialogClose asChild>
           <Button
@@ -59,7 +62,7 @@ export function LogoutConfirm({
             className="w-full"
             disabled={isPending}
           >
-            Cancel
+            {t("cancel")}
           </Button>
         </DialogClose>
       </DialogFooter>

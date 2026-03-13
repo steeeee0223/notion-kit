@@ -19,7 +19,10 @@
     },
     "account-security": {
       "title": "Kontosicherheit",
-      "email": { "title": "E-Mail", "button": "E-Mail-Addresse ändern" },
+      "email": {
+        "title": "E-Mail",
+        "button": "E-Mail-Adresse ändern"
+      },
       "password": {
         "title": "Passwort",
         "description": "Wenn du den Zugriff auf deine Hochschul-E-Mail-Adresse verlierst, kannst du dich mit deinem Passwort anmelden.",
@@ -75,9 +78,22 @@
         "title": "Sprache",
         "description": "Ändere die in der Benutzeroberfläche verwendete Sprache.",
         "options": {
-          "en": { "label": "English", "description": "Englisch" },
-          "de": { "label": "Deutsch", "description": "Deutsch" },
-          "es": { "label": "Español", "description": "Spanisch" }
+          "en": {
+            "label": "English",
+            "description": "Englisch"
+          },
+          "de": {
+            "label": "Deutsch",
+            "description": "Deutsch"
+          },
+          "es": {
+            "label": "Español",
+            "description": "Spanisch"
+          },
+          "fr": {
+            "label": "Français",
+            "description": "Französisch"
+          }
         }
       },
       "start-week": {
@@ -149,7 +165,9 @@
       "slack": {
         "title": "Slack-Benachrichtigungen",
         "description": "Erhalte Benachrichtigungen in deinem Slack-Workspace, wenn du auf einer Seite, in einer Datenbankeigenschaft oder in einem Kommentar erwähnt wirst",
-        "options": { "off": "Aus" }
+        "options": {
+          "off": "Aus"
+        }
       }
     },
     "email": {
@@ -397,7 +415,9 @@
       }
     }
   },
-  "sites": { "title": "Websites" },
+  "sites": {
+    "title": "Websites"
+  },
   "emoji": {
     "title": "Emoji",
     "limit": {
@@ -433,7 +453,150 @@
       "actions": {
         "edit": "Bearbeiten",
         "delete": "Löschen"
+      },
+      "columns": {
+        "image": "Bild",
+        "name": "Name",
+        "added-by": "Hinzugefügt von",
+        "date-added": "Hinzugefügt am"
       }
+    },
+    "connections": {
+      "columns": {
+        "connection": "Verbindung",
+        "access": "Zugriff"
+      },
+      "actions": {
+        "connect": "Anderes Konto verbinden",
+        "disconnect": "Konto trennen"
+      }
+    },
+    "people": {
+      "search": "Tippen zum Suchen...",
+      "empty": {
+        "members": "Keine Mitglieder",
+        "guests": "Keine Gäste",
+        "groups": "Keine Gruppen",
+        "invitations": "Keine Einladungen"
+      },
+      "columns": {
+        "user": "Nutzer/-in",
+        "teamspaces": "Teamspaces",
+        "groups": "Gruppen",
+        "role": "Rolle",
+        "access": "Zugriff",
+        "status": "Status",
+        "invited-by": "Eingeladen von",
+        "members": "Mitglieder",
+        "group": "Gruppe"
+      },
+      "cells": {
+        "none": "Keine",
+        "no-access": "Kein Zugriff",
+        "empty": "Keine Ergebnisse.",
+        "teamspaces_one": "{{count}} Teamspace",
+        "teamspaces_other": "{{count}} Teamspaces",
+        "members_one": "{{count}} Mitglied",
+        "members_other": "{{count}} Mitglieder",
+        "pages_one": "{{count}} Seite",
+        "pages_other": "{{count}} Seiten"
+      },
+      "actions": {
+        "leave-workspace": "Workspace verlassen",
+        "remove-from-workspace": "Aus dem Workspace entfernen",
+        "upgrade-to-member": "Zum Mitglied heraufstufen",
+        "cancel-invitation": "Einladung stornieren"
+      },
+      "roles": {
+        "admin": "Administrator",
+        "owner": "Workspace-Besitzer",
+        "member": "Mitglied",
+        "guest": "Gast"
+      },
+      "role-options": {
+        "owner": {
+          "label": "Workspace-Besitzer",
+          "description": "Kann Workspace-Einstellungen ändern und neue Mitglieder einladen."
+        },
+        "member": {
+          "label": "Mitglied",
+          "description": "Kann keine Workspace-Einstellungen ändern oder neue Mitglieder einladen."
+        }
+      },
+      "statuses": {
+        "pending": "Ausstehend",
+        "rejected": "Abgelehnt",
+        "canceled": "Abgebrochen"
+      }
+    },
+    "plans": {
+      "actions": {
+        "compare": "Alle Funktionen vergleichen",
+        "collapse": "Zuklappen",
+        "upgrade": "Upgraden",
+        "contact": "Vertrieb kontaktieren"
+      },
+      "highlight": {
+        "free": {
+          "title": "Free",
+          "description": "0 $ pro Mitglied / Monat"
+        },
+        "plus": {
+          "title": "Plus",
+          "description": "10 $ pro Mitglied / Monat bei jährlicher Abrechnung",
+          "subtext": "12 $ bei monatlicher Abrechnung"
+        },
+        "business": {
+          "title": "Business",
+          "description": "15 $ pro Mitglied / Monat bei jährlicher Abrechnung",
+          "subtext": "18 $ bei monatlicher Abrechnung"
+        },
+        "enterprise": {
+          "title": "Enterprise",
+          "description": "Preise auf Anfrage beim Vertrieb"
+        },
+        "tooltip": "Nur Workspace-Besitzer können diese Aktion ausführen."
+      }
+    },
+    "sessions": {
+      "columns": {
+        "device-name": "Gerätename",
+        "last-active": "Zuletzt aktiv",
+        "location": "Standort"
+      },
+      "actions": {
+        "logout": "Abmelden",
+        "logout-confirm-title": "Von {{device}} abmelden?",
+        "logout-confirm-desc": "Du wirst auf diesem Gerät abgemeldet."
+      }
+    },
+    "teamspaces": {
+      "columns": {
+        "teamspace": "Teamspace",
+        "owners": "Besitzer",
+        "access": "Zugang",
+        "updated": "Aktualisiert",
+        "user": "Benutzer",
+        "role": "Rolle"
+      },
+      "roles": {
+        "owner": {
+          "label": "Teamspace-Besitzer",
+          "description": "Kann die Teamspace-Einstellungen bearbeiten und hat vollen Zugriff auf die Teamspace-Seiten."
+        },
+        "member": {
+          "label": "Teamspace-Mitglied",
+          "description": "Kann die Teamspace-Einstellungen nicht bearbeiten und hat Zugriff auf die Teamspace-Seiten."
+        }
+      },
+      "actions": {
+        "settings": "Teamspace-Einstellungen",
+        "leave": "Teamspace verlassen",
+        "archive": "Teamspace archivieren",
+        "remove": "Entfernen"
+      },
+      "members": "Mitglieder",
+      "joined": "Beigetreten"
     }
   },
   "security": {
@@ -585,6 +748,250 @@
       }
     }
   },
-  "connections": { "title": "Verbindungen" },
-  "import": { "title": "Importieren" }
+  "connections": {
+    "title": "Verbindungen"
+  },
+  "import": {
+    "title": "Importieren"
+  },
+  "modals": {
+    "delete-guest": {
+      "title": "{{name}} aus dem Workspace entfernen?",
+      "description": "Sie verlieren den Zugriff auf alle freigegebenen Seiten. Um sie in Zukunft wieder als Gast hinzuzufügen, muss eine Anfrage gestellt werden oder ein Admin muss sie einladen.",
+      "remove": "Entfernen",
+      "cancel": "Abbrechen"
+    },
+    "delete-member": {
+      "title": "Warum entfernst du dieses Mitglied aus deinem Workspace?",
+      "description": "Wir würden uns über dein Feedback freuen, um Notion noch besser zu machen",
+      "continue": "Weiter",
+      "cancel": "Abbrechen",
+      "options": {
+        "no-longer-need": "Benötigt keinen Zugang mehr zu Notion",
+        "not-using-enough": "Zu wenig genutzt",
+        "too-expensive": "Zu teuer",
+        "switching-tool": "Wechsel zu einem anderen Tool",
+        "no-longer-works": "Arbeitet nicht mehr hier",
+        "switching-workspace": "Wechsel zu einem anderen Notion-Workspace",
+        "other": "Sonstiges"
+      }
+    },
+    "logout-confirm": {
+      "logout": "Abmelden",
+      "cancel": "Abbrechen"
+    },
+    "delete-workspace": {
+      "title": "Diesen gesamten Workspace dauerhaft löschen?",
+      "description": "Diese Aktion kann nicht rückgängig gemacht werden. Dies wird den Workspace, einschließlich aller Seiten und Dateien, dauerhaft löschen. Bitte gib den Namen des Workspaces zur Bestätigung ein.",
+      "validation": "Bitte gib \"{{name}}\" ein, um fortzufahren",
+      "delete": "Workspace dauerhaft löschen",
+      "cancel": "Abbrechen"
+    },
+    "delete-account": {
+      "title": "Dein gesamtes Konto dauerhaft löschen?",
+      "description": "Diese Aktion kann nicht rückgängig gemacht werden. Dies wird dein gesamtes Konto dauerhaft löschen. Alle privaten Workspaces werden gelöscht und du wirst aus allen geteilten Workspaces entfernt.",
+      "label": "Bitte gib deine E-Mail-Adresse zur Bestätigung ein.",
+      "validation": "Bitte gib \"{{email}}\" ein, um fortzufahren",
+      "delete": "Konto dauerhaft löschen",
+      "cancel": "Abbrechen"
+    },
+    "leave-teamspace": {
+      "title": "{{name}} verlassen?",
+      "description": "Du wirst diesen Teamspace nicht mehr in deiner Seitenleiste sehen und könntest die Berechtigungen für die Seiten des Teamspaces verlieren.",
+      "remove": "Entfernen",
+      "cancel": "Abbrechen"
+    },
+    "email-settings": {
+      "description": "Deine aktuelle E-Mail lautet <1>{{email}}</1>. Wir senden einen temporären Verifizierungscode an diese E-Mail.",
+      "send": "Verifizierungscode senden"
+    },
+    "change-plan": {
+      "title": "Zu welchem Plan möchtest du wechseln?",
+      "description": "Wähle einen der folgenden Notion-Pläne aus",
+      "continue": "Weiter",
+      "cancel": "Abbrechen",
+      "plans": {
+        "free": "Free",
+        "plus": "Plus",
+        "business": "Business",
+        "enterprise": "Enterprise"
+      },
+      "prices": {
+        "per-member": "{{price}} pro Mitglied / Monat",
+        "contact": "Kontaktiere den Vertrieb für Preise"
+      }
+    },
+    "change-payment-method": {
+      "title": "Zahlungsmethode ändern",
+      "update": "Aktualisieren",
+      "cancel": "Abbrechen"
+    },
+    "change-billing-email": {
+      "title": "Rechnungs-E-Mail ändern",
+      "update": "Aktualisieren",
+      "cancel": "Abbrechen"
+    },
+    "add-members": {
+      "headings": {
+        "select": "Person auswählen",
+        "type": "Tippe weiter, um eine E-Mail einzuladen"
+      },
+      "search-placeholder": "Nach Namen oder E-Mails suchen",
+      "roles": {
+        "owner": "Workspace-Besitzer",
+        "member": "Mitglied",
+        "guest": "Gast"
+      },
+      "invite": "Einladen",
+      "empty": "Gib oben E-Mails ein oder füge sie ein, getrennt durch Kommas.",
+      "learn-more": "Erfahre, wie du Personen einlädst und Berechtigungen festlegst",
+      "invited-badge": "Eingeladen"
+    },
+    "passkeys": {
+      "title": "Passkeys verwalten",
+      "description": "Verwende die integrierten Sicherheitsfunktionen deines Geräts wie Face ID zur Anmeldung, anstatt dir Passwörter zu merken.",
+      "error": "Der Passkey konnte nicht gespeichert werden; bitte versuche es erneut.",
+      "active": "Aktive Passkeys",
+      "add": "Neuen Passkey hinzufügen",
+      "cancel": "Abbrechen",
+      "created-at": "Erstellt am {{date}}",
+      "rename": "Passkey umbenennen",
+      "delete": "Passkey löschen"
+    },
+    "change-billing-address": {
+      "title": "Adresse ändern",
+      "business-name": "Unternehmensname (optional)",
+      "full-name": "Vollständiger Name",
+      "country": "Land oder Region",
+      "postal-code": "Postleitzahl",
+      "update": "Aktualisieren",
+      "cancel": "Abbrechen"
+    },
+    "add-team-members": {
+      "headings": {
+        "select": "Person auswählen",
+        "type": "Tippe weiter, um ein Mitglied einzuladen"
+      },
+      "title-prefix": "Personen einladen für",
+      "search-placeholder": "Nach Personen oder Gruppen suchen",
+      "no-results": "Keine Ergebnisse gefunden",
+      "invited": "Eingeladen",
+      "roles": {
+        "owner": "Teamspace-Besitzer",
+        "member": "Teamspace-Mitglied"
+      },
+      "copy-link": "Einladungslink kopieren",
+      "invite": "Einladen"
+    },
+    "2fa": {
+      "add-form": {
+        "required": "Erforderlich",
+        "title": "Um fortzufahren, müssen wir deine Identität überprüfen",
+        "password-placeholder": "Dein Passwort",
+        "continue": "Weiter",
+        "forgot": "Passwort vergessen",
+        "email-sent": "Ein Link zum Zurücksetzen des Passworts wurde an {{email}} gesendet."
+      },
+      "enable-method": {
+        "title": "2-stufige Verifizierung aktivieren",
+        "description": "Bestätige, dass du es bist, wenn du ein Passwort mit einem Verifizierungscode verwendest",
+        "authenticator": {
+          "title": "Code aus der Authenticator-App",
+          "description": "Generiere einen Einmalcode in deiner Authenticator-App"
+        },
+        "text": {
+          "title": "Sende mir einen Code per SMS",
+          "description": "Füge deine Telefonnummer hinzu und bestätige sie"
+        }
+      }
+    },
+    "teamspace-detail": {
+      "tabs": {
+        "general": "Allgemein",
+        "members": "Mitglieder",
+        "security": "Sicherheit"
+      },
+      "joined": "Beigetreten",
+      "join": "Beitreten",
+      "general": {
+        "details-title": "Details",
+        "icon-name": "Symbol und Name",
+        "description": "Beschreibung",
+        "no-description": "Keine Beschreibung",
+        "permissions-title": "Berechtigungen",
+        "danger-zone-title": "Gefahrenzone",
+        "leave": "Teamspace verlassen",
+        "leave-description": "Entfernt den Teamspace aus deiner Seitenleiste",
+        "learn-more": "Erfahre mehr über Teamspaces"
+      },
+      "security": {
+        "title": "Teamspace-Sicherheit",
+        "learn-more": "Erfahre mehr über Teamspace-Sicherheit"
+      },
+      "members": {
+        "permissions-title": "Berechtigungen",
+        "learn-more-permissions": "Erfahre mehr über Teamspace-Berechtigungen",
+        "members-title": "Mitglieder",
+        "add-members": "Mitglieder hinzufügen",
+        "copy-link": "Link kopieren",
+        "search-placeholder": "Suche nach Mitgliedern oder Gruppen"
+      }
+    },
+    "upgrade": {
+      "title": "Auf den {{plan}} Plan upgraden",
+      "billing-details": {
+        "name-label": "Name",
+        "name-placeholder": "Ada Lovelace",
+        "business-name-label": "Unternehmensname (optional)",
+        "business-name-placeholder": "Acme Inc.",
+        "vat-label": "MwSt./USt-IdNr. (optional)",
+        "vat-placeholder": "123456789"
+      },
+      "payment-section": {
+        "title": "Zahlungsmethode"
+      },
+      "billing-options": {
+        "title": "Zahlungsoptionen",
+        "monthly": "Monatlich bezahlen",
+        "monthly-desc": "{{price}} $ / Monat / Mitglied",
+        "annually": "Jährlich bezahlen",
+        "annually-desc": "{{price}} $ / Monat / Mitglied",
+        "save-badge": "Spare 17 %"
+      },
+      "confirm": {
+        "title": "Upgrade bestätigen",
+        "per-month": "/ Monat",
+        "terms-description": "Dein Notion-Abonnement verlängert sich automatisch jedes {{interval}} zum oben genannten Preis pro Platz + Steuern, sofern es nicht gekündigt wird. Kündige vor der Verlängerung über den Abrechnungs-Tab, um zukünftige Gebühren zu vermeiden ( <1>Bedingungen</1> )",
+        "submit": "Upgrade auf {{plan}}"
+      }
+    },
+    "create-teamspace": {
+      "title": "Einen neuen Teamspace erstellen",
+      "description": "In Teamspaces organisiert dein Team Seiten, Berechtigungen und Mitglieder",
+      "icon-name": "Symbol und Name",
+      "name-placeholder": "Acme Labs",
+      "description-label": "Beschreibung",
+      "description-placeholder": "Details über deinen Teamspace",
+      "permissions": "Berechtigungen",
+      "learn-more": "Erfahre mehr über Teamspaces",
+      "submit": "Teamspace erstellen"
+    },
+    "password": {
+      "errors": {
+        "unique": "Bitte inkludiere zusätzliche eindeutige Zeichen.",
+        "mismatch": "Dein neues Passwort stimmt nicht überein."
+      },
+      "title-change": "Passwort ändern",
+      "title-set": "Passwort festlegen",
+      "description": "Verwende ein Passwort mit mindestens 15 Buchstaben oder mit mindestens 8 Zeichen, bestehend aus Buchstaben und Zahlen. Wenn du den Zugriff auf deine Schul-E-Mail-Adresse verlierst, kannst du dich mit deinem Passwort einloggen.",
+      "current-label": "Gib dein aktuelles Passwort ein",
+      "current-placeholder": "Aktuelles Passwort",
+      "new-label": "Gib ein neues Passwort ein",
+      "new-placeholder": "Neues Passwort",
+      "confirm-label": "Bestätige dein neues Passwort",
+      "confirm-placeholder": "Passwort bestätigen",
+      "success-title": "Dein Passwort wurde gespeichert",
+      "success-description": "Du kannst dich einloggen, selbst wenn du den Zugriff auf deine Schul-E-Mail verlierst."
+    }
+  }
 }

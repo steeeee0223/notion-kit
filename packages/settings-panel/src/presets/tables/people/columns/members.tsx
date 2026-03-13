@@ -1,12 +1,16 @@
-"use client";
-
 import type { ColumnDef, Row } from "@tanstack/react-table";
 
+import { Trans } from "@notion-kit/i18n";
 import { Role } from "@notion-kit/schemas";
 
-import { MemberRow, PartialRole, Scope } from "../../../../lib";
-import { SortingToggle, TextCell, UserCell } from "../../common-cells";
-import { userFilterFn } from "../../utils";
+import { MemberRow, PartialRole, Scope } from "@/lib/types";
+import {
+  SortingToggle,
+  TextCell,
+  UserCell,
+} from "@/presets/tables/common-cells";
+import { userFilterFn } from "@/presets/tables/utils";
+
 import { MemberActionCell, RoleSelectCell, TeamspacesCell } from "../cells";
 
 interface CreateMemberColumnsOptions {
@@ -31,7 +35,7 @@ export function createMemberColumns({
         const isSorted = column.getIsSorted();
         return (
           <SortingToggle
-            title="User"
+            title={<Trans i18nKey="tables.people.columns.user" />}
             isSorted={isSorted}
             toggle={() => column.toggleSorting(isSorted === "asc")}
           />
@@ -42,7 +46,12 @@ export function createMemberColumns({
     },
     {
       accessorKey: "teamspaces",
-      header: () => <TextCell value="Teamspaces" className="pl-2" />,
+      header: () => (
+        <TextCell
+          value={<Trans i18nKey="tables.people.columns.teamspaces" />}
+          className="pl-2"
+        />
+      ),
       cell: ({ row }) => (
         <TeamspacesCell
           teamspaces={row.original.teamspaces}
@@ -52,8 +61,14 @@ export function createMemberColumns({
     },
     {
       accessorKey: "groups",
-      header: () => <TextCell value="Groups" />,
-      cell: () => <div className="cursor-default text-sm text-muted">None</div>,
+      header: () => (
+        <TextCell value={<Trans i18nKey="tables.people.columns.groups" />} />
+      ),
+      cell: () => (
+        <div className="cursor-default text-sm text-muted">
+          <Trans i18nKey="tables.people.cells.none" />
+        </div>
+      ),
     },
     {
       accessorKey: "role",
@@ -61,7 +76,7 @@ export function createMemberColumns({
         const isSorted = column.getIsSorted();
         return (
           <SortingToggle
-            title="Role"
+            title={<Trans i18nKey="tables.people.columns.role" />}
             isSorted={isSorted}
             toggle={() => column.toggleSorting(isSorted === "asc")}
           />

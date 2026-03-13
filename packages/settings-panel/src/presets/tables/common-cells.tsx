@@ -8,7 +8,7 @@ import { Button } from "@notion-kit/shadcn";
 import { Avatar } from "../_components";
 
 interface TextCellProps {
-  value: string;
+  value: React.ReactNode;
   className?: string;
 }
 
@@ -17,7 +17,7 @@ export function TextCell({ value, className }: TextCellProps) {
 }
 
 interface SortingToggleProps {
-  title: string;
+  title: React.ReactNode;
   isSorted: false | SortDirection;
   toggle: () => void;
 }

@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 
+import { useTranslation } from "@notion-kit/i18n";
 import { IconBlock } from "@notion-kit/icon-block";
 import { IconMenu } from "@notion-kit/icon-menu";
 import { IconObject } from "@notion-kit/schemas";
@@ -46,6 +47,10 @@ export function CreateTeamspace({
   onClose,
   onSubmit,
 }: CreateTeamspaceProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.create-teamspace",
+  });
+
   const form = useForm<CreateTeamspaceSchema>({
     resolver: zodResolver(createTeamspaceSchema),
     defaultValues: {
@@ -66,16 +71,15 @@ export function CreateTeamspace({
       onClick={(e) => e.stopPropagation()}
     >
       <DialogHeader className="items-start">
-        <DialogTitle typography="h2">Create a new teamspace</DialogTitle>
+        <DialogTitle typography="h2">{t("title")}</DialogTitle>
         <DialogDescription typography="desc" className="text-start">
-          Teamspaces are where your team organizes pages, permissions, and
-          members
+          {t("description")}
         </DialogDescription>
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={submit} className="space-y-3">
           <div className="flex flex-col gap-1">
-            <Label>Icon & name</Label>
+            <Label>{t("icon-name")}</Label>
             <div className="flex items-center gap-2">
               <FormField
                 control={form.control}
@@ -110,7 +114,7 @@ export function CreateTeamspace({
                     <FormControl>
                       <Input
                         data-size="lg"
-                        placeholder="Acme Labs"
+                        placeholder={t("name-placeholder")}
                         {...field}
                       />
                     </FormControl>
@@ -124,10 +128,10 @@ export function CreateTeamspace({
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>{t("description-label")}</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Details about your teamspace"
+                    placeholder={t("description-placeholder")}
                     {...field}
                   />
                 </FormControl>
@@ -139,7 +143,7 @@ export function CreateTeamspace({
             name="permission"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Permissions</FormLabel>
+                <FormLabel>{t("permissions")}</FormLabel>
                 <FormControl>
                   <PermissionSelect workspace={workspace} {...field} />
                 </FormControl>
@@ -149,7 +153,7 @@ export function CreateTeamspace({
           <DialogFooter className="flex-row justify-between">
             <HintButton
               icon="help"
-              label="Learn about teamspaces"
+              label={t("learn-more")}
               href="https://www.notion.com/help/guides/teamspaces-give-teams-home-for-important-work"
             />
             <Button
@@ -159,7 +163,7 @@ export function CreateTeamspace({
               disabled={formState.isSubmitting || !formState.isValid}
             >
               {formState.isSubmitting && <Spinner />}
-              Create teamspace
+              {t("submit")}
             </Button>
           </DialogFooter>
         </form>

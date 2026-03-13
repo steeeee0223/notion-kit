@@ -1,7 +1,6 @@
-"use client";
-
 import { useFormContext } from "react-hook-form";
 
+import { useTranslation } from "@notion-kit/i18n";
 import {
   FormControl,
   FormField,
@@ -14,6 +13,10 @@ import {
 import type { UpgradeSchema } from "@/lib/types";
 
 export function BillingDetails() {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.upgrade.billing-details",
+  });
+
   const { control } = useFormContext<UpgradeSchema>();
 
   return (
@@ -23,9 +26,9 @@ export function BillingDetails() {
         name="name"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Name</FormLabel>
+            <FormLabel>{t("name-label")}</FormLabel>
             <FormControl>
-              <Input placeholder="Ada Lovelace" {...field} />
+              <Input placeholder={t("name-placeholder")} {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -36,9 +39,9 @@ export function BillingDetails() {
         name="businessName"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Business name (optional)</FormLabel>
+            <FormLabel>{t("business-name-label")}</FormLabel>
             <FormControl>
-              <Input placeholder="Acme Inc." {...field} />
+              <Input placeholder={t("business-name-placeholder")} {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -49,9 +52,9 @@ export function BillingDetails() {
         name="vatId"
         render={({ field }) => (
           <FormItem className="col-span-2">
-            <FormLabel>VAT/GST number (optional)</FormLabel>
+            <FormLabel>{t("vat-label")}</FormLabel>
             <FormControl>
-              <Input placeholder="123456789" {...field} />
+              <Input placeholder={t("vat-placeholder")} {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>

@@ -1,7 +1,6 @@
-"use client";
-
 import { useTransition } from "react";
 
+import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -23,8 +22,11 @@ interface DeleteMemberProps {
 }
 
 export function DeleteMember({ onDelete }: DeleteMemberProps) {
-  const [loading, startTransition] = useTransition();
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.delete-member",
+  });
 
+  const [loading, startTransition] = useTransition();
   const onRemove = () => startTransition(() => onDelete?.());
 
   return (
@@ -33,19 +35,15 @@ export function DeleteMember({ onDelete }: DeleteMemberProps) {
         <div className="flex items-center justify-center">
           <Icon.UserX className="size-9 shrink-0 fill-default/45 p-1" />
         </div>
-        <DialogTitle className="px-6 text-lg/[22px]">
-          Why are you removing this member from your workspace?
-        </DialogTitle>
-        <DialogDescription>
-          We&apos;d love your input to make Notion better
-        </DialogDescription>
+        <DialogTitle className="px-6 text-lg/[22px]">{t("title")}</DialogTitle>
+        <DialogDescription>{t("description")}</DialogDescription>
       </DialogHeader>
       <Card className="w-full" asButton={false}>
         <CardContent className="flex w-full flex-col items-start gap-4 p-4">
-          {options.map((option, i) => (
-            <div key={i} className="flex items-center gap-2">
+          {options.map((option) => (
+            <div key={option} className="flex items-center gap-2">
               <Checkbox id={option} size="xs" className="border-[1.5px]" />
-              <Label htmlFor={option}>{option} </Label>
+              <Label htmlFor={option}>{t(`options.${option}`)}</Label>
             </div>
           ))}
         </CardContent>
@@ -57,12 +55,12 @@ export function DeleteMember({ onDelete }: DeleteMemberProps) {
           size="sm"
           className="w-full font-semibold"
         >
-          Continue
+          {t("continue")}
           {loading && <Spinner />}
         </Button>
         <DialogClose asChild>
           <Button variant="hint" size="sm" className="h-7 w-fit">
-            Cancel
+            {t("cancel")}
           </Button>
         </DialogClose>
       </DialogFooter>
@@ -71,11 +69,11 @@ export function DeleteMember({ onDelete }: DeleteMemberProps) {
 }
 
 const options = [
-  "No longer need access to Notion",
-  "Not using it enough",
-  "Too expensive",
-  "Switching to another tool",
-  "No longer works here",
-  "Switching to another Notion workspace",
-  "Other",
-];
+  "no-longer-need",
+  "not-using-enough",
+  "too-expensive",
+  "switching-tool",
+  "no-longer-works",
+  "switching-workspace",
+  "other",
+] as const;

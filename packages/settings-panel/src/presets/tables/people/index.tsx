@@ -1,8 +1,7 @@
-"use client";
-
 import { useMemo } from "react";
 
 import { cn } from "@notion-kit/cn";
+import { useTranslation } from "@notion-kit/i18n";
 import type { Role } from "@notion-kit/schemas";
 
 import type {
@@ -11,13 +10,14 @@ import type {
   InvitationRow,
   MemberRow,
   Scope,
-} from "../../../lib";
-import { DataTable } from "../data-table";
+} from "@/lib/types";
+import { DataTable } from "@/presets/tables/data-table";
+
 import {
+  createGroupColumns,
   createGuestColumns,
   createInvitationColumns,
   createMemberColumns,
-  groupColumns,
 } from "./columns";
 
 interface MembersTableProps {
@@ -42,6 +42,9 @@ export function MembersTable({
   onTeamspaceSelect,
   ...props
 }: MembersTableProps) {
+  const { t } = useTranslation("settings");
+  const trans = t("tables.people", { returnObjects: true });
+
   const columns = useMemo(
     () =>
       createMemberColumns({
@@ -58,7 +61,7 @@ export function MembersTable({
       columns={columns}
       initialColumnPinning={["user"]}
       search={{ id: "user", value: search }}
-      emptyResult="No members"
+      emptyResult={trans.empty.members}
       getHeaderClassName={(headerId) =>
         cn(
           headerId === "user" && "w-55",
@@ -88,6 +91,9 @@ export function GuestsTable({
   onDelete,
   ...props
 }: GuestsTableProps) {
+  const { t } = useTranslation("settings");
+  const trans = t("tables.people", { returnObjects: true });
+
   const columns = useMemo(
     () => createGuestColumns({ scopes: new Set(scopes), onUpdate, onDelete }),
     [scopes, onUpdate, onDelete],
@@ -97,7 +103,7 @@ export function GuestsTable({
       columns={columns}
       initialColumnPinning={["user"]}
       search={{ id: "user", value: search }}
-      emptyResult="No guests"
+      emptyResult={trans.empty.guests}
       getHeaderClassName={(headerId) =>
         cn(
           headerId === "user" && "w-55",
@@ -116,10 +122,14 @@ interface GroupsTableProps {
 }
 
 export function GroupsTable({ search, ...props }: GroupsTableProps) {
+  const { t } = useTranslation("settings");
+  const trans = t("tables.people", { returnObjects: true });
+  const columns = useMemo(() => createGroupColumns(), []);
+
   return (
     <DataTable
-      columns={groupColumns}
-      emptyResult="No groups"
+      columns={columns}
+      emptyResult={trans.empty.groups}
       search={{ id: "group", value: search }}
       {...props}
     />
@@ -138,14 +148,17 @@ export function InvitationsTable({
   search,
   ...props
 }: InvitationsTableProps) {
-  const columns = useMemo(() => createInvitationColumns(props), [props]);
+  const { t } = useTranslation("settings");
+  const trans = t("tables.people", { returnObjects: true });
+
+  const columns = useMemo(() => createInvitationColumns({ ...props }), [props]);
   return (
     <DataTable
       columns={columns}
       data={data}
       initialColumnPinning={["email"]}
       search={{ id: "email", value: search }}
-      emptyResult="No invitations"
+      emptyResult={trans.empty.invitations}
       getHeaderClassName={(headerId) =>
         cn(
           headerId === "email" && "w-55",

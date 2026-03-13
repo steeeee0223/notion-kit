@@ -1,5 +1,4 @@
-"use client";
-
+import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import {
   DialogContent,
@@ -10,17 +9,18 @@ import {
 } from "@notion-kit/shadcn";
 
 export function PasswordSuccess() {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.password",
+  });
+
   return (
     <DialogContent className="w-70" hideClose>
       <DialogHeader>
         <DialogIcon>
           <Icon.Check className="size-[27px] fill-icon" />
         </DialogIcon>
-        <DialogTitle>Your password has been saved</DialogTitle>
-        <DialogDescription>
-          You&apos;ll be able to log in, even if you lose access to your school
-          email address.
-        </DialogDescription>
+        <DialogTitle>{t("success-title")}</DialogTitle>
+        <DialogDescription>{t("success-description")}</DialogDescription>
       </DialogHeader>
     </DialogContent>
   );

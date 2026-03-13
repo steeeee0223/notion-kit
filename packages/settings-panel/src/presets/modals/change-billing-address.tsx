@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddressElement, useElements } from "@stripe/react-stripe-js";
@@ -8,8 +6,9 @@ import type {
   StripeAddressElementChangeEvent,
 } from "@stripe/stripe-js";
 import { useForm } from "react-hook-form";
-import { z } from "zod/v4";
+import { z } from "zod/mini";
 
+import { useTranslation } from "@notion-kit/i18n";
 import {
   Button,
   DialogClose,
@@ -104,6 +103,10 @@ function AddressFormStripe({
   defaultBusinessName,
   onConfirm,
 }: AddressFormStripeProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.change-billing-address",
+  });
+
   const elements = useElements();
   const [isPending, startTransition] = useTransition();
   const [businessName, setBusinessName] = useState(defaultBusinessName);
@@ -130,7 +133,7 @@ function AddressFormStripe({
   return (
     <>
       <DialogTitle className="text-left" typography="h2">
-        Change your address
+        {t("title")}
       </DialogTitle>
       <div className="flex flex-col gap-4">
         <AddressElement
@@ -144,7 +147,7 @@ function AddressFormStripe({
           onChange={handleAddressChange}
         />
         <div className="flex flex-col gap-1">
-          <Label>Business name (optional)</Label>
+          <Label>{t("business-name")}</Label>
           <Input
             placeholder="Acme Inc."
             value={businessName}
@@ -160,7 +163,7 @@ function AddressFormStripe({
             size="sm"
             className="text-secondary"
           >
-            Cancel
+            {t("cancel")}
           </Button>
         </DialogClose>
         <Button
@@ -170,7 +173,7 @@ function AddressFormStripe({
           disabled={!addressComplete || isPending}
           onClick={handleSubmit}
         >
-          Update
+          {t("update")}
           {isPending && <Spinner />}
         </Button>
       </div>
@@ -202,6 +205,10 @@ function ChangeBillingAddressNative({
   defaultBusinessName,
   onConfirm,
 }: NativeFormProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.change-billing-address",
+  });
+
   const form = useForm<NativeFormSchema>({
     resolver: zodResolver(nativeFormSchema),
     defaultValues: {
@@ -230,7 +237,7 @@ function ChangeBillingAddressNative({
   return (
     <DialogContent className="w-105">
       <DialogTitle className="text-left" typography="h2">
-        Change your address
+        {t("title")}
       </DialogTitle>
       <Form {...form}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -239,7 +246,7 @@ function ChangeBillingAddressNative({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Full name</FormLabel>
+                <FormLabel>{t("full-name")}</FormLabel>
                 <FormControl>
                   <Input placeholder="Ada Lovelace" {...field} />
                 </FormControl>
@@ -251,7 +258,7 @@ function ChangeBillingAddressNative({
             name="country"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Country or region</FormLabel>
+                <FormLabel>{t("country")}</FormLabel>
                 <FormControl>
                   <Input placeholder="United States" {...field} />
                 </FormControl>
@@ -263,7 +270,7 @@ function ChangeBillingAddressNative({
             name="postalCode"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Postal code</FormLabel>
+                <FormLabel>{t("postal-code")}</FormLabel>
                 <FormControl>
                   <Input placeholder="94107" {...field} />
                 </FormControl>
@@ -275,7 +282,7 @@ function ChangeBillingAddressNative({
             name="businessName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Business name (optional)</FormLabel>
+                <FormLabel>{t("business-name")}</FormLabel>
                 <FormControl>
                   <Input placeholder="Acme Inc." {...field} />
                 </FormControl>
@@ -290,7 +297,7 @@ function ChangeBillingAddressNative({
                 size="sm"
                 className="text-secondary"
               >
-                Cancel
+                {t("cancel")}
               </Button>
             </DialogClose>
             <Button
@@ -299,7 +306,7 @@ function ChangeBillingAddressNative({
               size="sm"
               disabled={form.formState.isSubmitting}
             >
-              Update
+              {t("update")}
               {form.formState.isSubmitting && <Spinner />}
             </Button>
           </div>

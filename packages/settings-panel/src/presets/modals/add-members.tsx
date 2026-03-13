@@ -1,9 +1,8 @@
-"use client";
-
-import React, { useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { z } from "zod/v4";
 
 import { useFilter } from "@notion-kit/hooks";
+import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import { Role, type User } from "@notion-kit/schemas";
 import {
@@ -22,11 +21,6 @@ import { TagsInput } from "@notion-kit/tags-input";
 
 import { Avatar, HintButton } from "@/presets/_components";
 
-enum Heading {
-  Select = "Select a person",
-  Type = "Keep typing to invite email",
-}
-
 const emailSchema = z.email();
 
 type DetailedAccount = User & { invited?: boolean };
@@ -44,7 +38,14 @@ export function AddMembers({
   onOpenChange,
   onAdd,
 }: AddMembersProps) {
-  const [heading, setHeading] = useState(Heading.Select);
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.add-members",
+  });
+
+  const headingSelect = t("headings.select");
+  const headingType = t("headings.type");
+
+  const [heading, setHeading] = useState<string>(headingSelect);
   const [role, setRole] = useState<Exclude<Role, Role.ADMIN>>(Role.OWNER);
   /** Input & Filter */
   const [emails, setEmails] = useState<string[]>([]);
@@ -75,7 +76,7 @@ export function AddMembers({
   const onInputChange = (input: string) => {
     if (input.length > 0) {
       const result = emailSchema.safeParse(input);
-      setHeading(result.success ? Heading.Select : Heading.Type);
+      setHeading(result.success ? headingSelect : headingType);
     }
     updateSearch(input);
   };
@@ -88,7 +89,7 @@ export function AddMembers({
   };
   const onClose = () => {
     onOpenChange?.(false);
-    setHeading(Heading.Select);
+    setHeading(headingSelect);
     updateSearch("");
     setEmails([]);
     setRole(Role.OWNER);
@@ -108,7 +109,7 @@ export function AddMembers({
               role="combobox"
               type="email"
               size={1}
-              placeholder="Search name or emails"
+              placeholder={t("search-placeholder")}
               autoComplete="off"
               value={{ tags: emails, input: search }}
               inputSchema={emailSchema}
@@ -120,11 +121,7 @@ export function AddMembers({
               <Select
                 value={role}
                 onChange={setRole}
-                options={{
-                  owner: "Workspace Owner",
-                  member: "Member",
-                  guest: "Guest",
-                }}
+                options={t("roles", { returnObjects: true })}
                 className="w-fit text-muted"
               />
               <Button
@@ -135,7 +132,7 @@ export function AddMembers({
                 onClick={invite}
                 className="h-7 min-w-[70px] font-medium"
               >
-                Invite
+                {t("invite")}
                 {loading && <Spinner />}
               </Button>
             </div>
@@ -150,7 +147,7 @@ export function AddMembers({
             </div>
           </div>
           <CommandEmpty className="flex min-h-7 items-center px-2 py-0 leading-[1.2] text-secondary select-none">
-            <span>Type or paste in emails above, separated by commas.</span>
+            <span>{t("empty")}</span>
           </CommandEmpty>
           {filteredAccounts?.map((user) => (
             <Item key={user.id} user={user} onSelect={onTagSelect} />
@@ -166,7 +163,7 @@ export function AddMembers({
       >
         <HintButton
           icon="help"
-          label="Learn how to invite people and set permissions"
+          label={t("learn-more")}
           className="w-full justify-start px-3"
         />
       </a>
@@ -179,10 +176,14 @@ interface ItemProps {
   onSelect?: (value: string) => void;
 }
 
-const Item: React.FC<ItemProps> = ({
+function Item({
   user: { name, email, avatarUrl, invited },
   onSelect,
-}) => {
+}: ItemProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.add-members",
+  });
+
   return (
     <CommandItem
       className="leading-[1.2]"
@@ -207,9 +208,9 @@ const Item: React.FC<ItemProps> = ({
           size="sm"
           className="ml-auto tracking-wide uppercase"
         >
-          Invited
+          {t("invited-badge")}
         </Badge>
       )}
     </CommandItem>
   );
-};
+}

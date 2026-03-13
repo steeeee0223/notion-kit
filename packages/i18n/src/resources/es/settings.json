@@ -78,9 +78,22 @@
         "title": "Idioma",
         "description": "Elige el idioma que te gustaría usar en Notion.",
         "options": {
-          "en": { "label": "English", "description": "Inglés" },
-          "de": { "label": "Deutsch", "description": "Alemán" },
-          "es": { "label": "Español", "description": "Español" }
+          "en": {
+            "label": "English",
+            "description": "Inglés"
+          },
+          "de": {
+            "label": "Deutsch",
+            "description": "Alemán"
+          },
+          "es": {
+            "label": "Español",
+            "description": "Español"
+          },
+          "fr": {
+            "label": "Français",
+            "description": "Francés"
+          }
         }
       },
       "start-week": {
@@ -152,7 +165,9 @@
       "slack": {
         "title": "Notificaciones de Slack",
         "description": "Recibe notificaciones en tu espacio de trabajo de Slack cuando te mencionen en una página, propiedad de base de datos o comentario.",
-        "options": { "off": "Desactivadas" }
+        "options": {
+          "off": "Desactivadas"
+        }
       }
     },
     "email": {
@@ -401,7 +416,9 @@
       }
     }
   },
-  "sites": { "title": "Sitios" },
+  "sites": {
+    "title": "Sitios"
+  },
   "emoji": {
     "title": "Emoji personalizado",
     "limit": {
@@ -425,8 +442,8 @@
     "emojis": {
       "count_one": "{{count}} emoji",
       "count_other": "{{count}} emojis",
-      "search": "Buscar por nombre o agregado por",
-      "add-emoji": "Agregar emoji",
+      "search": "Buscar por nombre o añadido por",
+      "add-emoji": "Añadir emoji",
       "empty": "Los emojis personalizados están disponibles para todos en tu espacio de trabajo",
       "delete": {
         "title": "¿Eliminar este emoji?",
@@ -437,7 +454,150 @@
       "actions": {
         "edit": "Editar",
         "delete": "Eliminar"
+      },
+      "columns": {
+        "image": "Imagen",
+        "name": "Nombre",
+        "added-by": "Añadido por",
+        "date-added": "Fecha de adición"
       }
+    },
+    "connections": {
+      "columns": {
+        "connection": "Conexión",
+        "access": "Acceso"
+      },
+      "actions": {
+        "connect": "Conectar otra cuenta",
+        "disconnect": "Desconectar cuenta"
+      }
+    },
+    "people": {
+      "search": "Escribe para buscar...",
+      "empty": {
+        "members": "No hay miembros",
+        "guests": "No hay invitados",
+        "groups": "No hay grupos",
+        "invitations": "No hay invitaciones"
+      },
+      "columns": {
+        "user": "Usuario",
+        "teamspaces": "Espacios de equipo",
+        "groups": "Grupos",
+        "role": "Rol",
+        "access": "Acceso",
+        "status": "Estado",
+        "invited-by": "Invitado por",
+        "members": "Miembros",
+        "group": "Grupo"
+      },
+      "cells": {
+        "none": "Ninguno",
+        "no-access": "Sin acceso",
+        "empty": "No hay resultados.",
+        "teamspaces_one": "{{count}} espacio de equipo",
+        "teamspaces_other": "{{count}} espacios de equipo",
+        "members_one": "{{count}} miembro",
+        "members_other": "{{count}} miembros",
+        "pages_one": "{{count}} página",
+        "pages_other": "{{count}} páginas"
+      },
+      "actions": {
+        "leave-workspace": "Abandonar espacio de trabajo",
+        "remove-from-workspace": "Eliminar del espacio de trabajo",
+        "upgrade-to-member": "Mejorar a miembro",
+        "cancel-invitation": "Cancelar invitación"
+      },
+      "roles": {
+        "admin": "Administrador",
+        "owner": "Propietario del espacio de trabajo",
+        "member": "Miembro",
+        "guest": "Invitado"
+      },
+      "role-options": {
+        "owner": {
+          "label": "Propietario del espacio de trabajo",
+          "description": "Puede cambiar la configuración del espacio de trabajo e invitar a nuevos miembros."
+        },
+        "member": {
+          "label": "Miembro",
+          "description": "No puede cambiar la configuración del espacio de trabajo ni invitar a nuevos miembros."
+        }
+      },
+      "statuses": {
+        "pending": "Pendiente",
+        "rejected": "Rechazado",
+        "canceled": "Cancelado"
+      }
+    },
+    "plans": {
+      "actions": {
+        "compare": "Compara todas las funciones",
+        "collapse": "Ocultar",
+        "upgrade": "Mejorar",
+        "contact": "Contactar ventas"
+      },
+      "highlight": {
+        "free": {
+          "title": "Gratuito",
+          "description": "0 US$ por miembro / mes"
+        },
+        "plus": {
+          "title": "Plus",
+          "description": "10 US$ por miembro / mes con cobro anual",
+          "subtext": "12 US$ con cobro mensual"
+        },
+        "business": {
+          "title": "Business",
+          "description": "15 US$ por miembro / mes con cobro anual",
+          "subtext": "18 US$ con cobro mensual"
+        },
+        "enterprise": {
+          "title": "Enterprise",
+          "description": "Contacta con Ventas para consultar precios"
+        },
+        "tooltip": "Solo los propietarios del espacio de trabajo pueden hacer esto."
+      }
+    },
+    "sessions": {
+      "columns": {
+        "device-name": "Nombre del dispositivo",
+        "last-active": "Última actividad",
+        "location": "Ubicación"
+      },
+      "actions": {
+        "logout": "Cerrar sesión",
+        "logout-confirm-title": "¿Cerrar sesión en {{device}}?",
+        "logout-confirm-desc": "Se cerrará la sesión en este dispositivo."
+      }
+    },
+    "teamspaces": {
+      "columns": {
+        "teamspace": "Espacio de equipo",
+        "owners": "Propietarios",
+        "access": "Acceso",
+        "updated": "Actualizado",
+        "user": "Usuario",
+        "role": "Rol"
+      },
+      "roles": {
+        "owner": {
+          "label": "Propietario de espacio de equipo",
+          "description": "Puede editar la configuración y tiene acceso completo a las páginas del espacio de equipo."
+        },
+        "member": {
+          "label": "Miembro de espacio de equipo",
+          "description": "No puede editar la configuración y tiene acceso a las páginas del espacio de equipo."
+        }
+      },
+      "actions": {
+        "settings": "Configuración del espacio de equipo",
+        "leave": "Abandonar espacio de equipo",
+        "archive": "Archivar espacio de equipo",
+        "remove": "Eliminar"
+      },
+      "members": "miembros",
+      "joined": "Unido"
     }
   },
   "security": {
@@ -589,6 +749,250 @@
       }
     }
   },
-  "connections": { "title": "Conexiones" },
-  "import": { "title": "Importar" }
+  "connections": {
+    "title": "Conexiones"
+  },
+  "import": {
+    "title": "Importar"
+  },
+  "modals": {
+    "delete-guest": {
+      "title": "¿Eliminar a {{name}} del espacio de trabajo?",
+      "description": "Perderá el acceso a todas las páginas compartidas. Para volver a añadirlo como invitado en el futuro deberá enviarse una solicitud o un administrador deberá invitarlo.",
+      "remove": "Eliminar",
+      "cancel": "Cancelar"
+    },
+    "delete-member": {
+      "title": "¿Por qué vas a eliminar a este miembro de tu espacio de trabajo?",
+      "description": "Nos encantaría conocer tu opinión para hacer que Notion sea mejor",
+      "continue": "Continuar",
+      "cancel": "Cancelar",
+      "options": {
+        "no-longer-need": "Ya no necesita acceder a Notion",
+        "not-using-enough": "No lo usa lo suficiente",
+        "too-expensive": "Demasiado caro",
+        "switching-tool": "Cambiando a otra herramienta",
+        "no-longer-works": "Ya no trabaja aquí",
+        "switching-workspace": "Cambiando a otro espacio de trabajo de Notion",
+        "other": "Otro"
+      }
+    },
+    "logout-confirm": {
+      "logout": "Cerrar sesión",
+      "cancel": "Cancelar"
+    },
+    "delete-workspace": {
+      "title": "¿Eliminar este espacio de trabajo de forma permanente?",
+      "description": "Esta acción no se puede deshacer. Se eliminará permanentemente el espacio de trabajo, incluidas todas las páginas y archivos. Escribe el nombre del espacio de trabajo para confirmar.",
+      "validation": "Escribe \"{{name}}\" para continuar",
+      "delete": "Eliminar espacio de trabajo permanentemente",
+      "cancel": "Cancelar"
+    },
+    "delete-account": {
+      "title": "¿Eliminar tu cuenta de forma permanente?",
+      "description": "Esta acción no se puede deshacer. Se eliminará permanentemente tu cuenta. Todos los espacios de trabajo privados serán eliminados y te eliminaremos de todos los espacios compartidos.",
+      "label": "Escribe tu correo electrónico para confirmar.",
+      "validation": "Escribe \"{{email}}\" para continuar",
+      "delete": "Eliminar cuenta permanentemente",
+      "cancel": "Cancelar"
+    },
+    "leave-teamspace": {
+      "title": "¿Abandonar {{name}}?",
+      "description": "Ya no verás este espacio de equipo en tu barra lateral y es posible que pierdas permisos para las páginas del espacio de equipo.",
+      "remove": "Eliminar",
+      "cancel": "Cancelar"
+    },
+    "email-settings": {
+      "description": "Tu correo electrónico actual es <1>{{email}}</1>. Enviaremos un código de verificación temporal a este correo electrónico.",
+      "send": "Enviar código de verificación"
+    },
+    "change-plan": {
+      "title": "¿A qué plan quieres cambiar?",
+      "description": "Elige uno de los siguientes planes de Notion",
+      "continue": "Continuar",
+      "cancel": "Cancelar",
+      "plans": {
+        "free": "Gratuito",
+        "plus": "Plus",
+        "business": "Business",
+        "enterprise": "Enterprise"
+      },
+      "prices": {
+        "per-member": "{{price}} por miembro / mes",
+        "contact": "Contacta con Ventas para consultar precios"
+      }
+    },
+    "change-payment-method": {
+      "title": "Cambiar tu método de pago",
+      "update": "Actualizar",
+      "cancel": "Cancelar"
+    },
+    "change-billing-email": {
+      "title": "Cambiar el correo de facturación",
+      "update": "Actualizar",
+      "cancel": "Cancelar"
+    },
+    "add-members": {
+      "headings": {
+        "select": "Selecciona a una persona",
+        "type": "Sigue escribiendo para invitar un correo"
+      },
+      "search-placeholder": "Buscar nombre o correos",
+      "roles": {
+        "owner": "Propietario del espacio de trabajo",
+        "member": "Miembro",
+        "guest": "Invitado"
+      },
+      "invite": "Invitar",
+      "empty": "Escribe o pega correos arriba, separados por comas.",
+      "learn-more": "Descubre cómo invitar a personas y configurar permisos",
+      "invited-badge": "Invitado"
+    },
+    "passkeys": {
+      "title": "Gestionar Passkeys",
+      "description": "Usa las funciones de seguridad integradas en tu dispositivo, como Face ID, para iniciar sesión en lugar de recordar contraseñas.",
+      "error": "No se pudo guardar la passkey; por favor inténtalo de nuevo.",
+      "active": "Passkeys activas",
+      "add": "Añadir nueva passkey",
+      "cancel": "Cancelar",
+      "created-at": "Creada el {{date}}",
+      "rename": "Renombrar passkey",
+      "delete": "Eliminar passkey"
+    },
+    "change-billing-address": {
+      "title": "Cambiar tu dirección",
+      "business-name": "Nombre de la empresa (opcional)",
+      "full-name": "Nombre completo",
+      "country": "País o región",
+      "postal-code": "Código postal",
+      "update": "Actualizar",
+      "cancel": "Cancelar"
+    },
+    "add-team-members": {
+      "headings": {
+        "select": "Selecciona a una persona",
+        "type": "Sigue escribiendo para invitar a un miembro"
+      },
+      "title-prefix": "Invitar personas a",
+      "search-placeholder": "Buscar personas o grupos",
+      "no-results": "No se han encontrado resultados",
+      "invited": "Invitado",
+      "roles": {
+        "owner": "Propietario del espacio de equipo",
+        "member": "Miembro del espacio de equipo"
+      },
+      "copy-link": "Copiar enlace de invitación",
+      "invite": "Invitar"
+    },
+    "2fa": {
+      "add-form": {
+        "required": "Requerido",
+        "title": "Para continuar, necesitamos verificar tu identidad",
+        "password-placeholder": "Tu contraseña",
+        "continue": "Continuar",
+        "forgot": "Olvidé mi contraseña",
+        "email-sent": "Se ha enviado un enlace para restablecer la contraseña a {{email}}."
+      },
+      "enable-method": {
+        "title": "Activar la verificación en dos pasos",
+        "description": "Confirma que eres tú cuando uses una contraseña con un código de verificación",
+        "authenticator": {
+          "title": "Código de la aplicación de autenticación",
+          "description": "Genera un código temporal en tu aplicación de autenticación"
+        },
+        "text": {
+          "title": "Enviarme un código por mensaje de texto",
+          "description": "Añade y verifica tu número de teléfono"
+        }
+      }
+    },
+    "teamspace-detail": {
+      "tabs": {
+        "general": "General",
+        "members": "Miembros",
+        "security": "Seguridad"
+      },
+      "joined": "Unido",
+      "join": "Unirse",
+      "general": {
+        "details-title": "Detalles",
+        "icon-name": "Icono y nombre",
+        "description": "Descripción",
+        "no-description": "Sin descripción",
+        "permissions-title": "Permisos",
+        "danger-zone-title": "Zona de peligro",
+        "leave": "Abandonar espacio de equipo",
+        "leave-description": "Elimina el espacio de equipo de tu barra lateral",
+        "learn-more": "Más información sobre espacios de equipo"
+      },
+      "security": {
+        "title": "Seguridad del espacio de equipo",
+        "learn-more": "Más información sobre la seguridad"
+      },
+      "members": {
+        "permissions-title": "Permisos",
+        "learn-more-permissions": "Más información sobre los permisos",
+        "members-title": "Miembros",
+        "add-members": "Añadir miembros",
+        "copy-link": "Copiar enlace",
+        "search-placeholder": "Buscar miembros o grupos"
+      }
+    },
+    "upgrade": {
+      "title": "Mejorar al plan {{plan}}",
+      "billing-details": {
+        "name-label": "Nombre",
+        "name-placeholder": "Ada Lovelace",
+        "business-name-label": "Nombre de la empresa (opcional)",
+        "business-name-placeholder": "Acme Inc.",
+        "vat-label": "Número de IVA/GST (opcional)",
+        "vat-placeholder": "123456789"
+      },
+      "payment-section": {
+        "title": "Método de pago"
+      },
+      "billing-options": {
+        "title": "Opciones de facturación",
+        "monthly": "Pago mensual",
+        "monthly-desc": "${{price}} / mes / miembro",
+        "annually": "Pago anual",
+        "annually-desc": "${{price}} / mes / miembro",
+        "save-badge": "Ahorra un 17%"
+      },
+      "confirm": {
+        "title": "Confirmar mejora",
+        "per-month": "/ mes",
+        "terms-description": "Tu suscripción a Notion se renovará automáticamente cada {{interval}} al precio por miembro más impuestos anterior a menos que se cancele. Cancélala a través de la pestaña de Facturación antes de que se renueve para evitar próximos cargos ( <1>términos</1> )",
+        "submit": "Mejorar a {{plan}}"
+      }
+    },
+    "create-teamspace": {
+      "title": "Crear un nuevo espacio de equipo",
+      "description": "Los espacios de equipo son donde tu equipo organiza páginas, permisos y miembros",
+      "icon-name": "Icono y nombre",
+      "name-placeholder": "Acme Labs",
+      "description-label": "Descripción",
+      "description-placeholder": "Detalles sobre tu espacio de equipo",
+      "permissions": "Permisos",
+      "learn-more": "Más información sobre los espacios de equipo",
+      "submit": "Crear espacio de equipo"
+    },
+    "password": {
+      "errors": {
+        "unique": "Por favor, incluye caracteres únicos adicionales.",
+        "mismatch": "Tu nueva contraseña no coincide."
+      },
+      "title-change": "Cambiar contraseña",
+      "title-set": "Establecer una contraseña",
+      "description": "Usa una contraseña de al menos 15 caracteres o de al menos 8 caracteres con letras y números. Si pierdes el acceso al correo electrónico de tu institución educativa, podrás iniciar sesión usando tu contraseña.",
+      "current-label": "Introduce tu contraseña actual",
+      "current-placeholder": "Contraseña actual",
+      "new-label": "Introduce una nueva contraseña",
+      "new-placeholder": "Nueva contraseña",
+      "confirm-label": "Confirma tu nueva contraseña",
+      "confirm-placeholder": "Confirmar contraseña",
+      "success-title": "Tu contraseña se ha guardado",
+      "success-description": "Podrás iniciar sesión incluso si pierdes el acceso a tu correo de la institución educativa."
+    }
+  }
 }

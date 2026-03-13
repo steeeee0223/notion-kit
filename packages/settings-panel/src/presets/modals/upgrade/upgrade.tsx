@@ -1,10 +1,9 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useElements, useStripe } from "@stripe/react-stripe-js";
 import type { Stripe } from "@stripe/stripe-js";
 import { useForm } from "react-hook-form";
 
+import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import {
   DialogContent,
@@ -71,6 +70,8 @@ function UpgradeForm({
   defaultBusinessName,
   onUpgrade,
 }: UpgradeFormProps) {
+  const { t } = useTranslation("settings", { keyPrefix: "modals.upgrade" });
+
   const stripe = useStripe();
   const elements = useElements();
 
@@ -101,7 +102,7 @@ function UpgradeForm({
           <DialogHeader className="items-start text-left">
             <Icon.ArrowInCircleUpFill className="-ml-1 size-8 fill-blue" />
             <DialogTitle className="text-left text-[22px]/[26px]">
-              Upgrade to the {plan.name} plan
+              {t("title", { plan: plan.name })}
             </DialogTitle>
             {description && (
               <DialogDescription typography="h2" className="text-left">

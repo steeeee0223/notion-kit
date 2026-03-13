@@ -1,7 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod/v4";
+import { z } from "zod/mini";
 
+import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -32,6 +33,10 @@ interface DeleteAccountProps {
 }
 
 export function DeleteAccount({ email, onSubmit }: DeleteAccountProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.delete-account",
+  });
+
   const form = useForm<UserSchema>({
     resolver: zodResolver(userSchema),
     defaultValues: { email: "" },
@@ -50,14 +55,8 @@ export function DeleteAccount({ email, onSubmit }: DeleteAccountProps) {
         <DialogIcon>
           <Icon.ExclamationMarkCircled className="size-9 fill-red" />
         </DialogIcon>
-        <DialogTitle typography="h2">
-          Delete your entire account permanently?
-        </DialogTitle>
-        <DialogDescription>
-          This action cannot be undone. This will permanently delete your entire
-          account. All private workspaces will be deleted, and you will be
-          removed from all shared workspaces.
-        </DialogDescription>
+        <DialogTitle typography="h2">{t("title")}</DialogTitle>
+        <DialogDescription>{t("description")}</DialogDescription>
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={submit} className="space-y-4">
@@ -66,7 +65,7 @@ export function DeleteAccount({ email, onSubmit }: DeleteAccountProps) {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Please type in your email to confirm.</FormLabel>
+                <FormLabel>{t("label")}</FormLabel>
                 <FormControl>
                   <Input
                     type="email"
@@ -79,7 +78,7 @@ export function DeleteAccount({ email, onSubmit }: DeleteAccountProps) {
             )}
           />
           {form.formState.errors.email && (
-            <FormMessage>{`Please type "${email}" to continue`}</FormMessage>
+            <FormMessage>{t("validation", { email })}</FormMessage>
           )}
           <DialogFooter>
             <Button
@@ -89,7 +88,7 @@ export function DeleteAccount({ email, onSubmit }: DeleteAccountProps) {
               className="w-full"
               disabled={form.formState.isSubmitting}
             >
-              Permanently delete account
+              {t("delete")}
             </Button>
             <DialogClose asChild>
               <Button
@@ -99,7 +98,7 @@ export function DeleteAccount({ email, onSubmit }: DeleteAccountProps) {
                 className="h-7 w-fit"
                 disabled={form.formState.isSubmitting}
               >
-                Cancel
+                {t("cancel")}
               </Button>
             </DialogClose>
           </DialogFooter>

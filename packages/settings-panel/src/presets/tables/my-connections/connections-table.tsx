@@ -1,11 +1,10 @@
-"use client";
-
 import { useMemo } from "react";
 
 import { cn } from "@notion-kit/cn";
 
-import type { Connection } from "../../../lib";
-import { DataTable } from "../data-table";
+import type { Connection } from "@/lib/types";
+import { DataTable } from "@/presets/tables/data-table";
+
 import {
   createConnectionColumns,
   type CreateConnectionColumnsOptions,
@@ -16,7 +15,10 @@ interface ConnectionsTableProps extends CreateConnectionColumnsOptions {
 }
 
 export function ConnectionsTable({ data, ...actions }: ConnectionsTableProps) {
-  const columns = useMemo(() => createConnectionColumns(actions), [actions]);
+  const columns = useMemo(
+    () => createConnectionColumns({ ...actions }),
+    [actions],
+  );
   return (
     <DataTable
       columns={columns}

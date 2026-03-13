@@ -1,8 +1,7 @@
-"use client";
-
 import { useState } from "react";
 
 import { useTemporaryFix } from "@notion-kit/hooks";
+import { useTranslation } from "@notion-kit/i18n";
 import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import { User } from "@notion-kit/schemas";
@@ -23,7 +22,8 @@ import type {
   TeamMemberRow,
   TeamspacePermission,
   TeamspaceRole,
-} from "../../../lib";
+} from "@/lib/types";
+
 import { LeaveTeamspace } from "../leave-teamspace";
 import { Tab } from "./common";
 import { GeneralContent } from "./general-content";
@@ -65,6 +65,10 @@ export function TeamspaceDetail({
   onRemoveMember,
   onFetchWorkspaceMembers,
 }: TeamspaceDetailProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "modals.teamspace-detail",
+  });
+
   const { onCloseAutoFocus } = useTemporaryFix();
   const [tab, setTab] = useState(Tab.Members);
 
@@ -93,7 +97,7 @@ export function TeamspaceDetail({
                     className="h-7 rounded-full bg-default/5 px-2.5 hover:bg-default/15"
                   >
                     <Icon.Check className="block h-full w-3 fill-current" />
-                    Joined
+                    {t("joined")}
                   </Button>
                 </DialogTrigger>
               </TooltipPreset>
@@ -106,18 +110,18 @@ export function TeamspaceDetail({
               className="h-7 rounded-full bg-default/5 px-2.5 hover:bg-default/15"
               onClick={onJoin}
             >
-              Join
+              {t("join")}
             </Button>
           )}
         </div>
         <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)}>
           <TabsList className="mb-5">
-            <TabsTrigger value={Tab.General}>General</TabsTrigger>
+            <TabsTrigger value={Tab.General}>{t("tabs.general")}</TabsTrigger>
             <TabsTrigger value={Tab.Members}>
-              Members
+              {t("tabs.members")}
               <span className="text-muted">{teamMembers.length}</span>
             </TabsTrigger>
-            <TabsTrigger value={Tab.Security}>Security</TabsTrigger>
+            <TabsTrigger value={Tab.Security}>{t("tabs.security")}</TabsTrigger>
           </TabsList>
           <TabsContent value={Tab.General}>
             <GeneralContent
