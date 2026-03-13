@@ -494,10 +494,13 @@
       "cells": {
         "none": "Ninguno",
         "no-access": "Sin acceso",
-        "teamspaces": "{{count}} espacios de equipo",
-        "members": "{{count}} miembros",
-        "pages": "{{count}} páginas",
-        "empty": "No hay resultados."
+        "empty": "No hay resultados.",
+        "teamspaces_one": "{{count}} espacio de equipo",
+        "teamspaces_other": "{{count}} espacios de equipo",
+        "members_one": "{{count}} miembro",
+        "members_other": "{{count}} miembros",
+        "pages_one": "{{count}} página",
+        "pages_other": "{{count}} páginas"
       },
       "actions": {
         "leave-workspace": "Abandonar espacio de trabajo",

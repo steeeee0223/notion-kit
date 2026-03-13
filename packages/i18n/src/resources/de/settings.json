@@ -493,10 +493,13 @@
       "cells": {
         "none": "Keine",
         "no-access": "Kein Zugriff",
-        "teamspaces": "{{count}} Teamspaces",
-        "members": "{{count}} Mitglieder",
-        "pages": "{{count}} Seiten",
-        "empty": "Keine Ergebnisse."
+        "empty": "Keine Ergebnisse.",
+        "teamspaces_one": "{{count}} Teamspace",
+        "teamspaces_other": "{{count}} Teamspaces",
+        "members_one": "{{count}} Mitglied",
+        "members_other": "{{count}} Mitglieder",
+        "pages_one": "{{count}} Seite",
+        "pages_other": "{{count}} Seiten"
       },
       "actions": {
         "leave-workspace": "Workspace verlassen",

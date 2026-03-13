@@ -494,10 +494,13 @@ interface Resources {
         cells: {
           none: "None";
           "no-access": "No access";
-          teamspaces: "{{count}} teamspaces";
-          members: "{{count}} members";
-          pages: "{{count}} pages";
           empty: "No results.";
+          teamspaces_one: "{{count}} teamspace";
+          teamspaces_other: "{{count}} teamspaces";
+          members_one: "{{count}} member";
+          members_other: "{{count}} members";
+          pages_one: "{{count}} page";
+          pages_other: "{{count}} pages";
         };
         actions: {
           "leave-workspace": "Leave workspace";
