@@ -507,6 +507,27 @@
         "remove-from-workspace": "Eliminar del espacio de trabajo",
         "upgrade-to-member": "Mejorar a miembro",
         "cancel-invitation": "Cancelar invitación"
+      },
+      "roles": {
+        "admin": "Administrador",
+        "owner": "Propietario del espacio de trabajo",
+        "member": "Miembro",
+        "guest": "Invitado"
+      },
+      "role-options": {
+        "owner": {
+          "label": "Propietario del espacio de trabajo",
+          "description": "Puede cambiar la configuración del espacio de trabajo e invitar a nuevos miembros."
+        },
+        "member": {
+          "label": "Miembro",
+          "description": "No puede cambiar la configuración del espacio de trabajo ni invitar a nuevos miembros."
+        }
+      },
+      "statuses": {
+        "pending": "Pendiente",
+        "rejected": "Rechazado",
+        "canceled": "Cancelado"
       }
     },
     "plans": {

@@ -494,19 +494,40 @@ interface Resources {
         cells: {
           none: "None";
           "no-access": "No access";
-          empty: "No results.";
           teamspaces_one: "{{count}} teamspace";
           teamspaces_other: "{{count}} teamspaces";
           members_one: "{{count}} member";
           members_other: "{{count}} members";
           pages_one: "{{count}} page";
           pages_other: "{{count}} pages";
+          empty: "No results.";
         };
         actions: {
           "leave-workspace": "Leave workspace";
           "remove-from-workspace": "Remove from workspace";
           "upgrade-to-member": "Upgrade to member";
           "cancel-invitation": "Cancel invitation";
+        };
+        roles: {
+          admin: "Admin";
+          owner: "Workspace Owner";
+          member: "Member";
+          guest: "Guest";
+        };
+        "role-options": {
+          owner: {
+            label: "Workspace owner";
+            description: "Can change workspace settings and invite new members to the workspace.";
+          };
+          member: {
+            label: "Member";
+            description: "Cannot change workspace settings or invite new members to the workspace.";
+          };
+        };
+        statuses: {
+          pending: "Pending";
+          rejected: "Rejected";
+          canceled: "Canceled";
         };
       };
       plans: {

@@ -23,8 +23,6 @@ import { Scope } from "@/lib/types";
 import type { GuestRow, MemberRow, PartialRole } from "@/lib/types";
 import { DeleteGuest, DeleteMember } from "@/presets/modals";
 
-import { roleLabels, roleOptions } from "./constants";
-
 interface TeamspacesCellProps {
   teamspaces: MemberRow["teamspaces"];
   onTeamspaceSelect?: (id: string) => void;
@@ -89,11 +87,15 @@ interface RoleCellProps {
 }
 
 export function RoleCell({ className, role }: RoleCellProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "tables.people.roles",
+  });
+
   return (
     <div
       className={cn("w-auto cursor-default text-sm text-secondary", className)}
     >
-      {roleLabels[role]}
+      {t(role)}
     </div>
   );
 }
@@ -108,6 +110,9 @@ export function RoleSelectCell({
   scopes,
   onSelect,
 }: RoleSelectCellProps) {
+  const { t } = useTranslation("settings", { keyPrefix: "tables.people" });
+  const roleOptions = t("role-options", { returnObjects: true });
+
   const [isUpdating, startTransition] = useTransition();
   const select = (role: PartialRole) =>
     startTransition(async () => await onSelect?.(role));
@@ -143,8 +148,9 @@ interface MemberActionCellProps {
 }
 
 export function MemberActionCell({ isSelf, onDelete }: MemberActionCellProps) {
-  const { t } = useTranslation("settings", { keyPrefix: "tables.people" });
-  const trans = t("actions", { returnObjects: true });
+  const { t } = useTranslation("settings", {
+    keyPrefix: "tables.people.actions",
+  });
 
   return (
     <DropdownMenu>
@@ -161,9 +167,7 @@ export function MemberActionCell({ isSelf, onDelete }: MemberActionCellProps) {
                 variant="error"
                 Icon={<Icon.Bye className="size-4" />}
                 Body={
-                  isSelf
-                    ? trans["leave-workspace"]
-                    : trans["remove-from-workspace"]
+                  isSelf ? t("leave-workspace") : t("remove-from-workspace")
                 }
                 onSelect={(e) => e.preventDefault()}
               />
@@ -180,6 +184,10 @@ interface AccessCellProps {
   access: GuestRow["access"];
 }
 export function AccessCell({ access }: AccessCellProps) {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "tables.people.cells",
+  });
+
   const options = access.reduce<SelectPresetProps["options"]>(
     (acc, { id, name, scope }) => ({
       ...acc,
@@ -187,11 +195,12 @@ export function AccessCell({ access }: AccessCellProps) {
     }),
     {},
   );
+
   return (
     <div className="flex items-center">
       {access.length < 1 ? (
         <div className="min-w-30 cursor-default pl-2 text-sm text-muted">
-          No access
+          {t("no-access")}
         </div>
       ) : (
         <Select
@@ -199,17 +208,24 @@ export function AccessCell({ access }: AccessCellProps) {
           options={options}
           hideCheck
           align="center"
-          placeholder={`${access.length} pages`}
-          renderOption={() => AccessCellDisplay({ pages: access.length })}
+          placeholder={t("pages", { count: access.length })}
+          renderOption={() => <AccessCellDisplay pages={access.length} />}
         />
       )}
     </div>
   );
 }
 
-const AccessCellDisplay = ({ pages }: { pages: number }) => (
-  <div className="min-w-0 truncate text-secondary">{`${pages} pages`}</div>
-);
+const AccessCellDisplay = ({ pages }: { pages: number }) => {
+  const { t } = useTranslation("settings", {
+    keyPrefix: "tables.people.cells",
+  });
+  return (
+    <div className="min-w-0 truncate text-secondary">
+      {t("pages", { count: pages })}
+    </div>
+  );
+};
 
 interface GuestActionCellProps {
   name: string;

@@ -506,6 +506,27 @@
         "remove-from-workspace": "Remove from workspace",
         "upgrade-to-member": "Upgrade to member",
         "cancel-invitation": "Cancel invitation"
+      },
+      "roles": {
+        "admin": "Admin",
+        "owner": "Workspace Owner",
+        "member": "Member",
+        "guest": "Guest"
+      },
+      "role-options": {
+        "owner": {
+          "label": "Workspace owner",
+          "description": "Can change workspace settings and invite new members to the workspace."
+        },
+        "member": {
+          "label": "Member",
+          "description": "Cannot change workspace settings or invite new members to the workspace."
+        }
+      },
+      "statuses": {
+        "pending": "Pending",
+        "rejected": "Rejected",
+        "canceled": "Canceled"
       }
     },
     "plans": {

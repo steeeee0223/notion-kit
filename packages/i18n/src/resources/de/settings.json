@@ -506,6 +506,27 @@
         "remove-from-workspace": "Aus dem Workspace entfernen",
         "upgrade-to-member": "Zum Mitglied heraufstufen",
         "cancel-invitation": "Einladung stornieren"
+      },
+      "roles": {
+        "admin": "Administrator",
+        "owner": "Workspace-Besitzer",
+        "member": "Mitglied",
+        "guest": "Gast"
+      },
+      "role-options": {
+        "owner": {
+          "label": "Workspace-Besitzer",
+          "description": "Kann Workspace-Einstellungen ändern und neue Mitglieder einladen."
+        },
+        "member": {
+          "label": "Mitglied",
+          "description": "Kann keine Workspace-Einstellungen ändern oder neue Mitglieder einladen."
+        }
+      },
+      "statuses": {
+        "pending": "Ausstehend",
+        "rejected": "Abgelehnt",
+        "canceled": "Abgebrochen"
       }
     },
     "plans": {

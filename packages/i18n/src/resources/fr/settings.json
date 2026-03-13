@@ -506,6 +506,27 @@
         "remove-from-workspace": "Retirer de l'espace de travail",
         "upgrade-to-member": "Passer à membre",
         "cancel-invitation": "Annuler l'invitation"
+      },
+      "roles": {
+        "admin": "Administrateur",
+        "owner": "Propriétaire de l'espace de travail",
+        "member": "Membre",
+        "guest": "Invité"
+      },
+      "role-options": {
+        "owner": {
+          "label": "Propriétaire de l'espace de travail",
+          "description": "Peut modifier les paramètres de l'espace de travail et inviter de nouveaux membres."
+        },
+        "member": {
+          "label": "Membre",
+          "description": "Ne peut pas modifier les paramètres de l'espace de travail ni inviter de nouveaux membres."
+        }
+      },
+      "statuses": {
+        "pending": "En attente",
+        "rejected": "Rejeté",
+        "canceled": "Annulé"
       }
     },
     "plans": {
