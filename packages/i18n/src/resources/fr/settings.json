@@ -453,6 +453,12 @@
       "actions": {
         "edit": "Modifier",
         "delete": "Supprimer"
+      },
+      "columns": {
+        "image": "Image",
+        "name": "Nom",
+        "added-by": "Ajouté par",
+        "date-added": "Date d'ajout"
       }
     },
     "connections": {

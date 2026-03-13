@@ -16,11 +16,11 @@ export function I18nProvider({
   language,
   defaultNS,
 }: I18nProviderProps) {
-  const i18n = useMemo(() => createI18n(), []);
+  const i18n = useMemo(() => createI18n(language), []);
 
   useEffect(() => {
     void setupLanguage(i18n, language);
-  }, [language]);
+  }, [i18n, language]);
 
   return (
     <I18nextProvider i18n={i18n} defaultNS={defaultNS}>

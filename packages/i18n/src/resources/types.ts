@@ -455,6 +455,12 @@ interface Resources {
           edit: "Edit";
           delete: "Delete";
         };
+        columns: {
+          image: "Image";
+          name: "Name";
+          "added-by": "Added by";
+          "date-added": "Date added";
+        };
       };
       connections: {
         columns: {

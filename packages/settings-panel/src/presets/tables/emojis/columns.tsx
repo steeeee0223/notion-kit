@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { ColumnDef, Row } from "@tanstack/react-table";
 
 import { AlertModal } from "@notion-kit/common/alert-modal";
-import { useTranslation } from "@notion-kit/i18n";
+import { Trans, useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -44,7 +44,9 @@ export function createEmojiColumns({
   return [
     {
       id: "image",
-      header: () => <TextCell value="Image" />,
+      header: () => (
+        <TextCell value={<Trans i18nKey="tables.emojis.columns.image" />} />
+      ),
       cell: ({ row }) => (
         <img
           loading="lazy"
@@ -57,14 +59,18 @@ export function createEmojiColumns({
     {
       id: "name",
       accessorKey: "name",
-      header: () => <TextCell value="Name" />,
+      header: () => (
+        <TextCell value={<Trans i18nKey="tables.emojis.columns.name" />} />
+      ),
       cell: ({ row }) => <TextCell value={row.original.name} />,
       filterFn: emojiFilterFn,
     },
     {
       id: "createdBy",
       accessorKey: "createdBy",
-      header: () => <TextCell value="Added by" />,
+      header: () => (
+        <TextCell value={<Trans i18nKey="tables.emojis.columns.added-by" />} />
+      ),
       cell: ({ row }) => <TextCell value={row.original.createdBy} />,
     },
     {
@@ -72,7 +78,7 @@ export function createEmojiColumns({
       accessorKey: "createdAt",
       header: ({ column }) => (
         <SortingToggle
-          title="Date added"
+          title={<Trans i18nKey="tables.emojis.columns.date-added" />}
           isSorted={column.getIsSorted()}
           toggle={() => column.toggleSorting()}
         />
