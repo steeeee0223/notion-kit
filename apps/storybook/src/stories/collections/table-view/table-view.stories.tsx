@@ -69,3 +69,17 @@ export const BoardView: Story = {
     ),
   ],
 };
+
+export const TimelineView: Story = {
+  decorators: [
+    () => (
+      <div className="px-60 py-24">
+        <TableView
+          table={{ layout: "timeline" }}
+          properties={mockProps}
+          data={mockData}
+        />
+      </div>
+    ),
+  ],
+};
