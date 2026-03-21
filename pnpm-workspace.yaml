@@ -45,8 +45,8 @@ catalogs:
     "@turbo/gen": ^2.6.0
     eslint-plugin-turbo: ^2.6.0
   tailwind-v4:
-    tailwindcss: ^4.1.16
-    "@tailwindcss/postcss": ^4.1.16
+    tailwindcss: ^4.2.2
+    "@tailwindcss/postcss": ^4.2.2
   ui:
     class-variance-authority: ^0.7.1
     lucide-react: ^0.456.0
