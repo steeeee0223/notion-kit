@@ -2,7 +2,9 @@ import fs from "node:fs";
 import path from "path";
 
 export const getFileSource = (filePath: string) => {
-  const fullPath = path.join(process.cwd(), "src", filePath);
+  const fullPath = filePath.startsWith("registry/")
+    ? path.join(process.cwd(), "../../packages", filePath)
+    : path.join(process.cwd(), "src", filePath);
   const content = fs.readFileSync(fullPath, "utf-8");
 
   const fileName = path.basename(fullPath);

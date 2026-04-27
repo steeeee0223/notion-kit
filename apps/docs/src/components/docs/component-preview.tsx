@@ -6,6 +6,7 @@ import { ThemeProvider } from "@notion-kit/shadcn";
 import { Index } from "@/__registry__/demos";
 import { CodeBlock } from "@/components/docs/code-block";
 import { getFileSource } from "@/lib/get-file-source";
+import { DemoName } from "@/registry/demos";
 
 import {
   ComponentWrapper,
@@ -14,7 +15,7 @@ import {
 
 interface ComponentPreviewProps {
   className?: string;
-  name: string;
+  name: DemoName;
   preview?: string;
   expandable?: boolean;
   hideCode?: boolean;
