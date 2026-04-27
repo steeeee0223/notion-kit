@@ -577,6 +577,9 @@ importers:
       '@notion-kit/navbar':
         specifier: workspace:*
         version: link:../../packages/navbar
+      '@notion-kit/registry':
+        specifier: workspace:*
+        version: link:../../packages/registry
       '@notion-kit/schemas':
         specifier: workspace:*
         version: link:../../packages/schemas
