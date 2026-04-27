@@ -40,11 +40,6 @@ export const ComponentPreview = async ({
   // eslint-disable-next-line @typescript-eslint/require-await
 }: ComponentPreviewProps) => {
   const demoItem = Index[name];
-  if (!demoItem) {
-    console.error(`Item not found: ${name}`);
-    return null;
-  }
-
   const Component = demoItem.component;
   const files = demoItem.files.map((file) => getFileSource(file));
 
