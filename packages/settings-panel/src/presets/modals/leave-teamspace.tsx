@@ -30,12 +30,10 @@ export function LeaveTeamspace({ name, onLeave }: LeaveTeamspaceProps) {
 
   return (
     <DialogContent className="w-[300px] p-5">
-      <DialogHeader>
-        <DialogTitle typography="h2">{t("title", { name })}</DialogTitle>
+      <DialogHeader align="center">
+        <DialogTitle>{t("title", { name })}</DialogTitle>
       </DialogHeader>
-      <DialogDescription className="text-muted">
-        {t("description")}
-      </DialogDescription>
+      <DialogDescription>{t("description")}</DialogDescription>
       <DialogFooter>
         <Button
           onClick={leave}

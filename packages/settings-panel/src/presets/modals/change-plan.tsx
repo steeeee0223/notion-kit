@@ -62,9 +62,9 @@ export function ChangePlan({ currentPlan, onConfirm }: ChangePlanProps) {
 
   return (
     <DialogContent className="max-h-[744px] w-fit max-w-[966px] min-w-[425px] gap-6">
-      <DialogHeader>
-        <Icon.ArrowLeftRight className="size-9 fill-secondary" />
-        <DialogTitle typography="h2">{t("title")}</DialogTitle>
+      <DialogHeader align="center">
+        <Icon.ArrowLeftRight className="size-9 fill-icon" />
+        <DialogTitle>{t("title")}</DialogTitle>
         <DialogDescription>{t("description")}</DialogDescription>
       </DialogHeader>
       <RadioGroup

@@ -39,10 +39,9 @@ export function AlertModal({
       forceMount
       hideClose
       className="flex w-[300px] flex-col items-start justify-center gap-2 p-6"
-      onClick={(e) => e.stopPropagation()}
       aria-describedby={undefined}
     >
-      <DialogHeader>
+      <DialogHeader align="center">
         <DialogTitle className="text-base font-normal tracking-wide">
           {title}
         </DialogTitle>

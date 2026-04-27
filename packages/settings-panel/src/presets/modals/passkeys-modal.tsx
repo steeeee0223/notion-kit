@@ -33,14 +33,12 @@ export function PasskeysModal() {
 
   return (
     <DialogContent className="w-100 p-5">
-      <DialogHeader>
+      <DialogHeader align="center">
         <DialogIcon>
-          <Icon.LockShield className="size-8 fill-primary/45" />
+          <Icon.LockShield className="size-8 fill-icon" />
         </DialogIcon>
         <DialogTitle>{t("title")}</DialogTitle>
-        <DialogDescription className="text-primary">
-          {t("description")}
-        </DialogDescription>
+        <DialogDescription>{t("description")}</DialogDescription>
         {error && <div className="text-xs text-red">{t("error")}</div>}
       </DialogHeader>
       {passkeys.length > 0 && (

@@ -80,8 +80,8 @@ export function AddTeamMembers({
       aria-describedby=""
       onCloseAutoFocus={() => form.reset()}
     >
-      <DialogHeader className="items-start text-left">
-        <DialogTitle typography="h2" className="flex items-center text-start">
+      <DialogHeader>
+        <DialogTitle className="flex items-center">
           <div className="min-w-1/4">{t("title-prefix")}</div>
           <IconBlock className="mx-1" size="sm" icon={teamspace.icon} />
           <div className="min-w-60 truncate pr-2.5 font-medium">

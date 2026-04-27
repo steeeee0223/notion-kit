@@ -15,7 +15,7 @@ export function PasswordSuccess() {
 
   return (
     <DialogContent className="w-70" hideClose>
-      <DialogHeader>
+      <DialogHeader align="center">
         <DialogIcon>
           <Icon.Check className="size-[27px] fill-icon" />
         </DialogIcon>

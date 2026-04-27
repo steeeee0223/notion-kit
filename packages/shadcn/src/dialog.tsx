@@ -107,12 +107,22 @@ function DialogContent({
   );
 }
 
-function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
+interface DialogHeaderProps extends React.ComponentProps<"div"> {
+  align?: "start" | "center";
+}
+
+function DialogHeader({
+  className,
+  align = "start",
+  ...props
+}: DialogHeaderProps) {
   return (
     <div
       data-slot="dialog-header"
+      data-align={align}
       className={cn(
-        "flex w-full flex-col items-center gap-2 text-center sm:text-left",
+        "group/dialog-header flex w-full flex-col items-start gap-2",
+        "data-[align=center]:items-center data-[align=center]:text-center",
         className,
       )}
       {...props}
@@ -154,7 +164,7 @@ interface DialogTitleProps
 
 function DialogTitle({
   className,
-  typography: type = "h3",
+  typography: type = "h2",
   ...props
 }: DialogTitleProps) {
   return (
@@ -162,7 +172,8 @@ function DialogTitle({
       data-slot="dialog-title"
       className={cn(
         typography(type),
-        "text-center wrap-break-word text-primary",
+        "wrap-break-word text-primary",
+        "group-data-[align=center]/dialog-header:text-center",
         className,
       )}
       style={{ marginTop: 0 }}
@@ -186,7 +197,8 @@ function DialogDescription({
       data-slot="dialog-description"
       className={cn(
         typography(type),
-        "text-center font-normal text-secondary",
+        "font-normal text-secondary",
+        "group-data-[align=center]/dialog-header:text-center",
         className,
       )}
       {...props}
