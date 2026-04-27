@@ -42,7 +42,7 @@ const sampleSteps: LearningStep[] = [
 ];
 
 const meta = {
-  title: "blocks/Learning Steps Dialog",
+  title: "registry/Learning Steps Dialog",
   component: LearningStepsDialog,
   parameters: { layout: "centered" },
 } satisfies Meta<typeof LearningStepsDialog>;

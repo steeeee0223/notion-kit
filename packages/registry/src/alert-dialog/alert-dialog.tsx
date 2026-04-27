@@ -12,22 +12,19 @@ import {
   Spinner,
 } from "@notion-kit/shadcn";
 
-interface AlertModalProps {
+interface AlertDialogProps {
   title: string;
   primary: string;
   secondary: string;
   onTrigger?: () => void | Promise<void>;
 }
 
-/**
- * @deprecated use AlertDialog from `@notion-kit/registry/alert-dialog`
- */
-export function AlertModal({
+export function AlertDialog({
   title,
   primary,
   secondary,
   onTrigger,
-}: AlertModalProps) {
+}: AlertDialogProps) {
   const [loading, startTransition] = useTransition();
 
   const trigger = () => startTransition(() => onTrigger?.());
