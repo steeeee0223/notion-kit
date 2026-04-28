@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
 import { CreateWorkspaceForm } from "@notion-kit/auth-ui";
 

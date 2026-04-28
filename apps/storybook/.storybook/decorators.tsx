@@ -1,4 +1,4 @@
-import type { Decorator } from "@storybook/nextjs-vite";
+import type { Decorator } from "storybook-react-rsbuild";
 
 import { I18nProvider } from "@notion-kit/i18n";
 import { ThemeProvider, Toaster, useTheme } from "@notion-kit/shadcn";

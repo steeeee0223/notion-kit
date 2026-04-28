@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { delay } from "msw";
+import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
 import { AlertModal } from "@notion-kit/common/alert-modal";
 import { Button, Dialog, DialogTrigger } from "@notion-kit/shadcn";

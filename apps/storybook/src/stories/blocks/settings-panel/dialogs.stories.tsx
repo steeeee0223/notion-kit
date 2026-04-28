@@ -1,6 +1,6 @@
 import React from "react";
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { loadStripe } from "@stripe/stripe-js";
+import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
 import {
   mockEmojis,

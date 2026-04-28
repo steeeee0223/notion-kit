@@ -3,11 +3,9 @@
   "compilerOptions": {
     "module": "esnext",
     "lib": ["ES2022", "dom", "dom.iterable"],
-    "types": ["vite/client"],
     "jsx": "preserve",
     "baseUrl": ".",
-    "paths": { "@/*": ["./src/*"] },
-    "plugins": [{ "name": "next" }]
+    "paths": { "@/*": ["./src/*"] }
   },
   "include": ["src", ".storybook/**/*.ts", ".storybook/**/*.tsx"],
   "exclude": ["node_modules"]

@@ -67,6 +67,8 @@ catalogs:
     "@t3-oss/env-core": ^0.13.6
   build:
     "@rollup/plugin-babel": ^6.1.0
+    "@rsbuild/core": ^2.0.2
+    "@rsbuild/plugin-react": ^2.0.0
   supabase:
     "@supabase/supabase-js": ^2.49.0
   stripe:

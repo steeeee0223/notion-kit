@@ -13,14 +13,10 @@ export const env = createEnv({
     // STRIPE
     STORYBOOK_STRIPE_PUBLISHABLE_KEY: z.string(),
   },
-  /**
-   * In Vite, env vars from `.env` files are only available via `import.meta.env`,
-   * NOT `process.env`. We must use `import.meta.env` here for the values to resolve.
-   */
   runtimeEnv: {
-    NODE_ENV: import.meta.env.MODE,
-    STORYBOOK_STRIPE_PUBLISHABLE_KEY: import.meta.env
-      .STORYBOOK_STRIPE_PUBLISHABLE_KEY as string,
+    NODE_ENV: process.env.NODE_ENV,
+    STORYBOOK_STRIPE_PUBLISHABLE_KEY:
+      process.env.STORYBOOK_STRIPE_PUBLISHABLE_KEY,
   },
-  skipValidation: !!import.meta.env.CI || import.meta.env.MODE === "test",
+  skipValidation: !!process.env.CI || process.env.NODE_ENV === "test",
 });

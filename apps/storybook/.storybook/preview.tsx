@@ -1,5 +1,5 @@
-import type { Preview } from "@storybook/nextjs-vite";
 import { initialize, mswLoader } from "msw-storybook-addon";
+import type { Preview } from "storybook-react-rsbuild";
 
 import { locales } from "@notion-kit/i18n";
 
@@ -44,7 +44,7 @@ const preview: Preview = {
       toolbar: {
         title: "Locale",
         icon: "globe",
-        items: locales,
+        items: [...locales],
         dynamicTitle: true,
       },
     },
