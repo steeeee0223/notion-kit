@@ -1,4 +1,4 @@
-import { setProjectAnnotations } from "@storybook/nextjs-vite";
+import { setProjectAnnotations } from "storybook-react-rsbuild";
 
 import * as previewAnnotations from "./preview";
 

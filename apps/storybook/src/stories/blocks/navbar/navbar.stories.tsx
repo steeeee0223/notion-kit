@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
 import NavbarDemo from "@notion-kit/registry/navbar-notion";
 

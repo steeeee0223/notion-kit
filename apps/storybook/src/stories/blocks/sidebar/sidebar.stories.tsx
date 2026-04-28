@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
 import SidebarDemo from "@notion-kit/registry/sidebar-notion";
 

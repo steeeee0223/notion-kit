@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
 import { SingleImageDropzone } from "@notion-kit/single-image-dropzone";
 

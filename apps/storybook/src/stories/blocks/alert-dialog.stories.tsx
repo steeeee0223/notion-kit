@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { delay } from "msw";
+import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
 import { AlertDialog } from "@notion-kit/registry/alert-dialog";
 import { Dialog } from "@notion-kit/shadcn";

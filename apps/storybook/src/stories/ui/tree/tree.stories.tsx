@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { Meta, StoryObj } from "storybook-react-rsbuild";
 import { expect, userEvent, within } from "storybook/test";
 
 import { Tree, useTree } from "@notion-kit/tree";

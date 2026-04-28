@@ -4,6 +4,7 @@
   "version": "0.16.0",
   "type": "module",
   "exports": {
+    "./rsbuild": "./rsbuild.config.ts",
     "./tsdown": "./tsdown.ts"
   },
   "scripts": {
@@ -18,6 +19,8 @@
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "@rollup/plugin-babel": "catalog:build",
+    "@rsbuild/core": "catalog:build",
+    "@rsbuild/plugin-react": "catalog:build",
     "@types/node": "catalog:node22",
     "typescript": "catalog:"
   },
