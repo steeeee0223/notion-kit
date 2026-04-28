@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
-import { SidebarDemo } from "./demo";
+import SidebarDemo from "@notion-kit/registry/sidebar-notion";
 
 const meta = {
   title: "blocks/Sidebar",

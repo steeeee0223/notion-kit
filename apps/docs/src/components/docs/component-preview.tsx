@@ -6,6 +6,7 @@ import { ThemeProvider } from "@notion-kit/shadcn";
 import { Index } from "@/__registry__/demos";
 import { CodeBlock } from "@/components/docs/code-block";
 import { getFileSource } from "@/lib/get-file-source";
+import { DemoName } from "@/registry/demos";
 
 import {
   ComponentWrapper,
@@ -14,7 +15,7 @@ import {
 
 interface ComponentPreviewProps {
   className?: string;
-  name: string;
+  name: DemoName;
   preview?: string;
   expandable?: boolean;
   hideCode?: boolean;
@@ -39,11 +40,6 @@ export const ComponentPreview = async ({
   // eslint-disable-next-line @typescript-eslint/require-await
 }: ComponentPreviewProps) => {
   const demoItem = Index[name];
-  if (!demoItem) {
-    console.error(`Item not found: ${name}`);
-    return null;
-  }
-
   const Component = demoItem.component;
   const files = demoItem.files.map((file) => getFileSource(file));
 

@@ -67,11 +67,11 @@ export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
     >
       <Form {...form}>
         <form onSubmit={submit} className="space-y-4">
-          <DialogHeader className="items-start">
-            <DialogTitle className="text-left">
+          <DialogHeader>
+            <DialogTitle>
               {isEdit ? t("edit-title") : t("add-title")}
             </DialogTitle>
-            <DialogDescription typography="desc" className="text-left">
+            <DialogDescription typography="desc">
               {t("description")}
             </DialogDescription>
           </DialogHeader>

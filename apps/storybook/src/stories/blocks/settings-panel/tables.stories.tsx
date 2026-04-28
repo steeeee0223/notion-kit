@@ -1,6 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 import {
+  mockConnections,
+  mockEmojis,
+  mockGuests,
+  mockInvitations,
+  mockMembers,
+  mockSessions,
+  mockTeamMemberRows,
+  mockTeamspaces,
+} from "@notion-kit/registry/settings-panel-notion";
+import {
   ConnectionsTable,
   EmojisTable,
   GuestsTable,
@@ -12,17 +22,6 @@ import {
   TeamMembersTable,
   TeamspacesTable,
 } from "@notion-kit/settings-panel";
-
-import {
-  mockConnections,
-  mockEmojis,
-  mockGuests,
-  mockInvitations,
-  mockMembers,
-  mockSessions,
-  mockTeamMemberRows,
-  mockTeamspaces,
-} from "./data";
 
 const meta = {
   title: "blocks/Settings Panel/Tables",

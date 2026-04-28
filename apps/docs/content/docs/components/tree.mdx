@@ -4,7 +4,7 @@ description: A collapsible, hierarchical tree component for organizing nested it
 ---
 
 <ComponentPreview
-  name="tree/default"
+  name="tree-default"
   preview={`const tree = useTree(folderNodes, {});
   return (
     <Tree tree={tree}>
@@ -53,7 +53,7 @@ export default function MyTree() {
 Disable collapsing to show all nodes expanded by default.
 
 <ComponentPreview
-  name="tree/non-collapsible"
+  name="tree-non-collapsible"
   preview={`useTree(data, { collapsible: false })`}
 />
 
@@ -62,7 +62,7 @@ Disable collapsing to show all nodes expanded by default.
 Enable selection of multiple tree items.
 
 <ComponentPreview
-  name="tree/multi-select"
+  name="tree-multi-select"
   preview={`useTree(data, { selectionMode: "multiple" })`}
 />
 
@@ -71,7 +71,7 @@ Enable selection of multiple tree items.
 Display an indicator when a folder has no children.
 
 <ComponentPreview
-  name="tree/show-empty"
+  name="tree-show-empty"
   preview={`useTree(data, { showEmptyChild: true })`}
 />
 
@@ -79,7 +79,7 @@ Display an indicator when a folder has no children.
 
 A searchable tree interface for command palettes.
 
-<ComponentPreview name="tree/command" preview={`<CommandTree tree={tree} />`} />
+<ComponentPreview name="tree-command" preview={`<CommandTree tree={tree} />`} />
 
 ## API Reference
 

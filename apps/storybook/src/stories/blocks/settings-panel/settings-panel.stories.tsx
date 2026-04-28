@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
-import { Demo as SettingsDemo } from "./demo";
+import SettingsDemo from "@notion-kit/registry/settings-panel-notion";
 
 const meta = {
   title: "blocks/Settings Panel/Tabs",

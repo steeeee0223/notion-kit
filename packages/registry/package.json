@@ -1,0 +1,75 @@
+{
+  "name": "@notion-kit/registry",
+  "version": "0.16.0",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/steeeee0223/notion-kit/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/steeeee0223/notion-kit.git",
+    "directory": "packages/registry"
+  },
+  "exports": {
+    "./*": {
+      "types": "./dist/*/index.d.mts",
+      "default": "./dist/*/index.mjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "build": "tsdown",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsdown --watch",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@notion-kit/auth-ui": "workspace:*",
+    "@notion-kit/cn": "workspace:*",
+    "@notion-kit/code-block": "workspace:*",
+    "@notion-kit/cover": "workspace:*",
+    "@notion-kit/hooks": "workspace:*",
+    "@notion-kit/icon-block": "workspace:*",
+    "@notion-kit/icon-menu": "workspace:*",
+    "@notion-kit/icons": "workspace:*",
+    "@notion-kit/navbar": "workspace:*",
+    "@notion-kit/schemas": "workspace:*",
+    "@notion-kit/settings-panel": "workspace:*",
+    "@notion-kit/shadcn": "workspace:*",
+    "@notion-kit/sidebar": "workspace:*",
+    "@notion-kit/single-image-dropzone": "workspace:*",
+    "@notion-kit/table-view": "workspace:*",
+    "@notion-kit/tags-input": "workspace:*",
+    "@notion-kit/tree": "workspace:*",
+    "@notion-kit/unsplash": "workspace:*",
+    "@notion-kit/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@notion-kit/config": "workspace:*",
+    "@notion-kit/eslint-config": "workspace:*",
+    "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tsconfig": "workspace:*",
+    "babel-plugin-react-compiler": "catalog:react-compiler",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "react-compiler-runtime": "catalog:react-compiler",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:react19",
+    "react-hotkeys-hook": "*",
+    "zod": "catalog:"
+  },
+  "prettier": "@notion-kit/prettier-config",
+  "babel": {
+    "plugins": [
+      "babel-plugin-react-compiler"
+    ]
+  }
+}

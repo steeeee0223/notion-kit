@@ -3,6 +3,16 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { loadStripe } from "@stripe/stripe-js";
 
 import {
+  mockEmojis,
+  mockGuests,
+  mockMembers,
+  mockPasskeys,
+  mockTeamMemberRows,
+  mockUser,
+  mockUsers,
+  mockWorkspaces,
+} from "@notion-kit/registry/settings-panel-notion";
+import {
   Add2FAForm,
   AddMembers,
   AddTeamMembers,
@@ -26,17 +36,6 @@ import { Dialog } from "@notion-kit/shadcn";
 
 import { env } from "@/env";
 import { asyncSuccess } from "@/lib/utils";
-
-import {
-  mockEmojis,
-  mockGuests,
-  mockMembers,
-  mockPasskeys,
-  mockTeamMemberRows,
-  mockUser,
-  mockUsers,
-  mockWorkspaces,
-} from "./data";
 
 const Portal = ({ children }: React.PropsWithChildren) => (
   <Dialog open>{children}</Dialog>

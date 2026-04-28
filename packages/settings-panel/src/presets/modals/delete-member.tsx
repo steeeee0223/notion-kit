@@ -12,6 +12,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogIcon,
   DialogTitle,
   Label,
   Spinner,
@@ -31,11 +32,11 @@ export function DeleteMember({ onDelete }: DeleteMemberProps) {
 
   return (
     <DialogContent className="flex w-[406px] flex-col items-start justify-center gap-6 p-5">
-      <DialogHeader>
-        <div className="flex items-center justify-center">
-          <Icon.UserX className="size-9 shrink-0 fill-default/45 p-1" />
-        </div>
-        <DialogTitle className="px-6 text-lg/[22px]">{t("title")}</DialogTitle>
+      <DialogHeader align="center">
+        <DialogIcon>
+          <Icon.UserX className="size-9 fill-default/45" />
+        </DialogIcon>
+        <DialogTitle>{t("title")}</DialogTitle>
         <DialogDescription>{t("description")}</DialogDescription>
       </DialogHeader>
       <Card className="w-full" asButton={false}>

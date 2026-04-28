@@ -3,7 +3,7 @@ title: Code Block
 description: A composable code block with syntax highlighting, language selection, code formatting, and Mermaid diagram support.
 ---
 
-<ComponentPreview name="code-block/default" hideCode />
+<ComponentPreview name="code-block-default" hideCode />
 
 ## Supported Features
 
@@ -50,7 +50,7 @@ In uncontrolled mode, the component manages its own state internally.
 Use `defaultValue` to set the initial code and language.
 
 <ComponentPreview
-  name="code-block/default"
+  name="code-block-default"
   preview={`<CodeBlock
     defaultValue={{
       code: sampleCode,
@@ -69,7 +69,7 @@ Use `defaultValue` to set the initial code and language.
 In controlled mode, use `value` and `onChange` to manage state externally.
 
 <ComponentPreview
-  name="code-block/controlled"
+  name="code-block-controlled"
   preview={`<CodeBlock value={value} onChange={setValue}>
     <CodeBlockLang />
     <CodeBlockToolbar />
@@ -83,7 +83,7 @@ In controlled mode, use `value` and `onChange` to manage state externally.
 Use the `readonly` prop to prevent editing code, changing language, and editing the caption.
 
 <ComponentPreview
-  name="code-block/readonly"
+  name="code-block-readonly"
   preview={`<CodeBlock
     readonly
     defaultValue={{
@@ -104,7 +104,7 @@ Use the `readonly` prop to prevent editing code, changing language, and editing 
 When language is set to `mermaid`, a live diagram preview is rendered alongside the code editor.
 
 <ComponentPreview
-  name="code-block/mermaid"
+  name="code-block-mermaid"
   preview={`<CodeBlock
     defaultValue={{ code: mermaidCode, lang: "mermaid" }}
   >

@@ -61,9 +61,7 @@ function PaymentMethodForm({ onConfirm }: PaymentMethodFormProps) {
 
   return (
     <>
-      <DialogTitle className="text-left" typography="h2">
-        {t("title")}
-      </DialogTitle>
+      <DialogTitle>{t("title")}</DialogTitle>
       <div className="flex flex-col gap-4">
         {!isReady && <PaymentSkeleton />}
         <PaymentElement

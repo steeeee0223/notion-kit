@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
-import { NavbarDemo } from "./demo";
+import NavbarDemo from "@notion-kit/registry/navbar-notion";
 
 const meta = {
   title: "blocks/Navbar",

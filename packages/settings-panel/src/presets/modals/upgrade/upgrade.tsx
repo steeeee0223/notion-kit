@@ -9,6 +9,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogIcon,
   DialogTitle,
   Form,
 } from "@notion-kit/shadcn";
@@ -99,15 +100,15 @@ function UpgradeForm({
     <DialogContent className="w-[830px] max-w-[90vw]">
       <Form {...form}>
         <form onSubmit={submit} className="flex flex-col gap-9">
-          <DialogHeader className="items-start text-left">
-            <Icon.ArrowInCircleUpFill className="-ml-1 size-8 fill-blue" />
-            <DialogTitle className="text-left text-[22px]/[26px]">
+          <DialogHeader>
+            <DialogIcon>
+              <Icon.ArrowInCircleUpFill className="size-8 fill-blue" />
+            </DialogIcon>
+            <DialogTitle className="text-[22px]/[26px]">
               {t("title", { plan: plan.name })}
             </DialogTitle>
             {description && (
-              <DialogDescription typography="h2" className="text-left">
-                {description}
-              </DialogDescription>
+              <DialogDescription>{description}</DialogDescription>
             )}
           </DialogHeader>
           <div className="flex flex-col gap-8 md:flex-row">

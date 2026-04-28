@@ -293,6 +293,9 @@ importers:
       '@notion-kit/navbar':
         specifier: workspace:*
         version: link:../../packages/navbar
+      '@notion-kit/registry':
+        specifier: workspace:*
+        version: link:../../packages/registry
       '@notion-kit/schemas':
         specifier: workspace:*
         version: link:../../packages/schemas
@@ -577,6 +580,9 @@ importers:
       '@notion-kit/navbar':
         specifier: workspace:*
         version: link:../../packages/navbar
+      '@notion-kit/registry':
+        specifier: workspace:*
+        version: link:../../packages/registry
       '@notion-kit/schemas':
         specifier: workspace:*
         version: link:../../packages/schemas
@@ -1521,6 +1527,106 @@ importers:
       react-dom:
         specifier: catalog:react19
         version: 19.2.3(react@19.2.3)
+    devDependencies:
+      '@notion-kit/config':
+        specifier: workspace:*
+        version: link:../../tooling/config
+      '@notion-kit/eslint-config':
+        specifier: workspace:*
+        version: link:../../tooling/eslint
+      '@notion-kit/prettier-config':
+        specifier: workspace:*
+        version: link:../../tooling/prettier
+      '@notion-kit/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
+      babel-plugin-react-compiler:
+        specifier: catalog:react-compiler
+        version: 1.0.0
+      eslint:
+        specifier: 'catalog:'
+        version: 9.39.1(jiti@2.6.1)
+      prettier:
+        specifier: 'catalog:'
+        version: 3.6.2
+      react-compiler-runtime:
+        specifier: catalog:react-compiler
+        version: 1.0.0(react@19.2.3)
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.16.6(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  packages/registry:
+    dependencies:
+      '@notion-kit/auth-ui':
+        specifier: workspace:*
+        version: link:../auth-ui
+      '@notion-kit/cn':
+        specifier: workspace:*
+        version: link:../cn
+      '@notion-kit/code-block':
+        specifier: workspace:*
+        version: link:../code-block
+      '@notion-kit/cover':
+        specifier: workspace:*
+        version: link:../cover
+      '@notion-kit/hooks':
+        specifier: workspace:*
+        version: link:../hooks
+      '@notion-kit/icon-block':
+        specifier: workspace:*
+        version: link:../icon-block
+      '@notion-kit/icon-menu':
+        specifier: workspace:*
+        version: link:../icon-menu
+      '@notion-kit/icons':
+        specifier: workspace:*
+        version: link:../icons
+      '@notion-kit/navbar':
+        specifier: workspace:*
+        version: link:../navbar
+      '@notion-kit/schemas':
+        specifier: workspace:*
+        version: link:../schemas
+      '@notion-kit/settings-panel':
+        specifier: workspace:*
+        version: link:../settings-panel
+      '@notion-kit/shadcn':
+        specifier: workspace:*
+        version: link:../shadcn
+      '@notion-kit/sidebar':
+        specifier: workspace:*
+        version: link:../sidebar
+      '@notion-kit/single-image-dropzone':
+        specifier: workspace:*
+        version: link:../single-image-dropzone
+      '@notion-kit/table-view':
+        specifier: workspace:*
+        version: link:../table-view
+      '@notion-kit/tags-input':
+        specifier: workspace:*
+        version: link:../tags-input
+      '@notion-kit/tree':
+        specifier: workspace:*
+        version: link:../tree
+      '@notion-kit/unsplash':
+        specifier: workspace:*
+        version: link:../unsplash
+      '@notion-kit/utils':
+        specifier: workspace:*
+        version: link:../utils
+      react:
+        specifier: catalog:react19
+        version: 19.2.3
+      react-hotkeys-hook:
+        specifier: '*'
+        version: 5.2.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      zod:
+        specifier: 'catalog:'
+        version: 4.1.12
     devDependencies:
       '@notion-kit/config':
         specifier: workspace:*
@@ -15904,8 +16010,8 @@ snapshots:
       '@babel/parser': 7.26.9
       eslint: 9.39.1(jiti@2.6.1)
       hermes-parser: 0.25.1
-      zod: 4.1.12
-      zod-validation-error: 4.0.2(zod@4.1.12)
+      zod: 4.3.6
+      zod-validation-error: 4.0.2(zod@4.3.6)
     transitivePeerDependencies:
       - supports-color
 
@@ -20008,9 +20114,9 @@ snapshots:
       grammex: 3.1.12
       graphmatch: 1.1.1
 
-  zod-validation-error@4.0.2(zod@4.1.12):
+  zod-validation-error@4.0.2(zod@4.3.6):
     dependencies:
-      zod: 4.1.12
+      zod: 4.3.6
 
   zod@4.1.12: {}
 
