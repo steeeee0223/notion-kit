@@ -45,12 +45,18 @@ catalogs:
       specifier: ^8.0.0
       version: 8.0.0
   fns:
+    '@types/lodash.groupby':
+      specifier: ^4.6.9
+      version: 4.6.9
     '@types/lodash.throttle':
       specifier: ^4.1.9
       version: 4.1.9
     date-fns:
       specifier: ^4.1.0
       version: 4.1.0
+    lodash.groupby:
+      specifier: ^4.6.0
+      version: 4.6.0
     lodash.throttle:
       specifier: ^4.1.1
       version: 4.1.1
@@ -1511,6 +1517,8 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
 
+  packages/map: {}
+
   packages/navbar:
     dependencies:
       '@notion-kit/cn':
@@ -1625,6 +1633,9 @@ importers:
       '@notion-kit/tags-input':
         specifier: workspace:*
         version: link:../tags-input
+      '@notion-kit/timeline':
+        specifier: workspace:*
+        version: link:../timeline
       '@notion-kit/tree':
         specifier: workspace:*
         version: link:../tree
@@ -1634,6 +1645,12 @@ importers:
       '@notion-kit/utils':
         specifier: workspace:*
         version: link:../utils
+      date-fns:
+        specifier: catalog:fns
+        version: 4.1.0
+      lodash.groupby:
+        specifier: catalog:fns
+        version: 4.6.0
       react:
         specifier: catalog:react19
         version: 19.2.3
@@ -1644,6 +1661,9 @@ importers:
         specifier: 'catalog:'
         version: 4.1.12
     devDependencies:
+      '@faker-js/faker':
+        specifier: ^10.4.0
+        version: 10.4.0
       '@notion-kit/config':
         specifier: workspace:*
         version: link:../../tooling/config
@@ -1656,6 +1676,9 @@ importers:
       '@notion-kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
+      '@types/lodash.groupby':
+        specifier: catalog:fns
+        version: 4.6.9
       babel-plugin-react-compiler:
         specifier: catalog:react-compiler
         version: 1.0.0
@@ -3895,6 +3918,10 @@ packages:
   '@eslint/plugin-kit@0.4.1':
     resolution: {integrity: sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@faker-js/faker@10.4.0':
+    resolution: {integrity: sha512-sDBWI3yLy8EcDzgobvJTWq1MJYzAkQdpjXuPukga9wXonhpMRvd1Izuo2Qgwey2OiEoRIBr35RMU9HJRoOHzpw==}
+    engines: {node: ^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0, npm: '>=10'}
 
   '@floating-ui/core@1.6.9':
     resolution: {integrity: sha512-uMXCuQ3BItDUbAMhIXw7UPXRfAlOAvZzdK9BWpE60MCn+Svt3aLn9jsPTi/WNGlRUu2uI0v5S7JiIUsbsvh3fw==}
@@ -6220,6 +6247,9 @@ packages:
 
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+
+  '@types/lodash.groupby@4.6.9':
+    resolution: {integrity: sha512-z2xtCX2ko7GrqORnnYea4+ksT7jZNAvaOcLd6mP9M7J09RHvJs06W8BGdQQAX8ARef09VQLdeRilSOcfHlDQJQ==}
 
   '@types/lodash.throttle@4.1.9':
     resolution: {integrity: sha512-PCPVfpfueguWZQB7pJQK890F2scYKoDUL3iM522AptHWn7d5NQmeS/LTEHIcLr5PaTzl3dK2Z0xSUHHTHwaL5g==}
@@ -8975,6 +9005,9 @@ packages:
   lodash.get@4.4.2:
     resolution: {integrity: sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ==}
     deprecated: This package is deprecated. Use the optional chaining (?.) operator instead.
+
+  lodash.groupby@4.6.0:
+    resolution: {integrity: sha512-5dcWxm23+VAoz+awKmBaiBvzox8+RqMgFhi7UvX9DHZr2HdxHXM/Wrf8cfKpsW37RNrvtPn6hSwNqurSILbmJw==}
 
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
@@ -12495,6 +12528,8 @@ snapshots:
       '@eslint/core': 0.17.0
       levn: 0.4.1
 
+  '@faker-js/faker@10.4.0': {}
+
   '@floating-ui/core@1.6.9':
     dependencies:
       '@floating-ui/utils': 0.2.9
@@ -14914,6 +14949,10 @@ snapshots:
   '@types/json-schema@7.0.15': {}
 
   '@types/json5@0.0.29': {}
+
+  '@types/lodash.groupby@4.6.9':
+    dependencies:
+      '@types/lodash': 4.17.24
 
   '@types/lodash.throttle@4.1.9':
     dependencies:
@@ -18125,6 +18164,8 @@ snapshots:
   lodash.debounce@4.0.8: {}
 
   lodash.get@4.4.2: {}
+
+  lodash.groupby@4.6.0: {}
 
   lodash.merge@4.6.2: {}
 
