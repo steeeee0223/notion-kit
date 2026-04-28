@@ -86,7 +86,7 @@ export function Add2FAForm({
     <DialogContent className="w-[330px] p-5">
       <Form {...form}>
         <form onSubmit={submit} className="space-y-4">
-          <DialogHeader align="center">
+          <DialogHeader>
             <DialogIcon className="relative size-9">
               <Avatar
                 src={avatarUrl}

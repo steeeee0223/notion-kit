@@ -44,7 +44,9 @@ export function ChangeBillingEmail({
 
   return (
     <DialogContent className="w-105">
-      <DialogTitle>{t("title")}</DialogTitle>
+      <DialogTitle className="text-left" typography="h2">
+        {t("title")}
+      </DialogTitle>
       <Form {...form}>
         <form onSubmit={submit} className="space-y-6">
           <FormField

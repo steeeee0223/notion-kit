@@ -51,11 +51,11 @@ export function DeleteWorkspace({ name, onSubmit }: DeleteWorkspaceProps) {
 
   return (
     <DialogContent className="w-[420px] p-5">
-      <DialogHeader align="center">
+      <DialogHeader>
         <DialogIcon>
           <Icon.ExclamationMarkCircled className="size-9 fill-red" />
         </DialogIcon>
-        <DialogTitle>{t("title")}</DialogTitle>
+        <DialogTitle typography="h2">{t("title")}</DialogTitle>
         <DialogDescription>{t("description")}</DialogDescription>
       </DialogHeader>
       <Form {...form}>

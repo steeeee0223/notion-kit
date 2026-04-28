@@ -29,13 +29,15 @@ export function DeleteGuest({ name, onDelete }: DeleteGuestProps) {
 
   return (
     <DialogContent className="w-[300px] p-5">
-      <DialogHeader align="center">
+      <DialogHeader>
         <DialogIcon>
           <Icon.UserX className="size-9 fill-default/45" />
         </DialogIcon>
-        <DialogTitle>{t("title", { name })}</DialogTitle>
-        <DialogDescription>{t("description")}</DialogDescription>
+        <DialogTitle typography="h2">{t("title", { name })}</DialogTitle>
       </DialogHeader>
+      <DialogDescription className="text-muted">
+        {t("description")}
+      </DialogDescription>
       <DialogFooter>
         <Button
           onClick={onRemove}

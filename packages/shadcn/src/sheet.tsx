@@ -8,6 +8,7 @@ import { cn } from "@notion-kit/cn";
 import { Button } from "./button";
 import * as Icon from "./icons";
 import { contentVariants, Typography, typography } from "./variants";
+import { VisuallyHidden } from "./visually-hidden";
 
 function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />;
@@ -58,6 +59,8 @@ interface SheetContentProps
   extends React.ComponentProps<typeof SheetPrimitive.Content> {
   side?: "top" | "right" | "bottom" | "left";
   hideClose?: boolean;
+  hasOverlay?: boolean;
+  container?: Element | DocumentFragment | null;
 }
 
 function SheetContent({
@@ -65,11 +68,19 @@ function SheetContent({
   children,
   side = "right",
   hideClose,
+  hasOverlay = true,
+  container,
   ...props
 }: SheetContentProps) {
   return (
-    <SheetPortal>
-      <SheetOverlay />
+    <SheetPortal container={container}>
+      {hasOverlay && <SheetOverlay />}
+      <VisuallyHidden asChild>
+        <SheetPrimitive.Title />
+      </VisuallyHidden>
+      <VisuallyHidden asChild>
+        <SheetPrimitive.Description />
+      </VisuallyHidden>
       <SheetPrimitive.Content
         data-slot="sheet-content"
         className={cn(

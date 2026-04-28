@@ -83,7 +83,7 @@ export function PasswordForm({ hasPassword, onSubmit }: PasswordFormProps) {
     <DialogContent className="w-[350px] p-6">
       <Form {...form}>
         <form onSubmit={submit} className="space-y-2">
-          <DialogHeader align="center">
+          <DialogHeader>
             <DialogIcon>
               <Icon.Password className="size-[27px] fill-icon" />
             </DialogIcon>

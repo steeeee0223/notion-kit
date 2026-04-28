@@ -19,9 +19,6 @@ interface AlertModalProps {
   onTrigger?: () => void | Promise<void>;
 }
 
-/**
- * @deprecated use AlertDialog from `@notion-kit/registry/alert-dialog`
- */
 export function AlertModal({
   title,
   primary,
@@ -42,9 +39,10 @@ export function AlertModal({
       forceMount
       hideClose
       className="flex w-[300px] flex-col items-start justify-center gap-2 p-6"
+      onClick={(e) => e.stopPropagation()}
       aria-describedby={undefined}
     >
-      <DialogHeader align="center">
+      <DialogHeader>
         <DialogTitle className="text-base font-normal tracking-wide">
           {title}
         </DialogTitle>
