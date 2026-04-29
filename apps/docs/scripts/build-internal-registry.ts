@@ -2,6 +2,7 @@ import { existsSync, promises as fs } from "node:fs";
 import path from "node:path";
 import { rimraf } from "rimraf";
 
+import { discoverFiles } from "@/lib/registry-utils";
 import { DemoName, DEMOS } from "@/registry/demos";
 
 const INTERNAL_REGISTRY_PATH = path.join(process.cwd(), "src/__registry__");
@@ -24,14 +25,6 @@ async function setup() {
   );
 }
 
-async function discoverFiles(demoName: DemoName): Promise<string[]> {
-  const demoDir = path.join(REGISTRY_SRC_PATH, demoName);
-  const entries = await fs.readdir(demoDir);
-  return entries
-    .filter((file) => file !== "index.ts")
-    .map((file) => `registry/src/${demoName}/${file}`);
-}
-
 async function buildDemos() {
   const targetPath = INTERNAL_REGISTRY_PATH;
 
@@ -52,7 +45,9 @@ export const Index: Record<
 
   for (const name of DEMOS) {
     const files = await discoverFiles(name);
-    const filesStr = files.map((file) => `"${file}"`).join(", ");
+    const filesStr = files
+      .map((file) => `"registry/src/${name}/${file}"`)
+      .join(", ");
     const importPath = `@notion-kit/registry/${name}`;
 
     index += `  "${name}": {

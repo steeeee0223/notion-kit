@@ -2,6 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "single-image-dropzone-default",
   "title": "Single Image Dropzone Default",
+  "dependencies": ["@notion-kit/single-image-dropzone"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],

@@ -2,6 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icon-menu-default",
   "title": "Icon Menu Default",
+  "dependencies": ["@notion-kit/icon-block", "@notion-kit/icon-menu"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],

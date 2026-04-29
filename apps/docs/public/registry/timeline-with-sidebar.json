@@ -2,6 +2,11 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "timeline-with-sidebar",
   "title": "Timeline With Sidebar",
+  "dependencies": [
+    "@notion-kit/icons",
+    "@notion-kit/shadcn",
+    "@notion-kit/timeline"
+  ],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],

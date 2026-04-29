@@ -2,6 +2,11 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "cover-picker",
   "title": "Cover Picker",
+  "dependencies": [
+    "@notion-kit/cover",
+    "@notion-kit/icons",
+    "@notion-kit/shadcn"
+  ],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],

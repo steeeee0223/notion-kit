@@ -2,6 +2,11 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "navbar-menu",
   "title": "Navbar Menu",
+  "dependencies": [
+    "@notion-kit/navbar/presets",
+    "@notion-kit/schemas",
+    "@notion-kit/shadcn"
+  ],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],

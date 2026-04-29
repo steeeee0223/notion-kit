@@ -2,6 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icon-block-emoji",
   "title": "Icon Block Emoji",
+  "dependencies": ["@notion-kit/icon-block"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],

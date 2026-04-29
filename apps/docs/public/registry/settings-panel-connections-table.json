@@ -2,6 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "settings-panel-connections-table",
   "title": "Settings Panel Connections Table",
+  "dependencies": ["@notion-kit/settings-panel"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],

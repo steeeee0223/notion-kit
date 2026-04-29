@@ -2,6 +2,12 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "navbar-notion",
   "title": "Navbar Notion",
+  "dependencies": [
+    "@notion-kit/schemas",
+    "@notion-kit/icons",
+    "@notion-kit/navbar",
+    "@notion-kit/navbar/presets"
+  ],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],

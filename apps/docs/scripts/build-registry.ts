@@ -7,6 +7,7 @@ import type { RegistryItem } from "@notion-kit/validators";
 import { RegistryIndexSchema } from "@notion-kit/validators";
 
 import { getRegistryPath } from "@/lib/get-file-source";
+import { discoverFiles, getDemoDependencies } from "@/lib/registry-utils";
 import { DEMOS } from "@/registry/demos";
 import { theme } from "@/registry/theme";
 
@@ -23,23 +24,19 @@ function toTitle(name: string): string {
     .join(" ");
 }
 
-async function discoverFiles(demoName: string): Promise<string[]> {
-  const demoDir = path.join(REGISTRY_SRC_PATH, demoName);
-  const entries = await fs.readdir(demoDir);
-  return entries.filter((file) => file !== "index.ts");
-}
-
 async function buildDemoItems(): Promise<RegistryItem[]> {
   const items: RegistryItem[] = [];
 
   for (const name of DEMOS) {
     const files = await discoverFiles(name);
+    const dependencies = await getDemoDependencies(name);
 
     items.push({
       $schema: "https://ui.shadcn.com/schema/registry-item.json",
       name,
       title: toTitle(name),
       type: "registry:component",
+      dependencies,
       files: files.map((file) => ({
         type: "registry:component",
         path: path.join(REGISTRY_SRC_PATH, name, file),

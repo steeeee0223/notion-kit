@@ -2,6 +2,11 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "settings-panel-notion",
   "title": "Settings Panel Notion",
+  "dependencies": [
+    "@notion-kit/schemas",
+    "@notion-kit/settings-panel",
+    "@notion-kit/utils"
+  ],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],

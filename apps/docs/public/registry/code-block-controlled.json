@@ -2,6 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "code-block-controlled",
   "title": "Code Block Controlled",
+  "dependencies": ["@notion-kit/code-block"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],

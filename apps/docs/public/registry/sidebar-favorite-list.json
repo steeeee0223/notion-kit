@@ -2,6 +2,11 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "sidebar-favorite-list",
   "title": "Sidebar Favorite List",
+  "dependencies": [
+    "@notion-kit/schemas",
+    "@notion-kit/sidebar/presets",
+    "@notion-kit/utils"
+  ],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
