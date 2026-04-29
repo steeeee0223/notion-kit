@@ -10,7 +10,7 @@ export function TimelineContent({
     <div
       data-slot="timeline-content"
       className={cn(
-        "relative flex h-full w-max flex-none overflow-clip",
+        "relative grid min-h-max w-max flex-none",
         className,
       )}
       {...props}
@@ -39,7 +39,7 @@ export function TimelineList({
     <div
       data-slot="timeline-list"
       className={cn(
-        "absolute top-(--timeline-header-height) z-0 h-full w-full overflow-y-auto",
+        "z-0 min-h-full w-full pt-(--timeline-header-height) col-start-1 row-start-1",
         className,
       )}
       {...props}

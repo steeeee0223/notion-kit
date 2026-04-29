@@ -133,7 +133,7 @@ export function TimelineRangeHeader({ className }: TimelineRangeHeaderProps) {
   return (
     <div
       data-slot="timeline-range-header"
-      className={cn("relative flex h-full flex-col", className)}
+      className={cn("relative flex h-full flex-col col-start-1 row-start-1", className)}
       style={{ width: totalWidth }}
     >
       {/* Sticky header */}
