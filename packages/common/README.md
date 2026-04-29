@@ -1,3 +1,3 @@
 # @notion-kit/common
 
-This is an internal package of Notion Kit.
+This is a registry package of shared and reusable blocks for Notion Kit.
