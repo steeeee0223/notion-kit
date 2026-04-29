@@ -1,1 +1,1 @@
-export { default } from "./without-sidebar";
+export { default } from "./timeline-without-sidebar";

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 
 import {
@@ -11,7 +13,7 @@ import {
   type TimelineRange,
 } from "@notion-kit/timeline";
 
-export default function BaseTimeline() {
+export default function TimelineLayout() {
   const [range, setRange] = useState<TimelineRange>("monthly");
 
   return (

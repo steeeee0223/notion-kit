@@ -1,4 +1,6 @@
-import * as React from "react";
+"use client";
+
+import { useState } from "react";
 
 import {
   Button,
@@ -10,10 +12,10 @@ import {
   DropdownMenuTrigger,
 } from "@notion-kit/shadcn";
 
-export function DropdownMenuCheckboxes() {
-  const [showStatusBar, setShowStatusBar] = React.useState(true);
-  const [showActivityBar, setShowActivityBar] = React.useState(false);
-  const [showPanel, setShowPanel] = React.useState(false);
+export default function Demo() {
+  const [showStatusBar, setShowStatusBar] = useState(true);
+  const [showActivityBar, setShowActivityBar] = useState(false);
+  const [showPanel, setShowPanel] = useState(false);
 
   return (
     <DropdownMenu>

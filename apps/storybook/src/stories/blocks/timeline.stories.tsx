@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import BaseTimeline from "@notion-kit/registry/timeline-base";
-import DemoWithSidebar from "@notion-kit/registry/timeline-with-sidebar";
-import WithoutSidebar from "@notion-kit/registry/timeline-without-sidebar";
+import TimelineLayout from "@notion-kit/registry/timeline-layout";
+import TimelineWithSidebar from "@notion-kit/registry/timeline-with-sidebar";
+import TimelineWithoutSidebar from "@notion-kit/registry/timeline-without-sidebar";
 
 const meta = {
   title: "blocks/Timeline",
@@ -18,13 +18,13 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Layout: Story = {
-  render: () => <BaseTimeline />,
+  render: () => <TimelineLayout />,
 };
 
 export const Example: Story = {
-  render: () => <WithoutSidebar />,
+  render: () => <TimelineWithoutSidebar />,
 };
 
 export const WithSidebar: Story = {
-  render: () => <DemoWithSidebar />,
+  render: () => <TimelineWithSidebar />,
 };

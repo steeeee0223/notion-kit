@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { ContextMenuExample } from "./example";
+import ContextMenuExample from "@notion-kit/registry/context-menu";
 
 const meta = {
   title: "Shadcn/Context Menu",

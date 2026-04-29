@@ -13,7 +13,7 @@ import {
   ContextMenuTrigger,
 } from "@notion-kit/shadcn";
 
-export function ContextMenuExample() {
+export default function Demo() {
   return (
     <ContextMenu>
       <ContextMenuTrigger className="flex aspect-video w-full max-w-xs items-center justify-center rounded-xl border border-dashed p-4 text-sm">

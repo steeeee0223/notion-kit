@@ -1,1 +1,1 @@
-export { default } from "./with-sidebar";
+export { default } from "./timeline-with-sidebar";

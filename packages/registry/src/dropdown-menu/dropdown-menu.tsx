@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@notion-kit/shadcn";
 
-export function DropdownMenuDemo() {
+export default function Demo() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
