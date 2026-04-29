@@ -7,7 +7,7 @@ import type { RegistryItem } from "@notion-kit/validators";
 import { RegistryIndexSchema } from "@notion-kit/validators";
 
 import { getRegistryPath } from "@/lib/get-file-source";
-import { discoverFiles, getDemoDependencies } from "@/lib/registry-utils";
+import { getDemoFilesAndDependencies } from "@/lib/registry";
 import { DEMOS } from "@/registry/demos";
 import { theme } from "@/registry/theme";
 
@@ -28,8 +28,7 @@ async function buildDemoItems(): Promise<RegistryItem[]> {
   const items: RegistryItem[] = [];
 
   for (const name of DEMOS) {
-    const files = await discoverFiles(name);
-    const dependencies = await getDemoDependencies(name);
+    const { files, dependencies } = await getDemoFilesAndDependencies(name);
 
     items.push({
       $schema: "https://ui.shadcn.com/schema/registry-item.json",

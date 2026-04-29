@@ -2,14 +2,10 @@ import { existsSync, promises as fs } from "node:fs";
 import path from "node:path";
 import { rimraf } from "rimraf";
 
-import { discoverFiles } from "@/lib/registry-utils";
-import { DemoName, DEMOS } from "@/registry/demos";
+import { discoverFiles } from "@/lib/registry";
+import { DEMOS } from "@/registry/demos";
 
 const INTERNAL_REGISTRY_PATH = path.join(process.cwd(), "src/__registry__");
-const REGISTRY_SRC_PATH = path.join(
-  process.cwd(),
-  "../../packages/registry/src",
-);
 
 async function setup() {
   const targetPath = INTERNAL_REGISTRY_PATH;

@@ -13,7 +13,6 @@ import {
 } from "@notion-kit/shadcn";
 
 import { ibm_plex_mono } from "@/lib/fonts";
-
 import type { DemoName } from "@/registry/demos";
 
 const installationStyles = tv({

@@ -6,13 +6,13 @@ const REGISTRY_SRC_PATH = path.join(
   "../../packages/registry/src",
 );
 
-export async function discoverFiles(demoName: string): Promise<string[]> {
+export async function discoverFiles(demoName: string) {
   const demoDir = path.join(REGISTRY_SRC_PATH, demoName);
   const entries = await fs.readdir(demoDir);
   return entries.filter((file) => file !== "index.ts");
 }
 
-export async function getDemoDependencies(demoName: string): Promise<string[]> {
+export async function getDemoFilesAndDependencies(demoName: string) {
   const files = await discoverFiles(demoName);
   const dependencies = new Set<string>();
 
@@ -25,6 +25,8 @@ export async function getDemoDependencies(demoName: string): Promise<string[]> {
     let match;
     while ((match = importRegex.exec(content)) !== null) {
       const pkg = match[1];
+      if (!pkg) continue;
+
       // Include @notion-kit/* dependencies except for standard React or local imports
       if (pkg.startsWith("@notion-kit/")) {
         dependencies.add(pkg);
@@ -39,5 +41,5 @@ export async function getDemoDependencies(demoName: string): Promise<string[]> {
     }
   }
 
-  return Array.from(dependencies);
+  return { files, dependencies: Array.from(dependencies) };
 }
