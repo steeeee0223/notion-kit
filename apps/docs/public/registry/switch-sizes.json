@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "switch-sizes",
+  "title": "Switch Sizes",
+  "dependencies": ["@notion-kit/shadcn"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/switch-sizes/switch-sizes.tsx",
+      "content": "import { Switch } from \"@notion-kit/shadcn\";\n\nconst sizes = [\"sm\", \"md\"] as const;\n\nexport default function Sizes() {\n  return (\n    <div className=\"grid grid-cols-4 gap-2\">\n      {sizes.map((size) => (\n        <Switch key={size} size={size} />\n      ))}\n    </div>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/switch-sizes/switch-sizes.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

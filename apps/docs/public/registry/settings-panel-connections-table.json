@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "settings-panel-connections-table",
+  "title": "Settings Panel Connections Table",
+  "dependencies": ["@notion-kit/settings-panel"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/settings-panel-connections-table/settings-panel-connections-table.tsx",
+      "content": "import { ConnectionsTable, type Connection } from \"@notion-kit/settings-panel\";\n\nconst connections: Connection[] = [\n  {\n    id: \"c1\",\n    connection: { type: \"slack\", account: \"steeeee@example.com\" },\n    scopes: [\"Can preview links\"],\n  },\n  {\n    id: \"c2\",\n    connection: { type: \"github\", account: \"steeeee0913\" },\n    scopes: [\"Can preview links\", \"Can content\"],\n  },\n  {\n    id: \"c3\",\n    connection: { type: \"jira\", account: \"steeeee@example.com\" },\n    scopes: [\"Can preview links and sync databases\"],\n  },\n];\n\nexport default function Demo() {\n  return <ConnectionsTable data={connections} />;\n}\n",
+      "type": "registry:component",
+      "target": "components/settings-panel-connections-table/settings-panel-connections-table.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

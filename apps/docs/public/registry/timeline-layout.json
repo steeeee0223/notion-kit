@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "timeline-layout",
+  "title": "Timeline Layout",
+  "dependencies": ["@notion-kit/timeline"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/timeline-layout/timeline-layout.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport {\n  TimelineContent,\n  TimelineHeaderToolbar,\n  TimelineProvider,\n  TimelineRangeHeader,\n  TimelineToday,\n  type TimelineRange,\n} from \"@notion-kit/timeline\";\n\nexport default function TimelineLayout() {\n  const [range, setRange] = useState<TimelineRange>(\"monthly\");\n\n  return (\n    <TimelineProvider range={range} zoom={100}>\n      <TimelineContent>\n        <TimelineRangeHeader />\n        <TimelineHeaderToolbar onRangeChange={setRange} />\n        <TimelineToday />\n      </TimelineContent>\n    </TimelineProvider>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/timeline-layout/timeline-layout.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

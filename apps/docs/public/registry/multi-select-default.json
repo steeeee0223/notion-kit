@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "multi-select-default",
+  "title": "Multi Select Default",
+  "dependencies": ["@notion-kit/shadcn"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/multi-select-default/multi-select-default.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { MultiSelect, type MultiSelectOption } from \"@notion-kit/shadcn\";\n\nconst OPTIONS: MultiSelectOption[] = [\n  { value: \"react\", label: \"React\" },\n  { value: \"vue\", label: \"Vue\" },\n  { value: \"svelte\", label: \"Svelte\" },\n  { value: \"angular\", label: \"Angular\" },\n  { value: \"solid\", label: \"Solid\" },\n];\n\nexport default function Default() {\n  const [value, setValue] = useState<MultiSelectOption[]>([]);\n\n  return (\n    <MultiSelect\n      value={value}\n      defaultOptions={OPTIONS}\n      onChange={setValue}\n      placeholder=\"Select frameworks...\"\n    />\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/multi-select-default/multi-select-default.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

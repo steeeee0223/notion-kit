@@ -65,7 +65,7 @@ function CodeBlock({
           role="figure"
           aria-labelledby={props.id}
           data-slot="code-block"
-          className="group/code-block relative w-full min-w-0 grow rounded-[10px] text-start"
+          className="group/code-block relative w-full min-w-0 grow rounded-lg text-start"
           {...props}
         >
           {children}

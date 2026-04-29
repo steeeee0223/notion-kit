@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "storybook-react-rsbuild";
 import {
   LearningStepsDialog,
   type LearningStep,
-} from "@notion-kit/registry/learning-steps-dialog";
+} from "@notion-kit/common/learning-steps-dialog";
 
 const sampleSteps: LearningStep[] = [
   {
@@ -42,7 +42,7 @@ const sampleSteps: LearningStep[] = [
 ];
 
 const meta = {
-  title: "registry/Learning Steps Dialog",
+  title: "blocks/Learning Steps Dialog",
   component: LearningStepsDialog,
   parameters: { layout: "centered" },
 } satisfies Meta<typeof LearningStepsDialog>;

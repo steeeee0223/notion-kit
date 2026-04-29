@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icon-block-sizes",
+  "title": "Icon Block Sizes",
+  "dependencies": ["@notion-kit/icon-block"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/icon-block-sizes/icon-block-sizes.tsx",
+      "content": "import { IconBlock } from \"@notion-kit/icon-block\";\n\nconst sizes = [\"sm\", \"md\", \"lg\", \"xl\"] as const;\n\nexport default function Demo() {\n  return (\n    <div className=\"grid grid-cols-4 gap-2\">\n      {sizes.map((size) => (\n        <IconBlock key={size} size={size} icon={{ type: \"emoji\", src: \"🚀\" }} />\n      ))}\n    </div>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/icon-block-sizes/icon-block-sizes.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button-disabled",
+  "title": "Button Disabled",
+  "dependencies": ["@notion-kit/icons", "@notion-kit/shadcn"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/button-disabled/button-disabled.tsx",
+      "content": "import { Icon } from \"@notion-kit/icons\";\nimport { Button } from \"@notion-kit/shadcn\";\n\nexport default function Disabled() {\n  return (\n    <Button disabled size=\"md\">\n      <Icon.ArrowSquarePathUpDown className=\"mr-2 size-4 animate-spin\" /> Please\n      wait\n    </Button>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/button-disabled/button-disabled.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

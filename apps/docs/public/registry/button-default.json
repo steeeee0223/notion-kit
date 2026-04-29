@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button-default",
+  "title": "Button Default",
+  "dependencies": ["@notion-kit/shadcn"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/button-default/button-default.tsx",
+      "content": "import { Button } from \"@notion-kit/shadcn\";\n\nexport default function Default() {\n  return <Button size=\"md\">Button</Button>;\n}\n",
+      "type": "registry:component",
+      "target": "components/button-default/button-default.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icon-block-lucide",
+  "title": "Icon Block Lucide",
+  "dependencies": ["@notion-kit/icon-block"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/icon-block-lucide/icon-block-lucide.tsx",
+      "content": "import { IconBlock } from \"@notion-kit/icon-block\";\n\nexport default function Lucide() {\n  return (\n    <IconBlock\n      size=\"md\"\n      icon={{ type: \"lucide\", src: \"badge-euro\", color: \"#3e9392\" }}\n    />\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/icon-block-lucide/icon-block-lucide.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

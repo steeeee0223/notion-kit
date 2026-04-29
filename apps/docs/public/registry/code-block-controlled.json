@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "code-block-controlled",
+  "title": "Code Block Controlled",
+  "dependencies": ["@notion-kit/code-block"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/code-block-controlled/code-block-controlled.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport type { CodeBlockValue } from \"@notion-kit/code-block\";\nimport {\n  CodeBlock,\n  CodeBlockCaption,\n  CodeBlockContent,\n  CodeBlockLang,\n  CodeBlockToolbar,\n} from \"@notion-kit/code-block\";\n\nconst sampleCode = `function greet(name: string): string {\n  return \\`Hello, \\${name}!\\`;\n}\n\nconst result = greet(\"World\");\nconsole.log(result);\n`;\n\nexport default function Controlled() {\n  const [value, setValue] = useState<CodeBlockValue>({\n    code: sampleCode,\n    lang: \"typescript\",\n  });\n\n  return (\n    <CodeBlock className=\"w-full\" value={value} onChange={setValue}>\n      <CodeBlockLang />\n      <CodeBlockToolbar />\n      <CodeBlockContent />\n      <CodeBlockCaption />\n    </CodeBlock>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/code-block-controlled/code-block-controlled.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tree-show-empty",
+  "title": "Tree Show Empty",
+  "dependencies": ["@notion-kit/tree"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/tree-show-empty/tree-show-empty.tsx",
+      "content": "\"use client\";\n\nimport { Tree, useTree } from \"@notion-kit/tree\";\nimport { TreeList, type TreeItemData } from \"@notion-kit/tree/presets\";\n\nexport const folderNodes: TreeItemData[] = [\n  {\n    id: \"1\",\n    parentId: null,\n    title: \"Folder 1\",\n    group: \"default\",\n    icon: \"F\",\n  },\n  {\n    id: \"1.a\",\n    parentId: \"1\",\n    title: \"Folder A\",\n    group: \"default\",\n    icon: \"F\",\n  },\n  {\n    id: \"1.a.1\",\n    parentId: \"1.a\",\n    title: \"File 1 in folder A\",\n    group: \"default\",\n  },\n  {\n    id: \"1.b\",\n    parentId: \"1\",\n    title: \"File B\",\n    group: \"default\",\n  },\n  {\n    id: \"2\",\n    parentId: null,\n    title: \"Folder 2\",\n    group: \"default\",\n    icon: \"F\",\n  },\n  {\n    id: \"2.c\",\n    parentId: \"2\",\n    title: \"File C\",\n    group: \"default\",\n  },\n  {\n    id: \"2.d\",\n    parentId: \"2\",\n    title: \"File D\",\n    group: \"default\",\n  },\n  {\n    id: \"3\",\n    parentId: null,\n    title: \"Folder 3\",\n    group: \"default\",\n    icon: \"F\",\n  },\n];\n\nexport default function ShowEmpty() {\n  const tree = useTree(folderNodes, { showEmptyChild: true });\n\n  return (\n    <Tree tree={tree} className=\"w-40\">\n      <TreeList nodeIds={tree.entity.rootIds} />\n    </Tree>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/tree-show-empty/tree-show-empty.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "multi-select-max-selected",
+  "title": "Multi Select Max Selected",
+  "dependencies": ["@notion-kit/shadcn"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/multi-select-max-selected/multi-select-max-selected.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { MultiSelect, type MultiSelectOption } from \"@notion-kit/shadcn\";\n\nconst OPTIONS: MultiSelectOption[] = [\n  { value: \"react\", label: \"React\" },\n  { value: \"vue\", label: \"Vue\" },\n  { value: \"svelte\", label: \"Svelte\" },\n  { value: \"angular\", label: \"Angular\" },\n  { value: \"solid\", label: \"Solid\" },\n];\n\nexport default function MaxSelected() {\n  const [value, setValue] = useState<MultiSelectOption[]>([]);\n\n  return (\n    <MultiSelect\n      value={value}\n      defaultOptions={OPTIONS}\n      onChange={setValue}\n      maxSelected={3}\n      placeholder=\"Select up to 3...\"\n    />\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/multi-select-max-selected/multi-select-max-selected.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

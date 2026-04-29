@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "badge-default",
+  "title": "Badge Default",
+  "dependencies": ["@notion-kit/shadcn"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/badge-default/badge-default.tsx",
+      "content": "import { Badge } from \"@notion-kit/shadcn\";\n\nexport default function Default() {\n  return <Badge>badge</Badge>;\n}\n",
+      "type": "registry:component",
+      "target": "components/badge-default/badge-default.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "code-block-default",
+  "title": "Code Block Default",
+  "dependencies": ["@notion-kit/code-block"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/code-block-default/code-block-default.tsx",
+      "content": "\"use client\";\n\nimport {\n  CodeBlock,\n  CodeBlockCaption,\n  CodeBlockContent,\n  CodeBlockLang,\n  CodeBlockToolbar,\n} from \"@notion-kit/code-block\";\n\nconst sampleCode = `// Generics with 'extends' and default values\nfunction identity<T extends number | string = string>(arg: T): T {\n  return arg;\n}\n\nlet str = identity();  // Default type is string\nlet num = identity(42);  // T inferred as number\n\n// Generic interfaces with 'extends' and default types\ninterface Box<T extends object = { message: string }> {\n  content: T;\n}\n\nlet defaultBox: Box = { content: { message: \"Hello\" } };\nlet customBox: Box<{ status: number }> = { content: { status: 200 } };\n`;\n\nexport default function Default() {\n  return (\n    <CodeBlock\n      className=\"w-full\"\n      defaultValue={{\n        code: sampleCode,\n        lang: \"typescript\",\n      }}\n    >\n      <CodeBlockLang />\n      <CodeBlockToolbar />\n      <CodeBlockContent />\n      <CodeBlockCaption />\n    </CodeBlock>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/code-block-default/code-block-default.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

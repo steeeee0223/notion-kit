@@ -3,16 +3,51 @@ import { existsSync, promises as fs } from "node:fs";
 import path from "path";
 import { rimraf } from "rimraf";
 
+import type { RegistryItem } from "@notion-kit/validators";
 import { RegistryIndexSchema } from "@notion-kit/validators";
 
-import { registry } from "@/registry";
+import { getRegistryPath } from "@/lib/get-file-source";
+import { getDemoFilesAndDependencies } from "@/lib/registry";
+import { DEMOS } from "@/registry/demos";
+import { theme } from "@/registry/theme";
 
 const REGISTRY_PATH = path.join(process.cwd(), "public/registry");
+const REGISTRY_SRC_PATH = path.join(
+  process.cwd(),
+  "../../packages/registry/src",
+);
 
-/**
- * Builds `registry/index.json`.
- * Contains the list of all components, hooks, etc.
- */
+function toTitle(name: string): string {
+  return name
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+async function buildDemoItems(): Promise<RegistryItem[]> {
+  const items: RegistryItem[] = [];
+
+  for (const name of DEMOS) {
+    const { files, dependencies } = await getDemoFilesAndDependencies(name);
+
+    items.push({
+      $schema: "https://ui.shadcn.com/schema/registry-item.json",
+      name,
+      title: toTitle(name),
+      type: "registry:component",
+      dependencies,
+      files: files.map((file) => ({
+        type: "registry:component",
+        path: path.join(REGISTRY_SRC_PATH, name, file),
+        target: `components/${name}/${file}`,
+      })),
+      registryDependencies: [getRegistryPath("notion-theme")],
+    });
+  }
+
+  return items;
+}
+
 const buildRegistry = async () => {
   const targetPath = REGISTRY_PATH;
   rimraf.sync(targetPath);
@@ -20,9 +55,16 @@ const buildRegistry = async () => {
     await fs.mkdir(targetPath, { recursive: true });
   }
 
-  const result = RegistryIndexSchema.parse(registry);
+  const items = await buildDemoItems();
 
-  const registryJson = JSON.stringify(result, null, 2);
+  const registry = RegistryIndexSchema.parse({
+    $schema: "https://ui.shadcn.com/schema/registry.json",
+    name: "notion-ui",
+    homepage: "https://notion-ui.vercel.app/",
+    items: [theme, ...items],
+  });
+
+  const registryJson = JSON.stringify(registry, null, 2);
   await fs.writeFile(path.join(targetPath, "index.json"), registryJson, "utf8");
 
   childProcess.execSync(

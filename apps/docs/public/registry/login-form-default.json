@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "login-form-default",
+  "title": "Login Form Default",
+  "dependencies": ["@notion-kit/auth-ui"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/login-form-default/login-form-default.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { AuthProvider, LoginForm, type LoginMode } from \"@notion-kit/auth-ui\";\n\nconst BASE_URL = \"\"; // Set your base URL here if needed\n\nexport default function Demo() {\n  const [mode, setMode] = useState<LoginMode>(\"sign_in\");\n\n  return (\n    <AuthProvider baseURL={BASE_URL}>\n      <LoginForm callbackURL=\"/\" mode={mode} onModeChange={setMode} />\n    </AuthProvider>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/login-form-default/login-form-default.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

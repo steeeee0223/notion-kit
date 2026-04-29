@@ -25,7 +25,7 @@ export function CodeBlockToolbar() {
       <div
         data-slot="code-block-toolbar"
         className={cn(
-          "absolute end-1.5 top-1.5 z-10 flex h-6 items-center justify-end rounded-sm bg-popover",
+          "absolute inset-e-1.5 top-1.5 z-10 flex h-6 items-center justify-end rounded-sm bg-popover",
           "opacity-0 transition-opacity group-hover/code-block:opacity-100 focus-within:opacity-100",
         )}
       >
