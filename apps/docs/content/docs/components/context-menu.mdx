@@ -1,0 +1,142 @@
+---
+title: Context Menu
+description: Displays a menu of actions triggered by a right-click (or long-press on touch devices).
+links:
+  - label: Radix UI
+    href: https://www.radix-ui.com/primitives/docs/components/context-menu
+  - label: Shadcn UI
+    href: https://ui.shadcn.com/docs/components/context-menu
+---
+
+<ComponentPreview name="context-menu" hideCode />
+
+## Installation
+
+<Installation packages="@notion-kit/shadcn" registryName="notion-ui" />
+
+## Anatomy
+
+```
+<ContextMenu>
+  <ContextMenuTrigger />
+  <ContextMenuContent>
+    <ContextMenuGroup>
+      <ContextMenuLabel />
+      <ContextMenuItem />
+      <ContextMenuItem />
+    </ContextMenuGroup>
+    <ContextMenuSeparator />
+    <ContextMenuSub>
+      <ContextMenuSubTrigger />
+      <ContextMenuSubContent>
+        <ContextMenuGroup>
+          <ContextMenuItem />
+        </ContextMenuGroup>
+      </ContextMenuSubContent>
+    </ContextMenuSub>
+    <ContextMenuCheckboxItem />
+  </ContextMenuContent>
+</ContextMenu>
+```
+
+## Examples
+
+---
+
+### Default
+
+A context menu with groups, shortcuts, submenus, checkbox items, and a destructive action.
+
+<ComponentPreview
+  name="context-menu"
+  preview={`<ContextMenu>
+  <ContextMenuTrigger>
+    Right click here
+  </ContextMenuTrigger>
+  <ContextMenuContent>
+    <ContextMenuGroup>
+      <ContextMenuLabel>Actions</ContextMenuLabel>
+      <ContextMenuItem Body="Back">
+        <ContextMenuShortcut>⌘[</ContextMenuShortcut>
+      </ContextMenuItem>
+      <ContextMenuItem Body="Reload">
+        <ContextMenuShortcut>⌘R</ContextMenuShortcut>
+      </ContextMenuItem>
+    </ContextMenuGroup>
+    <ContextMenuSeparator />
+    <ContextMenuCheckboxItem checked Body="Show Bookmarks" />
+  </ContextMenuContent>
+</ContextMenu>`}
+/>
+
+## API Reference
+
+### ContextMenu
+
+The root component. Wraps the trigger and content.
+
+### ContextMenuTrigger
+
+The area that activates the context menu on right-click or long-press.
+
+| Prop      | Type      | Default | Description                                                         |
+| --------- | --------- | ------- | ------------------------------------------------------------------- |
+| `asChild` | `boolean` | -       | Merges props onto the child element instead of rendering a wrapper. |
+
+### ContextMenuContent
+
+The popover panel that appears at the pointer position.
+
+| Prop   | Type                                     | Default | Description                          |
+| ------ | ---------------------------------------- | ------- | ------------------------------------ |
+| `side` | `"top" \| "right" \| "bottom" \| "left"` | -       | Forces the panel to a specific side. |
+
+### ContextMenuItem
+
+A single actionable item in the menu. Extends the shared `MenuItem` props.
+
+| Prop       | Type                                                            | Default     | Description                               |
+| ---------- | --------------------------------------------------------------- | ----------- | ----------------------------------------- |
+| `Body`     | `React.ReactNode`                                               | -           | The label text or content of the item.    |
+| `Icon`     | `React.ReactNode`                                               | -           | An optional leading icon.                 |
+| `desc`     | `string`                                                        | -           | An optional description below the label.  |
+| `variant`  | `"default" \| "secondary" \| "sidebar" \| "warning" \| "error"` | `"default"` | The visual style of the item.             |
+| `disabled` | `boolean`                                                       | -           | Whether the item is disabled.             |
+| `onSelect` | `(event: Event) => void`                                        | -           | Handler called when the item is selected. |
+
+### ContextMenuCheckboxItem
+
+A menu item that can be toggled on and off. Extends `ContextMenuItem` props.
+
+| Prop              | Type                         | Default | Description                                    |
+| ----------------- | ---------------------------- | ------- | ---------------------------------------------- |
+| `checked`         | `boolean`                    | -       | Whether the item is checked.                   |
+| `onCheckedChange` | `(checked: boolean) => void` | -       | Handler called when the checked state changes. |
+
+### ContextMenuLabel
+
+A non-interactive label used to title a group of items.
+
+### ContextMenuSeparator
+
+A visual divider between groups of items.
+
+### ContextMenuShortcut
+
+Displays a keyboard shortcut hint aligned to the right of an item.
+
+### ContextMenuGroup
+
+Groups related menu items together with consistent spacing.
+
+### ContextMenuSub
+
+Wraps a sub-menu trigger and its content.
+
+### ContextMenuSubTrigger
+
+A menu item that opens a nested sub-menu. Accepts the same props as `ContextMenuItem`.
+
+### ContextMenuSubContent
+
+The popover panel for a sub-menu.

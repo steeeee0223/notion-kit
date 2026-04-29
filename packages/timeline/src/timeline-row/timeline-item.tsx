@@ -12,7 +12,7 @@ import { addDays, differenceInCalendarDays, isSameDay } from "date-fns";
 import { cn } from "@notion-kit/cn";
 
 import { useTimelineContext, useTimelineDragging } from "../timeline-provider";
-import { TimelineContextProps, TimelineFeature } from "../types";
+import type { TimelineContextProps, TimelineFeature } from "../types";
 import {
   addRangeFn,
   daysInFn,
