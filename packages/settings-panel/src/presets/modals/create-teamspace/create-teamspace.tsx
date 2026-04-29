@@ -70,9 +70,9 @@ export function CreateTeamspace({
       className="w-120 p-6 select-none"
       onClick={(e) => e.stopPropagation()}
     >
-      <DialogHeader>
-        <DialogTitle>{t("title")}</DialogTitle>
-        <DialogDescription typography="desc">
+      <DialogHeader className="items-start">
+        <DialogTitle typography="h2">{t("title")}</DialogTitle>
+        <DialogDescription typography="desc" className="text-start">
           {t("description")}
         </DialogDescription>
       </DialogHeader>

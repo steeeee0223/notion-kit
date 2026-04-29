@@ -34,12 +34,14 @@ export function LogoutConfirm({
 
   return (
     <DialogContent className="w-[324px] p-5" hideClose>
-      <DialogHeader align="center">
+      <DialogHeader>
         <DialogIcon>
-          <Icon.PersonBadgeExclamationMark className="size-8 fill-icon" />
+          <Icon.PersonBadgeExclamationMark className="size-8 fill-muted" />
         </DialogIcon>
-        <DialogTitle>{title}</DialogTitle>
-        <DialogDescription>{description}</DialogDescription>
+        <DialogTitle typography="h2">{title}</DialogTitle>
+        <DialogDescription typography="h2" className="text-muted">
+          {description}
+        </DialogDescription>
       </DialogHeader>
       <DialogFooter>
         <Button

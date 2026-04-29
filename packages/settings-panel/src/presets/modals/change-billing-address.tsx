@@ -132,7 +132,9 @@ function AddressFormStripe({
 
   return (
     <>
-      <DialogTitle>{t("title")}</DialogTitle>
+      <DialogTitle className="text-left" typography="h2">
+        {t("title")}
+      </DialogTitle>
       <div className="flex flex-col gap-4">
         <AddressElement
           options={{
@@ -234,7 +236,9 @@ function ChangeBillingAddressNative({
 
   return (
     <DialogContent className="w-105">
-      <DialogTitle>{t("title")}</DialogTitle>
+      <DialogTitle className="text-left" typography="h2">
+        {t("title")}
+      </DialogTitle>
       <Form {...form}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <FormField

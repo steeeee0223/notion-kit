@@ -17,7 +17,7 @@ export function Enable2FAMethod() {
 
   return (
     <DialogContent className="w-[330px] p-5">
-      <DialogHeader align="center">
+      <DialogHeader>
         <DialogIcon>
           <Icon.LockShield className="size-8 fill-icon" />
         </DialogIcon>

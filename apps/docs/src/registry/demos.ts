@@ -27,9 +27,14 @@ export const DEMOS = [
   "code-block-default",
   "code-block-mermaid",
   "code-block-readonly",
+  // Context Menu
+  "context-menu",
   // Cover
   "cover-default",
   "cover-picker",
+  // Dropdown Menu
+  "dropdown-menu",
+  "dropdown-menu-checkbox",
   // Icon Block
   "icon-block-emoji",
   "icon-block-lucide",
@@ -99,6 +104,10 @@ export const DEMOS = [
   "tabs-demo",
   // Tags Input
   "tags-input-default",
+  // Timeline
+  "timeline-layout",
+  "timeline-with-sidebar",
+  "timeline-without-sidebar",
   // Tooltip
   "tooltip-demo",
   // Tree

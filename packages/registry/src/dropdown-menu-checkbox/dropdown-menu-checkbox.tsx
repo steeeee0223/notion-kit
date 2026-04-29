@@ -1,4 +1,6 @@
-import * as React from "react";
+"use client";
+
+import { useState } from "react";
 
 import {
   Button,
@@ -7,14 +9,13 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@notion-kit/shadcn";
 
-export function DropdownMenuCheckboxes() {
-  const [showStatusBar, setShowStatusBar] = React.useState(true);
-  const [showActivityBar, setShowActivityBar] = React.useState(false);
-  const [showPanel, setShowPanel] = React.useState(false);
+export default function Demo() {
+  const [showStatusBar, setShowStatusBar] = useState(true);
+  const [showActivityBar, setShowActivityBar] = useState(false);
+  const [showPanel, setShowPanel] = useState(false);
 
   return (
     <DropdownMenu>
@@ -22,9 +23,8 @@ export function DropdownMenuCheckboxes() {
         <Button size="md">Open</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>Appearance</DropdownMenuLabel>
-        <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          <DropdownMenuLabel>Appearance</DropdownMenuLabel>
           <DropdownMenuCheckboxItem
             checked={showStatusBar}
             onCheckedChange={setShowStatusBar}

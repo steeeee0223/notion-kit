@@ -58,16 +58,13 @@ function DropdownMenuSub({
 type DropdownMenuSubTriggerProps = React.ComponentProps<
   typeof DropdownMenuPrimitive.SubTrigger & typeof MenuItem
 >;
-function DropdownMenuSubTrigger({
-  className,
-  ...props
-}: DropdownMenuSubTriggerProps) {
+function DropdownMenuSubTrigger({ ...props }: DropdownMenuSubTriggerProps) {
   return (
     <DropdownMenuPrimitive.SubTrigger
       data-slot="dropdown-menu-sub-trigger"
       asChild
     >
-      <MenuItem className={className} {...props}>
+      <MenuItem {...props}>
         <MenuItemAction>
           <ChevronRightIcon className="size-4 text-icon" />
         </MenuItemAction>

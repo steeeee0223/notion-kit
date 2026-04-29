@@ -1,0 +1,247 @@
+---
+title: Timeline
+description: A composable timeline view with draggable items, range headers, sidebar, and navigation tools.
+---
+
+<ComponentPreview name="timeline-without-sidebar" hideCode />
+
+## Supported Features
+
+- Daily, monthly, and quarterly range views
+
+- Draggable and resizable timeline items
+
+- Auto-scroll to today's date on mount
+
+- Range navigation with previous/next jump buttons
+
+- "Today" indicator with tooltip
+
+- Optional sidebar with header and scrollable body
+
+- Marker creation via hover trigger
+
+- Deferred range transitions for smooth UI
+
+## Installation
+
+<Installation packages="@notion-kit/timeline" registryName="blocks" />
+
+## Anatomy
+
+```
+<TimelineProvider>
+  <TimelineContent>
+    <TimelineRangeHeader />
+    <TimelineList>
+      <TimelineRow />
+      <TimelineRow />
+      <TimelineRow />
+    </TimelineList>
+    <TimelineToolbar>
+      <TimelineRangeSelect />
+      <TimelineJumpTo />
+    </TimelineToolbar>
+    <TimelineToday />
+  </TimelineContent>
+  <TimelineSidebar>
+    <TimelineSidebarHeader>
+      <TimelineSidebarClose />
+      {/* your header */}
+    </TimelineSidebarHeader>
+    <TimelineSidebarBody>
+      {/* your body */}
+    </TimelineSidebarBody>
+  </TimelineSidebar>
+</TimelineProvider>
+```
+
+## Examples
+
+---
+
+### Layout Only
+
+A minimal timeline showing the range header, toolbar, and today indicator — without any items.
+
+<ComponentPreview
+  name="timeline-layout"
+  preview={`<TimelineProvider range={range}>
+  <TimelineContent>
+    <TimelineRangeHeader />
+    <TimelineToolbar>
+      <TimelineRangeSelect value={range} onChange={setRange} />
+      <TimelineJumpTo />
+    </TimelineToolbar>
+    <TimelineToday />
+  </TimelineContent>
+</TimelineProvider>`}
+/>
+
+### Without Sidebar
+
+A full timeline with draggable items, context menus, range selection, and a marker creation trigger.
+
+<ComponentPreview
+  name="timeline-without-sidebar"
+  preview={`<TimelineProvider range={range}>
+  <TimelineContent>
+    <TimelineRangeHeader />
+    <TimelineList>
+      {rows.map((row) => <TimelineRow key={row.id} item={row} />)}
+    </TimelineList>
+    <TimelineToolbar>
+      <TimelineRangeSelect value={range} onChange={setRange} />
+      <TimelineJumpTo />
+    </TimelineToolbar>
+    <TimelineToday />
+  </TimelineContent>
+</TimelineProvider>`}
+/>
+
+### With Sidebar
+
+A timeline with an attached sidebar panel listing all items, plus a header toolbar for opening/closing the sidebar.
+
+<ComponentPreview
+  name="timeline-with-sidebar"
+  preview={`<TimelineProvider range={range}>
+  <TimelineContent>
+    <TimelineRangeHeader />
+    <TimelineList>
+      {rows.map((row) => <TimelineRow key={row.id} item={row} />)}
+    </TimelineList>
+    <TimelineToday />
+    <TimelineHeaderToolbar />
+  </TimelineContent>
+  <TimelineSidebar>
+    <TimelineSidebarHeader>
+      <TimelineSidebarClose />
+    </TimelineSidebarHeader>
+    <TimelineSidebarBody>
+      {rows.map((row) => <div key={row.id}>{row.name}</div>)}
+    </TimelineSidebarBody>
+  </TimelineSidebar>
+</TimelineProvider>`}
+/>
+
+## API Reference
+
+### TimelineProvider
+
+Root provider that manages timeline state, scroll position, and CSS variables.
+
+| Prop           | Type                   | Default     | Description                                                   |
+| -------------- | ---------------------- | ----------- | ------------------------------------------------------------- |
+| `range`        | `TimelineRange`        | `"monthly"` | The active range granularity.                                 |
+| `zoom`         | `number`               | `100`       | Zoom level as a percentage.                                   |
+| `startDate`    | `number \| null`       | -           | Override the timeline start date (timestamp).                 |
+| `endDate`      | `number \| null`       | -           | Override the timeline end date (timestamp).                   |
+| `sidebarWidth` | `number`               | -           | Controlled sidebar width in pixels. Auto-detected if omitted. |
+| `onAddItem`    | `(ts: number) => void` | -           | Handler called when clicking to add a new item.               |
+
+### TimelineContent
+
+The main scrollable container that holds the range header, items, and tools.
+
+### TimelineList
+
+The absolutely-positioned list container for timeline rows, placed below the range header.
+
+### TimelineRangeHeader
+
+Renders the two-row header showing range labels (years/quarters) and sub-range labels (months/weeks/days).
+No additional props.
+
+### TimelineRow
+
+A single timeline item row. Renders both the draggable bar and a jump-to anchor.
+
+| Prop     | Type                                                       | Default | Description                                         |
+| -------- | ---------------------------------------------------------- | ------- | --------------------------------------------------- |
+| `item`\* | [`TimelineFeature`](#type-timelinefeature)                 | -       | The feature data for this row.                      |
+| `onMove` | `(id: string, start: number, end: number \| null) => void` | -       | Handler called when the item is dragged or resized. |
+| `render` | `() => React.ReactNode`                                    | -       | Custom render function for the item card content.   |
+
+### TimelineToolbar
+
+A sticky toolbar container for placing controls like range select and jump-to.
+
+### TimelineHeaderToolbar
+
+A pre-composed toolbar with sidebar trigger, range select, and jump-to buttons.
+
+| Prop            | Type                             | Description                                             |
+| --------------- | -------------------------------- | ------------------------------------------------------- |
+| `onSidebarOpen` | `() => void`                     | Handler called when the sidebar open button is clicked. |
+| `onRangeChange` | `(range: TimelineRange) => void` | Handler called when the range is changed.               |
+
+### TimelineRangeSelect
+
+A select dropdown for switching between range granularities.
+
+| Prop       | Type                             | Description                               |
+| ---------- | -------------------------------- | ----------------------------------------- |
+| `value`\*  | `TimelineRange`                  | The currently selected range.             |
+| `onChange` | `(value: TimelineRange) => void` | Handler called when the range is changed. |
+
+### TimelineJumpTo
+
+Navigation buttons for jumping to the previous/next range group and back to today.
+
+### TimelineToday
+
+Renders a vertical red line and badge at today's date position.
+
+### GanttCreateMarkerTrigger
+
+A hover-activated trigger that follows the cursor and creates a marker on click.
+
+| Prop             | Type                   | Description                                              |
+| ---------------- | ---------------------- | -------------------------------------------------------- |
+| `onCreateMarker` | `(ts: number) => void` | Handler called with the timestamp of the click position. |
+
+### TimelineSidebar
+
+A sticky sidebar panel attached to the start edge of the timeline.
+
+### TimelineSidebarHeader
+
+A sticky header inside the sidebar.
+
+### TimelineSidebarBody
+
+A scrollable body area inside the sidebar.
+
+### TimelineSidebarClose
+
+A button that hides the sidebar panel.
+
+| Prop          | Type         | Default        | Description                        |
+| ------------- | ------------ | -------------- | ---------------------------------- |
+| `description` | `string`     | `"Hide table"` | Tooltip text for the close button. |
+| `onClick`     | `() => void` | -              | Handler called when clicked.       |
+
+### TimelineSidebarTrigger
+
+A button that opens the sidebar panel.
+
+| Prop          | Type         | Default        | Description                          |
+| ------------- | ------------ | -------------- | ------------------------------------ |
+| `description` | `string`     | `"Show table"` | Tooltip text for the trigger button. |
+| `onClick`     | `() => void` | -              | Handler called when clicked.         |
+
+### `type` TimelineRange
+
+```ts
+type TimelineRange = "daily" | "monthly" | "quarterly";
+```
+
+### `type` TimelineFeature
+
+| Prop        | Type     | Description                        |
+| ----------- | -------- | ---------------------------------- |
+| `id`\*      | `string` | Unique identifier for the feature. |
+| `name`\*    | `string` | Display name of the feature.       |
+| `startAt`\* | `number` | Start timestamp in milliseconds.   |
+| `endAt`\*   | `number` | End timestamp in milliseconds.     |

@@ -91,6 +91,10 @@ export const Index: Record<
       () => import("@notion-kit/registry/code-block-readonly"),
     ),
   },
+  "context-menu": {
+    files: ["registry/src/context-menu/context-menu.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/context-menu")),
+  },
   "cover-default": {
     files: ["registry/src/cover-default/cover-default.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/cover-default")),
@@ -98,6 +102,16 @@ export const Index: Record<
   "cover-picker": {
     files: ["registry/src/cover-picker/cover-picker.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/cover-picker")),
+  },
+  "dropdown-menu": {
+    files: ["registry/src/dropdown-menu/dropdown-menu.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/dropdown-menu")),
+  },
+  "dropdown-menu-checkbox": {
+    files: ["registry/src/dropdown-menu-checkbox/dropdown-menu-checkbox.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/dropdown-menu-checkbox"),
+    ),
   },
   "icon-block-emoji": {
     files: ["registry/src/icon-block-emoji/icon-block-emoji.tsx"],
@@ -392,6 +406,24 @@ export const Index: Record<
     files: ["registry/src/tags-input-default/tags-input-default.tsx"],
     component: React.lazy(
       () => import("@notion-kit/registry/tags-input-default"),
+    ),
+  },
+  "timeline-layout": {
+    files: ["registry/src/timeline-layout/timeline-layout.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/timeline-layout")),
+  },
+  "timeline-with-sidebar": {
+    files: ["registry/src/timeline-with-sidebar/timeline-with-sidebar.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/timeline-with-sidebar"),
+    ),
+  },
+  "timeline-without-sidebar": {
+    files: [
+      "registry/src/timeline-without-sidebar/timeline-without-sidebar.tsx",
+    ],
+    component: React.lazy(
+      () => import("@notion-kit/registry/timeline-without-sidebar"),
     ),
   },
   "tooltip-demo": {

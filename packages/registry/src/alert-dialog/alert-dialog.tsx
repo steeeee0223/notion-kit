@@ -41,7 +41,7 @@ export function AlertDialog({
       className="flex w-[300px] flex-col items-start justify-center gap-2 p-6"
       aria-describedby={undefined}
     >
-      <DialogHeader align="center">
+      <DialogHeader>
         <DialogTitle className="text-base font-normal tracking-wide">
           {title}
         </DialogTitle>

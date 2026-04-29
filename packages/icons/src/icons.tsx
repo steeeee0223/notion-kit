@@ -135,6 +135,22 @@ export const ArrowTurnDownLeft = (props: IconProps) => (
   </svg>
 );
 
+export const ArrowStraightFillSmall = ({
+  side = "right",
+  className,
+  ...props
+}: IconWithSideProps) => (
+  <svg
+    aria-hidden="true"
+    role="graphics-symbol"
+    viewBox="0 0 16 16"
+    className={cn(SIDE[side], className)}
+    {...props}
+  >
+    <path d="M13.78 7.47 9.46 3.15A.75.75 0 0 0 8.4 4.21l3.04 3.04H2.702C2.315 7.25 2 7.586 2 8s.315.75.703.75h8.736L8.4 11.79a.75.75 0 0 0 1.061 1.06l4.32-4.32a.75.75 0 0 0 0-1.06"></path>
+  </svg>
+);
+
 export const ArrowRectangle = ({
   className,
   side = "right",
@@ -516,15 +532,60 @@ export const Help = (props: IconProps) => (
   </svg>
 );
 
+/**
+ * @default "right"
+ */
+export const Chevron = ({
+  side = "right",
+  className,
+  ...props
+}: IconWithSideProps) => (
+  <svg
+    aria-hidden="true"
+    role="graphics-symbol"
+    viewBox="0 0 16 16"
+    className={cn(SIDE[side], className)}
+    {...props}
+  >
+    <path d="M6.722 3.238a.625.625 0 1 0-.884.884L9.716 8l-3.878 3.878a.625.625 0 0 0 .884.884l4.32-4.32a.625.625 0 0 0 0-.884z" />
+  </svg>
+);
+
+/**
+ * @deprecated use Chevron instead
+ */
 export const ChevronRight = (props: IconProps) => (
   <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 16 16" {...props}>
     <path d="M12.375 8.06445C12.375 7.83203 12.2861 7.63379 12.1084 7.45605L6.77637 2.24023C6.62598 2.08984 6.44141 2.01465 6.22266 2.01465C5.77832 2.01465 5.42285 2.35645 5.42285 2.80078C5.42285 3.01953 5.51172 3.21777 5.66211 3.375L10.4746 8.06445L5.66211 12.7539C5.51855 12.9043 5.42285 13.1025 5.42285 13.3213C5.42285 13.7725 5.77832 14.1143 6.22266 14.1143C6.44141 14.1143 6.62598 14.0391 6.77637 13.8887L12.1084 8.67285C12.293 8.49512 12.375 8.29688 12.375 8.06445Z" />
   </svg>
 );
 
+/**
+ * @deprecated use Chevron instead
+ */
 export const ChevronDown = (props: IconProps) => (
   <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 30 30" {...props}>
     <polygon points="15,17.4 4.8,7 2,9.8 15,23 28,9.8 25.2,7 " />
+  </svg>
+);
+
+/**
+ * @default "right"
+ */
+export const ArrowChevronDoubleSmall = ({
+  side = "right",
+  className,
+  ...props
+}: IconWithSideProps) => (
+  <svg
+    aria-hidden="true"
+    role="graphics-symbol"
+    viewBox="0 0 16 16"
+    className={cn(SIDE[side], className)}
+    {...props}
+  >
+    <path d="M4.482 3.238a.625.625 0 1 0-.884.884L7.476 8l-3.878 3.878a.625.625 0 0 0 .884.884l4.32-4.32a.625.625 0 0 0 0-.884z" />
+    <path d="M8.882 3.238a.625.625 0 0 0-.884.884L11.876 8l-3.878 3.878a.625.625 0 0 0 .884.884l4.32-4.32a.625.625 0 0 0 0-.884z" />
   </svg>
 );
 

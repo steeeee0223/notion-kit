@@ -48,7 +48,7 @@ export function ChevronDown({ className, ...props }: IconProps) {
       role="graphics-symbol"
       aria-hidden="true"
       viewBox="0 0 30 30"
-      className={cn("block size-2.5 shrink-0 fill-icon", className)}
+      className={cn("block size-3 shrink-0 fill-icon", className)}
       {...props}
     >
       <polygon points="15,17.4 4.8,7 2,9.8 15,23 28,9.8 25.2,7 " />

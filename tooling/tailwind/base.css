@@ -30,6 +30,8 @@
   --color-popover: var(--bg-popover);
   --color-tooltip: var(--bg-tooltip);
   --color-input: var(--bg-input);
+  --color-timeline: var(--bg-timeline);
+  --color-timeline-dark: var(--bg-timeline-dark);
   /* Border */
   --color-border: var(--border);
   --color-border-button: var(--border-button);
@@ -52,6 +54,7 @@
     --alpha(var(--blue) / 57%) 0px 0px 0px 2px inset,
     --alpha(var(--blue) / 35%) 0px 0px 0px 1px inset;
   --shadow-l-pinned: -1px 0 0 var(--border-cell) inset;
+  --shadow-out-md: var(--sha-out-md);
   /* Text size */
   --leading-tight: 1.2;
   /* Animate */
@@ -92,12 +95,17 @@
   --bg-popover: rgb(255, 255, 255);
   --bg-tooltip: rgb(15, 15, 15);
   --bg-input: rgba(242, 241, 238, 0.6);
+  --bg-timeline: rgb(253, 253, 253);
+  --bg-timeline-dark: rgba(55, 53, 47, 0.03);
   /* Border color */
   --border: rgba(var(--base) / 0.1);
   --border-button: rgba(var(--base) / 0.15);
   --border-cell: rgb(233, 233, 231);
   --ring: rgba(15, 15, 15, 0.1);
   --radius: 0.5rem;
+  --sha-out-md:
+    0px 8px 12px 0px #19191907, 0px 2px 6px 0px #19191907,
+    0px 0px 0px 1px #2a1c0012;
 }
 
 .dark {
@@ -121,9 +129,12 @@
   --bg-popover: rgb(37, 37, 37);
   --bg-tooltip: rgb(47, 47, 47);
   --bg-input: rgba(255, 255, 255, 0.055);
+  --bg-timeline: rgb(247, 247, 247);
+  --bg-timeline-dark: rgba(255, 255, 255, 0.02);
   /* Border color */
   --border-cell: rgb(47, 47, 47);
   --ring: rgba(255, 255, 255, 0.075);
+  --sha-out-md: 0px 0px 0px 1px #383836, 0px 4px 12px -2px #19191914;
 }
 
 @layer base {

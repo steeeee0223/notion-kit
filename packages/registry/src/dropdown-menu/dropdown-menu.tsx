@@ -14,16 +14,15 @@ import {
   DropdownMenuTrigger,
 } from "@notion-kit/shadcn";
 
-export function DropdownMenuDemo() {
+export default function Demo() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button size="md">Open</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuItem Body="Profile">
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>

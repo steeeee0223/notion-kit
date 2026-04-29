@@ -45,15 +45,20 @@
     "@notion-kit/single-image-dropzone": "workspace:*",
     "@notion-kit/table-view": "workspace:*",
     "@notion-kit/tags-input": "workspace:*",
+    "@notion-kit/timeline": "workspace:*",
     "@notion-kit/tree": "workspace:*",
     "@notion-kit/unsplash": "workspace:*",
-    "@notion-kit/utils": "workspace:*"
+    "@notion-kit/utils": "workspace:*",
+    "date-fns": "catalog:fns",
+    "lodash.groupby": "catalog:fns"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.4.0",
     "@notion-kit/config": "workspace:*",
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "@types/lodash.groupby": "catalog:fns",
     "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",
     "prettier": "catalog:",

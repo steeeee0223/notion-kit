@@ -34,7 +34,7 @@ function MenuLabel({
       data-slot="menu-label"
       className={cn(
         typography("label"),
-        "mt-1.5 mb-2 flex fill-default/45 px-3.5 text-secondary select-none",
+        "my-1 flex fill-default/45 px-3.5 text-secondary select-none",
         className,
       )}
       title={title}
