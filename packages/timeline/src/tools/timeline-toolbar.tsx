@@ -42,10 +42,10 @@ export function TimelineHeaderToolbar({
   return (
     <div
       data-slot="timeline-header-toolbar"
-      className="absolute inset-0 top-0 z-20 flex pointer-events-none"
+      className="pointer-events-none absolute inset-0 top-0 z-20 flex"
     >
       {onSidebarOpen && (
-        <TimelineToolbar className="sticky inset-s-0 top-px ps-3 pt-[7px] pointer-events-auto">
+        <TimelineToolbar className="pointer-events-auto sticky inset-s-0 top-px ps-3 pt-[7px]">
           <TimelineSidebarTrigger
             description="Show table"
             onClick={onSidebarOpen}
@@ -53,7 +53,7 @@ export function TimelineHeaderToolbar({
         </TimelineToolbar>
       )}
       <TimelineToolbar
-        className="sticky top-px pe-(--timeline-inline-padding) pt-[7px] pointer-events-auto"
+        className="pointer-events-auto sticky top-px pe-(--timeline-inline-padding) pt-[7px]"
         style={{
           insetInlineStart: containerWidth > 0 ? containerWidth - 270 : 0,
         }}
