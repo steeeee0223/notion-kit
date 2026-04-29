@@ -4,6 +4,7 @@ import React, { useCallback, useState } from "react";
 import { type DragEndEvent } from "@dnd-kit/core";
 import type { Table } from "@tanstack/react-table";
 
+import { cn } from "@notion-kit/cn";
 import { AlertModal } from "@notion-kit/common/alert-modal";
 import { Icon } from "@notion-kit/icons";
 import { Button, Dialog } from "@notion-kit/shadcn";
@@ -14,7 +15,11 @@ import { useTableViewCtx } from "../table-contexts";
 import { TableGroupedRow } from "./table-grouped-row";
 import { TableRow } from "./table-row";
 
-export function DndTableBody() {
+interface DndTableBodyProps {
+  className?: string;
+}
+
+export function DndTableBody({ className }: DndTableBodyProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [pendingDragEvent, setPendingDragEvent] = useState<DragEndEvent | null>(
     null,
@@ -43,7 +48,7 @@ export function DndTableBody() {
 
   return (
     <>
-      <div className="relative isolation-auto min-w-[708px]">
+      <div className={cn("relative isolation-auto", className)}>
         {/* Drag and Fill handle */}
         <div
           id="notion-table-view-drag-and-fill-handle"
@@ -76,7 +81,6 @@ export function DndTableBody() {
           )}
         </div>
       </div>
-      <div className="w-[438px]" />
       {!locked && (
         <Button
           id="notion-table-view-add-row"

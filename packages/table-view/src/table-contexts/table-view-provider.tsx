@@ -12,6 +12,7 @@ import { arrayToEntity } from "../lib/utils";
 import { ListViewContent } from "../list-view";
 import { DEFAULT_PLUGINS, DefaultPlugins, type CellPlugin } from "../plugins";
 import { RowView } from "../row-view";
+import { TimelineViewContent } from "../timeline-view";
 import { Toolbar } from "../tools/toolbar";
 import { TableViewContent } from "./table-view-content";
 import type { TableProps } from "./types";
@@ -64,6 +65,8 @@ function Content({ layout }: { layout: LayoutType }) {
       return <ListViewContent />;
     case "board":
       return <BoardViewContent />;
+    case "timeline":
+      return <TimelineViewContent />;
     default:
       return <TableViewContent />;
   }

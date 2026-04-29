@@ -42,7 +42,8 @@ export function LayoutMenu() {
               disabled={
                 layout.value !== "table" &&
                 layout.value !== "list" &&
-                layout.value !== "board"
+                layout.value !== "board" &&
+                layout.value !== "timeline"
               }
             >
               <LayoutIcon layout={layout.value} />

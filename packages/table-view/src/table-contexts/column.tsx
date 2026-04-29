@@ -27,7 +27,16 @@ export const defaultColumn: Partial<ColumnDef<Row>> = {
   },
   footer: ({ table, ...props }) => {
     const { layout } = table.getTableGlobalState();
-    if (layout !== "table") return null;
-    return <TableFooterCell table={table} {...props} />;
+    switch (layout) {
+      case "table":
+        return <TableFooterCell table={table} {...props} />;
+      case "timeline": {
+        const titleColId = table.getTitleColumnId();
+        if (props.column.id !== titleColId) return null;
+        return <TableFooterCell table={table} {...props} />;
+      }
+      default:
+        return null;
+    }
   },
 };

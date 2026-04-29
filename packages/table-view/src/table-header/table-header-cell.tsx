@@ -16,18 +16,109 @@ import {
 } from "@notion-kit/shadcn";
 
 import { DefaultIcon } from "../common";
-import type { Row } from "../lib/types";
+import type { ColumnInfo, Row } from "../lib/types";
 import { PropMenu } from "../menus";
+
+interface TableHeaderCellTriggerProps
+  extends React.ComponentProps<typeof Button> {
+  info: ColumnInfo;
+  width?: string;
+  hideMenu?: boolean;
+}
+
+function TableHeaderCellTrigger({
+  info,
+  width,
+  hideMenu,
+  className,
+  ...props
+}: TableHeaderCellTriggerProps) {
+  return (
+    <div
+      data-slot="table-view-header-cell"
+      className="flex shrink-0 overflow-hidden p-0 text-sm"
+      style={{ width }}
+    >
+      <DropdownMenu>
+        <TooltipPreset
+          description={
+            info.description
+              ? [
+                  { type: "default", text: info.name },
+                  { type: "secondary", text: info.description },
+                ]
+              : info.name
+          }
+          side="top"
+        >
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="cell"
+              className={cn("size-full px-2", className)}
+              {...props}
+            >
+              {info.icon ? (
+                <IconBlock
+                  icon={info.icon}
+                  className="size-4 p-0 opacity-60 dark:opacity-45"
+                />
+              ) : (
+                <DefaultIcon type={info.type} className="fill-default/45" />
+              )}
+              <div className="truncate">{info.name}</div>
+              {info.description && <Icon.Info className="size-3 fill-icon" />}
+            </Button>
+          </DropdownMenuTrigger>
+        </TooltipPreset>
+        {!hideMenu && (
+          <DropdownMenuContent
+            align="start"
+            sideOffset={0}
+            className="w-[220px]"
+          >
+            <PropMenu view="table" propId={info.id} />
+          </DropdownMenuContent>
+        )}
+      </DropdownMenu>
+    </div>
+  );
+}
+
+interface TableHeaderCellResizerProps extends React.ComponentProps<"div"> {
+  isResizing?: boolean;
+}
+
+function TableHeaderCellResizer({
+  isResizing,
+  className,
+  ...props
+}: TableHeaderCellResizerProps) {
+  return (
+    <div
+      dir="ltr"
+      data-slot="table-view-header-cell-resizer"
+      className="absolute inset-e-0 z-10 w-0 grow-0"
+    >
+      <div
+        role="presentation"
+        tabIndex={-1}
+        className={cn(
+          "-ms-[3px] -mt-px w-[5px] animate-bg-out cursor-col-resize bg-transparent hover:bg-blue/80",
+          isResizing && "bg-blue/80",
+          className,
+        )}
+        {...props}
+      />
+    </div>
+  );
+}
 
 /**
  * Table Header Cell
  *
  * @requires SortableContext
  */
-export function TableHeaderCell({
-  header,
-  table,
-}: HeaderContext<Row, unknown>) {
+function TableHeaderCell({ header, table }: HeaderContext<Row, unknown>) {
   const info = header.column.getInfo();
   const isResizing = header.column.getIsResizing();
   const onResizeStart = header.getResizeHandler();
@@ -57,71 +148,28 @@ export function TableHeaderCell({
       ref={setNodeRef}
       style={style}
     >
-      <DropdownMenu modal={false}>
-        <TooltipPreset
-          description={
-            info.description
-              ? [
-                  { type: "default", text: info.name },
-                  { type: "secondary", text: info.description },
-                ]
-              : info.name
-          }
-          side="top"
-        >
-          <DropdownMenuTrigger asChild disabled={locked}>
-            <div
-              id="notion-table-view-header-cell"
-              className="flex shrink-0 overflow-hidden p-0 text-sm"
-              style={{ width: header.column.getSize() }}
-            >
-              <Button
-                {...attributes}
-                {...listeners}
-                variant="cell"
-                className={cn("size-full px-2", isResizing && "bg-transparent")}
-              >
-                {info.icon ? (
-                  <IconBlock
-                    icon={info.icon}
-                    className="size-4 p-0 opacity-60 dark:opacity-45"
-                  />
-                ) : (
-                  <DefaultIcon type={info.type} className="fill-default/45" />
-                )}
-                <div className="truncate">{info.name}</div>
-                {info.description && <Icon.Info className="size-3 fill-icon" />}
-              </Button>
-            </div>
-          </DropdownMenuTrigger>
-        </TooltipPreset>
-        {!isDragging && (
-          <DropdownMenuContent
-            align="start"
-            sideOffset={0}
-            className="w-[220px]"
-          >
-            <PropMenu view="table" propId={header.column.id} />
-          </DropdownMenuContent>
-        )}
-      </DropdownMenu>
+      <TableHeaderCellTrigger
+        info={info}
+        width={header.column.getWidth()}
+        hideMenu={isDragging}
+        className={cn(isResizing && "bg-transparent")}
+        disabled={locked}
+        {...attributes}
+        {...listeners}
+      />
       {/* Resize handle */}
-      <div className="absolute right-0 z-10 w-0 grow-0">
-        <div
-          role="presentation"
-          tabIndex={-1}
-          className={cn(
-            "-mt-px -ml-[3px] h-[34px] w-[5px] animate-bg-out cursor-col-resize bg-transparent hover:bg-blue/80",
-            isResizing && "bg-blue/80",
-          )}
-          // Resize for desktop
-          onMouseDown={onResizeStart}
-          onMouseUp={header.column.handleResizeEnd}
-          // Resize for mobile
-          onTouchStart={onResizeStart}
-          onTouchEnd={header.column.handleResizeEnd}
-        />
-      </div>
+      <TableHeaderCellResizer
+        isResizing={isResizing}
+        className="h-[34px]"
+        // Resize for desktop
+        onMouseDown={onResizeStart}
+        onMouseUp={header.column.handleResizeEnd}
+        // Resize for mobile
+        onTouchStart={onResizeStart}
+        onTouchEnd={header.column.handleResizeEnd}
+      />
     </div>
   );
 }
+
+export { TableHeaderCell, TableHeaderCellTrigger, TableHeaderCellResizer };

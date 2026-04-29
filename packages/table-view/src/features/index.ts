@@ -41,6 +41,12 @@ import {
   type RowActionsRowApi,
   type RowActionsTableApi,
 } from "./row-actions";
+import {
+  TimelineFeature,
+  type TimelineOptions,
+  type TimelineTableApi,
+  type TimelineTableState,
+} from "./timeline";
 
 declare module "@tanstack/react-table" {
   // merge our new feature's state with the existing table state
@@ -49,7 +55,8 @@ declare module "@tanstack/react-table" {
       ColumnsInfoTableState,
       FreezingTableState,
       ExtendedGroupingTableState,
-      TableMenuTableState {}
+      TableMenuTableState,
+      TimelineTableState {}
 
   // merge our new feature's options with the existing table options
   interface TableOptionsResolved<TData extends RowData>
@@ -58,7 +65,8 @@ declare module "@tanstack/react-table" {
       FreezingOptions,
       RowActionsOptions,
       ExtendedGroupingOptions,
-      TableMenuOptions {
+      TableMenuOptions,
+      TimelineOptions {
     sync?: (debugValue?: string) => void;
   }
 
@@ -69,7 +77,8 @@ declare module "@tanstack/react-table" {
       FreezingTableApi,
       RowActionsTableApi,
       ExtendedGroupingTableApi,
-      TableMenuTableApi {}
+      TableMenuTableApi,
+      TimelineTableApi {}
 
   interface Column<TData extends RowData>
     extends ColumnInfoColumnApi,
@@ -88,6 +97,7 @@ export * from "./extended-grouped-row-model";
 export * from "./freezing";
 export * from "./menu";
 export * from "./row-actions";
+export * from "./timeline";
 export * from "./constants";
 
 export const DEFAULT_FEATURES = [
@@ -97,4 +107,5 @@ export const DEFAULT_FEATURES = [
   TableMenuFeature,
   RowActionsFeature,
   ExtendedGroupingFeature,
+  TimelineFeature,
 ];

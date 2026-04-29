@@ -69,3 +69,13 @@ export const BoardView: Story = {
     ),
   ],
 };
+
+export const TimelineView: Story = {
+  render: () => (
+    <TableView
+      table={{ layout: "timeline" }}
+      properties={mockProps}
+      data={mockData}
+    />
+  ),
+};

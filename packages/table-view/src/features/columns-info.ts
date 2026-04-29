@@ -6,7 +6,7 @@ import type {
   TableFeature,
   Updater,
 } from "@tanstack/react-table";
-import { functionalUpdate } from "@tanstack/react-table";
+import { functionalUpdate, memo } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { ColumnInfo, PluginType, Row } from "../lib/types";
@@ -38,8 +38,10 @@ export interface ColumnsInfoOptions {
 
 export interface ColumnsInfoTableApi {
   // Column Getters
+  getTitleColumnId: () => string;
   getColumnInfo: (colId: string) => ColumnInfo;
   getColumnPlugin: (colId: string) => CellPlugin;
+  getColumnSizeVariables: () => Record<string, number>;
   getDeletedColumns: () => ColumnInfo[];
   countVisibleColumns: () => number;
   // Column Setters
@@ -89,6 +91,16 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
 
   createTable: (table: Table<Row>) => {
     /** Column Getters */
+    table.getTitleColumnId = () => {
+      const { columnOrder, columnsInfo } = table.getState();
+      const titleColId = columnOrder.find(
+        (colId) => columnsInfo[colId]?.type === "title",
+      );
+      if (!titleColId) {
+        throw new Error(`[TableView] Title column not found`);
+      }
+      return titleColId;
+    };
     table.getColumnInfo = (colId) => {
       const info = table.getState().columnsInfo[colId];
       if (!info) {
@@ -104,6 +116,30 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
       }
       return plugin;
     };
+    /**
+     * Instead of calling `column.getSize()` on every render for every header
+     * and especially every data cell (very expensive),
+     * we will calculate all column sizes at once at the root table level in a useMemo
+     * and pass the column sizes down as CSS variables to the <table> element.
+     */
+    table.getColumnSizeVariables = memo(
+      () => [
+        table.getFlatHeaders(),
+        table.getState().columnSizingInfo,
+        table.getState().columnSizing,
+      ],
+      (headers) => {
+        return headers.reduce<Record<string, number>>(
+          (sizes, header) => ({
+            ...sizes,
+            [`--header-${header.id}-size`]: header.getSize(),
+            [`--col-${header.column.id}-size`]: header.column.getSize(),
+          }),
+          {},
+        );
+      },
+      { key: "table.getColumnSizeVariables" },
+    );
     table.getDeletedColumns = () => {
       const { columnOrder, columnsInfo } = table.getState();
       return columnOrder.reduce<ColumnInfo[]>((acc, colId) => {
@@ -301,8 +337,10 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     column.getPlugin = () => table.getColumnPlugin(column.id);
     /** Column width */
     column.getWidth = () => `calc(var(--col-${column.id}-size) * 1px)`;
-    column.handleResizeEnd = () =>
+    column.handleResizeEnd = () => {
+      console.log("[resize end] settings width", column.getSize());
       table.setColumnInfo(column.id, { width: `${column.getSize()}px` });
+    };
     /** Setter */
     column.updateConfig = (updater) =>
       table._setColumnInfo(column.id, (v) => ({

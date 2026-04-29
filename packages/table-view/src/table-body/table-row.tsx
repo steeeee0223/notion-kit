@@ -21,7 +21,7 @@ export function TableRow({ row }: TableRowProps) {
   const isMobile = useIsMobile();
   /** Add row */
   const { table } = useTableViewCtx();
-  const { locked } = table.getTableGlobalState();
+  const { locked, layout } = table.getTableGlobalState();
   const addNextRow = (e: React.MouseEvent) => {
     if (e.altKey) {
       table.addRow({ id: row.id, at: "prev" });
@@ -60,7 +60,7 @@ export function TableRow({ row }: TableRowProps) {
     >
       <div
         role="row"
-        id="notion-table-view-row"
+        data-slot="notion-table-view-row"
         dir="ltr"
         className={cn(
           "flex w-full border-b border-b-border-cell",
@@ -107,7 +107,9 @@ export function TableRow({ row }: TableRowProps) {
         </div>
       </div>
       {/* Bottom line at row end */}
-      <div className="flex w-16 grow justify-start border-b border-b-border-cell" />
+      {layout === "table" && (
+        <div className="flex w-16 grow justify-start border-b border-b-border-cell" />
+      )}
     </div>
   );
 }
@@ -116,12 +118,18 @@ interface TableCellsProps {
   cells: Cell<RowModel, unknown>[];
 }
 
-function TableCells({ cells }: TableCellsProps) {
+const TableCells = React.memo(function TableCells({ cells }: TableCellsProps) {
+  const { table } = useTableViewCtx();
+  const { layout } = table.getTableGlobalState();
+  const titleColId = table.getTitleColumnId();
+
   return cells.map((cell) => {
+    if (layout === "timeline" && cell.column.id !== titleColId) return null;
+
     return (
       <React.Fragment key={cell.id}>
         {flexRender(cell.column.columnDef.cell, cell.getContext())}
       </React.Fragment>
     );
   });
-}
+});

@@ -1,7 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
-
 import { Icon } from "@notion-kit/icons";
 import { Button, Separator } from "@notion-kit/shadcn";
 
@@ -13,34 +11,8 @@ import { useTableViewCtx } from "./table-view-provider";
 
 export function TableViewContent() {
   const { table } = useTableViewCtx();
-  const { sorting, columnSizingInfo, columnSizing } = table.getState();
+  const { sorting } = table.getState();
   const isSorted = sorting.length > 0;
-
-  /**
-   * Instead of calling `column.getSize()` on every render for every header
-   * and especially every data cell (very expensive),
-   * we will calculate all column sizes at once at the root table level in a useMemo
-   * and pass the column sizes down as CSS variables to the <table> element.
-   */
-  const columnSizeVars = useMemo(
-    () => {
-      return table.getFlatHeaders().reduce<Record<string, number>>(
-        (sizes, header) => ({
-          ...sizes,
-          [`--header-${header.id}-size`]: header.getSize(),
-          [`--col-${header.column.id}-size`]: header.column.getSize(),
-        }),
-        {},
-      );
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      table.getFlatHeaders(),
-      columnSizingInfo,
-      columnSizing,
-    ],
-  );
 
   return (
     <div
@@ -73,12 +45,12 @@ export function TableViewContent() {
       <div
         data-block-id="15f35e0f-492c-8003-9976-f8ae747a6aeb"
         className="relative"
-        style={columnSizeVars}
+        style={table.getColumnSizeVariables()}
       >
         {/* Header row */}
         <TableHeader />
         {/* Table body */}
-        <DndTableBody />
+        <DndTableBody className="min-w-[708px]" />
         {/* Table footer */}
         <TableFooter />
       </div>
