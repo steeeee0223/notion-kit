@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "navbar-title",
+  "title": "Navbar Title",
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/navbar-title/navbar-title.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { Title } from \"@notion-kit/navbar/presets\";\nimport { Page } from \"@notion-kit/schemas\";\n\nexport const defaultPage: Page = {\n  type: \"page\",\n  id: \"12\",\n  title: \"Title\",\n  isArchived: false,\n  parentId: null,\n  isPublished: false,\n  isFavorite: true,\n  createdAt: 0,\n  lastEditedAt: 0,\n  createdBy: \"admin\",\n  lastEditedBy: \"admin\",\n};\n\nexport default function Demo() {\n  const [page, setPage] = useState(defaultPage);\n  return (\n    <Title\n      page={page}\n      onUpdate={(data) => setPage((prev) => ({ ...prev, ...data }))}\n    />\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/navbar-title/navbar-title.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

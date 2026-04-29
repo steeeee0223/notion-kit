@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "code-block-readonly",
+  "title": "Code Block Readonly",
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/code-block-readonly/code-block-readonly.tsx",
+      "content": "\"use client\";\n\nimport {\n  CodeBlock,\n  CodeBlockCaption,\n  CodeBlockContent,\n  CodeBlockLang,\n  CodeBlockToolbar,\n} from \"@notion-kit/code-block\";\n\nconst sampleCode = `interface Config {\n  host: string;\n  port: number;\n  debug?: boolean;\n}\n\nconst config: Config = {\n  host: \"localhost\",\n  port: 3000,\n  debug: true,\n};\n`;\n\nexport default function Readonly() {\n  return (\n    <CodeBlock\n      className=\"w-full\"\n      readonly\n      defaultValue={{\n        code: sampleCode,\n        lang: \"typescript\",\n        caption: \"This code block is readonly\",\n      }}\n    >\n      <CodeBlockLang />\n      <CodeBlockToolbar />\n      <CodeBlockContent />\n      <CodeBlockCaption />\n    </CodeBlock>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/code-block-readonly/code-block-readonly.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

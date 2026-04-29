@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "settings-panel-guests-table",
+  "title": "Settings Panel Guests Table",
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/settings-panel-guests-table/settings-panel-guests-table.tsx",
+      "content": "import type { User } from \"@notion-kit/schemas\";\nimport {\n  GuestsTable,\n  Scope,\n  type GuestRow,\n  type PageAccess,\n} from \"@notion-kit/settings-panel\";\n\nconst scopes = new Set(Object.values(Scope));\nconst users: User[] = [\n  {\n    id: \"user1\",\n    name: \"John Wick\",\n    avatarUrl: \"https://avatarfiles.alphacoders.com/342/thumb-1920-342585.jpg\",\n    email: \"john-wick@example.com\",\n  },\n  {\n    id: \"user2\",\n    name: \"ShadCN\",\n    avatarUrl: \"https://github.com/shadcn.png\",\n    email: \"shadcn@example.com\",\n  },\n  {\n    id: \"user3\",\n    name: \"Gopher\",\n    avatarUrl:\n      \"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Go_gopher_favicon.svg/1200px-Go_gopher_favicon.svg.png\",\n    email: \"gopher@example.com\",\n  },\n];\n\nconst generateGuests = (users: User[]) => {\n  const access: PageAccess[] = [\n    { id: \"p1\", name: \"Page 1\", scope: \"All\" },\n    { id: \"p2\", name: \"Page 2\", scope: \"Can view\" },\n    { id: \"p3\", name: \"Page 3\", scope: \"Can comment\" },\n  ];\n\n  return users.map<GuestRow>((user) => ({ id: user.id, user, access }));\n};\n\nexport default function Demo() {\n  return <GuestsTable data={generateGuests(users)} scopes={scopes} />;\n}\n",
+      "type": "registry:component",
+      "target": "components/settings-panel-guests-table/settings-panel-guests-table.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

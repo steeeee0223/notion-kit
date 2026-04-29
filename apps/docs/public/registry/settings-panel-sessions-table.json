@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "settings-panel-sessions-table",
+  "title": "Settings Panel Sessions Table",
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/settings-panel-sessions-table/settings-panel-sessions-table.tsx",
+      "content": "import { SessionsTable, type SessionRow } from \"@notion-kit/settings-panel\";\n\nconst mockSessions: SessionRow[] = [\n  {\n    id: \"session-1\",\n    type: \"laptop\",\n    device: \"MacBook Pro\",\n    lastActive: Date.UTC(2023, 9, 1, 12, 0, 0),\n    location: \"New York, USA\",\n    token: \"token-1\",\n  },\n  {\n    id: \"session-2\",\n    device: \"iPhone 14\",\n    type: \"mobile\",\n    lastActive: Date.UTC(2023, 9, 2, 14, 30, 0),\n    location: \"San Francisco, USA\",\n    token: \"token-2\",\n  },\n  {\n    id: \"session-3\",\n    device: \"iPad Pro\",\n    type: \"mobile\",\n    lastActive: Date.UTC(2023, 9, 3, 9, 15, 0),\n    location: \"Los Angeles, USA\",\n    token: \"token-3\",\n  },\n  {\n    id: \"session-4\",\n    device: \"Windows PC\",\n    type: \"unknown\",\n    lastActive: Date.UTC(2023, 9, 4, 18, 45, 0),\n    location: \"Chicago, USA\",\n    token: \"token-4\",\n  },\n];\n\nexport default function Demo() {\n  return (\n    <SessionsTable data={mockSessions} currentSessionId={mockSessions[0]?.id} />\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/settings-panel-sessions-table/settings-panel-sessions-table.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

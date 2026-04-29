@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "settings-panel-plans-table",
+  "title": "Settings Panel Plans Table",
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/settings-panel-plans-table/settings-panel-plans-table.tsx",
+      "content": "import { PlansTable } from \"@notion-kit/settings-panel\";\n\nexport default function Demo() {\n  return <PlansTable />;\n}\n",
+      "type": "registry:component",
+      "target": "components/settings-panel-plans-table/settings-panel-plans-table.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

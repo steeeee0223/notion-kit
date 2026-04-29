@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "settings-panel-members-table",
+  "title": "Settings Panel Members Table",
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/settings-panel-members-table/settings-panel-members-table.tsx",
+      "content": "import { Role, type User } from \"@notion-kit/schemas\";\nimport {\n  MembersTable,\n  MemberTeamspace,\n  Scope,\n  type MemberRow,\n} from \"@notion-kit/settings-panel\";\nimport { randomItem } from \"@notion-kit/utils\";\n\nconst scopes = new Set(Object.values(Scope));\nconst users: User[] = [\n  {\n    id: \"user1\",\n    name: \"John Wick\",\n    avatarUrl: \"https://avatarfiles.alphacoders.com/342/thumb-1920-342585.jpg\",\n    email: \"john-wick@example.com\",\n  },\n  {\n    id: \"user2\",\n    name: \"ShadCN\",\n    avatarUrl: \"https://github.com/shadcn.png\",\n    email: \"shadcn@example.com\",\n  },\n  {\n    id: \"user3\",\n    name: \"Gopher\",\n    avatarUrl:\n      \"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Go_gopher_favicon.svg/1200px-Go_gopher_favicon.svg.png\",\n    email: \"gopher@example.com\",\n  },\n];\n\nconst generateMembers = (users: User[]) => {\n  const teamspaces: MemberTeamspace[] = [\n    {\n      id: \"t1\",\n      memberCount: 26,\n      name: \"Dev Lab\",\n      icon: { type: \"text\", src: \"D\" },\n    },\n    {\n      id: \"t2\",\n      memberCount: 3,\n      name: \"Private group\",\n      icon: { type: \"text\", src: \"P\" },\n    },\n    {\n      id: \"t3\",\n      memberCount: 44,\n      name: \"Teamspace\",\n      icon: { type: \"text\", src: \"T\" },\n    },\n  ];\n\n  return users.map<MemberRow>((user) => ({\n    id: user.id,\n    user,\n    role: randomItem([Role.OWNER, Role.MEMBER]),\n    teamspaces,\n    groups: { current: null, options: [] },\n  }));\n};\n\nexport default function Demo() {\n  return <MembersTable data={generateMembers(users)} scopes={scopes} />;\n}\n",
+      "type": "registry:component",
+      "target": "components/settings-panel-members-table/settings-panel-members-table.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

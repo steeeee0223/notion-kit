@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "login-form-auth",
+  "title": "Login Form Auth",
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/login-form-auth/login-form-auth.tsx",
+      "content": "import { AuthProvider, LoginForm } from \"@notion-kit/auth-ui\";\n\nexport default function Demo() {\n  return (\n    <AuthProvider>\n      <div className=\"flex h-full w-full flex-col items-center justify-center gap-10 bg-main\">\n        <h1 className=\"text-lg font-bold text-primary\">Login Page</h1>\n        <LoginForm mode=\"sign_in\" className=\"w-80\" />\n      </div>\n    </AuthProvider>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/login-form-auth/login-form-auth.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

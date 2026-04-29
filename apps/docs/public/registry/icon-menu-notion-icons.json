@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icon-menu-notion-icons",
+  "title": "Icon Menu Notion Icons",
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/icon-menu-notion-icons/icon-menu-notion-icons.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { IconBlock, type IconData } from \"@notion-kit/icon-block\";\nimport {\n  IconMenu,\n  useEmojiFactory,\n  useLucideFactory,\n  useNotionIconsFactory,\n} from \"@notion-kit/icon-menu\";\n\nconst defaultIcon: IconData = { type: \"text\", src: \"S\" };\n\nexport default function NotionIcons() {\n  const [icon, setIcon] = useState<IconData>(defaultIcon);\n\n  const emoji = useEmojiFactory();\n  const lucide = useLucideFactory();\n  const notion = useNotionIconsFactory();\n\n  return (\n    <IconMenu\n      factories={[emoji, lucide, notion]}\n      onSelect={setIcon}\n      onRemove={() => setIcon(defaultIcon)}\n      onUpload={(file) =>\n        setIcon({ type: \"url\", src: URL.createObjectURL(file) })\n      }\n    >\n      <IconBlock icon={icon} size=\"lg\" />\n    </IconMenu>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/icon-menu-notion-icons/icon-menu-notion-icons.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

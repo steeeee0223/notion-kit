@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "settings-panel-teamspaces-table",
+  "title": "Settings Panel Teamspaces Table",
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/settings-panel-teamspaces-table/settings-panel-teamspaces-table.tsx",
+      "content": "import { TeamspacesTable, type TeamspaceRow } from \"@notion-kit/settings-panel\";\n\nexport const mockTeamspaces: TeamspaceRow[] = [\n  {\n    id: \"team-1\",\n    name: \"Acme Lab 1\",\n    icon: { type: \"text\", src: \"A\" },\n    memberCount: 20,\n    permission: \"default\",\n    ownedBy: { name: \"Jason\" },\n    ownerCount: 3,\n    updatedAt: Date.UTC(2024, 5, 1),\n  },\n  {\n    id: \"team-2\",\n    name: \"Acme Lab 2\",\n    icon: { type: \"text\", src: \"B\" },\n    memberCount: 30,\n    permission: \"default\",\n    ownedBy: { name: \"Alice\" },\n    ownerCount: 2,\n    updatedAt: Date.UTC(2024, 5, 3),\n  },\n  {\n    id: \"team-3\",\n    name: \"Acme Lab 3\",\n    icon: { type: \"text\", src: \"C\" },\n    memberCount: 25,\n    permission: \"default\",\n    ownedBy: { name: \"Bob\" },\n    ownerCount: 1,\n    updatedAt: Date.UTC(2024, 5, 10),\n  },\n];\n\nexport default function Demo() {\n  return <TeamspacesTable workspace=\"Acme Inc.\" data={mockTeamspaces} />;\n}\n",
+      "type": "registry:component",
+      "target": "components/settings-panel-teamspaces-table/settings-panel-teamspaces-table.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

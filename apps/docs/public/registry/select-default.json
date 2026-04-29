@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "select-default",
+  "title": "Select Default",
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/select-default/select-default.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { SelectPreset as Select } from \"@notion-kit/shadcn\";\n\nexport default function Default() {\n  const options = { light: \"Light\", dark: \"Dark\" };\n  const [value, setValue] = useState(\"light\");\n\n  return (\n    <Select\n      className=\"w-fit\"\n      options={options}\n      value={value}\n      onChange={setValue}\n    />\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/select-default/select-default.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

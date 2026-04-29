@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "input-search",
+  "title": "Input Search",
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/input-search/input-search.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { Input } from \"@notion-kit/shadcn\";\n\nexport default function Search() {\n  const [value, setValue] = useState(\"\");\n  return (\n    <Input\n      className=\"w-80\"\n      value={value}\n      onChange={(e) => setValue(e.target.value)}\n      onCancel={() => setValue(\"\")}\n      placeholder=\"Enter something...\"\n      search\n      clear\n    />\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/input-search/input-search.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button-hint",
+  "title": "Button Hint",
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/button-hint/button-hint.tsx",
+      "content": "import { Icon } from \"@notion-kit/icons\";\nimport { Button } from \"@notion-kit/shadcn\";\n\nexport default function Hint() {\n  return (\n    <Button variant=\"hint\" size=\"xs\">\n      <Icon.QuestionMarkCircled className=\"mr-1.5 size-3.5\" />\n      Learn more about this feature\n    </Button>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/button-hint/button-hint.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

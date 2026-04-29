@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "switch-default",
+  "title": "Switch Default",
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/switch-default/switch-default.tsx",
+      "content": "import { Switch } from \"@notion-kit/shadcn\";\n\nexport default function Default() {\n  return <Switch />;\n}\n",
+      "type": "registry:component",
+      "target": "components/switch-default/switch-default.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

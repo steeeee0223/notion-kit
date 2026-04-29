@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "settings-panel-invitations-table",
+  "title": "Settings Panel Invitations Table",
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/settings-panel-invitations-table/settings-panel-invitations-table.tsx",
+      "content": "import { Role } from \"@notion-kit/schemas\";\nimport {\n  InvitationsTable,\n  Scope,\n  type InvitationRow,\n} from \"@notion-kit/settings-panel\";\n\nconst scopes = new Set(Object.values(Scope));\nconst mockUser = {\n  id: \"user1\",\n  name: \"Shad CN\",\n  avatarUrl: \"https://github.com/shadcn.png\",\n  email: \"shadcn@example.com\",\n};\nexport const mockInvitations: InvitationRow[] = [\n  {\n    id: \"i-1\",\n    role: Role.MEMBER,\n    email: \"invitee1@example.com\",\n    status: \"pending\",\n    invitedBy: mockUser,\n  },\n  {\n    id: \"i-2\",\n    role: Role.OWNER,\n    email: \"invitee2@example.com\",\n    status: \"canceled\",\n    invitedBy: mockUser,\n  },\n  {\n    id: \"i-3\",\n    role: Role.GUEST,\n    email: \"invitee3@example.com\",\n    status: \"rejected\",\n    invitedBy: mockUser,\n  },\n];\n\nexport default function Demo() {\n  return <InvitationsTable data={mockInvitations} scopes={scopes} />;\n}\n",
+      "type": "registry:component",
+      "target": "components/settings-panel-invitations-table/settings-panel-invitations-table.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

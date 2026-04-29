@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "select-custom",
+  "title": "Select Custom",
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/select-custom/select-custom.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { SelectPreset, type SelectPresetProps } from \"@notion-kit/shadcn\";\n\nconst Option: SelectPresetProps[\"renderOption\"] = ({ option }) => (\n  <div className=\"truncate text-secondary\">\n    {typeof option === \"string\" ? option : option?.label}\n  </div>\n);\n\nexport default function Custom() {\n  const options = {\n    on: { label: \"On\", description: \"Turn on notification\" },\n    off: { label: \"Off\", description: \"Turn on notification\" },\n  };\n  const [value, setValue] = useState<keyof typeof options>(\"on\");\n\n  return (\n    <SelectPreset\n      className=\"w-fit\"\n      options={options}\n      value={value}\n      onChange={setValue}\n      renderOption={Option}\n    />\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/select-custom/select-custom.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

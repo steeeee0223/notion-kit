@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "navbar-participants",
+  "title": "Navbar Participants",
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/navbar-participants/navbar-participants.tsx",
+      "content": "import { Participants } from \"@notion-kit/navbar/presets\";\nimport type { User } from \"@notion-kit/schemas\";\nimport { TooltipProvider } from \"@notion-kit/shadcn\";\n\nexport const currentUser: User = {\n  id: \"u1\",\n  name: \"Steve Yu\",\n  email: \"steve@example.com\",\n  avatarUrl: \"\",\n};\n\nexport const otherUsers: User[] = [\n  {\n    id: \"u2\",\n    name: \"Pong\",\n    email: \"pong@example.com\",\n    avatarUrl: \"\",\n  },\n  {\n    id: \"u3\",\n    name: \"Ming\",\n    email: \"ming@example.com\",\n    avatarUrl: \"\",\n  },\n];\n\nexport default function Demo() {\n  return (\n    <TooltipProvider>\n      <Participants currentUser={currentUser} otherUsers={otherUsers} />\n    </TooltipProvider>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/navbar-participants/navbar-participants.tsx"
+    }
+  ],
+  "type": "registry:component"
+}
