@@ -3,7 +3,7 @@
   "name": "navbar-sharing",
   "title": "Navbar Sharing",
   "dependencies": [
-    "@notion-kit/navbar/presets",
+    "@notion-kit/navbar",
     "@notion-kit/schemas",
     "@notion-kit/shadcn"
   ],

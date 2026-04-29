@@ -739,7 +739,7 @@
       "title": "Navbar Menu",
       "type": "registry:component",
       "dependencies": [
-        "@notion-kit/navbar/presets",
+        "@notion-kit/navbar",
         "@notion-kit/schemas",
         "@notion-kit/shadcn"
       ],
@@ -762,8 +762,7 @@
       "dependencies": [
         "@notion-kit/schemas",
         "@notion-kit/icons",
-        "@notion-kit/navbar",
-        "@notion-kit/navbar/presets"
+        "@notion-kit/navbar"
       ],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
@@ -787,7 +786,7 @@
       "title": "Navbar Participants",
       "type": "registry:component",
       "dependencies": [
-        "@notion-kit/navbar/presets",
+        "@notion-kit/navbar",
         "@notion-kit/schemas",
         "@notion-kit/shadcn"
       ],
@@ -808,7 +807,7 @@
       "title": "Navbar Sharing",
       "type": "registry:component",
       "dependencies": [
-        "@notion-kit/navbar/presets",
+        "@notion-kit/navbar",
         "@notion-kit/schemas",
         "@notion-kit/shadcn"
       ],
@@ -828,7 +827,7 @@
       "name": "navbar-title",
       "title": "Navbar Title",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/navbar/presets", "@notion-kit/schemas"],
+      "dependencies": ["@notion-kit/navbar", "@notion-kit/schemas"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1081,7 +1080,7 @@
       "type": "registry:component",
       "dependencies": [
         "@notion-kit/schemas",
-        "@notion-kit/sidebar/presets",
+        "@notion-kit/sidebar",
         "@notion-kit/utils"
       ],
       "registryDependencies": [
@@ -1104,8 +1103,7 @@
         "@notion-kit/schemas",
         "@notion-kit/utils",
         "@notion-kit/icons",
-        "@notion-kit/sidebar",
-        "@notion-kit/sidebar/presets"
+        "@notion-kit/sidebar"
       ],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
@@ -1130,7 +1128,7 @@
       "type": "registry:component",
       "dependencies": [
         "@notion-kit/schemas",
-        "@notion-kit/sidebar/presets",
+        "@notion-kit/sidebar",
         "@notion-kit/utils"
       ],
       "registryDependencies": [
@@ -1152,7 +1150,7 @@
       "dependencies": [
         "@notion-kit/schemas",
         "@notion-kit/shadcn",
-        "@notion-kit/sidebar/presets",
+        "@notion-kit/sidebar",
         "@notion-kit/utils"
       ],
       "registryDependencies": [
@@ -1173,7 +1171,7 @@
       "type": "registry:component",
       "dependencies": [
         "@notion-kit/schemas",
-        "@notion-kit/sidebar/presets",
+        "@notion-kit/sidebar",
         "@notion-kit/utils"
       ],
       "registryDependencies": [
@@ -1192,7 +1190,7 @@
       "name": "sidebar-workspace-switcher",
       "title": "Sidebar Workspace Switcher",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/schemas", "@notion-kit/sidebar/presets"],
+      "dependencies": ["@notion-kit/schemas", "@notion-kit/sidebar"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1455,7 +1453,7 @@
       "name": "tree-command",
       "title": "Tree Command",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/tree", "@notion-kit/tree/presets"],
+      "dependencies": ["@notion-kit/tree"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1472,7 +1470,7 @@
       "name": "tree-default",
       "title": "Tree Default",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/tree", "@notion-kit/tree/presets"],
+      "dependencies": ["@notion-kit/tree"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1489,7 +1487,7 @@
       "name": "tree-multi-select",
       "title": "Tree Multi Select",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/tree", "@notion-kit/tree/presets"],
+      "dependencies": ["@notion-kit/tree"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1506,7 +1504,7 @@
       "name": "tree-non-collapsible",
       "title": "Tree Non Collapsible",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/tree", "@notion-kit/tree/presets"],
+      "dependencies": ["@notion-kit/tree"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1523,7 +1521,7 @@
       "name": "tree-show-empty",
       "title": "Tree Show Empty",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/tree", "@notion-kit/tree/presets"],
+      "dependencies": ["@notion-kit/tree"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],

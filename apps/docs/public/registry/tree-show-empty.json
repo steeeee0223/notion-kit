@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "tree-show-empty",
   "title": "Tree Show Empty",
-  "dependencies": ["@notion-kit/tree", "@notion-kit/tree/presets"],
+  "dependencies": ["@notion-kit/tree"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],

@@ -4,7 +4,7 @@
   "title": "Sidebar Favorite List",
   "dependencies": [
     "@notion-kit/schemas",
-    "@notion-kit/sidebar/presets",
+    "@notion-kit/sidebar",
     "@notion-kit/utils"
   ],
   "registryDependencies": [

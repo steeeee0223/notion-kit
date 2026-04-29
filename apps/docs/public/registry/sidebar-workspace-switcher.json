@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "sidebar-workspace-switcher",
   "title": "Sidebar Workspace Switcher",
-  "dependencies": ["@notion-kit/schemas", "@notion-kit/sidebar/presets"],
+  "dependencies": ["@notion-kit/schemas", "@notion-kit/sidebar"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],

@@ -29,7 +29,9 @@ export async function getDemoFilesAndDependencies(demoName: string) {
 
       // Include @notion-kit/* dependencies except for standard React or local imports
       if (pkg.startsWith("@notion-kit/")) {
-        dependencies.add(pkg);
+        const parts = pkg.split("/");
+        const dep = parts.length > 2 ? parts.slice(0, 2).join("/") : pkg;
+        dependencies.add(dep);
       } else if (
         !pkg.startsWith(".") &&
         !pkg.startsWith("@/") &&

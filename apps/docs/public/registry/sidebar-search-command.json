@@ -5,7 +5,7 @@
   "dependencies": [
     "@notion-kit/schemas",
     "@notion-kit/shadcn",
-    "@notion-kit/sidebar/presets",
+    "@notion-kit/sidebar",
     "@notion-kit/utils"
   ],
   "registryDependencies": [

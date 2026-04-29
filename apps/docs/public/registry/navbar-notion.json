@@ -5,8 +5,7 @@
   "dependencies": [
     "@notion-kit/schemas",
     "@notion-kit/icons",
-    "@notion-kit/navbar",
-    "@notion-kit/navbar/presets"
+    "@notion-kit/navbar"
   ],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"

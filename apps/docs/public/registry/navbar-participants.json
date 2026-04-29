@@ -3,7 +3,7 @@
   "name": "navbar-participants",
   "title": "Navbar Participants",
   "dependencies": [
-    "@notion-kit/navbar/presets",
+    "@notion-kit/navbar",
     "@notion-kit/schemas",
     "@notion-kit/shadcn"
   ],

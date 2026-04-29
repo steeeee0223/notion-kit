@@ -3,7 +3,7 @@
   "name": "navbar-menu",
   "title": "Navbar Menu",
   "dependencies": [
-    "@notion-kit/navbar/presets",
+    "@notion-kit/navbar",
     "@notion-kit/schemas",
     "@notion-kit/shadcn"
   ],
