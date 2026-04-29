@@ -87,10 +87,7 @@ export function TimelineItemResizer({
   const handleDragMove = useCallback(() => {
     const timelineRect = timeline.ref?.current?.getBoundingClientRect();
     const x =
-      mousePosition.x -
-      (timelineRect?.left ?? 0) +
-      scrollX -
-      sidebarWidth;
+      mousePosition.x - (timelineRect?.left ?? 0) + scrollX - sidebarWidth;
 
     onDragMove?.(getDateByMousePosition(timeline, x));
   }, [mousePosition.x, onDragMove, scrollX, sidebarWidth, timeline]);

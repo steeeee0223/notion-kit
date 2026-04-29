@@ -4,7 +4,11 @@ import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 
 import { ROW_HEIGHT } from "./constants";
-import { useTimelineContext, useTimelineScrollX, useTimelineSidebarWidth } from "./timeline-provider";
+import {
+  useTimelineContext,
+  useTimelineScrollX,
+  useTimelineSidebarWidth,
+} from "./timeline-provider";
 import { getDateByMousePosition } from "./utils";
 
 interface TimelineAddFeatureHelperProps {
@@ -26,10 +30,7 @@ export function TimelineAddFeatureHelper({
   const handleClick = () => {
     const timelineRect = timeline.ref?.current?.getBoundingClientRect();
     const x =
-      mousePosition.x -
-      (timelineRect?.left ?? 0) +
-      scrollX -
-      sidebarWidth;
+      mousePosition.x - (timelineRect?.left ?? 0) + scrollX - sidebarWidth;
     const currentDate = getDateByMousePosition(timeline, x);
 
     timeline.onAddItem?.(currentDate.getTime());

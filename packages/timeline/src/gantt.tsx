@@ -37,7 +37,8 @@ export const GanttCreateMarkerTrigger: FC<GanttCreateMarkerTriggerProps> = ({
   const [windowScroll] = useWindowScroll();
   const x = useThrottle(
     mousePosition.x -
-      (mouseRef.current?.getBoundingClientRect().x ?? 0) -
+      // eslint-disable-next-line react-hooks/refs, @typescript-eslint/no-unnecessary-condition
+      (mouseRef.current.getBoundingClientRect().x ?? 0) -
       (windowScroll.x ?? 0),
     10,
   );
