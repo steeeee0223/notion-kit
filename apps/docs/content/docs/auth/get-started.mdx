@@ -18,7 +18,7 @@ Follow the tutorial on [`BETTER-AUTH`](https://www.better-auth.com/docs/installa
 <Step>
 ### Install Auth UI from Notion UI
 
-<Installation packages="@notion-kit/auth-ui" registryName="auth-ui" />
+<Installation packages="@notion-kit/auth-ui" registryName="login-form-auth" />
 
 </Step>
 <Step>
@@ -26,7 +26,7 @@ Follow the tutorial on [`BETTER-AUTH`](https://www.better-auth.com/docs/installa
 
 ```tsx
 // app/layout.tsx
-import { AuthProvider } from "@/components/core/auth-ui"; // [!code highlight]
+import { AuthProvider } from "@notion-kit/auth-ui"; // [!code highlight]
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -49,7 +49,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
 ```tsx
 // app/page.tsx
-import { LoginForm } from "@/components/core/auth-ui"; // [!code highlight]
+import { LoginForm } from "@notion-kit/auth-ui"; // [!code highlight]
 
 export default function Page() {
   return (
