@@ -14,6 +14,8 @@ import {
 
 import { ibm_plex_mono } from "@/lib/fonts";
 
+import type { DemoName } from "@/registry/demos";
+
 const installationStyles = tv({
   slots: {
     tab: cn(ibm_plex_mono.className, "font-normal"),
@@ -24,7 +26,7 @@ const installationStyles = tv({
 
 interface InstallationProps {
   packages: string;
-  registryName: string;
+  registryName: DemoName;
 }
 
 function Installation({ packages, registryName }: InstallationProps) {
