@@ -26,7 +26,7 @@ export function CodeBlockLang({ className }: CodeBlockLangProps) {
     <div
       data-slot="code-block-lang"
       className={cn(
-        "absolute start-2 top-2 z-10 flex items-center justify-end text-secondary",
+        "absolute inset-s-2 top-2 z-10 flex items-center justify-end text-secondary",
         !readonly &&
           "opacity-0 transition-opacity group-hover/code-block:opacity-100 has-data-[state=open]:opacity-100",
         className,
@@ -44,7 +44,7 @@ export function CodeBlockLang({ className }: CodeBlockLangProps) {
               className="h-5 min-w-0 shrink-0 px-1.5 text-xs/tight text-secondary"
             >
               {langLabel}
-              <Icon.ChevronDown className="size-2.5 fill-icon" />
+              <Icon.Chevron side="down" className="size-2.5 fill-icon" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-60">
