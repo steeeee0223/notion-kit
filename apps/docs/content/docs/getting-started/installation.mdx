@@ -34,3 +34,18 @@ export default function Home() {
   );
 }
 ```
+
+## Manual Setup (Without CLI)
+
+If you are installing Notion Kit packages directly via `npm` rather than the `shadcn` CLI, you must also provide the theme CSS variables for the components to display correctly.
+
+1. Install the config package:
+```bash
+npm install @notion-kit/tailwind-config
+```
+
+2. Add the CSS import to the top of your global stylesheet (e.g., `app/globals.css`):
+```css
+@import "tailwindcss";
+@import "@notion-kit/tailwind-config/base.css";
+```
