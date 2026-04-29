@@ -28,7 +28,7 @@ export function TimelineToolbar({
 }
 
 export interface TimelineHeaderToolbarProps {
-  onSidebarOpen: () => void;
+  onSidebarOpen?: () => void;
   onRangeChange: (range: TimelineRange) => void;
 }
 
@@ -42,16 +42,18 @@ export function TimelineHeaderToolbar({
   return (
     <div
       data-slot="timeline-header-toolbar"
-      className="absolute inset-0 top-0 z-20 flex h-0"
+      className="absolute inset-0 top-0 z-20 flex pointer-events-none"
     >
-      <TimelineToolbar className="sticky inset-s-0 top-px ps-3 pt-[7px]">
-        <TimelineSidebarTrigger
-          description="Show table"
-          onClick={onSidebarOpen}
-        />
-      </TimelineToolbar>
+      {onSidebarOpen && (
+        <TimelineToolbar className="sticky inset-s-0 top-px ps-3 pt-[7px] pointer-events-auto">
+          <TimelineSidebarTrigger
+            description="Show table"
+            onClick={onSidebarOpen}
+          />
+        </TimelineToolbar>
+      )}
       <TimelineToolbar
-        className="sticky top-px pe-(--timeline-inline-padding) pt-[7px]"
+        className="sticky top-px pe-(--timeline-inline-padding) pt-[7px] pointer-events-auto"
         style={{
           insetInlineStart: containerWidth > 0 ? containerWidth - 270 : 0,
         }}

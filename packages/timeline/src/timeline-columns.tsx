@@ -34,8 +34,6 @@ export function TimelineColumn({
 
 export interface TimelineColumnsProps {
   className?: string;
-  /** Total number of columns across all ranges (used by virtualization). */
-  totalColumns?: number;
   isColumnSecondary?: (item: number) => boolean;
 }
 
@@ -45,16 +43,15 @@ export interface TimelineColumnsProps {
  * instead of per-column, eliminating hundreds of hook instances.
  */
 export function TimelineColumns({
-  totalColumns,
   isColumnSecondary,
   className,
 }: TimelineColumnsProps) {
-  const resolvedTotalColumns = totalColumns ?? 0;
   const timeline = useTimelineContext();
+  const totalColumns = timeline.timelineData.subRanges.length;
   const [dragging] = useTimelineDragging();
   const { startIndex, endIndex } = useVisibleRange();
   const columnWidth = resolveColumnWidth(timeline.range, timeline.zoom);
-  const totalWidth = resolvedTotalColumns * columnWidth;
+  const totalWidth = totalColumns * columnWidth;
 
   // Lifted mouse tracking — single tracker for entire column area
   const mouseRef = useRef<HTMLDivElement>(null);
@@ -72,7 +69,7 @@ export function TimelineColumns({
   const handleMouseLeave = () => setHovering(false);
 
   // Clamp the end index to the actual column count
-  const clampedEnd = Math.min(endIndex, resolvedTotalColumns - 1);
+  const clampedEnd = Math.min(endIndex, totalColumns - 1);
   const visibleCount = Math.max(0, clampedEnd - startIndex + 1);
 
   // Compute which subrange column the mouse is over

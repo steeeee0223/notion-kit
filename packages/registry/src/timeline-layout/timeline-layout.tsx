@@ -4,12 +4,10 @@ import { useState } from "react";
 
 import {
   TimelineContent,
-  TimelineJumpTo,
+  TimelineHeaderToolbar,
   TimelineProvider,
   TimelineRangeHeader,
-  TimelineRangeSelect,
   TimelineToday,
-  TimelineToolbar,
   type TimelineRange,
 } from "@notion-kit/timeline";
 
@@ -20,10 +18,7 @@ export default function TimelineLayout() {
     <TimelineProvider range={range} zoom={100}>
       <TimelineContent>
         <TimelineRangeHeader />
-        <TimelineToolbar className="sticky top-px right-0 pe-24 pt-[7px]">
-          <TimelineRangeSelect value={range} onChange={setRange} />
-          <TimelineJumpTo />
-        </TimelineToolbar>
+        <TimelineHeaderToolbar onRangeChange={setRange} />
         <TimelineToday />
       </TimelineContent>
     </TimelineProvider>

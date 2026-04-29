@@ -10,7 +10,7 @@ export function TimelineContent({
     <div
       data-slot="timeline-content"
       className={cn(
-        "relative grid min-h-max w-max flex-none",
+        "relative col-span-2 col-start-1 row-start-1 grid h-full w-max flex-none",
         className,
       )}
       {...props}
@@ -39,7 +39,7 @@ export function TimelineList({
     <div
       data-slot="timeline-list"
       className={cn(
-        "z-0 min-h-full w-full pt-(--timeline-header-height) col-start-1 row-start-1",
+        "z-0 col-start-1 row-start-1 min-h-full w-full pt-(--timeline-header-height)",
         className,
       )}
       {...props}

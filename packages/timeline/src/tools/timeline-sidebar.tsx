@@ -18,7 +18,7 @@ export function TimelineSidebar({
     <div
       data-slot="timeline-sidebar"
       className={cn(
-        "sticky inset-s-0 z-30 h-full w-(--timeline-sidebar-width)",
+        "sticky inset-s-0 z-30 col-start-1 row-start-1 h-full w-(--timeline-sidebar-width)",
         className,
       )}
       style={style}

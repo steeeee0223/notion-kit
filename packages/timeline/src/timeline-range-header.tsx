@@ -133,11 +133,14 @@ export function TimelineRangeHeader({ className }: TimelineRangeHeaderProps) {
   return (
     <div
       data-slot="timeline-range-header"
-      className={cn("relative flex h-full flex-col col-start-1 row-start-1", className)}
+      className={cn(
+        "relative col-start-1 row-start-1 flex h-full flex-col",
+        className,
+      )}
       style={{ width: totalWidth }}
     >
       {/* Sticky header */}
-      <div className="sticky top-0 z-20 h-(--timeline-header-height) shrink-0 bg-main">
+      <div className="sticky top-0 z-20 h-(--timeline-header-height) w-full bg-main">
         {/* Primary range row */}
         <div
           className="flex h-(--timeline-row-height)"
@@ -161,11 +164,10 @@ export function TimelineRangeHeader({ className }: TimelineRangeHeaderProps) {
           width={resolvedColumnWidth}
         />
       </div>
-      {/* Columns — sibling to header at the same level, fills remaining height */}
+      {/* Columns — placed absolutely to fill the remaining height */}
       <TimelineColumns
-        totalColumns={subRanges.length}
         isColumnSecondary={(index) => index % 2 === 1}
-        className="flex-1"
+        className="absolute inset-x-0 top-(--timeline-header-height) bottom-0 flex-1"
       />
     </div>
   );

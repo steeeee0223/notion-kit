@@ -17,14 +17,12 @@ import {
 import {
   GanttCreateMarkerTrigger,
   TimelineContent,
-  TimelineJumpTo,
+  TimelineHeaderToolbar,
   TimelineList,
   TimelineProvider,
   TimelineRangeHeader,
-  TimelineRangeSelect,
   TimelineRow,
   TimelineToday,
-  TimelineToolbar,
   type TimelineRange,
 } from "@notion-kit/timeline";
 
@@ -140,17 +138,7 @@ export default function WithoutSidebar() {
             </React.Fragment>
           ))}
         </TimelineList>
-        {/* {exampleMarkers.map((marker) => (
-          <GanttMarker
-            key={marker.id}
-            {...marker}
-            onRemove={handleRemoveMarker}
-          />
-        ))} */}
-        <TimelineToolbar className="sticky top-px right-0 pe-24 pt-[7px]">
-          <TimelineRangeSelect value={range} onChange={setRange} />
-          <TimelineJumpTo />
-        </TimelineToolbar>
+        <TimelineHeaderToolbar onRangeChange={setRange} />
         <TimelineToday />
         <GanttCreateMarkerTrigger onCreateMarker={handleCreateMarker} />
       </TimelineContent>

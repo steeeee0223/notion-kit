@@ -20,7 +20,7 @@ export function TimelineToday() {
   return (
     <div
       data-slot="timeline-today"
-      className="pointer-events-none absolute top-(--timeline-today-top) left-0 z-20 flex h-full flex-col items-center justify-center overflow-visible select-none [--timeline-today-top:36px]"
+      className="pointer-events-none absolute top-10 left-0 z-20 flex h-full flex-col items-center justify-center overflow-visible select-none"
       style={{
         width: 0,
         transform: `translateX(${pixelOffset}px)`,
@@ -30,12 +30,12 @@ export function TimelineToday() {
         <Button
           variant="red-fill"
           size="circle"
-          className="pointer-events-auto sticky top-(--timeline-today-top) size-[22px] text-xs"
+          className="pointer-events-auto sticky top-10 size-[22px] text-xs"
         >
           {label}
         </Button>
       </TooltipPreset>
-      <div className="mt-1 size-1.5 rounded-full bg-red" />
+      <div className="sticky top-16 size-1.5 rounded-full bg-red" />
       <div className="h-full w-px bg-red" />
     </div>
   );
