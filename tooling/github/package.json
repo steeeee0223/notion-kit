@@ -1,4 +1,5 @@
 {
   "name": "@notion-kit/github",
-  "private": true
+  "private": true,
+  "version": null
 }
