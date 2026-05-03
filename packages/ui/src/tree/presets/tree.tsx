@@ -1,6 +1,6 @@
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
-import { Button, MenuItem } from "@notion-kit/shadcn";
+import { Button, MenuItem } from "~/primitives";
 
 import { Tree as TreePrimitive, type TreeNode } from "../core";
 import type { TreeItemData } from "./utils";

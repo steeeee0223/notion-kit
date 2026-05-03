@@ -11,7 +11,7 @@ import {
   CommandList,
   MenuItem,
   useCommandState,
-} from "@notion-kit/shadcn";
+} from "~/primitives";
 
 import { Tree as TreePrimitive, type TreeInstance } from "../core";
 import type { TreeItemData } from "./utils";
