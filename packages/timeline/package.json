@@ -1,6 +1,7 @@
 {
   "name": "@notion-kit/timeline",
   "version": "0.17.0",
+  "private": true,
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -11,22 +12,11 @@
     "directory": "packages/timeline"
   },
   "exports": {
-    ".": {
-      "types": "./dist/index.d.mts",
-      "default": "./dist/index.mjs"
-    }
+    ".": "./src/index.ts"
   },
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
   "license": "MIT",
   "scripts": {
-    "build": "tsdown",
-    "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsdown --watch",
+    "clean": "git clean -xdf .cache .turbo node_modules",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "test": "vitest run",
@@ -48,7 +38,6 @@
     "@dnd-kit/core": "catalog:ui",
     "@dnd-kit/modifiers": "catalog:ui",
     "@dnd-kit/sortable": "catalog:ui",
-    "@notion-kit/config": "workspace:*",
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
@@ -58,14 +47,11 @@
     "@types/lodash.throttle": "catalog:fns",
     "@types/react": "catalog:react19",
     "@vitejs/plugin-react": "catalog:test",
-    "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",
     "jsdom": "catalog:rtl",
     "prettier": "catalog:",
     "react": "catalog:react19",
-    "react-compiler-runtime": "catalog:react-compiler",
     "react-dom": "catalog:react19",
-    "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:test"
   },
@@ -73,10 +59,5 @@
     "react": "catalog:react19",
     "react-dom": "catalog:react19"
   },
-  "prettier": "@notion-kit/prettier-config",
-  "babel": {
-    "plugins": [
-      "babel-plugin-react-compiler"
-    ]
-  }
+  "prettier": "@notion-kit/prettier-config"
 }
