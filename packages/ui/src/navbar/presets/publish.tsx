@@ -16,7 +16,7 @@ import {
   TabsList,
   TabsTrigger,
   toast,
-} from "@notion-kit/shadcn";
+} from "~/primitives";
 
 import { NavbarItem } from "../core";
 

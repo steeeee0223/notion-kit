@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@notion-kit/shadcn";
+} from "~/primitives";
 import { toDateString } from "@notion-kit/utils";
 
 import { NavbarItem } from "../core";

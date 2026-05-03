@@ -2,14 +2,14 @@
 
 import React, { useRef, useState } from "react";
 
-import { IconBlock, type IconData } from "@notion-kit/icon-block";
-import { IconMenu } from "@notion-kit/icon-menu";
+import { IconBlock, type IconData } from "~/icon-block";
+import { IconMenu } from "~/icon-menu";
 import {
   Input,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@notion-kit/shadcn";
+} from "~/primitives";
 
 interface RenamePopoverProps extends React.PropsWithChildren {
   title: string;

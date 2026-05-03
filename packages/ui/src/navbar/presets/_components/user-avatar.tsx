@@ -6,7 +6,7 @@ import {
   AvatarImage,
   TooltipPreset,
   TooltipProvider,
-} from "@notion-kit/shadcn";
+} from "~/primitives";
 
 interface UserAvatarProps {
   user: User;
