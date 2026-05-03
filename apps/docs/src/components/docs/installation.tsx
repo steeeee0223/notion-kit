@@ -10,7 +10,7 @@ import {
   Tabs,
   TabsContent,
   TabsList,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { ibm_plex_mono } from "@/lib/fonts";
 import type { DemoName } from "@/registry/demos";

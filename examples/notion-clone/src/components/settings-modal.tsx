@@ -8,7 +8,7 @@ import {
   SettingsSidebar,
   SettingsSidebarPreset,
 } from "@notion-kit/settings-panel";
-import { Dialog, DialogContent } from "@notion-kit/shadcn";
+import { Dialog, DialogContent } from "@notion-kit/ui/primitives";
 
 import { useSettings } from "@/hooks/use-settings";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@notion-kit/shadcn";
+import { Button } from "@notion-kit/ui/primitives";
 
 export default function TestPage() {
   return (
@@ -15,7 +15,7 @@ export default function TestPage() {
         </section>
 
         <section className="space-y-4 rounded-lg border p-6">
-          <h2 className="text-xl font-semibold">@notion-kit/shadcn (Button)</h2>
+          <h2 className="text-xl font-semibold">@notion-kit/ui/primitives (Button)</h2>
           <div className="flex gap-2">
             <Button size="sm">Default</Button>
             <Button size="sm" variant="blue">

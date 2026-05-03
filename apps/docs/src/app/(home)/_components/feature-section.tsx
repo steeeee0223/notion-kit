@@ -5,7 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 export function FeatureSection() {
   return (

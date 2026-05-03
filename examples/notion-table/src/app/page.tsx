@@ -7,7 +7,7 @@ import {
   ThemeToggle,
   TooltipPreset as Tooltip,
   TooltipProvider,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 import { TableView } from "@notion-kit/table-view";
 
 import { mockData, mockProps } from "@/lib/data";
