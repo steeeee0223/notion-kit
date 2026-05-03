@@ -5,7 +5,7 @@ import {
   MenuItem,
   MultiSelect,
   type MultiSelectOption,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 const frameworks: MultiSelectOption[] = [
   {

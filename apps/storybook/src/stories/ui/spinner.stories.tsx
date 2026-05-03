@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { Spinner } from "@notion-kit/shadcn";
+import { Spinner } from "@notion-kit/ui/primitives";
 
 const meta = {
   title: "shadcn/Spinner",

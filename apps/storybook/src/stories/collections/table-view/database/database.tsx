@@ -6,7 +6,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 import { TableView } from "@notion-kit/table-view";
 
 import { mockData, mockProps } from "./data";

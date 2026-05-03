@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "storybook-react-rsbuild";
 import {
   LearningStepsDialog,
   type LearningStep,
-} from "@notion-kit/common/learning-steps-dialog";
+} from "@notion-kit/ui/learning-steps-dialog";
 
 const sampleSteps: LearningStep[] = [
   {

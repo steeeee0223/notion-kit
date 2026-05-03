@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 import { expect, userEvent, within } from "storybook/test";
 
-import { Tree, useTree } from "@notion-kit/tree";
-import { CommandTree, TreeList } from "@notion-kit/tree/presets";
+import { Tree, useTree } from "@notion-kit/ui/tree";
+import { CommandTree, TreeList } from "@notion-kit/ui/tree/presets";
 
 import { folderNodes } from "./data";
 

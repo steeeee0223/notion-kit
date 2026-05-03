@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { Selectable } from "@notion-kit/selectable";
+import { Selectable } from "@notion-kit/ui/selectable";
 
 import { items } from "./constants";
 import { SelectWithDraggableItems } from "./draggable";

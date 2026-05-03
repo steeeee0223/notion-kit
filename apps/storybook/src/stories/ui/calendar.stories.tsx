@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { Calendar, type DateRange } from "@notion-kit/shadcn";
+import { Calendar, type DateRange } from "@notion-kit/ui/primitives";
 import { DateConfig, DateData, DateTimePicker } from "@notion-kit/table-view";
 
 const meta = {

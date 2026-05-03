@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
 import { cn } from "@notion-kit/cn";
-import { RadioGroup, RadioGroupItem } from "@notion-kit/shadcn";
+import { RadioGroup, RadioGroupItem } from "@notion-kit/ui/primitives";
 
 const meta = {
   title: "Shadcn/RadioGroup",

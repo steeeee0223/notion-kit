@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { TagsInput } from "@notion-kit/tags-input";
+import { TagsInput } from "@notion-kit/ui/tags-input";
 
 const meta = {
   title: "blocks/Tags Input",

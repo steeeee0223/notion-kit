@@ -8,7 +8,7 @@ import {
   Tree,
   TreeItem,
   TreeItemLabel,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 interface Item {
   name: string;
