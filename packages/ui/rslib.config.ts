@@ -43,11 +43,16 @@ export default defineConfig({
     }),
   ],
   source: {
+    alias: {
+      "~": "./src",
+    },
     entry: {
       "primitives/index": "./src/primitives/index.ts",
-      "icons/index": "./src/icons/index.ts",
-      "i18n/index": "./src/i18n/index.ts",
-      "common/index": "./src/common/index.ts",
+      "alert-modal/index": "./src/alert-modal/index.ts",
+      "colors/index": "./src/colors/index.ts",
+      "learning-steps-dialog/index": "./src/learning-steps-dialog/index.ts",
+      "timezone-menu/index": "./src/timezone-menu/index.ts",
+      "url-form/index": "./src/url-form/index.ts",
       "icon-block/index": "./src/icon-block/index.ts",
       "icon-menu/index": "./src/icon-menu/index.ts",
       "tags-input/index": "./src/tags-input/index.ts",
@@ -61,27 +66,23 @@ export default defineConfig({
       "tree/index": "./src/tree/index.ts",
       "tree/presets/index": "./src/tree/presets/index.ts",
       "timeline/index": "./src/timeline/index.ts",
+      "selectable/index": "./src/selectable/index.ts",
     },
   },
   lib: [
     {
       format: "esm",
       syntax: "es2022",
-      dts: { bundle: false },
+      bundle: false,
+      dts: true,
     },
     {
       format: "cjs",
       syntax: "es2022",
+      bundle: false,
     },
   ],
   output: {
     target: "node",
-    externals: [
-      /^react($|\/)/,
-      /^react-dom($|\/)/,
-      /^zod($|\/)/,
-      EXTERNAL_NOTION_KIT,
-      ...THIRD_PARTY,
-    ],
   },
 });
