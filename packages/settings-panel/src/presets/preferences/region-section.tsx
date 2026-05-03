@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 
-import { AlertModal } from "@notion-kit/common/alert-modal";
-import { TimezoneMenu } from "@notion-kit/common/timezone-menu";
+import { AlertModal } from "@notion-kit/ui/common";
+import { TimezoneMenu } from "@notion-kit/ui/common";
 import { LOCALE, useTranslation } from "@notion-kit/ui/i18n";
 import { Icon } from "@notion-kit/ui/icons";
 import {

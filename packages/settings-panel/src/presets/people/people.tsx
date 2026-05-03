@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from "react";
 import { saveAs } from "file-saver";
 
 import { cn } from "@notion-kit/cn";
-import { AlertModal } from "@notion-kit/common/alert-modal";
+import { AlertModal } from "@notion-kit/ui/common";
 import { useTranslation } from "@notion-kit/ui/i18n";
 import { Icon } from "@notion-kit/ui/icons";
 import { Plan } from "@notion-kit/schemas";

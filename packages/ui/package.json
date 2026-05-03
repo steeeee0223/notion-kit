@@ -13,8 +13,9 @@
   "exports": {
     "./style.css": "./dist/style.css",
     "./*": {
-      "types": "./dist/*/index.d.mts",
-      "default": "./dist/*/index.mjs"
+      "types": "./dist/*/index.d.ts",
+      "import": "./dist/*/index.js",
+      "require": "./dist/*/index.cjs"
     }
   },
   "files": [
@@ -22,10 +23,10 @@
   ],
   "license": "MIT",
   "scripts": {
-    "build": "tsdown && pnpm build:css",
+    "build": "rslib build && pnpm build:css",
     "build:css": "tailwindcss -i ./src/style.css -o ./dist/style.css --minify",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsdown --watch",
+    "dev": "rslib build --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
@@ -66,6 +67,7 @@
     "vaul": "^1.1.2"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.58.7",
     "@notion-kit/common": "workspace:*",
     "@notion-kit/config": "workspace:*",
     "@notion-kit/cover": "workspace:*",
@@ -85,6 +87,8 @@
     "@notion-kit/tsconfig": "workspace:*",
     "@notion-kit/unsplash": "workspace:*",
     "@rollup/plugin-babel": "catalog:build",
+    "@rsbuild/plugin-babel": "catalog:build",
+    "@rslib/core": "catalog:build",
     "@tailwindcss/cli": "catalog:tailwind-v4",
     "@types/lodash.throttle": "catalog:fns",
     "babel-plugin-react-compiler": "catalog:react-compiler",
