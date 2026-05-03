@@ -3,8 +3,8 @@
 import type { Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
-import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Icon } from "@notion-kit/icons";
+import { AlertModal } from "@notion-kit/ui/alert-modal";
 import {
   Button,
   Dialog,

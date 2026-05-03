@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
+import { Button, TooltipPreset, TooltipProvider } from "~/primitives";
 
 import { cn } from "@notion-kit/cn";
-import { Button, TooltipPreset, TooltipProvider } from "~/primitives";
 
 function Navbar({ className, ...props }: React.ComponentProps<"nav">) {
   return (

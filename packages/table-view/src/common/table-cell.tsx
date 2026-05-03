@@ -5,11 +5,10 @@ import type { LayoutType } from "../features";
 import type { ColumnInfo, Row } from "../lib/types";
 import type { CellPlugin, InferCellProps } from "../plugins";
 
-interface TableCellProps<TPlugin extends CellPlugin>
-  extends Pick<
-    CellContext<Row<TPlugin[]>, unknown>,
-    "row" | "column" | "table"
-  > {
+interface TableCellProps<TPlugin extends CellPlugin> extends Pick<
+  CellContext<Row<TPlugin[]>, unknown>,
+  "row" | "column" | "table"
+> {
   view: LayoutType | "row-view";
 }
 

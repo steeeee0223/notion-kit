@@ -5,8 +5,8 @@ import { arrayMove, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { ColumnSort } from "@tanstack/react-table";
 
-import { IconBlock } from "@notion-kit/ui/icon-block";
 import { Icon } from "@notion-kit/icons";
+import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Button,
   Command,

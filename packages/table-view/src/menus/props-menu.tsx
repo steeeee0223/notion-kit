@@ -6,8 +6,8 @@ import { CSS } from "@dnd-kit/utilities";
 
 import { cn } from "@notion-kit/cn";
 import { useFilter } from "@notion-kit/hooks";
-import { IconBlock } from "@notion-kit/ui/icon-block";
 import { Icon } from "@notion-kit/icons";
+import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Button,
   Input,

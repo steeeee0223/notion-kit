@@ -1,5 +1,9 @@
 import { cn } from "@notion-kit/cn";
-import { Popover, PopoverContent, PopoverTrigger } from "@notion-kit/ui/primitives";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@notion-kit/ui/primitives";
 
 import { CellTrigger, CopyButton } from "../../../common";
 import { wrappedClassName } from "../../../lib/utils";

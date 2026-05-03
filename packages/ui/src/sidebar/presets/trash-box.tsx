@@ -1,10 +1,7 @@
 "use client";
 
 import { AlertModal } from "~/alert-modal";
-import { useFilter } from "@notion-kit/hooks";
 import { IconBlock } from "~/icon-block";
-import { Icon } from "@notion-kit/icons";
-import type { Page } from "@notion-kit/schemas";
 import {
   Button,
   Dialog,
@@ -18,6 +15,10 @@ import {
   TooltipPreset,
   TooltipProvider,
 } from "~/primitives";
+
+import { useFilter } from "@notion-kit/hooks";
+import { Icon } from "@notion-kit/icons";
+import type { Page } from "@notion-kit/schemas";
 
 import { SidebarMenuItem } from "../core";
 

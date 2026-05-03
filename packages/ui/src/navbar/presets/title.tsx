@@ -1,6 +1,7 @@
 import { IconBlock } from "~/icon-block";
-import type { Page, UpdatePageParams } from "@notion-kit/schemas";
 import { Button } from "~/primitives";
+
+import type { Page, UpdatePageParams } from "@notion-kit/schemas";
 
 import { RenamePopover } from "./_components";
 

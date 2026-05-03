@@ -3,9 +3,9 @@
 import { useMediaQuery } from "usehooks-ts";
 
 import { cn } from "@notion-kit/cn";
+import { Plan } from "@notion-kit/schemas";
 import { useTranslation } from "@notion-kit/ui/i18n";
 import { Icon } from "@notion-kit/ui/icons";
-import { Plan } from "@notion-kit/schemas";
 import {
   Button,
   Card,

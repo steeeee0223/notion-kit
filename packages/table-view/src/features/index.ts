@@ -45,7 +45,8 @@ import {
 declare module "@tanstack/react-table" {
   // merge our new feature's state with the existing table state
   interface TableState
-    extends CountingTableState,
+    extends
+      CountingTableState,
       ColumnsInfoTableState,
       FreezingTableState,
       ExtendedGroupingTableState,
@@ -53,7 +54,8 @@ declare module "@tanstack/react-table" {
 
   // merge our new feature's options with the existing table options
   interface TableOptionsResolved<TData extends RowData>
-    extends CountingOptions,
+    extends
+      CountingOptions,
       ColumnsInfoOptions,
       FreezingOptions,
       RowActionsOptions,
@@ -64,7 +66,8 @@ declare module "@tanstack/react-table" {
 
   // merge our new feature's instance APIs with the existing table instance APIs
   interface Table<TData extends RowData>
-    extends CountingTableApi,
+    extends
+      CountingTableApi,
       ColumnsInfoTableApi,
       FreezingTableApi,
       RowActionsTableApi,
@@ -72,12 +75,10 @@ declare module "@tanstack/react-table" {
       TableMenuTableApi {}
 
   interface Column<TData extends RowData>
-    extends ColumnInfoColumnApi,
-      RowActionsColumnApi {}
+    extends ColumnInfoColumnApi, RowActionsColumnApi {}
 
   interface Row<TData extends RowData>
-    extends RowActionsRowApi,
-      ExtendedGroupingRowApi {
+    extends RowActionsRowApi, ExtendedGroupingRowApi {
     getGroupingValue: (colId: string) => ComparableValue;
   }
 }

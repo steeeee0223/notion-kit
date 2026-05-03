@@ -1,5 +1,3 @@
-import { cn } from "@notion-kit/cn";
-import type { User } from "@notion-kit/schemas";
 import {
   Avatar,
   AvatarFallback,
@@ -7,6 +5,9 @@ import {
   TooltipPreset,
   TooltipProvider,
 } from "~/primitives";
+
+import { cn } from "@notion-kit/cn";
+import type { User } from "@notion-kit/schemas";
 
 interface UserAvatarProps {
   user: User;

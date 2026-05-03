@@ -2,10 +2,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 
+import { IconObject } from "@notion-kit/schemas";
 import { useTranslation } from "@notion-kit/ui/i18n";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import { IconMenu } from "@notion-kit/ui/icon-menu";
-import { IconObject } from "@notion-kit/schemas";
 import {
   Button,
   DialogContent,

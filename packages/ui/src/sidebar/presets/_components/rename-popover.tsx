@@ -1,9 +1,10 @@
 "use client";
 
-import { useInputField } from "@notion-kit/hooks";
 import { IconBlock, type IconData } from "~/icon-block";
 import { IconMenu } from "~/icon-menu";
 import { DropdownMenuSubContent, Input } from "~/primitives";
+
+import { useInputField } from "@notion-kit/hooks";
 
 interface RenamePopoverProps {
   title: string;

@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-
-import { cn } from "@notion-kit/cn";
 import type { IconData } from "~/icon-block";
 import {
   Button,
@@ -15,6 +13,8 @@ import {
   TabsList,
   TabsTrigger,
 } from "~/primitives";
+
+import { cn } from "@notion-kit/cn";
 
 import {
   MenuSearchBar,

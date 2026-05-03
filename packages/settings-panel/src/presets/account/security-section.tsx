@@ -3,7 +3,12 @@
 import { useState } from "react";
 
 import { useTranslation } from "@notion-kit/ui/i18n";
-import { Button, Dialog, DialogTrigger, Switch } from "@notion-kit/ui/primitives";
+import {
+  Button,
+  Dialog,
+  DialogTrigger,
+  Switch,
+} from "@notion-kit/ui/primitives";
 
 import { SettingsRule, SettingsSection } from "../../core";
 import { useAccount, useAccountActions } from "../hooks";

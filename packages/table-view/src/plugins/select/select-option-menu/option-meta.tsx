@@ -5,7 +5,12 @@ import { useEffect, useState } from "react";
 import { cn } from "@notion-kit/cn";
 import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
-import { Button, Input, TooltipPreset, typography } from "@notion-kit/ui/primitives";
+import {
+  Button,
+  Input,
+  TooltipPreset,
+  typography,
+} from "@notion-kit/ui/primitives";
 
 import type { OptionConfig } from "../types";
 

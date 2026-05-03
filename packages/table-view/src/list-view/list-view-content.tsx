@@ -3,8 +3,8 @@
 import { useCallback, useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/core";
 
-import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Icon } from "@notion-kit/icons";
+import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog } from "@notion-kit/ui/primitives";
 
 import { SortableDnd, useDndSensors } from "../common";

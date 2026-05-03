@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-
-import type { IconData, Page, UpdatePageParams } from "@notion-kit/schemas";
 import { MenuItem } from "~/primitives";
 import { Tree, useTree } from "~/tree";
+
+import type { IconData, Page, UpdatePageParams } from "@notion-kit/schemas";
 
 import { SidebarGroup, SidebarMenuItem } from "../core";
 import { DocGroupActions, DocIcon, DocItemActions } from "./_components";

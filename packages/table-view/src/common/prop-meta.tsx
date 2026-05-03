@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 
 import { useInputField } from "@notion-kit/hooks";
+import { Icon } from "@notion-kit/icons";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import { IconMenu } from "@notion-kit/ui/icon-menu";
-import { Icon } from "@notion-kit/icons";
 import { Button, Input, TooltipPreset } from "@notion-kit/ui/primitives";
 
 import { useTableViewCtx } from "../table-contexts";

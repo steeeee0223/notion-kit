@@ -19,10 +19,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-
 import { IconBlock } from "~/icon-block";
-import { Icon } from "@notion-kit/icons";
-import { Role, User, Workspace } from "@notion-kit/schemas";
 import {
   Badge,
   Button,
@@ -31,6 +28,9 @@ import {
   TooltipPreset,
   TooltipProvider,
 } from "~/primitives";
+
+import { Icon } from "@notion-kit/icons";
+import { Role, User, Workspace } from "@notion-kit/schemas";
 
 import { planTitle } from "./constant";
 import { HeaderDropdown } from "./header-dropdown";

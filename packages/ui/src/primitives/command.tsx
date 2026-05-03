@@ -66,8 +66,9 @@ function CommandDialog({
   );
 }
 
-export interface CommandInputProps
-  extends React.ComponentProps<typeof CommandPrimitive.Input> {
+export interface CommandInputProps extends React.ComponentProps<
+  typeof CommandPrimitive.Input
+> {
   classNames?: {
     wrapper?: string;
   };

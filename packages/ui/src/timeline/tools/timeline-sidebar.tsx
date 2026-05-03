@@ -1,8 +1,8 @@
 import React from "react";
+import { Button, ScrollArea, TooltipPreset } from "~/primitives";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
-import { Button, ScrollArea, TooltipPreset } from "~/primitives";
 
 export interface TimelineSidebarProps extends React.PropsWithChildren {
   className?: string;

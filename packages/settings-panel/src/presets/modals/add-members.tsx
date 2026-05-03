@@ -2,9 +2,9 @@ import { useState, useTransition } from "react";
 import { z } from "zod/v4";
 
 import { useFilter } from "@notion-kit/hooks";
+import { Role, type User } from "@notion-kit/schemas";
 import { useTranslation } from "@notion-kit/ui/i18n";
 import { Icon } from "@notion-kit/ui/icons";
-import { Role, type User } from "@notion-kit/schemas";
 import {
   Badge,
   Button,

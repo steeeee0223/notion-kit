@@ -1,15 +1,9 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-
 import { IconBlock, type IconData } from "~/icon-block";
 import { IconMenu } from "~/icon-menu";
-import {
-  Input,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "~/primitives";
+import { Input, Popover, PopoverContent, PopoverTrigger } from "~/primitives";
 
 interface RenamePopoverProps extends React.PropsWithChildren {
   title: string;

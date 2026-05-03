@@ -5,8 +5,8 @@ import { CSS } from "@dnd-kit/utilities";
 import type { HeaderContext } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
-import { IconBlock } from "@notion-kit/ui/icon-block";
 import { Icon } from "@notion-kit/icons";
+import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Button,
   DropdownMenu,

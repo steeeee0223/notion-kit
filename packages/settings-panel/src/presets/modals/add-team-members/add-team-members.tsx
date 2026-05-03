@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 
+import type { User } from "@notion-kit/schemas";
 import { useTranslation } from "@notion-kit/ui/i18n";
 import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import { Icon } from "@notion-kit/ui/icons";
-import type { User } from "@notion-kit/schemas";
 import {
   Badge,
   Button,

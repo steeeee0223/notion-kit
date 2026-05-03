@@ -1,8 +1,5 @@
 "use client";
 
-import { useCopyToClipboard } from "@notion-kit/hooks";
-import { Icon } from "@notion-kit/icons";
-import type { IconData, UpdatePageParams } from "@notion-kit/schemas";
 import {
   Button,
   DropdownMenu,
@@ -17,6 +14,10 @@ import {
   MenuItemAction,
   TooltipPreset,
 } from "~/primitives";
+
+import { useCopyToClipboard } from "@notion-kit/hooks";
+import { Icon } from "@notion-kit/icons";
+import type { IconData, UpdatePageParams } from "@notion-kit/schemas";
 import { toDateString } from "@notion-kit/utils";
 
 import { RenamePopover } from "./rename-popover";

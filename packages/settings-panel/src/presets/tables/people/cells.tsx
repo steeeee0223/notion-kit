@@ -1,10 +1,10 @@
 import { useTransition } from "react";
 
 import { cn } from "@notion-kit/cn";
+import { Role } from "@notion-kit/schemas";
 import { useTranslation } from "@notion-kit/ui/i18n";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import { Icon } from "@notion-kit/ui/icons";
-import { Role } from "@notion-kit/schemas";
 import {
   Button,
   Dialog,

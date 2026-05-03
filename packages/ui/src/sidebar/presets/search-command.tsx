@@ -1,10 +1,6 @@
 "use client";
 
-import { cn } from "@notion-kit/cn";
-import { useFilter } from "@notion-kit/hooks";
 import { IconBlock } from "~/icon-block";
-import { Icon } from "@notion-kit/icons";
-import type { Page } from "@notion-kit/schemas";
 import {
   CommandDialog,
   CommandEmpty,
@@ -14,6 +10,11 @@ import {
   CommandList,
   CommandSeparator,
 } from "~/primitives";
+
+import { cn } from "@notion-kit/cn";
+import { useFilter } from "@notion-kit/hooks";
+import { Icon } from "@notion-kit/icons";
+import type { Page } from "@notion-kit/schemas";
 import { toDateString } from "@notion-kit/utils";
 
 interface SearchCommandProps {

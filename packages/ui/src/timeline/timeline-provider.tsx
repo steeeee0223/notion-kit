@@ -8,11 +8,11 @@ import React, {
   useMemo,
   useRef,
 } from "react";
+import { TooltipProvider } from "~/primitives";
 import { atom, Provider as JotaiProvider, useAtom } from "jotai";
 import throttle from "lodash.throttle";
 
 import { cn } from "@notion-kit/cn";
-import { TooltipProvider } from "~/primitives";
 
 import { HEADER_HEIGHT, ROW_HEIGHT } from "./constants";
 import type {

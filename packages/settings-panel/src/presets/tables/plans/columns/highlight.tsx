@@ -1,12 +1,18 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { Plan } from "@notion-kit/schemas";
-import { Button, TooltipPreset, TooltipProvider } from "@notion-kit/ui/primitives";
+import {
+  Button,
+  TooltipPreset,
+  TooltipProvider,
+} from "@notion-kit/ui/primitives";
 
 import { ListCell, PlanHeader } from "../cells";
 
-export interface HighlightPlanRow
-  extends Omit<Record<Plan, string[]>, Plan.EDUCATION> {
+export interface HighlightPlanRow extends Omit<
+  Record<Plan, string[]>,
+  Plan.EDUCATION
+> {
   title: string;
 }
 

@@ -1,5 +1,6 @@
 import { DatabaseIcon, Ellipsis, Plus } from "lucide-react";
 
+import { TableView } from "@notion-kit/table-view";
 import {
   Button,
   Tabs,
@@ -7,7 +8,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "@notion-kit/ui/primitives";
-import { TableView } from "@notion-kit/table-view";
 
 import { mockData, mockProps } from "./data";
 import { ViewWrapper } from "./view-wrapper";

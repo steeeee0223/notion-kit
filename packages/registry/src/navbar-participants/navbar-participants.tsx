@@ -1,5 +1,5 @@
-import { Participants } from "@notion-kit/ui/navbar/presets";
 import type { User } from "@notion-kit/schemas";
+import { Participants } from "@notion-kit/ui/navbar/presets";
 import { TooltipProvider } from "@notion-kit/ui/primitives";
 
 export const currentUser: User = {

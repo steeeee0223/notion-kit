@@ -2,9 +2,6 @@
 
 import React from "react";
 import { tzOffset } from "@date-fns/tz";
-
-import { cn } from "@notion-kit/cn";
-import { useFilter } from "@notion-kit/hooks";
 import {
   Command,
   CommandGroup,
@@ -17,6 +14,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/primitives";
+
+import { cn } from "@notion-kit/cn";
+import { useFilter } from "@notion-kit/hooks";
 
 interface TimezoneMenuProps extends React.PropsWithChildren {
   className?: string;

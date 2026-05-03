@@ -1,5 +1,5 @@
-import { Menu } from "@notion-kit/ui/navbar/presets";
 import type { Page } from "@notion-kit/schemas";
+import { Menu } from "@notion-kit/ui/navbar/presets";
 import { TooltipProvider } from "@notion-kit/ui/primitives";
 
 export const page: Page = {

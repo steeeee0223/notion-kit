@@ -1,7 +1,7 @@
 "use client";
 
-import { IconBlock } from "@notion-kit/ui/icon-block";
 import { Icon } from "@notion-kit/icons";
+import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Button,
   MenuGroup,

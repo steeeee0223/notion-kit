@@ -1,10 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-
-import { useCopyToClipboard, useOrigin } from "@notion-kit/hooks";
-import { Icon } from "@notion-kit/icons";
-import type { Page } from "@notion-kit/schemas";
 import {
   Button,
   Input,
@@ -17,6 +13,10 @@ import {
   TabsTrigger,
   toast,
 } from "~/primitives";
+
+import { useCopyToClipboard, useOrigin } from "@notion-kit/hooks";
+import { Icon } from "@notion-kit/icons";
+import type { Page } from "@notion-kit/schemas";
 
 import { NavbarItem } from "../core";
 

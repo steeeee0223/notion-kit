@@ -8,11 +8,11 @@ import {
   useTransition,
 } from "react";
 import { betterFetch } from "@better-fetch/fetch";
-import dynamicIconImports from "lucide-react/dynamicIconImports";
-
 import { COLOR } from "~/colors";
 import type { LucideName } from "~/icon-block";
 import { LucideIcon } from "~/icon-block";
+import dynamicIconImports from "lucide-react/dynamicIconImports";
+
 import { randomItem } from "@notion-kit/utils";
 
 import { useRecentIcons } from "../_hooks";

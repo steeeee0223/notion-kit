@@ -1,7 +1,4 @@
 import { useState } from "react";
-
-import { cn } from "@notion-kit/cn";
-import { Icon } from "@notion-kit/icons";
 import {
   Button,
   Command,
@@ -12,6 +9,9 @@ import {
   MenuItem,
   useCommandState,
 } from "~/primitives";
+
+import { cn } from "@notion-kit/cn";
+import { Icon } from "@notion-kit/icons";
 
 import { Tree as TreePrimitive, type TreeInstance } from "../core";
 import type { TreeItemData } from "./utils";

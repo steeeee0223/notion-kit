@@ -1,6 +1,5 @@
 "use client";
 
-import { TimezoneMenu } from "@notion-kit/ui/timezone-menu";
 import {
   Calendar,
   MenuGroup,
@@ -9,6 +8,7 @@ import {
   MenuItemSwitch,
   Separator,
 } from "@notion-kit/ui/primitives";
+import { TimezoneMenu } from "@notion-kit/ui/timezone-menu";
 
 import type { InferCellProps } from "../../types";
 import { DateFormatMenu, TimeFormatMenu } from "../common";

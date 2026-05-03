@@ -1,9 +1,9 @@
 import { useMemo } from "react";
+import { Button, TooltipPreset } from "~/primitives";
 import { format } from "date-fns";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
-import { Button, TooltipPreset } from "~/primitives";
 
 import {
   useTimelineContainerWidth,

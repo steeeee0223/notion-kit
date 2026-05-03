@@ -1,7 +1,8 @@
 "use client";
 
-import { Icon } from "@notion-kit/icons";
 import { Button, MenuItemAction, TooltipPreset } from "~/primitives";
+
+import { Icon } from "@notion-kit/icons";
 
 interface DocGroupActionsProps {
   onCreate?: () => void;

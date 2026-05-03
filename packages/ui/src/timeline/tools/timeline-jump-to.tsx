@@ -1,3 +1,4 @@
+import { Button } from "~/primitives";
 import {
   addMonths,
   addYears,
@@ -7,7 +8,6 @@ import {
 } from "date-fns";
 
 import { Icon } from "@notion-kit/icons";
-import { Button } from "~/primitives";
 
 import {
   useTimelineContext,

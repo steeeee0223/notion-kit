@@ -4,8 +4,8 @@ import { useId, useState } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { useInputField } from "@notion-kit/hooks";
-import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import { Icon } from "@notion-kit/icons";
+import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import {
   Button,
   Input,

@@ -1,12 +1,6 @@
 import React from "react";
+import { Button, Input, TooltipPreset, TooltipProvider } from "~/primitives";
 import { Shuffle } from "lucide-react";
-
-import {
-  Button,
-  Input,
-  TooltipPreset,
-  TooltipProvider,
-} from "~/primitives";
 
 interface MenuSearchBarProps {
   search: string;

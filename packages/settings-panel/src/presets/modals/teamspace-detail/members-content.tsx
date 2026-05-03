@@ -1,10 +1,15 @@
 import { useState } from "react";
 
+import { User } from "@notion-kit/schemas";
 import { useTranslation } from "@notion-kit/ui/i18n";
 import { type IconData } from "@notion-kit/ui/icon-block";
 import { Icon } from "@notion-kit/ui/icons";
-import { User } from "@notion-kit/schemas";
-import { Button, Dialog, DialogTrigger, Input } from "@notion-kit/ui/primitives";
+import {
+  Button,
+  Dialog,
+  DialogTrigger,
+  Input,
+} from "@notion-kit/ui/primitives";
 
 import type {
   TeamspacePermission as Permission,

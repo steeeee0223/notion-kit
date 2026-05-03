@@ -1,8 +1,8 @@
 "use client";
 
 import { useSession } from "@notion-kit/auth-ui";
-import { IconBlock } from "@notion-kit/ui/icon-block";
 import type { IconData } from "@notion-kit/schemas";
+import { IconBlock } from "@notion-kit/ui/icon-block";
 
 import { DatabaseView } from "@/components/database-view";
 import { useWorkspaceList } from "@/hooks/use-workspace-list";

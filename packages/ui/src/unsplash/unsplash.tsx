@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
+import { Input, Spinner } from "~/primitives";
 
 import { cn } from "@notion-kit/cn";
-import { Input, Spinner } from "~/primitives";
 
 import { useUnsplash } from "./use-unsplash";
 

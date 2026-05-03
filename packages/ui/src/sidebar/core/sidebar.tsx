@@ -1,7 +1,7 @@
 import * as React from "react";
+import { Sheet, SheetContent } from "~/primitives";
 
 import { cn } from "@notion-kit/cn";
-import { Sheet, SheetContent } from "~/primitives";
 
 import { useSidebar } from "./sidebar-provider";
 

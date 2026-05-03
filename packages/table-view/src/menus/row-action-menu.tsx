@@ -3,9 +3,9 @@
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { useCopyToClipboard } from "@notion-kit/hooks";
+import { Icon } from "@notion-kit/icons";
 import type { IconData } from "@notion-kit/ui/icon-block";
 import { IconMenu } from "@notion-kit/ui/icon-menu";
-import { Icon } from "@notion-kit/icons";
 import {
   Command,
   CommandGroup,

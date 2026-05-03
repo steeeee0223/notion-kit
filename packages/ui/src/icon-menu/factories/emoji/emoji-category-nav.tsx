@@ -1,3 +1,4 @@
+import { Button, TooltipPreset, TooltipProvider } from "~/primitives";
 import {
   Bug,
   Car,
@@ -10,7 +11,6 @@ import {
 } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
-import { Button, TooltipPreset, TooltipProvider } from "~/primitives";
 
 import type { EmojiCategoryList } from "./constants";
 
