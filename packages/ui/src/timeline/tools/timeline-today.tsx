@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { formatDate } from "date-fns";
 
-import { Button, TooltipPreset } from "@notion-kit/shadcn";
+import { Button, TooltipPreset } from "~/primitives";
 
 import { useTimelineContext } from "../timeline-provider";
 import { getOffset } from "../utils";

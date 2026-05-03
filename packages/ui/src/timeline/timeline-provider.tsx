@@ -12,7 +12,7 @@ import { atom, Provider as JotaiProvider, useAtom } from "jotai";
 import throttle from "lodash.throttle";
 
 import { cn } from "@notion-kit/cn";
-import { TooltipProvider } from "@notion-kit/shadcn";
+import { TooltipProvider } from "~/primitives";
 
 import { HEADER_HEIGHT, ROW_HEIGHT } from "./constants";
 import type {

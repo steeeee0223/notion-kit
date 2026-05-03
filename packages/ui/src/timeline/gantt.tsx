@@ -12,7 +12,7 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from "@notion-kit/shadcn";
+} from "~/primitives";
 
 import { useTimelineContext } from "./timeline-provider";
 import { getDateByMousePosition, getOffset } from "./utils";
