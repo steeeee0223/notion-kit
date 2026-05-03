@@ -1,11 +1,11 @@
 import { cn } from "@notion-kit/cn";
-import { Icon } from "@notion-kit/icons";
+import { Icon } from "@notion-kit/ui/icons";
 import {
   Button,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { useCodeBlock } from "./code-block-provider";
 import { CODE_BLOCK_LANGUAGES } from "./constant";

@@ -11,6 +11,7 @@
     "directory": "packages/code-block"
   },
   "exports": {
+    "./style.css": "./dist/style.css",
     ".": {
       "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
@@ -24,7 +25,8 @@
   "types": "./dist/index.d.mts",
   "license": "MIT",
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && pnpm build:css",
+    "build:css": "tailwindcss -i ./src/style.css -o ./dist/style.css --minify",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "tsdown --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
@@ -36,8 +38,6 @@
   "dependencies": {
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/hooks": "workspace:*",
-    "@notion-kit/icons": "workspace:*",
-    "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/utils": "workspace:*",
     "mermaid": "^11.12.2",
     "prettier": "catalog:",
@@ -48,6 +48,7 @@
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "@tailwindcss/cli": "catalog:tailwind-v4",
     "@testing-library/jest-dom": "catalog:rtl",
     "@testing-library/react": "catalog:rtl",
     "@testing-library/user-event": "catalog:rtl",
@@ -64,6 +65,7 @@
     "vitest": "catalog:test"
   },
   "peerDependencies": {
+    "@notion-kit/ui": "workspace:*",
     "react": "catalog:react19",
     "react-dom": "catalog:react19"
   },

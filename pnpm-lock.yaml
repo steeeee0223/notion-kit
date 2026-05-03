@@ -1022,12 +1022,9 @@ importers:
       '@notion-kit/hooks':
         specifier: workspace:*
         version: link:../hooks
-      '@notion-kit/icons':
+      '@notion-kit/ui':
         specifier: workspace:*
-        version: link:../icons
-      '@notion-kit/shadcn':
-        specifier: workspace:*
-        version: link:../shadcn
+        version: link:../ui
       '@notion-kit/utils':
         specifier: workspace:*
         version: link:../utils
@@ -1053,6 +1050,9 @@ importers:
       '@notion-kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
+      '@tailwindcss/cli':
+        specifier: catalog:tailwind-v4
+        version: 4.2.4
       '@testing-library/jest-dom':
         specifier: catalog:rtl
         version: 6.9.1

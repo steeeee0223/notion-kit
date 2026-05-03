@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { useCopyToClipboard } from "@notion-kit/hooks";
-import { Icon } from "@notion-kit/icons";
+import { Icon } from "@notion-kit/ui/icons";
 import {
   Command,
   CommandGroup,
@@ -19,7 +19,7 @@ import {
   PopoverTrigger,
   Switch,
   toast,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 import { KEYBOARD, toDateString } from "@notion-kit/utils";
 
 import { useCodeBlock } from "./code-block-provider";

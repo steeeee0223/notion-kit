@@ -1,6 +1,6 @@
 import { cn } from "@notion-kit/cn";
 import { useCopyToClipboard } from "@notion-kit/hooks";
-import { Icon } from "@notion-kit/icons";
+import { Icon } from "@notion-kit/ui/icons";
 import {
   Button,
   Popover,
@@ -9,7 +9,7 @@ import {
   toast,
   TooltipPreset,
   TooltipProvider,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { CodeBlockActions } from "./code-block-actions";
 import { useCodeBlock } from "./code-block-provider";
