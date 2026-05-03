@@ -1,13 +1,13 @@
 "use client";
 
-import { IconBlock } from "@notion-kit/icon-block";
+import { IconBlock } from "@notion-kit/ui/icon-block";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
   MenuGroup,
   MenuItem,
   MenuItemAction,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { DefaultIcon, MenuHeader } from "../common";
 import { TableViewMenuPage } from "../features";

@@ -8,7 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { SortMenu, TableViewMenu } from "../menus";
 import { useTableViewCtx } from "../table-contexts";

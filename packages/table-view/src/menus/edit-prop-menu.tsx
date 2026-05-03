@@ -9,7 +9,7 @@ import {
   Separator,
   Switch,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { DefaultIcon, MenuHeader, PropMeta } from "../common";
 import { TableViewMenuPage } from "../features";

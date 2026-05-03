@@ -13,7 +13,7 @@ import {
   MenuItemAction,
   Switch,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { CountMethod } from "../features";
 import { type PluginType } from "../lib/types";

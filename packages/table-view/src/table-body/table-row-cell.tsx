@@ -4,7 +4,7 @@ import { useState } from "react";
 import { CellContext, flexRender } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
-import { Button } from "@notion-kit/shadcn";
+import { Button } from "@notion-kit/ui/primitives";
 
 import type { ColumnInfo, Row } from "../lib/types";
 import type { CellPlugin, InferCellProps } from "../plugins";

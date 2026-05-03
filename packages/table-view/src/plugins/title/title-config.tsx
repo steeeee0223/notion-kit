@@ -8,7 +8,7 @@ import {
   Label,
   MenuItemAction,
   Switch,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import type { ConfigMenuProps } from "../types";
 import type { TitleConfig } from "./types";

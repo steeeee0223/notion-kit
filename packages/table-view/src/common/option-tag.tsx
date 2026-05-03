@@ -1,4 +1,4 @@
-import { Badge } from "@notion-kit/shadcn";
+import { Badge } from "@notion-kit/ui/primitives";
 import { COLOR, type Color } from "@notion-kit/utils";
 
 interface OptionTagProps {

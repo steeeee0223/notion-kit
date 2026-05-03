@@ -4,7 +4,7 @@ import {
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import type { ConfigMenuProps } from "../types";
 import { DateFormatMenu, TimeFormatMenu } from "./common";

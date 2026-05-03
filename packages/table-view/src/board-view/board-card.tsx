@@ -8,7 +8,7 @@ import { flexRender, type Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { useInputField } from "@notion-kit/hooks";
-import { IconBlock } from "@notion-kit/icon-block";
+import { IconBlock } from "@notion-kit/ui/icon-block";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
   Separator,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import type { Row as RowModel } from "../lib/types";
 import { RowActionMenu } from "../menus";

@@ -3,8 +3,8 @@
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { useCopyToClipboard } from "@notion-kit/hooks";
-import type { IconData } from "@notion-kit/icon-block";
-import { IconMenu } from "@notion-kit/icon-menu";
+import type { IconData } from "@notion-kit/ui/icon-block";
+import { IconMenu } from "@notion-kit/ui/icon-menu";
 import { Icon } from "@notion-kit/icons";
 import {
   Command,
@@ -15,7 +15,7 @@ import {
   CommandSeparator,
   MenuItem,
   MenuItemShortcut,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 import { KEYBOARD } from "@notion-kit/utils";
 
 import { ROW_VIEW_OPTIONS } from "../features";

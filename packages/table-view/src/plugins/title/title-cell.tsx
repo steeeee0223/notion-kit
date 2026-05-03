@@ -4,7 +4,7 @@ import { useId, useState } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { useInputField } from "@notion-kit/hooks";
-import { IconBlock, type IconData } from "@notion-kit/icon-block";
+import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -13,7 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { CellTrigger, RowViewIcon, TextInputPopover } from "../../common";
 import { ROW_VIEW_OPTIONS } from "../../features";

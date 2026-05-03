@@ -1,6 +1,6 @@
 "use client";
 
-import { IconBlock } from "@notion-kit/icon-block";
+import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Command,
   CommandEmpty,
@@ -10,7 +10,7 @@ import {
   CommandList,
   MenuItem,
   MenuItemCheck,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { DefaultIcon, MenuHeader } from "../common";
 import { TableViewMenuPage } from "../features";

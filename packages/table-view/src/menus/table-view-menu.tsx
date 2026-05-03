@@ -4,7 +4,7 @@ import {
   MenuItem,
   MenuItemSelect,
   Separator,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { LayoutIcon, MenuGroupHeader, MenuHeader } from "../common";
 import { LAYOUT_OPTIONS, TableViewMenuPage } from "../features";

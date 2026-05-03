@@ -4,9 +4,9 @@ import React, { useCallback, useState } from "react";
 import { type DragEndEvent } from "@dnd-kit/core";
 import type { Table } from "@tanstack/react-table";
 
-import { AlertModal } from "@notion-kit/common/alert-modal";
+import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Icon } from "@notion-kit/icons";
-import { Button, Dialog } from "@notion-kit/shadcn";
+import { Button, Dialog } from "@notion-kit/ui/primitives";
 
 import { SortableDnd, useDndSensors } from "../common";
 import type { Row } from "../lib/types";

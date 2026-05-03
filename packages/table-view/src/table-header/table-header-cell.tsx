@@ -5,7 +5,7 @@ import { CSS } from "@dnd-kit/utilities";
 import type { HeaderContext } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
-import { IconBlock } from "@notion-kit/icon-block";
+import { IconBlock } from "@notion-kit/ui/icon-block";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -13,7 +13,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { DefaultIcon } from "../common";
 import type { Row } from "../lib/types";

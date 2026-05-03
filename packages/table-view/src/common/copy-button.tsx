@@ -3,7 +3,7 @@
 import { cn } from "@notion-kit/cn";
 import { useCopyToClipboard } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
-import { Button, TooltipPreset } from "@notion-kit/shadcn";
+import { Button, TooltipPreset } from "@notion-kit/ui/primitives";
 
 interface CopyButtonProps {
   className?: string;
