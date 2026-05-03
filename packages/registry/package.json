@@ -1,7 +1,6 @@
 {
   "name": "@notion-kit/registry",
   "version": "0.17.0",
-  "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
   },
@@ -10,6 +9,8 @@
     "url": "https://github.com/steeeee0223/notion-kit.git",
     "directory": "packages/registry"
   },
+  "license": "MIT",
+  "type": "module",
   "exports": {
     "./*": {
       "types": "./dist/*/index.d.mts",
@@ -19,7 +20,6 @@
   "files": [
     "dist"
   ],
-  "license": "MIT",
   "scripts": {
     "build": "tsdown",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
@@ -28,6 +28,12 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
+  "babel": {
+    "plugins": [
+      "babel-plugin-react-compiler"
+    ]
+  },
+  "prettier": "@notion-kit/prettier-config",
   "dependencies": {
     "@notion-kit/auth-ui": "workspace:*",
     "@notion-kit/cn": "workspace:*",
@@ -59,11 +65,5 @@
     "react": "catalog:react19",
     "react-hotkeys-hook": "*",
     "zod": "catalog:"
-  },
-  "prettier": "@notion-kit/prettier-config",
-  "babel": {
-    "plugins": [
-      "babel-plugin-react-compiler"
-    ]
   }
 }

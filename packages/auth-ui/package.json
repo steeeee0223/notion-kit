@@ -1,7 +1,6 @@
 {
   "name": "@notion-kit/auth-ui",
   "version": "0.17.0",
-  "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
   },
@@ -10,6 +9,8 @@
     "url": "https://github.com/steeeee0223/notion-kit.git",
     "directory": "packages/auth-ui"
   },
+  "license": "MIT",
+  "type": "module",
   "exports": {
     "./style.css": "./dist/style.css",
     ".": {
@@ -17,13 +18,12 @@
       "default": "./dist/index.mjs"
     }
   },
-  "files": [
-    "dist"
-  ],
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
-  "license": "MIT",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsdown && pnpm build:css",
     "build:css": "tailwindcss -i ./src/style.css -o ./dist/style.css --minify",
@@ -33,6 +33,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
+  "prettier": "@notion-kit/prettier-config",
   "dependencies": {
     "@hookform/resolvers": "catalog:ui",
     "@notion-kit/auth": "workspace:*",
@@ -60,6 +61,5 @@
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
     "zod": "catalog:"
-  },
-  "prettier": "@notion-kit/prettier-config"
+  }
 }

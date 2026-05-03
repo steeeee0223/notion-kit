@@ -1,7 +1,6 @@
 {
   "name": "@notion-kit/ui",
   "version": "0.17.0",
-  "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
   },
@@ -10,6 +9,8 @@
     "url": "https://github.com/steeeee0223/notion-kit.git",
     "directory": "packages/ui"
   },
+  "license": "MIT",
+  "type": "module",
   "exports": {
     "./style.css": "./dist/style.css",
     "./*": {
@@ -21,7 +22,6 @@
   "files": [
     "dist"
   ],
-  "license": "MIT",
   "scripts": {
     "build": "rslib build && pnpm build:css",
     "build:css": "tailwindcss -i ./src/style.css -o ./dist/style.css --minify",
@@ -31,6 +31,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
+  "prettier": "@notion-kit/prettier-config",
   "dependencies": {
     "@better-fetch/fetch": "catalog:",
     "@dnd-kit/core": "catalog:ui",
@@ -91,6 +92,5 @@
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
     "zod": "catalog:"
-  },
-  "prettier": "@notion-kit/prettier-config"
+  }
 }

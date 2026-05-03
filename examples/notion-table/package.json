@@ -11,10 +11,11 @@
     "start": "next start",
     "typecheck": "tsc --noEmit"
   },
+  "prettier": "@notion-kit/prettier-config",
   "dependencies": {
     "@notion-kit/cn": "workspace:*",
-    "@notion-kit/shadcn": "workspace:*",
     "@notion-kit/table-view": "workspace:*",
+    "@notion-kit/ui": "workspace:*",
     "lucide-react": "catalog:ui",
     "next": "catalog:next16",
     "react": "catalog:react19",
@@ -30,6 +31,5 @@
     "@types/react-dom": "catalog:react19",
     "tailwindcss": "catalog:tailwind-v4",
     "typescript": "catalog:"
-  },
-  "prettier": "@notion-kit/prettier-config"
+  }
 }

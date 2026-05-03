@@ -254,9 +254,9 @@ importers:
       '@notion-kit/settings-panel':
         specifier: workspace:*
         version: link:../../packages/settings-panel
-      '@notion-kit/shadcn':
+      '@notion-kit/ui':
         specifier: workspace:*
-        version: link:../../packages/shadcn
+        version: link:../../packages/ui
       '@t3-oss/env-nextjs':
         specifier: catalog:env
         version: 0.13.6(typescript@5.9.3)(valibot@1.2.0(typescript@5.9.3))(zod@4.3.6)
@@ -312,9 +312,9 @@ importers:
       '@notion-kit/registry':
         specifier: workspace:*
         version: link:../../packages/registry
-      '@notion-kit/shadcn':
+      '@notion-kit/ui':
         specifier: workspace:*
-        version: link:../../packages/shadcn
+        version: link:../../packages/ui
       fumadocs-core:
         specifier: ^16.0.12
         version: 16.0.12(@types/react@19.2.7)(lucide-react@0.456.0(react@19.2.3))(next@16.1.0(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -406,60 +406,27 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../../packages/cn
-      '@notion-kit/common':
-        specifier: workspace:*
-        version: link:../../packages/common
-      '@notion-kit/cover':
-        specifier: workspace:*
-        version: link:../../packages/cover
       '@notion-kit/hooks':
         specifier: workspace:*
         version: link:../../packages/hooks
       '@notion-kit/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
-      '@notion-kit/icon-block':
-        specifier: workspace:*
-        version: link:../../packages/icon-block
-      '@notion-kit/icon-menu':
-        specifier: workspace:*
-        version: link:../../packages/icon-menu
       '@notion-kit/icons':
         specifier: workspace:*
         version: link:../../packages/icons
-      '@notion-kit/navbar':
-        specifier: workspace:*
-        version: link:../../packages/navbar
       '@notion-kit/schemas':
         specifier: workspace:*
         version: link:../../packages/schemas
-      '@notion-kit/selectable':
-        specifier: workspace:*
-        version: link:../../packages/selectable
       '@notion-kit/settings-panel':
         specifier: workspace:*
         version: link:../../packages/settings-panel
-      '@notion-kit/shadcn':
-        specifier: workspace:*
-        version: link:../../packages/shadcn
-      '@notion-kit/sidebar':
-        specifier: workspace:*
-        version: link:../../packages/sidebar
-      '@notion-kit/single-image-dropzone':
-        specifier: workspace:*
-        version: link:../../packages/single-image-dropzone
       '@notion-kit/table-view':
         specifier: workspace:*
         version: link:../../packages/table-view
-      '@notion-kit/tags-input':
+      '@notion-kit/ui':
         specifier: workspace:*
-        version: link:../../packages/tags-input
-      '@notion-kit/tree':
-        specifier: workspace:*
-        version: link:../../packages/tree
-      '@notion-kit/unsplash':
-        specifier: workspace:*
-        version: link:../../packages/unsplash
+        version: link:../../packages/ui
       '@notion-kit/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -545,24 +512,12 @@ importers:
       '@notion-kit/code-block':
         specifier: workspace:*
         version: link:../../packages/code-block
-      '@notion-kit/common':
-        specifier: workspace:*
-        version: link:../../packages/common
-      '@notion-kit/cover':
-        specifier: workspace:*
-        version: link:../../packages/cover
       '@notion-kit/hooks':
         specifier: workspace:*
         version: link:../../packages/hooks
       '@notion-kit/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
-      '@notion-kit/icon-block':
-        specifier: workspace:*
-        version: link:../../packages/icon-block
-      '@notion-kit/icon-menu':
-        specifier: workspace:*
-        version: link:../../packages/icon-menu
       '@notion-kit/icons':
         specifier: workspace:*
         version: link:../../packages/icons
@@ -572,30 +527,15 @@ importers:
       '@notion-kit/schemas':
         specifier: workspace:*
         version: link:../../packages/schemas
-      '@notion-kit/selectable':
-        specifier: workspace:*
-        version: link:../../packages/selectable
       '@notion-kit/settings-panel':
         specifier: workspace:*
         version: link:../../packages/settings-panel
-      '@notion-kit/shadcn':
-        specifier: workspace:*
-        version: link:../../packages/shadcn
-      '@notion-kit/single-image-dropzone':
-        specifier: workspace:*
-        version: link:../../packages/single-image-dropzone
       '@notion-kit/table-view':
         specifier: workspace:*
         version: link:../../packages/table-view
-      '@notion-kit/tags-input':
+      '@notion-kit/ui':
         specifier: workspace:*
-        version: link:../../packages/tags-input
-      '@notion-kit/tree':
-        specifier: workspace:*
-        version: link:../../packages/tree
-      '@notion-kit/unsplash':
-        specifier: workspace:*
-        version: link:../../packages/unsplash
+        version: link:../../packages/ui
       '@notion-kit/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -714,9 +654,6 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../../packages/cn
-      '@notion-kit/icon-block':
-        specifier: workspace:*
-        version: link:../../packages/icon-block
       '@notion-kit/icons':
         specifier: workspace:*
         version: link:../../packages/icons
@@ -726,15 +663,12 @@ importers:
       '@notion-kit/settings-panel':
         specifier: workspace:*
         version: link:../../packages/settings-panel
-      '@notion-kit/shadcn':
-        specifier: workspace:*
-        version: link:../../packages/shadcn
-      '@notion-kit/sidebar':
-        specifier: workspace:*
-        version: link:../../packages/sidebar
       '@notion-kit/table-view':
         specifier: workspace:*
         version: link:../../packages/table-view
+      '@notion-kit/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@t3-oss/env-nextjs':
         specifier: catalog:env
         version: 0.13.6(typescript@5.9.3)(valibot@1.2.0(typescript@5.9.3))(zod@4.3.6)
@@ -790,12 +724,12 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../../packages/cn
-      '@notion-kit/shadcn':
-        specifier: workspace:*
-        version: link:../../packages/shadcn
       '@notion-kit/table-view':
         specifier: workspace:*
         version: link:../../packages/table-view
+      '@notion-kit/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       lucide-react:
         specifier: catalog:ui
         version: 0.456.0(react@19.2.3)
@@ -1096,95 +1030,6 @@ importers:
         specifier: catalog:test
         version: 4.0.17(@types/node@25.6.0)(@vitest/browser-playwright@4.0.17)(@vitest/ui@4.0.17)(jiti@2.6.1)(jsdom@25.0.1(bufferutil@4.1.0))(lightningcss@1.32.0)(msw@2.12.4(@types/node@25.6.0)(typescript@5.9.3))(terser@5.46.2)(tsx@4.19.3)(yaml@2.7.1)
 
-  packages/common:
-    dependencies:
-      '@hookform/resolvers':
-        specifier: catalog:ui
-        version: 5.2.2(react-hook-form@7.66.0(react@19.2.3))
-      '@notion-kit/cn':
-        specifier: workspace:*
-        version: link:../cn
-      '@notion-kit/hooks':
-        specifier: workspace:*
-        version: link:../hooks
-      '@notion-kit/shadcn':
-        specifier: workspace:*
-        version: link:../shadcn
-      react:
-        specifier: catalog:react19
-        version: 19.2.3
-      react-hook-form:
-        specifier: catalog:ui
-        version: 7.66.0(react@19.2.3)
-      zod:
-        specifier: 'catalog:'
-        version: 4.1.12
-    devDependencies:
-      '@notion-kit/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@notion-kit/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@notion-kit/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      eslint:
-        specifier: 'catalog:'
-        version: 9.39.1(jiti@2.6.1)
-      prettier:
-        specifier: 'catalog:'
-        version: 3.6.2
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-
-  packages/cover:
-    dependencies:
-      '@notion-kit/cn':
-        specifier: workspace:*
-        version: link:../cn
-      '@notion-kit/common':
-        specifier: workspace:*
-        version: link:../common
-      '@notion-kit/shadcn':
-        specifier: workspace:*
-        version: link:../shadcn
-      '@notion-kit/single-image-dropzone':
-        specifier: workspace:*
-        version: link:../single-image-dropzone
-      '@notion-kit/unsplash':
-        specifier: workspace:*
-        version: link:../unsplash
-      lucide-react:
-        specifier: catalog:ui
-        version: 0.456.0(react@19.2.3)
-      react:
-        specifier: catalog:react19
-        version: 19.2.3
-      react-dom:
-        specifier: catalog:react19
-        version: 19.2.3(react@19.2.3)
-    devDependencies:
-      '@notion-kit/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@notion-kit/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@notion-kit/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      eslint:
-        specifier: 'catalog:'
-        version: 9.39.1(jiti@2.6.1)
-      prettier:
-        specifier: 'catalog:'
-        version: 3.6.2
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-
   packages/hooks:
     dependencies:
       react:
@@ -1262,179 +1107,11 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
 
-  packages/icon-block:
-    dependencies:
-      '@notion-kit/cn':
-        specifier: workspace:*
-        version: link:../cn
-      '@notion-kit/shadcn':
-        specifier: workspace:*
-        version: link:../shadcn
-      lucide-react:
-        specifier: catalog:ui
-        version: 0.456.0(react@19.2.3)
-      react:
-        specifier: catalog:react19
-        version: 19.2.3
-      react-dom:
-        specifier: catalog:react19
-        version: 19.2.3(react@19.2.3)
-      zod:
-        specifier: 'catalog:'
-        version: 4.1.12
-    devDependencies:
-      '@notion-kit/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@notion-kit/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@notion-kit/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      eslint:
-        specifier: 'catalog:'
-        version: 9.39.1(jiti@2.6.1)
-      prettier:
-        specifier: 'catalog:'
-        version: 3.6.2
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-
-  packages/icon-menu:
-    dependencies:
-      '@better-fetch/fetch':
-        specifier: 'catalog:'
-        version: 1.1.21
-      '@emoji-mart/data':
-        specifier: ^1.2.1
-        version: 1.2.1
-      '@notion-kit/cn':
-        specifier: workspace:*
-        version: link:../cn
-      '@notion-kit/common':
-        specifier: workspace:*
-        version: link:../common
-      '@notion-kit/icon-block':
-        specifier: workspace:*
-        version: link:../icon-block
-      '@notion-kit/shadcn':
-        specifier: workspace:*
-        version: link:../shadcn
-      '@notion-kit/single-image-dropzone':
-        specifier: workspace:*
-        version: link:../single-image-dropzone
-      '@notion-kit/utils':
-        specifier: workspace:*
-        version: link:../utils
-      '@tanstack/react-virtual':
-        specifier: ^3.11.3
-        version: 3.13.18(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      lucide-react:
-        specifier: catalog:ui
-        version: 0.456.0(react@19.2.3)
-      react:
-        specifier: catalog:react19
-        version: 19.2.3
-      react-dom:
-        specifier: catalog:react19
-        version: 19.2.3(react@19.2.3)
-      usehooks-ts:
-        specifier: catalog:ui
-        version: 3.1.1(react@19.2.3)
-    devDependencies:
-      '@notion-kit/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@notion-kit/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@notion-kit/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      '@testing-library/jest-dom':
-        specifier: catalog:rtl
-        version: 6.9.1
-      '@testing-library/react':
-        specifier: catalog:rtl
-        version: 16.3.1(@testing-library/dom@10.4.0)(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@testing-library/user-event':
-        specifier: catalog:rtl
-        version: 14.6.1(@testing-library/dom@10.4.0)
-      '@vitejs/plugin-react':
-        specifier: catalog:test
-        version: 4.7.0(vite@7.3.0(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.2)(tsx@4.19.3)(yaml@2.7.1))
-      eslint:
-        specifier: 'catalog:'
-        version: 9.39.1(jiti@2.6.1)
-      prettier:
-        specifier: 'catalog:'
-        version: 3.6.2
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vitest:
-        specifier: catalog:test
-        version: 4.0.17(@types/node@25.6.0)(@vitest/browser-playwright@4.0.17)(@vitest/ui@4.0.17)(jiti@2.6.1)(jsdom@25.0.1(bufferutil@4.1.0))(lightningcss@1.32.0)(msw@2.12.4(@types/node@25.6.0)(typescript@5.9.3))(terser@5.46.2)(tsx@4.19.3)(yaml@2.7.1)
-
   packages/icons:
     dependencies:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../cn
-      react:
-        specifier: catalog:react19
-        version: 19.2.3
-      react-dom:
-        specifier: catalog:react19
-        version: 19.2.3(react@19.2.3)
-    devDependencies:
-      '@notion-kit/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@notion-kit/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@notion-kit/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      eslint:
-        specifier: 'catalog:'
-        version: 9.39.1(jiti@2.6.1)
-      prettier:
-        specifier: 'catalog:'
-        version: 3.6.2
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-
-  packages/navbar:
-    dependencies:
-      '@notion-kit/cn':
-        specifier: workspace:*
-        version: link:../cn
-      '@notion-kit/hooks':
-        specifier: workspace:*
-        version: link:../hooks
-      '@notion-kit/icon-block':
-        specifier: workspace:*
-        version: link:../icon-block
-      '@notion-kit/icon-menu':
-        specifier: workspace:*
-        version: link:../icon-menu
-      '@notion-kit/icons':
-        specifier: workspace:*
-        version: link:../icons
-      '@notion-kit/schemas':
-        specifier: workspace:*
-        version: link:../schemas
-      '@notion-kit/shadcn':
-        specifier: workspace:*
-        version: link:../shadcn
-      '@notion-kit/utils':
-        specifier: workspace:*
-        version: link:../utils
       react:
         specifier: catalog:react19
         version: 19.2.3
@@ -1571,52 +1248,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
 
-  packages/selectable:
-    dependencies:
-      '@notion-kit/cn':
-        specifier: workspace:*
-        version: link:../cn
-      '@radix-ui/react-slot':
-        specifier: ^1.2.4
-        version: 1.2.4(@types/react@19.2.7)(react@19.2.3)
-      react:
-        specifier: catalog:react19
-        version: 19.2.3
-      react-dom:
-        specifier: catalog:react19
-        version: 19.2.3(react@19.2.3)
-    devDependencies:
-      '@notion-kit/config':
-        specifier: workspace:*
-        version: link:../../tooling/config
-      '@notion-kit/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@notion-kit/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@notion-kit/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      babel-plugin-react-compiler:
-        specifier: catalog:react-compiler
-        version: 1.0.0
-      eslint:
-        specifier: 'catalog:'
-        version: 9.39.1(jiti@2.6.1)
-      prettier:
-        specifier: 'catalog:'
-        version: 3.6.2
-      react-compiler-runtime:
-        specifier: catalog:react-compiler
-        version: 1.0.0(react@19.2.3)
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.16.6(typescript@5.9.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-
   packages/settings-panel:
     dependencies:
       '@date-fns/tz':
@@ -1702,186 +1333,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
 
-  packages/shadcn:
-    dependencies:
-      '@headless-tree/core':
-        specifier: ^1.5.1
-        version: 1.5.1
-      '@headless-tree/react':
-        specifier: ^1.5.1
-        version: 1.5.1(@headless-tree/core@1.5.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@hookform/resolvers':
-        specifier: catalog:ui
-        version: 5.2.2(react-hook-form@7.66.0(react@19.2.3))
-      '@notion-kit/cn':
-        specifier: workspace:*
-        version: link:../cn
-      '@radix-ui/react-icons':
-        specifier: ^1.3.2
-        version: 1.3.2(react@19.2.3)
-      cmdk:
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      lucide-react:
-        specifier: catalog:ui
-        version: 0.456.0(react@19.2.3)
-      next-themes:
-        specifier: ^0.4.6
-        version: 0.4.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      radix-ui:
-        specifier: 1.4.3
-        version: 1.4.3(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      react:
-        specifier: catalog:react19
-        version: 19.2.3
-      react-day-picker:
-        specifier: ^9.13.0
-        version: 9.13.0(react@19.2.3)
-      react-dom:
-        specifier: catalog:react19
-        version: 19.2.3(react@19.2.3)
-      react-hook-form:
-        specifier: catalog:ui
-        version: 7.66.0(react@19.2.3)
-      react-resizable-panels:
-        specifier: ^2.1.7
-        version: 2.1.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      sonner:
-        specifier: ^2.0.7
-        version: 2.0.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      vaul:
-        specifier: ^1.1.2
-        version: 1.1.2(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      zod:
-        specifier: 'catalog:'
-        version: 4.1.12
-    devDependencies:
-      '@notion-kit/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@notion-kit/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@notion-kit/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      eslint:
-        specifier: 'catalog:'
-        version: 9.39.1(jiti@2.6.1)
-      prettier:
-        specifier: 'catalog:'
-        version: 3.6.2
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-
-  packages/sidebar:
-    dependencies:
-      '@dnd-kit/core':
-        specifier: catalog:ui
-        version: 6.3.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@dnd-kit/modifiers':
-        specifier: catalog:ui
-        version: 9.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
-      '@dnd-kit/sortable':
-        specifier: catalog:ui
-        version: 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
-      '@notion-kit/cn':
-        specifier: workspace:*
-        version: link:../cn
-      '@notion-kit/common':
-        specifier: workspace:*
-        version: link:../common
-      '@notion-kit/hooks':
-        specifier: workspace:*
-        version: link:../hooks
-      '@notion-kit/icon-block':
-        specifier: workspace:*
-        version: link:../icon-block
-      '@notion-kit/icon-menu':
-        specifier: workspace:*
-        version: link:../icon-menu
-      '@notion-kit/icons':
-        specifier: workspace:*
-        version: link:../icons
-      '@notion-kit/schemas':
-        specifier: workspace:*
-        version: link:../schemas
-      '@notion-kit/shadcn':
-        specifier: workspace:*
-        version: link:../shadcn
-      '@notion-kit/tree':
-        specifier: workspace:*
-        version: link:../tree
-      '@notion-kit/utils':
-        specifier: workspace:*
-        version: link:../utils
-      react:
-        specifier: catalog:react19
-        version: 19.2.3
-      react-dom:
-        specifier: catalog:react19
-        version: 19.2.3(react@19.2.3)
-    devDependencies:
-      '@notion-kit/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@notion-kit/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@notion-kit/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      eslint:
-        specifier: 'catalog:'
-        version: 9.39.1(jiti@2.6.1)
-      prettier:
-        specifier: 'catalog:'
-        version: 3.6.2
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-
-  packages/single-image-dropzone:
-    dependencies:
-      '@notion-kit/cn':
-        specifier: workspace:*
-        version: link:../cn
-      '@notion-kit/shadcn':
-        specifier: workspace:*
-        version: link:../shadcn
-      lucide-react:
-        specifier: catalog:ui
-        version: 0.456.0(react@19.2.3)
-      react:
-        specifier: catalog:react19
-        version: 19.2.3
-      react-dom:
-        specifier: catalog:react19
-        version: 19.2.3(react@19.2.3)
-      react-dropzone:
-        specifier: ^14.3.8
-        version: 14.3.8(react@19.2.3)
-    devDependencies:
-      '@notion-kit/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@notion-kit/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@notion-kit/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      eslint:
-        specifier: 'catalog:'
-        version: 9.39.1(jiti@2.6.1)
-      prettier:
-        specifier: 'catalog:'
-        version: 3.6.2
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-
   packages/table-view:
     dependencies:
       '@dnd-kit/core':
@@ -1896,27 +1347,15 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../cn
-      '@notion-kit/common':
-        specifier: workspace:*
-        version: link:../common
       '@notion-kit/hooks':
         specifier: workspace:*
         version: link:../hooks
-      '@notion-kit/icon-block':
-        specifier: workspace:*
-        version: link:../icon-block
-      '@notion-kit/icon-menu':
-        specifier: workspace:*
-        version: link:../icon-menu
       '@notion-kit/icons':
         specifier: workspace:*
         version: link:../icons
-      '@notion-kit/shadcn':
+      '@notion-kit/ui':
         specifier: workspace:*
-        version: link:../shadcn
-      '@notion-kit/tags-input':
-        specifier: workspace:*
-        version: link:../tags-input
+        version: link:../ui
       '@notion-kit/utils':
         specifier: workspace:*
         version: link:../utils
@@ -1996,180 +1435,6 @@ importers:
       vitest:
         specifier: catalog:test
         version: 4.0.17(@types/node@25.6.0)(@vitest/browser-playwright@4.0.17)(@vitest/ui@4.0.17)(jiti@2.6.1)(jsdom@25.0.1(bufferutil@4.1.0))(lightningcss@1.32.0)(msw@2.12.4(@types/node@25.6.0)(typescript@5.9.3))(terser@5.46.2)(tsx@4.19.3)(yaml@2.7.1)
-
-  packages/tags-input:
-    dependencies:
-      '@hookform/resolvers':
-        specifier: catalog:ui
-        version: 5.2.2(react-hook-form@7.66.0(react@19.2.3))
-      '@notion-kit/cn':
-        specifier: workspace:*
-        version: link:../cn
-      '@notion-kit/shadcn':
-        specifier: workspace:*
-        version: link:../shadcn
-      '@notion-kit/utils':
-        specifier: workspace:*
-        version: link:../utils
-      lucide-react:
-        specifier: catalog:ui
-        version: 0.456.0(react@19.2.3)
-      react:
-        specifier: catalog:react19
-        version: 19.2.3
-      react-dom:
-        specifier: catalog:react19
-        version: 19.2.3(react@19.2.3)
-      zod:
-        specifier: 'catalog:'
-        version: 4.1.12
-    devDependencies:
-      '@notion-kit/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@notion-kit/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@notion-kit/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      eslint:
-        specifier: 'catalog:'
-        version: 9.39.1(jiti@2.6.1)
-      prettier:
-        specifier: 'catalog:'
-        version: 3.6.2
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-
-  packages/timeline:
-    dependencies:
-      '@notion-kit/cn':
-        specifier: workspace:*
-        version: link:../cn
-      '@notion-kit/hooks':
-        specifier: workspace:*
-        version: link:../hooks
-      '@notion-kit/icons':
-        specifier: workspace:*
-        version: link:../icons
-      '@notion-kit/shadcn':
-        specifier: workspace:*
-        version: link:../shadcn
-      '@tanstack/react-virtual':
-        specifier: catalog:ui
-        version: 3.13.24(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@uidotdev/usehooks':
-        specifier: ^2.4.1
-        version: 2.4.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      date-fns:
-        specifier: catalog:fns
-        version: 4.1.0
-      jotai:
-        specifier: ^2.19.0
-        version: 2.19.1(@babel/core@7.29.0)(@babel/template@7.28.6)(@types/react@19.2.7)(react@19.2.3)
-      lodash.throttle:
-        specifier: catalog:fns
-        version: 4.1.1
-    devDependencies:
-      '@dnd-kit/core':
-        specifier: catalog:ui
-        version: 6.3.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@dnd-kit/modifiers':
-        specifier: catalog:ui
-        version: 9.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
-      '@dnd-kit/sortable':
-        specifier: catalog:ui
-        version: 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
-      '@notion-kit/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@notion-kit/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@notion-kit/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      '@testing-library/jest-dom':
-        specifier: catalog:rtl
-        version: 6.9.1
-      '@testing-library/react':
-        specifier: catalog:rtl
-        version: 16.3.1(@testing-library/dom@10.4.0)(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@testing-library/user-event':
-        specifier: catalog:rtl
-        version: 14.6.1(@testing-library/dom@10.4.0)
-      '@types/lodash.throttle':
-        specifier: catalog:fns
-        version: 4.1.9
-      '@types/react':
-        specifier: catalog:react19
-        version: 19.2.7
-      '@vitejs/plugin-react':
-        specifier: catalog:test
-        version: 4.7.0(vite@7.3.0(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.2)(tsx@4.19.3)(yaml@2.7.1))
-      eslint:
-        specifier: 'catalog:'
-        version: 9.39.1(jiti@2.6.1)
-      jsdom:
-        specifier: catalog:rtl
-        version: 25.0.1(bufferutil@4.1.0)
-      prettier:
-        specifier: 'catalog:'
-        version: 3.6.2
-      react:
-        specifier: catalog:react19
-        version: 19.2.3
-      react-dom:
-        specifier: catalog:react19
-        version: 19.2.3(react@19.2.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vitest:
-        specifier: catalog:test
-        version: 4.0.17(@types/node@25.6.0)(@vitest/browser-playwright@4.0.17)(@vitest/ui@4.0.17)(jiti@2.6.1)(jsdom@25.0.1(bufferutil@4.1.0))(lightningcss@1.32.0)(msw@2.12.4(@types/node@25.6.0)(typescript@5.9.3))(terser@5.46.2)(tsx@4.19.3)(yaml@2.7.1)
-
-  packages/tree:
-    dependencies:
-      '@notion-kit/cn':
-        specifier: workspace:*
-        version: link:../cn
-      '@notion-kit/icons':
-        specifier: workspace:*
-        version: link:../icons
-      '@notion-kit/shadcn':
-        specifier: workspace:*
-        version: link:../shadcn
-      '@radix-ui/react-slot':
-        specifier: ^1.2.4
-        version: 1.2.4(@types/react@19.2.7)(react@19.2.3)
-      react:
-        specifier: catalog:react19
-        version: 19.2.3
-      react-dom:
-        specifier: catalog:react19
-        version: 19.2.3(react@19.2.3)
-    devDependencies:
-      '@notion-kit/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@notion-kit/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@notion-kit/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      eslint:
-        specifier: 'catalog:'
-        version: 9.39.1(jiti@2.6.1)
-      prettier:
-        specifier: 'catalog:'
-        version: 3.6.2
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
 
   packages/ui:
     dependencies:
@@ -2336,43 +1601,6 @@ importers:
       tw-animate-css:
         specifier: catalog:tailwind-v4
         version: 1.4.0
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-
-  packages/unsplash:
-    dependencies:
-      '@notion-kit/cn':
-        specifier: workspace:*
-        version: link:../cn
-      '@notion-kit/shadcn':
-        specifier: workspace:*
-        version: link:../shadcn
-      react:
-        specifier: catalog:react19
-        version: 19.2.3
-      react-dom:
-        specifier: catalog:react19
-        version: 19.2.3(react@19.2.3)
-      unsplash-js:
-        specifier: ^7.0.19
-        version: 7.0.19
-    devDependencies:
-      '@notion-kit/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@notion-kit/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@notion-kit/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      eslint:
-        specifier: 'catalog:'
-        version: 9.39.1(jiti@2.6.1)
-      prettier:
-        specifier: 'catalog:'
-        version: 3.6.2
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -6333,12 +5561,6 @@ packages:
       react: '>=16.8'
       react-dom: '>=16.8'
 
-  '@tanstack/react-virtual@3.13.18':
-    resolution: {integrity: sha512-dZkhyfahpvlaV0rIKnvQiVoWPyURppl6w4m9IwMDpuIjcJ1sD9YGWrt0wISvgU7ewACXx2Ct46WPgI6qAD4v6A==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
   '@tanstack/react-virtual@3.13.24':
     resolution: {integrity: sha512-aIJvz5OSkhNIhZIpYivrxrPTKYsjW9Uzy+sP/mx0S3sev2HyvPb7xmjbYvokzEpfgYHy/HjzJ2zFAETuUfgCpg==}
     peerDependencies:
@@ -6348,9 +5570,6 @@ packages:
   '@tanstack/table-core@8.21.3':
     resolution: {integrity: sha512-ldZXEhOBb8Is7xLs01fR3YEc3DERiz5silj8tnGkFZytt1abEvl/GhUmCE0PMLaMPTa3Jk4HbKmRlHmu+gCftg==}
     engines: {node: '>=12'}
-
-  '@tanstack/virtual-core@3.13.18':
-    resolution: {integrity: sha512-Mx86Hqu1k39icq2Zusq+Ey2J6dDWTjDvEv43PJtRCoEYTLyfaPnxIQ6iy7YAOK0NV/qOEmZQ/uCufrppZxTgcg==}
 
   '@tanstack/virtual-core@3.14.0':
     resolution: {integrity: sha512-JLANqGy/D6k4Ujmh8Tr25lGimuOXNiaVyXaCAZS0W+1390sADdGnyUdSWNIfd49gebtIxGMij4IktRVzrdr12Q==}
@@ -15485,12 +14704,6 @@ snapshots:
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
 
-  '@tanstack/react-virtual@3.13.18(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
-    dependencies:
-      '@tanstack/virtual-core': 3.13.18
-      react: 19.2.3
-      react-dom: 19.2.3(react@19.2.3)
-
   '@tanstack/react-virtual@3.13.24(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
       '@tanstack/virtual-core': 3.14.0
@@ -15498,8 +14711,6 @@ snapshots:
       react-dom: 19.2.3(react@19.2.3)
 
   '@tanstack/table-core@8.21.3': {}
-
-  '@tanstack/virtual-core@3.13.18': {}
 
   '@tanstack/virtual-core@3.14.0': {}
 

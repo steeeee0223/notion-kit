@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "addon": "storybook add",
     "build": "pnpm with-env storybook build",
     "clean": "git clean -xdf .cache .turbo node_modules",
     "dev": "pnpm with-env storybook dev -p 6006",
@@ -12,10 +13,10 @@
     "start": "pnpx http-server storybook-static",
     "test": "vitest --project=storybook --silent=passed-only --run",
     "typecheck": "tsc --noEmit",
-    "addon": "storybook add",
     "upgrade": "pnpx storybook@latest upgrade",
     "with-env": "dotenv -e ../../.env --"
   },
+  "prettier": "@notion-kit/prettier-config",
   "dependencies": {
     "@dnd-kit/core": "catalog:ui",
     "@dnd-kit/modifiers": "catalog:ui",
@@ -23,23 +24,14 @@
     "@notion-kit/auth-ui": "workspace:*",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/code-block": "workspace:*",
-    "@notion-kit/common": "workspace:*",
-    "@notion-kit/cover": "workspace:*",
     "@notion-kit/hooks": "workspace:*",
     "@notion-kit/i18n": "workspace:*",
-    "@notion-kit/icon-block": "workspace:*",
-    "@notion-kit/icon-menu": "workspace:*",
     "@notion-kit/icons": "workspace:*",
     "@notion-kit/registry": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
-    "@notion-kit/selectable": "workspace:*",
     "@notion-kit/settings-panel": "workspace:*",
-    "@notion-kit/shadcn": "workspace:*",
-    "@notion-kit/single-image-dropzone": "workspace:*",
     "@notion-kit/table-view": "workspace:*",
-    "@notion-kit/tags-input": "workspace:*",
-    "@notion-kit/tree": "workspace:*",
-    "@notion-kit/unsplash": "workspace:*",
+    "@notion-kit/ui": "workspace:*",
     "@notion-kit/utils": "workspace:*",
     "@stripe/react-stripe-js": "catalog:stripe",
     "@stripe/stripe-js": "catalog:stripe",
@@ -78,7 +70,6 @@
     "typescript": "catalog:",
     "vitest": "catalog:test"
   },
-  "prettier": "@notion-kit/prettier-config",
   "msw": {
     "workerDirectory": [
       "public"

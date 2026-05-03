@@ -1,7 +1,6 @@
 {
   "name": "@notion-kit/code-block",
   "version": "0.17.0",
-  "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
   },
@@ -10,6 +9,8 @@
     "url": "https://github.com/steeeee0223/notion-kit.git",
     "directory": "packages/code-block"
   },
+  "license": "MIT",
+  "type": "module",
   "exports": {
     "./style.css": "./dist/style.css",
     ".": {
@@ -17,13 +18,12 @@
       "default": "./dist/index.mjs"
     }
   },
-  "files": [
-    "dist"
-  ],
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
-  "license": "MIT",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsdown && pnpm build:css",
     "build:css": "tailwindcss -i ./src/style.css -o ./dist/style.css --minify",
@@ -35,6 +35,12 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
+  "babel": {
+    "plugins": [
+      "babel-plugin-react-compiler"
+    ]
+  },
+  "prettier": "@notion-kit/prettier-config",
   "dependencies": {
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/hooks": "workspace:*",
@@ -68,11 +74,5 @@
     "@notion-kit/ui": "workspace:*",
     "react": "catalog:react19",
     "react-dom": "catalog:react19"
-  },
-  "prettier": "@notion-kit/prettier-config",
-  "babel": {
-    "plugins": [
-      "babel-plugin-react-compiler"
-    ]
   }
 }

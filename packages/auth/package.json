@@ -1,7 +1,6 @@
 {
   "name": "@notion-kit/auth",
   "version": "0.17.0",
-  "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
   },
@@ -10,19 +9,20 @@
     "url": "https://github.com/steeeee0223/notion-kit.git",
     "directory": "packages/auth"
   },
+  "license": "MIT",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
     }
   },
-  "files": [
-    "dist"
-  ],
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
-  "license": "MIT",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsdown",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
@@ -34,6 +34,7 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "with-env": "dotenv -e ../../.env --"
   },
+  "prettier": "@notion-kit/prettier-config",
   "dependencies": {
     "@better-auth/passkey": "^1.5.1",
     "@better-auth/stripe": "^1.5.1",
@@ -60,6 +61,5 @@
     "prettier": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
-  },
-  "prettier": "@notion-kit/prettier-config"
+  }
 }

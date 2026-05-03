@@ -2,11 +2,11 @@
   "name": "@notion-kit/i18n",
   "version": "0.17.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
   },
-  "license": "MIT",
   "scripts": {
     "build:types": "i18next-resources-for-ts interface -i ./src/resources/en -o ./src/resources/types.ts && pnpm format -w",
     "clean": "git clean -xdf .cache .turbo node_modules",
@@ -14,6 +14,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
+  "prettier": "@notion-kit/prettier-config",
   "dependencies": {
     "i18next": "^25.0.1",
     "react-i18next": "^15.4.1"
@@ -30,6 +31,5 @@
   "peerDependencies": {
     "react": "catalog:react19",
     "react-dom": "catalog:react19"
-  },
-  "prettier": "@notion-kit/prettier-config"
+  }
 }
