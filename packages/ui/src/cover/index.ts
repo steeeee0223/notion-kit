@@ -1,1 +1,2 @@
-export * from "@notion-kit/cover";
+export * from "./cover";
+export * from "./cover-picker";

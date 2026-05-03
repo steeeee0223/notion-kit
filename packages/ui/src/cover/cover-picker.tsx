@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-import { UrlForm } from "@notion-kit/common/url-form";
+import { UrlForm } from "~/url-form";
 import {
   Button,
   Popover,
@@ -12,9 +12,9 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@notion-kit/shadcn";
-import { SingleImageDropzone } from "@notion-kit/single-image-dropzone";
-import { Unsplash } from "@notion-kit/unsplash";
+} from "~/primitives";
+import { SingleImageDropzone } from "~/single-image-dropzone";
+import { Unsplash } from "~/unsplash";
 
 export interface CoverPickerProps extends React.PropsWithChildren {
   /** @param unsplashAPIKey - Unsplash Access Key */

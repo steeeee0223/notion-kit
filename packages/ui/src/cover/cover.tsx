@@ -3,7 +3,7 @@
 import { ImageIcon, X } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
-import { Button, Skeleton } from "@notion-kit/shadcn";
+import { Button, Skeleton } from "~/primitives";
 
 import type { CoverPickerProps } from "./cover-picker";
 import { CoverPicker } from "./cover-picker";
