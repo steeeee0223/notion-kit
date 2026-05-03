@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { RefreshCw } from "lucide-react";
 
-import { Button, Input, Label, Separator } from "@notion-kit/shadcn";
-import { SingleImageDropzone } from "@notion-kit/single-image-dropzone";
+import { Button, Input, Label, Separator } from "~/primitives";
+import { SingleImageDropzone } from "~/single-image-dropzone";
 
 function deriveNameFromSource(source: string | File): string {
   if (source instanceof File) {

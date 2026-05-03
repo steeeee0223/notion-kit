@@ -7,7 +7,7 @@ import {
   PopoverTrigger,
   TooltipPreset,
   TooltipProvider,
-} from "@notion-kit/shadcn";
+} from "~/primitives";
 
 import type { PaletteProps } from "../../_components";
 import type { Skin } from "./constants";

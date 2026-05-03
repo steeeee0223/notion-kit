@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
-import { Button, TooltipPreset, TooltipProvider } from "@notion-kit/shadcn";
+import { Button, TooltipPreset, TooltipProvider } from "~/primitives";
 
 import type { EmojiCategoryList } from "./constants";
 

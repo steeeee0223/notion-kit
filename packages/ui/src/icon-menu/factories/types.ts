@@ -1,4 +1,4 @@
-import type { IconData } from "@notion-kit/icon-block";
+import type { IconData } from "~/icon-block";
 
 /** A single item in the icon grid */
 export interface IconItem {

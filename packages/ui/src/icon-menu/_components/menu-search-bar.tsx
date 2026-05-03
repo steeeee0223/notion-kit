@@ -6,7 +6,7 @@ import {
   Input,
   TooltipPreset,
   TooltipProvider,
-} from "@notion-kit/shadcn";
+} from "~/primitives";
 
 interface MenuSearchBarProps {
   search: string;

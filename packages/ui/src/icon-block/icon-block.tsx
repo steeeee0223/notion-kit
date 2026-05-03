@@ -6,7 +6,7 @@ import {
   AvatarFallback,
   AvatarImage,
   Spinner,
-} from "@notion-kit/shadcn";
+} from "~/primitives";
 
 import { getLetter, isEmoji, isLucideIcon } from "./lib";
 import { LucideIcon } from "./lucide-icon";

@@ -10,9 +10,9 @@ import {
 import { betterFetch } from "@better-fetch/fetch";
 import dynamicIconImports from "lucide-react/dynamicIconImports";
 
-import { COLOR } from "@notion-kit/common/colors";
-import type { LucideName } from "@notion-kit/icon-block";
-import { LucideIcon } from "@notion-kit/icon-block";
+import { COLOR } from "~/colors";
+import type { LucideName } from "~/icon-block";
+import { LucideIcon } from "~/icon-block";
 import { randomItem } from "@notion-kit/utils";
 
 import { useRecentIcons } from "../_hooks";

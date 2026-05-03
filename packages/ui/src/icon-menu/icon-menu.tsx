@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 
 import { cn } from "@notion-kit/cn";
-import type { IconData } from "@notion-kit/icon-block";
+import type { IconData } from "~/icon-block";
 import {
   Button,
   Popover,
@@ -14,7 +14,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@notion-kit/shadcn";
+} from "~/primitives";
 
 import {
   MenuSearchBar,
