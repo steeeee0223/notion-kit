@@ -915,24 +915,15 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../cn
-      '@notion-kit/icon-block':
-        specifier: workspace:*
-        version: link:../icon-block
-      '@notion-kit/icon-menu':
-        specifier: workspace:*
-        version: link:../icon-menu
-      '@notion-kit/icons':
-        specifier: workspace:*
-        version: link:../icons
       '@notion-kit/schemas':
         specifier: workspace:*
         version: link:../schemas
       '@notion-kit/settings-panel':
         specifier: workspace:*
         version: link:../settings-panel
-      '@notion-kit/shadcn':
+      '@notion-kit/ui':
         specifier: workspace:*
-        version: link:../shadcn
+        version: link:../ui
       react:
         specifier: catalog:react19
         version: 19.2.3
@@ -961,6 +952,9 @@ importers:
       '@notion-kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
+      '@tailwindcss/cli':
+        specifier: catalog:tailwind-v4
+        version: 4.2.4
       babel-plugin-react-compiler:
         specifier: catalog:react-compiler
         version: 1.0.0

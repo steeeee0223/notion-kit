@@ -11,6 +11,7 @@
     "directory": "packages/auth-ui"
   },
   "exports": {
+    "./style.css": "./dist/style.css",
     ".": {
       "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
@@ -24,7 +25,8 @@
   "types": "./dist/index.d.mts",
   "license": "MIT",
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && pnpm build:css",
+    "build:css": "tailwindcss -i ./src/style.css -o ./dist/style.css --minify",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "tsdown --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
@@ -35,12 +37,8 @@
     "@hookform/resolvers": "catalog:ui",
     "@notion-kit/auth": "workspace:*",
     "@notion-kit/cn": "workspace:*",
-    "@notion-kit/icon-block": "workspace:*",
-    "@notion-kit/icon-menu": "workspace:*",
-    "@notion-kit/icons": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/settings-panel": "workspace:*",
-    "@notion-kit/shadcn": "workspace:*",
     "react-hook-form": "catalog:ui",
     "uuid": "catalog:uuid"
   },
@@ -49,6 +47,7 @@
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "@tailwindcss/cli": "catalog:tailwind-v4",
     "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",
     "prettier": "catalog:",
@@ -57,6 +56,7 @@
     "typescript": "catalog:"
   },
   "peerDependencies": {
+    "@notion-kit/ui": "workspace:*",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
     "zod": "catalog:"

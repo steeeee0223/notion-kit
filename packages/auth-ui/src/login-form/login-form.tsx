@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { cn } from "@notion-kit/cn";
-import { Icon } from "@notion-kit/icons";
+import { Icon } from "@notion-kit/ui/icons";
 import {
   Button,
   Form,
@@ -17,7 +17,7 @@ import {
   Separator,
   Spinner,
   toast,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { useAuth } from "../auth-provider";
 import { handleError } from "../lib";

@@ -1,5 +1,5 @@
 import { ErrorContext } from "@notion-kit/auth";
-import { toast } from "@notion-kit/shadcn";
+import { toast } from "@notion-kit/ui/primitives";
 
 export function handleError(
   { error }: ErrorContext | { error: { message?: string } },
