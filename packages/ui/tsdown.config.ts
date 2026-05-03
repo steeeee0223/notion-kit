@@ -44,6 +44,7 @@ export default defineConfig((opts) => ({
     "navbar/index": "./src/navbar/index.ts",
     "navbar/presets/index": "./src/navbar/presets/index.ts",
     "primitives/index": "./src/primitives/index.ts",
+    "selectable/index": "./src/selectable/index.ts",
     "sidebar/index": "./src/sidebar/index.ts",
     "sidebar/presets/index": "./src/sidebar/presets/index.ts",
     "single-image-dropzone/index": "./src/single-image-dropzone/index.ts",
