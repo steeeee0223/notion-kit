@@ -1438,9 +1438,6 @@ importers:
         specifier: catalog:react19
         version: 19.2.3(react@19.2.3)
     devDependencies:
-      '@notion-kit/config':
-        specifier: workspace:*
-        version: link:../../tooling/config
       '@notion-kit/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint
@@ -1456,9 +1453,6 @@ importers:
       prettier:
         specifier: 'catalog:'
         version: 3.6.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.16.6(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1873,9 +1867,6 @@ importers:
         specifier: 'catalog:'
         version: 4.1.12
     devDependencies:
-      '@notion-kit/config':
-        specifier: workspace:*
-        version: link:../../tooling/config
       '@notion-kit/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint
@@ -1891,9 +1882,6 @@ importers:
       prettier:
         specifier: 'catalog:'
         version: 3.6.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.16.6(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
