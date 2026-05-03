@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 
 import type { Plan } from "@notion-kit/schemas";
-import { Button } from "@notion-kit/shadcn";
+import { Button } from "@notion-kit/ui/primitives";
 
 import { contentColumns, getHighlightColumns } from "./columns";
 import { contentTables, highlightData } from "./data";

@@ -4,8 +4,8 @@ import React, { createContext, use, useMemo, useState } from "react";
 import { loadStripe, type Stripe } from "@stripe/stripe-js";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { I18nProvider } from "@notion-kit/i18n";
-import { TooltipProvider } from "@notion-kit/shadcn";
+import { I18nProvider } from "@notion-kit/ui/i18n";
+import { TooltipProvider } from "@notion-kit/ui/primitives";
 
 import { getScopes } from "@/lib/scopes";
 import { Scope, type SettingsAdapters } from "@/lib/types";

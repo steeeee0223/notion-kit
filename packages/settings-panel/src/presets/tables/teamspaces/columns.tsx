@@ -1,7 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
-import { Trans } from "@notion-kit/i18n";
-import type { IconData } from "@notion-kit/icon-block";
+import { Trans } from "@notion-kit/ui/i18n";
+import type { IconData } from "@notion-kit/ui/icon-block";
 import { toDateString } from "@notion-kit/utils";
 
 import type {

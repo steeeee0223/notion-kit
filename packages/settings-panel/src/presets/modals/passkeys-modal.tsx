@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 
-import { useTranslation } from "@notion-kit/i18n";
-import { Icon } from "@notion-kit/icons";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { Icon } from "@notion-kit/ui/icons";
 import {
   Button,
   DialogClose,
@@ -17,7 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   Input,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 import { toDateString } from "@notion-kit/utils";
 
 import type { Passkey } from "@/lib/types";

@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 
-import { useTranslation } from "@notion-kit/i18n";
-import { Icon } from "@notion-kit/icons";
-import { Button, Dialog, DialogTrigger, Switch } from "@notion-kit/shadcn";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { Icon } from "@notion-kit/ui/icons";
+import { Button, Dialog, DialogTrigger, Switch } from "@notion-kit/ui/primitives";
 
 import { SettingsRule, SettingsSection } from "../../core";
 import { useAccount, useAccountActions } from "../hooks";

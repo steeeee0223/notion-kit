@@ -1,4 +1,4 @@
-import { toast } from "@notion-kit/shadcn";
+import { toast } from "@notion-kit/ui/primitives";
 
 import type { GuestRow } from "./types";
 

@@ -3,8 +3,8 @@
 import { useMediaQuery } from "usehooks-ts";
 
 import { cn } from "@notion-kit/cn";
-import { useTranslation } from "@notion-kit/i18n";
-import { Icon } from "@notion-kit/icons";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { Icon } from "@notion-kit/ui/icons";
 import { Plan } from "@notion-kit/schemas";
 import {
   Button,
@@ -13,7 +13,7 @@ import {
   CardDescription,
   CardTitle,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { SettingsSection, useScopes } from "@/core";
 import { Scope } from "@/lib/types";

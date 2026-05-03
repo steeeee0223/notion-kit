@@ -1,13 +1,13 @@
-import { useTranslation } from "@notion-kit/i18n";
-import { IconBlock, type IconData } from "@notion-kit/icon-block";
-import { Icon } from "@notion-kit/icons";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
+import { Icon } from "@notion-kit/ui/icons";
 import {
   Button,
   Dialog,
   DialogTrigger,
   MenuItemAction,
   Separator,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import type { TeamspacePermission as Permission } from "@/lib/types";
 import {

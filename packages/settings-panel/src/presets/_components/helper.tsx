@@ -1,14 +1,14 @@
 import { useMemo } from "react";
 
 import { cn } from "@notion-kit/cn";
-import { Trans, TransProps } from "@notion-kit/i18n";
-import { Icon } from "@notion-kit/icons";
+import { Trans, TransProps } from "@notion-kit/ui/i18n";
+import { Icon } from "@notion-kit/ui/icons";
 import {
   AvatarFallback,
   AvatarImage,
   Avatar as AvatarRoot,
   Button,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { SettingsPlan } from "../../core";
 

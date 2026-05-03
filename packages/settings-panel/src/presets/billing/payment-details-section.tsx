@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 
-import { useTranslation } from "@notion-kit/i18n";
+import { useTranslation } from "@notion-kit/ui/i18n";
 import {
   Button,
   Dialog,
   DialogTrigger,
   Separator,
   Switch,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { SettingsRule, SettingsSection } from "@/core";
 import { useStripePromise } from "@/core/settings-provider";

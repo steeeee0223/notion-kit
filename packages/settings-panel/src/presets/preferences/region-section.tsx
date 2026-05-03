@@ -4,14 +4,14 @@ import { useState } from "react";
 
 import { AlertModal } from "@notion-kit/common/alert-modal";
 import { TimezoneMenu } from "@notion-kit/common/timezone-menu";
-import { LOCALE, useTranslation } from "@notion-kit/i18n";
-import { Icon } from "@notion-kit/icons";
+import { LOCALE, useTranslation } from "@notion-kit/ui/i18n";
+import { Icon } from "@notion-kit/ui/icons";
 import {
   Button,
   Dialog,
   SelectPreset as Select,
   Switch,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { SettingsRule, SettingsSection } from "../../core";
 import { useAccountActions } from "../hooks";

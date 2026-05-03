@@ -2,8 +2,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 
-import { useTranslation } from "@notion-kit/i18n";
-import { Icon } from "@notion-kit/icons";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { Icon } from "@notion-kit/ui/icons";
 import {
   Button,
   DialogClose,
@@ -19,7 +19,7 @@ import {
   FormItem,
   FormMessage,
   Input,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 const workspaceSchema = z.object({
   name: z.string(),

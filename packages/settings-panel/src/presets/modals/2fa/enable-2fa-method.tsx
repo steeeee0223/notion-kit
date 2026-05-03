@@ -1,5 +1,5 @@
-import { useTranslation } from "@notion-kit/i18n";
-import { Icon } from "@notion-kit/icons";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { Icon } from "@notion-kit/ui/icons";
 import {
   Button,
   DialogContent,
@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogIcon,
   DialogTitle,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 export function Enable2FAMethod() {
   const { t } = useTranslation("settings", {

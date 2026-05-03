@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import { cn } from "@notion-kit/cn";
-import { useTranslation } from "@notion-kit/i18n";
+import { useTranslation } from "@notion-kit/ui/i18n";
 import type { Role } from "@notion-kit/schemas";
 
 import type {

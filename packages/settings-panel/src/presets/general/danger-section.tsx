@@ -3,8 +3,8 @@
 import { useState } from "react";
 
 import { AlertModal } from "@notion-kit/common/alert-modal";
-import { useTranslation } from "@notion-kit/i18n";
-import { Button, Dialog, DialogTrigger } from "@notion-kit/shadcn";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { Button, Dialog, DialogTrigger } from "@notion-kit/ui/primitives";
 
 import { SettingsSection, useScopes } from "@/core";
 import { Scope } from "@/lib/types";

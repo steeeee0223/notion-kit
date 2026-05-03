@@ -11,6 +11,7 @@
     "directory": "packages/settings-panel"
   },
   "exports": {
+    "./style.css": "./dist/style.css",
     ".": {
       "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
@@ -24,7 +25,8 @@
   "types": "./dist/index.d.mts",
   "license": "MIT",
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && pnpm build:css",
+    "build:css": "tailwindcss -i ./src/style.css -o ./dist/style.css --minify",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "tsdown --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
@@ -33,17 +35,9 @@
   },
   "dependencies": {
     "@date-fns/tz": "^1.3.1",
-    "@hookform/resolvers": "catalog:ui",
     "@notion-kit/cn": "workspace:*",
-    "@notion-kit/common": "workspace:*",
     "@notion-kit/hooks": "workspace:*",
-    "@notion-kit/i18n": "workspace:*",
-    "@notion-kit/icon-block": "workspace:*",
-    "@notion-kit/icon-menu": "workspace:*",
-    "@notion-kit/icons": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
-    "@notion-kit/shadcn": "workspace:*",
-    "@notion-kit/tags-input": "workspace:*",
     "@notion-kit/utils": "workspace:*",
     "@stripe/react-stripe-js": "catalog:stripe",
     "@stripe/stripe-js": "catalog:stripe",
@@ -58,6 +52,7 @@
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "@tailwindcss/cli": "catalog:tailwind-v4",
     "@types/file-saver": "^2.0.7",
     "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",
@@ -67,12 +62,10 @@
     "typescript": "catalog:"
   },
   "peerDependencies": {
+    "@notion-kit/ui": "workspace:*",
     "react": "catalog:react19",
     "react-dom": "catalog:react19"
   },
-  "bundleDependencies": [
-    "@notion-kit/i18n"
-  ],
   "prettier": "@notion-kit/prettier-config",
   "babel": {
     "plugins": [

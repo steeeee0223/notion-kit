@@ -2,8 +2,8 @@ import { useState } from "react";
 import type { ColumnDef, Row } from "@tanstack/react-table";
 
 import { AlertModal } from "@notion-kit/common/alert-modal";
-import { Trans, useTranslation } from "@notion-kit/i18n";
-import { Icon } from "@notion-kit/icons";
+import { Trans, useTranslation } from "@notion-kit/ui/i18n";
+import { Icon } from "@notion-kit/ui/icons";
 import {
   Button,
   Dialog,
@@ -13,7 +13,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 import { toDateString } from "@notion-kit/utils";
 
 import type { EmojiRow } from "@/lib/types";

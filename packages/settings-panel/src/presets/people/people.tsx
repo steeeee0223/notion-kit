@@ -3,8 +3,8 @@ import { saveAs } from "file-saver";
 
 import { cn } from "@notion-kit/cn";
 import { AlertModal } from "@notion-kit/common/alert-modal";
-import { useTranslation } from "@notion-kit/i18n";
-import { Icon } from "@notion-kit/icons";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { Icon } from "@notion-kit/ui/icons";
 import { Plan } from "@notion-kit/schemas";
 import {
   Button,
@@ -18,7 +18,7 @@ import {
   TabsList,
   TabsTrigger,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import {
   SettingsRule,

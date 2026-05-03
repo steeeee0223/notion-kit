@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslation } from "@notion-kit/i18n";
+import { useTranslation } from "@notion-kit/ui/i18n";
 import {
   Badge,
   Button,
@@ -10,7 +10,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { Avatar } from "../_components";
 

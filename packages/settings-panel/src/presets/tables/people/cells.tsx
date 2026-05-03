@@ -1,9 +1,9 @@
 import { useTransition } from "react";
 
 import { cn } from "@notion-kit/cn";
-import { useTranslation } from "@notion-kit/i18n";
-import { IconBlock } from "@notion-kit/icon-block";
-import { Icon } from "@notion-kit/icons";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { IconBlock } from "@notion-kit/ui/icon-block";
+import { Icon } from "@notion-kit/ui/icons";
 import { Role } from "@notion-kit/schemas";
 import {
   Button,
@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
   SelectPreset as Select,
   type SelectPresetProps,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { Scope } from "@/lib/types";
 import type { GuestRow, MemberRow, PartialRole } from "@/lib/types";

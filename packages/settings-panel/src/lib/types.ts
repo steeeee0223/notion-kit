@@ -1,6 +1,6 @@
 import { z } from "zod/v4";
 
-import type { LOCALE } from "@notion-kit/i18n";
+import type { LOCALE } from "@notion-kit/ui/i18n";
 import type { IconData, User } from "@notion-kit/schemas";
 import { Plan, Role } from "@notion-kit/schemas";
 

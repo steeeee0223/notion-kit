@@ -8,7 +8,7 @@ import type {
 import { useForm } from "react-hook-form";
 import { z } from "zod/mini";
 
-import { useTranslation } from "@notion-kit/i18n";
+import { useTranslation } from "@notion-kit/ui/i18n";
 import {
   Button,
   DialogClose,
@@ -22,7 +22,7 @@ import {
   Input,
   Label,
   Spinner,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import type { BillingAddress } from "@/lib/types";
 import { StripeElements } from "@/presets/_components";

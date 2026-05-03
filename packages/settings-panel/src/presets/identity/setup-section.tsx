@@ -4,8 +4,8 @@
 "use client";
 
 import { useCopyToClipboard } from "@notion-kit/hooks";
-import { useTranslation } from "@notion-kit/i18n";
-import { toast, TooltipPreset } from "@notion-kit/shadcn";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { toast, TooltipPreset } from "@notion-kit/ui/primitives";
 
 import { SettingsRule, SettingsSection } from "../../core";
 import { useWorkspace } from "../hooks";

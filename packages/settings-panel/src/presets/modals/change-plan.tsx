@@ -1,8 +1,8 @@
 import { useState, useTransition } from "react";
 
 import { cn } from "@notion-kit/cn";
-import { useTranslation } from "@notion-kit/i18n";
-import { Icon } from "@notion-kit/icons";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { Icon } from "@notion-kit/ui/icons";
 import { Plan } from "@notion-kit/schemas";
 import {
   Button,
@@ -14,7 +14,7 @@ import {
   RadioGroup,
   RadioGroupItem,
   Spinner,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 const PLAN_OPTIONS = [
   {

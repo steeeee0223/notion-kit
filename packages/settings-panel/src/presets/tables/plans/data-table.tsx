@@ -15,7 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 export interface DataTableProps<TData, TValue> {
   type: "highlight" | "content";

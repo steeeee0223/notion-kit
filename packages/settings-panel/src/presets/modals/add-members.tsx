@@ -2,8 +2,8 @@ import { useState, useTransition } from "react";
 import { z } from "zod/v4";
 
 import { useFilter } from "@notion-kit/hooks";
-import { useTranslation } from "@notion-kit/i18n";
-import { Icon } from "@notion-kit/icons";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { Icon } from "@notion-kit/ui/icons";
 import { Role, type User } from "@notion-kit/schemas";
 import {
   Badge,
@@ -16,8 +16,8 @@ import {
   CommandSeparator,
   SelectPreset as Select,
   Spinner,
-} from "@notion-kit/shadcn";
-import { TagsInput } from "@notion-kit/tags-input";
+} from "@notion-kit/ui/primitives";
+import { TagsInput } from "@notion-kit/ui/tags-input";
 
 import { Avatar, HintButton } from "@/presets/_components";
 

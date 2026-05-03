@@ -1,7 +1,7 @@
 import { useFormContext, useWatch } from "react-hook-form";
 
-import { Trans, useTranslation } from "@notion-kit/i18n";
-import { Icon } from "@notion-kit/icons";
+import { Trans, useTranslation } from "@notion-kit/ui/i18n";
+import { Icon } from "@notion-kit/ui/icons";
 import {
   Button,
   Checkbox,
@@ -10,7 +10,7 @@ import {
   FormItem,
   FormMessage,
   Label,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import type { UpgradePlan, UpgradeSchema } from "@/lib/types";
 

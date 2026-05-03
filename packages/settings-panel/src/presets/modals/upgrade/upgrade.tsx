@@ -3,15 +3,15 @@ import { useElements, useStripe } from "@stripe/react-stripe-js";
 import type { Stripe } from "@stripe/stripe-js";
 import { useForm } from "react-hook-form";
 
-import { useTranslation } from "@notion-kit/i18n";
-import { Icon } from "@notion-kit/icons";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { Icon } from "@notion-kit/ui/icons";
 import {
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   Form,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import {
   upgradeSchema,

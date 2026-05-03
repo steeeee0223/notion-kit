@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { useTranslation } from "@notion-kit/i18n";
+import { useTranslation } from "@notion-kit/ui/i18n";
 
 import { SettingsSection } from "../core";
 import { NotImplemented } from "./_components";

@@ -1,7 +1,7 @@
 "use client";
 
-import { useTranslation } from "@notion-kit/i18n";
-import { SelectPreset as Select } from "@notion-kit/shadcn";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { SelectPreset as Select } from "@notion-kit/ui/primitives";
 
 import { SettingsRule, SettingsSection } from "../../core";
 

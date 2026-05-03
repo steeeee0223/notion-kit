@@ -1,8 +1,8 @@
 import React from "react";
 
 import { cn } from "@notion-kit/cn";
-import { Icon } from "@notion-kit/icons";
-import { MenuItem } from "@notion-kit/shadcn";
+import { Icon } from "@notion-kit/ui/icons";
+import { MenuItem } from "@notion-kit/ui/primitives";
 
 export const permissions = {
   default: {

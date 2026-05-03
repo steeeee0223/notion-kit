@@ -1,6 +1,6 @@
 import { useTransition } from "react";
 
-import { useTranslation } from "@notion-kit/i18n";
+import { useTranslation } from "@notion-kit/ui/i18n";
 import {
   Button,
   DialogClose,
@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
   Spinner,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 interface LeaveTeamspaceProps {
   name: string;

@@ -1,6 +1,6 @@
 import { useFormContext } from "react-hook-form";
 
-import { useTranslation } from "@notion-kit/i18n";
+import { useTranslation } from "@notion-kit/ui/i18n";
 import {
   FormControl,
   FormField,
@@ -8,7 +8,7 @@ import {
   FormLabel,
   FormMessage,
   Input,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import type { UpgradeSchema } from "@/lib/types";
 

@@ -6,14 +6,14 @@ import {
 } from "@stripe/react-stripe-js";
 import type { Stripe } from "@stripe/stripe-js";
 
-import { useTranslation } from "@notion-kit/i18n";
+import { useTranslation } from "@notion-kit/ui/i18n";
 import {
   Button,
   DialogClose,
   DialogContent,
   DialogTitle,
   Spinner,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { StripeElements } from "@/presets/_components";
 

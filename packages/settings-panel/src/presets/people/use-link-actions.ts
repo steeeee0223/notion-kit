@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 
 import { useCopyToClipboard } from "@notion-kit/hooks";
-import { toast } from "@notion-kit/shadcn";
+import { toast } from "@notion-kit/ui/primitives";
 
 import { useWorkspace, useWorkspaceActions } from "../hooks";
 

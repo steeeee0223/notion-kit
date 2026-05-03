@@ -1,7 +1,7 @@
 "use client";
 
-import { useTranslation } from "@notion-kit/i18n";
-import { Input } from "@notion-kit/shadcn";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { Input } from "@notion-kit/ui/primitives";
 
 import { Content, TextLinks } from "../_components";
 import { SettingsSection } from "../../core";

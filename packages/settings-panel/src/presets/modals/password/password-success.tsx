@@ -1,12 +1,12 @@
-import { useTranslation } from "@notion-kit/i18n";
-import { Icon } from "@notion-kit/icons";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { Icon } from "@notion-kit/ui/icons";
 import {
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogIcon,
   DialogTitle,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 export function PasswordSuccess() {
   const { t } = useTranslation("settings", {

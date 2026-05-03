@@ -3,8 +3,8 @@ import { useHover } from "usehooks-ts";
 
 import { cn } from "@notion-kit/cn";
 import { useInputField } from "@notion-kit/hooks";
-import { useTranslation } from "@notion-kit/i18n";
-import { Icon } from "@notion-kit/icons";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { Icon } from "@notion-kit/ui/icons";
 import {
   Avatar,
   AvatarFallback,
@@ -13,7 +13,7 @@ import {
   Input,
   Label,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { SettingsSection } from "@/core";
 import { useAccount, useAccountActions, useFileActions } from "@/presets/hooks";

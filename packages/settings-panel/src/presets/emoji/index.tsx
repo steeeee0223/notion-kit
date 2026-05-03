@@ -1,5 +1,5 @@
-import { useTranslation } from "@notion-kit/i18n";
-import { Separator, Switch } from "@notion-kit/shadcn";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { Separator, Switch } from "@notion-kit/ui/primitives";
 
 import { SettingsRule, SettingsSection } from "@/core";
 import { useEmoji, useEmojiActions } from "@/presets/hooks";

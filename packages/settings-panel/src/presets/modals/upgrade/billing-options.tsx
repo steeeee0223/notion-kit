@@ -1,14 +1,14 @@
 import { useFormContext } from "react-hook-form";
 
 import { cn } from "@notion-kit/cn";
-import { useTranslation } from "@notion-kit/i18n";
+import { useTranslation } from "@notion-kit/ui/i18n";
 import {
   Badge,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import type { UpgradePlan, UpgradeSchema } from "@/lib/types";
 

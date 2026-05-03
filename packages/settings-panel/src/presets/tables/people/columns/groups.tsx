@@ -1,6 +1,6 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
-import { Trans } from "@notion-kit/i18n";
+import { Trans } from "@notion-kit/ui/i18n";
 
 import type { GroupOption } from "@/lib/types";
 import { TextCell } from "@/presets/tables/common-cells";

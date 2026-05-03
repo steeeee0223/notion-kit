@@ -1,9 +1,9 @@
 import { useState } from "react";
 
 import { useTemporaryFix } from "@notion-kit/hooks";
-import { useTranslation } from "@notion-kit/i18n";
-import { IconBlock, type IconData } from "@notion-kit/icon-block";
-import { Icon } from "@notion-kit/icons";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
+import { Icon } from "@notion-kit/ui/icons";
 import { User } from "@notion-kit/schemas";
 import {
   Button,
@@ -16,7 +16,7 @@ import {
   TabsTrigger,
   TooltipPreset,
   TooltipProvider,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import type {
   TeamMemberRow,

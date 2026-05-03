@@ -1,8 +1,8 @@
 import { useTransition } from "react";
 
-import { useTranslation } from "@notion-kit/i18n";
-import { IconBlock, type IconData } from "@notion-kit/icon-block";
-import { Icon } from "@notion-kit/icons";
+import { useTranslation } from "@notion-kit/ui/i18n";
+import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
+import { Icon } from "@notion-kit/ui/icons";
 import {
   Button,
   Dialog,
@@ -16,7 +16,7 @@ import {
   Option,
   SelectPreset as Select,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import type { TeamspacePermission, TeamspaceRole } from "@/lib/types";
 import { Avatar, permissions } from "@/presets/_components";
