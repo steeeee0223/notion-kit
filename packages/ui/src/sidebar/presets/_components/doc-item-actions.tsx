@@ -16,7 +16,7 @@ import {
   MenuFooter,
   MenuItemAction,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "~/primitives";
 import { toDateString } from "@notion-kit/utils";
 
 import { RenamePopover } from "./rename-popover";

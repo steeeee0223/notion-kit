@@ -9,7 +9,7 @@ import React, {
 
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
-import { TooltipProvider } from "@notion-kit/shadcn";
+import { TooltipProvider } from "~/primitives";
 
 import { DEFAULT_CONFIG, type SidebarConfig } from "./constants";
 

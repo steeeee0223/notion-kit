@@ -3,14 +3,16 @@
 import { useState } from "react";
 
 import type { IconData, Page, UpdatePageParams } from "@notion-kit/schemas";
-import { MenuItem } from "@notion-kit/shadcn";
-import { Tree, useTree } from "@notion-kit/tree";
+import { MenuItem } from "~/primitives";
+import { Tree, useTree } from "~/tree";
 
 import { SidebarGroup, SidebarMenuItem } from "../core";
-import { DocIcon, DocItemActions } from "./_components";
+import { DocGroupActions, DocIcon, DocItemActions } from "./_components";
 import type { TreeData } from "./_lib";
 
-interface FavoriteListProps {
+interface DocListProps {
+  group: string;
+  title: string;
   pages: Page[];
   activePage?: string | null;
   defaultIcon?: IconData;
@@ -20,7 +22,9 @@ interface FavoriteListProps {
   onUpdate?: (id: string, data: UpdatePageParams) => void;
 }
 
-export function FavoriteList({
+export function DocList({
+  group,
+  title,
   pages,
   activePage,
   defaultIcon = { type: "lucide", src: "file" },
@@ -28,7 +32,7 @@ export function FavoriteList({
   onCreate,
   onDuplicate,
   onUpdate,
-}: FavoriteListProps) {
+}: DocListProps) {
   const [showList, setShowList] = useState(true);
 
   const treeData = pages.map((page) => ({
@@ -48,9 +52,11 @@ export function FavoriteList({
     <SidebarGroup>
       <SidebarMenuItem
         className="group/doc-list"
-        label={<span className="text-xs/none font-medium">Favorites</span>}
+        label={<span className="text-xs/none font-medium">{title}</span>}
         onClick={() => setShowList((v) => !v)}
-      />
+      >
+        <DocGroupActions onCreate={() => onCreate?.(group)} />
+      </SidebarMenuItem>
       {showList && (
         <Tree tree={tree}>
           <Tree.List<TreeData>
@@ -71,7 +77,7 @@ export function FavoriteList({
                     isFavorite={node.isFavorite}
                     lastEditedBy={node.lastEditedBy}
                     lastEditedAt={node.lastEditedAt}
-                    onCreate={() => onCreate?.(node.type, node.id)}
+                    onCreate={() => onCreate?.(group, node.id)}
                     onDuplicate={() => onDuplicate?.(node.id)}
                     onUpdate={(data) => onUpdate?.(node.id, data)}
                   />

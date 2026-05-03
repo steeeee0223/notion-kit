@@ -2,7 +2,7 @@
 
 import { cn } from "@notion-kit/cn";
 import { useFilter } from "@notion-kit/hooks";
-import { IconBlock } from "@notion-kit/icon-block";
+import { IconBlock } from "~/icon-block";
 import { Icon } from "@notion-kit/icons";
 import type { Page } from "@notion-kit/schemas";
 import {
@@ -13,7 +13,7 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "@notion-kit/shadcn";
+} from "~/primitives";
 import { toDateString } from "@notion-kit/utils";
 
 interface SearchCommandProps {

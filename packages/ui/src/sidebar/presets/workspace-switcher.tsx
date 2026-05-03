@@ -1,4 +1,4 @@
-import { IconBlock } from "@notion-kit/icon-block";
+import { IconBlock } from "~/icon-block";
 import { Icon } from "@notion-kit/icons";
 import type { User, Workspace } from "@notion-kit/schemas";
 import {
@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Separator,
-} from "@notion-kit/shadcn";
+} from "~/primitives";
 
 import { planTitle, WorkspaceList } from "./_components";
 

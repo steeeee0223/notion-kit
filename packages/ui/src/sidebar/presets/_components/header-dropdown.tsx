@@ -6,7 +6,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@notion-kit/shadcn";
+} from "~/primitives";
 
 interface HeaderDropdownProps {
   onLogout?: () => void;

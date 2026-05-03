@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
-import { Button, TooltipPreset } from "@notion-kit/shadcn";
+import { Button, TooltipPreset } from "~/primitives";
 
 import { mergeRefs } from "./merge-refs";
 import { useSidebar } from "./sidebar-provider";

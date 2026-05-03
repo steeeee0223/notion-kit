@@ -20,7 +20,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-import { IconBlock } from "@notion-kit/icon-block";
+import { IconBlock } from "~/icon-block";
 import { Icon } from "@notion-kit/icons";
 import { Role, User, Workspace } from "@notion-kit/schemas";
 import {
@@ -30,7 +30,7 @@ import {
   MenuGroup,
   TooltipPreset,
   TooltipProvider,
-} from "@notion-kit/shadcn";
+} from "~/primitives";
 
 import { planTitle } from "./constant";
 import { HeaderDropdown } from "./header-dropdown";

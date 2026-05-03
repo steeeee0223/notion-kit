@@ -1,8 +1,8 @@
 "use client";
 
-import { AlertModal } from "@notion-kit/common/alert-modal";
+import { AlertModal } from "~/alert-modal";
 import { useFilter } from "@notion-kit/hooks";
-import { IconBlock } from "@notion-kit/icon-block";
+import { IconBlock } from "~/icon-block";
 import { Icon } from "@notion-kit/icons";
 import type { Page } from "@notion-kit/schemas";
 import {
@@ -17,7 +17,7 @@ import {
   PopoverTrigger,
   TooltipPreset,
   TooltipProvider,
-} from "@notion-kit/shadcn";
+} from "~/primitives";
 
 import { SidebarMenuItem } from "../core";
 
