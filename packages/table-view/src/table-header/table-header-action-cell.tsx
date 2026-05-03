@@ -5,9 +5,8 @@ import React from "react";
 import { cn } from "@notion-kit/cn";
 import { Button } from "@notion-kit/ui/primitives";
 
-interface TableHeaderActionCellProps extends React.ComponentProps<
-  typeof Button
-> {
+interface TableHeaderActionCellProps
+  extends React.ComponentProps<typeof Button> {
   icon: React.ReactNode;
 }
 

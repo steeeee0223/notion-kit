@@ -1,6 +1,6 @@
 "use client";
 
-import { Trans, useTranslation } from "@notion-kit/ui/i18n";
+import { Trans, useTranslation } from "@notion-kit/i18n";
 import { Button } from "@notion-kit/ui/primitives";
 
 import { SettingsRule, SettingsSection } from "../../core";

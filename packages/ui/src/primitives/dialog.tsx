@@ -70,9 +70,8 @@ function DialogOverlay({
     />
   );
 }
-interface DialogContentProps extends React.ComponentProps<
-  typeof DialogPrimitive.Content
-> {
+interface DialogContentProps
+  extends React.ComponentProps<typeof DialogPrimitive.Content> {
   hideClose?: boolean;
   noTitle?: boolean;
 }
@@ -148,9 +147,8 @@ function DialogIcon({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-interface DialogTitleProps extends React.ComponentProps<
-  typeof DialogPrimitive.Title
-> {
+interface DialogTitleProps
+  extends React.ComponentProps<typeof DialogPrimitive.Title> {
   typography?: Typography;
 }
 
@@ -173,9 +171,8 @@ function DialogTitle({
   );
 }
 
-interface DialogDescriptionProps extends React.ComponentProps<
-  typeof DialogPrimitive.Description
-> {
+interface DialogDescriptionProps
+  extends React.ComponentProps<typeof DialogPrimitive.Description> {
   typography?: Typography;
 }
 

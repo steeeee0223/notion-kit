@@ -8,7 +8,8 @@ import { cn } from "@notion-kit/cn";
 import { buttonVariants, type ButtonVariants } from "./variants";
 
 export interface ButtonProps
-  extends React.ComponentProps<"button">, ButtonVariants {
+  extends React.ComponentProps<"button">,
+    ButtonVariants {
   asChild?: boolean;
 }
 

@@ -38,6 +38,7 @@
     "@hookform/resolvers": "catalog:ui",
     "@notion-kit/auth": "workspace:*",
     "@notion-kit/cn": "workspace:*",
+    "@notion-kit/icons": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/settings-panel": "workspace:*",
     "react-hook-form": "catalog:ui",

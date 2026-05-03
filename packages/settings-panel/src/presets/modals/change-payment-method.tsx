@@ -6,7 +6,7 @@ import {
 } from "@stripe/react-stripe-js";
 import type { Stripe } from "@stripe/stripe-js";
 
-import { useTranslation } from "@notion-kit/ui/i18n";
+import { useTranslation } from "@notion-kit/i18n";
 import {
   Button,
   DialogClose,

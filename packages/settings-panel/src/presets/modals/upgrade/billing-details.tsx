@@ -1,6 +1,6 @@
 import { useFormContext } from "react-hook-form";
 
-import { useTranslation } from "@notion-kit/ui/i18n";
+import { useTranslation } from "@notion-kit/i18n";
 import {
   FormControl,
   FormField,

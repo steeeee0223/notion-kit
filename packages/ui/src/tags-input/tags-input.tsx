@@ -97,7 +97,7 @@ function TagsInput({
           aria-label={tag.value}
           variant="tag"
           size="sm"
-          className="h-5 max-w-full min-w-0 shrink-0 rounded pr-0 text-sm/[1.2]"
+          className="h-5 max-w-full min-w-0 shrink-0 rounded pr-0 text-sm/tight"
           style={{
             backgroundColor: tag.color ? COLOR[tag.color].rgba : undefined,
           }}

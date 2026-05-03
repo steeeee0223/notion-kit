@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
 import { cn } from "@notion-kit/cn";
-import { Trans, TransProps } from "@notion-kit/ui/i18n";
-import { Icon } from "@notion-kit/ui/icons";
+import { Trans, TransProps } from "@notion-kit/i18n";
+import { Icon } from "@notion-kit/icons";
 import {
   AvatarFallback,
   AvatarImage,
@@ -90,7 +90,8 @@ export function Content({
 }
 
 interface TextLinksProps
-  extends Pick<TransProps, "i18nKey" | "values">, React.ComponentProps<"a"> {
+  extends Pick<TransProps, "i18nKey" | "values">,
+    React.ComponentProps<"a"> {
   hrefs?: string | string[];
 }
 

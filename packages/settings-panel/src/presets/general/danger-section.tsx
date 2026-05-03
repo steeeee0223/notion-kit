@@ -1,9 +1,7 @@
-"use client";
-
 import { useState } from "react";
 
-import { AlertModal } from "@notion-kit/ui/common";
-import { useTranslation } from "@notion-kit/ui/i18n";
+import { useTranslation } from "@notion-kit/i18n";
+import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog, DialogTrigger } from "@notion-kit/ui/primitives";
 
 import { SettingsSection, useScopes } from "@/core";

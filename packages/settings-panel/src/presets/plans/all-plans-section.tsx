@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 
+import { useTranslation } from "@notion-kit/i18n";
 import { Plan } from "@notion-kit/schemas";
-import { useTranslation } from "@notion-kit/ui/i18n";
 import { Dialog, Separator } from "@notion-kit/ui/primitives";
 
 import { SettingsSection, useScopes, useStripePromise } from "@/core";

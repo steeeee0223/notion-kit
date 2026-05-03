@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslation } from "@notion-kit/ui/i18n";
+import { useTranslation } from "@notion-kit/i18n";
 import { Button } from "@notion-kit/ui/primitives";
 
 import { TextLinks } from "../_components";

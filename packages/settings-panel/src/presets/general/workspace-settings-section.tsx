@@ -1,7 +1,7 @@
 "use client";
 
 import { useInputField } from "@notion-kit/hooks";
-import { useTranslation } from "@notion-kit/ui/i18n";
+import { useTranslation } from "@notion-kit/i18n";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import { IconMenu } from "@notion-kit/ui/icon-menu";
 import { Input } from "@notion-kit/ui/primitives";

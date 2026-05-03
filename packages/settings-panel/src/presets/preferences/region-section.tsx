@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 
-import { AlertModal, TimezoneMenu } from "@notion-kit/ui/common";
-import { LOCALE, useTranslation } from "@notion-kit/ui/i18n";
-import { Icon } from "@notion-kit/ui/icons";
+import { LOCALE, useTranslation } from "@notion-kit/i18n";
+import { Icon } from "@notion-kit/icons";
+import { AlertModal } from "@notion-kit/ui/alert-modal";
 import {
   Button,
   Dialog,
   SelectPreset as Select,
   Switch,
 } from "@notion-kit/ui/primitives";
+import { TimezoneMenu } from "@notion-kit/ui/timezone-menu";
 
 import { SettingsRule, SettingsSection } from "../../core";
 import { useAccountActions } from "../hooks";

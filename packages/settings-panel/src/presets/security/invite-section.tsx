@@ -1,7 +1,7 @@
 "use client";
 
+import { useTranslation } from "@notion-kit/i18n";
 import { Plan, Role } from "@notion-kit/schemas";
-import { useTranslation } from "@notion-kit/ui/i18n";
 import { Switch } from "@notion-kit/ui/primitives";
 
 import { SettingsSection } from "@/core";

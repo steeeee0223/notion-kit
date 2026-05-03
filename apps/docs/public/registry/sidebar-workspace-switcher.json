@@ -2,14 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "sidebar-workspace-switcher",
   "title": "Sidebar Workspace Switcher",
-  "dependencies": ["@notion-kit/schemas", "@notion-kit/sidebar"],
+  "dependencies": ["@notion-kit/schemas", "@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/sidebar-workspace-switcher/sidebar-workspace-switcher.tsx",
-      "content": "\"use client\";\n\nimport type { User, Workspace } from \"@notion-kit/schemas\";\nimport { Plan, Role } from \"@notion-kit/schemas\";\nimport { WorkspaceSwitcher } from \"@notion-kit/sidebar/presets\";\n\nexport const user: User = {\n  id: \"u1\",\n  name: \"Admin\",\n  email: \"admin@email.com\",\n  avatarUrl: \"\",\n};\n\nexport const workspaces: Workspace[] = [\n  {\n    id: \"w1\",\n    name: \"Workspace\",\n    role: Role.OWNER,\n    memberCount: 5,\n    plan: Plan.FREE,\n  },\n  {\n    id: \"w2\",\n    name: \"Workspace 2\",\n    role: Role.GUEST,\n    memberCount: 2,\n    plan: Plan.EDUCATION,\n  },\n  {\n    id: \"w3\",\n    name: \"Workspace 3\",\n    role: Role.OWNER,\n    memberCount: 10,\n    plan: Plan.ENTERPRISE,\n  },\n  {\n    id: \"w4\",\n    name: \"Workspace 4\",\n    role: Role.MEMBER,\n    memberCount: 12,\n    plan: Plan.PLUS,\n  },\n];\n\nexport default function Demo() {\n  return (\n    <div className=\"w-[200px]\">\n      <WorkspaceSwitcher\n        user={user}\n        workspaces={workspaces}\n        activeWorkspace={workspaces[0]!}\n      />\n    </div>\n  );\n}\n",
+      "content": "\"use client\";\n\nimport type { User, Workspace } from \"@notion-kit/schemas\";\nimport { Plan, Role } from \"@notion-kit/schemas\";\nimport { WorkspaceSwitcher } from \"@notion-kit/ui/sidebar/presets\";\n\nexport const user: User = {\n  id: \"u1\",\n  name: \"Admin\",\n  email: \"admin@email.com\",\n  avatarUrl: \"\",\n};\n\nexport const workspaces: Workspace[] = [\n  {\n    id: \"w1\",\n    name: \"Workspace\",\n    role: Role.OWNER,\n    memberCount: 5,\n    plan: Plan.FREE,\n  },\n  {\n    id: \"w2\",\n    name: \"Workspace 2\",\n    role: Role.GUEST,\n    memberCount: 2,\n    plan: Plan.EDUCATION,\n  },\n  {\n    id: \"w3\",\n    name: \"Workspace 3\",\n    role: Role.OWNER,\n    memberCount: 10,\n    plan: Plan.ENTERPRISE,\n  },\n  {\n    id: \"w4\",\n    name: \"Workspace 4\",\n    role: Role.MEMBER,\n    memberCount: 12,\n    plan: Plan.PLUS,\n  },\n];\n\nexport default function Demo() {\n  return (\n    <div className=\"w-[200px]\">\n      <WorkspaceSwitcher\n        user={user}\n        workspaces={workspaces}\n        activeWorkspace={workspaces[0]!}\n      />\n    </div>\n  );\n}\n",
       "type": "registry:component",
       "target": "components/sidebar-workspace-switcher/sidebar-workspace-switcher.tsx"
     }

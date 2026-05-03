@@ -19,9 +19,8 @@ import { defaultColumn } from "./column";
 import type { BaseTableProps } from "./types";
 import { getMinWidth, toPropertyEntity } from "./utils";
 
-interface UseTableViewOptions<
-  TPlugins extends CellPlugin[],
-> extends BaseTableProps<TPlugins> {
+interface UseTableViewOptions<TPlugins extends CellPlugin[]>
+  extends BaseTableProps<TPlugins> {
   plugins: Entity<TPlugins[number]>;
 }
 

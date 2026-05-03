@@ -39,6 +39,7 @@
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/code-block": "workspace:*",
     "@notion-kit/hooks": "workspace:*",
+    "@notion-kit/icons": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/settings-panel": "workspace:*",
     "@notion-kit/table-view": "workspace:*",

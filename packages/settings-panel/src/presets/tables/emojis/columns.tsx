@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ColumnDef, Row } from "@tanstack/react-table";
 
-import { AlertModal } from "@notion-kit/ui/common";
-import { Trans, useTranslation } from "@notion-kit/ui/i18n";
-import { Icon } from "@notion-kit/ui/icons";
+import { Trans, useTranslation } from "@notion-kit/i18n";
+import { Icon } from "@notion-kit/icons";
+import { AlertModal } from "@notion-kit/ui/alert-modal";
 import {
   Button,
   Dialog,

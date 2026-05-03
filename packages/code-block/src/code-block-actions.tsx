@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { useCopyToClipboard } from "@notion-kit/hooks";
-import { Icon } from "@notion-kit/ui/icons";
+import { Icon } from "@notion-kit/icons";
 import {
   Command,
   CommandGroup,

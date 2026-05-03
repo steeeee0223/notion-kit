@@ -93,7 +93,7 @@ export function WorkspaceSwitcher({
           <div className="inline-flex gap-2">
             <Button
               tabIndex={0}
-              className="h-7 px-2 text-xs/[1.2] font-medium text-secondary focus-within:shadow-notion"
+              className="h-7 px-2 text-xs/tight font-medium text-secondary focus-within:shadow-notion"
               onClick={onOpenSettings}
             >
               <Icon.Settings className="size-3.5 fill-secondary" />
@@ -101,7 +101,7 @@ export function WorkspaceSwitcher({
             </Button>
             <Button
               tabIndex={0}
-              className="h-7 px-2 text-xs/[1.2] font-medium text-secondary focus-within:shadow-notion"
+              className="h-7 px-2 text-xs/tight font-medium text-secondary focus-within:shadow-notion"
               onClick={onInviteMembers}
             >
               <Icon.PersonCircle className="size-3.5 fill-secondary" />

@@ -1,10 +1,10 @@
 import { useState } from "react";
 
 import { useTemporaryFix } from "@notion-kit/hooks";
+import { useTranslation } from "@notion-kit/i18n";
+import { Icon } from "@notion-kit/icons";
 import { User } from "@notion-kit/schemas";
-import { useTranslation } from "@notion-kit/ui/i18n";
 import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
-import { Icon } from "@notion-kit/ui/icons";
 import {
   Button,
   Dialog,

@@ -1,6 +1,6 @@
 import { cn } from "@notion-kit/cn";
 import { useCopyToClipboard } from "@notion-kit/hooks";
-import { Icon } from "@notion-kit/ui/icons";
+import { Icon } from "@notion-kit/icons";
 import {
   Button,
   Popover,

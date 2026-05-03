@@ -1,7 +1,7 @@
 import React from "react";
 
 import { cn } from "@notion-kit/cn";
-import { Icon } from "@notion-kit/ui/icons";
+import { Icon } from "@notion-kit/icons";
 
 const styles = {
   layout: "flex flex-col relative w-full self-stretch", // autolayout-col autolayout-fill-width

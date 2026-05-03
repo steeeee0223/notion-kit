@@ -35,8 +35,7 @@ const scrollAreaStyles = tv({
 });
 
 interface ScrollAreaProps
-  extends
-    ScrollAreaRootProps,
+  extends ScrollAreaRootProps,
     Omit<ScrollAreaViewPortProps, "dir">,
     VariantProps<typeof scrollAreaStyles> {
   scrollbars?: "vertical" | "horizontal" | "both";
@@ -110,8 +109,7 @@ const ScrollAreaViewPort = React.forwardRef<
 ScrollAreaViewPort.displayName = "ScrollAreaViewPort";
 
 interface ScrollAreaScrollbarProps
-  extends
-    ScrollAreaPrimitive.ScrollAreaScrollbarProps,
+  extends ScrollAreaPrimitive.ScrollAreaScrollbarProps,
     VariantProps<typeof scrollAreaStyles> {}
 const ScrollAreaScrollbar = ({
   className,

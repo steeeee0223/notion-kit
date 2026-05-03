@@ -151,7 +151,8 @@ function SelectLabel({
 }
 
 interface SelectItemProps
-  extends React.ComponentProps<typeof SelectPrimitive.Item>, MenuItemVariants {
+  extends React.ComponentProps<typeof SelectPrimitive.Item>,
+    MenuItemVariants {
   Icon?: React.ReactNode;
   disabled?: boolean;
   hideCheck?: boolean;
@@ -200,10 +201,8 @@ interface Option {
   icon?: React.ReactNode;
 }
 
-interface SelectPresetProps<T extends string = string> extends Pick<
-  SelectContentProps,
-  "side" | "align"
-> {
+interface SelectPresetProps<T extends string = string>
+  extends Pick<SelectContentProps, "side" | "align"> {
   className?: string;
   /**
    * @prop `options` maps `value` to `Option.value`

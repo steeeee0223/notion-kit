@@ -2,14 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icon-block-url",
   "title": "Icon Block Url",
-  "dependencies": ["@notion-kit/icon-block"],
+  "dependencies": ["@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/icon-block-url/icon-block-url.tsx",
-      "content": "import { IconBlock } from \"@notion-kit/icon-block\";\n\nexport default function Url() {\n  return (\n    <IconBlock\n      size=\"md\"\n      icon={{ type: \"url\", src: \"https://github.com/shadcn.png\" }}\n    />\n  );\n}\n",
+      "content": "import { IconBlock } from \"@notion-kit/ui/icon-block\";\n\nexport default function Url() {\n  return (\n    <IconBlock\n      size=\"md\"\n      icon={{ type: \"url\", src: \"https://github.com/shadcn.png\" }}\n    />\n  );\n}\n",
       "type": "registry:component",
       "target": "components/icon-block-url/icon-block-url.tsx"
     }

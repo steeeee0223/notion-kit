@@ -2,14 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "dropdown-menu-checkbox",
   "title": "Dropdown Menu Checkbox",
-  "dependencies": ["@notion-kit/shadcn"],
+  "dependencies": ["@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/dropdown-menu-checkbox/dropdown-menu-checkbox.tsx",
-      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport {\n  Button,\n  DropdownMenu,\n  DropdownMenuCheckboxItem,\n  DropdownMenuContent,\n  DropdownMenuGroup,\n  DropdownMenuLabel,\n  DropdownMenuTrigger,\n} from \"@notion-kit/shadcn\";\n\nexport default function Demo() {\n  const [showStatusBar, setShowStatusBar] = useState(true);\n  const [showActivityBar, setShowActivityBar] = useState(false);\n  const [showPanel, setShowPanel] = useState(false);\n\n  return (\n    <DropdownMenu>\n      <DropdownMenuTrigger asChild>\n        <Button size=\"md\">Open</Button>\n      </DropdownMenuTrigger>\n      <DropdownMenuContent className=\"w-56\">\n        <DropdownMenuGroup>\n          <DropdownMenuLabel>Appearance</DropdownMenuLabel>\n          <DropdownMenuCheckboxItem\n            checked={showStatusBar}\n            onCheckedChange={setShowStatusBar}\n            Body=\"Status Bar\"\n          />\n          <DropdownMenuCheckboxItem\n            checked={showActivityBar}\n            onCheckedChange={setShowActivityBar}\n            disabled\n            Body=\"Activity Bar\"\n          />\n          <DropdownMenuCheckboxItem\n            checked={showPanel}\n            onCheckedChange={setShowPanel}\n            Body=\"Panel\"\n          />\n        </DropdownMenuGroup>\n      </DropdownMenuContent>\n    </DropdownMenu>\n  );\n}\n",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport {\n  Button,\n  DropdownMenu,\n  DropdownMenuCheckboxItem,\n  DropdownMenuContent,\n  DropdownMenuGroup,\n  DropdownMenuLabel,\n  DropdownMenuTrigger,\n} from \"@notion-kit/ui/primitives\";\n\nexport default function Demo() {\n  const [showStatusBar, setShowStatusBar] = useState(true);\n  const [showActivityBar, setShowActivityBar] = useState(false);\n  const [showPanel, setShowPanel] = useState(false);\n\n  return (\n    <DropdownMenu>\n      <DropdownMenuTrigger asChild>\n        <Button size=\"md\">Open</Button>\n      </DropdownMenuTrigger>\n      <DropdownMenuContent className=\"w-56\">\n        <DropdownMenuGroup>\n          <DropdownMenuLabel>Appearance</DropdownMenuLabel>\n          <DropdownMenuCheckboxItem\n            checked={showStatusBar}\n            onCheckedChange={setShowStatusBar}\n            Body=\"Status Bar\"\n          />\n          <DropdownMenuCheckboxItem\n            checked={showActivityBar}\n            onCheckedChange={setShowActivityBar}\n            disabled\n            Body=\"Activity Bar\"\n          />\n          <DropdownMenuCheckboxItem\n            checked={showPanel}\n            onCheckedChange={setShowPanel}\n            Body=\"Panel\"\n          />\n        </DropdownMenuGroup>\n      </DropdownMenuContent>\n    </DropdownMenu>\n  );\n}\n",
       "type": "registry:component",
       "target": "components/dropdown-menu-checkbox/dropdown-menu-checkbox.tsx"
     }

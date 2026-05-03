@@ -2,14 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "spinner-variants",
   "title": "Spinner Variants",
-  "dependencies": ["@notion-kit/shadcn"],
+  "dependencies": ["@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/spinner-variants/spinner-variants.tsx",
-      "content": "import { Spinner } from \"@notion-kit/shadcn\";\n\nconst variants = [\"solid\", \"dashed\"] as const;\n\nexport default function Variants() {\n  return (\n    <div className=\"grid grid-cols-4 gap-2\">\n      {variants.map((variant) => (\n        <Spinner key={variant} variant={variant} />\n      ))}\n    </div>\n  );\n}\n",
+      "content": "import { Spinner } from \"@notion-kit/ui/primitives\";\n\nconst variants = [\"solid\", \"dashed\"] as const;\n\nexport default function Variants() {\n  return (\n    <div className=\"grid grid-cols-4 gap-2\">\n      {variants.map((variant) => (\n        <Spinner key={variant} variant={variant} />\n      ))}\n    </div>\n  );\n}\n",
       "type": "registry:component",
       "target": "components/spinner-variants/spinner-variants.tsx"
     }

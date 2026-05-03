@@ -55,9 +55,8 @@ function SheetOverlay({
   );
 }
 
-interface SheetContentProps extends React.ComponentProps<
-  typeof SheetPrimitive.Content
-> {
+interface SheetContentProps
+  extends React.ComponentProps<typeof SheetPrimitive.Content> {
   side?: "top" | "right" | "bottom" | "left";
   hideClose?: boolean;
   hasOverlay?: boolean;
@@ -128,9 +127,8 @@ function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-interface SheetTitleProps extends React.ComponentProps<
-  typeof SheetPrimitive.Title
-> {
+interface SheetTitleProps
+  extends React.ComponentProps<typeof SheetPrimitive.Title> {
   typography?: Typography;
 }
 

@@ -1,6 +1,6 @@
 import { PaymentElement } from "@stripe/react-stripe-js";
 
-import { useTranslation } from "@notion-kit/ui/i18n";
+import { useTranslation } from "@notion-kit/i18n";
 import { Label } from "@notion-kit/ui/primitives";
 
 export function PaymentSection() {

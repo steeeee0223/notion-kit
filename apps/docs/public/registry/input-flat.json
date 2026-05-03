@@ -2,14 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "input-flat",
   "title": "Input Flat",
-  "dependencies": ["@notion-kit/shadcn"],
+  "dependencies": ["@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/input-flat/input-flat.tsx",
-      "content": "import { Input } from \"@notion-kit/shadcn\";\n\nexport default function Flat() {\n  return (\n    <Input variant=\"flat\" className=\"w-80\" placeholder=\"Enter something...\" />\n  );\n}\n",
+      "content": "import { Input } from \"@notion-kit/ui/primitives\";\n\nexport default function Flat() {\n  return (\n    <Input variant=\"flat\" className=\"w-80\" placeholder=\"Enter something...\" />\n  );\n}\n",
       "type": "registry:component",
       "target": "components/input-flat/input-flat.tsx"
     }

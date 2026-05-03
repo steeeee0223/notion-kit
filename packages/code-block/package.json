@@ -44,6 +44,7 @@
   "dependencies": {
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/hooks": "workspace:*",
+    "@notion-kit/icons": "workspace:*",
     "@notion-kit/utils": "workspace:*",
     "mermaid": "^11.12.2",
     "prettier": "catalog:",

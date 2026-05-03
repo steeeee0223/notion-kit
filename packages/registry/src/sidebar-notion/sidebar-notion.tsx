@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { Icon } from "@notion-kit/ui/icons";
+import { Icon } from "@notion-kit/icons";
 import {
   Sidebar,
   SidebarClose,

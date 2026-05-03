@@ -1,7 +1,7 @@
 import { useFormContext, useWatch } from "react-hook-form";
 
-import { Trans, useTranslation } from "@notion-kit/ui/i18n";
-import { Icon } from "@notion-kit/ui/icons";
+import { Trans, useTranslation } from "@notion-kit/i18n";
+import { Icon } from "@notion-kit/icons";
 import {
   Button,
   Checkbox,

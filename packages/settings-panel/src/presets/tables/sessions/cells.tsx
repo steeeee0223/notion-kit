@@ -1,6 +1,6 @@
 "use client";
 
-import { Icon } from "@notion-kit/ui/icons";
+import { Icon } from "@notion-kit/icons";
 
 import type { SessionRow } from "../../../lib";
 

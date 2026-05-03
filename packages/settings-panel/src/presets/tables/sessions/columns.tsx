@@ -1,6 +1,6 @@
 import type { ColumnDef, Row } from "@tanstack/react-table";
 
-import { Trans, useTranslation } from "@notion-kit/ui/i18n";
+import { Trans, useTranslation } from "@notion-kit/i18n";
 import { Button, Dialog, DialogTrigger } from "@notion-kit/ui/primitives";
 import { toDateString } from "@notion-kit/utils";
 

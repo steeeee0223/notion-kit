@@ -3,12 +3,11 @@
   "compilerOptions": {
     "lib": ["ES2022", "dom", "dom.iterable"],
     "jsx": "react-jsx",
-    "rootDir": "src",
-    "baseUrl": ".",
+    "rootDir": ".",
     "paths": {
       "~/*": ["./src/*"]
     }
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "**/*.test.ts", "**/*.test.tsx"]
+  "include": ["src", "vitest.*.ts"],
+  "exclude": ["node_modules"]
 }

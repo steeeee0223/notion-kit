@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Icon } from "@notion-kit/ui/icons";
+import { Icon } from "@notion-kit/icons";
 
 export type TabType =
   | "account"

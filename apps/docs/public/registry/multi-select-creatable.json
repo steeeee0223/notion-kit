@@ -2,14 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "multi-select-creatable",
   "title": "Multi Select Creatable",
-  "dependencies": ["@notion-kit/shadcn"],
+  "dependencies": ["@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/multi-select-creatable/multi-select-creatable.tsx",
-      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { MultiSelect, type MultiSelectOption } from \"@notion-kit/shadcn\";\n\nconst OPTIONS: MultiSelectOption[] = [\n  { value: \"react\", label: \"React\" },\n  { value: \"vue\", label: \"Vue\" },\n  { value: \"svelte\", label: \"Svelte\" },\n];\n\nexport default function Creatable() {\n  const [value, setValue] = useState<MultiSelectOption[]>([]);\n  const [options, setOptions] = useState(OPTIONS);\n\n  return (\n    <MultiSelect\n      value={value}\n      defaultOptions={options}\n      onChange={(selected) => {\n        setValue(selected);\n        // Add any newly created options to the list\n        const newOptions = selected.filter(\n          (s) => !options.some((o) => o.value === s.value),\n        );\n        if (newOptions.length > 0) setOptions([...options, ...newOptions]);\n      }}\n      creatable\n      placeholder=\"Type to create...\"\n    />\n  );\n}\n",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { MultiSelect, type MultiSelectOption } from \"@notion-kit/ui/primitives\";\n\nconst OPTIONS: MultiSelectOption[] = [\n  { value: \"react\", label: \"React\" },\n  { value: \"vue\", label: \"Vue\" },\n  { value: \"svelte\", label: \"Svelte\" },\n];\n\nexport default function Creatable() {\n  const [value, setValue] = useState<MultiSelectOption[]>([]);\n  const [options, setOptions] = useState(OPTIONS);\n\n  return (\n    <MultiSelect\n      value={value}\n      defaultOptions={options}\n      onChange={(selected) => {\n        setValue(selected);\n        // Add any newly created options to the list\n        const newOptions = selected.filter(\n          (s) => !options.some((o) => o.value === s.value),\n        );\n        if (newOptions.length > 0) setOptions([...options, ...newOptions]);\n      }}\n      creatable\n      placeholder=\"Type to create...\"\n    />\n  );\n}\n",
       "type": "registry:component",
       "target": "components/multi-select-creatable/multi-select-creatable.tsx"
     }

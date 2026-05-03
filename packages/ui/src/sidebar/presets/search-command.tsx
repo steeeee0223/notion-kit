@@ -89,7 +89,7 @@ export function SearchCommand({
                 <div className="mr-2.5 flex items-center justify-center">
                   <IconBlock
                     icon={page.icon ?? { type: "text", src: page.title }}
-                    className="leading-[1.2]"
+                    className="leading-tight"
                   />
                 </div>
                 <div className="mr-1.5 min-w-0 flex-auto truncate">
@@ -107,7 +107,7 @@ export function SearchCommand({
             ))}
           </CommandGroup>
         ) : (
-          <CommandEmpty className="my-auto flex w-full items-center py-8 leading-[1.2] select-none">
+          <CommandEmpty className="my-auto flex w-full items-center py-8 leading-tight select-none">
             <div className="mx-3 min-w-0 flex-auto">
               <div className="truncate">
                 <div role="alert" className="m-0 font-medium text-secondary">
@@ -131,7 +131,7 @@ export function SearchCommand({
         )}
       </CommandList>
       <CommandSeparator />
-      <footer className="flex h-7 w-full shrink-0 grow-0 items-center truncate text-sm/[1.2] text-muted select-none">
+      <footer className="flex h-7 w-full shrink-0 grow-0 items-center truncate text-sm/tight text-muted select-none">
         <div className="mx-3 min-w-0 flex-auto">
           <ul className="m-0 inline-flex list-none items-center gap-5 truncate p-0">
             <li className="flex h-max items-center gap-1.5">

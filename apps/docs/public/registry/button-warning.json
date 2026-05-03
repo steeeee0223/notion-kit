@@ -2,14 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "button-warning",
   "title": "Button Warning",
-  "dependencies": ["@notion-kit/shadcn"],
+  "dependencies": ["@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/button-warning/button-warning.tsx",
-      "content": "import { Button } from \"@notion-kit/shadcn\";\n\nexport default function Warning() {\n  return (\n    <Button variant=\"red\" size=\"md\">\n      Delete this project\n    </Button>\n  );\n}\n",
+      "content": "import { Button } from \"@notion-kit/ui/primitives\";\n\nexport default function Warning() {\n  return (\n    <Button variant=\"red\" size=\"md\">\n      Delete this project\n    </Button>\n  );\n}\n",
       "type": "registry:component",
       "target": "components/button-warning/button-warning.tsx"
     }

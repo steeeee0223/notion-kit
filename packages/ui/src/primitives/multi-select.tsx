@@ -352,7 +352,7 @@ function MultiSelect({
                 : placeholder
             }
           />
-          <div className="absolute end-2 flex size-6 items-center justify-center">
+          <div className="absolute inset-e-2 flex size-6 items-center justify-center">
             <Button
               type="button"
               tabIndex={-1}

@@ -55,9 +55,8 @@ function DrawerOverlay({
   );
 }
 
-interface DrawerContentProps extends React.ComponentProps<
-  typeof DrawerPrimitive.Content
-> {
+interface DrawerContentProps
+  extends React.ComponentProps<typeof DrawerPrimitive.Content> {
   side?: "bottom" | "right";
   noTitle?: boolean;
 }

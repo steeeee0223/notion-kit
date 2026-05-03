@@ -9,9 +9,8 @@ export interface TableState<TPlugins extends CellPlugin[]> {
   data: Row<TPlugins>[];
 }
 
-export interface BaseTableProps<
-  TPlugins extends CellPlugin[],
-> extends TableState<TPlugins> {
+export interface BaseTableProps<TPlugins extends CellPlugin[]>
+  extends TableState<TPlugins> {
   table?: Partial<TableGlobalState>;
   getRowUrl?: (rowId: string) => string;
   onDataChange?: OnChangeFn<Row<TPlugins>[]>;
@@ -19,9 +18,8 @@ export interface BaseTableProps<
   onTableChange?: OnChangeFn<TableGlobalState>;
 }
 
-export interface TableProps<
-  TPlugins extends CellPlugin[],
-> extends BaseTableProps<TPlugins> {
+export interface TableProps<TPlugins extends CellPlugin[]>
+  extends BaseTableProps<TPlugins> {
   plugins?: TPlugins;
   children?: React.ReactNode;
 }

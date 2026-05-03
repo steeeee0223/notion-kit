@@ -77,7 +77,7 @@ function Sidebar({
           "group-data-[collapsible=offcanvas]:w-0",
           "group-data-[side=right]:rotate-180",
           // Set duration to 0 for all elements when dragging
-          "group-data-[dragging=true]_*:!duration-0 group-data-[dragging=true]:!duration-0",
+          "group-data-[dragging=true]_*:!duration-0 group-data-[dragging=true]:duration-0!",
         )}
       />
       <div
@@ -92,7 +92,7 @@ function Sidebar({
             ? "p-2"
             : "group-data-[side=left]:border-r group-data-[side=right]:border-l",
           // Set duration to 0 for all elements when dragging
-          "group-data-[dragging=true]_*:!duration-0 group-data-[dragging=true]:!duration-0",
+          "group-data-[dragging=true]_*:!duration-0 group-data-[dragging=true]:duration-0!",
           className,
         )}
         {...props}

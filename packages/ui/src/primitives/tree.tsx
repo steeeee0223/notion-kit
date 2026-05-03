@@ -53,7 +53,8 @@ type DropItemsHandler<T> = (
 ) => void;
 
 interface TreeProps<T extends TreeItemBase>
-  extends React.HTMLAttributes<HTMLDivElement>, PickedTreeConfig<T> {
+  extends React.HTMLAttributes<HTMLDivElement>,
+    PickedTreeConfig<T> {
   items: Record<string, T>;
   getItemName?: (item: ItemInstance<T>) => string;
   isItemFolder?: (item: ItemInstance<T>) => boolean;

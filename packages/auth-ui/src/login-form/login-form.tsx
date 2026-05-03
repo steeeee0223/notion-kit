@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { cn } from "@notion-kit/cn";
-import { Icon } from "@notion-kit/ui/icons";
+import { Icon } from "@notion-kit/icons";
 import {
   Button,
   Form,

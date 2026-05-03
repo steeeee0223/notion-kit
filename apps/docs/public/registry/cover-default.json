@@ -2,14 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "cover-default",
   "title": "Cover Default",
-  "dependencies": ["@notion-kit/cover"],
+  "dependencies": ["@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/cover-default/cover-default.tsx",
-      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { Cover } from \"@notion-kit/cover\";\n\nconst NOTION_IMAGE =\n  \"https://www.notion.com/_next/image?url=https%3A%2F%2Fimages.ctfassets.net%2Fspoqsaf9291f%2F5RcoNncfzeuqS7V5qqelRJ%2F81e4b42053f8937bbbdb4842f0fcdc72%2Fdocs-hero.png&w=3840&q=75\";\nconst UNSPLASH_ACCESS_KEY = \"UNSPLASH_ACCESS_KEY\";\n\nexport default function Default() {\n  const [cover, setCover] = useState(NOTION_IMAGE);\n\n  return (\n    <Cover\n      url={cover}\n      unsplashAPIKey={UNSPLASH_ACCESS_KEY}\n      onSelect={setCover}\n      onUpload={(file) => setCover(URL.createObjectURL(file))}\n      onRemove={() => setCover(NOTION_IMAGE)}\n    />\n  );\n}\n",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { Cover } from \"@notion-kit/ui/cover\";\n\nconst NOTION_IMAGE =\n  \"https://www.notion.com/_next/image?url=https%3A%2F%2Fimages.ctfassets.net%2Fspoqsaf9291f%2F5RcoNncfzeuqS7V5qqelRJ%2F81e4b42053f8937bbbdb4842f0fcdc72%2Fdocs-hero.png&w=3840&q=75\";\nconst UNSPLASH_ACCESS_KEY = \"UNSPLASH_ACCESS_KEY\";\n\nexport default function Default() {\n  const [cover, setCover] = useState(NOTION_IMAGE);\n\n  return (\n    <Cover\n      url={cover}\n      unsplashAPIKey={UNSPLASH_ACCESS_KEY}\n      onSelect={setCover}\n      onUpload={(file) => setCover(URL.createObjectURL(file))}\n      onRemove={() => setCover(NOTION_IMAGE)}\n    />\n  );\n}\n",
       "type": "registry:component",
       "target": "components/cover-default/cover-default.tsx"
     }

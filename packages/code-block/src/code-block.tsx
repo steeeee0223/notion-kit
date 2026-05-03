@@ -9,8 +9,7 @@ import type {
 import { CodeBlockProvider } from "./code-block-provider";
 
 interface CodeBlockProps
-  extends
-    Omit<React.ComponentProps<"div">, "onChange" | "defaultValue">,
+  extends Omit<React.ComponentProps<"div">, "onChange" | "defaultValue">,
     CodeBlockProviderProps {}
 
 /**

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import groupBy from "lodash.groupby";
 
-import { Icon } from "@notion-kit/ui/icons";
+import { Icon } from "@notion-kit/icons";
 import {
   Avatar,
   AvatarFallback,
