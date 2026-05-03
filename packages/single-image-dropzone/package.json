@@ -1,6 +1,7 @@
 {
   "name": "@notion-kit/single-image-dropzone",
   "version": "0.17.0",
+  "private": true,
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -11,22 +12,11 @@
     "directory": "packages/single-image-dropzone"
   },
   "exports": {
-    ".": {
-      "types": "./dist/index.d.mts",
-      "default": "./dist/index.mjs"
-    }
+    ".": "./src/index.ts"
   },
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
   "license": "MIT",
   "scripts": {
-    "build": "tsdown",
-    "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsdown --watch",
+    "clean": "git clean -xdf .cache .turbo node_modules",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
@@ -38,15 +28,11 @@
     "react-dropzone": "^14.3.8"
   },
   "devDependencies": {
-    "@notion-kit/config": "workspace:*",
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
-    "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "react-compiler-runtime": "catalog:react-compiler",
-    "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {

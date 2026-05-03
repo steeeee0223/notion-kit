@@ -1,6 +1,7 @@
 {
   "name": "@notion-kit/common",
   "version": "0.17.0",
+  "private": true,
   "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
@@ -11,19 +12,12 @@
     "directory": "packages/common"
   },
   "exports": {
-    "./*": {
-      "types": "./dist/*.d.mts",
-      "default": "./dist/*.mjs"
-    }
+    "./*": "./src/*.tsx",
+    "./colors": "./src/colors.ts"
   },
-  "files": [
-    "dist"
-  ],
   "license": "MIT",
   "scripts": {
-    "build": "tsdown",
-    "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsdown --watch",
+    "clean": "git clean -xdf .cache .turbo node_modules",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
@@ -36,25 +30,16 @@
     "react-hook-form": "catalog:ui"
   },
   "devDependencies": {
-    "@notion-kit/config": "workspace:*",
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
-    "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "react-compiler-runtime": "catalog:react-compiler",
-    "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:react19",
     "zod": "catalog:"
   },
-  "prettier": "@notion-kit/prettier-config",
-  "babel": {
-    "plugins": [
-      "babel-plugin-react-compiler"
-    ]
-  }
+  "prettier": "@notion-kit/prettier-config"
 }

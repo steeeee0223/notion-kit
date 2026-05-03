@@ -1,20 +1,15 @@
 {
   "name": "@notion-kit/i18n",
-  "private": true,
   "version": "0.17.0",
+  "private": true,
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.mts",
-      "default": "./dist/index.mjs"
-    }
+    ".": "./src/index.ts"
   },
   "license": "MIT",
   "scripts": {
-    "build": "tsdown",
     "build:types": "i18next-resources-for-ts interface -i ./src/resources/en -o ./src/resources/types.ts && pnpm format -w",
-    "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsdown --watch",
+    "clean": "git clean -xdf .cache .turbo node_modules",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
@@ -24,14 +19,12 @@
     "react-i18next": "^15.4.1"
   },
   "devDependencies": {
-    "@notion-kit/config": "workspace:*",
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "eslint": "catalog:",
     "i18next-resources-for-ts": "^1.6.0",
     "prettier": "catalog:",
-    "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {
