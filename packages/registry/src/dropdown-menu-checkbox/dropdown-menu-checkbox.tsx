@@ -10,7 +10,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 export default function Demo() {
   const [showStatusBar, setShowStatusBar] = useState(true);

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 
-import { IconBlock, type IconData } from "@notion-kit/icon-block";
-import { IconMenu } from "@notion-kit/icon-menu";
+import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
+import { IconMenu } from "@notion-kit/ui/icon-menu";
 
 const defaultIcon: IconData = { type: "text", src: "S" };
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { SelectPreset, type SelectPresetProps } from "@notion-kit/shadcn";
+import { SelectPreset, type SelectPresetProps } from "@notion-kit/ui/primitives";
 
 const Option: SelectPresetProps["renderOption"] = ({ option }) => (
   <div className="truncate text-secondary">

@@ -1,4 +1,4 @@
-import { Checkbox } from "@notion-kit/shadcn";
+import { Checkbox } from "@notion-kit/ui/primitives";
 
 const sizes = ["xs", "sm", "md"] as const;
 

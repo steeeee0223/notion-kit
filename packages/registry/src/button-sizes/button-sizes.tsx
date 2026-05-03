@@ -1,4 +1,4 @@
-import { Button } from "@notion-kit/shadcn";
+import { Button } from "@notion-kit/ui/primitives";
 
 const sizes = ["xs", "sm", "md", "lg"] as const;
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { Title } from "@notion-kit/navbar/presets";
+import { Title } from "@notion-kit/ui/navbar/presets";
 import { Page } from "@notion-kit/schemas";
 
 export const defaultPage: Page = {

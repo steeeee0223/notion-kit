@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 
-import { Icon } from "@notion-kit/icons";
-import { Navbar, NavbarItem } from "@notion-kit/navbar";
+import { Icon } from "@notion-kit/ui/icons";
+import { Navbar, NavbarItem } from "@notion-kit/ui/navbar";
 import {
   History,
   Menu,
   Participants,
   Publish,
   Title,
-} from "@notion-kit/navbar/presets";
+} from "@notion-kit/ui/navbar/presets";
 
 import { currentUser, defaultPage, otherUsers } from "./data";
 

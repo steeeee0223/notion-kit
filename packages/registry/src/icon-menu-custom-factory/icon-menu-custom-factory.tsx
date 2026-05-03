@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 
-import { IconBlock, type IconData } from "@notion-kit/icon-block";
+import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import {
   IconMenu,
   useCustomFactory,
   useEmojiFactory,
-} from "@notion-kit/icon-menu";
+} from "@notion-kit/ui/icon-menu";
 
 const defaultIcon: IconData = { type: "text", src: "S" };
 const iconsData = [

@@ -1466,54 +1466,21 @@ importers:
       '@notion-kit/code-block':
         specifier: workspace:*
         version: link:../code-block
-      '@notion-kit/cover':
-        specifier: workspace:*
-        version: link:../cover
       '@notion-kit/hooks':
         specifier: workspace:*
         version: link:../hooks
-      '@notion-kit/icon-block':
-        specifier: workspace:*
-        version: link:../icon-block
-      '@notion-kit/icon-menu':
-        specifier: workspace:*
-        version: link:../icon-menu
-      '@notion-kit/icons':
-        specifier: workspace:*
-        version: link:../icons
-      '@notion-kit/navbar':
-        specifier: workspace:*
-        version: link:../navbar
       '@notion-kit/schemas':
         specifier: workspace:*
         version: link:../schemas
       '@notion-kit/settings-panel':
         specifier: workspace:*
         version: link:../settings-panel
-      '@notion-kit/shadcn':
-        specifier: workspace:*
-        version: link:../shadcn
-      '@notion-kit/sidebar':
-        specifier: workspace:*
-        version: link:../sidebar
-      '@notion-kit/single-image-dropzone':
-        specifier: workspace:*
-        version: link:../single-image-dropzone
       '@notion-kit/table-view':
         specifier: workspace:*
         version: link:../table-view
-      '@notion-kit/tags-input':
+      '@notion-kit/ui':
         specifier: workspace:*
-        version: link:../tags-input
-      '@notion-kit/timeline':
-        specifier: workspace:*
-        version: link:../timeline
-      '@notion-kit/tree':
-        specifier: workspace:*
-        version: link:../tree
-      '@notion-kit/unsplash':
-        specifier: workspace:*
-        version: link:../unsplash
+        version: link:../ui
       '@notion-kit/utils':
         specifier: workspace:*
         version: link:../utils

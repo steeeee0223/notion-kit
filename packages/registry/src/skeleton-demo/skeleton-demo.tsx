@@ -1,4 +1,4 @@
-import { Skeleton } from "@notion-kit/shadcn";
+import { Skeleton } from "@notion-kit/ui/primitives";
 
 export default function Demo() {
   return (

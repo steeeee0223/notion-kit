@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import groupBy from "lodash.groupby";
 
-import { Icon } from "@notion-kit/icons";
+import { Icon } from "@notion-kit/ui/icons";
 import {
   Avatar,
   AvatarFallback,
@@ -13,7 +13,7 @@ import {
   ContextMenuGroup,
   ContextMenuItem,
   ContextMenuTrigger,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 import {
   GanttCreateMarkerTrigger,
   TimelineContent,
@@ -24,7 +24,7 @@ import {
   TimelineRow,
   TimelineToday,
   type TimelineRange,
-} from "@notion-kit/timeline";
+} from "@notion-kit/ui/timeline";
 
 import { exampleFeatures } from "../timeline-data";
 

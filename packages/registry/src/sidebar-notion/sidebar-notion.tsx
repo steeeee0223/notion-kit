@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { Icon } from "@notion-kit/icons";
+import { Icon } from "@notion-kit/ui/icons";
 import {
   Sidebar,
   SidebarClose,
@@ -16,7 +16,7 @@ import {
   SidebarOpen,
   SidebarProvider,
   SidebarRail,
-} from "@notion-kit/sidebar";
+} from "@notion-kit/ui/sidebar";
 import {
   DocList,
   FavoriteList,
@@ -24,7 +24,7 @@ import {
   TrashBox,
   usePages,
   WorkspaceSwitcher,
-} from "@notion-kit/sidebar/presets";
+} from "@notion-kit/ui/sidebar/presets";
 
 import {
   pages as allPages,
