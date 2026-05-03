@@ -22,7 +22,8 @@
   ],
   "license": "MIT",
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && pnpm build:css",
+    "build:css": "tailwindcss -i ./src/style.css -o ./dist/style.css --minify",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "tsdown --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
@@ -84,12 +85,15 @@
     "@notion-kit/tsconfig": "workspace:*",
     "@notion-kit/unsplash": "workspace:*",
     "@rollup/plugin-babel": "catalog:build",
+    "@tailwindcss/cli": "catalog:tailwind-v4",
     "@types/lodash.throttle": "catalog:fns",
     "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "react-compiler-runtime": "catalog:react-compiler",
+    "tailwindcss": "catalog:tailwind-v4",
     "tsdown": "catalog:",
+    "tw-animate-css": "catalog:tailwind-v4",
     "typescript": "catalog:"
   },
   "peerDependencies": {

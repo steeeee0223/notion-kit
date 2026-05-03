@@ -1,0 +1,189 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@source "../../packages/shadcn/src/**/*.{ts,tsx}";
+@source "../../packages/icons/src/**/*.{ts,tsx}";
+@source "../../packages/i18n/src/**/*.{ts,tsx}";
+@source "../../packages/common/src/**/*.{ts,tsx}";
+@source "../../packages/icon-block/src/**/*.{ts,tsx}";
+@source "../../packages/icon-menu/src/**/*.{ts,tsx}";
+@source "../../packages/tags-input/src/**/*.{ts,tsx}";
+@source "../../packages/single-image-dropzone/src/**/*.{ts,tsx}";
+@source "../../packages/unsplash/src/**/*.{ts,tsx}";
+@source "../../packages/cover/src/**/*.{ts,tsx}";
+@source "../../packages/navbar/src/**/*.{ts,tsx}";
+@source "../../packages/sidebar/src/**/*.{ts,tsx}";
+@source "../../packages/tree/src/**/*.{ts,tsx}";
+@source "../../packages/timeline/src/**/*.{ts,tsx}";
+
+@custom-variant dark (&:is(.dark *));
+
+@custom-variant radix-popper-wrapper (& [data-radix-popper-content-wrapper]);
+
+@theme inline {
+  /* General color */
+  --color-blue: var(--blue);
+  --color-blue-hover: var(--blue-hover);
+  --color-red: var(--red);
+  --color-orange: var(--orange);
+  /* Text color */
+  --color-default: var(--default);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-muted: var(--muted);
+  --color-icon: var(--icon);
+  --color-icon-primary: var(--icon-primary);
+  --color-icon-secondary: var(--icon-secondary);
+  --color-menu-icon: var(--menu-icon);
+  --color-tooltip-primary: var(--tooltip-primary);
+  --color-tooltip-secondary: var(--tooltip-secondary);
+  --color-sidebar-primary: var(--sidebar-primary);
+  /* Background color */
+  --color-main: var(--bg-main);
+  --color-sidebar: var(--bg-sidebar);
+  --color-modal: var(--bg-modal);
+  --color-popover: var(--bg-popover);
+  --color-tooltip: var(--bg-tooltip);
+  --color-input: var(--bg-input);
+  --color-timeline: var(--bg-timeline);
+  --color-timeline-dark: var(--bg-timeline-dark);
+  /* Border */
+  --color-border: var(--border);
+  --color-border-button: var(--border-button);
+  --color-border-cell: var(--border-cell);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius));
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 4px);
+  /* Shadow styles */
+  --shadow-notion:
+    --alpha(var(--blue) / 57%) 0 0 0 1px inset,
+    --alpha(var(--blue) / 35%) 0 0 0 2px;
+  /* for table view only */
+  --shadow-header-row:
+    var(--bg-main) -3px 0px 0px, var(--border-cell) 0px -1px 0px inset;
+  --shadow-header-sticky:
+    var(--bg-main) -3px 0px 0px, var(--border-cell) -1px -1px 0px inset;
+  --shadow-cell-focus:
+    --alpha(var(--blue) / 57%) 0px 0px 0px 2px inset,
+    --alpha(var(--blue) / 35%) 0px 0px 0px 1px inset;
+  --shadow-l-pinned: -1px 0 0 var(--border-cell) inset;
+  --shadow-out-md: var(--sha-out-md);
+  /* Text size */
+  --leading-tight: 1.2;
+  /* Animate */
+  --animate-bg: background 200ms ease;
+  --animate-bg-in: background 20ms ease-in;
+  --animate-bg-out: background 200ms ease-out;
+  /* Unused */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  /* Z indexes */
+  --z-col: 30;
+  --z-row: 40;
+  --z-menu: 50;
+}
+
+:root {
+  --base: 50 48 44;
+  --blue: rgb(35, 131, 226);
+  --blue-hover: rgb(0, 119, 212);
+  --red: rgb(235, 87, 87);
+  --orange: rgb(218, 163, 64);
+  /* Text color */
+  --default: rgb(var(--base));
+  --primary: rgb(44, 44, 43);
+  --secondary: rgb(142, 139, 134);
+  --muted: rgba(70, 68, 64, 0.45);
+  --icon: rgb(168, 164, 156);
+  --icon-primary: #383836;
+  --icon-secondary: #8e8b86;
+  --menu-icon: rgba(73, 72, 70);
+  --tooltip-primary: rgba(255, 255, 255, 0.9);
+  --tooltip-secondary: rgba(206, 205, 202, 0.6);
+  --sidebar-primary: rgb(95, 94, 91);
+  /* Background color */
+  --bg-main: rgb(255, 255, 255);
+  --bg-sidebar: rgb(249, 248, 247);
+  --bg-modal: rgb(255, 255, 255);
+  --bg-popover: rgb(255, 255, 255);
+  --bg-tooltip: rgb(15, 15, 15);
+  --bg-input: rgba(242, 241, 238, 0.6);
+  --bg-timeline: rgb(253, 253, 253);
+  --bg-timeline-dark: rgba(55, 53, 47, 0.03);
+  /* Border color */
+  --border: rgba(var(--base) / 0.1);
+  --border-button: rgba(var(--base) / 0.15);
+  --border-cell: rgb(233, 233, 231);
+  --ring: rgba(15, 15, 15, 0.1);
+  --radius: 0.5rem;
+  --sha-out-md:
+    0px 8px 12px 0px #19191907, 0px 2px 6px 0px #19191907,
+    0px 0px 0px 1px #2a1c0012;
+}
+
+.dark {
+  --base: 255 255 255;
+  /* Text color */
+  --default: rgb(var(--base));
+  --primary: rgb(240, 239, 237);
+  --secondary: rgba(168, 164, 156);
+  --muted: rgba(var(--base) / 0.3);
+  --icon: rgba(128, 125, 120);
+  --icon-primary: #e6e5e3;
+  --icon-secondary: #ada9a3;
+  --menu-icon: rgba(230, 229, 227);
+  --tooltip-primary: rgba(211, 211, 211, 1);
+  --tooltip-secondary: rgba(127, 127, 127, 1);
+  --sidebar-primary: rgb(155, 155, 155);
+  /* Background color */
+  --bg-main: rgb(25, 25, 25);
+  --bg-sidebar: rgb(32, 32, 32);
+  --bg-modal: rgb(32, 32, 32);
+  --bg-popover: rgb(37, 37, 37);
+  --bg-tooltip: rgb(47, 47, 47);
+  --bg-input: rgba(255, 255, 255, 0.055);
+  --bg-timeline: rgb(247, 247, 247);
+  --bg-timeline-dark: rgba(255, 255, 255, 0.02);
+  /* Border color */
+  --border-cell: rgb(47, 47, 47);
+  --ring: rgba(255, 255, 255, 0.075);
+  --sha-out-md: 0px 0px 0px 1px #383836, 0px 4px 12px -2px #19191914;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-main text-primary;
+  }
+}
+
+@utility notion-scrollbar {
+  &::-webkit-scrollbar {
+    @apply w-2.5;
+  }
+  &::-webkit-scrollbar-button {
+    @apply hidden;
+  }
+  &::-webkit-scrollbar-thumb {
+    @apply min-h-11 rounded-full border-solid border-popover bg-muted bg-clip-padding;
+    @variant dark {
+      @apply bg-main;
+    }
+  }
+}
+
+@utility cursor-webkit-grab {
+  cursor: -webkit-grab;
+}
+
+@utility word-break {
+  word-break: break-word;
+}
+
+@utility overflow-x-initial {
+  overflow-x: initial;
+}
