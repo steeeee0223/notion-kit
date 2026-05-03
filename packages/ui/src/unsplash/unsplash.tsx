@@ -3,7 +3,7 @@
 import React from "react";
 
 import { cn } from "@notion-kit/cn";
-import { Input, Spinner } from "@notion-kit/shadcn";
+import { Input, Spinner } from "~/primitives";
 
 import { useUnsplash } from "./use-unsplash";
 

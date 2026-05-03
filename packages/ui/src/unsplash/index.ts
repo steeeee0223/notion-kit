@@ -1,1 +1,1 @@
-export * from "@notion-kit/unsplash";
+export * from "./unsplash";

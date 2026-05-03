@@ -8,7 +8,7 @@ import type { DropzoneOptions } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 
 import { cn } from "@notion-kit/cn";
-import { Spinner } from "@notion-kit/shadcn";
+import { Spinner } from "~/primitives";
 
 const variants = {
   base: "relative rounded-md flex justify-center items-center flex-col cursor-pointer min-h-[150px] min-w-[200px] bg-input hover:bg-input/80 transition-colors duration-200 ease-in-out",

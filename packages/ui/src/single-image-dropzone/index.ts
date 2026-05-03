@@ -1,1 +1,1 @@
-export * from "@notion-kit/single-image-dropzone";
+export * from "./single-image-dropzone";

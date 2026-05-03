@@ -8,8 +8,8 @@ import { XIcon } from "lucide-react";
 import { z } from "zod/v4";
 
 import { cn } from "@notion-kit/cn";
-import type { InputProps } from "@notion-kit/shadcn";
-import { Badge, Button } from "@notion-kit/shadcn";
+import type { InputProps } from "~/primitives";
+import { Badge, Button } from "~/primitives";
 import { COLOR, type Color } from "@notion-kit/utils";
 
 export interface TagOption {

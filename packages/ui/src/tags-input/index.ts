@@ -1,1 +1,1 @@
-export * from "@notion-kit/tags-input";
+export * from "./tags-input";
