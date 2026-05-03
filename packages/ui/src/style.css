@@ -1,20 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@source "../../packages/shadcn/src/**/*.{ts,tsx}";
+@source "./**/*.{ts,tsx}";
 @source "../../packages/icons/src/**/*.{ts,tsx}";
 @source "../../packages/i18n/src/**/*.{ts,tsx}";
-@source "../../packages/common/src/**/*.{ts,tsx}";
-@source "../../packages/icon-block/src/**/*.{ts,tsx}";
-@source "../../packages/icon-menu/src/**/*.{ts,tsx}";
-@source "../../packages/tags-input/src/**/*.{ts,tsx}";
-@source "../../packages/single-image-dropzone/src/**/*.{ts,tsx}";
-@source "../../packages/unsplash/src/**/*.{ts,tsx}";
-@source "../../packages/cover/src/**/*.{ts,tsx}";
-@source "../../packages/navbar/src/**/*.{ts,tsx}";
-@source "../../packages/sidebar/src/**/*.{ts,tsx}";
-@source "../../packages/tree/src/**/*.{ts,tsx}";
-@source "../../packages/timeline/src/**/*.{ts,tsx}";
 
 @custom-variant dark (&:is(.dark *));
 
