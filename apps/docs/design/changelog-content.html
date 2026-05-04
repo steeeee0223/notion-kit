@@ -1,0 +1,3311 @@
+<div
+  class="mdx-content prose prose-gray dark:prose-invert @container/columns-container relative isolate mt-8 mb-14 contain-[inline-size] empty:hidden"
+  data-page-title="Changelog"
+  data-page-href="/page/changelog"
+  id="content"
+>
+  <blockquote class="sr-only" data-agent-docs-index="true">
+    <h2>Documentation Index</h2>
+    <p>
+      Fetch the complete documentation index at:
+      <a href="https://developers.notion.com/llms.txt"
+        >https://developers.notion.com/llms.txt</a
+      >
+    </p>
+    <p>
+      Use this file to discover all available pages before exploring further.
+    </p>
+  </blockquote>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="april-22-2026"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#april-22-2026"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        April 22, 2026
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <span data-as="p"
+          >Improvements to pagination reliability for the
+          <a class="link" href="/reference/post-database-query"
+            >Query a data source</a
+          >
+          endpoint:</span
+        >
+        <ul>
+          <li>
+            Pagination cursors now embed a session identifier, eliminating
+            intermittent <code>400 validation_error</code> (“The start_cursor
+            provided is invalid”) errors that could occur when multiple
+            pagination sessions for the same query overlapped.
+          </li>
+          <li>
+            The <code>start_cursor</code> parameter now accepts opaque string
+            values in addition to UUIDs. Existing UUID-based cursors continue to
+            work. As documented in our
+            <a class="link" href="/reference/versioning">versioning policy</a>,
+            cursors should always be treated as opaque — pass
+            <code>next_cursor</code> values back as
+            <code>start_cursor</code> without parsing or validating their
+            format.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="april-20-2026"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#april-20-2026"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        April 20, 2026
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="data-source-and-view-query-pagination-limit"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#data-source-and-view-query-pagination-limit"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer"
+            >Data source and view query pagination limit</span
+          >
+        </h3>
+        <span data-as="p"
+          >The
+          <a class="link" href="/reference/query-a-data-source"
+            >Query a data source</a
+          >,
+          <a class="link" href="/reference/create-view-query"
+            >Create a view query</a
+          >, and
+          <a class="link" href="/reference/get-view-query-results"
+            >Get view query results</a
+          >
+          endpoints now enforce a maximum pagination depth of 10,000 results per
+          query. When a query matches more rows than this limit, the response
+          includes a new <code>request_status</code> field:</span
+        >
+        <div
+          class="code-block not-prose group print:print-color-exact codeblock-light dark:twoslash-dark relative mt-5 mb-8 min-w-0 rounded-2xl border border-gray-950/10 bg-transparent text-gray-950 dark:border-white/10 dark:bg-transparent dark:text-gray-50"
+          numberoflines="6"
+          language="json"
+        >
+          <div
+            data-floating-buttons="true"
+            class="absolute top-3 right-4 flex items-center gap-1.5 print:hidden"
+          >
+            <div class="z-10 select-none" data-state="closed">
+              <button
+                class="group/code-snippet-feedback-button flex h-[26px] w-[26px] items-center justify-center rounded-md backdrop-blur"
+                id="code-snippet-feedback-button"
+                aria-label="Report incorrect code"
+              >
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="h-4 w-4 text-gray-400 group-hover/code-snippet-feedback-button:text-gray-500 dark:text-white/40 dark:group-hover/code-snippet-feedback-button:text-white/60"
+                >
+                  <path d="M12 16h.01"></path>
+                  <path d="M12 8v4"></path>
+                  <path
+                    d="M15.312 2a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586l-4.688-4.688A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2z"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+            <div class="z-10 select-none" data-state="closed">
+              <button
+                class="group/copy-button flex h-[26px] w-[26px] items-center justify-center rounded-md backdrop-blur"
+                data-testid="copy-code-button"
+                aria-label="Copy the contents from the code block"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60"
+                >
+                  <path
+                    d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                  <path
+                    d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+            <div class="z-10 select-none" data-state="closed">
+              <button
+                class="group/ask-ai-button flex h-[26px] w-[26px] items-center justify-center rounded-md backdrop-blur"
+                id="ask-ai-code-block-button"
+                aria-label="Ask AI"
+                data-chat-payload-element-id="lang-json-code-_____request_status_"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4 text-gray-400 group-hover/ask-ai-button:text-gray-500 dark:text-white/40 dark:group-hover/ask-ai-button:text-white/60"
+                >
+                  <path
+                    d="M3.51169 1.50098L3.92087 2.72754L3.99997 2.96387L5.49997 3.46387L4.23825 3.88477L4.00095 3.96387L3.92184 4.20117L3.50095 5.46191L3.49997 5.46387H3.49899L2.99899 3.96387L1.49899 3.46387L2.99899 2.96387L3.07809 2.72754L3.4863 1.50098C3.49031 1.50045 3.49522 1.5 3.49997 1.5C3.50416 1.50002 3.50807 1.50054 3.51169 1.50098Z"
+                    stroke="currentColor"
+                  ></path>
+                  <path
+                    d="M9.5 2.75L11.412 7.587L16.25 9.5L11.412 11.413L9.5 16.25L7.587 11.413L2.75 9.5L7.587 7.587L9.5 2.75Z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div
+            class="dark:bg-codeblock children:!my-0 children:!shadow-none children:!bg-transparent code-block-background [&amp;_*]:ring-0 [&amp;_*]:outline-0 [&amp;_*]:focus:ring-0 [&amp;_*]:focus:outline-0 scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-black/15 hover:scrollbar-thumb-black/20 active:scrollbar-thumb-black/20 dark:scrollbar-thumb-white/20 dark:hover:scrollbar-thumb-white/25 dark:active:scrollbar-thumb-white/25 relative h-full w-0 max-w-full min-w-full overflow-x-auto rounded-2xl bg-white px-4 py-3.5 text-sm leading-6 transition-[height] duration-300 ease-in-out"
+            data-component-part="code-block-root"
+            tabindex="0"
+            style="
+              font-variant-ligatures: none;
+              height: auto;
+              background-color: rgb(255, 255, 255);
+              --shiki-dark-bg: #0b0c0e;
+            "
+          >
+            <div class="font-mono leading-6 whitespace-pre">
+              <pre
+                class="shiki shiki-themes github-light-default dark-plus"
+                language="json"
+                style="
+                  background-color: rgb(255, 255, 255);
+                  --shiki-dark-bg: #0b0c0e;
+                  color: rgb(31, 35, 40);
+                  --shiki-dark: #d4d4d4;
+                "
+              ><code language="json" numberoflines="6"><span class="line"><span style="color: rgb(31, 35, 40); --shiki-dark: #D4D4D4;">{</span></span>
+<span class="line"><span style="color: rgb(17, 99, 41); --shiki-dark: #9CDCFE;">  "request_status"</span><span style="color: rgb(31, 35, 40); --shiki-dark: #D4D4D4;">: {</span></span>
+<span class="line"><span style="color: rgb(17, 99, 41); --shiki-dark: #9CDCFE;">    "type"</span><span style="color: rgb(31, 35, 40); --shiki-dark: #D4D4D4;">: </span><span style="color: rgb(10, 48, 105); --shiki-dark: #CE9178;">"incomplete"</span><span style="color: rgb(31, 35, 40); --shiki-dark: #D4D4D4;">,</span></span>
+<span class="line"><span style="color: rgb(17, 99, 41); --shiki-dark: #9CDCFE;">    "incomplete_reason"</span><span style="color: rgb(31, 35, 40); --shiki-dark: #D4D4D4;">: </span><span style="color: rgb(10, 48, 105); --shiki-dark: #CE9178;">"query_result_limit_reached"</span></span>
+<span class="line"><span style="color: rgb(31, 35, 40); --shiki-dark: #D4D4D4;">  }</span></span>
+<span class="line"><span style="color: rgb(31, 35, 40); --shiki-dark: #D4D4D4;">}</span></span>
+</code></pre>
+            </div>
+          </div>
+          <div
+            class="print:hidden"
+            data-fade-overlay="true"
+            aria-hidden="true"
+            style="--fade-color-light: #ffffff; --fade-color-dark: #0b0c0e"
+          ></div>
+        </div>
+        <span data-as="p"
+          >Integrations that polled these endpoints to iterate through all
+          matching rows in a large data source should check for
+          <code>request_status.type === "incomplete"</code> and adapt
+          accordingly. The limit improves reliability for all API users by
+          bounding the server-side resources consumed by each query.</span
+        ><span data-as="p"
+          >If your integration needs to process all pages in a large data
+          source, we recommend:</span
+        >
+        <ul>
+          <li>
+            Using
+            <a class="link" href="/reference/filter-data-source-entries"
+              >data source filters</a
+            >
+            or narrowing the
+            <a class="link" href="/reference/update-a-view"
+              >view’s filter/sort configuration</a
+            >
+            to reduce the result set (for example, filter by
+            <code>last_edited_time</code> to only fetch recently changed pages).
+          </li>
+          <li>
+            Setting up
+            <a class="link" href="/reference/webhooks">integration webhooks</a>
+            for incremental sync instead of polling the full data source on a
+            schedule.
+          </li>
+          <li>Dividing large data sources into multiple smaller ones.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="april-17-2026"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#april-17-2026"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        April 17, 2026
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="update-and-delete-comment-endpoints"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#update-and-delete-comment-endpoints"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer"
+            >Update and delete comment endpoints</span
+          >
+        </h3>
+        <span data-as="p"
+          >The
+          <a class="link" href="/reference/update-a-comment"
+            >Update a comment</a
+          >
+          (<code>PATCH /v1/comments/:comment_id</code>) and
+          <a class="link" href="/reference/delete-a-comment"
+            >Delete a comment</a
+          >
+          (<code>DELETE /v1/comments/:comment_id</code>) endpoints are now
+          generally available. Non-DLP integrations can only modify or delete
+          comments they created.</span
+        >
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="multi-value-filters-for-select-status-and-multi_select-properties"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#multi-value-filters-for-select-status-and-multi_select-properties"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer"
+            >Multi-value filters for select, status, and multi_select
+            properties</span
+          >
+        </h3>
+        <span data-as="p"
+          ><a class="link" href="/reference/post-database-query-filter"
+            >Database</a
+          >
+          and
+          <a class="link" href="/reference/filter-data-source-entries"
+            >data source</a
+          >
+          filters now accept an array of values for <code>equals</code> /
+          <code>does_not_equal</code> on select and status properties, and for
+          <code>contains</code> / <code>does_not_contain</code> on multi_select
+          properties, matching the multi-value conditions available in the
+          Notion UI. The same schema is used by
+          <a
+            class="link"
+            href="/guides/data-apis/working-with-views#quick-filters"
+            >view filters and quick filters</a
+          >. Person filters set via the API also now round-trip cleanly on read
+          without extra combinator nesting.</span
+        >
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="notion-mcp-improvements"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#notion-mcp-improvements"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">Notion MCP improvements</span>
+        </h3>
+        <ul>
+          <li>
+            The
+            <a class="link" href="/guides/mcp/mcp"><code>search</code></a> tool
+            no longer drops Slack DMs and private channel results when the
+            connected workspace has the Slack integration enabled.
+          </li>
+          <li>
+            The
+            <a class="link" href="/guides/mcp/mcp"><code>fetch</code></a> tool
+            now accepts any first-party Notion domain for the current
+            environment (both <code>notion.so</code> and
+            <code>notion.com</code>), fixing cases where pasted links fell
+            through as generic webpages.
+          </li>
+          <li>
+            Page resources returned by the <code>fetch</code> tool now include
+            <code>is_archived</code> so agents can tell when a page is in the
+            trash.
+          </li>
+          <li>
+            The enhanced Markdown guidance the MCP presents to LLMs now
+            documents <code>&lt;br&gt;</code> as the correct way to break lines
+            inside inline code, preventing retry loops when agents write
+            multi-line inline code via <code>update_page</code>.
+          </li>
+          <li>
+            The Notion MCP OAuth server adds
+            <a
+              href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-client-id-metadata-document"
+              target="_blank"
+              rel="noreferrer"
+              class="link"
+              >Client ID Metadata Document (CIMD)</a
+            >
+            support per
+            <a
+              href="https://modelcontextprotocol.io/specification/2025-11-25"
+              target="_blank"
+              rel="noreferrer"
+              class="link"
+              >MCP spec 2025-11-25</a
+            >, letting clients use an HTTPS URL as their
+            <code>client_id</code> instead of going through Dynamic Client
+            Registration.
+          </li>
+        </ul>
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="comment-markdown-formatting-clarification"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#comment-markdown-formatting-clarification"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer"
+            >Comment markdown formatting clarification</span
+          >
+        </h3>
+        <span data-as="p"
+          >The
+          <a class="link" href="/reference/create-a-comment"
+            >Create a comment</a
+          >
+          and
+          <a class="link" href="/reference/update-a-comment"
+            >Update a comment</a
+          >
+          references now explicitly document that the <code>markdown</code> body
+          parameter supports inline formatting only — fenced code blocks,
+          headings, lists, tables, and blockquotes do not render as structured
+          blocks in comments.</span
+        ><span data-as="p"
+          ><strong>SDK support</strong>: <code>@notionhq/client</code>
+          <a
+            href="https://github.com/makenotion/notion-sdk-js/releases/tag/v5.18.0"
+            target="_blank"
+            rel="noreferrer"
+            class="link"
+            ><code>v5.18.0</code></a
+          >
+          adds typed support for multi-value select, status, and multi_select
+          filters.
+          <a
+            href="https://github.com/makenotion/notion-sdk-js/releases/tag/v5.19.0"
+            target="_blank"
+            rel="noreferrer"
+            class="link"
+            ><code>v5.19.0</code></a
+          >
+          adds <code>notion.comments.update()</code> and
+          <code>notion.comments.delete()</code>.</span
+        >
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="april-7-2026"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#april-7-2026"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        April 7, 2026
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="markdown-body-parameter-for-comments"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#markdown-body-parameter-for-comments"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer"
+            >Markdown body parameter for comments</span
+          >
+        </h3>
+        <span data-as="p"
+          >The
+          <a class="link" href="/reference/create-a-comment">Create comment</a>
+          endpoint now accepts an optional <code>markdown</code> string body
+          parameter as an alternative to <code>rich_text</code>. Exactly one of
+          <code>rich_text</code> or <code>markdown</code> must be provided. See
+          the
+          <a class="link" href="/reference/create-a-comment#comment-body-format"
+            >endpoint reference</a
+          >
+          for supported formatting and usage details.</span
+        ><span data-as="p"
+          ><strong>SDK support</strong>: <code>@notionhq/client</code>
+          <a
+            href="https://github.com/makenotion/notion-sdk-js/releases/tag/v5.17.0"
+            target="_blank"
+            rel="noreferrer"
+            class="link"
+            ><code>v5.17.0</code></a
+          >
+          includes typed support for the <code>markdown</code> comment body
+          parameter.</span
+        >
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="april-2-2026"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#april-2-2026"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        April 2, 2026
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="what’s-new"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#what’s-new"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">What’s new</span>
+        </h3>
+        <span data-as="p"
+          >The
+          <a
+            href="https://www.notion.so/notion/Developer-Terms-ba4131408d0844e08330da2cbb225c20"
+            target="_blank"
+            rel="noreferrer"
+            class="link"
+            >Developer Terms</a
+          >
+          have been updated with clarifications to scope, revisions to the
+          Feedback provision, and other minor revisions.</span
+        >
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="march-30-2026"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#march-30-2026"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        March 30, 2026
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="heading-4-block-type"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#heading-4-block-type"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">Heading 4 block type</span>
+        </h3>
+        <span data-as="p"
+          ><a class="link" href="/reference/block#headings"
+            ><code>heading_4</code></a
+          >
+          is now a supported block type. You can create, read, and update
+          heading 4 blocks through the
+          <a class="link" href="/reference/patch-block-children"
+            >Append block children</a
+          >,
+          <a class="link" href="/reference/retrieve-a-block">Retrieve a block</a
+          >, and
+          <a class="link" href="/reference/update-a-block">Update a block</a>
+          endpoints, matching the existing <code>heading_1</code>,
+          <code>heading_2</code>, and <code>heading_3</code> block types.</span
+        >
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="tab-item-icons"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#tab-item-icons"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">Tab item icons</span>
+        </h3>
+        <span data-as="p"
+          ><a class="link" href="/reference/block#paragraph"
+            >Paragraph blocks</a
+          >
+          that are direct children of
+          <a class="link" href="/reference/block#tab">tab blocks</a> now support
+          an optional
+          <a class="link" href="/reference/emoji-and-icon"><code>icon</code></a>
+          field. You can set icons on tab items when creating tabs via
+          <a class="link" href="/reference/patch-block-children"
+            >Append block children</a
+          >
+          or <a class="link" href="/reference/post-page">Create a page</a>, and
+          update them via
+          <a class="link" href="/reference/update-a-block">Update a block</a>.
+          Icons on paragraphs that are not tab items are rejected with a
+          validation error.</span
+        >
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="”me”-relative-filter-for-people-properties"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#”me”-relative-filter-for-people-properties"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer"
+            >”me” relative filter for people properties</span
+          >
+        </h3>
+        <span data-as="p"
+          ><a class="link" href="/reference/filter-data-source-entries#people"
+            >People filter conditions</a
+          >
+          now accept <code>"me"</code> as a value for <code>contains</code> and
+          <code>does_not_contain</code>, in addition to user UUIDs. For
+          <a class="link" href="/guides/get-started/overview#connection-types"
+            >public integrations</a
+          >, <code>"me"</code> resolves to the user who authorized the
+          connection. For
+          <a class="link" href="/guides/get-started/overview#connection-types"
+            >internal integrations</a
+          >, <code>"me"</code> does not resolve to a user — a
+          <code>contains: "me"</code> filter will return no results and a
+          <code>does_not_contain: "me"</code> filter will match all entries.
+          Works across
+          <a class="link" href="/reference/post-database-query-filter#people"
+            >database queries</a
+          >,
+          <a class="link" href="/reference/filter-data-source-entries#people"
+            >data source queries</a
+          >,
+          <a
+            class="link"
+            href="/guides/data-apis/working-with-views#quick-filters"
+            >view filters, and quick filters</a
+          >.</span
+        >
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="relative-date-filter-values"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#relative-date-filter-values"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">Relative date filter values</span>
+        </h3>
+        <span data-as="p"
+          >Date filter conditions that accept an
+          <a
+            href="https://en.wikipedia.org/wiki/ISO_8601"
+            target="_blank"
+            rel="noreferrer"
+            class="link"
+            >ISO 8601 date</a
+          >
+          string (<code>equals</code>, <code>before</code>, <code>after</code>,
+          <code>on_or_before</code>, <code>on_or_after</code>) now also accept
+          the following relative date values: <code>"today"</code>,
+          <code>"tomorrow"</code>, <code>"yesterday"</code>,
+          <code>"one_week_ago"</code>, <code>"one_week_from_now"</code>,
+          <code>"one_month_ago"</code>, <code>"one_month_from_now"</code>. These
+          are resolved at query time relative to the current date. See the
+          <a class="link" href="/reference/filter-data-source-entries#date"
+            >date filter reference</a
+          >
+          for details.</span
+        >
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="view-api-fixes"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#view-api-fixes"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">View API fixes</span>
+        </h3>
+        <span data-as="p"
+          >Several fixes to the
+          <a class="link" href="/guides/data-apis/working-with-views"
+            >views API</a
+          >:</span
+        >
+        <ul>
+          <li>
+            <strong>Percent-encoded property IDs</strong>: Property IDs returned
+            by the API (e.g. <code>%7DUlu</code>) are now correctly resolved
+            when used in view filters, sorts, group-by, and other property
+            references.
+          </li>
+          <li>
+            <strong><code>width: 0</code> rejected</strong>: Column widths must
+            now be at least <code>1</code>. A width of <code>0</code> was
+            previously accepted but had no effect.
+          </li>
+          <li>
+            <strong>Partial <code>properties</code> list</strong>: Specifying a
+            subset of properties in a view now correctly hides unlisted
+            properties instead of showing all properties.
+          </li>
+        </ul>
+        <span data-as="p"
+          ><strong>SDK support</strong>: <code>@notionhq/client</code>
+          <a
+            href="https://github.com/makenotion/notion-sdk-js/releases/tag/v5.16.0"
+            target="_blank"
+            rel="noreferrer"
+            class="link"
+            ><code>v5.16.0</code></a
+          >
+          includes typed support for heading 4, tab item icons, and the
+          <code>"me"</code> person filter value.</span
+        >
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="march-25-2026"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#march-25-2026"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        March 25, 2026
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="tab-block-support"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#tab-block-support"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">Tab block support</span>
+        </h3>
+        <span data-as="p"
+          ><a class="link" href="/reference/block#tab">Tab blocks</a> are now a
+          supported block type in the API. Use tabs to organize content into
+          labeled sections within a page.</span
+        >
+        <ul>
+          <li>
+            <strong>Read</strong>:
+            <a class="link" href="/reference/retrieve-a-block"
+              >Retrieve a block</a
+            >
+            and
+            <a class="link" href="/reference/get-block-children"
+              >Retrieve block children</a
+            >
+            return tab blocks with <code>type: "tab"</code> and an empty
+            <code>tab: {}</code> object. Each tab within the container is a
+            <a class="link" href="/reference/block#paragraph">paragraph</a>
+            block — the <code>rich_text</code> is the tab label, the
+            <code>icon</code> is the tab icon, and the
+            <code>children</code> contain the tab’s content.
+          </li>
+          <li>
+            <strong>Create</strong>:
+            <a class="link" href="/reference/patch-block-children"
+              >Append block children</a
+            >
+            accepts <code>type: "tab"</code> blocks. Each tab is a paragraph
+            block with nested children and an optional <code>icon</code>. Only
+            paragraph blocks can be direct children of a tab block.
+          </li>
+        </ul>
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="writable-verification-property"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#writable-verification-property"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">Writable verification property</span>
+        </h3>
+        <span data-as="p"
+          >The
+          <a class="link" href="/reference/page-property-values#verification"
+            ><code>verification</code></a
+          >
+          property on wiki database pages can now be set and updated via the
+          <a class="link" href="/reference/post-page">Create page</a> and
+          <a class="link" href="/reference/patch-page">Update page</a>
+          endpoints. Set <code>state</code> to <code>"verified"</code> or
+          <code>"unverified"</code>, with an optional <code>date</code> object
+          for expiration. The <code>verified_by</code> field is automatically
+          set to the acting integration and cannot be overridden.</span
+        >
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="native-icons-and-custom-emoji-listing"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#native-icons-and-custom-emoji-listing"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer"
+            >Native icons and custom emoji listing</span
+          >
+        </h3>
+        <span data-as="p">Two icon-related improvements:</span>
+        <ul>
+          <li>
+            <strong>Native Notion icons</strong>: A new
+            <code>type: "icon"</code> variant is available on all
+            <a class="link" href="/reference/emoji-and-icon#icon"
+              ><code>icon</code></a
+            >
+            fields (pages, databases, callout blocks). Specify an icon by
+            <code>name</code> and optional <code>color</code> (defaults to
+            <code>"gray"</code>). Previously, native icons were returned as
+            <code>type: "external"</code> with SVG URLs — they are now returned
+            in the structured <code>icon</code> format.
+          </li>
+          <li>
+            <strong>Custom emoji listing</strong>: A new
+            <a class="link" href="/reference/list-custom-emojis"
+              >List custom emojis</a
+            >
+            endpoint (<code>GET /v1/custom_emojis</code>) retrieves workspace
+            custom emojis with cursor pagination and an optional
+            <code>name</code> filter for exact-match lookups.
+          </li>
+        </ul>
+        <span data-as="p"
+          ><strong>SDK support</strong>: <code>@notionhq/client</code>
+          <a
+            href="https://github.com/makenotion/notion-sdk-js/releases/tag/v5.15.0"
+            target="_blank"
+            rel="noreferrer"
+            class="link"
+            ><code>v5.15.0</code></a
+          >
+          adds <code>notion.customEmojis.list()</code> and typed support for tab
+          blocks, verification writes, and native icons.</span
+        >
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="march-19-2026"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#march-19-2026"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        March 19, 2026
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <h3 class="group flex font-semibold whitespace-pre-wrap" id="views-api">
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#views-api"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">Views API</span>
+        </h3>
+        <span data-as="p"
+          >We’ve launched the
+          <a class="link" href="/guides/data-apis/working-with-views"
+            ><code>/v1/views</code> API</a
+          >. Eight new endpoints let integrations programmatically manage
+          database views — the same view presets that users create in the Notion
+          UI:</span
+        >
+        <ul>
+          <li>
+            <a class="link" href="/reference/create-view">Create</a>,
+            <a class="link" href="/reference/retrieve-a-view">retrieve</a>,
+            <a class="link" href="/reference/update-a-view">update</a>, and
+            <a class="link" href="/reference/delete-view">delete</a> views on
+            any database.
+          </li>
+          <li>
+            <a class="link" href="/reference/list-views">List views</a> for a
+            database or across the workspace by data source.
+          </li>
+          <li>
+            <a class="link" href="/reference/create-view-query">Query a view</a>
+            to fetch pages using the view’s saved filter and sort configuration,
+            with
+            <a class="link" href="/reference/get-view-query-results"
+              >pagination</a
+            >
+            support.
+          </li>
+        </ul>
+        <span data-as="p"
+          ><a
+            class="link"
+            href="/guides/data-apis/working-with-views#view-configuration"
+            >Supported view types</a
+          >
+          include table, board, calendar, timeline, gallery, list, form, chart,
+          map, and dashboard. Views can be configured with filters, sorts,
+          <a
+            class="link"
+            href="/guides/data-apis/working-with-views#quick-filters"
+            >quick filters</a
+          >, and type-specific layout settings like grouping, cover images,
+          subtasks, and chart options.</span
+        ><span data-as="p"
+          >Dashboard views support a full grid layout with
+          <a
+            class="link"
+            href="/guides/data-apis/working-with-views#widget-placement"
+            >widget placement</a
+          >
+          — add, position, and remove widget views within rows.</span
+        ><span data-as="p"
+          >Three new
+          <a class="link" href="/reference/webhooks/view-created"
+            >webhook events</a
+          >
+          (<code>view.created</code>, <code>view.updated</code>,
+          <code>view.deleted</code>) are available on API version
+          <code>2025-09-03</code> and later.</span
+        ><span data-as="p"
+          ><strong>SDK support</strong>: <code>@notionhq/client</code>
+          <a
+            href="https://github.com/makenotion/notion-sdk-js/releases/tag/v5.14.0"
+            target="_blank"
+            rel="noreferrer"
+            class="link"
+            ><code>v5.14.0</code></a
+          >
+          adds <code>notion.views.*</code> and
+          <code>notion.views.queries.*</code> methods.</span
+        >
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="status-property-support"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#status-property-support"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">Status property support</span>
+        </h3>
+        <span data-as="p"
+          >You can now
+          <a class="link" href="/reference/property-object#status"
+            >create and update status properties</a
+          >
+          through the Notion API and
+          <a class="link" href="/guides/mcp/mcp">Notion MCP</a>. Previously,
+          status properties were read-only — they could be queried but not
+          created or modified via the API.</span
+        >
+        <ul>
+          <li>
+            <strong>Create</strong>: pass <code>{ status: {} }</code> in a
+            <a class="link" href="/reference/create-database"
+              >Create database</a
+            >
+            or
+            <a class="link" href="/reference/create-a-data-source"
+              >Create data source</a
+            >
+            request to add a status property with default options (Not started,
+            In progress, Done). Custom initial options are also supported.
+          </li>
+          <li>
+            <strong>Update</strong>: add new options to an existing status
+            property via
+            <a class="link" href="/reference/update-a-data-source"
+              >Update data source</a
+            >, following the same pattern as select and multi_select.
+          </li>
+          <li>
+            <strong>MCP</strong>: the <code>notion-create-database</code> and
+            <code>notion-update-data-source</code> tools now support the
+            <code>STATUS</code> column type in their schema definitions.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="march-11-2026"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#march-11-2026"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        March 11, 2026
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="new-api-version-2026-03-11"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#new-api-version-2026-03-11"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer"
+            >New API version: <code>2026-03-11</code></span
+          >
+        </h3>
+        <span data-as="p"
+          >We’ve released
+          <strong>Notion API version <code>2026-03-11</code></strong> with three
+          breaking changes that simplify and modernize the API surface:</span
+        >
+        <ul>
+          <li>
+            <strong><code>after</code> replaced by <code>position</code></strong
+            >: The
+            <a class="link" href="/reference/patch-block-children"
+              >Append block children</a
+            >
+            endpoint now uses a <code>position</code> object instead of a flat
+            <code>after</code> string parameter, enabling more flexible block
+            placement (including <code>start</code> and
+            <code>end</code> positioning).
+          </li>
+          <li>
+            <strong
+              ><code>archived</code> replaced by <code>in_trash</code></strong
+            >: All endpoints now use <code>in_trash</code> instead of
+            <code>archived</code> in both request parameters and response
+            bodies. The <code>archived</code> field was
+            <a class="link" href="/page/changelog#changes-for-april-2024"
+              >deprecated in April 2024</a
+            >
+            and is now fully removed in this version.
+          </li>
+          <li>
+            <strong
+              ><code>transcription</code> renamed to
+              <code>meeting_notes</code></strong
+            >: The <code>transcription</code> block type has been renamed to
+            <code>meeting_notes</code> across all block endpoints.
+          </li>
+        </ul>
+        <span data-as="p"
+          >Most integrations only need simple find-and-replace updates. See the
+          <a class="link" href="/guides/get-started/upgrade-guide-2026-03-11"
+            >upgrade guide</a
+          >
+          for step-by-step instructions.</span
+        ><span data-as="p"
+          ><strong>SDK support</strong>: <code>@notionhq/client</code>
+          <a
+            href="https://github.com/makenotion/notion-sdk-js/releases/tag/v5.12.0"
+            target="_blank"
+            rel="noreferrer"
+            class="link"
+            ><code>v5.12.0</code></a
+          >
+          adds support for <code>2026-03-11</code>. Upgrade the SDK and set
+          <code>notionVersion: "2026-03-11"</code> to opt in.</span
+        >
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="notion-mcp-new-view-tools"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#notion-mcp-new-view-tools"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">Notion MCP: new view tools</span>
+        </h3>
+        <span data-as="p"
+          >Two new tools are available in
+          <a class="link" href="/guides/mcp/mcp">Notion MCP</a>:</span
+        >
+        <ul>
+          <li>
+            <strong><code>notion-create-view</code></strong> — Create new
+            database views with filters, sorts, grouping, display properties,
+            and layout-specific settings (calendar, timeline, etc.).
+          </li>
+          <li>
+            <strong><code>notion-update-view</code></strong> — Update an
+            existing view’s configuration. Accepts <code>view://</code> URIs,
+            Notion URLs with <code>?v=</code>, or bare UUIDs.
+          </li>
+        </ul>
+        <span data-as="p"
+          >See
+          <a class="link" href="/guides/mcp/mcp-supported-tools"
+            >Supported tools</a
+          >
+          for details and example prompts.</span
+        >
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="markdown-content-api-improvements"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#markdown-content-api-improvements"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">Markdown content API improvements</span>
+        </h3>
+        <span data-as="p"
+          >The
+          <a class="link" href="/reference/update-page-markdown"
+            >Update page markdown</a
+          >
+          endpoint now supports two additional command types:</span
+        >
+        <ul>
+          <li>
+            <strong><code>update_content</code></strong> — Make targeted edits
+            with an array of search-and-replace operations (<code>old_str</code>
+            / <code>new_str</code>). Recommended for precise, multi-site edits.
+          </li>
+          <li>
+            <strong><code>replace_content</code></strong> — Replace the entire
+            page content with new markdown in a single operation.
+          </li>
+        </ul>
+        <span data-as="p"
+          >We recommend <code>update_content</code> and
+          <code>replace_content</code> over the older
+          <code>insert_content</code> and
+          <code>replace_content_range</code> commands. See
+          <a class="link" href="/guides/data-apis/working-with-markdown-content"
+            >Working with markdown content</a
+          >
+          for usage examples.</span
+        >
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="template-timezone-parameter"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#template-timezone-parameter"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">Template timezone parameter</span>
+        </h3>
+        <span data-as="p"
+          >The <a class="link" href="/reference/post-page">Create page</a> and
+          <a class="link" href="/reference/patch-page">Update page</a> endpoints
+          now accept an optional <code>timezone</code> field inside the
+          <code>template</code> parameter. This controls how template variables
+          like <code>@now</code> and <code>@today</code> resolve — for example,
+          <code>"America/New_York"</code> ensures dates reflect Eastern Time
+          instead of defaulting to UTC. See the
+          <a class="link" href="/guides/data-apis/creating-pages-from-templates"
+            >Creating pages from templates</a
+          >
+          guide for details.</span
+        >
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="march-2-2026"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#march-2-2026"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        March 2, 2026
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <ul>
+          <li>
+            The
+            <a class="link" href="/reference/retrieve-page-markdown"
+              ><code>GET /v1/pages/:page_id/markdown</code></a
+            >
+            endpoint is now available to
+            <strong>internal integrations</strong> (workspace-level bots), in
+            addition to public integrations.
+          </li>
+          <li>
+            Released
+            <a
+              href="https://github.com/makenotion/notion-sdk-js/releases/tag/v5.11.1"
+              target="_blank"
+              rel="noreferrer"
+              class="link"
+              ><code>v5.11.1</code></a
+            >
+            of our TS/JS SDK. <code>UnsupportedBlockObjectResponse</code> now
+            includes a <code>block_type</code> string field indicating the
+            underlying block type.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="february-26-2026"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#february-26-2026"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        February 26, 2026
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <span data-as="p"
+          >We released
+          <a
+            href="https://github.com/makenotion/notion-sdk-js/releases/tag/v5.10.0"
+            target="_blank"
+            rel="noreferrer"
+            class="link"
+            ><code>v5.10.0</code></a
+          >
+          and
+          <a
+            href="https://github.com/makenotion/notion-sdk-js/releases/tag/v5.11.0"
+            target="_blank"
+            rel="noreferrer"
+            class="link"
+            ><code>v5.11.0</code></a
+          >
+          of our SDK for JavaScript and TypeScript. Here’s what’s new in the
+          Notion API:</span
+        >
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="markdown-content-api"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#markdown-content-api"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">Markdown content API</span>
+        </h3>
+        <span data-as="p"
+          >Three new endpoints let you create, read, and update page content
+          using
+          <a class="link" href="/guides/data-apis/enhanced-markdown"
+            >enhanced markdown</a
+          >
+          instead of the block-based API:</span
+        >
+        <ul>
+          <li>
+            <a class="link" href="/reference/post-page"
+              ><code>POST /v1/pages</code></a
+            >
+            now accepts a <code>markdown</code> parameter as an alternative to
+            <code>children</code>.
+          </li>
+          <li>
+            <a class="link" href="/reference/retrieve-page-markdown"
+              ><code>GET /v1/pages/:page_id/markdown</code></a
+            >
+            retrieves a page’s full content as enhanced markdown.
+          </li>
+          <li>
+            <a class="link" href="/reference/update-page-markdown"
+              ><code>PATCH /v1/pages/:page_id/markdown</code></a
+            >
+            inserts or replaces content using enhanced markdown with
+            ellipsis-based selections.
+          </li>
+        </ul>
+        <span data-as="p"
+          >See
+          <a class="link" href="/guides/data-apis/working-with-markdown-content"
+            >Working with markdown content</a
+          >
+          and the
+          <a class="link" href="/guides/data-apis/enhanced-markdown"
+            >Enhanced markdown format reference</a
+          >
+          for details.</span
+        >
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="ai-meeting-notes"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#ai-meeting-notes"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">AI meeting notes</span>
+        </h3>
+        <ul>
+          <li>
+            The <code>GET /v1/pages/:page_id/markdown</code> endpoint supports
+            an <code>include_transcript</code> query parameter to include full
+            meeting note transcripts in the response.
+          </li>
+          <li>
+            Added support for the
+            <a class="link" href="/reference/block#transcription"
+              ><code>transcription</code> block type</a
+            >, enabling integrations to read AI meeting notes metadata —
+            including title, status, calendar event details, and pointers to
+            summary, notes, and transcript content blocks.
+          </li>
+        </ul>
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="sdk-improvements"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#sdk-improvements"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">SDK improvements</span>
+        </h3>
+        <ul>
+          <li>
+            <strong>Automatic retry with exponential backoff</strong> — the SDK
+            now retries failed requests automatically with configurable backoff
+            (<a
+              href="https://github.com/makenotion/notion-sdk-js/releases/tag/v5.10.0"
+              target="_blank"
+              rel="noreferrer"
+              class="link"
+              >v5.10.0</a
+            >).
+          </li>
+          <li>
+            <strong>Markdown endpoint methods</strong> —
+            <code>pages.retrieveMarkdown()</code> and
+            <code>pages.updateMarkdown()</code> (<a
+              href="https://github.com/makenotion/notion-sdk-js/releases/tag/v5.11.0"
+              target="_blank"
+              rel="noreferrer"
+              class="link"
+              >v5.11.0</a
+            >).
+          </li>
+        </ul>
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="notion-mcp-improvements-2"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#notion-mcp-improvements-2"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">Notion MCP improvements</span>
+        </h3>
+        <span data-as="p"
+          >Highlighting recent changes to
+          <a
+            href="https://developers.notion.com/docs/mcp"
+            target="_blank"
+            rel="noreferrer"
+            class="link"
+            >Notion MCP</a
+          >:</span
+        >
+        <ul>
+          <li>
+            Create and fetch <strong>comments on blocks</strong>, not just
+            pages.
+          </li>
+          <li>View <strong>Notion Sites</strong> pages via the fetch tool.</li>
+          <li>
+            Fetch AI <strong>meeting transcripts</strong> and query meeting
+            notes efficiently with the new
+            <code>notion-query-meeting-notes</code> tool.
+          </li>
+          <li>
+            Fetch an <strong>individual data source</strong> by ID or URL within
+            a database.
+          </li>
+          <li>
+            <strong>~91% context token reduction</strong> in
+            <code>notion-create-database</code> and
+            <code>notion-update-data-source</code> tools by switching to SQL
+            DDL-based schemas.
+          </li>
+          <li>
+            Added <code>update_verification</code> command to the
+            <code>notion-update-page</code> tool.
+          </li>
+          <li>
+            Flattened <code>notion-update-page</code> tool parameters and fixed
+            schema issues for improved compatibility with MCP clients.
+          </li>
+          <li>
+            <strong>Enterprise governance</strong>: audit logging for MCP tool
+            usage and admin tool allowlisting.
+          </li>
+        </ul>
+        <span data-as="p"
+          >We recommend reconnecting Notion MCP in your third-party AI tools to
+          ensure you have the most up-to-date tools and resources.</span
+        >
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="january-15-2026"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#january-15-2026"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        January 15, 2026
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <span data-as="p"
+          >We
+          <a
+            href="https://github.com/makenotion/notion-sdk-js/releases/tag/v5.7.0"
+            target="_blank"
+            rel="noreferrer"
+            class="link"
+            >released <code>v5.7.0</code></a
+          >
+          of our SDK for JavaScript and TypeScript. Since the last changelog
+          entry, we’ve added the following fixes and improvements to the Notion
+          API:</span
+        >
+        <ul>
+          <li>
+            Introduce
+            <a class="link" href="/reference/move-page">Move page</a> API to
+            change the <code>parent</code> of an existing page.
+          </li>
+          <li>
+            TS/JS example projects extracted to a new open-source project:
+            <a
+              href="https://github.com/makenotion/notion-cookbook/tree/main/examples"
+              target="_blank"
+              rel="noreferrer"
+              class="link"
+              ><code>notion-cookbook</code></a
+            >.
+          </li>
+          <li>
+            Add support for
+            <a
+              href="https://developers.notion.com/reference/post-page#choosing-a-parent"
+              target="_blank"
+              rel="noreferrer"
+              class="link"
+              >customizing the <code>position</code> of a new page</a
+            >
+            within the parent page.
+          </li>
+          <li>
+            New APIs to power the flow described in our
+            <a
+              class="link"
+              href="/guides/data-apis/creating-pages-from-templates"
+              >Creating pages from templates</a
+            >
+            guide:
+            <ul>
+              <li>
+                Introduce
+                <a class="link" href="/reference/list-data-source-templates"
+                  >List data source templates</a
+                >
+                endpoint.
+              </li>
+              <li>
+                Introduce
+                <a
+                  href="https://developers.notion.com/reference/post-page#setting-up-page-content"
+                  target="_blank"
+                  rel="noreferrer"
+                  class="link"
+                  ><code>template</code> parameter</a
+                >
+                to Create Page API.
+              </li>
+              <li>
+                Introduce
+                <a
+                  href="https://developers.notion.com/reference/patch-page#applying-a-page-template"
+                  target="_blank"
+                  rel="noreferrer"
+                  class="link"
+                  ><code>template</code></a
+                >
+                and
+                <a
+                  href="https://developers.notion.com/reference/patch-page#erasing-content-from-a-page"
+                  target="_blank"
+                  rel="noreferrer"
+                  class="link"
+                  ><code>erase_content</code> parameters</a
+                >
+                to Update Page API.
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <span data-as="p"
+          >Highlighting recent LLM-facing changes to
+          <a
+            href="https://developers.notion.com/docs/mcp"
+            target="_blank"
+            rel="noreferrer"
+            class="link"
+            >Notion MCP</a
+          >, our remote Model Context Protocol (MCP) server for AI tools:</span
+        >
+        <ul>
+          <li>
+            Released <code>notion-query-data-sources</code> tool to Enterprise
+            Notion workspaces with access to Notion AI.
+          </li>
+          <li>
+            Tool consolidation: <code>notion-get-user</code> has been removed
+            &amp; its functionality has been rolled into
+            <code>notion-get-users</code>.
+          </li>
+          <li>
+            Fixed a bug causing child content to be deleted by the
+            <code>notion-update-page</code> tool when using
+            <code>replace_content</code> and
+            <code>replace_content_range</code> modes.
+          </li>
+          <li>
+            Removed Notion-flavored Markdown specification from
+            <code>notion-create-pages</code> tool to conserve context tokens,
+            since it exists behind a dedicated MCP Resource as well.
+          </li>
+        </ul>
+        <span data-as="p"
+          >We recommend reconnecting Notion MCP in your third-party AI tools to
+          ensure you have the most up-to-date tools and resources.</span
+        >
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="september-13-2025"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#september-13-2025"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        September 13, 2025
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <span data-as="p"
+          >We
+          <a
+            href="https://github.com/makenotion/notion-sdk-js/releases/tag/v5.1.0"
+            target="_blank"
+            rel="noreferrer"
+            class="link"
+            >released <code>v5.1.0</code></a
+          >
+          of <code>@notionhq/client</code>, our SDK for JavaScript and
+          TypeScript. This includes the following fixes and improvements:</span
+        >
+        <ul>
+          <li>
+            Add support for <code>is_locked</code> boolean parameter on update
+            page and database APIs (to update whether a page is locked in the
+            Notion app UI)
+          </li>
+          <li>
+            <code>dataSource.update</code>: add support for changing a data
+            source’s <code>parent</code> database
+          </li>
+          <li>
+            Remove <code>page_id</code> as a possible <code>parent</code> for
+            <code>CreateDataSourceBodyParameters</code>
+          </li>
+          <li>Add <code>request_id</code> to Client log lines</li>
+        </ul>
+        <span data-as="p"
+          >As noted in the
+          <a
+            href="https://github.com/makenotion/notion-sdk-js?tab=readme-ov-file#requirements-and-compatibility"
+            target="_blank"
+            rel="noreferrer"
+            class="link"
+            >library’s README</a
+          >, v5 and above of the SDK isn’t compatible with API versions older
+          than <code>2025-09-03</code>. See the
+          <a class="link" href="/guides/get-started/upgrade-guide-2025-09-03"
+            >upgrade guide</a
+          >
+          to learn more.</span
+        >
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="august-26-2025"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#august-26-2025"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        August 26, 2025
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="important-api-update-coming-september-3rd"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#important-api-update-coming-september-3rd"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer"
+            >Important API update coming September 3rd</span
+          >
+        </h3>
+        <span data-as="p"
+          >We’re introducing multi-source databases to Notion! Our new API
+          version <code>2025-09-03</code> separates “<strong>databases</strong>”
+          (containers) from “<strong>data sources</strong>” (tables), unlocking
+          powerful new organizational capabilities.</span
+        >
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="what-you-need-to-know"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#what-you-need-to-know"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">What you need to know:</span>
+        </h3>
+        <ul>
+          <li>
+            Current integrations continue working with single-source databases
+          </li>
+          <li>
+            Update to the new API version to support multi-source databases
+          </li>
+          <li>
+            We’re introducing the concept of API versioning to
+            <a class="link" href="/reference/webhooks">integration webhooks</a>
+            as well
+          </li>
+        </ul>
+        <span data-as="p"
+          >Start upgrading your integrations now to ensure a smooth transition
+          when users begin creating additional data sources starting from
+          September 3rd.</span
+        ><span data-as="p"
+          ><strong>Full details and migration guide</strong>:
+          <a class="link" href="/guides/get-started/upgrade-guide-2025-09-03"
+            >Upgrading to 2025-09-03</a
+          ></span
+        ><span data-as="p"
+          ><strong>General information about API versioning</strong>:
+          <a class="link" href="/reference/versioning">Versioning</a></span
+        >
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="december-20-2024"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#december-20-2024"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        December 20, 2024
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="what’s-new-2"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#what’s-new-2"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">What’s new</span>
+        </h3>
+        <ul>
+          <li>
+            Revised <strong>Section 1.1</strong> to refine the scope of
+            application of the
+            <a
+              href="https://www.notion.so/Developer-Terms-ba4131408d0844e08330da2cbb225c20"
+              target="_blank"
+              rel="noreferrer"
+              class="link"
+              >Developer Terms</a
+            >.
+          </li>
+          <li>
+            Revised <strong>Section 3.1</strong> to clarify prohibited uses of
+            the API and created a new <strong>Section 3.2</strong> for
+            formatting purposes
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="september-11-2024"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#september-11-2024"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        September 11, 2024
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="what’s-new-3"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#what’s-new-3"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">What’s new</span>
+        </h3>
+        <span data-as="p"
+          >We are excited to announce an update to our Notion Public API token
+          format.</span
+        ><span data-as="p"
+          >Starting September 25, 2024, newly generated Public API tokens will
+          automatically use the <strong><code>ntn_</code></strong> prefix
+          instead of the**<code>secret_</code>** prefix.</span
+        >
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="why-the-change"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#why-the-change"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">Why the change?</span>
+        </h3>
+        <span data-as="p"
+          >This change is part of our ongoing efforts to improve the security of
+          our API. By introducing the <strong><code>ntn_</code></strong> prefix,
+          we aim to:</span
+        >
+        <ul>
+          <li>
+            Enhance compatibility with secret scanners and other security tools,
+            making it easier to identify and manage Notion API tokens.
+          </li>
+          <li>
+            Provide a clearer distinction between Notion API tokens and other
+            types of secrets, reducing the risk of misconfiguration and
+            improving overall security.
+          </li>
+        </ul>
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="what-do-you-need-to-do"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#what-do-you-need-to-do"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">What do you need to do?</span>
+        </h3>
+        <ul>
+          <li>
+            New Integrations: For any new integrations, the tokens will be
+            automatically generated with the
+            <strong><code>ntn_</code></strong> prefix. Simply generate your
+            tokens as usual through the Notion API settings page.
+          </li>
+          <li>
+            Existing Tokens: All existing tokens with the secret_ prefix will
+            continue to work without any changes. There is no immediate need to
+            update your existing integrations.
+          </li>
+          <li>
+            Token Format: We strongly advise against using regular expressions
+            (regex) to identify or validate Notion Public API tokens. The token
+            format may change over time, and relying on regex patterns could
+            lead to false positives or negatives. Instead, treat the token as an
+            opaque string and use it as provided.
+          </li>
+          <li>
+            Best Practices: To handle Notion API tokens securely:
+            <ul>
+              <li>
+                Store tokens securely using appropriate encryption methods.
+              </li>
+              <li>
+                Use Notion’s official SDKs or libraries when available, as they
+                handle token management correctly.
+              </li>
+              <li>
+                Validate tokens by making authenticated requests to Notion’s API
+                rather than parsing the token itself.
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="questions-or-concerns"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#questions-or-concerns"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">Questions or concerns?</span>
+        </h3>
+        <span data-as="p"
+          >If you have any questions or need assistance with this transition,
+          please feel free to reach out to our support team or visit our
+          docs.</span
+        >
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="september-9-2024"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#september-9-2024"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        September 9, 2024
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="what’s-new-4"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#what’s-new-4"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">What’s new</span>
+        </h3>
+        <span data-as="p"
+          >Revised <strong>Section 3.1</strong> of the
+          <a
+            href="https://www.notion.so/Developer-Terms-ba4131408d0844e08330da2cbb225c20"
+            target="_blank"
+            rel="noreferrer"
+            class="link"
+            >Developer Terms</a
+          >
+          to include additional security and data use restrictions.</span
+        >
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="changes-for-april-2024"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#changes-for-april-2024"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        Changes for April 2024
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="what’s-new-5"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#what’s-new-5"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">What’s new</span>
+        </h3>
+        <ul>
+          <li>
+            Added: New property <code>in_trash</code> to indicate whether a
+            page/block/database has been deleted or placed in “Trash”.
+          </li>
+          <li>
+            <code>in_trash</code> is the preferred field going forward. The
+            <code>archived</code> property is a deprecated alias for
+            <code>in_trash</code> and may be removed in a future API version.
+            New integrations should use <code>in_trash</code> exclusively.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="changes-for-november-27-december-10-2023"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#changes-for-november-27-december-10-2023"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        Changes for November 27 - December 10, 2023
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="what’s-new-6"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#what’s-new-6"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">What’s new</span>
+        </h3>
+        <ul>
+          <li>
+            We added support for reading and writing names to
+            <code>file</code> blocks in the public API. Read more here.
+          </li>
+          <li>
+            We fixed the types in the SDK to support appending
+            <code>table</code> and <code>column</code> blocks as children of
+            <code>toggle</code> blocks.
+          </li>
+          <li>We updated the emoji and timezones available in the SDK.</li>
+          <li>
+            We added support for <code>australian_dollar</code> in the
+            <code>format</code> field of number database properties.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="september-8-september-21-2023"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#september-8-september-21-2023"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        September 8 - September 21, 2023
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="what’s-new-7"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#what’s-new-7"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">What’s new</span>
+        </h3>
+        <ul>
+          <li>
+            The <a class="link" href="/page/examples">Examples</a> page was
+            updated with all our most recent demo code. We’ve organized these
+            sample integrations by level of experience with the Public API to
+            help developers who are newer to the Public API find introductory
+            code more easily.
+          </li>
+          <li>
+            A note was added to all API endpoint documentation directing
+            developers to review the
+            <a class="link" href="/reference/status-codes#error-codes"
+              >Status codes</a
+            >
+            page for a complete list of error codes that can be returned by API
+            requests.
+          </li>
+          <li>
+            A clarification was added to the
+            <a class="link" href="/reference/request-limits">Request limits</a>
+            page and
+            <a class="link" href="/reference/patch-block-children"
+              >Append block children endpoint</a
+            >
+            documentation to indicate the current limit for appending a list of
+            block children per API request. Up to 100 block children can be
+            appended at a time.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div
+    class="update update-container relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6"
+    id="september-6-september-7-2023"
+  >
+    <div
+      class="group top-(--scroll-mt) flex w-full shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]"
+    >
+      <div class="absolute">
+        <a
+          href="#september-6-september-7-2023"
+          class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+          aria-label="Navigate to changelog"
+          >​
+          <div
+            class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="gray"
+              height="12px"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+              ></path>
+            </svg></div
+        ></a>
+      </div>
+      <div
+        class="dark:text-primary-light flex grow-0 cursor-pointer items-center justify-center rounded-lg bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+        contenteditable="false"
+        data-component-part="update-label"
+      >
+        September 6 - September 7, 2023
+      </div>
+    </div>
+    <div class="max-w-full flex-1 overflow-hidden px-0.5">
+      <div class="prose-sm" data-component-part="update-content">
+        <h3
+          class="group flex font-semibold whitespace-pre-wrap"
+          id="what’s-new-8"
+        >
+          <div class="absolute" tabindex="-1">
+            <a
+              href="#what’s-new-8"
+              class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+              aria-label="Navigate to header"
+              >​
+              <div
+                class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+          <span class="cursor-pointer">What’s new</span>
+        </h3>
+        <ul>
+          <li>
+            The
+            <a
+              class="link"
+              href="/page/changelog#notice-for-an-upcoming-public-api-change"
+              >updates</a
+            >
+            related to the
+            <a
+              href="https://twitter.com/NotionHQ/status/1699828805408550971?s=20"
+              target="_blank"
+              rel="noreferrer"
+              class="link"
+              >Formulas 2.0 launch</a
+            >
+            are now live in the Public API. These changes will not impact most
+            developers using the Public API; however, please note that the
+            formatting of
+            <a class="link" href="/reference/property-object#formula"
+              ><code>formula.expression</code></a
+            >, which is returned when
+            <a class="link" href="/reference/retrieve-a-database"
+              >retrieving a database</a
+            >
+            with a
+            <a class="link" href="/reference/property-object#formula"
+              >Formula property</a
+            >, has changed. See Notion’s Help Center articles for more
+            information on the Formula 2.0 changes:
+            <ul>
+              <li>
+                <a
+                  href="https://www.notion.so/help/guides/new-formulas-whats-changed"
+                  target="_blank"
+                  rel="noreferrer"
+                  class="link"
+                  >Formulas 2.0: How to use Notion’s new and improved formulas
+                  with your existing setups</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://www.notion.so/help/guides/write-formulas-that-extend-capabilities-of-databases"
+                  target="_blank"
+                  rel="noreferrer"
+                  class="link"
+                  >How to write Notion formulas that extend the capabilities of
+                  your databases</a
+                >
+              </li>
+            </ul>
+          </li>
+          <li>
+            The example for the
+            <a class="link" href="/reference/property-object#formula"
+              >Formula database property</a
+            >
+            was updated to align with the new Formula 2.0 launch.
+          </li>
+          <li>
+            <a
+              href="https://github.com/makenotion/notion-cookbook/tree/main/examples/javascript/intro-to-notion-api"
+              target="_blank"
+              rel="noreferrer"
+              class="link"
+              >New sample code</a
+            >
+            was added to the
+            <a
+              href="https://github.com/makenotion/notion-cookbook/tree/main/examples/javascript"
+              target="_blank"
+              rel="noreferrer"
+              class="link"
+              >Notion SDK for JavaScript’s <code>examples</code></a
+            >
+            directory. This new example demonstrates how to use the Public API
+            with basic and intermediate levels of difficulty.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div
+    class="callout my-4 flex gap-3 overflow-hidden rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 dark:border-blue-900 dark:bg-blue-600/20"
+    data-callout-type="note"
+  >
+    <div class="mt-0.5 w-4" data-component-part="callout-icon">
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 14 14"
+        fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg"
+        class="size-4 text-blue-800 dark:text-blue-300"
+        aria-label="Note"
+      >
+        <path
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M7 1.3C10.14 1.3 12.7 3.86 12.7 7C12.7 10.14 10.14 12.7 7 12.7C5.48908 12.6974 4.0408 12.096 2.97241 11.0276C1.90403 9.9592 1.30264 8.51092 1.3 7C1.3 3.86 3.86 1.3 7 1.3ZM7 0C3.14 0 0 3.14 0 7C0 10.86 3.14 14 7 14C10.86 14 14 10.86 14 7C14 3.14 10.86 0 7 0ZM8 3H6V8H8V3ZM8 9H6V11H8V9Z"
+        ></path>
+      </svg>
+    </div>
+    <div
+      class="prose dark:prose-invert [&amp;_kbd]:bg-background-light dark:[&amp;_kbd]:bg-background-dark [&amp;_code]:!text-current [&amp;_kbd]:!text-current [&amp;_a]:!text-current [&amp;_a]:border-current [&amp;_strong]:!text-current w-full min-w-0 text-sm text-blue-800 dark:text-blue-300"
+      data-component-part="callout-content"
+    >
+      <span data-as="p"><strong>Looking for older updates?</strong></span
+      ><span data-as="p"
+        >Changelog entries from before September 2023 are now kept in a separate
+        page:
+        <a class="link" href="/guides/resources/historical-changelog"
+          >Historical changelog</a
+        >.</span
+      >
+    </div>
+  </div>
+</div>

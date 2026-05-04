@@ -4,6 +4,7 @@
   "pages": [
     "---Getting Started---",
     "index",
+    "changelog",
     "...getting-started",
     "---Components---",
     "...components",
