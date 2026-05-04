@@ -1,6 +1,7 @@
 {
   "name": "@notion-kit/schemas",
   "version": "0.17.0",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
   },
@@ -9,20 +10,19 @@
     "url": "https://github.com/steeeee0223/notion-kit.git",
     "directory": "packages/schemas"
   },
-  "license": "MIT",
-  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
     }
   },
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
   "files": [
     "dist"
   ],
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "license": "MIT",
   "scripts": {
     "build": "tsdown",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
@@ -31,7 +31,6 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
-  "prettier": "@notion-kit/prettier-config",
   "dependencies": {
     "zod": "catalog:"
   },
@@ -43,5 +42,6 @@
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
-  }
+  },
+  "prettier": "@notion-kit/prettier-config"
 }

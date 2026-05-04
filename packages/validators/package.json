@@ -2,7 +2,6 @@
   "name": "@notion-kit/validators",
   "version": "0.17.0",
   "private": true,
-  "license": "MIT",
   "type": "module",
   "exports": {
     ".": {
@@ -10,12 +9,13 @@
       "default": "./dist/index.mjs"
     }
   },
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
   "files": [
     "dist"
   ],
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "license": "MIT",
   "scripts": {
     "build": "tsdown",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
@@ -24,7 +24,6 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
-  "prettier": "@notion-kit/prettier-config",
   "dependencies": {
     "zod": "catalog:"
   },
@@ -37,5 +36,6 @@
     "prettier": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
-  }
+  },
+  "prettier": "@notion-kit/prettier-config"
 }

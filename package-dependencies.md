@@ -11,46 +11,46 @@ graph TD
     schemas[schemas]
     i18n[i18n]
     auth[auth]
-
+    
     %% Level 1 - depends on base packages
     icons --> cn
     selectable --> cn
     shadcn --> cn
-
+    
     %% Level 2 - depends on Level 1
     single-image-dropzone --> cn
     single-image-dropzone --> shadcn
-
+    
     icon-block --> cn
     icon-block --> shadcn
-
+    
     tags-input --> cn
     tags-input --> shadcn
     tags-input --> utils
-
+    
     common --> cn
     common --> hooks
     common --> shadcn
-
+        
     navbar --> cn
     navbar --> shadcn
-
+    
     %% Level 3 - depends on Level 2
     tree --> cn
-
+    
     icon-menu --> cn
     icon-menu --> common
     icon-menu --> icon-block
     icon-menu --> shadcn
     icon-menu --> utils
-
+    
     unsplash --> cn
     unsplash --> shadcn
-
+    
     cover --> cn
     cover --> shadcn
     cover --> unsplash
-
+    
     settings-panel --> cn
     settings-panel --> common
     settings-panel --> hooks
@@ -62,7 +62,7 @@ graph TD
     settings-panel --> shadcn
     settings-panel --> tags-input
     settings-panel --> utils
-
+    
     auth-ui --> cn
     auth-ui --> auth
     auth-ui --> icon-block
@@ -71,7 +71,7 @@ graph TD
     auth-ui --> schemas
     auth-ui --> settings-panel
     auth-ui --> shadcn
-
+    
     %% Level 4 - depends on Level 3
     sidebar --> cn
     sidebar --> common
@@ -80,7 +80,7 @@ graph TD
     sidebar --> shadcn
     sidebar --> tree
     sidebar --> utils
-
+    
     %% tree/presets subpackage (virtual node for documentation)
     tree-presets[tree/presets] --> cn
     tree-presets --> icons
@@ -95,7 +95,7 @@ graph TD
     navbar/presets --> schemas
     navbar/presets --> shadcn
     navbar/presets --> utils
-
+    
     %% sidebar/presets subpackage (virtual node for documentation)
     sidebar-presets[sidebar/presets] --> cn
     sidebar-presets --> hooks
