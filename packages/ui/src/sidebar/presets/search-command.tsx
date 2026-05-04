@@ -1,6 +1,10 @@
-"use client";
+import { cn } from "@notion-kit/cn";
+import { useFilter } from "@notion-kit/hooks";
+import { Icon } from "@notion-kit/icons";
+import type { Page } from "@notion-kit/schemas";
+import { toDateString } from "@notion-kit/utils";
 
-import { IconBlock } from "~/icon-block";
+import { IconBlock } from "@/icon-block";
 import {
   CommandDialog,
   CommandEmpty,
@@ -9,13 +13,7 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "~/primitives";
-
-import { cn } from "@notion-kit/cn";
-import { useFilter } from "@notion-kit/hooks";
-import { Icon } from "@notion-kit/icons";
-import type { Page } from "@notion-kit/schemas";
-import { toDateString } from "@notion-kit/utils";
+} from "@/primitives";
 
 interface SearchCommandProps {
   workspaceName: string;

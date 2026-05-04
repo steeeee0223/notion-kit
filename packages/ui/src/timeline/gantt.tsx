@@ -3,16 +3,17 @@
 import type { FC } from "react";
 import { memo, useCallback, useMemo } from "react";
 import { useMouse, useThrottle, useWindowScroll } from "@uidotdev/usehooks";
+import { formatDate } from "date-fns";
+
+import { cn } from "@notion-kit/cn";
+import { Icon } from "@notion-kit/icons";
+
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from "~/primitives";
-import { formatDate } from "date-fns";
-
-import { cn } from "@notion-kit/cn";
-import { Icon } from "@notion-kit/icons";
+} from "@/primitives";
 
 import { useTimelineContext } from "./timeline-provider";
 import { getDateByMousePosition, getOffset } from "./utils";

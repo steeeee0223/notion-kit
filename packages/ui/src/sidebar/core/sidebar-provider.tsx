@@ -6,10 +6,11 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { TooltipProvider } from "~/primitives";
 
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
+
+import { TooltipProvider } from "@/primitives";
 
 import { DEFAULT_CONFIG, type SidebarConfig } from "./constants";
 

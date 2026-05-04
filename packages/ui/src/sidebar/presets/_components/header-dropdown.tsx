@@ -1,3 +1,5 @@
+import { Icon } from "@notion-kit/icons";
+
 import {
   Button,
   DropdownMenu,
@@ -5,9 +7,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "~/primitives";
-
-import { Icon } from "@notion-kit/icons";
+} from "@/primitives";
 
 interface HeaderDropdownProps {
   onLogout?: () => void;

@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import {
   Button,
   Popover,
@@ -6,7 +7,7 @@ import {
   PopoverTrigger,
   TooltipPreset,
   TooltipProvider,
-} from "~/primitives";
+} from "@/primitives";
 
 import type { PaletteProps } from "../../_components";
 import type { Skin } from "./constants";

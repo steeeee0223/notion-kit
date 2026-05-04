@@ -1,7 +1,8 @@
-"use client";
-
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod/v4";
+
 import {
   Button,
   Form,
@@ -9,9 +10,7 @@ import {
   FormField,
   FormItem,
   Input,
-} from "~/primitives";
-import { useForm } from "react-hook-form";
-import { z } from "zod/v4";
+} from "@/primitives";
 
 const urlSchema = z.object({
   url: z

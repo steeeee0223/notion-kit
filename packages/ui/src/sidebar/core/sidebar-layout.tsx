@@ -1,7 +1,8 @@
 import React from "react";
-import { MenuGroup } from "~/primitives";
 
 import { cn } from "@notion-kit/cn";
+
+import { MenuGroup } from "@/primitives";
 
 function SidebarHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (

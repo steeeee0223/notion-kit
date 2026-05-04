@@ -1,11 +1,9 @@
-"use client";
-
-import { IconBlock, type IconData } from "~/icon-block";
-import { Button } from "~/primitives";
-import { Tree, useTreeContext } from "~/tree";
-
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
+
+import { IconBlock, type IconData } from "@/icon-block";
+import { Button } from "@/primitives";
+import { Tree, useTreeContext } from "@/tree";
 
 import type { TreeData } from "../_lib";
 

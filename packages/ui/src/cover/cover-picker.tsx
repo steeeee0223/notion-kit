@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+
 import {
   Button,
   Popover,
@@ -10,10 +11,10 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "~/primitives";
-import { SingleImageDropzone } from "~/single-image-dropzone";
-import { Unsplash } from "~/unsplash";
-import { UrlForm } from "~/url-form";
+} from "@/primitives";
+import { SingleImageDropzone } from "@/single-image-dropzone";
+import { Unsplash } from "@/unsplash";
+import { UrlForm } from "@/url-form";
 
 export interface CoverPickerProps extends React.PropsWithChildren {
   /** @param unsplashAPIKey - Unsplash Access Key */

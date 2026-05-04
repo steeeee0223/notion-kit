@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
 import {
   closestCenter,
@@ -19,7 +17,11 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { IconBlock } from "~/icon-block";
+
+import { Icon } from "@notion-kit/icons";
+import { Role, User, Workspace } from "@notion-kit/schemas";
+
+import { IconBlock } from "@/icon-block";
 import {
   Badge,
   Button,
@@ -27,10 +29,7 @@ import {
   MenuGroup,
   TooltipPreset,
   TooltipProvider,
-} from "~/primitives";
-
-import { Icon } from "@notion-kit/icons";
-import { Role, User, Workspace } from "@notion-kit/schemas";
+} from "@/primitives";
 
 import { planTitle } from "./constant";
 import { HeaderDropdown } from "./header-dropdown";

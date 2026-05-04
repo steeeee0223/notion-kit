@@ -1,6 +1,7 @@
-"use client";
-
 import React, { useState } from "react";
+
+import { cn } from "@notion-kit/cn";
+
 import {
   Button,
   Dialog,
@@ -9,9 +10,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "~/primitives";
-
-import { cn } from "@notion-kit/cn";
+} from "@/primitives";
 
 interface LearningStep {
   icon: React.ReactNode;

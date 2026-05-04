@@ -1,14 +1,14 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-"use client";
 
 import * as React from "react";
-import { Spinner } from "~/primitives";
 import { UploadCloudIcon, X } from "lucide-react";
 import type { DropzoneOptions } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 
 import { cn } from "@notion-kit/cn";
+
+import { Spinner } from "@/primitives";
 
 const variants = {
   base: "relative rounded-md flex justify-center items-center flex-col cursor-pointer min-h-[150px] min-w-[200px] bg-input hover:bg-input/80 transition-colors duration-200 ease-in-out",

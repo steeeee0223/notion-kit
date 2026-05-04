@@ -1,8 +1,9 @@
 import { useMemo } from "react";
-import { Button, TooltipPreset } from "~/primitives";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
+
+import { Button, TooltipPreset } from "@/primitives";
 
 import { mergeRefs } from "./merge-refs";
 import { useSidebar } from "./sidebar-provider";

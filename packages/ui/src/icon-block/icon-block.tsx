@@ -1,8 +1,6 @@
-"use client";
-
-import { Avatar, AvatarFallback, AvatarImage, Spinner } from "~/primitives";
-
 import { cn, cva, type VariantProps } from "@notion-kit/cn";
+
+import { Avatar, AvatarFallback, AvatarImage, Spinner } from "@/primitives";
 
 import { getLetter, isEmoji, isLucideIcon } from "./lib";
 import { LucideIcon } from "./lucide-icon";

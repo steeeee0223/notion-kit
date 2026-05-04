@@ -1,6 +1,7 @@
-"use client";
-
 import { useState, useTransition } from "react";
+
+import { Icon } from "@notion-kit/icons";
+
 import {
   Button,
   Drawer,
@@ -13,9 +14,7 @@ import {
   TabsTrigger,
   toast,
   TooltipPreset,
-} from "~/primitives";
-
-import { Icon } from "@notion-kit/icons";
+} from "@/primitives";
 
 import { NavbarItem } from "../core";
 

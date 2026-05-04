@@ -1,4 +1,4 @@
-import type { IconData } from "~/icon-block";
+import type { IconData } from "@/icon-block";
 
 import type {
   IconFactoryResult,

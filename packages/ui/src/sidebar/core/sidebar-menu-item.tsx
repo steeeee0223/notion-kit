@@ -1,7 +1,8 @@
 import React, { useMemo } from "react";
-import { MenuItem, TooltipPreset } from "~/primitives";
 
 import { cn } from "@notion-kit/cn";
+
+import { MenuItem, TooltipPreset } from "@/primitives";
 
 interface SidebarMenuItemProps extends React.ComponentProps<"div"> {
   label: React.ReactNode;

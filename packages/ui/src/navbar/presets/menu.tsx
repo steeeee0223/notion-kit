@@ -1,4 +1,6 @@
-"use client";
+import { Icon } from "@notion-kit/icons";
+import type { Page } from "@notion-kit/schemas";
+import { toDateString } from "@notion-kit/utils";
 
 import {
   DropdownMenu,
@@ -7,11 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "~/primitives";
-
-import { Icon } from "@notion-kit/icons";
-import type { Page } from "@notion-kit/schemas";
-import { toDateString } from "@notion-kit/utils";
+} from "@/primitives";
 
 import { NavbarItem } from "../core";
 import type { StateChangeEvent } from "./types";

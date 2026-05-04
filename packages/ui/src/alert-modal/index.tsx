@@ -1,6 +1,5 @@
-"use client";
-
 import { useLayoutEffect, useRef, useTransition } from "react";
+
 import {
   Button,
   DialogClose,
@@ -9,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
   Spinner,
-} from "~/primitives";
+} from "@/primitives";
 
 interface AlertModalProps {
   title: string;

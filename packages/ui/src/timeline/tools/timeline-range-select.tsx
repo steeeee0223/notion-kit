@@ -1,4 +1,4 @@
-import { SelectPreset } from "~/primitives";
+import { SelectPreset } from "@/primitives";
 
 import type { TimelineRange } from "../types";
 

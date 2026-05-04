@@ -1,9 +1,7 @@
-"use client";
-
-import { TooltipPreset } from "~/primitives";
-
 import { User } from "@notion-kit/schemas";
 import { idToColor } from "@notion-kit/utils";
+
+import { TooltipPreset } from "@/primitives";
 
 import { UserAvatar } from "./_components";
 

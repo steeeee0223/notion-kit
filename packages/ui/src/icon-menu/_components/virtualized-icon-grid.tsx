@@ -1,12 +1,13 @@
 import { useCallback, useMemo, useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import type { IconData } from "~/icon-block";
+
+import type { IconData } from "@/icon-block";
 import {
   Button,
   ScrollArea,
   TooltipPreset,
   TooltipProvider,
-} from "~/primitives";
+} from "@/primitives";
 
 import type { IconFactoryResult, IconItem } from "../factories/types";
 import { MenuSectionTitle } from "./menu-section-title";
@@ -70,7 +71,7 @@ export function VirtualizedIconGrid({
   }, [factory, searchQuery]);
 
   /**
-   * ScrollArea from ~/primitives wraps content inside a Radix Viewport div.
+   * ScrollArea from @/primitives wraps content inside a Radix Viewport div.
    * We need a ref to that viewport element for TanStack Virtual's getScrollElement.
    * We use a callback ref on the ScrollArea root to find the viewport child.
    */

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
-import { Button, TooltipPreset } from "~/primitives";
 import { formatDate } from "date-fns";
+
+import { Button, TooltipPreset } from "@/primitives";
 
 import { useTimelineContext } from "../timeline-provider";
 import { getOffset } from "../utils";

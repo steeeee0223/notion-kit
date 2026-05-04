@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { Circle } from "lucide-react";
+
 import {
   Button,
   Popover,
@@ -8,8 +10,7 @@ import {
   PopoverTrigger,
   TooltipPreset,
   TooltipProvider,
-} from "~/primitives";
-import { Circle } from "lucide-react";
+} from "@/primitives";
 
 import type { PaletteProps } from "./types";
 
