@@ -32,7 +32,6 @@
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
-    "@notion-kit/tailwind-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "@notion-kit/validators": "workspace:*",
     "@tailwindcss/postcss": "catalog:tailwind-v4",

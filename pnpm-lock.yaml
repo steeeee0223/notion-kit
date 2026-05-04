@@ -270,9 +270,6 @@ importers:
       '@notion-kit/prettier-config':
         specifier: workspace:*
         version: link:../../tooling/prettier
-      '@notion-kit/tailwind-config':
-        specifier: workspace:*
-        version: link:../../tooling/tailwind
       '@notion-kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
@@ -343,9 +340,6 @@ importers:
       '@notion-kit/prettier-config':
         specifier: workspace:*
         version: link:../../tooling/prettier
-      '@notion-kit/tailwind-config':
-        specifier: workspace:*
-        version: link:../../tooling/tailwind
       '@notion-kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
@@ -443,9 +437,6 @@ importers:
       '@notion-kit/prettier-config':
         specifier: workspace:*
         version: link:../../tooling/prettier
-      '@notion-kit/tailwind-config':
-        specifier: workspace:*
-        version: link:../../tooling/tailwind
       '@notion-kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
@@ -564,9 +555,6 @@ importers:
       '@notion-kit/prettier-config':
         specifier: workspace:*
         version: link:../../tooling/prettier
-      '@notion-kit/tailwind-config':
-        specifier: workspace:*
-        version: link:../../tooling/tailwind
       '@notion-kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
@@ -685,9 +673,6 @@ importers:
       '@notion-kit/prettier-config':
         specifier: workspace:*
         version: link:../../tooling/prettier
-      '@notion-kit/tailwind-config':
-        specifier: workspace:*
-        version: link:../../tooling/tailwind
       '@notion-kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
@@ -743,9 +728,6 @@ importers:
       '@notion-kit/prettier-config':
         specifier: workspace:*
         version: link:../../tooling/prettier
-      '@notion-kit/tailwind-config':
-        specifier: workspace:*
-        version: link:../../tooling/tailwind
       '@notion-kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
@@ -889,9 +871,6 @@ importers:
       '@notion-kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
-      '@tailwindcss/cli':
-        specifier: catalog:tailwind-v4
-        version: 4.2.4
       babel-plugin-react-compiler:
         specifier: catalog:react-compiler
         version: 1.0.0
@@ -984,9 +963,6 @@ importers:
       '@notion-kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
-      '@tailwindcss/cli':
-        specifier: catalog:tailwind-v4
-        version: 4.2.4
       '@testing-library/jest-dom':
         specifier: catalog:rtl
         version: 6.9.1
@@ -1329,9 +1305,6 @@ importers:
       '@notion-kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
-      '@tailwindcss/cli':
-        specifier: catalog:tailwind-v4
-        version: 4.2.4
       '@types/file-saver':
         specifier: ^2.0.7
         version: 2.0.7
