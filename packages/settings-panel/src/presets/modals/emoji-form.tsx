@@ -81,7 +81,7 @@ export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
             render={({ field }) => (
               <FormItem>
                 {preview ? (
-                  <div className="flex flex-col items-center gap-1 rounded bg-default/5 p-3 pb-1">
+                  <div className="flex flex-col items-center gap-1 rounded-md bg-default/5 p-3 pb-1">
                     <p className="mb-1 text-xs text-secondary">
                       {t("preview")}
                     </p>

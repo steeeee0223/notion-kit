@@ -23,7 +23,7 @@ function Command({
     <CommandPrimitive
       data-slot="command"
       className={cn(
-        "flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-primary focus-visible:outline-none",
+        "flex size-full flex-col overflow-hidden rounded-md bg-popover text-primary focus-visible:outline-none",
         className,
       )}
       {...props}
@@ -57,7 +57,7 @@ function CommandDialog({
       >
         <Command
           shouldFilter={shouldFilter}
-          className="bg-modal focus-visible:outline-hidden [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted **:[[cmdk-input]]:h-12"
+          className="bg-modal focus-visible:outline-hidden [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:size-5 **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted **:[[cmdk-input]]:h-12"
         >
           {children}
         </Command>

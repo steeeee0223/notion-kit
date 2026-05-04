@@ -112,14 +112,14 @@ export function UploadForm({ disabled, onSubmit, onCancel }: UploadFormProps) {
               <img
                 src={previewUrl}
                 alt="Preview dark"
-                className="size-10 rounded object-contain"
+                className="size-10 rounded-md object-contain"
               />
             </div>
             <div className="flex size-14 items-center justify-center rounded-lg bg-white">
               <img
                 src={previewUrl}
                 alt="Preview light"
-                className="size-10 rounded object-contain"
+                className="size-10 rounded-md object-contain"
               />
             </div>
           </div>

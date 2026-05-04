@@ -234,7 +234,7 @@ export function TeamMemberActionCell({
                 defaultValue: teamspaceRoles[role].label,
               })}
             </span>
-            <Icon.ChevronDown className="size-2.5 fill-icon" />
+            <Icon.Chevron side="down" className="size-2.5 fill-icon" />
           </Button>
         </DropdownMenuTrigger>
       </TooltipPreset>

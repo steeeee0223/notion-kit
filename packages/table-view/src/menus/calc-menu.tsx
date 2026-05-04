@@ -65,7 +65,7 @@ export function CalcMenu({ id, type }: CalcMenuProps) {
               Body={
                 <>
                   <div>Show large counts as 99+</div>
-                  <div className="mt-1.5 overflow-hidden text-xs overflow-ellipsis whitespace-normal text-muted">
+                  <div className="mt-1.5 overflow-hidden text-xs text-ellipsis whitespace-normal text-muted">
                     This improves performance for large databases.
                   </div>
                 </>

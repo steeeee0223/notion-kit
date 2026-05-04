@@ -88,7 +88,7 @@ export function RegionSection() {
               disabled={!tz}
             >
               {`(${gmt}) ${tz}`}
-              <Icon.ChevronDown className="fill-icon" />
+              <Icon.Chevron side="down" className="fill-icon" />
             </Button>
           )}
         />

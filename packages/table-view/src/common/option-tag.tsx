@@ -11,7 +11,7 @@ export function OptionTag({ name, color }: OptionTagProps) {
     <Badge
       variant="tag"
       size="sm"
-      className="h-5 max-w-full min-w-0 shrink-0 text-sm leading-5"
+      className="h-5 max-w-full min-w-0 shrink-0 text-sm/5"
       style={{ backgroundColor: COLOR[color].rgba }}
     >
       <span className="truncate">{name}</span>

@@ -42,7 +42,7 @@ export function ConfirmSection({ plan }: ConfirmSectionProps) {
               {t("per-month")}
             </span>
           </div>
-          <Icon.ChevronDown className="size-3.5 fill-icon" />
+          <Icon.Chevron side="down" className="size-3.5 fill-icon" />
         </div>
         <FormField
           control={control}

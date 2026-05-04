@@ -8,7 +8,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Slot } from "@radix-ui/react-slot";
+import { Slot } from "radix-ui";
 
 import { cn } from "@notion-kit/cn";
 
@@ -188,7 +188,7 @@ Tree.Item = function TreeItem({
   children,
   ...props
 }: TreeItemProps) {
-  const Comp = asChild ? Slot : "div";
+  const Comp = asChild ? Slot.Root : "div";
   const tree = useTreeContext();
   const node = tree.entity.nodes.get(id);
 
@@ -225,7 +225,7 @@ Tree.ExpandIndicator = function TreeExpandIndicator({
   onToggle,
   ...props
 }: TreeExpandIndicatorProps) {
-  const Comp = asChild ? Slot : "span";
+  const Comp = asChild ? Slot.Root : "span";
 
   return (
     <Comp
@@ -241,7 +241,7 @@ Tree.ExpandIndicator = function TreeExpandIndicator({
 };
 
 Tree.Group = function TreeGroup({ asChild, ...props }: DivSlotProps) {
-  const Comp = asChild ? Slot : "div";
+  const Comp = asChild ? Slot.Root : "div";
   return <Comp role="group" {...props} />;
 };
 
@@ -252,9 +252,9 @@ Tree.EmptyIndicator = function TreeEmptyIndicator({
   ...props
 }: DivSlotProps) {
   return asChild ? (
-    <Slot {...props} className={className}>
+    <Slot.Root {...props} className={className}>
       {children}
-    </Slot>
+    </Slot.Root>
   ) : (
     <div {...props} className={cn("text-muted", className)}>
       No items

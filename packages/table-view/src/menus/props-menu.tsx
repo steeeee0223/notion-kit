@@ -232,7 +232,10 @@ function PropertyItem({
         >
           {hidden ? <Icon.EyeHide /> : <Icon.Eye />}
         </Button>
-        <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-icon" />
+        <Icon.Chevron
+          side="right"
+          className="ml-1.5 h-full w-3 animate-bg-out fill-icon"
+        />
       </MenuItemAction>
     </MenuItem>
   );

@@ -48,7 +48,7 @@ export const TeamspacesCell = ({
               <span className="text-primary">
                 {t("teamspaces", { count: teamspaces.length })}
               </span>
-              <Icon.ChevronDown className="size-2.5 fill-icon" />
+              <Icon.Chevron side="down" className="size-2.5 fill-icon" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
@@ -61,7 +61,7 @@ export const TeamspacesCell = ({
                   Body={
                     <div className="flex items-center">
                       <div className="max-w-full shrink-0 truncate">
-                        <div className="max-w-25 truncate text-sm leading-5 text-primary">
+                        <div className="max-w-25 truncate text-sm/5 text-primary">
                           {ts.name}
                         </div>
                       </div>

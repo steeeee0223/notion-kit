@@ -141,12 +141,10 @@ export function AddMembers({
       </div>
       <CommandList className="max-h-[300px] min-h-0 grow transform overflow-auto overflow-x-hidden">
         <CommandGroup className="min-h-[200px]">
-          <div className="my-1.5 flex fill-current px-2 text-xs leading-5 font-medium text-default/45 select-none">
-            <div className="self-center overflow-hidden overflow-ellipsis whitespace-nowrap">
-              {heading}
-            </div>
+          <div className="my-1.5 flex fill-current px-2 text-xs/5 font-medium text-default/45 select-none">
+            <div className="self-center truncate">{heading}</div>
           </div>
-          <CommandEmpty className="flex min-h-7 items-center px-2 py-0 leading-[1.2] text-secondary select-none">
+          <CommandEmpty className="flex min-h-7 items-center px-2 py-0 leading-tight text-secondary select-none">
             <span>{t("empty")}</span>
           </CommandEmpty>
           {filteredAccounts?.map((user) => (
@@ -186,7 +184,7 @@ function Item({
 
   return (
     <CommandItem
-      className="leading-[1.2]"
+      className="leading-tight"
       key={email}
       value={email}
       onSelect={onSelect}

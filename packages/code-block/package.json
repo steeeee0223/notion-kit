@@ -53,7 +53,6 @@
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
-
     "@testing-library/jest-dom": "catalog:rtl",
     "@testing-library/react": "catalog:rtl",
     "@testing-library/user-event": "catalog:rtl",

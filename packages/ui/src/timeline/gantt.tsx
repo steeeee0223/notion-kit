@@ -51,7 +51,7 @@ export const GanttCreateMarkerTrigger: FC<GanttCreateMarkerTriggerProps> = ({
   return (
     <div
       className={cn(
-        "group pointer-events-none absolute top-0 left-0 h-full w-full overflow-visible select-none",
+        "group pointer-events-none absolute top-0 left-0 size-full overflow-visible select-none",
         className,
       )}
       ref={mouseRef}
@@ -61,7 +61,7 @@ export const GanttCreateMarkerTrigger: FC<GanttCreateMarkerTriggerProps> = ({
         style={{ transform: `translateX(${x}px)` }}
       >
         <button
-          className="bg-card z-50 inline-flex h-4 w-4 items-center justify-center rounded-full"
+          className="bg-card z-50 inline-flex size-4 items-center justify-center rounded-full"
           onClick={handleClick}
           type="button"
         >

@@ -9,7 +9,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Slot } from "@radix-ui/react-slot";
+import { Slot } from "radix-ui";
 
 import { cn } from "@notion-kit/cn";
 
@@ -433,7 +433,7 @@ function Selectable({
     onPointerCancel: handlePointerCancel,
   };
 
-  const Comp = asChild ? Slot : "div";
+  const Comp = asChild ? Slot.Root : "div";
 
   return (
     <SelectableContext value={contextValue}>
@@ -479,7 +479,7 @@ Selectable.Overlay = function SelectableOverlay({
     ...style,
   };
 
-  const Comp = asChild ? Slot : "div";
+  const Comp = asChild ? Slot.Root : "div";
 
   return (
     <Comp
@@ -507,7 +507,7 @@ Selectable.Item = function SelectableItem({
   ...props
 }: SelectableItemProps) {
   const { ref, isSelected, isSelecting } = useSelectableItem(id);
-  const Comp = asChild ? Slot : "div";
+  const Comp = asChild ? Slot.Root : "div";
 
   return (
     <Comp
@@ -534,7 +534,7 @@ Selectable.Group = function SelectableGroup({
   asChild,
   ...props
 }: SelectableGroupProps) {
-  const Comp = asChild ? Slot : "div";
+  const Comp = asChild ? Slot.Root : "div";
   return <Comp className={cn(!asChild && className)} {...props} />;
 };
 

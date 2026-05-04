@@ -4,8 +4,7 @@ import * as React from "react";
 import { Checkbox as CheckboxPrimitive } from "radix-ui";
 
 import { cn, cva, type VariantProps } from "@notion-kit/cn";
-
-import * as Icon from "./icons";
+import { Icon } from "@notion-kit/icons";
 
 const checkboxVariants = cva(
   [

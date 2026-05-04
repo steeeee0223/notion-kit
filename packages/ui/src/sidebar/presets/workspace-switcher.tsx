@@ -58,7 +58,7 @@ export function WorkspaceSwitcher({
               {activeWorkspace.name}
             </span>
           </div>
-          <Icon.ChevronDown className="size-3.5 fill-icon" />
+          <Icon.Chevron side="down" className="size-3.5 fill-icon" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent

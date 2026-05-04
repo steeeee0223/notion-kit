@@ -202,7 +202,7 @@ export function People() {
               onClick={() => setAddMembersOpen(true)}
             >
               {tabs["add-members"]}
-              <Icon.ChevronDown className="size-3 fill-current" />
+              <Icon.Chevron side="down" className="size-3 fill-current" />
             </Button>
             <AddMembers
               open={addMembersOpen}

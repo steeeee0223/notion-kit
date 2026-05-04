@@ -48,7 +48,7 @@ export function TimelineAddFeatureHelper({
       }}
     >
       <button
-        className="flex h-full w-full items-center justify-center rounded-md border border-dashed p-2"
+        className="flex size-full items-center justify-center rounded-md border border-dashed p-2"
         onClick={handleClick}
         type="button"
       >

@@ -40,11 +40,9 @@ function TreeList<T extends TreeItemData>({
                     )}
                     aria-label={state.expanded ? "collapse" : "expand"}
                   >
-                    <Icon.ChevronDown
-                      className={cn(
-                        "size-3 rotate-0 transition-[rotate]",
-                        !state.expanded && "-rotate-90",
-                      )}
+                    <Icon.Chevron
+                      side={state.expanded ? "down" : "right"}
+                      className="size-3 rotate-0 transition-[rotate]"
                     />
                   </Button>
                 </TreePrimitive.ExpandIndicator>

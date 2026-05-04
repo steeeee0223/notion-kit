@@ -32,7 +32,7 @@ export const Example: Story = {
           htmlFor={`plan-${plan.value}`}
           className={cn(
             "flex h-[54px] cursor-pointer items-center gap-3 rounded-lg border border-border px-3 pr-4 transition-colors",
-            "has-[[data-state=checked]]:border-blue has-[[data-state=checked]]:bg-blue/5",
+            "has-data-[state=checked]:border-blue has-data-[state=checked]:bg-blue/5",
             "hover:bg-primary/5",
           )}
         >
@@ -56,7 +56,7 @@ export const Disabled: Story = {
           htmlFor={`disabled-${plan.value}`}
           className={cn(
             "flex h-[54px] items-center gap-3 rounded-lg border border-border px-3 pr-4",
-            "has-[[data-state=checked]]:border-blue has-[[data-state=checked]]:bg-blue/5",
+            "has-data-[state=checked]:border-blue has-data-[state=checked]:bg-blue/5",
             "opacity-50",
           )}
         >

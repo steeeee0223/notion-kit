@@ -4,8 +4,8 @@ import * as React from "react";
 import { Select as SelectPrimitive } from "radix-ui";
 
 import { cn } from "@notion-kit/cn";
+import { Icon } from "@notion-kit/icons";
 
-import * as Icon from "./icons";
 import { MenuItem, MenuItemCheck } from "./menu";
 import {
   buttonVariants,
@@ -58,7 +58,7 @@ function SelectTrigger({
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <Icon.ChevronDown className="ml-auto fill-icon" />
+        <Icon.Chevron side="down" className="ml-auto fill-icon" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );
@@ -77,7 +77,7 @@ function SelectScrollUpButton({
       )}
       {...props}
     >
-      <Icon.ChevronDown className="rotate-180" />
+      <Icon.Chevron side="up" className="size-4" />
     </SelectPrimitive.ScrollUpButton>
   );
 }
@@ -95,7 +95,7 @@ function SelectScrollDownButton({
       )}
       {...props}
     >
-      <Icon.ChevronDown />
+      <Icon.Chevron side="down" className="size-4" />
     </SelectPrimitive.ScrollDownButton>
   );
 }

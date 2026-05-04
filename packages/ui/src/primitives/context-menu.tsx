@@ -4,8 +4,8 @@ import * as React from "react";
 import { ContextMenu as ContextMenuPrimitive } from "radix-ui";
 
 import { cn } from "@notion-kit/cn";
+import { Icon } from "@notion-kit/icons";
 
-import * as Icon from "./icons";
 import {
   MenuGroup,
   MenuItem,
@@ -115,7 +115,10 @@ function ContextMenuSubTrigger({
     >
       <MenuItem {...props}>
         <MenuItemAction>
-          <Icon.ChevronDown className="cn-rtl-flip ml-auto -rotate-90 fill-icon transition-transform duration-100 focus:rotate-0" />
+          <Icon.Chevron
+            side="right"
+            className="cn-rtl-flip ml-auto fill-icon transition-transform duration-100 focus:rotate-0"
+          />
         </MenuItemAction>
       </MenuItem>
     </ContextMenuPrimitive.SubTrigger>

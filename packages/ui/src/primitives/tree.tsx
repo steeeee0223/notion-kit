@@ -19,8 +19,7 @@ import { AssistiveTreeDescription, useTree } from "@headless-tree/react";
 import { Slot } from "radix-ui";
 
 import { cn } from "@notion-kit/cn";
-
-import * as Icon from "./icons";
+import { Icon } from "@notion-kit/icons";
 
 interface TreeItemBase {
   name: string;
@@ -237,7 +236,10 @@ function TreeItemLabel<T>({
       {...props}
     >
       {item.isFolder() && (
-        <Icon.ChevronDown className="in-aria-[expanded=false]:-rotate-90" />
+        <Icon.Chevron
+          side={item.isExpanded() ? "down" : "right"}
+          className="size-4"
+        />
       )}
       {children ?? item.getItemName()}
     </span>

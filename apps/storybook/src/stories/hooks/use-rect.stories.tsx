@@ -29,11 +29,9 @@ export const Default: Story = {
             )}
             onPointerDown={() => setExpanded((v) => !v)}
           >
-            <Icon.ChevronDown
-              className={cn(
-                "size-8 fill-primary transition-[rotate]",
-                expanded && "rotate-180",
-              )}
+            <Icon.Chevron
+              side={expanded ? "down" : "right"}
+              className="size-8 fill-primary transition-[rotate]"
             />
           </div>
           <code className="rounded-md bg-input p-2">

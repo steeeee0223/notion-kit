@@ -3,22 +3,11 @@
 import * as React from "react";
 import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker";
 
-import { cn, cva } from "@notion-kit/cn";
+import { cn } from "@notion-kit/cn";
+import { Icon } from "@notion-kit/icons";
 
 import { Button } from "./button";
-import * as Icon from "./icons";
 import { buttonVariants } from "./variants";
-
-const rotation = cva("", {
-  variants: {
-    orientation: {
-      down: "rotate-0",
-      up: "rotate-180",
-      left: "rotate-90",
-      right: "-rotate-90",
-    },
-  },
-});
 
 function Calendar({
   className,
@@ -111,7 +100,7 @@ function Calendar({
           defaultClassNames.week_number,
         ),
         day: cn(
-          "group/day relative aspect-square h-full w-full p-0 text-center select-none [&:last-child[data-selected=true]_button]:rounded-r-md",
+          "group/day relative aspect-square size-full p-0 text-center select-none [&:last-child[data-selected=true]_button]:rounded-r-md",
           props.showWeekNumber
             ? "[&:nth-child(2)[data-selected=true]_button]:rounded-l-md"
             : "[&:first-child[data-selected=true]_button]:rounded-l-md",
@@ -133,13 +122,8 @@ function Calendar({
         Root: ({ rootRef, ...props }) => {
           return <div data-slot="calendar" ref={rootRef} {...props} />;
         },
-        Chevron: ({ className, orientation, ...props }) => {
-          return (
-            <Icon.ChevronDown
-              className={cn(rotation({ orientation, className }))}
-              {...props}
-            />
-          );
+        Chevron: ({ orientation, ...props }) => {
+          return <Icon.Chevron side={orientation} {...props} />;
         },
         DayButton: CalendarDayButton,
         WeekNumber: ({ children, ...props }) => {

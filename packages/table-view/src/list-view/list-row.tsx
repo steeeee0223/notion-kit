@@ -82,7 +82,7 @@ export function ListRow({ row }: ListRowProps) {
             </React.Fragment>
           ))}
         </div>
-        <div className="absolute -end-7 top-1/2 h-full w-7 -translate-y-1/2 cursor-pointer" />
+        <div className="absolute -inset-e-7 top-1/2 h-full w-7 -translate-y-1/2 cursor-pointer" />
       </div>
     </div>
   );

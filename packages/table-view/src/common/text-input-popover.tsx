@@ -64,7 +64,7 @@ function TextInputContent({
       spellCheck
       variant="flat"
       className={cn(
-        "max-h-[771px] min-h-9 border-none bg-transparent word-break whitespace-pre-wrap caret-primary",
+        "max-h-[771px] min-h-9 border-none bg-transparent wrap-break-word whitespace-pre-wrap caret-primary",
         className,
       )}
       {...props}

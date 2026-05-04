@@ -134,7 +134,7 @@ function SingleImageDropzone({
   return (
     <div className="relative">
       {disabled && (
-        <div className="absolute inset-y-0 z-50 flex h-full w-full items-center justify-center bg-main/80">
+        <div className="absolute inset-y-0 z-50 flex size-full items-center justify-center bg-main/80">
           <Spinner className="size-6 fill-icon" />
         </div>
       )}
@@ -150,7 +150,7 @@ function SingleImageDropzone({
         {imageUrl ? (
           // Image Preview
           <img
-            className="h-full w-full rounded-md object-cover"
+            className="size-full rounded-md object-cover"
             src={imageUrl}
             alt={acceptedFiles[0]?.name}
           />
@@ -171,7 +171,7 @@ function SingleImageDropzone({
               void onChange?.(undefined);
             }}
           >
-            <div className="flex size-5 items-center justify-center rounded-md border border-solid border-gray-500 bg-white transition-all duration-300 hover:h-6 hover:w-6 dark:border-gray-400 dark:bg-black">
+            <div className="flex size-5 items-center justify-center rounded-md border border-solid border-gray-500 bg-white transition-all duration-300 hover:size-6 dark:border-gray-400 dark:bg-black">
               <X
                 className="text-gray-500 dark:text-gray-400"
                 width={16}

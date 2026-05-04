@@ -44,7 +44,7 @@ function Resizer({ direction, id, ts }: ResizerProps) {
     >
       <div
         className={cn(
-          "absolute top-1.5 bottom-1.5 w-1 rounded-sm bg-primary",
+          "absolute inset-y-1.5 w-1 rounded-sm bg-primary",
           direction === "left" ? "inset-s-1" : "inset-s-0",
         )}
       />

@@ -48,10 +48,7 @@ const CardTitle = ({
   ...props
 }: React.ComponentProps<"h3">) => (
   <h3
-    className={cn(
-      "text-2xl leading-none font-semibold tracking-tight",
-      className,
-    )}
+    className={cn("text-2xl/none font-semibold tracking-tight", className)}
     {...props}
   >
     {children}

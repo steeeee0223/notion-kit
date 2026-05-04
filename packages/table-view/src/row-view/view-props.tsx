@@ -56,7 +56,7 @@ export function ViewProps({ rowId }: ViewPropsProps) {
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="cell"
-                        className="h-full w-full max-w-full rounded-sm px-1.5"
+                        className="size-full max-w-full rounded-sm px-1.5"
                       >
                         {info.icon ? (
                           <IconBlock

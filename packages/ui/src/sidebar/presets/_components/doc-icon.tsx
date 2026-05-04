@@ -1,4 +1,3 @@
-import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 
 import { IconBlock, type IconData } from "@/icon-block";
@@ -24,11 +23,9 @@ export function DocIcon({ node, defaultIcon }: DocIconProps) {
           className="relative hidden size-5 group-hover/icon:flex"
           aria-label={expanded ? "collapse" : "expand"}
         >
-          <Icon.ChevronDown
-            className={cn(
-              "size-3 rotate-0 transition-[rotate]",
-              !expanded && "-rotate-90",
-            )}
+          <Icon.Chevron
+            side={expanded ? "down" : "right"}
+            className="size-3 transition-[rotate]"
           />
         </Button>
       </Tree.ExpandIndicator>

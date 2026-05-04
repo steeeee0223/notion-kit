@@ -43,7 +43,7 @@ export default function TestPage() {
           </p>
           <p className="mt-2 text-sm text-green-600 dark:text-green-500">
             For comprehensive testing including complex components, run:{" "}
-            <code className="rounded bg-green-100 px-2 py-1 dark:bg-green-900">
+            <code className="rounded-md bg-green-100 px-2 py-1 dark:bg-green-900">
               pnpm test
             </code>
           </p>

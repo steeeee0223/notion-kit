@@ -58,7 +58,6 @@
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
-
     "@types/file-saver": "^2.0.7",
     "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",

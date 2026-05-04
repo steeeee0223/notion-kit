@@ -289,7 +289,7 @@ function TimelineProviderInner({
         <div
           data-slot="timeline-view"
           className={cn(
-            "relative isolate grid h-full w-full flex-none overflow-auto rounded-sm select-none",
+            "relative isolate grid size-full flex-none overflow-auto rounded-sm select-none",
             range,
             className,
           )}
