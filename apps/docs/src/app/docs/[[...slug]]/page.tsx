@@ -8,7 +8,7 @@ import {
 } from "fumadocs-ui/page";
 import { ExternalLinkIcon } from "lucide-react";
 
-import { Badge } from "@notion-kit/shadcn";
+import { Badge } from "@notion-kit/ui/primitives";
 
 import { mdxComponents } from "@/components/mdx-components";
 import { source } from "@/lib/source";

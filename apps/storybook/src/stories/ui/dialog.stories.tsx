@@ -2,8 +2,8 @@ import { useState } from "react";
 import { delay } from "msw";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { AlertModal } from "@notion-kit/common/alert-modal";
-import { Button, Dialog, DialogTrigger } from "@notion-kit/shadcn";
+import { AlertModal } from "@notion-kit/ui/alert-modal";
+import { Button, Dialog, DialogTrigger } from "@notion-kit/ui/primitives";
 
 const meta = {
   title: "shadcn/Dialog",

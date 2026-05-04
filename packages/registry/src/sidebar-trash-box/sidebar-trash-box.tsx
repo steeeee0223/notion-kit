@@ -1,7 +1,7 @@
 "use client";
 
 import { Page } from "@notion-kit/schemas";
-import { TrashBox, usePages } from "@notion-kit/sidebar/presets";
+import { TrashBox, usePages } from "@notion-kit/ui/sidebar/presets";
 import { randomInt } from "@notion-kit/utils";
 
 const getRandomTs = () =>

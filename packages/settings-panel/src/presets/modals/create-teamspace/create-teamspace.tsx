@@ -3,9 +3,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 
 import { useTranslation } from "@notion-kit/i18n";
-import { IconBlock } from "@notion-kit/icon-block";
-import { IconMenu } from "@notion-kit/icon-menu";
 import { IconObject } from "@notion-kit/schemas";
+import { IconBlock } from "@notion-kit/ui/icon-block";
+import { IconMenu } from "@notion-kit/ui/icon-menu";
 import {
   Button,
   DialogContent,
@@ -22,7 +22,7 @@ import {
   Label,
   Spinner,
   Textarea,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { HintButton } from "@/presets/_components";
 

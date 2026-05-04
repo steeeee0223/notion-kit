@@ -12,7 +12,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 export default function Demo() {
   return (

@@ -7,7 +7,7 @@ import type {
 } from "@stripe/stripe-js";
 
 import { useTranslation } from "@notion-kit/i18n";
-import { useTheme } from "@notion-kit/shadcn";
+import { useTheme } from "@notion-kit/ui/primitives";
 
 import { stripeDark, stripeLight } from "./stripe-appearance";
 

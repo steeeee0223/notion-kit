@@ -2,14 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "button-sizes",
   "title": "Button Sizes",
-  "dependencies": ["@notion-kit/shadcn"],
+  "dependencies": ["@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/button-sizes/button-sizes.tsx",
-      "content": "import { Button } from \"@notion-kit/shadcn\";\n\nconst sizes = [\"xs\", \"sm\", \"md\", \"lg\"] as const;\n\nexport default function Demo() {\n  return (\n    <div className=\"grid grid-cols-4 gap-2\">\n      {sizes.map((size) => (\n        <Button key={size} size={size}>\n          Button\n        </Button>\n      ))}\n    </div>\n  );\n}\n",
+      "content": "import { Button } from \"@notion-kit/ui/primitives\";\n\nconst sizes = [\"xs\", \"sm\", \"md\", \"lg\"] as const;\n\nexport default function Demo() {\n  return (\n    <div className=\"grid grid-cols-4 gap-2\">\n      {sizes.map((size) => (\n        <Button key={size} size={size}>\n          Button\n        </Button>\n      ))}\n    </div>\n  );\n}\n",
       "type": "registry:component",
       "target": "components/button-sizes/button-sizes.tsx"
     }

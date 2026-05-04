@@ -3,7 +3,12 @@ import { useMemo, useRef, useState } from "react";
 import { cn } from "@notion-kit/cn";
 import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
-import { Button, Dialog, DialogTrigger, Input } from "@notion-kit/shadcn";
+import {
+  Button,
+  Dialog,
+  DialogTrigger,
+  Input,
+} from "@notion-kit/ui/primitives";
 
 import type { EmojiRow } from "@/lib/types";
 import { EmojiForm, type EmojiSchema } from "@/presets/modals";

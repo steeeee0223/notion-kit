@@ -1,13 +1,13 @@
 "use client";
 
-import { IconBlock } from "@notion-kit/icon-block";
+import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { DefaultIcon, TableCell } from "../common";
 import { PropMenu } from "../menus";
@@ -56,7 +56,7 @@ export function ViewProps({ rowId }: ViewPropsProps) {
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="cell"
-                        className="h-full w-full max-w-full rounded-sm px-1.5"
+                        className="size-full max-w-full rounded-sm px-1.5"
                       >
                         {info.icon ? (
                           <IconBlock

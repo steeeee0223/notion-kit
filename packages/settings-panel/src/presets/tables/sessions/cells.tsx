@@ -18,7 +18,7 @@ export function DeviceCell({ device, type, isCurrent }: DeviceCellProps) {
         className="block size-6 shrink-0 fill-[rgba(81,73,60,0.32)] dark:fill-primary/30"
       />
       <div className="flex flex-col items-start justify-center">
-        <div className="truncate text-xs leading-5 font-normal text-primary">
+        <div className="truncate text-xs/5 font-normal text-primary">
           {device}
         </div>
         {isCurrent && (

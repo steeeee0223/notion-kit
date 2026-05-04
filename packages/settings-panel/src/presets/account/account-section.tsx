@@ -13,7 +13,7 @@ import {
   Input,
   Label,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { SettingsSection } from "@/core";
 import { useAccount, useAccountActions, useFileActions } from "@/presets/hooks";

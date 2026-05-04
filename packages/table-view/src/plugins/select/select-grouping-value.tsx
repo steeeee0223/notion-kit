@@ -1,5 +1,5 @@
 import { cn } from "@notion-kit/cn";
-import { TooltipPreset } from "@notion-kit/shadcn";
+import { TooltipPreset } from "@notion-kit/ui/primitives";
 
 import { OptionTag } from "../../common";
 import { ColumnInfo } from "../../lib/types";

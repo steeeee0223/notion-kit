@@ -2,14 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "unsplash-default",
   "title": "Unsplash Default",
-  "dependencies": ["@notion-kit/unsplash"],
+  "dependencies": ["@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/unsplash-default/unsplash-default.tsx",
-      "content": "import { Unsplash } from \"@notion-kit/unsplash\";\n\nconst UNSPLASH_ACCESS_KEY = \"UNSPLASH_ACCESS_KEY\";\n\nexport default function Default() {\n  return <Unsplash className=\"w-[540px]\" apiKey={UNSPLASH_ACCESS_KEY} />;\n}\n",
+      "content": "import { Unsplash } from \"@notion-kit/ui/unsplash\";\n\nconst UNSPLASH_ACCESS_KEY = \"UNSPLASH_ACCESS_KEY\";\n\nexport default function Default() {\n  return <Unsplash className=\"w-[540px]\" apiKey={UNSPLASH_ACCESS_KEY} />;\n}\n",
       "type": "registry:component",
       "target": "components/unsplash-default/unsplash-default.tsx"
     }

@@ -5,7 +5,7 @@ import { flexRender, type Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
-import { buttonVariants } from "@notion-kit/shadcn";
+import { buttonVariants } from "@notion-kit/ui/primitives";
 
 import { RowActions } from "../common";
 import type { Row as RowModel } from "../lib/types";
@@ -82,7 +82,7 @@ export function ListRow({ row }: ListRowProps) {
             </React.Fragment>
           ))}
         </div>
-        <div className="absolute -end-7 top-1/2 h-full w-7 -translate-y-1/2 cursor-pointer" />
+        <div className="absolute -inset-e-7 top-1/2 h-full w-7 -translate-y-1/2 cursor-pointer" />
       </div>
     </div>
   );

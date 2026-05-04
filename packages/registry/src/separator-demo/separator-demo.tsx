@@ -1,4 +1,4 @@
-import { Separator } from "@notion-kit/shadcn";
+import { Separator } from "@notion-kit/ui/primitives";
 
 export default function Demo() {
   return (

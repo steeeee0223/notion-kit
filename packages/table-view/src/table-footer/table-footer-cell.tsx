@@ -8,7 +8,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { CountMethod } from "../features";
 import { Row } from "../lib/types";
@@ -58,7 +58,10 @@ function CountDisplay({ id, type }: CountDisplayProps) {
         <span className="text-muted">
           {type === "checkbox" ? "∑" : "Calculate"}
         </span>
-        <Icon.ChevronDown className="mt-px ml-1 block size-2.5 shrink-0 fill-muted" />
+        <Icon.Chevron
+          side="down"
+          className="mt-px ml-1 block size-2.5 shrink-0 fill-muted"
+        />
       </div>
     </div>
   ) : (

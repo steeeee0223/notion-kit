@@ -1,5 +1,5 @@
 import { Icon } from "@notion-kit/icons";
-import { Button } from "@notion-kit/shadcn";
+import { Button } from "@notion-kit/ui/primitives";
 
 export default function NavIcon() {
   return (

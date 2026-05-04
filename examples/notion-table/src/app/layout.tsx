@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono } from "next/font/google";
 
 import { cn } from "@notion-kit/cn";
-import { ThemeProvider } from "@notion-kit/shadcn";
+import { ThemeProvider } from "@notion-kit/ui/primitives";
 
 import "./global.css";
 

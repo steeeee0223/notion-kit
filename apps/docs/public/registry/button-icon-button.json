@@ -2,14 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "button-icon-button",
   "title": "Button Icon Button",
-  "dependencies": ["@notion-kit/icons", "@notion-kit/shadcn"],
+  "dependencies": ["@notion-kit/icons", "@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/button-icon-button/button-icon-button.tsx",
-      "content": "import { Icon } from \"@notion-kit/icons\";\nimport { Button } from \"@notion-kit/shadcn\";\n\nexport default function IconButton() {\n  return (\n    <Button variant=\"icon\">\n      <Icon.TypesText className=\"size-4\" />\n    </Button>\n  );\n}\n",
+      "content": "import { Icon } from \"@notion-kit/icons\";\nimport { Button } from \"@notion-kit/ui/primitives\";\n\nexport default function IconButton() {\n  return (\n    <Button variant=\"icon\">\n      <Icon.TypesText className=\"size-4\" />\n    </Button>\n  );\n}\n",
       "type": "registry:component",
       "target": "components/button-icon-button/button-icon-button.tsx"
     }

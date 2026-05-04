@@ -2,7 +2,7 @@ import {
   SidebarInset,
   SidebarOpen,
   SidebarProvider,
-} from "@notion-kit/sidebar";
+} from "@notion-kit/ui/sidebar";
 
 import { AppSidebar } from "@/components/app-sidebar";
 

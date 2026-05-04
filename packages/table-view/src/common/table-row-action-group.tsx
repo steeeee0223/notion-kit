@@ -7,7 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { RowActionMenu } from "../menus";
 

@@ -13,7 +13,7 @@ import {
   DialogContent,
   DialogTitle,
   Spinner,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { StripeElements } from "@/presets/_components";
 

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { CellContext, flexRender } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
-import { Button } from "@notion-kit/shadcn";
+import { Button } from "@notion-kit/ui/primitives";
 
 import type { ColumnInfo, Row } from "../lib/types";
 import type { CellPlugin, InferCellProps } from "../plugins";
@@ -70,7 +70,7 @@ export function TableRowCell<TPlugin extends CellPlugin>({
         })}
       </div>
       {mode === CellMode.Select && (
-        <div className="pointer-events-none absolute top-0 left-0 z-(--z-col) h-full w-full rounded-[3px] bg-blue/5 shadow-cell-focus" />
+        <div className="pointer-events-none absolute top-0 left-0 z-(--z-col) size-full rounded-sm bg-blue/5 shadow-cell-focus" />
       )}
     </div>
   );

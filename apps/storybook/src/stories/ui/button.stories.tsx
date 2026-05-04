@@ -1,7 +1,7 @@
 import { ChevronRight, CircleHelp, RefreshCw } from "lucide-react";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { Button } from "@notion-kit/shadcn";
+import { Button } from "@notion-kit/ui/primitives";
 
 const meta = {
   title: "Shadcn/Button",

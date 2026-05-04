@@ -3,7 +3,12 @@
 import { useState } from "react";
 
 import { useTranslation } from "@notion-kit/i18n";
-import { Button, Dialog, DialogTrigger, Separator } from "@notion-kit/shadcn";
+import {
+  Button,
+  Dialog,
+  DialogTrigger,
+  Separator,
+} from "@notion-kit/ui/primitives";
 
 import { SettingsRule, SettingsSection } from "@/core";
 import { useBillingActions, useWorkspace } from "@/presets/hooks";

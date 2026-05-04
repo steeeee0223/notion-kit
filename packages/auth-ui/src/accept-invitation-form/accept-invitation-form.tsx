@@ -1,7 +1,7 @@
 "use client";
 
-import { IconBlock } from "@notion-kit/icon-block";
-import { Button, Form, Spinner } from "@notion-kit/shadcn";
+import { IconBlock } from "@notion-kit/ui/icon-block";
+import { Button, Form, Spinner } from "@notion-kit/ui/primitives";
 
 import { useAcceptInvitationForm } from "./use-accept-invitation-form";
 

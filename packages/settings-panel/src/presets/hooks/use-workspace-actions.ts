@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { IconData } from "@notion-kit/schemas";
-import { toast } from "@notion-kit/shadcn";
+import { toast } from "@notion-kit/ui/primitives";
 
 import { useSettingsApi } from "@/core";
 import { createDefaultFn, QUERY_KEYS } from "@/lib/queries";

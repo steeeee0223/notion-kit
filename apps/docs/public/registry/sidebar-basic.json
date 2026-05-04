@@ -2,14 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "sidebar-basic",
   "title": "Sidebar Basic",
-  "dependencies": ["@notion-kit/sidebar"],
+  "dependencies": ["@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/sidebar-basic/sidebar-basic.tsx",
-      "content": "import {\n  Sidebar,\n  SidebarClose,\n  SidebarHeader,\n  SidebarInset,\n  SidebarOpen,\n  SidebarProvider,\n  SidebarRail,\n} from \"@notion-kit/sidebar\";\n\nexport default function Basic() {\n  return (\n    <SidebarProvider className=\"h-full min-h-full\">\n      <Sidebar className=\"absolute z-0 h-full\">\n        <SidebarClose />\n        <SidebarHeader className=\"p-3 font-semibold\">My App</SidebarHeader>\n        <SidebarRail />\n      </Sidebar>\n      <SidebarInset>\n        <header className=\"flex h-11 shrink-0 items-center gap-2 border-b px-4\">\n          <SidebarOpen />\n          Navbar\n        </header>\n      </SidebarInset>\n    </SidebarProvider>\n  );\n}\n",
+      "content": "import {\n  Sidebar,\n  SidebarClose,\n  SidebarHeader,\n  SidebarInset,\n  SidebarOpen,\n  SidebarProvider,\n  SidebarRail,\n} from \"@notion-kit/ui/sidebar\";\n\nexport default function Basic() {\n  return (\n    <SidebarProvider className=\"h-full min-h-full\">\n      <Sidebar className=\"absolute z-0 h-full\">\n        <SidebarClose />\n        <SidebarHeader className=\"p-3 font-semibold\">My App</SidebarHeader>\n        <SidebarRail />\n      </Sidebar>\n      <SidebarInset>\n        <header className=\"flex h-11 shrink-0 items-center gap-2 border-b px-4\">\n          <SidebarOpen />\n          Navbar\n        </header>\n      </SidebarInset>\n    </SidebarProvider>\n  );\n}\n",
       "type": "registry:component",
       "target": "components/sidebar-basic/sidebar-basic.tsx"
     }

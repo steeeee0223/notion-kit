@@ -21,7 +21,7 @@ import {
   FormLabel,
   FormMessage,
   Input,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { PasswordSuccess } from "./password-success";
 

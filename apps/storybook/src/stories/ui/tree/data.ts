@@ -1,4 +1,4 @@
-import { TreeItemData } from "@notion-kit/tree/presets";
+import { TreeItemData } from "@notion-kit/ui/tree/presets";
 
 export const folderNodes: TreeItemData[] = [
   {

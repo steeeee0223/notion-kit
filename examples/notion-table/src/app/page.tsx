@@ -2,13 +2,13 @@
 
 import { BookTextIcon, Github } from "lucide-react";
 
+import { TableView } from "@notion-kit/table-view";
 import {
   Button,
   ThemeToggle,
   TooltipPreset as Tooltip,
   TooltipProvider,
-} from "@notion-kit/shadcn";
-import { TableView } from "@notion-kit/table-view";
+} from "@notion-kit/ui/primitives";
 
 import { mockData, mockProps } from "@/lib/data";
 

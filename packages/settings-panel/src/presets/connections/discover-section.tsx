@@ -1,5 +1,5 @@
 import { useTranslation } from "@notion-kit/i18n";
-import { Button } from "@notion-kit/shadcn";
+import { Button } from "@notion-kit/ui/primitives";
 
 import { SettingsSection } from "@/core";
 import type { ConnectionStrategy } from "@/lib/types";

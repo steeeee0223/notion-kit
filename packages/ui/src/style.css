@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@import "@notion-kit/tailwind-config/base.css";
+
+@source "./**/*.{ts,tsx}";
+@source "../../icons/src/**/*.{ts,tsx}";
+@source "../../settings-panel/src/**/*.{ts,tsx}";
+@source "../../code-block/src/**/*.{ts,tsx}";
+@source "../../auth-ui/src/**/*.{ts,tsx}";
+@source "../../table-view/src/**/*.{ts,tsx}";

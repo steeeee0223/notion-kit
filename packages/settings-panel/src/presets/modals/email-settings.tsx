@@ -1,5 +1,5 @@
 import { Trans, useTranslation } from "@notion-kit/i18n";
-import { Button, DialogContent } from "@notion-kit/shadcn";
+import { Button, DialogContent } from "@notion-kit/ui/primitives";
 
 interface EmailSettingsProps {
   email: string;

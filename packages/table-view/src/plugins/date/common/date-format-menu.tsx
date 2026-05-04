@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
   MenuItem,
   MenuItemSelect,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 import type { DateFormat } from "@notion-kit/utils";
 
 const options: { label: string; value: DateFormat }[] = [

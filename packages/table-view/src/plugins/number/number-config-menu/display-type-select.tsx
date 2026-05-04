@@ -1,5 +1,5 @@
 import { cn } from "@notion-kit/cn";
-import { Button } from "@notion-kit/shadcn";
+import { Button } from "@notion-kit/ui/primitives";
 
 import { ProgressBar, ProgressRing } from "../common";
 import type { NumberDisplayType } from "../types";

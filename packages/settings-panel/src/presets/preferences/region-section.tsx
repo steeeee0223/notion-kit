@@ -2,16 +2,16 @@
 
 import { useState } from "react";
 
-import { AlertModal } from "@notion-kit/common/alert-modal";
-import { TimezoneMenu } from "@notion-kit/common/timezone-menu";
 import { LOCALE, useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
+import { AlertModal } from "@notion-kit/ui/alert-modal";
 import {
   Button,
   Dialog,
   SelectPreset as Select,
   Switch,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
+import { TimezoneMenu } from "@notion-kit/ui/timezone-menu";
 
 import { SettingsRule, SettingsSection } from "../../core";
 import { useAccountActions } from "../hooks";
@@ -88,7 +88,7 @@ export function RegionSection() {
               disabled={!tz}
             >
               {`(${gmt}) ${tz}`}
-              <Icon.ChevronDown className="fill-icon" />
+              <Icon.Chevron side="down" className="fill-icon" />
             </Button>
           )}
         />

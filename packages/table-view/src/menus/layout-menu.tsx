@@ -11,7 +11,7 @@ import {
   MenuGroup,
   MenuItem,
   MenuItemSelect,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { LayoutIcon, MenuHeader, RowViewIcon } from "../common";
 import { LAYOUT_OPTIONS, ROW_VIEW_OPTIONS, RowViewType } from "../features";

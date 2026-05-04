@@ -5,7 +5,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { useCodeBlock } from "./code-block-provider";
 import { CODE_BLOCK_LANGUAGES } from "./constant";

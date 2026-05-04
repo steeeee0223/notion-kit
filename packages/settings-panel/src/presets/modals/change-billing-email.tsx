@@ -14,7 +14,7 @@ import {
   FormItem,
   Input,
   Spinner,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 const billingEmailSchema = z.object({
   email: z.email(),

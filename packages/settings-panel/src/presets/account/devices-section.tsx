@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslation } from "@notion-kit/i18n";
-import { Button, Dialog, DialogTrigger } from "@notion-kit/shadcn";
+import { Button, Dialog, DialogTrigger } from "@notion-kit/ui/primitives";
 
 import { SettingsRule, SettingsSection } from "../../core";
 import { useAccount } from "../hooks";

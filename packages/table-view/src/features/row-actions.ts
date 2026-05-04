@@ -8,7 +8,7 @@ import type {
 import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
-import type { IconData } from "@notion-kit/icon-block";
+import type { IconData } from "@notion-kit/ui/icon-block";
 
 import type { Cell, Row } from "../lib/types";
 import { getDefaultCell, insertAt } from "../lib/utils";

@@ -4,7 +4,12 @@ import { useState } from "react";
 
 import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
-import { Button, Dialog, DialogTrigger, Switch } from "@notion-kit/shadcn";
+import {
+  Button,
+  Dialog,
+  DialogTrigger,
+  Switch,
+} from "@notion-kit/ui/primitives";
 
 import { SettingsRule, SettingsSection } from "../../core";
 import { useAccount, useAccountActions } from "../hooks";
@@ -31,7 +36,7 @@ export function SupportSection() {
         <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
           <DialogTrigger asChild>
             <Button variant="hint" className="size-5">
-              <Icon.ChevronRight className="size-3 fill-default/35" />
+              <Icon.Chevron side="right" className="size-3 fill-default/35" />
             </Button>
           </DialogTrigger>
           <DeleteAccount

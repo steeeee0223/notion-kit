@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 
-import { Publish } from "@notion-kit/navbar/presets";
 import { Page } from "@notion-kit/schemas";
-import { TooltipProvider } from "@notion-kit/shadcn";
+import { Publish } from "@notion-kit/ui/navbar/presets";
+import { TooltipProvider } from "@notion-kit/ui/primitives";
 
 export const defaultPage: Page = {
   type: "page",

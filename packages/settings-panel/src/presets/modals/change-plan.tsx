@@ -14,7 +14,7 @@ import {
   RadioGroup,
   RadioGroupItem,
   Spinner,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 const PLAN_OPTIONS = [
   {

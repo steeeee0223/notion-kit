@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
   Form,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import {
   upgradeSchema,

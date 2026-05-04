@@ -1,5 +1,5 @@
 import { cn } from "@notion-kit/cn";
-import { MenuItem } from "@notion-kit/shadcn";
+import { MenuItem } from "@notion-kit/ui/primitives";
 
 interface SettingsTabProps {
   className?: string;

@@ -2,7 +2,12 @@ import React from "react";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
-import { Badge, Button, Separator, TooltipPreset } from "@notion-kit/shadcn";
+import {
+  Badge,
+  Button,
+  Separator,
+  TooltipPreset,
+} from "@notion-kit/ui/primitives";
 
 interface SettingsSectionProps extends React.PropsWithChildren {
   title: string;

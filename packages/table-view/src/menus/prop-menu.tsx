@@ -10,7 +10,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   Separator,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { PropMeta } from "../common";
 import { TableViewMenuPage } from "../features";

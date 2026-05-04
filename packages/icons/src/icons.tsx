@@ -10,7 +10,7 @@ export type IconProps = React.SVGProps<SVGSVGElement>;
  * @default side "right"
  */
 export interface IconWithSideProps extends IconProps {
-  side: keyof typeof SIDE;
+  side?: keyof typeof SIDE;
 }
 
 export const DragHandle = (props: IconProps) => {
@@ -548,24 +548,6 @@ export const Chevron = ({
     {...props}
   >
     <path d="M6.722 3.238a.625.625 0 1 0-.884.884L9.716 8l-3.878 3.878a.625.625 0 0 0 .884.884l4.32-4.32a.625.625 0 0 0 0-.884z" />
-  </svg>
-);
-
-/**
- * @deprecated use Chevron instead
- */
-export const ChevronRight = (props: IconProps) => (
-  <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 16 16" {...props}>
-    <path d="M12.375 8.06445C12.375 7.83203 12.2861 7.63379 12.1084 7.45605L6.77637 2.24023C6.62598 2.08984 6.44141 2.01465 6.22266 2.01465C5.77832 2.01465 5.42285 2.35645 5.42285 2.80078C5.42285 3.01953 5.51172 3.21777 5.66211 3.375L10.4746 8.06445L5.66211 12.7539C5.51855 12.9043 5.42285 13.1025 5.42285 13.3213C5.42285 13.7725 5.77832 14.1143 6.22266 14.1143C6.44141 14.1143 6.62598 14.0391 6.77637 13.8887L12.1084 8.67285C12.293 8.49512 12.375 8.29688 12.375 8.06445Z" />
-  </svg>
-);
-
-/**
- * @deprecated use Chevron instead
- */
-export const ChevronDown = (props: IconProps) => (
-  <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 30 30" {...props}>
-    <polygon points="15,17.4 4.8,7 2,9.8 15,23 28,9.8 25.2,7 " />
   </svg>
 );
 

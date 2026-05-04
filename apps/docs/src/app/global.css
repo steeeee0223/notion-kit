@@ -2,8 +2,8 @@
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
 
-@import "@notion-kit/tailwind-config/base.css";
+@import "@notion-kit/ui/style.css";
 
 @source "../../../../node_modules/fumadocs-ui/dist/**/*.js";
 
-@source "../../../../packages/**/src/**/*.{ts,tsx}";
+@source "./**/*.{ts,tsx}";

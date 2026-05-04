@@ -15,7 +15,7 @@ import {
   DialogTitle,
   Label,
   Spinner,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 interface DeleteMemberProps {
   onDelete?: () => void;

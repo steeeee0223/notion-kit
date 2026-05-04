@@ -1,5 +1,5 @@
 import { Icon } from "@notion-kit/icons";
-import { Button, PopoverClose } from "@notion-kit/shadcn";
+import { Button, PopoverClose } from "@notion-kit/ui/primitives";
 
 interface MenuHeaderProps {
   id?: string;

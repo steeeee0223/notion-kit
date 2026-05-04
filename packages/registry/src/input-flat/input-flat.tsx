@@ -1,4 +1,4 @@
-import { Input } from "@notion-kit/shadcn";
+import { Input } from "@notion-kit/ui/primitives";
 
 export default function Flat() {
   return (

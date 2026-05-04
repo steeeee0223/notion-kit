@@ -3,7 +3,7 @@
 import { createContext, use } from "react";
 import type { Table } from "@tanstack/react-table";
 
-import { TooltipProvider } from "@notion-kit/shadcn";
+import { TooltipProvider } from "@notion-kit/ui/primitives";
 
 import { BoardViewContent } from "../board-view";
 import { LayoutType } from "../features";

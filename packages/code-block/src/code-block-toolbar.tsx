@@ -9,7 +9,7 @@ import {
   toast,
   TooltipPreset,
   TooltipProvider,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { CodeBlockActions } from "./code-block-actions";
 import { useCodeBlock } from "./code-block-provider";

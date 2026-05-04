@@ -17,7 +17,7 @@ import {
   Separator,
   Spinner,
   toast,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { useAuth } from "../auth-provider";
 import { handleError } from "../lib";

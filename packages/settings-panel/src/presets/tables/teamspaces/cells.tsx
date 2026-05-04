@@ -1,8 +1,8 @@
 import { useTransition } from "react";
 
 import { useTranslation } from "@notion-kit/i18n";
-import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
+import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import {
   Button,
   Dialog,
@@ -16,7 +16,7 @@ import {
   Option,
   SelectPreset as Select,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import type { TeamspacePermission, TeamspaceRole } from "@/lib/types";
 import { Avatar, permissions } from "@/presets/_components";
@@ -234,7 +234,7 @@ export function TeamMemberActionCell({
                 defaultValue: teamspaceRoles[role].label,
               })}
             </span>
-            <Icon.ChevronDown className="size-2.5 fill-icon" />
+            <Icon.Chevron side="down" className="size-2.5 fill-icon" />
           </Button>
         </DropdownMenuTrigger>
       </TooltipPreset>

@@ -12,7 +12,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 import type { Color } from "@notion-kit/utils";
 
 import { OptionTag } from "../../../common";

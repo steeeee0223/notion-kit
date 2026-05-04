@@ -1,8 +1,8 @@
 "use client";
 
 import type { Organization } from "@notion-kit/auth";
-import { IconBlock } from "@notion-kit/icon-block";
-import { IconMenu } from "@notion-kit/icon-menu";
+import { IconBlock } from "@notion-kit/ui/icon-block";
+import { IconMenu } from "@notion-kit/ui/icon-menu";
 import {
   Button,
   Form,
@@ -13,7 +13,7 @@ import {
   FormLabel,
   Input,
   Spinner,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import {
   defaultIcon,

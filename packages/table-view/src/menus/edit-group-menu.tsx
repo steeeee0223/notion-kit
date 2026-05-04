@@ -15,7 +15,7 @@ import {
   MenuItemSelect,
   MenuItemSwitch,
   Separator,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { MenuGroupHeader, MenuHeader, SortableDnd } from "../common";
 import { TableViewMenuPage } from "../features";

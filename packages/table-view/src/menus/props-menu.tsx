@@ -6,8 +6,8 @@ import { CSS } from "@dnd-kit/utilities";
 
 import { cn } from "@notion-kit/cn";
 import { useFilter } from "@notion-kit/hooks";
-import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
+import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Button,
   Input,
@@ -16,7 +16,7 @@ import {
   MenuItemAction,
   MenuItemSelect,
   Separator,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import {
   DefaultIcon,
@@ -232,7 +232,10 @@ function PropertyItem({
         >
           {hidden ? <Icon.EyeHide /> : <Icon.Eye />}
         </Button>
-        <Icon.ChevronRight className="transition-out ml-1.5 h-full w-3 fill-icon" />
+        <Icon.Chevron
+          side="right"
+          className="ml-1.5 h-full w-3 animate-bg-out fill-icon"
+        />
       </MenuItemAction>
     </MenuItem>
   );

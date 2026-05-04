@@ -2,18 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "cover-picker",
   "title": "Cover Picker",
-  "dependencies": [
-    "@notion-kit/cover",
-    "@notion-kit/icons",
-    "@notion-kit/shadcn"
-  ],
+  "dependencies": ["@notion-kit/icons", "@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/cover-picker/cover-picker.tsx",
-      "content": "import { CoverPicker } from \"@notion-kit/cover\";\nimport { Icon } from \"@notion-kit/icons\";\nimport { Button } from \"@notion-kit/shadcn\";\n\nconst UNSPLASH_ACCESS_KEY = \"UNSPLASH_ACCESS_KEY\";\n\nexport default function Picker() {\n  return (\n    <CoverPicker unsplashAPIKey={UNSPLASH_ACCESS_KEY}>\n      <Button size=\"sm\">\n        <Icon.Photo className=\"mr-2 size-4\" />\n        Change cover\n      </Button>\n    </CoverPicker>\n  );\n}\n",
+      "content": "import { Icon } from \"@notion-kit/icons\";\nimport { CoverPicker } from \"@notion-kit/ui/cover\";\nimport { Button } from \"@notion-kit/ui/primitives\";\n\nconst UNSPLASH_ACCESS_KEY = \"UNSPLASH_ACCESS_KEY\";\n\nexport default function Picker() {\n  return (\n    <CoverPicker unsplashAPIKey={UNSPLASH_ACCESS_KEY}>\n      <Button size=\"sm\">\n        <Icon.Photo className=\"mr-2 size-4\" />\n        Change cover\n      </Button>\n    </CoverPicker>\n  );\n}\n",
       "type": "registry:component",
       "target": "components/cover-picker/cover-picker.tsx"
     }

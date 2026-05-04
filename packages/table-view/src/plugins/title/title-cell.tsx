@@ -4,8 +4,8 @@ import { useId, useState } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { useInputField } from "@notion-kit/hooks";
-import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
+import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import {
   Button,
   Input,
@@ -13,7 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { CellTrigger, RowViewIcon, TextInputPopover } from "../../common";
 import { ROW_VIEW_OPTIONS } from "../../features";
@@ -54,7 +54,7 @@ function TitleTableCell({
       onUpdate={onChange}
       renderTrigger={({ width }) => (
         <CellTrigger wrapped={wrapped} layout="table" aria-disabled={disabled}>
-          <div className="pointer-events-none absolute top-1.5 right-0 left-0 z-20 mx-1 my-0 hidden justify-end group-hover/row:flex">
+          <div className="pointer-events-none absolute inset-x-0 top-1.5 z-20 mx-1 my-0 hidden justify-end group-hover/row:flex">
             <div
               id="quick-action-container"
               className="pointer-events-auto sticky right-1 flex bg-transparent"
@@ -145,7 +145,7 @@ function TitleListCell({
             >
               <Input
                 spellCheck
-                className="max-h-[771px] min-h-9 border-none bg-transparent word-break whitespace-pre-wrap caret-primary"
+                className="max-h-[771px] min-h-9 border-none bg-transparent wrap-break-word whitespace-pre-wrap caret-primary"
                 variant="flat"
                 {...props}
               />

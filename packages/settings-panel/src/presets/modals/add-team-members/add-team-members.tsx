@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 
 import { useTranslation } from "@notion-kit/i18n";
-import { IconBlock, type IconData } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import type { User } from "@notion-kit/schemas";
+import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import {
   Badge,
   Button,
@@ -21,7 +21,7 @@ import {
   MultiSelectOption,
   SelectPreset,
   Spinner,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 import { idToColor } from "@notion-kit/utils";
 
 import type { TeamspaceRole } from "@/lib/types";

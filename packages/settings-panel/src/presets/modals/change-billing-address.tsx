@@ -22,7 +22,7 @@ import {
   Input,
   Label,
   Spinner,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import type { BillingAddress } from "@/lib/types";
 import { StripeElements } from "@/presets/_components";
