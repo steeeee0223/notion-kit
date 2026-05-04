@@ -92,7 +92,7 @@
       "name": "badge-default",
       "title": "Badge Default",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -109,7 +109,7 @@
       "name": "badge-sizes",
       "title": "Badge Sizes",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -126,7 +126,7 @@
       "name": "badge-variants",
       "title": "Badge Variants",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -143,7 +143,7 @@
       "name": "button-default",
       "title": "Button Default",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -160,7 +160,7 @@
       "name": "button-disabled",
       "title": "Button Disabled",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/icons", "@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/icons", "@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -177,7 +177,7 @@
       "name": "button-hint",
       "title": "Button Hint",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/icons", "@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/icons", "@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -194,7 +194,7 @@
       "name": "button-icon-button",
       "title": "Button Icon Button",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/icons", "@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/icons", "@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -211,7 +211,7 @@
       "name": "button-nav-icon",
       "title": "Button Nav Icon",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/icons", "@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/icons", "@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -228,7 +228,7 @@
       "name": "button-sizes",
       "title": "Button Sizes",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -245,7 +245,7 @@
       "name": "button-variants",
       "title": "Button Variants",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -262,7 +262,7 @@
       "name": "button-warning",
       "title": "Button Warning",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -279,7 +279,7 @@
       "name": "checkbox-default",
       "title": "Checkbox Default",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -296,7 +296,7 @@
       "name": "checkbox-sizes",
       "title": "Checkbox Sizes",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -381,7 +381,7 @@
       "name": "context-menu",
       "title": "Context Menu",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -398,7 +398,7 @@
       "name": "cover-default",
       "title": "Cover Default",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/cover"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -415,11 +415,7 @@
       "name": "cover-picker",
       "title": "Cover Picker",
       "type": "registry:component",
-      "dependencies": [
-        "@notion-kit/cover",
-        "@notion-kit/icons",
-        "@notion-kit/shadcn"
-      ],
+      "dependencies": ["@notion-kit/icons", "@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -436,7 +432,7 @@
       "name": "dropdown-menu",
       "title": "Dropdown Menu",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -453,7 +449,7 @@
       "name": "dropdown-menu-checkbox",
       "title": "Dropdown Menu Checkbox",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -470,7 +466,7 @@
       "name": "icon-block-emoji",
       "title": "Icon Block Emoji",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/icon-block"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -487,7 +483,7 @@
       "name": "icon-block-lucide",
       "title": "Icon Block Lucide",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/icon-block"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -504,7 +500,7 @@
       "name": "icon-block-sizes",
       "title": "Icon Block Sizes",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/icon-block"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -521,7 +517,7 @@
       "name": "icon-block-text",
       "title": "Icon Block Text",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/icon-block"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -538,7 +534,7 @@
       "name": "icon-block-url",
       "title": "Icon Block Url",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/icon-block"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -555,7 +551,7 @@
       "name": "icon-menu-custom-factory",
       "title": "Icon Menu Custom Factory",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/icon-block", "@notion-kit/icon-menu"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -572,7 +568,7 @@
       "name": "icon-menu-default",
       "title": "Icon Menu Default",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/icon-block", "@notion-kit/icon-menu"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -589,7 +585,7 @@
       "name": "icon-menu-notion-icons",
       "title": "Icon Menu Notion Icons",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/icon-block", "@notion-kit/icon-menu"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -606,7 +602,7 @@
       "name": "input-default",
       "title": "Input Default",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -623,7 +619,7 @@
       "name": "input-flat",
       "title": "Input Flat",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -640,7 +636,7 @@
       "name": "input-search",
       "title": "Input Search",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -691,7 +687,7 @@
       "name": "multi-select-creatable",
       "title": "Multi Select Creatable",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -708,7 +704,7 @@
       "name": "multi-select-default",
       "title": "Multi Select Default",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -725,7 +721,7 @@
       "name": "multi-select-inline",
       "title": "Multi Select Inline",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -742,7 +738,7 @@
       "name": "multi-select-max-selected",
       "title": "Multi Select Max Selected",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -759,11 +755,7 @@
       "name": "navbar-menu",
       "title": "Navbar Menu",
       "type": "registry:component",
-      "dependencies": [
-        "@notion-kit/navbar",
-        "@notion-kit/schemas",
-        "@notion-kit/shadcn"
-      ],
+      "dependencies": ["@notion-kit/schemas", "@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -783,7 +775,7 @@
       "dependencies": [
         "@notion-kit/schemas",
         "@notion-kit/icons",
-        "@notion-kit/navbar"
+        "@notion-kit/ui"
       ],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
@@ -806,11 +798,7 @@
       "name": "navbar-participants",
       "title": "Navbar Participants",
       "type": "registry:component",
-      "dependencies": [
-        "@notion-kit/navbar",
-        "@notion-kit/schemas",
-        "@notion-kit/shadcn"
-      ],
+      "dependencies": ["@notion-kit/schemas", "@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -827,11 +815,7 @@
       "name": "navbar-sharing",
       "title": "Navbar Sharing",
       "type": "registry:component",
-      "dependencies": [
-        "@notion-kit/navbar",
-        "@notion-kit/schemas",
-        "@notion-kit/shadcn"
-      ],
+      "dependencies": ["@notion-kit/schemas", "@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -848,7 +832,7 @@
       "name": "navbar-title",
       "title": "Navbar Title",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/navbar", "@notion-kit/schemas"],
+      "dependencies": ["@notion-kit/schemas", "@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -865,7 +849,7 @@
       "name": "resizable-demo",
       "title": "Resizable Demo",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -882,7 +866,7 @@
       "name": "select-custom",
       "title": "Select Custom",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -899,7 +883,7 @@
       "name": "select-default",
       "title": "Select Default",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -916,7 +900,7 @@
       "name": "separator-demo",
       "title": "Separator Demo",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1082,7 +1066,7 @@
       "name": "sidebar-basic",
       "title": "Sidebar Basic",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/sidebar"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1101,7 +1085,7 @@
       "type": "registry:component",
       "dependencies": [
         "@notion-kit/schemas",
-        "@notion-kit/sidebar",
+        "@notion-kit/ui",
         "@notion-kit/utils"
       ],
       "registryDependencies": [
@@ -1124,7 +1108,7 @@
         "@notion-kit/schemas",
         "@notion-kit/utils",
         "@notion-kit/icons",
-        "@notion-kit/sidebar"
+        "@notion-kit/ui"
       ],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
@@ -1149,7 +1133,7 @@
       "type": "registry:component",
       "dependencies": [
         "@notion-kit/schemas",
-        "@notion-kit/sidebar",
+        "@notion-kit/ui",
         "@notion-kit/utils"
       ],
       "registryDependencies": [
@@ -1170,8 +1154,7 @@
       "type": "registry:component",
       "dependencies": [
         "@notion-kit/schemas",
-        "@notion-kit/shadcn",
-        "@notion-kit/sidebar",
+        "@notion-kit/ui",
         "@notion-kit/utils"
       ],
       "registryDependencies": [
@@ -1192,7 +1175,7 @@
       "type": "registry:component",
       "dependencies": [
         "@notion-kit/schemas",
-        "@notion-kit/sidebar",
+        "@notion-kit/ui",
         "@notion-kit/utils"
       ],
       "registryDependencies": [
@@ -1211,7 +1194,7 @@
       "name": "sidebar-workspace-switcher",
       "title": "Sidebar Workspace Switcher",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/schemas", "@notion-kit/sidebar"],
+      "dependencies": ["@notion-kit/schemas", "@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1228,7 +1211,7 @@
       "name": "single-image-dropzone-default",
       "title": "Single Image Dropzone Default",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/single-image-dropzone"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1245,7 +1228,7 @@
       "name": "skeleton-demo",
       "title": "Skeleton Demo",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1262,7 +1245,7 @@
       "name": "spinner-default",
       "title": "Spinner Default",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1279,7 +1262,7 @@
       "name": "spinner-variants",
       "title": "Spinner Variants",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1296,7 +1279,7 @@
       "name": "switch-default",
       "title": "Switch Default",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1313,7 +1296,7 @@
       "name": "switch-sizes",
       "title": "Switch Sizes",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1364,7 +1347,7 @@
       "name": "tabs-demo",
       "title": "Tabs Demo",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1381,7 +1364,7 @@
       "name": "tags-input-default",
       "title": "Tags Input Default",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/tags-input"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1398,7 +1381,7 @@
       "name": "timeline-layout",
       "title": "Timeline Layout",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/timeline"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1415,11 +1398,7 @@
       "name": "timeline-with-sidebar",
       "title": "Timeline With Sidebar",
       "type": "registry:component",
-      "dependencies": [
-        "@notion-kit/icons",
-        "@notion-kit/shadcn",
-        "@notion-kit/timeline"
-      ],
+      "dependencies": ["@notion-kit/icons", "@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1436,11 +1415,7 @@
       "name": "timeline-without-sidebar",
       "title": "Timeline Without Sidebar",
       "type": "registry:component",
-      "dependencies": [
-        "@notion-kit/icons",
-        "@notion-kit/shadcn",
-        "@notion-kit/timeline"
-      ],
+      "dependencies": ["@notion-kit/icons", "@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1457,7 +1432,7 @@
       "name": "tooltip-demo",
       "title": "Tooltip Demo",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/shadcn"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1474,7 +1449,7 @@
       "name": "tree-command",
       "title": "Tree Command",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/tree"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1491,7 +1466,7 @@
       "name": "tree-default",
       "title": "Tree Default",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/tree"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1508,7 +1483,7 @@
       "name": "tree-multi-select",
       "title": "Tree Multi Select",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/tree"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1525,7 +1500,7 @@
       "name": "tree-non-collapsible",
       "title": "Tree Non Collapsible",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/tree"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1542,7 +1517,7 @@
       "name": "tree-show-empty",
       "title": "Tree Show Empty",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/tree"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1559,7 +1534,7 @@
       "name": "unsplash-default",
       "title": "Unsplash Default",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/unsplash"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
@@ -1576,7 +1551,7 @@
       "name": "unsplash-search",
       "title": "Unsplash Search",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/unsplash"],
+      "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],

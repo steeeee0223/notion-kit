@@ -15,8 +15,8 @@ import {
   SidebarHeader,
   SidebarMenuItem,
   SidebarRail,
-} from "@notion-kit/sidebar";
-import { DocList, WorkspaceSwitcher } from "@notion-kit/sidebar/presets";
+} from "@notion-kit/ui/sidebar";
+import { DocList, WorkspaceSwitcher } from "@notion-kit/ui/sidebar/presets";
 
 import { useSettings } from "@/hooks/use-settings";
 import { useWorkspaceList } from "@/hooks/use-workspace-list";

@@ -35,8 +35,8 @@ describe("Package Import Tests", () => {
     expect(cn).toBeDefined();
   });
 
-  it("should import @notion-kit/cover without errors", async () => {
-    const { Cover } = await import("@notion-kit/cover");
+  it("should import @notion-kit/ui/cover without errors", async () => {
+    const { Cover } = await import("@notion-kit/ui/cover");
     expect(Cover).toBeDefined();
   });
 
@@ -50,13 +50,13 @@ describe("Package Import Tests", () => {
     expect(I18nProvider).toBeDefined();
   });
 
-  it("should import @notion-kit/icon-block without errors", async () => {
-    const { IconBlock } = await import("@notion-kit/icon-block");
+  it("should import @notion-kit/ui/icon-block without errors", async () => {
+    const { IconBlock } = await import("@notion-kit/ui/icon-block");
     expect(IconBlock).toBeDefined();
   }, 10000); // Longer timeout for large package
 
-  it("should import @notion-kit/icon-menu without errors", async () => {
-    const { IconMenu } = await import("@notion-kit/icon-menu");
+  it("should import @notion-kit/ui/icon-menu without errors", async () => {
+    const { IconMenu } = await import("@notion-kit/ui/icon-menu");
     expect(IconMenu).toBeDefined();
   });
 
@@ -65,14 +65,14 @@ describe("Package Import Tests", () => {
     expect(Icon).toBeDefined();
   });
 
-  it("should import @notion-kit/navbar without errors", async () => {
-    const { Navbar } = await import("@notion-kit/navbar");
+  it("should import @notion-kit/ui/navbar without errors", async () => {
+    const { Navbar } = await import("@notion-kit/ui/navbar");
     expect(Navbar).toBeDefined();
   });
 
-  it("should import @notion-kit/selectable without errors", async () => {
+  it("should import @notion-kit/ui/selectable without errors", async () => {
     const { Selectable, useSelectable, useSelectableItem } = await import(
-      "@notion-kit/selectable"
+      "@notion-kit/ui/selectable"
     );
     expect(Selectable).toBeDefined();
     expect(useSelectable).toBeDefined();
@@ -84,20 +84,20 @@ describe("Package Import Tests", () => {
     expect(SettingsPanel).toBeDefined();
   });
 
-  it("should import @notion-kit/shadcn without errors", async () => {
-    const { Button, Calendar } = await import("@notion-kit/shadcn");
+  it("should import @notion-kit/ui/primitives without errors", async () => {
+    const { Button, Calendar } = await import("@notion-kit/ui/primitives");
     expect(Button).toBeDefined();
     expect(Calendar).toBeDefined();
   });
 
-  it("should import @notion-kit/sidebar without errors", async () => {
-    const { Sidebar } = await import("@notion-kit/sidebar");
+  it("should import @notion-kit/ui/sidebar without errors", async () => {
+    const { Sidebar } = await import("@notion-kit/ui/sidebar");
     expect(Sidebar).toBeDefined();
   });
 
-  it("should import @notion-kit/single-image-dropzone without errors", async () => {
+  it("should import @notion-kit/ui/single-image-dropzone without errors", async () => {
     const { SingleImageDropzone } = await import(
-      "@notion-kit/single-image-dropzone"
+      "@notion-kit/ui/single-image-dropzone"
     );
     expect(SingleImageDropzone).toBeDefined();
   });
@@ -107,19 +107,19 @@ describe("Package Import Tests", () => {
     expect(TableView).toBeDefined();
   });
 
-  it("should import @notion-kit/tags-input without errors", async () => {
-    const { TagsInput } = await import("@notion-kit/tags-input");
+  it("should import @notion-kit/ui/tags-input without errors", async () => {
+    const { TagsInput } = await import("@notion-kit/ui/tags-input");
     expect(TagsInput).toBeDefined();
   });
 
-  it("should import @notion-kit/tree without errors", async () => {
-    const { Tree, useTree } = await import("@notion-kit/tree");
+  it("should import @notion-kit/ui/tree without errors", async () => {
+    const { Tree, useTree } = await import("@notion-kit/ui/tree");
     expect(Tree).toBeDefined();
     expect(useTree).toBeDefined();
   });
 
-  it("should import @notion-kit/unsplash without errors", async () => {
-    const { Unsplash } = await import("@notion-kit/unsplash");
+  it("should import @notion-kit/ui/unsplash without errors", async () => {
+    const { Unsplash } = await import("@notion-kit/ui/unsplash");
     expect(Unsplash).toBeDefined();
   });
 });

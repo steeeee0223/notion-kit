@@ -19,7 +19,7 @@ import {
   FormItem,
   FormMessage,
   Input,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 const workspaceSchema = z.object({
   name: z.string(),

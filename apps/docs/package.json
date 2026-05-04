@@ -9,15 +9,16 @@
     "clean": "git clean -xdf .cache .next .turbo node_modules",
     "dev": "next dev --turbopack",
     "format": "prettier --check . \"!**/*.{md,mdx}\" --ignore-path ../../.gitignore",
+    "postinstall": "fumadocs-mdx",
     "lint": "eslint",
     "start": "next start",
-    "postinstall": "fumadocs-mdx",
     "typecheck": "tsc --noEmit"
   },
+  "prettier": "@notion-kit/prettier-config",
   "dependencies": {
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/registry": "workspace:*",
-    "@notion-kit/shadcn": "workspace:*",
+    "@notion-kit/ui": "workspace:*",
     "fumadocs-core": "^16.0.12",
     "fumadocs-mdx": "^14.0.0",
     "fumadocs-ui": "^16.0.12",
@@ -31,7 +32,6 @@
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
-    "@notion-kit/tailwind-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "@notion-kit/validators": "workspace:*",
     "@tailwindcss/postcss": "catalog:tailwind-v4",
@@ -43,6 +43,5 @@
     "tailwindcss": "catalog:tailwind-v4",
     "tsx": "^4.19.3",
     "typescript": "catalog:"
-  },
-  "prettier": "@notion-kit/prettier-config"
+  }
 }

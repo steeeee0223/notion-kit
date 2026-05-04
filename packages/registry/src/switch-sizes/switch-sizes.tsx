@@ -1,4 +1,4 @@
-import { Switch } from "@notion-kit/shadcn";
+import { Switch } from "@notion-kit/ui/primitives";
 
 const sizes = ["sm", "md"] as const;
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@notion-kit/cn";
-import { TooltipPreset } from "@notion-kit/shadcn";
+import { TooltipPreset } from "@notion-kit/ui/primitives";
 
 import { CellTrigger, CopyButton, TextInputPopover } from "../../common";
 import { wrappedClassName } from "../../lib/utils";

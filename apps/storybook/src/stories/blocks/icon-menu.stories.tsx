@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { IconBlock, type IconData } from "@notion-kit/icon-block";
+import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import {
   IconFactoryResult,
   IconMenu,
@@ -9,7 +9,7 @@ import {
   useEmojiFactory,
   useLucideFactory,
   useNotionIconsFactory,
-} from "@notion-kit/icon-menu";
+} from "@notion-kit/ui/icon-menu";
 
 const meta = {
   title: "blocks/Icon Menu",

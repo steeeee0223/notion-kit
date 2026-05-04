@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { Cover } from "@notion-kit/cover";
+import { Cover } from "@notion-kit/ui/cover";
 
 const meta = {
   title: "blocks/Cover",

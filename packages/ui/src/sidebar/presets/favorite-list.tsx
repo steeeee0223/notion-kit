@@ -1,0 +1,85 @@
+import { useState } from "react";
+
+import type { IconData, Page, UpdatePageParams } from "@notion-kit/schemas";
+
+import { MenuItem } from "@/primitives";
+import { Tree, useTree } from "@/tree";
+
+import { SidebarGroup, SidebarMenuItem } from "../core";
+import { DocIcon, DocItemActions } from "./_components";
+import type { TreeData } from "./_lib";
+
+interface FavoriteListProps {
+  pages: Page[];
+  activePage?: string | null;
+  defaultIcon?: IconData;
+  onSelect?: (page: Page) => void;
+  onCreate?: (group: string, parentId?: string) => void;
+  onDuplicate?: (id: string) => void;
+  onUpdate?: (id: string, data: UpdatePageParams) => void;
+}
+
+export function FavoriteList({
+  pages,
+  activePage,
+  defaultIcon = { type: "lucide", src: "file" },
+  onSelect,
+  onCreate,
+  onDuplicate,
+  onUpdate,
+}: FavoriteListProps) {
+  const [showList, setShowList] = useState(true);
+
+  const treeData = pages.map((page) => ({
+    ...page,
+    iconData: page.icon ?? defaultIcon,
+  }));
+
+  const tree = useTree(treeData, {
+    showEmptyChild: true,
+    collapsible: true,
+    initialSelected: activePage ? [activePage] : [],
+    onSelectionChange: (id) =>
+      onSelect?.(pages.find((page) => page.id === id)!),
+  });
+
+  return (
+    <SidebarGroup>
+      <SidebarMenuItem
+        className="group/doc-list"
+        label={<span className="text-xs/none font-medium">Favorites</span>}
+        onClick={() => setShowList((v) => !v)}
+      />
+      {showList && (
+        <Tree tree={tree}>
+          <Tree.List<TreeData>
+            nodeIds={tree.entity.rootIds}
+            renderItem={({ node }) => {
+              return (
+                <MenuItem
+                  variant="sidebar"
+                  className="group/doc-item focus:shadow-notion"
+                  Icon={<DocIcon node={node} defaultIcon={defaultIcon} />}
+                  Body={node.title}
+                >
+                  <DocItemActions
+                    type="normal"
+                    title={node.title}
+                    icon={node.icon ?? defaultIcon}
+                    pageLink={node.url ?? "#"}
+                    isFavorite={node.isFavorite}
+                    lastEditedBy={node.lastEditedBy}
+                    lastEditedAt={node.lastEditedAt}
+                    onCreate={() => onCreate?.(node.type, node.id)}
+                    onDuplicate={() => onDuplicate?.(node.id)}
+                    onUpdate={(data) => onUpdate?.(node.id, data)}
+                  />
+                </MenuItem>
+              );
+            }}
+          />
+        </Tree>
+      )}
+    </SidebarGroup>
+  );
+}

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { Unsplash } from "@notion-kit/unsplash";
+import { Unsplash } from "@notion-kit/ui/unsplash";
 
 const meta = {
   title: "blocks/Unsplash",

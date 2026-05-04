@@ -2,7 +2,7 @@
 
 import { useTranslation } from "@notion-kit/i18n";
 import { Plan } from "@notion-kit/schemas";
-import { Switch } from "@notion-kit/shadcn";
+import { Switch } from "@notion-kit/ui/primitives";
 
 import { SettingsSection } from "@/core";
 import {

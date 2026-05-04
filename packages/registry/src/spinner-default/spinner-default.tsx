@@ -1,4 +1,4 @@
-import { Spinner } from "@notion-kit/shadcn";
+import { Spinner } from "@notion-kit/ui/primitives";
 
 export default function Default() {
   return <Spinner />;

@@ -1,4 +1,4 @@
-import { toast } from "@notion-kit/shadcn";
+import { toast } from "@notion-kit/ui/primitives";
 
 export const delay = async (timeout: number): Promise<void> =>
   await new Promise((resolve) => setTimeout(resolve, timeout));

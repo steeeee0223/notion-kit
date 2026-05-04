@@ -1,5 +1,5 @@
 @import "tailwindcss";
 
-@import "@notion-kit/tailwind-config/base.css";
+@import "@notion-kit/ui/style.css";
 
-@source "../../../../packages/**/src/**/*.{ts,tsx}";
+@source "./app/**/*.{ts,tsx}";

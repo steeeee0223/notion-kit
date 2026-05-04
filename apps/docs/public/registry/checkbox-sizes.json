@@ -2,14 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "checkbox-sizes",
   "title": "Checkbox Sizes",
-  "dependencies": ["@notion-kit/shadcn"],
+  "dependencies": ["@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/checkbox-sizes/checkbox-sizes.tsx",
-      "content": "import { Checkbox } from \"@notion-kit/shadcn\";\n\nconst sizes = [\"xs\", \"sm\", \"md\"] as const;\n\nexport default function Sizes() {\n  return (\n    <div className=\"grid grid-cols-4 gap-2\">\n      {sizes.map((size) => (\n        <Checkbox key={size} size={size} />\n      ))}\n    </div>\n  );\n}\n",
+      "content": "import { Checkbox } from \"@notion-kit/ui/primitives\";\n\nconst sizes = [\"xs\", \"sm\", \"md\"] as const;\n\nexport default function Sizes() {\n  return (\n    <div className=\"grid grid-cols-4 gap-2\">\n      {sizes.map((size) => (\n        <Checkbox key={size} size={size} />\n      ))}\n    </div>\n  );\n}\n",
       "type": "registry:component",
       "target": "components/checkbox-sizes/checkbox-sizes.tsx"
     }

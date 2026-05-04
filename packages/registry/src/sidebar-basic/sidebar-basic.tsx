@@ -6,7 +6,7 @@ import {
   SidebarOpen,
   SidebarProvider,
   SidebarRail,
-} from "@notion-kit/sidebar";
+} from "@notion-kit/ui/sidebar";
 
 export default function Basic() {
   return (

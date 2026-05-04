@@ -43,7 +43,7 @@ export function CodeBlockCaption({
         data-placeholder={placeholder}
         data-content-editable-leaf={readonly ? undefined : "true"}
         className={cn(
-          "w-full max-w-full py-1.5 pl-0.5 text-sm/[1.4] word-break whitespace-break-spaces text-[rgb(168,164,156)] focus-visible:outline-none",
+          "w-full max-w-full py-1.5 pl-0.5 text-sm/[1.4] wrap-break-word whitespace-break-spaces text-[rgb(168,164,156)] focus-visible:outline-none",
           !readonly &&
             "caret-primary empty:before:text-[rgb(168,164,156)]/50 empty:before:content-[attr(data-placeholder)]",
           className,

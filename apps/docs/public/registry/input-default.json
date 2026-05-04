@@ -2,14 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "input-default",
   "title": "Input Default",
-  "dependencies": ["@notion-kit/shadcn"],
+  "dependencies": ["@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/input-default/input-default.tsx",
-      "content": "import { Input } from \"@notion-kit/shadcn\";\n\nexport default function Default() {\n  return <Input className=\"w-80\" />;\n}\n",
+      "content": "import { Input } from \"@notion-kit/ui/primitives\";\n\nexport default function Default() {\n  return <Input className=\"w-80\" />;\n}\n",
       "type": "registry:component",
       "target": "components/input-default/input-default.tsx"
     }

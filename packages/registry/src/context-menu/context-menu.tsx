@@ -11,7 +11,7 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 export default function Demo() {
   return (

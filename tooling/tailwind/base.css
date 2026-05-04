@@ -165,10 +165,6 @@
   cursor: -webkit-grab;
 }
 
-@utility word-break {
-  word-break: break-word;
-}
-
 @utility overflow-x-initial {
   overflow-x: initial;
 }

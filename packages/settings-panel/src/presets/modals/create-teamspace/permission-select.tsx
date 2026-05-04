@@ -1,4 +1,4 @@
-import { SelectPreset as Select } from "@notion-kit/shadcn";
+import { SelectPreset as Select } from "@notion-kit/ui/primitives";
 
 import { permissions, TeamspacePermission } from "../../_components";
 import type { TeamspacePermission as Permission } from "../../../lib";

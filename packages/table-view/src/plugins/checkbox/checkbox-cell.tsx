@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@notion-kit/cn";
-import { Checkbox } from "@notion-kit/shadcn";
+import { Checkbox } from "@notion-kit/ui/primitives";
 
 import { CellTrigger } from "../../common";
 import type { CellProps } from "../types";

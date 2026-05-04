@@ -20,7 +20,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { useDndSensors } from "../common";
 import { TableViewMenuPage } from "../features";
@@ -59,7 +59,7 @@ function TableHeaderRow() {
     <div
       id="notion-table-view-header-row"
       dir="ltr"
-      className="relative right-0 left-0 box-border flex h-[34px] min-w-[708px] bg-main text-default/65 shadow-header-row"
+      className="relative inset-x-0 box-border flex h-[34px] min-w-[708px] bg-main text-default/65 shadow-header-row"
     >
       <div className="sticky left-8 z-(--z-col) flex">
         {/* Hovered actions */}

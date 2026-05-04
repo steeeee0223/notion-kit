@@ -7,7 +7,7 @@ import {
   MenuItemCheck,
   MenuLabel,
   Separator,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 import { COLOR, type Color } from "@notion-kit/utils";
 
 import { ColorIcon } from "../../../common";

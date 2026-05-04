@@ -86,7 +86,7 @@ export function CodeBlockContent({ ...props }: React.ComponentProps<"div">) {
               autoComplete="off"
               aria-label="Code editor"
               className={cn(
-                "absolute inset-0 h-full w-full resize-none bg-transparent p-[inherit] text-transparent caret-primary focus-visible:outline-none",
+                "absolute inset-0 size-full resize-none bg-transparent p-[inherit] text-transparent caret-primary focus-visible:outline-none",
                 state.wrap &&
                   "overflow-hidden wrap-anywhere break-all whitespace-pre-wrap",
               )}

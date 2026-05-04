@@ -1,13 +1,13 @@
 import { DatabaseIcon, Ellipsis, Plus } from "lucide-react";
 
+import { TableView } from "@notion-kit/table-view";
 import {
   Button,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@notion-kit/shadcn";
-import { TableView } from "@notion-kit/table-view";
+} from "@notion-kit/ui/primitives";
 
 import { mockData, mockProps } from "./data";
 import { ViewWrapper } from "./view-wrapper";

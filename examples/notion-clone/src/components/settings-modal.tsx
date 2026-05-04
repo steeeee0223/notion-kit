@@ -8,7 +8,7 @@ import {
   SettingsSidebar,
   SettingsSidebarPreset,
 } from "@notion-kit/settings-panel";
-import { Dialog, DialogContent } from "@notion-kit/shadcn";
+import { Dialog, DialogContent } from "@notion-kit/ui/primitives";
 
 import { useSettings } from "@/hooks/use-settings";
 
@@ -24,7 +24,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         noTitle
-        className="flex h-[calc(100vh-100px)] max-h-[720px] w-[calc(100vw-100px)] max-w-[1150px] rounded border-none p-0 shadow"
+        className="flex h-[calc(100vh-100px)] max-h-[720px] w-[calc(100vw-100px)] max-w-[1150px] rounded-md border-none p-0 shadow-sm"
         onClick={(e) => e.stopPropagation()}
         /**
          * tmporary fix

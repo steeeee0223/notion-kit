@@ -6,7 +6,7 @@ import {
   CommandList,
   MenuItem,
   MenuItemCheck,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { useCodeBlock } from "../code-block-provider";
 import { CODE_BLOCK_THEMES } from "../constant";

@@ -20,7 +20,7 @@ import {
   FormLabel,
   FormMessage,
   Input,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 const userSchema = z.object({
   email: z.email(),

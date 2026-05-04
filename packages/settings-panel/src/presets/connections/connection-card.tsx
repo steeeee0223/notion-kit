@@ -10,7 +10,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { Avatar } from "../_components";
 

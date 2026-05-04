@@ -13,7 +13,7 @@ import {
   CardDescription,
   CardTitle,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { SettingsSection, useScopes } from "@/core";
 import { Scope } from "@/lib/types";

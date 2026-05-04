@@ -1,7 +1,7 @@
 import type { Decorator } from "storybook-react-rsbuild";
 
 import { I18nProvider } from "@notion-kit/i18n";
-import { ThemeProvider, Toaster, useTheme } from "@notion-kit/shadcn";
+import { ThemeProvider, Toaster, useTheme } from "@notion-kit/ui/primitives";
 
 interface StorybookThemeWrapperProps extends React.PropsWithChildren {
   theme: string;

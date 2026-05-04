@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { Page } from "@notion-kit/schemas";
-import { Button } from "@notion-kit/shadcn";
-import { SearchCommand, usePages } from "@notion-kit/sidebar/presets";
+import { Button } from "@notion-kit/ui/primitives";
+import { SearchCommand, usePages } from "@notion-kit/ui/sidebar/presets";
 import { randomInt } from "@notion-kit/utils";
 
 const getRandomTs = () =>

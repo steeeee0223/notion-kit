@@ -8,7 +8,7 @@ import type { Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
-import { Button } from "@notion-kit/shadcn";
+import { Button } from "@notion-kit/ui/primitives";
 
 import { GroupActions } from "../common";
 import type { Row as RowModel } from "../lib/types";

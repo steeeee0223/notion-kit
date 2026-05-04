@@ -2,14 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "badge-variants",
   "title": "Badge Variants",
-  "dependencies": ["@notion-kit/shadcn"],
+  "dependencies": ["@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/badge-variants/badge-variants.tsx",
-      "content": "import { Badge } from \"@notion-kit/shadcn\";\n\nconst variants = [\"default\", \"gray\", \"blue\", \"orange\", \"tag\"] as const;\n\nexport default function Variants() {\n  return (\n    <div className=\"grid grid-cols-4 gap-2\">\n      {variants.map((variant) => (\n        <Badge key={variant} variant={variant}>\n          {variant}\n        </Badge>\n      ))}\n    </div>\n  );\n}\n",
+      "content": "import { Badge } from \"@notion-kit/ui/primitives\";\n\nconst variants = [\"default\", \"gray\", \"blue\", \"orange\", \"tag\"] as const;\n\nexport default function Variants() {\n  return (\n    <div className=\"grid grid-cols-4 gap-2\">\n      {variants.map((variant) => (\n        <Badge key={variant} variant={variant}>\n          {variant}\n        </Badge>\n      ))}\n    </div>\n  );\n}\n",
       "type": "registry:component",
       "target": "components/badge-variants/badge-variants.tsx"
     }

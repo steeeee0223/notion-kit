@@ -30,6 +30,7 @@
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "eslint": "catalog:",
+    "eslint-plugin-better-tailwindcss": "^4.5.0",
     "prettier": "catalog:",
     "typescript": "catalog:"
   },

@@ -8,7 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { SortMenu, TableViewMenu } from "../menus";
 import { useTableViewCtx } from "../table-contexts";
@@ -75,7 +75,7 @@ export function Toolbar({ className }: ToolbarProps) {
       </Popover>
       <Button variant="blue" size="sm" className="h-7 px-2">
         New
-        <Icon.ChevronDown className="size-3 fill-current" />
+        <Icon.Chevron side="down" className="size-3 fill-current" />
       </Button>
     </div>
   );

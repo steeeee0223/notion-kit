@@ -1,6 +1,6 @@
-import { CoverPicker } from "@notion-kit/cover";
 import { Icon } from "@notion-kit/icons";
-import { Button } from "@notion-kit/shadcn";
+import { CoverPicker } from "@notion-kit/ui/cover";
+import { Button } from "@notion-kit/ui/primitives";
 
 const UNSPLASH_ACCESS_KEY = "UNSPLASH_ACCESS_KEY";
 

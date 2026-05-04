@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { Plan } from "@notion-kit/schemas";
-import { Dialog } from "@notion-kit/shadcn";
+import { Dialog } from "@notion-kit/ui/primitives";
 
 import { SettingsRule, useStripePromise, type SettingsRuleProps } from "@/core";
 import { getUpgradePlan, isPlanAbove } from "@/lib/plans";

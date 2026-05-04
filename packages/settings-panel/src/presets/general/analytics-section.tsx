@@ -1,5 +1,5 @@
 import { useTranslation } from "@notion-kit/i18n";
-import { Switch } from "@notion-kit/shadcn";
+import { Switch } from "@notion-kit/ui/primitives";
 
 import { SettingsRule, SettingsSection } from "@/core";
 import { HintButton, TextLinks } from "@/presets/_components";

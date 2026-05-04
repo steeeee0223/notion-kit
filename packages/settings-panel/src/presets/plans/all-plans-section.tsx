@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { useTranslation } from "@notion-kit/i18n";
 import { Plan } from "@notion-kit/schemas";
-import { Dialog, Separator } from "@notion-kit/shadcn";
+import { Dialog, Separator } from "@notion-kit/ui/primitives";
 
 import { SettingsSection, useScopes, useStripePromise } from "@/core";
 import { getUpgradePlan } from "@/lib/plans";

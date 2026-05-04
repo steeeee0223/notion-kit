@@ -1,7 +1,7 @@
 import React from "react";
 
 import { cn, cva, type VariantProps } from "@notion-kit/cn";
-import { buttonVariants, TooltipPreset } from "@notion-kit/shadcn";
+import { buttonVariants, TooltipPreset } from "@notion-kit/ui/primitives";
 
 import type { LayoutType } from "../features";
 

@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
   Separator,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 import { KEYBOARD } from "@notion-kit/utils";
 
 import { RowViewIcon } from "../common";

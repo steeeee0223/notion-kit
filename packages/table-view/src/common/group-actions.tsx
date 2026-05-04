@@ -3,8 +3,8 @@
 import type { Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
-import { AlertModal } from "@notion-kit/common/alert-modal";
 import { Icon } from "@notion-kit/icons";
+import { AlertModal } from "@notion-kit/ui/alert-modal";
 import {
   Button,
   Dialog,
@@ -15,7 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import type { Row as RowModel } from "../lib/types";
 import { useTableViewCtx } from "../table-contexts";

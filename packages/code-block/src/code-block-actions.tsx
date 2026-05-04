@@ -19,7 +19,7 @@ import {
   PopoverTrigger,
   Switch,
   toast,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 import { KEYBOARD, toDateString } from "@notion-kit/utils";
 
 import { useCodeBlock } from "./code-block-provider";

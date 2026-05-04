@@ -20,7 +20,7 @@ import {
   FormItem,
   FormMessage,
   Input,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { Avatar } from "@/presets/_components";
 

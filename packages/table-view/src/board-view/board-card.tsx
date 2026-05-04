@@ -8,8 +8,8 @@ import { flexRender, type Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { useInputField } from "@notion-kit/hooks";
-import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
+import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Button,
   Input,
@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
   Separator,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import type { Row as RowModel } from "../lib/types";
 import { RowActionMenu } from "../menus";
@@ -103,7 +103,7 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
         <div className="relative z-10">
           <div
             className={cn(
-              "pointer-events-auto absolute end-0 z-20 flex h-6 rounded-sm border border-border text-xs whitespace-nowrap text-secondary shadow-sm",
+              "pointer-events-auto absolute inset-e-0 z-20 flex h-6 rounded-sm border border-border text-xs whitespace-nowrap text-secondary shadow-sm",
               "opacity-0 transition-opacity group-hover/card:opacity-100 has-aria-expanded:opacity-100",
             )}
           >
@@ -128,7 +128,7 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
               >
                 <Input
                   spellCheck
-                  className="max-h-[771px] min-h-9 border-none bg-transparent word-break whitespace-pre-wrap caret-primary"
+                  className="max-h-[771px] min-h-9 border-none bg-transparent wrap-break-word whitespace-pre-wrap caret-primary"
                   variant="flat"
                   {...props}
                 />
@@ -167,7 +167,7 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
           {row.original.icon && (
             <IconBlock icon={row.original.icon} className="contents" />
           )}
-          <div className="min-h-6 w-auto max-w-full grow text-sm/normal font-medium word-break whitespace-pre-wrap">
+          <div className="min-h-6 w-auto max-w-full grow text-sm/normal font-medium wrap-break-word whitespace-pre-wrap">
             {titleCell.cell.value || (
               <span className="text-muted">New page</span>
             )}

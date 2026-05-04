@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { SingleImageDropzone } from "@notion-kit/single-image-dropzone";
+import { SingleImageDropzone } from "@notion-kit/ui/single-image-dropzone";
 
 export default function Default() {
   const [file, setFile] = useState<File>();

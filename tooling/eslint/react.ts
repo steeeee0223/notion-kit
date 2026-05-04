@@ -1,3 +1,4 @@
+import betterTailwindcssPlugin from "eslint-plugin-better-tailwindcss";
 import jsxA11yPlugin from "eslint-plugin-jsx-a11y";
 import reactPlugin from "eslint-plugin-react";
 import hooksPlugin from "eslint-plugin-react-hooks";
@@ -28,4 +29,17 @@ export const reactConfig = defineConfig(
     },
   },
   hooksPlugin.configs.flat["recommended-latest"],
+  {
+    settings: {
+      "better-tailwindcss": {
+        entryPoint: "../../tooling/tailwind/base.css",
+      },
+    },
+    ...betterTailwindcssPlugin.configs.recommended,
+    rules: {
+      ...betterTailwindcssPlugin.configs.recommended.rules,
+      "better-tailwindcss/enforce-consistent-line-wrapping": "off",
+      "better-tailwindcss/no-unknown-classes": "warn",
+    },
+  },
 );

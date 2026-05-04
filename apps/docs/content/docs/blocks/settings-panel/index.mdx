@@ -105,9 +105,9 @@ Each adapter is optional; only include the ones your application supports.
 | `people`      | [`PeopleAdapter`](#people-adapter)           | Member management.             |
 | `invitations` | [`InvitationsAdapter`](#invitations-adapter) | Invitation management.         |
 | `teamspaces`  | [`TeamspacesAdapter`](#teamspaces-adapter)   | Teamspace management.          |
-| `emoji`       | [`EmojiAdapter`](#emoji-adapter)             | Custom emoji management.         |
-| `billing`     | [`BillingAdapter`](#billing-adapter)         | Billing and subscription.        |
-| `uploadFile`  | `(file: File) => Promise<void>`              | File upload handler.             |
+| `emoji`       | [`EmojiAdapter`](#emoji-adapter)             | Custom emoji management.       |
+| `billing`     | [`BillingAdapter`](#billing-adapter)         | Billing and subscription.      |
+| `uploadFile`  | `(file: File) => Promise<void>`              | File upload handler.           |
 
 ### Account Adapter
 
@@ -186,12 +186,12 @@ Each adapter is optional; only include the ones your application supports.
 
 ### Emoji Adapter
 
-| Method     | Type                                                        | Description               |
-| ---------- | ----------------------------------------------------------- | ------------------------- |
-| `getAll`\* | `() => Promise<Emojis>`                                     | Retrieve all emojis.      |
-| `add`\*    | `(data: { name: string; file: File }) => Promise<void>`     | Add a custom emoji.       |
-| `update`\* | `(data: { id: string; name?: string; file?: File }) => Promise<void>` | Update a custom emoji.    |
-| `delete`\* | `(id: string) => Promise<void>`                             | Delete a custom emoji.    |
+| Method     | Type                                                                  | Description            |
+| ---------- | --------------------------------------------------------------------- | ---------------------- |
+| `getAll`\* | `() => Promise<Emojis>`                                               | Retrieve all emojis.   |
+| `add`\*    | `(data: { name: string; file: File }) => Promise<void>`               | Add a custom emoji.    |
+| `update`\* | `(data: { id: string; name?: string; file?: File }) => Promise<void>` | Update a custom emoji. |
+| `delete`\* | `(id: string) => Promise<void>`                                       | Delete a custom emoji. |
 
 ### Billing Adapter
 

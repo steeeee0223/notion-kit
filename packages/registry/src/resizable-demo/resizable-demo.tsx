@@ -2,7 +2,7 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 export default function Demo() {
   return (

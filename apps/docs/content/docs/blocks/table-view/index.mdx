@@ -34,7 +34,10 @@ description: An composable, editable data table.
 
 ## Installation
 
-<Installation packages="@notion-kit/table-view" registryName="table-view-controlled" />
+<Installation
+  packages="@notion-kit/table-view"
+  registryName="table-view-controlled"
+/>
 
 ## Note
 
@@ -101,9 +104,9 @@ A `TableState` is a generic type `TableState<TPlugins>` that represents the stat
 
 ### `type` TableGlobalState
 
-| Prop          | Type                           | Default   | Description                              |
-| ------------- | ------------------------------ | --------- | ---------------------------------------- |
-| `layout`      | `"table" \| "list" \| "board"` | `"table"` | The layout view of the table.            |
+| Prop          | Type                           | Default   | Description                                 |
+| ------------- | ------------------------------ | --------- | ------------------------------------------- |
+| `layout`      | `"table" \| "list" \| "board"` | `"table"` | The layout view of the table.               |
 | `locked`      | `boolean`                      | `false`   | Whether the table is locked (non-editable). |
-| `rowView`     | `"center" \| "side" \| "full"` | `"side"`  | The view type of the opened row.         |
-| `openedRowId` | `string \| null`               | `null`    | The unique identifier of the opened row. |
+| `rowView`     | `"center" \| "side" \| "full"` | `"side"`  | The view type of the opened row.            |
+| `openedRowId` | `string \| null`               | `null`    | The unique identifier of the opened row.    |

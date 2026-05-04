@@ -12,17 +12,16 @@
     "typecheck": "tsc --noEmit",
     "with-env": "dotenv -e ../../.env --"
   },
+  "prettier": "@notion-kit/prettier-config",
   "dependencies": {
     "@notion-kit/auth": "workspace:*",
     "@notion-kit/auth-ui": "workspace:*",
     "@notion-kit/cn": "workspace:*",
-    "@notion-kit/icon-block": "workspace:*",
     "@notion-kit/icons": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/settings-panel": "workspace:*",
-    "@notion-kit/shadcn": "workspace:*",
-    "@notion-kit/sidebar": "workspace:*",
     "@notion-kit/table-view": "workspace:*",
+    "@notion-kit/ui": "workspace:*",
     "@t3-oss/env-nextjs": "catalog:env",
     "next": "catalog:next16",
     "react": "catalog:react19",
@@ -32,7 +31,6 @@
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
-    "@notion-kit/tailwind-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "@tailwindcss/postcss": "catalog:tailwind-v4",
     "@types/node": "catalog:node22",
@@ -41,6 +39,5 @@
     "dotenv-cli": "catalog:env",
     "tailwindcss": "catalog:tailwind-v4",
     "typescript": "catalog:"
-  },
-  "prettier": "@notion-kit/prettier-config"
+  }
 }

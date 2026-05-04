@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 
 import { useTranslation } from "@notion-kit/i18n";
-import { IconBlock, type IconData } from "@notion-kit/icon-block";
+import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import {
   Button,
   Form,
@@ -14,7 +14,7 @@ import {
   FormItem,
   MultiSelect,
   Spinner,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { useTeamspaceOptions } from "./use-teamspaces";
 

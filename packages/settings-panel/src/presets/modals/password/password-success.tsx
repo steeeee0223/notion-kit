@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogIcon,
   DialogTitle,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 export function PasswordSuccess() {
   const { t } = useTranslation("settings", {

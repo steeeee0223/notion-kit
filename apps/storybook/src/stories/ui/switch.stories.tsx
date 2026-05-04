@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { Switch } from "@notion-kit/shadcn";
+import { Switch } from "@notion-kit/ui/primitives";
 
 const meta = {
   title: "Shadcn/Switch",

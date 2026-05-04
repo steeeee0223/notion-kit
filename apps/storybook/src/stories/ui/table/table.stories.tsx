@@ -8,7 +8,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { users } from "./data";
 

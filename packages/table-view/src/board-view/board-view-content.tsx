@@ -5,7 +5,7 @@ import { SortableContext } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 
 import { Icon } from "@notion-kit/icons";
-import { Button } from "@notion-kit/shadcn";
+import { Button } from "@notion-kit/ui/primitives";
 
 import { TableViewMenuPage } from "../features";
 import { useTableViewCtx } from "../table-contexts";

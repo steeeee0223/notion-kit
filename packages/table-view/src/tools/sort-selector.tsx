@@ -6,7 +6,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { SortMenu } from "../menus";
 import { useTableViewCtx } from "../table-contexts";
@@ -47,7 +47,7 @@ export function SortSelector() {
           className="gap-1 rounded-full px-2 text-sm [&_svg]:fill-current"
         >
           {badgeDisplay}
-          <Icon.ChevronDown className="size-3" />
+          <Icon.Chevron side="down" className="size-3" />
         </Button>
       </PopoverTrigger>
       <PopoverContent role="menu" className="w-80">

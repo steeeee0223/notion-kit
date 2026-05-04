@@ -12,7 +12,7 @@ import {
   DialogIcon,
   DialogTitle,
   Spinner,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 interface DeleteGuestProps {
   name: string;

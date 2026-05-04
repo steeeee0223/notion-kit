@@ -1,6 +1,6 @@
 "use client";
 
-import type { MultiSelectOption } from "@notion-kit/shadcn";
+import type { MultiSelectOption } from "@notion-kit/ui/primitives";
 import { idToColor } from "@notion-kit/utils";
 
 import type { TeamspaceRow } from "../../lib";

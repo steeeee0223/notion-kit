@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger,
   MenuItem,
   MenuItemSelect,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import type { NumberFormat } from "../types";
 

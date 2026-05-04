@@ -1,4 +1,4 @@
-import { Badge } from "@notion-kit/shadcn";
+import { Badge } from "@notion-kit/ui/primitives";
 
 const variants = ["default", "gray", "blue", "orange", "tag"] as const;
 

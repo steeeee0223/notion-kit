@@ -1,6 +1,6 @@
 import { z } from "zod/v4";
 
-import { Input, SelectPreset, Switch } from "@notion-kit/shadcn";
+import { Input, SelectPreset, Switch } from "@notion-kit/ui/primitives";
 import { COLOR_OPTIONS } from "@notion-kit/utils";
 
 import type { NumberOptions } from "../types";

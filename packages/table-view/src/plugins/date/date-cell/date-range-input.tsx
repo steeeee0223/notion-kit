@@ -5,7 +5,7 @@ import type { OnChangeFn } from "@tanstack/react-table";
 import z from "zod/v4";
 
 import { cn } from "@notion-kit/cn";
-import { Input, Separator } from "@notion-kit/shadcn";
+import { Input, Separator } from "@notion-kit/ui/primitives";
 import { formatDate, isoToTs } from "@notion-kit/utils";
 
 import type { DateData } from "../types";

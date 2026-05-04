@@ -1,4 +1,4 @@
-import { Badge } from "@notion-kit/shadcn";
+import { Badge } from "@notion-kit/ui/primitives";
 
 const sizes = ["sm", "md"] as const;
 

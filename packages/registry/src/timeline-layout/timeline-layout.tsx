@@ -9,7 +9,7 @@ import {
   TimelineRangeHeader,
   TimelineToday,
   type TimelineRange,
-} from "@notion-kit/timeline";
+} from "@notion-kit/ui/timeline";
 
 export default function TimelineLayout() {
   const [range, setRange] = useState<TimelineRange>("monthly");

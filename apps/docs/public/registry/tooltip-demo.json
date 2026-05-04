@@ -2,14 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "tooltip-demo",
   "title": "Tooltip Demo",
-  "dependencies": ["@notion-kit/shadcn"],
+  "dependencies": ["@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/tooltip-demo/tooltip-demo.tsx",
-      "content": "import {\n  Button,\n  Tooltip,\n  TooltipContent,\n  TooltipProvider,\n  TooltipTrigger,\n} from \"@notion-kit/shadcn\";\n\nexport default function Demo() {\n  return (\n    <TooltipProvider>\n      <Tooltip>\n        <TooltipTrigger asChild>\n          <Button size=\"md\">Hover</Button>\n        </TooltipTrigger>\n        <TooltipContent>\n          <p>Add to library</p>\n        </TooltipContent>\n      </Tooltip>\n    </TooltipProvider>\n  );\n}\n",
+      "content": "import {\n  Button,\n  Tooltip,\n  TooltipContent,\n  TooltipProvider,\n  TooltipTrigger,\n} from \"@notion-kit/ui/primitives\";\n\nexport default function Demo() {\n  return (\n    <TooltipProvider>\n      <Tooltip>\n        <TooltipTrigger asChild>\n          <Button size=\"md\">Hover</Button>\n        </TooltipTrigger>\n        <TooltipContent>\n          <p>Add to library</p>\n        </TooltipContent>\n      </Tooltip>\n    </TooltipProvider>\n  );\n}\n",
       "type": "registry:component",
       "target": "components/tooltip-demo/tooltip-demo.tsx"
     }

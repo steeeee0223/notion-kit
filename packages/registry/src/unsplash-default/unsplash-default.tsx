@@ -1,4 +1,4 @@
-import { Unsplash } from "@notion-kit/unsplash";
+import { Unsplash } from "@notion-kit/ui/unsplash";
 
 const UNSPLASH_ACCESS_KEY = "UNSPLASH_ACCESS_KEY";
 

@@ -8,7 +8,7 @@ import {
   Tree,
   TreeItem,
   TreeItemLabel,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 interface Item {
   name: string;
@@ -88,7 +88,7 @@ export function DndTree() {
         Tree with multi-select and drag and drop ∙{" "}
         <a
           href="https://headless-tree.lukasbach.com"
-          className="hover:text-foreground underline"
+          className="underline hover:text-white"
           target="_blank"
           rel="noopener noreferrer"
         >

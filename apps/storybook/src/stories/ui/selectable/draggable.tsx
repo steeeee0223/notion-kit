@@ -24,7 +24,7 @@ import {
   Selectable,
   SelectableProps,
   useSelectable,
-} from "@notion-kit/selectable";
+} from "@notion-kit/ui/selectable";
 
 import { items } from "./constants";
 

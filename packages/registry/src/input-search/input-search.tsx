@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { Input } from "@notion-kit/shadcn";
+import { Input } from "@notion-kit/ui/primitives";
 
 export default function Search() {
   const [value, setValue] = useState("");

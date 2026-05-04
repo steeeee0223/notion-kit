@@ -2,14 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "tags-input-default",
   "title": "Tags Input Default",
-  "dependencies": ["@notion-kit/tags-input"],
+  "dependencies": ["@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/tags-input-default/tags-input-default.tsx",
-      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { TagsInput } from \"@notion-kit/tags-input\";\n\nexport default function Default() {\n  const [emails, setEmails] = useState<string[]>([]);\n  const [input, setInput] = useState(\"\");\n\n  return (\n    <TagsInput\n      placeholder=\"Search name or emails\"\n      value={{ tags: emails, input }}\n      onTagsChange={setEmails}\n      onInputChange={setInput}\n    />\n  );\n}\n",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { TagsInput } from \"@notion-kit/ui/tags-input\";\n\nexport default function Default() {\n  const [emails, setEmails] = useState<string[]>([]);\n  const [input, setInput] = useState(\"\");\n\n  return (\n    <TagsInput\n      placeholder=\"Search name or emails\"\n      value={{ tags: emails, input }}\n      onTagsChange={setEmails}\n      onInputChange={setInput}\n    />\n  );\n}\n",
       "type": "registry:component",
       "target": "components/tags-input-default/tags-input-default.tsx"
     }

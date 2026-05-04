@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocalStorage } from "usehooks-ts";
 
-import { toast } from "@notion-kit/shadcn";
+import { toast } from "@notion-kit/ui/primitives";
 
 import {
   createDefaultFn,

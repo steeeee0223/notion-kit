@@ -9,7 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { CellTrigger, OptionTag } from "../../common";
 import { CellProps } from "../types";

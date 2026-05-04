@@ -1,7 +1,7 @@
 "use client";
 
-import { MenuGroup, MenuItem, MenuLabel } from "@notion-kit/shadcn";
-import { TagsInput } from "@notion-kit/tags-input";
+import { MenuGroup, MenuItem, MenuLabel } from "@notion-kit/ui/primitives";
+import { TagsInput } from "@notion-kit/ui/tags-input";
 
 import { OptionTag, SortableDnd } from "../../../common";
 import { OptionItem } from "./option-item";

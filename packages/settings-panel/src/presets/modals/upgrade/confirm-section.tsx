@@ -10,7 +10,7 @@ import {
   FormItem,
   FormMessage,
   Label,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import type { UpgradePlan, UpgradeSchema } from "@/lib/types";
 
@@ -42,7 +42,7 @@ export function ConfirmSection({ plan }: ConfirmSectionProps) {
               {t("per-month")}
             </span>
           </div>
-          <Icon.ChevronDown className="size-3.5 fill-icon" />
+          <Icon.Chevron side="down" className="size-3.5 fill-icon" />
         </div>
         <FormField
           control={control}

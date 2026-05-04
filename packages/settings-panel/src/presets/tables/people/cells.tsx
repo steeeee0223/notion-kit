@@ -2,9 +2,9 @@ import { useTransition } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { useTranslation } from "@notion-kit/i18n";
-import { IconBlock } from "@notion-kit/icon-block";
 import { Icon } from "@notion-kit/icons";
 import { Role } from "@notion-kit/schemas";
+import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Button,
   Dialog,
@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
   SelectPreset as Select,
   type SelectPresetProps,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { Scope } from "@/lib/types";
 import type { GuestRow, MemberRow, PartialRole } from "@/lib/types";
@@ -48,7 +48,7 @@ export const TeamspacesCell = ({
               <span className="text-primary">
                 {t("teamspaces", { count: teamspaces.length })}
               </span>
-              <Icon.ChevronDown className="size-2.5 fill-icon" />
+              <Icon.Chevron side="down" className="size-2.5 fill-icon" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
@@ -61,7 +61,7 @@ export const TeamspacesCell = ({
                   Body={
                     <div className="flex items-center">
                       <div className="max-w-full shrink-0 truncate">
-                        <div className="max-w-25 truncate text-sm leading-5 text-primary">
+                        <div className="max-w-25 truncate text-sm/5 text-primary">
                           {ts.name}
                         </div>
                       </div>

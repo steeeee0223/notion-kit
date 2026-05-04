@@ -7,7 +7,7 @@ import {
   DialogTrigger,
   Separator,
   Switch,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { SettingsRule, SettingsSection, useScopes } from "@/core";
 import { Scope } from "@/lib/types";

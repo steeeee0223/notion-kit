@@ -13,7 +13,7 @@ import {
   MenuItem,
   MenuItemCheck,
   TooltipPreset,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { DefaultIcon, MenuHeader } from "../common";
 import { TableViewMenuPage } from "../features";

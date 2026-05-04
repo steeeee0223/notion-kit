@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { MultiSelect, type MultiSelectOption } from "@notion-kit/shadcn";
+import { MultiSelect, type MultiSelectOption } from "@notion-kit/ui/primitives";
 
 const OPTIONS: MultiSelectOption[] = [
   { value: "react", label: "React" },

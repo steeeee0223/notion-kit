@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 
 import { Icon } from "@notion-kit/icons";
-import { Button, Separator } from "@notion-kit/shadcn";
+import { Button, Separator } from "@notion-kit/ui/primitives";
 
 import { DndTableBody } from "../table-body";
 import { TableFooter } from "../table-footer";

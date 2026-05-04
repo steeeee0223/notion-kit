@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { Input } from "@notion-kit/shadcn";
+import { Input } from "@notion-kit/ui/primitives";
 
 const meta = {
   title: "Shadcn/Input",

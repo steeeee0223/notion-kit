@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { TagsInput } from "@notion-kit/tags-input";
+import { TagsInput } from "@notion-kit/ui/tags-input";
 
 export default function Default() {
   const [emails, setEmails] = useState<string[]>([]);

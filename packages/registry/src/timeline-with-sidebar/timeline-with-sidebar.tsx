@@ -13,7 +13,7 @@ import {
   ContextMenuGroup,
   ContextMenuItem,
   ContextMenuTrigger,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 import {
   TimelineContent,
   TimelineHeaderToolbar,
@@ -27,7 +27,7 @@ import {
   TimelineSidebarHeader,
   TimelineToday,
   type TimelineRange,
-} from "@notion-kit/timeline";
+} from "@notion-kit/ui/timeline";
 
 import { exampleFeatures } from "../timeline-data";
 

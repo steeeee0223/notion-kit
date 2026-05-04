@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { Checkbox } from "@notion-kit/shadcn";
+import { Checkbox } from "@notion-kit/ui/primitives";
 
 const meta = {
   title: "Shadcn/Checkbox",

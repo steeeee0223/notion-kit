@@ -8,7 +8,7 @@ import {
   AvatarImage,
   Avatar as AvatarRoot,
   Button,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { SettingsPlan } from "../../core";
 

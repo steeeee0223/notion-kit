@@ -4,7 +4,7 @@ import { IBM_Plex_Mono } from "next/font/google";
 
 import { AuthProvider } from "@notion-kit/auth-ui";
 import { cn } from "@notion-kit/cn";
-import { ThemeProvider, Toaster } from "@notion-kit/shadcn";
+import { ThemeProvider, Toaster } from "@notion-kit/ui/primitives";
 
 import { env } from "@/env";
 

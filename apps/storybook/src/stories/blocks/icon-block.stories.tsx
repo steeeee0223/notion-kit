@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { IconBlock } from "@notion-kit/icon-block";
+import { IconBlock } from "@notion-kit/ui/icon-block";
 
 const meta = {
   title: "blocks/Icon Block",

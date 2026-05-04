@@ -17,7 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   Input,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 import { toDateString } from "@notion-kit/utils";
 
 import type { Passkey } from "@/lib/types";

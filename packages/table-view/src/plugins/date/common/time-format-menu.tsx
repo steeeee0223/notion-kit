@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
   MenuItem,
   MenuItemSelect,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 import type { TimeFormat } from "@notion-kit/utils";
 
 const options: { label: string; value: TimeFormat }[] = [

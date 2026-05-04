@@ -1,7 +1,7 @@
 "use client";
 
-import { useTree } from "@notion-kit/tree";
-import { CommandTree, type TreeItemData } from "@notion-kit/tree/presets";
+import { useTree } from "@notion-kit/ui/tree";
+import { CommandTree, type TreeItemData } from "@notion-kit/ui/tree/presets";
 
 export const folderNodes: TreeItemData[] = [
   {

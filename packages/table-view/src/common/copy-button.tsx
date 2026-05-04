@@ -3,7 +3,7 @@
 import { cn } from "@notion-kit/cn";
 import { useCopyToClipboard } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
-import { Button, TooltipPreset } from "@notion-kit/shadcn";
+import { Button, TooltipPreset } from "@notion-kit/ui/primitives";
 
 interface CopyButtonProps {
   className?: string;
@@ -16,7 +16,7 @@ export function CopyButton({ className, value }: CopyButtonProps) {
   return (
     <div
       className={cn(
-        "pointer-events-none absolute top-1.5 right-0 left-0 z-20 mx-1 my-0 flex justify-end",
+        "pointer-events-none absolute inset-x-0 top-1.5 z-20 mx-1 my-0 flex justify-end",
         className,
       )}
     >

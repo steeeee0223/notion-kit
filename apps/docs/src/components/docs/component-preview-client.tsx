@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { Skeleton } from "@notion-kit/shadcn";
+import { Skeleton } from "@notion-kit/ui/primitives";
 
 import { useHorizontalResize } from "@/hooks/use-horizontal-resize";
 

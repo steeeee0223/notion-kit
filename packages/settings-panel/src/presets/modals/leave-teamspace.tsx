@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
   Spinner,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 interface LeaveTeamspaceProps {
   name: string;

@@ -18,7 +18,7 @@ import {
   Input,
   MenuItem,
   MenuItemSelect,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { SortableDnd } from "../../../common";
 import type { ConfigMenuProps } from "../../types";

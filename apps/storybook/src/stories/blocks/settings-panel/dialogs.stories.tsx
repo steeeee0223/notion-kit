@@ -32,7 +32,7 @@ import {
   TeamspaceDetail,
   Upgrade,
 } from "@notion-kit/settings-panel";
-import { Dialog } from "@notion-kit/shadcn";
+import { Dialog } from "@notion-kit/ui/primitives";
 
 import { env } from "@/env";
 import { asyncSuccess } from "@/lib/utils";

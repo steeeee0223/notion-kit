@@ -9,7 +9,7 @@ import {
   DialogTrigger,
   Separator,
   Switch,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import { SettingsRule, SettingsSection } from "@/core";
 import { useStripePromise } from "@/core/settings-provider";

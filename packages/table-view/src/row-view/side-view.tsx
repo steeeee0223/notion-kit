@@ -3,7 +3,7 @@
 import React from "react";
 
 import { cn } from "@notion-kit/cn";
-import { Sheet, SheetContent, SheetTitle } from "@notion-kit/shadcn";
+import { Sheet, SheetContent, SheetTitle } from "@notion-kit/ui/primitives";
 
 import { useTableViewCtx } from "../table-contexts";
 import { rowViewContentVariants } from "./utils";

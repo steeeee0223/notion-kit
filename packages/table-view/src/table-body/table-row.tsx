@@ -7,7 +7,7 @@ import { Cell, flexRender, Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
-import { Checkbox } from "@notion-kit/shadcn";
+import { Checkbox } from "@notion-kit/ui/primitives";
 
 import { RowActions, TableRowActionGroup } from "../common";
 import type { Row as RowModel } from "../lib/types";

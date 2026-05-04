@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogIcon,
   DialogTitle,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 export function Enable2FAMethod() {
   const { t } = useTranslation("settings", {
@@ -28,9 +28,7 @@ export function Enable2FAMethod() {
         <Button className="group h-auto w-full items-start justify-start px-4 py-2.5 text-left">
           <Icon.AuthenticatorCode className="mr-2.5 size-5 fill-icon group-hover:fill-blue" />
           <div className="min-w-0">
-            <div className="truncate text-sm leading-5">
-              {t("authenticator.title")}
-            </div>
+            <div className="truncate text-sm/5">{t("authenticator.title")}</div>
             <span className="text-xs/[1.35] whitespace-normal text-muted">
               {t("authenticator.description")}
             </span>
@@ -39,7 +37,7 @@ export function Enable2FAMethod() {
         <Button className="group h-auto w-full items-start justify-start px-4 py-2.5 text-left">
           <Icon.TextMessage className="mr-2.5 size-5 fill-icon group-hover:fill-blue" />
           <div className="min-w-0">
-            <div className="truncate text-sm leading-5">{t("text.title")}</div>
+            <div className="truncate text-sm/5">{t("text.title")}</div>
             <span className="text-xs/[1.35] whitespace-normal text-muted">
               {t("text.description")}
             </span>

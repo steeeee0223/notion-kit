@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { SingleImageDropzone } from "@notion-kit/single-image-dropzone";
+import { SingleImageDropzone } from "@notion-kit/ui/single-image-dropzone";
 
 const meta = {
   title: "blocks/Single Image Dropzone",

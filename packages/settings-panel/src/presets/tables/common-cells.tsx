@@ -3,7 +3,7 @@ import { SortDirection } from "@tanstack/react-table";
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import type { User } from "@notion-kit/schemas";
-import { Button } from "@notion-kit/shadcn";
+import { Button } from "@notion-kit/ui/primitives";
 
 import { Avatar } from "../_components";
 

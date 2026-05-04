@@ -1,6 +1,6 @@
 import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
-import { Button, Switch } from "@notion-kit/shadcn";
+import { Button, Switch } from "@notion-kit/ui/primitives";
 
 import { SettingsRule, SettingsSection } from "../../core";
 

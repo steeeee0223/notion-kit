@@ -2,18 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "navbar-menu",
   "title": "Navbar Menu",
-  "dependencies": [
-    "@notion-kit/navbar",
-    "@notion-kit/schemas",
-    "@notion-kit/shadcn"
-  ],
+  "dependencies": ["@notion-kit/schemas", "@notion-kit/ui"],
   "registryDependencies": [
     "https://notion-ui.vercel.app/registry/notion-theme.json"
   ],
   "files": [
     {
       "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/navbar-menu/navbar-menu.tsx",
-      "content": "import { Menu } from \"@notion-kit/navbar/presets\";\nimport type { Page } from \"@notion-kit/schemas\";\nimport { TooltipProvider } from \"@notion-kit/shadcn\";\n\nexport const page: Page = {\n  type: \"page\",\n  id: \"12\",\n  title: \"Title\",\n  isArchived: false,\n  parentId: null,\n  isPublished: false,\n  isFavorite: true,\n  createdAt: 0,\n  lastEditedAt: 0,\n  createdBy: \"admin\",\n  lastEditedBy: \"admin\",\n};\n\nexport default function Demo() {\n  return (\n    <TooltipProvider>\n      <Menu page={page} />\n    </TooltipProvider>\n  );\n}\n",
+      "content": "import type { Page } from \"@notion-kit/schemas\";\nimport { Menu } from \"@notion-kit/ui/navbar/presets\";\nimport { TooltipProvider } from \"@notion-kit/ui/primitives\";\n\nexport const page: Page = {\n  type: \"page\",\n  id: \"12\",\n  title: \"Title\",\n  isArchived: false,\n  parentId: null,\n  isPublished: false,\n  isFavorite: true,\n  createdAt: 0,\n  lastEditedAt: 0,\n  createdBy: \"admin\",\n  lastEditedBy: \"admin\",\n};\n\nexport default function Demo() {\n  return (\n    <TooltipProvider>\n      <Menu page={page} />\n    </TooltipProvider>\n  );\n}\n",
       "type": "registry:component",
       "target": "components/navbar-menu/navbar-menu.tsx"
     }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@notion-kit/shadcn";
+import { Button } from "@notion-kit/ui/primitives";
 
 export default function TestPage() {
   return (
@@ -15,7 +15,9 @@ export default function TestPage() {
         </section>
 
         <section className="space-y-4 rounded-lg border p-6">
-          <h2 className="text-xl font-semibold">@notion-kit/shadcn (Button)</h2>
+          <h2 className="text-xl font-semibold">
+            @notion-kit/ui/primitives (Button)
+          </h2>
           <div className="flex gap-2">
             <Button size="sm">Default</Button>
             <Button size="sm" variant="blue">
@@ -41,7 +43,7 @@ export default function TestPage() {
           </p>
           <p className="mt-2 text-sm text-green-600 dark:text-green-500">
             For comprehensive testing including complex components, run:{" "}
-            <code className="rounded bg-green-100 px-2 py-1 dark:bg-green-900">
+            <code className="rounded-md bg-green-100 px-2 py-1 dark:bg-green-900">
               pnpm test
             </code>
           </p>

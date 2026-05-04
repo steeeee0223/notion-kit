@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import { cn } from "@notion-kit/cn";
-import type { IconData } from "@notion-kit/icon-block";
+import type { IconData } from "@notion-kit/ui/icon-block";
 
 import type {
   TeamMemberRow,

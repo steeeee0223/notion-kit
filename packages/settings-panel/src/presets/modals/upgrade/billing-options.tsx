@@ -8,7 +8,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@notion-kit/shadcn";
+} from "@notion-kit/ui/primitives";
 
 import type { UpgradePlan, UpgradeSchema } from "@/lib/types";
 
