@@ -4,8 +4,8 @@
   "pages": [
     "---Getting Started---",
     "index",
-    "changelog",
     "...getting-started",
+    "changelog",
     "---Components---",
     "...components",
     "---Blocks---",

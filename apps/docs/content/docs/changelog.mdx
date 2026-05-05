@@ -3,60 +3,17 @@ title: Changelog
 description: Latest updates and improvements to Notion UI.
 ---
 
-<Update date="April 22, 2026">
-Improvements to pagination reliability for the [Query a data source](#) endpoint:
+<ChangelogBlock version="v1.0.0">
 
-- Pagination cursors now embed a session identifier, eliminating intermittent `400 validation_error` (“The start_cursor provided is invalid”) errors that could occur when multiple pagination sessions for the same query overlapped.
-- The `start_cursor` parameter now accepts opaque string values in addition to UUIDs. Existing UUID-based cursors continue to work. As documented in our [versioning policy](#), cursors should always be treated as opaque — pass `next_cursor` values back as `start_cursor` without parsing or validating their format.
-</Update>
+### 🚀 NK-40: Single UI Package
 
-<Update date="April 20, 2026">
-### Data source and view query pagination limit
+We have consolidated all individual UI components into a single unified package: `@notion-kit/ui`.
 
-The [Query a data source](#), [Create a view query](#), and [Get view query results](#) endpoints now enforce a maximum pagination depth of 10,000 results per query. When a query matches more rows than this limit, the response includes a new `request_status` field:
+**What's new:**
+- **Simplified Imports:** Instead of importing from numerous small packages (e.g., `@notion-kit/button`, `@notion-kit/dialog`, etc.), all primitives and complex components like `navbar`, `sidebar`, and `timeline` are now exported directly from `@notion-kit/ui`.
+- **Easier Maintenance:** A single package structure drastically reduces dependency overhead and improves build performance.
+- **Unified Design System:** Ensures a more consistent styling approach across all components using shared core styles.
 
-```json
-{
-  "request_status": {
-    "type": "incomplete",
-    "incomplete_reason": "query_result_limit_reached"
-  }
-}
-```
+Please update your imports to use `@notion-kit/ui` for all UI components.
 
-Integrations that polled these endpoints to iterate through all matching rows in a large data source should check for `request_status.type === "incomplete"` and adapt accordingly. The limit improves reliability for all API users by bounding the server-side resources consumed by each query.
-
-If your integration needs to process all pages in a large data source, we recommend:
-
-- Using [data source filters](#) or narrowing the [view’s filter/sort configuration](#) to reduce the result set.
-- Setting up [integration webhooks](#) for incremental sync instead of polling the full data source on a schedule.
-- Dividing large data sources into multiple smaller ones.
-</Update>
-
-<Update date="April 17, 2026">
-### Update and delete comment endpoints
-
-The [Update a comment](#) and [Delete a comment](#) endpoints are now generally available. Non-DLP integrations can only modify or delete comments they created.
-
-### Multi-value filters for select, status, and multi_select properties
-
-[Database](#) and [data source](#) filters now accept an array of values for `equals` / `does_not_equal` on select and status properties, and for `contains` / `does_not_contain` on multi_select properties, matching the multi-value conditions available in the Notion UI.
-
-### Notion MCP improvements
-
-- The `search` tool no longer drops Slack DMs and private channel results when the connected workspace has the Slack integration enabled.
-- The `fetch` tool now accepts any first-party Notion domain for the current environment.
-- Page resources returned by the `fetch` tool now include `is_archived`.
-</Update>
-
-<Update date="April 7, 2026">
-### Markdown body parameter for comments
-
-The [Create comment](#) endpoint now accepts an optional `markdown` string body parameter as an alternative to `rich_text`. Exactly one of `rich_text` or `markdown` must be provided.
-</Update>
-
-<Update date="April 2, 2026">
-### What’s new
-
-The [Developer Terms](#) have been updated with clarifications to scope, revisions to the Feedback provision, and other minor revisions.
-</Update>
+</ChangelogBlock>
