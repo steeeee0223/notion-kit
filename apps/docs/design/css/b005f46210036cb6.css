@@ -1,0 +1,31 @@
+.bentos_bentoSection__5jULI {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+}
+@media (min-width: 840px) {
+  .bentos_bentoSection__5jULI {
+    gap: var(--spacing-32);
+  }
+}
+.bentos_bentoGrid__LBfZl {
+  --bento-gap: var(--spacing-16);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--bento-gap);
+}
+@media (min-width: 840px) {
+  .bentos_bentoGrid__LBfZl {
+    grid-template-columns: 1fr 1fr;
+    --bento-gap: var(--spacing-24);
+  }
+}
+.bentos_bentoGrid__LBfZl > * {
+  min-width: 0;
+}
+.bentos_bentoWide__XtuBE {
+  grid-column: 1/-1;
+}
+.bentos_layerDropShadow__Qz0hH {
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+}
