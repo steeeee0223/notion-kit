@@ -1,2 +1,2 @@
-export * from "./feature-section";
-export * from "./hero-section";
+export * from "./data";
+export * from "./feature-card";

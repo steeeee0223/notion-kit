@@ -1,0 +1,15 @@
+.notionDocumentAcmeHome_columnBlock__QI5UG {
+  display: grid;
+  grid-template-columns: calc(50% - 20px) calc(50% - 20px);
+  gap: 40px;
+}
+.notionDocumentAcmeHome_columnBlock__QI5UG.notionDocumentAcmeHome_singleColumn__YzzNv {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 10px;
+}
+.notionDocumentAcmeHome_columnBlock__QI5UG > * {
+  display: flex;
+  flex-direction: column;
+}

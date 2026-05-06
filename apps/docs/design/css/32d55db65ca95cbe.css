@@ -1,0 +1,15 @@
+.notionDocumentToday_columnBlock__bjtnm {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  gap: 40px;
+}
+.notionDocumentToday_columnBlock__bjtnm.notionDocumentToday_singleColumn__5HqVK {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+.notionDocumentToday_columnBlock__bjtnm > * {
+  display: flex;
+  flex-direction: column;
+}

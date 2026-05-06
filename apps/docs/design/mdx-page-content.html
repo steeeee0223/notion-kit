@@ -1,0 +1,1988 @@
+<div
+  class="mdx-content prose prose-gray dark:prose-invert @container/columns-container relative isolate mt-8 mb-14 contain-[inline-size] empty:hidden"
+  data-page-title="Overview"
+  data-page-href="/guides/get-started/overview"
+  id="content"
+>
+  <blockquote class="sr-only" data-agent-docs-index="true">
+    <h2>Documentation Index</h2>
+    <p>
+      Fetch the complete documentation index at:
+      <a href="https://developers.notion.com/llms.txt"
+        >https://developers.notion.com/llms.txt</a
+      >
+    </p>
+    <p>
+      Use this file to discover all available pages before exploring further.
+    </p>
+  </blockquote>
+  <h2
+    class="group flex font-semibold whitespace-pre-wrap"
+    id="using-the-notion-api"
+  >
+    <div class="absolute" tabindex="-1">
+      <a
+        href="#using-the-notion-api"
+        class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+        aria-label="Navigate to header"
+        >​
+        <div
+          class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="gray"
+            height="12px"
+            viewBox="0 0 576 512"
+          >
+            <path
+              d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+            ></path>
+          </svg></div
+      ></a>
+    </div>
+    <span class="cursor-pointer">Using the Notion API</span>
+  </h2>
+  <span data-as="p"
+    >Notion connections let you connect your workspace to external tools and
+    automate workflows through code. With the REST API, you can read, create,
+    and update nearly everything in a workspace — pages, databases, users,
+    comments, and more.</span
+  >
+  <span data-as="p"
+    >When you create a connection, you define what it can do: which API
+    endpoints it can call, what content it can read or write, and how it
+    authenticates. Each connection gets its own credentials and its own set of
+    permissions.</span
+  >
+  <h2
+    class="group flex font-semibold whitespace-pre-wrap"
+    id="what-is-a-notion-connection"
+  >
+    <div class="absolute" tabindex="-1">
+      <a
+        href="#what-is-a-notion-connection"
+        class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+        aria-label="Navigate to header"
+        >​
+        <div
+          class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="gray"
+            height="12px"
+            viewBox="0 0 576 512"
+          >
+            <path
+              d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+            ></path>
+          </svg></div
+      ></a>
+    </div>
+    <span class="cursor-pointer">What is a Notion connection?</span>
+  </h2>
+  <span data-as="p"
+    >A Notion
+    <a
+      href="https://www.notion.so/help/add-and-manage-connections-with-the-api"
+      target="_blank"
+      rel="noreferrer"
+      class="link"
+      >connection</a
+    >
+    — sometimes called an integration — connects your workspace to external apps
+    and tools. That could be a SaaS product, an automation script, or a custom
+    tool you’ve built.</span
+  >
+  <span data-as="p"
+    >Connections are added to Notion workspaces and require
+    <strong>explicit permission</strong> from users to access Notion pages and
+    databases.</span
+  >
+  <div>
+    <div
+      data-name="frame"
+      class="frame not-prose print:print-color-exact relative overflow-hidden rounded-2xl bg-gray-50/50 p-2 dark:bg-gray-800/25"
+    >
+      <div
+        class="bg-grid-neutral-200/20 dark:bg-grid-white/5 print:print-color-exact absolute inset-0 mask-[linear-gradient(0deg,#fff,rgba(255,255,255,0.6))] dark:mask-[linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))]"
+        style="background-position: 10px 10px"
+      ></div>
+      <div class="relative flex justify-center overflow-hidden rounded-xl">
+        <span aria-owns="rmiz-modal-13c5b258bfe8" data-rmiz=""
+          ><span data-rmiz-content="found" style="visibility: visible"
+            ><picture class="contents"
+              ><img
+                data-path="images/docs/0f06356-notion_overview.jpg"
+                class="object-contain"
+                width="1800"
+                height="1200"
+                decoding="async"
+                sizes="(max-width: 1024px) 100vw, 704px"
+                data-optimize="true"
+                srcset="
+                  https://mintcdn.com/notion-demo/LHm9qfrJYJOPRxs6/images/docs/0f06356-notion_overview.jpg?w=280&amp;fit=max&amp;auto=format&amp;n=LHm9qfrJYJOPRxs6&amp;q=85&amp;s=21d5d398c973d82465297615cad6b879   280w,
+                  https://mintcdn.com/notion-demo/LHm9qfrJYJOPRxs6/images/docs/0f06356-notion_overview.jpg?w=560&amp;fit=max&amp;auto=format&amp;n=LHm9qfrJYJOPRxs6&amp;q=85&amp;s=af5a2264b86ae5ffadb0ea53ada3cdfd   560w,
+                  https://mintcdn.com/notion-demo/LHm9qfrJYJOPRxs6/images/docs/0f06356-notion_overview.jpg?w=840&amp;fit=max&amp;auto=format&amp;n=LHm9qfrJYJOPRxs6&amp;q=85&amp;s=c048e5f1db362ebf127263571cc7f41f   840w,
+                  https://mintcdn.com/notion-demo/LHm9qfrJYJOPRxs6/images/docs/0f06356-notion_overview.jpg?w=1100&amp;fit=max&amp;auto=format&amp;n=LHm9qfrJYJOPRxs6&amp;q=85&amp;s=ffe19676cb29949f0f5eed1bc218a447 1100w,
+                  https://mintcdn.com/notion-demo/LHm9qfrJYJOPRxs6/images/docs/0f06356-notion_overview.jpg?w=1650&amp;fit=max&amp;auto=format&amp;n=LHm9qfrJYJOPRxs6&amp;q=85&amp;s=945c38c6e6cd30861ab3ab94a9721e2c 1650w,
+                  https://mintcdn.com/notion-demo/LHm9qfrJYJOPRxs6/images/docs/0f06356-notion_overview.jpg?w=2500&amp;fit=max&amp;auto=format&amp;n=LHm9qfrJYJOPRxs6&amp;q=85&amp;s=c06a22ed64ca97f2a5cd442c5edbefc8 2500w
+                "
+                src="https://mintcdn.com/notion-demo/LHm9qfrJYJOPRxs6/images/docs/0f06356-notion_overview.jpg?fit=max&amp;auto=format&amp;n=LHm9qfrJYJOPRxs6&amp;q=85&amp;s=ab31886c0c84514c8db8a2801d4fffe4"
+                style="aspect-ratio: 1800 / 1200" /></picture></span
+          ><span
+            data-rmiz-ghost=""
+            style="height: 409px; left: 0px; width: 613px; top: 0px"
+            ><button
+              aria-label="Expand image"
+              data-rmiz-btn-zoom=""
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                data-rmiz-btn-zoom-icon="true"
+                fill="currentColor"
+                focusable="false"
+                viewBox="0 0 16 16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M 9 1 L 9 2 L 12.292969 2 L 2 12.292969 L 2 9 L 1 9 L 1 14 L 6 14 L 6 13 L 2.707031 13 L 13 2.707031 L 13 6 L 14 6 L 14 1 Z"
+                ></path>
+              </svg></button></span
+        ></span>
+      </div>
+      <div
+        class="[&amp;_p]:m-0 [&amp;_a]:font-semibold [&amp;_a]:no-underline [&amp;_a]:border-b [&amp;_a]:border-primary [&amp;_a:hover]:border-b-2 dark:[&amp;_a]:text-white dark:[&amp;_a]:border-primary-light relative mt-3 rounded-2xl px-8 pt-0 pb-2 text-center text-sm text-gray-700 dark:text-gray-400"
+        contenteditable="false"
+        data-component-part="frame-caption"
+      >
+        <div class="space-y-4 whitespace-normal">
+          <p class="whitespace-pre-line">
+            Create Notion connections that unlock new possibilities for teams.
+          </p>
+        </div>
+      </div>
+      <div
+        class="pointer-events-none absolute inset-0 rounded-2xl border border-black/5 dark:border-white/5"
+      ></div>
+    </div>
+  </div>
+  <span data-as="p"
+    >Notion already has a
+    <a
+      href="https://www.notion.so/integrations/all"
+      target="_blank"
+      rel="noreferrer"
+      class="link"
+      >library</a
+    >
+    of connections you can browse. For developers who want to build their own,
+    Notion supports both internal and public connections — both powered by the
+    same REST API.</span
+  >
+  <h2
+    class="group flex font-semibold whitespace-pre-wrap"
+    id="connection-types"
+  >
+    <div class="absolute" tabindex="-1">
+      <a
+        href="#connection-types"
+        class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+        aria-label="Navigate to header"
+        >​
+        <div
+          class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="gray"
+            height="12px"
+            viewBox="0 0 576 512"
+          >
+            <path
+              d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+            ></path>
+          </svg></div
+      ></a>
+    </div>
+    <span class="cursor-pointer">Connection types</span>
+  </h2>
+  <span data-as="p">Notion connections come in two types:</span>
+  <ul>
+    <li>
+      <strong>Internal connections</strong> are scoped to a single workspace and
+      use a static API token. They’re ideal for custom automations and workflows
+      — things like syncing data, sending notifications, or building internal
+      dashboards.
+    </li>
+    <li>
+      <strong>Public connections</strong> use OAuth 2.0 for authentication. At
+      creation time, you choose their
+      <a
+        class="link"
+        href="/guides/get-started/public-connections#installation-scope"
+        >installation scope</a
+      >: <strong>Any workspace</strong> (any Notion user can install;
+      Marketplace-eligible) or
+      <strong>Selected workspaces only</strong> (restricted to workspaces you
+      select; not Marketplace-eligible).
+    </li>
+  </ul>
+  <div
+    class="callout my-4 flex gap-3 overflow-hidden rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 dark:border-blue-900 dark:bg-blue-600/20"
+    data-callout-type="note"
+  >
+    <div class="mt-0.5 w-4" data-component-part="callout-icon">
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 14 14"
+        fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg"
+        class="size-4 text-blue-800 dark:text-blue-300"
+        aria-label="Note"
+      >
+        <path
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M7 1.3C10.14 1.3 12.7 3.86 12.7 7C12.7 10.14 10.14 12.7 7 12.7C5.48908 12.6974 4.0408 12.096 2.97241 11.0276C1.90403 9.9592 1.30264 8.51092 1.3 7C1.3 3.86 3.86 1.3 7 1.3ZM7 0C3.14 0 0 3.14 0 7C0 10.86 3.14 14 7 14C10.86 14 14 10.86 14 7C14 3.14 10.86 0 7 0ZM8 3H6V8H8V3ZM8 9H6V11H8V9Z"
+        ></path>
+      </svg>
+    </div>
+    <div
+      class="prose dark:prose-invert [&amp;_kbd]:bg-background-light dark:[&amp;_kbd]:bg-background-dark [&amp;_code]:!text-current [&amp;_kbd]:!text-current [&amp;_a]:!text-current [&amp;_a]:border-current [&amp;_strong]:!text-current w-full min-w-0 text-sm text-blue-800 dark:text-blue-300"
+      data-component-part="callout-content"
+    >
+      <span data-as="p"
+        >Public connections must undergo a Notion security review before being
+        <a class="link" href="/guides/get-started/marketplace-listing"
+          >listed on the Marketplace</a
+        >. You can create and use a public connection without listing it.</span
+      >
+    </div>
+  </div>
+  <h3 class="group flex font-semibold whitespace-pre-wrap" id="comparison">
+    <div class="absolute" tabindex="-1">
+      <a
+        href="#comparison"
+        class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+        aria-label="Navigate to header"
+        >​
+        <div
+          class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="gray"
+            height="12px"
+            viewBox="0 0 576 512"
+          >
+            <path
+              d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+            ></path>
+          </svg></div
+      ></a>
+    </div>
+    <span class="cursor-pointer">Comparison</span>
+  </h3>
+  <div
+    data-table-wrapper="true"
+    class="-mx-(--page-padding) my-[1em] flex w-[calc(100%+(var(--page-padding)*2))] max-w-none overflow-x-auto py-[1em] contain-[inline-size] [--page-padding:20px]"
+  >
+    <div class="table max-w-none grow px-(--page-padding)">
+      <table
+        class="[&amp;_td]:min-w-[150px] [&amp;_th]:text-left [&amp;_td[data-numeric]]:tabular-nums m-0 table w-full max-w-none min-w-full"
+      >
+        <thead>
+          <tr>
+            <th style="text-align: left">Feature</th>
+            <th style="text-align: left">Internal connections</th>
+            <th style="text-align: left">Public connections</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="text-align: left">Installation scope</td>
+            <td style="text-align: left">Single workspace.</td>
+            <td style="text-align: left">
+              Any workspace, or a specific set of workspaces chosen at creation
+              time. Scope can’t change after creation.
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: left">User access</td>
+            <td style="text-align: left">
+              Only members of the workspace where it’s installed.
+            </td>
+            <td style="text-align: left">
+              Any user in a workspace where the connection is allowed to
+              install.
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: left">Content access</td>
+            <td style="text-align: left">
+              Granted directly to the connection, not tied to any specific user.
+            </td>
+            <td style="text-align: left">
+              Users choose which pages to share during the OAuth flow or via the
+              Add connections menu.
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: left">Authentication</td>
+            <td style="text-align: left">Static API token.</td>
+            <td style="text-align: left">OAuth 2.0.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div
+    class="callout my-4 flex gap-3 overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50 px-5 py-4 dark:border-neutral-700 dark:bg-white/10"
+    data-callout-type="info"
+  >
+    <div class="mt-0.5 w-4" data-component-part="callout-icon">
+      <svg
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg"
+        class="size-5 flex-none text-neutral-800 dark:text-neutral-300"
+        aria-label="Info"
+      >
+        <path
+          d="M8 0C3.58125 0 0 3.58125 0 8C0 12.4187 3.58125 16 8 16C12.4187 16 16 12.4187 16 8C16 3.58125 12.4187 0 8 0ZM8 14.5C4.41563 14.5 1.5 11.5841 1.5 8C1.5 4.41594 4.41563 1.5 8 1.5C11.5844 1.5 14.5 4.41594 14.5 8C14.5 11.5841 11.5844 14.5 8 14.5ZM9.25 10.5H8.75V7.75C8.75 7.3375 8.41563 7 8 7H7C6.5875 7 6.25 7.3375 6.25 7.75C6.25 8.1625 6.5875 8.5 7 8.5H7.25V10.5H6.75C6.3375 10.5 6 10.8375 6 11.25C6 11.6625 6.3375 12 6.75 12H9.25C9.66406 12 10 11.6641 10 11.25C10 10.8359 9.66563 10.5 9.25 10.5ZM8 6C8.55219 6 9 5.55219 9 5C9 4.44781 8.55219 4 8 4C7.44781 4 7 4.44687 7 5C7 5.55313 7.44687 6 8 6Z"
+        ></path>
+      </svg>
+    </div>
+    <div
+      class="prose dark:prose-invert [&amp;_kbd]:bg-background-light dark:[&amp;_kbd]:bg-background-dark [&amp;_code]:!text-current [&amp;_kbd]:!text-current [&amp;_a]:!text-current [&amp;_a]:border-current [&amp;_strong]:!text-current w-full min-w-0 text-sm text-neutral-800 dark:text-neutral-300"
+      data-component-part="callout-content"
+    >
+      <span data-as="p"><strong>Looking for SCIM or SAML SSO?</strong></span
+      ><span data-as="p"
+        >Enterprise identity management (user provisioning, group management,
+        and Single Sign-On) is covered in Notion’s Help Center, not in these API
+        docs.</span
+      >
+      <div
+        class="columns prose dark:prose-invert columns card-group dark:prose-dark grid max-w-none gap-4 gap-y-0 sm:grid-cols-[repeat(var(--cols),minmax(0,1fr))] @[0px]/columns-container:grid-cols-1 @2xl/columns-container:grid-cols-[repeat(var(--cols),minmax(0,1fr))]"
+        style="--cols: 2"
+      >
+        <div
+          class="card group dark:bg-background-dark dark:hover:border-primary!-light relative my-2 block w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-950/10 bg-white font-normal ring-2 ring-transparent hover:border-primary! dark:border-white/10"
+          tabindex="0"
+          role="link"
+        >
+          <div
+            class="relative flex items-center gap-x-4 px-6 py-5"
+            data-component-part="card-content-container"
+          >
+            <a
+              href="https://www.notion.so/help/provision-users-and-groups-with-scim"
+              tabindex="-1"
+              aria-hidden="true"
+              style="display: contents; color: inherit; text-decoration: none"
+              data-client-link=""
+              target="_blank"
+              rel="noreferrer"
+              ><div
+                id="card-link-arrow-icon"
+                class="dark:group-hover:text-primary-light absolute top-5 right-5 text-gray-400 group-hover:text-primary dark:text-gray-500"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-arrow-up-right size-4"
+                >
+                  <path d="M7 7h10v10"></path>
+                  <path d="M7 17 17 7"></path>
+                </svg>
+              </div>
+              <div
+                class="[&amp;&gt;svg]:size-6 size-6 fill-gray-800 text-gray-800 dark:fill-gray-100 dark:text-gray-100"
+                data-component-part="card-icon"
+              >
+                <img
+                  alt="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/arrowChevronDoubleForward.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=e9dad4152e1d3bf11e6a8404d9504665"
+                  class="m-0! size-6 shrink-0 bg-transparent dark:bg-transparent"
+                  src="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/arrowChevronDoubleForward.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=e9dad4152e1d3bf11e6a8404d9504665"
+                />
+              </div>
+              <div class="w-full">
+                <h2
+                  class="not-prose text-base font-semibold text-gray-800 dark:text-white"
+                  contenteditable="false"
+                  data-component-part="card-title"
+                >
+                  Provision users and groups with SCIM
+                </h2>
+                <div
+                  class="prose mt-0 text-base leading-6 font-normal text-gray-600 dark:text-gray-400"
+                  data-component-part="card-content"
+                ></div></div
+            ></a>
+          </div>
+        </div>
+        <div
+          class="card group dark:bg-background-dark dark:hover:border-primary!-light relative my-2 block w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-950/10 bg-white font-normal ring-2 ring-transparent hover:border-primary! dark:border-white/10"
+          tabindex="0"
+          role="link"
+        >
+          <div
+            class="relative flex items-center gap-x-4 px-6 py-5"
+            data-component-part="card-content-container"
+          >
+            <a
+              href="https://www.notion.so/help/saml-sso-configuration"
+              tabindex="-1"
+              aria-hidden="true"
+              style="display: contents; color: inherit; text-decoration: none"
+              data-client-link=""
+              target="_blank"
+              rel="noreferrer"
+              ><div
+                id="card-link-arrow-icon"
+                class="dark:group-hover:text-primary-light absolute top-5 right-5 text-gray-400 group-hover:text-primary dark:text-gray-500"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-arrow-up-right size-4"
+                >
+                  <path d="M7 7h10v10"></path>
+                  <path d="M7 17 17 7"></path>
+                </svg>
+              </div>
+              <div
+                class="[&amp;&gt;svg]:size-6 size-6 fill-gray-800 text-gray-800 dark:fill-gray-100 dark:text-gray-100"
+                data-component-part="card-icon"
+              >
+                <img
+                  alt="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/arrowChevronDoubleForward.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=e9dad4152e1d3bf11e6a8404d9504665"
+                  class="m-0! size-6 shrink-0 bg-transparent dark:bg-transparent"
+                  src="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/arrowChevronDoubleForward.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=e9dad4152e1d3bf11e6a8404d9504665"
+                />
+              </div>
+              <div class="w-full">
+                <h2
+                  class="not-prose text-base font-semibold text-gray-800 dark:text-white"
+                  contenteditable="false"
+                  data-component-part="card-title"
+                >
+                  SAML SSO configuration
+                </h2>
+                <div
+                  class="prose mt-0 text-base leading-6 font-normal text-gray-600 dark:text-gray-400"
+                  data-component-part="card-content"
+                ></div></div
+            ></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <h2 class="group flex font-semibold whitespace-pre-wrap" id="shared-concepts">
+    <div class="absolute" tabindex="-1">
+      <a
+        href="#shared-concepts"
+        class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+        aria-label="Navigate to header"
+        >​
+        <div
+          class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="gray"
+            height="12px"
+            viewBox="0 0 576 512"
+          >
+            <path
+              d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+            ></path>
+          </svg></div
+      ></a>
+    </div>
+    <span class="cursor-pointer">Shared concepts</span>
+  </h2>
+  <span data-as="p">All connection types share a few core concepts.</span>
+  <h3 class="group flex font-semibold whitespace-pre-wrap" id="capabilities">
+    <div class="absolute" tabindex="-1">
+      <a
+        href="#capabilities"
+        class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+        aria-label="Navigate to header"
+        >​
+        <div
+          class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="gray"
+            height="12px"
+            viewBox="0 0 576 512"
+          >
+            <path
+              d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+            ></path>
+          </svg></div
+      ></a>
+    </div>
+    <span class="cursor-pointer">Capabilities</span>
+  </h3>
+  <span data-as="p"
+    >Every connection has a set of capabilities that control what it can do —
+    read content, update content, insert content, read comments, and more. You
+    configure capabilities when you create a connection, and you can update them
+    later. See the
+    <a class="link" href="/reference/capabilities">Capabilities reference</a>
+    for the full list.</span
+  >
+  <div
+    class="columns prose dark:prose-invert columns card-group dark:prose-dark grid max-w-none gap-4 gap-y-0 sm:grid-cols-[repeat(var(--cols),minmax(0,1fr))] @[0px]/columns-container:grid-cols-1 @2xl/columns-container:grid-cols-[repeat(var(--cols),minmax(0,1fr))]"
+    style="--cols: 2"
+  >
+    <div
+      class="card group dark:bg-background-dark dark:hover:border-primary!-light relative my-2 block w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-950/10 bg-white font-normal ring-2 ring-transparent hover:border-primary! dark:border-white/10"
+      tabindex="0"
+      role="link"
+    >
+      <div
+        class="relative flex items-center gap-x-4 px-6 py-5"
+        data-component-part="card-content-container"
+      >
+        <a
+          href="/guides/data-apis/working-with-page-content"
+          tabindex="-1"
+          aria-hidden="true"
+          style="display: contents; color: inherit; text-decoration: none"
+          data-client-link=""
+          ><div
+            id="card-link-arrow-icon"
+            class="dark:group-hover:text-primary-light absolute top-5 right-5 hidden text-gray-400 group-hover:text-primary dark:text-gray-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-up-right size-4"
+            >
+              <path d="M7 7h10v10"></path>
+              <path d="M7 17 17 7"></path>
+            </svg>
+          </div>
+          <div
+            class="[&amp;&gt;svg]:size-6 size-6 fill-gray-800 text-gray-800 dark:fill-gray-100 dark:text-gray-100"
+            data-component-part="card-icon"
+          >
+            <img
+              alt="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/page.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=2d9752eedbbf14b504929f853c3dcd12"
+              class="m-0! size-6 shrink-0 bg-transparent dark:bg-transparent"
+              src="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/page.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=2d9752eedbbf14b504929f853c3dcd12"
+            />
+          </div>
+          <div class="w-full">
+            <h2
+              class="not-prose text-base font-semibold text-gray-800 dark:text-white"
+              contenteditable="false"
+              data-component-part="card-title"
+            >
+              Pages
+            </h2>
+            <div
+              class="prose mt-0 text-base leading-6 font-normal text-gray-600 dark:text-gray-400"
+              data-component-part="card-content"
+            >
+              <span data-as="p"
+                >Create, update, and retrieve page content.</span
+              >
+            </div>
+          </div></a
+        >
+      </div>
+    </div>
+    <div
+      class="card group dark:bg-background-dark dark:hover:border-primary!-light relative my-2 block w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-950/10 bg-white font-normal ring-2 ring-transparent hover:border-primary! dark:border-white/10"
+      tabindex="0"
+      role="link"
+    >
+      <div
+        class="relative flex items-center gap-x-4 px-6 py-5"
+        data-component-part="card-content-container"
+      >
+        <a
+          href="/guides/data-apis/working-with-databases"
+          tabindex="-1"
+          aria-hidden="true"
+          style="display: contents; color: inherit; text-decoration: none"
+          data-client-link=""
+          ><div
+            id="card-link-arrow-icon"
+            class="dark:group-hover:text-primary-light absolute top-5 right-5 hidden text-gray-400 group-hover:text-primary dark:text-gray-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-up-right size-4"
+            >
+              <path d="M7 7h10v10"></path>
+              <path d="M7 17 17 7"></path>
+            </svg>
+          </div>
+          <div
+            class="[&amp;&gt;svg]:size-6 size-6 fill-gray-800 text-gray-800 dark:fill-gray-100 dark:text-gray-100"
+            data-component-part="card-icon"
+          >
+            <img
+              alt="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/databaseEmbed.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=7b907de012695ed2c9dba2c6505536a0"
+              class="m-0! size-6 shrink-0 bg-transparent dark:bg-transparent"
+              src="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/databaseEmbed.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=7b907de012695ed2c9dba2c6505536a0"
+            />
+          </div>
+          <div class="w-full">
+            <h2
+              class="not-prose text-base font-semibold text-gray-800 dark:text-white"
+              contenteditable="false"
+              data-component-part="card-title"
+            >
+              Databases
+            </h2>
+            <div
+              class="prose mt-0 text-base leading-6 font-normal text-gray-600 dark:text-gray-400"
+              data-component-part="card-content"
+            >
+              <span data-as="p"
+                >Manage database, properties, entries, and schemas.</span
+              >
+            </div>
+          </div></a
+        >
+      </div>
+    </div>
+    <div
+      class="card group dark:bg-background-dark dark:hover:border-primary!-light relative my-2 block w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-950/10 bg-white font-normal ring-2 ring-transparent hover:border-primary! dark:border-white/10"
+      tabindex="0"
+      role="link"
+    >
+      <div
+        class="relative flex items-center gap-x-4 px-6 py-5"
+        data-component-part="card-content-container"
+      >
+        <a
+          href="/guides/data-apis/working-with-views"
+          tabindex="-1"
+          aria-hidden="true"
+          style="display: contents; color: inherit; text-decoration: none"
+          data-client-link=""
+          ><div
+            id="card-link-arrow-icon"
+            class="dark:group-hover:text-primary-light absolute top-5 right-5 hidden text-gray-400 group-hover:text-primary dark:text-gray-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-up-right size-4"
+            >
+              <path d="M7 7h10v10"></path>
+              <path d="M7 17 17 7"></path>
+            </svg>
+          </div>
+          <div
+            class="[&amp;&gt;svg]:size-6 size-6 fill-gray-800 text-gray-800 dark:fill-gray-100 dark:text-gray-100"
+            data-component-part="card-icon"
+          >
+            <img
+              alt="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/viewTable.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=8b8f0d1339820228c542e78d8fb372aa"
+              class="m-0! size-6 shrink-0 bg-transparent dark:bg-transparent"
+              src="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/viewTable.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=8b8f0d1339820228c542e78d8fb372aa"
+            />
+          </div>
+          <div class="w-full">
+            <h2
+              class="not-prose text-base font-semibold text-gray-800 dark:text-white"
+              contenteditable="false"
+              data-component-part="card-title"
+            >
+              Views
+            </h2>
+            <div
+              class="prose mt-0 text-base leading-6 font-normal text-gray-600 dark:text-gray-400"
+              data-component-part="card-content"
+            >
+              <span data-as="p"
+                >Create and configure database views programmatically.</span
+              >
+            </div>
+          </div></a
+        >
+      </div>
+    </div>
+    <div
+      class="card group dark:bg-background-dark dark:hover:border-primary!-light relative my-2 block w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-950/10 bg-white font-normal ring-2 ring-transparent hover:border-primary! dark:border-white/10"
+      tabindex="0"
+      role="link"
+    >
+      <div
+        class="relative flex items-center gap-x-4 px-6 py-5"
+        data-component-part="card-content-container"
+      >
+        <a
+          href="/reference/data-source"
+          tabindex="-1"
+          aria-hidden="true"
+          style="display: contents; color: inherit; text-decoration: none"
+          data-client-link=""
+          ><div
+            id="card-link-arrow-icon"
+            class="dark:group-hover:text-primary-light absolute top-5 right-5 hidden text-gray-400 group-hover:text-primary dark:text-gray-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-up-right size-4"
+            >
+              <path d="M7 7h10v10"></path>
+              <path d="M7 17 17 7"></path>
+            </svg>
+          </div>
+          <div
+            class="[&amp;&gt;svg]:size-6 size-6 fill-gray-800 text-gray-800 dark:fill-gray-100 dark:text-gray-100"
+            data-component-part="card-icon"
+          >
+            <img
+              alt="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/pathRoundEnds.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=f1b9491091d34c2249a03218696218a3"
+              class="m-0! size-6 shrink-0 bg-transparent dark:bg-transparent"
+              src="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/pathRoundEnds.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=f1b9491091d34c2249a03218696218a3"
+            />
+          </div>
+          <div class="w-full">
+            <h2
+              class="not-prose text-base font-semibold text-gray-800 dark:text-white"
+              contenteditable="false"
+              data-component-part="card-title"
+            >
+              Data sources
+            </h2>
+            <div
+              class="prose mt-0 text-base leading-6 font-normal text-gray-600 dark:text-gray-400"
+              data-component-part="card-content"
+            >
+              <span data-as="p"
+                >Manage data sources, properties, entries, and schemas.</span
+              >
+            </div>
+          </div></a
+        >
+      </div>
+    </div>
+    <div
+      class="card group dark:bg-background-dark dark:hover:border-primary!-light relative my-2 block w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-950/10 bg-white font-normal ring-2 ring-transparent hover:border-primary! dark:border-white/10"
+      tabindex="0"
+      role="link"
+    >
+      <div
+        class="relative flex items-center gap-x-4 px-6 py-5"
+        data-component-part="card-content-container"
+      >
+        <a
+          href="/guides/data-apis/working-with-files-and-media"
+          tabindex="-1"
+          aria-hidden="true"
+          style="display: contents; color: inherit; text-decoration: none"
+          data-client-link=""
+          ><div
+            id="card-link-arrow-icon"
+            class="dark:group-hover:text-primary-light absolute top-5 right-5 hidden text-gray-400 group-hover:text-primary dark:text-gray-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-up-right size-4"
+            >
+              <path d="M7 7h10v10"></path>
+              <path d="M7 17 17 7"></path>
+            </svg>
+          </div>
+          <div
+            class="[&amp;&gt;svg]:size-6 size-6 fill-gray-800 text-gray-800 dark:fill-gray-100 dark:text-gray-100"
+            data-component-part="card-icon"
+          >
+            <img
+              alt="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/arrowTrayUp.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=3b991e18c85512f06c2d7214acf94f12"
+              class="m-0! size-6 shrink-0 bg-transparent dark:bg-transparent"
+              src="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/arrowTrayUp.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=3b991e18c85512f06c2d7214acf94f12"
+            />
+          </div>
+          <div class="w-full">
+            <h2
+              class="not-prose text-base font-semibold text-gray-800 dark:text-white"
+              contenteditable="false"
+              data-component-part="card-title"
+            >
+              File uploads
+            </h2>
+            <div
+              class="prose mt-0 text-base leading-6 font-normal text-gray-600 dark:text-gray-400"
+              data-component-part="card-content"
+            >
+              <span data-as="p"
+                >Upload and attach files to pages and databases.</span
+              >
+            </div>
+          </div></a
+        >
+      </div>
+    </div>
+    <div
+      class="card group dark:bg-background-dark dark:hover:border-primary!-light relative my-2 block w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-950/10 bg-white font-normal ring-2 ring-transparent hover:border-primary! dark:border-white/10"
+      tabindex="0"
+      role="link"
+    >
+      <div
+        class="relative flex items-center gap-x-4 px-6 py-5"
+        data-component-part="card-content-container"
+      >
+        <a
+          href="/guides/data-apis/working-with-comments"
+          tabindex="-1"
+          aria-hidden="true"
+          style="display: contents; color: inherit; text-decoration: none"
+          data-client-link=""
+          ><div
+            id="card-link-arrow-icon"
+            class="dark:group-hover:text-primary-light absolute top-5 right-5 hidden text-gray-400 group-hover:text-primary dark:text-gray-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-up-right size-4"
+            >
+              <path d="M7 7h10v10"></path>
+              <path d="M7 17 17 7"></path>
+            </svg>
+          </div>
+          <div
+            class="[&amp;&gt;svg]:size-6 size-6 fill-gray-800 text-gray-800 dark:fill-gray-100 dark:text-gray-100"
+            data-component-part="card-icon"
+          >
+            <img
+              alt="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/comment.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=58788fe12adbfeb3cd20b7c30d100921"
+              class="m-0! size-6 shrink-0 bg-transparent dark:bg-transparent"
+              src="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/comment.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=58788fe12adbfeb3cd20b7c30d100921"
+            />
+          </div>
+          <div class="w-full">
+            <h2
+              class="not-prose text-base font-semibold text-gray-800 dark:text-white"
+              contenteditable="false"
+              data-component-part="card-title"
+            >
+              Comments
+            </h2>
+            <div
+              class="prose mt-0 text-base leading-6 font-normal text-gray-600 dark:text-gray-400"
+              data-component-part="card-content"
+            >
+              <span data-as="p">Handle page and inline comments.</span>
+            </div>
+          </div></a
+        >
+      </div>
+    </div>
+    <div
+      class="card group dark:bg-background-dark dark:hover:border-primary!-light relative my-2 block w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-950/10 bg-white font-normal ring-2 ring-transparent hover:border-primary! dark:border-white/10"
+      tabindex="0"
+      role="link"
+    >
+      <div
+        class="relative flex items-center gap-x-4 px-6 py-5"
+        data-component-part="card-content-container"
+      >
+        <a
+          href="/reference/post-search"
+          tabindex="-1"
+          aria-hidden="true"
+          style="display: contents; color: inherit; text-decoration: none"
+          data-client-link=""
+          ><div
+            id="card-link-arrow-icon"
+            class="dark:group-hover:text-primary-light absolute top-5 right-5 hidden text-gray-400 group-hover:text-primary dark:text-gray-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-up-right size-4"
+            >
+              <path d="M7 7h10v10"></path>
+              <path d="M7 17 17 7"></path>
+            </svg>
+          </div>
+          <div
+            class="[&amp;&gt;svg]:size-6 size-6 fill-gray-800 text-gray-800 dark:fill-gray-100 dark:text-gray-100"
+            data-component-part="card-icon"
+          >
+            <img
+              alt="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/magnifyingGlass.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=532b9d39e18feeffe9c342c0ebab7da6"
+              class="m-0! size-6 shrink-0 bg-transparent dark:bg-transparent"
+              src="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/magnifyingGlass.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=532b9d39e18feeffe9c342c0ebab7da6"
+            />
+          </div>
+          <div class="w-full">
+            <h2
+              class="not-prose text-base font-semibold text-gray-800 dark:text-white"
+              contenteditable="false"
+              data-component-part="card-title"
+            >
+              Content queries
+            </h2>
+            <div
+              class="prose mt-0 text-base leading-6 font-normal text-gray-600 dark:text-gray-400"
+              data-component-part="card-content"
+            >
+              <span data-as="p">Search through workspace content.</span>
+            </div>
+          </div></a
+        >
+      </div>
+    </div>
+    <div
+      class="card group dark:bg-background-dark dark:hover:border-primary!-light relative my-2 block w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-950/10 bg-white font-normal ring-2 ring-transparent hover:border-primary! dark:border-white/10"
+      tabindex="0"
+      role="link"
+    >
+      <div
+        class="relative flex items-center gap-x-4 px-6 py-5"
+        data-component-part="card-content-container"
+      >
+        <a
+          href="/reference/user"
+          tabindex="-1"
+          aria-hidden="true"
+          style="display: contents; color: inherit; text-decoration: none"
+          data-client-link=""
+          ><div
+            id="card-link-arrow-icon"
+            class="dark:group-hover:text-primary-light absolute top-5 right-5 hidden text-gray-400 group-hover:text-primary dark:text-gray-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-up-right size-4"
+            >
+              <path d="M7 7h10v10"></path>
+              <path d="M7 17 17 7"></path>
+            </svg>
+          </div>
+          <div
+            class="[&amp;&gt;svg]:size-6 size-6 fill-gray-800 text-gray-800 dark:fill-gray-100 dark:text-gray-100"
+            data-component-part="card-icon"
+          >
+            <img
+              alt="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/people.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=9db041f17fd02578d17a1e9a633f4c46"
+              class="m-0! size-6 shrink-0 bg-transparent dark:bg-transparent"
+              src="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/people.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=9db041f17fd02578d17a1e9a633f4c46"
+            />
+          </div>
+          <div class="w-full">
+            <h2
+              class="not-prose text-base font-semibold text-gray-800 dark:text-white"
+              contenteditable="false"
+              data-component-part="card-title"
+            >
+              Users
+            </h2>
+            <div
+              class="prose mt-0 text-base leading-6 font-normal text-gray-600 dark:text-gray-400"
+              data-component-part="card-content"
+            >
+              <span data-as="p">Access user profiles and permissions.</span>
+            </div>
+          </div></a
+        >
+      </div>
+    </div>
+  </div>
+  <h3 class="group flex font-semibold whitespace-pre-wrap" id="content-access">
+    <div class="absolute" tabindex="-1">
+      <a
+        href="#content-access"
+        class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+        aria-label="Navigate to header"
+        >​
+        <div
+          class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="gray"
+            height="12px"
+            viewBox="0 0 576 512"
+          >
+            <path
+              d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+            ></path>
+          </svg></div
+      ></a>
+    </div>
+    <span class="cursor-pointer">Content access</span>
+  </h3>
+  <span data-as="p"
+    >Connections must be explicitly granted access to pages and databases before
+    they can interact with them. The mechanism differs by type:</span
+  >
+  <ul>
+    <li>
+      <strong>Internal connections</strong> can be granted access in two ways:
+      the connection owner can add pages directly from the
+      <strong>Content access</strong> tab in the Creator dashboard, or workspace
+      members can share pages via the <strong>Add connections</strong> menu in
+      Notion.
+    </li>
+    <li>
+      <strong>Public connections</strong> use the OAuth page picker, where users
+      select which pages to grant access to during the authorization flow.
+    </li>
+  </ul>
+  <span data-as="p"
+    >See the
+    <a class="link" href="/guides/get-started/internal-connections"
+      >Internal connections</a
+    >
+    and
+    <a class="link" href="/guides/get-started/public-connections"
+      >Public connections</a
+    >
+    guides for specifics on how content access works for each type.</span
+  >
+  <h3 class="group flex font-semibold whitespace-pre-wrap" id="webhooks">
+    <div class="absolute" tabindex="-1">
+      <a
+        href="#webhooks"
+        class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+        aria-label="Navigate to header"
+        >​
+        <div
+          class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="gray"
+            height="12px"
+            viewBox="0 0 576 512"
+          >
+            <path
+              d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+            ></path>
+          </svg></div
+      ></a>
+    </div>
+    <span class="cursor-pointer">Webhooks</span>
+  </h3>
+  <span data-as="p"
+    >Connections can subscribe to real-time events — like page updates, property
+    changes, and new comments — via webhooks. This allows your connection to
+    react to changes in Notion without polling the API. See the
+    <a class="link" href="/reference/webhooks">Webhooks guide</a> for details on
+    setting up webhook subscriptions.</span
+  >
+  <h2
+    class="group flex font-semibold whitespace-pre-wrap"
+    id="starting-your-connection-journey"
+  >
+    <div class="absolute" tabindex="-1">
+      <a
+        href="#starting-your-connection-journey"
+        class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+        aria-label="Navigate to header"
+        >​
+        <div
+          class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="gray"
+            height="12px"
+            viewBox="0 0 576 512"
+          >
+            <path
+              d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+            ></path>
+          </svg></div
+      ></a>
+    </div>
+    <span class="cursor-pointer">Starting your connection journey</span>
+  </h2>
+  <span data-as="p"
+    >We recommend starting with an internal connection — it’s the fastest way to
+    begin building. You get an API token immediately and can focus entirely on
+    using the API within your workspace, without worrying about OAuth or
+    Marketplace listing. You can always create a public connection later if you
+    need multi-workspace support.</span
+  >
+  <span data-as="p">Here’s a guided path through the documentation:</span>
+  <div role="list" class="steps mt-10 mb-6 ml-3.5">
+    <div
+      id=""
+      role="listitem"
+      class="step group/step step-container relative flex items-start pb-5"
+    >
+      <div
+        data-component-part="step-line"
+        class="absolute top-11 h-[calc(100%-2.75rem)] w-px bg-gray-200/70 dark:bg-white/10"
+        contenteditable="false"
+      ></div>
+      <div
+        class="absolute ml-[-13px] py-2"
+        data-component-part="step-number"
+        contenteditable="false"
+      >
+        <div
+          class="relative flex size-7 shrink-0 items-center justify-center rounded-full bg-gray-50 text-xs font-semibold text-gray-900 dark:bg-white/10 dark:text-gray-50"
+        >
+          <div class="">1</div>
+          <div class="absolute" data-component-part="step-number-anchor-link">
+            <a
+              href="#"
+              class="flex items-center border-0 opacity-0"
+              aria-label="Navigate to header"
+              ><div class="flex h-6 w-6 items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div class="w-full overflow-hidden pr-px pl-8">
+        <div
+          data-component-part="step-content"
+          class="prose dark:prose-invert mt-2"
+        >
+          <span data-as="p"
+            ><a class="link" href="/guides/get-started/quick-start"
+              ><strong>Quickstart</strong></a
+            >
+            — Build your first connection with a hands-on tutorial.</span
+          >
+        </div>
+      </div>
+    </div>
+    <div
+      id=""
+      role="listitem"
+      class="step group/step step-container relative flex items-start pb-5"
+    >
+      <div
+        data-component-part="step-line"
+        class="absolute top-11 h-[calc(100%-2.75rem)] w-px bg-gray-200/70 dark:bg-white/10"
+        contenteditable="false"
+      ></div>
+      <div
+        class="absolute ml-[-13px] py-2"
+        data-component-part="step-number"
+        contenteditable="false"
+      >
+        <div
+          class="relative flex size-7 shrink-0 items-center justify-center rounded-full bg-gray-50 text-xs font-semibold text-gray-900 dark:bg-white/10 dark:text-gray-50"
+        >
+          <div class="">2</div>
+          <div class="absolute" data-component-part="step-number-anchor-link">
+            <a
+              href="#"
+              class="flex items-center border-0 opacity-0"
+              aria-label="Navigate to header"
+              ><div class="flex h-6 w-6 items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div class="w-full overflow-hidden pr-px pl-8">
+        <div
+          data-component-part="step-content"
+          class="prose dark:prose-invert mt-2"
+        >
+          <span data-as="p"
+            ><a class="link" href="/guides/get-started/internal-connections"
+              ><strong>Internal connections</strong></a
+            >
+            — Understand how internal connections work, including the
+            permissions model.</span
+          >
+        </div>
+      </div>
+    </div>
+    <div
+      id=""
+      role="listitem"
+      class="step group/step step-container relative flex items-start pb-5"
+    >
+      <div
+        data-component-part="step-line"
+        class="absolute top-11 h-[calc(100%-2.75rem)] w-px bg-gray-200/70 dark:bg-white/10"
+        contenteditable="false"
+      ></div>
+      <div
+        class="absolute ml-[-13px] py-2"
+        data-component-part="step-number"
+        contenteditable="false"
+      >
+        <div
+          class="relative flex size-7 shrink-0 items-center justify-center rounded-full bg-gray-50 text-xs font-semibold text-gray-900 dark:bg-white/10 dark:text-gray-50"
+        >
+          <div class="">3</div>
+          <div class="absolute" data-component-part="step-number-anchor-link">
+            <a
+              href="#"
+              class="flex items-center border-0 opacity-0"
+              aria-label="Navigate to header"
+              ><div class="flex h-6 w-6 items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div class="w-full overflow-hidden pr-px pl-8">
+        <div
+          data-component-part="step-content"
+          class="prose dark:prose-invert mt-2"
+        >
+          <span data-as="p"
+            ><a class="link" href="/guides/get-started/public-connections"
+              ><strong>Public connections</strong></a
+            >
+            — Learn how public connections work, including installation scope
+            and the OAuth flow.</span
+          >
+        </div>
+      </div>
+    </div>
+    <div
+      id=""
+      role="listitem"
+      class="step group/step step-container relative flex items-start pb-5"
+    >
+      <div
+        data-component-part="step-line"
+        class="absolute top-11 h-[calc(100%-2.75rem)] w-px bg-gray-200/70 dark:bg-white/10"
+        contenteditable="false"
+      ></div>
+      <div
+        class="absolute ml-[-13px] py-2"
+        data-component-part="step-number"
+        contenteditable="false"
+      >
+        <div
+          class="relative flex size-7 shrink-0 items-center justify-center rounded-full bg-gray-50 text-xs font-semibold text-gray-900 dark:bg-white/10 dark:text-gray-50"
+        >
+          <div class="">4</div>
+          <div class="absolute" data-component-part="step-number-anchor-link">
+            <a
+              href="#"
+              class="flex items-center border-0 opacity-0"
+              aria-label="Navigate to header"
+              ><div class="flex h-6 w-6 items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div class="w-full overflow-hidden pr-px pl-8">
+        <div
+          data-component-part="step-content"
+          class="prose dark:prose-invert mt-2"
+        >
+          <span data-as="p"
+            ><a class="link" href="/guides/get-started/authorization"
+              ><strong>Authorization</strong></a
+            >
+            — Implement the OAuth 2.0 flow for public connections.</span
+          >
+        </div>
+      </div>
+    </div>
+    <div
+      id=""
+      role="listitem"
+      class="step group/step step-container relative flex items-start pb-5"
+    >
+      <div
+        data-component-part="step-line"
+        class="absolute top-11 h-[calc(100%-2.75rem)] w-px bg-gray-200/70 dark:bg-white/10"
+        contenteditable="false"
+      ></div>
+      <div
+        class="absolute ml-[-13px] py-2"
+        data-component-part="step-number"
+        contenteditable="false"
+      >
+        <div
+          class="relative flex size-7 shrink-0 items-center justify-center rounded-full bg-gray-50 text-xs font-semibold text-gray-900 dark:bg-white/10 dark:text-gray-50"
+        >
+          <div class="">5</div>
+          <div class="absolute" data-component-part="step-number-anchor-link">
+            <a
+              href="#"
+              class="flex items-center border-0 opacity-0"
+              aria-label="Navigate to header"
+              ><div class="flex h-6 w-6 items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div class="w-full overflow-hidden pr-px pl-8">
+        <div
+          data-component-part="step-content"
+          class="prose dark:prose-invert mt-2"
+        >
+          <span data-as="p"
+            ><a class="link" href="/guides/get-started/handling-api-keys"
+              ><strong>Handling API keys</strong></a
+            >
+            — Secure and manage your API tokens in production.</span
+          >
+        </div>
+      </div>
+    </div>
+    <div
+      id=""
+      role="listitem"
+      class="step group/step step-container relative flex items-start pb-5"
+    >
+      <div
+        data-component-part="step-line"
+        class="absolute top-11 h-[calc(100%-2.75rem)] w-px bg-gray-200/70 dark:bg-white/10"
+        contenteditable="false"
+      ></div>
+      <div
+        class="absolute ml-[-13px] py-2"
+        data-component-part="step-number"
+        contenteditable="false"
+      >
+        <div
+          class="relative flex size-7 shrink-0 items-center justify-center rounded-full bg-gray-50 text-xs font-semibold text-gray-900 dark:bg-white/10 dark:text-gray-50"
+        >
+          <div class="">6</div>
+          <div class="absolute" data-component-part="step-number-anchor-link">
+            <a
+              href="#"
+              class="flex items-center border-0 opacity-0"
+              aria-label="Navigate to header"
+              ><div class="flex h-6 w-6 items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div class="w-full overflow-hidden pr-px pl-8">
+        <div
+          data-component-part="step-content"
+          class="prose dark:prose-invert mt-2"
+        >
+          <span data-as="p"
+            ><a class="link" href="/guides/get-started/preparing-for-users"
+              ><strong>Preparing for users</strong></a
+            >
+            — Set up databases, pages, and views automatically when users
+            install your connection.</span
+          >
+        </div>
+      </div>
+    </div>
+    <div
+      id=""
+      role="listitem"
+      class="step group/step step-container relative flex items-start pb-5"
+    >
+      <div
+        data-component-part="step-line"
+        class="absolute top-11 h-[calc(100%-2.75rem)] w-px bg-transparent bg-linear-to-b from-gray-200 via-80% to-transparent group-has-[[data-component-part=&quot;step-content&quot;]:empty]/step:hidden dark:from-white/10"
+        contenteditable="false"
+      ></div>
+      <div
+        class="absolute ml-[-13px] py-2"
+        data-component-part="step-number"
+        contenteditable="false"
+      >
+        <div
+          class="relative flex size-7 shrink-0 items-center justify-center rounded-full bg-gray-50 text-xs font-semibold text-gray-900 dark:bg-white/10 dark:text-gray-50"
+        >
+          <div class="">7</div>
+          <div class="absolute" data-component-part="step-number-anchor-link">
+            <a
+              href="#"
+              class="flex items-center border-0 opacity-0"
+              aria-label="Navigate to header"
+              ><div class="flex h-6 w-6 items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="gray"
+                  height="12px"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg></div
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div class="w-full overflow-hidden pr-px pl-8">
+        <div
+          data-component-part="step-content"
+          class="prose dark:prose-invert mt-2"
+        >
+          <span data-as="p"
+            ><a class="link" href="/guides/get-started/marketplace-listing"
+              ><strong>List on the Marketplace</strong></a
+            >
+            — Make your public connection discoverable to all Notion
+            users.</span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+  <h2 class="group flex font-semibold whitespace-pre-wrap" id="resources">
+    <div class="absolute" tabindex="-1">
+      <a
+        href="#resources"
+        class="group/link -ml-10 flex items-center border-0 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-0"
+        aria-label="Navigate to header"
+        >​
+        <div
+          class="dark:bg-background-dark dark:group-focus/link:border-primary-light flex h-6 w-6 items-center justify-center rounded-md bg-white text-gray-400 shadow-sm ring-1 ring-gray-400/30 group-focus/link:border-2 group-focus/link:border-primary hover:ring-gray-400/60 dark:text-white/50 dark:ring-1 dark:ring-gray-700/25 dark:brightness-[1.35] dark:hover:ring-white/20 dark:hover:brightness-150"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="gray"
+            height="12px"
+            viewBox="0 0 576 512"
+          >
+            <path
+              d="M0 256C0 167.6 71.6 96 160 96h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C98.1 144 48 194.1 48 256s50.1 112 112 112h72c13.3 0 24 10.7 24 24s-10.7 24-24 24H160C71.6 416 0 344.4 0 256zm576 0c0 88.4-71.6 160-160 160H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c61.9 0 112-50.1 112-112s-50.1-112-112-112H344c-13.3 0-24-10.7-24-24s10.7-24 24-24h72c88.4 0 160 71.6 160 160zM184 232H392c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+            ></path>
+          </svg></div
+      ></a>
+    </div>
+    <span class="cursor-pointer">Resources</span>
+  </h2>
+  <span data-as="p"
+    >Explore the links below to get started, and join the
+    <a
+      href="https://join.slack.com/t/notiondevs/shared_invite/zt-3u9oid9q8-HLUBmMVWYK~g9HFo4U4raA"
+      target="_blank"
+      rel="noreferrer"
+      class="link"
+      >Notion Devs Slack community</a
+    >
+    to share your projects and connect with fellow developers.</span
+  >
+  <div
+    class="columns prose dark:prose-invert columns card-group dark:prose-dark grid max-w-none gap-4 gap-y-0 sm:grid-cols-[repeat(var(--cols),minmax(0,1fr))] @[0px]/columns-container:grid-cols-1 @2xl/columns-container:grid-cols-[repeat(var(--cols),minmax(0,1fr))]"
+    style="--cols: 2"
+  >
+    <div
+      class="card group dark:bg-background-dark dark:hover:border-primary!-light relative my-2 block w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-950/10 bg-white font-normal ring-2 ring-transparent hover:border-primary! dark:border-white/10"
+      tabindex="0"
+      role="link"
+    >
+      <div
+        class="relative flex items-center gap-x-4 px-6 py-5"
+        data-component-part="card-content-container"
+      >
+        <a
+          href="/reference/intro"
+          tabindex="-1"
+          aria-hidden="true"
+          style="display: contents; color: inherit; text-decoration: none"
+          data-client-link=""
+          ><div
+            id="card-link-arrow-icon"
+            class="dark:group-hover:text-primary-light absolute top-5 right-5 hidden text-gray-400 group-hover:text-primary dark:text-gray-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-up-right size-4"
+            >
+              <path d="M7 7h10v10"></path>
+              <path d="M7 17 17 7"></path>
+            </svg>
+          </div>
+          <div
+            class="[&amp;&gt;svg]:size-6 size-6 fill-gray-800 text-gray-800 dark:fill-gray-100 dark:text-gray-100"
+            data-component-part="card-icon"
+          >
+            <img
+              alt="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/code.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=2601b12ff19455ce6c63331bfbcc62c0"
+              class="m-0! size-6 shrink-0 bg-transparent dark:bg-transparent"
+              src="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/code.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=2601b12ff19455ce6c63331bfbcc62c0"
+            />
+          </div>
+          <div class="w-full">
+            <h2
+              class="not-prose text-base font-semibold text-gray-800 dark:text-white"
+              contenteditable="false"
+              data-component-part="card-title"
+            >
+              API reference
+            </h2>
+            <div
+              class="prose mt-0 text-base leading-6 font-normal text-gray-600 dark:text-gray-400"
+              data-component-part="card-content"
+            ></div></div
+        ></a>
+      </div>
+    </div>
+    <div
+      class="card group dark:bg-background-dark dark:hover:border-primary!-light relative my-2 block w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-950/10 bg-white font-normal ring-2 ring-transparent hover:border-primary! dark:border-white/10"
+      tabindex="0"
+      role="link"
+    >
+      <div
+        class="relative flex items-center gap-x-4 px-6 py-5"
+        data-component-part="card-content-container"
+      >
+        <a
+          href="https://github.com/makenotion/notion-sdk-js"
+          tabindex="-1"
+          aria-hidden="true"
+          style="display: contents; color: inherit; text-decoration: none"
+          data-client-link=""
+          target="_blank"
+          rel="noreferrer"
+          ><div
+            id="card-link-arrow-icon"
+            class="dark:group-hover:text-primary-light absolute top-5 right-5 text-gray-400 group-hover:text-primary dark:text-gray-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-up-right size-4"
+            >
+              <path d="M7 7h10v10"></path>
+              <path d="M7 17 17 7"></path>
+            </svg>
+          </div>
+          <div
+            class="[&amp;&gt;svg]:size-6 size-6 fill-gray-800 text-gray-800 dark:fill-gray-100 dark:text-gray-100"
+            data-component-part="card-icon"
+          >
+            <svg
+              class="dark:bg-primary-light m-0! size-6 shrink-0 bg-primary"
+              style="
+                mask-image: url(&quot;https://d3gk2c5xim1je2.cloudfront.net/v7.1.0/brands/js.svg&quot;);
+                mask-repeat: no-repeat;
+                mask-position: center center;
+                background-color: rgb(0, 118, 215);
+              "
+            ></svg>
+          </div>
+          <div class="w-full">
+            <h2
+              class="not-prose text-base font-semibold text-gray-800 dark:text-white"
+              contenteditable="false"
+              data-component-part="card-title"
+            >
+              Notion SDK for JavaScript
+            </h2>
+            <div
+              class="prose mt-0 text-base leading-6 font-normal text-gray-600 dark:text-gray-400"
+              data-component-part="card-content"
+            ></div></div
+        ></a>
+      </div>
+    </div>
+    <div
+      class="card group dark:bg-background-dark dark:hover:border-primary!-light relative my-2 block w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-950/10 bg-white font-normal ring-2 ring-transparent hover:border-primary! dark:border-white/10"
+      tabindex="0"
+      role="link"
+    >
+      <div
+        class="relative flex items-center gap-x-4 px-6 py-5"
+        data-component-part="card-content-container"
+      >
+        <a
+          href="https://github.com/makenotion/notion-sdk-typescript-starter"
+          tabindex="-1"
+          aria-hidden="true"
+          style="display: contents; color: inherit; text-decoration: none"
+          data-client-link=""
+          target="_blank"
+          rel="noreferrer"
+          ><div
+            id="card-link-arrow-icon"
+            class="dark:group-hover:text-primary-light absolute top-5 right-5 text-gray-400 group-hover:text-primary dark:text-gray-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-up-right size-4"
+            >
+              <path d="M7 7h10v10"></path>
+              <path d="M7 17 17 7"></path>
+            </svg>
+          </div>
+          <div
+            class="[&amp;&gt;svg]:size-6 size-6 fill-gray-800 text-gray-800 dark:fill-gray-100 dark:text-gray-100"
+            data-component-part="card-icon"
+          >
+            <img
+              alt="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/code.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=2601b12ff19455ce6c63331bfbcc62c0"
+              class="m-0! size-6 shrink-0 bg-transparent dark:bg-transparent"
+              src="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/code.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=2601b12ff19455ce6c63331bfbcc62c0"
+            />
+          </div>
+          <div class="w-full">
+            <h2
+              class="not-prose text-base font-semibold text-gray-800 dark:text-white"
+              contenteditable="false"
+              data-component-part="card-title"
+            >
+              Starter templates
+            </h2>
+            <div
+              class="prose mt-0 text-base leading-6 font-normal text-gray-600 dark:text-gray-400"
+              data-component-part="card-content"
+            ></div></div
+        ></a>
+      </div>
+    </div>
+    <div
+      class="card group dark:bg-background-dark dark:hover:border-primary!-light relative my-2 block w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-950/10 bg-white font-normal ring-2 ring-transparent hover:border-primary! dark:border-white/10"
+      tabindex="0"
+      role="link"
+    >
+      <div
+        class="relative flex items-center gap-x-4 px-6 py-5"
+        data-component-part="card-content-container"
+      >
+        <a
+          href="https://www.postman.com/notionhq/notion-s-api-workspace/collection/52041987-03f70d8f-b6e5-4306-805c-f95f7cdf05b9"
+          tabindex="-1"
+          aria-hidden="true"
+          style="display: contents; color: inherit; text-decoration: none"
+          data-client-link=""
+          target="_blank"
+          rel="noreferrer"
+          ><div
+            id="card-link-arrow-icon"
+            class="dark:group-hover:text-primary-light absolute top-5 right-5 text-gray-400 group-hover:text-primary dark:text-gray-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-up-right size-4"
+            >
+              <path d="M7 7h10v10"></path>
+              <path d="M7 17 17 7"></path>
+            </svg>
+          </div>
+          <div
+            class="[&amp;&gt;svg]:size-6 size-6 fill-gray-800 text-gray-800 dark:fill-gray-100 dark:text-gray-100"
+            data-component-part="card-icon"
+          >
+            <img
+              alt="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/cube.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=ca03d98b0912c199f06d1110d9c2f64b"
+              class="m-0! size-6 shrink-0 bg-transparent dark:bg-transparent"
+              src="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/cube.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=ca03d98b0912c199f06d1110d9c2f64b"
+            />
+          </div>
+          <div class="w-full">
+            <h2
+              class="not-prose text-base font-semibold text-gray-800 dark:text-white"
+              contenteditable="false"
+              data-component-part="card-title"
+            >
+              Postman collection
+            </h2>
+            <div
+              class="prose mt-0 text-base leading-6 font-normal text-gray-600 dark:text-gray-400"
+              data-component-part="card-content"
+            ></div></div
+        ></a>
+      </div>
+    </div>
+    <div
+      class="card group dark:bg-background-dark dark:hover:border-primary!-light relative my-2 block w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-950/10 bg-white font-normal ring-2 ring-transparent hover:border-primary! dark:border-white/10"
+      tabindex="0"
+      role="link"
+    >
+      <div
+        class="relative flex items-center gap-x-4 px-6 py-5"
+        data-component-part="card-content-container"
+      >
+        <a
+          href="/page/frequently-asked-questions"
+          tabindex="-1"
+          aria-hidden="true"
+          style="display: contents; color: inherit; text-decoration: none"
+          data-client-link=""
+          ><div
+            id="card-link-arrow-icon"
+            class="dark:group-hover:text-primary-light absolute top-5 right-5 hidden text-gray-400 group-hover:text-primary dark:text-gray-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-up-right size-4"
+            >
+              <path d="M7 7h10v10"></path>
+              <path d="M7 17 17 7"></path>
+            </svg>
+          </div>
+          <div
+            class="[&amp;&gt;svg]:size-6 size-6 fill-gray-800 text-gray-800 dark:fill-gray-100 dark:text-gray-100"
+            data-component-part="card-icon"
+          >
+            <img
+              alt="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/questionMarkCircle.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=20159b5b3d48676a4735f2c3f9fdda77"
+              class="m-0! size-6 shrink-0 bg-transparent dark:bg-transparent"
+              src="https://mintcdn.com/notion-demo/yKfkO8UsVZTLLPNp/icons/nds/questionMarkCircle.svg?fit=max&amp;auto=format&amp;n=yKfkO8UsVZTLLPNp&amp;q=85&amp;s=20159b5b3d48676a4735f2c3f9fdda77"
+            />
+          </div>
+          <div class="w-full">
+            <h2
+              class="not-prose text-base font-semibold text-gray-800 dark:text-white"
+              contenteditable="false"
+              data-component-part="card-title"
+            >
+              FAQs
+            </h2>
+            <div
+              class="prose mt-0 text-base leading-6 font-normal text-gray-600 dark:text-gray-400"
+              data-component-part="card-content"
+            ></div></div
+        ></a>
+      </div>
+    </div>
+    <div
+      class="card group dark:bg-background-dark dark:hover:border-primary!-light relative my-2 block w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-950/10 bg-white font-normal ring-2 ring-transparent hover:border-primary! dark:border-white/10"
+      tabindex="0"
+      role="link"
+    >
+      <div
+        class="relative flex items-center gap-x-4 px-6 py-5"
+        data-component-part="card-content-container"
+      >
+        <a
+          href="https://join.slack.com/t/notiondevs/shared_invite/zt-3u9oid9q8-HLUBmMVWYK~g9HFo4U4raA"
+          tabindex="-1"
+          aria-hidden="true"
+          style="display: contents; color: inherit; text-decoration: none"
+          data-client-link=""
+          target="_blank"
+          rel="noreferrer"
+          ><div
+            id="card-link-arrow-icon"
+            class="dark:group-hover:text-primary-light absolute top-5 right-5 text-gray-400 group-hover:text-primary dark:text-gray-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-up-right size-4"
+            >
+              <path d="M7 7h10v10"></path>
+              <path d="M7 17 17 7"></path>
+            </svg>
+          </div>
+          <div
+            class="[&amp;&gt;svg]:size-6 size-6 fill-gray-800 text-gray-800 dark:fill-gray-100 dark:text-gray-100"
+            data-component-part="card-icon"
+          >
+            <svg
+              class="dark:bg-primary-light m-0! size-6 shrink-0 bg-primary"
+              style="
+                mask-image: url(&quot;https://d3gk2c5xim1je2.cloudfront.net/v7.1.0/brands/slack.svg&quot;);
+                mask-repeat: no-repeat;
+                mask-position: center center;
+                background-color: rgb(0, 118, 215);
+              "
+            ></svg>
+          </div>
+          <div class="w-full">
+            <h2
+              class="not-prose text-base font-semibold text-gray-800 dark:text-white"
+              contenteditable="false"
+              data-component-part="card-title"
+            >
+              Notion Devs Slack
+            </h2>
+            <div
+              class="prose mt-0 text-base leading-6 font-normal text-gray-600 dark:text-gray-400"
+              data-component-part="card-content"
+            ></div></div
+        ></a>
+      </div>
+    </div>
+  </div>
+</div>
