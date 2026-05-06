@@ -17,7 +17,7 @@ export default function HomePage() {
   return (
     <div className="flex w-full flex-col pb-16">
       {/* Hero Section */}
-      <section className="py-8 md:py-24">
+      <section className="py-24">
         <div className="container mx-auto px-4 md:px-6">
           <header
             className={cn(
@@ -53,7 +53,7 @@ export default function HomePage() {
                 <Link href="#">Request a demo</Link>
               </Button>
             </div>
-            <div className="-order-1 mx-auto mt-16 w-full overflow-hidden lg:order-[unset] lg:col-2 lg:row-span-full">
+            <div className="-order-1 mx-auto w-full overflow-hidden lg:order-[unset] lg:col-2 lg:row-span-full">
               <img
                 src="https://images.ctfassets.net/spoqsaf9291f/5RcoNncfzeuqS7V5qqelRJ/81e4b42053f8937bbbdb4842f0fcdc72/docs-hero.png"
                 alt="AI meeting notes"
@@ -89,7 +89,7 @@ export default function HomePage() {
             </h2>
           </div>
           <div className="flex flex-col gap-6">
-            <div className="flex flex-col items-center overflow-hidden rounded-2xl border border-border/50 bg-main shadow-sm md:flex-row">
+            <div className="flex flex-col items-center overflow-hidden rounded-2xl bg-input shadow-lg md:flex-row">
               <div className="flex-1 p-8 md:p-12">
                 <h3 className="mb-4 text-2xl font-bold md:text-3xl">
                   Every team&lsquo;s files, at a glance
@@ -100,7 +100,7 @@ export default function HomePage() {
                 </p>
               </div>
               <div className="flex-1 overflow-hidden p-6 md:p-12 md:pl-0">
-                <div className="rounded-lg border border-border shadow-lg">
+                <div className="overflow-hidden rounded-lg border shadow-lg">
                   <img
                     src="https://images.ctfassets.net/spoqsaf9291f/6COqnZ2QTZvnbICX7PYM1H/6cb3d833085349fa15befbd5fb2f5a0d/image.png"
                     alt="Workspace organization"
@@ -109,7 +109,7 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-            <div className="rounded-2xl border border-border/50 bg-primary/5 p-8 text-center md:p-12">
+            <div className="rounded-2xl bg-input p-8 text-center shadow-lg md:p-12">
               <blockquote className="mx-auto max-w-3xl text-xl/relaxed font-medium italic md:text-2xl">
                 "Not only do our streamlined workflows in Notion save us time,
                 they also make it easier to stay up to date on task details and
