@@ -30,9 +30,10 @@ export function FeatureCard({ feature }: FeatureCardProps) {
         {feature.link && (
           <Link
             href={feature.link.href}
-            className="inline-flex items-center font-semibold text-blue underline decoration-blue underline-offset-4"
+            className="group inline-flex items-center font-semibold text-blue underline underline-offset-4 hover:text-red"
           >
-            {feature.link.label} <ArrowRight className="ml-1 size-4" />
+            {feature.link.label}{" "}
+            <ArrowRight className="ml-1 size-4 transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
         )}
       </div>

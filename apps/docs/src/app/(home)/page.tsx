@@ -16,6 +16,21 @@ import {
 export default function HomePage() {
   return (
     <div className="flex w-full flex-col pb-16">
+      {/* Disclaimer Banner */}
+      <div className="bg-blue/10 px-4 py-3 text-center text-sm text-blue">
+        All images and illustrations on this page are the property of Notion.
+        Please support them by checking out the official{" "}
+        <Link
+          href="https://notion.so"
+          target="_blank"
+          rel="noreferrer"
+          className="font-semibold underline hover:text-red"
+        >
+          Notion App
+        </Link>
+        .
+      </div>
+
       {/* Hero Section */}
       <section className="py-24">
         <div className="container mx-auto px-4 md:px-6">
@@ -29,11 +44,11 @@ export default function HomePage() {
               Docs
             </p>
             <h1 className="text-5xl font-extrabold tracking-tight lg:max-w-100">
-              The next gen of notes & docs
+              The next gen of UI components
             </h1>
             <p className="text-lg text-secondary md:text-xl lg:max-w-100">
-              Simple. Powerful. Beautiful. Communicate more efficiently with
-              Notion's flexible building blocks.
+              Simple. Powerful. Beautiful. Build Notion-style applications
+              efficiently with our flexible React building blocks.
             </p>
             <div className="flex items-center gap-3">
               <Button
@@ -42,7 +57,7 @@ export default function HomePage() {
                 className="rounded-md px-5"
                 asChild
               >
-                <Link href="#">Get Notion free</Link>
+                <Link href="#">Browse Components</Link>
               </Button>
               <Button
                 variant="soft-blue"
@@ -50,7 +65,7 @@ export default function HomePage() {
                 className="rounded-md px-5"
                 asChild
               >
-                <Link href="#">Request a demo</Link>
+                <Link href="#">Read the docs</Link>
               </Button>
             </div>
             <div className="-order-1 mx-auto w-full overflow-hidden lg:order-[unset] lg:col-2 lg:row-span-full">
@@ -69,7 +84,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-12 text-center md:text-left">
             <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-              Go way beyond text & bullet points
+              Pre-built components for rich text and docs
             </h2>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -85,18 +100,19 @@ export default function HomePage() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-12 text-center md:text-left">
             <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-              Store docs where people can easily find them
+              Bring your own design system or extend with Tailwind
             </h2>
           </div>
           <div className="flex flex-col gap-6">
             <div className="flex flex-col items-center overflow-hidden rounded-2xl bg-input shadow-lg md:flex-row">
               <div className="flex-1 p-8 md:p-12">
                 <h3 className="mb-4 text-2xl font-bold md:text-3xl">
-                  Every team&lsquo;s files, at a glance
+                  Notion-styled & Flexible by default
                 </h3>
                 <p className="text-lg text-secondary">
-                  Notion&lsquo;s sidebar keeps your workspace organized no
-                  matter how fast you grow.
+                  Notion Kit components are designed to adapt to your brand,
+                  whether you use Tailwind CSS or your own custom styling
+                  solution.
                 </p>
               </div>
               <div className="flex-1 overflow-hidden p-6 md:p-12 md:pl-0">
@@ -111,13 +127,13 @@ export default function HomePage() {
             </div>
             <div className="rounded-2xl bg-input p-8 text-center shadow-lg md:p-12">
               <blockquote className="mx-auto max-w-3xl text-xl/relaxed font-medium italic md:text-2xl">
-                "Not only do our streamlined workflows in Notion save us time,
-                they also make it easier to stay up to date on task details and
-                progress."
+                "Notion Kit saved us weeks of UI development time. We just
+                dropped the components into our React app and styled them to
+                match our brand in minutes."
               </blockquote>
-              <div className="mt-6 font-semibold">Taku Wakasugi</div>
+              <div className="mt-6 font-semibold">Frontend Engineer</div>
               <div className="text-sm text-secondary">
-                Toyota Frontier Research Center, Toyota
+                Building a Notion-like Workspace
               </div>
             </div>
           </div>
@@ -129,7 +145,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-12 text-center md:text-left">
             <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-              Get your team on the same page, literally
+              Built for modern React development
             </h2>
           </div>
           <div className="grid gap-6 md:grid-cols-2">
@@ -144,7 +160,7 @@ export default function HomePage() {
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4 text-center md:px-6">
           <h2 className="mb-16 text-3xl font-bold tracking-tight md:text-4xl">
-            For PMs, designers, engineers, and everyone in between
+            Built for whatever you're creating
           </h2>
           <div className="mx-auto mb-16 max-w-4xl overflow-hidden rounded-lg">
             <img
@@ -156,19 +172,19 @@ export default function HomePage() {
           <div className="grid gap-8 md:grid-cols-3">
             {[
               {
-                title: "Product managers",
-                desc: "Connect the roadmap to goals, and keep folks aligned on what’s shipping and when.",
-                link: "See how PMs use Notion",
+                title: "SaaS Applications",
+                desc: "Embed beautiful, Notion-like note-taking and document editing experiences directly into your product.",
+                link: "View Showcase",
               },
               {
-                title: "Designers",
-                desc: "Move review rounds forward, prioritize requests, and hit all your creative deadlines.",
-                link: "See how designers use Notion",
+                title: "Internal Tools",
+                desc: "Quickly scaffold rich text editors and complex data tables for your internal admin dashboards.",
+                link: "View Showcase",
               },
               {
-                title: "Engineers",
-                desc: "Ship features faster with sprints, code guidelines, bug fixes & more, all in one place.",
-                link: "See how engineers use Notion",
+                title: "Documentation Sites",
+                desc: "Create engaging, interactive, and highly readable technical documentation.",
+                link: "View Showcase",
               },
             ].map((pillar, i) => (
               <div key={i} className="flex flex-col items-center text-center">
@@ -191,7 +207,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-              Wikis and Projects included, for the same price
+              Everything you need, right out of the box
             </h2>
           </div>
           <div className="grid gap-6 md:grid-cols-2">
@@ -207,13 +223,13 @@ export default function HomePage() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-12 flex flex-col items-center justify-between gap-4 text-center md:flex-row md:text-left">
             <h2 className="max-w-2xl text-3xl font-bold tracking-tight md:text-4xl">
-              Info from Figma, GitHub & more. Easy to share, easy to see.
+              Works seamlessly with your favorite modern React tools.
             </h2>
             <Link
               href="#"
               className="inline-flex items-center font-semibold whitespace-nowrap text-primary underline decoration-primary underline-offset-4 hover:border-b-2"
             >
-              See all connections <ArrowRight className="ml-1 size-4" />
+              Read the installation guide <ArrowRight className="ml-1 size-4" />
             </Link>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
