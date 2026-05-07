@@ -14,7 +14,10 @@ import { MermaidPreview } from "./mermaid-preview";
  * Code wrapping is handled via Shiki transformer which applies inline styles
  * directly to the pre/code elements when wrap mode is enabled.
  */
-export function CodeBlockContent({ ...props }: React.ComponentProps<"div">) {
+export function CodeBlockContent({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   const { state, store, readonly } = useCodeBlock();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const highlightRef = useRef<HTMLSpanElement>(null);
@@ -45,7 +48,10 @@ export function CodeBlockContent({ ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="code-block-content"
-      className="rounded-[10px] bg-[rgba(66,35,3,.031)] p-[22px] dark:bg-default/5"
+      className={cn(
+        "h-full rounded-lg bg-[rgba(66,35,3,.031)] p-[22px] dark:bg-default/5",
+        className,
+      )}
       {...props}
     >
       <div
