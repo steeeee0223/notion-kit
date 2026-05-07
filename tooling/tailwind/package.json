@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/tailwind-config",
-  "version": "0.17.0",
+  "version": "1.0.0-beta.0",
   "type": "module",
   "exports": {
     "./base.css": "./base.css"
