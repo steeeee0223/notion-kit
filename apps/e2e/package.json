@@ -41,7 +41,7 @@
     "@notion-kit/tsconfig": "workspace:*",
     "@tailwindcss/postcss": "catalog:tailwind-v4",
     "@testing-library/react": "catalog:rtl",
-    "@types/node": "catalog:node22",
+    "@types/node": "catalog:node",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",
     "@vitejs/plugin-react": "catalog:test",
