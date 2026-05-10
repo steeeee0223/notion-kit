@@ -4,5 +4,7 @@ export * from "./env";
 export type * from "./types";
 
 export { APIError as AuthError } from "better-auth/api";
+/** For Node.js servers */
+export { toNodeHandler } from "better-auth/node";
 /** For Nextjs Server */
 export { toNextJsHandler } from "better-auth/next-js";

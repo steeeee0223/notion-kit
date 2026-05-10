@@ -21,10 +21,31 @@ import {
   additionalUserFields,
 } from "@/lib/utils";
 
-export function createAuthClient(baseURL?: string) {
+interface CreateAuthClientOptions {
+  baseURL?: string;
+  basePath?: string;
+}
+
+function normalizeOptions(
+  options?: string | CreateAuthClientOptions,
+): CreateAuthClientOptions {
+  if (typeof options === "string") {
+    return options.startsWith("/")
+      ? { basePath: options }
+      : { baseURL: options, basePath: "/api/auth" };
+  }
+  return {
+    baseURL: options?.baseURL,
+    basePath: options?.basePath ?? "/api/auth",
+  };
+}
+
+export function createAuthClient(options?: string | CreateAuthClientOptions) {
+  const { baseURL, basePath } = normalizeOptions(options);
   return createReactClient({
     /** The base URL of the server (optional if you're using the same domain) */
     baseURL,
+    basePath,
     plugins: [
       inferAdditionalFields<Auth>({
         user: additionalUserFields,
