@@ -13,8 +13,8 @@ catalog:
   zod: ^4.1.12
 
 catalogs:
-  node22:
-    "@types/node": ^22.10.0
+  node:
+    "@types/node": ^24
   react19:
     react: ^19.2.3
     react-dom: ^19.2.3
