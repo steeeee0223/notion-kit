@@ -52,7 +52,7 @@
     "@storybook/addon-vitest": "^10.3.5",
     "@t3-oss/env-core": "catalog:env",
     "@tailwindcss/postcss": "catalog:tailwind-v4",
-    "@types/node": "catalog:node22",
+    "@types/node": "catalog:node",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",
     "@vitest/browser-playwright": "catalog:test",

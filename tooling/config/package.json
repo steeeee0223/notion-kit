@@ -21,7 +21,7 @@
     "@rollup/plugin-babel": "catalog:build",
     "@rsbuild/core": "catalog:build",
     "@rsbuild/plugin-react": "catalog:build",
-    "@types/node": "catalog:node22",
+    "@types/node": "catalog:node",
     "typescript": "catalog:"
   },
   "prettier": "@notion-kit/prettier-config"
