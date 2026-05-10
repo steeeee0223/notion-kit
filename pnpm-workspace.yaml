@@ -13,8 +13,8 @@ catalog:
   zod: ^4.1.12
 
 catalogs:
-  node22:
-    "@types/node": ^22.10.0
+  node:
+    "@types/node": ^24
   react19:
     react: ^19.2.3
     react-dom: ^19.2.3
@@ -87,3 +87,15 @@ catalogs:
     "lodash.throttle": ^4.1.1
     "@types/lodash.groupby": ^4.6.9
     "@types/lodash.throttle": ^4.1.9
+
+nodeLinker: hoisted
+linkWorkspacePackages: true
+allowBuilds:
+  "@parcel/watcher": false
+  "@prisma/engines": false
+  bufferutil: false
+  core-js-pure: false
+  esbuild: false
+  msw: false
+  prisma: false
+  sharp: false

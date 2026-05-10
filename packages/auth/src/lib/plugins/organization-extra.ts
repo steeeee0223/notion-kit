@@ -56,10 +56,9 @@ export function organizationExtra({ db }: { db: DB }) {
               where: [{ field: "referenceId", value: orgId }],
             });
             const active = subscriptions.find(
-              (s: { status: string | null }) =>
-                s.status === "active" || s.status === "trialing",
+              (s) => s.status === "active" || s.status === "trialing",
             );
-            if (active) plan = (active as { plan: string }).plan;
+            if (active) plan = active.plan;
           } catch {
             // Stripe plugin not loaded — subscription model unavailable
           }
@@ -102,10 +101,7 @@ export function organizationExtra({ db }: { db: DB }) {
               ownedBy: t.ownedBy,
               createdAt: t.createdAt,
               updatedAt: t.updatedAt,
-              members: t.teamMembers.map((m) => ({
-                userId: m.userId,
-                role: m.role,
-              })),
+              members: t.teamMembers,
             })),
           );
         },
@@ -128,19 +124,7 @@ export function organizationExtra({ db }: { db: DB }) {
             model: "teamMember",
             where: [{ field: "teamId", value: ctx.query.teamId }],
           });
-          return ctx.json(
-            rows.map(
-              (m: {
-                userId: string;
-                role: string;
-                createdAt: Date | null;
-              }) => ({
-                userId: m.userId,
-                role: m.role,
-                createdAt: m.createdAt,
-              }),
-            ),
-          );
+          return ctx.json(rows);
         },
       ),
 
