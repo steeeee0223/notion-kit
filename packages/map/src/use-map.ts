@@ -1,7 +1,17 @@
-import { use } from "react";
+import { createContext, use } from "react";
+import MapLibreGL from "maplibre-gl";
 
-import { MapContext } from "./map";
+export interface MapContextValue {
+  map: MapLibreGL.Map | null;
+  isLoaded: boolean;
+}
+
+export const MapContext = createContext<MapContextValue | null>(null);
 
 export function useMap() {
-  return use(MapContext);
+  const context = use(MapContext);
+  if (!context) {
+    throw new Error("useMap must be used within a Map component");
+  }
+  return context;
 }

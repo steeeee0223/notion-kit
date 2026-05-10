@@ -3,9 +3,13 @@
 import * as React from "react";
 import { Tooltip as TooltipPrimitive } from "radix-ui";
 
-import { cn, cva, type VariantProps } from "@notion-kit/cn";
+import { cn } from "@notion-kit/cn";
 
-import { contentVariants } from "./variants";
+import {
+  contentVariants,
+  tooltipVariants,
+  type TooltipVariants,
+} from "./variants";
 
 function TooltipProvider({
   ...props
@@ -28,20 +32,10 @@ function TooltipTrigger({
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />;
 }
 
-const tooltipVariants = cva("max-w-[220px] font-medium wrap-break-word", {
-  variants: {
-    size: {
-      sm: "rounded-sm px-2 py-1 text-xs/[1.4]",
-      md: "rounded-md px-3 py-1.5 text-sm",
-    },
-  },
-  defaultVariants: { size: "sm" },
-});
-
 type TooltipContentProps = React.ComponentProps<
   typeof TooltipPrimitive.Content
 > &
-  VariantProps<typeof tooltipVariants>;
+  TooltipVariants;
 function TooltipContent({
   className,
   size,

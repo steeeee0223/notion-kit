@@ -506,6 +506,9 @@ importers:
       '@notion-kit/icons':
         specifier: workspace:*
         version: link:../../packages/icons
+      '@notion-kit/map':
+        specifier: workspace:*
+        version: link:../../packages/map
       '@notion-kit/registry':
         specifier: workspace:*
         version: link:../../packages/registry
@@ -1131,6 +1134,12 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../cn
+      '@notion-kit/icons':
+        specifier: workspace:*
+        version: link:../icons
+      '@notion-kit/ui':
+        specifier: workspace:*
+        version: link:../ui
       maplibre-gl:
         specifier: ^5.24.0
         version: 5.24.0
@@ -1165,6 +1174,9 @@ importers:
       react-compiler-runtime:
         specifier: catalog:react-compiler
         version: 1.0.0(react@19.2.3)
+      tailwindcss:
+        specifier: catalog:tailwind-v4
+        version: 4.2.4
       tsdown:
         specifier: 'catalog:'
         version: 0.16.6(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(synckit@0.11.12)(typescript@5.9.3)
