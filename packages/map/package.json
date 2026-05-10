@@ -1,0 +1,56 @@
+{
+  "name": "@notion-kit/map",
+  "version": "0.17.0",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/steeeee0223/notion-kit/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/steeeee0223/notion-kit.git",
+    "directory": "packages/map"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsdown",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsdown --watch",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@notion-kit/cn": "workspace:*",
+    "maplibre-gl": "^5.24.0"
+  },
+  "devDependencies": {
+    "@notion-kit/config": "workspace:*",
+    "@notion-kit/eslint-config": "workspace:*",
+    "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tsconfig": "workspace:*",
+    "babel-plugin-react-compiler": "catalog:react-compiler",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "react-compiler-runtime": "catalog:react-compiler",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19"
+  },
+  "prettier": "@notion-kit/prettier-config"
+}
