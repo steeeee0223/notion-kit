@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { cn, cva, type VariantProps } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import { Button, Spinner } from "@notion-kit/ui/primitives";
 
+import { useMapBearing, useMapPitch } from "./use-map-state";
 import { useMap } from "./use-map";
 
 const positionClasses = cva("", {
@@ -158,37 +159,18 @@ export function MapControls({
 }
 
 function MapCompassButton({ onClick }: { onClick: () => void }) {
-  const { map } = useMap();
-  const compassRef = useRef<SVGSVGElement>(null);
-
-  useEffect(() => {
-    if (!map || !compassRef.current) return;
-
-    const compass = compassRef.current;
-
-    const updateRotation = () => {
-      const bearing = map.getBearing();
-      const pitch = map.getPitch();
-      compass.style.transform = `rotateX(${pitch}deg) rotateZ(${-bearing}deg)`;
-    };
-
-    map.on("rotate", updateRotation);
-    map.on("pitch", updateRotation);
-    updateRotation();
-
-    return () => {
-      map.off("rotate", updateRotation);
-      map.off("pitch", updateRotation);
-    };
-  }, [map]);
+  const bearing = useMapBearing();
+  const pitch = useMapPitch();
 
   return (
     <Button onClick={onClick} aria-label="Reset bearing to north">
       <svg
-        ref={compassRef}
         viewBox="0 0 24 24"
         className="size-5 transition-transform duration-200"
-        style={{ transformStyle: "preserve-3d" }}
+        style={{
+          transform: `rotateX(${pitch}deg) rotateZ(${-bearing}deg)`,
+          transformStyle: "preserve-3d",
+        }}
       >
         <path d="M12 2L16 12H12V2Z" className="fill-red-500" />
         <path d="M12 2L8 12H12V2Z" className="fill-red-300" />

@@ -1,4 +1,4 @@
-import {
+import React, {
   createContext,
   use,
   useEffect,
@@ -228,10 +228,7 @@ export function MapPopupClose({ onClick }: { onClick: () => void }) {
   );
 }
 
-export interface MapMarkerPopupProps extends PopupOptions {
-  /** Popup content */
-  children: ReactNode;
-}
+export type MapMarkerPopupProps = React.PropsWithChildren<PopupOptions>;
 
 export function MapMarkerPopup({
   children,
@@ -301,7 +298,7 @@ export function MapMarkerPopup({
 export interface MapMarkerTooltipProps
   extends Omit<PopupOptions, "closeButton" | "closeOnClick"> {
   /** Tooltip content */
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 export function MapMarkerTooltip({

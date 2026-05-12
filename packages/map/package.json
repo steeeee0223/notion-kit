@@ -38,6 +38,7 @@
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/icons": "workspace:*",
     "@notion-kit/ui": "workspace:*",
+    "lodash.isequal": "catalog:fns",
     "maplibre-gl": "^5.24.0"
   },
   "devDependencies": {
@@ -45,6 +46,7 @@
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "@types/lodash.isequal": "catalog:fns",
     "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",
     "prettier": "catalog:",
