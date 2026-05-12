@@ -18,6 +18,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { useMap } from "./use-map";
+import { usePopupOptions } from "./use-map-state";
 
 interface MarkerContextValue {
   marker: MapLibreGL.Marker;
@@ -238,7 +239,6 @@ export function MapMarkerPopup({
 }: MapMarkerPopupProps) {
   const { marker, map } = useMarkerContext();
   const container = useMemo(() => document.createElement("div"), []);
-  const prevPopupOptions = useRef(popupOptions);
 
   const popup = useMemo(() => {
     const popupInstance = new MapLibreGL.Popup({
@@ -253,6 +253,8 @@ export function MapMarkerPopup({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  usePopupOptions(popup, popupOptions);
+
   useEffect(() => {
     if (!map) return;
 
@@ -264,19 +266,6 @@ export function MapMarkerPopup({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map]);
-
-  if (popup.isOpen()) {
-    const prev = prevPopupOptions.current;
-
-    if (prev.offset !== popupOptions.offset) {
-      popup.setOffset(popupOptions.offset ?? 16);
-    }
-    if (prev.maxWidth !== popupOptions.maxWidth && popupOptions.maxWidth) {
-      popup.setMaxWidth(popupOptions.maxWidth ?? "none");
-    }
-
-    prevPopupOptions.current = popupOptions;
-  }
 
   const handleClose = () => popup.remove();
 
@@ -308,7 +297,6 @@ export function MapMarkerTooltip({
 }: MapMarkerTooltipProps) {
   const { marker, map } = useMarkerContext();
   const container = useMemo(() => document.createElement("div"), []);
-  const prevTooltipOptions = useRef(popupOptions);
 
   const tooltip = useMemo(() => {
     const tooltipInstance = new MapLibreGL.Popup({
@@ -321,6 +309,8 @@ export function MapMarkerTooltip({
     return tooltipInstance;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  usePopupOptions(tooltip, popupOptions);
 
   useEffect(() => {
     if (!map) return;
@@ -342,19 +332,6 @@ export function MapMarkerTooltip({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map]);
-
-  if (tooltip.isOpen()) {
-    const prev = prevTooltipOptions.current;
-
-    if (prev.offset !== popupOptions.offset) {
-      tooltip.setOffset(popupOptions.offset ?? 16);
-    }
-    if (prev.maxWidth !== popupOptions.maxWidth && popupOptions.maxWidth) {
-      tooltip.setMaxWidth(popupOptions.maxWidth ?? "none");
-    }
-
-    prevTooltipOptions.current = popupOptions;
-  }
 
   return createPortal(
     <div

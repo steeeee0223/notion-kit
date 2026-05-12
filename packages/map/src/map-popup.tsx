@@ -7,6 +7,7 @@ import { contentVariants } from "@notion-kit/ui/primitives";
 
 import { MapPopupClose } from "./map-marker";
 import { useMap } from "./use-map";
+import { usePopupOptions } from "./use-map-state";
 
 export interface MapPopupProps extends PopupOptions, React.PropsWithChildren {
   /** Longitude coordinate for popup position */
@@ -27,7 +28,6 @@ export function MapPopup({
   ...popupOptions
 }: MapPopupProps) {
   const { map } = useMap();
-  const popupOptionsRef = useRef(popupOptions);
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
   const container = useMemo(() => document.createElement("div"), []);
@@ -44,6 +44,8 @@ export function MapPopup({
     return popupInstance;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  usePopupOptions(popup, popupOptions, { lngLat: [longitude, latitude] });
 
   useEffect(() => {
     if (!map) return;
@@ -64,29 +66,6 @@ export function MapPopup({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map]);
 
-  if (popup.isOpen()) {
-    const prev = popupOptionsRef.current;
-
-    if (
-      popup.getLngLat().lng !== longitude ||
-      popup.getLngLat().lat !== latitude
-    ) {
-      popup.setLngLat([longitude, latitude]);
-    }
-
-    if (prev.offset !== popupOptions.offset) {
-      popup.setOffset(popupOptions.offset ?? 16);
-    }
-    if (prev.maxWidth !== popupOptions.maxWidth && popupOptions.maxWidth) {
-      popup.setMaxWidth(popupOptions.maxWidth ?? "none");
-    }
-    popupOptionsRef.current = popupOptions;
-  }
-
-  const handleClose = () => {
-    popup.remove();
-  };
-
   return createPortal(
     <div
       data-slot="map-popup"
@@ -94,7 +73,7 @@ export function MapPopup({
         contentVariants({ variant: "popover", openAnimation: true, className }),
       )}
     >
-      {closeButton && <MapPopupClose onClick={handleClose} />}
+      {closeButton && <MapPopupClose onClick={popup.remove} />}
       {children}
     </div>,
     container,
