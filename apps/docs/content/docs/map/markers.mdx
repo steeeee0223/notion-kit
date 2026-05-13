@@ -1,0 +1,36 @@
+---
+title: Markers
+description: DOM markers with custom content, labels, tooltips, popups, and drag callbacks.
+---
+
+<ComponentPreview
+  name="map-markers"
+  preview={`<MapMarker longitude={121.5654} latitude={25.033}>
+  <MapMarkerContent />
+</MapMarker>`}
+/>
+
+## Installation
+
+<Installation packages="@notion-kit/map" registryName="map-markers" />
+
+## API Reference
+
+### MapMarker
+
+`MapMarker` extends MapLibre `MarkerOptions`, except `element`.
+
+| Prop          | Type                          | Default | Description                        |
+| ------------- | ----------------------------- | ------- | ---------------------------------- |
+| `longitude`   | `number`                      | -       | Marker longitude.                  |
+| `latitude`    | `number`                      | -       | Marker latitude.                   |
+| `onClick`     | `(event: MouseEvent) => void` | -       | Called when the marker is clicked. |
+| `onDragStart` | `(lngLat) => void`            | -       | Called when dragging starts.       |
+| `onDrag`      | `(lngLat) => void`            | -       | Called while dragging.             |
+| `onDragEnd`   | `(lngLat) => void`            | -       | Called when dragging ends.         |
+
+### MapMarkerLabel
+
+| Prop       | Type                | Default | Description            |
+| ---------- | ------------------- | ------- | ---------------------- |
+| `position` | `"top" \| "bottom"` | `"top"` | Position of the label. |

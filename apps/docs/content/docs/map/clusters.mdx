@@ -1,0 +1,28 @@
+---
+title: Clusters
+description: Cluster GeoJSON points into scalable circle layers.
+---
+
+<ComponentPreview
+  name="map-cluster-layer"
+  preview={`<MapClusterLayer data={pointsData} />`}
+/>
+
+## Installation
+
+<Installation packages="@notion-kit/map" registryName="map-cluster-layer" />
+
+## API Reference
+
+### MapClusterLayer
+
+| Prop                | Type                                           | Default                             | Description                                  |
+| ------------------- | ---------------------------------------------- | ----------------------------------- | -------------------------------------------- |
+| `data`              | `string \| FeatureCollection<Point, P>`        | -                                   | GeoJSON data or a URL to fetch GeoJSON from. |
+| `clusterMaxZoom`    | `number`                                       | `14`                                | Maximum zoom level for clustering.           |
+| `clusterRadius`     | `number`                                       | `50`                                | Cluster radius in pixels.                    |
+| `clusterColors`     | `[string, string, string]`                     | `["#22c55e", "#eab308", "#ef4444"]` | Colors for small, medium, large clusters.    |
+| `clusterThresholds` | `[number, number]`                             | `[100, 750]`                        | Point count thresholds for cluster steps.    |
+| `pointColor`        | `string`                                       | `"#3b82f6"`                         | Color for unclustered points.                |
+| `onPointClick`      | `(feature, coordinates) => void`               | -                                   | Called when an unclustered point is clicked. |
+| `onClusterClick`    | `(clusterId, coordinates, pointCount) => void` | -                                   | Overrides the default cluster zoom behavior. |

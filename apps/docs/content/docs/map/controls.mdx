@@ -1,0 +1,76 @@
+---
+title: Controls
+description: Positionable map controls for zooming, locating, fullscreen, compass reset, and 2D/3D view switching.
+---
+
+<ComponentPreview
+  name="map-controls"
+  preview={`<MapControls>
+  <MapControlGroup>
+    <MapZoomIn />
+    <MapZoomOut />
+    <MapViewModeToggle />
+    <MapCompass />
+  </MapControlGroup>
+</MapControls>`}
+/>
+
+## Installation
+
+<Installation packages="@notion-kit/map" registryName="map-controls" />
+
+## Usage
+
+Controls are regular map children, so they can be composed into one or more groups.
+
+```tsx
+import {
+  Map,
+  MapCompass,
+  MapControlGroup,
+  MapControls,
+  MapViewModeToggle,
+  MapZoomIn,
+  MapZoomOut,
+} from "@notion-kit/map";
+
+export function Example() {
+  return (
+    <Map center={[121.5654, 25.033]} zoom={12}>
+      <MapControls>
+        <MapControlGroup>
+          <MapZoomIn />
+          <MapZoomOut />
+          <MapViewModeToggle />
+          <MapCompass />
+        </MapControlGroup>
+      </MapControls>
+    </Map>
+  );
+}
+```
+
+## API Reference
+
+### MapControls
+
+| Prop        | Type                                                           | Default          | Description                      |
+| ----------- | -------------------------------------------------------------- | ---------------- | -------------------------------- |
+| `position`  | `"top-left" \| "top-right" \| "bottom-left" \| "bottom-right"` | `"bottom-right"` | Position of the controls.        |
+| `className` | `string`                                                       | -                | Additional classes for the root. |
+
+### MapViewModeToggle
+
+| Prop           | Type                           | Default | Description                             |
+| -------------- | ------------------------------ | ------- | --------------------------------------- |
+| `pitch`        | `number`                       | `60`    | Pitch used when switching to 3D view.   |
+| `bearing`      | `number`                       | `-20`   | Bearing used when switching to 3D view. |
+| `duration`     | `number`                       | `600`   | Animation duration in milliseconds.     |
+| `threshold`    | `number`                       | `10`    | Pitch threshold for detecting 3D mode.  |
+| `onModeChange` | `(mode: "2d" \| "3d") => void` | -       | Called when a new mode is requested.    |
+
+### MapLocate
+
+| Prop       | Type                                             | Default | Description                             |
+| ---------- | ------------------------------------------------ | ------- | --------------------------------------- |
+| `onLocate` | `(coords: { lng: number; lat: number }) => void` | -       | Called after the user location is used. |

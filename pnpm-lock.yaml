@@ -306,6 +306,9 @@ importers:
       '@notion-kit/cn':
         specifier: workspace:*
         version: link:../../packages/cn
+      '@notion-kit/map':
+        specifier: workspace:*
+        version: link:../../packages/map
       '@notion-kit/registry':
         specifier: workspace:*
         version: link:../../packages/registry
@@ -1225,6 +1228,9 @@ importers:
       '@notion-kit/icons':
         specifier: workspace:*
         version: link:../icons
+      '@notion-kit/map':
+        specifier: workspace:*
+        version: link:../map
       '@notion-kit/schemas':
         specifier: workspace:*
         version: link:../schemas
@@ -1246,6 +1252,9 @@ importers:
       lodash.groupby:
         specifier: catalog:fns
         version: 4.6.0
+      maplibre-gl:
+        specifier: ^5.24.0
+        version: 5.24.0
       react:
         specifier: catalog:react19
         version: 19.2.3

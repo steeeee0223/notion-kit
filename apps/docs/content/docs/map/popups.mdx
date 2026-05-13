@@ -1,0 +1,28 @@
+---
+title: Popups
+description: Anchored popup content for map coordinates or marker interactions.
+---
+
+<ComponentPreview
+  name="map-popup"
+  preview={`<MapPopup longitude={121.5654} latitude={25.033} closeButton>
+  Taipei 101
+</MapPopup>`}
+/>
+
+## Installation
+
+<Installation packages="@notion-kit/map" registryName="map-popup" />
+
+## API Reference
+
+### MapPopup
+
+`MapPopup` extends MapLibre `PopupOptions`.
+
+| Prop          | Type         | Default | Description                        |
+| ------------- | ------------ | ------- | ---------------------------------- |
+| `longitude`   | `number`     | -       | Popup longitude.                   |
+| `latitude`    | `number`     | -       | Popup latitude.                    |
+| `onClose`     | `() => void` | -       | Called when the popup closes.      |
+| `closeButton` | `boolean`    | `false` | Shows the Notion Kit close button. |

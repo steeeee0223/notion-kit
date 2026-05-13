@@ -1,0 +1,28 @@
+---
+title: Arcs
+description: Render curved lines between points with hover state support.
+---
+
+<ComponentPreview name="map-arc" preview={`<MapArc data={flightRoutes} />`} />
+
+## Installation
+
+<Installation packages="@notion-kit/map" registryName="map-arc" />
+
+## API Reference
+
+### MapArc
+
+| Prop          | Type                                   | Default | Description                                    |
+| ------------- | -------------------------------------- | ------- | ---------------------------------------------- |
+| `data`        | `MapArcDatum[]`                        | -       | Arcs with `id`, `from`, and `to` coordinates.  |
+| `id`          | `string`                               | -       | Optional source and layer id prefix.           |
+| `curvature`   | `number`                               | `0.2`   | How far each arc bows from a straight line.    |
+| `samples`     | `number`                               | `64`    | Number of samples used for the curve.          |
+| `paint`       | `LineLayerSpecification["paint"]`      | -       | MapLibre paint properties for the arc layer.   |
+| `layout`      | `LineLayerSpecification["layout"]`     | -       | MapLibre layout properties for the arc layer.  |
+| `hoverPaint`  | `LineLayerSpecification["paint"]`      | -       | Paint applied to the currently hovered arc.    |
+| `onClick`     | `(event: MapArcEvent) => void`         | -       | Called when an arc is clicked.                 |
+| `onHover`     | `(event: MapArcEvent \| null) => void` | -       | Called when the hovered arc changes.           |
+| `interactive` | `boolean`                              | `true`  | Enables arc mouse events.                      |
+| `beforeId`    | `string`                               | -       | Layer id to insert before for z-order control. |

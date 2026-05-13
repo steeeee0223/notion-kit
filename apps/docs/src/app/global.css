@@ -3,6 +3,7 @@
 @import "fumadocs-ui/css/preset.css";
 
 @import "@notion-kit/ui/style.css";
+@import "@notion-kit/map/style.css";
 
 @source "../../../../node_modules/fumadocs-ui/dist/**/*.js";
 

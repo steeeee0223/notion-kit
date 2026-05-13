@@ -83,6 +83,83 @@ interface MapControlProps {
   className?: string;
 }
 
+type MapViewMode = "2d" | "3d";
+
+interface MapViewModeToggleProps extends MapControlProps {
+  /** Pitch to use when switching to 3D view (default: 60) */
+  pitch?: number;
+  /** Bearing to use when switching to 3D view (default: -20) */
+  bearing?: number;
+  /** Animation duration in milliseconds (default: 600) */
+  duration?: number;
+  /** Pitch threshold used to decide whether the map is currently in 3D (default: 10) */
+  threshold?: number;
+  /** Callback fired after a view mode is requested */
+  onModeChange?: (mode: MapViewMode) => void;
+}
+
+function MapViewModeIcon({ mode }: { mode: MapViewMode }) {
+  const is3D = mode === "3d";
+
+  return (
+    <svg
+      aria-hidden="true"
+      role="graphics-symbol"
+      viewBox="0 0 20 20"
+      className="size-4"
+    >
+      <path
+        d="M4 6.5 10 3l6 3.5-6 3.5L4 6.5Z"
+        className={cn("fill-current", is3D ? "opacity-100" : "opacity-40")}
+      />
+      {is3D ? (
+        <>
+          <path d="M4 8.25 9.25 11.3v5L4 13.25v-5Z" />
+          <path d="M16 8.25 10.75 11.3v5L16 13.25v-5Z" />
+        </>
+      ) : (
+        <path d="M4 10.25 10 13.75l6-3.5v2.25L10 16 4 12.5v-2.25Z" />
+      )}
+    </svg>
+  );
+}
+
+function MapViewModeToggle({
+  className,
+  pitch = 60,
+  bearing = -20,
+  duration = 600,
+  threshold = 10,
+  onModeChange,
+}: MapViewModeToggleProps) {
+  const { map } = useMap();
+  const currentPitch = useMapPitch();
+  const is3D = currentPitch > threshold;
+  const nextMode = is3D ? "2d" : "3d";
+
+  const handleToggle = useCallback(() => {
+    if (!map) return;
+
+    map.easeTo({
+      pitch: is3D ? 0 : pitch,
+      bearing: is3D ? 0 : bearing,
+      duration,
+    });
+    onModeChange?.(nextMode);
+  }, [bearing, duration, is3D, map, nextMode, onModeChange, pitch]);
+
+  return (
+    <MapControlButton
+      onClick={handleToggle}
+      aria-label={is3D ? "Switch to 2D view" : "Switch to 3D view"}
+      aria-pressed={is3D}
+      className={className}
+    >
+      <MapViewModeIcon mode={is3D ? "3d" : "2d"} />
+    </MapControlButton>
+  );
+}
+
 function MapZoomIn({ className }: MapControlProps) {
   const { map } = useMap();
   const handleZoomIn = useCallback(() => {
@@ -201,6 +278,7 @@ export {
   MapControlGroup,
   MapCompass,
   MapFullScreen,
+  MapViewModeToggle,
   MapZoomIn,
   MapZoomOut,
   MapLocate,

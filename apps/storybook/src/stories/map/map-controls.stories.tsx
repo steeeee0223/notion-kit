@@ -9,6 +9,7 @@ import {
   MapLocate,
   MapMarker,
   MapMarkerContent,
+  MapViewModeToggle,
   MapZoomIn,
   MapZoomOut,
   useCurrentLocation,
@@ -53,6 +54,7 @@ export const AllControls: Story = {
         <MapZoomOut />
         <Separator />
         <MapLocate />
+        <MapViewModeToggle />
         <MapCompass />
         <MapFullScreen />
       </MapControlGroup>
