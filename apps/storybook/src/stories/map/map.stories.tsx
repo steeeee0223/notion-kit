@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
 import { Map, type MapViewport } from "@notion-kit/map";
+import { Button } from "@notion-kit/ui/primitives";
 
 const meta = {
   title: "Map/Map",
@@ -9,7 +10,7 @@ const meta = {
   parameters: { layout: "fullscreen" },
   decorators: [
     (Story) => (
-      <div style={{ height: "500px", width: "100%" }}>
+      <div className="h-125 w-full">
         <Story />
       </div>
     ),
@@ -62,30 +63,33 @@ export const ControlledViewport: Story = {
     return (
       <div className="flex h-[500px] w-full flex-col">
         <div className="flex gap-2 p-2">
-          <button
-            className="rounded-sm bg-blue-600 px-3 py-1 text-sm text-white"
+          <Button
+            variant="blue"
+            size="sm"
             onClick={() =>
               setViewport((v) => ({ ...v, center: [-73.9857, 40.7484] }))
             }
           >
             NYC
-          </button>
-          <button
-            className="rounded-sm bg-blue-600 px-3 py-1 text-sm text-white"
+          </Button>
+          <Button
+            variant="blue"
+            size="sm"
             onClick={() =>
               setViewport((v) => ({ ...v, center: [139.6917, 35.6895] }))
             }
           >
             Tokyo
-          </button>
-          <button
-            className="rounded-sm bg-blue-600 px-3 py-1 text-sm text-white"
+          </Button>
+          <Button
+            variant="blue"
+            size="sm"
             onClick={() =>
               setViewport((v) => ({ ...v, center: [121.5654, 25.033] }))
             }
           >
             Taipei
-          </button>
+          </Button>
           <span className="ml-auto self-center text-xs text-muted">
             {viewport.center?.[0].toFixed(4)}, {viewport.center?.[1].toFixed(4)}{" "}
             | zoom: {viewport.zoom?.toFixed(1)}

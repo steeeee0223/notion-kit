@@ -157,7 +157,8 @@ export function usePopupOptions(
     if (
       typeof longitude === "number" &&
       typeof latitude === "number" &&
-      (popup.getLngLat().lng !== longitude || popup.getLngLat().lat !== latitude)
+      (popup.getLngLat().lng !== longitude ||
+        popup.getLngLat().lat !== latitude)
     ) {
       popup.setLngLat([longitude, latitude]);
     }

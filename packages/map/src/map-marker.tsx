@@ -1,11 +1,4 @@
-import React, {
-  createContext,
-  use,
-  useEffect,
-  useMemo,
-  useRef,
-  type ReactNode,
-} from "react";
+import React, { createContext, use, useEffect, useMemo, useRef } from "react";
 import MapLibreGL, { type MarkerOptions, type PopupOptions } from "maplibre-gl";
 import { createPortal } from "react-dom";
 
@@ -35,13 +28,12 @@ function useMarkerContext() {
   return context;
 }
 
-export type MapMarkerProps = {
+export interface MapMarkerProps
+  extends React.PropsWithChildren<Omit<MarkerOptions, "element">> {
   /** Longitude coordinate for marker position */
   longitude: number;
   /** Latitude coordinate for marker position */
   latitude: number;
-  /** Marker subcomponents (MapMarkerContent, MapMarkerPopup, MapMarkerTooltip, MapMarkerLabel) */
-  children: ReactNode;
   /** Callback when marker is clicked */
   onClick?: (e: MouseEvent) => void;
   /** Callback when mouse enters marker */
@@ -54,7 +46,7 @@ export type MapMarkerProps = {
   onDrag?: (lngLat: { lng: number; lat: number }) => void;
   /** Callback when marker drag ends (requires draggable: true) */
   onDragEnd?: (lngLat: { lng: number; lat: number }) => void;
-} & Omit<MarkerOptions, "element">;
+}
 
 export function MapMarker({
   longitude,
@@ -180,9 +172,7 @@ export function MapMarker({
   return <MarkerContext value={contextValue}>{children}</MarkerContext>;
 }
 
-export interface MapMarkerContentProps {
-  /** Custom marker content. Defaults to a blue dot if not provided */
-  children?: ReactNode;
+export interface MapMarkerContentProps extends React.PropsWithChildren {
   /** Additional CSS classes for the marker container */
   className?: string;
 }
@@ -208,7 +198,7 @@ function MapDefaultMarkerIcon() {
   return (
     <div
       data-slot="map-default-marker-icon"
-      className="relative size-4 rounded-full border-2 border-main bg-blue shadow-lg"
+      className="relative size-4 rounded-full border-2 border-white bg-blue shadow-lg"
     />
   );
 }
@@ -222,7 +212,7 @@ export function MapPopupClose({ onClick }: { onClick: () => void }) {
       aria-label="Close popup"
       variant="close"
       size="circle"
-      className="absolute top-0.5 right-0.5 z-10"
+      className="absolute top-2 right-2 z-10"
     >
       <Icon.Close className="size-3.5 fill-current" />
     </Button>
@@ -242,12 +232,12 @@ export function MapMarkerPopup({
 
   const popup = useMemo(() => {
     const popupInstance = new MapLibreGL.Popup({
-      offset: 16,
-      ...popupOptions,
+      offset: 20,
+      maxWidth: "none",
+      // Customized close button
       closeButton: false,
-    })
-      .setMaxWidth("none")
-      .setDOMContent(container);
+      ...popupOptions,
+    }).setDOMContent(container);
 
     return popupInstance;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -267,28 +257,25 @@ export function MapMarkerPopup({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map]);
 
-  const handleClose = () => popup.remove();
-
   return createPortal(
     <div
       data-slot="map-marker-popup"
       className={cn(
         contentVariants({ variant: "popover", openAnimation: true }),
+        "p-3",
         className,
       )}
     >
-      {closeButton && <MapPopupClose onClick={handleClose} />}
+      {closeButton && <MapPopupClose onClick={popup.remove} />}
       {children}
     </div>,
     container,
   );
 }
 
-export interface MapMarkerTooltipProps
-  extends Omit<PopupOptions, "closeButton" | "closeOnClick"> {
-  /** Tooltip content */
-  children?: ReactNode;
-}
+export type MapMarkerTooltipProps = React.PropsWithChildren<
+  Omit<PopupOptions, "closeButton" | "closeOnClick">
+>;
 
 export function MapMarkerTooltip({
   children,
@@ -300,11 +287,12 @@ export function MapMarkerTooltip({
 
   const tooltip = useMemo(() => {
     const tooltipInstance = new MapLibreGL.Popup({
-      offset: 16,
-      ...popupOptions,
+      offset: 20,
       closeOnClick: true,
       closeButton: false,
-    }).setMaxWidth("none");
+      maxWidth: "none",
+      ...popupOptions,
+    });
 
     return tooltipInstance;
     // eslint-disable-next-line react-hooks/exhaustive-deps

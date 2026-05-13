@@ -1,11 +1,16 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 
 import { cn, cva, type VariantProps } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
-import { Button, Spinner } from "@notion-kit/ui/primitives";
+import {
+  Button,
+  groupVariants,
+  TooltipPreset,
+} from "@notion-kit/ui/primitives";
 
-import { useMapBearing, useMapPitch } from "./use-map-state";
+import { useCurrentLocation } from "./use-current-location";
 import { useMap } from "./use-map";
+import { useMapBearing, useMapPitch } from "./use-map-state";
 
 const positionClasses = cva("", {
   variants: {
@@ -19,95 +24,17 @@ const positionClasses = cva("", {
 });
 type Position = VariantProps<typeof positionClasses>["position"];
 
-export interface MapControlsProps {
+export interface MapControlsProps extends React.PropsWithChildren {
   /** Position of the controls on the map (default: "bottom-right") */
   position?: Position;
-  /** Show zoom in/out buttons (default: true) */
-  showZoom?: boolean;
-  /** Show compass button to reset bearing (default: false) */
-  showCompass?: boolean;
-  /** Show locate button to find user's location (default: false) */
-  showLocate?: boolean;
-  /** Show fullscreen toggle button (default: false) */
-  showFullscreen?: boolean;
-  /** Additional CSS classes for the controls container */
   className?: string;
-  /** Callback with user coordinates when located */
-  onLocate?: (coords: { longitude: number; latitude: number }) => void;
 }
 
-function MapControlGroup({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="map-control-group"
-      className={cn(
-        "flex flex-col overflow-hidden rounded-md border border-border bg-main shadow-sm [&>button:not(:last-child)]:border-b [&>button:not(:last-child)]:border-border",
-        className,
-      )}
-      {...props}
-    />
-  );
-}
-
-export function MapControls({
+function MapControls({
   position = "bottom-right",
-  showZoom = true,
-  showCompass = false,
-  showLocate = false,
-  showFullscreen = false,
   className,
-  onLocate,
+  ...props
 }: MapControlsProps) {
-  const { map } = useMap();
-  const [waitingForLocation, setWaitingForLocation] = useState(false);
-
-  const handleZoomIn = useCallback(() => {
-    map?.zoomTo(map.getZoom() + 1, { duration: 300 });
-  }, [map]);
-
-  const handleZoomOut = useCallback(() => {
-    map?.zoomTo(map.getZoom() - 1, { duration: 300 });
-  }, [map]);
-
-  const handleResetBearing = useCallback(() => {
-    map?.resetNorthPitch({ duration: 300 });
-  }, [map]);
-
-  const handleLocate = useCallback(() => {
-    setWaitingForLocation(true);
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const coords = {
-            longitude: pos.coords.longitude,
-            latitude: pos.coords.latitude,
-          };
-          void map?.flyTo({
-            center: [coords.longitude, coords.latitude],
-            zoom: 14,
-            duration: 1500,
-          });
-          onLocate?.(coords);
-          setWaitingForLocation(false);
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-          setWaitingForLocation(false);
-        },
-      );
-    }
-  }, [map, onLocate]);
-
-  const handleFullscreen = useCallback(() => {
-    const container = map?.getContainer();
-    if (!container) return;
-    if (document.fullscreenElement) {
-      void document.exitFullscreen();
-    } else {
-      void container.requestFullscreen();
-    }
-  }, [map]);
-
   return (
     <div
       data-slot="map-controls"
@@ -116,54 +43,142 @@ export function MapControls({
         positionClasses({ position }),
         className,
       )}
-    >
-      {showZoom && (
-        <MapControlGroup>
-          <Button onClick={handleZoomIn} aria-label="Zoom in">
-            <Icon.Plus className="size-4 fill-current" />
-          </Button>
-          <Button onClick={handleZoomOut} aria-label="Zoom out">
-            <Icon.Minus className="size-4 fill-current" />
-          </Button>
-        </MapControlGroup>
-      )}
-      {showCompass && (
-        <MapControlGroup>
-          <MapCompassButton onClick={handleResetBearing} />
-        </MapControlGroup>
-      )}
-      {showLocate && (
-        <MapControlGroup>
-          <Button
-            onClick={handleLocate}
-            aria-label="Find my location"
-            disabled={waitingForLocation}
-          >
-            {waitingForLocation ? (
-              <Spinner />
-            ) : (
-              <Icon.Locate className="size-4 fill-current" />
-            )}
-          </Button>
-        </MapControlGroup>
-      )}
-      {showFullscreen && (
-        <MapControlGroup>
-          <Button onClick={handleFullscreen} aria-label="Toggle fullscreen">
-            <Icon.Maximize className="size-4 fill-current" />
-          </Button>
-        </MapControlGroup>
-      )}
-    </div>
+      {...props}
+    />
   );
 }
 
-function MapCompassButton({ onClick }: { onClick: () => void }) {
+function MapControlGroup({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="map-control-group"
+      className={cn(
+        groupVariants(),
+        "w-7 items-center overflow-hidden rounded-md border border-border bg-main py-0.5 shadow-sm",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+function MapControlButton({
+  "aria-label": label = "",
+  className,
+  ...props
+}: React.ComponentProps<typeof Button>) {
+  return (
+    <TooltipPreset description={label} collisionPadding={16} side="left">
+      <Button
+        variant="hint"
+        className={cn("size-6 [&_svg]:fill-current", className)}
+        aria-label={label}
+        {...props}
+      />
+    </TooltipPreset>
+  );
+}
+
+interface MapControlProps {
+  className?: string;
+}
+
+function MapZoomIn({ className }: MapControlProps) {
+  const { map } = useMap();
+  const handleZoomIn = useCallback(() => {
+    map?.zoomTo(map.getZoom() + 1, { duration: 300 });
+  }, [map]);
+  return (
+    <MapControlButton
+      onClick={handleZoomIn}
+      aria-label="Zoom in"
+      className={className}
+    >
+      <Icon.Plus className="size-3.5!" />
+    </MapControlButton>
+  );
+}
+
+function MapZoomOut({ className }: MapControlProps) {
+  const { map } = useMap();
+  const handleZoomOut = useCallback(() => {
+    map?.zoomTo(map.getZoom() - 1, { duration: 300 });
+  }, [map]);
+  return (
+    <MapControlButton
+      onClick={handleZoomOut}
+      aria-label="Zoom out"
+      className={className}
+    >
+      <Icon.Minus className="size-3.5!" />
+    </MapControlButton>
+  );
+}
+
+interface MapLocateProps extends MapControlProps {
+  /** Callback with user coordinates when located */
+  onLocate?: (coords: { lng: number; lat: number }) => void;
+}
+
+function MapLocate({ className, onLocate }: MapLocateProps) {
+  const { map } = useMap();
+  const { coordinates } = useCurrentLocation();
+
+  return (
+    <MapControlButton
+      onClick={() => {
+        if (!coordinates) return;
+        const location = {
+          lng: coordinates[0],
+          lat: coordinates[1],
+        };
+        void map?.flyTo({
+          center: location,
+          zoom: 14,
+          duration: 1500,
+        });
+        onLocate?.(location);
+      }}
+      aria-label="Find my location"
+      className={className}
+    >
+      <Icon.Locate />
+    </MapControlButton>
+  );
+}
+
+function MapFullScreen({ className }: MapControlProps) {
+  const { map } = useMap();
+  return (
+    <MapControlButton
+      onClick={() => {
+        const container = map?.getContainer();
+        if (!container) return;
+        if (document.fullscreenElement) {
+          void document.exitFullscreen();
+        } else {
+          void container.requestFullscreen();
+        }
+      }}
+      aria-label="Toggle fullscreen"
+      className={className}
+    >
+      <Icon.Maximize />
+    </MapControlButton>
+  );
+}
+
+function MapCompass({ className }: MapControlProps) {
+  const { map } = useMap();
   const bearing = useMapBearing();
   const pitch = useMapPitch();
 
   return (
-    <Button onClick={onClick} aria-label="Reset bearing to north">
+    <MapControlButton
+      onClick={() => map?.resetNorthPitch({ duration: 300 })}
+      aria-label="Reset bearing to north"
+      className={className}
+    >
       <svg
         viewBox="0 0 24 24"
         className="size-5 transition-transform duration-200"
@@ -177,6 +192,16 @@ function MapCompassButton({ onClick }: { onClick: () => void }) {
         <path d="M12 22L16 12H12V22Z" className="fill-icon" />
         <path d="M12 22L8 12H12V22Z" className="fill-icon-secondary" />
       </svg>
-    </Button>
+    </MapControlButton>
   );
 }
+
+export {
+  MapControls,
+  MapControlGroup,
+  MapCompass,
+  MapFullScreen,
+  MapZoomIn,
+  MapZoomOut,
+  MapLocate,
+};

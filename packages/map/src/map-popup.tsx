@@ -34,12 +34,12 @@ export function MapPopup({
 
   const popup = useMemo(() => {
     const popupInstance = new MapLibreGL.Popup({
-      offset: 16,
+      offset: 20,
+      maxWidth: "none",
       ...popupOptions,
+      // Customized close button
       closeButton: false,
-    })
-      .setMaxWidth("none")
-      .setLngLat([longitude, latitude]);
+    }).setLngLat([longitude, latitude]);
 
     return popupInstance;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -70,7 +70,9 @@ export function MapPopup({
     <div
       data-slot="map-popup"
       className={cn(
-        contentVariants({ variant: "popover", openAnimation: true, className }),
+        contentVariants({ variant: "popover", openAnimation: true }),
+        "p-3",
+        className,
       )}
     >
       {closeButton && <MapPopupClose onClick={popup.remove} />}

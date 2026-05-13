@@ -97,7 +97,6 @@ function mergeArcPaint(
   if (!hoverPaint) return paint;
   const merged: Record<string, unknown> = { ...paint };
   for (const [key, hoverValue] of Object.entries(hoverPaint)) {
-
     const baseValue = merged[key];
     merged[key] =
       baseValue === undefined
