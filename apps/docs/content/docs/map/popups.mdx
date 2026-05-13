@@ -18,11 +18,21 @@ description: Anchored popup content for map coordinates or marker interactions.
 
 ### MapPopup
 
+Creates a popup anchored to map coordinates and renders React content into the MapLibre popup container.
+
 `MapPopup` extends MapLibre `PopupOptions`.
 
 | Prop          | Type         | Default | Description                        |
 | ------------- | ------------ | ------- | ---------------------------------- |
-| `longitude`   | `number`     | -       | Popup longitude.                   |
-| `latitude`    | `number`     | -       | Popup latitude.                    |
+| `longitude`\* | `number`     | -       | Popup longitude.                   |
+| `latitude`\*  | `number`     | -       | Popup latitude.                    |
 | `onClose`     | `() => void` | -       | Called when the popup closes.      |
 | `closeButton` | `boolean`    | `false` | Shows the Notion Kit close button. |
+
+### MapPopupClose
+
+Renders the close button used inside coordinate popups and marker popups. You usually get it by passing `closeButton`, but it can be used directly in custom popup content.
+
+| Prop        | Type         | Default | Description                     |
+| ----------- | ------------ | ------- | ------------------------------- |
+| `onClick`\* | `() => void` | -       | Called when the button is used. |

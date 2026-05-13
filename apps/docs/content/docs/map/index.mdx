@@ -6,10 +6,7 @@ links:
     href: https://maplibre.org/maplibre-gl-js/docs/
 ---
 
-<ComponentPreview
-  name="map-default"
-  preview={`<Map center={[121.5654, 25.033]} zoom={12} />`}
-/>
+<ComponentPreview name="map-default" />
 
 ## Installation
 
@@ -18,17 +15,6 @@ links:
 ## Setup
 
 Import the map stylesheet once at your app entry point. This includes the MapLibre base styles and the Notion Kit map component styles.
-
-```tsx
-import "@notion-kit/map/style.css";
-```
-
-In a Next.js app, add the import to your root layout or global stylesheet:
-
-```tsx
-// app/layout.tsx
-import "@notion-kit/map/style.css";
-```
 
 ```css
 /* app/global.css */
@@ -54,6 +40,8 @@ export function Example() {
 ## API Reference
 
 ### Map
+
+Creates the MapLibre map instance, resolves the light/dark style, exposes the map through context, and renders map children once the instance exists.
 
 `Map` extends MapLibre `MapOptions`, except `container` and `style`.
 

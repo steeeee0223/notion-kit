@@ -13,9 +13,11 @@ description: Render curved lines between points with hover state support.
 
 ### MapArc
 
+Builds curved `LineString` features between coordinate pairs and renders them as a MapLibre line layer with an invisible hit layer for interactions.
+
 | Prop          | Type                                   | Default | Description                                    |
 | ------------- | -------------------------------------- | ------- | ---------------------------------------------- |
-| `data`        | `MapArcDatum[]`                        | -       | Arcs with `id`, `from`, and `to` coordinates.  |
+| `data`\*      | `MapArcDatum[]`                        | -       | Arcs with `id`, `from`, and `to` coordinates.  |
 | `id`          | `string`                               | -       | Optional source and layer id prefix.           |
 | `curvature`   | `number`                               | `0.2`   | How far each arc bows from a straight line.    |
 | `samples`     | `number`                               | `64`    | Number of samples used for the curve.          |
@@ -26,3 +28,24 @@ description: Render curved lines between points with hover state support.
 | `onHover`     | `(event: MapArcEvent \| null) => void` | -       | Called when the hovered arc changes.           |
 | `interactive` | `boolean`                              | `true`  | Enables arc mouse events.                      |
 | `beforeId`    | `string`                               | -       | Layer id to insert before for z-order control. |
+
+### MapArcDatum
+
+Describes one arc rendered by `MapArc`.
+
+| Prop     | Type               | Default | Description                                  |
+| -------- | ------------------ | ------- | -------------------------------------------- |
+| `id`\*   | `string \| number` | -       | Unique arc id used for events/hover state.   |
+| `from`\* | `[number, number]` | -       | Start coordinate as `[longitude, latitude]`. |
+| `to`\*   | `[number, number]` | -       | End coordinate as `[longitude, latitude]`.   |
+
+### MapArcEvent
+
+Payload passed to `onClick` and `onHover` callbacks.
+
+| Prop              | Type            | Default | Description                        |
+| ----------------- | --------------- | ------- | ---------------------------------- |
+| `arc`\*           | `MapArcDatum`   | -       | The arc datum under the pointer.   |
+| `longitude`\*     | `number`        | -       | Pointer longitude.                 |
+| `latitude`\*      | `number`        | -       | Pointer latitude.                  |
+| `originalEvent`\* | `MapMouseEvent` | -       | The original MapLibre mouse event. |

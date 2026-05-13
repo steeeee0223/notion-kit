@@ -18,19 +18,54 @@ description: DOM markers with custom content, labels, tooltips, popups, and drag
 
 ### MapMarker
 
+Creates a MapLibre DOM marker at a longitude and latitude, then provides marker context to marker children.
+
 `MapMarker` extends MapLibre `MarkerOptions`, except `element`.
 
-| Prop          | Type                          | Default | Description                        |
-| ------------- | ----------------------------- | ------- | ---------------------------------- |
-| `longitude`   | `number`                      | -       | Marker longitude.                  |
-| `latitude`    | `number`                      | -       | Marker latitude.                   |
-| `onClick`     | `(event: MouseEvent) => void` | -       | Called when the marker is clicked. |
-| `onDragStart` | `(lngLat) => void`            | -       | Called when dragging starts.       |
-| `onDrag`      | `(lngLat) => void`            | -       | Called while dragging.             |
-| `onDragEnd`   | `(lngLat) => void`            | -       | Called when dragging ends.         |
+| Prop           | Type                          | Default | Description                        |
+| -------------- | ----------------------------- | ------- | ---------------------------------- |
+| `longitude`\*  | `number`                      | -       | Marker longitude.                  |
+| `latitude`\*   | `number`                      | -       | Marker latitude.                   |
+| `onClick`      | `(event: MouseEvent) => void` | -       | Called when the marker is clicked. |
+| `onMouseEnter` | `(event: MouseEvent) => void` | -       | Called when the pointer enters.    |
+| `onMouseLeave` | `(event: MouseEvent) => void` | -       | Called when the pointer leaves.    |
+| `onDragStart`  | `(lngLat) => void`            | -       | Called when dragging starts.       |
+| `onDrag`       | `(lngLat) => void`            | -       | Called while dragging.             |
+| `onDragEnd`    | `(lngLat) => void`            | -       | Called when dragging ends.         |
+| `draggable`    | `boolean`                     | `false` | Enables MapLibre marker dragging.  |
+
+### MapMarkerContent
+
+Renders marker content into the marker DOM element. When no children are provided, it renders the default dot marker.
+
+### MapMarkerPopup
+
+Attaches a MapLibre popup to a `MapMarker`. The popup opens through MapLibre marker popup behavior and uses Notion Kit popover styling.
+
+`MapMarkerPopup` extends MapLibre `PopupOptions`.
+
+| Prop          | Type      | Default | Description                        |
+| ------------- | --------- | ------- | ---------------------------------- |
+| `closeButton` | `boolean` | `false` | Shows the Notion Kit close button. |
+
+### MapMarkerTooltip
+
+Shows tooltip content when the pointer enters the marker and removes it when the pointer leaves.
+
+`MapMarkerTooltip` extends MapLibre `PopupOptions`, except `closeButton` and `closeOnClick`.
 
 ### MapMarkerLabel
+
+Positions a small text label above or below custom marker content.
 
 | Prop       | Type                | Default | Description            |
 | ---------- | ------------------- | ------- | ---------------------- |
 | `position` | `"top" \| "bottom"` | `"top"` | Position of the label. |
+
+### MapPopupClose
+
+Renders the close button used by map popups. It is exported for custom popup compositions.
+
+| Prop        | Type         | Default | Description                     |
+| ----------- | ------------ | ------- | ------------------------------- |
+| `onClick`\* | `() => void` | -       | Called when the button is used. |

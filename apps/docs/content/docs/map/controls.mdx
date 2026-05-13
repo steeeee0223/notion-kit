@@ -54,12 +54,44 @@ export function Example() {
 
 ### MapControls
 
+Positions one or more control groups over the map. It renders an absolutely positioned container and accepts children.
+
 | Prop        | Type                                                           | Default          | Description                      |
 | ----------- | -------------------------------------------------------------- | ---------------- | -------------------------------- |
 | `position`  | `"top-left" \| "top-right" \| "bottom-left" \| "bottom-right"` | `"bottom-right"` | Position of the controls.        |
 | `className` | `string`                                                       | -                | Additional classes for the root. |
 
+### MapControlGroup
+
+Groups individual controls into a compact vertical toolbar with shared borders and background.
+
+### MapZoomIn
+
+Zooms the map in by one zoom level with a short animation.
+
+### MapZoomOut
+
+Zooms the map out by one zoom level with a short animation.
+
+### MapLocate
+
+Uses the browser geolocation API, flies the map to the current location, and optionally reports the resolved coordinates.
+
+| Prop       | Type                                             | Default | Description                             |
+| ---------- | ------------------------------------------------ | ------- | --------------------------------------- |
+| `onLocate` | `(coords: { lng: number; lat: number }) => void` | -       | Called after the user location is used. |
+
+### MapCompass
+
+Shows the current bearing and pitch, then resets the map to north-up with zero pitch when clicked.
+
+### MapFullScreen
+
+Toggles fullscreen mode for the current map container.
+
 ### MapViewModeToggle
+
+Switches between a flat 2D view and a pitched 3D view using MapLibre `easeTo`.
 
 | Prop           | Type                           | Default | Description                             |
 | -------------- | ------------------------------ | ------- | --------------------------------------- |
@@ -68,9 +100,3 @@ export function Example() {
 | `duration`     | `number`                       | `600`   | Animation duration in milliseconds.     |
 | `threshold`    | `number`                       | `10`    | Pitch threshold for detecting 3D mode.  |
 | `onModeChange` | `(mode: "2d" \| "3d") => void` | -       | Called when a new mode is requested.    |
-
-### MapLocate
-
-| Prop       | Type                                             | Default | Description                             |
-| ---------- | ------------------------------------------------ | ------- | --------------------------------------- |
-| `onLocate` | `(coords: { lng: number; lat: number }) => void` | -       | Called after the user location is used. |

@@ -16,9 +16,11 @@ description: Cluster GeoJSON points into scalable circle layers.
 
 ### MapClusterLayer
 
+Creates a clustered GeoJSON source for point data and renders cluster circles, cluster counts, and unclustered point circles.
+
 | Prop                | Type                                           | Default                             | Description                                  |
 | ------------------- | ---------------------------------------------- | ----------------------------------- | -------------------------------------------- |
-| `data`              | `string \| FeatureCollection<Point, P>`        | -                                   | GeoJSON data or a URL to fetch GeoJSON from. |
+| `data`\*            | `string \| FeatureCollection<Point, P>`        | -                                   | GeoJSON data or a URL to fetch GeoJSON from. |
 | `clusterMaxZoom`    | `number`                                       | `14`                                | Maximum zoom level for clustering.           |
 | `clusterRadius`     | `number`                                       | `50`                                | Cluster radius in pixels.                    |
 | `clusterColors`     | `[string, string, string]`                     | `["#22c55e", "#eab308", "#ef4444"]` | Colors for small, medium, large clusters.    |

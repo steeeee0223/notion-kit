@@ -16,15 +16,17 @@ description: Render line routes from coordinate arrays.
 
 ### MapRoute
 
-| Prop           | Type                 | Default     | Description                              |
-| -------------- | -------------------- | ----------- | ---------------------------------------- |
-| `id`           | `string`             | -           | Optional route layer id.                 |
-| `coordinates`  | `[number, number][]` | -           | Route coordinates as lng/lat pairs.      |
-| `color`        | `string`             | `"#4285F4"` | Line color.                              |
-| `width`        | `number`             | `3`         | Line width in pixels.                    |
-| `opacity`      | `number`             | `0.8`       | Line opacity.                            |
-| `dashArray`    | `[number, number]`   | -           | Dash pattern for dashed lines.           |
-| `interactive`  | `boolean`            | `true`      | Enables route mouse events and cursor.   |
-| `onClick`      | `() => void`         | -           | Called when the route is clicked.        |
-| `onMouseEnter` | `() => void`         | -           | Called when the cursor enters the route. |
-| `onMouseLeave` | `() => void`         | -           | Called when the cursor leaves the route. |
+Renders a `LineString` GeoJSON source and a MapLibre line layer from an array of coordinates.
+
+| Prop            | Type                 | Default     | Description                              |
+| --------------- | -------------------- | ----------- | ---------------------------------------- |
+| `id`            | `string`             | -           | Optional route layer id.                 |
+| `coordinates`\* | `[number, number][]` | -           | Route coordinates as lng/lat pairs.      |
+| `color`         | `string`             | `"#4285F4"` | Line color.                              |
+| `width`         | `number`             | `3`         | Line width in pixels.                    |
+| `opacity`       | `number`             | `0.8`       | Line opacity.                            |
+| `dashArray`     | `[number, number]`   | -           | Dash pattern for dashed lines.           |
+| `interactive`   | `boolean`            | `true`      | Enables route mouse events and cursor.   |
+| `onClick`       | `() => void`         | -           | Called when the route is clicked.        |
+| `onMouseEnter`  | `() => void`         | -           | Called when the cursor enters the route. |
+| `onMouseLeave`  | `() => void`         | -           | Called when the cursor leaves the route. |
