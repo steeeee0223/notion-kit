@@ -118,7 +118,7 @@ function CustomGeoJsonLayer() {
       const features = map.queryRenderedFeatures(event.point, {
         layers: ["parks-fill"],
       });
-      setHoveredPark(features[0]?.properties?.name ?? null);
+      setHoveredPark((features[0]?.properties as ParkProperties).name);
     };
 
     map.on("mouseenter", "parks-fill", handleMouseEnter);
@@ -164,7 +164,7 @@ function CustomGeoJsonLayer() {
         </Button>
       </div>
       {hoveredPark && (
-        <div className="absolute bottom-3 left-3 z-10 rounded-md border bg-main/90 px-3 py-2 text-sm font-medium shadow-sm backdrop-blur">
+        <div className="absolute bottom-3 left-3 z-10 rounded-md border bg-main px-3 py-2 text-sm font-medium shadow-sm backdrop-blur-sm">
           {hoveredPark}
         </div>
       )}
