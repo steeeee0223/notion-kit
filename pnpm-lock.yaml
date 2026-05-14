@@ -1171,6 +1171,9 @@ importers:
       '@notion-kit/prettier-config':
         specifier: workspace:*
         version: link:../../tooling/prettier
+      '@notion-kit/tailwind-config':
+        specifier: workspace:*
+        version: link:../../tooling/tailwind
       '@notion-kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript

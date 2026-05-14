@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import "@notion-kit/tailwind-config/base.css";
 @import "maplibre-gl/dist/maplibre-gl.css";
 
 @layer base {
