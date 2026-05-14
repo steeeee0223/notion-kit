@@ -1,0 +1,186 @@
+---
+title: Advanced
+description: Use the underlying MapLibre instance for custom sources, layers, and interactions.
+---
+
+The `useMap` hook gives child components access to the MapLibre instance after the map has loaded. Use it when you need MapLibre APIs directly, such as custom sources, custom layers, hover queries, visibility toggles, heatmaps, or raster overlays.
+
+## Custom GeoJSON Layer
+
+<ComponentPreview
+  name="map-custom-geojson-layer"
+  preview={`map.addSource("parks", { type: "geojson", data: geojsonData });
+map.addLayer({ id: "parks-fill", type: "fill", source: "parks" });`}
+/>
+
+## Installation
+
+<Installation
+  packages="@notion-kit/map"
+  registryName="map-custom-geojson-layer"
+/>
+
+## Usage
+
+Create a child component that reads `{ map, isLoaded }` from `useMap`, then add your source and layers inside an effect. Always guard on `isLoaded`, keep source and layer ids stable, and remove layers before removing the source during cleanup.
+
+```tsx
+import { useEffect } from "react";
+
+import { Map, useMap } from "@notion-kit/map";
+
+const geojsonData = {
+  type: "FeatureCollection",
+  features: [
+    {
+      type: "Feature",
+      properties: { name: "Daan Forest Park" },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [121.5321, 25.0347],
+            [121.5379, 25.0345],
+            [121.538, 25.0291],
+            [121.5322, 25.0293],
+            [121.5321, 25.0347],
+          ],
+        ],
+      },
+    },
+  ],
+} satisfies GeoJSON.FeatureCollection<GeoJSON.Polygon>;
+
+function ParksLayer() {
+  const { map, isLoaded } = useMap();
+
+  useEffect(() => {
+    if (!map || !isLoaded) return;
+
+    map.addSource("parks", {
+      type: "geojson",
+      data: geojsonData,
+    });
+
+    map.addLayer({
+      id: "parks-fill",
+      type: "fill",
+      source: "parks",
+      paint: {
+        "fill-color": "#22c55e",
+        "fill-opacity": 0.4,
+      },
+    });
+
+    return () => {
+      if (map.getLayer("parks-fill")) map.removeLayer("parks-fill");
+      if (map.getSource("parks")) map.removeSource("parks");
+    };
+  }, [isLoaded, map]);
+
+  return null;
+}
+
+export function Example() {
+  return (
+    <Map center={[121.525, 25.037]} zoom={13}>
+      <ParksLayer />
+    </Map>
+  );
+}
+```
+
+## Updating GeoJSON Data
+
+If the GeoJSON changes after the source is created, update the existing source instead of adding it again.
+
+```tsx
+import type { GeoJSONSource } from "maplibre-gl";
+
+function ParksLayer({ data }: { data: GeoJSON.FeatureCollection }) {
+  const { map, isLoaded } = useMap();
+
+  useEffect(() => {
+    if (!map || !isLoaded) return;
+
+    if (!map.getSource("parks")) {
+      map.addSource("parks", { type: "geojson", data });
+    }
+
+    if (!map.getLayer("parks-fill")) {
+      map.addLayer({
+        id: "parks-fill",
+        type: "fill",
+        source: "parks",
+        paint: { "fill-color": "#22c55e", "fill-opacity": 0.4 },
+      });
+    }
+
+    return () => {
+      if (map.getLayer("parks-fill")) map.removeLayer("parks-fill");
+      if (map.getSource("parks")) map.removeSource("parks");
+    };
+  }, [isLoaded, map]);
+
+  useEffect(() => {
+    if (!map || !isLoaded) return;
+
+    const source = map.getSource("parks") as GeoJSONSource | undefined;
+    source?.setData(data);
+  }, [data, isLoaded, map]);
+
+  return null;
+}
+```
+
+## Layer Interactions
+
+Use MapLibre layer events for hover and click states. Querying rendered features lets you read GeoJSON properties from the feature under the cursor.
+
+```tsx
+useEffect(() => {
+  if (!map || !isLoaded || !map.getLayer("parks-fill")) return;
+
+  const handleMouseMove = (event: maplibregl.MapMouseEvent) => {
+    const features = map.queryRenderedFeatures(event.point, {
+      layers: ["parks-fill"],
+    });
+
+    console.log(features[0]?.properties?.name);
+  };
+
+  const handleMouseEnter = () => {
+    map.getCanvas().style.cursor = "pointer";
+  };
+
+  const handleMouseLeave = () => {
+    map.getCanvas().style.cursor = "";
+  };
+
+  map.on("mousemove", "parks-fill", handleMouseMove);
+  map.on("mouseenter", "parks-fill", handleMouseEnter);
+  map.on("mouseleave", "parks-fill", handleMouseLeave);
+
+  return () => {
+    map.off("mousemove", "parks-fill", handleMouseMove);
+    map.off("mouseenter", "parks-fill", handleMouseEnter);
+    map.off("mouseleave", "parks-fill", handleMouseLeave);
+  };
+}, [isLoaded, map]);
+```
+
+## Visibility Toggles
+
+Use `setLayoutProperty` to show or hide a layer without removing its source.
+
+```tsx
+function setParksVisible(visible: boolean) {
+  if (!map?.getLayer("parks-fill")) return;
+
+  map.setLayoutProperty(
+    "parks-fill",
+    "visibility",
+    visible ? "visible" : "none",
+  );
+}
+```

@@ -10,6 +10,8 @@
     "...components",
     "---Blocks---",
     "...blocks",
+    "---Map---",
+    "...map",
     "---Auth---",
     "auth/get-started",
     "...auth-ui",

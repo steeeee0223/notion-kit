@@ -10,10 +10,20 @@ description: Latest updates and improvements to Notion UI.
 We have consolidated all individual UI components into a single unified package: `@notion-kit/ui`.
 
 **What's new:**
+
 - **Simplified Imports:** Instead of importing from numerous small packages (e.g., `@notion-kit/button`, `@notion-kit/dialog`, etc.), all primitives and complex components like `navbar`, `sidebar`, and `timeline` are now exported directly from `@notion-kit/ui`.
 - **Easier Maintenance:** A single package structure drastically reduces dependency overhead and improves build performance.
 - **Unified Design System:** Ensures a more consistent styling approach across all components using shared core styles.
 
-Please update your imports to use `@notion-kit/ui` for all UI components.
+### 🗺️ NK-47: Map components
+
+Added `@notion-kit/map`, a MapLibre-powered package for building interactive maps with Notion Kit styling.
+
+**What's new:**
+
+- **Map Container:** Theme-aware `Map` component with custom styles, projections, loading state, and controlled viewport support.
+- **Controls:** Zoom, locate, compass, fullscreen, and 2D/3D view controls for common map interactions.
+- **Overlays:** Markers, popups, routes, arcs, and clustered GeoJSON point layers for rich map experiences.
+- **Advanced Layers:** Documentation and registry examples for custom MapLibre sources, layers, GeoJSON updates, interactions, and visibility toggles.
 
 </ChangelogBlock>

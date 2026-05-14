@@ -52,6 +52,15 @@ export const DEMOS = [
   // Login Form
   "login-form-auth",
   "login-form-default",
+  // Map
+  "map-arc",
+  "map-cluster-layer",
+  "map-controls",
+  "map-custom-geojson-layer",
+  "map-default",
+  "map-markers",
+  "map-popup",
+  "map-route",
   // Multi Select
   "multi-select-creatable",
   "multi-select-default",

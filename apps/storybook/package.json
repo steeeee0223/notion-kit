@@ -27,6 +27,7 @@
     "@notion-kit/hooks": "workspace:*",
     "@notion-kit/i18n": "workspace:*",
     "@notion-kit/icons": "workspace:*",
+    "@notion-kit/map": "workspace:*",
     "@notion-kit/registry": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/settings-panel": "workspace:*",
