@@ -181,6 +181,44 @@ export const Index: Record<
       () => import("@notion-kit/registry/login-form-default"),
     ),
   },
+  "map-arc": {
+    files: ["registry/src/map-arc/map-arc.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/map-arc")),
+  },
+  "map-cluster-layer": {
+    files: ["registry/src/map-cluster-layer/map-cluster-layer.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/map-cluster-layer"),
+    ),
+  },
+  "map-controls": {
+    files: ["registry/src/map-controls/map-controls.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/map-controls")),
+  },
+  "map-custom-geojson-layer": {
+    files: [
+      "registry/src/map-custom-geojson-layer/map-custom-geojson-layer.tsx",
+    ],
+    component: React.lazy(
+      () => import("@notion-kit/registry/map-custom-geojson-layer"),
+    ),
+  },
+  "map-default": {
+    files: ["registry/src/map-default/map-default.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/map-default")),
+  },
+  "map-markers": {
+    files: ["registry/src/map-markers/map-markers.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/map-markers")),
+  },
+  "map-popup": {
+    files: ["registry/src/map-popup/map-popup.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/map-popup")),
+  },
+  "map-route": {
+    files: ["registry/src/map-route/map-route.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/map-route")),
+  },
   "multi-select-creatable": {
     files: ["registry/src/multi-select-creatable/multi-select-creatable.tsx"],
     component: React.lazy(

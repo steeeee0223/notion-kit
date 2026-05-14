@@ -1,0 +1,55 @@
+---
+title: Map
+description: A MapLibre-powered map container with theme-aware styles and controlled viewport support.
+links:
+  - label: MapLibre GL JS
+    href: https://maplibre.org/maplibre-gl-js/docs/
+---
+
+<ComponentPreview name="map-default" />
+
+## Installation
+
+<Installation packages="@notion-kit/map" registryName="map-default" />
+
+## Setup
+
+Import the map stylesheet once at your app entry point. This includes the MapLibre base styles and the Notion Kit map component styles.
+
+```css
+/* app/global.css */
+@import "@notion-kit/map/style.css";
+```
+
+## Usage
+
+The `Map` component creates the underlying MapLibre instance and provides it to child components through context.
+
+```tsx
+import { Map } from "@notion-kit/map";
+
+export function Example() {
+  return (
+    <div className="h-[420px] w-full">
+      <Map center={[121.5654, 25.033]} zoom={12} />
+    </div>
+  );
+}
+```
+
+## API Reference
+
+### Map
+
+Creates the MapLibre map instance, resolves the light/dark style, exposes the map through context, and renders map children once the instance exists.
+
+`Map` extends MapLibre `MapOptions`, except `container` and `style`.
+
+| Prop               | Type                                     | Default | Description                                     |
+| ------------------ | ---------------------------------------- | ------- | ----------------------------------------------- |
+| `theme`            | `"light" \| "dark"`                      | -       | Forces the map style theme.                     |
+| `styles`           | `{ light?: MapStyleOption; dark?: ... }` | -       | Custom style URLs or MapLibre style objects.    |
+| `projection`       | `ProjectionSpecification`                | -       | MapLibre projection configuration.              |
+| `viewport`         | `Partial<MapViewport>`                   | -       | Controlled center, zoom, bearing, and pitch.    |
+| `onViewportChange` | `(viewport: MapViewport) => void`        | -       | Called when the map viewport changes.           |
+| `loading`          | `boolean`                                | `false` | Shows the built-in loading overlay when `true`. |

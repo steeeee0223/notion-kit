@@ -1,0 +1,13 @@
+{
+  "title": "Map",
+  "pages": [
+    "index",
+    "controls",
+    "markers",
+    "popups",
+    "routes",
+    "arcs",
+    "clusters",
+    "advanced"
+  ]
+}
