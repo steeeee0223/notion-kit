@@ -11,15 +11,22 @@
       "env": [
         "POSTGRES_URL",
         "BETTER_AUTH_URL",
+        "BETTER_AUTH_ALLOWED_HOSTS",
         "BETTER_AUTH_SECRET",
         "TRUSTED_ORIGINS",
+        "APP_URL",
+        "VIEWER_URL",
         "GOOGLE_CLIENT_ID",
         "GOOGLE_CLIENT_SECRET",
         "GITHUB_CLIENT_ID",
         "GITHUB_CLIENT_SECRET",
         "NEXT_PUBLIC_AUTH_URL",
         "MAILTRAP_API_KEY",
-        "MAILTRAP_INBOX_ID"
+        "MAILTRAP_INBOX_ID",
+        "STRIPE_SECRET_KEY",
+        "STRIPE_WEBHOOK_SECRET",
+        "SUPABASE_URL",
+        "SUPABASE_PUBLISHABLE_KEY"
       ]
     },
     "dev": {
@@ -61,6 +68,7 @@
     "VERCEL",
     "VERCEL_ENV",
     "VERCEL_URL",
+    "PORT",
     "STORYBOOK_STRIPE_PUBLISHABLE_KEY",
     "npm_lifecycle_event"
   ]

@@ -14,11 +14,12 @@ See [Notion Auth](https://notion-authn.vercel.app/) for a complete example.
 ## API Reference
 
 <Callout title="Note">
-  You can use `https://notion-authn.vercel.app` as the `baseURL` for testing
+  You can use `https://notion-authn.vercel.app` as the `authURL` for testing
   purposes.
 </Callout>
 
 | Prop       | Type                    | Default | Description                                 |
 | ---------- | ----------------------- | ------- | ------------------------------------------- |
-| `baseURL`  | `string`                | -       | The base URL of the authentication service. |
+| `authURL`  | `string`                | -       | The URL of the authentication service.      |
+| `appURL`   | `string`                | -       | The base URL for frontend return links.     |
 | `redirect` | `(url: string) => void` | -       | Your URL redirect function.                 |

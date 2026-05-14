@@ -5,11 +5,46 @@ import { z } from "zod/v4";
 
 import type { DB } from "@/db/db";
 import { invitation as invitationTable, team as teamTable } from "@/db/schemas";
+import { toSlugLike } from "@/lib/utils";
 
 export function organizationExtra({ db }: { db: DB }) {
   return {
     id: "organization-extra",
     endpoints: {
+      getUniqueSlug: createAuthEndpoint(
+        "/organization/get-unique-slug",
+        {
+          method: "POST",
+          body: z.object({ name: z.string().min(1) }),
+          requireHeaders: true,
+          use: [sessionMiddleware],
+        },
+        async (ctx) => {
+          const baseSlug = toSlugLike(ctx.body.name) || "workspace";
+          const candidates = [
+            baseSlug,
+            ...Array.from(
+              { length: 10 },
+              () => `${baseSlug}-${crypto.randomUUID().slice(0, 8)}`,
+            ),
+          ];
+
+          for (const slug of candidates) {
+            const org = await ctx.context.adapter.findOne<{ id: string }>({
+              model: "organization",
+              where: [{ field: "slug", value: slug }],
+            });
+            if (!org) {
+              return ctx.json({ slug });
+            }
+          }
+
+          return ctx.json({
+            slug: `${baseSlug}-${crypto.randomUUID().replace(/-/g, "")}`,
+          });
+        },
+      ),
+
       getWorkspaceDetail: createAuthEndpoint(
         "/organization-extra/get-workspace-detail",
         {

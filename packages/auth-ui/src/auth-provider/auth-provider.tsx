@@ -1,16 +1,10 @@
-"use client";
-
 import React, { createContext, use, useMemo } from "react";
-import { v4 } from "uuid";
 
 import { createAuthClient, type AuthClient } from "@notion-kit/auth";
 
-import { toSlugLike } from "../lib";
-
 interface AuthContextInterface {
   auth: AuthClient;
-  baseURL: string;
-  generateUniqueSlug: (name: string) => Promise<string>;
+  appURL: string;
   redirect?: (url: string) => void;
 }
 
@@ -45,43 +39,43 @@ function useListWorkspaces() {
 }
 
 interface AuthProviderProps extends React.PropsWithChildren {
-  baseURL?: string;
+  appURL?: string;
+  authURL?: string;
   redirect?: (url: string) => void;
 }
 
-function AuthProvider({ baseURL, children, redirect }: AuthProviderProps) {
+function resolveAppURL(appURL: string, url: string) {
+  if (!appURL || /^https?:\/\//.test(url)) return url;
+  const base = appURL.replace(/\/+$/, "");
+  if (url === "/") return base;
+  const path = url.startsWith("/") ? url : `/${url}`;
+  return `${base}${path}`;
+}
+
+function AuthProvider({
+  appURL,
+  authURL,
+  children,
+  redirect,
+}: AuthProviderProps) {
   const ctx = useMemo<AuthContextInterface>(() => {
-    const auth = createAuthClient(baseURL);
+    const auth = createAuthClient(authURL);
+    const appBaseURL = appURL ?? "";
     return {
       auth,
-      baseURL: baseURL ?? "",
-      generateUniqueSlug: async (name) => {
-        const baseSlug = toSlugLike(name);
-        let slug = baseSlug;
-        let counter = 0;
-
-        while (counter < 10) {
-          const res = await auth.organization.checkSlug({ slug });
-          if (!res.error) break;
-          const id = v4();
-          slug = `${baseSlug}-${id.slice(0, 8)}`;
-          counter++;
-        }
-
-        // The slug is guaranteed to be unique at this point if counter < 10
-        return slug;
-      },
+      appURL: appBaseURL,
       redirect: (url) => {
+        const resolvedURL = resolveAppURL(appBaseURL, url);
         if (redirect) {
-          redirect(url);
+          redirect(resolvedURL);
           return;
         }
         if (typeof window !== "undefined") {
-          window.location.href = url;
+          window.location.href = resolvedURL;
         }
       },
     };
-  }, [baseURL, redirect]);
+  }, [appURL, authURL, redirect]);
   return <AuthContext value={ctx}>{children}</AuthContext>;
 }
 
