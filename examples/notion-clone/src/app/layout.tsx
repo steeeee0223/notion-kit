@@ -30,7 +30,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       suppressHydrationWarning
     >
       <body className="flex min-h-screen flex-col">
-        <AuthProvider baseURL={env.NEXT_PUBLIC_AUTH_URL}>
+        <AuthProvider authURL={env.NEXT_PUBLIC_AUTH_URL}>
           <ThemeProvider attribute="class" disableTransitionOnChange>
             {children}
             <Toaster className="font-mono" />

@@ -11,6 +11,7 @@ describe("Package Import Tests", () => {
       POSTGRES_URL: "API_KEY",
       BETTER_AUTH_URL: "API_KEY",
       BETTER_AUTH_SECRET: "API_KEY",
+      BETTER_AUTH_ALLOWED_HOSTS: [],
       TRUSTED_ORIGINS: [],
       GOOGLE_CLIENT_ID: "API_KEY",
       GOOGLE_CLIENT_SECRET: "API_KEY",

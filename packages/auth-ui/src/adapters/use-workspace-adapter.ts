@@ -32,11 +32,11 @@ function parseIcon(logo: string | null | undefined, name: string): IconData {
 
 function parseInviteLink(
   metadata: string | null | undefined,
-  baseURL: string,
+  appURL: string,
 ): string {
   try {
     const parsed = JSON.parse(metadata ?? "") as WorkspaceMetadata;
-    if (parsed.inviteToken) return `${baseURL}/invite/${parsed.inviteToken}`;
+    if (parsed.inviteToken) return `${appURL}/invite/${parsed.inviteToken}`;
   } catch {
     // no invite link
   }
@@ -44,7 +44,7 @@ function parseInviteLink(
 }
 
 export function useWorkspaceAdapter(): WorkspaceAdapter | undefined {
-  const { auth, baseURL, redirect } = useAuth();
+  const { appURL, auth, redirect } = useAuth();
   const orgApi = auth.organization;
   const orgExtraApi = auth.organizationExtra;
 
@@ -76,7 +76,7 @@ export function useWorkspaceAdapter(): WorkspaceAdapter | undefined {
           name: data.name,
           slug: data.slug,
           icon: parseIcon(data.logo, data.name),
-          inviteLink: parseInviteLink(data.metadata, baseURL),
+          inviteLink: parseInviteLink(data.metadata, appURL),
           role: data.role as Role,
           plan: planFromString(data.plan),
         };
@@ -129,7 +129,7 @@ export function useWorkspaceAdapter(): WorkspaceAdapter | undefined {
     organizationId,
     workspace,
     session,
-    baseURL,
+    appURL,
     redirect,
   ]);
 }

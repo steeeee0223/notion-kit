@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -27,7 +25,7 @@ interface UseCreateWorkspaceFormOptions {
 export function useCreateWorkspaceForm({
   onSuccess,
 }: UseCreateWorkspaceFormOptions) {
-  const { auth, generateUniqueSlug } = useAuth();
+  const { auth } = useAuth();
 
   const form = useForm<CreateWorkspaceSchema>({
     resolver: zodResolver(createWorkspaceSchema),
@@ -36,10 +34,14 @@ export function useCreateWorkspaceForm({
   const { handleSubmit, setValue, watch } = form;
 
   const submit = handleSubmit(async (values) => {
-    const slug = await generateUniqueSlug(values.name);
+    const slugRes = await auth.organization.getUniqueSlug({
+      name: values.name,
+    });
+    if (!slugRes.data) return handleError(slugRes, "Generate workspace slug");
+
     const res = await auth.organization.create({
       name: values.name,
-      slug,
+      slug: slugRes.data.slug,
       logo: JSON.stringify(values.icon),
       metadata: { inviteToken: v4() } satisfies WorkspaceMetadata,
       keepCurrentActiveOrganization: false,

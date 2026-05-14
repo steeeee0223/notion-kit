@@ -7,7 +7,7 @@ import type { AccountAdapter, AccountStore } from "@notion-kit/settings-panel";
 import { useAuth, useSession } from "../auth-provider";
 
 export function useAccountAdapter(): AccountAdapter | undefined {
-  const { auth } = useAuth();
+  const { appURL, auth } = useAuth();
   const { data: session } = useSession();
 
   return useMemo<AccountAdapter | undefined>(() => {
@@ -38,7 +38,7 @@ export function useAccountAdapter(): AccountAdapter | undefined {
         );
       },
       delete: async () => {
-        await auth.deleteUser({ callbackURL: "/" }, { throw: true });
+        await auth.deleteUser({ callbackURL: appURL || "/" }, { throw: true });
       },
       sendEmailVerification: async (email) => {
         await auth.sendVerificationEmail({ email }, { throw: true });
@@ -50,5 +50,5 @@ export function useAccountAdapter(): AccountAdapter | undefined {
         );
       },
     };
-  }, [auth, session]);
+  }, [appURL, auth, session]);
 }

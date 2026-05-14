@@ -8,7 +8,7 @@ import Stripe from "stripe";
 import { authorizeReference, updateSessionData } from "@/db/actions";
 import { db } from "@/db/db";
 import { createSupabaseStorage } from "@/db/supabase";
-import { AuthEnv } from "@/env";
+import { stringListSchema, type AuthEnv } from "@/env";
 import { createMailtrapApi, sendEmail } from "@/lib/email";
 import { ac, roles } from "@/lib/permissions";
 import { plans } from "@/lib/plans";
@@ -29,7 +29,53 @@ function createStripeClient(secretKey?: string) {
   return new Stripe(secretKey);
 }
 
-export function createAuth(env: AuthEnv) {
+function stripTrailingSlash(url: string) {
+  return url.replace(/\/+$/, "");
+}
+
+function toOrigin(url: string) {
+  try {
+    return new URL(url).origin;
+  } catch {
+    return url;
+  }
+}
+
+function toAllowedHost(value: string) {
+  try {
+    const url = value.includes("://") ? value : `https://${value}`;
+    return new URL(url).host;
+  } catch {
+    return value.replace(/^https?:\/\//, "").split("/")[0] ?? value;
+  }
+}
+
+function uniq(values: string[]) {
+  return Array.from(new Set(values.filter(Boolean)));
+}
+
+interface CreateAuthOptions {
+  basePath?: string;
+}
+
+export function createAuth(
+  env: AuthEnv,
+  options: CreateAuthOptions = { basePath: "/" },
+) {
+  const appUrl = stripTrailingSlash(env.APP_URL ?? env.BETTER_AUTH_URL);
+  const authAllowedHosts = stringListSchema
+    .parse(env.BETTER_AUTH_ALLOWED_HOSTS)
+    .map(toAllowedHost);
+  const authAllowedOrigins = stringListSchema
+    .parse(env.TRUSTED_ORIGINS)
+    .map(toOrigin);
+  const allowedHosts = uniq([
+    toAllowedHost(env.BETTER_AUTH_URL),
+    "localhost:*",
+    "*.vercel.app",
+    ...authAllowedHosts,
+  ]);
+  const trustedOrigins = uniq([toOrigin(appUrl), ...authAllowedOrigins]);
   const mailApi = createMailtrapApi(env.MAILTRAP_API_KEY);
   const stripeClient = createStripeClient(env.STRIPE_SECRET_KEY);
   const supabaseStorage =
@@ -39,8 +85,13 @@ export function createAuth(env: AuthEnv) {
 
   const config = {
     appName: "Notion Auth",
+    baseURL: {
+      allowedHosts,
+      fallback: env.BETTER_AUTH_URL,
+    },
+    basePath: options.basePath,
     database: drizzleAdapter(db, { provider: "pg" }),
-    trustedOrigins: [env.BETTER_AUTH_URL, ...env.TRUSTED_ORIGINS],
+    trustedOrigins,
     user: {
       changeEmail: {
         enabled: true,
@@ -106,7 +157,7 @@ export function createAuth(env: AuthEnv) {
         roles,
         cancelPendingInvitationsOnReInvite: true,
         sendInvitationEmail: async ({ id, email, inviter, organization }) => {
-          const inviteLink = `${env.BETTER_AUTH_URL}/accept-invitation/${id}`;
+          const inviteLink = `${appUrl}/accept-invitation/${id}`;
           await sendEmail(mailApi, env.MAILTRAP_INBOX_ID ?? "", {
             from: { email: inviter.user.email, name: inviter.user.name },
             to: [{ email }],

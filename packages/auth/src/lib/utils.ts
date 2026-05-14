@@ -25,3 +25,14 @@ export const additionalTeamFields = {
 export const additionalTeamMemberFields = {
   role: { type: "string", required: true },
 } satisfies AdditionalFields;
+
+/**
+ * Converts a display name to a URL-friendly slug base.
+ */
+export function toSlugLike(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
