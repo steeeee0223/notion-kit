@@ -9,7 +9,7 @@ import { toSlugLike } from "../lib";
 
 interface AuthContextInterface {
   auth: AuthClient;
-  baseURL: string;
+  appURL: string;
   generateUniqueSlug: (name: string) => Promise<string>;
   redirect?: (url: string) => void;
 }
@@ -45,16 +45,31 @@ function useListWorkspaces() {
 }
 
 interface AuthProviderProps extends React.PropsWithChildren {
-  baseURL?: string;
+  appURL?: string;
+  authURL?: string;
   redirect?: (url: string) => void;
 }
 
-function AuthProvider({ baseURL, children, redirect }: AuthProviderProps) {
+function resolveAppURL(appURL: string, url: string) {
+  if (!appURL || /^https?:\/\//.test(url)) return url;
+  const base = appURL.replace(/\/+$/, "");
+  if (url === "/") return base;
+  const path = url.startsWith("/") ? url : `/${url}`;
+  return `${base}${path}`;
+}
+
+function AuthProvider({
+  appURL,
+  authURL,
+  children,
+  redirect,
+}: AuthProviderProps) {
   const ctx = useMemo<AuthContextInterface>(() => {
-    const auth = createAuthClient(baseURL);
+    const auth = createAuthClient(authURL);
+    const appBaseURL = appURL ?? "";
     return {
       auth,
-      baseURL: baseURL ?? "",
+      appURL: appBaseURL,
       generateUniqueSlug: async (name) => {
         const baseSlug = toSlugLike(name);
         let slug = baseSlug;
@@ -72,16 +87,17 @@ function AuthProvider({ baseURL, children, redirect }: AuthProviderProps) {
         return slug;
       },
       redirect: (url) => {
+        const resolvedURL = resolveAppURL(appBaseURL, url);
         if (redirect) {
-          redirect(url);
+          redirect(resolvedURL);
           return;
         }
         if (typeof window !== "undefined") {
-          window.location.href = url;
+          window.location.href = resolvedURL;
         }
       },
     };
-  }, [baseURL, redirect]);
+  }, [appURL, authURL, redirect]);
   return <AuthContext value={ctx}>{children}</AuthContext>;
 }
 

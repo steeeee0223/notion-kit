@@ -7,7 +7,7 @@ import type { BillingAdapter } from "@notion-kit/settings-panel";
 import { useActiveWorkspace, useAuth } from "../auth-provider";
 
 export function useBillingAdapter(): BillingAdapter | undefined {
-  const { baseURL, auth } = useAuth();
+  const { appURL, auth } = useAuth();
   const { data: workspace } = useActiveWorkspace();
   const organizationId = workspace?.id;
   const subApi = auth.subscription;
@@ -15,7 +15,7 @@ export function useBillingAdapter(): BillingAdapter | undefined {
 
   return useMemo<BillingAdapter | undefined>(() => {
     if (!organizationId) return undefined;
-    const billingReturnUrl = `${baseURL}/settings/billing`;
+    const billingReturnUrl = `${appURL}/settings/billing`;
     return {
       getAll: async () => {
         const [{ data: subscriptions }, { data: customer }] = await Promise.all(
@@ -87,5 +87,5 @@ export function useBillingAdapter(): BillingAdapter | undefined {
         });
       },
     };
-  }, [subApi, stripeExtraApi, organizationId, baseURL]);
+  }, [subApi, stripeExtraApi, organizationId, appURL]);
 }
