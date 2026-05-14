@@ -8,7 +8,7 @@ import Stripe from "stripe";
 import { authorizeReference, updateSessionData } from "@/db/actions";
 import { db } from "@/db/db";
 import { createSupabaseStorage } from "@/db/supabase";
-import { AuthEnv } from "@/env";
+import { stringListSchema, type AuthEnv } from "@/env";
 import { createMailtrapApi, sendEmail } from "@/lib/email";
 import { ac, roles } from "@/lib/permissions";
 import { plans } from "@/lib/plans";
@@ -58,16 +58,24 @@ interface CreateAuthOptions {
   basePath?: string;
 }
 
-export function createAuth(env: AuthEnv, options: CreateAuthOptions = {}) {
-  const basePath = options.basePath ?? "/api/auth";
+export function createAuth(
+  env: AuthEnv,
+  options: CreateAuthOptions = { basePath: "/" },
+) {
   const appUrl = stripTrailingSlash(env.APP_URL ?? env.BETTER_AUTH_URL);
+  const authAllowedHosts = stringListSchema
+    .parse(env.BETTER_AUTH_ALLOWED_HOSTS)
+    .map(toAllowedHost);
+  const authAllowedOrigins = stringListSchema
+    .parse(env.TRUSTED_ORIGINS)
+    .map(toOrigin);
   const allowedHosts = uniq([
     toAllowedHost(env.BETTER_AUTH_URL),
     "localhost:*",
     "*.vercel.app",
-    ...env.BETTER_AUTH_ALLOWED_HOSTS.map(toAllowedHost),
+    ...authAllowedHosts,
   ]);
-  const trustedOrigins = uniq([toOrigin(appUrl), ...env.TRUSTED_ORIGINS]);
+  const trustedOrigins = uniq([toOrigin(appUrl), ...authAllowedOrigins]);
   const mailApi = createMailtrapApi(env.MAILTRAP_API_KEY);
   const stripeClient = createStripeClient(env.STRIPE_SECRET_KEY);
   const supabaseStorage =
@@ -81,7 +89,7 @@ export function createAuth(env: AuthEnv, options: CreateAuthOptions = {}) {
       allowedHosts,
       fallback: env.BETTER_AUTH_URL,
     },
-    basePath,
+    basePath: options.basePath,
     database: drizzleAdapter(db, { provider: "pg" }),
     trustedOrigins,
     user: {

@@ -1,10 +1,12 @@
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod/v4";
 
-const commaSeparatedList = z
-  .string()
-  .optional()
+export const stringListSchema = z
+  .union([z.string(), z.array(z.string()), z.undefined()])
   .transform((val) => {
+    if (Array.isArray(val)) {
+      return val.map((item) => item.trim()).filter(Boolean);
+    }
     if (!val) return [];
     return val
       .split(",")
@@ -19,9 +21,9 @@ export function createAuthEnv() {
     server: {
       POSTGRES_URL: z.string(),
       BETTER_AUTH_URL: z.string(),
-      BETTER_AUTH_ALLOWED_HOSTS: commaSeparatedList,
+      BETTER_AUTH_ALLOWED_HOSTS: stringListSchema,
       BETTER_AUTH_SECRET: z.string(),
-      TRUSTED_ORIGINS: commaSeparatedList,
+      TRUSTED_ORIGINS: stringListSchema,
       APP_URL: z.string().optional(),
       GOOGLE_CLIENT_ID: z.string(),
       GOOGLE_CLIENT_SECRET: z.string(),
