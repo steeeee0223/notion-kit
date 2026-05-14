@@ -133,7 +133,7 @@ export const inputVariants = cva(
 export type InputVariants = VariantProps<typeof inputVariants>;
 
 export const contentVariants = cva(
-  "border border-border focus-visible:outline-hidden",
+  "border border-border text-primary focus-visible:outline-hidden",
   {
     variants: {
       variant: {
@@ -148,7 +148,7 @@ export const contentVariants = cva(
          * @note Used with: `openAnimation`
          */
         modal:
-          "fixed top-[50%] left-[50%] z-(--z-menu) grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 bg-modal p-6 shadow-lg duration-200",
+          "fixed top-1/2 left-1/2 z-(--z-menu) grid w-full max-w-lg -translate-1/2 gap-4 bg-modal p-6 shadow-lg duration-200",
         /**
          * @prop popover
          * @note Used by: DropdownMenu, Popover, Select
@@ -192,3 +192,17 @@ export const separatorVariants = cva("-mx-1 my-1 h-px bg-default/10");
 export type SeparatorVariants = VariantProps<typeof separatorVariants>;
 
 export const groupVariants = cva("flex flex-col gap-px py-1");
+
+export const tooltipVariants = cva(
+  "max-w-[220px] font-medium wrap-break-word",
+  {
+    variants: {
+      size: {
+        sm: "rounded-sm px-2 py-1 text-xs/[1.4]",
+        md: "rounded-md px-3 py-1.5 text-sm",
+      },
+    },
+    defaultVariants: { size: "sm" },
+  },
+);
+export type TooltipVariants = VariantProps<typeof tooltipVariants>;

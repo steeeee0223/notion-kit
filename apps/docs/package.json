@@ -17,6 +17,7 @@
   "prettier": "@notion-kit/prettier-config",
   "dependencies": {
     "@notion-kit/cn": "workspace:*",
+    "@notion-kit/map": "workspace:*",
     "@notion-kit/registry": "workspace:*",
     "@notion-kit/ui": "workspace:*",
     "fumadocs-core": "^16.0.12",

@@ -1,0 +1,11 @@
+@import "@notion-kit/tailwind-config/base.css";
+@import "maplibre-gl/dist/maplibre-gl.css";
+
+@layer base {
+  .maplibregl-popup-content {
+    @apply rounded-none! bg-transparent! p-0! shadow-none!;
+  }
+  .maplibregl-popup-tip {
+    @apply hidden!;
+  }
+}
