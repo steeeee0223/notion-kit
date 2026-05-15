@@ -2,10 +2,8 @@ import { createFetch } from "@better-fetch/fetch";
 
 import { env } from "@/env";
 
-const BASE_URL = "https://futar.bkk.hu/api/query/v1/ws/otp/api/where";
-
-export const bkkClient = createFetch({
-  baseURL: BASE_URL,
+const bkkClient = createFetch({
+  baseURL: "https://futar.bkk.hu/api/query/v1/ws/otp/api/where",
   customFetchImpl: fetch,
 });
 

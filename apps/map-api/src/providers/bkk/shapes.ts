@@ -12,6 +12,38 @@ const CACHE_TTL_MS = 5 * 60 * 1000;
 export const bkkShapesPlugin: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { routeId: string } }>(
     "/api/transit/shapes/:routeId",
+    {
+      schema: {
+        description: "Get route shapes by routeId",
+        tags: ["Transit"],
+        params: {
+          type: "object",
+          properties: {
+            routeId: { type: "string" },
+          },
+          required: ["routeId"],
+        },
+        response: {
+          200: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                shapeId: { type: "string" },
+                routeId: { type: "string" },
+                points: {
+                  type: "array",
+                  items: {
+                    type: "array",
+                    items: { type: "number" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
     async (req) => {
       const { routeId } = req.params;
 

@@ -17,7 +17,9 @@
   "dependencies": {
     "@better-fetch/fetch": "catalog:",
     "@fastify/cors": "catalog:fastify",
+    "@fastify/swagger": "^9.7.0",
     "@fastify/websocket": "catalog:fastify",
+    "@scalar/fastify-api-reference": "^1.55.3",
     "@t3-oss/env-core": "catalog:env",
     "fastify": "catalog:fastify",
     "zod": "catalog:"
