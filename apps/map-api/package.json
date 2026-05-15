@@ -1,0 +1,38 @@
+{
+  "name": "@notion-kit/map-api",
+  "version": "1.0.0-beta.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsdown",
+    "clean": "git clean -xdf .turbo dist node_modules",
+    "dev": "pnpm with-env tsx watch src/index.ts",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "start": "pnpm with-env node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "with-env": "dotenv -e ../../.env --"
+  },
+  "prettier": "@notion-kit/prettier-config",
+  "dependencies": {
+    "@better-fetch/fetch": "catalog:",
+    "@fastify/cors": "catalog:fastify",
+    "@fastify/websocket": "catalog:fastify",
+    "@t3-oss/env-core": "catalog:env",
+    "fastify": "catalog:fastify",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@notion-kit/config": "workspace:*",
+    "@notion-kit/eslint-config": "workspace:*",
+    "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tsconfig": "workspace:*",
+    "@types/node": "catalog:node",
+    "dotenv-cli": "catalog:env",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "tsdown": "catalog:",
+    "tsx": "^4.19.3",
+    "typescript": "catalog:"
+  }
+}

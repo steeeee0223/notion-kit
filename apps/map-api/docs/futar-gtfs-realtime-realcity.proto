@@ -1,0 +1,52 @@
+// realCity extensions for the GTFS-realtime protocol
+
+syntax = "proto2";
+import "gtfs-realtime.proto";
+
+package realcity;
+
+message VehicleDescriptor {
+  optional string vehicle_model = 1;
+  optional bool deviated = 2 [default = false];
+  optional int32 vehicle_type = 3;
+  optional bool door_open = 4;
+  optional int32 stop_distance = 5;
+}
+
+message StopTimeUpdate {
+  optional transit_realtime.TripUpdate.StopTimeEvent scheduled_arrival = 1;
+  optional transit_realtime.TripUpdate.StopTimeEvent scheduled_departure = 2;
+}
+
+message RouteDetail {
+  required string route_id = 1;
+  optional transit_realtime.TranslatedString header_text = 2;
+  optional transit_realtime.Alert.Cause cause = 3;
+  optional transit_realtime.Alert.Effect effect = 4;
+
+  enum EffectType {
+    NO_SERVICE = 1;
+    WARNING = 2;
+  }
+
+  optional EffectType effect_type = 5;
+}
+
+message Alert {
+  optional transit_realtime.TranslatedString startText = 1;
+  optional transit_realtime.TranslatedString endText = 2;
+  optional uint64 modifiedTime = 3;
+  repeated RouteDetail route = 4;
+}
+
+extend transit_realtime.VehicleDescriptor {
+  optional VehicleDescriptor vehicle = 1006;
+}
+
+extend transit_realtime.TripUpdate.StopTimeUpdate {
+  optional StopTimeUpdate stop_time_update = 1006;
+}
+
+extend transit_realtime.Alert {
+  optional Alert alert = 1006;
+}

@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+@import "@notion-kit/ui/style.css";
+@import "@notion-kit/map/style.css";
+
+@source "../**/*.{ts,tsx}";
