@@ -1,21 +1,26 @@
 import { useMemo } from "react";
+import { MapPin } from "lucide-react";
 import { create } from "zustand";
 
 import { cn } from "@notion-kit/cn";
-import { MenuGroup, MenuItem, MenuItemAction } from "@notion-kit/ui/primitives";
+import {
+  MenuGroup,
+  MenuItem,
+  MenuItemAction,
+  MenuLabel,
+} from "@notion-kit/ui/primitives";
 
-import { MapPin } from "lucide-react";
-
+import { useActiveVehiclePositions, useAdapterBBoxStore } from "@/adapters";
 import { VehicleType } from "@/lib/types";
-import { useTransitlandBBoxStore, useVehiclePositions } from "@/plugins/transitland/use-vehicle-positions";
-import { VehicleIconPreview } from "@/plugins/transitland/vehicle-icon";
+
+import { VehicleIconPreview } from "./vehicle-icon";
 
 interface TransitFilterState {
   hiddenTypes: Set<string>;
   toggleType: (type: string) => void;
 }
 
-export const useTransitFilter = create<TransitFilterState>((set) => ({
+export const useVehicleFilter = create<TransitFilterState>((set) => ({
   hiddenTypes: new Set(),
   toggleType: (type) =>
     set((state) => {
@@ -29,10 +34,10 @@ export const useTransitFilter = create<TransitFilterState>((set) => ({
     }),
 }));
 
-export function TransitPanel() {
-  const { data: vehicles = [] } = useVehiclePositions();
-  const { hiddenTypes, toggleType } = useTransitFilter();
-  const requestFlyTo = useTransitlandBBoxStore((state) => state.requestFlyTo);
+export function VehiclesPanel() {
+  const { data: vehicles = [] } = useActiveVehiclePositions();
+  const { hiddenTypes, toggleType } = useVehicleFilter();
+  const requestFlyTo = useAdapterBBoxStore((state) => state.requestFlyTo);
 
   const activeVehicles = vehicles.filter((v) => !v.stale);
 
@@ -51,11 +56,8 @@ export function TransitPanel() {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="mb-1 text-xs font-medium text-secondary">
-        Active Vehicles: {activeVehicles.length}
-      </div>
-
       <MenuGroup>
+        <MenuLabel>Active Vehicles</MenuLabel>
         {types.map((type) => (
           <MenuItem
             key={type}
@@ -74,19 +76,26 @@ export function TransitPanel() {
         ))}
       </MenuGroup>
 
-      <div className="mt-2 text-xs font-medium text-secondary">
-        Quick Locations
-      </div>
       <MenuGroup>
+        <MenuLabel>Quick Locations</MenuLabel>
         {[
-          { name: "Budapest, HU", coords: [19.0402, 47.4979] as [number, number] },
-          { name: "San Francisco, US", coords: [-122.4194, 37.7749] as [number, number] },
-          { name: "Edmonton, CA", coords: [-113.4938, 53.5461] as [number, number] },
+          {
+            name: "Budapest, HU",
+            coords: [19.0402, 47.4979] as [number, number],
+          },
+          {
+            name: "San Francisco, US",
+            coords: [-122.4194, 37.7749] as [number, number],
+          },
+          {
+            name: "Edmonton, CA",
+            coords: [-113.4938, 53.5461] as [number, number],
+          },
         ].map((loc) => (
           <MenuItem
             key={loc.name}
             Body={<div>{loc.name}</div>}
-            Icon={<MapPin className="size-4" />}
+            Icon={<MapPin className="size-4 text-red" />}
             onClick={() => requestFlyTo(loc.coords)}
           />
         ))}

@@ -8,8 +8,10 @@ import { useLayerStore } from "@/lib/layer-registry";
 import { useWs } from "@/lib/use-ws";
 
 // Initialize plugins
-import "@/plugins/transit";
-import "@/plugins/transitland";
+import "@/plugins/vehicles";
+import "@/plugins/routes";
+
+import { MyLocation } from "@/components/my-location";
 
 export const Route = createFileRoute("/")({
   component: MapPage,
@@ -22,6 +24,7 @@ function MapPage() {
   return (
     <div className="relative size-full">
       <Map center={[19.04, 47.497]} zoom={12} theme="dark">
+        <MyLocation />
         <MapToolbar />
         {Array.from(plugins.values()).map((plugin) => {
           if (!plugin.enabled) return null;
@@ -29,7 +32,7 @@ function MapPage() {
         })}
       </Map>
 
-      <div className="absolute top-4 left-4 z-10 w-80">
+      <div className="absolute top-4 left-4 z-10 mx-4">
         <LayerSidebar />
       </div>
     </div>

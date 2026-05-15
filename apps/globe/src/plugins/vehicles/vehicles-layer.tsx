@@ -1,28 +1,21 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
 
-import { MapPopup, MapRoute, useMap, useMapState } from "@notion-kit/map";
+import { MapPopup, useMap, useMapState } from "@notion-kit/map";
 
-import { useTransitFilter } from "@/plugins/transitland/transit-panel";
-import { TransitSymbolLayer } from "@/plugins/transitland/transit-symbol-layer";
-import { useRouteShapes } from "@/plugins/transitland/use-route-shapes";
-import {
-  getVehicleColor,
-  useVehicleGeoJSON,
-} from "@/plugins/transitland/use-vehicle-geojson";
-import {
-  useTransitlandBBoxStore,
-  useVehiclePositions,
-  type VehiclePosition,
-} from "@/plugins/transitland/use-vehicle-positions";
+import { useActiveVehiclePositions, useAdapterBBoxStore } from "@/adapters";
+import type { VehiclePosition } from "@/adapters";
 
-export function TransitLayer() {
+import { useVehicleStore } from "./store";
+import { getVehicleColor, useVehicleGeoJSON } from "./use-vehicle-geojson";
+import { useVehicleFilter } from "./vehicles-panel";
+import { VehiclesSymbolLayer } from "./vehicles-symbol-layer";
+
+export function VehiclesLayer() {
   const { map } = useMap();
-  const setBBoxAndZoom = useTransitlandBBoxStore(
-    (state) => state.setBBoxAndZoom,
-  );
-  const flyTo = useTransitlandBBoxStore((state) => state.flyTo);
-  const clearFlyTo = useTransitlandBBoxStore((state) => state.clearFlyTo);
+  const setBBoxAndZoom = useAdapterBBoxStore((state) => state.setBBoxAndZoom);
+  const flyTo = useAdapterBBoxStore((state) => state.flyTo);
+  const clearFlyTo = useAdapterBBoxStore((state) => state.clearFlyTo);
 
   const bbox = useMapState(
     (map) => {
@@ -47,40 +40,28 @@ export function TransitLayer() {
     clearFlyTo();
   }, [flyTo, map, clearFlyTo]);
 
-  const { data: vehicles = [] } = useVehiclePositions();
-  const hiddenTypes = useTransitFilter((state) => state.hiddenTypes);
+  const { data: vehicles = [] } = useActiveVehiclePositions();
+  const hiddenTypes = useVehicleFilter((state) => state.hiddenTypes);
   const geojson = useVehicleGeoJSON(vehicles, hiddenTypes);
 
-  const [selected, setSelected] = useState<VehiclePosition | null>(null);
-
-  const routeColor =
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-    selected?.routeColor || getVehicleColor(selected?.vehicleType || "UNKNOWN");
-  const { data: shapes = [] } = useRouteShapes(selected?.routeId ?? null);
+  const selected = useVehicleStore((state) => state.selectedVehicle);
+  const setSelected = useVehicleStore((state) => state.setSelectedVehicle);
 
   const handlePointClick = useCallback(
     (feature: GeoJSON.Feature<GeoJSON.Point>) => {
       const props = feature.properties as unknown as VehiclePosition;
       setSelected(props);
     },
-    [],
+    [setSelected],
   );
+
+  const routeColor =
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+    selected?.routeColor || getVehicleColor(selected?.vehicleType || "UNKNOWN");
 
   return (
     <>
-      <TransitSymbolLayer data={geojson} onPointClick={handlePointClick} />
-
-      {shapes.map((shape) => (
-        <MapRoute
-          key={shape.shapeId}
-          id={shape.shapeId}
-          coordinates={shape.points}
-          color={routeColor}
-          width={4}
-          opacity={0.7}
-          interactive={false}
-        />
-      ))}
+      <VehiclesSymbolLayer data={geojson} onPointClick={handlePointClick} />
 
       {selected && (
         <MapPopup
@@ -106,17 +87,11 @@ export function TransitLayer() {
             <div className="grid grid-cols-2 gap-x-2 gap-y-1">
               <span className="text-secondary">Type</span>
               <span className="truncate">{selected.vehicleType}</span>
-              {selected.licensePlate && (
-                <>
-                  <span className="text-secondary">Plate</span>
-                  <span className="truncate">{selected.licensePlate}</span>
-                </>
-              )}
+              <span className="text-secondary">Plate</span>
+              <span className="truncate">{selected.licensePlate}</span>
               <span className="text-secondary">Updated</span>
               <span className="truncate">
-                {formatDistanceToNow(selected.lastUpdateTime, {
-                  addSuffix: true,
-                })}
+                {formatDistanceToNow(selected.lastUpdateTime)}
               </span>
             </div>
           </div>

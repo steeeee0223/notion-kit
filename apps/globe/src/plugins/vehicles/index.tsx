@@ -1,15 +1,15 @@
 import { BusFront } from "lucide-react";
 
 import { useLayerStore } from "@/lib/layer-registry";
-import { TransitLayer } from "@/plugins/transit/transit-layer";
-import { TransitPanel } from "@/plugins/transit/transit-panel";
+import { VehiclesLayer } from "./vehicles-layer";
+import { VehiclesPanel } from "./vehicles-panel";
 
 // Auto-register plugin when imported
 useLayerStore.getState().register({
-  id: "transit",
-  name: "BKK Public Transit",
+  id: "vehicles",
+  name: "Vehicles",
   icon: <BusFront className="size-4" />,
-  MapLayer: TransitLayer,
-  PanelContent: TransitPanel,
+  MapLayer: VehiclesLayer,
+  PanelContent: VehiclesPanel,
   defaultEnabled: true,
 });

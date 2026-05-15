@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import type { VehiclePosition } from "@/plugins/transitland/use-vehicle-positions";
+import type { VehiclePosition } from "@/adapters";
 
 type VehicleFeature = GeoJSON.Feature<
   GeoJSON.Point,

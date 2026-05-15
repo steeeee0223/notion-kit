@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
-import type { VehiclePosition } from "@/plugins/transit/use-vehicle-positions";
+import type { VehiclePosition } from "@/adapters";
 
 const WS_URL = "ws://localhost:3100/ws";
 const VEHICLE_QUERY_KEY = ["transit", "vehicles"] as const;

@@ -3,13 +3,13 @@ import type MapLibreGL from "maplibre-gl";
 
 import { useMap } from "@notion-kit/map";
 
-import type { VehicleFeatureCollection } from "@/plugins/transitland/use-vehicle-geojson";
+import type { VehicleFeatureCollection } from "./use-vehicle-geojson";
 
 const SOURCE_ID = "transit-vehicles";
 const CIRCLE_LAYER_ID = "transit-vehicles-circle";
 const LABEL_LAYER_ID = "transit-vehicles-label";
 
-interface TransitSymbolLayerProps {
+interface VehiclesSymbolLayerProps {
   data: VehicleFeatureCollection;
   onPointClick?: (
     feature: GeoJSON.Feature<GeoJSON.Point>,
@@ -17,16 +17,36 @@ interface TransitSymbolLayerProps {
   ) => void;
 }
 
-export function TransitSymbolLayer({
+export function VehiclesSymbolLayer({
   data,
   onPointClick,
-}: TransitSymbolLayerProps) {
+}: VehiclesSymbolLayerProps) {
   const { map, isLoaded } = useMap();
   const onPointClickRef = useRef(onPointClick);
   onPointClickRef.current = onPointClick;
 
   useEffect(() => {
     if (!isLoaded || !map) return;
+
+    if (!map.hasImage("badge-bg")) {
+      const size = 12;
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.fillStyle = "black";
+        ctx.beginPath();
+        ctx.roundRect(0, 0, size, size, 4);
+        ctx.fill();
+        map.addImage("badge-bg", ctx.getImageData(0, 0, size, size), {
+          sdf: true,
+          stretchX: [[4, 8]],
+          stretchY: [[4, 8]],
+          content: [4, 4, 8, 8],
+        });
+      }
+    }
 
     map.addSource(SOURCE_ID, {
       type: "geojson",
@@ -64,15 +84,19 @@ export function TransitSymbolLayer({
       layout: {
         "text-field": ["get", "routeShortName"],
         "text-font": ["Open Sans Bold"],
-        "text-size": 10,
-        "text-offset": [0, -1.5],
+        "text-size": 9,
+        "text-offset": [0, -2.2],
         "text-anchor": "bottom",
         "text-allow-overlap": false,
+        "icon-image": "badge-bg",
+        "icon-text-fit": "both",
+        "icon-text-fit-padding": [0, 4, 0, 4],
+        "icon-offset": [0, -2.2],
+        "icon-anchor": "bottom",
       },
       paint: {
         "text-color": "#ffffff",
-        "text-halo-color": ["get", "_color"],
-        "text-halo-width": 2,
+        "icon-color": ["get", "_color"],
       },
     });
 

@@ -11,9 +11,9 @@ import { MapMarkerContent, MapMarkerLabel } from "@notion-kit/map";
 import { Badge } from "@notion-kit/ui/primitives";
 import { COLOR } from "@notion-kit/utils";
 
-import type { VehiclePosition } from "@/plugins/transit/use-vehicle-positions";
+import type { VehiclePosition } from "@/adapters";
 
-export function getVehicleIconConfig(vehicle: VehiclePosition) {
+function getVehicleIconConfig(vehicle: VehiclePosition) {
   // If the route has a color specified by BKK, use it
   // if (vehicle.routeColor && vehicle.routeColor !== "#") {
   //   return { color: vehicle.routeColor, icon: ShieldQuestion };
@@ -38,6 +38,9 @@ export function getVehicleIconConfig(vehicle: VehiclePosition) {
   }
 }
 
+/**
+ * @deprecated Render with layer instead of DOM
+ */
 export function VehicleMarkerContent({
   vehicle,
 }: {
