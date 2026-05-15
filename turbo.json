@@ -28,6 +28,7 @@
         "SUPABASE_URL",
         "SUPABASE_PUBLISHABLE_KEY",
         "TRANS_FUTAR_OPEN_DATA",
+        "TRANS_TRANSITLAND",
         "VITE_MAP_API_URL"
       ]
     },

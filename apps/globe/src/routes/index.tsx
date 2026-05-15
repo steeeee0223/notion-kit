@@ -9,6 +9,7 @@ import { useWs } from "@/lib/use-ws";
 
 // Initialize plugins
 import "@/plugins/transit";
+import "@/plugins/transitland";
 
 export const Route = createFileRoute("/")({
   component: MapPage,
