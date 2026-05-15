@@ -31,8 +31,18 @@ export function toAlertResponse(alert: AlertRow) {
 export function toStopResponse(stop: StopRow, alerts: AlertRow[] = []) {
   return {
     id: stop.id,
+    stop_id: stop.stopId,
     stop_name: stop.stopName,
+    tts_stop_name: stop.ttsStopName,
+    stop_desc: stop.stopDesc,
     stop_code: stop.stopCode,
+    stop_url: stop.stopUrl,
+    zone_id: stop.zoneId,
+    parent_stop_id: stop.parentStopId,
+    stop_timezone: stop.stopTimezone,
+    platform_code: stop.platformCode,
+    level_id: stop.levelId,
+    stop_access: stop.stopAccess,
     lat: stop.lat,
     lon: stop.lon,
     location_type: stop.locationType ?? 0,
@@ -69,11 +79,21 @@ export function toVehicleResponse(
 export function toRouteResponse(route: RouteRow) {
   return {
     id: route.id,
+    feed_onestop_id: route.feedOnestopId,
+    route_id: route.routeId,
+    agency_id: route.agencyId,
     route_short_name: route.routeShortName,
     route_long_name: route.routeLongName,
+    route_desc: route.routeDesc,
     route_type: route.routeType,
+    route_url: route.routeUrl,
     route_color: route.routeColor,
     route_text_color: route.routeTextColor,
+    route_sort_order: route.routeSortOrder,
+    continuous_pickup: route.continuousPickup,
+    continuous_drop_off: route.continuousDropOff,
+    network_id: route.networkId,
+    cemv_support: route.cemvSupport,
     agency_name: route.agencyName,
   };
 }
@@ -81,9 +101,19 @@ export function toRouteResponse(route: RouteRow) {
 export function toTripResponse(trip: TripRow) {
   return {
     id: trip.id,
+    trip_id: trip.tripId,
+    route_id: trip.routeId,
+    service_id: trip.serviceId,
+    shape_id: trip.shapeId,
     trip_headsign: trip.tripHeadsign,
+    trip_short_name: trip.tripShortName,
     direction_id: trip.directionId,
+    block_id: trip.blockId,
     wheelchair_accessible: trip.wheelchairAccessible,
+    bikes_allowed: trip.bikesAllowed,
+    cars_allowed: trip.carsAllowed,
+    safe_duration_factor: trip.safeDurationFactor,
+    safe_duration_offset: trip.safeDurationOffset,
   };
 }
 
@@ -92,6 +122,7 @@ export function toShapeResponse(shape: ShapeRow | null) {
   return {
     shape_id: shape.shapeId,
     geojson: shape.geojson,
+    points: shape.points,
     generated: shape.generated ?? false,
   };
 }
@@ -116,8 +147,21 @@ export function toDepartureResponse(
     direction_id: trip.directionId,
     stop_sequence: stopTime.stopSequence,
     service_date: serviceDate,
+    stop_id: stopTime.stopId,
+    location_group_id: stopTime.locationGroupId,
+    location_id: stopTime.locationId,
     scheduled_arrival: stopTime.arrivalTime,
     scheduled_departure: stopTime.departureTime,
+    start_pickup_drop_off_window: stopTime.startPickupDropOffWindow,
+    end_pickup_drop_off_window: stopTime.endPickupDropOffWindow,
+    pickup_type: stopTime.pickupType,
+    drop_off_type: stopTime.dropOffType,
+    continuous_pickup: stopTime.continuousPickup,
+    continuous_drop_off: stopTime.continuousDropOff,
+    shape_dist_traveled: stopTime.shapeDistTraveled,
+    timepoint: stopTime.timepoint,
+    pickup_booking_rule_id: stopTime.pickupBookingRuleId,
+    drop_off_booking_rule_id: stopTime.dropOffBookingRuleId,
     realtime_arrival_delay: arrivalDelay,
     realtime_departure_delay: departureDelay,
     estimated_departure: addSecondsToGtfsTime(
@@ -150,12 +194,25 @@ export function toTripStopTimeResponse(
   return {
     stop_sequence: stopTime.stopSequence,
     stop_id: stopTime.stopId,
+    location_group_id: stopTime.locationGroupId,
+    location_id: stopTime.locationId,
     stop_name: stop?.stopName ?? null,
     ...(includeGeometry
       ? { lat: stop?.lat ?? null, lon: stop?.lon ?? null }
       : {}),
     scheduled_arrival: stopTime.arrivalTime,
     scheduled_departure: stopTime.departureTime,
+    stop_headsign: stopTime.stopHeadsign,
+    start_pickup_drop_off_window: stopTime.startPickupDropOffWindow,
+    end_pickup_drop_off_window: stopTime.endPickupDropOffWindow,
+    pickup_type: stopTime.pickupType,
+    drop_off_type: stopTime.dropOffType,
+    continuous_pickup: stopTime.continuousPickup,
+    continuous_drop_off: stopTime.continuousDropOff,
+    shape_dist_traveled: stopTime.shapeDistTraveled,
+    timepoint: stopTime.timepoint,
+    pickup_booking_rule_id: stopTime.pickupBookingRuleId,
+    drop_off_booking_rule_id: stopTime.dropOffBookingRuleId,
     realtime_arrival_delay: tripUpdate?.arrivalDelay ?? null,
     realtime_departure_delay: departureDelay,
     estimated_departure: addSecondsToGtfsTime(

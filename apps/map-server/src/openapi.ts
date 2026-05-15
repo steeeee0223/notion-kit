@@ -44,6 +44,10 @@ const bboxArray = {
   example: examples.bboxArray,
 } as const;
 
+const bboxBody = {
+  anyOf: [bboxQuery, bboxArray],
+} as const;
+
 const alert = {
   type: "object",
   properties: {
@@ -109,8 +113,21 @@ const departure = {
       format: "date",
       example: examples.serviceDate,
     },
+    stop_id: { type: ["string", "null"], example: examples.stopId },
+    location_group_id: { type: ["string", "null"] },
+    location_id: { type: ["string", "null"] },
     scheduled_arrival: { type: ["string", "null"], example: "10:35:00" },
     scheduled_departure: { type: ["string", "null"], example: "10:35:00" },
+    start_pickup_drop_off_window: { type: ["string", "null"] },
+    end_pickup_drop_off_window: { type: ["string", "null"] },
+    pickup_type: { type: ["integer", "null"], example: 0 },
+    drop_off_type: { type: ["integer", "null"], example: 0 },
+    continuous_pickup: { type: ["integer", "null"] },
+    continuous_drop_off: { type: ["integer", "null"] },
+    shape_dist_traveled: { type: ["number", "null"] },
+    timepoint: { type: ["integer", "null"], example: 1 },
+    pickup_booking_rule_id: { type: ["string", "null"] },
+    drop_off_booking_rule_id: { type: ["string", "null"] },
     realtime_arrival_delay: { type: ["integer", "null"], example: 120 },
     realtime_departure_delay: { type: ["integer", "null"], example: 120 },
     estimated_departure: { type: ["string", "null"], example: "10:37:00" },
@@ -123,18 +140,53 @@ const stopTime = {
   type: "object",
   properties: {
     stop_sequence: { type: "integer", example: 1 },
-    stop_id: { type: "string", example: "f-9q9-bart:PITT" },
+    stop_id: { type: ["string", "null"], example: "f-9q9-bart:PITT" },
+    location_group_id: { type: ["string", "null"] },
+    location_id: { type: ["string", "null"] },
     stop_name: { type: ["string", "null"], example: "Pittsburg/Bay Point" },
     lat: { type: ["number", "null"], example: 37.9958 },
     lon: { type: ["number", "null"], example: -121.9448 },
     scheduled_arrival: { type: ["string", "null"], example: "09:00:00" },
     scheduled_departure: { type: ["string", "null"], example: "09:00:00" },
+    stop_headsign: { type: ["string", "null"] },
+    start_pickup_drop_off_window: { type: ["string", "null"] },
+    end_pickup_drop_off_window: { type: ["string", "null"] },
+    pickup_type: { type: ["integer", "null"], example: 0 },
+    drop_off_type: { type: ["integer", "null"], example: 0 },
+    continuous_pickup: { type: ["integer", "null"] },
+    continuous_drop_off: { type: ["integer", "null"] },
+    shape_dist_traveled: { type: ["number", "null"] },
+    timepoint: { type: ["integer", "null"], example: 1 },
+    pickup_booking_rule_id: { type: ["string", "null"] },
+    drop_off_booking_rule_id: { type: ["string", "null"] },
     realtime_arrival_delay: { type: ["integer", "null"], example: null },
     realtime_departure_delay: { type: ["integer", "null"], example: null },
     estimated_departure: { type: ["string", "null"], example: "09:00:00" },
     schedule_relationship: { type: "string", example: "STATIC" },
     is_timepoint: { type: "boolean", example: true },
     stop_status: { type: "string", example: "UPCOMING" },
+  },
+} as const;
+
+const route = {
+  type: "object",
+  properties: {
+    id: { type: "string", example: examples.routeId },
+    feed_onestop_id: { type: "string", example: examples.feedOnestopId },
+    route_id: { type: "string", example: "L1" },
+    agency_id: { type: ["string", "null"] },
+    route_short_name: { type: ["string", "null"], example: "L1" },
+    route_long_name: {
+      type: ["string", "null"],
+      example: "Antioch to SFIA/Millbrae",
+    },
+    route_desc: { type: ["string", "null"] },
+    route_type: { type: ["integer", "null"], example: 1 },
+    route_url: { type: ["string", "null"] },
+    route_color: { type: ["string", "null"], example: "ffff33" },
+    route_text_color: { type: ["string", "null"], example: "000000" },
+    route_sort_order: { type: ["integer", "null"], example: 10 },
+    agency_name: { type: ["string", "null"], example: "BART" },
   },
 } as const;
 
@@ -160,14 +212,128 @@ export const openApi = {
       },
     },
   },
+  mapStaticFeedsStatus: {
+    tags: ["Map"],
+    summary: "Check static GTFS feed status for a viewport",
+    description:
+      "Read-only static GTFS discovery/status. Does not import GTFS static rows and does not poll GTFS-RT.",
+    querystring: {
+      type: "object",
+      required: ["bbox"],
+      properties: {
+        bbox: bboxQuery,
+      },
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          candidates: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                feed_lookup_key: {
+                  type: "string",
+                  example: examples.feedOnestopId,
+                },
+                feed_onestop_id: {
+                  type: "string",
+                  example: examples.feedOnestopId,
+                },
+                name: { type: ["string", "null"], example: "BART" },
+                spec: { type: ["string", "null"], example: "gtfs" },
+                status: {
+                  type: "string",
+                  enum: ["missing", "current", "stale", "unknown"],
+                  example: "current",
+                },
+                is_strong_match: { type: "boolean", example: true },
+                version: {
+                  type: "object",
+                  properties: {
+                    sha1: { type: ["string", "null"], example: "ab5bdc8b" },
+                    fetched_at: {
+                      type: ["string", "null"],
+                      format: "date-time",
+                    },
+                  },
+                },
+                local: {
+                  type: "object",
+                  properties: {
+                    exists: { type: "boolean", example: true },
+                    sha1: { type: ["string", "null"], example: "ab5bdc8b" },
+                    fetched_at: {
+                      type: ["string", "null"],
+                      format: "date-time",
+                    },
+                    last_static_sync: {
+                      type: ["string", "null"],
+                      format: "date-time",
+                    },
+                    counts: { type: "object", additionalProperties: true },
+                  },
+                },
+              },
+            },
+          },
+          meta: {
+            type: "object",
+            properties: {
+              bbox: bboxArray,
+              total: { type: "integer", example: 1 },
+            },
+          },
+        },
+      },
+      ...standardErrors,
+    },
+  },
+  mapRoutes: {
+    tags: ["Map"],
+    summary: "List cached routes for a static GTFS feed",
+    description:
+      "Reads cached GTFS static routes by Feed Onestop ID. Does not import GTFS static rows.",
+    querystring: {
+      type: "object",
+      required: ["feed_onestop_id"],
+      properties: {
+        feed_onestop_id: { type: "string", example: examples.feedOnestopId },
+        route_type: { type: "integer", example: 1 },
+        limit: { type: "integer", default: 200, maximum: 500, example: 50 },
+      },
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          routes: { type: "array", items: route },
+          meta: {
+            type: "object",
+            properties: {
+              total: { type: "integer", example: 8 },
+              feed_onestop_id: {
+                type: "string",
+                example: examples.feedOnestopId,
+              },
+              static_feed: { type: "object", additionalProperties: true },
+            },
+          },
+        },
+      },
+      ...standardErrors,
+    },
+  },
   mapStops: {
     tags: ["Map"],
     summary: "List stops in a viewport",
     description:
-      "Use after static sync. Ready-to-test query: bbox=-122.5,37.6,-121.8,37.9&include_alerts=true&limit=50",
+      "Use after static sync. For static layer lists, prefer feed_onestop_id. Ready-to-test query: feed_onestop_id=f-9q9-bart&include_alerts=true&limit=50",
     querystring: {
       type: "object",
       properties: {
+        feed_onestop_id: { type: "string", example: examples.feedOnestopId },
         bbox: bboxQuery,
         lat: { type: "number", example: 37.8032 },
         lon: { type: "number", example: -122.0169 },
@@ -193,13 +359,23 @@ export const openApi = {
               type: "object",
               properties: {
                 id: { type: "string", example: examples.stopId },
+                stop_id: { type: "string", example: "12TH" },
                 stop_name: {
-                  type: "string",
+                  type: ["string", "null"],
                   example: "12th Street / Oakland City Center",
                 },
+                tts_stop_name: { type: ["string", "null"] },
+                stop_desc: { type: ["string", "null"] },
                 stop_code: { type: ["string", "null"], example: "BART-12TH" },
-                lat: { type: "number", example: 37.8032 },
-                lon: { type: "number", example: -122.0169 },
+                stop_url: { type: ["string", "null"] },
+                zone_id: { type: ["string", "null"] },
+                parent_stop_id: { type: ["string", "null"] },
+                stop_timezone: { type: ["string", "null"] },
+                platform_code: { type: ["string", "null"] },
+                level_id: { type: ["string", "null"] },
+                stop_access: { type: ["integer", "null"] },
+                lat: { type: ["number", "null"], example: 37.8032 },
+                lon: { type: ["number", "null"], example: -122.0169 },
                 location_type: { type: "integer", example: 0 },
                 wheelchair_boarding: { type: "integer", example: 1 },
                 feed_onestop_id: {
@@ -215,6 +391,11 @@ export const openApi = {
             properties: {
               total: { type: "integer", example: 42 },
               bbox: bboxArray,
+              feed_onestop_id: {
+                type: "string",
+                example: examples.feedOnestopId,
+              },
+              static_feed: { type: "object", additionalProperties: true },
             },
           },
         },
@@ -244,6 +425,29 @@ export const openApi = {
             type: "object",
             properties: {
               snapshot_age_seconds: { type: "integer", example: 12 },
+              snapshot_available: { type: "boolean", example: true },
+              message: {
+                type: "string",
+                example: "No recent vehicle snapshots are available.",
+              },
+              auto_sync: {
+                type: "object",
+                properties: {
+                  attempted: { type: "boolean", example: true },
+                  skipped_reason: {
+                    type: "string",
+                    enum: ["cooldown", "in_flight"],
+                  },
+                  polled_count: { type: "integer", example: 3 },
+                  vehicle_positions_count: { type: "integer", example: 128 },
+                  errors_count: { type: "integer", example: 0 },
+                  message: {
+                    type: "string",
+                    example:
+                      "No recent vehicle snapshots were available, so realtime sync was triggered.",
+                  },
+                },
+              },
             },
           },
         },
@@ -343,26 +547,45 @@ export const openApi = {
             type: "object",
             properties: {
               id: { type: "string", example: examples.tripId },
+              trip_id: { type: "string", example: "trip-555" },
+              route_id: { type: "string", example: examples.routeId },
+              service_id: { type: "string", example: "weekday" },
+              shape_id: { type: ["string", "null"], example: "shape-L1-0" },
               trip_headsign: { type: ["string", "null"], example: "Antioch" },
+              trip_short_name: { type: ["string", "null"] },
               direction_id: { type: ["integer", "null"], example: 0 },
+              block_id: { type: ["string", "null"] },
               wheelchair_accessible: { type: ["integer", "null"], example: 1 },
+              bikes_allowed: { type: ["integer", "null"] },
+              cars_allowed: { type: ["integer", "null"] },
+              safe_duration_factor: { type: ["number", "null"] },
+              safe_duration_offset: { type: ["integer", "null"] },
             },
           },
           route: {
             type: ["object", "null"],
             properties: {
               id: { type: "string", example: examples.routeId },
+              route_id: { type: "string", example: "L1" },
+              agency_id: { type: ["string", "null"] },
               route_short_name: { type: ["string", "null"], example: "L1" },
               route_long_name: {
                 type: ["string", "null"],
                 example: "Antioch to SFIA/Millbrae",
               },
+              route_desc: { type: ["string", "null"] },
               route_type: { type: ["integer", "null"], example: 1 },
+              route_url: { type: ["string", "null"] },
               route_color: { type: ["string", "null"], example: "#ffff33" },
               route_text_color: {
                 type: ["string", "null"],
                 example: "#000000",
               },
+              route_sort_order: { type: ["integer", "null"] },
+              continuous_pickup: { type: ["integer", "null"] },
+              continuous_drop_off: { type: ["integer", "null"] },
+              network_id: { type: ["string", "null"] },
+              cemv_support: { type: ["integer", "null"] },
               agency_name: {
                 type: ["string", "null"],
                 example: "Bay Area Rapid Transit",
@@ -374,6 +597,7 @@ export const openApi = {
             properties: {
               shape_id: { type: "string", example: "shape-L1-0" },
               geojson: { type: "object", additionalProperties: true },
+              points: { type: "array", items: { type: "object" } },
               generated: { type: "boolean", example: false },
             },
           },
@@ -527,7 +751,7 @@ export const openApi = {
     body: {
       type: "object",
       properties: {
-        bbox: bboxArray,
+        bbox: bboxBody,
         feedIds: {
           type: "array",
           items: { type: "string" },
@@ -560,17 +784,41 @@ export const openApi = {
                   example: examples.feedOnestopId,
                 },
                 sha1: { type: ["string", "null"], example: "ab5bdc8b" },
-                status: { type: "string", example: "imported" },
+                status: {
+                  type: "string",
+                  enum: ["imported", "updated", "skipped", "partial", "error"],
+                  example: "imported",
+                },
                 stopsCount: { type: "integer", example: 50 },
                 routesCount: { type: "integer", example: 8 },
                 tripsCount: { type: "integer", example: 1420 },
                 stopTimesCount: { type: "integer", example: 38400 },
                 durationMs: { type: "integer", example: 4200 },
+                error: {
+                  type: "string",
+                  example: "Invalid GTFS static feed relationships",
+                },
               },
             },
           },
           transitlandApiCallsUsed: { type: "integer", example: 2 },
-          errors: { type: "array", items: { type: "object" } },
+          errors: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                feedOnestopId: {
+                  type: "string",
+                  example: examples.feedOnestopId,
+                },
+                message: {
+                  type: "string",
+                  example: "Invalid GTFS static feed relationships",
+                },
+              },
+              required: ["feedOnestopId", "message"],
+            },
+          },
         },
       },
       ...standardErrors,
@@ -580,11 +828,12 @@ export const openApi = {
     tags: ["Admin / Sync"],
     summary: "Poll direct agency GTFS-RT URLs",
     description:
-      'Run after static sync has stored realtime URLs on feeds. Body example: { "feedIds": ["f-9q9-bart"] }.',
+      'Poll realtime feeds by feed ID or discover realtime-capable feeds for a bbox. Body examples: { "feedIds": ["f-9q9-bart"] } or { "bbox": [-122.6, 37.6, -122.2, 37.9] }.',
     security: [{ adminBearer: [] }],
     body: {
       type: "object",
       properties: {
+        bbox: bboxBody,
         feedIds: {
           type: "array",
           items: { type: "string" },
@@ -613,6 +862,18 @@ export const openApi = {
             },
           },
           errors: { type: "array", items: { type: "object" } },
+          meta: {
+            type: "object",
+            properties: {
+              requested_bbox: bboxArray,
+              requested_feed_ids: {
+                type: "array",
+                items: { type: "string" },
+              },
+              matched_realtime_feed_count: { type: "integer", example: 2 },
+              message: { type: "string" },
+            },
+          },
         },
       },
       ...standardErrors,

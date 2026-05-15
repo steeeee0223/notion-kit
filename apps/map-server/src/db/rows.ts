@@ -17,34 +17,60 @@ export const feedRowSchema = z.object({
   last_static_sync: timestampString.nullable(),
 });
 
+export const agencyRowSchema = z.object({
+  id: z.string(),
+  feed_onestop_id: z.string(),
+  agency_id: nullableString,
+  agency_name: z.string(),
+  agency_url: z.string(),
+  agency_timezone: z.string(),
+  agency_lang: nullableString,
+  agency_phone: nullableString,
+  agency_fare_url: nullableString,
+  agency_email: nullableString,
+  cemv_support: nullableNumber,
+});
+
 export const stopRowSchema = z.object({
   id: z.string(),
   feed_onestop_id: z.string(),
   stop_id: z.string(),
   onestop_id: nullableString.optional(),
-  stop_name: z.string(),
+  stop_name: nullableString,
+  tts_stop_name: nullableString.optional(),
   stop_desc: nullableString.optional(),
   stop_code: nullableString,
+  stop_url: nullableString.optional(),
   stop_timezone: nullableString.optional(),
   location_type: z.number().nullable(),
   wheelchair_boarding: z.number().nullable(),
   platform_code: nullableString.optional(),
   zone_id: nullableString.optional(),
   parent_stop_id: nullableString.optional(),
-  lat: z.number(),
-  lon: z.number(),
+  level_id: nullableString.optional(),
+  stop_access: nullableNumber.optional(),
+  lat: nullableNumber,
+  lon: nullableNumber,
 });
 
 export const routeRowSchema = z.object({
   id: z.string(),
   feed_onestop_id: z.string(),
   route_id: z.string(),
+  agency_id: nullableString.optional(),
   onestop_id: nullableString.optional(),
   route_short_name: nullableString,
   route_long_name: nullableString,
+  route_desc: nullableString.optional(),
   route_type: nullableNumber,
+  route_url: nullableString.optional(),
   route_color: nullableString,
   route_text_color: nullableString,
+  route_sort_order: nullableNumber.optional(),
+  continuous_pickup: nullableNumber.optional(),
+  continuous_drop_off: nullableNumber.optional(),
+  network_id: nullableString.optional(),
+  cemv_support: nullableNumber.optional(),
   agency_name: nullableString,
 });
 
@@ -53,6 +79,7 @@ export const shapeRowSchema = z.object({
   feed_onestop_id: z.string(),
   shape_id: z.string(),
   geojson: z.unknown().nullable(),
+  points: z.unknown().nullable().optional(),
   generated: z.boolean().nullable(),
 });
 
@@ -64,21 +91,36 @@ export const tripRowSchema = z.object({
   shape_id: z.string().nullable(),
   service_id: z.string(),
   trip_headsign: nullableString,
+  trip_short_name: nullableString.optional(),
   direction_id: nullableNumber,
+  block_id: nullableString.optional(),
   wheelchair_accessible: nullableNumber,
   bikes_allowed: nullableNumber,
+  cars_allowed: nullableNumber.optional(),
+  safe_duration_factor: nullableNumber.optional(),
+  safe_duration_offset: nullableNumber.optional(),
 });
 
 export const stopTimeRowSchema = z.object({
   id: z.number(),
   trip_id: z.string(),
-  stop_id: z.string(),
+  stop_id: nullableString,
+  location_group_id: nullableString.optional(),
+  location_id: nullableString.optional(),
   stop_sequence: z.number(),
   arrival_time: nullableString,
   departure_time: nullableString,
   stop_headsign: nullableString,
+  start_pickup_drop_off_window: nullableString.optional(),
+  end_pickup_drop_off_window: nullableString.optional(),
   pickup_type: nullableNumber,
   drop_off_type: nullableNumber,
+  continuous_pickup: nullableNumber.optional(),
+  continuous_drop_off: nullableNumber.optional(),
+  shape_dist_traveled: nullableNumber.optional(),
+  timepoint: nullableNumber.optional(),
+  pickup_booking_rule_id: nullableString.optional(),
+  drop_off_booking_rule_id: nullableString.optional(),
   interpolated: z.boolean().nullable(),
 });
 
@@ -151,6 +193,7 @@ export const alertRowSchema = z.object({
 });
 
 export type FeedRow = z.infer<typeof feedRowSchema>;
+export type AgencyRow = z.infer<typeof agencyRowSchema>;
 export type StopRow = z.infer<typeof stopRowSchema>;
 export type RouteRow = z.infer<typeof routeRowSchema>;
 export type ShapeRow = z.infer<typeof shapeRowSchema>;

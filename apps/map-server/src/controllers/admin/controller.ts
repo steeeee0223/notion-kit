@@ -5,7 +5,11 @@ import { openApi } from "@/openapi";
 import { buildStaticImportResult } from "@/services/gtfs/data-transfer";
 import { importGtfsStaticFeed } from "@/services/gtfs/static-import";
 import { syncRealtimeFeeds } from "@/services/realtime/gtfs-rt";
-import { getFeedsByIds, runRetention } from "@/services/repository";
+import {
+  getFeedsByIds,
+  getStaticFeedCounts,
+  runRetention,
+} from "@/services/repository";
 import {
   getFeedOnestopId,
   getFeedVersion,
@@ -22,7 +26,7 @@ export function registerAdminRoutes(app: FastifyInstance) {
       try {
         assertAdmin(app, request);
         const body = staticSyncBodySchema.parse(request.body ?? {});
-        const transitland = new TransitlandClient(app.env.TRANS_TRANSITLAND);
+        const transitland = new TransitlandClient();
         const feeds = await transitland.discoverFeeds({
           bbox: body.bbox,
           feedIds: body.feedIds,
@@ -43,15 +47,24 @@ export function registerAdminRoutes(app: FastifyInstance) {
           const sha1 = getFeedVersion(feed)?.sha1 ?? null;
           const existingSha1 =
             existingFeeds.get(feedOnestopId)?.sha1Current ?? null;
+          const existingCounts = await getStaticFeedCounts(feedOnestopId);
           const started = Date.now();
           try {
-            if (!body.force && sha1 && sha1 === existingSha1) {
+            if (
+              !body.force &&
+              sha1 &&
+              sha1 === existingSha1 &&
+              existingCounts.stops > 0 &&
+              existingCounts.routes > 0 &&
+              existingCounts.trips > 0
+            ) {
               synced.push(
                 buildStaticImportResult(
                   feedOnestopId,
                   sha1,
                   "skipped",
                   started,
+                  existingCounts,
                 ),
               );
               continue;
@@ -68,12 +81,24 @@ export function registerAdminRoutes(app: FastifyInstance) {
               }),
             );
           } catch (error) {
+            const message = getErrorMessage(error);
+            app.log.error(
+              { error: message, feedOnestopId },
+              "Static GTFS import failed",
+            );
             errors.push({
               feedOnestopId,
-              message: error instanceof Error ? error.message : String(error),
+              message,
             });
             synced.push(
-              buildStaticImportResult(feedOnestopId, sha1, "error", started),
+              buildStaticImportResult(
+                feedOnestopId,
+                sha1,
+                "error",
+                started,
+                undefined,
+                message,
+              ),
             );
           }
         }
@@ -97,6 +122,7 @@ export function registerAdminRoutes(app: FastifyInstance) {
         assertAdmin(app, request);
         const body = realtimeSyncBodySchema.parse(request.body ?? {});
         const response = await syncRealtimeFeeds({
+          bbox: body.bbox,
           feedIds: body.feedIds,
           timeoutMs: app.env.MAP_RT_POLL_TIMEOUT_MS,
         });
@@ -131,4 +157,50 @@ function assertAdmin(app: FastifyInstance, request: FastifyRequest) {
   if (header !== `Bearer ${app.env.MAP_ADMIN_TOKEN}`) {
     throw unauthorized();
   }
+}
+
+const MAX_IMPORT_ERROR_MESSAGE_LENGTH = 2000;
+
+function getErrorMessage(error: unknown) {
+  const causeMessage = getNestedErrorMessage(error);
+  if (causeMessage) return truncateErrorMessage(causeMessage);
+  if (error instanceof Error && error.message) {
+    return truncateErrorMessage(error.message);
+  }
+  if (error && typeof error === "object" && "message" in error) {
+    const message = (error as { message?: unknown }).message;
+    if (typeof message === "string" && message.length > 0) {
+      return truncateErrorMessage(message);
+    }
+  }
+  if (typeof error === "string" && error.length > 0) {
+    return truncateErrorMessage(error);
+  }
+
+  try {
+    const serialized = JSON.stringify(error);
+    if (serialized && serialized !== "{}") {
+      return truncateErrorMessage(serialized);
+    }
+  } catch {
+    // Fall through to the generic message.
+  }
+
+  return "Unknown static GTFS import error";
+}
+
+function getNestedErrorMessage(error: unknown): string | null {
+  if (!error || typeof error !== "object" || !("cause" in error)) return null;
+  const cause = (error as { cause?: unknown }).cause;
+  if (cause instanceof Error && cause.message) return cause.message;
+  if (cause && typeof cause === "object" && "message" in cause) {
+    const message = (cause as { message?: unknown }).message;
+    if (typeof message === "string" && message.length > 0) return message;
+  }
+  return null;
+}
+
+function truncateErrorMessage(message: string) {
+  if (message.length <= MAX_IMPORT_ERROR_MESSAGE_LENGTH) return message;
+  return `${message.slice(0, MAX_IMPORT_ERROR_MESSAGE_LENGTH)}...`;
 }

@@ -1,3 +1,4 @@
+import cors from "@fastify/cors";
 import swagger from "@fastify/swagger";
 import websocket from "@fastify/websocket";
 import scalar from "@scalar/fastify-api-reference";
@@ -26,7 +27,7 @@ const wsHub = new WsHub(env, app.log);
 app.decorate("env", env);
 app.decorate("wsHub", wsHub);
 
-// await app.register(cors, { origin: true });
+await app.register(cors, { origin: true });
 await app.register(swagger, {
   openapi: {
     info: {

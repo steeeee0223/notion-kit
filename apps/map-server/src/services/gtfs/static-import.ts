@@ -1,13 +1,17 @@
 import { parse } from "csv-parse/sync";
 import JSZip from "jszip";
 
+import { env } from "@/env";
 import { badRequest } from "@/lib/api-error";
 import {
   buildStaticFeedData,
   buildStaticImportResult,
   type CsvRow,
 } from "@/services/gtfs/data-transfer";
-import { replaceFeedStaticRows } from "@/services/repository";
+import {
+  replaceFeedStaticCoreRows,
+  replaceFeedStaticRows,
+} from "@/services/repository";
 import {
   getFeedOnestopId,
   getFeedVersion,
@@ -15,6 +19,8 @@ import {
 } from "@/services/transitland/client";
 
 export type { StaticImportResult } from "@/services/gtfs/data-transfer";
+
+const DEV_STOP_TIMES_IMPORT_LIMIT = 1_000_000;
 
 export async function importGtfsStaticFeed(input: {
   feed: TransitlandFeed;
@@ -56,14 +62,37 @@ export async function importGtfsStaticFeed(input: {
     calendarDates,
     shapes,
   });
+
+  if (shouldImportCoreRowsOnly(data.counts.stopTimes)) {
+    await replaceFeedStaticCoreRows(feedOnestopId, data.rows);
+    return buildStaticImportResult(
+      feedOnestopId,
+      sha1,
+      "partial",
+      started,
+      { ...data.counts, stopTimes: 0 },
+      [
+        `Skipped ${data.counts.stopTimes.toLocaleString("en-US")} stop_times rows in development because this feed exceeds the local import limit of ${DEV_STOP_TIMES_IMPORT_LIMIT.toLocaleString("en-US")} rows.`,
+        "Stops, routes, trips, shapes, calendar, and feed metadata were imported.",
+      ].join(" "),
+    );
+  }
+
   await replaceFeedStaticRows(feedOnestopId, data.rows);
 
   return buildStaticImportResult(
     feedOnestopId,
     sha1,
-    "imported",
+    input.existingSha1 ? "updated" : "imported",
     started,
     data.counts,
+  );
+}
+
+function shouldImportCoreRowsOnly(stopTimesCount: number) {
+  return (
+    env.NODE_ENV !== "production" &&
+    stopTimesCount > DEV_STOP_TIMES_IMPORT_LIMIT
   );
 }
 

@@ -28,6 +28,7 @@
         "SUPABASE_URL",
         "SUPABASE_PUBLISHABLE_KEY",
         "TRANS_TRANSITLAND",
+        "MAP_ADMIN_TOKEN",
         "MAP_POSTGRES_URL"
       ]
     },
