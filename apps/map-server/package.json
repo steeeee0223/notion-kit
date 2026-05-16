@@ -1,0 +1,49 @@
+{
+  "name": "@notion-kit/map-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsdown",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "pnpm with-env drizzle-kit push",
+    "db:studio": "pnpm with-env drizzle-kit studio",
+    "dev": "pnpm with-env node --import tsx src/index.ts",
+    "format": "prettier --check . \"!**/*.{md,mdx}\" --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "start": "pnpm with-env node dist/index.mjs",
+    "typecheck": "tsc --noEmit",
+    "verify:frontend": "pnpm with-env node --import tsx scripts/verify-frontend-use-cases.ts",
+    "with-env": "dotenv -e ../../.env --"
+  },
+  "prettier": "@notion-kit/prettier-config",
+  "dependencies": {
+    "@better-fetch/fetch": "catalog:",
+    "@fastify/cors": "^11.2.0",
+    "@fastify/swagger": "^9.6.1",
+    "@fastify/websocket": "^11.2.0",
+    "@scalar/fastify-api-reference": "^1.36.1",
+    "@t3-oss/env-core": "catalog:env",
+    "@vercel/postgres": "^0.10.0",
+    "csv-parse": "^5.6.0",
+    "drizzle-orm": "^0.45.1",
+    "fastify": "^5.8.5",
+    "gtfs-realtime-bindings": "^1.1.1",
+    "jszip": "^3.10.1",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@notion-kit/eslint-config": "workspace:*",
+    "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tsconfig": "workspace:*",
+    "@types/node": "catalog:node",
+    "dotenv-cli": "catalog:env",
+    "drizzle-kit": "^0.31.9",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "tsdown": "catalog:",
+    "tsx": "^4.19.3",
+    "typescript": "catalog:"
+  }
+}

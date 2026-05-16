@@ -100,4 +100,5 @@ allowBuilds:
   esbuild: false
   msw: false
   prisma: false
+  protobufjs: false
   sharp: false
