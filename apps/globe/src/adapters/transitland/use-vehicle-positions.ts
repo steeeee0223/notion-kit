@@ -1,7 +1,8 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { create } from "zustand";
 
+import { mapApiClient } from "@/lib/api-client";
 import type { VehicleType } from "@/lib/types";
 
 export interface VehiclePosition {
@@ -9,6 +10,7 @@ export interface VehiclePosition {
   routeId: string;
   routeShortName: string;
   routeColor: string;
+  operatorOnestopId?: string;
   vehicleType: VehicleType;
   longitude: number;
   latitude: number;
@@ -18,8 +20,6 @@ export interface VehiclePosition {
   lastUpdateTime: number;
   stale: boolean;
 }
-
-const API_BASE = "http://localhost:3100";
 
 interface BBoxStore {
   bbox: string;
@@ -54,11 +54,12 @@ export function useVehiclePositions() {
     queryKey: ["transitland", "vehicles", debouncedBbox],
     queryFn: async () => {
       if (!debouncedBbox) return [];
-      const url = new URL(`${API_BASE}/api/transit/transitland/vehicles`);
-      url.searchParams.set("bbox", debouncedBbox);
-      const res = await fetch(url.toString());
-      if (!res.ok) return [];
-      const data = await res.json() as { vehicles: VehiclePosition[] };
+      const { data, error } = await mapApiClient<{
+        vehicles: VehiclePosition[];
+      }>(`/transitland/vehicles`, {
+        query: { bbox: debouncedBbox },
+      });
+      if (error) return [];
       return data.vehicles;
     },
     enabled: !!debouncedBbox && zoom >= 8,

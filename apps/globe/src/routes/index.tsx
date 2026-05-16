@@ -8,10 +8,12 @@ import { useLayerStore } from "@/lib/layer-registry";
 import { useWs } from "@/lib/use-ws";
 
 // Initialize plugins
-import "@/plugins/vehicles";
 import "@/plugins/routes";
+import "@/plugins/stops";
+import "@/plugins/vehicles";
 
 import { MyLocation } from "@/components/my-location";
+import { StopDeparturesSheet } from "@/plugins/stops/stop-departures-sheet";
 
 export const Route = createFileRoute("/")({
   component: MapPage,
@@ -35,6 +37,8 @@ function MapPage() {
       <div className="absolute top-4 left-4 z-10 mx-4">
         <LayerSidebar />
       </div>
+
+      <StopDeparturesSheet />
     </div>
   );
 }

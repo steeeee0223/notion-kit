@@ -1,21 +1,28 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { mapApiClient } from "@/lib/api-client";
+
 export interface RouteShape {
   shapeId: string;
   routeId: string;
   points: [number, number][];
 }
 
-const API_BASE = "http://localhost:3100";
-
-export function useRouteShapes(routeId: string | null) {
+export function useRouteShapes(
+  routeId: string | null,
+  operatorOnestopId?: string,
+) {
   return useQuery<RouteShape[]>({
-    queryKey: ["transitland", "shapes", routeId],
+    queryKey: ["transitland", "shapes", routeId, operatorOnestopId],
     queryFn: async () => {
       if (!routeId) return [];
-      const res = await fetch(`${API_BASE}/api/transit/transitland/route-shapes/${routeId}`);
-      if (!res.ok) return [];
-      const data = await res.json() as { shapes: RouteShape[] };
+      const { data, error } = await mapApiClient<{ shapes: RouteShape[] }>(
+        `/transitland/route-shapes/${routeId}`,
+        {
+          query: operatorOnestopId ? { operatorId: operatorOnestopId } : {},
+        },
+      );
+      if (error) return [];
       return data.shapes;
     },
     enabled: !!routeId,

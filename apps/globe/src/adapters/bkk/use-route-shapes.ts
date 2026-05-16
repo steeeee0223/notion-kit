@@ -1,21 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { mapApiClient } from "@/lib/api-client";
+
 export interface RouteShape {
   shapeId: string;
   routeId: string;
   points: [number, number][];
 }
 
-const API_BASE = "http://localhost:3100";
-
 export function useRouteShapes(routeId: string | null) {
   return useQuery<RouteShape[]>({
     queryKey: ["transit", "shapes", routeId],
     queryFn: async () => {
       if (!routeId) return [];
-      const res = await fetch(`${API_BASE}/api/transit/shapes/${routeId}`);
-      if (!res.ok) return [];
-      return (await res.json()) as RouteShape[];
+      const { data, error } = await mapApiClient<RouteShape[]>(
+        `/bkk/route-shapes/${routeId}`,
+      );
+      if (error) return [];
+      return data;
     },
     enabled: !!routeId,
     staleTime: 5 * 60 * 1000,

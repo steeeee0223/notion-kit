@@ -102,6 +102,38 @@ export interface TransitlandStopsResponse {
   stops: TransitlandStop[];
 }
 
+export interface TransitlandDeparture {
+  trip: {
+    trip_id: string;
+    trip_headsign: string;
+    direction_id: number;
+    route: {
+      id: number;
+      route_id: string;
+      route_short_name: string;
+      route_long_name: string;
+      route_type: number;
+      route_color: string | null;
+    };
+  };
+  stop_headsign: string | null;
+  arrival: { scheduled: string | null; estimated: string | null };
+  departure: { scheduled: string | null; estimated: string | null };
+  service_date: string;
+  continuous_drop_off: number | null;
+  continuous_pickup: number | null;
+}
+
+export interface TransitlandDeparturesResponse {
+  stops: {
+    id: number;
+    onestop_id: string;
+    stop_id: string;
+    stop_name: string;
+    departures: TransitlandDeparture[];
+  }[];
+}
+
 export interface TransitlandRoutesGeoJSONResponse {
   type: "FeatureCollection";
   features: {

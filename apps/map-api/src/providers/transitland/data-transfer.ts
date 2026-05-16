@@ -36,11 +36,12 @@ export interface GTFSRTEntity {
 
 export function transferTransitlandVehicles(
   feedData: GTFSRTFeed,
+  operatorOnestopId?: string,
 ): VehiclePosition[] {
   if (feedData.entity.length === 0) return [];
 
   const now = Date.now();
-  const feedTimestamp = feedData.header?.timestamp
+  const feedTimestamp = feedData.header.timestamp
     ? Number(feedData.header.timestamp) * 1000
     : now;
 
@@ -49,14 +50,17 @@ export function transferTransitlandVehicles(
     .map<VehiclePosition>((e) => {
       const v = e.vehicle!;
       const pos = v.position!;
-      
-      const lastUpdateTime = v.timestamp ? Number(v.timestamp) * 1000 : feedTimestamp;
+
+      const lastUpdateTime = v.timestamp
+        ? Number(v.timestamp) * 1000
+        : feedTimestamp;
 
       return {
         id: v.vehicle?.id ?? e.id,
         routeId: v.trip?.routeId ?? "",
         routeShortName: v.trip?.routeId ?? "", // Realtime feeds often don't include shortName
         routeColor: "", // RT feeds usually don't have color, we'd need static GTFS
+        operatorOnestopId: operatorOnestopId ?? "",
         vehicleType: "UNKNOWN", // RT feeds might not have type, we default to UNKNOWN
         longitude: pos.longitude,
         latitude: pos.latitude,

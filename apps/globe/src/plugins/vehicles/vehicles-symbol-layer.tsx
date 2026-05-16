@@ -8,6 +8,7 @@ import type { VehicleFeatureCollection } from "./use-vehicle-geojson";
 const SOURCE_ID = "transit-vehicles";
 const CIRCLE_LAYER_ID = "transit-vehicles-circle";
 const LABEL_LAYER_ID = "transit-vehicles-label";
+const HEADING_LAYER_ID = "transit-vehicles-heading";
 
 interface VehiclesSymbolLayerProps {
   data: VehicleFeatureCollection;
@@ -15,6 +16,28 @@ interface VehiclesSymbolLayerProps {
     feature: GeoJSON.Feature<GeoJSON.Point>,
     coordinates: [number, number],
   ) => void;
+}
+
+function createArrowImage(map: MapLibreGL.Map) {
+  if (map.hasImage("heading-arrow")) return;
+  const size = 32;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  ctx.clearRect(0, 0, size, size);
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.moveTo(size / 2, 2);
+  ctx.lineTo(size - 6, size - 6);
+  ctx.lineTo(size / 2, size - 12);
+  ctx.lineTo(6, size - 6);
+  ctx.closePath();
+  ctx.fill();
+  map.addImage("heading-arrow", ctx.getImageData(0, 0, size, size), {
+    sdf: true,
+  });
 }
 
 export function VehiclesSymbolLayer({
@@ -47,6 +70,8 @@ export function VehiclesSymbolLayer({
         });
       }
     }
+
+    createArrowImage(map);
 
     map.addSource(SOURCE_ID, {
       type: "geojson",
@@ -100,6 +125,26 @@ export function VehiclesSymbolLayer({
       },
     });
 
+    map.addLayer({
+      id: HEADING_LAYER_ID,
+      type: "symbol",
+      source: SOURCE_ID,
+      minzoom: 11,
+      filter: [">", ["get", "bearing"], 0],
+      layout: {
+        "icon-image": "heading-arrow",
+        "icon-size": ["interpolate", ["linear"], ["zoom"], 11, 0.35, 16, 0.6],
+        "icon-rotate": ["get", "bearing"],
+        "icon-rotation-alignment": "map",
+        "icon-allow-overlap": true,
+        "icon-offset": [0, -25],
+      },
+      paint: {
+        "icon-color": ["get", "_color"],
+        "icon-opacity": 0.85,
+      },
+    });
+
     const handleClick = (
       e: MapLibreGL.MapMouseEvent & {
         features?: MapLibreGL.MapGeoJSONFeature[];
@@ -139,6 +184,7 @@ export function VehiclesSymbolLayer({
       map.off("mouseleave", CIRCLE_LAYER_ID, handleMouseLeave);
 
       try {
+        if (map.getLayer(HEADING_LAYER_ID)) map.removeLayer(HEADING_LAYER_ID);
         if (map.getLayer(LABEL_LAYER_ID)) map.removeLayer(LABEL_LAYER_ID);
         if (map.getLayer(CIRCLE_LAYER_ID)) map.removeLayer(CIRCLE_LAYER_ID);
         if (map.getSource(SOURCE_ID)) map.removeSource(SOURCE_ID);

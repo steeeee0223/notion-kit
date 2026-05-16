@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 
 import type {
+  TransitlandDeparturesResponse,
   TransitlandFeedsResponse,
   TransitlandOperatorsResponse,
   TransitlandRoutesGeoJSONResponse,
@@ -9,8 +10,8 @@ import type {
 } from "@/providers/transitland/api";
 import { fetchTransitland } from "@/providers/transitland/client";
 import {
-  type GTFSRTFeed,
   transferTransitlandVehicles,
+  type GTFSRTFeed,
 } from "@/providers/transitland/data-transfer";
 import type { RouteShape } from "@/providers/types";
 
@@ -269,28 +270,29 @@ export const transitlandPlugin: FastifyPluginAsync = async (app) => {
 
       try {
         // 1. Find operators in this bbox
-        const operatorsData = await fetchTransitland<TransitlandOperatorsResponse>(
-          "/operators",
-          {
+        const operatorsData =
+          await fetchTransitland<TransitlandOperatorsResponse>("/operators", {
             bbox,
             limit: limit ?? 50,
-          },
-        );
+          });
 
         if (!operatorsData?.operators) {
           return { vehicles: [] };
         }
 
-        // 2. Extract GTFS_RT feeds from these operators
+        // 3. Extract GTFS_RT feeds from these operators
         const rtFeeds = operatorsData.operators.flatMap(
-          (op) => op.feeds?.filter((f) => f.spec === "GTFS_RT") ?? [],
+          (op) =>
+            op.feeds
+              ?.filter((f) => f.spec === "GTFS_RT")
+              .map((f) => ({ ...f, operator_onestop_id: op.onestop_id })) ?? [],
         );
 
         if (rtFeeds.length === 0) {
           return { vehicles: [] };
         }
-        
-        // 2. For each feed, fetch the latest vehicle positions
+
+        // 4. For each feed, fetch the latest vehicle positions
         const vehiclePromises = rtFeeds.map(async (feed) => {
           try {
             const feedData = await fetchTransitland<GTFSRTFeed>(
@@ -298,7 +300,10 @@ export const transitlandPlugin: FastifyPluginAsync = async (app) => {
               {},
             );
             if (!feedData) return [];
-            return transferTransitlandVehicles(feedData);
+            return transferTransitlandVehicles(
+              feedData,
+              feed.operator_onestop_id,
+            );
           } catch (err) {
             app.log.error(err, "Failed to fetch vehicle_positions for feed");
             return [];
@@ -316,7 +321,121 @@ export const transitlandPlugin: FastifyPluginAsync = async (app) => {
     },
   );
 
-  app.get<{ Params: { routeId: string } }>(
+  app.get<{
+    Params: { routeId: string };
+    Querystring: { operatorId?: string; limit?: number };
+  }>(
+    "/api/transit/transitland/route-stops/:routeId",
+    {
+      schema: {
+        description:
+          "Get stops served by a specific route. Resolves routeId to onestop_id, then fetches stops.",
+        tags: ["Transitland"],
+        params: {
+          type: "object",
+          properties: {
+            routeId: { type: "string" },
+          },
+        },
+        querystring: {
+          type: "object",
+          properties: {
+            operatorId: { type: "string" },
+            limit: { type: "number", default: 100 },
+          },
+        },
+      },
+    },
+    async (req) => {
+      const { routeId } = req.params;
+      const { operatorId, limit } = req.query;
+
+      try {
+        const routeData = await fetchTransitland<TransitlandRoutesResponse>(
+          "/routes",
+          {
+            route_id: routeId,
+            ...(operatorId ? { operator_onestop_id: operatorId } : {}),
+            limit: 1,
+          },
+        );
+
+        const onestopId = routeData?.routes[0]?.onestop_id;
+        if (!onestopId) {
+          return { stops: [], meta: { after: 0, next: "" } };
+        }
+
+        const data = await fetchTransitland<TransitlandStopsResponse>(
+          "/stops",
+          {
+            served_by_onestop_ids: onestopId,
+            limit: limit ?? 100,
+          },
+        );
+        return data ?? { stops: [], meta: { after: 0, next: "" } };
+      } catch (err) {
+        app.log.error(err, "Failed to fetch route stops");
+        return { stops: [], meta: { after: 0, next: "" } };
+      }
+    },
+  );
+
+  app.get<{
+    Params: { stopKey: string };
+    Querystring: {
+      next?: number;
+      service_date?: string;
+    };
+  }>(
+    "/api/transit/transitland/stops/:stopKey/departures",
+    {
+      schema: {
+        description:
+          "Get upcoming departures from a stop. stop_key can be a Transitland onestop_id or an internal ID.",
+        tags: ["Transitland"],
+        params: {
+          type: "object",
+          properties: {
+            stopKey: { type: "string" },
+          },
+        },
+        querystring: {
+          type: "object",
+          properties: {
+            next: { type: "number", default: 3600 },
+            service_date: { type: "string" },
+          },
+        },
+      },
+    },
+    async (req) => {
+      const { stopKey } = req.params;
+      const { next, service_date } = req.query;
+
+      try {
+        const params: Record<string, string | number> = {
+          next: next ?? 3600,
+        };
+        if (service_date) {
+          params.service_date = service_date;
+        }
+
+        const data = await fetchTransitland<TransitlandDeparturesResponse>(
+          `/stops/${stopKey}/departures`,
+          params,
+        );
+        return data ?? { stops: [] };
+      } catch (err) {
+        app.log.error(err, "Failed to fetch stop departures");
+        return { stops: [] };
+      }
+    },
+  );
+
+  app.get<{
+    Params: { routeId: string };
+    Querystring: { operatorId?: string };
+  }>(
     "/api/transit/transitland/route-shapes/:routeId",
     {
       schema: {
@@ -328,15 +447,25 @@ export const transitlandPlugin: FastifyPluginAsync = async (app) => {
             routeId: { type: "string" },
           },
         },
+        querystring: {
+          type: "object",
+          properties: {
+            operatorId: { type: "string" },
+          },
+        },
       },
     },
     async (req) => {
       const { routeId } = req.params;
+      const { operatorId } = req.query;
 
       try {
         const data = await fetchTransitland<TransitlandRoutesGeoJSONResponse>(
           `/routes.geojson`,
-          { route_id: routeId }
+          {
+            route_id: routeId,
+            ...(operatorId ? { operator_onestop_id: operatorId } : {}),
+          },
         );
 
         if (!data || data.features.length === 0) {
@@ -346,8 +475,6 @@ export const transitlandPlugin: FastifyPluginAsync = async (app) => {
         const shapes: RouteShape[] = [];
 
         for (const feature of data.features) {
-          if (!feature.geometry) continue;
-          
           const geomType = feature.geometry.type;
           const coords = feature.geometry.coordinates;
 

@@ -1,6 +1,7 @@
 import { BusFront } from "lucide-react";
 
 import { useLayerStore } from "@/lib/layer-registry";
+
 import { VehiclesLayer } from "./vehicles-layer";
 import { VehiclesPanel } from "./vehicles-panel";
 

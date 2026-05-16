@@ -6,12 +6,17 @@ import { getVehicleColor } from "@/plugins/vehicles/use-vehicle-geojson";
 
 export function RoutesLayer() {
   const selected = useVehicleStore((state) => state.selectedVehicle);
-  const { data: shapes = [] } = useActiveRouteShapes(selected?.routeId ?? null);
+  const { data: shapes = [] } = useActiveRouteShapes(
+    selected?.routeId ?? null,
+    selected?.operatorOnestopId,
+  );
 
   if (!selected || shapes.length === 0) return null;
 
-   
-  const routeColor = selected.routeColor || getVehicleColor(selected.vehicleType);
+  let routeColor = selected.routeColor || getVehicleColor(selected.vehicleType);
+  if (routeColor && !routeColor.startsWith("#")) {
+    routeColor = `#${routeColor}`;
+  }
 
   return (
     <>

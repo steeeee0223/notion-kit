@@ -1,6 +1,7 @@
 import { Route } from "lucide-react";
 
 import { useLayerStore } from "@/lib/layer-registry";
+
 import { RoutesLayer } from "./routes-layer";
 
 // Auto-register plugin when imported

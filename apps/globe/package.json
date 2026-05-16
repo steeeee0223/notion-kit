@@ -14,6 +14,7 @@
   },
   "prettier": "@notion-kit/prettier-config",
   "dependencies": {
+    "@better-fetch/fetch": "catalog:",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/icons": "workspace:*",
     "@notion-kit/map": "workspace:*",

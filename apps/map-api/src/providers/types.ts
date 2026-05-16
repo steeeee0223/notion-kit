@@ -3,6 +3,7 @@ export interface VehiclePosition {
   routeId: string;
   routeShortName: string;
   routeColor: string;
+  operatorOnestopId?: string;
   vehicleType:
     | "BUS"
     | "TRAM"

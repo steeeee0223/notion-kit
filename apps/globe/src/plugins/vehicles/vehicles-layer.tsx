@@ -70,6 +70,8 @@ export function VehiclesLayer() {
           onClose={() => setSelected(null)}
           offset={15}
           className="w-50"
+          closeOnClick={false}
+          closeButton
         >
           <div className="flex min-w-40 flex-col gap-1.5">
             <div className="flex items-center gap-2">

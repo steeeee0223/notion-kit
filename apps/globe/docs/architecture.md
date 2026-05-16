@@ -7,7 +7,9 @@ This document defines the architectural patterns for the `@notion-kit/globe` app
 To prevent code duplication (e.g., repeating the same UI components for different APIs), the architecture is split into two primary domains: **Map Plugins** and **Source Adapters**.
 
 ### 1.1 Map Plugins (Visual Layer)
-A Map Plugin is strictly responsible for *how* data is rendered on the map and *how* the user interacts with it. It does not know where the data comes from.
+
+A Map Plugin is strictly responsible for _how_ data is rendered on the map and _how_ the user interacts with it. It does not know where the data comes from.
+
 - **Examples:** `VehiclesPlugin`, `RoutesPlugin`, `StopsPlugin`, `TrafficPlugin`, `HeatmapPlugin`.
 - **Responsibilities:**
   - Rendering GeoJSON feature layers (e.g., points, lines, polygons).
@@ -17,7 +19,9 @@ A Map Plugin is strictly responsible for *how* data is rendered on the map and *
   - Providing UI panels for the sidebar (e.g., filtering options).
 
 ### 1.2 Source Adapters (Data Layer)
-A Source Adapter is strictly responsible for *fetching and normalizing* data into a standardized format that the Map Plugins can consume.
+
+A Source Adapter is strictly responsible for _fetching and normalizing_ data into a standardized format that the Map Plugins can consume.
+
 - **Examples:** `BKKAdapter`, `TransitlandAdapter`.
 - **Responsibilities:**
   - Managing API endpoints, WebSockets, or polling intervals.
@@ -46,7 +50,7 @@ apps/globe/src/
 
 The connection between Plugins and Adapters is managed via React Context and Zustand stores.
 
-1. **Global Adapter State:** The application maintains a global state defining the *Active Source Adapter* (e.g., `activeAdapter: "transitland"`).
+1. **Global Adapter State:** The application maintains a global state defining the _Active Source Adapter_ (e.g., `activeAdapter: "transitland"`).
 2. **Standardized Hooks:** We expose standard hooks like `useVehiclePositions()` which internally route the request to the active adapter.
    ```ts
    export function useVehiclePositions() {

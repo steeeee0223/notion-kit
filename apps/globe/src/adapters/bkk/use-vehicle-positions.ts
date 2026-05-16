@@ -7,6 +7,7 @@ export interface VehiclePosition {
   routeId: string;
   routeShortName: string;
   routeColor: string;
+  operatorOnestopId?: string;
   vehicleType: VehicleType;
   longitude: number;
   latitude: number;

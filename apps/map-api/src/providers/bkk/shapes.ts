@@ -10,8 +10,11 @@ const CACHE_TTL_MS = 5 * 60 * 1000;
 
 // eslint-disable-next-line @typescript-eslint/require-await
 export const bkkShapesPlugin: FastifyPluginAsync = async (app) => {
-  app.get<{ Params: { routeId: string } }>(
-    "/api/transit/shapes/:routeId",
+  app.get<{
+    Params: { routeId: string };
+    Querystring: { operatorId?: string };
+  }>(
+    "/api/transit/bkk/route-shapes/:routeId",
     {
       schema: {
         description: "Get route shapes by routeId",
@@ -22,6 +25,12 @@ export const bkkShapesPlugin: FastifyPluginAsync = async (app) => {
             routeId: { type: "string" },
           },
           required: ["routeId"],
+        },
+        querystring: {
+          type: "object",
+          properties: {
+            operatorId: { type: "string" },
+          },
         },
         response: {
           200: {
