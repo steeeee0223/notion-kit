@@ -89,6 +89,12 @@ catalogs:
     "@types/lodash.groupby": ^4.6.9
     "@types/lodash.isequal": ^4.5.8
     "@types/lodash.throttle": ^4.1.9
+  fastify:
+    fastify: ^5.8.5
+    "@fastify/cors": ^11.2.0
+    "@fastify/swagger": ^9.7.0
+    "@fastify/websocket": ^11.2.0
+    "@scalar/fastify-api-reference": ^1.57.2
 
 nodeLinker: hoisted
 linkWorkspacePackages: true
@@ -100,4 +106,5 @@ allowBuilds:
   esbuild: false
   msw: false
   prisma: false
+  protobufjs: false
   sharp: false

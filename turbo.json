@@ -26,7 +26,9 @@
         "STRIPE_SECRET_KEY",
         "STRIPE_WEBHOOK_SECRET",
         "SUPABASE_URL",
-        "SUPABASE_PUBLISHABLE_KEY"
+        "SUPABASE_PUBLISHABLE_KEY",
+        "TRANS_TRANSITLAND",
+        "MAP_POSTGRES_URL"
       ]
     },
     "dev": {
