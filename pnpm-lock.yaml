@@ -44,6 +44,22 @@ catalogs:
     dotenv-cli:
       specifier: ^8.0.0
       version: 8.0.0
+  fastify:
+    '@fastify/cors':
+      specifier: ^11.2.0
+      version: 11.2.0
+    '@fastify/swagger':
+      specifier: ^9.7.0
+      version: 9.7.0
+    '@fastify/websocket':
+      specifier: ^11.2.0
+      version: 11.2.0
+    '@scalar/fastify-api-reference':
+      specifier: ^1.57.2
+      version: 1.57.2
+    fastify:
+      specifier: ^5.8.5
+      version: 5.8.5
   fns:
     '@types/lodash.groupby':
       specifier: ^4.6.9
@@ -462,17 +478,17 @@ importers:
         specifier: 'catalog:'
         version: 1.1.21
       '@fastify/cors':
-        specifier: ^11.2.0
+        specifier: catalog:fastify
         version: 11.2.0
       '@fastify/swagger':
-        specifier: ^9.6.1
+        specifier: catalog:fastify
         version: 9.7.0
       '@fastify/websocket':
-        specifier: ^11.2.0
+        specifier: catalog:fastify
         version: 11.2.0(bufferutil@4.1.0)
       '@scalar/fastify-api-reference':
-        specifier: ^1.36.1
-        version: 1.57.1
+        specifier: catalog:fastify
+        version: 1.57.2
       '@t3-oss/env-core':
         specifier: catalog:env
         version: 0.13.6(typescript@5.9.3)(valibot@1.3.1(typescript@5.9.3))(zod@4.3.6)
@@ -486,7 +502,7 @@ importers:
         specifier: ^0.45.1
         version: 0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17)
       fastify:
-        specifier: ^5.8.5
+        specifier: catalog:fastify
         version: 5.8.5
       gtfs-realtime-bindings:
         specifier: ^1.1.1
@@ -5113,8 +5129,8 @@ packages:
     resolution: {integrity: sha512-Gv3CK0X+BqXYkVJLTQXNM8YgdquhuGV4hKlsM8S9k5GGonj8LBDSAiuU3W48JGX1pY7hRotBGcIIU+1a1X1mcw==}
     engines: {node: '>=22'}
 
-  '@scalar/fastify-api-reference@1.57.1':
-    resolution: {integrity: sha512-8yXGLab/J94Q3uEq2v6Wq2oGoyNJ8POWFlTWlI1UKm8eq4nR/l7etq46yviQKsu6Hq+OpGv00eOFjQ3MelpSuQ==}
+  '@scalar/fastify-api-reference@1.57.2':
+    resolution: {integrity: sha512-m9CpGNQdSlmjdCpTUl/elhuGm5L9pGg6CXY9m1qvKo54Bk+neq+UDGqn8hll6hs2Is4+xrYQeF8rjIoQY1TNAA==}
     engines: {node: '>=22'}
 
   '@scalar/helpers@0.8.0':
@@ -12215,7 +12231,7 @@ snapshots:
       json-schema-resolver: 3.0.0
       openapi-types: 12.1.3
       rfdc: 1.4.1
-      yaml: 2.7.1
+      yaml: 2.9.0
     transitivePeerDependencies:
       - supports-color
 
@@ -14049,7 +14065,7 @@ snapshots:
       '@scalar/types': 0.11.0
       '@scalar/validation': 0.5.0
 
-  '@scalar/fastify-api-reference@1.57.1':
+  '@scalar/fastify-api-reference@1.57.2':
     dependencies:
       '@scalar/client-side-rendering': 0.1.9
       '@scalar/openapi-parser': 0.28.4
