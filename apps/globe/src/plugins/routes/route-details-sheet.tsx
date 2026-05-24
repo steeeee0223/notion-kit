@@ -76,8 +76,8 @@ export function RouteDetailsSheet() {
 
           {!isLoading && stops.length > 0 && (
             <div className="relative mt-2 ml-2 space-y-4 border-l-2 border-default/20 pb-6">
-              {stops.map((stop, index) => (
-                <div key={`${stop.id}-${index}`} className="relative pl-6">
+              {stops.map((stop) => (
+                <div key={stop.id} className="relative pl-6">
                   {/* Timeline dot */}
                   <div className="absolute top-1.5 left-[-5px] size-2 rounded-full bg-primary" />
 

@@ -191,9 +191,8 @@ function toRouteStop(stop: TransitStop): RouteStop[] {
   return [
     {
       id: stop.id,
-      onestopId: stop.id,
       stopId: stop.stop_id,
-      stopName: stop.stop_name ?? stop.stop_id,
+      stopName: stop.stop_name ?? "Unknown stop",
       longitude: stop.lon,
       latitude: stop.lat,
       routeShortNames: [],

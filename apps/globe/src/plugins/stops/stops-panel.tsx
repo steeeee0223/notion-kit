@@ -157,11 +157,6 @@ function toStopSearchItem(stop: RouteStop): TransitSearchItem<RouteStop> {
     title: stop.stopName || stop.stopId,
     subtitle: stop.id,
     badge: stop.routeShortNames[0] ?? null,
-    searchText: [
-      stop.stopName,
-      stop.stopId,
-      stop.onestopId,
-      ...stop.routeShortNames,
-    ].join(" "),
+    searchText: [stop.stopName, stop.stopId, ...stop.routeShortNames].join(" "),
   };
 }

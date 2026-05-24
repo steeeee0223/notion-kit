@@ -66,7 +66,7 @@ export function StopDeparturesSheet() {
   const selectedStop = useStopsStore((state) => state.selectedStop);
   const setSelectedStop = useStopsStore((state) => state.setSelectedStop);
   const { data: departures = [], isLoading } = useActiveStopDepartures(
-    selectedStop?.onestopId ?? null,
+    selectedStop?.id ?? null,
   );
 
   const grouped = useMemo(() => groupDepartures(departures), [departures]);
@@ -81,14 +81,13 @@ export function StopDeparturesSheet() {
       <SheetContent hideClose side="right">
         <SheetHeader>
           <SheetTitle typography="h2">
-            {selectedStop?.stopName ?? "-"}
+            {selectedStop?.stopName ?? "Unknown stop"}
           </SheetTitle>
           <SheetDescription>{selectedStop?.stopId ?? "-"}</SheetDescription>
         </SheetHeader>
         {selectedStop && (
           <div className="grid grid-cols-2 gap-x-2 gap-y-1 border-b px-4 py-2 text-xs">
             <span className="text-secondary">Stop key</span>
-            <span className="truncate">{selectedStop.onestopId}</span>
             <span className="text-secondary">Location</span>
             <span className="truncate">
               {selectedStop.latitude.toFixed(5)},{" "}

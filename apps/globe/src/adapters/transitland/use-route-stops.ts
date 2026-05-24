@@ -4,8 +4,13 @@ import { mapApiClient } from "@/lib/api-client";
 import { queryKey } from "@/lib/query-key";
 
 export interface RouteStop {
+  /**
+   * the unique ID of the stop, <feed_onestop_id>:<stop_id>
+   */
   id: string;
-  onestopId: string;
+  /**
+   * the stop ID
+   */
   stopId: string;
   stopName: string;
   longitude: number;
@@ -37,9 +42,8 @@ function transferStop(
 
   return {
     id: stop.stop_id,
-    onestopId: stop.stop_id,
     stopId: stop.stop_id,
-    stopName: stop.stop_name ?? stop.stop_id,
+    stopName: stop.stop_name ?? "Unknown stop",
     longitude: stop.lon,
     latitude: stop.lat,
     routeShortNames: routeShortName ? [routeShortName] : [],

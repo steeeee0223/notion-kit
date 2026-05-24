@@ -3,6 +3,7 @@
 ## ISSUE
 
 1. **[已修正]** calling `/api/admin/sync/static` with payload
+
    ```json
    {"feedIds": ["f-u2m-bkk"], "force": false}
 
@@ -26,6 +27,7 @@
       ]
    }
    ```
+
    - Root cause: GTFS CSV rows were parsed once into typed rows where optional blank fields become `null` and numeric fields become numbers, then the static import row builders validated those typed rows a second time with schemas that only accepted raw CSV strings. BKK therefore failed before rows were built, even though the feed contains valid static data.
    - Fix: GTFS static schemas now accept both raw CSV values and already-parsed values for optional, numeric, and service-day fields.
    - Verified against `apps/map-server/docs/f-u2m-bkk-latest/`:
@@ -39,6 +41,10 @@
    - Local development caveat: BKK has 5,011,699 `stop_times` rows and exceeded the current 512 MB database project limit during end-to-end curl verification. In development, oversized feeds now import core static rows and return `status: "partial"` with `stopTimesCount: 0` instead of rolling back stops/routes/trips to zero. A production database with sufficient storage should run without this development-only stop-times cap.
    - Note: the full BKK fixture is large enough that an in-memory verification needs a larger local Node heap. The production import path should still be revisited for streaming/batched parsing before treating very large GTFS feeds as routine.
 
+2. Using `encodeURIComponent` in frontend does NOT resolve the IDs containing `:`!
+   1. check if the `map-server` uses `decodeURIComponent` correctly, and write unittest to ensure our ID format could be decoded correctly.
+3. use case `2C` is updated!
+
 ## Use cases
 
 The following are use cases for the `@notion-kit/globe` app:
@@ -49,9 +55,12 @@ The following are use cases for the `@notion-kit/globe` app:
 - case 2: routes and stops
   - case 2A: click on a realtime vehicles -> display routes with stops (depending on which layer is enabled)
   - case 2B: click on a realtime vehicles -> show vehicle info (incluing route ID) -> click "view route" button -> show route with stops and realtime vehicles (including this vehicle)
-  - case 2C: click on a route -> show the route with stops
+  - case 2C: click on a route -> show the route with trips (in a given time range)
+    - click on a trip should
+      - 1.  expand a section showing all stop with stop times
+      - 2.  show all stop dot on the map route
+      - 3.  click on the stop should fly the stop on the map
   - case 2D: display a list of all routes in the city (by Onestop ID) -> click on a route/search result -> display that route on the map; clicking the rendered route triggers `case 2C`
-  - case 2E: display a list of all routes in the city (by Onestop ID) -> click on a route -> shows all trips at a side panel
 - case 3: departures
   - case 3A: click on a stop -> show departures at side panel
   - case 3B: display a list of all stops in the city (by Onestop ID) -> click on a stop/search result -> display that stop on the map; clicking the rendered stop triggers `case 3A`
@@ -95,21 +104,6 @@ Important decisions:
 - Bbox belongs to discovery/status. Route/stop list reads should use `feed_onestop_id`.
 - When a bbox resolves to multiple static feeds, backend returns candidates and the frontend chooses unless there is exactly one strong match.
 - `/api/admin/sync/static` is acceptable for the current dev flow. A production user-facing flow should add a non-admin map sync endpoint so browser code does not need an admin token.
-
-### Compare to use cases
-
-| Use case                                                         | As-is before changes                                                                                | Current working tree                                                                                           | To-do / To-fix                                                                                                                                                                                                                                          |
-| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Case 1A: bbox -> realtime vehicles                               | `/api/map/vehicles` 只讀現有 snapshots；如果 DB 沒 snapshot 就空                                    | bbox 可用來 discover Transitland GTFS_RT feeds，sync 後 snapshot 可能進 DB；WS/vehicles API 也會嘗試 auto-sync | **[已修正]** 已從 GET/WS 移除 auto-sync 邏輯，改為由 WsHub 內的 15 秒 background poller 定期更新。                                                                                                                                                      |
-| Case 1B: quick location -> realtime vehicles                     | quick location 只是改 bbox；backend 不會自動知道要 poll 哪些 feed                                   | 只要 quick location 產生 bbox，理論上可 discover 該區 realtime feeds                                           | **[已修正]** 只要 WS client 更新 subscription 的 bbox，poller 就會在背景定期為該 bbox 獲取最新資料並推送。                                                                                                                                              |
-| Case 2A: click realtime vehicle -> route/stops                   | route/stops API 依賴 static GTFS trips/routes/stops；RT vehicle 如果只有 RT feed id，常常 join 不上 | 已嘗試把 RT feed 對應回 static GTFS feed，並修 trip id decoding                                                | **[已修正]** 已實作 graceful fallback。當查無 trip_id 時，會透過新增的 `fallback_route_id` 或自動查車輛最新 `route_id` 來回傳相對應的 route 線條與 alerts。已修復因 fallback 時漏傳資料導致 route 和 stops 沒有顯示的問題，確保地圖能正常繪製預備路線。 |
-| Case 2B: realtime vehicle "view route"                           | 尚未實作 frontend "view route" 按鈕與對應狀態管理                                                   | 已實作 `RouteDetailsSheet` 與 store 狀態。可於 popup 中點擊按鈕跳轉至該路線                                    | **[已修正]** popup 加入 "View Route" 按鈕，點擊後會過濾車輛，並在右側面板列出經過站點。                                                                                                                                                                 |
-| Case 2C: click on route line -> show stops                       | `<MapRoute>` 並非 interactive，點擊無反應                                                           | `RoutesLayer` 已加入 `interactive=true`，點擊路線即可跳出站點清單與詳細資訊                                    | **[已修正]** 點擊地圖上的路線將會連動至 store，觸發 `RouteDetailsSheet` 顯示。                                                                                                                                                                          |
-| Case 2D: list routes by Feed Onestop ID                          | 沒有 feed-scoped route list API                                                                     | Backend has `GET /api/map/static-feeds/status?bbox=...` and `GET /api/map/routes?feed_onestop_id=...`          | Frontend route search/recent selection should render the route on the map only. The route details side panel opens after the user clicks the rendered route.                                                                                            |
-| Case 3A: click stop -> departures                                | departures 依賴 static stop 資料與目前 realtime updates                                             | map-server 沒有真正針對 departures 做完整改造，只是間接受 static sync/feed scoping 影響                        | **[已修正]** 已驗證 departures API 在缺乏 static trips 時的穩定性。過濾邏輯能安全地略過無對應 static GTFS 的 RT 班次，不會拋出 500 錯誤。                                                                                                               |
-| Case 3B: list stops by Feed Onestop ID                           | stops API was primarily bbox/radius scoped                                                          | Backend supports `GET /api/map/stops?feed_onestop_id=...` and returns static feed metadata                     | Frontend stop search/recent selection should render the stop on the map only. The departures side panel opens after the user clicks the rendered stop.                                                                                                  |
-| Case 4A: replay by timeframe + bbox/location + optional vehicles | backend 已有 snapshot 概念，但 frontend 未實作                                                      | 新的 realtime snapshot 寫入會影響 replay 可用資料                                                              | **[未來規劃]** 需要定義 replay query contract：time range、bbox、vehicle ids、route ids、stop ids 如何 filter，以及是否要 join static GTFS                                                                                                              |
-| Case 4B: static vehicle/stop/route at selected time              | backend 有 snapshot rows，但靜態時間點查詢契約不完整                                                | 沒有完整補齊                                                                                                   | **[未來規劃]** 需要先設計 snapshot API：selected time 查最近一筆？exact timestamp？route/stops 是 current static 還是 historical static？                                                                                                               |
 
 ## Next step
 

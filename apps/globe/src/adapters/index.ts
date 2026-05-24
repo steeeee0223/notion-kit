@@ -68,7 +68,6 @@ export function useActiveRouteShapes(context: SelectedTripContext) {
 
 export function useActiveRouteStops(context: SelectedTripContext) {
   const activeAdapter = useAdapterStore((state) => state.activeAdapter);
-
   return useTransitlandRouteStops(
     activeAdapter === "transitland" ? (context.tripId ?? null) : null,
     context.routeId ?? null,
