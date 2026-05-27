@@ -293,3 +293,13 @@ export const cache = pgTable(
   },
   (table) => [index("cache_expires_idx").on(table.expiresAt)],
 );
+
+export const config = pgTable("config", {
+  user: text("user").primaryKey(),
+  credentials: jsonb("credentials")
+    .$type<Record<string, string | null>>()
+    .notNull()
+    .default({}),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
