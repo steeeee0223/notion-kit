@@ -8,6 +8,7 @@ import { registerAdminRoutes } from "@/controllers/admin/controller";
 import { registerMapRoutes } from "@/controllers/map/controller";
 import { registerReplayRoutes } from "@/controllers/replay/controller";
 import { registerStopRoutes } from "@/controllers/stops/controller";
+import { registerTransportRoutes } from "@/controllers/transport/controller";
 import { registerTripRoutes } from "@/controllers/trips/controller";
 import { registerWsRoutes } from "@/controllers/ws/controller";
 import { env } from "@/env";
@@ -69,6 +70,7 @@ app.get("/api/health", { schema: openApi.health }, () => ({
 }));
 
 await app.register(registerMapRoutes);
+await app.register(registerTransportRoutes);
 await app.register(registerStopRoutes);
 await app.register(registerTripRoutes);
 await app.register(registerReplayRoutes);
