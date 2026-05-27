@@ -116,20 +116,7 @@ export function registerMapRoutes(app: FastifyInstance) {
     async (request, reply) => {
       try {
         const query = mapRoutesQuerySchema.parse(request.query);
-        const routes = await findRoutes({
-          feedOnestopId: query.feed_onestop_id,
-          routeType: query.route_type,
-          limit: query.limit,
-        });
-        const response = mapRoutesResponseSchema.parse({
-          routes: routes.map(toRouteResponse),
-          meta: {
-            total: routes.length,
-            feed_onestop_id: query.feed_onestop_id,
-            static_feed: await getCachedStaticFeedMeta(query.feed_onestop_id),
-          },
-        });
-        return reply.send(response);
+        return reply.send(await buildRoutesResponse(query));
       } catch (error) {
         return sendError(reply, error);
       }
@@ -142,51 +129,7 @@ export function registerMapRoutes(app: FastifyInstance) {
     async (request, reply) => {
       try {
         const query = mapTripsQuerySchema.parse(request.query);
-        const routeMap = await getRoutesByIds([query.route_id]);
-        const route = routeMap.get(query.route_id);
-        if (!route)
-          throw notFound("Route not found", { routeId: query.route_id });
-
-        const activeServices = await getActiveServices(
-          route.feedOnestopId,
-          query.service_date,
-        );
-        const staticCounts = await getStaticFeedCounts(route.feedOnestopId);
-        const tripRows =
-          staticCounts.stopTimes > 0 && activeServices.size > 0
-            ? await findTripsByRouteInTimeRange({
-                routeId: query.route_id,
-                serviceIds: [...activeServices],
-                startTime: query.start_time,
-                endTime: query.end_time,
-                directionId: query.direction_id,
-                limit: query.limit,
-              })
-            : (
-                await findTripsByRoute({
-                  routeId: query.route_id,
-                  serviceIds:
-                    activeServices.size > 0 ? [...activeServices] : undefined,
-                  directionId: query.direction_id,
-                  limit: query.limit,
-                })
-              ).map((trip) => ({
-                trip,
-                firstDepartureTime: null,
-                lastDepartureTime: null,
-                stopCount: 0,
-              }));
-        const response = mapTripsResponseSchema.parse({
-          trips: tripRows.map(toRouteTripSummaryResponse),
-          meta: {
-            total: tripRows.length,
-            route_id: query.route_id,
-            service_date: query.service_date,
-            start_time: query.start_time,
-            end_time: query.end_time,
-          },
-        });
-        return reply.send(response);
+        return reply.send(await buildTripsResponse(query));
       } catch (error) {
         return sendError(reply, error);
       }
@@ -199,20 +142,7 @@ export function registerMapRoutes(app: FastifyInstance) {
     async (request, reply) => {
       try {
         const query = mapRouteShapeQuerySchema.parse(request.query);
-        const routeMap = await getRoutesByIds([query.route_id]);
-        const route = routeMap.get(query.route_id);
-        if (!route)
-          throw notFound("Route not found", { routeId: query.route_id });
-
-        const [trip] = await getTripsByRouteId(query.route_id, 1);
-        const response = mapRouteShapeResponseSchema.parse({
-          trip: trip ? toTripResponse(trip) : null,
-          route: toRouteResponse(route),
-          shape: trip
-            ? await getShapeResponseForTrip(trip, query.include_shape)
-            : null,
-        });
-        return reply.send(response);
+        return reply.send(await buildRouteShapeResponse(query));
       } catch (error) {
         return sendError(reply, error);
       }
@@ -257,50 +187,7 @@ export function registerMapRoutes(app: FastifyInstance) {
     async (request, reply) => {
       try {
         const query = mapVehiclesQuerySchema.parse(request.query);
-        const vehicles = await getLatestVehicleSnapshots({
-          bbox: query.bbox,
-          feedOnestopId: query.feed_onestop_id,
-        });
-        const routes = await getRoutesByIds(
-          vehicles.flatMap((vehicle) =>
-            vehicle.routeId ? [vehicle.routeId] : [],
-          ),
-        );
-        const newest = vehicles.reduce(
-          (max, vehicle) => Math.max(max, vehicle.capturedAt.getTime()),
-          0,
-        );
-        const snapshotAvailable = vehicles.length > 0;
-        const response = {
-          vehicles: vehicles
-            .filter((vehicle) => {
-              if (typeof query.route_type !== "number") return true;
-              const route = vehicle.routeId
-                ? routes.get(vehicle.routeId)
-                : undefined;
-              return route?.routeType === query.route_type;
-            })
-            .map((vehicle) =>
-              toVehicleResponse(
-                vehicle,
-                vehicle.routeId ? routes.get(vehicle.routeId) : undefined,
-              ),
-            ),
-          meta: {
-            snapshot_age_seconds: newest
-              ? Math.max(0, Math.floor((Date.now() - newest) / 1000))
-              : 0,
-            snapshot_available: snapshotAvailable,
-            ...(vehicles.length === 0
-              ? {
-                  message: snapshotAvailable
-                    ? "No recent vehicle snapshots matched the current viewport or filters."
-                    : "No recent vehicle snapshots are available.",
-                }
-              : {}),
-          },
-        };
-        return reply.send(mapVehiclesResponseSchema.parse(response));
+        return reply.send(await buildVehiclesResponse(query));
       } catch (error) {
         return sendError(reply, error);
       }
@@ -309,6 +196,135 @@ export function registerMapRoutes(app: FastifyInstance) {
 }
 
 type TripRow = Awaited<ReturnType<typeof getTripsByRouteId>>[number];
+
+export async function buildRoutesResponse(
+  query: z.infer<typeof mapRoutesQuerySchema>,
+) {
+  const routes = await findRoutes({
+    feedOnestopId: query.feed_onestop_id,
+    routeType: query.route_type,
+    limit: query.limit,
+  });
+  return mapRoutesResponseSchema.parse({
+    routes: routes.map(toRouteResponse),
+    meta: {
+      total: routes.length,
+      feed_onestop_id: query.feed_onestop_id,
+      static_feed: await getCachedStaticFeedMeta(query.feed_onestop_id),
+    },
+  });
+}
+
+export async function buildTripsResponse(
+  query: z.infer<typeof mapTripsQuerySchema>,
+) {
+  const routeMap = await getRoutesByIds([query.route_id]);
+  const route = routeMap.get(query.route_id);
+  if (!route) throw notFound("Route not found", { routeId: query.route_id });
+
+  const activeServices = await getActiveServices(
+    route.feedOnestopId,
+    query.service_date,
+  );
+  const staticCounts = await getStaticFeedCounts(route.feedOnestopId);
+  const tripRows =
+    staticCounts.stopTimes > 0 && activeServices.size > 0
+      ? await findTripsByRouteInTimeRange({
+          routeId: query.route_id,
+          serviceIds: [...activeServices],
+          startTime: query.start_time,
+          endTime: query.end_time,
+          directionId: query.direction_id,
+          limit: query.limit,
+        })
+      : (
+          await findTripsByRoute({
+            routeId: query.route_id,
+            serviceIds:
+              activeServices.size > 0 ? [...activeServices] : undefined,
+            directionId: query.direction_id,
+            limit: query.limit,
+          })
+        ).map((trip) => ({
+          trip,
+          firstDepartureTime: null,
+          lastDepartureTime: null,
+          stopCount: 0,
+        }));
+
+  return mapTripsResponseSchema.parse({
+    trips: tripRows.map(toRouteTripSummaryResponse),
+    meta: {
+      total: tripRows.length,
+      route_id: query.route_id,
+      service_date: query.service_date,
+      start_time: query.start_time,
+      end_time: query.end_time,
+    },
+  });
+}
+
+export async function buildRouteShapeResponse(
+  query: z.infer<typeof mapRouteShapeQuerySchema>,
+) {
+  const routeMap = await getRoutesByIds([query.route_id]);
+  const route = routeMap.get(query.route_id);
+  if (!route) throw notFound("Route not found", { routeId: query.route_id });
+
+  const [trip] = await getTripsByRouteId(query.route_id, 1);
+  return mapRouteShapeResponseSchema.parse({
+    trip: trip ? toTripResponse(trip) : null,
+    route: toRouteResponse(route),
+    shape: trip
+      ? await getShapeResponseForTrip(trip, query.include_shape)
+      : null,
+  });
+}
+
+export async function buildVehiclesResponse(
+  query: z.infer<typeof mapVehiclesQuerySchema>,
+) {
+  const vehicles = await getLatestVehicleSnapshots({
+    bbox: query.bbox,
+    feedOnestopId: query.feed_onestop_id,
+  });
+  const routes = await getRoutesByIds(
+    vehicles.flatMap((vehicle) => (vehicle.routeId ? [vehicle.routeId] : [])),
+  );
+  const newest = vehicles.reduce(
+    (max, vehicle) => Math.max(max, vehicle.capturedAt.getTime()),
+    0,
+  );
+  const snapshotAvailable = vehicles.length > 0;
+  const response = {
+    vehicles: vehicles
+      .filter((vehicle) => {
+        if (typeof query.route_type !== "number") return true;
+        const route = vehicle.routeId ? routes.get(vehicle.routeId) : undefined;
+        return route?.routeType === query.route_type;
+      })
+      .map((vehicle) =>
+        toVehicleResponse(
+          vehicle,
+          vehicle.routeId ? routes.get(vehicle.routeId) : undefined,
+        ),
+      ),
+    meta: {
+      snapshot_age_seconds: newest
+        ? Math.max(0, Math.floor((Date.now() - newest) / 1000))
+        : 0,
+      snapshot_available: snapshotAvailable,
+      ...(vehicles.length === 0
+        ? {
+            message: snapshotAvailable
+              ? "No recent vehicle snapshots matched the current viewport or filters."
+              : "No recent vehicle snapshots are available.",
+          }
+        : {}),
+    },
+  };
+  return mapVehiclesResponseSchema.parse(response);
+}
 
 async function getShapeResponseForTrip(trip: TripRow, includeShape: boolean) {
   if (!includeShape) return null;
@@ -361,7 +377,9 @@ async function buildGeneratedShapeResponse(trip: TripRow) {
   };
 }
 
-async function buildStopsResponse(query: z.infer<typeof mapStopsQuerySchema>) {
+export async function buildStopsResponse(
+  query: z.infer<typeof mapStopsQuerySchema>,
+) {
   const stops = await findStops({
     bbox: query.bbox,
     feedOnestopId: query.feed_onestop_id,

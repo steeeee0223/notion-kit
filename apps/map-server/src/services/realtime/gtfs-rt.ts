@@ -33,13 +33,14 @@ export async function syncRealtimeFeeds(input: {
   bbox?: Bbox;
   feedIds?: string[];
   timeoutMs: number;
+  apiKey?: string;
 }) {
   const errors = [];
   let feedIdsToPoll = input.feedIds;
   const transitlandTargets = new Map<string, TransitlandRealtimeVehicleFeed>();
 
   if (input.feedIds?.length || input.bbox) {
-    const transitland = new TransitlandClient();
+    const transitland = new TransitlandClient(input.apiKey);
     const feedRows = [];
 
     if (input.feedIds?.length) {
@@ -134,7 +135,7 @@ export async function syncRealtimeFeeds(input: {
     }
   }
 
-  const transitland = new TransitlandClient();
+  const transitland = new TransitlandClient(input.apiKey);
   for (const [feedOnestopId, target] of transitlandTargets) {
     if (polledFeedIds.has(feedOnestopId)) continue;
     const started = Date.now();

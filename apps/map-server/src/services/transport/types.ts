@@ -37,8 +37,9 @@ export interface DiscoverStaticFeedsInput {
   limit?: number;
 }
 
-export interface SyncStaticFeedInput {
-  feedId: string;
+export interface StaticSyncInput {
+  bbox?: Bbox;
+  feedIds?: string[];
   force?: boolean;
 }
 
@@ -48,51 +49,47 @@ export interface SyncRealtimeInput {
   timeoutMs?: number;
 }
 
-export interface ListStopsInput {
+export interface StopQuery {
   bbox?: Bbox;
-  feedIds?: string[];
-  routeId?: string;
-  limit?: number;
-}
-
-export interface ListRoutesInput {
-  bbox?: Bbox;
-  feedIds?: string[];
-  query?: string;
-  limit?: number;
-}
-
-export interface ListTripsInput {
-  routeId?: string;
-  feedId?: string;
-  serviceDate?: string;
-  startTime?: string;
-  endTime?: string;
-  limit?: number;
-}
-
-export interface GetRouteShapeInput {
-  routeId: string;
-  tripId?: string;
-  serviceDate?: string;
-}
-
-export interface GetDeparturesInput {
-  stopId: string;
-  serviceDate?: string;
-  startTime?: string;
-  endTime?: string;
-  includeRealtime?: boolean;
+  feedOnestopId?: string;
   includeAlerts?: boolean;
-  limit?: number;
+  limit: number;
 }
 
-export interface ListVehiclesInput {
+export interface RouteQuery {
+  feedOnestopId: string;
+  routeType?: number;
+  limit: number;
+}
+
+export interface TripQuery {
+  routeId: string;
+  serviceDate: string;
+  startTime: string;
+  endTime: string;
+  directionId?: number;
+  limit: number;
+}
+
+export interface RouteShapeQuery {
+  routeId: string;
+  includeShape: boolean;
+}
+
+export interface DepartureQuery {
+  stopId: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  includeRealtime: boolean;
+  includeAlerts: boolean;
+  limit: number;
+}
+
+export interface VehicleQuery {
   bbox?: Bbox;
-  feedIds?: string[];
-  routeId?: string;
-  tripId?: string;
-  limit?: number;
+  feedOnestopId?: string;
+  routeType?: number;
 }
 
 export interface TransportProviderAdapter {
@@ -106,36 +103,30 @@ export interface TransportProviderAdapter {
     input: DiscoverStaticFeedsInput,
     context: ProviderContext,
   ) => Promise<{ candidates: StaticFeedStatusCandidate[]; meta: unknown }>;
-  syncStaticFeed?: (
-    input: SyncStaticFeedInput,
+  syncStatic?: (
+    input: StaticSyncInput,
     context: ProviderContext,
   ) => Promise<unknown>;
   syncRealtime?: (
     input: SyncRealtimeInput,
     context: ProviderContext,
   ) => Promise<unknown>;
-  listStops?: (
-    input: ListStopsInput,
+  findStops?: (input: StopQuery, context: ProviderContext) => Promise<unknown>;
+  findRoutes?: (
+    input: RouteQuery,
     context: ProviderContext,
   ) => Promise<unknown>;
-  listRoutes?: (
-    input: ListRoutesInput,
+  findTrips?: (input: TripQuery, context: ProviderContext) => Promise<unknown>;
+  findRouteShape?: (
+    input: RouteShapeQuery,
     context: ProviderContext,
   ) => Promise<unknown>;
-  listTrips?: (
-    input: ListTripsInput,
+  findDepartures?: (
+    input: DepartureQuery,
     context: ProviderContext,
   ) => Promise<unknown>;
-  getRouteShape?: (
-    input: GetRouteShapeInput,
-    context: ProviderContext,
-  ) => Promise<unknown>;
-  getDepartures?: (
-    input: GetDeparturesInput,
-    context: ProviderContext,
-  ) => Promise<unknown>;
-  listVehicles?: (
-    input: ListVehiclesInput,
+  findVehicles?: (
+    input: VehicleQuery,
     context: ProviderContext,
   ) => Promise<unknown>;
 }
