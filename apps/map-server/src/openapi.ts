@@ -190,6 +190,29 @@ const route = {
   },
 } as const;
 
+const routeTripSummary = {
+  type: "object",
+  properties: {
+    id: { type: "string", example: examples.tripId },
+    trip_id: { type: "string", example: "trip-555" },
+    route_id: { type: "string", example: examples.routeId },
+    service_id: { type: "string", example: "weekday" },
+    shape_id: { type: ["string", "null"], example: "shape-L1-0" },
+    trip_headsign: { type: ["string", "null"], example: "Antioch" },
+    trip_short_name: { type: ["string", "null"] },
+    direction_id: { type: ["integer", "null"], example: 0 },
+    block_id: { type: ["string", "null"] },
+    wheelchair_accessible: { type: ["integer", "null"], example: 1 },
+    bikes_allowed: { type: ["integer", "null"] },
+    cars_allowed: { type: ["integer", "null"] },
+    safe_duration_factor: { type: ["number", "null"] },
+    safe_duration_offset: { type: ["integer", "null"] },
+    first_departure_time: { type: ["string", "null"], example: "10:05:00" },
+    last_departure_time: { type: ["string", "null"], example: "10:55:00" },
+    matching_stop_times_count: { type: "integer", example: 12 },
+  },
+} as const;
+
 const standardErrors = {
   400: { description: "Bad request", ...errorResponse },
   401: { description: "Unauthorized", ...errorResponse },
@@ -318,6 +341,85 @@ export const openApi = {
                 example: examples.feedOnestopId,
               },
               static_feed: { type: "object", additionalProperties: true },
+            },
+          },
+        },
+      },
+      ...standardErrors,
+    },
+  },
+  mapTrips: {
+    tags: ["Map"],
+    summary: "List cached trips for a route in a service time range",
+    description:
+      "Reads cached GTFS static trips by internal route ID. Does not import GTFS static rows. Use this before expanding a trip with /api/trips/:tripId/stop-times.",
+    querystring: {
+      type: "object",
+      required: ["route_id"],
+      properties: {
+        route_id: { type: "string", example: examples.routeId },
+        service_date: {
+          type: "string",
+          format: "date",
+          example: examples.serviceDate,
+        },
+        start_time: { type: "string", example: examples.startTime },
+        end_time: { type: "string", example: examples.endTime },
+        direction_id: { type: "integer", example: 0 },
+        limit: { type: "integer", default: 100, maximum: 500, example: 50 },
+      },
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          trips: { type: "array", items: routeTripSummary },
+          meta: {
+            type: "object",
+            properties: {
+              total: { type: "integer", example: 8 },
+              route_id: { type: "string", example: examples.routeId },
+              service_date: {
+                type: "string",
+                example: examples.serviceDate,
+              },
+              start_time: { type: "string", example: examples.startTime },
+              end_time: { type: "string", example: examples.endTime },
+            },
+          },
+        },
+      },
+      ...standardErrors,
+    },
+  },
+  mapRouteShape: {
+    tags: ["Map"],
+    summary: "Get representative route geometry for a cached static route",
+    description:
+      "Reads a route and representative trip shape by internal route ID. Does not import GTFS static rows.",
+    querystring: {
+      type: "object",
+      required: ["route_id"],
+      properties: {
+        route_id: { type: "string", example: examples.routeId },
+        include_shape: { type: "boolean", default: true, example: true },
+      },
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          trip: {
+            anyOf: [routeTripSummary, { type: "null" }],
+          },
+          route,
+          shape: {
+            type: ["object", "null"],
+            properties: {
+              shape_id: { type: "string", example: "shape-L1-0" },
+              geojson: { type: "object", additionalProperties: true },
+              points: { type: "array", items: { type: "object" } },
+              generated: { type: "boolean", example: false },
             },
           },
         },

@@ -8,6 +8,10 @@ import {
   type RouteStop,
 } from "./transitland/use-route-stops";
 import {
+  useRouteTrips as useTransitlandRouteTrips,
+  type RouteTrip,
+} from "./transitland/use-route-trips";
+import {
   useStopDepartures as useTransitlandStopDepartures,
   type StopDeparture,
 } from "./transitland/use-stop-departures";
@@ -19,7 +23,7 @@ import {
 
 export { useAdapterBBoxStore };
 
-export type { RouteStop, StopDeparture, VehiclePosition };
+export type { RouteStop, RouteTrip, StopDeparture, VehiclePosition };
 
 export type SourceAdapterId = "bkk" | "transitland";
 
@@ -71,6 +75,21 @@ export function useActiveRouteStops(context: SelectedTripContext) {
   return useTransitlandRouteStops(
     activeAdapter === "transitland" ? (context.tripId ?? null) : null,
     context.routeId ?? null,
+  );
+}
+
+export function useActiveRouteTrips(
+  routeId: string | null,
+  serviceDate: string,
+  startTime: string,
+  endTime: string,
+) {
+  const activeAdapter = useAdapterStore((state) => state.activeAdapter);
+  return useTransitlandRouteTrips(
+    activeAdapter === "transitland" ? routeId : null,
+    serviceDate,
+    startTime,
+    endTime,
   );
 }
 

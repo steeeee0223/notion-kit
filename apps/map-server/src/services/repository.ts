@@ -172,6 +172,62 @@ export async function getTripsByRouteId(routeId: string, limitCount = 1) {
     .limit(limitCount);
 }
 
+export async function findTripsByRoute(options: {
+  routeId: string;
+  serviceIds?: string[];
+  directionId?: number;
+  limit: number;
+}) {
+  const conditions = [eq(trips.routeId, options.routeId)];
+  if (options.serviceIds?.length) {
+    conditions.push(inArray(trips.serviceId, [...new Set(options.serviceIds)]));
+  }
+  if (typeof options.directionId === "number") {
+    conditions.push(eq(trips.directionId, options.directionId));
+  }
+  return db
+    .select()
+    .from(trips)
+    .where(and(...conditions))
+    .orderBy(trips.tripId)
+    .limit(options.limit);
+}
+
+export async function findTripsByRouteInTimeRange(options: {
+  routeId: string;
+  serviceIds: string[];
+  startTime: string;
+  endTime: string;
+  directionId?: number;
+  limit: number;
+}) {
+  if (options.serviceIds.length === 0) return [];
+
+  const conditions = [
+    eq(trips.routeId, options.routeId),
+    inArray(trips.serviceId, [...new Set(options.serviceIds)]),
+    gte(stopTimes.departureTime, options.startTime),
+    lte(stopTimes.departureTime, options.endTime),
+  ];
+  if (typeof options.directionId === "number") {
+    conditions.push(eq(trips.directionId, options.directionId));
+  }
+
+  return db
+    .select({
+      trip: trips,
+      firstDepartureTime: sql<string | null>`min(${stopTimes.departureTime})`,
+      lastDepartureTime: sql<string | null>`max(${stopTimes.departureTime})`,
+      stopCount: sql<number>`count(*)`,
+    })
+    .from(trips)
+    .innerJoin(stopTimes, eq(stopTimes.tripId, trips.id))
+    .where(and(...conditions))
+    .groupBy(trips.id)
+    .orderBy(sql`min(${stopTimes.departureTime})`, trips.id)
+    .limit(options.limit);
+}
+
 export async function getShape(shapeId: string) {
   const [row] = await db
     .select()
@@ -541,10 +597,6 @@ async function upsertRowsWithClient(
   }
 }
 
-export async function insertRows(table: string, rows: TableInsert[]) {
-  await insertRowsWithClient(db, table, rows);
-}
-
 async function insertRowsWithClient(
   client: DbClient,
   table: string,
@@ -562,12 +614,6 @@ async function insertRowsWithClient(
 function getInsertChunkSize(table: string) {
   if (table === "shapes") return 10;
   return 1000;
-}
-
-export async function deleteFeedStaticRows(feedOnestopId: string) {
-  await db.transaction(async (tx) => {
-    await deleteFeedStaticRowsWithClient(tx, feedOnestopId);
-  });
 }
 
 export async function replaceFeedStaticRows(
@@ -717,17 +763,3 @@ function uniqueLatestTripUpdates(
   }
   return [...byTripStop.values()];
 }
-
-export type RepositoryRow =
-  | typeof agencies.$inferSelect
-  | typeof alertSnapshots.$inferSelect
-  | typeof calendarDates.$inferSelect
-  | typeof calendar.$inferSelect
-  | typeof feeds.$inferSelect
-  | typeof routes.$inferSelect
-  | typeof shapes.$inferSelect
-  | typeof stops.$inferSelect
-  | typeof stopTimes.$inferSelect
-  | typeof trips.$inferSelect
-  | typeof tripUpdateSnapshots.$inferSelect
-  | typeof vehiclePositionSnapshots.$inferSelect;

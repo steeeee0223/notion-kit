@@ -2,9 +2,13 @@ import { z } from "zod/v4";
 
 import {
   bboxSchema,
+  gtfsTimeSchema,
   integerQuerySchema,
   optionalBooleanSchema,
   positiveIntegerQuerySchema,
+  scopedIdSchema,
+  serviceDateSchema,
+  todayServiceDate,
 } from "@/lib/schemas";
 
 export const mapStopsQuerySchema = z
@@ -46,6 +50,24 @@ export const mapRoutesQuerySchema = z.object({
   feed_onestop_id: z.string().min(1),
   route_type: integerQuerySchema.optional(),
   limit: positiveIntegerQuerySchema.max(500).default(200),
+});
+
+export const mapTripsQuerySchema = z
+  .object({
+    route_id: scopedIdSchema,
+    service_date: serviceDateSchema.default(todayServiceDate()),
+    start_time: gtfsTimeSchema.default("00:00:00"),
+    end_time: gtfsTimeSchema.default("29:59:59"),
+    direction_id: integerQuerySchema.optional(),
+    limit: positiveIntegerQuerySchema.max(500).default(100),
+  })
+  .refine((query) => query.end_time > query.start_time, {
+    message: "end_time must be after start_time",
+  });
+
+export const mapRouteShapeQuerySchema = z.object({
+  route_id: scopedIdSchema,
+  include_shape: optionalBooleanSchema.transform((value) => value ?? true),
 });
 
 export const staticFeedsStatusQuerySchema = z.object({

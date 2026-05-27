@@ -5,13 +5,14 @@ import {
   gtfsTimeSchema,
   optionalBooleanSchema,
   positiveIntegerQuerySchema,
+  scopedIdSchema,
   secondsToGtfsTime,
   serviceDateSchema,
   todayServiceDate,
 } from "@/lib/schemas";
 
 export const stopParamsSchema = z.object({
-  stopId: z.string().min(1),
+  stopId: scopedIdSchema,
 });
 
 export const departuresQuerySchema = z

@@ -43,6 +43,10 @@ const tripStopTimesResponseSchema = z.object({
   stop_times: z.array(z.unknown()),
 });
 
+type AlertRows = Awaited<ReturnType<typeof getAlerts>>;
+type StopTimeRows = Awaited<ReturnType<typeof getStopTimesByTrip>>;
+type StopMap = Awaited<ReturnType<typeof getStopsByIds>>;
+
 export function registerTripRoutes(app: FastifyInstance) {
   app.get(
     "/api/trips/:tripId/route",
@@ -98,7 +102,7 @@ export function registerTripRoutes(app: FastifyInstance) {
                   if (vehicle?.routeId) fallbackRouteId = vehicle.routeId;
                 }
                 let route = null;
-                let alerts: any[] = [];
+                let alerts: AlertRows = [];
                 let shape = null;
                 if (fallbackRouteId) {
                   const routeMap = await getRoutesByIds([fallbackRouteId]);
@@ -189,8 +193,8 @@ export function registerTripRoutes(app: FastifyInstance) {
                   });
                   if (vehicle?.routeId) fallbackRouteId = vehicle.routeId;
                 }
-                let stopTimeRows: any[] = [];
-                let stopMap = new Map();
+                let stopTimeRows: StopTimeRows = [];
+                let stopMap: StopMap = new Map();
                 if (fallbackRouteId) {
                   const fallbackTrips = await getTripsByRouteId(
                     fallbackRouteId,
@@ -235,10 +239,7 @@ export function registerTripRoutes(app: FastifyInstance) {
 
 type TripRow = Awaited<ReturnType<typeof getTrip>>;
 
-async function getShapeResponseForTrip(
-  trip: TripRow,
-  includeShape: boolean,
-) {
+async function getShapeResponseForTrip(trip: TripRow, includeShape: boolean) {
   if (!includeShape) return null;
 
   if (trip.shapeId) {

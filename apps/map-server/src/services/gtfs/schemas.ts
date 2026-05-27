@@ -173,17 +173,6 @@ export const shapeFileSchema = z.object({
   shape_dist_traveled: optionalFloat,
 });
 
-export const gtfsStaticFileSchemas = {
-  "agency.txt": agencyFileSchema,
-  "stops.txt": stopFileSchema,
-  "routes.txt": routeFileSchema,
-  "trips.txt": tripFileSchema,
-  "stop_times.txt": stopTimeFileSchema,
-  "calendar.txt": calendarFileSchema,
-  "calendar_dates.txt": calendarDateFileSchema,
-  "shapes.txt": shapeFileSchema,
-};
-
 export type AgencyCsvRow = z.infer<typeof agencyFileSchema>;
 export type StopCsvRow = z.infer<typeof stopFileSchema>;
 export type RouteCsvRow = z.infer<typeof routeFileSchema>;

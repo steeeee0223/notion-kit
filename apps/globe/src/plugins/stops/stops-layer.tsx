@@ -3,7 +3,7 @@ import type MapLibreGL from "maplibre-gl";
 
 import { useMap } from "@notion-kit/map";
 
-import { useActiveRouteStops } from "@/adapters";
+import { useActiveRouteStops, useAdapterBBoxStore } from "@/adapters";
 import type { RouteStop } from "@/adapters";
 import { useRouteStore } from "@/plugins/routes/store";
 import { useVehicleStore } from "@/plugins/vehicles/store";
@@ -26,23 +26,32 @@ export function StopsLayer() {
   const selectedRouteContext = useRouteStore(
     (state) => state.selectedRouteContext,
   );
-  const mapRouteContext = useRouteStore((state) => state.mapRouteContext);
+  const expandedTripId = useRouteStore((state) => state.expandedTripId);
   const mapStop = useStopsStore((state) => state.mapStop);
   const setSelectedStop = useStopsStore((state) => state.setSelectedStop);
+  const requestFlyTo = useAdapterBBoxStore((state) => state.requestFlyTo);
   const onClickRef = useRef(setSelectedStop);
+  const flyToRef = useRef(requestFlyTo);
   onClickRef.current = setSelectedStop;
+  flyToRef.current = requestFlyTo;
 
-  const context = selectedRouteContext ??
-    mapRouteContext ?? {
-      tripId: selected?.tripId,
-      routeId: selected?.routeId,
-    };
+  const context =
+    selectedRouteContext && expandedTripId
+      ? {
+          tripId: expandedTripId,
+          routeId: selectedRouteContext.routeId,
+        }
+      : {
+          tripId: selected?.tripId,
+          routeId: selected?.routeId,
+        };
 
   const { data: stops = [] } = useActiveRouteStops(context);
 
   let routeColor =
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-    selected?.routeColor || getVehicleColor(selected?.vehicleType || "UNKNOWN");
+    selectedRouteContext?.routeColor ??
+    selected?.routeColor ??
+    getVehicleColor(selected?.vehicleType ?? "UNKNOWN");
   if (routeColor && !routeColor.startsWith("#")) {
     routeColor = `#${routeColor}`;
   }
@@ -68,6 +77,7 @@ export function StopsLayer() {
     (feature: GeoJSON.Feature<GeoJSON.Point, RouteStop>) => {
       const props = feature.properties;
       onClickRef.current(props);
+      flyToRef.current([props.longitude, props.latitude]);
     },
     [],
   );

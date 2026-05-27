@@ -14,6 +14,20 @@ export const queryKey = {
       ["map-server", "stops", feedOnestopId] as const,
     tripRoute: (tripId: string | null) =>
       ["map-server", "trip-route", tripId] as const,
+    routeTrips: (
+      routeId: string | null,
+      serviceDate: string,
+      startTime: string,
+      endTime: string,
+    ) =>
+      [
+        "map-server",
+        "route-trips",
+        routeId,
+        serviceDate,
+        startTime,
+        endTime,
+      ] as const,
     tripStopTimes: (tripId: string | null) =>
       ["map-server", "trip-stop-times", tripId] as const,
     stopDepartures: (stopKey: string | null) =>

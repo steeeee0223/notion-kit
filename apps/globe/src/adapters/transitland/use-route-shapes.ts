@@ -10,7 +10,7 @@ export interface RouteShape {
 }
 
 interface TripRouteResponse {
-  trip: { id: string };
+  trip: { id: string } | null;
   route: { id: string } | null;
   shape: {
     shape_id: string;
@@ -26,15 +26,16 @@ export function useRouteShapes(
   return useQuery<RouteShape[]>({
     queryKey: queryKey.mapServer.tripRoute(tripId ?? fallbackRouteId ?? null),
     queryFn: async () => {
-      const id = tripId ?? fallbackRouteId ?? null;
-      if (!id) return [];
-      const query: Record<string, boolean | string> = { include_shape: true };
-      if (fallbackRouteId) query.fallback_route_id = fallbackRouteId;
+      if (!tripId && !fallbackRouteId) return [];
 
-      const { data, error } = await mapApiClient<TripRouteResponse>(
-        `/api/trips/${encodeURIComponent(id)}/route`,
-        { query },
-      );
+      const { data, error } = tripId
+        ? await mapApiClient<TripRouteResponse>(
+            `/api/trips/${encodeURIComponent(tripId)}/route`,
+            { query: { include_shape: true } },
+          )
+        : await mapApiClient<TripRouteResponse>("/api/map/route-shape", {
+            query: { route_id: fallbackRouteId!, include_shape: true },
+          });
       if (error) return [];
       return toRouteShapes(data);
     },
@@ -47,7 +48,7 @@ function toRouteShapes(response: TripRouteResponse): RouteShape[] {
   const shape = response.shape;
   if (!shape) return [];
 
-  const routeId = response.route?.id ?? response.trip.id;
+  const routeId = response.route?.id ?? response.trip?.id ?? shape.shape_id;
   const lines = getLineCoordinates(shape.geojson);
 
   return lines.map((points, index) => ({

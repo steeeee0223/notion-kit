@@ -117,6 +117,20 @@ export function toTripResponse(trip: TripRow) {
   };
 }
 
+export function toRouteTripSummaryResponse(input: {
+  trip: TripRow;
+  firstDepartureTime: string | null;
+  lastDepartureTime: string | null;
+  stopCount: number;
+}) {
+  return {
+    ...toTripResponse(input.trip),
+    first_departure_time: input.firstDepartureTime,
+    last_departure_time: input.lastDepartureTime,
+    matching_stop_times_count: Number(input.stopCount),
+  };
+}
+
 export function toShapeResponse(shape: ShapeRow | null) {
   if (!shape) return null;
   return {

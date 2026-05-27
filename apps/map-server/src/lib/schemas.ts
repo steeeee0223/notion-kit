@@ -42,6 +42,7 @@ export const serviceDateSchema = z.iso.date();
 export const gtfsTimeSchema = z
   .string()
   .regex(/^\d{2,3}:[0-5]\d:[0-5]\d$/, "Expected HH:MM:SS");
+export const scopedIdSchema = z.string().min(1).transform(decodeRepeatedly);
 
 export type Bbox = z.infer<typeof bboxSchema>;
 
@@ -77,6 +78,20 @@ export function currentGtfsTime(now = new Date()) {
   return secondsToGtfsTime(
     now.getUTCHours() * 3600 + now.getUTCMinutes() * 60 + now.getUTCSeconds(),
   );
+}
+
+export function decodeRepeatedly(value: string) {
+  let decoded = value;
+  for (let i = 0; i < 3; i += 1) {
+    try {
+      const next = decodeURIComponent(decoded);
+      if (next === decoded) break;
+      decoded = next;
+    } catch {
+      break;
+    }
+  }
+  return decoded;
 }
 
 export function withinBbox(point: { lat: number; lon: number }, bbox?: Bbox) {
