@@ -321,7 +321,11 @@ export const simulatorAdapter: TransportProviderAdapter = {
         ? simulatorDepartures
             .slice(0, input.limit)
             .map((departure) =>
-              buildSimulatorDeparture(departure, input.date, input.includeRealtime),
+              buildSimulatorDeparture(
+                departure,
+                input.date,
+                input.includeRealtime,
+              ),
             )
         : [];
     return {

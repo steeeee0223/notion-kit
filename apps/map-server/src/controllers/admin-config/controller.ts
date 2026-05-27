@@ -1,6 +1,7 @@
 import type { FastifyInstance, FastifyRequest } from "fastify";
 
 import { sendError, unauthorized, upstreamError } from "@/lib/api-error";
+import { openApi } from "@/openapi";
 import {
   getActiveConfig,
   getConfigForUser,
@@ -16,18 +17,22 @@ import {
 } from "./schema";
 
 export function registerAdminConfigRoutes(app: FastifyInstance) {
-  app.get("/api/admin/config", async (request, reply) => {
-    try {
-      assertAdmin(app, request);
-      const row = await getActiveConfig(app.env.MAP_ADMIN_TOKEN);
-      return reply.send({
-        user: row.user,
-        credentials: redactCredentials(row.credentials),
-      });
-    } catch (error) {
-      return sendError(reply, error);
-    }
-  });
+  app.get(
+    "/api/admin/config",
+    { schema: openApi.adminConfig },
+    async (request, reply) => {
+      try {
+        assertAdmin(app, request);
+        const row = await getActiveConfig(app.env.MAP_ADMIN_TOKEN);
+        return reply.send({
+          user: row.user,
+          credentials: redactCredentials(row.credentials),
+        });
+      } catch (error) {
+        return sendError(reply, error);
+      }
+    },
+  );
 
   app.get("/api/admin/config/:user", async (request, reply) => {
     try {

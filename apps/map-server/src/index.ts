@@ -48,6 +48,14 @@ await app.register(swagger, {
         name: "Admin / Sync",
         description: "Static sync, realtime polling, and retention jobs.",
       },
+      {
+        name: "Transport",
+        description: "Provider-scoped normalized transportation APIs.",
+      },
+      {
+        name: "Admin / Config",
+        description: "Shared provider credential configuration.",
+      },
       { name: "WebSocket", description: "Live push protocol documentation." },
     ],
     components: {

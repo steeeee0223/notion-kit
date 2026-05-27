@@ -2,10 +2,7 @@ import { simulatorAdapter } from "@/services/transport/simulator-adapter";
 import { transitlandAdapter } from "@/services/transport/transitland-adapter";
 
 import { providerNotFound, unsupportedCapability } from "./errors";
-import type {
-  ProviderCapability,
-  TransportProviderAdapter,
-} from "./types";
+import type { ProviderCapability, TransportProviderAdapter } from "./types";
 
 export interface TransportProviderRegistry {
   list: () => TransportProviderAdapter[];

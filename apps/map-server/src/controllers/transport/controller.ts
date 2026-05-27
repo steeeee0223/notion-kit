@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 
 import { ApiError, sendError } from "@/lib/api-error";
+import { openApi } from "@/openapi";
 import { getActiveConfig, getConfigUserFromToken } from "@/services/config";
 import { unsupportedCapability } from "@/services/transport/errors";
 import {
@@ -44,50 +45,58 @@ export function registerTransportRoutes(app: FastifyInstance) {
     },
   );
 
-  app.get("/api/transport/:provider/routes", async (request, reply) => {
-    try {
-      const { provider } = providerParamsSchema.parse(request.params);
-      const query = mapRoutesQuerySchema.parse(request.query);
-      const adapter = transportProviderRegistry.get(provider);
-      assertProviderMethod(adapter, "static_schedule", "findRoutes");
-      const context = await buildProviderContext(app);
-      return reply.send(
-        await adapter.findRoutes(
-          {
-            feedOnestopId: query.feed_onestop_id,
-            routeType: query.route_type,
-            limit: query.limit,
-          },
-          context,
-        ),
-      );
-    } catch (error) {
-      return sendError(reply, error);
-    }
-  });
+  app.get(
+    "/api/transport/:provider/routes",
+    { schema: openApi.transportRoutes },
+    async (request, reply) => {
+      try {
+        const { provider } = providerParamsSchema.parse(request.params);
+        const query = mapRoutesQuerySchema.parse(request.query);
+        const adapter = transportProviderRegistry.get(provider);
+        assertProviderMethod(adapter, "static_schedule", "findRoutes");
+        const context = await buildProviderContext(app);
+        return reply.send(
+          await adapter.findRoutes(
+            {
+              feedOnestopId: query.feed_onestop_id,
+              routeType: query.route_type,
+              limit: query.limit,
+            },
+            context,
+          ),
+        );
+      } catch (error) {
+        return sendError(reply, error);
+      }
+    },
+  );
 
-  app.get("/api/transport/:provider/stops", async (request, reply) => {
-    try {
-      const { provider } = providerParamsSchema.parse(request.params);
-      const query = mapStopsQuerySchema.parse(request.query);
-      const adapter = transportProviderRegistry.get(provider);
-      assertProviderMethod(adapter, "static_schedule", "findStops");
-      const context = await buildProviderContext(app);
-      return reply.send(
-        await adapter.findStops(
-          {
-            bbox: query.bbox,
-            feedOnestopId: query.feed_onestop_id,
-            includeAlerts: query.include_alerts,
-            limit: query.limit,
-          },
-          context,
-        ),
-      );
-    } catch (error) {
-      return sendError(reply, error);
-    }
-  });
+  app.get(
+    "/api/transport/:provider/stops",
+    { schema: openApi.transportStops },
+    async (request, reply) => {
+      try {
+        const { provider } = providerParamsSchema.parse(request.params);
+        const query = mapStopsQuerySchema.parse(request.query);
+        const adapter = transportProviderRegistry.get(provider);
+        assertProviderMethod(adapter, "static_schedule", "findStops");
+        const context = await buildProviderContext(app);
+        return reply.send(
+          await adapter.findStops(
+            {
+              bbox: query.bbox,
+              feedOnestopId: query.feed_onestop_id,
+              includeAlerts: query.include_alerts,
+              limit: query.limit,
+            },
+            context,
+          ),
+        );
+      } catch (error) {
+        return sendError(reply, error);
+      }
+    },
+  );
 
   app.get("/api/transport/:provider/trips", async (request, reply) => {
     try {
@@ -166,27 +175,31 @@ export function registerTransportRoutes(app: FastifyInstance) {
     },
   );
 
-  app.get("/api/transport/:provider/vehicles", async (request, reply) => {
-    try {
-      const { provider } = providerParamsSchema.parse(request.params);
-      const query = mapVehiclesQuerySchema.parse(request.query);
-      const adapter = transportProviderRegistry.get(provider);
-      assertProviderMethod(adapter, "realtime_vehicles", "findVehicles");
-      const context = await buildProviderContext(app);
-      return reply.send(
-        await adapter.findVehicles(
-          {
-            bbox: query.bbox,
-            feedOnestopId: query.feed_onestop_id,
-            routeType: query.route_type,
-          },
-          context,
-        ),
-      );
-    } catch (error) {
-      return sendError(reply, error);
-    }
-  });
+  app.get(
+    "/api/transport/:provider/vehicles",
+    { schema: openApi.transportVehicles },
+    async (request, reply) => {
+      try {
+        const { provider } = providerParamsSchema.parse(request.params);
+        const query = mapVehiclesQuerySchema.parse(request.query);
+        const adapter = transportProviderRegistry.get(provider);
+        assertProviderMethod(adapter, "realtime_vehicles", "findVehicles");
+        const context = await buildProviderContext(app);
+        return reply.send(
+          await adapter.findVehicles(
+            {
+              bbox: query.bbox,
+              feedOnestopId: query.feed_onestop_id,
+              routeType: query.route_type,
+            },
+            context,
+          ),
+        );
+      } catch (error) {
+        return sendError(reply, error);
+      }
+    },
+  );
 }
 
 async function buildProviderContext(

@@ -51,10 +51,9 @@ describe("simulator transport provider adapter", () => {
   });
 
   it("returns deterministic simulator vehicles", async () => {
-    const response = (await simulatorAdapter.findVehicles?.(
-      {},
-      context,
-    )) as { vehicles: Array<Record<string, unknown>> };
+    const response = (await simulatorAdapter.findVehicles?.({}, context)) as {
+      vehicles: Array<Record<string, unknown>>;
+    };
 
     expect(response.vehicles[0]).toMatchObject({
       vehicle_id: "sim-vehicle-1",

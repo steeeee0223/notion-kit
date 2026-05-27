@@ -221,6 +221,14 @@ const standardErrors = {
   500: { description: "Internal server error", ...errorResponse },
 } as const;
 
+const providerParams = {
+  type: "object",
+  required: ["provider"],
+  properties: {
+    provider: { type: "string", example: "simulator" },
+  },
+} as const;
+
 export const openApi = {
   health: {
     tags: ["System"],
@@ -552,6 +560,77 @@ export const openApi = {
               },
             },
           },
+        },
+      },
+      ...standardErrors,
+    },
+  },
+  transportRoutes: {
+    tags: ["Transport"],
+    summary: "List normalized routes for a transport provider",
+    params: providerParams,
+    querystring: {
+      type: "object",
+      required: ["feed_onestop_id"],
+      properties: {
+        feed_onestop_id: { type: "string", example: examples.feedOnestopId },
+        route_type: { type: "integer", example: 3 },
+        limit: { type: "integer", example: 200 },
+      },
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          routes: { type: "array", items: route },
+          meta: { type: "object", additionalProperties: true },
+        },
+      },
+      ...standardErrors,
+    },
+  },
+  transportStops: {
+    tags: ["Transport"],
+    summary: "List normalized stops for a transport provider",
+    params: providerParams,
+    querystring: {
+      type: "object",
+      properties: {
+        feed_onestop_id: { type: "string", example: examples.feedOnestopId },
+        bbox: bboxQuery,
+        include_alerts: { type: "boolean", example: true },
+        limit: { type: "integer", example: 200 },
+      },
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          stops: { type: "array", items: { type: "object" } },
+          meta: { type: "object", additionalProperties: true },
+        },
+      },
+      ...standardErrors,
+    },
+  },
+  transportVehicles: {
+    tags: ["Transport"],
+    summary: "List normalized vehicle snapshots for a transport provider",
+    params: providerParams,
+    querystring: {
+      type: "object",
+      properties: {
+        bbox: bboxQuery,
+        feed_onestop_id: { type: "string", example: examples.feedOnestopId },
+        route_type: { type: "integer", example: 3 },
+      },
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          vehicles: { type: "array", items: vehicle },
+          meta: { type: "object", additionalProperties: true },
         },
       },
       ...standardErrors,
@@ -990,6 +1069,38 @@ export const openApi = {
         type: "object",
         properties: {
           ok: { type: "boolean", example: true },
+        },
+      },
+      ...standardErrors,
+    },
+  },
+  adminTransportValidate: {
+    tags: ["Admin / Sync"],
+    summary: "Validate transport provider configuration",
+    security: [{ adminBearer: [] }],
+    params: providerParams,
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          ok: { type: "boolean", example: true },
+          message: { type: "string", example: "Missing transit_api_key" },
+          credentialKeys: { type: "object", additionalProperties: true },
+        },
+      },
+      ...standardErrors,
+    },
+  },
+  adminConfig: {
+    tags: ["Admin / Config"],
+    summary: "Read active shared provider config status",
+    security: [{ adminBearer: [] }],
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          user: { type: "string", example: "local" },
+          credentials: { type: "object", additionalProperties: true },
         },
       },
       ...standardErrors,

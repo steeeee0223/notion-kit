@@ -32,6 +32,7 @@ import { realtimeSyncBodySchema, staticSyncBodySchema } from "./schema";
 export function registerAdminRoutes(app: FastifyInstance) {
   app.post(
     "/api/admin/transport/:provider/validate",
+    { schema: openApi.adminTransportValidate },
     async (request, reply) => {
       try {
         assertAdmin(app, request);
