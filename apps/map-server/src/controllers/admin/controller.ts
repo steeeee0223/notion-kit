@@ -2,6 +2,7 @@ import type { FastifyInstance, FastifyRequest } from "fastify";
 
 import { badRequest, sendError, unauthorized } from "@/lib/api-error";
 import { openApi } from "@/openapi";
+import { getActiveConfig, getConfigUserFromToken } from "@/services/config";
 import { buildStaticImportResult } from "@/services/gtfs/data-transfer";
 import { importGtfsStaticFeed } from "@/services/gtfs/static-import";
 import { syncRealtimeFeeds } from "@/services/realtime/gtfs-rt";
@@ -15,10 +16,86 @@ import {
   getFeedVersion,
   TransitlandClient,
 } from "@/services/transitland/client";
+import { unsupportedCapability } from "@/services/transport/errors";
+import {
+  assertProviderCapability,
+  transportProviderRegistry,
+} from "@/services/transport/registry";
+import type {
+  ProviderCapability,
+  ProviderContext,
+  TransportProviderAdapter,
+} from "@/services/transport/types";
 
 import { realtimeSyncBodySchema, staticSyncBodySchema } from "./schema";
 
 export function registerAdminRoutes(app: FastifyInstance) {
+  app.post(
+    "/api/admin/transport/:provider/validate",
+    async (request, reply) => {
+      try {
+        assertAdmin(app, request);
+        const { provider: providerKey } = (request.params ?? {}) as {
+          provider: string;
+        };
+        const provider = transportProviderRegistry.get(providerKey);
+        return reply.send(
+          await provider.healthCheck(await buildProviderContext(app)),
+        );
+      } catch (error) {
+        return sendError(reply, error);
+      }
+    },
+  );
+
+  app.post(
+    "/api/admin/transport/:provider/sync/static",
+    async (request, reply) => {
+      try {
+        assertAdmin(app, request);
+        const { provider: providerKey } = (request.params ?? {}) as {
+          provider: string;
+        };
+        const provider = transportProviderRegistry.get(providerKey);
+        assertProviderMethod(provider, "static_schedule", "syncStatic");
+        const body = staticSyncBodySchema.parse(request.body ?? {});
+        return reply.send(
+          await provider.syncStatic(body, await buildProviderContext(app)),
+        );
+      } catch (error) {
+        return sendError(reply, error);
+      }
+    },
+  );
+
+  app.post(
+    "/api/admin/transport/:provider/sync/realtime",
+    async (request, reply) => {
+      try {
+        assertAdmin(app, request);
+        const { provider: providerKey } = (request.params ?? {}) as {
+          provider: string;
+        };
+        const provider = transportProviderRegistry.get(providerKey);
+        assertProviderMethod(provider, "realtime_vehicles", "syncRealtime");
+        const body = realtimeSyncBodySchema.parse(request.body ?? {});
+        const response = await provider.syncRealtime(
+          {
+            ...body,
+            timeoutMs: app.env.MAP_RT_POLL_TIMEOUT_MS,
+          },
+          await buildProviderContext(app),
+        );
+        app.wsHub.broadcastVehicles().catch((error: unknown) => {
+          app.log.error(error, "Failed to broadcast realtime vehicles");
+        });
+        return reply.send(response);
+      } catch (error) {
+        return sendError(reply, error);
+      }
+    },
+  );
+
   app.post(
     "/api/admin/sync/static",
     { schema: openApi.adminStaticSync },
@@ -156,6 +233,39 @@ function assertAdmin(app: FastifyInstance, request: FastifyRequest) {
   const header = request.headers.authorization;
   if (header !== `Bearer ${app.env.MAP_ADMIN_TOKEN}`) {
     throw unauthorized();
+  }
+}
+
+async function buildProviderContext(
+  app: FastifyInstance,
+): Promise<ProviderContext> {
+  const activeConfig = await getActiveConfig(app.env.MAP_ADMIN_TOKEN).catch(
+    () => ({
+      user: getConfigUserFromToken(app.env.MAP_ADMIN_TOKEN),
+      credentials: {},
+    }),
+  );
+  return {
+    configUser: activeConfig.user,
+    credentials: activeConfig.credentials,
+    log: app.log,
+  };
+}
+
+type TransportSyncMethod = keyof Pick<
+  TransportProviderAdapter,
+  "syncStatic" | "syncRealtime"
+>;
+
+function assertProviderMethod<TMethod extends TransportSyncMethod>(
+  provider: TransportProviderAdapter,
+  capability: ProviderCapability,
+  method: TMethod,
+): asserts provider is TransportProviderAdapter &
+  Required<Pick<TransportProviderAdapter, TMethod>> {
+  assertProviderCapability(provider, capability);
+  if (typeof provider[method] !== "function") {
+    throw unsupportedCapability(provider.key, capability);
   }
 }
 

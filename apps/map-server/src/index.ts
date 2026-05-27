@@ -4,6 +4,7 @@ import websocket from "@fastify/websocket";
 import scalar from "@scalar/fastify-api-reference";
 import Fastify from "fastify";
 
+import { registerAdminConfigRoutes } from "@/controllers/admin-config/controller";
 import { registerAdminRoutes } from "@/controllers/admin/controller";
 import { registerMapRoutes } from "@/controllers/map/controller";
 import { registerReplayRoutes } from "@/controllers/replay/controller";
@@ -74,6 +75,7 @@ await app.register(registerTransportRoutes);
 await app.register(registerStopRoutes);
 await app.register(registerTripRoutes);
 await app.register(registerReplayRoutes);
+await app.register(registerAdminConfigRoutes);
 await app.register(registerAdminRoutes);
 await app.register(registerWsRoutes);
 
