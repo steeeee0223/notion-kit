@@ -1,3 +1,6 @@
+import { simulatorAdapter } from "@/services/transport/simulator-adapter";
+import { transitlandAdapter } from "@/services/transport/transitland-adapter";
+
 import { providerNotFound, unsupportedCapability } from "./errors";
 import type {
   ProviderCapability,
@@ -34,3 +37,8 @@ export function assertProviderCapability(
     throw unsupportedCapability(provider.key, capability);
   }
 }
+
+export const transportProviderRegistry = createTransportProviderRegistry([
+  transitlandAdapter,
+  simulatorAdapter,
+]);

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { ProviderError } from "./errors";
 import {
@@ -7,14 +7,34 @@ import {
 } from "./registry";
 import type { TransportProviderAdapter } from "./types";
 
-const simulator: TransportProviderAdapter = {
-  key: "simulator",
-  displayName: "Simulator",
-  kind: "simulator",
-  capabilities: ["static_schedule", "realtime_vehicles"],
-  requiredCredentialKeys: [],
-  healthCheck: async () => ({ ok: true }),
-};
+const adapters = vi.hoisted(() => ({
+  simulator: {
+    key: "simulator",
+    displayName: "Simulator",
+    kind: "simulator",
+    capabilities: ["static_schedule", "realtime_vehicles"],
+    requiredCredentialKeys: [],
+    healthCheck: async () => ({ ok: true }),
+  },
+  transitland: {
+    key: "transitland",
+    displayName: "Transitland",
+    kind: "gtfs",
+    capabilities: ["static_schedule"],
+    requiredCredentialKeys: ["transit_api_key"],
+    healthCheck: async () => ({ ok: true }),
+  },
+}));
+
+vi.mock("@/services/transport/simulator-adapter", () => ({
+  simulatorAdapter: adapters.simulator,
+}));
+
+vi.mock("@/services/transport/transitland-adapter", () => ({
+  transitlandAdapter: adapters.transitland,
+}));
+
+const simulator = adapters.simulator as TransportProviderAdapter;
 
 describe("transport provider registry", () => {
   it("returns a provider by key", () => {
