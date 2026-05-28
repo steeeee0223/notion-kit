@@ -190,6 +190,38 @@ const route = {
   },
 } as const;
 
+const stop = {
+  type: "object",
+  properties: {
+    id: { type: "string", example: examples.stopId },
+    stop_id: { type: "string", example: "12TH" },
+    stop_name: {
+      type: ["string", "null"],
+      example: "12th Street / Oakland City Center",
+    },
+    tts_stop_name: { type: ["string", "null"] },
+    stop_desc: { type: ["string", "null"] },
+    stop_code: { type: ["string", "null"], example: "BART-12TH" },
+    stop_url: { type: ["string", "null"] },
+    zone_id: { type: ["string", "null"] },
+    parent_stop_id: { type: ["string", "null"] },
+    stop_timezone: { type: ["string", "null"] },
+    platform_code: { type: ["string", "null"] },
+    level_id: { type: ["string", "null"] },
+    stop_access: { type: ["integer", "null"] },
+    lat: { type: ["number", "null"], example: 37.8032 },
+    lon: { type: ["number", "null"], example: -122.0169 },
+    location_type: { type: "integer", example: 0 },
+    wheelchair_boarding: { type: "integer", example: 1 },
+    feed_onestop_id: {
+      type: "string",
+      example: examples.feedOnestopId,
+    },
+    alerts: { type: "array", items: alert },
+  },
+} as const;
+
+
 const routeTripSummary = {
   type: "object",
   properties: {
@@ -517,36 +549,7 @@ const baseOpenApi = {
         properties: {
           stops: {
             type: "array",
-            items: {
-              type: "object",
-              properties: {
-                id: { type: "string", example: examples.stopId },
-                stop_id: { type: "string", example: "12TH" },
-                stop_name: {
-                  type: ["string", "null"],
-                  example: "12th Street / Oakland City Center",
-                },
-                tts_stop_name: { type: ["string", "null"] },
-                stop_desc: { type: ["string", "null"] },
-                stop_code: { type: ["string", "null"], example: "BART-12TH" },
-                stop_url: { type: ["string", "null"] },
-                zone_id: { type: ["string", "null"] },
-                parent_stop_id: { type: ["string", "null"] },
-                stop_timezone: { type: ["string", "null"] },
-                platform_code: { type: ["string", "null"] },
-                level_id: { type: ["string", "null"] },
-                stop_access: { type: ["integer", "null"] },
-                lat: { type: ["number", "null"], example: 37.8032 },
-                lon: { type: ["number", "null"], example: -122.0169 },
-                location_type: { type: "integer", example: 0 },
-                wheelchair_boarding: { type: "integer", example: 1 },
-                feed_onestop_id: {
-                  type: "string",
-                  example: examples.feedOnestopId,
-                },
-                alerts: { type: "array", items: alert },
-              },
-            },
+            items: stop,
           },
           meta: {
             type: "object",
@@ -658,7 +661,7 @@ const baseOpenApi = {
       200: {
         type: "object",
         properties: {
-          stops: { type: "array", items: { type: "object" } },
+          stops: { type: "array", items: stop },
           meta: { type: "object", additionalProperties: true },
         },
       },
