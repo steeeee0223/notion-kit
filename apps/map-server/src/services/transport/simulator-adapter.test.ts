@@ -5,7 +5,7 @@ import { simulatorAdapter } from "./simulator-adapter";
 import type { ProviderContext } from "./types";
 
 const context: ProviderContext = {
-  configUser: "test",
+  configAdminToken: "test",
   credentials: {},
   log: console as unknown as FastifyBaseLogger,
 };

@@ -170,5 +170,5 @@ function getTransportProvider(
 ): MapServerTransportProviderId {
   return isMapServerTransportProvider(activeAdapter)
     ? activeAdapter
-    : "transitland";
+    : "transit";
 }

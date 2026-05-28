@@ -21,7 +21,7 @@ import {
 import { missingCredentials } from "./errors";
 import type { ProviderContext, TransportProviderAdapter } from "./types";
 
-const PROVIDER_KEY = "transitland";
+const PROVIDER_KEY = "transit";
 const TRANSITLAND_API_KEY = "transit_api_key";
 
 export const transitlandAdapter: TransportProviderAdapter = {

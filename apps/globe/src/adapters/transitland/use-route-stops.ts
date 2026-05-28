@@ -78,7 +78,7 @@ export function useRouteStops(
       const id = tripId ?? fallbackRouteId ?? null;
       if (!id) return [];
 
-      if (provider !== "transitland" && fallbackRouteId) {
+      if (provider !== "transit" && fallbackRouteId) {
         const feedOnestopId = getFeedOnestopId(fallbackRouteId);
         if (!feedOnestopId) return [];
         const { data, error } = await mapApiClient<StopsResponse>(

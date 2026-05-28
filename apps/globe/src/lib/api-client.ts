@@ -61,7 +61,7 @@ export async function syncRealtimeSnapshots(
 ) {
   const response = await fetch(
     `${env.VITE_MAP_API_BASE_URL}${adminTransportProviderPath(
-      input.provider ?? "transitland",
+      input.provider ?? "transit",
       "/sync/realtime",
     )}`,
     {
@@ -88,7 +88,7 @@ export async function syncStaticTransitData(input: {
   provider?: MapServerTransportProviderId;
 }) {
   return postAdminSync<StaticSyncResponse>(
-    adminTransportProviderPath(input.provider ?? "transitland", "/sync/static"),
+    adminTransportProviderPath(input.provider ?? "transit", "/sync/static"),
     {
       bbox: input.bbox,
       feedIds: input.feedIds,

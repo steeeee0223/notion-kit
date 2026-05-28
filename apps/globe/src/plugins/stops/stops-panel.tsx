@@ -185,7 +185,7 @@ function getTransportProvider(
 ): MapServerTransportProviderId {
   return isMapServerTransportProvider(activeAdapter)
     ? activeAdapter
-    : "transitland";
+    : "transit";
 }
 
 function toStopSearchItem(stop: RouteStop): TransitSearchItem<RouteStop> {

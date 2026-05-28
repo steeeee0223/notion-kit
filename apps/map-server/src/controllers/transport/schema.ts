@@ -13,10 +13,10 @@ export {
 export { departuresQuerySchema } from "@/controllers/stops/schema";
 
 export const providerParamsSchema = z.object({
-  provider: z.string().min(1),
+  provider: z.enum(["transit", "simulator"]),
 });
 
 export const providerStopParamsSchema = z.object({
-  provider: z.string().min(1),
+  provider: z.enum(["transit", "simulator"]),
   stopId: scopedIdSchema,
 });

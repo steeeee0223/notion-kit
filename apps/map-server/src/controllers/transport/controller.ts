@@ -208,14 +208,14 @@ async function buildProviderContext(
   try {
     const activeConfig = await getActiveConfig(app.env.MAP_ADMIN_TOKEN);
     return {
-      configUser: activeConfig.adminToken,
+      configAdminToken: activeConfig.adminToken,
       credentials: activeConfig.credentials,
       log: app.log,
     };
   } catch (error) {
     if (error instanceof ApiError && error.code === "NOT_FOUND") {
       return {
-        configUser: getConfigAdminToken(app.env.MAP_ADMIN_TOKEN),
+        configAdminToken: getConfigAdminToken(app.env.MAP_ADMIN_TOKEN),
         credentials: {},
         log: app.log,
       };

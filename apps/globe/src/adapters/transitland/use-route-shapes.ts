@@ -37,7 +37,7 @@ export function useRouteShapes(
       if (!tripId && !fallbackRouteId) return [];
 
       const { data, error } =
-        provider === "transitland" && tripId
+        provider === "transit" && tripId
           ? await mapApiClient<TripRouteResponse>(
               `/api/trips/${encodeURIComponent(tripId)}/route`,
               { query: { include_shape: true } },

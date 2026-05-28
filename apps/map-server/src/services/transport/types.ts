@@ -19,7 +19,7 @@ export type ProviderKind =
   | "flight_reserved";
 
 export interface ProviderContext {
-  configUser: string;
+  configAdminToken: string;
   credentials: CredentialMap;
   log: FastifyBaseLogger;
 }

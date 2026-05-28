@@ -1,9 +1,9 @@
-export type MapServerTransportProviderId = "transitland" | "simulator";
+export type MapServerTransportProviderId = "transit" | "simulator";
 
 export function isMapServerTransportProvider(
   value: string,
 ): value is MapServerTransportProviderId {
-  return value === "transitland" || value === "simulator";
+  return value === "transit" || value === "simulator";
 }
 
 export function transportProviderPath(

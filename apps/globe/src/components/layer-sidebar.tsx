@@ -27,7 +27,7 @@ const SOURCES: Record<
     label: "BKK Futar (TODO)",
     icon: <Icon.Map className="size-4 fill-icon" />,
   },
-  transitland: {
+  transit: {
     label: "Transitland Global",
     icon: <Icon.Globe className="size-4 fill-icon" />,
   },

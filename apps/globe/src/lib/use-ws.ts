@@ -72,7 +72,7 @@ export function useWs() {
   const ws = useRef<WebSocket | null>(null);
   const bboxRef = useRef(bbox);
   const enabled =
-    vehiclesEnabled && activeAdapter === "transitland" && !!bbox && zoom >= 8;
+    vehiclesEnabled && activeAdapter === "transit" && !!bbox && zoom >= 8;
 
   useEffect(() => {
     bboxRef.current = bbox;
@@ -127,7 +127,7 @@ export function useWs() {
               .setAutoSyncMessage(msg.payload.meta?.auto_sync?.message ?? null);
             const vehicles = toVehiclePositions(msg.payload.vehicles);
             queryClient.setQueryData<VehiclePosition[]>(
-              queryKey.mapServer.vehicles("transitland", bboxRef.current),
+              queryKey.mapServer.vehicles("transit", bboxRef.current),
               (prev) => mergeVehicles(prev, vehicles),
             );
           }

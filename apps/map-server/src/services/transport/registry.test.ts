@@ -14,15 +14,15 @@ const adapters = vi.hoisted(() => ({
     kind: "simulator",
     capabilities: ["static_schedule", "realtime_vehicles"],
     requiredCredentialKeys: [],
-    healthCheck: async () => ({ ok: true }),
+    healthCheck: vi.fn(),
   },
   transitland: {
-    key: "transitland",
+    key: "transit",
     displayName: "Transitland",
     kind: "gtfs",
     capabilities: ["static_schedule"],
     requiredCredentialKeys: ["transit_api_key"],
-    healthCheck: async () => ({ ok: true }),
+    healthCheck: vi.fn(),
   },
 }));
 
@@ -37,6 +37,11 @@ vi.mock("@/services/transport/transitland-adapter", () => ({
 const simulator = adapters.simulator as TransportProviderAdapter;
 
 describe("transport provider registry", () => {
+  it("uses transit as the public Transitland-backed provider slug", () => {
+    const registry = createTransportProviderRegistry([adapters.transitland as TransportProviderAdapter]);
+    expect(registry.get("transit")).toBe(adapters.transitland);
+  });
+
   it("returns a provider by key", () => {
     const registry = createTransportProviderRegistry([simulator]);
 
@@ -60,3 +65,4 @@ describe("transport provider registry", () => {
     );
   });
 });
+

@@ -38,7 +38,7 @@ interface AdapterStore {
 }
 
 export const useAdapterStore = create<AdapterStore>((set) => ({
-  activeAdapter: "transitland",
+  activeAdapter: "transit",
   setActiveAdapter: (id) => set({ activeAdapter: id }),
 }));
 
@@ -121,5 +121,5 @@ function getActiveTransportProvider(
 ): MapServerTransportProviderId {
   return isMapServerTransportProvider(activeAdapter)
     ? activeAdapter
-    : "transitland";
+    : "transit";
 }

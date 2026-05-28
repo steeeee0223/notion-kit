@@ -75,7 +75,7 @@ export const useVehicleDiagnosticsStore = create<VehicleDiagnosticsState>(
 );
 
 export function useVehiclePositions(
-  provider: MapServerTransportProviderId = "transitland",
+  provider: MapServerTransportProviderId = "transit",
   enabled = true,
 ) {
   const { bbox, zoom } = useTransitlandBBoxStore();
