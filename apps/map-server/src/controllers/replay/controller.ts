@@ -179,7 +179,9 @@ async function buildTripStopTimes(
   currentStopSequence?: number | null,
 ) {
   const stopTimeRows = await getStopTimesByTrip(tripId);
-  const stopMap = await getStopsByIds(stopTimeRows.map((st) => st.stopId));
+  const stopMap = await getStopsByIds(
+    stopTimeRows.flatMap((st) => (st.stopId ? [st.stopId] : [])),
+  );
   const updates = await getTripUpdates({ tripIds: [tripId] });
   const updateByStop = new Map(
     updates.map((update) => [update.stopId ?? "", update]),
@@ -187,8 +189,8 @@ async function buildTripStopTimes(
   return stopTimeRows.map((st) =>
     toTripStopTimeResponse(
       st,
-      stopMap.get(st.stopId),
-      updateByStop.get(st.stopId),
+      st.stopId ? stopMap.get(st.stopId) : undefined,
+      updateByStop.get(st.stopId ?? ""),
       true,
       currentStopSequence,
     ),

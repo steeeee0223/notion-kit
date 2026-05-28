@@ -1,112 +1,80 @@
-import type { FastifyInstance, FastifyRequest } from "fastify";
+import type {
+  FastifyInstance,
+  FastifyReply,
+  FastifyRequest,
+  FastifySchema,
+} from "fastify";
 
-import { badRequest, sendError, unauthorized } from "@/lib/api-error";
+import { sendError, unauthorized } from "@/lib/api-error";
 import { openApi } from "@/openapi";
-import { buildStaticImportResult } from "@/services/gtfs/data-transfer";
-import { importGtfsStaticFeed } from "@/services/gtfs/static-import";
-import { syncRealtimeFeeds } from "@/services/realtime/gtfs-rt";
-import { getFeedsByIds, runRetention } from "@/services/repository";
+import { getActiveConfig, getConfigAdminToken } from "@/services/config";
+import { runRetention } from "@/services/repository";
+import { unsupportedCapability } from "@/services/transport/errors";
 import {
-  getFeedOnestopId,
-  getFeedVersion,
-  TransitlandClient,
-} from "@/services/transitland/client";
+  assertProviderCapability,
+  transportProviderRegistry,
+} from "@/services/transport/registry";
+import type {
+  ProviderCapability,
+  ProviderContext,
+  TransportProviderAdapter,
+} from "@/services/transport/types";
 
 import { realtimeSyncBodySchema, staticSyncBodySchema } from "./schema";
 
+interface OpenApiExtension {
+  adminTransportValidate: Record<string, FastifySchema>;
+  adminTransportStaticSync: Record<string, FastifySchema>;
+  adminTransportRealtimeSync: Record<string, FastifySchema>;
+}
+
+const api = openApi as typeof openApi & OpenApiExtension;
+
+const documentedProviders = ["transit", "simulator"] as const;
+const hiddenOpenApiSchema = { hide: true } as FastifySchema;
+
 export function registerAdminRoutes(app: FastifyInstance) {
+  for (const provider of documentedProviders) {
+    app.post(
+      `/api/admin/transport/${provider}/validate`,
+      { schema: api.adminTransportValidate[provider] },
+      (request, reply) => handleValidate(app, provider, request, reply),
+    );
+    app.post(
+      `/api/admin/transport/${provider}/sync/static`,
+      { schema: api.adminTransportStaticSync[provider] },
+      (request, reply) => handleStaticSync(app, provider, request, reply),
+    );
+    app.post(
+      `/api/admin/transport/${provider}/sync/realtime`,
+      { schema: api.adminTransportRealtimeSync[provider] },
+      (request, reply) => handleRealtimeSync(app, provider, request, reply),
+    );
+  }
+
+  // Keep compatibility generic paths
   app.post(
-    "/api/admin/sync/static",
-    { schema: openApi.adminStaticSync },
+    "/api/admin/transport/:provider/validate",
+    { schema: hiddenOpenApiSchema },
     async (request, reply) => {
-      try {
-        assertAdmin(app, request);
-        const body = staticSyncBodySchema.parse(request.body ?? {});
-        const transitland = new TransitlandClient(app.env.TRANS_TRANSITLAND);
-        const feeds = await transitland.discoverFeeds({
-          bbox: body.bbox,
-          feedIds: body.feedIds,
-        });
-        if (feeds.length === 0) {
-          throw badRequest("No Transitland GTFS feeds matched the request");
-        }
-
-        const existingFeeds = await getFeedsByIds(
-          feeds.map(getFeedOnestopId).filter(Boolean),
-        );
-        const synced = [];
-        const errors = [];
-        let transitlandApiCallsUsed = body.feedIds?.length ?? 1;
-
-        for (const feed of feeds) {
-          const feedOnestopId = getFeedOnestopId(feed);
-          const sha1 = getFeedVersion(feed)?.sha1 ?? null;
-          const existingSha1 =
-            existingFeeds.get(feedOnestopId)?.sha1Current ?? null;
-          const started = Date.now();
-          try {
-            if (!body.force && sha1 && sha1 === existingSha1) {
-              synced.push(
-                buildStaticImportResult(
-                  feedOnestopId,
-                  sha1,
-                  "skipped",
-                  started,
-                ),
-              );
-              continue;
-            }
-            const zipBuffer =
-              await transitland.downloadLatestFeedVersion(feedOnestopId);
-            transitlandApiCallsUsed += 1;
-            synced.push(
-              await importGtfsStaticFeed({
-                feed,
-                zipBuffer,
-                force: body.force,
-                existingSha1,
-              }),
-            );
-          } catch (error) {
-            errors.push({
-              feedOnestopId,
-              message: error instanceof Error ? error.message : String(error),
-            });
-            synced.push(
-              buildStaticImportResult(feedOnestopId, sha1, "error", started),
-            );
-          }
-        }
-
-        return reply.send({
-          synced,
-          transitlandApiCallsUsed,
-          errors,
-        });
-      } catch (error) {
-        return sendError(reply, error);
-      }
+      const { provider } = (request.params ?? {}) as { provider: string };
+      return handleValidate(app, provider, request, reply);
     },
   );
-
   app.post(
-    "/api/admin/sync/realtime",
-    { schema: openApi.adminRealtimeSync },
+    "/api/admin/transport/:provider/sync/static",
+    { schema: hiddenOpenApiSchema },
     async (request, reply) => {
-      try {
-        assertAdmin(app, request);
-        const body = realtimeSyncBodySchema.parse(request.body ?? {});
-        const response = await syncRealtimeFeeds({
-          feedIds: body.feedIds,
-          timeoutMs: app.env.MAP_RT_POLL_TIMEOUT_MS,
-        });
-        app.wsHub.broadcastVehicles().catch((error: unknown) => {
-          app.log.error(error, "Failed to broadcast realtime vehicles");
-        });
-        return reply.send(response);
-      } catch (error) {
-        return sendError(reply, error);
-      }
+      const { provider } = (request.params ?? {}) as { provider: string };
+      return handleStaticSync(app, provider, request, reply);
+    },
+  );
+  app.post(
+    "/api/admin/transport/:provider/sync/realtime",
+    { schema: hiddenOpenApiSchema },
+    async (request, reply) => {
+      const { provider } = (request.params ?? {}) as { provider: string };
+      return handleRealtimeSync(app, provider, request, reply);
     },
   );
 
@@ -130,5 +98,104 @@ function assertAdmin(app: FastifyInstance, request: FastifyRequest) {
   const header = request.headers.authorization;
   if (header !== `Bearer ${app.env.MAP_ADMIN_TOKEN}`) {
     throw unauthorized();
+  }
+}
+
+async function buildProviderContext(
+  app: FastifyInstance,
+): Promise<ProviderContext> {
+  try {
+    const activeConfig = await getActiveConfig(app.env.MAP_ADMIN_TOKEN);
+    return {
+      configAdminToken: activeConfig.adminToken,
+      credentials: activeConfig.credentials,
+      log: app.log,
+    };
+  } catch {
+    return {
+      configAdminToken: getConfigAdminToken(app.env.MAP_ADMIN_TOKEN),
+      credentials: {},
+      log: app.log,
+    };
+  }
+}
+
+type TransportSyncMethod = keyof Pick<
+  TransportProviderAdapter,
+  "syncStatic" | "syncRealtime"
+>;
+
+function assertProviderMethod<TMethod extends TransportSyncMethod>(
+  provider: TransportProviderAdapter,
+  capability: ProviderCapability,
+  method: TMethod,
+): asserts provider is TransportProviderAdapter &
+  Required<Pick<TransportProviderAdapter, TMethod>> {
+  assertProviderCapability(provider, capability);
+  if (typeof provider[method] !== "function") {
+    throw unsupportedCapability(provider.key, capability);
+  }
+}
+
+async function handleValidate(
+  app: FastifyInstance,
+  providerKey: string,
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  try {
+    assertAdmin(app, request);
+    const provider = transportProviderRegistry.get(providerKey);
+    return reply.send(
+      await provider.healthCheck(await buildProviderContext(app)),
+    );
+  } catch (error) {
+    return sendError(reply, error);
+  }
+}
+
+async function handleStaticSync(
+  app: FastifyInstance,
+  providerKey: string,
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  try {
+    assertAdmin(app, request);
+    const provider = transportProviderRegistry.get(providerKey);
+    assertProviderMethod(provider, "static_schedule", "syncStatic");
+    const body = staticSyncBodySchema.parse(request.body ?? {});
+    return reply.send(
+      await provider.syncStatic(body, await buildProviderContext(app)),
+    );
+  } catch (error) {
+    return sendError(reply, error);
+  }
+}
+
+async function handleRealtimeSync(
+  app: FastifyInstance,
+  providerKey: string,
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  try {
+    assertAdmin(app, request);
+    const provider = transportProviderRegistry.get(providerKey);
+    assertProviderMethod(provider, "realtime_vehicles", "syncRealtime");
+    const body = realtimeSyncBodySchema.parse(request.body ?? {});
+    const response = await provider.syncRealtime(
+      {
+        ...body,
+        timeoutMs: app.env.MAP_RT_POLL_TIMEOUT_MS,
+      },
+      await buildProviderContext(app),
+    );
+    app.wsHub.broadcastVehicles().catch((error: unknown) => {
+      app.log.error(error, "Failed to broadcast realtime vehicles");
+    });
+    return reply.send(response);
+  } catch (error) {
+    return sendError(reply, error);
   }
 }

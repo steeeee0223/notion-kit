@@ -17,7 +17,7 @@ interface RtEntity {
     currentStopSequence?: number;
     currentStatus?: unknown;
     occupancyStatus?: unknown;
-    timestamp?: number | LongLike;
+    timestamp?: number | string | LongLike;
   };
   tripUpdate?: {
     trip?: {
@@ -36,7 +36,10 @@ interface RtEntity {
   alert?: {
     cause?: unknown;
     effect?: unknown;
-    activePeriod?: { start?: number | LongLike; end?: number | LongLike }[];
+    activePeriod?: {
+      start?: number | string | LongLike;
+      end?: number | string | LongLike;
+    }[];
     informedEntity?: {
       routeId?: string;
       stopId?: string;
@@ -191,13 +194,14 @@ function translatedText(
   );
 }
 
-function timestampOrNull(value: number | LongLike | undefined) {
+function timestampOrNull(value: number | string | LongLike | undefined) {
   const seconds = longToNumber(value);
   return seconds ? new Date(seconds * 1000) : null;
 }
 
-function longToNumber(value: number | LongLike | undefined) {
+function longToNumber(value: number | string | LongLike | undefined) {
   if (typeof value === "number") return value;
+  if (typeof value === "string") return Number(value);
   if (value?.toNumber) return value.toNumber();
   if (value) return Number(value.toString());
   return null;
@@ -210,5 +214,21 @@ function enumName(value: unknown) {
 }
 
 function scopedId(feedOnestopId: string, id: string) {
-  return `${feedOnestopId}:${id}`;
+  const decoded = decodeRepeatedly(id);
+  if (decoded.startsWith(`${feedOnestopId}:`)) return decoded;
+  return `${feedOnestopId}:${decoded}`;
+}
+
+function decodeRepeatedly(value: string) {
+  let decoded = value;
+  for (let i = 0; i < 3; i += 1) {
+    try {
+      const next = decodeURIComponent(decoded);
+      if (next === decoded) break;
+      decoded = next;
+    } catch {
+      break;
+    }
+  }
+  return decoded;
 }

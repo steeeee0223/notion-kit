@@ -1,0 +1,53 @@
+{
+  "name": "@notion-kit/globe",
+  "version": "1.0.0-beta.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b && vite build",
+    "clean": "git clean -xdf .turbo dist node_modules",
+    "dev": "pnpm with-env vite",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "preview": "pnpm with-env vite preview",
+    "typecheck": "tsc --noEmit",
+    "with-env": "dotenv -e ../../.env --"
+  },
+  "prettier": "@notion-kit/prettier-config",
+  "dependencies": {
+    "@better-fetch/fetch": "catalog:",
+    "@notion-kit/cn": "workspace:*",
+    "@notion-kit/icons": "workspace:*",
+    "@notion-kit/map": "workspace:*",
+    "@notion-kit/ui": "workspace:*",
+    "@notion-kit/utils": "workspace:*",
+    "@t3-oss/env-core": "catalog:env",
+    "@tanstack/react-query": "catalog:ui",
+    "@tanstack/react-router": "catalog:tanstack-router",
+    "date-fns": "catalog:fns",
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19",
+    "zod": "catalog:",
+    "zustand": "catalog:ui"
+  },
+  "devDependencies": {
+    "@notion-kit/config": "workspace:*",
+    "@notion-kit/eslint-config": "workspace:*",
+    "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tailwind-config": "workspace:*",
+    "@notion-kit/tsconfig": "workspace:*",
+    "@tailwindcss/postcss": "catalog:tailwind-v4",
+    "@tanstack/router-devtools": "catalog:tanstack-router",
+    "@tanstack/router-plugin": "catalog:tanstack-router",
+    "@types/node": "catalog:node",
+    "@types/react": "catalog:react19",
+    "@types/react-dom": "catalog:react19",
+    "@vitejs/plugin-react": "catalog:test",
+    "dotenv-cli": "catalog:env",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "tailwindcss": "catalog:tailwind-v4",
+    "typescript": "catalog:",
+    "vite": "^8.0.13"
+  }
+}

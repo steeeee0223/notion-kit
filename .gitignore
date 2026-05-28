@@ -67,4 +67,5 @@ storybook-static/
 # agents
 .agent/
 .agents/
+.superpowers/
 skills-lock.json

@@ -9,6 +9,7 @@ import {
   type Bbox,
 } from "@/lib/schemas";
 import { buildStopDepartures } from "@/services/departures";
+import { maybeAutoSyncRealtimeSnapshots } from "@/services/realtime/auto-sync";
 import {
   getLatestVehicleSnapshots,
   getReplayVehicleRows,
@@ -67,10 +68,18 @@ interface ClientState {
 export class WsHub {
   private readonly clients = new Map<WebSocketLike, ClientState>();
 
+  private pollTimer?: ReturnType<typeof setInterval>;
+
   constructor(
     private readonly env: MapServerEnv,
     private readonly logger: FastifyBaseLogger,
-  ) {}
+  ) {
+    this.pollTimer = setInterval(() => {
+      this.pollRealtime().catch((err) =>
+        this.logger.error(err, "Background poll error"),
+      );
+    }, 15000);
+  }
 
   add(socket: WebSocketLike) {
     const state: ClientState = { socket };
@@ -98,13 +107,16 @@ export class WsHub {
       (client) => client.vehicles,
     );
     if (subscribed.length === 0) return;
-    const vehicles = await getLatestVehicleSnapshots({});
-    const routes = await getRoutesByIds(
-      vehicles.flatMap((vehicle) => (vehicle.routeId ? [vehicle.routeId] : [])),
-    );
+
     for (const client of subscribed) {
       const subscription = client.vehicles;
       if (!subscription) continue;
+      const vehicles = await this.getVehiclesForSubscription(subscription);
+      const routes = await getRoutesByIds(
+        vehicles.flatMap((vehicle) =>
+          vehicle.routeId ? [vehicle.routeId] : [],
+        ),
+      );
       const filtered = vehicles.filter((vehicle) => {
         const route = vehicle.routeId ? routes.get(vehicle.routeId) : undefined;
         const feedMatches =
@@ -131,9 +143,34 @@ export class WsHub {
             ),
           ),
           alerts: [],
+          meta: {
+            snapshot_available: filtered.length > 0,
+            ...(filtered.length === 0
+              ? {
+                  message:
+                    "No recent vehicle snapshots matched the current viewport or filters.",
+                }
+              : {}),
+          },
         },
       });
     }
+  }
+
+  private async getVehiclesForSubscription(subscription: VehicleSubscription) {
+    if (subscription.feedOnestopIds?.length) {
+      const chunks = await Promise.all(
+        [...new Set(subscription.feedOnestopIds)].map((feedOnestopId) =>
+          getLatestVehicleSnapshots({
+            bbox: subscription.bbox,
+            feedOnestopId,
+          }),
+        ),
+      );
+      return uniqueVehicleSnapshots(chunks.flat());
+    }
+
+    return getLatestVehicleSnapshots({ bbox: subscription.bbox });
   }
 
   private async handleMessage(state: ClientState, rawMessage: Buffer | string) {
@@ -185,6 +222,34 @@ export class WsHub {
       payload: { interval_seconds: 15, snapshot_age_seconds: 0 },
     });
     await this.broadcastVehicles();
+    this.pollRealtime().catch((err) =>
+      this.logger.error(err, "Initial poll error"),
+    );
+  }
+
+  private async pollRealtime() {
+    const subscribed = [...this.clients.values()].filter(
+      (client) => client.vehicles,
+    );
+    if (subscribed.length === 0) return;
+
+    let updated = false;
+    for (const client of subscribed) {
+      if (!client.vehicles) continue;
+      const autoSync = await maybeAutoSyncRealtimeSnapshots({
+        bbox: client.vehicles.bbox,
+        env: this.env,
+        feedIds: client.vehicles.feedOnestopIds,
+        logger: this.logger,
+      });
+      if (autoSync.attempted && (autoSync.vehicle_positions_count ?? 0) > 0) {
+        updated = true;
+      }
+    }
+
+    if (updated) {
+      await this.broadcastVehicles();
+    }
   }
 
   private async handleStopDeparturesMessage(
@@ -415,6 +480,20 @@ function parseEnvelope(rawMessage: Buffer | string): Envelope {
     id: parsed.id,
     payload: parsed.payload,
   };
+}
+
+function uniqueVehicleSnapshots(
+  rows: Awaited<ReturnType<typeof getLatestVehicleSnapshots>>,
+) {
+  const byVehicle = new Map<
+    string,
+    Awaited<ReturnType<typeof getLatestVehicleSnapshots>>[number]
+  >();
+  for (const row of rows) {
+    const key = row.vehicleId ?? `${row.tripId ?? "unknown"}:${row.id}`;
+    if (!byVehicle.has(key)) byVehicle.set(key, row);
+  }
+  return [...byVehicle.values()];
 }
 
 function parseBboxPayload(value: unknown) {

@@ -3,6 +3,7 @@ import { z } from "zod/v4";
 
 import { db } from "@/db";
 import {
+  agencies,
   alertSnapshots,
   cache,
   calendar,
@@ -24,6 +25,7 @@ type DbClient = Pick<typeof db, "delete" | "insert" | "select">;
 
 export interface StaticFeedData {
   feeds: (typeof feeds.$inferInsert)[];
+  agencies: (typeof agencies.$inferInsert)[];
   stops: (typeof stops.$inferInsert)[];
   routes: (typeof routes.$inferInsert)[];
   shapes: (typeof shapes.$inferInsert)[];
@@ -102,6 +104,28 @@ export async function findStops(options: {
     .limit(options.limit);
 }
 
+export async function findRoutes(options: {
+  feedOnestopId: string;
+  routeType?: number;
+  limit: number;
+}) {
+  const conditions = [eq(routes.feedOnestopId, options.feedOnestopId)];
+  if (typeof options.routeType === "number") {
+    conditions.push(eq(routes.routeType, options.routeType));
+  }
+  return db
+    .select()
+    .from(routes)
+    .where(and(...conditions))
+    .orderBy(
+      sql`${routes.routeSortOrder} nulls last`,
+      sql`${routes.routeShortName} nulls last`,
+      sql`${routes.routeLongName} nulls last`,
+      routes.id,
+    )
+    .limit(options.limit);
+}
+
 export async function getStop(stopId: string) {
   const [row] = await db
     .select()
@@ -138,6 +162,70 @@ export async function getTrip(tripId: string) {
     .limit(1);
   if (!row) throw notFound("Trip not found", { tripId });
   return row;
+}
+
+export async function getTripsByRouteId(routeId: string, limitCount = 1) {
+  return db
+    .select()
+    .from(trips)
+    .where(eq(trips.routeId, routeId))
+    .limit(limitCount);
+}
+
+export async function findTripsByRoute(options: {
+  routeId: string;
+  serviceIds?: string[];
+  directionId?: number;
+  limit: number;
+}) {
+  const conditions = [eq(trips.routeId, options.routeId)];
+  if (options.serviceIds?.length) {
+    conditions.push(inArray(trips.serviceId, [...new Set(options.serviceIds)]));
+  }
+  if (typeof options.directionId === "number") {
+    conditions.push(eq(trips.directionId, options.directionId));
+  }
+  return db
+    .select()
+    .from(trips)
+    .where(and(...conditions))
+    .orderBy(trips.tripId)
+    .limit(options.limit);
+}
+
+export async function findTripsByRouteInTimeRange(options: {
+  routeId: string;
+  serviceIds: string[];
+  startTime: string;
+  endTime: string;
+  directionId?: number;
+  limit: number;
+}) {
+  if (options.serviceIds.length === 0) return [];
+
+  const conditions = [
+    eq(trips.routeId, options.routeId),
+    inArray(trips.serviceId, [...new Set(options.serviceIds)]),
+    gte(stopTimes.departureTime, options.startTime),
+    lte(stopTimes.departureTime, options.endTime),
+  ];
+  if (typeof options.directionId === "number") {
+    conditions.push(eq(trips.directionId, options.directionId));
+  }
+
+  return db
+    .select({
+      trip: trips,
+      firstDepartureTime: sql<string | null>`min(${stopTimes.departureTime})`,
+      lastDepartureTime: sql<string | null>`max(${stopTimes.departureTime})`,
+      stopCount: sql<number>`count(*)`,
+    })
+    .from(trips)
+    .innerJoin(stopTimes, eq(stopTimes.tripId, trips.id))
+    .where(and(...conditions))
+    .groupBy(trips.id)
+    .orderBy(sql`min(${stopTimes.departureTime})`, trips.id)
+    .limit(options.limit);
 }
 
 export async function getShape(shapeId: string) {
@@ -441,8 +529,38 @@ export async function getFeedsByIds(feedIds: string[]) {
   return new Map(rows.map((feed) => [feed.onestopId, feed]));
 }
 
+export async function getStaticFeedCounts(feedOnestopId: string) {
+  const [stopsCount, routesCount, tripsCount, stopTimesCount] =
+    await Promise.all([
+      countRows(stops, eq(stops.feedOnestopId, feedOnestopId)),
+      countRows(routes, eq(routes.feedOnestopId, feedOnestopId)),
+      countRows(trips, eq(trips.feedOnestopId, feedOnestopId)),
+      countRows(
+        stopTimes,
+        sql`${stopTimes.tripId} like ${`${feedOnestopId}:%`}`,
+      ),
+    ]);
+  return {
+    stops: stopsCount,
+    routes: routesCount,
+    trips: tripsCount,
+    stopTimes: stopTimesCount,
+  };
+}
+
 export async function upsertRows(table: string, rows: TableInsert[]) {
   await upsertRowsWithClient(db, table, rows);
+}
+
+async function countRows(
+  table: typeof stops | typeof routes | typeof trips | typeof stopTimes,
+  where: ReturnType<typeof sql>,
+) {
+  const [row] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(table)
+    .where(where);
+  return Number(row?.count ?? 0);
 }
 
 async function upsertRowsWithClient(
@@ -479,10 +597,6 @@ async function upsertRowsWithClient(
   }
 }
 
-export async function insertRows(table: string, rows: TableInsert[]) {
-  await insertRowsWithClient(db, table, rows);
-}
-
 async function insertRowsWithClient(
   client: DbClient,
   table: string,
@@ -490,16 +604,16 @@ async function insertRowsWithClient(
 ) {
   if (rows.length === 0) return;
   const tableMap = getTable(table);
-  for (let start = 0; start < rows.length; start += 1000) {
-    const chunk = rows.slice(start, start + 1000);
+  const chunkSize = getInsertChunkSize(table);
+  for (let start = 0; start < rows.length; start += chunkSize) {
+    const chunk = rows.slice(start, start + chunkSize);
     await client.insert(tableMap).values(chunk as never);
   }
 }
 
-export async function deleteFeedStaticRows(feedOnestopId: string) {
-  await db.transaction(async (tx) => {
-    await deleteFeedStaticRowsWithClient(tx, feedOnestopId);
-  });
+function getInsertChunkSize(table: string) {
+  if (table === "shapes") return 10;
+  return 1000;
 }
 
 export async function replaceFeedStaticRows(
@@ -508,15 +622,36 @@ export async function replaceFeedStaticRows(
 ) {
   await db.transaction(async (tx) => {
     await deleteFeedStaticRowsWithClient(tx, feedOnestopId);
-    await upsertRowsWithClient(tx, "feeds", rows.feeds);
-    await insertRowsWithClient(tx, "stops", rows.stops);
-    await insertRowsWithClient(tx, "routes", rows.routes);
-    await insertRowsWithClient(tx, "shapes", rows.shapes);
-    await insertRowsWithClient(tx, "trips", rows.trips);
-    await insertRowsWithClient(tx, "stop_times", rows.stopTimes);
-    await insertRowsWithClient(tx, "calendar", rows.calendar);
-    await insertRowsWithClient(tx, "calendar_dates", rows.calendarDates);
+    await insertStaticRowsWithClient(tx, rows, { includeStopTimes: true });
   });
+}
+
+export async function replaceFeedStaticCoreRows(
+  feedOnestopId: string,
+  rows: StaticFeedData,
+) {
+  await db.transaction(async (tx) => {
+    await deleteFeedStaticRowsWithClient(tx, feedOnestopId);
+    await insertStaticRowsWithClient(tx, rows, { includeStopTimes: false });
+  });
+}
+
+async function insertStaticRowsWithClient(
+  client: DbClient,
+  rows: StaticFeedData,
+  options: { includeStopTimes: boolean },
+) {
+  await upsertRowsWithClient(client, "feeds", rows.feeds);
+  await insertRowsWithClient(client, "agencies", rows.agencies);
+  await insertRowsWithClient(client, "stops", rows.stops);
+  await insertRowsWithClient(client, "routes", rows.routes);
+  await insertRowsWithClient(client, "shapes", rows.shapes);
+  await insertRowsWithClient(client, "trips", rows.trips);
+  if (options.includeStopTimes) {
+    await insertRowsWithClient(client, "stop_times", rows.stopTimes);
+  }
+  await insertRowsWithClient(client, "calendar", rows.calendar);
+  await insertRowsWithClient(client, "calendar_dates", rows.calendarDates);
 }
 
 export async function insertRealtimeSnapshotRows(rows: RealtimeSnapshotData) {
@@ -551,6 +686,9 @@ async function deleteFeedStaticRowsWithClient(
   await client.delete(shapes).where(eq(shapes.feedOnestopId, feedOnestopId));
   await client.delete(routes).where(eq(routes.feedOnestopId, feedOnestopId));
   await client
+    .delete(agencies)
+    .where(eq(agencies.feedOnestopId, feedOnestopId));
+  await client
     .delete(calendar)
     .where(eq(calendar.feedOnestopId, feedOnestopId));
   await client
@@ -582,6 +720,7 @@ type DrizzleTable = Parameters<typeof db.insert>[0];
 
 function getTable(table: string): DrizzleTable {
   const map: Record<string, DrizzleTable> = {
+    agencies,
     feeds,
     stops,
     routes,
@@ -624,16 +763,3 @@ function uniqueLatestTripUpdates(
   }
   return [...byTripStop.values()];
 }
-
-export type RepositoryRow =
-  | typeof alertSnapshots.$inferSelect
-  | typeof calendarDates.$inferSelect
-  | typeof calendar.$inferSelect
-  | typeof feeds.$inferSelect
-  | typeof routes.$inferSelect
-  | typeof shapes.$inferSelect
-  | typeof stops.$inferSelect
-  | typeof stopTimes.$inferSelect
-  | typeof trips.$inferSelect
-  | typeof tripUpdateSnapshots.$inferSelect
-  | typeof vehiclePositionSnapshots.$inferSelect;

@@ -44,6 +44,10 @@ const bboxArray = {
   example: examples.bboxArray,
 } as const;
 
+const bboxBody = {
+  anyOf: [bboxQuery, bboxArray],
+} as const;
+
 const alert = {
   type: "object",
   properties: {
@@ -109,8 +113,21 @@ const departure = {
       format: "date",
       example: examples.serviceDate,
     },
+    stop_id: { type: ["string", "null"], example: examples.stopId },
+    location_group_id: { type: ["string", "null"] },
+    location_id: { type: ["string", "null"] },
     scheduled_arrival: { type: ["string", "null"], example: "10:35:00" },
     scheduled_departure: { type: ["string", "null"], example: "10:35:00" },
+    start_pickup_drop_off_window: { type: ["string", "null"] },
+    end_pickup_drop_off_window: { type: ["string", "null"] },
+    pickup_type: { type: ["integer", "null"], example: 0 },
+    drop_off_type: { type: ["integer", "null"], example: 0 },
+    continuous_pickup: { type: ["integer", "null"] },
+    continuous_drop_off: { type: ["integer", "null"] },
+    shape_dist_traveled: { type: ["number", "null"] },
+    timepoint: { type: ["integer", "null"], example: 1 },
+    pickup_booking_rule_id: { type: ["string", "null"] },
+    drop_off_booking_rule_id: { type: ["string", "null"] },
     realtime_arrival_delay: { type: ["integer", "null"], example: 120 },
     realtime_departure_delay: { type: ["integer", "null"], example: 120 },
     estimated_departure: { type: ["string", "null"], example: "10:37:00" },
@@ -123,18 +140,107 @@ const stopTime = {
   type: "object",
   properties: {
     stop_sequence: { type: "integer", example: 1 },
-    stop_id: { type: "string", example: "f-9q9-bart:PITT" },
+    stop_id: { type: ["string", "null"], example: "f-9q9-bart:PITT" },
+    location_group_id: { type: ["string", "null"] },
+    location_id: { type: ["string", "null"] },
     stop_name: { type: ["string", "null"], example: "Pittsburg/Bay Point" },
     lat: { type: ["number", "null"], example: 37.9958 },
     lon: { type: ["number", "null"], example: -121.9448 },
     scheduled_arrival: { type: ["string", "null"], example: "09:00:00" },
     scheduled_departure: { type: ["string", "null"], example: "09:00:00" },
+    stop_headsign: { type: ["string", "null"] },
+    start_pickup_drop_off_window: { type: ["string", "null"] },
+    end_pickup_drop_off_window: { type: ["string", "null"] },
+    pickup_type: { type: ["integer", "null"], example: 0 },
+    drop_off_type: { type: ["integer", "null"], example: 0 },
+    continuous_pickup: { type: ["integer", "null"] },
+    continuous_drop_off: { type: ["integer", "null"] },
+    shape_dist_traveled: { type: ["number", "null"] },
+    timepoint: { type: ["integer", "null"], example: 1 },
+    pickup_booking_rule_id: { type: ["string", "null"] },
+    drop_off_booking_rule_id: { type: ["string", "null"] },
     realtime_arrival_delay: { type: ["integer", "null"], example: null },
     realtime_departure_delay: { type: ["integer", "null"], example: null },
     estimated_departure: { type: ["string", "null"], example: "09:00:00" },
     schedule_relationship: { type: "string", example: "STATIC" },
     is_timepoint: { type: "boolean", example: true },
     stop_status: { type: "string", example: "UPCOMING" },
+  },
+} as const;
+
+const route = {
+  type: "object",
+  properties: {
+    id: { type: "string", example: examples.routeId },
+    feed_onestop_id: { type: "string", example: examples.feedOnestopId },
+    route_id: { type: "string", example: "L1" },
+    agency_id: { type: ["string", "null"] },
+    route_short_name: { type: ["string", "null"], example: "L1" },
+    route_long_name: {
+      type: ["string", "null"],
+      example: "Antioch to SFIA/Millbrae",
+    },
+    route_desc: { type: ["string", "null"] },
+    route_type: { type: ["integer", "null"], example: 1 },
+    route_url: { type: ["string", "null"] },
+    route_color: { type: ["string", "null"], example: "ffff33" },
+    route_text_color: { type: ["string", "null"], example: "000000" },
+    route_sort_order: { type: ["integer", "null"], example: 10 },
+    agency_name: { type: ["string", "null"], example: "BART" },
+  },
+} as const;
+
+const stop = {
+  type: "object",
+  properties: {
+    id: { type: "string", example: examples.stopId },
+    stop_id: { type: "string", example: "12TH" },
+    stop_name: {
+      type: ["string", "null"],
+      example: "12th Street / Oakland City Center",
+    },
+    tts_stop_name: { type: ["string", "null"] },
+    stop_desc: { type: ["string", "null"] },
+    stop_code: { type: ["string", "null"], example: "BART-12TH" },
+    stop_url: { type: ["string", "null"] },
+    zone_id: { type: ["string", "null"] },
+    parent_stop_id: { type: ["string", "null"] },
+    stop_timezone: { type: ["string", "null"] },
+    platform_code: { type: ["string", "null"] },
+    level_id: { type: ["string", "null"] },
+    stop_access: { type: ["integer", "null"] },
+    lat: { type: ["number", "null"], example: 37.8032 },
+    lon: { type: ["number", "null"], example: -122.0169 },
+    location_type: { type: "integer", example: 0 },
+    wheelchair_boarding: { type: "integer", example: 1 },
+    feed_onestop_id: {
+      type: "string",
+      example: examples.feedOnestopId,
+    },
+    alerts: { type: "array", items: alert },
+  },
+} as const;
+
+const routeTripSummary = {
+  type: "object",
+  properties: {
+    id: { type: "string", example: examples.tripId },
+    trip_id: { type: "string", example: "trip-555" },
+    route_id: { type: "string", example: examples.routeId },
+    service_id: { type: "string", example: "weekday" },
+    shape_id: { type: ["string", "null"], example: "shape-L1-0" },
+    trip_headsign: { type: ["string", "null"], example: "Antioch" },
+    trip_short_name: { type: ["string", "null"] },
+    direction_id: { type: ["integer", "null"], example: 0 },
+    block_id: { type: ["string", "null"] },
+    wheelchair_accessible: { type: ["integer", "null"], example: 1 },
+    bikes_allowed: { type: ["integer", "null"] },
+    cars_allowed: { type: ["integer", "null"] },
+    safe_duration_factor: { type: ["number", "null"] },
+    safe_duration_offset: { type: ["integer", "null"] },
+    first_departure_time: { type: ["string", "null"], example: "10:05:00" },
+    last_departure_time: { type: ["string", "null"], example: "10:55:00" },
+    matching_stop_times_count: { type: "integer", example: 12 },
   },
 } as const;
 
@@ -146,7 +252,67 @@ const standardErrors = {
   500: { description: "Internal server error", ...errorResponse },
 } as const;
 
-export const openApi = {
+const adminConfigResponse = {
+  200: {
+    type: "object",
+    properties: {
+      admin_token: { type: "string", example: "local.secret" },
+      credentials: { type: "object", additionalProperties: true },
+    },
+  },
+  ...standardErrors,
+} as const;
+
+const adminTokenParams = {
+  type: "object",
+  required: ["adminToken"],
+  properties: {
+    adminToken: { type: "string", example: "local.secret" },
+  },
+} as const;
+
+const providerParams = {
+  type: "object",
+  required: ["provider"],
+  properties: {
+    provider: { type: "string", example: "simulator" },
+  },
+} as const;
+
+interface OpenApiTag {
+  name: string;
+  description: string;
+}
+
+export const openApiTags = [
+  { name: "System", description: "Service health and diagnostics." },
+  {
+    name: "Transport / Transitland",
+    description: "Transitland-backed provider-scoped transportation APIs.",
+  },
+  {
+    name: "Transport / Simulator",
+    description: "Simulator-backed provider-scoped transportation APIs.",
+  },
+  { name: "Replay", description: "Historical vehicle replay APIs." },
+  {
+    name: "Admin / Sync / Transitland",
+    description:
+      "Transitland provider validation, static sync, and realtime sync.",
+  },
+  {
+    name: "Admin / Sync / Simulator",
+    description:
+      "Simulator provider validation, static sync, and realtime sync.",
+  },
+  {
+    name: "Admin / Config",
+    description: "Shared provider credential configuration.",
+  },
+  { name: "WebSocket", description: "Live push protocol documentation." },
+] satisfies OpenApiTag[];
+
+const baseOpenApi = {
   health: {
     tags: ["System"],
     summary: "Health check",
@@ -160,14 +326,207 @@ export const openApi = {
       },
     },
   },
+  mapStaticFeedsStatus: {
+    tags: ["Map"],
+    summary: "Check static GTFS feed status for a viewport",
+    description:
+      "Read-only static GTFS discovery/status. Does not import GTFS static rows and does not poll GTFS-RT.",
+    querystring: {
+      type: "object",
+      required: ["bbox"],
+      properties: {
+        bbox: bboxQuery,
+      },
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          candidates: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                feed_lookup_key: {
+                  type: "string",
+                  example: examples.feedOnestopId,
+                },
+                feed_onestop_id: {
+                  type: "string",
+                  example: examples.feedOnestopId,
+                },
+                name: { type: ["string", "null"], example: "BART" },
+                spec: { type: ["string", "null"], example: "gtfs" },
+                status: {
+                  type: "string",
+                  enum: ["missing", "current", "stale", "unknown"],
+                  example: "current",
+                },
+                is_strong_match: { type: "boolean", example: true },
+                version: {
+                  type: "object",
+                  properties: {
+                    sha1: { type: ["string", "null"], example: "ab5bdc8b" },
+                    fetched_at: {
+                      type: ["string", "null"],
+                      format: "date-time",
+                    },
+                  },
+                },
+                local: {
+                  type: "object",
+                  properties: {
+                    exists: { type: "boolean", example: true },
+                    sha1: { type: ["string", "null"], example: "ab5bdc8b" },
+                    fetched_at: {
+                      type: ["string", "null"],
+                      format: "date-time",
+                    },
+                    last_static_sync: {
+                      type: ["string", "null"],
+                      format: "date-time",
+                    },
+                    counts: { type: "object", additionalProperties: true },
+                  },
+                },
+              },
+            },
+          },
+          meta: {
+            type: "object",
+            properties: {
+              bbox: bboxArray,
+              total: { type: "integer", example: 1 },
+            },
+          },
+        },
+      },
+      ...standardErrors,
+    },
+  },
+  mapRoutes: {
+    tags: ["Map"],
+    summary: "List cached routes for a static GTFS feed",
+    description:
+      "Reads cached GTFS static routes by Feed Onestop ID. Does not import GTFS static rows.",
+    querystring: {
+      type: "object",
+      required: ["feed_onestop_id"],
+      properties: {
+        feed_onestop_id: { type: "string", example: examples.feedOnestopId },
+        route_type: { type: "integer", example: 1 },
+        limit: { type: "integer", default: 200, maximum: 500, example: 50 },
+      },
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          routes: { type: "array", items: route },
+          meta: {
+            type: "object",
+            properties: {
+              total: { type: "integer", example: 8 },
+              feed_onestop_id: {
+                type: "string",
+                example: examples.feedOnestopId,
+              },
+              static_feed: { type: "object", additionalProperties: true },
+            },
+          },
+        },
+      },
+      ...standardErrors,
+    },
+  },
+  mapTrips: {
+    tags: ["Map"],
+    summary: "List cached trips for a route in a service time range",
+    description:
+      "Reads cached GTFS static trips by internal route ID. Does not import GTFS static rows. Use this before expanding a trip with /api/trips/:tripId/stop-times.",
+    querystring: {
+      type: "object",
+      required: ["route_id"],
+      properties: {
+        route_id: { type: "string", example: examples.routeId },
+        service_date: {
+          type: "string",
+          format: "date",
+          example: examples.serviceDate,
+        },
+        start_time: { type: "string", example: examples.startTime },
+        end_time: { type: "string", example: examples.endTime },
+        direction_id: { type: "integer", example: 0 },
+        limit: { type: "integer", default: 100, maximum: 500, example: 50 },
+      },
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          trips: { type: "array", items: routeTripSummary },
+          meta: {
+            type: "object",
+            properties: {
+              total: { type: "integer", example: 8 },
+              route_id: { type: "string", example: examples.routeId },
+              service_date: {
+                type: "string",
+                example: examples.serviceDate,
+              },
+              start_time: { type: "string", example: examples.startTime },
+              end_time: { type: "string", example: examples.endTime },
+            },
+          },
+        },
+      },
+      ...standardErrors,
+    },
+  },
+  mapRouteShape: {
+    tags: ["Map"],
+    summary: "Get representative route geometry for a cached static route",
+    description:
+      "Reads a route and representative trip shape by internal route ID. Does not import GTFS static rows.",
+    querystring: {
+      type: "object",
+      required: ["route_id"],
+      properties: {
+        route_id: { type: "string", example: examples.routeId },
+        include_shape: { type: "boolean", default: true, example: true },
+      },
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          trip: {
+            anyOf: [routeTripSummary, { type: "null" }],
+          },
+          route,
+          shape: {
+            type: ["object", "null"],
+            properties: {
+              shape_id: { type: "string", example: "shape-L1-0" },
+              geojson: { type: "object", additionalProperties: true },
+              points: { type: "array", items: { type: "object" } },
+              generated: { type: "boolean", example: false },
+            },
+          },
+        },
+      },
+      ...standardErrors,
+    },
+  },
   mapStops: {
     tags: ["Map"],
     summary: "List stops in a viewport",
     description:
-      "Use after static sync. Ready-to-test query: bbox=-122.5,37.6,-121.8,37.9&include_alerts=true&limit=50",
+      "Use after static sync. For static layer lists, prefer feed_onestop_id. Ready-to-test query: feed_onestop_id=f-9q9-bart&include_alerts=true&limit=50",
     querystring: {
       type: "object",
       properties: {
+        feed_onestop_id: { type: "string", example: examples.feedOnestopId },
         bbox: bboxQuery,
         lat: { type: "number", example: 37.8032 },
         lon: { type: "number", example: -122.0169 },
@@ -189,32 +548,18 @@ export const openApi = {
         properties: {
           stops: {
             type: "array",
-            items: {
-              type: "object",
-              properties: {
-                id: { type: "string", example: examples.stopId },
-                stop_name: {
-                  type: "string",
-                  example: "12th Street / Oakland City Center",
-                },
-                stop_code: { type: ["string", "null"], example: "BART-12TH" },
-                lat: { type: "number", example: 37.8032 },
-                lon: { type: "number", example: -122.0169 },
-                location_type: { type: "integer", example: 0 },
-                wheelchair_boarding: { type: "integer", example: 1 },
-                feed_onestop_id: {
-                  type: "string",
-                  example: examples.feedOnestopId,
-                },
-                alerts: { type: "array", items: alert },
-              },
-            },
+            items: stop,
           },
           meta: {
             type: "object",
             properties: {
               total: { type: "integer", example: 42 },
               bbox: bboxArray,
+              feed_onestop_id: {
+                type: "string",
+                example: examples.feedOnestopId,
+              },
+              static_feed: { type: "object", additionalProperties: true },
             },
           },
         },
@@ -244,8 +589,102 @@ export const openApi = {
             type: "object",
             properties: {
               snapshot_age_seconds: { type: "integer", example: 12 },
+              snapshot_available: { type: "boolean", example: true },
+              message: {
+                type: "string",
+                example: "No recent vehicle snapshots are available.",
+              },
+              auto_sync: {
+                type: "object",
+                properties: {
+                  attempted: { type: "boolean", example: true },
+                  skipped_reason: {
+                    type: "string",
+                    enum: ["cooldown", "in_flight"],
+                  },
+                  polled_count: { type: "integer", example: 3 },
+                  vehicle_positions_count: { type: "integer", example: 128 },
+                  errors_count: { type: "integer", example: 0 },
+                  message: {
+                    type: "string",
+                    example:
+                      "No recent vehicle snapshots were available, so realtime sync was triggered.",
+                  },
+                },
+              },
             },
           },
+        },
+      },
+      ...standardErrors,
+    },
+  },
+  transportRoutes: {
+    tags: ["Transport"],
+    summary: "List normalized routes for a transport provider",
+    params: providerParams,
+    querystring: {
+      type: "object",
+      required: ["feed_onestop_id"],
+      properties: {
+        feed_onestop_id: { type: "string", example: examples.feedOnestopId },
+        route_type: { type: "integer", example: 3 },
+        limit: { type: "integer", example: 200 },
+      },
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          routes: { type: "array", items: route },
+          meta: { type: "object", additionalProperties: true },
+        },
+      },
+      ...standardErrors,
+    },
+  },
+  transportStops: {
+    tags: ["Transport"],
+    summary: "List normalized stops for a transport provider",
+    params: providerParams,
+    querystring: {
+      type: "object",
+      properties: {
+        feed_onestop_id: { type: "string", example: examples.feedOnestopId },
+        bbox: bboxQuery,
+        include_alerts: { type: "boolean", example: true },
+        limit: { type: "integer", example: 200 },
+      },
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          stops: { type: "array", items: stop },
+          meta: { type: "object", additionalProperties: true },
+        },
+      },
+      ...standardErrors,
+    },
+  },
+  transportVehicles: {
+    tags: ["Transport"],
+    summary: "List normalized vehicle snapshots for a transport provider",
+    params: providerParams,
+    querystring: {
+      type: "object",
+      properties: {
+        bbox: bboxQuery,
+        feed_onestop_id: { type: "string", example: examples.feedOnestopId },
+        route_type: { type: "integer", example: 3 },
+      },
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          vehicles: { type: "array", items: vehicle },
+          meta: { type: "object", additionalProperties: true },
         },
       },
       ...standardErrors,
@@ -343,26 +782,45 @@ export const openApi = {
             type: "object",
             properties: {
               id: { type: "string", example: examples.tripId },
+              trip_id: { type: "string", example: "trip-555" },
+              route_id: { type: "string", example: examples.routeId },
+              service_id: { type: "string", example: "weekday" },
+              shape_id: { type: ["string", "null"], example: "shape-L1-0" },
               trip_headsign: { type: ["string", "null"], example: "Antioch" },
+              trip_short_name: { type: ["string", "null"] },
               direction_id: { type: ["integer", "null"], example: 0 },
+              block_id: { type: ["string", "null"] },
               wheelchair_accessible: { type: ["integer", "null"], example: 1 },
+              bikes_allowed: { type: ["integer", "null"] },
+              cars_allowed: { type: ["integer", "null"] },
+              safe_duration_factor: { type: ["number", "null"] },
+              safe_duration_offset: { type: ["integer", "null"] },
             },
           },
           route: {
             type: ["object", "null"],
             properties: {
               id: { type: "string", example: examples.routeId },
+              route_id: { type: "string", example: "L1" },
+              agency_id: { type: ["string", "null"] },
               route_short_name: { type: ["string", "null"], example: "L1" },
               route_long_name: {
                 type: ["string", "null"],
                 example: "Antioch to SFIA/Millbrae",
               },
+              route_desc: { type: ["string", "null"] },
               route_type: { type: ["integer", "null"], example: 1 },
+              route_url: { type: ["string", "null"] },
               route_color: { type: ["string", "null"], example: "#ffff33" },
               route_text_color: {
                 type: ["string", "null"],
                 example: "#000000",
               },
+              route_sort_order: { type: ["integer", "null"] },
+              continuous_pickup: { type: ["integer", "null"] },
+              continuous_drop_off: { type: ["integer", "null"] },
+              network_id: { type: ["string", "null"] },
+              cemv_support: { type: ["integer", "null"] },
               agency_name: {
                 type: ["string", "null"],
                 example: "Bay Area Rapid Transit",
@@ -374,6 +832,7 @@ export const openApi = {
             properties: {
               shape_id: { type: "string", example: "shape-L1-0" },
               geojson: { type: "object", additionalProperties: true },
+              points: { type: "array", items: { type: "object" } },
               generated: { type: "boolean", example: false },
             },
           },
@@ -527,7 +986,7 @@ export const openApi = {
     body: {
       type: "object",
       properties: {
-        bbox: bboxArray,
+        bbox: bboxBody,
         feedIds: {
           type: "array",
           items: { type: "string" },
@@ -560,17 +1019,41 @@ export const openApi = {
                   example: examples.feedOnestopId,
                 },
                 sha1: { type: ["string", "null"], example: "ab5bdc8b" },
-                status: { type: "string", example: "imported" },
+                status: {
+                  type: "string",
+                  enum: ["imported", "updated", "skipped", "partial", "error"],
+                  example: "imported",
+                },
                 stopsCount: { type: "integer", example: 50 },
                 routesCount: { type: "integer", example: 8 },
                 tripsCount: { type: "integer", example: 1420 },
                 stopTimesCount: { type: "integer", example: 38400 },
                 durationMs: { type: "integer", example: 4200 },
+                error: {
+                  type: "string",
+                  example: "Invalid GTFS static feed relationships",
+                },
               },
             },
           },
           transitlandApiCallsUsed: { type: "integer", example: 2 },
-          errors: { type: "array", items: { type: "object" } },
+          errors: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                feedOnestopId: {
+                  type: "string",
+                  example: examples.feedOnestopId,
+                },
+                message: {
+                  type: "string",
+                  example: "Invalid GTFS static feed relationships",
+                },
+              },
+              required: ["feedOnestopId", "message"],
+            },
+          },
         },
       },
       ...standardErrors,
@@ -580,11 +1063,12 @@ export const openApi = {
     tags: ["Admin / Sync"],
     summary: "Poll direct agency GTFS-RT URLs",
     description:
-      'Run after static sync has stored realtime URLs on feeds. Body example: { "feedIds": ["f-9q9-bart"] }.',
+      'Poll realtime feeds by feed ID or discover realtime-capable feeds for a bbox. Body examples: { "feedIds": ["f-9q9-bart"] } or { "bbox": [-122.6, 37.6, -122.2, 37.9] }.',
     security: [{ adminBearer: [] }],
     body: {
       type: "object",
       properties: {
+        bbox: bboxBody,
         feedIds: {
           type: "array",
           items: { type: "string" },
@@ -613,6 +1097,18 @@ export const openApi = {
             },
           },
           errors: { type: "array", items: { type: "object" } },
+          meta: {
+            type: "object",
+            properties: {
+              requested_bbox: bboxArray,
+              requested_feed_ids: {
+                type: "array",
+                items: { type: "string" },
+              },
+              matched_realtime_feed_count: { type: "integer", example: 2 },
+              message: { type: "string" },
+            },
+          },
         },
       },
       ...standardErrors,
@@ -632,6 +1128,65 @@ export const openApi = {
       ...standardErrors,
     },
   },
+  adminTransportValidate: {
+    tags: ["Admin / Sync"],
+    summary: "Validate transport provider configuration",
+    security: [{ adminBearer: [] }],
+    params: providerParams,
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          ok: { type: "boolean", example: true },
+          message: { type: "string", example: "Missing transit_api_key" },
+          credentialKeys: { type: "object", additionalProperties: true },
+        },
+      },
+      ...standardErrors,
+    },
+  },
+  adminConfig: {
+    tags: ["Admin / Config"],
+    summary: "Read active shared provider config status",
+    security: [{ adminBearer: [] }],
+    response: adminConfigResponse,
+  },
+  adminConfigByToken: {
+    tags: ["Admin / Config"],
+    summary: "Read shared provider config status by admin token",
+    security: [{ adminBearer: [] }],
+    params: adminTokenParams,
+    response: adminConfigResponse,
+  },
+  adminConfigCredentialsPut: {
+    tags: ["Admin / Config"],
+    summary: "Replace shared provider credentials for an admin token",
+    security: [{ adminBearer: [] }],
+    params: adminTokenParams,
+    body: {
+      type: "object",
+      required: ["credentials"],
+      properties: {
+        credentials: { type: "object", additionalProperties: true },
+      },
+    },
+    response: adminConfigResponse,
+  },
+  adminConfigCredentialsPatch: {
+    tags: ["Admin / Config"],
+    summary: "Patch one shared provider credential for an admin token",
+    security: [{ adminBearer: [] }],
+    params: adminTokenParams,
+    body: {
+      type: "object",
+      required: ["key", "value"],
+      properties: {
+        key: { type: "string", example: "transit_api_key" },
+        value: { type: ["string", "null"], example: "secret-value" },
+      },
+    },
+    response: adminConfigResponse,
+  },
   websocket: {
     tags: ["WebSocket"],
     summary:
@@ -647,5 +1202,154 @@ export const openApi = {
         },
       },
     },
+  },
+} as const;
+
+function withProviderTag<
+  T extends {
+    readonly params?: {
+      readonly properties?: Record<string, unknown>;
+      readonly required?: readonly string[];
+    };
+    readonly summary?: string;
+    readonly tags?: readonly string[];
+  },
+>(provider: string, schema: T) {
+  const { params: originalParams, ...rest } = schema;
+  let params = undefined;
+  if (originalParams) {
+    const { provider: _, ...remainingProperties } =
+      originalParams.properties ?? {};
+    const remainingRequired = (originalParams.required ?? []).filter(
+      (r: string) => r !== "provider",
+    );
+    if (Object.keys(remainingProperties).length > 0) {
+      params = {
+        ...originalParams,
+        required: remainingRequired,
+        properties: remainingProperties,
+      };
+    }
+  }
+  return {
+    ...rest,
+    ...(params ? { params } : {}),
+    tags: [
+      `Transport / ${provider === "transit" ? "Transitland" : "Simulator"}`,
+    ],
+    summary: `${schema.summary} (${provider === "transit" ? "Transitland" : "Simulator"})`,
+  };
+}
+
+function withAdminProviderTag<
+  T extends {
+    readonly params?: {
+      readonly properties?: Record<string, unknown>;
+      readonly required?: readonly string[];
+    };
+    readonly summary?: string;
+    readonly tags?: readonly string[];
+  },
+>(provider: string, schema: T) {
+  const { params: originalParams, ...rest } = schema;
+  let params = undefined;
+  if (originalParams) {
+    const { provider: _, ...remainingProperties } =
+      originalParams.properties ?? {};
+    const remainingRequired = (originalParams.required ?? []).filter(
+      (r: string) => r !== "provider",
+    );
+    if (Object.keys(remainingProperties).length > 0) {
+      params = {
+        ...originalParams,
+        required: remainingRequired,
+        properties: remainingProperties,
+      };
+    }
+  }
+  return {
+    ...rest,
+    ...(params ? { params } : {}),
+    tags: [
+      `Admin / Sync / ${provider === "transit" ? "Transitland" : "Simulator"}`,
+    ],
+    summary: `${schema.summary} (${provider === "transit" ? "Transitland" : "Simulator"})`,
+  };
+}
+
+const {
+  mapStaticFeedsStatus,
+  mapRoutes: _mapRoutes,
+  mapTrips,
+  mapRouteShape,
+  mapStops: _mapStops,
+  mapVehicles: _mapVehicles,
+  transportRoutes,
+  transportStops,
+  transportVehicles,
+  stopDepartures,
+  tripRoute,
+  tripStopTimes,
+  adminStaticSync: _adminStaticSync,
+  adminRealtimeSync: _adminRealtimeSync,
+  adminTransportValidate: _adminTransportValidate,
+  ...remainingBaseOpenApi
+} = baseOpenApi;
+
+export const openApi = {
+  ...remainingBaseOpenApi,
+  transportStaticFeedsStatus: {
+    transit: withProviderTag("transit", mapStaticFeedsStatus),
+    simulator: withProviderTag("simulator", mapStaticFeedsStatus),
+  },
+  transportRoutes: {
+    transit: withProviderTag("transit", transportRoutes),
+    simulator: withProviderTag("simulator", transportRoutes),
+  },
+  transportStops: {
+    transit: withProviderTag("transit", transportStops),
+    simulator: withProviderTag("simulator", transportStops),
+  },
+  transportTrips: {
+    transit: withProviderTag("transit", mapTrips),
+    simulator: withProviderTag("simulator", mapTrips),
+  },
+  transportRouteShape: {
+    transit: withProviderTag("transit", mapRouteShape),
+    simulator: withProviderTag("simulator", mapRouteShape),
+  },
+  transportStopDepartures: {
+    transit: withProviderTag("transit", stopDepartures),
+    simulator: withProviderTag("simulator", stopDepartures),
+  },
+  transportVehicles: {
+    transit: withProviderTag("transit", transportVehicles),
+    simulator: withProviderTag("simulator", transportVehicles),
+  },
+  transportTripRoute: {
+    transit: withProviderTag("transit", tripRoute),
+    simulator: withProviderTag("simulator", tripRoute),
+  },
+  transportTripStopTimes: {
+    transit: withProviderTag("transit", tripStopTimes),
+    simulator: withProviderTag("simulator", tripStopTimes),
+  },
+  adminTransportValidate: {
+    transit: withAdminProviderTag(
+      "transit",
+      baseOpenApi.adminTransportValidate,
+    ),
+    simulator: withAdminProviderTag(
+      "simulator",
+      baseOpenApi.adminTransportValidate,
+    ),
+  },
+  adminTransportStaticSync: {
+    transit: withAdminProviderTag("transit", baseOpenApi.adminStaticSync),
+    simulator: withAdminProviderTag("simulator", baseOpenApi.adminStaticSync),
+  },
+  adminTransportRealtimeSync: {
+    transit: withAdminProviderTag("transit", baseOpenApi.adminRealtimeSync),
+    simulator: withAdminProviderTag("simulator", baseOpenApi.adminRealtimeSync),
   },
 } as const;

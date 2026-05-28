@@ -5,6 +5,7 @@ import {
   isoTimestampSchema,
   optionalBooleanSchema,
   positiveIntegerQuerySchema,
+  scopedIdSchema,
 } from "@/lib/schemas";
 
 export const replayVehiclesQuerySchema = z
@@ -28,8 +29,8 @@ export const replaySnapshotQuerySchema = z.object({
   timestamp: isoTimestampSchema,
   bbox: bboxSchema.optional(),
   feed_onestop_id: z.string().optional(),
-  trip_id: z.string().optional(),
-  route_id: z.string().optional(),
+  trip_id: scopedIdSchema.optional(),
+  route_id: scopedIdSchema.optional(),
   vehicle_id: z.string().optional(),
   include_stop_times: optionalBooleanSchema.transform(
     (value) => value ?? false,
