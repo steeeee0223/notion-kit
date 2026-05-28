@@ -1,6 +1,10 @@
 import { createFetch } from "@better-fetch/fetch";
 
 import { env } from "@/env";
+import {
+  adminTransportProviderPath,
+  type MapServerTransportProviderId,
+} from "@/lib/transport-provider";
 
 export const MAP_WS_URL =
   env.VITE_MAP_WS_URL ??
@@ -11,12 +15,16 @@ export const mapApiClient = createFetch({
 });
 
 export interface RealtimeSyncResponse {
-  polled: {
+  polled?: {
     feedOnestopId: string;
     vehiclePositionsCount: number;
     tripUpdatesCount: number;
     alertsCount: number;
     durationMs: number;
+  }[];
+  synced?: {
+    feedOnestopId: string;
+    vehiclesCount: number;
   }[];
   errors: {
     feedOnestopId: string;
@@ -48,9 +56,14 @@ export interface StaticSyncResponse {
   }[];
 }
 
-export async function syncRealtimeSnapshots(input: { bbox?: string } = {}) {
+export async function syncRealtimeSnapshots(
+  input: { bbox?: string; provider?: MapServerTransportProviderId } = {},
+) {
   const response = await fetch(
-    `${env.VITE_MAP_API_BASE_URL}/api/admin/sync/realtime`,
+    `${env.VITE_MAP_API_BASE_URL}${adminTransportProviderPath(
+      input.provider ?? "transitland",
+      "/sync/realtime",
+    )}`,
     {
       method: "POST",
       headers: {
@@ -72,12 +85,16 @@ export async function syncRealtimeSnapshots(input: { bbox?: string } = {}) {
 export async function syncStaticTransitData(input: {
   bbox?: string;
   feedIds?: string[];
+  provider?: MapServerTransportProviderId;
 }) {
-  return postAdminSync<StaticSyncResponse>("/api/admin/sync/static", {
-    bbox: input.bbox,
-    feedIds: input.feedIds,
-    force: false,
-  });
+  return postAdminSync<StaticSyncResponse>(
+    adminTransportProviderPath(input.provider ?? "transitland", "/sync/static"),
+    {
+      bbox: input.bbox,
+      feedIds: input.feedIds,
+      force: false,
+    },
+  );
 }
 
 async function postAdminSync<T>(path: string, body: unknown) {

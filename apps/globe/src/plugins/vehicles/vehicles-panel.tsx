@@ -11,11 +11,19 @@ import {
   MenuLabel,
 } from "@notion-kit/ui/primitives";
 
-import { useActiveVehiclePositions, useAdapterBBoxStore } from "@/adapters";
+import {
+  useActiveVehiclePositions,
+  useAdapterBBoxStore,
+  useAdapterStore,
+} from "@/adapters";
 import { useVehicleDiagnosticsStore } from "@/adapters/transitland/use-vehicle-positions";
 import * as GoogleIcon from "@/components/google-icons";
 import { syncRealtimeSnapshots } from "@/lib/api-client";
 import { queryKey } from "@/lib/query-key";
+import {
+  isMapServerTransportProvider,
+  type MapServerTransportProviderId,
+} from "@/lib/transport-provider";
 import { VehicleType } from "@/lib/types";
 
 import { VehicleIconPreview } from "./vehicle-icon";
@@ -42,6 +50,7 @@ export const useVehicleFilter = create<TransitFilterState>((set) => ({
 export function VehiclesPanel() {
   const queryClient = useQueryClient();
   const { data: vehicles = [] } = useActiveVehiclePositions();
+  const activeAdapter = useAdapterStore((state) => state.activeAdapter);
   const { hiddenTypes, toggleType } = useVehicleFilter();
   const bbox = useAdapterBBoxStore((state) => state.bbox);
   const message = useVehicleDiagnosticsStore((state) => state.message);
@@ -52,6 +61,8 @@ export function VehiclesPanel() {
     (state) => state.setAutoSyncMessage,
   );
   const [isSyncing, setIsSyncing] = useState(false);
+  const transportProvider = getTransportProvider(activeAdapter);
+  const canSyncRealtime = isMapServerTransportProvider(activeAdapter);
 
   const activeVehicles = vehicles.filter((v) => !v.stale);
 
@@ -77,17 +88,25 @@ export function VehiclesPanel() {
     try {
       const realtimeSync = await syncRealtimeSnapshots({
         bbox,
+        provider: transportProvider,
       });
-      const vehiclePositionsCount = realtimeSync.polled.reduce(
+      const syncedFeeds =
+        realtimeSync.polled ??
+        realtimeSync.synced?.map((feed) => ({
+          feedOnestopId: feed.feedOnestopId,
+          vehiclePositionsCount: feed.vehiclesCount,
+        })) ??
+        [];
+      const vehiclePositionsCount = syncedFeeds.reduce(
         (total, feed) => total + feed.vehiclePositionsCount,
         0,
       );
       setAutoSyncMessage(
         realtimeSync.meta?.message ??
-          `Vehicle sync finished: ${vehiclePositionsCount} vehicle positions from ${realtimeSync.polled.length} realtime feeds.`,
+          `Vehicle sync finished: ${vehiclePositionsCount} vehicle positions from ${syncedFeeds.length} realtime feeds.`,
       );
       await queryClient.invalidateQueries({
-        queryKey: queryKey.mapServer.vehicles(bbox),
+        queryKey: queryKey.mapServer.vehicles(transportProvider, bbox),
       });
     } catch (error) {
       setAutoSyncMessage(
@@ -122,7 +141,7 @@ export function VehiclesPanel() {
             />
           }
           Body="Sync vehicles"
-          disabled={isSyncing}
+          disabled={!canSyncRealtime || isSyncing}
           onClick={handleSyncRealtime}
         />
         {types.map((type) => (
@@ -144,4 +163,12 @@ export function VehiclesPanel() {
       </MenuGroup>
     </div>
   );
+}
+
+function getTransportProvider(
+  activeAdapter: string,
+): MapServerTransportProviderId {
+  return isMapServerTransportProvider(activeAdapter)
+    ? activeAdapter
+    : "transitland";
 }

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import {
@@ -18,6 +18,10 @@ import {
 import * as GoogleIcon from "@/components/google-icons";
 import { syncStaticTransitData } from "@/lib/api-client";
 import { queryKey } from "@/lib/query-key";
+import {
+  isMapServerTransportProvider,
+  type MapServerTransportProviderId,
+} from "@/lib/transport-provider";
 import {
   TransitEntitySearch,
   TransitStaticFeed,
@@ -40,18 +44,33 @@ export function RoutesPanel() {
   );
   const [message, setMessage] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
-  const isTransitland = activeAdapter === "transitland";
+  const transportProvider = getTransportProvider(activeAdapter);
+  const isTransportProvider = isMapServerTransportProvider(activeAdapter);
+  const previousAdapter = useRef(activeAdapter);
+
+  useEffect(() => {
+    if (previousAdapter.current !== activeAdapter) {
+      setSelectedFeed(null);
+      previousAdapter.current = activeAdapter;
+    }
+  }, [activeAdapter, setSelectedFeed]);
 
   const {
     data: candidates = [],
     isLoading: isFeedLoading,
     error: feedError,
-  } = useStaticFeedStatus(bbox, isTransitland, (data) => data.candidates);
+  } = useStaticFeedStatus(
+    transportProvider,
+    bbox,
+    isTransportProvider,
+    (data) => data.candidates,
+  );
 
   const canLoadRoutes = isUsableStaticFeed(selectedFeed);
   const { data: routeItems = [], isLoading: isRoutesLoading } = useFeedRoutes(
+    transportProvider,
     selectedFeed?.feedOnestopId ?? null,
-    isTransitland && canLoadRoutes,
+    isTransportProvider && canLoadRoutes,
     (data) => data.routes.map(toRouteSearchItem),
   );
 
@@ -68,7 +87,12 @@ export function RoutesPanel() {
     setIsSyncing(true);
     try {
       const result = await syncStaticTransitData(
-        selectedFeed ? { feedIds: [selectedFeed.feedLookupKey] } : { bbox },
+        selectedFeed
+          ? {
+              feedIds: [selectedFeed.feedLookupKey],
+              provider: transportProvider,
+            }
+          : { bbox, provider: transportProvider },
       );
       const routesCount = result.synced.reduce(
         (total, feed) => total + feed.routesCount,
@@ -76,10 +100,11 @@ export function RoutesPanel() {
       );
       setMessage(`Feed sync finished: ${routesCount} routes synced.`);
       await queryClient.invalidateQueries({
-        queryKey: queryKey.mapServer.staticFeedStatus(bbox),
+        queryKey: queryKey.mapServer.staticFeedStatus(transportProvider, bbox),
       });
       await queryClient.invalidateQueries({
         queryKey: queryKey.mapServer.routes(
+          transportProvider,
           selectedFeed?.feedOnestopId ?? null,
         ),
       });
@@ -111,8 +136,11 @@ export function RoutesPanel() {
         error={feedError}
         isLoading={isFeedLoading}
         isSyncing={isSyncing}
-        isTransitland={isTransitland}
+        isStaticFeedSource={isTransportProvider}
         message={message}
+        sourceLabel={
+          activeAdapter === "simulator" ? "Simulator" : "Transitland"
+        }
         selectedFeed={selectedFeed}
         onSelectFeed={setSelectedFeed}
         onSync={handleSync}
@@ -123,7 +151,7 @@ export function RoutesPanel() {
           placeholder="Search routes..."
           items={routeItems}
           recentItems={recentItems}
-          disabled={!isTransitland || !canLoadRoutes || isRoutesLoading}
+          disabled={!isTransportProvider || !canLoadRoutes || isRoutesLoading}
           isLoading={isRoutesLoading}
           onSelect={handleRouteSelect}
         />
@@ -151,6 +179,14 @@ export function RoutesPanel() {
       </MenuGroup>
     </>
   );
+}
+
+function getTransportProvider(
+  activeAdapter: string,
+): MapServerTransportProviderId {
+  return isMapServerTransportProvider(activeAdapter)
+    ? activeAdapter
+    : "transitland";
 }
 
 function toRouteSearchItem(

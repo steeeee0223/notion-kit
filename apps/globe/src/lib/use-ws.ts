@@ -127,7 +127,7 @@ export function useWs() {
               .setAutoSyncMessage(msg.payload.meta?.auto_sync?.message ?? null);
             const vehicles = toVehiclePositions(msg.payload.vehicles);
             queryClient.setQueryData<VehiclePosition[]>(
-              queryKey.mapServer.vehicles(bboxRef.current),
+              queryKey.mapServer.vehicles("transitland", bboxRef.current),
               (prev) => mergeVehicles(prev, vehicles),
             );
           }

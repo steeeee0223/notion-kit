@@ -178,7 +178,7 @@ function TripRow({
   }[];
   onToggle: () => void;
 }) {
-  const title = trip.tripHeadsign || trip.tripShortName || trip.tripId;
+  const title = trip.tripHeadsign ?? trip.tripShortName ?? trip.tripId;
   const timeRange = [trip.firstDepartureTime, trip.lastDepartureTime]
     .filter(Boolean)
     .join(" - ");
@@ -196,7 +196,7 @@ function TripRow({
       <Button
         type="button"
         variant="hint"
-        className="h-auto w-full justify-start gap-2 px-2 py-2 text-left"
+        className="h-auto w-full justify-start gap-2 p-2 text-left"
         onClick={onToggle}
       >
         <Icon.Chevron

@@ -1,5 +1,10 @@
 import { create } from "zustand";
 
+import {
+  isMapServerTransportProvider,
+  type MapServerTransportProviderId,
+} from "@/lib/transport-provider";
+
 import { useRouteShapes as useBKKRouteShapes } from "./bkk/use-route-shapes";
 import { useVehiclePositions as useBKKVehiclePositions } from "./bkk/use-vehicle-positions";
 import { useRouteShapes as useTransitlandRouteShapes } from "./transitland/use-route-shapes";
@@ -25,7 +30,7 @@ export { useAdapterBBoxStore };
 
 export type { RouteStop, RouteTrip, StopDeparture, VehiclePosition };
 
-export type SourceAdapterId = "bkk" | "transitland";
+export type SourceAdapterId = "bkk" | MapServerTransportProviderId;
 
 interface AdapterStore {
   activeAdapter: SourceAdapterId;
@@ -39,10 +44,12 @@ export const useAdapterStore = create<AdapterStore>((set) => ({
 
 export function useActiveVehiclePositions() {
   const activeAdapter = useAdapterStore((state) => state.activeAdapter);
+  const transportProvider = getActiveTransportProvider(activeAdapter);
 
   const bkk = useBKKVehiclePositions();
   const transitland = useTransitlandVehiclePositions(
-    activeAdapter === "transitland",
+    transportProvider,
+    activeAdapter !== "bkk",
   );
 
   return activeAdapter === "bkk" ? bkk : transitland;
@@ -60,10 +67,12 @@ export interface SelectedTripContext {
 
 export function useActiveRouteShapes(context: SelectedTripContext) {
   const activeAdapter = useAdapterStore((state) => state.activeAdapter);
+  const transportProvider = getActiveTransportProvider(activeAdapter);
 
   const bkk = useBKKRouteShapes(context.routeId ?? null);
   const transitland = useTransitlandRouteShapes(
-    activeAdapter === "transitland" ? (context.tripId ?? null) : null,
+    transportProvider,
+    activeAdapter !== "bkk" ? (context.tripId ?? null) : null,
     context.routeId ?? null,
   );
 
@@ -72,8 +81,10 @@ export function useActiveRouteShapes(context: SelectedTripContext) {
 
 export function useActiveRouteStops(context: SelectedTripContext) {
   const activeAdapter = useAdapterStore((state) => state.activeAdapter);
+  const transportProvider = getActiveTransportProvider(activeAdapter);
   return useTransitlandRouteStops(
-    activeAdapter === "transitland" ? (context.tripId ?? null) : null,
+    transportProvider,
+    activeAdapter !== "bkk" ? (context.tripId ?? null) : null,
     context.routeId ?? null,
   );
 }
@@ -85,8 +96,10 @@ export function useActiveRouteTrips(
   endTime: string,
 ) {
   const activeAdapter = useAdapterStore((state) => state.activeAdapter);
+  const transportProvider = getActiveTransportProvider(activeAdapter);
   return useTransitlandRouteTrips(
-    activeAdapter === "transitland" ? routeId : null,
+    transportProvider,
+    activeAdapter !== "bkk" ? routeId : null,
     serviceDate,
     startTime,
     endTime,
@@ -95,8 +108,18 @@ export function useActiveRouteTrips(
 
 export function useActiveStopDepartures(stopKey: string | null) {
   const activeAdapter = useAdapterStore((state) => state.activeAdapter);
+  const transportProvider = getActiveTransportProvider(activeAdapter);
 
   return useTransitlandStopDepartures(
-    activeAdapter === "transitland" ? stopKey : null,
+    transportProvider,
+    activeAdapter !== "bkk" ? stopKey : null,
   );
+}
+
+function getActiveTransportProvider(
+  activeAdapter: SourceAdapterId,
+): MapServerTransportProviderId {
+  return isMapServerTransportProvider(activeAdapter)
+    ? activeAdapter
+    : "transitland";
 }

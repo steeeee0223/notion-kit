@@ -19,9 +19,10 @@ interface TransitStaticFeedProps {
   error: unknown;
   isLoading: boolean;
   isSyncing: boolean;
-  isTransitland: boolean;
+  isStaticFeedSource: boolean;
   message: string | null;
   selectedFeed: StaticFeedSelection | null;
+  sourceLabel: string;
   onSelectFeed: (feed: StaticFeedSelection | null) => void;
   onSync: () => void;
 }
@@ -32,14 +33,15 @@ export function TransitStaticFeed({
   error,
   isLoading,
   isSyncing,
-  isTransitland,
+  isStaticFeedSource,
   message,
   selectedFeed,
+  sourceLabel,
   onSelectFeed,
   onSync,
 }: TransitStaticFeedProps) {
   useEffect(() => {
-    if (!isTransitland || isLoading) return;
+    if (!isStaticFeedSource || isLoading) return;
     if (candidates.length === 1) {
       const candidate = candidates[0];
       if (!candidate) return;
@@ -68,31 +70,34 @@ export function TransitStaticFeed({
     ) {
       onSelectFeed(null);
     }
-  }, [candidates, isLoading, isTransitland, onSelectFeed, selectedFeed]);
+  }, [candidates, isLoading, isStaticFeedSource, onSelectFeed, selectedFeed]);
 
   const shouldShowSync = selectedFeed?.status !== "current";
 
   return (
     <MenuGroup>
       <MenuLabel>Feed</MenuLabel>
-      {!isTransitland && (
-        <PanelMessage message="Static feeds are available for Transitland only." />
+      {!isStaticFeedSource && (
+        <PanelMessage message="Static feeds are available for transport providers only." />
       )}
-      {isTransitland && !bbox && (
+      {isStaticFeedSource && !bbox && (
         <PanelMessage message="Move the map before loading feeds." />
       )}
-      {isTransitland && Boolean(error) && (
+      {isStaticFeedSource && Boolean(error) && (
         <PanelMessage message="Failed to load feed." />
       )}
-      {isTransitland && selectedFeed && (
+      {isStaticFeedSource && selectedFeed && (
         <FeedStatusMessage
-          label={selectedFeed.name ?? selectedFeed.feedOnestopId}
+          label={
+            selectedFeed.name ??
+            `${sourceLabel} · ${selectedFeed.feedOnestopId}`
+          }
           status={selectedFeed.status}
         />
       )}
       {message && <PanelMessage message={message} muted />}
 
-      {isTransitland && (
+      {isStaticFeedSource && (
         <StaticFeedCandidates
           candidates={candidates}
           selectedFeedLabel={selectedFeed?.name ?? selectedFeed?.feedOnestopId}
@@ -111,7 +116,7 @@ export function TransitStaticFeed({
             />
           }
           Body="Sync feed"
-          disabled={!isTransitland || isSyncing}
+          disabled={!isStaticFeedSource || isSyncing}
           onClick={onSync}
         />
       )}

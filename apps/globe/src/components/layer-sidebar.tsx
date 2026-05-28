@@ -31,6 +31,10 @@ const SOURCES: Record<
     label: "Transitland Global",
     icon: <Icon.Globe className="size-4 fill-icon" />,
   },
+  simulator: {
+    label: "Simulator",
+    icon: <Icon.Map className="size-4 fill-icon" />,
+  },
 };
 
 export function LayerSidebar() {

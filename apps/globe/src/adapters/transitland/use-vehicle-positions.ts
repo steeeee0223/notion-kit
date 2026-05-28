@@ -4,6 +4,10 @@ import { create } from "zustand";
 
 import { mapApiClient } from "@/lib/api-client";
 import { queryKey } from "@/lib/query-key";
+import {
+  transportProviderPath,
+  type MapServerTransportProviderId,
+} from "@/lib/transport-provider";
 import type { VehicleType } from "@/lib/types";
 
 import { toVehiclePositions, type MapServerVehicle } from "./transfer";
@@ -70,7 +74,10 @@ export const useVehicleDiagnosticsStore = create<VehicleDiagnosticsState>(
   }),
 );
 
-export function useVehiclePositions(enabled = true) {
+export function useVehiclePositions(
+  provider: MapServerTransportProviderId = "transitland",
+  enabled = true,
+) {
   const { bbox, zoom } = useTransitlandBBoxStore();
   const [debouncedBbox, setDebouncedBbox] = useState(bbox);
 
@@ -82,11 +89,11 @@ export function useVehiclePositions(enabled = true) {
   }, [bbox]);
 
   return useQuery<VehiclePosition[]>({
-    queryKey: queryKey.mapServer.vehicles(debouncedBbox),
+    queryKey: queryKey.mapServer.vehicles(provider, debouncedBbox),
     queryFn: async () => {
       if (!debouncedBbox) return [];
       const { data, error } = await mapApiClient<MapVehiclesResponse>(
-        `/api/map/vehicles`,
+        transportProviderPath(provider, "/vehicles"),
         {
           query: { bbox: debouncedBbox },
         },

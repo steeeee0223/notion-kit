@@ -3,6 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import type { RouteStop } from "@/adapters/transitland/use-route-stops";
 import { mapApiClient } from "@/lib/api-client";
 import { queryKey } from "@/lib/query-key";
+import {
+  transportProviderPath,
+  type MapServerTransportProviderId,
+} from "@/lib/transport-provider";
 
 export type StaticFeedStatus = "missing" | "current" | "stale" | "unknown";
 
@@ -79,18 +83,19 @@ export interface StopsResponse {
 }
 
 export function useStaticFeedStatus<T = StaticFeedStatusResponse>(
+  provider: MapServerTransportProviderId,
   bbox: string | null,
   enabled: boolean,
   selector?: (data: StaticFeedStatusResponse) => T,
 ) {
   return useQuery<StaticFeedStatusResponse, Error, T>({
-    queryKey: queryKey.mapServer.staticFeedStatus(bbox),
+    queryKey: queryKey.mapServer.staticFeedStatus(provider, bbox),
     queryFn: async () => {
       if (!bbox) {
         return { candidates: [], meta: { bbox: [0, 0, 0, 0], total: 0 } };
       }
       const { data, error } = await mapApiClient<StaticFeedStatusResponse>(
-        "/api/map/static-feeds/status",
+        transportProviderPath(provider, "/static-feeds/status"),
         { query: { bbox } },
       );
       if (error) throw toError(error);
@@ -103,6 +108,7 @@ export function useStaticFeedStatus<T = StaticFeedStatusResponse>(
 }
 
 export function useFeedRoutes<T = TransitRoute[]>(
+  provider: MapServerTransportProviderId,
   feedOnestopId: string | null,
   enabled: boolean,
   selector: (data: RoutesResponse) => T = selectRoutes as (
@@ -110,11 +116,11 @@ export function useFeedRoutes<T = TransitRoute[]>(
   ) => T,
 ) {
   return useQuery<RoutesResponse, Error, T>({
-    queryKey: queryKey.mapServer.routes(feedOnestopId),
+    queryKey: queryKey.mapServer.routes(provider, feedOnestopId),
     queryFn: async () => {
       if (!feedOnestopId) return { routes: [] };
       const { data, error } = await mapApiClient<RoutesResponse>(
-        "/api/map/routes",
+        transportProviderPath(provider, "/routes"),
         { query: { feed_onestop_id: feedOnestopId, limit: 500 } },
       );
       if (error) throw toError(error);
@@ -127,6 +133,7 @@ export function useFeedRoutes<T = TransitRoute[]>(
 }
 
 export function useFeedStops<T = RouteStop[]>(
+  provider: MapServerTransportProviderId,
   feedOnestopId: string | null,
   enabled: boolean,
   selector: (data: StopsResponse) => T = selectRouteStops as (
@@ -134,11 +141,11 @@ export function useFeedStops<T = RouteStop[]>(
   ) => T,
 ) {
   return useQuery<StopsResponse, Error, T>({
-    queryKey: queryKey.mapServer.stops(feedOnestopId),
+    queryKey: queryKey.mapServer.stops(provider, feedOnestopId),
     queryFn: async () => {
       if (!feedOnestopId) return { stops: [] };
       const { data, error } = await mapApiClient<StopsResponse>(
-        "/api/map/stops",
+        transportProviderPath(provider, "/stops"),
         { query: { feed_onestop_id: feedOnestopId, limit: 500 } },
       );
       if (error) throw toError(error);

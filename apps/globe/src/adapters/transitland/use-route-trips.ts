@@ -2,6 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 
 import { mapApiClient } from "@/lib/api-client";
 import { queryKey } from "@/lib/query-key";
+import {
+  transportProviderPath,
+  type MapServerTransportProviderId,
+} from "@/lib/transport-provider";
 
 export interface RouteTrip {
   id: string;
@@ -34,6 +38,7 @@ interface RouteTripResponse {
 }
 
 export function useRouteTrips(
+  provider: MapServerTransportProviderId,
   routeId: string | null,
   serviceDate: string,
   startTime: string,
@@ -41,6 +46,7 @@ export function useRouteTrips(
 ) {
   return useQuery<RouteTrip[]>({
     queryKey: queryKey.mapServer.routeTrips(
+      provider,
       routeId,
       serviceDate,
       startTime,
@@ -49,7 +55,7 @@ export function useRouteTrips(
     queryFn: async () => {
       if (!routeId) return [];
       const { data, error } = await mapApiClient<RouteTripResponse>(
-        "/api/map/trips",
+        transportProviderPath(provider, "/trips"),
         {
           query: {
             route_id: routeId,
