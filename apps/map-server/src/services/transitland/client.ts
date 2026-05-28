@@ -1,7 +1,6 @@
 import { createFetch, createSchema } from "@better-fetch/fetch";
 import { z } from "zod/v4";
 
-import { env } from "@/env";
 import { upstreamError } from "@/lib/api-error";
 import type { Bbox } from "@/lib/schemas";
 
@@ -54,12 +53,9 @@ export type TransitlandRealtimeVehicleFeed = TransitlandFeed & {
 };
 
 export class TransitlandClient {
-  private readonly apiKey: string | undefined;
   private readonly baseUrl = "https://transit.land/api/v2/rest";
 
-  constructor(apiKey = env.TRANS_TRANSITLAND) {
-    this.apiKey = apiKey;
-  }
+  constructor(private readonly apiKey: string) {}
 
   async discoverFeeds(input: {
     bbox?: Bbox;

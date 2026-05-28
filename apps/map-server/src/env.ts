@@ -9,7 +9,6 @@ export const env = createEnv({
       .enum(["development", "production", "test"])
       .prefault("development"),
     PORT: z.coerce.number().int().positive().prefault(3002),
-    TRANS_TRANSITLAND: z.string().optional(),
     MAP_POSTGRES_URL: z.string().min(1),
     MAP_ADMIN_TOKEN: z.union([z.string().min(1), z.undefined()]),
     MAP_RT_POLL_TIMEOUT_MS: z.coerce.number().int().positive().prefault(10000),
@@ -18,7 +17,6 @@ export const env = createEnv({
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
     PORT: process.env.PORT,
-    TRANS_TRANSITLAND: process.env.TRANS_TRANSITLAND,
     MAP_POSTGRES_URL: process.env.MAP_POSTGRES_URL,
     MAP_ADMIN_TOKEN: process.env.MAP_ADMIN_TOKEN,
     MAP_RT_POLL_TIMEOUT_MS: "10000",
