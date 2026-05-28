@@ -1,3 +1,5 @@
 import type { FastifyInstance } from "fastify";
 
-export function registerStopRoutes(app: FastifyInstance) {}
+export function registerStopRoutes(_app: FastifyInstance) {
+  // noop
+}

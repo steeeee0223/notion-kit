@@ -248,7 +248,10 @@ const providerParams = {
   },
 } as const;
 
-type OpenApiTag = { name: string; description: string };
+interface OpenApiTag {
+  name: string;
+  description: string;
+}
 
 export const openApiTags = [
   { name: "System", description: "Service health and diagnostics." },
@@ -1200,12 +1203,21 @@ const baseOpenApi = {
   },
 } as const;
 
-function withProviderTag(provider: string, schema: any) {
+function withProviderTag<
+  T extends {
+    readonly params?: {
+      readonly properties?: Record<string, unknown>;
+      readonly required?: readonly string[];
+    };
+    readonly summary?: string;
+    readonly tags?: readonly string[];
+  },
+>(provider: string, schema: T) {
   let params = undefined;
   if (schema.params) {
     const { provider: _, ...remainingProperties } =
-      schema.params.properties || {};
-    const remainingRequired = (schema.params.required || []).filter(
+      schema.params.properties ?? {};
+    const remainingRequired = (schema.params.required ?? []).filter(
       (r: string) => r !== "provider",
     );
     if (Object.keys(remainingProperties).length > 0) {
@@ -1226,12 +1238,21 @@ function withProviderTag(provider: string, schema: any) {
   };
 }
 
-function withAdminProviderTag(provider: string, schema: any) {
+function withAdminProviderTag<
+  T extends {
+    readonly params?: {
+      readonly properties?: Record<string, unknown>;
+      readonly required?: readonly string[];
+    };
+    readonly summary?: string;
+    readonly tags?: readonly string[];
+  },
+>(provider: string, schema: T) {
   let params = undefined;
   if (schema.params) {
     const { provider: _, ...remainingProperties } =
-      schema.params.properties || {};
-    const remainingRequired = (schema.params.required || []).filter(
+      schema.params.properties ?? {};
+    const remainingRequired = (schema.params.required ?? []).filter(
       (r: string) => r !== "provider",
     );
     if (Object.keys(remainingProperties).length > 0) {
@@ -1253,61 +1274,61 @@ function withAdminProviderTag(provider: string, schema: any) {
 }
 
 const {
-  mapStaticFeedsStatus: _,
-  mapRoutes: __,
-  mapTrips: ___,
-  mapRouteShape: ____,
-  mapStops: _____,
-  mapVehicles: ______,
-  transportRoutes: _______,
-  transportStops: ________,
-  transportVehicles: _________,
-  stopDepartures: __________,
-  tripRoute: ___________,
-  tripStopTimes: ____________,
-  adminStaticSync: _____________,
-  adminRealtimeSync: ______________,
-  adminTransportValidate: _______________,
+  mapStaticFeedsStatus,
+  mapRoutes: _mapRoutes,
+  mapTrips,
+  mapRouteShape,
+  mapStops: _mapStops,
+  mapVehicles: _mapVehicles,
+  transportRoutes,
+  transportStops,
+  transportVehicles,
+  stopDepartures,
+  tripRoute,
+  tripStopTimes,
+  adminStaticSync: _adminStaticSync,
+  adminRealtimeSync: _adminRealtimeSync,
+  adminTransportValidate: _adminTransportValidate,
   ...remainingBaseOpenApi
 } = baseOpenApi;
 
 export const openApi = {
   ...remainingBaseOpenApi,
   transportStaticFeedsStatus: {
-    transit: withProviderTag("transit", baseOpenApi.mapStaticFeedsStatus),
-    simulator: withProviderTag("simulator", baseOpenApi.mapStaticFeedsStatus),
+    transit: withProviderTag("transit", mapStaticFeedsStatus),
+    simulator: withProviderTag("simulator", mapStaticFeedsStatus),
   },
   transportRoutes: {
-    transit: withProviderTag("transit", baseOpenApi.transportRoutes),
-    simulator: withProviderTag("simulator", baseOpenApi.transportRoutes),
+    transit: withProviderTag("transit", transportRoutes),
+    simulator: withProviderTag("simulator", transportRoutes),
   },
   transportStops: {
-    transit: withProviderTag("transit", baseOpenApi.transportStops),
-    simulator: withProviderTag("simulator", baseOpenApi.transportStops),
+    transit: withProviderTag("transit", transportStops),
+    simulator: withProviderTag("simulator", transportStops),
   },
   transportTrips: {
-    transit: withProviderTag("transit", baseOpenApi.mapTrips),
-    simulator: withProviderTag("simulator", baseOpenApi.mapTrips),
+    transit: withProviderTag("transit", mapTrips),
+    simulator: withProviderTag("simulator", mapTrips),
   },
   transportRouteShape: {
-    transit: withProviderTag("transit", baseOpenApi.mapRouteShape),
-    simulator: withProviderTag("simulator", baseOpenApi.mapRouteShape),
+    transit: withProviderTag("transit", mapRouteShape),
+    simulator: withProviderTag("simulator", mapRouteShape),
   },
   transportStopDepartures: {
-    transit: withProviderTag("transit", baseOpenApi.stopDepartures),
-    simulator: withProviderTag("simulator", baseOpenApi.stopDepartures),
+    transit: withProviderTag("transit", stopDepartures),
+    simulator: withProviderTag("simulator", stopDepartures),
   },
   transportVehicles: {
-    transit: withProviderTag("transit", baseOpenApi.transportVehicles),
-    simulator: withProviderTag("simulator", baseOpenApi.transportVehicles),
+    transit: withProviderTag("transit", transportVehicles),
+    simulator: withProviderTag("simulator", transportVehicles),
   },
   transportTripRoute: {
-    transit: withProviderTag("transit", baseOpenApi.tripRoute),
-    simulator: withProviderTag("simulator", baseOpenApi.tripRoute),
+    transit: withProviderTag("transit", tripRoute),
+    simulator: withProviderTag("simulator", tripRoute),
   },
   transportTripStopTimes: {
-    transit: withProviderTag("transit", baseOpenApi.tripStopTimes),
-    simulator: withProviderTag("simulator", baseOpenApi.tripStopTimes),
+    transit: withProviderTag("transit", tripStopTimes),
+    simulator: withProviderTag("simulator", tripStopTimes),
   },
   adminTransportValidate: {
     transit: withAdminProviderTag(

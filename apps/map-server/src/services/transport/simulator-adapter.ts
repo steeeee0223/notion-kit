@@ -240,18 +240,19 @@ export const simulatorAdapter: TransportProviderAdapter = {
     "departures",
   ],
   requiredCredentialKeys: [],
-  healthCheck: async () => ({ ok: true }),
-  discoverStaticFeeds: async () => ({
-    candidates: [buildSimulatorFeedCandidate()],
-    meta: {
-      provider: PROVIDER_KEY,
-      total: 1,
-      generated_at: SIM_TIMESTAMP,
-    },
-  }),
-  syncStatic: async (input) => {
+  healthCheck: () => Promise.resolve({ ok: true }),
+  discoverStaticFeeds: () =>
+    Promise.resolve({
+      candidates: [buildSimulatorFeedCandidate()],
+      meta: {
+        provider: PROVIDER_KEY,
+        total: 1,
+        generated_at: SIM_TIMESTAMP,
+      },
+    }),
+  syncStatic: (input) => {
     const feedIds = input.feedIds?.length ? input.feedIds : [SIM_FEED_ID];
-    return {
+    return Promise.resolve({
       synced: feedIds.map((feedOnestopId) => ({
         feedOnestopId,
         sha1: "simulator",
@@ -263,24 +264,24 @@ export const simulatorAdapter: TransportProviderAdapter = {
         durationMs: 0,
       })),
       errors: [],
-    };
+    });
   },
-  syncRealtime: async (input) => {
+  syncRealtime: (input) => {
     const feedIds = input.feedIds?.length ? input.feedIds : [SIM_FEED_ID];
-    return {
+    return Promise.resolve({
       synced: feedIds.map((feedOnestopId) => ({
         feedOnestopId,
         vehiclesCount: simulatorVehicles.length,
       })),
       errors: [],
-    };
+    });
   },
-  findStops: async (input) => {
+  findStops: (input) => {
     const stops = filterByFeed(simulatorStops, input.feedOnestopId).slice(
       0,
       input.limit,
     );
-    return {
+    return Promise.resolve({
       stops,
       meta: {
         total: stops.length,
@@ -292,32 +293,32 @@ export const simulatorAdapter: TransportProviderAdapter = {
             }
           : {}),
       },
-    };
+    });
   },
-  findRoutes: async (input) => {
+  findRoutes: (input) => {
     const routes =
       input.feedOnestopId === SIM_FEED_ID &&
       (typeof input.routeType !== "number" ||
         input.routeType === simulatorRoute.route_type)
         ? [simulatorRoute].slice(0, input.limit)
         : [];
-    return {
+    return Promise.resolve({
       routes,
       meta: {
         total: routes.length,
         feed_onestop_id: input.feedOnestopId,
         static_feed: buildSimulatorStaticFeedMeta(input.feedOnestopId),
       },
-    };
+    });
   },
-  findTrips: async (input) => {
+  findTrips: (input) => {
     const trips =
       input.routeId === simulatorRoute.id &&
       (typeof input.directionId !== "number" ||
         input.directionId === simulatorTrip.direction_id)
         ? [simulatorTrip].slice(0, input.limit)
         : [];
-    return {
+    return Promise.resolve({
       trips,
       meta: {
         total: trips.length,
@@ -326,23 +327,27 @@ export const simulatorAdapter: TransportProviderAdapter = {
         start_time: input.startTime,
         end_time: input.endTime,
       },
-    };
+    });
   },
-  findRouteShape: async (input) => {
+  findRouteShape: (input) => {
     if (input.routeId !== simulatorRoute.id) {
-      throw notFound("Route not found", { routeId: input.routeId });
+      return Promise.reject(
+        notFound("Route not found", { routeId: input.routeId }),
+      );
     }
 
-    return {
+    return Promise.resolve({
       trip: simulatorTrip,
       route: simulatorRoute,
       shape: input.includeShape ? simulatorShape : null,
-    };
+    });
   },
-  findDepartures: async (input) => {
+  findDepartures: (input) => {
     const stop = simulatorStops.find((stop) => stop.id === input.stopId);
     if (!stop) {
-      throw notFound("Stop not found", { stopId: input.stopId });
+      return Promise.reject(
+        notFound("Stop not found", { stopId: input.stopId }),
+      );
     }
 
     const departures =
@@ -357,7 +362,7 @@ export const simulatorAdapter: TransportProviderAdapter = {
               ),
             )
         : [];
-    return {
+    return Promise.resolve({
       stop,
       departures,
       alerts: [],
@@ -367,26 +372,28 @@ export const simulatorAdapter: TransportProviderAdapter = {
         end_time: input.endTime,
         realtime_available: input.includeRealtime,
       },
-    };
+    });
   },
-  findVehicles: async (input) => {
+  findVehicles: (input) => {
     const vehicles =
       (input.feedOnestopId && input.feedOnestopId !== SIM_FEED_ID) ||
       (typeof input.routeType === "number" &&
         input.routeType !== simulatorRoute.route_type)
         ? []
         : simulatorVehicles;
-    return {
+    return Promise.resolve({
       vehicles,
       meta: {
         snapshot_age_seconds: 0,
         snapshot_available: vehicles.length > 0,
       },
-    };
+    });
   },
   findTripRoute: (input) => {
     if (input.tripId !== simulatorTrip.id) {
-      throw notFound("Trip not found", { tripId: input.tripId });
+      return Promise.reject(
+        notFound("Trip not found", { tripId: input.tripId }),
+      );
     }
     return Promise.resolve({
       trip: simulatorTrip,
@@ -397,7 +404,9 @@ export const simulatorAdapter: TransportProviderAdapter = {
   },
   findTripStopTimes: (input) => {
     if (input.tripId !== simulatorTrip.id) {
-      throw notFound("Trip not found", { tripId: input.tripId });
+      return Promise.reject(
+        notFound("Trip not found", { tripId: input.tripId }),
+      );
     }
     return Promise.resolve({
       trip_id: simulatorTrip.id,

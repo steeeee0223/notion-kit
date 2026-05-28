@@ -1,8 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { z } from "zod/v4";
 
-import { sendError } from "@/lib/api-error";
-import { openApi } from "@/openapi";
 import {
   getAlerts,
   getLatestVehicleSnapshots,
@@ -23,12 +21,6 @@ import {
   toTripStopTimeResponse,
 } from "@/services/transfer";
 
-import {
-  tripParamsSchema,
-  tripRouteQuerySchema,
-  tripStopTimesQuerySchema,
-} from "./schema";
-
 const tripRouteResponseSchema = z.object({
   trip: z.unknown(),
   route: z.unknown(),
@@ -47,7 +39,9 @@ type AlertRows = Awaited<ReturnType<typeof getAlerts>>;
 type StopTimeRows = Awaited<ReturnType<typeof getStopTimesByTrip>>;
 type StopMap = Awaited<ReturnType<typeof getStopsByIds>>;
 
-export function registerTripRoutes(app: FastifyInstance) {}
+export function registerTripRoutes(_app: FastifyInstance) {
+  // noop
+}
 
 export async function buildTripRouteResponse(query: {
   tripId: string;

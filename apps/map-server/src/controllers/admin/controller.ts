@@ -5,22 +5,10 @@ import type {
   FastifySchema,
 } from "fastify";
 
-import { badRequest, sendError, unauthorized } from "@/lib/api-error";
+import { sendError, unauthorized } from "@/lib/api-error";
 import { openApi } from "@/openapi";
 import { getActiveConfig, getConfigAdminToken } from "@/services/config";
-import { buildStaticImportResult } from "@/services/gtfs/data-transfer";
-import { importGtfsStaticFeed } from "@/services/gtfs/static-import";
-import { syncRealtimeFeeds } from "@/services/realtime/gtfs-rt";
-import {
-  getFeedsByIds,
-  getStaticFeedCounts,
-  runRetention,
-} from "@/services/repository";
-import {
-  getFeedOnestopId,
-  getFeedVersion,
-  TransitlandClient,
-} from "@/services/transitland/client";
+import { runRetention } from "@/services/repository";
 import { unsupportedCapability } from "@/services/transport/errors";
 import {
   assertProviderCapability,
@@ -147,52 +135,6 @@ function assertProviderMethod<TMethod extends TransportSyncMethod>(
   if (typeof provider[method] !== "function") {
     throw unsupportedCapability(provider.key, capability);
   }
-}
-
-const MAX_IMPORT_ERROR_MESSAGE_LENGTH = 2000;
-
-function getErrorMessage(error: unknown) {
-  const causeMessage = getNestedErrorMessage(error);
-  if (causeMessage) return truncateErrorMessage(causeMessage);
-  if (error instanceof Error && error.message) {
-    return truncateErrorMessage(error.message);
-  }
-  if (error && typeof error === "object" && "message" in error) {
-    const message = (error as { message?: unknown }).message;
-    if (typeof message === "string" && message.length > 0) {
-      return truncateErrorMessage(message);
-    }
-  }
-  if (typeof error === "string" && error.length > 0) {
-    return truncateErrorMessage(error);
-  }
-
-  try {
-    const serialized = JSON.stringify(error);
-    if (serialized && serialized !== "{}") {
-      return truncateErrorMessage(serialized);
-    }
-  } catch {
-    // Fall through to the generic message.
-  }
-
-  return "Unknown static GTFS import error";
-}
-
-function getNestedErrorMessage(error: unknown): string | null {
-  if (!error || typeof error !== "object" || !("cause" in error)) return null;
-  const cause = (error as { cause?: unknown }).cause;
-  if (cause instanceof Error && cause.message) return cause.message;
-  if (cause && typeof cause === "object" && "message" in cause) {
-    const message = (cause as { message?: unknown }).message;
-    if (typeof message === "string" && message.length > 0) return message;
-  }
-  return null;
-}
-
-function truncateErrorMessage(message: string) {
-  if (message.length <= MAX_IMPORT_ERROR_MESSAGE_LENGTH) return message;
-  return `${message.slice(0, MAX_IMPORT_ERROR_MESSAGE_LENGTH)}...`;
 }
 
 async function handleValidate(

@@ -40,15 +40,15 @@ export const transitlandAdapter: TransportProviderAdapter = {
     "departures",
   ],
   requiredCredentialKeys: [TRANSITLAND_API_KEY],
-  healthCheck: async (context) => {
+  healthCheck: (context) => {
     const present = Boolean(getTransitlandApiKey(context));
-    return {
+    return Promise.resolve({
       ok: present,
       ...(present ? {} : { message: "Missing transit_api_key" }),
       credentialKeys: {
         transit_api_key: { present },
       },
-    };
+    });
   },
   discoverStaticFeeds: async (input, context) => {
     const apiKey = requireTransitlandApiKey(context);
@@ -278,6 +278,7 @@ function addProviderToCollection<T extends Record<string, unknown>>(
   return {
     ...response,
     [key]: records.map((record) =>
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       isRecord(record) ? addProviderKey(record) : record,
     ),
   };

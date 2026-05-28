@@ -1,9 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { z } from "zod/v4";
 
-import { notFound, sendError } from "@/lib/api-error";
-import { quantizeBbox } from "@/lib/schemas";
-import { openApi } from "@/openapi";
+import { notFound } from "@/lib/api-error";
 import {
   findRoutes,
   findStops,
@@ -13,7 +11,6 @@ import {
   getAlerts,
   getFeedsByIds,
   getLatestVehicleSnapshots,
-  getOrSetCached,
   getRoutesByIds,
   getShape,
   getStaticFeedCounts,
@@ -21,7 +18,6 @@ import {
   getStopTimesByTrip,
   getTripsByRouteId,
 } from "@/services/repository";
-import { buildStaticFeedStatusCandidates } from "@/services/static-feed-status";
 import {
   toRouteResponse,
   toRouteTripSummaryResponse,
@@ -30,7 +26,6 @@ import {
   toTripResponse,
   toVehicleResponse,
 } from "@/services/transfer";
-import { TransitlandClient } from "@/services/transitland/client";
 
 import {
   mapRouteShapeQuerySchema,
@@ -38,10 +33,9 @@ import {
   mapStopsQuerySchema,
   mapTripsQuerySchema,
   mapVehiclesQuerySchema,
-  staticFeedsStatusQuerySchema,
 } from "./schema";
 
-const mapStopsResponseSchema = z.object({
+export const mapStopsResponseSchema = z.object({
   stops: z.array(z.unknown()),
   meta: z.object({
     total: z.number(),
@@ -87,7 +81,9 @@ const mapVehiclesResponseSchema = z.object({
   }),
 });
 
-export function registerMapRoutes(app: FastifyInstance) {}
+export function registerMapRoutes(_app: FastifyInstance) {
+  // noop
+}
 
 type TripRow = Awaited<ReturnType<typeof getTripsByRouteId>>[number];
 
