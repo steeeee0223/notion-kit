@@ -35,6 +35,12 @@ Because these routes have hardcoded provider names in their paths (e.g. `simulat
   - `POST /api/admin/transport/simulator/validate` (with correct authorization headers)
 * Assert status code `200` and inspect returned response properties.
 
+### [apps/globe]
+
+#### [No Changes Required]
+* A thorough audit of [apps/globe](file:///Users/steven.yu/Documents/notion-kit/apps/globe) confirms it builds URLs dynamically as strings (e.g. `/api/transport/simulator/stops`) and casts fetched JSON responses to native interface types. It does not import or rely on the backend's path parameter schemas at compile time.
+* Therefore, the frontend will immediately work without any code changes once the backend validation issue is resolved.
+
 ---
 
 ## 3. Verification Plan
