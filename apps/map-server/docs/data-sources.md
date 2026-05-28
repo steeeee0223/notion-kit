@@ -14,9 +14,7 @@ V1 does not cover weather, ports as infrastructure, lighthouses, static GeoJSON 
 
 ## Current state
 
-The server currently imports Transitland GTFS static feeds, syncs Transitland GTFS-RT realtime data, and serves cached map responses through `/api/map/...`.
-
-Static and realtime sync are intentionally separate. Read endpoints do not import static GTFS rows as a side effect.
+The server exposes concrete, provider-scoped transportation read and sync endpoints for both the `transit` (Transitland-backed) and `simulator` providers. Read endpoints call into normalized provider adapters under the hood.
 
 ## Target architecture
 
@@ -36,29 +34,45 @@ Provider credentials live in the shared database `config` table:
 
 ```ts
 config {
-  user: string;
+  admin_token: string;
   credentials: jsonb;
 }
 ```
 
-`MAP_ADMIN_TOKEN` selects the active config user by token prefix. For example, `local.secret` reads the `local` config row.
+`MAP_ADMIN_TOKEN` selects the active config by matching the token exactly. For example, `local.secret` reads the `local.secret` config row. If unset, it defaults to `admin`.
 
 ## Provider-scoped endpoints
 
-Provider-scoped endpoints make source selection explicit while preserving normalized responses:
+Concrete provider-scoped endpoints make source selection explicit while preserving normalized responses:
 
 ```txt
-GET /api/transport/:provider/static-feeds/status
-GET /api/transport/:provider/routes
-GET /api/transport/:provider/stops
-GET /api/transport/:provider/route-shape
-GET /api/transport/:provider/trips
-GET /api/transport/:provider/stops/:stopId/departures
-GET /api/transport/:provider/vehicles
+GET /api/transport/transit/static-feeds/status
+GET /api/transport/transit/routes
+GET /api/transport/transit/stops
+GET /api/transport/transit/route-shape
+GET /api/transport/transit/trips
+GET /api/transport/transit/stops/:stopId/departures
+GET /api/transport/transit/vehicles
+GET /api/transport/transit/trips/:tripId/route
+GET /api/transport/transit/trips/:tripId/stop-times
 
-POST /api/admin/transport/:provider/sync/static
-POST /api/admin/transport/:provider/sync/realtime
-POST /api/admin/transport/:provider/validate
+GET /api/transport/simulator/static-feeds/status
+GET /api/transport/simulator/routes
+GET /api/transport/simulator/stops
+GET /api/transport/simulator/route-shape
+GET /api/transport/simulator/trips
+GET /api/transport/simulator/stops/:stopId/departures
+GET /api/transport/simulator/vehicles
+GET /api/transport/simulator/trips/:tripId/route
+GET /api/transport/simulator/trips/:tripId/stop-times
+
+POST /api/admin/transport/transit/sync/static
+POST /api/admin/transport/transit/sync/realtime
+POST /api/admin/transport/transit/validate
+
+POST /api/admin/transport/simulator/sync/static
+POST /api/admin/transport/simulator/sync/realtime
+POST /api/admin/transport/simulator/validate
 ```
 
 ## Roadmap

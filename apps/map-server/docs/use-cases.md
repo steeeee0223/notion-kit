@@ -35,29 +35,29 @@ The following are use cases for the `@notion-kit/globe` app:
 
 1. Realtime vehicle sync is GTFS-RT only
    - `TransitlandClient.discoverRealtimeVehicleFeeds({ bbox })` discovers GTFS-RT vehicle feeds from Transitland.
-   - `/api/admin/sync/realtime` accepts bbox or feed IDs and polls realtime vehicle feeds only.
-   - `/api/map/vehicles` and WebSocket reads no longer perform inline sync work.
+   - `/api/admin/transport/transit/sync/realtime` accepts bbox or feed IDs and polls realtime vehicle feeds only.
+   - `/api/transport/:provider/vehicles` and WebSocket reads no longer perform inline sync work.
    - `WsHub` owns the 15 second background poller for active client bbox/feed subscriptions.
 
 2. Static GTFS sync is explicit and separate from realtime
-   - `/api/admin/sync/static` imports or refreshes static GTFS only; it must not poll GTFS-RT vehicle feeds.
+   - `/api/admin/transport/:provider/sync/static` imports or refreshes static GTFS only; it must not poll GTFS-RT vehicle feeds.
    - Static sync has explicit result semantics: `imported`, `updated`, `skipped`, `partial`, and `error`.
    - Static feed row counts prevent skipping a feed when SHA is unchanged but local tables are empty.
    - Large local feeds may import as `partial` when `stop_times` exceeds the development storage/import cap.
 
 3. Static GTFS status/list APIs are implemented
-   - `GET /api/map/static-feeds/status?bbox=...` performs read-only static feed discovery/status and returns `missing`, `current`, `stale`, or `unknown` candidates.
-   - `GET /api/map/routes?feed_onestop_id=...` reads cached static routes by Feed Onestop ID.
-   - `GET /api/map/stops?feed_onestop_id=...` reads cached static stops by Feed Onestop ID while preserving previous bbox/radius stop query behavior.
+   - `GET /api/transport/:provider/static-feeds/status?bbox=...` performs read-only static feed discovery/status and returns `missing`, `current`, `stale`, or `unknown` candidates.
+   - `GET /api/transport/:provider/routes?feed_onestop_id=...` reads cached static routes by Feed Onestop ID.
+   - `GET /api/transport/:provider/stops?feed_onestop_id=...` reads cached static stops by Feed Onestop ID while preserving previous bbox/radius stop query behavior.
    - Route/stop list APIs do not import static GTFS as a side effect.
 
 4. Route details now follow the updated case `2C`
    - Route search/recent selection renders a route on the map without opening route details.
-   - `GET /api/map/route-shape?route_id=...` returns representative route geometry without pretending the route ID is a trip ID.
+   - `GET /api/transport/:provider/route-shape?route_id=...` returns representative route geometry without pretending the route ID is a trip ID.
    - Clicking the rendered route opens `RouteDetailsSheet`.
-   - `GET /api/map/trips?route_id=...&service_date=...&start_time=...&end_time=...` lists route trips for the selected time range.
-   - If local `stop_times` were skipped for a large feed, `/api/map/trips` falls back to listing trips by `route_id` with null first/last departure summaries.
-   - Expanding a concrete trip calls `/api/trips/:tripId/stop-times` and renders stop dots for that expanded trip.
+   - `GET /api/transport/:provider/trips?route_id=...&service_date=...&start_time=...&end_time=...` lists route trips for the selected time range.
+   - If local `stop_times` were skipped for a large feed, `/api/transport/:provider/trips` falls back to listing trips by `route_id` with null first/last departure summaries.
+   - Expanding a concrete trip calls `/api/transport/:provider/trips/:tripId/stop-times` and renders stop dots for that expanded trip.
 
 5. Scoped GTFS ID decoding is centralized
    - `decodeRepeatedly`/`scopedIdSchema` handle plain, once-encoded, and twice-encoded internal IDs.
@@ -85,7 +85,7 @@ Important decisions:
 - Routes and Stops each get their own Sync button because their active data source adapter may differ.
 - Bbox belongs to discovery/status. Route/stop list reads should use `feed_onestop_id`.
 - When a bbox resolves to multiple static feeds, backend returns candidates and the frontend chooses unless there is exactly one strong match.
-- `/api/admin/sync/static` is acceptable for the current dev flow. A production user-facing flow should add a non-admin map sync endpoint so browser code does not need an admin token.
+- `/api/admin/transport/:provider/sync/static` is acceptable for the current dev flow. A production user-facing flow should add a non-admin map sync endpoint so browser code does not need an admin token.
 
 ## Next step
 
@@ -97,7 +97,7 @@ Important decisions:
    - Confirm encoded scoped IDs work in path params and query params.
 
 2. Test BKK partial import behavior
-   - Confirm `GET /api/map/trips?route_id=f-u2m-bkk:H5...` returns trip rows even when local `stop_times` are skipped.
+   - Confirm `GET /api/transport/:provider/trips?route_id=f-u2m-bkk:H5...` returns trip rows even when local `stop_times` are skipped.
    - Confirm the route details UI handles null first/last departure summaries gracefully.
    - Confirm trip expansion communicates that stop times are unavailable rather than silently appearing broken.
 
@@ -127,7 +127,7 @@ Important decisions:
    - Preserve all-or-core import semantics explicitly so partial imports are visible to the frontend.
 
 2. Improve route-trip behavior when stop times are absent
-   - Today `/api/map/trips` can fall back to trips by route without time summaries.
+   - Today `/api/transport/:provider/trips` can fall back to trips by route without time summaries.
    - Decide whether the UI should hide time-range filtering, show an explicit "schedule unavailable" state, or trigger a full import job.
 
 ### Continue map-server cleanup
@@ -156,12 +156,12 @@ sequenceDiagram
     participant BE
 
     user->>FE: Toggle Routes or Stops layer
-    FE->>BE: GET /api/map/static-feeds/status?bbox=...
+    FE->>BE: GET /api/transport/transit/static-feeds/status?bbox=...
     BE-->>FE: feed candidates + status (missing/current/stale/unknown)
     alt exactly one candidate and cached rows are current or unknown/readable
-        FE->>BE: GET /api/map/routes?feed_onestop_id=...
+        FE->>BE: GET /api/transport/transit/routes?feed_onestop_id=...
         BE-->>FE: cached routes + feed version metadata
-        FE->>BE: GET /api/map/stops?feed_onestop_id=...
+        FE->>BE: GET /api/transport/transit/stops?feed_onestop_id=...
         BE-->>FE: cached stops + feed version metadata
     else multiple feed candidates
         FE-->>user: Ask user to choose Selected Feed
@@ -179,13 +179,13 @@ sequenceDiagram
     participant BE
 
     user->>FE: Click Routes Sync or Stops Sync
-    FE->>BE: POST /api/admin/sync/static { bbox or feedIds: [selected feed_lookup_key], force: false }
+    FE->>BE: POST /api/admin/transport/transit/sync/static { bbox or feedIds: [selected feed_lookup_key], force: false }
     BE-->>FE: sync result (imported/updated/skipped/error) + feed version metadata
     alt sync selected or resolved a route feed
-        FE->>BE: GET /api/map/routes?feed_onestop_id=...
+        FE->>BE: GET /api/transport/transit/routes?feed_onestop_id=...
         BE-->>FE: cached routes + feed version metadata
     else sync selected or resolved a stop feed
-        FE->>BE: GET /api/map/stops?feed_onestop_id=...
+        FE->>BE: GET /api/transport/transit/stops?feed_onestop_id=...
         BE-->>FE: cached stops + feed version metadata
     end
 ```
@@ -204,6 +204,6 @@ sequenceDiagram
     BE-->>FE: background GTFS-RT poll updates
 
     user->>FE: Click Vehicles Sync
-    FE->>BE: POST /api/admin/sync/realtime { bbox or feedIds }
+    FE->>BE: POST /api/admin/transport/transit/sync/realtime { bbox or feedIds }
     BE-->>FE: realtime poll result + vehicle snapshot counts
 ```
