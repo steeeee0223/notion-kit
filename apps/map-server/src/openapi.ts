@@ -221,7 +221,6 @@ const stop = {
   },
 } as const;
 
-
 const routeTripSummary = {
   type: "object",
   properties: {

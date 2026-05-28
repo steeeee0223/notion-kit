@@ -1,5 +1,5 @@
 import swagger from "@fastify/swagger";
-import Fastify from "fastify";
+import Fastify, { type FastifyInstance } from "fastify";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/db", () => {
@@ -15,8 +15,24 @@ vi.mock("@/db", () => {
   };
 });
 
+interface StopsResponse {
+  stops: { stop_name: string }[];
+}
+
+interface RoutesResponse {
+  routes: { route_long_name: string }[];
+}
+
+interface VehiclesResponse {
+  vehicles: { vehicle_label: string }[];
+}
+
+interface ValidateResponse {
+  ok: boolean;
+}
+
 describe("Simulator Route Integration Tests", () => {
-  let app: any;
+  let app: FastifyInstance;
 
   beforeAll(async () => {
     vi.stubEnv("MAP_POSTGRES_URL", "postgres://example.test/db");
@@ -60,10 +76,10 @@ describe("Simulator Route Integration Tests", () => {
       url: "/api/transport/simulator/stops?feed_onestop_id=sim-feed&limit=500",
     });
     expect(response.statusCode).toBe(200);
-    const data = response.json();
+    const data = response.json<StopsResponse>();
     expect(data.stops).toBeDefined();
     expect(data.stops.length).toBe(3);
-    expect(data.stops[0].stop_name).toBe("Central Station");
+    expect(data.stops[0]?.stop_name).toBe("Central Station");
   });
 
   it("GET /api/transport/simulator/routes returns 200 and routes", async () => {
@@ -72,10 +88,10 @@ describe("Simulator Route Integration Tests", () => {
       url: "/api/transport/simulator/routes?feed_onestop_id=sim-feed&limit=500",
     });
     expect(response.statusCode).toBe(200);
-    const data = response.json();
+    const data = response.json<RoutesResponse>();
     expect(data.routes).toBeDefined();
     expect(data.routes.length).toBe(1);
-    expect(data.routes[0].route_long_name).toBe("Blue Line");
+    expect(data.routes[0]?.route_long_name).toBe("Blue Line");
   });
 
   it("GET /api/transport/simulator/vehicles returns 200 and vehicles", async () => {
@@ -84,10 +100,10 @@ describe("Simulator Route Integration Tests", () => {
       url: "/api/transport/simulator/vehicles?feed_onestop_id=sim-feed",
     });
     expect(response.statusCode).toBe(200);
-    const data = response.json();
+    const data = response.json<VehiclesResponse>();
     expect(data.vehicles).toBeDefined();
     expect(data.vehicles.length).toBe(1);
-    expect(data.vehicles[0].vehicle_label).toBe("Simulator 1");
+    expect(data.vehicles[0]?.vehicle_label).toBe("Simulator 1");
   });
 
   it("POST /api/admin/transport/simulator/validate returns 200 with Authorization", async () => {
@@ -99,7 +115,7 @@ describe("Simulator Route Integration Tests", () => {
       },
     });
     expect(response.statusCode).toBe(200);
-    const data = response.json();
+    const data = response.json<ValidateResponse>();
     expect(data.ok).toBe(true);
   });
 });
