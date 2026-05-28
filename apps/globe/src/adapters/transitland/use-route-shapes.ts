@@ -36,21 +36,30 @@ export function useRouteShapes(
     queryFn: async () => {
       if (!tripId && !fallbackRouteId) return [];
 
-      const { data, error } =
-        provider === "transit" && tripId
-          ? await mapApiClient<TripRouteResponse>(
-              `/api/trips/${encodeURIComponent(tripId)}/route`,
-              { query: { include_shape: true } },
-            )
-          : await mapApiClient<TripRouteResponse>(
-              transportProviderPath(provider, "/route-shape"),
-              {
-                query: {
-                  route_id: fallbackRouteId ?? tripId!,
-                  include_shape: true,
-                },
+      const { data, error } = tripId
+        ? await mapApiClient<TripRouteResponse>(
+            transportProviderPath(
+              provider,
+              `/trips/${encodeURIComponent(tripId)}/route`,
+            ),
+            {
+              query: {
+                include_shape: true,
+                ...(fallbackRouteId
+                  ? { fallback_route_id: fallbackRouteId }
+                  : {}),
               },
-            );
+            },
+          )
+        : await mapApiClient<TripRouteResponse>(
+            transportProviderPath(provider, "/route-shape"),
+            {
+              query: {
+                route_id: fallbackRouteId!,
+                include_shape: true,
+              },
+            },
+          );
       if (error) return [];
       return toRouteShapes(data);
     },

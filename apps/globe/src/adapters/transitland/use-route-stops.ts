@@ -36,16 +36,6 @@ interface TripStopTimesResponse {
   stop_times: TripStopTime[];
 }
 
-interface StopsResponse {
-  stops: {
-    id: string;
-    stop_id: string;
-    stop_name: string | null;
-    lat: number | null;
-    lon: number | null;
-  }[];
-}
-
 function transferStop(
   stop: TripStopTime,
   routeShortName: string | null,
@@ -78,28 +68,6 @@ export function useRouteStops(
       const id = tripId ?? fallbackRouteId ?? null;
       if (!id) return [];
 
-      if (provider !== "transit" && fallbackRouteId) {
-        const feedOnestopId = getFeedOnestopId(fallbackRouteId);
-        if (!feedOnestopId) return [];
-        const { data, error } = await mapApiClient<StopsResponse>(
-          transportProviderPath(provider, "/stops"),
-          { query: { feed_onestop_id: feedOnestopId, limit: 500 } },
-        );
-        if (error) return [];
-        return data.stops.flatMap((stop) => {
-          const routeStop = transferStop(
-            {
-              stop_id: stop.id,
-              stop_name: stop.stop_name,
-              lat: stop.lat,
-              lon: stop.lon,
-            },
-            null,
-          );
-          return routeStop ? [routeStop] : [];
-        });
-      }
-
       const query: Record<string, boolean | string> = {
         include_realtime: true,
         include_geometry: true,
@@ -107,7 +75,10 @@ export function useRouteStops(
       if (fallbackRouteId) query.fallback_route_id = fallbackRouteId;
 
       const { data, error } = await mapApiClient<TripStopTimesResponse>(
-        `/api/trips/${encodeURIComponent(id)}/stop-times`,
+        transportProviderPath(
+          provider,
+          `/trips/${encodeURIComponent(id)}/stop-times`,
+        ),
         { query },
       );
       if (error) return [];
@@ -119,10 +90,4 @@ export function useRouteStops(
     enabled: !!(tripId ?? fallbackRouteId),
     staleTime: 20 * 1000,
   });
-}
-
-function getFeedOnestopId(routeId: string) {
-  const separatorIndex = routeId.indexOf(":");
-  if (separatorIndex <= 0) return null;
-  return routeId.slice(0, separatorIndex);
 }
