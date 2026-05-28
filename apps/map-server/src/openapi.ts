@@ -1213,23 +1213,24 @@ function withProviderTag<
     readonly tags?: readonly string[];
   },
 >(provider: string, schema: T) {
+  const { params: originalParams, ...rest } = schema;
   let params = undefined;
-  if (schema.params) {
+  if (originalParams) {
     const { provider: _, ...remainingProperties } =
-      schema.params.properties ?? {};
-    const remainingRequired = (schema.params.required ?? []).filter(
+      originalParams.properties ?? {};
+    const remainingRequired = (originalParams.required ?? []).filter(
       (r: string) => r !== "provider",
     );
     if (Object.keys(remainingProperties).length > 0) {
       params = {
-        ...schema.params,
+        ...originalParams,
         required: remainingRequired,
         properties: remainingProperties,
       };
     }
   }
   return {
-    ...schema,
+    ...rest,
     ...(params ? { params } : {}),
     tags: [
       `Transport / ${provider === "transit" ? "Transitland" : "Simulator"}`,
@@ -1248,23 +1249,24 @@ function withAdminProviderTag<
     readonly tags?: readonly string[];
   },
 >(provider: string, schema: T) {
+  const { params: originalParams, ...rest } = schema;
   let params = undefined;
-  if (schema.params) {
+  if (originalParams) {
     const { provider: _, ...remainingProperties } =
-      schema.params.properties ?? {};
-    const remainingRequired = (schema.params.required ?? []).filter(
+      originalParams.properties ?? {};
+    const remainingRequired = (originalParams.required ?? []).filter(
       (r: string) => r !== "provider",
     );
     if (Object.keys(remainingProperties).length > 0) {
       params = {
-        ...schema.params,
+        ...originalParams,
         required: remainingRequired,
         properties: remainingProperties,
       };
     }
   }
   return {
-    ...schema,
+    ...rest,
     ...(params ? { params } : {}),
     tags: [
       `Admin / Sync / ${provider === "transit" ? "Transitland" : "Simulator"}`,
