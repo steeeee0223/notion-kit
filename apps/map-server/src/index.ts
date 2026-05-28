@@ -6,11 +6,8 @@ import Fastify from "fastify";
 
 import { registerAdminConfigRoutes } from "@/controllers/admin-config/controller";
 import { registerAdminRoutes } from "@/controllers/admin/controller";
-import { registerMapRoutes } from "@/controllers/map/controller";
 import { registerReplayRoutes } from "@/controllers/replay/controller";
-import { registerStopRoutes } from "@/controllers/stops/controller";
 import { registerTransportRoutes } from "@/controllers/transport/controller";
-import { registerTripRoutes } from "@/controllers/trips/controller";
 import { registerWsRoutes } from "@/controllers/ws/controller";
 import { env } from "@/env";
 import { openApi } from "@/openapi";
@@ -78,10 +75,7 @@ app.get("/api/health", { schema: openApi.health }, () => ({
   service: "@notion-kit/map-server",
 }));
 
-await app.register(registerMapRoutes);
 await app.register(registerTransportRoutes);
-await app.register(registerStopRoutes);
-await app.register(registerTripRoutes);
 await app.register(registerReplayRoutes);
 await app.register(registerAdminConfigRoutes);
 await app.register(registerAdminRoutes);

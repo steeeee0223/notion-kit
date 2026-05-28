@@ -1176,8 +1176,27 @@ function withAdminProviderTag(provider: string, schema: any) {
   };
 }
 
+const {
+  mapStaticFeedsStatus: _,
+  mapRoutes: __,
+  mapTrips: ___,
+  mapRouteShape: ____,
+  mapStops: _____,
+  mapVehicles: ______,
+  transportRoutes: _______,
+  transportStops: ________,
+  transportVehicles: _________,
+  stopDepartures: __________,
+  tripRoute: ___________,
+  tripStopTimes: ____________,
+  adminStaticSync: _____________,
+  adminRealtimeSync: ______________,
+  adminTransportValidate: _______________,
+  ...remainingBaseOpenApi
+} = baseOpenApi;
+
 export const openApi = {
-  ...baseOpenApi,
+  ...remainingBaseOpenApi,
   transportStaticFeedsStatus: {
     transit: withProviderTag("transit", baseOpenApi.mapStaticFeedsStatus),
     simulator: withProviderTag("simulator", baseOpenApi.mapStaticFeedsStatus),

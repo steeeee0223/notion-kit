@@ -47,47 +47,7 @@ type AlertRows = Awaited<ReturnType<typeof getAlerts>>;
 type StopTimeRows = Awaited<ReturnType<typeof getStopTimesByTrip>>;
 type StopMap = Awaited<ReturnType<typeof getStopsByIds>>;
 
-export function registerTripRoutes(app: FastifyInstance) {
-  app.get(
-    "/api/trips/:tripId/route",
-    { schema: openApi.tripRoute },
-    async (request, reply) => {
-      try {
-        const params = tripParamsSchema.parse(request.params);
-        const query = tripRouteQuerySchema.parse(request.query);
-        const response = await buildTripRouteResponse({
-          tripId: params.tripId,
-          includeShape: query.include_shape,
-          fallbackRouteId: query.fallback_route_id,
-        });
-        return reply.send(response);
-      } catch (error) {
-        return sendError(reply, error);
-      }
-    },
-  );
-
-  app.get(
-    "/api/trips/:tripId/stop-times",
-    { schema: openApi.tripStopTimes },
-    async (request, reply) => {
-      try {
-        const params = tripParamsSchema.parse(request.params);
-        const query = tripStopTimesQuerySchema.parse(request.query);
-        const response = await buildTripStopTimesResponse({
-          tripId: params.tripId,
-          date: query.date,
-          includeRealtime: query.include_realtime,
-          includeGeometry: query.include_geometry,
-          fallbackRouteId: query.fallback_route_id,
-        });
-        return reply.send(response);
-      } catch (error) {
-        return sendError(reply, error);
-      }
-    },
-  );
-}
+export function registerTripRoutes(app: FastifyInstance) {}
 
 export async function buildTripRouteResponse(query: {
   tripId: string;
