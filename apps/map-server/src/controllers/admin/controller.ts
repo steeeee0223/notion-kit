@@ -1,4 +1,9 @@
-import type { FastifyInstance, FastifyRequest } from "fastify";
+import type {
+  FastifyInstance,
+  FastifyReply,
+  FastifyRequest,
+  FastifySchema,
+} from "fastify";
 
 import { badRequest, sendError, unauthorized } from "@/lib/api-error";
 import { openApi } from "@/openapi";
@@ -29,71 +34,55 @@ import type {
 
 import { realtimeSyncBodySchema, staticSyncBodySchema } from "./schema";
 
+interface OpenApiExtension {
+  adminTransportValidate: Record<string, FastifySchema>;
+  adminTransportStaticSync: Record<string, FastifySchema>;
+  adminTransportRealtimeSync: Record<string, FastifySchema>;
+}
+
+const api = openApi as typeof openApi & OpenApiExtension;
+
+const documentedProviders = ["transit", "simulator"] as const;
+
 export function registerAdminRoutes(app: FastifyInstance) {
+  for (const provider of documentedProviders) {
+    app.post(
+      `/api/admin/transport/${provider}/validate`,
+      { schema: api.adminTransportValidate[provider] },
+      (request, reply) => handleValidate(app, provider, request, reply),
+    );
+    app.post(
+      `/api/admin/transport/${provider}/sync/static`,
+      { schema: api.adminTransportStaticSync[provider] },
+      (request, reply) => handleStaticSync(app, provider, request, reply),
+    );
+    app.post(
+      `/api/admin/transport/${provider}/sync/realtime`,
+      { schema: api.adminTransportRealtimeSync[provider] },
+      (request, reply) => handleRealtimeSync(app, provider, request, reply),
+    );
+  }
+
+  // Keep compatibility generic paths
   app.post(
     "/api/admin/transport/:provider/validate",
-    { schema: openApi.adminTransportValidate },
     async (request, reply) => {
-      try {
-        assertAdmin(app, request);
-        const { provider: providerKey } = (request.params ?? {}) as {
-          provider: string;
-        };
-        const provider = transportProviderRegistry.get(providerKey);
-        return reply.send(
-          await provider.healthCheck(await buildProviderContext(app)),
-        );
-      } catch (error) {
-        return sendError(reply, error);
-      }
+      const { provider } = (request.params ?? {}) as { provider: string };
+      return handleValidate(app, provider, request, reply);
     },
   );
-
   app.post(
     "/api/admin/transport/:provider/sync/static",
     async (request, reply) => {
-      try {
-        assertAdmin(app, request);
-        const { provider: providerKey } = (request.params ?? {}) as {
-          provider: string;
-        };
-        const provider = transportProviderRegistry.get(providerKey);
-        assertProviderMethod(provider, "static_schedule", "syncStatic");
-        const body = staticSyncBodySchema.parse(request.body ?? {});
-        return reply.send(
-          await provider.syncStatic(body, await buildProviderContext(app)),
-        );
-      } catch (error) {
-        return sendError(reply, error);
-      }
+      const { provider } = (request.params ?? {}) as { provider: string };
+      return handleStaticSync(app, provider, request, reply);
     },
   );
-
   app.post(
     "/api/admin/transport/:provider/sync/realtime",
     async (request, reply) => {
-      try {
-        assertAdmin(app, request);
-        const { provider: providerKey } = (request.params ?? {}) as {
-          provider: string;
-        };
-        const provider = transportProviderRegistry.get(providerKey);
-        assertProviderMethod(provider, "realtime_vehicles", "syncRealtime");
-        const body = realtimeSyncBodySchema.parse(request.body ?? {});
-        const response = await provider.syncRealtime(
-          {
-            ...body,
-            timeoutMs: app.env.MAP_RT_POLL_TIMEOUT_MS,
-          },
-          await buildProviderContext(app),
-        );
-        app.wsHub.broadcastVehicles().catch((error: unknown) => {
-          app.log.error(error, "Failed to broadcast realtime vehicles");
-        });
-        return reply.send(response);
-      } catch (error) {
-        return sendError(reply, error);
-      }
+      const { provider } = (request.params ?? {}) as { provider: string };
+      return handleRealtimeSync(app, provider, request, reply);
     },
   );
 
@@ -317,4 +306,67 @@ function getNestedErrorMessage(error: unknown): string | null {
 function truncateErrorMessage(message: string) {
   if (message.length <= MAX_IMPORT_ERROR_MESSAGE_LENGTH) return message;
   return `${message.slice(0, MAX_IMPORT_ERROR_MESSAGE_LENGTH)}...`;
+}
+
+async function handleValidate(
+  app: FastifyInstance,
+  providerKey: string,
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  try {
+    assertAdmin(app, request);
+    const provider = transportProviderRegistry.get(providerKey);
+    return reply.send(
+      await provider.healthCheck(await buildProviderContext(app)),
+    );
+  } catch (error) {
+    return sendError(reply, error);
+  }
+}
+
+async function handleStaticSync(
+  app: FastifyInstance,
+  providerKey: string,
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  try {
+    assertAdmin(app, request);
+    const provider = transportProviderRegistry.get(providerKey);
+    assertProviderMethod(provider, "static_schedule", "syncStatic");
+    const body = staticSyncBodySchema.parse(request.body ?? {});
+    return reply.send(
+      await provider.syncStatic(body, await buildProviderContext(app)),
+    );
+  } catch (error) {
+    return sendError(reply, error);
+  }
+}
+
+async function handleRealtimeSync(
+  app: FastifyInstance,
+  providerKey: string,
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  try {
+    assertAdmin(app, request);
+    const provider = transportProviderRegistry.get(providerKey);
+    assertProviderMethod(provider, "realtime_vehicles", "syncRealtime");
+    const body = realtimeSyncBodySchema.parse(request.body ?? {});
+    const response = await provider.syncRealtime(
+      {
+        ...body,
+        timeoutMs: app.env.MAP_RT_POLL_TIMEOUT_MS,
+      },
+      await buildProviderContext(app),
+    );
+    app.wsHub.broadcastVehicles().catch((error: unknown) => {
+      app.log.error(error, "Failed to broadcast realtime vehicles");
+    });
+    return reply.send(response);
+  } catch (error) {
+    return sendError(reply, error);
+  }
 }

@@ -38,7 +38,9 @@ const simulator = adapters.simulator as TransportProviderAdapter;
 
 describe("transport provider registry", () => {
   it("uses transit as the public Transitland-backed provider slug", () => {
-    const registry = createTransportProviderRegistry([adapters.transitland as TransportProviderAdapter]);
+    const registry = createTransportProviderRegistry([
+      adapters.transitland as TransportProviderAdapter,
+    ]);
     expect(registry.get("transit")).toBe(adapters.transitland);
   });
 
@@ -65,4 +67,3 @@ describe("transport provider registry", () => {
     );
   });
 });
-
