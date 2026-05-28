@@ -49,6 +49,7 @@ interface OpenApiExtension {
 const api = openApi as typeof openApi & OpenApiExtension;
 
 const documentedProviders = ["transit", "simulator"] as const;
+const hiddenOpenApiSchema = { hide: true } as FastifySchema;
 
 export function registerTransportRoutes(app: FastifyInstance) {
   for (const provider of documentedProviders) {
@@ -106,29 +107,47 @@ export function registerTransportRoutes(app: FastifyInstance) {
   // Keep compatibility with legacy generic `:provider` routes (without openapi schemas since they are now registered above)
   app.get(
     "/api/transport/:provider/static-feeds/status",
+    { schema: hiddenOpenApiSchema },
     async (request, reply) => {
       const { provider } = providerParamsSchema.parse(request.params);
       return handleStaticFeedsStatus(app, provider, request, reply);
     },
   );
-  app.get("/api/transport/:provider/routes", async (request, reply) => {
-    const { provider } = providerParamsSchema.parse(request.params);
-    return handleRoutes(app, provider, request, reply);
-  });
-  app.get("/api/transport/:provider/stops", async (request, reply) => {
-    const { provider } = providerParamsSchema.parse(request.params);
-    return handleStops(app, provider, request, reply);
-  });
-  app.get("/api/transport/:provider/trips", async (request, reply) => {
-    const { provider } = providerParamsSchema.parse(request.params);
-    return handleTrips(app, provider, request, reply);
-  });
-  app.get("/api/transport/:provider/route-shape", async (request, reply) => {
-    const { provider } = providerParamsSchema.parse(request.params);
-    return handleRouteShape(app, provider, request, reply);
-  });
+  app.get(
+    "/api/transport/:provider/routes",
+    { schema: hiddenOpenApiSchema },
+    async (request, reply) => {
+      const { provider } = providerParamsSchema.parse(request.params);
+      return handleRoutes(app, provider, request, reply);
+    },
+  );
+  app.get(
+    "/api/transport/:provider/stops",
+    { schema: hiddenOpenApiSchema },
+    async (request, reply) => {
+      const { provider } = providerParamsSchema.parse(request.params);
+      return handleStops(app, provider, request, reply);
+    },
+  );
+  app.get(
+    "/api/transport/:provider/trips",
+    { schema: hiddenOpenApiSchema },
+    async (request, reply) => {
+      const { provider } = providerParamsSchema.parse(request.params);
+      return handleTrips(app, provider, request, reply);
+    },
+  );
+  app.get(
+    "/api/transport/:provider/route-shape",
+    { schema: hiddenOpenApiSchema },
+    async (request, reply) => {
+      const { provider } = providerParamsSchema.parse(request.params);
+      return handleRouteShape(app, provider, request, reply);
+    },
+  );
   app.get(
     "/api/transport/:provider/stops/:stopId/departures",
+    { schema: hiddenOpenApiSchema },
     async (request, reply) => {
       const { provider, stopId } = providerStopParamsSchema.parse(
         request.params,
@@ -136,10 +155,14 @@ export function registerTransportRoutes(app: FastifyInstance) {
       return handleDepartures(app, provider, stopId, request, reply);
     },
   );
-  app.get("/api/transport/:provider/vehicles", async (request, reply) => {
-    const { provider } = providerParamsSchema.parse(request.params);
-    return handleVehicles(app, provider, request, reply);
-  });
+  app.get(
+    "/api/transport/:provider/vehicles",
+    { schema: hiddenOpenApiSchema },
+    async (request, reply) => {
+      const { provider } = providerParamsSchema.parse(request.params);
+      return handleVehicles(app, provider, request, reply);
+    },
+  );
 }
 
 async function buildProviderContext(

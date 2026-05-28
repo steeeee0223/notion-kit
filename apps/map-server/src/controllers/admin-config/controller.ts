@@ -34,22 +34,27 @@ export function registerAdminConfigRoutes(app: FastifyInstance) {
     },
   );
 
-  app.get("/api/admin/config/:adminToken", async (request, reply) => {
-    try {
-      assertAdmin(app, request);
-      const params = configAdminTokenParamsSchema.parse(request.params);
-      const row = await getConfigForAdminToken(params.adminToken);
-      return reply.send({
-        admin_token: row.adminToken,
-        credentials: redactCredentials(row.credentials),
-      });
-    } catch (error) {
-      return sendError(reply, error);
-    }
-  });
+  app.get(
+    "/api/admin/config/:adminToken",
+    { schema: openApi.adminConfigByToken },
+    async (request, reply) => {
+      try {
+        assertAdmin(app, request);
+        const params = configAdminTokenParamsSchema.parse(request.params);
+        const row = await getConfigForAdminToken(params.adminToken);
+        return reply.send({
+          admin_token: row.adminToken,
+          credentials: redactCredentials(row.credentials),
+        });
+      } catch (error) {
+        return sendError(reply, error);
+      }
+    },
+  );
 
   app.put(
     "/api/admin/config/:adminToken/credentials",
+    { schema: openApi.adminConfigCredentialsPut },
     async (request, reply) => {
       try {
         assertAdmin(app, request);
@@ -72,6 +77,7 @@ export function registerAdminConfigRoutes(app: FastifyInstance) {
 
   app.patch(
     "/api/admin/config/:adminToken/credentials",
+    { schema: openApi.adminConfigCredentialsPatch },
     async (request, reply) => {
       try {
         assertAdmin(app, request);

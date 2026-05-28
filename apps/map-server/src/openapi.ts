@@ -221,6 +221,25 @@ const standardErrors = {
   500: { description: "Internal server error", ...errorResponse },
 } as const;
 
+const adminConfigResponse = {
+  200: {
+    type: "object",
+    properties: {
+      admin_token: { type: "string", example: "local.secret" },
+      credentials: { type: "object", additionalProperties: true },
+    },
+  },
+  ...standardErrors,
+} as const;
+
+const adminTokenParams = {
+  type: "object",
+  required: ["adminToken"],
+  properties: {
+    adminToken: { type: "string", example: "local.secret" },
+  },
+} as const;
+
 const providerParams = {
   type: "object",
   required: ["provider"],
@@ -228,6 +247,36 @@ const providerParams = {
     provider: { type: "string", example: "simulator" },
   },
 } as const;
+
+type OpenApiTag = { name: string; description: string };
+
+export const openApiTags = [
+  { name: "System", description: "Service health and diagnostics." },
+  {
+    name: "Transport / Transitland",
+    description: "Transitland-backed provider-scoped transportation APIs.",
+  },
+  {
+    name: "Transport / Simulator",
+    description: "Simulator-backed provider-scoped transportation APIs.",
+  },
+  { name: "Replay", description: "Historical vehicle replay APIs." },
+  {
+    name: "Admin / Sync / Transitland",
+    description:
+      "Transitland provider validation, static sync, and realtime sync.",
+  },
+  {
+    name: "Admin / Sync / Simulator",
+    description:
+      "Simulator provider validation, static sync, and realtime sync.",
+  },
+  {
+    name: "Admin / Config",
+    description: "Shared provider credential configuration.",
+  },
+  { name: "WebSocket", description: "Live push protocol documentation." },
+] satisfies OpenApiTag[];
 
 const baseOpenApi = {
   health: {
@@ -1095,16 +1144,43 @@ const baseOpenApi = {
     tags: ["Admin / Config"],
     summary: "Read active shared provider config status",
     security: [{ adminBearer: [] }],
-    response: {
-      200: {
-        type: "object",
-        properties: {
-          admin_token: { type: "string", example: "local.secret" },
-          credentials: { type: "object", additionalProperties: true },
-        },
+    response: adminConfigResponse,
+  },
+  adminConfigByToken: {
+    tags: ["Admin / Config"],
+    summary: "Read shared provider config status by admin token",
+    security: [{ adminBearer: [] }],
+    params: adminTokenParams,
+    response: adminConfigResponse,
+  },
+  adminConfigCredentialsPut: {
+    tags: ["Admin / Config"],
+    summary: "Replace shared provider credentials for an admin token",
+    security: [{ adminBearer: [] }],
+    params: adminTokenParams,
+    body: {
+      type: "object",
+      required: ["credentials"],
+      properties: {
+        credentials: { type: "object", additionalProperties: true },
       },
-      ...standardErrors,
     },
+    response: adminConfigResponse,
+  },
+  adminConfigCredentialsPatch: {
+    tags: ["Admin / Config"],
+    summary: "Patch one shared provider credential for an admin token",
+    security: [{ adminBearer: [] }],
+    params: adminTokenParams,
+    body: {
+      type: "object",
+      required: ["key", "value"],
+      properties: {
+        key: { type: "string", example: "transit_api_key" },
+        value: { type: ["string", "null"], example: "secret-value" },
+      },
+    },
+    response: adminConfigResponse,
   },
   websocket: {
     tags: ["WebSocket"],

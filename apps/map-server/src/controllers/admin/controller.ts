@@ -43,6 +43,7 @@ interface OpenApiExtension {
 const api = openApi as typeof openApi & OpenApiExtension;
 
 const documentedProviders = ["transit", "simulator"] as const;
+const hiddenOpenApiSchema = { hide: true } as FastifySchema;
 
 export function registerAdminRoutes(app: FastifyInstance) {
   for (const provider of documentedProviders) {
@@ -66,6 +67,7 @@ export function registerAdminRoutes(app: FastifyInstance) {
   // Keep compatibility generic paths
   app.post(
     "/api/admin/transport/:provider/validate",
+    { schema: hiddenOpenApiSchema },
     async (request, reply) => {
       const { provider } = (request.params ?? {}) as { provider: string };
       return handleValidate(app, provider, request, reply);
@@ -73,6 +75,7 @@ export function registerAdminRoutes(app: FastifyInstance) {
   );
   app.post(
     "/api/admin/transport/:provider/sync/static",
+    { schema: hiddenOpenApiSchema },
     async (request, reply) => {
       const { provider } = (request.params ?? {}) as { provider: string };
       return handleStaticSync(app, provider, request, reply);
@@ -80,6 +83,7 @@ export function registerAdminRoutes(app: FastifyInstance) {
   );
   app.post(
     "/api/admin/transport/:provider/sync/realtime",
+    { schema: hiddenOpenApiSchema },
     async (request, reply) => {
       const { provider } = (request.params ?? {}) as { provider: string };
       return handleRealtimeSync(app, provider, request, reply);

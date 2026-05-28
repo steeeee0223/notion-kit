@@ -10,7 +10,7 @@ import { registerReplayRoutes } from "@/controllers/replay/controller";
 import { registerTransportRoutes } from "@/controllers/transport/controller";
 import { registerWsRoutes } from "@/controllers/ws/controller";
 import { env } from "@/env";
-import { openApi } from "@/openapi";
+import { openApi, openApiTags } from "@/openapi";
 import { WsHub } from "@/services/ws-hub";
 
 const app = Fastify({
@@ -35,26 +35,7 @@ await app.register(swagger, {
       description:
         "Backend APIs for static GTFS, realtime GTFS-RT snapshots, map viewport data, stop departures, trip details, replay, and WebSocket subscriptions.",
     },
-    tags: [
-      { name: "System", description: "Service health and diagnostics." },
-      { name: "Map", description: "Viewport-friendly map APIs." },
-      { name: "Stops", description: "Stop detail and departure APIs." },
-      { name: "Trips", description: "Trip, route, shape, and stop-time APIs." },
-      { name: "Replay", description: "Historical vehicle replay APIs." },
-      {
-        name: "Admin / Sync",
-        description: "Static sync, realtime polling, and retention jobs.",
-      },
-      {
-        name: "Transport",
-        description: "Provider-scoped normalized transportation APIs.",
-      },
-      {
-        name: "Admin / Config",
-        description: "Shared provider credential configuration.",
-      },
-      { name: "WebSocket", description: "Live push protocol documentation." },
-    ],
+    tags: openApiTags,
     components: {
       securitySchemes: {
         adminBearer: {
