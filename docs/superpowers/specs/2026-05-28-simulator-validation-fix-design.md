@@ -44,4 +44,4 @@ Because these routes have hardcoded provider names in their paths (e.g. `simulat
 * Run `pnpm typecheck` to verify no TypeScript compilation issues.
 
 ### Manual Verification
-* Start the dev server (`pnpm dev`) and curl the endpoints to verify `200 OK` status and correct JSON body structure.
+* Start the dev server (`pnpm -F map-server dev`) and curl the endpoints to verify `200 OK` status and correct JSON body structure.
