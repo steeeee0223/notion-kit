@@ -12,11 +12,8 @@ const INVALID_CREDENTIAL_KEYS = new Set([
 ]);
 const CREDENTIAL_KEY_PATTERN = /^[a-z][a-z0-9_]*$/;
 
-export function getConfigUserFromToken(token: string | undefined): string {
-  if (!token) return "admin";
-  const dotIndex = token.indexOf(".");
-  if (dotIndex <= 0) return "admin";
-  return token.slice(0, dotIndex);
+export function getConfigAdminToken(token: string | undefined): string {
+  return token ?? "admin";
 }
 
 export function validateCredentialKey(key: string): void {
@@ -39,23 +36,23 @@ export function redactCredentials(
   );
 }
 
-export async function getConfigForUser(user: string) {
+export async function getConfigForAdminToken(adminToken: string) {
   const { db } = await import("../db");
   const [row] = await db
     .select()
     .from(config)
-    .where(eq(config.user, user))
+    .where(eq(config.adminToken, adminToken))
     .limit(1);
-  if (!row) throw notFound("Config user not found", { user });
+  if (!row) throw notFound("Config admin token not found");
   return row;
 }
 
 export async function getActiveConfig(adminToken: string | undefined) {
-  return getConfigForUser(getConfigUserFromToken(adminToken));
+  return getConfigForAdminToken(getConfigAdminToken(adminToken));
 }
 
 export async function upsertCredentials(
-  user: string,
+  adminToken: string,
   credentials: CredentialMap,
 ) {
   for (const key of Object.keys(credentials)) validateCredentialKey(key);
@@ -63,9 +60,9 @@ export async function upsertCredentials(
   const { db } = await import("../db");
   const [row] = await db
     .insert(config)
-    .values({ user, credentials, updatedAt: new Date() })
+    .values({ adminToken, credentials, updatedAt: new Date() })
     .onConflictDoUpdate({
-      target: config.user,
+      target: config.adminToken,
       set: {
         credentials: sql`excluded.credentials`,
         updatedAt: sql`excluded.updated_at`,
@@ -77,7 +74,7 @@ export async function upsertCredentials(
 }
 
 export async function patchCredential(
-  user: string,
+  adminToken: string,
   key: string,
   value: string | null,
 ) {
@@ -87,12 +84,12 @@ export async function patchCredential(
   const [row] = await db
     .insert(config)
     .values({
-      user,
+      adminToken,
       credentials: { [key]: value },
       updatedAt: new Date(),
     })
     .onConflictDoUpdate({
-      target: config.user,
+      target: config.adminToken,
       set: {
         credentials: sql`${config.credentials} || excluded.credentials`,
         updatedAt: sql`excluded.updated_at`,
@@ -103,7 +100,7 @@ export async function patchCredential(
   return row;
 }
 
-export async function removeCredential(user: string, key: string) {
+export async function removeCredential(adminToken: string, key: string) {
   validateCredentialKey(key);
 
   const { db } = await import("../db");
@@ -113,10 +110,10 @@ export async function removeCredential(user: string, key: string) {
       credentials: sql`${config.credentials} - ${key}`,
       updatedAt: new Date(),
     })
-    .where(eq(config.user, user))
+    .where(eq(config.adminToken, adminToken))
     .returning();
 
-  if (!row) throw notFound("Config user not found", { user });
+  if (!row) throw notFound("Config admin token not found");
 
   return row;
 }

@@ -1099,7 +1099,7 @@ export const openApi = {
       200: {
         type: "object",
         properties: {
-          user: { type: "string", example: "local" },
+          admin_token: { type: "string", example: "local.secret" },
           credentials: { type: "object", additionalProperties: true },
         },
       },

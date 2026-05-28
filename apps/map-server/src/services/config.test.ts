@@ -1,21 +1,22 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  getConfigUserFromToken,
+  getConfigAdminToken,
   redactCredentials,
   validateCredentialKey,
 } from "./config";
 
 describe("config service helpers", () => {
-  it("uses the token prefix as the config user", () => {
-    expect(getConfigUserFromToken("local.secret-value")).toBe("local");
-    expect(getConfigUserFromToken("ci.abc.def")).toBe("ci");
-    expect(getConfigUserFromToken("production.token")).toBe("production");
+  it("uses the full configured admin token as the config row id", () => {
+    expect(getConfigAdminToken("local.secret-value")).toBe(
+      "local.secret-value",
+    );
+    expect(getConfigAdminToken("ci.abc.def")).toBe("ci.abc.def");
+    expect(getConfigAdminToken("production.token")).toBe("production.token");
   });
 
-  it("falls back to admin when the token has no user prefix", () => {
-    expect(getConfigUserFromToken("plain-token")).toBe("admin");
-    expect(getConfigUserFromToken(undefined)).toBe("admin");
+  it("falls back to admin only when the server has no admin token", () => {
+    expect(getConfigAdminToken(undefined)).toBe("admin");
   });
 
   it("rejects invalid credential keys", () => {

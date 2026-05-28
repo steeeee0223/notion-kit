@@ -55,7 +55,7 @@ export type TransitlandRealtimeVehicleFeed = TransitlandFeed & {
 export class TransitlandClient {
   private readonly baseUrl = "https://transit.land/api/v2/rest";
 
-  constructor(private readonly apiKey: string) {}
+  constructor(private readonly apiKey?: string) {}
 
   async discoverFeeds(input: {
     bbox?: Bbox;

@@ -2,7 +2,7 @@ import type { FastifyInstance } from "fastify";
 
 import { ApiError, sendError } from "@/lib/api-error";
 import { openApi } from "@/openapi";
-import { getActiveConfig, getConfigUserFromToken } from "@/services/config";
+import { getActiveConfig, getConfigAdminToken } from "@/services/config";
 import { unsupportedCapability } from "@/services/transport/errors";
 import {
   assertProviderCapability,
@@ -208,14 +208,14 @@ async function buildProviderContext(
   try {
     const activeConfig = await getActiveConfig(app.env.MAP_ADMIN_TOKEN);
     return {
-      configUser: activeConfig.user,
+      configUser: activeConfig.adminToken,
       credentials: activeConfig.credentials,
       log: app.log,
     };
   } catch (error) {
     if (error instanceof ApiError && error.code === "NOT_FOUND") {
       return {
-        configUser: getConfigUserFromToken(app.env.MAP_ADMIN_TOKEN),
+        configUser: getConfigAdminToken(app.env.MAP_ADMIN_TOKEN),
         credentials: {},
         log: app.log,
       };

@@ -2,7 +2,7 @@ import type { FastifyInstance, FastifyRequest } from "fastify";
 
 import { badRequest, sendError, unauthorized } from "@/lib/api-error";
 import { openApi } from "@/openapi";
-import { getActiveConfig, getConfigUserFromToken } from "@/services/config";
+import { getActiveConfig, getConfigAdminToken } from "@/services/config";
 import { buildStaticImportResult } from "@/services/gtfs/data-transfer";
 import { importGtfsStaticFeed } from "@/services/gtfs/static-import";
 import { syncRealtimeFeeds } from "@/services/realtime/gtfs-rt";
@@ -240,17 +240,20 @@ function assertAdmin(app: FastifyInstance, request: FastifyRequest) {
 async function buildProviderContext(
   app: FastifyInstance,
 ): Promise<ProviderContext> {
-  const activeConfig = await getActiveConfig(app.env.MAP_ADMIN_TOKEN).catch(
-    () => ({
-      user: getConfigUserFromToken(app.env.MAP_ADMIN_TOKEN),
+  try {
+    const activeConfig = await getActiveConfig(app.env.MAP_ADMIN_TOKEN);
+    return {
+      configUser: activeConfig.adminToken,
+      credentials: activeConfig.credentials,
+      log: app.log,
+    };
+  } catch {
+    return {
+      configUser: getConfigAdminToken(app.env.MAP_ADMIN_TOKEN),
       credentials: {},
-    }),
-  );
-  return {
-    configUser: activeConfig.user,
-    credentials: activeConfig.credentials,
-    log: app.log,
-  };
+      log: app.log,
+    };
+  }
 }
 
 type TransportSyncMethod = keyof Pick<

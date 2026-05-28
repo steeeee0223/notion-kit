@@ -295,7 +295,7 @@ export const cache = pgTable(
 );
 
 export const config = pgTable("config", {
-  user: text("user").primaryKey(),
+  adminToken: text("admin_token").primaryKey(),
   credentials: jsonb("credentials")
     .$type<Record<string, string | null>>()
     .notNull()

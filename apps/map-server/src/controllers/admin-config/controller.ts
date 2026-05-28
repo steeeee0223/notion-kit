@@ -4,14 +4,14 @@ import { sendError, unauthorized, upstreamError } from "@/lib/api-error";
 import { openApi } from "@/openapi";
 import {
   getActiveConfig,
-  getConfigForUser,
+  getConfigForAdminToken,
   patchCredential,
   redactCredentials,
   upsertCredentials,
 } from "@/services/config";
 
 import {
-  configUserParamsSchema,
+  configAdminTokenParamsSchema,
   patchCredentialsBodySchema,
   upsertCredentialsBodySchema,
 } from "./schema";
@@ -25,7 +25,7 @@ export function registerAdminConfigRoutes(app: FastifyInstance) {
         assertAdmin(app, request);
         const row = await getActiveConfig(app.env.MAP_ADMIN_TOKEN);
         return reply.send({
-          user: row.user,
+          admin_token: row.adminToken,
           credentials: redactCredentials(row.credentials),
         });
       } catch (error) {
@@ -34,13 +34,13 @@ export function registerAdminConfigRoutes(app: FastifyInstance) {
     },
   );
 
-  app.get("/api/admin/config/:user", async (request, reply) => {
+  app.get("/api/admin/config/:adminToken", async (request, reply) => {
     try {
       assertAdmin(app, request);
-      const params = configUserParamsSchema.parse(request.params);
-      const row = await getConfigForUser(params.user);
+      const params = configAdminTokenParamsSchema.parse(request.params);
+      const row = await getConfigForAdminToken(params.adminToken);
       return reply.send({
-        user: row.user,
+        admin_token: row.adminToken,
         credentials: redactCredentials(row.credentials),
       });
     } catch (error) {
@@ -48,37 +48,50 @@ export function registerAdminConfigRoutes(app: FastifyInstance) {
     }
   });
 
-  app.put("/api/admin/config/:user/credentials", async (request, reply) => {
-    try {
-      assertAdmin(app, request);
-      const params = configUserParamsSchema.parse(request.params);
-      const body = upsertCredentialsBodySchema.parse(request.body ?? {});
-      const row = await upsertCredentials(params.user, body.credentials);
-      assertConfigRow(row);
-      return reply.send({
-        user: row.user,
-        credentials: redactCredentials(row.credentials),
-      });
-    } catch (error) {
-      return sendError(reply, error);
-    }
-  });
+  app.put(
+    "/api/admin/config/:adminToken/credentials",
+    async (request, reply) => {
+      try {
+        assertAdmin(app, request);
+        const params = configAdminTokenParamsSchema.parse(request.params);
+        const body = upsertCredentialsBodySchema.parse(request.body ?? {});
+        const row = await upsertCredentials(
+          params.adminToken,
+          body.credentials,
+        );
+        assertConfigRow(row);
+        return reply.send({
+          admin_token: row.adminToken,
+          credentials: redactCredentials(row.credentials),
+        });
+      } catch (error) {
+        return sendError(reply, error);
+      }
+    },
+  );
 
-  app.patch("/api/admin/config/:user/credentials", async (request, reply) => {
-    try {
-      assertAdmin(app, request);
-      const params = configUserParamsSchema.parse(request.params);
-      const body = patchCredentialsBodySchema.parse(request.body ?? {});
-      const row = await patchCredential(params.user, body.key, body.value);
-      assertConfigRow(row);
-      return reply.send({
-        user: row.user,
-        credentials: redactCredentials(row.credentials),
-      });
-    } catch (error) {
-      return sendError(reply, error);
-    }
-  });
+  app.patch(
+    "/api/admin/config/:adminToken/credentials",
+    async (request, reply) => {
+      try {
+        assertAdmin(app, request);
+        const params = configAdminTokenParamsSchema.parse(request.params);
+        const body = patchCredentialsBodySchema.parse(request.body ?? {});
+        const row = await patchCredential(
+          params.adminToken,
+          body.key,
+          body.value,
+        );
+        assertConfigRow(row);
+        return reply.send({
+          admin_token: row.adminToken,
+          credentials: redactCredentials(row.credentials),
+        });
+      } catch (error) {
+        return sendError(reply, error);
+      }
+    },
+  );
 }
 
 function assertAdmin(app: FastifyInstance, request: FastifyRequest) {

@@ -1,7 +1,7 @@
 import { z } from "zod/v4";
 
-export const configUserParamsSchema = z.object({
-  user: z.string().min(1),
+export const configAdminTokenParamsSchema = z.object({
+  adminToken: z.string().min(1),
 });
 
 export const patchCredentialsBodySchema = z.object({
