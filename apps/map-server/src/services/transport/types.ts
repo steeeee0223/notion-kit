@@ -92,6 +92,20 @@ export interface VehicleQuery {
   routeType?: number;
 }
 
+export interface TripRouteQuery {
+  tripId: string;
+  includeShape: boolean;
+  fallbackRouteId?: string;
+}
+
+export interface TripStopTimesQuery {
+  tripId: string;
+  date: string;
+  includeRealtime: boolean;
+  includeGeometry: boolean;
+  fallbackRouteId?: string;
+}
+
 export interface TransportProviderAdapter {
   key: string;
   displayName: string;
@@ -127,6 +141,14 @@ export interface TransportProviderAdapter {
   ) => Promise<unknown>;
   findVehicles?: (
     input: VehicleQuery,
+    context: ProviderContext,
+  ) => Promise<unknown>;
+  findTripRoute?: (
+    input: TripRouteQuery,
+    context: ProviderContext,
+  ) => Promise<unknown>;
+  findTripStopTimes?: (
+    input: TripStopTimesQuery,
     context: ProviderContext,
   ) => Promise<unknown>;
 }

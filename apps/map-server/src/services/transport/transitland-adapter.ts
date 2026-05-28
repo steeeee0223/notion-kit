@@ -5,6 +5,10 @@ import {
   buildTripsResponse,
   buildVehiclesResponse,
 } from "@/controllers/map/controller";
+import {
+  buildTripRouteResponse,
+  buildTripStopTimesResponse,
+} from "@/controllers/trips/controller";
 import { badRequest } from "@/lib/api-error";
 import { buildStopDepartures } from "@/services/departures";
 import { buildStaticImportResult } from "@/services/gtfs/data-transfer";
@@ -235,6 +239,22 @@ export const transitlandAdapter: TransportProviderAdapter = {
       }),
       "vehicles",
     );
+  },
+  findTripRoute: (input) => {
+    return buildTripRouteResponse({
+      tripId: input.tripId,
+      includeShape: input.includeShape,
+      fallbackRouteId: input.fallbackRouteId,
+    });
+  },
+  findTripStopTimes: (input) => {
+    return buildTripStopTimesResponse({
+      tripId: input.tripId,
+      date: input.date,
+      includeRealtime: input.includeRealtime,
+      includeGeometry: input.includeGeometry,
+      fallbackRouteId: input.fallbackRouteId,
+    });
   },
 };
 

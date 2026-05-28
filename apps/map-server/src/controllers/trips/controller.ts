@@ -55,81 +55,11 @@ export function registerTripRoutes(app: FastifyInstance) {
       try {
         const params = tripParamsSchema.parse(request.params);
         const query = tripRouteQuerySchema.parse(request.query);
-        const cacheKey = [
-          "trip",
-          params.tripId,
-          "route",
-          query.include_shape,
-          query.fallback_route_id ?? "none",
-          "v2",
-        ].join(":");
-        const response = await getOrSetCached(
-          cacheKey,
-          24 * 60 * 60,
-          tripRouteResponseSchema,
-          async () => {
-            try {
-              const trip = await getTrip(params.tripId);
-              const routeMap = await getRoutesByIds([trip.routeId]);
-              const route = routeMap.get(trip.routeId);
-              const shape = await getShapeResponseForTrip(
-                trip,
-                query.include_shape,
-              );
-              const alerts = await getAlerts({
-                feedOnestopIds: [trip.feedOnestopId],
-                routeIds: [trip.routeId],
-              });
-              return {
-                trip: toTripResponse(trip),
-                route: route ? toRouteResponse(route) : null,
-                shape,
-                alerts: alerts.map(toAlertResponse),
-              };
-            } catch (error) {
-              if (
-                error &&
-                typeof error === "object" &&
-                "statusCode" in error &&
-                (error as { statusCode?: number }).statusCode === 404
-              ) {
-                let fallbackRouteId = query.fallback_route_id;
-                if (!fallbackRouteId) {
-                  const [vehicle] = await getLatestVehicleSnapshots({
-                    tripId: params.tripId,
-                    limit: 1,
-                  });
-                  if (vehicle?.routeId) fallbackRouteId = vehicle.routeId;
-                }
-                let route = null;
-                let alerts: AlertRows = [];
-                let shape = null;
-                if (fallbackRouteId) {
-                  const routeMap = await getRoutesByIds([fallbackRouteId]);
-                  route = routeMap.get(fallbackRouteId) ?? null;
-                  alerts = await getAlerts({ routeIds: [fallbackRouteId] });
-                  const fallbackTrips = await getTripsByRouteId(
-                    fallbackRouteId,
-                    1,
-                  );
-                  if (fallbackTrips[0]) {
-                    shape = await getShapeResponseForTrip(
-                      fallbackTrips[0],
-                      query.include_shape,
-                    );
-                  }
-                }
-                return {
-                  trip: null,
-                  route: route ? toRouteResponse(route) : null,
-                  shape,
-                  alerts: alerts.map(toAlertResponse),
-                };
-              }
-              throw error;
-            }
-          },
-        );
+        const response = await buildTripRouteResponse({
+          tripId: params.tripId,
+          includeShape: query.include_shape,
+          fallbackRouteId: query.fallback_route_id,
+        });
         return reply.send(response);
       } catch (error) {
         return sendError(reply, error);
@@ -144,96 +74,180 @@ export function registerTripRoutes(app: FastifyInstance) {
       try {
         const params = tripParamsSchema.parse(request.params);
         const query = tripStopTimesQuerySchema.parse(request.query);
-        const cacheKey = `trip:${params.tripId}:stoptimes:${query.date}:${query.include_realtime}:${query.include_geometry}`;
-        const ttl = query.include_realtime ? 20 : 60 * 60;
-        const response = await getOrSetCached(
-          cacheKey,
-          ttl,
-          tripStopTimesResponseSchema,
-          async () => {
-            try {
-              const trip = await getTrip(params.tripId);
-              const routeMap = await getRoutesByIds([trip.routeId]);
-              const route = routeMap.get(trip.routeId);
-              const stopTimeRows = await getStopTimesByTrip(trip.id);
-              const stopMap = await getStopsByIds(
-                stopTimeRows.flatMap((st) => (st.stopId ? [st.stopId] : [])),
-              );
-              const updates = query.include_realtime
-                ? await getTripUpdates({ tripIds: [trip.id] })
-                : [];
-              const updateByStop = new Map(
-                updates.map((update) => [update.stopId ?? "", update]),
-              );
-              return {
-                trip_id: trip.id,
-                route_short_name: route?.routeShortName ?? null,
-                service_date: query.date,
-                stop_times: stopTimeRows.map((st) =>
-                  toTripStopTimeResponse(
-                    st,
-                    st.stopId ? stopMap.get(st.stopId) : undefined,
-                    updateByStop.get(st.stopId ?? ""),
-                    query.include_geometry,
-                  ),
-                ),
-              };
-            } catch (error) {
-              if (
-                error &&
-                typeof error === "object" &&
-                "statusCode" in error &&
-                (error as { statusCode?: number }).statusCode === 404
-              ) {
-                let fallbackRouteId = query.fallback_route_id;
-                if (!fallbackRouteId) {
-                  const [vehicle] = await getLatestVehicleSnapshots({
-                    tripId: params.tripId,
-                    limit: 1,
-                  });
-                  if (vehicle?.routeId) fallbackRouteId = vehicle.routeId;
-                }
-                let stopTimeRows: StopTimeRows = [];
-                let stopMap: StopMap = new Map();
-                if (fallbackRouteId) {
-                  const fallbackTrips = await getTripsByRouteId(
-                    fallbackRouteId,
-                    1,
-                  );
-                  if (fallbackTrips[0]) {
-                    stopTimeRows = await getStopTimesByTrip(
-                      fallbackTrips[0].id,
-                    );
-                    stopMap = await getStopsByIds(
-                      stopTimeRows.flatMap((st) =>
-                        st.stopId ? [st.stopId] : [],
-                      ),
-                    );
-                  }
-                }
-                return {
-                  trip_id: params.tripId,
-                  route_short_name: null,
-                  service_date: query.date,
-                  stop_times: stopTimeRows.map((st) =>
-                    toTripStopTimeResponse(
-                      st,
-                      st.stopId ? stopMap.get(st.stopId) : undefined,
-                      undefined,
-                      query.include_geometry,
-                    ),
-                  ),
-                };
-              }
-              throw error;
-            }
-          },
-        );
+        const response = await buildTripStopTimesResponse({
+          tripId: params.tripId,
+          date: query.date,
+          includeRealtime: query.include_realtime,
+          includeGeometry: query.include_geometry,
+          fallbackRouteId: query.fallback_route_id,
+        });
         return reply.send(response);
       } catch (error) {
         return sendError(reply, error);
       }
     },
+  );
+}
+
+export async function buildTripRouteResponse(query: {
+  tripId: string;
+  includeShape: boolean;
+  fallbackRouteId?: string;
+}) {
+  const cacheKey = [
+    "trip",
+    query.tripId,
+    "route",
+    query.includeShape,
+    query.fallbackRouteId ?? "none",
+    "v3",
+  ].join(":");
+  return getOrSetCached(
+    cacheKey,
+    24 * 60 * 60,
+    tripRouteResponseSchema,
+    async () => {
+      try {
+        const trip = await getTrip(query.tripId);
+        const routeMap = await getRoutesByIds([trip.routeId]);
+        const route = routeMap.get(trip.routeId);
+        const shape = await getShapeResponseForTrip(trip, query.includeShape);
+        const alerts = await getAlerts({
+          feedOnestopIds: [trip.feedOnestopId],
+          routeIds: [trip.routeId],
+        });
+        return {
+          trip: toTripResponse(trip),
+          route: route ? toRouteResponse(route) : null,
+          shape,
+          alerts: alerts.map(toAlertResponse),
+        };
+      } catch (error) {
+        if (isNotFoundError(error)) {
+          let fallbackRouteId = query.fallbackRouteId;
+          if (!fallbackRouteId) {
+            const [vehicle] = await getLatestVehicleSnapshots({
+              tripId: query.tripId,
+              limit: 1,
+            });
+            if (vehicle?.routeId) fallbackRouteId = vehicle.routeId;
+          }
+          let route = null;
+          let alerts: AlertRows = [];
+          let shape = null;
+          if (fallbackRouteId) {
+            const routeMap = await getRoutesByIds([fallbackRouteId]);
+            route = routeMap.get(fallbackRouteId) ?? null;
+            alerts = await getAlerts({ routeIds: [fallbackRouteId] });
+            const fallbackTrips = await getTripsByRouteId(fallbackRouteId, 1);
+            if (fallbackTrips[0]) {
+              shape = await getShapeResponseForTrip(
+                fallbackTrips[0],
+                query.includeShape,
+              );
+            }
+          }
+          return {
+            trip: null,
+            route: route ? toRouteResponse(route) : null,
+            shape,
+            alerts: alerts.map(toAlertResponse),
+          };
+        }
+        throw error;
+      }
+    },
+  );
+}
+
+export async function buildTripStopTimesResponse(query: {
+  tripId: string;
+  date: string;
+  includeRealtime: boolean;
+  includeGeometry: boolean;
+  fallbackRouteId?: string;
+}) {
+  const cacheKey = `trip:${query.tripId}:stoptimes:${query.date}:${query.includeRealtime}:${query.includeGeometry}:v3`;
+  const ttl = query.includeRealtime ? 20 : 60 * 60;
+  return getOrSetCached(
+    cacheKey,
+    ttl,
+    tripStopTimesResponseSchema,
+    async () => {
+      try {
+        const trip = await getTrip(query.tripId);
+        const routeMap = await getRoutesByIds([trip.routeId]);
+        const route = routeMap.get(trip.routeId);
+        const stopTimeRows = await getStopTimesByTrip(trip.id);
+        const stopMap = await getStopsByIds(
+          stopTimeRows.flatMap((st) => (st.stopId ? [st.stopId] : [])),
+        );
+        const updates = query.includeRealtime
+          ? await getTripUpdates({ tripIds: [trip.id] })
+          : [];
+        const updateByStop = new Map(
+          updates.map((update) => [update.stopId ?? "", update]),
+        );
+        return {
+          trip_id: trip.id,
+          route_short_name: route?.routeShortName ?? null,
+          service_date: query.date,
+          stop_times: stopTimeRows.map((st) =>
+            toTripStopTimeResponse(
+              st,
+              st.stopId ? stopMap.get(st.stopId) : undefined,
+              updateByStop.get(st.stopId ?? ""),
+              query.includeGeometry,
+            ),
+          ),
+        };
+      } catch (error) {
+        if (isNotFoundError(error)) {
+          let fallbackRouteId = query.fallbackRouteId;
+          if (!fallbackRouteId) {
+            const [vehicle] = await getLatestVehicleSnapshots({
+              tripId: query.tripId,
+              limit: 1,
+            });
+            if (vehicle?.routeId) fallbackRouteId = vehicle.routeId;
+          }
+          let stopTimeRows: StopTimeRows = [];
+          let stopMap: StopMap = new Map();
+          if (fallbackRouteId) {
+            const fallbackTrips = await getTripsByRouteId(fallbackRouteId, 1);
+            if (fallbackTrips[0]) {
+              stopTimeRows = await getStopTimesByTrip(fallbackTrips[0].id);
+              stopMap = await getStopsByIds(
+                stopTimeRows.flatMap((st) => (st.stopId ? [st.stopId] : [])),
+              );
+            }
+          }
+          return {
+            trip_id: query.tripId,
+            route_short_name: null,
+            service_date: query.date,
+            stop_times: stopTimeRows.map((st) =>
+              toTripStopTimeResponse(
+                st,
+                st.stopId ? stopMap.get(st.stopId) : undefined,
+                undefined,
+                query.includeGeometry,
+              ),
+            ),
+          };
+        }
+        throw error;
+      }
+    },
+  );
+}
+
+function isNotFoundError(error: unknown) {
+  return (
+    error &&
+    typeof error === "object" &&
+    "statusCode" in error &&
+    (error as { statusCode?: number }).statusCode === 404
   );
 }
 

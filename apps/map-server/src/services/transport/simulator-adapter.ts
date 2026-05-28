@@ -177,6 +177,35 @@ const simulatorDepartures = [
   },
 ];
 
+const simulatorStopTimes = simulatorStops.map((stop, index) => ({
+  stop_sequence: index + 1,
+  stop_id: stop.id,
+  location_group_id: null,
+  location_id: null,
+  stop_name: stop.stop_name,
+  lat: stop.lat,
+  lon: stop.lon,
+  scheduled_arrival: `08:${String(index * 10).padStart(2, "0")}:00`,
+  scheduled_departure: `08:${String(index * 10).padStart(2, "0")}:00`,
+  stop_headsign: simulatorTrip.trip_headsign,
+  start_pickup_drop_off_window: null,
+  end_pickup_drop_off_window: null,
+  pickup_type: 0,
+  drop_off_type: 0,
+  continuous_pickup: null,
+  continuous_drop_off: null,
+  shape_dist_traveled: index * 1.4,
+  timepoint: 1,
+  pickup_booking_rule_id: null,
+  drop_off_booking_rule_id: null,
+  realtime_arrival_delay: 0,
+  realtime_departure_delay: 0,
+  estimated_departure: `08:${String(index * 10).padStart(2, "0")}:00`,
+  schedule_relationship: "SCHEDULED",
+  is_timepoint: true,
+  stop_status: index === 0 ? "CURRENT" : "UPCOMING",
+}));
+
 const simulatorVehicles = [
   {
     vehicle_id: "sim-vehicle-1",
@@ -354,6 +383,37 @@ export const simulatorAdapter: TransportProviderAdapter = {
         snapshot_available: vehicles.length > 0,
       },
     };
+  },
+  findTripRoute: (input) => {
+    if (input.tripId !== simulatorTrip.id) {
+      throw notFound("Trip not found", { tripId: input.tripId });
+    }
+    return Promise.resolve({
+      trip: simulatorTrip,
+      route: simulatorRoute,
+      shape: input.includeShape ? simulatorShape : null,
+      alerts: [],
+    });
+  },
+  findTripStopTimes: (input) => {
+    if (input.tripId !== simulatorTrip.id) {
+      throw notFound("Trip not found", { tripId: input.tripId });
+    }
+    return Promise.resolve({
+      trip_id: simulatorTrip.id,
+      route_short_name: simulatorRoute.route_short_name,
+      service_date: input.date,
+      stop_times: simulatorStopTimes.map((stopTime) =>
+        input.includeRealtime
+          ? stopTime
+          : {
+              ...stopTime,
+              realtime_arrival_delay: null,
+              realtime_departure_delay: null,
+              schedule_relationship: "STATIC",
+            },
+      ),
+    });
   },
 };
 
