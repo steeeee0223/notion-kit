@@ -229,7 +229,7 @@ const providerParams = {
   },
 } as const;
 
-export const openApi = {
+const baseOpenApi = {
   health: {
     tags: ["System"],
     summary: "Health check",
@@ -1121,5 +1121,115 @@ export const openApi = {
         },
       },
     },
+  },
+} as const;
+
+function withProviderTag(provider: string, schema: any) {
+  let params = undefined;
+  if (schema.params) {
+    const { provider: _, ...remainingProperties } =
+      schema.params.properties || {};
+    const remainingRequired = (schema.params.required || []).filter(
+      (r: string) => r !== "provider",
+    );
+    if (Object.keys(remainingProperties).length > 0) {
+      params = {
+        ...schema.params,
+        required: remainingRequired,
+        properties: remainingProperties,
+      };
+    }
+  }
+  return {
+    ...schema,
+    ...(params ? { params } : {}),
+    tags: [
+      `Transport / ${provider === "transit" ? "Transitland" : "Simulator"}`,
+    ],
+    summary: `${schema.summary} (${provider === "transit" ? "Transitland" : "Simulator"})`,
+  };
+}
+
+function withAdminProviderTag(provider: string, schema: any) {
+  let params = undefined;
+  if (schema.params) {
+    const { provider: _, ...remainingProperties } =
+      schema.params.properties || {};
+    const remainingRequired = (schema.params.required || []).filter(
+      (r: string) => r !== "provider",
+    );
+    if (Object.keys(remainingProperties).length > 0) {
+      params = {
+        ...schema.params,
+        required: remainingRequired,
+        properties: remainingProperties,
+      };
+    }
+  }
+  return {
+    ...schema,
+    ...(params ? { params } : {}),
+    tags: [
+      `Admin / Sync / ${provider === "transit" ? "Transitland" : "Simulator"}`,
+    ],
+    summary: `${schema.summary} (${provider === "transit" ? "Transitland" : "Simulator"})`,
+  };
+}
+
+export const openApi = {
+  ...baseOpenApi,
+  transportStaticFeedsStatus: {
+    transit: withProviderTag("transit", baseOpenApi.mapStaticFeedsStatus),
+    simulator: withProviderTag("simulator", baseOpenApi.mapStaticFeedsStatus),
+  },
+  transportRoutes: {
+    transit: withProviderTag("transit", baseOpenApi.transportRoutes),
+    simulator: withProviderTag("simulator", baseOpenApi.transportRoutes),
+  },
+  transportStops: {
+    transit: withProviderTag("transit", baseOpenApi.transportStops),
+    simulator: withProviderTag("simulator", baseOpenApi.transportStops),
+  },
+  transportTrips: {
+    transit: withProviderTag("transit", baseOpenApi.mapTrips),
+    simulator: withProviderTag("simulator", baseOpenApi.mapTrips),
+  },
+  transportRouteShape: {
+    transit: withProviderTag("transit", baseOpenApi.mapRouteShape),
+    simulator: withProviderTag("simulator", baseOpenApi.mapRouteShape),
+  },
+  transportStopDepartures: {
+    transit: withProviderTag("transit", baseOpenApi.stopDepartures),
+    simulator: withProviderTag("simulator", baseOpenApi.stopDepartures),
+  },
+  transportVehicles: {
+    transit: withProviderTag("transit", baseOpenApi.transportVehicles),
+    simulator: withProviderTag("simulator", baseOpenApi.transportVehicles),
+  },
+  transportTripRoute: {
+    transit: withProviderTag("transit", baseOpenApi.tripRoute),
+    simulator: withProviderTag("simulator", baseOpenApi.tripRoute),
+  },
+  transportTripStopTimes: {
+    transit: withProviderTag("transit", baseOpenApi.tripStopTimes),
+    simulator: withProviderTag("simulator", baseOpenApi.tripStopTimes),
+  },
+  adminTransportValidate: {
+    transit: withAdminProviderTag(
+      "transit",
+      baseOpenApi.adminTransportValidate,
+    ),
+    simulator: withAdminProviderTag(
+      "simulator",
+      baseOpenApi.adminTransportValidate,
+    ),
+  },
+  adminTransportStaticSync: {
+    transit: withAdminProviderTag("transit", baseOpenApi.adminStaticSync),
+    simulator: withAdminProviderTag("simulator", baseOpenApi.adminStaticSync),
+  },
+  adminTransportRealtimeSync: {
+    transit: withAdminProviderTag("transit", baseOpenApi.adminRealtimeSync),
+    simulator: withAdminProviderTag("simulator", baseOpenApi.adminRealtimeSync),
   },
 } as const;
