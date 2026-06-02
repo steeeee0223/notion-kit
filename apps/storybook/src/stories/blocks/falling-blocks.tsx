@@ -318,16 +318,16 @@ function Root({
       t0Ref.current = performance.now();
     }
 
-    const { w: cw, h: ch } = dimsRef.current;
-
-    if (bodiesRef.current.length !== count) {
-      bodiesRef.current = Array.from({ length: count }, (_, i) =>
-        makeBody(i, cw),
-      );
-      t0Ref.current = performance.now();
-    }
-
     const step = (now: number) => {
+      const { w: cw, h: ch } = dimsRef.current;
+
+      if (bodiesRef.current.length !== count) {
+        bodiesRef.current = Array.from({ length: count }, (_, i) =>
+          makeBody(i, cw),
+        );
+        t0Ref.current = performance.now();
+      }
+
       const bs = bodiesRef.current;
       const { anyLive, newFrames } = computePhysicsStep(
         now,
@@ -457,8 +457,9 @@ function Item({
 
   return (
     <Comp
-      className={cn("absolute will-change-[transform,left,top]", className)}
+      className={cn("will-change-[transform,left,top]", className)}
       style={{
+        position: "absolute",
         width: SIZE,
         height: SIZE,
         left: f.x - HALF,
