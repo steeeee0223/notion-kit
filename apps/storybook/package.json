@@ -36,6 +36,7 @@
     "@notion-kit/utils": "workspace:*",
     "@stripe/react-stripe-js": "catalog:stripe",
     "@stripe/stripe-js": "catalog:stripe",
+    "framer-motion": "^12.38.0",
     "lucide-react": "catalog:ui",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
