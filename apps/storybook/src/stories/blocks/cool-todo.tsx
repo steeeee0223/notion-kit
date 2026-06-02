@@ -17,6 +17,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { Eject, type EjectRef } from "./eject";
+import { SlingShot } from "./sling-shot";
 import { Sortable, arrayMove } from "./sortable";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -163,7 +164,9 @@ function TodoItemRow({ todo }: { todo: TodoItem }) {
             checked={false}
             onCheckedChange={handleCheck}
           />
-          <span className="flex-1 text-sm text-primary">{todo.label}</span>
+          <SlingShot.Item id={todo.id} className="flex flex-1 items-center">
+            <span className="flex-1 text-sm text-primary select-none">{todo.label}</span>
+          </SlingShot.Item>
           <div className={cn(
             "opacity-0 transition-opacity duration-200",
             "group-hover/todo:opacity-100",
@@ -228,30 +231,32 @@ function TrashBox() {
 
   return (
     <div className="fixed right-8 bottom-8 z-50">
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="hint" size="md" className="rounded-full shadow-out-md">
-            <Icon.Trash className="size-5 fill-icon" />
-            {archivedTodos.length > 0 && (
-              <span className="ml-1 text-xs text-secondary">{archivedTodos.length}</span>
-            )}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent side="top" align="end" className="w-80 p-0">
-          <div className="p-3 text-sm font-medium text-secondary">
-            Trash ({archivedTodos.length})
-          </div>
-          <div className="max-h-64 overflow-y-auto">
-            {archivedTodos.length === 0 ? (
-              <div className="px-3 pb-3 text-sm text-muted">No archived items</div>
-            ) : (
-              archivedTodos.map((todo) => (
-                <ArchivedItemRow key={todo.id} todo={todo} />
-              ))
-            )}
-          </div>
-        </PopoverContent>
-      </Popover>
+      <SlingShot.Goal id="trash">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="hint" size="md" className="rounded-full shadow-out-md">
+              <Icon.Trash className="size-5 fill-icon" />
+              {archivedTodos.length > 0 && (
+                <span className="ml-1 text-xs text-secondary">{archivedTodos.length}</span>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent side="top" align="end" className="w-80 p-0">
+            <div className="p-3 text-sm font-medium text-secondary">
+              Trash ({archivedTodos.length})
+            </div>
+            <div className="max-h-64 overflow-y-auto">
+              {archivedTodos.length === 0 ? (
+                <div className="px-3 pb-3 text-sm text-muted">No archived items</div>
+              ) : (
+                archivedTodos.map((todo) => (
+                  <ArchivedItemRow key={todo.id} todo={todo} />
+                ))
+              )}
+            </div>
+          </PopoverContent>
+        </Popover>
+      </SlingShot.Goal>
     </div>
   );
 }
@@ -274,17 +279,31 @@ function TodoList() {
 
 export function CoolTodo() {
   const [store] = React.useState(createTodoStore);
+  const screenRef = React.useRef<HTMLDivElement>(null);
 
   return (
     <TodoStoreContext value={store}>
-      <div className="flex h-screen w-screen bg-main">
-        <div className="flex w-1/2 items-start justify-center p-12">
-          <div className="w-full max-w-md rounded-lg border border-border bg-popover shadow-out-md">
-            <TodoInput />
-            <TodoList />
+      <div ref={screenRef} className="relative flex h-screen w-screen bg-main">
+        <SlingShot
+          boundsRef={screenRef}
+          onGoalHit={({ itemId }) => {
+            store.getState().archiveTodo(itemId);
+          }}
+          className="contents"
+        >
+          <SlingShot.Arrow />
+          <SlingShot.Preview />
+          <SlingShot.Power />
+
+          <div className="flex w-1/2 items-start justify-center p-12">
+            <div className="w-full max-w-md rounded-lg border border-border bg-popover shadow-out-md">
+              <TodoInput />
+              <TodoList />
+            </div>
           </div>
-        </div>
-        <TrashBox />
+
+          <TrashBox />
+        </SlingShot>
       </div>
     </TodoStoreContext>
   );
