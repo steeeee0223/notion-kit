@@ -16,6 +16,7 @@ import {
   PopoverTrigger,
 } from "@notion-kit/ui/primitives";
 
+import { Eject, type EjectRef } from "./eject";
 import { Sortable, arrayMove } from "./sortable";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -140,44 +141,52 @@ function TodoInput() {
 function TodoItemRow({ todo }: { todo: TodoItem }) {
   const checkTodo = useTodoStore((s) => s.checkTodo);
   const archiveTodo = useTodoStore((s) => s.archiveTodo);
+  const ejectRef = React.useRef<EjectRef>(null);
+
+  const handleCheck = () => {
+    ejectRef.current?.eject();
+    checkTodo(todo.id);
+  };
 
   return (
     <Sortable.Item id={todo.id} className="group/todo">
-      <div className="flex items-center gap-2 px-3 py-2">
-        <div className={cn(
-          "opacity-0 transition-opacity duration-200",
-          "group-hover/todo:opacity-100",
-        )}>
-          <Sortable.DragHandle className="size-6" />
+      <Eject ref={ejectRef} mode="disappear" triggers={null}>
+        <div className="flex items-center gap-2 px-3 py-2">
+          <div className={cn(
+            "opacity-0 transition-opacity duration-200",
+            "group-hover/todo:opacity-100",
+          )}>
+            <Sortable.DragHandle className="size-6" />
+          </div>
+          <Checkbox
+            size="sm"
+            checked={false}
+            onCheckedChange={handleCheck}
+          />
+          <span className="flex-1 text-sm text-primary">{todo.label}</span>
+          <div className={cn(
+            "opacity-0 transition-opacity duration-200",
+            "group-hover/todo:opacity-100",
+            "has-[button[aria-expanded='true']]:opacity-100",
+          )}>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="hint" className="size-6">
+                  <Icon.Dots className="size-4 fill-icon" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  Body="Delete"
+                  Icon={<Icon.Trash className="size-4" />}
+                  variant="error"
+                  onSelect={() => archiveTodo(todo.id)}
+                />
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
-        <Checkbox
-          size="sm"
-          checked={false}
-          onCheckedChange={() => checkTodo(todo.id)}
-        />
-        <span className="flex-1 text-sm text-primary">{todo.label}</span>
-        <div className={cn(
-          "opacity-0 transition-opacity duration-200",
-          "group-hover/todo:opacity-100",
-          "has-[button[aria-expanded='true']]:opacity-100",
-        )}>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="hint" className="size-6">
-                <Icon.Dots className="size-4 fill-icon" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                Body="Delete"
-                Icon={<Icon.Trash className="size-4" />}
-                variant="error"
-                onSelect={() => archiveTodo(todo.id)}
-              />
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
+      </Eject>
     </Sortable.Item>
   );
 }
