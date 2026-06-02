@@ -649,12 +649,21 @@ function SlingShotRoot({
         let nextVx = velocity.x;
         let nextVy = velocity.y + resolvedConfig.gravity * dt;
 
-        if (nextX <= minX || nextX >= maxX) {
-          nextX = clamp(nextX, minX, maxX);
+        // Wall & ceiling bounce — direction guard is critical here.
+        // During aiming the item can be pulled past the bounds. Without the
+        // velocity check, launching from that position would immediately
+        // trigger a false bounce (the item is already past the wall but
+        // flying *away* from it), causing the actual flight path to diverge
+        // from the preview trajectory the user aimed with.
+        if (nextX <= minX && nextVx < 0) {
+          nextX = minX;
+          nextVx = -nextVx * resolvedConfig.bounce;
+        } else if (nextX >= maxX && nextVx > 0) {
+          nextX = maxX;
           nextVx = -nextVx * resolvedConfig.bounce;
         }
 
-        if (nextY <= minY) {
+        if (nextY <= minY && nextVy < 0) {
           nextY = minY;
           nextVy = Math.abs(nextVy) * resolvedConfig.bounce;
         }
