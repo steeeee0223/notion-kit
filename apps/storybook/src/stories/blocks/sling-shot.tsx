@@ -703,11 +703,17 @@ function SlingShotRoot({
               velocity: settledVelocity,
             });
             forceRender();
-            onLand?.({
-              itemId,
-              position: settledPosition,
-              velocity: settledVelocity,
-            });
+
+            // onGoalHit and onLand are mutually exclusive outcomes.
+            // If a goal was hit at any point during this flight, skip
+            // onLand so consumers don't receive conflicting events.
+            if (it.hitGoalIds.size === 0) {
+              onLand?.({
+                itemId,
+                position: settledPosition,
+                velocity: settledVelocity,
+              });
+            }
             return;
           }
         }
