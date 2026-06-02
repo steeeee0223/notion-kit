@@ -2,11 +2,11 @@ import * as React from "react";
 import {
   closestCenter,
   DndContext,
-  type DragEndEvent,
   DragOverlay,
   PointerSensor,
   useSensor,
   useSensors,
+  type DragEndEvent,
 } from "@dnd-kit/core";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
@@ -25,7 +25,9 @@ import { Button, type ButtonProps } from "@notion-kit/ui/primitives";
 
 interface SortableItemContextValue {
   attributes: React.HTMLAttributes<HTMLElement>;
-  listeners: Record<string, React.EventHandler<React.SyntheticEvent>> | undefined;
+  listeners:
+    | Record<string, React.EventHandler<React.SyntheticEvent>>
+    | undefined;
   isDragging: boolean;
 }
 
@@ -42,7 +44,12 @@ interface SortableRootProps extends React.ComponentProps<"div"> {
   onReorder: (activeId: string, overId: string) => void;
 }
 
-function SortableRoot({ items, onReorder, children, ...props }: SortableRootProps) {
+function SortableRoot({
+  items,
+  onReorder,
+  children,
+  ...props
+}: SortableRootProps) {
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
   );
@@ -77,7 +84,13 @@ interface SortableItemProps extends React.ComponentProps<"div"> {
   id: string;
 }
 
-function SortableItem({ id, className, style, children, ...props }: SortableItemProps) {
+function SortableItem({
+  id,
+  className,
+  style,
+  children,
+  ...props
+}: SortableItemProps) {
   const {
     attributes,
     isDragging,
@@ -118,7 +131,11 @@ function SortableItem({ id, className, style, children, ...props }: SortableItem
 
 type SortableDragHandleProps = ButtonProps;
 
-function SortableDragHandle({ children, className, ...props }: SortableDragHandleProps) {
+function SortableDragHandle({
+  children,
+  className,
+  ...props
+}: SortableDragHandleProps) {
   const { attributes, listeners } = React.use(SortableItemContext);
 
   return (

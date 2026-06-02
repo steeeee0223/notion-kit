@@ -138,9 +138,18 @@ interface SlingShotContextValue {
     rotation: number;
     shakeOffset: Vector;
   };
-  onPointerCancel: (itemId: string, event: React.PointerEvent<HTMLElement>) => void;
-  onPointerDown: (itemId: string, event: React.PointerEvent<HTMLElement>) => void;
-  onPointerMove: (itemId: string, event: React.PointerEvent<HTMLElement>) => void;
+  onPointerCancel: (
+    itemId: string,
+    event: React.PointerEvent<HTMLElement>,
+  ) => void;
+  onPointerDown: (
+    itemId: string,
+    event: React.PointerEvent<HTMLElement>,
+  ) => void;
+  onPointerMove: (
+    itemId: string,
+    event: React.PointerEvent<HTMLElement>,
+  ) => void;
   onPointerUp: (itemId: string, event: React.PointerEvent<HTMLElement>) => void;
   registerGoal: (goal: SlingShotGoalRegistration) => () => void;
   registerItem: (id: string, element: HTMLElement) => () => void;
@@ -185,7 +194,9 @@ const FALLBACK_SLING_STATE: SlingShotState = {
   velocity: ZERO_VECTOR,
 };
 
-const SlingShotContext = React.createContext<SlingShotContextValue | null>(null);
+const SlingShotContext = React.createContext<SlingShotContextValue | null>(
+  null,
+);
 
 function useSlingShotContext() {
   const ctx = React.use(SlingShotContext);
@@ -382,7 +393,9 @@ function SlingShotRoot({
 
   // Active aiming state exposed to Arrow / Preview / Power
   const [activeItemId, setActiveItemId] = React.useState<string | null>(null);
-  const [activeState, setActiveState] = React.useState<SlingShotState | null>(null);
+  const [activeState, setActiveState] = React.useState<SlingShotState | null>(
+    null,
+  );
 
   // ── Item registration ────────────────────────────────────────────────────
 
@@ -663,8 +676,7 @@ function SlingShotRoot({
               bottom: layoutRect.top + settledPosition.y + layoutRect.height,
               height: layoutRect.height,
               left: layoutRect.left + settledPosition.x,
-              right:
-                layoutRect.left + settledPosition.x + layoutRect.width,
+              right: layoutRect.left + settledPosition.x + layoutRect.width,
               top: layoutRect.top + settledPosition.y,
               width: layoutRect.width,
             });
@@ -718,7 +730,7 @@ function SlingShotRoot({
 
       item.frameId = requestAnimationFrame(tick);
     },
-     
+
     [boundsRef, detectGoalHits, forceRender, onLand, onLaunch, resolvedConfig],
   );
 
@@ -776,7 +788,10 @@ function SlingShotRoot({
         startShake(itemId);
       }
 
-      setAimingStateForItem(itemId, limitVector(rawVector, resolvedConfig.maxPull));
+      setAimingStateForItem(
+        itemId,
+        limitVector(rawVector, resolvedConfig.maxPull),
+      );
       return true;
     },
     [

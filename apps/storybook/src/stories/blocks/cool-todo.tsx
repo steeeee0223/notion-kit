@@ -20,7 +20,7 @@ import {
 import { Eject, type EjectRef } from "./eject";
 import { FallingBlocks } from "./falling-blocks";
 import { SlingShot } from "./sling-shot";
-import { Sortable, arrayMove } from "./sortable";
+import { arrayMove, Sortable } from "./sortable";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -105,13 +105,16 @@ const TodoStoreContext = React.createContext<TodoStoreApi | null>(null);
 
 function useTodoStore<T>(selector: (state: TodoStore) => T): T {
   const store = React.use(TodoStoreContext);
-  if (!store) throw new Error("useTodoStore must be used inside TodoStoreProvider");
+  if (!store)
+    throw new Error("useTodoStore must be used inside TodoStoreProvider");
   return useStore(store, selector);
 }
 
 // Stable selector functions defined outside to prevent reference changes on render
-const activeTodosSelector = (s: TodoStore) => s.todos.filter((t) => t.status === "active");
-const archivedTodosSelector = (s: TodoStore) => s.todos.filter((t) => t.status === "archived");
+const activeTodosSelector = (s: TodoStore) =>
+  s.todos.filter((t) => t.status === "active");
+const archivedTodosSelector = (s: TodoStore) =>
+  s.todos.filter((t) => t.status === "archived");
 const checkTodoSelector = (s: TodoStore) => s.checkTodo;
 const archiveTodoSelector = (s: TodoStore) => s.archiveTodo;
 const addTodoSelector = (s: TodoStore) => s.addTodo;
@@ -136,7 +139,10 @@ function TodoInput() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 border-b border-border p-3">
+    <form
+      onSubmit={handleSubmit}
+      className="flex gap-2 border-b border-border p-3"
+    >
       <Input
         value={value}
         onChange={(e) => setValue(e.target.value)}
@@ -164,25 +170,27 @@ function TodoItemRow({ todo }: { todo: TodoItem }) {
     <Sortable.Item id={todo.id} className="group/todo">
       <Eject ref={ejectRef} mode="disappear" triggers={null}>
         <div className="flex items-center gap-2 px-3 py-2">
-          <div className={cn(
-            "opacity-0 transition-opacity duration-200",
-            "group-hover/todo:opacity-100",
-          )}>
+          <div
+            className={cn(
+              "opacity-0 transition-opacity duration-200",
+              "group-hover/todo:opacity-100",
+            )}
+          >
             <Sortable.DragHandle className="size-6" />
           </div>
-          <Checkbox
-            size="sm"
-            checked={false}
-            onCheckedChange={handleCheck}
-          />
+          <Checkbox size="sm" checked={false} onCheckedChange={handleCheck} />
           <SlingShot.Item id={todo.id} className="flex flex-1 items-center">
-            <span className="flex-1 text-sm text-primary select-none">{todo.label}</span>
+            <span className="flex-1 text-sm text-primary select-none">
+              {todo.label}
+            </span>
           </SlingShot.Item>
-          <div className={cn(
-            "opacity-0 transition-opacity duration-200",
-            "group-hover/todo:opacity-100",
-            "has-[button[aria-expanded='true']]:opacity-100",
-          )}>
+          <div
+            className={cn(
+              "opacity-0 transition-opacity duration-200",
+              "group-hover/todo:opacity-100",
+              "has-[button[aria-expanded='true']]:opacity-100",
+            )}
+          >
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="hint" className="size-6">
@@ -205,8 +213,6 @@ function TodoItemRow({ todo }: { todo: TodoItem }) {
   );
 }
 
-
-
 function TrashBox() {
   const archivedTodos = useArchivedTodos();
   const [open, setOpen] = React.useState(false);
@@ -223,19 +229,31 @@ function TrashBox() {
       <SlingShot.Goal id="trash">
         <Popover open={open} onOpenChange={handleOpenChange}>
           <PopoverTrigger asChild>
-            <Button variant="hint" size="md" className="rounded-full shadow-out-md">
+            <Button
+              variant="hint"
+              size="md"
+              className="rounded-full shadow-out-md"
+            >
               <Icon.Trash className="size-5 fill-icon" />
               {archivedTodos.length > 0 && (
-                <span className="ml-1 text-xs text-secondary">{archivedTodos.length}</span>
+                <span className="ml-1 text-xs text-secondary">
+                  {archivedTodos.length}
+                </span>
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent side="top" align="end" className="w-80 overflow-hidden p-0">
+          <PopoverContent
+            side="top"
+            align="end"
+            className="w-80 overflow-hidden p-0"
+          >
             <div className="p-3 text-sm font-medium text-secondary">
               Trash ({archivedTodos.length})
             </div>
             {archivedTodos.length === 0 ? (
-              <div className="px-3 pb-3 text-sm text-muted">No archived items</div>
+              <div className="px-3 pb-3 text-sm text-muted">
+                No archived items
+              </div>
             ) : (
               <FallingBlocks.Root
                 runId={runId}
@@ -245,14 +263,22 @@ function TrashBox() {
                 {archivedTodos.map((todo) => (
                   <FallingBlocks.Item key={todo.id} asChild>
                     <div className="group/block relative flex size-[62px] cursor-grab flex-col items-center justify-center rounded-md border border-border bg-popover p-1 shadow-sm select-none">
-                      <Checkbox size="xs" checked disabled className="size-3 shrink-0" />
+                      <Checkbox
+                        size="xs"
+                        checked
+                        disabled
+                        className="size-3 shrink-0"
+                      />
                       <span className="mt-0.5 w-full truncate px-0.5 text-center text-[8px] text-secondary line-through">
                         {todo.label}
                       </span>
                       <div className="absolute right-0.5 bottom-0.5 opacity-0 transition-opacity duration-150 group-hover/block:opacity-100">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="hint" className="flex size-4 items-center justify-center p-0">
+                            <Button
+                              variant="hint"
+                              className="flex size-4 items-center justify-center p-0"
+                            >
                               <Icon.Dots className="size-2.5 fill-icon" />
                             </Button>
                           </DropdownMenuTrigger>
@@ -260,13 +286,17 @@ function TrashBox() {
                             <DropdownMenuItem
                               Body="Restore"
                               Icon={<Icon.Undo className="size-4" />}
-                              onSelect={() => store.getState().restoreTodo(todo.id)}
+                              onSelect={() =>
+                                store.getState().restoreTodo(todo.id)
+                              }
                             />
                             <DropdownMenuItem
                               Body="Delete forever"
                               Icon={<Icon.Trash className="size-4" />}
                               variant="error"
-                              onSelect={() => store.getState().deleteTodo(todo.id)}
+                              onSelect={() =>
+                                store.getState().deleteTodo(todo.id)
+                              }
                             />
                           </DropdownMenuContent>
                         </DropdownMenu>
