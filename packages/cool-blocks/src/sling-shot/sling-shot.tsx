@@ -85,8 +85,6 @@ export interface SlingShotProps extends React.ComponentProps<"div"> {
   onLaunch?: (velocity: Vector, itemId: string) => void;
 }
 
-// ─── Per-item physics state ──────────────────────────────────────────────────
-
 interface ItemPhysicsState {
   basePosition: Vector;
   baseRotation: number;
@@ -134,8 +132,6 @@ function createItemState(): ItemPhysicsState {
     velocity: ZERO_VECTOR,
   };
 }
-
-// ─── Context ─────────────────────────────────────────────────────────────────
 
 interface SlingShotContextValue {
   activeItemId: string | null;
@@ -355,8 +351,6 @@ function splitSlotsAndItems(children: React.ReactNode) {
 
   return { items, slots };
 }
-
-// ─── SlingShotRoot ────────────────────────────────────────────────────────────
 
 function SlingShotRoot({
   boundsRef,
@@ -1155,8 +1149,6 @@ function SlingShotRoot({
   );
 }
 
-// ─── SlingShotSlot ────────────────────────────────────────────────────────────
-
 export interface SlingShotSlotProps extends React.ComponentProps<"div"> {
   render?: (props: SlingShotState) => React.ReactNode;
 }
@@ -1170,8 +1162,6 @@ function SlingShotSlot({ render, children, ...props }: SlingShotSlotProps) {
     <div {...props}>{children}</div>
   );
 }
-
-// ─── SlingShotItem ────────────────────────────────────────────────────────────
 
 export interface SlingShotItemProps extends SlingShotSlotProps {
   id?: string;
@@ -1237,8 +1227,6 @@ function SlingShotItem({
     />
   );
 }
-
-// ─── SlingShotGoal ────────────────────────────────────────────────────────────
 
 export interface SlingShotGoalProps extends React.ComponentProps<"div"> {
   render?: (props: SlingShotGoalState) => React.ReactNode;
@@ -1346,8 +1334,6 @@ function SlingShotGoal({
   );
 }
 
-// ─── SlingShotPower ───────────────────────────────────────────────────────────
-
 function SlingShotPower({
   className,
   style,
@@ -1398,8 +1384,6 @@ function SlingShotPower({
   );
 }
 
-// ─── SlingShotArrow ───────────────────────────────────────────────────────────
-
 function SlingShotArrow({
   className,
   style,
@@ -1432,8 +1416,6 @@ function SlingShotArrow({
     </SlingShotSlot>
   );
 }
-
-// ─── SlingShotPreview ─────────────────────────────────────────────────────────
 
 export interface SlingShotPreviewProps extends SlingShotSlotProps {
   dotClassName?: string;

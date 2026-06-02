@@ -21,8 +21,6 @@ import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import { Button, type ButtonProps } from "@notion-kit/ui/primitives";
 
-// ─── Context ─────────────────────────────────────────────────────────────────
-
 interface SortableItemContextValue {
   attributes: React.HTMLAttributes<HTMLElement>;
   listeners:
@@ -36,8 +34,6 @@ const SortableItemContext = React.createContext<SortableItemContextValue>({
   listeners: undefined,
   isDragging: false,
 });
-
-// ─── SortableRoot ─────────────────────────────────────────────────────────────
 
 interface SortableRootProps extends React.ComponentProps<"div"> {
   items: string[];
@@ -77,8 +73,6 @@ function SortableRoot({
     </DndContext>
   );
 }
-
-// ─── SortableItem ─────────────────────────────────────────────────────────────
 
 interface SortableItemProps extends React.ComponentProps<"div"> {
   id: string;
@@ -127,8 +121,6 @@ function SortableItem({
   );
 }
 
-// ─── SortableDragHandle ───────────────────────────────────────────────────────
-
 type SortableDragHandleProps = ButtonProps;
 
 function SortableDragHandle({
@@ -151,8 +143,6 @@ function SortableDragHandle({
   );
 }
 
-// ─── SortableOverlay ──────────────────────────────────────────────────────────
-
 function SortableOverlay({
   children,
   ...props
@@ -163,8 +153,6 @@ function SortableOverlay({
     </DragOverlay>
   );
 }
-
-// ─── Export ───────────────────────────────────────────────────────────────────
 
 export const Sortable = {
   Root: SortableRoot,

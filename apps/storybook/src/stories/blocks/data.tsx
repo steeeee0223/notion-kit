@@ -7,7 +7,6 @@ export interface Block {
   svg: React.ReactNode;
 }
 
-// ─── Logo definitions ──────────────────────────────────────────────────────
 export const DEFAULT_LOGOS = [
   {
     name: "Notion",

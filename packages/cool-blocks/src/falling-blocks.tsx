@@ -5,7 +5,6 @@ import { Slot } from "radix-ui";
 import { cn } from "@notion-kit/cn";
 import { Button } from "@notion-kit/ui/primitives";
 
-// ─── Physics constants ─────────────────────────────────────────────────────
 const G = 0.6; // gravity per frame
 const BOUNCE = 0; // restitution
 const FRICTION = 0.86; // horizontal friction on floor/wall bounce

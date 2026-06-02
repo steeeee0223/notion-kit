@@ -23,8 +23,6 @@ import {
 
 import { arrayMove, Sortable } from "./sortable";
 
-// ─── Types ──────────────────────────────────────────────────────────────────
-
 interface TodoItem {
   id: string;
   label: string;
@@ -41,8 +39,6 @@ interface TodoStore {
   deleteTodo: (id: string) => void;
   reorderTodos: (activeId: string, overId: string) => void;
 }
-
-// ─── Store ──────────────────────────────────────────────────────────────────
 
 const INITIAL_TODOS: TodoItem[] = [
   { id: "1", label: "Design the cool todo list spec", status: "active" },
@@ -111,8 +107,6 @@ function createTodoStore() {
   }));
 }
 
-// ─── Store context ──────────────────────────────────────────────────────────
-
 type TodoStoreApi = ReturnType<typeof createTodoStore>;
 const TodoStoreContext = React.createContext<TodoStoreApi | null>(null);
 
@@ -136,8 +130,6 @@ const useLaunchedTodos = () =>
   useTodoStore(
     useShallow((s) => s.todos.filter((t) => t.status === "launched")),
   );
-
-// ─── Components ─────────────────────────────────────────────────────────────
 
 function TodoInput() {
   const addTodo = useTodoStore((s) => s.addTodo);

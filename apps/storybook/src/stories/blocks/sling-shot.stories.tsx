@@ -20,8 +20,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// ─── Shared stage wrapper ─────────────────────────────────────────────────────
-
 interface StageContext {
   slingShotProps: SlingShotProps;
 }
@@ -85,8 +83,6 @@ function Stage({
     </div>
   );
 }
-
-// ─── Stories ───────────────────────────────────────────────────────────────────
 
 export const Default: Story = {
   args: {
