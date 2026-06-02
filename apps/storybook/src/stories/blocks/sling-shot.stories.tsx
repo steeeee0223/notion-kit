@@ -1,6 +1,7 @@
 import * as React from "react";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
+import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import { Badge, Button } from "@notion-kit/ui/primitives";
 
@@ -52,6 +53,7 @@ function DemoStage(args: SlingShotProps) {
             boundsRef={stageRef}
             resetKey={resetKey}
             onLaunch={() => setStatus("launched")}
+            onGoalHit={({ goalId }) => setStatus(`hit ${goalId}`)}
             onLand={({ position }) =>
               setStatus(`${Math.round(position.x)}, ${Math.round(position.y)}`)
             }
@@ -59,6 +61,7 @@ function DemoStage(args: SlingShotProps) {
             <SlingShot.Power />
             <SlingShot.Arrow />
             <SlingShot.Preview />
+
             <SlingShot.Item>
               <Button size="md" variant="blue">
                 Launch
@@ -71,11 +74,18 @@ function DemoStage(args: SlingShotProps) {
             boundsRef={stageRef}
             resetKey={resetKey}
             onLaunch={() => setStatus("launched")}
+            onGoalHit={({ goalId }) => setStatus(`hit ${goalId}`)}
             onLand={({ position }) =>
               setStatus(`${Math.round(position.x)}, ${Math.round(position.y)}`)
             }
           >
             <SlingShot.Arrow />
+            <SlingShot.Goal
+              id="card-pig"
+              className="absolute top-72 left-68 z-20 flex size-14 items-center justify-center rounded-lg border border-border bg-modal text-xl shadow-lg"
+            >
+              🐖
+            </SlingShot.Goal>
             <div className="flex h-24 w-36 flex-col justify-between rounded-lg border border-border bg-modal p-4 shadow-lg">
               <div className="flex items-center justify-between">
                 <Icon.Lightning className="size-5 text-blue" />
@@ -92,6 +102,7 @@ function DemoStage(args: SlingShotProps) {
             boundsRef={stageRef}
             resetKey={resetKey}
             onLaunch={() => setStatus("launched")}
+            onGoalHit={({ goalId }) => setStatus(`hit ${goalId}`)}
             onLand={({ position }) =>
               setStatus(`${Math.round(position.x)}, ${Math.round(position.y)}`)
             }
@@ -112,6 +123,33 @@ function DemoStage(args: SlingShotProps) {
               )}
             />
             <SlingShot.Preview dotClassName="bg-orange" />
+            <SlingShot.Goal
+              id="strict-pig"
+              hitTest={({ goalRect, itemRect }) => {
+                const itemCenterX = itemRect.left + itemRect.width / 2;
+                const itemCenterY = itemRect.top + itemRect.height / 2;
+                const goalCenterX = goalRect.left + goalRect.width / 2;
+                const goalCenterY = goalRect.top + goalRect.height / 2;
+
+                return (
+                  Math.hypot(
+                    itemCenterX - goalCenterX,
+                    itemCenterY - goalCenterY,
+                  ) < 42
+                );
+              }}
+              className="absolute top-48 -left-68 z-20"
+              render={({ isHit }) => (
+                <div
+                  className={cn(
+                    "flex size-16 items-center justify-center rounded-full border border-border bg-modal text-2xl shadow-lg transition",
+                    isHit && "scale-110 border-red/60",
+                  )}
+                >
+                  🎯
+                </div>
+              )}
+            />
             <SlingShot.Item>
               <div className="flex size-20 items-center justify-center rounded-lg bg-input shadow-lg">
                 <Icon.ArrowInCircleUpFill className="size-8 text-orange" />

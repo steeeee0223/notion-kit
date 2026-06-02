@@ -20,7 +20,7 @@ interface Point extends Vector {
   opacity: number;
 }
 
-type SlotName = "arrow" | "item" | "power" | "preview";
+type SlotName = "arrow" | "goal" | "item" | "power" | "preview";
 
 export interface SlingShotConfig {
   bounce?: number;
@@ -41,6 +41,21 @@ export interface SlingShotLandEvent {
   velocity: Vector;
 }
 
+export interface SlingShotHitEvent {
+  goalElement: HTMLElement;
+  goalId: string;
+  goalRect: DOMRect;
+  itemElement: HTMLElement;
+  itemRect: DOMRect;
+  velocity: Vector;
+}
+
+export interface SlingShotGoalState {
+  hitCount: number;
+  isHit: boolean;
+  lastHit: SlingShotHitEvent | null;
+}
+
 export interface SlingShotState {
   aimAngle: number;
   isAiming: boolean;
@@ -58,12 +73,9 @@ export interface SlingShotProps extends React.ComponentProps<"div"> {
   config?: SlingShotConfig;
   disabled?: boolean;
   resetKey?: React.Key;
+  onGoalHit?: (event: SlingShotHitEvent) => void;
   onLand?: (event: SlingShotLandEvent) => void;
   onLaunch?: (velocity: Vector) => void;
-}
-
-export interface SlingShotPreviewProps extends SlingShotSlotProps {
-  dotClassName?: string;
 }
 
 interface SlingShotContextValue {
@@ -77,10 +89,18 @@ interface SlingShotContextValue {
   onPointerDown: (event: React.PointerEvent<HTMLElement>) => void;
   onPointerMove: (event: React.PointerEvent<HTMLElement>) => void;
   onPointerUp: (event: React.PointerEvent<HTMLElement>) => void;
+  registerGoal: (goal: SlingShotGoalRegistration) => () => void;
 }
 
 interface SlingShotSlotComponent {
   __slingShotSlot?: SlotName;
+}
+
+interface SlingShotGoalRegistration {
+  element: HTMLElement;
+  hitTest?: (event: SlingShotHitEvent) => boolean;
+  id: string;
+  notifyHit: (event: SlingShotHitEvent) => void;
 }
 
 const DEFAULT_CONFIG = {
@@ -103,14 +123,12 @@ const SlingShotContext = React.createContext<SlingShotContextValue | null>(
   null,
 );
 
-function useSlingShotContext(componentName: string) {
-  const context = React.use(SlingShotContext);
-
-  if (!context) {
-    throw new Error(`${componentName} must be used inside <SlingShot>.`);
+function useSlingShotContext() {
+  const ctx = React.use(SlingShotContext);
+  if (!ctx) {
+    throw new Error("useSlingShotContext must be used inside <SlingShot>.");
   }
-
-  return context;
+  return ctx;
 }
 
 function clamp(value: number, min: number, max: number) {
@@ -169,6 +187,28 @@ function getSlotName(type: unknown) {
   if (typeof type === "string") return undefined;
 
   return (type as SlingShotSlotComponent).__slingShotSlot;
+}
+
+function getRectFromBox(box: {
+  bottom: number;
+  height: number;
+  left: number;
+  right: number;
+  top: number;
+  width: number;
+}) {
+  return DOMRect.fromRect({
+    height: box.height,
+    width: box.width,
+    x: box.left,
+    y: box.top,
+  });
+}
+
+function rectsIntersect(a: DOMRect, b: DOMRect) {
+  return (
+    a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top
+  );
 }
 
 function limitVector(vector: Vector, max: number) {
@@ -253,6 +293,7 @@ function SlingShotRoot({
   className,
   config,
   disabled,
+  onGoalHit,
   onLand,
   onLaunch,
   resetKey,
@@ -261,6 +302,8 @@ function SlingShotRoot({
   const rootRef = React.useRef<HTMLDivElement>(null);
   const itemRef = React.useRef<HTMLElement | null>(null);
   const frameRef = React.useRef<number | null>(null);
+  const goalsRef = React.useRef(new Map<string, SlingShotGoalRegistration>());
+  const hitGoalIdsRef = React.useRef(new Set<string>());
   const shakeFrameRef = React.useRef<number | null>(null);
   const pointerRef = React.useRef<number | null>(null);
   const captureElementRef = React.useRef<HTMLElement | null>(null);
@@ -322,6 +365,7 @@ function SlingShotRoot({
     powerRef.current = 0;
     pointerRef.current = null;
     captureElementRef.current = null;
+    hitGoalIdsRef.current.clear();
     isAimingRef.current = false;
     setActivePointerId(null);
     setPosition(ZERO_VECTOR);
@@ -441,6 +485,50 @@ function SlingShotRoot({
     }));
   }, []);
 
+  const registerGoal = React.useCallback((goal: SlingShotGoalRegistration) => {
+    goalsRef.current.set(goal.id, goal);
+
+    return () => {
+      goalsRef.current.delete(goal.id);
+      hitGoalIdsRef.current.delete(goal.id);
+    };
+  }, []);
+
+  const detectGoalHits = React.useCallback(
+    ({
+      item,
+      itemRect,
+      velocity,
+    }: {
+      item: HTMLElement;
+      itemRect: DOMRect;
+      velocity: Vector;
+    }) => {
+      goalsRef.current.forEach((goal) => {
+        if (hitGoalIdsRef.current.has(goal.id)) return;
+
+        const goalRect = goal.element.getBoundingClientRect();
+        const hitEvent: SlingShotHitEvent = {
+          goalElement: goal.element,
+          goalId: goal.id,
+          goalRect,
+          itemElement: item,
+          itemRect,
+          velocity,
+        };
+        const isHit =
+          goal.hitTest?.(hitEvent) ?? rectsIntersect(itemRect, goalRect);
+
+        if (!isHit) return;
+
+        hitGoalIdsRef.current.add(goal.id);
+        goal.notifyHit(hitEvent);
+        onGoalHit?.(hitEvent);
+      });
+    },
+    [onGoalHit],
+  );
+
   const startFlight = React.useCallback(
     (pullVector: Vector) => {
       const item = itemRef.current;
@@ -461,6 +549,7 @@ function SlingShotRoot({
       };
 
       onLaunch?.(velocityRef.current);
+      hitGoalIdsRef.current.clear();
       setState((value) => ({
         ...value,
         isAiming: false,
@@ -511,9 +600,22 @@ function SlingShotRoot({
               y: groundY,
             };
             const settledVelocity = { x: 0, y: 0 };
+            const settledItemRect = getRectFromBox({
+              bottom: layoutRect.top + settledPosition.y + layoutRect.height,
+              height: layoutRect.height,
+              left: layoutRect.left + settledPosition.x,
+              right: layoutRect.left + settledPosition.x + layoutRect.width,
+              top: layoutRect.top + settledPosition.y,
+              width: layoutRect.width,
+            });
 
             positionRef.current = settledPosition;
             velocityRef.current = settledVelocity;
+            detectGoalHits({
+              item,
+              itemRect: settledItemRect,
+              velocity: settledVelocity,
+            });
             setPosition(settledPosition);
             setRotation(settledPosition.x * resolvedConfig.rotation);
             setState((value) => ({
@@ -531,9 +633,23 @@ function SlingShotRoot({
         }
 
         const nextPosition = { x: nextX, y: nextY };
+        const nextVelocity = { x: nextVx, y: nextVy };
+        const nextItemRect = getRectFromBox({
+          bottom: layoutRect.top + nextY + layoutRect.height,
+          height: layoutRect.height,
+          left: layoutRect.left + nextX,
+          right: layoutRect.left + nextX + layoutRect.width,
+          top: layoutRect.top + nextY,
+          width: layoutRect.width,
+        });
 
         positionRef.current = nextPosition;
-        velocityRef.current = { x: nextVx, y: nextVy };
+        velocityRef.current = nextVelocity;
+        detectGoalHits({
+          item,
+          itemRect: nextItemRect,
+          velocity: nextVelocity,
+        });
         setPosition(nextPosition);
         setRotation((value) => value + nextVx * dt * resolvedConfig.rotation);
 
@@ -542,7 +658,7 @@ function SlingShotRoot({
 
       frameRef.current = requestAnimationFrame(tick);
     },
-    [boundsRef, onLand, onLaunch, resolvedConfig],
+    [boundsRef, detectGoalHits, onLand, onLaunch, resolvedConfig],
   );
 
   const beginDrag = React.useCallback(
@@ -730,6 +846,7 @@ function SlingShotRoot({
       onPointerDown: handlePointerDown,
       onPointerMove: handlePointerMove,
       onPointerUp: handlePointerRelease,
+      registerGoal,
       position,
       rotation,
       shakeOffset,
@@ -740,6 +857,7 @@ function SlingShotRoot({
       handlePointerDown,
       handlePointerMove,
       handlePointerRelease,
+      registerGoal,
       position,
       rotation,
       shakeOffset,
@@ -770,7 +888,7 @@ export interface SlingShotSlotProps extends React.ComponentProps<"div"> {
 }
 
 function SlingShotSlot({ render, children, ...props }: SlingShotSlotProps) {
-  const { state } = useSlingShotContext("SlingShotPower");
+  const { state } = useSlingShotContext();
   return typeof render !== "undefined" ? (
     <Slot.Root {...props}>{render(state)}</Slot.Root>
   ) : (
@@ -789,7 +907,7 @@ function SlingShotItem({
   render,
   ...props
 }: SlingShotSlotProps) {
-  const context = useSlingShotContext("SlingShotItem");
+  const context = useSlingShotContext();
   const transform = `translate3d(${context.position.x + context.shakeOffset.x}px, ${context.position.y + context.shakeOffset.y}px, 0) rotate(${context.rotation}deg)`;
 
   return (
@@ -823,13 +941,122 @@ function SlingShotItem({
   );
 }
 
+export interface SlingShotGoalProps extends React.ComponentProps<"div"> {
+  render?: (props: SlingShotGoalState) => React.ReactNode;
+  hitTest?: (event: SlingShotHitEvent) => boolean;
+  onHit?: (event: SlingShotHitEvent) => void;
+}
+
+function SlingShotGoal({
+  ref,
+  className,
+  children,
+  hitTest,
+  onHit,
+  render,
+  ...props
+}: SlingShotGoalProps) {
+  const { registerGoal } = useSlingShotContext();
+  const fallbackId = React.useId();
+  const goalRef = React.useRef<HTMLDivElement | null>(null);
+  const timeoutRef = React.useRef<number | null>(null);
+  const [goalState, setGoalState] = React.useState<SlingShotGoalState>({
+    hitCount: 0,
+    isHit: false,
+    lastHit: null,
+  });
+
+  const notifyHit = React.useCallback(
+    (event: SlingShotHitEvent) => {
+      if (timeoutRef.current !== null) {
+        window.clearTimeout(timeoutRef.current);
+      }
+
+      setGoalState((value) => ({
+        hitCount: value.hitCount + 1,
+        isHit: true,
+        lastHit: event,
+      }));
+      onHit?.(event);
+
+      timeoutRef.current = window.setTimeout(() => {
+        timeoutRef.current = null;
+        setGoalState((value) => ({ ...value, isHit: false }));
+      }, 420);
+    },
+    [onHit],
+  );
+
+  React.useEffect(() => {
+    const element = goalRef.current;
+
+    if (!element) return;
+
+    return registerGoal({
+      element,
+      hitTest,
+      id: props.id ?? fallbackId,
+      notifyHit,
+    });
+  }, [fallbackId, hitTest, notifyHit, props.id, registerGoal]);
+
+  React.useEffect(() => {
+    return () => {
+      if (timeoutRef.current !== null) {
+        window.clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  if (render) {
+    return (
+      <Slot.Root
+        data-slot="sling-shot-goal"
+        ref={composeRefs(goalRef, ref)}
+        {...props}
+      >
+        {render(goalState)}
+      </Slot.Root>
+    );
+  }
+
+  return (
+    <>
+      <style>
+        {`
+          @keyframes sling-shot-goal-hit {
+            0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+            18% { transform: translate3d(-3px, 1px, 0) rotate(-2deg); }
+            36% { transform: translate3d(3px, -1px, 0) rotate(2deg); }
+            54% { transform: translate3d(-2px, -1px, 0) rotate(-1deg); }
+            72% { transform: translate3d(2px, 1px, 0) rotate(1deg); }
+          }
+        `}
+      </style>
+      <div
+        data-slot="sling-shot-goal"
+        ref={composeRefs(goalRef, ref)}
+        className={cn(
+          "relative inline-block transition-[filter]",
+          goalState.isHit &&
+            "pointer-events-none animate-[sling-shot-goal-hit_420ms_ease-out] ring-2 ring-red/60 ring-offset-1",
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </div>
+    </>
+  );
+}
+
 function SlingShotPower({
   className,
   style,
   render,
   ...props
 }: SlingShotSlotProps) {
-  const { state } = useSlingShotContext("SlingShotPower");
+  const { state } = useSlingShotContext();
   if (!state.isAiming) return null;
 
   const value = Math.round(state.power * 100);
@@ -856,7 +1083,7 @@ function SlingShotPower({
         <div
           className="absolute h-full rounded-full"
           style={{
-            backgroundColor: COLOR.blue.hex,
+            backgroundColor: COLOR.orange.hex,
             opacity: 0.3,
             width: `calc(${value}% + 2px)`,
           }}
@@ -864,7 +1091,7 @@ function SlingShotPower({
         <div
           className="absolute h-full rounded-full"
           style={{
-            backgroundColor: COLOR.blue.hex,
+            backgroundColor: COLOR.orange.hex,
             width: `${value}%`,
           }}
         />
@@ -879,7 +1106,7 @@ function SlingShotArrow({
   render,
   ...props
 }: SlingShotSlotProps) {
-  const { state } = useSlingShotContext("SlingShotArrow");
+  const { state } = useSlingShotContext();
   if (!state.isAiming || state.power === 0) return null;
 
   return (
@@ -905,6 +1132,9 @@ function SlingShotArrow({
     </SlingShotSlot>
   );
 }
+export interface SlingShotPreviewProps extends SlingShotSlotProps {
+  dotClassName?: string;
+}
 
 function SlingShotPreview({
   className,
@@ -912,7 +1142,7 @@ function SlingShotPreview({
   render,
   ...props
 }: SlingShotPreviewProps) {
-  const { state } = useSlingShotContext("SlingShotPreview");
+  const { state } = useSlingShotContext();
   if (!state.isAiming || state.previewPoints.length === 0) return null;
 
   return (
@@ -943,12 +1173,14 @@ function SlingShotPreview({
 }
 
 SlingShotItem.__slingShotSlot = "item";
+SlingShotGoal.__slingShotSlot = "goal";
 SlingShotPower.__slingShotSlot = "power";
 SlingShotArrow.__slingShotSlot = "arrow";
 SlingShotPreview.__slingShotSlot = "preview";
 
 export const SlingShot = Object.assign(SlingShotRoot, {
   Arrow: SlingShotArrow,
+  Goal: SlingShotGoal,
   Item: SlingShotItem,
   Power: SlingShotPower,
   Preview: SlingShotPreview,
