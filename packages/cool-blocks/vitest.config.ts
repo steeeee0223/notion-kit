@@ -1,8 +1,8 @@
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vitest/config";
+import { defineConfig, type Plugin } from "vitest/config";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react() as Plugin[]],
   test: {
     name: "cool-blocks",
     environment: "jsdom",
