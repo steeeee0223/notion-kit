@@ -37,7 +37,9 @@ export interface SlingShotConfig {
 }
 
 export interface SlingShotLandEvent {
+  itemElement: HTMLElement;
   itemId: string;
+  itemRect: DOMRect;
   position: Vector;
   velocity: Vector;
 }
@@ -709,7 +711,9 @@ function SlingShotRoot({
             // onLand so consumers don't receive conflicting events.
             if (it.hitGoalIds.size === 0) {
               onLand?.({
+                itemElement: element,
                 itemId,
+                itemRect: settledItemRect,
                 position: settledPosition,
                 velocity: settledVelocity,
               });
@@ -1102,7 +1106,7 @@ function SlingShotItem({
 
   const itemRef = React.useCallback(
     (node: HTMLElement | null) => {
-      if (node) context.registerItem(id, node);
+      if (node) return context.registerItem(id, node);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [id],
@@ -1125,7 +1129,7 @@ function SlingShotItem({
         isAiming ? "cursor-grabbing" : "cursor-grab",
         className,
       )}
-      style={{ ...style, transform }}
+      style={{ transform, ...style }}
       onPointerCancel={composeEventHandlers(onPointerCancel, (e) =>
         context.onPointerCancel(id, e),
       )}

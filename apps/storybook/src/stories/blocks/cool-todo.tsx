@@ -27,14 +27,17 @@ import { arrayMove, Sortable } from "./sortable";
 
 interface LandTransform {
   rotate: string;
-  transform: string;
+  width: number;
+  x: number;
+  y: number;
 }
 
 interface TodoItem {
   id: string;
   label: string;
-  /** CSS transform captured when the item landed on the ground */
+  /** Absolute position and rotation captured when the item landed */
   landTransform?: LandTransform;
+  launchVersion?: number;
   status: "active" | "done" | "archived" | "launched";
 }
 
@@ -81,7 +84,14 @@ function createTodoStore() {
     launchTodo: (id, landTransform) =>
       set((state) => ({
         todos: state.todos.map((t) =>
-          t.id === id ? { ...t, status: "launched", landTransform } : t,
+          t.id === id
+            ? {
+                ...t,
+                landTransform,
+                launchVersion: (t.launchVersion ?? 0) + 1,
+                status: "launched",
+              }
+            : t,
         ),
       })),
     archiveTodo: (id) =>
@@ -371,12 +381,16 @@ function LaunchedTodoList() {
     <div style={{ height: 0, overflow: "visible" }}>
       {launchedTodos.map((todo) => (
         <SlingShot.Item
-          key={todo.id}
+          key={`${todo.id}-v${todo.launchVersion ?? 0}`}
           id={todo.id}
           className="group/launched block w-full"
           style={{
-            transform: todo.landTransform?.transform,
+            left: todo.landTransform?.x,
+            position: "absolute",
+            top: todo.landTransform?.y,
+            width: todo.landTransform?.width,
             rotate: todo.landTransform?.rotate,
+            transform: undefined,
           }}
         >
           <TodoItemCard todo={todo} hoverGroup="launched" />
@@ -388,11 +402,18 @@ function LaunchedTodoList() {
 
 const SLING_SHOT_ROTATION = 0.035;
 
-function buildLandTransform(position: { x: number; y: number }): LandTransform {
-  const rotation = position.x * SLING_SHOT_ROTATION;
+function buildLandTransform(
+  itemRect: DOMRect,
+  boundsElement: HTMLElement,
+  positionX: number,
+): LandTransform {
+  const boundsRect = boundsElement.getBoundingClientRect();
+  const rotation = positionX * SLING_SHOT_ROTATION;
   return {
     rotate: `${rotation}deg`,
-    transform: `translate3d(${position.x}px, ${position.y}px, 0) rotate(${rotation}deg)`,
+    width: itemRect.width,
+    x: itemRect.left - boundsRect.left,
+    y: itemRect.top - boundsRect.top,
   };
 }
 
@@ -410,8 +431,11 @@ function SlingShotPlayground() {
       <SlingShot
         boundsRef={screenRef}
         onGoalHit={({ itemId }) => archiveTodo(itemId)}
-        onLand={({ itemId, position }) =>
-          launchTodo(itemId, buildLandTransform(position))
+        onLand={({ itemId, itemRect, position }) =>
+          launchTodo(
+            itemId,
+            buildLandTransform(itemRect, screenRef.current!, position.x),
+          )
         }
         className="contents"
       >
