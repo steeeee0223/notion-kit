@@ -4,10 +4,13 @@ import { Slot } from "radix-ui";
 import { cn } from "@notion-kit/cn";
 import { COLOR } from "@notion-kit/utils";
 
-interface Vector {
-  x: number;
-  y: number;
-}
+import {
+  getPositionAfterLayoutOffsetChange,
+  getPositionAfterVisualPositionPreserved,
+  getPositioningReferenceOrigin,
+  useComposedRefs,
+  type Vector,
+} from "./sling-shot-utils";
 
 interface Box {
   left: number;
@@ -98,6 +101,7 @@ interface ItemPhysicsState {
   pointerId: number | null;
   pointerStart: Vector;
   position: Vector;
+  preservedVisualPosition: Vector | null;
   power: number;
   pullVector: Vector;
   rotation: number;
@@ -121,6 +125,7 @@ function createItemState(): ItemPhysicsState {
     pointerId: null,
     pointerStart: ZERO_VECTOR,
     position: ZERO_VECTOR,
+    preservedVisualPosition: null,
     power: 0,
     pullVector: ZERO_VECTOR,
     rotation: 0,
@@ -212,21 +217,6 @@ function useSlingShotContext() {
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
-}
-
-function composeRefs<T>(...refs: (React.Ref<T> | undefined)[]) {
-  return (node: T | null) => {
-    refs.forEach((ref) => {
-      if (!ref) return;
-
-      if (typeof ref === "function") {
-        ref(node);
-        return;
-      }
-
-      ref.current = node;
-    });
-  };
 }
 
 function composeEventHandlers<E extends React.SyntheticEvent>(
@@ -398,6 +388,13 @@ function SlingShotRoot({
   const [renderTick, setRenderTick] = React.useState(0);
   const forceRender = React.useCallback(() => setRenderTick((t) => t + 1), []);
 
+  const getReferenceOrigin = React.useCallback(() => {
+    return getPositioningReferenceOrigin({
+      boundsRect: boundsRef?.current?.getBoundingClientRect(),
+      rootRect: rootRef.current?.getBoundingClientRect(),
+    });
+  }, [boundsRef]);
+
   // Active aiming state exposed to Arrow / Preview / Power
   const [activeItemId, setActiveItemId] = React.useState<string | null>(null);
   const [activeState, setActiveState] = React.useState<SlingShotState | null>(
@@ -429,40 +426,40 @@ function SlingShotRoot({
       //   BCR = naturalLayoutPos + currentTransform
       //   currentTransform ≈ translate(position.x, position.y)
       //   layoutOffset = naturalLayoutPos − refPos = BCR − position − refPos
-      const rootEl = rootRef.current;
-      let refLeft = 0;
-      let refTop = 0;
-      if (rootEl) {
-        const rootRect = rootEl.getBoundingClientRect();
-        if (rootRect.width > 0 || rootRect.height > 0) {
-          refLeft = rootRect.left;
-          refTop = rootRect.top;
-        } else if (boundsRef?.current) {
-          const bRect = boundsRef.current.getBoundingClientRect();
-          refLeft = bRect.left;
-          refTop = bRect.top;
-        }
-      }
-
+      const referenceOrigin = getReferenceOrigin();
       const itemRect = element.getBoundingClientRect();
       const newLayoutOffset = {
-        x: itemRect.left - s.position.x - refLeft,
-        y: itemRect.top - s.position.y - refTop,
+        x: itemRect.left - s.position.x - referenceOrigin.x,
+        y: itemRect.top - s.position.y - referenceOrigin.y,
       };
 
-      if (
+      const preservedVisualPosition = s.preservedVisualPosition;
+      const shouldPreserveUnmountedVisualPosition =
+        preservedVisualPosition !== null &&
+        (s.position.x !== 0 || s.position.y !== 0);
+
+      if (shouldPreserveUnmountedVisualPosition) {
+        s.position = getPositionAfterVisualPositionPreserved({
+          nextLayoutOffset: newLayoutOffset,
+          visualPosition: preservedVisualPosition,
+        });
+
+        element.style.transform = `translate3d(${s.position.x + s.shakeOffset.x}px, ${s.position.y + s.shakeOffset.y}px, 0) rotate(${s.rotation}deg)`;
+      } else if (
         isExisting &&
         (s.layoutOffset.x !== newLayoutOffset.x ||
           s.layoutOffset.y !== newLayoutOffset.y)
       ) {
-        // Re-registration with a changed layout position (e.g. the item moved
-        // to a different container). Adjust the physics position so the item
-        // appears at the same visual location:
-        //   newPosition = oldPosition + oldLayoutOffset − newLayoutOffset
-        s.position = {
-          x: s.position.x + s.layoutOffset.x - newLayoutOffset.x,
-          y: s.position.y + s.layoutOffset.y - newLayoutOffset.y,
-        };
+        // Re-registration with a changed layout position can mean either:
+        // - a launched item moved into the launched overlay and should stay
+        //   visually where it landed, or
+        // - an undisplaced item mounted while an ancestor layout animation was
+        //   still settling and should remain at its natural layout position.
+        s.position = getPositionAfterLayoutOffsetChange({
+          currentPosition: s.position,
+          nextLayoutOffset: newLayoutOffset,
+          previousLayoutOffset: s.layoutOffset,
+        });
 
         // Synchronously patch the DOM so the adjusted position is visible
         // before the browser paints. React will sync its virtual DOM on the
@@ -470,6 +467,7 @@ function SlingShotRoot({
         element.style.transform = `translate3d(${s.position.x + s.shakeOffset.x}px, ${s.position.y + s.shakeOffset.y}px, 0) rotate(${s.rotation}deg)`;
       }
 
+      s.preservedVisualPosition = null;
       s.layoutOffset = newLayoutOffset;
 
       return () => {
@@ -480,6 +478,17 @@ function SlingShotRoot({
             cancelAnimationFrame(item.shakeFrameId);
           if (item.pointerId !== null) {
             activePointersRef.current.delete(item.pointerId);
+          }
+          if (
+            item.element &&
+            (item.position.x !== 0 || item.position.y !== 0)
+          ) {
+            const referenceOrigin = getReferenceOrigin();
+            const rect = item.element.getBoundingClientRect();
+            item.preservedVisualPosition = {
+              x: rect.left - referenceOrigin.x,
+              y: rect.top - referenceOrigin.y,
+            };
           }
           item.element = null;
         }
@@ -495,8 +504,7 @@ function SlingShotRoot({
         pendingCleanupsRef.current.set(id, timeoutId);
       };
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [getReferenceOrigin],
   );
 
   // ── Shake ────────────────────────────────────────────────────────────────
@@ -580,7 +588,6 @@ function SlingShotRoot({
   const setAimingStateForItem = React.useCallback(
     (itemId: string, pullVector: Vector) => {
       const item = itemsRef.current.get(itemId);
-      const root = rootRef.current;
       if (!item) return;
 
       const launchVector = negateVector(pullVector);
@@ -617,7 +624,7 @@ function SlingShotRoot({
         aimAngle: Math.atan2(launchVector.y, launchVector.x),
         isAiming: item.isAiming,
         isFlying: false,
-        itemCenter: root ? itemCenter : ZERO_VECTOR,
+        itemCenter,
         launchVector,
         power,
         previewPoints,
@@ -842,9 +849,7 @@ function SlingShotRoot({
       target: HTMLElement,
     ) => {
       const item = itemsRef.current.get(itemId);
-      const root = rootRef.current;
-
-      if (!item?.element || !root || disabled || item.isFlying) return;
+      if (!item?.element || disabled || item.isFlying) return;
 
       cancelFlight(itemId);
       item.pointerId = pointerId;
@@ -855,13 +860,13 @@ function SlingShotRoot({
       activePointersRef.current.set(pointerId, itemId);
 
       const itemRect = item.element.getBoundingClientRect();
-      const rootRect = root.getBoundingClientRect();
+      const referenceOrigin = getReferenceOrigin();
       item.itemStartCenter = {
-        x: itemRect.left - rootRect.left + itemRect.width / 2,
-        y: itemRect.top - rootRect.top + itemRect.height / 2,
+        x: itemRect.left - referenceOrigin.x + itemRect.width / 2,
+        y: itemRect.top - referenceOrigin.y + itemRect.height / 2,
       };
     },
-    [cancelFlight, disabled],
+    [cancelFlight, disabled, getReferenceOrigin],
   );
 
   const moveDrag = React.useCallback(
@@ -940,34 +945,21 @@ function SlingShotRoot({
       reset.element = item.element; // keep element reference
       // Recompute layoutOffset for the kept element
       if (item.element) {
-        const rootEl = rootRef.current;
-        let refLeft = 0;
-        let refTop = 0;
-        if (rootEl) {
-          const rootRect = rootEl.getBoundingClientRect();
-          if (rootRect.width > 0 || rootRect.height > 0) {
-            refLeft = rootRect.left;
-            refTop = rootRect.top;
-          } else if (boundsRef?.current) {
-            const bRect = boundsRef.current.getBoundingClientRect();
-            refLeft = bRect.left;
-            refTop = bRect.top;
-          }
-        }
+        const referenceOrigin = getReferenceOrigin();
         const elRect = item.element.getBoundingClientRect();
         reset.layoutOffset = {
-          x: elRect.left - item.position.x - refLeft,
-          y: elRect.top - item.position.y - refTop,
+          x: elRect.left - item.position.x - referenceOrigin.x,
+          y: elRect.top - item.position.y - referenceOrigin.y,
         };
       }
       itemsRef.current.set(id, reset);
     });
     activePointersRef.current.clear();
+
     setActiveItemId(null);
     setActiveState(null);
     forceRender();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resetKey]);
+  }, [forceRender, getReferenceOrigin, resetKey]);
 
   React.useEffect(() => {
     const items = itemsRef.current;
@@ -1211,6 +1203,10 @@ function SlingShotItem({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [id],
   );
+  const composedRef = useComposedRefs(
+    itemRef as React.Ref<HTMLDivElement>,
+    ref as React.Ref<HTMLElement>,
+  ) as React.Ref<HTMLDivElement>;
 
   const transform = `translate3d(${position.x + shakeOffset.x}px, ${position.y + shakeOffset.y}px, 0) rotate(${rotation}deg)`;
 
@@ -1218,12 +1214,7 @@ function SlingShotItem({
     <SlingShotSlot
       render={render}
       data-slot="sling-shot-item"
-      ref={
-        composeRefs(
-          itemRef as React.Ref<HTMLDivElement>,
-          ref as React.Ref<HTMLElement>,
-        ) as React.Ref<HTMLDivElement>
-      }
+      ref={composedRef}
       className={cn(
         "relative z-10 inline-block touch-none will-change-transform",
         isAiming ? "cursor-grabbing" : "cursor-grab",
@@ -1268,6 +1259,7 @@ function SlingShotGoal({
   const fallbackId = React.useId();
   const goalRef = React.useRef<HTMLDivElement | null>(null);
   const timeoutRef = React.useRef<number | null>(null);
+  const composedGoalRef = useComposedRefs(goalRef, ref);
   const [goalState, setGoalState] = React.useState<SlingShotGoalState>({
     hitCount: 0,
     isHit: false,
@@ -1318,11 +1310,7 @@ function SlingShotGoal({
 
   if (render) {
     return (
-      <Slot.Root
-        data-slot="sling-shot-goal"
-        ref={composeRefs(goalRef, ref)}
-        {...props}
-      >
+      <Slot.Root data-slot="sling-shot-goal" ref={composedGoalRef} {...props}>
         {render(goalState)}
       </Slot.Root>
     );
@@ -1343,7 +1331,7 @@ function SlingShotGoal({
       </style>
       <div
         data-slot="sling-shot-goal"
-        ref={composeRefs(goalRef, ref)}
+        ref={composedGoalRef}
         className={cn(
           "relative inline-block transition-[filter]",
           goalState.isHit &&

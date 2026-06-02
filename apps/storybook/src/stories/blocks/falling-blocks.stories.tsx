@@ -10,10 +10,13 @@ import { restrictToParentElement } from "@dnd-kit/modifiers";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
 import { cn } from "@notion-kit/cn";
+import {
+  FallingBlocks,
+  useFallingBlocks,
+} from "@notion-kit/cool-blocks/falling-blocks";
 import { TooltipPreset, TooltipProvider } from "@notion-kit/ui/primitives";
 
 import { DEFAULT_LOGOS } from "./data";
-import { FallingBlocks, useFallingBlocks } from "./falling-blocks";
 
 const meta = {
   title: "interesting/Falling Blocks",
@@ -31,7 +34,7 @@ export const Basic: Story = {
           {DEFAULT_LOGOS.map((block) => (
             <FallingBlocks.Item
               key={block.name}
-              className="flex flex-col items-center justify-center gap-1 rounded-lg shadow-lg select-none"
+              className="flex size-16 flex-col items-center justify-center gap-1 rounded-lg shadow-lg select-none"
               style={{ background: block.bg }}
             >
               <TooltipPreset description={block.name}>
@@ -103,7 +106,7 @@ function DraggableItem({
     <FallingBlocks.Item
       physicsIndex={index}
       className={cn(
-        "flex flex-col items-center justify-center gap-1 rounded-lg shadow-lg select-none",
+        "flex size-16 flex-col items-center justify-center gap-1 rounded-lg shadow-lg select-none",
         isDragging ? "z-50 cursor-grabbing" : "cursor-grab",
       )}
       style={{ background: block.bg }}

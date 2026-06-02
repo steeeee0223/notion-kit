@@ -1,10 +1,9 @@
 import * as React from "react";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
+import { Eject, type EjectRef } from "@notion-kit/cool-blocks/eject";
 import { Icon } from "@notion-kit/icons";
 import { Button, Input } from "@notion-kit/ui/primitives";
-
-import { Eject, type EjectRef } from "./eject";
 
 const meta = {
   title: "interesting/Eject",
@@ -17,9 +16,6 @@ const meta = {
       control: "select",
       options: ["respawn", "disappear", "ghost"],
     },
-    // force: {
-    //   control: { type: "range", min: 0.1, max: 5, step: 0.1 },
-    // },
   },
 } satisfies Meta<typeof Eject>;
 

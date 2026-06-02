@@ -3,6 +3,9 @@ import { create, useStore } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 
 import { cn } from "@notion-kit/cn";
+import { Eject, type EjectRef } from "@notion-kit/cool-blocks/eject";
+import { FallingBlocks } from "@notion-kit/cool-blocks/falling-blocks";
+import { SlingShot } from "@notion-kit/cool-blocks/sling-shot";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -18,9 +21,6 @@ import {
   PopoverTrigger,
 } from "@notion-kit/ui/primitives";
 
-import { Eject, type EjectRef } from "./eject";
-import { FallingBlocks } from "./falling-blocks";
-import { SlingShot } from "./sling-shot";
 import { arrayMove, Sortable } from "./sortable";
 
 // ─── Types ──────────────────────────────────────────────────────────────────

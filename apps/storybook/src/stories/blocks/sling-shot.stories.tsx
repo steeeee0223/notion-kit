@@ -2,10 +2,12 @@ import * as React from "react";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
 import { cn } from "@notion-kit/cn";
+import {
+  SlingShot,
+  type SlingShotProps,
+} from "@notion-kit/cool-blocks/sling-shot";
 import { Icon } from "@notion-kit/icons";
 import { Badge, Button } from "@notion-kit/ui/primitives";
-
-import { SlingShot, type SlingShotProps } from "./sling-shot";
 
 const meta = {
   title: "interesting/Sling Shot",
