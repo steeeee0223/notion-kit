@@ -48,31 +48,35 @@ export function DefaultTeamspace() {
           name="id"
           render={({ field }) => (
             <FormItem className="min-w-0 grow">
-              <FormControl>
-                <MultiSelect
-                  options={teamspaceOptions}
-                  value={teamspaceOptions.filter(
-                    (option) => option.id === field.value,
-                  )}
-                  onChange={(options) => field.onChange(options.at(0)?.id)}
-                  disabled={field.disabled}
-                  maxSelected={1}
-                  hideClearAllButton
-                  emptyIndicator="No results found"
-                  renderOption={({ option }) => (
-                    <>
-                      <div className="mr-2.5 flex items-center justify-center">
-                        <IconBlock
-                          icon={JSON.parse(option.icon as string) as IconData}
-                        />
-                      </div>
-                      <div className="mr-3 min-w-0 flex-auto truncate">
-                        {option.label}
-                      </div>
-                    </>
-                  )}
-                />
-              </FormControl>
+              <FormControl
+                render={
+                  <MultiSelect
+                    options={teamspaceOptions}
+                    value={teamspaceOptions.filter(
+                      (option) => option.id === field.value,
+                    )}
+                    onChange={(options) => field.onChange(options.at(0)?.id)}
+                    disabled={field.disabled}
+                    maxSelected={1}
+                    hideClearAllButton
+                    emptyIndicator="No results found"
+                    renderOption={({ option }) => (
+                      <>
+                        <div className="mr-2.5 flex items-center justify-center">
+                          <IconBlock
+                            icon={
+                              JSON.parse(option.icon as string) as IconData
+                            }
+                          />
+                        </div>
+                        <div className="mr-3 min-w-0 flex-auto truncate">
+                          {option.label}
+                        </div>
+                      </>
+                    )}
+                  />
+                }
+              />
             </FormItem>
           )}
         />

@@ -66,14 +66,16 @@ export function DeleteAccount({ email, onSubmit }: DeleteAccountProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("label")}</FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    data-size="lg"
-                    placeholder={email}
-                    {...field}
-                  />
-                </FormControl>
+                <FormControl
+                  render={
+                    <Input
+                      type="email"
+                      data-size="lg"
+                      placeholder={email}
+                      {...field}
+                    />
+                  }
+                />
               </FormItem>
             )}
           />

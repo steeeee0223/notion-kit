@@ -17,18 +17,21 @@ export function DocIcon({ node, defaultIcon }: DocIconProps) {
 
   return (
     <div className="group/icon">
-      <Tree.ExpandIndicator asChild onToggle={() => tree.expand(node.id)}>
-        <Button
-          variant="hint"
-          className="relative hidden size-5 group-hover/icon:flex"
-          aria-label={expanded ? "collapse" : "expand"}
-        >
-          <Icon.Chevron
-            side={expanded ? "down" : "right"}
-            className="size-3 transition-[rotate]"
-          />
-        </Button>
-      </Tree.ExpandIndicator>
+      <Tree.ExpandIndicator
+        onToggle={() => tree.expand(node.id)}
+        render={
+          <Button
+            variant="hint"
+            className="relative hidden size-5 group-hover/icon:flex"
+            aria-label={expanded ? "collapse" : "expand"}
+          >
+            <Icon.Chevron
+              side={expanded ? "down" : "right"}
+              className="size-3 transition-[rotate]"
+            />
+          </Button>
+        }
+      />
       <IconBlock
         className="group-hover/icon:hidden"
         icon={node.iconData ?? defaultIcon}

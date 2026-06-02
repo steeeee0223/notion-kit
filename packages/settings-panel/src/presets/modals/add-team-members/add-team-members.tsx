@@ -96,61 +96,63 @@ export function AddTeamMembers({
               control={form.control}
               name="users"
               render={({ field }) => (
-                <FormItem className="min-w-0 grow">
-                  <FormControl>
-                    <MultiSelect
-                      groupBy="header"
-                      className="min-h-7 border-none bg-transparent py-1.5 pl-2 focus-within:shadow-none!"
-                      classNames={{ input: "p-0" }}
-                      options={multiSelectOptions}
-                      disabled={field.disabled}
-                      placeholder={t("search-placeholder")}
-                      hideClearAllButton
-                      emptyIndicator={t("no-results")}
-                      value={field.value.map((user) => ({
-                        label: user.name,
-                        value: user.name,
-                        id: user.id,
-                        color: idToColor(user.id),
-                      }))}
-                      onChange={(values) =>
-                        field.onChange(
-                          values.reduce<User[]>((acc, v) => {
-                            const member = members.get(v.value);
-                            if (member) acc.push(member);
-                            return acc;
-                          }, []),
-                        )
-                      }
-                      renderOption={({ option }) => (
-                        <MenuItem
-                          Icon={
-                            <Avatar
-                              src={
-                                "avatarUrl" in option
-                                  ? (option.avatarUrl as string)
-                                  : undefined
-                              }
-                              fallback={option.label}
-                            />
-                          }
-                          Body={option.label}
-                        >
-                          {option.disabled && (
-                            <MenuItemAction>
-                              <Badge
-                                variant="gray"
-                                size="sm"
-                                className="ml-auto tracking-wide uppercase"
-                              >
-                                {t("invited")}
-                              </Badge>
-                            </MenuItemAction>
-                          )}
-                        </MenuItem>
-                      )}
-                    />
-                  </FormControl>
+                <FormItem className="min-w-0 flex-1 basis-0">
+                  <FormControl
+                    render={
+                      <MultiSelect
+                        groupBy="header"
+                        className="min-h-7 border-none bg-transparent py-1.5 pl-2 focus-within:shadow-none!"
+                        classNames={{ input: "min-w-0 p-0" }}
+                        options={multiSelectOptions}
+                        disabled={field.disabled}
+                        placeholder={t("search-placeholder")}
+                        hideClearAllButton
+                        emptyIndicator={t("no-results")}
+                        value={field.value.map((user) => ({
+                          label: user.name,
+                          value: user.name,
+                          id: user.id,
+                          color: idToColor(user.id),
+                        }))}
+                        onChange={(values) =>
+                          field.onChange(
+                            values.reduce<User[]>((acc, v) => {
+                              const member = members.get(v.value);
+                              if (member) acc.push(member);
+                              return acc;
+                            }, []),
+                          )
+                        }
+                        renderOption={({ option }) => (
+                          <MenuItem
+                            Icon={
+                              <Avatar
+                                src={
+                                  "avatarUrl" in option
+                                    ? (option.avatarUrl as string)
+                                    : undefined
+                                }
+                                fallback={option.label}
+                              />
+                            }
+                            Body={option.label}
+                          >
+                            {option.disabled && (
+                              <MenuItemAction>
+                                <Badge
+                                  variant="gray"
+                                  size="sm"
+                                  className="ml-auto tracking-wide uppercase"
+                                >
+                                  {t("invited")}
+                                </Badge>
+                              </MenuItemAction>
+                            )}
+                          </MenuItem>
+                        )}
+                      />
+                    }
+                  />
                 </FormItem>
               )}
             />
@@ -158,17 +160,19 @@ export function AddTeamMembers({
               control={form.control}
               name="role"
               render={({ field }) => (
-                <FormItem className="sticky top-0 ml-2 shrink-0 py-0.5">
-                  <FormControl>
-                    <SelectPreset
-                      options={{
-                        owner: t("roles.owner"),
-                        member: t("roles.member"),
-                      }}
-                      className="mb-0 w-[170px] text-muted"
-                      {...field}
-                    />
-                  </FormControl>
+                <FormItem className="sticky top-0 ml-2 w-auto shrink-0 py-0.5">
+                  <FormControl
+                    render={
+                      <SelectPreset
+                        options={{
+                          owner: t("roles.owner"),
+                          member: t("roles.member"),
+                        }}
+                        className="mb-0 w-[170px] text-muted"
+                        {...field}
+                      />
+                    }
+                  />
                 </FormItem>
               )}
             />

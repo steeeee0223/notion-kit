@@ -41,21 +41,23 @@ export function CreateWorkspaceForm({ ...props }: CreateWorkspaceFormProps) {
             name="icon"
             render={({ field }) => (
               <FormItem className="flex flex-col items-center">
-                <FormControl>
-                  <IconMenu
-                    disabled={field.disabled}
-                    onSelect={field.onChange}
-                    onRemove={() => field.onChange(defaultIcon)}
-                    onUpload={(file) =>
-                      field.onChange({
-                        type: "url",
-                        src: URL.createObjectURL(file),
-                      })
-                    }
-                  >
-                    <IconBlock icon={field.value} size="lg" />
-                  </IconMenu>
-                </FormControl>
+                <FormControl
+                  render={
+                    <IconMenu
+                      disabled={field.disabled}
+                      onSelect={field.onChange}
+                      onRemove={() => field.onChange(defaultIcon)}
+                      onUpload={(file) =>
+                        field.onChange({
+                          type: "url",
+                          src: URL.createObjectURL(file),
+                        })
+                      }
+                    >
+                      <IconBlock icon={field.value} size="lg" />
+                    </IconMenu>
+                  }
+                />
                 <FormDescription>Choose or add an icon</FormDescription>
               </FormItem>
             )}
@@ -66,9 +68,11 @@ export function CreateWorkspaceForm({ ...props }: CreateWorkspaceFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Workspace name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Acme Inc." data-size="lg" {...field} />
-                </FormControl>
+                <FormControl
+                  render={
+                    <Input placeholder="Acme Inc." data-size="lg" {...field} />
+                  }
+                />
                 <FormDescription>
                   The name of your company or organization
                 </FormDescription>

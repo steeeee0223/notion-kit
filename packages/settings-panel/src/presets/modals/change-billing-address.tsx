@@ -247,9 +247,9 @@ function ChangeBillingAddressNative({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("full-name")}</FormLabel>
-                <FormControl>
-                  <Input placeholder="Ada Lovelace" {...field} />
-                </FormControl>
+                <FormControl
+                  render={<Input placeholder="Ada Lovelace" {...field} />}
+                />
               </FormItem>
             )}
           />
@@ -259,9 +259,9 @@ function ChangeBillingAddressNative({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("country")}</FormLabel>
-                <FormControl>
-                  <Input placeholder="United States" {...field} />
-                </FormControl>
+                <FormControl
+                  render={<Input placeholder="United States" {...field} />}
+                />
               </FormItem>
             )}
           />
@@ -271,9 +271,7 @@ function ChangeBillingAddressNative({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("postal-code")}</FormLabel>
-                <FormControl>
-                  <Input placeholder="94107" {...field} />
-                </FormControl>
+                <FormControl render={<Input placeholder="94107" {...field} />} />
               </FormItem>
             )}
           />
@@ -283,9 +281,9 @@ function ChangeBillingAddressNative({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("business-name")}</FormLabel>
-                <FormControl>
-                  <Input placeholder="Acme Inc." {...field} />
-                </FormControl>
+                <FormControl
+                  render={<Input placeholder="Acme Inc." {...field} />}
+                />
               </FormItem>
             )}
           />
