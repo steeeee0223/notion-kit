@@ -17,6 +17,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { Eject, type EjectRef } from "./eject";
+import { FallingBlocks } from "./falling-blocks";
 import { SlingShot } from "./sling-shot";
 import { Sortable, arrayMove } from "./sortable";
 
@@ -228,11 +229,19 @@ function ArchivedItemRow({ todo }: { todo: TodoItem }) {
 
 function TrashBox() {
   const archivedTodos = useArchivedTodos();
+  const [open, setOpen] = React.useState(false);
+  const [runId, setRunId] = React.useState(0);
+  const store = React.use(TodoStoreContext)!;
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (nextOpen) setRunId((v) => v + 1);
+  };
 
   return (
     <div className="fixed right-8 bottom-8 z-50">
       <SlingShot.Goal id="trash">
-        <Popover>
+        <Popover open={open} onOpenChange={handleOpenChange}>
           <PopoverTrigger asChild>
             <Button variant="hint" size="md" className="rounded-full shadow-out-md">
               <Icon.Trash className="size-5 fill-icon" />
@@ -241,19 +250,52 @@ function TrashBox() {
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent side="top" align="end" className="w-80 p-0">
+          <PopoverContent side="top" align="end" className="w-80 p-0 overflow-hidden">
             <div className="p-3 text-sm font-medium text-secondary">
               Trash ({archivedTodos.length})
             </div>
-            <div className="max-h-64 overflow-y-auto">
-              {archivedTodos.length === 0 ? (
-                <div className="px-3 pb-3 text-sm text-muted">No archived items</div>
-              ) : (
-                archivedTodos.map((todo) => (
-                  <ArchivedItemRow key={todo.id} todo={todo} />
-                ))
-              )}
-            </div>
+            {archivedTodos.length === 0 ? (
+              <div className="px-3 pb-3 text-sm text-muted">No archived items</div>
+            ) : (
+              <FallingBlocks.Root
+                runId={runId}
+                count={archivedTodos.length}
+                className="relative h-64 w-full bg-input"
+              >
+                {archivedTodos.map((todo) => (
+                  <FallingBlocks.Item key={todo.id} asChild>
+                    <div className="group/block flex flex-col items-center justify-center p-1 rounded-md border border-border bg-popover shadow-sm cursor-grab select-none w-[62px] h-[62px] relative">
+                      <Checkbox size="xs" checked disabled className="shrink-0 size-3" />
+                      <span className="w-full text-center truncate text-[8px] text-secondary line-through mt-0.5 px-0.5">
+                        {todo.label}
+                      </span>
+                      <div className="absolute right-0.5 bottom-0.5 opacity-0 group-hover/block:opacity-100 transition-opacity duration-150">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="hint" className="size-4 p-0 flex items-center justify-center">
+                              <Icon.Dots className="size-2.5 fill-icon" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              Body="Restore"
+                              Icon={<Icon.Undo className="size-4" />}
+                              onSelect={() => store.getState().restoreTodo(todo.id)}
+                            />
+                            <DropdownMenuItem
+                              Body="Delete forever"
+                              Icon={<Icon.Trash className="size-4" />}
+                              variant="error"
+                              onSelect={() => store.getState().deleteTodo(todo.id)}
+                            />
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
+                  </FallingBlocks.Item>
+                ))}
+              </FallingBlocks.Root>
+            )}
           </PopoverContent>
         </Popover>
       </SlingShot.Goal>
