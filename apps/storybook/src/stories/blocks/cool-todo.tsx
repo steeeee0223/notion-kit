@@ -9,6 +9,7 @@ import {
   Checkbox,
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
   Input,
@@ -149,7 +150,13 @@ function TodoInput() {
         placeholder="Add a todo..."
         className="flex-1"
       />
-      <Button type="submit" variant="blue" size="sm" disabled={!value.trim()}>
+      <Button
+        type="submit"
+        variant="blue"
+        size="sm"
+        className="h-7"
+        disabled={!value.trim()}
+      >
         Add
       </Button>
     </form>
@@ -197,12 +204,14 @@ function TodoItemRow({ todo }: { todo: TodoItem }) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem
-                    Body="Delete"
-                    Icon={<Icon.Trash className="size-4" />}
-                    variant="error"
-                    onSelect={() => archiveTodo(todo.id)}
-                  />
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem
+                      Body="Delete"
+                      Icon={<Icon.Trash />}
+                      variant="error"
+                      onSelect={() => archiveTodo(todo.id)}
+                    />
+                  </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -226,7 +235,7 @@ function TrashBox() {
 
   return (
     <div className="fixed right-8 bottom-8 z-50">
-      <SlingShot.Goal id="trash">
+      <SlingShot.Goal id="trash" className="rounded-full">
         <Popover open={open} onOpenChange={handleOpenChange}>
           <PopoverTrigger asChild>
             <Button
@@ -245,44 +254,40 @@ function TrashBox() {
           <PopoverContent
             side="top"
             align="end"
-            className="w-80 overflow-hidden p-0"
+            className="h-80 w-100 overflow-hidden p-0"
           >
-            <div className="p-3 text-sm font-medium text-secondary">
+            <div className="fixed top-0 left-0 p-3 text-sm font-medium text-secondary">
               Trash ({archivedTodos.length})
             </div>
-            {archivedTodos.length === 0 ? (
-              <div className="px-3 pb-3 text-sm text-muted">
-                No archived items
-              </div>
-            ) : (
-              <FallingBlocks.Root
-                runId={runId}
-                count={archivedTodos.length}
-                className="relative h-64 w-full bg-input"
-              >
-                {archivedTodos.map((todo) => (
-                  <FallingBlocks.Item key={todo.id} asChild>
-                    <div className="group/block relative flex size-[62px] cursor-grab flex-col items-center justify-center rounded-md border border-border bg-popover p-1 shadow-sm select-none">
-                      <Checkbox
-                        size="xs"
-                        checked={false}
-                        disabled
-                        className="size-3 shrink-0"
-                      />
-                      <span className="mt-0.5 w-full truncate px-0.5 text-center text-[8px] text-secondary line-through">
-                        {todo.label}
-                      </span>
-                      <div className="absolute right-0.5 bottom-0.5 opacity-0 transition-opacity duration-150 group-hover/block:opacity-100">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="hint"
-                              className="flex size-4 items-center justify-center p-0"
-                            >
-                              <Icon.Dots className="size-2.5 fill-icon" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
+            <FallingBlocks.Root
+              runId={runId}
+              count={archivedTodos.length}
+              className="relative size-full bg-input"
+            >
+              {archivedTodos.map((todo) => (
+                <FallingBlocks.Item key={todo.id} asChild>
+                  <div className="group/block relative flex size-[62px] cursor-grab flex-col items-center justify-center rounded-md border border-border bg-popover p-1 shadow-sm select-none">
+                    <Checkbox
+                      size="xs"
+                      checked={false}
+                      disabled
+                      className="size-3 shrink-0"
+                    />
+                    <span className="mt-0.5 w-full truncate px-0.5 text-center text-[8px] text-secondary line-through">
+                      {todo.label}
+                    </span>
+                    <div className="absolute right-0.5 bottom-0.5 opacity-0 transition-opacity duration-150 group-hover/block:opacity-100">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="hint"
+                            className="flex size-4 items-center justify-center p-0"
+                          >
+                            <Icon.Dots className="size-2.5 fill-icon" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuGroup>
                             <DropdownMenuItem
                               Body="Restore"
                               Icon={<Icon.Undo className="size-4" />}
@@ -292,20 +297,20 @@ function TrashBox() {
                             />
                             <DropdownMenuItem
                               Body="Delete forever"
-                              Icon={<Icon.Trash className="size-4" />}
+                              Icon={<Icon.Trash />}
                               variant="error"
                               onSelect={() =>
                                 store.getState().deleteTodo(todo.id)
                               }
                             />
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
+                          </DropdownMenuGroup>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
-                  </FallingBlocks.Item>
-                ))}
-              </FallingBlocks.Root>
-            )}
+                  </div>
+                </FallingBlocks.Item>
+              ))}
+            </FallingBlocks.Root>
           </PopoverContent>
         </Popover>
       </SlingShot.Goal>
@@ -345,7 +350,7 @@ export function CoolTodo() {
         >
           <SlingShot.Arrow />
           <SlingShot.Preview />
-          <SlingShot.Power />
+          <SlingShot.Power className="w-20" />
           <SlingShot.Item id="dummy" className="hidden" />
 
           <div className="flex w-1/2 items-start justify-center p-12">
