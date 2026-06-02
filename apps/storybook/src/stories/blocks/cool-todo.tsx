@@ -1,5 +1,6 @@
 import * as React from "react";
 import { create, useStore } from "zustand";
+import { useShallow } from "zustand/react/shallow";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
@@ -108,13 +109,22 @@ function useTodoStore<T>(selector: (state: TodoStore) => T): T {
   return useStore(store, selector);
 }
 
-const useActiveTodos = () => useTodoStore((s) => s.todos.filter((t) => t.status === "active"));
-const useArchivedTodos = () => useTodoStore((s) => s.todos.filter((t) => t.status === "archived"));
+// Stable selector functions defined outside to prevent reference changes on render
+const activeTodosSelector = (s: TodoStore) => s.todos.filter((t) => t.status === "active");
+const archivedTodosSelector = (s: TodoStore) => s.todos.filter((t) => t.status === "archived");
+const checkTodoSelector = (s: TodoStore) => s.checkTodo;
+const archiveTodoSelector = (s: TodoStore) => s.archiveTodo;
+const addTodoSelector = (s: TodoStore) => s.addTodo;
+const reorderTodosSelector = (s: TodoStore) => s.reorderTodos;
+
+// Custom hooks utilizing stable selectors and shallow comparison for array slices
+const useActiveTodos = () => useTodoStore(useShallow(activeTodosSelector));
+const useArchivedTodos = () => useTodoStore(useShallow(archivedTodosSelector));
 
 // ─── Components ─────────────────────────────────────────────────────────────
 
 function TodoInput() {
-  const addTodo = useTodoStore((s) => s.addTodo);
+  const addTodo = useTodoStore(addTodoSelector);
   const [value, setValue] = React.useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -141,8 +151,8 @@ function TodoInput() {
 }
 
 function TodoItemRow({ todo }: { todo: TodoItem }) {
-  const checkTodo = useTodoStore((s) => s.checkTodo);
-  const archiveTodo = useTodoStore((s) => s.archiveTodo);
+  const checkTodo = useTodoStore(checkTodoSelector);
+  const archiveTodo = useTodoStore(archiveTodoSelector);
   const ejectRef = React.useRef<EjectRef>(null);
 
   const handleCheck = () => {
@@ -275,7 +285,7 @@ function TrashBox() {
 
 function TodoList() {
   const activeTodos = useActiveTodos();
-  const reorderTodos = useTodoStore((s) => s.reorderTodos);
+  const reorderTodos = useTodoStore(reorderTodosSelector);
 
   return (
     <Sortable.Root
