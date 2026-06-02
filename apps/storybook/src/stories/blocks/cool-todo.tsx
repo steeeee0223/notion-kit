@@ -254,28 +254,6 @@ function TodoItemCard({
   );
 }
 
-/**
- * Launched todo item — takes up no space in the list (height 0),
- * but overflows to appear on the ground via the stored CSS transform.
- * Supports all the same actions as active items (slingshot, check, archive).
- */
-function LaunchedTodoItem({ todo }: { todo: TodoItem }) {
-  return (
-    <div className="group/launched" style={{ height: 0, overflow: "visible" }}>
-      <div
-        style={{
-          transform: todo.landTransform?.transform,
-          rotate: todo.landTransform?.rotate,
-        }}
-      >
-        <SlingShot.Item id={todo.id} className="block w-full">
-          <TodoItemCard todo={todo} hoverGroup="launched" />
-        </SlingShot.Item>
-      </div>
-    </div>
-  );
-}
-
 function TrashBox() {
   const [runId, setRunId] = React.useState(0);
   const archivedTodos = useArchivedTodos();
@@ -366,7 +344,7 @@ function TrashBox() {
   );
 }
 
-function TodoList() {
+function ActiveTodoList() {
   const activeTodos = useActiveTodos();
   const reorderTodos = useTodoStore((s) => s.reorderTodos);
 
@@ -386,6 +364,28 @@ function TodoList() {
   );
 }
 
+function LaunchedTodoList() {
+  const launchedTodos = useLaunchedTodos();
+
+  return (
+    <div style={{ height: 0, overflow: "visible" }}>
+      {launchedTodos.map((todo) => (
+        <SlingShot.Item
+          key={todo.id}
+          id={todo.id}
+          className="group/launched block w-full"
+          style={{
+            transform: todo.landTransform?.transform,
+            rotate: todo.landTransform?.rotate,
+          }}
+        >
+          <TodoItemCard todo={todo} hoverGroup="launched" />
+        </SlingShot.Item>
+      ))}
+    </div>
+  );
+}
+
 const SLING_SHOT_ROTATION = 0.035;
 
 function buildLandTransform(position: { x: number; y: number }): LandTransform {
@@ -398,7 +398,6 @@ function buildLandTransform(position: { x: number; y: number }): LandTransform {
 
 function SlingShotPlayground() {
   const screenRef = React.useRef<HTMLDivElement>(null);
-  const launchedTodos = useLaunchedTodos();
   const { archiveTodo, launchTodo } = useTodoStore(
     useShallow((s) => ({
       archiveTodo: s.archiveTodo,
@@ -424,13 +423,10 @@ function SlingShotPlayground() {
         <div className="flex w-1/2 items-start justify-center p-12">
           <div className="w-full max-w-md rounded-lg border border-border bg-popover shadow-out-md">
             <TodoInput />
-            <TodoList />
+            <LaunchedTodoList />
+            <ActiveTodoList />
           </div>
         </div>
-
-        {launchedTodos.map((todo) => (
-          <LaunchedTodoItem key={todo.id} todo={todo} />
-        ))}
 
         <TrashBox />
       </SlingShot>
