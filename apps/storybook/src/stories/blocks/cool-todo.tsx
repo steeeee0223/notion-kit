@@ -346,6 +346,7 @@ export function CoolTodo() {
           <SlingShot.Arrow />
           <SlingShot.Preview />
           <SlingShot.Power />
+          <SlingShot.Item id="dummy" className="hidden" />
 
           <div className="flex w-1/2 items-start justify-center p-12">
             <div className="w-full max-w-md rounded-lg border border-border bg-popover shadow-out-md">
