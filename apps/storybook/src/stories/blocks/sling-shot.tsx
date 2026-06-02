@@ -37,6 +37,7 @@ export interface SlingShotConfig {
 }
 
 export interface SlingShotLandEvent {
+  itemId: string;
   position: Vector;
   velocity: Vector;
 }
@@ -46,6 +47,7 @@ export interface SlingShotHitEvent {
   goalId: string;
   goalRect: DOMRect;
   itemElement: HTMLElement;
+  itemId: string;
   itemRect: DOMRect;
   velocity: Vector;
 }
@@ -75,21 +77,73 @@ export interface SlingShotProps extends React.ComponentProps<"div"> {
   resetKey?: React.Key;
   onGoalHit?: (event: SlingShotHitEvent) => void;
   onLand?: (event: SlingShotLandEvent) => void;
-  onLaunch?: (velocity: Vector) => void;
+  onLaunch?: (velocity: Vector, itemId: string) => void;
 }
 
-interface SlingShotContextValue {
-  disabled?: boolean;
-  itemRef: React.RefObject<HTMLElement | null>;
+// ─── Per-item physics state ──────────────────────────────────────────────────
+
+interface ItemPhysicsState {
+  basePosition: Vector;
+  baseRotation: number;
+  captureElement: HTMLElement | null;
+  element: HTMLElement | null;
+  frameId: number | null;
+  hitGoalIds: Set<string>;
+  isAiming: boolean;
+  isFlying: boolean;
+  itemStartCenter: Vector;
+  pointerId: number | null;
+  pointerStart: Vector;
   position: Vector;
+  power: number;
+  pullVector: Vector;
   rotation: number;
+  shakeFrameId: number | null;
   shakeOffset: Vector;
-  state: SlingShotState;
-  onPointerCancel: (event: React.PointerEvent<HTMLElement>) => void;
-  onPointerDown: (event: React.PointerEvent<HTMLElement>) => void;
-  onPointerMove: (event: React.PointerEvent<HTMLElement>) => void;
-  onPointerUp: (event: React.PointerEvent<HTMLElement>) => void;
+  velocity: Vector;
+}
+
+function createItemState(): ItemPhysicsState {
+  return {
+    basePosition: ZERO_VECTOR,
+    baseRotation: 0,
+    captureElement: null,
+    element: null,
+    frameId: null,
+    hitGoalIds: new Set(),
+    isAiming: false,
+    isFlying: false,
+    itemStartCenter: ZERO_VECTOR,
+    pointerId: null,
+    pointerStart: ZERO_VECTOR,
+    position: ZERO_VECTOR,
+    power: 0,
+    pullVector: ZERO_VECTOR,
+    rotation: 0,
+    shakeFrameId: null,
+    shakeOffset: ZERO_VECTOR,
+    velocity: ZERO_VECTOR,
+  };
+}
+
+// ─── Context ─────────────────────────────────────────────────────────────────
+
+interface SlingShotContextValue {
+  activeItemId: string | null;
+  activeState: SlingShotState | null;
+  disabled?: boolean;
+  getItemState: (id: string) => { isAiming: boolean; isFlying: boolean };
+  getItemTransform: (id: string) => {
+    position: Vector;
+    rotation: number;
+    shakeOffset: Vector;
+  };
+  onPointerCancel: (itemId: string, event: React.PointerEvent<HTMLElement>) => void;
+  onPointerDown: (itemId: string, event: React.PointerEvent<HTMLElement>) => void;
+  onPointerMove: (itemId: string, event: React.PointerEvent<HTMLElement>) => void;
+  onPointerUp: (itemId: string, event: React.PointerEvent<HTMLElement>) => void;
   registerGoal: (goal: SlingShotGoalRegistration) => () => void;
+  registerItem: (id: string, element: HTMLElement) => () => void;
 }
 
 interface SlingShotSlotComponent {
@@ -119,9 +173,19 @@ const DEFAULT_CONFIG = {
 
 const ZERO_VECTOR = { x: 0, y: 0 };
 
-const SlingShotContext = React.createContext<SlingShotContextValue | null>(
-  null,
-);
+const FALLBACK_SLING_STATE: SlingShotState = {
+  aimAngle: 0,
+  isAiming: false,
+  isFlying: false,
+  itemCenter: ZERO_VECTOR,
+  launchVector: ZERO_VECTOR,
+  power: 0,
+  previewPoints: [],
+  pullVector: ZERO_VECTOR,
+  velocity: ZERO_VECTOR,
+};
+
+const SlingShotContext = React.createContext<SlingShotContextValue | null>(null);
 
 function useSlingShotContext() {
   const ctx = React.use(SlingShotContext);
@@ -287,6 +351,8 @@ function splitSlotsAndItems(children: React.ReactNode) {
   return { items, slots };
 }
 
+// ─── SlingShotRoot ────────────────────────────────────────────────────────────
+
 function SlingShotRoot({
   boundsRef,
   children,
@@ -300,124 +366,129 @@ function SlingShotRoot({
   ...props
 }: SlingShotProps) {
   const rootRef = React.useRef<HTMLDivElement>(null);
-  const itemRef = React.useRef<HTMLElement | null>(null);
-  const frameRef = React.useRef<number | null>(null);
+  const itemsRef = React.useRef(new Map<string, ItemPhysicsState>());
   const goalsRef = React.useRef(new Map<string, SlingShotGoalRegistration>());
-  const hitGoalIdsRef = React.useRef(new Set<string>());
-  const shakeFrameRef = React.useRef<number | null>(null);
-  const pointerRef = React.useRef<number | null>(null);
-  const captureElementRef = React.useRef<HTMLElement | null>(null);
-  const pointerStartRef = React.useRef<Vector>(ZERO_VECTOR);
-  const basePositionRef = React.useRef<Vector>(ZERO_VECTOR);
-  const positionRef = React.useRef<Vector>(ZERO_VECTOR);
-  const velocityRef = React.useRef<Vector>(ZERO_VECTOR);
-  const pullVectorRef = React.useRef<Vector>(ZERO_VECTOR);
-  const powerRef = React.useRef(0);
-  const isAimingRef = React.useRef(false);
-  const itemStartCenterRef = React.useRef<Vector>(ZERO_VECTOR);
+  // Maps pointerId → itemId for active drags
+  const activePointersRef = React.useRef(new Map<number, string>());
 
   const resolvedConfig = React.useMemo(
     () => ({ ...DEFAULT_CONFIG, ...config }),
     [config],
   );
 
-  const [position, setPosition] = React.useState<Vector>(ZERO_VECTOR);
-  const [rotation, setRotation] = React.useState(0);
-  const [shakeOffset, setShakeOffset] = React.useState<Vector>(ZERO_VECTOR);
-  const [activePointerId, setActivePointerId] = React.useState<number | null>(
-    null,
-  );
-  const [state, setState] = React.useState<SlingShotState>({
-    aimAngle: 0,
-    isAiming: false,
-    isFlying: false,
-    itemCenter: ZERO_VECTOR,
-    launchVector: ZERO_VECTOR,
-    power: 0,
-    previewPoints: [],
-    pullVector: ZERO_VECTOR,
-    velocity: ZERO_VECTOR,
-  });
+  // Incrementing this causes context consumers to re-render and read fresh physics state
+  const [renderTick, setRenderTick] = React.useState(0);
+  const forceRender = React.useCallback(() => setRenderTick((t) => t + 1), []);
 
-  const stopShake = React.useCallback(() => {
-    if (shakeFrameRef.current !== null) {
-      cancelAnimationFrame(shakeFrameRef.current);
-      shakeFrameRef.current = null;
+  // Active aiming state exposed to Arrow / Preview / Power
+  const [activeItemId, setActiveItemId] = React.useState<string | null>(null);
+  const [activeState, setActiveState] = React.useState<SlingShotState | null>(null);
+
+  // ── Item registration ────────────────────────────────────────────────────
+
+  const registerItem = React.useCallback((id: string, element: HTMLElement) => {
+    if (!itemsRef.current.has(id)) {
+      itemsRef.current.set(id, createItemState());
     }
+    const s = itemsRef.current.get(id)!;
+    s.element = element;
 
-    setShakeOffset(ZERO_VECTOR);
-  }, []);
-
-  const cancelFlight = React.useCallback(() => {
-    if (frameRef.current !== null) {
-      cancelAnimationFrame(frameRef.current);
-      frameRef.current = null;
-    }
-  }, []);
-
-  const reset = React.useCallback(() => {
-    cancelFlight();
-    stopShake();
-    basePositionRef.current = ZERO_VECTOR;
-    positionRef.current = ZERO_VECTOR;
-    velocityRef.current = ZERO_VECTOR;
-    pullVectorRef.current = ZERO_VECTOR;
-    powerRef.current = 0;
-    pointerRef.current = null;
-    captureElementRef.current = null;
-    hitGoalIdsRef.current.clear();
-    isAimingRef.current = false;
-    setActivePointerId(null);
-    setPosition(ZERO_VECTOR);
-    setRotation(0);
-    setState((value) => ({
-      ...value,
-      aimAngle: 0,
-      isAiming: false,
-      isFlying: false,
-      launchVector: ZERO_VECTOR,
-      power: 0,
-      previewPoints: [],
-      pullVector: ZERO_VECTOR,
-      velocity: ZERO_VECTOR,
-    }));
-  }, [cancelFlight, stopShake]);
-
-  React.useEffect(() => {
-    reset();
-  }, [reset, resetKey]);
-
-  React.useEffect(() => {
     return () => {
-      cancelFlight();
-      stopShake();
-    };
-  }, [cancelFlight, stopShake]);
-
-  const startShake = React.useCallback(() => {
-    if (!resolvedConfig.shake || shakeFrameRef.current !== null) return;
-
-    const tick = () => {
-      if (!isAimingRef.current) {
-        shakeFrameRef.current = null;
-        setShakeOffset(ZERO_VECTOR);
-        return;
+      const item = itemsRef.current.get(id);
+      if (item) {
+        if (item.frameId !== null) cancelAnimationFrame(item.frameId);
+        if (item.shakeFrameId !== null) cancelAnimationFrame(item.shakeFrameId);
+        if (item.pointerId !== null) {
+          activePointersRef.current.delete(item.pointerId);
+        }
       }
-
-      const amplitude = powerRef.current * resolvedConfig.shakeIntensity;
-      setShakeOffset({
-        x: (Math.random() - 0.5) * amplitude,
-        y: (Math.random() - 0.5) * amplitude,
-      });
-      shakeFrameRef.current = requestAnimationFrame(tick);
+      itemsRef.current.delete(id);
     };
+  }, []);
 
-    shakeFrameRef.current = requestAnimationFrame(tick);
-  }, [resolvedConfig.shake, resolvedConfig.shakeIntensity]);
+  // ── Shake ────────────────────────────────────────────────────────────────
 
-  const setAimingState = React.useCallback(
-    (pullVector: Vector) => {
+  const stopShake = React.useCallback(
+    (itemId: string) => {
+      const item = itemsRef.current.get(itemId);
+      if (!item) return;
+      if (item.shakeFrameId !== null) {
+        cancelAnimationFrame(item.shakeFrameId);
+        item.shakeFrameId = null;
+      }
+      item.shakeOffset = ZERO_VECTOR;
+      forceRender();
+    },
+    [forceRender],
+  );
+
+  const startShake = React.useCallback(
+    (itemId: string) => {
+      const item = itemsRef.current.get(itemId);
+      if (!item || !resolvedConfig.shake || item.shakeFrameId !== null) return;
+
+      const tick = () => {
+        const it = itemsRef.current.get(itemId);
+        if (!it || !it.isAiming) {
+          if (it) {
+            it.shakeFrameId = null;
+            it.shakeOffset = ZERO_VECTOR;
+          }
+          forceRender();
+          return;
+        }
+        const amplitude = it.power * resolvedConfig.shakeIntensity;
+        it.shakeOffset = {
+          x: (Math.random() - 0.5) * amplitude,
+          y: (Math.random() - 0.5) * amplitude,
+        };
+        it.shakeFrameId = requestAnimationFrame(tick);
+        forceRender();
+      };
+
+      item.shakeFrameId = requestAnimationFrame(tick);
+    },
+    [forceRender, resolvedConfig.shake, resolvedConfig.shakeIntensity],
+  );
+
+  // ── Flight cancellation / reset ──────────────────────────────────────────
+
+  const cancelFlight = React.useCallback((itemId: string) => {
+    const item = itemsRef.current.get(itemId);
+    if (!item || item.frameId === null) return;
+    cancelAnimationFrame(item.frameId);
+    item.frameId = null;
+  }, []);
+
+  const clearAimState = React.useCallback(
+    (itemId: string) => {
+      const item = itemsRef.current.get(itemId);
+      if (!item) return;
+      if (item.pointerId !== null) {
+        activePointersRef.current.delete(item.pointerId);
+      }
+      item.pointerId = null;
+      item.captureElement = null;
+      item.isAiming = false;
+      item.position = item.basePosition;
+      item.rotation = item.baseRotation;
+      item.pullVector = ZERO_VECTOR;
+      item.power = 0;
+      setActiveItemId(null);
+      setActiveState(null);
+      forceRender();
+    },
+    [forceRender],
+  );
+
+  // ── Aiming state updater (called every moveDrag) ─────────────────────────
+
+  const setAimingStateForItem = React.useCallback(
+    (itemId: string, pullVector: Vector) => {
+      const item = itemsRef.current.get(itemId);
       const root = rootRef.current;
+      if (!item) return;
+
       const launchVector = negateVector(pullVector);
       const velocity = {
         x: launchVector.x * resolvedConfig.power,
@@ -429,8 +500,8 @@ function SlingShotRoot({
         1,
       );
       const itemCenter = {
-        x: itemStartCenterRef.current.x + pullVector.x,
-        y: itemStartCenterRef.current.y + pullVector.y,
+        x: item.itemStartCenter.x + pullVector.x,
+        y: item.itemStartCenter.y + pullVector.y,
       };
       const previewPoints = getPreviewPoints({
         gravity: resolvedConfig.gravity,
@@ -440,18 +511,17 @@ function SlingShotRoot({
         velocity,
       });
 
-      pullVectorRef.current = pullVector;
-      powerRef.current = power;
-      positionRef.current = {
-        x: basePositionRef.current.x + pullVector.x,
-        y: basePositionRef.current.y + pullVector.y,
+      item.pullVector = pullVector;
+      item.power = power;
+      item.position = {
+        x: item.basePosition.x + pullVector.x,
+        y: item.basePosition.y + pullVector.y,
       };
+      item.rotation = pullVector.x * resolvedConfig.rotation;
 
-      setPosition(positionRef.current);
-      setRotation(pullVector.x * resolvedConfig.rotation);
-      setState({
+      setActiveState({
         aimAngle: Math.atan2(launchVector.y, launchVector.x),
-        isAiming: isAimingRef.current,
+        isAiming: item.isAiming,
         isFlying: false,
         itemCenter: root ? itemCenter : ZERO_VECTOR,
         launchVector,
@@ -460,52 +530,37 @@ function SlingShotRoot({
         pullVector,
         velocity,
       });
+      forceRender();
     },
-    [resolvedConfig],
+    [forceRender, resolvedConfig],
   );
 
-  const clearAimState = React.useCallback(() => {
-    pointerRef.current = null;
-    captureElementRef.current = null;
-    isAimingRef.current = false;
-    positionRef.current = basePositionRef.current;
-    pullVectorRef.current = ZERO_VECTOR;
-    powerRef.current = 0;
-    setActivePointerId(null);
-    setPosition(basePositionRef.current);
-    setRotation(0);
-    setState((value) => ({
-      ...value,
-      isAiming: false,
-      launchVector: ZERO_VECTOR,
-      power: 0,
-      previewPoints: [],
-      pullVector: ZERO_VECTOR,
-      velocity: ZERO_VECTOR,
-    }));
-  }, []);
+  // ── Goal registration & hit detection ───────────────────────────────────
 
   const registerGoal = React.useCallback((goal: SlingShotGoalRegistration) => {
     goalsRef.current.set(goal.id, goal);
-
     return () => {
       goalsRef.current.delete(goal.id);
-      hitGoalIdsRef.current.delete(goal.id);
     };
   }, []);
 
   const detectGoalHits = React.useCallback(
     ({
+      itemId,
       item,
       itemRect,
       velocity,
     }: {
+      itemId: string;
       item: HTMLElement;
       itemRect: DOMRect;
       velocity: Vector;
     }) => {
+      const it = itemsRef.current.get(itemId);
+      if (!it) return;
+
       goalsRef.current.forEach((goal) => {
-        if (hitGoalIdsRef.current.has(goal.id)) return;
+        if (it.hitGoalIds.has(goal.id)) return;
 
         const goalRect = goal.element.getBoundingClientRect();
         const hitEvent: SlingShotHitEvent = {
@@ -513,6 +568,7 @@ function SlingShotRoot({
           goalId: goal.id,
           goalRect,
           itemElement: item,
+          itemId,
           itemRect,
           velocity,
         };
@@ -521,7 +577,7 @@ function SlingShotRoot({
 
         if (!isHit) return;
 
-        hitGoalIdsRef.current.add(goal.id);
+        it.hitGoalIds.add(goal.id);
         goal.notifyHit(hitEvent);
         onGoalHit?.(hitEvent);
       });
@@ -529,34 +585,33 @@ function SlingShotRoot({
     [onGoalHit],
   );
 
+  // ── Flight simulation ─────────────────────────────────────────────────────
+
   const startFlight = React.useCallback(
-    (pullVector: Vector) => {
-      const item = itemRef.current;
+    (itemId: string, pullVector: Vector) => {
+      const item = itemsRef.current.get(itemId);
+      if (!item?.element) return;
+      const element = item.element;
 
-      if (!item) return;
-
-      const currentRect = item.getBoundingClientRect();
+      const currentRect = element.getBoundingClientRect();
       const layoutRect = {
-        left: currentRect.left - positionRef.current.x,
-        top: currentRect.top - positionRef.current.y,
+        left: currentRect.left - item.position.x,
+        top: currentRect.top - item.position.y,
         width: currentRect.width,
         height: currentRect.height,
       };
 
-      velocityRef.current = {
+      item.velocity = {
         x: -pullVector.x * resolvedConfig.power,
         y: -pullVector.y * resolvedConfig.power,
       };
+      item.isFlying = true;
+      item.hitGoalIds.clear();
 
-      onLaunch?.(velocityRef.current);
-      hitGoalIdsRef.current.clear();
-      setState((value) => ({
-        ...value,
-        isAiming: false,
-        isFlying: true,
-        previewPoints: [],
-        velocity: velocityRef.current,
-      }));
+      onLaunch?.(item.velocity, itemId);
+      setActiveItemId(null);
+      setActiveState(null);
+      forceRender();
 
       const bounds = getBounds(boundsRef?.current ?? null);
       const minX = bounds.left - layoutRect.left;
@@ -567,11 +622,14 @@ function SlingShotRoot({
       let lastTime = performance.now();
 
       const tick = (time: number) => {
+        const it = itemsRef.current.get(itemId);
+        if (!it) return; // item was unregistered (e.g. archived)
+
         const dt = Math.min((time - lastTime) / 1000, 0.032);
         lastTime = time;
 
-        const velocity = velocityRef.current;
-        const current = positionRef.current;
+        const velocity = it.velocity;
+        const current = it.position;
         let nextX = current.x + velocity.x * dt;
         let nextY = current.y + velocity.y * dt;
         let nextVx = velocity.x;
@@ -599,35 +657,35 @@ function SlingShotRoot({
               x: clamp(nextX, minX, maxX),
               y: groundY,
             };
-            const settledVelocity = { x: 0, y: 0 };
+            const settledVelocity = ZERO_VECTOR;
             const settledItemRect = getRectFromBox({
               bottom: layoutRect.top + settledPosition.y + layoutRect.height,
               height: layoutRect.height,
               left: layoutRect.left + settledPosition.x,
-              right: layoutRect.left + settledPosition.x + layoutRect.width,
+              right:
+                layoutRect.left + settledPosition.x + layoutRect.width,
               top: layoutRect.top + settledPosition.y,
               width: layoutRect.width,
             });
 
-            positionRef.current = settledPosition;
-            velocityRef.current = settledVelocity;
+            it.position = settledPosition;
+            it.velocity = settledVelocity;
+            it.isFlying = false;
+            it.rotation = settledPosition.x * resolvedConfig.rotation;
+            it.frameId = null;
+
             detectGoalHits({
-              item,
+              itemId,
+              item: element,
               itemRect: settledItemRect,
               velocity: settledVelocity,
             });
-            setPosition(settledPosition);
-            setRotation(settledPosition.x * resolvedConfig.rotation);
-            setState((value) => ({
-              ...value,
-              isFlying: false,
-              velocity: settledVelocity,
-            }));
+            forceRender();
             onLand?.({
+              itemId,
               position: settledPosition,
               velocity: settledVelocity,
             });
-            frameRef.current = null;
             return;
           }
         }
@@ -643,112 +701,151 @@ function SlingShotRoot({
           width: layoutRect.width,
         });
 
-        positionRef.current = nextPosition;
-        velocityRef.current = nextVelocity;
+        it.position = nextPosition;
+        it.velocity = nextVelocity;
+        it.rotation += nextVx * dt * resolvedConfig.rotation;
+
         detectGoalHits({
-          item,
+          itemId,
+          item: element,
           itemRect: nextItemRect,
           velocity: nextVelocity,
         });
-        setPosition(nextPosition);
-        setRotation((value) => value + nextVx * dt * resolvedConfig.rotation);
-
-        frameRef.current = requestAnimationFrame(tick);
+        forceRender();
+        it.frameId = requestAnimationFrame(tick);
       };
 
-      frameRef.current = requestAnimationFrame(tick);
+      item.frameId = requestAnimationFrame(tick);
     },
-    [boundsRef, detectGoalHits, onLand, onLaunch, resolvedConfig],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [boundsRef, detectGoalHits, forceRender, onLand, onLaunch, resolvedConfig],
   );
+
+  // ── Drag lifecycle ────────────────────────────────────────────────────────
 
   const beginDrag = React.useCallback(
     (
+      itemId: string,
       pointerId: number,
       clientX: number,
       clientY: number,
       target: HTMLElement,
     ) => {
-      const item = itemRef.current;
+      const item = itemsRef.current.get(itemId);
       const root = rootRef.current;
 
-      if (!item || !root || disabled || state.isFlying) return;
+      if (!item || !item.element || !root || disabled || item.isFlying) return;
 
-      cancelFlight();
-      pointerRef.current = pointerId;
-      setActivePointerId(pointerId);
-      captureElementRef.current = target;
-      pointerStartRef.current = { x: clientX, y: clientY };
-      basePositionRef.current = positionRef.current;
+      cancelFlight(itemId);
+      item.pointerId = pointerId;
+      item.captureElement = target;
+      item.pointerStart = { x: clientX, y: clientY };
+      item.basePosition = item.position;
+      item.baseRotation = item.rotation;
+      activePointersRef.current.set(pointerId, itemId);
 
-      const itemRect = item.getBoundingClientRect();
+      const itemRect = item.element.getBoundingClientRect();
       const rootRect = root.getBoundingClientRect();
-      itemStartCenterRef.current = {
+      item.itemStartCenter = {
         x: itemRect.left - rootRect.left + itemRect.width / 2,
         y: itemRect.top - rootRect.top + itemRect.height / 2,
       };
     },
-    [cancelFlight, disabled, state.isFlying],
+    [cancelFlight, disabled],
   );
 
   const moveDrag = React.useCallback(
     (pointerId: number, clientX: number, clientY: number) => {
-      if (pointerRef.current !== pointerId) return false;
+      const itemId = activePointersRef.current.get(pointerId);
+      if (!itemId) return false;
+      const item = itemsRef.current.get(itemId);
+      if (!item || item.pointerId !== pointerId) return false;
 
       const rawVector = {
-        x: clientX - pointerStartRef.current.x,
-        y: clientY - pointerStartRef.current.y,
+        x: clientX - item.pointerStart.x,
+        y: clientY - item.pointerStart.y,
       };
 
-      if (!isAimingRef.current) {
+      if (!item.isAiming) {
         const distance = Math.hypot(rawVector.x, rawVector.y);
-
         if (distance < resolvedConfig.startDragDistance) return false;
 
-        isAimingRef.current = true;
-        setState((value) => ({ ...value, isAiming: true }));
-        startShake();
+        item.isAiming = true;
+        setActiveItemId(itemId);
+        startShake(itemId);
       }
 
-      setAimingState(limitVector(rawVector, resolvedConfig.maxPull));
+      setAimingStateForItem(itemId, limitVector(rawVector, resolvedConfig.maxPull));
       return true;
     },
     [
       resolvedConfig.maxPull,
       resolvedConfig.startDragDistance,
-      setAimingState,
+      setAimingStateForItem,
       startShake,
     ],
   );
 
   const endDrag = React.useCallback(
     (pointerId: number) => {
-      if (pointerRef.current !== pointerId) return false;
+      const itemId = activePointersRef.current.get(pointerId);
+      if (!itemId) return false;
+      const item = itemsRef.current.get(itemId);
+      if (!item || item.pointerId !== pointerId) return false;
 
-      const shouldLaunch = isAimingRef.current;
-      const pullVector = pullVectorRef.current;
+      const shouldLaunch = item.isAiming;
+      const pullVector = { ...item.pullVector };
 
-      pointerRef.current = null;
-      captureElementRef.current = null;
-      setActivePointerId(null);
-      isAimingRef.current = false;
-      pullVectorRef.current = ZERO_VECTOR;
-      powerRef.current = 0;
-      stopShake();
+      stopShake(itemId);
 
       if (!shouldLaunch || Math.hypot(pullVector.x, pullVector.y) < 8) {
-        clearAimState();
+        clearAimState(itemId);
         return false;
       }
 
-      startFlight(pullVector);
+      // Clear drag tracking without resetting position
+      activePointersRef.current.delete(pointerId);
+      item.pointerId = null;
+      item.captureElement = null;
+      item.isAiming = false;
+      item.pullVector = ZERO_VECTOR;
+      item.power = 0;
+
+      startFlight(itemId, pullVector);
       return true;
     },
     [clearAimState, startFlight, stopShake],
   );
 
-  React.useEffect(() => {
-    if (activePointerId === null) return;
+  // ── Reset on key change ───────────────────────────────────────────────────
 
+  React.useEffect(() => {
+    itemsRef.current.forEach((item, id) => {
+      if (item.frameId !== null) cancelAnimationFrame(item.frameId);
+      if (item.shakeFrameId !== null) cancelAnimationFrame(item.shakeFrameId);
+      const reset = createItemState();
+      reset.element = item.element; // keep element reference
+      itemsRef.current.set(id, reset);
+    });
+    activePointersRef.current.clear();
+    setActiveItemId(null);
+    setActiveState(null);
+    forceRender();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetKey]);
+
+  React.useEffect(() => {
+    return () => {
+      itemsRef.current.forEach((item) => {
+        if (item.frameId !== null) cancelAnimationFrame(item.frameId);
+        if (item.shakeFrameId !== null) cancelAnimationFrame(item.shakeFrameId);
+      });
+    };
+  }, []);
+
+  // ── Window-level pointer listeners (always active) ───────────────────────
+
+  React.useEffect(() => {
     const handleWindowPointerMove = (event: PointerEvent) => {
       if (moveDrag(event.pointerId, event.clientX, event.clientY)) {
         event.preventDefault();
@@ -761,6 +858,10 @@ function SlingShotRoot({
       }
     };
 
+    const handleWindowBlur = () => {
+      activePointersRef.current.forEach((itemId) => clearAimState(itemId));
+    };
+
     window.addEventListener("pointermove", handleWindowPointerMove, {
       passive: false,
     });
@@ -770,25 +871,27 @@ function SlingShotRoot({
     window.addEventListener("pointercancel", handleWindowPointerRelease, {
       passive: false,
     });
-    window.addEventListener("blur", clearAimState);
+    window.addEventListener("blur", handleWindowBlur);
 
     return () => {
       window.removeEventListener("pointermove", handleWindowPointerMove);
       window.removeEventListener("pointerup", handleWindowPointerRelease);
       window.removeEventListener("pointercancel", handleWindowPointerRelease);
-      window.removeEventListener("blur", clearAimState);
+      window.removeEventListener("blur", handleWindowBlur);
     };
-  }, [activePointerId, clearAimState, endDrag, moveDrag]);
+  }, [clearAimState, endDrag, moveDrag]);
+
+  // ── Item pointer event handlers (forwarded from SlingShotItem) ───────────
 
   const handlePointerDown = React.useCallback(
-    (event: React.PointerEvent<HTMLElement>) => {
+    (itemId: string, event: React.PointerEvent<HTMLElement>) => {
       beginDrag(
+        itemId,
         event.pointerId,
         event.clientX,
         event.clientY,
         event.currentTarget,
       );
-
       try {
         event.currentTarget.setPointerCapture(event.pointerId);
       } catch {
@@ -799,7 +902,7 @@ function SlingShotRoot({
   );
 
   const handlePointerMove = React.useCallback(
-    (event: React.PointerEvent<HTMLElement>) => {
+    (_itemId: string, event: React.PointerEvent<HTMLElement>) => {
       if (moveDrag(event.pointerId, event.clientX, event.clientY)) {
         event.preventDefault();
       }
@@ -808,21 +911,50 @@ function SlingShotRoot({
   );
 
   const handlePointerRelease = React.useCallback(
-    (event: React.PointerEvent<HTMLElement>) => {
+    (itemId: string, event: React.PointerEvent<HTMLElement>) => {
+      const item = itemsRef.current.get(itemId);
       try {
-        if (captureElementRef.current?.hasPointerCapture(event.pointerId)) {
-          captureElementRef.current.releasePointerCapture(event.pointerId);
+        if (item?.captureElement?.hasPointerCapture(event.pointerId)) {
+          item.captureElement.releasePointerCapture(event.pointerId);
         }
       } catch {
         // The browser may release capture before React receives this event.
       }
-
       if (endDrag(event.pointerId)) {
         event.preventDefault();
       }
     },
     [endDrag],
   );
+
+  // ── Per-item transform / state getters (stable refs; context tick forces re-read) ─
+
+  const getItemTransform = React.useCallback(
+    (id: string) => {
+      const item = itemsRef.current.get(id);
+      return {
+        position: item?.position ?? ZERO_VECTOR,
+        rotation: item?.rotation ?? 0,
+        shakeOffset: item?.shakeOffset ?? ZERO_VECTOR,
+      };
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [renderTick],
+  );
+
+  const getItemState = React.useCallback(
+    (id: string) => {
+      const item = itemsRef.current.get(id);
+      return {
+        isAiming: item?.isAiming ?? false,
+        isFlying: item?.isFlying ?? false,
+      };
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [renderTick],
+  );
+
+  // ── Children rendering ────────────────────────────────────────────────────
 
   const explicitItem = hasExplicitItem(children);
   const renderedChildren = React.useMemo(() => {
@@ -840,28 +972,29 @@ function SlingShotRoot({
 
   const contextValue = React.useMemo<SlingShotContextValue>(
     () => ({
+      activeItemId,
+      activeState,
       disabled,
-      itemRef,
+      getItemState,
+      getItemTransform,
       onPointerCancel: handlePointerRelease,
       onPointerDown: handlePointerDown,
       onPointerMove: handlePointerMove,
       onPointerUp: handlePointerRelease,
       registerGoal,
-      position,
-      rotation,
-      shakeOffset,
-      state,
+      registerItem,
     }),
     [
+      activeItemId,
+      activeState,
       disabled,
+      getItemState,
+      getItemTransform,
       handlePointerDown,
       handlePointerMove,
       handlePointerRelease,
       registerGoal,
-      position,
-      rotation,
-      shakeOffset,
-      state,
+      registerItem,
     ],
   );
 
@@ -883,12 +1016,15 @@ function SlingShotRoot({
   );
 }
 
+// ─── SlingShotSlot ────────────────────────────────────────────────────────────
+
 export interface SlingShotSlotProps extends React.ComponentProps<"div"> {
   render?: (props: SlingShotState) => React.ReactNode;
 }
 
 function SlingShotSlot({ render, children, ...props }: SlingShotSlotProps) {
-  const { state } = useSlingShotContext();
+  const { activeState } = useSlingShotContext();
+  const state = activeState ?? FALLBACK_SLING_STATE;
   return typeof render !== "undefined" ? (
     <Slot.Root {...props}>{render(state)}</Slot.Root>
   ) : (
@@ -896,19 +1032,40 @@ function SlingShotSlot({ render, children, ...props }: SlingShotSlotProps) {
   );
 }
 
+// ─── SlingShotItem ────────────────────────────────────────────────────────────
+
+export interface SlingShotItemProps extends SlingShotSlotProps {
+  id?: string;
+}
+
 function SlingShotItem({
   className,
+  id: idProp,
   ref,
+  render,
   style,
   onPointerCancel,
   onPointerDown,
   onPointerMove,
   onPointerUp,
-  render,
   ...props
-}: SlingShotSlotProps) {
+}: SlingShotItemProps) {
+  const fallbackId = React.useId();
+  const id = idProp ?? fallbackId;
   const context = useSlingShotContext();
-  const transform = `translate3d(${context.position.x + context.shakeOffset.x}px, ${context.position.y + context.shakeOffset.y}px, 0) rotate(${context.rotation}deg)`;
+
+  const { position, rotation, shakeOffset } = context.getItemTransform(id);
+  const { isAiming } = context.getItemState(id);
+
+  const itemRef = React.useCallback(
+    (node: HTMLElement | null) => {
+      if (node) context.registerItem(id, node);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [id],
+  );
+
+  const transform = `translate3d(${position.x + shakeOffset.x}px, ${position.y + shakeOffset.y}px, 0) rotate(${rotation}deg)`;
 
   return (
     <SlingShotSlot
@@ -916,30 +1073,34 @@ function SlingShotItem({
       data-slot="sling-shot-item"
       ref={
         composeRefs(
-          context.itemRef,
+          itemRef as React.Ref<HTMLDivElement>,
           ref as React.Ref<HTMLElement>,
         ) as React.Ref<HTMLDivElement>
       }
       className={cn(
         "relative z-10 inline-block touch-none will-change-transform",
-        context.state.isAiming ? "cursor-grabbing" : "cursor-grab",
+        isAiming ? "cursor-grabbing" : "cursor-grab",
         className,
       )}
-      style={{
-        ...style,
-        transform,
-      }}
-      onPointerCancel={composeEventHandlers(
-        onPointerCancel,
-        context.onPointerCancel,
+      style={{ ...style, transform }}
+      onPointerCancel={composeEventHandlers(onPointerCancel, (e) =>
+        context.onPointerCancel(id, e),
       )}
-      onPointerDown={composeEventHandlers(onPointerDown, context.onPointerDown)}
-      onPointerMove={composeEventHandlers(onPointerMove, context.onPointerMove)}
-      onPointerUp={composeEventHandlers(onPointerUp, context.onPointerUp)}
+      onPointerDown={composeEventHandlers(onPointerDown, (e) =>
+        context.onPointerDown(id, e),
+      )}
+      onPointerMove={composeEventHandlers(onPointerMove, (e) =>
+        context.onPointerMove(id, e),
+      )}
+      onPointerUp={composeEventHandlers(onPointerUp, (e) =>
+        context.onPointerUp(id, e),
+      )}
       {...props}
     />
   );
 }
+
+// ─── SlingShotGoal ────────────────────────────────────────────────────────────
 
 export interface SlingShotGoalProps extends React.ComponentProps<"div"> {
   render?: (props: SlingShotGoalState) => React.ReactNode;
@@ -1050,16 +1211,18 @@ function SlingShotGoal({
   );
 }
 
+// ─── SlingShotPower ───────────────────────────────────────────────────────────
+
 function SlingShotPower({
   className,
   style,
   render,
   ...props
 }: SlingShotSlotProps) {
-  const { state } = useSlingShotContext();
-  if (!state.isAiming) return null;
+  const { activeState } = useSlingShotContext();
+  if (!activeState?.isAiming) return null;
 
-  const value = Math.round(state.power * 100);
+  const value = Math.round(activeState.power * 100);
 
   return (
     <SlingShotSlot
@@ -1072,8 +1235,8 @@ function SlingShotPower({
         className,
       )}
       style={{
-        left: state.itemCenter.x,
-        top: state.itemCenter.y - 32,
+        left: activeState.itemCenter.x,
+        top: activeState.itemCenter.y - 32,
         transform: "translateX(-50%)",
         ...style,
       }}
@@ -1100,14 +1263,16 @@ function SlingShotPower({
   );
 }
 
+// ─── SlingShotArrow ───────────────────────────────────────────────────────────
+
 function SlingShotArrow({
   className,
   style,
   render,
   ...props
 }: SlingShotSlotProps) {
-  const { state } = useSlingShotContext();
-  if (!state.isAiming || state.power === 0) return null;
+  const { activeState } = useSlingShotContext();
+  if (!activeState?.isAiming || activeState.power === 0) return null;
 
   return (
     <SlingShotSlot
@@ -1119,11 +1284,11 @@ function SlingShotArrow({
         className,
       )}
       style={{
-        left: state.itemCenter.x,
-        top: state.itemCenter.y,
-        transform: `rotate(${state.aimAngle}rad)`,
+        left: activeState.itemCenter.x,
+        top: activeState.itemCenter.y,
+        transform: `rotate(${activeState.aimAngle}rad)`,
         transformOrigin: "0 50%",
-        width: 36 + state.power * 84,
+        width: 36 + activeState.power * 84,
         ...style,
       }}
       {...props}
@@ -1132,6 +1297,9 @@ function SlingShotArrow({
     </SlingShotSlot>
   );
 }
+
+// ─── SlingShotPreview ─────────────────────────────────────────────────────────
+
 export interface SlingShotPreviewProps extends SlingShotSlotProps {
   dotClassName?: string;
 }
@@ -1142,8 +1310,9 @@ function SlingShotPreview({
   render,
   ...props
 }: SlingShotPreviewProps) {
-  const { state } = useSlingShotContext();
-  if (!state.isAiming || state.previewPoints.length === 0) return null;
+  const { activeState } = useSlingShotContext();
+  if (!activeState?.isAiming || activeState.previewPoints.length === 0)
+    return null;
 
   return (
     <SlingShotSlot
@@ -1153,7 +1322,7 @@ function SlingShotPreview({
       className={cn("pointer-events-none absolute inset-0 z-20", className)}
       {...props}
     >
-      {state.previewPoints.map((point, index) => (
+      {activeState.previewPoints.map((point, index) => (
         <div
           key={index}
           className={cn(

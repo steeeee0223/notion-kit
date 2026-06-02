@@ -41,7 +41,8 @@
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
     "react-hotkeys-hook": "catalog:ui",
-    "uuid": "catalog:uuid"
+    "uuid": "catalog:uuid",
+    "zustand": "^5.0.13"
   },
   "devDependencies": {
     "@notion-kit/config": "workspace:*",
