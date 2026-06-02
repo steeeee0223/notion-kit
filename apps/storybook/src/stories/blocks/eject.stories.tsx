@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "storybook-react-rsbuild";
 import { Icon } from "@notion-kit/icons";
 import { Button, Input } from "@notion-kit/ui/primitives";
 
-import { Eject, EjectRef } from "./eject";
+import { Eject, type EjectRef } from "./eject";
 
 const meta = {
   title: "interesting/Eject",
@@ -27,37 +27,47 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {
-    mode: "respawn",
-    triggers: ["onClick"],
-    children: <Button size="md">Click to Eject (Respawn)</Button>,
+  render: () => {
+    const ref = React.useRef<EjectRef>(null);
+    return (
+      <Eject ref={ref} mode="respawn">
+        <Button size="md" onClick={() => ref.current?.eject()}>
+          Click to Eject (Respawn)
+        </Button>
+      </Eject>
+    );
   },
 };
 
 export const DisappearMode: Story = {
-  args: {
-    mode: "disappear",
-    triggers: ["onClick"],
-    children: (
-      <Button size="md" variant="red">
-        Click to Eject (Disappear)
-      </Button>
-    ),
+  render: () => {
+    const ref = React.useRef<EjectRef>(null);
+    return (
+      <Eject ref={ref} mode="disappear">
+        <Button size="md" variant="red" onClick={() => ref.current?.eject()}>
+          Click to Eject (Disappear)
+        </Button>
+      </Eject>
+    );
   },
 };
 
 export const GhostMode: Story = {
-  args: {
-    mode: "ghost",
-    triggers: ["onClick"],
-    children: <Button size="md">Click to Eject (Ghost)</Button>,
+  render: () => {
+    const ref = React.useRef<EjectRef>(null);
+    return (
+      <Eject ref={ref} mode="ghost">
+        <Button size="md" onClick={() => ref.current?.eject()}>
+          Click to Eject (Ghost)
+        </Button>
+      </Eject>
+    );
   },
 };
 
 export const KeyboardShortcut: Story = {
   args: {
     mode: "respawn",
-    triggers: [],
     shortcut: "mod+e",
     children: (
       <div className="flex h-32 w-64 cursor-pointer items-center justify-center rounded-lg bg-input">
@@ -68,15 +78,22 @@ export const KeyboardShortcut: Story = {
 };
 
 export const ContextMenuTrigger: Story = {
-  args: {
-    mode: "respawn",
-    triggers: ["onContextMenu"],
-    onContextMenu: (e) => e.preventDefault(),
-    children: (
-      <Button size="md" variant="hint">
-        Right Click to Eject
-      </Button>
-    ),
+  render: () => {
+    const ref = React.useRef<EjectRef>(null);
+    return (
+      <Eject ref={ref} mode="respawn">
+        <Button
+          size="md"
+          variant="hint"
+          onContextMenu={(e) => {
+            e.preventDefault();
+            void ref.current?.eject();
+          }}
+        >
+          Right Click to Eject
+        </Button>
+      </Eject>
+    );
   },
 };
 
@@ -108,6 +125,7 @@ const controls = [
 
 export const Playground: Story = {
   render: () => {
+    const ejectRef = React.useRef<EjectRef>(null);
     const [config, setConfig] = React.useState({
       force: 1,
       duration: 1.5,
@@ -142,8 +160,12 @@ export const Playground: Story = {
           ))}
         </div>
 
-        <Eject mode="respawn" config={config} asChild>
-          <Button variant="red" size="md">
+        <Eject ref={ejectRef} mode="respawn" config={config}>
+          <Button
+            variant="red"
+            size="md"
+            onClick={() => ejectRef.current?.eject()}
+          >
             Eject Me!
           </Button>
         </Eject>
@@ -162,6 +184,7 @@ const EjectFormTemplate = () => {
 
   const dialogRef = React.useRef<EjectRef>(null);
   const buttonRef = React.useRef<EjectRef>(null);
+  const inputRef = React.useRef<EjectRef>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -182,7 +205,6 @@ const EjectFormTemplate = () => {
     <Eject
       id="form"
       ref={dialogRef}
-      triggers={null}
       className="relative flex w-full flex-col gap-6 rounded-lg border bg-modal p-8 shadow-xl"
     >
       <div className="text-2xl font-semibold">Subscribe to Newsletter</div>
@@ -192,19 +214,18 @@ const EjectFormTemplate = () => {
           {/* Value left behind when input flies away */}
           {inputEjected && <div className="px-3 text-sm">{inputValue}</div>}
 
-          <Eject
-            id="input"
-            mode="disappear"
-            triggers={["onBlur"]}
-            onBlur={() => {
-              if (inputValue) setInputEjected(true);
-            }}
-          >
+          <Eject id="input" ref={inputRef} mode="disappear">
             <Input
               name="email"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Enter your email"
+              onBlur={() => {
+                if (inputValue) {
+                  setInputEjected(true);
+                  void inputRef.current?.eject();
+                }
+              }}
             />
           </Eject>
         </div>
@@ -219,13 +240,7 @@ const EjectFormTemplate = () => {
               Success!
             </div>
           )}
-          <Eject
-            ref={buttonRef}
-            id="button"
-            asChild
-            mode="disappear"
-            triggers={null}
-          >
+          <Eject ref={buttonRef} id="button" mode="disappear">
             <Button
               type="submit"
               variant="blue"

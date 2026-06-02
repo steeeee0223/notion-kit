@@ -5,13 +5,6 @@ import { useHotkeys } from "react-hotkeys-hook";
 
 import { cn } from "@notion-kit/cn";
 
-export type EjectTrigger =
-  | "onClick"
-  | "onContextMenu"
-  | "onPointerDown"
-  | "onMouseDown"
-  | "onTouchStart"
-  | "onBlur";
 export type EjectMode = "disappear" | "respawn" | "ghost";
 export interface EjectConfig {
   /**
@@ -61,11 +54,6 @@ export interface EjectProps extends React.ComponentProps<"div"> {
    */
   mode?: EjectMode;
   /**
-   * Event triggers that will cause the ejection.
-   * @default ["onClick"]
-   */
-  triggers?: EjectTrigger[] | null;
-  /**
    * Keyboard shortcut to trigger ejection.
    */
   shortcut?: string;
@@ -76,16 +64,7 @@ export interface EjectProps extends React.ComponentProps<"div"> {
 }
 
 export const Eject = React.forwardRef<EjectRef, EjectProps>(function Eject(
-  {
-    asChild,
-    mode = "respawn",
-    triggers = ["onClick"],
-    shortcut,
-    config,
-    className,
-    style,
-    ...props
-  },
+  { asChild, mode = "respawn", shortcut, config, className, style, ...props },
   ref,
 ) {
   const Comp = asChild ? Slot.Root : "div";
@@ -95,10 +74,6 @@ export const Eject = React.forwardRef<EjectRef, EjectProps>(function Eject(
   const [renderKey, setRenderKey] = React.useState(0);
   const [respawning, setRespawning] = React.useState(false);
 
-  const resolvedTriggers = React.useMemo(
-    () => new Set(triggers ?? []),
-    [triggers],
-  );
   const resolvedConfig = React.useMemo(() => {
     return {
       ...config,
@@ -188,18 +163,6 @@ export const Eject = React.forwardRef<EjectRef, EjectProps>(function Eject(
     triggerEject,
   ]);
 
-  const listeners = React.useMemo(() => {
-    return Array.from(resolvedTriggers).reduce((acc, trigger) => {
-      acc[trigger] = (e: React.SyntheticEvent) => {
-        props[trigger]?.(e as never);
-        if (resolvedTriggers.has(trigger)) {
-          void triggerEject();
-        }
-      };
-      return acc;
-    }, {} as React.ComponentProps<"div">);
-  }, [props, resolvedTriggers, triggerEject]);
-
   // Bind keyboard shortcut
   useHotkeys(
     shortcut ?? "",
@@ -250,7 +213,6 @@ export const Eject = React.forwardRef<EjectRef, EjectProps>(function Eject(
         ...(respawning ? { opacity: 0 } : {}),
       }}
       {...props}
-      {...listeners}
     />
   );
 });

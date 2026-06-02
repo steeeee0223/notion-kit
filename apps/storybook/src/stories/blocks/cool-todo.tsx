@@ -176,7 +176,7 @@ function TodoItemRow({ todo }: { todo: TodoItem }) {
   return (
     <Sortable.Item id={todo.id} className="group/todo">
       <SlingShot.Item id={todo.id} className="block w-full">
-        <Eject ref={ejectRef} mode="disappear" triggers={null}>
+        <Eject ref={ejectRef} mode="disappear">
           <div className="flex items-center gap-2 rounded-md border border-border/50 bg-popover px-3 py-2 shadow-sm">
             <div
               className={cn(
