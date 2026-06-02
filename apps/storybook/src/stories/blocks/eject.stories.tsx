@@ -166,12 +166,12 @@ const EjectFormTemplate = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setFormState("submitting");
-    buttonRef.current?.eject();
+    void buttonRef.current?.eject();
 
     // Simulate API call and success
     setTimeout(() => {
       setFormState("submitSuccess");
-      dialogRef.current?.eject();
+      void dialogRef.current?.eject();
       setInputEjected(false);
       setFormState("initial");
       setInputValue("");

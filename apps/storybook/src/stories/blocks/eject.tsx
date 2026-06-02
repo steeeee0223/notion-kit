@@ -47,7 +47,7 @@ export interface EjectConfig {
 }
 
 export interface EjectRef {
-  eject: () => void;
+  eject: () => Promise<void>;
 }
 
 export interface EjectProps extends React.ComponentProps<"div"> {

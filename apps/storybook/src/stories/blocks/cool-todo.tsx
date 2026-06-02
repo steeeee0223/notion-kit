@@ -161,54 +161,54 @@ function TodoItemRow({ todo }: { todo: TodoItem }) {
   const archiveTodo = useTodoStore(archiveTodoSelector);
   const ejectRef = React.useRef<EjectRef>(null);
 
-  const handleCheck = () => {
-    ejectRef.current?.eject();
+  const handleCheck = async () => {
+    await ejectRef.current?.eject();
     checkTodo(todo.id);
   };
 
   return (
     <Sortable.Item id={todo.id} className="group/todo">
-      <Eject ref={ejectRef} mode="disappear" triggers={null}>
-        <div className="flex items-center gap-2 px-3 py-2">
-          <div
-            className={cn(
-              "opacity-0 transition-opacity duration-200",
-              "group-hover/todo:opacity-100",
-            )}
-          >
-            <Sortable.DragHandle className="size-6" />
-          </div>
-          <Checkbox size="sm" checked={false} onCheckedChange={handleCheck} />
-          <SlingShot.Item id={todo.id} className="flex flex-1 items-center">
+      <SlingShot.Item id={todo.id} className="block w-full">
+        <Eject ref={ejectRef} mode="disappear" triggers={null}>
+          <div className="flex items-center gap-2 rounded-md border border-border/50 bg-popover px-3 py-2 shadow-sm">
+            <div
+              className={cn(
+                "opacity-0 transition-opacity duration-200",
+                "group-hover/todo:opacity-100",
+              )}
+            >
+              <Sortable.DragHandle className="size-6" />
+            </div>
+            <Checkbox size="sm" checked={false} onCheckedChange={handleCheck} />
             <span className="flex-1 text-sm text-primary select-none">
               {todo.label}
             </span>
-          </SlingShot.Item>
-          <div
-            className={cn(
-              "opacity-0 transition-opacity duration-200",
-              "group-hover/todo:opacity-100",
-              "has-[button[aria-expanded='true']]:opacity-100",
-            )}
-          >
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="hint" className="size-6">
-                  <Icon.Dots className="size-4 fill-icon" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  Body="Delete"
-                  Icon={<Icon.Trash className="size-4" />}
-                  variant="error"
-                  onSelect={() => archiveTodo(todo.id)}
-                />
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div
+              className={cn(
+                "opacity-0 transition-opacity duration-200",
+                "group-hover/todo:opacity-100",
+                "has-[button[aria-expanded='true']]:opacity-100",
+              )}
+            >
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="hint" className="size-6">
+                    <Icon.Dots className="size-4 fill-icon" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    Body="Delete"
+                    Icon={<Icon.Trash className="size-4" />}
+                    variant="error"
+                    onSelect={() => archiveTodo(todo.id)}
+                  />
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
-        </div>
-      </Eject>
+        </Eject>
+      </SlingShot.Item>
     </Sortable.Item>
   );
 }
@@ -265,7 +265,7 @@ function TrashBox() {
                     <div className="group/block relative flex size-[62px] cursor-grab flex-col items-center justify-center rounded-md border border-border bg-popover p-1 shadow-sm select-none">
                       <Checkbox
                         size="xs"
-                        checked
+                        checked={false}
                         disabled
                         className="size-3 shrink-0"
                       />

@@ -902,6 +902,17 @@ function SlingShotRoot({
 
   const handlePointerDown = React.useCallback(
     (itemId: string, event: React.PointerEvent<HTMLElement>) => {
+      const target = event.target as HTMLElement;
+      if (
+        target.closest("button") ||
+        target.closest("input") ||
+        target.closest("[role='checkbox']") ||
+        target.closest("[role='menuitem']") ||
+        target.closest("[data-slot='checkbox']")
+      ) {
+        return;
+      }
+
       beginDrag(
         itemId,
         event.pointerId,
