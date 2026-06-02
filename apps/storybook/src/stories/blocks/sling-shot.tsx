@@ -429,7 +429,7 @@ function SlingShotRoot({
 
       const tick = () => {
         const it = itemsRef.current.get(itemId);
-        if (!it || !it.isAiming) {
+        if (!it?.isAiming) {
           if (it) {
             it.shakeFrameId = null;
             it.shakeOffset = ZERO_VECTOR;
@@ -455,7 +455,8 @@ function SlingShotRoot({
 
   const cancelFlight = React.useCallback((itemId: string) => {
     const item = itemsRef.current.get(itemId);
-    if (!item || item.frameId === null) return;
+    if (!item) return;
+    if (item.frameId === null) return;
     cancelAnimationFrame(item.frameId);
     item.frameId = null;
   }, []);
@@ -717,7 +718,7 @@ function SlingShotRoot({
 
       item.frameId = requestAnimationFrame(tick);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
     [boundsRef, detectGoalHits, forceRender, onLand, onLaunch, resolvedConfig],
   );
 
@@ -734,7 +735,7 @@ function SlingShotRoot({
       const item = itemsRef.current.get(itemId);
       const root = rootRef.current;
 
-      if (!item || !item.element || !root || disabled || item.isFlying) return;
+      if (!item?.element || !root || disabled || item.isFlying) return;
 
       cancelFlight(itemId);
       item.pointerId = pointerId;
@@ -759,7 +760,7 @@ function SlingShotRoot({
       const itemId = activePointersRef.current.get(pointerId);
       if (!itemId) return false;
       const item = itemsRef.current.get(itemId);
-      if (!item || item.pointerId !== pointerId) return false;
+      if (item?.pointerId !== pointerId) return false;
 
       const rawVector = {
         x: clientX - item.pointerStart.x,
@@ -791,7 +792,7 @@ function SlingShotRoot({
       const itemId = activePointersRef.current.get(pointerId);
       if (!itemId) return false;
       const item = itemsRef.current.get(itemId);
-      if (!item || item.pointerId !== pointerId) return false;
+      if (item?.pointerId !== pointerId) return false;
 
       const shouldLaunch = item.isAiming;
       const pullVector = { ...item.pullVector };
@@ -835,8 +836,9 @@ function SlingShotRoot({
   }, [resetKey]);
 
   React.useEffect(() => {
+    const items = itemsRef.current;
     return () => {
-      itemsRef.current.forEach((item) => {
+      items.forEach((item) => {
         if (item.frameId !== null) cancelAnimationFrame(item.frameId);
         if (item.shakeFrameId !== null) cancelAnimationFrame(item.shakeFrameId);
       });

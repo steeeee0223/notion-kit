@@ -126,7 +126,7 @@ function TodoInput() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 p-3 border-b border-border">
+    <form onSubmit={handleSubmit} className="flex gap-2 border-b border-border p-3">
       <Input
         value={value}
         onChange={(e) => setValue(e.target.value)}
@@ -195,37 +195,7 @@ function TodoItemRow({ todo }: { todo: TodoItem }) {
   );
 }
 
-function ArchivedItemRow({ todo }: { todo: TodoItem }) {
-  const restoreTodo = useTodoStore((s) => s.restoreTodo);
-  const deleteTodo = useTodoStore((s) => s.deleteTodo);
 
-  return (
-    <div className="flex items-center gap-2 px-3 py-2">
-      <Checkbox size="sm" checked disabled />
-      <span className="flex-1 text-sm text-secondary line-through">{todo.label}</span>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="hint" className="size-6">
-            <Icon.Dots className="size-4 fill-icon" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            Body="Restore"
-            Icon={<Icon.Undo className="size-4" />}
-            onSelect={() => restoreTodo(todo.id)}
-          />
-          <DropdownMenuItem
-            Body="Delete forever"
-            Icon={<Icon.Trash className="size-4" />}
-            variant="error"
-            onSelect={() => deleteTodo(todo.id)}
-          />
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
-  );
-}
 
 function TrashBox() {
   const archivedTodos = useArchivedTodos();
@@ -250,7 +220,7 @@ function TrashBox() {
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent side="top" align="end" className="w-80 p-0 overflow-hidden">
+          <PopoverContent side="top" align="end" className="w-80 overflow-hidden p-0">
             <div className="p-3 text-sm font-medium text-secondary">
               Trash ({archivedTodos.length})
             </div>
@@ -264,15 +234,15 @@ function TrashBox() {
               >
                 {archivedTodos.map((todo) => (
                   <FallingBlocks.Item key={todo.id} asChild>
-                    <div className="group/block flex flex-col items-center justify-center p-1 rounded-md border border-border bg-popover shadow-sm cursor-grab select-none w-[62px] h-[62px] relative">
-                      <Checkbox size="xs" checked disabled className="shrink-0 size-3" />
-                      <span className="w-full text-center truncate text-[8px] text-secondary line-through mt-0.5 px-0.5">
+                    <div className="group/block relative flex size-[62px] cursor-grab flex-col items-center justify-center rounded-md border border-border bg-popover p-1 shadow-sm select-none">
+                      <Checkbox size="xs" checked disabled className="size-3 shrink-0" />
+                      <span className="mt-0.5 w-full truncate px-0.5 text-center text-[8px] text-secondary line-through">
                         {todo.label}
                       </span>
-                      <div className="absolute right-0.5 bottom-0.5 opacity-0 group-hover/block:opacity-100 transition-opacity duration-150">
+                      <div className="absolute right-0.5 bottom-0.5 opacity-0 transition-opacity duration-150 group-hover/block:opacity-100">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="hint" className="size-4 p-0 flex items-center justify-center">
+                            <Button variant="hint" className="flex size-4 items-center justify-center p-0">
                               <Icon.Dots className="size-2.5 fill-icon" />
                             </Button>
                           </DropdownMenuTrigger>
