@@ -1,0 +1,74 @@
+{
+  "name": "@notion-kit/cool-blocks",
+  "version": "1.0.0",
+  "bugs": {
+    "url": "https://github.com/steeeee0223/notion-kit/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/steeeee0223/notion-kit.git",
+    "directory": "packages/cool-blocks"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./*": {
+      "types": "./dist/*.d.mts",
+      "default": "./dist/*.mjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsdown --watch",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "babel": {
+    "plugins": [
+      "babel-plugin-react-compiler"
+    ]
+  },
+  "prettier": "@notion-kit/prettier-config",
+  "dependencies": {
+    "@notion-kit/cn": "workspace:*",
+    "@notion-kit/hooks": "workspace:*",
+    "@notion-kit/icons": "workspace:*",
+    "@notion-kit/utils": "workspace:*",
+    "framer-motion": "catalog:ui",
+    "radix-ui": "1.4.3",
+    "react-hotkeys-hook": "catalog:ui"
+  },
+  "devDependencies": {
+    "@notion-kit/config": "workspace:*",
+    "@notion-kit/eslint-config": "workspace:*",
+    "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tsconfig": "workspace:*",
+    "@testing-library/jest-dom": "catalog:rtl",
+    "@testing-library/react": "catalog:rtl",
+    "@testing-library/user-event": "catalog:rtl",
+    "@types/react": "catalog:react19",
+    "@vitejs/plugin-react": "catalog:test",
+    "babel-plugin-react-compiler": "catalog:react-compiler",
+    "eslint": "catalog:",
+    "jsdom": "catalog:rtl",
+    "prettier": "catalog:",
+    "react": "catalog:react19",
+    "react-compiler-runtime": "catalog:react-compiler",
+    "react-dom": "catalog:react19",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:test"
+  },
+  "peerDependencies": {
+    "@notion-kit/ui": "workspace:*",
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19"
+  }
+}

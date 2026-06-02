@@ -24,6 +24,7 @@
     "@notion-kit/auth-ui": "workspace:*",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/code-block": "workspace:*",
+    "@notion-kit/cool-blocks": "workspace:*",
     "@notion-kit/hooks": "workspace:*",
     "@notion-kit/i18n": "workspace:*",
     "@notion-kit/icons": "workspace:*",
@@ -40,12 +41,14 @@
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
     "react-hotkeys-hook": "catalog:ui",
-    "uuid": "catalog:uuid"
+    "uuid": "catalog:uuid",
+    "zustand": "^5.0.13"
   },
   "devDependencies": {
     "@notion-kit/config": "workspace:*",
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tailwind-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "@storybook/addon-a11y": "^10.3.5",
     "@storybook/addon-docs": "^10.3.5",
