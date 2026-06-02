@@ -25,19 +25,9 @@ import { arrayMove, Sortable } from "./sortable";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
-interface LandTransform {
-  rotate: string;
-  width: number;
-  x: number;
-  y: number;
-}
-
 interface TodoItem {
   id: string;
   label: string;
-  /** Absolute position and rotation captured when the item landed */
-  landTransform?: LandTransform;
-  launchVersion?: number;
   status: "active" | "done" | "archived" | "launched";
 }
 
@@ -45,7 +35,7 @@ interface TodoStore {
   todos: TodoItem[];
   addTodo: (label: string) => void;
   checkTodo: (id: string) => void;
-  launchTodo: (id: string, landTransform: LandTransform) => void;
+  launchTodo: (id: string) => void;
   archiveTodo: (id: string) => void;
   restoreTodo: (id: string) => void;
   deleteTodo: (id: string) => void;
@@ -81,25 +71,16 @@ function createTodoStore() {
           t.id === id ? { ...t, status: "done" } : t,
         ),
       })),
-    launchTodo: (id, landTransform) =>
+    launchTodo: (id) =>
       set((state) => ({
         todos: state.todos.map((t) =>
-          t.id === id
-            ? {
-                ...t,
-                landTransform,
-                launchVersion: (t.launchVersion ?? 0) + 1,
-                status: "launched",
-              }
-            : t,
+          t.id === id ? { ...t, status: "launched" } : t,
         ),
       })),
     archiveTodo: (id) =>
       set((state) => ({
         todos: state.todos.map((t) =>
-          t.id === id
-            ? { ...t, status: "archived", landTransform: undefined }
-            : t,
+          t.id === id ? { ...t, status: "archived" } : t,
         ),
       })),
     restoreTodo: (id) =>
@@ -109,7 +90,7 @@ function createTodoStore() {
         return {
           todos: [
             ...state.todos.filter((t) => t.id !== id),
-            { ...todo, status: "active", landTransform: undefined },
+            { ...todo, status: "active" },
           ],
         };
       }),
@@ -378,43 +359,19 @@ function LaunchedTodoList() {
   const launchedTodos = useLaunchedTodos();
 
   return (
-    <div style={{ height: 0, overflow: "visible" }}>
+    <div style={{ height: 0, overflow: "visible", position: "relative" }}>
       {launchedTodos.map((todo) => (
         <SlingShot.Item
-          key={`${todo.id}-v${todo.launchVersion ?? 0}`}
+          key={todo.id}
           id={todo.id}
           className="group/launched block w-full"
-          style={{
-            left: todo.landTransform?.x,
-            position: "absolute",
-            top: todo.landTransform?.y,
-            width: todo.landTransform?.width,
-            rotate: todo.landTransform?.rotate,
-            transform: undefined,
-          }}
+          style={{ position: "absolute" as const }}
         >
           <TodoItemCard todo={todo} hoverGroup="launched" />
         </SlingShot.Item>
       ))}
     </div>
   );
-}
-
-const SLING_SHOT_ROTATION = 0.035;
-
-function buildLandTransform(
-  itemRect: DOMRect,
-  boundsElement: HTMLElement,
-  positionX: number,
-): LandTransform {
-  const boundsRect = boundsElement.getBoundingClientRect();
-  const rotation = positionX * SLING_SHOT_ROTATION;
-  return {
-    rotate: `${rotation}deg`,
-    width: itemRect.width,
-    x: itemRect.left - boundsRect.left,
-    y: itemRect.top - boundsRect.top,
-  };
 }
 
 function SlingShotPlayground() {
@@ -431,12 +388,7 @@ function SlingShotPlayground() {
       <SlingShot
         boundsRef={screenRef}
         onGoalHit={({ itemId }) => archiveTodo(itemId)}
-        onLand={({ itemId, itemRect, position }) =>
-          launchTodo(
-            itemId,
-            buildLandTransform(itemRect, screenRef.current!, position.x),
-          )
-        }
+        onLand={({ itemId }) => launchTodo(itemId)}
         className="contents"
       >
         <SlingShot.Arrow />

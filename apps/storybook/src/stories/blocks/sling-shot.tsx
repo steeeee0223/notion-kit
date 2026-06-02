@@ -94,6 +94,7 @@ interface ItemPhysicsState {
   isAiming: boolean;
   isFlying: boolean;
   itemStartCenter: Vector;
+  layoutOffset: Vector;
   pointerId: number | null;
   pointerStart: Vector;
   position: Vector;
@@ -116,6 +117,7 @@ function createItemState(): ItemPhysicsState {
     isAiming: false,
     isFlying: false,
     itemStartCenter: ZERO_VECTOR,
+    layoutOffset: ZERO_VECTOR,
     pointerId: null,
     pointerStart: ZERO_VECTOR,
     position: ZERO_VECTOR,
@@ -383,6 +385,9 @@ function SlingShotRoot({
   const goalsRef = React.useRef(new Map<string, SlingShotGoalRegistration>());
   // Maps pointerId → itemId for active drags
   const activePointersRef = React.useRef(new Map<number, string>());
+  const pendingCleanupsRef = React.useRef(
+    new Map<string, ReturnType<typeof setTimeout>>(),
+  );
 
   const resolvedConfig = React.useMemo(
     () => ({ ...DEFAULT_CONFIG, ...config }),
@@ -401,25 +406,98 @@ function SlingShotRoot({
 
   // ── Item registration ────────────────────────────────────────────────────
 
-  const registerItem = React.useCallback((id: string, element: HTMLElement) => {
-    if (!itemsRef.current.has(id)) {
-      itemsRef.current.set(id, createItemState());
-    }
-    const s = itemsRef.current.get(id)!;
-    s.element = element;
+  const registerItem = React.useCallback(
+    (id: string, element: HTMLElement) => {
+      // Cancel any pending deferred cleanup — the item is re-registering
+      // from a different container within the same React commit.
+      const pendingTimeout = pendingCleanupsRef.current.get(id);
+      if (pendingTimeout !== undefined) {
+        clearTimeout(pendingTimeout);
+        pendingCleanupsRef.current.delete(id);
+      }
 
-    return () => {
-      const item = itemsRef.current.get(id);
-      if (item) {
-        if (item.frameId !== null) cancelAnimationFrame(item.frameId);
-        if (item.shakeFrameId !== null) cancelAnimationFrame(item.shakeFrameId);
-        if (item.pointerId !== null) {
-          activePointersRef.current.delete(item.pointerId);
+      const isExisting = itemsRef.current.has(id);
+      if (!isExisting) {
+        itemsRef.current.set(id, createItemState());
+      }
+      const s = itemsRef.current.get(id)!;
+      s.element = element;
+
+      // Compute the item's natural layout offset relative to the positioning
+      // reference (rootRef, or boundsRef for display:contents roots).
+      //
+      //   BCR = naturalLayoutPos + currentTransform
+      //   currentTransform ≈ translate(position.x, position.y)
+      //   layoutOffset = naturalLayoutPos − refPos = BCR − position − refPos
+      const rootEl = rootRef.current;
+      let refLeft = 0;
+      let refTop = 0;
+      if (rootEl) {
+        const rootRect = rootEl.getBoundingClientRect();
+        if (rootRect.width > 0 || rootRect.height > 0) {
+          refLeft = rootRect.left;
+          refTop = rootRect.top;
+        } else if (boundsRef?.current) {
+          const bRect = boundsRef.current.getBoundingClientRect();
+          refLeft = bRect.left;
+          refTop = bRect.top;
         }
       }
-      itemsRef.current.delete(id);
-    };
-  }, []);
+
+      const itemRect = element.getBoundingClientRect();
+      const newLayoutOffset = {
+        x: itemRect.left - s.position.x - refLeft,
+        y: itemRect.top - s.position.y - refTop,
+      };
+
+      if (
+        isExisting &&
+        (s.layoutOffset.x !== newLayoutOffset.x ||
+          s.layoutOffset.y !== newLayoutOffset.y)
+      ) {
+        // Re-registration with a changed layout position (e.g. the item moved
+        // to a different container). Adjust the physics position so the item
+        // appears at the same visual location:
+        //   newPosition = oldPosition + oldLayoutOffset − newLayoutOffset
+        s.position = {
+          x: s.position.x + s.layoutOffset.x - newLayoutOffset.x,
+          y: s.position.y + s.layoutOffset.y - newLayoutOffset.y,
+        };
+
+        // Synchronously patch the DOM so the adjusted position is visible
+        // before the browser paints. React will sync its virtual DOM on the
+        // next natural render (user interaction, animation frame, etc.).
+        element.style.transform = `translate3d(${s.position.x + s.shakeOffset.x}px, ${s.position.y + s.shakeOffset.y}px, 0) rotate(${s.rotation}deg)`;
+      }
+
+      s.layoutOffset = newLayoutOffset;
+
+      return () => {
+        const item = itemsRef.current.get(id);
+        if (item) {
+          if (item.frameId !== null) cancelAnimationFrame(item.frameId);
+          if (item.shakeFrameId !== null)
+            cancelAnimationFrame(item.shakeFrameId);
+          if (item.pointerId !== null) {
+            activePointersRef.current.delete(item.pointerId);
+          }
+          item.element = null;
+        }
+
+        // Defer deletion so physics state survives container changes (the item
+        // unmounts from one container and re-registers from another in the same
+        // React commit). If the item doesn't re-register, the timeout fires
+        // and garbage-collects the orphaned state.
+        const timeoutId = setTimeout(() => {
+          itemsRef.current.delete(id);
+          pendingCleanupsRef.current.delete(id);
+        }, 0);
+        pendingCleanupsRef.current.set(id, timeoutId);
+      };
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
 
   // ── Shake ────────────────────────────────────────────────────────────────
 
@@ -860,6 +938,28 @@ function SlingShotRoot({
       if (item.shakeFrameId !== null) cancelAnimationFrame(item.shakeFrameId);
       const reset = createItemState();
       reset.element = item.element; // keep element reference
+      // Recompute layoutOffset for the kept element
+      if (item.element) {
+        const rootEl = rootRef.current;
+        let refLeft = 0;
+        let refTop = 0;
+        if (rootEl) {
+          const rootRect = rootEl.getBoundingClientRect();
+          if (rootRect.width > 0 || rootRect.height > 0) {
+            refLeft = rootRect.left;
+            refTop = rootRect.top;
+          } else if (boundsRef?.current) {
+            const bRect = boundsRef.current.getBoundingClientRect();
+            refLeft = bRect.left;
+            refTop = bRect.top;
+          }
+        }
+        const elRect = item.element.getBoundingClientRect();
+        reset.layoutOffset = {
+          x: elRect.left - item.position.x - refLeft,
+          y: elRect.top - item.position.y - refTop,
+        };
+      }
       itemsRef.current.set(id, reset);
     });
     activePointersRef.current.clear();
