@@ -8,7 +8,7 @@
   ],
   "files": [
     {
-      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/switch-default/switch-default.tsx",
+      "path": "../../packages/registry/src/switch-default/switch-default.tsx",
       "content": "import { Switch } from \"@notion-kit/ui/primitives\";\n\nexport default function Default() {\n  return <Switch />;\n}\n",
       "type": "registry:component",
       "target": "components/switch-default/switch-default.tsx"

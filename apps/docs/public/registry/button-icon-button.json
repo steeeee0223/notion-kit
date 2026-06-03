@@ -8,7 +8,7 @@
   ],
   "files": [
     {
-      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/button-icon-button/button-icon-button.tsx",
+      "path": "../../packages/registry/src/button-icon-button/button-icon-button.tsx",
       "content": "import { Icon } from \"@notion-kit/icons\";\nimport { Button } from \"@notion-kit/ui/primitives\";\n\nexport default function IconButton() {\n  return (\n    <Button variant=\"icon\">\n      <Icon.TypesText className=\"size-4\" />\n    </Button>\n  );\n}\n",
       "type": "registry:component",
       "target": "components/button-icon-button/button-icon-button.tsx"

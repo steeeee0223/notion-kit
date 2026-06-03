@@ -8,7 +8,7 @@
   ],
   "files": [
     {
-      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/settings-panel-plans-table/settings-panel-plans-table.tsx",
+      "path": "../../packages/registry/src/settings-panel-plans-table/settings-panel-plans-table.tsx",
       "content": "import { PlansTable } from \"@notion-kit/settings-panel\";\n\nexport default function Demo() {\n  return <PlansTable />;\n}\n",
       "type": "registry:component",
       "target": "components/settings-panel-plans-table/settings-panel-plans-table.tsx"

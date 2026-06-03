@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "map-default",
+  "title": "Map Default",
+  "dependencies": ["@notion-kit/map"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "../../packages/registry/src/map-default/map-default.tsx",
+      "content": "\"use client\";\n\nimport { Map } from \"@notion-kit/map\";\n\nexport default function MapDefault() {\n  return (\n    <div className=\"h-[420px] w-full overflow-hidden rounded-md border\">\n      <Map center={[121.5654, 25.033]} zoom={12} />\n    </div>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/map-default/map-default.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

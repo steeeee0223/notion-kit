@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "map-cluster-layer",
+  "title": "Map Cluster Layer",
+  "dependencies": ["@notion-kit/map"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "../../packages/registry/src/map-cluster-layer/map-cluster-layer.tsx",
+      "content": "\"use client\";\n\nimport {\n  Map,\n  MapClusterLayer,\n  MapControlGroup,\n  MapControls,\n  MapZoomIn,\n  MapZoomOut,\n} from \"@notion-kit/map\";\n\ninterface PointProperties {\n  name: string;\n  category: string;\n}\n\nfunction generateTaipeiPoints(\n  count: number,\n): GeoJSON.FeatureCollection<GeoJSON.Point, PointProperties> {\n  const center = { lng: 121.54, lat: 25.05 };\n  const categories = [\"Restaurant\", \"Cafe\", \"Bar\", \"Shop\", \"Hotel\"];\n  const features: GeoJSON.Feature<GeoJSON.Point, PointProperties>[] = [];\n\n  for (let i = 0; i < count; i++) {\n    const lng = center.lng + (Math.random() - 0.5) * 0.15;\n    const lat = center.lat + (Math.random() - 0.5) * 0.1;\n    features.push({\n      type: \"Feature\",\n      properties: {\n        name: `Location ${i + 1}`,\n        category: categories[Math.floor(Math.random() * categories.length)]!,\n      },\n      geometry: { type: \"Point\", coordinates: [lng, lat] },\n    });\n  }\n\n  return { type: \"FeatureCollection\", features };\n}\n\nconst pointsData = generateTaipeiPoints(300);\n\nexport default function MapClusterLayerDemo() {\n  return (\n    <div className=\"h-[420px] w-full overflow-hidden rounded-md border\">\n      <Map center={[121.54, 25.05]} zoom={11}>\n        <MapControls>\n          <MapControlGroup>\n            <MapZoomIn />\n            <MapZoomOut />\n          </MapControlGroup>\n        </MapControls>\n        <MapClusterLayer data={pointsData} />\n      </Map>\n    </div>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/map-cluster-layer/map-cluster-layer.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

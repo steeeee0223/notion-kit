@@ -8,7 +8,7 @@
   ],
   "files": [
     {
-      "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/button-nav-icon/button-nav-icon.tsx",
+      "path": "../../packages/registry/src/button-nav-icon/button-nav-icon.tsx",
       "content": "import { Icon } from \"@notion-kit/icons\";\nimport { Button } from \"@notion-kit/ui/primitives\";\n\nexport default function NavIcon() {\n  return (\n    <Button variant=\"nav-icon\">\n      <Icon.CommentFilled className=\"size-4 text-default/45\" />\n    </Button>\n  );\n}\n",
       "type": "registry:component",
       "target": "components/button-nav-icon/button-nav-icon.tsx"

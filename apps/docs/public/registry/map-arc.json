@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "map-arc",
+  "title": "Map Arc",
+  "dependencies": ["@notion-kit/map"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "../../packages/registry/src/map-arc/map-arc.tsx",
+      "content": "\"use client\";\n\nimport {\n  Map,\n  MapArc,\n  MapControlGroup,\n  MapControls,\n  MapZoomIn,\n  MapZoomOut,\n  type MapArcDatum,\n} from \"@notion-kit/map\";\n\nconst flightRoutes: MapArcDatum[] = [\n  { id: \"tpe-nrt\", from: [121.5654, 25.033], to: [139.6917, 35.6895] },\n  { id: \"tpe-icn\", from: [121.5654, 25.033], to: [126.978, 37.5665] },\n  { id: \"tpe-hkg\", from: [121.5654, 25.033], to: [114.1694, 22.3193] },\n  { id: \"tpe-sin\", from: [121.5654, 25.033], to: [103.8198, 1.3521] },\n  { id: \"tpe-bkk\", from: [121.5654, 25.033], to: [100.5018, 13.7563] },\n];\n\nexport default function MapArcDemo() {\n  return (\n    <div className=\"h-[420px] w-full overflow-hidden rounded-md border\">\n      <Map center={[121, 25]} zoom={3}>\n        <MapControls>\n          <MapControlGroup>\n            <MapZoomIn />\n            <MapZoomOut />\n          </MapControlGroup>\n        </MapControls>\n        <MapArc\n          data={flightRoutes}\n          paint={{ \"line-color\": \"#8b5cf6\", \"line-width\": 2.5 }}\n          hoverPaint={{ \"line-color\": \"#ef4444\", \"line-width\": 4 }}\n        />\n      </Map>\n    </div>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/map-arc/map-arc.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

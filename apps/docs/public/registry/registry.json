@@ -98,7 +98,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/badge-default/badge-default.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/badge-default/badge-default.tsx",
           "type": "registry:component",
           "target": "components/badge-default/badge-default.tsx"
         }
@@ -115,7 +115,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/badge-sizes/badge-sizes.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/badge-sizes/badge-sizes.tsx",
           "type": "registry:component",
           "target": "components/badge-sizes/badge-sizes.tsx"
         }
@@ -132,7 +132,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/badge-variants/badge-variants.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/badge-variants/badge-variants.tsx",
           "type": "registry:component",
           "target": "components/badge-variants/badge-variants.tsx"
         }
@@ -149,7 +149,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/button-default/button-default.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/button-default/button-default.tsx",
           "type": "registry:component",
           "target": "components/button-default/button-default.tsx"
         }
@@ -166,7 +166,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/button-disabled/button-disabled.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/button-disabled/button-disabled.tsx",
           "type": "registry:component",
           "target": "components/button-disabled/button-disabled.tsx"
         }
@@ -183,7 +183,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/button-hint/button-hint.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/button-hint/button-hint.tsx",
           "type": "registry:component",
           "target": "components/button-hint/button-hint.tsx"
         }
@@ -200,7 +200,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/button-icon-button/button-icon-button.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/button-icon-button/button-icon-button.tsx",
           "type": "registry:component",
           "target": "components/button-icon-button/button-icon-button.tsx"
         }
@@ -217,7 +217,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/button-nav-icon/button-nav-icon.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/button-nav-icon/button-nav-icon.tsx",
           "type": "registry:component",
           "target": "components/button-nav-icon/button-nav-icon.tsx"
         }
@@ -234,7 +234,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/button-sizes/button-sizes.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/button-sizes/button-sizes.tsx",
           "type": "registry:component",
           "target": "components/button-sizes/button-sizes.tsx"
         }
@@ -251,7 +251,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/button-variants/button-variants.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/button-variants/button-variants.tsx",
           "type": "registry:component",
           "target": "components/button-variants/button-variants.tsx"
         }
@@ -268,7 +268,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/button-warning/button-warning.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/button-warning/button-warning.tsx",
           "type": "registry:component",
           "target": "components/button-warning/button-warning.tsx"
         }
@@ -285,7 +285,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/checkbox-default/checkbox-default.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/checkbox-default/checkbox-default.tsx",
           "type": "registry:component",
           "target": "components/checkbox-default/checkbox-default.tsx"
         }
@@ -302,7 +302,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/checkbox-sizes/checkbox-sizes.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/checkbox-sizes/checkbox-sizes.tsx",
           "type": "registry:component",
           "target": "components/checkbox-sizes/checkbox-sizes.tsx"
         }
@@ -319,7 +319,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/code-block-controlled/code-block-controlled.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/code-block-controlled/code-block-controlled.tsx",
           "type": "registry:component",
           "target": "components/code-block-controlled/code-block-controlled.tsx"
         }
@@ -336,7 +336,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/code-block-default/code-block-default.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/code-block-default/code-block-default.tsx",
           "type": "registry:component",
           "target": "components/code-block-default/code-block-default.tsx"
         }
@@ -353,7 +353,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/code-block-mermaid/code-block-mermaid.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/code-block-mermaid/code-block-mermaid.tsx",
           "type": "registry:component",
           "target": "components/code-block-mermaid/code-block-mermaid.tsx"
         }
@@ -370,7 +370,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/code-block-readonly/code-block-readonly.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/code-block-readonly/code-block-readonly.tsx",
           "type": "registry:component",
           "target": "components/code-block-readonly/code-block-readonly.tsx"
         }
@@ -387,7 +387,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/context-menu/context-menu.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/context-menu/context-menu.tsx",
           "type": "registry:component",
           "target": "components/context-menu/context-menu.tsx"
         }
@@ -404,7 +404,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/cover-default/cover-default.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/cover-default/cover-default.tsx",
           "type": "registry:component",
           "target": "components/cover-default/cover-default.tsx"
         }
@@ -421,7 +421,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/cover-picker/cover-picker.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/cover-picker/cover-picker.tsx",
           "type": "registry:component",
           "target": "components/cover-picker/cover-picker.tsx"
         }
@@ -438,7 +438,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/dropdown-menu/dropdown-menu.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/dropdown-menu/dropdown-menu.tsx",
           "type": "registry:component",
           "target": "components/dropdown-menu/dropdown-menu.tsx"
         }
@@ -455,7 +455,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/dropdown-menu-checkbox/dropdown-menu-checkbox.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/dropdown-menu-checkbox/dropdown-menu-checkbox.tsx",
           "type": "registry:component",
           "target": "components/dropdown-menu-checkbox/dropdown-menu-checkbox.tsx"
         }
@@ -472,7 +472,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/icon-block-emoji/icon-block-emoji.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/icon-block-emoji/icon-block-emoji.tsx",
           "type": "registry:component",
           "target": "components/icon-block-emoji/icon-block-emoji.tsx"
         }
@@ -489,7 +489,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/icon-block-lucide/icon-block-lucide.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/icon-block-lucide/icon-block-lucide.tsx",
           "type": "registry:component",
           "target": "components/icon-block-lucide/icon-block-lucide.tsx"
         }
@@ -506,7 +506,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/icon-block-sizes/icon-block-sizes.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/icon-block-sizes/icon-block-sizes.tsx",
           "type": "registry:component",
           "target": "components/icon-block-sizes/icon-block-sizes.tsx"
         }
@@ -523,7 +523,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/icon-block-text/icon-block-text.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/icon-block-text/icon-block-text.tsx",
           "type": "registry:component",
           "target": "components/icon-block-text/icon-block-text.tsx"
         }
@@ -540,7 +540,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/icon-block-url/icon-block-url.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/icon-block-url/icon-block-url.tsx",
           "type": "registry:component",
           "target": "components/icon-block-url/icon-block-url.tsx"
         }
@@ -557,7 +557,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/icon-menu-custom-factory/icon-menu-custom-factory.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/icon-menu-custom-factory/icon-menu-custom-factory.tsx",
           "type": "registry:component",
           "target": "components/icon-menu-custom-factory/icon-menu-custom-factory.tsx"
         }
@@ -574,7 +574,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/icon-menu-default/icon-menu-default.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/icon-menu-default/icon-menu-default.tsx",
           "type": "registry:component",
           "target": "components/icon-menu-default/icon-menu-default.tsx"
         }
@@ -591,7 +591,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/icon-menu-notion-icons/icon-menu-notion-icons.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/icon-menu-notion-icons/icon-menu-notion-icons.tsx",
           "type": "registry:component",
           "target": "components/icon-menu-notion-icons/icon-menu-notion-icons.tsx"
         }
@@ -608,7 +608,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/input-default/input-default.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/input-default/input-default.tsx",
           "type": "registry:component",
           "target": "components/input-default/input-default.tsx"
         }
@@ -625,7 +625,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/input-flat/input-flat.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/input-flat/input-flat.tsx",
           "type": "registry:component",
           "target": "components/input-flat/input-flat.tsx"
         }
@@ -642,7 +642,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/input-search/input-search.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/input-search/input-search.tsx",
           "type": "registry:component",
           "target": "components/input-search/input-search.tsx"
         }
@@ -659,7 +659,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/login-form-auth/login-form-auth.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/login-form-auth/login-form-auth.tsx",
           "type": "registry:component",
           "target": "components/login-form-auth/login-form-auth.tsx"
         }
@@ -676,7 +676,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/login-form-default/login-form-default.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/login-form-default/login-form-default.tsx",
           "type": "registry:component",
           "target": "components/login-form-default/login-form-default.tsx"
         }
@@ -684,59 +684,144 @@
     },
     {
       "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-      "name": "multi-select-creatable",
-      "title": "Multi Select Creatable",
+      "name": "map-arc",
+      "title": "Map Arc",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/ui"],
+      "dependencies": ["@notion-kit/map"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/multi-select-creatable/multi-select-creatable.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/map-arc/map-arc.tsx",
           "type": "registry:component",
-          "target": "components/multi-select-creatable/multi-select-creatable.tsx"
+          "target": "components/map-arc/map-arc.tsx"
         }
       ]
     },
     {
       "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-      "name": "multi-select-default",
-      "title": "Multi Select Default",
+      "name": "map-cluster-layer",
+      "title": "Map Cluster Layer",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/ui"],
+      "dependencies": ["@notion-kit/map"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/multi-select-default/multi-select-default.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/map-cluster-layer/map-cluster-layer.tsx",
           "type": "registry:component",
-          "target": "components/multi-select-default/multi-select-default.tsx"
+          "target": "components/map-cluster-layer/map-cluster-layer.tsx"
         }
       ]
     },
     {
       "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-      "name": "multi-select-inline",
-      "title": "Multi Select Inline",
+      "name": "map-controls",
+      "title": "Map Controls",
       "type": "registry:component",
-      "dependencies": ["@notion-kit/ui"],
+      "dependencies": ["@notion-kit/map", "@notion-kit/ui"],
       "registryDependencies": [
         "https://notion-ui.vercel.app/registry/notion-theme.json"
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/multi-select-inline/multi-select-inline.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/map-controls/map-controls.tsx",
           "type": "registry:component",
-          "target": "components/multi-select-inline/multi-select-inline.tsx"
+          "target": "components/map-controls/map-controls.tsx"
         }
       ]
     },
     {
       "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-      "name": "multi-select-max-selected",
-      "title": "Multi Select Max Selected",
+      "name": "map-custom-geojson-layer",
+      "title": "Map Custom Geojson Layer",
+      "type": "registry:component",
+      "dependencies": ["@notion-kit/map", "@notion-kit/ui"],
+      "registryDependencies": [
+        "https://notion-ui.vercel.app/registry/notion-theme.json"
+      ],
+      "files": [
+        {
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/map-custom-geojson-layer/map-custom-geojson-layer.tsx",
+          "type": "registry:component",
+          "target": "components/map-custom-geojson-layer/map-custom-geojson-layer.tsx"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "map-default",
+      "title": "Map Default",
+      "type": "registry:component",
+      "dependencies": ["@notion-kit/map"],
+      "registryDependencies": [
+        "https://notion-ui.vercel.app/registry/notion-theme.json"
+      ],
+      "files": [
+        {
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/map-default/map-default.tsx",
+          "type": "registry:component",
+          "target": "components/map-default/map-default.tsx"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "map-markers",
+      "title": "Map Markers",
+      "type": "registry:component",
+      "dependencies": ["@notion-kit/map"],
+      "registryDependencies": [
+        "https://notion-ui.vercel.app/registry/notion-theme.json"
+      ],
+      "files": [
+        {
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/map-markers/map-markers.tsx",
+          "type": "registry:component",
+          "target": "components/map-markers/map-markers.tsx"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "map-popup",
+      "title": "Map Popup",
+      "type": "registry:component",
+      "dependencies": ["@notion-kit/map"],
+      "registryDependencies": [
+        "https://notion-ui.vercel.app/registry/notion-theme.json"
+      ],
+      "files": [
+        {
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/map-popup/map-popup.tsx",
+          "type": "registry:component",
+          "target": "components/map-popup/map-popup.tsx"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "map-route",
+      "title": "Map Route",
+      "type": "registry:component",
+      "dependencies": ["@notion-kit/map"],
+      "registryDependencies": [
+        "https://notion-ui.vercel.app/registry/notion-theme.json"
+      ],
+      "files": [
+        {
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/map-route/map-route.tsx",
+          "type": "registry:component",
+          "target": "components/map-route/map-route.tsx"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "combobox-basic",
+      "title": "Combobox Basic",
       "type": "registry:component",
       "dependencies": ["@notion-kit/ui"],
       "registryDependencies": [
@@ -744,9 +829,43 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/multi-select-max-selected/multi-select-max-selected.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/combobox-basic/combobox-basic.tsx",
           "type": "registry:component",
-          "target": "components/multi-select-max-selected/multi-select-max-selected.tsx"
+          "target": "components/combobox-basic/combobox-basic.tsx"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "combobox-multiple-floating",
+      "title": "Combobox Multiple Floating",
+      "type": "registry:component",
+      "dependencies": ["@notion-kit/ui"],
+      "registryDependencies": [
+        "https://notion-ui.vercel.app/registry/notion-theme.json"
+      ],
+      "files": [
+        {
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/combobox-multiple-floating/combobox-multiple-floating.tsx",
+          "type": "registry:component",
+          "target": "components/combobox-multiple-floating/combobox-multiple-floating.tsx"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "combobox-multiple-inline",
+      "title": "Combobox Multiple Inline",
+      "type": "registry:component",
+      "dependencies": ["@notion-kit/ui"],
+      "registryDependencies": [
+        "https://notion-ui.vercel.app/registry/notion-theme.json"
+      ],
+      "files": [
+        {
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/combobox-multiple-inline/combobox-multiple-inline.tsx",
+          "type": "registry:component",
+          "target": "components/combobox-multiple-inline/combobox-multiple-inline.tsx"
         }
       ]
     },
@@ -761,7 +880,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/navbar-menu/navbar-menu.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/navbar-menu/navbar-menu.tsx",
           "type": "registry:component",
           "target": "components/navbar-menu/navbar-menu.tsx"
         }
@@ -782,12 +901,12 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/navbar-notion/data.ts",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/navbar-notion/data.ts",
           "type": "registry:component",
           "target": "components/navbar-notion/data.ts"
         },
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/navbar-notion/navbar-notion.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/navbar-notion/navbar-notion.tsx",
           "type": "registry:component",
           "target": "components/navbar-notion/navbar-notion.tsx"
         }
@@ -804,7 +923,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/navbar-participants/navbar-participants.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/navbar-participants/navbar-participants.tsx",
           "type": "registry:component",
           "target": "components/navbar-participants/navbar-participants.tsx"
         }
@@ -821,7 +940,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/navbar-sharing/navbar-sharing.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/navbar-sharing/navbar-sharing.tsx",
           "type": "registry:component",
           "target": "components/navbar-sharing/navbar-sharing.tsx"
         }
@@ -838,7 +957,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/navbar-title/navbar-title.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/navbar-title/navbar-title.tsx",
           "type": "registry:component",
           "target": "components/navbar-title/navbar-title.tsx"
         }
@@ -855,7 +974,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/resizable-demo/resizable-demo.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/resizable-demo/resizable-demo.tsx",
           "type": "registry:component",
           "target": "components/resizable-demo/resizable-demo.tsx"
         }
@@ -872,7 +991,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/select-custom/select-custom.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/select-custom/select-custom.tsx",
           "type": "registry:component",
           "target": "components/select-custom/select-custom.tsx"
         }
@@ -889,7 +1008,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/select-default/select-default.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/select-default/select-default.tsx",
           "type": "registry:component",
           "target": "components/select-default/select-default.tsx"
         }
@@ -906,7 +1025,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/separator-demo/separator-demo.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/separator-demo/separator-demo.tsx",
           "type": "registry:component",
           "target": "components/separator-demo/separator-demo.tsx"
         }
@@ -923,7 +1042,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/settings-panel-connections-table/settings-panel-connections-table.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/settings-panel-connections-table/settings-panel-connections-table.tsx",
           "type": "registry:component",
           "target": "components/settings-panel-connections-table/settings-panel-connections-table.tsx"
         }
@@ -940,7 +1059,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/settings-panel-guests-table/settings-panel-guests-table.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/settings-panel-guests-table/settings-panel-guests-table.tsx",
           "type": "registry:component",
           "target": "components/settings-panel-guests-table/settings-panel-guests-table.tsx"
         }
@@ -957,7 +1076,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/settings-panel-invitations-table/settings-panel-invitations-table.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/settings-panel-invitations-table/settings-panel-invitations-table.tsx",
           "type": "registry:component",
           "target": "components/settings-panel-invitations-table/settings-panel-invitations-table.tsx"
         }
@@ -978,7 +1097,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/settings-panel-members-table/settings-panel-members-table.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/settings-panel-members-table/settings-panel-members-table.tsx",
           "type": "registry:component",
           "target": "components/settings-panel-members-table/settings-panel-members-table.tsx"
         }
@@ -999,12 +1118,12 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/settings-panel-notion/data.ts",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/settings-panel-notion/data.ts",
           "type": "registry:component",
           "target": "components/settings-panel-notion/data.ts"
         },
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/settings-panel-notion/settings-panel-notion.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/settings-panel-notion/settings-panel-notion.tsx",
           "type": "registry:component",
           "target": "components/settings-panel-notion/settings-panel-notion.tsx"
         }
@@ -1021,7 +1140,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/settings-panel-plans-table/settings-panel-plans-table.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/settings-panel-plans-table/settings-panel-plans-table.tsx",
           "type": "registry:component",
           "target": "components/settings-panel-plans-table/settings-panel-plans-table.tsx"
         }
@@ -1038,7 +1157,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/settings-panel-sessions-table/settings-panel-sessions-table.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/settings-panel-sessions-table/settings-panel-sessions-table.tsx",
           "type": "registry:component",
           "target": "components/settings-panel-sessions-table/settings-panel-sessions-table.tsx"
         }
@@ -1055,7 +1174,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/settings-panel-teamspaces-table/settings-panel-teamspaces-table.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/settings-panel-teamspaces-table/settings-panel-teamspaces-table.tsx",
           "type": "registry:component",
           "target": "components/settings-panel-teamspaces-table/settings-panel-teamspaces-table.tsx"
         }
@@ -1072,7 +1191,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/sidebar-basic/sidebar-basic.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/sidebar-basic/sidebar-basic.tsx",
           "type": "registry:component",
           "target": "components/sidebar-basic/sidebar-basic.tsx"
         }
@@ -1093,7 +1212,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/sidebar-favorite-list/sidebar-favorite-list.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/sidebar-favorite-list/sidebar-favorite-list.tsx",
           "type": "registry:component",
           "target": "components/sidebar-favorite-list/sidebar-favorite-list.tsx"
         }
@@ -1115,12 +1234,12 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/sidebar-notion/data.ts",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/sidebar-notion/data.ts",
           "type": "registry:component",
           "target": "components/sidebar-notion/data.ts"
         },
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/sidebar-notion/sidebar-notion.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/sidebar-notion/sidebar-notion.tsx",
           "type": "registry:component",
           "target": "components/sidebar-notion/sidebar-notion.tsx"
         }
@@ -1141,7 +1260,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/sidebar-page-list/sidebar-page-list.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/sidebar-page-list/sidebar-page-list.tsx",
           "type": "registry:component",
           "target": "components/sidebar-page-list/sidebar-page-list.tsx"
         }
@@ -1162,7 +1281,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/sidebar-search-command/sidebar-search-command.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/sidebar-search-command/sidebar-search-command.tsx",
           "type": "registry:component",
           "target": "components/sidebar-search-command/sidebar-search-command.tsx"
         }
@@ -1183,7 +1302,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/sidebar-trash-box/sidebar-trash-box.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/sidebar-trash-box/sidebar-trash-box.tsx",
           "type": "registry:component",
           "target": "components/sidebar-trash-box/sidebar-trash-box.tsx"
         }
@@ -1200,7 +1319,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/sidebar-workspace-switcher/sidebar-workspace-switcher.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/sidebar-workspace-switcher/sidebar-workspace-switcher.tsx",
           "type": "registry:component",
           "target": "components/sidebar-workspace-switcher/sidebar-workspace-switcher.tsx"
         }
@@ -1217,7 +1336,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/single-image-dropzone-default/single-image-dropzone-default.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/single-image-dropzone-default/single-image-dropzone-default.tsx",
           "type": "registry:component",
           "target": "components/single-image-dropzone-default/single-image-dropzone-default.tsx"
         }
@@ -1234,7 +1353,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/skeleton-demo/skeleton-demo.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/skeleton-demo/skeleton-demo.tsx",
           "type": "registry:component",
           "target": "components/skeleton-demo/skeleton-demo.tsx"
         }
@@ -1251,7 +1370,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/spinner-default/spinner-default.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/spinner-default/spinner-default.tsx",
           "type": "registry:component",
           "target": "components/spinner-default/spinner-default.tsx"
         }
@@ -1268,7 +1387,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/spinner-variants/spinner-variants.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/spinner-variants/spinner-variants.tsx",
           "type": "registry:component",
           "target": "components/spinner-variants/spinner-variants.tsx"
         }
@@ -1285,7 +1404,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/switch-default/switch-default.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/switch-default/switch-default.tsx",
           "type": "registry:component",
           "target": "components/switch-default/switch-default.tsx"
         }
@@ -1302,7 +1421,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/switch-sizes/switch-sizes.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/switch-sizes/switch-sizes.tsx",
           "type": "registry:component",
           "target": "components/switch-sizes/switch-sizes.tsx"
         }
@@ -1319,7 +1438,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/table-view-controlled/table-view-controlled.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/table-view-controlled/table-view-controlled.tsx",
           "type": "registry:component",
           "target": "components/table-view-controlled/table-view-controlled.tsx"
         }
@@ -1336,7 +1455,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/table-view-uncontrolled/table-view-uncontrolled.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/table-view-uncontrolled/table-view-uncontrolled.tsx",
           "type": "registry:component",
           "target": "components/table-view-uncontrolled/table-view-uncontrolled.tsx"
         }
@@ -1353,7 +1472,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/tabs-demo/tabs-demo.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/tabs-demo/tabs-demo.tsx",
           "type": "registry:component",
           "target": "components/tabs-demo/tabs-demo.tsx"
         }
@@ -1370,7 +1489,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/tags-input-default/tags-input-default.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/tags-input-default/tags-input-default.tsx",
           "type": "registry:component",
           "target": "components/tags-input-default/tags-input-default.tsx"
         }
@@ -1387,7 +1506,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/timeline-layout/timeline-layout.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/timeline-layout/timeline-layout.tsx",
           "type": "registry:component",
           "target": "components/timeline-layout/timeline-layout.tsx"
         }
@@ -1404,7 +1523,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/timeline-with-sidebar/timeline-with-sidebar.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/timeline-with-sidebar/timeline-with-sidebar.tsx",
           "type": "registry:component",
           "target": "components/timeline-with-sidebar/timeline-with-sidebar.tsx"
         }
@@ -1421,7 +1540,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/timeline-without-sidebar/timeline-without-sidebar.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/timeline-without-sidebar/timeline-without-sidebar.tsx",
           "type": "registry:component",
           "target": "components/timeline-without-sidebar/timeline-without-sidebar.tsx"
         }
@@ -1438,7 +1557,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/tooltip-demo/tooltip-demo.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/tooltip-demo/tooltip-demo.tsx",
           "type": "registry:component",
           "target": "components/tooltip-demo/tooltip-demo.tsx"
         }
@@ -1455,7 +1574,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/tree-command/tree-command.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/tree-command/tree-command.tsx",
           "type": "registry:component",
           "target": "components/tree-command/tree-command.tsx"
         }
@@ -1472,7 +1591,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/tree-default/tree-default.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/tree-default/tree-default.tsx",
           "type": "registry:component",
           "target": "components/tree-default/tree-default.tsx"
         }
@@ -1489,7 +1608,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/tree-multi-select/tree-multi-select.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/tree-multi-select/tree-multi-select.tsx",
           "type": "registry:component",
           "target": "components/tree-multi-select/tree-multi-select.tsx"
         }
@@ -1506,7 +1625,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/tree-non-collapsible/tree-non-collapsible.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/tree-non-collapsible/tree-non-collapsible.tsx",
           "type": "registry:component",
           "target": "components/tree-non-collapsible/tree-non-collapsible.tsx"
         }
@@ -1523,7 +1642,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/tree-show-empty/tree-show-empty.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/tree-show-empty/tree-show-empty.tsx",
           "type": "registry:component",
           "target": "components/tree-show-empty/tree-show-empty.tsx"
         }
@@ -1540,7 +1659,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/unsplash-default/unsplash-default.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/unsplash-default/unsplash-default.tsx",
           "type": "registry:component",
           "target": "components/unsplash-default/unsplash-default.tsx"
         }
@@ -1557,7 +1676,7 @@
       ],
       "files": [
         {
-          "path": "/Users/awen/Documents/ts-space/notion-kit/packages/registry/src/unsplash-search/unsplash-search.tsx",
+          "path": "/Users/steven.yu/Documents/notion-kit/packages/registry/src/unsplash-search/unsplash-search.tsx",
           "type": "registry:component",
           "target": "components/unsplash-search/unsplash-search.tsx"
         }

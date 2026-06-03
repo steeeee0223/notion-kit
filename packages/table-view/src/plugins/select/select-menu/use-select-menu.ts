@@ -159,7 +159,7 @@ export function useSelectMenu({
   const handleTagsChange = useCallback(
     (tags: string[]) => {
       const newTag = tags.find((tag) => !config.options.items[tag]);
-      // If receives new tag from TagsInput
+      // If receives new tag from the creatable combobox item
       if (newTag) {
         addOption();
         return;

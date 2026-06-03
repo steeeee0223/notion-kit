@@ -8,16 +8,22 @@ import { Role, type User } from "@notion-kit/schemas";
 import {
   Badge,
   Button,
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxItem,
+  ComboboxLabel,
+  ComboboxList,
+  ComboboxValue,
   CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-  CommandList,
   CommandSeparator,
   SelectPreset as Select,
   Spinner,
 } from "@notion-kit/ui/primitives";
-import { TagsInput } from "@notion-kit/ui/tags-input";
 
 import { Avatar, HintButton } from "@/presets/_components";
 
@@ -104,54 +110,74 @@ export function AddMembers({
     >
       <div className="z-10 max-h-60 shrink-0 overflow-hidden overflow-y-auto border-b border-border">
         <div className="flex min-w-0 flex-1 flex-col items-stretch">
-          <div className="z-10 mr-0 mb-0 flex min-h-[34px] w-full cursor-text flex-nowrap items-start overflow-auto bg-input p-[4px_9px] text-sm">
-            <TagsInput
-              role="combobox"
-              type="email"
-              size={1}
-              placeholder={t("search-placeholder")}
-              autoComplete="off"
-              value={{ tags: emails, input: search }}
-              inputSchema={emailSchema}
-              onTagsChange={setEmails}
-              onInputChange={onInputChange}
-              className="min-h-[34px] min-w-0 grow border-none bg-transparent px-0"
-            />
-            <div className="ml-2 flex shrink-0 items-center gap-2 py-0.5">
-              <Select
-                value={role}
-                onChange={setRole}
-                options={t("roles", { returnObjects: true })}
-                className="w-fit text-muted"
-              />
-              <Button
-                tabIndex={0}
-                variant="blue"
-                size="sm"
-                disabled={emails.length < 1}
-                onClick={invite}
-                className="h-7 min-w-[70px] font-medium"
-              >
-                {t("invite")}
-                {loading && <Spinner />}
-              </Button>
-            </div>
-          </div>
+          <Combobox<string, true>
+            multiple
+            open
+            value={emails}
+            inputValue={search}
+            onInputValueChange={onInputChange}
+            onValueChange={(values) => {
+              const validEmails = values.filter(
+                (value) => emailSchema.safeParse(value).success,
+              );
+              setEmails(Array.from(new Set(validEmails)));
+              if (validEmails.length > emails.length) onInputChange("");
+            }}
+            items={filteredAccounts?.map((user) => user.email) ?? []}
+            filter={null}
+          >
+            <ComboboxChips variant="inline" hideClearButton>
+              <div className="flex max-h-16 min-h-[34px] flex-1 flex-wrap gap-1 overflow-auto">
+                <ComboboxValue>
+                  {(selectedValue: string[]) => (
+                    <>
+                      {selectedValue.map((email) => (
+                        <ComboboxChip key={email}>{email}</ComboboxChip>
+                      ))}
+                      <ComboboxChipsInput
+                        type="email"
+                        placeholder={t("search-placeholder")}
+                        autoComplete="off"
+                      />
+                    </>
+                  )}
+                </ComboboxValue>
+              </div>
+              <div className="flex shrink-0 items-center gap-2 py-0.5">
+                <Select
+                  value={role}
+                  onChange={setRole}
+                  options={t("roles", { returnObjects: true })}
+                  className="w-fit text-muted"
+                />
+                <Button
+                  tabIndex={0}
+                  variant="blue"
+                  size="sm"
+                  disabled={emails.length < 1}
+                  onClick={invite}
+                  className="h-7 min-w-[70px] font-medium"
+                >
+                  {t("invite")}
+                  {loading && <Spinner />}
+                </Button>
+              </div>
+            </ComboboxChips>
+            {/* </div> */}
+            <ComboboxContent variant="inline">
+              <ComboboxEmpty>{t("empty")}</ComboboxEmpty>
+              <ComboboxList className="max-h-[300px] min-h-0 grow transform overflow-auto overflow-x-hidden">
+                <ComboboxGroup className="min-h-50">
+                  <ComboboxLabel title={heading} />
+                  {filteredAccounts?.map((user) => (
+                    <Item key={user.id} user={user} onSelect={onTagSelect} />
+                  ))}
+                </ComboboxGroup>
+              </ComboboxList>
+            </ComboboxContent>
+          </Combobox>
         </div>
       </div>
-      <CommandList className="max-h-[300px] min-h-0 grow transform overflow-auto overflow-x-hidden">
-        <CommandGroup className="min-h-[200px]">
-          <div className="my-1.5 flex fill-current px-2 text-xs/5 font-medium text-default/45 select-none">
-            <div className="self-center truncate">{heading}</div>
-          </div>
-          <CommandEmpty className="flex min-h-7 items-center px-2 py-0 leading-tight text-secondary select-none">
-            <span>{t("empty")}</span>
-          </CommandEmpty>
-          {filteredAccounts?.map((user) => (
-            <Item key={user.id} user={user} onSelect={onTagSelect} />
-          ))}
-        </CommandGroup>
-      </CommandList>
       <CommandSeparator />
       <a
         href="https://www.notion.so/help/add-members-admins-guests-and-groups"
@@ -183,23 +209,21 @@ function Item({
   });
 
   return (
-    <CommandItem
+    <ComboboxItem
       className="leading-tight"
       key={email}
       value={email}
-      onSelect={onSelect}
-      disabled={invited}
-    >
-      <div className="mr-2.5 flex items-center justify-center">
-        {invited ? (
+      icon={
+        invited ? (
           <Avatar src={avatarUrl} fallback={name} />
         ) : (
           <Icon.Envelope className="size-5 shrink-0 fill-primary" />
-        )}
-      </div>
-      <div className="mr-3 min-w-0 flex-auto truncate">
-        {invited ? name : email}
-      </div>
+        )
+      }
+      label={invited ? name : email}
+      onClick={() => onSelect?.(email)}
+      disabled={invited}
+    >
       {invited && (
         <Badge
           variant="gray"
@@ -209,6 +233,6 @@ function Item({
           {t("invited-badge")}
         </Badge>
       )}
-    </CommandItem>
+    </ComboboxItem>
   );
 }

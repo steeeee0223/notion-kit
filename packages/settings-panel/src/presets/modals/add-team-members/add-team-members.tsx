@@ -7,6 +7,18 @@ import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import {
   Badge,
   Button,
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxCollection,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxItem,
+  ComboboxLabel,
+  ComboboxList,
+  ComboboxValue,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -15,10 +27,7 @@ import {
   FormControl,
   FormField,
   FormItem,
-  MenuItem,
   MenuItemAction,
-  MultiSelect,
-  MultiSelectOption,
   SelectPreset,
   Spinner,
 } from "@notion-kit/ui/primitives";
@@ -28,6 +37,19 @@ import type { TeamspaceRole } from "@/lib/types";
 import { Avatar } from "@/presets/_components";
 
 import { useAddTeamMembersForm } from "./use-add-team-members-form";
+
+interface AddTeamMembersOption {
+  id: string;
+  name: string;
+  color: string;
+  disabled?: boolean;
+  avatarUrl: string;
+}
+
+interface GroupOption {
+  label: string;
+  items: AddTeamMembersOption[];
+}
 
 interface WorkspaceMember extends User {
   invited?: boolean;
@@ -55,16 +77,19 @@ export function AddTeamMembers({
   });
 
   const multiSelectOptions = useMemo(
-    () =>
-      workspaceMembers.map<MultiSelectOption>((user) => ({
-        label: user.name,
-        value: user.name,
-        id: user.id,
-        disabled: user.invited,
-        avatarUrl: user.avatarUrl,
-        header: t("headings.select"),
-      })),
-    [workspaceMembers, t],
+    () => [
+      {
+        label: t("headings.select"),
+        items: workspaceMembers.map<AddTeamMembersOption>((user) => ({
+          id: user.id,
+          name: user.name,
+          color: idToColor(user.id),
+          disabled: user.invited,
+          avatarUrl: user.avatarUrl,
+        })),
+      },
+    ],
+    [t, workspaceMembers],
   );
 
   const { form, members, submit } = useAddTeamMembersForm({
@@ -99,58 +124,95 @@ export function AddTeamMembers({
                 <FormItem className="min-w-0 flex-1 basis-0">
                   <FormControl
                     render={
-                      <MultiSelect
-                        groupBy="header"
-                        className="min-h-7 border-none bg-transparent py-1.5 pl-2 focus-within:shadow-none!"
-                        classNames={{ input: "min-w-0 p-0" }}
-                        options={multiSelectOptions}
+                      <Combobox<AddTeamMembersOption, true>
+                        multiple
                         disabled={field.disabled}
-                        placeholder={t("search-placeholder")}
-                        hideClearAllButton
-                        emptyIndicator={t("no-results")}
                         value={field.value.map((user) => ({
-                          label: user.name,
-                          value: user.name,
                           id: user.id,
+                          name: user.name,
                           color: idToColor(user.id),
+                          avatarUrl: user.avatarUrl,
                         }))}
-                        onChange={(values) =>
+                        onValueChange={(values) => {
                           field.onChange(
-                            values.reduce<User[]>((acc, v) => {
-                              const member = members.get(v.value);
+                            values.reduce<User[]>((acc, option) => {
+                              const member = members.get(option.name);
                               if (member) acc.push(member);
                               return acc;
                             }, []),
-                          )
+                          );
+                        }}
+                        items={multiSelectOptions}
+                        itemToStringLabel={(option) => option.name}
+                        itemToStringValue={(option) => option.name}
+                        isItemEqualToValue={(item, value) =>
+                          item.name === value.name
                         }
-                        renderOption={({ option }) => (
-                          <MenuItem
-                            Icon={
-                              <Avatar
-                                src={
-                                  "avatarUrl" in option
-                                    ? (option.avatarUrl as string)
-                                    : undefined
-                                }
-                                fallback={option.label}
-                              />
-                            }
-                            Body={option.label}
-                          >
-                            {option.disabled && (
-                              <MenuItemAction>
-                                <Badge
-                                  variant="gray"
-                                  size="sm"
-                                  className="ml-auto tracking-wide uppercase"
-                                >
-                                  {t("invited")}
-                                </Badge>
-                              </MenuItemAction>
+                      >
+                        <ComboboxChips
+                          hideClearButton
+                          className="min-h-7 cursor-text border-none bg-transparent py-1.5 pl-2 focus-within:shadow-none!"
+                        >
+                          <ComboboxValue>
+                            {(selected: AddTeamMembersOption[]) => (
+                              <>
+                                {selected.map((option) => (
+                                  <ComboboxChip
+                                    key={option.id}
+                                    style={{ backgroundColor: option.color }}
+                                  >
+                                    {option.name}
+                                  </ComboboxChip>
+                                ))}
+                                <ComboboxChipsInput
+                                  placeholder={t("search-placeholder")}
+                                />
+                              </>
                             )}
-                          </MenuItem>
-                        )}
-                      />
+                          </ComboboxValue>
+                        </ComboboxChips>
+                        <ComboboxContent>
+                          <ComboboxEmpty>{t("no-results")}</ComboboxEmpty>
+                          <ComboboxList>
+                            {(group: GroupOption) => (
+                              <ComboboxGroup
+                                key={group.label}
+                                items={group.items}
+                              >
+                                <ComboboxLabel title={group.label} />
+                                <ComboboxCollection>
+                                  {(option: AddTeamMembersOption) => (
+                                    <ComboboxItem
+                                      key={option.id}
+                                      value={option}
+                                      disabled={option.disabled}
+                                      label={option.name}
+                                      icon={
+                                        <Avatar
+                                          src={option.avatarUrl}
+                                          fallback={option.name}
+                                        />
+                                      }
+                                    >
+                                      {option.disabled && (
+                                        <MenuItemAction>
+                                          <Badge
+                                            variant="gray"
+                                            size="sm"
+                                            className="ml-auto tracking-wide uppercase"
+                                          >
+                                            {t("invited")}
+                                          </Badge>
+                                        </MenuItemAction>
+                                      )}
+                                    </ComboboxItem>
+                                  )}
+                                </ComboboxCollection>
+                              </ComboboxGroup>
+                            )}
+                          </ComboboxList>
+                        </ComboboxContent>
+                      </Combobox>
                     }
                   />
                 </FormItem>

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "map-controls",
+  "title": "Map Controls",
+  "dependencies": ["@notion-kit/map", "@notion-kit/ui"],
+  "registryDependencies": [
+    "https://notion-ui.vercel.app/registry/notion-theme.json"
+  ],
+  "files": [
+    {
+      "path": "../../packages/registry/src/map-controls/map-controls.tsx",
+      "content": "\"use client\";\n\nimport {\n  Map,\n  MapCompass,\n  MapControlGroup,\n  MapControls,\n  MapFullScreen,\n  MapLocate,\n  MapViewModeToggle,\n  MapZoomIn,\n  MapZoomOut,\n} from \"@notion-kit/map\";\nimport { Separator } from \"@notion-kit/ui/primitives\";\n\nexport default function MapControlsDemo() {\n  return (\n    <div className=\"h-[420px] w-full overflow-hidden rounded-md border\">\n      <Map center={[121.5654, 25.033]} zoom={12}>\n        <MapControls>\n          <MapControlGroup>\n            <MapZoomIn />\n            <MapZoomOut />\n            <Separator />\n            <MapLocate />\n            <MapViewModeToggle />\n            <MapCompass />\n            <MapFullScreen />\n          </MapControlGroup>\n        </MapControls>\n      </Map>\n    </div>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/map-controls/map-controls.tsx"
+    }
+  ],
+  "type": "registry:component"
+}
