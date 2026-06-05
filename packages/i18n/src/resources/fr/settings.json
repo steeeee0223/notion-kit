@@ -832,20 +832,31 @@
       "cancel": "Annuler"
     },
     "add-members": {
+      "title": "Ajouter des membres",
+      "description": "Saisissez ou collez des emails ci-dessous, séparés par des virgules",
       "headings": {
-        "select": "Sélectionner",
-        "type": "Taper pour ajouter"
+        "select": "Sélectionner une personne",
+        "type": "Continuez à saisir pour inviter un email"
       },
-      "search-placeholder": "Nom ou email",
-      "roles": {
-        "owner": "Propriétaire",
-        "member": "Membre",
-        "guest": "Invité"
+      "search-placeholder": "Rechercher un nom ou des emails",
+      "role-label": "Sélectionner un rôle",
+      "role-options": {
+        "owner": {
+          "label": "Propriétaire de l’espace de travail",
+          "description": "Peut modifier les paramètres de l’espace de travail et inviter de nouveaux membres"
+        },
+        "member": {
+          "label": "Membre",
+          "description": "Ne peut pas modifier les paramètres de l’espace de travail ni inviter de nouveaux membres"
+        }
       },
-      "invite": "Inviter",
-      "empty": "Tapez les emails.",
-      "learn-more": "Apprenez en plus",
-      "invited-badge": "Invité(s)"
+      "message-label": "Message",
+      "message-placeholder": "Ajoutez une note à votre invitation...",
+      "invite": "Envoyer l’invitation",
+      "cancel": "Annuler",
+      "empty": "Saisissez ou collez des emails ci-dessus, séparés par des virgules.",
+      "learn-more": "Découvrez comment inviter des personnes et définir les autorisations",
+      "invited-badge": "Invité"
     },
     "passkeys": {
       "title": "Passkeys",

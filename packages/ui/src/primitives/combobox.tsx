@@ -329,7 +329,7 @@ function ComboboxChips({
       data-variant={variant}
       ref={comboboxAnchor?.ref}
       className={cn(
-        "relative min-h-[34px] border-border bg-input text-sm transition-[color,box-shadow] outline-none",
+        "relative min-h-[34px] cursor-text border-border bg-input text-sm transition-[color,box-shadow] outline-none",
         "flex flex-wrap gap-1",
         isInline
           ? "rounded-none border-b p-2"

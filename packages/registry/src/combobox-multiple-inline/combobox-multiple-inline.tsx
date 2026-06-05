@@ -113,7 +113,6 @@ export default function ComboboxMultipleInline({
         inputValue={inputValue}
         onInputValueChange={setInputValue}
         items={items}
-        filter={null}
       >
         <ComboboxChips variant="inline" hideClearButton>
           <ComboboxValue>

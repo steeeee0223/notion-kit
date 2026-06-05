@@ -79,7 +79,7 @@ export default function ComboboxMultipleFloating({
         inputValue={inputValue}
         onInputValueChange={setInputValue}
       >
-        <ComboboxChips className="w-full cursor-text py-1 pl-2">
+        <ComboboxChips className="w-full py-1 pl-2">
           <ComboboxValue>
             {(selected: string[]) => (
               <>
