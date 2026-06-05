@@ -49,13 +49,11 @@ A dropdown menu with groups, shortcuts, submenus, and a warning item.
 <ComponentPreview
   name="dropdown-menu"
   preview={`<DropdownMenu>
-  <DropdownMenuTrigger asChild>
-    <Button>Open</Button>
-  </DropdownMenuTrigger>
+  <DropdownMenuTrigger render={<Button>Open</Button>} />
   <DropdownMenuContent>
     <DropdownMenuGroup>
       <DropdownMenuLabel>My Account</DropdownMenuLabel>
-      <DropdownMenuItem Body="Profile">
+      <DropdownMenuItem label="Profile">
         <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
       </DropdownMenuItem>
     </DropdownMenuGroup>
@@ -70,9 +68,7 @@ Use `DropdownMenuCheckboxItem` for toggling options on and off.
 <ComponentPreview
   name="dropdown-menu-checkbox"
   preview={`<DropdownMenu>
-  <DropdownMenuTrigger asChild>
-    <Button>Open</Button>
-  </DropdownMenuTrigger>
+  <DropdownMenuTrigger render={<Button>Open</Button>} />
   <DropdownMenuContent>
     <DropdownMenuGroup>
       <DropdownMenuLabel>Appearance</DropdownMenuLabel>

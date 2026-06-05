@@ -64,11 +64,13 @@ function RowViewMenu() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <MenuItem Body="Open pages in">
-          <MenuItemSelect>{ROW_VIEW_OPTIONS[current].label}</MenuItemSelect>
-        </MenuItem>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <MenuItem Body="Open pages in">
+            <MenuItemSelect>{ROW_VIEW_OPTIONS[current].label}</MenuItemSelect>
+          </MenuItem>
+        }
+      />
       <DropdownMenuContent align="end" sideOffset={0} className="w-68">
         <DropdownMenuGroup>
           {Object.entries(ROW_VIEW_OPTIONS).map(([value, option]) => {
@@ -76,8 +78,8 @@ function RowViewMenu() {
             return (
               <DropdownMenuCheckboxItem
                 key={rowView}
-                Icon={<RowViewIcon rowView={rowView} />}
-                Body={option.label}
+                icon={<RowViewIcon rowView={rowView} />}
+                label={option.label}
                 desc={option.desc}
                 checked={rowView === current}
                 onCheckedChange={() =>

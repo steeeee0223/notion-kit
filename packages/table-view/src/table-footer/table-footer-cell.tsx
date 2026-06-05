@@ -26,15 +26,18 @@ export function TableFooterCell({ column }: HeaderContext<Row, unknown>) {
   return (
     <div className="flex" style={{ width: props.width }}>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            tabIndex={0}
-            variant="cell"
-            className="h-8 w-full justify-end overflow-hidden pr-2 select-auto"
-          >
-            <CountDisplay {...props} />
-          </Button>
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              tabIndex={0}
+              variant="cell"
+              className="h-8 w-full justify-end overflow-hidden pr-2 select-auto"
+            >
+              <CountDisplay {...props} />
+            </Button>
+          }
+        />
+
         <DropdownMenuContent className="w-50" align="start" alignOffset={-4}>
           <CalcMenu {...props} />
         </DropdownMenuContent>

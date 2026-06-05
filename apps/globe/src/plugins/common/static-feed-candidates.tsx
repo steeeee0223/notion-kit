@@ -31,21 +31,23 @@ export function StaticFeedCandidates({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <MenuItem
-          Icon={<GoogleIcon.DataExploration className="size-4" />}
-          Body={
-            selectedCandidate?.name ??
-            selectedCandidate?.feed_onestop_id ??
-            selectedFeedLabel ??
-            "Select feed"
-          }
-        >
-          <MenuItemAction>
-            <Icon.Chevron side="down" className="size-3 fill-icon" />
-          </MenuItemAction>
-        </MenuItem>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <MenuItem
+            Icon={<GoogleIcon.DataExploration className="size-4" />}
+            Body={
+              selectedCandidate?.name ??
+              selectedCandidate?.feed_onestop_id ??
+              selectedFeedLabel ??
+              "Select feed"
+            }
+          >
+            <MenuItemAction>
+              <Icon.Chevron side="down" className="size-3 fill-icon" />
+            </MenuItemAction>
+          </MenuItem>
+        }
+      />
       <DropdownMenuContent align="start" className="w-80">
         <DropdownMenuGroup>
           <DropdownMenuLabel>Feed Candidates</DropdownMenuLabel>
@@ -53,7 +55,7 @@ export function StaticFeedCandidates({
             <DropdownMenuCheckboxItem
               key={candidate.feed_onestop_id}
               checked={candidate.feed_onestop_id === selectedFeedOnestopId}
-              Body={candidate.name ?? candidate.feed_onestop_id}
+              label={candidate.name ?? candidate.feed_onestop_id}
               desc={`${candidate.status} · ${candidate.local.counts.stops} stops`}
               onCheckedChange={() => onSelect(candidate)}
             />

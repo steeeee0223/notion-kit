@@ -69,31 +69,39 @@ export function TableHeaderCell({
           }
           side="top"
         >
-          <DropdownMenuTrigger asChild disabled={locked}>
-            <div
-              id="notion-table-view-header-cell"
-              className="flex shrink-0 overflow-hidden p-0 text-sm"
-              style={{ width: header.column.getSize() }}
-            >
-              <Button
-                {...attributes}
-                {...listeners}
-                variant="cell"
-                className={cn("size-full px-2", isResizing && "bg-transparent")}
+          <DropdownMenuTrigger
+            disabled={locked}
+            render={
+              <div
+                id="notion-table-view-header-cell"
+                className="flex shrink-0 overflow-hidden p-0 text-sm"
+                style={{ width: header.column.getSize() }}
               >
-                {info.icon ? (
-                  <IconBlock
-                    icon={info.icon}
-                    className="size-4 p-0 opacity-60 dark:opacity-45"
-                  />
-                ) : (
-                  <DefaultIcon type={info.type} className="fill-default/45" />
-                )}
-                <div className="truncate">{info.name}</div>
-                {info.description && <Icon.Info className="size-3 fill-icon" />}
-              </Button>
-            </div>
-          </DropdownMenuTrigger>
+                <Button
+                  {...attributes}
+                  {...listeners}
+                  variant="cell"
+                  className={cn(
+                    "size-full px-2",
+                    isResizing && "bg-transparent",
+                  )}
+                >
+                  {info.icon ? (
+                    <IconBlock
+                      icon={info.icon}
+                      className="size-4 p-0 opacity-60 dark:opacity-45"
+                    />
+                  ) : (
+                    <DefaultIcon type={info.type} className="fill-default/45" />
+                  )}
+                  <div className="truncate">{info.name}</div>
+                  {info.description && (
+                    <Icon.Info className="size-3 fill-icon" />
+                  )}
+                </Button>
+              </div>
+            }
+          />
         </TooltipPreset>
         {!isDragging && (
           <DropdownMenuContent

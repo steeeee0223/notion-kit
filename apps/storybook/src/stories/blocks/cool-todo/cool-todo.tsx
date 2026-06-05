@@ -154,6 +154,7 @@ function TodoInput() {
         placeholder="Add a todo..."
         className="flex-1"
       />
+
       <Button
         type="submit"
         variant="blue"
@@ -208,27 +209,29 @@ function TodoItemCard({
         {todo.label}
       </span>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="hint"
-            className={cn(
-              "size-6 opacity-0 transition-opacity duration-200",
-              hoverGroup === "launched"
-                ? "group-hover/launched:opacity-100"
-                : "group-hover/todo:opacity-100",
-              "has-[button[aria-expanded='true']]:opacity-100",
-            )}
-          >
-            <Icon.Dots className="size-4 fill-icon" />
-          </Button>
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="hint"
+              className={cn(
+                "size-6 opacity-0 transition-opacity duration-200",
+                hoverGroup === "launched"
+                  ? "group-hover/launched:opacity-100"
+                  : "group-hover/todo:opacity-100",
+                "has-[button[aria-expanded='true']]:opacity-100",
+              )}
+            >
+              <Icon.Dots className="size-4 fill-icon" />
+            </Button>
+          }
+        />
         <DropdownMenuContent align="end">
           <DropdownMenuGroup>
             <DropdownMenuItem
-              Body="Delete"
-              Icon={<Icon.Trash />}
+              label="Delete"
+              icon={<Icon.Trash />}
               variant="error"
-              onSelect={() => archiveTodo(todo.id)}
+              onClick={() => archiveTodo(todo.id)}
             />
           </DropdownMenuGroup>
         </DropdownMenuContent>
@@ -294,26 +297,30 @@ function TrashBox() {
                   {todo.label}
                 </span>
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="hint"
-                      className="absolute right-0.5 bottom-0.5 flex size-4 items-center justify-center p-0 opacity-0 transition-opacity duration-150 group-hover/block:opacity-100"
-                    >
-                      <Icon.Dots className="size-2.5 fill-icon" />
-                    </Button>
-                  </DropdownMenuTrigger>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button
+                        variant="hint"
+                        className="absolute right-0.5 bottom-0.5 flex size-4 items-center justify-center p-0 opacity-0 transition-opacity duration-150 group-hover/block:opacity-100"
+                      >
+                        <Icon.Dots className="size-2.5 fill-icon" />
+                      </Button>
+                    }
+                  />
+
                   <DropdownMenuContent align="end">
                     <DropdownMenuGroup>
                       <DropdownMenuItem
-                        Body="Restore"
-                        Icon={<Icon.Undo className="size-4" />}
-                        onSelect={() => restoreTodo(todo.id)}
+                        label="Restore"
+                        icon={<Icon.Undo className="size-4" />}
+                        onClick={() => restoreTodo(todo.id)}
                       />
+
                       <DropdownMenuItem
-                        Body="Delete forever"
-                        Icon={<Icon.Trash />}
+                        label="Delete forever"
+                        icon={<Icon.Trash />}
                         variant="error"
-                        onSelect={() => deleteTodo(todo.id)}
+                        onClick={() => deleteTodo(todo.id)}
                       />
                     </DropdownMenuGroup>
                   </DropdownMenuContent>

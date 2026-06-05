@@ -159,7 +159,7 @@ const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
           tabIndex={-1}
           id={id}
           className="group h-8"
-          Icon={
+          icon={
             <div>
               <Button
                 variant="hint"
@@ -174,7 +174,7 @@ const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
             </div>
           }
           checked={id === activeWorkspace}
-          Body={<WorkspaceTitle role={role} name={name} />}
+          label={<WorkspaceTitle role={role} name={name} />}
           {...listeners}
           onClick={() => onSelect?.(id)}
         />

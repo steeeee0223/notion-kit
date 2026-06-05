@@ -32,22 +32,24 @@ export function DateFormatMenu({
 }: DateFormatMenuProps) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <MenuItem
-          Icon={showIcon ? <Icon.ViewCalendar /> : undefined}
-          Body="Date format"
-        >
-          <MenuItemSelect>
-            {options.find((option) => option.value === format)?.label}
-          </MenuItemSelect>
-        </MenuItem>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <MenuItem
+            Icon={showIcon ? <Icon.ViewCalendar /> : undefined}
+            Body="Date format"
+          >
+            <MenuItemSelect>
+              {options.find((option) => option.value === format)?.label}
+            </MenuItemSelect>
+          </MenuItem>
+        }
+      />
       <DropdownMenuContent align="end" className="w-[180px]">
         <DropdownMenuGroup>
           {options.map((option) => (
             <DropdownMenuCheckboxItem
               key={option.value}
-              Body={option.label}
+              label={option.label}
               checked={format === option.value}
               onCheckedChange={() => onChange(option.value)}
             />

@@ -74,33 +74,35 @@ export function SelectConfigMenu({
 
   return (
     <DropdownMenuSub>
-      <DropdownMenuSubTrigger Icon={<Icon.Sliders />} Body="Edit property" />
+      <DropdownMenuSubTrigger icon={<Icon.Sliders />} label="Edit property" />
       <DropdownMenuSubContent className="w-[250px]">
         <DropdownMenuGroup>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <MenuItem
-                Icon={<Icon.ArrowUpDown />}
-                Body="Sort"
-                aria-label="Sort options"
-              >
-                <MenuItemSelect>
-                  {sortOptions.find((o) => o.value === config.sort)?.label}
-                </MenuItemSelect>
-              </MenuItem>
-            </DropdownMenuTrigger>
+            <DropdownMenuTrigger
+              render={
+                <MenuItem
+                  Icon={<Icon.ArrowUpDown />}
+                  Body="Sort"
+                  aria-label="Sort options"
+                >
+                  <MenuItemSelect>
+                    {sortOptions.find((o) => o.value === config.sort)?.label}
+                  </MenuItemSelect>
+                </MenuItem>
+              }
+            />
             <DropdownMenuContent
               align="start"
               alignOffset={4}
               sideOffset={0}
               className="w-[250px]"
-              onCloseAutoFocus={(e) => e.preventDefault()}
+              finalFocus={false}
             >
               <DropdownMenuGroup>
                 {sortOptions.map((option) => (
                   <DropdownMenuCheckboxItem
                     key={option.value}
-                    Body={option.label}
+                    label={option.label}
                     checked={config.sort === option.value}
                     onCheckedChange={() => updateSort(option.value)}
                   />

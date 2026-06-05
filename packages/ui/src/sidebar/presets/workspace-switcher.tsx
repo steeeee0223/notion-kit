@@ -47,32 +47,33 @@ export function WorkspaceSwitcher({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="hint"
-          className="h-8 w-full justify-normal rounded-sm px-3 py-1.5"
-        >
-          <div className="flex max-w-[150px] items-center gap-x-2">
-            <IconBlock size="sm" icon={icon} />
-            <span className="overflow-hidden text-start font-medium text-ellipsis text-primary">
-              {activeWorkspace.name}
-            </span>
-          </div>
-          <Icon.Chevron side="down" className="size-3.5 fill-icon" />
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="hint"
+            className="h-8 w-full justify-normal rounded-sm px-3 py-1.5"
+          >
+            <div className="flex max-w-[150px] items-center gap-x-2">
+              <IconBlock size="sm" icon={icon} />
+              <span className="overflow-hidden text-start font-medium text-ellipsis text-primary">
+                {activeWorkspace.name}
+              </span>
+            </div>
+            <Icon.Chevron side="down" className="size-3.5 fill-icon" />
+          </Button>
+        }
+      />
       <DropdownMenuContent
         className="w-[300px]"
         align="start"
         alignOffset={11}
-        forceMount
         /**
          * tmporary fix
          * @see https://github.com/radix-ui/primitives/issues/1241
          */
-        onCloseAutoFocus={(e) => {
-          e.preventDefault();
+        finalFocus={() => {
           document.body.style.pointerEvents = "";
+          return false;
         }}
       >
         <div className="flex flex-col gap-3 p-3">
@@ -123,14 +124,14 @@ export function WorkspaceSwitcher({
           <DropdownMenuItem
             variant="secondary"
             className="text-xs"
-            Body="Add another account"
-            onSelect={onCreateAccount}
+            label="Add another account"
+            onClick={onCreateAccount}
           />
           <DropdownMenuItem
             variant="secondary"
             className="text-xs"
-            Body="Log out"
-            onSelect={onLogout}
+            label="Log out"
+            onClick={onLogout}
           />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -138,8 +139,8 @@ export function WorkspaceSwitcher({
           <DropdownMenuItem
             variant="secondary"
             className="text-xs"
-            Body="Get Mac App"
-            onSelect={handleGetMac}
+            label="Get Mac App"
+            onClick={handleGetMac}
           />
         </DropdownMenuGroup>
       </DropdownMenuContent>

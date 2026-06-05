@@ -21,7 +21,7 @@ export function TitleConfig({
 
   return (
     <Label htmlFor={id}>
-      <DropdownMenuItem Icon={<Icon.EmojiFace />} Body="Show page icon">
+      <DropdownMenuItem icon={<Icon.EmojiFace />} label="Show page icon">
         <MenuItemAction className="flex items-center">
           <Switch
             id={id}
