@@ -131,7 +131,10 @@ function MenuItemAction({ className, children }: MenuItemActionProps) {
 
 function MenuItemCheck() {
   return (
-    <MenuItemAction data-slot="menu-item-check" className="w-3.5">
+    <MenuItemAction
+      data-slot="menu-item-check"
+      className="pointer-events-none w-3.5"
+    >
       <Icon.Check className="size-full fill-primary" />
     </MenuItemAction>
   );

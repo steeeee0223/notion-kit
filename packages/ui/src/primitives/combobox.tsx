@@ -7,7 +7,7 @@ import { Icon } from "@notion-kit/icons";
 import { Badge } from "./badge";
 import { Button } from "./button";
 import * as _Icon from "./icons";
-import { MenuGroup, MenuItem, MenuLabel } from "./menu";
+import { MenuGroup, MenuItem, MenuItemCheck, MenuLabel } from "./menu";
 import { Separator } from "./separator";
 import { contentVariants } from "./variants";
 
@@ -198,7 +198,7 @@ function ComboboxItem({
   icon,
   label,
   desc,
-  showIndicator,
+  showIndicator = true,
   children,
   ...props
 }: ComboboxItemProps) {
@@ -220,11 +220,7 @@ function ComboboxItem({
       {showIndicator && (
         <ComboboxPrimitive.ItemIndicator
           data-slot="combobox-item-indicator"
-          render={
-            <span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center">
-              <Icon.Check className="fill-primary" />
-            </span>
-          }
+          render={<MenuItemCheck />}
         />
       )}
     </ComboboxPrimitive.Item>
