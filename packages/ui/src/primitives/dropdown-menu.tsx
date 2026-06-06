@@ -43,13 +43,13 @@ function DropdownMenuSub({ ...props }: Menu.SubmenuRoot.Props) {
 
 type MenuItemVisualProps = Pick<
   React.ComponentProps<typeof MenuItem>,
-  "className" | "variant" | "disabled" | "inset" | "desc"
+  "className" | "variant" | "desc"
 >;
 
 interface DropdownMenuSubTriggerProps
   extends Omit<
       Menu.SubmenuTrigger.Props,
-      "children" | "className" | "disabled" | "label" | "render"
+      "children" | "className" | "label" | "render"
     >,
     MenuItemVisualProps {
   icon?: React.ReactNode;
@@ -63,15 +63,12 @@ function DropdownMenuSubTrigger({
   children,
   className,
   desc,
-  disabled,
-  inset,
   variant,
   ...props
 }: DropdownMenuSubTriggerProps) {
   return (
     <Menu.SubmenuTrigger
       data-slot="dropdown-menu-sub-trigger"
-      disabled={disabled ?? undefined}
       label={typeof label === "string" ? label : undefined}
       render={
         <MenuItem
@@ -79,8 +76,6 @@ function DropdownMenuSubTrigger({
           Icon={icon}
           className={className}
           desc={desc}
-          disabled={disabled}
-          inset={inset}
           variant={variant}
         >
           {children}
@@ -164,10 +159,7 @@ function DropdownMenuContent({
 }
 
 interface DropdownMenuItemProps
-  extends Omit<
-      Menu.Item.Props,
-      "children" | "className" | "disabled" | "label" | "render"
-    >,
+  extends Omit<Menu.Item.Props, "children" | "className" | "label" | "render">,
     MenuItemVisualProps {
   icon?: React.ReactNode;
   label?: React.ReactNode;
@@ -177,31 +169,23 @@ interface DropdownMenuItemProps
 function DropdownMenuItem({
   icon,
   label,
-  children,
   className,
   desc,
-  disabled,
-  inset,
   variant,
   ...props
 }: DropdownMenuItemProps) {
   return (
     <Menu.Item
       data-slot="dropdown-menu-item"
-      disabled={disabled ?? undefined}
       label={typeof label === "string" ? label : undefined}
       render={
         <MenuItem
           Body={label}
           Icon={icon}
-          className={className}
           desc={desc}
-          disabled={disabled}
-          inset={inset}
           variant={variant}
-        >
-          {children}
-        </MenuItem>
+          className={className}
+        />
       }
       {...props}
     />
@@ -211,7 +195,7 @@ function DropdownMenuItem({
 interface DropdownMenuCheckboxItemProps
   extends Omit<
       Menu.CheckboxItem.Props,
-      "children" | "className" | "disabled" | "label" | "render"
+      "children" | "className" | "label" | "render"
     >,
     MenuItemVisualProps {
   icon?: React.ReactNode;
@@ -225,15 +209,12 @@ function DropdownMenuCheckboxItem({
   children,
   className,
   desc,
-  disabled,
-  inset,
   variant,
   ...props
 }: DropdownMenuCheckboxItemProps) {
   return (
     <Menu.CheckboxItem
       data-slot="dropdown-menu-checkbox-item"
-      disabled={disabled ?? undefined}
       label={typeof label === "string" ? label : undefined}
       render={
         <MenuItem
@@ -241,8 +222,6 @@ function DropdownMenuCheckboxItem({
           Icon={icon}
           className={className}
           desc={desc}
-          disabled={disabled}
-          inset={inset}
           variant={variant}
         >
           {children}

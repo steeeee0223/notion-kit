@@ -67,5 +67,13 @@ storybook-static/
 # agents
 .agent/
 .agents/
+!.agents/
+.agents/*
+!.agents/skills/
+.agents/skills/*
+!.agents/skills/migrating-radix-to-base-ui/
+!.agents/skills/migrating-radix-to-base-ui/SKILL.md
+!.agents/skills/using-primitives-for-components/
+!.agents/skills/using-primitives-for-components/SKILL.md
 .superpowers/
 skills-lock.json

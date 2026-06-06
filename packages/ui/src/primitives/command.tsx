@@ -160,19 +160,16 @@ function CommandSeparator({
 
 function CommandItem({
   className,
-  disabled,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Item>) {
   return (
     <CommandPrimitive.Item
       data-slot="command-item"
       className={cn(
-        menuItemVariants({ disabled }),
+        menuItemVariants(),
         "aria-selected:bg-default/5 aria-selected:text-primary",
-        "data-[disabled=true]:text-muted",
         className,
       )}
-      disabled={disabled}
       {...props}
     />
   );

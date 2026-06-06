@@ -75,6 +75,8 @@ export const menuItemVariants = cva(
   [
     "mx-1 flex min-h-7 w-[calc(100%-8px)] animate-bg-in cursor-pointer items-center rounded-md px-2 text-sm/tight select-none hover:bg-default/5 focus-visible:outline-hidden",
     "fill-menu-icon [&_svg]:block [&_svg]:shrink-0",
+    "data-highlighted:bg-default/10",
+    "data-disabled:pointer-events-none data-disabled:cursor-not-allowed data-disabled:opacity-40",
   ],
   {
     variants: {
@@ -85,10 +87,6 @@ export const menuItemVariants = cva(
           "fill-secondary text-sidebar-primary aria-selected:bg-default/10 aria-selected:text-primary",
         warning: "hover:fill-red hover:text-red",
         error: "fill-red text-red",
-      },
-      inset: { true: "pl-8" },
-      disabled: {
-        true: "pointer-events-none cursor-not-allowed opacity-40 hover:bg-transparent",
       },
     },
     defaultVariants: {
