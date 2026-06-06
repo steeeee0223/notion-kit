@@ -364,7 +364,7 @@ function RolesField() {
                   position="popper"
                   side="bottom"
                   align="start"
-                  className="w-(--radix-select-trigger-width)"
+                  className="w-(--anchor-width)"
                 >
                   <SelectGroup>
                     <MenuLabel>{t("role-label")}</MenuLabel>
@@ -373,7 +373,7 @@ function RolesField() {
                         key={value}
                         value={value}
                         Icon={option.icon}
-                        textValue={option.label}
+                        label={option.label}
                       >
                         <div className="space-y-1 whitespace-normal">
                           <div className="text-sm">{option.label}</div>

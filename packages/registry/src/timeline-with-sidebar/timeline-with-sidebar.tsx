@@ -92,23 +92,27 @@ export default function WithSidebar() {
                   render={() => {
                     return (
                       <ContextMenu>
-                        <ContextMenuTrigger asChild>
-                          <div
-                            onPointerDown={() => handleViewFeature(feature.id)}
-                            role="button"
-                            className="me-2.5 flex w-full items-center gap-1.5 text-sm font-medium"
-                          >
-                            <Avatar className="size-5">
-                              <AvatarImage src={feature.owner.image} />
-                              <AvatarFallback>
-                                {feature.owner.name.slice(0, 2)}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="max-w-100 truncate text-xs">
-                              {feature.name}
+                        <ContextMenuTrigger
+                          render={
+                            <div
+                              onPointerDown={() =>
+                                handleViewFeature(feature.id)
+                              }
+                              role="button"
+                              className="me-2.5 flex w-full items-center gap-1.5 text-sm font-medium"
+                            >
+                              <Avatar className="size-5">
+                                <AvatarImage src={feature.owner.image} />
+                                <AvatarFallback>
+                                  {feature.owner.name.slice(0, 2)}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="max-w-100 truncate text-xs">
+                                {feature.name}
+                              </div>
                             </div>
-                          </div>
-                        </ContextMenuTrigger>
+                          }
+                        />
                         <ContextMenuContent>
                           <ContextMenuGroup>
                             <ContextMenuItem

@@ -133,7 +133,9 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
         <div className="ml-1 flex h-8 items-center gap-2">
           <Select
             value={currentId}
-            onValueChange={(id) => updateRule({ id, desc })}
+            onValueChange={(id) => {
+              if (id !== null) updateRule({ id, desc });
+            }}
           >
             <SelectTrigger className="my-0 w-fit max-w-[180px] border border-border">
               <SelectValue aria-label={current.name}>

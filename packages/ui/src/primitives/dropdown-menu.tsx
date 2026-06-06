@@ -43,7 +43,7 @@ function DropdownMenuSub({ ...props }: Menu.SubmenuRoot.Props) {
 
 type MenuItemVisualProps = Pick<
   React.ComponentProps<typeof MenuItem>,
-  "className" | "variant" | "desc"
+  "className" | "variant" | "desc" | "disabled"
 >;
 
 interface DropdownMenuSubTriggerProps
@@ -63,12 +63,14 @@ function DropdownMenuSubTrigger({
   children,
   className,
   desc,
+  disabled,
   variant,
   ...props
 }: DropdownMenuSubTriggerProps) {
   return (
     <Menu.SubmenuTrigger
       data-slot="dropdown-menu-sub-trigger"
+      disabled={disabled}
       label={typeof label === "string" ? label : undefined}
       render={
         <MenuItem
@@ -76,6 +78,7 @@ function DropdownMenuSubTrigger({
           Icon={icon}
           className={className}
           desc={desc}
+          disabled={disabled}
           variant={variant}
         >
           {children}
@@ -171,18 +174,21 @@ function DropdownMenuItem({
   label,
   className,
   desc,
+  disabled,
   variant,
   ...props
 }: DropdownMenuItemProps) {
   return (
     <Menu.Item
       data-slot="dropdown-menu-item"
+      disabled={disabled}
       label={typeof label === "string" ? label : undefined}
       render={
         <MenuItem
           Body={label}
           Icon={icon}
           desc={desc}
+          disabled={disabled}
           variant={variant}
           className={className}
         />
@@ -209,12 +215,14 @@ function DropdownMenuCheckboxItem({
   children,
   className,
   desc,
+  disabled,
   variant,
   ...props
 }: DropdownMenuCheckboxItemProps) {
   return (
     <Menu.CheckboxItem
       data-slot="dropdown-menu-checkbox-item"
+      disabled={disabled}
       label={typeof label === "string" ? label : undefined}
       render={
         <MenuItem
@@ -222,6 +230,7 @@ function DropdownMenuCheckboxItem({
           Icon={icon}
           className={className}
           desc={desc}
+          disabled={disabled}
           variant={variant}
         >
           {children}

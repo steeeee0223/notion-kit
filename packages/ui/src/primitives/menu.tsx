@@ -50,6 +50,7 @@ interface MenuItemProps extends React.ComponentProps<"div">, MenuItemVariants {
   Icon?: React.ReactNode;
   Body?: React.ReactNode;
   desc?: string;
+  disabled?: boolean;
 }
 
 function MenuItem({
@@ -58,6 +59,7 @@ function MenuItem({
   Icon,
   Body,
   desc,
+  disabled,
   children,
   ...props
 }: MenuItemProps) {
@@ -69,6 +71,8 @@ function MenuItem({
       className={cn(menuItemVariants({ variant }), "group/item", className)}
       aria-label={typeof Body === "string" ? Body : undefined}
       aria-describedby={desc ? "menu-item-desc" : undefined}
+      aria-disabled={disabled || undefined}
+      data-disabled={disabled ? "" : undefined}
       {...props}
     >
       <div
