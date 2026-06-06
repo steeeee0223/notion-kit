@@ -20,7 +20,7 @@ export default function Demo() {
       <DropdownMenuTrigger render={<Button size="md">Open</Button>} />
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel title="My Account" />
           <DropdownMenuItem label="Profile">
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
@@ -36,7 +36,7 @@ export default function Demo() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem label="Team" />
+          <DropdownMenuLabel title="Team" />
           <DropdownMenuSub>
             <DropdownMenuSubTrigger label="Invite users" />
             <DropdownMenuPortal>
@@ -54,6 +54,7 @@ export default function Demo() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          <DropdownMenuLabel title="Resources" />
           <DropdownMenuItem label="GitHub" />
           <DropdownMenuItem label="Support" />
           <DropdownMenuItem label="API" disabled />

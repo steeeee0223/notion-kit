@@ -18,7 +18,7 @@ describe("ContextMenu", () => {
         />
         <ContextMenuContent>
           <ContextMenuGroup>
-            <ContextMenuItem Body="Remove marker" />
+            <ContextMenuItem label="Remove marker" />
           </ContextMenuGroup>
         </ContextMenuContent>
       </ContextMenu>,

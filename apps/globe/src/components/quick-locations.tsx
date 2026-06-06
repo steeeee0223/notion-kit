@@ -8,7 +8,7 @@ export function QuickLocations() {
 
   return (
     <MenuGroup>
-      <MenuLabel>Quick Locations</MenuLabel>
+      <MenuLabel title="Quick Locations" />
       {[
         {
           name: "Budapest, HU",
@@ -25,8 +25,8 @@ export function QuickLocations() {
       ].map((loc) => (
         <MenuItem
           key={loc.name}
-          Body={loc.name}
-          Icon={<GoogleIcon.LocationOn className="size-4" />}
+          label={loc.name}
+          icon={<GoogleIcon.LocationOn className="size-4" />}
           onClick={() => requestFlyTo(loc.coords)}
         />
       ))}

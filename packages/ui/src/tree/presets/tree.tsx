@@ -26,7 +26,7 @@ function TreeList<T extends TreeItemData>({
             data-slot="tree-item"
             variant="sidebar"
             className="focus:shadow-notion"
-            Icon={
+            icon={
               <div className="group/icon">
                 <TreePrimitive.ExpandIndicator
                   onToggle={() => tree.expand(node.id)}
@@ -53,7 +53,7 @@ function TreeList<T extends TreeItemData>({
                 )}
               </div>
             }
-            Body={node.title}
+            label={node.title}
             children={renderAction?.({ node }) ?? null}
           />
         );

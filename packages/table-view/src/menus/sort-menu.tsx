@@ -23,6 +23,7 @@ import {
   PopoverTrigger,
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -60,8 +61,8 @@ export function SortMenu() {
           <PopoverTrigger asChild>
             <MenuItem
               variant="secondary"
-              Icon={<Icon.Plus className="size-4" />}
-              Body="Add sort"
+              icon={<Icon.Plus className="size-4" />}
+              label="Add sort"
             />
           </PopoverTrigger>
           <PopoverContent align="start">
@@ -71,8 +72,8 @@ export function SortMenu() {
         <MenuItem
           variant="warning"
           className="text-secondary"
-          Icon={<Icon.Trash />}
-          Body="Delete sort"
+          icon={<Icon.Trash />}
+          label="Delete sort"
           onClick={() => table.resetSorting()}
         />
       </MenuGroup>
@@ -124,12 +125,12 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
       ref={setNodeRef}
       className="h-9 hover:bg-transparent *:data-[slot=menu-item-body]:mx-0"
       style={style}
-      Icon={
+      icon={
         <div key="drag-handle" {...attributes} {...listeners}>
           <Icon.DragHandle className="size-3 fill-icon!" />
         </div>
       }
-      Body={
+      label={
         <div className="ml-1 flex h-8 items-center gap-2">
           <Select
             value={currentId}
@@ -137,7 +138,7 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
               if (id !== null) updateRule({ id, desc });
             }}
           >
-            <SelectTrigger className="my-0 w-fit max-w-[180px] border border-border">
+            <SelectTrigger className="my-0 w-fit max-w-45 border border-border">
               <SelectValue aria-label={current.name}>
                 <div className="flex items-center gap-2">
                   {current.icon ? (
@@ -150,18 +151,22 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              {properties.map(({ id, name, type, icon }) => (
-                <SelectItem key={id} value={id}>
-                  <div className="flex items-center gap-2">
-                    {icon ? (
-                      <IconBlock icon={icon} />
-                    ) : (
-                      <DefaultIcon type={type} />
-                    )}
-                    {name}
-                  </div>
-                </SelectItem>
-              ))}
+              <SelectGroup>
+                {properties.map(({ id, name, type, icon }) => (
+                  <SelectItem
+                    key={id}
+                    value={id}
+                    label={name}
+                    icon={
+                      icon ? (
+                        <IconBlock icon={icon} />
+                      ) : (
+                        <DefaultIcon type={type} />
+                      )
+                    }
+                  />
+                ))}
+              </SelectGroup>
             </SelectContent>
           </Select>
           <Select
@@ -170,12 +175,14 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
               updateRule({ id: currentId, desc: value === "desc" })
             }
           >
-            <SelectTrigger className="my-0 w-fit max-w-[180px] border border-border">
+            <SelectTrigger className="my-0 w-fit max-w-45 border border-border">
               <SelectValue aria-label={desc ? "desc" : "asc"} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="asc">Ascending</SelectItem>
-              <SelectItem value="desc">Descending</SelectItem>
+              <SelectGroup>
+                <SelectItem value="asc" label="Ascending" />
+                <SelectItem value="desc" label="Descending" />
+              </SelectGroup>
             </SelectContent>
           </Select>
         </div>
@@ -213,10 +220,10 @@ function PropSelectMenu() {
             >
               <MenuItem
                 key={id}
-                Icon={
+                icon={
                   icon ? <IconBlock icon={icon} /> : <DefaultIcon type={type} />
                 }
-                Body={name}
+                label={name}
               />
             </CommandItem>
           ))}

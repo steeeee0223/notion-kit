@@ -55,16 +55,16 @@ A context menu with groups, shortcuts, submenus, checkbox items, and a destructi
   </ContextMenuTrigger>
   <ContextMenuContent>
     <ContextMenuGroup>
-      <ContextMenuLabel>Actions</ContextMenuLabel>
-      <ContextMenuItem Body="Back">
+      <ContextMenuLabel title="Action" />
+      <ContextMenuItem label="Back">
         <ContextMenuShortcut>⌘[</ContextMenuShortcut>
       </ContextMenuItem>
-      <ContextMenuItem Body="Reload">
+      <ContextMenuItem label="Reload">
         <ContextMenuShortcut>⌘R</ContextMenuShortcut>
       </ContextMenuItem>
     </ContextMenuGroup>
     <ContextMenuSeparator />
-    <ContextMenuCheckboxItem checked Body="Show Bookmarks" />
+    <ContextMenuCheckboxItem checked label="Show Bookmarks" />
   </ContextMenuContent>
 </ContextMenu>`}
 />
@@ -97,8 +97,8 @@ A single actionable item in the menu. Extends the shared `MenuItem` props.
 
 | Prop       | Type                                                            | Default     | Description                              |
 | ---------- | --------------------------------------------------------------- | ----------- | ---------------------------------------- |
-| `Body`     | `React.ReactNode`                                               | -           | The label text or content of the item.   |
-| `Icon`     | `React.ReactNode`                                               | -           | An optional leading icon.                |
+| `label`    | `React.ReactNode`                                               | -           | The label text or content of the item.   |
+| `icon`     | `React.ReactNode`                                               | -           | An optional leading icon.                |
 | `desc`     | `string`                                                        | -           | An optional description below the label. |
 | `variant`  | `"default" \| "secondary" \| "sidebar" \| "warning" \| "error"` | `"default"` | The visual style of the item.            |
 | `disabled` | `boolean`                                                       | -           | Whether the item is disabled.            |
@@ -116,6 +116,10 @@ A menu item that can be toggled on and off. Extends `ContextMenuItem` props.
 ### ContextMenuLabel
 
 A non-interactive label used to title a group of items.
+
+| Prop    | Type     | Default | Description          |
+| ------- | -------- | ------- | -------------------- |
+| `title` | `string` | -       | The group label text. |
 
 ### ContextMenuSeparator
 

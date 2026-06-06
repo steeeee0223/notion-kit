@@ -43,6 +43,7 @@ Or if you prefer using Shadcn primitives, use
 ### Select
 
 A `Select` is a generic component `Select<T>`, where `T` extends `string`.
+`SelectPreset` wraps options in `SelectGroup` for you. When composing lower-level primitives, place every `SelectItem` inside a `SelectGroup`.
 
 | Prop           | Type                                      | Default    | Description                                                   |
 | -------------- | ----------------------------------------- | ---------- | ------------------------------------------------------------- |
@@ -57,7 +58,36 @@ A `Select` is a generic component `Select<T>`, where `T` extends `string`.
 
 ### `type` Option
 
-| Prop          | Type     | Description                    |
-| ------------- | -------- | ------------------------------ |
-| `label`\*     | `string` | The option name.               |
-| `description` | `string` | The description of the option. |
+| Prop          | Type              | Description                    |
+| ------------- | ----------------- | ------------------------------ |
+| `label`\*     | `string`          | The option name.               |
+| `description` | `string`          | The description of the option. |
+| `icon`        | `React.ReactNode` | An optional leading icon.      |
+
+### SelectGroup
+
+Groups related options. Every `SelectItem` must be rendered inside a `SelectGroup`.
+
+| Prop       | Type              | Default | Description        |
+| ---------- | ----------------- | ------- | ------------------ |
+| `children` | `React.ReactNode` | -       | The grouped items. |
+
+### SelectLabel
+
+A non-interactive label used to title a group of options.
+
+| Prop    | Type     | Default | Description           |
+| ------- | -------- | ------- | --------------------- |
+| `title` | `string` | -       | The group label text. |
+
+### SelectItem
+
+A single selectable option.
+
+| Prop        | Type              | Default | Description                              |
+| ----------- | ----------------- | ------- | ---------------------------------------- |
+| `value`     | `string`          | -       | The option value.                        |
+| `label`     | `string`          | -       | The option label.                        |
+| `icon`      | `React.ReactNode` | -       | An optional leading icon.                |
+| `desc`      | `string`          | -       | An optional description below the label. |
+| `hideCheck` | `boolean`         | `false` | Whether the check indicator is hidden.   |

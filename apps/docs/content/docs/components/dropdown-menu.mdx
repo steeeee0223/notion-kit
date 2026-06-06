@@ -52,7 +52,7 @@ A dropdown menu with groups, shortcuts, submenus, and a warning item.
   <DropdownMenuTrigger render={<Button>Open</Button>} />
   <DropdownMenuContent>
     <DropdownMenuGroup>
-      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+      <DropdownMenuLabel title="Account" />
       <DropdownMenuItem label="Profile">
         <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
       </DropdownMenuItem>
@@ -71,7 +71,7 @@ Use `DropdownMenuCheckboxItem` for toggling options on and off.
   <DropdownMenuTrigger render={<Button>Open</Button>} />
   <DropdownMenuContent>
     <DropdownMenuGroup>
-      <DropdownMenuLabel>Appearance</DropdownMenuLabel>
+      <DropdownMenuLabel title="Appearance" />
       <DropdownMenuCheckboxItem
         checked={showStatusBar}
         onCheckedChange={setShowStatusBar}
@@ -129,6 +129,10 @@ A menu item that can be toggled on and off. Extends `DropdownMenuItem` props.
 ### DropdownMenuLabel
 
 A non-interactive label used to title a group of items.
+
+| Prop    | Type     | Default | Description          |
+| ------- | -------- | ------- | -------------------- |
+| `title` | `string` | -       | The group label text. |
 
 ### DropdownMenuSeparator
 

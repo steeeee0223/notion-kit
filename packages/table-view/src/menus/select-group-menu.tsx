@@ -54,7 +54,7 @@ export function SelectGroupMenu() {
           <CommandGroup className="h-40 overflow-y-auto">
             {tableGlobal.layout !== "board" && (
               <CommandItem value="none" asChild>
-                <MenuItem Body="None" onClick={() => selectGroup(null)}>
+                <MenuItem label="None" onClick={() => selectGroup(null)}>
                   {groupingColId === undefined && <MenuItemCheck />}
                 </MenuItem>
               </CommandItem>
@@ -68,14 +68,14 @@ export function SelectGroupMenu() {
               >
                 <MenuItem
                   key={id}
-                  Icon={
+                  icon={
                     icon ? (
                       <IconBlock icon={icon} />
                     ) : (
                       <DefaultIcon type={type} />
                     )
                   }
-                  Body={name}
+                  label={name}
                 >
                   {groupingColId === id && <MenuItemCheck />}
                 </MenuItem>

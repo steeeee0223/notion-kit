@@ -35,8 +35,8 @@ export function DateFormatMenu({
       <DropdownMenuTrigger
         render={
           <MenuItem
-            Icon={showIcon ? <Icon.ViewCalendar /> : undefined}
-            Body="Date format"
+            icon={showIcon ? <Icon.ViewCalendar /> : undefined}
+            label="Date format"
           >
             <MenuItemSelect>
               {options.find((option) => option.value === format)?.label}

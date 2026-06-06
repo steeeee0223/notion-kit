@@ -46,13 +46,9 @@ export function TeamspacePermission({
   return (
     <MenuItem
       className={cn("h-10 w-full", className)}
-      Icon={icon}
-      Body={
-        <div className="flex flex-col items-start gap-0.5 p-1">
-          <div className="truncate">{label}</div>
-          <div className="truncate text-xs text-secondary">{description}</div>
-        </div>
-      }
+      icon={icon}
+      label={label}
+      desc={description}
     >
       {children}
     </MenuItem>

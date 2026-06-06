@@ -117,18 +117,18 @@ export default function WithoutSidebar() {
                         <ContextMenuContent>
                           <ContextMenuGroup>
                             <ContextMenuItem
-                              Icon={<Icon.Eye />}
-                              Body="View feature"
+                              icon={<Icon.Eye />}
+                              label="View feature"
                               onClick={() => handleViewFeature(feature.id)}
                             />
                             <ContextMenuItem
-                              Icon={<Icon.Link />}
-                              Body="Copy link"
+                              icon={<Icon.Link />}
+                              label="Copy link"
                               onClick={() => handleCopyLink(feature.id)}
                             />
                             <ContextMenuItem
-                              Icon={<Icon.Trash />}
-                              Body="Remove from roadmap"
+                              icon={<Icon.Trash />}
+                              label="Remove from roadmap"
                               onClick={() => handleRemoveFeature(feature.id)}
                             />
                           </ContextMenuGroup>

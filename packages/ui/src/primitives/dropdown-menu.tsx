@@ -43,7 +43,7 @@ function DropdownMenuSub({ ...props }: Menu.SubmenuRoot.Props) {
 
 type MenuItemVisualProps = Pick<
   React.ComponentProps<typeof MenuItem>,
-  "className" | "variant" | "desc" | "disabled"
+  "className" | "variant" | "desc"
 >;
 
 interface DropdownMenuSubTriggerProps
@@ -63,22 +63,19 @@ function DropdownMenuSubTrigger({
   children,
   className,
   desc,
-  disabled,
   variant,
   ...props
 }: DropdownMenuSubTriggerProps) {
   return (
     <Menu.SubmenuTrigger
       data-slot="dropdown-menu-sub-trigger"
-      disabled={disabled}
       label={typeof label === "string" ? label : undefined}
       render={
         <MenuItem
-          Body={label}
-          Icon={icon}
+          label={label}
+          icon={icon}
           className={className}
           desc={desc}
-          disabled={disabled}
           variant={variant}
         >
           {children}
@@ -162,11 +159,10 @@ function DropdownMenuContent({
 }
 
 interface DropdownMenuItemProps
-  extends Omit<Menu.Item.Props, "children" | "className" | "label" | "render">,
+  extends Omit<Menu.Item.Props, "className" | "label" | "render">,
     MenuItemVisualProps {
   icon?: React.ReactNode;
   label?: React.ReactNode;
-  children?: React.ReactNode;
 }
 
 function DropdownMenuItem({
@@ -174,21 +170,18 @@ function DropdownMenuItem({
   label,
   className,
   desc,
-  disabled,
   variant,
   ...props
 }: DropdownMenuItemProps) {
   return (
     <Menu.Item
       data-slot="dropdown-menu-item"
-      disabled={disabled}
       label={typeof label === "string" ? label : undefined}
       render={
         <MenuItem
-          Body={label}
-          Icon={icon}
+          label={label}
+          icon={icon}
           desc={desc}
-          disabled={disabled}
           variant={variant}
           className={className}
         />
@@ -215,22 +208,19 @@ function DropdownMenuCheckboxItem({
   children,
   className,
   desc,
-  disabled,
   variant,
   ...props
 }: DropdownMenuCheckboxItemProps) {
   return (
     <Menu.CheckboxItem
       data-slot="dropdown-menu-checkbox-item"
-      disabled={disabled}
       label={typeof label === "string" ? label : undefined}
       render={
         <MenuItem
-          Body={label}
-          Icon={icon}
+          label={label}
+          icon={icon}
           className={className}
           desc={desc}
-          disabled={disabled}
           variant={variant}
         >
           {children}
@@ -272,11 +262,15 @@ function DropdownMenuRadioItem({
   );
 }
 
-function DropdownMenuLabel({ ...props }: Menu.GroupLabel.Props) {
+interface DropdownMenuLabelProps extends Menu.GroupLabel.Props {
+  title: string;
+}
+
+function DropdownMenuLabel({ title, ...props }: DropdownMenuLabelProps) {
   return (
     <Menu.GroupLabel
       data-slot="dropdown-menu-label"
-      render={<MenuLabel />}
+      render={<MenuLabel title={title} />}
       {...props}
     />
   );

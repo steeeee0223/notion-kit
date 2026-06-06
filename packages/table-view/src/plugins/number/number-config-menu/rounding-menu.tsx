@@ -30,7 +30,7 @@ export function RoundingMenu({ round, onUpdate }: RoundingMenuProps) {
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <MenuItem Body="Decimal places">
+          <MenuItem label="Decimal places">
             <MenuItemSelect>
               {options.find((option) => option.value === round)?.label}
             </MenuItemSelect>

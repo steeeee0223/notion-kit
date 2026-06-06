@@ -34,8 +34,8 @@ export function StaticFeedCandidates({
       <DropdownMenuTrigger
         render={
           <MenuItem
-            Icon={<GoogleIcon.DataExploration className="size-4" />}
-            Body={
+            icon={<GoogleIcon.DataExploration className="size-4" />}
+            label={
               selectedCandidate?.name ??
               selectedCandidate?.feed_onestop_id ??
               selectedFeedLabel ??
@@ -50,7 +50,7 @@ export function StaticFeedCandidates({
       />
       <DropdownMenuContent align="start" className="w-80">
         <DropdownMenuGroup>
-          <DropdownMenuLabel>Feed Candidates</DropdownMenuLabel>
+          <DropdownMenuLabel title="Feed Candidates" />
           {visibleCandidates.map((candidate) => (
             <DropdownMenuCheckboxItem
               key={candidate.feed_onestop_id}

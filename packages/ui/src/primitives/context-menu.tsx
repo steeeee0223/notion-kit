@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { ContextMenu as ContextMenuPrimitive } from "@base-ui/react/context-menu";
 import { Menu } from "@base-ui/react/menu";
@@ -16,7 +14,7 @@ import {
   MenuLabel,
 } from "./menu";
 import { Separator } from "./separator";
-import { contentVariants } from "./variants";
+import { contentVariants, MenuItemVariants } from "./variants";
 
 function ContextMenu({ ...props }: ContextMenuPrimitive.Root.Props) {
   return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />;
@@ -96,29 +94,32 @@ function ContextMenuContent({
   );
 }
 
-type ContextMenuItemProps = React.ComponentProps<typeof MenuItem> &
-  Omit<Menu.Item.Props, "children" | "className" | "label" | "render">;
+interface ContextMenuItemProps
+  extends Omit<Menu.Item.Props, "className" | "label" | "render"> {
+  className?: string;
+  icon?: React.ReactNode;
+  label?: string;
+  desc?: string;
+  variant?: MenuItemVariants["variant"];
+}
 function ContextMenuItem({
-  Body,
-  Icon,
   className,
+  label,
+  icon,
   desc,
-  disabled,
   variant,
   ...props
 }: ContextMenuItemProps) {
   return (
     <Menu.Item
       data-slot="context-menu-item"
-      disabled={disabled}
-      label={typeof Body === "string" ? Body : undefined}
+      label={typeof label === "string" ? label : undefined}
       render={
         <MenuItem
-          Body={Body}
-          Icon={Icon}
+          label={label}
+          icon={icon}
           className={className}
           desc={desc}
-          disabled={disabled}
           variant={variant}
         />
       }
@@ -127,32 +128,35 @@ function ContextMenuItem({
   );
 }
 
+interface ContextMenuSubTriggerProps
+  extends Omit<Menu.SubmenuTrigger.Props, "className" | "label" | "render"> {
+  className?: string;
+  label?: string;
+  icon?: React.ReactNode;
+  desc?: string;
+  variant?: MenuItemVariants["variant"];
+  children?: React.ReactNode;
+}
+
 function ContextMenuSubTrigger({
-  Body,
-  Icon: ItemIcon,
   className,
+  label,
+  icon,
   desc,
-  disabled,
   variant,
   children,
   ...props
-}: React.ComponentProps<typeof MenuItem> &
-  Omit<
-    Menu.SubmenuTrigger.Props,
-    "children" | "className" | "label" | "render"
-  >) {
+}: ContextMenuSubTriggerProps) {
   return (
     <Menu.SubmenuTrigger
       data-slot="context-menu-sub-trigger"
-      disabled={disabled}
-      label={typeof Body === "string" ? Body : undefined}
+      label={typeof label === "string" ? label : undefined}
       render={
         <MenuItem
-          Body={Body}
-          Icon={ItemIcon}
+          label={label}
+          icon={icon}
           className={className}
           desc={desc}
-          disabled={disabled}
           variant={variant}
         >
           {children}
@@ -199,14 +203,24 @@ function ContextMenuSubContent({
   );
 }
 
-type ContextMenuCheckboxItemProps = React.ComponentProps<typeof MenuItem> &
-  Omit<Menu.CheckboxItem.Props, "children" | "className" | "label" | "render">;
+interface ContextMenuCheckboxItemProps
+  extends Omit<
+    Menu.CheckboxItem.Props,
+    "children" | "className" | "label" | "render"
+  > {
+  className?: string;
+  icon?: React.ReactNode;
+  label?: string;
+  desc?: string;
+  variant?: MenuItemVariants["variant"];
+  children?: React.ReactNode;
+}
+
 function ContextMenuCheckboxItem({
-  Body,
-  Icon,
   className,
+  label,
+  icon,
   desc,
-  disabled,
   variant,
   children,
   ...props
@@ -214,15 +228,13 @@ function ContextMenuCheckboxItem({
   return (
     <Menu.CheckboxItem
       data-slot="context-menu-checkbox-item"
-      disabled={disabled}
-      label={typeof Body === "string" ? Body : undefined}
+      label={typeof label === "string" ? label : undefined}
       render={
         <MenuItem
-          Body={Body}
-          Icon={Icon}
+          label={label}
+          icon={icon}
           className={className}
           desc={desc}
-          disabled={disabled}
           variant={variant}
         >
           {children}
@@ -239,15 +251,11 @@ function ContextMenuCheckboxItem({
 function ContextMenuRadioItem({
   className,
   children,
-  inset,
   ...props
-}: Menu.RadioItem.Props & {
-  inset?: boolean;
-}) {
+}: Menu.RadioItem.Props) {
   return (
     <Menu.RadioItem
       data-slot="context-menu-radio-item"
-      data-inset={inset}
       className={cn(
         "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 data-inset:pl-7 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
@@ -264,11 +272,15 @@ function ContextMenuRadioItem({
   );
 }
 
-function ContextMenuLabel({ ...props }: Menu.GroupLabel.Props) {
+interface ContextMenuLabelProps extends Menu.GroupLabel.Props {
+  title: string;
+}
+
+function ContextMenuLabel({ title, ...props }: ContextMenuLabelProps) {
   return (
     <Menu.GroupLabel
       data-slot="context-menu-label"
-      render={<MenuLabel />}
+      render={<MenuLabel title={title} />}
       {...props}
     />
   );
@@ -278,7 +290,7 @@ function ContextMenuSeparator({ className, ...props }: Menu.Separator.Props) {
   return (
     <Menu.Separator
       data-slot="context-menu-separator"
-      render={<Separator className={cn("m-0", className)} />}
+      render={<Separator className={className} />}
       {...props}
     />
   );

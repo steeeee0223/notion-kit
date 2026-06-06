@@ -1,11 +1,13 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import type { SelectPresetProps } from "@notion-kit/ui/primitives";
-import { SelectPreset as Select } from "@notion-kit/ui/primitives";
+import {
+  SelectPreset as Select,
+  type SelectPresetProps,
+} from "@notion-kit/ui/primitives";
 
 const meta = {
-  title: "blocks/Select",
+  title: "shadcn/Select",
   component: Select,
   parameters: { layout: "centered" },
 } satisfies Meta<typeof Select>;

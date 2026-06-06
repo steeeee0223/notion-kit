@@ -22,7 +22,7 @@ export default function Demo() {
       <DropdownMenuTrigger render={<Button size="md">Open</Button>} />
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
-          <DropdownMenuLabel>Appearance</DropdownMenuLabel>
+          <DropdownMenuLabel title="Appearance" />
           <DropdownMenuCheckboxItem
             checked={showStatusBar}
             onCheckedChange={setShowStatusBar}

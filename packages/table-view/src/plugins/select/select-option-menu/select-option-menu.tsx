@@ -42,8 +42,8 @@ export function SelectOptionMenu({
         <MenuItem
           variant="warning"
           onClick={onDelete}
-          Icon={<Icon.Trash />}
-          Body="Delete"
+          icon={<Icon.Trash />}
+          label="Delete"
         />
       </MenuGroup>
       <Separator />
@@ -52,8 +52,8 @@ export function SelectOptionMenu({
         {Object.entries(COLOR).map(([key, color]) => (
           <MenuItem
             key={key}
-            Icon={<ColorIcon color={color.rgba} />}
-            Body={color.name}
+            icon={<ColorIcon color={color.rgba} />}
+            label={color.name}
             onClick={() => onUpdate({ color: key as Color })}
           >
             {option.color === key && <MenuItemCheck />}

@@ -179,13 +179,14 @@ function ComboboxList({ className, ...props }: ComboboxPrimitive.List.Props) {
   return (
     <ComboboxPrimitive.List
       data-slot="combobox-list"
-      className={cn("max-h-[300px] overflow-auto overflow-x-hidden", className)}
+      className={cn("max-h-75 overflow-auto overflow-x-hidden", className)}
       {...props}
     />
   );
 }
 
 interface ComboboxItemProps extends ComboboxPrimitive.Item.Props {
+  className?: string;
   icon?: React.ReactNode;
   label?: React.ReactNode;
   desc?: string;
@@ -208,9 +209,9 @@ function ComboboxItem({
       value={value}
       render={
         <MenuItem
-          className={cn("data-highlighted:bg-default/5", className)}
-          Icon={icon}
-          Body={label ?? value}
+          className={className}
+          icon={icon}
+          label={label ?? value}
           desc={desc}
         />
       }
@@ -228,6 +229,7 @@ function ComboboxItem({
 }
 
 interface ComboboxCreatableItemProps extends ComboboxPrimitive.Item.Props {
+  className?: string;
   value: string;
 }
 

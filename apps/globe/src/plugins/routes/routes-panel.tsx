@@ -158,12 +158,12 @@ export function RoutesPanel() {
 
         {recentItems.length > 0 && (
           <>
-            <MenuLabel>Recent Routes</MenuLabel>
+            <MenuLabel title="Recent Routes" />
             {recentItems.map((item) => (
               <MenuItem
                 key={item.key}
-                Icon={<GoogleIcon.Route className="size-4" />}
-                Body={<div className="truncate">{item.title}</div>}
+                icon={<GoogleIcon.Route className="size-4" />}
+                label={<div className="truncate">{item.title}</div>}
                 desc={item.subtitle}
                 onClick={() => handleRouteSelect(item.value)}
               >

@@ -75,7 +75,7 @@ export function OptionItem({
         role="menuitem"
         style={style}
         onClick={() => onSelect(option.name)}
-        Icon={
+        icon={
           draggable ? (
             <div
               className="flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-icon"
@@ -86,7 +86,7 @@ export function OptionItem({
             </div>
           ) : null
         }
-        Body={<OptionTag {...option} />}
+        label={<OptionTag {...option} />}
       >
         <MenuItemAction className="flex items-center text-muted">
           <Popover>

@@ -27,7 +27,7 @@ export function LangMenu() {
               value={lang.value}
               onSelect={(lang) => store.setLang(lang)}
             >
-              <MenuItem Body={lang.label}>
+              <MenuItem label={lang.label}>
                 {lang.value === state.lang && <MenuItemCheck />}
               </MenuItem>
             </CommandItem>

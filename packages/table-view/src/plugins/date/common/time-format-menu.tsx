@@ -32,8 +32,8 @@ export function TimeFormatMenu({
       <DropdownMenuTrigger
         render={
           <MenuItem
-            Body="Time format"
-            Icon={showIcon ? <Icon.Clock /> : undefined}
+            label="Time format"
+            icon={showIcon ? <Icon.Clock /> : undefined}
           >
             <MenuItemSelect>
               {options.find((option) => option.value === format)?.label}

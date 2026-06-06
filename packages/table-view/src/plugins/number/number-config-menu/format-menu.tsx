@@ -27,7 +27,7 @@ export function FormatMenu({ format, onUpdate }: FormatMenuProps) {
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <MenuItem Body="Number format">
+          <MenuItem label="Number format">
             <MenuItemSelect>
               {options.find((option) => option.value === format)?.label}
             </MenuItemSelect>

@@ -143,11 +143,11 @@ export function LayerSidebar() {
                 {activeAdapter === id && (
                   <div className="mt-2 flex flex-col gap-2 border-t pt-3">
                     <MenuGroup>
-                      <MenuLabel>Layers</MenuLabel>
+                      <MenuLabel title="Layers" />
                       {pluginList.map((plugin) => (
                         <MenuItemSwitch
                           key={plugin.id}
-                          Body={plugin.name}
+                          label={plugin.name}
                           checked={plugin.enabled}
                           onCheckedChange={() => toggle(plugin.id)}
                         />

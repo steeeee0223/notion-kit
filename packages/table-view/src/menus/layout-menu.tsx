@@ -66,7 +66,7 @@ function RowViewMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <MenuItem Body="Open pages in">
+          <MenuItem label="Open pages in">
             <MenuItemSelect>{ROW_VIEW_OPTIONS[current].label}</MenuItemSelect>
           </MenuItem>
         }

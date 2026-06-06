@@ -81,8 +81,8 @@ export function SelectConfigMenu({
             <DropdownMenuTrigger
               render={
                 <MenuItem
-                  Icon={<Icon.ArrowUpDown />}
-                  Body="Sort"
+                  icon={<Icon.ArrowUpDown />}
+                  label="Sort"
                   aria-label="Sort options"
                 >
                   <MenuItemSelect>

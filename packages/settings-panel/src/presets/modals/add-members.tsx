@@ -40,6 +40,7 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   Separator,
   Spinner,
@@ -361,27 +362,20 @@ function RolesField() {
                   <RoleOption option={roleOptions[selectedRole]} />
                 </SelectTrigger>
                 <SelectContent
-                  position="popper"
                   side="bottom"
                   align="start"
                   className="w-(--anchor-width)"
                 >
                   <SelectGroup>
-                    <MenuLabel>{t("role-label")}</MenuLabel>
+                    <SelectLabel title={t("role-label")} />
                     {Object.entries(roleOptions).map(([value, option]) => (
                       <SelectItem
                         key={value}
                         value={value}
-                        Icon={option.icon}
+                        icon={option.icon}
                         label={option.label}
-                      >
-                        <div className="space-y-1 whitespace-normal">
-                          <div className="text-sm">{option.label}</div>
-                          <div className="text-xs text-secondary">
-                            {option.description}
-                          </div>
-                        </div>
-                      </SelectItem>
+                        desc={option.description}
+                      />
                     ))}
                   </SelectGroup>
                 </SelectContent>
