@@ -66,7 +66,9 @@ export function DeleteWorkspace({ name, onSubmit }: DeleteWorkspaceProps) {
             render={({ field }) => (
               <FormItem>
                 <FormControl
-                  render={<Input placeholder={name} {...field} data-size="lg" />}
+                  render={
+                    <Input placeholder={name} {...field} data-size="lg" />
+                  }
                 />
               </FormItem>
             )}

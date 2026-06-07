@@ -55,9 +55,7 @@ export function ChangeBillingEmail({
             render={({ field }) => (
               <FormItem>
                 <FormControl
-                  render={
-                    <Input type="email" placeholder={email} {...field} />
-                  }
+                  render={<Input type="email" placeholder={email} {...field} />}
                 />
               </FormItem>
             )}

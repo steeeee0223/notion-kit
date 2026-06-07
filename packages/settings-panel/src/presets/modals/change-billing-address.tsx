@@ -271,7 +271,9 @@ function ChangeBillingAddressNative({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("postal-code")}</FormLabel>
-                <FormControl render={<Input placeholder="94107" {...field} />} />
+                <FormControl
+                  render={<Input placeholder="94107" {...field} />}
+                />
               </FormItem>
             )}
           />

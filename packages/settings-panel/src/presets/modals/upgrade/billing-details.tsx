@@ -42,7 +42,10 @@ export function BillingDetails() {
             <FormLabel>{t("business-name-label")}</FormLabel>
             <FormControl
               render={
-                <Input placeholder={t("business-name-placeholder")} {...field} />
+                <Input
+                  placeholder={t("business-name-placeholder")}
+                  {...field}
+                />
               }
             />
             <FormMessage />
