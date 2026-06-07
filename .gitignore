@@ -60,6 +60,9 @@ dist/
 # turbo
 .turbo
 
+# docs registry
+docs/public/registry/
+
 # storybook
 storybook-static/
 *storybook.log
