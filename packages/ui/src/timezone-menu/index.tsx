@@ -4,15 +4,16 @@ import React from "react";
 import { tzOffset } from "@date-fns/tz";
 
 import { cn } from "@notion-kit/cn";
-import { useFilter } from "@notion-kit/hooks";
 
 import {
-  Command,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  MenuItem,
+  Autocomplete,
+  AutocompleteCollection,
+  AutocompleteContent,
+  AutocompleteGroup,
+  AutocompleteInput,
+  AutocompleteItem,
+  AutocompleteLabel,
+  AutocompleteList,
   MenuItemCheck,
   Popover,
   PopoverContent,
@@ -38,9 +39,19 @@ export function TimezoneMenu({
 }: TimezoneMenuProps) {
   const defaultTz =
     currentTz ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const { search, results, updateSearch } = useFilter(
-    Intl.supportedValuesOf("timeZone"),
-    (tz, v) => tz.toLowerCase().includes(v),
+  const timezones = React.useMemo(
+    () => Intl.supportedValuesOf("timeZone"),
+    [],
+  );
+  const timezoneGroups = React.useMemo(
+    () => [
+      { label: "Current timezone", items: [defaultTz] },
+      {
+        label: "Select a timezone",
+        items: timezones.filter((tz) => tz !== defaultTz),
+      },
+    ],
+    [defaultTz, timezones],
   );
 
   return (
@@ -49,38 +60,34 @@ export function TimezoneMenu({
         {renderTrigger({ tz: defaultTz, gmt: getGmtStr(defaultTz) })}
       </PopoverTrigger>
       <PopoverContent className={cn("w-[342px]", className)}>
-        <Command shouldFilter={false}>
-          <CommandInput
-            value={search}
-            onValueChange={updateSearch}
-            placeholder={"Search cities, timezones..."}
-          />
-          <CommandList className="max-h-100 overflow-y-auto">
-            <CommandGroup
-              className={cn(
-                "flex flex-col gap-px px-0",
-                "**:[[cmdk-group-heading]]:mt-1.5 **:[[cmdk-group-heading]]:mb-2 **:[[cmdk-group-heading]]:flex **:[[cmdk-group-heading]]:items-center **:[[cmdk-group-heading]]:truncate **:[[cmdk-group-heading]]:px-3.5 **:[[cmdk-group-heading]]:py-0 **:[[cmdk-group-heading]]:leading-tight **:[[cmdk-group-heading]]:text-secondary **:[[cmdk-group-heading]]:select-none",
+        <Autocomplete<string>
+          items={timezoneGroups}
+          itemToStringValue={(tz) => tz}
+          open
+          autoHighlight="always"
+          openOnInputClick
+        >
+          <AutocompleteInput placeholder="Search cities, timezones..." />
+          <AutocompleteContent variant="inline">
+            <AutocompleteList className="max-h-100 overflow-y-auto">
+              {(group: (typeof timezoneGroups)[number]) => (
+                <AutocompleteGroup key={group.label} items={group.items}>
+                  <AutocompleteLabel title={group.label} />
+                  <AutocompleteCollection>
+                    {(tz: string) => (
+                      <TzItem
+                        key={tz}
+                        checked={tz === defaultTz}
+                        tz={tz}
+                        onSelect={onChange}
+                      />
+                    )}
+                  </AutocompleteCollection>
+                </AutocompleteGroup>
               )}
-              heading="Current timezone"
-            >
-              <TzItem checked tz={defaultTz} onSelect={onChange} />
-            </CommandGroup>
-            {results && results.length > 0 && (
-              <CommandGroup
-                className={cn(
-                  "flex flex-col gap-px px-0",
-                  "**:[[cmdk-group-heading]]:mt-1.5 **:[[cmdk-group-heading]]:mb-2 **:[[cmdk-group-heading]]:flex **:[[cmdk-group-heading]]:items-center **:[[cmdk-group-heading]]:truncate **:[[cmdk-group-heading]]:px-3.5 **:[[cmdk-group-heading]]:py-0 **:[[cmdk-group-heading]]:leading-tight **:[[cmdk-group-heading]]:text-secondary **:[[cmdk-group-heading]]:select-none",
-                )}
-                heading="Select a timezone"
-              >
-                {results.map((tz) => {
-                  if (tz === defaultTz) return null;
-                  return <TzItem key={tz} tz={tz} onSelect={onChange} />;
-                })}
-              </CommandGroup>
-            )}
-          </CommandList>
-        </Command>
+            </AutocompleteList>
+          </AutocompleteContent>
+        </Autocomplete>
       </PopoverContent>
     </Popover>
   );
@@ -94,15 +101,15 @@ interface TzItemProps {
 
 function TzItem({ tz, checked, onSelect }: TzItemProps) {
   return (
-    <CommandItem asChild value={tz} onSelect={onSelect}>
-      <MenuItem
-        className="h-11"
-        label={tz.replace("_", " ")}
-        desc={getGmtStr(tz)}
-      >
-        {checked && <MenuItemCheck />}
-      </MenuItem>
-    </CommandItem>
+    <AutocompleteItem
+      className="h-11"
+      value={tz}
+      label={tz.replace("_", " ")}
+      desc={getGmtStr(tz)}
+      onClick={() => onSelect?.(tz)}
+    >
+      {checked && <MenuItemCheck />}
+    </AutocompleteItem>
   );
 }
 
