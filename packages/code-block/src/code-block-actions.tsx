@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 import { useCopyToClipboard } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import {
-  Command,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
+  Autocomplete,
+  AutocompleteCollection,
+  AutocompleteContent,
+  AutocompleteGroup,
+  AutocompleteInput,
+  AutocompleteItem,
+  AutocompleteLabel,
+  AutocompleteList,
+  AutocompleteSeparator,
   MenuFooter,
-  MenuItem,
   MenuItemAction,
   MenuItemSelect,
   MenuItemShortcut,
@@ -35,93 +37,166 @@ export function CodeBlockActions() {
   const [openThemeSelect, setOpenThemeSelect] = useState(false);
   const [openLangSelect, setOpenLangSelect] = useState(false);
 
+  type CodeAction = {
+    value: string;
+    name: string;
+    icon: ReactNode;
+    shortcut?: string;
+    action?: ReactNode;
+    onClick?: () => void | Promise<void>;
+    popover?: "language" | "theme";
+  };
+
+  const actions: CodeAction[] = [];
+
+  if (!readonly) {
+    actions.push({
+      value: "caption",
+      name: "Caption",
+      icon: <Icon.Caption />,
+      shortcut: `${KEYBOARD.CMD}${KEYBOARD.OPTION}M`,
+      onClick: () => store.enableCaption(),
+    });
+  }
+
+  actions.push(
+    {
+      value: "copy-code",
+      name: "Copy code",
+      icon: <Icon.CopyCode />,
+      onClick: () => copy(state.code),
+    },
+    {
+      value: "wrap-code",
+      name: "Wrap code",
+      icon: <Icon.ArrowTurnDownLeft />,
+      onClick: store.toggleWrap,
+      action: (
+        <MenuItemAction>
+          <Switch size="sm" checked={state.wrap} />
+        </MenuItemAction>
+      ),
+    },
+  );
+
+  if (!readonly) {
+    actions.push({
+      value: "language",
+      name: "Language",
+      icon: <Icon.CurlyBraces />,
+      popover: "language" as const,
+    });
+  }
+
+  if (!readonly && isFormattable(state.lang)) {
+    actions.push({
+      value: "format-code",
+      name: "Format code",
+      icon: <Icon.Lightning />,
+      onClick: store.formatCode,
+    });
+  }
+
+  actions.push(
+    {
+      value: "theme",
+      name: "Theme",
+      icon: <Icon.EmojiFace />,
+      popover: "theme" as const,
+    },
+  );
+
   return (
-    <Command shouldFilter>
-      <CommandInput placeholder="Search actions..." />
-      <CommandList>
-        <CommandGroup heading="Code">
-          {!readonly && (
-            <CommandItem
-              asChild
-              value="caption"
-              onSelect={() => store.enableCaption()}
-            >
-              <MenuItem icon={<Icon.Caption />} label="Caption">
-                <MenuItemShortcut>
-                  {KEYBOARD.CMD}
-                  {KEYBOARD.OPTION}M
-                </MenuItemShortcut>
-              </MenuItem>
-            </CommandItem>
-          )}
-          <CommandItem
-            asChild
-            value="copy-code"
-            onSelect={() => copy(state.code)}
-          >
-            <MenuItem icon={<Icon.CopyCode />} label="Copy code" />
-          </CommandItem>
-          <CommandItem asChild value="wrap-code" onSelect={store.toggleWrap}>
-            <MenuItem icon={<Icon.ArrowTurnDownLeft />} label="Wrap code">
-              <MenuItemAction>
-                <Switch size="sm" checked={state.wrap} />
-              </MenuItemAction>
-            </MenuItem>
-          </CommandItem>
-          {!readonly && (
-            <Popover open={openLangSelect} onOpenChange={setOpenLangSelect}>
-              <PopoverTrigger asChild>
-                <CommandItem
-                  asChild
-                  value="language"
-                  onPointerEnter={() => setOpenLangSelect(true)}
-                  onSelect={() => setOpenLangSelect((v) => !v)}
-                >
-                  <MenuItem icon={<Icon.CurlyBraces />} label="Language">
-                    <MenuItemSelect />
-                  </MenuItem>
-                </CommandItem>
-              </PopoverTrigger>
-              <PopoverContent side="left" className="w-60">
-                <LangMenu />
-              </PopoverContent>
-            </Popover>
-          )}
-          {!readonly && isFormattable(state.lang) && (
-            <CommandItem
-              asChild
-              value="format-code"
-              onSelect={store.formatCode}
-            >
-              <MenuItem icon={<Icon.Lightning />} label="Format code" />
-            </CommandItem>
-          )}
-          <Popover open={openThemeSelect} onOpenChange={setOpenThemeSelect}>
-            <PopoverTrigger asChild>
-              <CommandItem
-                asChild
-                value="theme"
-                onPointerEnter={() => setOpenThemeSelect(true)}
-                onSelect={() => setOpenThemeSelect((v) => !v)}
-              >
-                <MenuItem icon={<Icon.EmojiFace />} label="Theme">
-                  <MenuItemSelect />
-                </MenuItem>
-              </CommandItem>
-            </PopoverTrigger>
-            <PopoverContent side="left" className="w-60">
-              <ThemeMenu />
-            </PopoverContent>
-          </Popover>
-        </CommandGroup>
-        <CommandSeparator />
-        <MenuFooter>
-          {lastEditedBy && (
-            <div className="w-full">Last edited by {lastEditedBy}</div>
-          )}
-          <div className="w-full">{toDateString(state.ts)}</div>
-        </MenuFooter>
-      </CommandList>
-    </Command>
+    <Autocomplete
+      items={actions}
+      itemToStringValue={(action) => action.name}
+      open
+      autoHighlight="always"
+      openOnInputClick
+    >
+      <AutocompleteInput placeholder="Search actions..." />
+      <AutocompleteContent role="presentation" variant="inline">
+        <AutocompleteList>
+          <AutocompleteGroup items={actions}>
+            <AutocompleteLabel title="Code" />
+            <AutocompleteCollection>
+              {(action: (typeof actions)[number]) => {
+                if (action.popover === "language") {
+                  return (
+                    <Popover
+                      key={action.value}
+                      open={openLangSelect}
+                      onOpenChange={setOpenLangSelect}
+                    >
+                      <PopoverTrigger asChild>
+                        <AutocompleteItem
+                          value={action}
+                          icon={action.icon}
+                          label={action.name}
+                          onPointerEnter={() => setOpenLangSelect(true)}
+                          onClick={() => setOpenLangSelect((v) => !v)}
+                        >
+                          <MenuItemSelect />
+                        </AutocompleteItem>
+                      </PopoverTrigger>
+                      <PopoverContent side="left" className="w-60">
+                        <LangMenu />
+                      </PopoverContent>
+                    </Popover>
+                  );
+                }
+
+                if (action.popover === "theme") {
+                  return (
+                    <Popover
+                      key={action.value}
+                      open={openThemeSelect}
+                      onOpenChange={setOpenThemeSelect}
+                    >
+                      <PopoverTrigger asChild>
+                        <AutocompleteItem
+                          value={action}
+                          icon={action.icon}
+                          label={action.name}
+                          onPointerEnter={() => setOpenThemeSelect(true)}
+                          onClick={() => setOpenThemeSelect((v) => !v)}
+                        >
+                          <MenuItemSelect />
+                        </AutocompleteItem>
+                      </PopoverTrigger>
+                      <PopoverContent side="left" className="w-60">
+                        <ThemeMenu />
+                      </PopoverContent>
+                    </Popover>
+                  );
+                }
+
+                return (
+                  <AutocompleteItem
+                    key={action.value}
+                    value={action}
+                    icon={action.icon}
+                    label={action.name}
+                    onClick={action.onClick}
+                  >
+                    {action.shortcut && (
+                      <MenuItemShortcut>{action.shortcut}</MenuItemShortcut>
+                    )}
+                    {action.action}
+                  </AutocompleteItem>
+                );
+              }}
+            </AutocompleteCollection>
+          </AutocompleteGroup>
+          <AutocompleteSeparator />
+          <MenuFooter>
+            {lastEditedBy && (
+              <div className="w-full">Last edited by {lastEditedBy}</div>
+            )}
+            <div className="w-full">{toDateString(state.ts)}</div>
+          </MenuFooter>
+        </AutocompleteList>
+      </AutocompleteContent>
+    </Autocomplete>
   );
 }

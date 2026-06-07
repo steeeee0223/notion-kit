@@ -11,6 +11,12 @@ export const Index: Record<
     component: React.LazyExoticComponent<React.ComponentType<object>>;
   }
 > = {
+  "autocomplete-menu": {
+    files: ["registry/src/autocomplete-menu/autocomplete-menu.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/autocomplete-menu"),
+    ),
+  },
   "badge-default": {
     files: ["registry/src/badge-default/badge-default.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/badge-default")),
@@ -90,6 +96,10 @@ export const Index: Record<
     component: React.lazy(
       () => import("@notion-kit/registry/code-block-readonly"),
     ),
+  },
+  "command-dialog": {
+    files: ["registry/src/command-dialog/command-dialog.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/command-dialog")),
   },
   "context-menu": {
     files: ["registry/src/context-menu/context-menu.tsx"],

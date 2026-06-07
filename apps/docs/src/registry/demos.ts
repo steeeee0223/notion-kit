@@ -6,6 +6,8 @@
  * 2. Auto-discover source files for the code preview panel
  */
 export const DEMOS = [
+  // Autocomplete
+  "autocomplete-menu",
   // Badge
   "badge-default",
   "badge-sizes",
@@ -27,6 +29,8 @@ export const DEMOS = [
   "code-block-default",
   "code-block-mermaid",
   "code-block-readonly",
+  // Command
+  "command-dialog",
   // Context Menu
   "context-menu",
   // Cover

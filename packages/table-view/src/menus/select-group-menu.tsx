@@ -2,13 +2,14 @@
 
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  MenuItem,
+  Autocomplete,
+  AutocompleteCollection,
+  AutocompleteContent,
+  AutocompleteEmpty,
+  AutocompleteGroup,
+  AutocompleteInput,
+  AutocompleteItem,
+  AutocompleteList,
   MenuItemCheck,
 } from "@notion-kit/ui/primitives";
 
@@ -36,6 +37,12 @@ export function SelectGroupMenu() {
       page: TableViewMenuPage.EditGroupBy,
     });
   };
+  const groupOptions = [
+    ...(tableGlobal.layout !== "board"
+      ? [{ kind: "none" as const, id: null, name: "None" }]
+      : []),
+    ...options.map((option) => ({ kind: "column" as const, ...option })),
+  ];
 
   return (
     <>
@@ -48,45 +55,50 @@ export function SelectGroupMenu() {
           })
         }
       />
-      <Command shouldFilter>
-        <CommandInput placeholder="Search for a property" />
-        <CommandList>
-          <CommandGroup className="h-40 overflow-y-auto">
-            {tableGlobal.layout !== "board" && (
-              <CommandItem value="none" asChild>
-                <MenuItem label="None" onClick={() => selectGroup(null)}>
-                  {groupingColId === undefined && <MenuItemCheck />}
-                </MenuItem>
-              </CommandItem>
-            )}
-            {options.map(({ id, name, type, icon }) => (
-              <CommandItem
-                key={id}
-                value={name}
-                onSelect={() => selectGroup(id)}
-                asChild
-              >
-                <MenuItem
-                  key={id}
-                  icon={
-                    icon ? (
-                      <IconBlock icon={icon} />
-                    ) : (
-                      <DefaultIcon type={type} />
-                    )
-                  }
-                  label={name}
-                >
-                  {groupingColId === id && <MenuItemCheck />}
-                </MenuItem>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-          <CommandEmpty className="px-3 text-start text-muted">
-            No results
-          </CommandEmpty>
-        </CommandList>
-      </Command>
+      <Autocomplete
+        items={groupOptions}
+        itemToStringValue={(option) => option.name}
+        open
+        autoHighlight="always"
+        openOnInputClick
+      >
+        <AutocompleteInput placeholder="Search for a property" />
+        <AutocompleteContent role="presentation" variant="inline">
+          <AutocompleteList>
+            <AutocompleteGroup
+              className="h-40 overflow-y-auto"
+              items={groupOptions}
+            >
+              <AutocompleteCollection>
+                {(option: (typeof groupOptions)[number]) => (
+                  <AutocompleteItem
+                    key={option.id ?? "none"}
+                    value={option}
+                    label={option.name}
+                    icon={
+                      option.kind === "column" ? (
+                        option.icon ? (
+                          <IconBlock icon={option.icon} />
+                        ) : (
+                          <DefaultIcon type={option.type} />
+                        )
+                      ) : null
+                    }
+                    onClick={() => selectGroup(option.id)}
+                  >
+                    {groupingColId === (option.id ?? undefined) && (
+                      <MenuItemCheck />
+                    )}
+                  </AutocompleteItem>
+                )}
+              </AutocompleteCollection>
+            </AutocompleteGroup>
+            <AutocompleteEmpty className="px-3 text-start text-muted">
+              No results
+            </AutocompleteEmpty>
+          </AutocompleteList>
+        </AutocompleteContent>
+      </Autocomplete>
     </>
   );
 }

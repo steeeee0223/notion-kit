@@ -1,0 +1,38 @@
+---
+title: Autocomplete
+description: A Base UI autocomplete composed with Notion-style menu groups, items, labels, and separators.
+---
+
+<ComponentPreview
+  name="autocomplete-menu"
+  preview={`<AutocompleteMenu />`}
+/>
+
+## Installation
+
+<Installation packages="@notion-kit/ui" registryName="autocomplete-menu" />
+
+## Anatomy
+
+```
+<Autocomplete>
+  <AutocompleteInput />
+  <AutocompleteContent>
+    <AutocompleteEmpty />
+    <AutocompleteList>
+      <AutocompleteGroup>
+        <AutocompleteLabel />
+        <AutocompleteCollection>
+          <AutocompleteItem />
+        </AutocompleteCollection>
+      </AutocompleteGroup>
+    </AutocompleteList>
+  </AutocompleteContent>
+</Autocomplete>
+```
+
+## API Reference
+
+Use `Autocomplete` as the Base UI root. Render items through `AutocompleteCollection` when the root receives `items`; this keeps filtering inside Base UI. `AutocompleteItem` uses the shared menu item visuals, so pass `icon`, `label`, `desc`, and trailing content through `MenuItemAction`.
+
+Use `AutocompleteContent variant="inline"` for popover menus where the outer popover is already responsible for positioning.

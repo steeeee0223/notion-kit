@@ -1,0 +1,35 @@
+---
+title: Command
+description: A dialog-only command palette built on the autocomplete primitive.
+---
+
+<ComponentPreview
+  name="command-dialog"
+  preview={`<CommandDialogDemo />`}
+/>
+
+## Installation
+
+<Installation packages="@notion-kit/ui" registryName="command-dialog" />
+
+## Anatomy
+
+```
+<CommandDialog>
+  <CommandInput />
+  <CommandList>
+    <CommandGroup>
+      <CommandCollection>
+        <CommandItem />
+      </CommandCollection>
+    </CommandGroup>
+    <CommandEmpty />
+  </CommandList>
+</CommandDialog>
+```
+
+## API Reference
+
+`Command` is intentionally exposed only as a dialog surface. Use `CommandDialog` for command palettes and use `Autocomplete` directly for popover menus.
+
+Pass `items` and `itemToStringValue` to `CommandDialog`, then render filtered rows through `CommandCollection`. `CommandItem` follows the menu item pattern: use `icon` and `label` props for the leading icon and main label, and use `MenuItemAction` for trailing metadata or shortcuts.

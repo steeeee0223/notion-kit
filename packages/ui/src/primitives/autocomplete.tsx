@@ -50,10 +50,10 @@ type AutocompleteInputProps = Omit<
   keyof InputProps | "render"
 > &
   Omit<InputProps, "onChange" | "value" | "defaultValue"> & {
-  classNames?: {
-    wrapper?: string;
+    classNames?: {
+      wrapper?: string;
+    };
   };
-};
 
 function AutocompleteInput({
   className,
@@ -145,44 +145,20 @@ function AutocompleteContent({
   alignOffset,
   anchor,
   collisionPadding,
+  style,
   ...props
 }: AutocompleteContentProps) {
-  const [inlineContainer, setInlineContainer] =
-    React.useState<HTMLDivElement | null>(null);
-
   if (variant === "inline") {
     return (
-      <>
-        <div ref={setInlineContainer} className="relative z-10 w-full" />
-        {inlineContainer && (
-          <AutocompletePrimitive.Portal container={inlineContainer}>
-            <AutocompletePrimitive.Positioner
-              align={align}
-              alignOffset={alignOffset}
-              anchor={anchor}
-              collisionPadding={collisionPadding}
-              side={side}
-              sideOffset={sideOffset}
-              className="relative w-full"
-              style={{
-                position: "relative",
-                inset: "auto",
-                transform: "none",
-              }}
-            >
-              <AutocompletePrimitive.Popup
-                data-slot="autocomplete-content"
-                data-variant={variant}
-                className={cn(
-                  "group/autocomplete-content relative w-full overflow-hidden rounded-md bg-modal",
-                  className,
-                )}
-                {...props}
-              />
-            </AutocompletePrimitive.Positioner>
-          </AutocompletePrimitive.Portal>
+      <div
+        data-slot="autocomplete-content"
+        data-variant={variant}
+        className={cn(
+          "group/autocomplete-content relative w-full overflow-hidden",
+          className,
         )}
-      </>
+        {...props}
+      />
     );
   }
 
@@ -200,9 +176,10 @@ function AutocompleteContent({
         <AutocompletePrimitive.Popup
           data-slot="autocomplete-content"
           data-variant={variant}
+          style={style}
           className={cn(
-            contentVariants({ variant: "default", openAnimation: true }),
-            "group/autocomplete-content max-h-[min(calc(var(--available-height)-8px),300px)] w-(--anchor-width) min-w-(--anchor-width) overflow-hidden rounded-md bg-modal",
+            contentVariants({ variant: "popover", openAnimation: true }),
+            "group/autocomplete-content max-h-[min(calc(var(--available-height)-8px),300px)] w-(--anchor-width) min-w-(--anchor-width) overflow-hidden",
             className,
           )}
           {...props}
@@ -240,11 +217,8 @@ function AutocompleteGroup({
 }
 
 interface AutocompleteLabelProps
-  extends Omit<
-    AutocompletePrimitive.GroupLabel.Props,
-    "children" | "render" | "title"
-  > {
-  title: React.ReactNode;
+  extends AutocompletePrimitive.GroupLabel.Props {
+  title: string;
 }
 
 function AutocompleteLabel({ title, ...props }: AutocompleteLabelProps) {
@@ -278,7 +252,6 @@ function AutocompleteItem<ItemValue = string>({
   label,
   desc,
   variant,
-  children,
   ...props
 }: AutocompleteItemProps<ItemValue>) {
   return (
@@ -295,9 +268,7 @@ function AutocompleteItem<ItemValue = string>({
         />
       }
       {...props}
-    >
-      {children}
-    </AutocompletePrimitive.Item>
+    />
   );
 }
 
@@ -322,7 +293,8 @@ function AutocompleteEmpty({
     <AutocompletePrimitive.Empty
       data-slot="autocomplete-empty"
       className={cn(
-        "min-h-7 items-center p-2 text-sm/tight text-secondary select-none",
+        "hidden min-h-7 items-center p-2 text-sm/tight text-secondary select-none",
+        "group-data-empty/autocomplete-content:flex",
         className,
       )}
       {...props}

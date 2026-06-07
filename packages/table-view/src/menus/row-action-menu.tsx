@@ -7,12 +7,15 @@ import { Icon } from "@notion-kit/icons";
 import type { IconData } from "@notion-kit/ui/icon-block";
 import { IconMenu } from "@notion-kit/ui/icon-menu";
 import {
-  Command,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
+  Autocomplete,
+  AutocompleteCollection,
+  AutocompleteContent,
+  AutocompleteGroup,
+  AutocompleteInput,
+  AutocompleteItem,
+  AutocompleteLabel,
+  AutocompleteList,
+  AutocompleteSeparator,
   MenuItem,
   MenuItemShortcut,
 } from "@notion-kit/ui/primitives";
@@ -116,40 +119,50 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
   useHotkeys("backspace", deleteRow);
 
   return (
-    <Command shouldFilter>
-      <CommandInput placeholder="Search actions..." />
-      <CommandList>
-        <CommandGroup heading="Page">
-          <IconMenu
-            className="w-full border-none text-start hover:bg-transparent"
-            onSelect={selectIcon}
-            onRemove={removeIcon}
-            onUpload={uploadIcon}
-          >
-            <MenuItem
-              icon={<Icon.EmojiFace className="size-5" />}
-              label="Edit icon"
-            />
-          </IconMenu>
-        </CommandGroup>
-        <CommandSeparator />
-        <CommandGroup>
-          {actions.map((prop) => (
-            <CommandItem
-              asChild
-              key={prop.value}
-              value={prop.value}
-              onSelect={prop.onSelect}
+    <Autocomplete
+      items={actions}
+      itemToStringValue={(action) => action.name}
+      open
+      autoHighlight="always"
+      openOnInputClick
+    >
+      <AutocompleteInput placeholder="Search actions..." />
+      <AutocompleteContent role="presentation" variant="inline">
+        <AutocompleteList>
+          <AutocompleteGroup>
+            <AutocompleteLabel title="Page" />
+            <IconMenu
+              className="w-full border-none text-start hover:bg-transparent"
+              onSelect={selectIcon}
+              onRemove={removeIcon}
+              onUpload={uploadIcon}
             >
-              <MenuItem icon={prop.icon} label={prop.name}>
-                {prop.shortcut && (
-                  <MenuItemShortcut>{prop.shortcut}</MenuItemShortcut>
-                )}
-              </MenuItem>
-            </CommandItem>
-          ))}
-        </CommandGroup>
-      </CommandList>
-    </Command>
+              <MenuItem
+                icon={<Icon.EmojiFace className="size-5" />}
+                label="Edit icon"
+              />
+            </IconMenu>
+          </AutocompleteGroup>
+          <AutocompleteSeparator />
+          <AutocompleteGroup items={actions}>
+            <AutocompleteCollection>
+              {(action: (typeof actions)[number]) => (
+                <AutocompleteItem
+                  key={action.value}
+                  value={action}
+                  icon={action.icon}
+                  label={action.name}
+                  onClick={action.onSelect}
+                >
+                  {action.shortcut && (
+                    <MenuItemShortcut>{action.shortcut}</MenuItemShortcut>
+                  )}
+                </AutocompleteItem>
+              )}
+            </AutocompleteCollection>
+          </AutocompleteGroup>
+        </AutocompleteList>
+      </AutocompleteContent>
+    </Autocomplete>
   );
 }
