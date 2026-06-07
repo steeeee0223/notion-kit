@@ -35,7 +35,6 @@ import {
   FormItem,
   FormLabel,
   MenuItemAction,
-  MenuLabel,
   Select,
   SelectContent,
   SelectGroup,

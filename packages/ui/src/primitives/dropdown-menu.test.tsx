@@ -9,7 +9,7 @@ import {
 } from "./dropdown-menu";
 
 describe("DropdownMenu", () => {
-  it("composes the trigger with the Base UI render prop", async () => {
+  it("composes the trigger with the Base UI render prop", () => {
     render(
       <DropdownMenu defaultOpen>
         <DropdownMenuTrigger render={<button type="button">Open</button>} />

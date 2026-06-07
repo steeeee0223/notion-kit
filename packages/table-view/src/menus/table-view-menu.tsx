@@ -121,8 +121,8 @@ function TableMenu() {
       <MenuGroup>
         <MenuItem
           {...(locked
-            ? { Icon: <Icon.LockOpen />, Body: "Unlock database" }
-            : { Icon: <Icon.Lock />, Body: "Lock database" })}
+            ? { icon: <Icon.LockOpen />, label: "Unlock database" }
+            : { icon: <Icon.Lock />, label: "Lock database" })}
           onClick={table.toggleTableLocked}
         />
       </MenuGroup>
