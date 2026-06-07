@@ -1,6 +1,7 @@
 /** Variants */
 export * from "./variants";
 /** Shadcn UI */
+export * from "./autocomplete";
 export * from "./avatar";
 export * from "./badge";
 export * from "./button";
