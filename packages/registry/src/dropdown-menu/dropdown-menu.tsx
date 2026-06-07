@@ -41,10 +41,14 @@ export default function Demo() {
             <DropdownMenuSubTrigger label="Invite users" />
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
-                <DropdownMenuItem label="Email" />
-                <DropdownMenuItem label="Message" />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem label="Email" />
+                  <DropdownMenuItem label="Message" />
+                </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem label="More..." />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem label="More..." />
+                </DropdownMenuGroup>
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>

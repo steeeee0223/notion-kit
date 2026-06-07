@@ -128,17 +128,13 @@ function SelectContent({
           data-slot="select-content"
           className={cn(
             "relative max-h-96 min-w-32 overflow-hidden",
-            "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
             contentVariants({ variant: "popover", sideAnimation: true }),
             className,
           )}
           {...props}
         >
           <SelectScrollUpButton />
-          <SelectPrimitive.List
-            data-slot="select-list"
-            className="max-h-96 py-1"
-          >
+          <SelectPrimitive.List data-slot="select-list" className="max-h-96">
             {children}
           </SelectPrimitive.List>
           <SelectScrollDownButton />
