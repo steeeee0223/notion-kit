@@ -83,44 +83,32 @@ export function TransitEntitySearch<T>({
         >
           <AutocompleteInput placeholder={placeholder} />
           <AutocompleteContent role="presentation" variant="inline">
+            {!isLoading && (
+              <AutocompleteEmpty className="py-6 text-center text-sm text-secondary">
+                No matches found
+              </AutocompleteEmpty>
+            )}
             <AutocompleteList className="max-h-100 overflow-y-auto">
-              {recentItems.length > 0 && (
-                <AutocompleteGroup
-                  className="flex flex-col gap-px px-0"
-                  items={recentItems}
-                >
-                  <AutocompleteLabel title="Recent" />
-                  <AutocompleteCollection>
-                    {(item: TransitSearchItem<T>) => (
-                      <SearchItem
-                        key={`recent-${item.key}`}
-                        item={item}
-                        onSelect={handleSelect}
-                      />
-                    )}
-                  </AutocompleteCollection>
-                </AutocompleteGroup>
-              )}
-              <AutocompleteGroup
-                className="flex flex-col gap-px px-0"
-                items={items}
-              >
-                <AutocompleteLabel title={label} />
-                <AutocompleteCollection>
-                  {(item: TransitSearchItem<T>) => (
-                    <SearchItem
-                      key={item.key}
-                      item={item}
-                      onSelect={handleSelect}
-                    />
-                  )}
-                </AutocompleteCollection>
-              </AutocompleteGroup>
-              {!isLoading && (
-                <AutocompleteEmpty className="py-6 text-center text-sm text-secondary">
-                  No matches found
-                </AutocompleteEmpty>
-              )}
+              {(group: (typeof groups)[number]) => {
+                if (group.label === "Recent" && group.items.length === 0) {
+                  return null;
+                }
+
+                return (
+                  <AutocompleteGroup key={group.label} items={group.items}>
+                    <AutocompleteLabel title={group.label} />
+                    <AutocompleteCollection>
+                      {(item: TransitSearchItem<T>) => (
+                        <SearchItem
+                          key={`${group.label}-${item.key}`}
+                          item={item}
+                          onSelect={handleSelect}
+                        />
+                      )}
+                    </AutocompleteCollection>
+                  </AutocompleteGroup>
+                );
+              }}
             </AutocompleteList>
           </AutocompleteContent>
         </Autocomplete>

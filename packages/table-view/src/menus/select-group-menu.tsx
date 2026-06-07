@@ -23,12 +23,21 @@ export function SelectGroupMenu() {
   const { columnOrder, columnsInfo, grouping, tableGlobal } = table.getState();
   const groupingColId = grouping.at(0);
 
-  const options = columnOrder.reduce<ColumnInfo[]>((acc, colId) => {
-    const col = columnsInfo[colId]!;
-    if (col.hidden || col.isDeleted) return acc;
-    acc.push(col);
-    return acc;
-  }, []);
+  const options = columnOrder.reduce<(ColumnInfo & { kind: "column" })[]>(
+    (acc, colId) => {
+      const col = columnsInfo[colId]!;
+      if (col.hidden || col.isDeleted) return acc;
+      acc.push({ ...col, kind: "column" });
+      return acc;
+    },
+    [],
+  );
+  const groupOptions = [
+    ...(tableGlobal.layout !== "board"
+      ? [{ kind: "none" as const, id: null, name: "None" }]
+      : []),
+    ...options,
+  ];
 
   const selectGroup = (colId: string | null) => {
     table.setGroupingColumn(colId);
@@ -37,12 +46,6 @@ export function SelectGroupMenu() {
       page: TableViewMenuPage.EditGroupBy,
     });
   };
-  const groupOptions = [
-    ...(tableGlobal.layout !== "board"
-      ? [{ kind: "none" as const, id: null, name: "None" }]
-      : []),
-    ...options.map((option) => ({ kind: "column" as const, ...option })),
-  ];
 
   return (
     <>
@@ -65,10 +68,7 @@ export function SelectGroupMenu() {
         <AutocompleteInput placeholder="Search for a property" />
         <AutocompleteContent role="presentation" variant="inline">
           <AutocompleteList>
-            <AutocompleteGroup
-              className="h-40 overflow-y-auto"
-              items={groupOptions}
-            >
+            <AutocompleteGroup className="h-40">
               <AutocompleteCollection>
                 {(option: (typeof groupOptions)[number]) => (
                   <AutocompleteItem
@@ -93,10 +93,10 @@ export function SelectGroupMenu() {
                 )}
               </AutocompleteCollection>
             </AutocompleteGroup>
-            <AutocompleteEmpty className="px-3 text-start text-muted">
-              No results
-            </AutocompleteEmpty>
           </AutocompleteList>
+          <AutocompleteEmpty className="px-3 text-start text-muted">
+            No results
+          </AutocompleteEmpty>
         </AutocompleteContent>
       </Autocomplete>
     </>

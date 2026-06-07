@@ -14,7 +14,10 @@ issues recording for current task
    1. [solved] item check indicator positioned wrong!
    2. [solved] SelectItem should wrapped in SelectGroup!
    3. [solved] Select content weird layout...
-10. command-item rendered with menu-item becomes DISABLED!!!
+10. ~~command-item rendered with menu-item becomes DISABLED!!!~~
 11. [solved] separators in menu are all with height 0!
-12. menu content or portal issues!
+12. menu issues!
     1. content or portal z-index wrong!
+13. in table-view
+    1. many menus are still not working as expected (e.g. popover + menu primitives). they can probably changed into dropdown-menu
+    2. sort-menu.tsx -> the SelectContent's in the SortRule are not visible, not sure if they are caused by issue 12.1

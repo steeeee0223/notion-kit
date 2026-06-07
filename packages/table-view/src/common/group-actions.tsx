@@ -64,12 +64,12 @@ export function GroupActions({ className, row }: GroupActionsProps) {
             <DropdownMenuItem
               {...(row.getShouldShowGroupAggregates()
                 ? {
-                    Icon: <Icon.EyeHideInversePadded className="size-6" />,
-                    Body: "Hide aggregation",
+                    icon: <Icon.EyeHideInversePadded className="size-6" />,
+                    label: "Hide aggregation",
                   }
                 : {
-                    Icon: <Icon.Eye />,
-                    Body: "Show aggregation",
+                    icon: <Icon.Eye />,
+                    label: "Show aggregation",
                   })}
               onClick={row.toggleGroupAggregates}
             />

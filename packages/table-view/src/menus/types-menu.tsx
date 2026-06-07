@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { v4 } from "uuid";
 
@@ -19,7 +17,7 @@ import {
 import { DefaultIcon, MenuHeader } from "../common";
 import { TableViewMenuPage } from "../features";
 import type { PluginType } from "../lib/types";
-import { CellPlugin } from "../plugins";
+import type { CellPlugin } from "../plugins";
 import { useTableViewCtx } from "../table-contexts";
 
 interface TypesMenuProps {
@@ -110,13 +108,10 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
         />
         <AutocompleteContent role="presentation" variant="inline">
           <AutocompleteList>
-            <AutocompleteGroup
-              className="flex flex-col gap-px px-0"
-              items={pluginOptions}
-            >
+            <AutocompleteGroup>
               <AutocompleteLabel title="Type" />
               <AutocompleteCollection>
-                {(plugin: (typeof pluginOptions)[number]) => (
+                {(plugin: CellPlugin) => (
                   <TooltipPreset
                     key={plugin.id}
                     side="left"
@@ -138,9 +133,7 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
               </AutocompleteCollection>
             </AutocompleteGroup>
             {!propId && search.length > 0 && (
-              <AutocompleteGroup
-                className="flex flex-col gap-px px-0"
-              >
+              <AutocompleteGroup>
                 <AutocompleteLabel title="Select to add" />
                 <AutocompleteItem
                   value={`search-${search}`}

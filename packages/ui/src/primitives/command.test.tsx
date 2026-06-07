@@ -77,6 +77,50 @@ describe("CommandDialog", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("filters object-valued commands through itemToStringValue", async () => {
+    const user = userEvent.setup();
+    const actions = [
+      { id: "archive", title: "Archive page" },
+      { id: "invite", title: "Invite members" },
+    ];
+
+    render(
+      <CommandDialog
+        open
+        items={actions}
+        itemToStringValue={(action) => action.title}
+      >
+        <CommandInput aria-label="Search commands" />
+        <CommandList>
+          <CommandGroup heading="Actions">
+            <CommandCollection>
+              {(action: (typeof actions)[number]) => (
+                <CommandItem
+                  key={action.id}
+                  value={action}
+                  label={action.title}
+                />
+              )}
+            </CommandCollection>
+          </CommandGroup>
+        </CommandList>
+        <CommandEmpty>No commands</CommandEmpty>
+      </CommandDialog>,
+    );
+
+    await user.type(
+      screen.getByRole("combobox", { name: "Search commands" }),
+      "archive",
+    );
+
+    expect(
+      screen.getByRole("option", { name: "Archive page" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("option", { name: "Invite members" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("activates command items", async () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();

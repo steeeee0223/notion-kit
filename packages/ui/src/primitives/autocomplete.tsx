@@ -217,8 +217,11 @@ function AutocompleteGroup({
 }
 
 interface AutocompleteLabelProps
-  extends AutocompletePrimitive.GroupLabel.Props {
-  title: string;
+  extends Omit<
+    AutocompletePrimitive.GroupLabel.Props,
+    "children" | "render" | "title"
+  > {
+  title: React.ReactNode;
 }
 
 function AutocompleteLabel({ title, ...props }: AutocompleteLabelProps) {

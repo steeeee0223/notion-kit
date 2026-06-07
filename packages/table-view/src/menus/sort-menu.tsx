@@ -218,7 +218,7 @@ function PropSelectMenu() {
       <AutocompleteInput clear placeholder="Search for a property..." />
       <AutocompleteContent role="presentation" variant="inline">
         <AutocompleteList>
-          <AutocompleteGroup className="h-40 overflow-y-auto" items={columns}>
+          <AutocompleteGroup className="h-40 overflow-y-auto">
             <AutocompleteCollection>
               {(column: (typeof columns)[number]) => (
                 <AutocompleteItem
@@ -238,10 +238,10 @@ function PropSelectMenu() {
               )}
             </AutocompleteCollection>
           </AutocompleteGroup>
-          <AutocompleteEmpty className="px-3 text-start text-muted">
-            No results
-          </AutocompleteEmpty>
         </AutocompleteList>
+        <AutocompleteEmpty className="px-3 text-start text-muted">
+          No results
+        </AutocompleteEmpty>
       </AutocompleteContent>
     </Autocomplete>
   );

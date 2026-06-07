@@ -28,6 +28,16 @@ import { useCodeBlock } from "./code-block-provider";
 import { LangMenu, ThemeMenu } from "./menus";
 import { isFormattable } from "./transformers";
 
+interface CodeAction {
+  value: string;
+  name: string;
+  icon: ReactNode;
+  shortcut?: string;
+  action?: ReactNode;
+  onClick?: () => void | Promise<void>;
+  popover?: "language" | "theme";
+}
+
 export function CodeBlockActions() {
   const { state, store, lastEditedBy, readonly } = useCodeBlock();
   const { copy } = useCopyToClipboard({
@@ -36,16 +46,6 @@ export function CodeBlockActions() {
 
   const [openThemeSelect, setOpenThemeSelect] = useState(false);
   const [openLangSelect, setOpenLangSelect] = useState(false);
-
-  type CodeAction = {
-    value: string;
-    name: string;
-    icon: ReactNode;
-    shortcut?: string;
-    action?: ReactNode;
-    onClick?: () => void | Promise<void>;
-    popover?: "language" | "theme";
-  };
 
   const actions: CodeAction[] = [];
 
@@ -97,14 +97,12 @@ export function CodeBlockActions() {
     });
   }
 
-  actions.push(
-    {
-      value: "theme",
-      name: "Theme",
-      icon: <Icon.EmojiFace />,
-      popover: "theme" as const,
-    },
-  );
+  actions.push({
+    value: "theme",
+    name: "Theme",
+    icon: <Icon.EmojiFace />,
+    popover: "theme" as const,
+  });
 
   return (
     <Autocomplete
@@ -117,10 +115,10 @@ export function CodeBlockActions() {
       <AutocompleteInput placeholder="Search actions..." />
       <AutocompleteContent role="presentation" variant="inline">
         <AutocompleteList>
-          <AutocompleteGroup items={actions}>
+          <AutocompleteGroup>
             <AutocompleteLabel title="Code" />
             <AutocompleteCollection>
-              {(action: (typeof actions)[number]) => {
+              {(action: CodeAction) => {
                 if (action.popover === "language") {
                   return (
                     <Popover

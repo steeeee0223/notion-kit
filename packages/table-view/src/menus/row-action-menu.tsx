@@ -137,14 +137,14 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
               onRemove={removeIcon}
               onUpload={uploadIcon}
             >
-              <MenuItem
+              <AutocompleteItem
                 icon={<Icon.EmojiFace className="size-5" />}
                 label="Edit icon"
               />
             </IconMenu>
           </AutocompleteGroup>
           <AutocompleteSeparator />
-          <AutocompleteGroup items={actions}>
+          <AutocompleteGroup>
             <AutocompleteCollection>
               {(action: (typeof actions)[number]) => (
                 <AutocompleteItem

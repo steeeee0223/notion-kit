@@ -44,7 +44,9 @@ export default function CommandDialogDemo() {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>Open command</Button>
+      <Button size="sm" onClick={() => setOpen(true)}>
+        Open command
+      </Button>
       <CommandDialog
         open={open}
         onOpenChange={setOpen}
@@ -54,7 +56,7 @@ export default function CommandDialogDemo() {
       >
         <CommandInput search clear placeholder="Search actions..." />
         <CommandList>
-          <CommandGroup heading="Actions" items={ACTIONS}>
+          <CommandGroup heading="Actions">
             <CommandCollection>
               {(action: (typeof ACTIONS)[number]) => (
                 <CommandItem
