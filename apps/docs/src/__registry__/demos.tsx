@@ -11,10 +11,16 @@ export const Index: Record<
     component: React.LazyExoticComponent<React.ComponentType<object>>;
   }
 > = {
-  "autocomplete-menu": {
-    files: ["registry/src/autocomplete-menu/autocomplete-menu.tsx"],
+  "autocomplete-default": {
+    files: ["registry/src/autocomplete-default/autocomplete-default.tsx"],
     component: React.lazy(
-      () => import("@notion-kit/registry/autocomplete-menu"),
+      () => import("@notion-kit/registry/autocomplete-default"),
+    ),
+  },
+  "autocomplete-popover": {
+    files: ["registry/src/autocomplete-popover/autocomplete-popover.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/autocomplete-popover"),
     ),
   },
   "badge-default": {

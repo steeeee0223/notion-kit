@@ -11,9 +11,9 @@ import { MenuGroup, MenuItem, MenuLabel } from "./menu";
 import { Separator } from "./separator";
 import { contentVariants } from "./variants";
 
-type AutocompleteGroupItem<ItemValue> = {
+interface AutocompleteGroupItem<ItemValue> {
   items: readonly ItemValue[];
-};
+}
 
 type AutocompleteRootProps<ItemValue = string> = Omit<
   AutocompletePrimitive.Root.Props<ItemValue>,

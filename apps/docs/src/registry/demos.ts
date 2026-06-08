@@ -7,7 +7,8 @@
  */
 export const DEMOS = [
   // Autocomplete
-  "autocomplete-menu",
+  "autocomplete-default",
+  "autocomplete-popover",
   // Badge
   "badge-default",
   "badge-sizes",

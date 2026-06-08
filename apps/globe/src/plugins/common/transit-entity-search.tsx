@@ -88,7 +88,7 @@ export function TransitEntitySearch<T>({
                 No matches found
               </AutocompleteEmpty>
             )}
-            <AutocompleteList className="max-h-100 overflow-y-auto">
+            <AutocompleteList className="max-h-100">
               {(group: (typeof groups)[number]) => {
                 if (group.label === "Recent" && group.items.length === 0) {
                   return null;

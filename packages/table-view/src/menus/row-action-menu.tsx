@@ -1,5 +1,3 @@
-"use client";
-
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { useCopyToClipboard } from "@notion-kit/hooks";
@@ -16,7 +14,6 @@ import {
   AutocompleteLabel,
   AutocompleteList,
   AutocompleteSeparator,
-  MenuItem,
   MenuItemShortcut,
 } from "@notion-kit/ui/primitives";
 import { KEYBOARD } from "@notion-kit/utils";

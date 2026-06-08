@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 
 import { cn } from "@notion-kit/cn";
@@ -11,12 +9,12 @@ import {
   AutocompleteEmpty,
   AutocompleteGroup,
   AutocompleteInput,
-  type AutocompleteInputProps,
   AutocompleteItem,
-  type AutocompleteItemProps,
   AutocompleteLabel,
   AutocompleteList,
   AutocompleteSeparator,
+  type AutocompleteInputProps,
+  type AutocompleteItemProps,
   type AutocompleteRootProps,
 } from "./autocomplete";
 import {
@@ -84,7 +82,7 @@ function CommandDialog<ItemValue = string>({
   );
 }
 
-interface CommandInputProps extends AutocompleteInputProps {}
+type CommandInputProps = AutocompleteInputProps;
 
 function CommandInput({ classNames, ...props }: CommandInputProps) {
   return (

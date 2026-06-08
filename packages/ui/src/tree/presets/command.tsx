@@ -111,7 +111,8 @@ function CommandTreeInput({
             }
             break;
           case "ArrowRight": {
-            const firstChild = tree.entity.nodes.get(highlightedId)?.children[0];
+            const firstChild =
+              tree.entity.nodes.get(highlightedId)?.children[0];
             if (!firstChild) return;
             if (!tree.state.expanded.has(highlightedId)) {
               tree.expand(highlightedId);

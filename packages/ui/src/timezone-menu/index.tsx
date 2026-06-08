@@ -39,10 +39,7 @@ export function TimezoneMenu({
 }: TimezoneMenuProps) {
   const defaultTz =
     currentTz ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const timezones = React.useMemo(
-    () => Intl.supportedValuesOf("timeZone"),
-    [],
-  );
+  const timezones = React.useMemo(() => Intl.supportedValuesOf("timeZone"), []);
   const timezoneGroups = React.useMemo(
     () => [
       { label: "Current timezone", items: [defaultTz] },
@@ -69,7 +66,7 @@ export function TimezoneMenu({
         >
           <AutocompleteInput placeholder="Search cities, timezones..." />
           <AutocompleteContent variant="inline">
-            <AutocompleteList className="max-h-100 overflow-y-auto">
+            <AutocompleteList className="max-h-100">
               {(group: (typeof timezoneGroups)[number]) => (
                 <AutocompleteGroup key={group.label} items={group.items}>
                   <AutocompleteLabel title={group.label} />

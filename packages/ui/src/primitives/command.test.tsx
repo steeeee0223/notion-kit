@@ -3,12 +3,12 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import {
+  CommandCollection,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandCollection,
   CommandList,
   CommandSeparator,
   CommandShortcut,

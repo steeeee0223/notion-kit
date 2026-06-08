@@ -56,9 +56,10 @@ describe("Autocomplete", () => {
       "data-slot",
       "autocomplete-label",
     );
-    expect(
-      screen.getByRole("option", { name: "Components" }),
-    ).toHaveAttribute("data-slot", "autocomplete-item");
+    expect(screen.getByRole("option", { name: "Components" })).toHaveAttribute(
+      "data-slot",
+      "autocomplete-item",
+    );
   });
 
   it("shows empty state through Base UI filtering", async () => {
