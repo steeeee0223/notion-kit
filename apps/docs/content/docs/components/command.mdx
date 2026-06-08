@@ -5,7 +5,41 @@ description: A dialog-only command palette built on the autocomplete primitive.
 
 <ComponentPreview
   name="command-dialog"
-  preview={`<CommandDialogDemo />`}
+  preview={`<>
+  <Button size="sm" onClick={() => setOpen(true)}>
+    Open command
+  </Button>
+  <CommandDialog
+    open={open}
+    onOpenChange={setOpen}
+    items={actions}
+    itemToStringValue={(action) => action.label}
+    title="Workspace command palette"
+  >
+    <CommandInput search clear placeholder="Search actions..." />
+    <CommandList>
+      <CommandGroup heading="Actions">
+        <CommandCollection>
+          {(action) => (
+            <CommandItem
+              key={action.value}
+              value={action}
+              label={action.label}
+              icon={action.icon}
+              onClick={() => setOpen(false)}
+            >
+              <MenuItemAction className="flex items-center gap-2 text-xs text-muted">
+                <span>{action.section}</span>
+                <span>{action.shortcut}</span>
+              </MenuItemAction>
+            </CommandItem>
+          )}
+        </CommandCollection>
+      </CommandGroup>
+      <CommandEmpty>No commands found.</CommandEmpty>
+    </CommandList>
+  </CommandDialog>
+</>`}
 />
 
 ## Installation
@@ -30,6 +64,83 @@ description: A dialog-only command palette built on the autocomplete primitive.
 
 ## API Reference
 
-`Command` is intentionally exposed only as a dialog surface. Use `CommandDialog` for command palettes and use `Autocomplete` directly for popover menus.
+### CommandDialog
 
-Pass `items` and `itemToStringValue` to `CommandDialog`, then render filtered rows through `CommandCollection`. `CommandItem` follows the menu item pattern: use `icon` and `label` props for the leading icon and main label, and use `MenuItemAction` for trailing metadata or shortcuts.
+The dialog-only command palette root. It wraps `Dialog` and an always-open inline `Autocomplete`.
+
+Use `CommandDialog` for command palettes. Use `Autocomplete` directly for popover menus.
+
+| Prop                | Type                            | Default                          | Description                                      |
+| ------------------- | ------------------------------- | -------------------------------- | ------------------------------------------------ |
+| `open`              | `boolean`                       | -                                | Whether the dialog is open.                      |
+| `onOpenChange`      | `(open: boolean) => void`       | -                                | Handler called when the dialog opens or closes.  |
+| `items`             | `Item[] \| { items: Item[] }[]` | -                                | Items filtered by the internal autocomplete.     |
+| `itemToStringValue` | `(item: Item) => string`        | -                                | Converts object items to searchable text.        |
+| `filter`            | Base UI filter function         | -                                | Optional custom filter. Prefer the internal filter by default. |
+| `filteredItems`     | `Item[] \| { items: Item[] }[]` | -                                | Controlled filtered result set.                  |
+| `title`             | `string`                        | `"Command Palette"`              | Accessible dialog title rendered in an `sr-only` header. |
+| `description`       | `string`                        | `"Search for a command to run..."` | Accessible dialog description.                 |
+| `className`         | `string`                        | -                                | Classes applied to the dialog content.           |
+
+### CommandInput
+
+The command search input. Extends `AutocompleteInput`.
+
+| Prop          | Type                     | Default | Description                                  |
+| ------------- | ------------------------ | ------- | -------------------------------------------- |
+| `search`      | `boolean`                | -       | Shows the search icon.                       |
+| `clear`       | `boolean`                | -       | Shows the clear affordance when there is text. |
+| `placeholder` | `string`                 | -       | Placeholder text for the command input.      |
+| `classNames`  | `{ wrapper?: string }`   | -       | Classes for the input wrapper.               |
+
+### CommandList
+
+The scrollable command result list. Extends `AutocompleteList`.
+
+### CommandCollection
+
+Renders filtered command items from `CommandDialog`.
+
+| Prop       | Type                         | Default | Description                      |
+| ---------- | ---------------------------- | ------- | -------------------------------- |
+| `children` | `(item, index) => ReactNode` | -       | Renderer for each filtered item. |
+
+### CommandGroup
+
+Groups related command items.
+
+| Prop      | Type              | Default | Description              |
+| --------- | ----------------- | ------- | ------------------------ |
+| `heading` | `React.ReactNode` | -       | Optional group heading.  |
+| `items`   | `Item[]`          | -       | Group items for grouped root data. |
+
+For flat command palettes, do not pass `items` to `CommandGroup`; let `CommandCollection` read from `CommandDialog`.
+
+### CommandItem
+
+A single command row. Extends `AutocompleteItem`.
+
+| Prop       | Type                                                            | Default         | Description                              |
+| ---------- | --------------------------------------------------------------- | --------------- | ---------------------------------------- |
+| `value`    | `Item`                                                          | -               | The command value selected by Base UI.   |
+| `label`    | `React.ReactNode`                                               | `String(value)` | The main command label.                  |
+| `icon`     | `React.ReactNode`                                               | -               | An optional leading icon.                |
+| `desc`     | `string`                                                        | -               | An optional description below the label. |
+| `variant`  | `"default" \| "secondary" \| "sidebar" \| "warning" \| "error"` | `"default"`     | The visual style of the item.            |
+| `shortcut` | `React.ReactNode`                                               | -               | Shortcut rendered with `CommandShortcut`. |
+| `disabled` | `boolean`                                                       | -               | Whether the command is disabled.         |
+| `onClick`  | `React.MouseEventHandler<HTMLElement>`                          | -               | Handler called when the item is clicked. |
+
+Use `MenuItemAction` as trailing content for metadata or multi-part shortcuts.
+
+### CommandEmpty
+
+Content shown only when the filtered command result set is empty.
+
+### CommandSeparator
+
+A visual divider between command groups.
+
+### CommandShortcut
+
+Displays a keyboard shortcut hint aligned to the right of a command item.

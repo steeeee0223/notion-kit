@@ -4,13 +4,85 @@ description: A Base UI autocomplete composed with Notion-style menu groups, item
 ---
 
 <ComponentPreview
-  name="autocomplete-menu"
-  preview={`<AutocompleteMenu />`}
+  name="autocomplete-default"
+  preview={`<Autocomplete items={groups} open autoHighlight="always" openOnInputClick>
+  <AutocompleteInput search clear placeholder="Search workspace..." />
+  <AutocompleteContent role="presentation">
+    <AutocompleteEmpty>No matches found.</AutocompleteEmpty>
+    <AutocompleteList>
+      {(group) => (
+        <AutocompleteGroup key={group.label} items={group.items}>
+          <AutocompleteLabel title={group.label} />
+          <AutocompleteCollection>
+            {(item) => (
+              <AutocompleteItem
+                key={item}
+                value={item}
+                label={item}
+                icon={group.icon}
+              >
+                <MenuItemAction className="text-xs text-muted">
+                  {group.label.slice(0, -1)}
+                </MenuItemAction>
+              </AutocompleteItem>
+            )}
+          </AutocompleteCollection>
+        </AutocompleteGroup>
+      )}
+    </AutocompleteList>
+  </AutocompleteContent>
+</Autocomplete>`}
 />
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="autocomplete-menu" />
+<Installation packages="@notion-kit/ui" registryName="autocomplete-default" />
+
+## Examples
+
+---
+
+### Popover Menu
+
+Use `AutocompleteContent variant="inline"` when another primitive owns the overlay positioning. This keeps existing popover menus as `Popover` + `Autocomplete`.
+
+<ComponentPreview
+  name="autocomplete-popover"
+  preview={`<Popover>
+  <PopoverTrigger asChild>
+    <Button variant="hint" size="sm">Open menu</Button>
+  </PopoverTrigger>
+  <PopoverContent>
+    <Autocomplete items={groups} open autoHighlight="always" openOnInputClick>
+      <AutocompleteInput search clear placeholder="Search workspace..." />
+      <AutocompleteContent role="presentation" variant="inline">
+        <AutocompleteEmpty>No matches found.</AutocompleteEmpty>
+        <AutocompleteList>
+          {(group) => (
+            <AutocompleteGroup key={group.label} items={group.items}>
+              <AutocompleteLabel title={group.label} />
+              <AutocompleteCollection>
+                {(item) => (
+                  <AutocompleteItem
+                    key={item}
+                    value={item}
+                    label={item}
+                    icon={group.icon}
+                  >
+                    <MenuItemAction className="text-xs text-muted">
+                      {group.label.slice(0, -1)}
+                    </MenuItemAction>
+                  </AutocompleteItem>
+                )}
+              </AutocompleteCollection>
+            </AutocompleteGroup>
+          )}
+        </AutocompleteList>
+      </AutocompleteContent>
+    </Autocomplete>
+  </PopoverContent>
+</Popover>`}
+/>
 
 ## Anatomy
 
@@ -31,8 +103,137 @@ description: A Base UI autocomplete composed with Notion-style menu groups, item
 </Autocomplete>
 ```
 
+For grouped root items, render groups from `AutocompleteList`:
+
+```
+<Autocomplete items={groups}>
+  <AutocompleteInput />
+  <AutocompleteContent>
+    <AutocompleteEmpty />
+    <AutocompleteList>
+      {(group) => (
+        <AutocompleteGroup items={group.items}>
+          <AutocompleteLabel title={group.label} />
+          <AutocompleteCollection>
+            {(item) => <AutocompleteItem value={item} label={item} />}
+          </AutocompleteCollection>
+        </AutocompleteGroup>
+      )}
+    </AutocompleteList>
+  </AutocompleteContent>
+</Autocomplete>
+```
+
 ## API Reference
 
-Use `Autocomplete` as the Base UI root. Render items through `AutocompleteCollection` when the root receives `items`; this keeps filtering inside Base UI. `AutocompleteItem` uses the shared menu item visuals, so pass `icon`, `label`, `desc`, and trailing content through `MenuItemAction`.
+### Autocomplete
 
-Use `AutocompleteContent variant="inline"` for popover menus where the outer popover is already responsible for positioning.
+The Base UI autocomplete root. It owns the input value, filtering, highlight state, and item collection.
+
+| Prop                | Type                                           | Default | Description                                                   |
+| ------------------- | ---------------------------------------------- | ------- | ------------------------------------------------------------- |
+| `items`             | `Item[] \| { items: Item[] }[]`                | -       | Items to filter and render through `AutocompleteCollection`.  |
+| `itemToStringValue` | `(item: Item) => string`                       | -       | Converts object items to searchable text.                     |
+| `value`             | `string`                                       | -       | Controlled input value.                                       |
+| `onValueChange`     | `(value: string) => void`                      | -       | Handler called when the input value changes.                  |
+| `filter`            | Base UI filter function                        | -       | Optional custom filter. Prefer the internal filter by default. |
+| `filteredItems`     | `Item[] \| { items: Item[] }[]`                | -       | Controlled filtered result set.                               |
+| `open`              | `boolean`                                      | -       | Whether the autocomplete popup/list is open.                  |
+| `autoHighlight`     | `"always" \| "input" \| "none" \| boolean`    | -       | How Base UI highlights a matching item.                       |
+| `openOnInputClick`  | `boolean`                                      | -       | Opens the list when the input is clicked.                     |
+
+### AutocompleteInput
+
+The search input. It renders the shared `Input` primitive and supports the same visual affordances.
+
+| Prop        | Type                          | Default | Description                                  |
+| ----------- | ----------------------------- | ------- | -------------------------------------------- |
+| `search`    | `boolean`                     | -       | Shows the search icon.                       |
+| `clear`     | `boolean`                     | -       | Shows the clear affordance when there is text. |
+| `placeholder` | `string`                   | -       | Placeholder text for the input.              |
+| `onCancel`  | `() => void`                  | -       | Handler passed to the underlying input.      |
+| `classNames` | `{ wrapper?: string }`      | -       | Classes for the input wrapper.               |
+
+### AutocompleteContent
+
+The popup surface. Floating content is positioned by Base UI; inline content renders in-flow for composed menus.
+
+| Prop               | Type                    | Default      | Description                                      |
+| ------------------ | ----------------------- | ------------ | ------------------------------------------------ |
+| `variant`          | `"floating" \| "inline"` | `"floating"` | Whether to render a positioned popup or in-flow content. |
+| `side`             | `"top" \| "right" \| "bottom" \| "left"` | `"bottom"` | Preferred side for floating content. |
+| `align`            | `"start" \| "center" \| "end"` | `"start"` | Preferred alignment for floating content. |
+| `sideOffset`       | `number`                | `4`          | Distance from the anchor for floating content.   |
+| `alignOffset`      | `number`                | -            | Alignment offset for floating content.           |
+| `collisionPadding` | `number \| Padding`     | -            | Padding used when avoiding viewport collisions.  |
+| `anchor`           | Base UI anchor          | -            | Custom anchor for floating content.              |
+
+### AutocompleteList
+
+The scrollable list viewport. When the root receives grouped items, pass a render function as children and render one `AutocompleteGroup` per group.
+
+| Prop       | Type                                              | Default | Description                         |
+| ---------- | ------------------------------------------------- | ------- | ----------------------------------- |
+| `children` | `React.ReactNode \| ((item, index) => ReactNode)` | -       | Static content or a Base UI item/group renderer. |
+
+### AutocompleteCollection
+
+Renders the filtered items from the nearest root or group.
+
+| Prop       | Type                         | Default | Description                         |
+| ---------- | ---------------------------- | ------- | ----------------------------------- |
+| `children` | `(item, index) => ReactNode` | -       | Renderer for each filtered item.    |
+
+### AutocompleteGroup
+
+Groups related autocomplete items with menu spacing.
+
+| Prop    | Type     | Default | Description                                                                 |
+| ------- | -------- | ------- | --------------------------------------------------------------------------- |
+| `items` | `Item[]` | -       | Group items. Use only when rendering a grouped root item from `AutocompleteList`. |
+
+For flat root items, keep the visual group item-less and let `AutocompleteCollection` read the root filtered items.
+
+### AutocompleteLabel
+
+A non-interactive label used to title a group of items.
+
+| Prop    | Type              | Default | Description                 |
+| ------- | ----------------- | ------- | --------------------------- |
+| `title` | `React.ReactNode` | -       | The group label content.    |
+
+### AutocompleteItem
+
+A single selectable autocomplete row. Extends the shared `MenuItem` visual props.
+
+| Prop      | Type                                                            | Default         | Description                              |
+| --------- | --------------------------------------------------------------- | --------------- | ---------------------------------------- |
+| `value`   | `Item`                                                          | -               | The item value selected by Base UI.      |
+| `label`   | `React.ReactNode`                                               | `String(value)` | The main item label.                     |
+| `icon`    | `React.ReactNode`                                               | -               | An optional leading icon.                |
+| `desc`    | `string`                                                        | -               | An optional description below the label. |
+| `variant` | `"default" \| "secondary" \| "sidebar" \| "warning" \| "error"` | `"default"`     | The visual style of the item.            |
+| `disabled` | `boolean`                                                      | -               | Whether the item is disabled.            |
+| `onClick` | `React.MouseEventHandler<HTMLElement>`                         | -               | Handler called when the item is clicked. |
+
+Use `MenuItemAction` as trailing content for metadata, status, or shortcuts.
+
+### AutocompleteEmpty
+
+Content shown only when Base UI reports an empty filtered result set.
+
+### AutocompleteSeparator
+
+A visual divider between autocomplete groups.
+
+### AutocompleteTrigger
+
+Optional trigger for autocomplete compositions that need a trigger affordance.
+
+### AutocompleteClear
+
+Clears the current autocomplete input value.
+
+### AutocompleteStatus
+
+Displays Base UI autocomplete status text.
