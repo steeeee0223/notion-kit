@@ -1,0 +1,46 @@
+---
+title: Combobox
+description: A Base UI combobox with Notion-style chip input, floating and inline variants, and creatable items.
+---
+
+<ComponentPreview
+  name="combobox-basic"
+  preview={`<ComboboxBasic />`}
+/>
+
+## Installation
+
+<Installation packages="@notion-kit/ui" registryName="combobox-basic" />
+
+## Examples
+
+---
+
+### Multiple Floating
+
+Use the floating variant for a positioned popup. This example supports creatable items and a configurable chip limit.
+
+<ComponentPreview
+  name="combobox-multiple-floating"
+  preview={`<ComboboxMultipleFloating maxChips={3} />`}
+/>
+
+### Multiple Inline
+
+Use the inline variant when the list is part of the surrounding menu surface. This example supports creatable items and a configurable chip limit.
+
+<ComponentPreview
+  name="combobox-multiple-inline"
+  preview={`<ComboboxMultipleInline maxChips={3} />`}
+/>
+
+## API Reference
+
+### Composition
+
+Use `Combobox` as the Base UI root and compose the lower-level parts directly:
+
+- `ComboboxInput`, `ComboboxTrigger`, `ComboboxContent`, `ComboboxList`, `ComboboxGroup`, and `ComboboxItem` for a basic floating combobox.
+- `ComboboxChips`, `ComboboxValue`, `ComboboxChip`, and `ComboboxChipsInput` for multiple selection.
+- `ComboboxCreatableItem` for unmatched search values that should become new options.
+- `ComboboxContent variant="inline"` when the popup should render in-flow instead of as a floating overlay.

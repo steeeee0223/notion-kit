@@ -90,7 +90,7 @@ describe("SelectMenu - Single Select", () => {
     await user.type(combobox, newName);
 
     // "Create" suggestion should appear with the option name
-    const createItem = screen.getByRole("menuitem", {
+    const createItem = screen.getByRole("option", {
       name: `Create ${newName}`,
     });
     expect(createItem).toBeDefined();
@@ -128,7 +128,7 @@ describe("SelectMenu - Single Select", () => {
     expect(screen.queryByText("Option C")).not.toBeInTheDocument();
 
     // "Create" suggestion should appear for the typed text
-    const createItem = screen.getByRole("menuitem", {
+    const createItem = screen.getByRole("option", {
       name: `Create ${typed}`,
     });
     expect(createItem).toBeInTheDocument();

@@ -22,18 +22,20 @@ interface MenuProps {
 export function Menu({ page, onChangeState }: MenuProps) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <NavbarItem hint="Style, export, and more...">
-          <Icon.Dots className="size-4 fill-current" />
-        </NavbarItem>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <NavbarItem hint="Style, export, and more...">
+            <Icon.Dots className="size-4 fill-current" />
+          </NavbarItem>
+        }
+      />
       <DropdownMenuContent className="w-60" align="end" alignOffset={8}>
         <DropdownMenuGroup>
           <DropdownMenuItem
             variant="warning"
-            Icon={<Icon.Trash />}
-            Body="Delete"
-            onSelect={() => onChangeState?.(page.id, "archive")}
+            icon={<Icon.Trash />}
+            label="Delete"
+            onClick={() => onChangeState?.(page.id, "archive")}
           />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

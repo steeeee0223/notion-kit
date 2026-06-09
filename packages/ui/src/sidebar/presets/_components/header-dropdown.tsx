@@ -20,26 +20,29 @@ export function HeaderDropdown({
 }: HeaderDropdownProps) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant={null}
-          className="relative flex size-5 text-secondary"
-          aria-label="More actions"
-        >
-          <Icon.Dots className="size-3 fill-current" />
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant={null}
+            className="relative flex size-5 text-secondary"
+            aria-label="More actions"
+          >
+            <Icon.Dots className="size-3 fill-current" />
+          </Button>
+        }
+      />
       <DropdownMenuContent align="start">
         <DropdownMenuGroup>
           <DropdownMenuItem
-            Icon={<Icon.SquarePlus className="size-4" />}
-            Body="Join or create workspace"
-            onSelect={onCreateWorkspace}
+            icon={<Icon.SquarePlus className="size-4" />}
+            label="Join or create workspace"
+            onClick={onCreateWorkspace}
           />
+
           <DropdownMenuItem
-            Icon={<Icon.CircleCross className="size-4" />}
-            Body="Log out"
-            onSelect={onLogout}
+            icon={<Icon.CircleCross className="size-4" />}
+            label="Log out"
+            onClick={onLogout}
           />
         </DropdownMenuGroup>
       </DropdownMenuContent>

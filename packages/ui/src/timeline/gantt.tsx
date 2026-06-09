@@ -99,19 +99,21 @@ export const GanttMarker: FC<
       }}
     >
       <ContextMenu>
-        <ContextMenuTrigger asChild>
-          <div
-            className={cn(
-              "group bg-card pointer-events-auto sticky top-0 flex flex-col flex-nowrap items-center justify-center rounded-b-md px-2 py-1 text-xs whitespace-nowrap text-primary select-auto",
-              className,
-            )}
-          >
-            {label}
-            <span className="max-h-0 overflow-hidden opacity-80 transition-all group-hover:max-h-8">
-              {formatDate(date, "MMM dd, yyyy")}
-            </span>
-          </div>
-        </ContextMenuTrigger>
+        <ContextMenuTrigger
+          render={
+            <div
+              className={cn(
+                "group bg-card pointer-events-auto sticky top-0 flex flex-col flex-nowrap items-center justify-center rounded-b-md px-2 py-1 text-xs whitespace-nowrap text-primary select-auto",
+                className,
+              )}
+            >
+              {label}
+              <span className="max-h-0 overflow-hidden opacity-80 transition-all group-hover:max-h-8">
+                {formatDate(date, "MMM dd, yyyy")}
+              </span>
+            </div>
+          }
+        />
         <ContextMenuContent>
           {onRemove ? (
             <ContextMenuItem

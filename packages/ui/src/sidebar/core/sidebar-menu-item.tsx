@@ -23,8 +23,8 @@ export function SidebarMenuItem({
         data-slot="sidebar-menuitem"
         variant="sidebar"
         className={cn("h-[27px] font-medium", className)}
-        Body={label}
-        Icon={icon}
+        label={label}
+        icon={icon}
         {...rest}
       />
     );

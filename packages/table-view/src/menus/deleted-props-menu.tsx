@@ -50,14 +50,14 @@ function PropertyItem({ info, onRestore, onDelete }: PropertyItemProps) {
     <MenuItem
       role="menuitem"
       className="*:data-[slot=menu-item-body]:leading-normal"
-      Icon={
+      icon={
         info.icon ? (
           <IconBlock icon={info.icon} />
         ) : (
           <DefaultIcon type={info.type} />
         )
       }
-      Body={info.name}
+      label={info.name}
     >
       <MenuItemAction className="flex items-center text-muted">
         <Button

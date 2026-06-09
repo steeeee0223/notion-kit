@@ -19,27 +19,25 @@ export default function Demo() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button size="md">Open</Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger render={<Button size="md">Open</Button>} />
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
-          <DropdownMenuLabel>Appearance</DropdownMenuLabel>
+          <DropdownMenuLabel title="Appearance" />
           <DropdownMenuCheckboxItem
             checked={showStatusBar}
             onCheckedChange={setShowStatusBar}
-            Body="Status Bar"
+            label="Status Bar"
           />
           <DropdownMenuCheckboxItem
             checked={showActivityBar}
             onCheckedChange={setShowActivityBar}
             disabled
-            Body="Activity Bar"
+            label="Activity Bar"
           />
           <DropdownMenuCheckboxItem
             checked={showPanel}
             onCheckedChange={setShowPanel}
-            Body="Panel"
+            label="Panel"
           />
         </DropdownMenuGroup>
       </DropdownMenuContent>

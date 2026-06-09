@@ -91,8 +91,8 @@ export function PropMenu({ propId, view }: PropMenuProps) {
         {info.type !== "title" && (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger
-              Icon={<Icon.ArrowSquarePathUpDown />}
-              Body="Change type"
+              icon={<Icon.ArrowSquarePathUpDown />}
+              label="Change type"
             />
             <DropdownMenuSubContent sideOffset={-4} className="w-50">
               <TypesMenu propId={propId} menu={null} />
@@ -105,31 +105,34 @@ export function PropMenu({ propId, view }: PropMenuProps) {
           <Separator />
           <DropdownMenuGroup>
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger Icon={<Icon.ArrowUpDown />} Body="Sort" />
+              <DropdownMenuSubTrigger
+                icon={<Icon.ArrowUpDown />}
+                label="Sort"
+              />
               <DropdownMenuSubContent sideOffset={-4} className="w-50">
                 <DropdownMenuGroup>
                   <DropdownMenuItem
-                    Icon={<Icon.ArrowUp className="size-4" />}
-                    Body="Sort ascending"
-                    onSelect={() => sortColumn(false)}
+                    icon={<Icon.ArrowUp className="size-4" />}
+                    label="Sort ascending"
+                    onClick={() => sortColumn(false)}
                   />
                   <DropdownMenuItem
-                    Icon={<Icon.ArrowDown className="size-4" />}
-                    Body="Sort descending"
-                    onSelect={() => sortColumn(true)}
+                    icon={<Icon.ArrowDown className="size-4" />}
+                    label="Sort descending"
+                    onClick={() => sortColumn(true)}
                   />
                 </DropdownMenuGroup>
               </DropdownMenuSubContent>
             </DropdownMenuSub>
             <DropdownMenuItem
-              Icon={<Icon.SquareGridBelowLines />}
-              Body={column.getIsGrouped() ? "Ungroup" : "Group"}
-              onSelect={() =>
+              icon={<Icon.SquareGridBelowLines />}
+              label={column.getIsGrouped() ? "Ungroup" : "Group"}
+              onClick={() =>
                 table.setGroupingColumn((v) => (v === propId ? null : propId))
               }
             />
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger Icon={<Icon.Sum />} Body="Calculate" />
+              <DropdownMenuSubTrigger icon={<Icon.Sum />} label="Calculate" />
               <DropdownMenuSubContent
                 sideOffset={-4}
                 className="w-50"
@@ -140,7 +143,7 @@ export function PropMenu({ propId, view }: PropMenuProps) {
             </DropdownMenuSub>
             <DropdownMenuItem
               disabled={!canFreeze}
-              onSelect={pinColumns}
+              onClick={pinColumns}
               {...(canUnfreeze
                 ? { Icon: <Icon.PinStrikeThrough />, Body: "Unfreeze columns" }
                 : { Icon: <Icon.Pin />, Body: "Freeze up to column" })}
@@ -148,13 +151,13 @@ export function PropMenu({ propId, view }: PropMenuProps) {
             />
             {info.type !== "title" && (
               <DropdownMenuItem
-                onSelect={hideProp}
-                Icon={<Icon.EyeHideInversePadded className="size-6" />}
-                Body="Hide in view"
+                onClick={hideProp}
+                icon={<Icon.EyeHideInversePadded className="size-6" />}
+                label="Hide in view"
               />
             )}
             <DropdownMenuItem
-              onSelect={wrapProp}
+              onClick={wrapProp}
               {...(info.wrapped
                 ? { Icon: <Icon.ArrowLineRight />, Body: "Unwrap text" }
                 : { Icon: <Icon.ArrowUTurnDownLeft />, Body: "Wrap text" })}
@@ -168,23 +171,23 @@ export function PropMenu({ propId, view }: PropMenuProps) {
           INSERT_SIDES.map((side) => (
             <DropdownMenuItem
               key={side}
-              onSelect={() => insertColumn(side)}
-              Icon={<Icon.ArrowRectangle side={side} />}
-              Body={`Insert ${side}`}
+              onClick={() => insertColumn(side)}
+              icon={<Icon.ArrowRectangle side={side} />}
+              label={`Insert ${side}`}
             />
           ))}
         {info.type !== "title" && (
           <>
             <DropdownMenuItem
-              onSelect={duplicateProp}
-              Icon={<Icon.Duplicate />}
-              Body="Duplicate property"
+              onClick={duplicateProp}
+              icon={<Icon.Duplicate />}
+              label="Duplicate property"
             />
             <DropdownMenuItem
               variant="warning"
-              onSelect={deleteProp}
-              Icon={<Icon.Trash />}
-              Body="Delete property"
+              onClick={deleteProp}
+              icon={<Icon.Trash />}
+              label="Delete property"
             />
           </>
         )}

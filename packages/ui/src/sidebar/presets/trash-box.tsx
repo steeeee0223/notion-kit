@@ -98,12 +98,12 @@ export function TrashBox({
                     id={page.id}
                     tabIndex={-1}
                     role="menuitem"
-                    Icon={
+                    icon={
                       <IconBlock
                         icon={page.icon ?? { type: "text", src: page.title }}
                       />
                     }
-                    Body={page.title}
+                    label={page.title}
                     onClick={() => handleSelect(page)}
                   >
                     <MenuItemAction className="flex gap-1">

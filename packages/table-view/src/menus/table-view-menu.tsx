@@ -76,8 +76,8 @@ function TableMenu() {
       <MenuHeader id="view-settings" title="View Settings" />
       <MenuGroup>
         <MenuItem
-          Icon={<LayoutIcon layout={layout} />}
-          Body="Layout"
+          icon={<LayoutIcon layout={layout} />}
+          label="Layout"
           onClick={() => openMenu(TableViewMenuPage.Layout)}
         >
           <MenuItemSelect>
@@ -85,15 +85,15 @@ function TableMenu() {
           </MenuItemSelect>
         </MenuItem>
         <MenuItem
-          Icon={<Icon.ArrowUpDown />}
-          Body="Sort"
+          icon={<Icon.ArrowUpDown />}
+          label="Sort"
           onClick={() => openMenu(TableViewMenuPage.Sort)}
         >
           <MenuItemSelect />
         </MenuItem>
         <MenuItem
-          Icon={<Icon.SquareGridBelowLines />}
-          Body="Group"
+          icon={<Icon.SquareGridBelowLines />}
+          label="Group"
           onClick={() =>
             openMenu(
               groupedColumn
@@ -109,9 +109,9 @@ function TableMenu() {
       <MenuGroup>
         <MenuGroupHeader title="Data source settings" />
         <MenuItem
-          Icon={<Icon.Sliders />}
-          Body="Edit properties"
-          disabled={locked}
+          icon={<Icon.Sliders />}
+          label="Edit properties"
+          data-disabled={locked}
           onClick={() => openMenu(TableViewMenuPage.Props)}
         >
           <MenuItemSelect />
@@ -121,8 +121,8 @@ function TableMenu() {
       <MenuGroup>
         <MenuItem
           {...(locked
-            ? { Icon: <Icon.LockOpen />, Body: "Unlock database" }
-            : { Icon: <Icon.Lock />, Body: "Lock database" })}
+            ? { icon: <Icon.LockOpen />, label: "Unlock database" }
+            : { icon: <Icon.Lock />, label: "Lock database" })}
           onClick={table.toggleTableLocked}
         />
       </MenuGroup>

@@ -1,5 +1,3 @@
-"use client";
-
 import React, {
   createContext,
   useCallback,
@@ -9,13 +7,10 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Slot } from "radix-ui";
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
 
 import { cn } from "@notion-kit/cn";
-
-//* ============================================================================
-//* Context & Types
-//* ============================================================================
 
 interface Point {
   x: number;
@@ -48,10 +43,6 @@ interface SelectableContextValue {
 
 const SelectableContext = createContext<SelectableContextValue | null>(null);
 
-//* ============================================================================
-//* Hooks
-//* ============================================================================
-
 export function useSelectable() {
   const ctx = useContext(SelectableContext);
   if (!ctx) {
@@ -78,10 +69,6 @@ export function useSelectableItem(id: string) {
     toggle: () => ctx.toggleSelection(id),
   };
 }
-
-//* ============================================================================
-//* Utilities
-//* ============================================================================
 
 function getElementRect(element: HTMLElement, container: HTMLElement): Rect {
   const elRect = element.getBoundingClientRect();
@@ -113,11 +100,7 @@ function rectsIntersect(r1: Rect, r2: Rect, mode: SelectionMode): boolean {
   );
 }
 
-//* ============================================================================
-//* Main Component
-//* ============================================================================
-
-interface SelectableProps extends React.PropsWithChildren {
+interface SelectableProps extends useRender.ComponentProps<"div"> {
   mode?: SelectionMode;
   disabled?: boolean;
   multiple?: boolean;
@@ -125,8 +108,6 @@ interface SelectableProps extends React.PropsWithChildren {
   onSelectMove?: (e: React.PointerEvent, selecting: Set<string>) => void;
   onSelectEnd?: (selected: Set<string>) => void;
   onSelectCancel?: () => void;
-  asChild?: boolean;
-  className?: string;
   activationConstraint?: {
     distance?: number;
     delay?: number;
@@ -143,7 +124,6 @@ interface SelectableProps extends React.PropsWithChildren {
 }
 
 function Selectable({
-  children,
   mode = "intersect",
   disabled = false,
   multiple = false,
@@ -151,10 +131,11 @@ function Selectable({
   onSelectMove,
   onSelectEnd,
   onSelectCancel,
-  asChild = false,
+  render,
   className,
   activationConstraint,
   isSelectableIntersect,
+  ...props
 }: SelectableProps) {
   const containerRef = useRef<HTMLElement>(null);
   const [selectedIds, setSelectedIds] = useState(new Set<string>());
@@ -426,116 +407,87 @@ function Selectable({
     ],
   );
 
-  const eventHandlers = {
-    onPointerDown: handlePointerDown,
-    onPointerMove: handlePointerMove,
-    onPointerUp: handlePointerUp,
-    onPointerCancel: handlePointerCancel,
-  };
+  const element = useRender({
+    defaultTagName: "div",
+    render,
+    ref: containerRef,
+    props: mergeProps(
+      {
+        className: cn("relative touch-none select-none", className),
+        style: { touchAction: "none" },
+        onPointerDown: handlePointerDown,
+        onPointerMove: handlePointerMove,
+        onPointerUp: handlePointerUp,
+        onPointerCancel: handlePointerCancel,
+      },
+      props,
+    ),
+  });
 
-  const Comp = asChild ? Slot.Root : "div";
-
-  return (
-    <SelectableContext value={contextValue}>
-      <Comp
-        ref={containerRef as React.Ref<HTMLDivElement>}
-        className={cn(!asChild && "relative touch-none select-none", className)}
-        {...eventHandlers}
-        style={asChild ? undefined : { touchAction: "none" }}
-      >
-        {children}
-      </Comp>
-    </SelectableContext>
-  );
-}
-
-//* ============================================================================
-//* Overlay Component
-//* ============================================================================
-
-interface SelectableOverlayProps extends React.PropsWithChildren {
-  className?: string;
-  style?: React.CSSProperties;
-  asChild?: boolean;
+  return <SelectableContext value={contextValue}>{element}</SelectableContext>;
 }
 
 Selectable.Overlay = function SelectableOverlay({
   className,
-  style,
-  asChild,
-  children,
-}: SelectableOverlayProps) {
+  render,
+  ...props
+}: useRender.ComponentProps<"div">) {
   const { selectionRect, isSelecting } = useSelectable();
-
-  if (!isSelecting || !selectionRect) return null;
 
   const overlayStyle: React.CSSProperties = {
     position: "absolute",
-    left: selectionRect.x,
-    top: selectionRect.y,
-    width: selectionRect.width,
-    height: selectionRect.height,
+    left: selectionRect?.x,
+    top: selectionRect?.y,
+    width: selectionRect?.width,
+    height: selectionRect?.height,
     pointerEvents: "none",
-    ...style,
   };
 
-  const Comp = asChild ? Slot.Root : "div";
-
-  return (
-    <Comp
-      className={cn(!asChild && "pointer-events-none absolute", className)}
-      style={overlayStyle}
-    >
-      {asChild ? children : null}
-    </Comp>
-  );
+  return useRender({
+    defaultTagName: "div",
+    render,
+    props: mergeProps(
+      {
+        className: cn("pointer-events-none absolute", className),
+        style: overlayStyle,
+      },
+      props,
+    ),
+    enabled: isSelecting && !!selectionRect,
+  });
 };
 
-//* ============================================================================
-//* Item Component
-//* ============================================================================
-
-interface SelectableItemProps extends React.ComponentPropsWithoutRef<"div"> {
+interface SelectableItemProps extends useRender.ComponentProps<"div"> {
   id: string;
-  asChild?: boolean;
 }
 
 Selectable.Item = function SelectableItem({
   id,
-  className,
-  asChild,
+  render,
   ...props
 }: SelectableItemProps) {
   const { ref, isSelected, isSelecting } = useSelectableItem(id);
-  const Comp = asChild ? Slot.Root : "div";
 
-  return (
-    <Comp
-      ref={ref as React.Ref<HTMLDivElement>}
-      data-selectable-item
-      data-selected={isSelected}
-      data-selecting={isSelecting}
-      className={cn(!asChild && className)}
-      {...props}
-    />
-  );
+  return useRender({
+    defaultTagName: "div",
+    render,
+    ref,
+    props: mergeProps(
+      {
+        "data-selectable-item": true,
+        "data-selected": isSelected,
+        "data-selecting": isSelecting,
+      },
+      props,
+    ),
+  });
 };
 
-//* ============================================================================
-//* Group Component
-//* ============================================================================
-
-interface SelectableGroupProps extends React.ComponentPropsWithoutRef<"div"> {
-  asChild?: boolean;
-}
-
 Selectable.Group = function SelectableGroup({
-  className,
-  asChild,
+  render,
   ...props
-}: SelectableGroupProps) {
-  const Comp = asChild ? Slot.Root : "div";
-  return <Comp className={cn(!asChild && className)} {...props} />;
+}: useRender.ComponentProps<"div">) {
+  return useRender({ defaultTagName: "div", render, props });
 };
 
 export { Selectable };
@@ -545,6 +497,4 @@ export type {
   SelectionMode,
   SelectableProps,
   SelectableItemProps,
-  SelectableGroupProps,
-  SelectableOverlayProps,
 };

@@ -61,11 +61,10 @@ export const DEMOS = [
   "map-markers",
   "map-popup",
   "map-route",
-  // Multi Select
-  "multi-select-creatable",
-  "multi-select-default",
-  "multi-select-inline",
-  "multi-select-max-selected",
+  // Combobox
+  "combobox-basic",
+  "combobox-multiple-floating",
+  "combobox-multiple-inline",
   // Navbar
   "navbar-menu",
   "navbar-notion",

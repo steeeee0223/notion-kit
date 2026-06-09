@@ -26,26 +26,26 @@ function TreeList<T extends TreeItemData>({
             data-slot="tree-item"
             variant="sidebar"
             className="focus:shadow-notion"
-            Icon={
+            icon={
               <div className="group/icon">
                 <TreePrimitive.ExpandIndicator
-                  asChild
                   onToggle={() => tree.expand(node.id)}
-                >
-                  <Button
-                    variant="hint"
-                    className={cn(
-                      "relative size-5",
-                      node.icon && "hidden group-hover/icon:flex",
-                    )}
-                    aria-label={state.expanded ? "collapse" : "expand"}
-                  >
-                    <Icon.Chevron
-                      side={state.expanded ? "down" : "right"}
-                      className="size-3 rotate-0 transition-[rotate]"
-                    />
-                  </Button>
-                </TreePrimitive.ExpandIndicator>
+                  render={
+                    <Button
+                      variant="hint"
+                      className={cn(
+                        "relative size-5",
+                        node.icon && "hidden group-hover/icon:flex",
+                      )}
+                      aria-label={state.expanded ? "collapse" : "expand"}
+                    >
+                      <Icon.Chevron
+                        side={state.expanded ? "down" : "right"}
+                        className="size-3 rotate-0 transition-[rotate]"
+                      />
+                    </Button>
+                  }
+                />
                 {node.icon && (
                   <div className="flex size-5 items-center justify-center group-hover/icon:hidden">
                     {node.icon}
@@ -53,7 +53,7 @@ function TreeList<T extends TreeItemData>({
                 )}
               </div>
             }
-            Body={node.title}
+            label={node.title}
             children={renderAction?.({ node }) ?? null}
           />
         );

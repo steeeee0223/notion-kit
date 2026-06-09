@@ -59,8 +59,8 @@ export function FavoriteList({
                 <MenuItem
                   variant="sidebar"
                   className="group/doc-item focus:shadow-notion"
-                  Icon={<DocIcon node={node} defaultIcon={defaultIcon} />}
-                  Body={node.title}
+                  icon={<DocIcon node={node} defaultIcon={defaultIcon} />}
+                  label={node.title}
                 >
                   <DocItemActions
                     type="normal"

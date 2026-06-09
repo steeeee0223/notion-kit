@@ -17,18 +17,20 @@ function ThemeToggle() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="nav-icon">
-          <SunIcon className="size-5 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-          <MoonIcon className="absolute size-5 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <Button variant="nav-icon">
+            <SunIcon className="size-5 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+            <MoonIcon className="absolute size-5 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+        }
+      />
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>
-          <DropdownMenuItem Body="Light" onSelect={() => setTheme("light")} />
-          <DropdownMenuItem Body="Dark" onSelect={() => setTheme("dark")} />
-          <DropdownMenuItem Body="System" onSelect={() => setTheme("system")} />
+          <DropdownMenuItem label="Light" onClick={() => setTheme("light")} />
+          <DropdownMenuItem label="Dark" onClick={() => setTheme("dark")} />
+          <DropdownMenuItem label="System" onClick={() => setTheme("system")} />
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

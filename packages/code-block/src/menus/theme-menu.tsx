@@ -26,7 +26,7 @@ export function ThemeMenu() {
               value={theme.value}
               onSelect={() => store.setTheme(theme.value)}
             >
-              <MenuItem Body={theme.label}>
+              <MenuItem label={theme.label}>
                 {theme.value === state.theme && <MenuItemCheck />}
               </MenuItem>
             </CommandItem>

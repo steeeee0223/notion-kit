@@ -38,7 +38,7 @@ export function EditGroupMenu() {
       />
       <MenuGroup>
         <MenuItem
-          Body="Group by"
+          label="Group by"
           onClick={() =>
             table.setTableMenuState({
               open: true,
@@ -50,7 +50,7 @@ export function EditGroupMenu() {
         </MenuItem>
         {/* TODO Sort group by */}
         <MenuItemSwitch
-          Body="Hide empty groups"
+          label="Hide empty groups"
           checked={hideEmptyGroups}
           onCheckedChange={table.toggleHideEmptyGroups}
         />
@@ -87,14 +87,14 @@ export function EditGroupMenu() {
       <MenuGroup>
         {layout !== "board" && (
           <MenuItem
-            Icon={<Icon.Trash />}
-            Body="Remove grouping"
+            icon={<Icon.Trash />}
+            label="Remove grouping"
             onClick={() => table.setGroupingColumn(null)}
           />
         )}
         <MenuItem
-          Icon={<Icon.QuestionMarkCircled />}
-          Body="Learn about grouping"
+          icon={<Icon.QuestionMarkCircled />}
+          label="Learn about grouping"
           onClick={() => {
             if (!isClient) return;
             window.open(
@@ -142,7 +142,7 @@ function GroupItem({
       ref={setNodeRef}
       role="menuitem"
       style={style}
-      Icon={
+      icon={
         <div
           key="drag-handle"
           className="mr-2 flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center fill-icon!"
@@ -152,7 +152,7 @@ function GroupItem({
           <Icon.DragHandle className="size-3" />
         </div>
       }
-      Body={children}
+      label={children}
       className="*:data-[slot=menu-item-body]:leading-normal"
     >
       <MenuItemAction className="flex items-center text-muted [&_svg]:fill-current">

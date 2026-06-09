@@ -53,25 +53,27 @@ export function ViewProps({ rowId }: ViewPropsProps) {
                         : info.name
                     }
                   >
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="cell"
-                        className="size-full max-w-full rounded-sm px-1.5"
-                      >
-                        {info.icon ? (
-                          <IconBlock
-                            icon={info.icon}
-                            className="size-4 p-0 opacity-60 dark:opacity-45"
-                          />
-                        ) : (
-                          <DefaultIcon
-                            type={info.type}
-                            className="fill-default/45"
-                          />
-                        )}
-                        <div className="truncate">{info.name}</div>
-                      </Button>
-                    </DropdownMenuTrigger>
+                    <DropdownMenuTrigger
+                      render={
+                        <Button
+                          variant="cell"
+                          className="size-full max-w-full rounded-sm px-1.5"
+                        >
+                          {info.icon ? (
+                            <IconBlock
+                              icon={info.icon}
+                              className="size-4 p-0 opacity-60 dark:opacity-45"
+                            />
+                          ) : (
+                            <DefaultIcon
+                              type={info.type}
+                              className="fill-default/45"
+                            />
+                          )}
+                          <div className="truncate">{info.name}</div>
+                        </Button>
+                      }
+                    />
                   </TooltipPreset>
                   <DropdownMenuContent
                     align="start"

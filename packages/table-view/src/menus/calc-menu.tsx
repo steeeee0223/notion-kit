@@ -42,6 +42,7 @@ export function CalcMenu({ id, type }: CalcMenuProps) {
             CountMethod.NONEMPTY,
           ]),
     ];
+
     const percentMethods =
       type === "checkbox"
         ? [CountMethod.PERCENTAGE_CHECKED, CountMethod.PERCENTAGE_UNCHECKED]
@@ -52,25 +53,19 @@ export function CalcMenu({ id, type }: CalcMenuProps) {
   return (
     <DropdownMenuGroup>
       <DropdownMenuCheckboxItem
-        Body="None"
+        label="None"
         checked={counting.method === CountMethod.NONE}
         onCheckedChange={() => table.setColumnCountMethod(id, CountMethod.NONE)}
       />
       <DropdownMenuSub>
-        <DropdownMenuSubTrigger Body="Count" />
+        <DropdownMenuSubTrigger label="Count" />
         <DropdownMenuSubContent className="w-[250px]">
           <DropdownMenuGroup>
             <DropdownMenuItem
               className="gap-2 p-2"
-              Body={
-                <>
-                  <div>Show large counts as 99+</div>
-                  <div className="mt-1.5 overflow-hidden text-xs text-ellipsis whitespace-normal text-muted">
-                    This improves performance for large databases.
-                  </div>
-                </>
-              }
-              onSelect={() => table.setColumnCountCapped(id, (v) => !v)}
+              label="Show large counts as 99+"
+              desc="This improves performance for large databases."
+              onClick={() => table.setColumnCountCapped(id, (v) => !v)}
             >
               <MenuItemAction>
                 <Switch size="sm" checked={counting.isCapped} />
@@ -91,7 +86,7 @@ export function CalcMenu({ id, type }: CalcMenuProps) {
         </DropdownMenuSubContent>
       </DropdownMenuSub>
       <DropdownMenuSub>
-        <DropdownMenuSubTrigger Body="Percent" />
+        <DropdownMenuSubTrigger label="Percent" />
         <DropdownMenuSubContent className="w-[250px]">
           <DropdownMenuGroup>
             {percentMethods.map((method) => (
@@ -127,7 +122,7 @@ function HintItem({ title, desc, imgSrc, ...props }: HintItemProps) {
         { type: "default", text: desc },
       ]}
     >
-      <DropdownMenuCheckboxItem Body={title} {...props} />
+      <DropdownMenuCheckboxItem label={title} {...props} />
     </TooltipPreset>
   );
 }

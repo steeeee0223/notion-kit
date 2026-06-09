@@ -79,11 +79,13 @@ export function ViewNav({ rowId }: ViewNavProps) {
         />
         <DropdownMenu>
           <TooltipPreset className="z-999" description="Switch peek mode">
-            <DropdownMenuTrigger asChild>
-              <Button variant="hint" className="size-6">
-                <RowViewIcon rowView={rowView} className="fill-icon" />
-              </Button>
-            </DropdownMenuTrigger>
+            <DropdownMenuTrigger
+              render={
+                <Button variant="hint" className="size-6">
+                  <RowViewIcon rowView={rowView} className="fill-icon" />
+                </Button>
+              }
+            />
           </TooltipPreset>
           <DropdownMenuContent className="z-999 w-52">
             <DropdownMenuGroup>
@@ -92,8 +94,8 @@ export function ViewNav({ rowId }: ViewNavProps) {
                 return (
                   <DropdownMenuCheckboxItem
                     key={view}
-                    Icon={<RowViewIcon rowView={view} />}
-                    Body={option.label}
+                    icon={<RowViewIcon rowView={view} />}
+                    label={option.label}
                     checked={rowView === view}
                     onCheckedChange={() =>
                       table.setTableGlobalState((v) => ({

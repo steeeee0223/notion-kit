@@ -129,8 +129,8 @@ export function PropsMenu() {
               page: TableViewMenuPage.CreateProp,
             })
           }
-          Icon={<Icon.Plus className="size-4" />}
-          Body="New property"
+          icon={<Icon.Plus className="size-4" />}
+          label="New property"
         />
         {deletedCount > 0 && (
           <MenuItem
@@ -142,8 +142,8 @@ export function PropsMenu() {
                 page: TableViewMenuPage.DeletedProps,
               })
             }
-            Icon={<Icon.Trash />}
-            Body="Deleted properties"
+            icon={<Icon.Trash />}
+            label="Deleted properties"
           >
             <MenuItemSelect>{deletedCount}</MenuItemSelect>
           </MenuItem>
@@ -153,8 +153,8 @@ export function PropsMenu() {
           onClick={() =>
             window.open("https://www.notion.com/help/database-properties")
           }
-          Icon={<Icon.Help className="size-4" />}
-          Body="Learn about properties"
+          icon={<Icon.Help className="size-4" />}
+          label="Learn about properties"
         />
       </MenuGroup>
     </>
@@ -199,7 +199,7 @@ function PropertyItem({
       role="menuitem"
       style={style}
       onClick={onClick}
-      Icon={[
+      icon={[
         <div
           key="drag-handle"
           className={cn(
@@ -215,7 +215,7 @@ function PropertyItem({
           {icon ? <IconBlock icon={icon} /> : <DefaultIcon type={type} />}
         </React.Fragment>,
       ]}
-      Body={name}
+      label={name}
       className="*:data-[slot=menu-item-body]:leading-normal"
     >
       <MenuItemAction className="flex items-center text-muted [&_svg]:fill-current">

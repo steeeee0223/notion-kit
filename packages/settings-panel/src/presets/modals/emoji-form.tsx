@@ -117,26 +117,28 @@ export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
                     {t("upload")}
                   </Button>
                 )}
-                <FormControl>
-                  <Input
-                    ref={fileRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const selected = e.target.files?.[0];
-                      if (!selected) return;
-                      field.onChange(selected);
-                      setPreview(URL.createObjectURL(selected));
-                      if (!form.getValues("name") && !isEdit) {
-                        const baseName = selected.name
-                          .replace(/\.[^.]+$/, "")
-                          .replace(/\s+/g, "-");
-                        form.setValue("name", baseName);
-                      }
-                    }}
-                  />
-                </FormControl>
+                <FormControl
+                  render={
+                    <Input
+                      ref={fileRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const selected = e.target.files?.[0];
+                        if (!selected) return;
+                        field.onChange(selected);
+                        setPreview(URL.createObjectURL(selected));
+                        if (!form.getValues("name") && !isEdit) {
+                          const baseName = selected.name
+                            .replace(/\.[^.]+$/, "")
+                            .replace(/\s+/g, "-");
+                          form.setValue("name", baseName);
+                        }
+                      }}
+                    />
+                  }
+                />
               </FormItem>
             )}
           />
@@ -146,14 +148,16 @@ export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("name-label")}</FormLabel>
-                <FormControl>
-                  <Input
-                    variant="default"
-                    placeholder={t("name-placeholder")}
-                    autoComplete="off"
-                    {...field}
-                  />
-                </FormControl>
+                <FormControl
+                  render={
+                    <Input
+                      variant="default"
+                      placeholder={t("name-placeholder")}
+                      autoComplete="off"
+                      {...field}
+                    />
+                  }
+                />
               </FormItem>
             )}
           />

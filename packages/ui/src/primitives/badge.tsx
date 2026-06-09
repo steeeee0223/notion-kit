@@ -3,7 +3,7 @@ import * as React from "react";
 import { cn, cva, type VariantProps } from "@notion-kit/cn";
 
 const badgeVariants = cva(
-  "inline-flex items-center border transition-colors focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden",
+  "inline-flex items-center rounded-sm border transition-colors focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden",
   {
     variants: {
       variant: {
@@ -14,8 +14,8 @@ const badgeVariants = cva(
         tag: "truncate border-none bg-[#cecdca]/50 text-primary",
       },
       size: {
-        md: "rounded-full px-2.5 py-0.5 text-xs font-semibold",
-        sm: "rounded-sm px-1.5 text-[9px]/none font-medium",
+        md: "px-2.5 py-0.5 text-xs font-semibold",
+        sm: "px-1.5 text-[9px]/none font-medium",
       },
     },
     defaultVariants: {

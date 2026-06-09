@@ -108,14 +108,16 @@ export function Add2FAForm({
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormControl>
-                  <Input
-                    data-size="lg"
-                    type="password"
-                    placeholder={t("password-placeholder")}
-                    {...field}
-                  />
-                </FormControl>
+                <FormControl
+                  render={
+                    <Input
+                      data-size="lg"
+                      type="password"
+                      placeholder={t("password-placeholder")}
+                      {...field}
+                    />
+                  }
+                />
               </FormItem>
             )}
           />

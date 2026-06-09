@@ -45,16 +45,18 @@ export const UrlForm: React.FC<UrlFormProps> = ({ onUrlSubmit, disabled }) => {
           name="url"
           render={({ field }) => (
             <FormItem className="h-7 flex-1">
-              <FormControl>
-                <Input
-                  clear
-                  disabled={disabled}
-                  type="url"
-                  placeholder="Paste an image link..."
-                  {...field}
-                  onCancel={() => form.setValue("url", "")}
-                />
-              </FormControl>
+              <FormControl
+                render={
+                  <Input
+                    clear
+                    disabled={disabled}
+                    type="url"
+                    placeholder="Paste an image link..."
+                    {...field}
+                    onCancel={() => form.setValue("url", "")}
+                  />
+                }
+              />
             </FormItem>
           )}
         />

@@ -57,22 +57,26 @@ export function DraggableItem({ id, label, overlay }: DraggableItemProps) {
   };
 
   return (
-    <Selectable.Item key={id} id={id} asChild>
-      <div
-        className={cn(
-          "rounded-lg bg-default/10 p-4 text-sm font-medium",
-          "data-[selected=true]:bg-blue/30 data-[selected=true]:shadow-notion data-[selecting=true]:bg-blue/15",
-          (isDragging || (active !== null && isSelected)) && "opacity-0",
-          overlay && "pointer-events-none bg-red/30 shadow-lg",
-        )}
-        ref={setNodeRef}
-        style={overlay ? undefined : style}
-        {...attributes}
-        {...listeners}
-      >
-        <div>{label}</div>
-      </div>
-    </Selectable.Item>
+    <Selectable.Item
+      key={id}
+      id={id}
+      render={
+        <div
+          className={cn(
+            "rounded-lg bg-default/10 p-4 text-sm font-medium",
+            "data-[selected=true]:bg-blue/30 data-[selected=true]:shadow-notion data-[selecting=true]:bg-blue/15",
+            (isDragging || (active !== null && isSelected)) && "opacity-0",
+            overlay && "pointer-events-none bg-red/30 shadow-lg",
+          )}
+          ref={setNodeRef}
+          style={overlay ? undefined : style}
+          {...attributes}
+          {...listeners}
+        >
+          <div>{label}</div>
+        </div>
+      }
+    />
   );
 }
 

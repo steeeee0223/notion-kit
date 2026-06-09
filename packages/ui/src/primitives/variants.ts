@@ -75,6 +75,8 @@ export const menuItemVariants = cva(
   [
     "mx-1 flex min-h-7 w-[calc(100%-8px)] animate-bg-in cursor-pointer items-center rounded-md px-2 text-sm/tight select-none hover:bg-default/5 focus-visible:outline-hidden",
     "fill-menu-icon [&_svg]:block [&_svg]:shrink-0",
+    "data-highlighted:bg-default/10",
+    "data-disabled:pointer-events-none data-disabled:cursor-not-allowed data-disabled:opacity-40",
   ],
   {
     variants: {
@@ -85,10 +87,6 @@ export const menuItemVariants = cva(
           "fill-secondary text-sidebar-primary aria-selected:bg-default/10 aria-selected:text-primary",
         warning: "hover:fill-red hover:text-red",
         error: "fill-red text-red",
-      },
-      inset: { true: "pl-8" },
-      disabled: {
-        true: "pointer-events-none cursor-not-allowed opacity-40 hover:bg-transparent",
       },
     },
     defaultVariants: {
@@ -154,7 +152,7 @@ export const contentVariants = cva(
          * @note Used by: DropdownMenu, Popover, Select
          * @note Used with: `openAnimation`, `sideAnimation`
          */
-        popover: "z-(--z-menu) rounded-md bg-popover shadow-md",
+        popover: "z-(--z-menu) rounded-lg bg-popover shadow-md",
         /**
          * @prop sheet
          */
@@ -175,6 +173,11 @@ export const contentVariants = cva(
       },
       openAnimation: {
         true: [
+          "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95",
+          "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          /**
+           * @deprecated legacy animation data attribute for radix-ui, will be removed in the future
+           */
           "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
           "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
         ],

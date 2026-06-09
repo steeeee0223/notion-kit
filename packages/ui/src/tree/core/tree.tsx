@@ -1,5 +1,3 @@
-"use client";
-
 import React, {
   createContext,
   use,
@@ -8,7 +6,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Slot } from "radix-ui";
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
 
 import { cn } from "@notion-kit/cn";
 
@@ -149,11 +148,8 @@ function useTreeContext<T extends TreeItemData>() {
   return ctx as TreeInstance<T>;
 }
 
-interface DivSlotProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
-interface TreeProps<T extends TreeItemData> extends DivSlotProps {
+interface TreeProps<T extends TreeItemData>
+  extends React.ComponentProps<"div"> {
   tree: TreeInstance<T>;
 }
 
@@ -165,101 +161,91 @@ function Tree<T extends TreeItemData>({ tree, ...props }: TreeProps<T>) {
   );
 }
 
-interface TreeItemProps extends DivSlotProps {
+interface TreeItemProps extends useRender.ComponentProps<"div"> {
   id: string;
 }
 
-const composeRefs =
-  <T,>(...refs: (React.Ref<T> | undefined)[]) =>
-  (node: T | null) => {
-    refs.forEach((ref) => {
-      if (typeof ref === "function") {
-        ref(node);
-      } else if (ref != null) {
-        ref.current = node;
-      }
-    });
-  };
-
-Tree.Item = function TreeItem({
-  asChild,
-  ref,
-  id,
-  children,
-  ...props
-}: TreeItemProps) {
-  const Comp = asChild ? Slot.Root : "div";
+Tree.Item = function TreeItem({ id, render, ...props }: TreeItemProps) {
   const tree = useTreeContext();
   const node = tree.entity.nodes.get(id);
-
-  if (!node) return;
-
-  const nav = createTreeNavigation(id, tree);
-  const composedRef = composeRefs((el) => tree.registerItem(id, el), ref);
-
-  return (
-    <Comp
-      role="treeitem"
-      ref={composedRef}
-      id={id}
-      aria-level={node.level}
-      aria-expanded={tree.state.expanded.has(id)}
-      aria-selected={tree.state.selected.has(id)}
-      tabIndex={-1}
-      onClick={() => tree.select(id)}
-      onKeyDown={nav.onKeyDown}
-      {...props}
-    >
-      {asChild ? children : tree.entity.nodes.get(id)?.title}
-    </Comp>
+  const nav = node ? createTreeNavigation(id, tree) : undefined;
+  const registerRef = useCallback(
+    (el: HTMLDivElement | null) => tree.registerItem(id, el),
+    [id, tree],
   );
+
+  return useRender({
+    defaultTagName: "div",
+    render,
+    ref: registerRef,
+    enabled: !!node,
+    props: mergeProps(
+      {
+        role: "treeitem",
+        id,
+        "aria-level": node?.level,
+        "aria-expanded": tree.state.expanded.has(id),
+        "aria-selected": tree.state.selected.has(id),
+        tabIndex: -1,
+        onClick: () => tree.select(id),
+        onKeyDown: nav?.onKeyDown,
+        children: tree.entity.nodes.get(id)?.title,
+      },
+      props,
+    ),
+  });
 };
 
-interface TreeExpandIndicatorProps extends React.ComponentProps<"span"> {
-  asChild?: boolean;
+interface TreeExpandIndicatorProps extends useRender.ComponentProps<"span"> {
   onToggle?: () => void;
 }
 
 Tree.ExpandIndicator = function TreeExpandIndicator({
-  asChild,
   onToggle,
+  render,
   ...props
 }: TreeExpandIndicatorProps) {
-  const Comp = asChild ? Slot.Root : "span";
-
-  return (
-    <Comp
-      aria-hidden
-      tabIndex={-1}
-      onClick={(e) => {
-        e.stopPropagation();
-        onToggle?.();
-      }}
-      {...props}
-    />
-  );
+  return useRender({
+    defaultTagName: "span",
+    render,
+    props: mergeProps(
+      {
+        "aria-hidden": true,
+        tabIndex: -1,
+        onClick: (e: React.MouseEvent<HTMLSpanElement>) => {
+          e.stopPropagation();
+          onToggle?.();
+        },
+      },
+      props,
+    ),
+  });
 };
 
-Tree.Group = function TreeGroup({ asChild, ...props }: DivSlotProps) {
-  const Comp = asChild ? Slot.Root : "div";
-  return <Comp role="group" {...props} />;
+Tree.Group = function TreeGroup({
+  render,
+  ...props
+}: useRender.ComponentProps<"div">) {
+  return useRender({
+    defaultTagName: "div",
+    render,
+    props: mergeProps({ role: "group" }, props),
+  });
 };
 
 Tree.EmptyIndicator = function TreeEmptyIndicator({
-  asChild,
   className,
-  children,
+  render,
   ...props
-}: DivSlotProps) {
-  return asChild ? (
-    <Slot.Root {...props} className={className}>
-      {children}
-    </Slot.Root>
-  ) : (
-    <div {...props} className={cn("text-muted", className)}>
-      No items
-    </div>
-  );
+}: useRender.ComponentProps<"div">) {
+  return useRender({
+    defaultTagName: "div",
+    render,
+    props: mergeProps(
+      { className: cn("text-muted", className), children: "No items" },
+      props,
+    ),
+  });
 };
 
 interface TreeListItemProps<T extends TreeItemData> {
@@ -298,8 +284,11 @@ Tree.List = function TreeList<T extends TreeItemData>({
           id={nodeId}
           style={{ paddingLeft: node.level * tree.indent }}
           {...(renderItem && {
-            asChild: true,
-            children: renderItem({ node, tree, state: { expanded, selected } }),
+            render: renderItem({
+              node,
+              tree,
+              state: { expanded, selected },
+            }) as React.ReactElement,
           })}
         />
         {!shouldShowChildren ? null : node.children.length > 0 ? (
@@ -313,7 +302,9 @@ Tree.List = function TreeList<T extends TreeItemData>({
         ) : (
           <Tree.EmptyIndicator
             style={{ paddingLeft: (node.level + 1) * tree.indent }}
-            {...(renderEmpty && { asChild: true, children: renderEmpty() })}
+            {...(renderEmpty && {
+              render: renderEmpty() as React.ReactElement,
+            })}
           />
         )}
       </div>

@@ -46,7 +46,7 @@ export function CodeBlockActions() {
               value="caption"
               onSelect={() => store.enableCaption()}
             >
-              <MenuItem Icon={<Icon.Caption />} Body="Caption">
+              <MenuItem icon={<Icon.Caption />} label="Caption">
                 <MenuItemShortcut>
                   {KEYBOARD.CMD}
                   {KEYBOARD.OPTION}M
@@ -59,10 +59,10 @@ export function CodeBlockActions() {
             value="copy-code"
             onSelect={() => copy(state.code)}
           >
-            <MenuItem Icon={<Icon.CopyCode />} Body="Copy code" />
+            <MenuItem icon={<Icon.CopyCode />} label="Copy code" />
           </CommandItem>
           <CommandItem asChild value="wrap-code" onSelect={store.toggleWrap}>
-            <MenuItem Icon={<Icon.ArrowTurnDownLeft />} Body="Wrap code">
+            <MenuItem icon={<Icon.ArrowTurnDownLeft />} label="Wrap code">
               <MenuItemAction>
                 <Switch size="sm" checked={state.wrap} />
               </MenuItemAction>
@@ -77,7 +77,7 @@ export function CodeBlockActions() {
                   onPointerEnter={() => setOpenLangSelect(true)}
                   onSelect={() => setOpenLangSelect((v) => !v)}
                 >
-                  <MenuItem Icon={<Icon.CurlyBraces />} Body="Language">
+                  <MenuItem icon={<Icon.CurlyBraces />} label="Language">
                     <MenuItemSelect />
                   </MenuItem>
                 </CommandItem>
@@ -93,7 +93,7 @@ export function CodeBlockActions() {
               value="format-code"
               onSelect={store.formatCode}
             >
-              <MenuItem Icon={<Icon.Lightning />} Body="Format code" />
+              <MenuItem icon={<Icon.Lightning />} label="Format code" />
             </CommandItem>
           )}
           <Popover open={openThemeSelect} onOpenChange={setOpenThemeSelect}>
@@ -104,7 +104,7 @@ export function CodeBlockActions() {
                 onPointerEnter={() => setOpenThemeSelect(true)}
                 onSelect={() => setOpenThemeSelect((v) => !v)}
               >
-                <MenuItem Icon={<Icon.EmojiFace />} Body="Theme">
+                <MenuItem icon={<Icon.EmojiFace />} label="Theme">
                   <MenuItemSelect />
                 </MenuItem>
               </CommandItem>

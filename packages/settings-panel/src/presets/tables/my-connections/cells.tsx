@@ -47,23 +47,25 @@ export function ActionCell({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="hint" className="size-5" aria-label="More options">
-          <Icon.Dots className="size-4 fill-current" />
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <Button variant="hint" className="size-5" aria-label="More options">
+            <Icon.Dots className="size-4 fill-current" />
+          </Button>
+        }
+      />
       <DropdownMenuContent align="center">
         <DropdownMenuGroup>
           <DropdownMenuItem
             // TODO impl. this
             disabled
-            Body={trans.connect}
-            onSelect={onCreateConnection}
+            label={trans.connect}
+            onClick={onCreateConnection}
           />
           <DropdownMenuItem
             variant="error"
-            Body={trans.disconnect}
-            onSelect={onDisconnect}
+            label={trans.disconnect}
+            onClick={onDisconnect}
           />
         </DropdownMenuGroup>
       </DropdownMenuContent>

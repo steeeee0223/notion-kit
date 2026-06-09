@@ -140,27 +140,26 @@ export function TeamspaceActionCell({
   return (
     <DropdownMenu>
       <TooltipPreset description="Teamspace settings and members...">
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="hint"
-            className="size-5"
-            aria-label="More options"
-            disabled={isArchiving}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Icon.Dots className="size-4 fill-current" />
-          </Button>
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="hint"
+              className="size-5"
+              aria-label="More options"
+              disabled={isArchiving}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Icon.Dots className="size-4 fill-current" />
+            </Button>
+          }
+        />
       </TooltipPreset>
-      <DropdownMenuContent
-        className="w-[282px]"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <DropdownMenuContent className="w-[282px]">
         <DropdownMenuGroup>
           <DropdownMenuItem
             onClick={onViewDetail}
-            Icon={<Icon.Gear />}
-            Body={trans.settings}
+            icon={<Icon.Gear />}
+            label={trans.settings}
           />
           {!!role && (
             <>
@@ -168,9 +167,10 @@ export function TeamspaceActionCell({
                 <DialogTrigger asChild>
                   <DropdownMenuItem
                     variant="error"
-                    Icon={<Icon.Bye className="size-4" />}
-                    Body={trans.leave}
-                    onSelect={(e) => {
+                    icon={<Icon.Bye className="size-4" />}
+                    label={trans.leave}
+                    closeOnClick={false}
+                    onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                     }}
@@ -182,8 +182,8 @@ export function TeamspaceActionCell({
                 variant="error"
                 onClick={archive}
                 disabled={role !== "owner"}
-                Icon={<Icon.ArchiveBox />}
-                Body={trans.archive}
+                icon={<Icon.ArchiveBox />}
+                label={trans.archive}
               />
             </>
           )}
@@ -227,16 +227,18 @@ export function TeamMemberActionCell({
   return (
     <DropdownMenu>
       <TooltipPreset description="Teamspace settings and members...">
-        <DropdownMenuTrigger asChild>
-          <Button variant="hint" size="xs" disabled={isPending}>
-            <span className="text-primary">
-              {t(`roles.${role}.label`, {
-                defaultValue: teamspaceRoles[role].label,
-              })}
-            </span>
-            <Icon.Chevron side="down" className="size-2.5 fill-icon" />
-          </Button>
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          render={
+            <Button variant="hint" size="xs" disabled={isPending}>
+              <span className="text-primary">
+                {t(`roles.${role}.label`, {
+                  defaultValue: teamspaceRoles[role].label,
+                })}
+              </span>
+              <Icon.Chevron side="down" className="size-2.5 fill-icon" />
+            </Button>
+          }
+        />
       </TooltipPreset>
       <DropdownMenuContent className="w-[288px]">
         <DropdownMenuGroup>
@@ -247,27 +249,19 @@ export function TeamMemberActionCell({
                 disabled={role === "member"}
                 checked={role === key}
                 onClick={() => update(key as TeamspaceRole)}
-                Body={
-                  <div className="flex flex-col items-start gap-0.5 py-1">
-                    <div className="truncate">
-                      {t(`roles.${key}.label`, {
-                        defaultValue: label,
-                      })}
-                    </div>
-                    <div className="text-xs whitespace-normal text-secondary">
-                      {t(`roles.${key}.description`, {
-                        defaultValue: description,
-                      })}
-                    </div>
-                  </div>
-                }
+                label={t(`roles.${key}.label`, {
+                  defaultValue: label,
+                })}
+                desc={t(`roles.${key}.description`, {
+                  defaultValue: description,
+                })}
               />
             ),
           )}
           <DropdownMenuItem
             variant="error"
             onClick={remove}
-            Body={t("actions.remove")}
+            label={t("actions.remove")}
           />
         </DropdownMenuGroup>
       </DropdownMenuContent>

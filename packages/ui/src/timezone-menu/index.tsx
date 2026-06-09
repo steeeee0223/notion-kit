@@ -97,14 +97,8 @@ function TzItem({ tz, checked, onSelect }: TzItemProps) {
     <CommandItem asChild value={tz} onSelect={onSelect}>
       <MenuItem
         className="h-11"
-        Body={
-          <div className="flex flex-col gap-0.5 p-1">
-            <div className="truncate">{tz.replace("_", " ")}</div>
-            <div className="truncate text-xs text-secondary">
-              {getGmtStr(tz)}
-            </div>
-          </div>
-        }
+        label={tz.replace("_", " ")}
+        desc={getGmtStr(tz)}
       >
         {checked && <MenuItemCheck />}
       </MenuItem>

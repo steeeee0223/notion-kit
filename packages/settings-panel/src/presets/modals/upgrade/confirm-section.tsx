@@ -49,14 +49,16 @@ export function ConfirmSection({ plan }: ConfirmSectionProps) {
           name="termsAccepted"
           render={({ field }) => (
             <FormItem className="grid-cols-[1fr_auto]">
-              <FormControl>
-                <Checkbox
-                  size="xs"
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                  className="mt-0.5"
-                />
-              </FormControl>
+              <FormControl
+                render={
+                  <Checkbox
+                    size="xs"
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    className="mt-0.5"
+                  />
+                }
+              />
               <label
                 htmlFor={field.name}
                 className="text-[10px]/[13px] text-secondary"

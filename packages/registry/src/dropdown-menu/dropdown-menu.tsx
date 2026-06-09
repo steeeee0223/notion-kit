@@ -17,52 +17,55 @@ import {
 export default function Demo() {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button size="md">Open</Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger render={<Button size="md">Open</Button>} />
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuItem Body="Profile">
+          <DropdownMenuLabel title="My Account" />
+          <DropdownMenuItem label="Profile">
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem Body="Billing">
+          <DropdownMenuItem label="Billing">
             <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem Body="Settings">
+          <DropdownMenuItem label="Settings">
             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem Body="Keyboard shortcuts">
+          <DropdownMenuItem label="Keyboard shortcuts">
             <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem Body="Team" />
+          <DropdownMenuLabel title="Team" />
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger Body="Invite users" />
+            <DropdownMenuSubTrigger label="Invite users" />
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
-                <DropdownMenuItem Body="Email" />
-                <DropdownMenuItem Body="Message" />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem label="Email" />
+                  <DropdownMenuItem label="Message" />
+                </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem Body="More..." />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem label="More..." />
+                </DropdownMenuGroup>
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
-          <DropdownMenuItem Body="New Team">
+          <DropdownMenuItem label="New Team">
             <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem Body="GitHub" />
-          <DropdownMenuItem Body="Support" />
-          <DropdownMenuItem Body="API" disabled />
+          <DropdownMenuLabel title="Resources" />
+          <DropdownMenuItem label="GitHub" />
+          <DropdownMenuItem label="Support" />
+          <DropdownMenuItem label="API" disabled />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem variant="warning" Body="Log out">
+          <DropdownMenuItem variant="warning" label="Log out">
             <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
