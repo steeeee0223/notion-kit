@@ -412,6 +412,7 @@ function Selectable({
     render,
     ref: containerRef,
     props: mergeProps(
+      // eslint-disable-next-line react-hooks/refs
       {
         className: cn("relative touch-none select-none", className),
         style: { touchAction: "none" },

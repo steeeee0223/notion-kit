@@ -13,7 +13,6 @@ const THIRD_PARTY = [
   /^@radix-ui\//,
   /^@tanstack\//,
   /^@uidotdev\//,
-  "cmdk",
   "date-fns",
   "i18next",
   "jotai",

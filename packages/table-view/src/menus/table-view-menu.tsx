@@ -111,7 +111,7 @@ function TableMenu() {
         <MenuItem
           icon={<Icon.Sliders />}
           label="Edit properties"
-          data-disabled={locked}
+          aria-disabled={locked}
           onClick={() => openMenu(TableViewMenuPage.Props)}
         >
           <MenuItemSelect />

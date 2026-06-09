@@ -119,7 +119,7 @@ export function TableHeaderCell({
           role="presentation"
           tabIndex={-1}
           className={cn(
-            "-mt-px -ml-[3px] h-[34px] w-[5px] animate-bg-out cursor-col-resize bg-transparent hover:bg-blue/80",
+            "-mt-px ml-[-3px] h-[34px] w-[5px] animate-bg-out cursor-col-resize bg-transparent hover:bg-blue/80",
             isResizing && "bg-blue/80",
           )}
           // Resize for desktop

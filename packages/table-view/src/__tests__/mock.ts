@@ -81,7 +81,7 @@ export function mockResizeObserver() {
 
   beforeEach(() => {
     global.ResizeObserver = ResizeObserverMock;
-    // Mock scrollIntoView for cmdk
+    // Mock scrollIntoView for menu primitives
     Element.prototype.scrollIntoView = vi.fn();
     Object.defineProperty(window, "matchMedia", {
       writable: true,

@@ -8,13 +8,15 @@ import type { ColumnSort } from "@tanstack/react-table";
 import { Icon } from "@notion-kit/icons";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
+  Autocomplete,
+  AutocompleteCollection,
+  AutocompleteContent,
+  AutocompleteEmpty,
+  AutocompleteGroup,
+  AutocompleteInput,
+  AutocompleteItem,
+  AutocompleteList,
   Button,
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
   MenuGroup,
   MenuItem,
   MenuItemAction,
@@ -206,32 +208,41 @@ function PropSelectMenu() {
     table.setSorting((prev) => [...prev, { id, desc: false }]);
 
   return (
-    <Command shouldFilter>
-      <CommandInput clear placeholder="Search for a property..." />
-      <CommandList>
-        <CommandGroup className="h-40 overflow-y-auto">
-          {columns.map(({ id, name, type, icon }) => (
-            <CommandItem
-              key={id}
-              value={name}
-              onSelect={() => selectProp(id)}
-              disabled={sortedProps.has(id)}
-              asChild
-            >
-              <MenuItem
-                key={id}
-                icon={
-                  icon ? <IconBlock icon={icon} /> : <DefaultIcon type={type} />
-                }
-                label={name}
-              />
-            </CommandItem>
-          ))}
-        </CommandGroup>
-        <CommandEmpty className="px-3 text-start text-muted">
+    <Autocomplete
+      items={columns}
+      itemToStringValue={(column) => column.name}
+      open
+      autoHighlight="always"
+      openOnInputClick
+    >
+      <AutocompleteInput clear placeholder="Search for a property..." />
+      <AutocompleteContent role="presentation" variant="inline">
+        <AutocompleteList>
+          <AutocompleteGroup className="h-40 overflow-y-auto">
+            <AutocompleteCollection>
+              {(column: (typeof columns)[number]) => (
+                <AutocompleteItem
+                  key={column.id}
+                  value={column}
+                  onClick={() => selectProp(column.id)}
+                  disabled={sortedProps.has(column.id)}
+                  icon={
+                    column.icon ? (
+                      <IconBlock icon={column.icon} />
+                    ) : (
+                      <DefaultIcon type={column.type} />
+                    )
+                  }
+                  label={column.name}
+                />
+              )}
+            </AutocompleteCollection>
+          </AutocompleteGroup>
+        </AutocompleteList>
+        <AutocompleteEmpty className="px-3 text-start text-muted">
           No results
-        </CommandEmpty>
-      </CommandList>
-    </Command>
+        </AutocompleteEmpty>
+      </AutocompleteContent>
+    </Autocomplete>
   );
 }

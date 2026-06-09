@@ -1,16 +1,15 @@
-"use client";
-
+import { useState } from "react";
 import { v4 } from "uuid";
 
-import { cn } from "@notion-kit/cn";
-import { useFilter } from "@notion-kit/hooks";
 import {
-  Command,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  MenuItem,
+  Autocomplete,
+  AutocompleteCollection,
+  AutocompleteContent,
+  AutocompleteGroup,
+  AutocompleteInput,
+  AutocompleteItem,
+  AutocompleteLabel,
+  AutocompleteList,
   MenuItemCheck,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
@@ -18,7 +17,7 @@ import {
 import { DefaultIcon, MenuHeader } from "../common";
 import { TableViewMenuPage } from "../features";
 import type { PluginType } from "../lib/types";
-import { CellPlugin } from "../plugins";
+import type { CellPlugin } from "../plugins";
 import { useTableViewCtx } from "../table-contexts";
 
 interface TypesMenuProps {
@@ -49,12 +48,10 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
   const { table } = useTableViewCtx();
 
   const plugins = table.getState().cellPlugins;
+  const pluginOptions = Object.values(plugins);
   const propType = propId ? table.getColumnInfo(propId).type : null;
+  const [search, setSearch] = useState("");
 
-  const { search, results, updateSearch } = useFilter(
-    Object.values(plugins),
-    (prop, v) => prop.default.name.toLowerCase().includes(v),
-  );
   const select = (type: PluginType<CellPlugin[]>, name: string) => {
     let colId = propId;
     if (colId === undefined) {
@@ -95,67 +92,60 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
           }
         />
       )}
-      <Command shouldFilter={false}>
-        <CommandInput
-          value={search}
-          onValueChange={updateSearch}
+      <Autocomplete
+        items={pluginOptions}
+        itemToStringValue={(plugin) => plugin.default.name}
+        value={search}
+        onValueChange={setSearch}
+        open
+        autoHighlight="always"
+        openOnInputClick
+      >
+        <AutocompleteInput
           placeholder={
             propId ? "Search for property type" : "Search or add new property"
           }
         />
-        <CommandList>
-          {results && results.length > 0 && (
-            <CommandGroup
-              className={cn(
-                "flex flex-col gap-px px-0",
-                "**:[[cmdk-group-heading]]:mt-1.5 **:[[cmdk-group-heading]]:mb-2 **:[[cmdk-group-heading]]:flex **:[[cmdk-group-heading]]:items-center **:[[cmdk-group-heading]]:truncate **:[[cmdk-group-heading]]:px-3.5 **:[[cmdk-group-heading]]:py-0 **:[[cmdk-group-heading]]:leading-tight **:[[cmdk-group-heading]]:text-secondary **:[[cmdk-group-heading]]:select-none",
-              )}
-              heading="Type"
-            >
-              {results.map(({ id, meta }) => (
-                <CommandItem key={id} value={`default-${id}`} asChild>
+        <AutocompleteContent role="presentation" variant="inline">
+          <AutocompleteList>
+            <AutocompleteGroup>
+              <AutocompleteLabel title="Type" />
+              <AutocompleteCollection>
+                {(plugin: CellPlugin) => (
                   <TooltipPreset
+                    key={plugin.id}
                     side="left"
                     sideOffset={6}
-                    description={meta.desc}
-                    // WARNING adding `text-xs/[1.4] to prevent style overriding by `CommandItem`
+                    description={plugin.meta.desc}
                     className="max-w-[282px] text-xs/[1.4]"
                   >
-                    <MenuItem
-                      aria-disabled={id === "title"}
-                      icon={meta.icon}
-                      label={meta.name}
-                      onClick={() => select(id, meta.name)}
+                    <AutocompleteItem
+                      value={plugin}
+                      disabled={plugin.id === "title"}
+                      icon={plugin.meta.icon}
+                      label={plugin.meta.name}
+                      onClick={() => select(plugin.id, plugin.meta.name)}
                     >
-                      {propType === id && <MenuItemCheck />}
-                    </MenuItem>
+                      {propType === plugin.id && <MenuItemCheck />}
+                    </AutocompleteItem>
                   </TooltipPreset>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          )}
-          {!propId && search.length > 0 && (
-            <CommandGroup
-              className={cn(
-                "flex flex-col gap-px px-0",
-                "**:[[cmdk-group-heading]]:mt-1.5 **:[[cmdk-group-heading]]:mb-2 **:[[cmdk-group-heading]]:flex **:[[cmdk-group-heading]]:items-center **:[[cmdk-group-heading]]:truncate **:[[cmdk-group-heading]]:px-3.5 **:[[cmdk-group-heading]]:py-0 **:[[cmdk-group-heading]]:leading-tight **:[[cmdk-group-heading]]:text-secondary **:[[cmdk-group-heading]]:select-none",
-              )}
-              heading="Select to add"
-            >
-              <CommandItem
-                value={`search-${search}`}
-                onSelect={() => select("text", search)}
-                asChild
-              >
-                <MenuItem
+                )}
+              </AutocompleteCollection>
+            </AutocompleteGroup>
+            {!propId && search.length > 0 && (
+              <AutocompleteGroup>
+                <AutocompleteLabel title="Select to add" />
+                <AutocompleteItem
+                  value={`search-${search}`}
                   icon={<DefaultIcon type="text" className="fill-menu-icon" />}
                   label={search}
+                  onClick={() => select("text", search)}
                 />
-              </CommandItem>
-            </CommandGroup>
-          )}
-        </CommandList>
-      </Command>
+              </AutocompleteGroup>
+            )}
+          </AutocompleteList>
+        </AutocompleteContent>
+      </Autocomplete>
     </>
   );
 }

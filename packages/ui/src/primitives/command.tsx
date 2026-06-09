@@ -1,10 +1,22 @@
-"use client";
-
 import * as React from "react";
-import { Command as CommandPrimitive, useCommandState } from "cmdk";
 
 import { cn } from "@notion-kit/cn";
 
+import {
+  Autocomplete,
+  AutocompleteCollection,
+  AutocompleteContent,
+  AutocompleteEmpty,
+  AutocompleteGroup,
+  AutocompleteInput,
+  AutocompleteItem,
+  AutocompleteLabel,
+  AutocompleteList,
+  AutocompleteSeparator,
+  type AutocompleteInputProps,
+  type AutocompleteItemProps,
+  type AutocompleteRootProps,
+} from "./autocomplete";
 import {
   Dialog,
   DialogContent,
@@ -12,39 +24,31 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./dialog";
-import { Input } from "./input";
-import { InputVariants, menuItemVariants, separatorVariants } from "./variants";
+import { MenuItemShortcut } from "./menu";
 
-function Command({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive>) {
-  return (
-    <CommandPrimitive
-      data-slot="command"
-      className={cn(
-        "flex size-full flex-col overflow-hidden rounded-md bg-popover text-primary focus-visible:outline-none",
-        className,
-      )}
-      {...props}
-    />
-  );
-}
-
-interface CommandDialogProps extends React.ComponentProps<typeof Dialog> {
+interface CommandDialogProps<ItemValue = string>
+  extends React.ComponentProps<typeof Dialog>,
+    Pick<
+      AutocompleteRootProps<ItemValue>,
+      "items" | "itemToStringValue" | "filter" | "filteredItems"
+    > {
   className?: string;
-  shouldFilter?: boolean;
   title?: string;
   description?: string;
+  children?: React.ReactNode;
 }
-function CommandDialog({
+
+function CommandDialog<ItemValue = string>({
   className,
-  shouldFilter,
   title = "Command Palette",
   description = "Search for a command to run...",
   children,
+  items,
+  itemToStringValue,
+  filter,
+  filteredItems,
   ...props
-}: CommandDialogProps) {
+}: CommandDialogProps<ItemValue>) {
   return (
     <Dialog {...props}>
       <DialogHeader className="sr-only">
@@ -55,57 +59,52 @@ function CommandDialog({
         className={cn("overflow-hidden p-0 shadow-lg", className)}
         hideClose
       >
-        <Command
-          shouldFilter={shouldFilter}
-          className="bg-modal focus-visible:outline-hidden [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:size-5 **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted **:[[cmdk-input]]:h-12"
+        <Autocomplete
+          items={items}
+          itemToStringValue={itemToStringValue}
+          filter={filter}
+          filteredItems={filteredItems}
+          open
+          autoHighlight="always"
+          openOnInputClick
         >
-          {children}
-        </Command>
+          <AutocompleteContent
+            data-slot="command"
+            role="presentation"
+            variant="inline"
+            className="flex size-full flex-col overflow-hidden rounded-md bg-modal text-primary focus-visible:outline-none"
+          >
+            {children}
+          </AutocompleteContent>
+        </Autocomplete>
       </DialogContent>
     </Dialog>
   );
 }
 
-export interface CommandInputProps
-  extends React.ComponentProps<typeof CommandPrimitive.Input> {
-  classNames?: {
-    wrapper?: string;
-  };
-  variant?: InputVariants["variant"];
-  search?: boolean;
-  clear?: boolean;
-  onCancel?: () => void;
-}
-function CommandInput({
-  classNames,
-  onValueChange,
-  ...props
-}: CommandInputProps) {
+type CommandInputProps = AutocompleteInputProps;
+
+function CommandInput({ classNames, ...props }: CommandInputProps) {
   return (
-    <div
-      data-slot="command-input-wrapper"
-      className={cn(
-        "flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2",
-        classNames?.wrapper,
-      )}
-    >
-      <CommandPrimitive.Input data-slot="command-input" asChild>
-        <Input
-          onChange={(e) => onValueChange?.(e.target.value)}
-          onCancel={() => onValueChange?.("")}
-          {...props}
-        />
-      </CommandPrimitive.Input>
-    </div>
+    <AutocompleteInput
+      data-slot="command-input"
+      classNames={{
+        wrapper: cn(
+          "flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2",
+          classNames?.wrapper,
+        ),
+      }}
+      {...props}
+    />
   );
 }
 
 function CommandList({
   className,
   ...props
-}: React.ComponentProps<typeof CommandPrimitive.List>) {
+}: React.ComponentProps<typeof AutocompleteList>) {
   return (
-    <CommandPrimitive.List
+    <AutocompleteList
       data-slot="command-list"
       className={cn(
         "overflow-x-hidden overflow-y-auto focus-visible:outline-none",
@@ -116,12 +115,18 @@ function CommandList({
   );
 }
 
+function CommandCollection({
+  ...props
+}: React.ComponentProps<typeof AutocompleteCollection>) {
+  return <AutocompleteCollection data-slot="command-collection" {...props} />;
+}
+
 function CommandEmpty({
   className,
   ...props
-}: React.ComponentProps<typeof CommandPrimitive.Empty>) {
+}: React.ComponentProps<typeof AutocompleteEmpty>) {
   return (
-    <CommandPrimitive.Empty
+    <AutocompleteEmpty
       data-slot="command-empty"
       className={cn("py-2 text-center text-sm select-none", className)}
       {...props}
@@ -129,74 +134,66 @@ function CommandEmpty({
   );
 }
 
-function CommandGroup({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Group>) {
+interface CommandGroupProps
+  extends Omit<React.ComponentProps<typeof AutocompleteGroup>, "heading"> {
+  heading?: React.ReactNode;
+}
+
+function CommandGroup({ heading, children, ...props }: CommandGroupProps) {
   return (
-    <CommandPrimitive.Group
-      data-slot="command-group"
-      className={cn(
-        "overflow-hidden py-1 text-muted **:[[cmdk-group-heading]]:px-3.5 **:[[cmdk-group-heading]]:py-1.5 **:[[cmdk-group-heading]]:text-xs **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted",
-        className,
-      )}
-      {...props}
-    />
+    <AutocompleteGroup data-slot="command-group" {...props}>
+      {heading ? <AutocompleteLabel title={heading} /> : null}
+      {children}
+    </AutocompleteGroup>
   );
 }
 
-function CommandSeparator({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Separator>) {
-  return (
-    <CommandPrimitive.Separator
-      data-slot="command-separator"
-      className={cn(separatorVariants({ className }))}
-      {...props}
-    />
-  );
+interface CommandItemProps<ItemValue = string>
+  extends AutocompleteItemProps<ItemValue> {
+  shortcut?: React.ReactNode;
 }
 
-function CommandItem({
-  className,
+function CommandItem<ItemValue = string>({
+  children,
+  shortcut,
   ...props
-}: React.ComponentProps<typeof CommandPrimitive.Item>) {
+}: CommandItemProps<ItemValue>) {
   return (
-    <CommandPrimitive.Item
-      data-slot="command-item"
-      className={cn(
-        menuItemVariants(),
-        "aria-selected:bg-default/5 aria-selected:text-primary",
-        className,
-      )}
-      {...props}
-    />
+    <AutocompleteItem data-slot="command-item" {...props}>
+      {children}
+      {shortcut ? <CommandShortcut>{shortcut}</CommandShortcut> : null}
+    </AutocompleteItem>
   );
 }
 
 function CommandShortcut({
   className,
   ...props
-}: React.HTMLAttributes<HTMLSpanElement>) {
+}: React.ComponentProps<typeof MenuItemShortcut>) {
   return (
-    <span
+    <MenuItemShortcut
       data-slot="command-shortcut"
-      className={cn("ml-auto text-xs tracking-widest text-muted", className)}
+      className={cn("text-xs tracking-widest", className)}
       {...props}
     />
   );
 }
 
+function CommandSeparator({
+  ...props
+}: React.ComponentProps<typeof AutocompleteSeparator>) {
+  return <AutocompleteSeparator data-slot="command-separator" {...props} />;
+}
+
 export {
-  Command,
+  CommandCollection,
   CommandDialog,
-  CommandInput,
-  CommandList,
   CommandEmpty,
   CommandGroup,
+  CommandInput,
   CommandItem,
-  CommandShortcut,
+  CommandList,
   CommandSeparator,
-  useCommandState,
+  CommandShortcut,
 };
+export type { CommandDialogProps, CommandInputProps, CommandItemProps };
