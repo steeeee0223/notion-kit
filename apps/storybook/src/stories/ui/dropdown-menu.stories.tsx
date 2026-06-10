@@ -3,6 +3,8 @@ import type { Meta, StoryObj } from "storybook-react-rsbuild";
 import DropdownMenuDemo from "@notion-kit/registry/dropdown-menu";
 import DropdownMenuCheckboxes from "@notion-kit/registry/dropdown-menu-checkbox";
 
+import DropdownMenuInline from "./dropdown-menu-inline";
+
 const meta = {
   title: "Shadcn/Dropdown Menu",
   parameters: { layout: "centered" },
@@ -16,4 +18,7 @@ export const Example: Story = {
 };
 export const Checkboxes: Story = {
   render: () => <DropdownMenuCheckboxes />,
+};
+export const InlineMenu: Story = {
+  render: () => <DropdownMenuInline />,
 };
