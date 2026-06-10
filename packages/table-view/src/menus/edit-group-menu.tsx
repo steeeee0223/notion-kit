@@ -9,12 +9,12 @@ import { useIsClient } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
-  MenuGroup,
-  MenuItem,
+  DropdownMenuCheckboxItem,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
   MenuItemAction,
   MenuItemSelect,
-  MenuItemSwitch,
-  Separator,
 } from "@notion-kit/ui/primitives";
 
 import { MenuGroupHeader, MenuHeader, SortableDnd } from "../common";
@@ -36,8 +36,9 @@ export function EditGroupMenu() {
         title="Group"
         onBack={() => table.setTableMenuState({ open: true, page: null })}
       />
-      <MenuGroup>
-        <MenuItem
+      <DropdownMenuGroup>
+        <DropdownMenuItem
+          closeOnClick={false}
           label="Group by"
           onClick={() =>
             table.setTableMenuState({
@@ -47,16 +48,17 @@ export function EditGroupMenu() {
           }
         >
           <MenuItemSelect>{col?.name ?? ""}</MenuItemSelect>
-        </MenuItem>
+        </DropdownMenuItem>
         {/* TODO Sort group by */}
-        <MenuItemSwitch
+        <DropdownMenuCheckboxItem
+          closeOnClick={false}
           label="Hide empty groups"
           checked={hideEmptyGroups}
           onCheckedChange={table.toggleHideEmptyGroups}
         />
-      </MenuGroup>
-      <Separator />
-      <MenuGroup>
+      </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
         <MenuGroupHeader
           title="Groups"
           action={table.getIsSomeGroupVisible() ? "Hide all" : "Show all"}
@@ -82,17 +84,17 @@ export function EditGroupMenu() {
             })}
           </SortableDnd>
         </div>
-      </MenuGroup>
-      <Separator />
-      <MenuGroup>
+      </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
         {layout !== "board" && (
-          <MenuItem
+          <DropdownMenuItem
             icon={<Icon.Trash />}
             label="Remove grouping"
             onClick={() => table.setGroupingColumn(null)}
           />
         )}
-        <MenuItem
+        <DropdownMenuItem
           icon={<Icon.QuestionMarkCircled />}
           label="Learn about grouping"
           onClick={() => {
@@ -103,7 +105,7 @@ export function EditGroupMenu() {
             );
           }}
         />
-      </MenuGroup>
+      </DropdownMenuGroup>
     </>
   );
 }
@@ -138,14 +140,16 @@ function GroupItem({
   };
 
   return (
-    <MenuItem
+    <DropdownMenuItem
       ref={setNodeRef}
-      role="menuitem"
+      closeOnClick={false}
       style={style}
       icon={
         <div
           key="drag-handle"
           className="mr-2 flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center fill-icon!"
+          onPointerDown={(event) => event.stopPropagation()}
+          onClick={(event) => event.stopPropagation()}
           {...attributes}
           {...listeners}
         >
@@ -161,6 +165,7 @@ function GroupItem({
           aria-label="Toggle property visibility"
           variant="hint"
           className="size-6"
+          onKeyDown={(event) => event.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation();
             onVisibilityChange();
@@ -169,6 +174,6 @@ function GroupItem({
           {visible ? <Icon.Eye /> : <Icon.EyeHide />}
         </Button>
       </MenuItemAction>
-    </MenuItem>
+    </DropdownMenuItem>
   );
 }

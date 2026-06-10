@@ -163,11 +163,13 @@ interface DropdownMenuItemProps
     MenuItemVisualProps {
   icon?: React.ReactNode;
   label?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 function DropdownMenuItem({
   icon,
   label,
+  children,
   className,
   desc,
   variant,
@@ -184,7 +186,9 @@ function DropdownMenuItem({
           desc={desc}
           variant={variant}
           className={className}
-        />
+        >
+          {children}
+        </MenuItem>
       }
       {...props}
     />
