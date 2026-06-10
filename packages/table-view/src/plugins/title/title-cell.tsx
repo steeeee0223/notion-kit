@@ -127,17 +127,19 @@ function TitleListCell({
         >
           <Popover open={open} onOpenChange={setOpen}>
             <TooltipPreset description="Edit" side="top">
-              <PopoverTrigger asChild>
-                <Button
-                  tabIndex={0}
-                  aria-label="Edit"
-                  size="xs"
-                  className="rounded-md bg-main text-secondary shadow-sm"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Icon.PencilLine className="fill-current" />
-                </Button>
-              </PopoverTrigger>
+              <PopoverTrigger
+                render={
+                  <Button
+                    tabIndex={0}
+                    aria-label="Edit"
+                    size="xs"
+                    className="rounded-md bg-main text-secondary shadow-sm"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Icon.PencilLine className="fill-current" />
+                  </Button>
+                }
+              />
             </TooltipPreset>
             <PopoverContent
               side="bottom"

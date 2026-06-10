@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useId, useState } from "react";
+import React, { useId } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -37,7 +35,6 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
   const { locked } = table.getTableGlobalState();
   const titleCell = row.getTitleCell();
 
-  const [isEditing, setIsEditing] = useState(false);
   const { props } = useInputField({
     id: row.id,
     initialValue: titleCell.cell.value,
@@ -108,18 +105,20 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
             )}
           >
             {/* Title Edit Popover */}
-            <Popover open={isEditing} onOpenChange={setIsEditing}>
+            <Popover>
               <TooltipPreset description="Edit" side="top">
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={null}
-                    className="flex rounded-none px-1.5 py-1 text-secondary"
-                    aria-label="Edit"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Icon.PencilLine className="fill-current" />
-                  </Button>
-                </PopoverTrigger>
+                <PopoverTrigger
+                  render={
+                    <Button
+                      variant={null}
+                      className="flex rounded-none px-1.5 py-1 text-secondary"
+                      aria-label="Edit"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Icon.PencilLine className="fill-current" />
+                    </Button>
+                  }
+                />
               </TooltipPreset>
               <PopoverContent
                 side="left"
@@ -141,16 +140,18 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
                 description="Rename, delete, move to and more..."
                 side="top"
               >
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={null}
-                    className="flex rounded-none px-1.5 py-1 text-secondary"
-                    aria-label="Actions"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Icon.Dots className="size-4 fill-current" />
-                  </Button>
-                </PopoverTrigger>
+                <PopoverTrigger
+                  render={
+                    <Button
+                      variant={null}
+                      className="flex rounded-none px-1.5 py-1 text-secondary"
+                      aria-label="Actions"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Icon.Dots className="size-4 fill-current" />
+                    </Button>
+                  }
+                />
               </TooltipPreset>
               <PopoverContent
                 className="w-[265px]"

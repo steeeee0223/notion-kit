@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 
 import { cn } from "@notion-kit/cn";
@@ -158,17 +156,20 @@ export function IconMenu({
 }: IconMenuProps) {
   return (
     <Popover>
-      <PopoverTrigger asChild disabled={disabled}>
-        <Button
-          variant={null}
-          className={cn(
-            "size-fit rounded-md border text-secondary disabled:opacity-100",
-            className,
-          )}
-        >
-          {children}
-        </Button>
-      </PopoverTrigger>
+      <PopoverTrigger
+        disabled={disabled}
+        render={
+          <Button
+            variant={null}
+            className={cn(
+              "size-fit rounded-md border text-secondary disabled:opacity-100",
+              className,
+            )}
+          >
+            {children}
+          </Button>
+        }
+      />
       <PopoverContent className="z-999 w-102">
         {factories ? (
           <IconMenuContent

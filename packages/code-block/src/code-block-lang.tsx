@@ -38,15 +38,17 @@ export function CodeBlockLang({ className }: CodeBlockLangProps) {
         </span>
       ) : (
         <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={null}
-              className="h-5 min-w-0 shrink-0 px-1.5 text-xs/tight text-secondary"
-            >
-              {langLabel}
-              <Icon.Chevron side="down" className="size-2.5 fill-icon" />
-            </Button>
-          </PopoverTrigger>
+          <PopoverTrigger
+            render={
+              <Button
+                variant={null}
+                className="h-5 min-w-0 shrink-0 px-1.5 text-xs/tight text-secondary"
+              >
+                {langLabel}
+                <Icon.Chevron side="down" className="size-2.5 fill-icon" />
+              </Button>
+            }
+          />
           <PopoverContent className="w-60">
             <LangMenu />
           </PopoverContent>

@@ -27,29 +27,32 @@ export function DatePickerCell({
     return null;
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <CellTrigger
-          className="group/date-cell"
-          wrapped={wrapped}
-          layout={layout}
-          widthType="date"
-          aria-disabled={disabled}
-          tooltip={tooltip}
-        >
-          {(layout === "table" || layout === "row-view") && (
-            <CopyButton
-              className="hidden group-hover/date-cell:flex"
-              value={dateStr}
-            />
-          )}
-          <div className={cn("leading-normal", wrappedClassName(wrapped))}>
-            {dateStr ||
-              (layout === "row-view" ? (
-                <span className="text-muted">Empty</span>
-              ) : null)}
-          </div>
-        </CellTrigger>
-      </PopoverTrigger>
+      <PopoverTrigger
+        nativeButton={false}
+        render={
+          <CellTrigger
+            className="group/date-cell"
+            wrapped={wrapped}
+            layout={layout}
+            widthType="date"
+            aria-disabled={disabled}
+            tooltip={tooltip}
+          >
+            {(layout === "table" || layout === "row-view") && (
+              <CopyButton
+                className="hidden group-hover/date-cell:flex"
+                value={dateStr}
+              />
+            )}
+            <div className={cn("leading-normal", wrappedClassName(wrapped))}>
+              {dateStr ||
+                (layout === "row-view" ? (
+                  <span className="text-muted">Empty</span>
+                ) : null)}
+            </div>
+          </CellTrigger>
+        }
+      />
       <PopoverContent
         align="start"
         side="bottom"

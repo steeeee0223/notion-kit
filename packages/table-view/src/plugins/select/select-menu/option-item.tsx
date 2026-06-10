@@ -1,5 +1,3 @@
-"use client";
-
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -73,6 +71,7 @@ export function OptionItem({
       <MenuItem
         ref={setNodeRef}
         role="menuitem"
+        aria-label={option.name}
         style={style}
         onClick={() => onSelect(option.name)}
         icon={
@@ -90,23 +89,24 @@ export function OptionItem({
       >
         <MenuItemAction className="flex items-center text-muted">
           <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                tabIndex={0}
-                variant="hint"
-                className="size-5"
-                onClick={(e) => e.stopPropagation()}
-                aria-label="More"
-              >
-                <Icon.Dots className="size-3.5 fill-current" />
-              </Button>
-            </PopoverTrigger>
+            <PopoverTrigger
+              render={
+                <Button
+                  tabIndex={0}
+                  variant="hint"
+                  className="size-5"
+                  onClick={(e) => e.stopPropagation()}
+                  aria-label="More"
+                >
+                  <Icon.Dots className="size-3.5 fill-current" />
+                </Button>
+              }
+            />
             <PopoverContent
               align="center"
               sideOffset={0}
-              className="w-[220px]"
+              className="w-55"
               collisionPadding={12}
-              onClick={(e) => e.stopPropagation()}
             >
               <SelectOptionMenu
                 option={option}

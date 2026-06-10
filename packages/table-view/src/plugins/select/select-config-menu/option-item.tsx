@@ -1,5 +1,3 @@
-"use client";
-
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -52,31 +50,34 @@ export function OptionItem({
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <MenuItem
-          ref={setNodeRef}
-          role="menuitem"
-          style={style}
-          onClick={(e) => e.stopPropagation()}
-          icon={
-            <div
-              key="drag-handle"
-              className="flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-default/45"
-              {...attributes}
-              {...listeners}
-            >
-              <Icon.DragHandle className="size-3" />
-            </div>
-          }
-          label={<OptionTag {...option} />}
-        />
-      </PopoverTrigger>
+      <PopoverTrigger
+        nativeButton={false}
+        render={
+          <MenuItem
+            ref={setNodeRef}
+            role="menuitem"
+            aria-label={option.name}
+            style={style}
+            onClick={(e) => e.stopPropagation()}
+            icon={
+              <div
+                key="drag-handle"
+                className="flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-default/45"
+                {...attributes}
+                {...listeners}
+              >
+                <Icon.DragHandle className="size-3" />
+              </div>
+            }
+            label={<OptionTag {...option} />}
+          />
+        }
+      />
       <PopoverContent
         align="center"
         sideOffset={0}
-        className="w-[220px]"
+        className="w-55"
         collisionPadding={12}
-        onClick={(e) => e.stopPropagation()}
       >
         <SelectOptionMenu
           option={option}

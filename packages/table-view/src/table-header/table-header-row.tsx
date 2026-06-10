@@ -76,7 +76,7 @@ function TableHeaderRow() {
               <Checkbox
                 id="row-select"
                 size="sm"
-                className="cursor-pointer rounded-[2px] accent-blue"
+                className="cursor-pointer rounded-xs accent-blue"
               />
             </label>
           </div>
@@ -118,18 +118,18 @@ function TableHeaderRow() {
       </div>
       {!tableGlobal.locked && (
         <Popover>
-          <PopoverTrigger asChild>
-            <TableHeaderActionCell icon={<Icon.Plus />} />
-          </PopoverTrigger>
+          <PopoverTrigger
+            render={<TableHeaderActionCell icon={<Icon.Plus />} />}
+          />
           <PopoverContent sideOffset={0} collisionPadding={12}>
             <TypesMenu menu={TableViewMenuPage.CreateProp} />
           </PopoverContent>
         </Popover>
       )}
       <Popover>
-        <PopoverTrigger asChild>
-          <TableHeaderActionCell icon={<Icon.Dots />} />
-        </PopoverTrigger>
+        <PopoverTrigger
+          render={<TableHeaderActionCell icon={<Icon.Dots />} />}
+        />
         <PopoverContent sideOffset={0} collisionPadding={12} sticky="always">
           <PropsMenu />
         </PopoverContent>

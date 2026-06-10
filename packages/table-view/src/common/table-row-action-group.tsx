@@ -87,16 +87,18 @@ export function RowActions({
           disabled={isDragging}
           className="z-999 text-center"
         >
-          <PopoverTrigger asChild>
-            <Button
-              variant="hint"
-              aria-label="Row actions"
-              className="h-6 w-4.5"
-              {...dragHandleProps}
-            >
-              <Icon.DragHandle className="size-3.5 fill-icon" />
-            </Button>
-          </PopoverTrigger>
+          <PopoverTrigger
+            render={
+              <Button
+                variant="hint"
+                aria-label="Row actions"
+                className="h-6 w-4.5"
+                {...dragHandleProps}
+              >
+                <Icon.DragHandle className="size-3.5 fill-icon" />
+              </Button>
+            }
+          />
         </TooltipPreset>
         <PopoverContent className="w-[265px]" side="right" align="start">
           <RowActionMenu rowId={rowId} />
