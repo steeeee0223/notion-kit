@@ -1,12 +1,14 @@
 "use client";
 
+import { useState } from "react";
+
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
@@ -20,26 +22,33 @@ interface ToolbarProps {
 export function Toolbar({ className }: ToolbarProps) {
   const { table } = useTableViewCtx();
   const { menu } = table.getState();
+  const [sortOpen, setSortOpen] = useState(false);
 
   return (
     <div className={cn("flex items-center justify-end gap-0.5", className)}>
       <ToolbarItem icon={<Icon.FilterSmall />} label="Filter" />
-      <Popover>
-        <TooltipPreset description="Sort" side="top">
-          <PopoverTrigger asChild>
+      <DropdownMenu open={sortOpen} onOpenChange={setSortOpen}>
+        <DropdownMenuTrigger
+          render={
             <Button
               variant="nav-icon"
               aria-label="Sort"
+              title="Sort"
               className="[&_svg]:fill-current"
+              onClick={() => setSortOpen((open) => !open)}
             >
               <Icon.ArrowUpDownSmall />
             </Button>
-          </PopoverTrigger>
-        </TooltipPreset>
-        <PopoverContent role="menu">
+          }
+        />
+        <DropdownMenuContent
+          aria-label="Sort"
+          collisionPadding={12}
+          className="w-72"
+        >
           <SortMenu />
-        </PopoverContent>
-      </Popover>
+        </DropdownMenuContent>
+      </DropdownMenu>
       <ToolbarItem
         icon={<Icon.LightningSmall />}
         label="Create and view automations"
@@ -49,30 +58,33 @@ export function Toolbar({ className }: ToolbarProps) {
         icon={<Icon.ArrowExpandDiagonalSmall className="rotate-90" />}
         label="Open as full page"
       />
-      <Popover
+      <DropdownMenu
         open={menu.open}
         onOpenChange={(open) => table.setTableMenuState({ open, page: null })}
       >
-        <TooltipPreset description="Settings" side="top">
-          <PopoverTrigger asChild>
+        <DropdownMenuTrigger
+          render={
             <Button
               variant="nav-icon"
               aria-label="Settings"
+              title="Settings"
               className="[&_svg]:fill-current"
+              onClick={() =>
+                table.setTableMenuState({ open: !menu.open, page: null })
+              }
             >
-              {<Icon.SlidersSmall />}
+              <Icon.SlidersSmall />
             </Button>
-          </PopoverTrigger>
-        </TooltipPreset>
-        <PopoverContent
-          role="menu"
+          }
+        />
+        <DropdownMenuContent
           collisionPadding={12}
-          sticky="always"
+          className="w-72"
           aria-labelledby="view-settings"
         >
           <TableViewMenu />
-        </PopoverContent>
-      </Popover>
+        </DropdownMenuContent>
+      </DropdownMenu>
       <Button variant="blue" size="sm" className="h-7 px-2">
         New
         <Icon.Chevron side="down" className="size-3 fill-current" />
