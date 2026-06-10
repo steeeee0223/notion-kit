@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
@@ -23,17 +23,45 @@ export function Toolbar({ className }: ToolbarProps) {
   const { table } = useTableViewCtx();
   const { menu } = table.getState();
   const [sortOpen, setSortOpen] = useState(false);
+  const sortOpenRef = useRef(sortOpen);
+  const menuOpenRef = useRef(menu.open);
+
+  useEffect(() => {
+    sortOpenRef.current = sortOpen;
+  }, [sortOpen]);
+
+  useEffect(() => {
+    menuOpenRef.current = menu.open;
+  }, [menu.open]);
+
+  const setSortMenuOpen = (open: boolean) => {
+    if (sortOpenRef.current === open) return;
+    sortOpenRef.current = open;
+    setSortOpen(open);
+  };
+
+  const setTableMenuOpen = (open: boolean) => {
+    if (menuOpenRef.current === open) return;
+    menuOpenRef.current = open;
+    table.setTableMenuState({ open, page: null });
+  };
 
   return (
     <div className={cn("flex items-center justify-end gap-0.5", className)}>
       <ToolbarItem icon={<Icon.FilterSmall />} label="Filter" />
-      <DropdownMenu open={sortOpen} onOpenChange={setSortOpen}>
+      <DropdownMenu
+        modal={false}
+        open={sortOpen}
+        onOpenChange={setSortMenuOpen}
+      >
         <DropdownMenuTrigger
           render={
             <Button
               variant="nav-icon"
               aria-label="Sort"
+              title="Sort"
               className="[&_svg]:fill-current"
+              onClick={() => setSortMenuOpen(!sortOpenRef.current)}
             >
               <Icon.ArrowUpDownSmall />
             </Button>
@@ -57,15 +85,18 @@ export function Toolbar({ className }: ToolbarProps) {
         label="Open as full page"
       />
       <DropdownMenu
+        modal={false}
         open={menu.open}
-        onOpenChange={(open) => table.setTableMenuState({ open, page: null })}
+        onOpenChange={setTableMenuOpen}
       >
         <DropdownMenuTrigger
           render={
             <Button
               variant="nav-icon"
               aria-label="Settings"
+              title="Settings"
               className="[&_svg]:fill-current"
+              onClick={() => setTableMenuOpen(!menuOpenRef.current)}
             >
               <Icon.SlidersSmall />
             </Button>

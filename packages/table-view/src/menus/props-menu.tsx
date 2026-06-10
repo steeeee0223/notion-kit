@@ -73,7 +73,11 @@ export function PropsMenu() {
         title="Properties"
         onBack={() => table.setTableMenuState({ open: true, page: null })}
       />
-      <div className="flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2">
+      <div
+        className="flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2"
+        onClick={(event) => event.stopPropagation()}
+        onKeyDown={(event) => event.stopPropagation()}
+      >
         <Input
           ref={inputRef}
           clear

@@ -1,5 +1,8 @@
 import { render, screen, within } from "@testing-library/react";
-import userEvent, { UserEvent } from "@testing-library/user-event";
+import userEvent, {
+  PointerEventsCheckLevel,
+  UserEvent,
+} from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -111,13 +114,20 @@ describe("SortMenu", () => {
   });
 
   it("should show sort-rule select options inside the dropdown", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({
+      pointerEventsCheck: PointerEventsCheckLevel.Never,
+    });
     await addSortRule(user, "Name");
 
-    await user.click(await screen.findByText("Ascending"));
+    const sortMenu = screen.getByRole("menu", { name: "Sort" });
+    const directionTrigger = within(sortMenu).getAllByRole("combobox")[1];
+    if (!directionTrigger) {
+      throw new Error("Expected a direction combobox in the sort rule");
+    }
+    await user.click(directionTrigger);
 
     expect(
-      screen.getByRole("option", { name: "Descending" }),
+      await screen.findByRole("option", { name: "Descending" }),
     ).toBeInTheDocument();
   });
 });

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   mockData,
@@ -10,6 +10,10 @@ import {
 import { TableView } from "../table-contexts";
 
 mockResizeObserver();
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 function renderToolbar() {
   return render(<TableView properties={mockProperties} data={mockData} />);
@@ -84,6 +88,22 @@ describe("Toolbar", () => {
       await user.click(settingsButton);
 
       // TableViewMenu shows "View Settings" header
+      expect(
+        screen.getByRole("heading", { name: "View Settings" }),
+      ).toBeInTheDocument();
+    });
+
+    it("should only request one open transition for one settings click", async () => {
+      const user = userEvent.setup();
+      const log = vi.spyOn(console, "log").mockImplementation(() => {});
+      renderToolbar();
+
+      await user.click(screen.getByRole("button", { name: "Settings" }));
+
+      const menuSyncs = log.mock.calls.filter(
+        ([message]) => message === "[table.setTableMenuState] table synced",
+      );
+      expect(menuSyncs).toHaveLength(1);
       expect(
         screen.getByRole("heading", { name: "View Settings" }),
       ).toBeInTheDocument();
