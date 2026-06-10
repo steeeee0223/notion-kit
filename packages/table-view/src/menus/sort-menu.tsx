@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -17,12 +18,10 @@ import {
   AutocompleteItem,
   AutocompleteList,
   Button,
-  MenuGroup,
+  DropdownMenuGroup,
+  DropdownMenuItem,
   MenuItem,
   MenuItemAction,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Select,
   SelectContent,
   SelectGroup,
@@ -35,8 +34,11 @@ import { DefaultIcon, SortableDnd } from "../common";
 import { useTableViewCtx } from "../table-contexts";
 
 export function SortMenu() {
-  const { table } = useTableViewCtx();
+  const { table, __synced } = useTableViewCtx();
+  void __synced;
+
   const sorting = table.getState().sorting;
+  const [addingSort, setAddingSort] = useState(false);
 
   const reorderRules = (e: DragEndEvent) => {
     // reorder after drag & drop
@@ -51,34 +53,39 @@ export function SortMenu() {
 
   return (
     <>
-      <MenuGroup>
+      <DropdownMenuGroup>
         <SortableDnd items={sorting.map((s) => s.id)} onDragEnd={reorderRules}>
           {sorting.map((prop) => (
             <SortRule key={prop.id} {...prop} />
           ))}
         </SortableDnd>
-      </MenuGroup>
-      <MenuGroup>
-        <Popover>
-          <PopoverTrigger asChild>
-            <MenuItem
-              variant="secondary"
-              icon={<Icon.Plus className="size-4" />}
-              label="Add sort"
-            />
-          </PopoverTrigger>
-          <PopoverContent align="start">
-            <PropSelectMenu />
-          </PopoverContent>
-        </Popover>
-        <MenuItem
+      </DropdownMenuGroup>
+      <DropdownMenuGroup>
+        <DropdownMenuItem
+          closeOnClick={false}
+          variant="secondary"
+          icon={<Icon.Plus className="size-4" />}
+          label="Add sort"
+          onClick={() => setAddingSort((value) => !value)}
+        />
+        {addingSort && (
+          <div
+            className="px-2 pb-2"
+            onClick={(event) => event.stopPropagation()}
+            onKeyDown={(event) => event.stopPropagation()}
+          >
+            <PropSelectMenu onSelect={() => setAddingSort(false)} />
+          </div>
+        )}
+        <DropdownMenuItem
+          closeOnClick={false}
           variant="warning"
           className="text-secondary"
           icon={<Icon.Trash />}
           label="Delete sort"
           onClick={() => table.resetSorting()}
         />
-      </MenuGroup>
+      </DropdownMenuGroup>
     </>
   );
 }
@@ -128,12 +135,22 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
       className="h-9 hover:bg-transparent *:data-[slot=menu-item-body]:mx-0"
       style={style}
       icon={
-        <div key="drag-handle" {...attributes} {...listeners}>
+        <div
+          key="drag-handle"
+          onPointerDown={(event) => event.stopPropagation()}
+          onClick={(event) => event.stopPropagation()}
+          {...attributes}
+          {...listeners}
+        >
           <Icon.DragHandle className="size-3 fill-icon!" />
         </div>
       }
       label={
-        <div className="ml-1 flex h-8 items-center gap-2">
+        <div
+          className="ml-1 flex h-8 items-center gap-2"
+          onClick={(event) => event.stopPropagation()}
+          onKeyDown={(event) => event.stopPropagation()}
+        >
           <Select
             value={currentId}
             onValueChange={(id) => {
@@ -178,7 +195,9 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
             }
           >
             <SelectTrigger className="my-0 w-fit max-w-45 border border-border">
-              <SelectValue aria-label={desc ? "desc" : "asc"} />
+              <SelectValue aria-label={desc ? "desc" : "asc"}>
+                {desc ? "Descending" : "Ascending"}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
@@ -191,7 +210,14 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
       }
     >
       <MenuItemAction className="flex items-center">
-        <Button variant="hint" className="size-5" onClick={removeRule}>
+        <Button
+          variant="hint"
+          className="size-5"
+          onClick={(event) => {
+            event.stopPropagation();
+            removeRule();
+          }}
+        >
           <Icon.Close className="fill-current" />
         </Button>
       </MenuItemAction>
@@ -199,13 +225,15 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
   );
 }
 
-function PropSelectMenu() {
+function PropSelectMenu({ onSelect }: { onSelect: () => void }) {
   const { table } = useTableViewCtx();
   const columns = Object.values(table.getState().columnsInfo);
   /** Select */
   const sortedProps = new Set(table.getState().sorting.map((s) => s.id));
-  const selectProp = (id: string) =>
+  const selectProp = (id: string) => {
     table.setSorting((prev) => [...prev, { id, desc: false }]);
+    onSelect();
+  };
 
   return (
     <Autocomplete
@@ -215,7 +243,11 @@ function PropSelectMenu() {
       autoHighlight="always"
       openOnInputClick
     >
-      <AutocompleteInput clear placeholder="Search for a property..." />
+      <AutocompleteInput
+        clear
+        placeholder="Search for a property..."
+        onKeyDown={(event) => event.stopPropagation()}
+      />
       <AutocompleteContent role="presentation" variant="inline">
         <AutocompleteList>
           <AutocompleteGroup className="h-40 overflow-y-auto">

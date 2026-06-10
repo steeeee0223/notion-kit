@@ -27,7 +27,7 @@ export function Toolbar({ className }: ToolbarProps) {
   return (
     <div className={cn("flex items-center justify-end gap-0.5", className)}>
       <ToolbarItem icon={<Icon.FilterSmall />} label="Filter" />
-      <DropdownMenu open={sortOpen} onOpenChange={setSortOpen}>
+      <DropdownMenu modal={false} open={sortOpen} onOpenChange={setSortOpen}>
         <DropdownMenuTrigger
           render={
             <Button
@@ -59,6 +59,7 @@ export function Toolbar({ className }: ToolbarProps) {
         label="Open as full page"
       />
       <DropdownMenu
+        modal={false}
         open={menu.open}
         onOpenChange={(open) => table.setTableMenuState({ open, page: null })}
       >

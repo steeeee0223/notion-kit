@@ -60,21 +60,19 @@ describe("SortMenu", () => {
     ).toBeInTheDocument();
 
     // Should display the sort rule with "Ascending" direction
-    expect(screen.getByText("Ascending")).toBeInTheDocument();
+    expect(await screen.findByText("Ascending")).toBeInTheDocument();
   });
 
   it("should delete all sort rules when clicking 'Delete sort'", async () => {
     const user = userEvent.setup();
     await addSortRule(user, "Name");
 
-    // Open sort menu and verify rule exists
-    const sortButton = screen.getByRole("button", { name: "Sort" });
-    await user.click(sortButton);
+    // Sort menu remains open after adding a rule
     expect(
       screen.getByRole("menuitem", { name: "Add sort" }),
     ).toBeInTheDocument();
 
-    expect(screen.getByText("Ascending")).toBeInTheDocument();
+    expect(await screen.findByText("Ascending")).toBeInTheDocument();
 
     // Click "Delete sort" to remove all rules
     const deleteSortButton = screen.getByRole("menuitem", {
@@ -86,6 +84,7 @@ describe("SortMenu", () => {
     await user.click(document.body);
 
     // Re-open sort menu
+    const sortButton = screen.getByRole("button", { name: "Sort" });
     await user.click(sortButton);
     expect(
       screen.getByRole("menuitem", { name: "Add sort" }),
@@ -106,15 +105,16 @@ describe("SortMenu", () => {
     await user.type(searchInput, "Done");
 
     expect(searchInput).toHaveValue("Done");
-    expect(screen.getByRole("listbox")).toBeInTheDocument();
-    expect(screen.getByText("Done")).toBeInTheDocument();
+    const listbox = screen.getByRole("listbox");
+    expect(listbox).toBeInTheDocument();
+    expect(within(listbox).getByText("Done")).toBeInTheDocument();
   });
 
   it("should show sort-rule select options inside the dropdown", async () => {
     const user = userEvent.setup();
     await addSortRule(user, "Name");
 
-    await user.click(screen.getByText("Ascending"));
+    await user.click(await screen.findByText("Ascending"));
 
     expect(
       screen.getByRole("option", { name: "Descending" }),
