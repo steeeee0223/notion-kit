@@ -1,10 +1,9 @@
 import {
-  DropdownMenu,
   DropdownMenuCheckboxItem,
-  DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuTrigger,
-  MenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   MenuItemSelect,
 } from "@notion-kit/ui/primitives";
 
@@ -24,28 +23,25 @@ interface FormatMenuProps {
 
 export function FormatMenu({ format, onUpdate }: FormatMenuProps) {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <MenuItem label="Number format">
-            <MenuItemSelect>
-              {options.find((option) => option.value === format)?.label}
-            </MenuItemSelect>
-          </MenuItem>
-        }
-      />
-      <DropdownMenuContent align="end" className="w-48">
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger label="Number format">
+        <MenuItemSelect>
+          {options.find((option) => option.value === format)?.label}
+        </MenuItemSelect>
+      </DropdownMenuSubTrigger>
+      <DropdownMenuSubContent className="w-48">
         <DropdownMenuGroup>
           {options.map((option) => (
             <DropdownMenuCheckboxItem
               key={option.value}
+              closeOnClick={false}
               label={option.label}
               checked={format === option.value}
               onCheckedChange={() => onUpdate(option.value)}
             />
           ))}
         </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </DropdownMenuSubContent>
+    </DropdownMenuSub>
   );
 }

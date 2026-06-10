@@ -1,10 +1,9 @@
 import {
-  DropdownMenu,
   DropdownMenuCheckboxItem,
-  DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuTrigger,
-  MenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   MenuItemSelect,
 } from "@notion-kit/ui/primitives";
 
@@ -27,28 +26,25 @@ interface RoundingMenuProps {
 
 export function RoundingMenu({ round, onUpdate }: RoundingMenuProps) {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <MenuItem label="Decimal places">
-            <MenuItemSelect>
-              {options.find((option) => option.value === round)?.label}
-            </MenuItemSelect>
-          </MenuItem>
-        }
-      />
-      <DropdownMenuContent align="end">
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger label="Decimal places">
+        <MenuItemSelect>
+          {options.find((option) => option.value === round)?.label}
+        </MenuItemSelect>
+      </DropdownMenuSubTrigger>
+      <DropdownMenuSubContent>
         <DropdownMenuGroup>
           {options.map((option) => (
             <DropdownMenuCheckboxItem
               key={option.value}
+              closeOnClick={false}
               label={option.label}
               checked={round === option.value}
               onCheckedChange={() => onUpdate(option.value)}
             />
           ))}
         </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </DropdownMenuSubContent>
+    </DropdownMenuSub>
   );
 }

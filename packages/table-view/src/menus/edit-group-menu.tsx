@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -12,12 +10,13 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   MenuItemAction,
   MenuItemSelect,
 } from "@notion-kit/ui/primitives";
 
-import { MenuGroupHeader, MenuHeader, SortableDnd } from "../common";
+import { MenuHeader, SortableDnd } from "../common";
 import { TableViewMenuPage } from "../features";
 import { useTableViewCtx } from "../table-contexts";
 
@@ -59,11 +58,18 @@ export function EditGroupMenu() {
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
-        <MenuGroupHeader
-          title="Groups"
-          action={table.getIsSomeGroupVisible() ? "Hide all" : "Show all"}
-          onActionClick={table.toggleAllGroupsVisible}
-        />
+        <DropdownMenuLabel title="Groups">
+          <div className="ml-auto">
+            <Button
+              tabIndex={0}
+              variant="soft-blue"
+              className="h-[initial] min-w-0 shrink bg-transparent px-1.5 py-0.5 text-xs/tight shadow-none"
+              onClick={table.toggleAllGroupsVisible}
+            >
+              {table.getIsSomeGroupVisible() ? "Hide all" : "Show all"}
+            </Button>
+          </div>
+        </DropdownMenuLabel>
         <div className="flex flex-col">
           <SortableDnd
             items={groupOrder}

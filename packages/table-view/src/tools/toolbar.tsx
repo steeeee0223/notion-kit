@@ -27,15 +27,13 @@ export function Toolbar({ className }: ToolbarProps) {
   return (
     <div className={cn("flex items-center justify-end gap-0.5", className)}>
       <ToolbarItem icon={<Icon.FilterSmall />} label="Filter" />
-      <DropdownMenu modal={false} open={sortOpen} onOpenChange={setSortOpen}>
+      <DropdownMenu open={sortOpen} onOpenChange={setSortOpen}>
         <DropdownMenuTrigger
           render={
             <Button
               variant="nav-icon"
               aria-label="Sort"
-              title="Sort"
               className="[&_svg]:fill-current"
-              onClick={() => setSortOpen((open) => !open)}
             >
               <Icon.ArrowUpDownSmall />
             </Button>
@@ -59,7 +57,6 @@ export function Toolbar({ className }: ToolbarProps) {
         label="Open as full page"
       />
       <DropdownMenu
-        modal={false}
         open={menu.open}
         onOpenChange={(open) => table.setTableMenuState({ open, page: null })}
       >
@@ -68,11 +65,7 @@ export function Toolbar({ className }: ToolbarProps) {
             <Button
               variant="nav-icon"
               aria-label="Settings"
-              title="Settings"
               className="[&_svg]:fill-current"
-              onClick={() =>
-                table.setTableMenuState({ open: !menu.open, page: null })
-              }
             >
               <Icon.SlidersSmall />
             </Button>

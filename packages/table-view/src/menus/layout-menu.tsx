@@ -1,11 +1,12 @@
-"use client";
-
 import { cn } from "@notion-kit/cn";
 import {
   Button,
   DropdownMenuCheckboxItem,
   DropdownMenuGroup,
-  MenuItemSelect,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  MenuItemAction,
 } from "@notion-kit/ui/primitives";
 
 import { LayoutIcon, MenuHeader, RowViewIcon } from "../common";
@@ -58,27 +59,32 @@ function RowViewMenu() {
   const { rowView: current } = table.getTableGlobalState();
 
   return (
-    <>
-      <div className="flex h-8 items-center justify-between px-2 text-sm">
-        <span className="text-primary">Open pages in</span>
-        <MenuItemSelect>{ROW_VIEW_OPTIONS[current].label}</MenuItemSelect>
-      </div>
-      {Object.entries(ROW_VIEW_OPTIONS).map(([value, option]) => {
-        const rowView = value as RowViewType;
-        return (
-          <DropdownMenuCheckboxItem
-            key={rowView}
-            closeOnClick={false}
-            icon={<RowViewIcon rowView={rowView} />}
-            label={option.label}
-            desc={option.desc}
-            checked={rowView === current}
-            onCheckedChange={() =>
-              table.setTableGlobalState((v) => ({ ...v, rowView }))
-            }
-          />
-        );
-      })}
-    </>
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger label="Open pages in">
+        <MenuItemAction className="flex items-center text-muted">
+          {ROW_VIEW_OPTIONS[current].label}
+        </MenuItemAction>
+      </DropdownMenuSubTrigger>
+      <DropdownMenuSubContent className="w-64">
+        <DropdownMenuGroup>
+          {Object.entries(ROW_VIEW_OPTIONS).map(([value, option]) => {
+            const rowView = value as RowViewType;
+            return (
+              <DropdownMenuCheckboxItem
+                key={rowView}
+                closeOnClick={false}
+                icon={<RowViewIcon rowView={rowView} />}
+                label={option.label}
+                desc={option.desc}
+                checked={rowView === current}
+                onCheckedChange={() =>
+                  table.setTableGlobalState((v) => ({ ...v, rowView }))
+                }
+              />
+            );
+          })}
+        </DropdownMenuGroup>
+      </DropdownMenuSubContent>
+    </DropdownMenuSub>
   );
 }

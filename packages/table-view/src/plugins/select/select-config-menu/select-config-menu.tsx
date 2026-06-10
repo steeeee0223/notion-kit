@@ -1,23 +1,17 @@
-"use client";
-
 import { useEffect, useState } from "react";
 
 import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
-  DropdownMenu,
   DropdownMenuCheckboxItem,
-  DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
   Input,
-  MenuItem,
-  MenuItemSelect,
+  MenuItemAction,
 } from "@notion-kit/ui/primitives";
 
 import { SortableDnd } from "../../../common";
@@ -77,21 +71,17 @@ export function SelectConfigMenu({
       <DropdownMenuSubTrigger icon={<Icon.Sliders />} label="Edit property" />
       <DropdownMenuSubContent className="w-[250px]">
         <DropdownMenuGroup>
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <MenuItem
-                  icon={<Icon.ArrowUpDown />}
-                  label="Sort"
-                  aria-label="Sort options"
-                >
-                  <MenuItemSelect>
-                    {sortOptions.find((o) => o.value === config.sort)?.label}
-                  </MenuItemSelect>
-                </MenuItem>
-              }
-            />
-            <DropdownMenuContent
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger
+              icon={<Icon.ArrowUpDown />}
+              label="Sort"
+              aria-label="Sort options"
+            >
+              <MenuItemAction className="flex items-center text-muted">
+                {sortOptions.find((o) => o.value === config.sort)?.label}
+              </MenuItemAction>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent
               align="start"
               alignOffset={4}
               sideOffset={0}
@@ -108,8 +98,8 @@ export function SelectConfigMenu({
                   />
                 ))}
               </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
         </DropdownMenuGroup>
         <DropdownMenuGroup>
           <DropdownMenuLabel title="Options" className="relative">

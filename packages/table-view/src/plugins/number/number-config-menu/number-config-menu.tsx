@@ -1,15 +1,13 @@
-"use client";
-
 import { Icon } from "@notion-kit/icons";
 import {
   DropdownMenuGroup,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
 
-import { MenuGroupHeader } from "../../../common";
 import type { ConfigMenuProps } from "../../types";
 import type { NumberConfig } from "../types";
 import { DisplayTypeSelect } from "./display-type-select";
@@ -37,7 +35,7 @@ export function NumberConfigMenu({
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <MenuGroupHeader title="Show as" />
+          <DropdownMenuLabel title="Show as" />
           {/* buttons for display type */}
           <DisplayTypeSelect
             type={config.showAs}

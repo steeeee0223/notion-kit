@@ -65,12 +65,7 @@ export function SelectGroupMenu() {
         autoHighlight="always"
         openOnInputClick
       >
-        <div
-          onClick={(event) => event.stopPropagation()}
-          onKeyDown={(event) => event.stopPropagation()}
-        >
-          <AutocompleteInput placeholder="Search for a property" />
-        </div>
+        <AutocompleteInput placeholder="Search for a property" />
         <AutocompleteContent role="presentation" variant="inline">
           <AutocompleteList>
             <AutocompleteGroup className="h-40">
