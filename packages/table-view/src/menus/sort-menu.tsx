@@ -20,7 +20,6 @@ import {
   Button,
   DropdownMenuGroup,
   DropdownMenuItem,
-  MenuItem,
   MenuItemAction,
   Select,
   SelectContent,
@@ -130,8 +129,9 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
   };
 
   return (
-    <MenuItem
+    <DropdownMenuItem
       ref={setNodeRef}
+      closeOnClick={false}
       className="h-9 hover:bg-transparent *:data-[slot=menu-item-body]:mx-0"
       style={style}
       icon={
@@ -221,7 +221,7 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
           <Icon.Close className="fill-current" />
         </Button>
       </MenuItemAction>
-    </MenuItem>
+    </DropdownMenuItem>
   );
 }
 
