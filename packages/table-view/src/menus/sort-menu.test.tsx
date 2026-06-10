@@ -27,11 +27,6 @@ async function addSortRule(user: UserEvent, propertyName: string) {
   const commandList = screen.getByRole("listbox");
   const propertyOption = within(commandList).getByText(propertyName);
   await user.click(propertyOption);
-
-  // Close the property selection popover by pressing Escape twice
-  // (once for nested popover, once for main sort popover)
-  await user.keyboard("{Escape}");
-  await user.keyboard("{Escape}");
 }
 
 describe("SortMenu", () => {
@@ -56,17 +51,10 @@ describe("SortMenu", () => {
     const doneOption = within(commandList).getByText("Done");
     await user.click(doneOption);
 
-    // Close popovers by pressing Escape
-    await user.keyboard("{Escape}");
-    await user.keyboard("{Escape}");
-
-    // Verify popovers are closed
+    // Verify the inline panel closes after selecting a property
     expect(
       screen.queryByPlaceholderText("Search for a property..."),
     ).not.toBeInTheDocument();
-
-    // Re-open sort menu to verify the rule was added
-    await user.click(sortButton);
     expect(
       screen.getByRole("menuitem", { name: "Add sort" }),
     ).toBeInTheDocument();
@@ -105,5 +93,31 @@ describe("SortMenu", () => {
 
     // Verify no rules exist (no "Ascending" text)
     expect(screen.queryByText("Ascending")).not.toBeInTheDocument();
+  });
+
+  it("should keep typed search inside the inline add-sort panel", async () => {
+    const user = userEvent.setup();
+    renderTableView();
+
+    await user.click(screen.getByRole("button", { name: "Sort" }));
+    await user.click(screen.getByRole("menuitem", { name: "Add sort" }));
+
+    const searchInput = screen.getByPlaceholderText("Search for a property...");
+    await user.type(searchInput, "Done");
+
+    expect(searchInput).toHaveValue("Done");
+    expect(screen.getByRole("listbox")).toBeInTheDocument();
+    expect(screen.getByText("Done")).toBeInTheDocument();
+  });
+
+  it("should show sort-rule select options inside the dropdown", async () => {
+    const user = userEvent.setup();
+    await addSortRule(user, "Name");
+
+    await user.click(screen.getByText("Ascending"));
+
+    expect(
+      screen.getByRole("option", { name: "Descending" }),
+    ).toBeInTheDocument();
   });
 });
