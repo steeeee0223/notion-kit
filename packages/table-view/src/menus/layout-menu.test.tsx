@@ -106,7 +106,27 @@ describe("LayoutMenu", () => {
     // Should show row view menu item
     expect(screen.getByText("Open pages in")).toBeInTheDocument();
     // Default value should be "Side peek"
-    expect(screen.getByText("Side peek")).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitemcheckbox", { name: /Side peek/i }),
+    ).toBeChecked();
+  });
+
+  it("should change row view inline without closing the layout menu", async () => {
+    const user = userEvent.setup();
+    renderTableView();
+
+    await openLayoutMenu(user);
+
+    await user.click(
+      screen.getByRole("menuitemcheckbox", { name: /Center peek/i }),
+    );
+
+    expect(
+      screen.getByRole("heading", { name: "Layout" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitemcheckbox", { name: /Center peek/i }),
+    ).toBeChecked();
   });
 
   it("should navigate back to View Settings when clicking back button", async () => {

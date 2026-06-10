@@ -3,13 +3,8 @@
 import { cn } from "@notion-kit/cn";
 import {
   Button,
-  DropdownMenu,
   DropdownMenuCheckboxItem,
-  DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuTrigger,
-  MenuGroup,
-  MenuItem,
   MenuItemSelect,
 } from "@notion-kit/ui/primitives";
 
@@ -27,7 +22,7 @@ export function LayoutMenu() {
         title="Layout"
         onBack={() => table.setTableMenuState({ open: true, page: null })}
       />
-      <MenuGroup>
+      <DropdownMenuGroup>
         <div className="grid grid-cols-3 gap-2 p-2 pb-0">
           {LAYOUT_OPTIONS.map((layout) => (
             <Button
@@ -50,10 +45,10 @@ export function LayoutMenu() {
             </Button>
           ))}
         </div>
-      </MenuGroup>
-      <MenuGroup>
+      </DropdownMenuGroup>
+      <DropdownMenuGroup>
         <RowViewMenu />
-      </MenuGroup>
+      </DropdownMenuGroup>
     </>
   );
 }
@@ -63,33 +58,27 @@ function RowViewMenu() {
   const { rowView: current } = table.getTableGlobalState();
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <MenuItem label="Open pages in">
-            <MenuItemSelect>{ROW_VIEW_OPTIONS[current].label}</MenuItemSelect>
-          </MenuItem>
-        }
-      />
-      <DropdownMenuContent align="end" sideOffset={0} className="w-68">
-        <DropdownMenuGroup>
-          {Object.entries(ROW_VIEW_OPTIONS).map(([value, option]) => {
-            const rowView = value as RowViewType;
-            return (
-              <DropdownMenuCheckboxItem
-                key={rowView}
-                icon={<RowViewIcon rowView={rowView} />}
-                label={option.label}
-                desc={option.desc}
-                checked={rowView === current}
-                onCheckedChange={() =>
-                  table.setTableGlobalState((v) => ({ ...v, rowView }))
-                }
-              />
-            );
-          })}
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <div className="flex h-8 items-center justify-between px-2 text-sm">
+        <span className="text-primary">Open pages in</span>
+        <MenuItemSelect>{ROW_VIEW_OPTIONS[current].label}</MenuItemSelect>
+      </div>
+      {Object.entries(ROW_VIEW_OPTIONS).map(([value, option]) => {
+        const rowView = value as RowViewType;
+        return (
+          <DropdownMenuCheckboxItem
+            key={rowView}
+            closeOnClick={false}
+            icon={<RowViewIcon rowView={rowView} />}
+            label={option.label}
+            desc={option.desc}
+            checked={rowView === current}
+            onCheckedChange={() =>
+              table.setTableGlobalState((v) => ({ ...v, rowView }))
+            }
+          />
+        );
+      })}
+    </>
   );
 }
