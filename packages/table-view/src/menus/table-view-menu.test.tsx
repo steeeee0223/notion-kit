@@ -75,6 +75,18 @@ describe("TableViewMenu", () => {
       expect(nameMenuItem).toBeInTheDocument();
       expect(doneMenuItem).toBeInTheDocument();
     });
+
+    it("should keep the settings dropdown open when navigating between menu pages", async () => {
+      const user = userEvent.setup();
+      const menu = await openSettingsMenu(user);
+
+      await user.click(within(menu).getByRole("menuitem", { name: "Layout" }));
+
+      expect(
+        screen.getByRole("heading", { name: "Layout" }),
+      ).toBeInTheDocument();
+      expect(screen.getByRole("menu")).toBeInTheDocument();
+    });
   });
 
   describe("Lock Database", () => {

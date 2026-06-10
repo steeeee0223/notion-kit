@@ -17,6 +17,14 @@ function renderToolbar() {
 
 describe("Toolbar", () => {
   describe("Sort Button", () => {
+    it("should expose the sort trigger as a menu trigger", async () => {
+      renderToolbar();
+
+      const sortButton = screen.getByRole("button", { name: "Sort" });
+
+      expect(sortButton).toHaveAttribute("aria-haspopup", "menu");
+    });
+
     it("should show the sort menu when clicking the sort button", async () => {
       const user = userEvent.setup();
       renderToolbar();
@@ -57,6 +65,14 @@ describe("Toolbar", () => {
   });
 
   describe("Settings Button", () => {
+    it("should expose the settings trigger as a menu trigger", async () => {
+      renderToolbar();
+
+      const settingsButton = screen.getByRole("button", { name: "Settings" });
+
+      expect(settingsButton).toHaveAttribute("aria-haspopup", "menu");
+    });
+
     it("should show the table menu when clicking the settings button", async () => {
       const user = userEvent.setup();
       renderToolbar();
@@ -118,6 +134,25 @@ describe("Toolbar", () => {
       expect(
         screen.getByRole("heading", { name: "View Settings" }),
       ).toBeInTheDocument();
+    });
+
+    it("should close the settings dropdown when clicking the close button", async () => {
+      const user = userEvent.setup();
+      renderToolbar();
+
+      const settingsButton = screen.getByRole("button", { name: "Settings" });
+      await user.click(settingsButton);
+
+      expect(
+        screen.getByRole("heading", { name: "View Settings" }),
+      ).toBeInTheDocument();
+
+      const closeButton = screen.getByRole("button", { name: "Close" });
+      await user.click(closeButton);
+
+      expect(
+        screen.queryByRole("heading", { name: "View Settings" }),
+      ).not.toBeInTheDocument();
     });
   });
 });
