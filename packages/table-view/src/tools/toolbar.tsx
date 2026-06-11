@@ -1,7 +1,3 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
-
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import {
@@ -13,65 +9,28 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { SortMenu, TableViewMenu } from "../menus";
-import { useTableViewCtx } from "../table-contexts";
 
 interface ToolbarProps {
   className?: string;
 }
 
 export function Toolbar({ className }: ToolbarProps) {
-  const { table } = useTableViewCtx();
-  const { menu } = table.getState();
-  const [sortOpen, setSortOpen] = useState(false);
-  const sortOpenRef = useRef(sortOpen);
-  const menuOpenRef = useRef(menu.open);
-
-  useEffect(() => {
-    sortOpenRef.current = sortOpen;
-  }, [sortOpen]);
-
-  useEffect(() => {
-    menuOpenRef.current = menu.open;
-  }, [menu.open]);
-
-  const setSortMenuOpen = (open: boolean) => {
-    if (sortOpenRef.current === open) return;
-    sortOpenRef.current = open;
-    setSortOpen(open);
-  };
-
-  const setTableMenuOpen = (open: boolean) => {
-    if (menuOpenRef.current === open) return;
-    menuOpenRef.current = open;
-    table.setTableMenuState({ open, page: null });
-  };
-
   return (
     <div className={cn("flex items-center justify-end gap-0.5", className)}>
       <ToolbarItem icon={<Icon.FilterSmall />} label="Filter" />
-      <DropdownMenu
-        modal={false}
-        open={sortOpen}
-        onOpenChange={setSortMenuOpen}
-      >
+      <DropdownMenu>
         <DropdownMenuTrigger
           render={
             <Button
               variant="nav-icon"
               aria-label="Sort"
-              title="Sort"
               className="[&_svg]:fill-current"
-              onClick={() => setSortMenuOpen(!sortOpenRef.current)}
             >
               <Icon.ArrowUpDownSmall />
             </Button>
           }
         />
-        <DropdownMenuContent
-          aria-label="Sort"
-          collisionPadding={12}
-          className="w-72"
-        >
+        <DropdownMenuContent collisionPadding={12} className="w-72">
           <SortMenu />
         </DropdownMenuContent>
       </DropdownMenu>
@@ -84,29 +43,19 @@ export function Toolbar({ className }: ToolbarProps) {
         icon={<Icon.ArrowExpandDiagonalSmall className="rotate-90" />}
         label="Open as full page"
       />
-      <DropdownMenu
-        modal={false}
-        open={menu.open}
-        onOpenChange={setTableMenuOpen}
-      >
+      <DropdownMenu>
         <DropdownMenuTrigger
           render={
             <Button
               variant="nav-icon"
               aria-label="Settings"
-              title="Settings"
               className="[&_svg]:fill-current"
-              onClick={() => setTableMenuOpen(!menuOpenRef.current)}
             >
               <Icon.SlidersSmall />
             </Button>
           }
         />
-        <DropdownMenuContent
-          collisionPadding={12}
-          className="w-72"
-          aria-labelledby="view-settings"
-        >
+        <DropdownMenuContent collisionPadding={12} className="w-72">
           <TableViewMenu />
         </DropdownMenuContent>
       </DropdownMenu>

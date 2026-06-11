@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, useSortable } from "@dnd-kit/sortable";
@@ -21,6 +19,9 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   MenuItemAction,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Select,
   SelectContent,
   SelectGroup,
@@ -33,8 +34,7 @@ import { DefaultIcon, SortableDnd } from "../common";
 import { useTableViewCtx } from "../table-contexts";
 
 export function SortMenu() {
-  const { table, __synced } = useTableViewCtx();
-  void __synced;
+  const { table } = useTableViewCtx();
 
   const sorting = table.getState().sorting;
   const [addingSort, setAddingSort] = useState(false);
@@ -60,22 +60,21 @@ export function SortMenu() {
         </SortableDnd>
       </DropdownMenuGroup>
       <DropdownMenuGroup>
-        <DropdownMenuItem
-          closeOnClick={false}
-          variant="secondary"
-          icon={<Icon.Plus className="size-4" />}
-          label="Add sort"
-          onClick={() => setAddingSort((value) => !value)}
-        />
-        {addingSort && (
-          <div
-            className="px-2 pb-2"
-            onClick={(event) => event.stopPropagation()}
-            onKeyDown={(event) => event.stopPropagation()}
-          >
+        <Popover open={addingSort} onOpenChange={setAddingSort}>
+          <PopoverTrigger
+            render={
+              <DropdownMenuItem
+                closeOnClick={false}
+                variant="secondary"
+                icon={<Icon.Plus className="size-4" />}
+                label="Add sort"
+              />
+            }
+          />
+          <PopoverContent>
             <PropSelectMenu onSelect={() => setAddingSort(false)} />
-          </div>
-        )}
+          </PopoverContent>
+        </Popover>
         <DropdownMenuItem
           closeOnClick={false}
           variant="warning"
@@ -132,34 +131,24 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
     <DropdownMenuItem
       ref={setNodeRef}
       closeOnClick={false}
-      className="h-9 hover:bg-transparent *:data-[slot=menu-item-body]:mx-0"
+      className="h-9"
       style={style}
       icon={
-        <div
-          key="drag-handle"
-          onPointerDown={(event) => event.stopPropagation()}
-          onClick={(event) => event.stopPropagation()}
-          {...attributes}
-          {...listeners}
-        >
+        <div key="drag-handle" {...attributes} {...listeners}>
           <Icon.DragHandle className="size-3 fill-icon!" />
         </div>
       }
       label={
-        <div
-          className="ml-1 flex h-8 items-center gap-2"
-          onClick={(event) => event.stopPropagation()}
-          onKeyDown={(event) => event.stopPropagation()}
-        >
+        <div className="grid h-8 w-full grid-cols-2 items-center gap-1.5">
           <Select
             value={currentId}
             onValueChange={(id) => {
               if (id !== null) updateRule({ id, desc });
             }}
           >
-            <SelectTrigger className="my-0 w-fit max-w-45 border border-border">
+            <SelectTrigger className="my-0 w-full max-w-45 border border-border">
               <SelectValue aria-label={current.name}>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 truncate">
                   {current.icon ? (
                     <IconBlock icon={current.icon} />
                   ) : (
@@ -194,9 +183,11 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
               updateRule({ id: currentId, desc: value === "desc" })
             }
           >
-            <SelectTrigger className="my-0 w-fit max-w-45 border border-border">
+            <SelectTrigger className="my-0 w-full max-w-45 border border-border">
               <SelectValue aria-label={desc ? "desc" : "asc"}>
-                {desc ? "Descending" : "Ascending"}
+                <span className="truncate">
+                  {desc ? "Descending" : "Ascending"}
+                </span>
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
@@ -210,14 +201,7 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
       }
     >
       <MenuItemAction className="flex items-center">
-        <Button
-          variant="hint"
-          className="size-5"
-          onClick={(event) => {
-            event.stopPropagation();
-            removeRule();
-          }}
-        >
+        <Button variant="hint" className="size-5" onClick={removeRule}>
           <Icon.Close className="fill-current" />
         </Button>
       </MenuItemAction>

@@ -154,8 +154,6 @@ function GroupItem({
         <div
           key="drag-handle"
           className="mr-2 flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center fill-icon!"
-          onPointerDown={(event) => event.stopPropagation()}
-          onClick={(event) => event.stopPropagation()}
           {...attributes}
           {...listeners}
         >
@@ -163,7 +161,6 @@ function GroupItem({
         </div>
       }
       label={children}
-      className="*:data-[slot=menu-item-body]:leading-normal"
     >
       <MenuItemAction className="flex items-center text-muted [&_svg]:fill-current">
         <Button
@@ -171,7 +168,6 @@ function GroupItem({
           aria-label="Toggle property visibility"
           variant="hint"
           className="size-6"
-          onKeyDown={(event) => event.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation();
             onVisibilityChange();

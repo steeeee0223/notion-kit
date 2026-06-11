@@ -160,6 +160,9 @@ interface MenuItemSwitchProps extends MenuItemProps {
   onCheckedChange?: (checked: boolean) => void;
 }
 
+/**
+ * @deprecated
+ */
 function MenuItemSwitch({
   checked = false,
   onCheckedChange,

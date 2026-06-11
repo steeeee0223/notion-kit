@@ -13,6 +13,7 @@ import {
   MenuLabel,
 } from "./menu";
 import { Separator } from "./separator";
+import { Switch } from "./switch";
 import { contentVariants } from "./variants";
 
 function DropdownMenu({ ...props }: Menu.Root.Props) {
@@ -203,6 +204,7 @@ interface DropdownMenuCheckboxItemProps
     MenuItemVisualProps {
   icon?: React.ReactNode;
   label?: React.ReactNode;
+  checkType?: "check" | "switch";
   children?: React.ReactNode;
 }
 
@@ -213,6 +215,7 @@ function DropdownMenuCheckboxItem({
   className,
   desc,
   variant,
+  checkType = "check",
   ...props
 }: DropdownMenuCheckboxItemProps) {
   return (
@@ -228,9 +231,17 @@ function DropdownMenuCheckboxItem({
           variant={variant}
         >
           {children}
-          <Menu.CheckboxItemIndicator>
-            <MenuItemCheck />
-          </Menu.CheckboxItemIndicator>
+          {checkType === "switch" ? (
+            <MenuItemAction>
+              <Switch
+                size="sm"
+                checked={props.checked}
+                disabled={props.disabled}
+              />
+            </MenuItemAction>
+          ) : (
+            <Menu.CheckboxItemIndicator render={<MenuItemCheck />} />
+          )}
         </MenuItem>
       }
       {...props}

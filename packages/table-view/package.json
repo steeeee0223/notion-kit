@@ -15,6 +15,10 @@
     ".": {
       "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
+    },
+    "./menus": {
+      "types": "./dist/menus.d.mts",
+      "default": "./dist/menus.mjs"
     }
   },
   "main": "./dist/index.mjs",

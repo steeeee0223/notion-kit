@@ -1,17 +1,12 @@
-"use client";
-
 import { useMemo } from "react";
 
 import {
   DropdownMenuCheckboxItem,
   DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  MenuItemAction,
-  Switch,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
@@ -61,16 +56,13 @@ export function CalcMenu({ id, type }: CalcMenuProps) {
         <DropdownMenuSubTrigger label="Count" />
         <DropdownMenuSubContent className="w-[250px]">
           <DropdownMenuGroup>
-            <DropdownMenuItem
-              className="gap-2 p-2"
+            <DropdownMenuCheckboxItem
+              checkType="switch"
               label="Show large counts as 99+"
               desc="This improves performance for large databases."
-              onClick={() => table.setColumnCountCapped(id, (v) => !v)}
-            >
-              <MenuItemAction>
-                <Switch size="sm" checked={counting.isCapped} />
-              </MenuItemAction>
-            </DropdownMenuItem>
+              checked={counting.isCapped}
+              onCheckedChange={() => table.setColumnCountCapped(id, (v) => !v)}
+            />
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>

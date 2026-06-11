@@ -1,4 +1,46 @@
-import type { ColumnDefs, Row } from "@notion-kit/table-view";
+import type {
+  ColumnDefs,
+  DateConfig,
+  NumberConfig,
+  Row,
+  SelectConfig,
+} from "@notion-kit/table-view";
+
+export const mockDateConfig: DateConfig = {
+  dateFormat: "MM/dd/yyyy",
+  timeFormat: "24-hour",
+};
+
+export const mockNumberConfig: NumberConfig = {
+  format: "number",
+  round: "default",
+  options: { color: "green", divideBy: 100, showNumber: true },
+  showAs: "number",
+};
+
+export const mockSelectConfig: SelectConfig = {
+  sort: "manual",
+  options: {
+    names: ["In progress", "Done", "Backlog"],
+    items: {
+      "In progress": {
+        id: "option-1",
+        name: "In progress",
+        color: "yellow",
+      },
+      Done: {
+        id: "option-2",
+        name: "Done",
+        color: "green",
+      },
+      Backlog: {
+        id: "option-3",
+        name: "Backlog",
+        color: "gray",
+      },
+    },
+  },
+};
 
 export const mockProps: ColumnDefs = [
   {

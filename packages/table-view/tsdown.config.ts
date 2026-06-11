@@ -12,6 +12,10 @@ export default defineConfig((opts) => ({
    * for the entire package in consuming applications
    */
   ...withReactClient(opts),
+  entry: {
+    index: "./src/index.ts",
+    menus: "./src/menus/index.ts",
+  },
   banner: { js: '"use client";\n"use no memo";' },
   external: [/^@dnd-kit\//],
 }));

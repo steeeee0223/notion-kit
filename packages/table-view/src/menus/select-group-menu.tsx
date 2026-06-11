@@ -1,5 +1,3 @@
-"use client";
-
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Autocomplete,
@@ -58,52 +56,47 @@ export function SelectGroupMenu() {
           })
         }
       />
-      <div
-        onClick={(event) => event.stopPropagation()}
-        onKeyDown={(event) => event.stopPropagation()}
+      <Autocomplete
+        items={groupOptions}
+        itemToStringValue={(option) => option.name}
+        open
+        autoHighlight="always"
+        openOnInputClick
       >
-        <Autocomplete
-          items={groupOptions}
-          itemToStringValue={(option) => option.name}
-          open
-          autoHighlight="always"
-          openOnInputClick
-        >
-          <AutocompleteInput placeholder="Search for a property" />
-          <AutocompleteContent role="presentation" variant="inline">
-            <AutocompleteList>
-              <AutocompleteGroup className="h-40">
-                <AutocompleteCollection>
-                  {(option: (typeof groupOptions)[number]) => (
-                    <AutocompleteItem
-                      key={option.id ?? "none"}
-                      value={option}
-                      label={option.name}
-                      icon={
-                        option.kind === "column" ? (
-                          option.icon ? (
-                            <IconBlock icon={option.icon} />
-                          ) : (
-                            <DefaultIcon type={option.type} />
-                          )
-                        ) : null
-                      }
-                      onClick={() => selectGroup(option.id)}
-                    >
-                      {groupingColId === (option.id ?? undefined) && (
-                        <MenuItemCheck />
-                      )}
-                    </AutocompleteItem>
-                  )}
-                </AutocompleteCollection>
-              </AutocompleteGroup>
-            </AutocompleteList>
-            <AutocompleteEmpty className="px-3 text-start text-muted">
-              No results
-            </AutocompleteEmpty>
-          </AutocompleteContent>
-        </Autocomplete>
-      </div>
+        <AutocompleteInput placeholder="Search for a property" />
+        <AutocompleteContent role="presentation" variant="inline">
+          <AutocompleteList>
+            <AutocompleteGroup className="h-40">
+              <AutocompleteCollection>
+                {(option: (typeof groupOptions)[number]) => (
+                  <AutocompleteItem
+                    key={option.id ?? "none"}
+                    value={option}
+                    label={option.name}
+                    icon={
+                      option.kind === "column" ? (
+                        option.icon ? (
+                          <IconBlock icon={option.icon} />
+                        ) : (
+                          <DefaultIcon type={option.type} />
+                        )
+                      ) : null
+                    }
+                    onClick={() => selectGroup(option.id)}
+                  >
+                    {groupingColId === (option.id ?? undefined) && (
+                      <MenuItemCheck />
+                    )}
+                  </AutocompleteItem>
+                )}
+              </AutocompleteCollection>
+            </AutocompleteGroup>
+          </AutocompleteList>
+          <AutocompleteEmpty className="px-3 text-start text-muted">
+            No results
+          </AutocompleteEmpty>
+        </AutocompleteContent>
+      </Autocomplete>
     </>
   );
 }

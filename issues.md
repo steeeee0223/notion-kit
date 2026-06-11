@@ -14,3 +14,7 @@ issues recording for current task
    2. sort-menu.tsx -> the SelectContent's in the SortRule are not visible.
       - root cause: the sort toolbar Popover contained a second Popover for "Add sort" and Select portals inside non-dropdown MenuItem rows. Click/type events from inline controls bubbled into the parent menu surface, while nested floating roots competed for outside-click and focus handling. Migrating the parent shell and internal actions to DropdownMenu, rendering "Add sort" inline, and stopping propagation from embedded controls keeps the SelectContent in the active dropdown interaction tree.
 7. fix unittest errors!
+
+## Existing issues
+
+1. press "Remove grouping" does not clear the `state.groupingState.groupValues`
