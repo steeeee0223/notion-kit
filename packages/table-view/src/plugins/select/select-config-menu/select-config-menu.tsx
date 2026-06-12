@@ -5,10 +5,10 @@ import { Icon } from "@notion-kit/icons";
 import {
   Button,
   DropdownMenuCheckboxItem,
+  DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuSub,
-  DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   Input,
   MenuItemAction,
@@ -69,7 +69,7 @@ export function SelectConfigMenu({
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger icon={<Icon.Sliders />} label="Edit property" />
-      <DropdownMenuSubContent className="w-[250px]">
+      <DropdownMenuContent sideOffset={-4} className="w-[250px]">
         <DropdownMenuGroup>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger
@@ -81,10 +81,10 @@ export function SelectConfigMenu({
                 {sortOptions.find((o) => o.value === config.sort)?.label}
               </MenuItemAction>
             </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent
+            <DropdownMenuContent
               align="start"
               alignOffset={4}
-              sideOffset={0}
+              sideOffset={-4}
               className="w-[250px]"
               finalFocus={false}
             >
@@ -98,7 +98,7 @@ export function SelectConfigMenu({
                   />
                 ))}
               </DropdownMenuGroup>
-            </DropdownMenuSubContent>
+            </DropdownMenuContent>
           </DropdownMenuSub>
         </DropdownMenuGroup>
         <DropdownMenuGroup>
@@ -119,7 +119,13 @@ export function SelectConfigMenu({
           {showInput && (
             <div className="mb-2 flex flex-col gap-2 px-3">
               <div className="flex w-full min-w-0 flex-auto items-center select-none">
-                <Input {...nameField.props} />
+                <Input
+                  {...nameField.props}
+                  onKeyDown={(e) => {
+                    e.stopPropagation();
+                    nameField.props.onKeyDown?.(e);
+                  }}
+                />
               </div>
               {nameField.error && (
                 <div className="text-sm text-red">Option already exists.</div>
@@ -147,7 +153,7 @@ export function SelectConfigMenu({
             </SortableDnd>
           </div>
         </DropdownMenuGroup>
-      </DropdownMenuSubContent>
+      </DropdownMenuContent>
     </DropdownMenuSub>
   );
 }

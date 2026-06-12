@@ -2,10 +2,10 @@ import { useMemo } from "react";
 
 import {
   DropdownMenuCheckboxItem,
+  DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuSeparator,
   DropdownMenuSub,
-  DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
@@ -54,7 +54,7 @@ export function CalcMenu({ id, type }: CalcMenuProps) {
       />
       <DropdownMenuSub>
         <DropdownMenuSubTrigger label="Count" />
-        <DropdownMenuSubContent className="w-[250px]">
+        <DropdownMenuContent sideOffset={-4} className="w-[250px]">
           <DropdownMenuGroup>
             <DropdownMenuCheckboxItem
               checkType="switch"
@@ -75,11 +75,11 @@ export function CalcMenu({ id, type }: CalcMenuProps) {
               />
             ))}
           </DropdownMenuGroup>
-        </DropdownMenuSubContent>
+        </DropdownMenuContent>
       </DropdownMenuSub>
       <DropdownMenuSub>
         <DropdownMenuSubTrigger label="Percent" />
-        <DropdownMenuSubContent className="w-[250px]">
+        <DropdownMenuContent sideOffset={-4} className="w-[250px]">
           <DropdownMenuGroup>
             {percentMethods.map((method) => (
               <HintItem
@@ -90,7 +90,7 @@ export function CalcMenu({ id, type }: CalcMenuProps) {
               />
             ))}
           </DropdownMenuGroup>
-        </DropdownMenuSubContent>
+        </DropdownMenuContent>
       </DropdownMenuSub>
     </DropdownMenuGroup>
   );

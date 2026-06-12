@@ -224,6 +224,9 @@ interface SelectPresetProps<T extends string = string>
   renderOption?: React.FC<{ option?: Option | string }>;
 }
 
+/**
+ * @todo the apis are wrong!
+ */
 function SelectPreset<T extends string = string>({
   className,
   options,

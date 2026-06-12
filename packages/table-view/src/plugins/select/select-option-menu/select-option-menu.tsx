@@ -1,12 +1,11 @@
-"use client";
-
 import { Icon } from "@notion-kit/icons";
 import {
-  MenuGroup,
-  MenuItem,
-  MenuItemCheck,
-  MenuLabel,
-  Separator,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
 } from "@notion-kit/ui/primitives";
 import { COLOR, type Color } from "@notion-kit/utils";
 
@@ -32,34 +31,38 @@ export function SelectOptionMenu({
   onUpdate,
 }: SelectOptionMenuProps) {
   return (
-    <>
-      <MenuGroup>
+    <DropdownMenuContent
+      align="center"
+      sideOffset={0}
+      className="w-55"
+      collisionPadding={12}
+    >
+      <DropdownMenuGroup>
         <OptionMeta
           option={option}
           validateName={validateName}
           onUpdate={onUpdate}
         />
-        <MenuItem
+        <DropdownMenuItem
           variant="warning"
           onClick={onDelete}
           icon={<Icon.Trash />}
           label="Delete"
         />
-      </MenuGroup>
-      <Separator />
-      <MenuGroup>
-        <MenuLabel title="Colors" />
+      </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        <DropdownMenuLabel title="Colors" />
         {Object.entries(COLOR).map(([key, color]) => (
-          <MenuItem
+          <DropdownMenuCheckboxItem
             key={key}
             icon={<ColorIcon color={color.rgba} />}
             label={color.name}
-            onClick={() => onUpdate({ color: key as Color })}
-          >
-            {option.color === key && <MenuItemCheck />}
-          </MenuItem>
+            checked={option.color === key}
+            onCheckedChange={() => onUpdate({ color: key as Color })}
+          />
         ))}
-      </MenuGroup>
-    </>
+      </DropdownMenuGroup>
+    </DropdownMenuContent>
   );
 }

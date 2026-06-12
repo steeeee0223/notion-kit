@@ -1,10 +1,10 @@
 import { Icon } from "@notion-kit/icons";
 import {
+  DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuSub,
-  DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
 
@@ -22,7 +22,7 @@ export function NumberConfigMenu({
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger icon={<Icon.Sliders />} label="Edit property" />
-      <DropdownMenuSubContent className="w-75">
+      <DropdownMenuContent sideOffset={-4} className="w-75">
         <DropdownMenuGroup>
           <FormatMenu
             format={config.format}
@@ -58,7 +58,7 @@ export function NumberConfigMenu({
             Changes apply to all views showing this property.
           </div>
         </DropdownMenuGroup>
-      </DropdownMenuSubContent>
+      </DropdownMenuContent>
     </DropdownMenuSub>
   );
 }

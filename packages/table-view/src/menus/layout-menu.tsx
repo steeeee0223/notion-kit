@@ -2,9 +2,9 @@ import { cn } from "@notion-kit/cn";
 import {
   Button,
   DropdownMenuCheckboxItem,
+  DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuSub,
-  DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   MenuItemAction,
 } from "@notion-kit/ui/primitives";
@@ -65,7 +65,7 @@ function RowViewMenu() {
           {ROW_VIEW_OPTIONS[current].label}
         </MenuItemAction>
       </DropdownMenuSubTrigger>
-      <DropdownMenuSubContent className="w-64">
+      <DropdownMenuContent sideOffset={-4} className="w-64">
         <DropdownMenuGroup>
           {Object.entries(ROW_VIEW_OPTIONS).map(([value, option]) => {
             const rowView = value as RowViewType;
@@ -84,7 +84,7 @@ function RowViewMenu() {
             );
           })}
         </DropdownMenuGroup>
-      </DropdownMenuSubContent>
+      </DropdownMenuContent>
     </DropdownMenuSub>
   );
 }

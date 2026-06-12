@@ -1,10 +1,9 @@
 import {
   DropdownMenuCheckboxItem,
+  DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuSub,
-  DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  MenuItemSelect,
 } from "@notion-kit/ui/primitives";
 
 import type { NumberFormat } from "../types";
@@ -25,11 +24,11 @@ export function FormatMenu({ format, onUpdate }: FormatMenuProps) {
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger label="Number format">
-        <MenuItemSelect>
+        <div className="text-muted">
           {options.find((option) => option.value === format)?.label}
-        </MenuItemSelect>
+        </div>
       </DropdownMenuSubTrigger>
-      <DropdownMenuSubContent className="w-48">
+      <DropdownMenuContent sideOffset={-4} className="w-48">
         <DropdownMenuGroup>
           {options.map((option) => (
             <DropdownMenuCheckboxItem
@@ -41,7 +40,7 @@ export function FormatMenu({ format, onUpdate }: FormatMenuProps) {
             />
           ))}
         </DropdownMenuGroup>
-      </DropdownMenuSubContent>
+      </DropdownMenuContent>
     </DropdownMenuSub>
   );
 }

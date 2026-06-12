@@ -33,7 +33,11 @@ export function OptionSettings({ options, onUpdate }: OptionSettingsProps) {
       <div className="flex h-7 w-full items-center gap-4 px-4">
         <div className="flex-[6_1_0] text-sm">Divide by</div>
         <div className="flex-[6_1_0]">
-          <Input defaultValue={options.divideBy} onBlur={updateValue} />
+          <Input
+            defaultValue={options.divideBy}
+            onBlur={updateValue}
+            onKeyDown={(e) => e.stopPropagation()}
+          />
         </div>
       </div>
       <div className="flex h-7 w-full items-center gap-4 px-4">

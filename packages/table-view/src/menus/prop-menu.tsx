@@ -2,10 +2,10 @@ import { flexRender, functionalUpdate } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
 import {
+  DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSub,
-  DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   Separator,
 } from "@notion-kit/ui/primitives";
@@ -92,9 +92,9 @@ export function PropMenu({ propId, view }: PropMenuProps) {
               icon={<Icon.ArrowSquarePathUpDown />}
               label="Change type"
             />
-            <DropdownMenuSubContent sideOffset={-4} className="w-50">
+            <DropdownMenuContent sideOffset={-4} className="w-50">
               <TypesMenu propId={propId} menu={null} />
-            </DropdownMenuSubContent>
+            </DropdownMenuContent>
           </DropdownMenuSub>
         )}
       </DropdownMenuGroup>
@@ -107,7 +107,7 @@ export function PropMenu({ propId, view }: PropMenuProps) {
                 icon={<Icon.ArrowUpDown />}
                 label="Sort"
               />
-              <DropdownMenuSubContent sideOffset={-4} className="w-50">
+              <DropdownMenuContent sideOffset={-4} className="w-50">
                 <DropdownMenuGroup>
                   <DropdownMenuItem
                     icon={<Icon.ArrowUp className="size-4" />}
@@ -120,7 +120,7 @@ export function PropMenu({ propId, view }: PropMenuProps) {
                     onClick={() => sortColumn(true)}
                   />
                 </DropdownMenuGroup>
-              </DropdownMenuSubContent>
+              </DropdownMenuContent>
             </DropdownMenuSub>
             <DropdownMenuItem
               icon={<Icon.SquareGridBelowLines />}
@@ -131,13 +131,13 @@ export function PropMenu({ propId, view }: PropMenuProps) {
             />
             <DropdownMenuSub>
               <DropdownMenuSubTrigger icon={<Icon.Sum />} label="Calculate" />
-              <DropdownMenuSubContent
+              <DropdownMenuContent
                 sideOffset={-4}
                 className="w-50"
                 collisionPadding={12}
               >
                 <CalcMenu id={propId} type={info.type} />
-              </DropdownMenuSubContent>
+              </DropdownMenuContent>
             </DropdownMenuSub>
             <DropdownMenuItem
               disabled={!canFreeze}

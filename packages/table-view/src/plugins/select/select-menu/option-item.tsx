@@ -4,11 +4,10 @@ import { CSS } from "@dnd-kit/utilities";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
+  DropdownMenu,
+  DropdownMenuTrigger,
   MenuItem,
   MenuItemAction,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 import type { Color } from "@notion-kit/utils";
@@ -70,8 +69,6 @@ export function OptionItem({
     >
       <MenuItem
         ref={setNodeRef}
-        role="menuitem"
-        aria-label={option.name}
         style={style}
         onClick={() => onSelect(option.name)}
         icon={
@@ -88,8 +85,8 @@ export function OptionItem({
         label={<OptionTag {...option} />}
       >
         <MenuItemAction className="flex items-center text-muted">
-          <Popover>
-            <PopoverTrigger
+          <DropdownMenu>
+            <DropdownMenuTrigger
               render={
                 <Button
                   tabIndex={0}
@@ -102,20 +99,13 @@ export function OptionItem({
                 </Button>
               }
             />
-            <PopoverContent
-              align="center"
-              sideOffset={0}
-              className="w-55"
-              collisionPadding={12}
-            >
-              <SelectOptionMenu
-                option={option}
-                validateName={validateName}
-                onUpdate={onUpdate}
-                onDelete={onDelete}
-              />
-            </PopoverContent>
-          </Popover>
+            <SelectOptionMenu
+              option={option}
+              validateName={validateName}
+              onUpdate={onUpdate}
+              onDelete={onDelete}
+            />
+          </DropdownMenu>
         </MenuItemAction>
       </MenuItem>
     </TooltipPreset>

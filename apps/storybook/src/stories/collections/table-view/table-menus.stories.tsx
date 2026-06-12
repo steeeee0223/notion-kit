@@ -9,6 +9,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
   Popover,
   PopoverContent,
@@ -101,7 +102,7 @@ export const SortMenu: Story = {
   },
 };
 
-export const ColumnPluginConfigMenus: Story = {
+export const ColumnConfigMenus: Story = {
   render: () => {
     const [dateConfig, setDateConfig] = useState(mockDateConfig);
     const [numberConfig, setNumberConfig] = useState(mockNumberConfig);
@@ -112,23 +113,26 @@ export const ColumnPluginConfigMenus: Story = {
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <Button variant="hint" size="sm">
+              <Button variant="hint" size="sm" className="w-30">
                 Config menus
               </Button>
             }
           />
           <DropdownMenuContent className="w-55">
             <DropdownMenuGroup>
+              <DropdownMenuLabel title="Date config" />
               <Menu.DateConfigMenu
                 propId="prop-D1"
                 config={dateConfig}
                 onChange={setDateConfig}
               />
+              <DropdownMenuLabel title="Number config" />
               <Menu.NumberConfigMenu
                 propId="prop-N1"
                 config={numberConfig}
                 onChange={setNumberConfig}
               />
+              <DropdownMenuLabel title="Select config" />
               <Menu.SelectConfigMenu
                 propId="prop-S1"
                 config={selectConfig}
