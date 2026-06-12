@@ -14,8 +14,12 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  SelectPreset as Select,
-  type SelectPresetProps,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@notion-kit/ui/primitives";
 
 import { Scope } from "@/lib/types";
@@ -90,6 +94,12 @@ export function RoleCell({ className, role }: RoleCellProps) {
   );
 }
 
+interface RoleOption {
+  value: PartialRole;
+  label: string;
+  description: string;
+}
+
 interface RoleSelectCellProps {
   role: PartialRole;
   scopes?: Set<Scope>;
@@ -102,6 +112,10 @@ export function RoleSelectCell({
 }: RoleSelectCellProps) {
   const { t } = useTranslation("settings", { keyPrefix: "tables.people" });
   const roleOptions = t("role-options", { returnObjects: true });
+  const options = Object.entries(roleOptions).map(([value, option]) => ({
+    value,
+    ...option,
+  }));
 
   const [isUpdating, startTransition] = useTransition();
   const select = (role: PartialRole) =>
@@ -111,26 +125,41 @@ export function RoleSelectCell({
     <div className="flex items-center">
       {scopes?.has(Scope.MemberUpdate) ? (
         <Select
-          className="w-auto"
-          options={roleOptions}
-          onChange={select}
+          items={options}
+          onValueChange={(nextValue) => {
+            if (nextValue !== null) select(nextValue);
+          }}
           value={role}
-          align="center"
-          renderOption={Custom}
           disabled={isUpdating}
-        />
+        >
+          <SelectTrigger className="w-auto">
+            <SelectValue>
+              {(value: RoleOption) => (
+                <div className="min-w-0 truncate text-secondary">
+                  {value.label}
+                </div>
+              )}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent align="center">
+            <SelectGroup>
+              {options.map((option) => (
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  label={option.label}
+                  desc={option.description}
+                />
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       ) : (
         <RoleCell role={role} />
       )}
     </div>
   );
 }
-
-const Custom: SelectPresetProps["renderOption"] = ({ option }) => (
-  <div className="min-w-0 truncate text-secondary">
-    {typeof option === "string" ? option : option?.label}
-  </div>
-);
 
 interface MemberActionCellProps {
   isSelf: boolean;
@@ -178,13 +207,11 @@ export function AccessCell({ access }: AccessCellProps) {
     keyPrefix: "tables.people.cells",
   });
 
-  const options = access.reduce<SelectPresetProps["options"]>(
-    (acc, { id, name, scope }) => ({
-      ...acc,
-      [id]: { label: name, description: scope },
-    }),
-    {},
-  );
+  const options = access.map(({ id, name, scope }) => ({
+    value: id,
+    label: name,
+    description: scope,
+  }));
 
   return (
     <div className="flex items-center">
@@ -193,14 +220,29 @@ export function AccessCell({ access }: AccessCellProps) {
           {t("no-access")}
         </div>
       ) : (
-        <Select
-          className="w-auto"
-          options={options}
-          hideCheck
-          align="center"
-          placeholder={t("pages", { count: access.length })}
-          renderOption={() => <AccessCellDisplay pages={access.length} />}
-        />
+        <Select items={options} value={null}>
+          <SelectTrigger className="w-auto">
+            <SelectValue
+              aria-label={t("pages", { count: access.length })}
+              placeholder={t("pages", { count: access.length })}
+            >
+              <AccessCellDisplay pages={access.length} />
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent align="center">
+            <SelectGroup>
+              {options.map((option) => (
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  label={option.label}
+                  desc={option.description}
+                  hideCheck
+                />
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       )}
     </div>
   );

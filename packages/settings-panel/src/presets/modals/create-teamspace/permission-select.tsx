@@ -1,7 +1,17 @@
-import { SelectPreset as Select } from "@notion-kit/ui/primitives";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@notion-kit/ui/primitives";
 
-import { permissions, TeamspacePermission } from "../../_components";
-import type { TeamspacePermission as Permission } from "../../../lib";
+import type { TeamspacePermission as Permission } from "@/lib/types";
+import {
+  TeamspacePermission,
+  useTeamspacePermissionOptions,
+} from "@/presets/_components";
 
 interface PermissionSelectProps {
   workspace: string;
@@ -16,21 +26,29 @@ export function PermissionSelect({
   value,
   onChange,
 }: PermissionSelectProps) {
-  const options = { ...permissions };
-  options.default.description = permissions.default.getDescription(workspace);
+  const permissionOptions = useTeamspacePermissionOptions(workspace);
 
   return (
     <Select
-      className="h-fit border border-border pl-0"
+      items={permissionOptions}
       value={value}
-      onChange={(val) => onChange(val)}
-      disabled={disabled}
-      options={options}
-      renderOption={({ option }) => {
-        if (typeof option === "string" || typeof option === "undefined")
-          return null as never;
-        return <TeamspacePermission {...option} />;
+      onValueChange={(nextValue) => {
+        if (nextValue !== null) onChange(nextValue);
       }}
-    />
+      disabled={disabled}
+    >
+      <SelectTrigger className="h-fit border border-border pl-0">
+        <SelectValue>
+          {(option) => <TeamspacePermission {...option} />}
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          {permissionOptions.map((option) => (
+            <SelectItem key={option.value} {...option} />
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
   );
 }

@@ -1,7 +1,15 @@
 "use client";
 
 import { useTranslation } from "@notion-kit/i18n";
-import { SelectPreset as Select, Switch } from "@notion-kit/ui/primitives";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Switch,
+} from "@notion-kit/ui/primitives";
 
 import { TextLinks } from "../_components";
 import { SettingsRule, SettingsSection } from "../../core";
@@ -10,6 +18,9 @@ export function PrivacySection() {
   /** i18n */
   const { t } = useTranslation("settings");
   const trans = t("preferences.privacy", { returnObjects: true });
+  const viewHistoryOptions = Object.entries(trans["view-history"].options).map(
+    ([value, label]) => ({ value, label }),
+  );
 
   return (
     <SettingsSection title={trans.title}>
@@ -31,11 +42,18 @@ export function PrivacySection() {
           />
         }
       >
-        <Select
-          options={trans["view-history"].options}
-          value="yes"
-          side="left"
-        />
+        <Select items={viewHistoryOptions} value="yes">
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent side="left">
+            <SelectGroup>
+              {viewHistoryOptions.map((option) => (
+                <SelectItem key={option.value} {...option} />
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </SettingsRule>
       <SettingsRule
         title={trans["discover-profile"].title}

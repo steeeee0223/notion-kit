@@ -8,7 +8,12 @@ import { AlertModal } from "@notion-kit/ui/alert-modal";
 import {
   Button,
   Dialog,
-  SelectPreset as Select,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Switch,
 } from "@notion-kit/ui/primitives";
 import { TimezoneMenu } from "@notion-kit/ui/timezone-menu";
@@ -16,25 +21,33 @@ import { TimezoneMenu } from "@notion-kit/ui/timezone-menu";
 import { SettingsRule, SettingsSection } from "../../core";
 import { useAccountActions } from "../hooks";
 
+interface LocaleOption {
+  value: LOCALE;
+  label: string;
+  desc: string;
+}
+
 export function RegionSection() {
   const { locale, timezone, update } = useAccountActions();
   /** i18n */
   const { t, i18n } = useTranslation("settings");
   const trans = t("preferences", { returnObjects: true });
+  const localeOptions = Object.entries(
+    trans.region.language.options,
+  ).map<LocaleOption>(([value, option]) => ({
+    value: value as LOCALE,
+    label: option.label,
+    desc: option.description,
+  }));
+  const selectedLocale = localeOptions.find(
+    (option) => option.value === locale,
+  );
   /** Actions */
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<LOCALE | null>(null);
-
-  const switchLanguage = (language: LOCALE) => {
-    setSelectedLanguage(language);
-    setDialogOpen(true);
-  };
-
   const handleConfirmLanguageChange = async () => {
-    if (selectedLanguage) {
-      await i18n.changeLanguage(selectedLanguage);
-      await update({ language: selectedLanguage });
-      setSelectedLanguage(null);
+    if (selectedLocale) {
+      await i18n.changeLanguage(selectedLocale.value);
+      await update({ language: selectedLocale.value });
     }
     setDialogOpen(false);
   };
@@ -47,25 +60,29 @@ export function RegionSection() {
     });
   };
 
-  const langLabel = selectedLanguage
-    ? trans.region.language.options[selectedLanguage].label
-    : "";
-
   return (
     <SettingsSection title={trans.region.title}>
       <SettingsRule {...trans.region.language}>
-        <Select
-          options={trans.region.language.options}
-          value={locale}
-          onChange={switchLanguage}
-          side="bottom"
-          align="end"
-          renderOption={({ option }) => (
-            <div className="truncate text-secondary">
-              {typeof option === "string" ? option : option?.label}
-            </div>
-          )}
-        />
+        <Select<LocaleOption>
+          items={localeOptions}
+          value={selectedLocale}
+          onValueChange={() => setDialogOpen(true)}
+        >
+          <SelectTrigger>
+            <SelectValue>
+              {(option: LocaleOption) => (
+                <div className="truncate text-secondary">{option.label}</div>
+              )}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent side="bottom" align="end">
+            <SelectGroup>
+              {localeOptions.map((option) => (
+                <SelectItem key={option.value} {...option} />
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </SettingsRule>
       <SettingsRule {...trans.region["start-week"]}>
         <Switch size="sm" defaultChecked />
@@ -97,7 +114,7 @@ export function RegionSection() {
         <AlertModal
           {...trans.modals.language}
           title={t("preferences.modals.language.title", {
-            language: langLabel,
+            language: selectedLocale?.label,
           })}
           onTrigger={handleConfirmLanguageChange}
         />

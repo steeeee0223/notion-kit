@@ -21,7 +21,7 @@ function renderToolbar() {
 
 describe("Toolbar", () => {
   describe("Sort Button", () => {
-    it("should expose the sort trigger as a menu trigger", async () => {
+    it("should expose the sort trigger as a menu trigger", () => {
       renderToolbar();
 
       const sortButton = screen.getByRole("button", { name: "Sort" });
@@ -69,7 +69,7 @@ describe("Toolbar", () => {
   });
 
   describe("Settings Button", () => {
-    it("should expose the settings trigger as a menu trigger", async () => {
+    it("should expose the settings trigger as a menu trigger", () => {
       renderToolbar();
 
       const settingsButton = screen.getByRole("button", { name: "Settings" });

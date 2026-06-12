@@ -12,8 +12,8 @@ import {
 import type { TeamspacePermission as Permission } from "@/lib/types";
 import {
   HintButton,
-  permissions,
   TeamspacePermission,
+  useTeamspacePermissionOptions,
 } from "@/presets/_components";
 
 import { LeaveTeamspace } from "../leave-teamspace";
@@ -40,8 +40,10 @@ export function GeneralContent({
   const { t } = useTranslation("settings", {
     keyPrefix: "modals.teamspace-detail.general",
   });
-  const options = { ...permissions };
-  options.default.description = permissions.default.getDescription(workspace);
+  const options = useTeamspacePermissionOptions(workspace);
+  const permission = options.find(
+    (option) => option.value === teamspace.permission,
+  )!;
 
   return (
     <div className="space-y-5">
@@ -86,7 +88,7 @@ export function GeneralContent({
         >
           <TeamspacePermission
             className="mx-0 h-11 px-0 hover:bg-transparent"
-            {...options[teamspace.permission]}
+            {...permission}
           >
             <MenuItemAction>
               <Icon.Chevron side="right" className="size-3 fill-default/30" />

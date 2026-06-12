@@ -2,31 +2,61 @@
 
 import { useState } from "react";
 
+import { Icon } from "@notion-kit/icons";
 import {
-  SelectPreset,
-  type SelectPresetProps,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@notion-kit/ui/primitives";
 
-const Option: SelectPresetProps["renderOption"] = ({ option }) => (
-  <div className="truncate text-secondary">
-    {typeof option === "string" ? option : option?.label}
-  </div>
-);
+const options = [
+  {
+    value: "on",
+    icon: <Icon.ArrowUp />,
+    label: "Ascending",
+    description: "Sort ascending",
+  },
+  {
+    value: "off",
+    icon: <Icon.ArrowDown />,
+    label: "Descending",
+    description: "Sort descending",
+  },
+] as const;
 
 export default function Custom() {
-  const options = {
-    on: { label: "On", description: "Turn on notification" },
-    off: { label: "Off", description: "Turn on notification" },
-  };
-  const [value, setValue] = useState<keyof typeof options>("on");
+  const [value, setValue] = useState<(typeof options)[number]["value"]>("on");
+  const selectedOption = options.find((option) => option.value === value);
 
   return (
-    <SelectPreset
-      className="w-fit"
-      options={options}
+    <Select
+      items={options}
       value={value}
-      onChange={setValue}
-      renderOption={Option}
-    />
+      onValueChange={(nextValue) => {
+        if (nextValue !== null) setValue(nextValue);
+      }}
+    >
+      <SelectTrigger className="w-fit">
+        <SelectValue aria-label={selectedOption?.label}>
+          <div className="truncate text-secondary">{selectedOption?.label}</div>
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          {options.map((option) => (
+            <SelectItem
+              key={option.value}
+              value={option.value}
+              label={option.label}
+              icon={option.icon}
+              desc={option.description}
+            />
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
   );
 }

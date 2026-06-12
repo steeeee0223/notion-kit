@@ -1,24 +1,40 @@
-"use client";
-
 import { useTranslation } from "@notion-kit/i18n";
-import { SelectPreset as Select, Switch } from "@notion-kit/ui/primitives";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Switch,
+} from "@notion-kit/ui/primitives";
 
-import { TextLinks } from "../_components";
-import { SettingsRule, SettingsSection } from "../../core";
+import { SettingsRule, SettingsSection } from "@/core";
+import { TextLinks } from "@/presets/_components";
 
 export function DesktopSection() {
   /** i18n */
   const { t } = useTranslation("settings");
   const trans = t("preferences.desktop", { returnObjects: true });
+  const openOnStartOptions = Object.entries(trans["open-on-start"].options).map(
+    ([value, label]) => ({ value, label }),
+  );
 
   return (
     <SettingsSection title={trans.title}>
       <SettingsRule {...trans["open-on-start"]}>
-        <Select
-          options={trans["open-on-start"].options}
-          value="top"
-          side="left"
-        />
+        <Select items={openOnStartOptions} value="top">
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent side="left">
+            <SelectGroup>
+              {openOnStartOptions.map((option) => (
+                <SelectItem key={option.value} {...option} />
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </SettingsRule>
       <SettingsRule
         title={trans["open-links"].title}
