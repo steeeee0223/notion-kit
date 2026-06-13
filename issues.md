@@ -7,9 +7,10 @@ issues recording for current task
 3. menu issues!
    1. content or portal z-index wrong! (e.g. in sidebar-presets, table-view)
       - root cause: table-view was mixing Popover, visual-only MenuItem rows, DropdownMenu, Autocomplete, and Select portals in the same menu flow. Nested/competing floating roots each applied their own portal/focus/dismiss semantics, so child content could render outside the active stack or be treated as outside interaction.
-4. [-] select-preset: remove this!
+4. [x] select-preset: remove this!
    1. [x] first migration
-   2. [ ] to fix: settings-panel modals
+   2. [x] to fix: settings-panel modals
+5. [ ] Some select in dialog may occur z-index issue, since dialog is NOT yet migrated to base-ui
 
 ## Table view menus
 
