@@ -114,7 +114,7 @@ function HintItem({ title, desc, imgSrc, ...props }: HintItemProps) {
         { type: "default", text: desc },
       ]}
     >
-      <DropdownMenuCheckboxItem label={title} {...props} />
+      <DropdownMenuCheckboxItem {...props} label={title} />
     </TooltipPreset>
   );
 }

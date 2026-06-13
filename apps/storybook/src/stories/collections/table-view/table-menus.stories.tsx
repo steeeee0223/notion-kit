@@ -26,6 +26,7 @@ import {
   mockProps,
   mockSelectConfig,
 } from "./database";
+import { PluginsToolbar } from "./plugins-toolbar";
 
 const meta = {
   title: "collections/Table View/Menus",
@@ -97,6 +98,95 @@ export const SortMenu: Story = {
           </DropdownMenuContent>
         </DropdownMenu>
         <Code title="Sorting" codeObject={sorting} />
+      </div>
+    );
+  },
+};
+
+export const CalcMenu: Story = {
+  render: () => {
+    const { table } = useTableViewCtx();
+    const { columnOrder, columnCounting } = table.getState();
+    const countResults = Object.fromEntries(
+      columnOrder.map((id) => [
+        table.getColumnInfo(id).name,
+        table.getColumnCountResult(id),
+      ]),
+    );
+
+    return (
+      <div className="grid grid-cols-2 justify-between gap-4 p-20">
+        <PluginsToolbar
+          contentClassName="w-50"
+          renderContent={(info) => (
+            <Menu.CalcMenu id={info.id} type={info.type} />
+          )}
+        />
+        <div className="flex w-full flex-col gap-3">
+          <Code title="Counting" codeObject={columnCounting} />
+          <Code title="Count results" codeObject={countResults} />
+        </div>
+      </div>
+    );
+  },
+};
+
+export const PropMenu: Story = {
+  render: () => {
+    const { table } = useTableViewCtx();
+    const { columnsInfo } = table.getState();
+
+    return (
+      <div className="grid grid-cols-2 justify-between gap-4 p-20">
+        <PluginsToolbar
+          contentClassName="w-60"
+          renderContent={(info) => (
+            <Menu.PropMenu propId={info.id} view="table" />
+          )}
+        />
+        <div className="flex w-full flex-col gap-3">
+          <Code title="Columns info" codeObject={columnsInfo} />
+        </div>
+      </div>
+    );
+  },
+};
+
+export const TypesMenu: Story = {
+  render: () => {
+    return (
+      <div className="grid grid-cols-2 justify-between gap-4 p-20">
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button variant="hint" size="sm" className="w-30">
+                Types menu
+              </Button>
+            }
+          />
+          <DropdownMenuContent collisionPadding={12} className="w-60">
+            <Menu.TypesMenu menu={null} />
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    );
+  },
+};
+
+export const EditPropMenu: Story = {
+  render: () => {
+    const { table } = useTableViewCtx();
+    const { columnsInfo } = table.getState();
+
+    return (
+      <div className="grid grid-cols-2 justify-between gap-4 p-20">
+        <PluginsToolbar
+          contentClassName="w-72"
+          renderContent={(info) => <Menu.EditPropMenu propId={info.id} />}
+        />
+        <div className="flex w-full flex-col gap-3">
+          <Code title="Columns info" codeObject={columnsInfo} />
+        </div>
       </div>
     );
   },

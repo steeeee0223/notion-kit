@@ -24,10 +24,9 @@ issues recording for current task
       1. caveat: the date/time-format-menu are reused else where, so they are not behave as proper submenus
    2. [x] number-config-menu: use dropdown-menu
    3. [x] select-config-menu: use dropdown-menu
-4. [-] calc-menu: use dropdown-menu
-   1. [ ] no stories yet
-5. [ ] prop-menu
-6. [ ] types-menu
+4. [x] calc-menu: use dropdown-menu
+5. [x] types-menu
+6. [ ] prop-menu
 7. [ ] props-menu
 8. [ ] edit-prop-menu
 9. [ ] unittests: needs to rewrite the selectors!
