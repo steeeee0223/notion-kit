@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 
 import { LOCALE, useTranslation } from "@notion-kit/i18n";
@@ -18,8 +16,8 @@ import {
 } from "@notion-kit/ui/primitives";
 import { TimezoneMenu } from "@notion-kit/ui/timezone-menu";
 
-import { SettingsRule, SettingsSection } from "../../core";
-import { useAccountActions } from "../hooks";
+import { SettingsRule, SettingsSection } from "@/core";
+import { useAccountActions } from "@/presets/hooks";
 
 interface LocaleOption {
   value: LOCALE;
@@ -39,16 +37,12 @@ export function RegionSection() {
     label: option.label,
     desc: option.description,
   }));
-  const selectedLocale = localeOptions.find(
-    (option) => option.value === locale,
-  );
   /** Actions */
+  const [value, setValue] = useState(locale);
   const [dialogOpen, setDialogOpen] = useState(false);
   const handleConfirmLanguageChange = async () => {
-    if (selectedLocale) {
-      await i18n.changeLanguage(selectedLocale.value);
-      await update({ language: selectedLocale.value });
-    }
+    await i18n.changeLanguage(value);
+    await update({ language: value });
     setDialogOpen(false);
   };
 
@@ -63,17 +57,17 @@ export function RegionSection() {
   return (
     <SettingsSection title={trans.region.title}>
       <SettingsRule {...trans.region.language}>
-        <Select<LocaleOption>
+        <Select
           items={localeOptions}
-          value={selectedLocale}
-          onValueChange={() => setDialogOpen(true)}
+          value={locale}
+          onValueChange={(value) => {
+            if (!value) return;
+            setValue(value);
+            setDialogOpen(true);
+          }}
         >
           <SelectTrigger>
-            <SelectValue>
-              {(option: LocaleOption) => (
-                <div className="truncate text-secondary">{option.label}</div>
-              )}
-            </SelectValue>
+            <SelectValue />
           </SelectTrigger>
           <SelectContent side="bottom" align="end">
             <SelectGroup>
@@ -114,7 +108,8 @@ export function RegionSection() {
         <AlertModal
           {...trans.modals.language}
           title={t("preferences.modals.language.title", {
-            language: selectedLocale?.label,
+            language: localeOptions.find((option) => option.value === value)
+              ?.label,
           })}
           onTrigger={handleConfirmLanguageChange}
         />

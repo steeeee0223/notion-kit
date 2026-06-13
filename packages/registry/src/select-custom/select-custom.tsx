@@ -15,13 +15,13 @@ import {
 const options = [
   {
     value: "on",
-    icon: <Icon.ArrowUp />,
+    icon: <Icon.ArrowUp className="size-5" />,
     label: "Ascending",
     description: "Sort ascending",
   },
   {
     value: "off",
-    icon: <Icon.ArrowDown />,
+    icon: <Icon.ArrowDown className="size-5" />,
     label: "Descending",
     description: "Sort descending",
   },

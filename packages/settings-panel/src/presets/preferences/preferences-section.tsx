@@ -1,5 +1,3 @@
-"use client";
-
 import { useTranslation } from "@notion-kit/i18n";
 import {
   Select,
@@ -11,7 +9,7 @@ import {
   useTheme,
 } from "@notion-kit/ui/primitives";
 
-import { SettingsRule, SettingsSection } from "../../core";
+import { SettingsRule, SettingsSection } from "@/core";
 
 export function PreferencesSection() {
   const { theme, setTheme } = useTheme();
@@ -20,9 +18,9 @@ export function PreferencesSection() {
   const trans = t("preferences", {
     returnObjects: true,
   });
-  const options = Object.entries<string>(
-    trans.preferences.appearance.options,
-  ).map(([value, label]) => ({ value, label }));
+  const options = Object.entries(trans.preferences.appearance.options).map(
+    ([value, label]) => ({ value, label }),
+  );
 
   return (
     <SettingsSection title={trans.title}>

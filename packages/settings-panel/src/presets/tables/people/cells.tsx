@@ -94,12 +94,6 @@ export function RoleCell({ className, role }: RoleCellProps) {
   );
 }
 
-interface RoleOption {
-  value: PartialRole;
-  label: string;
-  description: string;
-}
-
 interface RoleSelectCellProps {
   role: PartialRole;
   scopes?: Set<Scope>;
@@ -114,7 +108,8 @@ export function RoleSelectCell({
   const roleOptions = t("role-options", { returnObjects: true });
   const options = Object.entries(roleOptions).map(([value, option]) => ({
     value,
-    ...option,
+    label: option.label,
+    desc: option.description,
   }));
 
   const [isUpdating, startTransition] = useTransition();
@@ -126,17 +121,17 @@ export function RoleSelectCell({
       {scopes?.has(Scope.MemberUpdate) ? (
         <Select
           items={options}
-          onValueChange={(nextValue) => {
-            if (nextValue !== null) select(nextValue);
-          }}
           value={role}
+          onValueChange={(value) => {
+            if (value !== null) select(value);
+          }}
           disabled={isUpdating}
         >
           <SelectTrigger className="w-auto">
             <SelectValue>
-              {(value: RoleOption) => (
+              {(value: PartialRole) => (
                 <div className="min-w-0 truncate text-secondary">
-                  {value.label}
+                  {roleOptions[value].label}
                 </div>
               )}
             </SelectValue>
@@ -144,12 +139,7 @@ export function RoleSelectCell({
           <SelectContent align="center">
             <SelectGroup>
               {options.map((option) => (
-                <SelectItem
-                  key={option.value}
-                  value={option.value}
-                  label={option.label}
-                  desc={option.description}
-                />
+                <SelectItem key={option.value} {...option} />
               ))}
             </SelectGroup>
           </SelectContent>
@@ -207,12 +197,6 @@ export function AccessCell({ access }: AccessCellProps) {
     keyPrefix: "tables.people.cells",
   });
 
-  const options = access.map(({ id, name, scope }) => ({
-    value: id,
-    label: name,
-    description: scope,
-  }));
-
   return (
     <div className="flex items-center">
       {access.length < 1 ? (
@@ -220,23 +204,20 @@ export function AccessCell({ access }: AccessCellProps) {
           {t("no-access")}
         </div>
       ) : (
-        <Select items={options} value={null}>
-          <SelectTrigger className="w-auto">
-            <SelectValue
-              aria-label={t("pages", { count: access.length })}
-              placeholder={t("pages", { count: access.length })}
-            >
+        <Select items={[{ items: access }]}>
+          <SelectTrigger>
+            <SelectValue>
               <AccessCellDisplay pages={access.length} />
             </SelectValue>
           </SelectTrigger>
           <SelectContent align="center">
             <SelectGroup>
-              {options.map((option) => (
+              {access.map((option) => (
                 <SelectItem
-                  key={option.value}
-                  value={option.value}
-                  label={option.label}
-                  desc={option.description}
+                  key={option.id}
+                  value={option.id}
+                  label={option.name}
+                  desc={option.scope}
                   hideCheck
                 />
               ))}

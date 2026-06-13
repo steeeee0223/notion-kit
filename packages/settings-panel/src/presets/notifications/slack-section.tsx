@@ -22,7 +22,7 @@ export function SlackSection() {
   return (
     <SettingsSection title={trans.title}>
       <SettingsRule {...trans.slack}>
-        <Select items={options} value="off">
+        <Select items={options} defaultValue="off">
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>

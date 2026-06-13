@@ -1,5 +1,3 @@
-"use client";
-
 import { useTranslation } from "@notion-kit/i18n";
 import {
   Select,
@@ -11,8 +9,8 @@ import {
   Switch,
 } from "@notion-kit/ui/primitives";
 
-import { TextLinks } from "../_components";
-import { SettingsRule, SettingsSection } from "../../core";
+import { SettingsRule, SettingsSection } from "@/core";
+import { TextLinks } from "@/presets/_components";
 
 export function PrivacySection() {
   /** i18n */
@@ -42,7 +40,7 @@ export function PrivacySection() {
           />
         }
       >
-        <Select items={viewHistoryOptions} value="yes">
+        <Select items={viewHistoryOptions} defaultValue="yes">
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>

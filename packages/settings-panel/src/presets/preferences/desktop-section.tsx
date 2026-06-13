@@ -23,7 +23,7 @@ export function DesktopSection() {
   return (
     <SettingsSection title={trans.title}>
       <SettingsRule {...trans["open-on-start"]}>
-        <Select items={openOnStartOptions} value="top">
+        <Select items={openOnStartOptions} defaultValue="top">
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
