@@ -1,5 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import userEvent, { PointerEventsCheckLevel } from "@testing-library/user-event";
+import userEvent, {
+  PointerEventsCheckLevel,
+} from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -136,9 +138,7 @@ describe("LayoutMenu", () => {
     });
     await user.click(centerPeek);
 
-    expect(
-      screen.getByRole("heading", { name: "Layout" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Layout" })).toBeInTheDocument();
     await waitFor(() => expect(centerPeek).toBeChecked());
   });
 

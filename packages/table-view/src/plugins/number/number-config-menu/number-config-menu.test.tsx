@@ -1,7 +1,8 @@
 import type React from "react";
-
 import { render, screen, waitFor } from "@testing-library/react";
-import userEvent, { PointerEventsCheckLevel } from "@testing-library/user-event";
+import userEvent, {
+  PointerEventsCheckLevel,
+} from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import {
@@ -10,10 +11,10 @@ import {
   DropdownMenuTrigger,
 } from "@notion-kit/ui/primitives";
 
+import type { NumberConfig } from "../types";
 import { FormatMenu } from "./format-menu";
 import { NumberConfigMenu } from "./number-config-menu";
 import { RoundingMenu } from "./rounding-menu";
-import type { NumberConfig } from "../types";
 
 const config: NumberConfig = {
   format: "number",
@@ -43,7 +44,9 @@ function setupSubmenuUser() {
   });
 }
 
-async function openEditPropertySubmenu(user: ReturnType<typeof userEvent.setup>) {
+async function openEditPropertySubmenu(
+  user: ReturnType<typeof userEvent.setup>,
+) {
   const editProperty = screen.getByRole("menuitem", {
     name: /Edit property/i,
   });
@@ -132,7 +135,9 @@ describe("RoundingMenu", () => {
     renderInsideDropdown(<RoundingMenu round="default" onUpdate={onChange} />);
 
     await user.hover(screen.getByRole("menuitem", { name: /Decimal places/i }));
-    await user.click(await screen.findByRole("menuitemcheckbox", { name: "2" }));
+    await user.click(
+      await screen.findByRole("menuitemcheckbox", { name: "2" }),
+    );
 
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith("2");
