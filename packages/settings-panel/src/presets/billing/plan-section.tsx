@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 
 import { useTranslation } from "@notion-kit/i18n";
@@ -27,11 +25,13 @@ export function PlanSection() {
     <SettingsSection title={t("title")}>
       <SettingsRule title={trans.title} description={workspace.plan}>
         <Dialog open={openChangePlan} onOpenChange={setOpenChangePlan}>
-          <DialogTrigger asChild>
-            <Button size="sm" className="w-36">
-              {trans.button}
-            </Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={
+              <Button size="sm" className="w-36">
+                {trans.button}
+              </Button>
+            }
+          />
           <ChangePlan
             currentPlan={workspace.plan}
             onConfirm={async (plan) => {

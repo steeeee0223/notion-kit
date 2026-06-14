@@ -50,7 +50,6 @@ type PopoverPositionerProps = Pick<
 type PopoverContentProps = PopoverPrimitive.Popup.Props &
   PopoverPositionerProps & {
     container?: PopoverPrimitive.Portal.Props["container"];
-    forceMount?: boolean;
   };
 
 function PopoverContent({
@@ -61,7 +60,6 @@ function PopoverContent({
   collisionBoundary,
   collisionPadding,
   container,
-  forceMount,
   positionMethod,
   side,
   sideOffset = 4,
@@ -70,7 +68,7 @@ function PopoverContent({
   ...props
 }: PopoverContentProps) {
   return (
-    <PopoverPrimitive.Portal container={container} keepMounted={forceMount}>
+    <PopoverPrimitive.Portal container={container}>
       <PopoverPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}

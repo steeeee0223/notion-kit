@@ -51,7 +51,10 @@ export function AddTeamMembers({
       hideClose
       className="max-h-1/2 min-h-50 w-125"
       aria-describedby=""
-      onCloseAutoFocus={() => form.reset()}
+      finalFocus={() => {
+        form.reset();
+        return true;
+      }}
     >
       <DialogHeader className="items-start text-left">
         <DialogTitle typography="h2" className="flex items-center text-start">

@@ -64,8 +64,7 @@
     "react-resizable-panels": "^2.1.7",
     "sonner": "^2.0.7",
     "unsplash-js": "^7.0.19",
-    "usehooks-ts": "catalog:ui",
-    "vaul": "^1.1.2"
+    "usehooks-ts": "catalog:ui"
   },
   "devDependencies": {
     "@notion-kit/config": "workspace:*",

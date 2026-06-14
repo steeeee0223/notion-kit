@@ -146,7 +146,7 @@ export const contentVariants = cva(
          * @note Used with: `openAnimation`
          */
         modal:
-          "fixed top-1/2 left-1/2 z-(--z-menu) grid w-full max-w-lg -translate-1/2 gap-4 bg-modal p-6 shadow-lg duration-200",
+          "fixed top-1/2 left-1/2 z-(--z-menu) grid w-full max-w-lg -translate-1/2 gap-4 rounded-lg bg-modal p-6 shadow-lg duration-200",
         /**
          * @prop popover
          * @note Used by: DropdownMenu, Popover, Select

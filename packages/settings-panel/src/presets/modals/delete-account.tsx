@@ -50,7 +50,7 @@ export function DeleteAccount({ email, onSubmit }: DeleteAccountProps) {
   });
 
   return (
-    <DialogContent className="w-[420px] p-5">
+    <DialogContent className="w-105">
       <DialogHeader>
         <DialogIcon>
           <Icon.ExclamationMarkCircled className="size-9 fill-red" />
@@ -92,17 +92,19 @@ export function DeleteAccount({ email, onSubmit }: DeleteAccountProps) {
             >
               {t("delete")}
             </Button>
-            <DialogClose asChild>
-              <Button
-                type="button"
-                variant="hint"
-                size="sm"
-                className="h-7 w-fit"
-                disabled={form.formState.isSubmitting}
-              >
-                {t("cancel")}
-              </Button>
-            </DialogClose>
+            <DialogClose
+              render={
+                <Button
+                  type="button"
+                  variant="hint"
+                  size="sm"
+                  className="h-7 w-fit"
+                  disabled={form.formState.isSubmitting}
+                >
+                  {t("cancel")}
+                </Button>
+              }
+            />
           </DialogFooter>
         </form>
       </Form>

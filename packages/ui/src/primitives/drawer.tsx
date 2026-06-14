@@ -1,53 +1,57 @@
-"use client";
-
 import * as React from "react";
-import { Drawer as DrawerPrimitive } from "vaul";
+import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
 
 import { cn } from "@notion-kit/cn";
 
 import { contentVariants } from "./variants";
-import { VisuallyHidden } from "./visually-hidden";
+
+type DrawerDirection = "top" | "right" | "bottom" | "left";
+
+function directionToSwipeDirection(direction?: DrawerDirection) {
+  if (direction === "top") return "up";
+  if (direction === "bottom") return "down";
+  return direction;
+}
 
 function Drawer({
-  shouldScaleBackground = true,
+  direction,
+  shouldScaleBackground: _shouldScaleBackground,
+  swipeDirection,
   ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Root>) {
+}: DrawerPrimitive.Root.Props & {
+  direction?: DrawerDirection;
+  shouldScaleBackground?: boolean;
+}) {
   return (
     <DrawerPrimitive.Root
       data-slot="drawer"
-      shouldScaleBackground={shouldScaleBackground}
+      swipeDirection={swipeDirection ?? directionToSwipeDirection(direction)}
       {...props}
     />
   );
 }
 
-function DrawerTrigger({
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Trigger>) {
+function DrawerTrigger({ ...props }: DrawerPrimitive.Trigger.Props) {
   return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />;
 }
 
-function DrawerPortal({
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Portal>) {
+function DrawerPortal({ ...props }: DrawerPrimitive.Portal.Props) {
   return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />;
 }
 
-function DrawerClose({
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Close>) {
+function DrawerClose({ ...props }: DrawerPrimitive.Close.Props) {
   return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />;
 }
 
 function DrawerOverlay({
   className,
   ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Overlay>) {
+}: DrawerPrimitive.Backdrop.Props) {
   return (
-    <DrawerPrimitive.Overlay
+    <DrawerPrimitive.Backdrop
       data-slot="drawer-overlay"
       className={cn(
-        "fixed inset-0 z-(--z-menu) bg-black/80 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
+        "fixed inset-0 z-(--z-menu) bg-black/80 data-closed:animate-out data-closed:fade-out-0 data-open:animate-in data-open:fade-in-0",
         className,
       )}
       {...props}
@@ -55,8 +59,7 @@ function DrawerOverlay({
   );
 }
 
-interface DrawerContentProps
-  extends React.ComponentProps<typeof DrawerPrimitive.Content> {
+interface DrawerContentProps extends DrawerPrimitive.Popup.Props {
   side?: "bottom" | "right";
   noTitle?: boolean;
 }
@@ -70,26 +73,25 @@ function DrawerContent({
   return (
     <DrawerPortal>
       <DrawerOverlay className="z-0 bg-transparent" />
-      <DrawerPrimitive.Content
-        data-slot="drawer-content"
-        className={cn(
-          // TODO check and update these styles
-          "fixed inset-x-0 bottom-0 z-(--z-menu) mt-24 flex flex-col rounded-t-[10px]",
-          contentVariants({ variant: "default", openAnimation: false }),
-          side === "right" &&
-            "inset-y-0 right-0 left-auto mt-0 h-screen rounded-none border-t-0 border-r-0",
-          className,
-        )}
-        {...props}
-        {...(noTitle && { "aria-describedby": undefined })}
-      >
-        {noTitle && (
-          <VisuallyHidden asChild>
-            <DrawerTitle />
-          </VisuallyHidden>
-        )}
-        {children}
-      </DrawerPrimitive.Content>
+      <DrawerPrimitive.Viewport className="pointer-events-none fixed inset-0 z-(--z-menu)">
+        <DrawerPrimitive.Popup
+          data-slot="drawer-content"
+          className={cn(
+            "pointer-events-auto fixed inset-x-0 bottom-0 z-(--z-menu) mt-24 flex flex-col rounded-t-[10px]",
+            contentVariants({ variant: "default", openAnimation: false }),
+            side === "right" &&
+              "inset-y-0 right-0 left-auto mt-0 h-screen rounded-none border-t-0 border-r-0",
+            className,
+          )}
+          {...props}
+          {...(noTitle && { "aria-describedby": undefined })}
+        >
+          <DrawerPrimitive.Content>
+            {noTitle && <DrawerTitle className="sr-only" />}
+            {children}
+          </DrawerPrimitive.Content>
+        </DrawerPrimitive.Popup>
+      </DrawerPrimitive.Viewport>
     </DrawerPortal>
   );
 }
@@ -116,10 +118,7 @@ function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function DrawerTitle({
-  className,
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Title>) {
+function DrawerTitle({ className, ...props }: DrawerPrimitive.Title.Props) {
   return (
     <DrawerPrimitive.Title
       className={cn(
@@ -134,7 +133,7 @@ function DrawerTitle({
 function DrawerDescription({
   className,
   ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Description>) {
+}: DrawerPrimitive.Description.Props) {
   return (
     <DrawerPrimitive.Description
       className={cn("text-sm text-muted", className)}

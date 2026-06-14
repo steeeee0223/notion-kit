@@ -7,7 +7,6 @@ import { AlertModal } from "@notion-kit/ui/alert-modal";
 import {
   Button,
   Dialog,
-  DialogTrigger,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -78,14 +77,12 @@ export function GroupActions({ className, row }: GroupActionsProps) {
               label="Hide group"
               onClick={row.toggleGroupVisibility}
             />
-            <DialogTrigger asChild>
-              <DropdownMenuItem
-                icon={<Icon.Trash />}
-                label="Delete rows"
-                closeOnClick={false}
-                onClick={() => setShowDeleteConfirm(true)}
-              />
-            </DialogTrigger>
+            <DropdownMenuItem
+              icon={<Icon.Trash />}
+              label="Delete rows"
+              closeOnClick={false}
+              onClick={() => setShowDeleteConfirm(true)}
+            />
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -59,10 +59,11 @@ export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
   return (
     <DialogContent
       className="w-70"
-      onCloseAutoFocus={() => {
+      finalFocus={() => {
         form.reset();
         if (preview) URL.revokeObjectURL(preview);
         setPreview(null);
+        return true;
       }}
     >
       <Form {...form}>
@@ -162,16 +163,18 @@ export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
             )}
           />
           <div className="flex items-center justify-between gap-2">
-            <DialogClose asChild>
-              <Button
-                type="button"
-                variant="hint"
-                size="sm"
-                className="font-normal"
-              >
-                {t("cancel")}
-              </Button>
-            </DialogClose>
+            <DialogClose
+              render={
+                <Button
+                  type="button"
+                  variant="hint"
+                  size="sm"
+                  className="font-normal"
+                >
+                  {t("cancel")}
+                </Button>
+              }
+            />
             <Button
               type="submit"
               variant="blue"

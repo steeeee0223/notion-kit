@@ -119,17 +119,19 @@ export function AddMembers({
                 {t("invite")}
                 {form.formState.isSubmitting && <Spinner />}
               </Button>
-              <DialogClose asChild>
-                <Button
-                  type="button"
-                  variant="hint"
-                  size="sm"
-                  className="w-full"
-                  disabled={form.formState.isSubmitting}
-                >
-                  {t("cancel")}
-                </Button>
-              </DialogClose>
+              <DialogClose
+                render={
+                  <Button
+                    type="button"
+                    variant="hint"
+                    size="sm"
+                    className="w-full"
+                    disabled={form.formState.isSubmitting}
+                  >
+                    {t("cancel")}
+                  </Button>
+                }
+              />
             </DialogFooter>
           </form>
         </Form>

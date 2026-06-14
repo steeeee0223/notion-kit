@@ -69,7 +69,6 @@ export function TrashBox({
           }
         />
         <PopoverContent
-          forceMount
           className="relative bottom-10 flex h-[50vh] w-100 flex-col"
           side="right"
           sideOffset={-4}
@@ -121,16 +120,18 @@ export function TrashBox({
                       </TooltipPreset>
                       <Dialog>
                         <TooltipPreset description="Delete from Trash">
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="hint"
-                              className="size-5"
-                              aria-label="Delete from Trash"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Icon.Trash className="size-4" />
-                            </Button>
-                          </DialogTrigger>
+                          <DialogTrigger
+                            render={
+                              <Button
+                                variant="hint"
+                                className="size-5"
+                                aria-label="Delete from Trash"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Icon.Trash className="size-4" />
+                              </Button>
+                            }
+                          />
                         </TooltipPreset>
                         <AlertModal
                           title="Are you sure you want to delete this page from Trash?"

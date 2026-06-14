@@ -58,11 +58,13 @@ export function DeleteMember({ onDelete }: DeleteMemberProps) {
           {t("continue")}
           {loading && <Spinner />}
         </Button>
-        <DialogClose asChild>
-          <Button variant="hint" size="sm" className="h-7 w-fit">
-            {t("cancel")}
-          </Button>
-        </DialogClose>
+        <DialogClose
+          render={
+            <Button variant="hint" size="sm" className="h-7 w-fit">
+              {t("cancel")}
+            </Button>
+          }
+        />
       </DialogFooter>
     </DialogContent>
   );
