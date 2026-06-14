@@ -1,11 +1,9 @@
-"use client";
-
 import { Icon } from "@notion-kit/icons";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Button,
-  MenuGroup,
-  MenuItem,
+  DropdownMenuGroup,
+  DropdownMenuItem,
   MenuItemAction,
 } from "@notion-kit/ui/primitives";
 
@@ -25,7 +23,7 @@ export function DeletedPropsMenu() {
           table.setTableMenuState({ open: true, page: TableViewMenuPage.Props })
         }
       />
-      <MenuGroup>
+      <DropdownMenuGroup>
         {table.getDeletedColumns().map((info) => (
           <PropertyItem
             key={info.id}
@@ -34,7 +32,7 @@ export function DeletedPropsMenu() {
             onDelete={() => table.removeColumnInfo(info.id)}
           />
         ))}
-      </MenuGroup>
+      </DropdownMenuGroup>
     </>
   );
 }
@@ -47,9 +45,8 @@ interface PropertyItemProps {
 
 function PropertyItem({ info, onRestore, onDelete }: PropertyItemProps) {
   return (
-    <MenuItem
-      role="menuitem"
-      className="*:data-[slot=menu-item-body]:leading-normal"
+    <DropdownMenuItem
+      label={info.name}
       icon={
         info.icon ? (
           <IconBlock icon={info.icon} />
@@ -57,7 +54,7 @@ function PropertyItem({ info, onRestore, onDelete }: PropertyItemProps) {
           <DefaultIcon type={info.type} />
         )
       }
-      label={info.name}
+      closeOnClick={false}
     >
       <MenuItemAction className="flex items-center text-muted">
         <Button
@@ -85,6 +82,6 @@ function PropertyItem({ info, onRestore, onDelete }: PropertyItemProps) {
           <Icon.Trash className="fill-current" />
         </Button>
       </MenuItemAction>
-    </MenuItem>
+    </DropdownMenuItem>
   );
 }

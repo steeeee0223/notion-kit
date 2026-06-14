@@ -26,9 +26,9 @@ issues recording for current task
    3. [x] select-config-menu: use dropdown-menu
 4. [x] calc-menu: use dropdown-menu
 5. [x] types-menu
-6. [ ] prop-menu
+6. [x] prop-menu
 7. [ ] props-menu
-8. [ ] edit-prop-menu
+8. [x] edit-prop-menu
 9. [ ] unittests: needs to rewrite the selectors!
 
 ## Existing issues

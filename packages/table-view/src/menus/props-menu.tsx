@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useLayoutEffect, useRef } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -10,12 +8,14 @@ import { Icon } from "@notion-kit/icons";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Button,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
   Input,
   MenuGroup,
   MenuItem,
   MenuItemAction,
   MenuItemSelect,
-  Separator,
 } from "@notion-kit/ui/primitives";
 
 import {
@@ -123,36 +123,37 @@ export function PropsMenu() {
           </SortableDnd>
         </div>
       </MenuGroup>
-      <Separator />
-      <MenuGroup>
-        <MenuItem
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        <DropdownMenuItem
           variant="secondary"
+          icon={<Icon.Plus className="size-4" />}
+          label="New property"
+          closeOnClick={false}
           onClick={() =>
             table.setTableMenuState({
               open: true,
               page: TableViewMenuPage.CreateProp,
             })
           }
-          icon={<Icon.Plus className="size-4" />}
-          label="New property"
         />
         {deletedCount > 0 && (
-          <MenuItem
+          <DropdownMenuItem
             variant="secondary"
-            tabIndex={0}
+            icon={<Icon.Trash />}
+            label="Deleted properties"
+            closeOnClick={false}
             onClick={() =>
               table.setTableMenuState({
                 open: true,
                 page: TableViewMenuPage.DeletedProps,
               })
             }
-            icon={<Icon.Trash />}
-            label="Deleted properties"
           >
             <MenuItemSelect>{deletedCount}</MenuItemSelect>
-          </MenuItem>
+          </DropdownMenuItem>
         )}
-        <MenuItem
+        <DropdownMenuItem
           variant="secondary"
           onClick={() =>
             window.open("https://www.notion.com/help/database-properties")
@@ -160,7 +161,7 @@ export function PropsMenu() {
           icon={<Icon.Help className="size-4" />}
           label="Learn about properties"
         />
-      </MenuGroup>
+      </DropdownMenuGroup>
     </>
   );
 }
