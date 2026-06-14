@@ -27,9 +27,14 @@ issues recording for current task
 4. [x] calc-menu: use dropdown-menu
 5. [x] types-menu
 6. [x] prop-menu
-7. [ ] props-menu
+7. [x] props-menu
 8. [x] edit-prop-menu
 9. [ ] unittests: needs to rewrite the selectors!
+
+## Upgrade dnd
+
+1. [ ] Upgrade dnd
+2. [ ] Add to primitive
 
 ## Existing issues
 

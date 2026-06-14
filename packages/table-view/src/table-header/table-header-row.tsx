@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { closestCenter, DndContext } from "@dnd-kit/core";
 import {
@@ -17,6 +15,9 @@ import { useIsMobile } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import {
   Checkbox,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -126,14 +127,14 @@ function TableHeaderRow() {
           </PopoverContent>
         </Popover>
       )}
-      <Popover>
-        <PopoverTrigger
+      <DropdownMenu>
+        <DropdownMenuTrigger
           render={<TableHeaderActionCell icon={<Icon.Dots />} />}
         />
-        <PopoverContent sideOffset={0} collisionPadding={12} sticky="always">
+        <DropdownMenuContent sideOffset={0} collisionPadding={12}>
           <PropsMenu />
-        </PopoverContent>
-      </Popover>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }
