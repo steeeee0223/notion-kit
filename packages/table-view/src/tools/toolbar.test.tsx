@@ -95,7 +95,9 @@ describe("Toolbar", () => {
 
     it("should only request one open transition for one settings click", async () => {
       const user = userEvent.setup();
-      const log = vi.spyOn(console, "log").mockImplementation(() => {});
+      const log = vi.spyOn(console, "log").mockImplementation(() => {
+        // noop
+      });
       renderToolbar();
 
       await user.click(screen.getByRole("button", { name: "Settings" }));
