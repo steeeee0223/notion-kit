@@ -4,7 +4,6 @@
     "module": "esnext",
     "lib": ["ES2022", "dom", "dom.iterable"],
     "jsx": "preserve",
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
