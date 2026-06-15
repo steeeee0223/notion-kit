@@ -24,6 +24,7 @@ function Combobox<Value, Multiple extends boolean | undefined = false>(
   const anchor = React.useRef<HTMLElement | null>(null);
   const ctx = React.useMemo<ComboboxAnchorContextValue>(
     () =>
+      // eslint-disable-next-line react-hooks/refs
       Object.assign(anchor, {
         ref: (node: HTMLElement | null) => {
           anchor.current = node;
@@ -206,12 +207,12 @@ function ComboboxItem({
   return (
     <ComboboxPrimitive.Item
       data-slot="combobox-item"
-      value={value}
+      value={value as unknown}
       render={
         <MenuItem
           className={className}
           icon={icon}
-          label={label ?? value}
+          label={label ?? String(value)}
           desc={desc}
         />
       }

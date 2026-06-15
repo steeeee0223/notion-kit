@@ -1,5 +1,3 @@
-"use client";
-
 import { flexRender, functionalUpdate } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
@@ -145,8 +143,8 @@ export function PropMenu({ propId, view }: PropMenuProps) {
               disabled={!canFreeze}
               onClick={pinColumns}
               {...(canUnfreeze
-                ? { Icon: <Icon.PinStrikeThrough />, Body: "Unfreeze columns" }
-                : { Icon: <Icon.Pin />, Body: "Freeze up to column" })}
+                ? { icon: <Icon.PinStrikeThrough />, label: "Unfreeze columns" }
+                : { icon: <Icon.Pin />, label: "Freeze up to column" })}
               className="[&_svg]:w-3"
             />
             {info.type !== "title" && (
@@ -159,8 +157,8 @@ export function PropMenu({ propId, view }: PropMenuProps) {
             <DropdownMenuItem
               onClick={wrapProp}
               {...(info.wrapped
-                ? { Icon: <Icon.ArrowLineRight />, Body: "Unwrap text" }
-                : { Icon: <Icon.ArrowUTurnDownLeft />, Body: "Wrap text" })}
+                ? { icon: <Icon.ArrowLineRight />, label: "Unwrap text" }
+                : { icon: <Icon.ArrowUTurnDownLeft />, label: "Wrap text" })}
             />
           </DropdownMenuGroup>
         </>

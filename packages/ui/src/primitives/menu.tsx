@@ -136,7 +136,7 @@ function MenuItemSelect({ className, children }: MenuItemActionProps) {
       {children}
       <Icon.Chevron
         side="right"
-        className="ml-1.5 h-full w-3 -rotate-90 fill-icon transition-[rotate] group-data-[state='open']/item:rotate-0"
+        className="ml-1.5 h-full w-3 fill-icon transition-[rotate] group-data-[state='open']/item:rotate-90"
       />
     </MenuItemAction>
   );
