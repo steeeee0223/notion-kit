@@ -1,13 +1,10 @@
-"use client";
-
 import { Icon } from "@notion-kit/icons";
 import {
-  MenuGroup,
-  MenuItem,
-  MenuItemAction,
+  DropdownMenuCheckboxItem,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
   MenuItemSelect,
-  Separator,
-  Switch,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
@@ -61,15 +58,15 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
         }
       />
       <PropMeta propId={propId} type={info.type} />
-      <MenuGroup>
+      <DropdownMenuGroup>
         {info.type === "title" ? (
           <TooltipPreset
             side="left"
             sideOffset={6}
             description="This property's type cannot be changed."
           >
-            <MenuItem
-              data-disabled
+            <DropdownMenuItem
+              disabled
               icon={<Icon.ArrowSquarePathUpDown />}
               label="Type"
             >
@@ -80,11 +77,12 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
                   <span>Title</span>
                 </div>
               </MenuItemSelect>
-            </MenuItem>
+            </DropdownMenuItem>
           </TooltipPreset>
         ) : (
           <>
-            <MenuItem
+            <DropdownMenuItem
+              closeOnClick={false}
               onClick={openTypesMenu}
               icon={<Icon.ArrowSquarePathUpDown />}
               label="Type"
@@ -96,10 +94,9 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
                   <span>{plugin.meta.name}</span>
                 </div>
               </MenuItemSelect>
-            </MenuItem>
-            <MenuItem
-              // TODO
-              data-disabled
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              disabled
               icon={<Icon.PencilLine />}
               label={
                 <div className="flex items-center">
@@ -113,34 +110,32 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
               <MenuItemSelect>
                 <div className="flex truncate">Off</div>
               </MenuItemSelect>
-            </MenuItem>
+            </DropdownMenuItem>
           </>
         )}
-      </MenuGroup>
-      <Separator />
-      <MenuGroup>
-        <MenuItem
-          onClick={wrapProp}
+      </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        <DropdownMenuCheckboxItem
+          checkType="switch"
           icon={<Icon.ArrowUTurnDownLeft />}
           label="Wrap in view"
-        >
-          <MenuItemAction className="flex items-center">
-            <Switch size="sm" checked={info.wrapped} />
-          </MenuItemAction>
-        </MenuItem>
+          checked={info.wrapped}
+          onCheckedChange={wrapProp}
+        />
         {info.type !== "title" && (
           <>
-            <MenuItem
+            <DropdownMenuItem
               onClick={hideProp}
               icon={<Icon.EyeHideInversePadded className="size-6" />}
               label="Hide in view"
             />
-            <MenuItem
+            <DropdownMenuItem
               onClick={duplicateProp}
               icon={<Icon.Duplicate />}
               label="Duplicate property"
             />
-            <MenuItem
+            <DropdownMenuItem
               variant="warning"
               onClick={deleteProp}
               icon={<Icon.Trash />}
@@ -148,7 +143,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
             />
           </>
         )}
-      </MenuGroup>
+      </DropdownMenuGroup>
     </>
   );
 }

@@ -1,8 +1,9 @@
 import * as React from "react";
 import { Menu } from "@base-ui/react/menu";
-import { ChevronRightIcon, DotFilledIcon } from "@radix-ui/react-icons";
+import { DotFilledIcon } from "@radix-ui/react-icons";
 
 import { cn } from "@notion-kit/cn";
+import { Icon } from "@notion-kit/icons";
 
 import {
   MenuGroup,
@@ -13,6 +14,7 @@ import {
   MenuLabel,
 } from "./menu";
 import { Separator } from "./separator";
+import { Switch } from "./switch";
 import { contentVariants } from "./variants";
 
 function DropdownMenu({ ...props }: Menu.Root.Props) {
@@ -55,15 +57,17 @@ interface DropdownMenuSubTriggerProps
   icon?: React.ReactNode;
   label?: React.ReactNode;
   children?: React.ReactNode;
+  chevron?: boolean;
 }
 
 function DropdownMenuSubTrigger({
+  className,
+  variant,
   icon,
   label,
-  children,
-  className,
   desc,
-  variant,
+  chevron = true,
+  children,
   ...props
 }: DropdownMenuSubTriggerProps) {
   return (
@@ -79,9 +83,14 @@ function DropdownMenuSubTrigger({
           variant={variant}
         >
           {children}
-          <MenuItemAction>
-            <ChevronRightIcon className="size-4 text-icon" />
-          </MenuItemAction>
+          {chevron && (
+            <MenuItemAction>
+              <Icon.Chevron
+                side="right"
+                className="ml-1.5 h-full w-3 fill-icon transition-[rotate] group-aria-expanded/item:rotate-90"
+              />
+            </MenuItemAction>
+          )}
         </MenuItem>
       }
       {...props}
@@ -93,36 +102,6 @@ type DropdownMenuPositionerProps = Pick<
   Menu.Positioner.Props,
   "align" | "alignOffset" | "side" | "sideOffset" | "collisionPadding"
 >;
-
-function DropdownMenuSubContent({
-  className,
-  align,
-  alignOffset,
-  collisionPadding,
-  side,
-  sideOffset = 4,
-  ...props
-}: DropdownMenuContentProps) {
-  return (
-    <Menu.Positioner
-      align={align}
-      alignOffset={alignOffset}
-      collisionPadding={collisionPadding}
-      side={side}
-      sideOffset={sideOffset}
-    >
-      <Menu.Popup
-        data-slot="dropdown-menu-sub-content"
-        className={cn(
-          "min-w-32 overflow-hidden",
-          contentVariants({ variant: "popover", sideAnimation: true }),
-          className,
-        )}
-        {...props}
-      />
-    </Menu.Positioner>
-  );
-}
 
 type DropdownMenuContentProps = Menu.Popup.Props & DropdownMenuPositionerProps;
 
@@ -163,11 +142,13 @@ interface DropdownMenuItemProps
     MenuItemVisualProps {
   icon?: React.ReactNode;
   label?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 function DropdownMenuItem({
   icon,
   label,
+  children,
   className,
   desc,
   variant,
@@ -184,7 +165,9 @@ function DropdownMenuItem({
           desc={desc}
           variant={variant}
           className={className}
-        />
+        >
+          {children}
+        </MenuItem>
       }
       {...props}
     />
@@ -199,6 +182,7 @@ interface DropdownMenuCheckboxItemProps
     MenuItemVisualProps {
   icon?: React.ReactNode;
   label?: React.ReactNode;
+  checkType?: "check" | "switch";
   children?: React.ReactNode;
 }
 
@@ -209,6 +193,7 @@ function DropdownMenuCheckboxItem({
   className,
   desc,
   variant,
+  checkType = "check",
   ...props
 }: DropdownMenuCheckboxItemProps) {
   return (
@@ -224,9 +209,17 @@ function DropdownMenuCheckboxItem({
           variant={variant}
         >
           {children}
-          <Menu.CheckboxItemIndicator>
-            <MenuItemCheck />
-          </Menu.CheckboxItemIndicator>
+          {checkType === "switch" ? (
+            <MenuItemAction>
+              <Switch
+                size="sm"
+                checked={props.checked}
+                disabled={props.disabled}
+              />
+            </MenuItemAction>
+          ) : (
+            <Menu.CheckboxItemIndicator render={<MenuItemCheck />} />
+          )}
         </MenuItem>
       }
       {...props}
@@ -238,6 +231,9 @@ function DropdownMenuRadioGroup({ ...props }: Menu.RadioGroup.Props) {
   return <Menu.RadioGroup data-slot="dropdown-menu-radio-group" {...props} />;
 }
 
+/**
+ * @todo this is currently unused, update the style
+ */
 function DropdownMenuRadioItem({
   className,
   children,
@@ -305,7 +301,6 @@ export {
   DropdownMenuGroup,
   DropdownMenuPortal,
   DropdownMenuSub,
-  DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
 };

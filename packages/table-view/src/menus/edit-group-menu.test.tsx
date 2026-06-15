@@ -39,32 +39,29 @@ describe("EditGroupMenu", () => {
     expect(screen.getAllByText("Done").length).toBeGreaterThan(0);
   });
 
-  it("should show 'Hide empty groups' switch", async () => {
+  it("should show 'Hide empty groups' checkbox item", async () => {
     const user = userEvent.setup();
     await openEditGroupMenu(user);
 
-    // Should show "Hide empty groups" switch
-    expect(screen.getByText("Hide empty groups")).toBeInTheDocument();
-
-    // Should have a switch element
-    const switchElement = screen.getByRole("switch");
-    expect(switchElement).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitemcheckbox", { name: "Hide empty groups" }),
+    ).toBeInTheDocument();
   });
 
-  it("should toggle 'Hide empty groups' when clicking the switch", async () => {
+  it("should toggle 'Hide empty groups' without closing the group menu", async () => {
     const user = userEvent.setup();
     await openEditGroupMenu(user);
 
-    // Get the switch
-    const switchElement = screen.getByRole("switch");
-    const initialState = switchElement.getAttribute("aria-checked");
+    const hideEmptyGroupsItem = screen.getByRole("menuitemcheckbox", {
+      name: "Hide empty groups",
+    });
+    const initialState = hideEmptyGroupsItem.getAttribute("aria-checked");
 
-    // Click the switch to toggle
-    await user.click(switchElement);
+    await user.click(hideEmptyGroupsItem);
 
-    // Switch should now have the opposite state
-    const newState = switchElement.getAttribute("aria-checked");
+    const newState = hideEmptyGroupsItem.getAttribute("aria-checked");
     expect(newState).not.toBe(initialState);
+    expect(screen.getByRole("heading", { name: "Group" })).toBeInTheDocument();
   });
 
   it("should show 'Groups' section header with visibility toggle", async () => {
@@ -88,6 +85,18 @@ describe("EditGroupMenu", () => {
     expect(
       screen.getByRole("menuitem", { name: "Remove grouping" }),
     ).toBeInTheDocument();
+  });
+
+  it("should toggle a group visibility row action without closing the group menu", async () => {
+    const user = userEvent.setup();
+    await openEditGroupMenu(user);
+
+    const visibilityButtons = screen.getAllByRole("button", {
+      name: "Toggle property visibility",
+    });
+    await user.click(visibilityButtons[0]!);
+
+    expect(screen.getByRole("heading", { name: "Group" })).toBeInTheDocument();
   });
 
   it("should remove grouping when clicking 'Remove grouping'", async () => {

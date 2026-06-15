@@ -37,11 +37,13 @@ const GROUPS = [
 export default function AutocompletePopover() {
   return (
     <Popover defaultOpen>
-      <PopoverTrigger asChild>
-        <Button variant="hint" size="sm">
-          Open menu
-        </Button>
-      </PopoverTrigger>
+      <PopoverTrigger
+        render={
+          <Button variant="hint" size="sm">
+            Open menu
+          </Button>
+        }
+      />
       <PopoverContent>
         <Autocomplete<string>
           items={GROUPS}

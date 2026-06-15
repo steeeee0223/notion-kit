@@ -1,5 +1,3 @@
-"use client";
-
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Autocomplete,

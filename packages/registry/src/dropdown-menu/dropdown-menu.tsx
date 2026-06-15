@@ -5,11 +5,9 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuSub,
-  DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@notion-kit/ui/primitives";
@@ -39,18 +37,16 @@ export default function Demo() {
           <DropdownMenuLabel title="Team" />
           <DropdownMenuSub>
             <DropdownMenuSubTrigger label="Invite users" />
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuGroup>
-                  <DropdownMenuItem label="Email" />
-                  <DropdownMenuItem label="Message" />
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem label="More..." />
-                </DropdownMenuGroup>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
+            <DropdownMenuContent sideOffset={-4}>
+              <DropdownMenuGroup>
+                <DropdownMenuItem label="Email" />
+                <DropdownMenuItem label="Message" />
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem label="More..." />
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
           </DropdownMenuSub>
           <DropdownMenuItem label="New Team">
             <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>

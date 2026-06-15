@@ -1,12 +1,13 @@
 import { Icon } from "@notion-kit/icons";
 import {
-  MenuGroup,
-  MenuItem,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   MenuItemSelect,
-  Separator,
 } from "@notion-kit/ui/primitives";
 
-import { LayoutIcon, MenuGroupHeader, MenuHeader } from "../common";
+import { LayoutIcon, MenuHeader } from "../common";
 import { LAYOUT_OPTIONS, TableViewMenuPage } from "../features";
 import { useTableViewCtx } from "../table-contexts";
 import { DeletedPropsMenu } from "./deleted-props-menu";
@@ -74,8 +75,9 @@ function TableMenu() {
   return (
     <>
       <MenuHeader id="view-settings" title="View Settings" />
-      <MenuGroup>
-        <MenuItem
+      <DropdownMenuGroup>
+        <DropdownMenuItem
+          closeOnClick={false}
           icon={<LayoutIcon layout={layout} />}
           label="Layout"
           onClick={() => openMenu(TableViewMenuPage.Layout)}
@@ -83,15 +85,17 @@ function TableMenu() {
           <MenuItemSelect>
             {LAYOUT_OPTIONS.find((l) => l.value === layout)?.label}
           </MenuItemSelect>
-        </MenuItem>
-        <MenuItem
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          closeOnClick={false}
           icon={<Icon.ArrowUpDown />}
           label="Sort"
           onClick={() => openMenu(TableViewMenuPage.Sort)}
         >
           <MenuItemSelect />
-        </MenuItem>
-        <MenuItem
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          closeOnClick={false}
           icon={<Icon.SquareGridBelowLines />}
           label="Group"
           onClick={() =>
@@ -103,29 +107,31 @@ function TableMenu() {
           }
         >
           <MenuItemSelect>{groupedColumn?.name ?? ""}</MenuItemSelect>
-        </MenuItem>
-      </MenuGroup>
-      <Separator />
-      <MenuGroup>
-        <MenuGroupHeader title="Data source settings" />
-        <MenuItem
+        </DropdownMenuItem>
+      </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        <DropdownMenuLabel title="Data source settings" />
+        <DropdownMenuItem
+          closeOnClick={false}
           icon={<Icon.Sliders />}
           label="Edit properties"
-          aria-disabled={locked}
+          disabled={locked}
           onClick={() => openMenu(TableViewMenuPage.Props)}
         >
           <MenuItemSelect />
-        </MenuItem>
-      </MenuGroup>
-      <Separator />
-      <MenuGroup>
-        <MenuItem
+        </DropdownMenuItem>
+      </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        <DropdownMenuItem
+          closeOnClick={false}
           {...(locked
             ? { icon: <Icon.LockOpen />, label: "Unlock database" }
             : { icon: <Icon.Lock />, label: "Lock database" })}
           onClick={table.toggleTableLocked}
         />
-      </MenuGroup>
+      </DropdownMenuGroup>
     </>
   );
 }

@@ -1,17 +1,12 @@
-"use client";
-
 import { useMemo } from "react";
 
 import {
   DropdownMenuCheckboxItem,
+  DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuSub,
-  DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  MenuItemAction,
-  Switch,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
@@ -59,18 +54,15 @@ export function CalcMenu({ id, type }: CalcMenuProps) {
       />
       <DropdownMenuSub>
         <DropdownMenuSubTrigger label="Count" />
-        <DropdownMenuSubContent className="w-[250px]">
+        <DropdownMenuContent sideOffset={-4} className="w-[250px]">
           <DropdownMenuGroup>
-            <DropdownMenuItem
-              className="gap-2 p-2"
+            <DropdownMenuCheckboxItem
+              checkType="switch"
               label="Show large counts as 99+"
               desc="This improves performance for large databases."
-              onClick={() => table.setColumnCountCapped(id, (v) => !v)}
-            >
-              <MenuItemAction>
-                <Switch size="sm" checked={counting.isCapped} />
-              </MenuItemAction>
-            </DropdownMenuItem>
+              checked={counting.isCapped}
+              onCheckedChange={() => table.setColumnCountCapped(id, (v) => !v)}
+            />
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
@@ -83,11 +75,11 @@ export function CalcMenu({ id, type }: CalcMenuProps) {
               />
             ))}
           </DropdownMenuGroup>
-        </DropdownMenuSubContent>
+        </DropdownMenuContent>
       </DropdownMenuSub>
       <DropdownMenuSub>
         <DropdownMenuSubTrigger label="Percent" />
-        <DropdownMenuSubContent className="w-[250px]">
+        <DropdownMenuContent sideOffset={-4} className="w-[250px]">
           <DropdownMenuGroup>
             {percentMethods.map((method) => (
               <HintItem
@@ -98,7 +90,7 @@ export function CalcMenu({ id, type }: CalcMenuProps) {
               />
             ))}
           </DropdownMenuGroup>
-        </DropdownMenuSubContent>
+        </DropdownMenuContent>
       </DropdownMenuSub>
     </DropdownMenuGroup>
   );
@@ -122,7 +114,7 @@ function HintItem({ title, desc, imgSrc, ...props }: HintItemProps) {
         { type: "default", text: desc },
       ]}
     >
-      <DropdownMenuCheckboxItem label={title} {...props} />
+      <DropdownMenuCheckboxItem {...props} label={title} />
     </TooltipPreset>
   );
 }

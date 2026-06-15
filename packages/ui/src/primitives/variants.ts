@@ -82,7 +82,7 @@ export const menuItemVariants = cva(
     variants: {
       variant: {
         default: "text-primary",
-        secondary: "text-secondary",
+        secondary: "fill-secondary text-secondary",
         sidebar:
           "fill-secondary text-sidebar-primary aria-selected:bg-default/10 aria-selected:text-primary",
         warning: "hover:fill-red hover:text-red",

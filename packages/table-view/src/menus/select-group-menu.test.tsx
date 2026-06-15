@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent, { UserEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
@@ -58,9 +58,11 @@ describe("SelectGroupMenu", () => {
     expect(screen.getByRole("option", { name: "Done" })).toBeInTheDocument();
 
     // "Name" should be filtered out
-    expect(
-      screen.queryByRole("option", { name: "Name" }),
-    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("option", { name: "Name" }),
+      ).not.toBeInTheDocument(),
+    );
   });
 
   it("should navigate to Edit Group menu after selecting a property", async () => {

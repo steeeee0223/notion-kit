@@ -105,6 +105,7 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
           placeholder={
             propId ? "Search for property type" : "Search or add new property"
           }
+          onKeyDown={(e) => e.stopPropagation()}
         />
         <AutocompleteContent role="presentation" variant="inline">
           <AutocompleteList>

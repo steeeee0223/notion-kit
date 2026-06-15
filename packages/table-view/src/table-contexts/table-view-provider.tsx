@@ -1,12 +1,9 @@
-"use client";
-
 import { createContext, use } from "react";
 import type { Table } from "@tanstack/react-table";
 
 import { TooltipProvider } from "@notion-kit/ui/primitives";
 
 import { BoardViewContent } from "../board-view";
-import { LayoutType } from "../features";
 import type { Row } from "../lib/types";
 import { arrayToEntity } from "../lib/utils";
 import { ListViewContent } from "../list-view";
@@ -31,7 +28,9 @@ export function useTableViewCtx() {
   return ctx;
 }
 
-export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
+export function TableViewWrapper<
+  TPlugins extends CellPlugin[] = DefaultPlugins,
+>({
   plugins = DEFAULT_PLUGINS as TPlugins,
   children,
   ...props
@@ -40,25 +39,36 @@ export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
     plugins: arrayToEntity(plugins),
     ...props,
   });
-  const { layout } = ctx.table.getTableGlobalState();
 
   return (
     <TableViewContext value={ctx}>
-      <TooltipProvider delayDuration={500}>
-        <div className="relative flex flex-col gap-4">
-          <div className="sticky top-0 z-(--z-row) bg-main px-24 pb-2">
-            <Toolbar />
-          </div>
-          <Content layout={layout} />
-        </div>
-        <RowView />
-        {children}
-      </TooltipProvider>
+      <TooltipProvider delayDuration={500}>{children}</TooltipProvider>
     </TableViewContext>
   );
 }
 
-function Content({ layout }: { layout: LayoutType }) {
+export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
+  children,
+  ...props
+}: TableProps<TPlugins>) {
+  return (
+    <TableViewWrapper {...props}>
+      <div className="relative flex flex-col gap-4">
+        <div className="sticky top-0 z-(--z-row) bg-main px-24 pb-2">
+          <Toolbar />
+        </div>
+        <Content />
+      </div>
+      <RowView />
+      {children}
+    </TableViewWrapper>
+  );
+}
+
+function Content() {
+  const { table } = useTableViewCtx();
+  const { layout } = table.getTableGlobalState();
+
   switch (layout) {
     case "list":
       return <ListViewContent />;

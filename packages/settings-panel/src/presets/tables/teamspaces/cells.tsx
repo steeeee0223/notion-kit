@@ -13,13 +13,17 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Option,
-  SelectPreset as Select,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
 import type { TeamspacePermission, TeamspaceRole } from "@/lib/types";
-import { Avatar, permissions } from "@/presets/_components";
+import { Avatar, useTeamspacePermissionOptions } from "@/presets/_components";
 import { LeaveTeamspace } from "@/presets/modals";
 import { TextCell } from "@/presets/tables/common-cells";
 
@@ -62,8 +66,10 @@ export function AccessSelectCell({
   disabled,
   onSelect,
 }: AccessSelectCellProps) {
-  const options = { ...permissions };
-  options.default.description = permissions.default.getDescription(workspace);
+  const permissionOptions = useTeamspacePermissionOptions(workspace);
+  const selected = permissionOptions.find(
+    (option) => option.value === permission,
+  );
 
   const [isUpdating, startTransition] = useTransition();
   const select = (permission: TeamspacePermission) => {
@@ -73,25 +79,34 @@ export function AccessSelectCell({
   return (
     <div className="flex items-center px-1">
       {disabled ? (
-        <TextCell
-          className="text-center text-sm"
-          value={options[permission].label}
-        />
+        <TextCell className="text-center text-sm" value={selected?.label} />
       ) : (
         <Select
-          className="w-auto"
-          options={options}
-          onChange={select}
+          items={permissionOptions}
+          onValueChange={(nextValue) => {
+            if (nextValue !== null) select(nextValue);
+          }}
           value={permission}
-          align="center"
-          renderOption={({ option }) => (
-            <TextCell
-              className="min-w-0 text-sm"
-              value={(option as Option).label}
-            />
-          )}
           disabled={isUpdating}
-        />
+        >
+          <SelectTrigger className="w-auto">
+            <SelectValue>
+              {(permission: (typeof permissionOptions)[number]) => (
+                <TextCell
+                  className="min-w-0 text-sm"
+                  value={permission.label}
+                />
+              )}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent align="center">
+            <SelectGroup>
+              {permissionOptions.map((option) => (
+                <SelectItem key={option.value} {...option} />
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       )}
     </div>
   );

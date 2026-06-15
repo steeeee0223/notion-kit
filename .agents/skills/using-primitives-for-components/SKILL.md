@@ -15,7 +15,7 @@ Compose `@notion-kit/ui/primitives`; they encode styling, a11y, variants, librar
 | -------------- | ----------------------------------------------- |
 | Command/action | `Button`; `Spinner` when pending                |
 | Form field     | `Field*` or `Form*`                             |
-| Option choice  | `SelectPreset` first; then lower controls       |
+| Option choice  | Compose `Select*` primitives                    |
 | Menu action    | `DropdownMenu*` or `ContextMenu*`               |
 | Modal content  | `Dialog`, `Sheet`, or `Drawer` with title       |
 | Data display   | `Card`, `Table`, `Badge`, `Avatar`, `Separator` |
@@ -26,7 +26,7 @@ Compose `@notion-kit/ui/primitives`; they encode styling, a11y, variants, librar
 
 1. Import from the primitives barrel: `@notion-kit/ui/primitives`.
 2. Search `packages/ui/src/primitives/index.ts` before raw controls.
-3. Use `SelectPreset` before hand-composing `Select`; drop lower only when needed.
+3. Compose select with `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, and `SelectItem`; do not introduce a preset wrapper API.
 4. Use `TooltipPreset` before hand-composing `Tooltip`; drop lower only when needed.
 5. Keep structure semantic: `TabsTrigger` in `TabsList`, overlays with titles.
 6. Every menu-like item needs its group: `SelectItem`/`SelectGroup`, `DropdownMenuItem`/`DropdownMenuGroup`, `ContextMenuItem`/`ContextMenuGroup`, `ComboboxItem`/`ComboboxGroup`.
@@ -48,17 +48,37 @@ import {
   DropdownMenuTrigger,
   Field,
   FieldLabel,
-  SelectPreset,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
 <Field>
   <FieldLabel>Default access</FieldLabel>
-  <SelectPreset
+  <Select
     value={access}
-    onChange={setAccess}
-    options={{ view: "Can view", edit: "Can edit" }}
-  />
+    onValueChange={(nextValue) => {
+      if (nextValue !== null) setAccess(nextValue);
+    }}
+    items={[
+      { value: "view", label: "Can view" },
+      { value: "edit", label: "Can edit" },
+    ]}
+  >
+    <SelectTrigger>
+      <SelectValue />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectGroup>
+        <SelectItem value="view" label="Can view" />
+        <SelectItem value="edit" label="Can edit" />
+      </SelectGroup>
+    </SelectContent>
+  </Select>
   <TooltipPreset description="Applies to new members">
     <Button variant="hint">
       <Icon.QuestionMarkCircled />
@@ -84,7 +104,7 @@ import {
 | ---------------------------------------------- | ----------------------------------------------------- |
 | Rebuilding primitive styles                    | Compose primitive slots.                              |
 | Raw `div` form rows                            | Use `Field`/`FieldGroup` or `FormItem`/`FormControl`. |
-| Hand-composing select/tooltip                  | Use `SelectPreset` or `TooltipPreset` first.          |
+| Creating a custom select preset API            | Compose `Select*` primitives directly.                |
 | Importing third-party icons                    | Use `@notion-kit/icons`; ask if missing.              |
 | One-off status colors                          | Use `Badge` variants or semantic tokens.              |
 | Menu-like item directly in content/list        | Wrap it in matching group.                            |

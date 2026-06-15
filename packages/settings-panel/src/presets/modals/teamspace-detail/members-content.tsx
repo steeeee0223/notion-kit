@@ -18,8 +18,8 @@ import type {
 } from "@/lib/types";
 import {
   HintButton,
-  permissions,
   TeamspacePermission,
+  useTeamspacePermissionOptions,
 } from "@/presets/_components";
 import { AddTeamMembers } from "@/presets/modals";
 import { TeamMembersTable } from "@/presets/tables";
@@ -59,8 +59,10 @@ export function MembersContent({
   const { t } = useTranslation("settings", {
     keyPrefix: "modals.teamspace-detail.members",
   });
-  const options = { ...permissions };
-  options.default.description = permissions.default.getDescription(workspace);
+  const options = useTeamspacePermissionOptions(workspace);
+  const permission = options.find(
+    (option) => option.value === teamspace.permission,
+  )!;
   /** Search field */
   const [search, setSearch] = useState("");
   /** Add team members */
@@ -92,7 +94,7 @@ export function MembersContent({
         <Card className="mb-2.5 flex flex-col">
           <TeamspacePermission
             className="mx-0 h-11 px-0 hover:bg-transparent"
-            {...options[teamspace.permission]}
+            {...permission}
           />
         </Card>
         <HintButton

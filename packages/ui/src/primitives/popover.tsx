@@ -1,7 +1,4 @@
-"use client";
-
-import * as React from "react";
-import { Popover as PopoverPrimitive } from "radix-ui";
+import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 
 import { cn } from "@notion-kit/cn";
 
@@ -9,71 +6,95 @@ import { Button } from "./button";
 import * as Icon from "./icons";
 import { contentVariants } from "./variants";
 
-function Popover({
+function Popover<Payload = unknown>({
+  modal = false,
   ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Root>) {
-  return <PopoverPrimitive.Root data-slot="popover" {...props} />;
+}: PopoverPrimitive.Root.Props<Payload>) {
+  return <PopoverPrimitive.Root data-slot="popover" modal={modal} {...props} />;
 }
 
-function PopoverTrigger({
+function PopoverTrigger<Payload = unknown>({
   ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Trigger>) {
+}: PopoverPrimitive.Trigger.Props<Payload>) {
   return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />;
 }
 
-function PopoverClose({
-  ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Close>) {
+function PopoverClose({ ...props }: PopoverPrimitive.Close.Props) {
   return (
-    <PopoverPrimitive.Close data-slot="popover-close" asChild>
-      <Button variant="close" size="circle" aria-label="Close" {...props}>
-        <Icon.Close className="h-full w-3.5 fill-secondary dark:fill-default/45" />
-      </Button>
-    </PopoverPrimitive.Close>
+    <PopoverPrimitive.Close
+      data-slot="popover-close"
+      render={
+        <Button variant="close" size="circle" aria-label="Close">
+          <Icon.Close className="h-full w-3.5 fill-secondary dark:fill-default/45" />
+        </Button>
+      }
+      {...props}
+    />
   );
 }
 
-type PopoverContentProps = React.ComponentProps<
-  typeof PopoverPrimitive.Content
+type PopoverPositionerProps = Pick<
+  PopoverPrimitive.Positioner.Props,
+  | "align"
+  | "alignOffset"
+  | "anchor"
+  | "collisionBoundary"
+  | "collisionPadding"
+  | "positionMethod"
+  | "side"
+  | "sideOffset"
 > & {
-  container?: Element | DocumentFragment | null;
+  sticky?: PopoverPrimitive.Positioner.Props["sticky"] | "always" | "partial";
 };
+
+type PopoverContentProps = PopoverPrimitive.Popup.Props &
+  PopoverPositionerProps & {
+    container?: PopoverPrimitive.Portal.Props["container"];
+    forceMount?: boolean;
+  };
+
 function PopoverContent({
   className,
   align = "center",
-  sideOffset = 4,
+  alignOffset,
+  anchor,
+  collisionBoundary,
+  collisionPadding,
   container,
+  forceMount,
+  positionMethod,
+  side,
+  sideOffset = 4,
+  sticky,
+  finalFocus = false,
   ...props
 }: PopoverContentProps) {
   return (
-    <PopoverPrimitive.Portal container={container}>
-      <PopoverPrimitive.Content
-        data-slot="popover-content"
+    <PopoverPrimitive.Portal container={container} keepMounted={forceMount}>
+      <PopoverPrimitive.Positioner
         align={align}
+        alignOffset={alignOffset}
+        anchor={anchor}
+        collisionBoundary={collisionBoundary}
+        collisionPadding={collisionPadding}
+        positionMethod={positionMethod}
+        side={side}
         sideOffset={sideOffset}
-        className={cn(
-          "w-72 p-0 outline-hidden",
-          contentVariants({ variant: "popover", sideAnimation: true }),
-          className,
-        )}
-        /**
-         * tmporary fix
-         * @see https://github.com/radix-ui/primitives/issues/1241
-         */
-        onCloseAutoFocus={(e) => {
-          e.preventDefault();
-          document.body.style.pointerEvents = "";
-        }}
-        {...props}
-      />
+        sticky={typeof sticky === "string" ? true : sticky}
+      >
+        <PopoverPrimitive.Popup
+          data-slot="popover-content"
+          className={cn(
+            "w-72 p-0 outline-hidden",
+            contentVariants({ variant: "popover", sideAnimation: true }),
+            className,
+          )}
+          finalFocus={finalFocus}
+          {...props}
+        />
+      </PopoverPrimitive.Positioner>
     </PopoverPrimitive.Portal>
   );
 }
 
-function PopoverAnchor({
-  ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Anchor>) {
-  return <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />;
-}
-
-export { Popover, PopoverTrigger, PopoverClose, PopoverContent, PopoverAnchor };
+export { Popover, PopoverTrigger, PopoverClose, PopoverContent };

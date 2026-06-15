@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { closestCenter, DndContext } from "@dnd-kit/core";
 import {
@@ -17,6 +15,9 @@ import { useIsMobile } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import {
   Checkbox,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -76,7 +77,7 @@ function TableHeaderRow() {
               <Checkbox
                 id="row-select"
                 size="sm"
-                className="cursor-pointer rounded-[2px] accent-blue"
+                className="cursor-pointer rounded-xs accent-blue"
               />
             </label>
           </div>
@@ -118,22 +119,22 @@ function TableHeaderRow() {
       </div>
       {!tableGlobal.locked && (
         <Popover>
-          <PopoverTrigger asChild>
-            <TableHeaderActionCell icon={<Icon.Plus />} />
-          </PopoverTrigger>
+          <PopoverTrigger
+            render={<TableHeaderActionCell icon={<Icon.Plus />} />}
+          />
           <PopoverContent sideOffset={0} collisionPadding={12}>
             <TypesMenu menu={TableViewMenuPage.CreateProp} />
           </PopoverContent>
         </Popover>
       )}
-      <Popover>
-        <PopoverTrigger asChild>
-          <TableHeaderActionCell icon={<Icon.Dots />} />
-        </PopoverTrigger>
-        <PopoverContent sideOffset={0} collisionPadding={12} sticky="always">
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={<TableHeaderActionCell icon={<Icon.Dots />} />}
+        />
+        <DropdownMenuContent sideOffset={0} collisionPadding={12}>
           <PropsMenu />
-        </PopoverContent>
-      </Popover>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }

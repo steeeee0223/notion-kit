@@ -1,23 +1,17 @@
-"use client";
-
 import { useEffect, useState } from "react";
 
 import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
-  DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuSub,
-  DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
   Input,
-  MenuItem,
-  MenuItemSelect,
+  MenuItemAction,
 } from "@notion-kit/ui/primitives";
 
 import { SortableDnd } from "../../../common";
@@ -75,26 +69,22 @@ export function SelectConfigMenu({
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger icon={<Icon.Sliders />} label="Edit property" />
-      <DropdownMenuSubContent className="w-[250px]">
+      <DropdownMenuContent sideOffset={-4} className="w-[250px]">
         <DropdownMenuGroup>
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <MenuItem
-                  icon={<Icon.ArrowUpDown />}
-                  label="Sort"
-                  aria-label="Sort options"
-                >
-                  <MenuItemSelect>
-                    {sortOptions.find((o) => o.value === config.sort)?.label}
-                  </MenuItemSelect>
-                </MenuItem>
-              }
-            />
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger
+              icon={<Icon.ArrowUpDown />}
+              label="Sort"
+              aria-label="Sort options"
+            >
+              <MenuItemAction className="flex items-center text-muted">
+                {sortOptions.find((o) => o.value === config.sort)?.label}
+              </MenuItemAction>
+            </DropdownMenuSubTrigger>
             <DropdownMenuContent
               align="start"
               alignOffset={4}
-              sideOffset={0}
+              sideOffset={-4}
               className="w-[250px]"
               finalFocus={false}
             >
@@ -109,7 +99,7 @@ export function SelectConfigMenu({
                 ))}
               </DropdownMenuGroup>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenuSub>
         </DropdownMenuGroup>
         <DropdownMenuGroup>
           <DropdownMenuLabel title="Options" className="relative">
@@ -129,7 +119,13 @@ export function SelectConfigMenu({
           {showInput && (
             <div className="mb-2 flex flex-col gap-2 px-3">
               <div className="flex w-full min-w-0 flex-auto items-center select-none">
-                <Input {...nameField.props} />
+                <Input
+                  {...nameField.props}
+                  onKeyDown={(e) => {
+                    e.stopPropagation();
+                    nameField.props.onKeyDown?.(e);
+                  }}
+                />
               </div>
               {nameField.error && (
                 <div className="text-sm text-red">Option already exists.</div>
@@ -157,7 +153,7 @@ export function SelectConfigMenu({
             </SortableDnd>
           </div>
         </DropdownMenuGroup>
-      </DropdownMenuSubContent>
+      </DropdownMenuContent>
     </DropdownMenuSub>
   );
 }

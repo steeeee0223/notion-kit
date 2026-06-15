@@ -260,20 +260,22 @@ function TrashBox() {
       className="fixed right-8 bottom-8 z-50 rounded-full"
     >
       <Popover onOpenChange={handleOpenChange}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="hint"
-            size="md"
-            className="rounded-full shadow-out-md"
-          >
-            <Icon.Trash className="size-5 fill-icon" />
-            {archivedTodos.length > 0 && (
-              <span className="ml-1 text-xs text-secondary">
-                {archivedTodos.length}
-              </span>
-            )}
-          </Button>
-        </PopoverTrigger>
+        <PopoverTrigger
+          render={
+            <Button
+              variant="hint"
+              size="md"
+              className="rounded-full shadow-out-md"
+            >
+              <Icon.Trash className="size-5 fill-icon" />
+              {archivedTodos.length > 0 && (
+                <span className="ml-1 text-xs text-secondary">
+                  {archivedTodos.length}
+                </span>
+              )}
+            </Button>
+          }
+        />
         <PopoverContent
           side="top"
           align="end"

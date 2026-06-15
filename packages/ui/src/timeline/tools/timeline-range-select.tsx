@@ -1,6 +1,24 @@
-import { SelectPreset } from "@/primitives";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/primitives";
 
 import type { TimelineRange } from "../types";
+
+const OPTIONS = [
+  // {value: "hourly", label: "Hours"},
+  { value: "daily", label: "Day" },
+  // {value: "weekly", label: "Week"},
+  // {value: "bi-hourly", label: "Bi-week"},
+  { value: "monthly", label: "Month" },
+  { value: "quarterly", label: "Quarter" },
+  // {value: "yearly", label: "Year"},
+  // {value: "5-years", label: "5-year"},
+] satisfies { value: TimelineRange; label: string }[];
 
 interface TimelineRangeSelectProps {
   value: TimelineRange;
@@ -12,22 +30,29 @@ export function TimelineRangeSelect({
   onChange,
 }: TimelineRangeSelectProps) {
   return (
-    <SelectPreset
+    <Select
       data-slot="timeline-range-select"
-      className="h-6 w-auto min-w-12 border-none px-1.5 text-secondary"
-      options={{
-        // hourly: "Hours",
-        daily: "Day",
-        // weekly: "Week",
-        // "bi-weekly": "Bi-week",
-        monthly: "Month",
-        quarterly: "Quarter",
-        // yearly: "Year",
-        // "5-years": "5-years",
-      }}
+      items={OPTIONS}
       value={value}
-      onChange={onChange}
-      hideCheck
-    />
+      onValueChange={(nextValue) => {
+        if (nextValue !== null) onChange(nextValue);
+      }}
+    >
+      <SelectTrigger className="h-6 w-auto min-w-12 border-none px-1.5 text-secondary">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          {OPTIONS.map((option) => (
+            <SelectItem
+              key={option.value}
+              value={option.value}
+              label={option.label}
+              hideCheck
+            />
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
   );
 }

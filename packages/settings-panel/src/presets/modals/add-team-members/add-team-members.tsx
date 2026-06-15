@@ -1,59 +1,24 @@
-import { useMemo } from "react";
-
 import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
-import type { User } from "@notion-kit/schemas";
 import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import {
-  Badge,
   Button,
-  Combobox,
-  ComboboxChip,
-  ComboboxChips,
-  ComboboxChipsInput,
-  ComboboxCollection,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxGroup,
-  ComboboxItem,
-  ComboboxLabel,
-  ComboboxList,
-  ComboboxValue,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   Form,
-  FormControl,
-  FormField,
-  FormItem,
-  MenuItemAction,
-  SelectPreset,
   Spinner,
 } from "@notion-kit/ui/primitives";
-import { idToColor } from "@notion-kit/utils";
 
 import type { TeamspaceRole } from "@/lib/types";
-import { Avatar } from "@/presets/_components";
 
-import { useAddTeamMembersForm } from "./use-add-team-members-form";
-
-interface AddTeamMembersOption {
-  id: string;
-  name: string;
-  color: string;
-  disabled?: boolean;
-  avatarUrl: string;
-}
-
-interface GroupOption {
-  label: string;
-  items: AddTeamMembersOption[];
-}
-
-interface WorkspaceMember extends User {
-  invited?: boolean;
-}
+import {
+  RoleField,
+  useAddTeamMembersForm,
+  UsersField,
+  type WorkspaceMember,
+} from "./fields";
 
 interface AddTeamMembersProps {
   teamspace: {
@@ -76,24 +41,7 @@ export function AddTeamMembers({
     keyPrefix: "modals.add-team-members",
   });
 
-  const multiSelectOptions = useMemo(
-    () => [
-      {
-        label: t("headings.select"),
-        items: workspaceMembers.map<AddTeamMembersOption>((user) => ({
-          id: user.id,
-          name: user.name,
-          color: idToColor(user.id),
-          disabled: user.invited,
-          avatarUrl: user.avatarUrl,
-        })),
-      },
-    ],
-    [t, workspaceMembers],
-  );
-
-  const { form, members, submit } = useAddTeamMembersForm({
-    workspaceMembers,
+  const { form, submit } = useAddTeamMembersForm({
     onSubmit: onAddMembers,
   });
   const disabled = !form.formState.isValid || form.formState.isSubmitting;
@@ -117,127 +65,8 @@ export function AddTeamMembers({
       <Form {...form}>
         <form onSubmit={submit} className="flex flex-col justify-between gap-3">
           <div className="flex min-h-8 w-full cursor-text flex-nowrap items-start rounded-sm bg-input p-[4px_9px] text-sm focus-within:shadow-notion">
-            <FormField
-              control={form.control}
-              name="users"
-              render={({ field }) => (
-                <FormItem className="min-w-0 flex-1 basis-0">
-                  <FormControl
-                    render={
-                      <Combobox<AddTeamMembersOption, true>
-                        multiple
-                        disabled={field.disabled}
-                        value={field.value.map((user) => ({
-                          id: user.id,
-                          name: user.name,
-                          color: idToColor(user.id),
-                          avatarUrl: user.avatarUrl,
-                        }))}
-                        onValueChange={(values) => {
-                          field.onChange(
-                            values.reduce<User[]>((acc, option) => {
-                              const member = members.get(option.name);
-                              if (member) acc.push(member);
-                              return acc;
-                            }, []),
-                          );
-                        }}
-                        items={multiSelectOptions}
-                        itemToStringLabel={(option) => option.name}
-                        itemToStringValue={(option) => option.name}
-                        isItemEqualToValue={(item, value) =>
-                          item.name === value.name
-                        }
-                      >
-                        <ComboboxChips
-                          hideClearButton
-                          className="min-h-7 cursor-text border-none bg-transparent py-1.5 pl-2 focus-within:shadow-none!"
-                        >
-                          <ComboboxValue>
-                            {(selected: AddTeamMembersOption[]) => (
-                              <>
-                                {selected.map((option) => (
-                                  <ComboboxChip
-                                    key={option.id}
-                                    style={{ backgroundColor: option.color }}
-                                  >
-                                    {option.name}
-                                  </ComboboxChip>
-                                ))}
-                                <ComboboxChipsInput
-                                  placeholder={t("search-placeholder")}
-                                />
-                              </>
-                            )}
-                          </ComboboxValue>
-                        </ComboboxChips>
-                        <ComboboxContent>
-                          <ComboboxEmpty>{t("no-results")}</ComboboxEmpty>
-                          <ComboboxList>
-                            {(group: GroupOption) => (
-                              <ComboboxGroup
-                                key={group.label}
-                                items={group.items}
-                              >
-                                <ComboboxLabel title={group.label} />
-                                <ComboboxCollection>
-                                  {(option: AddTeamMembersOption) => (
-                                    <ComboboxItem
-                                      key={option.id}
-                                      value={option}
-                                      disabled={option.disabled}
-                                      label={option.name}
-                                      icon={
-                                        <Avatar
-                                          src={option.avatarUrl}
-                                          fallback={option.name}
-                                        />
-                                      }
-                                    >
-                                      {option.disabled && (
-                                        <MenuItemAction>
-                                          <Badge
-                                            variant="gray"
-                                            size="sm"
-                                            className="ml-auto tracking-wide uppercase"
-                                          >
-                                            {t("invited")}
-                                          </Badge>
-                                        </MenuItemAction>
-                                      )}
-                                    </ComboboxItem>
-                                  )}
-                                </ComboboxCollection>
-                              </ComboboxGroup>
-                            )}
-                          </ComboboxList>
-                        </ComboboxContent>
-                      </Combobox>
-                    }
-                  />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem className="sticky top-0 ml-2 w-auto shrink-0 py-0.5">
-                  <FormControl
-                    render={
-                      <SelectPreset
-                        options={{
-                          owner: t("roles.owner"),
-                          member: t("roles.member"),
-                        }}
-                        className="mb-0 w-[170px] text-muted"
-                        {...field}
-                      />
-                    }
-                  />
-                </FormItem>
-              )}
-            />
+            <UsersField workspaceMembers={workspaceMembers} />
+            <RoleField />
           </div>
           <DialogFooter className="flex-row justify-between">
             <Button type="button" variant="soft-blue" size="sm" disabled>

@@ -1,16 +1,13 @@
-"use client";
-
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
+  DropdownMenu,
+  DropdownMenuTrigger,
   MenuItem,
   MenuItemAction,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 import type { Color } from "@notion-kit/utils";
@@ -72,7 +69,6 @@ export function OptionItem({
     >
       <MenuItem
         ref={setNodeRef}
-        role="menuitem"
         style={style}
         onClick={() => onSelect(option.name)}
         icon={
@@ -89,33 +85,27 @@ export function OptionItem({
         label={<OptionTag {...option} />}
       >
         <MenuItemAction className="flex items-center text-muted">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                tabIndex={0}
-                variant="hint"
-                className="size-5"
-                onClick={(e) => e.stopPropagation()}
-                aria-label="More"
-              >
-                <Icon.Dots className="size-3.5 fill-current" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent
-              align="center"
-              sideOffset={0}
-              className="w-[220px]"
-              collisionPadding={12}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <SelectOptionMenu
-                option={option}
-                validateName={validateName}
-                onUpdate={onUpdate}
-                onDelete={onDelete}
-              />
-            </PopoverContent>
-          </Popover>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  tabIndex={0}
+                  variant="hint"
+                  className="size-5"
+                  onClick={(e) => e.stopPropagation()}
+                  aria-label="More"
+                >
+                  <Icon.Dots className="size-3.5 fill-current" />
+                </Button>
+              }
+            />
+            <SelectOptionMenu
+              option={option}
+              validateName={validateName}
+              onUpdate={onUpdate}
+              onDelete={onDelete}
+            />
+          </DropdownMenu>
         </MenuItemAction>
       </MenuItem>
     </TooltipPreset>

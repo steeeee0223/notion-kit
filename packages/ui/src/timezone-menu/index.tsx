@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { tzOffset } from "@date-fns/tz";
 
@@ -28,7 +26,7 @@ interface TimezoneMenuProps extends React.PropsWithChildren {
    */
   currentTz?: string;
   onChange: (tz: string) => void;
-  renderTrigger: (props: { tz: string; gmt: string }) => React.ReactNode;
+  renderTrigger: (props: { tz: string; gmt: string }) => React.ReactElement;
 }
 
 export function TimezoneMenu({
@@ -53,9 +51,9 @@ export function TimezoneMenu({
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        {renderTrigger({ tz: defaultTz, gmt: getGmtStr(defaultTz) })}
-      </PopoverTrigger>
+      <PopoverTrigger
+        render={renderTrigger({ tz: defaultTz, gmt: getGmtStr(defaultTz) })}
+      />
       <PopoverContent className={cn("w-[342px]", className)}>
         <Autocomplete<string>
           items={timezoneGroups}
@@ -72,12 +70,16 @@ export function TimezoneMenu({
                   <AutocompleteLabel title={group.label} />
                   <AutocompleteCollection>
                     {(tz: string) => (
-                      <TzItem
+                      <AutocompleteItem
                         key={tz}
-                        checked={tz === defaultTz}
-                        tz={tz}
-                        onSelect={onChange}
-                      />
+                        className="h-11"
+                        value={tz}
+                        label={tz.replace("_", " ")}
+                        desc={getGmtStr(tz)}
+                        onClick={() => onChange(tz)}
+                      >
+                        {tz === defaultTz && <MenuItemCheck />}
+                      </AutocompleteItem>
                     )}
                   </AutocompleteCollection>
                 </AutocompleteGroup>
@@ -87,26 +89,6 @@ export function TimezoneMenu({
         </Autocomplete>
       </PopoverContent>
     </Popover>
-  );
-}
-
-interface TzItemProps {
-  tz: string;
-  checked?: boolean;
-  onSelect?: (value: string) => void;
-}
-
-function TzItem({ tz, checked, onSelect }: TzItemProps) {
-  return (
-    <AutocompleteItem
-      className="h-11"
-      value={tz}
-      label={tz.replace("_", " ")}
-      desc={getGmtStr(tz)}
-      onClick={() => onSelect?.(tz)}
-    >
-      {checked && <MenuItemCheck />}
-    </AutocompleteItem>
   );
 }
 

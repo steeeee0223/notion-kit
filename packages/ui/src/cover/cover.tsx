@@ -1,5 +1,3 @@
-"use client";
-
 import { ImageIcon, X } from "lucide-react";
 
 import { cn } from "@notion-kit/cn";
@@ -9,7 +7,7 @@ import { Button, Skeleton } from "@/primitives";
 import type { CoverPickerProps } from "./cover-picker";
 import { CoverPicker } from "./cover-picker";
 
-export interface CoverProps extends CoverPickerProps {
+export interface CoverProps extends Omit<CoverPickerProps, "children"> {
   url?: string;
   alt?: string;
   preview?: boolean;
@@ -19,7 +17,7 @@ function Cover({ url, alt, preview, ...props }: CoverProps) {
   return (
     <div
       className={cn(
-        "group relative h-[30vh] max-h-[280px] w-full",
+        "group relative h-[30vh] max-h-70 w-full",
         url ? "bg-main" : "h-[12vh]",
       )}
     >

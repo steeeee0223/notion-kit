@@ -1,5 +1,3 @@
-"use client";
-
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { HeaderContext } from "@tanstack/react-table";
@@ -72,43 +70,33 @@ export function TableHeaderCell({
           <DropdownMenuTrigger
             disabled={locked}
             render={
-              <div
+              <Button
+                {...attributes}
+                {...listeners}
                 id="notion-table-view-header-cell"
-                className="flex shrink-0 overflow-hidden p-0 text-sm"
+                variant="cell"
+                className={cn(
+                  "h-full shrink-0 overflow-hidden px-2 text-sm",
+                  isResizing && "bg-transparent",
+                )}
                 style={{ width: header.column.getSize() }}
               >
-                <Button
-                  {...attributes}
-                  {...listeners}
-                  variant="cell"
-                  className={cn(
-                    "size-full px-2",
-                    isResizing && "bg-transparent",
-                  )}
-                >
-                  {info.icon ? (
-                    <IconBlock
-                      icon={info.icon}
-                      className="size-4 p-0 opacity-60 dark:opacity-45"
-                    />
-                  ) : (
-                    <DefaultIcon type={info.type} className="fill-default/45" />
-                  )}
-                  <div className="truncate">{info.name}</div>
-                  {info.description && (
-                    <Icon.Info className="size-3 fill-icon" />
-                  )}
-                </Button>
-              </div>
+                {info.icon ? (
+                  <IconBlock
+                    icon={info.icon}
+                    className="size-4 p-0 opacity-60 dark:opacity-45"
+                  />
+                ) : (
+                  <DefaultIcon type={info.type} className="fill-default/45" />
+                )}
+                <div className="truncate">{info.name}</div>
+                {info.description && <Icon.Info className="size-3 fill-icon" />}
+              </Button>
             }
           />
         </TooltipPreset>
         {!isDragging && (
-          <DropdownMenuContent
-            align="start"
-            sideOffset={0}
-            className="w-[220px]"
-          >
+          <DropdownMenuContent align="start" sideOffset={0} className="w-55">
             <PropMenu view="table" propId={header.column.id} />
           </DropdownMenuContent>
         )}

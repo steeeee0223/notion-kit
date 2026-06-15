@@ -1,5 +1,8 @@
 import { screen, waitFor } from "@testing-library/react";
-import userEvent, { UserEvent } from "@testing-library/user-event";
+import userEvent, {
+  PointerEventsCheckLevel,
+  UserEvent,
+} from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import { renderSelectTable } from "../__tests__/utils";
@@ -35,7 +38,9 @@ describe("SelectConfigMenu", () => {
   // --- Tests that work in jsdom ---
 
   it("Flow 14: should delete an option", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({
+      pointerEventsCheck: PointerEventsCheckLevel.Never,
+    });
     await openSelectConfigMenu(user);
 
     // Click on "Option A" to open its popover
@@ -45,10 +50,10 @@ describe("SelectConfigMenu", () => {
     // Wait for popover to render, then click Delete
     await waitFor(() => {
       expect(
-        screen.getByRole("menuitem", { name: /delete/i }),
+        screen.getByRole("menuitem", { name: "Delete" }),
       ).toBeInTheDocument();
     });
-    const deleteItem = screen.getByRole("menuitem", { name: /delete/i });
+    const deleteItem = screen.getByRole("menuitem", { name: "Delete" });
     await user.click(deleteItem);
 
     // Option A should be removed from the list

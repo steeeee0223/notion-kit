@@ -1,3 +1,4 @@
+import React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { useCopyToClipboard } from "@notion-kit/hooks";
@@ -20,6 +21,18 @@ import { KEYBOARD } from "@notion-kit/utils";
 
 import { ROW_VIEW_OPTIONS } from "../features";
 import { useTableViewCtx } from "../table-contexts";
+
+interface Action {
+  value: string;
+  label: string;
+  icon: React.ReactNode;
+  shortcut?: string;
+  onSelect?: () => void;
+}
+interface ActionGroup {
+  value: string;
+  items: Action[];
+}
 
 interface RowActionMenuProps {
   rowId: string;
@@ -73,40 +86,60 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
   const deleteRow = () => table.deleteRow(rowId);
 
   /** Search */
-  const actions = [
+  const groups: ActionGroup[] = [
     {
-      value: `open-in-${rowView}`,
-      name: ROW_VIEW_OPTIONS[rowView].tooltip,
-      icon: <Icon.ArrowDiagonalUpRight />,
-      // shortcut: `${KEYBOARD.OPTION}Click`,
-      onSelect: openRowView,
+      value: "Page",
+      items: [
+        {
+          value: `edit-icon`,
+          label: "Edit icon",
+          icon: <Icon.EmojiFace className="size-5" />,
+        },
+      ],
     },
     {
-      value: "open-in-new-tab",
-      name: "Open in new tab",
-      icon: <Icon.ArrowDiagonalUpRight />,
-      shortcut: `${KEYBOARD.CMD}${KEYBOARD.SHIFT}${KEYBOARD.ENTER}`,
-      onSelect: openInNewTab,
+      value: "Open in",
+      items: [
+        {
+          value: `open-in-${rowView}`,
+          label: ROW_VIEW_OPTIONS[rowView].tooltip,
+          icon: <Icon.ArrowDiagonalUpRight />,
+          // shortcut: `${KEYBOARD.OPTION}Click`,
+          onSelect: openRowView,
+        },
+        {
+          value: "open-in-new-tab",
+          label: "Open in new tab",
+          icon: <Icon.ArrowDiagonalUpRight />,
+          shortcut: `${KEYBOARD.CMD}${KEYBOARD.SHIFT}${KEYBOARD.ENTER}`,
+          onSelect: openInNewTab,
+        },
+      ],
     },
     {
-      value: "copy-link",
-      name: "Copy link",
-      icon: <Icon.Link />,
-      onSelect: copyLink,
-    },
-    {
-      value: "duplicate",
-      name: "Duplicate",
-      icon: <Icon.Duplicate />,
-      shortcut: `${KEYBOARD.CMD}D`,
-      onSelect: duplicateRow,
-    },
-    {
-      value: "delete",
-      name: "Delete",
-      icon: <Icon.Trash />,
-      shortcut: KEYBOARD.DEL,
-      onSelect: deleteRow,
+      value: "Action",
+      items: [
+        {
+          value: "copy-link",
+          label: "Copy link",
+          icon: <Icon.Link />,
+          onSelect: copyLink,
+        },
+        {
+          value: "duplicate",
+          label: "Duplicate",
+          icon: <Icon.Duplicate />,
+          shortcut: `${KEYBOARD.CMD}D`,
+          onSelect: duplicateRow,
+        },
+        {
+          value: "delete",
+          label: "Delete",
+          icon: <Icon.Trash />,
+          shortcut: KEYBOARD.DEL,
+          onSelect: deleteRow,
+        },
+      ],
     },
   ];
 
@@ -116,9 +149,9 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
   useHotkeys("backspace", deleteRow);
 
   return (
-    <Autocomplete
-      items={actions}
-      itemToStringValue={(action) => action.name}
+    <Autocomplete<Action>
+      items={groups}
+      itemToStringValue={(action) => action.value}
       open
       autoHighlight="always"
       openOnInputClick
@@ -126,38 +159,48 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
       <AutocompleteInput placeholder="Search actions..." />
       <AutocompleteContent role="presentation" variant="inline">
         <AutocompleteList>
-          <AutocompleteGroup>
-            <AutocompleteLabel title="Page" />
-            <IconMenu
-              className="w-full border-none text-start hover:bg-transparent"
-              onSelect={selectIcon}
-              onRemove={removeIcon}
-              onUpload={uploadIcon}
-            >
-              <AutocompleteItem
-                icon={<Icon.EmojiFace className="size-5" />}
-                label="Edit icon"
-              />
-            </IconMenu>
-          </AutocompleteGroup>
-          <AutocompleteSeparator />
-          <AutocompleteGroup>
-            <AutocompleteCollection>
-              {(action: (typeof actions)[number]) => (
-                <AutocompleteItem
-                  key={action.value}
-                  value={action}
-                  icon={action.icon}
-                  label={action.name}
-                  onClick={action.onSelect}
-                >
-                  {action.shortcut && (
-                    <MenuItemShortcut>{action.shortcut}</MenuItemShortcut>
+          {(group: ActionGroup, index) => {
+            const isLast = groups.length - 1 === index;
+
+            return (
+              <React.Fragment key={group.value}>
+                <AutocompleteGroup key={group.value} items={group.items}>
+                  {group.value === "Page" && (
+                    <AutocompleteLabel title={group.value} />
                   )}
-                </AutocompleteItem>
-              )}
-            </AutocompleteCollection>
-          </AutocompleteGroup>
+                  <AutocompleteCollection>
+                    {({ shortcut, onSelect, ...action }: Action) => {
+                      if (group.value === "Page") {
+                        return (
+                          <IconMenu
+                            className="w-full border-none text-start hover:bg-transparent"
+                            onSelect={selectIcon}
+                            onRemove={removeIcon}
+                            onUpload={uploadIcon}
+                          >
+                            <AutocompleteItem {...action} />
+                          </IconMenu>
+                        );
+                      }
+
+                      return (
+                        <AutocompleteItem
+                          key={action.value}
+                          {...action}
+                          onClick={onSelect}
+                        >
+                          {shortcut && (
+                            <MenuItemShortcut>{shortcut}</MenuItemShortcut>
+                          )}
+                        </AutocompleteItem>
+                      );
+                    }}
+                  </AutocompleteCollection>
+                </AutocompleteGroup>
+                {!isLast && <AutocompleteSeparator />}
+              </React.Fragment>
+            );
+          }}
         </AutocompleteList>
       </AutocompleteContent>
     </Autocomplete>

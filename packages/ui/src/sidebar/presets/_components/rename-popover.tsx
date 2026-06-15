@@ -1,10 +1,8 @@
-"use client";
-
 import { useInputField } from "@notion-kit/hooks";
 
 import { IconBlock, type IconData } from "@/icon-block";
 import { IconMenu } from "@/icon-menu";
-import { DropdownMenuSubContent, Input } from "@/primitives";
+import { DropdownMenuContent, Input } from "@/primitives";
 
 interface RenamePopoverProps {
   title: string;
@@ -20,7 +18,10 @@ export function RenamePopover({ title, icon, onChange }: RenamePopoverProps) {
   });
 
   return (
-    <DropdownMenuSubContent className="flex w-60 items-center gap-1.5 px-2 py-1">
+    <DropdownMenuContent
+      sideOffset={-4}
+      className="flex w-60 items-center gap-1.5 px-2 py-1"
+    >
       <IconMenu
         className="size-7 shrink-0 border border-border-button hover:bg-default/5"
         onSelect={(icon) => onChange({ title, icon })}
@@ -35,6 +36,6 @@ export function RenamePopover({ title, icon, onChange }: RenamePopoverProps) {
         className="wrap-break-word whitespace-pre-wrap"
         {...props}
       />
-    </DropdownMenuSubContent>
+    </DropdownMenuContent>
   );
 }

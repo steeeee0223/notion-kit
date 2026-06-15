@@ -1,5 +1,4 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -7,7 +6,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectPreset,
   SelectTrigger,
   SelectValue,
 } from "./select";
@@ -52,26 +50,6 @@ describe("Select", () => {
     expect(list).not.toHaveClass(
       "h-(--anchor-height)",
       "min-w-(--anchor-width)",
-    );
-  });
-
-  it("wraps preset options in a select group", async () => {
-    const user = userEvent.setup();
-    render(
-      <SelectPreset<"on" | "off">
-        value="on"
-        options={{
-          on: "On",
-          off: "Off",
-        }}
-      />,
-    );
-
-    await user.click(screen.getByRole("combobox"));
-
-    expect(screen.getByRole("group")).toHaveAttribute(
-      "data-slot",
-      "select-group",
     );
   });
 });

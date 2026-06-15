@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -9,15 +7,16 @@ import { useIsClient } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
-  MenuGroup,
-  MenuItem,
+  DropdownMenuCheckboxItem,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   MenuItemAction,
   MenuItemSelect,
-  MenuItemSwitch,
-  Separator,
 } from "@notion-kit/ui/primitives";
 
-import { MenuGroupHeader, MenuHeader, SortableDnd } from "../common";
+import { MenuHeader, SortableDnd } from "../common";
 import { TableViewMenuPage } from "../features";
 import { useTableViewCtx } from "../table-contexts";
 
@@ -36,8 +35,9 @@ export function EditGroupMenu() {
         title="Group"
         onBack={() => table.setTableMenuState({ open: true, page: null })}
       />
-      <MenuGroup>
-        <MenuItem
+      <DropdownMenuGroup>
+        <DropdownMenuItem
+          closeOnClick={false}
           label="Group by"
           onClick={() =>
             table.setTableMenuState({
@@ -47,21 +47,29 @@ export function EditGroupMenu() {
           }
         >
           <MenuItemSelect>{col?.name ?? ""}</MenuItemSelect>
-        </MenuItem>
+        </DropdownMenuItem>
         {/* TODO Sort group by */}
-        <MenuItemSwitch
+        <DropdownMenuCheckboxItem
+          closeOnClick={false}
           label="Hide empty groups"
           checked={hideEmptyGroups}
           onCheckedChange={table.toggleHideEmptyGroups}
         />
-      </MenuGroup>
-      <Separator />
-      <MenuGroup>
-        <MenuGroupHeader
-          title="Groups"
-          action={table.getIsSomeGroupVisible() ? "Hide all" : "Show all"}
-          onActionClick={table.toggleAllGroupsVisible}
-        />
+      </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        <DropdownMenuLabel title="Groups">
+          <div className="ml-auto">
+            <Button
+              tabIndex={0}
+              variant="soft-blue"
+              className="h-[initial] min-w-0 shrink bg-transparent px-1.5 py-0.5 text-xs/tight shadow-none"
+              onClick={table.toggleAllGroupsVisible}
+            >
+              {table.getIsSomeGroupVisible() ? "Hide all" : "Show all"}
+            </Button>
+          </div>
+        </DropdownMenuLabel>
         <div className="flex flex-col">
           <SortableDnd
             items={groupOrder}
@@ -82,17 +90,17 @@ export function EditGroupMenu() {
             })}
           </SortableDnd>
         </div>
-      </MenuGroup>
-      <Separator />
-      <MenuGroup>
+      </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
         {layout !== "board" && (
-          <MenuItem
+          <DropdownMenuItem
             icon={<Icon.Trash />}
             label="Remove grouping"
             onClick={() => table.setGroupingColumn(null)}
           />
         )}
-        <MenuItem
+        <DropdownMenuItem
           icon={<Icon.QuestionMarkCircled />}
           label="Learn about grouping"
           onClick={() => {
@@ -103,7 +111,7 @@ export function EditGroupMenu() {
             );
           }}
         />
-      </MenuGroup>
+      </DropdownMenuGroup>
     </>
   );
 }
@@ -138,9 +146,9 @@ function GroupItem({
   };
 
   return (
-    <MenuItem
+    <DropdownMenuItem
       ref={setNodeRef}
-      role="menuitem"
+      closeOnClick={false}
       style={style}
       icon={
         <div
@@ -153,7 +161,6 @@ function GroupItem({
         </div>
       }
       label={children}
-      className="*:data-[slot=menu-item-body]:leading-normal"
     >
       <MenuItemAction className="flex items-center text-muted [&_svg]:fill-current">
         <Button
@@ -169,6 +176,6 @@ function GroupItem({
           {visible ? <Icon.Eye /> : <Icon.EyeHide />}
         </Button>
       </MenuItemAction>
-    </MenuItem>
+    </DropdownMenuItem>
   );
 }

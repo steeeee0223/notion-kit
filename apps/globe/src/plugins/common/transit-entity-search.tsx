@@ -64,13 +64,15 @@ export function TransitEntitySearch<T>({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <MenuItem
-          icon={<Icon.MagnifyingGlass className="size-4" />}
-          label={label}
-          data-disabled={disabled}
-        />
-      </PopoverTrigger>
+      <PopoverTrigger
+        render={
+          <MenuItem
+            icon={<Icon.MagnifyingGlass className="size-4" />}
+            label={label}
+            data-disabled={disabled}
+          />
+        }
+      />
       <PopoverContent align="start" className="w-[342px] p-0">
         <Autocomplete<TransitSearchItem<T>>
           items={groups}

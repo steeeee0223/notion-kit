@@ -58,17 +58,19 @@ export function TrashBox({
   return (
     <TooltipProvider>
       <Popover open={isOpen} onOpenChange={onOpenChange}>
-        <PopoverTrigger asChild>
-          <SidebarMenuItem
-            role="button"
-            label="Trash"
-            icon={<Icon.Trash className="size-5.5" />}
-            hint="Restore deleted pages"
-          />
-        </PopoverTrigger>
+        <PopoverTrigger
+          render={
+            <SidebarMenuItem
+              role="button"
+              label="Trash"
+              icon={<Icon.Trash className="size-5.5" />}
+              hint="Restore deleted pages"
+            />
+          }
+        />
         <PopoverContent
           forceMount
-          className="relative bottom-10 flex h-[50vh] w-[400px] flex-col"
+          className="relative bottom-10 flex h-[50vh] w-100 flex-col"
           side="right"
           sideOffset={-4}
           align="start"

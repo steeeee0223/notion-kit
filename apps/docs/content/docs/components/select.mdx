@@ -5,7 +5,28 @@ description: Displays a list of options for the user to pick from—triggered by
 
 <ComponentPreview
   name="select-default"
-  preview={`<Select options={options} value={value} onChange={setValue} />`}
+  preview={`<Select
+  value={value}
+  onValueChange={(nextValue) => {
+    if (nextValue !== null) setValue(nextValue);
+  }}
+  items={options}
+>
+  <SelectTrigger>
+    <SelectValue />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectGroup>
+      {options.map((option) => (
+        <SelectItem
+          key={option.value}
+          value={option.value}
+          label={option.label}
+        />
+      ))}
+    </SelectGroup>
+  </SelectContent>
+</Select>`}
 />
 
 ## Installation
@@ -27,42 +48,37 @@ Or if you prefer using Shadcn primitives, use
 <ComponentPreview
   name="select-custom"
   preview={`<Select
-    options={options}
+    items={options}
     value={value}
-    onChange={setValue}
-    renderOption={({ option }) => (
-      <div>
-        {typeof option === "string" ? option : option?.label}
-      </div>
-    )}
-  />`}
+    onValueChange={(nextValue) => {
+      if (nextValue !== null) setValue(nextValue);
+    }}
+  >
+    <SelectTrigger>
+      <SelectValue>
+        <div>{selectedOption.label}</div>
+      </SelectValue>
+    </SelectTrigger>
+    <SelectContent>{/* SelectGroup + SelectItem */}</SelectContent>
+  </Select>`}
 />
 
 ## API Reference
 
 ### Select
 
-A `Select` is a generic component `Select<T>`, where `T` extends `string`.
-`SelectPreset` wraps options in `SelectGroup` for you. When composing lower-level primitives, place every `SelectItem` inside a `SelectGroup`.
+A `Select` follows Base UI's composition API. Compose `Select`,
+`SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, and
+`SelectItem` directly. Pass option data to `Select` with Base UI's `items`
+prop when you want `SelectValue` to render item labels automatically.
 
-| Prop           | Type                                      | Default    | Description                                                   |
-| -------------- | ----------------------------------------- | ---------- | ------------------------------------------------------------- |
-| `options`\*    | `Record<T, string \| Option>`             | -          | The available options.                                        |
-| `value`        | `T`                                       | -          | The selected value.                                           |
-| `disabled`     | `boolean`                                 | -          | Whether the select is disabled.                               |
-| `hideCheck`    | `boolean`                                 | -          | Whether the check ✔️ should be hidden.                        |
-| `side`         | `"top" \| "right" \| "bottom" \| "left"`  | `"bottom"` | The preferred side of the anchor to render against when open. |
-| `align`        | `"start" \| "center" \| "end"`            | `"end"`    | The preferred alignment against the anchor.                   |
-| `onChange`     | `(value: T) => void`                      | -          | Handler that is called when an option is selected.            |
-| `renderOption` | `React.FC<{ option?: Option \| string }>` | -          | A custom renderer for `SelectItem`.                           |
-
-### `type` Option
-
-| Prop          | Type              | Description                    |
-| ------------- | ----------------- | ------------------------------ |
-| `label`\*     | `string`          | The option name.               |
-| `description` | `string`          | The description of the option. |
-| `icon`        | `React.ReactNode` | An optional leading icon.      |
+| Prop            | Type                                        | Default | Description                                      |
+| --------------- | ------------------------------------------- | ------- | ------------------------------------------------ |
+| `items`         | `Select.Root.Props["items"]`                | -       | Optional item data used by Base UI value lookup. |
+| `value`         | `Value \| Value[] \| null`                  | -       | The selected value.                              |
+| `defaultValue`  | `Value \| Value[] \| null`                  | -       | The uncontrolled initial value.                  |
+| `disabled`      | `boolean`                                   | -       | Whether the select is disabled.                  |
+| `onValueChange` | `(value: Value \| Value[] \| null) => void` | -       | Handler called when an option is selected.       |
 
 ### SelectGroup
 

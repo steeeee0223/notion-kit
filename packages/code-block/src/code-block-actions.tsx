@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import React from "react";
 
 import { useCopyToClipboard } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
@@ -31,9 +31,9 @@ import { isFormattable } from "./transformers";
 interface CodeAction {
   value: string;
   name: string;
-  icon: ReactNode;
+  icon: React.ReactNode;
   shortcut?: string;
-  action?: ReactNode;
+  action?: React.ReactNode;
   onClick?: () => void | Promise<void>;
   popover?: "language" | "theme";
 }
@@ -43,9 +43,6 @@ export function CodeBlockActions() {
   const { copy } = useCopyToClipboard({
     onSuccess: () => toast.success("Code copied to clipboard"),
   });
-
-  const [openThemeSelect, setOpenThemeSelect] = useState(false);
-  const [openLangSelect, setOpenLangSelect] = useState(false);
 
   const actions: CodeAction[] = [];
 
@@ -121,22 +118,18 @@ export function CodeBlockActions() {
               {(action: CodeAction) => {
                 if (action.popover === "language") {
                   return (
-                    <Popover
-                      key={action.value}
-                      open={openLangSelect}
-                      onOpenChange={setOpenLangSelect}
-                    >
-                      <PopoverTrigger asChild>
-                        <AutocompleteItem
-                          value={action}
-                          icon={action.icon}
-                          label={action.name}
-                          onPointerEnter={() => setOpenLangSelect(true)}
-                          onClick={() => setOpenLangSelect((v) => !v)}
-                        >
-                          <MenuItemSelect />
-                        </AutocompleteItem>
-                      </PopoverTrigger>
+                    <Popover key={action.value}>
+                      <PopoverTrigger
+                        render={
+                          <AutocompleteItem
+                            value={action}
+                            icon={action.icon}
+                            label={action.name}
+                          >
+                            <MenuItemSelect />
+                          </AutocompleteItem>
+                        }
+                      />
                       <PopoverContent side="left" className="w-60">
                         <LangMenu />
                       </PopoverContent>
@@ -146,22 +139,18 @@ export function CodeBlockActions() {
 
                 if (action.popover === "theme") {
                   return (
-                    <Popover
-                      key={action.value}
-                      open={openThemeSelect}
-                      onOpenChange={setOpenThemeSelect}
-                    >
-                      <PopoverTrigger asChild>
-                        <AutocompleteItem
-                          value={action}
-                          icon={action.icon}
-                          label={action.name}
-                          onPointerEnter={() => setOpenThemeSelect(true)}
-                          onClick={() => setOpenThemeSelect((v) => !v)}
-                        >
-                          <MenuItemSelect />
-                        </AutocompleteItem>
-                      </PopoverTrigger>
+                    <Popover key={action.value}>
+                      <PopoverTrigger
+                        render={
+                          <AutocompleteItem
+                            value={action}
+                            icon={action.icon}
+                            label={action.name}
+                          >
+                            <MenuItemSelect />
+                          </AutocompleteItem>
+                        }
+                      />
                       <PopoverContent side="left" className="w-60">
                         <ThemeMenu />
                       </PopoverContent>

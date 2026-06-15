@@ -56,16 +56,18 @@ export function CodeBlockToolbar() {
           )}
           <Popover>
             <TooltipPreset side="top" description="More">
-              <PopoverTrigger asChild>
-                <Button
-                  tabIndex={0}
-                  variant={null}
-                  aria-label="More"
-                  className="size-6 shrink-0 rounded-s-none"
-                >
-                  <Icon.EllipsisSmall className="size-4 fill-secondary" />
-                </Button>
-              </PopoverTrigger>
+              <PopoverTrigger
+                render={
+                  <Button
+                    tabIndex={0}
+                    variant={null}
+                    aria-label="More"
+                    className="size-6 shrink-0 rounded-s-none"
+                  >
+                    <Icon.EllipsisSmall className="size-4 fill-secondary" />
+                  </Button>
+                }
+              />
             </TooltipPreset>
             <PopoverContent className="w-65">
               <CodeBlockActions />

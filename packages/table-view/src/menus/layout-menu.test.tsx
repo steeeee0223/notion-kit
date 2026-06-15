@@ -1,5 +1,7 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent, {
+  PointerEventsCheckLevel,
+} from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -13,6 +15,12 @@ mockResizeObserver();
 
 function renderTableView() {
   return render(<TableView properties={mockProperties} data={mockData} />);
+}
+
+function setupSubmenuUser() {
+  return userEvent.setup({
+    pointerEventsCheck: PointerEventsCheckLevel.Never,
+  });
 }
 
 async function openLayoutMenu(user: ReturnType<typeof userEvent.setup>) {
@@ -97,16 +105,41 @@ describe("LayoutMenu", () => {
     expect(boardButton.ariaSelected).toBe("true");
   });
 
-  it("should show 'Open pages in' row view menu", async () => {
-    const user = userEvent.setup();
+  it("should show 'Open pages in' as a row view submenu", async () => {
+    const user = setupSubmenuUser();
     renderTableView();
 
     await openLayoutMenu(user);
 
-    // Should show row view menu item
-    expect(screen.getByText("Open pages in")).toBeInTheDocument();
-    // Default value should be "Side peek"
-    expect(screen.getByText("Side peek")).toBeInTheDocument();
+    const rowViewTrigger = screen.getByRole("menuitem", {
+      name: /Open pages in/i,
+    });
+    expect(rowViewTrigger).toHaveTextContent("Side peek");
+    expect(
+      screen.queryByRole("menuitemcheckbox", { name: /Side peek/i }),
+    ).not.toBeInTheDocument();
+
+    await user.hover(rowViewTrigger);
+
+    expect(
+      await screen.findByRole("menuitemcheckbox", { name: /Side peek/i }),
+    ).toBeChecked();
+  });
+
+  it("should change row view from the submenu without closing the layout menu", async () => {
+    const user = setupSubmenuUser();
+    renderTableView();
+
+    await openLayoutMenu(user);
+
+    await user.hover(screen.getByRole("menuitem", { name: /Open pages in/i }));
+    const centerPeek = await screen.findByRole("menuitemcheckbox", {
+      name: /Center peek/i,
+    });
+    await user.click(centerPeek);
+
+    expect(screen.getByRole("heading", { name: "Layout" })).toBeInTheDocument();
+    await waitFor(() => expect(centerPeek).toBeChecked());
   });
 
   it("should navigate back to View Settings when clicking back button", async () => {

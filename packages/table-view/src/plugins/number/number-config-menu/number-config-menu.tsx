@@ -1,15 +1,13 @@
-"use client";
-
 import { Icon } from "@notion-kit/icons";
 import {
+  DropdownMenuContent,
   DropdownMenuGroup,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuSub,
-  DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
 
-import { MenuGroupHeader } from "../../../common";
 import type { ConfigMenuProps } from "../../types";
 import type { NumberConfig } from "../types";
 import { DisplayTypeSelect } from "./display-type-select";
@@ -24,7 +22,7 @@ export function NumberConfigMenu({
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger icon={<Icon.Sliders />} label="Edit property" />
-      <DropdownMenuSubContent className="w-75">
+      <DropdownMenuContent sideOffset={-4} className="w-75">
         <DropdownMenuGroup>
           <FormatMenu
             format={config.format}
@@ -37,7 +35,7 @@ export function NumberConfigMenu({
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <MenuGroupHeader title="Show as" />
+          <DropdownMenuLabel title="Show as" />
           {/* buttons for display type */}
           <DisplayTypeSelect
             type={config.showAs}
@@ -60,7 +58,7 @@ export function NumberConfigMenu({
             Changes apply to all views showing this property.
           </div>
         </DropdownMenuGroup>
-      </DropdownMenuSubContent>
+      </DropdownMenuContent>
     </DropdownMenuSub>
   );
 }

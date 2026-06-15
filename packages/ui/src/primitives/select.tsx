@@ -203,81 +203,6 @@ function SelectSeparator({ ...props }: SelectPrimitive.Separator.Props) {
   );
 }
 
-interface Option {
-  label: string;
-  description?: string;
-  icon?: React.ReactNode;
-}
-
-interface SelectPresetProps<T extends string = string>
-  extends Pick<SelectContentProps, "side" | "align"> {
-  className?: string;
-  /**
-   * @prop `options` maps `value` to `Option.value`
-   */
-  options: Record<T, string | Option>;
-  onChange?: (value: T) => void;
-  value?: T;
-  placeholder?: string;
-  disabled?: boolean;
-  hideCheck?: boolean;
-  renderOption?: React.FC<{ option?: Option | string }>;
-}
-
-function SelectPreset<T extends string = string>({
-  className,
-  options,
-  value,
-  placeholder,
-  side = "bottom",
-  align = "end",
-  disabled,
-  hideCheck,
-  onChange,
-  renderOption: OptionValue,
-}: SelectPresetProps<T>) {
-  return (
-    <Select
-      value={value}
-      onValueChange={(nextValue) => {
-        if (nextValue !== null) onChange?.(nextValue);
-      }}
-      disabled={disabled}
-    >
-      <SelectTrigger className={className} onClick={(e) => e.stopPropagation()}>
-        <SelectValue
-          aria-disabled={disabled}
-          placeholder={placeholder}
-          {...(OptionValue && {
-            "aria-label": value,
-            children: (
-              <OptionValue option={value ? options[value] : undefined} />
-            ),
-          })}
-        />
-      </SelectTrigger>
-      <SelectContent side={side} align={align}>
-        <SelectGroup>
-          {Object.entries<string | Option>(options).map(([key, option]) => (
-            <SelectItem
-              key={key}
-              value={key}
-              hideCheck={hideCheck}
-              {...(typeof option === "string"
-                ? { label: option }
-                : {
-                    label: option.label,
-                    icon: option.icon,
-                    desc: option.description,
-                  })}
-            />
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
-  );
-}
-
 export {
   Select,
   SelectGroup,
@@ -290,7 +215,4 @@ export {
   SelectSeparator,
   SelectScrollUpButton,
   SelectScrollDownButton,
-  SelectPreset,
 };
-
-export type { Option, SelectPresetProps };

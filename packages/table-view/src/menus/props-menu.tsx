@@ -1,21 +1,25 @@
-"use client";
-
-import React, { useLayoutEffect, useRef } from "react";
+import React, { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 import { cn } from "@notion-kit/cn";
-import { useFilter } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
+  Autocomplete,
+  AutocompleteCollection,
+  AutocompleteContent,
+  AutocompleteEmpty,
+  AutocompleteGroup,
+  AutocompleteInput,
+  AutocompleteItem,
+  AutocompleteList,
   Button,
-  Input,
-  MenuGroup,
-  MenuItem,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
   MenuItemAction,
   MenuItemSelect,
-  Separator,
 } from "@notion-kit/ui/primitives";
 
 import {
@@ -23,6 +27,7 @@ import {
   MenuGroupHeader,
   MenuHeader,
   SortableDnd,
+  useDndSensors,
 } from "../common";
 import { TableViewMenuPage } from "../features";
 import type { ColumnInfo } from "../lib/types";
@@ -35,8 +40,9 @@ export function PropsMenu() {
   const { table } = useTableViewCtx();
   const { columnOrder } = table.getState();
   const noShownProps = table.countVisibleColumns() === 1;
-  // Search
-  const inputRef = useRef<HTMLInputElement>(null);
+
+  const sensors = useDndSensors();
+  const [search, setSearch] = useState("");
   const { props, deletedCount } = columnOrder.reduce(
     (acc, propId) => {
       const info = table.getColumnInfo(propId);
@@ -50,11 +56,6 @@ export function PropsMenu() {
     { deletedCount: 0, props: [] as ColumnInfo[] },
   );
 
-  const { search, results, updateSearch } = useFilter(
-    props,
-    (prop, v) => prop.name.toLowerCase().includes(v),
-    { default: "empty" },
-  );
   // Menu actions
   const openEditPropMenu = (propId: string) =>
     table.setTableMenuState({
@@ -63,92 +64,96 @@ export function PropsMenu() {
       id: propId,
     });
 
-  useLayoutEffect(() => {
-    inputRef.current?.focus();
-  }, []);
-
   return (
     <>
       <MenuHeader
         title="Properties"
         onBack={() => table.setTableMenuState({ open: true, page: null })}
       />
-      <div className="flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2">
-        <Input
-          ref={inputRef}
+      <Autocomplete
+        items={props}
+        itemToStringValue={(prop) => prop.name}
+        value={search}
+        onValueChange={setSearch}
+        open
+        autoHighlight="always"
+        openOnInputClick
+      >
+        <AutocompleteInput
           clear
-          value={search}
-          onChange={(e) => updateSearch(e.target.value)}
-          onCancel={() => updateSearch("")}
+          onCancel={() => setSearch("")}
+          onKeyDown={(e) => e.stopPropagation()}
           placeholder="Search for a property..."
         />
-      </div>
-      <MenuGroup>
-        <MenuGroupHeader
-          title={search && !results ? "No results" : "Properties"}
-          action={search ? null : noShownProps ? "Show all" : "Hide all"}
-          onActionClick={table.toggleAllColumnsVisible}
-        />
-        <div className="flex flex-col">
-          <SortableDnd
-            items={columnOrder}
-            onDragEnd={table.handleColumnDragEnd}
-          >
-            {search.length === 0
-              ? props.map((prop) => (
-                  <PropertyItem
-                    key={prop.id}
-                    draggable
-                    info={prop}
-                    onClick={() => openEditPropMenu(prop.id)}
-                    onVisibilityChange={() =>
-                      table.setColumnInfo(prop.id, { hidden: !prop.hidden })
-                    }
-                  />
-                ))
-              : (results ?? []).map((prop) => (
-                  <PropertyItem
-                    key={prop.id}
-                    info={prop}
-                    onClick={() => openEditPropMenu(prop.id)}
-                    onVisibilityChange={() =>
-                      table.setColumnInfo(prop.id, { hidden: !prop.hidden })
-                    }
-                  />
-                ))}
-          </SortableDnd>
-        </div>
-      </MenuGroup>
-      <Separator />
-      <MenuGroup>
-        <MenuItem
+        <AutocompleteContent role="presentation" variant="inline">
+          <AutocompleteList>
+            <AutocompleteGroup>
+              <MenuGroupHeader
+                title="Properties"
+                action={search ? null : noShownProps ? "Show all" : "Hide all"}
+                onActionClick={table.toggleAllColumnsVisible}
+              />
+              <div className="flex flex-col">
+                <SortableDnd
+                  items={columnOrder}
+                  sensors={sensors}
+                  onDragEnd={table.handleColumnDragEnd}
+                >
+                  <AutocompleteCollection>
+                    {(prop: ColumnInfo) => (
+                      <PropertyItem
+                        key={prop.id}
+                        draggable={search.length === 0}
+                        info={prop}
+                        onClick={() => openEditPropMenu(prop.id)}
+                        onVisibilityChange={() =>
+                          table.setColumnInfo(prop.id, {
+                            hidden: !prop.hidden,
+                          })
+                        }
+                      />
+                    )}
+                  </AutocompleteCollection>
+                </SortableDnd>
+              </div>
+            </AutocompleteGroup>
+          </AutocompleteList>
+          <AutocompleteEmpty className="px-3 text-start text-muted">
+            No results
+          </AutocompleteEmpty>
+        </AutocompleteContent>
+      </Autocomplete>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        <DropdownMenuItem
           variant="secondary"
+          icon={<Icon.Plus className="size-4" />}
+          label="New property"
+          closeOnClick={false}
           onClick={() =>
             table.setTableMenuState({
               open: true,
               page: TableViewMenuPage.CreateProp,
             })
           }
-          icon={<Icon.Plus className="size-4" />}
-          label="New property"
         />
         {deletedCount > 0 && (
-          <MenuItem
+          <DropdownMenuItem
             variant="secondary"
-            tabIndex={0}
+            icon={<Icon.Trash />}
+            label="Deleted properties"
+            closeOnClick={false}
             onClick={() =>
               table.setTableMenuState({
                 open: true,
                 page: TableViewMenuPage.DeletedProps,
               })
             }
-            icon={<Icon.Trash />}
-            label="Deleted properties"
           >
             <MenuItemSelect>{deletedCount}</MenuItemSelect>
-          </MenuItem>
+          </DropdownMenuItem>
         )}
-        <MenuItem
+        <DropdownMenuItem
           variant="secondary"
           onClick={() =>
             window.open("https://www.notion.com/help/database-properties")
@@ -156,7 +161,7 @@ export function PropsMenu() {
           icon={<Icon.Help className="size-4" />}
           label="Learn about properties"
         />
-      </MenuGroup>
+      </DropdownMenuGroup>
     </>
   );
 }
@@ -194,9 +199,10 @@ function PropertyItem({
   };
 
   return (
-    <MenuItem
+    <AutocompleteItem
       ref={setNodeRef}
-      role="menuitem"
+      label={name}
+      value={info}
       style={style}
       onClick={onClick}
       icon={[
@@ -215,7 +221,6 @@ function PropertyItem({
           {icon ? <IconBlock icon={icon} /> : <DefaultIcon type={type} />}
         </React.Fragment>,
       ]}
-      label={name}
       className="*:data-[slot=menu-item-body]:leading-normal"
     >
       <MenuItemAction className="flex items-center text-muted [&_svg]:fill-current">
@@ -237,6 +242,6 @@ function PropertyItem({
           className="ml-1.5 h-full w-3 animate-bg-out fill-icon"
         />
       </MenuItemAction>
-    </MenuItem>
+    </AutocompleteItem>
   );
 }

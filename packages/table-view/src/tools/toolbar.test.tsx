@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   mockData,
@@ -11,12 +11,24 @@ import { TableView } from "../table-contexts";
 
 mockResizeObserver();
 
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
 function renderToolbar() {
   return render(<TableView properties={mockProperties} data={mockData} />);
 }
 
 describe("Toolbar", () => {
   describe("Sort Button", () => {
+    it("should expose the sort trigger as a menu trigger", () => {
+      renderToolbar();
+
+      const sortButton = screen.getByRole("button", { name: "Sort" });
+
+      expect(sortButton).toHaveAttribute("aria-haspopup", "menu");
+    });
+
     it("should show the sort menu when clicking the sort button", async () => {
       const user = userEvent.setup();
       renderToolbar();
@@ -57,6 +69,14 @@ describe("Toolbar", () => {
   });
 
   describe("Settings Button", () => {
+    it("should expose the settings trigger as a menu trigger", () => {
+      renderToolbar();
+
+      const settingsButton = screen.getByRole("button", { name: "Settings" });
+
+      expect(settingsButton).toHaveAttribute("aria-haspopup", "menu");
+    });
+
     it("should show the table menu when clicking the settings button", async () => {
       const user = userEvent.setup();
       renderToolbar();
@@ -68,6 +88,24 @@ describe("Toolbar", () => {
       await user.click(settingsButton);
 
       // TableViewMenu shows "View Settings" header
+      expect(
+        screen.getByRole("heading", { name: "View Settings" }),
+      ).toBeInTheDocument();
+    });
+
+    it("should only request one open transition for one settings click", async () => {
+      const user = userEvent.setup();
+      const log = vi.spyOn(console, "log").mockImplementation(() => {
+        // noop
+      });
+      renderToolbar();
+
+      await user.click(screen.getByRole("button", { name: "Settings" }));
+
+      const menuSyncs = log.mock.calls.filter(
+        ([message]) => message === "[table.setTableMenuState] table synced",
+      );
+      expect(menuSyncs).toHaveLength(1);
       expect(
         screen.getByRole("heading", { name: "View Settings" }),
       ).toBeInTheDocument();
@@ -118,6 +156,25 @@ describe("Toolbar", () => {
       expect(
         screen.getByRole("heading", { name: "View Settings" }),
       ).toBeInTheDocument();
+    });
+
+    it("should close the settings dropdown when clicking the close button", async () => {
+      const user = userEvent.setup();
+      renderToolbar();
+
+      const settingsButton = screen.getByRole("button", { name: "Settings" });
+      await user.click(settingsButton);
+
+      expect(
+        screen.getByRole("heading", { name: "View Settings" }),
+      ).toBeInTheDocument();
+
+      const closeButton = screen.getByRole("button", { name: "Close" });
+      await user.click(closeButton);
+
+      expect(
+        screen.queryByRole("heading", { name: "View Settings" }),
+      ).not.toBeInTheDocument();
     });
   });
 });

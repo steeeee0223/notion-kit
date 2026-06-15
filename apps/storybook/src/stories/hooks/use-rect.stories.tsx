@@ -5,6 +5,8 @@ import { cn } from "@notion-kit/cn";
 import { useRect } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 
+import { Code } from "@/components/code";
+
 const meta = {
   title: "Hooks/Use Rect",
   parameters: { layout: "centered" },
@@ -34,9 +36,7 @@ export const Default: Story = {
               className="size-8 fill-primary transition-[rotate]"
             />
           </div>
-          <code className="rounded-md bg-input p-2">
-            <pre className="text-xs">{JSON.stringify(rect, null, 2)}</pre>
-          </code>
+          <Code codeObject={rect} />
         </div>
       );
     },
