@@ -111,11 +111,13 @@ export function MembersContent({
               open={openAddTeamMembers}
               onOpenChange={handleAddTeamMembers}
             >
-              <DialogTrigger asChild>
-                <Button variant="blue" size="sm">
-                  {t("add-members")}
-                </Button>
-              </DialogTrigger>
+              <DialogTrigger
+                render={
+                  <Button variant="blue" size="sm">
+                    {t("add-members")}
+                  </Button>
+                }
+              />
               <AddTeamMembers
                 teamspace={teamspace}
                 workspaceMembers={workspaceMembers}

@@ -13,9 +13,7 @@ export default function Demo() {
         <TooltipTrigger asChild>
           <Button size="md">Hover</Button>
         </TooltipTrigger>
-        <TooltipContent>
-          <p>Add to library</p>
-        </TooltipContent>
+        <TooltipContent>Add to library </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );

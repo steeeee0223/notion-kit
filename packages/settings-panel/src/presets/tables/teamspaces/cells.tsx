@@ -179,18 +179,20 @@ export function TeamspaceActionCell({
           {!!role && (
             <>
               <Dialog>
-                <DialogTrigger asChild>
-                  <DropdownMenuItem
-                    variant="error"
-                    icon={<Icon.Bye className="size-4" />}
-                    label={trans.leave}
-                    closeOnClick={false}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                  />
-                </DialogTrigger>
+                <DialogTrigger
+                  render={
+                    <DropdownMenuItem
+                      variant="error"
+                      icon={<Icon.Bye className="size-4" />}
+                      label={trans.leave}
+                      closeOnClick={false}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                    />
+                  }
+                />
                 <LeaveTeamspace name={name} onLeave={onLeave} />
               </Dialog>
               <DropdownMenuItem

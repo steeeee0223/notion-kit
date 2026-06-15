@@ -116,12 +116,14 @@ export function People() {
             title={invite.title}
             description={
               <Dialog>
-                <DialogTrigger asChild>
-                  <TextLinks
-                    i18nKey="people.invite.description"
-                    values={{ guests: guests.length }}
-                  />
-                </DialogTrigger>
+                <DialogTrigger
+                  render={
+                    <TextLinks
+                      i18nKey="people.invite.description"
+                      values={{ guests: guests.length }}
+                    />
+                  }
+                />
                 <AlertModal {...modals["reset-link"]} onTrigger={updateLink} />
               </Dialog>
             }
@@ -246,7 +248,7 @@ export function People() {
             (workspace.plan === Plan.FREE ||
               workspace.plan === Plan.EDUCATION) && (
               <>
-                <section className="max-w-[300px] text-sm">
+                <section className="max-w-75 text-sm">
                   <Icon.Group className="mb-2 h-auto w-8 shrink-0 fill-default/45" />
                   <header className="font-semibold">{upgradeText.title}</header>
                   <p className="mt-1 mb-4 text-secondary">

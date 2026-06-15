@@ -33,15 +33,13 @@ export function LogoutConfirm({
   const logout = () => startTransition(async () => await onConfirm?.());
 
   return (
-    <DialogContent className="w-[324px] p-5" hideClose>
+    <DialogContent className="w-81" hideClose>
       <DialogHeader>
         <DialogIcon>
           <Icon.PersonBadgeExclamationMark className="size-8 fill-muted" />
         </DialogIcon>
         <DialogTitle typography="h2">{title}</DialogTitle>
-        <DialogDescription typography="h2" className="text-muted">
-          {description}
-        </DialogDescription>
+        <DialogDescription>{description}</DialogDescription>
       </DialogHeader>
       <DialogFooter>
         <Button
@@ -55,16 +53,18 @@ export function LogoutConfirm({
           {isPending && <Spinner />}
           {t("logout")}
         </Button>
-        <DialogClose asChild>
-          <Button
-            type="button"
-            size="sm"
-            className="w-full"
-            disabled={isPending}
-          >
-            {t("cancel")}
-          </Button>
-        </DialogClose>
+        <DialogClose
+          render={
+            <Button
+              type="button"
+              size="sm"
+              className="w-full"
+              disabled={isPending}
+            >
+              {t("cancel")}
+            </Button>
+          }
+        />
       </DialogFooter>
     </DialogContent>
   );

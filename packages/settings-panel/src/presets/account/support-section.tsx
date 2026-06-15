@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 
 import { useTranslation } from "@notion-kit/i18n";
@@ -11,9 +9,9 @@ import {
   Switch,
 } from "@notion-kit/ui/primitives";
 
-import { SettingsRule, SettingsSection } from "../../core";
-import { useAccount, useAccountActions } from "../hooks";
-import { DeleteAccount } from "../modals";
+import { SettingsRule, SettingsSection } from "@/core";
+import { useAccount, useAccountActions } from "@/presets/hooks";
+import { DeleteAccount } from "@/presets/modals";
 
 export function SupportSection() {
   /** i18n */
@@ -34,11 +32,13 @@ export function SupportSection() {
         className="**:data-[slot=settings-rule-title]:text-red"
       >
         <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-          <DialogTrigger asChild>
-            <Button variant="hint" className="size-5">
-              <Icon.Chevron side="right" className="size-3 fill-default/35" />
-            </Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={
+              <Button variant="hint" className="size-5">
+                <Icon.Chevron side="right" className="size-3 fill-default/35" />
+              </Button>
+            }
+          />
           <DeleteAccount
             email={account.email}
             onSubmit={async (email) => {

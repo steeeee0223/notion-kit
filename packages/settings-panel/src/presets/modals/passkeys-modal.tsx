@@ -32,15 +32,13 @@ export function PasskeysModal() {
     usePasskeys();
 
   return (
-    <DialogContent className="w-100 p-5">
+    <DialogContent className="w-100">
       <DialogHeader>
         <DialogIcon>
           <Icon.LockShield className="size-8 fill-primary/45" />
         </DialogIcon>
         <DialogTitle>{t("title")}</DialogTitle>
-        <DialogDescription className="text-primary">
-          {t("description")}
-        </DialogDescription>
+        <DialogDescription>{t("description")}</DialogDescription>
         {error && <div className="text-xs text-red">{t("error")}</div>}
       </DialogHeader>
       {passkeys.length > 0 && (
@@ -73,16 +71,18 @@ export function PasskeysModal() {
           )}
           {t("add")}
         </Button>
-        <DialogClose asChild>
-          <Button
-            type="button"
-            size="sm"
-            className="w-full"
-            disabled={isPending}
-          >
-            {t("cancel")}
-          </Button>
-        </DialogClose>
+        <DialogClose
+          render={
+            <Button
+              type="button"
+              size="sm"
+              className="w-full"
+              disabled={isPending}
+            >
+              {t("cancel")}
+            </Button>
+          }
+        />
       </DialogFooter>
     </DialogContent>
   );

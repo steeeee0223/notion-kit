@@ -73,16 +73,18 @@ function PaymentMethodForm({ onConfirm }: PaymentMethodFormProps) {
         />
       </div>
       <div className="flex items-center justify-end gap-2">
-        <DialogClose asChild>
-          <Button
-            type="button"
-            variant="hint"
-            size="sm"
-            className="text-secondary"
-          >
-            {t("cancel")}
-          </Button>
-        </DialogClose>
+        <DialogClose
+          render={
+            <Button
+              type="button"
+              variant="hint"
+              size="sm"
+              className="text-secondary"
+            >
+              {t("cancel")}
+            </Button>
+          }
+        />
         <Button
           type="button"
           variant="blue"

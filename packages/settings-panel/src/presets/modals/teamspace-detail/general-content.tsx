@@ -100,23 +100,25 @@ export function GeneralContent({
         <Title title={t("danger-zone-title")} />
         <Card className="mb-2.5 flex flex-col hover:bg-red/10">
           <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                tabIndex={-1}
-                variant={null}
-                className="h-11 w-full min-w-0 shrink-0 justify-normal gap-3.5 py-2 text-sm/tight text-red hover:bg-transparent"
-              >
-                <Icon.ArrowLineRight className="size-5 fill-current" />
-                <div className="flex flex-col items-start">
-                  <div className="truncate text-sm/5 text-red">
-                    {t("leave")}
+            <DialogTrigger
+              render={
+                <Button
+                  tabIndex={-1}
+                  variant={null}
+                  className="h-11 w-full min-w-0 shrink-0 justify-normal gap-3.5 py-2 text-sm/tight text-red hover:bg-transparent"
+                >
+                  <Icon.ArrowLineRight className="size-5 fill-current" />
+                  <div className="flex flex-col items-start">
+                    <div className="truncate text-sm/5 text-red">
+                      {t("leave")}
+                    </div>
+                    <div className="overflow-hidden text-xs text-ellipsis whitespace-normal text-secondary">
+                      {t("leave-description")}
+                    </div>
                   </div>
-                  <div className="overflow-hidden text-xs text-ellipsis whitespace-normal text-secondary">
-                    {t("leave-description")}
-                  </div>
-                </div>
-              </Button>
-            </DialogTrigger>
+                </Button>
+              }
+            />
             <LeaveTeamspace name={teamspace.name} onLeave={onLeave} />
           </Dialog>
         </Card>

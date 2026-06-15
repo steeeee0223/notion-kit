@@ -31,11 +31,13 @@ export function DangerSection() {
             href="https://www.notion.com/help/create-delete-and-switch-workspaces#delete-workspace"
           >
             <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-              <DialogTrigger asChild>
-                <Button variant="red" size="sm">
-                  {trans.delete}
-                </Button>
-              </DialogTrigger>
+              <DialogTrigger
+                render={
+                  <Button variant="red" size="sm">
+                    {trans.delete}
+                  </Button>
+                }
+              />
               <DeleteWorkspace
                 name={workspace.name}
                 onSubmit={async () => {
@@ -49,11 +51,13 @@ export function DangerSection() {
       ) : (
         <Dialog>
           <Content>
-            <DialogTrigger asChild>
-              <Button variant="red" size="sm">
-                {trans.leave}
-              </Button>
-            </DialogTrigger>
+            <DialogTrigger
+              render={
+                <Button variant="red" size="sm">
+                  {trans.leave}
+                </Button>
+              }
+            />
           </Content>
           <AlertModal
             {...modalsTrans.leave}

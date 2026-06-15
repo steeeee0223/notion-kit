@@ -4,7 +4,7 @@ import { cn } from "@notion-kit/cn";
 
 import { Button } from "./button";
 import * as Icon from "./icons";
-import { contentVariants } from "./variants";
+import { contentVariants, positioner } from "./variants";
 
 function Popover<Payload = unknown>({
   modal = false,
@@ -43,14 +43,11 @@ type PopoverPositionerProps = Pick<
   | "positionMethod"
   | "side"
   | "sideOffset"
-> & {
-  sticky?: PopoverPrimitive.Positioner.Props["sticky"] | "always" | "partial";
-};
+>;
 
 type PopoverContentProps = PopoverPrimitive.Popup.Props &
   PopoverPositionerProps & {
     container?: PopoverPrimitive.Portal.Props["container"];
-    forceMount?: boolean;
   };
 
 function PopoverContent({
@@ -61,16 +58,14 @@ function PopoverContent({
   collisionBoundary,
   collisionPadding,
   container,
-  forceMount,
   positionMethod,
   side,
   sideOffset = 4,
-  sticky,
   finalFocus = false,
   ...props
 }: PopoverContentProps) {
   return (
-    <PopoverPrimitive.Portal container={container} keepMounted={forceMount}>
+    <PopoverPrimitive.Portal container={container}>
       <PopoverPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}
@@ -80,7 +75,7 @@ function PopoverContent({
         positionMethod={positionMethod}
         side={side}
         sideOffset={sideOffset}
-        sticky={typeof sticky === "string" ? true : sticky}
+        className={cn(positioner())}
       >
         <PopoverPrimitive.Popup
           data-slot="popover-content"

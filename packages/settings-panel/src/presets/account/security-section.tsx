@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 
 import { useTranslation } from "@notion-kit/i18n";
@@ -10,9 +8,9 @@ import {
   Switch,
 } from "@notion-kit/ui/primitives";
 
-import { SettingsRule, SettingsSection } from "../../core";
-import { useAccount, useAccountActions } from "../hooks";
-import { EmailSettings, PasskeysModal, PasswordForm } from "../modals";
+import { SettingsRule, SettingsSection } from "@/core";
+import { useAccount, useAccountActions } from "@/presets/hooks";
+import { EmailSettings, PasskeysModal, PasswordForm } from "@/presets/modals";
 
 export function SecuritySection() {
   const [passwordOpen, setPasswordOpen] = useState(false);
@@ -29,9 +27,9 @@ export function SecuritySection() {
     <SettingsSection title={trans.title}>
       <SettingsRule title={trans.email.title} description={account.email}>
         <Dialog>
-          <DialogTrigger asChild>
-            <Button size="sm">{trans.email.button}</Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={<Button size="sm">{trans.email.button}</Button>}
+          />
           <EmailSettings
             email={account.email}
             onSendVerification={() => sendEmailVerification(account.email)}
@@ -70,9 +68,9 @@ export function SecuritySection() {
       </SettingsRule>
       <SettingsRule {...trans.passkeys}>
         <Dialog>
-          <DialogTrigger asChild>
-            <Button size="sm">{trans.passkeys.button}</Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={<Button size="sm">{trans.passkeys.button}</Button>}
+          />
           <PasskeysModal />
         </Dialog>
       </SettingsRule>

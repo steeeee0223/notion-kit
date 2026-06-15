@@ -326,7 +326,7 @@ export function MapMarkerTooltip({
       data-slot="map-marker-tooltip"
       className={cn(
         contentVariants({ variant: "tooltip", openAnimation: true }),
-        tooltipVariants({ size: "sm" }),
+        tooltipVariants(),
         className,
       )}
     >

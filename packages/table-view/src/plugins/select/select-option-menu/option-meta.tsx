@@ -48,10 +48,6 @@ export function OptionMeta({
         <div className="flex min-h-7 w-full items-center select-none">
           <Input
             {...nameField.props}
-            onKeyDown={(e) => {
-              e.stopPropagation();
-              nameField.props.onKeyDown?.(e);
-            }}
             endIcon={
               <TooltipPreset
                 side="top"
@@ -81,10 +77,6 @@ export function OptionMeta({
             className={cn(typography("body"))}
             placeholder="Add a description..."
             {...descField.props}
-            onKeyDown={(e) => {
-              e.stopPropagation();
-              descField.props.onKeyDown?.(e);
-            }}
           />
         </div>
       )}

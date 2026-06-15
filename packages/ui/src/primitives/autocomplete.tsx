@@ -9,7 +9,7 @@ import * as _Icon from "./icons";
 import { Input, type InputProps } from "./input";
 import { MenuGroup, MenuItem, MenuLabel } from "./menu";
 import { Separator } from "./separator";
-import { contentVariants } from "./variants";
+import { contentVariants, positioner } from "./variants";
 
 interface AutocompleteGroupItem<ItemValue> {
   items: readonly ItemValue[];
@@ -171,7 +171,7 @@ function AutocompleteContent({
         collisionPadding={collisionPadding}
         side={side}
         sideOffset={sideOffset}
-        className="z-(--z-menu)"
+        className={cn(positioner())}
       >
         <AutocompletePrimitive.Popup
           data-slot="autocomplete-content"

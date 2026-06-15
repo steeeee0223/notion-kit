@@ -110,11 +110,13 @@ export function ChangePlan({ currentPlan, onConfirm }: ChangePlanProps) {
           {t("continue")}
           {isPending && <Spinner />}
         </Button>
-        <DialogClose asChild>
-          <Button variant="hint" size="sm" className="text-secondary">
-            {t("cancel")}
-          </Button>
-        </DialogClose>
+        <DialogClose
+          render={
+            <Button variant="hint" size="sm" className="text-secondary">
+              {t("cancel")}
+            </Button>
+          }
+        />
       </div>
     </DialogContent>
   );

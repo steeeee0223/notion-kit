@@ -2,15 +2,9 @@
 
 issues recording for current task
 
-1. combobox-multiple-inline.tsx -> current filtering behavior is NOT same as combobox-multiple-floating.tsx
-2. add-members.tsx -> state needs to be refactored to fit better with `base-ui`'s usage (or see combobox-multiple-floating.tsx), also avoid using `useFilter`
-3. menu issues!
-   1. content or portal z-index wrong! (e.g. in sidebar-presets, table-view)
-      - root cause: table-view was mixing Popover, visual-only MenuItem rows, DropdownMenu, Autocomplete, and Select portals in the same menu flow. Nested/competing floating roots each applied their own portal/focus/dismiss semantics, so child content could render outside the active stack or be treated as outside interaction.
-4. [x] select-preset: remove this!
-   1. [x] first migration
-   2. [x] to fix: settings-panel modals
-5. [ ] Some select in dialog may occur z-index issue, since dialog is NOT yet migrated to base-ui
+1. [ ] combobox-multiple-inline.tsx -> current filtering behavior is NOT same as combobox-multiple-floating.tsx
+2. [ ] migrate tooltip!
+3. [ ] update `contentVariants` to new design after migration
 
 ## Table view menus
 

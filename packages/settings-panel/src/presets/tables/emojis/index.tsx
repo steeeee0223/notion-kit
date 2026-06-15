@@ -112,7 +112,8 @@ export function EmojisTable({
   );
 }
 
-interface AddEmojiDialogProps extends React.PropsWithChildren {
+interface AddEmojiDialogProps {
+  children: React.ReactElement;
   onCreate?: (data: EmojiSchema) => Promise<void>;
 }
 
@@ -121,7 +122,7 @@ function AddEmojiDialog({ children, onCreate }: AddEmojiDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger render={children} />
       <EmojiForm
         onSave={async ({ name, file }) => {
           if (file) await onCreate?.({ name, file });

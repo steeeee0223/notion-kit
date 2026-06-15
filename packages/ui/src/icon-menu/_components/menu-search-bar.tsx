@@ -26,6 +26,7 @@ export const MenuSearchBar: React.FC<MenuSearchBarProps> = ({
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             onCancel={() => onSearchChange("")}
+            onKeyDown={(e) => e.stopPropagation()}
             placeholder="Filter..."
           />
         </div>

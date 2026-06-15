@@ -28,7 +28,6 @@ const THIRD_PARTY = [
   "sonner",
   "unsplash-js",
   "usehooks-ts",
-  "vaul",
 ];
 
 export default defineConfig((opts) => ({

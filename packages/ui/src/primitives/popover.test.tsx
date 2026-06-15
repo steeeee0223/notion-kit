@@ -44,20 +44,4 @@ describe("Popover", () => {
 
     expect(screen.queryByText("Closable content")).not.toBeInTheDocument();
   });
-
-  it("keeps Radix-style content compatibility props", () => {
-    render(
-      <Popover defaultOpen>
-        <PopoverTrigger render={<button type="button">Open</button>} />
-        <PopoverContent forceMount sticky="always">
-          Sticky content
-        </PopoverContent>
-      </Popover>,
-    );
-
-    expect(screen.getByText("Sticky content")).toHaveAttribute(
-      "data-slot",
-      "popover-content",
-    );
-  });
 });

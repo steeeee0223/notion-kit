@@ -9,7 +9,7 @@ import { Button } from "./button";
 import * as _Icon from "./icons";
 import { MenuGroup, MenuItem, MenuItemCheck, MenuLabel } from "./menu";
 import { Separator } from "./separator";
-import { contentVariants } from "./variants";
+import { contentVariants, positioner } from "./variants";
 
 type ComboboxAnchorContextValue = React.RefObject<HTMLElement | null> & {
   ref: React.RefCallback<HTMLElement>;
@@ -159,14 +159,14 @@ function ComboboxContent({
         align={align}
         alignOffset={alignOffset}
         anchor={anchor ?? comboboxAnchor}
-        className="z-(--z-menu)"
+        className={cn(positioner())}
       >
         <ComboboxPrimitive.Popup
           data-slot="combobox-content"
           data-variant={variant}
           className={cn(
-            contentVariants({ variant: "default", openAnimation: true }),
-            "group/combobox-content max-h-[min(calc(var(--available-height)-8px),300px)] w-(--anchor-width) min-w-(--anchor-width) overflow-hidden rounded-md bg-modal",
+            contentVariants({ variant: "popover", openAnimation: true }),
+            "group/combobox-content max-h-[min(calc(var(--available-height)-8px),300px)] w-(--anchor-width) min-w-(--anchor-width) overflow-hidden",
             className,
           )}
           {...props}

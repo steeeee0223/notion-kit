@@ -101,11 +101,13 @@ const LogoutCell = ({
   const { t } = useTranslation("settings");
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button size="xs" className="h-7 px-2 text-secondary">
-          {t("tables.sessions.actions.logout")}
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button size="xs" className="h-7 px-2 text-secondary">
+            {t("tables.sessions.actions.logout")}
+          </Button>
+        }
+      />
       <LogoutConfirm
         title={t("tables.sessions.actions.logout-confirm-title", {
           device: row.original.device,

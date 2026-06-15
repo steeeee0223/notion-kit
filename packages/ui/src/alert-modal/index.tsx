@@ -34,10 +34,8 @@ export function AlertModal({
 
   return (
     <DialogContent
-      forceMount
       hideClose
-      className="flex w-[300px] flex-col items-start justify-center gap-2 p-6"
-      onClick={(e) => e.stopPropagation()}
+      className="flex w-75 flex-col items-start justify-center gap-2"
       aria-describedby={undefined}
     >
       <DialogHeader>
@@ -56,11 +54,13 @@ export function AlertModal({
           {primary}
           {loading && <Spinner />}
         </Button>
-        <DialogClose asChild>
-          <Button size="sm" className="w-full">
-            {secondary}
-          </Button>
-        </DialogClose>
+        <DialogClose
+          render={
+            <Button size="sm" className="w-full">
+              {secondary}
+            </Button>
+          }
+        />
       </DialogFooter>
     </DialogContent>
   );

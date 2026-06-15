@@ -37,9 +37,19 @@ export function PermissionSelect({
       }}
       disabled={disabled}
     >
-      <SelectTrigger className="h-fit border border-border pl-0">
+      <SelectTrigger className="h-fit justify-between border border-border pl-0 text-left">
         <SelectValue>
-          {(option) => <TeamspacePermission {...option} />}
+          {(value: Permission) => {
+            const permission = permissionOptions.find(
+              (option) => option.value === value,
+            );
+            return (
+              <TeamspacePermission
+                className="hover:bg-transparent data-highlighted:bg-transparent"
+                {...permission}
+              />
+            );
+          }}
         </SelectValue>
       </SelectTrigger>
       <SelectContent>
