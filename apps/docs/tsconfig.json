@@ -4,9 +4,8 @@
     "module": "esnext",
     "lib": ["ES2022", "dom", "dom.iterable"],
     "jsx": "preserve",
-    "baseUrl": ".",
     "paths": {
-      "fumadocs-mdx:collections/*": [".source/*"],
+      "fumadocs-mdx:collections/*": ["./.source/*"],
       "@/*": ["./src/*"]
     },
     "plugins": [{ "name": "next" }]

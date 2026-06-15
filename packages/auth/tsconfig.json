@@ -3,7 +3,6 @@
   "compilerOptions": {
     "declaration": false,
     "composite": false,
-    "baseUrl": ".",
     "paths": { "@/*": ["./src/*"] }
   },
   "include": ["src", "drizzle.config.ts"],
