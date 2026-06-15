@@ -1,15 +1,9 @@
-"use client";
-
 import * as React from "react";
 import { Tooltip as TooltipPrimitive } from "radix-ui";
 
 import { cn } from "@notion-kit/cn";
 
-import {
-  contentVariants,
-  tooltipVariants,
-  type TooltipVariants,
-} from "./variants";
+import { contentVariants, tooltipVariants } from "./variants";
 
 function TooltipProvider({
   ...props
@@ -34,11 +28,9 @@ function TooltipTrigger({
 
 type TooltipContentProps = React.ComponentProps<
   typeof TooltipPrimitive.Content
-> &
-  TooltipVariants;
+>;
 function TooltipContent({
   className,
-  size,
   sideOffset = 4,
   ...props
 }: TooltipContentProps) {
@@ -49,7 +41,7 @@ function TooltipContent({
         sideOffset={sideOffset}
         className={cn(
           contentVariants({ variant: "tooltip", sideAnimation: true }),
-          tooltipVariants({ size }),
+          tooltipVariants(),
           className,
         )}
         {...props}

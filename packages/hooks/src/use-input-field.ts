@@ -65,6 +65,7 @@ export function useInputField({
         onUpdate?.(value);
       },
       onKeyDown: (e) => {
+        e.stopPropagation();
         if (e.key !== "Enter" || value === initialValue) return;
         if (!error) onUpdate?.(value);
         onKeyDownUpdate?.();

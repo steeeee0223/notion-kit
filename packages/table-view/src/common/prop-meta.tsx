@@ -68,10 +68,6 @@ export function PropMeta({ propId, type }: PropMetaProps) {
             <div className="flex">
               <Input
                 {...nameField.props}
-                onKeyDown={(e) => {
-                  e.stopPropagation();
-                  nameField.props.onKeyDown?.(e);
-                }}
                 endIcon={
                   <TooltipPreset
                     side="top"
@@ -105,10 +101,6 @@ export function PropMeta({ propId, type }: PropMetaProps) {
             className="text-[13px]/[20px]"
             placeholder="Add a description..."
             {...descField.props}
-            onKeyDown={(e) => {
-              e.stopPropagation();
-              descField.props.onKeyDown?.(e);
-            }}
           />
         </div>
       )}

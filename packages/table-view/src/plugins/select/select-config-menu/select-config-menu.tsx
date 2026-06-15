@@ -119,13 +119,7 @@ export function SelectConfigMenu({
           {showInput && (
             <div className="mb-2 flex flex-col gap-2 px-3">
               <div className="flex w-full min-w-0 flex-auto items-center select-none">
-                <Input
-                  {...nameField.props}
-                  onKeyDown={(e) => {
-                    e.stopPropagation();
-                    nameField.props.onKeyDown?.(e);
-                  }}
-                />
+                <Input {...nameField.props} />
               </div>
               {nameField.error && (
                 <div className="text-sm text-red">Option already exists.</div>
