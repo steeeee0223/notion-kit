@@ -30,16 +30,16 @@ catalogs:
     msw: ^2.12.4
     msw-storybook-addon: ^2.0.6
     playwright: ^1.57.0
-    vitest: ^4.0.17
-    "@vitejs/plugin-react": ^4.3.4
-    "@vitest/browser-playwright": ^4.0.17
-    "@vitest/coverage-v8": ^4.0.17
-    "@vitest/ui": ^4.0.17
+    vitest: 4.1.8
+    "@vitejs/plugin-react": 6.0.2
+    "@vitest/browser-playwright": 4.1.8
+    "@vitest/coverage-v8": 4.1.8
+    "@vitest/ui": 4.1.8
   rtl:
-    jsdom: ^25.0.1
-    "@testing-library/jest-dom": ^6.6.3
-    "@testing-library/react": ^16.1.0
-    "@testing-library/user-event": ^14.5.2
+    jsdom: 29.1.1
+    "@testing-library/jest-dom": 6.9.1
+    "@testing-library/react": 16.3.2
+    "@testing-library/user-event": 14.6.1
   turbo:
     turbo: ^2.6.0
     "@turbo/gen": ^2.6.0
