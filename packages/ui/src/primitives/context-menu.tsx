@@ -14,7 +14,7 @@ import {
   MenuLabel,
 } from "./menu";
 import { Separator } from "./separator";
-import { contentVariants, MenuItemVariants } from "./variants";
+import { contentVariants, MenuItemVariants, positioner } from "./variants";
 
 function ContextMenu({ ...props }: ContextMenuPrimitive.Root.Props) {
   return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />;
@@ -189,6 +189,7 @@ function ContextMenuSubContent({
       collisionPadding={collisionPadding}
       side={side}
       sideOffset={sideOffset}
+      className={cn(positioner())}
     >
       <Menu.Popup
         data-slot="context-menu-sub-content"

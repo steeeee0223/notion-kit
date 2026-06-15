@@ -15,7 +15,7 @@ import {
 } from "./menu";
 import { Separator } from "./separator";
 import { Switch } from "./switch";
-import { contentVariants } from "./variants";
+import { contentVariants, positioner } from "./variants";
 
 function DropdownMenu({ ...props }: Menu.Root.Props) {
   return <Menu.Root data-slot="dropdown-menu" {...props} />;
@@ -122,6 +122,7 @@ function DropdownMenuContent({
         collisionPadding={collisionPadding}
         side={side}
         sideOffset={sideOffset}
+        className={cn(positioner())}
       >
         <Menu.Popup
           data-slot="dropdown-menu-content"

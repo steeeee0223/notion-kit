@@ -209,3 +209,5 @@ export const tooltipVariants = cva(
   },
 );
 export type TooltipVariants = VariantProps<typeof tooltipVariants>;
+
+export const positioner = cva("isolate z-(--z-menu) outline-none");

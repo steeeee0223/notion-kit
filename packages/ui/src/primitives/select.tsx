@@ -9,6 +9,7 @@ import { Separator } from "./separator";
 import {
   buttonVariants,
   contentVariants,
+  positioner,
   type MenuItemVariants,
 } from "./variants";
 
@@ -123,6 +124,7 @@ function SelectContent({
         collisionPadding={collisionPadding}
         side={side}
         sideOffset={sideOffset}
+        className={cn(positioner())}
       >
         <SelectPrimitive.Popup
           data-slot="select-content"
