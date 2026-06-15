@@ -65,9 +65,9 @@ export function TransitEntitySearch<T>({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <MenuItem
-          Icon={<Icon.MagnifyingGlass className="size-4" />}
-          Body={label}
-          disabled={disabled}
+          icon={<Icon.MagnifyingGlass className="size-4" />}
+          label={label}
+          data-disabled={disabled}
         />
       </PopoverTrigger>
       <PopoverContent align="start" className="w-[342px] p-0">
@@ -131,7 +131,7 @@ function SearchItem<T>({ item, onSelect }: SearchItemProps<T>) {
     >
       <MenuItem
         className="h-12"
-        Body={
+        label={
           <span
             className="max-w-16 truncate rounded-sm px-1.5 text-xs font-bold text-white"
             style={{ backgroundColor: normalizeBadgeColor(item.color) }}

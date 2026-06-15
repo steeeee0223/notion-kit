@@ -15,8 +15,7 @@ export const env = createEnv({
   },
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
-    STORYBOOK_STRIPE_PUBLISHABLE_KEY:
-      process.env.STORYBOOK_STRIPE_PUBLISHABLE_KEY,
+    STORYBOOK_STRIPE_PUBLISHABLE_KEY: "STRIPE_PUBLISHABLE_KEY",
   },
   skipValidation: !!process.env.CI || process.env.NODE_ENV === "test",
 });

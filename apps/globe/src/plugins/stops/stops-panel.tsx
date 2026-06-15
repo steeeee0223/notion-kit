@@ -157,12 +157,12 @@ export function StopsPanel() {
 
         {recentItems.length > 0 && (
           <>
-            <MenuLabel>Recent Stops</MenuLabel>
+            <MenuLabel title="Recent Stops" />
             {recentItems.map((item) => (
               <MenuItem
                 key={item.key}
-                Icon={<GoogleIcon.PinDrop className="size-4" />}
-                Body={item.title}
+                icon={<GoogleIcon.PinDrop className="size-4" />}
+                label={item.title}
                 desc={item.subtitle}
                 onClick={() => handleStopSelect(item.value)}
               >

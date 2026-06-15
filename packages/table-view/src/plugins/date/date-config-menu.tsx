@@ -16,7 +16,7 @@ export function DateConfigMenu({
 }: ConfigMenuProps<DateConfig>) {
   return (
     <DropdownMenuSub>
-      <DropdownMenuSubTrigger Icon={<Icon.Sliders />} Body="Edit property" />
+      <DropdownMenuSubTrigger icon={<Icon.Sliders />} label="Edit property" />
       <DropdownMenuSubContent className="w-75">
         <DropdownMenuGroup>
           <DateFormatMenu

@@ -1,22 +1,30 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 
 import { useTranslation } from "@notion-kit/i18n";
-import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
+import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Button,
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxCollection,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxValue,
   Form,
   FormControl,
   FormField,
   FormItem,
-  MultiSelect,
   Spinner,
 } from "@notion-kit/ui/primitives";
 
-import { useTeamspaceOptions } from "./use-teamspaces";
+import { useTeamspaceOptions, type TeamspaceOption } from "./use-teamspaces";
 
 const defaultTeamspaceFormSchema = z.object({
   id: z.string(),
@@ -27,6 +35,7 @@ export function DefaultTeamspace() {
   /** i18n */
   const { t } = useTranslation("settings");
   const trans = t("teamspaces.teamspaces.default", { returnObjects: true });
+
   /** form */
   const teamspaceOptions = useTeamspaceOptions();
   const form = useForm<DefaultTeamspaceFormSchema>({
@@ -48,31 +57,65 @@ export function DefaultTeamspace() {
           name="id"
           render={({ field }) => (
             <FormItem className="min-w-0 grow">
-              <FormControl>
-                <MultiSelect
-                  options={teamspaceOptions}
-                  value={teamspaceOptions.filter(
-                    (option) => option.id === field.value,
-                  )}
-                  onChange={(options) => field.onChange(options.at(0)?.id)}
-                  disabled={field.disabled}
-                  maxSelected={1}
-                  hideClearAllButton
-                  emptyIndicator="No results found"
-                  renderOption={({ option }) => (
-                    <>
-                      <div className="mr-2.5 flex items-center justify-center">
-                        <IconBlock
-                          icon={JSON.parse(option.icon as string) as IconData}
-                        />
-                      </div>
-                      <div className="mr-3 min-w-0 flex-auto truncate">
-                        {option.label}
-                      </div>
-                    </>
-                  )}
-                />
-              </FormControl>
+              <FormControl
+                render={
+                  <Combobox<TeamspaceOption, true>
+                    multiple
+                    disabled={field.disabled}
+                    value={teamspaceOptions.filter(
+                      (option) => option.id === field.value,
+                    )}
+                    onValueChange={(options) => {
+                      const last = options.at(-1);
+                      field.onChange(last?.id ?? "");
+                    }}
+                    items={teamspaceOptions}
+                    itemToStringLabel={(option) => option.name}
+                    itemToStringValue={(option) => option.name}
+                    isItemEqualToValue={(item, value) =>
+                      item.name === value.name
+                    }
+                  >
+                    <ComboboxChips
+                      hideClearButton
+                      className="w-full cursor-text py-1 pl-2"
+                    >
+                      <ComboboxValue>
+                        {(selected: TeamspaceOption[]) => (
+                          <>
+                            {selected.map((option) => (
+                              <ComboboxChip
+                                key={option.id}
+                                style={{ backgroundColor: option.color }}
+                              >
+                                {option.name}
+                              </ComboboxChip>
+                            ))}
+                            <ComboboxChipsInput />
+                          </>
+                        )}
+                      </ComboboxValue>
+                    </ComboboxChips>
+                    <ComboboxContent>
+                      <ComboboxEmpty>No results found</ComboboxEmpty>
+                      <ComboboxList>
+                        <ComboboxGroup>
+                          <ComboboxCollection>
+                            {(option: TeamspaceOption) => (
+                              <ComboboxItem
+                                key={option.id}
+                                value={option}
+                                icon={<IconBlock icon={option.icon} />}
+                                label={option.name}
+                              />
+                            )}
+                          </ComboboxCollection>
+                        </ComboboxGroup>
+                      </ComboboxList>
+                    </ComboboxContent>
+                  </Combobox>
+                }
+              />
             </FormItem>
           )}
         />

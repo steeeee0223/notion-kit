@@ -219,30 +219,24 @@ export const Index: Record<
     files: ["registry/src/map-route/map-route.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/map-route")),
   },
-  "multi-select-creatable": {
-    files: ["registry/src/multi-select-creatable/multi-select-creatable.tsx"],
-    component: React.lazy(
-      () => import("@notion-kit/registry/multi-select-creatable"),
-    ),
+  "combobox-basic": {
+    files: ["registry/src/combobox-basic/combobox-basic.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/combobox-basic")),
   },
-  "multi-select-default": {
-    files: ["registry/src/multi-select-default/multi-select-default.tsx"],
-    component: React.lazy(
-      () => import("@notion-kit/registry/multi-select-default"),
-    ),
-  },
-  "multi-select-inline": {
-    files: ["registry/src/multi-select-inline/multi-select-inline.tsx"],
-    component: React.lazy(
-      () => import("@notion-kit/registry/multi-select-inline"),
-    ),
-  },
-  "multi-select-max-selected": {
+  "combobox-multiple-floating": {
     files: [
-      "registry/src/multi-select-max-selected/multi-select-max-selected.tsx",
+      "registry/src/combobox-multiple-floating/combobox-multiple-floating.tsx",
     ],
     component: React.lazy(
-      () => import("@notion-kit/registry/multi-select-max-selected"),
+      () => import("@notion-kit/registry/combobox-multiple-floating"),
+    ),
+  },
+  "combobox-multiple-inline": {
+    files: [
+      "registry/src/combobox-multiple-inline/combobox-multiple-inline.tsx",
+    ],
+    component: React.lazy(
+      () => import("@notion-kit/registry/combobox-multiple-inline"),
     ),
   },
   "navbar-menu": {

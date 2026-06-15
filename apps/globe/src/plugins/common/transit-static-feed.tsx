@@ -76,7 +76,7 @@ export function TransitStaticFeed({
 
   return (
     <MenuGroup>
-      <MenuLabel>Feed</MenuLabel>
+      <MenuLabel title="Feed" />
       {!isStaticFeedSource && (
         <PanelMessage message="Static feeds are available for transport providers only." />
       )}
@@ -110,13 +110,13 @@ export function TransitStaticFeed({
 
       {shouldShowSync && (
         <MenuItem
-          Icon={
+          icon={
             <GoogleIcon.Sync
               className={cn("size-4", isSyncing && "animate-spin")}
             />
           }
-          Body="Sync feed"
-          disabled={!isStaticFeedSource || isSyncing}
+          label="Sync feed"
+          data-disabled={!isStaticFeedSource || isSyncing}
           onClick={onSync}
         />
       )}

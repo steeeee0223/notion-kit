@@ -69,9 +69,9 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
             description="This property's type cannot be changed."
           >
             <MenuItem
-              disabled
-              Icon={<Icon.ArrowSquarePathUpDown />}
-              Body="Type"
+              data-disabled
+              icon={<Icon.ArrowSquarePathUpDown />}
+              label="Type"
             >
               <MenuItemSelect>
                 <div className="flex items-center truncate">
@@ -86,8 +86,8 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
           <>
             <MenuItem
               onClick={openTypesMenu}
-              Icon={<Icon.ArrowSquarePathUpDown />}
-              Body="Type"
+              icon={<Icon.ArrowSquarePathUpDown />}
+              label="Type"
             >
               <MenuItemSelect>
                 <div className="flex truncate">
@@ -99,9 +99,9 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
             </MenuItem>
             <MenuItem
               // TODO
-              disabled
-              Icon={<Icon.PencilLine />}
-              Body={
+              data-disabled
+              icon={<Icon.PencilLine />}
+              label={
                 <div className="flex items-center">
                   AI Autofill
                   <div className="ml-1.5 inline-block w-fit self-center rounded-sm bg-blue/10 px-1 py-0.5 text-[11px]/[1.3] font-medium tracking-normal whitespace-nowrap text-blue">
@@ -121,8 +121,8 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
       <MenuGroup>
         <MenuItem
           onClick={wrapProp}
-          Icon={<Icon.ArrowUTurnDownLeft />}
-          Body="Wrap in view"
+          icon={<Icon.ArrowUTurnDownLeft />}
+          label="Wrap in view"
         >
           <MenuItemAction className="flex items-center">
             <Switch size="sm" checked={info.wrapped} />
@@ -132,19 +132,19 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
           <>
             <MenuItem
               onClick={hideProp}
-              Icon={<Icon.EyeHideInversePadded className="size-6" />}
-              Body="Hide in view"
+              icon={<Icon.EyeHideInversePadded className="size-6" />}
+              label="Hide in view"
             />
             <MenuItem
               onClick={duplicateProp}
-              Icon={<Icon.Duplicate />}
-              Body="Duplicate property"
+              icon={<Icon.Duplicate />}
+              label="Duplicate property"
             />
             <MenuItem
               variant="warning"
               onClick={deleteProp}
-              Icon={<Icon.Trash />}
-              Body="Delete property"
+              icon={<Icon.Trash />}
+              label="Delete property"
             />
           </>
         )}

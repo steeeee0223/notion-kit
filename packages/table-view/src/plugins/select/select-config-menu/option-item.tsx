@@ -58,7 +58,7 @@ export function OptionItem({
           role="menuitem"
           style={style}
           onClick={(e) => e.stopPropagation()}
-          Icon={
+          icon={
             <div
               key="drag-handle"
               className="flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-default/45"
@@ -68,7 +68,7 @@ export function OptionItem({
               <Icon.DragHandle className="size-3" />
             </div>
           }
-          Body={<OptionTag {...option} />}
+          label={<OptionTag {...option} />}
         />
       </PopoverTrigger>
       <PopoverContent

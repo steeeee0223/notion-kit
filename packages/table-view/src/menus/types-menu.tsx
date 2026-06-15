@@ -122,9 +122,9 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
                     className="max-w-[282px] text-xs/[1.4]"
                   >
                     <MenuItem
-                      disabled={id === "title"}
-                      Icon={meta.icon}
-                      Body={meta.name}
+                      aria-disabled={id === "title"}
+                      icon={meta.icon}
+                      label={meta.name}
                       onClick={() => select(id, meta.name)}
                     >
                       {propType === id && <MenuItemCheck />}
@@ -148,8 +148,8 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
                 asChild
               >
                 <MenuItem
-                  Icon={<DefaultIcon type="text" className="fill-menu-icon" />}
-                  Body={search}
+                  icon={<DefaultIcon type="text" className="fill-menu-icon" />}
+                  label={search}
                 />
               </CommandItem>
             </CommandGroup>

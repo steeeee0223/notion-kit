@@ -65,7 +65,7 @@ export function DateTimePicker({
       <Separator />
       <MenuGroup>
         <MenuItemSwitch
-          Body="End date"
+          label="End date"
           checked={data.endDate}
           onCheckedChange={(endDate) =>
             onChange((v) => ({ ...v, end: undefined, endDate }))
@@ -78,7 +78,7 @@ export function DateTimePicker({
           }
         />
         <MenuItemSwitch
-          Body="Include time"
+          label="Include time"
           checked={data.includeTime}
           onCheckedChange={(includeTime) =>
             onChange((v) => ({ ...v, includeTime }))
@@ -96,7 +96,7 @@ export function DateTimePicker({
               currentTz={config.tz}
               onChange={(tz) => onConfigChange?.((v) => ({ ...v, tz }))}
               renderTrigger={({ gmt }) => (
-                <MenuItem Body="Timezone">
+                <MenuItem label="Timezone">
                   <MenuItemSelect>{gmt}</MenuItemSelect>
                 </MenuItem>
               )}
@@ -107,7 +107,7 @@ export function DateTimePicker({
       <Separator />
       <MenuGroup>
         <MenuItem
-          Body="Clear"
+          label="Clear"
           onClick={() =>
             onChange((v) => ({ ...v, start: undefined, end: undefined }))
           }

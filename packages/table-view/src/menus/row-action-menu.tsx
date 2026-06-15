@@ -127,8 +127,8 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
             onUpload={uploadIcon}
           >
             <MenuItem
-              Icon={<Icon.EmojiFace className="size-5" />}
-              Body="Edit icon"
+              icon={<Icon.EmojiFace className="size-5" />}
+              label="Edit icon"
             />
           </IconMenu>
         </CommandGroup>
@@ -141,7 +141,7 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
               value={prop.value}
               onSelect={prop.onSelect}
             >
-              <MenuItem Icon={prop.icon} Body={prop.name}>
+              <MenuItem icon={prop.icon} label={prop.name}>
                 {prop.shortcut && (
                   <MenuItemShortcut>{prop.shortcut}</MenuItemShortcut>
                 )}

@@ -1,6 +1,4 @@
-"use client";
-
-import type { MultiSelectOption } from "@notion-kit/ui/primitives";
+import type { IconData } from "@notion-kit/schemas";
 import { idToColor } from "@notion-kit/utils";
 
 import type { TeamspaceRow } from "../../lib";
@@ -50,14 +48,20 @@ export function useTeamspacesTable() {
   return data;
 }
 
+export interface TeamspaceOption {
+  id: string;
+  name: string;
+  color: string;
+  icon: IconData;
+}
+
 export function useTeamspaceOptions() {
-  const { data } = useTeamspaces<MultiSelectOption[]>((res) =>
+  const { data } = useTeamspaces<TeamspaceOption[]>((res) =>
     Object.values(res).map((t) => ({
-      label: t.name,
-      value: t.name,
       id: t.id,
+      name: t.name,
       color: idToColor(t.id),
-      icon: JSON.stringify(t.icon),
+      icon: t.icon,
     })),
   );
   return data;

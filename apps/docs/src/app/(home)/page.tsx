@@ -55,17 +55,17 @@ export default function HomePage() {
                 variant="blue"
                 size="lg"
                 className="rounded-md px-5"
-                asChild
+                render={<Link href="#" />}
               >
-                <Link href="#">Browse Components</Link>
+                Browse Components
               </Button>
               <Button
                 variant="soft-blue"
                 size="lg"
                 className="rounded-md px-5"
-                asChild
+                render={<Link href="#" />}
               >
-                <Link href="#">Read the docs</Link>
+                Read the docs
               </Button>
             </div>
             <div className="-order-1 mx-auto w-full overflow-hidden lg:order-[unset] lg:col-2 lg:row-span-full">

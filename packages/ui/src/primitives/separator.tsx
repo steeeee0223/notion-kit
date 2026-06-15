@@ -1,25 +1,20 @@
-"use client";
-
-import * as React from "react";
-import { Separator as SeparatorPrimitive } from "radix-ui";
+import { Separator as SeparatorPrimitive } from "@base-ui/react/separator";
 
 import { cn } from "@notion-kit/cn";
 
 function Separator({
   className,
   orientation = "horizontal",
-  decorative = true,
   ...props
-}: React.ComponentProps<typeof SeparatorPrimitive.Root>) {
+}: SeparatorPrimitive.Props) {
   return (
-    <SeparatorPrimitive.Root
+    <SeparatorPrimitive
       data-slot="separator-root"
-      decorative={decorative}
       orientation={orientation}
       className={cn(
-        "shrink-0 bg-default/10",
-        "data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px",
+        "shrink-0 bg-border",
         "data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full",
+        "data-[orientation=vertical]:w-px data-[orientation=vertical]:self-stretch",
         className,
       )}
       {...props}

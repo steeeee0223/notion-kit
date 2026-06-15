@@ -27,9 +27,9 @@ export function BillingDetails() {
         render={({ field }) => (
           <FormItem>
             <FormLabel>{t("name-label")}</FormLabel>
-            <FormControl>
-              <Input placeholder={t("name-placeholder")} {...field} />
-            </FormControl>
+            <FormControl
+              render={<Input placeholder={t("name-placeholder")} {...field} />}
+            />
             <FormMessage />
           </FormItem>
         )}
@@ -40,9 +40,14 @@ export function BillingDetails() {
         render={({ field }) => (
           <FormItem>
             <FormLabel>{t("business-name-label")}</FormLabel>
-            <FormControl>
-              <Input placeholder={t("business-name-placeholder")} {...field} />
-            </FormControl>
+            <FormControl
+              render={
+                <Input
+                  placeholder={t("business-name-placeholder")}
+                  {...field}
+                />
+              }
+            />
             <FormMessage />
           </FormItem>
         )}
@@ -53,9 +58,9 @@ export function BillingDetails() {
         render={({ field }) => (
           <FormItem className="col-span-2">
             <FormLabel>{t("vat-label")}</FormLabel>
-            <FormControl>
-              <Input placeholder={t("vat-placeholder")} {...field} />
-            </FormControl>
+            <FormControl
+              render={<Input placeholder={t("vat-placeholder")} {...field} />}
+            />
             <FormMessage />
           </FormItem>
         )}

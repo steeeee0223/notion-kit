@@ -51,71 +51,69 @@ export function DocItemActions({
     <MenuItemAction className="flex items-center opacity-0 transition-opacity group-hover/doc-item:opacity-100 focus-within:opacity-100">
       <DropdownMenu>
         <TooltipPreset description="Delete, duplicate, and more...">
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="hint"
-              className="size-5"
-              aria-label="More actions"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Icon.Dots className="size-3 fill-current" />
-            </Button>
-          </DropdownMenuTrigger>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="hint"
+                className="size-5"
+                aria-label="More actions"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Icon.Dots className="size-3 fill-current" />
+              </Button>
+            }
+          />
         </TooltipPreset>
-        <DropdownMenuContent
-          className="w-60"
-          align="start"
-          side="right"
-          forceMount
-        >
+        <DropdownMenuContent className="w-60" align="start" side="right">
           <DropdownMenuGroup>
             {isFavorite ? (
               <DropdownMenuItem
-                Icon={<Icon.StarSlash />}
-                Body="Remove from Favorites"
-                onSelect={() => onUpdate({ isFavorite: false })}
+                icon={<Icon.StarSlash />}
+                label="Remove from Favorites"
+                onClick={() => onUpdate({ isFavorite: false })}
               />
             ) : (
               <DropdownMenuItem
-                Icon={<Icon.Star />}
-                Body="Add to Favorites"
-                onSelect={() => onUpdate({ isFavorite: true })}
+                icon={<Icon.Star />}
+                label="Add to Favorites"
+                onClick={() => onUpdate({ isFavorite: true })}
               />
             )}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem
-              Icon={<Icon.Link />}
-              Body="Copy link"
-              onSelect={() => copy(pageLink)}
+              icon={<Icon.Link />}
+              label="Copy link"
+              onClick={() => copy(pageLink)}
             />
+
             {type === "normal" && (
               <DropdownMenuItem
-                Icon={<Icon.Duplicate />}
-                Body="Duplicate"
-                onSelect={onDuplicate}
+                icon={<Icon.Duplicate />}
+                label="Duplicate"
+                onClick={onDuplicate}
               />
             )}
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger Icon={<Icon.Compose />} Body="Rename" />
+              <DropdownMenuSubTrigger icon={<Icon.Compose />} label="Rename" />
               <RenamePopover title={title} icon={icon} onChange={onUpdate} />
             </DropdownMenuSub>
             {type === "normal" && (
               <DropdownMenuItem
                 variant="warning"
-                Icon={<Icon.Trash />}
-                Body="Move to Trash"
-                onSelect={() => onUpdate({ isArchived: true })}
+                icon={<Icon.Trash />}
+                label="Move to Trash"
+                onClick={() => onUpdate({ isArchived: true })}
               />
             )}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem
-              Icon={<Icon.ArrowDiagonalUpRight />}
-              Body="Open in new tab"
-              onSelect={() => window.open(pageLink)}
+              icon={<Icon.ArrowDiagonalUpRight />}
+              label="Open in new tab"
+              onClick={() => window.open(pageLink)}
             />
           </DropdownMenuGroup>
           <DropdownMenuSeparator />

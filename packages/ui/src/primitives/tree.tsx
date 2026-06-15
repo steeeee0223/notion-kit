@@ -1,6 +1,6 @@
-"use client";
-
 import * as React from "react";
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
 import {
   createOnDropHandler,
   dragAndDropFeature,
@@ -16,7 +16,6 @@ import type {
   TreeInstance,
 } from "@headless-tree/core";
 import { AssistiveTreeDescription, useTree } from "@headless-tree/react";
-import { Slot } from "radix-ui";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
@@ -133,17 +132,15 @@ function Tree<T extends TreeItemBase>({
   );
 }
 
-interface TreeItemProps<T> extends React.ComponentProps<"div"> {
+interface TreeItemProps<T> extends useRender.ComponentProps<"div"> {
   item: ItemInstance<T>;
   indent?: number;
-  asChild?: boolean;
 }
 
 function TreeItem<T>({
   item,
   className,
-  asChild,
-  children,
+  render,
   ...props
 }: Omit<TreeItemProps<T>, "indent">) {
   const { indent, tree } = useTreeContext<T>();
@@ -165,43 +162,42 @@ function TreeItem<T>({
     "--tree-padding": `${item.getItemMeta().level * indent}px`,
   } as React.CSSProperties;
 
-  const Comp = asChild ? Slot.Root : "div";
-
   const ctx = React.useMemo<TreeContextValue>(
     () => ({ indent, currentItem: item as ItemInstance<unknown> }),
     [indent, item],
   );
 
-  return (
-    <TreeContext value={ctx}>
-      <Comp
-        role="treeitem"
-        data-slot="tree-item"
-        style={mergedStyle}
-        className={cn(
+  const element = useRender({
+    defaultTagName: "div",
+    render,
+    props: mergeProps(
+      {
+        role: "treeitem",
+        "data-slot": "tree-item",
+        style: mergedStyle,
+        className: cn(
           "z-10 ps-(--tree-padding) outline-hidden select-none focus:z-20",
           "data-disabled:pointer-events-none data-disabled:opacity-40",
           className,
-        )}
-        data-focus={item.isFocused() || false}
-        data-folder={item.isFolder() || false}
-        data-selected={item.isSelected() || false}
-        data-drag-target={item.isDragTarget() || false}
+        ),
+        "data-focus": item.isFocused() || false,
+        "data-folder": item.isFolder() || false,
+        "data-selected": item.isSelected() || false,
+        "data-drag-target": item.isDragTarget() || false,
         /**
          * @note must use this pattern to avoid error
          */
-        data-search-match={
+        "data-search-match":
           typeof item.isMatchingSearch === "function"
             ? item.isMatchingSearch() || false
-            : undefined
-        }
-        aria-expanded={item.isExpanded()}
-        {...otherProps}
-      >
-        {children}
-      </Comp>
-    </TreeContext>
-  );
+            : undefined,
+        "aria-expanded": item.isExpanded(),
+      },
+      otherProps,
+    ),
+  });
+
+  return <TreeContext value={ctx}>{element}</TreeContext>;
 }
 
 interface TreeItemLabelProps<T> extends React.HTMLAttributes<HTMLSpanElement> {

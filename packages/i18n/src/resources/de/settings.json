@@ -832,17 +832,28 @@
       "cancel": "Abbrechen"
     },
     "add-members": {
+      "title": "Mitglieder hinzufügen",
+      "description": "Gib unten E-Mails ein oder füge sie ein, getrennt durch Kommas",
       "headings": {
         "select": "Person auswählen",
         "type": "Tippe weiter, um eine E-Mail einzuladen"
       },
       "search-placeholder": "Nach Namen oder E-Mails suchen",
-      "roles": {
-        "owner": "Workspace-Besitzer",
-        "member": "Mitglied",
-        "guest": "Gast"
+      "role-label": "Rolle auswählen",
+      "role-options": {
+        "owner": {
+          "label": "Workspace-Besitzer",
+          "description": "Kann Workspace-Einstellungen ändern und neue Mitglieder in den Workspace einladen"
+        },
+        "member": {
+          "label": "Mitglied",
+          "description": "Kann Workspace-Einstellungen nicht ändern und keine neuen Mitglieder in den Workspace einladen"
+        }
       },
-      "invite": "Einladen",
+      "message-label": "Nachricht",
+      "message-placeholder": "Füge deiner Einladung eine Notiz hinzu...",
+      "invite": "Einladung senden",
+      "cancel": "Abbrechen",
       "empty": "Gib oben E-Mails ein oder füge sie ein, getrennt durch Kommas.",
       "learn-more": "Erfahre, wie du Personen einlädst und Berechtigungen festlegst",
       "invited-badge": "Eingeladen"

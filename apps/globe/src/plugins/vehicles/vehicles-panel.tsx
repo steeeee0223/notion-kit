@@ -120,7 +120,7 @@ export function VehiclesPanel() {
   return (
     <div className="flex flex-col gap-2">
       <MenuGroup>
-        <MenuLabel>Active Vehicles</MenuLabel>
+        <MenuLabel title="Active Vehicles" />
         {(message ?? autoSyncMessage) && (
           <div className="mx-1 mb-1 flex flex-col gap-2 rounded-md border border-default/15 bg-default/5 p-2 text-xs text-secondary">
             {message && (
@@ -135,24 +135,24 @@ export function VehiclesPanel() {
           </div>
         )}
         <MenuItem
-          Icon={
+          icon={
             <GoogleIcon.Sync
               className={cn("size-3.5", isSyncing && "animate-spin")}
             />
           }
-          Body="Sync vehicles"
-          disabled={!canSyncRealtime || isSyncing}
+          label="Sync vehicles"
+          data-disabled={!canSyncRealtime || isSyncing}
           onClick={handleSyncRealtime}
         />
         {types.map((type) => (
           <MenuItem
             key={type}
-            Body={
+            label={
               <div className={cn(hiddenTypes.has(type) && "text-muted")}>
                 {type}
               </div>
             }
-            Icon={<VehicleIconPreview type={type} />}
+            icon={<VehicleIconPreview type={type} />}
             onClick={() => toggleType(type)}
           >
             <MenuItemAction className="flex items-center gap-1.5">
