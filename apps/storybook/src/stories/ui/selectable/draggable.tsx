@@ -1,25 +1,9 @@
 import { useState } from "react";
-import {
-  closestCenter,
-  DndContext,
-  DragEndEvent,
-  DragOverlay,
-  useDndContext,
-} from "@dnd-kit/core";
-import {
-  restrictToParentElement,
-  restrictToVerticalAxis,
-} from "@dnd-kit/modifiers";
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { createPortal } from "react-dom";
+import { arrayMove } from "@dnd-kit/helpers";
+import { useDragOperation, type DragEndEvent } from "@dnd-kit/react";
 
 import { cn } from "@notion-kit/cn";
+import { Sortable } from "@notion-kit/ui/primitives";
 import {
   Selectable,
   SelectableProps,
@@ -30,73 +14,83 @@ import { items } from "./constants";
 
 interface DraggableItemProps {
   id: string;
+  index: number;
+  label: React.ReactNode;
+}
+
+interface DraggableItemPreviewProps extends React.ComponentProps<"div"> {
+  hidden?: boolean;
   label: React.ReactNode;
   overlay?: boolean;
 }
 
-export function DraggableItem({ id, label, overlay }: DraggableItemProps) {
+function DraggableItemPreview({
+  hidden,
+  label,
+  overlay,
+  className,
+  ref,
+  ...props
+}: DraggableItemPreviewProps) {
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "rounded-lg bg-default/10 p-4 text-sm font-medium",
+        "data-[selected=true]:bg-blue/30 data-[selected=true]:shadow-notion data-[selecting=true]:bg-blue/15",
+        hidden && "opacity-0",
+        overlay && "pointer-events-none bg-red/30 shadow-lg",
+        className,
+      )}
+      {...props}
+    >
+      <div>{label}</div>
+    </div>
+  );
+}
+
+export function DraggableItem({ id, index, label }: DraggableItemProps) {
   const { selectedIds } = useSelectable();
   const isSelected = selectedIds.has(id);
-
-  const {
-    setNodeRef,
-    isDragging,
-    active,
-    attributes,
-    listeners,
-    transform,
-    transition,
-  } = useSortable({
-    id,
-    data: { label, isSelected, selectedIds: Array.from(selectedIds) },
-  });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+  const { source } = useDragOperation();
 
   return (
-    <Selectable.Item
-      key={id}
+    <Sortable.Item
       id={id}
+      index={index}
+      data={{ label, isSelected, selectedIds: Array.from(selectedIds) }}
       render={
-        <div
-          className={cn(
-            "rounded-lg bg-default/10 p-4 text-sm font-medium",
-            "data-[selected=true]:bg-blue/30 data-[selected=true]:shadow-notion data-[selecting=true]:bg-blue/15",
-            (isDragging || (active !== null && isSelected)) && "opacity-0",
-            overlay && "pointer-events-none bg-red/30 shadow-lg",
-          )}
-          ref={setNodeRef}
-          style={overlay ? undefined : style}
-          {...attributes}
-          {...listeners}
-        >
-          <div>{label}</div>
-        </div>
+        <Selectable.Item
+          id={id}
+          render={
+            <DraggableItemPreview
+              label={label}
+              hidden={
+                source !== null &&
+                source !== undefined &&
+                (source.id === id || isSelected)
+              }
+            />
+          }
+        />
       }
     />
   );
 }
 
 export function DraggableOverlay() {
-  const { active } = useDndContext();
+  return (
+    <Sortable.Overlay>
+      {(source) => {
+        const selectedIds = source.data.selectedIds as string[] | undefined;
+        const isSelected = source.data.isSelected as boolean;
+        const activeLabel = source.data.label as React.ReactNode;
+        const showMultiple =
+          isSelected && selectedIds !== undefined && selectedIds.length > 1;
 
-  if (!active) return null;
-
-  const selectedIds = active.data.current?.selectedIds as string[] | undefined;
-  const isSelected = active.data.current?.isSelected as boolean;
-  const activeLabel = active.data.current?.label as string;
-
-  // If the dragged item is selected, show all selected items in overlay
-  const showMultiple = isSelected && selectedIds && selectedIds.length > 1;
-
-  return typeof window !== "undefined"
-    ? createPortal(
-        <DragOverlay dropAnimation={null}>
-          <DraggableItem
-            id={active.id.toString()}
+        return (
+          <DraggableItemPreview
+            overlay
             label={
               <span>
                 {activeLabel}
@@ -107,31 +101,28 @@ export function DraggableOverlay() {
                 )}
               </span>
             }
-            overlay
           />
-        </DragOverlay>,
-        document.body,
-      )
-    : null;
+        );
+      }}
+    </Sortable.Overlay>
+  );
 }
 
 export function SelectWithDraggableItems(props: SelectableProps) {
   const [orderedItems, setOrderedItems] = useState(items.slice(0, 10));
 
   const handleDragEnd = (e: DragEndEvent) => {
-    const { active, over } = e;
-    if (!over || active.id === over.id) return;
+    const { source, target } = e.operation;
+    if (!source || !target || source.id === target.id) return;
 
-    const selectedIdsArray = active.data.current?.selectedIds as
-      | string[]
-      | undefined;
-    const isSelected = active.data.current?.isSelected as boolean;
+    const selectedIdsArray = source.data.selectedIds as string[] | undefined;
+    const isSelected = source.data.isSelected as boolean;
 
     setOrderedItems((v) => {
       // If dragging a selected item with multiple selections, move all selected items
       if (isSelected && selectedIdsArray && selectedIdsArray.length > 1) {
-        const activeIndex = v.findIndex((item) => item.id === active.id);
-        const overIndex = v.findIndex((item) => item.id === over.id);
+        const activeIndex = v.findIndex((item) => item.id === source.id);
+        const overIndex = v.findIndex((item) => item.id === target.id);
 
         // Get all selected items in their current order
         const selectedItems = v.filter((item) =>
@@ -176,8 +167,8 @@ export function SelectWithDraggableItems(props: SelectableProps) {
       }
 
       // Single item drag - original behavior
-      const activeIndex = v.findIndex((item) => item.id === active.id);
-      const overIndex = v.findIndex((item) => item.id === over.id);
+      const activeIndex = v.findIndex((item) => item.id === source.id);
+      const overIndex = v.findIndex((item) => item.id === target.id);
 
       if (activeIndex === -1 || overIndex === -1) return v;
 
@@ -191,23 +182,25 @@ export function SelectWithDraggableItems(props: SelectableProps) {
       className="min-h-[500px] min-w-120 rounded-lg bg-popover p-6 shadow-sm"
     >
       <Selectable.Overlay className="rounded-sm border-2 border-blue bg-blue/10" />
-      <DndContext
-        collisionDetection={closestCenter}
-        modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+      <Sortable.Root
+        items={orderedItems.map((item) => item.id)}
         onDragEnd={handleDragEnd}
       >
         <DraggableOverlay />
-        <Selectable.Group className="flex flex-col gap-4">
-          <SortableContext
-            items={orderedItems}
-            strategy={verticalListSortingStrategy}
-          >
-            {orderedItems.map((item) => (
-              <DraggableItem key={item.id} id={item.id} label={item.label} />
-            ))}
-          </SortableContext>
-        </Selectable.Group>
-      </DndContext>
+        <Sortable.List
+          className="gap-4"
+          render={<Selectable.Group className="flex flex-col gap-4" />}
+        >
+          {orderedItems.map((item, index) => (
+            <DraggableItem
+              key={item.id}
+              id={item.id}
+              index={index}
+              label={item.label}
+            />
+          ))}
+        </Sortable.List>
+      </Sortable.Root>
     </Selectable>
   );
 }

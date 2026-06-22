@@ -9,10 +9,11 @@ import {
   ComboboxLabel,
   ComboboxList,
   ComboboxValue,
+  Sortable,
 } from "@notion-kit/ui/primitives";
 import { COLOR, type Color } from "@notion-kit/utils";
 
-import { OptionTag, SortableDnd } from "../../../common";
+import { OptionTag } from "../../../common";
 import { OptionItem } from "./option-item";
 import { SelectMenuApi } from "./use-select-menu";
 
@@ -123,23 +124,32 @@ export function SelectMenu({ menu }: SelectMenuProps) {
                 </ComboboxCreatableItem>
               ) : (
                 <div className="flex flex-col">
-                  <SortableDnd items={group.items} onDragEnd={reorderOptions}>
-                    {group.items.map((name) => {
-                      const option = config.options.items[name];
-                      if (!option) return;
-                      return (
-                        <OptionItem
-                          key={option.name}
-                          option={option}
-                          draggable={search === ""}
-                          onSelect={selectTag}
-                          onUpdate={(data) => updateOption(name, data)}
-                          onDelete={() => deleteOption(name)}
-                          validateName={validateOptionName}
-                        />
-                      );
-                    })}
-                  </SortableDnd>
+                  <Sortable.Root
+                    items={group.items}
+                    disabled={search !== ""}
+                    onItemsChange={(orderedIds) =>
+                      reorderOptions(orderedIds.map(String))
+                    }
+                  >
+                    <Sortable.List>
+                      {group.items.map((name, index) => {
+                        const option = config.options.items[name];
+                        if (!option) return;
+                        return (
+                          <OptionItem
+                            key={option.name}
+                            option={option}
+                            index={index}
+                            draggable={search === ""}
+                            onSelect={selectTag}
+                            onUpdate={(data) => updateOption(name, data)}
+                            onDelete={() => deleteOption(name)}
+                            validateName={validateOptionName}
+                          />
+                        );
+                      })}
+                    </Sortable.List>
+                  </Sortable.Root>
                 </div>
               )}
             </ComboboxGroup>

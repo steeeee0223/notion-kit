@@ -1,13 +1,4 @@
 import React from "react";
-import { closestCenter, DndContext } from "@dnd-kit/core";
-import {
-  restrictToHorizontalAxis,
-  restrictToParentElement,
-} from "@dnd-kit/modifiers";
-import {
-  horizontalListSortingStrategy,
-  SortableContext,
-} from "@dnd-kit/sortable";
 import { flexRender } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
@@ -21,9 +12,9 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Sortable,
 } from "@notion-kit/ui/primitives";
 
-import { useDndSensors } from "../common";
 import { TableViewMenuPage } from "../features";
 import { PropsMenu, TypesMenu } from "../menus";
 import { useTableViewCtx } from "../table-contexts";
@@ -31,19 +22,20 @@ import { TableHeaderActionCell } from "./table-header-action-cell";
 
 export const DndTableHeader = React.memo(function DndTableHeader() {
   const { table } = useTableViewCtx();
-  const sensors = useDndSensors();
+  const { columnOrder } = table.getState();
 
   return (
-    <DndContext
-      collisionDetection={closestCenter}
-      modifiers={[restrictToHorizontalAxis, restrictToParentElement]}
-      onDragEnd={table.handleColumnDragEnd}
-      sensors={sensors}
+    <Sortable.Root
+      items={columnOrder}
+      orientation="horizontal"
+      onItemsChange={(orderedIds) =>
+        table.handleColumnOrderChange(orderedIds.map(String))
+      }
     >
       <div className="relative">
         <TableHeaderRow />
       </div>
-    </DndContext>
+    </Sortable.Root>
   );
 });
 
@@ -51,7 +43,7 @@ function TableHeaderRow() {
   const { table } = useTableViewCtx();
   const isMobile = useIsMobile();
 
-  const { columnOrder, tableGlobal } = table.getState();
+  const { tableGlobal } = table.getState();
   const headers = table.getCenterLeafHeaders();
   const leftPinnedHeaders = table.getLeftLeafHeaders();
   const isLeftPinned = leftPinnedHeaders.length > 0;
@@ -83,30 +75,17 @@ function TableHeaderRow() {
           </div>
         </div>
       </div>
-      <div className={cn("m-0 inline-flex", isLeftPinned && "flex")}>
-        <SortableContext
-          items={columnOrder}
-          strategy={horizontalListSortingStrategy}
-        >
-          {/* Left pinned Columns */}
-          {isLeftPinned && (
-            <div
-              id="draggable-ghost-section-left"
-              className="sticky left-8 z-(--z-col) flex bg-main shadow-header-sticky"
-            >
-              {leftPinnedHeaders.map((header) => (
-                <React.Fragment key={header.id}>
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
-          )}
-          {/* Center unpinned Columns */}
-          <div id="draggable-ghost-section-center" className="flex">
-            {headers.map((header) => (
+      <Sortable.List
+        orientation="horizontal"
+        className={cn("m-0 inline-flex", isLeftPinned && "flex")}
+      >
+        {/* Left pinned Columns */}
+        {isLeftPinned && (
+          <div
+            id="draggable-ghost-section-left"
+            className="sticky left-8 z-(--z-col) flex bg-main shadow-header-sticky"
+          >
+            {leftPinnedHeaders.map((header) => (
               <React.Fragment key={header.id}>
                 {flexRender(
                   header.column.columnDef.header,
@@ -115,8 +94,16 @@ function TableHeaderRow() {
               </React.Fragment>
             ))}
           </div>
-        </SortableContext>
-      </div>
+        )}
+        {/* Center unpinned Columns */}
+        <div id="draggable-ghost-section-center" className="flex">
+          {headers.map((header) => (
+            <React.Fragment key={header.id}>
+              {flexRender(header.column.columnDef.header, header.getContext())}
+            </React.Fragment>
+          ))}
+        </div>
+      </Sortable.List>
       {!tableGlobal.locked && (
         <Popover>
           <PopoverTrigger

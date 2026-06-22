@@ -12,9 +12,9 @@ import {
   DropdownMenuSubTrigger,
   Input,
   MenuItemAction,
+  Sortable,
 } from "@notion-kit/ui/primitives";
 
-import { SortableDnd } from "../../../common";
 import type { ConfigMenuProps } from "../../types";
 import type { SelectConfig, SelectSort } from "../types";
 import { OptionItem } from "./option-item";
@@ -127,24 +127,29 @@ export function SelectConfigMenu({
             </div>
           )}
           <div className="flex flex-col">
-            <SortableDnd
+            <Sortable.Root
               items={config.options.names}
-              onDragEnd={reorderOptions}
+              onItemsChange={(orderedIds) =>
+                reorderOptions(orderedIds.map(String))
+              }
             >
-              {config.options.names.map((name) => {
-                const option = config.options.items[name];
-                if (!option) return;
-                return (
-                  <OptionItem
-                    key={option.name}
-                    option={option}
-                    onUpdate={(data) => updateOption(name, data)}
-                    onDelete={() => deleteOption(name)}
-                    validateName={validateOptionName}
-                  />
-                );
-              })}
-            </SortableDnd>
+              <Sortable.List>
+                {config.options.names.map((name, index) => {
+                  const option = config.options.items[name];
+                  if (!option) return;
+                  return (
+                    <OptionItem
+                      key={option.name}
+                      option={option}
+                      index={index}
+                      onUpdate={(data) => updateOption(name, data)}
+                      onDelete={() => deleteOption(name)}
+                      validateName={validateOptionName}
+                    />
+                  );
+                })}
+              </Sortable.List>
+            </Sortable.Root>
           </div>
         </DropdownMenuGroup>
       </DropdownMenuContent>

@@ -1,7 +1,4 @@
 import { useState } from "react";
-import { type DragEndEvent } from "@dnd-kit/core";
-import { arrayMove, useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import type { ColumnSort } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
@@ -28,9 +25,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Sortable,
 } from "@notion-kit/ui/primitives";
 
-import { DefaultIcon, SortableDnd } from "../common";
+import { DefaultIcon } from "../common";
 import { useTableViewCtx } from "../table-contexts";
 
 export function SortMenu() {
@@ -39,25 +37,29 @@ export function SortMenu() {
   const sorting = table.getState().sorting;
   const [addingSort, setAddingSort] = useState(false);
 
-  const reorderRules = (e: DragEndEvent) => {
-    // reorder after drag & drop
-    const { active, over } = e;
-    if (!over || active.id === over.id) return;
+  const reorderRules = (orderedIds: string[]) => {
     table.setSorting((prev) => {
-      const oldIndex = prev.findIndex((s) => s.id === active.id);
-      const newIndex = prev.findIndex((s) => s.id === over.id);
-      return arrayMove(prev, oldIndex, newIndex); //this is just a splice util
+      const byId = new Map(prev.map((rule) => [rule.id, rule]));
+      return orderedIds.flatMap((id) => {
+        const rule = byId.get(id);
+        return rule ? [rule] : [];
+      });
     });
   };
 
   return (
     <>
       <DropdownMenuGroup>
-        <SortableDnd items={sorting.map((s) => s.id)} onDragEnd={reorderRules}>
-          {sorting.map((prop) => (
-            <SortRule key={prop.id} {...prop} />
-          ))}
-        </SortableDnd>
+        <Sortable.Root
+          items={sorting.map((rule) => rule.id)}
+          onItemsChange={(orderedIds) => reorderRules(orderedIds.map(String))}
+        >
+          <Sortable.List>
+            {sorting.map((prop, index) => (
+              <SortRule key={prop.id} {...prop} index={index} />
+            ))}
+          </Sortable.List>
+        </Sortable.Root>
       </DropdownMenuGroup>
       <DropdownMenuGroup>
         <Popover open={addingSort} onOpenChange={setAddingSort}>
@@ -91,9 +93,10 @@ export function SortMenu() {
 interface SortRuleProps {
   id: string;
   desc: boolean;
+  index: number;
 }
 
-function SortRule({ id: currentId, desc }: SortRuleProps) {
+function SortRule({ id: currentId, desc, index }: SortRuleProps) {
   const { table } = useTableViewCtx();
 
   const current = table.getColumnInfo(currentId);
@@ -111,93 +114,84 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
     }
   };
 
-  /** DND */
-  const {
-    attributes,
-    isDragging,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: currentId });
-  const style: React.CSSProperties = {
-    opacity: isDragging ? 0.8 : 1,
-    zIndex: isDragging ? 10 : 0,
-    transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
-    transition, // Warning: it is somehow laggy
-  };
-
   return (
-    <DropdownMenuItem
-      ref={setNodeRef}
-      closeOnClick={false}
-      className="h-9"
-      style={style}
-      icon={
-        <div key="drag-handle" {...attributes} {...listeners}>
-          <Icon.DragHandle className="size-3 fill-icon!" />
-        </div>
-      }
-      label={
-        <div className="grid h-8 w-full grid-cols-2 items-center gap-1.5">
-          <Select
-            value={currentId}
-            onValueChange={(id) => {
-              if (id !== null) updateRule({ id, desc });
-            }}
-          >
-            <SelectTrigger className="my-0 w-full max-w-45 border border-border">
-              <SelectValue aria-label={current.name}>
-                <div className="flex items-center gap-2 truncate">
-                  {current.icon ? (
-                    <IconBlock icon={current.icon} />
-                  ) : (
-                    <DefaultIcon type={current.type} />
-                  )}
-                  {current.name}
-                </div>
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {properties.map(({ id, name, type, icon }) => (
-                  <SelectItem
-                    key={id}
-                    value={id}
-                    label={name}
-                    icon={
-                      icon ? (
-                        <IconBlock icon={icon} />
+    <Sortable.Item
+      id={currentId}
+      index={index}
+      render={
+        <DropdownMenuItem
+          closeOnClick={false}
+          className="h-9"
+          icon={
+            <Sortable.Handle
+              aria-label={`Move ${current.name}`}
+              render={<div key="drag-handle" />}
+            >
+              <Icon.DragHandle className="size-3 fill-icon!" />
+            </Sortable.Handle>
+          }
+          label={
+            <div className="grid h-8 w-full grid-cols-2 items-center gap-1.5">
+              <Select
+                value={currentId}
+                onValueChange={(id) => {
+                  if (id !== null) updateRule({ id, desc });
+                }}
+              >
+                <SelectTrigger className="my-0 w-full max-w-45 border border-border">
+                  <SelectValue aria-label={current.name}>
+                    <div className="flex items-center gap-2 truncate">
+                      {current.icon ? (
+                        <IconBlock icon={current.icon} />
                       ) : (
-                        <DefaultIcon type={type} />
-                      )
-                    }
-                  />
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <Select
-            value={desc ? "desc" : "asc"}
-            onValueChange={(value) =>
-              updateRule({ id: currentId, desc: value === "desc" })
-            }
-          >
-            <SelectTrigger className="my-0 w-full max-w-45 border border-border">
-              <SelectValue aria-label={desc ? "desc" : "asc"}>
-                <span className="truncate">
-                  {desc ? "Descending" : "Ascending"}
-                </span>
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="asc" label="Ascending" />
-                <SelectItem value="desc" label="Descending" />
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
+                        <DefaultIcon type={current.type} />
+                      )}
+                      {current.name}
+                    </div>
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {properties.map(({ id, name, type, icon }) => (
+                      <SelectItem
+                        key={id}
+                        value={id}
+                        label={name}
+                        icon={
+                          icon ? (
+                            <IconBlock icon={icon} />
+                          ) : (
+                            <DefaultIcon type={type} />
+                          )
+                        }
+                      />
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <Select
+                value={desc ? "desc" : "asc"}
+                onValueChange={(value) =>
+                  updateRule({ id: currentId, desc: value === "desc" })
+                }
+              >
+                <SelectTrigger className="my-0 w-full max-w-45 border border-border">
+                  <SelectValue aria-label={desc ? "desc" : "asc"}>
+                    <span className="truncate">
+                      {desc ? "Descending" : "Ascending"}
+                    </span>
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="asc" label="Ascending" />
+                    <SelectItem value="desc" label="Descending" />
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          }
+        />
       }
     >
       <MenuItemAction className="flex items-center">
@@ -205,7 +199,7 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
           <Icon.Close className="fill-current" />
         </Button>
       </MenuItemAction>
-    </DropdownMenuItem>
+    </Sortable.Item>
   );
 }
 

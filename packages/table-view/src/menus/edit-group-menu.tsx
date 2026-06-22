@@ -1,6 +1,4 @@
 import React from "react";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import { flexRender } from "@tanstack/react-table";
 
 import { useIsClient } from "@notion-kit/hooks";
@@ -14,9 +12,10 @@ import {
   DropdownMenuSeparator,
   MenuItemAction,
   MenuItemSelect,
+  Sortable,
 } from "@notion-kit/ui/primitives";
 
-import { MenuHeader, SortableDnd } from "../common";
+import { MenuHeader } from "../common";
 import { TableViewMenuPage } from "../features";
 import { useTableViewCtx } from "../table-contexts";
 
@@ -71,24 +70,29 @@ export function EditGroupMenu() {
           </div>
         </DropdownMenuLabel>
         <div className="flex flex-col">
-          <SortableDnd
+          <Sortable.Root
             items={groupOrder}
-            onDragEnd={table.handleGroupedRowDragEnd}
+            onItemsChange={(orderedIds) =>
+              table.handleGroupedRowOrderChange(orderedIds.map(String))
+            }
           >
-            {groupOrder.map((groupId) => {
-              const renderer = table.getGroupingValueRenderer(groupId);
-              return (
-                <GroupItem
-                  key={groupId}
-                  id={groupId}
-                  visible={groupVisibility[groupId] ?? true}
-                  onVisibilityChange={() => table.toggleGroupVisible(groupId)}
-                >
-                  {flexRender(renderer, {})}
-                </GroupItem>
-              );
-            })}
-          </SortableDnd>
+            <Sortable.List>
+              {groupOrder.map((groupId, index) => {
+                const renderer = table.getGroupingValueRenderer(groupId);
+                return (
+                  <GroupItem
+                    key={groupId}
+                    id={groupId}
+                    index={index}
+                    visible={groupVisibility[groupId] ?? true}
+                    onVisibilityChange={() => table.toggleGroupVisible(groupId)}
+                  >
+                    {flexRender(renderer, {})}
+                  </GroupItem>
+                );
+              })}
+            </Sortable.List>
+          </Sortable.Root>
         </div>
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
@@ -118,49 +122,38 @@ export function EditGroupMenu() {
 
 interface GroupItemProps {
   id: string;
+  index: number;
   visible: boolean;
   onVisibilityChange: () => void;
 }
 
 function GroupItem({
   id,
+  index,
   visible,
   children,
   onVisibilityChange,
 }: React.PropsWithChildren<GroupItemProps>) {
-  /** DND */
-  const {
-    attributes,
-    isDragging,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id });
-
-  const style: React.CSSProperties = {
-    opacity: isDragging ? 0.8 : 1,
-    zIndex: isDragging ? 10 : 0,
-    transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
-    transition, // Warning: it is somehow laggy
-  };
-
   return (
-    <DropdownMenuItem
-      ref={setNodeRef}
-      closeOnClick={false}
-      style={style}
-      icon={
-        <div
-          key="drag-handle"
-          className="mr-2 flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center fill-icon!"
-          {...attributes}
-          {...listeners}
-        >
-          <Icon.DragHandle className="size-3" />
-        </div>
+    <Sortable.Item
+      id={id}
+      index={index}
+      render={
+        <DropdownMenuItem
+          closeOnClick={false}
+          icon={
+            <Sortable.Handle
+              aria-label={`Move ${id}`}
+              render={
+                <div className="mr-2 flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center fill-icon!" />
+              }
+            >
+              <Icon.DragHandle className="size-3" />
+            </Sortable.Handle>
+          }
+          label={children}
+        />
       }
-      label={children}
     >
       <MenuItemAction className="flex items-center text-muted [&_svg]:fill-current">
         <Button
@@ -176,6 +169,6 @@ function GroupItem({
           {visible ? <Icon.Eye /> : <Icon.EyeHide />}
         </Button>
       </MenuItemAction>
-    </DropdownMenuItem>
+    </Sortable.Item>
   );
 }

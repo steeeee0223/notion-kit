@@ -32,6 +32,12 @@ describe("PropsMenu", () => {
     expect(
       within(menu).getByPlaceholderText("Search for a property..."),
     ).toBeInTheDocument();
+    expect(
+      document.querySelector("[data-slot='sortable-list']"),
+    ).toBeInTheDocument();
+    expect(
+      document.querySelector("[data-slot='sortable-handle']"),
+    ).toBeInTheDocument();
   });
 
   it("should display all properties in the menu", async () => {

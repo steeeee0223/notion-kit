@@ -1,42 +1,37 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import type { DragEndEvent } from "@dnd-kit/core";
 
 import { Icon } from "@notion-kit/icons";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
-import { Button, Dialog } from "@notion-kit/ui/primitives";
+import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
-import { SortableDnd, useDndSensors } from "../common";
 import { TableGroupedRow } from "../table-body";
 import { useTableViewCtx } from "../table-contexts";
 import { ListRow } from "./list-row";
 
 export function ListViewContent() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [pendingDragEvent, setPendingDragEvent] = useState<DragEndEvent | null>(
-    null,
-  );
+  const [pendingOrder, setPendingOrder] = useState<string[] | null>(null);
   const { table } = useTableViewCtx();
-  const sensors = useDndSensors();
 
   const rows = table.getRowModel().rows;
 
-  const handleRowDragEnd = useCallback(
-    (e: DragEndEvent) => {
+  const handleRowOrderChange = useCallback(
+    (ids: string[]) => {
       const isSorted = table.getState().sorting.length > 0;
-      if (!isSorted) return table.handleRowDragEnd(e);
-      setPendingDragEvent(e);
+      if (!isSorted) return table.handleRowOrderChange(ids);
+      setPendingOrder(ids);
       setDialogOpen(true);
     },
     [table],
   );
 
   const handleConfirmRemoveSorting = () => {
-    if (pendingDragEvent) {
+    if (pendingOrder) {
       table.resetSorting();
-      table.handleRowDragEnd(pendingDragEvent);
-      setPendingDragEvent(null);
+      table.handleRowOrderChange(pendingOrder);
+      setPendingOrder(null);
     }
     setDialogOpen(false);
   };
@@ -48,19 +43,22 @@ export function ListViewContent() {
         className="flex flex-col py-1"
       >
         <div className="relative flex flex-col">
-          <SortableDnd
+          <Sortable.Root
             items={rows.map((row) => row.id)}
-            sensors={sensors}
-            onDragEnd={handleRowDragEnd}
+            onItemsChange={(orderedIds) =>
+              handleRowOrderChange(orderedIds.map(String))
+            }
           >
-            {rows.map((row) =>
-              row.getIsGrouped() ? (
-                <TableGroupedRow key={row.id} row={row} />
-              ) : (
-                <ListRow key={row.id} row={row} />
-              ),
-            )}
-          </SortableDnd>
+            <Sortable.List>
+              {rows.map((row, index) =>
+                row.getIsGrouped() ? (
+                  <TableGroupedRow key={row.id} row={row} />
+                ) : (
+                  <ListRow key={row.id} row={row} index={index} />
+                ),
+              )}
+            </Sortable.List>
+          </Sortable.Root>
         </div>
         <Button
           tabIndex={0}

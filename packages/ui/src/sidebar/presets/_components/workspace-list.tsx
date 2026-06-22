@@ -1,22 +1,4 @@
 import React, { useMemo, useState } from "react";
-import {
-  closestCenter,
-  DndContext,
-  DragEndEvent,
-  PointerSensor,
-  useSensor,
-} from "@dnd-kit/core";
-import {
-  restrictToParentElement,
-  restrictToVerticalAxis,
-} from "@dnd-kit/modifiers";
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 
 import { Icon } from "@notion-kit/icons";
 import { Role, User, Workspace } from "@notion-kit/schemas";
@@ -27,6 +9,7 @@ import {
   Button,
   DropdownMenuCheckboxItem,
   MenuGroup,
+  Sortable,
   TooltipDescription,
   TooltipPreset,
   TooltipProvider,
@@ -52,21 +35,7 @@ export const WorkspaceList: React.FC<WorkspaceListProps> = ({
   onCreateWorkspace,
   onLogout,
 }) => {
-  const sensor = useSensor(PointerSensor, {
-    activationConstraint: { distance: 5 },
-  });
-
   const [order, setOrder] = useState(workspaces.map((w) => w.id));
-  const onDragEnd = (e: DragEndEvent) => {
-    // reorder columns after drag & drop
-    const { active, over } = e;
-    if (!over || active.id === over.id) return;
-    setOrder((prev) => {
-      const oldIndex = prev.indexOf(active.id as string);
-      const newIndex = prev.indexOf(over.id as string);
-      return arrayMove(prev, oldIndex, newIndex); //this is just a splice util
-    });
-  };
 
   const workspaceList = useMemo(() => {
     const map = workspaces.reduce<Record<string, Workspace>>(
@@ -85,65 +54,45 @@ export const WorkspaceList: React.FC<WorkspaceListProps> = ({
           onLogout={onLogout}
         />
       </div>
-      <MenuGroup>
-        <DndContext
-          collisionDetection={closestCenter}
-          modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-          onDragEnd={onDragEnd}
-          sensors={[sensor]}
-        >
-          <SortableContext items={order} strategy={verticalListSortingStrategy}>
-            {workspaceList.map((workspace) => (
-              <WorkspaceItem
-                key={workspace.id}
-                workspace={workspace}
-                activeWorkspace={activeWorkspace}
-                onSelect={onSelect}
-              />
-            ))}
-          </SortableContext>
-        </DndContext>
-      </MenuGroup>
+      <Sortable.Root
+        items={order}
+        onItemsChange={(orderedIds) => setOrder(orderedIds.map(String))}
+      >
+        <Sortable.List render={<MenuGroup />}>
+          {workspaceList.map((workspace, index) => (
+            <WorkspaceItem
+              key={workspace.id}
+              workspace={workspace}
+              index={index}
+              activeWorkspace={activeWorkspace}
+              onSelect={onSelect}
+            />
+          ))}
+        </Sortable.List>
+      </Sortable.Root>
     </TooltipProvider>
   );
 };
 
 interface WorkspaceItemProps {
+  index: number;
   workspace: Workspace;
   activeWorkspace?: string;
   onSelect?: (id: string) => void;
 }
 
 const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
+  index,
   workspace,
   activeWorkspace,
   onSelect,
 }) => {
   const { id, name, icon, plan, memberCount, role } = workspace;
-  /** DND */
-  const {
-    attributes,
-    isDragging,
-    listeners,
-    setNodeRef,
-    setActivatorNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id });
-
-  const style: React.CSSProperties = {
-    opacity: isDragging ? 0.8 : 1,
-    zIndex: isDragging ? 10 : 0,
-    transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
-    transition, // Warning: it is somehow laggy
-  };
-
   return (
-    <div
-      ref={setNodeRef}
-      {...attributes}
-      style={style}
-      className="flex cursor-grab flex-col"
+    <Sortable.Item
+      id={id}
+      index={index}
+      render={<div className="flex cursor-grab flex-col" />}
     >
       <TooltipPreset
         side="right"
@@ -160,19 +109,19 @@ const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
         disabled={role === Role.GUEST}
       >
         <DropdownMenuCheckboxItem
-          ref={setActivatorNodeRef}
           role="menuitem"
           tabIndex={-1}
           id={id}
           className="group h-8"
           icon={
             <div>
-              <Button
-                variant="hint"
+              <Sortable.Handle
+                aria-label={`Move workspace ${name}`}
                 className="relative hidden size-5 shrink-0 cursor-grab p-0.5 group-hover:flex"
+                render={<Button variant="hint" />}
               >
                 <Icon.DragHandle className="size-3 fill-default/45" />
-              </Button>
+              </Sortable.Handle>
               <IconBlock
                 className="group-hover:hidden"
                 icon={icon ?? { type: "text", src: name }}
@@ -181,11 +130,10 @@ const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
           }
           checked={id === activeWorkspace}
           label={<WorkspaceTitle role={role} name={name} />}
-          {...listeners}
           onClick={() => onSelect?.(id)}
         />
       </TooltipPreset>
-    </div>
+    </Sortable.Item>
   );
 };
 

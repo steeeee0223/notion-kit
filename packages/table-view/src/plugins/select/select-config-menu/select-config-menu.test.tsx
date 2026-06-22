@@ -43,6 +43,13 @@ describe("SelectConfigMenu", () => {
     });
     await openSelectConfigMenu(user);
 
+    expect(
+      document.querySelector("[data-slot='sortable-list']"),
+    ).toBeInTheDocument();
+    expect(
+      document.querySelector("[data-slot='sortable-handle']"),
+    ).toBeInTheDocument();
+
     // Click on "Option A" to open its popover
     const optionAItem = screen.getByRole("menuitem", { name: "Option A" });
     await user.click(optionAItem);
