@@ -14,7 +14,7 @@ import type { Cell, Row } from "../lib/types";
 import { getDefaultCell, insertAt } from "../lib/utils";
 import type { CellPlugin, InferData } from "../plugins";
 import type { TitlePlugin } from "../plugins/title";
-import { createDragEndUpdater, createGroupId } from "./utils";
+import { createDragEndUpdater, createGroupId, reorderByIds } from "./utils";
 
 export interface RowActionsOptions {
   onTableDataChange?: OnChangeFn<Row[]>;
@@ -40,6 +40,10 @@ export interface RowActionsTableApi {
   duplicateRow: (id: string) => void;
   deleteRow: (id: string) => void;
   deleteRows: (ids: string[]) => void;
+  handleRowOrderChange: (
+    orderedIds: string[],
+    moved?: { rowId: string; groupId: string },
+  ) => void;
   handleRowDragEnd: (e: DragEndEvent) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
   // With Grouping API
@@ -198,6 +202,33 @@ export const RowActionsFeature: TableFeature = {
     table.deleteRows = (ids) => {
       const idSet = new Set(ids);
       table.setTableData((prev) => prev.filter((row) => !idSet.has(row.id)));
+    };
+    table.handleRowOrderChange = (orderedIds, moved) => {
+      const { grouping, groupingState } = table.getState();
+      const groupingColumnId = grouping[0];
+
+      table.setTableData((rows) => {
+        const next = reorderByIds(rows, orderedIds, (row) => row.id);
+        if (!moved || !groupingColumnId) return next;
+
+        const now = Date.now();
+        return next.map((row) => {
+          if (row.id !== moved.rowId) return row;
+          return {
+            ...row,
+            properties: {
+              ...row.properties,
+              [groupingColumnId]: {
+                id: v4(),
+                value: structuredClone<unknown>(
+                  groupingState.groupValues[moved.groupId]?.original,
+                ),
+              },
+            },
+            lastEditedAt: now,
+          };
+        });
+      });
     };
     table.handleRowDragEnd = (e) => {
       const { grouping, groupingState } = table.getState();

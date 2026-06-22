@@ -3,7 +3,6 @@
  * Tests for row CRUD operations using direct table APIs
  */
 
-import type { DragEndEvent } from "@dnd-kit/core";
 import { act, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
@@ -288,20 +287,15 @@ describe("useTableView - Row Custom APIs", () => {
     });
   });
 
-  describe("handleRowDragEnd", () => {
-    it("should reorder rows on drag end", () => {
+  describe("handleRowOrderChange", () => {
+    it("should reorder rows from ordered ids", () => {
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
       });
 
-      const dragEvent = {
-        active: { id: "row1", data: { current: {} } },
-        over: { id: "row2", data: { current: {} } },
-      } as DragEndEvent;
-
       act(() => {
-        table.handleRowDragEnd(dragEvent);
+        table.handleRowOrderChange(["row2", "row1"]);
       });
 
       const rows = table.getRowModel().rows;
@@ -312,19 +306,14 @@ describe("useTableView - Row Custom APIs", () => {
       expect(row1Index).toBeGreaterThan(row2Index);
     });
 
-    it("should handle drag to beginning", () => {
+    it("should handle moving a row to the beginning", () => {
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
       });
 
-      const dragEvent = {
-        active: { id: "row2", data: { current: {} } },
-        over: { id: "row1", data: { current: {} } },
-      } as DragEndEvent;
-
       act(() => {
-        table.handleRowDragEnd(dragEvent);
+        table.handleRowOrderChange(["row2", "row1"]);
       });
 
       const rows = table.getRowModel().rows;

@@ -15,7 +15,7 @@ import {
 import type { ColumnInfo, Row as RowModel } from "../lib/types";
 import type { CellPlugin, ComparableValue, InferData } from "../plugins";
 import { DefaultGroupingValue } from "../plugins";
-import { createDragEndUpdater } from "./utils";
+import { createDragEndUpdater, reorderByIds } from "./utils";
 
 interface ExtendedGroupingState {
   groupOrder: string[];
@@ -57,6 +57,7 @@ export interface ExtendedGroupingTableApi {
   toggleHideEmptyGroups: () => void;
   toggleGroupVisible: (groupId: string) => void;
   toggleAllGroupsVisible: () => void;
+  handleGroupedRowOrderChange: (orderedIds: string[]) => void;
   handleGroupedRowDragEnd: (e: DragEndEvent) => void;
   _resetGroupingState: () => void;
   getGroupingValueRenderer: (
@@ -145,6 +146,16 @@ export const ExtendedGroupingFeature: TableFeature = {
           ),
         };
       });
+    };
+    table.handleGroupedRowOrderChange = (orderedIds) => {
+      table._setGroupingState((state) => ({
+        ...state,
+        groupOrder: reorderByIds(
+          state.groupOrder,
+          orderedIds,
+          (groupId) => groupId,
+        ),
+      }));
     };
     table.handleGroupedRowDragEnd = (e) => {
       const updater = createDragEndUpdater<string>(e, (v) => v);
