@@ -27,6 +27,7 @@ import {
   Button,
   DropdownMenuCheckboxItem,
   MenuGroup,
+  TooltipDescription,
   TooltipPreset,
   TooltipProvider,
 } from "@/primitives";
@@ -147,10 +148,15 @@ const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
       <TooltipPreset
         side="right"
         sideOffset={8}
-        description={[
-          { type: "default", text: planTitle[plan] },
-          { type: "secondary", text: `${memberCount} members` },
-        ]}
+        description={
+          <>
+            <TooltipDescription text={planTitle[plan]} />
+            <TooltipDescription
+              type="secondary"
+              text={`${memberCount} members`}
+            />
+          </>
+        }
         disabled={role === Role.GUEST}
       >
         <DropdownMenuCheckboxItem

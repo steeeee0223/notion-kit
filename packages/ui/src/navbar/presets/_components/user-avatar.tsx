@@ -5,6 +5,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
+  TooltipDescription,
   TooltipPreset,
   TooltipProvider,
 } from "@/primitives";
@@ -17,14 +18,15 @@ interface UserAvatarProps {
 
 export function UserAvatar({ user, borderColor, className }: UserAvatarProps) {
   return (
-    <TooltipProvider delayDuration={0}>
+    <TooltipProvider>
       <TooltipPreset
         sideOffset={8}
-        description={[
-          { type: "default", text: user.name },
-          { type: "default", text: user.email },
-        ]}
-        className="*:data-[tooltip-desc=1]:font-normal"
+        description={
+          <>
+            <TooltipDescription text={user.name} />
+            <TooltipDescription text={user.email} className="font-normal" />
+          </>
+        }
       >
         <Avatar
           className={cn("size-6 border-2 select-none", className)}

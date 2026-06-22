@@ -6,6 +6,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  TooltipDescription,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
@@ -63,10 +64,15 @@ export function RowActions({
       isMobile={isMobile}
     >
       <TooltipPreset
-        description={[
-          { type: "default", text: "Click to add below" },
-          { type: "secondary", text: "Option-click to add above" },
-        ]}
+        description={
+          <>
+            <TooltipDescription text="Click to add below" />
+            <TooltipDescription
+              type="secondary"
+              text="Option-click to add above"
+            />
+          </>
+        }
         className="z-999 text-center"
       >
         <Button
@@ -80,10 +86,12 @@ export function RowActions({
       </TooltipPreset>
       <Popover>
         <TooltipPreset
-          description={[
-            { type: "default", text: "Drag to move" },
-            { type: "default", text: "Click to open menu" },
-          ]}
+          description={
+            <>
+              <TooltipDescription text="Drag to move" />
+              <TooltipDescription text="Click to open menu" />
+            </>
+          }
           disabled={isDragging}
           className="z-999 text-center"
         >

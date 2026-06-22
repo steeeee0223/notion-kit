@@ -6,6 +6,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  TooltipDescription,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
@@ -80,19 +81,20 @@ export function SelectCell({
                     if (!option) return;
                     return (
                       <TooltipPreset
-                        asChild={false}
                         key={option.id}
                         disabled={layout !== "table"}
                         description={
-                          option.description
-                            ? [
-                                { type: "default", text: option.name },
-                                {
-                                  type: "secondary",
-                                  text: option.description,
-                                },
-                              ]
-                            : option.name
+                          option.description ? (
+                            <>
+                              <TooltipDescription text={option.name} />
+                              <TooltipDescription
+                                type="secondary"
+                                text={option.description}
+                              />
+                            </>
+                          ) : (
+                            option.name
+                          )
                         }
                         side="top"
                       >

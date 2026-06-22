@@ -10,6 +10,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  TooltipDescription,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
@@ -58,12 +59,14 @@ export function TableHeaderCell({
       <DropdownMenu modal={false}>
         <TooltipPreset
           description={
-            info.description
-              ? [
-                  { type: "default", text: info.name },
-                  { type: "secondary", text: info.description },
-                ]
-              : info.name
+            info.description ? (
+              <>
+                <TooltipDescription text={info.name} />
+                <TooltipDescription type="secondary" text={info.description} />
+              </>
+            ) : (
+              info.name
+            )
           }
           side="top"
         >

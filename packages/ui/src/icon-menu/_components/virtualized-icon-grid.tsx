@@ -147,7 +147,7 @@ export function VirtualizedIconGrid({
   }, [rows, virtualItems, scrollOffset]);
 
   return (
-    <TooltipProvider delayDuration={500}>
+    <TooltipProvider>
       <ScrollArea ref={scrollAreaRef} className="relative h-[214px] w-full">
         <div
           className="relative"

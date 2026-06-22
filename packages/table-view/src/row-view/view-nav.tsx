@@ -11,6 +11,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuTrigger,
   Separator,
+  TooltipDescription,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 import { KEYBOARD } from "@notion-kit/utils";
@@ -42,10 +43,12 @@ export function ViewNav({ rowId }: ViewNavProps) {
         {rowView !== "center" && (
           <TooltipPreset
             className="z-999"
-            description={[
-              { type: "default", text: "Close" },
-              { type: "secondary", text: "Escape" },
-            ]}
+            description={
+              <>
+                <TooltipDescription text="Close" />
+                <TooltipDescription type="secondary" text="Escape" />
+              </>
+            }
           >
             <Button
               variant="hint"
@@ -59,10 +62,15 @@ export function ViewNav({ rowId }: ViewNavProps) {
         {rowView !== "full" && (
           <TooltipPreset
             className="z-999"
-            description={[
-              { type: "default", text: "Open in full page" },
-              { type: "secondary", text: KEYBOARD.CMD + KEYBOARD.ENTER },
-            ]}
+            description={
+              <>
+                <TooltipDescription text="Open in full page" />
+                <TooltipDescription
+                  type="secondary"
+                  text={KEYBOARD.CMD + KEYBOARD.ENTER}
+                />
+              </>
+            }
           >
             <Button
               variant="hint"

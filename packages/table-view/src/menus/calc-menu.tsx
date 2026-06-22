@@ -7,6 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubTrigger,
+  TooltipDescription,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
@@ -109,10 +110,12 @@ function HintItem({ title, desc, imgSrc, ...props }: HintItemProps) {
     <TooltipPreset
       className="w-[156px]"
       side="right"
-      description={[
-        { type: "image", text: imgSrc },
-        { type: "default", text: desc },
-      ]}
+      description={
+        <>
+          <TooltipDescription type="image" text={imgSrc} />
+          <TooltipDescription text={desc} />
+        </>
+      }
     >
       <DropdownMenuCheckboxItem {...props} label={title} />
     </TooltipPreset>

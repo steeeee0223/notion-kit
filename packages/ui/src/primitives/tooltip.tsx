@@ -1,105 +1,122 @@
 import * as React from "react";
-import { Tooltip as TooltipPrimitive } from "radix-ui";
+import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip";
 
 import { cn } from "@notion-kit/cn";
 
-import { contentVariants, tooltipVariants } from "./variants";
+import { contentVariants, positioner, tooltipVariants } from "./variants";
 
-function TooltipProvider({
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
-  return <TooltipPrimitive.Provider data-slot="tooltip-provider" {...props} />;
+function TooltipProvider({ ...props }: TooltipPrimitive.Provider.Props) {
+  return <TooltipPrimitive.Provider {...props} />;
 }
 
-type TooltipProps = React.ComponentProps<typeof TooltipPrimitive.Root>;
-function Tooltip({ ...props }: TooltipProps) {
-  return (
-    <TooltipProvider>
-      <TooltipPrimitive.Root data-slot="tooltip" {...props} />
-    </TooltipProvider>
-  );
+function Tooltip<Payload = unknown>({
+  ...props
+}: TooltipPrimitive.Root.Props<Payload>) {
+  return <TooltipPrimitive.Root data-slot="tooltip" {...props} />;
 }
 
-function TooltipTrigger({
+function TooltipTrigger<Payload = unknown>({
   ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
+}: TooltipPrimitive.Trigger.Props<Payload>) {
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />;
 }
 
-type TooltipContentProps = React.ComponentProps<
-  typeof TooltipPrimitive.Content
+type TooltipPositionerProps = Pick<
+  TooltipPrimitive.Positioner.Props,
+  | "align"
+  | "alignOffset"
+  | "anchor"
+  | "collisionPadding"
+  | "side"
+  | "sideOffset"
 >;
+
+type TooltipContentProps = TooltipPrimitive.Popup.Props &
+  TooltipPositionerProps;
+
 function TooltipContent({
+  align,
+  alignOffset,
+  anchor,
   className,
+  collisionPadding,
+  side,
   sideOffset = 4,
   ...props
 }: TooltipContentProps) {
   return (
     <TooltipPrimitive.Portal>
-      <TooltipPrimitive.Content
-        data-slot="tooltip-content"
+      <TooltipPrimitive.Positioner
+        align={align}
+        alignOffset={alignOffset}
+        anchor={anchor}
+        collisionPadding={collisionPadding}
+        side={side}
         sideOffset={sideOffset}
-        className={cn(
-          contentVariants({ variant: "tooltip", sideAnimation: true }),
-          tooltipVariants(),
-          className,
-        )}
-        {...props}
-      />
+        className={cn(positioner())}
+      >
+        <TooltipPrimitive.Popup
+          data-slot="tooltip-content"
+          className={cn(
+            contentVariants({ variant: "tooltip", sideAnimation: true }),
+            tooltipVariants(),
+            className,
+          )}
+          {...props}
+        />
+      </TooltipPrimitive.Positioner>
     </TooltipPrimitive.Portal>
   );
 }
 
-interface Description {
-  type: "default" | "secondary" | "image";
-  text: string;
-}
-
-interface TooltipPresetProps extends TooltipContentProps {
-  children: React.ReactNode;
-  description: string | Description[];
+interface TooltipPresetProps
+  extends Omit<TooltipContentProps, "children" | "render"> {
   disabled?: boolean;
+  children: React.ReactElement;
+  description: React.ReactNode;
 }
 
 function TooltipPreset({
   children,
-  description,
   disabled,
   side = "bottom",
-  asChild = true,
+  description,
   ...props
 }: TooltipPresetProps) {
-  const body =
-    typeof description === "string"
-      ? description
-      : description.map((desc, i) => (
-          <TooltipDescription key={i} id={i} {...desc} />
-        ));
-
   return (
-    <Tooltip>
-      <TooltipTrigger asChild={asChild}>{children}</TooltipTrigger>
-      {!disabled && (
-        <TooltipContent side={side} {...props}>
-          {body}
-        </TooltipContent>
-      )}
+    <Tooltip disabled={disabled}>
+      <TooltipTrigger render={children} />
+      <TooltipContent side={side} {...props}>
+        {typeof description === "string" ? (
+          <TooltipDescription text={description} />
+        ) : (
+          description
+        )}
+      </TooltipContent>
     </Tooltip>
   );
 }
 
-interface TooltipDescriptionProps extends Description {
-  id: number;
+interface TooltipDescriptionProps {
+  type?: "primary" | "secondary" | "image";
+  text: string;
+  className?: string;
 }
 
-function TooltipDescription({ id, type, text }: TooltipDescriptionProps) {
+function TooltipDescription({
+  type = "primary",
+  text,
+  className,
+}: TooltipDescriptionProps) {
+  const id = React.useId();
+
   switch (type) {
     case "secondary":
       return (
         <span
           data-slot="tooltip-desc-2"
           data-tooltip-desc={id}
-          className="text-tooltip-secondary"
+          className={cn("text-tooltip-secondary", className)}
         >
           {text}
         </span>
@@ -111,12 +128,16 @@ function TooltipDescription({ id, type, text }: TooltipDescriptionProps) {
           data-tooltip-desc={id}
           src={text}
           alt=""
-          className="my-1 w-[140px] rounded-sm"
+          className={cn("my-1 w-35 rounded-sm", className)}
         />
       );
     default:
       return (
-        <div data-slot="tooltip-desc-1" data-tooltip-desc={id}>
+        <div
+          data-slot="tooltip-desc-1"
+          data-tooltip-desc={id}
+          className={className}
+        >
           {text}
         </div>
       );
@@ -128,12 +149,12 @@ export {
   TooltipTrigger,
   TooltipContent,
   TooltipProvider,
+  TooltipDescription,
   TooltipPreset,
 };
 
 export type {
-  TooltipProps,
   TooltipContentProps,
   TooltipPresetProps,
-  Description,
+  TooltipDescriptionProps,
 };

@@ -60,7 +60,7 @@ export function SettingsProvider({
     [stripePublishableKey],
   );
   return (
-    <TooltipProvider delayDuration={500}>
+    <TooltipProvider>
       <SettingsApiContext value={adapters}>
         <StripeContext value={stripePromise}>
           <QueryClientProvider client={queryClient}>
