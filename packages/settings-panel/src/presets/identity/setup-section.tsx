@@ -29,7 +29,7 @@ export function SetupSection() {
           sideOffset={15}
           align="center"
         >
-          <div className="min-w-max px-[60px] text-xs/4 text-secondary">
+          <div className="min-w-max px-15 text-xs/4 text-secondary">
             <a
               onClick={() => copy(workspace.id)}
               rel="noopener noreferrer"

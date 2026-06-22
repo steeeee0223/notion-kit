@@ -42,7 +42,7 @@ export function TableViewWrapper<
 
   return (
     <TableViewContext value={ctx}>
-      <TooltipProvider delayDuration={500}>{children}</TooltipProvider>
+      <TooltipProvider>{children}</TooltipProvider>
     </TableViewContext>
   );
 }

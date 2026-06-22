@@ -24,7 +24,7 @@ export function SkinPicker({ palette, value, onSelect }: SkinPickerProps) {
   };
 
   return (
-    <TooltipProvider delayDuration={500}>
+    <TooltipProvider>
       <Popover open={open} onOpenChange={setOpen}>
         <TooltipPreset description="Select skin tone">
           <PopoverTrigger

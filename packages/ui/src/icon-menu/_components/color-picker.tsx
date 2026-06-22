@@ -22,7 +22,7 @@ export function ColorPicker({ palette, value, onSelect }: ColorPickerProps) {
   };
 
   return (
-    <TooltipProvider delayDuration={500}>
+    <TooltipProvider>
       <Popover open={open} onOpenChange={setOpen}>
         <TooltipPreset description="Select icon color">
           <PopoverTrigger
@@ -33,7 +33,7 @@ export function ColorPicker({ palette, value, onSelect }: ColorPickerProps) {
             }
           />
         </TooltipPreset>
-        <PopoverContent className="z-1000 grid w-[180px] grid-cols-5 gap-0 p-2">
+        <PopoverContent className="z-1000 grid w-45 grid-cols-5 gap-0 p-2">
           {Object.entries(palette).map(([name, color]) => (
             <TooltipPreset key={name} description={name} className="z-1001">
               <Button

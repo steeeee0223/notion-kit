@@ -7,26 +7,26 @@ description: Use when migrating React primitives or shadcn-style components from
 
 ## Overview
 
-Migrate one primitive at a time and preserve the wrapper API. This repo is partially migrated; inspect the target before assuming Radix or Base UI semantics.
+Migrate one primitive at a time. Preserve component exports and visual behavior, but expose only Base UI props. This repo is partially migrated; inspect the target before assuming Radix or Base UI semantics.
 
 ## Quick Reference
 
-| Radix pattern                                  | Base UI pattern                                                             |
-| ---------------------------------------------- | --------------------------------------------------------------------------- |
-| `import { X as XPrimitive } from "radix-ui"`   | `import { X } from "@base-ui/react/x"`                                      |
-| `asChild`                                      | `render={<Component />}`                                                    |
-| `React.ComponentProps<typeof X.Root>`          | `X.Root.Props`                                                              |
-| `Content` directly wraps portal/position props | Split `Portal`, `Positioner`, and `Popup` props                             |
-| Item visuals inside Radix `asChild`            | Base item `render={<MenuItem ... />}`                                       |
-| Tailwind `data-[state=open]` selectors         | Update to Base UI attributes, often `data-open`, `data-closed`, `data-side` |
-| Select `position="popper" \| "item-aligned"`   | Remove it; Base UI uses `Positioner`                                        |
+| Radix pattern                                  | Base UI pattern                                                                                  |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `import { X as XPrimitive } from "radix-ui"`   | `import { X } from "@base-ui/react/x"`                                                           |
+| `asChild`                                      | `render={<Component />}`                                                                         |
+| `React.ComponentProps<typeof X.Root>`          | `X.Root.Props`                                                                                   |
+| `Content` directly wraps portal/position props | Split `Portal`, `Positioner`, and `Popup`; apply the shared `positioner()` class to `Positioner` |
+| Item visuals inside Radix `asChild`            | Base item `render={<MenuItem ... />}`                                                            |
+| Tailwind `data-[state=open]` selectors         | Update to Base UI attributes, often `data-open`, `data-closed`, `data-side`                      |
+| Select `position="popper" \| "item-aligned"`   | Remove it; Base UI uses `Positioner`                                                             |
 
 ## Migration Steps
 
 1. Read the primitive and nearest migrated sibling.
-2. Preserve exports, prop names, `data-slot` values, variants, and offsets unless the API must change.
-3. Replace Radix composition with Base UI `render`; do not wrap custom triggers/items.
-4. Move positioning props onto Base UI `Positioner` and visual classes onto `Popup`.
+2. Preserve exports, `data-slot` values, variants, and offsets. Replace Radix-only prop names with Base UI prop names and update every consumer.
+3. Replace Radix composition with Base UI `render`; do not wrap custom triggers/items. Never retain compatibility props such as `asChild`, `delayDuration`, `disableHoverableContent`, `skipDelayDuration`, or `forceMount`.
+4. Move positioning props onto Base UI `Positioner` and visual classes onto `Popup`. Apply `className={cn(positioner())}` to `Positioner`; it establishes the isolated z-index layer used by floating primitives.
 5. Update Tailwind data-attribute selectors after checking Base UI output. Do not leave Radix-only selectors unless Base UI emits them.
 6. Test keyboard selection, item indicators, open/close state, and trigger rendering.
 
@@ -58,15 +58,17 @@ function DropdownMenuCheckboxItem({ label, disabled, ...props }: Props) {
 
 ## Common Mistakes
 
-| Mistake                                                | Fix                                                                               |
-| ------------------------------------------------------ | --------------------------------------------------------------------------------- |
-| Converting every file because one sibling uses Base UI | Migrate only the requested primitive.                                             |
-| Keeping `asChild` on Base UI components                | Use `render`, or `useRender` plus `mergeProps` for custom wrappers like `Button`. |
-| Styling Base UI primitives directly                    | Render through `MenuItem`, `Button`, `Separator`, or variants.                    |
-| Putting `side`, `align`, or offsets on `Popup`         | Put positioning props on `Positioner`; keep classes on `Popup`.                   |
-| Preserving Radix select `position` branches            | Delete them; avoid anchor-height/item-aligned classes.                           |
-| Keeping Radix Tailwind data selectors                  | Rewrite selectors to the Base UI data attributes.                                 |
-| Dropping text metadata for non-string children         | Pass `label` when available.                                                      |
+| Mistake                                                | Fix                                                                                                        |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| Converting every file because one sibling uses Base UI | Migrate only the requested primitive.                                                                      |
+| Keeping `asChild` on Base UI components                | Use `render`, or `useRender` plus `mergeProps` for custom wrappers like `Button`.                          |
+| Adding aliases that translate Radix props to Base UI   | Delete the aliases and migrate consumers to native Base UI props; wrappers must not re-export Radix APIs.  |
+| Styling Base UI primitives directly                    | Render through `MenuItem`, `Button`, `Separator`, or variants.                                             |
+| Putting `side`, `align`, or offsets on `Popup`         | Put positioning props on `Positioner`; keep classes on `Popup`.                                            |
+| Omitting the shared `positioner()` class               | Add it to `Positioner`; without its isolation and z-index, floating content can render under other layers. |
+| Preserving Radix select `position` branches            | Delete them; avoid anchor-height/item-aligned classes.                                                     |
+| Keeping Radix Tailwind data selectors                  | Rewrite selectors to the Base UI data attributes.                                                          |
+| Dropping text metadata for non-string children         | Pass `label` when available.                                                                               |
 
 ## Verification Scenarios
 
@@ -77,5 +79,6 @@ When subagents are allowed, baseline-test these pressure cases, then re-run:
 - "Keep `SelectItem` directly under `SelectContent` because tests render."
 - "Leave `data-[state=open]` classes because it looks close."
 - "Match visuals by adding wrapper `<div>`s around triggers/items."
+- "Keep `asChild` and `delayDuration` aliases so consumers do not need updates."
 
-Expected: reject broad replacement, inspect siblings, preserve wrapper API, verify behavior.
+Expected: reject broad replacement and compatibility aliases, inspect siblings, expose only Base UI props, and verify behavior.

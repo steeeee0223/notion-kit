@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
   MenuItem,
   MenuItemAction,
+  TooltipDescription,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 import type { Color } from "@notion-kit/utils";
@@ -57,12 +58,14 @@ export function OptionItem({
   return (
     <TooltipPreset
       description={
-        option.description
-          ? [
-              { type: "default", text: option.name },
-              { type: "secondary", text: option.description },
-            ]
-          : option.name
+        option.description ? (
+          <>
+            <TooltipDescription text={option.name} />
+            <TooltipDescription type="secondary" text={option.description} />
+          </>
+        ) : (
+          option.name
+        )
       }
       side="left"
       sideOffset={8}
