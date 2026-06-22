@@ -19,7 +19,10 @@
   "prettier": "@notion-kit/prettier-config",
   "dependencies": {
     "@dnd-kit/core": "catalog:ui",
+    "@dnd-kit/dom": "catalog:ui",
+    "@dnd-kit/helpers": "catalog:ui",
     "@dnd-kit/modifiers": "catalog:ui",
+    "@dnd-kit/react": "catalog:ui",
     "@dnd-kit/sortable": "catalog:ui",
     "@notion-kit/auth-ui": "workspace:*",
     "@notion-kit/cn": "workspace:*",
