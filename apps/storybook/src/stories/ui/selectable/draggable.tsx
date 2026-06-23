@@ -108,99 +108,81 @@ export function DraggableOverlay() {
   );
 }
 
-export function SelectWithDraggableItems(props: SelectableProps) {
+function SortableSelectableItems() {
   const [orderedItems, setOrderedItems] = useState(items.slice(0, 10));
+  const { selectedIds } = useSelectable();
 
   const handleDragEnd = (e: DragEndEvent) => {
     const { source, target } = e.operation;
     if (!source || !target || source.id === target.id) return;
 
-    const selectedIdsArray = source.data.selectedIds as string[] | undefined;
-    const isSelected = source.data.isSelected as boolean;
+    const sourceId = String(source.id);
+    const targetId = String(target.id);
 
     setOrderedItems((v) => {
-      // If dragging a selected item with multiple selections, move all selected items
-      if (isSelected && selectedIdsArray && selectedIdsArray.length > 1) {
-        const activeIndex = v.findIndex((item) => item.id === source.id);
-        const overIndex = v.findIndex((item) => item.id === target.id);
+      const sourceIndex = v.findIndex((item) => item.id === sourceId);
+      const targetIndex = v.findIndex((item) => item.id === targetId);
 
-        // Get all selected items in their current order
-        const selectedItems = v.filter((item) =>
-          selectedIdsArray.includes(item.id),
+      if (sourceIndex === -1 || targetIndex === -1) return v;
+
+      if (selectedIds.has(sourceId) && selectedIds.size > 1) {
+        if (selectedIds.has(targetId)) return v;
+
+        const selectedItems = v.filter((item) => selectedIds.has(item.id));
+        const nonSelectedItems = v.filter((item) => !selectedIds.has(item.id));
+        const targetIndexInNonSelected = nonSelectedItems.findIndex(
+          (item) => item.id === targetId,
         );
 
-        // Get non-selected items
-        const nonSelectedItems = v.filter(
-          (item) => !selectedIdsArray.includes(item.id),
-        );
+        if (targetIndexInNonSelected === -1) return v;
 
-        // Determine insert position
-        let insertIndex: number;
-        if (overIndex === -1) {
-          insertIndex = nonSelectedItems.length;
-        } else {
-          // Find the position in non-selected items
-          const overItem = v[overIndex];
-          if (!overItem) {
-            console.error("Over item not found", overIndex);
-            return v as never;
-          }
-          const overIndexInNonSelected = nonSelectedItems.findIndex(
-            (item) => item.id === overItem.id,
-          );
+        const insertIndex =
+          sourceIndex < targetIndex
+            ? targetIndexInNonSelected + 1
+            : targetIndexInNonSelected;
 
-          // If moving down, insert after; if moving up, insert before
-          insertIndex =
-            activeIndex < overIndex
-              ? overIndexInNonSelected + 1
-              : overIndexInNonSelected;
-        }
-
-        // Insert selected items at the new position
-        const result = [
+        return [
           ...nonSelectedItems.slice(0, insertIndex),
           ...selectedItems,
           ...nonSelectedItems.slice(insertIndex),
         ];
-
-        return result;
       }
 
-      // Single item drag - original behavior
-      const activeIndex = v.findIndex((item) => item.id === source.id);
-      const overIndex = v.findIndex((item) => item.id === target.id);
-
-      if (activeIndex === -1 || overIndex === -1) return v;
-
-      return arrayMove(v, activeIndex, overIndex);
+      return arrayMove(v, sourceIndex, targetIndex);
     });
   };
 
+  return (
+    <Sortable.Root
+      items={orderedItems.map((item) => item.id)}
+      onDragEnd={handleDragEnd}
+    >
+      <DraggableOverlay />
+      <Sortable.List
+        className="gap-4"
+        render={<Selectable.Group className="flex flex-col gap-4" />}
+      >
+        {orderedItems.map((item, index) => (
+          <DraggableItem
+            key={item.id}
+            id={item.id}
+            index={index}
+            label={item.label}
+          />
+        ))}
+      </Sortable.List>
+    </Sortable.Root>
+  );
+}
+
+export function SelectWithDraggableItems(props: SelectableProps) {
   return (
     <Selectable
       {...props}
       className="min-h-[500px] min-w-120 rounded-lg bg-popover p-6 shadow-sm"
     >
       <Selectable.Overlay className="rounded-sm border-2 border-blue bg-blue/10" />
-      <Sortable.Root
-        items={orderedItems.map((item) => item.id)}
-        onDragEnd={handleDragEnd}
-      >
-        <DraggableOverlay />
-        <Sortable.List
-          className="gap-4"
-          render={<Selectable.Group className="flex flex-col gap-4" />}
-        >
-          {orderedItems.map((item, index) => (
-            <DraggableItem
-              key={item.id}
-              id={item.id}
-              index={index}
-              label={item.label}
-            />
-          ))}
-        </Sortable.List>
-      </Sortable.Root>
+      <SortableSelectableItems />
     </Selectable>
   );
 }
