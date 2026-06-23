@@ -31,7 +31,7 @@ All tests are comprehensive and passing:
 - ✅ `table.addColumnInfo({ id, name, type, at })` - Add with positioning
 - ✅ `table.removeColumnInfo(colId)` - Remove column
 - ✅ `table.duplicateColumnInfo(colId)` - Duplicate with unique name
-- ✅ `table.handleColumnDragEnd(event)` - Column DnD
+- ✅ `table.handleColumnOrderChange(orderedIds)` - Column DnD
 - ✅ Column info getters
 - **Status**: All tests passing! ✅
 
@@ -41,7 +41,7 @@ All tests are comprehensive and passing:
 - ✅ `table.deleteRow(rowId)` - Delete single row
 - ✅ `table.deleteRows(rowIds)` - Delete multiple rows
 - ✅ `table.duplicateRow(rowId)` - Duplicate with cell cloning
-- ✅ `table.handleRowDragEnd(event)` - Row DnD
+- ✅ `table.handleRowOrderChange(orderedIds)` - Row DnD
 - ✅ Cell APIs (`getCell`, `updateCell`)
 - ✅ Timestamp management (createdAt, lastEditedAt)
 - **Status**: All tests passing! ✅
@@ -77,7 +77,7 @@ All tests are comprehensive and passing:
 - ✅ `table.toggleGroupVisible(groupId)` - Toggle individual group
 - ✅ `table.toggleAllGroupsVisible()` - Toggle all groups
 - ✅ `table.toggleHideEmptyGroups()` - Toggle empty groups filter
-- ⚠️ `table.handleGroupedRowDragEnd(event)` - Group DnD (skipped - not fully implemented)
+- ⚠️ `table.handleGroupedRowOrderChange(orderedIds)` - Group DnD (skipped - not fully implemented)
 - ✅ `table.getIsSomeGroupVisible()` - Check if any group visible
 - ✅ `table.setGroupingColumn(colId)` - Set grouping column
 - ✅ `table.getGroupedColumnInfo()` - Get grouped column info
@@ -183,7 +183,7 @@ Located under `src/plugins/select/`, these tests cover the Select/Multi-Select c
 
 - ✅ Basic CRUD operations (add, remove, update)
 - ✅ Custom APIs with direct table methods
-- ✅ Column DnD (handleColumnDragEnd)
+- ✅ Column DnD (handleColumnOrderChange)
 - ✅ Column freezing with pinning
 - ✅ Controlled & uncontrolled modes
 
@@ -191,7 +191,7 @@ Located under `src/plugins/select/`, these tests cover the Select/Multi-Select c
 
 - ✅ Basic CRUD operations (add, delete, update)
 - ✅ Custom APIs with direct table methods
-- ✅ Row DnD (handleRowDragEnd)
+- ✅ Row DnD (handleRowOrderChange)
 - ✅ Cell operations (get, update)
 - ✅ Timestamp management
 - ✅ Controlled & uncontrolled modes
@@ -209,7 +209,7 @@ Located under `src/plugins/select/`, these tests cover the Select/Multi-Select c
 - ✅ Group visibility controls (individual + all)
 - ✅ Empty groups filtering
 - ✅ Aggregate display control
-- ✅ Group DnD (handleGroupedRowDragEnd)
+- ✅ Group DnD (handleGroupedRowOrderChange)
 - ✅ Row-level group APIs
 
 **Counting:**

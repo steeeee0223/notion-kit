@@ -81,7 +81,10 @@ export function BoardGroup({ index, itemIds, row }: BoardGroupProps) {
       <div
         ref={listRef}
         data-slot="board-group-content"
-        className="relative flex min-h-2 w-full flex-col gap-2"
+        className={cn(
+          "relative flex min-h-2 w-full flex-col gap-2",
+          itemIds.length === 0 && "min-h-10",
+        )}
       >
         {isDropTarget && itemIds.length === 0 && (
           <div className="absolute inset-x-0 top-0 h-1.5 bg-blue/30" />

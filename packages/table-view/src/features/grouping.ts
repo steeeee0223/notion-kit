@@ -1,4 +1,3 @@
-import type { DragEndEvent } from "@dnd-kit/core";
 import type {
   OnChangeFn,
   Row,
@@ -15,7 +14,7 @@ import {
 import type { ColumnInfo, Row as RowModel } from "../lib/types";
 import type { CellPlugin, ComparableValue, InferData } from "../plugins";
 import { DefaultGroupingValue } from "../plugins";
-import { createDragEndUpdater, reorderByIds } from "./utils";
+import { reorderByIds } from "./utils";
 
 interface ExtendedGroupingState {
   groupOrder: string[];
@@ -58,7 +57,6 @@ export interface ExtendedGroupingTableApi {
   toggleGroupVisible: (groupId: string) => void;
   toggleAllGroupsVisible: () => void;
   handleGroupedRowOrderChange: (orderedIds: string[]) => void;
-  handleGroupedRowDragEnd: (e: DragEndEvent) => void;
   _resetGroupingState: () => void;
   getGroupingValueRenderer: (
     groupId: string,
@@ -155,13 +153,6 @@ export const ExtendedGroupingFeature: TableFeature = {
           orderedIds,
           (groupId) => groupId,
         ),
-      }));
-    };
-    table.handleGroupedRowDragEnd = (e) => {
-      const updater = createDragEndUpdater<string>(e, (v) => v);
-      table._setGroupingState((v) => ({
-        ...v,
-        groupOrder: functionalUpdate(updater, v.groupOrder),
       }));
     };
     table._resetGroupingState = () => {

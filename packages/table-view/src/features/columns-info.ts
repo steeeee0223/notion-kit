@@ -1,4 +1,3 @@
-import type { DragEndEvent } from "@dnd-kit/core";
 import type {
   Column,
   OnChangeFn,
@@ -18,7 +17,7 @@ import {
 } from "../lib/utils";
 import type { CellPlugin, InferConfig, InferPlugin } from "../plugins";
 import { DEFAULT_PLUGINS } from "../plugins";
-import { createDragEndUpdater, createIdsUpdater, reorderByIds } from "./utils";
+import { createIdsUpdater, reorderByIds } from "./utils";
 
 export type ColumnsInfoState<TPlugins extends CellPlugin[] = CellPlugin[]> =
   Record<string, ColumnInfo<InferPlugin<TPlugins>>>;
@@ -46,7 +45,6 @@ export interface ColumnsInfoTableApi {
   _setColumnInfo: (colId: string, updater: Updater<ColumnInfo>) => void;
   setColumnInfo: (colId: string, info: Partial<Omit<ColumnInfo, "id">>) => void;
   handleColumnOrderChange: (orderedIds: string[]) => void;
-  handleColumnDragEnd: (e: DragEndEvent) => void;
   _addColumnInfo: (info: ColumnInfo, idsUpdater: Updater<string[]>) => void;
   addColumnInfo: (payload: {
     id: string;
@@ -158,16 +156,6 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
         ids: reorderByIds(prev.ids, orderedIds, (id) => id),
       }));
       table.options.sync?.("table.handleColumnOrderChange");
-    };
-    table.handleColumnDragEnd = (e) => {
-      table.options.onColumnInfoChange?.((prev) => {
-        const updater = createDragEndUpdater<string>(e, (v) => v);
-        return {
-          ...prev,
-          ids: functionalUpdate(updater, prev.ids),
-        };
-      });
-      table.options.sync?.("table.handleColumnDragEnd");
     };
     table._addColumnInfo = (info, idsUpdater) => {
       table.options.onColumnInfoChange?.((prev) => {

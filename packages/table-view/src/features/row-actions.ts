@@ -1,4 +1,3 @@
-import type { DragEndEvent } from "@dnd-kit/core";
 import type {
   OnChangeFn,
   Table,
@@ -14,7 +13,7 @@ import type { Cell, Row } from "../lib/types";
 import { getDefaultCell, insertAt } from "../lib/utils";
 import type { CellPlugin, InferData } from "../plugins";
 import type { TitlePlugin } from "../plugins/title";
-import { createDragEndUpdater, createGroupId, reorderByIds } from "./utils";
+import { createGroupId, reorderByIds } from "./utils";
 
 export interface RowActionsOptions {
   onTableDataChange?: OnChangeFn<Row[]>;
@@ -44,7 +43,6 @@ export interface RowActionsTableApi {
     orderedIds: string[],
     moved?: { rowId: string; groupId: string },
   ) => void;
-  handleRowDragEnd: (e: DragEndEvent) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
   // With Grouping API
   addRowToGroup: (groupId: string) => void;
@@ -222,36 +220,6 @@ export const RowActionsFeature: TableFeature = {
                 id: v4(),
                 value: structuredClone<unknown>(
                   groupingState.groupValues[moved.groupId]?.original,
-                ),
-              },
-            },
-            lastEditedAt: now,
-          };
-        });
-      });
-    };
-    table.handleRowDragEnd = (e) => {
-      const { grouping, groupingState } = table.getState();
-
-      table.setTableData((v) => {
-        const updater = createDragEndUpdater<Row>(e, (d) => d.id);
-        const next = functionalUpdate(updater, v);
-
-        const groupId = e.over?.data.current?.groupId as string | undefined;
-        if (!groupId) return next;
-
-        // If moved into a group, we need to update the grouping cell value.
-        const now = Date.now();
-        return next.map((row) => {
-          if (row.id !== e.active.id || !grouping[0]) return row;
-          return {
-            ...row,
-            properties: {
-              ...row.properties,
-              [grouping[0]]: {
-                id: v4(),
-                value: structuredClone<unknown>(
-                  groupingState.groupValues[groupId]?.original,
                 ),
               },
             },
