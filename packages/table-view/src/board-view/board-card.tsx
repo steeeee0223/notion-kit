@@ -1,7 +1,5 @@
-import React, { useId } from "react";
-import { useDroppable } from "@dnd-kit/core";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import React from "react";
+import { useSortable } from "@dnd-kit/react/sortable";
 import { flexRender, type Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
@@ -23,16 +21,30 @@ import { RowActionMenu } from "../menus";
 import { useTableViewCtx } from "../table-contexts";
 
 interface BoardCardProps {
+  groupId: string;
+  index: number;
   row: Row<RowModel>;
+}
+
+interface BoardCardContentProps {
+  dragSource?: boolean;
+  dropTarget?: boolean;
   overlay?: boolean;
+  ref?: React.Ref<HTMLDivElement>;
+  row: Row<RowModel>;
 }
 
 /**
  * A BoardCard is displayed as a table row
  */
-export function BoardCard({ row, overlay }: BoardCardProps) {
+export function BoardCardContent({
+  dragSource,
+  dropTarget,
+  overlay,
+  ref,
+  row,
+}: BoardCardContentProps) {
   const { table } = useTableViewCtx();
-  const { locked } = table.getTableGlobalState();
   const titleCell = row.getTitleCell();
 
   const { props } = useInputField({
@@ -47,50 +59,28 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
       ),
   });
 
-  /** DND */
-  const {
-    attributes,
-    isDragging,
-    isOver,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({
-    id: row.id,
-    disabled: locked,
-    data: { type: "board-card", groupId: row.parentId },
-  });
-
-  const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
   return (
     <div
-      ref={setNodeRef}
+      ref={ref}
       data-slot="board-card"
       data-block-id={row.id}
       className={cn(
         "relative cursor-grab",
         overlay
           ? "cursor-grabbing opacity-80"
-          : isDragging
+          : dragSource
             ? "z-10 rounded-lg opacity-80 shadow-lg ring-2 ring-ring"
             : null,
       )}
-      style={style}
     >
       <div
         className={cn(
           "group/card static block h-full min-h-10 animate-bg-in overflow-hidden rounded-lg border border-border-button bg-popover px-2.5 py-2 text-inherit select-none hover:bg-default/5 dark:border-none",
-          isOver && "bg-default/10",
+          dropTarget && "bg-default/10",
           overlay && "pointer-events-none",
         )}
-        {...attributes}
-        {...listeners}
-        role={attributes.role}
+        role="button"
+        tabIndex={0}
         onClick={() => table.openRow(row.id)}
         onKeyDown={() => {
           // noop
@@ -183,33 +173,34 @@ export function BoardCard({ row, overlay }: BoardCardProps) {
           ))}
         </div>
       </div>
-      {isOver && <div className="absolute inset-x-0 h-1.5 bg-blue/30" />}
+      {dropTarget && <div className="absolute inset-x-0 h-1.5 bg-blue/30" />}
     </div>
   );
 }
 
-export function PlaceholderBoardCard({ groupId }: { groupId: string }) {
-  const cardId = useId();
-
+export function BoardCard({ groupId, index, row }: BoardCardProps) {
   const { table } = useTableViewCtx();
   const { locked } = table.getTableGlobalState();
-
-  /** DND */
-  const { isOver, active, setNodeRef } = useDroppable({
-    id: groupId,
+  const {
+    isDragSource,
+    isDropTarget,
+    ref: sortableRef,
+  } = useSortable({
+    id: row.id,
+    index,
+    group: groupId,
     disabled: locked,
-    data: { type: "board-card", groupId },
+    type: "board-card",
+    accept: "board-card",
+    data: { groupId },
   });
-  const isCardOver = isOver && active?.data.current?.type === "board-card";
 
   return (
-    <div
-      ref={setNodeRef}
-      data-slot="placeholder-board-card"
-      data-block-id={cardId}
-      className="relative h-0 w-full"
-    >
-      {isCardOver && <div className="absolute inset-x-0 h-1.5 bg-blue/30" />}
-    </div>
+    <BoardCardContent
+      ref={sortableRef}
+      row={row}
+      dragSource={isDragSource}
+      dropTarget={isDropTarget}
+    />
   );
 }

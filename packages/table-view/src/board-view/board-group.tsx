@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
-import { useDroppable } from "@dnd-kit/core";
-import { horizontalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { CollisionPriority } from "@dnd-kit/abstract";
+import { RestrictToHorizontalAxis } from "@dnd-kit/abstract/modifiers";
+import { useDroppable } from "@dnd-kit/react";
+import { useSortable } from "@dnd-kit/react/sortable";
 import type { Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
@@ -13,93 +13,86 @@ import { Button } from "@notion-kit/ui/primitives";
 import { GroupActions } from "../common";
 import type { Row as RowModel } from "../lib/types";
 import { useTableViewCtx } from "../table-contexts";
-import { BoardCard, PlaceholderBoardCard } from "./board-card";
+import { BoardCard } from "./board-card";
 
 interface BoardGroupProps {
+  index: number;
+  itemIds: string[];
   row: Row<RowModel>;
 }
 
-export function BoardGroup({ row }: BoardGroupProps) {
+export function BoardGroup({ index, itemIds, row }: BoardGroupProps) {
   const { table } = useTableViewCtx();
   const { locked } = table.getTableGlobalState();
-
-  /** DND for group dragging */
   const {
-    attributes,
+    handleRef,
     isDragging,
-    listeners,
-    setNodeRef: setGroupNodeRef,
-    transform,
-    transition,
+    ref: sortableRef,
   } = useSortable({
     id: row.id,
+    index,
     disabled: locked,
-    data: { type: "board-group" },
-    strategy: horizontalListSortingStrategy,
+    type: "board-group",
+    accept: "board-group",
+    modifiers: [RestrictToHorizontalAxis],
+  });
+  const { isDropTarget, ref: listRef } = useDroppable({
+    id: `board-list:${row.id}`,
+    disabled: locked,
+    type: "board-list",
+    accept: "board-card",
+    collisionPriority: CollisionPriority.Low,
+    data: { groupId: row.id },
   });
 
-  /** DND for card dropping */
-  const { setNodeRef: setCardNodeRef } = useDroppable({
-    id: row.id,
-    disabled: locked,
-    data: { type: "board-card", groupId: row.id },
-  });
-
-  const mergedRef = (node: HTMLElement | null) => {
-    setGroupNodeRef(node);
-    setCardNodeRef(node);
-  };
-
-  const style: React.CSSProperties = {
-    transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
-    transition, // Warning: it is somehow laggy
-  };
-
-  const addRow = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
+  const addRow = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
     table.addRowToGroup(row.id);
   };
 
   return (
     <div
-      ref={mergedRef}
+      ref={sortableRef}
       data-slot="board-group"
       data-block-id={row.id}
       className={cn(
         "group/board-group mb-4 box-content flex h-max w-[260px] shrink-0 flex-col items-center gap-2 rounded-lg p-2 text-sm",
         isDragging && "z-10 bg-default/5 opacity-80",
       )}
-      style={style}
     >
       <div
+        ref={handleRef}
         data-slot="board-group-header"
         className="flex w-full cursor-grab items-center"
-        {...attributes}
-        {...listeners}
       >
-        {/* Grouping value */}
         <div className="flex max-w-100 items-center overflow-hidden text-sm/6 font-medium whitespace-nowrap">
           {row.renderGroupingValue({})}
         </div>
-        {/* Count */}
         {row.getShouldShowGroupAggregates() && (
           <Button variant="hint" size="xs" className="text-muted">
-            {row.subRows.length}
+            {itemIds.length}
           </Button>
         )}
-        {/*  Group actions */}
         <GroupActions
           className="ml-auto opacity-0 group-hover/board-group:opacity-100"
           row={row}
         />
       </div>
       <div
+        ref={listRef}
         data-slot="board-group-content"
-        className="flex min-h-2 w-full flex-col gap-2"
+        className="relative flex min-h-2 w-full flex-col gap-2"
       >
-        <PlaceholderBoardCard groupId={row.id} />
-        {row.subRows.map((subRow) => (
-          <BoardCard key={subRow.id} row={subRow} />
+        {isDropTarget && itemIds.length === 0 && (
+          <div className="absolute inset-x-0 top-0 h-1.5 bg-blue/30" />
+        )}
+        {itemIds.map((itemId, itemIndex) => (
+          <BoardCardSlot
+            key={itemId}
+            itemId={itemId}
+            groupId={row.id}
+            index={itemIndex}
+          />
         ))}
       </div>
       <Button
@@ -112,4 +105,20 @@ export function BoardGroup({ row }: BoardGroupProps) {
       </Button>
     </div>
   );
+}
+
+function BoardCardSlot({
+  groupId,
+  index,
+  itemId,
+}: {
+  groupId: string;
+  index: number;
+  itemId: string;
+}) {
+  const { table } = useTableViewCtx();
+  const row = table.getRowModel().rowsById[itemId];
+  if (!row) return null;
+
+  return <BoardCard row={row} groupId={groupId} index={index} />;
 }
