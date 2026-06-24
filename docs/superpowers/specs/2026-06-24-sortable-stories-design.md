@@ -18,8 +18,9 @@ The stories use local fixture data and React state. They do not depend on the ta
 
 The story module exports Storybook metadata under `Notion UI/Sortable`. Small private components keep the examples readable:
 
-- A list row renders a label and `Sortable.Handle` inside `Sortable.Item`.
-- A sidebar list row renders its content directly in `Sortable.Item`, making the full row the drag surface without a separate handle.
+- Both list examples render `Sortable.List` as `MenuGroup` and compose each `Sortable.Item` through its `render` prop with a `MenuItem`.
+- The explicit-handle list places `Sortable.Handle` in the rendered menu item's action area.
+- The sidebar list omits `Sortable.Handle`, making the full rendered `MenuItem` row the drag surface.
 - A board column renders a sortable column shell, header, card list, empty drop area, and add-page affordance.
 - A board card renders a compact page-style card and uses `Sortable.Item` metadata to identify its column.
 
@@ -42,7 +43,7 @@ Column and card IDs are distinct strings so nested sortable registration cannot 
 
 ## Accessibility and Interaction
 
-The explicit-handle list and every draggable column use labeled `Sortable.Handle` controls. The sidebar list deliberately uses each full row as its drag surface, and its items expose readable labels. Cards use their card body as the sortable surface, matching the production board interaction. Column headings and card labels remain readable without drag interaction.
+The explicit-handle list and every draggable column use labeled `Sortable.Handle` controls. Both list patterns preserve `MenuItem` roles and labels. The sidebar list deliberately uses each full menu row as its drag surface. Cards use their card body as the sortable surface, matching the production board interaction. Column headings and card labels remain readable without drag interaction.
 
 ## Verification
 
