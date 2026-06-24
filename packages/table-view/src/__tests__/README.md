@@ -31,7 +31,7 @@ All tests are comprehensive and passing:
 - ✅ `table.addColumnInfo({ id, name, type, at })` - Add with positioning
 - ✅ `table.removeColumnInfo(colId)` - Remove column
 - ✅ `table.duplicateColumnInfo(colId)` - Duplicate with unique name
-- ✅ `table.handleColumnDragEnd(orderedIds)` - Column DnD
+- ✅ `table.handleColumnDragEnd(event)` - Column DnD
 - ✅ Column info getters
 - **Status**: All tests passing! ✅
 
