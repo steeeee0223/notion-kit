@@ -22,15 +22,11 @@ import { TableHeaderActionCell } from "./table-header-action-cell";
 
 export const DndTableHeader = React.memo(function DndTableHeader() {
   const { table } = useTableViewCtx();
-  const { columnOrder } = table.getState();
 
   return (
     <Sortable.Root
-      items={columnOrder}
       orientation="horizontal"
-      onItemsChange={(orderedIds) =>
-        table.handleColumnOrderChange(orderedIds.map(String))
-      }
+      onDragEnd={table.handleColumnOrderChange}
     >
       <div className="relative">
         <TableHeaderRow />

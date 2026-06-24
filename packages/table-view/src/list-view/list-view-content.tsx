@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import type { DragEndEvent } from "@dnd-kit/react";
 
 import { Icon } from "@notion-kit/icons";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
@@ -12,26 +13,27 @@ import { ListRow } from "./list-row";
 
 export function ListViewContent() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [pendingOrder, setPendingOrder] = useState<string[] | null>(null);
+  const [pendingDragEndEvent, setPendingDragEndEvent] =
+    useState<DragEndEvent | null>(null);
   const { table } = useTableViewCtx();
 
   const rows = table.getRowModel().rows;
 
-  const handleRowOrderChange = useCallback(
-    (ids: string[]) => {
+  const handleRowDragEnd = useCallback(
+    (e: DragEndEvent) => {
       const isSorted = table.getState().sorting.length > 0;
-      if (!isSorted) return table.handleRowOrderChange(ids);
-      setPendingOrder(ids);
+      if (!isSorted) return table.handleRowDragEnd(e);
+      setPendingDragEndEvent(e);
       setDialogOpen(true);
     },
     [table],
   );
 
   const handleConfirmRemoveSorting = () => {
-    if (pendingOrder) {
+    if (pendingDragEndEvent) {
       table.resetSorting();
-      table.handleRowOrderChange(pendingOrder);
-      setPendingOrder(null);
+      table.handleRowDragEnd(pendingDragEndEvent);
+      setPendingDragEndEvent(null);
     }
     setDialogOpen(false);
   };
@@ -42,12 +44,7 @@ export function ListViewContent() {
         data-block-id="1fe35e0f-492c-80fd-8d7c-f7e953641770"
         className="flex flex-col py-1"
       >
-        <Sortable.Root
-          items={rows.map((row) => row.id)}
-          onItemsChange={(orderedIds) =>
-            handleRowOrderChange(orderedIds.map(String))
-          }
-        >
+        <Sortable.Root onDragEnd={handleRowDragEnd}>
           <Sortable.List>
             {rows.map((row, index) =>
               row.getIsGrouped() ? (

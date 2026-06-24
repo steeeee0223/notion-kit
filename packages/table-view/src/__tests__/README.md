@@ -41,7 +41,7 @@ All tests are comprehensive and passing:
 - ✅ `table.deleteRow(rowId)` - Delete single row
 - ✅ `table.deleteRows(rowIds)` - Delete multiple rows
 - ✅ `table.duplicateRow(rowId)` - Duplicate with cell cloning
-- ✅ `table.handleRowOrderChange(orderedIds)` - Row DnD
+- ✅ `table.handleRowDragEnd(event)` - Row DnD
 - ✅ Cell APIs (`getCell`, `updateCell`)
 - ✅ Timestamp management (createdAt, lastEditedAt)
 - **Status**: All tests passing! ✅
@@ -77,7 +77,7 @@ All tests are comprehensive and passing:
 - ✅ `table.toggleGroupVisible(groupId)` - Toggle individual group
 - ✅ `table.toggleAllGroupsVisible()` - Toggle all groups
 - ✅ `table.toggleHideEmptyGroups()` - Toggle empty groups filter
-- ⚠️ `table.handleGroupedRowOrderChange(orderedIds)` - Group DnD (skipped - not fully implemented)
+- ⚠️ `table.handleGroupedRowOrderChange(event)` - Group DnD (skipped - not fully implemented)
 - ✅ `table.getIsSomeGroupVisible()` - Check if any group visible
 - ✅ `table.setGroupingColumn(colId)` - Set grouping column
 - ✅ `table.getGroupedColumnInfo()` - Get grouped column info
@@ -191,7 +191,7 @@ Located under `src/plugins/select/`, these tests cover the Select/Multi-Select c
 
 - ✅ Basic CRUD operations (add, delete, update)
 - ✅ Custom APIs with direct table methods
-- ✅ Row DnD (handleRowOrderChange)
+- ✅ Row DnD (handleRowDragEnd)
 - ✅ Cell operations (get, update)
 - ✅ Timestamp management
 - ✅ Controlled & uncontrolled modes

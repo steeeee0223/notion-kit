@@ -1,3 +1,4 @@
+import type { DragEndEvent } from "@dnd-kit/react";
 import type {
   Column,
   OnChangeFn,
@@ -8,6 +9,8 @@ import type {
 import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
+import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
+
 import type { ColumnInfo, PluginType, Row } from "../lib/types";
 import {
   arrayToEntity,
@@ -17,7 +20,7 @@ import {
 } from "../lib/utils";
 import type { CellPlugin, InferConfig, InferPlugin } from "../plugins";
 import { DEFAULT_PLUGINS } from "../plugins";
-import { createIdsUpdater, reorderByIds } from "./utils";
+import { createIdsUpdater } from "./utils";
 
 export type ColumnsInfoState<TPlugins extends CellPlugin[] = CellPlugin[]> =
   Record<string, ColumnInfo<InferPlugin<TPlugins>>>;
@@ -44,7 +47,7 @@ export interface ColumnsInfoTableApi {
   // Column Setters
   _setColumnInfo: (colId: string, updater: Updater<ColumnInfo>) => void;
   setColumnInfo: (colId: string, info: Partial<Omit<ColumnInfo, "id">>) => void;
-  handleColumnOrderChange: (orderedIds: string[]) => void;
+  handleColumnOrderChange: (e: DragEndEvent) => void;
   _addColumnInfo: (info: ColumnInfo, idsUpdater: Updater<string[]>) => void;
   addColumnInfo: (payload: {
     id: string;
@@ -150,10 +153,11 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     table.setColumnInfo = (colId, info) => {
       table._setColumnInfo(colId, (prev) => ({ ...prev, ...info }));
     };
-    table.handleColumnOrderChange = (orderedIds) => {
+    table.handleColumnOrderChange = (e) => {
+      const { columnOrder } = table.getState();
       table.options.onColumnInfoChange?.((prev) => ({
         ...prev,
-        ids: reorderByIds(prev.ids, orderedIds, (id) => id),
+        ids: getSortableItemsAfterDrag(columnOrder, e),
       }));
       table.options.sync?.("table.handleColumnOrderChange");
     };

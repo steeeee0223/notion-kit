@@ -3,6 +3,7 @@
  * Tests for column CRUD operations using direct table APIs
  */
 
+import type { DragEndEvent } from "@dnd-kit/react";
 import { act } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
@@ -232,14 +233,21 @@ describe("useTableView - Column Custom APIs", () => {
   });
 
   describe("handleColumnOrderChange", () => {
-    it("should reorder columns from ordered ids", () => {
+    it("should reorder columns from a drag end event", () => {
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
       });
 
       act(() => {
-        table.handleColumnOrderChange(["col2", "col1"]);
+        table.handleColumnOrderChange({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: "col1" },
+            target: { id: "col2" },
+          },
+        } as DragEndEvent);
       });
 
       const columnOrder = table.getState().columnOrder;
@@ -250,14 +258,21 @@ describe("useTableView - Column Custom APIs", () => {
       expect(col1Index).toBeGreaterThan(col2Index);
     });
 
-    it("should handle moving a column to the beginning", () => {
+    it("should handle moving a column to the beginning from a drag end event", () => {
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
       });
 
       act(() => {
-        table.handleColumnOrderChange(["col2", "col1"]);
+        table.handleColumnOrderChange({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: "col1" },
+            target: { id: "col2" },
+          },
+        } as DragEndEvent);
       });
 
       const columnOrder = table.getState().columnOrder;

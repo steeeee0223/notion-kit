@@ -1,7 +1,12 @@
 import { useState } from "react";
 
 import { Icon } from "@notion-kit/icons";
-import { MenuGroup, MenuItem, Sortable } from "@notion-kit/ui/primitives";
+import {
+  getSortableItemsAfterDrag,
+  MenuGroup,
+  MenuItem,
+  Sortable,
+} from "@notion-kit/ui/primitives";
 
 const menuItems = [
   { id: "inbox", label: "Inbox", icon: <Icon.Globe /> },
@@ -14,16 +19,7 @@ export function SortableMenuList({ itemHandle }: { itemHandle?: boolean }) {
 
   return (
     <Sortable.Root
-      items={items.map((item) => item.id)}
-      onItemsChange={(orderedIds) => {
-        const itemsById = new Map(items.map((item) => [item.id, item]));
-        setItems(
-          orderedIds.flatMap((id) => {
-            const item = itemsById.get(String(id));
-            return item ? [item] : [];
-          }),
-        );
-      }}
+      onDragEnd={(e) => setItems(getSortableItemsAfterDrag(items, e))}
     >
       <Sortable.List
         className="w-64 rounded-lg bg-popover p-1 shadow-sm"

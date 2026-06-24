@@ -86,11 +86,8 @@ export function PropsMenu() {
                 onActionClick={table.toggleAllColumnsVisible}
               />
               <Sortable.Root
-                items={props.map((prop) => prop.id)}
                 disabled={search.length > 0}
-                onItemsChange={(orderedIds) =>
-                  table.handleColumnOrderChange(orderedIds.map(String))
-                }
+                onDragEnd={table.handleColumnOrderChange}
               >
                 <Sortable.List>
                   <AutocompleteCollection>

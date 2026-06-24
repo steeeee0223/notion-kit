@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from "react";
+import type { DragEndEvent } from "@dnd-kit/react";
 import type { Table } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
@@ -12,25 +13,26 @@ import { TableRow } from "./table-row";
 
 export function DndTableBody() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [pendingOrder, setPendingOrder] = useState<string[] | null>(null);
+  const [pendingDragEndEvent, setPendingDragEndEvent] =
+    useState<DragEndEvent | null>(null);
   const { table } = useTableViewCtx();
   const { locked } = table.getTableGlobalState();
 
-  const handleRowOrderChange = useCallback(
-    (ids: string[]) => {
+  const handleRowDragEnd = useCallback(
+    (e: DragEndEvent) => {
       const isSorted = table.getState().sorting.length > 0;
-      if (!isSorted) return table.handleRowOrderChange(ids);
-      setPendingOrder(ids);
+      if (!isSorted) return table.handleRowDragEnd(e);
+      setPendingDragEndEvent(e);
       setDialogOpen(true);
     },
     [table],
   );
 
   const handleConfirmRemoveSorting = () => {
-    if (pendingOrder) {
+    if (pendingDragEndEvent) {
       table.resetSorting();
-      table.handleRowOrderChange(pendingOrder);
-      setPendingOrder(null);
+      table.handleRowDragEnd(pendingDragEndEvent);
+      setPendingDragEndEvent(null);
     }
     setDialogOpen(false);
   };
@@ -64,12 +66,9 @@ export function DndTableBody() {
         {/* Rows */}
         <div className="relative">
           {table.getState().columnSizingInfo.isResizingColumn ? (
-            <MemoizedTableBody
-              table={table}
-              onRowOrderChange={handleRowOrderChange}
-            />
+            <MemoizedTableBody table={table} onRowDragEnd={handleRowDragEnd} />
           ) : (
-            <TableBody table={table} onRowOrderChange={handleRowOrderChange} />
+            <TableBody table={table} onRowDragEnd={handleRowDragEnd} />
           )}
         </div>
       </div>
@@ -102,21 +101,17 @@ export function DndTableBody() {
 
 interface TableBodyProps {
   table: Table<Row>;
-  onRowOrderChange: (ids: string[]) => void;
+  onRowDragEnd: (e: DragEndEvent) => void;
 }
 
 /**
  * un-memoized normal table body component - see memoized version below
  */
-function TableBody({ table, onRowOrderChange }: TableBodyProps) {
+function TableBody({ table, onRowDragEnd }: TableBodyProps) {
   const rows = table.getRowModel().rows;
-  const ids = rows.map((row) => row.id);
 
   return (
-    <Sortable.Root
-      items={ids}
-      onItemsChange={(orderedIds) => onRowOrderChange(orderedIds.map(String))}
-    >
+    <Sortable.Root onDragEnd={onRowDragEnd}>
       <Sortable.List>
         {rows.map((row, index) =>
           row.getIsGrouped() ? (

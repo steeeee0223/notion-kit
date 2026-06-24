@@ -10,6 +10,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSub,
   DropdownMenuSubTrigger,
+  getSortableItemsAfterDrag,
   Input,
   MenuItemAction,
   Sortable,
@@ -127,9 +128,8 @@ export function SelectConfigMenu({
             </div>
           )}
           <Sortable.Root
-            items={config.options.names}
-            onItemsChange={(orderedIds) =>
-              reorderOptions(orderedIds.map(String))
+            onDragEnd={(e) =>
+              reorderOptions(getSortableItemsAfterDrag(config.options.names, e))
             }
           >
             <Sortable.List>

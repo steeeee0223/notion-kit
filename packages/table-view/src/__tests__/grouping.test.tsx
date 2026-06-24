@@ -3,6 +3,7 @@
  * Tests for grouping states, visibility controls, and aggregate display
  */
 
+import type { DragEndEvent } from "@dnd-kit/react";
 import { act } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
@@ -355,7 +356,7 @@ describe("useTableView - Extended Grouping", () => {
   });
 
   describe("Group ordering", () => {
-    it("should reorder grouped rows from ordered ids", () => {
+    it("should reorder grouped rows from a drag end event", () => {
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
@@ -374,7 +375,14 @@ describe("useTableView - Extended Grouping", () => {
       const secondGroupId = initialGroupOrder[1]!;
 
       act(() => {
-        table.handleGroupedRowOrderChange([secondGroupId, firstGroupId]);
+        table.handleGroupedRowOrderChange({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: firstGroupId },
+            target: { id: secondGroupId },
+          },
+        } as DragEndEvent);
       });
 
       const newGroupOrder = table.getState().groupingState.groupOrder;

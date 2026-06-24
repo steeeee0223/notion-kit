@@ -10,7 +10,12 @@ import {
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
-import { Badge, Button, Sortable } from "@notion-kit/ui/primitives";
+import {
+  Badge,
+  Button,
+  getSortableItemsAfterDrag,
+  Sortable,
+} from "@notion-kit/ui/primitives";
 
 interface BoardColumn {
   id: string;
@@ -295,6 +300,8 @@ export function SortableKanbanBoard() {
   const handleDragEnd = (event: DragEndEvent) => {
     const sourceType = event.operation.source?.type;
     if (sourceType === "board-column") {
+      const orderedIds = getSortableItemsAfterDrag(columnOrder, event);
+      if (orderedIds) setColumnOrder(orderedIds);
       setDragVersion((version) => version + 1);
       return;
     }
@@ -316,9 +323,7 @@ export function SortableKanbanBoard() {
   return (
     <div className="max-w-215 overflow-x-auto rounded-lg bg-main p-4">
       <Sortable.Root
-        items={columnOrder}
         orientation="horizontal"
-        onItemsChange={(orderedIds) => setColumnOrder(orderedIds.map(String))}
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}

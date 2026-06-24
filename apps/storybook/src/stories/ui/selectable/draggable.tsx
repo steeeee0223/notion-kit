@@ -123,10 +123,7 @@ function SortableSelectableItems() {
   };
 
   return (
-    <Sortable.Root
-      items={orderedItems.map((item) => item.id)}
-      onDragEnd={handleDragEnd}
-    >
+    <Sortable.Root onDragEnd={handleDragEnd}>
       <Sortable.Overlay>
         {({ data }) => {
           const selectedIds = data.selectedIds as string[] | undefined;

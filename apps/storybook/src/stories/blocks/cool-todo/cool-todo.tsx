@@ -15,6 +15,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  getSortableItemsAfterDrag,
   Input,
   Popover,
   PopoverContent,
@@ -36,7 +37,7 @@ interface TodoStore {
   archiveTodo: (id: string) => void;
   restoreTodo: (id: string) => void;
   deleteTodo: (id: string) => void;
-  reorderTodos: (orderedIds: string[]) => void;
+  reorderTodos: (updated: TodoItem[]) => void;
 }
 
 const INITIAL_TODOS: TodoItem[] = [
@@ -93,15 +94,10 @@ function createTodoStore() {
       set((state) => ({
         todos: state.todos.filter((t) => t.id !== id),
       })),
-    reorderTodos: (orderedIds) =>
+    reorderTodos: (updated) =>
       set((state) => {
-        const byId = new Map(state.todos.map((todo) => [todo.id, todo]));
-        const active = orderedIds.flatMap((id) => {
-          const todo = byId.get(id);
-          return todo ? [todo] : [];
-        });
         const inactive = state.todos.filter((todo) => todo.status !== "active");
-        return { todos: [...active, ...inactive] };
+        return { todos: [...updated, ...inactive] };
       }),
   }));
 }
@@ -336,8 +332,9 @@ function ActiveTodoList() {
 
   return (
     <Sortable.Root
-      items={activeTodos.map((t) => t.id)}
-      onItemsChange={(orderedIds) => reorderTodos(orderedIds.map(String))}
+      onDragEnd={(event) =>
+        reorderTodos(getSortableItemsAfterDrag(activeTodos, event))
+      }
     >
       <Sortable.List>
         {activeTodos.map((todo, index) => (

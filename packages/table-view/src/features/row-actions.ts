@@ -1,3 +1,4 @@
+import type { DragEndEvent } from "@dnd-kit/react";
 import type {
   OnChangeFn,
   Table,
@@ -8,12 +9,13 @@ import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { IconData } from "@notion-kit/ui/icon-block";
+import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
 import type { Cell, Row } from "../lib/types";
 import { getDefaultCell, insertAt } from "../lib/utils";
 import type { CellPlugin, InferData } from "../plugins";
 import type { TitlePlugin } from "../plugins/title";
-import { createGroupId, reorderByIds } from "./utils";
+import { createGroupId } from "./utils";
 
 export interface RowActionsOptions {
   onTableDataChange?: OnChangeFn<Row[]>;
@@ -39,10 +41,7 @@ export interface RowActionsTableApi {
   duplicateRow: (id: string) => void;
   deleteRow: (id: string) => void;
   deleteRows: (ids: string[]) => void;
-  handleRowOrderChange: (
-    orderedIds: string[],
-    moved?: { rowId: string; groupId: string },
-  ) => void;
+  handleRowDragEnd: (e: DragEndEvent) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
   // With Grouping API
   addRowToGroup: (groupId: string) => void;
@@ -62,6 +61,15 @@ export interface RowActionsRowApi {
   getTitleCell: () => { colId: string; cell: Cell<TitlePlugin> };
   getIsFirstChild: () => boolean;
   getIsLastChild: () => boolean;
+}
+
+function getDragGroupId(data: unknown) {
+  return typeof data === "object" &&
+    data !== null &&
+    "groupId" in data &&
+    typeof data.groupId === "string"
+    ? data.groupId
+    : undefined;
 }
 
 export const RowActionsFeature: TableFeature = {
@@ -201,17 +209,28 @@ export const RowActionsFeature: TableFeature = {
       const idSet = new Set(ids);
       table.setTableData((prev) => prev.filter((row) => !idSet.has(row.id)));
     };
-    table.handleRowOrderChange = (orderedIds, moved) => {
+    table.handleRowDragEnd = (event) => {
       const { grouping, groupingState } = table.getState();
       const groupingColumnId = grouping[0];
+      const source = event.operation.source;
+      const target = event.operation.target;
+      const sourceGroupId = getDragGroupId(source?.data);
+      const targetGroupId = getDragGroupId(target?.data);
 
       table.setTableData((rows) => {
-        const next = reorderByIds(rows, orderedIds, (row) => row.id);
-        if (!moved || !groupingColumnId) return next;
+        const next = getSortableItemsAfterDrag(rows, event);
+        if (
+          !source ||
+          !targetGroupId ||
+          targetGroupId === sourceGroupId ||
+          !groupingColumnId
+        ) {
+          return next;
+        }
 
         const now = Date.now();
         return next.map((row) => {
-          if (row.id !== moved.rowId) return row;
+          if (row.id !== String(source.id)) return row;
           return {
             ...row,
             properties: {
@@ -219,7 +238,7 @@ export const RowActionsFeature: TableFeature = {
               [groupingColumnId]: {
                 id: v4(),
                 value: structuredClone<unknown>(
-                  groupingState.groupValues[moved.groupId]?.original,
+                  groupingState.groupValues[targetGroupId]?.original,
                 ),
               },
             },

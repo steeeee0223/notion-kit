@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { DragEndEvent } from "@dnd-kit/react";
 import type { ColumnSort } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
@@ -15,6 +16,7 @@ import {
   Button,
   DropdownMenuGroup,
   DropdownMenuItem,
+  getSortableItemsAfterDrag,
   MenuItemAction,
   Popover,
   PopoverContent,
@@ -37,23 +39,14 @@ export function SortMenu() {
   const sorting = table.getState().sorting;
   const [addingSort, setAddingSort] = useState(false);
 
-  const reorderRules = (orderedIds: string[]) => {
-    table.setSorting((prev) => {
-      const byId = new Map(prev.map((rule) => [rule.id, rule]));
-      return orderedIds.flatMap((id) => {
-        const rule = byId.get(id);
-        return rule ? [rule] : [];
-      });
-    });
+  const reorderRules = (e: DragEndEvent) => {
+    table.setSorting((v) => getSortableItemsAfterDrag(v, e));
   };
 
   return (
     <>
       <DropdownMenuGroup>
-        <Sortable.Root
-          items={sorting.map((rule) => rule.id)}
-          onItemsChange={(orderedIds) => reorderRules(orderedIds.map(String))}
-        >
+        <Sortable.Root onDragEnd={reorderRules}>
           <Sortable.List>
             {sorting.map((prop, index) => (
               <SortRule key={prop.id} {...prop} index={index} />

@@ -1,3 +1,4 @@
+import type { DragEndEvent } from "@dnd-kit/react";
 import type {
   OnChangeFn,
   Row,
@@ -11,10 +12,11 @@ import {
   makeStateUpdater,
 } from "@tanstack/react-table";
 
+import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
+
 import type { ColumnInfo, Row as RowModel } from "../lib/types";
 import type { CellPlugin, ComparableValue, InferData } from "../plugins";
 import { DefaultGroupingValue } from "../plugins";
-import { reorderByIds } from "./utils";
 
 interface ExtendedGroupingState {
   groupOrder: string[];
@@ -56,7 +58,7 @@ export interface ExtendedGroupingTableApi {
   toggleHideEmptyGroups: () => void;
   toggleGroupVisible: (groupId: string) => void;
   toggleAllGroupsVisible: () => void;
-  handleGroupedRowOrderChange: (orderedIds: string[]) => void;
+  handleGroupedRowOrderChange: (e: DragEndEvent) => void;
   _resetGroupingState: () => void;
   getGroupingValueRenderer: (
     groupId: string,
@@ -145,14 +147,10 @@ export const ExtendedGroupingFeature: TableFeature = {
         };
       });
     };
-    table.handleGroupedRowOrderChange = (orderedIds) => {
+    table.handleGroupedRowOrderChange = (e) => {
       table._setGroupingState((state) => ({
         ...state,
-        groupOrder: reorderByIds(
-          state.groupOrder,
-          orderedIds,
-          (groupId) => groupId,
-        ),
+        groupOrder: getSortableItemsAfterDrag(state.groupOrder, e),
       }));
     };
     table._resetGroupingState = () => {

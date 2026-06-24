@@ -79,18 +79,20 @@ function getSortableModifiers(orientation: Orientation) {
 
 interface SortableRootProps
   extends React.ComponentProps<typeof DragDropProvider> {
-  items: UniqueIdentifier[];
   orientation?: Orientation;
   disabled?: boolean;
-  onItemsChange?: (items: UniqueIdentifier[], event: DragEndEvent) => void;
+}
+
+function getSortableItemsAfterDrag<
+  T extends UniqueIdentifier[] | { id: UniqueIdentifier }[],
+>(items: T, event: DragEndEvent) {
+  if (event.canceled) return items;
+  return move(items, event);
 }
 
 function SortableRoot({
   children,
   disabled = false,
-  items,
-  onDragEnd,
-  onItemsChange,
   orientation = "vertical",
   sensors,
   ...props
@@ -104,35 +106,9 @@ function SortableRoot({
     [disabled, orientation],
   );
 
-  const handleDragEnd: NonNullable<SortableRootProps["onDragEnd"]> = (
-    event,
-    manager,
-  ) => {
-    onDragEnd?.(event, manager);
-
-    const { source, target } = event.operation;
-    if (
-      event.canceled ||
-      !source ||
-      !target ||
-      source.id === target.id ||
-      !items.includes(source.id) ||
-      !items.includes(target.id)
-    ) {
-      return;
-    }
-
-    const next = move(items, event);
-    if (next !== items) onItemsChange?.(next, event);
-  };
-
   return (
     <SortableRootContext value={context}>
-      <DragDropProvider
-        sensors={sensors ?? sortableSensors}
-        onDragEnd={handleDragEnd}
-        {...props}
-      >
+      <DragDropProvider sensors={sensors ?? sortableSensors} {...props}>
         {children}
       </DragDropProvider>
     </SortableRootContext>
@@ -323,6 +299,7 @@ const Sortable = {
 };
 
 export {
+  getSortableItemsAfterDrag,
   Sortable,
   SortableHandle,
   SortableItem,

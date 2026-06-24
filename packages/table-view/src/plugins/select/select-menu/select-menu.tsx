@@ -9,6 +9,7 @@ import {
   ComboboxLabel,
   ComboboxList,
   ComboboxValue,
+  getSortableItemsAfterDrag,
   Sortable,
 } from "@notion-kit/ui/primitives";
 import { COLOR, type Color } from "@notion-kit/utils";
@@ -124,11 +125,10 @@ export function SelectMenu({ menu }: SelectMenuProps) {
                 </ComboboxCreatableItem>
               ) : (
                 <Sortable.Root
-                  items={group.items}
                   disabled={search !== ""}
-                  onItemsChange={(orderedIds) =>
-                    reorderOptions(orderedIds.map(String))
-                  }
+                  onDragEnd={(e) => {
+                    reorderOptions(getSortableItemsAfterDrag(group.items, e));
+                  }}
                 >
                   <Sortable.List>
                     {group.items.map((name, index) => {

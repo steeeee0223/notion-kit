@@ -1,9 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState } from "react";
-import type { UniqueIdentifier } from "@dnd-kit/abstract";
 import { PointerActivationConstraints, PointerSensor } from "@dnd-kit/dom";
-import { move } from "@dnd-kit/helpers";
 import {
   DragDropProvider,
   type DragEndEvent,
@@ -15,7 +13,6 @@ import { useTableViewCtx } from "../table-contexts";
 import {
   createBoardItems,
   findBoardGroup,
-  flattenBoardItems,
   haveSameBoardItems,
   haveSameBoardItemSet,
   moveBoardItems,
@@ -32,15 +29,6 @@ const boardSensors: React.ComponentProps<typeof DragDropProvider>["sensors"] = (
     ],
   }),
 ];
-
-function haveSameIds(a: UniqueIdentifier[], b: UniqueIdentifier[]) {
-  return (
-    a.length === b.length &&
-    new Set(a).size === a.length &&
-    new Set(b).size === b.length &&
-    a.every((id) => b.includes(id))
-  );
-}
 
 interface UseBoardDndResult {
   activeCardId: string | null;
@@ -73,8 +61,8 @@ export function useBoardDnd(): UseBoardDndResult {
   }, []);
 
   const handleDragStart = useCallback(
-    (event: DragStartEvent) => {
-      const { source } = event.operation;
+    (e: DragStartEvent) => {
+      const { source } = e.operation;
       if (source?.type !== "board-card") return;
 
       const sourceId = String(source.id);
@@ -88,17 +76,17 @@ export function useBoardDnd(): UseBoardDndResult {
   );
 
   const handleDragOver = useCallback(
-    (event: DragOverEvent) => {
-      if (event.operation.source?.type !== "board-card") return;
-      const next = moveBoardItems(itemsRef.current, event);
+    (e: DragOverEvent) => {
+      if (e.operation.source?.type !== "board-card") return;
+      const next = moveBoardItems(itemsRef.current, e);
       if (next !== itemsRef.current) updateItems(next);
     },
     [updateItems],
   );
 
   const finishCardDrag = useCallback(
-    (event: DragEndEvent) => {
-      const { canceled, source, target } = event.operation;
+    (e: DragEndEvent) => {
+      const { canceled, source, target } = e.operation;
       const snapshot = snapshotRef.current;
       const sourceGroupId = sourceGroupRef.current;
 
@@ -135,7 +123,7 @@ export function useBoardDnd(): UseBoardDndResult {
         return;
       }
 
-      const finalItems = moveBoardItems(itemsRef.current, event);
+      const finalItems = moveBoardItems(itemsRef.current, e);
       if (!haveSameBoardItemSet(derivedItems, finalItems)) {
         updateItems(derivedItems);
         return;
@@ -148,38 +136,30 @@ export function useBoardDnd(): UseBoardDndResult {
       }
 
       updateItems(finalItems);
-      table.handleRowOrderChange(
-        flattenBoardItems(finalItems, groupOrder),
-        destinationGroupId === sourceGroupId
-          ? undefined
-          : { rowId: sourceId, groupId: destinationGroupId },
-      );
+      table.handleRowDragEnd(e);
     },
-    [derivedItems, groupOrder, table, updateItems],
+    [derivedItems, table, updateItems],
   );
 
   const handleDragEnd = useCallback(
-    (event: DragEndEvent) => {
-      const { source, target } = event.operation;
+    (e: DragEndEvent) => {
+      const { source, target } = e.operation;
 
       if (source?.type === "board-card") {
-        finishCardDrag(event);
+        finishCardDrag(e);
       } else if (
-        !event.canceled &&
+        !e.canceled &&
         source?.type === "board-group" &&
         target?.type === "board-group"
       ) {
-        const nextGroupOrder = move(groupOrder, event).map(String);
-        if (haveSameIds(groupOrder, nextGroupOrder)) {
-          table.handleGroupedRowOrderChange(nextGroupOrder);
-        }
+        table.handleGroupedRowOrderChange(e);
       }
 
       setActiveCardId(null);
       snapshotRef.current = null;
       sourceGroupRef.current = null;
     },
-    [finishCardDrag, groupOrder, table],
+    [finishCardDrag, table],
   );
 
   return {

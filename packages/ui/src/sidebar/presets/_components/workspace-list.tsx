@@ -7,6 +7,7 @@ import { IconBlock } from "@/icon-block";
 import {
   Badge,
   DropdownMenuCheckboxItem,
+  getSortableItemsAfterDrag,
   MenuGroup,
   Sortable,
   TooltipDescription,
@@ -54,8 +55,7 @@ export function WorkspaceList({
         />
       </div>
       <Sortable.Root
-        items={order}
-        onItemsChange={(orderedIds) => setOrder(orderedIds.map(String))}
+        onDragEnd={(e) => setOrder(getSortableItemsAfterDrag(order, e))}
       >
         <Sortable.List render={<MenuGroup />}>
           {workspaceList.map((workspace, index) => (
