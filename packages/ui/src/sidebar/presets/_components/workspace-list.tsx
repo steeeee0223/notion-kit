@@ -88,48 +88,46 @@ function WorkspaceItem({
 }: WorkspaceItemProps) {
   const { id, name, icon, plan, memberCount, role } = workspace;
   return (
-    <Sortable.Item
-      id={id}
-      index={index}
-      render={<div className="flex cursor-grab flex-col" />}
+    <TooltipPreset
+      side="right"
+      sideOffset={8}
+      description={
+        <>
+          <TooltipDescription text={planTitle[plan]} />
+          <TooltipDescription
+            type="secondary"
+            text={`${memberCount} members`}
+          />
+        </>
+      }
+      disabled={role === Role.GUEST}
     >
-      <TooltipPreset
-        side="right"
-        sideOffset={8}
-        description={
-          <>
-            <TooltipDescription text={planTitle[plan]} />
-            <TooltipDescription
-              type="secondary"
-              text={`${memberCount} members`}
-            />
-          </>
+      <Sortable.Item
+        id={id}
+        index={index}
+        render={
+          <DropdownMenuCheckboxItem
+            className="group h-8"
+            tabIndex={-1}
+            icon={
+              <div>
+                <Sortable.Handle
+                  aria-label={`Move workspace ${name}`}
+                  className="relative hidden size-5 group-hover:flex"
+                />
+                <IconBlock
+                  className="group-hover:hidden"
+                  icon={icon ?? { type: "text", src: name }}
+                />
+              </div>
+            }
+            checked={id === activeWorkspace}
+            label={<WorkspaceTitle role={role} name={name} />}
+            onClick={() => onSelect?.(id)}
+          />
         }
-        disabled={role === Role.GUEST}
-      >
-        <DropdownMenuCheckboxItem
-          role="menuitem"
-          tabIndex={-1}
-          id={id}
-          className="group h-8"
-          icon={
-            <div>
-              <Sortable.Handle
-                aria-label={`Move workspace ${name}`}
-                className="relative hidden size-5 group-hover:flex"
-              />
-              <IconBlock
-                className="group-hover:hidden"
-                icon={icon ?? { type: "text", src: name }}
-              />
-            </div>
-          }
-          checked={id === activeWorkspace}
-          label={<WorkspaceTitle role={role} name={name} />}
-          onClick={() => onSelect?.(id)}
-        />
-      </TooltipPreset>
-    </Sortable.Item>
+      />
+    </TooltipPreset>
   );
 }
 

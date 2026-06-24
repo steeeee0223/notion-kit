@@ -197,12 +197,10 @@ function SortableItem({
   collisionDetector,
   collisionPriority,
   data,
-  disabled: disabledProp,
   effects,
   group,
   id,
   index,
-  modifiers: modifiersProp,
   plugins,
   register,
   render,
@@ -212,8 +210,8 @@ function SortableItem({
   ...props
 }: SortableItemProps) {
   const root = React.useContext(SortableRootContext);
-  const disabled = disabledProp ?? root?.disabled;
-  const modifiers = modifiersProp ?? root?.modifiers;
+  const disabled = props.disabled ?? root?.disabled;
+  const modifiers = props.modifiers ?? root?.modifiers;
   const sortable = useSortable({
     accept,
     alignment,

@@ -101,7 +101,7 @@ export function TimelineItemResizer({
   }, [mousePosition.x, onDragMove, scrollX, sidebarWidth, timeline]);
 
   const handleDragStart = () => {
-    initialValueRef.current = props.ts ? new Date(props.ts) : null;
+    initialValueRef.current = props.ts !== null ? new Date(props.ts) : null;
     setDragging(true);
   };
 

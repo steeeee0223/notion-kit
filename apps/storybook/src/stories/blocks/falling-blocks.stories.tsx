@@ -30,7 +30,7 @@ export const Basic: Story = {
   render: () => {
     return (
       <TooltipProvider>
-        <FallingBlocks.Root className="relative h-[420px] w-100 overflow-hidden rounded-lg border border-border bg-popover shadow-lg">
+        <FallingBlocks.Root className="relative h-105 w-100 overflow-hidden rounded-lg border border-border bg-popover shadow-lg">
           {DEFAULT_LOGOS.map((block) => (
             <FallingBlocks.Item
               key={block.name}
@@ -60,7 +60,7 @@ export const Basic: Story = {
 // Internal wrapper for the Draggable story to use useFallingBlocks hook
 function DraggableStage() {
   const { setDragStart, setDragMove, setDragEnd } = useFallingBlocks();
-  const { isDropTarget, ref } = useDroppable({
+  const { ref } = useDroppable({
     id: "falling-blocks-root",
     type: "falling-blocks-root",
     accept: "falling-block",
@@ -93,11 +93,7 @@ function DraggableStage() {
       onDragMove={handleDragMove}
       onDragEnd={handleDragEnd}
     >
-      <div
-        ref={ref}
-        data-drop-target={isDropTarget || undefined}
-        className="absolute inset-0"
-      >
+      <div ref={ref} className="absolute inset-0">
         {DEFAULT_LOGOS.map((block, index) => (
           <DraggableItem key={block.name} block={block} index={index} />
         ))}
@@ -110,7 +106,7 @@ function DraggableItem({
   block,
   index,
 }: {
-  block: (typeof DEFAULT_LOGOS)[0];
+  block: (typeof DEFAULT_LOGOS)[number];
   index: number;
 }) {
   const { isDragging, ref } = useDraggable({
@@ -143,7 +139,7 @@ export const Draggable: Story = {
       <TooltipProvider>
         <FallingBlocks.Root
           count={DEFAULT_LOGOS.length}
-          className="relative h-[420px] w-100 overflow-hidden rounded-lg border border-border bg-popover shadow-lg"
+          className="relative h-105 w-100 overflow-hidden rounded-lg border border-border bg-popover shadow-lg"
         >
           <DraggableStage />
 

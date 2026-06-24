@@ -39,7 +39,7 @@ export function OptionItem({
               <Sortable.Handle
                 aria-label={`Move ${option.name}`}
                 className="h-6 w-4.5"
-                onPointerDown={(event) => event.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
               />
             }
             label={<OptionTag {...option} />}
