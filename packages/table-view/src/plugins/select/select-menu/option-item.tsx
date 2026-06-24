@@ -1,6 +1,3 @@
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
@@ -8,6 +5,7 @@ import {
   DropdownMenuTrigger,
   MenuItem,
   MenuItemAction,
+  Sortable,
   TooltipDescription,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
@@ -18,6 +16,7 @@ import { SelectOptionMenu } from "../select-option-menu";
 import type { OptionConfig } from "../types";
 
 interface OptionItemProps {
+  index: number;
   option: OptionConfig;
   draggable?: boolean;
   onSelect: (value: string) => void;
@@ -31,6 +30,7 @@ interface OptionItemProps {
 }
 
 export function OptionItem({
+  index,
   option,
   draggable,
   onSelect,
@@ -38,23 +38,6 @@ export function OptionItem({
   onDelete,
   validateName,
 }: OptionItemProps) {
-  /** DND */
-  const {
-    attributes,
-    isDragging,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: option.name });
-
-  const style: React.CSSProperties = {
-    opacity: isDragging ? 0.8 : 1,
-    zIndex: isDragging ? 10 : 0,
-    transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
-    transition, // Warning: it is somehow laggy
-  };
-
   return (
     <TooltipPreset
       description={
@@ -70,22 +53,24 @@ export function OptionItem({
       side="left"
       sideOffset={8}
     >
-      <MenuItem
-        ref={setNodeRef}
-        style={style}
-        onClick={() => onSelect(option.name)}
-        icon={
-          draggable ? (
-            <div
-              className="flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-icon"
-              {...attributes}
-              {...listeners}
-            >
-              <Icon.DragHandle className="size-3" />
-            </div>
-          ) : null
+      <Sortable.Item
+        id={option.name}
+        index={index}
+        disabled={!draggable}
+        render={
+          <MenuItem
+            onClick={() => onSelect(option.name)}
+            icon={
+              draggable ? (
+                <Sortable.Handle
+                  aria-label={`Move ${option.name}`}
+                  className="h-6 w-4.5"
+                />
+              ) : null
+            }
+            label={<OptionTag {...option} />}
+          />
         }
-        label={<OptionTag {...option} />}
       >
         <MenuItemAction className="flex items-center text-muted">
           <DropdownMenu>
@@ -110,7 +95,7 @@ export function OptionItem({
             />
           </DropdownMenu>
         </MenuItemAction>
-      </MenuItem>
+      </Sortable.Item>
     </TooltipPreset>
   );
 }

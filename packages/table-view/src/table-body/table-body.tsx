@@ -1,14 +1,11 @@
-"use client";
-
 import React, { useCallback, useState } from "react";
-import { type DragEndEvent } from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/react";
 import type { Table } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
-import { Button, Dialog } from "@notion-kit/ui/primitives";
+import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
-import { SortableDnd, useDndSensors } from "../common";
 import type { Row } from "../lib/types";
 import { useTableViewCtx } from "../table-contexts";
 import { TableGroupedRow } from "./table-grouped-row";
@@ -16,9 +13,8 @@ import { TableRow } from "./table-row";
 
 export function DndTableBody() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [pendingDragEvent, setPendingDragEvent] = useState<DragEndEvent | null>(
-    null,
-  );
+  const [pendingDragEndEvent, setPendingDragEndEvent] =
+    useState<DragEndEvent | null>(null);
   const { table } = useTableViewCtx();
   const { locked } = table.getTableGlobalState();
 
@@ -26,17 +22,17 @@ export function DndTableBody() {
     (e: DragEndEvent) => {
       const isSorted = table.getState().sorting.length > 0;
       if (!isSorted) return table.handleRowDragEnd(e);
-      setPendingDragEvent(e);
+      setPendingDragEndEvent(e);
       setDialogOpen(true);
     },
     [table],
   );
 
   const handleConfirmRemoveSorting = () => {
-    if (pendingDragEvent) {
+    if (pendingDragEndEvent) {
       table.resetSorting();
-      table.handleRowDragEnd(pendingDragEvent);
-      setPendingDragEvent(null);
+      table.handleRowDragEnd(pendingDragEndEvent);
+      setPendingDragEndEvent(null);
     }
     setDialogOpen(false);
   };
@@ -112,23 +108,20 @@ interface TableBodyProps {
  * un-memoized normal table body component - see memoized version below
  */
 function TableBody({ table, onRowDragEnd }: TableBodyProps) {
-  const sensors = useDndSensors();
   const rows = table.getRowModel().rows;
 
   return (
-    <SortableDnd
-      items={rows.map((row) => row.id)}
-      sensors={sensors}
-      onDragEnd={onRowDragEnd}
-    >
-      {rows.map((row) =>
-        row.getIsGrouped() ? (
-          <TableGroupedRow key={row.id} row={row} />
-        ) : (
-          <TableRow key={row.id} row={row} />
-        ),
-      )}
-    </SortableDnd>
+    <Sortable.Root onDragEnd={onRowDragEnd}>
+      <Sortable.List>
+        {rows.map((row) =>
+          row.getIsGrouped() ? (
+            <TableGroupedRow key={row.id} row={row} />
+          ) : (
+            <TableRow key={row.id} row={row} />
+          ),
+        )}
+      </Sortable.List>
+    </Sortable.Root>
   );
 }
 

@@ -37,6 +37,12 @@ describe("EditGroupMenu", () => {
     ).toBeInTheDocument();
     // "Done" may appear in multiple places
     expect(screen.getAllByText("Done").length).toBeGreaterThan(0);
+    expect(
+      document.querySelector("[data-slot='sortable-list']"),
+    ).toBeInTheDocument();
+    expect(
+      document.querySelector("[data-slot='sortable-handle']"),
+    ).toBeInTheDocument();
   });
 
   it("should show 'Hide empty groups' checkbox item", async () => {

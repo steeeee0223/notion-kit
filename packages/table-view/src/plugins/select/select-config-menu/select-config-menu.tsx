@@ -10,11 +10,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSub,
   DropdownMenuSubTrigger,
+  getSortableItemsAfterDrag,
   Input,
   MenuItemAction,
+  Sortable,
 } from "@notion-kit/ui/primitives";
 
-import { SortableDnd } from "../../../common";
 import type { ConfigMenuProps } from "../../types";
 import type { SelectConfig, SelectSort } from "../types";
 import { OptionItem } from "./option-item";
@@ -126,26 +127,28 @@ export function SelectConfigMenu({
               )}
             </div>
           )}
-          <div className="flex flex-col">
-            <SortableDnd
-              items={config.options.names}
-              onDragEnd={reorderOptions}
-            >
-              {config.options.names.map((name) => {
+          <Sortable.Root
+            onDragEnd={(e) =>
+              reorderOptions(getSortableItemsAfterDrag(config.options.names, e))
+            }
+          >
+            <Sortable.List>
+              {config.options.names.map((name, index) => {
                 const option = config.options.items[name];
                 if (!option) return;
                 return (
                   <OptionItem
                     key={option.name}
                     option={option}
+                    index={index}
                     onUpdate={(data) => updateOption(name, data)}
                     onDelete={() => deleteOption(name)}
                     validateName={validateOptionName}
                   />
                 );
               })}
-            </SortableDnd>
-          </div>
+            </Sortable.List>
+          </Sortable.Root>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenuSub>

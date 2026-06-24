@@ -1,24 +1,21 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import type { DragEndEvent } from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/react";
 
 import { Icon } from "@notion-kit/icons";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
-import { Button, Dialog } from "@notion-kit/ui/primitives";
+import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
-import { SortableDnd, useDndSensors } from "../common";
 import { TableGroupedRow } from "../table-body";
 import { useTableViewCtx } from "../table-contexts";
 import { ListRow } from "./list-row";
 
 export function ListViewContent() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [pendingDragEvent, setPendingDragEvent] = useState<DragEndEvent | null>(
-    null,
-  );
+  const [pendingDragEndEvent, setPendingDragEndEvent] =
+    useState<DragEndEvent | null>(null);
   const { table } = useTableViewCtx();
-  const sensors = useDndSensors();
 
   const rows = table.getRowModel().rows;
 
@@ -26,33 +23,29 @@ export function ListViewContent() {
     (e: DragEndEvent) => {
       const isSorted = table.getState().sorting.length > 0;
       if (!isSorted) return table.handleRowDragEnd(e);
-      setPendingDragEvent(e);
+      setPendingDragEndEvent(e);
       setDialogOpen(true);
     },
     [table],
   );
 
   const handleConfirmRemoveSorting = () => {
-    if (pendingDragEvent) {
+    if (pendingDragEndEvent) {
       table.resetSorting();
-      table.handleRowDragEnd(pendingDragEvent);
-      setPendingDragEvent(null);
+      table.handleRowDragEnd(pendingDragEndEvent);
+      setPendingDragEndEvent(null);
     }
     setDialogOpen(false);
   };
 
   return (
-    <div key="notion-list-view" className="min-w-[708px] px-24 pb-0">
+    <div key="notion-list-view" className="min-w-177 px-24 pb-0">
       <div
         data-block-id="1fe35e0f-492c-80fd-8d7c-f7e953641770"
         className="flex flex-col py-1"
       >
-        <div className="relative flex flex-col">
-          <SortableDnd
-            items={rows.map((row) => row.id)}
-            sensors={sensors}
-            onDragEnd={handleRowDragEnd}
-          >
+        <Sortable.Root onDragEnd={handleRowDragEnd}>
+          <Sortable.List>
             {rows.map((row) =>
               row.getIsGrouped() ? (
                 <TableGroupedRow key={row.id} row={row} />
@@ -60,8 +53,8 @@ export function ListViewContent() {
                 <ListRow key={row.id} row={row} />
               ),
             )}
-          </SortableDnd>
-        </div>
+          </Sortable.List>
+        </Sortable.Root>
         <Button
           tabIndex={0}
           variant="cell"

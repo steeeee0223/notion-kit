@@ -1,8 +1,6 @@
 "use client";
 
 import { useCallback } from "react";
-import type { DragEndEvent } from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
 
 import { getRandomColor, type Color } from "@notion-kit/utils";
 
@@ -61,16 +59,10 @@ export function useSelectConfigMenu({
   );
 
   const reorderOptions = useCallback(
-    (e: DragEndEvent) => {
-      const { active, over } = e;
-      if (!over || active.id === over.id) return;
+    (names: string[]) => {
       dispatch({
         action: "update:sort:manual",
-        updater: (prev) => {
-          const oldIndex = prev.indexOf(active.id as string);
-          const newIndex = prev.indexOf(over.id as string);
-          return arrayMove(prev, oldIndex, newIndex);
-        },
+        updater: names,
       });
     },
     [dispatch],

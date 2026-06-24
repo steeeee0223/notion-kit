@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
@@ -20,15 +18,10 @@ import {
   DropdownMenuSeparator,
   MenuItemAction,
   MenuItemSelect,
+  Sortable,
 } from "@notion-kit/ui/primitives";
 
-import {
-  DefaultIcon,
-  MenuGroupHeader,
-  MenuHeader,
-  SortableDnd,
-  useDndSensors,
-} from "../common";
+import { DefaultIcon, MenuGroupHeader, MenuHeader } from "../common";
 import { TableViewMenuPage } from "../features";
 import type { ColumnInfo } from "../lib/types";
 import { useTableViewCtx } from "../table-contexts";
@@ -41,7 +34,6 @@ export function PropsMenu() {
   const { columnOrder } = table.getState();
   const noShownProps = table.countVisibleColumns() === 1;
 
-  const sensors = useDndSensors();
   const [search, setSearch] = useState("");
   const { props, deletedCount } = columnOrder.reduce(
     (acc, propId) => {
@@ -93,16 +85,16 @@ export function PropsMenu() {
                 action={search ? null : noShownProps ? "Show all" : "Hide all"}
                 onActionClick={table.toggleAllColumnsVisible}
               />
-              <div className="flex flex-col">
-                <SortableDnd
-                  items={columnOrder}
-                  sensors={sensors}
-                  onDragEnd={table.handleColumnDragEnd}
-                >
+              <Sortable.Root
+                disabled={search.length > 0}
+                onDragEnd={table.handleColumnDragEnd}
+              >
+                <Sortable.List>
                   <AutocompleteCollection>
                     {(prop: ColumnInfo) => (
                       <PropertyItem
                         key={prop.id}
+                        index={props.findIndex((item) => item.id === prop.id)}
                         draggable={search.length === 0}
                         info={prop}
                         onClick={() => openEditPropMenu(prop.id)}
@@ -114,8 +106,8 @@ export function PropsMenu() {
                       />
                     )}
                   </AutocompleteCollection>
-                </SortableDnd>
-              </div>
+                </Sortable.List>
+              </Sortable.Root>
             </AutocompleteGroup>
           </AutocompleteList>
           <AutocompleteEmpty className="px-3 text-start text-muted">
@@ -168,6 +160,7 @@ export function PropsMenu() {
 
 interface PropertyItemProps {
   draggable?: boolean;
+  index: number;
   info: ColumnInfo;
   onClick: () => void;
   onVisibilityChange: () => void;
@@ -175,53 +168,36 @@ interface PropertyItemProps {
 
 function PropertyItem({
   draggable,
+  index,
   info,
   onClick,
   onVisibilityChange,
 }: PropertyItemProps) {
   const { id, name, icon, hidden, type } = info;
 
-  /** DND */
-  const {
-    attributes,
-    isDragging,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id });
-
-  const style: React.CSSProperties = {
-    opacity: isDragging ? 0.8 : 1,
-    zIndex: isDragging ? 10 : 0,
-    transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
-    transition, // Warning: it is somehow laggy
-  };
-
   return (
-    <AutocompleteItem
-      ref={setNodeRef}
-      label={name}
-      value={info}
-      style={style}
-      onClick={onClick}
-      icon={[
-        <div
-          key="drag-handle"
-          className={cn(
-            "mr-2 hidden h-6 w-4.5 shrink-0 cursor-grab items-center justify-center fill-icon!",
-            draggable && "flex",
-          )}
-          {...attributes}
-          {...listeners}
-        >
-          <Icon.DragHandle className="size-3" />
-        </div>,
-        <React.Fragment key="icon">
-          {icon ? <IconBlock icon={icon} /> : <DefaultIcon type={type} />}
-        </React.Fragment>,
-      ]}
-      className="*:data-[slot=menu-item-body]:leading-normal"
+    <Sortable.Item
+      id={id}
+      index={index}
+      disabled={!draggable}
+      render={
+        <AutocompleteItem
+          label={name}
+          value={info}
+          onClick={onClick}
+          icon={[
+            <Sortable.Handle
+              key="drag-handle"
+              aria-label={`Move ${name}`}
+              className={cn("mr-2 hidden h-6 w-4.5", draggable && "flex")}
+            />,
+            <React.Fragment key="icon">
+              {icon ? <IconBlock icon={icon} /> : <DefaultIcon type={type} />}
+            </React.Fragment>,
+          ]}
+          className="*:data-[slot=menu-item-body]:leading-normal"
+        />
+      }
     >
       <MenuItemAction className="flex items-center text-muted [&_svg]:fill-current">
         <Button
@@ -242,6 +218,6 @@ function PropertyItem({
           className="ml-1.5 h-full w-3 animate-bg-out fill-icon"
         />
       </MenuItemAction>
-    </AutocompleteItem>
+    </Sortable.Item>
   );
 }

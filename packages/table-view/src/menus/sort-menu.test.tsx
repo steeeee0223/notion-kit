@@ -64,6 +64,12 @@ describe("SortMenu", () => {
 
     // Should display the sort rule with "Ascending" direction
     expect(await screen.findByText("Ascending")).toBeInTheDocument();
+    expect(
+      document.querySelector("[data-slot='sortable-list']"),
+    ).toBeInTheDocument();
+    expect(
+      document.querySelector("[data-slot='sortable-handle']"),
+    ).toBeInTheDocument();
   });
 
   it("should delete all sort rules when clicking 'Delete sort'", async () => {

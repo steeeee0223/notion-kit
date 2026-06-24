@@ -1,11 +1,11 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
+import { RestrictToHorizontalAxis } from "@dnd-kit/abstract/modifiers";
+import { PointerActivationConstraints, PointerSensor } from "@dnd-kit/dom";
 import {
-  DndContext,
-  MouseSensor,
+  DragDropProvider,
   useDraggable,
-  useSensor,
-} from "@dnd-kit/core";
-import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
+  type DragEndEvent,
+} from "@dnd-kit/react";
 import { useMouse } from "@uidotdev/usehooks";
 import { format } from "date-fns";
 
@@ -19,6 +19,17 @@ import {
 } from "../timeline-provider";
 import { getDateByMousePosition } from "../utils";
 
+const timelineResizerSensors: React.ComponentProps<
+  typeof DragDropProvider
+>["sensors"] = (defaults) => [
+  ...defaults.filter((sensor) => sensor !== PointerSensor),
+  PointerSensor.configure({
+    activationConstraints: [
+      new PointerActivationConstraints.Distance({ value: 10 }),
+    ],
+  }),
+];
+
 interface ResizerProps {
   id: string;
   direction: "left" | "right";
@@ -26,8 +37,9 @@ interface ResizerProps {
 }
 
 function Resizer({ direction, id, ts }: ResizerProps) {
-  const { isDragging, attributes, listeners, setNodeRef } = useDraggable({
+  const { isDragging, ref } = useDraggable({
     id: `timeline-item-resizer-${direction}-${id}`,
+    type: "timeline-item-resizer",
   });
 
   return (
@@ -38,9 +50,7 @@ function Resizer({ direction, id, ts }: ResizerProps) {
         direction === "left" ? "-inset-s-1.5" : "-inset-e-1.5",
         isDragging && "opacity-100",
       )}
-      ref={setNodeRef}
-      {...attributes}
-      {...listeners}
+      ref={ref}
     >
       <div
         className={cn(
@@ -78,11 +88,9 @@ export function TimelineItemResizer({
   const [scrollX] = useTimelineScrollX();
   const [, setDragging] = useTimelineDragging();
   const [sidebarWidth] = useTimelineSidebarWidth();
+  const initialValueRef = useRef<Date | null>(null);
 
   const [mousePosition] = useMouse<HTMLDivElement>();
-  const mouseSensor = useSensor(MouseSensor, {
-    activationConstraint: { distance: 10 },
-  });
 
   const handleDragMove = useCallback(() => {
     const timelineRect = timeline.ref?.current?.getBoundingClientRect();
@@ -92,20 +100,31 @@ export function TimelineItemResizer({
     onDragMove?.(getDateByMousePosition(timeline, x));
   }, [mousePosition.x, onDragMove, scrollX, sidebarWidth, timeline]);
 
-  const handleDragEnd = () => {
+  const handleDragStart = () => {
+    initialValueRef.current = props.ts !== null ? new Date(props.ts) : null;
+    setDragging(true);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
     setDragging(false);
+    if (event.canceled) {
+      if (initialValueRef.current) onDragMove?.(initialValueRef.current);
+      initialValueRef.current = null;
+      return;
+    }
+    initialValueRef.current = null;
     onDragEnd?.();
   };
 
   return (
-    <DndContext
-      modifiers={[restrictToHorizontalAxis]}
-      onDragStart={() => setDragging(true)}
+    <DragDropProvider
+      modifiers={[RestrictToHorizontalAxis]}
+      onDragStart={handleDragStart}
       onDragMove={handleDragMove}
       onDragEnd={handleDragEnd}
-      sensors={[mouseSensor]}
+      sensors={timelineResizerSensors}
     >
       <Resizer {...props} />
-    </DndContext>
+    </DragDropProvider>
   );
 }

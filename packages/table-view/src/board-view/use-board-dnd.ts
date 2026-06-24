@@ -1,179 +1,173 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { PointerActivationConstraints, PointerSensor } from "@dnd-kit/dom";
 import {
-  closestCenter,
-  getFirstCollision,
-  MeasuringStrategy,
-  pointerWithin,
-  rectIntersection,
-  type CollisionDetection,
-  type DndContextProps,
+  DragDropProvider,
   type DragEndEvent,
   type DragOverEvent,
   type DragStartEvent,
-  type UniqueIdentifier,
-} from "@dnd-kit/core";
+} from "@dnd-kit/react";
 
-import { useDndSensors } from "../common";
 import { useTableViewCtx } from "../table-contexts";
+import {
+  createBoardItems,
+  findBoardGroup,
+  haveSameBoardItems,
+  haveSameBoardItemSet,
+  moveBoardItems,
+  type BoardItems,
+} from "./board-dnd-state";
+
+const boardSensors: React.ComponentProps<typeof DragDropProvider>["sensors"] = (
+  defaults,
+) => [
+  ...defaults.filter((sensor) => sensor !== PointerSensor),
+  PointerSensor.configure({
+    activationConstraints: [
+      new PointerActivationConstraints.Distance({ value: 5 }),
+    ],
+  }),
+];
 
 interface UseBoardDndResult {
-  activeId: string | null;
-  activeGroupId: string | null;
-  props: DndContextProps;
+  activeCardId: string | null;
+  groupOrder: string[];
+  items: BoardItems;
+  providerProps: Omit<
+    React.ComponentProps<typeof DragDropProvider>,
+    "children"
+  >;
 }
 
 export function useBoardDnd(): UseBoardDndResult {
   const { table } = useTableViewCtx();
-  const sensors = useDndSensors();
-
-  const { groupOrder } = table.getState().groupingState;
-  const rows = table.getRowModel().rowsById;
-
-  const [activeId, setActiveId] = useState<string | null>(null);
-  const lastOverId = useRef<string | null>(null);
-  const recentlyMovedToNewContainer = useRef(false);
-
-  // Build items map for collision detection
-  const items = useMemo(() => {
-    return groupOrder.reduce<Record<string, string[]>>((acc, groupId) => {
-      const row = rows[groupId];
-      acc[groupId] = row?.subRows.map((subRow) => subRow.id) ?? [];
-      return acc;
-    }, {});
-  }, [groupOrder, rows]);
-  const activeGroupId = activeId && activeId in items ? activeId : null;
-
-  const findContainer = useCallback(
-    (id: UniqueIdentifier) => {
-      if (id in items) return id;
-      return Object.keys(items).find((key) =>
-        items[key]?.includes(id.toString()),
-      );
-    },
-    [items],
+  const groupedRowsById = table.getGroupedRowModel().rowsById;
+  const groupOrder = table.getState().groupingState.groupOrder;
+  const derivedItems = useMemo(
+    () => createBoardItems(groupOrder, groupedRowsById),
+    [groupOrder, groupedRowsById],
   );
 
-  /**
-   * Custom collision detection strategy optimized for multiple containers
-   * Based on dnd-kit's MultipleContainers example
-   */
-  const collisionDetectionStrategy: CollisionDetection = useCallback(
-    (args) => {
-      // If dragging a group, use closestCenter for group containers only
-      if (activeGroupId) {
-        return closestCenter({
-          ...args,
-          droppableContainers: args.droppableContainers.filter(
-            (container) => container.id in items,
-          ),
-        });
-      }
+  const [items, setItems] = useState(derivedItems);
+  const [activeCardId, setActiveCardId] = useState<string | null>(null);
+  const itemsRef = useRef(items);
+  const snapshotRef = useRef<BoardItems | null>(null);
+  const sourceGroupRef = useRef<string | null>(null);
 
-      // Start by finding any intersecting droppable
-      const pointerIntersections = pointerWithin(args);
-      const intersections =
-        pointerIntersections.length > 0
-          ? pointerIntersections
-          : rectIntersection(args);
-      let overId = getFirstCollision(intersections, "id");
-
-      if (overId !== null) {
-        if (overId in items) {
-          const containerItems = items[overId];
-
-          // If a container is matched and it contains items
-          if (containerItems && containerItems.length > 0) {
-            const collisions = closestCenter({
-              ...args,
-              droppableContainers: args.droppableContainers.filter(
-                (container) =>
-                  container.id !== overId &&
-                  containerItems.includes(String(container.id)),
-              ),
-            });
-            // Return the closest droppable within that container
-            overId = collisions[0]?.id ?? null;
-          }
-        }
-
-        lastOverId.current = overId ? String(overId) : null;
-        return overId ? [{ id: overId }] : [];
-      }
-
-      // When a draggable item moves to a new container, the layout may shift
-      if (recentlyMovedToNewContainer.current) {
-        lastOverId.current = activeId;
-      }
-
-      // If no droppable is matched, return the last match
-      return lastOverId.current ? [{ id: lastOverId.current }] : [];
-    },
-    [activeGroupId, activeId, items],
-  );
-
-  const handleDragStart = useCallback((e: DragStartEvent) => {
-    setActiveId(e.active.id.toString());
+  const updateItems = useCallback((next: BoardItems) => {
+    itemsRef.current = next;
+    setItems(next);
   }, []);
+
+  const handleDragStart = useCallback(
+    (e: DragStartEvent) => {
+      const { source } = e.operation;
+      if (source?.type !== "board-card") return;
+
+      const sourceId = String(source.id);
+      itemsRef.current = derivedItems;
+      setItems(derivedItems);
+      snapshotRef.current = derivedItems;
+      sourceGroupRef.current = findBoardGroup(derivedItems, sourceId) ?? null;
+      setActiveCardId(sourceId);
+    },
+    [derivedItems],
+  );
 
   const handleDragOver = useCallback(
     (e: DragOverEvent) => {
-      const { active, over } = e;
-      if (!over || active.id in items) return;
-      const overContainer = findContainer(over.id);
-      const activeContainer = findContainer(active.id);
+      if (e.operation.source?.type !== "board-card") return;
+      const next = moveBoardItems(itemsRef.current, e);
+      if (next !== itemsRef.current) updateItems(next);
+    },
+    [updateItems],
+  );
+
+  const finishCardDrag = useCallback(
+    (e: DragEndEvent) => {
+      const { canceled, source, target } = e.operation;
+      const snapshot = snapshotRef.current;
+      const sourceGroupId = sourceGroupRef.current;
+
+      if (!snapshot || !source || !sourceGroupId) {
+        updateItems(derivedItems);
+        return;
+      }
+
+      if (canceled) {
+        updateItems(
+          haveSameBoardItemSet(snapshot, derivedItems)
+            ? snapshot
+            : derivedItems,
+        );
+        return;
+      }
+
+      const sourceId = String(source.id);
+      const targetId = target ? String(target.id) : null;
+      const targetIsCurrent =
+        target !== null &&
+        (target.type === "board-list"
+          ? typeof target.data.groupId === "string" &&
+            derivedItems[target.data.groupId] !== undefined
+          : targetId !== null &&
+            findBoardGroup(derivedItems, targetId) !== undefined);
 
       if (
-        !overContainer ||
-        !activeContainer ||
-        activeContainer === overContainer
-      )
+        !targetIsCurrent ||
+        findBoardGroup(derivedItems, sourceId) === undefined ||
+        !haveSameBoardItems(snapshot, derivedItems)
+      ) {
+        updateItems(derivedItems);
         return;
+      }
 
-      // Handle cross-group dragging
-      recentlyMovedToNewContainer.current = true;
+      const finalItems = moveBoardItems(itemsRef.current, e);
+      if (!haveSameBoardItemSet(derivedItems, finalItems)) {
+        updateItems(derivedItems);
+        return;
+      }
+
+      const destinationGroupId = findBoardGroup(finalItems, sourceId);
+      if (!destinationGroupId) {
+        updateItems(derivedItems);
+        return;
+      }
+
+      updateItems(finalItems);
+      table.handleRowDragEnd(e);
     },
-    [findContainer, items],
+    [derivedItems, table, updateItems],
   );
 
   const handleDragEnd = useCallback(
     (e: DragEndEvent) => {
-      const { active, over } = e;
-      setActiveId(null);
-      if (!over) return;
+      const { source, target } = e.operation;
 
-      const activeData = active.data.current;
-      // Handle group reordering
-      if (activeData?.type === "board-group") {
+      if (source?.type === "board-card") {
+        finishCardDrag(e);
+      } else if (
+        !e.canceled &&
+        source?.type === "board-group" &&
+        target?.type === "board-group"
+      ) {
         table.handleGroupedRowDragEnd(e);
-        return;
       }
-      // Handle card reordering
-      if (activeData?.type === "board-card") {
-        table.handleRowDragEnd(e);
-      }
+
+      setActiveCardId(null);
+      snapshotRef.current = null;
+      sourceGroupRef.current = null;
     },
-    [table],
+    [finishCardDrag, table],
   );
 
-  useEffect(() => {
-    requestAnimationFrame(() => {
-      recentlyMovedToNewContainer.current = false;
-    });
-  }, [items]);
-
   return {
-    activeId,
-    activeGroupId,
-    props: {
-      sensors,
-      measuring: {
-        droppable: {
-          strategy: MeasuringStrategy.Always,
-        },
-      },
-      collisionDetection: collisionDetectionStrategy,
+    activeCardId,
+    groupOrder,
+    items: activeCardId === null ? derivedItems : items,
+    providerProps: {
+      sensors: boardSensors,
       onDragStart: handleDragStart,
       onDragOver: handleDragOver,
       onDragEnd: handleDragEnd,

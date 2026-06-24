@@ -2,10 +2,10 @@ import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
-  ButtonProps,
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Sortable,
   TooltipDescription,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
@@ -13,13 +13,11 @@ import {
 import { RowActionMenu } from "../menus";
 
 interface TableRowActionGroupProps extends React.ComponentProps<"div"> {
-  isDragging?: boolean;
   isMobile?: boolean;
 }
 
 export function TableRowActionGroup({
   className,
-  isDragging,
   isMobile,
   ...props
 }: TableRowActionGroupProps) {
@@ -30,9 +28,9 @@ export function TableRowActionGroup({
         className={cn(
           "flex h-full items-center opacity-0 transition-opacity delay-0 duration-200",
           "group-hover/row:opacity-100",
+          "group-data-dragging/row:opacity-100",
           "has-[button[aria-expanded='true']]:opacity-100",
-          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-          (isMobile || isDragging) && "opacity-100",
+          isMobile && "opacity-100",
         )}
         {...props}
       />
@@ -43,26 +41,18 @@ export function TableRowActionGroup({
 interface RowActionsProps {
   className?: string;
   rowId: string;
-  isDragging: boolean;
   isMobile: boolean;
-  dragHandleProps: ButtonProps;
   onAddNext: (e: React.MouseEvent) => void;
 }
 
 export function RowActions({
   className,
   rowId,
-  isDragging,
   isMobile,
-  dragHandleProps,
   onAddNext,
 }: RowActionsProps) {
   return (
-    <TableRowActionGroup
-      className={className}
-      isDragging={isDragging}
-      isMobile={isMobile}
-    >
+    <TableRowActionGroup className={className} isMobile={isMobile}>
       <TooltipPreset
         description={
           <>
@@ -73,7 +63,7 @@ export function RowActions({
             />
           </>
         }
-        className="z-999 text-center"
+        className="text-center"
       >
         <Button
           variant="hint"
@@ -92,19 +82,11 @@ export function RowActions({
               <TooltipDescription text="Click to open menu" />
             </>
           }
-          disabled={isDragging}
-          className="z-999 text-center"
+          className="text-center"
         >
           <PopoverTrigger
             render={
-              <Button
-                variant="hint"
-                aria-label="Row actions"
-                className="h-6 w-4.5"
-                {...dragHandleProps}
-              >
-                <Icon.DragHandle className="size-3.5 fill-icon" />
-              </Button>
+              <Sortable.Handle aria-label="Row actions" className="h-6 w-4.5" />
             }
           />
         </TooltipPreset>

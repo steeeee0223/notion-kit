@@ -3,7 +3,7 @@
  * Tests for row CRUD operations using direct table APIs
  */
 
-import type { DragEndEvent } from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/react";
 import { act, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
@@ -289,19 +289,21 @@ describe("useTableView - Row Custom APIs", () => {
   });
 
   describe("handleRowDragEnd", () => {
-    it("should reorder rows on drag end", () => {
+    it("should reorder rows from a drag end event", () => {
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
       });
 
-      const dragEvent = {
-        active: { id: "row1", data: { current: {} } },
-        over: { id: "row2", data: { current: {} } },
-      } as DragEndEvent;
-
       act(() => {
-        table.handleRowDragEnd(dragEvent);
+        table.handleRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: "row1" },
+            target: { id: "row2" },
+          },
+        } as DragEndEvent);
       });
 
       const rows = table.getRowModel().rows;
@@ -312,19 +314,21 @@ describe("useTableView - Row Custom APIs", () => {
       expect(row1Index).toBeGreaterThan(row2Index);
     });
 
-    it("should handle drag to beginning", () => {
+    it("should handle moving a row to the beginning from a drag end event", () => {
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
       });
 
-      const dragEvent = {
-        active: { id: "row2", data: { current: {} } },
-        over: { id: "row1", data: { current: {} } },
-      } as DragEndEvent;
-
       act(() => {
-        table.handleRowDragEnd(dragEvent);
+        table.handleRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: "row1" },
+            target: { id: "row2" },
+          },
+        } as DragEndEvent);
       });
 
       const rows = table.getRowModel().rows;

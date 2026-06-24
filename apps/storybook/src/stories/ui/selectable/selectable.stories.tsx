@@ -19,7 +19,7 @@ export const Basic: Story = {
     return (
       <Selectable
         {...args}
-        className="min-h-[500px] min-w-200 rounded-lg bg-popover p-6 shadow-sm"
+        className="min-h-125 min-w-200 rounded-lg bg-popover p-6 shadow-sm"
       >
         <Selectable.Overlay className="rounded-sm border-2 border-blue bg-blue/10" />
         <Selectable.Group className="grid grid-cols-5 gap-4">
@@ -44,7 +44,7 @@ export const SelectContain: Story = {
     return (
       <Selectable
         {...args}
-        className="min-h-[500px] min-w-200 rounded-lg bg-popover p-6 shadow-sm"
+        className="min-h-125 min-w-200 rounded-lg bg-popover p-6 shadow-sm"
       >
         <Selectable.Overlay className="rounded-sm border-2 border-blue bg-blue/10" />
         <Selectable.Group className="grid grid-cols-5 gap-4">
@@ -69,7 +69,7 @@ export const MultiSelect: Story = {
     return (
       <Selectable
         {...args}
-        className="min-h-[500px] min-w-200 rounded-lg bg-popover p-6 shadow-sm"
+        className="min-h-125 min-w-200 rounded-lg bg-popover p-6 shadow-sm"
       >
         <Selectable.Overlay className="rounded-sm border-2 border-blue bg-blue/10" />
         <Selectable.Group className="grid grid-cols-5 gap-4">
@@ -93,7 +93,7 @@ export const NoOverlay: Story = {
     return (
       <Selectable
         {...args}
-        className="min-h-[500px] min-w-200 rounded-lg bg-popover p-6 shadow-sm"
+        className="min-h-125 min-w-200 rounded-lg bg-popover p-6 shadow-sm"
       >
         <Selectable.Group className="grid grid-cols-5 gap-4">
           {items.map((item) => (

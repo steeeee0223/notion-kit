@@ -1,10 +1,7 @@
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-
-import { Icon } from "@notion-kit/icons";
 import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
+  Sortable,
 } from "@notion-kit/ui/primitives";
 import type { Color } from "@notion-kit/utils";
 
@@ -13,6 +10,7 @@ import { SelectOptionMenu } from "../select-option-menu";
 import type { OptionConfig } from "../types";
 
 interface OptionItemProps {
+  index: number;
   option: OptionConfig;
   onUpdate: (data: {
     name?: string;
@@ -24,47 +22,31 @@ interface OptionItemProps {
 }
 
 export function OptionItem({
+  index,
   option,
   onUpdate,
   onDelete,
   validateName,
 }: OptionItemProps) {
-  /** DND */
-  const {
-    attributes,
-    isDragging,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: option.name });
-
-  const style: React.CSSProperties = {
-    opacity: isDragging ? 0.8 : 1,
-    zIndex: isDragging ? 10 : 0,
-    transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
-    transition, // Warning: it is somehow laggy
-  };
-
   return (
     <DropdownMenuSub>
-      <DropdownMenuSubTrigger
-        ref={setNodeRef}
-        style={style}
-        icon={
-          <div
-            key="drag-handle"
-            className="flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-default/45"
-            onPointerDown={(e) => e.stopPropagation()}
-            {...attributes}
-            {...listeners}
-          >
-            <Icon.DragHandle className="size-3" />
-          </div>
+      <Sortable.Item
+        id={option.name}
+        index={index}
+        render={
+          <DropdownMenuSubTrigger
+            icon={
+              <Sortable.Handle
+                aria-label={`Move ${option.name}`}
+                className="h-6 w-4.5"
+                onPointerDown={(e) => e.stopPropagation()}
+              />
+            }
+            label={<OptionTag {...option} />}
+            chevron={false}
+            openOnHover={false}
+          />
         }
-        label={<OptionTag {...option} />}
-        chevron={false}
-        openOnHover={false}
       />
       <SelectOptionMenu
         option={option}

@@ -36,9 +36,10 @@
   "dependencies": {
     "@base-ui/react": "^1.6.0",
     "@better-fetch/fetch": "catalog:",
-    "@dnd-kit/core": "catalog:ui",
-    "@dnd-kit/modifiers": "catalog:ui",
-    "@dnd-kit/sortable": "catalog:ui",
+    "@dnd-kit/abstract": "catalog:ui",
+    "@dnd-kit/dom": "catalog:ui",
+    "@dnd-kit/helpers": "catalog:ui",
+    "@dnd-kit/react": "catalog:ui",
     "@emoji-mart/data": "^1.2.1",
     "@headless-tree/core": "^1.5.1",
     "@headless-tree/react": "^1.5.1",

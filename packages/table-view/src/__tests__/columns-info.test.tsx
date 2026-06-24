@@ -3,7 +3,7 @@
  * Tests for column CRUD operations using direct table APIs
  */
 
-import type { DragEndEvent } from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/react";
 import { act } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
@@ -233,19 +233,21 @@ describe("useTableView - Column Custom APIs", () => {
   });
 
   describe("handleColumnDragEnd", () => {
-    it("should reorder columns on drag end", () => {
+    it("should reorder columns from a drag end event", () => {
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
       });
 
-      const dragEvent = {
-        active: { id: "col1", data: { current: {} } },
-        over: { id: "col2", data: { current: {} } },
-      } as DragEndEvent;
-
       act(() => {
-        table.handleColumnDragEnd(dragEvent);
+        table.handleColumnDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: "col1" },
+            target: { id: "col2" },
+          },
+        } as DragEndEvent);
       });
 
       const columnOrder = table.getState().columnOrder;
@@ -256,19 +258,21 @@ describe("useTableView - Column Custom APIs", () => {
       expect(col1Index).toBeGreaterThan(col2Index);
     });
 
-    it("should handle drag to beginning", () => {
+    it("should handle moving a column to the beginning from a drag end event", () => {
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
       });
 
-      const dragEvent = {
-        active: { id: "col2", data: { current: {} } },
-        over: { id: "col1", data: { current: {} } },
-      } as DragEndEvent;
-
       act(() => {
-        table.handleColumnDragEnd(dragEvent);
+        table.handleColumnDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: "col1" },
+            target: { id: "col2" },
+          },
+        } as DragEndEvent);
       });
 
       const columnOrder = table.getState().columnOrder;

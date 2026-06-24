@@ -9,10 +9,12 @@ import {
   ComboboxLabel,
   ComboboxList,
   ComboboxValue,
+  getSortableItemsAfterDrag,
+  Sortable,
 } from "@notion-kit/ui/primitives";
 import { COLOR, type Color } from "@notion-kit/utils";
 
-import { OptionTag, SortableDnd } from "../../../common";
+import { OptionTag } from "../../../common";
 import { OptionItem } from "./option-item";
 import { SelectMenuApi } from "./use-select-menu";
 
@@ -122,15 +124,21 @@ export function SelectMenu({ menu }: SelectMenuProps) {
                   </div>
                 </ComboboxCreatableItem>
               ) : (
-                <div className="flex flex-col">
-                  <SortableDnd items={group.items} onDragEnd={reorderOptions}>
-                    {group.items.map((name) => {
+                <Sortable.Root
+                  disabled={search !== ""}
+                  onDragEnd={(e) => {
+                    reorderOptions(getSortableItemsAfterDrag(group.items, e));
+                  }}
+                >
+                  <Sortable.List>
+                    {group.items.map((name, index) => {
                       const option = config.options.items[name];
                       if (!option) return;
                       return (
                         <OptionItem
                           key={option.name}
                           option={option}
+                          index={index}
                           draggable={search === ""}
                           onSelect={selectTag}
                           onUpdate={(data) => updateOption(name, data)}
@@ -139,8 +147,8 @@ export function SelectMenu({ menu }: SelectMenuProps) {
                         />
                       );
                     })}
-                  </SortableDnd>
-                </div>
+                  </Sortable.List>
+                </Sortable.Root>
               )}
             </ComboboxGroup>
           )}

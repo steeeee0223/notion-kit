@@ -15,13 +15,13 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  getSortableItemsAfterDrag,
   Input,
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Sortable,
 } from "@notion-kit/ui/primitives";
-
-import { arrayMove, Sortable } from "./sortable";
 
 interface TodoItem {
   id: string;
@@ -37,7 +37,7 @@ interface TodoStore {
   archiveTodo: (id: string) => void;
   restoreTodo: (id: string) => void;
   deleteTodo: (id: string) => void;
-  reorderTodos: (activeId: string, overId: string) => void;
+  reorderTodos: (updated: TodoItem[]) => void;
 }
 
 const INITIAL_TODOS: TodoItem[] = [
@@ -94,15 +94,10 @@ function createTodoStore() {
       set((state) => ({
         todos: state.todos.filter((t) => t.id !== id),
       })),
-    reorderTodos: (activeId, overId) =>
+    reorderTodos: (updated) =>
       set((state) => {
-        const activeTodos = state.todos.filter((t) => t.status === "active");
-        const oldIndex = activeTodos.findIndex((t) => t.id === activeId);
-        const newIndex = activeTodos.findIndex((t) => t.id === overId);
-        if (oldIndex === -1 || newIndex === -1) return state;
-        const reordered = arrayMove(activeTodos, oldIndex, newIndex);
-        const nonActive = state.todos.filter((t) => t.status !== "active");
-        return { todos: [...reordered, ...nonActive] };
+        const inactive = state.todos.filter((todo) => todo.status !== "active");
+        return { todos: [...updated, ...inactive] };
       }),
   }));
 }
@@ -194,16 +189,11 @@ function TodoItemCard({
       mode="disappear"
       className="flex items-center gap-2 rounded-md border border-border/50 bg-popover px-3 py-2 shadow-sm"
     >
-      <div
-        className={cn(
-          "opacity-0 transition-opacity duration-200",
-          hoverGroup === "launched"
-            ? "group-hover/launched:opacity-100"
-            : "group-hover/todo:opacity-100",
-        )}
-      >
-        <Sortable.DragHandle className="size-6" />
-      </div>
+      {hoverGroup === "todo" && (
+        <div className="opacity-0 transition-opacity duration-200 group-hover/todo:opacity-100">
+          <Sortable.Handle className="size-6" />
+        </div>
+      )}
       <Checkbox size="sm" checked={false} onCheckedChange={handleCheck} />
       <span className="flex-1 text-sm text-primary select-none">
         {todo.label}
@@ -342,16 +332,24 @@ function ActiveTodoList() {
 
   return (
     <Sortable.Root
-      items={activeTodos.map((t) => t.id)}
-      onReorder={reorderTodos}
+      onDragEnd={(event) =>
+        reorderTodos(getSortableItemsAfterDrag(activeTodos, event))
+      }
     >
-      {activeTodos.map((todo) => (
-        <Sortable.Item key={todo.id} id={todo.id} className="group/todo">
-          <SlingShot.Item id={todo.id} className="block w-full">
-            <TodoItemCard todo={todo} />
-          </SlingShot.Item>
-        </Sortable.Item>
-      ))}
+      <Sortable.List>
+        {activeTodos.map((todo, index) => (
+          <Sortable.Item
+            key={todo.id}
+            id={todo.id}
+            index={index}
+            className="group/todo"
+          >
+            <SlingShot.Item id={todo.id} className="block w-full">
+              <TodoItemCard todo={todo} />
+            </SlingShot.Item>
+          </Sortable.Item>
+        ))}
+      </Sortable.List>
     </Sortable.Root>
   );
 }
