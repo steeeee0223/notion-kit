@@ -1813,12 +1813,6 @@ importers:
       '@emoji-mart/data':
         specifier: ^1.2.1
         version: 1.2.1
-      '@headless-tree/core':
-        specifier: ^1.5.1
-        version: 1.5.1
-      '@headless-tree/react':
-        specifier: ^1.5.1
-        version: 1.5.1(@headless-tree/core@1.5.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@hookform/resolvers':
         specifier: catalog:ui
         version: 5.2.2(react-hook-form@7.66.0(react@19.2.3))
@@ -3527,16 +3521,6 @@ packages:
 
   '@formatjs/intl-localematcher@0.6.2':
     resolution: {integrity: sha512-XOMO2Hupl0wdd172Y06h6kLpBz6Dv+J4okPLl4LPtzbr8f66WbIoy4ev98EBuZ6ZK4h5ydTN6XneT4QVpD7cdA==}
-
-  '@headless-tree/core@1.5.1':
-    resolution: {integrity: sha512-uPoFcjPYdnXwuEDJd2oCMY8a4nnsMKyx6P0G1+is6dIGFpUsoV0qjtJN6ykJtOgTHVhBRR11zRmletER6Qgj/Q==}
-
-  '@headless-tree/react@1.5.1':
-    resolution: {integrity: sha512-8r34ug5g25peTDgyGoCZf5Ohy4O0FMhdhUNyiaXzGn/1nwUDpmmwsrqh64DVNPereSA9uhY0s39uRibfvdmTqw==}
-    peerDependencies:
-      '@headless-tree/core': '*'
-      react: '*'
-      react-dom: '*'
 
   '@hexagon/base64@1.1.28':
     resolution: {integrity: sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw==}
@@ -12778,14 +12762,6 @@ snapshots:
   '@formatjs/intl-localematcher@0.6.2':
     dependencies:
       tslib: 2.8.1
-
-  '@headless-tree/core@1.5.1': {}
-
-  '@headless-tree/react@1.5.1(@headless-tree/core@1.5.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
-    dependencies:
-      '@headless-tree/core': 1.5.1
-      react: 19.2.3
-      react-dom: 19.2.3(react@19.2.3)
 
   '@hexagon/base64@1.1.28': {}
 

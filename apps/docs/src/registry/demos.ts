@@ -124,7 +124,7 @@ export const DEMOS = [
   // Tooltip
   "tooltip-demo",
   // Tree
-  "tree-command",
+  "tree-combobox",
   "tree-default",
   "tree-multi-select",
   "tree-non-collapsible",

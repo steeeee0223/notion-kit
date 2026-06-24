@@ -17,11 +17,11 @@ import {
 import { Tree as TreePrimitive, type TreeInstance } from "../core";
 import type { TreeItemData } from "./utils";
 
-interface CommandTreeProps<T extends TreeItemData> {
+interface ComboboxTreeProps<T extends TreeItemData> {
   tree: TreeInstance<T>;
 }
 
-function CommandTree<T extends TreeItemData>({ tree }: CommandTreeProps<T>) {
+function ComboboxTree<T extends TreeItemData>({ tree }: ComboboxTreeProps<T>) {
   const [input, setInput] = useState("");
   const [highlightedId, setHighlightedId] = useState<string | undefined>();
   const mode = input === "" ? "browse" : "search";
@@ -39,7 +39,7 @@ function CommandTree<T extends TreeItemData>({ tree }: CommandTreeProps<T>) {
       autoHighlight="always"
       openOnInputClick
     >
-      <CommandTreeInput
+      <ComboboxTreeInput
         tree={tree}
         value={input}
         highlightedId={highlightedId}
@@ -49,7 +49,7 @@ function CommandTree<T extends TreeItemData>({ tree }: CommandTreeProps<T>) {
           <AutocompleteList>
             <AutocompleteGroup>
               <TreePrimitive tree={tree}>
-                <CommandTreeList nodeIds={tree.entity.rootIds} />
+                <ComboboxTreeList nodeIds={tree.entity.rootIds} />
               </TreePrimitive>
             </AutocompleteGroup>
           </AutocompleteList>
@@ -86,17 +86,17 @@ function CommandTree<T extends TreeItemData>({ tree }: CommandTreeProps<T>) {
   );
 }
 
-interface CommandTreeInputProps {
+interface ComboboxTreeInputProps {
   tree: TreeInstance<TreeItemData>;
   value: string;
   highlightedId?: string;
 }
 
-function CommandTreeInput({
+function ComboboxTreeInput({
   tree,
   value,
   highlightedId,
-}: CommandTreeInputProps) {
+}: ComboboxTreeInputProps) {
   return (
     <AutocompleteInput
       placeholder="Type to search..."
@@ -125,7 +125,7 @@ function CommandTreeInput({
   );
 }
 
-function CommandTreeList<T extends TreeItemData>({
+function ComboboxTreeList<T extends TreeItemData>({
   nodeIds,
 }: {
   nodeIds: string[];
@@ -176,4 +176,4 @@ function CommandTreeList<T extends TreeItemData>({
   );
 }
 
-export { CommandTree, CommandTreeList };
+export { ComboboxTree, ComboboxTreeList };

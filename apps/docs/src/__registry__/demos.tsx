@@ -478,9 +478,9 @@ export const Index: Record<
     files: ["registry/src/tooltip-demo/tooltip-demo.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/tooltip-demo")),
   },
-  "tree-command": {
-    files: ["registry/src/tree-command/tree-command.tsx"],
-    component: React.lazy(() => import("@notion-kit/registry/tree-command")),
+  "tree-combobox": {
+    files: ["registry/src/tree-combobox/tree-combobox.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/tree-combobox")),
   },
   "tree-default": {
     files: ["registry/src/tree-default/tree-default.tsx"],
