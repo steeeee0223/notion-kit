@@ -63,7 +63,7 @@ export function RowActions({
             />
           </>
         }
-        className="z-999 text-center"
+        className="text-center"
       >
         <Button
           variant="hint"
@@ -76,28 +76,17 @@ export function RowActions({
       </TooltipPreset>
       <Popover>
         <TooltipPreset
-          triggerProps={{ "data-slot": "sortable-handle" }}
           description={
             <>
               <TooltipDescription text="Drag to move" />
               <TooltipDescription text="Click to open menu" />
             </>
           }
-          className="z-999 text-center"
+          className="text-center"
         >
           <PopoverTrigger
             render={
-              <Sortable.Handle
-                render={
-                  <Button
-                    variant="hint"
-                    aria-label="Row actions"
-                    className="h-6 w-4.5"
-                  >
-                    <Icon.DragHandle className="size-3.5 fill-icon" />
-                  </Button>
-                }
-              />
+              <Sortable.Handle aria-label="Row actions" className="h-6 w-4.5" />
             }
           />
         </TooltipPreset>

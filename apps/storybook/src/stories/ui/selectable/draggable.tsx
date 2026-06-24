@@ -78,36 +78,6 @@ export function DraggableItem({ id, index, label }: DraggableItemProps) {
   );
 }
 
-export function DraggableOverlay() {
-  return (
-    <Sortable.Overlay>
-      {(source) => {
-        const selectedIds = source.data.selectedIds as string[] | undefined;
-        const isSelected = source.data.isSelected as boolean;
-        const activeLabel = source.data.label as React.ReactNode;
-        const showMultiple =
-          isSelected && selectedIds !== undefined && selectedIds.length > 1;
-
-        return (
-          <DraggableItemPreview
-            overlay
-            label={
-              <span>
-                {activeLabel}
-                {showMultiple && (
-                  <span className="ml-2 text-secondary">
-                    +{selectedIds.length - 1} more items
-                  </span>
-                )}
-              </span>
-            }
-          />
-        );
-      }}
-    </Sortable.Overlay>
-  );
-}
-
 function SortableSelectableItems() {
   const [orderedItems, setOrderedItems] = useState(items.slice(0, 10));
   const { selectedIds } = useSelectable();
@@ -157,11 +127,32 @@ function SortableSelectableItems() {
       items={orderedItems.map((item) => item.id)}
       onDragEnd={handleDragEnd}
     >
-      <DraggableOverlay />
-      <Sortable.List
-        className="gap-4"
-        render={<Selectable.Group className="flex flex-col gap-4" />}
-      >
+      <Sortable.Overlay>
+        {({ data }) => {
+          const selectedIds = data.selectedIds as string[] | undefined;
+          const isSelected = data.isSelected as boolean;
+          const activeLabel = data.label as React.ReactNode;
+          const showMultiple =
+            isSelected && selectedIds !== undefined && selectedIds.length > 1;
+
+          return (
+            <DraggableItemPreview
+              overlay
+              label={
+                <span>
+                  {activeLabel}
+                  {showMultiple && (
+                    <span className="ml-2 text-secondary">
+                      +{selectedIds.length - 1} more items
+                    </span>
+                  )}
+                </span>
+              }
+            />
+          );
+        }}
+      </Sortable.Overlay>
+      <Sortable.List className="gap-4">
         {orderedItems.map((item, index) => (
           <DraggableItem
             key={item.id}
@@ -179,7 +170,7 @@ export function SelectWithDraggableItems(props: SelectableProps) {
   return (
     <Selectable
       {...props}
-      className="min-h-[500px] min-w-120 rounded-lg bg-popover p-6 shadow-sm"
+      className="min-h-125 min-w-120 rounded-lg bg-popover p-6 shadow-sm"
     >
       <Selectable.Overlay className="rounded-sm border-2 border-blue bg-blue/10" />
       <SortableSelectableItems />

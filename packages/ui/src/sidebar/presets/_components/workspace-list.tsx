@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { Icon } from "@notion-kit/icons";
 import { Role, User, Workspace } from "@notion-kit/schemas";
@@ -6,7 +6,6 @@ import { Role, User, Workspace } from "@notion-kit/schemas";
 import { IconBlock } from "@/icon-block";
 import {
   Badge,
-  Button,
   DropdownMenuCheckboxItem,
   MenuGroup,
   Sortable,
@@ -27,14 +26,14 @@ interface WorkspaceListProps {
   onLogout?: () => void;
 }
 
-export const WorkspaceList: React.FC<WorkspaceListProps> = ({
+export function WorkspaceList({
   user,
   activeWorkspace,
   workspaces,
   onSelect,
   onCreateWorkspace,
   onLogout,
-}) => {
+}: WorkspaceListProps) {
   const [order, setOrder] = useState(workspaces.map((w) => w.id));
 
   const workspaceList = useMemo(() => {
@@ -72,7 +71,7 @@ export const WorkspaceList: React.FC<WorkspaceListProps> = ({
       </Sortable.Root>
     </TooltipProvider>
   );
-};
+}
 
 interface WorkspaceItemProps {
   index: number;
@@ -81,12 +80,12 @@ interface WorkspaceItemProps {
   onSelect?: (id: string) => void;
 }
 
-const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
+function WorkspaceItem({
   index,
   workspace,
   activeWorkspace,
   onSelect,
-}) => {
+}: WorkspaceItemProps) {
   const { id, name, icon, plan, memberCount, role } = workspace;
   return (
     <Sortable.Item
@@ -117,11 +116,8 @@ const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
             <div>
               <Sortable.Handle
                 aria-label={`Move workspace ${name}`}
-                className="relative hidden size-5 shrink-0 cursor-grab p-0.5 group-hover:flex"
-                render={<Button variant="hint" />}
-              >
-                <Icon.DragHandle className="size-3 fill-default/45" />
-              </Sortable.Handle>
+                className="relative hidden size-5 group-hover:flex"
+              />
               <IconBlock
                 className="group-hover:hidden"
                 icon={icon ?? { type: "text", src: name }}
@@ -135,14 +131,14 @@ const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
       </TooltipPreset>
     </Sortable.Item>
   );
-};
+}
 
 interface WorkspaceTitleProps {
   role: Role;
   name: string;
 }
 
-const WorkspaceTitle: React.FC<WorkspaceTitleProps> = ({ role, name }) => {
+function WorkspaceTitle({ role, name }: WorkspaceTitleProps) {
   if (role !== Role.GUEST) return name;
   return (
     <>
@@ -157,4 +153,4 @@ const WorkspaceTitle: React.FC<WorkspaceTitleProps> = ({ role, name }) => {
       </Badge>
     </>
   );
-};
+}

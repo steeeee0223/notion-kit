@@ -3,7 +3,7 @@
 issues recording for current task
 
 1. [ ] combobox-multiple-inline.tsx -> current filtering behavior is NOT same as combobox-multiple-floating.tsx
-2. [ ] migrate tooltip!
+2. [x] migrate tooltip!
 3. [ ] update `contentVariants` to new design after migration
 
 ## Table view menus
@@ -27,8 +27,11 @@ issues recording for current task
 
 ## Upgrade dnd
 
-1. [ ] Upgrade dnd
-2. [ ] Add to primitive
+1. [x] Upgrade dnd
+2. [x] Add to primitive
+3. [ ] Fix usage
+   1. [ ] selectable + dnd
+   2. [ ] falling blocks + dnd
 
 ## Existing issues
 

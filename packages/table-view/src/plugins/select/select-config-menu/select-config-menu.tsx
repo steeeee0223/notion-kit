@@ -126,31 +126,29 @@ export function SelectConfigMenu({
               )}
             </div>
           )}
-          <div className="flex flex-col">
-            <Sortable.Root
-              items={config.options.names}
-              onItemsChange={(orderedIds) =>
-                reorderOptions(orderedIds.map(String))
-              }
-            >
-              <Sortable.List>
-                {config.options.names.map((name, index) => {
-                  const option = config.options.items[name];
-                  if (!option) return;
-                  return (
-                    <OptionItem
-                      key={option.name}
-                      option={option}
-                      index={index}
-                      onUpdate={(data) => updateOption(name, data)}
-                      onDelete={() => deleteOption(name)}
-                      validateName={validateOptionName}
-                    />
-                  );
-                })}
-              </Sortable.List>
-            </Sortable.Root>
-          </div>
+          <Sortable.Root
+            items={config.options.names}
+            onItemsChange={(orderedIds) =>
+              reorderOptions(orderedIds.map(String))
+            }
+          >
+            <Sortable.List>
+              {config.options.names.map((name, index) => {
+                const option = config.options.items[name];
+                if (!option) return;
+                return (
+                  <OptionItem
+                    key={option.name}
+                    option={option}
+                    index={index}
+                    onUpdate={(data) => updateOption(name, data)}
+                    onDelete={() => deleteOption(name)}
+                    validateName={validateOptionName}
+                  />
+                );
+              })}
+            </Sortable.List>
+          </Sortable.Root>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenuSub>

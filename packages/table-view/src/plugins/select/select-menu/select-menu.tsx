@@ -123,34 +123,32 @@ export function SelectMenu({ menu }: SelectMenuProps) {
                   </div>
                 </ComboboxCreatableItem>
               ) : (
-                <div className="flex flex-col">
-                  <Sortable.Root
-                    items={group.items}
-                    disabled={search !== ""}
-                    onItemsChange={(orderedIds) =>
-                      reorderOptions(orderedIds.map(String))
-                    }
-                  >
-                    <Sortable.List>
-                      {group.items.map((name, index) => {
-                        const option = config.options.items[name];
-                        if (!option) return;
-                        return (
-                          <OptionItem
-                            key={option.name}
-                            option={option}
-                            index={index}
-                            draggable={search === ""}
-                            onSelect={selectTag}
-                            onUpdate={(data) => updateOption(name, data)}
-                            onDelete={() => deleteOption(name)}
-                            validateName={validateOptionName}
-                          />
-                        );
-                      })}
-                    </Sortable.List>
-                  </Sortable.Root>
-                </div>
+                <Sortable.Root
+                  items={group.items}
+                  disabled={search !== ""}
+                  onItemsChange={(orderedIds) =>
+                    reorderOptions(orderedIds.map(String))
+                  }
+                >
+                  <Sortable.List>
+                    {group.items.map((name, index) => {
+                      const option = config.options.items[name];
+                      if (!option) return;
+                      return (
+                        <OptionItem
+                          key={option.name}
+                          option={option}
+                          index={index}
+                          draggable={search === ""}
+                          onSelect={selectTag}
+                          onUpdate={(data) => updateOption(name, data)}
+                          onDelete={() => deleteOption(name)}
+                          validateName={validateOptionName}
+                        />
+                      );
+                    })}
+                  </Sortable.List>
+                </Sortable.Root>
               )}
             </ComboboxGroup>
           )}

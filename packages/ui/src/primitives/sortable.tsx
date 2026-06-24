@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
@@ -80,17 +78,11 @@ function getSortableModifiers(orientation: Orientation) {
 }
 
 interface SortableRootProps
-  extends Omit<
-    React.ComponentProps<typeof DragDropProvider>,
-    "children" | "onDragEnd" | "sensors"
-  > {
-  children?: React.ReactNode;
-  disabled?: boolean;
+  extends React.ComponentProps<typeof DragDropProvider> {
   items: UniqueIdentifier[];
-  onDragEnd?: React.ComponentProps<typeof DragDropProvider>["onDragEnd"];
-  onItemsChange?: (items: UniqueIdentifier[], event: DragEndEvent) => void;
   orientation?: Orientation;
-  sensors?: React.ComponentProps<typeof DragDropProvider>["sensors"];
+  disabled?: boolean;
+  onItemsChange?: (items: UniqueIdentifier[], event: DragEndEvent) => void;
 }
 
 function SortableRoot({
@@ -281,7 +273,6 @@ function SortableItem({
 type SortableHandleProps = ButtonProps;
 
 function SortableHandle({
-  "aria-label": ariaLabel,
   children,
   className,
   ref,
@@ -298,11 +289,14 @@ function SortableHandle({
       type="button"
       variant="hint"
       data-slot="sortable-handle"
-      aria-label={ariaLabel ?? "Drag item"}
-      className={cn("cursor-grab touch-none active:cursor-grabbing", className)}
+      aria-label="Drag item"
+      className={cn(
+        "shrink-0 cursor-grab touch-none fill-icon! active:cursor-grabbing",
+        className,
+      )}
       {...props}
     >
-      {children ?? <Icon.DragHandle className="size-3.5 fill-icon" />}
+      {children ?? <Icon.DragHandle className="size-3 fill-icon" />}
     </Button>
   );
 }

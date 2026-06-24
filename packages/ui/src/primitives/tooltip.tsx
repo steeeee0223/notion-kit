@@ -74,9 +74,6 @@ interface TooltipPresetProps
   disabled?: boolean;
   children: React.ReactElement;
   description: React.ReactNode;
-  triggerProps?: Omit<TooltipPrimitive.Trigger.Props, "render"> & {
-    "data-slot"?: string;
-  };
 }
 
 function TooltipPreset({
@@ -84,12 +81,11 @@ function TooltipPreset({
   disabled,
   side = "bottom",
   description,
-  triggerProps,
   ...props
 }: TooltipPresetProps) {
   return (
     <Tooltip disabled={disabled}>
-      <TooltipTrigger {...triggerProps} render={children} />
+      <TooltipTrigger render={children} />
       <TooltipContent side={side} {...props}>
         {typeof description === "string" ? (
           <TooltipDescription text={description} />

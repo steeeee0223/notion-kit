@@ -37,29 +37,27 @@ export function ListViewContent() {
   };
 
   return (
-    <div key="notion-list-view" className="min-w-[708px] px-24 pb-0">
+    <div key="notion-list-view" className="min-w-177 px-24 pb-0">
       <div
         data-block-id="1fe35e0f-492c-80fd-8d7c-f7e953641770"
         className="flex flex-col py-1"
       >
-        <div className="relative flex flex-col">
-          <Sortable.Root
-            items={rows.map((row) => row.id)}
-            onItemsChange={(orderedIds) =>
-              handleRowOrderChange(orderedIds.map(String))
-            }
-          >
-            <Sortable.List>
-              {rows.map((row, index) =>
-                row.getIsGrouped() ? (
-                  <TableGroupedRow key={row.id} row={row} />
-                ) : (
-                  <ListRow key={row.id} row={row} index={index} />
-                ),
-              )}
-            </Sortable.List>
-          </Sortable.Root>
-        </div>
+        <Sortable.Root
+          items={rows.map((row) => row.id)}
+          onItemsChange={(orderedIds) =>
+            handleRowOrderChange(orderedIds.map(String))
+          }
+        >
+          <Sortable.List>
+            {rows.map((row, index) =>
+              row.getIsGrouped() ? (
+                <TableGroupedRow key={row.id} row={row} />
+              ) : (
+                <ListRow key={row.id} row={row} index={index} />
+              ),
+            )}
+          </Sortable.List>
+        </Sortable.Root>
         <Button
           tabIndex={0}
           variant="cell"

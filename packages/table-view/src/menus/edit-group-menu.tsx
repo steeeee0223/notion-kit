@@ -69,31 +69,29 @@ export function EditGroupMenu() {
             </Button>
           </div>
         </DropdownMenuLabel>
-        <div className="flex flex-col">
-          <Sortable.Root
-            items={groupOrder}
-            onItemsChange={(orderedIds) =>
-              table.handleGroupedRowOrderChange(orderedIds.map(String))
-            }
-          >
-            <Sortable.List>
-              {groupOrder.map((groupId, index) => {
-                const renderer = table.getGroupingValueRenderer(groupId);
-                return (
-                  <GroupItem
-                    key={groupId}
-                    id={groupId}
-                    index={index}
-                    visible={groupVisibility[groupId] ?? true}
-                    onVisibilityChange={() => table.toggleGroupVisible(groupId)}
-                  >
-                    {flexRender(renderer, {})}
-                  </GroupItem>
-                );
-              })}
-            </Sortable.List>
-          </Sortable.Root>
-        </div>
+        <Sortable.Root
+          items={groupOrder}
+          onItemsChange={(orderedIds) =>
+            table.handleGroupedRowOrderChange(orderedIds.map(String))
+          }
+        >
+          <Sortable.List>
+            {groupOrder.map((groupId, index) => {
+              const renderer = table.getGroupingValueRenderer(groupId);
+              return (
+                <GroupItem
+                  key={groupId}
+                  id={groupId}
+                  index={index}
+                  visible={groupVisibility[groupId] ?? true}
+                  onVisibilityChange={() => table.toggleGroupVisible(groupId)}
+                >
+                  {flexRender(renderer, {})}
+                </GroupItem>
+              );
+            })}
+          </Sortable.List>
+        </Sortable.Root>
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
@@ -141,16 +139,7 @@ function GroupItem({
       render={
         <DropdownMenuItem
           closeOnClick={false}
-          icon={
-            <Sortable.Handle
-              aria-label={`Move ${id}`}
-              render={
-                <div className="mr-2 flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center fill-icon!" />
-              }
-            >
-              <Icon.DragHandle className="size-3" />
-            </Sortable.Handle>
-          }
+          icon={<Sortable.Handle className="h-6 w-4.5" />}
           label={children}
         />
       }

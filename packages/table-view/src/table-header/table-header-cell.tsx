@@ -4,7 +4,6 @@ import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
-  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
@@ -19,8 +18,6 @@ import { PropMenu } from "../menus";
 
 /**
  * Table Header Cell
- *
- * @requires SortableContext
  */
 export function TableHeaderCell({
   header,
@@ -49,7 +46,6 @@ export function TableHeaderCell({
     >
       <DropdownMenu modal={false}>
         <TooltipPreset
-          triggerProps={{ "data-slot": "sortable-handle" }}
           description={
             info.description ? (
               <>
@@ -67,17 +63,13 @@ export function TableHeaderCell({
             render={
               <Sortable.Handle
                 aria-label={info.name}
-                render={
-                  <Button
-                    id="notion-table-view-header-cell"
-                    variant="cell"
-                    className={cn(
-                      "h-full shrink-0 overflow-hidden px-2 text-sm",
-                      isResizing && "bg-transparent",
-                    )}
-                    style={{ width: header.column.getSize() }}
-                  />
-                }
+                id="notion-table-view-header-cell"
+                variant="cell"
+                className={cn(
+                  "h-full overflow-hidden px-2 text-sm",
+                  isResizing && "bg-transparent",
+                )}
+                style={{ width: header.column.getSize() }}
               >
                 {info.icon ? (
                   <IconBlock

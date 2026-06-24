@@ -122,14 +122,7 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
         <DropdownMenuItem
           closeOnClick={false}
           className="h-9"
-          icon={
-            <Sortable.Handle
-              aria-label={`Move ${current.name}`}
-              render={<div key="drag-handle" />}
-            >
-              <Icon.DragHandle className="size-3 fill-icon!" />
-            </Sortable.Handle>
-          }
+          icon={<Sortable.Handle aria-label={`Move ${current.name}`} />}
           label={
             <div className="grid h-8 w-full grid-cols-2 items-center gap-1.5">
               <Select

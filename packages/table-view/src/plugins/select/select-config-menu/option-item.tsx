@@ -1,4 +1,3 @@
-import { Icon } from "@notion-kit/icons";
 import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
@@ -39,12 +38,9 @@ export function OptionItem({
             icon={
               <Sortable.Handle
                 aria-label={`Move ${option.name}`}
-                className="flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-default/45"
+                className="h-6 w-4.5"
                 onPointerDown={(event) => event.stopPropagation()}
-                render={<div />}
-              >
-                <Icon.DragHandle className="size-3" />
-              </Sortable.Handle>
+              />
             }
             label={<OptionTag {...option} />}
             chevron={false}

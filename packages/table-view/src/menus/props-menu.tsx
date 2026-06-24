@@ -85,34 +85,32 @@ export function PropsMenu() {
                 action={search ? null : noShownProps ? "Show all" : "Hide all"}
                 onActionClick={table.toggleAllColumnsVisible}
               />
-              <div className="flex flex-col">
-                <Sortable.Root
-                  items={props.map((prop) => prop.id)}
-                  disabled={search.length > 0}
-                  onItemsChange={(orderedIds) =>
-                    table.handleColumnOrderChange(orderedIds.map(String))
-                  }
-                >
-                  <Sortable.List>
-                    <AutocompleteCollection>
-                      {(prop: ColumnInfo) => (
-                        <PropertyItem
-                          key={prop.id}
-                          index={props.findIndex((item) => item.id === prop.id)}
-                          draggable={search.length === 0}
-                          info={prop}
-                          onClick={() => openEditPropMenu(prop.id)}
-                          onVisibilityChange={() =>
-                            table.setColumnInfo(prop.id, {
-                              hidden: !prop.hidden,
-                            })
-                          }
-                        />
-                      )}
-                    </AutocompleteCollection>
-                  </Sortable.List>
-                </Sortable.Root>
-              </div>
+              <Sortable.Root
+                items={props.map((prop) => prop.id)}
+                disabled={search.length > 0}
+                onItemsChange={(orderedIds) =>
+                  table.handleColumnOrderChange(orderedIds.map(String))
+                }
+              >
+                <Sortable.List>
+                  <AutocompleteCollection>
+                    {(prop: ColumnInfo) => (
+                      <PropertyItem
+                        key={prop.id}
+                        index={props.findIndex((item) => item.id === prop.id)}
+                        draggable={search.length === 0}
+                        info={prop}
+                        onClick={() => openEditPropMenu(prop.id)}
+                        onVisibilityChange={() =>
+                          table.setColumnInfo(prop.id, {
+                            hidden: !prop.hidden,
+                          })
+                        }
+                      />
+                    )}
+                  </AutocompleteCollection>
+                </Sortable.List>
+              </Sortable.Root>
             </AutocompleteGroup>
           </AutocompleteList>
           <AutocompleteEmpty className="px-3 text-start text-muted">
@@ -194,14 +192,8 @@ function PropertyItem({
             <Sortable.Handle
               key="drag-handle"
               aria-label={`Move ${name}`}
-              className={cn(
-                "mr-2 hidden h-6 w-4.5 shrink-0 cursor-grab items-center justify-center fill-icon!",
-                draggable && "flex",
-              )}
-              render={<div />}
-            >
-              <Icon.DragHandle className="size-3" />
-            </Sortable.Handle>,
+              className={cn("mr-2 hidden h-6 w-4.5", draggable && "flex")}
+            />,
             <React.Fragment key="icon">
               {icon ? <IconBlock icon={icon} /> : <DefaultIcon type={type} />}
             </React.Fragment>,

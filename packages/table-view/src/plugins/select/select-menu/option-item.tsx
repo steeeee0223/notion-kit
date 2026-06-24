@@ -64,11 +64,8 @@ export function OptionItem({
               draggable ? (
                 <Sortable.Handle
                   aria-label={`Move ${option.name}`}
-                  className="flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-icon"
-                  render={<div />}
-                >
-                  <Icon.DragHandle className="size-3" />
-                </Sortable.Handle>
+                  className="h-6 w-4.5"
+                />
               ) : null
             }
             label={<OptionTag {...option} />}

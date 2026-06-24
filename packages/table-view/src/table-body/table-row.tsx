@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Cell, flexRender, Row } from "@tanstack/react-table";
 
@@ -73,7 +71,7 @@ export function TableRow({ index, row }: TableRowProps) {
                     <Checkbox
                       id="row-select"
                       size="sm"
-                      className="cursor-pointer rounded-[2px] accent-blue"
+                      className="cursor-pointer rounded-xs accent-blue"
                     />
                   </label>
                 </TableRowActionGroup>
