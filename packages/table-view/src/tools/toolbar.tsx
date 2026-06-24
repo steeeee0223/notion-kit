@@ -9,12 +9,16 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { SortMenu, TableViewMenu } from "../menus";
+import { useTableViewCtx } from "../table-contexts";
 
 interface ToolbarProps {
   className?: string;
 }
 
 export function Toolbar({ className }: ToolbarProps) {
+  const { table } = useTableViewCtx();
+  const tableMenu = table.getTableMenuState();
+
   return (
     <div className={cn("flex items-center justify-end gap-0.5", className)}>
       <ToolbarItem icon={<Icon.FilterSmall />} label="Filter" />
@@ -43,7 +47,15 @@ export function Toolbar({ className }: ToolbarProps) {
         icon={<Icon.ArrowExpandDiagonalSmall className="rotate-90" />}
         label="Open as full page"
       />
-      <DropdownMenu>
+      <DropdownMenu
+        open={tableMenu.open}
+        onOpenChange={(open) =>
+          table.setTableMenuState({
+            open,
+            page: open ? tableMenu.page : null,
+          })
+        }
+      >
         <DropdownMenuTrigger
           render={
             <Button

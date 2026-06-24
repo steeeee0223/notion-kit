@@ -124,7 +124,10 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
                   if (id !== null) updateRule({ id, desc });
                 }}
               >
-                <SelectTrigger className="my-0 w-full max-w-45 border border-border">
+                <SelectTrigger
+                  aria-label={current.name}
+                  className="my-0 w-full max-w-45 border border-border"
+                >
                   <SelectValue aria-label={current.name}>
                     <div className="flex items-center gap-2 truncate">
                       {current.icon ? (
@@ -161,7 +164,10 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
                   updateRule({ id: currentId, desc: value === "desc" })
                 }
               >
-                <SelectTrigger className="my-0 w-full max-w-45 border border-border">
+                <SelectTrigger
+                  aria-label={desc ? "Descending" : "Ascending"}
+                  className="my-0 w-full max-w-45 border border-border"
+                >
                   <SelectValue aria-label={desc ? "desc" : "asc"}>
                     <span className="truncate">
                       {desc ? "Descending" : "Ascending"}
@@ -181,7 +187,12 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
       }
     >
       <MenuItemAction className="flex items-center">
-        <Button variant="hint" className="size-5" onClick={removeRule}>
+        <Button
+          variant="hint"
+          className="size-5"
+          aria-label={`Remove ${current.name} sort`}
+          onClick={removeRule}
+        >
           <Icon.Close className="fill-current" />
         </Button>
       </MenuItemAction>

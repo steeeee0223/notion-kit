@@ -3,143 +3,86 @@
  * Tests for the row action menu functionality
  */
 
-import { render, screen, within } from "@testing-library/react";
-import userEvent, { UserEvent } from "@testing-library/user-event";
+import { within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import {
-  mockData,
-  mockProperties,
-  mockResizeObserver,
-} from "../__tests__/mock";
-import { TableView } from "../table-contexts";
+import { renderTableView } from "@/__tests__/component-objects/render-table-view";
+import { mockResizeObserver } from "@/__tests__/mock";
 
 mockResizeObserver();
 
-async function openRowActionMenu(user: UserEvent) {
-  render(
-    <TableView
-      properties={mockProperties}
-      data={mockData}
-      getRowUrl={(rowId) => `/${rowId}`}
-    />,
-  );
-
-  const row1 = screen.getByRole("row", { name: "Task 1" });
-  const menuTrigger = within(row1).getByRole("button", {
-    name: "Row actions",
-  });
-  await user.click(menuTrigger);
-
-  const menu = screen.getByRole("dialog");
-  expect(menu).toBeInTheDocument();
+async function openRowActionMenu() {
+  const tableView = renderTableView({ getRowUrl: (rowId) => `/${rowId}` });
+  const menu = await tableView.openRowActions("Task 1");
+  expect(menu.root).toBeInTheDocument();
   return menu;
 }
 
 describe("RowActionMenu", () => {
-  it("should display search input", async () => {
-    const user = userEvent.setup();
-    const menu = await openRowActionMenu(user);
+  it("RowActionMenu_Open_ShowsSearchInput", async () => {
+    const menu = await openRowActionMenu();
 
-    expect(
-      within(menu).getByPlaceholderText("Search actions..."),
-    ).toBeInTheDocument();
+    expect(menu.searchInput()).toBeInTheDocument();
   });
 
-  it("should show 'Edit icon' option", async () => {
-    const user = userEvent.setup();
-    const menu = await openRowActionMenu(user);
+  it("RowActionMenu_Open_ShowsEditIconOption", async () => {
+    const menu = await openRowActionMenu();
 
-    expect(within(menu).getByText("Edit icon")).toBeInTheDocument();
+    expect(within(menu.root).getByText("Edit icon")).toBeInTheDocument();
   });
 
-  it("should display options", async () => {
-    const user = userEvent.setup();
-    const menu = await openRowActionMenu(user);
+  it("RowActionMenu_Open_ShowsActions", async () => {
+    const menu = await openRowActionMenu();
 
-    expect(
-      within(menu).getByRole("option", { name: /open in new tab/i }),
-    ).toBeInTheDocument();
-    expect(
-      within(menu).getByRole("option", { name: /copy link/i }),
-    ).toBeInTheDocument();
-    expect(
-      within(menu).getByRole("option", { name: /duplicate/i }),
-    ).toBeInTheDocument();
-    expect(
-      within(menu).getByRole("option", { name: /delete/i }),
-    ).toBeInTheDocument();
+    expect(menu.option(/open in new tab/i)).toBeInTheDocument();
+    expect(menu.option(/copy link/i)).toBeInTheDocument();
+    expect(menu.option(/duplicate/i)).toBeInTheDocument();
+    expect(menu.option(/delete/i)).toBeInTheDocument();
   });
 
-  it("should show keyboard shortcuts for actions", async () => {
-    const user = userEvent.setup();
-    const menu = await openRowActionMenu(user);
+  it("RowActionMenu_Open_ShowsKeyboardShortcuts", async () => {
+    const menu = await openRowActionMenu();
 
-    // Check for duplicate keyboard shortcut
-    const duplicateItem = within(menu).getByRole("option", {
-      name: /duplicate/i,
-    });
+    const duplicateItem = menu.option(/duplicate/i);
     expect(duplicateItem).toBeInTheDocument();
     expect(within(duplicateItem).getByText(/⌘D/)).toBeInTheDocument();
 
-    // Check for delete keyboard shortcut
-    const deleteItem = within(menu).getByRole("option", { name: /delete/i });
+    const deleteItem = menu.option(/delete/i);
     expect(deleteItem).toBeInTheDocument();
     expect(within(deleteItem).getByText(/Delete/)).toBeInTheDocument();
   });
 
-  it("should filter actions when searching", async () => {
-    const user = userEvent.setup();
-    const menu = await openRowActionMenu(user);
+  it("RowActionMenu_Search_FiltersActions", async () => {
+    const menu = await openRowActionMenu();
 
-    const searchInput = within(menu).getByPlaceholderText("Search actions...");
-    await user.type(searchInput, "duplicate");
+    await menu.search("duplicate");
 
-    // Should show Duplicate option
-    expect(
-      within(menu).getByRole("option", { name: /duplicate/i }),
-    ).toBeInTheDocument();
-
-    // Should not show Copy link
-    expect(
-      within(menu).queryByRole("option", { name: /copy link/i }),
-    ).not.toBeInTheDocument();
+    expect(menu.option(/duplicate/i)).toBeInTheDocument();
+    expect(menu.queryOption(/copy link/i)).not.toBeInTheDocument();
   });
 
-  it("should copy correct link when clicking 'Copy link'", async () => {
-    const user = userEvent.setup();
-    const menu = await openRowActionMenu(user);
+  it("RowActionMenu_CopyLink_CopiesRowUrl", async () => {
+    const menu = await openRowActionMenu();
 
-    const copyLinkOption = within(menu).getByRole("option", {
-      name: /copy link/i,
-    });
-    await user.click(copyLinkOption);
+    await menu.choose(/copy link/i);
 
     const url = await navigator.clipboard.readText();
     expect(url.endsWith("/row1")).toBeTruthy();
   });
 
-  it("should duplicate row when clicking 'Duplicate'", async () => {
-    const user = userEvent.setup();
-    const menu = await openRowActionMenu(user);
+  it("RowActionMenu_Duplicate_DuplicatesRow", async () => {
+    const menu = await openRowActionMenu();
 
-    const duplicateOption = within(menu).getByRole("option", {
-      name: /duplicate/i,
-    });
-    await user.click(duplicateOption);
+    await menu.choose(/duplicate/i);
 
-    const rows = screen.getAllByRole("row", { name: "Task 1" });
-    expect(rows).toHaveLength(2);
+    await menu.waitForRowCount("Task 1", 2);
   });
 
-  it("should delete row when clicking 'Delete'", async () => {
-    const user = userEvent.setup();
-    const menu = await openRowActionMenu(user);
+  it("RowActionMenu_Delete_DeletesRow", async () => {
+    const menu = await openRowActionMenu();
 
-    const deleteOption = within(menu).getByRole("option", { name: /delete/i });
-    await user.click(deleteOption);
+    await menu.choose(/delete/i);
 
-    const row1 = screen.queryByRole("row", { name: "Task 1" });
-    expect(row1).not.toBeInTheDocument();
+    await menu.waitForRowRemoved("Task 1");
   });
 });

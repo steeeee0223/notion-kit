@@ -1,140 +1,83 @@
-import { screen, within } from "@testing-library/react";
-import userEvent, { UserEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
-import { mockResizeObserver } from "../__tests__/mock";
-import { openSettingsMenu } from "../__tests__/utils";
+import { renderTableView } from "@/__tests__/component-objects/render-table-view";
+import { mockResizeObserver } from "@/__tests__/mock";
 
 mockResizeObserver();
 
-async function openPropsMenu(user: UserEvent) {
-  const menu = await openSettingsMenu(user);
-
-  // Click on "Edit properties" menu item
-  const propsMenuItem = within(menu).getByRole("menuitem", {
-    name: "Edit properties",
-  });
-  await user.click(propsMenuItem);
-
-  expect(
-    screen.getByRole("heading", { name: "Properties" }),
-  ).toBeInTheDocument();
-
-  return menu;
+async function openPropertiesMenu() {
+  const tableView = renderTableView();
+  const settings = await tableView.openViewSettings();
+  return { tableView, properties: await settings.openProperties() };
 }
 
 describe("PropsMenu", () => {
-  it("should display Properties menu with search input", async () => {
-    const user = userEvent.setup();
-    const menu = await openPropsMenu(user);
+  it("PropertiesMenu_Open_ShowsSearchAndMoveHandles", async () => {
+    const { properties } = await openPropertiesMenu();
 
-    // Should show search placeholder
-    expect(
-      within(menu).getByPlaceholderText("Search for a property..."),
-    ).toBeInTheDocument();
-    expect(
-      document.querySelector("[data-slot='sortable-list']"),
-    ).toBeInTheDocument();
-    expect(
-      document.querySelector("[data-slot='sortable-handle']"),
-    ).toBeInTheDocument();
+    expect(properties.heading()).toBeVisible();
+    expect(properties.searchInput()).toBeVisible();
+    expect(properties.moveHandle("Name")).toBeVisible();
   });
 
-  it("should display all properties in the menu", async () => {
-    const user = userEvent.setup();
-    const menu = await openPropsMenu(user);
+  it("PropertiesMenu_Open_ShowsAllProperties", async () => {
+    const { properties } = await openPropertiesMenu();
 
-    // Should show both Name and Done properties
-    expect(within(menu).getByText("Name")).toBeInTheDocument();
-    expect(within(menu).getByText("Done")).toBeInTheDocument();
+    expect(properties.property("Name")).toBeVisible();
+    expect(properties.property("Done")).toBeVisible();
   });
 
-  it("should show 'New property' menu item", async () => {
-    const user = userEvent.setup();
-    const menu = await openPropsMenu(user);
+  it("PropertiesMenu_Open_ShowsNewPropertyAction", async () => {
+    const { properties } = await openPropertiesMenu();
 
-    expect(
-      within(menu).getByRole("menuitem", { name: "New property" }),
-    ).toBeInTheDocument();
+    expect(properties.newPropertyItem()).toBeVisible();
   });
 
-  it("should show 'Learn about properties' menu item", async () => {
-    const user = userEvent.setup();
-    const menu = await openPropsMenu(user);
+  it("PropertiesMenu_Open_ShowsHelpAction", async () => {
+    const { properties } = await openPropertiesMenu();
 
-    expect(
-      within(menu).getByRole("menuitem", { name: "Learn about properties" }),
-    ).toBeInTheDocument();
+    expect(properties.helpItem()).toBeVisible();
   });
 
-  it("should filter properties when searching", async () => {
-    const user = userEvent.setup();
-    const menu = await openPropsMenu(user);
+  it("PropertiesMenu_Search_FiltersProperties", async () => {
+    const { properties } = await openPropertiesMenu();
 
-    const searchInput = screen.getByPlaceholderText("Search for a property...");
-    await user.type(searchInput, "Name");
+    await properties.search("Name");
 
-    // Should show only Name property
-    expect(within(menu).getByText("Name")).toBeInTheDocument();
-    // "Done" should not be visible in search results
-    expect(
-      within(menu).queryByRole("menuitem", { name: "Done" }),
-    ).not.toBeInTheDocument();
+    expect(properties.property("Name")).toBeVisible();
+    expect(properties.queryProperty("Done")).not.toBeInTheDocument();
   });
 
-  it("should show 'No results' when search has no matches", async () => {
-    const user = userEvent.setup();
-    const menu = await openPropsMenu(user);
+  it("PropertiesMenu_UnmatchedSearch_ShowsNoResults", async () => {
+    const { properties } = await openPropertiesMenu();
 
-    const searchInput = screen.getByPlaceholderText("Search for a property...");
-    await user.type(searchInput, "nonexistent");
+    await properties.search("nonexistent");
 
-    expect(within(menu).getByText("No results")).toBeInTheDocument();
+    expect(properties.noResults()).toBeVisible();
   });
 
-  it("should toggle property visibility when clicking eye icon", async () => {
-    const user = userEvent.setup();
-    const menu = await openPropsMenu(user);
+  it("PropertiesMenu_VisibilityToggle_TargetsNamedProperty", async () => {
+    const { tableView, properties } = await openPropertiesMenu();
+    const doneVisibilityButton = properties.visibilityButton("Done");
 
-    // Click visibility toggle for "Done" property
-    const visibilityButtons = within(menu).getAllByRole("button", {
-      name: "Toggle property visibility",
-    });
-    // Find a non-disabled button (title property is disabled)
-    const doneVisibilityButton = visibilityButtons.find(
-      (btn) => !btn.hasAttribute("disabled"),
-    );
-    expect(doneVisibilityButton).toBeDefined();
-    await user.click(doneVisibilityButton!);
+    await tableView.user.click(doneVisibilityButton);
 
-    // Property visibility should be toggled (button still present)
     expect(doneVisibilityButton).toBeInTheDocument();
   });
 
-  it("should navigate back to View Settings when clicking back button", async () => {
-    const user = userEvent.setup();
-    const menu = await openPropsMenu(user);
+  it("PropertiesMenu_BackNavigation_ReturnsToViewSettings", async () => {
+    const { properties } = await openPropertiesMenu();
 
-    // Click back button
-    const backButton = within(menu).getByRole("button", { name: /back/i });
-    await user.click(backButton);
+    const settings = await properties.backToViewSettings();
 
-    // Should return to main menu
-    expect(
-      screen.getByRole("heading", { name: "View Settings" }),
-    ).toBeInTheDocument();
+    expect(settings.heading("View Settings")).toBeVisible();
   });
 
-  it("should navigate to New Property menu when clicking 'New property'", async () => {
-    const user = userEvent.setup();
-    const menu = await openPropsMenu(user);
+  it("PropertiesMenu_NewPropertyNavigation_OpensPropertyTypes", async () => {
+    const { properties } = await openPropertiesMenu();
 
-    const newPropertyItem = within(menu).getByText("New property");
-    await user.click(newPropertyItem);
+    const types = await properties.openNewProperty();
 
-    // Should navigate to New Property menu
-    expect(
-      screen.getByRole("heading", { name: "New property" }),
-    ).toBeInTheDocument();
+    expect(types.heading()).toBeVisible();
   });
 });

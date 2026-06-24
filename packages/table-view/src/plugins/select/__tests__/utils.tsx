@@ -1,10 +1,17 @@
+import { useState } from "react";
+import { functionalUpdate } from "@tanstack/react-table";
 import { render } from "@testing-library/react";
+import userEvent, {
+  PointerEventsCheckLevel,
+} from "@testing-library/user-event";
 
-import type { ColumnDefs, Row } from "../../../lib/types";
-import { TableView } from "../../../table-contexts";
+import { TableViewObject } from "@/__tests__/component-objects/table-view";
+import type { ColumnDefs, Row } from "@/lib/types";
+import { TableView } from "@/table-contexts";
+
 import type { SelectConfig } from "../types";
 
-const selectConfig: SelectConfig = {
+export const selectConfig: SelectConfig = {
   options: {
     names: ["Option A", "Option B", "Option C"],
     items: {
@@ -84,6 +91,28 @@ interface RenderSelectTableOptions {
 }
 
 export function renderSelectTable(options?: RenderSelectTableOptions) {
-  const data = createMockData(options);
-  return render(<TableView properties={mockProperties} data={data} />);
+  const user = userEvent.setup({
+    pointerEventsCheck: PointerEventsCheckLevel.Never,
+  });
+
+  function StatefulSelectTable() {
+    const [data, setData] = useState(createMockData(options));
+    const [properties, setProperties] = useState(mockProperties);
+
+    return (
+      <TableView
+        properties={properties}
+        data={data}
+        onDataChange={(updater) =>
+          setData((prev) => functionalUpdate(updater, prev))
+        }
+        onPropertiesChange={(updater) =>
+          setProperties((prev) => functionalUpdate(updater, prev))
+        }
+      />
+    );
+  }
+
+  render(<StatefulSelectTable />);
+  return new TableViewObject(user);
 }
