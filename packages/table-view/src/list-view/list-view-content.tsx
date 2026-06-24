@@ -46,11 +46,11 @@ export function ListViewContent() {
       >
         <Sortable.Root onDragEnd={handleRowDragEnd}>
           <Sortable.List>
-            {rows.map((row, index) =>
+            {rows.map((row) =>
               row.getIsGrouped() ? (
                 <TableGroupedRow key={row.id} row={row} />
               ) : (
-                <ListRow key={row.id} row={row} index={index} />
+                <ListRow key={row.id} row={row} />
               ),
             )}
           </Sortable.List>

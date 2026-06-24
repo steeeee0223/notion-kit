@@ -87,7 +87,7 @@ export function PropsMenu() {
               />
               <Sortable.Root
                 disabled={search.length > 0}
-                onDragEnd={table.handleColumnOrderChange}
+                onDragEnd={table.handleColumnDragEnd}
               >
                 <Sortable.List>
                   <AutocompleteCollection>

@@ -375,7 +375,7 @@ describe("useTableView - Extended Grouping", () => {
       const secondGroupId = initialGroupOrder[1]!;
 
       act(() => {
-        table.handleGroupedRowOrderChange({
+        table.handleGroupedRowDragEnd({
           canceled: false,
           operation: {
             canceled: false,

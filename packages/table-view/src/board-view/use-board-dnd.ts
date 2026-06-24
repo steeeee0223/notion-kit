@@ -152,7 +152,7 @@ export function useBoardDnd(): UseBoardDndResult {
         source?.type === "board-group" &&
         target?.type === "board-group"
       ) {
-        table.handleGroupedRowOrderChange(e);
+        table.handleGroupedRowDragEnd(e);
       }
 
       setActiveCardId(null);

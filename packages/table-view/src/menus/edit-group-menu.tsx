@@ -69,7 +69,7 @@ export function EditGroupMenu() {
             </Button>
           </div>
         </DropdownMenuLabel>
-        <Sortable.Root onDragEnd={table.handleGroupedRowOrderChange}>
+        <Sortable.Root onDragEnd={table.handleGroupedRowDragEnd}>
           <Sortable.List>
             {groupOrder.map((groupId, index) => {
               const renderer = table.getGroupingValueRenderer(groupId);

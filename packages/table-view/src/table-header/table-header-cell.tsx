@@ -28,8 +28,6 @@ export function TableHeaderCell({
   const onResizeStart = header.getResizeHandler();
   const { locked } = table.getTableGlobalState();
 
-  const index = table.getState().columnOrder.indexOf(header.column.id);
-
   const style: React.CSSProperties = {
     width: header.column.getWidth(),
   };
@@ -37,7 +35,7 @@ export function TableHeaderCell({
   return (
     <Sortable.Item
       id={header.column.id}
-      index={index}
+      index={header.column.getIndex()}
       disabled={locked}
       style={style}
       render={

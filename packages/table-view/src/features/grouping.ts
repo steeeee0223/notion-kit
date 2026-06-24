@@ -58,7 +58,7 @@ export interface ExtendedGroupingTableApi {
   toggleHideEmptyGroups: () => void;
   toggleGroupVisible: (groupId: string) => void;
   toggleAllGroupsVisible: () => void;
-  handleGroupedRowOrderChange: (e: DragEndEvent) => void;
+  handleGroupedRowDragEnd: (e: DragEndEvent) => void;
   _resetGroupingState: () => void;
   getGroupingValueRenderer: (
     groupId: string,
@@ -147,7 +147,7 @@ export const ExtendedGroupingFeature: TableFeature = {
         };
       });
     };
-    table.handleGroupedRowOrderChange = (e) => {
+    table.handleGroupedRowDragEnd = (e) => {
       table._setGroupingState((state) => ({
         ...state,
         groupOrder: getSortableItemsAfterDrag(state.groupOrder, e),

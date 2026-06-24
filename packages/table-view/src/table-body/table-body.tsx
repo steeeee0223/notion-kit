@@ -113,11 +113,11 @@ function TableBody({ table, onRowDragEnd }: TableBodyProps) {
   return (
     <Sortable.Root onDragEnd={onRowDragEnd}>
       <Sortable.List>
-        {rows.map((row, index) =>
+        {rows.map((row) =>
           row.getIsGrouped() ? (
             <TableGroupedRow key={row.id} row={row} />
           ) : (
-            <TableRow key={row.id} row={row} index={index} />
+            <TableRow key={row.id} row={row} />
           ),
         )}
       </Sortable.List>

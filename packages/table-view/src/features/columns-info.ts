@@ -47,7 +47,7 @@ export interface ColumnsInfoTableApi {
   // Column Setters
   _setColumnInfo: (colId: string, updater: Updater<ColumnInfo>) => void;
   setColumnInfo: (colId: string, info: Partial<Omit<ColumnInfo, "id">>) => void;
-  handleColumnOrderChange: (e: DragEndEvent) => void;
+  handleColumnDragEnd: (e: DragEndEvent) => void;
   _addColumnInfo: (info: ColumnInfo, idsUpdater: Updater<string[]>) => void;
   addColumnInfo: (payload: {
     id: string;
@@ -153,13 +153,13 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
     table.setColumnInfo = (colId, info) => {
       table._setColumnInfo(colId, (prev) => ({ ...prev, ...info }));
     };
-    table.handleColumnOrderChange = (e) => {
+    table.handleColumnDragEnd = (e) => {
       const { columnOrder } = table.getState();
       table.options.onColumnInfoChange?.((prev) => ({
         ...prev,
         ids: getSortableItemsAfterDrag(columnOrder, e),
       }));
-      table.options.sync?.("table.handleColumnOrderChange");
+      table.options.sync?.("table.handleColumnDragEnd");
     };
     table._addColumnInfo = (info, idsUpdater) => {
       table.options.onColumnInfoChange?.((prev) => {

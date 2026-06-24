@@ -31,7 +31,7 @@ All tests are comprehensive and passing:
 - ✅ `table.addColumnInfo({ id, name, type, at })` - Add with positioning
 - ✅ `table.removeColumnInfo(colId)` - Remove column
 - ✅ `table.duplicateColumnInfo(colId)` - Duplicate with unique name
-- ✅ `table.handleColumnOrderChange(orderedIds)` - Column DnD
+- ✅ `table.handleColumnDragEnd(orderedIds)` - Column DnD
 - ✅ Column info getters
 - **Status**: All tests passing! ✅
 
@@ -77,7 +77,7 @@ All tests are comprehensive and passing:
 - ✅ `table.toggleGroupVisible(groupId)` - Toggle individual group
 - ✅ `table.toggleAllGroupsVisible()` - Toggle all groups
 - ✅ `table.toggleHideEmptyGroups()` - Toggle empty groups filter
-- ⚠️ `table.handleGroupedRowOrderChange(event)` - Group DnD (skipped - not fully implemented)
+- ⚠️ `table.handleGroupedRowDragEnd(event)` - Group DnD (skipped - not fully implemented)
 - ✅ `table.getIsSomeGroupVisible()` - Check if any group visible
 - ✅ `table.setGroupingColumn(colId)` - Set grouping column
 - ✅ `table.getGroupedColumnInfo()` - Get grouped column info
@@ -183,7 +183,7 @@ Located under `src/plugins/select/`, these tests cover the Select/Multi-Select c
 
 - ✅ Basic CRUD operations (add, remove, update)
 - ✅ Custom APIs with direct table methods
-- ✅ Column DnD (handleColumnOrderChange)
+- ✅ Column DnD (handleColumnDragEnd)
 - ✅ Column freezing with pinning
 - ✅ Controlled & uncontrolled modes
 
@@ -209,7 +209,7 @@ Located under `src/plugins/select/`, these tests cover the Select/Multi-Select c
 - ✅ Group visibility controls (individual + all)
 - ✅ Empty groups filtering
 - ✅ Aggregate display control
-- ✅ Group DnD (handleGroupedRowOrderChange)
+- ✅ Group DnD (handleGroupedRowDragEnd)
 - ✅ Row-level group APIs
 
 **Counting:**

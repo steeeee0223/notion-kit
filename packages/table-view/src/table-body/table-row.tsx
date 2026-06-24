@@ -10,11 +10,10 @@ import type { Row as RowModel } from "../lib/types";
 import { useTableViewCtx } from "../table-contexts";
 
 interface TableRowProps {
-  index: number;
   row: Row<RowModel>;
 }
 
-export function TableRow({ index, row }: TableRowProps) {
+export function TableRow({ row }: TableRowProps) {
   const isMobile = useIsMobile();
   /** Add row */
   const { table } = useTableViewCtx();
@@ -29,7 +28,7 @@ export function TableRow({ index, row }: TableRowProps) {
   return (
     <Sortable.Item
       id={row.id}
-      index={index}
+      index={row.index}
       disabled={locked}
       data={{ type: "table-row", groupId: row.parentId }}
       render={

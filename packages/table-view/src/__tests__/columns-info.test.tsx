@@ -232,7 +232,7 @@ describe("useTableView - Column Custom APIs", () => {
     });
   });
 
-  describe("handleColumnOrderChange", () => {
+  describe("handleColumnDragEnd", () => {
     it("should reorder columns from a drag end event", () => {
       const { table } = renderTableHook({
         data: mockData,
@@ -240,7 +240,7 @@ describe("useTableView - Column Custom APIs", () => {
       });
 
       act(() => {
-        table.handleColumnOrderChange({
+        table.handleColumnDragEnd({
           canceled: false,
           operation: {
             canceled: false,
@@ -265,7 +265,7 @@ describe("useTableView - Column Custom APIs", () => {
       });
 
       act(() => {
-        table.handleColumnOrderChange({
+        table.handleColumnDragEnd({
           canceled: false,
           operation: {
             canceled: false,

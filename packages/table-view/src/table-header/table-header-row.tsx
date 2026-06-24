@@ -26,7 +26,7 @@ export const DndTableHeader = React.memo(function DndTableHeader() {
   return (
     <Sortable.Root
       orientation="horizontal"
-      onDragEnd={table.handleColumnOrderChange}
+      onDragEnd={table.handleColumnDragEnd}
     >
       <div className="relative">
         <TableHeaderRow />
