@@ -45,7 +45,6 @@ describe("NumberConfigMenu", () => {
     );
 
     await menu.openSubmenu(/Edit property/i);
-
     expect(menu.item(/Number format/i)).toHaveTextContent("Number");
     expect(menu.item(/Decimal places/i)).toHaveTextContent("Default");
   });
@@ -70,8 +69,7 @@ describe("FormatMenu", () => {
     );
     await menu.openSubmenu(/Number format/i);
 
-    await menu.choose("Currency");
-
+    menu.choose("Currency");
     expect(onChange).toHaveBeenCalledOnce();
     expect(onChange).toHaveBeenCalledWith("currency");
     expect(menu.item(/Number format/i)).toBeInTheDocument();
@@ -86,7 +84,6 @@ describe("RoundingMenu", () => {
     expect(menu.queryCheckbox("2")).not.toBeInTheDocument();
 
     await menu.openSubmenu(/Decimal places/i);
-
     expect(menu.checkbox("2")).toBeVisible();
   });
 
@@ -97,8 +94,7 @@ describe("RoundingMenu", () => {
     );
     await menu.openSubmenu(/Decimal places/i);
 
-    await menu.choose("2");
-
+    menu.choose("2");
     expect(onChange).toHaveBeenCalledOnce();
     expect(onChange).toHaveBeenCalledWith("2");
     expect(menu.item(/Decimal places/i)).toBeInTheDocument();

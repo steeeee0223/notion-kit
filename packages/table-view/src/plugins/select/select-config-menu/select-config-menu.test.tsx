@@ -1,195 +1,107 @@
-import { screen, waitFor } from "@testing-library/react";
-import userEvent, {
-  PointerEventsCheckLevel,
-  UserEvent,
-} from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
+import { SelectConfigMenuObject } from "@/__tests__/component-objects/select-config-menu";
 import { mockResizeObserver } from "@/__tests__/mock";
 
-import { renderSelectTable } from "../__tests__/utils";
+import { renderSelectConfigMenuTable } from "../__tests__/utils";
 
 mockResizeObserver();
 
-async function openSelectConfigMenu(user: UserEvent, columnName = "Status") {
-  renderSelectTable({ preselected: "single" });
+const optionNames = ["Option A", "Option B", "Option C"];
 
-  // Find the column header button and click to open the PropMenu dropdown
-  const headerCell = screen.getByRole("button", { name: columnName });
-  await user.click(headerCell);
-
-  // The PropMenu dropdown should be open — find "Edit property" sub-trigger
-  const editPropertyTrigger = screen.getByRole("menuitem", {
-    name: /edit property/i,
-  });
-  expect(editPropertyTrigger).toBeInTheDocument();
-
-  // Hover the sub-trigger to open the config submenu
-  // DropdownMenuSubTrigger opens on hover in Radix
-  await user.hover(editPropertyTrigger);
-
-  // Wait for the submenu to appear
-  await new Promise((r) => setTimeout(r, 100));
-
-  // The config submenu should now be visible with "Options" label
-  expect(screen.getByText("Options")).toBeInTheDocument();
+async function openSelectConfigMenu() {
+  const tableView = renderSelectConfigMenuTable({ preselected: "single" });
+  return SelectConfigMenuObject.find(tableView.user);
 }
 
 describe("SelectConfigMenu", () => {
-  // --- Tests that work in jsdom ---
+  it("SelectConfigMenu_Open_ShowsOptionsWithDragHandles", async () => {
+    const menu = await openSelectConfigMenu();
 
-  it("Flow 14: should delete an option", async () => {
-    const user = userEvent.setup({
-      pointerEventsCheck: PointerEventsCheckLevel.Never,
-    });
-    await openSelectConfigMenu(user);
-
-    expect(
-      document.querySelector("[data-slot='sortable-list']"),
-    ).toBeInTheDocument();
-    expect(
-      document.querySelector("[data-slot='sortable-handle']"),
-    ).toBeInTheDocument();
-
-    // Click on "Option A" to open its popover
-    const optionAItem = screen.getByRole("menuitem", { name: "Option A" });
-    await user.click(optionAItem);
-
-    // Wait for popover to render, then click Delete
-    await waitFor(() => {
-      expect(
-        screen.getByRole("menuitem", { name: "Delete" }),
-      ).toBeInTheDocument();
-    });
-    const deleteItem = screen.getByRole("menuitem", { name: "Delete" });
-    await user.click(deleteItem);
-
-    // Option A should be removed from the list
-    const remainingItems = screen.queryByRole("menuitem", {
-      name: "Option A",
-    });
-    expect(remainingItems).not.toBeInTheDocument();
+    expect(menu.label("Options")).toBeInTheDocument();
+    expect(menu.sortableList()).toBeInTheDocument();
+    expect(menu.moveHandle("Option A")).toBeInTheDocument();
   });
 
-  // --- Tests skipped due to Radix DropdownMenuSubContent behavior in jsdom ---
-  //
-  // Root cause: In jsdom, clicking non-DropdownMenu interactive elements (Button,
-  // PopoverTrigger, nested DropdownMenuTrigger) inside DropdownMenuSubContent causes
-  // the SubContent to dismiss/unmount. This prevents testing:
-  //
-  // 1. Flows 9-10: Clicking the "Add" Button unmounts the SubContent before the
-  //    input can render.
-  // 2. Flows 11-13: Popover portals cannot open from within SubContent.
-  // 3. Flows 15-15b: Nested DropdownMenu cannot open from within SubContent.
-  //
-  // These flows work correctly in the browser. Verify via Storybook or E2E tests.
-  it.skip("Flow 9: add option via '+' button — SubContent dismisses on Button click", async () => {
-    const user = userEvent.setup();
-    await openSelectConfigMenu(user);
+  it("SelectConfigMenu_AddOption_AppendsOption", async () => {
+    const menu = await openSelectConfigMenu();
 
-    const addButton = screen.getByRole("button", { name: "Add" });
-    await user.click(addButton);
-
-    const input = screen.getByRole("textbox");
-    expect(input).toBeInTheDocument();
-
-    await user.type(input, "New Status{Enter}");
-    expect(screen.getByText("New Status")).toBeInTheDocument();
+    await menu.addOption("New Status");
+    expect(menu.option("New Status")).toBeInTheDocument();
+    expect(menu.optionNames([...optionNames, "New Status"])).toEqual([
+      "Option A",
+      "Option B",
+      "Option C",
+      "New Status",
+    ]);
   });
 
-  it.skip("Flow 10: duplicate option error — SubContent dismisses on Button click", async () => {
-    const user = userEvent.setup();
-    await openSelectConfigMenu(user);
+  it("SelectConfigMenu_DuplicateOption_ShowsValidationError", async () => {
+    const menu = await openSelectConfigMenu();
 
-    const addButton = screen.getByRole("button", { name: /add/i });
-    await user.click(addButton);
-
-    const input = screen.getByRole("textbox");
-    await user.type(input, "Option A{Enter}");
-    expect(screen.getByText("Option already exists.")).toBeInTheDocument();
+    await menu.tryAddOption("Option A");
+    expect(menu.duplicateError()).toBeInTheDocument();
+    expect(menu.addInput()).toHaveAttribute("aria-invalid", "true");
   });
 
-  it.skip("Flow 11: option edit popover — Popover cannot portal from SubContent", async () => {
-    const user = userEvent.setup();
-    await openSelectConfigMenu(user);
+  it("SelectConfigMenu_OpenOption_ShowsOptionEditor", async () => {
+    const menu = await openSelectConfigMenu();
 
-    const optionA = screen.getByRole("menuitem", { name: "Option A" });
-    await user.click(optionA);
-
-    await waitFor(() => {
-      expect(screen.getByDisplayValue("Option A")).toBeInTheDocument();
-    });
+    const optionMenu = await menu.openOptionMenu("Option A");
+    expect(optionMenu.nameInput()).toHaveValue("Option A");
+    expect(optionMenu.colorsLabel()).toBeInTheDocument();
   });
 
-  it.skip("Flow 12: edit option name — Popover cannot portal from SubContent", async () => {
-    const user = userEvent.setup();
-    await openSelectConfigMenu(user);
+  it("SelectConfigMenu_RenameOption_UpdatesOptionName", async () => {
+    const menu = await openSelectConfigMenu();
+    const optionMenu = await menu.openOptionMenu("Option A");
 
-    const optionA = screen.getByRole("menuitem", { name: "Option A" });
-    await user.click(optionA);
-
-    await waitFor(() => {
-      expect(screen.getByDisplayValue("Option A")).toBeInTheDocument();
-    });
-    const nameInput = screen.getByDisplayValue("Option A");
-    await user.clear(nameInput);
-    await user.type(nameInput, "Renamed Option{Enter}");
-
-    await waitFor(() => {
-      expect(screen.getByText("Renamed Option")).toBeInTheDocument();
-    });
+    await optionMenu.rename("Renamed Option");
+    expect(menu.option("Renamed Option")).toBeInTheDocument();
+    expect(menu.queryOption("Option A")).not.toBeInTheDocument();
   });
 
-  it.skip("Flow 13: change option color — Popover cannot portal from SubContent", async () => {
-    const user = userEvent.setup();
-    await openSelectConfigMenu(user);
+  it("SelectConfigMenu_ChooseOptionColor_ChecksSelectedColor", async () => {
+    const menu = await openSelectConfigMenu();
+    const optionMenu = await menu.openOptionMenu("Option A");
 
-    const optionA = screen.getByRole("menuitem", { name: "Option A" });
-    await user.click(optionA);
-
-    await waitFor(() => {
-      expect(screen.getByText("Colors")).toBeInTheDocument();
-    });
-
-    const redColor = screen.getByRole("menuitem", { name: /red/i });
-    await user.click(redColor);
+    await optionMenu.chooseColor("Red");
+    expect(optionMenu.color("Red")).toHaveAttribute("aria-checked", "true");
   });
 
-  it.skip("Flow 15: sort dropdown — nested DropdownMenu cannot open from SubContent", async () => {
-    const user = userEvent.setup();
-    await openSelectConfigMenu(user);
+  it("SelectConfigMenu_DeleteOption_RemovesOption", async () => {
+    const menu = await openSelectConfigMenu();
 
-    const sort = screen.getByRole("menuitem", { name: /sort options/i });
-    await user.click(sort);
-
-    expect(
-      screen.getByRole("menuitemcheckbox", { name: /manual/i }),
-    ).toBeInTheDocument();
+    await menu.deleteOption("Option A");
+    expect(menu.queryOption("Option A")).not.toBeInTheDocument();
   });
 
-  it.skip("Flow 15b: sort alphabetical — nested DropdownMenu cannot open from SubContent", async () => {
-    const user = userEvent.setup();
-    await openSelectConfigMenu(user);
+  it("SelectConfigMenu_OpenSortMenu_ShowsSortChoices", async () => {
+    const menu = await openSelectConfigMenu();
 
-    const sort = screen.getByRole("menuitem", { name: /sort options/i });
-    await user.click(sort);
+    const sortMenu = await menu.openSortMenu();
+    expect(sortMenu.item("Manual")).toBeVisible();
+    expect(sortMenu.item("Alphabetical")).toBeVisible();
+    expect(sortMenu.item("Reverse alphabetical")).toBeVisible();
+  });
 
-    const alphabetical = screen.getByRole("menuitemcheckbox", {
-      name: /alphabetical/i,
-    });
-    await user.click(alphabetical);
+  it("SelectConfigMenu_ChangeSort_ReordersOptions", async () => {
+    const menu = await openSelectConfigMenu();
+    let sortMenu = await menu.openSortMenu();
 
-    const menuItems = screen.getAllByRole("menuitem");
-    const optionTexts = menuItems
-      .map((el) => el.textContent.trim())
-      .filter(
-        (t) =>
-          t.includes("Option A") ||
-          t.includes("Option B") ||
-          t.includes("Option C"),
-      );
-    expect(optionTexts[0]).toContain("Option A");
-    expect(optionTexts[1]).toContain("Option B");
-    expect(optionTexts[2]).toContain("Option C");
+    sortMenu.choose("Reverse alphabetical");
+    expect(menu.optionNames(optionNames)).toEqual([
+      "Option C",
+      "Option B",
+      "Option A",
+    ]);
+
+    sortMenu = await menu.openSortMenu();
+    sortMenu.choose("Alphabetical");
+    expect(menu.optionNames(optionNames)).toEqual([
+      "Option A",
+      "Option B",
+      "Option C",
+    ]);
   });
 });

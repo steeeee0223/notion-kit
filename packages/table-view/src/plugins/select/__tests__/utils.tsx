@@ -5,10 +5,17 @@ import userEvent, {
   PointerEventsCheckLevel,
 } from "@testing-library/user-event";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@notion-kit/ui/primitives";
+
 import { TableViewObject } from "@/__tests__/component-objects/table-view";
 import type { ColumnDefs, Row } from "@/lib/types";
 import { TableView } from "@/table-contexts";
 
+import { SelectConfigMenuContent } from "../select-config-menu";
 import type { SelectConfig } from "../types";
 
 export const selectConfig: SelectConfig = {
@@ -114,5 +121,63 @@ export function renderSelectTable(options?: RenderSelectTableOptions) {
   }
 
   render(<StatefulSelectTable />);
+  return new TableViewObject(user);
+}
+
+export function renderSelectConfigMenuTable(
+  options?: RenderSelectTableOptions,
+) {
+  const user = userEvent.setup({
+    pointerEventsCheck: PointerEventsCheckLevel.Never,
+  });
+
+  function StatefulSelectConfigMenuTable() {
+    const [data, setData] = useState(createMockData(options));
+    const [properties, setProperties] = useState(mockProperties);
+    const config = (properties.find((property) => property.id === "select-col")
+      ?.config ?? selectConfig) as SelectConfig;
+
+    return (
+      <TableView
+        properties={properties}
+        data={data}
+        onDataChange={(updater) =>
+          setData((prev) => functionalUpdate(updater, prev))
+        }
+        onPropertiesChange={(updater) =>
+          setProperties((prev) => functionalUpdate(updater, prev))
+        }
+      >
+        <DropdownMenu defaultOpen modal={false}>
+          <DropdownMenuTrigger
+            render={<button type="button">Open select config</button>}
+          />
+          <DropdownMenuContent>
+            <SelectConfigMenuContent
+              propId="select-col"
+              config={config}
+              onChange={(updater) =>
+                setProperties((prev) =>
+                  prev.map((property) =>
+                    property.id === "select-col"
+                      ? {
+                          ...property,
+                          config: functionalUpdate(
+                            updater,
+                            property.config ?? selectConfig,
+                          ),
+                        }
+                      : property,
+                  ),
+                )
+              }
+            />
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TableView>
+    );
+  }
+
+  render(<StatefulSelectConfigMenuTable />);
   return new TableViewObject(user);
 }

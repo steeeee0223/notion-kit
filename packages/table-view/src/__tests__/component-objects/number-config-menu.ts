@@ -1,4 +1,4 @@
-import { screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import type { UserEvent } from "@testing-library/user-event";
 
 export class NumberConfigMenuObject {
@@ -30,7 +30,7 @@ export class NumberConfigMenuObject {
     });
   }
 
-  async choose(name: string) {
-    await this.user.click(this.checkbox(name));
+  choose(name: string) {
+    fireEvent.click(this.checkbox(name));
   }
 }
