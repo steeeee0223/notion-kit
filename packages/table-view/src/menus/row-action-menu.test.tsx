@@ -3,7 +3,6 @@
  * Tests for the row action menu functionality
  */
 
-import { within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
@@ -28,7 +27,7 @@ describe("RowActionMenu", () => {
   it("RowActionMenu_Open_ShowsEditIconOption", async () => {
     const menu = await openRowActionMenu();
 
-    expect(within(menu.root).getByText("Edit icon")).toBeInTheDocument();
+    expect(menu.text("Edit icon")).toBeInTheDocument();
   });
 
   it("RowActionMenu_Open_ShowsActions", async () => {
@@ -45,11 +44,11 @@ describe("RowActionMenu", () => {
 
     const duplicateItem = menu.option(/duplicate/i);
     expect(duplicateItem).toBeInTheDocument();
-    expect(within(duplicateItem).getByText(/⌘D/)).toBeInTheDocument();
+    expect(menu.shortcutFor(/duplicate/i, /⌘D/)).toBeInTheDocument();
 
     const deleteItem = menu.option(/delete/i);
     expect(deleteItem).toBeInTheDocument();
-    expect(within(deleteItem).getByText(/Delete/)).toBeInTheDocument();
+    expect(menu.shortcutFor(/delete/i, /Delete/)).toBeInTheDocument();
   });
 
   it("RowActionMenu_Search_FiltersActions", async () => {

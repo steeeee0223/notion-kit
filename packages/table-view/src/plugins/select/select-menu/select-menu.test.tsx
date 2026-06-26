@@ -1,4 +1,3 @@
-import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { SelectMenuObject } from "@/__tests__/component-objects/select-menu";
@@ -24,7 +23,7 @@ describe("SelectMenu - Single Select", () => {
   it("SelectMenu_SingleSelect_BackspaceClearsSelection", async () => {
     const tableView = renderSelectTable({ preselected: "single" });
 
-    expect(screen.getByText("Option A")).toBeInTheDocument();
+    expect(tableView.cellButton("Row 1", "Option A")).toBeInTheDocument();
 
     const menu = await SelectMenuObject.open(tableView, "Row 1", "Status");
 
@@ -51,23 +50,23 @@ describe("SelectMenu - Single Select", () => {
 
     const menu = await SelectMenuObject.open(tableView, "Row 1", "Status");
 
-    expect(screen.getByText("Option A")).toBeInTheDocument();
-    expect(screen.getByText("Option B")).toBeInTheDocument();
-    expect(screen.getByText("Option C")).toBeInTheDocument();
+    expect(menu.option("Option A")).toBeInTheDocument();
+    expect(menu.option("Option B")).toBeInTheDocument();
+    expect(menu.option("Option C")).toBeInTheDocument();
 
     const typed = "nonexistent";
     await menu.search(typed);
 
-    expect(screen.queryByText("Option A")).not.toBeInTheDocument();
-    expect(screen.queryByText("Option B")).not.toBeInTheDocument();
-    expect(screen.queryByText("Option C")).not.toBeInTheDocument();
+    expect(menu.queryOption("Option A")).not.toBeInTheDocument();
+    expect(menu.queryOption("Option B")).not.toBeInTheDocument();
+    expect(menu.queryOption("Option C")).not.toBeInTheDocument();
     expect(menu.createOption(typed)).toBeInTheDocument();
   });
 
   it("SelectMenu_SingleSelect_ReplacesPreviousSelection", async () => {
     const tableView = renderSelectTable({ preselected: "single" });
 
-    expect(screen.getByText("Option A")).toBeInTheDocument();
+    expect(tableView.cellButton("Row 1", "Option A")).toBeInTheDocument();
 
     const menu = await SelectMenuObject.open(tableView, "Row 1", "Status");
 
@@ -89,8 +88,8 @@ describe("SelectMenu - Multi Select", () => {
     await menu.choose("Option A");
     await menu.choose("Option B");
 
-    expect(menu.combobox().parentElement).toHaveTextContent("Option A");
-    expect(menu.combobox().parentElement).toHaveTextContent("Option B");
+    expect(menu.optionGroup()).toHaveTextContent("Option A");
+    expect(menu.optionGroup()).toHaveTextContent("Option B");
   });
 });
 
@@ -103,9 +102,7 @@ describe("SelectMenu - Option Management", () => {
     expect(menu.option("Option A")).toBeInTheDocument();
     await menu.openOptionActions("Option A");
 
-    expect(
-      screen.getByRole("menuitem", { name: /delete/i }),
-    ).toBeInTheDocument();
+    expect(menu.optionActionsItem(/delete/i)).toBeInTheDocument();
   });
 
   it("SelectMenu_OptionActions_DeletesOption", async () => {

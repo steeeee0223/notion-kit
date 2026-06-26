@@ -28,8 +28,16 @@ export class RowActionsObject {
     return within(this.root).getByRole("option", { name });
   }
 
+  text(name: string | RegExp) {
+    return within(this.root).getByText(name);
+  }
+
   queryOption(name: string | RegExp) {
     return within(this.root).queryByRole("option", { name });
+  }
+
+  shortcutFor(name: string | RegExp, shortcut: string | RegExp) {
+    return within(this.option(name)).getByText(shortcut);
   }
 
   async search(value: string) {

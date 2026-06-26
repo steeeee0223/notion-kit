@@ -35,12 +35,22 @@ export class SelectMenuObject {
     return screen.queryByRole("menuitem", { name });
   }
 
+  optionActionsItem(name: string | RegExp) {
+    return screen.getByRole("menuitem", { name });
+  }
+
   createOption(name: string) {
     return screen.getByRole("option", { name: `Create ${name}` });
   }
 
   selectedCell() {
     return this.cell;
+  }
+
+  optionGroup() {
+    const comboboxParent = this.combobox().parentElement;
+    if (!comboboxParent) throw new Error("Expected combobox parent");
+    return comboboxParent;
   }
 
   async search(value: string) {
@@ -87,8 +97,6 @@ export class SelectMenuObject {
 
   async deleteOption(name: string) {
     await this.openOptionActions(name);
-    await this.tableView.user.click(
-      screen.getByRole("menuitem", { name: /delete/i }),
-    );
+    await this.tableView.user.click(this.optionActionsItem(/delete/i));
   }
 }
