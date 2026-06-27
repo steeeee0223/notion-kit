@@ -54,7 +54,7 @@ describe("Package Import Tests", () => {
   it("should import @notion-kit/ui/icon-block without errors", async () => {
     const { IconBlock } = await import("@notion-kit/ui/icon-block");
     expect(IconBlock).toBeDefined();
-  }, 10000); // Longer timeout for large package
+  });
 
   it("should import @notion-kit/ui/icon-menu without errors", async () => {
     const { IconMenu } = await import("@notion-kit/ui/icon-menu");
