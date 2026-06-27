@@ -41,8 +41,6 @@
     "@dnd-kit/helpers": "catalog:ui",
     "@dnd-kit/react": "catalog:ui",
     "@emoji-mart/data": "^1.2.1",
-    "@headless-tree/core": "^1.5.1",
-    "@headless-tree/react": "^1.5.1",
     "@hookform/resolvers": "catalog:ui",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/hooks": "workspace:*",

@@ -8,7 +8,6 @@ const THIRD_PARTY = [
   /^@better-fetch\//,
   /^@dnd-kit\//,
   /^@emoji-mart\//,
-  /^@headless-tree\//,
   /^@hookform\//,
   /^@radix-ui\//,
   /^@tanstack\//,

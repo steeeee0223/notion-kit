@@ -300,8 +300,7 @@ export function SortableKanbanBoard() {
   const handleDragEnd = (event: DragEndEvent) => {
     const sourceType = event.operation.source?.type;
     if (sourceType === "board-column") {
-      const orderedIds = getSortableItemsAfterDrag(columnOrder, event);
-      if (orderedIds) setColumnOrder(orderedIds);
+      setColumnOrder(getSortableItemsAfterDrag(columnOrder, event));
       setDragVersion((version) => version + 1);
       return;
     }

@@ -59,7 +59,7 @@ function PropertyItem({ info, onRestore, onDelete }: PropertyItemProps) {
       <MenuItemAction className="flex items-center text-muted">
         <Button
           tabIndex={0}
-          aria-label="Restore"
+          aria-label={`Restore ${info.name}`}
           variant="hint"
           className="size-6 p-0 disabled:opacity-40"
           onClick={(e) => {
@@ -71,7 +71,7 @@ function PropertyItem({ info, onRestore, onDelete }: PropertyItemProps) {
         </Button>
         <Button
           tabIndex={0}
-          aria-label="Delete"
+          aria-label={`Delete ${info.name}`}
           variant="hint"
           className="size-6 disabled:opacity-40"
           onClick={(e) => {

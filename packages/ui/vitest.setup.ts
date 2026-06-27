@@ -1,7 +1,11 @@
 import "@testing-library/jest-dom/vitest";
 
 import { cleanup } from "@testing-library/react";
-import { afterEach } from "vitest";
+import { afterEach, vi } from "vitest";
+
+vi.mock("@better-fetch/fetch", () => ({
+  betterFetch: vi.fn(() => Promise.resolve({ data: {}, error: null })),
+}));
 
 afterEach(() => {
   cleanup();

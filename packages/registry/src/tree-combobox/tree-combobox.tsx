@@ -1,7 +1,7 @@
 "use client";
 
 import { useTree } from "@notion-kit/ui/tree";
-import { CommandTree, type TreeItemData } from "@notion-kit/ui/tree/presets";
+import { ComboboxTree, type TreeItemData } from "@notion-kit/ui/tree/presets";
 
 export const folderNodes: TreeItemData[] = [
   {
@@ -58,12 +58,12 @@ export const folderNodes: TreeItemData[] = [
   },
 ];
 
-export default function Command() {
+export default function TreeCombobox() {
   const tree = useTree(folderNodes, {});
 
   return (
     <div className="w-40">
-      <CommandTree tree={tree} />
+      <ComboboxTree tree={tree} />
     </div>
   );
 }

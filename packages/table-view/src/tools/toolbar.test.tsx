@@ -1,13 +1,7 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import {
-  mockData,
-  mockProperties,
-  mockResizeObserver,
-} from "../__tests__/mock";
-import { TableView } from "../table-contexts";
+import { renderTableView } from "../__tests__/component-objects/render-table-view";
+import { mockResizeObserver } from "../__tests__/mock";
 
 mockResizeObserver();
 
@@ -15,166 +9,91 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-function renderToolbar() {
-  return render(<TableView properties={mockProperties} data={mockData} />);
-}
-
 describe("Toolbar", () => {
-  describe("Sort Button", () => {
-    it("should expose the sort trigger as a menu trigger", () => {
-      renderToolbar();
+  it("Toolbar_SortTrigger_ExposesMenuSemantics", () => {
+    const tableView = renderTableView();
 
-      const sortButton = screen.getByRole("button", { name: "Sort" });
-
-      expect(sortButton).toHaveAttribute("aria-haspopup", "menu");
-    });
-
-    it("should show the sort menu when clicking the sort button", async () => {
-      const user = userEvent.setup();
-      renderToolbar();
-
-      // Find and click the Sort button
-      const sortButton = screen.getByRole("button", { name: "Sort" });
-      expect(sortButton).toBeInTheDocument();
-
-      await user.click(sortButton);
-
-      // SortMenu contains "Add sort" and "Delete sort" menu items
-      expect(
-        screen.getByRole("menuitem", { name: "Add sort" }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole("menuitem", { name: "Delete sort" }),
-      ).toBeInTheDocument();
-    });
-
-    it("should close the sort menu when clicking outside", async () => {
-      const user = userEvent.setup();
-      renderToolbar();
-
-      // Open the sort menu
-      const sortButton = screen.getByRole("button", { name: "Sort" });
-      await user.click(sortButton);
-
-      // Verify menu is open
-      const addSortButton = screen.getByRole("menuitem", { name: "Add sort" });
-      expect(addSortButton).toBeInTheDocument();
-
-      // Click outside (on the body)
-      await user.click(document.body);
-
-      // Menu should be closed
-      expect(addSortButton).not.toBeInTheDocument();
-    });
+    expect(tableView.button("Sort")).toHaveAttribute("aria-haspopup", "menu");
   });
 
-  describe("Settings Button", () => {
-    it("should expose the settings trigger as a menu trigger", () => {
-      renderToolbar();
+  it("Toolbar_SortTrigger_OpensSortMenu", async () => {
+    const tableView = renderTableView();
 
-      const settingsButton = screen.getByRole("button", { name: "Settings" });
+    const sort = await tableView.openSortMenu();
 
-      expect(settingsButton).toHaveAttribute("aria-haspopup", "menu");
-    });
+    expect(sort.addSortItem()).toBeVisible();
+    expect(sort.deleteSortItem()).toBeVisible();
+  });
 
-    it("should show the table menu when clicking the settings button", async () => {
-      const user = userEvent.setup();
-      renderToolbar();
+  it("Toolbar_SortMenu_ClosesOnOutsideClick", async () => {
+    const tableView = renderTableView();
+    const sort = await tableView.openSortMenu();
 
-      // Find and click the Settings button
-      const settingsButton = screen.getByRole("button", { name: "Settings" });
-      expect(settingsButton).toBeInTheDocument();
+    await tableView.clickOutside();
+    await sort.waitUntilClosed();
 
-      await user.click(settingsButton);
+    expect(sort.root).not.toBeInTheDocument();
+  });
 
-      // TableViewMenu shows "View Settings" header
-      expect(
-        screen.getByRole("heading", { name: "View Settings" }),
-      ).toBeInTheDocument();
-    });
+  it("Toolbar_SettingsTrigger_ExposesMenuSemantics", () => {
+    const tableView = renderTableView();
 
-    it("should only request one open transition for one settings click", async () => {
-      const user = userEvent.setup();
-      const log = vi.spyOn(console, "log").mockImplementation(() => {
-        // noop
-      });
-      renderToolbar();
+    expect(tableView.button("Settings")).toHaveAttribute(
+      "aria-haspopup",
+      "menu",
+    );
+  });
 
-      await user.click(screen.getByRole("button", { name: "Settings" }));
+  it("Toolbar_SettingsTrigger_OpensViewSettings", async () => {
+    const tableView = renderTableView();
 
-      const menuSyncs = log.mock.calls.filter(
-        ([message]) => message === "[table.setTableMenuState] table synced",
-      );
-      expect(menuSyncs).toHaveLength(1);
-      expect(
-        screen.getByRole("heading", { name: "View Settings" }),
-      ).toBeInTheDocument();
-    });
+    const settings = await tableView.openViewSettings();
 
-    it("should close the settings menu when clicking outside", async () => {
-      const user = userEvent.setup();
-      renderToolbar();
+    expect(settings.heading()).toBeVisible();
+  });
 
-      // Open the settings menu
-      const settingsButton = screen.getByRole("button", { name: "Settings" });
-      await user.click(settingsButton);
+  it("Toolbar_SettingsClick_RequestsOneOpenTransition", async () => {
+    const log = vi.spyOn(console, "log").mockImplementation(() => undefined);
+    const tableView = renderTableView();
 
-      // Verify menu is open
-      expect(
-        screen.getByRole("heading", { name: "View Settings" }),
-      ).toBeInTheDocument();
+    const settings = await tableView.openViewSettings();
 
-      // Click outside (on the body)
-      await user.click(document.body);
+    const menuSyncs = log.mock.calls.filter(
+      ([message]) => message === "[table.setTableMenuState] table synced",
+    );
+    expect(menuSyncs).toHaveLength(1);
+    expect(settings.heading()).toBeVisible();
+  });
 
-      // Menu should be closed
-      expect(
-        screen.queryByRole("heading", { name: "View Settings" }),
-      ).not.toBeInTheDocument();
-    });
+  it("Toolbar_ViewSettings_ClosesOnOutsideClick", async () => {
+    const tableView = renderTableView();
+    const settings = await tableView.openViewSettings();
 
-    it("should toggle menu state correctly", async () => {
-      const user = userEvent.setup();
-      renderToolbar();
+    await tableView.clickOutside();
+    await settings.waitUntilClosed();
 
-      const settingsButton = screen.getByRole("button", { name: "Settings" });
+    expect(settings.root).not.toBeInTheDocument();
+  });
 
-      // First click: open
-      await user.click(settingsButton);
-      expect(
-        screen.getByRole("heading", { name: "View Settings" }),
-      ).toBeInTheDocument();
+  it("Toolbar_SettingsTrigger_TogglesMenu", async () => {
+    const tableView = renderTableView();
+    const firstSettings = await tableView.openViewSettings();
 
-      // Second click: close
-      await user.click(settingsButton);
-      expect(
-        screen.queryByRole("heading", { name: "View Settings" }),
-      ).not.toBeInTheDocument();
+    await tableView.clickButton("Settings");
+    await firstSettings.waitUntilClosed();
+    const reopenedSettings = await tableView.openViewSettings();
 
-      // Third click: re-open
-      await user.click(settingsButton);
-      expect(
-        screen.getByRole("heading", { name: "View Settings" }),
-      ).toBeInTheDocument();
-    });
+    expect(firstSettings.root).not.toBeInTheDocument();
+    expect(reopenedSettings.heading()).toBeVisible();
+  });
 
-    it("should close the settings dropdown when clicking the close button", async () => {
-      const user = userEvent.setup();
-      renderToolbar();
+  it("Toolbar_ViewSettingsClose_ClosesMenu", async () => {
+    const tableView = renderTableView();
+    const settings = await tableView.openViewSettings();
 
-      const settingsButton = screen.getByRole("button", { name: "Settings" });
-      await user.click(settingsButton);
+    await settings.close();
+    await settings.waitUntilClosed();
 
-      expect(
-        screen.getByRole("heading", { name: "View Settings" }),
-      ).toBeInTheDocument();
-
-      const closeButton = screen.getByRole("button", { name: "Close" });
-      await user.click(closeButton);
-
-      expect(
-        screen.queryByRole("heading", { name: "View Settings" }),
-      ).not.toBeInTheDocument();
-    });
+    expect(settings.root).not.toBeInTheDocument();
   });
 });

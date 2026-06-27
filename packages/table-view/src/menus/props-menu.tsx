@@ -202,7 +202,7 @@ function PropertyItem({
       <MenuItemAction className="flex items-center text-muted [&_svg]:fill-current">
         <Button
           tabIndex={0}
-          aria-label="Toggle property visibility"
+          aria-label={`Toggle ${name} visibility`}
           disabled={type === "title"}
           variant="hint"
           className="size-6 p-0 disabled:opacity-40"

@@ -134,7 +134,12 @@ function GroupItem({
       render={
         <DropdownMenuItem
           closeOnClick={false}
-          icon={<Sortable.Handle className="h-6 w-4.5" />}
+          icon={
+            <Sortable.Handle
+              aria-label={`Move ${id} group`}
+              className="h-6 w-4.5"
+            />
+          }
           label={children}
         />
       }
@@ -142,7 +147,7 @@ function GroupItem({
       <MenuItemAction className="flex items-center text-muted [&_svg]:fill-current">
         <Button
           tabIndex={0}
-          aria-label="Toggle property visibility"
+          aria-label={`Toggle ${id} group visibility`}
           variant="hint"
           className="size-6"
           onClick={(e) => {

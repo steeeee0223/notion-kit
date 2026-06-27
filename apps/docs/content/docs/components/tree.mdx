@@ -75,11 +75,14 @@ Display an indicator when a folder has no children.
   preview={`useTree(data, { showEmptyChild: true })`}
 />
 
-### Command Tree
+### Combobox Tree
 
-A searchable tree interface for command palettes.
+A searchable tree interface using a combobox.
 
-<ComponentPreview name="tree-command" preview={`<CommandTree tree={tree} />`} />
+<ComponentPreview
+  name="tree-combobox"
+  preview={`<ComboboxTree tree={tree} />`}
+/>
 
 ## API Reference
 
@@ -167,9 +170,9 @@ Pre-styled tree list component from `@notion-kit/ui/tree/presets`.
 | ----------- | ---------- | --------------------------- |
 | `nodeIds`\* | `string[]` | Array of node IDs to render |
 
-### CommandTree (Preset)
+### ComboboxTree (Preset)
 
-Searchable tree component for command interfaces.
+Searchable tree component with combobox behavior.
 
 | Prop     | Type              | Description                  |
 | -------- | ----------------- | ---------------------------- |

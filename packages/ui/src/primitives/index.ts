@@ -39,6 +39,5 @@ export * from "./visually-hidden";
 /** Custom */
 export * from "./menu";
 /** origin ui */
-export * from "./tree";
 /** utils */
 export * from "./compose-refs";

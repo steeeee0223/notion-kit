@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "storybook-react-rsbuild";
 import { expect, userEvent, within } from "storybook/test";
 
 import { Tree, useTree } from "@notion-kit/ui/tree";
-import { CommandTree, TreeList } from "@notion-kit/ui/tree/presets";
+import { ComboboxTree, TreeList } from "@notion-kit/ui/tree/presets";
 
 import { folderNodes } from "./data";
 
@@ -166,16 +166,16 @@ export const ShowingEmptyChild: Story = {
   },
 };
 
-export const Command: Story = {
+export const Combobox: Story = {
   render: () => {
     const tree = useTree(folderNodes, {});
 
-    return <CommandTree tree={tree} />;
+    return <ComboboxTree tree={tree} />;
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Command tree should have a search input
+    // Combobox tree should have a search input
     const searchInput = canvas.getByPlaceholderText(/type to search/i);
     await expect(searchInput).toBeInTheDocument();
 

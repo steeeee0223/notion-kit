@@ -236,6 +236,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
           return { ...row, properties };
         }),
       );
+      table.options.sync?.("table.removeColumnInfo");
     };
     table.toggleColumnWrapped = (colId, updater) => {
       table._setColumnInfo(colId, (prev) => ({
