@@ -6,8 +6,9 @@ import {
   DropdownMenuTrigger,
 } from "@notion-kit/ui/primitives";
 
+import { useTableViewCtx } from "@/table-contexts";
+
 import { SortMenu } from "../menus";
-import { useTableViewCtx } from "../table-contexts";
 
 export function SortSelector() {
   const { table } = useTableViewCtx();

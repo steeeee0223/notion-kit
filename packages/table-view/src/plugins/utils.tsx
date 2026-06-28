@@ -1,4 +1,5 @@
-import type { Row } from "../lib/types";
+import type { Row } from "@/lib/types";
+
 import type {
   CellPlugin,
   CompareFn,

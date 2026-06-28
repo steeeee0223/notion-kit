@@ -6,7 +6,8 @@
 import { act } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import type { ColumnInfo, Row } from "../lib/types";
+import type { ColumnInfo, Row } from "@/lib/types";
+
 import { renderTableHook } from "./mock";
 
 const mockProperties: ColumnInfo[] = [

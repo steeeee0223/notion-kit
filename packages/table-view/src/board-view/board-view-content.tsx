@@ -1,13 +1,12 @@
-"use client";
-
 import { DragDropProvider, DragOverlay } from "@dnd-kit/react";
 import { createPortal } from "react-dom";
 
 import { Icon } from "@notion-kit/icons";
 import { Button } from "@notion-kit/ui/primitives";
 
-import { TableViewMenuPage } from "../features";
-import { useTableViewCtx } from "../table-contexts";
+import { TableViewMenuPage } from "@/features";
+import { useTableViewCtx } from "@/table-contexts";
+
 import { BoardCardContent } from "./board-card";
 import { BoardGroup } from "./board-group";
 import { useBoardDnd } from "./use-board-dnd";

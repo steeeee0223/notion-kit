@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   functionalUpdate,
@@ -11,10 +9,11 @@ import {
   type OnChangeFn,
 } from "@tanstack/react-table";
 
-import { DEFAULT_FEATURES, getExtendedGroupedRowModel } from "../features";
-import type { ColumnDefs, ColumnInfo, Row } from "../lib/types";
-import { type Entity } from "../lib/utils";
-import type { CellPlugin } from "../plugins";
+import { DEFAULT_FEATURES, getExtendedGroupedRowModel } from "@/features";
+import type { ColumnDefs, ColumnInfo, Row } from "@/lib/types";
+import { type Entity } from "@/lib/utils";
+import type { CellPlugin } from "@/plugins";
+
 import { defaultColumn } from "./column";
 import type { BaseTableProps } from "./types";
 import { getMinWidth, toPropertyEntity } from "./utils";

@@ -15,9 +15,9 @@ import {
   Sortable,
 } from "@notion-kit/ui/primitives";
 
-import { MenuHeader } from "../common";
-import { TableViewMenuPage } from "../features";
-import { useTableViewCtx } from "../table-contexts";
+import { MenuHeader } from "@/common";
+import { TableViewMenuPage } from "@/features";
+import { useTableViewCtx } from "@/table-contexts";
 
 export function EditGroupMenu() {
   const isClient = useIsClient();

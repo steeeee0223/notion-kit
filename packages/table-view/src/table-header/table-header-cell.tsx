@@ -12,8 +12,9 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { DefaultIcon } from "../common";
-import type { Row } from "../lib/types";
+import { DefaultIcon } from "@/common";
+import type { Row } from "@/lib/types";
+
 import { PropMenu } from "../menus";
 
 /**

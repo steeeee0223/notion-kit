@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { RowData } from "@tanstack/react-table";
 
-import type { ComparableValue } from "../plugins";
+import type { ComparableValue } from "@/plugins";
+
 import {
   ColumnsInfoFeature,
   type ColumnInfoColumnApi,

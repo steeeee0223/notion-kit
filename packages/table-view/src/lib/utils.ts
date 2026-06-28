@@ -3,8 +3,9 @@ import { v4 } from "uuid";
 
 import { cn } from "@notion-kit/cn";
 
-import { CountMethod } from "../features";
-import type { CellPlugin, InferData } from "../plugins";
+import { CountMethod } from "@/features";
+import type { CellPlugin, InferData } from "@/plugins";
+
 import type { Cell, Row } from "./types";
 
 export interface Entity<T extends { id: string }> {

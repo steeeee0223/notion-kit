@@ -167,6 +167,7 @@ export const ShowingEmptyChild: Story = {
 };
 
 export const Combobox: Story = {
+  name: "🚧 Combobox",
   render: () => {
     const tree = useTree(folderNodes, {});
 

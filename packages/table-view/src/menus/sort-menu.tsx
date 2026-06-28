@@ -30,8 +30,8 @@ import {
   Sortable,
 } from "@notion-kit/ui/primitives";
 
-import { DefaultIcon } from "../common";
-import { useTableViewCtx } from "../table-contexts";
+import { DefaultIcon } from "@/common";
+import { useTableViewCtx } from "@/table-contexts";
 
 export function SortMenu() {
   const { table } = useTableViewCtx();

@@ -16,9 +16,9 @@ import {
 } from "@notion-kit/ui/primitives";
 import { KEYBOARD } from "@notion-kit/utils";
 
-import { RowViewIcon } from "../common";
-import { ROW_VIEW_OPTIONS, RowViewType } from "../features";
-import { useTableViewCtx } from "../table-contexts";
+import { RowViewIcon } from "@/common";
+import { ROW_VIEW_OPTIONS, RowViewType } from "@/features";
+import { useTableViewCtx } from "@/table-contexts";
 
 interface ViewNavProps {
   rowId: string;

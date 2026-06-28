@@ -1,12 +1,10 @@
-"use client";
-
 import React from "react";
 import { flexRender } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 
-import { CountMethod } from "../features";
-import { useTableViewCtx } from "../table-contexts";
+import { CountMethod } from "@/features";
+import { useTableViewCtx } from "@/table-contexts";
 
 export function TableFooter() {
   const { table } = useTableViewCtx();

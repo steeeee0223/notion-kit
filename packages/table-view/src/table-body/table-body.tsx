@@ -6,8 +6,9 @@ import { Icon } from "@notion-kit/icons";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
-import type { Row } from "../lib/types";
-import { useTableViewCtx } from "../table-contexts";
+import type { Row } from "@/lib/types";
+import { useTableViewCtx } from "@/table-contexts";
+
 import { TableGroupedRow } from "./table-grouped-row";
 import { TableRow } from "./table-row";
 

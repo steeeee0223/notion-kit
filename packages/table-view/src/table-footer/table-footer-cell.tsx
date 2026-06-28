@@ -1,5 +1,3 @@
-"use client";
-
 import type { HeaderContext } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
@@ -10,11 +8,11 @@ import {
   DropdownMenuTrigger,
 } from "@notion-kit/ui/primitives";
 
-import { CountMethod } from "../features";
-import { Row } from "../lib/types";
-import { CalcMenu, countMethodHint } from "../menus";
-import type { CellPlugin, InferKey } from "../plugins";
-import { useTableViewCtx } from "../table-contexts";
+import { CountMethod } from "@/features";
+import { Row } from "@/lib/types";
+import { CalcMenu, countMethodHint } from "@/menus";
+import type { CellPlugin, InferKey } from "@/plugins";
+import { useTableViewCtx } from "@/table-contexts";
 
 export function TableFooterCell({ column }: HeaderContext<Row, unknown>) {
   const props = {

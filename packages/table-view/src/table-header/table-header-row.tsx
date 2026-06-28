@@ -15,9 +15,10 @@ import {
   Sortable,
 } from "@notion-kit/ui/primitives";
 
-import { TableViewMenuPage } from "../features";
+import { TableViewMenuPage } from "@/features";
+import { useTableViewCtx } from "@/table-contexts";
+
 import { PropsMenu, TypesMenu } from "../menus";
-import { useTableViewCtx } from "../table-contexts";
 import { TableHeaderActionCell } from "./table-header-action-cell";
 
 export const DndTableHeader = React.memo(function DndTableHeader() {

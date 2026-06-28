@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { renderTableView } from "../__tests__/component-objects/render-table-view";
-import { mockResizeObserver } from "../__tests__/mock";
-import type { ColumnInfo, Row } from "../lib/types";
+import { renderTableView } from "@/__tests__/component-objects/render-table-view";
+import { mockResizeObserver } from "@/__tests__/mock";
+import type { ColumnInfo, Row } from "@/lib/types";
 
 mockResizeObserver();
 

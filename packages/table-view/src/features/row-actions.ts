@@ -11,10 +11,11 @@ import { v4 } from "uuid";
 import type { IconData } from "@notion-kit/ui/icon-block";
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
-import type { Cell, Row } from "../lib/types";
-import { getDefaultCell, insertAt } from "../lib/utils";
-import type { CellPlugin, InferData } from "../plugins";
-import type { TitlePlugin } from "../plugins/title";
+import type { Cell, Row } from "@/lib/types";
+import { getDefaultCell, insertAt } from "@/lib/utils";
+import type { CellPlugin, InferData } from "@/plugins";
+import type { TitlePlugin } from "@/plugins/title";
+
 import { createGroupId } from "./utils";
 
 export interface RowActionsOptions {

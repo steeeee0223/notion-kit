@@ -14,9 +14,9 @@ import {
 
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
-import type { ColumnInfo, Row as RowModel } from "../lib/types";
-import type { CellPlugin, ComparableValue, InferData } from "../plugins";
-import { DefaultGroupingValue } from "../plugins";
+import type { ColumnInfo, Row as RowModel } from "@/lib/types";
+import type { CellPlugin, ComparableValue, InferData } from "@/plugins";
+import { DefaultGroupingValue } from "@/plugins";
 
 interface ExtendedGroupingState {
   groupOrder: string[];

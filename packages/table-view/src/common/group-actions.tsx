@@ -15,8 +15,8 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import type { Row as RowModel } from "../lib/types";
-import { useTableViewCtx } from "../table-contexts";
+import type { Row as RowModel } from "@/lib/types";
+import { useTableViewCtx } from "@/table-contexts";
 
 interface GroupActionsProps {
   className?: string;
