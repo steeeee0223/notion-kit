@@ -137,7 +137,7 @@ function ComboboxTreeList<T extends TreeItemData>({
         return (
           <AutocompleteItem
             key={node.id}
-            value={node.id}
+            value={node.title}
             data-slot="tree-item"
             variant="sidebar"
             className="focus:bg-default/5"

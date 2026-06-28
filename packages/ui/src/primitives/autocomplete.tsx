@@ -5,11 +5,11 @@ import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 
 import { Button } from "./button";
+import { popup, positioner } from "./design";
 import * as _Icon from "./icons";
 import { Input, type InputProps } from "./input";
 import { MenuGroup, MenuItem, MenuLabel } from "./menu";
 import { Separator } from "./separator";
-import { contentVariants, positioner } from "./variants";
 
 interface AutocompleteGroupItem<ItemValue> {
   items: readonly ItemValue[];
@@ -177,11 +177,7 @@ function AutocompleteContent({
           data-slot="autocomplete-content"
           data-variant={variant}
           style={style}
-          className={cn(
-            contentVariants({ variant: "popover", openAnimation: true }),
-            "group/autocomplete-content max-h-[min(calc(var(--available-height)-8px),300px)] w-(--anchor-width) min-w-(--anchor-width) overflow-hidden",
-            className,
-          )}
+          className={cn(popup({ type: "autocomplete" }), className)}
           {...props}
         />
       </AutocompletePrimitive.Positioner>

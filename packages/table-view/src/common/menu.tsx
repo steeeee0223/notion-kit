@@ -1,7 +1,7 @@
 import { Icon } from "@notion-kit/icons";
 import { Button } from "@notion-kit/ui/primitives";
 
-import { useTableViewCtx } from "../table-contexts";
+import { useTableViewCtx } from "@/table-contexts";
 
 interface MenuHeaderProps {
   id?: string;

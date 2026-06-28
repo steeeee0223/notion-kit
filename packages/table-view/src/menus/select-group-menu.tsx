@@ -11,10 +11,10 @@ import {
   MenuItemCheck,
 } from "@notion-kit/ui/primitives";
 
-import { DefaultIcon, MenuHeader } from "../common";
-import { TableViewMenuPage } from "../features";
-import type { ColumnInfo } from "../lib/types";
-import { useTableViewCtx } from "../table-contexts";
+import { DefaultIcon, MenuHeader } from "@/common";
+import { TableViewMenuPage } from "@/features";
+import type { ColumnInfo } from "@/lib/types";
+import { useTableViewCtx } from "@/table-contexts";
 
 export function SelectGroupMenu() {
   const { table } = useTableViewCtx();

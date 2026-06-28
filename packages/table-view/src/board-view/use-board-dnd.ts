@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useMemo, useRef, useState } from "react";
 import { PointerActivationConstraints, PointerSensor } from "@dnd-kit/dom";
 import {
@@ -9,7 +7,8 @@ import {
   type DragStartEvent,
 } from "@dnd-kit/react";
 
-import { useTableViewCtx } from "../table-contexts";
+import { useTableViewCtx } from "@/table-contexts";
+
 import {
   createBoardItems,
   findBoardGroup,

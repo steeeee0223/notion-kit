@@ -6,7 +6,8 @@ import {
   memo,
 } from "@tanstack/react-table";
 
-import type { ComparableValue } from "../plugins";
+import type { ComparableValue } from "@/plugins";
+
 import { createGroupId } from "./utils";
 
 export function getExtendedGroupedRowModel<TData extends RowData>(): (

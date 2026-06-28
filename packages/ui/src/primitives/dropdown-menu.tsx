@@ -5,6 +5,7 @@ import { DotFilledIcon } from "@radix-ui/react-icons";
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 
+import { popup, positioner } from "./design";
 import {
   MenuGroup,
   MenuItem,
@@ -15,7 +16,6 @@ import {
 } from "./menu";
 import { Separator } from "./separator";
 import { Switch } from "./switch";
-import { contentVariants, positioner } from "./variants";
 
 function DropdownMenu({ ...props }: Menu.Root.Props) {
   return <Menu.Root data-slot="dropdown-menu" {...props} />;
@@ -126,11 +126,7 @@ function DropdownMenuContent({
       >
         <Menu.Popup
           data-slot="dropdown-menu-content"
-          className={cn(
-            "min-w-32 overflow-hidden",
-            contentVariants({ variant: "popover", sideAnimation: true }),
-            className,
-          )}
+          className={cn(popup({ type: "dropdownMenu" }), className)}
           {...props}
         />
       </Menu.Positioner>

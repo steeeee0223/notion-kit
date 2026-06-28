@@ -6,7 +6,7 @@ import type {
   InferData,
   InferKey,
   InferPlugin,
-} from "../plugins";
+} from "@/plugins";
 
 interface PropertyBase {
   id: string;

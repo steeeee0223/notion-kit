@@ -1,9 +1,9 @@
 import type { CellContext } from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
 
-import type { LayoutType } from "../features";
-import type { ColumnInfo, Row } from "../lib/types";
-import type { CellPlugin, InferCellProps } from "../plugins";
+import type { LayoutType } from "@/features";
+import type { ColumnInfo, Row } from "@/lib/types";
+import type { CellPlugin, InferCellProps } from "@/plugins";
 
 interface TableCellProps<TPlugin extends CellPlugin>
   extends Pick<

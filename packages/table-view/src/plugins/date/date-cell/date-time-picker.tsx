@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Calendar,
   MenuGroup,
@@ -10,7 +8,8 @@ import {
 } from "@notion-kit/ui/primitives";
 import { TimezoneMenu } from "@notion-kit/ui/timezone-menu";
 
-import type { InferCellProps } from "../../types";
+import type { InferCellProps } from "@/plugins/types";
+
 import { DateFormatMenu, TimeFormatMenu } from "../common";
 import type { DatePlugin } from "../types";
 import { DateRangeInput } from "./date-range-input";

@@ -14,11 +14,11 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { DefaultIcon, MenuHeader } from "../common";
-import { TableViewMenuPage } from "../features";
-import type { PluginType } from "../lib/types";
-import type { CellPlugin } from "../plugins";
-import { useTableViewCtx } from "../table-contexts";
+import { DefaultIcon, MenuHeader } from "@/common";
+import { TableViewMenuPage } from "@/features";
+import type { PluginType } from "@/lib/types";
+import type { CellPlugin } from "@/plugins";
+import { useTableViewCtx } from "@/table-contexts";
 
 interface TypesMenuProps {
   /**

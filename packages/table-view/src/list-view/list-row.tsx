@@ -5,9 +5,9 @@ import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
 import { buttonVariants, Sortable } from "@notion-kit/ui/primitives";
 
-import { RowActions } from "../common";
-import type { Row as RowModel } from "../lib/types";
-import { useTableViewCtx } from "../table-contexts";
+import { RowActions } from "@/common";
+import type { Row as RowModel } from "@/lib/types";
+import { useTableViewCtx } from "@/table-contexts";
 
 interface ListRowProps {
   row: Row<RowModel>;

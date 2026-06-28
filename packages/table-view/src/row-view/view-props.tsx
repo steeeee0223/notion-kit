@@ -1,5 +1,3 @@
-"use client";
-
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Button,
@@ -10,9 +8,9 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { DefaultIcon, TableCell } from "../common";
-import { PropMenu } from "../menus";
-import { useTableViewCtx } from "../table-contexts";
+import { DefaultIcon, TableCell } from "@/common";
+import { PropMenu } from "@/menus";
+import { useTableViewCtx } from "@/table-contexts";
 
 interface ViewPropsProps {
   rowId: string;

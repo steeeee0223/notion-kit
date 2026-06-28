@@ -1,10 +1,10 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
-import { TableCell } from "../common";
-import type { Row } from "../lib/types";
-import { TableRowCell } from "../table-body";
-import { TableFooterCell } from "../table-footer";
-import { TableHeaderCell } from "../table-header";
+import { TableCell } from "@/common";
+import type { Row } from "@/lib/types";
+import { TableRowCell } from "@/table-body";
+import { TableFooterCell } from "@/table-footer";
+import { TableHeaderCell } from "@/table-header";
 
 export const defaultColumn: Partial<ColumnDef<Row>> = {
   size: 200,

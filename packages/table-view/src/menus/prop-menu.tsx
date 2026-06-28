@@ -10,10 +10,11 @@ import {
   Separator,
 } from "@notion-kit/ui/primitives";
 
-import { PropMeta } from "../common";
-import { TableViewMenuPage } from "../features";
-import { ConfigMenuProps } from "../plugins";
-import { useTableViewCtx } from "../table-contexts";
+import { PropMeta } from "@/common";
+import { TableViewMenuPage } from "@/features";
+import { ConfigMenuProps } from "@/plugins";
+import { useTableViewCtx } from "@/table-contexts";
+
 import { CalcMenu } from "./calc-menu";
 import { TypesMenu } from "./types-menu";
 

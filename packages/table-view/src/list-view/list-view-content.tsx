@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
 
@@ -7,8 +5,9 @@ import { Icon } from "@notion-kit/icons";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
-import { TableGroupedRow } from "../table-body";
-import { useTableViewCtx } from "../table-contexts";
+import { TableGroupedRow } from "@/table-body";
+import { useTableViewCtx } from "@/table-contexts";
+
 import { ListRow } from "./list-row";
 
 export function ListViewContent() {

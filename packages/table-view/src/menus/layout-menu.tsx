@@ -9,9 +9,9 @@ import {
   MenuItemAction,
 } from "@notion-kit/ui/primitives";
 
-import { LayoutIcon, MenuHeader, RowViewIcon } from "../common";
-import { LAYOUT_OPTIONS, ROW_VIEW_OPTIONS, RowViewType } from "../features";
-import { useTableViewCtx } from "../table-contexts";
+import { LayoutIcon, MenuHeader, RowViewIcon } from "@/common";
+import { LAYOUT_OPTIONS, ROW_VIEW_OPTIONS, RowViewType } from "@/features";
+import { useTableViewCtx } from "@/table-contexts";
 
 export function LayoutMenu() {
   const { table } = useTableViewCtx();

@@ -7,9 +7,10 @@ import {
   MenuItemSelect,
 } from "@notion-kit/ui/primitives";
 
-import { LayoutIcon, MenuHeader } from "../common";
-import { LAYOUT_OPTIONS, TableViewMenuPage } from "../features";
-import { useTableViewCtx } from "../table-contexts";
+import { LayoutIcon, MenuHeader } from "@/common";
+import { LAYOUT_OPTIONS, TableViewMenuPage } from "@/features";
+import { useTableViewCtx } from "@/table-contexts";
+
 import { DeletedPropsMenu } from "./deleted-props-menu";
 import { EditGroupMenu } from "./edit-group-menu";
 import { EditPropMenu } from "./edit-prop-menu";

@@ -8,8 +8,9 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
+import { useTableViewCtx } from "@/table-contexts";
+
 import { SortMenu, TableViewMenu } from "../menus";
-import { useTableViewCtx } from "../table-contexts";
 
 interface ToolbarProps {
   className?: string;

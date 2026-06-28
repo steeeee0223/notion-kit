@@ -16,9 +16,9 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import type { Row as RowModel } from "../lib/types";
-import { RowActionMenu } from "../menus";
-import { useTableViewCtx } from "../table-contexts";
+import type { Row as RowModel } from "@/lib/types";
+import { RowActionMenu } from "@/menus";
+import { useTableViewCtx } from "@/table-contexts";
 
 interface BoardCardProps {
   groupId: string;

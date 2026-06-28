@@ -1,5 +1,3 @@
-"use client";
-
 import { CollisionPriority } from "@dnd-kit/abstract";
 import { RestrictToHorizontalAxis } from "@dnd-kit/abstract/modifiers";
 import { useDroppable } from "@dnd-kit/react";
@@ -10,9 +8,10 @@ import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import { Button } from "@notion-kit/ui/primitives";
 
-import { GroupActions } from "../common";
-import type { Row as RowModel } from "../lib/types";
-import { useTableViewCtx } from "../table-contexts";
+import { GroupActions } from "@/common";
+import type { Row as RowModel } from "@/lib/types";
+import { useTableViewCtx } from "@/table-contexts";
+
 import { BoardCard } from "./board-card";
 
 interface BoardGroupProps {

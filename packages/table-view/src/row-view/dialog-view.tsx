@@ -1,11 +1,10 @@
-"use client";
-
 import React from "react";
 
 import { cn } from "@notion-kit/cn";
 import { Dialog, DialogContent, DialogTitle } from "@notion-kit/ui/primitives";
 
-import { useTableViewCtx } from "../table-contexts";
+import { useTableViewCtx } from "@/table-contexts";
+
 import { rowViewContentVariants } from "./utils";
 import { ViewNav } from "./view-nav";
 import { ViewProps } from "./view-props";

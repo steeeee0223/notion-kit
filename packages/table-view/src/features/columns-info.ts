@@ -11,15 +11,16 @@ import { v4 } from "uuid";
 
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
-import type { ColumnInfo, PluginType, Row } from "../lib/types";
+import type { ColumnInfo, PluginType, Row } from "@/lib/types";
 import {
   arrayToEntity,
   getDefaultCell,
   getUniqueName,
   type Entity,
-} from "../lib/utils";
-import type { CellPlugin, InferConfig, InferPlugin } from "../plugins";
-import { DEFAULT_PLUGINS } from "../plugins";
+} from "@/lib/utils";
+import type { CellPlugin, InferConfig, InferPlugin } from "@/plugins";
+import { DEFAULT_PLUGINS } from "@/plugins";
+
 import { createIdsUpdater } from "./utils";
 
 export type ColumnsInfoState<TPlugins extends CellPlugin[] = CellPlugin[]> =

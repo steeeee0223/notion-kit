@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 
 import { useInputField } from "@notion-kit/hooks";
@@ -8,7 +6,8 @@ import { IconBlock } from "@notion-kit/ui/icon-block";
 import { IconMenu } from "@notion-kit/ui/icon-menu";
 import { Button, Input, TooltipPreset } from "@notion-kit/ui/primitives";
 
-import { useTableViewCtx } from "../table-contexts";
+import { useTableViewCtx } from "@/table-contexts";
+
 import { DefaultIcon } from "./default-icon";
 
 interface PropMetaProps {

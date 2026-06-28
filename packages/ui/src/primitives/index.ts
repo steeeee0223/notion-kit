@@ -1,4 +1,5 @@
 /** Variants */
+export * from "./design";
 export * from "./variants";
 /** Shadcn UI */
 export * from "./autocomplete";

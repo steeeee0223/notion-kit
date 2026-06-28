@@ -19,8 +19,8 @@ import {
 } from "@notion-kit/ui/primitives";
 import { KEYBOARD } from "@notion-kit/utils";
 
-import { ROW_VIEW_OPTIONS } from "../features";
-import { useTableViewCtx } from "../table-contexts";
+import { ROW_VIEW_OPTIONS } from "@/features";
+import { useTableViewCtx } from "@/table-contexts";
 
 interface Action {
   value: string;

@@ -189,7 +189,6 @@ Tree.Item = function TreeItem({ id, render, ...props }: TreeItemProps) {
         tabIndex: -1,
         onClick: () => tree.select(id),
         onKeyDown: nav?.onKeyDown,
-        children: tree.entity.nodes.get(id)?.title,
       },
       props,
     ),
@@ -212,7 +211,7 @@ Tree.ExpandIndicator = function TreeExpandIndicator({
       {
         "aria-hidden": true,
         tabIndex: -1,
-        onClick: (e: React.MouseEvent<HTMLSpanElement>) => {
+        onClick: (e: React.MouseEvent) => {
           e.stopPropagation();
           onToggle?.();
         },

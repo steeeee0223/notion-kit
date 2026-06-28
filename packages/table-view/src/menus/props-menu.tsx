@@ -21,10 +21,10 @@ import {
   Sortable,
 } from "@notion-kit/ui/primitives";
 
-import { DefaultIcon, MenuGroupHeader, MenuHeader } from "../common";
-import { TableViewMenuPage } from "../features";
-import type { ColumnInfo } from "../lib/types";
-import { useTableViewCtx } from "../table-contexts";
+import { DefaultIcon, MenuGroupHeader, MenuHeader } from "@/common";
+import { TableViewMenuPage } from "@/features";
+import type { ColumnInfo } from "@/lib/types";
+import { useTableViewCtx } from "@/table-contexts";
 
 /**
  * @summary The menu of all properties

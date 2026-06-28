@@ -8,9 +8,9 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { DefaultIcon, MenuHeader, PropMeta } from "../common";
-import { TableViewMenuPage } from "../features";
-import { useTableViewCtx } from "../table-contexts";
+import { DefaultIcon, MenuHeader, PropMeta } from "@/common";
+import { TableViewMenuPage } from "@/features";
+import { useTableViewCtx } from "@/table-contexts";
 
 interface EditPropMenuProps {
   propId: string;
