@@ -3,9 +3,9 @@ import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
 
 import { cn } from "@notion-kit/cn";
 
-import { Button } from "./button";
-import * as Icon from "./icons";
-import { contentVariants, Typography, typography } from "./variants";
+import { CloseButton } from "./button";
+import { popup } from "./design";
+import { typography, type Typography } from "./variants";
 
 function Sheet<Payload = unknown>({
   ...props
@@ -19,23 +19,11 @@ function SheetTrigger<Payload = unknown>({
   return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />;
 }
 
-function SheetClose({ render, ...props }: SheetPrimitive.Close.Props) {
+function SheetClose({ ...props }: SheetPrimitive.Close.Props) {
   return (
     <SheetPrimitive.Close
       data-slot="sheet-close"
-      render={
-        render ?? (
-          <Button
-            type="button"
-            variant="close"
-            size="circle"
-            aria-label="Close"
-          >
-            <Icon.Close className="h-full w-3.5 fill-secondary dark:fill-default/45" />
-            <span className="sr-only">Close</span>
-          </Button>
-        )
-      }
+      render={<CloseButton />}
       {...props}
     />
   );
@@ -72,7 +60,6 @@ function SheetContent({
   hideClose,
   hasOverlay = true,
   container,
-
   ...props
 }: SheetContentProps) {
   return (
@@ -82,19 +69,8 @@ function SheetContent({
       <SheetPrimitive.Description className="sr-only" />
       <SheetPrimitive.Popup
         data-slot="sheet-content"
-        className={cn(
-          contentVariants({ variant: "sheet" }),
-          "flex flex-col gap-4 transition ease-in-out data-closed:animate-out data-closed:duration-300 data-open:animate-in data-open:duration-300",
-          side === "right" &&
-            "inset-y-0 right-0 h-full w-3/4 border-l data-closed:slide-out-to-right data-open:slide-in-from-right sm:max-w-sm",
-          side === "left" &&
-            "inset-y-0 left-0 h-full w-3/4 border-r data-closed:slide-out-to-left data-open:slide-in-from-left sm:max-w-sm",
-          side === "top" &&
-            "inset-x-0 top-0 h-auto border-b data-closed:slide-out-to-top data-open:slide-in-from-top",
-          side === "bottom" &&
-            "inset-x-0 bottom-0 h-auto border-t data-closed:slide-out-to-bottom data-open:slide-in-from-bottom",
-          className,
-        )}
+        data-side={side}
+        className={cn(popup({ type: "sheet" }), className)}
         {...props}
       >
         {children}

@@ -5,6 +5,7 @@ import { Menu } from "@base-ui/react/menu";
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 
+import { popup, positioner } from "./design";
 import {
   MenuGroup,
   MenuItem,
@@ -14,7 +15,7 @@ import {
   MenuLabel,
 } from "./menu";
 import { Separator } from "./separator";
-import { contentVariants, MenuItemVariants, positioner } from "./variants";
+import type { MenuItemVariants } from "./variants";
 
 function ContextMenu({ ...props }: ContextMenuPrimitive.Root.Props) {
   return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />;
@@ -79,14 +80,11 @@ function ContextMenuContent({
         collisionPadding={collisionPadding}
         side={side}
         sideOffset={sideOffset}
+        className={cn(positioner())}
       >
         <Menu.Popup
           data-slot="context-menu-content"
-          className={cn(
-            "max-h-(--available-height) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto duration-100",
-            contentVariants({ variant: "popover", sideAnimation: true }),
-            className,
-          )}
+          className={cn(popup({ type: "contextMenu" }), className)}
           {...props}
         />
       </Menu.Positioner>
@@ -193,11 +191,7 @@ function ContextMenuSubContent({
     >
       <Menu.Popup
         data-slot="context-menu-sub-content"
-        className={cn(
-          "min-w-32 origin-(--transform-origin) overflow-hidden duration-100",
-          contentVariants({ variant: "popover", sideAnimation: true }),
-          className,
-        )}
+        className={cn(popup({ type: "contextMenu" }), className)}
         {...props}
       />
     </Menu.Positioner>

@@ -2,9 +2,8 @@ import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 
 import { cn } from "@notion-kit/cn";
 
-import { Button } from "./button";
-import * as Icon from "./icons";
-import { contentVariants, positioner } from "./variants";
+import { CloseButton } from "./button";
+import { popup, positioner } from "./design";
 
 function Popover<Payload = unknown>({
   modal = false,
@@ -23,11 +22,7 @@ function PopoverClose({ ...props }: PopoverPrimitive.Close.Props) {
   return (
     <PopoverPrimitive.Close
       data-slot="popover-close"
-      render={
-        <Button variant="close" size="circle" aria-label="Close">
-          <Icon.Close className="h-full w-3.5 fill-secondary dark:fill-default/45" />
-        </Button>
-      }
+      render={<CloseButton />}
       {...props}
     />
   );
@@ -79,11 +74,7 @@ function PopoverContent({
       >
         <PopoverPrimitive.Popup
           data-slot="popover-content"
-          className={cn(
-            "w-72 p-0 outline-hidden",
-            contentVariants({ variant: "popover", sideAnimation: true }),
-            className,
-          )}
+          className={cn(popup({ type: "popover" }), className)}
           finalFocus={finalFocus}
           {...props}
         />

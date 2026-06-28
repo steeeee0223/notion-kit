@@ -4,14 +4,10 @@ import { Select as SelectPrimitive } from "@base-ui/react/select";
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 
+import { popup, positioner } from "./design";
 import { MenuGroup, MenuItem, MenuItemCheck, MenuLabel } from "./menu";
 import { Separator } from "./separator";
-import {
-  buttonVariants,
-  contentVariants,
-  positioner,
-  type MenuItemVariants,
-} from "./variants";
+import { buttonVariants, type MenuItemVariants } from "./variants";
 
 function Select<Value = string, Multiple extends boolean | undefined = false>({
   ...props
@@ -128,15 +124,11 @@ function SelectContent({
       >
         <SelectPrimitive.Popup
           data-slot="select-content"
-          className={cn(
-            "relative max-h-96 min-w-32 overflow-hidden",
-            contentVariants({ variant: "popover", sideAnimation: true }),
-            className,
-          )}
+          className={cn(popup({ type: "select" }), className)}
           {...props}
         >
           <SelectScrollUpButton />
-          <SelectPrimitive.List data-slot="select-list" className="max-h-96">
+          <SelectPrimitive.List data-slot="select-list">
             {children}
           </SelectPrimitive.List>
           <SelectScrollDownButton />

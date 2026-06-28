@@ -3,7 +3,7 @@ import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip";
 
 import { cn } from "@notion-kit/cn";
 
-import { contentVariants, positioner, tooltipVariants } from "./variants";
+import { popup, positioner } from "./design";
 
 function TooltipProvider({ ...props }: TooltipPrimitive.Provider.Props) {
   return <TooltipPrimitive.Provider {...props} />;
@@ -57,11 +57,7 @@ function TooltipContent({
       >
         <TooltipPrimitive.Popup
           data-slot="tooltip-content"
-          className={cn(
-            contentVariants({ variant: "tooltip", sideAnimation: true }),
-            tooltipVariants(),
-            className,
-          )}
+          className={cn(popup({ type: "tooltip" }), className)}
           {...props}
         />
       </TooltipPrimitive.Positioner>

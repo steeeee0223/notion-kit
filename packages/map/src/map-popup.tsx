@@ -3,7 +3,7 @@ import MapLibreGL, { type PopupOptions } from "maplibre-gl";
 import { createPortal } from "react-dom";
 
 import { cn } from "@notion-kit/cn";
-import { contentVariants } from "@notion-kit/ui/primitives";
+import { popup as popupStyle } from "@notion-kit/ui/primitives";
 
 import { MapPopupClose } from "./map-marker";
 import { useMap } from "./use-map";
@@ -69,11 +69,7 @@ export function MapPopup({
   return createPortal(
     <div
       data-slot="map-popup"
-      className={cn(
-        contentVariants({ variant: "popover", openAnimation: true }),
-        "p-3",
-        className,
-      )}
+      className={cn(popupStyle({ type: "popover" }), "p-3", className)}
     >
       {closeButton && <MapPopupClose onClick={popup.remove} />}
       {children}

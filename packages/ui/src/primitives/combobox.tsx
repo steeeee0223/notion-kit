@@ -6,10 +6,10 @@ import { Icon } from "@notion-kit/icons";
 
 import { Badge } from "./badge";
 import { Button } from "./button";
+import { popup, positioner } from "./design";
 import * as _Icon from "./icons";
 import { MenuGroup, MenuItem, MenuItemCheck, MenuLabel } from "./menu";
 import { Separator } from "./separator";
-import { contentVariants, positioner } from "./variants";
 
 type ComboboxAnchorContextValue = React.RefObject<HTMLElement | null> & {
   ref: React.RefCallback<HTMLElement>;
@@ -165,8 +165,8 @@ function ComboboxContent({
           data-slot="combobox-content"
           data-variant={variant}
           className={cn(
-            contentVariants({ variant: "popover", openAnimation: true }),
-            "group/combobox-content max-h-[min(calc(var(--available-height)-8px),300px)] w-(--anchor-width) min-w-(--anchor-width) overflow-hidden",
+            popup({ type: "combobox" }),
+            "max-h-[min(calc(var(--available-height)-8px),300px)] min-w-(--anchor-width)",
             className,
           )}
           {...props}

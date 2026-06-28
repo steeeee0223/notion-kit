@@ -144,43 +144,14 @@ export const contentVariants = cva(
          */
         default: "bg-transparent",
         /**
-         * @prop modal
-         * @note Used by: Dialog
-         * @note Used with: `openAnimation`
-         */
-        modal:
-          "fixed top-1/2 left-1/2 z-(--z-menu) grid w-full max-w-lg -translate-1/2 gap-4 rounded-lg bg-modal p-6 shadow-lg duration-200",
-        /**
-         * @prop popover
-         * @note Used by: DropdownMenu, Popover, Select
-         * @note Used with: `openAnimation`, `sideAnimation`
-         */
-        popover: "z-(--z-menu) rounded-lg bg-popover shadow-md",
-        /**
-         * @prop sheet
-         */
-        sheet: "fixed z-(--z-menu) bg-main shadow-lg",
-        /**
          * @prop tab
          * @note Used by: Tabs
          * @note Used with: `openAnimation`, `sideAnimation`
          */
         tab: "border-none bg-transparent",
-        /**
-         * @prop tooltip
-         * @note Used by: Tooltip
-         * @note Used with: `openAnimation`, `sideAnimation`
-         */
-        tooltip:
-          "relative z-(--z-menu) animate-in overflow-hidden border-none bg-tooltip font-medium text-tooltip-primary shadow-md backdrop-filter-none fade-in-0 zoom-in-95",
       },
       openAnimation: {
         true: [
-          "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95",
-          "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
-          /**
-           * @deprecated legacy animation data attribute for radix-ui, will be removed in the future
-           */
           "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
           "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
         ],
@@ -194,13 +165,4 @@ export const contentVariants = cva(
 );
 export type ContentVariants = VariantProps<typeof contentVariants>;
 
-export const separatorVariants = cva("-mx-1 my-1 h-px bg-default/10");
-export type SeparatorVariants = VariantProps<typeof separatorVariants>;
-
 export const groupVariants = cva("flex flex-col gap-px py-1");
-
-export const tooltipVariants = cva(
-  "max-w-55 rounded-sm px-2 py-1 text-xs/[1.4] font-medium wrap-break-word",
-);
-
-export const positioner = cva("isolate z-(--z-menu) outline-none");
