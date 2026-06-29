@@ -1843,9 +1843,6 @@ importers:
       date-fns:
         specifier: catalog:fns
         version: 4.1.0
-      i18next:
-        specifier: ^25.0.1
-        version: 25.0.1(typescript@6.0.3)
       jotai:
         specifier: ^2.19.0
         version: 2.19.1(@babel/core@7.29.0)(@babel/template@7.28.6)(@types/react@19.2.7)(react@19.2.3)
