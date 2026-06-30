@@ -35,6 +35,7 @@ export default defineConfig((opts) => ({
     "cover/index": "./src/cover/index.ts",
     "icon-block/index": "./src/icon-block/index.ts",
     "icon-menu/index": "./src/icon-menu/index.ts",
+    "kanban/index": "./src/kanban/index.ts",
     "learning-steps-dialog/index": "./src/learning-steps-dialog/index.tsx",
     "navbar/index": "./src/navbar/index.ts",
     "navbar/presets/index": "./src/navbar/presets/index.ts",
