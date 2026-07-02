@@ -1,4 +1,5 @@
-import React, { useId, useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
+import { Feedback } from "@dnd-kit/dom";
 import { move } from "@dnd-kit/helpers";
 import type {
   DragEndEvent,
@@ -6,14 +7,12 @@ import type {
   DragStartEvent,
 } from "@dnd-kit/react";
 
-import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import { Kanban, KanbanDnd } from "@notion-kit/ui/kanban";
 import {
   Badge,
   Button,
   getSortableItemsAfterDrag,
-  Sortable,
 } from "@notion-kit/ui/primitives";
 
 interface BoardColumn {
@@ -131,42 +130,6 @@ function moveBoardCards(
   return haveSameCardSet(items, next) ? next : items;
 }
 
-interface BoardCardPreviewProps extends React.ComponentProps<"div"> {
-  card: BoardCard;
-  overlay?: boolean;
-}
-
-function BoardCardPreview({
-  card,
-  className,
-  overlay,
-  ref,
-  ...props
-}: BoardCardPreviewProps) {
-  return (
-    <div
-      ref={ref}
-      role="article"
-      aria-label={card.title}
-      className={cn(
-        "group/card min-h-20 rounded-lg border border-border-button bg-popover px-3 py-2.5 text-sm shadow-xs select-none hover:bg-default/5 dark:border-none",
-        "data-dragging:z-10 data-dragging:opacity-80 data-dragging:shadow-lg data-dragging:ring-2 data-dragging:ring-ring",
-        overlay && "pointer-events-none cursor-grabbing opacity-90 shadow-lg",
-        className,
-      )}
-      {...props}
-    >
-      <div className="font-medium wrap-break-word whitespace-pre-wrap">
-        {card.title}
-      </div>
-      <div className="mt-3 flex items-center gap-1.5 text-xs text-secondary">
-        <Icon.Clock className="size-3.5 fill-current" />
-        {card.detail}
-      </div>
-    </div>
-  );
-}
-
 function SortableBoardCard({
   card,
   columnId,
@@ -181,7 +144,7 @@ function SortableBoardCard({
       id={card.id}
       index={index}
       group={columnId}
-      // render={<BoardCardPreview card={card} />}
+      plugins={[Feedback.configure({ feedback: "clone" })]}
     >
       <div className="font-medium wrap-break-word whitespace-pre-wrap">
         {card.title}
@@ -258,52 +221,39 @@ export function KanbanBoard() {
     boardColumns.map((column) => column.id),
   );
   const [items, setItems] = useState(initialBoardItems);
-  const [activeCardId, setActiveCardId] = useState<string | null>(null);
-  const [dragVersion, setDragVersion] = useState(0);
-  const itemsRef = useRef(items);
+
   const snapshotRef = useRef<BoardItems | null>(null);
 
-  const updateItems = (next: BoardItems) => {
-    itemsRef.current = next;
-    setItems(next);
-  };
-
   const handleDragStart = (event: DragStartEvent) => {
-    const { source } = event.operation;
-    if (source?.type !== KanbanDnd.Item) return;
-
-    snapshotRef.current = itemsRef.current;
-    setActiveCardId(String(source.id));
+    if (event.operation.source?.type === KanbanDnd.Item) {
+      snapshotRef.current = items;
+    }
   };
 
   const handleDragOver = (event: DragOverEvent) => {
     if (event.operation.source?.type !== KanbanDnd.Item) return;
 
-    const next = moveBoardCards(itemsRef.current, event);
-    if (next !== itemsRef.current) updateItems(next);
+    setItems((current) => moveBoardCards(current, event));
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const sourceType = event.operation.source?.type;
+
     if (sourceType === KanbanDnd.Column) {
-      setColumnOrder(getSortableItemsAfterDrag(columnOrder, event));
-      setDragVersion((version) => version + 1);
+      setColumnOrder((current) => getSortableItemsAfterDrag(current, event));
       return;
     }
-    if (sourceType !== KanbanDnd.Item) return;
 
-    if (event.canceled) {
-      if (snapshotRef.current) updateItems(snapshotRef.current);
+    if (
+      sourceType === KanbanDnd.Item &&
+      event.canceled &&
+      snapshotRef.current
+    ) {
+      setItems(snapshotRef.current);
     }
 
-    setActiveCardId(null);
-    setDragVersion((version) => version + 1);
     snapshotRef.current = null;
   };
-
-  const activeCard = activeCardId
-    ? boardCardsById.get(activeCardId)
-    : undefined;
 
   return (
     <div data-slot="notion-board-view" className="relative float-start px-24">
@@ -323,17 +273,13 @@ export function KanbanBoard() {
 
               return (
                 <KanbanColumn
-                  key={`${column.id}:${dragVersion}`}
+                  key={column.id}
                   column={column}
                   index={index}
                   itemIds={items[column.id] ?? []}
                 />
               );
             })}
-
-            <Sortable.Overlay>
-              {activeCard && <BoardCardPreview card={activeCard} overlay />}
-            </Sortable.Overlay>
           </Kanban.Root>
         </div>
       </div>
