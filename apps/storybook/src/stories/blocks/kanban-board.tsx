@@ -107,7 +107,7 @@ function moveBoardCards(
   const targetColumnId: unknown = target.data.columnId;
   if (
     !sourceColumnId ||
-    target.type !== KanbanDnd.Column ||
+    target.type !== KanbanDnd.ColumnContent ||
     typeof targetColumnId !== "string" ||
     items[targetColumnId] === undefined
   ) {

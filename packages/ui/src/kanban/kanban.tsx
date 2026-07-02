@@ -9,6 +9,7 @@ import { Sortable } from "@/primitives";
 enum KanbanDnd {
   Item = "item",
   Column = "column",
+  ColumnContent = "column-content",
 }
 
 function KanbanRoot({
@@ -53,7 +54,7 @@ function KanbanColumn({ id, className, ...props }: KanbanColumnProps) {
         data-slot="kanban-column"
         id={id}
         type={KanbanDnd.Column}
-        accept={[KanbanDnd.Column, KanbanDnd.Item]}
+        accept={KanbanDnd.Column}
         className={cn(
           "group/kanban-column mb-4 box-content flex h-max w-65 shrink-0 flex-col items-center gap-2 rounded-lg p-2 text-sm",
           "data-dragging:z-10 data-dragging:bg-default/5",
@@ -86,20 +87,20 @@ function KanbanColumnContent({
   className,
   ...props
 }: React.ComponentProps<typeof Sortable.List>) {
-  // const { id } = useKanbanColumnContext();
-  // const { ref } = useDroppable({
-  //   id: `board-list:${id}`,
-  //   type: KanbanDnd.Column,
-  //   accept: KanbanDnd.Item,
-  //   collisionPriority: CollisionPriority.Low,
-  //   data: { columnId: id },
-  // });
+  const { id } = useKanbanColumnContext();
+  const { ref } = useDroppable({
+    id: `content:${id}`,
+    type: KanbanDnd.ColumnContent,
+    accept: KanbanDnd.Item,
+    collisionPriority: CollisionPriority.Low,
+    data: { columnId: id },
+  });
 
   return (
     <Sortable.List
       data-slot="kanban-column-content"
       orientation="vertical"
-      // ref={ref}
+      ref={ref}
       className={cn("min-h-10 w-full gap-2", className)}
       {...props}
     />
@@ -118,7 +119,7 @@ function KanbanItem({ group, overlay, className, ...props }: KanbanItemProps) {
       data-slot="kanban-item"
       type={KanbanDnd.Item}
       accept={KanbanDnd.Item}
-      data={{ group }}
+      data={{ columnId: group }}
       modifiers={[]}
       className={cn(
         "group/card static block h-full min-h-10 animate-bg-in overflow-hidden rounded-lg border border-border-button bg-popover px-2.5 py-2 text-inherit select-none hover:bg-default/5 dark:border-none",

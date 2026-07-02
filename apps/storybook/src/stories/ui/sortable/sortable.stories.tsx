@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { SortableKanbanBoard } from "./sortable-kanban-board";
 import { SortableMenuList } from "./sortable-menu-list";
 
 const meta = {
@@ -17,8 +16,4 @@ export const List: Story = {
 
 export const ListWithItemHandle: Story = {
   render: () => <SortableMenuList itemHandle />,
-};
-
-export const KanbanBoard: Story = {
-  render: () => <SortableKanbanBoard />,
 };
