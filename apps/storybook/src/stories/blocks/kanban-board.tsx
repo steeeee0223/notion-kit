@@ -1,14 +1,13 @@
 import { useId, useRef, useState } from "react";
 import { Feedback } from "@dnd-kit/dom";
-import { move } from "@dnd-kit/helpers";
-import type {
-  DragEndEvent,
-  DragOverEvent,
-  DragStartEvent,
-} from "@dnd-kit/react";
 
 import { Icon } from "@notion-kit/icons";
-import { Kanban, KanbanDnd } from "@notion-kit/ui/kanban";
+import {
+  getKanbanItemsAfterDrag,
+  Kanban,
+  KanbanDnd,
+  KanbanItems,
+} from "@notion-kit/ui/kanban";
 import {
   Badge,
   Button,
@@ -26,8 +25,6 @@ interface BoardCard {
   title: string;
   detail: string;
 }
-
-type BoardItems = Record<string, string[]>;
 
 const boardColumns: BoardColumn[] = [
   { id: "column:not-started", title: "Not started", variant: "gray" },
@@ -65,70 +62,11 @@ const boardCards: BoardCard[] = [
 
 const boardCardsById = new Map(boardCards.map((card) => [card.id, card]));
 
-const initialBoardItems: BoardItems = {
+const initialBoardItems: KanbanItems = {
   "column:not-started": ["card:project-brief", "card:research"],
   "column:in-progress": ["card:sortable-story", "card:polish"],
   "column:done": ["card:documentation"],
 };
-
-function findCardColumn(items: BoardItems, cardId: string) {
-  return Object.keys(items).find((columnId) =>
-    items[columnId]?.includes(cardId),
-  );
-}
-
-function haveSameCardSet(a: BoardItems, b: BoardItems) {
-  const aIds = Object.values(a).flat();
-  const bIds = Object.values(b).flat();
-  const aSet = new Set(aIds);
-  const bSet = new Set(bIds);
-
-  return (
-    aIds.length === aSet.size &&
-    bIds.length === bSet.size &&
-    aSet.size === bSet.size &&
-    [...aSet].every((id) => bSet.has(id))
-  );
-}
-
-function moveBoardCards(
-  items: BoardItems,
-  event: DragOverEvent | DragEndEvent,
-) {
-  const { source, target } = event.operation;
-  if (!source || !target) return items;
-
-  const moved = move(items, event);
-  if (moved !== items && haveSameCardSet(items, moved)) return moved;
-
-  const sourceId = String(source.id);
-  const sourceColumnId = findCardColumn(items, sourceId);
-  const targetColumnId: unknown = target.data.columnId;
-  if (
-    !sourceColumnId ||
-    target.type !== KanbanDnd.ColumnContent ||
-    typeof targetColumnId !== "string" ||
-    items[targetColumnId] === undefined
-  ) {
-    return items;
-  }
-
-  const sourceItems = items[sourceColumnId];
-  if (!sourceItems) return items;
-
-  const next = {
-    ...items,
-    [sourceColumnId]: sourceItems.filter((id) => id !== sourceId),
-    [targetColumnId]: [
-      ...(sourceColumnId === targetColumnId
-        ? sourceItems.filter((id) => id !== sourceId)
-        : (items[targetColumnId] ?? [])),
-      sourceId,
-    ],
-  };
-
-  return haveSameCardSet(items, next) ? next : items;
-}
 
 function SortableBoardCard({
   card,
@@ -221,39 +159,7 @@ export function KanbanBoard() {
     boardColumns.map((column) => column.id),
   );
   const [items, setItems] = useState(initialBoardItems);
-
-  const snapshotRef = useRef<BoardItems | null>(null);
-
-  const handleDragStart = (event: DragStartEvent) => {
-    if (event.operation.source?.type === KanbanDnd.Item) {
-      snapshotRef.current = items;
-    }
-  };
-
-  const handleDragOver = (event: DragOverEvent) => {
-    if (event.operation.source?.type !== KanbanDnd.Item) return;
-
-    setItems((current) => moveBoardCards(current, event));
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const sourceType = event.operation.source?.type;
-
-    if (sourceType === KanbanDnd.Column) {
-      setColumnOrder((current) => getSortableItemsAfterDrag(current, event));
-      return;
-    }
-
-    if (
-      sourceType === KanbanDnd.Item &&
-      event.canceled &&
-      snapshotRef.current
-    ) {
-      setItems(snapshotRef.current);
-    }
-
-    snapshotRef.current = null;
-  };
+  const snapshotRef = useRef<KanbanItems | null>(null);
 
   return (
     <div data-slot="notion-board-view" className="relative float-start px-24">
@@ -263,9 +169,29 @@ export function KanbanBoard() {
           className="relative flex min-w-full grow py-2"
         >
           <Kanban.Root
-            onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
-            onDragEnd={handleDragEnd}
+            onDragStart={(e) => {
+              if (e.operation.source?.type !== KanbanDnd.Item) return;
+              snapshotRef.current = items;
+            }}
+            onDragOver={(e) => {
+              if (e.operation.source?.type !== KanbanDnd.Item) return;
+              setItems((v) => getKanbanItemsAfterDrag(v, e));
+            }}
+            onDragEnd={(e) => {
+              const sourceType = e.operation.source?.type;
+              if (sourceType === KanbanDnd.Column) {
+                setColumnOrder((v) => getSortableItemsAfterDrag(v, e));
+                return;
+              }
+              if (
+                sourceType === KanbanDnd.Item &&
+                e.canceled &&
+                snapshotRef.current
+              ) {
+                setItems(snapshotRef.current);
+              }
+              snapshotRef.current = null;
+            }}
           >
             {columnOrder.map((columnId, index) => {
               const column = boardColumns.find((item) => item.id === columnId);

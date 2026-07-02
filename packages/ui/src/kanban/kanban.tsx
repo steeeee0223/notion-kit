@@ -1,6 +1,11 @@
 import { createContext, use, useMemo } from "react";
 import { CollisionPriority } from "@dnd-kit/abstract";
-import { useDroppable } from "@dnd-kit/react";
+import { move } from "@dnd-kit/helpers";
+import {
+  useDroppable,
+  type DragEndEvent,
+  type DragOverEvent,
+} from "@dnd-kit/react";
 
 import { cn } from "@notion-kit/cn";
 
@@ -10,6 +15,68 @@ enum KanbanDnd {
   Item = "item",
   Column = "column",
   ColumnContent = "column-content",
+}
+
+type KanbanItems = Record<string, string[]>;
+
+function findKanbanItemColumn(items: KanbanItems, itemId: string) {
+  return Object.keys(items).find((columnId) =>
+    items[columnId]?.some((id) => id === itemId),
+  );
+}
+
+function getColumnContentTargetId(data: unknown) {
+  if (!data || typeof data !== "object" || !("columnId" in data)) {
+    return null;
+  }
+
+  const { columnId } = data as { columnId: unknown };
+  return typeof columnId === "string" ? columnId : null;
+}
+
+function getKanbanItemsAfterDrag(
+  items: KanbanItems,
+  e: DragOverEvent | DragEndEvent,
+): KanbanItems {
+  const { source, target } = e.operation;
+  if (!source || !target || source.type !== KanbanDnd.Item) return items;
+
+  if (target.type !== KanbanDnd.ColumnContent) {
+    return move(items, e);
+  }
+
+  const targetColumnId = getColumnContentTargetId(target.data);
+  const sourceColumnId = findKanbanItemColumn(items, String(source.id));
+  if (
+    !sourceColumnId ||
+    !targetColumnId ||
+    items[targetColumnId] === undefined
+  ) {
+    return items;
+  }
+
+  const sourceItems = items[sourceColumnId];
+
+  const sourceId = String(source.id);
+  if (!sourceItems) return items;
+  if (
+    sourceColumnId === targetColumnId &&
+    sourceItems[sourceItems.length - 1] === sourceId
+  ) {
+    return items;
+  }
+
+  const nextSourceItems = sourceItems.filter((id) => id !== sourceId);
+  const targetItems =
+    sourceColumnId === targetColumnId
+      ? nextSourceItems
+      : (items[targetColumnId] ?? []);
+
+  return {
+    ...items,
+    [sourceColumnId]: nextSourceItems,
+    [targetColumnId]: [...targetItems, sourceId],
+  };
 }
 
 function KanbanRoot({
@@ -146,5 +213,6 @@ export {
   KanbanDnd,
   KanbanItem,
   KanbanRoot,
+  getKanbanItemsAfterDrag,
 };
-export type { KanbanColumnProps, KanbanItemProps };
+export type { KanbanColumnProps, KanbanItemProps, KanbanItems };
