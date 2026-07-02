@@ -11,11 +11,11 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const SortableList: Story = {
+export const List: Story = {
   render: () => <SortableMenuList />,
 };
 
-export const SortableSidebarList: Story = {
+export const ListWithItemHandle: Story = {
   render: () => <SortableMenuList itemHandle />,
 };
 

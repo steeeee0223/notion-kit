@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { KanbanDemo } from "@notion-kit/ui/kanban";
+import { KanbanBoard } from "./kanban-board";
 
 const meta = {
   title: "blocks/Kanban",
@@ -15,6 +15,6 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Example: Story = {
-  render: () => <KanbanDemo />,
+export const Kanban: Story = {
+  render: () => <KanbanBoard />,
 };

@@ -22,7 +22,7 @@ export function SortableMenuList({ itemHandle }: { itemHandle?: boolean }) {
       onDragEnd={(e) => setItems(getSortableItemsAfterDrag(items, e))}
     >
       <Sortable.List
-        className="w-64 rounded-lg bg-popover p-1 shadow-sm"
+        className="w-64 rounded-lg bg-popover shadow-sm"
         render={<MenuGroup />}
       >
         {items.map((item, index) => (

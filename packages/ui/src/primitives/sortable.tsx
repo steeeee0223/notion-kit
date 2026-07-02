@@ -246,12 +246,7 @@ function SortableItem({
 
 type SortableHandleProps = ButtonProps;
 
-function SortableHandle({
-  children,
-  className,
-  ref,
-  ...props
-}: SortableHandleProps) {
+function SortableHandle({ className, ref, ...props }: SortableHandleProps) {
   const item = React.useContext(SortableItemContext);
   if (!item) {
     throw new Error("Sortable.Handle must be used inside Sortable.Item");
@@ -270,7 +265,7 @@ function SortableHandle({
       )}
       {...props}
     >
-      {children ?? <Icon.DragHandle className="size-3 fill-icon" />}
+      <Icon.DragHandle className="size-3 fill-icon" />
     </Button>
   );
 }

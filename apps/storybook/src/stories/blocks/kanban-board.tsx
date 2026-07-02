@@ -1,15 +1,14 @@
-import { useRef, useState, type ComponentProps } from "react";
-import { CollisionPriority } from "@dnd-kit/abstract";
+import React, { useId, useRef, useState } from "react";
 import { move } from "@dnd-kit/helpers";
-import {
-  useDroppable,
-  type DragEndEvent,
-  type DragOverEvent,
-  type DragStartEvent,
+import type {
+  DragEndEvent,
+  DragOverEvent,
+  DragStartEvent,
 } from "@dnd-kit/react";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
+import { Kanban, KanbanDnd } from "@notion-kit/ui/kanban";
 import {
   Badge,
   Button,
@@ -108,7 +107,7 @@ function moveBoardCards(
   const targetColumnId: unknown = target.data.columnId;
   if (
     !sourceColumnId ||
-    target.type !== "board-list" ||
+    target.type !== KanbanDnd.Column ||
     typeof targetColumnId !== "string" ||
     items[targetColumnId] === undefined
   ) {
@@ -132,7 +131,7 @@ function moveBoardCards(
   return haveSameCardSet(items, next) ? next : items;
 }
 
-interface BoardCardPreviewProps extends ComponentProps<"div"> {
+interface BoardCardPreviewProps extends React.ComponentProps<"div"> {
   card: BoardCard;
   overlay?: boolean;
 }
@@ -178,16 +177,20 @@ function SortableBoardCard({
   index: number;
 }) {
   return (
-    <Sortable.Item
+    <Kanban.Item
       id={card.id}
       index={index}
       group={columnId}
-      type="board-card"
-      accept="board-card"
-      data={{ columnId, title: card.title }}
-      modifiers={[]}
-      render={<BoardCardPreview card={card} />}
-    />
+      // render={<BoardCardPreview card={card} />}
+    >
+      <div className="font-medium wrap-break-word whitespace-pre-wrap">
+        {card.title}
+      </div>
+      <div className="mt-3 flex items-center gap-1.5 text-xs text-secondary">
+        <Icon.Clock className="size-3.5 fill-current" />
+        {card.detail}
+      </div>
+    </Kanban.Item>
   );
 }
 
@@ -200,54 +203,31 @@ function KanbanColumn({
   index: number;
   itemIds: string[];
 }) {
-  const { isDropTarget, ref } = useDroppable({
-    id: `board-list:${column.id}`,
-    type: "board-list",
-    accept: "board-card",
-    collisionPriority: CollisionPriority.Low,
-    data: { columnId: column.id },
-  });
-
   return (
-    <Sortable.Item
+    <Kanban.Column
       id={column.id}
       index={index}
-      type="board-column"
-      accept="board-column"
-      className="group/board-column mb-4 box-content flex h-max w-65 shrink-0 flex-col items-center gap-2 rounded-lg p-2 text-sm data-dragging:z-10 data-dragging:bg-default/5"
       render={<section aria-labelledby={`${column.id}-title`} />}
     >
-      <Sortable.Handle
-        render={
-          <div className="flex w-full items-center gap-1">
-            <h3
-              id={`${column.id}-title`}
-              className="min-w-0 truncate text-sm/6"
-            >
-              <Badge variant={column.variant} className="max-w-full">
-                {column.title}
-              </Badge>
-            </h3>
-            <span className="text-xs text-muted">{itemIds.length}</span>
-            <Button
-              variant="hint"
-              size="xs"
-              aria-label={`${column.title} actions`}
-              className="ml-auto opacity-0 group-hover/board-column:opacity-100"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Icon.Dots className="size-3.5 fill-current" />
-            </Button>
-          </div>
-        }
-      />
+      <Kanban.ColumnHeader>
+        <h3 id={`${column.id}-title`} className="min-w-0 truncate text-sm/6">
+          <Badge variant={column.variant} className="max-w-full">
+            {column.title}
+          </Badge>
+        </h3>
+        <span className="text-xs text-muted">{itemIds.length}</span>
+        <Button
+          variant="hint"
+          size="xs"
+          aria-label={`${column.title} actions`}
+          className="ml-auto opacity-0 group-hover/kanban-column:opacity-100"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Icon.Dots className="size-3.5 fill-current" />
+        </Button>
+      </Kanban.ColumnHeader>
 
-      <Sortable.List
-        orientation="vertical"
-        ref={ref}
-        data-drop-target={isDropTarget || undefined}
-        className="relative min-h-10 w-full gap-2 rounded-lg data-drop-target:bg-blue/5"
-      >
+      <Kanban.ColumnContent>
         {itemIds.map((itemId, itemIndex) => {
           const card = boardCardsById.get(itemId);
           if (!card) return null;
@@ -261,20 +241,19 @@ function KanbanColumn({
             />
           );
         })}
-        {isDropTarget && itemIds.length === 0 && (
-          <div className="absolute inset-x-0 top-0 h-1.5 rounded-full bg-blue/30" />
-        )}
-      </Sortable.List>
+      </Kanban.ColumnContent>
 
       <Button size="sm" className="w-full rounded-lg text-secondary">
         <Icon.Plus className="fill-current" />
         New page
       </Button>
-    </Sortable.Item>
+    </Kanban.Column>
   );
 }
 
-export function SortableKanbanBoard() {
+export function KanbanBoard() {
+  const blockId = useId();
+
   const [columnOrder, setColumnOrder] = useState(
     boardColumns.map((column) => column.id),
   );
@@ -291,14 +270,14 @@ export function SortableKanbanBoard() {
 
   const handleDragStart = (event: DragStartEvent) => {
     const { source } = event.operation;
-    if (source?.type !== "board-card") return;
+    if (source?.type !== KanbanDnd.Item) return;
 
     snapshotRef.current = itemsRef.current;
     setActiveCardId(String(source.id));
   };
 
   const handleDragOver = (event: DragOverEvent) => {
-    if (event.operation.source?.type !== "board-card") return;
+    if (event.operation.source?.type !== KanbanDnd.Item) return;
 
     const next = moveBoardCards(itemsRef.current, event);
     if (next !== itemsRef.current) updateItems(next);
@@ -306,12 +285,12 @@ export function SortableKanbanBoard() {
 
   const handleDragEnd = (event: DragEndEvent) => {
     const sourceType = event.operation.source?.type;
-    if (sourceType === "board-column") {
+    if (sourceType === KanbanDnd.Column) {
       setColumnOrder(getSortableItemsAfterDrag(columnOrder, event));
       setDragVersion((version) => version + 1);
       return;
     }
-    if (sourceType !== "board-card") return;
+    if (sourceType !== KanbanDnd.Item) return;
 
     if (event.canceled) {
       if (snapshotRef.current) updateItems(snapshotRef.current);
@@ -327,32 +306,37 @@ export function SortableKanbanBoard() {
     : undefined;
 
   return (
-    <div className="max-w-215 overflow-x-auto rounded-lg bg-main p-4">
-      <Sortable.Root
-        orientation="horizontal"
-        onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
-      >
-        <Sortable.List className="min-w-max items-start gap-3">
-          {columnOrder.map((columnId, index) => {
-            const column = boardColumns.find((item) => item.id === columnId);
-            if (!column) return null;
+    <div data-slot="notion-board-view" className="relative float-start px-24">
+      <div className="contain-layout">
+        <div
+          data-block-id={blockId}
+          className="relative flex min-w-full grow py-2"
+        >
+          <Kanban.Root
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDragEnd={handleDragEnd}
+          >
+            {columnOrder.map((columnId, index) => {
+              const column = boardColumns.find((item) => item.id === columnId);
+              if (!column) return null;
 
-            return (
-              <KanbanColumn
-                key={`${column.id}:${dragVersion}`}
-                column={column}
-                index={index}
-                itemIds={items[column.id] ?? []}
-              />
-            );
-          })}
-        </Sortable.List>
-        <Sortable.Overlay>
-          {activeCard && <BoardCardPreview card={activeCard} overlay />}
-        </Sortable.Overlay>
-      </Sortable.Root>
+              return (
+                <KanbanColumn
+                  key={`${column.id}:${dragVersion}`}
+                  column={column}
+                  index={index}
+                  itemIds={items[column.id] ?? []}
+                />
+              );
+            })}
+
+            <Sortable.Overlay>
+              {activeCard && <BoardCardPreview card={activeCard} overlay />}
+            </Sortable.Overlay>
+          </Kanban.Root>
+        </div>
+      </div>
     </div>
   );
 }

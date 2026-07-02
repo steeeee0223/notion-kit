@@ -7,6 +7,10 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "vitest.*.ts"],
+  "include": [
+    "src",
+    "vitest.*.ts",
+    "../../apps/storybook/src/stories/blocks/demo.tsx"
+  ],
   "exclude": ["node_modules"]
 }
