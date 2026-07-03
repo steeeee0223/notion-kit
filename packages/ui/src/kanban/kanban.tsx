@@ -1,5 +1,6 @@
 import { createContext, use, useMemo } from "react";
 import { CollisionPriority } from "@dnd-kit/abstract";
+import { Feedback } from "@dnd-kit/dom";
 import { move } from "@dnd-kit/helpers";
 import {
   useDroppable,
@@ -46,7 +47,8 @@ function getKanbanItemsAfterDrag(
   }
 
   const targetColumnId = getColumnContentTargetId(target.data);
-  const sourceColumnId = findKanbanItemColumn(items, String(source.id));
+  const sourceId = String(source.id);
+  const sourceColumnId = findKanbanItemColumn(items, sourceId);
   if (
     !sourceColumnId ||
     !targetColumnId ||
@@ -56,13 +58,8 @@ function getKanbanItemsAfterDrag(
   }
 
   const sourceItems = items[sourceColumnId];
-
-  const sourceId = String(source.id);
   if (!sourceItems) return items;
-  if (
-    sourceColumnId === targetColumnId &&
-    sourceItems[sourceItems.length - 1] === sourceId
-  ) {
+  if (sourceColumnId === targetColumnId && sourceItems.at(-1) === sourceId) {
     return items;
   }
 
@@ -177,10 +174,9 @@ function KanbanColumnContent({
 interface KanbanItemProps extends React.ComponentProps<typeof Sortable.Item> {
   id: string;
   group: string;
-  overlay?: boolean;
 }
 
-function KanbanItem({ group, overlay, className, ...props }: KanbanItemProps) {
+function KanbanItem({ group, className, ...props }: KanbanItemProps) {
   return (
     <Sortable.Item
       data-slot="kanban-item"
@@ -188,9 +184,9 @@ function KanbanItem({ group, overlay, className, ...props }: KanbanItemProps) {
       accept={KanbanDnd.Item}
       data={{ columnId: group }}
       modifiers={[]}
+      plugins={[Feedback.configure({ feedback: "clone" })]}
       className={cn(
         "group/card static block h-full min-h-10 animate-bg-in overflow-hidden rounded-lg border border-border-button bg-popover px-2.5 py-2 text-inherit select-none hover:bg-default/5 dark:border-none",
-        overlay && "pointer-events-none cursor-grabbing opacity-90 shadow-lg",
         className,
       )}
       {...props}

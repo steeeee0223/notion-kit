@@ -1,5 +1,4 @@
 import { useId, useRef, useState } from "react";
-import { Feedback } from "@dnd-kit/dom";
 
 import { Icon } from "@notion-kit/icons";
 import {
@@ -78,12 +77,7 @@ function SortableBoardCard({
   index: number;
 }) {
   return (
-    <Kanban.Item
-      id={card.id}
-      index={index}
-      group={columnId}
-      plugins={[Feedback.configure({ feedback: "clone" })]}
-    >
+    <Kanban.Item id={card.id} index={index} group={columnId}>
       <div className="font-medium wrap-break-word whitespace-pre-wrap">
         {card.title}
       </div>
