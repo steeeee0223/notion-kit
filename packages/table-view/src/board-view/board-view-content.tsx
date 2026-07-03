@@ -1,22 +1,19 @@
-import { DragDropProvider, DragOverlay } from "@dnd-kit/react";
-import { createPortal } from "react-dom";
-
 import { Icon } from "@notion-kit/icons";
+import { Kanban } from "@notion-kit/ui/kanban";
 import { Button } from "@notion-kit/ui/primitives";
 
 import { TableViewMenuPage } from "@/features";
 import { useTableViewCtx } from "@/table-contexts";
 
-import { BoardCardContent } from "./board-card";
 import { BoardGroup } from "./board-group";
 import { useBoardDnd } from "./use-board-dnd";
 
 export function BoardViewContent() {
   const { table } = useTableViewCtx();
-  const { activeCardId, groupOrder, items, providerProps } = useBoardDnd();
+  const handlers = useBoardDnd();
   const groupedRowsById = table.getGroupedRowModel().rowsById;
-  const { grouping } = table.getState();
-  const activeRow = activeCardId ? groupedRowsById[activeCardId] : undefined;
+  const { grouping, groupingState } = table.getState();
+  const { groupOrder } = groupingState;
 
   return (
     <div data-slot="notion-board-view" className="relative float-start px-24">
@@ -42,30 +39,14 @@ export function BoardViewContent() {
               </Button>
             </div>
           )}
-          <DragDropProvider {...providerProps}>
-            <div className="flex gap-3">
-              {groupOrder.map((groupId, index) => {
-                const row =
-                  groupedRowsById[groupId] ??
-                  table.getPlaceholderGroupedRow(groupId);
-                return (
-                  <BoardGroup
-                    key={groupId}
-                    row={row}
-                    index={index}
-                    itemIds={items[groupId] ?? []}
-                  />
-                );
-              })}
-            </div>
-            {typeof document !== "undefined" &&
-              createPortal(
-                <DragOverlay dropAnimation={null}>
-                  {activeRow && <BoardCardContent row={activeRow} overlay />}
-                </DragOverlay>,
-                document.body,
-              )}
-          </DragDropProvider>
+          <Kanban.Root {...handlers}>
+            {groupOrder.map((groupId, index) => {
+              const row =
+                groupedRowsById[groupId] ??
+                table.getPlaceholderGroupedRow(groupId);
+              return <BoardGroup key={groupId} row={row} index={index} />;
+            })}
+          </Kanban.Root>
         </div>
       </div>
     </div>

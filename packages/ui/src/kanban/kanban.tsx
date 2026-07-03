@@ -7,6 +7,7 @@ import {
   type DragEndEvent,
   type DragOverEvent,
 } from "@dnd-kit/react";
+import z from "zod";
 
 import { cn } from "@notion-kit/cn";
 
@@ -26,13 +27,9 @@ function findKanbanItemColumn(items: KanbanItems, itemId: string) {
   );
 }
 
-function getColumnContentTargetId(data: unknown) {
-  if (!data || typeof data !== "object" || !("columnId" in data)) {
-    return null;
-  }
-
-  const { columnId } = data as { columnId: unknown };
-  return typeof columnId === "string" ? columnId : null;
+function getKanbanColumnTargetId(data: unknown) {
+  const result = z.object({ columnId: z.string() }).safeParse(data);
+  return result.success ? result.data.columnId : null;
 }
 
 function getKanbanItemsAfterDrag(
@@ -46,7 +43,7 @@ function getKanbanItemsAfterDrag(
     return move(items, e);
   }
 
-  const targetColumnId = getColumnContentTargetId(target.data);
+  const targetColumnId = getKanbanColumnTargetId(target.data);
   const sourceId = String(source.id);
   const sourceColumnId = findKanbanItemColumn(items, sourceId);
   if (
@@ -209,6 +206,7 @@ export {
   KanbanDnd,
   KanbanItem,
   KanbanRoot,
+  getKanbanColumnTargetId,
   getKanbanItemsAfterDrag,
 };
 export type { KanbanColumnProps, KanbanItemProps, KanbanItems };
