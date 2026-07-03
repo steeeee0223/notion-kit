@@ -1,1 +1,1 @@
-export { default, KanbanBoard } from "./kanban-board";
+export { default } from "./kanban-board";

@@ -47,6 +47,8 @@ export function BoardCard({ groupId, row }: BoardCardProps) {
   return (
     <Kanban.Item
       data-block-id={row.id}
+      role="button"
+      tabIndex={0}
       id={row.id}
       index={row.index}
       group={groupId}

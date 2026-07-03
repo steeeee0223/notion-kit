@@ -3,25 +3,7 @@ title: Sortable
 description: A composable drag-and-drop primitive for reordering lists and item collections.
 ---
 
-<ComponentPreview
-  name="sortable-list"
-  preview={`<Sortable.Root
-  onDragEnd={(event) =>
-    setItems((items) => getSortableItemsAfterDrag(items, event))
-  }
->
-  <Sortable.List render={<MenuGroup />}>
-    {items.map((item, index) => (
-      <Sortable.Item
-        key={item.id}
-        id={item.id}
-        index={index}
-        render={<MenuItem label={item.label} icon={<Sortable.Handle />} />}
-      />
-    ))}
-  </Sortable.List>
-</Sortable.Root>`}
-/>
+<ComponentPreview name="sortable-list" hideCode />
 
 ## Installation
 
@@ -50,15 +32,7 @@ Use `getSortableItemsAfterDrag` in `onDragEnd` to update ordered state after a s
 
 <ComponentPreview
   name="sortable-list"
-  preview={`const [items, setItems] = useState(menuItems);
-
-return <Sortable.Root
-onDragEnd={(event) =>
-setItems((items) => getSortableItemsAfterDrag(items, event))
-}
-
->
-
+  preview={`<Sortable.Root onDragEnd={...}>
   <Sortable.List render={<MenuGroup />}>
     {items.map((item, index) => (
       <Sortable.Item
@@ -69,7 +43,8 @@ setItems((items) => getSortableItemsAfterDrag(items, event))
       />
     ))}
   </Sortable.List>
-</Sortable.Root>;`}
+</Sortable.Root>
+`}
 />
 
 ## API Reference
