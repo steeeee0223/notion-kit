@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 
 import { Icon } from "@notion-kit/icons";
@@ -14,12 +16,14 @@ const menuItems = [
   { id: "archive", label: "Archive", icon: <Icon.Clock /> },
 ];
 
-export function SortableMenuList({ itemHandle }: { itemHandle?: boolean }) {
+export function SortableList({ itemHandle }: { itemHandle?: boolean }) {
   const [items, setItems] = useState(menuItems);
 
   return (
     <Sortable.Root
-      onDragEnd={(e) => setItems(getSortableItemsAfterDrag(items, e))}
+      onDragEnd={(e) =>
+        setItems((value) => getSortableItemsAfterDrag(value, e))
+      }
     >
       <Sortable.List
         className="w-64 rounded-lg bg-popover shadow-sm"
@@ -53,3 +57,5 @@ export function SortableMenuList({ itemHandle }: { itemHandle?: boolean }) {
     </Sortable.Root>
   );
 }
+
+export default SortableList;

@@ -1,0 +1,134 @@
+---
+title: Kanban
+description: A composable board layout with draggable columns, draggable cards, and grouped item movement.
+---
+
+<ComponentPreview name="kanban-board" hideCode />
+
+## Installation
+
+<Installation packages="@notion-kit/ui" registryName="kanban-board" />
+
+## Anatomy
+
+```
+<Kanban.Root>
+  <Kanban.Column>
+    <Kanban.ColumnHeader />
+    <Kanban.ColumnContent>
+      <Kanban.Item />
+    </Kanban.ColumnContent>
+  </Kanban.Column>
+</Kanban.Root>
+```
+
+## Examples
+
+---
+
+### Board
+
+Use `getKanbanItemsAfterDrag` while dragging cards across columns, then use `getSortableItemsAfterDrag` when columns are reordered.
+
+<ComponentPreview
+  name="kanban-board"
+  preview={`<Kanban.Root
+  onDragOver={(event) => {
+    if (event.operation.source?.type === KanbanDnd.Item) {
+      setItems((value) => getKanbanItemsAfterDrag(value, event));
+    }
+  }}
+  onDragEnd={(event) => {
+    if (event.operation.source?.type === KanbanDnd.Column) {
+      setColumnOrder((value) => getSortableItemsAfterDrag(value, event));
+    }
+  }}
+>
+  {columnOrder.map((columnId, index) => (
+    <Kanban.Column key={columnId} id={columnId} index={index}>
+      <Kanban.ColumnHeader>{column.title}</Kanban.ColumnHeader>
+      <Kanban.ColumnContent>
+        {items[columnId].map((itemId, itemIndex) => (
+          <Kanban.Item
+            key={itemId}
+            id={itemId}
+            index={itemIndex}
+            group={columnId}
+          />
+        ))}
+      </Kanban.ColumnContent>
+    </Kanban.Column>
+  ))}
+</Kanban.Root>`}
+/>
+
+## API Reference
+
+### Kanban.Root
+
+Horizontal sortable root for kanban columns. Accepts the same props as `Sortable.Root`.
+
+### Kanban.Column
+
+Registers a draggable column. Accepts `Sortable.Item` props in addition to the following.
+
+| Prop        | Type           | Default | Description                              |
+| ----------- | -------------- | ------- | ---------------------------------------- |
+| `id`\*      | `string`       | -       | Stable column id.                        |
+| `index`\*   | `number`       | -       | Current column index.                    |
+| `className` | `string`       | -       | Additional classes for the column shell. |
+| `render`    | `ReactElement` | -       | Replaces the default column element.     |
+
+### Kanban.ColumnHeader
+
+Renders a column header that also acts as the column drag handle. Accepts standard `<div>` props.
+
+### Kanban.ColumnContent
+
+Vertical sortable list and droppable target for cards in the current column.
+
+| Prop          | Type                         | Default      | Description                                      |
+| ------------- | ---------------------------- | ------------ | ------------------------------------------------ |
+| `orientation` | `"horizontal" \| "vertical"` | `"vertical"` | Overrides the default vertical card list layout. |
+| `render`      | `ReactElement`               | -            | Replaces the default list element.               |
+
+### Kanban.Item
+
+Registers a draggable card.
+
+| Prop      | Type     | Default | Description                             |
+| --------- | -------- | ------- | --------------------------------------- |
+| `id`\*    | `string` | -       | Stable card id.                         |
+| `index`\* | `number` | -       | Current card index inside its column.   |
+| `group`\* | `string` | -       | Column id for the card's current group. |
+
+### getKanbanItemsAfterDrag
+
+Returns the next grouped item state after moving a card within or between columns.
+
+```ts
+setItems((items) => getKanbanItemsAfterDrag(items, event));
+```
+
+| Parameter | Type                               | Description                                |
+| --------- | ---------------------------------- | ------------------------------------------ |
+| `items`   | [`KanbanItems`](#type-kanbanitems) | Current mapping of column ids to card ids. |
+| `event`   | `DragOverEvent \| DragEndEvent`    | Event from `Kanban.Root`.                  |
+
+### getKanbanColumnTargetId
+
+Reads a target column id from dnd-kit target data. Returns `null` when the data is not a kanban column target.
+
+### `enum` KanbanDnd
+
+| Value           | Description                         |
+| --------------- | ----------------------------------- |
+| `Item`          | Drag type for cards.                |
+| `Column`        | Drag type for columns.              |
+| `ColumnContent` | Droppable type for card containers. |
+
+### `type` KanbanItems
+
+```ts
+type KanbanItems = Record<string, string[]>;
+```

@@ -1,3 +1,5 @@
+"use client";
+
 import { useId, useRef, useState } from "react";
 
 import { Icon } from "@notion-kit/icons";
@@ -5,7 +7,7 @@ import {
   getKanbanItemsAfterDrag,
   Kanban,
   KanbanDnd,
-  KanbanItems,
+  type KanbanItems,
 } from "@notion-kit/ui/kanban";
 import {
   Badge,
@@ -206,3 +208,5 @@ export function KanbanBoard() {
     </div>
   );
 }
+
+export default KanbanBoard;

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { SortableMenuList } from "./sortable-menu-list";
+import SortableList from "@notion-kit/registry/sortable-list";
 
 const meta = {
   title: "Notion UI/Sortable",
@@ -11,9 +11,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const List: Story = {
-  render: () => <SortableMenuList />,
+  render: () => <SortableList />,
 };
 
 export const ListWithItemHandle: Story = {
-  render: () => <SortableMenuList itemHandle />,
+  render: () => <SortableList itemHandle />,
 };

@@ -50,6 +50,8 @@ export const DEMOS = [
   "icon-menu-custom-factory",
   "icon-menu-default",
   "icon-menu-notion-icons",
+  // Kanban
+  "kanban-board",
   // Input
   "input-default",
   "input-flat",
@@ -104,6 +106,8 @@ export const DEMOS = [
   "single-image-dropzone-default",
   // Skeleton
   "skeleton-demo",
+  // Sortable
+  "sortable-list",
   // Spinner
   "spinner-default",
   "spinner-variants",

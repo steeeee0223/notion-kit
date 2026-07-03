@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { KanbanBoard } from "./kanban-board";
+import { KanbanBoard } from "@notion-kit/registry/kanban-board";
 
 const meta = {
   title: "blocks/Kanban",
