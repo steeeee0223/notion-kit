@@ -112,6 +112,7 @@ export const NoOverlay: Story = {
 };
 
 export const WithDraggableItems: Story = {
+  name: "🚧 With Draggable Items",
   args: {
     activationConstraint: { distance: 5, delay: 250 },
   },

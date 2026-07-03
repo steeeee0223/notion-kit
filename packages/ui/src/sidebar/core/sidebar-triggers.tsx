@@ -3,9 +3,13 @@ import { useMemo } from "react";
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 
-import { Button, TooltipDescription, TooltipPreset } from "@/primitives";
+import {
+  Button,
+  composeRefs,
+  TooltipDescription,
+  TooltipPreset,
+} from "@/primitives";
 
-import { mergeRefs } from "./merge-refs";
 import { useSidebar } from "./sidebar-provider";
 import { useSidebarResize } from "./use-sidebar-resize";
 
@@ -38,7 +42,7 @@ function SidebarRail({
 
   //* Merge external ref with our dragRef
   const combinedRef = useMemo(
-    () => mergeRefs(ref ? [ref, dragRef] : [dragRef]),
+    () => composeRefs(...(ref ? [ref, dragRef] : [dragRef])),
     [ref, dragRef],
   );
 

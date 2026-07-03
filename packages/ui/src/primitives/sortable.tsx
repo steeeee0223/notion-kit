@@ -247,9 +247,9 @@ function SortableItem({
 type SortableHandleProps = ButtonProps;
 
 function SortableHandle({
-  children,
   className,
   ref,
+  children,
   ...props
 }: SortableHandleProps) {
   const item = React.useContext(SortableItemContext);

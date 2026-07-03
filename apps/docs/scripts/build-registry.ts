@@ -3,12 +3,12 @@ import { existsSync, promises as fs } from "node:fs";
 import path from "path";
 import { rimraf } from "rimraf";
 
+import { registryIndex } from "@notion-kit/registry";
 import type { RegistryItem } from "@notion-kit/validators";
 import { RegistryIndexSchema } from "@notion-kit/validators";
 
 import { getRegistryPath } from "@/lib/get-file-source";
 import { getDemoFilesAndDependencies } from "@/lib/registry";
-import { DEMOS } from "@/registry/demos";
 import { theme } from "@/registry/theme";
 
 const REGISTRY_PATH = path.join(process.cwd(), "public/registry");
@@ -27,7 +27,7 @@ function toTitle(name: string): string {
 async function buildDemoItems(): Promise<RegistryItem[]> {
   const items: RegistryItem[] = [];
 
-  for (const name of DEMOS) {
+  for (const name of registryIndex) {
     const { files, dependencies } = await getDemoFilesAndDependencies(name);
 
     items.push({

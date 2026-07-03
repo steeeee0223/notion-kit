@@ -78,5 +78,7 @@ storybook-static/
 !.agents/skills/migrating-radix-to-base-ui/SKILL.md
 !.agents/skills/using-primitives-for-components/
 !.agents/skills/using-primitives-for-components/SKILL.md
+!.agents/skills/writing-component-docs/
+!.agents/skills/writing-component-docs/SKILL.md
 .superpowers/
 skills-lock.json

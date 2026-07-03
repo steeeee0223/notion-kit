@@ -49,7 +49,7 @@ function DraggableItemPreview({
   );
 }
 
-export function DraggableItem({ id, index, label }: DraggableItemProps) {
+function DraggableItem({ id, index, label }: DraggableItemProps) {
   const { selectedIds } = useSelectable();
   const isSelected = selectedIds.has(id);
   const { source } = useDragOperation();
