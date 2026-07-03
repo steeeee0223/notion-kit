@@ -5,6 +5,7 @@ import { PackageIcon, RocketIcon } from "lucide-react";
 import { tv } from "tailwind-variants";
 
 import { cn } from "@notion-kit/cn";
+import type { RegistryIndex } from "@notion-kit/registry";
 import {
   TabsTrigger as Tab,
   Tabs,
@@ -13,7 +14,6 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { ibm_plex_mono } from "@/lib/fonts";
-import type { DemoName } from "@/registry/demos";
 
 const installationStyles = tv({
   slots: {
@@ -25,7 +25,7 @@ const installationStyles = tv({
 
 interface InstallationProps {
   packages: string;
-  registryName: DemoName;
+  registryName: RegistryIndex;
 }
 
 function Installation({ packages, registryName }: InstallationProps) {

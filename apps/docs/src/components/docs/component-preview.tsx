@@ -1,12 +1,12 @@
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 import { cn } from "@notion-kit/cn";
+import type { RegistryIndex } from "@notion-kit/registry";
 import { ThemeProvider } from "@notion-kit/ui/primitives";
 
 import { Index } from "@/__registry__/demos";
 import { CodeBlock } from "@/components/docs/code-block";
 import { getFileSource } from "@/lib/get-file-source";
-import { DemoName } from "@/registry/demos";
 
 import {
   ComponentWrapper,
@@ -15,7 +15,7 @@ import {
 
 interface ComponentPreviewProps {
   className?: string;
-  name: DemoName;
+  name: RegistryIndex;
   preview?: string;
   expandable?: boolean;
   hideCode?: boolean;
