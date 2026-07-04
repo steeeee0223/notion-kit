@@ -213,10 +213,7 @@ function AutocompleteGroup({
 }
 
 interface AutocompleteLabelProps
-  extends Omit<
-    AutocompletePrimitive.GroupLabel.Props,
-    "children" | "render" | "title"
-  > {
+  extends Omit<AutocompletePrimitive.GroupLabel.Props, "title"> {
   title: React.ReactNode;
 }
 
@@ -272,13 +269,12 @@ function AutocompleteItem<ItemValue = string>({
 }
 
 function AutocompleteSeparator({
-  className,
   ...props
 }: AutocompletePrimitive.Separator.Props) {
   return (
     <AutocompletePrimitive.Separator
       data-slot="autocomplete-separator"
-      render={<Separator className={className} />}
+      render={<Separator />}
       {...props}
     />
   );

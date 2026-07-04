@@ -38,6 +38,7 @@ export function RoleField() {
                 items={options}
                 value={field.value}
                 onValueChange={field.onChange}
+                disabled={field.disabled}
               >
                 <SelectTrigger className="mb-0 w-[170px] text-muted">
                   <SelectValue />

@@ -163,6 +163,5 @@ export const contentVariants = cva(
     defaultVariants: { variant: "default", openAnimation: true },
   },
 );
-export type ContentVariants = VariantProps<typeof contentVariants>;
 
 export const groupVariants = cva("flex flex-col gap-px py-1");

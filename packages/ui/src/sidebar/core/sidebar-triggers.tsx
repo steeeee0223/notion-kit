@@ -112,7 +112,7 @@ function SidebarOpen({
     <TooltipPreset
       description={
         <>
-          <TooltipDescription text="Close sidebar" />
+          <TooltipDescription text="Open sidebar" />
           <TooltipDescription type="secondary" text={`⌘${config.shortcut}`} />
         </>
       }

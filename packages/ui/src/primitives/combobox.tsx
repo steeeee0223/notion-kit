@@ -104,6 +104,7 @@ function ComboboxContent({
   align = "start",
   alignOffset = 0,
   anchor,
+  style,
   ...props
 }: ComboboxPrimitive.Popup.Props &
   Pick<
@@ -113,41 +114,18 @@ function ComboboxContent({
     variant?: "floating" | "inline";
   }) {
   const comboboxAnchor = React.useContext(ComboboxAnchorContext);
-  const [inlineContainer, setInlineContainer] =
-    React.useState<HTMLDivElement | null>(null);
 
   if (variant === "inline") {
     return (
-      <>
-        <div ref={setInlineContainer} className="relative z-10 w-full" />
-        {inlineContainer && (
-          <ComboboxPrimitive.Portal container={inlineContainer}>
-            <ComboboxPrimitive.Positioner
-              side={side}
-              sideOffset={sideOffset}
-              align={align}
-              alignOffset={alignOffset}
-              anchor={anchor}
-              className="relative w-full"
-              style={{
-                position: "relative",
-                inset: "auto",
-                transform: "none",
-              }}
-            >
-              <ComboboxPrimitive.Popup
-                data-slot="combobox-content"
-                data-variant={variant}
-                className={cn(
-                  "group/combobox-content relative w-full overflow-hidden",
-                  className,
-                )}
-                {...props}
-              />
-            </ComboboxPrimitive.Positioner>
-          </ComboboxPrimitive.Portal>
+      <div
+        data-slot="combobox-content"
+        data-variant={variant}
+        className={cn(
+          "group/combobox-content relative w-full overflow-hidden",
+          className,
         )}
-      </>
+        {...props}
+      />
     );
   }
 
@@ -164,6 +142,7 @@ function ComboboxContent({
         <ComboboxPrimitive.Popup
           data-slot="combobox-content"
           data-variant={variant}
+          style={style}
           className={cn(
             popup({ type: "combobox" }),
             "max-h-[min(calc(var(--available-height)-8px),300px)] min-w-(--anchor-width)",

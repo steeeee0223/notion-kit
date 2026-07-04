@@ -180,6 +180,7 @@ export function TeamspaceActionCell({
             <>
               <Dialog>
                 <DialogTrigger
+                  nativeButton={false}
                   render={
                     <DropdownMenuItem
                       variant="error"
