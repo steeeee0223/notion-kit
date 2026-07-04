@@ -11,7 +11,7 @@ export default defineConfig(async (opts) => {
     const s = await stat(`./src/${item}`);
     if (s.isDirectory()) {
       entries.push(`./src/${item}/index.ts`);
-    } else if (item !== "index.ts" && /\.(ts|tsx)$/.test(item)) {
+    } else if (/\.(ts|tsx)$/.test(item)) {
       entries.push(`./src/${item}`);
     }
   }

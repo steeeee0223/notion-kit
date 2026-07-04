@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 
 import { cn } from "@notion-kit/cn";
@@ -46,7 +44,7 @@ export function OptionMeta({
 
   return (
     <>
-      <div className="flex flex-col gap-px px-3 pt-3 pb-1">
+      <div className="flex flex-col gap-px p-3 pb-1">
         <div className="flex min-h-7 w-full items-center select-none">
           <Input
             {...nameField.props}

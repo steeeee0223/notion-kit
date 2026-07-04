@@ -6,8 +6,8 @@ import type {
 } from "@tanstack/react-table";
 import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
 
-import type { Row } from "../lib/types";
-import { getCount } from "../lib/utils";
+import type { Row } from "@/lib/types";
+import { getCount } from "@/lib/utils";
 
 // define types for our new feature's custom state
 export enum CountMethod {

@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Calendar,
   MenuGroup,
@@ -10,7 +8,8 @@ import {
 } from "@notion-kit/ui/primitives";
 import { TimezoneMenu } from "@notion-kit/ui/timezone-menu";
 
-import type { InferCellProps } from "../../types";
+import type { InferCellProps } from "@/plugins/types";
+
 import { DateFormatMenu, TimeFormatMenu } from "../common";
 import type { DatePlugin } from "../types";
 import { DateRangeInput } from "./date-range-input";
@@ -65,7 +64,7 @@ export function DateTimePicker({
       <Separator />
       <MenuGroup>
         <MenuItemSwitch
-          Body="End date"
+          label="End date"
           checked={data.endDate}
           onCheckedChange={(endDate) =>
             onChange((v) => ({ ...v, end: undefined, endDate }))
@@ -78,7 +77,7 @@ export function DateTimePicker({
           }
         />
         <MenuItemSwitch
-          Body="Include time"
+          label="Include time"
           checked={data.includeTime}
           onCheckedChange={(includeTime) =>
             onChange((v) => ({ ...v, includeTime }))
@@ -96,7 +95,7 @@ export function DateTimePicker({
               currentTz={config.tz}
               onChange={(tz) => onConfigChange?.((v) => ({ ...v, tz }))}
               renderTrigger={({ gmt }) => (
-                <MenuItem Body="Timezone">
+                <MenuItem label="Timezone">
                   <MenuItemSelect>{gmt}</MenuItemSelect>
                 </MenuItem>
               )}
@@ -107,7 +106,7 @@ export function DateTimePicker({
       <Separator />
       <MenuGroup>
         <MenuItem
-          Body="Clear"
+          label="Clear"
           onClick={() =>
             onChange((v) => ({ ...v, start: undefined, end: undefined }))
           }

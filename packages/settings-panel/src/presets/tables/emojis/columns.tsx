@@ -7,7 +7,6 @@ import { AlertModal } from "@notion-kit/ui/alert-modal";
 import {
   Button,
   Dialog,
-  DialogTrigger,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -47,6 +46,7 @@ export function createEmojiColumns({
       header: () => (
         <TextCell value={<Trans i18nKey="tables.emojis.columns.image" />} />
       ),
+
       cell: ({ row }) => (
         <img
           loading="lazy"
@@ -62,6 +62,7 @@ export function createEmojiColumns({
       header: () => (
         <TextCell value={<Trans i18nKey="tables.emojis.columns.name" />} />
       ),
+
       cell: ({ row }) => <TextCell value={row.original.name} />,
       filterFn: emojiFilterFn,
     },
@@ -71,6 +72,7 @@ export function createEmojiColumns({
       header: () => (
         <TextCell value={<Trans i18nKey="tables.emojis.columns.added-by" />} />
       ),
+
       cell: ({ row }) => <TextCell value={row.original.createdBy} />,
     },
     {
@@ -83,6 +85,7 @@ export function createEmojiColumns({
           toggle={() => column.toggleSorting()}
         />
       ),
+
       cell: ({ row }) => (
         <TextCell value={toDateString(row.original.createdAt)} />
       ),
@@ -106,25 +109,28 @@ interface ActionCellProps {
 function ActionCell({ emoji, onEdit, onDelete }: ActionCellProps) {
   const { t } = useTranslation("settings");
   const trans = t("tables.emojis", { returnObjects: true });
+
   const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="hint" className="size-5" aria-label="More options">
-          <Icon.Dots className="size-4 fill-current" />
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <Button variant="hint" className="size-5" aria-label="More options">
+            <Icon.Dots className="size-4 fill-current" />
+          </Button>
+        }
+      />
       <DropdownMenuContent align="end" className="w-50">
         <DropdownMenuGroup>
+          <DropdownMenuItem
+            icon={<Icon.PencilLine />}
+            label={trans.actions.edit}
+            closeOnClick={false}
+            onClick={() => setEditOpen(true)}
+          />
           <Dialog open={editOpen} onOpenChange={setEditOpen}>
-            <DialogTrigger asChild>
-              <DropdownMenuItem
-                Icon={<Icon.PencilLine />}
-                Body={trans.actions.edit}
-                onSelect={(e) => e.preventDefault()}
-              />
-            </DialogTrigger>
             <EmojiForm
               emoji={emoji}
               onSave={async (data) => {
@@ -133,15 +139,14 @@ function ActionCell({ emoji, onEdit, onDelete }: ActionCellProps) {
               }}
             />
           </Dialog>
-          <Dialog>
-            <DialogTrigger asChild>
-              <DropdownMenuItem
-                variant="error"
-                Icon={<Icon.Trash />}
-                Body={trans.actions.delete}
-                onSelect={(e) => e.preventDefault()}
-              />
-            </DialogTrigger>
+          <DropdownMenuItem
+            variant="error"
+            icon={<Icon.Trash />}
+            label={trans.actions.delete}
+            closeOnClick={false}
+            onClick={() => setDeleteOpen(true)}
+          />
+          <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
             <AlertModal {...trans.delete} onTrigger={() => onDelete?.(emoji)} />
           </Dialog>
         </DropdownMenuGroup>

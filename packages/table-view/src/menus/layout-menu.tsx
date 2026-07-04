@@ -1,21 +1,17 @@
-"use client";
-
 import { cn } from "@notion-kit/cn";
 import {
   Button,
-  DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuTrigger,
-  MenuGroup,
-  MenuItem,
-  MenuItemSelect,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  MenuItemAction,
 } from "@notion-kit/ui/primitives";
 
-import { LayoutIcon, MenuHeader, RowViewIcon } from "../common";
-import { LAYOUT_OPTIONS, ROW_VIEW_OPTIONS, RowViewType } from "../features";
-import { useTableViewCtx } from "../table-contexts";
+import { LayoutIcon, MenuHeader, RowViewIcon } from "@/common";
+import { LAYOUT_OPTIONS, ROW_VIEW_OPTIONS, RowViewType } from "@/features";
+import { useTableViewCtx } from "@/table-contexts";
 
 export function LayoutMenu() {
   const { table } = useTableViewCtx();
@@ -27,7 +23,7 @@ export function LayoutMenu() {
         title="Layout"
         onBack={() => table.setTableMenuState({ open: true, page: null })}
       />
-      <MenuGroup>
+      <DropdownMenuGroup>
         <div className="grid grid-cols-3 gap-2 p-2 pb-0">
           {LAYOUT_OPTIONS.map((layout) => (
             <Button
@@ -50,10 +46,10 @@ export function LayoutMenu() {
             </Button>
           ))}
         </div>
-      </MenuGroup>
-      <MenuGroup>
+      </DropdownMenuGroup>
+      <DropdownMenuGroup>
         <RowViewMenu />
-      </MenuGroup>
+      </DropdownMenuGroup>
     </>
   );
 }
@@ -63,21 +59,22 @@ function RowViewMenu() {
   const { rowView: current } = table.getTableGlobalState();
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <MenuItem Body="Open pages in">
-          <MenuItemSelect>{ROW_VIEW_OPTIONS[current].label}</MenuItemSelect>
-        </MenuItem>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" sideOffset={0} className="w-68">
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger label="Open pages in">
+        <MenuItemAction className="flex items-center text-muted">
+          {ROW_VIEW_OPTIONS[current].label}
+        </MenuItemAction>
+      </DropdownMenuSubTrigger>
+      <DropdownMenuContent sideOffset={-4} className="w-64">
         <DropdownMenuGroup>
           {Object.entries(ROW_VIEW_OPTIONS).map(([value, option]) => {
             const rowView = value as RowViewType;
             return (
               <DropdownMenuCheckboxItem
                 key={rowView}
-                Icon={<RowViewIcon rowView={rowView} />}
-                Body={option.label}
+                closeOnClick={false}
+                icon={<RowViewIcon rowView={rowView} />}
+                label={option.label}
                 desc={option.desc}
                 checked={rowView === current}
                 onCheckedChange={() =>
@@ -88,6 +85,6 @@ function RowViewMenu() {
           })}
         </DropdownMenuGroup>
       </DropdownMenuContent>
-    </DropdownMenu>
+    </DropdownMenuSub>
   );
 }

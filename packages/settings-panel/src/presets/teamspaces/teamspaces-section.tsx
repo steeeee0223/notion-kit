@@ -54,15 +54,17 @@ export function TeamspacesSection() {
       <Separator />
       <SettingsRule {...trans.manage}>
         <Dialog open={openCreate} onOpenChange={setOpenCreate}>
-          <DialogTrigger>
-            <Button
-              variant="blue"
-              size="sm"
-              disabled={!scopes.has(Scope.TeamspaceCreate)}
-            >
-              {trans.manage.button}
-            </Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={
+              <Button
+                variant="blue"
+                size="sm"
+                disabled={!scopes.has(Scope.TeamspaceCreate)}
+              >
+                {trans.manage.button}
+              </Button>
+            }
+          />
           <CreateTeamspace
             workspace={workspace.name}
             onClose={() => setOpenCreate(false)}

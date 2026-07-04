@@ -1,18 +1,16 @@
-"use client";
-
 import { Icon } from "@notion-kit/icons";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Button,
-  MenuGroup,
-  MenuItem,
+  DropdownMenuGroup,
+  DropdownMenuItem,
   MenuItemAction,
 } from "@notion-kit/ui/primitives";
 
-import { DefaultIcon, MenuHeader } from "../common";
-import { TableViewMenuPage } from "../features";
-import type { ColumnInfo } from "../lib/types";
-import { useTableViewCtx } from "../table-contexts";
+import { DefaultIcon, MenuHeader } from "@/common";
+import { TableViewMenuPage } from "@/features";
+import type { ColumnInfo } from "@/lib/types";
+import { useTableViewCtx } from "@/table-contexts";
 
 export function DeletedPropsMenu() {
   const { table } = useTableViewCtx();
@@ -25,7 +23,7 @@ export function DeletedPropsMenu() {
           table.setTableMenuState({ open: true, page: TableViewMenuPage.Props })
         }
       />
-      <MenuGroup>
+      <DropdownMenuGroup>
         {table.getDeletedColumns().map((info) => (
           <PropertyItem
             key={info.id}
@@ -34,7 +32,7 @@ export function DeletedPropsMenu() {
             onDelete={() => table.removeColumnInfo(info.id)}
           />
         ))}
-      </MenuGroup>
+      </DropdownMenuGroup>
     </>
   );
 }
@@ -47,22 +45,21 @@ interface PropertyItemProps {
 
 function PropertyItem({ info, onRestore, onDelete }: PropertyItemProps) {
   return (
-    <MenuItem
-      role="menuitem"
-      className="*:data-[slot=menu-item-body]:leading-normal"
-      Icon={
+    <DropdownMenuItem
+      label={info.name}
+      icon={
         info.icon ? (
           <IconBlock icon={info.icon} />
         ) : (
           <DefaultIcon type={info.type} />
         )
       }
-      Body={info.name}
+      closeOnClick={false}
     >
       <MenuItemAction className="flex items-center text-muted">
         <Button
           tabIndex={0}
-          aria-label="Restore"
+          aria-label={`Restore ${info.name}`}
           variant="hint"
           className="size-6 p-0 disabled:opacity-40"
           onClick={(e) => {
@@ -74,7 +71,7 @@ function PropertyItem({ info, onRestore, onDelete }: PropertyItemProps) {
         </Button>
         <Button
           tabIndex={0}
-          aria-label="Delete"
+          aria-label={`Delete ${info.name}`}
           variant="hint"
           className="size-6 disabled:opacity-40"
           onClick={(e) => {
@@ -85,6 +82,6 @@ function PropertyItem({ info, onRestore, onDelete }: PropertyItemProps) {
           <Icon.Trash className="fill-current" />
         </Button>
       </MenuItemAction>
-    </MenuItem>
+    </DropdownMenuItem>
   );
 }

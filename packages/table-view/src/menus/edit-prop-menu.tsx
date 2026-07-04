@@ -1,19 +1,16 @@
-"use client";
-
 import { Icon } from "@notion-kit/icons";
 import {
-  MenuGroup,
-  MenuItem,
-  MenuItemAction,
+  DropdownMenuCheckboxItem,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
   MenuItemSelect,
-  Separator,
-  Switch,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { DefaultIcon, MenuHeader, PropMeta } from "../common";
-import { TableViewMenuPage } from "../features";
-import { useTableViewCtx } from "../table-contexts";
+import { DefaultIcon, MenuHeader, PropMeta } from "@/common";
+import { TableViewMenuPage } from "@/features";
+import { useTableViewCtx } from "@/table-contexts";
 
 interface EditPropMenuProps {
   propId: string;
@@ -61,17 +58,17 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
         }
       />
       <PropMeta propId={propId} type={info.type} />
-      <MenuGroup>
+      <DropdownMenuGroup>
         {info.type === "title" ? (
           <TooltipPreset
             side="left"
             sideOffset={6}
             description="This property's type cannot be changed."
           >
-            <MenuItem
+            <DropdownMenuItem
               disabled
-              Icon={<Icon.ArrowSquarePathUpDown />}
-              Body="Type"
+              icon={<Icon.ArrowSquarePathUpDown />}
+              label="Type"
             >
               <MenuItemSelect>
                 <div className="flex items-center truncate">
@@ -80,14 +77,15 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
                   <span>Title</span>
                 </div>
               </MenuItemSelect>
-            </MenuItem>
+            </DropdownMenuItem>
           </TooltipPreset>
         ) : (
           <>
-            <MenuItem
+            <DropdownMenuItem
+              closeOnClick={false}
               onClick={openTypesMenu}
-              Icon={<Icon.ArrowSquarePathUpDown />}
-              Body="Type"
+              icon={<Icon.ArrowSquarePathUpDown />}
+              label="Type"
             >
               <MenuItemSelect>
                 <div className="flex truncate">
@@ -96,12 +94,11 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
                   <span>{plugin.meta.name}</span>
                 </div>
               </MenuItemSelect>
-            </MenuItem>
-            <MenuItem
-              // TODO
+            </DropdownMenuItem>
+            <DropdownMenuItem
               disabled
-              Icon={<Icon.PencilLine />}
-              Body={
+              icon={<Icon.PencilLine />}
+              label={
                 <div className="flex items-center">
                   AI Autofill
                   <div className="ml-1.5 inline-block w-fit self-center rounded-sm bg-blue/10 px-1 py-0.5 text-[11px]/[1.3] font-medium tracking-normal whitespace-nowrap text-blue">
@@ -113,42 +110,40 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
               <MenuItemSelect>
                 <div className="flex truncate">Off</div>
               </MenuItemSelect>
-            </MenuItem>
+            </DropdownMenuItem>
           </>
         )}
-      </MenuGroup>
-      <Separator />
-      <MenuGroup>
-        <MenuItem
-          onClick={wrapProp}
-          Icon={<Icon.ArrowUTurnDownLeft />}
-          Body="Wrap in view"
-        >
-          <MenuItemAction className="flex items-center">
-            <Switch size="sm" checked={info.wrapped} />
-          </MenuItemAction>
-        </MenuItem>
+      </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        <DropdownMenuCheckboxItem
+          checkType="switch"
+          icon={<Icon.ArrowUTurnDownLeft />}
+          label="Wrap in view"
+          checked={info.wrapped}
+          onCheckedChange={wrapProp}
+        />
         {info.type !== "title" && (
           <>
-            <MenuItem
+            <DropdownMenuItem
               onClick={hideProp}
-              Icon={<Icon.EyeHideInversePadded className="size-6" />}
-              Body="Hide in view"
+              icon={<Icon.EyeHideInversePadded className="size-6" />}
+              label="Hide in view"
             />
-            <MenuItem
+            <DropdownMenuItem
               onClick={duplicateProp}
-              Icon={<Icon.Duplicate />}
-              Body="Duplicate property"
+              icon={<Icon.Duplicate />}
+              label="Duplicate property"
             />
-            <MenuItem
+            <DropdownMenuItem
               variant="warning"
               onClick={deleteProp}
-              Icon={<Icon.Trash />}
-              Body="Delete property"
+              icon={<Icon.Trash />}
+              label="Delete property"
             />
           </>
         )}
-      </MenuGroup>
+      </DropdownMenuGroup>
     </>
   );
 }

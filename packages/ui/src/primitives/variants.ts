@@ -75,20 +75,18 @@ export const menuItemVariants = cva(
   [
     "mx-1 flex min-h-7 w-[calc(100%-8px)] animate-bg-in cursor-pointer items-center rounded-md px-2 text-sm/tight select-none hover:bg-default/5 focus-visible:outline-hidden",
     "fill-menu-icon [&_svg]:block [&_svg]:shrink-0",
+    "data-highlighted:bg-default/10",
+    "data-disabled:pointer-events-none data-disabled:cursor-not-allowed data-disabled:opacity-40",
   ],
   {
     variants: {
       variant: {
         default: "text-primary",
-        secondary: "text-secondary",
+        secondary: "fill-secondary text-secondary",
         sidebar:
           "fill-secondary text-sidebar-primary aria-selected:bg-default/10 aria-selected:text-primary",
         warning: "hover:fill-red hover:text-red",
         error: "fill-red text-red",
-      },
-      inset: { true: "pl-8" },
-      disabled: {
-        true: "pointer-events-none cursor-not-allowed opacity-40 hover:bg-transparent",
       },
     },
     defaultVariants: {
@@ -132,6 +130,9 @@ export const inputVariants = cva(
 );
 export type InputVariants = VariantProps<typeof inputVariants>;
 
+/**
+ * @todo migrate to the new styles in `./design`
+ */
 export const contentVariants = cva(
   "border border-border text-primary focus-visible:outline-hidden",
   {
@@ -143,35 +144,11 @@ export const contentVariants = cva(
          */
         default: "bg-transparent",
         /**
-         * @prop modal
-         * @note Used by: Dialog
-         * @note Used with: `openAnimation`
-         */
-        modal:
-          "fixed top-1/2 left-1/2 z-(--z-menu) grid w-full max-w-lg -translate-1/2 gap-4 bg-modal p-6 shadow-lg duration-200",
-        /**
-         * @prop popover
-         * @note Used by: DropdownMenu, Popover, Select
-         * @note Used with: `openAnimation`, `sideAnimation`
-         */
-        popover: "z-(--z-menu) rounded-md bg-popover shadow-md",
-        /**
-         * @prop sheet
-         */
-        sheet: "fixed z-(--z-menu) bg-main shadow-lg",
-        /**
          * @prop tab
          * @note Used by: Tabs
          * @note Used with: `openAnimation`, `sideAnimation`
          */
         tab: "border-none bg-transparent",
-        /**
-         * @prop tooltip
-         * @note Used by: Tooltip
-         * @note Used with: `openAnimation`, `sideAnimation`
-         */
-        tooltip:
-          "relative z-(--z-menu) animate-in overflow-hidden border-none bg-tooltip font-medium text-tooltip-primary shadow-md backdrop-filter-none fade-in-0 zoom-in-95",
       },
       openAnimation: {
         true: [
@@ -186,23 +163,5 @@ export const contentVariants = cva(
     defaultVariants: { variant: "default", openAnimation: true },
   },
 );
-export type ContentVariants = VariantProps<typeof contentVariants>;
-
-export const separatorVariants = cva("-mx-1 my-1 h-px bg-default/10");
-export type SeparatorVariants = VariantProps<typeof separatorVariants>;
 
 export const groupVariants = cva("flex flex-col gap-px py-1");
-
-export const tooltipVariants = cva(
-  "max-w-[220px] font-medium wrap-break-word",
-  {
-    variants: {
-      size: {
-        sm: "rounded-sm px-2 py-1 text-xs/[1.4]",
-        md: "rounded-md px-3 py-1.5 text-sm",
-      },
-    },
-    defaultVariants: { size: "sm" },
-  },
-);
-export type TooltipVariants = VariantProps<typeof tooltipVariants>;

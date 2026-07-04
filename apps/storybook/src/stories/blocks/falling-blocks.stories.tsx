@@ -1,12 +1,12 @@
+import { RestrictToElement } from "@dnd-kit/dom/modifiers";
 import {
-  DndContext,
-  DragEndEvent,
-  DragMoveEvent,
-  DragStartEvent,
+  DragDropProvider,
   useDraggable,
   useDroppable,
-} from "@dnd-kit/core";
-import { restrictToParentElement } from "@dnd-kit/modifiers";
+  type DragEndEvent,
+  type DragMoveEvent,
+  type DragStartEvent,
+} from "@dnd-kit/react";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
 import { cn } from "@notion-kit/cn";
@@ -30,7 +30,7 @@ export const Basic: Story = {
   render: () => {
     return (
       <TooltipProvider>
-        <FallingBlocks.Root className="relative h-[420px] w-100 overflow-hidden rounded-lg border border-border bg-popover shadow-lg">
+        <FallingBlocks.Root className="relative h-105 w-100 overflow-hidden rounded-lg border border-border bg-popover shadow-lg">
           {DEFAULT_LOGOS.map((block) => (
             <FallingBlocks.Item
               key={block.name}
@@ -60,34 +60,45 @@ export const Basic: Story = {
 // Internal wrapper for the Draggable story to use useFallingBlocks hook
 function DraggableStage() {
   const { setDragStart, setDragMove, setDragEnd } = useFallingBlocks();
-  const { setNodeRef } = useDroppable({ id: "falling-blocks-root" });
+  const { ref } = useDroppable({
+    id: "falling-blocks-root",
+    type: "falling-blocks-root",
+    accept: "falling-block",
+  });
 
   const handleDragStart = (e: DragStartEvent) => {
-    setDragStart(e.active.id as number);
+    const { source } = e.operation;
+    if (source) setDragStart(Number(source.id));
   };
 
   const handleDragMove = (e: DragMoveEvent) => {
-    setDragMove(e.active.id as number, e.delta.x, e.delta.y);
+    const { source, transform } = e.operation;
+    if (source) setDragMove(Number(source.id), transform.x, transform.y);
   };
 
   const handleDragEnd = (e: DragEndEvent) => {
-    setDragEnd(e.active.id as number, e.delta.x, e.delta.y);
+    const { source, transform } = e.operation;
+    if (source) setDragEnd(Number(source.id), transform.x, transform.y);
   };
 
   return (
-    <DndContext
-      modifiers={[restrictToParentElement]}
+    <DragDropProvider
+      modifiers={[
+        RestrictToElement.configure({
+          element: (operation) =>
+            operation.source?.element?.parentElement ?? null,
+        }),
+      ]}
       onDragStart={handleDragStart}
       onDragMove={handleDragMove}
       onDragEnd={handleDragEnd}
-      onDragCancel={handleDragEnd}
     >
-      <div ref={setNodeRef} className="absolute inset-0">
+      <div ref={ref} className="absolute inset-0">
         {DEFAULT_LOGOS.map((block, index) => (
           <DraggableItem key={block.name} block={block} index={index} />
         ))}
       </div>
-    </DndContext>
+    </DragDropProvider>
   );
 }
 
@@ -95,11 +106,12 @@ function DraggableItem({
   block,
   index,
 }: {
-  block: (typeof DEFAULT_LOGOS)[0];
+  block: (typeof DEFAULT_LOGOS)[number];
   index: number;
 }) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+  const { isDragging, ref } = useDraggable({
     id: index,
+    type: "falling-block",
   });
 
   return (
@@ -110,9 +122,7 @@ function DraggableItem({
         isDragging ? "z-50 cursor-grabbing" : "cursor-grab",
       )}
       style={{ background: block.bg }}
-      ref={setNodeRef}
-      {...attributes}
-      {...listeners}
+      ref={ref}
     >
       <TooltipPreset description={block.name}>
         <div className="size-[26px] shrink-0" style={{ color: block.color }}>
@@ -129,7 +139,7 @@ export const Draggable: Story = {
       <TooltipProvider>
         <FallingBlocks.Root
           count={DEFAULT_LOGOS.length}
-          className="relative h-[420px] w-100 overflow-hidden rounded-lg border border-border bg-popover shadow-lg"
+          className="relative h-105 w-100 overflow-hidden rounded-lg border border-border bg-popover shadow-lg"
         >
           <DraggableStage />
 

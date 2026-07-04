@@ -15,13 +15,13 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  getSortableItemsAfterDrag,
   Input,
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Sortable,
 } from "@notion-kit/ui/primitives";
-
-import { arrayMove, Sortable } from "./sortable";
 
 interface TodoItem {
   id: string;
@@ -37,7 +37,7 @@ interface TodoStore {
   archiveTodo: (id: string) => void;
   restoreTodo: (id: string) => void;
   deleteTodo: (id: string) => void;
-  reorderTodos: (activeId: string, overId: string) => void;
+  reorderTodos: (updated: TodoItem[]) => void;
 }
 
 const INITIAL_TODOS: TodoItem[] = [
@@ -94,15 +94,10 @@ function createTodoStore() {
       set((state) => ({
         todos: state.todos.filter((t) => t.id !== id),
       })),
-    reorderTodos: (activeId, overId) =>
+    reorderTodos: (updated) =>
       set((state) => {
-        const activeTodos = state.todos.filter((t) => t.status === "active");
-        const oldIndex = activeTodos.findIndex((t) => t.id === activeId);
-        const newIndex = activeTodos.findIndex((t) => t.id === overId);
-        if (oldIndex === -1 || newIndex === -1) return state;
-        const reordered = arrayMove(activeTodos, oldIndex, newIndex);
-        const nonActive = state.todos.filter((t) => t.status !== "active");
-        return { todos: [...reordered, ...nonActive] };
+        const inactive = state.todos.filter((todo) => todo.status !== "active");
+        return { todos: [...updated, ...inactive] };
       }),
   }));
 }
@@ -154,6 +149,7 @@ function TodoInput() {
         placeholder="Add a todo..."
         className="flex-1"
       />
+
       <Button
         type="submit"
         variant="blue"
@@ -193,42 +189,39 @@ function TodoItemCard({
       mode="disappear"
       className="flex items-center gap-2 rounded-md border border-border/50 bg-popover px-3 py-2 shadow-sm"
     >
-      <div
-        className={cn(
-          "opacity-0 transition-opacity duration-200",
-          hoverGroup === "launched"
-            ? "group-hover/launched:opacity-100"
-            : "group-hover/todo:opacity-100",
-        )}
-      >
-        <Sortable.DragHandle className="size-6" />
-      </div>
+      {hoverGroup === "todo" && (
+        <div className="opacity-0 transition-opacity duration-200 group-hover/todo:opacity-100">
+          <Sortable.Handle className="size-6" />
+        </div>
+      )}
       <Checkbox size="sm" checked={false} onCheckedChange={handleCheck} />
       <span className="flex-1 text-sm text-primary select-none">
         {todo.label}
       </span>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="hint"
-            className={cn(
-              "size-6 opacity-0 transition-opacity duration-200",
-              hoverGroup === "launched"
-                ? "group-hover/launched:opacity-100"
-                : "group-hover/todo:opacity-100",
-              "has-[button[aria-expanded='true']]:opacity-100",
-            )}
-          >
-            <Icon.Dots className="size-4 fill-icon" />
-          </Button>
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="hint"
+              className={cn(
+                "size-6 opacity-0 transition-opacity duration-200",
+                hoverGroup === "launched"
+                  ? "group-hover/launched:opacity-100"
+                  : "group-hover/todo:opacity-100",
+                "has-[button[aria-expanded='true']]:opacity-100",
+              )}
+            >
+              <Icon.Dots className="size-4 fill-icon" />
+            </Button>
+          }
+        />
         <DropdownMenuContent align="end">
           <DropdownMenuGroup>
             <DropdownMenuItem
-              Body="Delete"
-              Icon={<Icon.Trash />}
+              label="Delete"
+              icon={<Icon.Trash />}
               variant="error"
-              onSelect={() => archiveTodo(todo.id)}
+              onClick={() => archiveTodo(todo.id)}
             />
           </DropdownMenuGroup>
         </DropdownMenuContent>
@@ -257,20 +250,22 @@ function TrashBox() {
       className="fixed right-8 bottom-8 z-50 rounded-full"
     >
       <Popover onOpenChange={handleOpenChange}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="hint"
-            size="md"
-            className="rounded-full shadow-out-md"
-          >
-            <Icon.Trash className="size-5 fill-icon" />
-            {archivedTodos.length > 0 && (
-              <span className="ml-1 text-xs text-secondary">
-                {archivedTodos.length}
-              </span>
-            )}
-          </Button>
-        </PopoverTrigger>
+        <PopoverTrigger
+          render={
+            <Button
+              variant="hint"
+              size="md"
+              className="rounded-full shadow-out-md"
+            >
+              <Icon.Trash className="size-5 fill-icon" />
+              {archivedTodos.length > 0 && (
+                <span className="ml-1 text-xs text-secondary">
+                  {archivedTodos.length}
+                </span>
+              )}
+            </Button>
+          }
+        />
         <PopoverContent
           side="top"
           align="end"
@@ -294,26 +289,30 @@ function TrashBox() {
                   {todo.label}
                 </span>
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="hint"
-                      className="absolute right-0.5 bottom-0.5 flex size-4 items-center justify-center p-0 opacity-0 transition-opacity duration-150 group-hover/block:opacity-100"
-                    >
-                      <Icon.Dots className="size-2.5 fill-icon" />
-                    </Button>
-                  </DropdownMenuTrigger>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button
+                        variant="hint"
+                        className="absolute right-0.5 bottom-0.5 flex size-4 items-center justify-center p-0 opacity-0 transition-opacity duration-150 group-hover/block:opacity-100"
+                      >
+                        <Icon.Dots className="size-2.5 fill-icon" />
+                      </Button>
+                    }
+                  />
+
                   <DropdownMenuContent align="end">
                     <DropdownMenuGroup>
                       <DropdownMenuItem
-                        Body="Restore"
-                        Icon={<Icon.Undo className="size-4" />}
-                        onSelect={() => restoreTodo(todo.id)}
+                        label="Restore"
+                        icon={<Icon.Undo className="size-4" />}
+                        onClick={() => restoreTodo(todo.id)}
                       />
+
                       <DropdownMenuItem
-                        Body="Delete forever"
-                        Icon={<Icon.Trash />}
+                        label="Delete forever"
+                        icon={<Icon.Trash />}
                         variant="error"
-                        onSelect={() => deleteTodo(todo.id)}
+                        onClick={() => deleteTodo(todo.id)}
                       />
                     </DropdownMenuGroup>
                   </DropdownMenuContent>
@@ -333,16 +332,24 @@ function ActiveTodoList() {
 
   return (
     <Sortable.Root
-      items={activeTodos.map((t) => t.id)}
-      onReorder={reorderTodos}
+      onDragEnd={(event) =>
+        reorderTodos(getSortableItemsAfterDrag(activeTodos, event))
+      }
     >
-      {activeTodos.map((todo) => (
-        <Sortable.Item key={todo.id} id={todo.id} className="group/todo">
-          <SlingShot.Item id={todo.id} className="block w-full">
-            <TodoItemCard todo={todo} />
-          </SlingShot.Item>
-        </Sortable.Item>
-      ))}
+      <Sortable.List>
+        {activeTodos.map((todo, index) => (
+          <Sortable.Item
+            key={todo.id}
+            id={todo.id}
+            index={index}
+            className="group/todo"
+          >
+            <SlingShot.Item id={todo.id} className="block w-full">
+              <TodoItemCard todo={todo} />
+            </SlingShot.Item>
+          </Sortable.Item>
+        ))}
+      </Sortable.List>
     </Sortable.Root>
   );
 }

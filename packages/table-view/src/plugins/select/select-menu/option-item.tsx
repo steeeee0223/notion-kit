@@ -1,16 +1,12 @@
-"use client";
-
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
+  DropdownMenu,
+  DropdownMenuTrigger,
   MenuItem,
   MenuItemAction,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+  Sortable,
+  TooltipDescription,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 import type { Color } from "@notion-kit/utils";
@@ -20,6 +16,7 @@ import { SelectOptionMenu } from "../select-option-menu";
 import type { OptionConfig } from "../types";
 
 interface OptionItemProps {
+  index: number;
   option: OptionConfig;
   draggable?: boolean;
   onSelect: (value: string) => void;
@@ -33,6 +30,7 @@ interface OptionItemProps {
 }
 
 export function OptionItem({
+  index,
   option,
   draggable,
   onSelect,
@@ -40,84 +38,64 @@ export function OptionItem({
   onDelete,
   validateName,
 }: OptionItemProps) {
-  /** DND */
-  const {
-    attributes,
-    isDragging,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: option.name });
-
-  const style: React.CSSProperties = {
-    opacity: isDragging ? 0.8 : 1,
-    zIndex: isDragging ? 10 : 0,
-    transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
-    transition, // Warning: it is somehow laggy
-  };
-
   return (
     <TooltipPreset
       description={
-        option.description
-          ? [
-              { type: "default", text: option.name },
-              { type: "secondary", text: option.description },
-            ]
-          : option.name
+        option.description ? (
+          <>
+            <TooltipDescription text={option.name} />
+            <TooltipDescription type="secondary" text={option.description} />
+          </>
+        ) : (
+          option.name
+        )
       }
       side="left"
       sideOffset={8}
     >
-      <MenuItem
-        ref={setNodeRef}
-        role="menuitem"
-        style={style}
-        onClick={() => onSelect(option.name)}
-        Icon={
-          draggable ? (
-            <div
-              className="flex h-6 w-4.5 shrink-0 cursor-grab items-center justify-center [&_svg]:fill-icon"
-              {...attributes}
-              {...listeners}
-            >
-              <Icon.DragHandle className="size-3" />
-            </div>
-          ) : null
+      <Sortable.Item
+        id={option.name}
+        index={index}
+        disabled={!draggable}
+        render={
+          <MenuItem
+            onClick={() => onSelect(option.name)}
+            icon={
+              draggable ? (
+                <Sortable.Handle
+                  aria-label={`Move ${option.name}`}
+                  className="h-6 w-4.5"
+                />
+              ) : null
+            }
+            label={<OptionTag {...option} />}
+          />
         }
-        Body={<OptionTag {...option} />}
       >
         <MenuItemAction className="flex items-center text-muted">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                tabIndex={0}
-                variant="hint"
-                className="size-5"
-                onClick={(e) => e.stopPropagation()}
-                aria-label="More"
-              >
-                <Icon.Dots className="size-3.5 fill-current" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent
-              align="center"
-              sideOffset={0}
-              className="w-[220px]"
-              collisionPadding={12}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <SelectOptionMenu
-                option={option}
-                validateName={validateName}
-                onUpdate={onUpdate}
-                onDelete={onDelete}
-              />
-            </PopoverContent>
-          </Popover>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  tabIndex={0}
+                  variant="hint"
+                  className="size-5"
+                  onClick={(e) => e.stopPropagation()}
+                  aria-label="More"
+                >
+                  <Icon.Dots className="size-3.5 fill-current" />
+                </Button>
+              }
+            />
+            <SelectOptionMenu
+              option={option}
+              validateName={validateName}
+              onUpdate={onUpdate}
+              onDelete={onDelete}
+            />
+          </DropdownMenu>
         </MenuItemAction>
-      </MenuItem>
+      </Sortable.Item>
     </TooltipPreset>
   );
 }

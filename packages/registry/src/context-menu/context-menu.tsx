@@ -26,39 +26,39 @@ export default function Demo() {
       </ContextMenuTrigger>
       <ContextMenuContent className="w-48">
         <ContextMenuGroup>
-          <ContextMenuLabel>Actions</ContextMenuLabel>
-          <ContextMenuItem Body="Back">
+          <ContextMenuLabel title="Actions" />
+          <ContextMenuItem label="Back">
             <ContextMenuShortcut>⌘[</ContextMenuShortcut>
           </ContextMenuItem>
-          <ContextMenuItem disabled Body="Forward">
+          <ContextMenuItem disabled label="Forward">
             <ContextMenuShortcut>⌘]</ContextMenuShortcut>
           </ContextMenuItem>
-          <ContextMenuItem Body="Reload">
+          <ContextMenuItem label="Reload">
             <ContextMenuShortcut>⌘R</ContextMenuShortcut>
           </ContextMenuItem>
           <ContextMenuSub>
-            <ContextMenuSubTrigger Body="More Tools" />
+            <ContextMenuSubTrigger label="More Tools" />
             <ContextMenuSubContent className="w-44">
               <ContextMenuGroup>
-                <ContextMenuItem Body="Save Page..." />
-                <ContextMenuItem Body="Create Shortcut..." />
-                <ContextMenuItem Body="Name Window..." />
+                <ContextMenuItem label="Save Page..." />
+                <ContextMenuItem label="Create Shortcut..." />
+                <ContextMenuItem label="Name Window..." />
               </ContextMenuGroup>
               <ContextMenuSeparator />
               <ContextMenuGroup>
-                <ContextMenuItem Body="Developer Tools" />
+                <ContextMenuItem label="Developer Tools" />
               </ContextMenuGroup>
               <ContextMenuSeparator />
               <ContextMenuGroup>
-                <ContextMenuItem Body="Delete" variant="error" />
+                <ContextMenuItem label="Delete" variant="error" />
               </ContextMenuGroup>
             </ContextMenuSubContent>
           </ContextMenuSub>
         </ContextMenuGroup>
         <ContextMenuSeparator />
         <ContextMenuGroup>
-          <ContextMenuCheckboxItem checked Body="Show Bookmarks" />
-          <ContextMenuCheckboxItem Body="Show Full URLs" />
+          <ContextMenuCheckboxItem checked label="Show Bookmarks" />
+          <ContextMenuCheckboxItem label="Show Full URLs" />
         </ContextMenuGroup>
       </ContextMenuContent>
     </ContextMenu>

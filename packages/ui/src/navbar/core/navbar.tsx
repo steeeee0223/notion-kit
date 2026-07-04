@@ -6,7 +6,7 @@ import { Button, TooltipPreset, TooltipProvider } from "@/primitives";
 
 function Navbar({ className, ...props }: React.ComponentProps<"nav">) {
   return (
-    <TooltipProvider delayDuration={500}>
+    <TooltipProvider>
       <nav
         className={cn(
           "flex h-12 w-full items-center gap-x-4 bg-main px-3 py-2",

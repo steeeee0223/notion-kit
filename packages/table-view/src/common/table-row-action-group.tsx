@@ -2,23 +2,22 @@ import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
-  ButtonProps,
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Sortable,
+  TooltipDescription,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
 import { RowActionMenu } from "../menus";
 
 interface TableRowActionGroupProps extends React.ComponentProps<"div"> {
-  isDragging?: boolean;
   isMobile?: boolean;
 }
 
 export function TableRowActionGroup({
   className,
-  isDragging,
   isMobile,
   ...props
 }: TableRowActionGroupProps) {
@@ -29,9 +28,9 @@ export function TableRowActionGroup({
         className={cn(
           "flex h-full items-center opacity-0 transition-opacity delay-0 duration-200",
           "group-hover/row:opacity-100",
+          "group-data-dragging/row:opacity-100",
           "has-[button[aria-expanded='true']]:opacity-100",
-          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-          (isMobile || isDragging) && "opacity-100",
+          isMobile && "opacity-100",
         )}
         {...props}
       />
@@ -42,32 +41,29 @@ export function TableRowActionGroup({
 interface RowActionsProps {
   className?: string;
   rowId: string;
-  isDragging: boolean;
   isMobile: boolean;
-  dragHandleProps: ButtonProps;
   onAddNext: (e: React.MouseEvent) => void;
 }
 
 export function RowActions({
   className,
   rowId,
-  isDragging,
   isMobile,
-  dragHandleProps,
   onAddNext,
 }: RowActionsProps) {
   return (
-    <TableRowActionGroup
-      className={className}
-      isDragging={isDragging}
-      isMobile={isMobile}
-    >
+    <TableRowActionGroup className={className} isMobile={isMobile}>
       <TooltipPreset
-        description={[
-          { type: "default", text: "Click to add below" },
-          { type: "secondary", text: "Option-click to add above" },
-        ]}
-        className="z-999 text-center"
+        description={
+          <>
+            <TooltipDescription text="Click to add below" />
+            <TooltipDescription
+              type="secondary"
+              text="Option-click to add above"
+            />
+          </>
+        }
+        className="text-center"
       >
         <Button
           variant="hint"
@@ -80,23 +76,19 @@ export function RowActions({
       </TooltipPreset>
       <Popover>
         <TooltipPreset
-          description={[
-            { type: "default", text: "Drag to move" },
-            { type: "default", text: "Click to open menu" },
-          ]}
-          disabled={isDragging}
-          className="z-999 text-center"
+          description={
+            <>
+              <TooltipDescription text="Drag to move" />
+              <TooltipDescription text="Click to open menu" />
+            </>
+          }
+          className="text-center"
         >
-          <PopoverTrigger asChild>
-            <Button
-              variant="hint"
-              aria-label="Row actions"
-              className="h-6 w-4.5"
-              {...dragHandleProps}
-            >
-              <Icon.DragHandle className="size-3.5 fill-icon" />
-            </Button>
-          </PopoverTrigger>
+          <PopoverTrigger
+            render={
+              <Sortable.Handle aria-label="Row actions" className="h-6 w-4.5" />
+            }
+          />
         </TooltipPreset>
         <PopoverContent className="w-[265px]" side="right" align="start">
           <RowActionMenu rowId={rowId} />

@@ -1,9 +1,13 @@
 import React from "react";
 
 import { cn, cva, type VariantProps } from "@notion-kit/cn";
-import { buttonVariants, TooltipPreset } from "@notion-kit/ui/primitives";
+import {
+  buttonVariants,
+  TooltipDescription,
+  TooltipPreset,
+} from "@notion-kit/ui/primitives";
 
-import type { LayoutType } from "../features";
+import type { LayoutType } from "@/features";
 
 const cellVariant = cva("relative px-2 aria-disabled:pointer-events-none", {
   variants: {
@@ -64,12 +68,17 @@ export function CellTrigger({
       side={layout === "board" ? "left" : "top"}
       {...(tooltip
         ? {
-            description: tooltip.description
-              ? [
-                  { type: "default", text: tooltip.title },
-                  { type: "secondary", text: tooltip.description },
-                ]
-              : tooltip.title,
+            description: tooltip.description ? (
+              <>
+                <TooltipDescription text={tooltip.title} />
+                <TooltipDescription
+                  type="secondary"
+                  text={tooltip.description}
+                />
+              </>
+            ) : (
+              tooltip.title
+            ),
           }
         : {
             description: "",

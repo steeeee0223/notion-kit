@@ -28,7 +28,7 @@ export function DeleteGuest({ name, onDelete }: DeleteGuestProps) {
   const onRemove = () => startTransition(() => onDelete?.());
 
   return (
-    <DialogContent className="w-[300px] p-5">
+    <DialogContent className="w-75">
       <DialogHeader>
         <DialogIcon>
           <Icon.UserX className="size-9 fill-default/45" />
@@ -48,11 +48,13 @@ export function DeleteGuest({ name, onDelete }: DeleteGuestProps) {
           {t("remove")}
           {loading && <Spinner />}
         </Button>
-        <DialogClose asChild>
-          <Button variant="hint" size="sm" className="h-7 w-fit">
-            {t("cancel")}
-          </Button>
-        </DialogClose>
+        <DialogClose
+          render={
+            <Button variant="hint" size="sm" className="h-7 w-fit">
+              {t("cancel")}
+            </Button>
+          }
+        />
       </DialogFooter>
     </DialogContent>
   );

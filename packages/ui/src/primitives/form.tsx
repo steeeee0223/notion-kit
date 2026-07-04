@@ -1,20 +1,15 @@
-"use client";
-
 import * as React from "react";
-import { Label as LabelPrimitive, Slot } from "radix-ui";
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
 import type { ControllerProps, FieldPath, FieldValues } from "react-hook-form";
 import {
-  useForm as __useForm,
   Controller,
   FormProvider,
   useFormContext,
   useFormState,
 } from "react-hook-form";
 
-import { cn } from "@notion-kit/cn";
-
-import { Label } from "./label";
-import { typography } from "./variants";
+import { Field, FieldDescription, FieldError, FieldLabel } from "./field";
 
 const Form = FormProvider;
 
@@ -85,22 +80,16 @@ function FormItem({ className, ...props }: React.ComponentProps<"div">) {
 
   return (
     <FormItemContext.Provider value={contextValue}>
-      <div
-        data-slot="form-item"
-        className={cn("grid gap-2", className)}
-        {...props}
-      />
+      <Field data-slot="form-item" className={className} {...props} />
     </FormItemContext.Provider>
   );
 }
 
-function FormLabel({
-  ...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
+function FormLabel({ ...props }: React.ComponentProps<typeof FieldLabel>) {
   const { error, formItemId } = useFormField();
 
   return (
-    <Label
+    <FieldLabel
       data-slot="form-label"
       data-error={!!error}
       htmlFor={formItemId}
@@ -109,33 +98,35 @@ function FormLabel({
   );
 }
 
-function FormControl({ ...props }: React.ComponentProps<typeof Slot.Root>) {
+function FormControl({ render, ...props }: useRender.ComponentProps<"div">) {
   const { error, formItemId, formDescriptionId, formMessageId } =
     useFormField();
 
-  return (
-    <Slot.Root
-      data-slot="form-control"
-      id={formItemId}
-      aria-describedby={
-        !error
+  return useRender({
+    defaultTagName: "div",
+    render,
+    props: mergeProps(
+      {
+        "data-slot": "form-control",
+        id: formItemId,
+        "aria-describedby": !error
           ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
-      }
-      aria-invalid={!!error}
-      {...props}
-    />
-  );
+          : `${formDescriptionId} ${formMessageId}`,
+        "aria-invalid": !!error,
+      },
+      props,
+    ),
+  });
 }
 
 function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
   const { formDescriptionId } = useFormField();
 
   return (
-    <p
+    <FieldDescription
       data-slot="form-description"
       id={formDescriptionId}
-      className={cn("text-muted", typography("desc"), className)}
+      className={className}
       {...props}
     />
   );
@@ -146,16 +137,15 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
   const body = error?.message ?? props.children;
 
   if (!body) return null;
-
   return (
-    <p
+    <FieldError
       data-slot="form-message"
       id={formMessageId}
-      className={cn("text-center text-xs text-red", className)}
+      className={className}
       {...props}
     >
       {body}
-    </p>
+    </FieldError>
   );
 }
 

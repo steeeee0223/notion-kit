@@ -99,13 +99,15 @@ export function PasswordForm({ hasPassword, onSubmit }: PasswordFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t("current-label")}</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder={t("current-placeholder")}
-                      {...field}
-                    />
-                  </FormControl>
+                  <FormControl
+                    render={
+                      <Input
+                        type="password"
+                        placeholder={t("current-placeholder")}
+                        {...field}
+                      />
+                    }
+                  />
                 </FormItem>
               )}
             />
@@ -116,13 +118,15 @@ export function PasswordForm({ hasPassword, onSubmit }: PasswordFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("new-label")}</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder={t("new-placeholder")}
-                    {...field}
-                  />
-                </FormControl>
+                <FormControl
+                  render={
+                    <Input
+                      type="password"
+                      placeholder={t("new-placeholder")}
+                      {...field}
+                    />
+                  }
+                />
               </FormItem>
             )}
           />
@@ -132,13 +136,15 @@ export function PasswordForm({ hasPassword, onSubmit }: PasswordFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("confirm-label")}</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder={t("confirm-placeholder")}
-                    {...field}
-                  />
-                </FormControl>
+                <FormControl
+                  render={
+                    <Input
+                      type="password"
+                      placeholder={t("confirm-placeholder")}
+                      {...field}
+                    />
+                  }
+                />
               </FormItem>
             )}
           />

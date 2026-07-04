@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 
 import { useTranslation } from "@notion-kit/i18n";
@@ -42,11 +40,13 @@ export function PaymentDetailsSection() {
           open={openChangePaymentMethod}
           onOpenChange={setOpenChangePaymentMethod}
         >
-          <DialogTrigger asChild>
-            <Button size="sm" className="w-36">
-              {trans["payment-method"].button}
-            </Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={
+              <Button size="sm" className="w-36">
+                {trans["payment-method"].button}
+              </Button>
+            }
+          />
           <ChangePaymentMethod
             stripePromise={stripePromise}
             onConfirm={async () => {
@@ -62,11 +62,13 @@ export function PaymentDetailsSection() {
         description={billing.billedTo ?? "-"}
       >
         <Dialog open={openChangeBilledTo} onOpenChange={setOpenChangeBilledTo}>
-          <DialogTrigger asChild>
-            <Button size="sm" className="w-36">
-              {trans["billed-to"].button}
-            </Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={
+              <Button size="sm" className="w-36">
+                {trans["billed-to"].button}
+              </Button>
+            }
+          />
           <ChangeBillingAddress
             stripePromise={stripePromise}
             onConfirm={async (addr) => {
@@ -85,11 +87,13 @@ export function PaymentDetailsSection() {
           open={openChangeBillingEmail}
           onOpenChange={setOpenChangeBillingEmail}
         >
-          <DialogTrigger asChild>
-            <Button size="sm" className="w-36">
-              {trans["billing-email"].button}
-            </Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={
+              <Button size="sm" className="w-36">
+                {trans["billing-email"].button}
+              </Button>
+            }
+          />
           <ChangeBillingEmail
             email={billing.billingEmail}
             onConfirm={async (email) => {

@@ -1,12 +1,10 @@
-"use client";
-
 import type { Row } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
 import { Button } from "@notion-kit/ui/primitives";
 
-import { GroupActions } from "../common";
-import type { Row as RowModel } from "../lib/types";
+import { GroupActions } from "@/common";
+import type { Row as RowModel } from "@/lib/types";
 
 interface TableGroupedRowProps {
   row: Row<RowModel>;

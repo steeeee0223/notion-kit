@@ -59,10 +59,11 @@ export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
   return (
     <DialogContent
       className="w-70"
-      onCloseAutoFocus={() => {
+      finalFocus={() => {
         form.reset();
         if (preview) URL.revokeObjectURL(preview);
         setPreview(null);
+        return true;
       }}
     >
       <Form {...form}>
@@ -117,26 +118,28 @@ export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
                     {t("upload")}
                   </Button>
                 )}
-                <FormControl>
-                  <Input
-                    ref={fileRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const selected = e.target.files?.[0];
-                      if (!selected) return;
-                      field.onChange(selected);
-                      setPreview(URL.createObjectURL(selected));
-                      if (!form.getValues("name") && !isEdit) {
-                        const baseName = selected.name
-                          .replace(/\.[^.]+$/, "")
-                          .replace(/\s+/g, "-");
-                        form.setValue("name", baseName);
-                      }
-                    }}
-                  />
-                </FormControl>
+                <FormControl
+                  render={
+                    <Input
+                      ref={fileRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const selected = e.target.files?.[0];
+                        if (!selected) return;
+                        field.onChange(selected);
+                        setPreview(URL.createObjectURL(selected));
+                        if (!form.getValues("name") && !isEdit) {
+                          const baseName = selected.name
+                            .replace(/\.[^.]+$/, "")
+                            .replace(/\s+/g, "-");
+                          form.setValue("name", baseName);
+                        }
+                      }}
+                    />
+                  }
+                />
               </FormItem>
             )}
           />
@@ -146,28 +149,32 @@ export function EmojiForm({ emoji, onSave }: EmojiFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("name-label")}</FormLabel>
-                <FormControl>
-                  <Input
-                    variant="default"
-                    placeholder={t("name-placeholder")}
-                    autoComplete="off"
-                    {...field}
-                  />
-                </FormControl>
+                <FormControl
+                  render={
+                    <Input
+                      variant="default"
+                      placeholder={t("name-placeholder")}
+                      autoComplete="off"
+                      {...field}
+                    />
+                  }
+                />
               </FormItem>
             )}
           />
           <div className="flex items-center justify-between gap-2">
-            <DialogClose asChild>
-              <Button
-                type="button"
-                variant="hint"
-                size="sm"
-                className="font-normal"
-              >
-                {t("cancel")}
-              </Button>
-            </DialogClose>
+            <DialogClose
+              render={
+                <Button
+                  type="button"
+                  variant="hint"
+                  size="sm"
+                  className="font-normal"
+                >
+                  {t("cancel")}
+                </Button>
+              }
+            />
             <Button
               type="submit"
               variant="blue"

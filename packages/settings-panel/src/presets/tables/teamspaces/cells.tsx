@@ -13,13 +13,17 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Option,
-  SelectPreset as Select,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
 import type { TeamspacePermission, TeamspaceRole } from "@/lib/types";
-import { Avatar, permissions } from "@/presets/_components";
+import { Avatar, useTeamspacePermissionOptions } from "@/presets/_components";
 import { LeaveTeamspace } from "@/presets/modals";
 import { TextCell } from "@/presets/tables/common-cells";
 
@@ -62,8 +66,10 @@ export function AccessSelectCell({
   disabled,
   onSelect,
 }: AccessSelectCellProps) {
-  const options = { ...permissions };
-  options.default.description = permissions.default.getDescription(workspace);
+  const permissionOptions = useTeamspacePermissionOptions(workspace);
+  const selected = permissionOptions.find(
+    (option) => option.value === permission,
+  );
 
   const [isUpdating, startTransition] = useTransition();
   const select = (permission: TeamspacePermission) => {
@@ -73,25 +79,34 @@ export function AccessSelectCell({
   return (
     <div className="flex items-center px-1">
       {disabled ? (
-        <TextCell
-          className="text-center text-sm"
-          value={options[permission].label}
-        />
+        <TextCell className="text-center text-sm" value={selected?.label} />
       ) : (
         <Select
-          className="w-auto"
-          options={options}
-          onChange={select}
+          items={permissionOptions}
+          onValueChange={(nextValue) => {
+            if (nextValue !== null) select(nextValue);
+          }}
           value={permission}
-          align="center"
-          renderOption={({ option }) => (
-            <TextCell
-              className="min-w-0 text-sm"
-              value={(option as Option).label}
-            />
-          )}
           disabled={isUpdating}
-        />
+        >
+          <SelectTrigger className="w-auto">
+            <SelectValue>
+              {(permission: (typeof permissionOptions)[number]) => (
+                <TextCell
+                  className="min-w-0 text-sm"
+                  value={permission.label}
+                />
+              )}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent align="center">
+            <SelectGroup>
+              {permissionOptions.map((option) => (
+                <SelectItem key={option.value} {...option} />
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       )}
     </div>
   );
@@ -140,50 +155,53 @@ export function TeamspaceActionCell({
   return (
     <DropdownMenu>
       <TooltipPreset description="Teamspace settings and members...">
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="hint"
-            className="size-5"
-            aria-label="More options"
-            disabled={isArchiving}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Icon.Dots className="size-4 fill-current" />
-          </Button>
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="hint"
+              className="size-5"
+              aria-label="More options"
+              disabled={isArchiving}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Icon.Dots className="size-4 fill-current" />
+            </Button>
+          }
+        />
       </TooltipPreset>
-      <DropdownMenuContent
-        className="w-[282px]"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <DropdownMenuContent className="w-[282px]">
         <DropdownMenuGroup>
           <DropdownMenuItem
             onClick={onViewDetail}
-            Icon={<Icon.Gear />}
-            Body={trans.settings}
+            icon={<Icon.Gear />}
+            label={trans.settings}
           />
           {!!role && (
             <>
               <Dialog>
-                <DialogTrigger asChild>
-                  <DropdownMenuItem
-                    variant="error"
-                    Icon={<Icon.Bye className="size-4" />}
-                    Body={trans.leave}
-                    onSelect={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                  />
-                </DialogTrigger>
+                <DialogTrigger
+                  nativeButton={false}
+                  render={
+                    <DropdownMenuItem
+                      variant="error"
+                      icon={<Icon.Bye className="size-4" />}
+                      label={trans.leave}
+                      closeOnClick={false}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                    />
+                  }
+                />
                 <LeaveTeamspace name={name} onLeave={onLeave} />
               </Dialog>
               <DropdownMenuItem
                 variant="error"
                 onClick={archive}
                 disabled={role !== "owner"}
-                Icon={<Icon.ArchiveBox />}
-                Body={trans.archive}
+                icon={<Icon.ArchiveBox />}
+                label={trans.archive}
               />
             </>
           )}
@@ -227,16 +245,18 @@ export function TeamMemberActionCell({
   return (
     <DropdownMenu>
       <TooltipPreset description="Teamspace settings and members...">
-        <DropdownMenuTrigger asChild>
-          <Button variant="hint" size="xs" disabled={isPending}>
-            <span className="text-primary">
-              {t(`roles.${role}.label`, {
-                defaultValue: teamspaceRoles[role].label,
-              })}
-            </span>
-            <Icon.Chevron side="down" className="size-2.5 fill-icon" />
-          </Button>
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          render={
+            <Button variant="hint" size="xs" disabled={isPending}>
+              <span className="text-primary">
+                {t(`roles.${role}.label`, {
+                  defaultValue: teamspaceRoles[role].label,
+                })}
+              </span>
+              <Icon.Chevron side="down" className="size-2.5 fill-icon" />
+            </Button>
+          }
+        />
       </TooltipPreset>
       <DropdownMenuContent className="w-[288px]">
         <DropdownMenuGroup>
@@ -247,27 +267,19 @@ export function TeamMemberActionCell({
                 disabled={role === "member"}
                 checked={role === key}
                 onClick={() => update(key as TeamspaceRole)}
-                Body={
-                  <div className="flex flex-col items-start gap-0.5 py-1">
-                    <div className="truncate">
-                      {t(`roles.${key}.label`, {
-                        defaultValue: label,
-                      })}
-                    </div>
-                    <div className="text-xs whitespace-normal text-secondary">
-                      {t(`roles.${key}.description`, {
-                        defaultValue: description,
-                      })}
-                    </div>
-                  </div>
-                }
+                label={t(`roles.${key}.label`, {
+                  defaultValue: label,
+                })}
+                desc={t(`roles.${key}.description`, {
+                  defaultValue: description,
+                })}
               />
             ),
           )}
           <DropdownMenuItem
             variant="error"
             onClick={remove}
-            Body={t("actions.remove")}
+            label={t("actions.remove")}
           />
         </DropdownMenuGroup>
       </DropdownMenuContent>

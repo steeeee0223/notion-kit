@@ -3,11 +3,12 @@
  * Tests for grouping states, visibility controls, and aggregate display
  */
 
-import type { DragEndEvent } from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/react";
 import { act } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import type { ColumnInfo, Row } from "../lib/types";
+import type { ColumnInfo, Row } from "@/lib/types";
+
 import { renderTableHook } from "./mock";
 
 const mockProperties: ColumnInfo[] = [
@@ -28,7 +29,7 @@ const mockData: Row[] = [
     lastEditedAt: Date.now(),
     properties: {
       col1: { id: "cell1", value: "Task 1" },
-      col2: { id: "cell2", value: { name: "TODO" } },
+      col2: { id: "cell2", value: "TODO" },
     },
   },
   {
@@ -37,7 +38,7 @@ const mockData: Row[] = [
     lastEditedAt: Date.now(),
     properties: {
       col1: { id: "cell3", value: "Task 2" },
-      col2: { id: "cell4", value: { name: "TODO" } },
+      col2: { id: "cell4", value: "TODO" },
     },
   },
   {
@@ -46,7 +47,7 @@ const mockData: Row[] = [
     lastEditedAt: Date.now(),
     properties: {
       col1: { id: "cell5", value: "Task 3" },
-      col2: { id: "cell6", value: { name: "DONE" } },
+      col2: { id: "cell6", value: "DONE" },
     },
   },
 ];
@@ -355,9 +356,8 @@ describe("useTableView - Extended Grouping", () => {
     });
   });
 
-  describe("Group DnD", () => {
-    // Skip this test - handleGroupedRowDragEnd may not be fully implemented
-    it.skip("should handle group row drag end", () => {
+  describe("Group ordering", () => {
+    it("should reorder grouped rows from a drag end event", () => {
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
@@ -375,13 +375,15 @@ describe("useTableView - Extended Grouping", () => {
       const firstGroupId = initialGroupOrder[0]!;
       const secondGroupId = initialGroupOrder[1]!;
 
-      const dragEvent = {
-        active: { id: firstGroupId, data: { current: {} } },
-        over: { id: secondGroupId, data: { current: {} } },
-      } as DragEndEvent;
-
       act(() => {
-        table.handleGroupedRowDragEnd(dragEvent);
+        table.handleGroupedRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: firstGroupId },
+            target: { id: secondGroupId },
+          },
+        } as DragEndEvent);
       });
 
       const newGroupOrder = table.getState().groupingState.groupOrder;

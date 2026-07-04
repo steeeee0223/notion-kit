@@ -1,5 +1,5 @@
 import { cn } from "@notion-kit/cn";
-import { TooltipPreset } from "@notion-kit/ui/primitives";
+import { TooltipDescription, TooltipPreset } from "@notion-kit/ui/primitives";
 
 import { OptionTag } from "../../common";
 import { ColumnInfo } from "../../lib/types";
@@ -38,15 +38,16 @@ export function SelectGroupingValue({
       <TooltipPreset
         key={tag.id}
         description={
-          tag.description
-            ? [
-                { type: "default", text: tag.name },
-                { type: "secondary", text: tag.description },
-              ]
-            : tag.name
+          tag.description ? (
+            <>
+              <TooltipDescription text={tag.name} />
+              <TooltipDescription type="secondary" text={tag.description} />
+            </>
+          ) : (
+            tag.name
+          )
         }
         side="top"
-        asChild={false}
       >
         <OptionTag {...tag} />
       </TooltipPreset>

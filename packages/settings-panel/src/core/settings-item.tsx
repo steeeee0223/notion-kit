@@ -5,7 +5,7 @@ interface SettingsTabProps {
   className?: string;
   name: string;
   isActive: boolean;
-  Icon: React.ReactNode;
+  icon: React.ReactNode;
   onClick?: () => void;
 }
 
@@ -22,7 +22,7 @@ function SettingsTab({
       variant="sidebar"
       aria-selected={isActive}
       className={cn("px-3", className)}
-      Body={name}
+      label={name}
       {...props}
     />
   );

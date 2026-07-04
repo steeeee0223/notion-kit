@@ -29,7 +29,7 @@ export function LeaveTeamspace({ name, onLeave }: LeaveTeamspaceProps) {
   const leave = () => startTransition(() => onLeave?.());
 
   return (
-    <DialogContent className="w-[300px] p-5">
+    <DialogContent className="w-75">
       <DialogHeader>
         <DialogTitle typography="h2">{t("title", { name })}</DialogTitle>
       </DialogHeader>
@@ -47,11 +47,13 @@ export function LeaveTeamspace({ name, onLeave }: LeaveTeamspaceProps) {
           {t("remove")}
           {isLeaving && <Spinner />}
         </Button>
-        <DialogClose asChild>
-          <Button variant="hint" size="sm" className="h-7 w-fit">
-            {t("cancel")}
-          </Button>
-        </DialogClose>
+        <DialogClose
+          render={
+            <Button variant="hint" size="sm" className="h-7 w-fit">
+              {t("cancel")}
+            </Button>
+          }
+        />
       </DialogFooter>
     </DialogContent>
   );

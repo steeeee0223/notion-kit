@@ -51,18 +51,15 @@ export function Publish({ page, onUpdate }: PublishProps) {
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <NavbarItem hint="Share or publish to the web" className="ml-1">
-          Share
-          {isPublished && <Icon.Globe className="fill-blue" />}
-        </NavbarItem>
-      </PopoverTrigger>
-      <PopoverContent
-        className="w-[400px]"
-        align="end"
-        alignOffset={8}
-        forceMount
-      >
+      <PopoverTrigger
+        render={
+          <NavbarItem hint="Share or publish to the web" className="ml-1">
+            Share
+            {isPublished && <Icon.Globe className="fill-blue" />}
+          </NavbarItem>
+        }
+      />
+      <PopoverContent className="w-100" align="end" alignOffset={8}>
         <Tabs defaultValue="publish" className="relative my-0.5 w-full">
           <TabsList>
             <TabsTrigger value="publish">Publish</TabsTrigger>

@@ -2,18 +2,45 @@
 
 import { useState } from "react";
 
-import { SelectPreset as Select } from "@notion-kit/ui/primitives";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@notion-kit/ui/primitives";
+
+const options = [
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
+];
 
 export default function Default() {
-  const options = { light: "Light", dark: "Dark" };
   const [value, setValue] = useState("light");
 
   return (
     <Select
-      className="w-fit"
-      options={options}
+      items={options}
       value={value}
-      onChange={setValue}
-    />
+      onValueChange={(nextValue) => {
+        if (nextValue !== null) setValue(nextValue);
+      }}
+    >
+      <SelectTrigger className="w-fit">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          {options.map((option) => (
+            <SelectItem
+              key={option.value}
+              value={option.value}
+              label={option.label}
+            />
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
   );
 }

@@ -1,4 +1,4 @@
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { useTranslation } from "@notion-kit/i18n";
@@ -8,15 +8,18 @@ import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Button,
   Dialog,
-  DialogTrigger,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  SelectPreset as Select,
-  type SelectPresetProps,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@notion-kit/ui/primitives";
 
 import { Scope } from "@/lib/types";
@@ -43,34 +46,25 @@ export const TeamspacesCell = ({
         </div>
       ) : (
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="hint" size="xs">
-              <span className="text-primary">
-                {t("teamspaces", { count: teamspaces.length })}
-              </span>
-              <Icon.Chevron side="down" className="size-2.5 fill-icon" />
-            </Button>
-          </DropdownMenuTrigger>
+          <DropdownMenuTrigger
+            render={
+              <Button variant="hint" size="xs">
+                <span className="text-primary">
+                  {t("teamspaces", { count: teamspaces.length })}
+                </span>
+                <Icon.Chevron side="down" className="size-2.5 fill-icon" />
+              </Button>
+            }
+          />
           <DropdownMenuContent>
             <DropdownMenuGroup>
               {teamspaces.map((ts) => (
                 <DropdownMenuItem
                   key={ts.id}
                   onClick={() => onTeamspaceSelect?.(ts.id)}
-                  Icon={<IconBlock icon={ts.icon} size="sm" />}
-                  Body={
-                    <div className="flex items-center">
-                      <div className="max-w-full shrink-0 truncate">
-                        <div className="max-w-25 truncate text-sm/5 text-primary">
-                          {ts.name}
-                        </div>
-                      </div>
-                      <div className="inline-flex truncate text-xs text-muted">
-                        <span className="mx-2">—</span>
-                        {t("members", { count: ts.memberCount })}
-                      </div>
-                    </div>
-                  }
+                  icon={<IconBlock icon={ts.icon} size="sm" />}
+                  label={ts.name}
+                  desc={t("members", { count: ts.memberCount })}
                 />
               ))}
             </DropdownMenuGroup>
@@ -112,6 +106,11 @@ export function RoleSelectCell({
 }: RoleSelectCellProps) {
   const { t } = useTranslation("settings", { keyPrefix: "tables.people" });
   const roleOptions = t("role-options", { returnObjects: true });
+  const options = Object.entries(roleOptions).map(([value, option]) => ({
+    value,
+    label: option.label,
+    desc: option.description,
+  }));
 
   const [isUpdating, startTransition] = useTransition();
   const select = (role: PartialRole) =>
@@ -121,26 +120,36 @@ export function RoleSelectCell({
     <div className="flex items-center">
       {scopes?.has(Scope.MemberUpdate) ? (
         <Select
-          className="w-auto"
-          options={roleOptions}
-          onChange={select}
+          items={options}
           value={role}
-          align="center"
-          renderOption={Custom}
+          onValueChange={(value) => {
+            if (value !== null) select(value);
+          }}
           disabled={isUpdating}
-        />
+        >
+          <SelectTrigger className="w-auto">
+            <SelectValue>
+              {(value: PartialRole) => (
+                <div className="min-w-0 truncate text-secondary">
+                  {roleOptions[value].label}
+                </div>
+              )}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent align="center">
+            <SelectGroup>
+              {options.map((option) => (
+                <SelectItem key={option.value} {...option} />
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       ) : (
         <RoleCell role={role} />
       )}
     </div>
   );
 }
-
-const Custom: SelectPresetProps["renderOption"] = ({ option }) => (
-  <div className="min-w-0 truncate text-secondary">
-    {typeof option === "string" ? option : option?.label}
-  </div>
-);
 
 interface MemberActionCellProps {
   isSelf: boolean;
@@ -151,27 +160,27 @@ export function MemberActionCell({ isSelf, onDelete }: MemberActionCellProps) {
   const { t } = useTranslation("settings", {
     keyPrefix: "tables.people.actions",
   });
+  const [openRemoveConfirm, setOpenRemoveConfirm] = useState(false);
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="hint" className="size-5" aria-label="More options">
-          <Icon.Dots className="size-4 fill-current" />
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <Button variant="hint" className="size-5" aria-label="More options">
+            <Icon.Dots className="size-4 fill-current" />
+          </Button>
+        }
+      />
       <DropdownMenuContent className="w-50">
         <DropdownMenuGroup>
-          <Dialog>
-            <DialogTrigger asChild>
-              <DropdownMenuItem
-                variant="error"
-                Icon={<Icon.Bye className="size-4" />}
-                Body={
-                  isSelf ? t("leave-workspace") : t("remove-from-workspace")
-                }
-                onSelect={(e) => e.preventDefault()}
-              />
-            </DialogTrigger>
+          <DropdownMenuItem
+            variant="error"
+            icon={<Icon.Bye className="size-4" />}
+            label={isSelf ? t("leave-workspace") : t("remove-from-workspace")}
+            closeOnClick={false}
+            onClick={() => setOpenRemoveConfirm(true)}
+          />
+          <Dialog open={openRemoveConfirm} onOpenChange={setOpenRemoveConfirm}>
             <DeleteMember onDelete={onDelete} />
           </Dialog>
         </DropdownMenuGroup>
@@ -188,14 +197,6 @@ export function AccessCell({ access }: AccessCellProps) {
     keyPrefix: "tables.people.cells",
   });
 
-  const options = access.reduce<SelectPresetProps["options"]>(
-    (acc, { id, name, scope }) => ({
-      ...acc,
-      [id]: { label: name, description: scope },
-    }),
-    {},
-  );
-
   return (
     <div className="flex items-center">
       {access.length < 1 ? (
@@ -203,14 +204,26 @@ export function AccessCell({ access }: AccessCellProps) {
           {t("no-access")}
         </div>
       ) : (
-        <Select
-          className="w-auto"
-          options={options}
-          hideCheck
-          align="center"
-          placeholder={t("pages", { count: access.length })}
-          renderOption={() => <AccessCellDisplay pages={access.length} />}
-        />
+        <Select items={[{ items: access }]}>
+          <SelectTrigger>
+            <SelectValue>
+              <AccessCellDisplay pages={access.length} />
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent align="center">
+            <SelectGroup>
+              {access.map((option) => (
+                <SelectItem
+                  key={option.id}
+                  value={option.id}
+                  label={option.name}
+                  desc={option.scope}
+                  hideCheck
+                />
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       )}
     </div>
   );
@@ -244,37 +257,40 @@ export function GuestActionCell({
   const [isUpgrading, startTransition] = useTransition();
   const upgrade = () => startTransition(async () => await onUpdate?.());
 
+  const [openRemoveConfirm, setOpenRemoveConfirm] = useState(false);
+
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="hint"
-          className="size-5"
-          disabled={isUpgrading}
-          aria-label="More options"
-        >
-          <Icon.Dots className="size-4 fill-current" />
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="hint"
+            className="size-5"
+            disabled={isUpgrading}
+            aria-label="More options"
+          >
+            <Icon.Dots className="size-4 fill-current" />
+          </Button>
+        }
+      />
       <DropdownMenuContent className="w-50">
         <DropdownMenuGroup>
           <DropdownMenuItem
-            Icon={<Icon.ArrowUpCircled className="size-4" />}
-            Body={trans["upgrade-to-member"]}
-            onSelect={upgrade}
+            icon={<Icon.ArrowUpCircled className="size-4" />}
+            label={trans["upgrade-to-member"]}
+            onClick={upgrade}
           />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <Dialog>
-            <DialogTrigger asChild>
-              <DropdownMenuItem
-                variant="error"
-                Icon={<Icon.Bye className="size-4" />}
-                Body={trans["remove-from-workspace"]}
-                onSelect={(e) => e.preventDefault()}
-              />
-            </DialogTrigger>
+          <DropdownMenuItem
+            variant="error"
+            icon={<Icon.Bye className="size-4" />}
+            label={trans["remove-from-workspace"]}
+            closeOnClick={false}
+            onClick={() => setOpenRemoveConfirm(true)}
+          />
+          <Dialog open={openRemoveConfirm} onOpenChange={setOpenRemoveConfirm}>
             <DeleteGuest name={name} onDelete={onDelete} />
           </Dialog>
         </DropdownMenuGroup>
@@ -296,23 +312,25 @@ export function InvitationActionCell({ onCancel }: InvitationActionCellProps) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="hint"
-          className="size-5"
-          disabled={isCancelling}
-          aria-label="More options"
-        >
-          <Icon.Dots className="size-4 fill-current" />
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="hint"
+            className="size-5"
+            disabled={isCancelling}
+            aria-label="More options"
+          >
+            <Icon.Dots className="size-4 fill-current" />
+          </Button>
+        }
+      />
       <DropdownMenuContent className="w-50">
         <DropdownMenuGroup>
           <DropdownMenuItem
             variant="error"
-            Icon={<Icon.Bye className="size-4" />}
-            Body={trans["cancel-invitation"]}
-            onSelect={cancel}
+            icon={<Icon.Bye className="size-4" />}
+            label={trans["cancel-invitation"]}
+            onClick={cancel}
           />
         </DropdownMenuGroup>
       </DropdownMenuContent>

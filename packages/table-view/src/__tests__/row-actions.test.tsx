@@ -3,11 +3,12 @@
  * Tests for row CRUD operations using direct table APIs
  */
 
-import type { DragEndEvent } from "@dnd-kit/core";
+import type { DragEndEvent, DragOverEvent } from "@dnd-kit/react";
 import { act, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import type { ColumnInfo, Row } from "../lib/types";
+import type { ColumnInfo, Row } from "@/lib/types";
+
 import { renderTableHook } from "./mock";
 
 const mockProperties: ColumnInfo[] = [
@@ -289,19 +290,21 @@ describe("useTableView - Row Custom APIs", () => {
   });
 
   describe("handleRowDragEnd", () => {
-    it("should reorder rows on drag end", () => {
+    it("should reorder rows from a drag end event", () => {
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
       });
 
-      const dragEvent = {
-        active: { id: "row1", data: { current: {} } },
-        over: { id: "row2", data: { current: {} } },
-      } as DragEndEvent;
-
       act(() => {
-        table.handleRowDragEnd(dragEvent);
+        table.handleRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: "row1" },
+            target: { id: "row2" },
+          },
+        } as DragEndEvent);
       });
 
       const rows = table.getRowModel().rows;
@@ -312,23 +315,179 @@ describe("useTableView - Row Custom APIs", () => {
       expect(row1Index).toBeGreaterThan(row2Index);
     });
 
-    it("should handle drag to beginning", () => {
+    it("should handle moving a row to the beginning from a drag end event", () => {
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
       });
 
-      const dragEvent = {
-        active: { id: "row2", data: { current: {} } },
-        over: { id: "row1", data: { current: {} } },
-      } as DragEndEvent;
-
       act(() => {
-        table.handleRowDragEnd(dragEvent);
+        table.handleRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: "row1" },
+            target: { id: "row2" },
+          },
+        } as DragEndEvent);
       });
 
       const rows = table.getRowModel().rows;
       expect(rows[0]?.id).toBe("row2");
+    });
+
+    it("updates row grouping from kanban column drag metadata", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      act(() => {
+        table.handleRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: "row1", data: { columnId: "col2:25" } },
+            target: { id: "row2", data: { columnId: "col2:30" } },
+          },
+        } as unknown as DragEndEvent);
+      });
+
+      expect(table.getRow("row1").original.properties.col2?.value).toBe(30);
+    });
+
+    it("can commit row grouping without replaying a kanban preview reorder", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      act(() => {
+        table.handleRowDragEnd(
+          {
+            canceled: false,
+            operation: {
+              canceled: false,
+              source: { id: "row1", data: { columnId: "col2:25" } },
+              target: { id: "row2", data: { columnId: "col2:30" } },
+            },
+          } as unknown as DragEndEvent,
+          { reorder: false },
+        );
+      });
+
+      expect(table.getCellValues().map((row) => row.id)).toEqual([
+        "row1",
+        "row2",
+      ]);
+      expect(table.getRow("row1").original.properties.col2?.value).toBe(30);
+    });
+
+    it("previews kanban row order directly in table data", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      act(() => {
+        table.handleKanbanRowDragOver({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: {
+              id: "row1",
+              type: "item",
+              data: { columnId: "col2:25" },
+              manager: {
+                dragOperation: {
+                  position: { current: { x: 0, y: 0 } },
+                },
+              },
+            },
+            target: { id: "row2", type: "item", data: { columnId: "col2:30" } },
+          },
+        } as unknown as DragOverEvent);
+      });
+
+      const targetGroup = table.getGroupedRowModel().rowsById["col2:30"];
+
+      expect(targetGroup?.subRows.map((row) => row.id)).toEqual([
+        "row1",
+        "row2",
+      ]);
+      expect(table.getRow("row1").original.properties.col2?.value).toBe(30);
+    });
+
+    it("moves a kanban row into an emptied column-content target", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      act(() => {
+        table.handleKanbanRowDragOver({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: {
+              id: "row1",
+              type: "item",
+              data: { columnId: "col2:25" },
+            },
+            target: {
+              id: "content:col2:30",
+              type: "column-content",
+              data: { columnId: "col2:30" },
+            },
+          },
+        } as unknown as DragOverEvent);
+      });
+
+      expect(
+        table.getGroupedRowModel().rowsById["col2:25"]?.subRows ?? [],
+      ).toHaveLength(0);
+
+      act(() => {
+        table.handleKanbanRowDragOver({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: {
+              id: "row2",
+              type: "item",
+              data: { columnId: "col2:30" },
+            },
+            target: {
+              id: "content:col2:25",
+              type: "column-content",
+              data: { columnId: "col2:25" },
+            },
+          },
+        } as unknown as DragOverEvent);
+      });
+
+      const emptiedGroup = table.getGroupedRowModel().rowsById["col2:25"];
+      const sourceGroup = table.getGroupedRowModel().rowsById["col2:30"];
+
+      expect(emptiedGroup?.subRows.map((row) => row.id)).toEqual(["row2"]);
+      expect(sourceGroup?.subRows.map((row) => row.id)).toEqual(["row1"]);
+      expect(table.getRow("row2").original.properties.col2?.value).toBe(25);
     });
   });
 

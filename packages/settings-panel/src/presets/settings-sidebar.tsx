@@ -72,17 +72,17 @@ export function SettingsSidebarPreset({
           name={account.preferredName}
           className="font-medium"
           isActive={tab === "account"}
-          Icon={
+          icon={
             <Avatar src={account.avatarUrl} fallback={account.preferredName} />
           }
           onClick={() => onTabChange("account")}
         />
-        {accountTabs.map(({ value, Icon }) => (
+        {accountTabs.map(({ value, icon }) => (
           <SettingsTab
             key={value}
             name={t(`${value}.title`)}
             isActive={tab === value}
-            Icon={Icon}
+            icon={icon}
             onClick={() => onTabChange(value)}
           />
         ))}
@@ -90,12 +90,12 @@ export function SettingsSidebarPreset({
       {tabGroups.map(({ i18nKey, tabs }) => (
         <SettingsSidebarGroup key={i18nKey}>
           <SettingsSidebarTitle>{t(i18nKey)}</SettingsSidebarTitle>
-          {tabs.map(({ value, Icon }) => (
+          {tabs.map(({ value, icon }) => (
             <SettingsTab
               key={value}
               name={t(`${value}.title`)}
               isActive={tab === value}
-              Icon={Icon}
+              icon={icon}
               onClick={() => onTabChange(value)}
             />
           ))}

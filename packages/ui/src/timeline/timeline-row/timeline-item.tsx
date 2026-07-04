@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo, useState } from "react";
+import { RestrictToHorizontalAxis } from "@dnd-kit/abstract/modifiers";
+import { PointerActivationConstraints, PointerSensor } from "@dnd-kit/dom";
 import {
-  DndContext,
-  MouseSensor,
+  DragDropProvider,
   useDraggable,
-  useSensor,
-} from "@dnd-kit/core";
-import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
+  type DragEndEvent,
+} from "@dnd-kit/react";
 import { useMouse } from "@uidotdev/usehooks";
 import { addDays, differenceInCalendarDays, isSameDay } from "date-fns";
 
@@ -25,6 +25,17 @@ import {
   startOfFn,
 } from "../utils";
 import { TimelineItemResizer } from "./timeline-item-resizer";
+
+const timelineItemSensors: React.ComponentProps<
+  typeof DragDropProvider
+>["sensors"] = (defaults) => [
+  ...defaults.filter((sensor) => sensor !== PointerSensor),
+  PointerSensor.configure({
+    activationConstraints: [
+      new PointerActivationConstraints.Distance({ value: 10 }),
+    ],
+  }),
+];
 
 function getWidth(
   startAt: number | Date,
@@ -122,10 +133,6 @@ export function TimelineItem({
   const [previousStartAt, setPreviousStartAt] = useState(startAt);
   const [previousEndAt, setPreviousEndAt] = useState(endAt);
 
-  const mouseSensor = useSensor(MouseSensor, {
-    activationConstraint: { distance: 10 },
-  });
-
   const handleItemDragStart = () => {
     setDragging(true);
     setPreviousMouseX(mousePosition.x);
@@ -153,8 +160,13 @@ export function TimelineItem({
     previousEndAt,
   ]);
 
-  const handleDragEnd = () => {
+  const handleDragEnd = (event?: DragEndEvent) => {
     setDragging(false);
+    if (event?.canceled) {
+      setStartAt(previousStartAt);
+      setEndAt(previousEndAt);
+      return;
+    }
     onMove?.(item.id, startAt.getTime(), endAt?.getTime() ?? null);
   };
 
@@ -185,17 +197,17 @@ export function TimelineItem({
           />
         )}
         {/* Item card */}
-        <DndContext
-          modifiers={[restrictToHorizontalAxis]}
+        <DragDropProvider
+          modifiers={[RestrictToHorizontalAxis]}
           onDragStart={handleItemDragStart}
           onDragMove={handleItemDragMove}
           onDragEnd={handleDragEnd}
-          sensors={[mouseSensor]}
+          sensors={timelineItemSensors}
         >
           <TimelineItemCard id={item.id}>
             {render ? render() : null}
           </TimelineItemCard>
-        </DndContext>
+        </DragDropProvider>
         {/* Right resizer */}
         {onMove && (
           <TimelineItemResizer
@@ -216,8 +228,9 @@ interface TimelineItemCardProps extends React.PropsWithChildren {
 }
 
 function TimelineItemCard({ id, children }: TimelineItemCardProps) {
-  const { isDragging, attributes, listeners, setNodeRef } = useDraggable({
+  const { isDragging, ref } = useDraggable({
     id,
+    type: "timeline-item",
   });
 
   return (
@@ -227,9 +240,7 @@ function TimelineItemCard({ id, children }: TimelineItemCardProps) {
         "absolute flex h-[34px] overflow-hidden ps-1.5",
         isDragging && "cursor-grabbing",
       )}
-      {...attributes}
-      {...listeners}
-      ref={setNodeRef}
+      ref={ref}
     >
       {children}
     </div>

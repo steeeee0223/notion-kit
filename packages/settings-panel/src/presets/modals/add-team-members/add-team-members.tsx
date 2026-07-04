@@ -1,37 +1,24 @@
-import { useMemo } from "react";
-
 import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
-import type { User } from "@notion-kit/schemas";
 import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import {
-  Badge,
   Button,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   Form,
-  FormControl,
-  FormField,
-  FormItem,
-  MenuItem,
-  MenuItemAction,
-  MultiSelect,
-  MultiSelectOption,
-  SelectPreset,
   Spinner,
 } from "@notion-kit/ui/primitives";
-import { idToColor } from "@notion-kit/utils";
 
 import type { TeamspaceRole } from "@/lib/types";
-import { Avatar } from "@/presets/_components";
 
-import { useAddTeamMembersForm } from "./use-add-team-members-form";
-
-interface WorkspaceMember extends User {
-  invited?: boolean;
-}
+import {
+  RoleField,
+  useAddTeamMembersForm,
+  UsersField,
+  type WorkspaceMember,
+} from "./fields";
 
 interface AddTeamMembersProps {
   teamspace: {
@@ -54,21 +41,7 @@ export function AddTeamMembers({
     keyPrefix: "modals.add-team-members",
   });
 
-  const multiSelectOptions = useMemo(
-    () =>
-      workspaceMembers.map<MultiSelectOption>((user) => ({
-        label: user.name,
-        value: user.name,
-        id: user.id,
-        disabled: user.invited,
-        avatarUrl: user.avatarUrl,
-        header: t("headings.select"),
-      })),
-    [workspaceMembers, t],
-  );
-
-  const { form, members, submit } = useAddTeamMembersForm({
-    workspaceMembers,
+  const { form, submit } = useAddTeamMembersForm({
     onSubmit: onAddMembers,
   });
   const disabled = !form.formState.isValid || form.formState.isSubmitting;
@@ -78,7 +51,10 @@ export function AddTeamMembers({
       hideClose
       className="max-h-1/2 min-h-50 w-125"
       aria-describedby=""
-      onCloseAutoFocus={() => form.reset()}
+      finalFocus={() => {
+        form.reset();
+        return true;
+      }}
     >
       <DialogHeader className="items-start text-left">
         <DialogTitle typography="h2" className="flex items-center text-start">
@@ -92,86 +68,8 @@ export function AddTeamMembers({
       <Form {...form}>
         <form onSubmit={submit} className="flex flex-col justify-between gap-3">
           <div className="flex min-h-8 w-full cursor-text flex-nowrap items-start rounded-sm bg-input p-[4px_9px] text-sm focus-within:shadow-notion">
-            <FormField
-              control={form.control}
-              name="users"
-              render={({ field }) => (
-                <FormItem className="min-w-0 grow">
-                  <FormControl>
-                    <MultiSelect
-                      groupBy="header"
-                      className="min-h-7 border-none bg-transparent py-1.5 pl-2 focus-within:shadow-none!"
-                      classNames={{ input: "p-0" }}
-                      options={multiSelectOptions}
-                      disabled={field.disabled}
-                      placeholder={t("search-placeholder")}
-                      hideClearAllButton
-                      emptyIndicator={t("no-results")}
-                      value={field.value.map((user) => ({
-                        label: user.name,
-                        value: user.name,
-                        id: user.id,
-                        color: idToColor(user.id),
-                      }))}
-                      onChange={(values) =>
-                        field.onChange(
-                          values.reduce<User[]>((acc, v) => {
-                            const member = members.get(v.value);
-                            if (member) acc.push(member);
-                            return acc;
-                          }, []),
-                        )
-                      }
-                      renderOption={({ option }) => (
-                        <MenuItem
-                          Icon={
-                            <Avatar
-                              src={
-                                "avatarUrl" in option
-                                  ? (option.avatarUrl as string)
-                                  : undefined
-                              }
-                              fallback={option.label}
-                            />
-                          }
-                          Body={option.label}
-                        >
-                          {option.disabled && (
-                            <MenuItemAction>
-                              <Badge
-                                variant="gray"
-                                size="sm"
-                                className="ml-auto tracking-wide uppercase"
-                              >
-                                {t("invited")}
-                              </Badge>
-                            </MenuItemAction>
-                          )}
-                        </MenuItem>
-                      )}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem className="sticky top-0 ml-2 shrink-0 py-0.5">
-                  <FormControl>
-                    <SelectPreset
-                      options={{
-                        owner: t("roles.owner"),
-                        member: t("roles.member"),
-                      }}
-                      className="mb-0 w-[170px] text-muted"
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+            <UsersField workspaceMembers={workspaceMembers} />
+            <RoleField />
           </div>
           <DialogFooter className="flex-row justify-between">
             <Button type="button" variant="soft-blue" size="sm" disabled>

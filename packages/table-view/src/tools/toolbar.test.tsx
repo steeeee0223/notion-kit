@@ -1,123 +1,99 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import {
-  mockData,
-  mockProperties,
-  mockResizeObserver,
-} from "../__tests__/mock";
-import { TableView } from "../table-contexts";
+import { renderTableView } from "../__tests__/component-objects/render-table-view";
+import { mockResizeObserver } from "../__tests__/mock";
 
 mockResizeObserver();
 
-function renderToolbar() {
-  return render(<TableView properties={mockProperties} data={mockData} />);
-}
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe("Toolbar", () => {
-  describe("Sort Button", () => {
-    it("should show the sort menu when clicking the sort button", async () => {
-      const user = userEvent.setup();
-      renderToolbar();
+  it("Toolbar_SortTrigger_ExposesMenuSemantics", () => {
+    const tableView = renderTableView();
 
-      // Find and click the Sort button
-      const sortButton = screen.getByRole("button", { name: "Sort" });
-      expect(sortButton).toBeInTheDocument();
-
-      await user.click(sortButton);
-
-      // SortMenu contains "Add sort" and "Delete sort" menu items
-      expect(
-        screen.getByRole("menuitem", { name: "Add sort" }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole("menuitem", { name: "Delete sort" }),
-      ).toBeInTheDocument();
-    });
-
-    it("should close the sort menu when clicking outside", async () => {
-      const user = userEvent.setup();
-      renderToolbar();
-
-      // Open the sort menu
-      const sortButton = screen.getByRole("button", { name: "Sort" });
-      await user.click(sortButton);
-
-      // Verify menu is open
-      const addSortButton = screen.getByRole("menuitem", { name: "Add sort" });
-      expect(addSortButton).toBeInTheDocument();
-
-      // Click outside (on the body)
-      await user.click(document.body);
-
-      // Menu should be closed
-      expect(addSortButton).not.toBeInTheDocument();
-    });
+    expect(tableView.button("Sort")).toHaveAttribute("aria-haspopup", "menu");
   });
 
-  describe("Settings Button", () => {
-    it("should show the table menu when clicking the settings button", async () => {
-      const user = userEvent.setup();
-      renderToolbar();
+  it("Toolbar_SortTrigger_OpensSortMenu", async () => {
+    const tableView = renderTableView();
 
-      // Find and click the Settings button
-      const settingsButton = screen.getByRole("button", { name: "Settings" });
-      expect(settingsButton).toBeInTheDocument();
+    const sort = await tableView.openSortMenu();
 
-      await user.click(settingsButton);
+    expect(sort.addSortItem()).toBeVisible();
+    expect(sort.deleteSortItem()).toBeVisible();
+  });
 
-      // TableViewMenu shows "View Settings" header
-      expect(
-        screen.getByRole("heading", { name: "View Settings" }),
-      ).toBeInTheDocument();
-    });
+  it("Toolbar_SortMenu_ClosesOnOutsideClick", async () => {
+    const tableView = renderTableView();
+    const sort = await tableView.openSortMenu();
 
-    it("should close the settings menu when clicking outside", async () => {
-      const user = userEvent.setup();
-      renderToolbar();
+    await tableView.clickOutside();
+    await sort.waitUntilClosed();
 
-      // Open the settings menu
-      const settingsButton = screen.getByRole("button", { name: "Settings" });
-      await user.click(settingsButton);
+    expect(sort.root).not.toBeInTheDocument();
+  });
 
-      // Verify menu is open
-      expect(
-        screen.getByRole("heading", { name: "View Settings" }),
-      ).toBeInTheDocument();
+  it("Toolbar_SettingsTrigger_ExposesMenuSemantics", () => {
+    const tableView = renderTableView();
 
-      // Click outside (on the body)
-      await user.click(document.body);
+    expect(tableView.button("Settings")).toHaveAttribute(
+      "aria-haspopup",
+      "menu",
+    );
+  });
 
-      // Menu should be closed
-      expect(
-        screen.queryByRole("heading", { name: "View Settings" }),
-      ).not.toBeInTheDocument();
-    });
+  it("Toolbar_SettingsTrigger_OpensViewSettings", async () => {
+    const tableView = renderTableView();
 
-    it("should toggle menu state correctly", async () => {
-      const user = userEvent.setup();
-      renderToolbar();
+    const settings = await tableView.openViewSettings();
 
-      const settingsButton = screen.getByRole("button", { name: "Settings" });
+    expect(settings.heading()).toBeVisible();
+  });
 
-      // First click: open
-      await user.click(settingsButton);
-      expect(
-        screen.getByRole("heading", { name: "View Settings" }),
-      ).toBeInTheDocument();
+  it("Toolbar_SettingsClick_RequestsOneOpenTransition", async () => {
+    const log = vi.spyOn(console, "log").mockImplementation(() => undefined);
+    const tableView = renderTableView();
 
-      // Second click: close
-      await user.click(settingsButton);
-      expect(
-        screen.queryByRole("heading", { name: "View Settings" }),
-      ).not.toBeInTheDocument();
+    const settings = await tableView.openViewSettings();
 
-      // Third click: re-open
-      await user.click(settingsButton);
-      expect(
-        screen.getByRole("heading", { name: "View Settings" }),
-      ).toBeInTheDocument();
-    });
+    const menuSyncs = log.mock.calls.filter(
+      ([message]) => message === "[table.setTableMenuState] table synced",
+    );
+    expect(menuSyncs).toHaveLength(1);
+    expect(settings.heading()).toBeVisible();
+  });
+
+  it("Toolbar_ViewSettings_ClosesOnOutsideClick", async () => {
+    const tableView = renderTableView();
+    const settings = await tableView.openViewSettings();
+
+    await tableView.clickOutside();
+    await settings.waitUntilClosed();
+
+    expect(settings.root).not.toBeInTheDocument();
+  });
+
+  it("Toolbar_SettingsTrigger_TogglesMenu", async () => {
+    const tableView = renderTableView();
+    const firstSettings = await tableView.openViewSettings();
+
+    await tableView.clickButton("Settings");
+    await firstSettings.waitUntilClosed();
+    const reopenedSettings = await tableView.openViewSettings();
+
+    expect(firstSettings.root).not.toBeInTheDocument();
+    expect(reopenedSettings.heading()).toBeVisible();
+  });
+
+  it("Toolbar_ViewSettingsClose_ClosesMenu", async () => {
+    const tableView = renderTableView();
+    const settings = await tableView.openViewSettings();
+
+    await settings.close();
+    await settings.waitUntilClosed();
+
+    expect(settings.root).not.toBeInTheDocument();
   });
 });

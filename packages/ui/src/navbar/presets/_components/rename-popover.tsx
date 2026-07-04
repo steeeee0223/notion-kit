@@ -4,7 +4,8 @@ import { IconBlock, type IconData } from "@/icon-block";
 import { IconMenu } from "@/icon-menu";
 import { Input, Popover, PopoverContent, PopoverTrigger } from "@/primitives";
 
-interface RenamePopoverProps extends React.PropsWithChildren {
+interface RenamePopoverProps {
+  children: React.ReactElement;
   title: string;
   icon: IconData;
   onChange: (value: { title: string; icon: IconData }) => void;
@@ -38,11 +39,8 @@ export function RenamePopover({
 
   return (
     <Popover open={open} onOpenChange={onOpenChange} modal>
-      <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent
-        className="flex w-[380px] items-center gap-1.5 px-2 py-1"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <PopoverTrigger render={children} />
+      <PopoverContent className="flex w-95 items-center gap-1.5 px-2 py-1">
         <IconMenu
           className="size-7 shrink-0 border border-border-button hover:bg-default/5"
           onSelect={(icon) => onChange({ title, icon })}

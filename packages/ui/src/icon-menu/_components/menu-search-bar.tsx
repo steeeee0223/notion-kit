@@ -17,7 +17,7 @@ export const MenuSearchBar: React.FC<MenuSearchBarProps> = ({
   Palette,
 }) => {
   return (
-    <TooltipProvider delayDuration={500}>
+    <TooltipProvider>
       <div className="mb-1.5 flex w-full items-center gap-x-1.5">
         <div className="flex-1">
           <Input
@@ -26,6 +26,7 @@ export const MenuSearchBar: React.FC<MenuSearchBarProps> = ({
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             onCancel={() => onSearchChange("")}
+            onKeyDown={(e) => e.stopPropagation()}
             placeholder="Filter..."
           />
         </div>

@@ -1,4 +1,4 @@
-import type { DragEndEvent } from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/react";
 import type {
   OnChangeFn,
   Row,
@@ -12,10 +12,11 @@ import {
   makeStateUpdater,
 } from "@tanstack/react-table";
 
-import type { ColumnInfo, Row as RowModel } from "../lib/types";
-import type { CellPlugin, ComparableValue, InferData } from "../plugins";
-import { DefaultGroupingValue } from "../plugins";
-import { createDragEndUpdater } from "./utils";
+import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
+
+import type { ColumnInfo, Row as RowModel } from "@/lib/types";
+import type { CellPlugin, ComparableValue, InferData } from "@/plugins";
+import { DefaultGroupingValue } from "@/plugins";
 
 interface ExtendedGroupingState {
   groupOrder: string[];
@@ -147,10 +148,9 @@ export const ExtendedGroupingFeature: TableFeature = {
       });
     };
     table.handleGroupedRowDragEnd = (e) => {
-      const updater = createDragEndUpdater<string>(e, (v) => v);
-      table._setGroupingState((v) => ({
-        ...v,
-        groupOrder: functionalUpdate(updater, v.groupOrder),
+      table._setGroupingState((state) => ({
+        ...state,
+        groupOrder: getSortableItemsAfterDrag(state.groupOrder, e),
       }));
     };
     table._resetGroupingState = () => {

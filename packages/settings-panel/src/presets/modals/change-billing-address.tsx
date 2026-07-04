@@ -156,16 +156,18 @@ function AddressFormStripe({
         </div>
       </div>
       <div className="flex items-center justify-end gap-2">
-        <DialogClose asChild>
-          <Button
-            type="button"
-            variant="hint"
-            size="sm"
-            className="text-secondary"
-          >
-            {t("cancel")}
-          </Button>
-        </DialogClose>
+        <DialogClose
+          render={
+            <Button
+              type="button"
+              variant="hint"
+              size="sm"
+              className="text-secondary"
+            >
+              {t("cancel")}
+            </Button>
+          }
+        />
         <Button
           type="button"
           variant="blue"
@@ -247,9 +249,9 @@ function ChangeBillingAddressNative({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("full-name")}</FormLabel>
-                <FormControl>
-                  <Input placeholder="Ada Lovelace" {...field} />
-                </FormControl>
+                <FormControl
+                  render={<Input placeholder="Ada Lovelace" {...field} />}
+                />
               </FormItem>
             )}
           />
@@ -259,9 +261,9 @@ function ChangeBillingAddressNative({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("country")}</FormLabel>
-                <FormControl>
-                  <Input placeholder="United States" {...field} />
-                </FormControl>
+                <FormControl
+                  render={<Input placeholder="United States" {...field} />}
+                />
               </FormItem>
             )}
           />
@@ -271,9 +273,9 @@ function ChangeBillingAddressNative({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("postal-code")}</FormLabel>
-                <FormControl>
-                  <Input placeholder="94107" {...field} />
-                </FormControl>
+                <FormControl
+                  render={<Input placeholder="94107" {...field} />}
+                />
               </FormItem>
             )}
           />
@@ -283,23 +285,25 @@ function ChangeBillingAddressNative({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("business-name")}</FormLabel>
-                <FormControl>
-                  <Input placeholder="Acme Inc." {...field} />
-                </FormControl>
+                <FormControl
+                  render={<Input placeholder="Acme Inc." {...field} />}
+                />
               </FormItem>
             )}
           />
           <div className="flex items-center justify-end gap-2">
-            <DialogClose asChild>
-              <Button
-                type="button"
-                variant="hint"
-                size="sm"
-                className="text-secondary"
-              >
-                {t("cancel")}
-              </Button>
-            </DialogClose>
+            <DialogClose
+              render={
+                <Button
+                  type="button"
+                  variant="hint"
+                  size="sm"
+                  className="text-secondary"
+                >
+                  {t("cancel")}
+                </Button>
+              }
+            />
             <Button
               type="submit"
               variant="blue"

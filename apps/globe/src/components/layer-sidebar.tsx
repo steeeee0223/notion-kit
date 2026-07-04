@@ -4,7 +4,12 @@ import {
   MenuGroup,
   MenuItemSwitch,
   MenuLabel,
-  SelectPreset,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Separator,
   Switch,
   Tabs,
@@ -19,23 +24,27 @@ import { useLayerStore } from "@/lib/layer-registry";
 
 import { QuickLocations } from "./quick-locations";
 
-const SOURCES: Record<
-  SourceAdapterId,
-  { label: string; icon: React.ReactNode }
-> = {
-  bkk: {
+const SOURCES: {
+  value: SourceAdapterId;
+  label: string;
+  icon: React.ReactNode;
+}[] = [
+  {
+    value: "bkk",
     label: "BKK Futar (TODO)",
     icon: <Icon.Map className="size-4 fill-icon" />,
   },
-  transit: {
+  {
+    value: "transit",
     label: "Transitland Global",
     icon: <Icon.Globe className="size-4 fill-icon" />,
   },
-  simulator: {
+  {
+    value: "simulator",
     label: "Simulator",
     icon: <Icon.Map className="size-4 fill-icon" />,
   },
-};
+];
 
 export function LayerSidebar() {
   const { plugins, toggle } = useLayerStore();
@@ -72,12 +81,24 @@ export function LayerSidebar() {
             <MenuLabel className="text-xs font-semibold text-secondary">
               Data Source
             </MenuLabel>
-            <SelectPreset
-              className="w-full rounded-md border bg-transparent px-3 py-1.5 text-sm"
-              options={SOURCES}
+            <Select
+              items={SOURCES}
               value={activeAdapter}
-              onChange={setActiveAdapter}
-            />
+              onValueChange={(nextValue) => {
+                if (nextValue !== null) setActiveAdapter(nextValue);
+              }}
+            >
+              <SelectTrigger className="w-full rounded-md border bg-transparent px-3 py-1.5 text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {SOURCES.map((option) => (
+                    <SelectItem key={option.value} {...option} />
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </MenuGroup>
 
           <MenuGroup className="gap-4">
@@ -143,11 +164,11 @@ export function LayerSidebar() {
                 {activeAdapter === id && (
                   <div className="mt-2 flex flex-col gap-2 border-t pt-3">
                     <MenuGroup>
-                      <MenuLabel>Layers</MenuLabel>
+                      <MenuLabel title="Layers" />
                       {pluginList.map((plugin) => (
                         <MenuItemSwitch
                           key={plugin.id}
-                          Body={plugin.name}
+                          label={plugin.name}
                           checked={plugin.enabled}
                           onCheckedChange={() => toggle(plugin.id)}
                         />

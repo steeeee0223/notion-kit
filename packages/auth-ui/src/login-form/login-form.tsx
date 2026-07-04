@@ -140,16 +140,18 @@ export function LoginForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        className="bg-transparent"
-                        data-size="lg"
-                        placeholder="Enter your email address..."
-                        clear
-                        onCancel={() => field.onChange("")}
-                        {...field}
-                      />
-                    </FormControl>
+                    <FormControl
+                      render={
+                        <Input
+                          className="bg-transparent"
+                          data-size="lg"
+                          placeholder="Enter your email address..."
+                          clear
+                          onCancel={() => field.onChange("")}
+                          {...field}
+                        />
+                      }
+                    />
                     {forgotPasswordStage === "none" && (
                       <FormDescription>
                         Use an organization email to easily collaborate with
@@ -166,15 +168,17 @@ export function LoginForm({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          className="bg-transparent"
-                          data-size="lg"
-                          placeholder="Enter your email password..."
-                          {...field}
-                        />
-                      </FormControl>
+                      <FormControl
+                        render={
+                          <Input
+                            type="password"
+                            className="bg-transparent"
+                            data-size="lg"
+                            placeholder="Enter your email password..."
+                            {...field}
+                          />
+                        }
+                      />
                       {mode === "sign_in" && (
                         <div
                           role="button"

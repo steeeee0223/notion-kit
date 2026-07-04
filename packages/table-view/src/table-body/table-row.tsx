@@ -1,17 +1,13 @@
-"use client";
-
 import React from "react";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import { Cell, flexRender, Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
-import { Checkbox } from "@notion-kit/ui/primitives";
+import { Checkbox, Sortable } from "@notion-kit/ui/primitives";
 
-import { RowActions, TableRowActionGroup } from "../common";
-import type { Row as RowModel } from "../lib/types";
-import { useTableViewCtx } from "../table-contexts";
+import { RowActions, TableRowActionGroup } from "@/common";
+import type { Row as RowModel } from "@/lib/types";
+import { useTableViewCtx } from "@/table-contexts";
 
 interface TableRowProps {
   row: Row<RowModel>;
@@ -29,34 +25,18 @@ export function TableRow({ row }: TableRowProps) {
     }
     table.addRow({ id: row.id, at: "next" });
   };
-  /** DND */
-  const {
-    attributes,
-    isDragging,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({
-    id: row.id,
-    disabled: locked,
-    data: {
-      type: "table-row",
-      groupId: row.parentId,
-    },
-  });
-  const style: React.CSSProperties = {
-    opacity: isDragging ? 0.8 : 1,
-    transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
-    transition, // Warning: it is somehow laggy
-  };
-
   return (
-    <div
-      ref={setNodeRef}
-      data-block-id={row.id}
-      className="group/row flex h-[calc(100%+2px)]"
-      style={style}
+    <Sortable.Item
+      id={row.id}
+      index={row.index}
+      disabled={locked}
+      data={{ type: "table-row", groupId: row.parentId }}
+      render={
+        <div
+          data-block-id={row.id}
+          className="group/row flex h-[calc(100%+2px)]"
+        />
+      }
     >
       <div
         role="row"
@@ -75,15 +55,12 @@ export function TableRow({ row }: TableRowProps) {
                 <RowActions
                   className="absolute -left-20"
                   rowId={row.id}
-                  isDragging={isDragging}
                   isMobile={isMobile}
-                  dragHandleProps={{ ...attributes, ...listeners }}
                   onAddNext={addNextRow}
                 />
                 {/* Row selection */}
                 <TableRowActionGroup
                   className="absolute -left-8 *:has-data-[state=checked]:opacity-100"
-                  isDragging={isDragging}
                   isMobile={isMobile}
                 >
                   <label
@@ -93,7 +70,7 @@ export function TableRow({ row }: TableRowProps) {
                     <Checkbox
                       id="row-select"
                       size="sm"
-                      className="cursor-pointer rounded-[2px] accent-blue"
+                      className="cursor-pointer rounded-xs accent-blue"
                     />
                   </label>
                 </TableRowActionGroup>
@@ -108,7 +85,7 @@ export function TableRow({ row }: TableRowProps) {
       </div>
       {/* Bottom line at row end */}
       <div className="flex w-16 grow justify-start border-b border-b-border-cell" />
-    </div>
+    </Sortable.Item>
   );
 }
 

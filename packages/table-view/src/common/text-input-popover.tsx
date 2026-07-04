@@ -12,7 +12,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 interface TextInputPopoverProps extends TextInputContentProps {
-  renderTrigger: ({ width }: { width: number }) => React.ReactNode;
+  renderTrigger: ({ width }: { width: number }) => React.ReactElement;
 }
 
 export function TextInputPopover({
@@ -24,9 +24,11 @@ export function TextInputPopover({
   const [open, setOpen] = useState(false);
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger ref={ref} asChild>
-        {renderTrigger({ width: rect.width })}
-      </PopoverTrigger>
+      <PopoverTrigger
+        ref={ref}
+        nativeButton={false}
+        render={renderTrigger({ width: rect.width })}
+      />
       <PopoverContent
         side="bottom"
         sideOffset={-rect.height}

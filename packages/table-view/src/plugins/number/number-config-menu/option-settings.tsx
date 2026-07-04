@@ -1,9 +1,23 @@
 import { z } from "zod/v4";
 
-import { Input, SelectPreset, Switch } from "@notion-kit/ui/primitives";
+import {
+  Input,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Switch,
+} from "@notion-kit/ui/primitives";
 import { COLOR_OPTIONS } from "@notion-kit/utils";
 
 import type { NumberOptions } from "../types";
+
+const colorOptions = Object.entries(COLOR_OPTIONS).map(([value, label]) => ({
+  value,
+  label,
+}));
 
 interface OptionSettingsProps {
   options: NumberOptions;
@@ -22,18 +36,35 @@ export function OptionSettings({ options, onUpdate }: OptionSettingsProps) {
         <div className="flex-[6_1_0] text-sm">Color</div>
         <div className="flex flex-[6_1_0] flex-wrap gap-2">
           <div className="flex w-full justify-end">
-            <SelectPreset
-              options={COLOR_OPTIONS}
+            <Select
+              items={colorOptions}
               value={options.color}
-              onChange={(color) => onUpdate({ color })}
-            />
+              onValueChange={(color) => {
+                if (color !== null) onUpdate({ color });
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {colorOptions.map((option) => (
+                    <SelectItem key={option.value} {...option} />
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
       <div className="flex h-7 w-full items-center gap-4 px-4">
         <div className="flex-[6_1_0] text-sm">Divide by</div>
         <div className="flex-[6_1_0]">
-          <Input defaultValue={options.divideBy} onBlur={updateValue} />
+          <Input
+            defaultValue={options.divideBy}
+            onBlur={updateValue}
+            onKeyDown={(e) => e.stopPropagation()}
+          />
         </div>
       </div>
       <div className="flex h-7 w-full items-center gap-4 px-4">

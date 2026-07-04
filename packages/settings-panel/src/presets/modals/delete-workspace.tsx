@@ -50,7 +50,7 @@ export function DeleteWorkspace({ name, onSubmit }: DeleteWorkspaceProps) {
   };
 
   return (
-    <DialogContent className="w-[420px] p-5">
+    <DialogContent className="w-105 p-5">
       <DialogHeader>
         <DialogIcon>
           <Icon.ExclamationMarkCircled className="size-9 fill-red" />
@@ -65,9 +65,11 @@ export function DeleteWorkspace({ name, onSubmit }: DeleteWorkspaceProps) {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormControl>
-                  <Input placeholder={name} {...field} data-size="lg" />
-                </FormControl>
+                <FormControl
+                  render={
+                    <Input placeholder={name} {...field} data-size="lg" />
+                  }
+                />
               </FormItem>
             )}
           />
@@ -84,16 +86,18 @@ export function DeleteWorkspace({ name, onSubmit }: DeleteWorkspaceProps) {
             >
               {t("delete")}
             </Button>
-            <DialogClose asChild>
-              <Button
-                variant="hint"
-                size="sm"
-                className="h-7 w-fit"
-                disabled={form.formState.isSubmitting}
-              >
-                {t("cancel")}
-              </Button>
-            </DialogClose>
+            <DialogClose
+              render={
+                <Button
+                  variant="hint"
+                  size="sm"
+                  className="h-7 w-fit"
+                  disabled={form.formState.isSubmitting}
+                >
+                  {t("cancel")}
+                </Button>
+              }
+            />
           </DialogFooter>
         </form>
       </Form>

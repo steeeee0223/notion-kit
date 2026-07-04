@@ -46,11 +46,13 @@ export function History({ pageId, fetchLogs }: HistoryProps) {
 
   return (
     <Drawer direction="right" open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        <NavbarItem hint={hint} className="w-7" onClick={handleClick}>
-          <Icon.Clock className="size-5 fill-current" />
-        </NavbarItem>
-      </DrawerTrigger>
+      <DrawerTrigger
+        render={
+          <NavbarItem hint={hint} className="w-7" onClick={handleClick}>
+            <Icon.Clock className="size-5 fill-current" />
+          </NavbarItem>
+        }
+      />
       <DrawerContent side="right" noTitle className="w-90">
         <div className="absolute top-0 left-0 ml-2.5 flex h-12 items-center">
           <TooltipPreset description="Close panel">

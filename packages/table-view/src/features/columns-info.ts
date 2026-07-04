@@ -1,4 +1,4 @@
-import type { DragEndEvent } from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/react";
 import type {
   Column,
   OnChangeFn,
@@ -9,16 +9,19 @@ import type {
 import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
-import type { ColumnInfo, PluginType, Row } from "../lib/types";
+import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
+
+import type { ColumnInfo, PluginType, Row } from "@/lib/types";
 import {
   arrayToEntity,
   getDefaultCell,
   getUniqueName,
   type Entity,
-} from "../lib/utils";
-import type { CellPlugin, InferConfig, InferPlugin } from "../plugins";
-import { DEFAULT_PLUGINS } from "../plugins";
-import { createDragEndUpdater, createIdsUpdater } from "./utils";
+} from "@/lib/utils";
+import type { CellPlugin, InferConfig, InferPlugin } from "@/plugins";
+import { DEFAULT_PLUGINS } from "@/plugins";
+
+import { createIdsUpdater } from "./utils";
 
 export type ColumnsInfoState<TPlugins extends CellPlugin[] = CellPlugin[]> =
   Record<string, ColumnInfo<InferPlugin<TPlugins>>>;
@@ -152,13 +155,11 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
       table._setColumnInfo(colId, (prev) => ({ ...prev, ...info }));
     };
     table.handleColumnDragEnd = (e) => {
-      table.options.onColumnInfoChange?.((prev) => {
-        const updater = createDragEndUpdater<string>(e, (v) => v);
-        return {
-          ...prev,
-          ids: functionalUpdate(updater, prev.ids),
-        };
-      });
+      const { columnOrder } = table.getState();
+      table.options.onColumnInfoChange?.((prev) => ({
+        ...prev,
+        ids: getSortableItemsAfterDrag(columnOrder, e),
+      }));
       table.options.sync?.("table.handleColumnDragEnd");
     };
     table._addColumnInfo = (info, idsUpdater) => {
@@ -236,6 +237,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
           return { ...row, properties };
         }),
       );
+      table.options.sync?.("table.removeColumnInfo");
     };
     table.toggleColumnWrapped = (colId, updater) => {
       table._setColumnInfo(colId, (prev) => ({

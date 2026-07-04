@@ -49,7 +49,7 @@ export function EmojiCategoryNav({
   scrollToSection,
 }: EmojiCategoryNavProps) {
   return (
-    <TooltipProvider delayDuration={300}>
+    <TooltipProvider>
       <div className="-mx-3 -mb-3 flex items-center gap-0.5 border-t px-3 py-1">
         {categories.map((catId) => {
           const cat = CATEGORY_ICONS[catId];

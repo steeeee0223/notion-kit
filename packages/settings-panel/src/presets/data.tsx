@@ -22,38 +22,38 @@ export type TabType =
 
 interface TabItem {
   value: Exclude<TabType, "account">;
-  Icon: React.ReactNode;
+  icon: React.ReactNode;
 }
 
 export const accountTabs: TabItem[] = [
-  { Icon: <Icon.Sliders />, value: "preferences" },
-  { Icon: <Icon.Bell />, value: "notifications" },
-  { Icon: <Icon.ArrowUpRightSquare />, value: "my-connections" },
+  { icon: <Icon.Sliders />, value: "preferences" },
+  { icon: <Icon.Bell />, value: "notifications" },
+  { icon: <Icon.ArrowUpRightSquare />, value: "my-connections" },
 ];
 
 export const workspaceTabs: TabItem[] = [
-  { Icon: <Icon.Gear />, value: "general" },
-  { Icon: <Icon.People />, value: "people" },
-  { Icon: <Icon.ArrowLineDown />, value: "import" },
+  { icon: <Icon.Gear />, value: "general" },
+  { icon: <Icon.People />, value: "people" },
+  { icon: <Icon.ArrowLineDown />, value: "import" },
 ];
 
 export const featuresTabs: TabItem[] = [
-  { Icon: <Icon.AiFace />, value: "notion-ai" },
-  { Icon: <Icon.BrowserClick />, value: "sites" },
-  { Icon: <Icon.EmojiFace />, value: "emoji" },
+  { icon: <Icon.AiFace />, value: "notion-ai" },
+  { icon: <Icon.BrowserClick />, value: "sites" },
+  { icon: <Icon.EmojiFace />, value: "emoji" },
 ];
 
 export const integrationsTabs: TabItem[] = [
-  { Icon: <Icon.SquareGrid2x2 />, value: "connections" },
+  { icon: <Icon.SquareGrid2x2 />, value: "connections" },
 ];
 
 export const adminTabs: TabItem[] = [
-  { Icon: <Icon.Teamspace />, value: "teamspaces" },
-  { Icon: <Icon.Key />, value: "security" },
-  { Icon: <Icon.CheckmarkShield />, value: "identity" },
+  { icon: <Icon.Teamspace />, value: "teamspaces" },
+  { icon: <Icon.Key />, value: "security" },
+  { icon: <Icon.CheckmarkShield />, value: "identity" },
 ];
 
 export const billingTabs: TabItem[] = [
-  { Icon: <Icon.CreditCard />, value: "billing" },
-  { Icon: <Icon.Map />, value: "plans" },
+  { icon: <Icon.CreditCard />, value: "billing" },
+  { icon: <Icon.Map />, value: "plans" },
 ];

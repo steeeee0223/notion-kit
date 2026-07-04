@@ -1,28 +1,24 @@
-"use client";
-
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import type { HeaderContext } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
-  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  Sortable,
+  TooltipDescription,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { DefaultIcon } from "../common";
-import type { Row } from "../lib/types";
+import { DefaultIcon } from "@/common";
+import type { Row } from "@/lib/types";
+
 import { PropMenu } from "../menus";
 
 /**
  * Table Header Cell
- *
- * @requires SortableContext
  */
 export function TableHeaderCell({
   header,
@@ -33,53 +29,46 @@ export function TableHeaderCell({
   const onResizeStart = header.getResizeHandler();
   const { locked } = table.getTableGlobalState();
 
-  /** DND */
-  const {
-    attributes,
-    isDragging,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: header.column.id, disabled: locked });
-
   const style: React.CSSProperties = {
     width: header.column.getWidth(),
-    opacity: isDragging ? 0.8 : 1,
-    zIndex: isDragging ? 10 : 0,
-    transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
-    transition, // Warning: it is somehow laggy
   };
 
   return (
-    <div
-      className="relative flex cursor-grab flex-row whitespace-nowrap"
-      ref={setNodeRef}
+    <Sortable.Item
+      id={header.column.id}
+      index={header.column.getIndex()}
+      disabled={locked}
       style={style}
+      render={
+        <div className="relative flex cursor-grab flex-row whitespace-nowrap" />
+      }
     >
       <DropdownMenu modal={false}>
         <TooltipPreset
           description={
-            info.description
-              ? [
-                  { type: "default", text: info.name },
-                  { type: "secondary", text: info.description },
-                ]
-              : info.name
+            info.description ? (
+              <>
+                <TooltipDescription text={info.name} />
+                <TooltipDescription type="secondary" text={info.description} />
+              </>
+            ) : (
+              info.name
+            )
           }
           side="top"
         >
-          <DropdownMenuTrigger asChild disabled={locked}>
-            <div
-              id="notion-table-view-header-cell"
-              className="flex shrink-0 overflow-hidden p-0 text-sm"
-              style={{ width: header.column.getSize() }}
-            >
-              <Button
-                {...attributes}
-                {...listeners}
+          <DropdownMenuTrigger
+            disabled={locked}
+            render={
+              <Sortable.Handle
+                aria-label={info.name}
+                id="notion-table-view-header-cell"
                 variant="cell"
-                className={cn("size-full px-2", isResizing && "bg-transparent")}
+                className={cn(
+                  "h-full overflow-hidden px-2 text-sm",
+                  isResizing && "bg-transparent",
+                )}
+                style={{ width: header.column.getSize() }}
               >
                 {info.icon ? (
                   <IconBlock
@@ -91,19 +80,13 @@ export function TableHeaderCell({
                 )}
                 <div className="truncate">{info.name}</div>
                 {info.description && <Icon.Info className="size-3 fill-icon" />}
-              </Button>
-            </div>
-          </DropdownMenuTrigger>
+              </Sortable.Handle>
+            }
+          />
         </TooltipPreset>
-        {!isDragging && (
-          <DropdownMenuContent
-            align="start"
-            sideOffset={0}
-            className="w-[220px]"
-          >
-            <PropMenu view="table" propId={header.column.id} />
-          </DropdownMenuContent>
-        )}
+        <DropdownMenuContent align="start" sideOffset={0} className="w-55">
+          <PropMenu view="table" propId={header.column.id} />
+        </DropdownMenuContent>
       </DropdownMenu>
       {/* Resize handle */}
       <div className="absolute right-0 z-10 w-0 grow-0">
@@ -111,7 +94,7 @@ export function TableHeaderCell({
           role="presentation"
           tabIndex={-1}
           className={cn(
-            "-mt-px -ml-[3px] h-[34px] w-[5px] animate-bg-out cursor-col-resize bg-transparent hover:bg-blue/80",
+            "-mt-px ml-[-3px] h-[34px] w-[5px] animate-bg-out cursor-col-resize bg-transparent hover:bg-blue/80",
             isResizing && "bg-blue/80",
           )}
           // Resize for desktop
@@ -122,6 +105,6 @@ export function TableHeaderCell({
           onTouchEnd={header.column.handleResizeEnd}
         />
       </div>
-    </div>
+    </Sortable.Item>
   );
 }

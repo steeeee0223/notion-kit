@@ -1,127 +1,72 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
-import {
-  mockData,
-  mockProperties,
-  mockResizeObserver,
-} from "../__tests__/mock";
-import { TableView } from "../table-contexts";
+import { renderTableView } from "../__tests__/component-objects/render-table-view";
+import { mockResizeObserver } from "../__tests__/mock";
 
 mockResizeObserver();
 
-function renderTableView() {
-  return render(<TableView properties={mockProperties} data={mockData} />);
-}
-
-async function openLayoutMenu(user: ReturnType<typeof userEvent.setup>) {
-  const settingsButton = screen.getByRole("button", { name: "Settings" });
-  await user.click(settingsButton);
-
-  expect(
-    screen.getByRole("heading", { name: "View Settings" }),
-  ).toBeInTheDocument();
-
-  // Click Layout menu item
-  const layoutMenuItem = screen.getByRole("menuitem", { name: /layout/i });
-  await user.click(layoutMenuItem);
-
-  expect(screen.getByRole("heading", { name: "Layout" })).toBeInTheDocument();
-}
-
-/**
- * Helper to find a layout button by its text content
- */
-function getLayoutButton(name: string): HTMLElement {
-  const button = screen.queryByRole("button", { name });
-  if (!button) {
-    throw new Error(`Layout button with name "${name}" not found`);
-  }
-  return button;
+async function openLayoutMenu() {
+  const tableView = renderTableView();
+  const settings = await tableView.openViewSettings();
+  return settings.openLayout();
 }
 
 describe("LayoutMenu", () => {
-  it("should display the Layout menu with layout options", async () => {
-    const user = userEvent.setup();
-    renderTableView();
-
-    await openLayoutMenu(user);
-
-    // Should show layout options
-    expect(screen.getByRole("button", { name: "Table" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Board" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "List" })).toBeInTheDocument();
+  it("LayoutMenu_Open_ShowsLayoutOptions", async () => {
+    const layout = await openLayoutMenu();
+    expect(layout.layoutButton("Table")).toBeVisible();
+    expect(layout.layoutButton("Board")).toBeVisible();
+    expect(layout.layoutButton("List")).toBeVisible();
   });
 
-  it("should show Table as the default selected layout", async () => {
-    const user = userEvent.setup();
-    renderTableView();
-
-    await openLayoutMenu(user);
-
-    // Table button should be selected
-    const tableButton = getLayoutButton("Table");
-    expect(tableButton.ariaSelected).toBe("true");
+  it("LayoutMenu_DefaultLayout_SelectsTable", async () => {
+    const layout = await openLayoutMenu();
+    expect(layout.layoutButton("Table")).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
   });
 
-  it("should switch to List layout when clicking List", async () => {
-    const user = userEvent.setup();
-    renderTableView();
-
-    await openLayoutMenu(user);
-
-    // Click List button
-    const listButton = getLayoutButton("List");
-    await user.click(listButton);
-
-    // List button should now be selected
-    expect(listButton.ariaSelected).toBe("true");
-
-    // Table button should not be selected
-    const tableButton = getLayoutButton("Table");
-    expect(tableButton.ariaSelected).toBe("false");
+  it("LayoutMenu_ListSelection_SelectsList", async () => {
+    const layout = await openLayoutMenu();
+    await layout.selectLayout("List");
+    expect(layout.layoutButton("List")).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    expect(layout.layoutButton("Table")).toHaveAttribute(
+      "aria-selected",
+      "false",
+    );
   });
 
-  it("should switch to Board layout when clicking Board", async () => {
-    const user = userEvent.setup();
-    renderTableView();
-
-    await openLayoutMenu(user);
-
-    // Click Board button
-    const boardButton = getLayoutButton("Board");
-    await user.click(boardButton);
-
-    // Board button should now be selected
-    expect(boardButton.ariaSelected).toBe("true");
+  it("LayoutMenu_BoardSelection_SelectsBoard", async () => {
+    const layout = await openLayoutMenu();
+    await layout.selectLayout("Board");
+    expect(layout.layoutButton("Board")).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
   });
 
-  it("should show 'Open pages in' row view menu", async () => {
-    const user = userEvent.setup();
-    renderTableView();
-
-    await openLayoutMenu(user);
-
-    // Should show row view menu item
-    expect(screen.getByText("Open pages in")).toBeInTheDocument();
-    // Default value should be "Side peek"
-    expect(screen.getByText("Side peek")).toBeInTheDocument();
+  it("LayoutMenu_RowViewHover_OpensCheckedSidePeek", async () => {
+    const layout = await openLayoutMenu();
+    expect(layout.rowViewTrigger()).toHaveTextContent("Side peek");
+    expect(layout.queryRowViewOption("Side peek")).not.toBeInTheDocument();
+    await layout.openRowViewOptions();
+    expect(layout.rowViewOption("Side peek")).toBeChecked();
   });
 
-  it("should navigate back to View Settings when clicking back button", async () => {
-    const user = userEvent.setup();
-    renderTableView();
+  it("LayoutMenu_RowViewSelection_StaysOpenAndChecksSelection", async () => {
+    const layout = await openLayoutMenu();
+    await layout.selectRowView("Center peek");
+    expect(layout.heading()).toBeVisible();
+    expect(layout.rowViewTrigger()).toHaveTextContent("Center peek");
+  });
 
-    await openLayoutMenu(user);
-
-    // Click back button
-    const backButton = screen.getByRole("button", { name: /back/i });
-    await user.click(backButton);
-
-    // Should return to main menu with "View Settings"
-    expect(
-      screen.getByRole("heading", { name: "View Settings" }),
-    ).toBeInTheDocument();
+  it("LayoutMenu_BackNavigation_ReturnsToViewSettings", async () => {
+    const layout = await openLayoutMenu();
+    const settings = await layout.backToViewSettings();
+    expect(settings.heading("View Settings")).toBeVisible();
   });
 });

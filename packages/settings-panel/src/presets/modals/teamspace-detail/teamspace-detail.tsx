@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-import { useTemporaryFix } from "@notion-kit/hooks";
 import { useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
 import { User } from "@notion-kit/schemas";
@@ -69,17 +68,14 @@ export function TeamspaceDetail({
     keyPrefix: "modals.teamspace-detail",
   });
 
-  const { onCloseAutoFocus } = useTemporaryFix();
   const [tab, setTab] = useState(Tab.Members);
 
   return (
     <TooltipProvider>
       <DialogContent
         className="block h-160 w-[630px] max-w-[unset] overflow-hidden p-9 pt-5"
-        onClick={(e) => e.stopPropagation()}
         hideClose
         noTitle
-        onCloseAutoFocus={onCloseAutoFocus}
       >
         <div className="flex h-[26px] shrink-0 grow-0 items-center gap-2">
           <IconBlock icon={teamspace.icon} size="sm" />
@@ -90,16 +86,18 @@ export function TeamspaceDetail({
           {teamspace.role ? (
             <Dialog>
               <TooltipPreset side="top" description="Click to leave teamspace">
-                <DialogTrigger asChild>
-                  <Button
-                    tabIndex={-1}
-                    variant={null}
-                    className="h-7 rounded-full bg-default/5 px-2.5 hover:bg-default/15"
-                  >
-                    <Icon.Check className="block h-full w-3 fill-current" />
-                    {t("joined")}
-                  </Button>
-                </DialogTrigger>
+                <DialogTrigger
+                  render={
+                    <Button
+                      tabIndex={-1}
+                      variant={null}
+                      className="h-7 rounded-full bg-default/5 px-2.5 hover:bg-default/15"
+                    >
+                      <Icon.Check className="block h-full w-3 fill-current" />
+                      {t("joined")}
+                    </Button>
+                  }
+                />
               </TooltipPreset>
               <LeaveTeamspace name={teamspace.name} onLeave={onLeave} />
             </Dialog>

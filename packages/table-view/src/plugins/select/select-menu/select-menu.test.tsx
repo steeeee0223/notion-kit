@@ -1,244 +1,117 @@
-import { screen, within } from "@testing-library/react";
-import userEvent, { UserEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
+import { SelectMenuObject } from "@/__tests__/component-objects/select-menu";
+import { mockResizeObserver } from "@/__tests__/mock";
+
 import { renderSelectTable } from "../__tests__/utils";
-import { mockResizeObserver } from "../../../__tests__/mock";
 
 mockResizeObserver();
 
-async function clickSelectCell(
-  user: UserEvent,
-  colIndex: number,
-  rowIndex = 0,
-) {
-  // Data rows have role="row" — header is the first row
-  const rows = screen.getAllByRole("row");
-  const dataRow = rows[rowIndex + 1]!;
-  // CellTrigger renders as div[role="button"], not <button>
-  const divButtons = dataRow.querySelectorAll('div[role="button"]');
-  const cell = divButtons[colIndex] as HTMLElement;
-  await user.click(cell);
-  return cell;
-}
-
 describe("SelectMenu - Single Select", () => {
-  it("Flow 1: should select an existing option", async () => {
-    const user = userEvent.setup();
-    renderSelectTable();
+  it("SelectMenu_SingleSelect_SelectsExistingOption", async () => {
+    const tableView = renderSelectTable();
 
-    // Click the single-select cell (index 1, after title at index 0)
-    await clickSelectCell(user, 1);
+    const menu = await SelectMenuObject.open(tableView, "Row 1", "Status");
 
-    // Popover should open with combobox input and options
-    const combobox = screen.getByRole("combobox");
-    expect(combobox).toBeInTheDocument();
+    expect(menu.combobox()).toBeInTheDocument();
+    expect(menu.option("Option A")).toBeInTheDocument();
+    await menu.choose("Option A");
 
-    // Click the menuitem that contains "Option A"
-    const optionA = screen.getByRole("menuitem", { name: "Option A" });
-    expect(optionA).toBeInTheDocument();
-    await user.click(optionA);
-
-    // Close popover
-    await user.keyboard("{Escape}");
-
-    // Cell should show the selected tag
-    const rows = screen.getAllByRole("row");
-    const dataRow = rows[1]!;
-    const divButtons = dataRow.querySelectorAll('div[role="button"]');
-    expect(divButtons[1]!.textContent).toContain("Option A");
+    await menu.waitForCellText("Option A");
   });
 
-  it("Flow 2: should deselect an option by removing the tag", async () => {
-    const user = userEvent.setup();
-    renderSelectTable({ preselected: "single" });
+  it("SelectMenu_SingleSelect_BackspaceClearsSelection", async () => {
+    const tableView = renderSelectTable({ preselected: "single" });
 
-    // The cell should initially show "Option A"
-    expect(screen.getByText("Option A")).toBeInTheDocument();
+    expect(tableView.cellButton("Row 1", "Option A")).toBeInTheDocument();
 
-    // Click the select cell with "Option A"
-    await clickSelectCell(user, 1);
+    const menu = await SelectMenuObject.open(tableView, "Row 1", "Status");
 
-    // Popover should open with the tag in the input
-    const combobox = screen.getByRole("combobox");
-    expect(combobox).toBeInTheDocument();
+    expect(menu.combobox()).toBeInTheDocument();
+    await menu.clearSelectionWithBackspace();
+    await menu.close();
 
-    // Remove the tag via backspace
-    await user.click(combobox);
-    await user.keyboard("{Backspace}");
-
-    // Close the popover
-    await user.keyboard("{Escape}");
-
-    // Cell should no longer contain the tag
-    const rows = screen.getAllByRole("row");
-    const dataRow = rows[1]!;
-    const divButtons = dataRow.querySelectorAll('div[role="button"]');
-    expect(divButtons[1]!.textContent).not.toContain("Option A");
+    await menu.waitForCellNotText("Option A");
   });
 
-  it("Flow 3: should create a new option via search input", async () => {
-    const user = userEvent.setup();
-    renderSelectTable();
+  it("SelectMenu_Search_CreatesNewOption", async () => {
+    const tableView = renderSelectTable();
 
-    // Click the single-select cell
-    await clickSelectCell(user, 1);
+    const menu = await SelectMenuObject.open(tableView, "Row 1", "Status");
 
-    // Type a new option name
     const newName = "Brand New Option";
-    const combobox = screen.getByRole("combobox");
-    await user.type(combobox, newName);
+    await menu.create(newName);
 
-    // "Create" suggestion should appear with the option name
-    const createItem = screen.getByRole("menuitem", {
-      name: `Create ${newName}`,
-    });
-    expect(createItem).toBeDefined();
-
-    // Click the create suggestion
-    await user.click(createItem);
-
-    // The new tag should be selected (may appear multiple times: in tag input + in list)
-    const newOptionElements = screen.getByRole("menuitem", { name: newName });
-    expect(newOptionElements).toBeInTheDocument();
+    expect(menu.option(newName)).toBeInTheDocument();
   });
 
-  it("Flow 4: should filter options when searching", async () => {
-    const user = userEvent.setup();
-    renderSelectTable();
+  it("SelectMenu_Search_FiltersOptions", async () => {
+    const tableView = renderSelectTable();
 
-    // Click the single-select cell
-    await clickSelectCell(user, 1);
+    const menu = await SelectMenuObject.open(tableView, "Row 1", "Status");
 
-    // Should show all options initially
-    expect(screen.getByText("Option A")).toBeInTheDocument();
-    expect(screen.getByText("Option B")).toBeInTheDocument();
-    expect(screen.getByText("Option C")).toBeInTheDocument();
+    expect(menu.option("Option A")).toBeInTheDocument();
+    expect(menu.option("Option B")).toBeInTheDocument();
+    expect(menu.option("Option C")).toBeInTheDocument();
 
-    // Type something in the combobox. Note: useFilter lowercases the search
-    // so typing a non-matching string hides all existing options and shows
-    // a "Create" suggestion instead.
     const typed = "nonexistent";
-    const combobox = screen.getByRole("combobox");
-    await user.type(combobox, typed);
+    await menu.search(typed);
 
-    // All existing options should be filtered out — no options match
-    expect(screen.queryByText("Option A")).not.toBeInTheDocument();
-    expect(screen.queryByText("Option B")).not.toBeInTheDocument();
-    expect(screen.queryByText("Option C")).not.toBeInTheDocument();
-
-    // "Create" suggestion should appear for the typed text
-    const createItem = screen.getByRole("menuitem", {
-      name: `Create ${typed}`,
-    });
-    expect(createItem).toBeInTheDocument();
+    expect(menu.queryOption("Option A")).not.toBeInTheDocument();
+    expect(menu.queryOption("Option B")).not.toBeInTheDocument();
+    expect(menu.queryOption("Option C")).not.toBeInTheDocument();
+    expect(menu.createOption(typed)).toBeInTheDocument();
   });
 
-  it("Flow 5: single select should replace previous selection", async () => {
-    const user = userEvent.setup();
-    renderSelectTable({ preselected: "single" });
+  it("SelectMenu_SingleSelect_ReplacesPreviousSelection", async () => {
+    const tableView = renderSelectTable({ preselected: "single" });
 
-    // Cell shows "Option A" initially
-    expect(screen.getByText("Option A")).toBeInTheDocument();
+    expect(tableView.cellButton("Row 1", "Option A")).toBeInTheDocument();
 
-    // Click the cell to open popover
-    await clickSelectCell(user, 1);
+    const menu = await SelectMenuObject.open(tableView, "Row 1", "Status");
 
-    // Select Option B
-    const optionB = screen.getByRole("menuitem", { name: "Option B" });
-    await user.click(optionB);
+    await menu.choose("Option B");
 
-    // Close popover
-    await user.keyboard("{Escape}");
-
-    // Cell should show Option B, not Option A
-    const rows = screen.getAllByRole("row");
-    const dataRow = rows[1]!;
-    const divButtons = dataRow.querySelectorAll('div[role="button"]');
-    const cellText = divButtons[1]!.textContent;
-    expect(cellText).toContain("Option B");
-    expect(cellText).not.toContain("Option A");
+    await menu.waitForCellText("Option B");
+    expect(menu.selectedCell()).not.toHaveTextContent("Option A");
   });
 });
 
 describe("SelectMenu - Multi Select", () => {
-  it("Flow 6: multi select should accumulate selections", async () => {
-    const user = userEvent.setup();
-    renderSelectTable();
+  it("SelectMenu_MultiSelect_AccumulatesSelections", async () => {
+    const tableView = renderSelectTable();
 
-    // Click the multi-select cell (index 2)
-    await clickSelectCell(user, 2);
+    const menu = await SelectMenuObject.open(tableView, "Row 1", "Tags");
 
-    // Popover should open
-    expect(screen.getByRole("combobox")).toBeInTheDocument();
+    expect(menu.combobox()).toBeInTheDocument();
 
-    // Select Option A
-    const optionA = screen.getByRole("menuitem", { name: "Option A" });
-    await user.click(optionA);
+    await menu.choose("Option A");
+    await menu.choose("Option B");
 
-    // Select Option B
-    const optionB = screen.getByRole("menuitem", { name: "Option B" });
-    await user.click(optionB);
-
-    // Both tags should be present in the combobox area
-    const combobox = screen.getByRole("combobox");
-    const inputArea = combobox.closest("[data-radix-popper-content-wrapper]");
-    if (inputArea) {
-      expect(inputArea.textContent).toContain("Option A");
-      expect(inputArea.textContent).toContain("Option B");
-    }
+    expect(menu.optionGroup()).toHaveTextContent("Option A");
+    expect(menu.optionGroup()).toHaveTextContent("Option B");
   });
 });
 
 describe("SelectMenu - Option Management", () => {
-  it("Flow 7: should open option edit menu via dots button", async () => {
-    const user = userEvent.setup();
-    renderSelectTable();
+  it("SelectMenu_OptionActions_OpensMenu", async () => {
+    const tableView = renderSelectTable();
 
-    // Click a select cell to open popover
-    await clickSelectCell(user, 1);
+    const menu = await SelectMenuObject.open(tableView, "Row 1", "Status");
 
-    // Find the option item containing "Option A"
-    const optionA = screen.getByRole("menuitem", { name: "Option A" });
-    expect(optionA).toBeInTheDocument();
+    expect(menu.option("Option A")).toBeInTheDocument();
+    await menu.openOptionActions("Option A");
 
-    // Hover to reveal the dots action button
-    await user.hover(optionA);
-
-    // Find the dots button inside the option item.
-    const dotsButton = within(optionA).getByRole("button", {
-      name: /more/i,
-    });
-    await user.click(dotsButton);
-    expect(
-      screen.getByRole("menuitem", { name: /delete/i }),
-    ).toBeInTheDocument();
+    expect(menu.optionActionsItem(/delete/i)).toBeInTheDocument();
   });
 
-  it("Flow 7b: should delete an option from the edit menu", async () => {
-    const user = userEvent.setup();
-    renderSelectTable();
+  it("SelectMenu_OptionActions_DeletesOption", async () => {
+    const tableView = renderSelectTable();
 
-    // Click a select cell to open popover
-    await clickSelectCell(user, 1);
+    const menu = await SelectMenuObject.open(tableView, "Row 1", "Status");
 
-    // Find and hover over the option
-    const optionA = screen.getByRole("menuitem", { name: "Option A" });
-    await user.hover(optionA);
+    await menu.deleteOption("Option A");
 
-    // Find <button> elements inside the option item
-    const dotsButton = within(optionA).getByRole("button", {
-      name: /more/i,
-    });
-    await user.click(dotsButton);
-
-    // Click Delete
-    const deleteItem = screen.getByRole("menuitem", { name: /delete/i });
-    await user.click(deleteItem);
-
-    // Option A should no longer be in the options list
-    expect(
-      screen.queryByRole("menuitem", { name: "Option A" }),
-    ).not.toBeInTheDocument();
+    expect(menu.queryOption("Option A")).not.toBeInTheDocument();
   });
 });

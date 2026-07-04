@@ -32,15 +32,13 @@ export function PasskeysModal() {
     usePasskeys();
 
   return (
-    <DialogContent className="w-100 p-5">
+    <DialogContent className="w-100">
       <DialogHeader>
         <DialogIcon>
           <Icon.LockShield className="size-8 fill-primary/45" />
         </DialogIcon>
         <DialogTitle>{t("title")}</DialogTitle>
-        <DialogDescription className="text-primary">
-          {t("description")}
-        </DialogDescription>
+        <DialogDescription>{t("description")}</DialogDescription>
         {error && <div className="text-xs text-red">{t("error")}</div>}
       </DialogHeader>
       {passkeys.length > 0 && (
@@ -73,16 +71,18 @@ export function PasskeysModal() {
           )}
           {t("add")}
         </Button>
-        <DialogClose asChild>
-          <Button
-            type="button"
-            size="sm"
-            className="w-full"
-            disabled={isPending}
-          >
-            {t("cancel")}
-          </Button>
-        </DialogClose>
+        <DialogClose
+          render={
+            <Button
+              type="button"
+              size="sm"
+              className="w-full"
+              disabled={isPending}
+            >
+              {t("cancel")}
+            </Button>
+          }
+        />
       </DialogFooter>
     </DialogContent>
   );
@@ -144,34 +144,36 @@ function PasskeyCard({
         </div>
       </div>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="hint"
-            className="ml-auto size-6"
-            aria-label="More options"
-          >
-            <Icon.Dots className="fill-muted" />
-          </Button>
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="hint"
+              className="ml-auto size-6"
+              aria-label="More options"
+            >
+              <Icon.Dots className="fill-muted" />
+            </Button>
+          }
+        />
         <DropdownMenuContent
           className="w-[180px]"
-          onCloseAutoFocus={(e) => {
-            e.preventDefault();
+          finalFocus={() => {
             if (isEditing) {
               inputRef.current?.focus();
             }
+            return false;
           }}
         >
           <DropdownMenuGroup>
             <DropdownMenuItem
-              Icon={<Icon.PencilLine />}
-              Body={t("rename")}
-              onSelect={enterEditName}
+              icon={<Icon.PencilLine />}
+              label={t("rename")}
+              onClick={enterEditName}
             />
             <DropdownMenuItem
-              Icon={<Icon.Trash />}
-              Body={t("delete")}
-              onSelect={() => onDelete?.(passkey.id)}
+              icon={<Icon.Trash />}
+              label={t("delete")}
+              onClick={() => onDelete?.(passkey.id)}
             />
           </DropdownMenuGroup>
         </DropdownMenuContent>

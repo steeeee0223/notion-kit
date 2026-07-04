@@ -24,16 +24,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         noTitle
-        className="flex h-[calc(100vh-100px)] max-h-[720px] w-[calc(100vw-100px)] max-w-[1150px] rounded-md border-none p-0 shadow-sm"
-        onClick={(e) => e.stopPropagation()}
-        /**
-         * tmporary fix
-         * @see https://github.com/radix-ui/primitives/issues/1241
-         */
-        onCloseAutoFocus={(e) => {
-          e.preventDefault();
-          document.body.style.pointerEvents = "";
-        }}
+        className="flex h-[calc(100vh-100px)] max-h-180 w-[calc(100vw-100px)] max-w-[1150px] rounded-md border-none p-0 shadow-sm"
       >
         <SettingsProvider adapters={adapters}>
           <SettingsPanel>

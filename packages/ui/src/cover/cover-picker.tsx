@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 
 import {
@@ -16,9 +14,10 @@ import { SingleImageDropzone } from "@/single-image-dropzone";
 import { Unsplash } from "@/unsplash";
 import { UrlForm } from "@/url-form";
 
-export interface CoverPickerProps extends React.PropsWithChildren {
+export interface CoverPickerProps {
   /** @param unsplashAPIKey - Unsplash Access Key */
   unsplashAPIKey: string;
+  children: React.ReactElement;
   onUpload?: (file: File) => void;
   onSelect?: (url: string) => void;
   onRemove?: () => void;
@@ -55,8 +54,8 @@ const CoverPicker: React.FC<CoverPickerProps> = ({
 
   return (
     <Popover>
-      <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent align="start" className="w-[520px]">
+      <PopoverTrigger render={children} />
+      <PopoverContent align="start" className="w-130">
         <Tabs defaultValue="upload" className="relative my-0.5 w-full">
           <TabsList>
             <div className="grow">

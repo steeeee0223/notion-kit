@@ -6,8 +6,9 @@
 import { act } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { CountMethod } from "../features";
-import type { Row } from "../lib/types";
+import { CountMethod } from "@/features";
+import type { Row } from "@/lib/types";
+
 import { mockData, mockProperties, renderTableHook } from "./mock";
 
 describe("useTableView - Counting Feature", () => {

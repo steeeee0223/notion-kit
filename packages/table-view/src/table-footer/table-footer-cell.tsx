@@ -1,5 +1,3 @@
-"use client";
-
 import type { HeaderContext } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
@@ -10,11 +8,11 @@ import {
   DropdownMenuTrigger,
 } from "@notion-kit/ui/primitives";
 
-import { CountMethod } from "../features";
-import { Row } from "../lib/types";
-import { CalcMenu, countMethodHint } from "../menus";
-import type { CellPlugin, InferKey } from "../plugins";
-import { useTableViewCtx } from "../table-contexts";
+import { CountMethod } from "@/features";
+import { Row } from "@/lib/types";
+import { CalcMenu, countMethodHint } from "@/menus";
+import type { CellPlugin, InferKey } from "@/plugins";
+import { useTableViewCtx } from "@/table-contexts";
 
 export function TableFooterCell({ column }: HeaderContext<Row, unknown>) {
   const props = {
@@ -26,15 +24,18 @@ export function TableFooterCell({ column }: HeaderContext<Row, unknown>) {
   return (
     <div className="flex" style={{ width: props.width }}>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            tabIndex={0}
-            variant="cell"
-            className="h-8 w-full justify-end overflow-hidden pr-2 select-auto"
-          >
-            <CountDisplay {...props} />
-          </Button>
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              tabIndex={0}
+              variant="cell"
+              className="h-8 w-full justify-end overflow-hidden pr-2 select-auto"
+            >
+              <CountDisplay {...props} />
+            </Button>
+          }
+        />
+
         <DropdownMenuContent className="w-50" align="start" alignOffset={-4}>
           <CalcMenu {...props} />
         </DropdownMenuContent>

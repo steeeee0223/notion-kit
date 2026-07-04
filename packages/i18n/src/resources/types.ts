@@ -833,17 +833,28 @@ interface Resources {
         cancel: "Cancel";
       };
       "add-members": {
+        title: "Add members";
+        description: "Type or paste in emails below, separated by commas";
         headings: {
           select: "Select a person";
           type: "Keep typing to invite email";
         };
         "search-placeholder": "Search name or emails";
-        roles: {
-          owner: "Workspace Owner";
-          member: "Member";
-          guest: "Guest";
+        "role-label": "Select role";
+        "role-options": {
+          owner: {
+            label: "Workspace owner";
+            description: "Can change workspace settings and invite new members to the workspace";
+          };
+          member: {
+            label: "Member";
+            description: "Can't change workspace settings or invite new members to the workspace";
+          };
         };
-        invite: "Invite";
+        "message-label": "Message";
+        "message-placeholder": "Add a note to your invite...";
+        invite: "Send invite";
+        cancel: "Cancel";
         empty: "Type or paste in emails above, separated by commas.";
         "learn-more": "Learn how to invite people and set permissions";
         "invited-badge": "Invited";

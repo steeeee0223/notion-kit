@@ -1,15 +1,14 @@
-"use client";
-
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
 } from "@notion-kit/ui/primitives";
 
+import { useTableViewCtx } from "@/table-contexts";
+
 import { SortMenu } from "../menus";
-import { useTableViewCtx } from "../table-contexts";
 
 export function SortSelector() {
   const { table } = useTableViewCtx();
@@ -39,20 +38,22 @@ export function SortSelector() {
   })();
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          variant="soft-blue"
-          size="xs"
-          className="gap-1 rounded-full px-2 text-sm [&_svg]:fill-current"
-        >
-          {badgeDisplay}
-          <Icon.Chevron side="down" className="size-3" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent role="menu" className="w-80">
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="soft-blue"
+            size="xs"
+            className="gap-1 rounded-full px-2 text-sm [&_svg]:fill-current"
+          >
+            {badgeDisplay}
+            <Icon.Chevron side="down" className="size-3" />
+          </Button>
+        }
+      />
+      <DropdownMenuContent className="w-80">
         <SortMenu />
-      </PopoverContent>
-    </Popover>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

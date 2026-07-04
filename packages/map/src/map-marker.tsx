@@ -4,11 +4,7 @@ import { createPortal } from "react-dom";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
-import {
-  Button,
-  contentVariants,
-  tooltipVariants,
-} from "@notion-kit/ui/primitives";
+import { Button, popup as popupStyle } from "@notion-kit/ui/primitives";
 
 import { useMap } from "./use-map";
 import { usePopupOptions } from "./use-map-state";
@@ -260,11 +256,7 @@ export function MapMarkerPopup({
   return createPortal(
     <div
       data-slot="map-marker-popup"
-      className={cn(
-        contentVariants({ variant: "popover", openAnimation: true }),
-        "p-3",
-        className,
-      )}
+      className={cn(popupStyle({ type: "popover" }), "p-3", className)}
     >
       {closeButton && <MapPopupClose onClick={popup.remove} />}
       {children}
@@ -324,17 +316,18 @@ export function MapMarkerTooltip({
   return createPortal(
     <div
       data-slot="map-marker-tooltip"
-      className={cn(
-        contentVariants({ variant: "tooltip", openAnimation: true }),
-        tooltipVariants({ size: "sm" }),
-        className,
-      )}
+      className={cn(popupStyle({ type: "tooltip" }), className)}
     >
       {children}
     </div>,
     container,
   );
 }
+
+const positionClasses = {
+  top: "bottom-full mb-1",
+  bottom: "top-full mt-1",
+};
 
 export interface MapMarkerLabelProps extends React.ComponentProps<"div"> {
   /** Position of the label relative to the marker (default: "top") */
@@ -346,11 +339,6 @@ export function MapMarkerLabel({
   className,
   ...props
 }: MapMarkerLabelProps) {
-  const positionClasses = {
-    top: "bottom-full mb-1",
-    bottom: "top-full mt-1",
-  };
-
   return (
     <div
       data-slot="map-marker-label"

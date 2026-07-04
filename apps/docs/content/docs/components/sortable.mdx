@@ -1,0 +1,115 @@
+---
+title: Sortable
+description: A composable drag-and-drop primitive for reordering lists and item collections.
+---
+
+<ComponentPreview name="sortable-list" hideCode />
+
+## Installation
+
+<Installation packages="@notion-kit/ui" registryName="sortable-list" />
+
+## Anatomy
+
+```
+<Sortable.Root>
+  <Sortable.List>
+    <Sortable.Item>
+      <Sortable.Handle />
+    </Sortable.Item>
+  </Sortable.List>
+  <Sortable.Overlay />
+</Sortable.Root>
+```
+
+## Examples
+
+---
+
+### Menu List
+
+Use `getSortableItemsAfterDrag` in `onDragEnd` to update ordered state after a successful drop.
+
+<ComponentPreview
+  name="sortable-list"
+  preview={`<Sortable.Root onDragEnd={...}>
+  <Sortable.List render={<MenuGroup />}>
+    {items.map((item, index) => (
+      <Sortable.Item
+        key={item.id}
+        id={item.id}
+        index={index}
+        render={<MenuItem label={item.label} icon={<Sortable.Handle />} />}
+      />
+    ))}
+  </Sortable.List>
+</Sortable.Root>
+`}
+/>
+
+## API Reference
+
+### Sortable.Root
+
+Wraps `DragDropProvider` and provides orientation, disabled state, sensors, and default movement modifiers to sortable children.
+
+| Prop          | Type                          | Default      | Description                                                |
+| ------------- | ----------------------------- | ------------ | ---------------------------------------------------------- |
+| `orientation` | `"horizontal" \| "vertical"`  | `"vertical"` | Axis used by default list styling and drag restrictions.   |
+| `disabled`    | `boolean`                     | `false`      | Disables sortable items inside the root.                   |
+| `sensors`     | `DragDropProvider["sensors"]` | -            | Custom dnd-kit sensors. Defaults to pointer/touch sensors. |
+
+### Sortable.List
+
+Renders the sortable item container. Accepts standard `<div>` props and Base UI `render` composition props.
+
+| Prop          | Type                         | Default | Description                                               |
+| ------------- | ---------------------------- | ------- | --------------------------------------------------------- |
+| `orientation` | `"horizontal" \| "vertical"` | -       | Overrides the root orientation for this list.             |
+| `render`      | `ReactElement`               | -       | Replaces the default `<div>` while preserving list props. |
+
+### Sortable.Item
+
+Registers one draggable item. Accepts dnd-kit sortable options in addition to render composition props.
+
+| Prop      | Type                   | Default | Description                                     |
+| --------- | ---------------------- | ------- | ----------------------------------------------- |
+| `id`\*    | `UniqueIdentifier`     | -       | Stable item id used by dnd-kit.                 |
+| `index`\* | `number`               | -       | Current item index in its list or group.        |
+| `group`   | `UniqueIdentifier`     | -       | Optional group id for grouped sortable layouts. |
+| `render`  | `(state) => ReactNode` | -       | Custom item render with drag/drop state.        |
+
+### Sortable.Handle
+
+Button used as the drag handle for the nearest `Sortable.Item`. It must be rendered inside a sortable item.
+
+### Sortable.Overlay
+
+Renders dnd-kit's `DragOverlay` in a portal. Use it when you need a custom drag preview.
+
+| Prop            | Type                           | Default         | Description                         |
+| --------------- | ------------------------------ | --------------- | ----------------------------------- |
+| `container`     | `Element \| DocumentFragment`  | `document.body` | Portal target for the drag overlay. |
+| `dropAnimation` | `DragOverlay["dropAnimation"]` | `null`          | Drop animation configuration.       |
+
+### getSortableItemsAfterDrag
+
+Moves an array after a drag end event and returns the original array when the operation was canceled.
+
+```ts
+const nextItems = getSortableItemsAfterDrag(items, event);
+```
+
+| Parameter | Type                                               | Description                          |
+| --------- | -------------------------------------------------- | ------------------------------------ |
+| `items`   | `UniqueIdentifier[] \| { id: UniqueIdentifier }[]` | Ordered array to move.               |
+| `event`   | `DragEndEvent`                                     | Drag end event from `Sortable.Root`. |
+
+### `type` SortableItemState
+
+| Prop         | Type      | Description                            |
+| ------------ | --------- | -------------------------------------- |
+| `dragging`   | `boolean` | Whether the item is actively dragging. |
+| `dropping`   | `boolean` | Whether the item is completing a drop. |
+| `dragSource` | `boolean` | Whether the item is the drag source.   |
+| `dropTarget` | `boolean` | Whether the item is the active target. |

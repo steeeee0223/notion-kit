@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 
 import { cn } from "@notion-kit/cn";
 
-import { MenuItem, TooltipPreset } from "@/primitives";
+import { MenuItem, TooltipDescription, TooltipPreset } from "@/primitives";
 
 interface SidebarMenuItemProps extends React.ComponentProps<"div"> {
   label: React.ReactNode;
@@ -23,8 +23,8 @@ export function SidebarMenuItem({
         data-slot="sidebar-menuitem"
         variant="sidebar"
         className={cn("h-[27px] font-medium", className)}
-        Body={label}
-        Icon={icon}
+        label={label}
+        icon={icon}
         {...rest}
       />
     );
@@ -34,12 +34,14 @@ export function SidebarMenuItem({
   return (
     <TooltipPreset
       description={
-        shortcut
-          ? [
-              { type: "default", text: hint },
-              { type: "secondary", text: shortcut },
-            ]
-          : hint
+        shortcut ? (
+          <>
+            <TooltipDescription text={hint} />
+            <TooltipDescription type="secondary" text={shortcut} />
+          </>
+        ) : (
+          hint
+        )
       }
       side="right"
       sideOffset={8}

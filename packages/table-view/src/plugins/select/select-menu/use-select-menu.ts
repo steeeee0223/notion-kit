@@ -1,8 +1,6 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import type { DragEndEvent } from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
 import type { OnChangeFn } from "@tanstack/react-table";
 
 import { useFilter } from "@notion-kit/hooks";
@@ -82,16 +80,10 @@ export function useSelectMenu({
   ]);
 
   const reorderOptions = useCallback(
-    (e: DragEndEvent) => {
-      const { active, over } = e;
-      if (!over || active.id === over.id) return;
+    (names: string[]) => {
       dispatchConfig({
         action: "update:sort:manual",
-        updater: (prev: string[]) => {
-          const oldIndex = prev.indexOf(active.id as string);
-          const newIndex = prev.indexOf(over.id as string);
-          return arrayMove(prev, oldIndex, newIndex);
-        },
+        updater: names,
       });
     },
     [dispatchConfig],
@@ -159,7 +151,7 @@ export function useSelectMenu({
   const handleTagsChange = useCallback(
     (tags: string[]) => {
       const newTag = tags.find((tag) => !config.options.items[tag]);
-      // If receives new tag from TagsInput
+      // If receives new tag from the creatable combobox item
       if (newTag) {
         addOption();
         return;

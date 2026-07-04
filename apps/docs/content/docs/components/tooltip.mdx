@@ -2,8 +2,8 @@
 title: Tooltip
 description: A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.
 links:
-  - label: Shadcn UI
-    href: https://ui.shadcn.com/docs/components/tooltip
+  - label: Base UI
+    href: https://base-ui.com/react/components/tooltip
 ---
 
 <ComponentPreview name="tooltip-demo" />
@@ -11,3 +11,54 @@ links:
 ## Installation
 
 <Installation packages="@notion-kit/ui" registryName="tooltip-demo" />
+
+## Anatomy
+
+Compose the Base UI tooltip parts directly when you need custom content or
+positioning. Use `render` to merge the trigger behavior into your button.
+
+```tsx
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger render={<Button>Open search</Button>} />
+    <TooltipContent>
+      {...}
+    </TooltipContent>
+  </Tooltip>
+</TooltipProvider>
+```
+
+`TooltipDescription` supports primary text, secondary text, and images:
+
+```tsx
+<TooltipContent>
+  <TooltipDescription text="Open search" />
+  <TooltipDescription type="secondary" text="⌘ K" />
+  <TooltipDescription type="image" text="/search-preview.png" />
+</TooltipContent>
+```
+
+## API Reference
+
+### TooltipProvider
+
+Uses Base UI provider props. The default `delay` is `600` milliseconds. Use
+`timeout` to control how long subsequent tooltips skip the opening delay.
+
+### TooltipTrigger
+
+Uses Base UI trigger props. Pass a React element to `render` to avoid adding a
+wrapper around the trigger.
+
+### TooltipContent
+
+Accepts Base UI popup props plus `align`, `alignOffset`, `anchor`,
+`collisionPadding`, `side`, and `sideOffset`. Its default `sideOffset` is `4`.
+
+### TooltipDescription
+
+| Prop        | Type                                  | Default     | Description                         |
+| ----------- | ------------------------------------- | ----------- | ----------------------------------- |
+| `text`\*    | `string`                              | -           | Text content or the image URL.      |
+| `type`      | `"primary" \| "secondary" \| "image"` | `"primary"` | Controls the description treatment. |
+| `className` | `string`                              | -           | Adds local presentation classes.    |

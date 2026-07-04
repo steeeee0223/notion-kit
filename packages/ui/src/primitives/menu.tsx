@@ -23,12 +23,11 @@ function MenuGroup({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function MenuLabel({
-  className,
-  title,
-  children,
-  ...props
-}: React.ComponentProps<"div">) {
+interface MenuLabelProps extends Omit<React.ComponentProps<"div">, "title"> {
+  title?: React.ReactNode;
+}
+
+function MenuLabel({ className, title, children, ...props }: MenuLabelProps) {
   return (
     <div
       data-slot="menu-label"
@@ -37,7 +36,6 @@ function MenuLabel({
         "my-1 flex fill-default/45 px-3.5 text-secondary select-none",
         className,
       )}
-      title={title}
       {...props}
     >
       <div className="flex self-center">{title}</div>
@@ -47,37 +45,29 @@ function MenuLabel({
 }
 
 interface MenuItemProps extends React.ComponentProps<"div">, MenuItemVariants {
-  Icon?: React.ReactNode;
-  Body?: React.ReactNode;
+  icon?: React.ReactNode;
+  label?: React.ReactNode;
   desc?: string;
 }
 
 function MenuItem({
   variant,
-  disabled,
   className,
-  inset,
-  Icon,
-  Body,
+  icon,
+  label,
   desc,
   children,
   ...props
 }: MenuItemProps) {
-  const iconChildren = React.Children.toArray(Icon);
+  const iconChildren = React.Children.toArray(icon);
   return (
     <div
       data-slot="menu-item"
       role="menuitem"
-      className={cn(
-        menuItemVariants({ variant, disabled, inset }),
-        "group/item",
-        className,
-      )}
-      aria-label={typeof Body === "string" ? Body : undefined}
+      className={cn(menuItemVariants({ variant }), "group/item", className)}
+      aria-label={typeof label === "string" ? label : undefined}
       aria-describedby={desc ? "menu-item-desc" : undefined}
       {...props}
-      data-disabled={disabled}
-      aria-disabled={Boolean(disabled)}
     >
       <div
         data-slot="menu-item-icon"
@@ -86,7 +76,7 @@ function MenuItem({
           iconChildren.length === 1 && "size-5",
         )}
       >
-        {Icon}
+        {icon}
       </div>
       <div
         data-slot="menu-item-body"
@@ -94,7 +84,7 @@ function MenuItem({
       >
         {desc ? (
           <div className="my-1 space-y-0.5">
-            <div className="truncate">{Body}</div>
+            <div className="truncate">{label}</div>
             <div
               id="menu-item-desc"
               className="overflow-hidden text-xs text-ellipsis whitespace-normal text-secondary"
@@ -103,7 +93,7 @@ function MenuItem({
             </div>
           </div>
         ) : (
-          Body
+          label
         )}
       </div>
       {children}
@@ -131,7 +121,10 @@ function MenuItemAction({ className, children }: MenuItemActionProps) {
 
 function MenuItemCheck() {
   return (
-    <MenuItemAction data-slot="menu-item-check" className="w-3.5">
+    <MenuItemAction
+      data-slot="menu-item-check"
+      className="pointer-events-none w-3.5"
+    >
       <Icon.Check className="size-full fill-primary" />
     </MenuItemAction>
   );
@@ -143,7 +136,7 @@ function MenuItemSelect({ className, children }: MenuItemActionProps) {
       {children}
       <Icon.Chevron
         side="right"
-        className="ml-1.5 h-full w-3 -rotate-90 fill-icon transition-[rotate] group-data-[state='open']/item:rotate-0"
+        className="ml-1.5 h-full w-3 fill-icon transition-[rotate] group-data-[state='open']/item:rotate-90"
       />
     </MenuItemAction>
   );
@@ -167,6 +160,9 @@ interface MenuItemSwitchProps extends MenuItemProps {
   onCheckedChange?: (checked: boolean) => void;
 }
 
+/**
+ * @deprecated
+ */
 function MenuItemSwitch({
   checked = false,
   onCheckedChange,

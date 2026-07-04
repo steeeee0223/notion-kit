@@ -1,29 +1,14 @@
-import { render, screen, within } from "@testing-library/react";
-import userEvent, { UserEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
-import { mockResizeObserver } from "../__tests__/mock";
-import type { ColumnInfo, Row } from "../lib/types";
-import { TableView } from "../table-contexts";
+import { renderTableView } from "@/__tests__/component-objects/render-table-view";
+import { mockResizeObserver } from "@/__tests__/mock";
+import type { ColumnInfo, Row } from "@/lib/types";
 
 mockResizeObserver();
 
-// Mock properties with a deleted property
-const mockPropertiesWithDeleted: ColumnInfo[] = [
-  {
-    id: "col1",
-    name: "Title",
-    type: "text",
-    width: "200",
-    config: {},
-  },
-  {
-    id: "col2",
-    name: "Status",
-    type: "checkbox",
-    width: "100",
-    config: {},
-  },
+const propertiesWithDeleted: ColumnInfo[] = [
+  { id: "col1", name: "Title", type: "text", width: "200", config: {} },
+  { id: "col2", name: "Status", type: "checkbox", width: "100", config: {} },
   {
     id: "col3",
     name: "Archived Property",
@@ -42,7 +27,7 @@ const mockPropertiesWithDeleted: ColumnInfo[] = [
   },
 ];
 
-const mockDataWithDeleted: Row[] = [
+const dataWithDeleted: Row[] = [
   {
     id: "row1",
     createdAt: Date.now(),
@@ -56,144 +41,71 @@ const mockDataWithDeleted: Row[] = [
   },
 ];
 
-async function openSettingsMenu(user: UserEvent) {
-  render(
-    <TableView
-      properties={mockPropertiesWithDeleted}
-      data={mockDataWithDeleted}
-    />,
-  );
-
-  const settingsButton = screen.getByRole("button", { name: /settings/i });
-  await user.click(settingsButton);
-
-  const menu = screen.getByRole("menu", { name: "View Settings" });
-  expect(menu).toBeInTheDocument();
-  return menu;
-}
-
-async function openPropsMenu(user: UserEvent) {
-  const menu = await openSettingsMenu(user);
-
-  // Click on "Edit properties" menu item
-  const propsMenuItem = within(menu).getByRole("menuitem", {
-    name: "Edit properties",
+async function openPropertiesMenu() {
+  const tableView = renderTableView({
+    properties: propertiesWithDeleted,
+    data: dataWithDeleted,
   });
-  await user.click(propsMenuItem);
-
-  expect(
-    screen.getByRole("heading", { name: "Properties" }),
-  ).toBeInTheDocument();
-
-  return menu;
+  const settings = await tableView.openViewSettings();
+  return settings.openProperties();
 }
 
-async function openDeletedPropsMenu(user: UserEvent) {
-  const menu = await openPropsMenu(user);
-
-  // Click on "Deleted properties" menu item
-  const deletedPropsItem = within(menu).getByText("Deleted properties");
-  await user.click(deletedPropsItem);
-
-  expect(
-    screen.getByRole("heading", { name: "Deleted properties" }),
-  ).toBeInTheDocument();
-
-  return menu;
+async function openDeletedPropertiesMenu() {
+  const properties = await openPropertiesMenu();
+  return properties.openDeletedProperties();
 }
 
 describe("DeletedPropsMenu", () => {
-  it("should display deleted properties count in Props menu", async () => {
-    const user = userEvent.setup();
-    const menu = await openPropsMenu(user);
+  it("PropertiesMenu_DeletedProperties_ShowsCount", async () => {
+    const properties = await openPropertiesMenu();
 
-    // Should show "Deleted properties" with count badge
-    expect(within(menu).getByText("Deleted properties")).toBeInTheDocument();
-    // Should show count of 2 deleted properties
-    expect(within(menu).getByText("2")).toBeInTheDocument();
+    expect(properties.deletedPropertiesItem()).toBeVisible();
+    expect(properties.deletedCount(2)).toBeVisible();
   });
 
-  it("should navigate to Deleted Properties menu and show deleted properties", async () => {
-    const user = userEvent.setup();
-    const menu = await openDeletedPropsMenu(user);
+  it("DeletedPropertiesMenu_Open_ShowsDeletedProperties", async () => {
+    const deleted = await openDeletedPropertiesMenu();
 
-    // Should show both deleted properties
-    expect(within(menu).getByText("Archived Property")).toBeInTheDocument();
-    expect(within(menu).getByText("Old Property")).toBeInTheDocument();
+    expect(deleted.property("Archived Property")).toBeVisible();
+    expect(deleted.property("Old Property")).toBeVisible();
   });
 
-  it("should have restore button for each deleted property", async () => {
-    const user = userEvent.setup();
-    const menu = await openDeletedPropsMenu(user);
+  it("DeletedPropertiesMenu_Open_ShowsNamedRestoreActions", async () => {
+    const deleted = await openDeletedPropertiesMenu();
 
-    // Should show restore buttons
-    const restoreButtons = within(menu).getAllByRole("button", {
-      name: /restore/i,
-    });
-    expect(restoreButtons.length).toBe(2);
+    expect(deleted.restoreButton("Archived Property")).toBeVisible();
+    expect(deleted.restoreButton("Old Property")).toBeVisible();
   });
 
-  it("should have delete button for each deleted property", async () => {
-    const user = userEvent.setup();
-    const menu = await openDeletedPropsMenu(user);
+  it("DeletedPropertiesMenu_Open_ShowsNamedDeleteActions", async () => {
+    const deleted = await openDeletedPropertiesMenu();
 
-    // Should show delete buttons
-    const deleteButtons = within(menu).getAllByRole("button", {
-      name: /delete/i,
-    });
-    expect(deleteButtons.length).toBe(2);
+    expect(deleted.deleteButton("Archived Property")).toBeVisible();
+    expect(deleted.deleteButton("Old Property")).toBeVisible();
   });
 
-  it("should restore property when clicking restore button", async () => {
-    const user = userEvent.setup();
-    const menu = await openDeletedPropsMenu(user);
+  it("DeletedPropertiesMenu_Restore_RemovesPropertyFromDeletedList", async () => {
+    const deleted = await openDeletedPropertiesMenu();
 
-    // Get initial count
-    const restoreButtons = within(menu).getAllByRole("button", {
-      name: /restore/i,
-    });
-    expect(restoreButtons.length).toBe(2);
+    await deleted.restore("Archived Property");
 
-    // Click restore on first property
-    await user.click(restoreButtons[0]!);
-
-    // Property should be removed from deleted list
-    const remainingRestoreButtons = within(menu).getAllByRole("button", {
-      name: /restore/i,
-    });
-    expect(remainingRestoreButtons.length).toBe(1);
+    expect(deleted.queryProperty("Archived Property")).not.toBeInTheDocument();
+    expect(deleted.restoreButton("Old Property")).toBeVisible();
   });
 
-  it("should permanently delete property when clicking delete button", async () => {
-    const user = userEvent.setup();
-    const menu = await openDeletedPropsMenu(user);
+  it("DeletedPropertiesMenu_Delete_RemovesPropertyPermanently", async () => {
+    const deleted = await openDeletedPropertiesMenu();
 
-    // Get initial count
-    const deleteButtons = within(menu).getAllByRole("button", {
-      name: /delete/i,
-    });
-    expect(deleteButtons.length).toBe(2);
+    await deleted.delete("Archived Property");
 
-    // Click delete on first property ("Archived Property")
-    await user.click(deleteButtons[0]!);
-
-    // Property should be removed from list
-    expect(
-      within(menu).queryByText("Archived Property"),
-    ).not.toBeInTheDocument();
+    expect(deleted.queryProperty("Archived Property")).not.toBeInTheDocument();
   });
 
-  it("should navigate back to Properties menu when clicking back button", async () => {
-    const user = userEvent.setup();
-    const menu = await openDeletedPropsMenu(user);
+  it("DeletedPropertiesMenu_BackNavigation_ReturnsToProperties", async () => {
+    const deleted = await openDeletedPropertiesMenu();
 
-    // Click back button
-    const backButton = within(menu).getByRole("button", { name: /back/i });
-    await user.click(backButton);
+    const properties = await deleted.backToProperties();
 
-    // Should return to Properties menu
-    expect(
-      screen.getByRole("heading", { name: "Properties" }),
-    ).toBeInTheDocument();
+    expect(properties.heading()).toBeVisible();
   });
 });

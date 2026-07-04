@@ -11,13 +11,14 @@ import {
   DropdownMenuGroup,
   DropdownMenuTrigger,
   Separator,
+  TooltipDescription,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 import { KEYBOARD } from "@notion-kit/utils";
 
-import { RowViewIcon } from "../common";
-import { ROW_VIEW_OPTIONS, RowViewType } from "../features";
-import { useTableViewCtx } from "../table-contexts";
+import { RowViewIcon } from "@/common";
+import { ROW_VIEW_OPTIONS, RowViewType } from "@/features";
+import { useTableViewCtx } from "@/table-contexts";
 
 interface ViewNavProps {
   rowId: string;
@@ -42,10 +43,12 @@ export function ViewNav({ rowId }: ViewNavProps) {
         {rowView !== "center" && (
           <TooltipPreset
             className="z-999"
-            description={[
-              { type: "default", text: "Close" },
-              { type: "secondary", text: "Escape" },
-            ]}
+            description={
+              <>
+                <TooltipDescription text="Close" />
+                <TooltipDescription type="secondary" text="Escape" />
+              </>
+            }
           >
             <Button
               variant="hint"
@@ -59,10 +62,15 @@ export function ViewNav({ rowId }: ViewNavProps) {
         {rowView !== "full" && (
           <TooltipPreset
             className="z-999"
-            description={[
-              { type: "default", text: "Open in full page" },
-              { type: "secondary", text: KEYBOARD.CMD + KEYBOARD.ENTER },
-            ]}
+            description={
+              <>
+                <TooltipDescription text="Open in full page" />
+                <TooltipDescription
+                  type="secondary"
+                  text={KEYBOARD.CMD + KEYBOARD.ENTER}
+                />
+              </>
+            }
           >
             <Button
               variant="hint"
@@ -79,11 +87,13 @@ export function ViewNav({ rowId }: ViewNavProps) {
         />
         <DropdownMenu>
           <TooltipPreset className="z-999" description="Switch peek mode">
-            <DropdownMenuTrigger asChild>
-              <Button variant="hint" className="size-6">
-                <RowViewIcon rowView={rowView} className="fill-icon" />
-              </Button>
-            </DropdownMenuTrigger>
+            <DropdownMenuTrigger
+              render={
+                <Button variant="hint" className="size-6">
+                  <RowViewIcon rowView={rowView} className="fill-icon" />
+                </Button>
+              }
+            />
           </TooltipPreset>
           <DropdownMenuContent className="z-999 w-52">
             <DropdownMenuGroup>
@@ -92,8 +102,8 @@ export function ViewNav({ rowId }: ViewNavProps) {
                 return (
                   <DropdownMenuCheckboxItem
                     key={view}
-                    Icon={<RowViewIcon rowView={view} />}
-                    Body={option.label}
+                    icon={<RowViewIcon rowView={view} />}
+                    label={option.label}
                     checked={rowView === view}
                     onCheckedChange={() =>
                       table.setTableGlobalState((v) => ({

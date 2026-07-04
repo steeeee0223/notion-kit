@@ -24,14 +24,16 @@ export function SkinPicker({ palette, value, onSelect }: SkinPickerProps) {
   };
 
   return (
-    <TooltipProvider delayDuration={500}>
+    <TooltipProvider>
       <Popover open={open} onOpenChange={setOpen}>
         <TooltipPreset description="Select skin tone">
-          <PopoverTrigger asChild>
-            <Button variant="hint" className="size-7 text-xl/6 text-primary">
-              {palette[value].emoji}
-            </Button>
-          </PopoverTrigger>
+          <PopoverTrigger
+            render={
+              <Button variant="hint" className="size-7 text-xl/6 text-primary">
+                {palette[value].emoji}
+              </Button>
+            }
+          />
         </TooltipPreset>
         <PopoverContent className="z-1000 grid w-50 grid-cols-6 gap-0 p-1">
           {Object.entries(palette).map(([id, { emoji, name }]) => (

@@ -18,9 +18,7 @@ export const Default: Story = {
     const [open, setOpen] = useState(false);
     return (
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button size="md">Open</Button>
-        </DialogTrigger>
+        <DialogTrigger render={<Button size="md">Open</Button>} />
         <AlertModal
           title="This action cannot be undone. This will permanently delete your account and remove your data from our servers."
           primary="Continue"

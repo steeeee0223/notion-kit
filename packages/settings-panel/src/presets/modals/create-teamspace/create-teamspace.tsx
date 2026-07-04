@@ -85,24 +85,26 @@ export function CreateTeamspace({
                 control={form.control}
                 name="icon"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col items-center">
-                    <FormControl>
-                      <IconMenu
-                        disabled={field.disabled}
-                        onSelect={field.onChange}
-                        onRemove={() =>
-                          field.onChange({ type: "text", src: "T" })
-                        }
-                        onUpload={(file) =>
-                          field.onChange({
-                            type: "url",
-                            src: URL.createObjectURL(file),
-                          })
-                        }
-                      >
-                        <IconBlock icon={field.value} size="sm" />
-                      </IconMenu>
-                    </FormControl>
+                  <FormItem className="w-auto shrink-0 flex-col items-center">
+                    <FormControl
+                      render={
+                        <IconMenu
+                          disabled={field.disabled}
+                          onSelect={field.onChange}
+                          onRemove={() =>
+                            field.onChange({ type: "text", src: "T" })
+                          }
+                          onUpload={(file) =>
+                            field.onChange({
+                              type: "url",
+                              src: URL.createObjectURL(file),
+                            })
+                          }
+                        >
+                          <IconBlock icon={field.value} size="sm" />
+                        </IconMenu>
+                      }
+                    />
                   </FormItem>
                 )}
               />
@@ -110,14 +112,16 @@ export function CreateTeamspace({
                 control={form.control}
                 name="name"
                 render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormControl>
-                      <Input
-                        data-size="lg"
-                        placeholder={t("name-placeholder")}
-                        {...field}
-                      />
-                    </FormControl>
+                  <FormItem className="min-w-0 flex-1">
+                    <FormControl
+                      render={
+                        <Input
+                          data-size="lg"
+                          placeholder={t("name-placeholder")}
+                          {...field}
+                        />
+                      }
+                    />
                   </FormItem>
                 )}
               />
@@ -129,12 +133,14 @@ export function CreateTeamspace({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("description-label")}</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder={t("description-placeholder")}
-                    {...field}
-                  />
-                </FormControl>
+                <FormControl
+                  render={
+                    <Textarea
+                      placeholder={t("description-placeholder")}
+                      {...field}
+                    />
+                  }
+                />
               </FormItem>
             )}
           />
@@ -144,9 +150,9 @@ export function CreateTeamspace({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("permissions")}</FormLabel>
-                <FormControl>
-                  <PermissionSelect workspace={workspace} {...field} />
-                </FormControl>
+                <FormControl
+                  render={<PermissionSelect workspace={workspace} {...field} />}
+                />
               </FormItem>
             )}
           />

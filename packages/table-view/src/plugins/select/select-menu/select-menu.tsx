@@ -1,15 +1,42 @@
-"use client";
+import {
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxContent,
+  ComboboxCreatableItem,
+  ComboboxGroup,
+  ComboboxLabel,
+  ComboboxList,
+  ComboboxValue,
+  getSortableItemsAfterDrag,
+  Sortable,
+} from "@notion-kit/ui/primitives";
+import { COLOR, type Color } from "@notion-kit/utils";
 
-import { MenuGroup, MenuItem, MenuLabel } from "@notion-kit/ui/primitives";
-import { TagsInput } from "@notion-kit/ui/tags-input";
-
-import { OptionTag, SortableDnd } from "../../../common";
+import { OptionTag } from "../../../common";
 import { OptionItem } from "./option-item";
 import { SelectMenuApi } from "./use-select-menu";
 
 interface SelectMenuProps {
   menu: SelectMenuApi;
 }
+
+type GroupOption =
+  | {
+      label: string;
+      items: string[];
+      creatable: false;
+    }
+  | {
+      label: string;
+      items: string[];
+      creatable: true;
+      option: {
+        name: string;
+        color: Color;
+      };
+    };
 
 export function SelectMenu({ menu }: SelectMenuProps) {
   const {
@@ -28,56 +55,105 @@ export function SelectMenu({ menu }: SelectMenuProps) {
     deleteOption,
   } = menu;
 
+  const items: GroupOption[] = [
+    {
+      label: "Select an option or create one",
+      items: results ?? [],
+      creatable: false,
+    },
+  ];
+
+  if (search && optionSuggestion) {
+    items.push({
+      label: "Create option",
+      items: [search],
+      creatable: true,
+      option: optionSuggestion,
+    });
+  }
+
   return (
-    <>
-      <div className="z-10 max-h-60 shrink-0 overflow-hidden overflow-y-auto border-b border-border">
-        <div className="flex min-w-0 flex-1 flex-col items-stretch">
-          <div className="z-10 mr-0 mb-0 flex min-h-[34px] w-full cursor-text flex-nowrap items-start overflow-auto bg-input p-[4px_9px] text-sm">
-            <TagsInput
-              role="combobox"
-              size={1}
-              placeholder="Search for an option..."
-              value={{ tags, input: search }}
-              onTagsChange={handleTagsChange}
-              onInputChange={handleInputChange}
-              className="min-h-[34px] min-w-0 grow border-none bg-transparent px-0"
-            />
-          </div>
-        </div>
-      </div>
-      <MenuGroup>
-        <MenuLabel title="Select an option or create one" />
-        <div className="flex flex-col">
-          <SortableDnd items={results ?? []} onDragEnd={reorderOptions}>
-            {results?.map((name) => {
-              const option = config.options.items[name];
-              if (!option) return;
-              return (
-                <OptionItem
-                  key={option.name}
-                  option={option}
-                  draggable={search === ""}
-                  onSelect={selectTag}
-                  onUpdate={(data) => updateOption(name, data)}
-                  onDelete={() => deleteOption(name)}
-                  validateName={validateOptionName}
-                />
-              );
-            })}
-          </SortableDnd>
-          {search && optionSuggestion && (
-            <MenuItem
-              Body={
-                <div className="flex items-center gap-2 px-1">
-                  Create
-                  <OptionTag {...optionSuggestion} />
-                </div>
-              }
-              onClick={addOption}
-            />
+    <Combobox<string, true>
+      multiple
+      open
+      value={tags.map((tag) => tag.value)}
+      inputValue={search}
+      onInputValueChange={handleInputChange}
+      onValueChange={handleTagsChange}
+      items={items}
+      filter={null}
+    >
+      <ComboboxChips variant="inline" hideClearButton className="z-10 max-h-60">
+        <ComboboxValue>
+          {(selectedValue: string[]) => (
+            <>
+              {selectedValue.map((value) => {
+                const tag = tags.find((item) => item.value === value);
+
+                return (
+                  <ComboboxChip
+                    key={value}
+                    style={{
+                      backgroundColor: tag?.color
+                        ? COLOR[tag.color].rgba
+                        : undefined,
+                    }}
+                  >
+                    {value}
+                  </ComboboxChip>
+                );
+              })}
+              <ComboboxChipsInput placeholder="Search for an option..." />
+            </>
           )}
-        </div>
-      </MenuGroup>
-    </>
+        </ComboboxValue>
+      </ComboboxChips>
+      <ComboboxContent variant="inline">
+        <ComboboxList>
+          {(group: GroupOption) => (
+            <ComboboxGroup key={group.label} items={group.items}>
+              <ComboboxLabel title={group.label} />
+              {group.creatable ? (
+                <ComboboxCreatableItem value={search} onClick={addOption}>
+                  <div className="flex items-center gap-2 px-1">
+                    Create
+                    <OptionTag
+                      name={group.option.name}
+                      color={group.option.color}
+                    />
+                  </div>
+                </ComboboxCreatableItem>
+              ) : (
+                <Sortable.Root
+                  disabled={search !== ""}
+                  onDragEnd={(e) => {
+                    reorderOptions(getSortableItemsAfterDrag(group.items, e));
+                  }}
+                >
+                  <Sortable.List>
+                    {group.items.map((name, index) => {
+                      const option = config.options.items[name];
+                      if (!option) return;
+                      return (
+                        <OptionItem
+                          key={option.name}
+                          option={option}
+                          index={index}
+                          draggable={search === ""}
+                          onSelect={selectTag}
+                          onUpdate={(data) => updateOption(name, data)}
+                          onDelete={() => deleteOption(name)}
+                          validateName={validateOptionName}
+                        />
+                      );
+                    })}
+                  </Sortable.List>
+                </Sortable.Root>
+              )}
+            </ComboboxGroup>
+          )}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
   );
 }

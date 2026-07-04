@@ -17,10 +17,3 @@ export function getLetter(src: string, fallbackText: string) {
   const letter = src.length > 0 ? src[0]! : fallbackText;
   return letter.toUpperCase();
 }
-
-export function toPascalCase(s: string): string {
-  return s
-    .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join("");
-}

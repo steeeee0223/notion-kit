@@ -1,8 +1,8 @@
 import { Icon } from "@notion-kit/icons";
 import {
+  DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuSub,
-  DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
 
@@ -16,8 +16,8 @@ export function DateConfigMenu({
 }: ConfigMenuProps<DateConfig>) {
   return (
     <DropdownMenuSub>
-      <DropdownMenuSubTrigger Icon={<Icon.Sliders />} Body="Edit property" />
-      <DropdownMenuSubContent className="w-75">
+      <DropdownMenuSubTrigger icon={<Icon.Sliders />} label="Edit property" />
+      <DropdownMenuContent sideOffset={-4} className="w-75">
         <DropdownMenuGroup>
           <DateFormatMenu
             showIcon
@@ -30,7 +30,7 @@ export function DateConfigMenu({
             onChange={(timeFormat) => onChange({ ...config, timeFormat })}
           />
         </DropdownMenuGroup>
-      </DropdownMenuSubContent>
+      </DropdownMenuContent>
     </DropdownMenuSub>
   );
 }

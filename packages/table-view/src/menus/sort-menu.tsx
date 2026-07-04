@@ -1,81 +1,84 @@
-"use client";
-
-import { type DragEndEvent } from "@dnd-kit/core";
-import { arrayMove, useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { useState } from "react";
+import type { DragEndEvent } from "@dnd-kit/react";
 import type { ColumnSort } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
+  Autocomplete,
+  AutocompleteCollection,
+  AutocompleteContent,
+  AutocompleteEmpty,
+  AutocompleteGroup,
+  AutocompleteInput,
+  AutocompleteItem,
+  AutocompleteList,
   Button,
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  MenuGroup,
-  MenuItem,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  getSortableItemsAfterDrag,
   MenuItemAction,
   Popover,
   PopoverContent,
   PopoverTrigger,
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Sortable,
 } from "@notion-kit/ui/primitives";
 
-import { DefaultIcon, SortableDnd } from "../common";
-import { useTableViewCtx } from "../table-contexts";
+import { DefaultIcon } from "@/common";
+import { useTableViewCtx } from "@/table-contexts";
 
 export function SortMenu() {
   const { table } = useTableViewCtx();
+
   const sorting = table.getState().sorting;
+  const [addingSort, setAddingSort] = useState(false);
 
   const reorderRules = (e: DragEndEvent) => {
-    // reorder after drag & drop
-    const { active, over } = e;
-    if (!over || active.id === over.id) return;
-    table.setSorting((prev) => {
-      const oldIndex = prev.findIndex((s) => s.id === active.id);
-      const newIndex = prev.findIndex((s) => s.id === over.id);
-      return arrayMove(prev, oldIndex, newIndex); //this is just a splice util
-    });
+    table.setSorting((v) => getSortableItemsAfterDrag(v, e));
   };
 
   return (
     <>
-      <MenuGroup>
-        <SortableDnd items={sorting.map((s) => s.id)} onDragEnd={reorderRules}>
-          {sorting.map((prop) => (
-            <SortRule key={prop.id} {...prop} />
-          ))}
-        </SortableDnd>
-      </MenuGroup>
-      <MenuGroup>
-        <Popover>
-          <PopoverTrigger asChild>
-            <MenuItem
-              variant="secondary"
-              Icon={<Icon.Plus className="size-4" />}
-              Body="Add sort"
-            />
-          </PopoverTrigger>
-          <PopoverContent align="start">
-            <PropSelectMenu />
+      <DropdownMenuGroup>
+        <Sortable.Root onDragEnd={reorderRules}>
+          <Sortable.List>
+            {sorting.map((prop, index) => (
+              <SortRule key={prop.id} {...prop} index={index} />
+            ))}
+          </Sortable.List>
+        </Sortable.Root>
+      </DropdownMenuGroup>
+      <DropdownMenuGroup>
+        <Popover open={addingSort} onOpenChange={setAddingSort}>
+          <PopoverTrigger
+            render={
+              <DropdownMenuItem
+                closeOnClick={false}
+                variant="secondary"
+                icon={<Icon.Plus className="size-4" />}
+                label="Add sort"
+              />
+            }
+          />
+          <PopoverContent>
+            <PropSelectMenu onSelect={() => setAddingSort(false)} />
           </PopoverContent>
         </Popover>
-        <MenuItem
+        <DropdownMenuItem
+          closeOnClick={false}
           variant="warning"
           className="text-secondary"
-          Icon={<Icon.Trash />}
-          Body="Delete sort"
+          icon={<Icon.Trash />}
+          label="Delete sort"
           onClick={() => table.resetSorting()}
         />
-      </MenuGroup>
+      </DropdownMenuGroup>
     </>
   );
 }
@@ -83,9 +86,10 @@ export function SortMenu() {
 interface SortRuleProps {
   id: string;
   desc: boolean;
+  index: number;
 }
 
-function SortRule({ id: currentId, desc }: SortRuleProps) {
+function SortRule({ id: currentId, desc, index }: SortRuleProps) {
   const { table } = useTableViewCtx();
 
   const current = table.getColumnInfo(currentId);
@@ -103,126 +107,149 @@ function SortRule({ id: currentId, desc }: SortRuleProps) {
     }
   };
 
-  /** DND */
-  const {
-    attributes,
-    isDragging,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: currentId });
-  const style: React.CSSProperties = {
-    opacity: isDragging ? 0.8 : 1,
-    zIndex: isDragging ? 10 : 0,
-    transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
-    transition, // Warning: it is somehow laggy
-  };
-
   return (
-    <MenuItem
-      ref={setNodeRef}
-      className="h-9 hover:bg-transparent *:data-[slot=menu-item-body]:mx-0"
-      style={style}
-      Icon={
-        <div key="drag-handle" {...attributes} {...listeners}>
-          <Icon.DragHandle className="size-3 fill-icon!" />
-        </div>
-      }
-      Body={
-        <div className="ml-1 flex h-8 items-center gap-2">
-          <Select
-            value={currentId}
-            onValueChange={(id) => updateRule({ id, desc })}
-          >
-            <SelectTrigger className="my-0 w-fit max-w-[180px] border border-border">
-              <SelectValue aria-label={current.name}>
-                <div className="flex items-center gap-2">
-                  {current.icon ? (
-                    <IconBlock icon={current.icon} />
-                  ) : (
-                    <DefaultIcon type={current.type} />
-                  )}
-                  {current.name}
-                </div>
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {properties.map(({ id, name, type, icon }) => (
-                <SelectItem key={id} value={id}>
-                  <div className="flex items-center gap-2">
-                    {icon ? (
-                      <IconBlock icon={icon} />
-                    ) : (
-                      <DefaultIcon type={type} />
-                    )}
-                    {name}
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select
-            value={desc ? "desc" : "asc"}
-            onValueChange={(value) =>
-              updateRule({ id: currentId, desc: value === "desc" })
-            }
-          >
-            <SelectTrigger className="my-0 w-fit max-w-[180px] border border-border">
-              <SelectValue aria-label={desc ? "desc" : "asc"} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="asc">Ascending</SelectItem>
-              <SelectItem value="desc">Descending</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+    <Sortable.Item
+      id={currentId}
+      index={index}
+      render={
+        <DropdownMenuItem
+          closeOnClick={false}
+          className="h-9"
+          icon={<Sortable.Handle aria-label={`Move ${current.name}`} />}
+          label={
+            <div className="grid h-8 w-full grid-cols-2 items-center gap-1.5">
+              <Select
+                value={currentId}
+                onValueChange={(id) => {
+                  if (id !== null) updateRule({ id, desc });
+                }}
+              >
+                <SelectTrigger
+                  aria-label={current.name}
+                  className="my-0 w-full max-w-45 border border-border"
+                >
+                  <SelectValue aria-label={current.name}>
+                    <div className="flex items-center gap-2 truncate">
+                      {current.icon ? (
+                        <IconBlock icon={current.icon} />
+                      ) : (
+                        <DefaultIcon type={current.type} />
+                      )}
+                      {current.name}
+                    </div>
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {properties.map(({ id, name, type, icon }) => (
+                      <SelectItem
+                        key={id}
+                        value={id}
+                        label={name}
+                        icon={
+                          icon ? (
+                            <IconBlock icon={icon} />
+                          ) : (
+                            <DefaultIcon type={type} />
+                          )
+                        }
+                      />
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <Select
+                value={desc ? "desc" : "asc"}
+                onValueChange={(value) =>
+                  updateRule({ id: currentId, desc: value === "desc" })
+                }
+              >
+                <SelectTrigger
+                  aria-label={desc ? "Descending" : "Ascending"}
+                  className="my-0 w-full max-w-45 border border-border"
+                >
+                  <SelectValue aria-label={desc ? "desc" : "asc"}>
+                    <span className="truncate">
+                      {desc ? "Descending" : "Ascending"}
+                    </span>
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="asc" label="Ascending" />
+                    <SelectItem value="desc" label="Descending" />
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          }
+        />
       }
     >
       <MenuItemAction className="flex items-center">
-        <Button variant="hint" className="size-5" onClick={removeRule}>
+        <Button
+          variant="hint"
+          className="size-5"
+          aria-label={`Remove ${current.name} sort`}
+          onClick={removeRule}
+        >
           <Icon.Close className="fill-current" />
         </Button>
       </MenuItemAction>
-    </MenuItem>
+    </Sortable.Item>
   );
 }
 
-function PropSelectMenu() {
+function PropSelectMenu({ onSelect }: { onSelect: () => void }) {
   const { table } = useTableViewCtx();
   const columns = Object.values(table.getState().columnsInfo);
   /** Select */
   const sortedProps = new Set(table.getState().sorting.map((s) => s.id));
-  const selectProp = (id: string) =>
+  const selectProp = (id: string) => {
     table.setSorting((prev) => [...prev, { id, desc: false }]);
+    onSelect();
+  };
 
   return (
-    <Command shouldFilter>
-      <CommandInput clear placeholder="Search for a property..." />
-      <CommandList>
-        <CommandGroup className="h-40 overflow-y-auto">
-          {columns.map(({ id, name, type, icon }) => (
-            <CommandItem
-              key={id}
-              value={name}
-              onSelect={() => selectProp(id)}
-              disabled={sortedProps.has(id)}
-              asChild
-            >
-              <MenuItem
-                key={id}
-                Icon={
-                  icon ? <IconBlock icon={icon} /> : <DefaultIcon type={type} />
-                }
-                Body={name}
-              />
-            </CommandItem>
-          ))}
-        </CommandGroup>
-        <CommandEmpty className="px-3 text-start text-muted">
+    <Autocomplete
+      items={columns}
+      itemToStringValue={(column) => column.name}
+      open
+      autoHighlight="always"
+      openOnInputClick
+    >
+      <AutocompleteInput
+        clear
+        placeholder="Search for a property..."
+        onKeyDown={(event) => event.stopPropagation()}
+      />
+      <AutocompleteContent role="presentation" variant="inline">
+        <AutocompleteList>
+          <AutocompleteGroup className="h-40 overflow-y-auto">
+            <AutocompleteCollection>
+              {(column: (typeof columns)[number]) => (
+                <AutocompleteItem
+                  key={column.id}
+                  value={column}
+                  onClick={() => selectProp(column.id)}
+                  disabled={sortedProps.has(column.id)}
+                  icon={
+                    column.icon ? (
+                      <IconBlock icon={column.icon} />
+                    ) : (
+                      <DefaultIcon type={column.type} />
+                    )
+                  }
+                  label={column.name}
+                />
+              )}
+            </AutocompleteCollection>
+          </AutocompleteGroup>
+        </AutocompleteList>
+        <AutocompleteEmpty className="px-3 text-start text-muted">
           No results
-        </CommandEmpty>
-      </CommandList>
-    </Command>
+        </AutocompleteEmpty>
+      </AutocompleteContent>
+    </Autocomplete>
   );
 }

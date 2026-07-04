@@ -1,33 +1,41 @@
-"use client";
-
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  MenuItem,
+  Autocomplete,
+  AutocompleteCollection,
+  AutocompleteContent,
+  AutocompleteEmpty,
+  AutocompleteGroup,
+  AutocompleteInput,
+  AutocompleteItem,
+  AutocompleteList,
   MenuItemCheck,
 } from "@notion-kit/ui/primitives";
 
-import { DefaultIcon, MenuHeader } from "../common";
-import { TableViewMenuPage } from "../features";
-import type { ColumnInfo } from "../lib/types";
-import { useTableViewCtx } from "../table-contexts";
+import { DefaultIcon, MenuHeader } from "@/common";
+import { TableViewMenuPage } from "@/features";
+import type { ColumnInfo } from "@/lib/types";
+import { useTableViewCtx } from "@/table-contexts";
 
 export function SelectGroupMenu() {
   const { table } = useTableViewCtx();
   const { columnOrder, columnsInfo, grouping, tableGlobal } = table.getState();
   const groupingColId = grouping.at(0);
 
-  const options = columnOrder.reduce<ColumnInfo[]>((acc, colId) => {
-    const col = columnsInfo[colId]!;
-    if (col.hidden || col.isDeleted) return acc;
-    acc.push(col);
-    return acc;
-  }, []);
+  const options = columnOrder.reduce<(ColumnInfo & { kind: "column" })[]>(
+    (acc, colId) => {
+      const col = columnsInfo[colId]!;
+      if (col.hidden || col.isDeleted) return acc;
+      acc.push({ ...col, kind: "column" });
+      return acc;
+    },
+    [],
+  );
+  const groupOptions = [
+    ...(tableGlobal.layout !== "board"
+      ? [{ kind: "none" as const, id: null, name: "None" }]
+      : []),
+    ...options,
+  ];
 
   const selectGroup = (colId: string | null) => {
     table.setGroupingColumn(colId);
@@ -48,45 +56,50 @@ export function SelectGroupMenu() {
           })
         }
       />
-      <Command shouldFilter>
-        <CommandInput placeholder="Search for a property" />
-        <CommandList>
-          <CommandGroup className="h-40 overflow-y-auto">
-            {tableGlobal.layout !== "board" && (
-              <CommandItem value="none" asChild>
-                <MenuItem Body="None" onClick={() => selectGroup(null)}>
-                  {groupingColId === undefined && <MenuItemCheck />}
-                </MenuItem>
-              </CommandItem>
-            )}
-            {options.map(({ id, name, type, icon }) => (
-              <CommandItem
-                key={id}
-                value={name}
-                onSelect={() => selectGroup(id)}
-                asChild
-              >
-                <MenuItem
-                  key={id}
-                  Icon={
-                    icon ? (
-                      <IconBlock icon={icon} />
-                    ) : (
-                      <DefaultIcon type={type} />
-                    )
-                  }
-                  Body={name}
-                >
-                  {groupingColId === id && <MenuItemCheck />}
-                </MenuItem>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-          <CommandEmpty className="px-3 text-start text-muted">
+      <Autocomplete
+        items={groupOptions}
+        itemToStringValue={(option) => option.name}
+        open
+        autoHighlight="always"
+        openOnInputClick
+      >
+        <AutocompleteInput
+          placeholder="Search for a property"
+          onKeyDown={(e) => e.stopPropagation()}
+        />
+        <AutocompleteContent role="presentation" variant="inline">
+          <AutocompleteList>
+            <AutocompleteGroup className="h-40">
+              <AutocompleteCollection>
+                {(option: (typeof groupOptions)[number]) => (
+                  <AutocompleteItem
+                    key={option.id ?? "none"}
+                    value={option}
+                    label={option.name}
+                    icon={
+                      option.kind === "column" ? (
+                        option.icon ? (
+                          <IconBlock icon={option.icon} />
+                        ) : (
+                          <DefaultIcon type={option.type} />
+                        )
+                      ) : null
+                    }
+                    onClick={() => selectGroup(option.id)}
+                  >
+                    {groupingColId === (option.id ?? undefined) && (
+                      <MenuItemCheck />
+                    )}
+                  </AutocompleteItem>
+                )}
+              </AutocompleteCollection>
+            </AutocompleteGroup>
+          </AutocompleteList>
+          <AutocompleteEmpty className="px-3 text-start text-muted">
             No results
-          </CommandEmpty>
-        </CommandList>
-      </Command>
+          </AutocompleteEmpty>
+        </AutocompleteContent>
+      </Autocomplete>
     </>
   );
 }

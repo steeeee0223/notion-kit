@@ -1,17 +1,16 @@
-"use client";
-
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  TooltipDescription,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { DefaultIcon, TableCell } from "../common";
-import { PropMenu } from "../menus";
-import { useTableViewCtx } from "../table-contexts";
+import { DefaultIcon, TableCell } from "@/common";
+import { PropMenu } from "@/menus";
+import { useTableViewCtx } from "@/table-contexts";
 
 interface ViewPropsProps {
   rowId: string;
@@ -45,33 +44,40 @@ export function ViewProps({ rowId }: ViewPropsProps) {
                   <TooltipPreset
                     side="left"
                     description={
-                      info.description
-                        ? [
-                            { type: "default", text: info.name },
-                            { type: "secondary", text: info.description },
-                          ]
-                        : info.name
+                      info.description ? (
+                        <>
+                          <TooltipDescription text={info.name} />
+                          <TooltipDescription
+                            type="secondary"
+                            text={info.description}
+                          />
+                        </>
+                      ) : (
+                        info.name
+                      )
                     }
                   >
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="cell"
-                        className="size-full max-w-full rounded-sm px-1.5"
-                      >
-                        {info.icon ? (
-                          <IconBlock
-                            icon={info.icon}
-                            className="size-4 p-0 opacity-60 dark:opacity-45"
-                          />
-                        ) : (
-                          <DefaultIcon
-                            type={info.type}
-                            className="fill-default/45"
-                          />
-                        )}
-                        <div className="truncate">{info.name}</div>
-                      </Button>
-                    </DropdownMenuTrigger>
+                    <DropdownMenuTrigger
+                      render={
+                        <Button
+                          variant="cell"
+                          className="size-full max-w-full rounded-sm px-1.5"
+                        >
+                          {info.icon ? (
+                            <IconBlock
+                              icon={info.icon}
+                              className="size-4 p-0 opacity-60 dark:opacity-45"
+                            />
+                          ) : (
+                            <DefaultIcon
+                              type={info.type}
+                              className="fill-default/45"
+                            />
+                          )}
+                          <div className="truncate">{info.name}</div>
+                        </Button>
+                      }
+                    />
                   </TooltipPreset>
                   <DropdownMenuContent
                     align="start"

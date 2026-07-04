@@ -31,9 +31,8 @@ export function ActivePlanSection() {
   return (
     <SettingsSection title={trans.title} hideSeparator>
       <Card
-        variant="popover"
         style={{ width: "unset" }}
-        className="relative flex flex-wrap justify-between gap-8 rounded-xl p-5"
+        className="relative flex flex-wrap justify-between gap-8 rounded-lg bg-popover p-5 shadow-md"
       >
         <CardContent className="flex flex-col gap-1.5">
           <CardTitle className="relative flex items-center gap-1 self-stretch text-[22px]/[26px] tracking-[-0.1px]">

@@ -58,17 +58,18 @@ export function TrashBox({
   return (
     <TooltipProvider>
       <Popover open={isOpen} onOpenChange={onOpenChange}>
-        <PopoverTrigger asChild>
-          <SidebarMenuItem
-            role="button"
-            label="Trash"
-            icon={<Icon.Trash className="size-5.5" />}
-            hint="Restore deleted pages"
-          />
-        </PopoverTrigger>
+        <PopoverTrigger
+          render={
+            <SidebarMenuItem
+              role="button"
+              label="Trash"
+              icon={<Icon.Trash className="size-5.5" />}
+              hint="Restore deleted pages"
+            />
+          }
+        />
         <PopoverContent
-          forceMount
-          className="relative bottom-10 flex h-[50vh] w-[400px] flex-col"
+          className="relative bottom-10 flex h-[50vh] w-100 flex-col"
           side="right"
           sideOffset={-4}
           align="start"
@@ -98,12 +99,12 @@ export function TrashBox({
                     id={page.id}
                     tabIndex={-1}
                     role="menuitem"
-                    Icon={
+                    icon={
                       <IconBlock
                         icon={page.icon ?? { type: "text", src: page.title }}
                       />
                     }
-                    Body={page.title}
+                    label={page.title}
                     onClick={() => handleSelect(page)}
                   >
                     <MenuItemAction className="flex gap-1">
@@ -119,16 +120,18 @@ export function TrashBox({
                       </TooltipPreset>
                       <Dialog>
                         <TooltipPreset description="Delete from Trash">
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="hint"
-                              className="size-5"
-                              aria-label="Delete from Trash"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Icon.Trash className="size-4" />
-                            </Button>
-                          </DialogTrigger>
+                          <DialogTrigger
+                            render={
+                              <Button
+                                variant="hint"
+                                className="size-5"
+                                aria-label="Delete from Trash"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Icon.Trash className="size-4" />
+                              </Button>
+                            }
+                          />
                         </TooltipPreset>
                         <AlertModal
                           title="Are you sure you want to delete this page from Trash?"

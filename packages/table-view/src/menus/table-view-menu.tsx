@@ -1,14 +1,16 @@
 import { Icon } from "@notion-kit/icons";
 import {
-  MenuGroup,
-  MenuItem,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   MenuItemSelect,
-  Separator,
 } from "@notion-kit/ui/primitives";
 
-import { LayoutIcon, MenuGroupHeader, MenuHeader } from "../common";
-import { LAYOUT_OPTIONS, TableViewMenuPage } from "../features";
-import { useTableViewCtx } from "../table-contexts";
+import { LayoutIcon, MenuHeader } from "@/common";
+import { LAYOUT_OPTIONS, TableViewMenuPage } from "@/features";
+import { useTableViewCtx } from "@/table-contexts";
+
 import { DeletedPropsMenu } from "./deleted-props-menu";
 import { EditGroupMenu } from "./edit-group-menu";
 import { EditPropMenu } from "./edit-prop-menu";
@@ -74,26 +76,29 @@ function TableMenu() {
   return (
     <>
       <MenuHeader id="view-settings" title="View Settings" />
-      <MenuGroup>
-        <MenuItem
-          Icon={<LayoutIcon layout={layout} />}
-          Body="Layout"
+      <DropdownMenuGroup>
+        <DropdownMenuItem
+          closeOnClick={false}
+          icon={<LayoutIcon layout={layout} />}
+          label="Layout"
           onClick={() => openMenu(TableViewMenuPage.Layout)}
         >
           <MenuItemSelect>
             {LAYOUT_OPTIONS.find((l) => l.value === layout)?.label}
           </MenuItemSelect>
-        </MenuItem>
-        <MenuItem
-          Icon={<Icon.ArrowUpDown />}
-          Body="Sort"
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          closeOnClick={false}
+          icon={<Icon.ArrowUpDown />}
+          label="Sort"
           onClick={() => openMenu(TableViewMenuPage.Sort)}
         >
           <MenuItemSelect />
-        </MenuItem>
-        <MenuItem
-          Icon={<Icon.SquareGridBelowLines />}
-          Body="Group"
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          closeOnClick={false}
+          icon={<Icon.SquareGridBelowLines />}
+          label="Group"
           onClick={() =>
             openMenu(
               groupedColumn
@@ -103,29 +108,31 @@ function TableMenu() {
           }
         >
           <MenuItemSelect>{groupedColumn?.name ?? ""}</MenuItemSelect>
-        </MenuItem>
-      </MenuGroup>
-      <Separator />
-      <MenuGroup>
-        <MenuGroupHeader title="Data source settings" />
-        <MenuItem
-          Icon={<Icon.Sliders />}
-          Body="Edit properties"
+        </DropdownMenuItem>
+      </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        <DropdownMenuLabel title="Data source settings" />
+        <DropdownMenuItem
+          closeOnClick={false}
+          icon={<Icon.Sliders />}
+          label="Edit properties"
           disabled={locked}
           onClick={() => openMenu(TableViewMenuPage.Props)}
         >
           <MenuItemSelect />
-        </MenuItem>
-      </MenuGroup>
-      <Separator />
-      <MenuGroup>
-        <MenuItem
+        </DropdownMenuItem>
+      </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        <DropdownMenuItem
+          closeOnClick={false}
           {...(locked
-            ? { Icon: <Icon.LockOpen />, Body: "Unlock database" }
-            : { Icon: <Icon.Lock />, Body: "Lock database" })}
+            ? { icon: <Icon.LockOpen />, label: "Unlock database" }
+            : { icon: <Icon.Lock />, label: "Lock database" })}
           onClick={table.toggleTableLocked}
         />
-      </MenuGroup>
+      </DropdownMenuGroup>
     </>
   );
 }

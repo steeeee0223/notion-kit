@@ -1,8 +1,8 @@
 import React from "react";
 import type { OnChangeFn, Table } from "@tanstack/react-table";
 
-import type { LayoutType } from "../features";
-import type { ColumnInfo, Row } from "../lib/types";
+import type { LayoutType } from "@/features";
+import type { ColumnInfo, Row } from "@/lib/types";
 
 export interface CellProps<Data, Config = undefined> {
   propId: string;
