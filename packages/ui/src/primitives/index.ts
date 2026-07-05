@@ -20,6 +20,7 @@ export * from "./field";
 export * from "./form";
 export * from "./input";
 export * from "./label";
+export * from "./meter";
 export * from "./popover";
 export * from "./radio-group";
 export * from "./resizable";
