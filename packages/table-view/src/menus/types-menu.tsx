@@ -107,7 +107,7 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
           }
           onKeyDown={(e) => e.stopPropagation()}
         />
-        <AutocompleteContent role="presentation" variant="inline">
+        <AutocompleteContent variant="inline">
           <AutocompleteList>
             <AutocompleteGroup>
               <AutocompleteLabel title="Type" />

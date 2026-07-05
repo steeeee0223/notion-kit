@@ -44,7 +44,7 @@ function ComboboxTree<T extends TreeItemData>({ tree }: ComboboxTreeProps<T>) {
         value={input}
         highlightedId={highlightedId}
       />
-      <AutocompleteContent role="presentation" variant="inline">
+      <AutocompleteContent variant="inline">
         {mode === "browse" ? (
           <AutocompleteList>
             <AutocompleteGroup>

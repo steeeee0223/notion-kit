@@ -1,15 +1,20 @@
-import { useFilter } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import type { Page } from "@notion-kit/schemas";
 
 import { AlertModal } from "@/alert-modal";
 import { IconBlock } from "@/icon-block";
 import {
+  Autocomplete,
+  AutocompleteCollection,
+  AutocompleteContent,
+  AutocompleteEmpty,
+  AutocompleteGroup,
+  AutocompleteInput,
+  AutocompleteItem,
+  AutocompleteList,
   Button,
   Dialog,
   DialogTrigger,
-  Input,
-  MenuItem,
   MenuItemAction,
   Popover,
   PopoverContent,
@@ -17,8 +22,7 @@ import {
   TooltipPreset,
   TooltipProvider,
 } from "@/primitives";
-
-import { SidebarMenuItem } from "../core";
+import { SidebarMenuItem } from "@/sidebar/core";
 
 interface TrashBoxProps {
   pages: Page[];
@@ -37,11 +41,7 @@ export function TrashBox({
   onDelete,
   onSelect,
 }: TrashBoxProps) {
-  const { search, results, updateSearch } = useFilter(
-    pages,
-    (page, v) => page.title.toLowerCase().includes(v),
-    { default: "all" },
-  );
+  const options = [{ value: "Archived", items: pages }];
   /** Docs Actions */
   const handleSelect = (page: Page) => {
     onSelect?.(page);
@@ -59,9 +59,9 @@ export function TrashBox({
     <TooltipProvider>
       <Popover open={isOpen} onOpenChange={onOpenChange}>
         <PopoverTrigger
+          nativeButton={false}
           render={
             <SidebarMenuItem
-              role="button"
               label="Trash"
               icon={<Icon.Trash className="size-5.5" />}
               hint="Restore deleted pages"
@@ -69,84 +69,87 @@ export function TrashBox({
           }
         />
         <PopoverContent
-          className="relative bottom-10 flex h-[50vh] w-100 flex-col"
+          className="relative h-[50vh] w-100"
           side="right"
           sideOffset={-4}
           align="start"
         >
-          <div className="flex w-full items-center px-3 py-2.5">
-            <Input
+          <Autocomplete<Page>
+            open
+            items={options}
+            itemToStringValue={(page) => page.title}
+          >
+            <AutocompleteInput
+              search
               clear
-              value={search}
-              onChange={(e) => updateSearch(e.target.value)}
-              onCancel={() => updateSearch("")}
               placeholder="Search pages in Trash"
             />
-          </div>
-          <div className="flex h-full grow overflow-y-auto py-1.5">
-            {!results || results.length === 0 ? (
-              <div className="flex w-full flex-col items-center justify-center gap-2 text-secondary">
-                <Icon.Trash className="block size-9 shrink-0 fill-current" />
-                <div className="flex flex-col text-center text-sm">
-                  <span className="font-semibold">No results</span>
-                </div>
-              </div>
-            ) : (
-              <div className="mt-2 flex w-full flex-col px-1 pb-1 text-sm">
-                {results.map((page) => (
-                  <MenuItem
-                    key={page.id}
-                    id={page.id}
-                    tabIndex={-1}
-                    role="menuitem"
-                    icon={
-                      <IconBlock
-                        icon={page.icon ?? { type: "text", src: page.title }}
-                      />
-                    }
-                    label={page.title}
-                    onClick={() => handleSelect(page)}
-                  >
-                    <MenuItemAction className="flex gap-1">
-                      <TooltipPreset description="Restore">
-                        <Button
-                          variant="hint"
-                          className="size-5"
-                          aria-label="Restore"
-                          onClick={(e) => handleRestore(e, page.id)}
+            <AutocompleteContent variant="inline" className="h-full">
+              <AutocompleteEmpty className="size-full flex-col items-center justify-center gap-2">
+                <Icon.Trash className="size-9 shrink-0 fill-current" />
+                <span className="font-semibold">No results</span>
+              </AutocompleteEmpty>
+              <AutocompleteList>
+                {(group: (typeof options)[number]) => (
+                  <AutocompleteGroup key={group.value} items={group.items}>
+                    <AutocompleteCollection>
+                      {(page: Page) => (
+                        <AutocompleteItem
+                          key={page.id}
+                          value={page}
+                          icon={
+                            <IconBlock
+                              icon={
+                                page.icon ?? { type: "text", src: page.title }
+                              }
+                            />
+                          }
+                          label={page.title}
+                          onClick={() => handleSelect(page)}
                         >
-                          <Icon.Undo className="size-4" />
-                        </Button>
-                      </TooltipPreset>
-                      <Dialog>
-                        <TooltipPreset description="Delete from Trash">
-                          <DialogTrigger
-                            render={
+                          <MenuItemAction className="flex items-center gap-1">
+                            <TooltipPreset description="Restore">
                               <Button
                                 variant="hint"
                                 className="size-5"
-                                aria-label="Delete from Trash"
-                                onClick={(e) => e.stopPropagation()}
+                                aria-label="Restore"
+                                onClick={(e) => handleRestore(e, page.id)}
                               >
-                                <Icon.Trash className="size-4" />
+                                <Icon.Undo className="size-4" />
                               </Button>
-                            }
-                          />
-                        </TooltipPreset>
-                        <AlertModal
-                          title="Are you sure you want to delete this page from Trash?"
-                          primary="Yes. Delete this page"
-                          secondary="Cancel"
-                          onTrigger={() => onDelete?.(page.id)}
-                        />
-                      </Dialog>
-                    </MenuItemAction>
-                  </MenuItem>
-                ))}
-              </div>
-            )}
-          </div>
-          <footer className="mt-0.5 shrink-0 border-t bg-blue/5 px-2 py-1.5 shadow-sm">
+                            </TooltipPreset>
+                            <Dialog>
+                              <TooltipPreset description="Delete from Trash">
+                                <DialogTrigger
+                                  render={
+                                    <Button
+                                      variant="hint"
+                                      className="size-5"
+                                      aria-label="Delete from Trash"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <Icon.Trash className="size-4" />
+                                    </Button>
+                                  }
+                                />
+                              </TooltipPreset>
+                              <AlertModal
+                                title="Are you sure you want to delete this page from Trash?"
+                                primary="Yes. Delete this page"
+                                secondary="Cancel"
+                                onTrigger={() => onDelete?.(page.id)}
+                              />
+                            </Dialog>
+                          </MenuItemAction>
+                        </AutocompleteItem>
+                      )}
+                    </AutocompleteCollection>
+                  </AutocompleteGroup>
+                )}
+              </AutocompleteList>
+            </AutocompleteContent>
+          </Autocomplete>
+          <footer className="sticky bottom-0 z-10 mt-0.5 shrink-0 border-t bg-blue/5 px-2 py-1.5 shadow-sm">
             <div className="flex items-center justify-between text-xs text-secondary">
               <span>
                 Pages in Trash for over 30 days will be automatically deleted

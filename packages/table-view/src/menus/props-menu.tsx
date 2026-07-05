@@ -77,7 +77,7 @@ export function PropsMenu() {
           onKeyDown={(e) => e.stopPropagation()}
           placeholder="Search for a property..."
         />
-        <AutocompleteContent role="presentation" variant="inline">
+        <AutocompleteContent variant="inline">
           <AutocompleteList>
             <AutocompleteGroup>
               <MenuGroupHeader

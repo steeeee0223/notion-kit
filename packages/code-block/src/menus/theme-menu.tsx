@@ -29,11 +29,7 @@ export function ThemeMenu() {
       openOnInputClick
     >
       <AutocompleteInput placeholder="Search themes..." />
-      <AutocompleteContent
-        role="presentation"
-        variant="inline"
-        className="bg-popover"
-      >
+      <AutocompleteContent variant="inline" className="bg-popover">
         <AutocompleteList className="max-h-60">
           {(group: OptionGroup) => (
             <AutocompleteGroup key={group.value} items={group.items}>

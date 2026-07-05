@@ -28,11 +28,11 @@ export class SelectMenuObject {
   }
 
   option(name: string) {
-    return screen.getByRole("menuitem", { name });
+    return screen.getByRole("option", { name });
   }
 
   queryOption(name: string) {
-    return screen.queryByRole("menuitem", { name });
+    return screen.queryByRole("option", { name });
   }
 
   optionActionsItem(name: string | RegExp) {

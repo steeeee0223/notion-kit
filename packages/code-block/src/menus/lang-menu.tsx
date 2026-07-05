@@ -28,7 +28,7 @@ export function LangMenu() {
       openOnInputClick
     >
       <AutocompleteInput placeholder="Search for a language..." />
-      <AutocompleteContent role="presentation" variant="inline">
+      <AutocompleteContent variant="inline">
         <AutocompleteList className="max-h-60">
           {(group: OptionGroup) => (
             <AutocompleteGroup key={group.value} items={group.items}>

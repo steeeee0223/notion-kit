@@ -223,7 +223,7 @@ function PropSelectMenu({ onSelect }: { onSelect: () => void }) {
         placeholder="Search for a property..."
         onKeyDown={(event) => event.stopPropagation()}
       />
-      <AutocompleteContent role="presentation" variant="inline">
+      <AutocompleteContent variant="inline">
         <AutocompleteList>
           <AutocompleteGroup className="h-40 overflow-y-auto">
             <AutocompleteCollection>
