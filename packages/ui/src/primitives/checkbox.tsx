@@ -1,23 +1,23 @@
-"use client";
-
-import * as React from "react";
-import { Checkbox as CheckboxPrimitive } from "radix-ui";
+import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox";
 
 import { cn, cva, type VariantProps } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 
 const checkboxVariants = cva(
   [
-    "peer shrink-0 border border-border-button shadow-xs outline-none hover:bg-default/5",
+    "peer relative flex shrink-0 items-center justify-center border border-border-button shadow-xs transition-colors outline-none hover:bg-default/5",
+    "after:absolute after:-inset-x-3 after:-inset-y-2",
+    "focus-visible:shadow-notion",
     "disabled:cursor-not-allowed disabled:opacity-50",
-    "data-[state=checked]:border-none data-[state=checked]:bg-blue data-[state=checked]:text-white",
+    "data-checked:border-none data-checked:bg-blue",
+    "data-indeterminate:border-none data-indeterminate:bg-blue",
   ],
   {
     variants: {
       size: {
         md: "size-4",
         sm: "size-3.5",
-        xs: "size-[13px] rounded-[2px]",
+        xs: "size-[13px] rounded-xs",
       },
     },
     defaultVariants: { size: "md" },
@@ -25,7 +25,7 @@ const checkboxVariants = cva(
 );
 
 export interface CheckboxProps
-  extends React.ComponentProps<typeof CheckboxPrimitive.Root>,
+  extends CheckboxPrimitive.Root.Props,
     VariantProps<typeof checkboxVariants> {}
 
 function Checkbox({ className, size, ...props }: CheckboxProps) {
@@ -37,10 +37,18 @@ function Checkbox({ className, size, ...props }: CheckboxProps) {
     >
       <CheckboxPrimitive.Indicator
         data-slot="checkbox-indicator"
-        className="flex items-center justify-center"
-      >
-        <Icon.Check className="size-full fill-white" />
-      </CheckboxPrimitive.Indicator>
+        render={(_props, state) => {
+          return (
+            <span className="grid place-content-center transition-none [&>svg]:size-3.5 [&>svg]:fill-white">
+              {state.indeterminate ? (
+                <Icon.DashFillSmall />
+              ) : state.checked ? (
+                <Icon.Check />
+              ) : null}
+            </span>
+          );
+        }}
+      />
     </CheckboxPrimitive.Root>
   );
 }

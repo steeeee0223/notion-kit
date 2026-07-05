@@ -1,5 +1,6 @@
-/** Variants */
+/** Core designs */
 export * from "./design";
+export * from "./menu";
 export * from "./variants";
 /** Shadcn UI */
 export * from "./autocomplete";
@@ -36,8 +37,5 @@ export * from "./textarea";
 export * from "./theme";
 export * from "./toast";
 export * from "./tooltip";
-export * from "./visually-hidden";
-/** Custom */
-export * from "./menu";
 /** utils */
 export * from "./compose-refs";
