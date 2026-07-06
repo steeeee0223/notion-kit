@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@notion-kit/cn";
 import { MeterBar, MeterRing, TooltipPreset } from "@notion-kit/ui/primitives";
 import { COLOR } from "@notion-kit/utils";
