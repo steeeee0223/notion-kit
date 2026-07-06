@@ -111,7 +111,7 @@ export function PaymentDetailsSection() {
         <Switch
           size="sm"
           checked={billing.invoiceEmails}
-          onCheckedChange={actions.toggleInvoiceEmails}
+          onCheckedChange={(checked) => actions.toggleInvoiceEmails(checked)}
         />
       </SettingsRule>
       <Separator />

@@ -120,6 +120,7 @@ function ComboboxContent({
       <div
         data-slot="combobox-content"
         data-variant={variant}
+        role="presentation"
         className={cn(
           "group/combobox-content relative w-full overflow-hidden",
           className,

@@ -153,6 +153,7 @@ function AutocompleteContent({
       <div
         data-slot="autocomplete-content"
         data-variant={variant}
+        role="presentation"
         className={cn(
           "group/autocomplete-content relative w-full overflow-hidden",
           className,

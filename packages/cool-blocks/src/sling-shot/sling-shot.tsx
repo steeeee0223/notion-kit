@@ -2,6 +2,7 @@ import * as React from "react";
 import { Slot } from "radix-ui";
 
 import { cn } from "@notion-kit/cn";
+import { MeterBar } from "@notion-kit/ui/primitives";
 import { COLOR } from "@notion-kit/utils";
 
 import {
@@ -1337,24 +1338,19 @@ function SlingShotGoal({
 function SlingShotPower({
   className,
   style,
-  render,
   ...props
-}: SlingShotSlotProps) {
+}: React.ComponentProps<"div">) {
   const { activeState } = useSlingShotContext();
   if (!activeState?.isAiming) return null;
 
   const value = Math.round(activeState.power * 100);
 
   return (
-    <SlingShotSlot
-      render={render}
+    <MeterBar
       data-slot="sling-shot-power"
-      role="progressbar"
-      aria-valuenow={value}
-      className={cn(
-        "pointer-events-none absolute z-40 flex w-full min-w-24 items-center justify-stretch self-stretch shadow-lg",
-        className,
-      )}
+      value={value}
+      trackColor={COLOR.orange.hex}
+      className={cn("absolute z-40 min-w-24 shadow-lg", className)}
       style={{
         left: activeState.itemCenter.x,
         top: activeState.itemCenter.y - 32,
@@ -1362,25 +1358,7 @@ function SlingShotPower({
         ...style,
       }}
       {...props}
-    >
-      <div className="relative h-1 min-h-1 w-full overflow-hidden rounded-full bg-default/10">
-        <div
-          className="absolute h-full rounded-full"
-          style={{
-            backgroundColor: COLOR.orange.hex,
-            opacity: 0.3,
-            width: `calc(${value}% + 2px)`,
-          }}
-        />
-        <div
-          className="absolute h-full rounded-full"
-          style={{
-            backgroundColor: COLOR.orange.hex,
-            width: `${value}%`,
-          }}
-        />
-      </div>
-    </SlingShotSlot>
+    />
   );
 }
 

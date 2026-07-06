@@ -65,6 +65,12 @@ export const Check = (props: IconProps) => {
   );
 };
 
+export const DashFillSmall = (props: IconProps) => (
+  <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 16 16" {...props}>
+    <path d="M4.25 8A.75.75 0 0 1 5 7.25h6a.75.75 0 0 1 0 1.5H5A.75.75 0 0 1 4.25 8" />
+  </svg>
+);
+
 export const QuestionMarkCircled = (props: IconProps) => {
   return (
     <svg

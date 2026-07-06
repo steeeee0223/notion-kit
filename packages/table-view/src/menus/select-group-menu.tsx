@@ -67,7 +67,7 @@ export function SelectGroupMenu() {
           placeholder="Search for a property"
           onKeyDown={(e) => e.stopPropagation()}
         />
-        <AutocompleteContent role="presentation" variant="inline">
+        <AutocompleteContent variant="inline">
           <AutocompleteList>
             <AutocompleteGroup className="h-40">
               <AutocompleteCollection>

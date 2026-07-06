@@ -1,9 +1,9 @@
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
+  ComboboxItem,
   DropdownMenu,
   DropdownMenuTrigger,
-  MenuItem,
   MenuItemAction,
   Sortable,
   TooltipDescription,
@@ -11,7 +11,8 @@ import {
 } from "@notion-kit/ui/primitives";
 import type { Color } from "@notion-kit/utils";
 
-import { OptionTag } from "../../../common";
+import { OptionTag } from "@/common";
+
 import { SelectOptionMenu } from "../select-option-menu";
 import type { OptionConfig } from "../types";
 
@@ -58,7 +59,8 @@ export function OptionItem({
         index={index}
         disabled={!draggable}
         render={
-          <MenuItem
+          <ComboboxItem
+            value={option}
             onClick={() => onSelect(option.name)}
             icon={
               draggable ? (

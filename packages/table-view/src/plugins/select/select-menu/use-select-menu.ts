@@ -1,12 +1,10 @@
-"use client";
-
 import { useCallback, useMemo, useState } from "react";
 import type { OnChangeFn } from "@tanstack/react-table";
 
-import { useFilter } from "@notion-kit/hooks";
-import { getRandomColor, type Color } from "@notion-kit/utils";
+import { idToColorKey, type Color } from "@notion-kit/utils";
 
-import { useTableViewCtx } from "../../../table-contexts";
+import { useTableViewCtx } from "@/table-contexts";
+
 import {
   propagateSelectEvent,
   selectConfigReducer,
@@ -49,19 +47,19 @@ export function useSelectMenu({
     [config, onConfigChange, table, propId, multi],
   );
 
-  const [optionSuggestion, setOptionSuggestion] = useState<{
-    name: string;
-    color: Color;
-  }>();
-  const { search, results, updateSearch } = useFilter(
-    config.options.names,
-    (option, v) => option.includes(v),
+  const [search, setSearch] = useState("");
+  const optionSuggestion = useMemo(
+    () =>
+      search && !config.options.items[search]
+        ? { name: search, color: idToColorKey(search) }
+        : undefined,
+    [config.options.items, search],
   );
 
   /** Config Actions */
   const addOption = useCallback(() => {
     if (!optionSuggestion) return;
-    updateSearch("");
+    setSearch("");
     dispatchConfig({
       action: "add:option",
       payload: optionSuggestion,
@@ -69,15 +67,7 @@ export function useSelectMenu({
     onChange(
       multi ? [...options, optionSuggestion.name] : [optionSuggestion.name],
     );
-    setOptionSuggestion(undefined);
-  }, [
-    optionSuggestion,
-    dispatchConfig,
-    multi,
-    options,
-    onChange,
-    updateSearch,
-  ]);
+  }, [optionSuggestion, dispatchConfig, multi, options, onChange]);
 
   const reorderOptions = useCallback(
     (names: string[]) => {
@@ -128,26 +118,11 @@ export function useSelectMenu({
       if (options.includes(name)) {
         onChange(options.filter((n) => n !== name));
       }
-      setOptionSuggestion(undefined);
     },
     [dispatchConfig, options, onChange],
   );
 
   /** Search & Filter */
-  const handleInputChange = useCallback(
-    (input: string) => {
-      updateSearch(input);
-      setOptionSuggestion((prev) => {
-        if (config.options.items[input]) return undefined;
-        return {
-          name: input,
-          color: prev ? prev.color : getRandomColor(),
-        };
-      });
-    },
-    [updateSearch, config.options.items],
-  );
-
   const handleTagsChange = useCallback(
     (tags: string[]) => {
       const newTag = tags.find((tag) => !config.options.items[tag]);
@@ -156,7 +131,6 @@ export function useSelectMenu({
         addOption();
         return;
       }
-      setOptionSuggestion(undefined);
       onChange(tags.slice(multi ? 0 : -1));
     },
     [multi, config.options.items, addOption, onChange],
@@ -164,12 +138,11 @@ export function useSelectMenu({
 
   const selectTag = useCallback(
     (value: string) => {
-      updateSearch("");
-      setOptionSuggestion(undefined);
+      setSearch("");
       if (options.includes(value)) return;
       onChange(multi ? [...options, value] : [value]);
     },
-    [options, multi, onChange, updateSearch],
+    [options, multi, onChange],
   );
 
   const tags = useMemo(
@@ -186,8 +159,7 @@ export function useSelectMenu({
     tags,
     optionSuggestion,
     search,
-    results,
-    handleInputChange,
+    setSearch,
     handleTagsChange,
     selectTag,
     addOption,

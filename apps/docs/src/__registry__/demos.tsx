@@ -239,6 +239,10 @@ export const Index: Record<
     files: ["registry/src/map-route/map-route.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/map-route")),
   },
+  "meter-demo": {
+    files: ["registry/src/meter-demo/meter-demo.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/meter-demo")),
+  },
   "combobox-basic": {
     files: ["registry/src/combobox-basic/combobox-basic.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/combobox-basic")),

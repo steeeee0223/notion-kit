@@ -157,7 +157,7 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
       openOnInputClick
     >
       <AutocompleteInput placeholder="Search actions..." />
-      <AutocompleteContent role="presentation" variant="inline">
+      <AutocompleteContent variant="inline">
         <AutocompleteList>
           {(group: ActionGroup, index) => {
             const isLast = groups.length - 1 === index;

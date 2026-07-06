@@ -1,7 +1,4 @@
-"use client";
-
-import * as React from "react";
-import { Switch as SwitchPrimitives } from "radix-ui";
+import { Switch as SwitchPrimitive } from "@base-ui/react/switch";
 
 import { cn, cva, type VariantProps } from "@notion-kit/cn";
 
@@ -9,7 +6,7 @@ const switchVariants = cva(
   [
     "peer inline-flex shrink-0 cursor-pointer items-center rounded-full border-none p-0.5 transition-all outline-none",
     "focus-visible:shadow-notion disabled:cursor-not-allowed disabled:opacity-50",
-    "data-[state=checked]:bg-blue data-[state=unchecked]:bg-default/15",
+    "data-checked:bg-blue data-unchecked:bg-default/15",
   ],
   {
     variants: {
@@ -22,21 +19,21 @@ const switchVariants = cva(
   },
 );
 
-export type SwitchProps = React.ComponentProps<typeof SwitchPrimitives.Root> &
+export type SwitchProps = SwitchPrimitive.Root.Props &
   VariantProps<typeof switchVariants>;
 
 function Switch({ className, size, ...props }: SwitchProps) {
   return (
-    <SwitchPrimitives.Root
+    <SwitchPrimitive.Root
       data-slot="switch"
       className={cn(switchVariants({ className, size }))}
       {...props}
     >
-      <SwitchPrimitives.Thumb
+      <SwitchPrimitive.Thumb
         data-slot="switch-thumb"
-        className="pointer-events-none block rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-full data-[state=unchecked]:translate-x-0"
+        className="pointer-events-none block rounded-full bg-white shadow-lg ring-0 transition-transform data-checked:translate-x-full data-unchecked:translate-x-0"
       />
-    </SwitchPrimitives.Root>
+    </SwitchPrimitive.Root>
   );
 }
 

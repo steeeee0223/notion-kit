@@ -12,9 +12,10 @@ import {
   getSortableItemsAfterDrag,
   Sortable,
 } from "@notion-kit/ui/primitives";
-import { COLOR, type Color } from "@notion-kit/utils";
+import { COLOR, getRandomColor } from "@notion-kit/utils";
 
-import { OptionTag } from "../../../common";
+import { OptionTag } from "@/common";
+
 import { OptionItem } from "./option-item";
 import { SelectMenuApi } from "./use-select-menu";
 
@@ -32,20 +33,14 @@ type GroupOption =
       label: string;
       items: string[];
       creatable: true;
-      option: {
-        name: string;
-        color: Color;
-      };
     };
 
 export function SelectMenu({ menu }: SelectMenuProps) {
   const {
     config,
     tags,
-    optionSuggestion,
     search,
-    results,
-    handleInputChange,
+    setSearch,
     handleTagsChange,
     selectTag,
     addOption,
@@ -58,17 +53,16 @@ export function SelectMenu({ menu }: SelectMenuProps) {
   const items: GroupOption[] = [
     {
       label: "Select an option or create one",
-      items: results ?? [],
+      items: config.options.names,
       creatable: false,
     },
   ];
 
-  if (search && optionSuggestion) {
+  if (search) {
     items.push({
       label: "Create option",
       items: [search],
       creatable: true,
-      option: optionSuggestion,
     });
   }
 
@@ -78,10 +72,9 @@ export function SelectMenu({ menu }: SelectMenuProps) {
       open
       value={tags.map((tag) => tag.value)}
       inputValue={search}
-      onInputValueChange={handleInputChange}
+      onInputValueChange={setSearch}
       onValueChange={handleTagsChange}
       items={items}
-      filter={null}
     >
       <ComboboxChips variant="inline" hideClearButton className="z-10 max-h-60">
         <ComboboxValue>
@@ -117,10 +110,7 @@ export function SelectMenu({ menu }: SelectMenuProps) {
                 <ComboboxCreatableItem value={search} onClick={addOption}>
                   <div className="flex items-center gap-2 px-1">
                     Create
-                    <OptionTag
-                      name={group.option.name}
-                      color={group.option.color}
-                    />
+                    <OptionTag name={search} color={getRandomColor()} />
                   </div>
                 </ComboboxCreatableItem>
               ) : (

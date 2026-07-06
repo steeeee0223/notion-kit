@@ -70,7 +70,6 @@ function CommandDialog<ItemValue = string>({
         >
           <AutocompleteContent
             data-slot="command"
-            role="presentation"
             variant="inline"
             className="flex size-full flex-col overflow-hidden rounded-md bg-modal text-primary focus-visible:outline-none"
           >
