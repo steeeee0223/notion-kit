@@ -35,10 +35,8 @@ export function createGuestColumns({
           <div className="flex w-[220px] items-center gap-4">
             <Checkbox
               size="sm"
-              checked={
-                table.getIsAllPageRowsSelected() ||
-                (table.getIsSomePageRowsSelected() && "indeterminate")
-              }
+              checked={table.getIsAllPageRowsSelected()}
+              indeterminate={table.getIsSomePageRowsSelected()}
               onCheckedChange={(value) =>
                 table.toggleAllPageRowsSelected(!!value)
               }

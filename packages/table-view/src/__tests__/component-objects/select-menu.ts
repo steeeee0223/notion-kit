@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { expect } from "vitest";
 
 import { TableViewObject } from "./table-view";
@@ -90,9 +90,8 @@ export class SelectMenuObject {
   async openOptionActions(name: string) {
     const option = this.option(name);
     await this.tableView.user.hover(option);
-    await this.tableView.user.click(
-      within(option).getByRole("button", { name: /more/i }),
-    );
+    fireEvent.click(within(option).getByRole("button", { name: /more/i }));
+    await screen.findByRole("menuitem", { name: /delete/i });
   }
 
   async deleteOption(name: string) {
