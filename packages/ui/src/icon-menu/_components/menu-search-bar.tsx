@@ -1,42 +1,35 @@
 import React from "react";
 import { Shuffle } from "lucide-react";
 
-import { Button, Input, TooltipPreset, TooltipProvider } from "@/primitives";
+import { AutocompleteInput, Button, TooltipPreset } from "@/primitives";
 
 interface MenuSearchBarProps {
-  search: string;
-  onSearchChange: (value: string) => void;
   onRandomSelect: () => void;
+  onSearchClear: () => void;
   Palette: React.ReactNode;
 }
 
-export const MenuSearchBar: React.FC<MenuSearchBarProps> = ({
-  search,
-  onSearchChange,
+export function MenuSearchBar({
   onRandomSelect,
+  onSearchClear,
   Palette,
-}) => {
+}: MenuSearchBarProps) {
   return (
-    <TooltipProvider>
-      <div className="mb-1.5 flex w-full items-center gap-x-1.5">
-        <div className="flex-1">
-          <Input
-            search
-            clear
-            value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
-            onCancel={() => onSearchChange("")}
-            onKeyDown={(e) => e.stopPropagation()}
-            placeholder="Filter..."
-          />
-        </div>
-        <TooltipPreset description="Random">
-          <Button variant="icon" className="size-7" onClick={onRandomSelect}>
-            <Shuffle size={16} />
-          </Button>
-        </TooltipPreset>
-        {Palette}
-      </div>
-    </TooltipProvider>
+    <div className="mb-1.5 flex w-full items-center gap-x-1.5">
+      <AutocompleteInput
+        search
+        clear
+        onCancel={onSearchClear}
+        onKeyDown={(e) => e.stopPropagation()}
+        placeholder="Filter..."
+        classNames={{ wrapper: "flex-1 p-0" }}
+      />
+      <TooltipPreset description="Random">
+        <Button variant="icon" className="size-7" onClick={onRandomSelect}>
+          <Shuffle size={16} />
+        </Button>
+      </TooltipPreset>
+      {Palette}
+    </div>
   );
-};
+}

@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import { cn } from "@notion-kit/cn";
 
 import type { IconData } from "@/icon-block";
 import {
+  Autocomplete,
+  AutocompleteContent,
+  AutocompleteEmpty,
+  AutocompleteList,
   Button,
   Popover,
   PopoverContent,
@@ -13,6 +17,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  TooltipProvider,
 } from "@/primitives";
 
 import {
@@ -21,6 +26,7 @@ import {
   useDefaultFactories,
   VirtualizedIconGrid,
 } from "./_components";
+import type { IconAutocompleteItem } from "./_components";
 import type { IconFactoryResult } from "./factories";
 
 export interface IconMenuProps extends React.PropsWithChildren {
@@ -102,21 +108,13 @@ function IconMenuContent({
           value={factory.id}
           className="bg-transparent p-3"
         >
-          <MenuSearchBar
-            search={searchQuery}
-            onSearchChange={setSearchQuery}
+          <IconFactoryPanel
+            factory={factory}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            onSelect={onSelect}
             onRandomSelect={handleRandomSelect}
-            Palette={factory.toolbar}
           />
-          {factory.isLoading ? (
-            <Spinner className="mx-1 my-2 fill-icon" />
-          ) : (
-            <VirtualizedIconGrid
-              factory={factory}
-              searchQuery={searchQuery}
-              onSelect={(data) => onSelect?.(data)}
-            />
-          )}
         </TabsContent>
       ))}
       {onUpload && (
@@ -131,18 +129,75 @@ function IconMenuContent({
   );
 }
 
-function IconMenuWithDefaults(
-  props: Omit<IconMenuProps, "factories"> & { factories?: undefined },
-) {
-  const defaultFactories = useDefaultFactories();
-  return (
-    <IconMenuContent
-      factories={defaultFactories}
-      onSelect={props.onSelect}
-      onRemove={props.onRemove}
-      onUpload={props.onUpload}
-    />
+function IconFactoryPanel({
+  factory,
+  searchQuery,
+  setSearchQuery,
+  onSelect,
+  onRandomSelect,
+}: {
+  factory: IconFactoryResult;
+  searchQuery: string;
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+  onSelect?: (iconData: IconData) => void;
+  onRandomSelect: () => void;
+}) {
+  const autocompleteItems = useMemo<IconAutocompleteItem[]>(
+    () =>
+      factory.sections.flatMap((section) =>
+        section.iconIds.map((id) => ({
+          id,
+          sectionId: section.id,
+          sectionLabel: section.label,
+          item: factory.getItem(id),
+        })),
+      ),
+    [factory],
   );
+
+  return (
+    <Autocomplete<IconAutocompleteItem>
+      grid
+      virtualized
+      inline
+      open
+      autoHighlight="always"
+      openOnInputClick
+      items={autocompleteItems}
+      itemToStringValue={({ item }) =>
+        [item.name, ...item.keywords].filter(Boolean).join(" ")
+      }
+      value={searchQuery}
+      onValueChange={(value, details) => {
+        if (details.reason !== "item-press") {
+          setSearchQuery(value);
+        }
+      }}
+    >
+      <MenuSearchBar
+        onRandomSelect={onRandomSelect}
+        onSearchClear={() => setSearchQuery("")}
+        Palette={factory.toolbar}
+      />
+      {factory.isLoading ? (
+        <Spinner className="mx-1 my-2 fill-icon" />
+      ) : (
+        <AutocompleteContent variant="inline">
+          <AutocompleteEmpty className="h-[214px] justify-center">
+            No results
+          </AutocompleteEmpty>
+          <AutocompleteList>
+            <VirtualizedIconGrid factory={factory} onSelect={onSelect} />
+          </AutocompleteList>
+        </AutocompleteContent>
+      )}
+    </Autocomplete>
+  );
+}
+
+function IconMenuWithDefaults(props: Omit<IconMenuProps, "factories">) {
+  const defaultFactories = useDefaultFactories();
+  return <IconMenuContent factories={defaultFactories} {...props} />;
 }
 
 export function IconMenu({
@@ -155,37 +210,39 @@ export function IconMenu({
   onUpload,
 }: IconMenuProps) {
   return (
-    <Popover>
-      <PopoverTrigger
-        disabled={disabled}
-        render={
-          <Button
-            variant={null}
-            className={cn(
-              "size-fit rounded-md border text-secondary disabled:opacity-100",
-              className,
-            )}
-          >
-            {children}
-          </Button>
-        }
-      />
-      <PopoverContent className="z-999 w-102">
-        {factories ? (
-          <IconMenuContent
-            factories={factories}
-            onSelect={onSelect}
-            onRemove={onRemove}
-            onUpload={onUpload}
-          />
-        ) : (
-          <IconMenuWithDefaults
-            onSelect={onSelect}
-            onRemove={onRemove}
-            onUpload={onUpload}
-          />
-        )}
-      </PopoverContent>
-    </Popover>
+    <TooltipProvider>
+      <Popover>
+        <PopoverTrigger
+          disabled={disabled}
+          render={
+            <Button
+              variant={null}
+              className={cn(
+                "size-fit rounded-md border text-secondary disabled:opacity-100",
+                className,
+              )}
+            >
+              {children}
+            </Button>
+          }
+        />
+        <PopoverContent className="z-999 w-102">
+          {factories ? (
+            <IconMenuContent
+              factories={factories}
+              onSelect={onSelect}
+              onRemove={onRemove}
+              onUpload={onUpload}
+            />
+          ) : (
+            <IconMenuWithDefaults
+              onSelect={onSelect}
+              onRemove={onRemove}
+              onUpload={onUpload}
+            />
+          )}
+        </PopoverContent>
+      </Popover>
+    </TooltipProvider>
   );
 }

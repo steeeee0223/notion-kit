@@ -48,8 +48,16 @@ export class IconMenuObject {
     return screen.queryByRole("tab", { name });
   }
 
+  iconOption(name: string) {
+    return screen.getByRole("gridcell", { name });
+  }
+
+  queryIconOption(name: string) {
+    return screen.queryByRole("gridcell", { name });
+  }
+
   searchInput() {
-    return screen.getByRole<HTMLInputElement>("searchbox");
+    return screen.getByRole<HTMLInputElement>("combobox");
   }
 
   removeButton() {

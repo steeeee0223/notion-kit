@@ -6,7 +6,6 @@ import {
   PopoverContent,
   PopoverTrigger,
   TooltipPreset,
-  TooltipProvider,
 } from "@/primitives";
 
 import type { PaletteProps } from "../../_components";
@@ -24,36 +23,34 @@ export function SkinPicker({ palette, value, onSelect }: SkinPickerProps) {
   };
 
   return (
-    <TooltipProvider>
-      <Popover open={open} onOpenChange={setOpen}>
-        <TooltipPreset description="Select skin tone">
-          <PopoverTrigger
-            render={
-              <Button variant="hint" className="size-7 text-xl/6 text-primary">
-                {palette[value].emoji}
-              </Button>
-            }
-          />
-        </TooltipPreset>
-        <PopoverContent className="z-1000 grid w-50 grid-cols-6 gap-0 p-1">
-          {Object.entries(palette).map(([id, { emoji, name }]) => (
-            <TooltipPreset
-              key={id}
-              sideOffset={8}
-              description={name}
-              className="z-1001"
+    <Popover open={open} onOpenChange={setOpen}>
+      <TooltipPreset description="Select skin tone">
+        <PopoverTrigger
+          render={
+            <Button variant="hint" className="size-7 text-xl/6 text-primary">
+              {palette[value].emoji}
+            </Button>
+          }
+        />
+      </TooltipPreset>
+      <PopoverContent className="z-1000 grid w-50 grid-cols-6 gap-0 p-1">
+        {Object.entries(palette).map(([id, { emoji, name }]) => (
+          <TooltipPreset
+            key={id}
+            sideOffset={8}
+            description={name}
+            className="z-1001"
+          >
+            <Button
+              variant="hint"
+              className="size-8 p-0 text-2xl text-primary"
+              onClick={() => selectSkin(id as Skin)}
             >
-              <Button
-                variant="hint"
-                className="size-8 p-0 text-2xl text-primary"
-                onClick={() => selectSkin(id as Skin)}
-              >
-                {emoji}
-              </Button>
-            </TooltipPreset>
-          ))}
-        </PopoverContent>
-      </Popover>
-    </TooltipProvider>
+              {emoji}
+            </Button>
+          </TooltipPreset>
+        ))}
+      </PopoverContent>
+    </Popover>
   );
 }

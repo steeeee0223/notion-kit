@@ -11,7 +11,7 @@ import {
 
 import { cn } from "@notion-kit/cn";
 
-import { Button, TooltipPreset, TooltipProvider } from "@/primitives";
+import { Button, TooltipPreset } from "@/primitives";
 
 import type { EmojiCategoryList } from "./constants";
 
@@ -49,31 +49,29 @@ export function EmojiCategoryNav({
   scrollToSection,
 }: EmojiCategoryNavProps) {
   return (
-    <TooltipProvider>
-      <div className="-mx-3 -mb-3 flex items-center gap-0.5 border-t px-3 py-1">
-        {categories.map((catId) => {
-          const cat = CATEGORY_ICONS[catId];
-          return (
-            <TooltipPreset
-              key={catId}
-              description={cat.label}
-              side="top"
-              className="z-1000"
+    <div className="-mx-3 -mb-3 flex items-center gap-0.5 border-t px-3 py-1">
+      {categories.map((catId) => {
+        const cat = CATEGORY_ICONS[catId];
+        return (
+          <TooltipPreset
+            key={catId}
+            description={cat.label}
+            side="top"
+            className="z-1000"
+          >
+            <Button
+              variant="hint"
+              className={cn(
+                "size-8 text-icon",
+                activeSectionId === catId && "bg-default/15",
+              )}
+              onClick={() => scrollToSection(catId)}
             >
-              <Button
-                variant="hint"
-                className={cn(
-                  "size-8 text-icon",
-                  activeSectionId === catId && "bg-default/15",
-                )}
-                onClick={() => scrollToSection(catId)}
-              >
-                {cat.icon}
-              </Button>
-            </TooltipPreset>
-          );
-        })}
-      </div>
-    </TooltipProvider>
+              {cat.icon}
+            </Button>
+          </TooltipPreset>
+        );
+      })}
+    </div>
   );
 }

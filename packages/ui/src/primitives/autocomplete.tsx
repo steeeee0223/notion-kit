@@ -199,6 +199,23 @@ function AutocompleteList({
   );
 }
 
+function AutocompleteRow({
+  className,
+  ...props
+}: AutocompletePrimitive.Row.Props) {
+  return (
+    <AutocompletePrimitive.Row
+      data-slot="autocomplete-row"
+      className={cn("flex", className)}
+      {...props}
+    />
+  );
+}
+
+function useAutocompleteFilteredItems<T>() {
+  return AutocompletePrimitive.useFilteredItems<T>();
+}
+
 function AutocompleteGroup({
   className,
   ...props
@@ -234,10 +251,7 @@ type AutocompleteItemVisualProps = Pick<
 >;
 
 interface AutocompleteItemProps<ItemValue = string>
-  extends Omit<
-      AutocompletePrimitive.Item.Props,
-      "className" | "render" | "value"
-    >,
+  extends Omit<AutocompletePrimitive.Item.Props, "className" | "value">,
     AutocompleteItemVisualProps {
   value?: ItemValue;
 }
@@ -289,8 +303,7 @@ function AutocompleteEmpty({
     <AutocompletePrimitive.Empty
       data-slot="autocomplete-empty"
       className={cn(
-        "hidden min-h-7 items-center p-2 text-sm/tight text-secondary select-none",
-        "group-data-empty/autocomplete-content:flex",
+        "flex min-h-7 items-center p-2 text-sm/tight text-secondary select-none empty:hidden",
         className,
       )}
       {...props}
@@ -334,9 +347,11 @@ export {
   AutocompleteItem,
   AutocompleteLabel,
   AutocompleteList,
+  AutocompleteRow,
   AutocompleteSeparator,
   AutocompleteStatus,
   AutocompleteTrigger,
+  useAutocompleteFilteredItems,
 };
 export type {
   AutocompleteContentProps,
