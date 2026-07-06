@@ -1,7 +1,7 @@
 import { cn } from "@notion-kit/cn";
-import { Button } from "@notion-kit/ui/primitives";
+import { Button, MeterBar, MeterRing } from "@notion-kit/ui/primitives";
+import { COLOR } from "@notion-kit/utils";
 
-import { ProgressBar, ProgressRing } from "../common";
 import type { NumberDisplayType } from "../types";
 
 interface DisplayTypeSelectProps {
@@ -36,7 +36,7 @@ export function DisplayTypeSelect({ type, onUpdate }: DisplayTypeSelectProps) {
         onClick={() => onUpdate("bar")}
       >
         <div className="mb-1 flex h-5 w-full items-center justify-center">
-          <ProgressBar value={50} color="blue" />
+          <MeterBar value={50} trackColor={COLOR.blue.hex} />
         </div>
         <div className="text-xs/none">Bar</div>
       </Button>
@@ -50,7 +50,7 @@ export function DisplayTypeSelect({ type, onUpdate }: DisplayTypeSelectProps) {
         onClick={() => onUpdate("ring")}
       >
         <div className="mb-1 flex h-5 w-full items-center justify-center">
-          <ProgressRing value={40} valueMax={100} color="blue" />
+          <MeterRing value={40} trackColor={COLOR.blue.hex} />
         </div>
         <div className="text-xs/none">Ring</div>
       </Button>
