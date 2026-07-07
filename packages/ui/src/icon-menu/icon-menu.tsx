@@ -20,14 +20,9 @@ import {
   TooltipProvider,
 } from "@/primitives";
 
-import {
-  MenuSearchBar,
-  UploadForm,
-  useDefaultFactories,
-  VirtualizedIconGrid,
-} from "./_components";
+import { MenuSearchBar, UploadForm, VirtualizedIconGrid } from "./_components";
 import type { IconAutocompleteItem } from "./_components";
-import type { IconFactoryResult } from "./factories";
+import { useDefaultFactories, type IconFactoryResult } from "./factories";
 
 export interface IconMenuProps extends React.PropsWithChildren {
   className?: string;

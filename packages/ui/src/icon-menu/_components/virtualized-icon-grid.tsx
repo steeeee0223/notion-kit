@@ -2,6 +2,7 @@ import { useCallback, useMemo, useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
 import type { IconData } from "@/icon-block";
+import type { IconFactoryResult, IconItem } from "@/icon-menu/factories";
 import {
   AutocompleteGroup,
   AutocompleteItem,
@@ -13,7 +14,6 @@ import {
   useAutocompleteFilteredItems,
 } from "@/primitives";
 
-import type { IconFactoryResult, IconItem } from "../factories/types";
 import type { IconAutocompleteItem } from "./types";
 
 const ICONS_PER_ROW = 12;

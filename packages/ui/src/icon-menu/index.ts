@@ -4,6 +4,7 @@ export {
   createIconFactories,
   createIconFactory,
   useRecentIcons,
+  useDefaultFactories,
   useEmojiFactory,
   useLucideFactory,
   useNotionIconsFactory,

@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import type { PaletteProps } from "@/icon-menu/_components";
 import {
   Button,
   Popover,
@@ -8,7 +9,6 @@ import {
   TooltipPreset,
 } from "@/primitives";
 
-import type { PaletteProps } from "../../_components";
 import type { Skin } from "./constants";
 
 type SkinPickerProps = PaletteProps<
