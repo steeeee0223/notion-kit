@@ -1,11 +1,9 @@
-"use client";
-
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { createApi } from "unsplash-js";
 
 import { defaultImages } from "./constants";
 
-interface UnsplashImage {
+export interface UnsplashImage {
   id: string;
   user: { name: string; portfolio_url: string };
   links: { html: string };
@@ -17,7 +15,7 @@ interface UnsplashConfig {
   apiKey: string;
 }
 
-export const useUnsplash = ({ apiKey }: UnsplashConfig) => {
+export function useUnsplash({ apiKey }: UnsplashConfig) {
   const unsplash = useMemo(
     () => createApi({ accessKey: apiKey, fetch }),
     [apiKey],
@@ -58,4 +56,4 @@ export const useUnsplash = ({ apiKey }: UnsplashConfig) => {
   }, [unsplash, query]);
 
   return { isLoading, images, query, setQuery };
-};
+}

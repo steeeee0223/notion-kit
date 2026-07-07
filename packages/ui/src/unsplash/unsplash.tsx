@@ -1,12 +1,18 @@
-"use client";
-
 import React from "react";
 
-import { cn } from "@notion-kit/cn";
+import {
+  Autocomplete,
+  AutocompleteContent,
+  AutocompleteEmpty,
+  AutocompleteInput,
+  AutocompleteItem,
+  AutocompleteList,
+  AutocompleteRow,
+  Spinner,
+  useAutocompleteFilteredItems,
+} from "@/primitives";
 
-import { Input, Spinner } from "@/primitives";
-
-import { useUnsplash } from "./use-unsplash";
+import { useUnsplash, type UnsplashImage } from "./use-unsplash";
 
 export interface UnsplashProps {
   /** @param apiKey - Unsplash Access Key */
@@ -15,66 +21,135 @@ export interface UnsplashProps {
   onSelect?: (url: string) => void;
 }
 
-/**
- * An `Unsplash` image browser
- */
-export const Unsplash: React.FC<UnsplashProps> = ({
-  apiKey,
-  className,
-  onSelect,
-}) => {
-  const { images, isLoading, query, setQuery } = useUnsplash({ apiKey });
+function getImageLabel(image: UnsplashImage) {
+  return image.description ?? `Unsplash image by ${image.user.name}`;
+}
+
+function getImageSearchValue(image: UnsplashImage, query: string) {
+  return [query, image.description, image.user.name].filter(Boolean).join(" ");
+}
+
+function getImageBySearchValue(
+  images: UnsplashImage[],
+  value: string,
+  query: string,
+) {
+  return images.find((image) => getImageSearchValue(image, query) === value);
+}
+
+function chunk<T>(arr: T[], size: number): T[][] {
+  const result: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+}
+
+function UnsplashImageGrid({ onSelect }: Pick<UnsplashProps, "onSelect">) {
+  const filteredImages = useAutocompleteFilteredItems<UnsplashImage>();
+  const rows = chunk(filteredImages, 3);
 
   return (
-    <div className={cn("max-h-[280px] w-full overflow-y-auto p-4", className)}>
-      <div className="flex">
-        <Input
-          id="unsplash"
-          clear
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onCancel={() => setQuery("")}
-          placeholder="Search for an image..."
-        />
-      </div>
-      <div className="mx-0 mt-4 flex items-center justify-center">
-        {isLoading || !images ? (
-          <Spinner className="fill-icon" />
-        ) : images.length > 0 ? (
-          <div className="grid w-full grid-cols-4">
-            {images.map(({ id, urls, user, description }) => (
-              <div
-                key={id}
-                tabIndex={-1}
-                role="button"
-                onClick={() => onSelect?.(urls.regular)}
-                onKeyDown={() => onSelect?.(urls.regular)}
-                className="aspect-video animate-bg-in cursor-pointer p-[3px] select-none"
+    <AutocompleteList className="flex w-full flex-col">
+      {rows.map((row) => (
+        <AutocompleteRow
+          key={row.map((image) => image.id).join("-")}
+          className="grid w-full grid-cols-3"
+        >
+          {row.map((image, columnIndex) => {
+            const index = filteredImages.indexOf(image);
+
+            return (
+              <AutocompleteItem
+                key={image.id}
+                value={image}
+                index={index === -1 ? columnIndex : index}
+                label={getImageLabel(image)}
+                aria-label={getImageLabel(image)}
+                onClick={() => onSelect?.(image.urls.regular)}
+                render={
+                  <div className="group block aspect-video h-auto cursor-pointer p-[3px] select-none" />
+                }
               >
                 <img
-                  src={urls.small}
-                  alt={description ?? "unsplash"}
-                  className="h-16 w-full rounded-sm object-cover object-center hover:opacity-75"
+                  src={image.urls.small}
+                  alt={image.description ?? "unsplash"}
+                  className="h-16 w-full rounded-sm object-cover object-center group-data-highlighted:opacity-75"
                   referrerPolicy="same-origin"
                 />
                 <div className="mt-0.5 mb-1 w-full truncate text-xs text-muted">
                   by{" "}
                   <a
-                    href={user.portfolio_url}
-                    className="text-muted underline hover:text-red"
+                    href={image.user.portfolio_url}
+                    className="text-muted underline group-data-highlighted:text-red"
                     target="_blank"
                     rel="noreferrer noopener"
+                    onClick={(event) => event.stopPropagation()}
                   >
-                    {user.name}
+                    {image.user.name}
                   </a>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>No result found.</p>
-        )}
-      </div>
-    </div>
+              </AutocompleteItem>
+            );
+          })}
+        </AutocompleteRow>
+      ))}
+    </AutocompleteList>
   );
-};
+}
+
+/**
+ * An `Unsplash` image browser
+ */
+export function Unsplash({ apiKey, onSelect }: UnsplashProps) {
+  const { images = [], isLoading, query, setQuery } = useUnsplash({ apiKey });
+  const [highlightedImage, setHighlightedImage] =
+    React.useState<UnsplashImage>();
+
+  return (
+    <Autocomplete<UnsplashImage>
+      grid
+      inline
+      open
+      autoHighlight="always"
+      openOnInputClick
+      items={images}
+      value={query}
+      onValueChange={(value, details) => {
+        if (details.reason === "item-press") {
+          if (details.event instanceof KeyboardEvent) {
+            const selectedImage = getImageBySearchValue(images, value, query);
+            if (selectedImage) {
+              onSelect?.(selectedImage.urls.regular);
+            }
+          }
+        } else {
+          setQuery(value);
+        }
+      }}
+      onItemHighlighted={(image) => setHighlightedImage(image)}
+      itemToStringValue={(image) => getImageSearchValue(image, query)}
+    >
+      <AutocompleteInput
+        id="unsplash"
+        search
+        clear
+        onCancel={() => setQuery("")}
+        onKeyDown={(event) => {
+          if (event.key !== "Enter") return;
+          const selectedImage = highlightedImage ?? images?.[0];
+          if (!selectedImage) return;
+
+          event.preventDefault();
+          onSelect?.(selectedImage.urls.regular);
+        }}
+        placeholder="Search for an image..."
+      />
+      <AutocompleteContent variant="inline">
+        {isLoading && <Spinner className="fill-icon" />}
+        <AutocompleteEmpty>No result found.</AutocompleteEmpty>
+        <UnsplashImageGrid onSelect={onSelect} />
+      </AutocompleteContent>
+    </Autocomplete>
+  );
+}
