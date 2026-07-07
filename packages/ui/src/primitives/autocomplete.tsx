@@ -193,7 +193,7 @@ function AutocompleteList({
   return (
     <AutocompletePrimitive.List
       data-slot="autocomplete-list"
-      className={cn("max-h-75 overflow-auto overflow-x-hidden", className)}
+      className={cn("max-h-75 overflow-x-hidden overflow-y-auto", className)}
       {...props}
     />
   );

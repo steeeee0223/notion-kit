@@ -13,7 +13,6 @@ import {
   AutocompleteLabel,
   AutocompleteList,
   AutocompleteSeparator,
-  type AutocompleteInputProps,
   type AutocompleteItemProps,
   type AutocompleteRootProps,
 } from "./autocomplete";
@@ -81,37 +80,16 @@ function CommandDialog<ItemValue = string>({
   );
 }
 
-type CommandInputProps = AutocompleteInputProps;
-
-function CommandInput({ classNames, ...props }: CommandInputProps) {
-  return (
-    <AutocompleteInput
-      data-slot="command-input"
-      classNames={{
-        wrapper: cn(
-          "flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2",
-          classNames?.wrapper,
-        ),
-      }}
-      {...props}
-    />
-  );
+function CommandInput({
+  ...props
+}: React.ComponentProps<typeof AutocompleteInput>) {
+  return <AutocompleteInput data-slot="command-input" {...props} />;
 }
 
 function CommandList({
-  className,
   ...props
 }: React.ComponentProps<typeof AutocompleteList>) {
-  return (
-    <AutocompleteList
-      data-slot="command-list"
-      className={cn(
-        "overflow-x-hidden overflow-y-auto focus-visible:outline-none",
-        className,
-      )}
-      {...props}
-    />
-  );
+  return <AutocompleteList data-slot="command-list" {...props} />;
 }
 
 function CommandCollection({
@@ -121,16 +99,9 @@ function CommandCollection({
 }
 
 function CommandEmpty({
-  className,
   ...props
 }: React.ComponentProps<typeof AutocompleteEmpty>) {
-  return (
-    <AutocompleteEmpty
-      data-slot="command-empty"
-      className={cn("py-2 text-center text-sm select-none", className)}
-      {...props}
-    />
-  );
+  return <AutocompleteEmpty data-slot="command-empty" {...props} />;
 }
 
 interface CommandGroupProps
@@ -195,4 +166,4 @@ export {
   CommandSeparator,
   CommandShortcut,
 };
-export type { CommandDialogProps, CommandInputProps, CommandItemProps };
+export type { CommandDialogProps, CommandItemProps };
