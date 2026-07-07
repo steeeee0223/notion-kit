@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
+import { toast } from "@notion-kit/ui/primitives";
 import { Unsplash } from "@notion-kit/ui/unsplash";
 
 const meta = {
@@ -13,8 +14,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    className: "w-[540px]",
     apiKey: "UNSPLASH_ACCESS_KEY",
-    onSelect: (url) => console.log(`select ${url}`),
+    onSelect: (image) =>
+      toast.success(`Select: ${image.description ?? image.id}`),
   },
 };

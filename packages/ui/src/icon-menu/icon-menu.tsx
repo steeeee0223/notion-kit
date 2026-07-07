@@ -18,6 +18,7 @@ import {
   TabsList,
   TabsTrigger,
   TooltipProvider,
+  useAutocompleteFilter,
 } from "@/primitives";
 
 import { MenuSearchBar, UploadForm, VirtualizedIconGrid } from "./_components";
@@ -137,6 +138,7 @@ function IconFactoryPanel({
   onSelect?: (iconData: IconData) => void;
   onRandomSelect: () => void;
 }) {
+  const filter = useAutocompleteFilter();
   const autocompleteItems = useMemo<IconAutocompleteItem[]>(
     () =>
       factory.sections.flatMap((section) =>
@@ -149,6 +151,16 @@ function IconFactoryPanel({
       ),
     [factory],
   );
+  const filteredAutocompleteItems = useMemo(() => {
+    const query = searchQuery.trim();
+    if (!query) {
+      return autocompleteItems;
+    }
+
+    return autocompleteItems.filter((item) =>
+      filter.contains(item, query, getIconAutocompleteStringValue),
+    );
+  }, [autocompleteItems, filter, searchQuery]);
 
   return (
     <Autocomplete<IconAutocompleteItem>
@@ -159,9 +171,8 @@ function IconFactoryPanel({
       autoHighlight="always"
       openOnInputClick
       items={autocompleteItems}
-      itemToStringValue={({ item }) =>
-        [item.name, ...item.keywords].filter(Boolean).join(" ")
-      }
+      filteredItems={filteredAutocompleteItems}
+      itemToStringValue={getIconAutocompleteStringValue}
       value={searchQuery}
       onValueChange={(value, details) => {
         if (details.reason !== "item-press") {
@@ -182,12 +193,20 @@ function IconFactoryPanel({
             No results
           </AutocompleteEmpty>
           <AutocompleteList>
-            <VirtualizedIconGrid factory={factory} onSelect={onSelect} />
+            <VirtualizedIconGrid
+              factory={factory}
+              items={filteredAutocompleteItems}
+              onSelect={onSelect}
+            />
           </AutocompleteList>
         </AutocompleteContent>
       )}
     </Autocomplete>
   );
+}
+
+function getIconAutocompleteStringValue({ item }: IconAutocompleteItem) {
+  return [item.name, ...item.keywords].filter(Boolean).join(" ");
 }
 
 function IconMenuWithDefaults(props: Omit<IconMenuProps, "factories">) {

@@ -219,6 +219,10 @@ function useAutocompleteFilteredItems<T>() {
   return AutocompletePrimitive.useFilteredItems<T>();
 }
 
+function useAutocompleteFilter() {
+  return AutocompletePrimitive.useFilter();
+}
+
 function AutocompleteGroup({
   className,
   ...props
@@ -354,6 +358,7 @@ export {
   AutocompleteSeparator,
   AutocompleteStatus,
   AutocompleteTrigger,
+  useAutocompleteFilter,
   useAutocompleteFilteredItems,
 };
 export type {
