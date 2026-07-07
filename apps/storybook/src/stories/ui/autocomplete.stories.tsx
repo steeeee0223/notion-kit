@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
 import AutocompleteDefault from "@notion-kit/registry/autocomplete-default";
+import AutocompleteGridMenu from "@notion-kit/registry/autocomplete-grid-menu";
 import AutocompletePopover from "@notion-kit/registry/autocomplete-popover";
 
 const meta = {
@@ -17,4 +18,8 @@ export const Basic: Story = {
 
 export const PopoverMenu: Story = {
   render: () => <AutocompletePopover />,
+};
+
+export const GridMenu: Story = {
+  render: () => <AutocompleteGridMenu />,
 };

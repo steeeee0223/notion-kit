@@ -1,6 +1,7 @@
 export const registryIndex = [
   "autocomplete-default",
   "autocomplete-popover",
+  "autocomplete-grid-menu",
   "badge-default",
   "badge-sizes",
   "badge-variants",

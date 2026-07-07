@@ -193,7 +193,10 @@ function AutocompleteList({
   return (
     <AutocompletePrimitive.List
       data-slot="autocomplete-list"
-      className={cn("max-h-75 overflow-x-hidden overflow-y-auto", className)}
+      className={cn(
+        "max-h-75 overflow-x-hidden overflow-y-auto focus-visible:outline-none",
+        className,
+      )}
       {...props}
     />
   );
@@ -206,7 +209,7 @@ function AutocompleteRow({
   return (
     <AutocompletePrimitive.Row
       data-slot="autocomplete-row"
-      className={cn("flex", className)}
+      className={cn("flex px-3", className)}
       {...props}
     />
   );
