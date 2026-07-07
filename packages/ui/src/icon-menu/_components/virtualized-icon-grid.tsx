@@ -21,9 +21,17 @@ const HEADER_HEIGHT = 32;
 const ROW_HEIGHT = 32;
 const INITIAL_ROW_COUNT = 12;
 
-type VirtualRow =
-  | { type: "header"; id: string; label: string }
-  | { type: "row"; id: string; iconItems: IconAutocompleteItem[] };
+interface IconSectionRows {
+  id: string;
+  label: string;
+  startRowIndex: number;
+}
+
+interface VirtualIconRow {
+  id: string;
+  sectionId: string;
+  iconItems: IconAutocompleteItem[];
+}
 
 function chunk<T>(arr: T[], size: number): T[][] {
   const result: T[][] = [];
@@ -31,14 +39,6 @@ function chunk<T>(arr: T[], size: number): T[][] {
     result.push(arr.slice(i, i + size));
   }
   return result;
-}
-
-function getRowHeight(row: VirtualRow | undefined) {
-  return row?.type === "header" ? HEADER_HEIGHT : ROW_HEIGHT;
-}
-
-function getTotalRowsHeight(rows: VirtualRow[]) {
-  return rows.reduce((height, row) => height + getRowHeight(row), 0);
 }
 
 interface VirtualizedIconGridProps {
@@ -53,8 +53,7 @@ export function VirtualizedIconGrid({
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const filteredItems = useAutocompleteFilteredItems<IconAutocompleteItem>();
 
-  // Flatten sections into virtualizable rows: headers + icon rows
-  const rows = useMemo((): VirtualRow[] => {
+  const { sections, rows } = useMemo(() => {
     const groupedItems = new Map<string, IconAutocompleteItem[]>();
 
     for (const iconItem of filteredItems) {
@@ -66,18 +65,27 @@ export function VirtualizedIconGrid({
       }
     }
 
-    return Array.from(groupedItems.entries()).flatMap(([sectionId, items]) => [
-      {
-        type: "header" as const,
-        label: items[0]?.sectionLabel ?? sectionId,
+    const nextSections: IconSectionRows[] = [];
+    const nextRows: VirtualIconRow[] = [];
+
+    for (const [sectionId, items] of groupedItems) {
+      const rowChunks = chunk(items, ICONS_PER_ROW);
+      nextSections.push({
         id: sectionId,
-      },
-      ...chunk(items, ICONS_PER_ROW).map((row, i) => ({
-        type: "row" as const,
-        id: `${sectionId}-${i}`,
-        iconItems: row,
-      })),
-    ]);
+        label: items[0]?.sectionLabel ?? sectionId,
+        startRowIndex: nextRows.length,
+      });
+
+      for (const [i, iconItems] of rowChunks.entries()) {
+        nextRows.push({
+          id: `${sectionId}-${i}`,
+          sectionId,
+          iconItems,
+        });
+      }
+    }
+
+    return { sections: nextSections, rows: nextRows };
   }, [filteredItems]);
 
   const filteredIndexByItem = useMemo(
@@ -89,10 +97,12 @@ export function VirtualizedIconGrid({
   const virtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => scrollRef.current,
-    estimateSize: (index) =>
-      rows[index]?.type === "header" ? HEADER_HEIGHT : ROW_HEIGHT,
+    estimateSize: () => ROW_HEIGHT,
+    getItemKey: (index) => rows[index]?.id ?? index,
     initialRect: { width: 400, height: 214 },
     overscan: 5,
+    paddingStart: HEADER_HEIGHT,
+    scrollPaddingStart: HEADER_HEIGHT,
   });
 
   /**
@@ -120,70 +130,66 @@ export function VirtualizedIconGrid({
 
   const scrollToSection = useCallback(
     (sectionId: string) => {
-      const index = rows.findIndex(
-        (r) => r.type === "header" && r.id === sectionId,
-      );
-      if (index >= 0) {
-        virtualizer.scrollToIndex(index, { align: "start" });
+      const section = sections.find((s) => s.id === sectionId);
+      if (section) {
+        virtualizer.scrollToIndex(section.startRowIndex, { align: "start" });
       }
     },
-    [rows, virtualizer],
+    [sections, virtualizer],
   );
 
-  // Derive active section from first visible header at or above viewport top
   const virtualItems = virtualizer.getVirtualItems();
   const renderedVirtualRows =
     virtualItems.length > 0
       ? virtualItems
       : rows.slice(0, INITIAL_ROW_COUNT).map((row, index) => {
-          const start = getTotalRowsHeight(rows.slice(0, index));
-          const size = getRowHeight(row);
+          const start = HEADER_HEIGHT + index * ROW_HEIGHT;
           return {
             key: row.id,
             index,
-            size,
+            size: ROW_HEIGHT,
             start,
-            end: start + size,
+            end: start + ROW_HEIGHT,
             lane: 0,
           };
         });
   const totalSize = Math.max(
     virtualizer.getTotalSize(),
-    getTotalRowsHeight(rows),
+    HEADER_HEIGHT + rows.length * ROW_HEIGHT,
   );
   const scrollOffset = virtualizer.scrollOffset ?? 0;
   const activeSectionId = useMemo(() => {
-    if (renderedVirtualRows.length === 0) return null;
+    if (rows.length === 0) return null;
 
-    // Find the last header whose start <= scrollOffset
-    let lastHeader: string | null = null;
-    for (const vItem of renderedVirtualRows) {
-      const row = rows[vItem.index];
-      if (row?.type === "header") {
-        if (vItem.start <= scrollOffset + HEADER_HEIGHT) {
-          lastHeader = row.id;
-        }
-      }
-    }
-
-    // If no header found in visible items, scan all rows before the first visible item
-    if (!lastHeader && renderedVirtualRows[0]) {
-      for (let i = renderedVirtualRows[0].index; i >= 0; i--) {
-        const row = rows[i];
-        if (row?.type === "header") {
-          lastHeader = row.id;
-          break;
-        }
-      }
-    }
-
-    return lastHeader;
-  }, [rows, renderedVirtualRows, scrollOffset]);
+    const activeRowIndex = Math.min(
+      rows.length - 1,
+      Math.max(0, Math.floor(scrollOffset / ROW_HEIGHT)),
+    );
+    return rows[activeRowIndex]?.sectionId ?? sections[0]?.id ?? null;
+  }, [rows, sections, scrollOffset]);
+  const activeSection = useMemo(
+    () =>
+      sections.find((section) => section.id === activeSectionId) ??
+      sections[0] ??
+      null,
+    [sections, activeSectionId],
+  );
 
   return (
     <>
       <ScrollArea ref={scrollAreaRef} className="relative h-[214px] w-full">
         <div className="relative" style={{ height: totalSize }}>
+          {activeSection ? (
+            <AutocompleteGroup
+              className="sticky top-0 z-1 bg-popover"
+              style={{ height: HEADER_HEIGHT, overflow: "visible" }}
+            >
+              <AutocompleteLabel
+                title={activeSection.label}
+                className="sticky top-0 z-1 my-0 h-8 bg-popover px-0"
+              />
+            </AutocompleteGroup>
+          ) : null}
           {renderedVirtualRows.map((virtualRow) => {
             const item = rows[virtualRow.index]!;
             return (
@@ -199,40 +205,33 @@ export function VirtualizedIconGrid({
                   />
                 }
               >
-                {item.type === "header" ? (
-                  <AutocompleteLabel
-                    title={item.label}
-                    className="sticky -top-px z-1 bg-popover px-0"
-                  />
-                ) : (
-                  <AutocompleteRow>
-                    {item.iconItems.map((iconItem) => {
-                      const filteredIndex =
-                        filteredIndexByItem.get(iconItem) ?? -1;
-                      return (
-                        <TooltipPreset
-                          key={iconItem.id}
-                          side="top"
-                          description={iconItem.item.name}
-                        >
-                          <AutocompleteItem
-                            value={iconItem}
-                            index={filteredIndex}
-                            onClick={() => handleIconClick(iconItem.item)}
-                            render={
-                              <Button
-                                variant="hint"
-                                className="size-8 text-2xl/none data-highlighted:bg-default/10"
-                              >
-                                {factory.renderIcon(iconItem.item, {})}
-                              </Button>
-                            }
-                          />
-                        </TooltipPreset>
-                      );
-                    })}
-                  </AutocompleteRow>
-                )}
+                <AutocompleteRow>
+                  {item.iconItems.map((iconItem) => {
+                    const filteredIndex =
+                      filteredIndexByItem.get(iconItem) ?? -1;
+                    return (
+                      <TooltipPreset
+                        key={iconItem.id}
+                        side="top"
+                        description={iconItem.item.name}
+                      >
+                        <AutocompleteItem
+                          value={iconItem}
+                          index={filteredIndex}
+                          onClick={() => handleIconClick(iconItem.item)}
+                          render={
+                            <Button
+                              variant="hint"
+                              className="size-8 text-2xl/none data-highlighted:bg-default/10"
+                            >
+                              {factory.renderIcon(iconItem.item, {})}
+                            </Button>
+                          }
+                        />
+                      </TooltipPreset>
+                    );
+                  })}
+                </AutocompleteRow>
               </AutocompleteGroup>
             );
           })}

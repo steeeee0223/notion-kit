@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
 import { screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 
 import { IconMenuObject } from "@/__tests__/component-objects/icon-menu";
 import { createIconFactory } from "@/icon-menu";
@@ -85,6 +85,50 @@ describe("IconMenu", () => {
     await menu.search("zzzz");
 
     expect(screen.getByText("No results")).toBeVisible();
+  });
+
+  it("IconMenu_OpenWithGroupedIcons_ShowsOneStickySectionLabel", async () => {
+    const icons = Array.from({ length: 14 }, (_, index) => ({
+      id: `icon-${index}`,
+      name: `Icon ${index}`,
+    }));
+    const factory = createIconFactory({
+      id: "icons",
+      label: "Icons",
+      icons,
+      sections: [
+        {
+          id: "primary",
+          label: "Primary",
+          iconIds: icons.slice(0, 13).map((icon) => icon.id),
+        },
+        {
+          id: "secondary",
+          label: "Secondary",
+          iconIds: icons.slice(13).map((icon) => icon.id),
+        },
+      ],
+      renderIcon: (item) => <span>{item.name}</span>,
+      toIconData: (item) => ({
+        type: "url",
+        src: `https://example.com/${item.id}.svg`,
+      }),
+    });
+    const menu = IconMenuObject.render({
+      factories: [factory],
+      onSelect: vi.fn(),
+    });
+    await menu.open();
+    await menu.selectTab("Icons");
+
+    const activeLabel = screen
+      .getByText("Primary")
+      .closest('[data-slot="autocomplete-label"]');
+
+    expect(activeLabel).toHaveClass("sticky");
+    expect(screen.queryByText("Secondary")).not.toBeInTheDocument();
+    expect(menu.iconOption("Icon 0")).toBeInTheDocument();
+    expect(menu.iconOption("Icon 13")).toBeInTheDocument();
   });
 
   it("IconMenu_TabChanged_ClearsSearchInput", async () => {
