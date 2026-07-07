@@ -109,7 +109,7 @@ export function Unsplash({ apiKey, onSelect }: UnsplashProps) {
       open
       autoHighlight="always"
       openOnInputClick
-      items={images}
+      items={groups}
       value={query}
       filter={null}
       onValueChange={onValueChange}
