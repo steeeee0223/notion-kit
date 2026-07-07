@@ -61,7 +61,7 @@
     "react-hook-form": "catalog:ui",
     "react-resizable-panels": "^2.1.7",
     "sonner": "^2.0.7",
-    "unsplash-js": "^7.0.19",
+    "unsplash-js": "^8.0.0",
     "usehooks-ts": "catalog:ui"
   },
   "devDependencies": {

@@ -5,7 +5,7 @@ import userEvent, {
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Unsplash } from "./unsplash";
-import { useUnsplash } from "./use-unsplash";
+import { useUnsplash, type UnsplashImage } from "./use-unsplash";
 
 vi.mock("./use-unsplash", () => ({
   useUnsplash: vi.fn(),
@@ -14,31 +14,67 @@ vi.mock("./use-unsplash", () => ({
 const mockUseUnsplash = vi.mocked(useUnsplash);
 const setQuery = vi.fn();
 
+function createImage(
+  id: string,
+  description: string | null,
+  userName: string,
+): UnsplashImage {
+  return {
+    id,
+    created_at: "2026-01-01T00:00:00Z",
+    updated_at: "2026-01-01T00:00:00Z",
+    blur_hash: null,
+    promoted_at: null,
+    links: {
+      html: `https://images.example.com/${id}`,
+      download: `https://images.example.com/${id}/download`,
+      self: `https://api.images.example.com/${id}`,
+      download_location: `https://api.images.example.com/${id}/download`,
+    },
+    width: 1200,
+    height: 800,
+    description,
+    color: null,
+    current_user_collections: [],
+    user: {
+      id: `user-${id}`,
+      updated_at: "2026-01-01T00:00:00Z",
+      bio: null,
+      first_name: userName,
+      last_name: null,
+      links: {
+        html: `https://example.com/${userName.toLowerCase()}`,
+        photos: `https://example.com/${userName.toLowerCase()}/photos`,
+        self: `https://api.example.com/${userName.toLowerCase()}`,
+      },
+      location: null,
+      name: userName,
+      profile_image: {
+        small: `https://example.com/${userName.toLowerCase()}-small.jpg`,
+        medium: `https://example.com/${userName.toLowerCase()}-medium.jpg`,
+        large: `https://example.com/${userName.toLowerCase()}-large.jpg`,
+      },
+      total_collections: 0,
+      username: userName.toLowerCase(),
+      social: {
+        instagram_username: null,
+        portfolio_url: null,
+        twitter_username: null,
+      },
+    },
+    urls: {
+      raw: `https://images.example.com/${id}-raw.jpg`,
+      thumb: `https://images.example.com/${id}-thumb.jpg`,
+      full: `https://images.example.com/${id}-full.jpg`,
+      regular: `https://images.example.com/${id}-regular.jpg`,
+      small: `https://images.example.com/${id}-small.jpg`,
+    },
+  };
+}
+
 const images = [
-  {
-    id: "image-1",
-    user: { name: "Ada", portfolio_url: "https://example.com/ada" },
-    links: { html: "https://images.example.com/1" },
-    urls: {
-      thumb: "https://images.example.com/1-thumb.jpg",
-      full: "https://images.example.com/1-full.jpg",
-      regular: "https://images.example.com/1-regular.jpg",
-      small: "https://images.example.com/1-small.jpg",
-    },
-    description: "Mountain lake",
-  },
-  {
-    id: "image-2",
-    user: { name: "Grace", portfolio_url: "https://example.com/grace" },
-    links: { html: "https://images.example.com/2" },
-    urls: {
-      thumb: "https://images.example.com/2-thumb.jpg",
-      full: "https://images.example.com/2-full.jpg",
-      regular: "https://images.example.com/2-regular.jpg",
-      small: "https://images.example.com/2-small.jpg",
-    },
-    description: undefined,
-  },
+  createImage("image-1", "Mountain lake", "Ada"),
+  createImage("image-2", null, "Grace"),
 ];
 
 describe("Unsplash", () => {
@@ -48,7 +84,8 @@ describe("Unsplash", () => {
       images,
       isLoading: false,
       query: "mountain",
-      setQuery,
+      status: null,
+      onValueChange: setQuery,
     });
   });
 
@@ -84,7 +121,7 @@ describe("Unsplash", () => {
     await user.click(screen.getByRole("gridcell", { name: "Mountain lake" }));
 
     expect(onSelect).toHaveBeenCalledWith(
-      "https://images.example.com/1-regular.jpg",
+      "https://images.example.com/image-1-regular.jpg",
     );
   });
 
@@ -99,7 +136,7 @@ describe("Unsplash", () => {
     await user.keyboard("{ArrowDown}{Enter}");
 
     expect(onSelect).toHaveBeenCalledWith(
-      "https://images.example.com/1-regular.jpg",
+      "https://images.example.com/image-1-regular.jpg",
     );
   });
 });
