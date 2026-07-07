@@ -1,7 +1,6 @@
-import { IconItem } from "@/icon-menu/factories";
+import type { IconItem } from "@/icon-menu/factories";
 
 export interface IconAutocompleteItem {
-  id: string;
   sectionId: string;
   sectionLabel: string;
   item: IconItem;

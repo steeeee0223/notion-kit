@@ -12,6 +12,7 @@ import {
   Button,
   ScrollArea,
   TooltipPreset,
+  useAutocompleteFilteredItems,
 } from "@/primitives";
 
 import type { IconAutocompleteItem } from "./utils";
@@ -30,12 +31,7 @@ interface IconSectionRows {
 interface VirtualIconRow {
   id: string;
   sectionId: string;
-  iconItems: IndexedIconAutocompleteItem[];
-}
-
-interface IndexedIconAutocompleteItem {
-  item: IconAutocompleteItem;
-  index: number;
+  iconItems: IconAutocompleteItem[];
 }
 
 function chunk<T>(arr: T[], size: number): T[][] {
@@ -48,27 +44,25 @@ function chunk<T>(arr: T[], size: number): T[][] {
 
 interface VirtualizedIconGridProps {
   factory: IconFactoryResult;
-  items: IconAutocompleteItem[];
   onSelect?: (iconData: IconData) => void;
 }
 
 export function VirtualizedIconGrid({
   factory,
-  items,
   onSelect,
 }: VirtualizedIconGridProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const filteredItems = useAutocompleteFilteredItems<IconAutocompleteItem>();
 
   const { sections, rows } = useMemo(() => {
-    const groupedItems = new Map<string, IndexedIconAutocompleteItem[]>();
+    const groupedItems = new Map<string, IconAutocompleteItem[]>();
 
-    for (const [index, iconItem] of items.entries()) {
+    for (const iconItem of filteredItems) {
       const sectionItems = groupedItems.get(iconItem.sectionId);
-      const indexedItem = { item: iconItem, index };
       if (sectionItems) {
-        sectionItems.push(indexedItem);
+        sectionItems.push(iconItem);
       } else {
-        groupedItems.set(iconItem.sectionId, [indexedItem]);
+        groupedItems.set(iconItem.sectionId, [iconItem]);
       }
     }
 
@@ -79,7 +73,7 @@ export function VirtualizedIconGrid({
       const rowChunks = chunk(items, ICONS_PER_ROW);
       nextSections.push({
         id: sectionId,
-        label: items[0]?.item.sectionLabel ?? sectionId,
+        label: items[0]?.sectionLabel ?? sectionId,
         startRowIndex: nextRows.length,
       });
 
@@ -93,7 +87,12 @@ export function VirtualizedIconGrid({
     }
 
     return { sections: nextSections, rows: nextRows };
-  }, [items]);
+  }, [filteredItems]);
+
+  const filteredIndexByItem = useMemo(
+    () => new Map(filteredItems.map((item, index) => [item, index])),
+    [filteredItems],
+  );
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
@@ -208,27 +207,31 @@ export function VirtualizedIconGrid({
                 }
               >
                 <AutocompleteRow>
-                  {item.iconItems.map((iconItem) => (
-                    <TooltipPreset
-                      key={iconItem.item.id}
-                      side="top"
-                      description={iconItem.item.item.name}
-                    >
-                      <AutocompleteItem
-                        value={iconItem.item}
-                        index={iconItem.index}
-                        onClick={() => handleIconClick(iconItem.item.item)}
-                        render={
-                          <Button
-                            variant="hint"
-                            className="size-8 text-2xl/none data-highlighted:bg-default/10"
-                          >
-                            {factory.renderIcon(iconItem.item.item, {})}
-                          </Button>
-                        }
-                      />
-                    </TooltipPreset>
-                  ))}
+                  {item.iconItems.map((iconItem) => {
+                    const filteredIndex =
+                      filteredIndexByItem.get(iconItem) ?? -1;
+                    return (
+                      <TooltipPreset
+                        key={iconItem.item.id}
+                        side="top"
+                        description={iconItem.item.name}
+                      >
+                        <AutocompleteItem
+                          value={iconItem}
+                          index={filteredIndex}
+                          onClick={() => handleIconClick(iconItem.item)}
+                          render={
+                            <Button
+                              variant="hint"
+                              className="size-8 text-2xl/none data-highlighted:bg-default/10"
+                            >
+                              {factory.renderIcon(iconItem.item, {})}
+                            </Button>
+                          }
+                        />
+                      </TooltipPreset>
+                    );
+                  })}
                 </AutocompleteRow>
               </AutocompleteGroup>
             );

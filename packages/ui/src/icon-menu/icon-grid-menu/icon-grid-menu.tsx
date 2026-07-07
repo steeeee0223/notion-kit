@@ -8,7 +8,6 @@ import {
   AutocompleteEmpty,
   AutocompleteStatus,
   Spinner,
-  useAutocompleteFilter,
 } from "@/primitives";
 
 import { MenuSearchBar } from "./menu-search-bar";
@@ -28,7 +27,6 @@ export function IconGridMenu({
   onSelect?: (iconData: IconData) => void;
   onRandomSelect: () => void;
 }) {
-  const filter = useAutocompleteFilter();
   const autocompleteItems = useMemo<IconAutocompleteItem[]>(
     () =>
       factory.sections.flatMap((section) =>
@@ -41,16 +39,6 @@ export function IconGridMenu({
       ),
     [factory],
   );
-  const filteredAutocompleteItems = useMemo(() => {
-    const query = searchQuery.trim();
-    if (!query) {
-      return autocompleteItems;
-    }
-
-    return autocompleteItems.filter((item) =>
-      filter.contains(item, query, getIconAutocompleteStringValue),
-    );
-  }, [autocompleteItems, filter, searchQuery]);
 
   return (
     <Autocomplete<IconAutocompleteItem>
@@ -61,7 +49,6 @@ export function IconGridMenu({
       autoHighlight="always"
       openOnInputClick
       items={autocompleteItems}
-      filteredItems={filteredAutocompleteItems}
       itemToStringValue={getIconAutocompleteStringValue}
       value={searchQuery}
       onValueChange={(value, details) => {
@@ -85,11 +72,7 @@ export function IconGridMenu({
         <AutocompleteEmpty className="h-[214px] justify-center">
           No results
         </AutocompleteEmpty>
-        <VirtualizedIconGrid
-          factory={factory}
-          items={filteredAutocompleteItems}
-          onSelect={onSelect}
-        />
+        <VirtualizedIconGrid factory={factory} onSelect={onSelect} />
       </AutocompleteContent>
     </Autocomplete>
   );
