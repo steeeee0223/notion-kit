@@ -15,7 +15,7 @@ export function MenuSearchBar({
   Palette,
 }: MenuSearchBarProps) {
   return (
-    <div className="mb-1.5 flex w-full items-center gap-x-1.5">
+    <div className="flex w-full items-center gap-x-1.5">
       <AutocompleteInput
         search
         clear

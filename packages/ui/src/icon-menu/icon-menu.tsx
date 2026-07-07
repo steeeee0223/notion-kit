@@ -1,29 +1,23 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 
 import { cn } from "@notion-kit/cn";
 
 import type { IconData } from "@/icon-block";
 import {
-  Autocomplete,
-  AutocompleteContent,
-  AutocompleteEmpty,
-  AutocompleteList,
   Button,
   Popover,
   PopoverContent,
   PopoverTrigger,
-  Spinner,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
   TooltipProvider,
-  useAutocompleteFilter,
 } from "@/primitives";
 
-import { MenuSearchBar, UploadForm, VirtualizedIconGrid } from "./_components";
-import type { IconAutocompleteItem } from "./_components";
+import { UploadForm } from "./_components";
 import { useDefaultFactories, type IconFactoryResult } from "./factories";
+import { IconGridMenu } from "./icon-grid-menu";
 
 export interface IconMenuProps extends React.PropsWithChildren {
   className?: string;
@@ -104,7 +98,7 @@ function IconMenuContent({
           value={factory.id}
           className="bg-transparent p-3"
         >
-          <IconFactoryPanel
+          <IconGridMenu
             factory={factory}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
@@ -123,90 +117,6 @@ function IconMenuContent({
       )}
     </Tabs>
   );
-}
-
-function IconFactoryPanel({
-  factory,
-  searchQuery,
-  setSearchQuery,
-  onSelect,
-  onRandomSelect,
-}: {
-  factory: IconFactoryResult;
-  searchQuery: string;
-  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
-  onSelect?: (iconData: IconData) => void;
-  onRandomSelect: () => void;
-}) {
-  const filter = useAutocompleteFilter();
-  const autocompleteItems = useMemo<IconAutocompleteItem[]>(
-    () =>
-      factory.sections.flatMap((section) =>
-        section.iconIds.map((id) => ({
-          id,
-          sectionId: section.id,
-          sectionLabel: section.label,
-          item: factory.getItem(id),
-        })),
-      ),
-    [factory],
-  );
-  const filteredAutocompleteItems = useMemo(() => {
-    const query = searchQuery.trim();
-    if (!query) {
-      return autocompleteItems;
-    }
-
-    return autocompleteItems.filter((item) =>
-      filter.contains(item, query, getIconAutocompleteStringValue),
-    );
-  }, [autocompleteItems, filter, searchQuery]);
-
-  return (
-    <Autocomplete<IconAutocompleteItem>
-      grid
-      virtualized
-      inline
-      open
-      autoHighlight="always"
-      openOnInputClick
-      items={autocompleteItems}
-      filteredItems={filteredAutocompleteItems}
-      itemToStringValue={getIconAutocompleteStringValue}
-      value={searchQuery}
-      onValueChange={(value, details) => {
-        if (details.reason !== "item-press") {
-          setSearchQuery(value);
-        }
-      }}
-    >
-      <MenuSearchBar
-        onRandomSelect={onRandomSelect}
-        onSearchClear={() => setSearchQuery("")}
-        Palette={factory.toolbar}
-      />
-      {factory.isLoading ? (
-        <Spinner className="mx-1 my-2 fill-icon" />
-      ) : (
-        <AutocompleteContent variant="inline">
-          <AutocompleteEmpty className="h-[214px] justify-center">
-            No results
-          </AutocompleteEmpty>
-          <AutocompleteList>
-            <VirtualizedIconGrid
-              factory={factory}
-              items={filteredAutocompleteItems}
-              onSelect={onSelect}
-            />
-          </AutocompleteList>
-        </AutocompleteContent>
-      )}
-    </Autocomplete>
-  );
-}
-
-function getIconAutocompleteStringValue({ item }: IconAutocompleteItem) {
-  return [item.name, ...item.keywords].filter(Boolean).join(" ");
 }
 
 function IconMenuWithDefaults(props: Omit<IconMenuProps, "factories">) {

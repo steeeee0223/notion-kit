@@ -1,4 +1,5 @@
 export { IconMenu } from "./icon-menu";
+export { IconGridMenu } from "./icon-grid-menu";
 export type { IconMenuProps } from "./icon-menu";
 export {
   createIconFactories,

@@ -7,13 +7,14 @@ import {
   AutocompleteGroup,
   AutocompleteItem,
   AutocompleteLabel,
+  AutocompleteList,
   AutocompleteRow,
   Button,
   ScrollArea,
   TooltipPreset,
 } from "@/primitives";
 
-import type { IconAutocompleteItem } from "./types";
+import type { IconAutocompleteItem } from "./utils";
 
 const ICONS_PER_ROW = 12;
 const HEADER_HEIGHT = 32;
@@ -177,7 +178,7 @@ export function VirtualizedIconGrid({
   );
 
   return (
-    <>
+    <AutocompleteList>
       <ScrollArea ref={scrollAreaRef} className="relative h-[214px] w-full">
         <div className="relative" style={{ height: totalSize }}>
           {activeSection ? (
@@ -235,6 +236,6 @@ export function VirtualizedIconGrid({
         </div>
       </ScrollArea>
       {factory.navigation?.(scrollToSection, activeSectionId)}
-    </>
+    </AutocompleteList>
   );
 }
