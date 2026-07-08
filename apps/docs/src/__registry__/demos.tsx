@@ -23,6 +23,12 @@ export const Index: Record<
       () => import("@notion-kit/registry/autocomplete-popover"),
     ),
   },
+  "autocomplete-grid-menu": {
+    files: ["registry/src/autocomplete-grid-menu/autocomplete-grid-menu.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/autocomplete-grid-menu"),
+    ),
+  },
   "badge-default": {
     files: ["registry/src/badge-default/badge-default.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/badge-default")),

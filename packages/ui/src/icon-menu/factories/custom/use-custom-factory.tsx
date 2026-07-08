@@ -1,17 +1,9 @@
-"use client";
-
 import { useCallback, useMemo } from "react";
 
 import { randomItem } from "@notion-kit/utils";
 
 import { useRecentIcons } from "../_hooks";
-import type {
-  IconFactoryResult,
-  IconItem,
-  IconSection,
-  RenderIconOptions,
-  SelectOptions,
-} from "../types";
+import type { IconFactoryResult, IconItem, IconSection } from "../types";
 
 interface CustomIcon {
   id: string;
@@ -94,7 +86,7 @@ export function useCustomFactory(
   );
 
   const renderIcon = useCallback(
-    (item: IconItem, _opts: RenderIconOptions) => {
+    (item: IconItem) => {
       const icon = iconMap.get(item.id);
       if (!icon) return null;
       return (
@@ -105,7 +97,7 @@ export function useCustomFactory(
   );
 
   const toIconData = useCallback(
-    (item: IconItem, _opts: SelectOptions) => {
+    (item: IconItem) => {
       const icon = iconMap.get(item.id);
       return {
         type: "url" as const,
@@ -128,10 +120,7 @@ export function useCustomFactory(
     search,
     renderIcon,
     toIconData,
-    onSelect: useCallback(
-      (item: IconItem) => trackRecent(item.id),
-      [trackRecent],
-    ),
+    select: trackRecent,
     getRandomIcon,
   };
 }

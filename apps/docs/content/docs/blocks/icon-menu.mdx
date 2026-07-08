@@ -1,16 +1,13 @@
 ---
 title: Icon Menu
-description: A controlled popover menu for icon selection and upload.
+description: A controlled popover menu with searchable icon factories, a virtualized grid, and upload support.
 ---
 
 <ComponentPreview name="icon-menu-default" hideCode />
 
 ## Installation
 
-<Installation
-  packages="@notion-kit/ui"
-  registryName="icon-menu-default"
-/>
+<Installation packages="@notion-kit/ui" registryName="icon-menu-default" />
 
 ## Examples
 
@@ -18,23 +15,44 @@ description: A controlled popover menu for icon selection and upload.
 
 ### With `IconBlock`
 
+Use the default factories for emoji and Lucide icons. Search runs through the autocomplete internals and each factory provides the searchable item text.
+
 <ComponentPreview name="icon-menu-default" />
 
 ### Notion Icons
 
-Including all icon sources — emoji, lucide, and notion icons.
+Compose factories to choose which tabs appear. This example includes emoji, Lucide, and Notion-style icons.
 
 <ComponentPreview name="icon-menu-notion-icons" />
 
 ### Custom Factory
 
-Use `useCustomFactory` to add your own icon sets.
+Use `useCustomFactory` to add your own icon set. `name` and `keywords` are searchable, and selected icons are tracked as recent items.
 
 <ComponentPreview name="icon-menu-custom-factory" />
 
+## Anatomy
+
+```
+<IconMenu>
+  <IconBlock />
+</IconMenu>
+```
+
+For custom sources, pass factory results to `factories`:
+
+```
+const emoji = useEmojiFactory();
+const brands = useCustomFactory({ icons });
+
+<IconMenu factories={[emoji, brands]}>
+  <IconBlock icon={icon} />
+</IconMenu>
+```
+
 ## Factories
 
-Icon Menu uses a factory pattern that lets you compose any combination of icon sources.
+Icon Menu uses a factory pattern that lets each source define its tab, searchable items, grid sections, optional toolbar controls, and optional section navigation.
 
 | Factory                   | Description                                      |
 | ------------------------- | ------------------------------------------------ |
@@ -57,6 +75,24 @@ Icon Menu uses a factory pattern that lets you compose any combination of icon s
 | `onRemove`  | `() => void`               | -       | Handler that is called when the remove button is clicked.                            |
 
 - See [`IconData`](/docs/blocks/icon-block#type-icondata)
+
+### IconFactoryResult
+
+| Field              | Type                                                                                    | Description                                                   |
+| ------------------ | --------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `id`               | `string`                                                                                | Unique factory id used for the tab value and storage keys.    |
+| `label`            | `string`                                                                                | Tab label shown in the menu.                                  |
+| `sections`         | `IconSection[]`                                                                         | Virtualized grid sections. Each section renders a label row.  |
+| `getItem`          | `(id: string) => IconItem`                                                              | Resolves an icon id into the item rendered by the grid.       |
+| `select`           | `(id: string) => void`                                                                  | Optional selection side effect, commonly used for recents.    |
+| `search`           | `(query: string) => string[]`                                                           | Returns matching icon ids for the current query.              |
+| `toIconData`       | `(item: IconItem) => IconData`                                                          | Converts a selected item into the value passed to `onSelect`. |
+| `renderIcon`       | `(item: IconItem) => React.ReactNode`                                                   | Renders the visual icon inside the grid button.               |
+| `renderToolbar`    | `() => React.ReactNode`                                                                 | Optional controls shown beside the search input.              |
+| `renderNavigation` | `(scrollToSection: (id: string) => void, activeSectionId: string \| null) => ReactNode` | Optional section navigation for large factories.              |
+| `isLoading`        | `boolean`                                                                               | Shows a searching status in the grid.                         |
+| `hidden`           | `boolean`                                                                               | Hides the factory tab, useful for empty upload history.       |
+| `getRandomIcon`    | `() => IconItem`                                                                        | Optional random selection source for the toolbar action.      |
 
 ## Creating a Custom Factory
 
@@ -93,14 +129,15 @@ Combine your factory with built-in ones and pass them via the `factories` prop:
 
 ```tsx
 const emoji = useEmojiFactory();
-const brands = useCustomFactory({ ... });
+const brands = useCustomFactory({
+  id: "brands",
+  label: "Brands",
+  icons,
+});
 
-<IconMenu
-  factories={[emoji, brands]}
-  onSelect={setIcon}
->
+<IconMenu factories={[emoji, brands]} onSelect={setIcon}>
   <IconBlock icon={icon} size="lg" />
-</IconMenu>
+</IconMenu>;
 ```
 
 ### 3. Upload factory

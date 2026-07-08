@@ -7,14 +7,8 @@ import emojiMartData, {
 import { randomItem } from "@notion-kit/utils";
 
 import { useRecentIcons } from "../_hooks";
-import type {
-  IconFactoryResult,
-  IconItem,
-  IconSection,
-  RenderIconOptions,
-  SelectOptions,
-} from "../types";
-import { CATEGORY_LABELS, DEFAULT_CATEGORIES, SkinPalette } from "./constants";
+import type { IconFactoryResult, IconItem, IconSection } from "../types";
+import { CATEGORIES, DEFAULT_CATEGORIES, SkinPalette } from "./constants";
 import type { EmojiCategoryList, Skin } from "./constants";
 import { EmojiCategoryNav } from "./emoji-category-nav";
 import { SkinPicker } from "./skin-picker";
@@ -63,7 +57,7 @@ export function useEmojiFactory(
     if (recentIds.length > 0) {
       result.push({
         id: "frequent",
-        label: CATEGORY_LABELS.frequent,
+        label: CATEGORIES.frequent.label,
         iconIds: recentIds,
       });
     }
@@ -73,7 +67,7 @@ export function useEmojiFactory(
       if (DEFAULT_CATEGORIES.includes(catId) && catId !== "frequent") {
         result.push({
           id: category.id,
-          label: CATEGORY_LABELS[catId],
+          label: CATEGORIES[catId].label,
           iconIds: category.emojis,
         });
       }
@@ -119,10 +113,9 @@ export function useEmojiFactory(
   );
 
   const renderIcon = useCallback(
-    (item: IconItem, opts: RenderIconOptions) => {
+    (item: IconItem) => {
       const emoji = emojiMap.get(item.id);
       if (!emoji) return null;
-      const skinValue = (opts.variantValue ?? skin) as Skin;
       return (
         <span
           className="relative text-primary"
@@ -132,7 +125,7 @@ export function useEmojiFactory(
           }}
           data-emoji-set="native"
         >
-          {getNativeEmoji(emoji, skinValue)}
+          {getNativeEmoji(emoji, skin)}
         </span>
       );
     },
@@ -140,23 +133,15 @@ export function useEmojiFactory(
   );
 
   const toIconData = useCallback(
-    (item: IconItem, opts: SelectOptions) => {
+    (item: IconItem) => {
       const emoji = emojiMap.get(item.id);
       if (!emoji) return { type: "emoji" as const, src: item.id };
-      const skinValue = (opts.variantValue ?? skin) as Skin;
       return {
         type: "emoji" as const,
-        src: getNativeEmoji(emoji, skinValue),
+        src: getNativeEmoji(emoji, skin),
       };
     },
     [emojiMap, skin],
-  );
-
-  const onSelect = useCallback(
-    (item: IconItem) => {
-      trackRecent(item.id);
-    },
-    [trackRecent],
   );
 
   const getRandomIcon = useCallback((): IconItem => {
@@ -183,15 +168,15 @@ export function useEmojiFactory(
     search,
     renderIcon,
     toIconData,
-    toolbar,
-    navigation: (scrollToSection, activeSectionId) => (
+    renderToolbar: () => toolbar,
+    renderNavigation: (scrollToSection, activeSectionId) => (
       <EmojiCategoryNav
         categories={activeCategoryIds}
         activeSectionId={activeSectionId}
         scrollToSection={scrollToSection}
       />
     ),
-    onSelect,
+    select: trackRecent,
     getRandomIcon,
   };
 }

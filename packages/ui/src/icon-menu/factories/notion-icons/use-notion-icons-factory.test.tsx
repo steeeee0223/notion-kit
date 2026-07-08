@@ -24,7 +24,7 @@ describe("useNotionIconsFactory", () => {
 
     expect(factory.id).toBe("notion");
     expect(factory.label).toBe("Notion");
-    expect(factory.onSelect).toBeTypeOf("function");
+    expect(factory.select).toBeTypeOf("function");
   });
 
   it("should have an 'all' section labeled 'Notion Icons'", () => {
@@ -81,16 +81,16 @@ describe("useNotionIconsFactory", () => {
     const firstId = result.current.sections.find((s) => s.id === "all")!
       .iconIds[0]!;
     const item = result.current.getItem(firstId);
-    const data = result.current.toIconData(item, {});
+    const data = result.current.toIconData(item);
 
     expect(data.type).toBe("url");
     expect(data.src).toContain("notion.so/icons/");
     expect(data.src).toContain("gray"); // default color
   });
 
-  it("toolbar is defined (ColorPicker)", () => {
+  it("renderToolbar renders ColorPicker", () => {
     const { result } = renderHook(() => useNotionIconsFactory());
-    expect(result.current.toolbar).toBeDefined();
+    expect(result.current.renderToolbar?.()).toBeDefined();
   });
 
   it("getRandomIcon returns a valid item after loading", async () => {
@@ -108,7 +108,7 @@ describe("useNotionIconsFactory", () => {
     expect(item.id).toBe("");
   });
 
-  it("tracks recent icons via onSelect", async () => {
+  it("tracks recent icons via select", async () => {
     localStorage.clear();
     const result = await waitForIcons();
 
@@ -117,7 +117,7 @@ describe("useNotionIconsFactory", () => {
     const item = result.current.getItem(firstId);
 
     act(() => {
-      result.current.onSelect?.(item);
+      result.current.select?.(item.id);
     });
 
     const recentSection = result.current.sections.find(

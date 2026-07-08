@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
 import { useCustomFactory } from "../custom";
-import type { IconFactoryResult, IconItem } from "../types";
+import type { IconFactoryResult } from "../types";
 
 interface StoredUploadIcon {
   id: string;
@@ -60,8 +60,9 @@ export function useUploadFactory(
 
   // Wrap onSelect to persist new icons into localStorage
   const onSelect = useCallback(
-    (item: IconItem) => {
-      base.onSelect?.(item);
+    (id: string) => {
+      base.select?.(id);
+      const item = base.getItem(id);
       setStoredIcons((v) => {
         if (v.some((i) => i.id === item.id)) return v;
         return [{ id: item.id, url: item.id, name: item.name }, ...v].slice(
@@ -75,7 +76,7 @@ export function useUploadFactory(
 
   return {
     ...base,
-    onSelect,
+    select: onSelect,
     hidden: storedIcons.length === 0,
   };
 }

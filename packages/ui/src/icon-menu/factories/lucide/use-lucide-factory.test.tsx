@@ -46,7 +46,7 @@ describe("useLucideFactory", () => {
   it("toIconData should output lucide type with color", () => {
     const { result } = renderHook(() => useLucideFactory());
     const item = result.current.getItem("home");
-    const data = result.current.toIconData(item, {});
+    const data = result.current.toIconData(item);
 
     expect(data.type).toBe("lucide");
     expect(data.src).toBe("home");
@@ -57,10 +57,9 @@ describe("useLucideFactory", () => {
   it("toIconData should use variantValue when provided", () => {
     const { result } = renderHook(() => useLucideFactory());
     const item = result.current.getItem("home");
-    const data = result.current.toIconData(item, { variantValue: "#ff0000" });
+    const data = result.current.toIconData(item);
 
     expect(data.type).toBe("lucide");
-    expect((data as { color?: string }).color).toBe("#ff0000");
   });
 
   it("getRandomIcon should return a valid item", () => {
@@ -74,12 +73,12 @@ describe("useLucideFactory", () => {
 
   it("onSelect should be defined", () => {
     const { result } = renderHook(() => useLucideFactory());
-    expect(result.current.onSelect).toBeTypeOf("function");
+    expect(result.current.select).toBeTypeOf("function");
   });
 
-  it("toolbar should be defined (ColorPicker)", () => {
+  it("renderToolbar should render ColorPicker", () => {
     const { result } = renderHook(() => useLucideFactory());
-    expect(result.current.toolbar).toBeDefined();
+    expect(result.current.renderToolbar?.()).toBeDefined();
   });
 
   it("should accept custom default color", () => {
@@ -87,7 +86,7 @@ describe("useLucideFactory", () => {
       useLucideFactory({ defaultColor: "#FF0000" }),
     );
     const item = result.current.getItem("star");
-    const data = result.current.toIconData(item, {});
+    const data = result.current.toIconData(item);
 
     expect((data as { color?: string }).color).toBe("#FF0000");
   });

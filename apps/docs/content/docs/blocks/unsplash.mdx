@@ -1,21 +1,16 @@
 ---
 title: Unsplash
-description: A search-enabled menu for Unsplash images.
+description: A search-enabled autocomplete grid for browsing and selecting Unsplash images.
 ---
 
 <ComponentPreview
   name="unsplash-default"
-  preivew={`<Unsplash
-    className="w-[540px]"
-    apiKey={UNSPLASH_ACCESS_KEY}
-  />`}
+  preview={`<Unsplash apiKey={UNSPLASH_ACCESS_KEY} onSelect={setImage} />`}
 />
 
 ## Installation
 
-```package-install
-pnpm add @notion-kit/ui
-```
+<Installation packages="@notion-kit/ui" registryName="unsplash-default" />
 
 ## Examples
 
@@ -23,13 +18,29 @@ pnpm add @notion-kit/ui
 
 ### Basic
 
+The picker opens inline, loads a default Unsplash collection, and searches remotely as the input changes.
+
+<ComponentPreview name="unsplash-default" />
+
+### Controlled Selection
+
+Use `onSelect` to receive the full Unsplash image object and decide which URL size to store.
+
 <ComponentPreview name="unsplash-search" />
 
 ## API Reference
 
 ### Unsplash
 
-| Prop       | Type                    | Default | Description                                                                          |
-| ---------- | ----------------------- | ------- | ------------------------------------------------------------------------------------ |
-| `apiKey`\* | `string`                | -       | The Unsplash access key from [Unsplash Developers](https://unsplash.com/developers). |
-| `onSelect` | `(url: string) => void` | -       | Handler that is called when an Unsplash image is selected.                           |
+| Prop       | Type                             | Default | Description                                                                                  |
+| ---------- | -------------------------------- | ------- | -------------------------------------------------------------------------------------------- |
+| `apiKey`\* | `string`                         | -       | The Unsplash access key from [Unsplash Developers](https://unsplash.com/developers).         |
+| `onSelect` | `(image: UnsplashImage) => void` | -       | Handler called when an image is selected. Use `image.urls.small`, `regular`, `full`, or raw. |
+
+### `type` UnsplashImage
+
+```ts
+type UnsplashImage = AssetBasic;
+```
+
+`UnsplashImage` is exported from `@notion-kit/ui/unsplash` and matches the `unsplash-js` basic asset shape.
