@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { createIconFactory } from "./create-icon-factory";
-import type { IconItem, RenderIconOptions, SelectOptions } from "./types";
+import type { IconItem } from "./types";
 
 describe("createIconFactory", () => {
   const mockIcons = [
@@ -15,8 +15,8 @@ describe("createIconFactory", () => {
     id: "test",
     label: "Test Icons",
     icons: mockIcons,
-    renderIcon: (item: IconItem, _opts: RenderIconOptions) => item.name,
-    toIconData: (item: IconItem, _opts: SelectOptions) => ({
+    renderIcon: (item: IconItem) => item.name,
+    toIconData: (item: IconItem) => ({
       type: "url" as const,
       src: `https://example.com/${item.id}.svg`,
     }),
@@ -80,13 +80,13 @@ describe("createIconFactory", () => {
 
   it("toIconData should generate correct data", () => {
     const item = factory.getItem("home");
-    const data = factory.toIconData(item, {});
+    const data = factory.toIconData(item);
     expect(data).toEqual({ type: "url", src: "https://example.com/home.svg" });
   });
 
   it("renderIcon should return the icon name", () => {
     const item = factory.getItem("heart");
-    const rendered = factory.renderIcon(item, {});
+    const rendered = factory.renderIcon(item);
     expect(rendered).toBe("Heart");
   });
 });

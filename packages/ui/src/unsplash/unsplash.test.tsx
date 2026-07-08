@@ -97,7 +97,7 @@ describe("Unsplash", () => {
 
     await user.type(screen.getByRole("combobox"), "s");
 
-    expect(setQuery).toHaveBeenCalledWith("mountains");
+    expect(setQuery).toHaveBeenCalledWith("mountains", expect.any(Object));
   });
 
   it("Unsplash_Loaded_RendersImageGridOptions", () => {
@@ -120,9 +120,7 @@ describe("Unsplash", () => {
 
     await user.click(screen.getByRole("gridcell", { name: "Mountain lake" }));
 
-    expect(onSelect).toHaveBeenCalledWith(
-      "https://images.example.com/image-1-regular.jpg",
-    );
+    expect(onSelect).toHaveBeenCalledWith(images[0]);
   });
 
   it("Unsplash_KeyboardSelection_CallsOnSelect", async () => {
@@ -135,8 +133,6 @@ describe("Unsplash", () => {
     screen.getByRole("combobox").focus();
     await user.keyboard("{ArrowDown}{Enter}");
 
-    expect(onSelect).toHaveBeenCalledWith(
-      "https://images.example.com/image-1-regular.jpg",
-    );
+    expect(onSelect).toHaveBeenCalledWith(images[0]);
   });
 });

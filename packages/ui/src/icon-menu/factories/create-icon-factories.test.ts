@@ -2,15 +2,15 @@ import { describe, expect, it } from "vitest";
 
 import { createIconFactories } from "./create-icon-factories";
 import { createIconFactory } from "./create-icon-factory";
-import type { IconItem, RenderIconOptions, SelectOptions } from "./types";
+import type { IconItem } from "./types";
 
 function makeFactory(id: string, label: string) {
   return createIconFactory({
     id,
     label,
     icons: [{ id: `${id}-icon-1`, name: `${label} Icon 1`, keywords: [] }],
-    renderIcon: (_item: IconItem, _opts: RenderIconOptions) => null,
-    toIconData: (item: IconItem, _opts: SelectOptions) => ({
+    renderIcon: (_item: IconItem) => null,
+    toIconData: (item: IconItem) => ({
       type: "url" as const,
       src: item.id,
     }),
