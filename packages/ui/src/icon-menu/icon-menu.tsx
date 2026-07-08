@@ -96,7 +96,7 @@ function IconMenuContent({
         <TabsContent
           key={factory.id}
           value={factory.id}
-          className="bg-transparent p-3"
+          className="bg-transparent"
         >
           <IconGridMenu
             factory={factory}

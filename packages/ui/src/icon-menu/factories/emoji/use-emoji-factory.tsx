@@ -8,7 +8,7 @@ import { randomItem } from "@notion-kit/utils";
 
 import { useRecentIcons } from "../_hooks";
 import type { IconFactoryResult, IconItem, IconSection } from "../types";
-import { CATEGORY_LABELS, DEFAULT_CATEGORIES, SkinPalette } from "./constants";
+import { CATEGORIES, DEFAULT_CATEGORIES, SkinPalette } from "./constants";
 import type { EmojiCategoryList, Skin } from "./constants";
 import { EmojiCategoryNav } from "./emoji-category-nav";
 import { SkinPicker } from "./skin-picker";
@@ -57,7 +57,7 @@ export function useEmojiFactory(
     if (recentIds.length > 0) {
       result.push({
         id: "frequent",
-        label: CATEGORY_LABELS.frequent,
+        label: CATEGORIES.frequent.label,
         iconIds: recentIds,
       });
     }
@@ -67,7 +67,7 @@ export function useEmojiFactory(
       if (DEFAULT_CATEGORIES.includes(catId) && catId !== "frequent") {
         result.push({
           id: category.id,
-          label: CATEGORY_LABELS[catId],
+          label: CATEGORIES[catId].label,
           iconIds: category.emojis,
         });
       }
