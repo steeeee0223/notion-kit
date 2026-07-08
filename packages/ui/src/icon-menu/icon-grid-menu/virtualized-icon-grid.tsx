@@ -15,12 +15,12 @@ import {
   useAutocompleteFilteredItems,
 } from "@/primitives";
 
-import type { IconAutocompleteItem } from "./utils";
-
-const ICONS_PER_ROW = 12;
-const HEADER_HEIGHT = 32;
-const ROW_HEIGHT = 32;
-const INITIAL_ROW_COUNT = 12;
+const CONFIG = {
+  iconsPerRow: 12,
+  headerHeight: 32,
+  rowHeight: 32,
+  initialRowCount: 12,
+} as const;
 
 interface IconSectionRows {
   id: string;
@@ -31,7 +31,7 @@ interface IconSectionRows {
 interface VirtualIconRow {
   id: string;
   sectionId: string;
-  iconItems: IconAutocompleteItem[];
+  iconItems: IconItem[];
 }
 
 function chunk<T>(arr: T[], size: number): T[][] {
@@ -52,17 +52,18 @@ export function VirtualizedIconGrid({
   onSelect,
 }: VirtualizedIconGridProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const filteredItems = useAutocompleteFilteredItems<IconAutocompleteItem>();
+  const filteredItems = useAutocompleteFilteredItems<IconItem>();
 
   const { sections, rows } = useMemo(() => {
-    const groupedItems = new Map<string, IconAutocompleteItem[]>();
+    const groupedItems = new Map<string, IconItem[]>();
 
     for (const iconItem of filteredItems) {
-      const sectionItems = groupedItems.get(iconItem.sectionId);
+      const sectionId = iconItem.sectionId ?? "all";
+      const sectionItems = groupedItems.get(sectionId);
       if (sectionItems) {
         sectionItems.push(iconItem);
       } else {
-        groupedItems.set(iconItem.sectionId, [iconItem]);
+        groupedItems.set(sectionId, [iconItem]);
       }
     }
 
@@ -70,7 +71,7 @@ export function VirtualizedIconGrid({
     const nextRows: VirtualIconRow[] = [];
 
     for (const [sectionId, items] of groupedItems) {
-      const rowChunks = chunk(items, ICONS_PER_ROW);
+      const rowChunks = chunk(items, CONFIG.iconsPerRow);
       nextSections.push({
         id: sectionId,
         label: items[0]?.sectionLabel ?? sectionId,
@@ -98,12 +99,12 @@ export function VirtualizedIconGrid({
   const virtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => scrollRef.current,
-    estimateSize: () => ROW_HEIGHT,
+    estimateSize: () => CONFIG.rowHeight,
     getItemKey: (index) => rows[index]?.id ?? index,
     initialRect: { width: 400, height: 214 },
     overscan: 5,
-    paddingStart: HEADER_HEIGHT,
-    scrollPaddingStart: HEADER_HEIGHT,
+    paddingStart: CONFIG.headerHeight,
+    scrollPaddingStart: CONFIG.headerHeight,
   });
 
   /**
@@ -122,9 +123,9 @@ export function VirtualizedIconGrid({
 
   const handleIconClick = useCallback(
     (item: IconItem) => {
-      const iconData = factory.toIconData(item, {});
+      const iconData = factory.toIconData(item);
       onSelect?.(iconData);
-      factory.onSelect?.(item);
+      factory.select?.(item.id);
     },
     [factory, onSelect],
   );
@@ -143,20 +144,20 @@ export function VirtualizedIconGrid({
   const renderedVirtualRows =
     virtualItems.length > 0
       ? virtualItems
-      : rows.slice(0, INITIAL_ROW_COUNT).map((row, index) => {
-          const start = HEADER_HEIGHT + index * ROW_HEIGHT;
+      : rows.slice(0, CONFIG.initialRowCount).map((row, index) => {
+          const start = CONFIG.headerHeight + index * CONFIG.rowHeight;
           return {
             key: row.id,
             index,
-            size: ROW_HEIGHT,
+            size: CONFIG.rowHeight,
             start,
-            end: start + ROW_HEIGHT,
+            end: start + CONFIG.rowHeight,
             lane: 0,
           };
         });
   const totalSize = Math.max(
     virtualizer.getTotalSize(),
-    HEADER_HEIGHT + rows.length * ROW_HEIGHT,
+    CONFIG.headerHeight + rows.length * CONFIG.rowHeight,
   );
   const scrollOffset = virtualizer.scrollOffset ?? 0;
   const activeSectionId = useMemo(() => {
@@ -164,7 +165,7 @@ export function VirtualizedIconGrid({
 
     const activeRowIndex = Math.min(
       rows.length - 1,
-      Math.max(0, Math.floor(scrollOffset / ROW_HEIGHT)),
+      Math.max(0, Math.floor(scrollOffset / CONFIG.rowHeight)),
     );
     return rows[activeRowIndex]?.sectionId ?? sections[0]?.id ?? null;
   }, [rows, sections, scrollOffset]);
@@ -183,7 +184,7 @@ export function VirtualizedIconGrid({
           {activeSection ? (
             <AutocompleteGroup
               className="sticky top-0 z-1 bg-popover"
-              style={{ height: HEADER_HEIGHT, overflow: "visible" }}
+              style={{ height: CONFIG.headerHeight, overflow: "visible" }}
             >
               <AutocompleteLabel
                 title={activeSection.label}
@@ -212,20 +213,21 @@ export function VirtualizedIconGrid({
                       filteredIndexByItem.get(iconItem) ?? -1;
                     return (
                       <TooltipPreset
-                        key={iconItem.item.id}
+                        key={iconItem.id}
                         side="top"
-                        description={iconItem.item.name}
+                        description={iconItem.name}
                       >
                         <AutocompleteItem
                           value={iconItem}
                           index={filteredIndex}
-                          onClick={() => handleIconClick(iconItem.item)}
+                          onClick={() => handleIconClick(iconItem)}
+                          nativeButton
                           render={
                             <Button
                               variant="hint"
                               className="size-8 text-2xl/none data-highlighted:bg-default/10"
                             >
-                              {factory.renderIcon(iconItem.item, {})}
+                              {factory.renderIcon(iconItem)}
                             </Button>
                           }
                         />
@@ -238,7 +240,7 @@ export function VirtualizedIconGrid({
           })}
         </div>
       </ScrollArea>
-      {factory.navigation?.(scrollToSection, activeSectionId)}
+      {factory.renderNavigation?.(scrollToSection, activeSectionId)}
     </AutocompleteList>
   );
 }

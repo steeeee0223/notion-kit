@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
-import { IconData } from "@/icon-block";
-import { IconFactoryResult } from "@/icon-menu/factories";
+import type { IconData } from "@/icon-block";
+import type { IconFactoryResult, IconItem } from "@/icon-menu/factories";
 import {
   Autocomplete,
   AutocompleteContent,
@@ -11,7 +11,7 @@ import {
 } from "@/primitives";
 
 import { MenuSearchBar } from "./menu-search-bar";
-import { getIconAutocompleteStringValue, IconAutocompleteItem } from "./utils";
+import { getIconStringValue } from "./utils";
 import { VirtualizedIconGrid } from "./virtualized-icon-grid";
 
 export function IconGridMenu({
@@ -27,21 +27,20 @@ export function IconGridMenu({
   onSelect?: (iconData: IconData) => void;
   onRandomSelect: () => void;
 }) {
-  const autocompleteItems = useMemo<IconAutocompleteItem[]>(
+  const autocompleteItems = useMemo<IconItem[]>(
     () =>
       factory.sections.flatMap((section) =>
         section.iconIds.map((id) => ({
-          id,
+          ...factory.getItem(id),
           sectionId: section.id,
           sectionLabel: section.label,
-          item: factory.getItem(id),
         })),
       ),
     [factory],
   );
 
   return (
-    <Autocomplete<IconAutocompleteItem>
+    <Autocomplete<IconItem>
       grid
       virtualized
       inline
@@ -49,7 +48,7 @@ export function IconGridMenu({
       autoHighlight="always"
       openOnInputClick
       items={autocompleteItems}
-      itemToStringValue={getIconAutocompleteStringValue}
+      itemToStringValue={getIconStringValue}
       value={searchQuery}
       onValueChange={(value, details) => {
         if (details.reason !== "item-press") {
@@ -60,7 +59,7 @@ export function IconGridMenu({
       <MenuSearchBar
         onRandomSelect={onRandomSelect}
         onSearchClear={() => setSearchQuery("")}
-        Palette={factory.toolbar}
+        Palette={factory.renderToolbar?.()}
       />
       <AutocompleteContent variant="inline">
         {factory.isLoading && (

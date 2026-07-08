@@ -14,7 +14,7 @@ describe("useUploadFactory", () => {
 
     expect(factory.id).toBe("upload");
     expect(factory.label).toBe("Uploads");
-    expect(factory.onSelect).toBeTypeOf("function");
+    expect(factory.select).toBeTypeOf("function");
   });
 
   it("is hidden when no icons are stored", () => {
@@ -26,11 +26,7 @@ describe("useUploadFactory", () => {
     const { result } = renderHook(() => useUploadFactory());
 
     act(() => {
-      result.current.onSelect?.({
-        id: "https://example.com/icon.png",
-        name: "icon",
-        keywords: [],
-      });
+      result.current.select?.("https://example.com/icon.png");
     });
     expect(result.current.hidden).toBe(false);
 
@@ -46,15 +42,11 @@ describe("useUploadFactory", () => {
 
   it("onSelect deduplicates icons with the same id", () => {
     const { result } = renderHook(() => useUploadFactory());
-    const item = {
-      id: "https://example.com/icon.png",
-      name: "icon",
-      keywords: [],
-    };
+    const url = "https://example.com/icon.png";
 
     act(() => {
-      result.current.onSelect?.(item);
-      result.current.onSelect?.(item);
+      result.current.select?.(url);
+      result.current.select?.(url);
     });
     expect(result.current.hidden).toBe(false);
 
@@ -68,94 +60,56 @@ describe("useUploadFactory", () => {
     const { result } = renderHook(() => useUploadFactory());
 
     act(() => {
-      result.current.onSelect?.({
-        id: "https://example.com/a.png",
-        name: "a",
-        keywords: [],
-      });
+      result.current.select?.("https://example.com/a.png");
     });
 
     const allSection = result.current.sections.find((s) => s.id === "all");
     expect(allSection?.iconIds).toContain("https://example.com/a.png");
   });
 
-  it("getItem returns the stored icon data", () => {
-    const { result } = renderHook(() => useUploadFactory());
-
-    act(() => {
-      result.current.onSelect?.({
-        id: "https://example.com/test.png",
-        name: "test",
-        keywords: [],
-      });
-    });
-    expect(result.current.hidden).toBe(false);
-
-    const item = result.current.getItem("https://example.com/test.png");
-    expect(item.id).toBe("https://example.com/test.png");
-  });
-
   it("toIconData returns url type", () => {
     const { result } = renderHook(() => useUploadFactory());
+    const url = "https://example.com/test.png";
 
     act(() => {
-      result.current.onSelect?.({
-        id: "https://example.com/test.png",
-        name: "test",
-        keywords: [],
-      });
+      result.current.select?.(url);
     });
     expect(result.current.hidden).toBe(false);
 
-    const item = result.current.getItem("https://example.com/test.png");
-    const data = result.current.toIconData(item, {});
+    const item = result.current.getItem(url);
+    const data = result.current.toIconData(item);
 
     expect(data.type).toBe("url");
-    expect(data.src).toBe("https://example.com/test.png");
+    expect(data.src).toBe(url);
   });
 
   it("search finds stored icons by URL", () => {
     const { result } = renderHook(() => useUploadFactory());
+    const url = "https://example.com/star-icon.png";
 
     act(() => {
-      result.current.onSelect?.({
-        id: "https://example.com/star-icon.png",
-        name: "star-icon",
-        keywords: [],
-      });
+      result.current.select?.(url);
     });
     expect(result.current.hidden).toBe(false);
 
     const results = result.current.search("star");
-    expect(results).toContain("https://example.com/star-icon.png");
+    expect(results).toContain(url);
   });
 
   it("evicts oldest icons when maxStored is exceeded", () => {
     const { result } = renderHook(() => useUploadFactory({ maxStored: 2 }));
 
     act(() => {
-      result.current.onSelect?.({
-        id: "first",
-        name: "first",
-        keywords: [],
-      });
+      result.current.select?.("first");
     });
     expect(result.current.hidden).toBe(false);
 
     act(() => {
-      result.current.onSelect?.({
-        id: "second",
-        name: "second",
-        keywords: [],
-      });
+      result.current.select?.("second");
     });
 
     act(() => {
-      result.current.onSelect?.({
-        id: "third",
-        name: "third",
-        keywords: [],
-      });
+      result.current.select?.("third");
     });
     expect(result.current.hidden).toBe(false);
 

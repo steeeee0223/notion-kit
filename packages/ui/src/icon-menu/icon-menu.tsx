@@ -49,17 +49,17 @@ function IconMenuContent({
   // Find the upload factory to persist submitted URLs / uploads
   const uploadFactory = factories.find((f) => f.id === "upload");
 
-  const handleUploadSubmit = ({ name, url }: { name: string; url: string }) => {
-    uploadFactory?.onSelect?.({ id: url, name, keywords: [name] });
+  const handleUploadSubmit = (url: string) => {
+    uploadFactory?.select?.(url);
     onSelect?.({ type: "url", src: url });
   };
 
   const handleRandomSelect = () => {
     if (activeFactory?.getRandomIcon) {
       const item = activeFactory.getRandomIcon();
-      const iconData = activeFactory.toIconData(item, {});
+      const iconData = activeFactory.toIconData(item);
       onSelect?.(iconData);
-      activeFactory.onSelect?.(item);
+      activeFactory.select?.(item.id);
     }
   };
 
@@ -110,7 +110,7 @@ function IconMenuContent({
       {onUpload && (
         <TabsContent value="file" className="p-3">
           <UploadForm
-            onSubmit={handleUploadSubmit}
+            onSubmit={(res) => handleUploadSubmit(res.url)}
             onCancel={() => setActiveTab(visibleFactories[0]?.id ?? "")}
           />
         </TabsContent>

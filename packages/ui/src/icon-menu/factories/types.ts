@@ -5,6 +5,8 @@ export interface IconItem {
   id: string;
   name: string;
   keywords: string[];
+  sectionId?: string;
+  sectionLabel?: string;
 }
 
 /** A category/section of icons */
@@ -14,34 +16,23 @@ export interface IconSection {
   iconIds: string[];
 }
 
-/** Options passed to renderIcon */
-export interface RenderIconOptions {
-  /** Current icon variant value, e.g. skin tone for emojis, color for lucide/notion */
-  variantValue?: string;
-}
-
-/** Options passed to toIconData */
-export interface SelectOptions {
-  variantValue?: string;
-}
-
 export interface IconFactoryResult {
   id: string;
   label: string;
   sections: IconSection[];
   getItem: (id: string) => IconItem;
+  select?: (id: string) => void;
   search: (query: string) => string[];
-  renderIcon: (item: IconItem, options: RenderIconOptions) => React.ReactNode;
-  toIconData: (item: IconItem, options: SelectOptions) => IconData;
-  toolbar?: React.ReactNode;
-  navigation?: (
+  toIconData: (item: IconItem) => IconData;
+  renderIcon: (item: IconItem) => React.ReactNode;
+  renderToolbar?: () => React.ReactNode;
+  renderNavigation?: (
     scrollToSection: (sectionId: string) => void,
     activeSectionId: string | null,
   ) => React.ReactNode;
   isLoading?: boolean;
   /** When true, the tab is not rendered in the menu */
   hidden?: boolean;
-  onSelect?: (item: IconItem) => void;
   getRandomIcon?: () => IconItem;
 }
 

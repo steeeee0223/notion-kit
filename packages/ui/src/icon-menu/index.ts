@@ -17,8 +17,6 @@ export type {
   IconFactoryResult,
   IconItem,
   IconSection,
-  RenderIconOptions,
-  SelectOptions,
   UseRecentIconsOptions,
   UseRecentIconsResult,
   UseEmojiFactoryOptions,

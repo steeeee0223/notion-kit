@@ -13,16 +13,10 @@ import { randomItem } from "@notion-kit/utils";
 import { COLOR } from "@/colors";
 import type { LucideName } from "@/icon-block";
 import { LucideIcon } from "@/icon-block";
+import { ColorPicker } from "@/icon-menu/_components";
 
 import { useRecentIcons } from "../_hooks";
-import { ColorPicker } from "../../_components/color-picker";
-import type {
-  IconFactoryResult,
-  IconItem,
-  IconSection,
-  RenderIconOptions,
-  SelectOptions,
-} from "../types";
+import type { IconFactoryResult, IconItem, IconSection } from "../types";
 
 type IconTag = [name: LucideName, tags: string[]];
 
@@ -123,12 +117,12 @@ export function useLucideFactory(
   );
 
   const renderIcon = useCallback(
-    (item: IconItem, opts: RenderIconOptions) => (
+    (item: IconItem) => (
       <LucideIcon
         icon={{
           type: "lucide",
           src: item.id as LucideName,
-          color: opts.variantValue ?? color,
+          color,
         }}
         className="size-4.5"
         strokeWidth={2.2}
@@ -138,19 +132,12 @@ export function useLucideFactory(
   );
 
   const toIconData = useCallback(
-    (item: IconItem, opts: SelectOptions) => ({
+    (item: IconItem) => ({
       type: "lucide" as const,
       src: item.id as LucideName,
-      color: opts.variantValue ?? color,
+      color,
     }),
     [color],
-  );
-
-  const onSelect = useCallback(
-    (item: IconItem) => {
-      trackRecent(item.id);
-    },
-    [trackRecent],
   );
 
   const getRandomIcon = useCallback((): IconItem => {
@@ -171,9 +158,9 @@ export function useLucideFactory(
     search,
     renderIcon,
     toIconData,
-    toolbar,
+    renderToolbar: () => toolbar,
     isLoading,
-    onSelect,
+    select: trackRecent,
     getRandomIcon,
   };
 }

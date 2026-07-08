@@ -1,11 +1,5 @@
 import type { IconItem } from "@/icon-menu/factories";
 
-export interface IconAutocompleteItem {
-  sectionId: string;
-  sectionLabel: string;
-  item: IconItem;
-}
-
-export function getIconAutocompleteStringValue({ item }: IconAutocompleteItem) {
+export function getIconStringValue(item: IconItem) {
   return [item.name, ...item.keywords].filter(Boolean).join(" ");
 }
