@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
 import { useCustomFactory } from "../custom";
-import type { IconFactoryResult, IconItem } from "../types";
+import type { IconFactoryResult } from "../types";
 
 interface StoredUploadIcon {
   id: string;

@@ -93,7 +93,7 @@ describe("useUnsplash", () => {
             count: 24,
           },
         },
-        signal: expect.any(AbortSignal),
+        signal: expect.any(AbortSignal) as unknown,
       }),
     );
   });
@@ -120,7 +120,7 @@ describe("useUnsplash", () => {
             per_page: 24,
           },
         },
-        signal: expect.any(AbortSignal),
+        signal: expect.any(AbortSignal) as unknown,
       }),
     );
   });
