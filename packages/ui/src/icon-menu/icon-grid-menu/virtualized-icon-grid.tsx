@@ -17,7 +17,6 @@ import {
 
 const CONFIG = {
   iconsPerRow: 12,
-  headerHeight: 32,
   rowHeight: 32,
   initialRowCount: 12,
 } as const;
@@ -28,11 +27,21 @@ interface IconSectionRows {
   startRowIndex: number;
 }
 
-interface VirtualIconRow {
+interface VirtualLabelRow {
   id: string;
+  type: "label";
+  sectionId: string;
+  label: string;
+}
+
+interface VirtualIconItemsRow {
+  id: string;
+  type: "items";
   sectionId: string;
   iconItems: IconItem[];
 }
+
+type VirtualIconRow = VirtualLabelRow | VirtualIconItemsRow;
 
 function chunk<T>(arr: T[], size: number): T[][] {
   const result: T[][] = [];
@@ -77,10 +86,17 @@ export function VirtualizedIconGrid({
         label: items[0]?.sectionLabel ?? sectionId,
         startRowIndex: nextRows.length,
       });
+      nextRows.push({
+        id: `${sectionId}-label`,
+        type: "label",
+        sectionId,
+        label: items[0]?.sectionLabel ?? sectionId,
+      });
 
       for (const [i, iconItems] of rowChunks.entries()) {
         nextRows.push({
           id: `${sectionId}-${i}`,
+          type: "items",
           sectionId,
           iconItems,
         });
@@ -103,8 +119,6 @@ export function VirtualizedIconGrid({
     getItemKey: (index) => rows[index]?.id ?? index,
     initialRect: { width: 400, height: 214 },
     overscan: 5,
-    paddingStart: CONFIG.headerHeight,
-    scrollPaddingStart: CONFIG.headerHeight,
   });
 
   /**
@@ -145,7 +159,7 @@ export function VirtualizedIconGrid({
     virtualItems.length > 0
       ? virtualItems
       : rows.slice(0, CONFIG.initialRowCount).map((row, index) => {
-          const start = CONFIG.headerHeight + index * CONFIG.rowHeight;
+          const start = index * CONFIG.rowHeight;
           return {
             key: row.id,
             index,
@@ -157,7 +171,7 @@ export function VirtualizedIconGrid({
         });
   const totalSize = Math.max(
     virtualizer.getTotalSize(),
-    CONFIG.headerHeight + rows.length * CONFIG.rowHeight,
+    rows.length * CONFIG.rowHeight,
   );
   const scrollOffset = virtualizer.scrollOffset ?? 0;
   const activeSectionId = useMemo(() => {
@@ -169,29 +183,10 @@ export function VirtualizedIconGrid({
     );
     return rows[activeRowIndex]?.sectionId ?? sections[0]?.id ?? null;
   }, [rows, sections, scrollOffset]);
-  const activeSection = useMemo(
-    () =>
-      sections.find((section) => section.id === activeSectionId) ??
-      sections[0] ??
-      null,
-    [sections, activeSectionId],
-  );
-
   return (
     <AutocompleteList>
       <ScrollArea ref={scrollAreaRef} className="relative h-[214px] w-full">
         <div className="relative" style={{ height: totalSize }}>
-          {activeSection ? (
-            <AutocompleteGroup
-              className="sticky top-0 z-1 bg-popover"
-              style={{ height: CONFIG.headerHeight, overflow: "visible" }}
-            >
-              <AutocompleteLabel
-                title={activeSection.label}
-                className="sticky top-0 z-1 my-0 h-8 bg-popover px-0"
-              />
-            </AutocompleteGroup>
-          ) : null}
           {renderedVirtualRows.map((virtualRow) => {
             const item = rows[virtualRow.index]!;
             return (
@@ -207,34 +202,41 @@ export function VirtualizedIconGrid({
                   />
                 }
               >
-                <AutocompleteRow>
-                  {item.iconItems.map((iconItem) => {
-                    const filteredIndex =
-                      filteredIndexByItem.get(iconItem) ?? -1;
-                    return (
-                      <TooltipPreset
-                        key={iconItem.id}
-                        side="top"
-                        description={iconItem.name}
-                      >
-                        <AutocompleteItem
-                          value={iconItem}
-                          index={filteredIndex}
-                          onClick={() => handleIconClick(iconItem)}
-                          nativeButton
-                          render={
-                            <Button
-                              variant="hint"
-                              className="size-8 text-2xl/none data-highlighted:bg-default/10"
-                            >
-                              {factory.renderIcon(iconItem)}
-                            </Button>
-                          }
-                        />
-                      </TooltipPreset>
-                    );
-                  })}
-                </AutocompleteRow>
+                {item.type === "label" ? (
+                  <AutocompleteLabel
+                    title={item.label}
+                    className="my-0 h-8 bg-popover"
+                  />
+                ) : (
+                  <AutocompleteRow>
+                    {item.iconItems.map((iconItem) => {
+                      const filteredIndex =
+                        filteredIndexByItem.get(iconItem) ?? -1;
+                      return (
+                        <TooltipPreset
+                          key={iconItem.id}
+                          side="top"
+                          description={iconItem.name}
+                        >
+                          <AutocompleteItem
+                            value={iconItem}
+                            index={filteredIndex}
+                            onClick={() => handleIconClick(iconItem)}
+                            nativeButton
+                            render={
+                              <Button
+                                variant="hint"
+                                className="size-8 text-2xl/none data-highlighted:bg-default/10"
+                              >
+                                {factory.renderIcon(iconItem)}
+                              </Button>
+                            }
+                          />
+                        </TooltipPreset>
+                      );
+                    })}
+                  </AutocompleteRow>
+                )}
               </AutocompleteGroup>
             );
           })}

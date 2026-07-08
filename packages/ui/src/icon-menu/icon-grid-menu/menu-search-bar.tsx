@@ -22,7 +22,6 @@ export function MenuSearchBar({
         onCancel={onSearchClear}
         onKeyDown={(e) => e.stopPropagation()}
         placeholder="Filter..."
-        classNames={{ wrapper: "flex-1 p-0" }}
       />
       <TooltipPreset description="Random">
         <Button variant="icon" className="size-7" onClick={onRandomSelect}>

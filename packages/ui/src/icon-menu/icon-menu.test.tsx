@@ -87,7 +87,7 @@ describe("IconMenu", () => {
     expect(screen.getByText("No results")).toBeVisible();
   });
 
-  it("IconMenu_OpenWithGroupedIcons_ShowsOneStickySectionLabel", async () => {
+  it("IconMenu_OpenWithGroupedIcons_RendersSectionLabelsAsVirtualRows", async () => {
     const icons = Array.from({ length: 14 }, (_, index) => ({
       id: `icon-${index}`,
       name: `Icon ${index}`,
@@ -121,12 +121,16 @@ describe("IconMenu", () => {
     await menu.open();
     await menu.selectTab("Icons");
 
-    const activeLabel = screen
+    const primaryLabel = screen
       .getByText("Primary")
       .closest('[data-slot="autocomplete-label"]');
 
-    expect(activeLabel).toHaveClass("sticky");
-    expect(screen.queryByText("Secondary")).not.toBeInTheDocument();
+    const secondaryLabel = screen
+      .getByText("Secondary")
+      .closest('[data-slot="autocomplete-label"]');
+
+    expect(primaryLabel).not.toHaveClass("sticky");
+    expect(secondaryLabel).not.toHaveClass("sticky");
     expect(menu.iconOption("Icon 0")).toBeInTheDocument();
     expect(menu.iconOption("Icon 13")).toBeInTheDocument();
   });
