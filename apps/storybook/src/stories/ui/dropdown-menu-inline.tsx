@@ -52,7 +52,7 @@ export default function DropdownMenuInline() {
           </Button>
         }
       />
-      <DropdownMenuContent>
+      <DropdownMenuContent className="w-60">
         <MenuHeader
           id="view-settings"
           title="View Settings"
@@ -65,9 +65,7 @@ export default function DropdownMenuInline() {
                 <Icon.InfoFilled className="fill-default/45 hover:fill-icon" />
               </Button>
             }
-            onKeyDown={(e) => {
-              e.stopPropagation();
-            }}
+            onKeyDown={(e) => e.stopPropagation()}
           />
         </div>
         <DropdownMenuGroup>

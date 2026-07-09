@@ -9,7 +9,6 @@ const THIRD_PARTY = [
   /^@dnd-kit\//,
   /^@emoji-mart\//,
   /^@hookform\//,
-  /^@radix-ui\//,
   /^@tanstack\//,
   /^@uidotdev\//,
   "date-fns",
