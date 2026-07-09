@@ -29,7 +29,7 @@ describe("IconMenu", () => {
 
     await menu.selectTab("Icons");
 
-    expect(menu.tab("Icons")).toHaveAttribute("data-state", "active");
+    expect(menu.tab("Icons")).toHaveAttribute("data-active");
   });
 
   it("IconMenu_SearchEntered_UpdatesSearchInput", async () => {
