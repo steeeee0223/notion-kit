@@ -1,7 +1,6 @@
-"use client";
-
-import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import { ThemeProvider, useTheme, type UseThemeProps } from "next-themes";
+
+import { Icon } from "@notion-kit/icons";
 
 import { Button } from "./button";
 import {
@@ -20,8 +19,8 @@ function ThemeToggle() {
       <DropdownMenuTrigger
         render={
           <Button variant="nav-icon">
-            <SunIcon className="size-5 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-            <MoonIcon className="absolute size-5 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+            <Icon.Moon className="size-5 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+            <Icon.Sun className="absolute size-5 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
             <span className="sr-only">Toggle theme</span>
           </Button>
         }

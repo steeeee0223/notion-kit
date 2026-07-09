@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Menu } from "@base-ui/react/menu";
-import { DotFilledIcon } from "@radix-ui/react-icons";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
@@ -225,7 +224,13 @@ function DropdownMenuCheckboxItem({
 }
 
 function DropdownMenuRadioGroup({ ...props }: Menu.RadioGroup.Props) {
-  return <Menu.RadioGroup data-slot="dropdown-menu-radio-group" {...props} />;
+  return (
+    <Menu.RadioGroup
+      data-slot="dropdown-menu-radio-group"
+      render={<MenuGroup />}
+      {...props}
+    />
+  );
 }
 
 /**
@@ -246,8 +251,9 @@ function DropdownMenuRadioItem({
       {...props}
     >
       <span className="absolute left-2 flex size-3.5 items-center justify-center">
-        <Menu.RadioItemIndicator>
-          <DotFilledIcon className="size-4 fill-current" />
+        {/* FIXME */}
+        <Menu.RadioItemIndicator className="grid size-full place-items-center">
+          <span className="size-2 rounded-full bg-white" />
         </Menu.RadioItemIndicator>
       </span>
       {children}
