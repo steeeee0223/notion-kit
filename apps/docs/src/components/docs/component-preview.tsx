@@ -1,8 +1,6 @@
-import { ScrollArea } from "@radix-ui/react-scroll-area";
-
 import { cn } from "@notion-kit/cn";
 import type { RegistryIndex } from "@notion-kit/registry";
-import { ThemeProvider } from "@notion-kit/ui/primitives";
+import { ScrollArea, ThemeProvider } from "@notion-kit/ui/primitives";
 
 import { Index } from "@/__registry__/demos";
 import { CodeBlock } from "@/components/docs/code-block";
