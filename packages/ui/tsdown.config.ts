@@ -16,7 +16,6 @@ const THIRD_PARTY = [
   /^lodash\./,
   "lucide-react",
   "next-themes",
-  "radix-ui",
   "react-day-picker",
   "react-dropzone",
   "react-hook-form",

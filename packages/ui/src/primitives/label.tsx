@@ -1,27 +1,31 @@
-"use client";
+import { mergeProps, useRender } from "@base-ui/react";
 
-import * as React from "react";
-import { Label as LabelPrimitive } from "radix-ui";
-
-import { cn, cva } from "@notion-kit/cn";
+import { cn } from "@notion-kit/cn";
 
 import { typography } from "./variants";
 
-const labelVariants = cva(
-  "text-secondary peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-);
-
 function Label({
+  ref,
+  render,
   className,
   ...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
-  return (
-    <LabelPrimitive.Root
-      data-slot="label"
-      className={cn(typography("label"), labelVariants(), className)}
-      {...props}
-    />
-  );
+}: useRender.ComponentProps<"label">) {
+  return useRender({
+    defaultTagName: "label",
+    ref,
+    render,
+    props: mergeProps(
+      {
+        "data-slot": "label",
+        className: cn(
+          typography("label"),
+          "text-secondary peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+          className,
+        ),
+      },
+      props,
+    ),
+  });
 }
 
 export { Label };
