@@ -130,24 +130,4 @@ export const inputVariants = cva(
 );
 export type InputVariants = VariantProps<typeof inputVariants>;
 
-/**
- * @deprecated
- * @todo migrate to the new styles in `./design`
- */
-export const contentVariants = cva(
-  "border border-border text-primary focus-visible:outline-hidden",
-  {
-    variants: {
-      variant: {
-        /**
-         * @prop default
-         * @note Used by: Drawer
-         */
-        default: "bg-transparent",
-      },
-    },
-    defaultVariants: { variant: "default" },
-  },
-);
-
 export const groupVariants = cva("flex flex-col gap-px py-1");

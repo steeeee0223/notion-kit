@@ -2,8 +2,6 @@ import * as React from "react";
 
 import { cn, cva, type VariantProps } from "@notion-kit/cn";
 
-import { contentVariants } from "./variants";
-
 const cardVariants = cva("rounded-lg shadow-xs", {
   variants: {
     asButton: {
@@ -20,7 +18,8 @@ interface CardProps
 const Card = ({ className, asButton, ...props }: CardProps) => (
   <div
     className={cn(
-      contentVariants({ variant: "default" }),
+      "border border-border bg-transparent text-primary",
+
       cardVariants({ asButton }),
       className,
     )}

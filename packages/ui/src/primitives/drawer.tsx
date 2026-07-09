@@ -3,8 +3,6 @@ import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
 
 import { cn } from "@notion-kit/cn";
 
-import { contentVariants } from "./variants";
-
 type DrawerDirection = "top" | "right" | "bottom" | "left";
 
 function directionToSwipeDirection(direction?: DrawerDirection) {
@@ -77,8 +75,7 @@ function DrawerContent({
         <DrawerPrimitive.Popup
           data-slot="drawer-content"
           className={cn(
-            "pointer-events-auto fixed inset-x-0 bottom-0 z-(--z-menu) mt-24 flex flex-col rounded-t-[10px]",
-            contentVariants({ variant: "default", openAnimation: false }),
+            "pointer-events-auto fixed inset-x-0 bottom-0 z-(--z-menu) mt-24 flex flex-col rounded-t-[10px] border-border bg-transparent text-primary outline-hidden",
             side === "right" &&
               "inset-y-0 right-0 left-auto mt-0 h-screen rounded-none border-t-0 border-r-0",
             className,
