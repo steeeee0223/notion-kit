@@ -1,5 +1,5 @@
 // @ts-nocheck
-import type { DragEndEvent } from "@dnd-kit/core";
+import type { DragEndEvent, DragOverEvent } from "@dnd-kit/react";
 import type {
   OnChangeFn,
   Table,
@@ -10,14 +10,29 @@ import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { IconData } from "@notion-kit/ui/icon-block";
+import {
+  getKanbanColumnTargetId,
+  getKanbanItemsAfterDrag,
+  type KanbanItems,
+} from "@notion-kit/ui/kanban";
+import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
 import type { Cell, Row } from "../lib/types";
 import { getDefaultCell, insertAt } from "../lib/utils";
-import type { CellPlugin, TitlePlugin } from "../plugins";
-import { createDragEndUpdater } from "./utils";
+import type {
+  CellPlugin,
+  ComparableValue,
+  InferData,
+  TitlePlugin,
+} from "../plugins";
+import { createGroupId } from "./utils";
 
 export interface RowActionsOptions {
   onTableDataChange?: OnChangeFn<Row[]>;
+}
+
+export interface RowDragEndOptions {
+  reorder?: boolean;
 }
 
 export interface RowActionsTableApi {
@@ -40,7 +55,8 @@ export interface RowActionsTableApi {
   duplicateRow: (id: string) => void;
   deleteRow: (id: string) => void;
   deleteRows: (ids: string[]) => void;
-  handleRowDragEnd: (e: DragEndEvent) => void;
+  handleKanbanRowDragOver: (e: DragOverEvent) => void;
+  handleRowDragEnd: (e: DragEndEvent, options?: RowDragEndOptions) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
   // With Grouping API
   addRowToGroup: (groupId: string) => void;
@@ -60,6 +76,83 @@ export interface RowActionsRowApi {
   getTitleCell: () => { colId: string; cell: Cell<TitlePlugin> };
   getIsFirstChild: () => boolean;
   getIsLastChild: () => boolean;
+}
+
+function getRowGroupingValue(
+  table: Table<Row>,
+  row: Row,
+  groupingColumnId: string,
+): ComparableValue | null {
+  const cell = row.properties[groupingColumnId];
+  if (!cell) return null;
+
+  const plugin = table.getColumnPlugin(groupingColumnId);
+  return (plugin.toGroupValue ?? plugin.toValue)(cell.value, row);
+}
+
+function createKanbanItemsFromRows(
+  table: Table<Row>,
+  rows: Row[],
+  groupingColumnId: string,
+  groupOrder: string[],
+): KanbanItems {
+  const items = Object.fromEntries(
+    groupOrder.map((groupId) => [groupId, [] as string[]]),
+  );
+
+  for (const row of rows) {
+    const groupingValue = getRowGroupingValue(table, row, groupingColumnId);
+    const groupId = createGroupId(groupingColumnId, groupingValue);
+    items[groupId]?.push(row.id);
+  }
+
+  return items;
+}
+
+function applyKanbanItemsToRows(
+  rows: Row[],
+  items: KanbanItems,
+  groupOrder: string[],
+  groupingColumnId: string,
+  groupValues: Record<string, { original: unknown } | undefined>,
+  options: { touchMovedRow?: boolean } = {},
+) {
+  const rowById = new Map(rows.map((row) => [row.id, row]));
+  const nextRows: Row[] = [];
+  const consumedIds = new Set<string>();
+  const now = Date.now();
+
+  for (const groupId of groupOrder) {
+    const groupValue = groupValues[groupId];
+    const itemIds = items[groupId] ?? [];
+    for (const itemId of itemIds) {
+      const row = rowById.get(itemId);
+      if (!row) continue;
+
+      consumedIds.add(itemId);
+      if (!groupValue || !row.properties[groupingColumnId]) {
+        nextRows.push(row);
+        continue;
+      }
+
+      nextRows.push({
+        ...row,
+        properties: {
+          ...row.properties,
+          [groupingColumnId]: {
+            ...row.properties[groupingColumnId],
+            id: options.touchMovedRow
+              ? v4()
+              : row.properties[groupingColumnId].id,
+            value: structuredClone(groupValue.original),
+          },
+        },
+        lastEditedAt: options.touchMovedRow ? now : row.lastEditedAt,
+      });
+    }
+  }
+
+  return [...nextRows, ...rows.filter((row) => !consumedIds.has(row.id))];
 }
 
 export const RowActionsFeature: TableFeature = {
@@ -187,31 +280,69 @@ export const RowActionsFeature: TableFeature = {
         return next;
       });
     };
-    table.handleRowDragEnd = (e) => {
+    table.handleKanbanRowDragOver = (event) => {
+      if (event.canceled) return;
+
       const { grouping, groupingState } = table.store.state;
+      const groupingColumnId = grouping[0];
+      if (!groupingColumnId) return;
 
-      table.setTableData((v) => {
-        const updater = createDragEndUpdater<Row>(e, (d) => d.id);
-        const next = functionalUpdate(updater, v);
+      table.setTableData((rows) => {
+        const currentItems = createKanbanItemsFromRows(
+          table,
+          rows,
+          groupingColumnId,
+          groupingState.groupOrder,
+        );
+        const nextItems = getKanbanItemsAfterDrag(currentItems, event);
+        if (nextItems === currentItems) return rows;
 
-        const groupId = e.over?.data.current?.groupId as string | undefined;
-        if (!groupId) {
+        const next = applyKanbanItemsToRows(
+          rows,
+          nextItems,
+          groupingState.groupOrder,
+          groupingColumnId,
+          groupingState.groupValues,
+        );
+        scheduleGroupingStateSync(next);
+        return next;
+      });
+    };
+    table.handleRowDragEnd = (event, options = {}) => {
+      if (event.canceled) return;
+
+      const { grouping, groupingState } = table.store.state;
+      const groupingColumnId = grouping[0];
+      const { source, target } = event.operation;
+      const sourceGroupId = getKanbanColumnTargetId(source?.data);
+      const targetGroupId = getKanbanColumnTargetId(target?.data);
+      const shouldReorder = options.reorder ?? true;
+
+      table.setTableData((rows) => {
+        const next = shouldReorder
+          ? getSortableItemsAfterDrag(rows, event)
+          : rows;
+        if (
+          !source ||
+          !targetGroupId ||
+          targetGroupId === sourceGroupId ||
+          !groupingColumnId
+        ) {
           scheduleGroupingStateSync(next);
           return next;
         }
 
-        // If moved into a group, we need to update the grouping cell value.
         const now = Date.now();
         const updated = next.map((row) => {
-          if (row.id !== e.active.id || !grouping[0]) return row;
+          if (row.id !== String(source.id)) return row;
           return {
             ...row,
             properties: {
               ...row.properties,
-              [grouping[0]]: {
+              [groupingColumnId]: {
                 id: v4(),
                 value: structuredClone<unknown>(
-                  groupingState.groupValues[groupId]?.original,
+                  groupingState.groupValues[targetGroupId]?.original,
                 ),
               },
             },
