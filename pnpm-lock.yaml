@@ -1744,6 +1744,9 @@ importers:
       '@vitest/ui':
         specifier: catalog:test
         version: 4.0.17(vitest@4.0.17)
+      babel-plugin-react-compiler:
+        specifier: catalog:react-compiler
+        version: 1.0.0
       eslint:
         specifier: 'catalog:'
         version: 9.39.1(jiti@2.7.0)
@@ -1753,6 +1756,9 @@ importers:
       prettier:
         specifier: 'catalog:'
         version: 3.6.2
+      react-compiler-runtime:
+        specifier: catalog:react-compiler
+        version: 1.0.0(react@19.2.3)
       tsdown:
         specifier: 'catalog:'
         version: 0.16.6(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(synckit@0.11.12)(typescript@5.9.3)

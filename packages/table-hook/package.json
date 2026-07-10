@@ -55,9 +55,11 @@
     "@vitejs/plugin-react": "catalog:test",
     "@vitest/coverage-v8": "catalog:test",
     "@vitest/ui": "catalog:test",
+    "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",
     "jsdom": "catalog:rtl",
     "prettier": "catalog:",
+    "react-compiler-runtime": "catalog:react-compiler",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:test"
