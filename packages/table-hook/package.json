@@ -37,8 +37,6 @@
   },
   "prettier": "@notion-kit/prettier-config",
   "dependencies": {
-    "@dnd-kit/abstract": "catalog:ui",
-    "@dnd-kit/helpers": "catalog:ui",
     "@dnd-kit/react": "catalog:ui",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/ui": "workspace:*",
