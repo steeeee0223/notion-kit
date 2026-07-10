@@ -1,0 +1,69 @@
+{
+  "name": "@notion-kit/table-hook",
+  "version": "0.0.0",
+  "bugs": {
+    "url": "https://github.com/steeeee0223/notion-kit/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/steeeee0223/notion-kit.git",
+    "directory": "packages/table-hook"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "coverage": "vitest run --coverage",
+    "dev": "tsdown --watch",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "prettier": "@notion-kit/prettier-config",
+  "dependencies": {
+    "@dnd-kit/core": "catalog:ui",
+    "@dnd-kit/sortable": "catalog:ui",
+    "@notion-kit/cn": "workspace:*",
+    "@notion-kit/ui": "workspace:*",
+    "@tanstack/react-table": "beta",
+    "uuid": "catalog:uuid"
+  },
+  "devDependencies": {
+    "@notion-kit/config": "workspace:*",
+    "@notion-kit/eslint-config": "workspace:*",
+    "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tsconfig": "workspace:*",
+    "@testing-library/react": "catalog:rtl",
+    "@testing-library/user-event": "catalog:rtl",
+    "@types/react": "catalog:react19",
+    "@vitejs/plugin-react": "catalog:test",
+    "@vitest/coverage-v8": "catalog:test",
+    "@vitest/ui": "catalog:test",
+    "eslint": "catalog:",
+    "jsdom": "catalog:rtl",
+    "prettier": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:test"
+  },
+  "peerDependencies": {
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19"
+  }
+}

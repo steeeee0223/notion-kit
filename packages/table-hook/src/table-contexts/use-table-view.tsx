@@ -1,0 +1,182 @@
+// @ts-nocheck
+"use client";
+
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  columnGroupingFeature,
+  columnOrderingFeature,
+  columnPinningFeature,
+  columnResizingFeature,
+  columnSizingFeature,
+  columnVisibilityFeature,
+  createExpandedRowModel,
+  createSortedRowModel,
+  functionalUpdate,
+  rowExpandingFeature,
+  rowSortingFeature,
+  tableFeatures,
+  useTable,
+  type ColumnDef,
+  type OnChangeFn,
+} from "@tanstack/react-table";
+
+import { DEFAULT_FEATURES, getExtendedGroupedRowModel } from "../features";
+import type { ColumnDefs, ColumnInfo, Row } from "../lib/types";
+import { type Entity } from "../lib/utils";
+import type { CellPlugin } from "../plugins";
+import { defaultColumn } from "./column";
+import type { BaseTableProps } from "./types";
+import { getMinWidth, toPropertyEntity } from "./utils";
+
+interface UseTableViewOptions<TPlugins extends CellPlugin[]>
+  extends BaseTableProps<TPlugins> {
+  plugins: Entity<TPlugins[number]>;
+}
+
+export function useTableView<TPlugins extends CellPlugin[]>({
+  plugins,
+  data,
+  properties,
+  table: tableGlobal,
+  getRowUrl,
+  onDataChange,
+  onPropertiesChange,
+  onTableChange,
+}: UseTableViewOptions<TPlugins>) {
+  const isPropertiesControlled = typeof onPropertiesChange !== "undefined";
+  const isDataControlled = typeof onDataChange !== "undefined";
+  /** columns states */
+  const [_columnEntity, setColumnEntity] = useState(
+    toPropertyEntity(plugins.items, properties),
+  );
+  // Use memoized entity for controlled properties
+  const columnEntity = useMemo(
+    () =>
+      isPropertiesControlled
+        ? toPropertyEntity(plugins.items, properties)
+        : _columnEntity,
+    [isPropertiesControlled, plugins.items, properties, _columnEntity],
+  );
+  const columns = useMemo(
+    () =>
+      columnEntity.ids.map<ColumnDef<Row<TPlugins>>>((colId) => {
+        const property = columnEntity.items[colId]!;
+        const plugin = plugins.items[property.type]!;
+        return {
+          id: property.id,
+          accessorKey: property.name,
+          minSize: getMinWidth(property.type),
+          sortFn: (rowA, rowB, colId) =>
+            plugin.compare(rowA.original, rowB.original, colId),
+          getGroupingValue: (row) =>
+            (plugin.toGroupValue ?? plugin.toValue)(
+              row.properties[colId]?.value,
+              row,
+            ),
+        };
+      }),
+    [columnEntity, plugins.items],
+  );
+  const handleColumnChange = useCallback<OnChangeFn<Entity<ColumnInfo>>>(
+    (updater) => {
+      if (!onPropertiesChange) {
+        setColumnEntity(updater);
+        return;
+      }
+      onPropertiesChange((prev) => {
+        const entity = toPropertyEntity(plugins.items, prev);
+        const next = functionalUpdate(updater, entity);
+        return next.ids.map((id) => next.items[id]!) as ColumnDefs<TPlugins>;
+      });
+    },
+    [onPropertiesChange, plugins.items],
+  );
+
+  /** data state */
+  const [_dataEntity, setDataEntity] = useState(data);
+  // Use memoized entity for controlled data
+  const dataEntity = useMemo(
+    () => (isDataControlled ? data : _dataEntity),
+    [isDataControlled, data, _dataEntity],
+  );
+
+  const features = useMemo(
+    () =>
+      tableFeatures({
+        columnGroupingFeature,
+        columnOrderingFeature,
+        columnPinningFeature,
+        columnResizingFeature,
+        columnSizingFeature,
+        columnVisibilityFeature,
+        rowExpandingFeature,
+        rowSortingFeature,
+        sortedRowModel: createSortedRowModel(),
+        groupedRowModel: getExtendedGroupedRowModel(),
+        expandedRowModel: createExpandedRowModel(),
+        ...DEFAULT_FEATURES,
+      }),
+    [],
+  );
+
+  const tableState = useMemo(
+    () => ({
+      columnOrder: columnEntity.ids,
+      columnsInfo: columnEntity.items,
+      cellPlugins: plugins.items,
+      tableGlobal: {
+        locked: false,
+        layout: "table" as const,
+        rowView: "side" as const,
+        openedRowId: null,
+        ...tableGlobal,
+      },
+    }),
+    [columnEntity.ids, columnEntity.items, plugins.items, tableGlobal],
+  );
+
+  /** table instance */
+  const table = useTable({
+    features,
+    columns,
+    data: dataEntity,
+    defaultColumn,
+    columnResizeMode: "onChange",
+    groupedColumnMode: false,
+    autoResetExpanded: false,
+    getRowId: (row) => row.id,
+    state: tableState,
+    onColumnInfoChange: handleColumnChange,
+    onTableDataChange: onDataChange ?? setDataEntity,
+    onTableGlobalChange: onTableChange,
+    getRowUrl,
+  });
+
+  useEffect(() => {
+    if (
+      !table.getGroupedColumnInfo() ||
+      table.state.groupingState.groupOrder.length > 0
+    ) {
+      return;
+    }
+
+    table._setGroupingState((v) =>
+      table.getGroupedRowModel().rows.reduce((acc, r) => {
+        const colId = r.groupingColumnId!;
+        acc.groupOrder.push(r.id);
+        acc.groupValues[r.id] = {
+          value: r.getGroupingValue(colId),
+          original: r.original.properties[colId]?.value as unknown,
+        };
+        return acc;
+      }, v),
+    );
+  }, [table]);
+
+  return useMemo(
+    () => ({
+      table,
+    }),
+    [table],
+  );
+}
