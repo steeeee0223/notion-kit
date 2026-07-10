@@ -23,6 +23,7 @@ import {
 import { DEFAULT_FEATURES, getExtendedGroupedRowModel } from "../features";
 import type { ColumnDefs, ColumnInfo, Row } from "../lib/types";
 import { type Entity } from "../lib/utils";
+import { resolveGroupingMethod, resolveSortingMethod } from "../methods";
 import type { CellPlugin } from "../plugins";
 import { defaultColumn } from "./column";
 import type { BaseTableProps } from "./types";
@@ -67,12 +68,19 @@ export function useTableView<TPlugins extends CellPlugin[]>({
           accessorKey: property.name,
           minSize: getMinWidth(property.type),
           sortFn: (rowA, rowB, colId) =>
-            plugin.compare(rowA.original, rowB.original, colId),
-          getGroupingValue: (row) =>
-            (plugin.toGroupValue ?? plugin.toValue)(
+            resolveSortingMethod(plugin)?.function(
+              rowA.original,
+              rowB.original,
+              colId,
+            ) ?? 0,
+          getGroupingValue: (row) => {
+            const groupingMethod = resolveGroupingMethod(plugin);
+            return groupingMethod.function(
               row.properties[colId]?.value,
               row,
-            ),
+              colId,
+            );
+          },
         };
       }),
     [columnEntity, plugins.items],

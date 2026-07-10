@@ -9,27 +9,14 @@ import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
 
 import type { Row } from "../lib/types";
 import { getCount } from "../lib/utils";
+import { CountMethod } from "../methods";
 
-// define types for our new feature's custom state
-export enum CountMethod {
-  NONE,
-  ALL,
-  VALUES,
-  UNIQUE,
-  EMPTY,
-  NONEMPTY,
-  CHECKED,
-  UNCHECKED,
-  PERCENTAGE_CHECKED,
-  PERCENTAGE_UNCHECKED,
-  PERCENTAGE_EMPTY,
-  PERCENTAGE_NONEMPTY,
-}
+export { CountMethod };
 
 export type CountingState = Record<
   string,
   {
-    method: CountMethod;
+    method: string;
     isCapped?: boolean;
   }
 >;
@@ -49,7 +36,7 @@ export interface CountingTableApi {
   getColumnCounting: (colId: string) => CountingState[string];
   getColumnCountResult: (colId: string) => string;
   setColumnCounting: (updater: Updater<CountingState>) => void;
-  setColumnCountMethod: (colId: string, method: CountMethod) => void;
+  setColumnCountMethod: (colId: string, method: string) => void;
   setColumnCountCapped: (colId: string, updater: Updater<boolean>) => void;
 }
 

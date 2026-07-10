@@ -4,6 +4,11 @@ import type { OnChangeFn, Table } from "@tanstack/react-table";
 
 import type { LayoutType } from "../features";
 import type { ColumnInfo, Row } from "../lib/types";
+import type {
+  CountingMethodGroup,
+  GroupingMethod,
+  SortingMethod,
+} from "../methods";
 
 export interface CellProps<Data, Config = undefined> {
   propId: string;
@@ -103,7 +108,16 @@ export interface CellPlugin<
    */
   toGroupValue?: (data: Data, row: Row) => ComparableValue;
   toTextValue: (data: Data, row: Row) => string;
-  compare: (rowA: Row, rowB: Row, colId: string) => number;
+  sorting?: {
+    defaultMethod?: string;
+    methods: SortingMethod[];
+  };
+  grouping?: {
+    defaultMethod?: string;
+    methods: GroupingMethod<Data>[];
+  };
+  counting?: CountingMethodGroup[];
+  compare?: (rowA: Row, rowB: Row, colId: string) => number;
   transferConfig?: <TPlugin extends CellPlugin>(
     column: ColumnInfo<TPlugin>,
     data: Row<TPlugin[]>[],

@@ -1,4 +1,22 @@
-import type { CellPlugin, ComparableValue, CompareFn } from "./types";
+import {
+  countAll,
+  countChecked,
+  countEmpty,
+  countNonEmpty,
+  countUnchecked,
+  countUnique,
+  countValues,
+  groupByTextValue,
+  groupByValue,
+  percentageChecked,
+  percentageEmpty,
+  percentageNonEmpty,
+  percentageUnchecked,
+  sortByCheckbox,
+  sortByNumber,
+  sortByText,
+} from "../methods";
+import type { CellPlugin } from "./types";
 
 export type TitlePlugin = CellPlugin<"title", string, { showIcon: boolean }>;
 export type TextPlugin = CellPlugin<"text", string, undefined>;
@@ -12,27 +30,27 @@ export type SelectPlugin = CellPlugin<
 
 const emptyIcon = null;
 
-function createCompareFn<T extends ComparableValue>(
-  compare: CompareFn<T>,
-): CompareFn<T> {
-  return (a, b) => {
-    if (a === null || a === undefined)
-      return b === null || b === undefined ? 0 : -1;
-    if (b === null || b === undefined) return 1;
-    return compare(a as T, b as T);
-  };
-}
+const genericCounting = [
+  {
+    group: "Count",
+    functions: [countAll, countValues, countUnique, countEmpty, countNonEmpty],
+  },
+  {
+    group: "Percentage",
+    functions: [percentageEmpty, percentageNonEmpty],
+  },
+];
 
-const compareStrings: CompareFn<string> = (a, b) => a.localeCompare(b);
-const compareNumbers: CompareFn<number> = (a, b) => a - b;
-const compareBooleans: CompareFn<boolean> = (a, b) => Number(a) - Number(b);
-
-function getCellValue(
-  row: Parameters<CellPlugin["compare"]>[0],
-  colId: string,
-) {
-  return row.properties[colId]?.value;
-}
+const checkboxCounting = [
+  {
+    group: "Count",
+    functions: [countAll, countChecked, countUnchecked],
+  },
+  {
+    group: "Percentage",
+    functions: [percentageChecked, percentageUnchecked],
+  },
+];
 
 export function title(): TitlePlugin {
   return {
@@ -47,11 +65,15 @@ export function title(): TitlePlugin {
     fromValue: (value) => value?.toString() ?? "",
     toValue: (data) => data,
     toTextValue: (data) => data,
-    compare: (rowA, rowB, colId) =>
-      createCompareFn(compareStrings)(
-        getCellValue(rowA, colId) as string,
-        getCellValue(rowB, colId) as string,
-      ),
+    sorting: {
+      defaultMethod: sortByText.id,
+      methods: [sortByText],
+    },
+    grouping: {
+      defaultMethod: groupByTextValue.id,
+      methods: [groupByTextValue],
+    },
+    counting: genericCounting,
     renderCell: () => null,
   };
 }
@@ -69,11 +91,15 @@ export function text(): TextPlugin {
     fromValue: (value) => value?.toString() ?? "",
     toValue: (data) => data,
     toTextValue: (data) => data,
-    compare: (rowA, rowB, colId) =>
-      createCompareFn(compareStrings)(
-        getCellValue(rowA, colId) as string,
-        getCellValue(rowB, colId) as string,
-      ),
+    sorting: {
+      defaultMethod: sortByText.id,
+      methods: [sortByText],
+    },
+    grouping: {
+      defaultMethod: groupByTextValue.id,
+      methods: [groupByTextValue],
+    },
+    counting: genericCounting,
     renderCell: () => null,
   };
 }
@@ -91,11 +117,15 @@ export function checkbox(): CheckboxPlugin {
     fromValue: (value) => Boolean(value),
     toValue: (data) => data,
     toTextValue: (data) => (data ? "v" : ""),
-    compare: (rowA, rowB, colId) =>
-      createCompareFn(compareBooleans)(
-        getCellValue(rowA, colId) as boolean,
-        getCellValue(rowB, colId) as boolean,
-      ),
+    sorting: {
+      defaultMethod: sortByCheckbox.id,
+      methods: [sortByCheckbox],
+    },
+    grouping: {
+      defaultMethod: groupByValue.id,
+      methods: [groupByValue],
+    },
+    counting: checkboxCounting,
     renderCell: () => null,
   };
 }
@@ -113,11 +143,15 @@ export function number(): NumberPlugin {
     fromValue: (value) => (typeof value === "number" ? value : Number(value)),
     toValue: (data) => data,
     toTextValue: (data) => data?.toString() ?? "",
-    compare: (rowA, rowB, colId) =>
-      createCompareFn(compareNumbers)(
-        getCellValue(rowA, colId) as number,
-        getCellValue(rowB, colId) as number,
-      ),
+    sorting: {
+      defaultMethod: sortByNumber.id,
+      methods: [sortByNumber],
+    },
+    grouping: {
+      defaultMethod: groupByValue.id,
+      methods: [groupByValue],
+    },
+    counting: genericCounting,
     renderCell: () => null,
   };
 }
@@ -135,13 +169,33 @@ export function select(): SelectPlugin {
     fromValue: (value) => (value ? { name: value.toString() } : null),
     toValue: (data) => data?.name ?? null,
     toTextValue: (data) => data?.name ?? "",
-    compare: (rowA, rowB, colId) =>
-      createCompareFn(compareStrings)(
-        ((getCellValue(rowA, colId) as { name?: string } | null)?.name ??
-          "") as string,
-        ((getCellValue(rowB, colId) as { name?: string } | null)?.name ??
-          "") as string,
-      ),
+    sorting: {
+      defaultMethod: sortByText.id,
+      methods: [
+        {
+          ...sortByText,
+          function: (rowA, rowB, colId) => {
+            const valueA =
+              (rowA.properties[colId]?.value as { name?: string } | null)
+                ?.name ?? "";
+            const valueB =
+              (rowB.properties[colId]?.value as { name?: string } | null)
+                ?.name ?? "";
+            return valueA.localeCompare(valueB);
+          },
+        },
+      ],
+    },
+    grouping: {
+      defaultMethod: groupByTextValue.id,
+      methods: [
+        {
+          ...groupByTextValue,
+          function: (data) => data?.name ?? "",
+        },
+      ],
+    },
+    counting: genericCounting,
     renderCell: () => null,
   };
 }

@@ -13,6 +13,7 @@ import type { IconData } from "@notion-kit/ui/icon-block";
 
 import type { Cell, Row } from "../lib/types";
 import { getDefaultCell, insertAt } from "../lib/utils";
+import { resolveGroupingMethod } from "../methods";
 import type { CellPlugin, InferData, TitlePlugin } from "../plugins";
 import { createDragEndUpdater, createGroupId } from "./utils";
 
@@ -122,7 +123,7 @@ export const RowActionsFeature: TableFeature = {
             [colId]: { id: "", value },
           },
         };
-        return (plugin.toGroupValue ?? plugin.toValue)(value, row);
+        return resolveGroupingMethod(plugin).function(value, row, colId);
       };
 
       table._setGroupingState((v) => {
