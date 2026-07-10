@@ -5,7 +5,7 @@ import {
   DEFAULT_FEATURES,
   ExtendedGroupingFeature,
   getExtendedGroupedRowModel,
-} from "../index";
+} from "@/index";
 
 describe("public API", () => {
   it("exports composable table features and row model factories", () => {

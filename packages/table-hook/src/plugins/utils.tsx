@@ -1,10 +1,10 @@
-import type { Row } from "../lib/types";
+import type { Row } from "@/lib/types";
 import type {
   CellPlugin,
   CompareFn,
   GroupingValueProps,
   InferData,
-} from "./types";
+} from "@/plugins/types";
 
 export function DefaultGroupingValue({ value }: GroupingValueProps) {
   if (typeof value === "string")

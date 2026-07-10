@@ -4,13 +4,13 @@ import { v4 } from "uuid";
 
 import { cn } from "@notion-kit/cn";
 
+import type { Cell, Row } from "@/lib/types";
 import {
   CountMethod,
   resolveCountingMethod,
   type CountingMethod,
-} from "../methods";
-import type { CellPlugin, InferData } from "../plugins";
-import type { Cell, Row } from "./types";
+} from "@/methods";
+import type { CellPlugin, InferData } from "@/plugins";
 
 export interface Entity<T extends { id: string }> {
   ids: string[];

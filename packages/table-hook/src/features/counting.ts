@@ -7,9 +7,9 @@ import type {
 } from "@tanstack/react-table";
 import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
 
-import type { Row } from "../lib/types";
-import { getCount } from "../lib/utils";
-import { CountMethod } from "../methods";
+import type { Row } from "@/lib/types";
+import { getCount } from "@/lib/utils";
+import { CountMethod } from "@/methods";
 
 export { CountMethod };
 

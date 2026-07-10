@@ -1,8 +1,8 @@
 // @ts-nocheck
 import type { Updater } from "@tanstack/react-table";
 
-import { insertAt } from "../lib/utils";
-import type { ComparableValue } from "../plugins";
+import { insertAt } from "@/lib/utils";
+import type { ComparableValue } from "@/plugins";
 
 export function createIdsUpdater(
   targetId: string,

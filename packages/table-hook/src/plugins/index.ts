@@ -15,8 +15,8 @@ import {
   sortByCheckbox,
   sortByNumber,
   sortByText,
-} from "../methods";
-import type { CellPlugin } from "./types";
+} from "@/methods";
+import type { CellPlugin } from "@/plugins/types";
 
 export type TitlePlugin = CellPlugin<"title", string, { showIcon: boolean }>;
 export type TextPlugin = CellPlugin<"text", string, undefined>;
@@ -241,5 +241,5 @@ export const DEFAULT_PLUGINS = [
 ];
 
 export type DefaultPlugins = (typeof DEFAULT_PLUGINS)[number][];
-export type * from "./types";
-export { DefaultGroupingValue } from "./utils";
+export type * from "@/plugins/types";
+export { DefaultGroupingValue } from "@/plugins/utils";

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import type { ColumnDef } from "@tanstack/react-table";
 
-import type { Row } from "../lib/types";
+import type { Row } from "@/lib/types";
 
 export const defaultColumn: Partial<ColumnDef<Row>> = {
   size: 200,

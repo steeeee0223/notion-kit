@@ -7,8 +7,13 @@ import type { DragEndEvent } from "@dnd-kit/react";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { useTableView } from "../table-contexts/use-table-view";
-import { mockData, mockProperties, plugins, renderTableHook } from "./mock";
+import {
+  mockData,
+  mockProperties,
+  plugins,
+  renderTableHook,
+} from "@/__tests__/mock";
+import { useTableView } from "@/table-contexts/use-table-view";
 
 describe("useTableView - Column Custom APIs", () => {
   describe("Column Visibility Source", () => {

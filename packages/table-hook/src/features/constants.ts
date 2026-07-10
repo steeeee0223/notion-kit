@@ -1,5 +1,5 @@
 // @ts-nocheck
-import type { RowViewType } from "./menu";
+import type { RowViewType } from "@/features/menu";
 
 export const ROW_VIEW_OPTIONS: Record<
   RowViewType,

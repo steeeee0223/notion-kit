@@ -15,11 +15,11 @@ import {
 
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
-import type { ColumnInfo, Row as RowModel } from "../lib/types";
-import { resolveGroupingMethod } from "../methods";
-import type { CellPlugin, ComparableValue, InferData } from "../plugins";
-import { DefaultGroupingValue } from "../plugins";
-import { createGroupId } from "./utils";
+import { createGroupId } from "@/features/utils";
+import type { ColumnInfo, Row as RowModel } from "@/lib/types";
+import { resolveGroupingMethod } from "@/methods";
+import type { CellPlugin, ComparableValue, InferData } from "@/plugins";
+import { DefaultGroupingValue } from "@/plugins";
 
 interface ExtendedGroupingState {
   groupOrder: string[];

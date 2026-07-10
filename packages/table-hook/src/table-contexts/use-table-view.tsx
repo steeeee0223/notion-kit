@@ -19,14 +19,14 @@ import {
   type OnChangeFn,
 } from "@tanstack/react-table";
 
-import { DEFAULT_FEATURES, getExtendedGroupedRowModel } from "../features";
-import type { ColumnDefs, ColumnInfo, Row } from "../lib/types";
-import { type Entity } from "../lib/utils";
-import { resolveGroupingMethod, resolveSortingMethod } from "../methods";
-import type { CellPlugin } from "../plugins";
-import { defaultColumn } from "./column";
-import type { BaseTableProps } from "./types";
-import { getMinWidth, toPropertyEntity } from "./utils";
+import { DEFAULT_FEATURES, getExtendedGroupedRowModel } from "@/features";
+import type { ColumnDefs, ColumnInfo, Row } from "@/lib/types";
+import { type Entity } from "@/lib/utils";
+import { resolveGroupingMethod, resolveSortingMethod } from "@/methods";
+import type { CellPlugin } from "@/plugins";
+import { defaultColumn } from "@/table-contexts/column";
+import type { BaseTableProps } from "@/table-contexts/types";
+import { getMinWidth, toPropertyEntity } from "@/table-contexts/utils";
 
 interface UseTableViewOptions<TPlugins extends CellPlugin[]>
   extends BaseTableProps<TPlugins> {

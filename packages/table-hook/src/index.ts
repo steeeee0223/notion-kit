@@ -1,4 +1,4 @@
-export { useTableView } from "./table-contexts/use-table-view";
+export { useTableView } from "@/table-contexts/use-table-view";
 export {
   ColumnsInfoFeature,
   CountingFeature,
@@ -8,8 +8,8 @@ export {
   RowActionsFeature,
   TableMenuFeature,
   getExtendedGroupedRowModel,
-} from "./features";
-export type { CellPlugin, ComparableValue, CompareFn } from "./plugins";
+} from "@/features";
+export type { CellPlugin, ComparableValue, CompareFn } from "@/plugins";
 export {
   CountMethod,
   compareBooleans,
@@ -32,11 +32,11 @@ export {
   sortByCheckbox,
   sortByNumber,
   sortByText,
-} from "./methods";
+} from "@/methods";
 export type {
   CountingMethod,
   CountingMethodContext,
   CountingMethodGroup,
   GroupingMethod,
   SortingMethod,
-} from "./methods";
+} from "@/methods";

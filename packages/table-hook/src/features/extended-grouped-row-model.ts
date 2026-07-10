@@ -2,8 +2,8 @@
 import type { Row, RowData, RowModel, Table } from "@tanstack/react-table";
 import { constructRow, flattenBy, tableMemo } from "@tanstack/react-table";
 
-import type { ComparableValue } from "../plugins";
-import { createGroupId } from "./utils";
+import { createGroupId } from "@/features/utils";
+import type { ComparableValue } from "@/plugins";
 
 export function getExtendedGroupedRowModel<TData extends RowData>(): (
   table: Table<any, TData>,

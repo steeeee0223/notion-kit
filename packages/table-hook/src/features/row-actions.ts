@@ -17,15 +17,15 @@ import {
 } from "@notion-kit/ui/kanban";
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
-import type { Cell, Row } from "../lib/types";
-import { getDefaultCell, insertAt } from "../lib/utils";
+import { createGroupId } from "@/features/utils";
+import type { Cell, Row } from "@/lib/types";
+import { getDefaultCell, insertAt } from "@/lib/utils";
 import type {
   CellPlugin,
   ComparableValue,
   InferData,
   TitlePlugin,
-} from "../plugins";
-import { createGroupId } from "./utils";
+} from "@/plugins";
 
 export interface RowActionsOptions {
   onTableDataChange?: OnChangeFn<Row[]>;

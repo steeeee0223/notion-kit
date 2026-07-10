@@ -1,7 +1,7 @@
 import type { Table, Row as TableRow } from "@tanstack/react-table";
 
-import type { Row } from "./lib/types";
-import type { CellPlugin, ComparableValue, CompareFn } from "./plugins/types";
+import type { Row } from "@/lib/types";
+import type { CellPlugin, ComparableValue, CompareFn } from "@/plugins/types";
 
 export enum CountMethod {
   NONE = "none",

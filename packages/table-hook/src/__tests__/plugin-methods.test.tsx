@@ -1,9 +1,9 @@
 import { act, render, renderHook, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import type { ColumnInfo, Row } from "../lib/types";
-import { arrayToEntity } from "../lib/utils";
-import { compareNumbers } from "../methods";
+import type { ColumnInfo, Row } from "@/lib/types";
+import { arrayToEntity } from "@/lib/utils";
+import { compareNumbers } from "@/methods";
 import {
   checkbox,
   DefaultGroupingValue,
@@ -11,9 +11,9 @@ import {
   select,
   type CellPlugin,
   type GroupingValueProps,
-} from "../plugins";
-import { createCompareFn } from "../plugins/utils";
-import { useTableView } from "../table-contexts/use-table-view";
+} from "@/plugins";
+import { createCompareFn } from "@/plugins/utils";
+import { useTableView } from "@/table-contexts/use-table-view";
 
 const reverseTextPlugin: CellPlugin<"reverse-text", string, undefined> = {
   id: "reverse-text",

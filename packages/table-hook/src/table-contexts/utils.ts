@@ -1,9 +1,9 @@
 import { v4 } from "uuid";
 
-import type { ColumnDefs, ColumnInfo, PluginType, Row } from "../lib/types";
-import { Entity } from "../lib/utils";
-import type { CellPlugin, TitlePlugin } from "../plugins";
-import type { TableState } from "./types";
+import type { ColumnDefs, ColumnInfo, PluginType, Row } from "@/lib/types";
+import { Entity } from "@/lib/utils";
+import type { CellPlugin, TitlePlugin } from "@/plugins";
+import type { TableState } from "@/table-contexts/types";
 
 export function getMinWidth(type: PluginType<CellPlugin[]>) {
   switch (type) {
