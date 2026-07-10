@@ -1,5 +1,5 @@
 // @ts-nocheck
-import type { DragEndEvent } from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/react";
 import type {
   Column,
   OnChangeFn,
@@ -10,6 +10,8 @@ import type {
 import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
+import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
+
 import type { ColumnInfo, PluginType, Row } from "../lib/types";
 import {
   arrayToEntity,
@@ -19,7 +21,7 @@ import {
 } from "../lib/utils";
 import type { CellPlugin, InferConfig, InferPlugin } from "../plugins";
 import { DEFAULT_PLUGINS } from "../plugins";
-import { createDragEndUpdater, createIdsUpdater } from "./utils";
+import { createIdsUpdater } from "./utils";
 
 export type ColumnsInfoState<TPlugins extends CellPlugin[] = CellPlugin[]> =
   Record<string, ColumnInfo<InferPlugin<TPlugins>>>;
@@ -177,10 +179,9 @@ export const ColumnsInfoFeature: TableFeature = {
     };
     table.handleColumnDragEnd = (e) => {
       table.options.onColumnInfoChange?.((prev) => {
-        const updater = createDragEndUpdater<string>(e, (v) => v);
         return {
           ...prev,
-          ids: functionalUpdate(updater, prev.ids),
+          ids: getSortableItemsAfterDrag(prev.ids, e),
         };
       });
     };
