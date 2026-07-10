@@ -100,6 +100,7 @@ export * from "./columns-info";
 export * from "./counting";
 export * from "./extended-grouped-row-model";
 export * from "./freezing";
+export * from "./grouping";
 export * from "./menu";
 export * from "./row-actions";
 export * from "./constants";

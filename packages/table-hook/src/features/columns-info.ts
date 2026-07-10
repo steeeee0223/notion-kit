@@ -89,6 +89,37 @@ export const ColumnsInfoFeature: TableFeature = {
   },
 
   constructTableAPIs: (table: Table<Row>) => {
+    const getColumnVisibilityFromInfo = () => {
+      const { columnOrder, columnsInfo } = table.store.state;
+      return columnOrder.reduce<Record<string, boolean>>((acc, colId) => {
+        const info = columnsInfo[colId];
+        acc[colId] = !info?.hidden && !info?.isDeleted;
+        return acc;
+      }, {});
+    };
+
+    table.setColumnVisibility = (updater) => {
+      const nextVisibility = functionalUpdate(
+        updater,
+        getColumnVisibilityFromInfo(),
+      );
+
+      queueMicrotask(() => {
+        table.options.onColumnInfoChange?.((prev) => ({
+          ...prev,
+          items: Object.fromEntries(
+            Object.entries(prev.items).map(([colId, info]) => [
+              colId,
+              {
+                ...info,
+                hidden: !(nextVisibility[colId] ?? true),
+              },
+            ]),
+          ),
+        }));
+      });
+    };
+
     /** Column Getters */
     table.getColumnInfo = (colId) => {
       const info = table.store.state.columnsInfo[colId];
@@ -140,13 +171,6 @@ export const ColumnsInfoFeature: TableFeature = {
           [colId]: functionalUpdate(updater, prev.items[colId]!),
         },
       }));
-      // Sync column visibility
-      const info = functionalUpdate(updater, table.getColumnInfo(colId));
-      if (info.hidden !== undefined || info.isDeleted !== undefined)
-        table.setColumnVisibility((prev) => ({
-          ...prev,
-          [colId]: !info.hidden && !info.isDeleted,
-        }));
     };
     table.setColumnInfo = (colId, info) => {
       table._setColumnInfo(colId, (prev) => ({ ...prev, ...info }));

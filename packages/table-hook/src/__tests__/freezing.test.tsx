@@ -72,6 +72,20 @@ describe("useTableView - Freezing Feature", () => {
       expect(freezingState).toEqual({ colId: "col1", index: 0 });
     });
 
+    it("should normalize stale freezing index from current column order", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.setColumnFreezing({ colId: "col2", index: 99 });
+      });
+
+      expect(table.getFreezingState()).toEqual({ colId: "col2", index: 1 });
+      expect(table.store.state.columnPinning.left).toEqual(["col1", "col2"]);
+    });
+
     it("should clear freezing when set to null", () => {
       const { table } = renderTableHook({
         data: mockData,

@@ -1,4 +1,14 @@
 export { useTableView } from "./table-contexts/use-table-view";
+export {
+  ColumnsInfoFeature,
+  CountingFeature,
+  DEFAULT_FEATURES,
+  ExtendedGroupingFeature,
+  FreezingFeature,
+  RowActionsFeature,
+  TableMenuFeature,
+  getExtendedGroupedRowModel,
+} from "./features";
 export type { CellPlugin, ComparableValue, CompareFn } from "./plugins";
 export {
   CountMethod,

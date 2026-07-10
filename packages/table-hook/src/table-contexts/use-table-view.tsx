@@ -1,7 +1,7 @@
 // @ts-nocheck
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   columnGroupingFeature,
   columnOrderingFeature,
@@ -131,6 +131,14 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     () => ({
       columnOrder: columnEntity.ids,
       columnsInfo: columnEntity.items,
+      columnVisibility: columnEntity.ids.reduce<Record<string, boolean>>(
+        (acc, colId) => {
+          const info = columnEntity.items[colId];
+          acc[colId] = !info?.hidden && !info?.isDeleted;
+          return acc;
+        },
+        {},
+      ),
       cellPlugins: plugins.items,
       tableGlobal: {
         locked: false,
@@ -159,27 +167,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     onTableGlobalChange: onTableChange,
     getRowUrl,
   });
-
-  useEffect(() => {
-    if (
-      !table.getGroupedColumnInfo() ||
-      table.state.groupingState.groupOrder.length > 0
-    ) {
-      return;
-    }
-
-    table._setGroupingState((v) =>
-      table.getGroupedRowModel().rows.reduce((acc, r) => {
-        const colId = r.groupingColumnId!;
-        acc.groupOrder.push(r.id);
-        acc.groupValues[r.id] = {
-          value: r.getGroupingValue(colId),
-          original: r.original.properties[colId]?.value as unknown,
-        };
-        return acc;
-      }, v),
-    );
-  }, [table]);
 
   return useMemo(
     () => ({

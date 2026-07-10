@@ -14,9 +14,10 @@ import {
 } from "@tanstack/react-table";
 
 import type { ColumnInfo, Row as RowModel } from "../lib/types";
+import { resolveGroupingMethod } from "../methods";
 import type { CellPlugin, ComparableValue, InferData } from "../plugins";
 import { DefaultGroupingValue } from "../plugins";
-import { createDragEndUpdater } from "./utils";
+import { createDragEndUpdater, createGroupId } from "./utils";
 
 interface ExtendedGroupingState {
   groupOrder: string[];
@@ -60,6 +61,11 @@ export interface ExtendedGroupingTableApi {
   toggleAllGroupsVisible: () => void;
   handleGroupedRowDragEnd: (e: DragEndEvent) => void;
   _resetGroupingState: () => void;
+  _syncGroupingState: (options?: { resetOrder?: boolean }) => void;
+  _syncGroupingStateFromData: (
+    rows: RowModel[],
+    options?: { resetOrder?: boolean },
+  ) => void;
   getGroupingValueRenderer: (
     groupId: string,
   ) => (props: { className?: string }) => React.ReactNode;
@@ -97,6 +103,109 @@ export const ExtendedGroupingFeature: TableFeature = {
   },
 
   constructTableAPIs: (table: Table<RowModel>) => {
+    const setGrouping = table.setGrouping.bind(table);
+    const resetGrouping = table.resetGrouping.bind(table);
+
+    const applyGroupingEntries = (
+      entries: {
+        id: string;
+        value: ComparableValue;
+        original: InferData<CellPlugin>;
+      }[],
+      options: { resetOrder?: boolean } = {},
+    ) => {
+      const nextIds = entries.map((entry) => entry.id);
+      const nextIdSet = new Set(nextIds);
+      const groupValues = Object.fromEntries(
+        entries.map((entry) => [
+          entry.id,
+          { value: entry.value, original: entry.original },
+        ]),
+      );
+
+      table._setGroupingState((prev) => {
+        const groupOrder = options.resetOrder
+          ? nextIds
+          : [
+              ...prev.groupOrder.filter((groupId) => nextIdSet.has(groupId)),
+              ...nextIds.filter(
+                (groupId) => !prev.groupOrder.includes(groupId),
+              ),
+            ];
+
+        const groupVisibility = options.resetOrder
+          ? {}
+          : Object.fromEntries(
+              Object.entries(prev.groupVisibility).filter(([groupId]) =>
+                nextIdSet.has(groupId),
+              ),
+            );
+
+        return {
+          ...prev,
+          groupOrder,
+          groupValues,
+          groupVisibility,
+        };
+      });
+    };
+
+    const getGroupingEntriesFromRows = () => {
+      const info = table.getGroupedColumnInfo();
+      if (!info) return [];
+
+      return table.getGroupedRowModel().rows.reduce<
+        {
+          id: string;
+          value: ComparableValue;
+          original: InferData<CellPlugin>;
+        }[]
+      >((acc, row) => {
+        const colId = row.groupingColumnId;
+        if (!colId) return acc;
+
+        acc.push({
+          id: row.id,
+          value: row.getGroupingValue(colId) as ComparableValue,
+          original: row.original.properties[colId]
+            ?.value as InferData<CellPlugin>,
+        });
+        return acc;
+      }, []);
+    };
+
+    const getGroupingEntriesFromData = (rows: RowModel[]) => {
+      const info = table.getGroupedColumnInfo();
+      if (!info) return [];
+
+      const plugin = table.getColumnPlugin(info.id);
+      const groupingMethod = resolveGroupingMethod(plugin);
+      const entries = new Map<
+        string,
+        {
+          id: string;
+          value: ComparableValue;
+          original: InferData<CellPlugin>;
+        }
+      >();
+
+      rows.forEach((row) => {
+        const original = row.properties[info.id]
+          ?.value as InferData<CellPlugin>;
+        const value = groupingMethod.function(
+          original,
+          row,
+          info.id,
+        ) as ComparableValue;
+        const id = createGroupId(info.id, value);
+        if (!entries.has(id)) {
+          entries.set(id, { id, value, original });
+        }
+      });
+
+      return Array.from(entries.values());
+    };
+
     table.getGroupedColumnInfo = () => {
       const { grouping } = table.store.state;
       if (grouping.length === 0) return null;
@@ -109,12 +218,25 @@ export const ExtendedGroupingFeature: TableFeature = {
     table._setGroupingState = (updater) => {
       table.options.onGroupingStateChange?.(updater);
     };
+    table._syncGroupingState = (options) => {
+      applyGroupingEntries(getGroupingEntriesFromRows(), options);
+    };
+    table._syncGroupingStateFromData = (rows, options) => {
+      applyGroupingEntries(getGroupingEntriesFromData(rows), options);
+    };
+    table.setGrouping = (updater) => {
+      setGrouping(updater);
+      table._syncGroupingState({ resetOrder: true });
+    };
+    table.resetGrouping = (defaultState) => {
+      resetGrouping(defaultState);
+      table._syncGroupingState({ resetOrder: true });
+    };
     table.setGroupingColumn = (updater) => {
       table.setGrouping((v) => {
         const colId = functionalUpdate(updater, v.length > 0 ? v[0]! : null);
         return colId ? [colId] : [];
       });
-      table._resetGroupingState();
     };
     table.toggleHideEmptyGroups = () => {
       table._setGroupingState((v) => ({
@@ -158,6 +280,7 @@ export const ExtendedGroupingFeature: TableFeature = {
         ...v,
         groupOrder: [],
         groupVisibility: {},
+        groupValues: {},
       }));
     };
     table.getGroupingValueRenderer = (groupId) => {

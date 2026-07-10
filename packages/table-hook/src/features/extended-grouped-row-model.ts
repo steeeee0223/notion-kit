@@ -1,6 +1,6 @@
 // @ts-nocheck
 import type { Row, RowData, RowModel, Table } from "@tanstack/react-table";
-import { constructRow, flattenBy, memo } from "@tanstack/react-table";
+import { constructRow, flattenBy, tableMemo } from "@tanstack/react-table";
 
 import type { ComparableValue } from "../plugins";
 import { createGroupId } from "./utils";
@@ -9,13 +9,16 @@ export function getExtendedGroupedRowModel<TData extends RowData>(): (
   table: Table<any, TData>,
 ) => () => RowModel<any, TData> {
   return (table) =>
-    memo({
+    tableMemo({
+      feature: "columnGroupingFeature",
+      table,
+      fnName: "table.getGroupedRowModel",
       memoDeps: () => [
-        table.store.state.grouping,
+        table.atoms.grouping?.get(),
         table.getPreGroupedRowModel(),
-        table.store.state.groupingState.groupOrder,
-        table.store.state.groupingState.groupVisibility,
-        table.store.state.groupingState.hideEmptyGroups,
+        table.atoms.groupingState?.get().groupOrder,
+        table.atoms.groupingState?.get().groupVisibility,
+        table.atoms.groupingState?.get().hideEmptyGroups,
       ],
       fn: (
         grouping,
@@ -24,7 +27,7 @@ export function getExtendedGroupedRowModel<TData extends RowData>(): (
         groupVisibility,
         hideEmptyGroups,
       ) => {
-        if (!rowModel.rows.length || !grouping.length) {
+        if (!rowModel.rows.length || !grouping?.length) {
           rowModel.rows.forEach((row) => {
             row.depth = 0;
             row.parentId = undefined;
@@ -196,6 +199,10 @@ export function getExtendedGroupedRowModel<TData extends RowData>(): (
           flatRows: groupedFlatRows,
           rowsById: groupedRowsById,
         };
+      },
+      onAfterUpdate: () => {
+        table._autoResetExpanded?.();
+        table._autoResetPageIndex?.();
       },
     });
 }

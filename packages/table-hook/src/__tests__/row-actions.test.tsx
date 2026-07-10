@@ -36,6 +36,47 @@ const mockData: Row[] = [
   },
 ];
 
+const groupedProperties: ColumnInfo[] = [
+  { id: "col1", name: "Name", type: "text", width: "200", config: undefined },
+  {
+    id: "col2",
+    name: "Status",
+    type: "select",
+    width: "150",
+    config: undefined,
+  },
+];
+
+const groupedData: Row[] = [
+  {
+    id: "row1",
+    createdAt: Date.now(),
+    lastEditedAt: Date.now(),
+    properties: {
+      col1: { id: "cell1", value: "Task 1" },
+      col2: { id: "cell2", value: { name: "TODO" } },
+    },
+  },
+  {
+    id: "row2",
+    createdAt: Date.now(),
+    lastEditedAt: Date.now(),
+    properties: {
+      col1: { id: "cell3", value: "Task 2" },
+      col2: { id: "cell4", value: { name: "TODO" } },
+    },
+  },
+  {
+    id: "row3",
+    createdAt: Date.now(),
+    lastEditedAt: Date.now(),
+    properties: {
+      col1: { id: "cell5", value: "Task 3" },
+      col2: { id: "cell6", value: { name: "DONE" } },
+    },
+  },
+];
+
 describe("useTableView - Row Custom APIs", () => {
   describe("addRow", () => {
     it("should add a new row at the end by default", () => {
@@ -382,6 +423,52 @@ describe("useTableView - Row Custom APIs", () => {
       await waitFor(() => {
         const row = table.getRow("row1");
         expect(row.original.lastEditedAt).toBeGreaterThanOrEqual(beforeUpdate);
+      });
+    });
+
+    it("should refresh grouping values after grouped cell edits", async () => {
+      const { table } = renderTableHook({
+        data: groupedData,
+        properties: groupedProperties,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      const todoGroupId = table.store.state.groupingState.groupOrder.find(
+        (groupId) =>
+          table.store.state.groupingState.groupValues[groupId]?.value ===
+          "TODO",
+      );
+      expect(todoGroupId).toBeDefined();
+
+      act(() => {
+        table.updateCell(
+          "row1",
+          "col2",
+          (prev) => ({
+            ...prev,
+            value: { name: "DONE" },
+          }),
+          todoGroupId,
+        );
+        table.updateCell(
+          "row2",
+          "col2",
+          (prev) => ({
+            ...prev,
+            value: { name: "DONE" },
+          }),
+          todoGroupId,
+        );
+      });
+
+      await waitFor(() => {
+        const groupValues = Object.values(
+          table.store.state.groupingState.groupValues,
+        ).map((group) => group.value);
+        expect(groupValues).toEqual(["DONE"]);
       });
     });
   });

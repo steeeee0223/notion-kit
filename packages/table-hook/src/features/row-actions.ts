@@ -13,9 +13,8 @@ import type { IconData } from "@notion-kit/ui/icon-block";
 
 import type { Cell, Row } from "../lib/types";
 import { getDefaultCell, insertAt } from "../lib/utils";
-import { resolveGroupingMethod } from "../methods";
-import type { CellPlugin, InferData, TitlePlugin } from "../plugins";
-import { createDragEndUpdater, createGroupId } from "./utils";
+import type { CellPlugin, TitlePlugin } from "../plugins";
+import { createDragEndUpdater } from "./utils";
 
 export interface RowActionsOptions {
   onTableDataChange?: OnChangeFn<Row[]>;
@@ -68,6 +67,14 @@ export const RowActionsFeature: TableFeature = {
     return {};
   },
   constructTableAPIs: (table: Table<Row>) => {
+    const scheduleGroupingStateSync = (rows: Row[]) => {
+      if (table.store.state.grouping.length > 0) {
+        queueMicrotask(() => {
+          table._syncGroupingStateFromData(rows);
+        });
+      }
+    };
+
     table.setTableData = (updater) =>
       table.options.onTableDataChange?.(updater);
     /** Cell API */
@@ -99,7 +106,7 @@ export const RowActionsFeature: TableFeature = {
     ) => {
       table.setTableData((prev) => {
         const now = Date.now();
-        return prev.map((row) => {
+        const next = prev.map((row) => {
           if (row.id !== rowId) return row;
           const data = functionalUpdate(updater, row.properties[colId]!);
           return {
@@ -108,45 +115,10 @@ export const RowActionsFeature: TableFeature = {
             lastEditedAt: now,
           };
         });
-      });
 
-      // Update grouping state if necessary
-      const { grouping } = table.store.state;
-      if (grouping[0] !== colId || !originalGroupId) return;
+        scheduleGroupingStateSync(next);
 
-      const getGroupingValue = (value: unknown) => {
-        const plugin = table.getColumnPlugin(colId);
-        const row = {
-          ...table.getRow(rowId).original,
-          properties: {
-            ...table.getRow(rowId).original.properties,
-            [colId]: { id: "", value },
-          },
-        };
-        return resolveGroupingMethod(plugin).function(value, row, colId);
-      };
-
-      table._setGroupingState((v) => {
-        const group = v.groupValues[originalGroupId];
-        if (!group) return v;
-        // Compute new group id and group value
-        const newCell = functionalUpdate(updater, {
-          id: "",
-          value: group.original as InferData<TPlugin>,
-        });
-        const groupingValue = getGroupingValue(newCell.value);
-        const groupId = createGroupId(colId, groupingValue);
-        if (v.groupValues[groupId] !== undefined) return v;
-        // Add new group id and value to grouping state
-        const groupOrder = [...v.groupOrder, groupId];
-        const groupValues = {
-          ...v.groupValues,
-          [groupId]: {
-            value: groupingValue,
-            original: newCell.value,
-          },
-        };
-        return { ...v, groupOrder, groupValues };
+        return next;
       });
     };
     /** Row API */
@@ -164,11 +136,18 @@ export const RowActionsFeature: TableFeature = {
           const plugin = table.getColumnPlugin(colId);
           row.properties[colId] = getDefaultCell(plugin);
         });
-        if (payload === undefined) return [...prev, row];
+        if (payload === undefined) {
+          const next = [...prev, row];
+          scheduleGroupingStateSync(next);
+          return next;
+        }
         const idx = prev.findIndex((row) => row.id === payload.id);
-        return payload.at === "next"
-          ? insertAt(prev, row, idx + 1)
-          : insertAt(prev, row, idx);
+        const next =
+          payload.at === "next"
+            ? insertAt(prev, row, idx + 1)
+            : insertAt(prev, row, idx);
+        scheduleGroupingStateSync(next);
+        return next;
       });
     };
     table.duplicateRow = (id) => {
@@ -184,19 +163,29 @@ export const RowActionsFeature: TableFeature = {
             { ...cell, id: v4() },
           ]),
         );
-        return insertAt(
+        const next = insertAt(
           prev,
           { ...src, id: rowId, properties, createdAt: now, lastEditedAt: now },
           idx + 1,
         );
+        scheduleGroupingStateSync(next);
+        return next;
       });
     };
     table.deleteRow = (id) => {
-      table.setTableData((prev) => prev.filter((row) => row.id !== id));
+      table.setTableData((prev) => {
+        const next = prev.filter((row) => row.id !== id);
+        scheduleGroupingStateSync(next);
+        return next;
+      });
     };
     table.deleteRows = (ids) => {
       const idSet = new Set(ids);
-      table.setTableData((prev) => prev.filter((row) => !idSet.has(row.id)));
+      table.setTableData((prev) => {
+        const next = prev.filter((row) => !idSet.has(row.id));
+        scheduleGroupingStateSync(next);
+        return next;
+      });
     };
     table.handleRowDragEnd = (e) => {
       const { grouping, groupingState } = table.store.state;
@@ -206,11 +195,14 @@ export const RowActionsFeature: TableFeature = {
         const next = functionalUpdate(updater, v);
 
         const groupId = e.over?.data.current?.groupId as string | undefined;
-        if (!groupId) return next;
+        if (!groupId) {
+          scheduleGroupingStateSync(next);
+          return next;
+        }
 
         // If moved into a group, we need to update the grouping cell value.
         const now = Date.now();
-        return next.map((row) => {
+        const updated = next.map((row) => {
           if (row.id !== e.active.id || !grouping[0]) return row;
           return {
             ...row,
@@ -226,6 +218,8 @@ export const RowActionsFeature: TableFeature = {
             lastEditedAt: now,
           };
         });
+        scheduleGroupingStateSync(updated);
+        return updated;
       });
     };
     table.updateRowIcon = (id, icon) => {
@@ -272,7 +266,9 @@ export const RowActionsFeature: TableFeature = {
         });
         // Here we simply append the new row to the end.
         // Actual implementation may vary based on grouping logic.
-        return [...v, row];
+        const next = [...v, row];
+        scheduleGroupingStateSync(next);
+        return next;
       });
     };
   },

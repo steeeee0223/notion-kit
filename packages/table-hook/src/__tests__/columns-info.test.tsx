@@ -4,12 +4,44 @@
  */
 
 import type { DragEndEvent } from "@dnd-kit/core";
-import { act } from "@testing-library/react";
+import { act, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { mockData, mockProperties, renderTableHook } from "./mock";
 
 describe("useTableView - Column Custom APIs", () => {
+  describe("Column Visibility Source", () => {
+    it("should derive initial column visibility from column info", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: [
+          mockProperties[0]!,
+          { ...mockProperties[1]!, hidden: true },
+        ],
+      });
+
+      expect(table.getColumnInfo("col2").hidden).toBe(true);
+      expect(table.getVisibleLeafColumns().map((column) => column.id)).toEqual([
+        "col1",
+      ]);
+    });
+
+    it("should update column info when core visibility APIs are used", async () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.setColumnVisibility({ col1: true, col2: false });
+      });
+
+      await waitFor(() => {
+        expect(table.getColumnInfo("col2").hidden).toBe(true);
+      });
+    });
+  });
+
   describe("addColumnInfo", () => {
     it("should add a new column at the end by default", () => {
       const { table } = renderTableHook({

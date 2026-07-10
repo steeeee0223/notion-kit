@@ -72,12 +72,15 @@ describe("useTableView - Extended Grouping", () => {
         data: mockData,
         properties: mockProperties,
       });
+      const initialGroupOrder = table.store.state.groupingState.groupOrder;
 
       act(() => {
         table.setGrouping(["col2"]);
       });
 
       const groupingState = table.store.state.groupingState;
+      expect(groupingState.groupOrder).not.toBe(initialGroupOrder);
+      expect(initialGroupOrder).toEqual([]);
       expect(groupingState.groupOrder.length).toBeGreaterThan(0);
     });
 
@@ -352,6 +355,39 @@ describe("useTableView - Extended Grouping", () => {
 
       const clearedGroupOrder = table.store.state.groupingState.groupOrder;
       expect(clearedGroupOrder).toEqual([]);
+    });
+
+    it("should rebuild grouping state when core grouping APIs are used directly", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      expect(table.store.state.groupingState.groupOrder.length).toBeGreaterThan(
+        0,
+      );
+
+      act(() => {
+        table.resetGrouping();
+      });
+
+      expect(table.store.state.groupingState.groupOrder).toEqual([]);
+      expect(table.store.state.groupingState.groupValues).toEqual({});
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      expect(table.store.state.groupingState.groupOrder.length).toBeGreaterThan(
+        0,
+      );
+      expect(
+        Object.keys(table.store.state.groupingState.groupValues).length,
+      ).toBeGreaterThan(0);
     });
   });
 

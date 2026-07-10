@@ -43,23 +43,27 @@ export const FreezingFeature: TableFeature = {
         );
       }
     };
+    const normalizeFreezingState = (state: FreezingState): FreezingState => {
+      if (!state) return null;
+      const index = table.store.state.columnOrder.indexOf(state.colId);
+      return index < 0 ? null : { colId: state.colId, index };
+    };
+
     table.getFreezingState = () => {
       throwIfDisabled();
-      return table.store.state.columnFreezing;
+      return normalizeFreezingState(table.store.state.columnFreezing);
     };
     table.getCanFreezeColumn = (colId) => {
       throwIfDisabled();
       return table.store.state.columnOrder.at(-1) !== colId;
     };
     table.setColumnFreezing = (updater) => {
-      const nextState = functionalUpdate(
-        updater,
-        table.store.state.columnFreezing,
-      );
-      table.options.onColumnFreezingChange?.(nextState);
+      const nextState = functionalUpdate(updater, table.getFreezingState());
+      const normalizedState = normalizeFreezingState(nextState);
+      table.options.onColumnFreezingChange?.(normalizedState);
       table.setColumnPinning({
-        left: nextState
-          ? table.store.state.columnOrder.slice(0, nextState.index + 1)
+        left: normalizedState
+          ? table.store.state.columnOrder.slice(0, normalizedState.index + 1)
           : [],
       });
     };
