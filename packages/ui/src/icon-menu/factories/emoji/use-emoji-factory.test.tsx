@@ -71,7 +71,7 @@ describe("useEmojiFactory", () => {
   it("toIconData should output an emoji type with native character", () => {
     const { result } = renderHook(() => useEmojiFactory());
     const item = result.current.getItem("+1");
-    const data = result.current.toIconData(item, {});
+    const data = result.current.toIconData(item);
 
     expect(data.type).toBe("emoji");
     expect(data.src).toBeDefined();
@@ -90,11 +90,11 @@ describe("useEmojiFactory", () => {
 
   it("onSelect should be defined", () => {
     const { result } = renderHook(() => useEmojiFactory());
-    expect(result.current.onSelect).toBeTypeOf("function");
+    expect(result.current.select).toBeTypeOf("function");
   });
 
-  it("toolbar should be defined (SkinPicker)", () => {
+  it("renderToolbar should render SkinPicker", () => {
     const { result } = renderHook(() => useEmojiFactory());
-    expect(result.current.toolbar).toBeDefined();
+    expect(result.current.renderToolbar?.()).toBeDefined();
   });
 });

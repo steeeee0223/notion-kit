@@ -110,7 +110,7 @@ export function CodeBlockActions() {
       openOnInputClick
     >
       <AutocompleteInput placeholder="Search actions..." />
-      <AutocompleteContent role="presentation" variant="inline">
+      <AutocompleteContent variant="inline">
         <AutocompleteList>
           <AutocompleteGroup>
             <AutocompleteLabel title="Code" />

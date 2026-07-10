@@ -8,20 +8,16 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  Spinner,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
+  TooltipProvider,
 } from "@/primitives";
 
-import {
-  MenuSearchBar,
-  UploadForm,
-  useDefaultFactories,
-  VirtualizedIconGrid,
-} from "./_components";
-import type { IconFactoryResult } from "./factories";
+import { UploadForm } from "./_components";
+import { useDefaultFactories, type IconFactoryResult } from "./factories";
+import { IconGridMenu } from "./icon-grid-menu";
 
 export interface IconMenuProps extends React.PropsWithChildren {
   className?: string;
@@ -53,17 +49,17 @@ function IconMenuContent({
   // Find the upload factory to persist submitted URLs / uploads
   const uploadFactory = factories.find((f) => f.id === "upload");
 
-  const handleUploadSubmit = ({ name, url }: { name: string; url: string }) => {
-    uploadFactory?.onSelect?.({ id: url, name, keywords: [name] });
+  const handleUploadSubmit = (url: string) => {
+    uploadFactory?.select?.(url);
     onSelect?.({ type: "url", src: url });
   };
 
   const handleRandomSelect = () => {
     if (activeFactory?.getRandomIcon) {
       const item = activeFactory.getRandomIcon();
-      const iconData = activeFactory.toIconData(item, {});
+      const iconData = activeFactory.toIconData(item);
       onSelect?.(iconData);
-      activeFactory.onSelect?.(item);
+      activeFactory.select?.(item.id);
     }
   };
 
@@ -100,29 +96,21 @@ function IconMenuContent({
         <TabsContent
           key={factory.id}
           value={factory.id}
-          className="bg-transparent p-3"
+          className="bg-transparent"
         >
-          <MenuSearchBar
-            search={searchQuery}
-            onSearchChange={setSearchQuery}
+          <IconGridMenu
+            factory={factory}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            onSelect={onSelect}
             onRandomSelect={handleRandomSelect}
-            Palette={factory.toolbar}
           />
-          {factory.isLoading ? (
-            <Spinner className="mx-1 my-2 fill-icon" />
-          ) : (
-            <VirtualizedIconGrid
-              factory={factory}
-              searchQuery={searchQuery}
-              onSelect={(data) => onSelect?.(data)}
-            />
-          )}
         </TabsContent>
       ))}
       {onUpload && (
         <TabsContent value="file" className="p-3">
           <UploadForm
-            onSubmit={handleUploadSubmit}
+            onSubmit={(res) => handleUploadSubmit(res.url)}
             onCancel={() => setActiveTab(visibleFactories[0]?.id ?? "")}
           />
         </TabsContent>
@@ -131,18 +119,9 @@ function IconMenuContent({
   );
 }
 
-function IconMenuWithDefaults(
-  props: Omit<IconMenuProps, "factories"> & { factories?: undefined },
-) {
+function IconMenuWithDefaults(props: Omit<IconMenuProps, "factories">) {
   const defaultFactories = useDefaultFactories();
-  return (
-    <IconMenuContent
-      factories={defaultFactories}
-      onSelect={props.onSelect}
-      onRemove={props.onRemove}
-      onUpload={props.onUpload}
-    />
-  );
+  return <IconMenuContent factories={defaultFactories} {...props} />;
 }
 
 export function IconMenu({
@@ -155,37 +134,39 @@ export function IconMenu({
   onUpload,
 }: IconMenuProps) {
   return (
-    <Popover>
-      <PopoverTrigger
-        disabled={disabled}
-        render={
-          <Button
-            variant={null}
-            className={cn(
-              "size-fit rounded-md border text-secondary disabled:opacity-100",
-              className,
-            )}
-          >
-            {children}
-          </Button>
-        }
-      />
-      <PopoverContent className="z-999 w-102">
-        {factories ? (
-          <IconMenuContent
-            factories={factories}
-            onSelect={onSelect}
-            onRemove={onRemove}
-            onUpload={onUpload}
-          />
-        ) : (
-          <IconMenuWithDefaults
-            onSelect={onSelect}
-            onRemove={onRemove}
-            onUpload={onUpload}
-          />
-        )}
-      </PopoverContent>
-    </Popover>
+    <TooltipProvider>
+      <Popover>
+        <PopoverTrigger
+          disabled={disabled}
+          render={
+            <Button
+              variant={null}
+              className={cn(
+                "size-fit rounded-md border text-secondary disabled:opacity-100",
+                className,
+              )}
+            >
+              {children}
+            </Button>
+          }
+        />
+        <PopoverContent className="z-999 w-102">
+          {factories ? (
+            <IconMenuContent
+              factories={factories}
+              onSelect={onSelect}
+              onRemove={onRemove}
+              onUpload={onUpload}
+            />
+          ) : (
+            <IconMenuWithDefaults
+              onSelect={onSelect}
+              onRemove={onRemove}
+              onUpload={onUpload}
+            />
+          )}
+        </PopoverContent>
+      </Popover>
+    </TooltipProvider>
   );
 }

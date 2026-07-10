@@ -12,9 +12,10 @@ import {
   getSortableItemsAfterDrag,
   Sortable,
 } from "@notion-kit/ui/primitives";
-import { COLOR, type Color } from "@notion-kit/utils";
+import { COLOR } from "@notion-kit/utils";
 
-import { OptionTag } from "../../../common";
+import { OptionTag } from "@/common";
+
 import { OptionItem } from "./option-item";
 import { SelectMenuApi } from "./use-select-menu";
 
@@ -22,30 +23,19 @@ interface SelectMenuProps {
   menu: SelectMenuApi;
 }
 
-type GroupOption =
-  | {
-      label: string;
-      items: string[];
-      creatable: false;
-    }
-  | {
-      label: string;
-      items: string[];
-      creatable: true;
-      option: {
-        name: string;
-        color: Color;
-      };
-    };
+interface GroupOption {
+  label: string;
+  items: string[];
+  creatable: boolean;
+}
 
 export function SelectMenu({ menu }: SelectMenuProps) {
   const {
     config,
-    tags,
     optionSuggestion,
+    tags,
     search,
-    results,
-    handleInputChange,
+    setSearch,
     handleTagsChange,
     selectTag,
     addOption,
@@ -58,17 +48,16 @@ export function SelectMenu({ menu }: SelectMenuProps) {
   const items: GroupOption[] = [
     {
       label: "Select an option or create one",
-      items: results ?? [],
+      items: config.options.names,
       creatable: false,
     },
   ];
 
-  if (search && optionSuggestion) {
+  if (optionSuggestion) {
     items.push({
       label: "Create option",
-      items: [search],
+      items: [optionSuggestion.name],
       creatable: true,
-      option: optionSuggestion,
     });
   }
 
@@ -78,10 +67,9 @@ export function SelectMenu({ menu }: SelectMenuProps) {
       open
       value={tags.map((tag) => tag.value)}
       inputValue={search}
-      onInputValueChange={handleInputChange}
+      onInputValueChange={setSearch}
       onValueChange={handleTagsChange}
       items={items}
-      filter={null}
     >
       <ComboboxChips variant="inline" hideClearButton className="z-10 max-h-60">
         <ComboboxValue>
@@ -113,14 +101,14 @@ export function SelectMenu({ menu }: SelectMenuProps) {
           {(group: GroupOption) => (
             <ComboboxGroup key={group.label} items={group.items}>
               <ComboboxLabel title={group.label} />
-              {group.creatable ? (
-                <ComboboxCreatableItem value={search} onClick={addOption}>
+              {group.creatable && optionSuggestion ? (
+                <ComboboxCreatableItem
+                  value={optionSuggestion.name}
+                  onClick={addOption}
+                >
                   <div className="flex items-center gap-2 px-1">
                     Create
-                    <OptionTag
-                      name={group.option.name}
-                      color={group.option.color}
-                    />
+                    <OptionTag {...optionSuggestion} />
                   </div>
                 </ComboboxCreatableItem>
               ) : (

@@ -1,6 +1,7 @@
 export const registryIndex = [
   "autocomplete-default",
   "autocomplete-popover",
+  "autocomplete-grid-menu",
   "badge-default",
   "badge-sizes",
   "badge-variants",
@@ -46,6 +47,7 @@ export const registryIndex = [
   "map-markers",
   "map-popup",
   "map-route",
+  "meter-demo",
   "combobox-basic",
   "combobox-multiple-floating",
   "combobox-multiple-inline",

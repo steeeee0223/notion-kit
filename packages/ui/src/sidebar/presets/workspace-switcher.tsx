@@ -63,19 +63,7 @@ export function WorkspaceSwitcher({
           </Button>
         }
       />
-      <DropdownMenuContent
-        className="w-[300px]"
-        align="start"
-        alignOffset={11}
-        /**
-         * tmporary fix
-         * @see https://github.com/radix-ui/primitives/issues/1241
-         */
-        finalFocus={() => {
-          document.body.style.pointerEvents = "";
-          return false;
-        }}
-      >
+      <DropdownMenuContent className="w-75" align="start" alignOffset={11}>
         <div className="flex flex-col gap-3 p-3">
           <div className="flex items-center gap-2.5">
             <div className="flex size-9 shrink-0 items-center justify-center rounded-md">

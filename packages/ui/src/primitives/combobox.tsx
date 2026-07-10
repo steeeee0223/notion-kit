@@ -120,6 +120,7 @@ function ComboboxContent({
       <div
         data-slot="combobox-content"
         data-variant={variant}
+        role="presentation"
         className={cn(
           "group/combobox-content relative w-full overflow-hidden",
           className,
@@ -159,7 +160,10 @@ function ComboboxList({ className, ...props }: ComboboxPrimitive.List.Props) {
   return (
     <ComboboxPrimitive.List
       data-slot="combobox-list"
-      className={cn("max-h-75 overflow-auto overflow-x-hidden", className)}
+      className={cn(
+        "max-h-75 overflow-auto overflow-x-hidden focus-visible:outline-none",
+        className,
+      )}
       {...props}
     />
   );

@@ -12,7 +12,15 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {},
+  render: () => {
+    return (
+      <div className="flex items-center gap-2">
+        <Checkbox defaultChecked />
+        <Checkbox indeterminate />
+        <Checkbox />
+      </div>
+    );
+  },
 };
 export const Small: Story = {
   args: { size: "sm" },

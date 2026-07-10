@@ -4,7 +4,7 @@ issues recording for current task
 
 1. [ ] combobox-multiple-inline.tsx -> current filtering behavior is NOT same as combobox-multiple-floating.tsx
 2. [x] migrate tooltip!
-3. [ ] update `contentVariants` to new design after migration
+3. [x] update `contentVariants` to new design after migration
 
 ## Table view menus
 
@@ -23,7 +23,7 @@ issues recording for current task
 6. [x] prop-menu
 7. [x] props-menu
 8. [x] edit-prop-menu
-9. [ ] unittests: needs to rewrite the selectors!
+9. [x] unittests: needs to rewrite the selectors!
 
 ## Upgrade dnd
 

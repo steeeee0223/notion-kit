@@ -23,6 +23,12 @@ export const Index: Record<
       () => import("@notion-kit/registry/autocomplete-popover"),
     ),
   },
+  "autocomplete-grid-menu": {
+    files: ["registry/src/autocomplete-grid-menu/autocomplete-grid-menu.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/autocomplete-grid-menu"),
+    ),
+  },
   "badge-default": {
     files: ["registry/src/badge-default/badge-default.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/badge-default")),
@@ -238,6 +244,10 @@ export const Index: Record<
   "map-route": {
     files: ["registry/src/map-route/map-route.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/map-route")),
+  },
+  "meter-demo": {
+    files: ["registry/src/meter-demo/meter-demo.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/meter-demo")),
   },
   "combobox-basic": {
     files: ["registry/src/combobox-basic/combobox-basic.tsx"],

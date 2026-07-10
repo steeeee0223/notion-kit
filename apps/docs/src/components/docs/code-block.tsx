@@ -7,6 +7,7 @@ import { tv } from "tailwind-variants";
 import { cn } from "@notion-kit/cn";
 import {
   Button,
+  ScrollArea,
   TabsTrigger as Tab,
   Tabs,
   TabsContent,
@@ -14,8 +15,6 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { ibm_plex_mono } from "@/lib/fonts";
-
-import { ScrollArea } from "./scroll-area";
 
 const codeblockStyles = tv({
   slots: {
@@ -93,10 +92,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
           </TabsList>
         )}
       </div>
-      <ScrollArea
-        scrollbars="both"
-        className={cn(isExpanded ? "max-h-[400px]" : "max-h-[200px]")}
-      >
+      <ScrollArea className={cn(isExpanded ? "max-h-100" : "max-h-50")}>
         {files.map(({ fileName, code, lang }) => (
           <TabsContent key={fileName} value={fileName} className={content()}>
             <DynamicCodeBlock

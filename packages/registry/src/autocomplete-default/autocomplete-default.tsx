@@ -40,7 +40,7 @@ export default function AutocompleteDefault() {
         openOnInputClick
       >
         <AutocompleteInput search clear placeholder="Search workspace..." />
-        <AutocompleteContent role="presentation">
+        <AutocompleteContent>
           <AutocompleteEmpty>No matches found.</AutocompleteEmpty>
           <AutocompleteList>
             {(group: (typeof GROUPS)[number]) => (

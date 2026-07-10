@@ -1,5 +1,3 @@
-"use client";
-
 import {
   useCallback,
   useEffect,
@@ -10,15 +8,10 @@ import {
 
 import { randomItem } from "@notion-kit/utils";
 
+import { ColorPicker } from "@/icon-menu/_components";
+
 import { useRecentIcons } from "../_hooks";
-import { ColorPicker } from "../../_components/color-picker";
-import type {
-  IconFactoryResult,
-  IconItem,
-  IconSection,
-  RenderIconOptions,
-  SelectOptions,
-} from "../types";
+import type { IconFactoryResult, IconItem, IconSection } from "../types";
 
 const NOTION_ICON_COLORS = [
   "gray",
@@ -165,7 +158,7 @@ export function useNotionIconsFactory(
   );
 
   const renderIcon = useCallback(
-    (item: IconItem, _opts: RenderIconOptions) => {
+    (item: IconItem) => {
       const icon = iconMap.get(item.id);
       if (!icon) return null;
       const fillColor = colorMap[color];
@@ -184,7 +177,7 @@ export function useNotionIconsFactory(
   );
 
   const toIconData = useCallback(
-    (item: IconItem, _opts: SelectOptions) => ({
+    (item: IconItem) => ({
       type: "url" as const,
       src: `https://www.notion.so/icons/${item.id}_${color}.svg`,
     }),
@@ -222,12 +215,9 @@ export function useNotionIconsFactory(
     search,
     renderIcon,
     toIconData,
-    toolbar,
+    renderToolbar: () => toolbar,
     isLoading: isPending,
-    onSelect: useCallback(
-      (item: IconItem) => trackRecent(item.id),
-      [trackRecent],
-    ),
+    select: trackRecent,
     getRandomIcon,
   };
 }

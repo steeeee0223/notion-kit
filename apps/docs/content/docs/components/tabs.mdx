@@ -1,13 +1,77 @@
 ---
 title: Tabs
-description: A set of layered sections of content—known as tab panels—that are displayed one at a time.
+description: A set of related panels where one section of content is visible at a time.
 links:
   - label: Shadcn UI
     href: https://ui.shadcn.com/docs/components/tabs
 ---
 
-<ComponentPreview name="tabs-demo" />
+<ComponentPreview name="tabs-demo" hideCode />
 
 ## Installation
 
 <Installation packages="@notion-kit/ui" registryName="tabs-demo" />
+
+## Anatomy
+
+```tsx
+<Tabs defaultValue="overview">
+  <TabsList>
+    <TabsTrigger value="overview">Overview</TabsTrigger>
+    <TabsTrigger value="activity">Activity</TabsTrigger>
+  </TabsList>
+  <TabsContent value="overview">Overview content</TabsContent>
+  <TabsContent value="activity">Activity content</TabsContent>
+</Tabs>
+```
+
+## Examples
+
+---
+
+### Controlled
+
+Use `value` and `onValueChange` when the selected tab is owned by parent state.
+
+<ComponentPreview name="tabs-demo" />
+
+## API Reference
+
+### Tabs
+
+The root component that manages the selected tab. It accepts Base UI Tabs root
+props and the controlled value props below.
+
+| Prop            | Type                         | Default        | Description                            |
+| --------------- | ---------------------------- | -------------- | -------------------------------------- |
+| `defaultValue`  | `TabValue`                   | First tab      | The uncontrolled initial tab value.    |
+| `value`         | `TabValue`                   | -              | The controlled selected tab value.     |
+| `onValueChange` | `(value: TabValue) => void`  | -              | Handler called when a tab is selected. |
+| `orientation`   | `"horizontal" \| "vertical"` | `"horizontal"` | The tab navigation orientation.        |
+
+### TabsList
+
+The container for tab triggers.
+
+| Prop              | Type      | Default | Description                                     |
+| ----------------- | --------- | ------- | ----------------------------------------------- |
+| `activateOnFocus` | `boolean` | `false` | Whether arrow-key focus also activates the tab. |
+| `loopFocus`       | `boolean` | `true`  | Whether keyboard focus loops through the list.  |
+
+### TabsTrigger
+
+A selectable tab. Its `value` must match a `TabsContent` value.
+
+| Prop       | Type       | Default | Description                        |
+| ---------- | ---------- | ------- | ---------------------------------- |
+| `value`    | `TabValue` | -       | The value selected by the trigger. |
+| `disabled` | `boolean`  | -       | Whether this trigger is disabled.  |
+
+### TabsContent
+
+The panel associated with a tab trigger.
+
+| Prop          | Type       | Default | Description                                    |
+| ------------- | ---------- | ------- | ---------------------------------------------- |
+| `value`       | `TabValue` | -       | The trigger value that shows this panel.       |
+| `keepMounted` | `boolean`  | `false` | Whether the panel remains mounted when hidden. |

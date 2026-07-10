@@ -7,7 +7,6 @@ import {
   PopoverContent,
   PopoverTrigger,
   TooltipPreset,
-  TooltipProvider,
 } from "@/primitives";
 
 import type { PaletteProps } from "./types";
@@ -22,31 +21,29 @@ export function ColorPicker({ palette, value, onSelect }: ColorPickerProps) {
   };
 
   return (
-    <TooltipProvider>
-      <Popover open={open} onOpenChange={setOpen}>
-        <TooltipPreset description="Select icon color">
-          <PopoverTrigger
-            render={
-              <Button variant="icon" className="size-7">
-                <Circle size={16} color={value} fill={value} />
-              </Button>
-            }
-          />
-        </TooltipPreset>
-        <PopoverContent className="z-1000 grid w-45 grid-cols-5 gap-0 p-2">
-          {Object.entries(palette).map(([name, color]) => (
-            <TooltipPreset key={name} description={name} className="z-1001">
-              <Button
-                variant="hint"
-                className="size-[30px] p-0"
-                onClick={() => selectColor(color)}
-              >
-                <Circle color={color} fill={color} size={16} />
-              </Button>
-            </TooltipPreset>
-          ))}
-        </PopoverContent>
-      </Popover>
-    </TooltipProvider>
+    <Popover open={open} onOpenChange={setOpen}>
+      <TooltipPreset description="Select icon color">
+        <PopoverTrigger
+          render={
+            <Button variant="icon" className="size-7">
+              <Circle size={16} color={value} fill={value} />
+            </Button>
+          }
+        />
+      </TooltipPreset>
+      <PopoverContent className="z-1000 grid w-45 grid-cols-5 gap-0 p-2">
+        {Object.entries(palette).map(([name, color]) => (
+          <TooltipPreset key={name} description={name} className="z-1001">
+            <Button
+              variant="hint"
+              className="size-[30px] p-0"
+              onClick={() => selectColor(color)}
+            >
+              <Circle color={color} fill={color} size={16} />
+            </Button>
+          </TooltipPreset>
+        ))}
+      </PopoverContent>
+    </Popover>
   );
 }

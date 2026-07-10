@@ -1,12 +1,6 @@
 import type { IconData } from "@/icon-block";
 
-import type {
-  IconFactoryResult,
-  IconItem,
-  IconSection,
-  RenderIconOptions,
-  SelectOptions,
-} from "./types";
+import type { IconFactoryResult, IconItem, IconSection } from "./types";
 
 interface IconDefinition {
   id: string;
@@ -19,10 +13,10 @@ interface CreateIconFactoryConfig {
   label: string;
   icons: IconDefinition[];
   sections?: { id: string; label: string; iconIds: string[] }[];
-  renderIcon: (item: IconItem, options: RenderIconOptions) => React.ReactNode;
-  toIconData: (item: IconItem, options: SelectOptions) => IconData;
-  toolbar?: React.ReactNode;
-  navigation?: (
+  renderIcon: (item: IconItem) => React.ReactNode;
+  toIconData: (item: IconItem) => IconData;
+  renderToolbar?: () => React.ReactNode;
+  renderNavigation?: (
     scrollToSection: (sectionId: string) => void,
     activeSectionId: string | null,
   ) => React.ReactNode;
@@ -73,7 +67,7 @@ export function createIconFactory(
     search,
     renderIcon: config.renderIcon,
     toIconData: config.toIconData,
-    toolbar: config.toolbar,
-    navigation: config.navigation,
+    renderToolbar: config.renderToolbar,
+    renderNavigation: config.renderNavigation,
   };
 }

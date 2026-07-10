@@ -7,7 +7,7 @@ description: A Base UI autocomplete composed with Notion-style menu groups, item
   name="autocomplete-default"
   preview={`<Autocomplete items={groups} open autoHighlight="always" openOnInputClick>
   <AutocompleteInput search clear placeholder="Search workspace..." />
-  <AutocompleteContent role="presentation">
+  <AutocompleteContent>
     <AutocompleteEmpty>No matches found.</AutocompleteEmpty>
     <AutocompleteList>
       {(group) => (
@@ -55,7 +55,7 @@ Use `AutocompleteContent variant="inline"` when another primitive owns the overl
   <PopoverContent>
     <Autocomplete items={groups} open autoHighlight="always" openOnInputClick>
       <AutocompleteInput search clear placeholder="Search workspace..." />
-      <AutocompleteContent role="presentation" variant="inline">
+      <AutocompleteContent variant="inline">
         <AutocompleteEmpty>No matches found.</AutocompleteEmpty>
         <AutocompleteList>
           {(group) => (

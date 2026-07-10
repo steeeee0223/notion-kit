@@ -52,7 +52,7 @@ export default function AutocompletePopover() {
           openOnInputClick
         >
           <AutocompleteInput search clear placeholder="Search workspace..." />
-          <AutocompleteContent role="presentation" variant="inline">
+          <AutocompleteContent variant="inline">
             <AutocompleteEmpty>No matches found.</AutocompleteEmpty>
             <AutocompleteList>
               {(group: (typeof GROUPS)[number]) => (

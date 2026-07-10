@@ -1,71 +1,38 @@
+"use client";
+
+import { useState } from "react";
+
 import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Input,
-  Label,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@notion-kit/ui/primitives";
 
+enum TabType {
+  Overview = "overview",
+  Tasks = "tasks",
+  Notes = "notes",
+}
+
 export default function Demo() {
+  const [value, setValue] = useState(TabType.Overview);
+
   return (
-    <Tabs defaultValue="account" className="w-[400px]">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="account">Account</TabsTrigger>
-        <TabsTrigger value="password">Password</TabsTrigger>
+    <Tabs className="w-80" value={value} onValueChange={setValue}>
+      <TabsList>
+        <TabsTrigger value={TabType.Overview}>Overview</TabsTrigger>
+        <TabsTrigger value={TabType.Tasks}>Tasks</TabsTrigger>
+        <TabsTrigger value={TabType.Notes}>Notes</TabsTrigger>
       </TabsList>
-      <TabsContent value="account">
-        <Card>
-          <CardHeader className="py-0">
-            <CardTitle>Account</CardTitle>
-            <CardDescription>
-              Make changes to your account here. Click save when you're done.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2 px-6">
-            <div className="space-y-1">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" defaultValue="Pedro Duarte" />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="username">Username</Label>
-              <Input id="username" defaultValue="@peduarte" />
-            </div>
-          </CardContent>
-          <CardFooter className="pt-4">
-            <Button size="md">Save changes</Button>
-          </CardFooter>
-        </Card>
+      <TabsContent value={TabType.Overview} className="p-4 text-sm">
+        A high-level summary of the workspace.
       </TabsContent>
-      <TabsContent value="password">
-        <Card>
-          <CardHeader className="py-0">
-            <CardTitle>Password</CardTitle>
-            <CardDescription>
-              Change your password here. After saving, you'll be logged out.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2 px-6">
-            <div className="space-y-1">
-              <Label htmlFor="current">Current password</Label>
-              <Input id="current" type="password" />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="new">New password</Label>
-              <Input id="new" type="password" />
-            </div>
-          </CardContent>
-          <CardFooter className="pt-4">
-            <Button size="md">Save password</Button>
-          </CardFooter>
-        </Card>
+      <TabsContent value={TabType.Tasks} className="p-4 text-sm">
+        Open decisions and follow-up tasks.
+      </TabsContent>
+      <TabsContent value={TabType.Notes} className="p-4 text-sm">
+        Meeting notes and context for the team.
       </TabsContent>
     </Tabs>
   );

@@ -130,38 +130,4 @@ export const inputVariants = cva(
 );
 export type InputVariants = VariantProps<typeof inputVariants>;
 
-/**
- * @todo migrate to the new styles in `./design`
- */
-export const contentVariants = cva(
-  "border border-border text-primary focus-visible:outline-hidden",
-  {
-    variants: {
-      variant: {
-        /**
-         * @prop default
-         * @note Used by: Drawer
-         */
-        default: "bg-transparent",
-        /**
-         * @prop tab
-         * @note Used by: Tabs
-         * @note Used with: `openAnimation`, `sideAnimation`
-         */
-        tab: "border-none bg-transparent",
-      },
-      openAnimation: {
-        true: [
-          "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
-          "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
-        ],
-      },
-      sideAnimation: {
-        true: "data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-      },
-    },
-    defaultVariants: { variant: "default", openAnimation: true },
-  },
-);
-
 export const groupVariants = cva("flex flex-col gap-px py-1");

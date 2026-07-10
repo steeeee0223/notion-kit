@@ -84,7 +84,7 @@ export function TransitEntitySearch<T>({
           openOnInputClick
         >
           <AutocompleteInput placeholder={placeholder} />
-          <AutocompleteContent role="presentation" variant="inline">
+          <AutocompleteContent variant="inline">
             {!isLoading && (
               <AutocompleteEmpty className="py-6 text-center text-sm text-secondary">
                 No matches found

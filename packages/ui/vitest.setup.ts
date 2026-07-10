@@ -30,3 +30,10 @@ if (typeof globalThis.ResizeObserver === "undefined") {
 Element.prototype.scrollTo = function () {
   return;
 };
+
+// jsdom does not implement getAnimations — needed by Base UI ScrollArea
+if (typeof Element.prototype.getAnimations === "undefined") {
+  Element.prototype.getAnimations = function () {
+    return [];
+  };
+}

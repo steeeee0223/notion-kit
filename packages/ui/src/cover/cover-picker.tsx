@@ -93,9 +93,8 @@ const CoverPicker: React.FC<CoverPickerProps> = ({
           </TabsContent>
           <TabsContent value="unsplash" className="mb-2">
             <Unsplash
-              className="overflow-y-scroll"
               apiKey={unsplashAPIKey}
-              onSelect={onUrlSubmit}
+              onSelect={(image) => onUrlSubmit(image.urls.regular)}
             />
           </TabsContent>
         </Tabs>

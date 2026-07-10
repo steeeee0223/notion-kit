@@ -2,7 +2,7 @@ import { format } from "date-fns";
 
 import { COLOR, type Color } from "./constants";
 
-export function randomInt(min: number, max: number): number {
+export function randomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
@@ -14,11 +14,16 @@ export function randomItem<T>(items: T[] | Record<string, T>): T {
   return items[randomItem(keys)]!;
 }
 
-export function toDateString(date: Date | string | number): string {
+export function toDateString(date: Date | string | number) {
   return format(new Date(date), "MMM d, yyyy 'at' h:mm a");
 }
 
-export function idToColor(id: string): string {
+export function idToColorKey(id: string) {
+  const colors = Object.keys(COLOR);
+  const sum = Array.from(id).reduce((acc, x) => acc + x.charCodeAt(0), 0);
+  return colors[sum % colors.length]! as Color;
+}
+export function idToColor(id: string) {
   const colors = Object.values(COLOR);
   const sum = Array.from(id).reduce((acc, x) => acc + x.charCodeAt(0), 0);
   return colors[sum % colors.length]!.hex;

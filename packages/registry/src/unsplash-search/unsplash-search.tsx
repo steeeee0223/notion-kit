@@ -10,11 +10,14 @@ export default function Search() {
   const [url, setUrl] = useState("");
 
   return (
-    <div className="flex w-[540px] flex-col items-center gap-2">
+    <div className="flex w-135 flex-col items-center gap-2">
       <div className="flex w-full truncate px-4 text-xl font-medium">
         Selected: {url}
       </div>
-      <Unsplash apiKey={UNSPLASH_ACCESS_KEY} onSelect={setUrl} />
+      <Unsplash
+        apiKey={UNSPLASH_ACCESS_KEY}
+        onSelect={(image) => setUrl(image.urls.full)}
+      />
     </div>
   );
 }

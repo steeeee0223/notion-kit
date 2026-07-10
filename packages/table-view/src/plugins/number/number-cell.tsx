@@ -1,12 +1,11 @@
-"use client";
-
 import { cn } from "@notion-kit/cn";
-import { TooltipPreset } from "@notion-kit/ui/primitives";
+import { MeterBar, MeterRing, TooltipPreset } from "@notion-kit/ui/primitives";
+import { COLOR } from "@notion-kit/utils";
 
-import { CellTrigger, CopyButton, TextInputPopover } from "../../common";
-import { wrappedClassName } from "../../lib/utils";
+import { CellTrigger, CopyButton, TextInputPopover } from "@/common";
+import { wrappedClassName } from "@/lib/utils";
+
 import type { InferCellProps } from "../types";
-import { ProgressBar, ProgressRing } from "./common";
 import type { NumberConfig, NumberPlugin } from "./types";
 
 export function NumberCell({
@@ -96,10 +95,11 @@ function NumberDisplay({ view, value, config, wrapped }: NumberDisplayProps) {
               description={`${value} / ${config.options.divideBy}`}
             >
               <span className="inline-flex w-24">
-                <ProgressBar
+                <MeterBar
                   className="h-[21px] max-w-40 min-w-12 grow"
-                  value={(cappedValue / config.options.divideBy) * 100}
-                  color={config.options.color}
+                  value={cappedValue}
+                  max={config.options.divideBy}
+                  trackColor={COLOR[config.options.color].hex}
                 />
               </span>
             </TooltipPreset>
@@ -122,10 +122,10 @@ function NumberDisplay({ view, value, config, wrapped }: NumberDisplayProps) {
               description={`${value} / ${config.options.divideBy}`}
             >
               <span className="inline-flex">
-                <ProgressRing
+                <MeterRing
                   value={cappedValue}
-                  valueMax={config.options.divideBy}
-                  color={config.options.color}
+                  max={config.options.divideBy}
+                  trackColor={COLOR[config.options.color].hex}
                 />
               </span>
             </TooltipPreset>
