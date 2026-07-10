@@ -73,7 +73,7 @@ function MeterRing({
   const r = 6;
   const circumference = 2 * Math.PI * r;
   const progress = Math.min(Math.max(value, 0), max);
-  const offset = circumference * (1 - progress / max);
+  const offset = max > 0 ? circumference * (1 - progress / max) : circumference;
 
   return (
     <Meter

@@ -12,7 +12,7 @@ import {
   getSortableItemsAfterDrag,
   Sortable,
 } from "@notion-kit/ui/primitives";
-import { COLOR, getRandomColor } from "@notion-kit/utils";
+import { COLOR } from "@notion-kit/utils";
 
 import { OptionTag } from "@/common";
 
@@ -23,21 +23,16 @@ interface SelectMenuProps {
   menu: SelectMenuApi;
 }
 
-type GroupOption =
-  | {
-      label: string;
-      items: string[];
-      creatable: false;
-    }
-  | {
-      label: string;
-      items: string[];
-      creatable: true;
-    };
+interface GroupOption {
+  label: string;
+  items: string[];
+  creatable: boolean;
+}
 
 export function SelectMenu({ menu }: SelectMenuProps) {
   const {
     config,
+    optionSuggestion,
     tags,
     search,
     setSearch,
@@ -58,10 +53,10 @@ export function SelectMenu({ menu }: SelectMenuProps) {
     },
   ];
 
-  if (search) {
+  if (optionSuggestion) {
     items.push({
       label: "Create option",
-      items: [search],
+      items: [optionSuggestion.name],
       creatable: true,
     });
   }
@@ -106,11 +101,14 @@ export function SelectMenu({ menu }: SelectMenuProps) {
           {(group: GroupOption) => (
             <ComboboxGroup key={group.label} items={group.items}>
               <ComboboxLabel title={group.label} />
-              {group.creatable ? (
-                <ComboboxCreatableItem value={search} onClick={addOption}>
+              {group.creatable && optionSuggestion ? (
+                <ComboboxCreatableItem
+                  value={optionSuggestion.name}
+                  onClick={addOption}
+                >
                   <div className="flex items-center gap-2 px-1">
                     Create
-                    <OptionTag name={search} color={getRandomColor()} />
+                    <OptionTag {...optionSuggestion} />
                   </div>
                 </ComboboxCreatableItem>
               ) : (

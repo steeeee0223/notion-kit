@@ -188,7 +188,7 @@ const GRID_COLUMNS = 8;
 
 function GridItem({ item }: { item: IconOption }) {
   return (
-    <TooltipPreset key={item.value} description={item.value} side="top">
+    <TooltipPreset description={item.value} side="top">
       <AutocompleteItem
         aria-label={item.value}
         value={item}
@@ -235,7 +235,7 @@ export default function AutocompleteGridMenu() {
                     {chunk(group.items, GRID_COLUMNS).map((row, rowIndex) => (
                       <AutocompleteRow key={`${group.label}:${rowIndex}`}>
                         {row.map((item) => (
-                          <GridItem item={item} />
+                          <GridItem key={item.value} item={item} />
                         ))}
                       </AutocompleteRow>
                     ))}

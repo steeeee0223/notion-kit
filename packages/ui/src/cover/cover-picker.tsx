@@ -94,7 +94,7 @@ const CoverPicker: React.FC<CoverPickerProps> = ({
           <TabsContent value="unsplash" className="mb-2">
             <Unsplash
               apiKey={unsplashAPIKey}
-              onSelect={(image) => onUrlSubmit(image.urls.full)}
+              onSelect={(image) => onUrlSubmit(image.urls.regular)}
             />
           </TabsContent>
         </Tabs>
