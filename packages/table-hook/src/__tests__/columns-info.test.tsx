@@ -3,7 +3,7 @@
  * Tests for column CRUD operations using direct table APIs
  */
 
-import type { DragEndEvent } from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/react";
 import { act, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
@@ -271,13 +271,15 @@ describe("useTableView - Column Custom APIs", () => {
         properties: mockProperties,
       });
 
-      const dragEvent = {
-        active: { id: "col1", data: { current: {} } },
-        over: { id: "col2", data: { current: {} } },
-      } as DragEndEvent;
-
       act(() => {
-        table.handleColumnDragEnd(dragEvent);
+        table.handleColumnDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: "col1" },
+            target: { id: "col2" },
+          },
+        } as DragEndEvent);
       });
 
       const columnOrder = table.store.state.columnOrder;
@@ -294,13 +296,15 @@ describe("useTableView - Column Custom APIs", () => {
         properties: mockProperties,
       });
 
-      const dragEvent = {
-        active: { id: "col2", data: { current: {} } },
-        over: { id: "col1", data: { current: {} } },
-      } as DragEndEvent;
-
       act(() => {
-        table.handleColumnDragEnd(dragEvent);
+        table.handleColumnDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: "col1" },
+            target: { id: "col2" },
+          },
+        } as DragEndEvent);
       });
 
       const columnOrder = table.store.state.columnOrder;

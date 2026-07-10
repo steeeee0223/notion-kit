@@ -3,7 +3,7 @@
  * Tests for grouping states, visibility controls, and aggregate display
  */
 
-import type { DragEndEvent } from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/react";
 import { act } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
@@ -392,8 +392,7 @@ describe("useTableView - Extended Grouping", () => {
   });
 
   describe("Group DnD", () => {
-    // Skip this test - handleGroupedRowDragEnd may not be fully implemented
-    it.skip("should handle group row drag end", () => {
+    it("should handle group row drag end", () => {
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
@@ -411,13 +410,15 @@ describe("useTableView - Extended Grouping", () => {
       const firstGroupId = initialGroupOrder[0]!;
       const secondGroupId = initialGroupOrder[1]!;
 
-      const dragEvent = {
-        active: { id: firstGroupId, data: { current: {} } },
-        over: { id: secondGroupId, data: { current: {} } },
-      } as DragEndEvent;
-
       act(() => {
-        table.handleGroupedRowDragEnd(dragEvent);
+        table.handleGroupedRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: firstGroupId },
+            target: { id: secondGroupId },
+          },
+        } as DragEndEvent);
       });
 
       const newGroupOrder = table.store.state.groupingState.groupOrder;
