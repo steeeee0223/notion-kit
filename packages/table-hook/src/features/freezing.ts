@@ -65,6 +65,7 @@ export const FreezingFeature: TableFeature = {
         left: normalizedState
           ? table.store.state.columnOrder.slice(0, normalizedState.index + 1)
           : [],
+        right: [],
       });
     };
     table.toggleColumnFreezed = (colId) => {

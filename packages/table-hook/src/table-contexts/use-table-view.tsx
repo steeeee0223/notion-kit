@@ -65,7 +65,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
         const plugin = plugins.items[property.type]!;
         return {
           id: property.id,
-          accessorKey: property.name,
+          accessorFn: (row) => row.properties[colId]?.value,
           minSize: getMinWidth(property.type),
           sortFn: (rowA, rowB, colId) =>
             resolveSortingMethod(plugin)?.function(
