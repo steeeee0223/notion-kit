@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { RowData } from "@tanstack/react-table";
 
@@ -24,8 +23,8 @@ import {
 } from "./freezing";
 import {
   ExtendedGroupingFeature,
-  ExtendedGroupingRowApi,
   type ExtendedGroupingOptions,
+  type ExtendedGroupingRowApi,
   type ExtendedGroupingTableApi,
   type ExtendedGroupingTableState,
 } from "./grouping";

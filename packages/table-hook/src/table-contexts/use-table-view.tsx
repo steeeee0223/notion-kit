@@ -1,7 +1,6 @@
 // @ts-nocheck
-"use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   columnGroupingFeature,
   columnOrderingFeature,
@@ -50,6 +49,10 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   const [_columnEntity, setColumnEntity] = useState(
     toPropertyEntity(plugins.items, properties),
   );
+  useEffect(() => {
+    if (isPropertiesControlled) return;
+    setColumnEntity(toPropertyEntity(plugins.items, properties));
+  }, [isPropertiesControlled, plugins.items, properties]);
   // Use memoized entity for controlled properties
   const columnEntity = useMemo(
     () =>

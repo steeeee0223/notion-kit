@@ -194,8 +194,11 @@ export const ColumnsInfoFeature: TableFeature = {
       });
     };
     table.addColumnInfo = (payload) => {
-      const { cellPlugins } = table.store.state;
+      const { cellPlugins, columnsInfo } = table.store.state;
       const { id, name, type, at } = payload;
+      if (columnsInfo[id]) {
+        throw new Error(`[TableView] Column already exists: "${id}"`);
+      }
       const plugin = cellPlugins[type];
       if (!plugin) {
         throw new Error(`[TableView] Plugin not found: ${type}`);

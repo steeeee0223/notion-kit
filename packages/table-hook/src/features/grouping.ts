@@ -152,30 +152,6 @@ export const ExtendedGroupingFeature: TableFeature = {
       });
     };
 
-    const getGroupingEntriesFromRows = () => {
-      const info = table.getGroupedColumnInfo();
-      if (!info) return [];
-
-      return table.getGroupedRowModel().rows.reduce<
-        {
-          id: string;
-          value: ComparableValue;
-          original: InferData<CellPlugin>;
-        }[]
-      >((acc, row) => {
-        const colId = row.groupingColumnId;
-        if (!colId) return acc;
-
-        acc.push({
-          id: row.id,
-          value: row.getGroupingValue(colId) as ComparableValue,
-          original: row.original.properties[colId]
-            ?.value as InferData<CellPlugin>,
-        });
-        return acc;
-      }, []);
-    };
-
     const getGroupingEntriesFromData = (rows: RowModel[]) => {
       const info = table.getGroupedColumnInfo();
       if (!info) return [];
@@ -221,7 +197,12 @@ export const ExtendedGroupingFeature: TableFeature = {
       table.options.onGroupingStateChange?.(updater);
     };
     table._syncGroupingState = (options) => {
-      applyGroupingEntries(getGroupingEntriesFromRows(), options);
+      applyGroupingEntries(
+        getGroupingEntriesFromData(
+          table.getPreGroupedRowModel().rows.map((row) => row.original),
+        ),
+        options,
+      );
     };
     table._syncGroupingStateFromData = (rows, options) => {
       applyGroupingEntries(getGroupingEntriesFromData(rows), options);
@@ -308,14 +289,11 @@ export const ExtendedGroupingFeature: TableFeature = {
     };
     table.getPlaceholderGroupedRow = (groupId) => {
       const { groupValues } = table.store.state.groupingState;
-      return constructRow(
-        table,
-        groupId,
-        groupValues[groupId]?.original as RowModel,
-        0,
-        0,
-        [],
-      );
+      const original = groupValues[groupId]?.original ?? {
+        id: groupId,
+        properties: {},
+      };
+      return constructRow(table, groupId, original as RowModel, 0, 0, []);
     };
   },
 

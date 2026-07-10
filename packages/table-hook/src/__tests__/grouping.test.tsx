@@ -118,6 +118,47 @@ describe("useTableView - Extended Grouping", () => {
         expect(groupValue?.original).toBeDefined();
       });
     });
+
+    it("should include each grouped flat row exactly once", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      const flatRowIds = table
+        .getGroupedRowModel()
+        .flatRows.map((row) => row.id);
+      expect(new Set(flatRowIds).size).toBe(flatRowIds.length);
+    });
+
+    it("should preserve hidden group metadata when regrouping", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      const hiddenGroupId = table.store.state.groupingState.groupOrder[0]!;
+
+      act(() => {
+        table.toggleGroupVisible(hiddenGroupId);
+        table.setGrouping(["col2"]);
+      });
+
+      expect(table.store.state.groupingState.groupOrder).toContain(
+        hiddenGroupId,
+      );
+      expect(
+        table.store.state.groupingState.groupValues[hiddenGroupId],
+      ).toBeDefined();
+    });
   });
 
   describe("Group Visibility", () => {
@@ -245,16 +286,15 @@ describe("useTableView - Extended Grouping", () => {
 
       const row = table.getGroupedRowModel().rows[0];
 
-      if (row?.getIsGrouped()) {
-        const initialState = row.getShouldShowGroupAggregates();
+      expect(row?.getIsGrouped()).toBe(true);
+      const initialState = row!.getShouldShowGroupAggregates();
 
-        act(() => {
-          row.toggleGroupAggregates();
-        });
+      act(() => {
+        row!.toggleGroupAggregates();
+      });
 
-        const toggledState = row.getShouldShowGroupAggregates();
-        expect(toggledState).toBe(!initialState);
-      }
+      const toggledState = row!.getShouldShowGroupAggregates();
+      expect(toggledState).toBe(!initialState);
     });
 
     it("should default to showing aggregates", () => {
@@ -269,9 +309,8 @@ describe("useTableView - Extended Grouping", () => {
 
       const row = table.getGroupedRowModel().rows[0];
 
-      if (row?.getIsGrouped()) {
-        expect(row.getShouldShowGroupAggregates()).toBe(true);
-      }
+      expect(row?.getIsGrouped()).toBe(true);
+      expect(row!.getShouldShowGroupAggregates()).toBe(true);
     });
   });
 
@@ -446,19 +485,18 @@ describe("useTableView - Extended Grouping", () => {
 
       const groupedRow = table.getGroupedRowModel().rows[0];
 
-      if (groupedRow?.getIsGrouped()) {
-        const groupId = groupedRow.id;
-        const initialVisibility =
-          table.store.state.groupingState.groupVisibility[groupId] ?? true;
+      expect(groupedRow?.getIsGrouped()).toBe(true);
+      const groupId = groupedRow!.id;
+      const initialVisibility =
+        table.store.state.groupingState.groupVisibility[groupId] ?? true;
 
-        act(() => {
-          groupedRow.toggleGroupVisibility();
-        });
+      act(() => {
+        groupedRow!.toggleGroupVisibility();
+      });
 
-        const newVisibility =
-          table.store.state.groupingState.groupVisibility[groupId];
-        expect(newVisibility).toBe(!initialVisibility);
-      }
+      const newVisibility =
+        table.store.state.groupingState.groupVisibility[groupId];
+      expect(newVisibility).toBe(!initialVisibility);
     });
   });
 });

@@ -186,6 +186,15 @@ describe("useTableView - Freezing Feature", () => {
 
       expect(table.getCanFreezeColumn("col3")).toBe(false);
     });
+
+    it("should not allow freezing a missing column", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      expect(table.getCanFreezeColumn("missing")).toBe(false);
+    });
   });
 
   describe("Pinning Integration", () => {
@@ -235,6 +244,37 @@ describe("useTableView - Freezing Feature", () => {
 
       const columnPinning = table.store.state.columnPinning;
       expect(columnPinning.left).toEqual([]);
+    });
+
+    it("should preserve right-pinned columns when freezing left columns", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.setColumnPinning({ left: [], right: ["col3"] });
+        table.setColumnFreezing({ colId: "col1", index: 0 });
+      });
+
+      expect(table.store.state.columnPinning).toEqual({
+        left: ["col1"],
+        right: ["col3"],
+      });
+    });
+
+    it("should not freeze the last column through toggle", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.toggleColumnFreezed("col3");
+      });
+
+      expect(table.getFreezingState()).toBeNull();
+      expect(table.store.state.columnPinning.left).toEqual([]);
     });
   });
 

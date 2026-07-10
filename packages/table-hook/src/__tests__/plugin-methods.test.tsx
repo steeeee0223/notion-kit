@@ -1,9 +1,18 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, render, renderHook, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import type { ColumnInfo, Row } from "../lib/types";
 import { arrayToEntity } from "../lib/utils";
-import type { CellPlugin } from "../plugins";
+import { compareNumbers } from "../methods";
+import {
+  checkbox,
+  DefaultGroupingValue,
+  number,
+  select,
+  type CellPlugin,
+  type GroupingValueProps,
+} from "../plugins";
+import { createCompareFn } from "../plugins/utils";
 import { useTableView } from "../table-contexts/use-table-view";
 
 const reverseTextPlugin: CellPlugin<"reverse-text", string, undefined> = {
@@ -131,5 +140,61 @@ describe("cell plugin registered methods", () => {
     });
 
     expect(table.getColumnCountResult("col1")).toBe("3");
+  });
+});
+
+describe("built-in plugin helpers", () => {
+  it("converts common checkbox strings without treating every non-empty string as checked", () => {
+    const plugin = checkbox();
+
+    expect(plugin.fromValue("false", undefined)).toBe(false);
+    expect(plugin.fromValue("0", undefined)).toBe(false);
+    expect(plugin.fromValue("", undefined)).toBe(false);
+    expect(plugin.fromValue("true", undefined)).toBe(true);
+    expect(plugin.fromValue("1", undefined)).toBe(true);
+  });
+
+  it("keeps empty and invalid number values as null", () => {
+    const plugin = number();
+
+    expect(plugin.fromValue(null, undefined)).toBeNull();
+    expect(plugin.fromValue("", undefined)).toBeNull();
+    expect(plugin.fromValue("not-a-number", undefined)).toBeNull();
+    expect(plugin.fromValue("0", undefined)).toBe(0);
+    expect(plugin.fromValue(12, undefined)).toBe(12);
+  });
+
+  it("converts falsy select primitives without dropping them", () => {
+    const plugin = select();
+
+    expect(plugin.fromValue(null, undefined)).toBeNull();
+    expect(plugin.fromValue(0, undefined)).toEqual({ name: "0" });
+    expect(plugin.fromValue(false, undefined)).toEqual({ name: "false" });
+  });
+
+  it("renders boolean and empty grouping labels visibly", () => {
+    const table = {} as GroupingValueProps["table"];
+    const { rerender } = render(
+      <DefaultGroupingValue table={table} value={false} />,
+    );
+    expect(screen.getByText("False")).toBeTruthy();
+
+    rerender(<DefaultGroupingValue table={table} value={null} />);
+    expect(screen.getByText("(Empty)")).toBeTruthy();
+  });
+
+  it("sorts rows with missing cells without passing undefined to comparators", () => {
+    const compare =
+      createCompareFn<CellPlugin<"number", number, undefined>>(compareNumbers);
+    const rowWithMissingCell = { properties: {} } as Row;
+    const rowWithNumber = {
+      id: "row1",
+      createdAt: 0,
+      lastEditedAt: 0,
+      properties: { col1: { id: "cell1", value: 1 } },
+    } as Row;
+
+    expect(compare(rowWithMissingCell, rowWithNumber, "col1")).toBeLessThan(0);
+    expect(compare(rowWithMissingCell, rowWithMissingCell, "col1")).toBe(0);
   });
 });

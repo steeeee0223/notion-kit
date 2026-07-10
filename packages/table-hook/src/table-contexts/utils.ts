@@ -54,9 +54,14 @@ export function toPropertyEntity<TPlugins extends CellPlugin[]>(
 ) {
   return properties.reduce<Entity<ColumnInfo>>(
     (acc, property) => {
+      const plugin = plugins[property.type];
+      if (!plugin) {
+        console.warn(`[TableView] Plugin not found for type: ${property.type}`);
+        return acc;
+      }
       acc.ids.push(property.id);
       acc.items[property.id] = {
-        config: plugins[property.type]!.default.config,
+        config: plugin.default.config,
         ...property,
       };
       return acc;

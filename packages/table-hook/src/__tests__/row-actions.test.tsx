@@ -470,6 +470,53 @@ describe("useTableView - Row Custom APIs", () => {
       expect(table.getRow("row1").original.properties.col2?.value).toBe(30);
     });
 
+    it("rolls back kanban row preview when drag is canceled", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      act(() => {
+        table.handleKanbanRowDragOver({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: {
+              id: "row1",
+              type: "item",
+              data: { columnId: "col2:25" },
+              manager: {
+                dragOperation: {
+                  position: { current: { x: 0, y: 0 } },
+                },
+              },
+            },
+            target: { id: "row2", type: "item", data: { columnId: "col2:30" } },
+          },
+        } as unknown as DragOverEvent);
+      });
+
+      expect(table.getRow("row1").original.properties.col2?.value).toBe(30);
+
+      act(() => {
+        table.handleRowDragEnd({
+          canceled: true,
+          operation: {
+            canceled: true,
+            source: { id: "row1" },
+            target: { id: "row2" },
+          },
+        } as DragEndEvent);
+      });
+
+      expect(table.getRow("row1").original.properties.col2?.value).toBe(25);
+      expect(table.getRow("row2").original.properties.col2?.value).toBe(30);
+    });
+
     it("moves a kanban row into an emptied column-content target", () => {
       const { table } = renderTableHook({
         data: mockData,
@@ -561,6 +608,29 @@ describe("useTableView - Row Custom APIs", () => {
         const cell = table.getCell("col1", "row1");
         expect(cell.value).toBe("Updated");
       });
+    });
+
+    it("should ignore updates for missing cells", () => {
+      const { table } = renderTableHook({
+        data: [
+          {
+            ...mockData[0]!,
+            properties: { col1: mockData[0]!.properties.col1! },
+          },
+        ],
+        properties: mockProperties,
+      });
+
+      expect(() => {
+        act(() => {
+          table.updateCell("row1", "col2", (prev) => ({
+            ...prev,
+            value: 42,
+          }));
+        });
+      }).not.toThrow();
+
+      expect(table.getRow("row1").original.properties.col2).toBeUndefined();
     });
 
     it("should update lastEditedAt timestamp when cell changes", async () => {

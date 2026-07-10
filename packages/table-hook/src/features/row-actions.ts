@@ -160,6 +160,8 @@ export const RowActionsFeature: TableFeature = {
     return {};
   },
   constructTableAPIs: (table: Table<Row>) => {
+    let kanbanDragSnapshot: Row[] | null = null;
+
     const scheduleGroupingStateSync = (rows: Row[]) => {
       if (table.store.state.grouping.length > 0) {
         queueMicrotask(() => {
@@ -201,7 +203,9 @@ export const RowActionsFeature: TableFeature = {
         const now = Date.now();
         const next = prev.map((row) => {
           if (row.id !== rowId) return row;
-          const data = functionalUpdate(updater, row.properties[colId]!);
+          const currentCell = row.properties[colId];
+          if (!currentCell) return row;
+          const data = functionalUpdate(updater, currentCell as Cell<TPlugin>);
           return {
             ...row,
             properties: { ...row.properties, [colId]: data },
@@ -296,6 +300,7 @@ export const RowActionsFeature: TableFeature = {
         );
         const nextItems = getKanbanItemsAfterDrag(currentItems, event);
         if (nextItems === currentItems) return rows;
+        kanbanDragSnapshot ??= rows;
 
         const next = applyKanbanItemsToRows(
           rows,
@@ -309,7 +314,18 @@ export const RowActionsFeature: TableFeature = {
       });
     };
     table.handleRowDragEnd = (event, options = {}) => {
-      if (event.canceled) return;
+      if (event.canceled) {
+        if (kanbanDragSnapshot) {
+          const snapshot = kanbanDragSnapshot;
+          kanbanDragSnapshot = null;
+          table.setTableData(() => {
+            scheduleGroupingStateSync(snapshot);
+            return snapshot;
+          });
+        }
+        return;
+      }
+      kanbanDragSnapshot = null;
 
       const { grouping, groupingState } = table.store.state;
       const groupingColumnId = grouping[0];
@@ -356,7 +372,8 @@ export const RowActionsFeature: TableFeature = {
     table.updateRowIcon = (id, icon) => {
       const colId = table.store.state.columnOrder.find(
         (propId) => table.getColumnPlugin(propId).id === "title",
-      )!;
+      );
+      if (!colId) return;
       table.setTableData((prev) => {
         const now = Date.now();
         return prev.map((row) => {

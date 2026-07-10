@@ -55,7 +55,8 @@ export const FreezingFeature: TableFeature = {
     };
     table.getCanFreezeColumn = (colId) => {
       throwIfDisabled();
-      return table.store.state.columnOrder.at(-1) !== colId;
+      const index = table.store.state.columnOrder.indexOf(colId);
+      return index >= 0 && index < table.store.state.columnOrder.length - 1;
     };
     table.setColumnFreezing = (updater) => {
       const nextState = functionalUpdate(updater, table.getFreezingState());
@@ -65,16 +66,18 @@ export const FreezingFeature: TableFeature = {
         left: normalizedState
           ? table.store.state.columnOrder.slice(0, normalizedState.index + 1)
           : [],
-        right: [],
+        right: table.store.state.columnPinning.right ?? [],
       });
     };
     table.toggleColumnFreezed = (colId) => {
       const index = table.getColumn(colId)?.getIndex();
       if (index === undefined)
         throw new Error(`[TableView] Column with id "${colId}" not found.`);
-      table.setColumnFreezing((prev) =>
-        prev?.colId === colId ? null : { colId, index },
-      );
+      table.setColumnFreezing((prev) => {
+        if (prev?.colId === colId) return null;
+        if (!table.getCanFreezeColumn(colId)) return prev;
+        return { colId, index };
+      });
     };
   },
 };

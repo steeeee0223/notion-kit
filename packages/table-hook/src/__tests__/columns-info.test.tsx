@@ -4,10 +4,11 @@
  */
 
 import type { DragEndEvent } from "@dnd-kit/react";
-import { act, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { mockData, mockProperties, renderTableHook } from "./mock";
+import { useTableView } from "../table-contexts/use-table-view";
+import { mockData, mockProperties, plugins, renderTableHook } from "./mock";
 
 describe("useTableView - Column Custom APIs", () => {
   describe("Column Visibility Source", () => {
@@ -39,6 +40,38 @@ describe("useTableView - Column Custom APIs", () => {
       await waitFor(() => {
         expect(table.getColumnInfo("col2").hidden).toBe(true);
       });
+    });
+
+    it("should sync uncontrolled column info when properties props change", () => {
+      const { result, rerender } = renderHook(
+        ({ properties }) =>
+          useTableView({ data: mockData, properties, plugins }),
+        { initialProps: { properties: mockProperties } },
+      );
+
+      expect(result.current.table.store.state.columnOrder).toEqual([
+        "col1",
+        "col2",
+      ]);
+
+      rerender({
+        properties: [
+          ...mockProperties,
+          {
+            id: "col3",
+            name: "Email",
+            type: "text",
+            width: "200",
+            config: undefined,
+          },
+        ],
+      });
+
+      expect(result.current.table.store.state.columnOrder).toEqual([
+        "col1",
+        "col2",
+        "col3",
+      ]);
     });
   });
 
@@ -125,6 +158,45 @@ describe("useTableView - Column Custom APIs", () => {
         expect(row.original.properties.col3).toBeDefined();
         expect(row.original.properties.col3?.value).toBeDefined();
       });
+    });
+
+    it("should reject duplicate column ids without overwriting existing cells", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+      const originalValue = table.getRow("row1").original.properties.col1;
+
+      expect(() => {
+        act(() => {
+          table.addColumnInfo({
+            id: "col1",
+            name: "Duplicate",
+            type: "text",
+          });
+        });
+      }).toThrow('[TableView] Column already exists: "col1"');
+
+      expect(table.store.state.columnOrder).toEqual(["col1", "col2"]);
+      expect(table.getRow("row1").original.properties.col1).toBe(originalValue);
+    });
+
+    it("should append when the requested insertion anchor is missing", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.addColumnInfo({
+          id: "col3",
+          name: "Email",
+          type: "text",
+          at: { id: "missing", side: "left" },
+        });
+      });
+
+      expect(table.store.state.columnOrder).toEqual(["col1", "col2", "col3"]);
     });
   });
 

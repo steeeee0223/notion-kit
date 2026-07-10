@@ -11,6 +11,7 @@ export function createIdsUpdater(
   return (prev) => {
     if (at === undefined) return [...prev, targetId];
     const idx = prev.indexOf(at.id);
+    if (idx < 0) return [...prev, targetId];
     return at.side === "right"
       ? insertAt(prev, targetId, idx + 1)
       : insertAt(prev, targetId, idx);

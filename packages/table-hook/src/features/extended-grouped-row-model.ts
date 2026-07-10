@@ -62,10 +62,6 @@ export function getExtendedGroupedRowModel<TData extends RowData>(): (
 
               row.depth = depth;
 
-              // Add to flat arrays immediately
-              groupedFlatRows.push(row);
-              groupedRowsById[row.id] = row;
-
               if (row.subRows.length > 0) {
                 row.subRows = groupUpRecursively(
                   row.subRows,
@@ -118,6 +114,9 @@ export function getExtendedGroupedRowModel<TData extends RowData>(): (
             const leafRows = depth
               ? flattenBy(groupedRows, (row) => row.subRows)
               : groupedRows;
+            if (leafRows.length === 0) {
+              continue;
+            }
 
             const row = constructRow(
               table,
@@ -169,12 +168,6 @@ export function getExtendedGroupedRowModel<TData extends RowData>(): (
               },
             });
 
-            // Add subRows to flat arrays during recursion
-            subRows.forEach((subRow) => {
-              groupedFlatRows.push(subRow);
-              groupedRowsById[subRow.id] = subRow;
-            });
-
             aggregatedGroupedRows.push(row);
           }
 
@@ -188,10 +181,12 @@ export function getExtendedGroupedRowModel<TData extends RowData>(): (
           groupedRows = reorderGroupsByRowId(groupedRows, groupOrder);
         }
 
-        // Add top-level groups to flat arrays
-        groupedRows.forEach((subRow) => {
-          groupedFlatRows.push(subRow);
-          groupedRowsById[subRow.id] = subRow;
+        groupedRows.forEach((row, index) => {
+          row.index = index;
+        });
+
+        groupedRows.forEach((row) => {
+          collectFlatRows(row, groupedFlatRows, groupedRowsById);
         });
 
         return {
@@ -205,6 +200,18 @@ export function getExtendedGroupedRowModel<TData extends RowData>(): (
         table._autoResetPageIndex?.();
       },
     });
+}
+
+function collectFlatRows<TData extends RowData>(
+  row: Row<TData>,
+  flatRows: Row<TData>[],
+  rowsById: Record<string, Row<TData>>,
+) {
+  flatRows.push(row);
+  rowsById[row.id] = row;
+  row.subRows.forEach((subRow) => {
+    collectFlatRows(subRow, flatRows, rowsById);
+  });
 }
 
 function groupBy<TData extends RowData>(rows: Row<TData>[], columnId: string) {

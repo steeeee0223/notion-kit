@@ -114,7 +114,34 @@ export function checkbox(): CheckboxPlugin {
       data: false,
       config: undefined,
     },
-    fromValue: (value) => Boolean(value),
+    fromValue: (value) => {
+      if (typeof value === "boolean") return value;
+      if (typeof value === "number") return value !== 0;
+      if (typeof value === "string") {
+        const normalized = value.trim().toLowerCase();
+        if (
+          normalized === "" ||
+          normalized === "false" ||
+          normalized === "0" ||
+          normalized === "no" ||
+          normalized === "off" ||
+          normalized === "unchecked"
+        ) {
+          return false;
+        }
+        if (
+          normalized === "true" ||
+          normalized === "1" ||
+          normalized === "yes" ||
+          normalized === "on" ||
+          normalized === "checked" ||
+          normalized === "v"
+        ) {
+          return true;
+        }
+      }
+      return Boolean(value);
+    },
     toValue: (data) => data,
     toTextValue: (data) => (data ? "v" : ""),
     sorting: {
@@ -140,7 +167,12 @@ export function number(): NumberPlugin {
       data: null,
       config: undefined,
     },
-    fromValue: (value) => (typeof value === "number" ? value : Number(value)),
+    fromValue: (value) => {
+      if (value === null) return null;
+      if (typeof value === "string" && value.trim() === "") return null;
+      const next = typeof value === "number" ? value : Number(value);
+      return Number.isFinite(next) ? next : null;
+    },
     toValue: (data) => data,
     toTextValue: (data) => data?.toString() ?? "",
     sorting: {
@@ -166,7 +198,7 @@ export function select(): SelectPlugin {
       data: null,
       config: undefined,
     },
-    fromValue: (value) => (value ? { name: value.toString() } : null),
+    fromValue: (value) => (value === null ? null : { name: value.toString() }),
     toValue: (data) => data?.name ?? null,
     toTextValue: (data) => data?.name ?? "",
     sorting: {
