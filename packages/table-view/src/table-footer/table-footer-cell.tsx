@@ -1,6 +1,7 @@
 import type { HeaderContext } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
+import { CountMethod, type Row } from "@notion-kit/table-hook";
 import {
   Button,
   DropdownMenu,
@@ -8,8 +9,6 @@ import {
   DropdownMenuTrigger,
 } from "@notion-kit/ui/primitives";
 
-import { CountMethod } from "@/features";
-import { Row } from "@/lib/types";
 import { CalcMenu, countMethodHint } from "@/menus";
 import type { CellPlugin, InferKey } from "@/plugins";
 import { useTableViewCtx } from "@/table-contexts";

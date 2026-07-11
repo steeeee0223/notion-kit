@@ -25,7 +25,7 @@ describe("useTableView - Column Custom APIs", () => {
         });
       });
 
-      const columnOrder = table.getState().columnOrder;
+      const columnOrder = table.store.state.columnOrder;
       expect(columnOrder).toContain("col3");
       expect(columnOrder[columnOrder.length - 1]).toBe("col3");
     });
@@ -45,7 +45,7 @@ describe("useTableView - Column Custom APIs", () => {
         });
       });
 
-      const columnOrder = table.getState().columnOrder;
+      const columnOrder = table.store.state.columnOrder;
       const col1Index = columnOrder.indexOf("col1");
       const col3Index = columnOrder.indexOf("col3");
 
@@ -67,7 +67,7 @@ describe("useTableView - Column Custom APIs", () => {
         });
       });
 
-      const columnOrder = table.getState().columnOrder;
+      const columnOrder = table.store.state.columnOrder;
       const col2Index = columnOrder.indexOf("col2");
       const col3Index = columnOrder.indexOf("col3");
 
@@ -107,7 +107,7 @@ describe("useTableView - Column Custom APIs", () => {
         table.removeColumnInfo("col2");
       });
 
-      const columnOrder = table.getState().columnOrder;
+      const columnOrder = table.store.state.columnOrder;
       expect(columnOrder).not.toContain("col2");
     });
 
@@ -121,7 +121,7 @@ describe("useTableView - Column Custom APIs", () => {
         table.removeColumnInfo("col2");
       });
 
-      const columnsInfo = table.getState().columnsInfo;
+      const columnsInfo = table.store.state.columnsInfo;
       expect(columnsInfo.col2).toBeUndefined();
     });
 
@@ -148,13 +148,13 @@ describe("useTableView - Column Custom APIs", () => {
         data: mockData,
         properties: mockProperties,
       });
-      const originalLength = table.getState().columnOrder.length;
+      const originalLength = table.store.state.columnOrder.length;
 
       act(() => {
         table.duplicateColumnInfo("col1");
       });
 
-      const columnOrder = table.getState().columnOrder;
+      const columnOrder = table.store.state.columnOrder;
       expect(columnOrder.length).toBe(originalLength + 1);
     });
 
@@ -168,7 +168,7 @@ describe("useTableView - Column Custom APIs", () => {
         table.duplicateColumnInfo("col1");
       });
 
-      const columnOrder = table.getState().columnOrder;
+      const columnOrder = table.store.state.columnOrder;
       const col1Index = columnOrder.indexOf("col1");
       const duplicateId = columnOrder[col1Index + 1];
 
@@ -186,9 +186,9 @@ describe("useTableView - Column Custom APIs", () => {
         table.duplicateColumnInfo("col1");
       });
 
-      const columnOrder = table.getState().columnOrder;
+      const columnOrder = table.store.state.columnOrder;
       const duplicateId = columnOrder[1]; // Should be right after col1
-      const duplicateInfo = table.getState().columnsInfo[duplicateId!];
+      const duplicateInfo = table.store.state.columnsInfo[duplicateId!];
 
       expect(duplicateInfo?.name).not.toBe("Name");
       expect(duplicateInfo?.name).toContain("Name");
@@ -205,9 +205,9 @@ describe("useTableView - Column Custom APIs", () => {
         table.duplicateColumnInfo("col1");
       });
 
-      const columnOrder = table.getState().columnOrder;
+      const columnOrder = table.store.state.columnOrder;
       const duplicateId = columnOrder[1];
-      const duplicateInfo = table.getState().columnsInfo[duplicateId!];
+      const duplicateInfo = table.store.state.columnsInfo[duplicateId!];
 
       expect(duplicateInfo?.type).toBe(originalInfo.type);
     });
@@ -222,7 +222,7 @@ describe("useTableView - Column Custom APIs", () => {
         table.duplicateColumnInfo("col1");
       });
 
-      const columnOrder = table.getState().columnOrder;
+      const columnOrder = table.store.state.columnOrder;
       const duplicateId = columnOrder[1];
       const rows = table.getRowModel().rows;
 
@@ -250,7 +250,7 @@ describe("useTableView - Column Custom APIs", () => {
         } as DragEndEvent);
       });
 
-      const columnOrder = table.getState().columnOrder;
+      const columnOrder = table.store.state.columnOrder;
       // col1 should have moved after col2
       const col1Index = columnOrder.indexOf("col1");
       const col2Index = columnOrder.indexOf("col2");
@@ -275,7 +275,7 @@ describe("useTableView - Column Custom APIs", () => {
         } as DragEndEvent);
       });
 
-      const columnOrder = table.getState().columnOrder;
+      const columnOrder = table.store.state.columnOrder;
       expect(columnOrder[0]).toBe("col2");
     });
   });

@@ -5,6 +5,7 @@ import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import { Kanban } from "@notion-kit/ui/kanban";
+import type { Row as RowModel } from "@notion-kit/table-hook";
 import {
   Button,
   Input,
@@ -15,7 +16,6 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import type { Row as RowModel } from "@/lib/types";
 import { RowActionMenu } from "@/menus";
 import { useTableViewCtx } from "@/table-contexts";
 

@@ -6,7 +6,7 @@ import { Icon } from "@notion-kit/icons";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
-import type { Row } from "@/lib/types";
+import type { Row } from "@notion-kit/table-hook";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { TableGroupedRow } from "./table-grouped-row";
@@ -21,7 +21,7 @@ export function DndTableBody() {
 
   const handleRowDragEnd = useCallback(
     (e: DragEndEvent) => {
-      const isSorted = table.getState().sorting.length > 0;
+      const isSorted = table.store.state.sorting.length > 0;
       if (!isSorted) return table.handleRowDragEnd(e);
       setPendingDragEndEvent(e);
       setDialogOpen(true);
@@ -66,7 +66,7 @@ export function DndTableBody() {
         </div>
         {/* Rows */}
         <div className="relative">
-          {table.getState().columnSizingInfo.isResizingColumn ? (
+          {table.store.state.columnSizingInfo.isResizingColumn ? (
             <MemoizedTableBody table={table} onRowDragEnd={handleRowDragEnd} />
           ) : (
             <TableBody table={table} onRowDragEnd={handleRowDragEnd} />

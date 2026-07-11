@@ -3,10 +3,10 @@ import { flexRender, type Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
+import type { Row as RowModel } from "@notion-kit/table-hook";
 import { buttonVariants, Sortable } from "@notion-kit/ui/primitives";
 
 import { RowActions } from "@/common";
-import type { Row as RowModel } from "@/lib/types";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface ListRowProps {

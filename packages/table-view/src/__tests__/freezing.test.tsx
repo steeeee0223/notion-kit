@@ -6,7 +6,7 @@
 import { act } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import type { ColumnInfo, Row } from "@/lib/types";
+import type { ColumnInfo, Row } from "@notion-kit/table-hook";
 
 import { renderTableHook } from "./mock";
 
@@ -186,8 +186,8 @@ describe("useTableView - Freezing Feature", () => {
         table.setColumnFreezing({ colId: "col1", index: 0 });
       });
 
-      const columnPinning = table.getState().columnPinning;
-      expect(columnPinning.left).toEqual(["col1"]);
+      const columnPinning = table.store.state.columnPinning;
+      expect(columnPinning.start).toEqual(["col1"]);
     });
 
     it("should pin multiple columns when freezing at higher index", () => {
@@ -200,8 +200,8 @@ describe("useTableView - Freezing Feature", () => {
         table.setColumnFreezing({ colId: "col2", index: 1 });
       });
 
-      const columnPinning = table.getState().columnPinning;
-      expect(columnPinning.left).toEqual(["col1", "col2"]);
+      const columnPinning = table.store.state.columnPinning;
+      expect(columnPinning.start).toEqual(["col1", "col2"]);
     });
 
     it("should clear pinning when unfreezing", () => {
@@ -214,14 +214,14 @@ describe("useTableView - Freezing Feature", () => {
         table.setColumnFreezing({ colId: "col1", index: 0 });
       });
 
-      expect(table.getState().columnPinning.left).toHaveLength(1);
+      expect(table.store.state.columnPinning.start).toHaveLength(1);
 
       act(() => {
         table.setColumnFreezing(null);
       });
 
-      const columnPinning = table.getState().columnPinning;
-      expect(columnPinning.left).toEqual([]);
+      const columnPinning = table.store.state.columnPinning;
+      expect(columnPinning.start).toEqual([]);
     });
   });
 

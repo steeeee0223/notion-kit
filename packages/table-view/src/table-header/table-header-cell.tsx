@@ -3,6 +3,7 @@ import type { HeaderContext } from "@tanstack/react-table";
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import { IconBlock } from "@notion-kit/ui/icon-block";
+import type { Row } from "@notion-kit/table-hook";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +14,6 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { DefaultIcon } from "@/common";
-import type { Row } from "@/lib/types";
 
 import { PropMenu } from "../menus";
 

@@ -6,8 +6,7 @@
 import { act } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { CountMethod } from "@/features";
-import type { Row } from "@/lib/types";
+import { CountMethod, type Row } from "@notion-kit/table-hook";
 
 import { mockData, mockProperties, renderTableHook } from "./mock";
 

@@ -3,12 +3,13 @@ import { beforeEach, vi } from "vitest";
 
 import {
   arrayToEntity,
+  DEFAULT_PLUGINS,
   useTableView,
   type BaseTableProps,
+  type CellPlugin,
+  type ColumnInfo,
+  type Row,
 } from "@notion-kit/table-hook";
-
-import type { ColumnInfo, Row } from "@/lib/types";
-import { DEFAULT_PLUGINS, type CellPlugin } from "@/plugins";
 
 export const plugins = arrayToEntity(DEFAULT_PLUGINS);
 

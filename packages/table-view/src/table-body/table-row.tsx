@@ -3,10 +3,10 @@ import { Cell, flexRender, Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
+import type { Row as RowModel } from "@notion-kit/table-hook";
 import { Checkbox, Sortable } from "@notion-kit/ui/primitives";
 
 import { RowActions, TableRowActionGroup } from "@/common";
-import type { Row as RowModel } from "@/lib/types";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface TableRowProps {
@@ -76,8 +76,8 @@ export function TableRow({ row }: TableRowProps) {
                 </TableRowActionGroup>
               </>
             )}
-            {/* Left pinned columns */}
-            <TableCells cells={row.getLeftVisibleCells()} />
+            {/* Start pinned columns */}
+            <TableCells cells={row.getStartVisibleCells()} />
           </div>
           {/* Center unpinned columns */}
           <TableCells cells={row.getCenterVisibleCells()} />

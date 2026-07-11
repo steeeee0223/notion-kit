@@ -2,18 +2,18 @@ import React from "react";
 import { flexRender } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
+import { CountMethod } from "@notion-kit/table-hook";
 
-import { CountMethod } from "@/features";
 import { useTableViewCtx } from "@/table-contexts";
 
 export function TableFooter() {
   const { table } = useTableViewCtx();
 
-  const leftPinnedHeaders = table.getLeftLeafHeaders();
+  const startPinnedHeaders = table.getStartLeafHeaders();
   const headers = table.getCenterLeafHeaders();
-  const isLeftPinned = leftPinnedHeaders.length > 0;
+  const isStartPinned = startPinnedHeaders.length > 0;
   const isSomeCountMethodSet = Object.values(
-    table.getState().columnCounting,
+    table.store.state.columnCounting,
   ).some((v) => v.method !== CountMethod.NONE);
 
   return (
@@ -25,11 +25,11 @@ export function TableFooter() {
           isSomeCountMethodSet && "opacity-100",
         )}
       >
-        <div className={cn("m-0 inline-flex", isLeftPinned && "flex")}>
+        <div className={cn("m-0 inline-flex", isStartPinned && "flex")}>
           {/* Pinned Columns */}
-          {isLeftPinned && (
+          {isStartPinned && (
             <div className="sticky left-8 z-(--z-col) flex bg-main">
-              {leftPinnedHeaders.map((header) => (
+              {startPinnedHeaders.map((header) => (
                 <React.Fragment key={header.id}>
                   {flexRender(
                     header.column.columnDef.footer,
