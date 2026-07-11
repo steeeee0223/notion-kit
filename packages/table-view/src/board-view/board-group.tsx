@@ -1,9 +1,9 @@
 import type { Row } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
+import type { Row as RowModel } from "@notion-kit/table-hook";
 import { Kanban } from "@notion-kit/ui/kanban";
 import { Button } from "@notion-kit/ui/primitives";
-import type { Row as RowModel } from "@notion-kit/table-hook";
 
 import { GroupActions } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
