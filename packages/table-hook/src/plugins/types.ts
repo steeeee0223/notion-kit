@@ -39,7 +39,7 @@ export type ComparableValue = string | number | boolean | null;
 export interface GroupingValueProps {
   className?: string;
   value: ComparableValue;
-  table: Table<Row>;
+  table: Table<any, Row>;
 }
 
 export interface TableDataAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {

@@ -57,7 +57,7 @@ export class SelectMenuObject {
     await this.tableView.user.type(this.combobox(), value);
   }
 
-  async choose(name: string) {
+  choose(name: string) {
     fireEvent.click(this.option(name));
   }
 

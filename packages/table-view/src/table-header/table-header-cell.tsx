@@ -1,9 +1,6 @@
-import type { HeaderContext } from "@tanstack/react-table";
-
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import { IconBlock } from "@notion-kit/ui/icon-block";
-import type { Row } from "@notion-kit/table-hook";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,8 +11,16 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { DefaultIcon } from "@/common";
+import type { TableViewHeader, TableViewTable } from "@/table-contexts";
 
 import { PropMenu } from "../menus";
+
+type TableGlobalReader = Pick<TableViewTable, "getTableGlobalState">;
+
+interface TableHeaderCellProps {
+  header: TableViewHeader;
+  table: TableGlobalReader;
+}
 
 /**
  * Table Header Cell
@@ -23,7 +28,7 @@ import { PropMenu } from "../menus";
 export function TableHeaderCell({
   header,
   table,
-}: HeaderContext<Row, unknown>) {
+}: TableHeaderCellProps) {
   const info = header.column.getInfo();
   const isResizing = header.column.getIsResizing();
   const onResizeStart = header.getResizeHandler();

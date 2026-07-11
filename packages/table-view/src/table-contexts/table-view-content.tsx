@@ -13,7 +13,7 @@ import { useTableViewCtx } from "./table-view-provider";
 
 export function TableViewContent() {
   const { table } = useTableViewCtx();
-  const { sorting, columnSizingInfo, columnSizing } = table.store.state;
+  const { sorting, columnResizing, columnSizing } = table.store.state;
   const isSorted = sorting.length > 0;
 
   /**
@@ -37,7 +37,7 @@ export function TableViewContent() {
     [
       // eslint-disable-next-line react-hooks/exhaustive-deps
       table.getFlatHeaders(),
-      columnSizingInfo,
+      columnResizing,
       columnSizing,
     ],
   );

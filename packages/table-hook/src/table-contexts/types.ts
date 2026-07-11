@@ -11,7 +11,7 @@ export interface TableState<TPlugins extends CellPlugin[]> {
 
 export interface BaseTableProps<TPlugins extends CellPlugin[]>
   extends TableState<TPlugins> {
-  defaultColumn?: Partial<ColumnDef<Row<TPlugins>>>;
+  defaultColumn?: Partial<ColumnDef<any, Row<TPlugins>>>;
   table?: Partial<TableGlobalState>;
   getRowUrl?: (rowId: string) => string;
   onDataChange?: OnChangeFn<Row<TPlugins>[]>;

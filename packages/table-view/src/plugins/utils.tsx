@@ -3,15 +3,8 @@ import type { Row } from "@notion-kit/table-hook";
 import type {
   CellPlugin,
   CompareFn,
-  GroupingValueProps,
   InferData,
 } from "./types";
-
-export function DefaultGroupingValue({ value }: GroupingValueProps) {
-  if (typeof value === "string")
-    return <span className="truncate">{value || "(Empty)"}</span>;
-  return <span className="truncate">{value}</span>;
-}
 
 /**
  * Comparison function for strings (case-sensitive)

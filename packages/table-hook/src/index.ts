@@ -14,6 +14,13 @@ export {
   TableViewMenuPage,
   getExtendedGroupedRowModel,
 } from "@/features";
+export type {
+  ColumnsInfoTableState,
+  CountingTableState,
+  ExtendedGroupingTableState,
+  FreezingTableState,
+  TableMenuTableState,
+} from "@/features";
 export {
   CountMethod,
   compareBooleans,

@@ -1,13 +1,11 @@
-import type { Row } from "@tanstack/react-table";
-
 import { Icon } from "@notion-kit/icons";
-import type { Row as RowModel } from "@notion-kit/table-hook";
 import { Button } from "@notion-kit/ui/primitives";
 
 import { GroupActions } from "@/common";
+import type { TableViewRow } from "@/table-contexts";
 
 interface TableGroupedRowProps {
-  row: Row<RowModel>;
+  row: TableViewRow;
 }
 
 export function TableGroupedRow({ row }: TableGroupedRowProps) {

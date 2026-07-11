@@ -1,13 +1,11 @@
 import React, { useCallback, useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
-import type { Table } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
-import type { Row } from "@notion-kit/table-hook";
-import { useTableViewCtx } from "@/table-contexts";
+import { type TableViewTable, useTableViewCtx } from "@/table-contexts";
 
 import { TableGroupedRow } from "./table-grouped-row";
 import { TableRow } from "./table-row";
@@ -66,7 +64,7 @@ export function DndTableBody() {
         </div>
         {/* Rows */}
         <div className="relative">
-          {table.store.state.columnSizingInfo?.isResizingColumn ? (
+          {table.store.state.columnResizing.isResizingColumn ? (
             <MemoizedTableBody table={table} onRowDragEnd={handleRowDragEnd} />
           ) : (
             <TableBody table={table} onRowDragEnd={handleRowDragEnd} />
@@ -101,7 +99,7 @@ export function DndTableBody() {
 }
 
 interface TableBodyProps {
-  table: Table<Row>;
+  table: TableViewTable;
   onRowDragEnd: (e: DragEndEvent) => void;
 }
 

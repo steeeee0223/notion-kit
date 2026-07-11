@@ -3,7 +3,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import type { Row } from "@/lib/types";
 
-export const defaultColumn: Partial<ColumnDef<Row>> = {
+export const defaultColumn: Partial<ColumnDef<any, Row>> = {
   size: 200,
   minSize: 100,
   maxSize: Number.MAX_SAFE_INTEGER,

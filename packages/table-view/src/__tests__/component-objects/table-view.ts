@@ -22,7 +22,7 @@ export class TableViewObject {
     const matcher = this.nameMatcher(name);
     const row = screen
       .getAllByRole("row")
-      .find((row) => matcher.test(row.textContent ?? ""));
+      .find((row) => matcher.test(row.textContent));
     if (!row) throw new Error(`Unable to find row matching ${matcher}`);
     return row;
   }
@@ -31,7 +31,7 @@ export class TableViewObject {
     const rows = screen.getAllByRole("row");
     if (!name) return rows;
     const matcher = this.nameMatcher(name);
-    return rows.filter((row) => matcher.test(row.textContent ?? ""));
+    return rows.filter((row) => matcher.test(row.textContent));
   }
 
   cellButton(rowName: string | RegExp, cellName: string | RegExp) {

@@ -3,7 +3,7 @@ import { TableViewMenuPage } from "@notion-kit/table-hook";
 import { Kanban } from "@notion-kit/ui/kanban";
 import { Button } from "@notion-kit/ui/primitives";
 
-import { useTableViewCtx } from "@/table-contexts";
+import { type TableViewRow, useTableViewCtx } from "@/table-contexts";
 
 import { BoardGroup } from "./board-group";
 import { useBoardDnd } from "./use-board-dnd";
@@ -41,9 +41,10 @@ export function BoardViewContent() {
           )}
           <Kanban.Root {...handlers}>
             {groupOrder.map((groupId, index) => {
-              const row =
+              const row = (
                 groupedRowsById[groupId] ??
-                table.getPlaceholderGroupedRow(groupId);
+                table.getPlaceholderGroupedRow(groupId)
+              ) as TableViewRow;
               return <BoardGroup key={groupId} row={row} index={index} />;
             })}
           </Kanban.Root>

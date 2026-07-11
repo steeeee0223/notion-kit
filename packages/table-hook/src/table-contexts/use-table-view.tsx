@@ -65,7 +65,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   );
   const columns = useMemo(
     () =>
-      columnEntity.ids.map<ColumnDef<Row<TPlugins>>>((colId) => {
+      columnEntity.ids.map<ColumnDef<any, Row<TPlugins>>>((colId) => {
         const property = columnEntity.items[colId]!;
         const plugin = plugins.items[property.type]!;
         return {

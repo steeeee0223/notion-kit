@@ -44,7 +44,7 @@ export class RowActionsObject {
     await this.tableView.user.type(this.searchInput(), value);
   }
 
-  async choose(name: string | RegExp) {
+  choose(name: string | RegExp) {
     fireEvent.click(this.option(name));
   }
 

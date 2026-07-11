@@ -1,11 +1,10 @@
 import React from "react";
-import { flexRender, type Row } from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
 
 import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import { Kanban } from "@notion-kit/ui/kanban";
-import type { Row as RowModel } from "@notion-kit/table-hook";
 import {
   Button,
   Input,
@@ -17,11 +16,11 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { RowActionMenu } from "@/menus";
-import { useTableViewCtx } from "@/table-contexts";
+import { type TableViewRow, useTableViewCtx } from "@/table-contexts";
 
 interface BoardCardProps {
   groupId: string;
-  row: Row<RowModel>;
+  row: TableViewRow;
 }
 
 /**

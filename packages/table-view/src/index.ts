@@ -23,13 +23,13 @@ export {
   title,
   url,
 } from "./plugins";
+export type { DefaultPlugins } from "./plugins";
 export type {
   CellPlugin,
   CellProps,
   ComparableValue,
   CompareFn,
   ConfigMenuProps,
-  DefaultPlugins,
   GroupingValueProps,
   InferCellProps,
   InferConfig,

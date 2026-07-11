@@ -25,6 +25,7 @@ interface CalcMenuProps {
 export function CalcMenu({ id, type }: CalcMenuProps) {
   const { table } = useTableViewCtx();
   const counting = table.getColumnCounting(id);
+  const currentMethod = counting.method as CountMethod;
 
   const { countMethods, percentMethods } = useMemo(() => {
     const countMethods = [
@@ -50,7 +51,7 @@ export function CalcMenu({ id, type }: CalcMenuProps) {
     <DropdownMenuGroup>
       <DropdownMenuCheckboxItem
         label="None"
-        checked={counting.method === CountMethod.NONE}
+        checked={currentMethod === CountMethod.NONE}
         onCheckedChange={() => table.setColumnCountMethod(id, CountMethod.NONE)}
       />
       <DropdownMenuSub>
@@ -71,7 +72,7 @@ export function CalcMenu({ id, type }: CalcMenuProps) {
               <HintItem
                 key={method}
                 {...countMethodHint[method]}
-                checked={counting.method === method}
+                checked={currentMethod === method}
                 onCheckedChange={() => table.setColumnCountMethod(id, method)}
               />
             ))}
@@ -86,7 +87,7 @@ export function CalcMenu({ id, type }: CalcMenuProps) {
               <HintItem
                 key={method}
                 {...countMethodHint[method]}
-                checked={counting.method === method}
+                checked={currentMethod === method}
                 onCheckedChange={() => table.setColumnCountMethod(id, method)}
               />
             ))}

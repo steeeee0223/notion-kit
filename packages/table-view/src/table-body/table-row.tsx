@@ -1,16 +1,19 @@
 import React from "react";
-import { Cell, flexRender, Row } from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
-import type { Row as RowModel } from "@notion-kit/table-hook";
 import { Checkbox, Sortable } from "@notion-kit/ui/primitives";
 
 import { RowActions, TableRowActionGroup } from "@/common";
-import { useTableViewCtx } from "@/table-contexts";
+import {
+  type TableViewCell,
+  type TableViewRow,
+  useTableViewCtx,
+} from "@/table-contexts";
 
 interface TableRowProps {
-  row: Row<RowModel>;
+  row: TableViewRow;
 }
 
 export function TableRow({ row }: TableRowProps) {
@@ -90,7 +93,7 @@ export function TableRow({ row }: TableRowProps) {
 }
 
 interface TableCellsProps {
-  cells: Cell<RowModel, unknown>[];
+  cells: TableViewCell[];
 }
 
 function TableCells({ cells }: TableCellsProps) {

@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { CellContext, flexRender } from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
-import type { ColumnInfo, Row } from "@notion-kit/table-hook";
+import type { ColumnInfo } from "@notion-kit/table-hook";
 import { Button } from "@notion-kit/ui/primitives";
 
 import type { CellPlugin, InferCellProps } from "@/plugins";
+import type { TableViewCell, TableViewTable } from "@/table-contexts";
 
 enum CellMode {
   Normal = "normal",
@@ -13,21 +14,33 @@ enum CellMode {
   Select = "select",
 }
 
-export function TableRowCell<TPlugin extends CellPlugin>({
+type TableGlobalReader = Pick<TableViewTable, "getTableGlobalState">;
+type UnknownCellPlugin = CellPlugin<string, unknown, unknown>;
+
+interface TableRowCellProps {
+  column: TableViewCell["column"];
+  row: TableViewCell["row"];
+  table: TableGlobalReader;
+}
+
+export function TableRowCell({
   column,
   row,
   table,
-}: CellContext<Row<TPlugin[]>, unknown>) {
+}: TableRowCellProps) {
   const [mode] = useState<CellMode>(CellMode.Normal);
 
   const { locked } = table.getTableGlobalState();
   const data = row.original.properties[column.id];
 
   const width = column.getWidth();
-  const info = column.getInfo() as ColumnInfo<TPlugin>;
-  const plugin = column.getPlugin() as TPlugin;
+  const info = column.getInfo() as ColumnInfo<UnknownCellPlugin>;
+  const plugin = column.getPlugin() as UnknownCellPlugin;
 
   if (!data) return null;
+  const cellData: unknown = data.value;
+  const cellConfig: unknown = info.config;
+
   return (
     <div
       id="notion-table-view-cell"
@@ -54,11 +67,11 @@ export function TableRowCell<TPlugin extends CellPlugin>({
         </div>
       )}
       <div className="flex h-full overflow-x-clip" style={{ width }}>
-        {flexRender<InferCellProps<TPlugin>>(plugin.renderCell, {
+        {flexRender<InferCellProps<UnknownCellPlugin>>(plugin.renderCell, {
           propId: column.id,
           row: row.original,
-          data: data.value,
-          config: info.config,
+          data: cellData,
+          config: cellConfig,
           wrapped: info.wrapped,
           disabled: locked,
           layout: "table",

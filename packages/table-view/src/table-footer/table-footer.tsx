@@ -14,7 +14,7 @@ export function TableFooter() {
   const isStartPinned = startPinnedHeaders.length > 0;
   const isSomeCountMethodSet = Object.values(
     table.store.state.columnCounting,
-  ).some((v) => v.method !== CountMethod.NONE);
+  ).some((v) => (v.method as CountMethod) !== CountMethod.NONE);
 
   return (
     <div className="group/footer left-0 z-(--z-row) box-border flex h-8 min-w-full border-t border-t-border-cell bg-main text-sm select-none">

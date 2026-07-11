@@ -1,13 +1,12 @@
-import type { ColumnDef } from "@tanstack/react-table";
-
-import type { Row } from "@notion-kit/table-hook";
-
 import { TableCell } from "@/common/table-cell";
 import { TableRowCell } from "@/table-body/table-row-cell";
 import { TableFooterCell } from "@/table-footer/table-footer-cell";
 import { TableHeaderCell } from "@/table-header/table-header-cell";
+import type { TableViewTable } from "@/table-contexts/table-view-provider";
 
-export const defaultColumn: Partial<ColumnDef<Row>> = {
+export const defaultColumn: NonNullable<
+  TableViewTable["options"]["defaultColumn"]
+> = {
   size: 200,
   minSize: 100,
   maxSize: Number.MAX_SAFE_INTEGER,
@@ -26,9 +25,9 @@ export const defaultColumn: Partial<ColumnDef<Row>> = {
         return <TableRowCell table={table} {...props} />;
     }
   },
-  footer: ({ table, ...props }) => {
+  footer: ({ column, table }) => {
     const { layout } = table.getTableGlobalState();
     if (layout !== "table") return null;
-    return <TableFooterCell table={table} {...props} />;
+    return <TableFooterCell column={column} />;
   },
 };
