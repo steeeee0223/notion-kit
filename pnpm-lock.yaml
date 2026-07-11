@@ -1780,6 +1780,9 @@ importers:
       '@notion-kit/icons':
         specifier: workspace:*
         version: link:../icons
+      '@notion-kit/table-hook':
+        specifier: workspace:*
+        version: link:../table-hook
       '@notion-kit/ui':
         specifier: workspace:*
         version: link:../ui
@@ -1787,8 +1790,8 @@ importers:
         specifier: workspace:*
         version: link:../utils
       '@tanstack/react-table':
-        specifier: catalog:ui
-        version: 8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: v9.0.0-beta.38
+        version: 9.0.0-beta.38(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react:
         specifier: catalog:react19
         version: 19.2.3
