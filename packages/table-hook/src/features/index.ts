@@ -56,15 +56,26 @@ import {
 } from "@/features/row-actions";
 import type { ComparableValue } from "@/plugins";
 
-declare module "@tanstack/react-table" {
+declare module "@tanstack/table-core" {
   // merge our new feature's state with the existing table state
   interface TableState_FeatureMap {
     columnsInfoFeature: ColumnsInfoTableState;
     countingFeature: CountingTableState;
     freezingFeature: FreezingTableState;
     tableMenuFeature: TableMenuTableState;
-    rowActionsFeature: {};
+    rowActionsFeature: Record<never, never>;
     extendedGroupingFeature: ExtendedGroupingTableState;
+  }
+
+  interface TableState_All
+    extends Partial<
+      ColumnsInfoTableState &
+        CountingTableState &
+        FreezingTableState &
+        TableMenuTableState &
+        ExtendedGroupingTableState
+    > {
+    __tableHookStateBrand?: never;
   }
 
   // merge our new feature's options with the existing table options
@@ -117,6 +128,27 @@ export * from "@/features/grouping";
 export * from "@/features/menu";
 export * from "@/features/row-actions";
 export * from "@/features/constants";
+export * from "@/features/types";
+
+export interface TableFeatures {
+  columnGroupingFeature: typeof columnGroupingFeature;
+  columnOrderingFeature: typeof columnOrderingFeature;
+  columnPinningFeature: typeof columnPinningFeature;
+  columnResizingFeature: typeof columnResizingFeature;
+  columnSizingFeature: typeof columnSizingFeature;
+  columnVisibilityFeature: typeof columnVisibilityFeature;
+  rowExpandingFeature: typeof rowExpandingFeature;
+  rowSortingFeature: typeof rowSortingFeature;
+  sortedRowModel: ReturnType<typeof createSortedRowModel>;
+  groupedRowModel: ReturnType<typeof getExtendedGroupedRowModel>;
+  expandedRowModel: ReturnType<typeof createExpandedRowModel>;
+  columnsInfoFeature: typeof ColumnsInfoFeature;
+  countingFeature: typeof CountingFeature;
+  freezingFeature: typeof FreezingFeature;
+  tableMenuFeature: typeof TableMenuFeature;
+  rowActionsFeature: typeof RowActionsFeature;
+  extendedGroupingFeature: typeof ExtendedGroupingFeature;
+}
 
 export const DEFAULT_FEATURES = tableFeatures({
   columnGroupingFeature,
@@ -136,5 +168,4 @@ export const DEFAULT_FEATURES = tableFeatures({
   tableMenuFeature: TableMenuFeature,
   rowActionsFeature: RowActionsFeature,
   extendedGroupingFeature: ExtendedGroupingFeature,
-});
-export type TableFeatures = typeof DEFAULT_FEATURES;
+} satisfies TableFeatures);

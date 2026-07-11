@@ -1,4 +1,3 @@
-// @ts-nocheck
 import type { Updater } from "@tanstack/react-table";
 
 import { insertAt } from "@/lib/utils";

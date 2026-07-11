@@ -1,12 +1,14 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   functionalUpdate,
   useTable,
   type ColumnDef,
   type OnChangeFn,
+  type Updater,
 } from "@tanstack/react-table";
 
 import { DEFAULT_FEATURES, type TableFeatures } from "@/features";
+import type { TableGlobalState } from "@/features/menu";
 import type { ColumnDefs, ColumnInfo, Row } from "@/lib/types";
 import { type Entity } from "@/lib/utils";
 import { resolveGroupingMethod, resolveSortingMethod } from "@/methods";
@@ -35,20 +37,39 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   const isDataControlled = typeof onDataChange !== "undefined";
   const isTableControlled = typeof onTableChange !== "undefined";
   /** columns states */
-  const [_columnEntity, setColumnEntity] = useState(
-    toPropertyEntity(plugins.items, properties),
+  const [_columnEntityState, setColumnEntityState] = useState(() => ({
+    properties,
+    entity: toPropertyEntity(plugins.items, properties),
+  }));
+  let uncontrolledColumnEntity = _columnEntityState.entity;
+  if (!isPropertiesControlled && _columnEntityState.properties !== properties) {
+    uncontrolledColumnEntity = toPropertyEntity(plugins.items, properties);
+    setColumnEntityState({
+      properties,
+      entity: uncontrolledColumnEntity,
+    });
+  }
+  const setColumnEntity = useCallback(
+    (updater: Updater<Entity<ColumnInfo>>) => {
+      setColumnEntityState((prev) => ({
+        ...prev,
+        entity: functionalUpdate(updater, prev.entity),
+      }));
+    },
+    [],
   );
-  useEffect(() => {
-    if (isPropertiesControlled) return;
-    setColumnEntity(toPropertyEntity(plugins.items, properties));
-  }, [isPropertiesControlled, plugins.items, properties]);
   // Use memoized entity for controlled properties
   const columnEntity = useMemo(
     () =>
       isPropertiesControlled
         ? toPropertyEntity(plugins.items, properties)
-        : _columnEntity,
-    [isPropertiesControlled, plugins.items, properties, _columnEntity],
+        : uncontrolledColumnEntity,
+    [
+      isPropertiesControlled,
+      plugins.items,
+      properties,
+      uncontrolledColumnEntity,
+    ],
   );
   const columns = useMemo(
     () =>
@@ -57,7 +78,10 @@ export function useTableView<TPlugins extends CellPlugin[]>({
         const plugin = plugins.items[property.type]!;
         return {
           id: property.id,
-          accessorFn: (row) => row.properties[colId]?.value,
+          accessorFn: (row) => {
+            const value: unknown = row.properties[colId]?.value;
+            return value;
+          },
           minSize: getMinWidth(property.type),
           sortFn: (rowA, rowB, colId) =>
             resolveSortingMethod(plugin)?.function(
@@ -89,7 +113,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
         return next.ids.map((id) => next.items[id]!) as ColumnDefs<TPlugins>;
       });
     },
-    [onPropertiesChange, plugins.items],
+    [onPropertiesChange, plugins.items, setColumnEntity],
   );
 
   /** data state */
@@ -110,11 +134,8 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     }),
     [tableGlobal],
   );
-  const [_tableGlobal, setTableGlobal] = useState(resolvedTableGlobal);
-  useEffect(() => {
-    if (isTableControlled) return;
-    setTableGlobal(resolvedTableGlobal);
-  }, [isTableControlled, resolvedTableGlobal]);
+  const [_tableGlobal, setTableGlobal] =
+    useState<TableGlobalState>(resolvedTableGlobal);
   const tableGlobalState = useMemo(
     () => (isTableControlled ? resolvedTableGlobal : _tableGlobal),
     [isTableControlled, resolvedTableGlobal, _tableGlobal],
@@ -139,7 +160,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   );
 
   /** table instance */
-  const table = useTable({
+  const table = useTable<TableFeatures, Row<TPlugins>>({
     features: DEFAULT_FEATURES,
     columns,
     data: dataEntity,

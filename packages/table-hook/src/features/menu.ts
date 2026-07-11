@@ -1,9 +1,10 @@
-// @ts-nocheck
 import {
   makeStateUpdater,
   type OnChangeFn,
   type TableFeature,
 } from "@tanstack/react-table";
+
+import type { TableInstance } from "@/features/types";
 
 export enum TableViewMenuPage {
   Layout,
@@ -102,42 +103,45 @@ export const TableMenuFeature: TableFeature = {
   },
 
   constructTableAPIs: (table) => {
-    table.getRowUrl = (rowId: string) => table.options.getRowUrl?.(rowId) ?? "";
-    table.getTableMenuState = () => table.store.state.menu;
-    table.setTableMenuState = (menu) => {
-      table.options.onTableMenuChange?.(menu);
+    const instance = table as unknown as TableInstance;
+
+    instance.getRowUrl = (rowId: string) =>
+      instance.options.getRowUrl?.(rowId) ?? "";
+    instance.getTableMenuState = () => instance.store.state.menu;
+    instance.setTableMenuState = (menu) => {
+      instance.options.onTableMenuChange?.(menu);
     };
-    table.getTableGlobalState = () => table.store.state.tableGlobal;
-    table.setTableGlobalState = (updater) => {
-      table.options.onTableGlobalChange?.(updater);
+    instance.getTableGlobalState = () => instance.store.state.tableGlobal;
+    instance.setTableGlobalState = (updater) => {
+      instance.options.onTableGlobalChange?.(updater);
     };
-    table.toggleTableLocked = () => {
-      table.setTableGlobalState((v) => ({ ...v, locked: !v.locked }));
+    instance.toggleTableLocked = () => {
+      instance.setTableGlobalState((v) => ({ ...v, locked: !v.locked }));
     };
-    table.setTableLayout = (layout) => {
-      table.setTableGlobalState((v) => ({ ...v, layout }));
+    instance.setTableLayout = (layout) => {
+      instance.setTableGlobalState((v) => ({ ...v, layout }));
     };
     /** Row view */
-    table.openRow = (id) => {
-      table.setTableGlobalState((v) => ({ ...v, openedRowId: id }));
-      const { rowView } = table.getTableGlobalState();
+    instance.openRow = (id) => {
+      instance.setTableGlobalState((v) => ({ ...v, openedRowId: id }));
+      const { rowView } = instance.getTableGlobalState();
       if (!id || rowView !== "full") return;
-      table.openRowInFullPage(id);
+      instance.openRowInFullPage(id);
     };
-    table.openRowInFullPage = (id) => {
-      table.setTableGlobalState((v) => ({
+    instance.openRowInFullPage = (id) => {
+      instance.setTableGlobalState((v) => ({
         ...v,
         openedRowId: id,
         rowView: "full",
       }));
-      const url = table.getRowUrl(id);
+      const url = instance.getRowUrl(id);
       if (!url || typeof window === "undefined") return;
       window.open(url, "_self");
     };
-    table.openRowInTab = (id) => {
-      const url = table.getRowUrl(id);
+    instance.openRowInTab = (id) => {
+      const url = instance.getRowUrl(id);
       if (typeof window === "undefined") return;
-      window.open(url || "#", "_blank", "noopener,noreferrer");
+      window.open(url, "_blank", "noopener,noreferrer");
     };
   },
 };

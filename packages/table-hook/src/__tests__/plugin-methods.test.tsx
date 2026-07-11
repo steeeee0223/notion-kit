@@ -125,7 +125,10 @@ describe("cell plugin registered methods", () => {
 
     const sortedRows = table.getSortedRowModel().rows;
     expect(
-      sortedRows.map((row) => row.original.properties.col1?.value),
+      sortedRows.map((row) => {
+        const value: unknown = row.original.properties.col1?.value;
+        return value;
+      }),
     ).toEqual(["Bravo", "Beta", "Alpha"]);
 
     act(() => {

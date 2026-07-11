@@ -1,15 +1,10 @@
-// @ts-nocheck
-import type { Table } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import { cn } from "@notion-kit/cn";
 
-import type { Cell, Row } from "@/lib/types";
-import {
-  CountMethod,
-  resolveCountingMethod,
-  type CountingMethod,
-} from "@/methods";
+import type { TableInstance } from "@/features/types";
+import type { Cell } from "@/lib/types";
+import { resolveCountingMethod } from "@/methods";
 import type { CellPlugin, InferData } from "@/plugins";
 
 export interface Entity<T extends { id: string }> {
@@ -53,16 +48,16 @@ export function getUniqueName(name: string, names: string[]) {
   return uniqueName;
 }
 
-export function getCount(table: Table<Row>, colId: string): string {
+export function getCount(table: TableInstance, colId: string): string {
   const { isCapped, method } = table.getColumnCounting(colId);
-  if (method === CountMethod.NONE) return "";
+  if (method === "none") return "";
 
   const plugin = table.getColumnPlugin(colId);
   const rows = table.getCoreRowModel().rows;
   const countingMethod = resolveCountingMethod(plugin, method);
 
   return (
-    (countingMethod as CountingMethod | undefined)?.function({
+    countingMethod?.function({
       table,
       rows,
       colId,

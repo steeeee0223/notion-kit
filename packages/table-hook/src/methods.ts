@@ -1,9 +1,6 @@
-import type { Table, Row as TableRow } from "@tanstack/react-table";
-
+import type { RowInstance, TableInstance } from "@/features/types";
 import type { Row } from "@/lib/types";
 import type { CellPlugin, ComparableValue, CompareFn } from "@/plugins/types";
-
-import type { TableFeatures } from "./features";
 
 export enum CountMethod {
   NONE = "none",
@@ -33,8 +30,8 @@ export interface GroupingMethod<Data = unknown> {
 }
 
 export interface CountingMethodContext {
-  table: Table<TableFeatures, Row>;
-  rows: TableRow<TableFeatures, Row>[];
+  table: TableInstance;
+  rows: RowInstance[];
   colId: string;
   plugin: CellPlugin;
   isCapped?: boolean;
@@ -61,13 +58,19 @@ function getPercentage(a: number, b: number) {
 }
 
 function toComparableString(value: unknown) {
-  return value === null || value === false || typeof value === "undefined"
-    ? ""
-    : value.toString();
+  if (value === null || value === false || typeof value === "undefined") {
+    return "";
+  }
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+  return "";
 }
 
-function getCellData(row: Row, colId: string) {
-  return row.properties[colId]?.value;
+function getCellData(row: Row, colId: string): unknown {
+  const value: unknown = row.properties[colId]?.value;
+  return value;
 }
 
 function createNullableCompareFn<T extends ComparableValue>(
