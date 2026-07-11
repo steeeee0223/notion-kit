@@ -5,6 +5,7 @@ import type {
   Row,
   Table,
   TableFeature,
+  TableFeatures,
 } from "@tanstack/react-table";
 import {
   constructRow,
@@ -74,7 +75,7 @@ export interface ExtendedGroupingTableApi {
   /**
    * Use this to render the empty group
    */
-  getPlaceholderGroupedRow: (groupId: string) => Row<RowModel>;
+  getPlaceholderGroupedRow: (groupId: string) => Row<TableFeatures, RowModel>;
 }
 
 export interface ExtendedGroupingRowApi {
@@ -104,7 +105,7 @@ export const ExtendedGroupingFeature: TableFeature = {
     };
   },
 
-  constructTableAPIs: (table: Table<RowModel>) => {
+  constructTableAPIs: (table: Table<TableFeatures, RowModel>) => {
     const setGrouping = table.setGrouping.bind(table);
     const resetGrouping = table.resetGrouping.bind(table);
 
@@ -187,7 +188,7 @@ export const ExtendedGroupingFeature: TableFeature = {
     table.getGroupedColumnInfo = () => {
       const { grouping } = table.store.state;
       if (grouping.length === 0) return null;
-      return table.getColumnInfo(grouping[0]!);
+      return table.getColumnInfo(grouping[0]);
     };
     table.getIsSomeGroupVisible = () => {
       const { groupOrder, groupVisibility } = table.store.state.groupingState;

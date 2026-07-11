@@ -1,25 +1,12 @@
-// @ts-nocheck
-
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  columnGroupingFeature,
-  columnOrderingFeature,
-  columnPinningFeature,
-  columnResizingFeature,
-  columnSizingFeature,
-  columnVisibilityFeature,
-  createExpandedRowModel,
-  createSortedRowModel,
   functionalUpdate,
-  rowExpandingFeature,
-  rowSortingFeature,
-  tableFeatures,
   useTable,
   type ColumnDef,
   type OnChangeFn,
 } from "@tanstack/react-table";
 
-import { DEFAULT_FEATURES, getExtendedGroupedRowModel } from "@/features";
+import { DEFAULT_FEATURES, type TableFeatures } from "@/features";
 import type { ColumnDefs, ColumnInfo, Row } from "@/lib/types";
 import { type Entity } from "@/lib/utils";
 import { resolveGroupingMethod, resolveSortingMethod } from "@/methods";
@@ -65,7 +52,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   );
   const columns = useMemo(
     () =>
-      columnEntity.ids.map<ColumnDef<any, Row<TPlugins>>>((colId) => {
+      columnEntity.ids.map<ColumnDef<TableFeatures, Row<TPlugins>>>((colId) => {
         const property = columnEntity.items[colId]!;
         const plugin = plugins.items[property.type]!;
         return {
@@ -133,25 +120,6 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     [isTableControlled, resolvedTableGlobal, _tableGlobal],
   );
 
-  const features = useMemo(
-    () =>
-      tableFeatures({
-        columnGroupingFeature,
-        columnOrderingFeature,
-        columnPinningFeature,
-        columnResizingFeature,
-        columnSizingFeature,
-        columnVisibilityFeature,
-        rowExpandingFeature,
-        rowSortingFeature,
-        sortedRowModel: createSortedRowModel(),
-        groupedRowModel: getExtendedGroupedRowModel(),
-        expandedRowModel: createExpandedRowModel(),
-        ...DEFAULT_FEATURES,
-      }),
-    [],
-  );
-
   const tableState = useMemo(
     () => ({
       columnOrder: columnEntity.ids,
@@ -172,7 +140,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
 
   /** table instance */
   const table = useTable({
-    features,
+    features: DEFAULT_FEATURES,
     columns,
     data: dataEntity,
     defaultColumn: defaultColumnOverride ?? defaultColumn,

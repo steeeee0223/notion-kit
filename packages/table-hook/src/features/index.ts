@@ -1,5 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { RowData } from "@tanstack/react-table";
+import {
+  columnGroupingFeature,
+  columnOrderingFeature,
+  columnPinningFeature,
+  columnResizingFeature,
+  columnSizingFeature,
+  columnVisibilityFeature,
+  createExpandedRowModel,
+  createSortedRowModel,
+  rowExpandingFeature,
+  rowSortingFeature,
+  tableFeatures,
+  type RowData,
+} from "@tanstack/react-table";
 
 import {
   ColumnsInfoFeature,
@@ -14,6 +27,7 @@ import {
   type CountingTableApi,
   type CountingTableState,
 } from "@/features/counting";
+import { getExtendedGroupedRowModel } from "@/features/extended-grouped-row-model";
 import {
   FreezingFeature,
   type FreezingOptions,
@@ -104,11 +118,23 @@ export * from "@/features/menu";
 export * from "@/features/row-actions";
 export * from "@/features/constants";
 
-export const DEFAULT_FEATURES = {
+export const DEFAULT_FEATURES = tableFeatures({
+  columnGroupingFeature,
+  columnOrderingFeature,
+  columnPinningFeature,
+  columnResizingFeature,
+  columnSizingFeature,
+  columnVisibilityFeature,
+  rowExpandingFeature,
+  rowSortingFeature,
+  sortedRowModel: createSortedRowModel(),
+  groupedRowModel: getExtendedGroupedRowModel(),
+  expandedRowModel: createExpandedRowModel(),
   columnsInfoFeature: ColumnsInfoFeature,
   countingFeature: CountingFeature,
   freezingFeature: FreezingFeature,
   tableMenuFeature: TableMenuFeature,
   rowActionsFeature: RowActionsFeature,
   extendedGroupingFeature: ExtendedGroupingFeature,
-};
+});
+export type TableFeatures = typeof DEFAULT_FEATURES;

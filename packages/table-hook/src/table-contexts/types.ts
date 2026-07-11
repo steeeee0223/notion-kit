@@ -1,6 +1,6 @@
 import type { ColumnDef, OnChangeFn } from "@tanstack/react-table";
 
-import { TableGlobalState } from "@/features";
+import type { TableFeatures, TableGlobalState } from "@/features";
 import type { ColumnDefs, Row } from "@/lib/types";
 import type { CellPlugin } from "@/plugins";
 
@@ -11,7 +11,7 @@ export interface TableState<TPlugins extends CellPlugin[]> {
 
 export interface BaseTableProps<TPlugins extends CellPlugin[]>
   extends TableState<TPlugins> {
-  defaultColumn?: Partial<ColumnDef<any, Row<TPlugins>>>;
+  defaultColumn?: Partial<ColumnDef<TableFeatures, Row<TPlugins>>>;
   table?: Partial<TableGlobalState>;
   getRowUrl?: (rowId: string) => string;
   onDataChange?: OnChangeFn<Row<TPlugins>[]>;

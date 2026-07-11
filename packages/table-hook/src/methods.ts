@@ -3,6 +3,8 @@ import type { Table, Row as TableRow } from "@tanstack/react-table";
 import type { Row } from "@/lib/types";
 import type { CellPlugin, ComparableValue, CompareFn } from "@/plugins/types";
 
+import type { TableFeatures } from "./features";
+
 export enum CountMethod {
   NONE = "none",
   ALL = "all",
@@ -31,8 +33,8 @@ export interface GroupingMethod<Data = unknown> {
 }
 
 export interface CountingMethodContext {
-  table: Table<any, Row>;
-  rows: TableRow<any, Row>[];
+  table: Table<TableFeatures, Row>;
+  rows: TableRow<TableFeatures, Row>[];
   colId: string;
   plugin: CellPlugin;
   isCapped?: boolean;
