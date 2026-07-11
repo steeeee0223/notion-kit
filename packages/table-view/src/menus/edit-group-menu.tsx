@@ -25,7 +25,7 @@ export function EditGroupMenu() {
 
   const { layout } = table.getTableGlobalState();
   const { groupOrder, groupVisibility, hideEmptyGroups } =
-    table.getState().groupingState;
+    table.store.state.groupingState;
   const col = table.getGroupedColumnInfo();
 
   return (

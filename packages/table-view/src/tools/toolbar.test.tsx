@@ -1,3 +1,4 @@
+import { screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
@@ -53,15 +54,13 @@ describe("Toolbar", () => {
   });
 
   it("Toolbar_SettingsClick_RequestsOneOpenTransition", async () => {
-    const log = vi.spyOn(console, "log").mockImplementation(() => undefined);
     const tableView = renderTableView();
 
     const settings = await tableView.openViewSettings();
 
-    const menuSyncs = log.mock.calls.filter(
-      ([message]) => message === "[table.setTableMenuState] table synced",
-    );
-    expect(menuSyncs).toHaveLength(1);
+    expect(
+      screen.getAllByRole("heading", { name: "View Settings" }),
+    ).toHaveLength(1);
     expect(settings.heading()).toBeVisible();
   });
 

@@ -47,7 +47,7 @@ interface TypesMenuProps {
 export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
   const { table } = useTableViewCtx();
 
-  const plugins = table.getState().cellPlugins;
+  const plugins = table.store.state.cellPlugins;
   const pluginOptions = Object.values(plugins);
   const propType = propId ? table.getColumnInfo(propId).type : null;
   const [search, setSearch] = useState("");

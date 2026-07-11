@@ -66,7 +66,7 @@ export function DndTableBody() {
         </div>
         {/* Rows */}
         <div className="relative">
-          {table.store.state.columnSizingInfo.isResizingColumn ? (
+          {table.store.state.columnSizingInfo?.isResizingColumn ? (
             <MemoizedTableBody table={table} onRowDragEnd={handleRowDragEnd} />
           ) : (
             <TableBody table={table} onRowDragEnd={handleRowDragEnd} />

@@ -31,7 +31,7 @@ import { useTableViewCtx } from "@/table-contexts";
  */
 export function PropsMenu() {
   const { table } = useTableViewCtx();
-  const { columnOrder } = table.getState();
+  const { columnOrder } = table.store.state;
   const noShownProps = table.countVisibleColumns() === 1;
 
   const [search, setSearch] = useState("");

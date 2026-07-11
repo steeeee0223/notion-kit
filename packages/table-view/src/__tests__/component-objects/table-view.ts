@@ -19,13 +19,19 @@ export class TableViewObject {
   }
 
   row(name: string | RegExp) {
-    return screen.getByRole("row", { name: this.nameMatcher(name) });
+    const matcher = this.nameMatcher(name);
+    const row = screen
+      .getAllByRole("row")
+      .find((row) => matcher.test(row.textContent ?? ""));
+    if (!row) throw new Error(`Unable to find row matching ${matcher}`);
+    return row;
   }
 
   rows(name?: string | RegExp) {
-    return name
-      ? screen.getAllByRole("row", { name: this.nameMatcher(name) })
-      : screen.getAllByRole("row");
+    const rows = screen.getAllByRole("row");
+    if (!name) return rows;
+    const matcher = this.nameMatcher(name);
+    return rows.filter((row) => matcher.test(row.textContent ?? ""));
   }
 
   cellButton(rowName: string | RegExp, cellName: string | RegExp) {

@@ -18,7 +18,8 @@ import { useTableViewCtx } from "@/table-contexts";
 
 export function SelectGroupMenu() {
   const { table } = useTableViewCtx();
-  const { columnOrder, columnsInfo, grouping, tableGlobal } = table.getState();
+  const { columnOrder, columnsInfo, grouping, tableGlobal } =
+    table.store.state;
   const groupingColId = grouping.at(0);
 
   const options = columnOrder.reduce<(ColumnInfo & { kind: "column" })[]>(

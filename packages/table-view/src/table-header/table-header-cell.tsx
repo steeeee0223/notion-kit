@@ -27,6 +27,7 @@ export function TableHeaderCell({
   const info = header.column.getInfo();
   const isResizing = header.column.getIsResizing();
   const onResizeStart = header.getResizeHandler();
+  const onResizeEnd = () => header.column.handleResizeEnd();
   const { locked } = table.getTableGlobalState();
 
   const style: React.CSSProperties = {
@@ -99,10 +100,10 @@ export function TableHeaderCell({
           )}
           // Resize for desktop
           onMouseDown={onResizeStart}
-          onMouseUp={header.column.handleResizeEnd}
+          onMouseUp={onResizeEnd}
           // Resize for mobile
           onTouchStart={onResizeStart}
-          onTouchEnd={header.column.handleResizeEnd}
+          onTouchEnd={onResizeEnd}
         />
       </div>
     </Sortable.Item>

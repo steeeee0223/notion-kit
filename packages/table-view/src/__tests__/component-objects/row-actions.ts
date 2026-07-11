@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { expect } from "vitest";
 
 import { TableViewObject } from "./table-view";
@@ -45,7 +45,7 @@ export class RowActionsObject {
   }
 
   async choose(name: string | RegExp) {
-    await this.tableView.user.click(this.option(name));
+    fireEvent.click(this.option(name));
   }
 
   async waitForRowCount(rowName: string | RegExp, count: number) {
@@ -56,9 +56,7 @@ export class RowActionsObject {
 
   async waitForRowRemoved(rowName: string | RegExp) {
     await waitFor(() => {
-      expect(
-        screen.queryByRole("row", { name: rowName }),
-      ).not.toBeInTheDocument();
+      expect(this.tableView.rows(rowName)).toHaveLength(0);
     });
   }
 }

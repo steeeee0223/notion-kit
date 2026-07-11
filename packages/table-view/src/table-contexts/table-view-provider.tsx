@@ -1,4 +1,4 @@
-import { createContext, use } from "react";
+import { createContext, use, useMemo } from "react";
 import type { Table } from "@tanstack/react-table";
 
 import { arrayToEntity, useTableView, type Row } from "@notion-kit/table-hook";
@@ -10,6 +10,7 @@ import { DEFAULT_PLUGINS, DefaultPlugins, type CellPlugin } from "@/plugins";
 import { RowView } from "@/row-view";
 import { Toolbar } from "@/tools/toolbar";
 
+import { defaultColumn } from "./default-column";
 import { TableViewContent } from "./table-view-content";
 import type { TableProps } from "./types";
 
@@ -33,8 +34,10 @@ export function TableViewWrapper<
   children,
   ...props
 }: TableProps<TPlugins>) {
+  const pluginEntity = useMemo(() => arrayToEntity(plugins), [plugins]);
   const ctx = useTableView({
-    plugins: arrayToEntity(plugins),
+    plugins: pluginEntity,
+    defaultColumn,
     ...props,
   });
 

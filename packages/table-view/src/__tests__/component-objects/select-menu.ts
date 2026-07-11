@@ -58,12 +58,12 @@ export class SelectMenuObject {
   }
 
   async choose(name: string) {
-    await this.tableView.user.click(this.option(name));
+    fireEvent.click(this.option(name));
   }
 
   async create(name: string) {
     await this.search(name);
-    await this.tableView.user.click(this.createOption(name));
+    fireEvent.click(this.createOption(name));
   }
 
   async close() {

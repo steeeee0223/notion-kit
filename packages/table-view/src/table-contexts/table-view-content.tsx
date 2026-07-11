@@ -13,7 +13,7 @@ import { useTableViewCtx } from "./table-view-provider";
 
 export function TableViewContent() {
   const { table } = useTableViewCtx();
-  const { sorting, columnSizingInfo, columnSizing } = table.getState();
+  const { sorting, columnSizingInfo, columnSizing } = table.store.state;
   const isSorted = sorting.length > 0;
 
   /**

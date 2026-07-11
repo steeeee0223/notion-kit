@@ -39,6 +39,6 @@ export function TableCell<TPlugin extends CellPlugin>({
           }
         : undefined,
     onChange: (updater) => column.updateCell(row.id, updater, row.parentId),
-    onConfigChange: column.updateConfig,
+    onConfigChange: (updater) => column.updateConfig(updater),
   });
 }

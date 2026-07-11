@@ -70,12 +70,12 @@ export function GroupActions({ className, row }: GroupActionsProps) {
                     icon: <Icon.Eye />,
                     label: "Show aggregation",
                   })}
-              onClick={row.toggleGroupAggregates}
+              onClick={() => row.toggleGroupAggregates()}
             />
             <DropdownMenuItem
               icon={<Icon.EyeHideInversePadded className="size-6" />}
               label="Hide group"
-              onClick={row.toggleGroupVisibility}
+              onClick={() => row.toggleGroupVisibility()}
             />
             <DropdownMenuItem
               icon={<Icon.Trash />}

@@ -64,7 +64,7 @@ export function TableRowCell<TPlugin extends CellPlugin>({
           layout: "table",
           onChange: (updater) =>
             column.updateCell(row.id, updater, row.parentId),
-          onConfigChange: column.updateConfig,
+          onConfigChange: (updater) => column.updateConfig(updater),
         })}
       </div>
       {mode === CellMode.Select && (

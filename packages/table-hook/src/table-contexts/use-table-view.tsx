@@ -42,9 +42,11 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   onDataChange,
   onPropertiesChange,
   onTableChange,
+  defaultColumn: defaultColumnOverride,
 }: UseTableViewOptions<TPlugins>) {
   const isPropertiesControlled = typeof onPropertiesChange !== "undefined";
   const isDataControlled = typeof onDataChange !== "undefined";
+  const isTableControlled = typeof onTableChange !== "undefined";
   /** columns states */
   const [_columnEntity, setColumnEntity] = useState(
     toPropertyEntity(plugins.items, properties),
@@ -111,6 +113,26 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     [isDataControlled, data, _dataEntity],
   );
 
+  const resolvedTableGlobal = useMemo(
+    () => ({
+      locked: false,
+      layout: "table" as const,
+      rowView: "side" as const,
+      openedRowId: null,
+      ...tableGlobal,
+    }),
+    [tableGlobal],
+  );
+  const [_tableGlobal, setTableGlobal] = useState(resolvedTableGlobal);
+  useEffect(() => {
+    if (isTableControlled) return;
+    setTableGlobal(resolvedTableGlobal);
+  }, [isTableControlled, resolvedTableGlobal]);
+  const tableGlobalState = useMemo(
+    () => (isTableControlled ? resolvedTableGlobal : _tableGlobal),
+    [isTableControlled, resolvedTableGlobal, _tableGlobal],
+  );
+
   const features = useMemo(
     () =>
       tableFeatures({
@@ -143,15 +165,9 @@ export function useTableView<TPlugins extends CellPlugin[]>({
         {},
       ),
       cellPlugins: plugins.items,
-      tableGlobal: {
-        locked: false,
-        layout: "table" as const,
-        rowView: "side" as const,
-        openedRowId: null,
-        ...tableGlobal,
-      },
+      tableGlobal: tableGlobalState,
     }),
-    [columnEntity.ids, columnEntity.items, plugins.items, tableGlobal],
+    [columnEntity.ids, columnEntity.items, plugins.items, tableGlobalState],
   );
 
   /** table instance */
@@ -159,7 +175,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     features,
     columns,
     data: dataEntity,
-    defaultColumn,
+    defaultColumn: defaultColumnOverride ?? defaultColumn,
     columnResizeMode: "onChange",
     groupedColumnMode: false,
     autoResetExpanded: false,
@@ -167,7 +183,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     state: tableState,
     onColumnInfoChange: handleColumnChange,
     onTableDataChange: onDataChange ?? setDataEntity,
-    onTableGlobalChange: onTableChange,
+    onTableGlobalChange: onTableChange ?? setTableGlobal,
     getRowUrl,
   });
 
