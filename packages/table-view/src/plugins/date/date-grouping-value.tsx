@@ -1,7 +1,6 @@
+import type { ColumnInfo, GroupingValueProps } from "@notion-kit/table-hook";
 import { formatDate } from "@notion-kit/utils";
 
-import type { ColumnInfo } from "../../lib/types";
-import type { GroupingValueProps } from "../types";
 import { DefaultGroupingValue } from "../utils";
 import type { DatePlugin } from "./types";
 

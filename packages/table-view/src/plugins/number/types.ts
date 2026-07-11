@@ -1,6 +1,5 @@
+import type { CellPlugin } from "@notion-kit/table-hook";
 import type { Color } from "@notion-kit/utils";
-
-import type { CellPlugin } from "../types";
 
 export type NumberFormat =
   | "number"

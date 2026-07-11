@@ -1,11 +1,7 @@
 import { createContext, use } from "react";
 import type { Table } from "@tanstack/react-table";
 
-import {
-  arrayToEntity,
-  useTableView,
-  type Row,
-} from "@notion-kit/table-hook";
+import { arrayToEntity, useTableView, type Row } from "@notion-kit/table-hook";
 import { TooltipProvider } from "@notion-kit/ui/primitives";
 
 import { BoardViewContent } from "@/board-view";

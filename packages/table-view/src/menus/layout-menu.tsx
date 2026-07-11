@@ -1,5 +1,10 @@
 import { cn } from "@notion-kit/cn";
 import {
+  LAYOUT_OPTIONS,
+  ROW_VIEW_OPTIONS,
+  RowViewType,
+} from "@notion-kit/table-hook";
+import {
   Button,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -10,7 +15,6 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { LayoutIcon, MenuHeader, RowViewIcon } from "@/common";
-import { LAYOUT_OPTIONS, ROW_VIEW_OPTIONS, RowViewType } from "@/features";
 import { useTableViewCtx } from "@/table-contexts";
 
 export function LayoutMenu() {

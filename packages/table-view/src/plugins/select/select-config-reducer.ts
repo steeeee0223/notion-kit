@@ -5,9 +5,9 @@ import {
 } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
+import type { Row } from "@notion-kit/table-hook";
 import type { Color } from "@notion-kit/utils";
 
-import type { Row } from "../../lib/types";
 import type { SelectCell, SelectConfig, SelectSort } from "./types";
 
 export type SelectConfigActionPayload =

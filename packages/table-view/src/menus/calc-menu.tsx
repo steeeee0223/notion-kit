@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 
+import { CountMethod, type PluginType } from "@notion-kit/table-hook";
 import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -11,8 +12,6 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { CountMethod } from "@/features";
-import { type PluginType } from "@/lib/types";
 import type { CellPlugin } from "@/plugins";
 import { useTableViewCtx } from "@/table-contexts";
 

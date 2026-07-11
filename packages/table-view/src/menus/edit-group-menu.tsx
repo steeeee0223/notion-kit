@@ -3,6 +3,7 @@ import { flexRender } from "@tanstack/react-table";
 
 import { useIsClient } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
+import { TableViewMenuPage } from "@notion-kit/table-hook";
 import {
   Button,
   DropdownMenuCheckboxItem,
@@ -16,7 +17,6 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { MenuHeader } from "@/common";
-import { TableViewMenuPage } from "@/features";
 import { useTableViewCtx } from "@/table-contexts";
 
 export function EditGroupMenu() {

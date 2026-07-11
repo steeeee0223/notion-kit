@@ -1,6 +1,7 @@
 import { z } from "zod/v4";
 
-import { DefaultIcon } from "../../common";
+import { DefaultIcon } from "@/common";
+
 import { compareNumbers, createCompareFn } from "../utils";
 import { NumberCell } from "./number-cell";
 import { NumberConfigMenu } from "./number-config-menu";

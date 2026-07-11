@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { useRect } from "@notion-kit/hooks";
+import { CellProps } from "@notion-kit/table-hook";
 import {
   Popover,
   PopoverContent,
@@ -10,8 +11,8 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { CellTrigger, OptionTag } from "../../common";
-import { CellProps } from "../types";
+import { CellTrigger, OptionTag } from "@/common";
+
 import { SelectMenu } from "./select-menu";
 import { useSelectMenu } from "./select-menu/use-select-menu";
 import type { SelectConfig } from "./types";

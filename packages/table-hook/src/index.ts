@@ -47,4 +47,10 @@ export type {
   GroupingMethod,
   SortingMethod,
 } from "@/methods";
-export type { TableGlobalState } from "@/features/menu";
+export { ROW_VIEW_OPTIONS } from "@/features";
+export { LAYOUT_OPTIONS } from "@/features/menu";
+export type {
+  TableGlobalState,
+  RowViewType,
+  LayoutType,
+} from "@/features/menu";

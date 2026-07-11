@@ -1,4 +1,4 @@
-import type { Row } from "@/lib/types";
+import type { Row } from "@notion-kit/table-hook";
 
 import type {
   CellPlugin,

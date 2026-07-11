@@ -3,7 +3,8 @@ import { v4 } from "uuid";
 
 import { getRandomColor } from "@notion-kit/utils";
 
-import { DefaultIcon } from "../../common";
+import { DefaultIcon } from "@/common";
+
 import type { Cell, ColumnInfo, Row } from "../../lib/types";
 import type { CellPlugin, ComparableValue } from "../types";
 import { compareStrings, createCompareFn } from "../utils";
