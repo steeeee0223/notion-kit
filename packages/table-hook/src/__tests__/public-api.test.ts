@@ -1,18 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  ColumnsInfoFeature,
-  DEFAULT_FEATURES,
-  ExtendedGroupingFeature,
-  getExtendedGroupedRowModel,
-} from "@/index";
+import * as TableHookExports from "@/index";
 
-describe("public API", () => {
-  it("exports composable table features and row model factories", () => {
-    expect(DEFAULT_FEATURES.columnsInfoFeature).toBe(ColumnsInfoFeature);
-    expect(DEFAULT_FEATURES.extendedGroupingFeature).toBe(
-      ExtendedGroupingFeature,
-    );
-    expect(getExtendedGroupedRowModel).toEqual(expect.any(Function));
+describe("table-hook public API", () => {
+  it("exports the v9 table engine contract used by table-view", () => {
+    expect(TableHookExports.useTableView).toBeTypeOf("function");
+    expect(TableHookExports.arrayToEntity).toBeTypeOf("function");
+    expect(TableHookExports.wrappedClassName).toBeTypeOf("function");
+    expect(TableHookExports.CountMethod).toBeDefined();
+    expect(TableHookExports.TableViewMenuPage).toBeDefined();
   });
 });

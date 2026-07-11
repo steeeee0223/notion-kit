@@ -63,10 +63,10 @@ export const FreezingFeature: TableFeature = {
       const normalizedState = normalizeFreezingState(nextState);
       table.options.onColumnFreezingChange?.(normalizedState);
       table.setColumnPinning({
-        left: normalizedState
+        start: normalizedState
           ? table.store.state.columnOrder.slice(0, normalizedState.index + 1)
           : [],
-        right: table.store.state.columnPinning.right ?? [],
+        end: table.store.state.columnPinning.end ?? [],
       });
     };
     table.toggleColumnFreezed = (colId) => {
