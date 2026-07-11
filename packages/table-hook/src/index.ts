@@ -47,3 +47,4 @@ export type {
   GroupingMethod,
   SortingMethod,
 } from "@/methods";
+export type { TableGlobalState } from "@/features/menu";

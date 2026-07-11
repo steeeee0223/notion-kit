@@ -1,11 +1,14 @@
 import { createContext, use } from "react";
 import type { Table } from "@tanstack/react-table";
 
+import {
+  arrayToEntity,
+  useTableView,
+  type Row,
+} from "@notion-kit/table-hook";
 import { TooltipProvider } from "@notion-kit/ui/primitives";
 
 import { BoardViewContent } from "@/board-view";
-import type { Row } from "@/lib/types";
-import { arrayToEntity } from "@/lib/utils";
 import { ListViewContent } from "@/list-view";
 import { DEFAULT_PLUGINS, DefaultPlugins, type CellPlugin } from "@/plugins";
 import { RowView } from "@/row-view";
@@ -13,11 +16,9 @@ import { Toolbar } from "@/tools/toolbar";
 
 import { TableViewContent } from "./table-view-content";
 import type { TableProps } from "./types";
-import { useTableView } from "./use-table-view";
 
 interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
   table: Table<Row<TPlugins>>;
-  __synced: number;
 }
 
 const TableViewContext = createContext<TableViewCtx | null>(null);

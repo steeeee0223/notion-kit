@@ -1,11 +1,14 @@
 import { renderHook } from "@testing-library/react";
 import { beforeEach, vi } from "vitest";
 
+import {
+  arrayToEntity,
+  useTableView,
+  type BaseTableProps,
+} from "@notion-kit/table-hook";
+
 import type { ColumnInfo, Row } from "@/lib/types";
-import { arrayToEntity } from "@/lib/utils";
 import { DEFAULT_PLUGINS, type CellPlugin } from "@/plugins";
-import type { BaseTableProps } from "@/table-contexts";
-import { useTableView } from "@/table-contexts/use-table-view";
 
 export const plugins = arrayToEntity(DEFAULT_PLUGINS);
 
