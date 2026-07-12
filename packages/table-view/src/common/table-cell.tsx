@@ -1,15 +1,19 @@
 import { flexRender } from "@tanstack/react-table";
 
-import type { ColumnInfo, LayoutType } from "@notion-kit/table-hook";
+import type {
+  CellInstance,
+  ColumnInfo,
+  LayoutType,
+  TableInstance,
+} from "@notion-kit/table-hook";
 import type { CellPlugin, InferCellProps } from "@/plugins";
-import type { TableViewCell, TableViewTable } from "@/table-contexts";
 
-type TableGlobalReader = Pick<TableViewTable, "getTableGlobalState">;
+type TableGlobalReader = Pick<TableInstance, "getTableGlobalState">;
 type UnknownCellPlugin = CellPlugin<string, unknown, unknown>;
 
 interface TableCellProps {
-  row: TableViewCell["row"];
-  column: TableViewCell["column"];
+  row: CellInstance["row"];
+  column: CellInstance["column"];
   table: TableGlobalReader;
   view: LayoutType | "row-view";
 }

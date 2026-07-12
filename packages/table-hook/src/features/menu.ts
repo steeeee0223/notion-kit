@@ -4,7 +4,7 @@ import {
   type TableFeature,
 } from "@tanstack/react-table";
 
-import type { TableInstance } from "@/features/types";
+import type { _TableInstance } from "@/features/types";
 
 export enum TableViewMenuPage {
   Layout,
@@ -103,7 +103,7 @@ export const TableMenuFeature: TableFeature = {
   },
 
   constructTableAPIs: (table) => {
-    const instance = table as unknown as TableInstance;
+    const instance = table as unknown as _TableInstance;
 
     instance.getRowUrl = (rowId: string) =>
       instance.options.getRowUrl?.(rowId) ?? "";

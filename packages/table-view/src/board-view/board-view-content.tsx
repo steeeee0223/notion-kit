@@ -1,9 +1,9 @@
 import { Icon } from "@notion-kit/icons";
-import { TableViewMenuPage } from "@notion-kit/table-hook";
+import { TableViewMenuPage, type RowInstance } from "@notion-kit/table-hook";
 import { Kanban } from "@notion-kit/ui/kanban";
 import { Button } from "@notion-kit/ui/primitives";
 
-import { type TableViewRow, useTableViewCtx } from "@/table-contexts";
+import { useTableViewCtx } from "@/table-contexts";
 
 import { BoardGroup } from "./board-group";
 import { useBoardDnd } from "./use-board-dnd";
@@ -44,7 +44,7 @@ export function BoardViewContent() {
               const row = (
                 groupedRowsById[groupId] ??
                 table.getPlaceholderGroupedRow(groupId)
-              ) as TableViewRow;
+              ) as RowInstance;
               return <BoardGroup key={groupId} row={row} index={index} />;
             })}
           </Kanban.Root>

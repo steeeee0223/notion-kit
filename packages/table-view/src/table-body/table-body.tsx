@@ -2,10 +2,11 @@ import React, { useCallback, useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
 
 import { Icon } from "@notion-kit/icons";
+import type { TableInstance } from "@notion-kit/table-hook";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
-import { type TableViewTable, useTableViewCtx } from "@/table-contexts";
+import { useTableViewCtx } from "@/table-contexts";
 
 import { TableGroupedRow } from "./table-grouped-row";
 import { TableRow } from "./table-row";
@@ -99,7 +100,7 @@ export function DndTableBody() {
 }
 
 interface TableBodyProps {
-  table: TableViewTable;
+  table: TableInstance;
   onRowDragEnd: (e: DragEndEvent) => void;
 }
 

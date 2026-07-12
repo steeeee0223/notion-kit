@@ -10,5 +10,5 @@ import type { Row as RowModel } from "@/lib/types";
 export type AnyTableFeatures = any;
 export type AnyRowData = any;
 
-export type TableInstance = Table<AnyTableFeatures, RowModel>;
-export type RowInstance = Row<AnyTableFeatures, RowModel>;
+export type _TableInstance = Table<AnyTableFeatures, RowModel>;
+export type _RowInstance = Row<AnyTableFeatures, RowModel>;

@@ -3,15 +3,160 @@ import { beforeEach, vi } from "vitest";
 
 import type { ColumnInfo, Row } from "@/lib/types";
 import { arrayToEntity } from "@/lib/utils";
+import {
+  countAll,
+  countChecked,
+  countEmpty,
+  countNonEmpty,
+  countUnchecked,
+  countUnique,
+  countValues,
+  groupByTextValue,
+  groupByValue,
+  percentageChecked,
+  percentageEmpty,
+  percentageNonEmpty,
+  percentageUnchecked,
+  sortByCheckbox,
+  sortByNumber,
+  sortByText,
+} from "@/methods";
 import { DEFAULT_PLUGINS, type CellPlugin } from "@/plugins";
 import type { BaseTableProps } from "@/table-contexts";
 import { useTableView } from "@/table-contexts/use-table-view";
 
-export const plugins = arrayToEntity(DEFAULT_PLUGINS);
+type TestCheckboxPlugin = CellPlugin<"checkbox", boolean, undefined>;
+type TestNumberPlugin = CellPlugin<"number", number | null, undefined>;
+type TestSelectPlugin = CellPlugin<
+  "select",
+  { name: string } | null,
+  undefined
+>;
+
+const genericCounting = [
+  {
+    group: "Count",
+    functions: [countAll, countValues, countUnique, countEmpty, countNonEmpty],
+  },
+  {
+    group: "Percentage",
+    functions: [percentageEmpty, percentageNonEmpty],
+  },
+];
+
+const checkboxCounting = [
+  {
+    group: "Count",
+    functions: [countAll, countChecked, countUnchecked],
+  },
+  {
+    group: "Percentage",
+    functions: [percentageChecked, percentageUnchecked],
+  },
+];
+
+const checkboxPlugin: TestCheckboxPlugin = {
+  id: "checkbox",
+  meta: { name: "Checkbox", desc: "Checkbox", icon: null },
+  default: {
+    name: "Checkbox",
+    icon: null,
+    data: false,
+    config: undefined,
+  },
+  fromValue: (value) => Boolean(value),
+  toValue: (data) => data,
+  toTextValue: (data) => (data ? "true" : ""),
+  sorting: {
+    defaultMethod: sortByCheckbox.id,
+    methods: [sortByCheckbox],
+  },
+  grouping: {
+    defaultMethod: groupByValue.id,
+    methods: [groupByValue],
+  },
+  counting: checkboxCounting,
+  renderCell: () => null,
+};
+
+const numberPlugin: TestNumberPlugin = {
+  id: "number",
+  meta: { name: "Number", desc: "Number", icon: null },
+  default: {
+    name: "Number",
+    icon: null,
+    data: null,
+    config: undefined,
+  },
+  fromValue: (value) => {
+    const next = typeof value === "number" ? value : Number(value);
+    return Number.isFinite(next) ? next : null;
+  },
+  toValue: (data) => data,
+  toTextValue: (data) => data?.toString() ?? "",
+  sorting: {
+    defaultMethod: sortByNumber.id,
+    methods: [sortByNumber],
+  },
+  grouping: {
+    defaultMethod: groupByValue.id,
+    methods: [groupByValue],
+  },
+  counting: genericCounting,
+  renderCell: () => null,
+};
+
+const selectPlugin: TestSelectPlugin = {
+  id: "select",
+  meta: { name: "Select", desc: "Select", icon: null },
+  default: {
+    name: "Select",
+    icon: null,
+    data: null,
+    config: undefined,
+  },
+  fromValue: (value) => (value === null ? null : { name: value.toString() }),
+  toValue: (data) => data?.name ?? null,
+  toTextValue: (data) => data?.name ?? "",
+  sorting: {
+    defaultMethod: sortByText.id,
+    methods: [
+      {
+        ...sortByText,
+        function: (rowA, rowB, colId) => {
+          const valueA =
+            (rowA.properties[colId]?.value as { name?: string } | null)
+              ?.name ?? "";
+          const valueB =
+            (rowB.properties[colId]?.value as { name?: string } | null)
+              ?.name ?? "";
+          return valueA.localeCompare(valueB);
+        },
+      },
+    ],
+  },
+  grouping: {
+    defaultMethod: groupByTextValue.id,
+    methods: [
+      {
+        ...groupByTextValue,
+        function: (data) => data?.name ?? "",
+      },
+    ],
+  },
+  counting: genericCounting,
+  renderCell: () => null,
+};
+
+export const plugins = arrayToEntity([
+  ...DEFAULT_PLUGINS,
+  checkboxPlugin,
+  numberPlugin,
+  selectPlugin,
+]);
 
 // Get actual configs from plugins
 const textPlugin = plugins.items.text!;
-const checkboxPlugin = plugins.items.checkbox!;
 
 export const mockProperties: ColumnInfo[] = [
   {

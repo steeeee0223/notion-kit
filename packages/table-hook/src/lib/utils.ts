@@ -2,7 +2,7 @@ import { v4 } from "uuid";
 
 import { cn } from "@notion-kit/cn";
 
-import type { TableInstance } from "@/features/types";
+import type { _TableInstance } from "@/features/types";
 import type { Cell } from "@/lib/types";
 import { resolveCountingMethod } from "@/methods";
 import type { CellPlugin, InferData } from "@/plugins";
@@ -48,7 +48,7 @@ export function getUniqueName(name: string, names: string[]) {
   return uniqueName;
 }
 
-export function getCount(table: TableInstance, colId: string): string {
+export function getCount(table: _TableInstance, colId: string): string {
   const { isCapped, method } = table.getColumnCounting(colId);
   if (method === "none") return "";
 

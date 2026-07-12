@@ -11,7 +11,7 @@ import {
 } from "@notion-kit/ui/kanban";
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
-import type { TableInstance } from "@/features/types";
+import type { _TableInstance } from "@/features/types";
 import { createGroupId } from "@/features/utils";
 import type { Cell, Row } from "@/lib/types";
 import { getDefaultCell, insertAt } from "@/lib/utils";
@@ -74,7 +74,7 @@ export interface RowActionsRowApi {
 }
 
 function getRowGroupingValue(
-  table: TableInstance,
+  table: _TableInstance,
   row: Row,
   groupingColumnId: string,
 ): ComparableValue | null {
@@ -86,7 +86,7 @@ function getRowGroupingValue(
 }
 
 function createKanbanItemsFromRows(
-  table: TableInstance,
+  table: _TableInstance,
   rows: Row[],
   groupingColumnId: string,
   groupOrder: string[],
@@ -155,7 +155,7 @@ export const RowActionsFeature: TableFeature = {
     return {};
   },
   constructTableAPIs: (_table) => {
-    const table = _table as unknown as TableInstance;
+    const table = _table as unknown as _TableInstance;
     let kanbanDragSnapshot: Row[] | null = null;
 
     const scheduleGroupingStateSync = (rows: Row[]) => {
@@ -417,7 +417,7 @@ export const RowActionsFeature: TableFeature = {
     };
   },
   assignColumnPrototype: (prototype, _table) => {
-    const table = _table as unknown as TableInstance;
+    const table = _table as unknown as _TableInstance;
 
     /** Cell */
     prototype.getCell = function (this: { id: string }, rowId: string) {
@@ -441,7 +441,7 @@ export const RowActionsFeature: TableFeature = {
     };
   },
   assignRowPrototype: (prototype, _table) => {
-    const table = _table as unknown as TableInstance;
+    const table = _table as unknown as _TableInstance;
 
     prototype.getTitleCell = function (this: { id: string }) {
       return table.getTitleCell(this.id);

@@ -1,7 +1,7 @@
 import type { OnChangeFn, TableFeature, Updater } from "@tanstack/react-table";
 import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
 
-import type { TableInstance } from "@/features/types";
+import type { _TableInstance } from "@/features/types";
 import { getCount } from "@/lib/utils";
 import { CountMethod } from "@/methods";
 
@@ -53,7 +53,7 @@ export const CountingFeature: TableFeature = {
 
   // define the new feature's table instance methods
   constructTableAPIs: (table) => {
-    const instance = table as unknown as TableInstance;
+    const instance = table as unknown as _TableInstance;
 
     instance.getColumnCounting = (colId) => {
       if (!instance.options.enableColumnCounting) {

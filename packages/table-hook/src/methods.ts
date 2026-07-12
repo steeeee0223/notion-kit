@@ -1,4 +1,4 @@
-import type { RowInstance, TableInstance } from "@/features/types";
+import type { _RowInstance, _TableInstance } from "@/features/types";
 import type { Row } from "@/lib/types";
 import type { CellPlugin, ComparableValue, CompareFn } from "@/plugins/types";
 
@@ -30,8 +30,8 @@ export interface GroupingMethod<Data = unknown> {
 }
 
 export interface CountingMethodContext {
-  table: TableInstance;
-  rows: RowInstance[];
+  table: _TableInstance;
+  rows: _RowInstance[];
   colId: string;
   plugin: CellPlugin;
   isCapped?: boolean;

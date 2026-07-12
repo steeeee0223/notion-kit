@@ -1,26 +1,28 @@
 import { createContext, use, useMemo } from "react";
 
-import { arrayToEntity, useTableView } from "@notion-kit/table-hook";
+import {
+  arrayToEntity,
+  useTableView,
+  type TableProps,
+} from "@notion-kit/table-hook";
 import { TooltipProvider } from "@notion-kit/ui/primitives";
 
 import { BoardViewContent } from "@/board-view";
 import { ListViewContent } from "@/list-view";
-import { DEFAULT_PLUGINS, type CellPlugin, type DefaultPlugins } from "@/plugins";
+import {
+  DEFAULT_PLUGINS,
+  type CellPlugin,
+  type DefaultPlugins,
+} from "@/plugins";
 import { RowView } from "@/row-view";
 import { Toolbar } from "@/tools/toolbar";
 
 import { defaultColumn } from "./default-column";
 import { TableViewContent } from "./table-view-content";
-import type { TableProps } from "./types";
 
-export type TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> = ReturnType<
+type TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> = ReturnType<
   typeof useTableView<TPlugins>
 >;
-export type TableViewTable = TableViewCtx["table"];
-export type TableViewRow = ReturnType<TableViewTable["getRowModel"]>["rows"][number];
-export type TableViewCell = ReturnType<TableViewRow["getVisibleCells"]>[number];
-export type TableViewHeader =
-  ReturnType<TableViewTable["getHeaderGroups"]>[number]["headers"][number];
 
 const TableViewContext = createContext<TableViewCtx | null>(null);
 

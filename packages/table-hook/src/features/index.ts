@@ -14,47 +14,48 @@ import {
   type RowData,
 } from "@tanstack/react-table";
 
+import type { ComparableValue } from "@/plugins";
+
 import {
   ColumnsInfoFeature,
   type ColumnInfoColumnApi,
   type ColumnsInfoOptions,
   type ColumnsInfoTableApi,
   type ColumnsInfoTableState,
-} from "@/features/columns-info";
+} from "./columns-info";
 import {
   CountingFeature,
   type CountingOptions,
   type CountingTableApi,
   type CountingTableState,
-} from "@/features/counting";
-import { getExtendedGroupedRowModel } from "@/features/extended-grouped-row-model";
+} from "./counting";
+import { getExtendedGroupedRowModel } from "./extended-grouped-row-model";
 import {
   FreezingFeature,
   type FreezingOptions,
   type FreezingTableApi,
   type FreezingTableState,
-} from "@/features/freezing";
+} from "./freezing";
 import {
   ExtendedGroupingFeature,
   type ExtendedGroupingOptions,
   type ExtendedGroupingRowApi,
   type ExtendedGroupingTableApi,
   type ExtendedGroupingTableState,
-} from "@/features/grouping";
+} from "./grouping";
 import {
   TableMenuFeature,
   type TableMenuOptions,
   type TableMenuTableApi,
   type TableMenuTableState,
-} from "@/features/menu";
+} from "./menu";
 import {
   RowActionsFeature,
   type RowActionsColumnApi,
   type RowActionsOptions,
   type RowActionsRowApi,
   type RowActionsTableApi,
-} from "@/features/row-actions";
-import type { ComparableValue } from "@/plugins";
+} from "./row-actions";
 
 declare module "@tanstack/table-core" {
   // merge our new feature's state with the existing table state

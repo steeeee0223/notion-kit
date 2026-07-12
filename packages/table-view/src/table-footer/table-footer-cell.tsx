@@ -1,5 +1,5 @@
 import { Icon } from "@notion-kit/icons";
-import { CountMethod } from "@notion-kit/table-hook";
+import { CountMethod, type HeaderInstance } from "@notion-kit/table-hook";
 import {
   Button,
   DropdownMenu,
@@ -9,10 +9,10 @@ import {
 
 import { CalcMenu, countMethodHint } from "@/menus";
 import type { CellPlugin, InferKey } from "@/plugins";
-import { type TableViewHeader, useTableViewCtx } from "@/table-contexts";
+import { useTableViewCtx } from "@/table-contexts";
 
 interface TableFooterCellProps {
-  column: TableViewHeader["column"];
+  column: HeaderInstance["column"];
 }
 
 export function TableFooterCell({ column }: TableFooterCellProps) {

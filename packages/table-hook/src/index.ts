@@ -20,6 +20,7 @@ export type {
   ExtendedGroupingTableState,
   FreezingTableState,
   TableMenuTableState,
+  TableFeatures,
 } from "@/features";
 export {
   CountMethod,

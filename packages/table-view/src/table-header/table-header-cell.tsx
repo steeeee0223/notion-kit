@@ -1,5 +1,6 @@
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
+import type { HeaderInstance, TableInstance } from "@notion-kit/table-hook";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   DropdownMenu,
@@ -11,14 +12,13 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { DefaultIcon } from "@/common";
-import type { TableViewHeader, TableViewTable } from "@/table-contexts";
 
 import { PropMenu } from "../menus";
 
-type TableGlobalReader = Pick<TableViewTable, "getTableGlobalState">;
+type TableGlobalReader = Pick<TableInstance, "getTableGlobalState">;
 
 interface TableHeaderCellProps {
-  header: TableViewHeader;
+  header: HeaderInstance;
   table: TableGlobalReader;
 }
 

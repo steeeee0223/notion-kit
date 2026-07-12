@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
+import type { RowInstance } from "@notion-kit/table-hook";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import {
   Button,
@@ -14,11 +15,11 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { type TableViewRow, useTableViewCtx } from "@/table-contexts";
+import { useTableViewCtx } from "@/table-contexts";
 
 interface GroupActionsProps {
   className?: string;
-  row: TableViewRow;
+  row: RowInstance;
 }
 
 export function GroupActions({ className, row }: GroupActionsProps) {

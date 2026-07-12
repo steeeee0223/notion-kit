@@ -5,7 +5,7 @@ import { v4 } from "uuid";
 
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
-import type { TableInstance } from "@/features/types";
+import type { _TableInstance } from "@/features/types";
 import { createIdsUpdater } from "@/features/utils";
 import type { ColumnInfo, PluginType } from "@/lib/types";
 import {
@@ -85,7 +85,7 @@ export const ColumnsInfoFeature: TableFeature = {
   },
 
   constructTableAPIs: (table) => {
-    const instance = table as unknown as TableInstance;
+    const instance = table as unknown as _TableInstance;
 
     const getColumnVisibilityFromInfo = () => {
       const { columnOrder, columnsInfo } = instance.store.state;
@@ -318,7 +318,7 @@ export const ColumnsInfoFeature: TableFeature = {
     };
   },
   assignColumnPrototype: (prototype, table) => {
-    const instance = table as unknown as TableInstance;
+    const instance = table as unknown as _TableInstance;
 
     prototype.getInfo = function (this: { id: string }) {
       return instance.getColumnInfo(this.id);

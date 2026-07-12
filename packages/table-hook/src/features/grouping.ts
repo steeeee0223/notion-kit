@@ -9,7 +9,7 @@ import {
 
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
-import type { RowInstance, TableInstance } from "@/features/types";
+import type { _RowInstance, _TableInstance } from "@/features/types";
 import { createGroupId } from "@/features/utils";
 import type { ColumnInfo, Row as RowModel } from "@/lib/types";
 import { resolveGroupingMethod } from "@/methods";
@@ -69,7 +69,7 @@ export interface ExtendedGroupingTableApi {
   /**
    * Use this to render the empty group
    */
-  getPlaceholderGroupedRow: (groupId: string) => RowInstance;
+  getPlaceholderGroupedRow: (groupId: string) => _RowInstance;
 }
 
 export interface ExtendedGroupingRowApi {
@@ -100,7 +100,7 @@ export const ExtendedGroupingFeature: TableFeature = {
   },
 
   constructTableAPIs: (_table) => {
-    const table = _table as unknown as TableInstance;
+    const table = _table as unknown as _TableInstance;
     const setGrouping = table.setGrouping.bind(table);
     const resetGrouping = table.resetGrouping.bind(table);
 
@@ -292,7 +292,7 @@ export const ExtendedGroupingFeature: TableFeature = {
   },
 
   assignRowPrototype: (prototype, _table) => {
-    const table = _table as unknown as TableInstance;
+    const table = _table as unknown as _TableInstance;
 
     prototype.getShouldShowGroupAggregates = function () {
       return table.store.state.groupingState.showAggregates;

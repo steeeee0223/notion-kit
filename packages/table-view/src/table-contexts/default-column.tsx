@@ -2,10 +2,10 @@ import { TableCell } from "@/common/table-cell";
 import { TableRowCell } from "@/table-body/table-row-cell";
 import { TableFooterCell } from "@/table-footer/table-footer-cell";
 import { TableHeaderCell } from "@/table-header/table-header-cell";
-import type { TableViewTable } from "@/table-contexts/table-view-provider";
+import type { TableInstance } from "@notion-kit/table-hook";
 
 export const defaultColumn: NonNullable<
-  TableViewTable["options"]["defaultColumn"]
+  TableInstance["options"]["defaultColumn"]
 > = {
   size: 200,
   minSize: 100,

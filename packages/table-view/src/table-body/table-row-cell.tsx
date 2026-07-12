@@ -2,11 +2,14 @@ import { useState } from "react";
 import { flexRender } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
-import type { ColumnInfo } from "@notion-kit/table-hook";
+import type {
+  CellInstance,
+  ColumnInfo,
+  TableInstance,
+} from "@notion-kit/table-hook";
 import { Button } from "@notion-kit/ui/primitives";
 
 import type { CellPlugin, InferCellProps } from "@/plugins";
-import type { TableViewCell, TableViewTable } from "@/table-contexts";
 
 enum CellMode {
   Normal = "normal",
@@ -14,12 +17,12 @@ enum CellMode {
   Select = "select",
 }
 
-type TableGlobalReader = Pick<TableViewTable, "getTableGlobalState">;
+type TableGlobalReader = Pick<TableInstance, "getTableGlobalState">;
 type UnknownCellPlugin = CellPlugin<string, unknown, unknown>;
 
 interface TableRowCellProps {
-  column: TableViewCell["column"];
-  row: TableViewCell["row"];
+  column: CellInstance["column"];
+  row: CellInstance["row"];
   table: TableGlobalReader;
 }
 

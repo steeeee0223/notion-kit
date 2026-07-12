@@ -1,7 +1,7 @@
 import type { OnChangeFn, TableFeature, Updater } from "@tanstack/react-table";
 import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
 
-import type { TableInstance } from "@/features/types";
+import type { _TableInstance } from "@/features/types";
 
 export type FreezingState = {
   colId: string;
@@ -37,7 +37,7 @@ export const FreezingFeature: TableFeature = {
   },
 
   constructTableAPIs: (table) => {
-    const instance = table as unknown as TableInstance;
+    const instance = table as unknown as _TableInstance;
 
     const throwIfDisabled = () => {
       if (!instance.options.enableColumnFreezing) {
