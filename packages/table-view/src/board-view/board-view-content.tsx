@@ -41,10 +41,8 @@ export function BoardViewContent() {
           )}
           <Kanban.Root {...handlers}>
             {groupOrder.map((groupId, index) => {
-              const row = (
-                groupedRowsById[groupId] ??
-                table.getPlaceholderGroupedRow(groupId)
-              ) as RowInstance;
+              const row = (groupedRowsById[groupId] ??
+                table.getPlaceholderGroupedRow(groupId)) as RowInstance;
               return <BoardGroup key={groupId} row={row} index={index} />;
             })}
           </Kanban.Root>

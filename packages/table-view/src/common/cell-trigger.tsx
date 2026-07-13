@@ -8,7 +8,6 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-
 const cellVariant = cva("relative px-2 aria-disabled:pointer-events-none", {
   variants: {
     layout: {

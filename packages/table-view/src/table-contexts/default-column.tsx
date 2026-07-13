@@ -1,8 +1,9 @@
+import type { TableInstance } from "@notion-kit/table-hook";
+
 import { TableCell } from "@/common/table-cell";
 import { TableRowCell } from "@/table-body/table-row-cell";
 import { TableFooterCell } from "@/table-footer/table-footer-cell";
 import { TableHeaderCell } from "@/table-header/table-header-cell";
-import type { TableInstance } from "@notion-kit/table-hook";
 
 export const defaultColumn: NonNullable<
   TableInstance["options"]["defaultColumn"]

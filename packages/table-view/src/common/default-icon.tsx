@@ -2,7 +2,6 @@ import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import type { RowViewType } from "@notion-kit/table-hook";
 
-
 interface DefaultIconProps {
   type: string;
   className?: string;

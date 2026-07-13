@@ -125,11 +125,11 @@ const selectPlugin: TestSelectPlugin = {
         ...sortByText,
         function: (rowA, rowB, colId) => {
           const valueA =
-            (rowA.properties[colId]?.value as { name?: string } | null)
-              ?.name ?? "";
+            (rowA.properties[colId]?.value as { name?: string } | null)?.name ??
+            "";
           const valueB =
-            (rowB.properties[colId]?.value as { name?: string } | null)
-              ?.name ?? "";
+            (rowB.properties[colId]?.value as { name?: string } | null)?.name ??
+            "";
           return valueA.localeCompare(valueB);
         },
       },

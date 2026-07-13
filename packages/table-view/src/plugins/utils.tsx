@@ -1,10 +1,6 @@
 import type { Row } from "@notion-kit/table-hook";
 
-import type {
-  CellPlugin,
-  CompareFn,
-  InferData,
-} from "./types";
+import type { CellPlugin, CompareFn, InferData } from "./types";
 
 /**
  * Comparison function for strings (case-sensitive)

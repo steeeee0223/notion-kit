@@ -6,6 +6,7 @@ import type {
   LayoutType,
   TableInstance,
 } from "@notion-kit/table-hook";
+
 import type { CellPlugin, InferCellProps } from "@/plugins";
 
 type TableGlobalReader = Pick<TableInstance, "getTableGlobalState">;
@@ -18,12 +19,7 @@ interface TableCellProps {
   view: LayoutType | "row-view";
 }
 
-export function TableCell({
-  row,
-  column,
-  table,
-  view,
-}: TableCellProps) {
+export function TableCell({ row, column, table, view }: TableCellProps) {
   const { locked } = table.getTableGlobalState();
   const data = row.original.properties[column.id];
   const plugin = column.getPlugin() as UnknownCellPlugin;

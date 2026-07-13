@@ -25,10 +25,7 @@ interface TableHeaderCellProps {
 /**
  * Table Header Cell
  */
-export function TableHeaderCell({
-  header,
-  table,
-}: TableHeaderCellProps) {
+export function TableHeaderCell({ header, table }: TableHeaderCellProps) {
   const info = header.column.getInfo();
   const isResizing = header.column.getIsResizing();
   const onResizeStart = header.getResizeHandler();

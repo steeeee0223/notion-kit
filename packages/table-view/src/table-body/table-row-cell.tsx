@@ -26,11 +26,7 @@ interface TableRowCellProps {
   table: TableGlobalReader;
 }
 
-export function TableRowCell({
-  column,
-  row,
-  table,
-}: TableRowCellProps) {
+export function TableRowCell({ column, row, table }: TableRowCellProps) {
   const [mode] = useState<CellMode>(CellMode.Normal);
 
   const { locked } = table.getTableGlobalState();
