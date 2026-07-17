@@ -1,8 +1,8 @@
-// @ts-nocheck
 import React from "react";
-import type { OnChangeFn, Table } from "@tanstack/react-table";
+import type { OnChangeFn } from "@tanstack/react-table";
 
-import type { LayoutType } from "@/features";
+import type { LayoutType } from "@/features/menu";
+import type { _TableInstance } from "@/features/types";
 import type { ColumnInfo, Row } from "@/lib/types";
 import type {
   CountingMethodGroup,
@@ -39,7 +39,7 @@ export type ComparableValue = string | number | boolean | null;
 export interface GroupingValueProps {
   className?: string;
   value: ComparableValue;
-  table: Table<Row>;
+  table: _TableInstance;
 }
 
 export interface TableDataAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {

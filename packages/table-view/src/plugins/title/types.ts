@@ -1,4 +1,4 @@
-import type { CellPlugin } from "../types";
+import type { CellPlugin } from "@notion-kit/table-hook";
 
 export interface TitleConfig {
   showIcon?: boolean;

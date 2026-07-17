@@ -1,11 +1,5 @@
-// @ts-nocheck
 import type { DragEndEvent } from "@dnd-kit/react";
-import type {
-  OnChangeFn,
-  Row,
-  Table,
-  TableFeature,
-} from "@tanstack/react-table";
+import type { OnChangeFn, TableFeature } from "@tanstack/react-table";
 import {
   constructRow,
   flexRender,
@@ -15,10 +9,11 @@ import {
 
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
+import type { _RowInstance, _TableInstance } from "@/features/types";
 import { createGroupId } from "@/features/utils";
 import type { ColumnInfo, Row as RowModel } from "@/lib/types";
 import { resolveGroupingMethod } from "@/methods";
-import type { CellPlugin, ComparableValue, InferData } from "@/plugins";
+import type { ComparableValue } from "@/plugins";
 import { DefaultGroupingValue } from "@/plugins";
 
 interface ExtendedGroupingState {
@@ -38,7 +33,7 @@ interface ExtendedGroupingState {
     string,
     {
       value: ComparableValue;
-      original: InferData<CellPlugin>;
+      original: unknown;
     }
   >;
   showAggregates: boolean;
@@ -74,7 +69,7 @@ export interface ExtendedGroupingTableApi {
   /**
    * Use this to render the empty group
    */
-  getPlaceholderGroupedRow: (groupId: string) => Row<RowModel>;
+  getPlaceholderGroupedRow: (groupId: string) => _RowInstance;
 }
 
 export interface ExtendedGroupingRowApi {
@@ -104,7 +99,8 @@ export const ExtendedGroupingFeature: TableFeature = {
     };
   },
 
-  constructTableAPIs: (table: Table<RowModel>) => {
+  constructTableAPIs: (_table) => {
+    const table = _table as unknown as _TableInstance;
     const setGrouping = table.setGrouping.bind(table);
     const resetGrouping = table.resetGrouping.bind(table);
 
@@ -112,18 +108,19 @@ export const ExtendedGroupingFeature: TableFeature = {
       entries: {
         id: string;
         value: ComparableValue;
-        original: InferData<CellPlugin>;
+        original: unknown;
       }[],
       options: { resetOrder?: boolean } = {},
     ) => {
       const nextIds = entries.map((entry) => entry.id);
       const nextIdSet = new Set(nextIds);
-      const groupValues = Object.fromEntries(
-        entries.map((entry) => [
-          entry.id,
-          { value: entry.value, original: entry.original },
-        ]),
-      );
+      const groupValues: ExtendedGroupingState["groupValues"] =
+        Object.fromEntries(
+          entries.map((entry) => [
+            entry.id,
+            { value: entry.value, original: entry.original },
+          ]),
+        );
 
       table._setGroupingState((prev) => {
         const groupOrder = options.resetOrder
@@ -163,18 +160,13 @@ export const ExtendedGroupingFeature: TableFeature = {
         {
           id: string;
           value: ComparableValue;
-          original: InferData<CellPlugin>;
+          original: unknown;
         }
       >();
 
       rows.forEach((row) => {
-        const original = row.properties[info.id]
-          ?.value as InferData<CellPlugin>;
-        const value = groupingMethod.function(
-          original,
-          row,
-          info.id,
-        ) as ComparableValue;
+        const original: unknown = row.properties[info.id]?.value;
+        const value = groupingMethod.function(original, row, info.id);
         const id = createGroupId(info.id, value);
         if (!entries.has(id)) {
           entries.set(id, { id, value, original });
@@ -186,8 +178,9 @@ export const ExtendedGroupingFeature: TableFeature = {
 
     table.getGroupedColumnInfo = () => {
       const { grouping } = table.store.state;
-      if (grouping.length === 0) return null;
-      return table.getColumnInfo(grouping[0]!);
+      const groupedColumnId = grouping[0];
+      if (!groupedColumnId) return null;
+      return table.getColumnInfo(groupedColumnId);
     };
     table.getIsSomeGroupVisible = () => {
       const { groupOrder, groupVisibility } = table.store.state.groupingState;
@@ -288,16 +281,19 @@ export const ExtendedGroupingFeature: TableFeature = {
       };
     };
     table.getPlaceholderGroupedRow = (groupId) => {
-      const { groupValues } = table.store.state.groupingState;
-      const original = groupValues[groupId]?.original ?? {
+      const original: RowModel = {
         id: groupId,
         properties: {},
+        createdAt: 0,
+        lastEditedAt: 0,
       };
-      return constructRow(table, groupId, original as RowModel, 0, 0, []);
+      return constructRow(table, groupId, original, 0, 0, []);
     };
   },
 
-  assignRowPrototype: (prototype, table) => {
+  assignRowPrototype: (prototype, _table) => {
+    const table = _table as unknown as _TableInstance;
+
     prototype.getShouldShowGroupAggregates = function () {
       return table.store.state.groupingState.showAggregates;
     };
@@ -307,11 +303,18 @@ export const ExtendedGroupingFeature: TableFeature = {
         showAggregates: !v.showAggregates,
       }));
     };
-    prototype.toggleGroupVisibility = function () {
+    prototype.toggleGroupVisibility = function (this: {
+      groupingColumnId?: string;
+      id: string;
+      getIsGrouped: () => boolean;
+    }) {
       if (!this.groupingColumnId || !this.getIsGrouped()) return;
       table.toggleGroupVisible(this.id);
     };
-    prototype.renderGroupingValue = function (props: { className?: string }) {
+    prototype.renderGroupingValue = function (
+      this: { id: string },
+      props: { className?: string },
+    ) {
       return flexRender(table.getGroupingValueRenderer(this.id), props);
     };
   },

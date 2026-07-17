@@ -1,2 +1,2 @@
 export * from "./table-view-provider";
-export type * from "./types";
+export * from "./table-view-content";

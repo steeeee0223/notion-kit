@@ -36,7 +36,7 @@ import { useTableViewCtx } from "@/table-contexts";
 export function SortMenu() {
   const { table } = useTableViewCtx();
 
-  const sorting = table.getState().sorting;
+  const sorting = table.store.state.sorting;
   const [addingSort, setAddingSort] = useState(false);
 
   const reorderRules = (e: DragEndEvent) => {
@@ -93,7 +93,7 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
   const { table } = useTableViewCtx();
 
   const current = table.getColumnInfo(currentId);
-  const properties = Object.values(table.getState().columnsInfo);
+  const properties = Object.values(table.store.state.columnsInfo);
 
   const updateRule = (columnSort: ColumnSort) =>
     table.setSorting((prev) =>
@@ -101,7 +101,7 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
     );
   const removeRule = () => {
     table.setSorting((prev) => prev.filter((s) => s.id !== currentId));
-    const isLastRule = table.getState().sorting.length === 1;
+    const isLastRule = table.store.state.sorting.length === 1;
     if (isLastRule) {
       // TODO close popover
     }
@@ -202,9 +202,9 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
 
 function PropSelectMenu({ onSelect }: { onSelect: () => void }) {
   const { table } = useTableViewCtx();
-  const columns = Object.values(table.getState().columnsInfo);
+  const columns = Object.values(table.store.state.columnsInfo);
   /** Select */
-  const sortedProps = new Set(table.getState().sorting.map((s) => s.id));
+  const sortedProps = new Set(table.store.state.sorting.map((s) => s.id));
   const selectProp = (id: string) => {
     table.setSorting((prev) => [...prev, { id, desc: false }]);
     onSelect();

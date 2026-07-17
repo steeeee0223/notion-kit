@@ -14,7 +14,7 @@ export function SortSelector() {
   const { table } = useTableViewCtx();
 
   const badgeDisplay = (() => {
-    const sorting = table.getState().sorting;
+    const sorting = table.store.state.sorting;
     const count = sorting.length;
     if (count === 1) {
       const sort = sorting[0]!;

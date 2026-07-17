@@ -1,4 +1,8 @@
 export { useTableView } from "@/table-contexts/use-table-view";
+export * from "@/table-contexts";
+export * from "@/lib/types";
+export * from "@/lib/utils";
+export * from "@/plugins";
 export {
   ColumnsInfoFeature,
   CountingFeature,
@@ -7,9 +11,17 @@ export {
   FreezingFeature,
   RowActionsFeature,
   TableMenuFeature,
+  TableViewMenuPage,
   getExtendedGroupedRowModel,
 } from "@/features";
-export type { CellPlugin, ComparableValue, CompareFn } from "@/plugins";
+export type {
+  ColumnsInfoTableState,
+  CountingTableState,
+  ExtendedGroupingTableState,
+  FreezingTableState,
+  TableMenuTableState,
+  TableFeatures,
+} from "@/features";
 export {
   CountMethod,
   compareBooleans,
@@ -29,6 +41,9 @@ export {
   percentageEmpty,
   percentageNonEmpty,
   percentageUnchecked,
+  resolveCountingMethod,
+  resolveGroupingMethod,
+  resolveSortingMethod,
   sortByCheckbox,
   sortByNumber,
   sortByText,
@@ -40,3 +55,10 @@ export type {
   GroupingMethod,
   SortingMethod,
 } from "@/methods";
+export { ROW_VIEW_OPTIONS } from "@/features";
+export { LAYOUT_OPTIONS } from "@/features/menu";
+export type {
+  TableGlobalState,
+  RowViewType,
+  LayoutType,
+} from "@/features/menu";

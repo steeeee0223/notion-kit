@@ -1,8 +1,8 @@
 import React, { useMemo, useRef } from "react";
 
+import type { Row as RowModel } from "@notion-kit/table-hook";
 import { Kanban, KanbanDnd } from "@notion-kit/ui/kanban";
 
-import type { Row as RowModel } from "@/lib/types";
 import { useTableViewCtx } from "@/table-contexts";
 
 export function useBoardDnd() {

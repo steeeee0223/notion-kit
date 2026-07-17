@@ -1,13 +1,12 @@
 import React from "react";
 
 import { cn, cva, type VariantProps } from "@notion-kit/cn";
+import type { LayoutType } from "@notion-kit/table-hook";
 import {
   buttonVariants,
   TooltipDescription,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
-
-import type { LayoutType } from "@/features";
 
 const cellVariant = cva("relative px-2 aria-disabled:pointer-events-none", {
   variants: {
