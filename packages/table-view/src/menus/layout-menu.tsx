@@ -21,21 +21,20 @@ export function LayoutMenu() {
   const { table } = useTableViewCtx();
 
   return (
-    <table.Subscribe selector={(state) => state.tableGlobal}>
-      {(tableGlobal) => <LayoutMenuContent tableGlobal={tableGlobal} />}
+    <table.Subscribe selector={(state) => state.tableGlobal.layout}>
+      {(layout) => <LayoutMenuContent currentLayout={layout} />}
     </table.Subscribe>
   );
 }
 
 function LayoutMenuContent({
-  tableGlobal,
+  currentLayout,
 }: {
-  tableGlobal: ReturnType<
+  currentLayout: ReturnType<
     typeof useTableViewCtx
-  >["table"]["store"]["state"]["tableGlobal"];
+  >["table"]["store"]["state"]["tableGlobal"]["layout"];
 }) {
   const { table } = useTableViewCtx();
-  const { layout: currentLayout } = tableGlobal;
 
   return (
     <>

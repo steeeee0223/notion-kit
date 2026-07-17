@@ -19,6 +19,7 @@ export function ListViewContent() {
   return (
     <table.Subscribe
       selector={(state) => ({
+        locked: state.tableGlobal.locked,
         sorting: state.sorting,
         grouping: state.grouping,
         groupingState: state.groupingState,
@@ -28,8 +29,9 @@ export function ListViewContent() {
         columnsInfo: state.columnsInfo,
       })}
     >
-      {({ sorting }) => (
+      {({ locked, sorting }) => (
         <ListViewContentInner
+          locked={locked ?? false}
           sorting={sorting}
           dialogOpen={dialogOpen}
           setDialogOpen={setDialogOpen}
@@ -42,6 +44,7 @@ export function ListViewContent() {
 }
 
 interface ListViewContentInnerProps {
+  locked: boolean;
   sorting: ReturnType<
     typeof useTableViewCtx
   >["table"]["store"]["state"]["sorting"];
@@ -52,6 +55,7 @@ interface ListViewContentInnerProps {
 }
 
 function ListViewContentInner({
+  locked,
   sorting,
   dialogOpen,
   setDialogOpen,
@@ -87,7 +91,7 @@ function ListViewContentInner({
         data-block-id="1fe35e0f-492c-80fd-8d7c-f7e953641770"
         className="flex flex-col py-1"
       >
-        <Sortable.Root onDragEnd={handleRowDragEnd}>
+        <Sortable.Root disabled={locked} onDragEnd={handleRowDragEnd}>
           <Sortable.List>
             {rows.map((row) =>
               row.getIsGrouped() ? (
@@ -98,15 +102,17 @@ function ListViewContentInner({
             )}
           </Sortable.List>
         </Sortable.Root>
-        <Button
-          tabIndex={0}
-          variant="cell"
-          className="h-7.5 rounded-md px-2 text-muted"
-          onClick={() => table.addRow()}
-        >
-          <Icon.Plus className="size-3.5 fill-current" />
-          New page
-        </Button>
+        {!locked && (
+          <Button
+            tabIndex={0}
+            variant="cell"
+            className="h-7.5 rounded-md px-2 text-muted"
+            onClick={() => table.addRow()}
+          >
+            <Icon.Plus className="size-3.5 fill-current" />
+            New page
+          </Button>
+        )}
       </div>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <AlertModal

@@ -22,19 +22,19 @@
 
 **Files:**
 
-- Create: `packages/table-view/src/table-contexts/table-view-reactivity.test.tsx`
-- Modify: none
+- Modify: `packages/table-view/src/table-contexts/table-view-reactivity.test.tsx`
 - Test: `packages/table-view/src/table-contexts/table-view-reactivity.test.tsx`
 
 **Interfaces:**
 
 - Consumes: `renderTableView(props?: Partial<React.ComponentProps<typeof TableView>>)` from `packages/table-view/src/__tests__/component-objects/render-table-view.tsx`.
 - Produces: regression tests named with `TableViewReactivity_*` that fail when `TableViewWrapper` stops subscribing to all state before UI dependencies are wrapped in `table.Subscribe`.
+- Preserves: the existing internal-store context-broadcast regression case and any other characterization cases already present in the file.
 
 - [ ] **Step 1: Write failing stale-UI tests**
 
 ```tsx
-import { screen, within } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
@@ -49,7 +49,7 @@ describe("TableViewReactivity", () => {
     const layout = await settings.openLayout();
 
     await layout.selectLayout("List");
-    expect(screen.getByText("Task 1").closest("[data-slot]")).toBeNull();
+    expect(screen.queryByRole("table")).not.toBeInTheDocument();
     expect(screen.getByText("Task 1")).toBeVisible();
 
     await layout.selectLayout("Board");
@@ -71,39 +71,32 @@ describe("TableViewReactivity", () => {
 
   it("TableViewReactivity_SortingChange_ShowsAndClearsSortSelector", async () => {
     const tableView = renderTableView();
-    const settings = await tableView.openViewSettings();
-    const sort = await settings.openSort();
+    const sort = await tableView.openSortMenu();
 
     await sort.addRule("Name");
-    expect(screen.getByRole("button", { name: /name/i })).toBeVisible();
+    await tableView.clickOutside();
+    expect(screen.getAllByRole("button", { name: /name/i })).toHaveLength(2);
 
-    await sort.removeRule("Name");
-    expect(
-      screen.queryByRole("button", { name: /name/i }),
-    ).not.toBeInTheDocument();
+    const sortedMenu = await tableView.openSortMenu();
+    await sortedMenu.deleteAll();
+    await tableView.clickOutside();
+    expect(screen.getAllByRole("button", { name: /name/i })).toHaveLength(1);
   });
 
-  it("TableViewReactivity_RowViewOpenAndModeChange_RendersSelectedRowView", async () => {
+  it("TableViewReactivity_RowOpen_RendersRowView", async () => {
     const tableView = renderTableView();
+    const rowActions = await tableView.openRowActions("Task 1");
 
-    await tableView.openRowActions("Task 1");
-    await tableView.rowActions.openPage();
-    expect(screen.getByRole("dialog")).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Task 1" })).toBeVisible();
+    rowActions.choose("Open in side peek");
 
-    const settings = await tableView.openViewSettings();
-    const layout = await settings.openLayout();
-    await layout.selectRowView("Center peek");
-
-    expect(screen.getByRole("dialog")).toBeVisible();
     expect(
-      within(screen.getByRole("dialog")).getByRole("heading", {
-        name: "Task 1",
-      }),
+      await screen.findByRole("heading", { name: "Task 1" }),
     ).toBeVisible();
   });
 });
 ```
+
+Extend the characterization matrix beyond these smoke cases before narrowing the root selector. Cover row-data replacement, list and board lock state, grouping-driven row models, column visibility, pinning, sizing/resizing, and footer counting so every coarse subscription family has at least one observable UI assertion.
 
 - [ ] **Step 2: Run the test to verify RED**
 

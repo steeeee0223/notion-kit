@@ -124,12 +124,14 @@ export const CalcMenu: Story = {
         selector={(state) => ({
           columnOrder: state.columnOrder,
           columnCounting: state.columnCounting,
+          columnsInfo: state.columnsInfo,
+          cellPlugins: state.cellPlugins,
         })}
       >
-        {({ columnOrder, columnCounting }) => {
+        {({ columnOrder, columnCounting, columnsInfo }) => {
           const countResults = Object.fromEntries(
             columnOrder.map((id) => [
-              table.getColumnInfo(id).name,
+              columnsInfo[id]!.name,
               table.getColumnCountResult(id),
             ]),
           );

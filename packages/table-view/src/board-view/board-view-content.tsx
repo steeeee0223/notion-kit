@@ -14,6 +14,7 @@ export function BoardViewContent() {
   return (
     <table.Subscribe
       selector={(state) => ({
+        locked: state.tableGlobal.locked,
         grouping: state.grouping,
         groupingState: state.groupingState,
         sorting: state.sorting,
@@ -23,8 +24,9 @@ export function BoardViewContent() {
         columnsInfo: state.columnsInfo,
       })}
     >
-      {({ grouping, groupingState }) => (
+      {({ locked, grouping, groupingState }) => (
         <BoardViewContentInner
+          locked={locked ?? false}
           grouping={grouping}
           groupingState={groupingState}
         />
@@ -34,9 +36,11 @@ export function BoardViewContent() {
 }
 
 function BoardViewContentInner({
+  locked,
   grouping,
   groupingState,
 }: {
+  locked: boolean;
   grouping: ReturnType<
     typeof useTableViewCtx
   >["table"]["store"]["state"]["grouping"];
@@ -77,7 +81,14 @@ function BoardViewContentInner({
             {groupOrder.map((groupId, index) => {
               const row = (groupedRowsById[groupId] ??
                 table.getPlaceholderGroupedRow(groupId)) as RowInstance;
-              return <BoardGroup key={groupId} row={row} index={index} />;
+              return (
+                <BoardGroup
+                  key={groupId}
+                  row={row}
+                  index={index}
+                  locked={locked}
+                />
+              );
             })}
           </Kanban.Root>
         </div>
