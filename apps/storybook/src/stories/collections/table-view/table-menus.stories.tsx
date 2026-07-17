@@ -44,32 +44,41 @@ type Story = StoryObj<typeof meta>;
 export const TableViewMenu: Story = {
   render: () => {
     const { table } = useTableViewCtx();
-    const { tableGlobal, grouping, groupingState } = table.getState();
 
     return (
-      <div className="grid grid-cols-2 justify-between gap-4 p-20">
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                variant="nav-icon"
-                aria-label="Settings"
-                className="[&_svg]:fill-current"
-              >
-                <Icon.SlidersSmall />
-              </Button>
-            }
-          />
-          <DropdownMenuContent collisionPadding={12} className="w-72">
-            <Menu.TableViewMenu />
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <div className="flex w-full flex-col gap-3">
-          <Code title="Table global" codeObject={tableGlobal} />
-          <Code title="Grouping" codeObject={grouping} />
-          <Code title="Grouping state" codeObject={groupingState} />
-        </div>
-      </div>
+      <table.Subscribe
+        selector={(state) => ({
+          tableGlobal: state.tableGlobal,
+          grouping: state.grouping,
+          groupingState: state.groupingState,
+        })}
+      >
+        {({ tableGlobal, grouping, groupingState }) => (
+          <div className="grid grid-cols-2 justify-between gap-4 p-20">
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="nav-icon"
+                    aria-label="Settings"
+                    className="[&_svg]:fill-current"
+                  >
+                    <Icon.SlidersSmall />
+                  </Button>
+                }
+              />
+              <DropdownMenuContent collisionPadding={12} className="w-72">
+                <Menu.TableViewMenu />
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <div className="flex w-full flex-col gap-3">
+              <Code title="Table global" codeObject={tableGlobal} />
+              <Code title="Grouping" codeObject={grouping} />
+              <Code title="Grouping state" codeObject={groupingState} />
+            </div>
+          </div>
+        )}
+      </table.Subscribe>
     );
   },
 };
@@ -77,28 +86,31 @@ export const TableViewMenu: Story = {
 export const SortMenu: Story = {
   render: () => {
     const { table } = useTableViewCtx();
-    const { sorting } = table.getState();
 
     return (
-      <div className="grid grid-cols-2 justify-between gap-4 p-20">
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                variant="nav-icon"
-                aria-label="Sort"
-                className="[&_svg]:fill-current"
-              >
-                <Icon.ArrowUpDownSmall />
-              </Button>
-            }
-          />
-          <DropdownMenuContent collisionPadding={12} className="w-72">
-            <Menu.SortMenu />
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <Code title="Sorting" codeObject={sorting} />
-      </div>
+      <table.Subscribe selector={(state) => state.sorting}>
+        {(sorting) => (
+          <div className="grid grid-cols-2 justify-between gap-4 p-20">
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="nav-icon"
+                    aria-label="Sort"
+                    className="[&_svg]:fill-current"
+                  >
+                    <Icon.ArrowUpDownSmall />
+                  </Button>
+                }
+              />
+              <DropdownMenuContent collisionPadding={12} className="w-72">
+                <Menu.SortMenu />
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Code title="Sorting" codeObject={sorting} />
+          </div>
+        )}
+      </table.Subscribe>
     );
   },
 };
@@ -106,27 +118,38 @@ export const SortMenu: Story = {
 export const CalcMenu: Story = {
   render: () => {
     const { table } = useTableViewCtx();
-    const { columnOrder, columnCounting } = table.getState();
-    const countResults = Object.fromEntries(
-      columnOrder.map((id) => [
-        table.getColumnInfo(id).name,
-        table.getColumnCountResult(id),
-      ]),
-    );
 
     return (
-      <div className="grid grid-cols-2 justify-between gap-4 p-20">
-        <PluginsToolbar
-          contentClassName="w-50"
-          renderContent={(info) => (
-            <Menu.CalcMenu id={info.id} type={info.type} />
-          )}
-        />
-        <div className="flex w-full flex-col gap-3">
-          <Code title="Counting" codeObject={columnCounting} />
-          <Code title="Count results" codeObject={countResults} />
-        </div>
-      </div>
+      <table.Subscribe
+        selector={(state) => ({
+          columnOrder: state.columnOrder,
+          columnCounting: state.columnCounting,
+        })}
+      >
+        {({ columnOrder, columnCounting }) => {
+          const countResults = Object.fromEntries(
+            columnOrder.map((id) => [
+              table.getColumnInfo(id).name,
+              table.getColumnCountResult(id),
+            ]),
+          );
+
+          return (
+            <div className="grid grid-cols-2 justify-between gap-4 p-20">
+              <PluginsToolbar
+                contentClassName="w-50"
+                renderContent={(info) => (
+                  <Menu.CalcMenu id={info.id} type={info.type} />
+                )}
+              />
+              <div className="flex w-full flex-col gap-3">
+                <Code title="Counting" codeObject={columnCounting} />
+                <Code title="Count results" codeObject={countResults} />
+              </div>
+            </div>
+          );
+        }}
+      </table.Subscribe>
     );
   },
 };
@@ -134,20 +157,23 @@ export const CalcMenu: Story = {
 export const PropMenu: Story = {
   render: () => {
     const { table } = useTableViewCtx();
-    const { columnsInfo } = table.getState();
 
     return (
-      <div className="grid grid-cols-2 justify-between gap-4 p-20">
-        <PluginsToolbar
-          contentClassName="w-60"
-          renderContent={(info) => (
-            <Menu.PropMenu propId={info.id} view="table" />
-          )}
-        />
-        <div className="flex w-full flex-col gap-3">
-          <Code title="Columns info" codeObject={columnsInfo} />
-        </div>
-      </div>
+      <table.Subscribe selector={(state) => state.columnsInfo}>
+        {(columnsInfo) => (
+          <div className="grid grid-cols-2 justify-between gap-4 p-20">
+            <PluginsToolbar
+              contentClassName="w-60"
+              renderContent={(info) => (
+                <Menu.PropMenu propId={info.id} view="table" />
+              )}
+            />
+            <div className="flex w-full flex-col gap-3">
+              <Code title="Columns info" codeObject={columnsInfo} />
+            </div>
+          </div>
+        )}
+      </table.Subscribe>
     );
   },
 };
@@ -176,18 +202,21 @@ export const TypesMenu: Story = {
 export const EditPropMenu: Story = {
   render: () => {
     const { table } = useTableViewCtx();
-    const { columnsInfo } = table.getState();
 
     return (
-      <div className="grid grid-cols-2 justify-between gap-4 p-20">
-        <PluginsToolbar
-          contentClassName="w-72"
-          renderContent={(info) => <Menu.EditPropMenu propId={info.id} />}
-        />
-        <div className="flex w-full flex-col gap-3">
-          <Code title="Columns info" codeObject={columnsInfo} />
-        </div>
-      </div>
+      <table.Subscribe selector={(state) => state.columnsInfo}>
+        {(columnsInfo) => (
+          <div className="grid grid-cols-2 justify-between gap-4 p-20">
+            <PluginsToolbar
+              contentClassName="w-72"
+              renderContent={(info) => <Menu.EditPropMenu propId={info.id} />}
+            />
+            <div className="flex w-full flex-col gap-3">
+              <Code title="Columns info" codeObject={columnsInfo} />
+            </div>
+          </div>
+        )}
+      </table.Subscribe>
     );
   },
 };

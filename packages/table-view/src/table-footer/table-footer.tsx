@@ -9,12 +9,40 @@ import { useTableViewCtx } from "@/table-contexts";
 export function TableFooter() {
   const { table } = useTableViewCtx();
 
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        columnCounting: state.columnCounting,
+        columnOrder: state.columnOrder,
+        columnVisibility: state.columnVisibility,
+        columnPinning: state.columnPinning,
+        columnSizing: state.columnSizing,
+        columnResizing: state.columnResizing,
+        columnsInfo: state.columnsInfo,
+      })}
+    >
+      {({ columnCounting }) => (
+        <TableFooterContent columnCounting={columnCounting} />
+      )}
+    </table.Subscribe>
+  );
+}
+
+function TableFooterContent({
+  columnCounting,
+}: {
+  columnCounting: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["columnCounting"];
+}) {
+  const { table } = useTableViewCtx();
+
   const startPinnedHeaders = table.getStartLeafHeaders();
   const headers = table.getCenterLeafHeaders();
   const isStartPinned = startPinnedHeaders.length > 0;
-  const isSomeCountMethodSet = Object.values(
-    table.store.state.columnCounting,
-  ).some((v) => (v.method as CountMethod) !== CountMethod.NONE);
+  const isSomeCountMethodSet = Object.values(columnCounting).some(
+    (v) => (v.method as CountMethod) !== CountMethod.NONE,
+  );
 
   return (
     <div className="group/footer left-0 z-(--z-row) box-border flex h-8 min-w-full border-t border-t-border-cell bg-main text-sm select-none">

@@ -16,16 +16,66 @@ export function DndTableBody() {
   const [pendingDragEndEvent, setPendingDragEndEvent] =
     useState<DragEndEvent | null>(null);
   const { table } = useTableViewCtx();
-  const { locked } = table.getTableGlobalState();
+
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        locked: state.tableGlobal.locked,
+        sorting: state.sorting,
+        grouping: state.grouping,
+        groupingState: state.groupingState,
+        expanded: state.expanded,
+        columnOrder: state.columnOrder,
+        columnVisibility: state.columnVisibility,
+        columnPinning: state.columnPinning,
+        columnResizing: state.columnResizing,
+        columnsInfo: state.columnsInfo,
+      })}
+    >
+      {({ locked, sorting, columnResizing }) => (
+        <DndTableBodyContent
+          locked={locked ?? false}
+          sorting={sorting}
+          isResizingColumn={Boolean(columnResizing.isResizingColumn)}
+          dialogOpen={dialogOpen}
+          setDialogOpen={setDialogOpen}
+          pendingDragEndEvent={pendingDragEndEvent}
+          setPendingDragEndEvent={setPendingDragEndEvent}
+        />
+      )}
+    </table.Subscribe>
+  );
+}
+
+interface DndTableBodyContentProps {
+  locked: boolean;
+  sorting: TableInstance["store"]["state"]["sorting"];
+  isResizingColumn: boolean;
+  dialogOpen: boolean;
+  setDialogOpen: (open: boolean) => void;
+  pendingDragEndEvent: DragEndEvent | null;
+  setPendingDragEndEvent: (event: DragEndEvent | null) => void;
+}
+
+function DndTableBodyContent({
+  locked,
+  sorting,
+  isResizingColumn,
+  dialogOpen,
+  setDialogOpen,
+  pendingDragEndEvent,
+  setPendingDragEndEvent,
+}: DndTableBodyContentProps) {
+  const { table } = useTableViewCtx();
 
   const handleRowDragEnd = useCallback(
     (e: DragEndEvent) => {
-      const isSorted = table.store.state.sorting.length > 0;
+      const isSorted = sorting.length > 0;
       if (!isSorted) return table.handleRowDragEnd(e);
       setPendingDragEndEvent(e);
       setDialogOpen(true);
     },
-    [table],
+    [setDialogOpen, setPendingDragEndEvent, sorting.length, table],
   );
 
   const handleConfirmRemoveSorting = () => {
@@ -65,7 +115,7 @@ export function DndTableBody() {
         </div>
         {/* Rows */}
         <div className="relative">
-          {table.store.state.columnResizing.isResizingColumn ? (
+          {isResizingColumn ? (
             <MemoizedTableBody table={table} onRowDragEnd={handleRowDragEnd} />
           ) : (
             <TableBody table={table} onRowDragEnd={handleRowDragEnd} />

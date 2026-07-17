@@ -38,9 +38,34 @@ export const DndTableHeader = React.memo(function DndTableHeader() {
 
 function TableHeaderRow() {
   const { table } = useTableViewCtx();
+
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        tableGlobal: state.tableGlobal,
+        columnOrder: state.columnOrder,
+        columnVisibility: state.columnVisibility,
+        columnPinning: state.columnPinning,
+        columnSizing: state.columnSizing,
+        columnResizing: state.columnResizing,
+        columnsInfo: state.columnsInfo,
+      })}
+    >
+      {({ tableGlobal }) => <TableHeaderRowContent tableGlobal={tableGlobal} />}
+    </table.Subscribe>
+  );
+}
+
+function TableHeaderRowContent({
+  tableGlobal,
+}: {
+  tableGlobal: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["tableGlobal"];
+}) {
+  const { table } = useTableViewCtx();
   const isMobile = useIsMobile();
 
-  const { tableGlobal } = table.store.state;
   const headers = table.getCenterLeafHeaders();
   const startPinnedHeaders = table.getStartLeafHeaders();
   const isStartPinned = startPinnedHeaders.length > 0;

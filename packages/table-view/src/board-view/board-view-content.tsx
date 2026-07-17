@@ -10,9 +10,43 @@ import { useBoardDnd } from "./use-board-dnd";
 
 export function BoardViewContent() {
   const { table } = useTableViewCtx();
+
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        grouping: state.grouping,
+        groupingState: state.groupingState,
+        sorting: state.sorting,
+        expanded: state.expanded,
+        columnOrder: state.columnOrder,
+        columnVisibility: state.columnVisibility,
+        columnsInfo: state.columnsInfo,
+      })}
+    >
+      {({ grouping, groupingState }) => (
+        <BoardViewContentInner
+          grouping={grouping}
+          groupingState={groupingState}
+        />
+      )}
+    </table.Subscribe>
+  );
+}
+
+function BoardViewContentInner({
+  grouping,
+  groupingState,
+}: {
+  grouping: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["grouping"];
+  groupingState: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["groupingState"];
+}) {
+  const { table } = useTableViewCtx();
   const handlers = useBoardDnd();
   const groupedRowsById = table.getRowModel().rowsById;
-  const { grouping, groupingState } = table.store.state;
   const { groupOrder } = groupingState;
 
   return (

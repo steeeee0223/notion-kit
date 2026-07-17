@@ -16,16 +16,60 @@ export function ListViewContent() {
     useState<DragEndEvent | null>(null);
   const { table } = useTableViewCtx();
 
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        sorting: state.sorting,
+        grouping: state.grouping,
+        groupingState: state.groupingState,
+        expanded: state.expanded,
+        columnOrder: state.columnOrder,
+        columnVisibility: state.columnVisibility,
+        columnsInfo: state.columnsInfo,
+      })}
+    >
+      {({ sorting }) => (
+        <ListViewContentInner
+          sorting={sorting}
+          dialogOpen={dialogOpen}
+          setDialogOpen={setDialogOpen}
+          pendingDragEndEvent={pendingDragEndEvent}
+          setPendingDragEndEvent={setPendingDragEndEvent}
+        />
+      )}
+    </table.Subscribe>
+  );
+}
+
+interface ListViewContentInnerProps {
+  sorting: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["sorting"];
+  dialogOpen: boolean;
+  setDialogOpen: (open: boolean) => void;
+  pendingDragEndEvent: DragEndEvent | null;
+  setPendingDragEndEvent: (event: DragEndEvent | null) => void;
+}
+
+function ListViewContentInner({
+  sorting,
+  dialogOpen,
+  setDialogOpen,
+  pendingDragEndEvent,
+  setPendingDragEndEvent,
+}: ListViewContentInnerProps) {
+  const { table } = useTableViewCtx();
+
   const rows = table.getRowModel().rows;
 
   const handleRowDragEnd = useCallback(
     (e: DragEndEvent) => {
-      const isSorted = table.store.state.sorting.length > 0;
+      const isSorted = sorting.length > 0;
       if (!isSorted) return table.handleRowDragEnd(e);
       setPendingDragEndEvent(e);
       setDialogOpen(true);
     },
-    [table],
+    [setDialogOpen, setPendingDragEndEvent, sorting.length, table],
   );
 
   const handleConfirmRemoveSorting = () => {

@@ -160,21 +160,24 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   );
 
   /** table instance */
-  const table = useTable<TableFeatures, Row<TPlugins>>({
-    features: DEFAULT_FEATURES,
-    columns,
-    data: dataEntity,
-    defaultColumn: defaultColumnOverride ?? defaultColumn,
-    columnResizeMode: "onChange",
-    groupedColumnMode: false,
-    autoResetExpanded: false,
-    getRowId: (row) => row.id,
-    state: tableState,
-    onColumnInfoChange: handleColumnChange,
-    onTableDataChange: onDataChange ?? setDataEntity,
-    onTableGlobalChange: onTableChange ?? setTableGlobal,
-    getRowUrl,
-  });
+  const table = useTable<TableFeatures, Row<TPlugins>, null>(
+    {
+      features: DEFAULT_FEATURES,
+      columns,
+      data: dataEntity,
+      defaultColumn: defaultColumnOverride ?? defaultColumn,
+      columnResizeMode: "onChange",
+      groupedColumnMode: false,
+      autoResetExpanded: false,
+      getRowId: (row) => row.id,
+      state: tableState,
+      onColumnInfoChange: handleColumnChange,
+      onTableDataChange: onDataChange ?? setDataEntity,
+      onTableGlobalChange: onTableChange ?? setTableGlobal,
+      getRowUrl,
+    },
+    () => null,
+  );
 
   return useMemo(
     () => ({

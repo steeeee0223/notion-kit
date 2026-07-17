@@ -19,7 +19,23 @@ import { useTableViewCtx } from "@/table-contexts";
 
 export function LayoutMenu() {
   const { table } = useTableViewCtx();
-  const { layout: currentLayout } = table.getTableGlobalState();
+
+  return (
+    <table.Subscribe selector={(state) => state.tableGlobal}>
+      {(tableGlobal) => <LayoutMenuContent tableGlobal={tableGlobal} />}
+    </table.Subscribe>
+  );
+}
+
+function LayoutMenuContent({
+  tableGlobal,
+}: {
+  tableGlobal: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["tableGlobal"];
+}) {
+  const { table } = useTableViewCtx();
+  const { layout: currentLayout } = tableGlobal;
 
   return (
     <>
@@ -60,35 +76,38 @@ export function LayoutMenu() {
 
 function RowViewMenu() {
   const { table } = useTableViewCtx();
-  const { rowView: current } = table.getTableGlobalState();
 
   return (
-    <DropdownMenuSub>
-      <DropdownMenuSubTrigger label="Open pages in">
-        <MenuItemAction className="flex items-center text-muted">
-          {ROW_VIEW_OPTIONS[current].label}
-        </MenuItemAction>
-      </DropdownMenuSubTrigger>
-      <DropdownMenuContent sideOffset={-4} className="w-64">
-        <DropdownMenuGroup>
-          {Object.entries(ROW_VIEW_OPTIONS).map(([value, option]) => {
-            const rowView = value as RowViewType;
-            return (
-              <DropdownMenuCheckboxItem
-                key={rowView}
-                closeOnClick={false}
-                icon={<RowViewIcon rowView={rowView} />}
-                label={option.label}
-                desc={option.desc}
-                checked={rowView === current}
-                onCheckedChange={() =>
-                  table.setTableGlobalState((v) => ({ ...v, rowView }))
-                }
-              />
-            );
-          })}
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenuSub>
+    <table.Subscribe selector={(state) => state.tableGlobal.rowView}>
+      {(current) => (
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger label="Open pages in">
+            <MenuItemAction className="flex items-center text-muted">
+              {ROW_VIEW_OPTIONS[current].label}
+            </MenuItemAction>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuContent sideOffset={-4} className="w-64">
+            <DropdownMenuGroup>
+              {Object.entries(ROW_VIEW_OPTIONS).map(([value, option]) => {
+                const rowView = value as RowViewType;
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={rowView}
+                    closeOnClick={false}
+                    icon={<RowViewIcon rowView={rowView} />}
+                    label={option.label}
+                    desc={option.desc}
+                    checked={rowView === current}
+                    onCheckedChange={() =>
+                      table.setTableGlobalState((v) => ({ ...v, rowView }))
+                    }
+                  />
+                );
+              })}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenuSub>
+      )}
+    </table.Subscribe>
   );
 }

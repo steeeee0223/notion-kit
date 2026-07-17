@@ -11,7 +11,32 @@ import { ViewProps } from "./view-props";
 
 export function SideView({ children }: React.PropsWithChildren) {
   const { table } = useTableViewCtx();
-  const { rowView, openedRowId } = table.getTableGlobalState();
+
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        tableGlobal: state.tableGlobal,
+        columnOrder: state.columnOrder,
+        columnsInfo: state.columnsInfo,
+      })}
+    >
+      {({ tableGlobal }) => (
+        <SideViewContent tableGlobal={tableGlobal}>{children}</SideViewContent>
+      )}
+    </table.Subscribe>
+  );
+}
+
+function SideViewContent({
+  children,
+  tableGlobal,
+}: React.PropsWithChildren<{
+  tableGlobal: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["tableGlobal"];
+}>) {
+  const { table } = useTableViewCtx();
+  const { rowView, openedRowId } = tableGlobal;
   const titleCell = openedRowId ? table.getTitleCell(openedRowId) : null;
 
   return (
