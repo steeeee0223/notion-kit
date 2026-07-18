@@ -89,7 +89,11 @@ describe("useTableView resource API", () => {
   it("ResourceApi_ControlledView_EmitsReplacementWithoutCommittingUntilPropsChange", () => {
     const onViewChange = vi.fn();
     const { result, rerender } = renderHook(
-      ({ view }: { view: { layout: "table" | "list"; rowView: "side"; openedRowId: null } }) =>
+      ({
+        view,
+      }: {
+        view: { layout: "table" | "list"; rowView: "side"; openedRowId: null };
+      }) =>
         useTableView({
           plugins,
           defaultData: mockData,
@@ -226,13 +230,11 @@ describe("useTableView resource API", () => {
   it("ResourceApi_OwnershipSwitch_WarnsInDevelopment", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     const { rerender } = renderHook(
-      (
-        props: {
-          data?: Row[];
-          defaultData?: Row[];
-          defaultProperties: ColumnInfo[];
-        },
-      ) => useTableView({ plugins, ...props } as never),
+      (props: {
+        data?: Row[];
+        defaultData?: Row[];
+        defaultProperties: ColumnInfo[];
+      }) => useTableView({ plugins, ...props } as never),
       {
         initialProps: {
           defaultData: mockData,
@@ -337,6 +339,8 @@ describe("useTableView resource API", () => {
           },
         ],
       });
-    }).toThrow('[TableView] Plugin not found for property "col1" type: missing');
+    }).toThrow(
+      '[TableView] Plugin not found for property "col1" type: missing',
+    );
   });
 });

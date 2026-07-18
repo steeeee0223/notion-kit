@@ -26,8 +26,8 @@ import {
 
 type UseTableViewOptions<TPlugins extends CellPlugin[]> =
   BaseTableProps<TPlugins> & {
-  plugins: Entity<TPlugins[number]>;
-};
+    plugins: Entity<TPlugins[number]>;
+  };
 
 const DEFAULT_VIEW_STATE = {
   locked: false,
@@ -51,10 +51,7 @@ function useOwnershipSwitchWarning(name: string, isControlled: boolean) {
   const initialMode = useRef(getResourceMode(isControlled));
   const mode = getResourceMode(isControlled);
 
-  if (
-    process.env.NODE_ENV !== "production" &&
-    initialMode.current !== mode
-  ) {
+  if (process.env.NODE_ENV !== "production" && initialMode.current !== mode) {
     console.warn(
       `[TableView] \`${name}\` changed from ${initialMode.current} to ${mode} during one mount. This is unsupported.`,
     );
@@ -132,8 +129,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     value: isPropertiesControlled
       ? options.properties
       : initialTable.current.properties,
-    defaultValue:
-      options.defaultProperties ?? initialTable.current.properties,
+    defaultValue: options.defaultProperties ?? initialTable.current.properties,
     onChange: onPropertiesChange,
   });
   const [tableGlobalState, setViewResource] = useResourceState<TableViewState>({

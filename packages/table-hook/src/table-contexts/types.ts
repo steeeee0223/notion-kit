@@ -59,10 +59,11 @@ export type BaseTableProps<TPlugins extends CellPlugin[]> =
     PropertiesResourceProps<TPlugins> &
     ViewResourceProps;
 
-export type TableProps<TPlugins extends CellPlugin[]> = BaseTableProps<TPlugins> & {
-  plugins?: TPlugins;
-  children?: React.ReactNode;
-};
+export type TableProps<TPlugins extends CellPlugin[]> =
+  BaseTableProps<TPlugins> & {
+    plugins?: TPlugins;
+    children?: React.ReactNode;
+  };
 
 export type TableInstance = Table<TableFeatures, RowModel>;
 export type RowInstance = Row<TableFeatures, RowModel>;
