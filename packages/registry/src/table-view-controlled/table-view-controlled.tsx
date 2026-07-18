@@ -56,8 +56,8 @@ export default function Demo() {
     <TableView
       properties={properties}
       data={data}
-      onDataChange={setData}
-      onPropertiesChange={setProperties}
+      onDataChange={({ next }) => setData(next)}
+      onPropertiesChange={({ next }) => setProperties(next)}
     />
   );
 }

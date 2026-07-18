@@ -18,21 +18,31 @@ function DataUpdateControls() {
       <button
         type="button"
         onClick={() =>
-          table.setTableData((rows) =>
-            rows.map((row) =>
-              row.id === "row1"
-                ? {
-                    ...row,
-                    properties: {
-                      ...row.properties,
-                      col1: {
-                        ...row.properties.col1!,
-                        value: "Renamed task",
+          table.setTableData(
+            (rows) =>
+              rows.map((row) =>
+                row.id === "row1"
+                  ? {
+                      ...row,
+                      properties: {
+                        ...row.properties,
+                        col1: {
+                          ...row.properties.col1!,
+                          value: "Renamed task",
+                        },
                       },
-                    },
-                  }
-                : row,
-            ),
+                    }
+                  : row,
+              ),
+            {
+              id: "test-data-cell-action",
+              type: "data.cell.update",
+              payload: {
+                rowId: "row1",
+                propertyId: "col1",
+                nextValue: "Renamed task",
+              },
+            },
           )
         }
       >
@@ -44,11 +54,21 @@ function DataUpdateControls() {
       <button
         type="button"
         onClick={() =>
-          table.setTableGlobalState((view) => ({
-            ...view,
-            openedRowId: "row1",
-            rowView: "center",
-          }))
+          table.setTableGlobalState(
+            (view) => ({
+              ...view,
+              openedRowId: "row1",
+              rowView: "center",
+            }),
+            (previous, next) => ({
+              id: "test-view-row-display-action",
+              type: "view.row_display.change",
+              payload: {
+                previousRowView: previous.rowView,
+                nextRowView: next.rowView,
+              },
+            }),
+          )
         }
       >
         Open first row center peek

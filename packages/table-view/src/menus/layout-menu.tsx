@@ -1,3 +1,5 @@
+import { v4 } from "uuid";
+
 import { cn } from "@notion-kit/cn";
 import {
   LAYOUT_OPTIONS,
@@ -97,9 +99,20 @@ function RowViewMenu() {
                     label={option.label}
                     desc={option.desc}
                     checked={rowView === current}
-                    onCheckedChange={() =>
-                      table.setTableGlobalState((v) => ({ ...v, rowView }))
-                    }
+                    onCheckedChange={() => {
+                      const actionId = v4();
+                      table.setTableGlobalState(
+                        (v) => ({ ...v, rowView }),
+                        (previous, next) => ({
+                          id: actionId,
+                          type: "view.row_display.change",
+                          payload: {
+                            previousRowView: previous.rowView,
+                            nextRowView: next.rowView,
+                          },
+                        }),
+                      );
+                    }}
                   />
                 );
               })}

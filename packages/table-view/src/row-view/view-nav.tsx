@@ -1,4 +1,5 @@
 import { useHotkeys } from "react-hotkeys-hook";
+import { v4 } from "uuid";
 
 import { Icon } from "@notion-kit/icons";
 import { ROW_VIEW_OPTIONS, RowViewType } from "@notion-kit/table-hook";
@@ -103,12 +104,23 @@ export function ViewNav({ rowId }: ViewNavProps) {
                     icon={<RowViewIcon rowView={view} />}
                     label={option.label}
                     checked={rowView === view}
-                    onCheckedChange={() =>
-                      table.setTableGlobalState((v) => ({
-                        ...v,
-                        rowView: view,
-                      }))
-                    }
+                    onCheckedChange={() => {
+                      const actionId = v4();
+                      table.setTableGlobalState(
+                        (v) => ({
+                          ...v,
+                          rowView: view,
+                        }),
+                        (previous, next) => ({
+                          id: actionId,
+                          type: "view.row_display.change",
+                          payload: {
+                            previousRowView: previous.rowView,
+                            nextRowView: next.rowView,
+                          },
+                        }),
+                      );
+                    }}
                   />
                 );
               })}

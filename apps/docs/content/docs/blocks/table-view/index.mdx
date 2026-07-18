@@ -70,18 +70,32 @@ description: An composable, editable data table.
   preview={`<TableView
     properties={properties}
     data={data}
-    onDataChange={setData}
-    onPropertiesChange={setProperties}
+    onDataChange={({ next }) => setData(next)}
+    onPropertiesChange={({ next }) => setProperties(next)}
     view={view}
-    onViewChange={setView}
+    onViewChange={({ next }) => setView(next)}
   />
   `}
 />
 
 Controlled resources are authoritative. `TableView` calls each replacement
-callback with the complete next resource, and the rendered table updates after
-the owner commits that value through props. This makes React state setters and
-complete-resource mutation functions directly assignable.
+callback with a `{ next, action }` envelope, and the rendered table updates
+after the owner commits `next` through props. React state handlers should
+destructure `next`. Backend mutation functions can accept the complete
+resource-change envelope directly.
+
+```tsx
+const replaceData = useMutation({ mutationFn: api.replaceData });
+
+<TableView data={data} onDataChange={replaceData.mutate} />;
+```
+
+`action` is a typed audit payload with a generated id. When one operation
+changes more than one resource, such as creating a property and initializing
+cells for every row, the emitted resource changes share the same action id.
+Use `serializeResourceAction(change)` when creating an activity-log record so
+the log stores the compact action payload and not the complete replacement
+resource.
 
 Uncontrolled resources use `defaultData`, `defaultProperties`, and
 `defaultView`. Defaults are read only on mount; reset an uncontrolled table by
@@ -94,18 +108,18 @@ remounting it with a new React `key`.
 A `TableView` is a generic component `TableView<TPlugins>` where `TPlugins` extends `CellPlugin[]`.
 It provides a table view with editable cells and supports various plugins for cell types.
 
-| Prop                 | Type                                                                   | Description                                                                                          |
-| -------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `plugins`            | `TPlugins`                                                             | The plugins to use for the table. Each table should contain at least `title()` and `text()` plugins. |
-| `data`               | [`Row<TPlugins>[]`](/docs/objects/database-properties#row)             | Controlled rows resource. Do not combine with `defaultData`.                                         |
-| `defaultData`        | [`Row<TPlugins>[]`](/docs/objects/database-properties#row)             | Mount-only uncontrolled rows default. Do not combine with `data`.                                    |
-| `properties`         | [`ColumnDefs<TPlugins>`](/docs/objects/database-properties#columndefs) | Controlled column definitions resource. Do not combine with `defaultProperties`.                     |
-| `defaultProperties`  | [`ColumnDefs<TPlugins>`](/docs/objects/database-properties#columndefs) | Mount-only uncontrolled column definitions default. Do not combine with `properties`.                |
-| `view`               | [`Partial<TableViewState>`](#type-tableviewstate)                      | Controlled view presentation resource. Do not combine with `defaultView`.                            |
-| `defaultView`        | [`Partial<TableViewState>`](#type-tableviewstate)                      | Mount-only uncontrolled view default. Do not combine with `view`.                                    |
-| `onDataChange`       | `(next: Row<TPlugins>[]) => unknown`                                   | Complete rows replacement callback.                                                                  |
-| `onPropertiesChange` | `(next: ColumnDefs<TPlugins>) => unknown`                              | Complete column definitions replacement callback.                                                    |
-| `onViewChange`       | `(next: TableViewState) => unknown`                                    | Complete view replacement callback.                                                                  |
+| Prop                 | Type                                                                                  | Description                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `plugins`            | `TPlugins`                                                                            | The plugins to use for the table. Each table should contain at least `title()` and `text()` plugins. |
+| `data`               | [`Row<TPlugins>[]`](/docs/objects/database-properties#row)                            | Controlled rows resource. Do not combine with `defaultData`.                                         |
+| `defaultData`        | [`Row<TPlugins>[]`](/docs/objects/database-properties#row)                            | Mount-only uncontrolled rows default. Do not combine with `data`.                                    |
+| `properties`         | [`ColumnDefs<TPlugins>`](/docs/objects/database-properties#columndefs)                | Controlled column definitions resource. Do not combine with `defaultProperties`.                     |
+| `defaultProperties`  | [`ColumnDefs<TPlugins>`](/docs/objects/database-properties#columndefs)                | Mount-only uncontrolled column definitions default. Do not combine with `properties`.                |
+| `view`               | [`Partial<TableViewState>`](#type-tableviewstate)                                     | Controlled view presentation resource. Do not combine with `defaultView`.                            |
+| `defaultView`        | [`Partial<TableViewState>`](#type-tableviewstate)                                     | Mount-only uncontrolled view default. Do not combine with `view`.                                    |
+| `onDataChange`       | `(change: ResourceChange<Row<TPlugins>[], DataResourceAction>) => unknown`            | Complete rows replacement envelope with an audit action.                                             |
+| `onPropertiesChange` | `(change: ResourceChange<ColumnDefs<TPlugins>, PropertiesResourceAction>) => unknown` | Complete column definitions replacement envelope with an audit action.                               |
+| `onViewChange`       | `(change: ResourceChange<TableViewState, ViewResourceAction>) => unknown`             | Complete view replacement envelope with an audit action.                                             |
 
 ### `type` TableState
 

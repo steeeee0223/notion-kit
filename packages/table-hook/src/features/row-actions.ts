@@ -1,5 +1,5 @@
 import type { DragEndEvent, DragOverEvent } from "@dnd-kit/react";
-import type { OnChangeFn, TableFeature, Updater } from "@tanstack/react-table";
+import type { TableFeature, Updater } from "@tanstack/react-table";
 import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
@@ -21,9 +21,10 @@ import type {
   InferData,
   TitlePlugin,
 } from "@/plugins";
+import type { DataResourceAction, ResourceChangeFn } from "@/table-contexts";
 
 export interface RowActionsOptions {
-  onTableDataChange?: OnChangeFn<Row[]>;
+  onTableDataChange?: ResourceChangeFn<Row[], DataResourceAction>;
 }
 
 export interface RowDragEndOptions {
@@ -31,7 +32,7 @@ export interface RowDragEndOptions {
 }
 
 export interface RowActionsTableApi {
-  setTableData: OnChangeFn<Row[]>;
+  setTableData: ResourceChangeFn<Row[], DataResourceAction>;
   // Cell API
   getCellValues: <TPlugins extends CellPlugin[]>() => Row<TPlugins>[];
   getCell: <TPlugin extends CellPlugin>(
@@ -150,6 +151,10 @@ function applyKanbanItemsToRows(
   return [...nextRows, ...rows.filter((row) => !consumedIds.has(row.id))];
 }
 
+function getRowPosition(rows: Row[], rowId: string) {
+  return rows.findIndex((row) => row.id === rowId);
+}
+
 export const RowActionsFeature: TableFeature = {
   getDefaultTableOptions: (): RowActionsOptions => {
     return {};
@@ -166,8 +171,8 @@ export const RowActionsFeature: TableFeature = {
       }
     };
 
-    table.setTableData = (updater) =>
-      table.options.onTableDataChange?.(updater);
+    table.setTableData = (updater, action) =>
+      table.options.onTableDataChange?.(updater, action);
     /** Cell API */
     table.getCellValues = () =>
       table.getCoreRowModel().rows.map((row) => row.original);
@@ -195,90 +200,148 @@ export const RowActionsFeature: TableFeature = {
       updater: Updater<Cell<TPlugin>>,
       _originalGroupId?: string,
     ) => {
-      table.setTableData((prev) => {
-        const now = Date.now();
-        const next = prev.map((row) => {
-          if (row.id !== rowId) return row;
-          const currentCell = row.properties[colId];
-          if (!currentCell) return row;
-          const data = functionalUpdate(updater, currentCell as Cell<TPlugin>);
-          return {
-            ...row,
-            properties: { ...row.properties, [colId]: data },
-            lastEditedAt: now,
-          };
-        });
+      const actionId = v4();
+      table.setTableData(
+        (prev) => {
+          const now = Date.now();
+          const next = prev.map((row) => {
+            if (row.id !== rowId) return row;
+            const currentCell = row.properties[colId];
+            if (!currentCell) return row;
+            const data = functionalUpdate(
+              updater,
+              currentCell as Cell<TPlugin>,
+            );
+            return {
+              ...row,
+              properties: { ...row.properties, [colId]: data },
+              lastEditedAt: now,
+            };
+          });
 
-        scheduleGroupingStateSync(next);
+          scheduleGroupingStateSync(next);
 
-        return next;
-      });
+          return next;
+        },
+        (previous, next) => ({
+          id: actionId,
+          type: "data.cell.update",
+          payload: {
+            rowId,
+            propertyId: colId,
+            previousValue: previous.find((row) => row.id === rowId)?.properties[
+              colId
+            ]?.value,
+            nextValue: next.find((row) => row.id === rowId)?.properties[colId]
+              ?.value,
+          },
+        }),
+      );
     };
     /** Row API */
     table.addRow = (payload) => {
       const rowId = v4();
-      table.setTableData((prev) => {
-        const now = Date.now();
-        const row: Row = {
-          id: rowId,
-          properties: {},
-          createdAt: now,
-          lastEditedAt: now,
-        };
-        table.store.state.columnOrder.forEach((colId) => {
-          const plugin = table.getColumnPlugin(colId);
-          row.properties[colId] = getDefaultCell(plugin);
-        });
-        if (payload === undefined) {
-          const next = [...prev, row];
+      const actionId = v4();
+      table.setTableData(
+        (prev) => {
+          const now = Date.now();
+          const row: Row = {
+            id: rowId,
+            properties: {},
+            createdAt: now,
+            lastEditedAt: now,
+          };
+          table.store.state.columnOrder.forEach((colId) => {
+            const plugin = table.getColumnPlugin(colId);
+            row.properties[colId] = getDefaultCell(plugin);
+          });
+          if (payload === undefined) {
+            const next = [...prev, row];
+            scheduleGroupingStateSync(next);
+            return next;
+          }
+          const idx = prev.findIndex((row) => row.id === payload.id);
+          const next =
+            payload.at === "next"
+              ? insertAt(prev, row, idx + 1)
+              : insertAt(prev, row, idx);
           scheduleGroupingStateSync(next);
           return next;
-        }
-        const idx = prev.findIndex((row) => row.id === payload.id);
-        const next =
-          payload.at === "next"
-            ? insertAt(prev, row, idx + 1)
-            : insertAt(prev, row, idx);
-        scheduleGroupingStateSync(next);
-        return next;
-      });
+        },
+        (_previous, next) => ({
+          id: actionId,
+          type: "data.row.create",
+          payload: {
+            rowId,
+            nextPosition: getRowPosition(next, rowId),
+          },
+        }),
+      );
     };
     table.duplicateRow = (id) => {
       const rowId = v4();
-      table.setTableData((prev) => {
-        const idx = prev.findIndex((row) => row.id === id);
-        if (idx < 0) return prev;
-        const now = Date.now();
-        const src = prev[idx]!;
-        const properties = Object.fromEntries(
-          Object.entries(src.properties).map(([colId, cell]) => [
-            colId,
-            { ...cell, id: v4() },
-          ]),
-        );
-        const next = insertAt(
-          prev,
-          { ...src, id: rowId, properties, createdAt: now, lastEditedAt: now },
-          idx + 1,
-        );
-        scheduleGroupingStateSync(next);
-        return next;
-      });
+      const actionId = v4();
+      table.setTableData(
+        (prev) => {
+          const idx = prev.findIndex((row) => row.id === id);
+          if (idx < 0) return prev;
+          const now = Date.now();
+          const src = prev[idx]!;
+          const properties = Object.fromEntries(
+            Object.entries(src.properties).map(([colId, cell]) => [
+              colId,
+              { ...cell, id: v4() },
+            ]),
+          );
+          const next = insertAt(
+            prev,
+            {
+              ...src,
+              id: rowId,
+              properties,
+              createdAt: now,
+              lastEditedAt: now,
+            },
+            idx + 1,
+          );
+          scheduleGroupingStateSync(next);
+          return next;
+        },
+        (_previous, next) => ({
+          id: actionId,
+          type: "data.row.duplicate",
+          payload: {
+            sourceRowId: id,
+            rowId,
+            nextPosition: getRowPosition(next, rowId),
+          },
+        }),
+      );
     };
     table.deleteRow = (id) => {
-      table.setTableData((prev) => {
-        const next = prev.filter((row) => row.id !== id);
-        scheduleGroupingStateSync(next);
-        return next;
-      });
+      table.deleteRows([id]);
     };
     table.deleteRows = (ids) => {
       const idSet = new Set(ids);
-      table.setTableData((prev) => {
-        const next = prev.filter((row) => !idSet.has(row.id));
-        scheduleGroupingStateSync(next);
-        return next;
-      });
+      const actionId = v4();
+      table.setTableData(
+        (prev) => {
+          const next = prev.filter((row) => !idSet.has(row.id));
+          scheduleGroupingStateSync(next);
+          return next;
+        },
+        (previous) => ({
+          id: actionId,
+          type: "data.row.delete",
+          payload: {
+            rowIds: ids,
+            previousPositions: ids.map((rowId) => ({
+              rowId,
+              index: getRowPosition(previous, rowId),
+            })),
+          },
+        }),
+      );
     };
     table.handleKanbanRowDragOver = (event) => {
       if ("canceled" in event && event.canceled) return;
@@ -287,37 +350,61 @@ export const RowActionsFeature: TableFeature = {
       const groupingColumnId = grouping[0];
       if (!groupingColumnId) return;
 
-      table.setTableData((rows) => {
-        const currentItems = createKanbanItemsFromRows(
-          table,
-          rows,
-          groupingColumnId,
-          groupingState.groupOrder,
-        );
-        const nextItems = getKanbanItemsAfterDrag(currentItems, event);
-        if (nextItems === currentItems) return rows;
-        kanbanDragSnapshot ??= rows;
+      const sourceRowId = String(event.operation.source?.id ?? "");
+      const actionId = v4();
+      table.setTableData(
+        (rows) => {
+          const currentItems = createKanbanItemsFromRows(
+            table,
+            rows,
+            groupingColumnId,
+            groupingState.groupOrder,
+          );
+          const nextItems = getKanbanItemsAfterDrag(currentItems, event);
+          if (nextItems === currentItems) return rows;
+          kanbanDragSnapshot ??= rows;
 
-        const next = applyKanbanItemsToRows(
-          rows,
-          nextItems,
-          groupingState.groupOrder,
-          groupingColumnId,
-          groupingState.groupValues,
-        );
-        scheduleGroupingStateSync(next);
-        return next;
-      });
+          const next = applyKanbanItemsToRows(
+            rows,
+            nextItems,
+            groupingState.groupOrder,
+            groupingColumnId,
+            groupingState.groupValues,
+          );
+          scheduleGroupingStateSync(next);
+          return next;
+        },
+        (previous, next) => ({
+          id: actionId,
+          type: "data.row.move",
+          payload: {
+            rowId: sourceRowId,
+            previousPosition: getRowPosition(previous, sourceRowId),
+            nextPosition: getRowPosition(next, sourceRowId),
+          },
+        }),
+      );
     };
     table.handleRowDragEnd = (event, options = {}) => {
       if (event.canceled) {
         if (kanbanDragSnapshot) {
           const snapshot = kanbanDragSnapshot;
           kanbanDragSnapshot = null;
-          table.setTableData(() => {
-            scheduleGroupingStateSync(snapshot);
-            return snapshot;
-          });
+          table.setTableData(
+            () => {
+              scheduleGroupingStateSync(snapshot);
+              return snapshot;
+            },
+            {
+              id: v4(),
+              type: "data.row.move",
+              payload: {
+                rowId: "",
+                previousPosition: -1,
+                nextPosition: -1,
+              },
+            },
+          );
         }
         return;
       }
@@ -330,90 +417,125 @@ export const RowActionsFeature: TableFeature = {
       const targetGroupId = getKanbanColumnTargetId(target?.data);
       const shouldReorder = options.reorder ?? true;
 
-      table.setTableData((rows) => {
-        const next = shouldReorder
-          ? getSortableItemsAfterDrag(rows, event)
-          : rows;
-        if (
-          !source ||
-          !targetGroupId ||
-          targetGroupId === sourceGroupId ||
-          !groupingColumnId
-        ) {
-          scheduleGroupingStateSync(next);
-          return next;
-        }
+      const sourceRowId = String(source?.id ?? "");
+      const actionId = v4();
+      table.setTableData(
+        (rows) => {
+          const next = shouldReorder
+            ? getSortableItemsAfterDrag(rows, event)
+            : rows;
+          if (
+            !source ||
+            !targetGroupId ||
+            targetGroupId === sourceGroupId ||
+            !groupingColumnId
+          ) {
+            scheduleGroupingStateSync(next);
+            return next;
+          }
 
-        const now = Date.now();
-        const updated = next.map((row) => {
-          if (row.id !== String(source.id)) return row;
-          return {
-            ...row,
-            properties: {
-              ...row.properties,
-              [groupingColumnId]: {
-                id: v4(),
-                value: structuredClone<unknown>(
-                  groupingState.groupValues[targetGroupId]?.original,
-                ),
+          const now = Date.now();
+          const updated = next.map((row) => {
+            if (row.id !== String(source.id)) return row;
+            return {
+              ...row,
+              properties: {
+                ...row.properties,
+                [groupingColumnId]: {
+                  id: v4(),
+                  value: structuredClone<unknown>(
+                    groupingState.groupValues[targetGroupId]?.original,
+                  ),
+                },
               },
-            },
-            lastEditedAt: now,
-          };
-        });
-        scheduleGroupingStateSync(updated);
-        return updated;
-      });
+              lastEditedAt: now,
+            };
+          });
+          scheduleGroupingStateSync(updated);
+          return updated;
+        },
+        (previous, next) => ({
+          id: actionId,
+          type: "data.row.move",
+          payload: {
+            rowId: sourceRowId,
+            previousPosition: getRowPosition(previous, sourceRowId),
+            nextPosition: getRowPosition(next, sourceRowId),
+          },
+        }),
+      );
     };
     table.updateRowIcon = (id, icon) => {
       const colId = table.store.state.columnOrder.find(
         (propId) => table.getColumnPlugin(propId).id === "title",
       );
       if (!colId) return;
-      table.setTableData((prev) => {
-        const now = Date.now();
-        return prev.map((row) => {
-          if (row.id !== id) return row;
-          const cell = row.properties[colId] as Cell<TitlePlugin> | undefined;
-          if (!cell) return row;
-          return {
-            ...row,
-            icon: icon ?? undefined,
-            lastEditedAt: now,
-          };
-        });
-      });
+      const actionId = v4();
+      table.setTableData(
+        (prev) => {
+          const now = Date.now();
+          return prev.map((row) => {
+            if (row.id !== id) return row;
+            const cell = row.properties[colId] as Cell<TitlePlugin> | undefined;
+            if (!cell) return row;
+            return {
+              ...row,
+              icon: icon ?? undefined,
+              lastEditedAt: now,
+            };
+          });
+        },
+        (previous, next) => ({
+          id: actionId,
+          type: "data.row.update",
+          payload: {
+            rowId: id,
+            previous: { icon: previous.find((row) => row.id === id)?.icon },
+            next: { icon: next.find((row) => row.id === id)?.icon },
+          },
+        }),
+      );
     };
     // With Grouping API
     table.addRowToGroup = (groupId) => {
       const { columnOrder, grouping, groupingState } = table.store.state;
       const rowId = v4();
-      table.setTableData((v) => {
-        const now = Date.now();
-        const row: Row = {
-          id: rowId,
-          properties: {},
-          createdAt: now,
-          lastEditedAt: now,
-        };
-        columnOrder.forEach((colId) => {
-          const plugin = table.getColumnPlugin(colId);
-          row.properties[colId] =
-            colId === grouping[0]
-              ? {
-                  id: v4(),
-                  value: structuredClone<unknown>(
-                    groupingState.groupValues[groupId]?.original,
-                  ),
-                }
-              : getDefaultCell(plugin);
-        });
-        // Here we simply append the new row to the end.
-        // Actual implementation may vary based on grouping logic.
-        const next = [...v, row];
-        scheduleGroupingStateSync(next);
-        return next;
-      });
+      const actionId = v4();
+      table.setTableData(
+        (v) => {
+          const now = Date.now();
+          const row: Row = {
+            id: rowId,
+            properties: {},
+            createdAt: now,
+            lastEditedAt: now,
+          };
+          columnOrder.forEach((colId) => {
+            const plugin = table.getColumnPlugin(colId);
+            row.properties[colId] =
+              colId === grouping[0]
+                ? {
+                    id: v4(),
+                    value: structuredClone<unknown>(
+                      groupingState.groupValues[groupId]?.original,
+                    ),
+                  }
+                : getDefaultCell(plugin);
+          });
+          const next = [...v, row];
+          scheduleGroupingStateSync(next);
+          return next;
+        },
+        (_previous, next) => ({
+          id: actionId,
+          type: "data.row.create",
+          payload: {
+            rowId,
+            nextPosition: getRowPosition(next, rowId),
+            groupId,
+          },
+        }),
+      );
     };
   },
   assignColumnPrototype: (prototype, _table) => {

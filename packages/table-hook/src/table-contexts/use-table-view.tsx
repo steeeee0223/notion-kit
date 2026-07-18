@@ -3,7 +3,6 @@ import {
   functionalUpdate,
   useTable,
   type ColumnDef,
-  type OnChangeFn,
 } from "@tanstack/react-table";
 
 import { DEFAULT_FEATURES, type TableFeatures } from "@/features";
@@ -12,12 +11,16 @@ import type { ColumnDefs, ColumnInfo, Row } from "@/lib/types";
 import { type Entity } from "@/lib/utils";
 import { resolveGroupingMethod, resolveSortingMethod } from "@/methods";
 import type { CellPlugin } from "@/plugins";
-import { defaultColumn } from "@/table-contexts/column";
 import type {
-  BaseTableProps,
+  DataResourceAction,
+  PropertiesResourceAction,
+  ResourceActionFactory,
+  ResourceChangeFn,
   ResourceChangeHandler,
-  TableState,
-} from "@/table-contexts/types";
+  ViewResourceAction,
+} from "@/table-contexts/actions";
+import { defaultColumn } from "@/table-contexts/column";
+import type { BaseTableProps, TableState } from "@/table-contexts/types";
 import {
   createInitialTable,
   getMinWidth,
@@ -61,7 +64,7 @@ function useOwnershipSwitchWarning(name: string, isControlled: boolean) {
   }, [mode, name]);
 }
 
-function useResourceState<TResource>({
+function useResourceState<TResource, TAction>({
   name,
   controlled,
   value,
@@ -72,7 +75,7 @@ function useResourceState<TResource>({
   controlled: boolean;
   value: TResource;
   defaultValue: TResource;
-  onChange: ResourceChangeHandler<TResource> | undefined;
+  onChange: ResourceChangeHandler<TResource, TAction> | undefined;
 }) {
   useOwnershipSwitchWarning(name, controlled);
 
@@ -88,18 +91,28 @@ function useResourceState<TResource>({
     }
   }, [resource]);
 
-  const setResource = useCallback<OnChangeFn<TResource>>(
-    (updater) => {
+  const setResource = useCallback<ResourceChangeFn<TResource, TAction>>(
+    (updater, action) => {
       if (lastResourceRef.current !== resource) {
         lastResourceRef.current = resource;
         pendingResourceRef.current = resource;
       }
-      const next = functionalUpdate(updater, pendingResourceRef.current);
+      const previous = pendingResourceRef.current;
+      const next = functionalUpdate(updater, previous);
       pendingResourceRef.current = next;
       if (!controlled) {
         setUncontrolledValue(next);
       }
-      onChange?.(next);
+      onChange?.({
+        next,
+        action:
+          typeof action === "function"
+            ? (action as ResourceActionFactory<TResource, TAction>)(
+                previous,
+                next,
+              )
+            : action,
+      });
     },
     [controlled, onChange, resource],
   );
@@ -139,14 +152,20 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     [viewLayout, viewLocked, viewOpenedRowId, viewRowView],
   );
 
-  const [dataEntity, setDataResource] = useResourceState({
+  const [dataEntity, setDataResource] = useResourceState<
+    Row<TPlugins>[],
+    DataResourceAction
+  >({
     name: "data",
     controlled: isDataControlled,
     value: isDataControlled ? options.data : initialTable.current.data,
     defaultValue: options.defaultData ?? initialTable.current.data,
     onChange: onDataChange,
   });
-  const [propertiesResource, setPropertiesResource] = useResourceState({
+  const [propertiesResource, setPropertiesResource] = useResourceState<
+    ColumnDefs<TPlugins>,
+    PropertiesResourceAction
+  >({
     name: "properties",
     controlled: isPropertiesControlled,
     value: isPropertiesControlled
@@ -155,7 +174,10 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     defaultValue: options.defaultProperties ?? initialTable.current.properties,
     onChange: onPropertiesChange,
   });
-  const [tableGlobalState, setViewResource] = useResourceState<TableViewState>({
+  const [tableGlobalState, setViewResource] = useResourceState<
+    TableViewState,
+    ViewResourceAction
+  >({
     name: "view",
     controlled: isViewControlled,
     value: controlledView,
@@ -198,13 +220,24 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       }),
     [columnEntity, plugins.items],
   );
-  const handleColumnChange = useCallback<OnChangeFn<Entity<ColumnInfo>>>(
-    (updater) => {
-      setPropertiesResource((prev: ColumnDefs<TPlugins>) => {
-        const entity = toPropertyEntity(plugins.items, prev);
-        const next = functionalUpdate(updater, entity);
-        return next.ids.map((id) => next.items[id]!) as ColumnDefs<TPlugins>;
-      });
+  const handleColumnChange = useCallback<
+    ResourceChangeFn<Entity<ColumnInfo>, PropertiesResourceAction>
+  >(
+    (updater, action) => {
+      setPropertiesResource(
+        (prev: ColumnDefs<TPlugins>) => {
+          const entity = toPropertyEntity(plugins.items, prev);
+          const next = functionalUpdate(updater, entity);
+          return next.ids.map((id) => next.items[id]!) as ColumnDefs<TPlugins>;
+        },
+        (previousProperties, nextProperties) => {
+          if (typeof action !== "function") return action;
+          return action(
+            toPropertyEntity(plugins.items, previousProperties),
+            toPropertyEntity(plugins.items, nextProperties),
+          );
+        },
+      );
     },
     [plugins.items, setPropertiesResource],
   );

@@ -110,8 +110,8 @@ export function renderSelectTable(options?: RenderSelectTableOptions) {
       <TableView
         properties={properties}
         data={data}
-        onDataChange={setData}
-        onPropertiesChange={setProperties}
+        onDataChange={({ next }) => setData(next)}
+        onPropertiesChange={({ next }) => setProperties(next)}
       />
     );
   }
@@ -137,8 +137,8 @@ export function renderSelectConfigMenuTable(
       <TableView
         properties={properties}
         data={data}
-        onDataChange={setData}
-        onPropertiesChange={setProperties}
+        onDataChange={({ next }) => setData(next)}
+        onPropertiesChange={({ next }) => setProperties(next)}
       >
         <DropdownMenu defaultOpen modal={false}>
           <DropdownMenuTrigger

@@ -1,4 +1,5 @@
 import React, { useMemo, useRef } from "react";
+import { v4 } from "uuid";
 
 import type { Row as RowModel } from "@notion-kit/table-hook";
 import { Kanban, KanbanDnd } from "@notion-kit/ui/kanban";
@@ -25,7 +26,19 @@ export function useBoardDnd() {
         const { source } = e.operation;
         if (source?.type === KanbanDnd.Item) {
           if (e.canceled && snapshotRef.current) {
-            table.setTableData(snapshotRef.current);
+            const actionId = v4();
+            const snapshot = snapshotRef.current;
+            table.setTableData(snapshot, (_previous, next) => ({
+              id: actionId,
+              type: "data.row.move",
+              payload: {
+                rowId: String(source.id),
+                previousPosition: -1,
+                nextPosition: next.findIndex(
+                  (row) => row.id === String(source.id),
+                ),
+              },
+            }));
           } else {
             table.handleRowDragEnd(e, { reorder: false });
           }

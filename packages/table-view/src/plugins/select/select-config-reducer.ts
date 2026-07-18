@@ -109,62 +109,86 @@ export function propagateSelectEvent(
   switch (event.type) {
     case "update:name": {
       const { originalName, name } = event.payload;
-      table.setTableData((prev) =>
-        prev.map((row) => {
-          const cell = row.properties[propId] as SelectCell;
-          if (type === "multi-select") {
-            const arr = cell.value as string[];
-            if (!arr.includes(originalName)) return row;
+      const actionId = v4();
+      table.setTableData(
+        (prev) =>
+          prev.map((row) => {
+            const cell = row.properties[propId] as SelectCell;
+            if (type === "multi-select") {
+              const arr = cell.value as string[];
+              if (!arr.includes(originalName)) return row;
+              return {
+                ...row,
+                properties: {
+                  ...row.properties,
+                  [propId]: {
+                    ...cell,
+                    value: arr.map((o) => (o === originalName ? name : o)),
+                  },
+                },
+              };
+            }
+            if (cell.value !== originalName) return row;
             return {
               ...row,
               properties: {
                 ...row.properties,
-                [propId]: {
-                  ...cell,
-                  value: arr.map((o) => (o === originalName ? name : o)),
-                },
+                [propId]: { ...cell, value: name },
               },
             };
-          }
-          if (cell.value !== originalName) return row;
-          return {
-            ...row,
-            properties: {
-              ...row.properties,
-              [propId]: { ...cell, value: name },
-            },
-          };
+          }),
+        (_previous, next) => ({
+          id: actionId,
+          type: "data.cell.update",
+          payload: {
+            rowIds: next.map((row) => row.id),
+            propertyId: propId,
+            previousValue: originalName,
+            nextValue: name,
+          },
         }),
       );
       break;
     }
     case "delete": {
       const name = event.payload;
-      table.setTableData((prev) =>
-        prev.map((row) => {
-          const cell = row.properties[propId] as SelectCell;
-          if (type === "multi-select") {
-            const arr = cell.value as string[];
-            if (!arr.includes(name)) return row;
+      const actionId = v4();
+      table.setTableData(
+        (prev) =>
+          prev.map((row) => {
+            const cell = row.properties[propId] as SelectCell;
+            if (type === "multi-select") {
+              const arr = cell.value as string[];
+              if (!arr.includes(name)) return row;
+              return {
+                ...row,
+                properties: {
+                  ...row.properties,
+                  [propId]: {
+                    ...cell,
+                    value: arr.filter((o) => o !== name),
+                  },
+                },
+              };
+            }
+            if (cell.value !== name) return row;
             return {
               ...row,
               properties: {
                 ...row.properties,
-                [propId]: {
-                  ...cell,
-                  value: arr.filter((o) => o !== name),
-                },
+                [propId]: { ...cell, value: null },
               },
             };
-          }
-          if (cell.value !== name) return row;
-          return {
-            ...row,
-            properties: {
-              ...row.properties,
-              [propId]: { ...cell, value: null },
-            },
-          };
+          }),
+        (_previous, next) => ({
+          id: actionId,
+          type: "data.cell.update",
+          payload: {
+            rowIds: next.map((row) => row.id),
+            propertyId: propId,
+            previousValue: name,
+            nextValue: type === "multi-select" ? "removed" : null,
+          },
         }),
       );
       break;

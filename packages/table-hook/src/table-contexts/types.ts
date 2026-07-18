@@ -4,48 +4,64 @@ import type { Cell, Header, Row, Table } from "@tanstack/table-core";
 import type { TableFeatures, TableViewState } from "@/features";
 import type { ColumnDefs, Row as RowModel } from "@/lib/types";
 import type { CellPlugin } from "@/plugins";
+import type {
+  DataResourceAction,
+  PropertiesResourceAction,
+  ResourceChangeHandler,
+  ViewResourceAction,
+} from "@/table-contexts/actions";
 
 export interface TableState<TPlugins extends CellPlugin[]> {
   properties: ColumnDefs<TPlugins>;
   data: RowModel<TPlugins>[];
 }
 
-export type ResourceChangeHandler<TResource> = (next: TResource) => unknown;
-
 type DataResourceProps<TPlugins extends CellPlugin[]> =
   | {
       data: RowModel<TPlugins>[];
       defaultData?: never;
-      onDataChange?: ResourceChangeHandler<RowModel<TPlugins>[]>;
+      onDataChange?: ResourceChangeHandler<
+        RowModel<TPlugins>[],
+        DataResourceAction
+      >;
     }
   | {
       data?: never;
       defaultData?: RowModel<TPlugins>[];
-      onDataChange?: ResourceChangeHandler<RowModel<TPlugins>[]>;
+      onDataChange?: ResourceChangeHandler<
+        RowModel<TPlugins>[],
+        DataResourceAction
+      >;
     };
 
 type PropertiesResourceProps<TPlugins extends CellPlugin[]> =
   | {
       properties: ColumnDefs<TPlugins>;
       defaultProperties?: never;
-      onPropertiesChange?: ResourceChangeHandler<ColumnDefs<TPlugins>>;
+      onPropertiesChange?: ResourceChangeHandler<
+        ColumnDefs<TPlugins>,
+        PropertiesResourceAction
+      >;
     }
   | {
       properties?: never;
       defaultProperties?: ColumnDefs<TPlugins>;
-      onPropertiesChange?: ResourceChangeHandler<ColumnDefs<TPlugins>>;
+      onPropertiesChange?: ResourceChangeHandler<
+        ColumnDefs<TPlugins>,
+        PropertiesResourceAction
+      >;
     };
 
 type ViewResourceProps =
   | {
       view: Partial<TableViewState>;
       defaultView?: never;
-      onViewChange?: ResourceChangeHandler<TableViewState>;
+      onViewChange?: ResourceChangeHandler<TableViewState, ViewResourceAction>;
     }
   | {
       view?: never;
       defaultView?: Partial<TableViewState>;
-      onViewChange?: ResourceChangeHandler<TableViewState>;
+      onViewChange?: ResourceChangeHandler<TableViewState, ViewResourceAction>;
     };
 
 interface SharedTableProps<TPlugins extends CellPlugin[]> {

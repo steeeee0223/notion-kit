@@ -1,10 +1,12 @@
 import {
   makeStateUpdater,
-  type OnChangeFn,
   type TableFeature,
+  type Updater,
 } from "@tanstack/react-table";
+import { v4 } from "uuid";
 
 import type { _TableInstance } from "@/features/types";
+import type { ResourceChangeFn, ViewResourceAction } from "@/table-contexts";
 
 export enum TableViewMenuPage {
   Layout,
@@ -66,8 +68,8 @@ export interface TableMenuTableState {
 
 export interface TableMenuOptions {
   getRowUrl?: (rowId: string) => string;
-  onTableMenuChange?: OnChangeFn<TableMenuState>;
-  onTableGlobalChange?: OnChangeFn<TableViewState>;
+  onTableMenuChange?: (updater: Updater<TableMenuState>) => void;
+  onTableGlobalChange?: ResourceChangeFn<TableViewState, ViewResourceAction>;
 }
 
 export interface TableMenuTableApi {
@@ -75,7 +77,7 @@ export interface TableMenuTableApi {
   getTableMenuState: () => TableMenuState;
   setTableMenuState: (state: TableMenuState) => void;
   getTableGlobalState: () => TableViewState;
-  setTableGlobalState: OnChangeFn<TableViewState>;
+  setTableGlobalState: ResourceChangeFn<TableViewState, ViewResourceAction>;
   toggleTableLocked: () => void;
   setTableLayout: (layout: LayoutType) => void;
   openRow: (id: string | null) => void;
@@ -100,7 +102,8 @@ export const TableMenuFeature: TableFeature = {
   getDefaultTableOptions: (table) => {
     return {
       onTableMenuChange: makeStateUpdater("menu", table),
-      onTableGlobalChange: makeStateUpdater("tableGlobal", table),
+      onTableGlobalChange: (updater) =>
+        makeStateUpdater("tableGlobal", table)(updater),
     };
   },
 
@@ -114,28 +117,72 @@ export const TableMenuFeature: TableFeature = {
       instance.options.onTableMenuChange?.(menu);
     };
     instance.getTableGlobalState = () => instance.store.state.tableGlobal;
-    instance.setTableGlobalState = (updater) => {
-      instance.options.onTableGlobalChange?.(updater);
+    instance.setTableGlobalState = (updater, action) => {
+      instance.options.onTableGlobalChange?.(updater, action);
     };
     instance.toggleTableLocked = () => {
-      instance.setTableGlobalState((v) => ({ ...v, locked: !v.locked }));
+      const actionId = v4();
+      instance.setTableGlobalState(
+        (v) => ({ ...v, locked: !v.locked }),
+        (previous, next) => ({
+          id: actionId,
+          type: "view.lock.change",
+          payload: {
+            previousLocked: previous.locked,
+            nextLocked: next.locked,
+          },
+        }),
+      );
     };
     instance.setTableLayout = (layout) => {
-      instance.setTableGlobalState((v) => ({ ...v, layout }));
+      const actionId = v4();
+      instance.setTableGlobalState(
+        (v) => ({ ...v, layout }),
+        (previous, next) => ({
+          id: actionId,
+          type: "view.layout.change",
+          payload: {
+            previousLayout: previous.layout,
+            nextLayout: next.layout,
+          },
+        }),
+      );
     };
     /** Row view */
     instance.openRow = (id) => {
-      instance.setTableGlobalState((v) => ({ ...v, openedRowId: id }));
+      const actionId = v4();
+      instance.setTableGlobalState(
+        (v) => ({ ...v, openedRowId: id }),
+        (previous, next) => ({
+          id: actionId,
+          type: "view.opened_row.change",
+          payload: {
+            previousRowId: previous.openedRowId,
+            nextRowId: next.openedRowId,
+          },
+        }),
+      );
       const { rowView } = instance.getTableGlobalState();
       if (!id || rowView !== "full") return;
       instance.openRowInFullPage(id);
     };
     instance.openRowInFullPage = (id) => {
-      instance.setTableGlobalState((v) => ({
-        ...v,
-        openedRowId: id,
-        rowView: "full",
-      }));
+      const actionId = v4();
+      instance.setTableGlobalState(
+        (v) => ({
+          ...v,
+          openedRowId: id,
+          rowView: "full",
+        }),
+        (previous, next) => ({
+          id: actionId,
+          type: "view.row_display.change",
+          payload: {
+            previousRowView: previous.rowView,
+            nextRowView: next.rowView,
+          },
+        }),
+      );
       const url = instance.getRowUrl(id);
       if (!url || typeof window === "undefined") return;
       window.open(url, "_self");

@@ -11,9 +11,136 @@ import type { TableViewState } from "@/features/menu";
 import type { ColumnInfo, Row } from "@/lib/types";
 import { arrayToEntity } from "@/lib/utils";
 import type { CellPlugin } from "@/plugins";
+import {
+  serializeResourceAction,
+  type DataResourceAction,
+  type PropertiesResourceAction,
+  type ResourceChange,
+  type ViewResourceAction,
+} from "@/table-contexts";
 import { useTableView } from "@/table-contexts/use-table-view";
 
+interface MockWithLastCall {
+  mock: {
+    lastCall?: readonly unknown[];
+  };
+}
+
+function getLastResourceChange<TResource, TAction>(mock: MockWithLastCall) {
+  return mock.mock.lastCall?.[0] as
+    | ResourceChange<TResource, TAction>
+    | undefined;
+}
+
 describe("useTableView resource API", () => {
+  it("ResourceActions_CallbacksReceiveCompleteReplacementEnvelope", () => {
+    const onDataChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        onDataChange,
+      }),
+    );
+
+    act(() => {
+      result.current.table.addRow();
+    });
+
+    const change = getLastResourceChange<Row[], DataResourceAction>(
+      onDataChange,
+    );
+    expect(change?.next).toHaveLength(mockData.length + 1);
+    expect(change?.action.type).toBe("data.row.create");
+    if (change?.action.type !== "data.row.create") {
+      throw new Error("Expected row create action");
+    }
+    expect(typeof change.action.id).toBe("string");
+    expect(typeof change.action.payload.rowId).toBe("string");
+    expect(change.action.payload.nextPosition).toBe(mockData.length);
+  });
+
+  it("ResourceActions_CrossResourceColumnOperationSharesActionId", () => {
+    const onDataChange = vi.fn();
+    const onPropertiesChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        onDataChange,
+        onPropertiesChange,
+      }),
+    );
+
+    act(() => {
+      result.current.table.addColumnInfo({
+        id: "col3",
+        name: "Estimate",
+        type: "text",
+      });
+    });
+
+    const propertiesChange = getLastResourceChange<
+      ColumnInfo[],
+      PropertiesResourceAction
+    >(onPropertiesChange);
+    const dataChange = getLastResourceChange<Row[], DataResourceAction>(
+      onDataChange,
+    );
+    expect(propertiesChange?.next.map((property) => property.id)).toEqual([
+      "col1",
+      "col2",
+      "col3",
+    ]);
+    expect(propertiesChange?.action).toMatchObject({
+      type: "properties.create",
+      payload: {
+        propertyId: "col3",
+        nextPosition: 2,
+        property: {
+          id: "col3",
+          name: "Estimate",
+          type: "text",
+        },
+      },
+    });
+    expect(dataChange?.action).toMatchObject({
+      type: "data.cell.update",
+      payload: {
+        rowIds: ["row1", "row2", "row3"],
+        propertyId: "col3",
+      },
+    });
+    expect(dataChange?.action.id).toBe(propertiesChange?.action.id);
+  });
+
+  it("ResourceActions_SerializationExcludesCompleteNextResource", () => {
+    const onPropertiesChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        onPropertiesChange,
+      }),
+    );
+
+    act(() => {
+      result.current.table.setColumnInfo("col2", { hidden: true });
+    });
+
+    const change = getLastResourceChange<
+      ColumnInfo[],
+      PropertiesResourceAction
+    >(onPropertiesChange);
+    const serialized = serializeResourceAction(change!);
+    expect(serialized).toEqual(change?.action);
+    expect(JSON.stringify(serialized)).not.toContain("Task 1");
+    expect(JSON.stringify(serialized)).not.toContain('"next"');
+  });
+
   it("ResourceApi_ControlledData_EmitsReplacementWithoutCommittingUntilPropsChange", () => {
     const onDataChange = vi.fn();
     const { result, rerender } = renderHook(
@@ -31,7 +158,11 @@ describe("useTableView resource API", () => {
       result.current.table.addRow();
     });
 
-    const nextData = onDataChange.mock.lastCall?.[0] as Row[];
+    const dataChange = getLastResourceChange<Row[], DataResourceAction>(
+      onDataChange,
+    );
+    expect(dataChange).toBeDefined();
+    const nextData = dataChange!.next;
     expect(nextData).toHaveLength(mockData.length + 1);
     expect(result.current.table.getRowModel().rows).toHaveLength(
       mockData.length,
@@ -65,9 +196,10 @@ describe("useTableView resource API", () => {
       });
     });
 
-    const nextProperties = onPropertiesChange.mock.lastCall?.[0] as
-      | ColumnInfo[]
-      | undefined;
+    const nextProperties = getLastResourceChange<
+      ColumnInfo[],
+      PropertiesResourceAction
+    >(onPropertiesChange)?.next;
     expect(nextProperties?.map((property) => property.id)).toEqual([
       "col1",
       "col2",
@@ -113,7 +245,9 @@ describe("useTableView resource API", () => {
       result.current.table.setTableLayout("list");
     });
 
-    const nextView = onViewChange.mock.lastCall?.[0] as {
+    const nextView = getLastResourceChange<TableViewState, ViewResourceAction>(
+      onViewChange,
+    )?.next as {
       layout: "list";
       rowView: "side";
       openedRowId: null;
@@ -155,7 +289,10 @@ describe("useTableView resource API", () => {
       result.current.table.openRow("row1");
     });
 
-    expect(onViewChange.mock.lastCall?.[0]).toMatchObject({
+    expect(
+      getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
+        ?.next,
+    ).toMatchObject({
       layout: "list",
       openedRowId: "row1",
     });
@@ -199,9 +336,12 @@ describe("useTableView resource API", () => {
       mockData.length + 1,
     );
     expect(result.current.table.getTableGlobalState().layout).toBe("list");
-    expect(onDataChange.mock.lastCall?.[0]).toHaveLength(mockData.length + 1);
     expect(
-      (onViewChange.mock.lastCall?.[0] as TableViewState | undefined)?.layout,
+      getLastResourceChange<Row[], DataResourceAction>(onDataChange)?.next,
+    ).toHaveLength(mockData.length + 1);
+    expect(
+      getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
+        ?.next.layout,
     ).toBe("list");
 
     rerender({
@@ -253,7 +393,9 @@ describe("useTableView resource API", () => {
       });
     });
 
-    expect(onDataChange.mock.lastCall?.[0]).toHaveLength(mockData.length);
+    expect(
+      getLastResourceChange<Row[], DataResourceAction>(onDataChange)?.next,
+    ).toHaveLength(mockData.length);
     expect(result.current.table.getRowModel().rows).toHaveLength(
       mockData.length,
     );
@@ -262,7 +404,11 @@ describe("useTableView resource API", () => {
       "col2",
       "col3",
     ]);
-    expect(onPropertiesChange.mock.lastCall?.[0]).toHaveLength(3);
+    expect(
+      getLastResourceChange<ColumnInfo[], PropertiesResourceAction>(
+        onPropertiesChange,
+      )?.next,
+    ).toHaveLength(3);
   });
 
   it("ResourceApi_OwnershipSwitch_WarnsOncePerTransitionInDevelopment", () => {
@@ -320,9 +466,10 @@ describe("useTableView resource API", () => {
       result.current.table.toggleAllColumnsVisible();
     });
 
-    const nextProperties = onPropertiesChange.mock.lastCall?.[0] as
-      | ColumnInfo[]
-      | undefined;
+    const nextProperties = getLastResourceChange<
+      ColumnInfo[],
+      PropertiesResourceAction
+    >(onPropertiesChange)?.next;
     expect(nextProperties).toMatchObject([
       { id: "col1", hidden: false },
       { id: "col2", hidden: true },
@@ -351,10 +498,13 @@ describe("useTableView resource API", () => {
         type: "text",
       });
     });
-    const addedProperties = onPropertiesChange.mock.lastCall?.[0] as
-      | ColumnInfo[]
-      | undefined;
-    const addedData = onDataChange.mock.lastCall?.[0] as Row[] | undefined;
+    const addedProperties = getLastResourceChange<
+      ColumnInfo[],
+      PropertiesResourceAction
+    >(onPropertiesChange)?.next;
+    const addedData = getLastResourceChange<Row[], DataResourceAction>(
+      onDataChange,
+    )?.next;
     expect(addedProperties?.map((property) => property.id)).toEqual([
       "col1",
       "col2",
@@ -368,10 +518,13 @@ describe("useTableView resource API", () => {
     act(() => {
       result.current.table.setColumnType("col3", "number");
     });
-    const typedProperties = onPropertiesChange.mock.lastCall?.[0] as
-      | ColumnInfo[]
-      | undefined;
-    const typedData = onDataChange.mock.lastCall?.[0] as Row[] | undefined;
+    const typedProperties = getLastResourceChange<
+      ColumnInfo[],
+      PropertiesResourceAction
+    >(onPropertiesChange)?.next;
+    const typedData = getLastResourceChange<Row[], DataResourceAction>(
+      onDataChange,
+    )?.next;
     expect(
       typedProperties?.find((property) => property.id === "col3")?.type,
     ).toBe("number");
@@ -383,10 +536,13 @@ describe("useTableView resource API", () => {
     act(() => {
       result.current.table.removeColumnInfo("col3");
     });
-    const removedProperties = onPropertiesChange.mock.lastCall?.[0] as
-      | ColumnInfo[]
-      | undefined;
-    const removedData = onDataChange.mock.lastCall?.[0] as Row[] | undefined;
+    const removedProperties = getLastResourceChange<
+      ColumnInfo[],
+      PropertiesResourceAction
+    >(onPropertiesChange)?.next;
+    const removedData = getLastResourceChange<Row[], DataResourceAction>(
+      onDataChange,
+    )?.next;
     expect(removedProperties?.map((property) => property.id)).toEqual([
       "col1",
       "col2",
@@ -426,8 +582,14 @@ describe("useTableView resource API", () => {
         .getRowModel()
         .rows.every((row) => row.original.properties.col3 !== undefined),
     ).toBe(true);
-    expect(onPropertiesChange.mock.lastCall?.[0]).toHaveLength(3);
-    expect(onDataChange.mock.lastCall?.[0]).toHaveLength(mockData.length);
+    expect(
+      getLastResourceChange<ColumnInfo[], PropertiesResourceAction>(
+        onPropertiesChange,
+      )?.next,
+    ).toHaveLength(3);
+    expect(
+      getLastResourceChange<Row[], DataResourceAction>(onDataChange)?.next,
+    ).toHaveLength(mockData.length);
 
     act(() => {
       result.current.table.setColumnType("col3", "number");
@@ -438,15 +600,21 @@ describe("useTableView resource API", () => {
         .getRowModel()
         .rows.every((row) => row.original.properties.col3?.value === 0),
     ).toBe(true);
+    const typedPropertiesChange = getLastResourceChange<
+      ColumnInfo[],
+      PropertiesResourceAction
+    >(onPropertiesChange);
+    const typedDataChange = getLastResourceChange<Row[], DataResourceAction>(
+      onDataChange,
+    );
+    expect(typedPropertiesChange).toBeDefined();
+    expect(typedDataChange).toBeDefined();
     expect(
-      (onPropertiesChange.mock.lastCall?.[0] as ColumnInfo[]).find(
-        (property) => property.id === "col3",
-      )?.type,
+      typedPropertiesChange!.next.find((property) => property.id === "col3")
+        ?.type,
     ).toBe("number");
     expect(
-      (onDataChange.mock.lastCall?.[0] as Row[]).every(
-        (row) => row.properties.col3?.value === 0,
-      ),
+      typedDataChange!.next.every((row) => row.properties.col3?.value === 0),
     ).toBe(true);
 
     act(() => {
@@ -461,11 +629,17 @@ describe("useTableView resource API", () => {
         .getRowModel()
         .rows.every((row) => row.original.properties.col3 === undefined),
     ).toBe(true);
-    expect(onPropertiesChange.mock.lastCall?.[0]).toHaveLength(2);
     expect(
-      (onDataChange.mock.lastCall?.[0] as Row[]).every(
-        (row) => row.properties.col3 === undefined,
-      ),
+      getLastResourceChange<ColumnInfo[], PropertiesResourceAction>(
+        onPropertiesChange,
+      )?.next,
+    ).toHaveLength(2);
+    const removedDataChange = getLastResourceChange<Row[], DataResourceAction>(
+      onDataChange,
+    );
+    expect(removedDataChange).toBeDefined();
+    expect(
+      removedDataChange!.next.every((row) => row.properties.col3 === undefined),
     ).toBe(true);
   });
 

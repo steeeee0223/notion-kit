@@ -37,13 +37,13 @@ export function renderTableView(props: Partial<TableViewProps> = {}) {
         {...rest}
         data={data}
         properties={properties}
-        onDataChange={(next) => {
-          setData(next);
-          onDataChange?.(next);
+        onDataChange={(change) => {
+          setData(change.next);
+          onDataChange?.(change);
         }}
-        onPropertiesChange={(next) => {
-          setProperties(next);
-          onPropertiesChange?.(next);
+        onPropertiesChange={(change) => {
+          setProperties(change.next);
+          onPropertiesChange?.(change);
         }}
       />
     );
