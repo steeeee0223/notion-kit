@@ -47,9 +47,9 @@ export const ListView: Story = {
     () => (
       <div className="px-60 py-24">
         <TableView
-          table={{ layout: "list" }}
-          properties={mockProps}
-          data={mockData}
+          defaultView={{ layout: "list" }}
+          defaultProperties={mockProps}
+          defaultData={mockData}
         />
       </div>
     ),
@@ -61,9 +61,9 @@ export const BoardView: Story = {
     () => (
       <div className="px-60 py-24">
         <TableView
-          table={{ layout: "board" }}
-          properties={mockProps}
-          data={mockData}
+          defaultView={{ layout: "board" }}
+          defaultProperties={mockProps}
+          defaultData={mockData}
         />
       </div>
     ),

@@ -134,7 +134,8 @@ function DatabaseView() {
   return (
     <TableView
       plugins={[...DEFAULT_PLUGINS, tagPlugin]} // Register your custom plugin here // [!code highlight]
-      // other props...
+      defaultProperties={properties}
+      defaultData={data}
     />
   );
 }

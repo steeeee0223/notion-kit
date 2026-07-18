@@ -32,7 +32,7 @@ const meta = {
   title: "collections/Table View/Menus",
   parameters: { layout: "fullscreen" },
   decorators: (Story) => (
-    <TableViewWrapper properties={mockProps} data={mockData}>
+    <TableViewWrapper defaultProperties={mockProps} defaultData={mockData}>
       <Story />
     </TableViewWrapper>
   ),

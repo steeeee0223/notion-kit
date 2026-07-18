@@ -1,75 +1,153 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   functionalUpdate,
   useTable,
   type ColumnDef,
   type OnChangeFn,
-  type Updater,
 } from "@tanstack/react-table";
 
 import { DEFAULT_FEATURES, type TableFeatures } from "@/features";
-import type { TableGlobalState } from "@/features/menu";
+import type { TableViewState } from "@/features/menu";
 import type { ColumnDefs, ColumnInfo, Row } from "@/lib/types";
 import { type Entity } from "@/lib/utils";
 import { resolveGroupingMethod, resolveSortingMethod } from "@/methods";
 import type { CellPlugin } from "@/plugins";
 import { defaultColumn } from "@/table-contexts/column";
-import type { BaseTableProps } from "@/table-contexts/types";
-import { getMinWidth, toPropertyEntity } from "@/table-contexts/utils";
+import type {
+  BaseTableProps,
+  ResourceChangeHandler,
+  TableState,
+} from "@/table-contexts/types";
+import {
+  createInitialTable,
+  getMinWidth,
+  toPropertyEntity,
+} from "@/table-contexts/utils";
 
-interface UseTableViewOptions<TPlugins extends CellPlugin[]>
-  extends BaseTableProps<TPlugins> {
+type UseTableViewOptions<TPlugins extends CellPlugin[]> =
+  BaseTableProps<TPlugins> & {
   plugins: Entity<TPlugins[number]>;
+};
+
+const DEFAULT_VIEW_STATE = {
+  locked: false,
+  layout: "table",
+  rowView: "side",
+  openedRowId: null,
+} satisfies TableViewState;
+
+function resolveViewState(view: Partial<TableViewState> | undefined) {
+  return {
+    ...DEFAULT_VIEW_STATE,
+    ...view,
+  };
 }
 
-export function useTableView<TPlugins extends CellPlugin[]>({
-  plugins,
-  data,
-  properties,
-  table: tableGlobal,
-  getRowUrl,
-  onDataChange,
-  onPropertiesChange,
-  onTableChange,
-  defaultColumn: defaultColumnOverride,
-}: UseTableViewOptions<TPlugins>) {
-  const isPropertiesControlled = typeof onPropertiesChange !== "undefined";
-  const isDataControlled = typeof onDataChange !== "undefined";
-  const isTableControlled = typeof onTableChange !== "undefined";
-  /** columns states */
-  const [_columnEntityState, setColumnEntityState] = useState(() => ({
-    properties,
-    entity: toPropertyEntity(plugins.items, properties),
-  }));
-  let uncontrolledColumnEntity = _columnEntityState.entity;
-  if (!isPropertiesControlled && _columnEntityState.properties !== properties) {
-    uncontrolledColumnEntity = toPropertyEntity(plugins.items, properties);
-    setColumnEntityState({
-      properties,
-      entity: uncontrolledColumnEntity,
-    });
+function getResourceMode(isControlled: boolean) {
+  return isControlled ? "controlled" : "uncontrolled";
+}
+
+function useOwnershipSwitchWarning(name: string, isControlled: boolean) {
+  const initialMode = useRef(getResourceMode(isControlled));
+  const mode = getResourceMode(isControlled);
+
+  if (
+    process.env.NODE_ENV !== "production" &&
+    initialMode.current !== mode
+  ) {
+    console.warn(
+      `[TableView] \`${name}\` changed from ${initialMode.current} to ${mode} during one mount. This is unsupported.`,
+    );
   }
-  const setColumnEntity = useCallback(
-    (updater: Updater<Entity<ColumnInfo>>) => {
-      setColumnEntityState((prev) => ({
-        ...prev,
-        entity: functionalUpdate(updater, prev.entity),
-      }));
+}
+
+function useResourceState<TResource>({
+  name,
+  controlled,
+  value,
+  defaultValue,
+  onChange,
+}: {
+  name: string;
+  controlled: boolean;
+  value: TResource;
+  defaultValue: TResource;
+  onChange: ResourceChangeHandler<TResource> | undefined;
+}) {
+  useOwnershipSwitchWarning(name, controlled);
+
+  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+  const resource = controlled ? value : uncontrolledValue;
+  const lastResourceRef = useRef(resource);
+  const pendingResourceRef = useRef(resource);
+
+  if (lastResourceRef.current !== resource) {
+    lastResourceRef.current = resource;
+    pendingResourceRef.current = resource;
+  }
+
+  const setResource = useCallback<OnChangeFn<TResource>>(
+    (updater) => {
+      const next = functionalUpdate(updater, pendingResourceRef.current);
+      pendingResourceRef.current = next;
+      if (!controlled) {
+        setUncontrolledValue(next);
+      }
+      onChange?.(next);
     },
-    [],
+    [controlled, onChange],
   );
-  // Use memoized entity for controlled properties
+
+  return [resource, setResource] as const;
+}
+
+export function useTableView<TPlugins extends CellPlugin[]>(
+  options: UseTableViewOptions<TPlugins>,
+) {
+  const {
+    plugins,
+    getRowUrl,
+    onDataChange,
+    onPropertiesChange,
+    onViewChange,
+    defaultColumn: defaultColumnOverride,
+  } = options;
+  const initialTable = useRef<TableState<TPlugins> | null>(null);
+  initialTable.current ??= createInitialTable() as TableState<TPlugins>;
+
+  const isDataControlled = options.data !== undefined;
+  const isPropertiesControlled = options.properties !== undefined;
+  const isViewControlled = options.view !== undefined;
+
+  const [dataEntity, setDataResource] = useResourceState({
+    name: "data",
+    controlled: isDataControlled,
+    value: isDataControlled ? options.data : initialTable.current.data,
+    defaultValue: options.defaultData ?? initialTable.current.data,
+    onChange: onDataChange,
+  });
+  const [propertiesResource, setPropertiesResource] = useResourceState({
+    name: "properties",
+    controlled: isPropertiesControlled,
+    value: isPropertiesControlled
+      ? options.properties
+      : initialTable.current.properties,
+    defaultValue:
+      options.defaultProperties ?? initialTable.current.properties,
+    onChange: onPropertiesChange,
+  });
+  const [tableGlobalState, setViewResource] = useResourceState<TableViewState>({
+    name: "view",
+    controlled: isViewControlled,
+    value: resolveViewState(isViewControlled ? options.view : undefined),
+    defaultValue: resolveViewState(options.defaultView),
+    onChange: onViewChange,
+  });
+
+  /** columns states */
   const columnEntity = useMemo(
-    () =>
-      isPropertiesControlled
-        ? toPropertyEntity(plugins.items, properties)
-        : uncontrolledColumnEntity,
-    [
-      isPropertiesControlled,
-      plugins.items,
-      properties,
-      uncontrolledColumnEntity,
-    ],
+    () => toPropertyEntity(plugins.items, propertiesResource),
+    [plugins.items, propertiesResource],
   );
   const columns = useMemo(
     () =>
@@ -103,42 +181,13 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   );
   const handleColumnChange = useCallback<OnChangeFn<Entity<ColumnInfo>>>(
     (updater) => {
-      if (!onPropertiesChange) {
-        setColumnEntity(updater);
-        return;
-      }
-      onPropertiesChange((prev) => {
+      setPropertiesResource((prev: ColumnDefs<TPlugins>) => {
         const entity = toPropertyEntity(plugins.items, prev);
         const next = functionalUpdate(updater, entity);
         return next.ids.map((id) => next.items[id]!) as ColumnDefs<TPlugins>;
       });
     },
-    [onPropertiesChange, plugins.items, setColumnEntity],
-  );
-
-  /** data state */
-  const [_dataEntity, setDataEntity] = useState(data);
-  // Use memoized entity for controlled data
-  const dataEntity = useMemo(
-    () => (isDataControlled ? data : _dataEntity),
-    [isDataControlled, data, _dataEntity],
-  );
-
-  const resolvedTableGlobal = useMemo(
-    () => ({
-      locked: false,
-      layout: "table" as const,
-      rowView: "side" as const,
-      openedRowId: null,
-      ...tableGlobal,
-    }),
-    [tableGlobal],
-  );
-  const [_tableGlobal, setTableGlobal] =
-    useState<TableGlobalState>(resolvedTableGlobal);
-  const tableGlobalState = useMemo(
-    () => (isTableControlled ? resolvedTableGlobal : _tableGlobal),
-    [isTableControlled, resolvedTableGlobal, _tableGlobal],
+    [plugins.items, setPropertiesResource],
   );
 
   const tableState = useMemo(
@@ -172,8 +221,8 @@ export function useTableView<TPlugins extends CellPlugin[]>({
       getRowId: (row) => row.id,
       state: tableState,
       onColumnInfoChange: handleColumnChange,
-      onTableDataChange: onDataChange ?? setDataEntity,
-      onTableGlobalChange: onTableChange ?? setTableGlobal,
+      onTableDataChange: setDataResource,
+      onTableGlobalChange: setViewResource,
       getRowUrl,
     },
     () => null,

@@ -50,30 +50,32 @@ export const LAYOUT_OPTIONS: {
 
 export type RowViewType = "center" | "side" | "full";
 
-export interface TableGlobalState {
+export interface TableViewState {
   locked?: boolean;
   layout: LayoutType;
   rowView: RowViewType;
   openedRowId: string | null;
 }
 
+export type TableGlobalState = TableViewState;
+
 export interface TableMenuTableState {
   menu: TableMenuState;
-  tableGlobal: TableGlobalState;
+  tableGlobal: TableViewState;
 }
 
 export interface TableMenuOptions {
   getRowUrl?: (rowId: string) => string;
   onTableMenuChange?: OnChangeFn<TableMenuState>;
-  onTableGlobalChange?: OnChangeFn<TableGlobalState>;
+  onTableGlobalChange?: OnChangeFn<TableViewState>;
 }
 
 export interface TableMenuTableApi {
   getRowUrl: (rowId: string) => string;
   getTableMenuState: () => TableMenuState;
   setTableMenuState: (state: TableMenuState) => void;
-  getTableGlobalState: () => TableGlobalState;
-  setTableGlobalState: OnChangeFn<TableGlobalState>;
+  getTableGlobalState: () => TableViewState;
+  setTableGlobalState: OnChangeFn<TableViewState>;
   toggleTableLocked: () => void;
   setTableLayout: (layout: LayoutType) => void;
   openRow: (id: string | null) => void;

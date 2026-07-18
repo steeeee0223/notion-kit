@@ -59,6 +59,7 @@ export { ROW_VIEW_OPTIONS } from "@/features";
 export { LAYOUT_OPTIONS } from "@/features/menu";
 export type {
   TableGlobalState,
+  TableViewState,
   RowViewType,
   LayoutType,
 } from "@/features/menu";
