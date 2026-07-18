@@ -34,13 +34,33 @@
 - [ ] **Step 1: Write failing stale-UI tests**
 
 ```tsx
-import { screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
 import { mockResizeObserver } from "../__tests__/mock";
+import { useTableViewCtx } from "./table-view-provider";
 
 mockResizeObserver();
+
+function RowViewModeControls() {
+  const { table } = useTableViewCtx();
+
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        table.setTableGlobalState((view) => ({
+          ...view,
+          openedRowId: "row1",
+          rowView: "center",
+        }))
+      }
+    >
+      Open first row center peek
+    </button>
+  );
+}
 
 describe("TableViewReactivity", () => {
   it("TableViewReactivity_LayoutSwitch_RendersSelectedLayout", async () => {
@@ -83,8 +103,9 @@ describe("TableViewReactivity", () => {
     expect(screen.getAllByRole("button", { name: /name/i })).toHaveLength(1);
   });
 
-  it("TableViewReactivity_RowOpen_RendersRowView", async () => {
-    const tableView = renderTableView();
+  it("TableViewReactivity_RowOpenAndModeChange_RendersSelectedRowView", async () => {
+    const tableView = renderTableView({ children: <RowViewModeControls /> });
+    const openCenterPeek = tableView.button("Open first row center peek");
     const rowActions = await tableView.openRowActions("Task 1");
 
     rowActions.choose("Open in side peek");
@@ -92,6 +113,10 @@ describe("TableViewReactivity", () => {
     expect(
       await screen.findByRole("heading", { name: "Task 1" }),
     ).toBeVisible();
+
+    fireEvent.click(openCenterPeek);
+
+    expect(await screen.findByRole("dialog", { name: "Task 1" })).toBeVisible();
   });
 });
 ```

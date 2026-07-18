@@ -48,14 +48,16 @@ export function BoardGroup({ index, locked, row }: BoardGroupProps) {
           <BoardCard key={subRow.id} row={subRow} groupId={row.id} />
         ))}
       </Kanban.ColumnContent>
-      <Button
-        size="sm"
-        className="w-full rounded-lg leading-tight text-secondary"
-        onClick={addRow}
-      >
-        <Icon.Plus className="fill-current" />
-        New page
-      </Button>
+      {!locked && (
+        <Button
+          size="sm"
+          className="w-full rounded-lg leading-tight text-secondary"
+          onClick={addRow}
+        >
+          <Icon.Plus className="fill-current" />
+          New page
+        </Button>
+      )}
     </Kanban.Column>
   );
 }

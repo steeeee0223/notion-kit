@@ -128,7 +128,32 @@ function TagConfigMenu({
 Finally, register your plugin in the table view:
 
 ```tsx
+import { DEFAULT_PLUGINS, TableView } from "@notion-kit/table-view";
+
 import { tagPlugin } from "./tag-plugin";
+
+const properties = [
+  { id: "name", name: "Name", type: "title" as const },
+  {
+    id: "tags",
+    name: "Tags",
+    type: "tag" as const,
+    config: { options: ["Bug", "Feature"] },
+  },
+];
+
+const now = Date.now();
+const data = [
+  {
+    id: "task-1",
+    createdAt: now,
+    lastEditedAt: now,
+    properties: {
+      name: { id: "task-1-name", value: "Ship table view" },
+      tags: { id: "task-1-tags", value: ["Feature"] },
+    },
+  },
+];
 
 function DatabaseView() {
   return (

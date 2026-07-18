@@ -43,6 +43,18 @@ function DataUpdateControls() {
       </button>
       <button
         type="button"
+        onClick={() =>
+          table.setTableGlobalState((view) => ({
+            ...view,
+            openedRowId: "row1",
+            rowView: "center",
+          }))
+        }
+      >
+        Open first row center peek
+      </button>
+      <button
+        type="button"
         onClick={() => table.setColumnInfo("col2", { hidden: true })}
       >
         Hide done column
@@ -147,7 +159,7 @@ describe("TableViewReactivity", () => {
     expect(onProbeRender).toHaveBeenCalledOnce();
   });
 
-  it("TableViewReactivity_RowOpen_RendersRowView", async () => {
+  it("TableViewReactivity_RowOpenAndModeChange_RendersSelectedRowView", async () => {
     const tableView = renderTableView({
       properties: [
         {
@@ -157,7 +169,9 @@ describe("TableViewReactivity", () => {
         },
         ...mockProperties.slice(1),
       ],
+      children: <DataUpdateControls />,
     });
+    const openCenterPeek = tableView.button("Open first row center peek");
     const rowActions = await tableView.openRowActions("Task 1");
 
     rowActions.choose("Open in side peek");
@@ -165,6 +179,10 @@ describe("TableViewReactivity", () => {
     expect(
       await screen.findByRole("heading", { name: "Task 1" }),
     ).toBeVisible();
+
+    fireEvent.click(openCenterPeek);
+
+    expect(await screen.findByRole("dialog", { name: "Task 1" })).toBeVisible();
   });
 
   it("TableViewReactivity_DataChange_RendersAddedRow", async () => {
@@ -268,6 +286,10 @@ describe("TableViewReactivity", () => {
       for (const column of columns) {
         expect(column).toHaveAttribute("disabled");
       }
+      const addButtons = screen
+        .queryAllByRole("button", { name: /new page/i })
+        .filter((element) => element.tagName === "BUTTON");
+      expect(addButtons).toHaveLength(0);
     });
   });
 

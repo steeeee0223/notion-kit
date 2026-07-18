@@ -7,6 +7,7 @@ import {
   plugins,
   renderTableHook,
 } from "@/__tests__/mock";
+import type { TableViewState } from "@/features/menu";
 import type { ColumnInfo, Row } from "@/lib/types";
 import { arrayToEntity } from "@/lib/utils";
 import type { CellPlugin } from "@/plugins";
@@ -125,6 +126,41 @@ describe("useTableView resource API", () => {
     expect(result.current.table.getTableGlobalState().layout).toBe("list");
   });
 
+  it("ResourceApi_ControlledViewPendingUpdate_SurvivesParentRerender", () => {
+    const onViewChange = vi.fn();
+    const view = {
+      layout: "table",
+      rowView: "side",
+      openedRowId: null,
+    } as const;
+    const { result, rerender } = renderHook(
+      ({ renderCount }: { renderCount: number }) => {
+        void renderCount;
+        return useTableView({
+          plugins,
+          defaultData: mockData,
+          defaultProperties: mockProperties,
+          view,
+          onViewChange,
+        });
+      },
+      { initialProps: { renderCount: 0 } },
+    );
+
+    act(() => {
+      result.current.table.setTableLayout("list");
+    });
+    rerender({ renderCount: 1 });
+    act(() => {
+      result.current.table.openRow("row1");
+    });
+
+    expect(onViewChange.mock.lastCall?.[0]).toMatchObject({
+      layout: "list",
+      openedRowId: "row1",
+    });
+  });
+
   it("ResourceApi_UncontrolledDefaults_InitializeCommitAndIgnoreLaterDefaultChanges", () => {
     const onDataChange = vi.fn();
     const onPropertiesChange = vi.fn();
@@ -164,7 +200,9 @@ describe("useTableView resource API", () => {
     );
     expect(result.current.table.getTableGlobalState().layout).toBe("list");
     expect(onDataChange.mock.lastCall?.[0]).toHaveLength(mockData.length + 1);
-    expect(onViewChange.mock.lastCall?.[0].layout).toBe("list");
+    expect(
+      (onViewChange.mock.lastCall?.[0] as TableViewState | undefined)?.layout,
+    ).toBe("list");
 
     rerender({
       defaultData: [
@@ -227,8 +265,8 @@ describe("useTableView resource API", () => {
     expect(onPropertiesChange.mock.lastCall?.[0]).toHaveLength(3);
   });
 
-  it("ResourceApi_OwnershipSwitch_WarnsInDevelopment", () => {
-    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+  it("ResourceApi_OwnershipSwitch_WarnsOncePerTransitionInDevelopment", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
     const { rerender } = renderHook(
       (props: {
         data?: Row[];
@@ -248,9 +286,15 @@ describe("useTableView resource API", () => {
       defaultProperties: mockProperties,
     } as never);
 
+    rerender({
+      data: mockData,
+      defaultProperties: mockProperties,
+    } as never);
+
     expect(warn).toHaveBeenCalledWith(
       "[TableView] `data` changed from uncontrolled to controlled during one mount. This is unsupported.",
     );
+    expect(warn).toHaveBeenCalledOnce();
     warn.mockRestore();
   });
 
@@ -283,6 +327,146 @@ describe("useTableView resource API", () => {
       { id: "col1", hidden: false },
       { id: "col2", hidden: true },
     ]);
+  });
+
+  it("ResourceApi_ControlledColumnLifecycle_EmitsCompletePropertyAndDataResources", () => {
+    const onDataChange = vi.fn();
+    const onPropertiesChange = vi.fn();
+    const { result, rerender } = renderHook(
+      ({ data, properties }: { data: Row[]; properties: ColumnInfo[] }) =>
+        useTableView({
+          plugins,
+          data,
+          properties,
+          onDataChange,
+          onPropertiesChange,
+        }),
+      { initialProps: { data: mockData, properties: mockProperties } },
+    );
+
+    act(() => {
+      result.current.table.addColumnInfo({
+        id: "col3",
+        name: "Estimate",
+        type: "text",
+      });
+    });
+    const addedProperties = onPropertiesChange.mock.lastCall?.[0] as
+      | ColumnInfo[]
+      | undefined;
+    const addedData = onDataChange.mock.lastCall?.[0] as Row[] | undefined;
+    expect(addedProperties?.map((property) => property.id)).toEqual([
+      "col1",
+      "col2",
+      "col3",
+    ]);
+    expect(addedData?.every((row) => row.properties.col3 !== undefined)).toBe(
+      true,
+    );
+
+    rerender({ properties: addedProperties!, data: addedData! });
+    act(() => {
+      result.current.table.setColumnType("col3", "number");
+    });
+    const typedProperties = onPropertiesChange.mock.lastCall?.[0] as
+      | ColumnInfo[]
+      | undefined;
+    const typedData = onDataChange.mock.lastCall?.[0] as Row[] | undefined;
+    expect(
+      typedProperties?.find((property) => property.id === "col3")?.type,
+    ).toBe("number");
+    expect(typedData?.every((row) => row.properties.col3?.value === 0)).toBe(
+      true,
+    );
+
+    rerender({ properties: typedProperties!, data: typedData! });
+    act(() => {
+      result.current.table.removeColumnInfo("col3");
+    });
+    const removedProperties = onPropertiesChange.mock.lastCall?.[0] as
+      | ColumnInfo[]
+      | undefined;
+    const removedData = onDataChange.mock.lastCall?.[0] as Row[] | undefined;
+    expect(removedProperties?.map((property) => property.id)).toEqual([
+      "col1",
+      "col2",
+    ]);
+    expect(removedData?.every((row) => row.properties.col3 === undefined)).toBe(
+      true,
+    );
+  });
+
+  it("ResourceApi_UncontrolledColumnLifecycle_CommitsAndEmitsCompleteResources", () => {
+    const onDataChange = vi.fn();
+    const onPropertiesChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        onDataChange,
+        onPropertiesChange,
+      }),
+    );
+
+    act(() => {
+      result.current.table.addColumnInfo({
+        id: "col3",
+        name: "Estimate",
+        type: "text",
+      });
+    });
+    expect(result.current.table.store.state.columnOrder).toEqual([
+      "col1",
+      "col2",
+      "col3",
+    ]);
+    expect(
+      result.current.table
+        .getRowModel()
+        .rows.every((row) => row.original.properties.col3 !== undefined),
+    ).toBe(true);
+    expect(onPropertiesChange.mock.lastCall?.[0]).toHaveLength(3);
+    expect(onDataChange.mock.lastCall?.[0]).toHaveLength(mockData.length);
+
+    act(() => {
+      result.current.table.setColumnType("col3", "number");
+    });
+    expect(result.current.table.getColumnInfo("col3").type).toBe("number");
+    expect(
+      result.current.table
+        .getRowModel()
+        .rows.every((row) => row.original.properties.col3?.value === 0),
+    ).toBe(true);
+    expect(
+      (onPropertiesChange.mock.lastCall?.[0] as ColumnInfo[]).find(
+        (property) => property.id === "col3",
+      )?.type,
+    ).toBe("number");
+    expect(
+      (onDataChange.mock.lastCall?.[0] as Row[]).every(
+        (row) => row.properties.col3?.value === 0,
+      ),
+    ).toBe(true);
+
+    act(() => {
+      result.current.table.removeColumnInfo("col3");
+    });
+    expect(result.current.table.store.state.columnOrder).toEqual([
+      "col1",
+      "col2",
+    ]);
+    expect(
+      result.current.table
+        .getRowModel()
+        .rows.every((row) => row.original.properties.col3 === undefined),
+    ).toBe(true);
+    expect(onPropertiesChange.mock.lastCall?.[0]).toHaveLength(2);
+    expect(
+      (onDataChange.mock.lastCall?.[0] as Row[]).every(
+        (row) => row.properties.col3 === undefined,
+      ),
+    ).toBe(true);
   });
 
   it("ResourceApi_PluginRegistryChange_RenormalizesPropertiesWithNewPluginDefaults", () => {

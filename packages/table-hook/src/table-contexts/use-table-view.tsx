@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   functionalUpdate,
   useTable,
@@ -51,11 +51,14 @@ function useOwnershipSwitchWarning(name: string, isControlled: boolean) {
   const initialMode = useRef(getResourceMode(isControlled));
   const mode = getResourceMode(isControlled);
 
-  if (process.env.NODE_ENV !== "production" && initialMode.current !== mode) {
-    console.warn(
-      `[TableView] \`${name}\` changed from ${initialMode.current} to ${mode} during one mount. This is unsupported.`,
-    );
-  }
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "production" && initialMode.current !== mode) {
+      console.warn(
+        `[TableView] \`${name}\` changed from ${initialMode.current} to ${mode} during one mount. This is unsupported.`,
+      );
+      initialMode.current = mode;
+    }
+  }, [mode, name]);
 }
 
 function useResourceState<TResource>({
@@ -78,13 +81,19 @@ function useResourceState<TResource>({
   const lastResourceRef = useRef(resource);
   const pendingResourceRef = useRef(resource);
 
-  if (lastResourceRef.current !== resource) {
-    lastResourceRef.current = resource;
-    pendingResourceRef.current = resource;
-  }
+  useEffect(() => {
+    if (lastResourceRef.current !== resource) {
+      lastResourceRef.current = resource;
+      pendingResourceRef.current = resource;
+    }
+  }, [resource]);
 
   const setResource = useCallback<OnChangeFn<TResource>>(
     (updater) => {
+      if (lastResourceRef.current !== resource) {
+        lastResourceRef.current = resource;
+        pendingResourceRef.current = resource;
+      }
       const next = functionalUpdate(updater, pendingResourceRef.current);
       pendingResourceRef.current = next;
       if (!controlled) {
@@ -92,7 +101,7 @@ function useResourceState<TResource>({
       }
       onChange?.(next);
     },
-    [controlled, onChange],
+    [controlled, onChange, resource],
   );
 
   return [resource, setResource] as const;
@@ -115,6 +124,20 @@ export function useTableView<TPlugins extends CellPlugin[]>(
   const isDataControlled = options.data !== undefined;
   const isPropertiesControlled = options.properties !== undefined;
   const isViewControlled = options.view !== undefined;
+  const viewLocked = options.view?.locked ?? DEFAULT_VIEW_STATE.locked;
+  const viewLayout = options.view?.layout ?? DEFAULT_VIEW_STATE.layout;
+  const viewRowView = options.view?.rowView ?? DEFAULT_VIEW_STATE.rowView;
+  const viewOpenedRowId =
+    options.view?.openedRowId ?? DEFAULT_VIEW_STATE.openedRowId;
+  const controlledView = useMemo(
+    () => ({
+      locked: viewLocked,
+      layout: viewLayout,
+      rowView: viewRowView,
+      openedRowId: viewOpenedRowId,
+    }),
+    [viewLayout, viewLocked, viewOpenedRowId, viewRowView],
+  );
 
   const [dataEntity, setDataResource] = useResourceState({
     name: "data",
@@ -135,7 +158,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
   const [tableGlobalState, setViewResource] = useResourceState<TableViewState>({
     name: "view",
     controlled: isViewControlled,
-    value: resolveViewState(isViewControlled ? options.view : undefined),
+    value: controlledView,
     defaultValue: resolveViewState(options.defaultView),
     onChange: onViewChange,
   });

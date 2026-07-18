@@ -94,18 +94,18 @@ remounting it with a new React `key`.
 A `TableView` is a generic component `TableView<TPlugins>` where `TPlugins` extends `CellPlugin[]`.
 It provides a table view with editable cells and supports various plugins for cell types.
 
-| Prop                  | Type                                                                   | Description                                                                                          |
-| --------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `plugins`             | `TPlugins`                                                             | The plugins to use for the table. Each table should contain at least `title()` and `text()` plugins. |
-| `data`                | [`Row<TPlugins>[]`](/docs/objects/database-properties#row)             | Controlled rows resource. Do not combine with `defaultData`.                                         |
-| `defaultData`         | [`Row<TPlugins>[]`](/docs/objects/database-properties#row)             | Mount-only uncontrolled rows default. Do not combine with `data`.                                    |
-| `properties`          | [`ColumnDefs<TPlugins>`](/docs/objects/database-properties#columndefs) | Controlled column definitions resource. Do not combine with `defaultProperties`.                     |
-| `defaultProperties`   | [`ColumnDefs<TPlugins>`](/docs/objects/database-properties#columndefs) | Mount-only uncontrolled column definitions default. Do not combine with `properties`.                |
-| `view`                | [`Partial<TableViewState>`](#type-tableviewstate)                      | Controlled view presentation resource. Do not combine with `defaultView`.                            |
-| `defaultView`         | [`Partial<TableViewState>`](#type-tableviewstate)                      | Mount-only uncontrolled view default. Do not combine with `view`.                                    |
-| `onDataChange`        | `(next: Row<TPlugins>[]) => unknown`                                   | Complete rows replacement callback.                                                                 |
-| `onPropertiesChange`  | `(next: ColumnDefs<TPlugins>) => unknown`                              | Complete column definitions replacement callback.                                                    |
-| `onViewChange`        | `(next: TableViewState) => unknown`                                    | Complete view replacement callback.                                                                 |
+| Prop                 | Type                                                                   | Description                                                                                          |
+| -------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `plugins`            | `TPlugins`                                                             | The plugins to use for the table. Each table should contain at least `title()` and `text()` plugins. |
+| `data`               | [`Row<TPlugins>[]`](/docs/objects/database-properties#row)             | Controlled rows resource. Do not combine with `defaultData`.                                         |
+| `defaultData`        | [`Row<TPlugins>[]`](/docs/objects/database-properties#row)             | Mount-only uncontrolled rows default. Do not combine with `data`.                                    |
+| `properties`         | [`ColumnDefs<TPlugins>`](/docs/objects/database-properties#columndefs) | Controlled column definitions resource. Do not combine with `defaultProperties`.                     |
+| `defaultProperties`  | [`ColumnDefs<TPlugins>`](/docs/objects/database-properties#columndefs) | Mount-only uncontrolled column definitions default. Do not combine with `properties`.                |
+| `view`               | [`Partial<TableViewState>`](#type-tableviewstate)                      | Controlled view presentation resource. Do not combine with `defaultView`.                            |
+| `defaultView`        | [`Partial<TableViewState>`](#type-tableviewstate)                      | Mount-only uncontrolled view default. Do not combine with `view`.                                    |
+| `onDataChange`       | `(next: Row<TPlugins>[]) => unknown`                                   | Complete rows replacement callback.                                                                  |
+| `onPropertiesChange` | `(next: ColumnDefs<TPlugins>) => unknown`                              | Complete column definitions replacement callback.                                                    |
+| `onViewChange`       | `(next: TableViewState) => unknown`                                    | Complete view replacement callback.                                                                  |
 
 ### `type` TableState
 
@@ -118,9 +118,9 @@ A `TableState` is a generic type `TableState<TPlugins>` that represents the stat
 
 ### `type` TableViewState
 
-| Prop          | Type                           | Default   | Description                                 |
-| ------------- | ------------------------------ | --------- | ------------------------------------------- |
-| `layout`      | `"table" \| "list" \| "board"` | `"table"` | The layout view of the table.               |
-| `locked`      | `boolean`                      | `false`   | Whether the table is locked (non-editable). |
-| `rowView`     | `"center" \| "side" \| "full"` | `"side"`  | The view type of the opened row.            |
-| `openedRowId` | `string \| null`               | `null`    | The unique identifier of the opened row.    |
+| Prop          | Type                                                                               | Default   | Description                                 |
+| ------------- | ---------------------------------------------------------------------------------- | --------- | ------------------------------------------- |
+| `layout`      | `"table" \| "list" \| "board" \| "timeline" \| "calendar" \| "gallery" \| "chart"` | `"table"` | The layout view of the table.               |
+| `locked`      | `boolean`                                                                          | `false`   | Whether the table is locked (non-editable). |
+| `rowView`     | `"center" \| "side" \| "full"`                                                     | `"side"`  | The view type of the opened row.            |
+| `openedRowId` | `string \| null`                                                                   | `null`    | The unique identifier of the opened row.    |
