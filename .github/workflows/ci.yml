@@ -23,9 +23,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup
         uses: ./tooling/github/setup
+        with:
+          base: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before || github.event.pull_request.base.sha || github.event.merge_group.base_sha || 'origin/main' }}
+          head: ${{ github.event.pull_request.head.sha || github.event.merge_group.head_sha || github.sha }}
 
       - name: Copy env
         shell: bash
@@ -35,32 +40,42 @@ jobs:
         run: pnpm build:packages
 
       - name: Lint
-        run: pnpm lint && pnpm lint:ws
+        run: pnpm lint:ws && pnpm lint --affected
 
   format:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup
         uses: ./tooling/github/setup
+        with:
+          base: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before || github.event.pull_request.base.sha || github.event.merge_group.base_sha || 'origin/main' }}
+          head: ${{ github.event.pull_request.head.sha || github.event.merge_group.head_sha || github.sha }}
 
       - name: Format
-        run: pnpm format
+        run: pnpm format --affected
 
   typecheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup
         uses: ./tooling/github/setup
+        with:
+          base: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before || github.event.pull_request.base.sha || github.event.merge_group.base_sha || 'origin/main' }}
+          head: ${{ github.event.pull_request.head.sha || github.event.merge_group.head_sha || github.sha }}
 
       - name: Build
         run: pnpm build:packages
 
       - name: Typecheck
-        run: turbo typecheck
+        run: pnpm typecheck --affected
 
   test:
     runs-on: ubuntu-latest
