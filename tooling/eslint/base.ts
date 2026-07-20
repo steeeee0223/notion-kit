@@ -55,7 +55,7 @@ export const baseConfig = defineConfig(
       ...tseslint.configs.stylisticTypeChecked,
     ],
     rules: {
-      ...turboPlugin.configs.recommended.rules,
+      "turbo/no-undeclared-env-vars": "error",
       "no-useless-rename": ["error"],
       "@typescript-eslint/no-unused-vars": [
         "error",
