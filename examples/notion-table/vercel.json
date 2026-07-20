@@ -3,5 +3,5 @@
   "buildCommand": "cd ../.. && pnpm exec turbo run build --filter=@notion-kit/notion-table",
   "devCommand": "cd ../.. && pnpm --filter @notion-kit/notion-table dev",
   "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
-  "ignoreCommand": "cd ../.. && npx --yes turbo@^2.9.0 query affected --tasks build --packages @notion-kit/notion-table --exit-code"
+  "ignoreCommand": "cd ../.. && pnpm exec turbo query affected --tasks build --packages @notion-kit/notion-table --exit-code"
 }
