@@ -3,5 +3,5 @@
   "buildCommand": "cd ../.. && pnpm exec turbo run build --filter=@notion-kit/storybook",
   "devCommand": "cd ../.. && pnpm --filter @notion-kit/storybook dev",
   "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
-  "ignoreCommand": "cd ../.. && pnpm exec turbo query affected --tasks build --packages @notion-kit/storybook --exit-code"
+  "ignoreCommand": "cd ../.. && bash turbo/affected.sh storybook"
 }
