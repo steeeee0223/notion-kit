@@ -1,9 +1,42 @@
 name: "Setup and install"
 description: "Common setup steps for Actions"
 
+inputs:
+  base:
+    description: "Git revision used as the affected comparison base"
+    required: false
+  head:
+    description: "Git revision used as the affected comparison head"
+    required: false
+
 runs:
   using: composite
   steps:
+    - name: Configure Turbo SCM range
+      if: inputs.base != '' || inputs.head != ''
+      shell: bash
+      env:
+        INPUT_BASE: ${{ inputs.base }}
+        INPUT_HEAD: ${{ inputs.head }}
+      run: |
+        base="$INPUT_BASE"
+        head="$INPUT_HEAD"
+
+        if [[ -z "$head" ]] || ! git cat-file -e "${head}^{commit}" 2>/dev/null; then
+          head="HEAD"
+        fi
+
+        if [[ -z "$base" ]] || [[ "$base" =~ ^0+$ ]] || ! git cat-file -e "${base}^{commit}" 2>/dev/null; then
+          base="$(git merge-base "$head" origin/main)"
+
+          if [[ "$(git rev-parse "$base")" == "$(git rev-parse "$head")" ]] && git cat-file -e "${head}^" 2>/dev/null; then
+            base="${head}^"
+          fi
+        fi
+
+        echo "TURBO_SCM_BASE=$base" >> "$GITHUB_ENV"
+        echo "TURBO_SCM_HEAD=$head" >> "$GITHUB_ENV"
+
     - uses: pnpm/action-setup@v6
     - uses: actions/setup-node@v6
       with:

@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd ../.. && pnpm exec turbo run build --filter=@notion-kit/notion-table",
+  "devCommand": "cd ../.. && pnpm --filter @notion-kit/notion-table dev",
+  "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
+  "ignoreCommand": "cd ../.. && bash turbo/affected.sh notion-table"
+}
