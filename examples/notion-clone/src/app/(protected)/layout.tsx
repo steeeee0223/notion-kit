@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 
 import { useActiveWorkspace, useSession } from "@notion-kit/auth-ui";
 
+import { routes } from "@/lib/routes";
+
 export default function Layout({ children }: React.PropsWithChildren) {
   const { data, isPending: isLoadingSession } = useSession();
   const { data: activeWorkspace, isPending: isLoadingActiveWorkspace } =
@@ -15,14 +17,14 @@ export default function Layout({ children }: React.PropsWithChildren) {
   useEffect(() => {
     if (isPending) return;
     if (!data) {
-      router.replace("/");
+      router.replace(routes.home);
       return;
     }
     if (!data.session.activeOrganizationId || !activeWorkspace) {
-      router.replace("/onboarding");
+      router.replace(routes.onboarding);
       return;
     }
-    router.replace(`/workspace/${activeWorkspace.slug}`);
+    router.replace(routes.workspace(activeWorkspace.slug));
   }, [activeWorkspace, data, isPending, router]);
 
   if (!isPending && !data) return null;
