@@ -254,7 +254,8 @@ export function MapClusterLayer<
     ) => {
       if (!onPointClick || !e.features?.length) return;
 
-      const feature = e.features[0] as unknown as GeoJSON.Feature<GeoJSON.Point, P> | undefined
+      const feature = e.features[0] as unknown as
+        GeoJSON.Feature<GeoJSON.Point, P> | undefined;
       if (!feature) return;
 
       const coordinates = feature.geometry.coordinates.slice() as [
