@@ -57,13 +57,10 @@ export async function setCached(
   ttlSeconds: number,
 ) {
   const expiresAt = new Date(Date.now() + ttlSeconds * 1000);
-  await db
-    .insert(cache)
-    .values({ key, value, expiresAt })
-    .onConflictDoUpdate({
-      target: cache.key,
-      set: { value, expiresAt },
-    });
+  await db.insert(cache).values({ key, value, expiresAt }).onConflictDoUpdate({
+    target: cache.key,
+    set: { value, expiresAt },
+  });
 }
 
 export async function getOrSetCached<T>(
