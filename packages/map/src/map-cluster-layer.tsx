@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any */
 import { useEffect, useId, useRef } from "react";
-import MapLibreGL from "maplibre-gl";
+import MapLibreGL, { Feature } from "maplibre-gl";
 
 import { useMap } from "./use-map";
 
@@ -254,7 +254,7 @@ export function MapClusterLayer<
     ) => {
       if (!onPointClick || !e.features?.length) return;
 
-      const feature = e.features[0] as any;
+      const feature = e.features[0] as unknown as GeoJSON.Feature<GeoJSON.Point, P> | undefined
       if (!feature) return;
 
       const coordinates = feature.geometry.coordinates.slice() as [
