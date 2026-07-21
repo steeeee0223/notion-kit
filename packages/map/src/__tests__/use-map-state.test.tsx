@@ -262,10 +262,11 @@ describe("usePopupOptions", () => {
 
   it("resets maxWidth to the popup default when it is cleared", () => {
     const popup = new FakePopup();
+    const initialProps: { maxWidth?: string } = { maxWidth: "240px" };
     const { rerender } = renderHook(
-      ({ maxWidth }) =>
+      ({ maxWidth }: { maxWidth?: string }) =>
         usePopupOptions(popup as unknown as PopupOptionsStore, { maxWidth }),
-      { initialProps: { maxWidth: "240px" } },
+      { initialProps },
     );
 
     act(() => {
@@ -273,7 +274,7 @@ describe("usePopupOptions", () => {
     });
     expect(popup.maxWidth).toBe("240px");
 
-    rerender();
+    rerender({ maxWidth: undefined });
 
     expect(popup.maxWidth).toBe("none");
   });
