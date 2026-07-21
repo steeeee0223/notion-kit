@@ -267,10 +267,7 @@ export function MapClusterLayer<
         coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
       }
 
-      onPointClick(
-        feature as unknown as GeoJSON.Feature<GeoJSON.Point, P>,
-        coordinates,
-      );
+      onPointClick(feature, coordinates);
     };
 
     // Cursor style handlers

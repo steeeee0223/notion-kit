@@ -265,7 +265,7 @@ describe("usePopupOptions", () => {
     const { rerender } = renderHook(
       ({ maxWidth }) =>
         usePopupOptions(popup as unknown as PopupOptionsStore, { maxWidth }),
-      { initialProps: { maxWidth: "240px" as string | undefined } },
+      { initialProps: { maxWidth: "240px" } },
     );
 
     act(() => {

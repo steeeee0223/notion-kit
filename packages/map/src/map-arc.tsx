@@ -108,7 +108,7 @@ function mergeArcPaint(
             baseValue,
           ];
   }
-  return merged as MapArcLinePaint;
+  return merged;
 }
 
 function buildArcCoordinates(
@@ -264,18 +264,10 @@ export function MapArc<T extends MapArcDatum = MapArcDatum>({
   useEffect(() => {
     if (!isLoaded || !map?.getLayer(layerId)) return;
     for (const [key, value] of Object.entries(mergedPaint)) {
-      map.setPaintProperty(
-        layerId,
-        key as keyof MapArcLinePaint,
-        value as never,
-      );
+      map.setPaintProperty(layerId, key, value);
     }
     for (const [key, value] of Object.entries(mergedLayout)) {
-      map.setLayoutProperty(
-        layerId,
-        key as keyof MapArcLineLayout,
-        value as never,
-      );
+      map.setLayoutProperty(layerId, key, value);
     }
     if (map.getLayer(hitLayerId)) {
       map.setPaintProperty(hitLayerId, "line-width", hitWidth);
