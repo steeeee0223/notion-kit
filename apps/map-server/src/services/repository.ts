@@ -59,10 +59,10 @@ export async function setCached(
   const expiresAt = new Date(Date.now() + ttlSeconds * 1000);
   await db
     .insert(cache)
-    .values({ key, value: value as never, expiresAt })
+    .values({ key, value, expiresAt })
     .onConflictDoUpdate({
       target: cache.key,
-      set: { value: value as never, expiresAt },
+      set: { value, expiresAt },
     });
 }
 
@@ -607,7 +607,7 @@ async function insertRowsWithClient(
   const chunkSize = getInsertChunkSize(table);
   for (let start = 0; start < rows.length; start += chunkSize) {
     const chunk = rows.slice(start, start + chunkSize);
-    await client.insert(tableMap).values(chunk as never);
+    await client.insert(tableMap).values(chunk);
   }
 }
 
