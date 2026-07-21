@@ -61,8 +61,7 @@ export function ListCell({ items }: ListCellProps) {
 }
 
 export type ContentCellProps =
-  | { type: "value"; value?: string }
-  | { type: "check"; checked?: boolean };
+  { type: "value"; value?: string } | { type: "check"; checked?: boolean };
 export function ContentCell(props: ContentCellProps) {
   return (
     <div className={cn(styles.item, "py-3")}>

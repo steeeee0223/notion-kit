@@ -24,8 +24,9 @@ function useMarkerContext() {
   return context;
 }
 
-export interface MapMarkerProps
-  extends React.PropsWithChildren<Omit<MarkerOptions, "element">> {
+export interface MapMarkerProps extends React.PropsWithChildren<
+  Omit<MarkerOptions, "element">
+> {
   /** Longitude coordinate for marker position */
   longitude: number;
   /** Latitude coordinate for marker position */

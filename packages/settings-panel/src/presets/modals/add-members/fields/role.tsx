@@ -60,9 +60,9 @@ export function RolesField() {
                   <SelectValue>
                     {(value: Role) => (
                       <RoleOption
-                        option={
-                          roleOptions.find((option) => option.value === value)!
-                        }
+                        option={roleOptions.find(
+                          (option) => option.value === value,
+                        )!}
                       />
                     )}
                   </SelectValue>

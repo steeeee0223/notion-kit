@@ -4,11 +4,7 @@ import isEqual from "lodash.isequal";
 import type { MapViewport } from "./map";
 
 export type CurrentLocationStatus =
-  | "idle"
-  | "loading"
-  | "success"
-  | "error"
-  | "unsupported";
+  "idle" | "loading" | "success" | "error" | "unsupported";
 
 export interface CurrentLocationState {
   coordinates: MapViewport["center"] | null;

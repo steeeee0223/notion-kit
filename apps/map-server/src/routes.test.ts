@@ -36,12 +36,10 @@ describe("Simulator Route Integration Tests", () => {
 
   beforeAll(async () => {
     vi.stubEnv("MAP_POSTGRES_URL", "postgres://example.test/db");
-    const { registerTransportRoutes } = await import(
-      "@/controllers/transport/controller"
-    );
-    const { registerAdminRoutes } = await import(
-      "@/controllers/admin/controller"
-    );
+    const { registerTransportRoutes } =
+      await import("@/controllers/transport/controller");
+    const { registerAdminRoutes } =
+      await import("@/controllers/admin/controller");
 
     app = Fastify({
       ajv: {
