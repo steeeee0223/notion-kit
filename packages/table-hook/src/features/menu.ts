@@ -150,6 +150,11 @@ export const TableMenuFeature: TableFeature = {
     };
     /** Row view */
     instance.openRow = (id) => {
+      const { rowView } = instance.getTableGlobalState();
+      if (id && rowView === "full") {
+        instance.openRowInFullPage(id);
+        return;
+      }
       const actionId = v4();
       instance.setTableGlobalState(
         (v) => ({ ...v, openedRowId: id }),
@@ -159,12 +164,11 @@ export const TableMenuFeature: TableFeature = {
           payload: {
             previousRowId: previous.openedRowId,
             nextRowId: next.openedRowId,
+            previousRowView: previous.rowView,
+            nextRowView: next.rowView,
           },
         }),
       );
-      const { rowView } = instance.getTableGlobalState();
-      if (!id || rowView !== "full") return;
-      instance.openRowInFullPage(id);
     };
     instance.openRowInFullPage = (id) => {
       const actionId = v4();
@@ -176,8 +180,10 @@ export const TableMenuFeature: TableFeature = {
         }),
         (previous, next) => ({
           id: actionId,
-          type: "view.row_display.change",
+          type: "view.opened_row.change",
           payload: {
+            previousRowId: previous.openedRowId,
+            nextRowId: next.openedRowId,
             previousRowView: previous.rowView,
             nextRowView: next.rowView,
           },

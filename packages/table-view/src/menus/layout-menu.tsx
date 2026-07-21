@@ -99,7 +99,8 @@ function RowViewMenu() {
                     label={option.label}
                     desc={option.desc}
                     checked={rowView === current}
-                    onCheckedChange={() => {
+                    onCheckedChange={(checked) => {
+                      if (!checked || rowView === current) return;
                       const actionId = v4();
                       table.setTableGlobalState(
                         (v) => ({ ...v, rowView }),

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { SelectConfigMenuObject } from "@/__tests__/component-objects/select-config-menu";
 import { mockResizeObserver } from "@/__tests__/mock";
@@ -59,6 +59,25 @@ describe("SelectConfigMenu", () => {
     await optionMenu.rename("Renamed Option");
     expect(menu.option("Renamed Option")).toBeInTheDocument();
     expect(menu.queryOption("Option A")).not.toBeInTheDocument();
+  });
+
+  it("SelectConfigMenu_RenameOption_ReportsOnlyChangedRows", async () => {
+    const onDataChange = vi.fn();
+    const tableView = renderSelectConfigMenuTable({
+      preselected: "single",
+      onDataChange,
+    });
+    const menu = await SelectConfigMenuObject.find(tableView.user);
+    const optionMenu = await menu.openOptionMenu("Option A");
+
+    await optionMenu.rename("Renamed Option");
+
+    expect(onDataChange.mock.lastCall?.[0]).toMatchObject({
+      action: {
+        type: "data.cell.update",
+        payload: { rowIds: ["row-1"] },
+      },
+    });
   });
 
   it("SelectConfigMenu_ChooseOptionColor_ChecksSelectedColor", async () => {

@@ -205,6 +205,34 @@ describe("TableViewReactivity", () => {
     expect(await screen.findByRole("dialog", { name: "Task 1" })).toBeVisible();
   });
 
+  it("ViewNav_SelectedRowView_DoesNotEmitChange", async () => {
+    const onViewChange = vi.fn();
+    const tableView = renderTableView({
+      properties: [
+        {
+          ...mockProperties[0]!,
+          type: "title",
+          config: { showIcon: true },
+        },
+        ...mockProperties.slice(1),
+      ],
+      onViewChange,
+    });
+    const rowActions = await tableView.openRowActions("Task 1");
+    rowActions.choose("Open in side peek");
+    const dialog = await screen.findByRole("dialog", { name: "Task 1" });
+    onViewChange.mockClear();
+
+    const trigger = dialog.querySelector<HTMLElement>('[aria-haspopup="menu"]');
+    expect(trigger).not.toBeNull();
+    fireEvent.click(trigger!);
+    fireEvent.click(
+      await screen.findByRole("menuitemcheckbox", { name: "Side peek" }),
+    );
+
+    expect(onViewChange).not.toHaveBeenCalled();
+  });
+
   it("TableViewReactivity_DataChange_RendersAddedRow", async () => {
     const tableView = renderTableView();
     const initialRowCount = tableView.rows().length;

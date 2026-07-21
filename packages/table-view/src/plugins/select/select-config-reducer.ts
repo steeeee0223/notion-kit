@@ -1,7 +1,7 @@
 import { functionalUpdate, type Updater } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
-import type { TableInstance } from "@notion-kit/table-hook";
+import type { Row, TableInstance } from "@notion-kit/table-hook";
 import type { Color } from "@notion-kit/utils";
 
 import type { SelectCell, SelectConfig, SelectSort } from "./types";
@@ -106,6 +106,13 @@ export function propagateSelectEvent(
   type: "select" | "multi-select",
   event: NonNullable<SelectConfigReducerResult["nextEvent"]>,
 ): void {
+  const getChangedRowIds = (previous: Row[], next: Row[]) => {
+    const previousById = new Map(previous.map((row) => [row.id, row]));
+    return next
+      .filter((row) => previousById.get(row.id) !== row)
+      .map((row) => row.id);
+  };
+
   switch (event.type) {
     case "update:name": {
       const { originalName, name } = event.payload;
@@ -137,11 +144,11 @@ export function propagateSelectEvent(
               },
             };
           }),
-        (_previous, next) => ({
+        (previous, next) => ({
           id: actionId,
           type: "data.cell.update",
           payload: {
-            rowIds: next.map((row) => row.id),
+            rowIds: getChangedRowIds(previous, next),
             propertyId: propId,
             previousValue: originalName,
             nextValue: name,
@@ -180,11 +187,11 @@ export function propagateSelectEvent(
               },
             };
           }),
-        (_previous, next) => ({
+        (previous, next) => ({
           id: actionId,
           type: "data.cell.update",
           payload: {
-            rowIds: next.map((row) => row.id),
+            rowIds: getChangedRowIds(previous, next),
             propertyId: propId,
             previousValue: name,
             nextValue: type === "multi-select" ? "removed" : null,

@@ -361,7 +361,8 @@ export const ColumnsInfoFeature: TableFeature = {
       );
     };
     instance.handleColumnDragEnd = (e) => {
-      const propertyId = String(e.operation.source?.id ?? "");
+      if (e.canceled || e.operation.source?.id == null) return;
+      const propertyId = String(e.operation.source.id);
       const actionId = v4();
       instance.options.onColumnInfoChange?.(
         (prev) => {
@@ -603,14 +604,12 @@ export const ColumnsInfoFeature: TableFeature = {
               },
             };
           }),
-        (previous, next): DataResourceAction => ({
+        (_previous, next): DataResourceAction => ({
           id: actionId,
           type: "data.cell.update",
           payload: {
             rowIds: next.map((row) => row.id),
             propertyId: colId,
-            previousValue: previous[0]?.properties[colId]?.value,
-            nextValue: next[0]?.properties[colId]?.value,
           },
         }),
       );

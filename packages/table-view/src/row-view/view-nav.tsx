@@ -104,7 +104,8 @@ export function ViewNav({ rowId }: ViewNavProps) {
                     icon={<RowViewIcon rowView={view} />}
                     label={option.label}
                     checked={rowView === view}
-                    onCheckedChange={() => {
+                    onCheckedChange={(checked) => {
+                      if (!checked || rowView === view) return;
                       const actionId = v4();
                       table.setTableGlobalState(
                         (v) => ({

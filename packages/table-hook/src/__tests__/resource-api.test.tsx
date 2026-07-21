@@ -53,12 +53,13 @@ describe("useTableView resource API", () => {
     );
     expect(change?.next).toHaveLength(mockData.length + 1);
     expect(change?.action.type).toBe("data.row.create");
-    if (change?.action.type !== "data.row.create") {
-      throw new Error("Expected row create action");
-    }
-    expect(typeof change.action.id).toBe("string");
-    expect(typeof change.action.payload.rowId).toBe("string");
-    expect(change.action.payload.nextPosition).toBe(mockData.length);
+    const action = change?.action as Extract<
+      DataResourceAction,
+      { type: "data.row.create" }
+    >;
+    expect(typeof action.id).toBe("string");
+    expect(typeof action.payload.rowId).toBe("string");
+    expect(action.payload.nextPosition).toBe(mockData.length);
   });
 
   it("ResourceActions_CrossResourceColumnOperationSharesActionId", () => {
@@ -114,6 +115,130 @@ describe("useTableView resource API", () => {
       },
     });
     expect(dataChange?.action.id).toBe(propertiesChange?.action.id);
+  });
+
+  it("ResourceApi_NoOpDataUpdater_DoesNotEmitChange", () => {
+    const onDataChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        onDataChange,
+      }),
+    );
+
+    act(() => {
+      result.current.table.setTableData((previous) => previous, {
+        id: "no-op-row-move",
+        type: "data.row.move",
+        payload: {
+          rowId: "row1",
+          previousPosition: 0,
+          nextPosition: 0,
+        },
+      });
+    });
+
+    expect(onDataChange).not.toHaveBeenCalled();
+  });
+
+  it("ResourceActions_BulkTypeConversion_OmitsScalarCellValues", () => {
+    const onDataChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        onDataChange,
+      }),
+    );
+
+    act(() => {
+      result.current.table.setColumnType("col2", "number");
+    });
+
+    const change = getLastResourceChange<Row[], DataResourceAction>(
+      onDataChange,
+    );
+    expect(change?.action).toMatchObject({
+      type: "data.cell.update",
+      payload: {
+        rowIds: ["row1", "row2", "row3"],
+        propertyId: "col2",
+      },
+    });
+    expect(change?.action.payload).not.toHaveProperty("previousValue");
+    expect(change?.action.payload).not.toHaveProperty("nextValue");
+  });
+
+  it("ResourceActions_OpenRowInExistingFullMode_EmitsOneCompleteAction", () => {
+    const onViewChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        defaultView: { rowView: "full" },
+        onViewChange,
+      }),
+    );
+
+    act(() => {
+      result.current.table.openRow("row1");
+    });
+
+    expect(onViewChange).toHaveBeenCalledOnce();
+    const change = getLastResourceChange<TableViewState, ViewResourceAction>(
+      onViewChange,
+    );
+    expect(change?.next).toMatchObject({
+      openedRowId: "row1",
+      rowView: "full",
+    });
+    expect(change?.action).toMatchObject({
+      type: "view.opened_row.change",
+      payload: {
+        previousRowId: null,
+        nextRowId: "row1",
+        previousRowView: "full",
+        nextRowView: "full",
+      },
+    });
+  });
+
+  it("ResourceActions_OpenRowInFullPage_ReportsRowAndDisplayTransitions", () => {
+    const onViewChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        defaultView: { rowView: "side" },
+        onViewChange,
+      }),
+    );
+
+    act(() => {
+      result.current.table.openRowInFullPage("row1");
+    });
+
+    const change = getLastResourceChange<TableViewState, ViewResourceAction>(
+      onViewChange,
+    );
+    expect(change?.next).toMatchObject({
+      openedRowId: "row1",
+      rowView: "full",
+    });
+    expect(change?.action).toMatchObject({
+      type: "view.opened_row.change",
+      payload: {
+        previousRowId: null,
+        nextRowId: "row1",
+        previousRowView: "side",
+        nextRowView: "full",
+      },
+    });
   });
 
   it("ResourceActions_SerializationExcludesCompleteNextResource", () => {

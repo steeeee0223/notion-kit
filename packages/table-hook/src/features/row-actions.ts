@@ -389,21 +389,22 @@ export const RowActionsFeature: TableFeature = {
       if (event.canceled) {
         if (kanbanDragSnapshot) {
           const snapshot = kanbanDragSnapshot;
+          const sourceRowId = String(event.operation.source?.id ?? "");
           kanbanDragSnapshot = null;
           table.setTableData(
             () => {
               scheduleGroupingStateSync(snapshot);
               return snapshot;
             },
-            {
+            (previous, next) => ({
               id: v4(),
               type: "data.row.move",
               payload: {
-                rowId: "",
-                previousPosition: -1,
-                nextPosition: -1,
+                rowId: sourceRowId,
+                previousPosition: getRowPosition(previous, sourceRowId),
+                nextPosition: getRowPosition(next, sourceRowId),
               },
-            },
+            }),
           );
         }
         return;

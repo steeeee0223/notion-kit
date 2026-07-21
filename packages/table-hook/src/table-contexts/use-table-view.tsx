@@ -99,6 +99,7 @@ function useResourceState<TResource, TAction>({
       }
       const previous = pendingResourceRef.current;
       const next = functionalUpdate(updater, previous);
+      if (Object.is(previous, next)) return;
       pendingResourceRef.current = next;
       if (!controlled) {
         setUncontrolledValue(next);

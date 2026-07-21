@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
 import { mockResizeObserver } from "../__tests__/mock";
@@ -62,6 +62,17 @@ describe("LayoutMenu", () => {
     await layout.selectRowView("Center peek");
     expect(layout.heading()).toBeVisible();
     expect(layout.rowViewTrigger()).toHaveTextContent("Center peek");
+  });
+
+  it("LayoutMenu_SelectedRowView_DoesNotEmitChange", async () => {
+    const onViewChange = vi.fn();
+    const tableView = renderTableView({ onViewChange });
+    const settings = await tableView.openViewSettings();
+    const layout = await settings.openLayout();
+
+    await layout.selectRowView("Side peek");
+
+    expect(onViewChange).not.toHaveBeenCalled();
   });
 
   it("LayoutMenu_BackNavigation_ReturnsToViewSettings", async () => {

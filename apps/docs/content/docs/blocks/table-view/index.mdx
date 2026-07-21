@@ -101,6 +101,30 @@ Uncontrolled resources use `defaultData`, `defaultProperties`, and
 `defaultView`. Defaults are read only on mount; reset an uncontrolled table by
 remounting it with a new React `key`.
 
+## Reactive custom children
+
+`TableView` does not rerender custom children for every internal store update.
+Read store-backed values through `table.Subscribe` and select only the state
+used by the child:
+
+```tsx
+import { useTableViewCtx } from "@notion-kit/table-view";
+
+function CurrentLayout() {
+  const { table } = useTableViewCtx();
+
+  return (
+    <table.Subscribe selector={(state) => state.tableGlobal.layout}>
+      {(layout) => <span>Current layout: {layout}</span>}
+    </table.Subscribe>
+  );
+}
+```
+
+Values read directly from `table.store.state` or snapshot helpers such as
+`table.getTableGlobalState()` are not reactive by themselves. A custom child
+that only reads a snapshot can become stale after internal store updates.
+
 ## API Reference
 
 ### TableView
@@ -132,9 +156,9 @@ A `TableState` is a generic type `TableState<TPlugins>` that represents the stat
 
 ### `type` TableViewState
 
-| Prop          | Type                                                                               | Default   | Description                                 |
-| ------------- | ---------------------------------------------------------------------------------- | --------- | ------------------------------------------- |
-| `layout`      | `"table" \| "list" \| "board" \| "timeline" \| "calendar" \| "gallery" \| "chart"` | `"table"` | The layout view of the table.               |
-| `locked`      | `boolean`                                                                          | `false`   | Whether the table is locked (non-editable). |
-| `rowView`     | `"center" \| "side" \| "full"`                                                     | `"side"`  | The view type of the opened row.            |
-| `openedRowId` | `string \| null`                                                                   | `null`    | The unique identifier of the opened row.    |
+| Prop          | Type                                                                               | Default   | Description                                                                                                                                |
+| ------------- | ---------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `layout`      | `"table" \| "list" \| "board" \| "timeline" \| "calendar" \| "gallery" \| "chart"` | `"table"` | The layout view. Only table, list, and board are currently implemented; the other typed values are reserved and render the table fallback. |
+| `locked`      | `boolean`                                                                          | `false`   | Whether the table is locked (non-editable).                                                                                                |
+| `rowView`     | `"center" \| "side" \| "full"`                                                     | `"side"`  | The view type of the opened row.                                                                                                           |
+| `openedRowId` | `string \| null`                                                                   | `null`    | The unique identifier of the opened row.                                                                                                   |

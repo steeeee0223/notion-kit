@@ -1,8 +1,16 @@
 # Table View Reactivity M1 Report
 
+## Status
+
+**Incomplete.** The implementation and sorting context probe are complete,
+but M1 acceptance is still pending before/after profiling for the other
+representative interactions listed under Follow-Up Profiling Notes. Do not
+treat this milestone as complete until those measurements record the commit
+subtrees and update sources for both baselines.
+
 ## Scope
 
-Milestone 1 focused on `@notion-kit/table-hook` and `@notion-kit/table-view` render reactivity. It did not change the public resource API; `data`, `properties`, `table`, and the existing callbacks keep their current names and behavior for this milestone.
+Milestone 1 focused on `@notion-kit/table-hook` and `@notion-kit/table-view` render reactivity. It did not rename the resource props; `data`, `properties`, `table`, and the existing callbacks keep their current names for this milestone.
 
 ## Investigation Method
 

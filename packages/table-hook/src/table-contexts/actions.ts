@@ -26,12 +26,14 @@ export type ResourceChangeFn<TResource, TAction> = (
   action: TAction | ResourceActionFactory<TResource, TAction>,
 ) => void;
 
+type CellUpdateTarget =
+  | { rowId: string; rowIds?: never }
+  | { rowId?: never; rowIds: string[] };
+
 export type DataResourceAction =
   | TableAction<
       "data.cell.update",
-      {
-        rowId?: string;
-        rowIds?: string[];
+      CellUpdateTarget & {
         propertyId: string;
         previousValue?: unknown;
         nextValue?: unknown;
@@ -125,7 +127,12 @@ export type ViewResourceAction =
     >
   | TableAction<
       "view.opened_row.change",
-      { previousRowId: string | null; nextRowId: string | null }
+      {
+        previousRowId: string | null;
+        nextRowId: string | null;
+        previousRowView: TableViewState["rowView"];
+        nextRowView: TableViewState["rowView"];
+      }
     >;
 
 export function serializeResourceAction<TResource, TAction>(
