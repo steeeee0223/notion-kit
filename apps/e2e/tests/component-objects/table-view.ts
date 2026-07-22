@@ -1,6 +1,7 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 
 import { CellEditorsObject } from "./cell-editors";
+import { GroupActionsObject } from "./group-actions";
 import { HeaderMenuObject } from "./header-menu";
 import type { AccessibleName } from "./menu-surface";
 import { RowActionsObject } from "./row-actions";
@@ -40,6 +41,10 @@ export class TableViewObject {
 
   group(id: string) {
     return this.page.getByRole("group", { name: `Group ${id}`, exact: true });
+  }
+
+  groupActions(id: string) {
+    return new GroupActionsObject(this.page, this.group(id));
   }
 
   async expandGroup(id: string) {
@@ -94,6 +99,10 @@ export class TableViewObject {
 
   controlledState() {
     return this.page.getByTestId("controlled-state");
+  }
+
+  async controlledSnapshot() {
+    return JSON.parse((await this.controlledState().textContent()) ?? "{}");
   }
 
   calculation(propertyName: string) {

@@ -144,9 +144,13 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
   ];
 
   /** Keyboard shortcut */
-  useHotkeys("meta+shift+enter", openInNewTab, { preventDefault: true });
-  useHotkeys("meta+d", duplicateRow, { preventDefault: true });
-  useHotkeys("backspace", deleteRow);
+  const hotkeyOptions = {
+    enableOnFormTags: ["INPUT"] as const,
+    preventDefault: true,
+  };
+  useHotkeys("meta+shift+enter", openInNewTab, hotkeyOptions);
+  useHotkeys("meta+d", duplicateRow, hotkeyOptions);
+  useHotkeys("backspace", deleteRow, hotkeyOptions);
 
   return (
     <Autocomplete<Action>

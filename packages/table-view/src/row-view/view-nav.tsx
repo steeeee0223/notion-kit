@@ -52,6 +52,7 @@ export function ViewNav({ rowId }: ViewNavProps) {
             <Button
               variant="hint"
               className="size-6"
+              aria-label="Close row"
               onClick={() => table.openRow(null)}
             >
               <Icon.ArrowChevronDoubleBackward className="size-5 rotate-180 fill-icon" />
@@ -74,6 +75,7 @@ export function ViewNav({ rowId }: ViewNavProps) {
             <Button
               variant="hint"
               className="size-6"
+              aria-label="Open in full page"
               onClick={() => table.openRowInFullPage(rowId)}
             >
               <Icon.ArrowExpandDiagonalSmall className="size-5 fill-icon" />
