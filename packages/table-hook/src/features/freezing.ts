@@ -1,6 +1,7 @@
-// @ts-nocheck
 import type { OnChangeFn, TableFeature, Updater } from "@tanstack/react-table";
 import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
+
+import type { _TableInstance } from "@/features/types";
 
 export type FreezingState = {
   colId: string;
@@ -36,8 +37,10 @@ export const FreezingFeature: TableFeature = {
   },
 
   constructTableAPIs: (table) => {
+    const instance = table as unknown as _TableInstance;
+
     const throwIfDisabled = () => {
-      if (!table.options.enableColumnFreezing) {
+      if (!instance.options.enableColumnFreezing) {
         throw new Error(
           `[TableView] Column Freezing is not enabled. To enable, pass \`enableColumnFreezing: true\` to your table options.`,
         );
@@ -45,37 +48,37 @@ export const FreezingFeature: TableFeature = {
     };
     const normalizeFreezingState = (state: FreezingState): FreezingState => {
       if (!state) return null;
-      const index = table.store.state.columnOrder.indexOf(state.colId);
+      const index = instance.store.state.columnOrder.indexOf(state.colId);
       return index < 0 ? null : { colId: state.colId, index };
     };
 
-    table.getFreezingState = () => {
+    instance.getFreezingState = () => {
       throwIfDisabled();
-      return normalizeFreezingState(table.store.state.columnFreezing);
+      return normalizeFreezingState(instance.store.state.columnFreezing);
     };
-    table.getCanFreezeColumn = (colId) => {
+    instance.getCanFreezeColumn = (colId) => {
       throwIfDisabled();
-      const index = table.store.state.columnOrder.indexOf(colId);
-      return index >= 0 && index < table.store.state.columnOrder.length - 1;
+      const index = instance.store.state.columnOrder.indexOf(colId);
+      return index >= 0 && index < instance.store.state.columnOrder.length - 1;
     };
-    table.setColumnFreezing = (updater) => {
-      const nextState = functionalUpdate(updater, table.getFreezingState());
+    instance.setColumnFreezing = (updater) => {
+      const nextState = functionalUpdate(updater, instance.getFreezingState());
       const normalizedState = normalizeFreezingState(nextState);
-      table.options.onColumnFreezingChange?.(normalizedState);
-      table.setColumnPinning({
-        left: normalizedState
-          ? table.store.state.columnOrder.slice(0, normalizedState.index + 1)
+      instance.options.onColumnFreezingChange?.(normalizedState);
+      instance.setColumnPinning({
+        start: normalizedState
+          ? instance.store.state.columnOrder.slice(0, normalizedState.index + 1)
           : [],
-        right: table.store.state.columnPinning.right ?? [],
+        end: instance.store.state.columnPinning.end,
       });
     };
-    table.toggleColumnFreezed = (colId) => {
-      const index = table.getColumn(colId)?.getIndex();
+    instance.toggleColumnFreezed = (colId) => {
+      const index = instance.getColumn(colId)?.getIndex();
       if (index === undefined)
         throw new Error(`[TableView] Column with id "${colId}" not found.`);
-      table.setColumnFreezing((prev) => {
+      instance.setColumnFreezing((prev) => {
         if (prev?.colId === colId) return null;
-        if (!table.getCanFreezeColumn(colId)) return prev;
+        if (!instance.getCanFreezeColumn(colId)) return prev;
         return { colId, index };
       });
     };

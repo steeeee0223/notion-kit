@@ -1,18 +1,16 @@
-import type { Row } from "@tanstack/react-table";
-
 import { Icon } from "@notion-kit/icons";
+import type { RowInstance } from "@notion-kit/table-hook";
 import { Kanban } from "@notion-kit/ui/kanban";
 import { Button } from "@notion-kit/ui/primitives";
 
 import { GroupActions } from "@/common";
-import type { Row as RowModel } from "@/lib/types";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { BoardCard } from "./board-card";
 
 interface BoardGroupProps {
   index: number;
-  row: Row<RowModel>;
+  row: RowInstance;
 }
 
 export function BoardGroup({ index, row }: BoardGroupProps) {

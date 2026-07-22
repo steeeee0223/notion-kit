@@ -1,3 +1,5 @@
+import { TableViewMenuPage } from "@notion-kit/table-hook";
+import type { ColumnInfo } from "@notion-kit/table-hook";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Autocomplete,
@@ -12,13 +14,11 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { DefaultIcon, MenuHeader } from "@/common";
-import { TableViewMenuPage } from "@/features";
-import type { ColumnInfo } from "@/lib/types";
 import { useTableViewCtx } from "@/table-contexts";
 
 export function SelectGroupMenu() {
   const { table } = useTableViewCtx();
-  const { columnOrder, columnsInfo, grouping, tableGlobal } = table.getState();
+  const { columnOrder, columnsInfo, grouping, tableGlobal } = table.store.state;
   const groupingColId = grouping.at(0);
 
   const options = columnOrder.reduce<(ColumnInfo & { kind: "column" })[]>(

@@ -1,24 +1,28 @@
-import { createContext, use } from "react";
-import type { Table } from "@tanstack/react-table";
+import { createContext, use, useMemo } from "react";
 
+import {
+  arrayToEntity,
+  useTableView,
+  type TableProps,
+} from "@notion-kit/table-hook";
 import { TooltipProvider } from "@notion-kit/ui/primitives";
 
 import { BoardViewContent } from "@/board-view";
-import type { Row } from "@/lib/types";
-import { arrayToEntity } from "@/lib/utils";
 import { ListViewContent } from "@/list-view";
-import { DEFAULT_PLUGINS, DefaultPlugins, type CellPlugin } from "@/plugins";
+import {
+  DEFAULT_PLUGINS,
+  type CellPlugin,
+  type DefaultPlugins,
+} from "@/plugins";
 import { RowView } from "@/row-view";
 import { Toolbar } from "@/tools/toolbar";
 
+import { defaultColumn } from "./default-column";
 import { TableViewContent } from "./table-view-content";
-import type { TableProps } from "./types";
-import { useTableView } from "./use-table-view";
 
-interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
-  table: Table<Row<TPlugins>>;
-  __synced: number;
-}
+type TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> = ReturnType<
+  typeof useTableView<TPlugins>
+>;
 
 const TableViewContext = createContext<TableViewCtx | null>(null);
 
@@ -36,8 +40,10 @@ export function TableViewWrapper<
   children,
   ...props
 }: TableProps<TPlugins>) {
-  const ctx = useTableView({
-    plugins: arrayToEntity(plugins),
+  const pluginEntity = useMemo(() => arrayToEntity(plugins), [plugins]);
+  const ctx = useTableView<TPlugins>({
+    plugins: pluginEntity,
+    defaultColumn: defaultColumn as TableProps<TPlugins>["defaultColumn"],
     ...props,
   });
 

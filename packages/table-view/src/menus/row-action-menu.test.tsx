@@ -63,7 +63,7 @@ describe("RowActionMenu", () => {
   it("RowActionMenu_CopyLink_CopiesRowUrl", async () => {
     const menu = await openRowActionMenu();
 
-    await menu.choose(/copy link/i);
+    menu.choose(/copy link/i);
 
     const url = await navigator.clipboard.readText();
     expect(url.endsWith("/row1")).toBeTruthy();
@@ -72,7 +72,7 @@ describe("RowActionMenu", () => {
   it("RowActionMenu_Duplicate_DuplicatesRow", async () => {
     const menu = await openRowActionMenu();
 
-    await menu.choose(/duplicate/i);
+    menu.choose(/duplicate/i);
 
     await menu.waitForRowCount("Task 1", 2);
   });
@@ -80,7 +80,7 @@ describe("RowActionMenu", () => {
   it("RowActionMenu_Delete_DeletesRow", async () => {
     const menu = await openRowActionMenu();
 
-    await menu.choose(/delete/i);
+    menu.choose(/delete/i);
 
     await menu.waitForRowRemoved("Task 1");
   });

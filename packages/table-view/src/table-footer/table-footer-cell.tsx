@@ -1,6 +1,5 @@
-import type { HeaderContext } from "@tanstack/react-table";
-
 import { Icon } from "@notion-kit/icons";
+import { CountMethod, type HeaderInstance } from "@notion-kit/table-hook";
 import {
   Button,
   DropdownMenu,
@@ -8,13 +7,15 @@ import {
   DropdownMenuTrigger,
 } from "@notion-kit/ui/primitives";
 
-import { CountMethod } from "@/features";
-import { Row } from "@/lib/types";
 import { CalcMenu, countMethodHint } from "@/menus";
 import type { CellPlugin, InferKey } from "@/plugins";
 import { useTableViewCtx } from "@/table-contexts";
 
-export function TableFooterCell({ column }: HeaderContext<Row, unknown>) {
+interface TableFooterCellProps {
+  column: HeaderInstance["column"];
+}
+
+export function TableFooterCell({ column }: TableFooterCellProps) {
   const props = {
     id: column.id,
     type: column.getInfo().type,
@@ -51,7 +52,7 @@ interface CountDisplayProps {
 
 function CountDisplay({ id, type }: CountDisplayProps) {
   const { table } = useTableViewCtx();
-  const { method } = table.getColumnCounting(id);
+  const { method } = table.getColumnCounting(id) as { method: CountMethod };
 
   return method === CountMethod.NONE ? (
     <div className="flex items-center opacity-100 transition-opacity duration-200">

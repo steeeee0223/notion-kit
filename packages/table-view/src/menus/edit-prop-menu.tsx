@@ -1,4 +1,5 @@
 import { Icon } from "@notion-kit/icons";
+import { TableViewMenuPage } from "@notion-kit/table-hook";
 import {
   DropdownMenuCheckboxItem,
   DropdownMenuGroup,
@@ -9,7 +10,6 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { DefaultIcon, MenuHeader, PropMeta } from "@/common";
-import { TableViewMenuPage } from "@/features";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface EditPropMenuProps {

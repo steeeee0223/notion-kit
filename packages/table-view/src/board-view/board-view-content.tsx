@@ -1,8 +1,8 @@
 import { Icon } from "@notion-kit/icons";
+import { TableViewMenuPage, type RowInstance } from "@notion-kit/table-hook";
 import { Kanban } from "@notion-kit/ui/kanban";
 import { Button } from "@notion-kit/ui/primitives";
 
-import { TableViewMenuPage } from "@/features";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { BoardGroup } from "./board-group";
@@ -11,8 +11,8 @@ import { useBoardDnd } from "./use-board-dnd";
 export function BoardViewContent() {
   const { table } = useTableViewCtx();
   const handlers = useBoardDnd();
-  const groupedRowsById = table.getGroupedRowModel().rowsById;
-  const { grouping, groupingState } = table.getState();
+  const groupedRowsById = table.getRowModel().rowsById;
+  const { grouping, groupingState } = table.store.state;
   const { groupOrder } = groupingState;
 
   return (
@@ -41,9 +41,8 @@ export function BoardViewContent() {
           )}
           <Kanban.Root {...handlers}>
             {groupOrder.map((groupId, index) => {
-              const row =
-                groupedRowsById[groupId] ??
-                table.getPlaceholderGroupedRow(groupId);
+              const row = (groupedRowsById[groupId] ??
+                table.getPlaceholderGroupedRow(groupId)) as RowInstance;
               return <BoardGroup key={groupId} row={row} index={index} />;
             })}
           </Kanban.Root>

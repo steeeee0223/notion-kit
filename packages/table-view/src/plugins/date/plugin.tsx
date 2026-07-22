@@ -1,6 +1,7 @@
 import { trimTs } from "@notion-kit/utils";
 
-import { DefaultIcon } from "../../common";
+import { DefaultIcon } from "@/common";
+
 import { compareNumbers, createCompareFn } from "../utils";
 import { DateCell, DatePickerCell } from "./date-cell";
 import { DateConfigMenu } from "./date-config-menu";
