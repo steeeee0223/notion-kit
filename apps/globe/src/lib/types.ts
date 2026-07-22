@@ -1,8 +1,2 @@
 export type VehicleType =
-  | "BUS"
-  | "TRAM"
-  | "TROLLEYBUS"
-  | "SUBWAY"
-  | "RAIL"
-  | "FERRY"
-  | "UNKNOWN";
+  "BUS" | "TRAM" | "TROLLEYBUS" | "SUBWAY" | "RAIL" | "FERRY" | "UNKNOWN";

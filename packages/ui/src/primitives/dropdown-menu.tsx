@@ -48,7 +48,8 @@ type MenuItemVisualProps = Pick<
 >;
 
 interface DropdownMenuSubTriggerProps
-  extends Omit<
+  extends
+    Omit<
       Menu.SubmenuTrigger.Props,
       "children" | "className" | "label" | "render"
     >,
@@ -134,7 +135,8 @@ function DropdownMenuContent({
 }
 
 interface DropdownMenuItemProps
-  extends Omit<Menu.Item.Props, "className" | "label" | "render">,
+  extends
+    Omit<Menu.Item.Props, "className" | "label" | "render">,
     MenuItemVisualProps {
   icon?: React.ReactNode;
   label?: React.ReactNode;
@@ -171,7 +173,8 @@ function DropdownMenuItem({
 }
 
 interface DropdownMenuCheckboxItemProps
-  extends Omit<
+  extends
+    Omit<
       Menu.CheckboxItem.Props,
       "children" | "className" | "label" | "render"
     >,

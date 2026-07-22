@@ -77,8 +77,9 @@ function getSortableModifiers(orientation: Orientation) {
   ];
 }
 
-interface SortableRootProps
-  extends React.ComponentProps<typeof DragDropProvider> {
+interface SortableRootProps extends React.ComponentProps<
+  typeof DragDropProvider
+> {
   orientation?: Orientation;
   disabled?: boolean;
 }
@@ -275,8 +276,9 @@ function SortableHandle({
   );
 }
 
-interface SortableOverlayProps
-  extends React.ComponentProps<typeof DragOverlay> {
+interface SortableOverlayProps extends React.ComponentProps<
+  typeof DragOverlay
+> {
   container?: Element | DocumentFragment | null;
 }
 

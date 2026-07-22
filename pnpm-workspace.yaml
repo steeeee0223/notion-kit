@@ -6,9 +6,9 @@ packages:
 
 catalog:
   "@better-fetch/fetch": ^1.1.21
-  eslint: ^9.39.1
-  prettier: ^3.6.2
-  tsdown: ^0.16.6
+  eslint: ^10.7.0
+  prettier: 3.9.5
+  tsdown: ^0.22.12
   typescript: 6.0.3
   zod: ^4.1.12
 
@@ -72,7 +72,7 @@ catalogs:
     "@t3-oss/env-nextjs": ^0.13.6
     "@t3-oss/env-core": ^0.13.6
   build:
-    "@rollup/plugin-babel": ^6.1.0
+    "@rollup/plugin-babel": ^7.1.0
     "@rsbuild/core": ^2.0.2
     "@rsbuild/plugin-babel": ^1.1.2
     "@rsbuild/plugin-react": ^2.0.0

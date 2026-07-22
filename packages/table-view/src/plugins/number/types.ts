@@ -3,10 +3,7 @@ import type { Color } from "@notion-kit/utils";
 import type { CellPlugin } from "../types";
 
 export type NumberFormat =
-  | "number"
-  | "number_with_commas"
-  | "percent"
-  | "currency";
+  "number" | "number_with_commas" | "percent" | "currency";
 export type NumberRound = "default" | "0" | "1" | "2" | "3" | "4" | "5";
 export type NumberDisplayType = "number" | "bar" | "ring";
 export interface NumberOptions {

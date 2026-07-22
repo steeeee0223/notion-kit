@@ -26,23 +26,23 @@ Add `MeterLabel` and `MeterValue` when the value needs to be announced or displa
 
 `Meter` extends the Base UI Meter root and renders a `<div>`.
 
-| Prop                | Type                                                  | Default          | Description                                                        |
-| ------------------- | ----------------------------------------------------- | ---------------- | ------------------------------------------------------------------ |
-| `value`             | `number`                                              | -                | The current value.                                                 |
-| `min`               | `number`                                              | `0`              | The minimum value.                                                 |
-| `max`               | `number`                                              | `100`            | The maximum value.                                                 |
-| `format`            | `Intl.NumberFormatOptions`                            | -                | Options used to format the value.                                  |
-| `locale`            | `Intl.LocalesArgument`                                | runtime locale   | Locale used by `Intl.NumberFormat` when formatting the value.      |
-| `aria-valuetext`    | `React.AriaAttributes["aria-valuetext"]`              | -                | Human-readable text for the current value.                         |
-| `getAriaValueText`  | `(formattedValue: string, value: number) => string`   | -                | Returns the human-readable text alternative for the current value. |
+| Prop               | Type                                                | Default        | Description                                                        |
+| ------------------ | --------------------------------------------------- | -------------- | ------------------------------------------------------------------ |
+| `value`            | `number`                                            | -              | The current value.                                                 |
+| `min`              | `number`                                            | `0`            | The minimum value.                                                 |
+| `max`              | `number`                                            | `100`          | The maximum value.                                                 |
+| `format`           | `Intl.NumberFormatOptions`                          | -              | Options used to format the value.                                  |
+| `locale`           | `Intl.LocalesArgument`                              | runtime locale | Locale used by `Intl.NumberFormat` when formatting the value.      |
+| `aria-valuetext`   | `React.AriaAttributes["aria-valuetext"]`            | -              | Human-readable text for the current value.                         |
+| `getAriaValueText` | `(formattedValue: string, value: number) => string` | -              | Returns the human-readable text alternative for the current value. |
 
 ### MeterBar
 
 `MeterBar` extends `Meter` and renders a horizontal track with an indicator.
 
-| Prop         | Type     | Default | Description                      |
-| ------------ | -------- | ------- | -------------------------------- |
-| `trackColor` | `string` | -       | CSS color for the indicator.     |
+| Prop         | Type     | Default | Description                  |
+| ------------ | -------- | ------- | ---------------------------- |
+| `trackColor` | `string` | -       | CSS color for the indicator. |
 
 ### MeterRing
 
@@ -61,6 +61,6 @@ Add `MeterLabel` and `MeterValue` when the value needs to be announced or displa
 
 `MeterValue` extends the Base UI Meter value and renders a `<span>`.
 
-| Prop       | Type                                                           | Default | Description                        |
-| ---------- | -------------------------------------------------------------- | ------- | ---------------------------------- |
-| `children` | `null \| ((formattedValue: string, value: number) => ReactNode)` | -       | Custom render function for value.  |
+| Prop       | Type                                                             | Default | Description                       |
+| ---------- | ---------------------------------------------------------------- | ------- | --------------------------------- |
+| `children` | `null \| ((formattedValue: string, value: number) => ReactNode)` | -       | Custom render function for value. |

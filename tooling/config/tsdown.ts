@@ -1,9 +1,8 @@
 import pluginBabel from "@rollup/plugin-babel";
-import { type UserConfigFn } from "tsdown";
+import type { InlineConfig } from "tsdown";
 
-export const baseConfig: UserConfigFn = (config) => {
+export function baseConfig(config: InlineConfig) {
   return {
-    ...config,
     dts: true,
     logLevel: "warn",
     onSuccess: async () => {
@@ -13,21 +12,19 @@ export const baseConfig: UserConfigFn = (config) => {
       }
       console.info("Build successfully!");
     },
-  };
-};
-
-export const withReactClient: UserConfigFn = (config) => {
-  return {
     ...config,
-    ...baseConfig(config),
+  };
+}
+
+export function withReactClient(config: InlineConfig) {
+  return {
     banner: { js: '"use client";' },
+    ...baseConfig(config),
   };
-};
+}
 
-export const withReactCompiler: UserConfigFn = (config) => {
+export function withReactCompiler(config: InlineConfig) {
   return {
-    ...config,
-    ...withReactClient(config),
     plugins: [
       pluginBabel({
         babelHelpers: "bundled",
@@ -39,5 +36,6 @@ export const withReactCompiler: UserConfigFn = (config) => {
         extensions: [".js", ".jsx", ".ts", ".tsx"],
       }),
     ],
+    ...withReactClient(config),
   };
-};
+}

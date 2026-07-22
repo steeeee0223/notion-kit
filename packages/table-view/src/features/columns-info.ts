@@ -250,8 +250,7 @@ export const ColumnsInfoFeature: TableFeature<Row> = {
       type: PluginType<TPlugins>,
     ) => {
       const destPlugin = table.getState().cellPlugins[type] as
-        | InferPlugin<TPlugins>
-        | undefined;
+        InferPlugin<TPlugins> | undefined;
       if (!destPlugin) {
         throw new Error(`[TableView] Plugin not found: ${type}`);
       }

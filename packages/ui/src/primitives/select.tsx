@@ -153,7 +153,8 @@ function SelectLabel({ title, ...props }: SelectLabelProps) {
 }
 
 interface SelectItemProps
-  extends Omit<SelectPrimitive.Item.Props, "className" | "render">,
+  extends
+    Omit<SelectPrimitive.Item.Props, "className" | "render">,
     MenuItemVariants {
   className?: string;
   icon?: React.ReactNode;

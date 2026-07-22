@@ -92,8 +92,10 @@ function ContextMenuContent({
   );
 }
 
-interface ContextMenuItemProps
-  extends Omit<Menu.Item.Props, "className" | "label" | "render"> {
+interface ContextMenuItemProps extends Omit<
+  Menu.Item.Props,
+  "className" | "label" | "render"
+> {
   className?: string;
   icon?: React.ReactNode;
   label?: string;
@@ -126,8 +128,10 @@ function ContextMenuItem({
   );
 }
 
-interface ContextMenuSubTriggerProps
-  extends Omit<Menu.SubmenuTrigger.Props, "className" | "label" | "render"> {
+interface ContextMenuSubTriggerProps extends Omit<
+  Menu.SubmenuTrigger.Props,
+  "className" | "label" | "render"
+> {
   className?: string;
   label?: string;
   icon?: React.ReactNode;
@@ -198,11 +202,10 @@ function ContextMenuSubContent({
   );
 }
 
-interface ContextMenuCheckboxItemProps
-  extends Omit<
-    Menu.CheckboxItem.Props,
-    "children" | "className" | "label" | "render"
-  > {
+interface ContextMenuCheckboxItemProps extends Omit<
+  Menu.CheckboxItem.Props,
+  "children" | "className" | "label" | "render"
+> {
   className?: string;
   icon?: React.ReactNode;
   label?: string;

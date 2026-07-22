@@ -148,8 +148,9 @@ function useTreeContext<T extends TreeItemData>() {
   return ctx as TreeInstance<T>;
 }
 
-interface TreeProps<T extends TreeItemData>
-  extends React.ComponentProps<"div"> {
+interface TreeProps<
+  T extends TreeItemData,
+> extends React.ComponentProps<"div"> {
   tree: TreeInstance<T>;
 }
 

@@ -87,7 +87,7 @@ class FakeMap extends FakeEvented {
 class FakePopup extends FakeEvented {
   private open = false;
   lngLat = { lng: 0, lat: 0 };
-  maxWidth = "none";
+  maxWidth: string | undefined = "none";
   offset: unknown = 16;
 
   isOpen() {
@@ -262,10 +262,11 @@ describe("usePopupOptions", () => {
 
   it("resets maxWidth to the popup default when it is cleared", () => {
     const popup = new FakePopup();
+    const initialProps: { maxWidth?: string } = { maxWidth: "240px" };
     const { rerender } = renderHook(
-      ({ maxWidth }) =>
+      ({ maxWidth }: { maxWidth?: string }) =>
         usePopupOptions(popup as unknown as PopupOptionsStore, { maxWidth }),
-      { initialProps: { maxWidth: "240px" as string | undefined } },
+      { initialProps },
     );
 
     act(() => {

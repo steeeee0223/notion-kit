@@ -8,7 +8,7 @@
     "build:registry": "tsx ./scripts/build-registry.ts && pnpm format -w",
     "clean": "git clean -xdf .cache .next .turbo node_modules",
     "dev": "next dev --turbopack",
-    "format": "prettier --check . \"!**/*.{md,mdx}\" --ignore-path ../../.gitignore",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
     "postinstall": "fumadocs-mdx",
     "lint": "eslint",
     "start": "next start",

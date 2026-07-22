@@ -9,8 +9,10 @@ import {
 
 import { ListCell, PlanHeader } from "../cells";
 
-export interface HighlightPlanRow
-  extends Omit<Record<Plan, string[]>, Plan.EDUCATION> {
+export interface HighlightPlanRow extends Omit<
+  Record<Plan, string[]>,
+  Plan.EDUCATION
+> {
   title: string;
 }
 
