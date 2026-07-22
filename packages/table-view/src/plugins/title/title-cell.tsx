@@ -54,7 +54,12 @@ function TitleTableCell({
       value={data}
       onUpdate={onChange}
       renderTrigger={({ width }) => (
-        <CellTrigger wrapped={wrapped} layout="table" aria-disabled={disabled}>
+        <CellTrigger
+          wrapped={wrapped}
+          layout="table"
+          aria-disabled={disabled}
+          aria-label={data}
+        >
           <div className="pointer-events-none absolute inset-x-0 top-1.5 z-20 mx-1 my-0 hidden justify-end group-hover/row:flex">
             <div
               id="quick-action-container"

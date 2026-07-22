@@ -18,6 +18,18 @@ export class HeaderMenuObject extends MenuSurfaceObject {
     );
   }
 
+  private async movePointerTo(target: Locator) {
+    await target.waitFor({ state: "visible" });
+    const box = await target.boundingBox();
+    if (!box) throw new Error("Menu target has no visible bounding box");
+    const point = {
+      x: box.x + box.width / 2,
+      y: box.y + box.height / 2,
+    };
+    await this.page.mouse.move(point.x, point.y, { steps: 12 });
+    return point;
+  }
+
   async chooseSubmenu(trigger: AccessibleName, option: AccessibleName) {
     await this.item(trigger).hover();
     await this.page.getByRole("menuitem", { name: option }).last().click();
@@ -32,7 +44,24 @@ export class HeaderMenuObject extends MenuSurfaceObject {
   }
 
   async calculate(method: AccessibleName) {
-    await this.chooseSubmenu("Calculate", method);
+    if (typeof method !== "string") {
+      throw new Error("Calculation methods must use an exact accessible name");
+    }
+    await this.item("Calculate").hover();
+    const category = method.startsWith("Percent") ? "Percent" : "Count";
+    const categoryItem = this.page
+      .getByRole("menuitem", { name: category, exact: true })
+      .last();
+    await this.movePointerTo(categoryItem);
+    const option = this.page
+      .getByRole("menuitemcheckbox", {
+        name: method,
+        exact: true,
+      })
+      .last();
+    const point = await this.movePointerTo(option);
+    await this.page.mouse.click(point.x, point.y);
+    await option.waitFor({ state: "hidden" });
   }
 
   async toggleFreeze() {

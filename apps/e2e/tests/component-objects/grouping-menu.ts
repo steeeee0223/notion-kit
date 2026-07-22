@@ -36,6 +36,24 @@ export class GroupingMenuObject extends MenuSurfaceObject {
     await this.checkboxItem("Hide empty groups").click();
   }
 
+  visibilityButton(groupId: string) {
+    return this.root.getByRole("button", {
+      name: `Toggle ${groupId} group visibility`,
+    });
+  }
+
+  allVisibilityButton() {
+    return this.root.getByRole("button", { name: /^(Hide|Show) all$/ });
+  }
+
+  async toggleGroup(groupId: string) {
+    await this.visibilityButton(groupId).click();
+  }
+
+  async toggleAll() {
+    await this.allVisibilityButton().click();
+  }
+
   async remove() {
     await this.item("Remove grouping").click();
   }

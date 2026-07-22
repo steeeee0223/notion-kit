@@ -59,6 +59,32 @@ const mockData: Row[] = [
 ];
 
 describe("useTableView - Sorting", () => {
+  it("Sorting_NullNumberValue_StaysLastInBothDirections", () => {
+    const dataWithNull = [
+      ...mockData,
+      {
+        id: "row5",
+        properties: {
+          col1: { value: "Empty", id: "row5-1" },
+          col2: { value: null, id: "row5-2" },
+          col3: { value: "Taipei", id: "row5-3" },
+        },
+        createdAt: 0,
+        lastEditedAt: 0,
+      },
+    ];
+    const { table } = renderTableHook({
+      data: dataWithNull,
+      properties: mockProperties,
+    });
+
+    act(() => table.setSorting([{ id: "col2", desc: false }]));
+    expect(table.getSortedRowModel().rows.at(-1)?.id).toBe("row5");
+
+    act(() => table.setSorting([{ id: "col2", desc: true }]));
+    expect(table.getSortedRowModel().rows.at(-1)?.id).toBe("row5");
+  });
+
   it("should initialize without sorting", () => {
     const { table } = renderTableHook({
       data: mockData,

@@ -25,6 +25,8 @@ export function BoardGroup({ index, locked, row }: BoardGroupProps) {
   return (
     <Kanban.Column
       data-block-id={row.id}
+      role="group"
+      aria-label={`Group ${row.id}`}
       id={row.id}
       index={index}
       disabled={locked}

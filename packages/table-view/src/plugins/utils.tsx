@@ -1,6 +1,53 @@
-import type { Row } from "@notion-kit/table-hook";
+import {
+  countAll,
+  countChecked,
+  countEmpty,
+  countNonEmpty,
+  countUnchecked,
+  countUnique,
+  countValues,
+  percentageChecked,
+  percentageEmpty,
+  percentageNonEmpty,
+  percentageUnchecked,
+  type Row,
+} from "@notion-kit/table-hook";
 
 import type { CellPlugin, CompareFn, InferData } from "./types";
+
+const genericCounting = [
+  {
+    group: "Count",
+    functions: [countAll, countValues, countUnique, countEmpty, countNonEmpty],
+  },
+  {
+    group: "Percentage",
+    functions: [percentageEmpty, percentageNonEmpty],
+  },
+];
+
+const checkboxCounting = [
+  {
+    group: "Count",
+    functions: [countAll, countChecked, countUnchecked],
+  },
+  {
+    group: "Percentage",
+    functions: [percentageChecked, percentageUnchecked],
+  },
+];
+
+export function withGenericCounting<TPlugin extends CellPlugin>(
+  plugin: TPlugin,
+): TPlugin {
+  return { ...plugin, counting: plugin.counting ?? genericCounting };
+}
+
+export function withCheckboxCounting<TPlugin extends CellPlugin>(
+  plugin: TPlugin,
+): TPlugin {
+  return { ...plugin, counting: plugin.counting ?? checkboxCounting };
+}
 
 /**
  * Comparison function for strings (case-sensitive)

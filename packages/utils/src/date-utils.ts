@@ -93,9 +93,27 @@ export function formatDate(ts: number, options: FormatOptions): string {
   });
 }
 
-export function isoToTs(iso: { date: string; time: string }): number {
+export function isoToTs(
+  iso: { date: string; time: string },
+  tz?: string,
+): number {
   if (!iso.date) return -1;
   const dateStr = `${iso.date} ${iso.time || "00:00:00"}`;
+  if (tz) {
+    const [year, month, date] = iso.date.split("-").map(Number);
+    const [hours, minutes, seconds] = (iso.time || "00:00:00")
+      .split(":")
+      .map(Number);
+    return new TZDate(
+      year!,
+      month! - 1,
+      date!,
+      hours!,
+      minutes!,
+      seconds!,
+      tz,
+    ).getTime();
+  }
   const date = parse(dateStr, "yyyy-MM-dd HH:mm:ss", new Date());
   return date.getTime();
 }
