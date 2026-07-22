@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 for (const mode of ["controlled", "uncontrolled"] as const) {
   test(`TableViewPage_${mode}_RendersDeterministicRows`, async ({ page }) => {

@@ -3,6 +3,10 @@
   "compilerOptions": {
     "jsx": "preserve",
     "lib": ["ES2022", "dom", "dom.iterable"],
+    "paths": {
+      "@/*": ["../../packages/table-view/src/*"],
+      "@notion-kit/table-view": ["../../packages/table-view/src/index.ts"]
+    },
     "plugins": [{ "name": "next" }]
   },
   "include": ["src", "tests", "playwright.config.ts", "vitest.*.ts"],
