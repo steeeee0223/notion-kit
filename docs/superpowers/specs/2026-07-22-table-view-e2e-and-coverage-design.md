@@ -42,13 +42,14 @@ The fixture is maintained in one module so the pages exercise identical initial 
 
 ### Controlled page
 
-`apps/e2e/src/app/table-view/controlled/page.tsx` owns `data`, `properties`, and `view` in React state. Each `onDataChange`, `onPropertiesChange`, and `onViewChange` handler applies `change.next` and records a compact diagnostic event.
+`apps/e2e/src/app/table-view/controlled/page.tsx` owns `data`, `properties`, and the public `view` resource in React state. The public view resource contains `layout`, `locked`, `rowView`, and `openedRowId`; sorting, grouping, and calculating remain internal table state in the current API. Each `onDataChange`, `onPropertiesChange`, and `onViewChange` handler applies `change.next` and records a compact diagnostic event.
 
 A read-only test-state region exposes:
 
 - callback counts;
 - the last resource action;
 - compact parent-owned data, property, and view state;
+- a separately labelled internal-state diagnostic for sorting, grouping, and calculating when result-oriented UI assertions need additional failure context;
 - a reset control that re-injects the initial state.
 
 This region is an explicit test contract. It proves that UI changes reached the parent and that the component subsequently obeyed the controlled props; it is not used to bypass user-facing interactions.
@@ -94,7 +95,7 @@ Shared happy paths are assigned to the mode that best proves the contract instea
 - Clearing an existing value and filling an empty cell preserve the correct value shape.
 - Adding, duplicating, and deleting a row update the callback action, parent count, and rendered rows consistently.
 - Adding, renaming, hiding, deleting, restoring, and configuring properties update the parent properties and table UI consistently.
-- Sorting, grouping, calculating, layout, lock, and row-view changes update parent-owned view state.
+- Layout, lock, row-view, and opened-row changes update parent-owned view state. Sorting, grouping, and calculating are verified through rendered results and may be inspected through the separately labelled internal-state diagnostic; they are not represented as parent-controlled state.
 - Parent reset restores all three controlled resources and the rendered table.
 
 ### Uncontrolled state
@@ -111,7 +112,7 @@ Shared happy paths are assigned to the mode that best proves the contract instea
 - Single-column ascending and descending rules produce the complete expected row order, including empty-value placement.
 - Multi-column sorting honors precedence; removing a secondary rule or all rules produces the expected order.
 - Editing a sorted value immediately repositions its row.
-- Controlled tests also assert the parent view action and resulting sorting state.
+- Sorting state is internal to the table in the current public API, so tests assert rendered order and the separately labelled internal diagnostic rather than an `onViewChange` action.
 
 ### Grouping
 
@@ -119,7 +120,7 @@ Shared happy paths are assigned to the mode that best proves the contract instea
 - Empty values enter the correct empty group; hiding empty groups changes the rendered result.
 - Hiding/showing one group, hiding/showing all groups, and removing grouping change actual rendered rows.
 - Board layout preserves the correct group-to-card relationship.
-- Controlled tests also assert parent-owned grouping state.
+- Grouping state is internal to the table in the current public API, so tests assert rendered membership and the separately labelled internal diagnostic rather than parent-owned view state.
 
 ### Calculating
 
