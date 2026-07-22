@@ -30,7 +30,7 @@ The existing tests are concentrated around menus, select configuration, and tabl
 
 The controlled and uncontrolled pages share one deterministic fixture containing:
 
-- title, text, number, select, checkbox, date, and link properties;
+- title, text, number, select, multi-select, checkbox, date, email, phone, URL, created-time, and last-edited-time properties;
 - fixed row, cell, property, and option IDs;
 - fixed timestamps;
 - empty and non-empty values;
@@ -91,7 +91,7 @@ Shared happy paths are assigned to the mode that best proves the contract instea
 
 ### Controlled resources and cells
 
-- Editing title, text, number, link, checkbox, select, and date cells updates both the visible cell and parent-owned data.
+- Editing title, text, number, email, phone, URL, checkbox, select, multi-select, and date cells updates both the visible cell and parent-owned data. Created-time and last-edited-time cells display their fixed row timestamps and remain read-only.
 - Clearing an existing value and filling an empty cell preserve the correct value shape.
 - Adding, duplicating, and deleting a row update the callback action, parent count, and rendered rows consistently.
 - Adding, renaming, hiding, deleting, restoring, and configuring properties update the parent properties and table UI consistently.
