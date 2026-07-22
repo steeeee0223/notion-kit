@@ -11,7 +11,34 @@ import { ViewProps } from "./view-props";
 
 export function DialogView({ children }: React.PropsWithChildren) {
   const { table } = useTableViewCtx();
-  const { rowView, openedRowId } = table.getTableGlobalState();
+
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        tableGlobal: state.tableGlobal,
+        columnOrder: state.columnOrder,
+        columnsInfo: state.columnsInfo,
+      })}
+    >
+      {({ tableGlobal }) => (
+        <DialogViewContent tableGlobal={tableGlobal}>
+          {children}
+        </DialogViewContent>
+      )}
+    </table.Subscribe>
+  );
+}
+
+function DialogViewContent({
+  children,
+  tableGlobal,
+}: React.PropsWithChildren<{
+  tableGlobal: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["tableGlobal"];
+}>) {
+  const { table } = useTableViewCtx();
+  const { rowView, openedRowId } = tableGlobal;
   const titleCell = openedRowId ? table.getTitleCell(openedRowId) : null;
 
   return (

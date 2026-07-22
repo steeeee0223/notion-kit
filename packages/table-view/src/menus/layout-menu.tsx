@@ -1,3 +1,5 @@
+import { v4 } from "uuid";
+
 import { cn } from "@notion-kit/cn";
 import {
   LAYOUT_OPTIONS,
@@ -19,7 +21,22 @@ import { useTableViewCtx } from "@/table-contexts";
 
 export function LayoutMenu() {
   const { table } = useTableViewCtx();
-  const { layout: currentLayout } = table.getTableGlobalState();
+
+  return (
+    <table.Subscribe selector={(state) => state.tableGlobal.layout}>
+      {(layout) => <LayoutMenuContent currentLayout={layout} />}
+    </table.Subscribe>
+  );
+}
+
+function LayoutMenuContent({
+  currentLayout,
+}: {
+  currentLayout: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["tableGlobal"]["layout"];
+}) {
+  const { table } = useTableViewCtx();
 
   return (
     <>
@@ -60,35 +77,50 @@ export function LayoutMenu() {
 
 function RowViewMenu() {
   const { table } = useTableViewCtx();
-  const { rowView: current } = table.getTableGlobalState();
 
   return (
-    <DropdownMenuSub>
-      <DropdownMenuSubTrigger label="Open pages in">
-        <MenuItemAction className="flex items-center text-muted">
-          {ROW_VIEW_OPTIONS[current].label}
-        </MenuItemAction>
-      </DropdownMenuSubTrigger>
-      <DropdownMenuContent sideOffset={-4} className="w-64">
-        <DropdownMenuGroup>
-          {Object.entries(ROW_VIEW_OPTIONS).map(([value, option]) => {
-            const rowView = value as RowViewType;
-            return (
-              <DropdownMenuCheckboxItem
-                key={rowView}
-                closeOnClick={false}
-                icon={<RowViewIcon rowView={rowView} />}
-                label={option.label}
-                desc={option.desc}
-                checked={rowView === current}
-                onCheckedChange={() =>
-                  table.setTableGlobalState((v) => ({ ...v, rowView }))
-                }
-              />
-            );
-          })}
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenuSub>
+    <table.Subscribe selector={(state) => state.tableGlobal.rowView}>
+      {(current) => (
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger label="Open pages in">
+            <MenuItemAction className="flex items-center text-muted">
+              {ROW_VIEW_OPTIONS[current].label}
+            </MenuItemAction>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuContent sideOffset={-4} className="w-64">
+            <DropdownMenuGroup>
+              {Object.entries(ROW_VIEW_OPTIONS).map(([value, option]) => {
+                const rowView = value as RowViewType;
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={rowView}
+                    closeOnClick={false}
+                    icon={<RowViewIcon rowView={rowView} />}
+                    label={option.label}
+                    desc={option.desc}
+                    checked={rowView === current}
+                    onCheckedChange={(checked) => {
+                      if (!checked || rowView === current) return;
+                      const actionId = v4();
+                      table.setTableGlobalState(
+                        (v) => ({ ...v, rowView }),
+                        (previous, next) => ({
+                          id: actionId,
+                          type: "view.row_display.change",
+                          payload: {
+                            previousRowView: previous.rowView,
+                            nextRowView: next.rowView,
+                          },
+                        }),
+                      );
+                    }}
+                  />
+                );
+              })}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenuSub>
+      )}
+    </table.Subscribe>
   );
 }

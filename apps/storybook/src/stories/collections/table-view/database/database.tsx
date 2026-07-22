@@ -43,7 +43,7 @@ export const Database = () => {
       </div>
       <TabsContent value="members" className="mt-0 bg-main">
         <ViewWrapper>
-          <TableView properties={mockProps} data={mockData} />
+          <TableView defaultProperties={mockProps} defaultData={mockData} />
         </ViewWrapper>
       </TabsContent>
     </Tabs>

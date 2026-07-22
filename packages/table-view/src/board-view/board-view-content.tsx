@@ -10,9 +10,47 @@ import { useBoardDnd } from "./use-board-dnd";
 
 export function BoardViewContent() {
   const { table } = useTableViewCtx();
+
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        locked: state.tableGlobal.locked,
+        grouping: state.grouping,
+        groupingState: state.groupingState,
+        sorting: state.sorting,
+        expanded: state.expanded,
+        columnOrder: state.columnOrder,
+        columnVisibility: state.columnVisibility,
+        columnsInfo: state.columnsInfo,
+      })}
+    >
+      {({ locked, grouping, groupingState }) => (
+        <BoardViewContentInner
+          locked={locked ?? false}
+          grouping={grouping}
+          groupingState={groupingState}
+        />
+      )}
+    </table.Subscribe>
+  );
+}
+
+function BoardViewContentInner({
+  locked,
+  grouping,
+  groupingState,
+}: {
+  locked: boolean;
+  grouping: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["grouping"];
+  groupingState: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["groupingState"];
+}) {
+  const { table } = useTableViewCtx();
   const handlers = useBoardDnd();
   const groupedRowsById = table.getRowModel().rowsById;
-  const { grouping, groupingState } = table.store.state;
   const { groupOrder } = groupingState;
 
   return (
@@ -43,7 +81,14 @@ export function BoardViewContent() {
             {groupOrder.map((groupId, index) => {
               const row = (groupedRowsById[groupId] ??
                 table.getPlaceholderGroupedRow(groupId)) as RowInstance;
-              return <BoardGroup key={groupId} row={row} index={index} />;
+              return (
+                <BoardGroup
+                  key={groupId}
+                  row={row}
+                  index={index}
+                  locked={locked}
+                />
+              );
             })}
           </Kanban.Root>
         </div>

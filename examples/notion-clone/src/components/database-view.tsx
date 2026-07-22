@@ -58,8 +58,8 @@ export function DatabaseView() {
         plugins={DEFAULT_PLUGINS}
         properties={properties}
         data={data}
-        onDataChange={setData}
-        onPropertiesChange={setProperties}
+        onDataChange={({ next }) => setData(next)}
+        onPropertiesChange={({ next }) => setProperties(next)}
       />
     </div>
   );
