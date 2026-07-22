@@ -27,8 +27,10 @@ catalogs:
     next: ^16.1.0
     "@next/eslint-plugin-next": ^16.1.0
   test:
+    "@playwright/test": ^1.57.0
     msw: ^2.12.4
     msw-storybook-addon: ^2.0.6
+    monocart-coverage-reports: ^2.11.5
     playwright: ^1.57.0
     vitest: 4.1.8
     "@vitejs/plugin-react": 6.0.2
