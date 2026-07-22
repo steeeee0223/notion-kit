@@ -37,6 +37,8 @@
     "react-dom": "catalog:react19"
   },
   "devDependencies": {
+    "@ampproject/remapping": "catalog:test",
+    "@jridgewell/trace-mapping": "catalog:test",
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",

@@ -164,6 +164,12 @@ catalogs:
       specifier: ^1.120.5
       version: 1.168.6
   test:
+    '@ampproject/remapping':
+      specifier: ^2.3.0
+      version: 2.3.0
+    '@jridgewell/trace-mapping':
+      specifier: ^0.3.31
+      version: 0.3.31
     '@playwright/test':
       specifier: ^1.57.0
       version: 1.61.1
@@ -442,6 +448,12 @@ importers:
         specifier: catalog:react19
         version: 19.2.3(react@19.2.3)
     devDependencies:
+      '@ampproject/remapping':
+        specifier: catalog:test
+        version: 2.3.0
+      '@jridgewell/trace-mapping':
+        specifier: catalog:test
+        version: 0.3.31
       '@notion-kit/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint
@@ -4123,9 +4135,6 @@ packages:
 
   '@jridgewell/sourcemap-codec@1.5.5':
     resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
-
-  '@jridgewell/trace-mapping@0.3.25':
-    resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
@@ -11506,7 +11515,7 @@ snapshots:
 
   '@ampproject/remapping@2.3.0':
     dependencies:
-      '@jridgewell/gen-mapping': 0.3.8
+      '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
 
   '@antfu/install-pkg@1.1.0':
@@ -11589,7 +11598,7 @@ snapshots:
       '@babel/parser': 7.26.9
       '@babel/types': 7.29.7
       '@jridgewell/gen-mapping': 0.3.8
-      '@jridgewell/trace-mapping': 0.3.25
+      '@jridgewell/trace-mapping': 0.3.31
       jsesc: 3.1.0
 
   '@babel/generator@7.29.1':
@@ -13057,11 +13066,6 @@ snapshots:
       '@jridgewell/trace-mapping': 0.3.31
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
-
-  '@jridgewell/trace-mapping@0.3.25':
-    dependencies:
-      '@jridgewell/resolve-uri': 3.1.2
-      '@jridgewell/sourcemap-codec': 1.5.5
 
   '@jridgewell/trace-mapping@0.3.31':
     dependencies:
