@@ -12,7 +12,7 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
   webServer: {
-    command: "next dev -p 3001",
+    command: "next dev -H 127.0.0.1 -p 3001",
     url: "http://127.0.0.1:3001",
     reuseExistingServer: !process.env.CI,
   },
