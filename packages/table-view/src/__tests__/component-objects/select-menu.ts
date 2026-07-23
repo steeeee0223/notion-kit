@@ -90,7 +90,11 @@ export class SelectMenuObject {
   async openOptionActions(name: string) {
     const option = this.option(name);
     await this.tableView.user.hover(option);
-    fireEvent.click(within(option).getByRole("button", { name: /more/i }));
+    const item = option.closest('[data-slot="sortable-item"]');
+    if (!item) throw new Error(`Expected sortable item for ${name}`);
+    await this.tableView.user.click(
+      within(item as HTMLElement).getByRole("button", { name: /more/i }),
+    );
     await screen.findByRole("menuitem", { name: /delete/i });
   }
 

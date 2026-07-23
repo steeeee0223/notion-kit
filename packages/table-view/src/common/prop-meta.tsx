@@ -77,6 +77,7 @@ export function PropMeta({ propId, type }: PropMetaProps) {
                       tabIndex={0}
                       variant="close"
                       className="ml-1 grow-0"
+                      aria-label="Add property description"
                       onClick={toggleDesc}
                     >
                       <Icon.InfoFilled className="fill-default/45 hover:fill-icon" />

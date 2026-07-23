@@ -12,6 +12,7 @@ import type { InferCellProps } from "@/plugins/types";
 
 import { DateFormatMenu, TimeFormatMenu } from "../common";
 import type { DatePlugin } from "../types";
+import { calendarDateToTs } from "../utils";
 import { DateRangeInput } from "./date-range-input";
 
 type DateTimePickerProps = Pick<
@@ -30,7 +31,12 @@ export function DateTimePicker({
 
   return (
     <div className="flex w-62 flex-col">
-      <DateRangeInput className="pb-0" value={data} onChange={onChange} />
+      <DateRangeInput
+        className="pb-0"
+        value={data}
+        onChange={onChange}
+        tz={config.tz}
+      />
       {data.endDate ? (
         <Calendar
           mode="range"
@@ -41,9 +47,20 @@ export function DateTimePicker({
               ...v,
               start:
                 selected?.from !== undefined
-                  ? selected.from.getTime()
+                  ? calendarDateToTs(
+                      selected.from,
+                      config,
+                      v.includeTime ? v.start : undefined,
+                    )
                   : v.start,
-              end: selected?.to !== undefined ? selected.to.getTime() : v.end,
+              end:
+                selected?.to !== undefined
+                  ? calendarDateToTs(
+                      selected.to,
+                      config,
+                      v.includeTime ? v.end : undefined,
+                    )
+                  : v.end,
             }));
           }}
         />
@@ -55,7 +72,14 @@ export function DateTimePicker({
           onSelect={(selected) => {
             onChange((v) => ({
               ...v,
-              start: selected !== undefined ? selected.getTime() : v.start,
+              start:
+                selected !== undefined
+                  ? calendarDateToTs(
+                      selected,
+                      config,
+                      v.includeTime ? v.start : undefined,
+                    )
+                  : v.start,
               end: undefined,
             }));
           }}

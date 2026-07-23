@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { OnChangeFn } from "@tanstack/react-table";
 import z from "zod/v4";
 
@@ -16,16 +16,25 @@ const dateTimeSchema = z.object({
 });
 type DateTimeSchema = z.infer<typeof dateTimeSchema>;
 
+function parsedDateTimeToTs(value: DateTimeSchema, tz?: string) {
+  return isoToTs(
+    { ...value, time: value.time || "00:00:00" },
+    tz,
+  );
+}
+
 interface DateRangeInputProps {
   className?: string;
   value: DateData;
   onChange: OnChangeFn<DateData>;
+  tz?: string;
 }
 
 export function DateRangeInput({
   className,
   value,
   onChange,
+  tz,
 }: DateRangeInputProps) {
   return (
     <div
@@ -36,15 +45,15 @@ export function DateRangeInput({
         <>
           <DateTimeInput
             id="start"
-            key={value.start}
             value={value.start}
+            tz={tz}
             onChange={(ts) => onChange((v) => ({ ...v, start: ts }))}
           />
           {value.endDate && (
             <DateTimeInput
               id="end"
-              key={value.end}
               value={value.end}
+              tz={tz}
               onChange={(ts) => onChange((v) => ({ ...v, end: ts }))}
             />
           )}
@@ -53,15 +62,15 @@ export function DateRangeInput({
         <div className="flex gap-3">
           <DateInput
             id="start"
-            key={value.start}
             value={value.start}
+            tz={tz}
             onChange={(ts) => onChange((prev) => ({ ...prev, start: ts }))}
           />
           {value.endDate && (
             <DateInput
               id="end"
-              key={value.end}
               value={value.end}
+              tz={tz}
               onChange={(ts) => onChange((prev) => ({ ...prev, end: ts }))}
             />
           )}
@@ -75,22 +84,25 @@ interface DateTimeInputProps {
   id: string;
   value?: number; // timestamp in ms
   onChange: (ts: number) => void;
+  tz?: string;
 }
 
-function DateTimeInput({ id, value: ts, onChange }: DateTimeInputProps) {
+function DateTimeInput({ id, value: ts, onChange, tz }: DateTimeInputProps) {
   const [error, setError] = useState(false);
-  const [value, setValue] = useState<DateTimeSchema>(() => {
+  const getValue = (): DateTimeSchema => {
     if (ts === undefined || ts < 0) return { date: "", time: "" };
     const [date, time] = formatDate(ts, {
       dateFormat: "_edit_mode",
       timeFormat: "_edit_mode",
     }).split(" ");
     return { date: date!, time: time! };
-  });
+  };
+  const [value, setValue] = useState<DateTimeSchema>(getValue);
+  useEffect(() => setValue(getValue()), [ts]);
   const handleBlur = () => {
     const res = dateTimeSchema.safeParse(value);
     setError(!res.success);
-    onChange(res.success ? isoToTs(res.data) : -1);
+    onChange(res.success ? parsedDateTimeToTs(res.data, tz) : -1);
   };
 
   return (
@@ -131,22 +143,25 @@ interface DateInputProps {
   id: string;
   value?: number; // timestamp in ms
   onChange: (ts: number) => void;
+  tz?: string;
 }
 
-function DateInput({ id, value: ts, onChange }: DateInputProps) {
+function DateInput({ id, value: ts, onChange, tz }: DateInputProps) {
   const [error, setError] = useState(false);
-  const [value, setValue] = useState(() => {
+  const getValue = () => {
     if (ts === undefined || ts < 0) return "";
     return formatDate(ts, {
       dateFormat: "_edit_mode",
       timeFormat: "hidden",
     });
-  });
+  };
+  const [value, setValue] = useState(getValue);
+  useEffect(() => setValue(getValue()), [ts]);
 
   const handleBlur = () => {
     const res = dateTimeSchema.safeParse({ date: value, time: "" });
     setError(!res.success);
-    onChange(res.success ? isoToTs(res.data) : -1);
+    onChange(res.success ? parsedDateTimeToTs(res.data, tz) : -1);
   };
 
   return (

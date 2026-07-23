@@ -39,65 +39,55 @@ export function OptionItem({
   onDelete,
   validateName,
 }: OptionItemProps) {
+  const tooltip = option.description ? (
+    <>
+      <TooltipDescription text={option.name} />
+      <TooltipDescription type="secondary" text={option.description} />
+    </>
+  ) : (
+    option.name
+  );
+
   return (
-    <TooltipPreset
-      description={
-        option.description ? (
-          <>
-            <TooltipDescription text={option.name} />
-            <TooltipDescription type="secondary" text={option.description} />
-          </>
-        ) : (
-          option.name
-        )
-      }
-      side="left"
-      sideOffset={8}
-    >
-      <Sortable.Item
-        id={option.name}
-        index={index}
-        disabled={!draggable}
-        render={
-          <ComboboxItem
-            value={option}
-            onClick={() => onSelect(option.name)}
-            icon={
-              draggable ? (
-                <Sortable.Handle
-                  aria-label={`Move ${option.name}`}
-                  className="h-6 w-4.5"
-                />
-              ) : null
+    <Sortable.Item id={option.name} index={index} disabled={!draggable}>
+      <TooltipPreset description={tooltip} side="left" sideOffset={8}>
+        <ComboboxItem
+          value={option}
+          onClick={() => onSelect(option.name)}
+          className="pr-9"
+          icon={
+            draggable ? (
+              <Sortable.Handle
+                aria-label={`Move ${option.name}`}
+                className="h-6 w-4.5"
+              />
+            ) : null
+          }
+          label={<OptionTag {...option} />}
+        />
+      </TooltipPreset>
+      <MenuItemAction className="absolute top-1/2 right-3 flex -translate-y-1/2 items-center text-muted">
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                tabIndex={0}
+                variant="hint"
+                className="size-5"
+                aria-label="More"
+              >
+                <Icon.Dots className="size-3.5 fill-current" />
+              </Button>
             }
-            label={<OptionTag {...option} />}
           />
-        }
-      >
-        <MenuItemAction className="flex items-center text-muted">
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button
-                  tabIndex={0}
-                  variant="hint"
-                  className="size-5"
-                  onClick={(e) => e.stopPropagation()}
-                  aria-label="More"
-                >
-                  <Icon.Dots className="size-3.5 fill-current" />
-                </Button>
-              }
-            />
-            <SelectOptionMenu
-              option={option}
-              validateName={validateName}
-              onUpdate={onUpdate}
-              onDelete={onDelete}
-            />
-          </DropdownMenu>
-        </MenuItemAction>
-      </Sortable.Item>
-    </TooltipPreset>
+          <SelectOptionMenu
+            option={option}
+            validateName={validateName}
+            onUpdate={onUpdate}
+            onDelete={onDelete}
+          />
+        </DropdownMenu>
+      </MenuItemAction>
+    </Sortable.Item>
   );
 }

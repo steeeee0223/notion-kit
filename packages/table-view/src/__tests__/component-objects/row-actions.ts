@@ -44,6 +44,10 @@ export class RowActionsObject {
     await this.tableView.user.type(this.searchInput(), value);
   }
 
+  async press(keys: string) {
+    await this.tableView.user.keyboard(keys);
+  }
+
   choose(name: string | RegExp) {
     fireEvent.click(this.option(name));
   }

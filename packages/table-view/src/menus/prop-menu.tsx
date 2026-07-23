@@ -123,13 +123,19 @@ export function PropMenu({ propId, view }: PropMenuProps) {
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenuSub>
-            <DropdownMenuItem
-              icon={<Icon.SquareGridBelowLines />}
-              label={column.getIsGrouped() ? "Ungroup" : "Group"}
-              onClick={() =>
-                table.setGroupingColumn((v) => (v === propId ? null : propId))
-              }
-            />
+            <table.Subscribe selector={(state) => state.grouping}>
+              {(grouping) => (
+                <DropdownMenuItem
+                  icon={<Icon.SquareGridBelowLines />}
+                  label={grouping.includes(propId) ? "Ungroup" : "Group"}
+                  onClick={() =>
+                    table.setGroupingColumn((v) =>
+                      v === propId ? null : propId,
+                    )
+                  }
+                />
+              )}
+            </table.Subscribe>
             <DropdownMenuSub>
               <DropdownMenuSubTrigger icon={<Icon.Sum />} label="Calculate" />
               <DropdownMenuContent
