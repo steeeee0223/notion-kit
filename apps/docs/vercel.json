@@ -2,6 +2,5 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "cd ../.. && pnpm exec turbo run build --filter=@notion-kit/docs",
   "devCommand": "cd ../.. && pnpm --filter @notion-kit/docs dev",
-  "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
-  "ignoreCommand": "cd ../.. && bash turbo/affected.sh docs"
+  "installCommand": "cd ../.. && pnpm install --frozen-lockfile"
 }
