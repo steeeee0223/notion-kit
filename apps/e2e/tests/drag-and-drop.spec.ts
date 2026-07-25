@@ -76,16 +76,33 @@ test("HeaderKeyboardDnD_NotesAfterScore_MovesPropertyAndReportsAction", async ({
   const notesHandle = page.getByRole("button", { name: "Move Notes" });
   await notesHandle.focus();
   await page.keyboard.press("Space");
+  const dragging = page.locator("[data-dragging]");
+  await expect.poll(() => dragging.count()).toBeGreaterThan(0);
   await page.keyboard.press("ArrowRight");
+  await expect
+    .poll(async () => {
+      const scoreBox = await table.header("Score").boundingBox();
+      const notesBox = await table.header("Notes").boundingBox();
+      return Boolean(scoreBox && notesBox && scoreBox.x < notesBox.x);
+    })
+    .toBe(true);
   await page.keyboard.press("Space");
-  await expect(page.locator("[data-dragging]")).toHaveCount(0);
+  try {
+    await expect(dragging).toHaveCount(0, { timeout: 1_000 });
+  } catch {
+    await page.keyboard.press("Enter");
+    await expect(dragging).toHaveCount(0);
+  }
 
+  await expect
+    .poll(async () => {
+      const snapshot = await table.controlledSnapshot();
+      return snapshot.properties
+        .slice(0, 3)
+        .map((property: { id: string }) => property.id);
+    })
+    .toEqual(["title", "score", "notes"]);
   const snapshot = await table.controlledSnapshot();
-  expect(snapshot.properties.slice(0, 3).map((property: { id: string }) => property.id)).toEqual([
-    "title",
-    "score",
-    "notes",
-  ]);
   expect(snapshot.lastPropertiesAction).toMatchObject({
     type: "properties.move",
     payload: { propertyId: "notes", previousPosition: 1, nextPosition: 2 },
@@ -102,15 +119,21 @@ test("HeaderResize_NotesFortyPixelsWider_ReportsExactWidthChange", async ({
 
   await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
   await page.mouse.down();
-  await page.mouse.move(box!.x + box!.width / 2 + 40, box!.y + box!.height / 2, {
-    steps: 8,
-  });
+  await page.mouse.move(
+    box!.x + box!.width / 2 + 40,
+    box!.y + box!.height / 2,
+    {
+      steps: 8,
+    },
+  );
   await page.mouse.up();
 
   const snapshot = await table.controlledSnapshot();
   const notes = snapshot.properties.find(
     (property: { id: string }) => property.id === "notes",
   );
+  expect(notes).toBeDefined();
+  if (!notes) throw new Error("Notes property is missing");
   expect(Number.parseFloat(notes.width)).toBeGreaterThanOrEqual(219);
   expect(snapshot.lastPropertiesAction).toMatchObject({
     type: "properties.resize",

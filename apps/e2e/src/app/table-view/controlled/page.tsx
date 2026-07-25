@@ -10,7 +10,10 @@ import {
 } from "@notion-kit/table-view";
 
 import { TableViewStateDiagnostic } from "../_components/table-view-state-diagnostic";
-import { createTableViewFixture } from "../../../test-fixtures/table-view";
+import {
+  createPluginConfigurationScenario,
+  createTableViewFixture,
+} from "../../../test-fixtures/table-view";
 
 export default function ControlledTableViewPage() {
   const initial = createTableViewFixture();
@@ -40,12 +43,21 @@ export default function ControlledTableViewPage() {
     setLastViewAction(null);
   };
 
+  const applyPluginConfigurationScenario = () => {
+    const next = createPluginConfigurationScenario();
+    setData(next.data);
+    setProperties(next.properties);
+  };
+
   return (
     <main className="min-h-screen overflow-auto bg-main py-8">
       <header className="mb-6 px-24">
         <h1 className="text-2xl font-semibold">Controlled table view</h1>
         <button type="button" onClick={reset}>
           Reset controlled state
+        </button>
+        <button type="button" onClick={applyPluginConfigurationScenario}>
+          Apply plugin configuration scenario
         </button>
       </header>
       <TableView

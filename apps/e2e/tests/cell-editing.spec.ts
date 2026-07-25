@@ -37,11 +37,7 @@ test("CellEditors_ExistingValues_RoundTripEveryEditablePlugin", async ({
     }),
   ).toHaveAttribute("href", "mailto:renamed@example.com");
 
-  await table.editTextCell(
-    "Alpha renamed",
-    "+886900000001",
-    "+886900000099",
-  );
+  await table.editTextCell("Alpha renamed", "+886900000001", "+886900000099");
   await expect(
     table.row("Alpha renamed").getByRole("link", {
       name: "+886900000099",

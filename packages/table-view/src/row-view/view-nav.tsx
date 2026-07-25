@@ -26,6 +26,15 @@ interface ViewNavProps {
 export function ViewNav({ rowId }: ViewNavProps) {
   const { table } = useTableViewCtx();
   const { rowView } = table.getTableGlobalState();
+  const rows = table
+    .getRowModel()
+    .flatRows.filter((row) => !row.getIsGrouped());
+  const rowIndex = rows.findIndex((row) => row.id === rowId);
+  const previousRowId = rowIndex > 0 ? rows[rowIndex - 1]?.id : undefined;
+  const nextRowId =
+    rowIndex >= 0 && rowIndex < rows.length - 1
+      ? rows[rowIndex + 1]?.id
+      : undefined;
 
   /** Keyboard shortcut */
   useHotkeys("esc", () => table.openRow(null), { preventDefault: true });
@@ -131,7 +140,25 @@ export function ViewNav({ rowId }: ViewNavProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="z-10 flex shrink-0 grow-0 items-center justify-end pl-3">
+      <div className="z-10 flex shrink-0 grow-0 items-center justify-end gap-0.5 pl-3">
+        <Button
+          variant="hint"
+          className="size-6"
+          aria-label="Previous row"
+          disabled={!previousRowId}
+          onClick={() => previousRowId && table.openRow(previousRowId)}
+        >
+          <Icon.Chevron side="left" className="fill-icon" />
+        </Button>
+        <Button
+          variant="hint"
+          className="size-6"
+          aria-label="Next row"
+          disabled={!nextRowId}
+          onClick={() => nextRowId && table.openRow(nextRowId)}
+        >
+          <Icon.Chevron className="fill-icon" />
+        </Button>
         <Button variant="hint" className="size-6">
           <Icon.Dots className="fill-icon" />
         </Button>

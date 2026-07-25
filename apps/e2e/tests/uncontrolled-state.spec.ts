@@ -1,5 +1,5 @@
-import { expect, test } from "./fixtures";
 import { TableViewObject } from "./component-objects/table-view";
+import { expect, test } from "./fixtures";
 
 test("UncontrolledState_ConsecutiveEditsAndLayoutChanges_PersistWithoutParentWriteback", async ({
   page,

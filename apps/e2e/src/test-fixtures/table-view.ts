@@ -132,6 +132,7 @@ const INITIAL_PROPERTIES: ColumnDefs = [
 const INITIAL_DATA: Row[] = [
   {
     id: "row-alpha",
+    icon: { type: "emoji", src: "🧪" },
     createdAt: 1_735_689_600_000,
     lastEditedAt: 1_735_689_600_000,
     properties: {
@@ -217,4 +218,67 @@ export function createTableViewFixture() {
     properties: INITIAL_PROPERTIES,
     view: INITIAL_VIEW,
   });
+}
+
+export function createPluginConfigurationScenario() {
+  const next = createTableViewFixture();
+  const score = next.properties.find((property) => property.id === "score");
+  const status = next.properties.find((property) => property.id === "status");
+  const due = next.properties.find((property) => property.id === "due");
+
+  if (score?.type !== "number" || status?.type !== "select") {
+    throw new Error("Plugin configuration fixture properties are missing");
+  }
+  if (due?.type !== "date") {
+    throw new Error("Plugin configuration fixture date property is missing");
+  }
+
+  score.config = {
+    format: "currency",
+    round: "0",
+    showAs: "bar",
+    options: { color: "green", divideBy: 100, showNumber: true },
+  };
+  status.config = {
+    sort: "reverse-alphabetical",
+    options: {
+      names: ["Waiting", "In progress", "Backlog"],
+      items: {
+        Waiting: {
+          id: "option-waiting",
+          name: "Waiting",
+          color: "yellow",
+        },
+        "In progress": {
+          id: "option-active",
+          name: "In progress",
+          color: "purple",
+        },
+        Backlog: {
+          id: "option-backlog",
+          name: "Backlog",
+          color: "gray",
+        },
+      },
+    },
+  };
+  due.config = {
+    dateFormat: "MM/dd/yyyy",
+    timeFormat: "12-hour",
+    tz: "UTC",
+  };
+
+  const alpha = next.data.find((row) => row.id === "row-alpha");
+  const omega = next.data.find((row) => row.id === "row-omega");
+  if (!alpha || !omega) {
+    throw new Error("Plugin configuration fixture rows are missing");
+  }
+  alpha.properties.status!.value = "In progress";
+  alpha.properties.due!.value = {
+    start: 1_735_689_600_000,
+    includeTime: true,
+  };
+  omega.properties.status!.value = null;
+
+  return next;
 }

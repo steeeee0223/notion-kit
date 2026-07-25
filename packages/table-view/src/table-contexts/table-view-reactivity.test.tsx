@@ -8,7 +8,12 @@ import {
 } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { CountMethod } from "@notion-kit/table-hook";
+import {
+  CountMethod,
+  type ResourceChange,
+  type TableViewState,
+  type ViewResourceAction,
+} from "@notion-kit/table-hook";
 
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
 import {
@@ -216,7 +221,10 @@ describe("TableViewReactivity", () => {
   });
 
   it("ViewNav_SelectedRowView_DoesNotEmitChange", async () => {
-    const onViewChange = vi.fn();
+    const onViewChange =
+      vi.fn<
+        (change: ResourceChange<TableViewState, ViewResourceAction>) => unknown
+      >();
     const tableView = renderTableView({
       properties: [
         {
@@ -244,7 +252,10 @@ describe("TableViewReactivity", () => {
   });
 
   it("ViewNav_DifferentPeekMode_EmitsViewChangeAndMovesRow", async () => {
-    const onViewChange = vi.fn();
+    const onViewChange =
+      vi.fn<
+        (change: ResourceChange<TableViewState, ViewResourceAction>) => unknown
+      >();
     const tableView = renderTableView({
       properties: [
         {
@@ -300,6 +311,72 @@ describe("TableViewReactivity", () => {
       expect(
         screen.queryByRole("dialog", { name: "Task 1" }),
       ).not.toBeInTheDocument(),
+    );
+  });
+
+  it("ViewNav_FirstRow_DisablesPreviousAndNavigatesToNextRow", async () => {
+    const onViewChange =
+      vi.fn<
+        (change: ResourceChange<TableViewState, ViewResourceAction>) => unknown
+      >();
+    const tableView = renderTableView({
+      properties: [
+        {
+          ...mockProperties[0]!,
+          type: "title",
+          config: { showIcon: true },
+        },
+        ...mockProperties.slice(1),
+      ],
+      onViewChange,
+    });
+    const rowActions = await tableView.openRowActions("Task 1");
+    rowActions.choose("Open in side peek");
+    const dialog = await screen.findByRole("dialog", { name: "Task 1" });
+
+    expect(
+      within(dialog).getByRole("button", { name: "Previous row" }),
+    ).toBeDisabled();
+    fireEvent.click(within(dialog).getByRole("button", { name: "Next row" }));
+
+    await waitFor(() =>
+      expect(document.querySelector('[role="dialog"]#row2')).toBeVisible(),
+    );
+    await waitFor(() =>
+      expect(onViewChange.mock.calls.at(-1)?.[0].action).toMatchObject({
+        type: "view.opened_row.change",
+        payload: {
+          previousRowId: "row1",
+          nextRowId: "row2",
+        },
+      }),
+    );
+  });
+
+  it("ViewNav_LastRow_DisablesNextAndNavigatesToPreviousRow", async () => {
+    const tableView = renderTableView({
+      properties: [
+        {
+          ...mockProperties[0]!,
+          type: "title",
+          config: { showIcon: true },
+        },
+        ...mockProperties.slice(1),
+      ],
+    });
+    const rowActions = await tableView.openRowActions("Task 3");
+    rowActions.choose("Open in side peek");
+    const dialog = await screen.findByRole("dialog", { name: "Task 3" });
+
+    expect(
+      within(dialog).getByRole("button", { name: "Next row" }),
+    ).toBeDisabled();
+    fireEvent.click(
+      within(dialog).getByRole("button", { name: "Previous row" }),
+    );
+
+    await waitFor(() =>
+      expect(document.querySelector('[role="dialog"]#row2')).toBeVisible(),
     );
   });
 

@@ -1,5 +1,5 @@
-import { TableViewObject } from "./component-objects/table-view";
 import { MenuSurfaceObject } from "./component-objects/menu-surface";
+import { TableViewObject } from "./component-objects/table-view";
 import { expect, test } from "./fixtures";
 
 async function propertyNames(table: TableViewObject) {
@@ -75,41 +75,45 @@ test("HeaderActions_InsertLeftAndRight_PreserveRequestedPropertyOrder", async ({
   await (await table.openHeader("Notes")).insert("left");
   let editor = await createPropertyFromOpenTypeMenu(table, "Inserted left");
   await editor.close();
-  await expect.poll(() => propertyNames(table)).toEqual([
-    "Name",
-    "Inserted left",
-    "Notes",
-    "Score",
-    "Status",
-    "Tags",
-    "Complete",
-    "Due",
-    "Email",
-    "Phone",
-    "Website",
-    "Created",
-    "Edited",
-  ]);
+  await expect
+    .poll(() => propertyNames(table))
+    .toEqual([
+      "Name",
+      "Inserted left",
+      "Notes",
+      "Score",
+      "Status",
+      "Tags",
+      "Complete",
+      "Due",
+      "Email",
+      "Phone",
+      "Website",
+      "Created",
+      "Edited",
+    ]);
 
   await (await table.openHeader("Notes")).insert("right");
   editor = await createPropertyFromOpenTypeMenu(table, "Inserted right");
   await editor.close();
-  await expect.poll(() => propertyNames(table)).toEqual([
-    "Name",
-    "Inserted left",
-    "Notes",
-    "Inserted right",
-    "Score",
-    "Status",
-    "Tags",
-    "Complete",
-    "Due",
-    "Email",
-    "Phone",
-    "Website",
-    "Created",
-    "Edited",
-  ]);
+  await expect
+    .poll(() => propertyNames(table))
+    .toEqual([
+      "Name",
+      "Inserted left",
+      "Notes",
+      "Inserted right",
+      "Score",
+      "Status",
+      "Tags",
+      "Complete",
+      "Due",
+      "Email",
+      "Phone",
+      "Website",
+      "Created",
+      "Edited",
+    ]);
   await expect(table.controlledState()).toContainText(
     '"type":"properties.create"',
   );
@@ -183,16 +187,70 @@ test("HeaderMenu_SortGroupAndChangeType_ApplyResultBearingActions", async ({
   await expect(page.getByRole("group", { name: /^Group / })).toHaveCount(0);
 
   header = await table.openHeader("Notes");
-  const editor = await header.changeType("Number");
-  await editor.close();
+  await header.changeType("Number");
   await expect(table.controlledState()).toContainText(
     '"type":"properties.type.change"',
   );
-  await expect(table.controlledState()).toContainText(
-    '"propertyId":"notes"',
-  );
-  await expect(table.controlledState()).toContainText(
-    '"nextType":"number"',
-  );
+  await expect(table.controlledState()).toContainText('"propertyId":"notes"');
+  await expect(table.controlledState()).toContainText('"nextType":"number"');
   await expect(table.header("Notes")).toBeVisible();
+});
+
+test("NumberConfig_ControlledScenario_RendersCurrencyRoundingAndBar", async ({
+  page,
+}) => {
+  const table = await TableViewObject.open(page, "controlled");
+
+  await table.button("Apply plugin configuration scenario").click();
+  await expect(table.cell("Alpha", /\$10/).getByRole("meter")).toBeVisible();
+  await expect(table.cell("Alpha", /\$10(?!\.)/)).toBeVisible();
+});
+
+test("SelectConfig_ControlledScenario_UpdatesOptionsAndAffectedRows", async ({
+  page,
+}) => {
+  const table = await TableViewObject.open(page, "controlled");
+
+  await table.button("Apply plugin configuration scenario").click();
+  await expect(table.cell("Alpha", "In progress")).toBeVisible();
+  await expect(table.cell("Omega", "Done")).toHaveCount(0);
+  await expect
+    .poll(async () => {
+      const snapshot = await table.controlledSnapshot();
+      return snapshot.properties.find(
+        (property: { id: string }) => property.id === "status",
+      )?.config?.options?.items["In progress"]?.color;
+    })
+    .toBe("purple");
+  await expect
+    .poll(async () => {
+      const snapshot = await table.controlledSnapshot();
+      return snapshot.properties.find(
+        (property: { id: string }) => property.id === "status",
+      )?.config?.options?.names;
+    })
+    .toEqual(["Waiting", "In progress", "Backlog"]);
+});
+
+test("DateConfig_ControlledScenario_RendersConfiguredDateAndTime", async ({
+  page,
+}) => {
+  const table = await TableViewObject.open(page, "controlled");
+
+  await table.button("Apply plugin configuration scenario").click();
+  await expect(table.cell("Alpha", /01\/01\/2025.*12:00 AM/)).toBeVisible();
+});
+
+test("TitleConfig_ShowPageIconToggle_ControlsRenderedRowIcons", async ({
+  page,
+}) => {
+  const table = await TableViewObject.open(page, "controlled");
+  const alpha = table.row("Alpha");
+  await expect(alpha.getByText("🧪", { exact: true })).toBeVisible();
+
+  const header = await table.openHeader("Name");
+  await header.item("Show page icon").click();
+
+  await expect(alpha.getByText("🧪", { exact: true })).toHaveCount(0);
+  await expect(table.controlledState()).toContainText('"showIcon":false');
 });

@@ -10,9 +10,12 @@ const appRoot = path.resolve(import.meta.dirname, "..");
 type DefaultSourceMapResolver = (url: string) => Promise<unknown>;
 
 function resolveNestedTableViewMap(source: string) {
-  const sourcePath = source.startsWith("file:")
-    ? fileURLToPath(source)
-    : source;
+  const projectPrefix = "turbopack:///[project]/";
+  const sourcePath = source.startsWith(projectPrefix)
+    ? path.resolve(appRoot, "../..", source.slice(projectPrefix.length))
+    : source.startsWith("file:")
+      ? fileURLToPath(source)
+      : source;
   if (!sourcePath.includes("/packages/table-view/dist/")) return null;
 
   const mapPath = `${sourcePath}.map`;
@@ -26,7 +29,7 @@ const resolveSourceMap: NonNullable<
 > = async (url, defaultResolver) => {
   const resolver = defaultResolver as DefaultSourceMapResolver;
   const sourceMap = await resolver(url);
-  if (!url.includes("/packages_table-view_dist")) return sourceMap;
+  if (!sourceMap) return sourceMap;
 
   const flattened = encodedMap(
     new FlattenMap(sourceMap as SourceMapInput, url),
@@ -43,15 +46,12 @@ export const coverageOptions: MCR.CoverageReportOptions = {
   baseDir: path.resolve(appRoot, "../.."),
   outputDir: path.resolve(appRoot, "coverage/e2e"),
   reports: [
-    ["v8", { outputFile: "index.html" }],
+    ["v8", { outputFile: "index.html", inline: true }],
     ["v8-json", { outputFile: "coverage.json" }],
-    ["text", { file: "coverage.txt" }],
+    ["text", { file: "coverage.txt", maxCols: 200 }],
     "console-details",
   ],
-  entryFilter: {
-    "**/_next/static/chunks/packages_table-view_dist*.js": true,
-    "**": false,
-  },
+  entryFilter: "**/_next/static/chunks/*.js",
   sourceFilter: {
     "**/packages/table-view/src/**/*.{ts,tsx}": true,
     "**": false,

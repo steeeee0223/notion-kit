@@ -51,9 +51,7 @@ test("RowViews_SideCenterAndFull_UseConfiguredDisplayBoundary", async ({
 
   let layout = await (await table.openSettings()).openLayout();
   await layout.item(/Open pages in/i).hover();
-  await page
-    .getByRole("menuitemcheckbox", { name: "Center peek" })
-    .click();
+  await page.getByRole("menuitemcheckbox", { name: "Center peek" }).click();
   await layout.close();
   await (await table.openRowActions("Omega")).openRow();
   await expect(page.getByRole("dialog", { name: "Omega" })).toBeVisible();
@@ -66,4 +64,46 @@ test("RowViews_SideCenterAndFull_UseConfiguredDisplayBoundary", async ({
   await layout.close();
   await (await table.openRowActions("Empty")).openRow();
   await expect(page).toHaveURL(/\/table-view\/rows\/row-empty$/);
+});
+
+test("RowViews_PreviousNextAndClose_RespectNavigationBoundaries", async ({
+  page,
+}) => {
+  const table = await TableViewObject.open(page, "controlled");
+  await (await table.openRowActions("Alpha")).openRow();
+  let dialog = page.getByRole("dialog", { name: "Alpha" });
+
+  await expect(
+    dialog.getByRole("button", { name: "Previous row" }),
+  ).toBeDisabled();
+  await dialog.getByRole("button", { name: "Next row" }).click();
+  dialog = page.getByRole("dialog", { name: "Empty" });
+  await expect(dialog).toBeVisible();
+  expect((await table.controlledSnapshot()).lastViewAction).toMatchObject({
+    type: "view.opened_row.change",
+    payload: {
+      previousRowId: "row-alpha",
+      nextRowId: "row-empty",
+    },
+  });
+
+  await dialog.getByRole("button", { name: "Next row" }).click();
+  dialog = page.getByRole("dialog", { name: "Omega" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "Next row" })).toBeDisabled();
+  await dialog.getByRole("button", { name: "Previous row" }).click();
+  await expect(page.getByRole("dialog", { name: "Empty" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Close row" }).click();
+  await expect(page.getByRole("dialog", { name: "Empty" })).toHaveCount(0);
+  const snapshot = await table.controlledSnapshot();
+  expect(snapshot.view.openedRowId).toBeNull();
+  expect(snapshot.lastViewAction).toMatchObject({
+    type: "view.opened_row.change",
+    payload: {
+      previousRowId: "row-empty",
+      nextRowId: null,
+    },
+  });
+  await expect(page).toHaveURL(/\/table-view\/controlled$/);
 });

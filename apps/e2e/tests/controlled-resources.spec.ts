@@ -119,7 +119,7 @@ test("ControlledView_LayoutLockRowViewAndOpenedRow_ParentStateStaysSynchronized"
   );
   await expect(table.controlledState()).toContainText('"locked":true');
   await expect(page.getByRole("button", { name: "Add row" })).toHaveCount(0);
-  await expect(
-    page.getByRole("button", { name: "Row actions" }),
-  ).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Row actions" })).toHaveCount(
+    0,
+  );
 });

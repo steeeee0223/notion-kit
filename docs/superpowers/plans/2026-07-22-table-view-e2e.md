@@ -96,15 +96,15 @@
 
 - [x] **Step 1: Test result-bearing header actions**
 
-- [ ] **Step 2: Finish plugin-configuration journeys**
+- [x] **Step 2: Finish plugin-configuration journeys**
 
   Add browser-level rendered-result coverage for number currency/rounding/display, select add/rename/color/delete/sort with affected rows, date/time formats, and title icon visibility. Avoid Base UI keyboard-submenu assertions that only reproduce the upstream focus bug.
 
-- [ ] **Step 3: Reverify header DnD; preserve the passing resize journey**
+- [x] **Step 3: Reverify header DnD; preserve the passing resize journey**
 
   Run `HeaderKeyboardDnD_NotesAfterScore_MovesPropertyAndReportsAction` alone under Chromium. Assert property order and the exact `properties.move` action. Keep `HeaderResize_NotesFortyPixelsWider_ReportsExactWidthChange` as the resize contract.
 
-- [ ] **Step 4: Run header specs at the configured Chromium viewport**
+- [x] **Step 4: Run header specs at the configured Chromium viewport**
 
   Run:
 
@@ -118,19 +118,19 @@
 
 ### Task 8: Cover row/group actions, layouts, row views, and DnD
 
-- [ ] **Step 1: Close remaining row-action boundaries**
+- [x] **Step 1: Close remaining row-action boundaries**
 
   Existing coverage includes search, configured open, add above/below, duplicate/delete, duplicate shortcut, new tab, clipboard, icon URL, and icon removal. Add only the remaining supported keyboard shortcuts and a real file-upload journey if file upload is part of the implemented product contract.
 
 - [x] **Step 2: Test group actions**
 
-- [ ] **Step 3: Close row-view navigation boundaries**
+- [x] **Step 3: Close row-view navigation boundaries**
 
   Existing coverage switches table/list/board and opens side, center, and full views. Add first/last previous-next disabled boundaries and explicit close/navigation outcomes without permanently leaving the deterministic fixture.
 
 - [x] **Step 4: Test row DnD with real pointers**
 
-- [ ] **Step 5: Run row/group/layout/DnD specs twice**
+- [x] **Step 5: Run row/group/layout/DnD specs twice**
 
   Run the four specs twice in Chromium and confirm deterministic defaults, no leaked popup/clipboard/upload state, and no order dependence.
 
@@ -138,11 +138,11 @@
 
 ### Task 9: Verify the complete E2E story and reports
 
-- [ ] **Step 1: Document Playwright commands and artifacts**
+- [x] **Step 1: Document Playwright commands and artifacts**
 
   Update `apps/e2e/README.md` with the required Node/pnpm invocation, Chromium installation, `test:e2e`, `test:e2e:coverage`, report paths, built-package precondition, and the separate informational E2E coverage policy.
 
-- [ ] **Step 2: Run the full Chromium suite**
+- [x] **Step 2: Run the full Chromium suite**
 
   ```bash
   $NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/e2e test:e2e
@@ -150,7 +150,7 @@
 
   Expected: every approved journey passes under the `chromium` project.
 
-- [ ] **Step 3: Generate and inspect full E2E coverage**
+- [x] **Step 3: Generate and inspect full E2E coverage**
 
   ```bash
   $NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/e2e test:e2e:coverage
@@ -158,7 +158,7 @@
 
   Expected: non-empty text, JSON, and HTML reports contain `packages/table-view/src` paths; no percentage gate is evaluated.
 
-- [ ] **Step 4: Run app quality checks**
+- [x] **Step 4: Run app quality checks**
 
   Run e2e `test`, `typecheck`, `lint`, and `format`. Every command must exit 0.
 

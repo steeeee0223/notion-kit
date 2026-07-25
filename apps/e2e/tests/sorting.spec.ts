@@ -1,5 +1,5 @@
-import { expect, test } from "./fixtures";
 import { TableViewObject } from "./component-objects/table-view";
+import { expect, test } from "./fixtures";
 
 async function expectRowOrder(table: TableViewObject, names: string[]) {
   const titles = table.rowTitles();
@@ -21,9 +21,7 @@ test("Sorting_RulesEditsAndRemoval_UpdateRowsWithoutParentViewWriteback", async 
     '"sorting":[{"id":"score","desc":false}]',
   );
   await expect(table.controlledState()).toContainText('"viewCount":0');
-  await expect(table.controlledState()).toContainText(
-    '"lastViewAction":null',
-  );
+  await expect(table.controlledState()).toContainText('"lastViewAction":null');
 
   await sort.setDirection("Ascending", "Descending");
   await expectRowOrder(table, ["Omega", "Alpha", "Empty"]);

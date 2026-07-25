@@ -1,10 +1,12 @@
 import type { Locator } from "@playwright/test";
 
-import { expect, test } from "./fixtures";
 import { TableViewObject } from "./component-objects/table-view";
+import { expect, test } from "./fixtures";
 
 async function expectVerticalOrder(locators: Locator[]) {
-  const boxes = await Promise.all(locators.map((locator) => locator.boundingBox()));
+  const boxes = await Promise.all(
+    locators.map((locator) => locator.boundingBox()),
+  );
   for (const [index, box] of boxes.entries()) {
     expect(box, `Expected item ${index} to be visible`).not.toBeNull();
     if (index === 0) continue;
@@ -93,7 +95,5 @@ test("Grouping_CompleteThenBoard_PreservesGroupMembershipAcrossLayouts", async (
   await expect(table.controlledState()).toContainText(
     '"type":"view.layout.change"',
   );
-  await expect(table.internalState()).toContainText(
-    '"grouping":["complete"]',
-  );
+  await expect(table.internalState()).toContainText('"grouping":["complete"]');
 });

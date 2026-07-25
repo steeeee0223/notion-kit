@@ -72,9 +72,7 @@ test("RowActionMenu_DuplicateDeleteAndShortcuts_TargetOnlySelectedRows", async (
   await expect(table.controlledState()).toContainText(
     '"type":"data.row.delete"',
   );
-  await expect(table.controlledState()).toContainText(
-    '"rowIds":["row-omega"]',
-  );
+  await expect(table.controlledState()).toContainText('"rowIds":["row-omega"]');
 
   const shortcutActions = await table.openRowActions("Empty");
   await shortcutActions.press("Meta+d");
@@ -102,6 +100,56 @@ test("RowActionMenu_NewTabAndCopyLink_UseDeterministicRowUrl", async ({
   await expect
     .poll(() => page.evaluate(() => navigator.clipboard.readText()))
     .toBe("http://127.0.0.1:3001/table-view/rows/row-omega");
+});
+
+test("RowActionMenu_NewTabAndDeleteShortcuts_TargetTheOpenMenuRow", async ({
+  page,
+}) => {
+  const table = await TableViewObject.open(page, "controlled");
+  const popupPromise = page.waitForEvent("popup");
+  await (await table.openRowActions("Alpha")).press("Meta+Shift+Enter");
+  const popup = await popupPromise;
+  await expect(popup).toHaveURL(/\/table-view\/rows\/row-alpha$/);
+  await popup.close();
+
+  await page.keyboard.press("Escape");
+  await (await table.openRowActions("Omega")).press("Backspace");
+  await expect(table.row("Omega")).toHaveCount(0);
+  const snapshot = await table.controlledSnapshot();
+  expect(snapshot.lastDataAction).toMatchObject({
+    type: "data.row.delete",
+    payload: { rowIds: ["row-omega"] },
+  });
+});
+
+test("RowActionMenu_RealIconFileUpload_StoresBlobUrlOnTargetRow", async ({
+  page,
+}) => {
+  const table = await TableViewObject.open(page, "controlled");
+  const actions = await table.openRowActions("Alpha");
+  await actions.editIcon();
+  await page.getByRole("tab", { name: "Upload" }).click();
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "alpha-icon.png",
+    mimeType: "image/png",
+    buffer: Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+      "base64",
+    ),
+  });
+  await expect(page.getByAltText("Preview dark")).toBeVisible();
+  await page.getByRole("button", { name: "Submit" }).click();
+
+  const snapshot = await table.controlledSnapshot();
+  const alpha = snapshot.data.find((row) => row.id === "row-alpha");
+  expect(snapshot.lastDataAction).toMatchObject({
+    type: "data.row.update",
+    payload: { rowId: "row-alpha" },
+  });
+  expect(alpha?.icon).toMatchObject({
+    type: "url",
+    src: expect.stringMatching(/^blob:http:\/\/127\.0\.0\.1:3001\//),
+  });
 });
 
 test("RowActionMenu_IconUrlAndRemove_UpdateOnlyTheTargetRow", async ({

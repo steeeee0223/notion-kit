@@ -10,12 +10,47 @@ import { ViewSettingsMenuObject } from "./view-settings-menu";
 
 type TableMode = "controlled" | "uncontrolled";
 
+interface ControlledPropertySnapshot {
+  id: string;
+  name: string;
+  width: string;
+  config?: {
+    options?: {
+      names: string[];
+      items: Record<string, { color: string }>;
+    };
+  };
+}
+
+interface ControlledSnapshot {
+  dataCount: number;
+  data: {
+    id: string;
+    icon?: { type: string; src: string };
+    properties: Record<string, { value: unknown }>;
+  }[];
+  lastDataAction: {
+    type: string;
+    payload: Record<string, unknown>;
+  } | null;
+  lastPropertiesAction: {
+    type: string;
+    payload: Record<string, unknown>;
+  } | null;
+  properties: ControlledPropertySnapshot[];
+  lastViewAction: {
+    type: string;
+    payload: Record<string, unknown>;
+  } | null;
+  view: { layout: string; openedRowId: string | null; rowView: string };
+}
+
 export class TableViewObject {
   constructor(readonly page: Page) {}
 
   static async open(page: Page, mode: TableMode) {
     const table = new TableViewObject(page);
-    await page.goto(`/table-view/${mode}`);
+    await page.goto(`/table-view/${mode}`, { waitUntil: "networkidle" });
     await table.table().waitFor({ state: "visible" });
     return table;
   }
@@ -60,7 +95,7 @@ export class TableViewObject {
   }
 
   sortButton() {
-    return this.button("Sort");
+    return this.page.getByRole("button", { name: "Sort", exact: true });
   }
 
   header(name: string) {
@@ -101,8 +136,10 @@ export class TableViewObject {
     return this.page.getByTestId("controlled-state");
   }
 
-  async controlledSnapshot() {
-    return JSON.parse((await this.controlledState().textContent()) ?? "{}");
+  async controlledSnapshot(): Promise<ControlledSnapshot> {
+    return JSON.parse(
+      (await this.controlledState().textContent()) ?? "{}",
+    ) as ControlledSnapshot;
   }
 
   calculation(propertyName: string) {
@@ -170,9 +207,7 @@ export class TableViewObject {
 
   async openRowActionsFor(row: Locator) {
     await row.hover();
-    await row
-      .getByRole("button", { name: "Row actions", exact: true })
-      .click();
+    await row.getByRole("button", { name: "Row actions", exact: true }).click();
     return RowActionsObject.open(this.page);
   }
 

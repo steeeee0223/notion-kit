@@ -25,10 +25,20 @@ test("GroupActions_AddAndAggregation_ApplyOnlyToSelectedGroup", async ({
     '"groupId":"status:Active"',
   );
   const snapshot = await table.controlledSnapshot();
+  expect(snapshot.lastDataAction).not.toBeNull();
+  if (!snapshot.lastDataAction) {
+    throw new Error("Row creation action is missing");
+  }
   const createdId = snapshot.lastDataAction.payload.rowId as string;
   const created = snapshot.data.find(
     (row: { id: string }) => row.id === createdId,
   );
+  expect(created).toBeDefined();
+  if (!created) throw new Error("Created row is missing");
+  expect(created.properties.status).toBeDefined();
+  if (!created.properties.status) {
+    throw new Error("Created row status is missing");
+  }
   expect(created.properties.status.value).toBe("Active");
 
   let menu = await active.openOptions();
@@ -75,9 +85,7 @@ test("GroupActions_HideAndDeleteConfirmation_RespectUserDecision", async ({
   await expect(table.controlledState()).toContainText(
     '"type":"data.row.delete"',
   );
-  await expect(table.controlledState()).toContainText(
-    '"rowIds":["row-alpha"]',
-  );
+  await expect(table.controlledState()).toContainText('"rowIds":["row-alpha"]');
   snapshot = await table.controlledSnapshot();
   expect(snapshot.data).not.toEqual(
     expect.arrayContaining([expect.objectContaining({ id: "row-alpha" })]),
@@ -100,7 +108,5 @@ test("GroupActions_LockedView_HidesMutationControls", async ({ page }) => {
   await expect(
     active.getByRole("button", { name: "Group options" }),
   ).toHaveCount(0);
-  await expect(active.getByRole("button", { name: "Add row" })).toHaveCount(
-    0,
-  );
+  await expect(active.getByRole("button", { name: "Add row" })).toHaveCount(0);
 });
