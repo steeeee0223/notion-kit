@@ -1,13 +1,13 @@
 {
-  "name": "@notion-kit/table-view",
-  "version": "1.0.0",
+  "name": "@notion-kit/table-hook",
+  "version": "0.0.0",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/steeeee0223/notion-kit.git",
-    "directory": "packages/table-view"
+    "directory": "packages/table-hook"
   },
   "license": "MIT",
   "type": "module",
@@ -15,10 +15,6 @@
     ".": {
       "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
-    },
-    "./menus": {
-      "types": "./dist/menus.d.mts",
-      "default": "./dist/menus.mjs"
     }
   },
   "main": "./dist/index.mjs",
@@ -43,19 +39,14 @@
   "dependencies": {
     "@dnd-kit/react": "catalog:ui",
     "@notion-kit/cn": "workspace:*",
-    "@notion-kit/hooks": "workspace:*",
-    "@notion-kit/icons": "workspace:*",
     "@notion-kit/ui": "workspace:*",
-    "@notion-kit/utils": "workspace:*",
-    "@tanstack/react-table": "catalog:ui",
-    "react-hotkeys-hook": "catalog:ui",
+    "@tanstack/react-table": "beta",
     "uuid": "catalog:uuid"
   },
   "devDependencies": {
     "@notion-kit/config": "workspace:*",
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
-    "@notion-kit/tailwind-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "@testing-library/react": "catalog:rtl",
     "@testing-library/user-event": "catalog:rtl",
@@ -68,7 +59,6 @@
     "jsdom": "catalog:rtl",
     "prettier": "catalog:",
     "react-compiler-runtime": "catalog:react-compiler",
-    "tailwindcss": "catalog:tailwind-v4",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:test"
