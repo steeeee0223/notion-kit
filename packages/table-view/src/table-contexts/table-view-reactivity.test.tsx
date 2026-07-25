@@ -153,18 +153,14 @@ describe("TableViewReactivity", () => {
     await sort.addRule("Name");
     await tableView.clickOutside();
 
-    expect(
-      screen.getAllByRole("button", { name: "Name" }),
-    ).toHaveLength(2);
+    expect(screen.getAllByRole("button", { name: "Name" })).toHaveLength(2);
 
     const sortedMenu = await tableView.openSortMenu();
     await sortedMenu.deleteAll();
     await tableView.clickOutside();
 
     await waitFor(() => {
-      expect(
-        screen.getAllByRole("button", { name: "Name" }),
-      ).toHaveLength(1);
+      expect(screen.getAllByRole("button", { name: "Name" })).toHaveLength(1);
     });
   });
 
@@ -189,9 +185,7 @@ describe("TableViewReactivity", () => {
     await sort.addRule("Name");
     await tableView.clickOutside();
 
-    expect(
-      screen.getAllByRole("button", { name: "Name" }),
-    ).toHaveLength(2);
+    expect(screen.getAllByRole("button", { name: "Name" })).toHaveLength(2);
     expect(onProbeRender).toHaveBeenCalledOnce();
   });
 
@@ -249,6 +243,88 @@ describe("TableViewReactivity", () => {
     expect(onViewChange).not.toHaveBeenCalled();
   });
 
+  it("ViewNav_DifferentPeekMode_EmitsViewChangeAndMovesRow", async () => {
+    const onViewChange = vi.fn();
+    const tableView = renderTableView({
+      properties: [
+        {
+          ...mockProperties[0]!,
+          type: "title",
+          config: { showIcon: true },
+        },
+        ...mockProperties.slice(1),
+      ],
+      onViewChange,
+    });
+    const rowActions = await tableView.openRowActions("Task 1");
+    rowActions.choose("Open in side peek");
+    const dialog = await screen.findByRole("dialog", { name: "Task 1" });
+    onViewChange.mockClear();
+
+    fireEvent.click(
+      dialog.querySelector<HTMLElement>('[aria-haspopup="menu"]')!,
+    );
+    fireEvent.click(
+      await screen.findByRole("menuitemcheckbox", { name: "Center peek" }),
+    );
+
+    await waitFor(() => expect(onViewChange).toHaveBeenCalledOnce());
+    expect(onViewChange.mock.calls[0]?.[0].action).toMatchObject({
+      type: "view.row_display.change",
+      payload: {
+        previousRowView: "side",
+        nextRowView: "center",
+      },
+    });
+    expect(await screen.findByRole("dialog", { name: "Task 1" })).toBeVisible();
+  });
+
+  it("ViewNav_EscapeShortcut_ClosesOpenedRow", async () => {
+    const tableView = renderTableView({
+      properties: [
+        {
+          ...mockProperties[0]!,
+          type: "title",
+          config: { showIcon: true },
+        },
+        ...mockProperties.slice(1),
+      ],
+    });
+    const rowActions = await tableView.openRowActions("Task 1");
+    rowActions.choose("Open in side peek");
+    expect(await screen.findByRole("dialog", { name: "Task 1" })).toBeVisible();
+
+    fireEvent.keyDown(document, { key: "Escape" });
+
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("dialog", { name: "Task 1" }),
+      ).not.toBeInTheDocument(),
+    );
+  });
+
+  it("ViewNav_OpenFullPageButton_OpensCurrentRowFullPage", async () => {
+    const tableView = renderTableView({
+      properties: [
+        {
+          ...mockProperties[0]!,
+          type: "title",
+          config: { showIcon: true },
+        },
+        ...mockProperties.slice(1),
+      ],
+    });
+    const rowActions = await tableView.openRowActions("Task 1");
+    rowActions.choose("Open in side peek");
+    expect(await screen.findByRole("dialog", { name: "Task 1" })).toBeVisible();
+
+    fireEvent.click(screen.getByRole("button", { name: "Open in full page" }));
+
+    await waitFor(() =>
+      expect(document.querySelector("section#row1")).toBeInTheDocument(),
+    );
+  });
+
   it("TableViewReactivity_DataChange_RendersAddedRow", async () => {
     const tableView = renderTableView();
     const initialRowCount = tableView.rows().length;
@@ -262,10 +338,7 @@ describe("TableViewReactivity", () => {
 
   it("TableViewReactivity_UncontrolledDataChange_RendersUpdatedCell", async () => {
     render(
-      <TableView
-        defaultData={mockData}
-        defaultProperties={mockProperties}
-      >
+      <TableView defaultData={mockData} defaultProperties={mockProperties}>
         <DataUpdateControls />
       </TableView>,
     );

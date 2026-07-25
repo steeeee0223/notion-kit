@@ -3,6 +3,7 @@ import { Icon } from "@notion-kit/icons";
 import type { HeaderInstance, TableInstance } from "@notion-kit/table-hook";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
@@ -63,15 +64,15 @@ export function TableHeaderCell({ header, table }: TableHeaderCellProps) {
           <DropdownMenuTrigger
             disabled={locked}
             render={
-              <Sortable.Handle
+              <Button
+                type="button"
+                variant="cell"
                 aria-label={info.name}
                 id="notion-table-view-header-cell"
-                variant="cell"
                 className={cn(
-                  "h-full overflow-hidden px-2 text-sm",
+                  "flex h-full min-w-0 flex-1 items-center gap-1 overflow-hidden px-2 text-sm",
                   isResizing && "bg-transparent",
                 )}
-                style={{ width: header.column.getSize() }}
               >
                 {info.icon ? (
                   <IconBlock
@@ -83,7 +84,7 @@ export function TableHeaderCell({ header, table }: TableHeaderCellProps) {
                 )}
                 <div className="truncate">{info.name}</div>
                 {info.description && <Icon.Info className="size-3 fill-icon" />}
-              </Sortable.Handle>
+              </Button>
             }
           />
         </TooltipPreset>
@@ -91,10 +92,16 @@ export function TableHeaderCell({ header, table }: TableHeaderCellProps) {
           <PropMenu view="table" propId={header.column.id} />
         </DropdownMenuContent>
       </DropdownMenu>
+      <Sortable.Handle
+        aria-label={`Move ${info.name}`}
+        className="h-full w-4 shrink-0 px-0"
+      />
       {/* Resize handle */}
       <div className="absolute right-0 z-10 w-0 grow-0">
         <div
-          role="presentation"
+          role="separator"
+          aria-label={`Resize ${info.name}`}
+          aria-orientation="vertical"
           tabIndex={-1}
           className={cn(
             "-mt-px ml-[-3px] h-[34px] w-[5px] animate-bg-out cursor-col-resize bg-transparent hover:bg-blue/80",

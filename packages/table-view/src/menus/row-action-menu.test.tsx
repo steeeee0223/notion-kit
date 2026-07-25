@@ -77,6 +77,15 @@ describe("RowActionMenu", () => {
     await menu.waitForRowCount("Task 1", 2);
   });
 
+  it("RowActionMenu_DuplicateShortcutWhileSearching_DuplicatesRow", async () => {
+    const menu = await openRowActionMenu();
+
+    menu.searchInput().focus();
+    await menu.press("{Meta>}d{/Meta}");
+
+    await menu.waitForRowCount("Task 1", 2);
+  });
+
   it("RowActionMenu_Delete_DeletesRow", async () => {
     const menu = await openRowActionMenu();
 

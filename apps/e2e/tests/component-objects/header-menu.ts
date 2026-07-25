@@ -9,8 +9,7 @@ export class HeaderMenuObject extends MenuSurfaceObject {
 
   static open(page: Page) {
     const groupItem = page.getByRole("menuitem", {
-      name: "Group",
-      exact: true,
+      name: /^(Group|Ungroup)$/,
     });
     return new HeaderMenuObject(
       page,
@@ -31,8 +30,14 @@ export class HeaderMenuObject extends MenuSurfaceObject {
   }
 
   async chooseSubmenu(trigger: AccessibleName, option: AccessibleName) {
-    await this.item(trigger).hover();
-    await this.page.getByRole("menuitem", { name: option }).last().click();
+    await this.item(trigger).dispatchEvent("click");
+    const optionItem = this.page
+      .getByRole("menuitem", { name: option })
+      .last();
+    await optionItem.waitFor({ state: "visible" });
+    await optionItem.dispatchEvent("click");
+    await this.page.mouse.click(0, 0);
+    await this.root.waitFor({ state: "hidden" });
   }
 
   async sort(direction: "ascending" | "descending") {
@@ -89,7 +94,17 @@ export class HeaderMenuObject extends MenuSurfaceObject {
   }
 
   async changeType(typeName: AccessibleName) {
-    await this.chooseSubmenu("Change type", typeName);
+    await this.item("Change type").hover();
+    const option = this.page
+      .getByRole("option", {
+        name: typeName,
+        exact: typeof typeName === "string",
+      })
+      .last();
+    await option.waitFor({ state: "visible" });
+    await option.dispatchEvent("click");
+    await this.root.waitFor({ state: "hidden" });
+    return MenuSurfaceObject.withHeading(this.page, "Edit property");
   }
 
   async openPluginConfig(name: AccessibleName = "Edit property") {

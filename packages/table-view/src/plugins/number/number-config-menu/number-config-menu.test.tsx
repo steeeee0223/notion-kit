@@ -1,3 +1,4 @@
+import { fireEvent, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { NumberConfigMenuObject } from "@/__tests__/component-objects/number-config-menu";
@@ -23,6 +24,46 @@ describe("NumberConfigMenu", () => {
     await menu.openSubmenu(/Edit property/i);
     expect(menu.item(/Number format/i)).toHaveTextContent("Number");
     expect(menu.item(/Decimal places/i)).toHaveTextContent("Default");
+  });
+
+  it("NumberConfigMenu_BarSelection_UpdatesOnlyDisplayType", async () => {
+    const onChange = vi.fn();
+    const menu = await NumberConfigMenuObject.renderOpen(
+      <NumberConfigMenu config={config} onChange={onChange} propId="amount" />,
+    );
+    await menu.openSubmenu(/Edit property/i);
+
+    fireEvent.click(screen.getByRole("button", { name: /Bar$/ }));
+
+    const updater = onChange.mock.calls[0]?.[0] as (
+      value: NumberConfig,
+    ) => NumberConfig;
+    expect(updater(config)).toEqual({ ...config, showAs: "bar" });
+  });
+
+  it("NumberConfigMenu_BarOptions_MergeDivideByWithoutLosingColor", async () => {
+    const barConfig: NumberConfig = { ...config, showAs: "bar" };
+    const onChange = vi.fn();
+    const menu = await NumberConfigMenuObject.renderOpen(
+      <NumberConfigMenu
+        config={barConfig}
+        onChange={onChange}
+        propId="amount"
+      />,
+    );
+    await menu.openSubmenu(/Edit property/i);
+    const input = screen.getByRole("textbox");
+
+    fireEvent.change(input, { target: { value: "25" } });
+    fireEvent.blur(input);
+
+    const updater = onChange.mock.calls[0]?.[0] as (
+      value: NumberConfig,
+    ) => NumberConfig;
+    expect(updater(barConfig)).toEqual({
+      ...barConfig,
+      options: { ...barConfig.options, divideBy: 25 },
+    });
   });
 });
 

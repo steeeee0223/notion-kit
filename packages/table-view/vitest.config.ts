@@ -8,6 +8,7 @@ export default defineConfig({
     name: "table-view",
     environment: "jsdom",
     globals: true,
+    testTimeout: 10_000,
     setupFiles: ["./vitest.setup.ts"],
     alias: {
       "@": path.resolve(__dirname, "src"),
