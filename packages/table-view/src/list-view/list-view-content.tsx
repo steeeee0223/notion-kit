@@ -16,16 +16,64 @@ export function ListViewContent() {
     useState<DragEndEvent | null>(null);
   const { table } = useTableViewCtx();
 
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        locked: state.tableGlobal.locked,
+        sorting: state.sorting,
+        grouping: state.grouping,
+        groupingState: state.groupingState,
+        expanded: state.expanded,
+        columnOrder: state.columnOrder,
+        columnVisibility: state.columnVisibility,
+        columnsInfo: state.columnsInfo,
+      })}
+    >
+      {({ locked, sorting }) => (
+        <ListViewContentInner
+          locked={locked ?? false}
+          sorting={sorting}
+          dialogOpen={dialogOpen}
+          setDialogOpen={setDialogOpen}
+          pendingDragEndEvent={pendingDragEndEvent}
+          setPendingDragEndEvent={setPendingDragEndEvent}
+        />
+      )}
+    </table.Subscribe>
+  );
+}
+
+interface ListViewContentInnerProps {
+  locked: boolean;
+  sorting: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["sorting"];
+  dialogOpen: boolean;
+  setDialogOpen: (open: boolean) => void;
+  pendingDragEndEvent: DragEndEvent | null;
+  setPendingDragEndEvent: (event: DragEndEvent | null) => void;
+}
+
+function ListViewContentInner({
+  locked,
+  sorting,
+  dialogOpen,
+  setDialogOpen,
+  pendingDragEndEvent,
+  setPendingDragEndEvent,
+}: ListViewContentInnerProps) {
+  const { table } = useTableViewCtx();
+
   const rows = table.getRowModel().rows;
 
   const handleRowDragEnd = useCallback(
     (e: DragEndEvent) => {
-      const isSorted = table.store.state.sorting.length > 0;
+      const isSorted = sorting.length > 0;
       if (!isSorted) return table.handleRowDragEnd(e);
       setPendingDragEndEvent(e);
       setDialogOpen(true);
     },
-    [table],
+    [setDialogOpen, setPendingDragEndEvent, sorting.length, table],
   );
 
   const handleConfirmRemoveSorting = () => {
@@ -43,7 +91,7 @@ export function ListViewContent() {
         data-block-id="1fe35e0f-492c-80fd-8d7c-f7e953641770"
         className="flex flex-col py-1"
       >
-        <Sortable.Root onDragEnd={handleRowDragEnd}>
+        <Sortable.Root disabled={locked} onDragEnd={handleRowDragEnd}>
           <Sortable.List>
             {rows.map((row) =>
               row.getIsGrouped() ? (
@@ -54,15 +102,17 @@ export function ListViewContent() {
             )}
           </Sortable.List>
         </Sortable.Root>
-        <Button
-          tabIndex={0}
-          variant="cell"
-          className="h-7.5 rounded-md px-2 text-muted"
-          onClick={() => table.addRow()}
-        >
-          <Icon.Plus className="size-3.5 fill-current" />
-          New page
-        </Button>
+        {!locked && (
+          <Button
+            tabIndex={0}
+            variant="cell"
+            className="h-7.5 rounded-md px-2 text-muted"
+            onClick={() => table.addRow()}
+          >
+            <Icon.Plus className="size-3.5 fill-current" />
+            New page
+          </Button>
+        )}
       </div>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <AlertModal

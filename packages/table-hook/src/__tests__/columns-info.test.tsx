@@ -5,7 +5,7 @@
 
 import type { DragEndEvent } from "@dnd-kit/react";
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import {
   mockData,
@@ -342,6 +342,52 @@ describe("useTableView - Column Custom APIs", () => {
   });
 
   describe("handleColumnDragEnd", () => {
+    it("ColumnDrag_Canceled_DoesNotEmitPropertyMove", () => {
+      const onPropertiesChange = vi.fn();
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+        onPropertiesChange,
+      });
+
+      act(() => {
+        table.handleColumnDragEnd({
+          canceled: true,
+          operation: {
+            canceled: true,
+            source: { id: "col1" },
+            target: { id: "col2" },
+          },
+        } as DragEndEvent);
+      });
+
+      expect(onPropertiesChange).not.toHaveBeenCalled();
+      expect(table.store.state.columnOrder).toEqual(["col1", "col2"]);
+    });
+
+    it("ColumnDrag_MissingSource_DoesNotEmitPropertyMove", () => {
+      const onPropertiesChange = vi.fn();
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+        onPropertiesChange,
+      });
+
+      act(() => {
+        table.handleColumnDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: null,
+            target: { id: "col2" },
+          },
+        } as unknown as DragEndEvent);
+      });
+
+      expect(onPropertiesChange).not.toHaveBeenCalled();
+      expect(table.store.state.columnOrder).toEqual(["col1", "col2"]);
+    });
+
     it("should reorder columns on drag end", () => {
       const { table } = renderTableHook({
         data: mockData,

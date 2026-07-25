@@ -36,7 +36,26 @@ import { useTableViewCtx } from "@/table-contexts";
 export function SortMenu() {
   const { table } = useTableViewCtx();
 
-  const sorting = table.store.state.sorting;
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        sorting: state.sorting,
+        columnsInfo: state.columnsInfo,
+      })}
+    >
+      {({ sorting }) => <SortMenuContent sorting={sorting} />}
+    </table.Subscribe>
+  );
+}
+
+function SortMenuContent({
+  sorting,
+}: {
+  sorting: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["sorting"];
+}) {
+  const { table } = useTableViewCtx();
   const [addingSort, setAddingSort] = useState(false);
 
   const reorderRules = (e: DragEndEvent) => {
@@ -202,9 +221,42 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
 
 function PropSelectMenu({ onSelect }: { onSelect: () => void }) {
   const { table } = useTableViewCtx();
-  const columns = Object.values(table.store.state.columnsInfo);
+
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        columnsInfo: state.columnsInfo,
+        sorting: state.sorting,
+      })}
+    >
+      {({ columnsInfo, sorting }) => (
+        <PropSelectMenuContent
+          columnsInfo={columnsInfo}
+          sorting={sorting}
+          onSelect={onSelect}
+        />
+      )}
+    </table.Subscribe>
+  );
+}
+
+function PropSelectMenuContent({
+  columnsInfo,
+  sorting,
+  onSelect,
+}: {
+  columnsInfo: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["columnsInfo"];
+  sorting: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["sorting"];
+  onSelect: () => void;
+}) {
+  const { table } = useTableViewCtx();
+  const columns = Object.values(columnsInfo);
   /** Select */
-  const sortedProps = new Set(table.store.state.sorting.map((s) => s.id));
+  const sortedProps = new Set(sorting.map((s) => s.id));
   const selectProp = (id: string) => {
     table.setSorting((prev) => [...prev, { id, desc: false }]);
     onSelect();

@@ -1,4 +1,4 @@
-import { createContext, use, useMemo } from "react";
+import { createContext, use, useMemo, useRef } from "react";
 
 import {
   arrayToEntity,
@@ -46,9 +46,20 @@ export function TableViewWrapper<
     defaultColumn: defaultColumn as TableProps<TPlugins>["defaultColumn"],
     ...props,
   });
+  const latestCtxRef = useRef(ctx);
+  latestCtxRef.current = ctx;
+  const contextValue = useMemo(
+    () =>
+      ({
+        get table() {
+          return latestCtxRef.current.table;
+        },
+      }) as TableViewCtx<TPlugins>,
+    [],
+  );
 
   return (
-    <TableViewContext value={ctx}>
+    <TableViewContext value={contextValue}>
       <TooltipProvider>{children}</TooltipProvider>
     </TableViewContext>
   );
@@ -74,14 +85,19 @@ export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
 
 function Content() {
   const { table } = useTableViewCtx();
-  const { layout } = table.getTableGlobalState();
 
-  switch (layout) {
-    case "list":
-      return <ListViewContent />;
-    case "board":
-      return <BoardViewContent />;
-    default:
-      return <TableViewContent />;
-  }
+  return (
+    <table.Subscribe selector={(state) => state.tableGlobal.layout}>
+      {(layout) => {
+        switch (layout) {
+          case "list":
+            return <ListViewContent />;
+          case "board":
+            return <BoardViewContent />;
+          default:
+            return <TableViewContent />;
+        }
+      }}
+    </table.Subscribe>
+  );
 }

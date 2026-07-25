@@ -22,6 +22,24 @@ import { TypesMenu } from "./types-menu";
 
 export function TableViewMenu() {
   const { table } = useTableViewCtx();
+
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        menu: state.menu,
+        tableGlobal: state.tableGlobal,
+        grouping: state.grouping,
+        groupingState: state.groupingState,
+        columnsInfo: state.columnsInfo,
+      })}
+    >
+      {() => <TableViewMenuContent />}
+    </table.Subscribe>
+  );
+}
+
+function TableViewMenuContent() {
+  const { table } = useTableViewCtx();
   const menu = table.getTableMenuState();
 
   switch (menu.page) {

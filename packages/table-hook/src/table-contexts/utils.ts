@@ -56,13 +56,16 @@ export function toPropertyEntity<TPlugins extends CellPlugin[]>(
     (acc, property) => {
       const plugin = plugins[property.type];
       if (!plugin) {
-        console.warn(`[TableView] Plugin not found for type: ${property.type}`);
-        return acc;
+        throw new Error(
+          `[TableView] Plugin not found for property "${property.id}" type: ${property.type}`,
+        );
       }
+      const { config, ...propertyWithoutConfig } = property;
       acc.ids.push(property.id);
       acc.items[property.id] = {
+        ...propertyWithoutConfig,
         config: plugin.default.config,
-        ...property,
+        ...(config === undefined ? {} : { config }),
       };
       return acc;
     },

@@ -47,5 +47,5 @@ const mockData: Row[] = [
 ];
 
 export default function Demo() {
-  return <TableView properties={mockProps} data={mockData} />;
+  return <TableView defaultProperties={mockProps} defaultData={mockData} />;
 }

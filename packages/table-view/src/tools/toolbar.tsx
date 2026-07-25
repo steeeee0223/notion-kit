@@ -18,6 +18,16 @@ interface ToolbarProps {
 
 export function Toolbar({ className }: ToolbarProps) {
   const { table } = useTableViewCtx();
+
+  return (
+    <table.Subscribe selector={(state) => state.menu}>
+      {() => <ToolbarContent className={className} />}
+    </table.Subscribe>
+  );
+}
+
+function ToolbarContent({ className }: ToolbarProps) {
+  const { table } = useTableViewCtx();
   const tableMenu = table.getTableMenuState();
 
   return (

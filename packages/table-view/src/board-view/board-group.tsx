@@ -10,12 +10,12 @@ import { BoardCard } from "./board-card";
 
 interface BoardGroupProps {
   index: number;
+  locked: boolean;
   row: RowInstance;
 }
 
-export function BoardGroup({ index, row }: BoardGroupProps) {
+export function BoardGroup({ index, locked, row }: BoardGroupProps) {
   const { table } = useTableViewCtx();
-  const { locked } = table.getTableGlobalState();
 
   const addRow = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -48,14 +48,16 @@ export function BoardGroup({ index, row }: BoardGroupProps) {
           <BoardCard key={subRow.id} row={subRow} groupId={row.id} />
         ))}
       </Kanban.ColumnContent>
-      <Button
-        size="sm"
-        className="w-full rounded-lg leading-tight text-secondary"
-        onClick={addRow}
-      >
-        <Icon.Plus className="fill-current" />
-        New page
-      </Button>
+      {!locked && (
+        <Button
+          size="sm"
+          className="w-full rounded-lg leading-tight text-secondary"
+          onClick={addRow}
+        >
+          <Icon.Plus className="fill-current" />
+          New page
+        </Button>
+      )}
     </Kanban.Column>
   );
 }

@@ -11,7 +11,32 @@ import { ViewProps } from "./view-props";
 
 export function FullView({ children }: React.PropsWithChildren) {
   const { table } = useTableViewCtx();
-  const { rowView, openedRowId } = table.getTableGlobalState();
+
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        tableGlobal: state.tableGlobal,
+        columnOrder: state.columnOrder,
+        columnsInfo: state.columnsInfo,
+      })}
+    >
+      {({ tableGlobal }) => (
+        <FullViewContent tableGlobal={tableGlobal}>{children}</FullViewContent>
+      )}
+    </table.Subscribe>
+  );
+}
+
+function FullViewContent({
+  children,
+  tableGlobal,
+}: React.PropsWithChildren<{
+  tableGlobal: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["tableGlobal"];
+}>) {
+  const { table } = useTableViewCtx();
+  const { rowView, openedRowId } = tableGlobal;
 
   if (!openedRowId || rowView !== "full") return null;
 

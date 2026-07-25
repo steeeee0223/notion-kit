@@ -5,7 +5,12 @@ import userEvent, {
   PointerEventsCheckLevel,
 } from "@testing-library/user-event";
 
-import type { ColumnDefs, Row } from "@notion-kit/table-hook";
+import type {
+  ColumnDefs,
+  DataResourceAction,
+  ResourceChange,
+  Row,
+} from "@notion-kit/table-hook";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -94,6 +99,7 @@ function createMockData(options?: {
 }
 
 interface RenderSelectTableOptions {
+  onDataChange?: (change: ResourceChange<Row[], DataResourceAction>) => void;
   preselected?: "single" | "multi" | "both";
 }
 
@@ -110,12 +116,11 @@ export function renderSelectTable(options?: RenderSelectTableOptions) {
       <TableView
         properties={properties}
         data={data}
-        onDataChange={(updater) =>
-          setData((prev) => functionalUpdate(updater, prev))
-        }
-        onPropertiesChange={(updater) =>
-          setProperties((prev) => functionalUpdate(updater, prev))
-        }
+        onDataChange={(change) => {
+          setData(change.next);
+          options?.onDataChange?.(change);
+        }}
+        onPropertiesChange={({ next }) => setProperties(next)}
       />
     );
   }
@@ -141,12 +146,11 @@ export function renderSelectConfigMenuTable(
       <TableView
         properties={properties}
         data={data}
-        onDataChange={(updater) =>
-          setData((prev) => functionalUpdate(updater, prev))
-        }
-        onPropertiesChange={(updater) =>
-          setProperties((prev) => functionalUpdate(updater, prev))
-        }
+        onDataChange={(change) => {
+          setData(change.next);
+          options?.onDataChange?.(change);
+        }}
+        onPropertiesChange={({ next }) => setProperties(next)}
       >
         <DropdownMenu defaultOpen modal={false}>
           <DropdownMenuTrigger

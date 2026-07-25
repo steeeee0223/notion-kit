@@ -1,6 +1,5 @@
 import type React from "react";
 import { useState } from "react";
-import { functionalUpdate } from "@tanstack/react-table";
 import { render } from "@testing-library/react";
 import userEvent, {
   PointerEventsCheckLevel,
@@ -19,29 +18,32 @@ export function renderTableView(props: Partial<TableViewProps> = {}) {
   });
 
   function StatefulTableView() {
-    const [data, setData] = useState(props.data ?? mockData);
+    const {
+      data: propData,
+      defaultData,
+      properties: propProperties,
+      defaultProperties,
+      onDataChange,
+      onPropertiesChange,
+      ...rest
+    } = props;
+    const [data, setData] = useState(propData ?? defaultData ?? mockData);
     const [properties, setProperties] = useState(
-      props.properties ?? mockProperties,
+      propProperties ?? defaultProperties ?? mockProperties,
     );
 
     return (
       <TableView
-        {...props}
+        {...rest}
         data={data}
         properties={properties}
-        onDataChange={(updater) => {
-          setData((prev) => {
-            const next = functionalUpdate(updater, prev);
-            props.onDataChange?.(next);
-            return next;
-          });
+        onDataChange={(change) => {
+          setData(change.next);
+          onDataChange?.(change);
         }}
-        onPropertiesChange={(updater) => {
-          setProperties((prev) => {
-            const next = functionalUpdate(updater, prev);
-            props.onPropertiesChange?.(next);
-            return next;
-          });
+        onPropertiesChange={(change) => {
+          setProperties(change.next);
+          onPropertiesChange?.(change);
         }}
       />
     );

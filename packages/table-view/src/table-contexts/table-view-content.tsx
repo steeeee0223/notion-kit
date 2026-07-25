@@ -11,7 +11,38 @@ import { useTableViewCtx } from "./table-view-provider";
 
 export function TableViewContent() {
   const { table } = useTableViewCtx();
-  const { sorting, columnResizing, columnSizing } = table.store.state;
+
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        sorting: state.sorting,
+        columnResizing: state.columnResizing,
+        columnSizing: state.columnSizing,
+      })}
+    >
+      {(state) => <TableViewContentInner {...state} />}
+    </table.Subscribe>
+  );
+}
+
+interface TableViewContentInnerProps {
+  sorting: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["sorting"];
+  columnResizing: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["columnResizing"];
+  columnSizing: ReturnType<
+    typeof useTableViewCtx
+  >["table"]["store"]["state"]["columnSizing"];
+}
+
+function TableViewContentInner({
+  sorting,
+  columnResizing,
+  columnSizing,
+}: TableViewContentInnerProps) {
+  const { table } = useTableViewCtx();
   const isSorted = sorting.length > 0;
 
   /**

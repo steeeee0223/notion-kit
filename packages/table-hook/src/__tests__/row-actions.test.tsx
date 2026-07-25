@@ -5,10 +5,14 @@
 
 import type { DragEndEvent, DragOverEvent } from "@dnd-kit/react";
 import { act, waitFor } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { renderTableHook } from "@/__tests__/mock";
 import type { ColumnInfo, Row } from "@/lib/types";
+import type {
+  DataResourceAction,
+  ResourceChange,
+} from "@/table-contexts/actions";
 
 const mockProperties: ColumnInfo[] = [
   { id: "col1", name: "Name", type: "text", width: "200", config: undefined },
@@ -471,9 +475,12 @@ describe("useTableView - Row Custom APIs", () => {
     });
 
     it("rolls back kanban row preview when drag is canceled", () => {
+      const onDataChange =
+        vi.fn<(change: ResourceChange<Row[], DataResourceAction>) => void>();
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
+        onDataChange,
       });
 
       act(() => {
@@ -515,6 +522,17 @@ describe("useTableView - Row Custom APIs", () => {
 
       expect(table.getRow("row1").original.properties.col2?.value).toBe(25);
       expect(table.getRow("row2").original.properties.col2?.value).toBe(30);
+      const change = onDataChange.mock.lastCall?.[0];
+      expect(change?.action.type).toBe("data.row.move");
+      const action = change?.action as Extract<
+        DataResourceAction,
+        { type: "data.row.move" }
+      >;
+      expect(action.payload.rowId).toBe("row1");
+      expect(typeof action.payload.previousPosition).toBe("number");
+      expect(typeof action.payload.nextPosition).toBe("number");
+      expect(action.payload.previousPosition).not.toBe(-1);
+      expect(action.payload.nextPosition).not.toBe(-1);
     });
 
     it("moves a kanban row into an emptied column-content target", () => {
