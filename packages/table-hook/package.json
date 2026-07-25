@@ -1,6 +1,6 @@
 {
   "name": "@notion-kit/table-hook",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "bugs": {
     "url": "https://github.com/steeeee0223/notion-kit/issues"
   },
@@ -40,7 +40,8 @@
     "@dnd-kit/react": "catalog:ui",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/ui": "workspace:*",
-    "@tanstack/react-table": "beta",
+    "@tanstack/react-table": "v9.0.0-beta.38",
+    "@tanstack/table-core": "9.0.0-beta.38",
     "uuid": "catalog:uuid"
   },
   "devDependencies": {

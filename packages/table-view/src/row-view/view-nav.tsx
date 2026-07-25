@@ -1,8 +1,7 @@
-"use client";
-
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { Icon } from "@notion-kit/icons";
+import { ROW_VIEW_OPTIONS, RowViewType } from "@notion-kit/table-hook";
 import {
   Button,
   DropdownMenu,
@@ -17,7 +16,6 @@ import {
 import { KEYBOARD } from "@notion-kit/utils";
 
 import { RowViewIcon } from "@/common";
-import { ROW_VIEW_OPTIONS, RowViewType } from "@/features";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface ViewNavProps {

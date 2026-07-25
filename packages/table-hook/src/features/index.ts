@@ -1,5 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { RowData } from "@tanstack/react-table";
+import {
+  columnGroupingFeature,
+  columnOrderingFeature,
+  columnPinningFeature,
+  columnResizingFeature,
+  columnSizingFeature,
+  columnVisibilityFeature,
+  createExpandedRowModel,
+  createSortedRowModel,
+  rowExpandingFeature,
+  rowSortingFeature,
+  tableFeatures,
+  type RowData,
+} from "@tanstack/react-table";
+
+import type { ComparableValue } from "@/plugins";
 
 import {
   ColumnsInfoFeature,
@@ -7,50 +22,61 @@ import {
   type ColumnsInfoOptions,
   type ColumnsInfoTableApi,
   type ColumnsInfoTableState,
-} from "@/features/columns-info";
+} from "./columns-info";
 import {
   CountingFeature,
   type CountingOptions,
   type CountingTableApi,
   type CountingTableState,
-} from "@/features/counting";
+} from "./counting";
+import { getExtendedGroupedRowModel } from "./extended-grouped-row-model";
 import {
   FreezingFeature,
   type FreezingOptions,
   type FreezingTableApi,
   type FreezingTableState,
-} from "@/features/freezing";
+} from "./freezing";
 import {
   ExtendedGroupingFeature,
   type ExtendedGroupingOptions,
   type ExtendedGroupingRowApi,
   type ExtendedGroupingTableApi,
   type ExtendedGroupingTableState,
-} from "@/features/grouping";
+} from "./grouping";
 import {
   TableMenuFeature,
   type TableMenuOptions,
   type TableMenuTableApi,
   type TableMenuTableState,
-} from "@/features/menu";
+} from "./menu";
 import {
   RowActionsFeature,
   type RowActionsColumnApi,
   type RowActionsOptions,
   type RowActionsRowApi,
   type RowActionsTableApi,
-} from "@/features/row-actions";
-import type { ComparableValue } from "@/plugins";
+} from "./row-actions";
 
-declare module "@tanstack/react-table" {
+declare module "@tanstack/table-core" {
   // merge our new feature's state with the existing table state
   interface TableState_FeatureMap {
     columnsInfoFeature: ColumnsInfoTableState;
     countingFeature: CountingTableState;
     freezingFeature: FreezingTableState;
     tableMenuFeature: TableMenuTableState;
-    rowActionsFeature: {};
+    rowActionsFeature: Record<never, never>;
     extendedGroupingFeature: ExtendedGroupingTableState;
+  }
+
+  interface TableState_All
+    extends Partial<
+      ColumnsInfoTableState &
+        CountingTableState &
+        FreezingTableState &
+        TableMenuTableState &
+        ExtendedGroupingTableState
+    > {
+    __tableHookStateBrand?: never;
   }
 
   // merge our new feature's options with the existing table options
@@ -103,12 +129,44 @@ export * from "@/features/grouping";
 export * from "@/features/menu";
 export * from "@/features/row-actions";
 export * from "@/features/constants";
+export * from "@/features/types";
 
-export const DEFAULT_FEATURES = {
+export interface TableFeatures {
+  columnGroupingFeature: typeof columnGroupingFeature;
+  columnOrderingFeature: typeof columnOrderingFeature;
+  columnPinningFeature: typeof columnPinningFeature;
+  columnResizingFeature: typeof columnResizingFeature;
+  columnSizingFeature: typeof columnSizingFeature;
+  columnVisibilityFeature: typeof columnVisibilityFeature;
+  rowExpandingFeature: typeof rowExpandingFeature;
+  rowSortingFeature: typeof rowSortingFeature;
+  sortedRowModel: ReturnType<typeof createSortedRowModel>;
+  groupedRowModel: ReturnType<typeof getExtendedGroupedRowModel>;
+  expandedRowModel: ReturnType<typeof createExpandedRowModel>;
+  columnsInfoFeature: typeof ColumnsInfoFeature;
+  countingFeature: typeof CountingFeature;
+  freezingFeature: typeof FreezingFeature;
+  tableMenuFeature: typeof TableMenuFeature;
+  rowActionsFeature: typeof RowActionsFeature;
+  extendedGroupingFeature: typeof ExtendedGroupingFeature;
+}
+
+export const DEFAULT_FEATURES = tableFeatures({
+  columnGroupingFeature,
+  columnOrderingFeature,
+  columnPinningFeature,
+  columnResizingFeature,
+  columnSizingFeature,
+  columnVisibilityFeature,
+  rowExpandingFeature,
+  rowSortingFeature,
+  sortedRowModel: createSortedRowModel(),
+  groupedRowModel: getExtendedGroupedRowModel(),
+  expandedRowModel: createExpandedRowModel(),
   columnsInfoFeature: ColumnsInfoFeature,
   countingFeature: CountingFeature,
   freezingFeature: FreezingFeature,
   tableMenuFeature: TableMenuFeature,
   rowActionsFeature: RowActionsFeature,
   extendedGroupingFeature: ExtendedGroupingFeature,
-};
+} satisfies TableFeatures);

@@ -1,4 +1,5 @@
-import { DefaultIcon } from "../../common";
+import { DefaultIcon } from "@/common";
+
 import { compareStrings, createCompareFn } from "../utils";
 import { TitleCell } from "./title-cell";
 import { TitleConfig } from "./title-config";

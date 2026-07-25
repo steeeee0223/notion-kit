@@ -1,19 +1,13 @@
-// @ts-nocheck
 import type { DragEndEvent } from "@dnd-kit/react";
-import type {
-  Column,
-  OnChangeFn,
-  Table,
-  TableFeature,
-  Updater,
-} from "@tanstack/react-table";
+import type { OnChangeFn, TableFeature, Updater } from "@tanstack/react-table";
 import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
+import type { _TableInstance } from "@/features/types";
 import { createIdsUpdater } from "@/features/utils";
-import type { ColumnInfo, PluginType, Row } from "@/lib/types";
+import type { ColumnInfo, PluginType } from "@/lib/types";
 import {
   arrayToEntity,
   getDefaultCell,
@@ -90,9 +84,11 @@ export const ColumnsInfoFeature: TableFeature = {
     };
   },
 
-  constructTableAPIs: (table: Table<Row>) => {
+  constructTableAPIs: (table) => {
+    const instance = table as unknown as _TableInstance;
+
     const getColumnVisibilityFromInfo = () => {
-      const { columnOrder, columnsInfo } = table.store.state;
+      const { columnOrder, columnsInfo } = instance.store.state;
       return columnOrder.reduce<Record<string, boolean>>((acc, colId) => {
         const info = columnsInfo[colId];
         acc[colId] = !info?.hidden && !info?.isDeleted;
@@ -100,14 +96,14 @@ export const ColumnsInfoFeature: TableFeature = {
       }, {});
     };
 
-    table.setColumnVisibility = (updater) => {
+    instance.setColumnVisibility = (updater) => {
       const nextVisibility = functionalUpdate(
         updater,
         getColumnVisibilityFromInfo(),
       );
 
       queueMicrotask(() => {
-        table.options.onColumnInfoChange?.((prev) => ({
+        instance.options.onColumnInfoChange?.((prev) => ({
           ...prev,
           items: Object.fromEntries(
             Object.entries(prev.items).map(([colId, info]) => [
@@ -123,23 +119,23 @@ export const ColumnsInfoFeature: TableFeature = {
     };
 
     /** Column Getters */
-    table.getColumnInfo = (colId) => {
-      const info = table.store.state.columnsInfo[colId];
+    instance.getColumnInfo = (colId) => {
+      const info = instance.store.state.columnsInfo[colId];
       if (!info) {
         throw new Error(`[TableView] Column info not found: "${colId}"`);
       }
       return info;
     };
-    table.getColumnPlugin = (colId) => {
-      const type = table.getColumnInfo(colId).type;
-      const plugin = table.store.state.cellPlugins[type];
+    instance.getColumnPlugin = (colId) => {
+      const type = instance.getColumnInfo(colId).type;
+      const plugin = instance.store.state.cellPlugins[type];
       if (!plugin) {
         throw new Error(`[TableView] Plugin not found: ${type}`);
       }
       return plugin;
     };
-    table.getDeletedColumns = () => {
-      const { columnOrder, columnsInfo } = table.store.state;
+    instance.getDeletedColumns = () => {
+      const { columnOrder, columnsInfo } = instance.store.state;
       return columnOrder.reduce<ColumnInfo[]>((acc, colId) => {
         const info = columnsInfo[colId];
         if (!info?.isDeleted) return acc;
@@ -147,26 +143,26 @@ export const ColumnsInfoFeature: TableFeature = {
         return acc;
       }, []);
     };
-    table.countVisibleColumns = () => {
-      const { columnsInfo } = table.store.state;
+    instance.countVisibleColumns = () => {
+      const { columnsInfo } = instance.store.state;
       return Object.values(columnsInfo).reduce((acc, info) => {
         if (!info.hidden && !info.isDeleted) acc++;
         return acc;
       }, 0);
     };
     /** Overrides */
-    table.toggleAllColumnsVisible = () => {
-      const canHide = table.countVisibleColumns() > 1;
-      table.store.state.columnOrder.forEach((colId) => {
-        table._setColumnInfo(colId, (prev) => {
+    instance.toggleAllColumnsVisible = () => {
+      const canHide = instance.countVisibleColumns() > 1;
+      instance.store.state.columnOrder.forEach((colId) => {
+        instance._setColumnInfo(colId, (prev) => {
           if (prev.isDeleted) return prev;
           return { ...prev, hidden: prev.type === "title" ? false : canHide };
         });
       });
     };
     /** Column Setters */
-    table._setColumnInfo = (colId, updater) => {
-      table.options.onColumnInfoChange?.((prev) => ({
+    instance._setColumnInfo = (colId, updater) => {
+      instance.options.onColumnInfoChange?.((prev) => ({
         ...prev,
         items: {
           ...prev.items,
@@ -174,27 +170,27 @@ export const ColumnsInfoFeature: TableFeature = {
         },
       }));
     };
-    table.setColumnInfo = (colId, info) => {
-      table._setColumnInfo(colId, (prev) => ({ ...prev, ...info }));
+    instance.setColumnInfo = (colId, info) => {
+      instance._setColumnInfo(colId, (prev) => ({ ...prev, ...info }));
     };
-    table.handleColumnDragEnd = (e) => {
-      table.options.onColumnInfoChange?.((prev) => {
+    instance.handleColumnDragEnd = (e) => {
+      instance.options.onColumnInfoChange?.((prev) => {
         return {
           ...prev,
           ids: getSortableItemsAfterDrag(prev.ids, e),
         };
       });
     };
-    table._addColumnInfo = (info, idsUpdater) => {
-      table.options.onColumnInfoChange?.((prev) => {
+    instance._addColumnInfo = (info, idsUpdater) => {
+      instance.options.onColumnInfoChange?.((prev) => {
         return {
           ids: functionalUpdate(idsUpdater, prev.ids),
           items: { ...prev.items, [info.id]: info },
         };
       });
     };
-    table.addColumnInfo = (payload) => {
-      const { cellPlugins, columnsInfo } = table.store.state;
+    instance.addColumnInfo = (payload) => {
+      const { cellPlugins, columnsInfo } = instance.store.state;
       const { id, name, type, at } = payload;
       if (columnsInfo[id]) {
         throw new Error(`[TableView] Column already exists: "${id}"`);
@@ -204,12 +200,12 @@ export const ColumnsInfoFeature: TableFeature = {
         throw new Error(`[TableView] Plugin not found: ${type}`);
       }
       const idsUpdater = createIdsUpdater(id, at);
-      table._addColumnInfo(
+      instance._addColumnInfo(
         { id, name, type, config: plugin.default.config },
         idsUpdater,
       );
       // Update all rows
-      table.setTableData((prev) =>
+      instance.setTableData((prev) =>
         prev.map((row) => {
           return {
             ...row,
@@ -221,24 +217,24 @@ export const ColumnsInfoFeature: TableFeature = {
         }),
       );
     };
-    table.duplicateColumnInfo = (colId) => {
-      const { cellPlugins } = table.store.state;
-      const src = table.getColumnInfo(colId);
+    instance.duplicateColumnInfo = (colId) => {
+      const { cellPlugins } = instance.store.state;
+      const src = instance.getColumnInfo(colId);
       const newColId = v4();
       const idsUpdater = createIdsUpdater(newColId, {
         id: colId,
         side: "right",
       });
-      table._addColumnInfo(
+      instance._addColumnInfo(
         {
           ...src,
           id: newColId,
-          name: table.generateUniqueColumnName(src.name),
+          name: instance.generateUniqueColumnName(src.name),
         },
         idsUpdater,
       );
       // Update all rows
-      table.setTableData((prev) =>
+      instance.setTableData((prev) =>
         prev.map((row) => {
           return {
             ...row,
@@ -250,43 +246,43 @@ export const ColumnsInfoFeature: TableFeature = {
         }),
       );
     };
-    table.removeColumnInfo = (colId) => {
-      table.options.onColumnInfoChange?.((prev) => {
+    instance.removeColumnInfo = (colId) => {
+      instance.options.onColumnInfoChange?.((prev) => {
         const { [colId]: _, ...items } = prev.items;
         return { ids: prev.ids.filter((id) => id !== colId), items };
       });
       // Update all rows
-      table.setTableData((prev) =>
+      instance.setTableData((prev) =>
         prev.map((row) => {
           const { [colId]: _, ...properties } = row.properties;
           return { ...row, properties };
         }),
       );
     };
-    table.toggleColumnWrapped = (colId, updater) => {
-      table._setColumnInfo(colId, (prev) => ({
+    instance.toggleColumnWrapped = (colId, updater) => {
+      instance._setColumnInfo(colId, (prev) => ({
         ...prev,
         wrapped: functionalUpdate(updater, prev.wrapped ?? false),
       }));
     };
-    table.setColumnType = <TPlugins extends CellPlugin[]>(
+    instance.setColumnType = <TPlugins extends CellPlugin[]>(
       colId: string,
       type: PluginType<TPlugins>,
     ) => {
-      const destPlugin = table.store.state.cellPlugins[type] as
+      const destPlugin = instance.store.state.cellPlugins[type] as
         | InferPlugin<TPlugins>
         | undefined;
       if (!destPlugin) {
         throw new Error(`[TableView] Plugin not found: ${type}`);
       }
-      const data = table.getCellValues();
+      const data = instance.getCellValues();
       const config =
-        destPlugin.transferConfig?.(table.getColumnInfo(colId), data) ??
+        destPlugin.transferConfig?.(instance.getColumnInfo(colId), data) ??
         destPlugin.default.config;
-      table.setColumnInfo(colId, { type, config });
+      instance.setColumnInfo(colId, { type, config });
       // Update all cells
-      const srcPlugin = table.getColumnPlugin(colId);
-      table.setTableData((prev) =>
+      const srcPlugin = instance.getColumnPlugin(colId);
+      instance.setTableData((prev) =>
         prev.map((row) => {
           const cell = row.properties[colId];
           if (!cell) return row;
@@ -307,35 +303,45 @@ export const ColumnsInfoFeature: TableFeature = {
       );
     };
     /** Column name */
-    table.checkIsUniqueColumnName = (name) => {
-      return Object.values(table.store.state.columnsInfo).every(
+    instance.checkIsUniqueColumnName = (name) => {
+      return Object.values(instance.store.state.columnsInfo).every(
         (info) => info.name !== name,
       );
     };
-    table.generateUniqueColumnName = (initial = "") => {
+    instance.generateUniqueColumnName = (initial = "") => {
       return getUniqueName(
         initial,
-        Object.values(table.store.state.columnsInfo).map((info) => info.name),
+        Object.values(instance.store.state.columnsInfo).map(
+          (info) => info.name,
+        ),
       );
     };
   },
   assignColumnPrototype: (prototype, table) => {
-    prototype.getInfo = function () {
-      return table.getColumnInfo(this.id);
+    const instance = table as unknown as _TableInstance;
+
+    prototype.getInfo = function (this: { id: string }) {
+      return instance.getColumnInfo(this.id);
     };
-    prototype.getPlugin = function () {
-      return table.getColumnPlugin(this.id);
+    prototype.getPlugin = function (this: { id: string }) {
+      return instance.getColumnPlugin(this.id);
     };
     /** Column width */
-    prototype.getWidth = function () {
+    prototype.getWidth = function (this: { id: string }) {
       return `calc(var(--col-${this.id}-size) * 1px)`;
     };
-    prototype.handleResizeEnd = function () {
-      table.setColumnInfo(this.id, { width: `${this.getSize()}px` });
+    prototype.handleResizeEnd = function (this: {
+      id: string;
+      getSize: () => number;
+    }) {
+      instance.setColumnInfo(this.id, { width: `${this.getSize()}px` });
     };
     /** Setter */
-    prototype.updateConfig = function (updater: Updater<unknown>) {
-      table._setColumnInfo(this.id, (v) => ({
+    prototype.updateConfig = function (
+      this: { id: string },
+      updater: Updater<unknown>,
+    ) {
+      instance._setColumnInfo(this.id, (v) => ({
         ...v,
         config: functionalUpdate(updater, v.config),
       }));

@@ -1,10 +1,9 @@
-"use client";
-
 import { cn } from "@notion-kit/cn";
+import type { LayoutType } from "@notion-kit/table-hook";
+import { wrappedClassName } from "@notion-kit/table-hook";
 
-import { CellTrigger, CopyButton } from "../../../common";
-import type { LayoutType } from "../../../features";
-import { wrappedClassName } from "../../../lib/utils";
+import { CellTrigger, CopyButton } from "@/common";
+
 import type { DateConfig, DateData } from "../types";
 import { toDateString } from "../utils";
 

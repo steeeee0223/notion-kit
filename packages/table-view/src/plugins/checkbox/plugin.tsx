@@ -1,4 +1,5 @@
-import { DefaultIcon } from "../../common";
+import { DefaultIcon } from "@/common";
+
 import { compareBooleans, createCompareFn } from "../utils";
 import { CheckboxCell } from "./checkbox-cell";
 import { CheckboxGroupingValue } from "./checkbox-grouping-value";

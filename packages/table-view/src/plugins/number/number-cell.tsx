@@ -1,11 +1,11 @@
 import { cn } from "@notion-kit/cn";
+import { wrappedClassName } from "@notion-kit/table-hook";
+import type { InferCellProps } from "@notion-kit/table-hook";
 import { MeterBar, MeterRing, TooltipPreset } from "@notion-kit/ui/primitives";
 import { COLOR } from "@notion-kit/utils";
 
 import { CellTrigger, CopyButton, TextInputPopover } from "@/common";
-import { wrappedClassName } from "@/lib/utils";
 
-import type { InferCellProps } from "../types";
 import type { NumberConfig, NumberPlugin } from "./types";
 
 export function NumberCell({

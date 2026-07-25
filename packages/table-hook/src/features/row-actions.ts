@@ -1,11 +1,5 @@
-// @ts-nocheck
 import type { DragEndEvent, DragOverEvent } from "@dnd-kit/react";
-import type {
-  OnChangeFn,
-  Table,
-  TableFeature,
-  Updater,
-} from "@tanstack/react-table";
+import type { OnChangeFn, TableFeature, Updater } from "@tanstack/react-table";
 import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
@@ -17,6 +11,7 @@ import {
 } from "@notion-kit/ui/kanban";
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
+import type { _TableInstance } from "@/features/types";
 import { createGroupId } from "@/features/utils";
 import type { Cell, Row } from "@/lib/types";
 import { getDefaultCell, insertAt } from "@/lib/utils";
@@ -79,7 +74,7 @@ export interface RowActionsRowApi {
 }
 
 function getRowGroupingValue(
-  table: Table<Row>,
+  table: _TableInstance,
   row: Row,
   groupingColumnId: string,
 ): ComparableValue | null {
@@ -91,7 +86,7 @@ function getRowGroupingValue(
 }
 
 function createKanbanItemsFromRows(
-  table: Table<Row>,
+  table: _TableInstance,
   rows: Row[],
   groupingColumnId: string,
   groupOrder: string[],
@@ -159,7 +154,8 @@ export const RowActionsFeature: TableFeature = {
   getDefaultTableOptions: (): RowActionsOptions => {
     return {};
   },
-  constructTableAPIs: (table: Table<Row>) => {
+  constructTableAPIs: (_table) => {
+    const table = _table as unknown as _TableInstance;
     let kanbanDragSnapshot: Row[] | null = null;
 
     const scheduleGroupingStateSync = (rows: Row[]) => {
@@ -197,7 +193,7 @@ export const RowActionsFeature: TableFeature = {
       rowId: string,
       colId: string,
       updater: Updater<Cell<TPlugin>>,
-      originalGroupId?: string,
+      _originalGroupId?: string,
     ) => {
       table.setTableData((prev) => {
         const now = Date.now();
@@ -285,7 +281,7 @@ export const RowActionsFeature: TableFeature = {
       });
     };
     table.handleKanbanRowDragOver = (event) => {
-      if (event.canceled) return;
+      if ("canceled" in event && event.canceled) return;
 
       const { grouping, groupingState } = table.store.state;
       const groupingColumnId = grouping[0];
@@ -420,9 +416,11 @@ export const RowActionsFeature: TableFeature = {
       });
     };
   },
-  assignColumnPrototype: (prototype, table) => {
+  assignColumnPrototype: (prototype, _table) => {
+    const table = _table as unknown as _TableInstance;
+
     /** Cell */
-    prototype.getCell = function (rowId: string) {
+    prototype.getCell = function (this: { id: string }, rowId: string) {
       return table.getCell(this.id, rowId);
     };
     prototype.updateCell = function <TPlugin extends CellPlugin>(
@@ -442,16 +440,24 @@ export const RowActionsFeature: TableFeature = {
       );
     };
   },
-  assignRowPrototype: (prototype, table) => {
-    prototype.getTitleCell = function () {
+  assignRowPrototype: (prototype, _table) => {
+    const table = _table as unknown as _TableInstance;
+
+    prototype.getTitleCell = function (this: { id: string }) {
       return table.getTitleCell(this.id);
     };
-    prototype.getIsFirstChild = function () {
+    prototype.getIsFirstChild = function (this: {
+      id: string;
+      getParentRow: () => { subRows: { id: string }[] } | undefined;
+    }) {
       const parent = this.getParentRow();
       if (!parent) return false;
       return parent.subRows[0]?.id === this.id;
     };
-    prototype.getIsLastChild = function () {
+    prototype.getIsLastChild = function (this: {
+      id: string;
+      getParentRow: () => { subRows: { id: string }[] } | undefined;
+    }) {
       const parent = this.getParentRow();
       if (!parent) return false;
       return parent.subRows.at(-1)?.id === this.id;

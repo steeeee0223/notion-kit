@@ -1,10 +1,13 @@
-"use client";
-
 import { useId, useState } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
+import {
+  ROW_VIEW_OPTIONS,
+  wrappedClassName,
+  type CellProps,
+} from "@notion-kit/table-hook";
 import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import {
   Button,
@@ -15,11 +18,9 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { CellTrigger, RowViewIcon, TextInputPopover } from "../../common";
-import { ROW_VIEW_OPTIONS } from "../../features";
-import { wrappedClassName } from "../../lib/utils";
-import { useTableViewCtx } from "../../table-contexts";
-import type { CellProps } from "../types";
+import { CellTrigger, RowViewIcon, TextInputPopover } from "@/common";
+import { useTableViewCtx } from "@/table-contexts";
+
 import type { TitleConfig } from "./types";
 
 interface TitleCellProps extends CellProps<string, TitleConfig> {

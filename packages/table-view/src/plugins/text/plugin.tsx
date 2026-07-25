@@ -1,4 +1,5 @@
-import { DefaultIcon } from "../../common";
+import { DefaultIcon } from "@/common";
+
 import { compareStrings, createCompareFn } from "../utils";
 import { TextCell } from "./text-cell";
 import type { TextPlugin } from "./types";

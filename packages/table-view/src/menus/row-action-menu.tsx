@@ -3,6 +3,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 
 import { useCopyToClipboard } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
+import { ROW_VIEW_OPTIONS } from "@notion-kit/table-hook";
 import type { IconData } from "@notion-kit/ui/icon-block";
 import { IconMenu } from "@notion-kit/ui/icon-menu";
 import {
@@ -19,7 +20,6 @@ import {
 } from "@notion-kit/ui/primitives";
 import { KEYBOARD } from "@notion-kit/utils";
 
-import { ROW_VIEW_OPTIONS } from "@/features";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface Action {

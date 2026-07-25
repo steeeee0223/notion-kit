@@ -1,8 +1,9 @@
 import React from "react";
-import { flexRender, type Row } from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
 
 import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
+import type { RowInstance } from "@notion-kit/table-hook";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import { Kanban } from "@notion-kit/ui/kanban";
 import {
@@ -15,13 +16,12 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import type { Row as RowModel } from "@/lib/types";
 import { RowActionMenu } from "@/menus";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface BoardCardProps {
   groupId: string;
-  row: Row<RowModel>;
+  row: RowInstance;
 }
 
 /**

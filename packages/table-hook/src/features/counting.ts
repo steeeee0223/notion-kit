@@ -1,13 +1,7 @@
-// @ts-nocheck
-import type {
-  OnChangeFn,
-  Table,
-  TableFeature,
-  Updater,
-} from "@tanstack/react-table";
+import type { OnChangeFn, TableFeature, Updater } from "@tanstack/react-table";
 import { functionalUpdate, makeStateUpdater } from "@tanstack/react-table";
 
-import type { Row } from "@/lib/types";
+import type { _TableInstance } from "@/features/types";
 import { getCount } from "@/lib/utils";
 import { CountMethod } from "@/methods";
 
@@ -16,7 +10,7 @@ export { CountMethod };
 export type CountingState = Record<
   string,
   {
-    method: string;
+    method: CountMethod | string;
     isCapped?: boolean;
   }
 >;
@@ -58,34 +52,36 @@ export const CountingFeature: TableFeature = {
   },
 
   // define the new feature's table instance methods
-  constructTableAPIs: (table: Table<Row>) => {
-    table.getColumnCounting = (colId) => {
-      if (!table.options.enableColumnCounting) {
+  constructTableAPIs: (table) => {
+    const instance = table as unknown as _TableInstance;
+
+    instance.getColumnCounting = (colId) => {
+      if (!instance.options.enableColumnCounting) {
         throw new Error(
           `[TableView] Column counting is not enabled. To enable, pass \`enableColumnCounting: true\` to your table options.`,
         );
       }
-      const counting = table.store.state.columnCounting;
+      const counting = instance.store.state.columnCounting;
       return counting[colId] ?? { method: CountMethod.NONE };
     };
-    table.getColumnCountResult = (colId) => {
-      if (!table.options.enableColumnCounting) {
+    instance.getColumnCountResult = (colId) => {
+      if (!instance.options.enableColumnCounting) {
         throw new Error(
           `[TableView] Column counting is not enabled. To enable, pass \`enableColumnCounting: true\` to your table options.`,
         );
       }
-      return getCount(table, colId);
+      return getCount(instance, colId);
     };
-    table.setColumnCounting = (updater) =>
-      table.options.onColumnCountingChange?.(updater);
-    table.setColumnCountMethod = (colId, method) => {
-      table.setColumnCounting((prev) => ({
+    instance.setColumnCounting = (updater) =>
+      instance.options.onColumnCountingChange?.(updater);
+    instance.setColumnCountMethod = (colId, method) => {
+      instance.setColumnCounting((prev) => ({
         ...prev,
         [colId]: { ...prev[colId], method },
       }));
     };
-    table.setColumnCountCapped = (colId, updater) => {
-      table.setColumnCounting((prev) => ({
+    instance.setColumnCountCapped = (colId, updater) => {
+      instance.setColumnCounting((prev) => ({
         ...prev,
         [colId]: {
           method: prev[colId]?.method ?? CountMethod.NONE,

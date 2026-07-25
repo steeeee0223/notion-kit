@@ -1,24 +1,26 @@
-// @ts-nocheck
 import type { Row, RowData, RowModel, Table } from "@tanstack/react-table";
 import { constructRow, flattenBy, tableMemo } from "@tanstack/react-table";
 
+import type { AnyRowData, AnyTableFeatures } from "@/features/types";
 import { createGroupId } from "@/features/utils";
 import type { ComparableValue } from "@/plugins";
 
 export function getExtendedGroupedRowModel<TData extends RowData>(): (
-  table: Table<any, TData>,
-) => () => RowModel<any, TData> {
-  return (table) =>
-    tableMemo({
+  table: Table<AnyTableFeatures, TData>,
+) => () => RowModel<AnyTableFeatures, TData> {
+  return (table) => {
+    const memoTable = table as unknown as Table<AnyTableFeatures, AnyRowData>;
+
+    return tableMemo({
       feature: "columnGroupingFeature",
-      table,
+      table: memoTable,
       fnName: "table.getGroupedRowModel",
       memoDeps: () => [
-        table.atoms.grouping?.get(),
+        table.atoms.grouping.get(),
         table.getPreGroupedRowModel(),
-        table.atoms.groupingState?.get().groupOrder,
-        table.atoms.groupingState?.get().groupVisibility,
-        table.atoms.groupingState?.get().hideEmptyGroups,
+        table.atoms.groupingState.get().groupOrder,
+        table.atoms.groupingState.get().groupVisibility,
+        table.atoms.groupingState.get().hideEmptyGroups,
       ],
       fn: (
         grouping,
@@ -27,7 +29,7 @@ export function getExtendedGroupedRowModel<TData extends RowData>(): (
         groupVisibility,
         hideEmptyGroups,
       ) => {
-        if (!rowModel.rows.length || !grouping?.length) {
+        if (!rowModel.rows.length || !grouping.length) {
           rowModel.rows.forEach((row) => {
             row.depth = 0;
             row.parentId = undefined;
@@ -40,19 +42,22 @@ export function getExtendedGroupedRowModel<TData extends RowData>(): (
           table.getColumn(columnId),
         );
 
-        const groupedFlatRows: Row<TData>[] = [];
-        const groupedRowsById: Record<string, Row<TData>> = {};
+        const groupedFlatRows: Row<AnyTableFeatures, TData>[] = [];
+        const groupedRowsById: Record<
+          string,
+          Row<AnyTableFeatures, TData>
+        > = {};
 
         // Recursively group the data with integrated visibility filtering
         const groupUpRecursively = (
-          rows: Row<TData>[],
+          rows: Row<AnyTableFeatures, TData>[],
           depth = 0,
           parentId?: string,
-        ): Row<TData>[] => {
+        ): Row<AnyTableFeatures, TData>[] => {
           // Grouping depth has been met
           // Stop grouping and simply rewrite the depth and row relationships
           if (depth >= existingGrouping.length) {
-            const processedRows: Row<TData>[] = [];
+            const processedRows: Row<AnyTableFeatures, TData>[] = [];
 
             for (const row of rows) {
               // Check leaf row visibility
@@ -87,7 +92,7 @@ export function getExtendedGroupedRowModel<TData extends RowData>(): (
           const rowGroupsMap = groupBy(rows, columnId);
 
           // Perform aggregations for each group
-          const aggregatedGroupedRows: Row<TData>[] = [];
+          const aggregatedGroupedRows: Row<AnyTableFeatures, TData>[] = [];
 
           for (const [groupingValue, groupedRows] of rowGroupsMap.entries()) {
             let id = createGroupId(columnId, groupingValue);
@@ -196,16 +201,16 @@ export function getExtendedGroupedRowModel<TData extends RowData>(): (
         };
       },
       onAfterUpdate: () => {
-        table._autoResetExpanded?.();
-        table._autoResetPageIndex?.();
+        table.autoResetExpanded();
       },
     });
+  };
 }
 
 function collectFlatRows<TData extends RowData>(
-  row: Row<TData>,
-  flatRows: Row<TData>[],
-  rowsById: Record<string, Row<TData>>,
+  row: Row<AnyTableFeatures, TData>,
+  flatRows: Row<AnyTableFeatures, TData>[],
+  rowsById: Record<string, Row<AnyTableFeatures, TData>>,
 ) {
   flatRows.push(row);
   rowsById[row.id] = row;
@@ -214,11 +219,14 @@ function collectFlatRows<TData extends RowData>(
   });
 }
 
-function groupBy<TData extends RowData>(rows: Row<TData>[], columnId: string) {
-  const groupMap = new Map<ComparableValue, Row<TData>[]>();
+function groupBy<TData extends RowData>(
+  rows: Row<AnyTableFeatures, TData>[],
+  columnId: string,
+) {
+  const groupMap = new Map<ComparableValue, Row<AnyTableFeatures, TData>[]>();
 
   return rows.reduce((map, row) => {
-    const resKey = row.getGroupingValue(columnId);
+    const resKey = row.getGroupingValue(columnId) as ComparableValue;
     const previous = map.get(resKey);
     if (!previous) {
       map.set(resKey, [row]);
@@ -236,21 +244,21 @@ function groupBy<TData extends RowData>(rows: Row<TData>[], columnId: string) {
  * @returns Reordered array of groups
  */
 function reorderGroupsByRowId<TData extends RowData>(
-  groups: Row<TData>[],
+  groups: Row<AnyTableFeatures, TData>[],
   groupOrder: string[],
-): Row<TData>[] {
+): Row<AnyTableFeatures, TData>[] {
   if (groupOrder.length === 0) {
     return groups;
   }
 
   // Create a map of row ID to the actual row object - O(n)
-  const rowMap = new Map<string, Row<TData>>();
+  const rowMap = new Map<string, Row<AnyTableFeatures, TData>>();
   groups.forEach((row) => {
     rowMap.set(row.id, row);
   });
 
   // Build the result array in the specified order - O(m)
-  const orderedGroups: Row<TData>[] = [];
+  const orderedGroups: Row<AnyTableFeatures, TData>[] = [];
   const usedIds = new Set<string>();
 
   // First, add rows in the specified order

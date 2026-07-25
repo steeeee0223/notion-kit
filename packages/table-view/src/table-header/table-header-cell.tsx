@@ -1,7 +1,6 @@
-import type { HeaderContext } from "@tanstack/react-table";
-
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
+import type { HeaderInstance, TableInstance } from "@notion-kit/table-hook";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   DropdownMenu,
@@ -13,20 +12,24 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { DefaultIcon } from "@/common";
-import type { Row } from "@/lib/types";
 
 import { PropMenu } from "../menus";
+
+type TableGlobalReader = Pick<TableInstance, "getTableGlobalState">;
+
+interface TableHeaderCellProps {
+  header: HeaderInstance;
+  table: TableGlobalReader;
+}
 
 /**
  * Table Header Cell
  */
-export function TableHeaderCell({
-  header,
-  table,
-}: HeaderContext<Row, unknown>) {
+export function TableHeaderCell({ header, table }: TableHeaderCellProps) {
   const info = header.column.getInfo();
   const isResizing = header.column.getIsResizing();
   const onResizeStart = header.getResizeHandler();
+  const onResizeEnd = () => header.column.handleResizeEnd();
   const { locked } = table.getTableGlobalState();
 
   const style: React.CSSProperties = {
@@ -99,10 +102,10 @@ export function TableHeaderCell({
           )}
           // Resize for desktop
           onMouseDown={onResizeStart}
-          onMouseUp={header.column.handleResizeEnd}
+          onMouseUp={onResizeEnd}
           // Resize for mobile
           onTouchStart={onResizeStart}
-          onTouchEnd={header.column.handleResizeEnd}
+          onTouchEnd={onResizeEnd}
         />
       </div>
     </Sortable.Item>

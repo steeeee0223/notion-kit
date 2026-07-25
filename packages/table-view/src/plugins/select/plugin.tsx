@@ -1,10 +1,11 @@
 import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
+import type { Cell, ColumnInfo, Row } from "@notion-kit/table-hook";
 import { getRandomColor } from "@notion-kit/utils";
 
-import { DefaultIcon } from "../../common";
-import type { Cell, ColumnInfo, Row } from "../../lib/types";
+import { DefaultIcon } from "@/common";
+
 import type { CellPlugin, ComparableValue } from "../types";
 import { compareStrings, createCompareFn } from "../utils";
 import { SelectCell } from "./select-cell";

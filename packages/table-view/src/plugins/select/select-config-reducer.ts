@@ -1,13 +1,9 @@
-import {
-  functionalUpdate,
-  type Table,
-  type Updater,
-} from "@tanstack/react-table";
+import { functionalUpdate, type Updater } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
+import type { TableInstance } from "@notion-kit/table-hook";
 import type { Color } from "@notion-kit/utils";
 
-import type { Row } from "../../lib/types";
 import type { SelectCell, SelectConfig, SelectSort } from "./types";
 
 export type SelectConfigActionPayload =
@@ -105,7 +101,7 @@ export function selectConfigReducer(
  * all rows that reference the renamed/deleted option.
  */
 export function propagateSelectEvent(
-  table: Table<Row>,
+  table: TableInstance,
   propId: string,
   type: "select" | "multi-select",
   event: NonNullable<SelectConfigReducerResult["nextEvent"]>,

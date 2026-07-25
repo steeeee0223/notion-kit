@@ -83,7 +83,7 @@ describe("useTableView - Freezing Feature", () => {
       });
 
       expect(table.getFreezingState()).toEqual({ colId: "col2", index: 1 });
-      expect(table.store.state.columnPinning.left).toEqual(["col1", "col2"]);
+      expect(table.store.state.columnPinning.start).toEqual(["col1", "col2"]);
     });
 
     it("should clear freezing when set to null", () => {
@@ -209,7 +209,7 @@ describe("useTableView - Freezing Feature", () => {
       });
 
       const columnPinning = table.store.state.columnPinning;
-      expect(columnPinning.left).toEqual(["col1"]);
+      expect(columnPinning.start).toEqual(["col1"]);
     });
 
     it("should pin multiple columns when freezing at higher index", () => {
@@ -223,7 +223,7 @@ describe("useTableView - Freezing Feature", () => {
       });
 
       const columnPinning = table.store.state.columnPinning;
-      expect(columnPinning.left).toEqual(["col1", "col2"]);
+      expect(columnPinning.start).toEqual(["col1", "col2"]);
     });
 
     it("should clear pinning when unfreezing", () => {
@@ -236,30 +236,30 @@ describe("useTableView - Freezing Feature", () => {
         table.setColumnFreezing({ colId: "col1", index: 0 });
       });
 
-      expect(table.store.state.columnPinning.left).toHaveLength(1);
+      expect(table.store.state.columnPinning.start).toHaveLength(1);
 
       act(() => {
         table.setColumnFreezing(null);
       });
 
       const columnPinning = table.store.state.columnPinning;
-      expect(columnPinning.left).toEqual([]);
+      expect(columnPinning.start).toEqual([]);
     });
 
-    it("should preserve right-pinned columns when freezing left columns", () => {
+    it("should preserve end-pinned columns when freezing start columns", () => {
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
       });
 
       act(() => {
-        table.setColumnPinning({ left: [], right: ["col3"] });
+        table.setColumnPinning({ start: [], end: ["col3"] });
         table.setColumnFreezing({ colId: "col1", index: 0 });
       });
 
       expect(table.store.state.columnPinning).toEqual({
-        left: ["col1"],
-        right: ["col3"],
+        start: ["col1"],
+        end: ["col3"],
       });
     });
 
@@ -274,7 +274,7 @@ describe("useTableView - Freezing Feature", () => {
       });
 
       expect(table.getFreezingState()).toBeNull();
-      expect(table.store.state.columnPinning.left).toEqual([]);
+      expect(table.store.state.columnPinning.start).toEqual([]);
     });
   });
 

@@ -1,5 +1,7 @@
-import { DefaultIcon } from "../../common";
-import type { CellPlugin } from "../types";
+import type { CellPlugin } from "@notion-kit/table-hook";
+
+import { DefaultIcon } from "@/common";
+
 import { compareStrings, createCompareFn } from "../utils";
 import { LinkCell } from "./link-cell";
 import type { EmailPlugin, PhonePlugin, UrlPlugin } from "./types";

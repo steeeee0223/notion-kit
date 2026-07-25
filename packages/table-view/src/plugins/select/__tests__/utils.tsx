@@ -5,6 +5,7 @@ import userEvent, {
   PointerEventsCheckLevel,
 } from "@testing-library/user-event";
 
+import type { ColumnDefs, Row } from "@notion-kit/table-hook";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +13,6 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { TableViewObject } from "@/__tests__/component-objects/table-view";
-import type { ColumnDefs, Row } from "@/lib/types";
 import { TableView } from "@/table-contexts";
 
 import { SelectConfigMenuContent } from "../select-config-menu";

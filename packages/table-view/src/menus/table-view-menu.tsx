@@ -1,4 +1,5 @@
 import { Icon } from "@notion-kit/icons";
+import { LAYOUT_OPTIONS, TableViewMenuPage } from "@notion-kit/table-hook";
 import {
   DropdownMenuGroup,
   DropdownMenuItem,
@@ -8,7 +9,6 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { LayoutIcon, MenuHeader } from "@/common";
-import { LAYOUT_OPTIONS, TableViewMenuPage } from "@/features";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { DeletedPropsMenu } from "./deleted-props-menu";

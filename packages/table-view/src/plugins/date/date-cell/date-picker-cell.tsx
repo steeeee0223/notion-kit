@@ -1,13 +1,14 @@
 import { cn } from "@notion-kit/cn";
+import { wrappedClassName } from "@notion-kit/table-hook";
+import type { InferCellProps } from "@notion-kit/table-hook";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@notion-kit/ui/primitives";
 
-import { CellTrigger, CopyButton } from "../../../common";
-import { wrappedClassName } from "../../../lib/utils";
-import type { InferCellProps } from "../../types";
+import { CellTrigger, CopyButton } from "@/common";
+
 import type { DatePlugin } from "../types";
 import { toDateString } from "../utils";
 import { DateTimePicker } from "./date-time-picker";

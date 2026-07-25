@@ -15,7 +15,7 @@ describe("SelectMenu - Single Select", () => {
 
     expect(menu.combobox()).toBeInTheDocument();
     expect(menu.option("Option A")).toBeInTheDocument();
-    await menu.choose("Option A");
+    menu.choose("Option A");
 
     await menu.waitForCellText("Option A");
   });
@@ -70,7 +70,7 @@ describe("SelectMenu - Single Select", () => {
 
     const menu = await SelectMenuObject.open(tableView, "Row 1", "Status");
 
-    await menu.choose("Option B");
+    menu.choose("Option B");
 
     await menu.waitForCellText("Option B");
     expect(menu.selectedCell()).not.toHaveTextContent("Option A");
@@ -85,8 +85,8 @@ describe("SelectMenu - Multi Select", () => {
 
     expect(menu.combobox()).toBeInTheDocument();
 
-    await menu.choose("Option A");
-    await menu.choose("Option B");
+    menu.choose("Option A");
+    menu.choose("Option B");
 
     expect(menu.optionGroup()).toHaveTextContent("Option A");
     expect(menu.optionGroup()).toHaveTextContent("Option B");

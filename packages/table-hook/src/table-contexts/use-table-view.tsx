@@ -1,25 +1,14 @@
-// @ts-nocheck
-
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
-  columnGroupingFeature,
-  columnOrderingFeature,
-  columnPinningFeature,
-  columnResizingFeature,
-  columnSizingFeature,
-  columnVisibilityFeature,
-  createExpandedRowModel,
-  createSortedRowModel,
   functionalUpdate,
-  rowExpandingFeature,
-  rowSortingFeature,
-  tableFeatures,
   useTable,
   type ColumnDef,
   type OnChangeFn,
+  type Updater,
 } from "@tanstack/react-table";
 
-import { DEFAULT_FEATURES, getExtendedGroupedRowModel } from "@/features";
+import { DEFAULT_FEATURES, type TableFeatures } from "@/features";
+import type { TableGlobalState } from "@/features/menu";
 import type { ColumnDefs, ColumnInfo, Row } from "@/lib/types";
 import { type Entity } from "@/lib/utils";
 import { resolveGroupingMethod, resolveSortingMethod } from "@/methods";
@@ -42,33 +31,57 @@ export function useTableView<TPlugins extends CellPlugin[]>({
   onDataChange,
   onPropertiesChange,
   onTableChange,
+  defaultColumn: defaultColumnOverride,
 }: UseTableViewOptions<TPlugins>) {
   const isPropertiesControlled = typeof onPropertiesChange !== "undefined";
   const isDataControlled = typeof onDataChange !== "undefined";
+  const isTableControlled = typeof onTableChange !== "undefined";
   /** columns states */
-  const [_columnEntity, setColumnEntity] = useState(
-    toPropertyEntity(plugins.items, properties),
+  const [_columnEntityState, setColumnEntityState] = useState(() => ({
+    properties,
+    entity: toPropertyEntity(plugins.items, properties),
+  }));
+  let uncontrolledColumnEntity = _columnEntityState.entity;
+  if (!isPropertiesControlled && _columnEntityState.properties !== properties) {
+    uncontrolledColumnEntity = toPropertyEntity(plugins.items, properties);
+    setColumnEntityState({
+      properties,
+      entity: uncontrolledColumnEntity,
+    });
+  }
+  const setColumnEntity = useCallback(
+    (updater: Updater<Entity<ColumnInfo>>) => {
+      setColumnEntityState((prev) => ({
+        ...prev,
+        entity: functionalUpdate(updater, prev.entity),
+      }));
+    },
+    [],
   );
-  useEffect(() => {
-    if (isPropertiesControlled) return;
-    setColumnEntity(toPropertyEntity(plugins.items, properties));
-  }, [isPropertiesControlled, plugins.items, properties]);
   // Use memoized entity for controlled properties
   const columnEntity = useMemo(
     () =>
       isPropertiesControlled
         ? toPropertyEntity(plugins.items, properties)
-        : _columnEntity,
-    [isPropertiesControlled, plugins.items, properties, _columnEntity],
+        : uncontrolledColumnEntity,
+    [
+      isPropertiesControlled,
+      plugins.items,
+      properties,
+      uncontrolledColumnEntity,
+    ],
   );
   const columns = useMemo(
     () =>
-      columnEntity.ids.map<ColumnDef<Row<TPlugins>>>((colId) => {
+      columnEntity.ids.map<ColumnDef<TableFeatures, Row<TPlugins>>>((colId) => {
         const property = columnEntity.items[colId]!;
         const plugin = plugins.items[property.type]!;
         return {
           id: property.id,
-          accessorFn: (row) => row.properties[colId]?.value,
+          accessorFn: (row) => {
+            const value: unknown = row.properties[colId]?.value;
+            return value;
+          },
           minSize: getMinWidth(property.type),
           sortFn: (rowA, rowB, colId) =>
             resolveSortingMethod(plugin)?.function(
@@ -100,7 +113,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
         return next.ids.map((id) => next.items[id]!) as ColumnDefs<TPlugins>;
       });
     },
-    [onPropertiesChange, plugins.items],
+    [onPropertiesChange, plugins.items, setColumnEntity],
   );
 
   /** data state */
@@ -111,23 +124,21 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     [isDataControlled, data, _dataEntity],
   );
 
-  const features = useMemo(
-    () =>
-      tableFeatures({
-        columnGroupingFeature,
-        columnOrderingFeature,
-        columnPinningFeature,
-        columnResizingFeature,
-        columnSizingFeature,
-        columnVisibilityFeature,
-        rowExpandingFeature,
-        rowSortingFeature,
-        sortedRowModel: createSortedRowModel(),
-        groupedRowModel: getExtendedGroupedRowModel(),
-        expandedRowModel: createExpandedRowModel(),
-        ...DEFAULT_FEATURES,
-      }),
-    [],
+  const resolvedTableGlobal = useMemo(
+    () => ({
+      locked: false,
+      layout: "table" as const,
+      rowView: "side" as const,
+      openedRowId: null,
+      ...tableGlobal,
+    }),
+    [tableGlobal],
+  );
+  const [_tableGlobal, setTableGlobal] =
+    useState<TableGlobalState>(resolvedTableGlobal);
+  const tableGlobalState = useMemo(
+    () => (isTableControlled ? resolvedTableGlobal : _tableGlobal),
+    [isTableControlled, resolvedTableGlobal, _tableGlobal],
   );
 
   const tableState = useMemo(
@@ -143,23 +154,17 @@ export function useTableView<TPlugins extends CellPlugin[]>({
         {},
       ),
       cellPlugins: plugins.items,
-      tableGlobal: {
-        locked: false,
-        layout: "table" as const,
-        rowView: "side" as const,
-        openedRowId: null,
-        ...tableGlobal,
-      },
+      tableGlobal: tableGlobalState,
     }),
-    [columnEntity.ids, columnEntity.items, plugins.items, tableGlobal],
+    [columnEntity.ids, columnEntity.items, plugins.items, tableGlobalState],
   );
 
   /** table instance */
-  const table = useTable({
-    features,
+  const table = useTable<TableFeatures, Row<TPlugins>>({
+    features: DEFAULT_FEATURES,
     columns,
     data: dataEntity,
-    defaultColumn,
+    defaultColumn: defaultColumnOverride ?? defaultColumn,
     columnResizeMode: "onChange",
     groupedColumnMode: false,
     autoResetExpanded: false,
@@ -167,7 +172,7 @@ export function useTableView<TPlugins extends CellPlugin[]>({
     state: tableState,
     onColumnInfoChange: handleColumnChange,
     onTableDataChange: onDataChange ?? setDataEntity,
-    onTableGlobalChange: onTableChange,
+    onTableGlobalChange: onTableChange ?? setTableGlobal,
     getRowUrl,
   });
 

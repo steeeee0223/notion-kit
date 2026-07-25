@@ -4,6 +4,7 @@ import { flexRender } from "@tanstack/react-table";
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
+import { TableViewMenuPage } from "@notion-kit/table-hook";
 import {
   Checkbox,
   DropdownMenu,
@@ -15,7 +16,6 @@ import {
   Sortable,
 } from "@notion-kit/ui/primitives";
 
-import { TableViewMenuPage } from "@/features";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { PropsMenu, TypesMenu } from "../menus";
@@ -40,10 +40,10 @@ function TableHeaderRow() {
   const { table } = useTableViewCtx();
   const isMobile = useIsMobile();
 
-  const { tableGlobal } = table.getState();
+  const { tableGlobal } = table.store.state;
   const headers = table.getCenterLeafHeaders();
-  const leftPinnedHeaders = table.getLeftLeafHeaders();
-  const isLeftPinned = leftPinnedHeaders.length > 0;
+  const startPinnedHeaders = table.getStartLeafHeaders();
+  const isStartPinned = startPinnedHeaders.length > 0;
 
   return (
     <div
@@ -74,15 +74,15 @@ function TableHeaderRow() {
       </div>
       <Sortable.List
         orientation="horizontal"
-        className={cn("m-0 inline-flex", isLeftPinned && "flex")}
+        className={cn("m-0 inline-flex", isStartPinned && "flex")}
       >
-        {/* Left pinned Columns */}
-        {isLeftPinned && (
+        {/* Start pinned Columns */}
+        {isStartPinned && (
           <div
             id="draggable-ghost-section-left"
             className="sticky left-8 z-(--z-col) flex bg-main shadow-header-sticky"
           >
-            {leftPinnedHeaders.map((header) => (
+            {startPinnedHeaders.map((header) => (
               <React.Fragment key={header.id}>
                 {flexRender(
                   header.column.columnDef.header,

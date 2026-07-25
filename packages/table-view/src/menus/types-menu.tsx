@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { v4 } from "uuid";
 
+import { TableViewMenuPage } from "@notion-kit/table-hook";
+import type { PluginType } from "@notion-kit/table-hook";
 import {
   Autocomplete,
   AutocompleteCollection,
@@ -15,8 +17,6 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { DefaultIcon, MenuHeader } from "@/common";
-import { TableViewMenuPage } from "@/features";
-import type { PluginType } from "@/lib/types";
 import type { CellPlugin } from "@/plugins";
 import { useTableViewCtx } from "@/table-contexts";
 
@@ -47,7 +47,7 @@ interface TypesMenuProps {
 export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
   const { table } = useTableViewCtx();
 
-  const plugins = table.getState().cellPlugins;
+  const plugins = table.store.state.cellPlugins;
   const pluginOptions = Object.values(plugins);
   const propType = propId ? table.getColumnInfo(propId).type : null;
   const [search, setSearch] = useState("");

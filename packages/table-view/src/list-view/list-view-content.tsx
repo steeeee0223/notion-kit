@@ -20,7 +20,7 @@ export function ListViewContent() {
 
   const handleRowDragEnd = useCallback(
     (e: DragEndEvent) => {
-      const isSorted = table.getState().sorting.length > 0;
+      const isSorted = table.store.state.sorting.length > 0;
       if (!isSorted) return table.handleRowDragEnd(e);
       setPendingDragEndEvent(e);
       setDialogOpen(true);
