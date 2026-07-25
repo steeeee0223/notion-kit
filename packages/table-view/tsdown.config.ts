@@ -16,6 +16,7 @@ export default defineConfig((opts) => ({
     index: "./src/index.ts",
     menus: "./src/menus/index.ts",
   },
+  sourcemap: true,
   banner: { js: '"use client";\n"use no memo";' },
   external: [/^@dnd-kit\//],
 }));
