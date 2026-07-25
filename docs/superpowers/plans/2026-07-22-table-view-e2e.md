@@ -162,6 +162,6 @@
 
   Run e2e `test`, `typecheck`, `lint`, and `format`. Every command must exit 0.
 
-- [ ] **Step 5: Commit documentation and final E2E corrections**
+- [x] **Step 5: Commit documentation and final E2E corrections**
 
   Commit only after Steps 1–4 are clean.
