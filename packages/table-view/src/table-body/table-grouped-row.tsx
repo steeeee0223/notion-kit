@@ -16,7 +16,11 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
   }
 
   return (
-    <div className="group/grouped-row h-11">
+    <div
+      role="group"
+      aria-label={`Group ${row.id}`}
+      className="group/grouped-row h-11"
+    >
       <div className="flex h-full items-center overflow-hidden">
         {/* Expand button */}
         <Button

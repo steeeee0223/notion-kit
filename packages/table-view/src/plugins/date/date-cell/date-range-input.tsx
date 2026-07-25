@@ -20,12 +20,14 @@ interface DateRangeInputProps {
   className?: string;
   value: DateData;
   onChange: OnChangeFn<DateData>;
+  tz?: string;
 }
 
 export function DateRangeInput({
   className,
   value,
   onChange,
+  tz,
 }: DateRangeInputProps) {
   return (
     <div
@@ -38,6 +40,7 @@ export function DateRangeInput({
             id="start"
             key={value.start}
             value={value.start}
+            tz={tz}
             onChange={(ts) => onChange((v) => ({ ...v, start: ts }))}
           />
           {value.endDate && (
@@ -45,6 +48,7 @@ export function DateRangeInput({
               id="end"
               key={value.end}
               value={value.end}
+              tz={tz}
               onChange={(ts) => onChange((v) => ({ ...v, end: ts }))}
             />
           )}
@@ -55,6 +59,7 @@ export function DateRangeInput({
             id="start"
             key={value.start}
             value={value.start}
+            tz={tz}
             onChange={(ts) => onChange((prev) => ({ ...prev, start: ts }))}
           />
           {value.endDate && (
@@ -62,6 +67,7 @@ export function DateRangeInput({
               id="end"
               key={value.end}
               value={value.end}
+              tz={tz}
               onChange={(ts) => onChange((prev) => ({ ...prev, end: ts }))}
             />
           )}
@@ -75,9 +81,10 @@ interface DateTimeInputProps {
   id: string;
   value?: number; // timestamp in ms
   onChange: (ts: number) => void;
+  tz?: string;
 }
 
-function DateTimeInput({ id, value: ts, onChange }: DateTimeInputProps) {
+function DateTimeInput({ id, value: ts, onChange, tz }: DateTimeInputProps) {
   const [error, setError] = useState(false);
   const [value, setValue] = useState<DateTimeSchema>(() => {
     if (ts === undefined || ts < 0) return { date: "", time: "" };
@@ -90,7 +97,7 @@ function DateTimeInput({ id, value: ts, onChange }: DateTimeInputProps) {
   const handleBlur = () => {
     const res = dateTimeSchema.safeParse(value);
     setError(!res.success);
-    onChange(res.success ? isoToTs(res.data) : -1);
+    onChange(res.success ? isoToTs(res.data, tz) : -1);
   };
 
   return (
@@ -131,9 +138,10 @@ interface DateInputProps {
   id: string;
   value?: number; // timestamp in ms
   onChange: (ts: number) => void;
+  tz?: string;
 }
 
-function DateInput({ id, value: ts, onChange }: DateInputProps) {
+function DateInput({ id, value: ts, onChange, tz }: DateInputProps) {
   const [error, setError] = useState(false);
   const [value, setValue] = useState(() => {
     if (ts === undefined || ts < 0) return "";
@@ -146,7 +154,7 @@ function DateInput({ id, value: ts, onChange }: DateInputProps) {
   const handleBlur = () => {
     const res = dateTimeSchema.safeParse({ date: value, time: "" });
     setError(!res.success);
-    onChange(res.success ? isoToTs(res.data) : -1);
+    onChange(res.success ? isoToTs(res.data, tz) : -1);
   };
 
   return (

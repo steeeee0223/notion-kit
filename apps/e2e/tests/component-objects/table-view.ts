@@ -1,4 +1,4 @@
-import type { Locator, Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 
 import { CellEditorsObject } from "./cell-editors";
 import { HeaderMenuObject } from "./header-menu";
@@ -27,8 +27,23 @@ export class TableViewObject {
     return this.table().getByRole("row");
   }
 
+  rowTitles() {
+    return this.rows().getByRole("button", {
+      name: /^(Alpha|Empty|Omega)$/,
+      exact: true,
+    });
+  }
+
   row(name: AccessibleName) {
     return this.rows().filter({ hasText: name });
+  }
+
+  group(id: string) {
+    return this.page.getByRole("group", { name: `Group ${id}`, exact: true });
+  }
+
+  async expandGroup(id: string) {
+    await this.group(id).getByRole("button", { name: "Open" }).click();
   }
 
   button(name: AccessibleName) {
@@ -44,15 +59,33 @@ export class TableViewObject {
   }
 
   header(name: string) {
-    return this.button(name);
+    return this.table().getByRole("button", { name, exact: true });
   }
 
   cell(rowName: AccessibleName, accessibleName: AccessibleName) {
-    return this.row(rowName).getByRole("button", { name: accessibleName });
+    return this.row(rowName).getByRole("button", {
+      name: accessibleName,
+      exact: typeof accessibleName === "string",
+    });
   }
 
   cellEditor(rowName: AccessibleName, accessibleName: AccessibleName) {
     return new CellEditorsObject(this.page, this.cell(rowName, accessibleName));
+  }
+
+  checkboxCell(rowName: AccessibleName) {
+    const row = this.row(rowName);
+    return row
+      .getByRole("button")
+      .filter({ has: this.page.getByRole("checkbox") });
+  }
+
+  async editTextCell(
+    rowName: AccessibleName,
+    currentValue: AccessibleName,
+    nextValue: string,
+  ) {
+    await this.cellEditor(rowName, currentValue).fill(nextValue);
   }
 
   internalState() {
@@ -61,6 +94,49 @@ export class TableViewObject {
 
   controlledState() {
     return this.page.getByTestId("controlled-state");
+  }
+
+  calculation(propertyName: string) {
+    return this.table().getByRole("button", {
+      name: `${propertyName} calculation`,
+      exact: true,
+    });
+  }
+
+  async setCalculation(propertyName: string, method: string) {
+    const category = method.startsWith("Percent") ? "Percent" : "Count";
+    const trigger = this.calculation(propertyName);
+
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        await trigger.click();
+        await expect(trigger).toHaveAttribute("aria-expanded", "true");
+        const categoryItem = this.page
+          .getByRole("menuitem", { name: category, exact: true })
+          .last();
+        await categoryItem.waitFor({ state: "visible", timeout: 2_000 });
+        await categoryItem.dispatchEvent("click");
+        const option = this.page
+          .getByRole("menuitemcheckbox", { name: method, exact: true })
+          .last();
+        await option.waitFor({ state: "visible", timeout: 2_000 });
+        // Base UI nested submenus currently close during Playwright
+        // pointer/focus movement. Dispatch the same DOM activation while that
+        // upstream issue is tracked separately; assertions still verify the
+        // real menu handler and UI.
+        await option.dispatchEvent("click");
+        await trigger.dispatchEvent("click");
+        await expect(trigger).toHaveAttribute("aria-expanded", "false");
+        await option.waitFor({ state: "hidden", timeout: 2_000 });
+        return;
+      } catch (error) {
+        if ((await trigger.getAttribute("aria-expanded")) === "true") {
+          await trigger.dispatchEvent("click");
+        }
+        await expect(trigger).toHaveAttribute("aria-expanded", "false");
+        if (attempt === 2) throw error;
+      }
+    }
   }
 
   async openSettings() {
@@ -80,8 +156,14 @@ export class TableViewObject {
 
   async openRowActions(rowName: AccessibleName) {
     const row = this.row(rowName);
+    return this.openRowActionsFor(row);
+  }
+
+  async openRowActionsFor(row: Locator) {
     await row.hover();
-    await row.getByRole("button", { name: "Row actions" }).click();
+    await row
+      .getByRole("button", { name: "Row actions", exact: true })
+      .click();
     return RowActionsObject.open(this.page);
   }
 

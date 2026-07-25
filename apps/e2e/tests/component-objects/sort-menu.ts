@@ -8,8 +8,11 @@ export class SortMenuObject extends MenuSurfaceObject {
   }
 
   static open(page: Page) {
-    const menu = MenuSurfaceObject.withHeading(page, "Sort");
-    return new SortMenuObject(page, menu.root);
+    const addSort = page.getByRole("menuitem", { name: "Add sort" });
+    return new SortMenuObject(
+      page,
+      page.getByRole("menu").filter({ has: addSort }).last(),
+    );
   }
 
   searchInput() {
@@ -42,5 +45,9 @@ export class SortMenuObject extends MenuSurfaceObject {
 
   async deleteAll() {
     await this.item("Delete sort").click();
+  }
+
+  async remove(propertyName: string) {
+    await this.removeButton(propertyName).click();
   }
 }

@@ -16,9 +16,10 @@ interface TableFooterCellProps {
 }
 
 export function TableFooterCell({ column }: TableFooterCellProps) {
+  const info = column.getInfo();
   const props = {
     id: column.id,
-    type: column.getInfo().type,
+    type: info.type,
     width: column.getWidth(),
   };
 
@@ -28,6 +29,7 @@ export function TableFooterCell({ column }: TableFooterCellProps) {
         <DropdownMenuTrigger
           render={
             <Button
+              aria-label={`${info.name} calculation`}
               tabIndex={0}
               variant="cell"
               className="h-8 w-full justify-end overflow-hidden pr-2 select-auto"
@@ -52,28 +54,34 @@ interface CountDisplayProps {
 
 function CountDisplay({ id, type }: CountDisplayProps) {
   const { table } = useTableViewCtx();
-  const { method } = table.getColumnCounting(id) as { method: CountMethod };
+  return (
+    <table.Subscribe selector={(state) => state.columnCounting[id]}>
+      {(counting) => {
+        const method = (counting?.method ?? CountMethod.NONE) as CountMethod;
 
-  return method === CountMethod.NONE ? (
-    <div className="flex items-center opacity-100 transition-opacity duration-200">
-      <div className="flex items-center">
-        <span className="text-muted">
-          {type === "checkbox" ? "∑" : "Calculate"}
-        </span>
-        <Icon.Chevron
-          side="down"
-          className="mt-px ml-1 block size-2.5 shrink-0 fill-muted"
-        />
-      </div>
-    </div>
-  ) : (
-    <div className="flex items-center justify-center gap-1">
-      <span className="mt-0.5 text-[10px] tracking-[1px] text-muted uppercase select-none">
-        {countMethodHint[method].label}
-      </span>
-      <span className="flex h-full items-center">
-        {table.getColumnCountResult(id)}
-      </span>
-    </div>
+        return method === CountMethod.NONE ? (
+          <div className="flex items-center opacity-100 transition-opacity duration-200">
+            <div className="flex items-center">
+              <span className="text-muted">
+                {type === "checkbox" ? "∑" : "Calculate"}
+              </span>
+              <Icon.Chevron
+                side="down"
+                className="mt-px ml-1 block size-2.5 shrink-0 fill-muted"
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center gap-1">
+            <span className="mt-0.5 text-[10px] tracking-[1px] text-muted uppercase select-none">
+              {countMethodHint[method].label}
+            </span>
+            <span className="flex h-full items-center">
+              {table.getColumnCountResult(id)}
+            </span>
+          </div>
+        );
+      }}
+    </table.Subscribe>
   );
 }

@@ -200,9 +200,10 @@ export function useTableView<TPlugins extends CellPlugin[]>(
           id: property.id,
           accessorFn: (row) => {
             const value: unknown = row.properties[colId]?.value;
-            return value;
+            return value === null ? undefined : value;
           },
           minSize: getMinWidth(property.type),
+          sortUndefined: "last",
           sortFn: (rowA, rowB, colId) =>
             resolveSortingMethod(plugin)?.function(
               rowA.original,
@@ -281,10 +282,16 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     () => null,
   );
 
+  const resourceVersion = useMemo(
+    () => ({}),
+    [dataEntity, propertiesResource, tableGlobalState],
+  );
+
   return useMemo(
     () => ({
       table,
+      resourceVersion,
     }),
-    [table],
+    [resourceVersion, table],
   );
 }

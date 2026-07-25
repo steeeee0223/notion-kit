@@ -5,20 +5,21 @@ import { number } from "./number";
 import { multiSelect, select } from "./select";
 import { text } from "./text";
 import { title } from "./title";
+import { withCheckboxCounting, withGenericCounting } from "./utils";
 
 export const DEFAULT_PLUGINS = [
-  title(),
-  text(),
-  number(),
-  checkbox(),
-  select(),
-  multiSelect(),
-  email(),
-  phone(),
-  url(),
-  date(),
-  createdTime(),
-  lastEditedTime(),
+  withGenericCounting(title()),
+  withGenericCounting(text()),
+  withGenericCounting(number()),
+  withCheckboxCounting(checkbox()),
+  withGenericCounting(select()),
+  withGenericCounting(multiSelect()),
+  withGenericCounting(email()),
+  withGenericCounting(phone()),
+  withGenericCounting(url()),
+  withGenericCounting(date()),
+  withGenericCounting(createdTime()),
+  withGenericCounting(lastEditedTime()),
 ];
 
 export type DefaultPlugins = (typeof DEFAULT_PLUGINS)[number][];

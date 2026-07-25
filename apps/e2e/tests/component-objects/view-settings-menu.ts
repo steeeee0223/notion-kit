@@ -2,6 +2,7 @@ import type { Locator, Page } from "@playwright/test";
 
 import { GroupingMenuObject } from "./grouping-menu";
 import { MenuSurfaceObject } from "./menu-surface";
+import { PropertiesMenuObject } from "./properties-menu";
 import { SortMenuObject } from "./sort-menu";
 
 export class ViewSettingsMenuObject extends MenuSurfaceObject {
@@ -31,7 +32,7 @@ export class ViewSettingsMenuObject extends MenuSurfaceObject {
 
   async openProperties() {
     await this.item("Edit properties").click();
-    return MenuSurfaceObject.withHeading(this.page, "Properties");
+    return PropertiesMenuObject.open(this.page);
   }
 
   async toggleLock() {
