@@ -18,6 +18,10 @@ export default defineConfig({
       reporter: ["text", "json", ["html", { subdir: "coverage" }]],
       include: ["src/**/*.{ts,tsx}"],
       exclude: ["src/__tests__/**"],
+      thresholds: {
+        statements: 90,
+        branches: 90,
+      },
     },
   },
 });

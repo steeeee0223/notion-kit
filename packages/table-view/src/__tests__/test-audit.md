@@ -11,7 +11,7 @@ $NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @not
 $NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/table-view coverage
 ```
 
-Final natural results before enabling thresholds: **33 test files, 311 passed tests**. V8 coverage: statements **93.59%** (1285/1373), branches **90.74%** (735/810), functions 89.58% (568/634), lines 95.05% (1173/1234). Statements and branches have a stable margin above the planned 90% gate; functions and lines remain diagnostic only.
+Final natural results before enabling thresholds: **33 test files, 311 passed tests**. V8 coverage: statements **93.59%** (1286/1374), branches **90.74%** (735/810), functions 89.58% (568/634), lines 95.06% (1174/1235). Statements and branches have a stable margin above the planned 90% gate; functions and lines remain diagnostic only.
 
 A **Keep** test catches a production regression, documents a non-obvious contract, or exercises a real component interaction and observable result. An **Add** row records a result-bearing contract introduced by this coverage plan. **Merge**, **Rewrite**, and **Remove** are transitional decisions only; no current declaration remains in those states, and no test was removed solely to increase coverage.
 
