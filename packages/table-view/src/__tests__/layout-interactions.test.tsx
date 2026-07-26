@@ -151,8 +151,8 @@ it("TableHeader_ResizeStartAndEnd_PersistsExactColumnWidth", async () => {
     const resizeHandle = screen.getByRole("separator", {
       name: "Resize Name",
     });
-    expect(resizeHandle).toHaveAttribute("tabindex", "0");
-    expect(resizeHandle).toHaveProperty("tagName", "BUTTON");
+    expect(resizeHandle).toHaveAttribute("tabindex", "-1");
+    expect(resizeHandle).toHaveProperty("tagName", "DIV");
 
     fireEvent.mouseDown(resizeHandle, { clientX: 200 });
     fireEvent.mouseMove(document, { clientX: 260 });

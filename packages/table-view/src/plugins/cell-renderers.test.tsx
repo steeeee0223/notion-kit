@@ -44,7 +44,9 @@ function renderNumber(
   overrides: Partial<React.ComponentProps<typeof NumberCell>> = {},
 ) {
   const onChange = vi.fn();
-  const view = render(
+  const renderCell = (
+    nextOverrides: Partial<React.ComponentProps<typeof NumberCell>> = {},
+  ) => (
     <NumberCell
       propId="amount"
       row={row}
@@ -53,9 +55,16 @@ function renderNumber(
       layout="table"
       onChange={onChange}
       {...overrides}
-    />,
+      {...nextOverrides}
+    />
   );
-  return { ...view, onChange };
+  const view = render(renderCell());
+  return {
+    ...view,
+    onChange,
+    rerenderNumber: (nextOverrides = {}) =>
+      view.rerender(renderCell(nextOverrides)),
+  };
 }
 
 describe("NumberCell", () => {
@@ -89,10 +98,10 @@ describe("NumberCell", () => {
   );
 
   it.each(["number", "bar", "ring"] as const)(
-    "NumberDisplay_Wrapped%s_PreservesTheConfiguredPresentation",
+    "NumberDisplay_Wrapped%s_TogglesWrappingWithoutChangingPresentation",
     (showAs) => {
       // Arrange
-      renderNumber(
+      const { container, rerenderNumber } = renderNumber(
         "150",
         {
           ...baseNumberConfig,
@@ -106,6 +115,17 @@ describe("NumberCell", () => {
 
       // Assert
       expect(displayedValue).toBeVisible();
+      expect(container.querySelector(".whitespace-pre-wrap")).not.toBeNull();
+      if (showAs !== "number") {
+        expect(screen.getByRole("meter")).toBeVisible();
+      }
+
+      // Act
+      rerenderNumber({ wrapped: false });
+
+      // Assert
+      expect(screen.getByText("150")).toBeVisible();
+      expect(container.querySelector(".whitespace-pre-wrap")).toBeNull();
       if (showAs !== "number") {
         expect(screen.getByRole("meter")).toBeVisible();
       }
@@ -202,7 +222,7 @@ describe("NumberCell", () => {
 });
 
 describe("SelectCell", () => {
-  it("SelectCell_StaleAndDescribedOptions_RendersOnlyConfiguredTags", () => {
+  it("SelectCell_StaleDescribedWrappedOption_FiltersWrapsAndExplainsConfiguredTag", async () => {
     // Arrange
     const fixture = createFullPluginFixture();
     const tags = fixture.properties.find(
@@ -216,10 +236,24 @@ describe("SelectCell", () => {
 
     // Act
     const alpha = table.row("Alpha");
+    const frontendTag = within(alpha).getByText("Frontend");
+    const tooltipTrigger = frontendTag.closest<HTMLElement>(
+      "[data-base-ui-tooltip-trigger]",
+    );
 
     // Assert
-    expect(alpha).toHaveTextContent("Frontend");
+    expect(frontendTag).toBeVisible();
+    expect(frontendTag.closest(".flex-wrap")).not.toBeNull();
+    expect(tooltipTrigger).not.toBeNull();
     expect(alpha).not.toHaveTextContent("Missing");
+
+    // Act
+    await table.user.hover(frontendTag);
+
+    // Assert
+    await waitFor(() => {
+      expect(screen.getByText("Client work")).toBeVisible();
+    });
   });
 
   it("SelectCell_EmptyRowView_RendersAnExplicitEmptyValue", () => {

@@ -91,7 +91,8 @@ describe.each(["table", "list"] as const)("%s sorted row drag", (layout) => {
 
     // Assert
     await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
-    expect(onDataChange.mock.lastCall?.[0].action).toMatchObject({
+    expect(onDataChange.mock.lastCall?.[0].action).toEqual({
+      id: expect.any(String),
       type: "data.row.move",
       payload: {
         rowId: "row1",
@@ -117,7 +118,8 @@ describe.each(["table", "list"] as const)("%s sorted row drag", (layout) => {
 
     // Assert
     await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
-    expect(onDataChange.mock.lastCall?.[0].action).toMatchObject({
+    expect(onDataChange.mock.lastCall?.[0].action).toEqual({
+      id: expect.any(String),
       type: "data.row.move",
       payload: {
         rowId: "row1",
