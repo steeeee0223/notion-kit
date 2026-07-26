@@ -113,23 +113,23 @@
 
 ### Task 5: Replace superficial menu tests with result-bearing contracts
 
-- [ ] **Step 1: Finish the audit-driven merge/rewrite pass**
+- [x] **Step 1: Finish the audit-driven merge/rewrite pass**
 
   Do not remove label-only tests until the audit names a passing result-bearing replacement.
 
-- [ ] **Step 2: Close remaining property-menu outcomes**
+- [x] **Step 2: Close remaining property-menu outcomes**
 
   Existing tests cover rename/duplicate validation/description, wrap, freeze, group, duplicate, hide/restore, delete, insert-right, title guards, type creation, and sorting interactions. Add missing change-type outcome, insert-left unit boundary, locked behavior, and exact action payload gaps.
 
-- [ ] **Step 3: Complete the calculation outcome matrix**
+- [x] **Step 3: Complete the calculation outcome matrix**
 
   Existing tests cover checked count, unchecked percentage, and cap state. Add count all/values/unique/empty/non-empty, zero-row behavior, remaining checkbox methods, and live recomputation after edit/add/delete.
 
-- [ ] **Step 4: Close remaining row/group menu outcomes**
+- [x] **Step 4: Close remaining row/group menu outcomes**
 
   Existing tests cover row search/copy/duplicate/delete/shortcut and group add/aggregation/hide/delete confirmation. Add only missing icon/config actions, supported shortcuts, locked boundaries, and exact payload assertions.
 
-- [ ] **Step 5: Finalize the audit and remove only fully subsumed tests**
+- [x] **Step 5: Finalize the audit and remove only fully subsumed tests**
 
 - [x] **Step 6: Run menu suites and coverage**
 
