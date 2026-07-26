@@ -34,6 +34,31 @@ export class TableViewObject {
     return rows.filter((row) => matcher.test(row.textContent));
   }
 
+  rowOrder(names: readonly string[]) {
+    return this.rows().map((row) => {
+      const name = names.find((name) =>
+        within(row).queryByRole("button", { name }),
+      );
+      if (!name) throw new Error("Unable to identify row by its title button");
+      return name;
+    });
+  }
+
+  group(name: string) {
+    return screen.getByRole("group", { name: `Group ${name}` });
+  }
+
+  async expandGroup(name: string) {
+    const group = this.group(name);
+    await this.user.click(within(group).getByRole("button", { name: "Open" }));
+  }
+
+  footerResult(propertyName: string) {
+    return screen.getByRole("button", {
+      name: `${propertyName} calculation`,
+    });
+  }
+
   cellButton(rowName: string | RegExp, cellName: string | RegExp) {
     return within(this.row(rowName)).getByRole("button", { name: cellName });
   }
