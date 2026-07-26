@@ -89,19 +89,19 @@
 
 ### Task 4: Cover every cell editor's real interaction and boundary behavior
 
-- [ ] **Step 1: Close title/text cancellation and keyboard boundaries**
+- [x] **Step 1: Close title/text cancellation and keyboard boundaries**
 
   Existing tests cover title list commit/placeholder and text display/editor behavior. Add only missing Escape cancellation, clearing, and exact resource payload boundaries.
 
-- [ ] **Step 2: Close number editor boundaries**
+- [x] **Step 2: Close number editor boundaries**
 
   Existing tests cover valid/invalid/empty commits, displays, display type, divide-by, show-number, color, currency, and rounding selection. Add missing Escape behavior and the remaining supported rounding/format boundaries.
 
-- [ ] **Step 3: Close checkbox and link ownership boundaries**
+- [x] **Step 3: Close checkbox and link ownership boundaries**
 
   Existing tests cover checkbox toggling and email/phone/URL edit/display boundaries. Add copy/open/cancel behavior only where the cell component owns that behavior.
 
-- [ ] **Step 4: Close date editor boundaries**
+- [x] **Step 4: Close date editor boundaries**
 
   Existing tests cover invalid/valid dates, independent start/end updates, end-date/include-time toggles, formats, clearing, and empty board/row-view behavior. Add calendar selection/navigation, Escape cancellation, and exact resource payload assertions.
 
