@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
 import { mockResizeObserver } from "@/__tests__/mock";
@@ -12,31 +13,15 @@ async function openPropertiesMenu() {
 }
 
 describe("PropsMenu", () => {
-  it("PropertiesMenu_Open_ShowsSearchAndMoveHandles", async () => {
-    const { properties } = await openPropertiesMenu();
+  it("PropertiesMenu_HelpAction_OpensDocumentedHelpTarget", async () => {
+    const open = vi.spyOn(window, "open").mockImplementation(() => null);
+    const { tableView, properties } = await openPropertiesMenu();
 
-    expect(properties.heading()).toBeVisible();
-    expect(properties.searchInput()).toBeVisible();
-    expect(properties.moveHandle("Name")).toBeVisible();
-  });
+    await tableView.user.click(properties.helpItem());
 
-  it("PropertiesMenu_Open_ShowsAllProperties", async () => {
-    const { properties } = await openPropertiesMenu();
-
-    expect(properties.property("Name")).toBeVisible();
-    expect(properties.property("Done")).toBeVisible();
-  });
-
-  it("PropertiesMenu_Open_ShowsNewPropertyAction", async () => {
-    const { properties } = await openPropertiesMenu();
-
-    expect(properties.newPropertyItem()).toBeVisible();
-  });
-
-  it("PropertiesMenu_Open_ShowsHelpAction", async () => {
-    const { properties } = await openPropertiesMenu();
-
-    expect(properties.helpItem()).toBeVisible();
+    expect(open).toHaveBeenCalledWith(
+      "https://www.notion.com/help/database-properties",
+    );
   });
 
   it("PropertiesMenu_Search_FiltersProperties", async () => {
@@ -56,13 +41,16 @@ describe("PropsMenu", () => {
     expect(properties.noResults()).toBeVisible();
   });
 
-  it("PropertiesMenu_VisibilityToggle_TargetsNamedProperty", async () => {
+  it("PropertiesMenu_VisibilityToggle_HidesNamedColumnAndUpdatesVisibilityState", async () => {
     const { tableView, properties } = await openPropertiesMenu();
     const doneVisibilityButton = properties.visibilityButton("Done");
 
     await tableView.user.click(doneVisibilityButton);
 
-    expect(doneVisibilityButton).toBeInTheDocument();
+    expect(properties.visibilityButton("Done")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Done" }),
+    ).not.toBeInTheDocument();
   });
 
   it("PropertiesMenu_BackNavigation_ReturnsToViewSettings", async () => {

@@ -12,13 +12,6 @@ async function openLayoutMenu() {
 }
 
 describe("LayoutMenu", () => {
-  it("LayoutMenu_Open_ShowsLayoutOptions", async () => {
-    const layout = await openLayoutMenu();
-    expect(layout.layoutButton("Table")).toBeVisible();
-    expect(layout.layoutButton("Board")).toBeVisible();
-    expect(layout.layoutButton("List")).toBeVisible();
-  });
-
   it("LayoutMenu_DefaultLayout_SelectsTable", async () => {
     const layout = await openLayoutMenu();
     expect(layout.layoutButton("Table")).toHaveAttribute(

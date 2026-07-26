@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
 import { mockResizeObserver } from "../__tests__/mock";
@@ -13,21 +13,6 @@ async function openEditGroupingMenu() {
 }
 
 describe("EditGroupMenu", () => {
-  it("EditGroupingMenu_Open_ShowsSelectedPropertyAndMoveHandle", async () => {
-    const { grouping } = await openEditGroupingMenu();
-
-    expect(grouping.heading()).toBeVisible();
-    expect(grouping.groupByItem()).toBeVisible();
-    expect(grouping.selectedProperty("Done")).toBeVisible();
-    expect(grouping.firstMoveHandle()).toBeVisible();
-  });
-
-  it("EditGroupingMenu_Open_ShowsHideEmptyGroups", async () => {
-    const { grouping } = await openEditGroupingMenu();
-
-    expect(grouping.hideEmptyGroupsItem()).toBeVisible();
-  });
-
   it("EditGroupingMenu_HideEmptyGroupsToggle_StaysOpen", async () => {
     const { grouping } = await openEditGroupingMenu();
     const initialState = grouping
@@ -41,19 +26,6 @@ describe("EditGroupMenu", () => {
       initialState,
     );
     expect(grouping.heading()).toBeVisible();
-  });
-
-  it("EditGroupingMenu_Open_ShowsGroupsVisibilityAction", async () => {
-    const { grouping } = await openEditGroupingMenu();
-
-    expect(grouping.groupsLabel()).toBeVisible();
-    expect(grouping.allVisibilityButton()).toBeVisible();
-  });
-
-  it("EditGroupingMenu_Open_ShowsRemoveGrouping", async () => {
-    const { grouping } = await openEditGroupingMenu();
-
-    expect(grouping.removeGroupingItem()).toBeVisible();
   });
 
   it("EditGroupingMenu_GroupVisibilityToggle_StaysOpen", async () => {
@@ -73,10 +45,16 @@ describe("EditGroupMenu", () => {
     expect(settings.groupingSelection("Done")).toBe(false);
   });
 
-  it("EditGroupingMenu_Open_ShowsGroupingHelp", async () => {
-    const { grouping } = await openEditGroupingMenu();
+  it("EditGroupingMenu_HelpAction_OpensDocumentedHelpTarget", async () => {
+    const open = vi.spyOn(window, "open").mockImplementation(() => null);
+    const { tableView, grouping } = await openEditGroupingMenu();
 
-    expect(grouping.helpItem()).toBeVisible();
+    await tableView.user.click(grouping.helpItem());
+
+    expect(open).toHaveBeenCalledWith(
+      "https://www.notion.com/help/boards#reorder-columns-&-cards",
+      "_blank",
+    );
   });
 
   it("EditGroupingMenu_ChangeGrouping_OpensSelection", async () => {

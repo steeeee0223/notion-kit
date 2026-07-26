@@ -65,6 +65,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });
 
@@ -237,6 +238,23 @@ describe("RowActionMenu", () => {
         next: { icon: { type: "url", src: "https://example.com/task.png" } },
       },
     });
+  });
+
+  it("RowActionMenu_IconMenu_RendersWithoutReactKeyWarning", async () => {
+    const error = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const { menu } = await openRowActionMenu({ properties: titleProperties });
+
+    menu.choose("Edit icon");
+    await screen.findByRole("tab", { name: "Upload" });
+
+    expect(
+      error.mock.calls.some(
+        ([message]) =>
+          typeof message === "string" && message.includes('unique "key" prop'),
+      ),
+    ).toBe(false);
   });
 
   it("RowActionMenu_FileIconUpload_UpdatesRowIconResource", async () => {

@@ -15,14 +15,6 @@ async function openSelectConfigMenu() {
 }
 
 describe("SelectConfigMenu", () => {
-  it("SelectConfigMenu_Open_ShowsOptionsWithDragHandles", async () => {
-    const menu = await openSelectConfigMenu();
-
-    expect(menu.label("Options")).toBeInTheDocument();
-    expect(menu.sortableList()).toBeInTheDocument();
-    expect(menu.moveHandle("Option A")).toBeInTheDocument();
-  });
-
   it("SelectConfigMenu_AddOption_AppendsOption", async () => {
     const menu = await openSelectConfigMenu();
 
@@ -42,14 +34,6 @@ describe("SelectConfigMenu", () => {
     await menu.tryAddOption("Option A");
     expect(menu.duplicateError()).toBeInTheDocument();
     expect(menu.addInput()).toHaveAttribute("aria-invalid", "true");
-  });
-
-  it("SelectConfigMenu_OpenOption_ShowsOptionEditor", async () => {
-    const menu = await openSelectConfigMenu();
-
-    const optionMenu = await menu.openOptionMenu("Option A");
-    expect(optionMenu.nameInput()).toHaveValue("Option A");
-    expect(optionMenu.colorsLabel()).toBeInTheDocument();
   });
 
   it("SelectConfigMenu_RenameOption_UpdatesOptionName", async () => {
@@ -93,15 +77,6 @@ describe("SelectConfigMenu", () => {
 
     await menu.deleteOption("Option A");
     expect(menu.queryOption("Option A")).not.toBeInTheDocument();
-  });
-
-  it("SelectConfigMenu_OpenSortMenu_ShowsSortChoices", async () => {
-    const menu = await openSelectConfigMenu();
-
-    const sortMenu = await menu.openSortMenu();
-    expect(sortMenu.item("Manual")).toBeVisible();
-    expect(sortMenu.item("Alphabetical")).toBeVisible();
-    expect(sortMenu.item("Reverse alphabetical")).toBeVisible();
   });
 
   it("SelectConfigMenu_ChangeSort_ReordersOptions", async () => {

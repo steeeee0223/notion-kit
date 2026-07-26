@@ -1,7 +1,7 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { expect, it, vi } from "vitest";
 
-import type { Row } from "@notion-kit/table-hook";
+import type { ColumnInfo, Row } from "@notion-kit/table-hook";
 
 import {
   findMenuByHeading,
@@ -15,15 +15,17 @@ mockResizeObserver();
 
 const anyString: unknown = expect.any(String);
 
-interface CapturedResourceChange {
+interface CapturedResourceChange<TNext = unknown[]> {
   action: { id: unknown; payload: Record<string, unknown> };
-  next: unknown[];
+  next: TNext;
 }
 
-function lastResourceChange(callback: {
+function lastResourceChange<TNext = unknown[]>(callback: {
   mock: { lastCall: unknown[] | undefined };
 }) {
-  return callback.mock.lastCall?.[0] as CapturedResourceChange | undefined;
+  return callback.mock.lastCall?.[0] as
+    | CapturedResourceChange<TNext>
+    | undefined;
 }
 
 async function openHeader(tableView: TableViewObject, name: string) {
@@ -184,23 +186,27 @@ it("PropMenu_Duplicate_ReportsExactPropertyAction", async () => {
   );
 
   // Assert
-  const change = lastResourceChange(onPropertiesChange);
+  const change = lastResourceChange<ColumnInfo[]>(onPropertiesChange);
   const action = change?.action;
-  const propertyId = action?.payload.propertyId;
+  const duplicatedProperty = change?.next[1];
+  expect(action?.payload.propertyId).toEqual(anyString);
+  expect(duplicatedProperty?.id).toEqual(anyString);
+  expect(action?.payload.propertyId).toBe(duplicatedProperty?.id);
   expect(action).toEqual({
     id: anyString,
     type: "properties.duplicate",
     payload: {
       sourcePropertyId: "col1",
-      propertyId,
+      propertyId: duplicatedProperty?.id,
       nextPosition: 1,
     },
   });
-  expect(change?.next[1]).toEqual({
+  expect(duplicatedProperty).toEqual({
     ...mockProperties[0],
-    id: propertyId,
+    id: anyString,
     name: "Name 1",
   });
+  expect(screen.getByRole("button", { name: "Name 1" })).toBeVisible();
 });
 
 it("PropMenu_Hide_UpdatesVisibilityAndCanBeRestored", async () => {
@@ -284,16 +290,20 @@ it.each([
     );
 
     // Assert
-    const action = lastResourceChange(onPropertiesChange)?.action;
-    const propertyId = action?.payload.propertyId;
+    const change = lastResourceChange<ColumnInfo[]>(onPropertiesChange);
+    const action = change?.action;
+    const createdProperty = change?.next[nextPosition];
+    expect(action?.payload.propertyId).toEqual(anyString);
+    expect(createdProperty?.id).toEqual(anyString);
+    expect(action?.payload.propertyId).toBe(createdProperty?.id);
     expect(action).toEqual({
       id: anyString,
       type: "properties.create",
       payload: {
-        propertyId,
+        propertyId: createdProperty?.id,
         nextPosition,
         property: {
-          id: propertyId,
+          id: createdProperty?.id,
           name: "Number",
           type: "number",
           config: {
@@ -305,6 +315,18 @@ it.each([
         },
       },
     });
+    expect(createdProperty).toEqual({
+      id: anyString,
+      name: "Number",
+      type: "number",
+      config: {
+        format: "number",
+        round: "default",
+        showAs: "number",
+        options: { color: "green", divideBy: 100, showNumber: true },
+      },
+    });
+    expect(screen.getByRole("button", { name: "Number" })).toBeVisible();
   },
 );
 
