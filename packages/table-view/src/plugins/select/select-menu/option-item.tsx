@@ -63,7 +63,7 @@ export function OptionItem({
               />
             ) : null
           }
-          label={<OptionTag {...option} />}
+          label={<OptionTag name={option.name} color={option.color} />}
         />
       </TooltipPreset>
       <MenuItemAction className="absolute top-1/2 right-3 flex -translate-y-1/2 items-center text-muted">

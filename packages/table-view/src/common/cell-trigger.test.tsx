@@ -1,8 +1,18 @@
+import type React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
 
 import { CellTrigger } from "./cell-trigger";
+
+function EventDelegationHarness({
+  children,
+  onClick,
+  onKeyDown,
+}: React.ComponentProps<"div">) {
+  const delegatedEventProps = { onClick, onKeyDown };
+  return <div {...delegatedEventProps}>{children}</div>;
+}
 
 it("CellTrigger_ClickAndKeyboard_StopParentPropagationByDefault", () => {
   const parentClick = vi.fn();
@@ -10,12 +20,11 @@ it("CellTrigger_ClickAndKeyboard_StopParentPropagationByDefault", () => {
   const onClick = vi.fn();
   const onKeyDown = vi.fn();
   render(
-    <details onClick={parentClick} onKeyDown={parentKeyDown}>
-      <summary>Parent</summary>
+    <EventDelegationHarness onClick={parentClick} onKeyDown={parentKeyDown}>
       <CellTrigger onClick={onClick} onKeyDown={onKeyDown}>
         Value
       </CellTrigger>
-    </details>,
+    </EventDelegationHarness>,
   );
   const trigger = screen.getByRole("button", { name: "Value" });
 
@@ -32,10 +41,9 @@ it("CellTrigger_PropagationOptOut_AllowsParentInteractions", () => {
   const parentClick = vi.fn();
   const parentKeyDown = vi.fn();
   render(
-    <details onClick={parentClick} onKeyDown={parentKeyDown}>
-      <summary>Parent</summary>
+    <EventDelegationHarness onClick={parentClick} onKeyDown={parentKeyDown}>
       <CellTrigger stopPropagation={false}>Value</CellTrigger>
-    </details>,
+    </EventDelegationHarness>,
   );
   const trigger = screen.getByRole("button", { name: "Value" });
 

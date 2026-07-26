@@ -1,5 +1,6 @@
 import type { ComponentProps } from "react";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
 
 import { SelectGroupingValue } from "./select-grouping-value";
@@ -28,12 +29,25 @@ it.each([
   ["with description", "Work in progress"],
 ] as const)(
   "SelectGroupingValue_Tag%s_RendersConfiguredOption",
-  (_case, description) => {
+  async (_case, description) => {
+    const user = userEvent.setup();
     render(
       <SelectGroupingValue value="Active" table={tableWithTag(description)} />,
     );
 
-    expect(screen.getByText("Active")).toBeVisible();
+    const tag = screen.getByText("Active");
+    const tooltipTrigger = tag.closest<HTMLElement>(
+      "[data-base-ui-tooltip-trigger]",
+    );
+    expect(tag).toBeVisible();
+    expect(tooltipTrigger).not.toBeNull();
+    expect(tooltipTrigger).not.toHaveAttribute("id", "active");
+    expect(tooltipTrigger).not.toHaveAttribute("description");
+
+    if (description) {
+      await user.hover(tag);
+      expect(await screen.findByText(description)).toBeVisible();
+    }
   },
 );
 
