@@ -157,11 +157,9 @@ describe("propagateSelectEvent", () => {
       payload: { originalName: "Beta", name: "Ready" },
     });
 
-    expect(result.next.map((row) => row.properties.status?.value)).toEqual([
-      "Ready",
-      "Alpha",
-      null,
-    ]);
+    expect(
+      result.next.map((row) => row.properties.status?.value as unknown),
+    ).toEqual(["Ready", "Alpha", null]);
     expect(result.next[0]).not.toBe(result.previous[0]);
     expect(result.next[1]).toBe(result.previous[1]);
     expect(result.action).toMatchObject({
@@ -185,10 +183,9 @@ describe("propagateSelectEvent", () => {
       },
     );
 
-    expect(result.next.map((row) => row.properties.status?.value)).toEqual([
-      ["Ready", "Alpha", "Ready"],
-      ["Alpha"],
-    ]);
+    expect(
+      result.next.map((row) => row.properties.status?.value as unknown),
+    ).toEqual([["Ready", "Alpha", "Ready"], ["Alpha"]]);
     expect(result.action).toMatchObject({
       payload: { rowIds: ["row1"], nextValue: "Ready" },
     });
@@ -200,10 +197,9 @@ describe("propagateSelectEvent", () => {
       payload: "Beta",
     });
 
-    expect(result.next.map((row) => row.properties.status?.value)).toEqual([
-      null,
-      "Alpha",
-    ]);
+    expect(
+      result.next.map((row) => row.properties.status?.value as unknown),
+    ).toEqual([null, "Alpha"]);
     expect(result.next[1]).toBe(result.previous[1]);
     expect(result.action).toMatchObject({
       payload: { rowIds: ["row1"], previousValue: "Beta", nextValue: null },
@@ -216,10 +212,9 @@ describe("propagateSelectEvent", () => {
       payload: "Beta",
     });
 
-    expect(result.next.map((row) => row.properties.status?.value)).toEqual([
-      ["Alpha"],
-      ["Alpha"],
-    ]);
+    expect(
+      result.next.map((row) => row.properties.status?.value as unknown),
+    ).toEqual([["Alpha"], ["Alpha"]]);
     expect(result.action).toMatchObject({
       payload: { rowIds: ["row1"], nextValue: "removed" },
     });

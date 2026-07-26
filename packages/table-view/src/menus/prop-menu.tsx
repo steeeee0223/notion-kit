@@ -46,7 +46,7 @@ interface PropMenuProps {
 export function PropMenu({ propId, view }: PropMenuProps) {
   const { table } = useTableViewCtx();
 
-  const column = table.getColumn(propId)!;
+  const _column = table.getColumn(propId)!;
   const info = table.getColumnInfo(propId);
   const plugin = table.getColumnPlugin(propId);
 

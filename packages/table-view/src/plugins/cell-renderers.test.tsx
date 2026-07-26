@@ -2,7 +2,11 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import type { DataResourceAction, Row } from "@notion-kit/table-hook";
+import type {
+  ColumnInfo,
+  DataResourceAction,
+  Row,
+} from "@notion-kit/table-hook";
 
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
 import {
@@ -15,6 +19,7 @@ import { CheckboxCell } from "./checkbox/checkbox-cell";
 import { LinkCell } from "./link/link-cell";
 import { NumberCell } from "./number/number-cell";
 import type { NumberConfig } from "./number/types";
+import type { MultiSelectPlugin } from "./select/types";
 import { TextCell } from "./text/text-cell";
 
 mockResizeObserver();
@@ -82,6 +87,45 @@ describe("NumberCell", () => {
       expect(meter).toHaveAttribute("aria-valuemax", "100");
     },
   );
+
+  it.each(["number", "bar", "ring"] as const)(
+    "NumberDisplay_Wrapped%s_PreservesTheConfiguredPresentation",
+    (showAs) => {
+      // Arrange
+      renderNumber(
+        "150",
+        {
+          ...baseNumberConfig,
+          showAs,
+        },
+        { wrapped: true },
+      );
+
+      // Act
+      const displayedValue = screen.getByText("150");
+
+      // Assert
+      expect(displayedValue).toBeVisible();
+      if (showAs !== "number") {
+        expect(screen.getByRole("meter")).toBeVisible();
+      }
+    },
+  );
+
+  it("NumberDisplay_CorruptPersistedValue_RendersAnEmptyDisplay", () => {
+    // Arrange
+    renderNumber("not-a-number", baseNumberConfig);
+
+    // Act
+    const trigger = screen
+      .getAllByRole("button")
+      .find((button) => button.getAttribute("aria-haspopup") === "dialog");
+
+    // Assert
+    expect(trigger).toBeDefined();
+    expect(trigger).toHaveTextContent("");
+    expect(trigger).not.toHaveTextContent("NaN");
+  });
 
   it("NumberDisplay_RowViewEmpty_ShowsExplicitEmpty", () => {
     renderNumber(null, baseNumberConfig, { layout: "row-view" });
@@ -155,6 +199,47 @@ describe("NumberCell", () => {
       expect(displayedValue).toBeVisible();
     },
   );
+});
+
+describe("SelectCell", () => {
+  it("SelectCell_StaleAndDescribedOptions_RendersOnlyConfiguredTags", () => {
+    // Arrange
+    const fixture = createFullPluginFixture();
+    const tags = fixture.properties.find(
+      (property) => property.id === "tags",
+    ) as ColumnInfo<MultiSelectPlugin>;
+    tags.wrapped = true;
+    const frontend = tags.config.options.items.Frontend!;
+    frontend.description = "Client work";
+    fixture.data[0]!.properties.tags!.value = ["Missing", "Frontend"];
+    const table = renderTableView(fixture);
+
+    // Act
+    const alpha = table.row("Alpha");
+
+    // Assert
+    expect(alpha).toHaveTextContent("Frontend");
+    expect(alpha).not.toHaveTextContent("Missing");
+  });
+
+  it("SelectCell_EmptyRowView_RendersAnExplicitEmptyValue", () => {
+    // Arrange
+    const fixture = createFullPluginFixture();
+    renderTableView({
+      ...fixture,
+      view: {
+        layout: "table",
+        rowView: "side",
+        openedRowId: "row-empty",
+      },
+    });
+
+    // Act
+    const statusRow = screen.getByRole("row", { name: /Status Empty/i });
+
+    // Assert
+    expect(statusRow).toBeVisible();
+  });
 });
 
 describe("LinkCell", () => {

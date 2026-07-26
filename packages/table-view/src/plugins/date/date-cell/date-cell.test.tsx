@@ -98,6 +98,60 @@ function DateRangeHarness({ initial }: { initial: DateData }) {
   );
 }
 
+it("DateTimePicker_RangeSelection_UpdatesBothDateBoundaries", async () => {
+  // Arrange
+  const user = userEvent.setup();
+  render(
+    <DateCellHarness
+      initial={{
+        start: Date.UTC(2025, 0, 15),
+        end: Date.UTC(2025, 0, 16),
+        endDate: true,
+      }}
+    />,
+  );
+  await user.click(screen.getByRole("button", { name: /January 15, 2025/i }));
+  await user.click(
+    screen.getByRole("button", { name: /Tuesday, January 14/i }),
+  );
+  expect(screen.getByTestId("date-state")).toHaveTextContent(
+    String(Date.UTC(2025, 0, 14)),
+  );
+  await user.click(screen.getByRole("button", { name: /next month/i }));
+
+  // Act
+  await user.click(
+    screen.getByRole("button", { name: /Sunday, February 16/i }),
+  );
+
+  // Assert
+  expect(screen.getByTestId("date-state")).toHaveTextContent(
+    JSON.stringify({
+      start: Date.UTC(2025, 0, 14),
+      end: Date.UTC(2025, 1, 16),
+      endDate: true,
+    }),
+  );
+});
+
+it("DateTimePicker_SelectedSingleDateClick_RetainsTheExistingBoundary", async () => {
+  // Arrange
+  const user = userEvent.setup();
+  const start = Date.UTC(2025, 0, 15);
+  render(<DateCellHarness initial={{ start }} />);
+  await user.click(screen.getByRole("button", { name: "January 15, 2025" }));
+
+  // Act
+  await user.click(
+    screen.getByRole("button", { name: /Wednesday, January 15/i }),
+  );
+
+  // Assert
+  expect(screen.getByTestId("date-state")).toHaveTextContent(
+    JSON.stringify({ start }),
+  );
+});
+
 it("DateRangeInput_InvalidThenValidDate_ReportsErrorAndTimestamp", async () => {
   const user = userEvent.setup();
   render(<DateRangeHarness initial={{}} />);

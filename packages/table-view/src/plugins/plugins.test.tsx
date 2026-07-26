@@ -102,10 +102,13 @@ describe("Select conversion and grouping contracts", () => {
   };
 
   it("SelectFromValue_DuplicatesUnknownAndWhitespace_ReturnsFirstKnown", () => {
-    expect(select().fromValue(" Missing, Done, Active, Done ", config)).toBe(
+    const plugin = select();
+    expect(plugin.fromValue(" , Missing, Done, Active, Done ", config)).toBe(
       "Done",
     );
-    expect(select().fromValue(42, config)).toBeNull();
+    expect(plugin.fromValue(42, config)).toBeNull();
+    expect(plugin.toTextValue(null, baseRow)).toBe("");
+    expect(plugin.toTextValue("Active", baseRow)).toBe("Active");
   });
 
   it("MultiSelectFromValue_DeduplicatesKnownOptionsAndPreservesOrder", () => {

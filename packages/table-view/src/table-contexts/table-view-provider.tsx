@@ -61,18 +61,17 @@ export function TableViewWrapper<
   useLayoutEffect(() => {
     setCommittedResourceVersion(ctx.resourceVersion);
   }, [ctx.resourceVersion]);
-  const contextValue = useMemo(
-    () =>
-      ({
-        get table() {
-          return latestCtxRef.current.table;
-        },
-        get resourceVersion() {
-          return latestCtxRef.current.resourceVersion;
-        },
-      }) as TableViewCtx<TPlugins>,
-    [committedResourceVersion],
-  );
+  const contextValue = useMemo(() => {
+    void committedResourceVersion;
+    return {
+      get table() {
+        return latestCtxRef.current.table;
+      },
+      get resourceVersion() {
+        return latestCtxRef.current.resourceVersion;
+      },
+    } as TableViewCtx<TPlugins>;
+  }, [committedResourceVersion]);
 
   return (
     <TableViewContext value={contextValue}>

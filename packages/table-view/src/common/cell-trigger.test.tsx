@@ -10,13 +10,13 @@ it("CellTrigger_ClickAndKeyboard_StopParentPropagationByDefault", () => {
   const onClick = vi.fn();
   const onKeyDown = vi.fn();
   render(
-    <div onClick={parentClick} onKeyDown={parentKeyDown}>
+    <button type="button" onClick={parentClick} onKeyDown={parentKeyDown}>
       <CellTrigger onClick={onClick} onKeyDown={onKeyDown}>
         Value
       </CellTrigger>
-    </div>,
+    </button>,
   );
-  const trigger = screen.getByRole("button", { name: "Value" });
+  const trigger = screen.getAllByRole("button", { name: "Value" }).at(-1)!;
 
   fireEvent.click(trigger);
   fireEvent.keyDown(trigger, { key: "Enter" });
@@ -31,11 +31,11 @@ it("CellTrigger_PropagationOptOut_AllowsParentInteractions", () => {
   const parentClick = vi.fn();
   const parentKeyDown = vi.fn();
   render(
-    <div onClick={parentClick} onKeyDown={parentKeyDown}>
+    <button type="button" onClick={parentClick} onKeyDown={parentKeyDown}>
       <CellTrigger stopPropagation={false}>Value</CellTrigger>
-    </div>,
+    </button>,
   );
-  const trigger = screen.getByRole("button", { name: "Value" });
+  const trigger = screen.getAllByRole("button", { name: "Value" }).at(-1)!;
 
   fireEvent.click(trigger);
   fireEvent.keyDown(trigger, { key: "Enter" });

@@ -7,6 +7,7 @@ import type { ColumnInfo, Row } from "@notion-kit/table-hook";
 import { TableViewWrapper } from "@/table-contexts";
 
 import { selectConfig } from "../__tests__/utils";
+import type { SelectConfig } from "../types";
 import { useSelectMenu } from "./use-select-menu";
 
 const properties: ColumnInfo[] = [
@@ -174,12 +175,7 @@ describe("useSelectMenu", () => {
     ]);
 
     act(() => result.current.reorderOptions(["Option C", "Option A"]));
-    expect(onConfigChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        options: expect.objectContaining({
-          names: ["Option C", "Option A"],
-        }),
-      }),
-    );
+    const updatedConfig = onConfigChange.mock.lastCall?.[0] as SelectConfig;
+    expect(updatedConfig.options.names).toEqual(["Option C", "Option A"]);
   });
 });

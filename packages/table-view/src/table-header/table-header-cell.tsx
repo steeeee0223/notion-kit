@@ -98,11 +98,13 @@ export function TableHeaderCell({ header, table }: TableHeaderCellProps) {
       />
       {/* Resize handle */}
       <div className="absolute right-0 z-10 w-0 grow-0">
-        <div
+        <Button
+          type="button"
+          variant="hint"
           role="separator"
           aria-label={`Resize ${info.name}`}
           aria-orientation="vertical"
-          tabIndex={-1}
+          tabIndex={0}
           className={cn(
             "-mt-px ml-[-3px] h-[34px] w-[5px] animate-bg-out cursor-col-resize bg-transparent hover:bg-blue/80",
             isResizing && "bg-blue/80",
