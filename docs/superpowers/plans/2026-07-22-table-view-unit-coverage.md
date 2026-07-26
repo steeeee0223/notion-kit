@@ -165,19 +165,19 @@
 
 - [x] **Step 1: Generate and rank the machine-readable gap list**
 
-- [ ] **Step 2: Add focused tests for remaining meaningful contracts**
+- [x] **Step 2: Add focused tests for remaining meaningful contracts**
 
   Prioritize resource mutations and guards, then display variants. Current natural metrics require at least 26 more covered statements and 56 more covered branches, assuming the denominator remains `1337/772`.
 
-- [ ] **Step 3: Remove proven dead or unreachable product code**
+- [x] **Step 3: Remove proven dead or unreachable product code**
 
   Demonstrate unreachability through public call sites/types before deletion. Do not add ignore directives or runtime exclusions.
 
-- [ ] **Step 4: Repeat coverage until both natural metrics exceed 90%**
+- [x] **Step 4: Repeat coverage until both natural metrics exceed 90%**
 
   Keep a small margin above 90% to avoid rounding instability.
 
-- [ ] **Step 5: Enable exact Vitest thresholds**
+- [x] **Step 5: Enable exact Vitest thresholds**
 
   Add only:
 
@@ -190,12 +190,12 @@
 
   Keep runtime sources included and test/helper/type/barrel exclusions explicit and minimal.
 
-- [ ] **Step 6: Complete audit evidence**
+- [x] **Step 6: Complete audit evidence**
 
-- [ ] **Step 7: Run final package gates**
+- [x] **Step 7: Run final package gates**
 
   Run `test`, `coverage`, `typecheck`, `lint`, and `format`. Current known state is test/coverage/typecheck passing; lint and format still require cleanup.
 
-- [ ] **Step 8: Commit the final 90% gate**
+- [x] **Step 8: Commit the final 90% gate**
 
   Commit only when the audit is complete, all package gates pass, and statements/branches are both at least 90%.
