@@ -1,11 +1,16 @@
 import { useState } from "react";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 
-import type { Row } from "@notion-kit/table-hook";
+import type { DataResourceAction, Row } from "@notion-kit/table-hook";
 
-import { mockResizeObserver } from "@/__tests__/mock";
+import { renderTableView } from "@/__tests__/component-objects/render-table-view";
+import {
+  createFullPluginFixture,
+  createResourceProbe,
+  mockResizeObserver,
+} from "@/__tests__/mock";
 
 import type { DateConfig, DateData } from "../types";
 import { DatePickerCell } from "./date-picker-cell";
@@ -40,9 +45,7 @@ function DateCellHarness({ initial }: { initial: DateData }) {
         onConfigChange={setConfig}
       />
       <output data-testid="date-state">{JSON.stringify(data)}</output>
-      <output data-testid="date-config">
-        {JSON.stringify(currentConfig)}
-      </output>
+      <output data-testid="date-config">{JSON.stringify(currentConfig)}</output>
     </>
   );
 }
@@ -52,14 +55,10 @@ it("DatePicker_EndTimeFormatsAndClear_UpdateCanonicalState", async () => {
   render(
     <DateCellHarness initial={{ start: Date.UTC(2025, 0, 15, 13, 45) }} />,
   );
-  await user.click(
-    screen.getByRole("button", { name: "January 15, 2025" }),
-  );
+  await user.click(screen.getByRole("button", { name: "January 15, 2025" }));
 
   await user.click(screen.getByRole("switch", { name: "End date" }));
-  expect(screen.getByTestId("date-state")).toHaveTextContent(
-    '"endDate":true',
-  );
+  expect(screen.getByTestId("date-state")).toHaveTextContent('"endDate":true');
   expect(screen.getAllByRole("textbox")).toHaveLength(2);
 
   await user.click(screen.getByRole("switch", { name: "Include time" }));
@@ -144,6 +143,27 @@ it("DateRangeInput_DateTimeBoundaries_UpdateStartAndEndIndependently", async () 
   expect(screen.getByTestId("range-state")).toHaveTextContent('"end":-1');
 });
 
+it("DateRangeInput_UnchangedBlur_DoesNotReportRedundantTimestamp", async () => {
+  // Arrange
+  const user = userEvent.setup();
+  const onChange = vi.fn();
+  render(
+    <DateRangeInput
+      value={{ start: Date.UTC(2025, 0, 15) }}
+      onChange={onChange}
+      tz="UTC"
+    />,
+  );
+  const input = screen.getByRole("textbox");
+
+  // Act
+  await user.click(input);
+  await user.tab();
+
+  // Assert
+  expect(onChange).not.toHaveBeenCalled();
+});
+
 it("DatePicker_EmptyBoardAndRowView_RespectDisplayBoundary", () => {
   const { container, rerender } = render(
     <DatePickerCell
@@ -168,4 +188,51 @@ it("DatePicker_EmptyBoardAndRowView_RespectDisplayBoundary", () => {
     />,
   );
   expect(screen.getByText("Empty")).toBeVisible();
+});
+
+it("DatePicker_NextMonthDateSelection_EmitsExactCellResourcePayload", async () => {
+  // Arrange
+  const dataProbe = createResourceProbe<Row[], DataResourceAction>();
+  const table = renderTableView({
+    ...createFullPluginFixture(),
+    onDataChange: dataProbe.onChange,
+  });
+  await table.user.click(table.cellButton("Alpha", "January 1, 2025"));
+
+  // Act
+  await table.user.click(screen.getByRole("button", { name: /next month/i }));
+  await table.user.click(
+    screen.getByRole("button", { name: /Friday, February 14/i }),
+  );
+
+  // Assert
+  await waitFor(() => expect(dataProbe.onChange).toHaveBeenCalledOnce());
+  expect(dataProbe.lastChange().action.type).toBe("data.cell.update");
+  expect(dataProbe.lastChange().action.payload).toEqual({
+    rowId: "row-alpha",
+    propertyId: "due",
+    previousValue: { start: Date.UTC(2025, 0, 1) },
+    nextValue: { start: Date.UTC(2025, 1, 14), end: undefined },
+  });
+});
+
+it("DatePicker_EscapeAfterTyping_CancelsWithoutResourceChange", async () => {
+  // Arrange
+  const dataProbe = createResourceProbe<Row[], DataResourceAction>();
+  const table = renderTableView({
+    ...createFullPluginFixture(),
+    onDataChange: dataProbe.onChange,
+  });
+  await table.user.click(table.cellButton("Alpha", "January 1, 2025"));
+  const input = await screen.findByRole("textbox");
+  await table.user.clear(input);
+  await table.user.type(input, "2025-02-14");
+
+  // Act
+  await table.user.keyboard("{Escape}");
+
+  // Assert
+  await waitFor(() => expect(input).not.toBeInTheDocument());
+  expect(table.row("Alpha")).toHaveTextContent("January 1, 2025");
+  expect(dataProbe.onChange).not.toHaveBeenCalled();
 });

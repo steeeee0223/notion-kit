@@ -110,7 +110,7 @@ function TitleListCell({
 }: Omit<TitleCellProps, "layout">) {
   const [open, setOpen] = useState(false);
   const id = useId();
-  const { props } = useInputField({
+  const { props, reset } = useInputField({
     id: `title-list-cell-${id}`,
     initialValue: data,
     onUpdate: (v) => {
@@ -156,6 +156,15 @@ function TitleListCell({
                 className="max-h-[771px] min-h-9 border-none bg-transparent wrap-break-word whitespace-pre-wrap caret-primary"
                 variant="flat"
                 {...props}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") {
+                    event.stopPropagation();
+                    reset();
+                    setOpen(false);
+                    return;
+                  }
+                  props.onKeyDown?.(event);
+                }}
               />
             </PopoverContent>
           </Popover>

@@ -1,8 +1,15 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
-import { expect, it, vi } from "vitest";
+import { expect, it } from "vitest";
+
+import type { DataResourceAction, Row } from "@notion-kit/table-hook";
 
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
-import { mockProperties, mockResizeObserver } from "@/__tests__/mock";
+import {
+  createFullPluginFixture,
+  createResourceProbe,
+  mockProperties,
+  mockResizeObserver,
+} from "@/__tests__/mock";
 
 mockResizeObserver();
 
@@ -26,7 +33,7 @@ it("TitleCell_QuickActionAppears_AccessibleNameRemainsStable", async () => {
 });
 
 it("TitleListCell_EditCommit_UpdatesRenderedTitleAndResource", async () => {
-  const onDataChange = vi.fn();
+  const dataProbe = createResourceProbe<Row[], DataResourceAction>();
   const table = renderTableView({
     properties: [
       {
@@ -36,7 +43,7 @@ it("TitleListCell_EditCommit_UpdatesRenderedTitleAndResource", async () => {
       },
       mockProperties[1]!,
     ],
-    onDataChange,
+    onDataChange: dataProbe.onChange,
   });
   const settings = await table.openViewSettings();
   const layout = await settings.openLayout();
@@ -48,9 +55,9 @@ it("TitleListCell_EditCommit_UpdatesRenderedTitleAndResource", async () => {
   fireEvent.change(input, { target: { value: "Renamed task" } });
   fireEvent.keyDown(input, { key: "Enter" });
 
-  await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
+  await waitFor(() => expect(dataProbe.onChange).toHaveBeenCalledOnce());
   expect(screen.getByText("Renamed task")).toBeVisible();
-  expect(onDataChange.mock.calls[0]?.[0].action).toMatchObject({
+  expect(dataProbe.lastChange().action).toMatchObject({
     type: "data.cell.update",
     payload: {
       rowId: "row1",
@@ -78,4 +85,58 @@ it("TitleListCell_EmptyValue_RendersNewPagePlaceholder", async () => {
   await table.clickOutside();
 
   expect(screen.getByText("New page", { selector: "span" })).toBeVisible();
+});
+
+it("TitleListCell_EscapeAfterEditing_CancelsWithoutResourceChange", async () => {
+  // Arrange
+  const dataProbe = createResourceProbe<Row[], DataResourceAction>();
+  const fixture = createFullPluginFixture();
+  const table = renderTableView({
+    ...fixture,
+    view: { ...fixture.view, layout: "list" },
+    onDataChange: dataProbe.onChange,
+  });
+  await table.user.hover(screen.getByText("Alpha"));
+  await table.user.click(screen.getAllByRole("button", { name: "Edit" })[0]!);
+  const input = await screen.findByRole("textbox");
+  fireEvent.change(input, { target: { value: "Discarded title" } });
+
+  // Act
+  fireEvent.keyDown(input, { key: "Escape" });
+
+  // Assert
+  await waitFor(() => expect(input).not.toBeInTheDocument());
+  expect(screen.getByText("Alpha")).toBeVisible();
+  expect(dataProbe.onChange).not.toHaveBeenCalled();
+});
+
+it("TitleListCell_ClearAndCommit_EmitsExactCellResourcePayload", async () => {
+  // Arrange
+  const dataProbe = createResourceProbe<Row[], DataResourceAction>();
+  const fixture = createFullPluginFixture();
+  const table = renderTableView({
+    ...fixture,
+    view: { ...fixture.view, layout: "list" },
+    onDataChange: dataProbe.onChange,
+  });
+  await table.user.hover(screen.getByText("Alpha"));
+  await table.user.click(screen.getAllByRole("button", { name: "Edit" })[0]!);
+  const input = await screen.findByRole("textbox");
+  fireEvent.change(input, { target: { value: "" } });
+
+  // Act
+  fireEvent.keyDown(input, { key: "Enter" });
+
+  // Assert
+  await waitFor(() => expect(dataProbe.onChange).toHaveBeenCalledOnce());
+  expect(dataProbe.lastChange().action.type).toBe("data.cell.update");
+  expect(dataProbe.lastChange().action.payload).toEqual({
+    rowId: "row-alpha",
+    propertyId: "title",
+    previousValue: "Alpha",
+    nextValue: "",
+  });
+  expect(
+    screen.getAllByText("New page", { selector: "span" })[0],
+  ).toBeVisible();
 });

@@ -17,10 +17,7 @@ const dateTimeSchema = z.object({
 type DateTimeSchema = z.infer<typeof dateTimeSchema>;
 
 function parsedDateTimeToTs(value: DateTimeSchema, tz?: string) {
-  return isoToTs(
-    { ...value, time: value.time || "00:00:00" },
-    tz,
-  );
+  return isoToTs({ ...value, time: value.time || "00:00:00" }, tz);
 }
 
 interface DateRangeInputProps {
@@ -98,6 +95,7 @@ function DateTimeInput({ id, value: ts, onChange, tz }: DateTimeInputProps) {
     return { date: date!, time: time! };
   };
   const [value, setValue] = useState<DateTimeSchema>(getValue);
+  // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps -- Calendar selections must refresh the controlled editor draft.
   useEffect(() => setValue(getValue()), [ts]);
   const handleBlur = () => {
     const res = dateTimeSchema.safeParse(value);
@@ -156,12 +154,14 @@ function DateInput({ id, value: ts, onChange, tz }: DateInputProps) {
     });
   };
   const [value, setValue] = useState(getValue);
+  // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps -- Calendar selections must refresh the controlled editor draft.
   useEffect(() => setValue(getValue()), [ts]);
 
   const handleBlur = () => {
     const res = dateTimeSchema.safeParse({ date: value, time: "" });
     setError(!res.success);
-    onChange(res.success ? parsedDateTimeToTs(res.data, tz) : -1);
+    const nextTs = res.success ? parsedDateTimeToTs(res.data, tz) : -1;
+    if (nextTs !== ts) onChange(nextTs);
   };
 
   return (

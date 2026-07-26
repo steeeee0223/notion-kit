@@ -1,10 +1,15 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import type { Row } from "@notion-kit/table-hook";
+import type { DataResourceAction, Row } from "@notion-kit/table-hook";
 
-import { mockResizeObserver } from "@/__tests__/mock";
+import { renderTableView } from "@/__tests__/component-objects/render-table-view";
+import {
+  createFullPluginFixture,
+  createResourceProbe,
+  mockResizeObserver,
+} from "@/__tests__/mock";
 
 import { CheckboxCell } from "./checkbox/checkbox-cell";
 import { LinkCell } from "./link/link-cell";
@@ -109,6 +114,43 @@ describe("NumberCell", () => {
     await user.keyboard("{Enter}");
     expect(onChange).toHaveBeenLastCalledWith(null);
   });
+
+  it("NumberEditor_EscapeAfterEditing_CancelsWithoutChange", async () => {
+    // Arrange
+    const user = userEvent.setup();
+    const { onChange } = renderNumber("12", baseNumberConfig);
+    await user.click(screen.getByRole("button", { name: "12" }));
+    const input = await screen.findByRole("textbox");
+    await user.clear(input);
+    await user.type(input, "99");
+
+    // Act
+    await user.keyboard("{Escape}");
+
+    // Assert
+    await waitFor(() => expect(input).not.toBeInTheDocument());
+    expect(screen.getByRole("button", { name: "12" })).toBeVisible();
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["Default", "default", "1.235"],
+    ["ThreePlace", "3", "1.235"],
+    ["FourPlace", "4", "1.2346"],
+    ["FivePlace", "5", "1.23457"],
+  ] as const)(
+    "NumberDisplay_%sRounding_RendersSupportedPrecisionBoundary",
+    (_scenario, round, expected) => {
+      // Arrange
+      renderNumber("1.234567", { ...baseNumberConfig, round });
+
+      // Act
+      const displayedValue = screen.getByText(expected);
+
+      // Assert
+      expect(displayedValue).toBeVisible();
+    },
+  );
 });
 
 describe("LinkCell", () => {
@@ -198,5 +240,77 @@ describe("TextAndCheckboxCells", () => {
     const updater = onChange.mock.calls[0]![0] as (value: boolean) => boolean;
     expect(updater(false)).toBe(true);
     expect(updater(true)).toBe(false);
+  });
+
+  it("TextCell_EscapeAfterEditing_CancelsWithoutResourceChange", async () => {
+    // Arrange
+    const dataProbe = createResourceProbe<Row[], DataResourceAction>();
+    const table = renderTableView({
+      ...createFullPluginFixture(),
+      onDataChange: dataProbe.onChange,
+    });
+    await table.user.click(table.cellButton("Alpha", "first note"));
+    const input = await screen.findByRole("textbox");
+    await table.user.clear(input);
+    await table.user.type(input, "discarded note");
+
+    // Act
+    await table.user.keyboard("{Escape}");
+
+    // Assert
+    await waitFor(() => expect(input).not.toBeInTheDocument());
+    expect(table.row("Alpha")).toHaveTextContent("first note");
+    expect(dataProbe.onChange).not.toHaveBeenCalled();
+  });
+
+  it("TextCell_ClearAndCommit_EmitsExactCellResourcePayload", async () => {
+    // Arrange
+    const dataProbe = createResourceProbe<Row[], DataResourceAction>();
+    const table = renderTableView({
+      ...createFullPluginFixture(),
+      onDataChange: dataProbe.onChange,
+    });
+    await table.user.click(table.cellButton("Alpha", "first note"));
+    const input = await screen.findByRole("textbox");
+    await table.user.clear(input);
+
+    // Act
+    await table.user.keyboard("{Enter}");
+
+    // Assert
+    await waitFor(() => expect(dataProbe.onChange).toHaveBeenCalledOnce());
+    expect(dataProbe.lastChange().action.type).toBe("data.cell.update");
+    expect(dataProbe.lastChange().action.payload).toEqual({
+      rowId: "row-alpha",
+      propertyId: "notes",
+      previousValue: "first note",
+      nextValue: "",
+    });
+  });
+
+  it("CheckboxCell_UncheckedPointerActivation_EmitsExactCellResourcePayload", async () => {
+    // Arrange
+    const dataProbe = createResourceProbe<Row[], DataResourceAction>();
+    const table = renderTableView({
+      ...createFullPluginFixture(),
+      onDataChange: dataProbe.onChange,
+    });
+    const checkbox = within(table.row("Empty"))
+      .getAllByRole("checkbox")
+      .find((element) => !element.hasAttribute("aria-labelledby"));
+    expect(checkbox).toBeDefined();
+
+    // Act
+    await table.user.click(checkbox!);
+
+    // Assert
+    await waitFor(() => expect(dataProbe.onChange).toHaveBeenCalledOnce());
+    expect(dataProbe.lastChange().action.type).toBe("data.cell.update");
+    expect(dataProbe.lastChange().action.payload).toEqual({
+      rowId: "row-empty",
+      propertyId: "complete",
+      previousValue: false,
+      nextValue: true,
+    });
   });
 });
