@@ -177,6 +177,7 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
                       if (group.value === "Page") {
                         return (
                           <IconMenu
+                            key={action.value}
                             className="w-full border-none text-start hover:bg-transparent"
                             onSelect={selectIcon}
                             onRemove={removeIcon}

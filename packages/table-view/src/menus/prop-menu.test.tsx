@@ -13,6 +13,19 @@ import { mockData, mockProperties, mockResizeObserver } from "@/__tests__/mock";
 
 mockResizeObserver();
 
+const anyString: unknown = expect.any(String);
+
+interface CapturedResourceChange {
+  action: { id: unknown; payload: Record<string, unknown> };
+  next: unknown[];
+}
+
+function lastResourceChange(callback: {
+  mock: { lastCall: unknown[] | undefined };
+}) {
+  return callback.mock.lastCall?.[0] as CapturedResourceChange | undefined;
+}
+
 async function openHeader(tableView: TableViewObject, name: string) {
   const header = screen.getByRole("button", { name });
   if (header.getAttribute("aria-expanded") === "true") {
@@ -30,12 +43,27 @@ async function reopenHeader(tableView: TableViewObject, name: string) {
 }
 
 it("PropMenu_Wrap_TogglesObservableHeaderState", async () => {
-  const tableView = renderTableView();
+  // Arrange
+  const onPropertiesChange = vi.fn();
+  const tableView = renderTableView({ onPropertiesChange });
 
   let menu = await openHeader(tableView, "Name");
+
+  // Act
   await tableView.user.click(
     within(menu).getByRole("menuitem", { name: "Wrap text" }),
   );
+
+  // Assert
+  expect(lastResourceChange(onPropertiesChange)?.action).toEqual({
+    id: anyString,
+    type: "properties.update",
+    payload: {
+      propertyId: "col1",
+      previous: mockProperties[0],
+      next: { ...mockProperties[0], wrapped: true },
+    },
+  });
   menu = await reopenHeader(tableView, "Name");
   expect(
     within(menu).getByRole("menuitem", { name: "Unwrap text" }),
@@ -43,21 +71,28 @@ it("PropMenu_Wrap_TogglesObservableHeaderState", async () => {
 });
 
 it("PropMenu_Rename_UpdatesHeaderAndReportsPropertyChange", async () => {
+  // Arrange
   const onPropertiesChange = vi.fn();
   const tableView = renderTableView({ onPropertiesChange });
   const menu = await openHeader(tableView, "Name");
   const name = within(menu).getByDisplayValue("Name");
 
+  // Act
   await tableView.user.clear(name);
   await tableView.user.type(name, "Owner");
   await tableView.user.tab();
 
+  // Assert
   expect(screen.getByRole("button", { name: "Owner" })).toBeVisible();
-  expect(onPropertiesChange).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      action: expect.objectContaining({ type: "properties.update" }),
-    }),
-  );
+  expect(lastResourceChange(onPropertiesChange)?.action).toEqual({
+    id: anyString,
+    type: "properties.update",
+    payload: {
+      propertyId: "col1",
+      previous: mockProperties[0],
+      next: { ...mockProperties[0], name: "Owner" },
+    },
+  });
 });
 
 it("PropMenu_DuplicateName_ShowsValidationWithoutChangingHeader", async () => {
@@ -76,10 +111,12 @@ it("PropMenu_DuplicateName_ShowsValidationWithoutChangingHeader", async () => {
 });
 
 it("PropMenu_DescriptionToggle_UpdatesPropertyMetadata", async () => {
+  // Arrange
   const onPropertiesChange = vi.fn();
   const tableView = renderTableView({ onPropertiesChange });
   const menu = await openHeader(tableView, "Name");
 
+  // Act
   await tableView.user.click(
     menu.querySelector<HTMLElement>('[aria-label="Add property description"]')!,
   );
@@ -87,14 +124,16 @@ it("PropMenu_DescriptionToggle_UpdatesPropertyMetadata", async () => {
   await tableView.user.type(description, "Primary task name");
   await tableView.user.tab();
 
-  expect(onPropertiesChange).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      action: expect.objectContaining({ type: "properties.update" }),
-      next: expect.arrayContaining([
-        expect.objectContaining({ description: "Primary task name" }),
-      ]),
-    }),
-  );
+  // Assert
+  expect(lastResourceChange(onPropertiesChange)?.action).toEqual({
+    id: anyString,
+    type: "properties.update",
+    payload: {
+      propertyId: "col1",
+      previous: mockProperties[0],
+      next: { ...mockProperties[0], description: "Primary task name" },
+    },
+  });
 });
 
 it("PropMenu_Freeze_TogglesObservableHeaderState", async () => {
@@ -133,33 +172,59 @@ it("PropMenu_Group_TogglesGroupedRowsAndHeaderAction", async () => {
 });
 
 it("PropMenu_Duplicate_ReportsExactPropertyAction", async () => {
+  // Arrange
   const onPropertiesChange = vi.fn();
   const tableView = renderTableView({ onPropertiesChange });
 
   const menu = await openHeader(tableView, "Name");
+
+  // Act
   await tableView.user.click(
     within(menu).getByRole("menuitem", { name: "Duplicate property" }),
   );
-  expect(onPropertiesChange).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      action: expect.objectContaining({ type: "properties.duplicate" }),
-    }),
-  );
+
+  // Assert
+  const change = lastResourceChange(onPropertiesChange);
+  const action = change?.action;
+  const propertyId = action?.payload.propertyId;
+  expect(action).toEqual({
+    id: anyString,
+    type: "properties.duplicate",
+    payload: {
+      sourcePropertyId: "col1",
+      propertyId,
+      nextPosition: 1,
+    },
+  });
+  expect(change?.next[1]).toEqual({
+    ...mockProperties[0],
+    id: propertyId,
+    name: "Name 1",
+  });
 });
 
 it("PropMenu_Hide_UpdatesVisibilityAndCanBeRestored", async () => {
+  // Arrange
   const onPropertiesChange = vi.fn();
   const tableView = renderTableView({ onPropertiesChange });
 
   const menu = await openHeader(tableView, "Name");
+
+  // Act
   await tableView.user.click(
     within(menu).getByRole("menuitem", { name: "Hide in view" }),
   );
-  expect(onPropertiesChange).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      action: expect.objectContaining({ type: "properties.visibility.change" }),
-    }),
-  );
+
+  // Assert
+  expect(lastResourceChange(onPropertiesChange)?.action).toEqual({
+    id: anyString,
+    type: "properties.visibility.change",
+    payload: {
+      propertyIds: ["col1"],
+      previousHidden: { col1: false },
+      nextHidden: { col1: true },
+    },
+  });
   expect(
     screen.queryByRole("button", { name: "Name" }),
   ).not.toBeInTheDocument();
@@ -179,36 +244,155 @@ it("PropMenu_Hide_UpdatesVisibilityAndCanBeRestored", async () => {
 });
 
 it("PropMenu_Delete_ReportsExactPropertyAction", async () => {
+  // Arrange
   const onPropertiesChange = vi.fn();
   const tableView = renderTableView({ onPropertiesChange });
 
   const menu = await openHeader(tableView, "Name");
+
+  // Act
   await tableView.user.click(
     within(menu).getByRole("menuitem", { name: "Delete property" }),
   );
-  expect(onPropertiesChange).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      action: expect.objectContaining({ type: "properties.delete" }),
-    }),
-  );
+
+  // Assert
+  expect(lastResourceChange(onPropertiesChange)?.action).toEqual({
+    id: anyString,
+    type: "properties.delete",
+    payload: { propertyId: "col1", previousPosition: 0 },
+  });
 });
 
-it("PropMenu_InsertRight_CreatesAtRequestedBoundary", async () => {
-  const onPropertiesChange = vi.fn();
-  const tableView = renderTableView({ onPropertiesChange });
+it.each([
+  ["Left", "left", 0],
+  ["Right", "right", 1],
+] as const)(
+  "PropMenu_Insert%s_CreatesAtRequestedBoundary",
+  async (_label, side, nextPosition) => {
+    // Arrange
+    const onPropertiesChange = vi.fn();
+    const tableView = renderTableView({ onPropertiesChange });
+    const menu = await openHeader(tableView, "Name");
 
-  const menu = await openHeader(tableView, "Name");
+    // Act
+    await tableView.user.click(
+      within(menu).getByRole("menuitem", { name: `Insert ${side}` }),
+    );
+    const create = await findMenuByHeading("New property");
+    await tableView.user.click(
+      within(create).getByRole("option", { name: "Number" }),
+    );
+
+    // Assert
+    const action = lastResourceChange(onPropertiesChange)?.action;
+    const propertyId = action?.payload.propertyId;
+    expect(action).toEqual({
+      id: anyString,
+      type: "properties.create",
+      payload: {
+        propertyId,
+        nextPosition,
+        property: {
+          id: propertyId,
+          name: "Number",
+          type: "number",
+          config: {
+            format: "number",
+            round: "default",
+            showAs: "number",
+            options: { color: "green", divideBy: 100, showNumber: true },
+          },
+        },
+      },
+    });
+  },
+);
+
+it("PropertyMenu_ChangeType_ReportsExactTypeAndCellBoundary", async () => {
+  // Arrange
+  const onDataChange = vi.fn();
+  const onPropertiesChange = vi.fn();
+  const tableView = renderTableView({ onDataChange, onPropertiesChange });
+  const settings = await tableView.openViewSettings();
+  const properties = await settings.openProperties();
+  await tableView.user.click(properties.property("Name"));
+  const edit = await findMenuByHeading("Edit property");
+
+  // Act
   await tableView.user.click(
-    within(menu).getByRole("menuitem", { name: "Insert right" }),
+    within(edit).getByRole("menuitem", { name: "Type" }),
   );
-  const create = await findMenuByHeading("New property");
+  const types = await findMenuByHeading("Change property type");
   await tableView.user.click(
-    within(create).getByRole("option", { name: "Number" }),
+    within(types).getByRole("option", { name: "Checkbox" }),
   );
-  expect(onPropertiesChange.mock.calls.at(-1)?.[0].action).toMatchObject({
-    type: "properties.create",
-    payload: { nextPosition: 1 },
+
+  // Assert
+  const propertiesChange = lastResourceChange(onPropertiesChange);
+  const dataChange = lastResourceChange(onDataChange);
+  expect(propertiesChange?.action).toEqual({
+    id: anyString,
+    type: "properties.type.change",
+    payload: {
+      propertyId: "col1",
+      previousType: "text",
+      nextType: "checkbox",
+    },
   });
+  expect(dataChange?.action).toEqual({
+    id: propertiesChange?.action.id,
+    type: "data.cell.update",
+    payload: { rowIds: ["row1", "row2", "row3"], propertyId: "col1" },
+  });
+});
+
+it("PropMenu_TitleConfigToggle_ReportsExactPropertyPayload", async () => {
+  // Arrange
+  const titleProperty = {
+    ...mockProperties[0]!,
+    type: "title" as const,
+    config: { showIcon: true },
+  };
+  const onPropertiesChange = vi.fn();
+  const tableView = renderTableView({
+    properties: [titleProperty, mockProperties[1]!],
+    onPropertiesChange,
+  });
+  const menu = await openHeader(tableView, "Name");
+
+  // Act
+  await tableView.user.click(
+    within(menu).getByRole("switch", { name: "Show page icon" }),
+  );
+
+  // Assert
+  expect(lastResourceChange(onPropertiesChange)?.action).toEqual({
+    id: anyString,
+    type: "properties.update",
+    payload: {
+      propertyId: "col1",
+      previous: titleProperty,
+      next: { ...titleProperty, config: { showIcon: false } },
+    },
+  });
+});
+
+it("PropMenu_LockedView_DisablesHeaderMutationBoundary", async () => {
+  // Arrange
+  const onPropertiesChange = vi.fn();
+  const tableView = renderTableView({
+    view: { locked: true },
+    onPropertiesChange,
+  });
+  const header = screen.getByRole("button", { name: "Name" });
+
+  // Act
+  await tableView.user.click(header);
+
+  // Assert
+  expect(header).toBeDisabled();
+  expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+  expect(onPropertiesChange).not.toHaveBeenCalled();
 });
 
 it("PropMenu_TitleColumn_HidesDestructiveTypeActions", async () => {
