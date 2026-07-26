@@ -59,23 +59,23 @@
 
 ### Task 2: Strengthen shared test harnesses without encoding DOM structure
 
-- [ ] **Step 1: Add a failing harness contract**
+- [x] **Step 1: Add a failing harness contract**
 
   Specify semantic helpers for row order, named groups, footer results, and controlled data/properties/view probes.
 
-- [ ] **Step 2: Verify the harness contract initially fails**
+- [x] **Step 2: Verify the harness contract initially fails**
 
-- [ ] **Step 3: Add deterministic full-plugin data and resource probes**
+- [x] **Step 3: Add deterministic full-plugin data and resource probes**
 
   Reuse the deterministic E2E values where practical. Continue applying `change.next` in controlled probes.
 
-- [ ] **Step 4: Add only semantic result helpers**
+- [x] **Step 4: Add only semantic result helpers**
 
   Prefer roles, accessible names, labels, and visible text. Do not encode DOM index paths.
 
-- [ ] **Step 5: Run the harness contract and existing suite**
+- [x] **Step 5: Run the harness contract and existing suite**
 
-- [ ] **Step 6: Commit harness improvements**
+- [x] **Step 6: Commit harness improvements**
 
 ### Task 3: Cover plugin conversion and formatting contracts
 
