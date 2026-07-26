@@ -431,7 +431,7 @@ describe("useTableView - Extended Grouping", () => {
   });
 
   describe("Group DnD", () => {
-    it("should handle group row drag end", () => {
+    it("GroupDrag_DifferentTarget_ReordersGroupsExactly", () => {
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
@@ -462,13 +462,32 @@ describe("useTableView - Extended Grouping", () => {
 
       const newGroupOrder = table.store.state.groupingState.groupOrder;
 
-      // Verify the order changed (groups were reordered)
-      expect(newGroupOrder).not.toEqual(initialGroupOrder);
-      expect(newGroupOrder).toHaveLength(initialGroupOrder.length);
+      expect(newGroupOrder).toEqual([
+        secondGroupId,
+        firstGroupId,
+        ...initialGroupOrder.slice(2),
+      ]);
+    });
 
-      // Verify both groups are still in the array
-      expect(newGroupOrder).toContain(firstGroupId);
-      expect(newGroupOrder).toContain(secondGroupId);
+    it.each([
+      ["missing source", null, { id: "target" }],
+      ["self target", { id: "source" }, { id: "source" }],
+    ])("GroupDrag_%s_PreservesGroupOrder", (_scenario, source, target) => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+      act(() => table.setGrouping(["col2"]));
+      const previous = table.store.state.groupingState.groupOrder;
+
+      act(() => {
+        table.handleGroupedRowDragEnd({
+          canceled: false,
+          operation: { canceled: false, source, target },
+        } as unknown as DragEndEvent);
+      });
+
+      expect(table.store.state.groupingState.groupOrder).toEqual(previous);
     });
   });
 

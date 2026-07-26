@@ -69,6 +69,24 @@ function DataUpdateControls() {
       <button
         type="button"
         onClick={() =>
+          table.setTableData(
+            (rows) => rows.filter((row) => row.id !== "row1"),
+            {
+              id: "test-data-row-delete-action",
+              type: "data.row.delete",
+              payload: {
+                rowIds: ["row1"],
+                previousPositions: [{ rowId: "row1", index: 0 }],
+              },
+            },
+          )
+        }
+      >
+        Delete first row
+      </button>
+      <button
+        type="button"
+        onClick={() =>
           table.setTableGlobalState(
             (view) => ({
               ...view,
@@ -400,6 +418,84 @@ describe("TableViewReactivity", () => {
     await waitFor(() =>
       expect(document.querySelector("section#row1")).toBeInTheDocument(),
     );
+  });
+
+  it.each([
+    ["Side", "Open first row center peek", "dialog"],
+    ["Center", "Open first row center peek", "dialog"],
+    ["Full", "Open first row full page", "section"],
+  ] as const)(
+    "RowView_%sOpenedRowDeleted_ClosesWithoutRenderingStaleData",
+    async (mode, openButtonName, containerType) => {
+      const tableView = renderTableView({
+        properties: [
+          {
+            ...mockProperties[0]!,
+            type: "title",
+            config: { showIcon: true },
+          },
+          ...mockProperties.slice(1),
+        ],
+        children: <DataUpdateControls />,
+      });
+      const deleteButton = tableView.button("Delete first row");
+      if (mode === "Side") {
+        const rowActions = await tableView.openRowActions("Task 1");
+        rowActions.choose("Open in side peek");
+      } else {
+        fireEvent.click(tableView.button(openButtonName));
+      }
+      if (containerType === "dialog") {
+        expect(
+          await screen.findByRole("dialog", { name: "Task 1" }),
+        ).toBeVisible();
+      } else {
+        await waitFor(() =>
+          expect(document.querySelector("section#row1")).toBeInTheDocument(),
+        );
+      }
+
+      fireEvent.click(deleteButton);
+
+      await waitFor(() => {
+        if (containerType === "dialog") {
+          expect(
+            screen.queryByRole("dialog", { name: "Task 1" }),
+          ).not.toBeInTheDocument();
+        } else {
+          expect(
+            document.querySelector("section#row1"),
+          ).not.toBeInTheDocument();
+        }
+      });
+    },
+  );
+
+  it("RowView_ConfiguredUrl_NavigatesWithoutRenderingInlineFullView", async () => {
+    const open = vi.spyOn(window, "open").mockImplementation(() => null);
+    const tableView = renderTableView({
+      properties: [
+        {
+          ...mockProperties[0]!,
+          type: "title",
+          config: { showIcon: true },
+        },
+        ...mockProperties.slice(1),
+      ],
+      getRowUrl: (rowId) => `/rows/${rowId}`,
+      children: <DataUpdateControls />,
+    });
+
+    try {
+      fireEvent.click(tableView.button("Open first row full page"));
+
+      await waitFor(() =>
+        expect(open).toHaveBeenCalledWith("/rows/row1", "_self"),
+      );
+      expect(document.querySelector("section#row1")).not.toBeInTheDocument();
+    } finally {
+      open.mockRestore();
+    }
   });
 
   it("TableViewReactivity_DataChange_RendersAddedRow", async () => {

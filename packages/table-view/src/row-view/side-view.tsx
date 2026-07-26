@@ -37,28 +37,32 @@ function SideViewContent({
 }>) {
   const { table } = useTableViewCtx();
   const { rowView, openedRowId } = tableGlobal;
-  const titleCell = openedRowId ? table.getTitleCell(openedRowId) : null;
+  const visibleRowId =
+    openedRowId && table.getRowModel().rowsById[openedRowId]
+      ? openedRowId
+      : null;
+  const titleCell = visibleRowId ? table.getTitleCell(visibleRowId) : null;
 
   return (
     <Sheet
-      open={!!openedRowId && rowView === "side"}
+      open={!!visibleRowId && rowView === "side"}
       onOpenChange={() => table.openRow(null)}
     >
       <SheetContent
         hideClose
-        id={openedRowId ?? undefined}
+        id={visibleRowId ?? undefined}
         side="right"
         className="w-150 overflow-x-hidden overflow-y-auto sm:max-w-150"
       >
-        {openedRowId && (
+        {visibleRowId && (
           <>
-            <ViewNav rowId={openedRowId} />
+            <ViewNav rowId={visibleRowId} />
             <div className={cn(rowViewContentVariants({ mode: "side" }))}>
               <SheetTitle typography="h1" className="col-start-2 mb-2">
                 {titleCell?.cell.value}
               </SheetTitle>
               <div className="col-start-2 mb-3 min-w-0">
-                <ViewProps rowId={openedRowId} />
+                <ViewProps rowId={visibleRowId} />
               </div>
               <div className="col-start-2">{children}</div>
             </div>

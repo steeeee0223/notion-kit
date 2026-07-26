@@ -241,6 +241,38 @@ describe("useTableView resource API", () => {
     });
   });
 
+  it("ResourceActions_OpenRowInFullPageWithoutWindow_StillCommitsState", () => {
+    const onViewChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        view: {
+          layout: "table",
+          rowView: "side",
+          openedRowId: null,
+        },
+        getRowUrl: (rowId) => `/rows/${rowId}`,
+        onViewChange,
+      }),
+    );
+    const browserWindow = globalThis.window;
+
+    try {
+      vi.stubGlobal("window", undefined);
+
+      act(() => result.current.table.openRowInFullPage("row1"));
+
+      expect(
+        getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
+          ?.next,
+      ).toMatchObject({ openedRowId: "row1", rowView: "full" });
+    } finally {
+      vi.stubGlobal("window", browserWindow);
+    }
+  });
+
   it("ResourceActions_SerializationExcludesCompleteNextResource", () => {
     const onPropertiesChange = vi.fn();
     const { result } = renderHook(() =>

@@ -365,7 +365,11 @@ describe("useTableView - Column Custom APIs", () => {
       expect(table.store.state.columnOrder).toEqual(["col1", "col2"]);
     });
 
-    it("ColumnDrag_MissingSource_DoesNotEmitPropertyMove", () => {
+    it.each([
+      ["MissingSource", null, { id: "col2" }],
+      ["MissingTarget", { id: "col1" }, null],
+      ["SelfTarget", { id: "col1" }, { id: "col1" }],
+    ])("ColumnDrag_%s_DoesNotEmitPropertyMove", (_scenario, source, target) => {
       const onPropertiesChange = vi.fn();
       const { table } = renderTableHook({
         data: mockData,
@@ -378,8 +382,8 @@ describe("useTableView - Column Custom APIs", () => {
           canceled: false,
           operation: {
             canceled: false,
-            source: null,
-            target: { id: "col2" },
+            source,
+            target,
           },
         } as unknown as DragEndEvent);
       });
@@ -388,10 +392,12 @@ describe("useTableView - Column Custom APIs", () => {
       expect(table.store.state.columnOrder).toEqual(["col1", "col2"]);
     });
 
-    it("should reorder columns on drag end", () => {
+    it("ColumnDrag_DifferentTarget_EmitsExactPropertyMove", () => {
+      const onPropertiesChange = vi.fn();
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
+        onPropertiesChange,
       });
 
       act(() => {
@@ -411,6 +417,15 @@ describe("useTableView - Column Custom APIs", () => {
       const col2Index = columnOrder.indexOf("col2");
 
       expect(col1Index).toBeGreaterThan(col2Index);
+      expect(onPropertiesChange.mock.lastCall?.[0].action).toEqual({
+        id: expect.any(String),
+        type: "properties.move",
+        payload: {
+          propertyId: "col1",
+          previousPosition: 0,
+          nextPosition: 1,
+        },
+      });
     });
 
     it("should handle drag to beginning", () => {

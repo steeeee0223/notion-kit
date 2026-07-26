@@ -361,7 +361,13 @@ export const ColumnsInfoFeature: TableFeature = {
       );
     };
     instance.handleColumnDragEnd = (e) => {
-      if (e.canceled || e.operation.source?.id == null) return;
+      if (
+        e.canceled ||
+        e.operation.source?.id == null ||
+        e.operation.target?.id == null ||
+        e.operation.source.id === e.operation.target.id
+      )
+        return;
       const propertyId = String(e.operation.source.id);
       const actionId = v4();
       instance.options.onColumnInfoChange?.(

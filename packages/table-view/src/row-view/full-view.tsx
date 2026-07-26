@@ -39,6 +39,7 @@ function FullViewContent({
   const { rowView, openedRowId } = tableGlobal;
 
   if (!openedRowId || rowView !== "full") return null;
+  if (!table.getRowModel().rowsById[openedRowId]) return null;
 
   const titleCell = table.getTitleCell(openedRowId);
   const rowUrl = table.getRowUrl(openedRowId);

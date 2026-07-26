@@ -334,10 +334,12 @@ describe("useTableView - Row Custom APIs", () => {
   });
 
   describe("handleRowDragEnd", () => {
-    it("should reorder rows on drag end", () => {
+    it("RowDrag_DifferentTarget_EmitsExactMoveResource", () => {
+      const onDataChange = vi.fn();
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
+        onDataChange,
       });
 
       act(() => {
@@ -357,6 +359,36 @@ describe("useTableView - Row Custom APIs", () => {
       const row2Index = rows.findIndex((r) => r.id === "row2");
 
       expect(row1Index).toBeGreaterThan(row2Index);
+      expect(onDataChange.mock.lastCall?.[0].action).toEqual({
+        id: expect.any(String),
+        type: "data.row.move",
+        payload: {
+          rowId: "row1",
+          previousPosition: 0,
+          nextPosition: 1,
+        },
+      });
+    });
+
+    it.each([
+      ["missing source", null, { id: "row2" }],
+      ["self target", { id: "row1" }, { id: "row1" }],
+    ])("RowDrag_%s_DoesNotEmitMoveResource", (_scenario, source, target) => {
+      const onDataChange = vi.fn();
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+        onDataChange,
+      });
+
+      act(() => {
+        table.handleRowDragEnd({
+          canceled: false,
+          operation: { canceled: false, source, target },
+        } as unknown as DragEndEvent);
+      });
+
+      expect(onDataChange).not.toHaveBeenCalled();
     });
 
     it("should handle drag to beginning", () => {
@@ -404,10 +436,12 @@ describe("useTableView - Row Custom APIs", () => {
       expect(table.getRow("row1").original.properties.col2?.value).toBe(30);
     });
 
-    it("can commit row grouping without replaying a kanban preview reorder", () => {
+    it("BoardCardDrag_GroupChangeWithoutPreview_EmitsExactStationaryMove", () => {
+      const onDataChange = vi.fn();
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
+        onDataChange,
       });
 
       act(() => {
@@ -433,6 +467,15 @@ describe("useTableView - Row Custom APIs", () => {
         "row2",
       ]);
       expect(table.getRow("row1").original.properties.col2?.value).toBe(30);
+      expect(onDataChange.mock.lastCall?.[0].action).toEqual({
+        id: expect.any(String),
+        type: "data.row.move",
+        payload: {
+          rowId: "row1",
+          previousPosition: 0,
+          nextPosition: 0,
+        },
+      });
     });
 
     it("previews kanban row order directly in table data", () => {
