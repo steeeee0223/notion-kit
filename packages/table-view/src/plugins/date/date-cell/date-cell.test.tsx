@@ -164,6 +164,29 @@ it("DateRangeInput_UnchangedBlur_DoesNotReportRedundantTimestamp", async () => {
   expect(onChange).not.toHaveBeenCalled();
 });
 
+it("DateRangeInput_UntouchedEmptyThenInvalidBlur_SuppressesOnlyEmptyMutation", async () => {
+  // Arrange
+  const user = userEvent.setup();
+  render(<DateRangeHarness initial={{}} />);
+  const input = screen.getByRole("textbox");
+
+  // Act
+  await user.click(input);
+  await user.tab();
+
+  // Assert
+  expect(screen.getByTestId("range-state")).toHaveTextContent("{}");
+
+  // Act
+  await user.click(input);
+  await user.type(input, "not-a-date");
+  await user.tab();
+
+  // Assert
+  expect(input).toHaveAttribute("aria-invalid", "true");
+  expect(screen.getByTestId("range-state")).toHaveTextContent('"start":-1');
+});
+
 it("DatePicker_EmptyBoardAndRowView_RespectDisplayBoundary", () => {
   const { container, rerender } = render(
     <DatePickerCell

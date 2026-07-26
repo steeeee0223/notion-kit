@@ -131,6 +131,10 @@ describe("NumberCell", () => {
     await waitFor(() => expect(input).not.toBeInTheDocument());
     expect(screen.getByRole("button", { name: "12" })).toBeVisible();
     expect(onChange).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole("button", { name: "12" }));
+    expect(await screen.findByRole("textbox")).toHaveValue("12");
+    expect(onChange).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -260,6 +264,10 @@ describe("TextAndCheckboxCells", () => {
     // Assert
     await waitFor(() => expect(input).not.toBeInTheDocument());
     expect(table.row("Alpha")).toHaveTextContent("first note");
+    expect(dataProbe.onChange).not.toHaveBeenCalled();
+
+    await table.user.click(table.cellButton("Alpha", "first note"));
+    expect(await screen.findByRole("textbox")).toHaveValue("first note");
     expect(dataProbe.onChange).not.toHaveBeenCalled();
   });
 

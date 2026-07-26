@@ -161,7 +161,8 @@ function DateInput({ id, value: ts, onChange, tz }: DateInputProps) {
     const res = dateTimeSchema.safeParse({ date: value, time: "" });
     setError(!res.success);
     const nextTs = res.success ? parsedDateTimeToTs(res.data, tz) : -1;
-    if (nextTs !== ts) onChange(nextTs);
+    const unchangedEmpty = value === "" && ts === undefined;
+    if (!unchangedEmpty && nextTs !== ts) onChange(nextTs);
   };
 
   return (

@@ -108,6 +108,11 @@ it("TitleListCell_EscapeAfterEditing_CancelsWithoutResourceChange", async () => 
   await waitFor(() => expect(input).not.toBeInTheDocument());
   expect(screen.getByText("Alpha")).toBeVisible();
   expect(dataProbe.onChange).not.toHaveBeenCalled();
+
+  await table.user.hover(screen.getByText("Alpha"));
+  await table.user.click(screen.getAllByRole("button", { name: "Edit" })[0]!);
+  expect(await screen.findByRole("textbox")).toHaveValue("Alpha");
+  expect(dataProbe.onChange).not.toHaveBeenCalled();
 });
 
 it("TitleListCell_ClearAndCommit_EmitsExactCellResourcePayload", async () => {
