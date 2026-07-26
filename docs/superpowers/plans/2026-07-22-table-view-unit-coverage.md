@@ -137,23 +137,23 @@
 
 ### Task 6: Cover table, list, board, row-view, header, footer, and DnD transitions
 
-- [ ] **Step 1: Close table body/header/footer boundaries**
+- [x] **Step 1: Close table body/header/footer boundaries**
 
   Existing reactivity tests cover visibility, pinning, sizing, counting, sorting, locking, and resource refresh. Add empty/first/last/grouped body cases, resize start/end, column reorder, and remaining footer refresh branches.
 
-- [ ] **Step 2: Close list-layout boundaries**
+- [x] **Step 2: Close list-layout boundaries**
 
   Existing tests cover add above/below, row open, title editing, and lock behavior. Add empty list and controlled-parent refresh boundaries.
 
-- [ ] **Step 3: Close board-layout and DnD boundaries**
+- [x] **Step 3: Close board-layout and DnD boundaries**
 
   Existing tests cover missing-group selection, title edit, add within group, card open, grouped membership, and lock behavior. Add select/checkbox/date/empty columns, group visibility/aggregation, empty board, card movement, and board DnD payloads.
 
-- [ ] **Step 4: Close row-view boundaries**
+- [x] **Step 4: Close row-view boundaries**
 
   Existing tests cover side/center/full rendering, mode change, Escape close, full-page action, and data refresh. Add first/last navigation, previous/next transitions, deleted-row guards, URL present/absent behavior, and the SSR guard.
 
-- [ ] **Step 5: Cover DnD hooks as deterministic state contracts**
+- [x] **Step 5: Cover DnD hooks as deterministic state contracts**
 
   Call public table/hook drag-end handlers with deterministic active/over IDs. Assert missing/self no-ops and exact row, column, board-card, and group move payloads without browser geometry.
 
