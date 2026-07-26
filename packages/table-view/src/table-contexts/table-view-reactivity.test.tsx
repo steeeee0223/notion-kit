@@ -66,6 +66,18 @@ function DataUpdateControls() {
       <button type="button" onClick={() => table.openRowInFullPage("row1")}>
         Open first row full page
       </button>
+      <button type="button" onClick={() => table.openRow("row1")}>
+        Open first row side peek
+      </button>
+      <button type="button" onClick={() => table.setGrouping(["col2"])}>
+        Group by done
+      </button>
+      <button
+        type="button"
+        onClick={() => table.toggleGroupVisible("col2:true")}
+      >
+        Hide done group
+      </button>
       <button
         type="button"
         onClick={() =>
@@ -468,6 +480,44 @@ describe("TableViewReactivity", () => {
           ).not.toBeInTheDocument();
         }
       });
+    },
+  );
+
+  it.each([
+    ["Side", "Open first row side peek", "dialog"],
+    ["Center", "Open first row center peek", "dialog"],
+    ["Full", "Open first row full page", "section"],
+  ] as const)(
+    "RowView_%sOpenedRowGroupHidden_RemainsOpenWithCoreRowData",
+    async (_mode, openButtonName, containerType) => {
+      const tableView = renderTableView({
+        properties: [
+          {
+            ...mockProperties[0]!,
+            type: "title",
+            config: { showIcon: true },
+          },
+          ...mockProperties.slice(1),
+        ],
+        children: <DataUpdateControls />,
+      });
+      const hideGroupButton = tableView.button("Hide done group");
+      const refreshRowViewButton = tableView.button("Hide done column");
+      fireEvent.click(tableView.button("Group by done"));
+      fireEvent.click(tableView.button(openButtonName));
+
+      fireEvent.click(hideGroupButton);
+      fireEvent.click(refreshRowViewButton);
+
+      if (containerType === "dialog") {
+        expect(
+          await screen.findByRole("dialog", { name: "Task 1" }),
+        ).toBeVisible();
+      } else {
+        await waitFor(() =>
+          expect(document.querySelector("section#row1")).toBeInTheDocument(),
+        );
+      }
     },
   );
 

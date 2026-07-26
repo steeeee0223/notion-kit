@@ -40,7 +40,7 @@ function DialogViewContent({
   const { table } = useTableViewCtx();
   const { rowView, openedRowId } = tableGlobal;
   const visibleRowId =
-    openedRowId && table.getRowModel().rowsById[openedRowId]
+    openedRowId && table.getCoreRowModel().rowsById[openedRowId]
       ? openedRowId
       : null;
   const titleCell = visibleRowId ? table.getTitleCell(visibleRowId) : null;

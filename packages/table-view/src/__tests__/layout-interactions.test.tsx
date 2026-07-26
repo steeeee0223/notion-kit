@@ -136,41 +136,45 @@ it("TableHeader_ResizeStartAndEnd_PersistsExactColumnWidth", async () => {
   const consoleError = vi
     .spyOn(console, "error")
     .mockImplementation(() => undefined);
-  const propertyChanges: PropertiesChange[] = [];
-  render(
-    <TableView
-      data={mockData}
-      properties={titleProperties}
-      view={{}}
-      onPropertiesChange={(change) => {
-        propertyChanges.push(change as PropertiesChange);
-      }}
-    />,
-  );
-  const resizeHandle = screen.getByRole("separator", { name: "Resize Name" });
+  try {
+    const propertyChanges: PropertiesChange[] = [];
+    render(
+      <TableView
+        data={mockData}
+        properties={titleProperties}
+        view={{}}
+        onPropertiesChange={(change) => {
+          propertyChanges.push(change as PropertiesChange);
+        }}
+      />,
+    );
+    const resizeHandle = screen.getByRole("separator", {
+      name: "Resize Name",
+    });
 
-  fireEvent.mouseDown(resizeHandle, { clientX: 200 });
-  fireEvent.mouseMove(document, { clientX: 260 });
+    fireEvent.mouseDown(resizeHandle, { clientX: 200 });
+    fireEvent.mouseMove(document, { clientX: 260 });
 
-  expect(propertyChanges).toHaveLength(0);
+    expect(propertyChanges).toHaveLength(0);
 
-  fireEvent.mouseUp(resizeHandle, { clientX: 260 });
+    fireEvent.mouseUp(resizeHandle, { clientX: 260 });
 
-  await waitFor(() => expect(propertyChanges).toHaveLength(1));
-  const change = propertyChanges[0]!;
-  expect(change.action.type).toBe("properties.resize");
-  if (change.action.type !== "properties.resize") {
-    throw new Error("Expected a properties.resize action");
+    await waitFor(() => expect(propertyChanges).toHaveLength(1));
+    const change = propertyChanges[0]!;
+    expect(change.action.type).toBe("properties.resize");
+    if (change.action.type !== "properties.resize") {
+      throw new Error("Expected a properties.resize action");
+    }
+    expect(change.action.payload).toEqual({
+      propertyId: "col1",
+      previousWidth: "200",
+      nextWidth: "260px",
+    });
+    expect(change.next[0]!.width).toBe("260px");
+    expect(consoleError).not.toHaveBeenCalled();
+  } finally {
+    consoleError.mockRestore();
   }
-  expect(change.action.payload).toEqual({
-    propertyId: "col1",
-    previousWidth: "200",
-    nextWidth: "260px",
-  });
-  expect(change.next[0]!.width).toBe("260px");
-  const consoleErrors = [...consoleError.mock.calls];
-  consoleError.mockRestore();
-  expect(consoleErrors).toHaveLength(0);
 });
 
 it("ListLayout_EmptyData_RendersNoRowsAndCreatesFirstRow", async () => {

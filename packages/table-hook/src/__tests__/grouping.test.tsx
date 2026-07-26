@@ -5,7 +5,7 @@
 
 import type { DragEndEvent } from "@dnd-kit/react";
 import { act } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { renderTableHook } from "@/__tests__/mock";
 import type { ColumnInfo, Row } from "@/lib/types";
@@ -470,25 +470,41 @@ describe("useTableView - Extended Grouping", () => {
     });
 
     it.each([
-      ["missing source", null, { id: "target" }],
-      ["self target", { id: "source" }, { id: "source" }],
-    ])("GroupDrag_%s_PreservesGroupOrder", (_scenario, source, target) => {
-      const { table } = renderTableHook({
-        data: mockData,
-        properties: mockProperties,
-      });
-      act(() => table.setGrouping(["col2"]));
-      const previous = table.store.state.groupingState.groupOrder;
+      ["canceled event", true, false, { id: "source" }, { id: "target" }],
+      ["canceled operation", false, true, { id: "source" }, { id: "target" }],
+      ["missing source", false, false, null, { id: "target" }],
+      ["missing target", false, false, { id: "source" }, null],
+      ["self target", false, false, { id: "source" }, { id: "source" }],
+    ])(
+      "GroupDrag_%s_PreservesGroupOrderWithoutStateCallback",
+      (_scenario, canceled, operationCanceled, source, target) => {
+        const { table } = renderTableHook({
+          data: mockData,
+          properties: mockProperties,
+        });
+        act(() => table.setGrouping(["col2"]));
+        const previous = table.store.state.groupingState.groupOrder;
+        const onGroupingStateChange = vi.fn();
+        table.setOptions((options) => ({
+          ...options,
+          onGroupingStateChange,
+        }));
 
-      act(() => {
-        table.handleGroupedRowDragEnd({
-          canceled: false,
-          operation: { canceled: false, source, target },
-        } as unknown as DragEndEvent);
-      });
+        act(() => {
+          table.handleGroupedRowDragEnd({
+            canceled,
+            operation: {
+              canceled: operationCanceled,
+              source,
+              target,
+            },
+          } as unknown as DragEndEvent);
+        });
 
-      expect(table.store.state.groupingState.groupOrder).toEqual(previous);
-    });
+        expect(onGroupingStateChange).not.toHaveBeenCalled();
+        expect(table.store.state.groupingState.groupOrder).toEqual(previous);
+      },
+    );
   });
 
   describe("Row Group Visibility API", () => {
