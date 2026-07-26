@@ -14,14 +14,14 @@ async function openPropertyTypesMenu() {
   return properties.openNewProperty();
 }
 
-function lastCreatedProperty(callback: {
+function lastCreateAction(callback: {
   mock: { lastCall: unknown[] | undefined };
 }) {
   return (
     callback.mock.lastCall?.[0] as
       | { action: { type: string; payload: { property: Partial<ColumnInfo> } } }
       | undefined
-  )?.action.payload.property;
+  )?.action;
 }
 
 describe("TypesMenu", () => {
@@ -33,20 +33,28 @@ describe("TypesMenu", () => {
     expect(properties.heading()).toBeVisible();
   });
 
-  it("PropertyTypesMenu_KnownType_CreatesNamedProperty", async () => {
-    const onPropertiesChange = vi.fn();
-    const tableView = renderTableView({ onPropertiesChange });
-    const settings = await tableView.openViewSettings();
-    const properties = await settings.openProperties();
-    const types = await properties.openNewProperty();
+  it.each([
+    ["Text", "text"],
+    ["Number", "number"],
+    ["Checkbox", "checkbox"],
+    ["Date", "date"],
+    ["Email", "email"],
+  ] as const)(
+    "PropertyTypesMenu_%s_CreatesExpectedProperty",
+    async (name, type) => {
+      const onPropertiesChange = vi.fn();
+      const tableView = renderTableView({ onPropertiesChange });
+      const settings = await tableView.openViewSettings();
+      const properties = await settings.openProperties();
+      const types = await properties.openNewProperty();
 
-    await tableView.user.click(types.type("Number"));
+      await tableView.user.click(types.type(name));
 
-    expect(lastCreatedProperty(onPropertiesChange)).toMatchObject({
-      type: "number",
-      name: "Number",
-    });
-  });
+      const action = lastCreateAction(onPropertiesChange);
+      expect(action?.type).toBe("properties.create");
+      expect(action?.payload.property).toMatchObject({ type, name });
+    },
+  );
 
   it("PropertyTypesMenu_CustomName_CreatesTextProperty", async () => {
     const onPropertiesChange = vi.fn();
@@ -58,7 +66,9 @@ describe("TypesMenu", () => {
     await tableView.user.type(types.searchInput(), "Owner");
     await tableView.user.click(types.type("Owner"));
 
-    expect(lastCreatedProperty(onPropertiesChange)).toMatchObject({
+    const action = lastCreateAction(onPropertiesChange);
+    expect(action?.type).toBe("properties.create");
+    expect(action?.payload.property).toMatchObject({
       type: "text",
       name: "Owner",
     });

@@ -1,9 +1,13 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
 import { mockResizeObserver } from "../__tests__/mock";
 
 mockResizeObserver();
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 async function openEditGroupingMenu() {
   const tableView = renderTableView();
