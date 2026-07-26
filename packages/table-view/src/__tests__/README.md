@@ -297,17 +297,19 @@ $NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store \
 ### Testing Uncontrolled Mode
 
 ```typescript
-it("should update in uncontrolled mode", () => {
+it("TableData_AddRow_UncontrolledStateAddsRow", () => {
+  // Arrange
   const { table } = renderTableHook({
     data: mockData,
     properties: mockProperties,
   });
 
+  // Act
   act(() => {
     table.addRow();
   });
 
-  // Assert state changed
+  // Assert
   expect(table.getRowModel().rows).toHaveLength(3);
 });
 ```
@@ -315,7 +317,8 @@ it("should update in uncontrolled mode", () => {
 ### Testing Controlled Mode
 
 ```typescript
-it("should use controlled state", () => {
+it("TableData_AddRow_ControlledModeReportsChangeWithoutLocalMutation", () => {
+  // Arrange
   const onTableDataChange = vi.fn();
 
   const { table } = renderTableHook({
@@ -324,14 +327,13 @@ it("should use controlled state", () => {
     options: { onTableDataChange },
   });
 
+  // Act
   act(() => {
     table.addRow();
   });
 
-  // Assert callback was called
+  // Assert
   expect(onTableDataChange).toHaveBeenCalled();
-
-  // State should NOT change without external update
   expect(table.getRowModel().rows).toHaveLength(2);
 });
 ```
