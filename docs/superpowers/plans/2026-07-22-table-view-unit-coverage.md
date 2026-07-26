@@ -39,21 +39,21 @@
 
 ### Task 1: Create the test-value audit and establish reproducible coverage evidence
 
-- [ ] **Step 1: Enumerate every existing test name**
+- [x] **Step 1: Enumerate every existing test name**
 
   Inventory every concrete and parameterized test under `packages/table-view/src`. A parameterized test receives one audit row only when all cases prove the same contract.
 
-- [ ] **Step 2: Write the audit with concrete value decisions**
+- [x] **Step 2: Write the audit with concrete value decisions**
 
   Create `packages/table-view/src/__tests__/test-audit.md` with File, Test, Decision, Value rule, and Evidence/replacement columns. Every Rewrite/Merge/Remove row must name its replacement or exact removal reason.
 
 - [x] **Step 3: Reproduce baseline and current coverage diagnostics**
 
-- [ ] **Step 4: Correct README commands and audit policy**
+- [x] **Step 4: Correct README commands and audit policy**
 
   Update `packages/table-view/src/__tests__/README.md` with the real `coverage` command, the 90% statement/branch policy, and the Keep/Rewrite/Merge/Remove/Add rubric.
 
-- [ ] **Step 5: Commit the audit artifact**
+- [x] **Step 5: Commit the audit artifact**
 
   Commit only the completed audit and README policy.
 
