@@ -1825,6 +1825,9 @@ importers:
       uuid:
         specifier: catalog:uuid
         version: 13.0.0
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
     devDependencies:
       '@notion-kit/config':
         specifier: workspace:*

@@ -12,7 +12,6 @@ import { TableGroupedRow } from "./table-grouped-row";
 import { TableRow } from "./table-row";
 
 export function DndTableBody() {
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [pendingDragEndEvent, setPendingDragEndEvent] =
     useState<DragEndEvent | null>(null);
   const { table } = useTableViewCtx();
@@ -37,8 +36,6 @@ export function DndTableBody() {
           locked={locked ?? false}
           sorting={sorting}
           isResizingColumn={Boolean(columnResizing.isResizingColumn)}
-          dialogOpen={dialogOpen}
-          setDialogOpen={setDialogOpen}
           pendingDragEndEvent={pendingDragEndEvent}
           setPendingDragEndEvent={setPendingDragEndEvent}
         />
@@ -51,8 +48,6 @@ interface DndTableBodyContentProps {
   locked: boolean;
   sorting: ReturnType<TableInstance["atoms"]["sorting"]["get"]>;
   isResizingColumn: boolean;
-  dialogOpen: boolean;
-  setDialogOpen: (open: boolean) => void;
   pendingDragEndEvent: DragEndEvent | null;
   setPendingDragEndEvent: (event: DragEndEvent | null) => void;
 }
@@ -61,8 +56,6 @@ function DndTableBodyContent({
   locked,
   sorting,
   isResizingColumn,
-  dialogOpen,
-  setDialogOpen,
   pendingDragEndEvent,
   setPendingDragEndEvent,
 }: DndTableBodyContentProps) {
@@ -73,18 +66,16 @@ function DndTableBodyContent({
       const isSorted = sorting.length > 0;
       if (!isSorted) return table.handleRowDragEnd(e);
       setPendingDragEndEvent(e);
-      setDialogOpen(true);
     },
-    [setDialogOpen, setPendingDragEndEvent, sorting.length, table],
+    [setPendingDragEndEvent, sorting.length, table],
   );
 
   const handleConfirmRemoveSorting = () => {
     if (pendingDragEndEvent) {
       table.resetSorting();
       table.handleRowDragEnd(pendingDragEndEvent);
-      setPendingDragEndEvent(null);
     }
-    setDialogOpen(false);
+    setPendingDragEndEvent(null);
   };
 
   return (
@@ -137,7 +128,12 @@ function DndTableBodyContent({
           </span>
         </Button>
       )}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog
+        open={pendingDragEndEvent !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingDragEndEvent(null);
+        }}
+      >
         <AlertModal
           title="Would you like to remove sorting?"
           primary="Remove"

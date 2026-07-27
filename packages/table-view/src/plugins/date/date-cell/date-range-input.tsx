@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { OnChangeFn } from "@tanstack/react-table";
-import z from "zod/v4";
+import * as z from "zod/v4/mini";
 
 import { cn } from "@notion-kit/cn";
 import { Input, Separator } from "@notion-kit/ui/primitives";
@@ -11,8 +11,11 @@ import { formatDate, isoToTs } from "@notion-kit/utils";
 import type { DateData } from "../types";
 
 const dateTimeSchema = z.object({
-  date: z.iso.date().or(z.literal("")),
-  time: z.iso.time({ precision: 0 }).or(z.literal("")).default("00:00:00"),
+  date: z.union([z.iso.date(), z.literal("")]),
+  time: z._default(
+    z.union([z.iso.time({ precision: 0 }), z.literal("")]),
+    "00:00:00",
+  ),
 });
 type DateTimeSchema = z.infer<typeof dateTimeSchema>;
 
@@ -91,6 +94,7 @@ function DateTimeInput({ id, value: ts, onChange, tz }: DateTimeInputProps) {
     const [date, time] = formatDate(ts, {
       dateFormat: "_edit_mode",
       timeFormat: "_edit_mode",
+      tz,
     }).split(" ");
     return { date: date!, time: time! };
   };
@@ -100,7 +104,8 @@ function DateTimeInput({ id, value: ts, onChange, tz }: DateTimeInputProps) {
   const handleBlur = () => {
     const res = dateTimeSchema.safeParse(value);
     setError(!res.success);
-    onChange(res.success ? parsedDateTimeToTs(res.data, tz) : -1);
+    const nextTs = res.success ? parsedDateTimeToTs(res.data, tz) : -1;
+    if (nextTs !== ts) onChange(nextTs);
   };
 
   return (
@@ -151,6 +156,7 @@ function DateInput({ id, value: ts, onChange, tz }: DateInputProps) {
     return formatDate(ts, {
       dateFormat: "_edit_mode",
       timeFormat: "hidden",
+      tz,
     });
   };
   const [value, setValue] = useState(getValue);

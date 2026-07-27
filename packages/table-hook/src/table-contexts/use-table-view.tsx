@@ -86,13 +86,6 @@ function useResourceState<TResource, TAction>({
   const lastResourceRef = useRef(resource);
   const pendingResourceRef = useRef(resource);
 
-  useEffect(() => {
-    if (lastResourceRef.current !== resource) {
-      lastResourceRef.current = resource;
-      pendingResourceRef.current = resource;
-    }
-  }, [resource]);
-
   const setResource = useCallback<ResourceChangeFn<TResource, TAction>>(
     (updater, action) => {
       if (lastResourceRef.current !== resource) {

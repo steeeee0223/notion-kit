@@ -1,4 +1,4 @@
-import { z } from "zod/v4";
+import * as z from "zod/v4/mini";
 
 import { DefaultIcon } from "@/common";
 
@@ -7,10 +7,10 @@ import { NumberCell } from "./number-cell";
 import { NumberConfigMenu } from "./number-config-menu";
 import type { NumberPlugin } from "./types";
 
-const numberSchema = z
-  .any()
-  .refine((val) => !isNaN(Number(val)))
-  .transform(String);
+const numberSchema = z.pipe(
+  z.custom((value) => !isNaN(Number(value))),
+  z.transform((value) => String(value)),
+);
 
 export function number(): NumberPlugin {
   return {
