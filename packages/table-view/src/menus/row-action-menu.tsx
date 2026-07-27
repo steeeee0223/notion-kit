@@ -144,9 +144,13 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
   ];
 
   /** Keyboard shortcut */
-  useHotkeys("meta+shift+enter", openInNewTab, { preventDefault: true });
-  useHotkeys("meta+d", duplicateRow, { preventDefault: true });
-  useHotkeys("backspace", deleteRow);
+  const hotkeyOptions = {
+    enableOnFormTags: ["INPUT"] as const,
+    preventDefault: true,
+  };
+  useHotkeys("meta+shift+enter", openInNewTab, hotkeyOptions);
+  useHotkeys("meta+d", duplicateRow, hotkeyOptions);
+  useHotkeys("backspace", deleteRow, hotkeyOptions);
 
   return (
     <Autocomplete<Action>
@@ -173,6 +177,7 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
                       if (group.value === "Page") {
                         return (
                           <IconMenu
+                            key={action.value}
                             className="w-full border-none text-start hover:bg-transparent"
                             onSelect={selectIcon}
                             onRemove={removeIcon}

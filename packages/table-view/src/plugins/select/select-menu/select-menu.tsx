@@ -108,7 +108,10 @@ export function SelectMenu({ menu }: SelectMenuProps) {
                 >
                   <div className="flex items-center gap-2 px-1">
                     Create
-                    <OptionTag {...optionSuggestion} />
+                    <OptionTag
+                      name={optionSuggestion.name}
+                      color={optionSuggestion.color}
+                    />
                   </div>
                 </ComboboxCreatableItem>
               ) : (

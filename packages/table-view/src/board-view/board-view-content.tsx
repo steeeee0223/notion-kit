@@ -51,7 +51,7 @@ function BoardViewContentInner({
   const { table } = useTableViewCtx();
   const handlers = useBoardDnd();
   const groupedRowsById = table.getRowModel().rowsById;
-  const { groupOrder } = groupingState;
+  const { groupOrder, groupVisibility } = groupingState;
 
   return (
     <div data-slot="notion-board-view" className="relative float-start px-24">
@@ -78,18 +78,20 @@ function BoardViewContentInner({
             </div>
           )}
           <Kanban.Root {...handlers}>
-            {groupOrder.map((groupId, index) => {
-              const row = (groupedRowsById[groupId] ??
-                table.getPlaceholderGroupedRow(groupId)) as RowInstance;
-              return (
-                <BoardGroup
-                  key={groupId}
-                  row={row}
-                  index={index}
-                  locked={locked}
-                />
-              );
-            })}
+            {groupOrder
+              .filter((groupId) => groupVisibility[groupId] ?? true)
+              .map((groupId, index) => {
+                const row = (groupedRowsById[groupId] ??
+                  table.getPlaceholderGroupedRow(groupId)) as RowInstance;
+                return (
+                  <BoardGroup
+                    key={groupId}
+                    row={row}
+                    index={index}
+                    locked={locked}
+                  />
+                );
+              })}
           </Kanban.Root>
         </div>
       </div>

@@ -49,7 +49,7 @@ export function SelectGroupingValue({
         }
         side="top"
       >
-        <OptionTag {...tag} />
+        <OptionTag name={tag.name} color={tag.color} />
       </TooltipPreset>
     </div>
   );

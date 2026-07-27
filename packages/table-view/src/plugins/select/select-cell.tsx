@@ -99,7 +99,7 @@ export function SelectCell({
                         }
                         side="top"
                       >
-                        <OptionTag {...option} />
+                        <OptionTag name={option.name} color={option.color} />
                       </TooltipPreset>
                     );
                   })

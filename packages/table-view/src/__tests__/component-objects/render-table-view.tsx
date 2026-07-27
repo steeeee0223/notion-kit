@@ -10,7 +10,7 @@ import { TableView } from "@/table-contexts";
 import { mockData, mockProperties } from "../mock";
 import { TableViewObject } from "./table-view";
 
-type TableViewProps = React.ComponentProps<typeof TableView>;
+export type TableViewProps = React.ComponentProps<typeof TableView>;
 
 export function renderTableView(props: Partial<TableViewProps> = {}) {
   const user = userEvent.setup({
@@ -23,20 +23,25 @@ export function renderTableView(props: Partial<TableViewProps> = {}) {
       defaultData,
       properties: propProperties,
       defaultProperties,
+      view: propView,
+      defaultView,
       onDataChange,
       onPropertiesChange,
+      onViewChange,
       ...rest
     } = props;
     const [data, setData] = useState(propData ?? defaultData ?? mockData);
     const [properties, setProperties] = useState(
       propProperties ?? defaultProperties ?? mockProperties,
     );
+    const [view, setView] = useState(propView ?? defaultView ?? {});
 
     return (
       <TableView
         {...rest}
         data={data}
         properties={properties}
+        view={view}
         onDataChange={(change) => {
           setData(change.next);
           onDataChange?.(change);
@@ -44,6 +49,10 @@ export function renderTableView(props: Partial<TableViewProps> = {}) {
         onPropertiesChange={(change) => {
           setProperties(change.next);
           onPropertiesChange?.(change);
+        }}
+        onViewChange={(change) => {
+          setView(change.next);
+          onViewChange?.(change);
         }}
       />
     );

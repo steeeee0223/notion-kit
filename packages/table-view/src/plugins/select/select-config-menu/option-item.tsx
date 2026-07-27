@@ -42,7 +42,7 @@ export function OptionItem({
                 onPointerDown={(e) => e.stopPropagation()}
               />
             }
-            label={<OptionTag {...option} />}
+            label={<OptionTag name={option.name} color={option.color} />}
             chevron={false}
             openOnHover={false}
           />

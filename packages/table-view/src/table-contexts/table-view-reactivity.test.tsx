@@ -1,12 +1,27 @@
 import { Profiler } from "react";
-import { fireEvent, screen, waitFor, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { CountMethod } from "@notion-kit/table-hook";
+import {
+  CountMethod,
+  type ResourceChange,
+  type TableViewState,
+  type ViewResourceAction,
+} from "@notion-kit/table-hook";
 
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
-import { mockProperties, mockResizeObserver } from "../__tests__/mock";
-import { useTableViewCtx } from "./table-view-provider";
+import {
+  mockData,
+  mockProperties,
+  mockResizeObserver,
+} from "../__tests__/mock";
+import { TableView, useTableViewCtx } from "./table-view-provider";
 
 mockResizeObserver();
 
@@ -50,6 +65,36 @@ function DataUpdateControls() {
       </button>
       <button type="button" onClick={() => table.openRowInFullPage("row1")}>
         Open first row full page
+      </button>
+      <button type="button" onClick={() => table.openRow("row1")}>
+        Open first row side peek
+      </button>
+      <button type="button" onClick={() => table.setGrouping(["col2"])}>
+        Group by done
+      </button>
+      <button
+        type="button"
+        onClick={() => table.toggleGroupVisible("col2:true")}
+      >
+        Hide done group
+      </button>
+      <button
+        type="button"
+        onClick={() =>
+          table.setTableData(
+            (rows) => rows.filter((row) => row.id !== "row1"),
+            {
+              id: "test-data-row-delete-action",
+              type: "data.row.delete",
+              payload: {
+                rowIds: ["row1"],
+                previousPositions: [{ rowId: "row1", index: 0 }],
+              },
+            },
+          )
+        }
+      >
+        Delete first row
       </button>
       <button
         type="button"
@@ -143,14 +188,14 @@ describe("TableViewReactivity", () => {
     await sort.addRule("Name");
     await tableView.clickOutside();
 
-    expect(screen.getAllByRole("button", { name: /name/i })).toHaveLength(2);
+    expect(screen.getAllByRole("button", { name: "Name" })).toHaveLength(2);
 
     const sortedMenu = await tableView.openSortMenu();
     await sortedMenu.deleteAll();
     await tableView.clickOutside();
 
     await waitFor(() => {
-      expect(screen.getAllByRole("button", { name: /name/i })).toHaveLength(1);
+      expect(screen.getAllByRole("button", { name: "Name" })).toHaveLength(1);
     });
   });
 
@@ -175,7 +220,7 @@ describe("TableViewReactivity", () => {
     await sort.addRule("Name");
     await tableView.clickOutside();
 
-    expect(screen.getAllByRole("button", { name: /name/i })).toHaveLength(2);
+    expect(screen.getAllByRole("button", { name: "Name" })).toHaveLength(2);
     expect(onProbeRender).toHaveBeenCalledOnce();
   });
 
@@ -206,7 +251,10 @@ describe("TableViewReactivity", () => {
   });
 
   it("ViewNav_SelectedRowView_DoesNotEmitChange", async () => {
-    const onViewChange = vi.fn();
+    const onViewChange =
+      vi.fn<
+        (change: ResourceChange<TableViewState, ViewResourceAction>) => unknown
+      >();
     const tableView = renderTableView({
       properties: [
         {
@@ -233,6 +281,273 @@ describe("TableViewReactivity", () => {
     expect(onViewChange).not.toHaveBeenCalled();
   });
 
+  it("ViewNav_DifferentPeekMode_EmitsViewChangeAndMovesRow", async () => {
+    const onViewChange =
+      vi.fn<
+        (change: ResourceChange<TableViewState, ViewResourceAction>) => unknown
+      >();
+    const tableView = renderTableView({
+      properties: [
+        {
+          ...mockProperties[0]!,
+          type: "title",
+          config: { showIcon: true },
+        },
+        ...mockProperties.slice(1),
+      ],
+      onViewChange,
+    });
+    const rowActions = await tableView.openRowActions("Task 1");
+    rowActions.choose("Open in side peek");
+    const dialog = await screen.findByRole("dialog", { name: "Task 1" });
+    onViewChange.mockClear();
+
+    fireEvent.click(
+      dialog.querySelector<HTMLElement>('[aria-haspopup="menu"]')!,
+    );
+    fireEvent.click(
+      await screen.findByRole("menuitemcheckbox", { name: "Center peek" }),
+    );
+
+    await waitFor(() => expect(onViewChange).toHaveBeenCalledOnce());
+    expect(onViewChange.mock.calls[0]?.[0].action).toMatchObject({
+      type: "view.row_display.change",
+      payload: {
+        previousRowView: "side",
+        nextRowView: "center",
+      },
+    });
+    expect(await screen.findByRole("dialog", { name: "Task 1" })).toBeVisible();
+  });
+
+  it("ViewNav_EscapeShortcut_ClosesOpenedRow", async () => {
+    const tableView = renderTableView({
+      properties: [
+        {
+          ...mockProperties[0]!,
+          type: "title",
+          config: { showIcon: true },
+        },
+        ...mockProperties.slice(1),
+      ],
+    });
+    const rowActions = await tableView.openRowActions("Task 1");
+    rowActions.choose("Open in side peek");
+    expect(await screen.findByRole("dialog", { name: "Task 1" })).toBeVisible();
+
+    fireEvent.keyDown(document, { key: "Escape" });
+
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("dialog", { name: "Task 1" }),
+      ).not.toBeInTheDocument(),
+    );
+  });
+
+  it("ViewNav_FirstRow_DisablesPreviousAndNavigatesToNextRow", async () => {
+    const onViewChange =
+      vi.fn<
+        (change: ResourceChange<TableViewState, ViewResourceAction>) => unknown
+      >();
+    const tableView = renderTableView({
+      properties: [
+        {
+          ...mockProperties[0]!,
+          type: "title",
+          config: { showIcon: true },
+        },
+        ...mockProperties.slice(1),
+      ],
+      onViewChange,
+    });
+    const rowActions = await tableView.openRowActions("Task 1");
+    rowActions.choose("Open in side peek");
+    const dialog = await screen.findByRole("dialog", { name: "Task 1" });
+
+    expect(
+      within(dialog).getByRole("button", { name: "Previous row" }),
+    ).toBeDisabled();
+    fireEvent.click(within(dialog).getByRole("button", { name: "Next row" }));
+
+    await waitFor(() =>
+      expect(document.querySelector('[role="dialog"]#row2')).toBeVisible(),
+    );
+    await waitFor(() =>
+      expect(onViewChange.mock.calls.at(-1)?.[0].action).toMatchObject({
+        type: "view.opened_row.change",
+        payload: {
+          previousRowId: "row1",
+          nextRowId: "row2",
+        },
+      }),
+    );
+  });
+
+  it("ViewNav_LastRow_DisablesNextAndNavigatesToPreviousRow", async () => {
+    const tableView = renderTableView({
+      properties: [
+        {
+          ...mockProperties[0]!,
+          type: "title",
+          config: { showIcon: true },
+        },
+        ...mockProperties.slice(1),
+      ],
+    });
+    const rowActions = await tableView.openRowActions("Task 3");
+    rowActions.choose("Open in side peek");
+    const dialog = await screen.findByRole("dialog", { name: "Task 3" });
+
+    expect(
+      within(dialog).getByRole("button", { name: "Next row" }),
+    ).toBeDisabled();
+    fireEvent.click(
+      within(dialog).getByRole("button", { name: "Previous row" }),
+    );
+
+    await waitFor(() =>
+      expect(document.querySelector('[role="dialog"]#row2')).toBeVisible(),
+    );
+  });
+
+  it("ViewNav_OpenFullPageButton_OpensCurrentRowFullPage", async () => {
+    const tableView = renderTableView({
+      properties: [
+        {
+          ...mockProperties[0]!,
+          type: "title",
+          config: { showIcon: true },
+        },
+        ...mockProperties.slice(1),
+      ],
+    });
+    const rowActions = await tableView.openRowActions("Task 1");
+    rowActions.choose("Open in side peek");
+    expect(await screen.findByRole("dialog", { name: "Task 1" })).toBeVisible();
+
+    fireEvent.click(screen.getByRole("button", { name: "Open in full page" }));
+
+    await waitFor(() =>
+      expect(document.querySelector("section#row1")).toBeInTheDocument(),
+    );
+  });
+
+  it.each([
+    ["Side", "Open first row center peek", "dialog"],
+    ["Center", "Open first row center peek", "dialog"],
+    ["Full", "Open first row full page", "section"],
+  ] as const)(
+    "RowView_%sOpenedRowDeleted_ClosesWithoutRenderingStaleData",
+    async (mode, openButtonName, containerType) => {
+      const tableView = renderTableView({
+        properties: [
+          {
+            ...mockProperties[0]!,
+            type: "title",
+            config: { showIcon: true },
+          },
+          ...mockProperties.slice(1),
+        ],
+        children: <DataUpdateControls />,
+      });
+      const deleteButton = tableView.button("Delete first row");
+      if (mode === "Side") {
+        const rowActions = await tableView.openRowActions("Task 1");
+        rowActions.choose("Open in side peek");
+      } else {
+        fireEvent.click(tableView.button(openButtonName));
+      }
+      if (containerType === "dialog") {
+        expect(
+          await screen.findByRole("dialog", { name: "Task 1" }),
+        ).toBeVisible();
+      } else {
+        await waitFor(() =>
+          expect(document.querySelector("section#row1")).toBeInTheDocument(),
+        );
+      }
+
+      fireEvent.click(deleteButton);
+
+      await waitFor(() => {
+        if (containerType === "dialog") {
+          expect(
+            screen.queryByRole("dialog", { name: "Task 1" }),
+          ).not.toBeInTheDocument();
+        } else {
+          expect(
+            document.querySelector("section#row1"),
+          ).not.toBeInTheDocument();
+        }
+      });
+    },
+  );
+
+  it.each([
+    ["Side", "Open first row side peek", "dialog"],
+    ["Center", "Open first row center peek", "dialog"],
+    ["Full", "Open first row full page", "section"],
+  ] as const)(
+    "RowView_%sOpenedRowGroupHidden_RemainsOpenWithCoreRowData",
+    async (_mode, openButtonName, containerType) => {
+      const tableView = renderTableView({
+        properties: [
+          {
+            ...mockProperties[0]!,
+            type: "title",
+            config: { showIcon: true },
+          },
+          ...mockProperties.slice(1),
+        ],
+        children: <DataUpdateControls />,
+      });
+      const hideGroupButton = tableView.button("Hide done group");
+      const refreshRowViewButton = tableView.button("Hide done column");
+      fireEvent.click(tableView.button("Group by done"));
+      fireEvent.click(tableView.button(openButtonName));
+
+      fireEvent.click(hideGroupButton);
+      fireEvent.click(refreshRowViewButton);
+
+      if (containerType === "dialog") {
+        expect(
+          await screen.findByRole("dialog", { name: "Task 1" }),
+        ).toBeVisible();
+      } else {
+        await waitFor(() =>
+          expect(document.querySelector("section#row1")).toBeInTheDocument(),
+        );
+      }
+    },
+  );
+
+  it("RowView_ConfiguredUrl_NavigatesWithoutRenderingInlineFullView", async () => {
+    const open = vi.spyOn(window, "open").mockImplementation(() => null);
+    const tableView = renderTableView({
+      properties: [
+        {
+          ...mockProperties[0]!,
+          type: "title",
+          config: { showIcon: true },
+        },
+        ...mockProperties.slice(1),
+      ],
+      getRowUrl: (rowId) => `/rows/${rowId}`,
+      children: <DataUpdateControls />,
+    });
+
+    try {
+      fireEvent.click(tableView.button("Open first row full page"));
+
+      await waitFor(() =>
+        expect(open).toHaveBeenCalledWith("/rows/row1", "_self"),
+      );
+      expect(document.querySelector("section#row1")).not.toBeInTheDocument();
+    } finally {
+      open.mockRestore();
+    }
+  });
+
   it("TableViewReactivity_DataChange_RendersAddedRow", async () => {
     const tableView = renderTableView();
     const initialRowCount = tableView.rows().length;
@@ -241,6 +556,20 @@ describe("TableViewReactivity", () => {
 
     await waitFor(() => {
       expect(tableView.rows()).toHaveLength(initialRowCount + 1);
+    });
+  });
+
+  it("TableViewReactivity_UncontrolledDataChange_RendersUpdatedCell", async () => {
+    render(
+      <TableView defaultData={mockData} defaultProperties={mockProperties}>
+        <DataUpdateControls />
+      </TableView>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Rename first row" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Renamed task")).toBeVisible();
     });
   });
 
@@ -393,7 +722,9 @@ describe("TableViewReactivity", () => {
     await tableView.clickButton("Count name column");
 
     await waitFor(() => {
-      expect(screen.getByText("count")).toBeVisible();
+      expect(
+        screen.getByRole("button", { name: "Name calculation" }),
+      ).toHaveTextContent("count3");
     });
   });
 });

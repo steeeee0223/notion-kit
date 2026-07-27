@@ -4,7 +4,7 @@ This directory contains comprehensive unit tests for the `@notion-kit/table-view
 
 ## ✅ All Tests Complete
 
-**Total**: 18 test files — 165 passed, 8 skipped
+**Current baseline**: 29 test files — 253 passed
 
 - ✅ All tests now using centralized mocks from `mock.ts`
 - ✅ Using actual plugins from `@notion-kit/table-view`
@@ -21,6 +21,45 @@ This directory contains comprehensive unit tests for the `@notion-kit/table-view
   - `test:watch` - Run tests in watch mode
   - `test:ui` - Open Vitest UI
   - `coverage` - Run tests with coverage report
+
+## Test Value and Coverage Policy
+
+Every test must catch a production regression, document a non-obvious contract,
+or verify a real component interaction and observable result. Tests use
+`TestUnit_Scenario_ExpectedOutcome` names and Arrange/Act/Assert structure.
+The complete row-by-row decision record is in
+[`test-audit.md`](./test-audit.md).
+
+Use the package scripts with Node 24.11.1 and the shared pnpm store:
+
+```bash
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+source "$NVM_DIR/nvm.sh"
+nvm use 24.11.1 --silent
+
+$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store \
+  -F @notion-kit/table-view test
+$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store \
+  -F @notion-kit/table-view coverage
+```
+
+The coverage policy is at least **90% statements** and **90% branches** across
+all runtime `src/**/*.{ts,tsx}` files. Functions and lines are diagnostic only;
+test helpers, test files, declarations, and executable-free barrels may be
+excluded, but difficult runtime code may not. The current baseline remains
+below that gate, so this policy must not be represented as passing until the
+Vitest thresholds are enabled and the command succeeds.
+
+When reviewing an existing test, classify it as:
+
+- **Keep** — it meets the value rule above.
+- **Rewrite** — it needs a result-bearing assertion; name the replacement test
+  and expected observable result before removing it.
+- **Merge** — an existing named result-bearing test subsumes its assertion;
+  record that test as the replacement.
+- **Remove** — only with the exact reason it has no product contract and no
+  necessary replacement.
+- **Add** — a new test closes a documented production contract or coverage gap.
 
 ### 2. Test Files
 
@@ -237,16 +276,20 @@ Located under `src/plugins/select/`, these tests cover the Select/Multi-Select c
 
 ```bash
 # From package directory
-pnpm -F @notion-kit/table-view test
+$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store \
+  -F @notion-kit/table-view test
 
 # Watch mode
-pnpm -F @notion-kit/table-view test:watch
+$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store \
+  -F @notion-kit/table-view test:watch
 
 # With UI
-pnpm -F @notion-kit/table-view test:ui
+$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store \
+  -F @notion-kit/table-view test:ui
 
 # With coverage
-pnpm -F @notion-kit/table-view test:coverage
+$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store \
+  -F @notion-kit/table-view coverage
 ```
 
 ## Test Patterns
@@ -254,17 +297,19 @@ pnpm -F @notion-kit/table-view test:coverage
 ### Testing Uncontrolled Mode
 
 ```typescript
-it("should update in uncontrolled mode", () => {
+it("TableData_AddRow_UncontrolledStateAddsRow", () => {
+  // Arrange
   const { table } = renderTableHook({
     data: mockData,
     properties: mockProperties,
   });
 
+  // Act
   act(() => {
     table.addRow();
   });
 
-  // Assert state changed
+  // Assert
   expect(table.getRowModel().rows).toHaveLength(3);
 });
 ```
@@ -272,7 +317,8 @@ it("should update in uncontrolled mode", () => {
 ### Testing Controlled Mode
 
 ```typescript
-it("should use controlled state", () => {
+it("TableData_AddRow_ControlledModeReportsChangeWithoutLocalMutation", () => {
+  // Arrange
   const onTableDataChange = vi.fn();
 
   const { table } = renderTableHook({
@@ -281,14 +327,13 @@ it("should use controlled state", () => {
     options: { onTableDataChange },
   });
 
+  // Act
   act(() => {
     table.addRow();
   });
 
-  // Assert callback was called
+  // Assert
   expect(onTableDataChange).toHaveBeenCalled();
-
-  // State should NOT change without external update
   expect(table.getRowModel().rows).toHaveLength(2);
 });
 ```

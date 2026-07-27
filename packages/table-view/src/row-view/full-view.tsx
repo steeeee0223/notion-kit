@@ -35,10 +35,12 @@ function FullViewContent({
     typeof useTableViewCtx
   >["table"]["store"]["state"]["tableGlobal"];
 }>) {
+  const headingTypographyClassName = typography("h1");
   const { table } = useTableViewCtx();
   const { rowView, openedRowId } = tableGlobal;
 
   if (!openedRowId || rowView !== "full") return null;
+  if (!table.getCoreRowModel().rowsById[openedRowId]) return null;
 
   const titleCell = table.getTitleCell(openedRowId);
   const rowUrl = table.getRowUrl(openedRowId);
@@ -54,7 +56,12 @@ function FullViewContent({
           rowViewContentVariants({ mode: "full", className: "mt-4" }),
         )}
       >
-        <div className={cn(typography("h1"), "col-start-2 mb-2 text-left")}>
+        <div
+          className={cn(
+            headingTypographyClassName,
+            "col-start-2 mb-2 text-left",
+          )}
+        >
           {titleCell.cell.value}
         </div>
         <div className="col-start-2 mb-3 min-w-0">
