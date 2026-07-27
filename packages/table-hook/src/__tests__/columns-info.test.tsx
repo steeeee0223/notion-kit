@@ -13,6 +13,12 @@ import {
   plugins,
   renderTableHook,
 } from "@/__tests__/mock";
+import type { ColumnDefs } from "@/lib/types";
+import type { CellPlugin } from "@/plugins";
+import type {
+  PropertiesResourceAction,
+  ResourceChangeHandler,
+} from "@/table-contexts/actions";
 import { useTableView } from "@/table-contexts/use-table-view";
 
 describe("useTableView - Column Custom APIs", () => {
@@ -393,7 +399,13 @@ describe("useTableView - Column Custom APIs", () => {
     });
 
     it("ColumnDrag_DifferentTarget_EmitsExactPropertyMove", () => {
-      const onPropertiesChange = vi.fn();
+      const onPropertiesChange =
+        vi.fn<
+          ResourceChangeHandler<
+            ColumnDefs<CellPlugin[]>,
+            PropertiesResourceAction
+          >
+        >();
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
@@ -415,10 +427,11 @@ describe("useTableView - Column Custom APIs", () => {
       // col1 should have moved after col2
       const col1Index = columnOrder.indexOf("col1");
       const col2Index = columnOrder.indexOf("col2");
+      const change = onPropertiesChange.mock.lastCall?.[0];
 
       expect(col1Index).toBeGreaterThan(col2Index);
-      expect(onPropertiesChange.mock.lastCall?.[0].action).toEqual({
-        id: expect.any(String),
+      expect(change?.action).toEqual({
+        id: change?.action.id,
         type: "properties.move",
         payload: {
           propertyId: "col1",
