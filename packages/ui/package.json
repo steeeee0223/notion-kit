@@ -24,6 +24,7 @@
   "scripts": {
     "build": "tsdown && pnpm build:css",
     "build:css": "tailwindcss -i ./src/style.css -o ./dist/style.css --minify",
+    "build:dom-selector": "tsdown --config tsdown.console.config.ts",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "tsdown --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
