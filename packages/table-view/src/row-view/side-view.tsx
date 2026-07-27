@@ -1,6 +1,7 @@
 import React from "react";
 
 import { cn } from "@notion-kit/cn";
+import type { TableInstance } from "@notion-kit/table-hook";
 import { Sheet, SheetContent, SheetTitle } from "@notion-kit/ui/primitives";
 
 import { useTableViewCtx } from "@/table-contexts";
@@ -31,9 +32,7 @@ function SideViewContent({
   children,
   tableGlobal,
 }: React.PropsWithChildren<{
-  tableGlobal: ReturnType<
-    typeof useTableViewCtx
-  >["table"]["store"]["state"]["tableGlobal"];
+  tableGlobal: ReturnType<TableInstance["atoms"]["tableGlobal"]["get"]>;
 }>) {
   const { table } = useTableViewCtx();
   const { rowView, openedRowId } = tableGlobal;

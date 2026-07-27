@@ -218,6 +218,28 @@ it("DateRangeInput_UnchangedBlur_DoesNotReportRedundantTimestamp", async () => {
   expect(onChange).not.toHaveBeenCalled();
 });
 
+it("DateRangeInput_UnchangedDateTimeBlur_DoesNotReportRedundantTimestamp", async () => {
+  // Arrange
+  const user = userEvent.setup();
+  const onChange = vi.fn();
+  render(
+    <DateRangeInput
+      value={{ includeTime: true, start: Date.UTC(2025, 0, 15, 13, 45) }}
+      onChange={onChange}
+      tz="UTC"
+    />,
+  );
+  const [dateInput, timeInput] = screen.getAllByRole("textbox");
+
+  // Act
+  await user.click(dateInput!);
+  await user.click(timeInput!);
+  await user.tab();
+
+  // Assert
+  expect(onChange).not.toHaveBeenCalled();
+});
+
 it("DateRangeInput_UntouchedEmptyThenInvalidBlur_SuppressesOnlyEmptyMutation", async () => {
   // Arrange
   const user = userEvent.setup();

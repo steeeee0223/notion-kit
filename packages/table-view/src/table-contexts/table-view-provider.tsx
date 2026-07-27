@@ -1,11 +1,4 @@
-import {
-  createContext,
-  use,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { createContext, use, useMemo, useRef } from "react";
 
 import {
   arrayToEntity,
@@ -55,23 +48,15 @@ export function TableViewWrapper<
   });
   const latestCtxRef = useRef(ctx);
   latestCtxRef.current = ctx;
-  const [committedResourceVersion, setCommittedResourceVersion] = useState(
-    ctx.resourceVersion,
-  );
-  useLayoutEffect(() => {
-    setCommittedResourceVersion(ctx.resourceVersion);
-  }, [ctx.resourceVersion]);
-  const contextValue = useMemo(() => {
-    void committedResourceVersion;
-    return {
+  const contextValue = useMemo(
+    () => ({
       get table() {
         return latestCtxRef.current.table;
       },
-      get resourceVersion() {
-        return latestCtxRef.current.resourceVersion;
-      },
-    } as TableViewCtx<TPlugins>;
-  }, [committedResourceVersion]);
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [ctx.table.options.columns, ctx.table.options.data],
+  );
 
   return (
     <TableViewContext value={contextValue}>

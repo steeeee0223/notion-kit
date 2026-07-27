@@ -24,8 +24,18 @@ interface GroupActionsProps {
 
 export function GroupActions({ className, row }: GroupActionsProps) {
   const { table } = useTableViewCtx();
-  const { locked } = table.store.state.tableGlobal;
 
+  return (
+    <table.Subscribe selector={(state) => state.tableGlobal.locked}>
+      {(locked) =>
+        locked ? null : <GroupActionsContent className={className} row={row} />
+      }
+    </table.Subscribe>
+  );
+}
+
+function GroupActionsContent({ className, row }: GroupActionsProps) {
+  const { table } = useTableViewCtx();
   const addRow = () => table.addRowToGroup(row.id);
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -35,7 +45,6 @@ export function GroupActions({ className, row }: GroupActionsProps) {
     setShowDeleteConfirm(false);
   };
 
-  if (locked) return null;
   return (
     <div
       className={cn(

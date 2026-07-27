@@ -31,24 +31,8 @@ import { useTableViewCtx } from "@/table-contexts";
  */
 export function PropsMenu() {
   const { table } = useTableViewCtx();
-  const { columnOrder } = table.store.state;
-  const noShownProps = table.countVisibleColumns() === 1;
-
   const [search, setSearch] = useState("");
-  const { props, deletedCount } = columnOrder.reduce(
-    (acc, propId) => {
-      const info = table.getColumnInfo(propId);
-      if (!info.isDeleted) {
-        acc.props.push({ ...info, id: propId });
-      } else {
-        acc.deletedCount++;
-      }
-      return acc;
-    },
-    { deletedCount: 0, props: [] as ColumnInfo[] },
-  );
 
-  // Menu actions
   const openEditPropMenu = (propId: string) =>
     table.setTableMenuState({
       open: true,
@@ -57,104 +41,135 @@ export function PropsMenu() {
     });
 
   return (
-    <>
-      <MenuHeader
-        title="Properties"
-        onBack={() => table.setTableMenuState({ open: true, page: null })}
-      />
-      <Autocomplete
-        items={props}
-        itemToStringValue={(prop) => prop.name}
-        value={search}
-        onValueChange={setSearch}
-        open
-        autoHighlight="always"
-        openOnInputClick
-      >
-        <AutocompleteInput
-          clear
-          onCancel={() => setSearch("")}
-          onKeyDown={(e) => e.stopPropagation()}
-          placeholder="Search for a property..."
-        />
-        <AutocompleteContent variant="inline">
-          <AutocompleteList>
-            <AutocompleteGroup>
-              <MenuGroupHeader
-                title="Properties"
-                action={search ? null : noShownProps ? "Show all" : "Hide all"}
-                onActionClick={table.toggleAllColumnsVisible}
-              />
-              <Sortable.Root
-                disabled={search.length > 0}
-                onDragEnd={table.handleColumnDragEnd}
-              >
-                <Sortable.List>
-                  <AutocompleteCollection>
-                    {(prop: ColumnInfo) => (
-                      <PropertyItem
-                        key={prop.id}
-                        index={props.findIndex((item) => item.id === prop.id)}
-                        draggable={search.length === 0}
-                        info={prop}
-                        onClick={() => openEditPropMenu(prop.id)}
-                        onVisibilityChange={() =>
-                          table.setColumnInfo(prop.id, {
-                            hidden: !prop.hidden,
-                          })
-                        }
-                      />
-                    )}
-                  </AutocompleteCollection>
-                </Sortable.List>
-              </Sortable.Root>
-            </AutocompleteGroup>
-          </AutocompleteList>
-          <AutocompleteEmpty className="px-3 text-start text-muted">
-            No results
-          </AutocompleteEmpty>
-        </AutocompleteContent>
-      </Autocomplete>
-      <DropdownMenuSeparator />
-      <DropdownMenuGroup>
-        <DropdownMenuItem
-          variant="secondary"
-          icon={<Icon.Plus className="size-4" />}
-          label="New property"
-          closeOnClick={false}
-          onClick={() =>
-            table.setTableMenuState({
-              open: true,
-              page: TableViewMenuPage.CreateProp,
-            })
-          }
-        />
-        {deletedCount > 0 && (
-          <DropdownMenuItem
-            variant="secondary"
-            icon={<Icon.Trash />}
-            label="Deleted properties"
-            closeOnClick={false}
-            onClick={() =>
-              table.setTableMenuState({
-                open: true,
-                page: TableViewMenuPage.DeletedProps,
-              })
+    <table.Subscribe
+      selector={(state) => ({
+        columnOrder: state.columnOrder,
+        columnsInfo: state.columnsInfo,
+        columnVisibility: state.columnVisibility,
+      })}
+    >
+      {({ columnOrder, columnsInfo, columnVisibility }) => {
+        const noShownProps =
+          Object.values(columnVisibility).filter(Boolean).length === 1;
+        const { props, deletedCount } = columnOrder.reduce(
+          (acc, propId) => {
+            const info = columnsInfo[propId]!;
+            if (!info.isDeleted) {
+              acc.props.push({ ...info, id: propId });
+            } else {
+              acc.deletedCount++;
             }
-          >
-            <MenuItemSelect>{deletedCount}</MenuItemSelect>
-          </DropdownMenuItem>
-        )}
-        <DropdownMenuItem
-          variant="secondary"
-          onClick={() =>
-            window.open("https://www.notion.com/help/database-properties")
-          }
-          icon={<Icon.Help className="size-4" />}
-          label="Learn about properties"
-        />
-      </DropdownMenuGroup>
-    </>
+            return acc;
+          },
+          { deletedCount: 0, props: [] as ColumnInfo[] },
+        );
+
+        return (
+          <>
+            <MenuHeader
+              title="Properties"
+              onBack={() => table.setTableMenuState({ open: true, page: null })}
+            />
+            <Autocomplete
+              items={props}
+              itemToStringValue={(prop) => prop.name}
+              value={search}
+              onValueChange={setSearch}
+              open
+              autoHighlight="always"
+              openOnInputClick
+            >
+              <AutocompleteInput
+                clear
+                onCancel={() => setSearch("")}
+                onKeyDown={(e) => e.stopPropagation()}
+                placeholder="Search for a property..."
+              />
+              <AutocompleteContent variant="inline">
+                <AutocompleteList>
+                  <AutocompleteGroup>
+                    <MenuGroupHeader
+                      title="Properties"
+                      action={
+                        search ? null : noShownProps ? "Show all" : "Hide all"
+                      }
+                      onActionClick={table.toggleAllColumnsVisible}
+                    />
+                    <Sortable.Root
+                      disabled={search.length > 0}
+                      onDragEnd={table.handleColumnDragEnd}
+                    >
+                      <Sortable.List>
+                        <AutocompleteCollection>
+                          {(prop: ColumnInfo) => (
+                            <PropertyItem
+                              key={prop.id}
+                              index={props.findIndex(
+                                (item) => item.id === prop.id,
+                              )}
+                              draggable={search.length === 0}
+                              info={prop}
+                              onClick={() => openEditPropMenu(prop.id)}
+                              onVisibilityChange={() =>
+                                table.setColumnInfo(prop.id, {
+                                  hidden: !prop.hidden,
+                                })
+                              }
+                            />
+                          )}
+                        </AutocompleteCollection>
+                      </Sortable.List>
+                    </Sortable.Root>
+                  </AutocompleteGroup>
+                </AutocompleteList>
+                <AutocompleteEmpty className="px-3 text-start text-muted">
+                  No results
+                </AutocompleteEmpty>
+              </AutocompleteContent>
+            </Autocomplete>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                variant="secondary"
+                icon={<Icon.Plus className="size-4" />}
+                label="New property"
+                closeOnClick={false}
+                onClick={() =>
+                  table.setTableMenuState({
+                    open: true,
+                    page: TableViewMenuPage.CreateProp,
+                  })
+                }
+              />
+              {deletedCount > 0 && (
+                <DropdownMenuItem
+                  variant="secondary"
+                  icon={<Icon.Trash />}
+                  label="Deleted properties"
+                  closeOnClick={false}
+                  onClick={() =>
+                    table.setTableMenuState({
+                      open: true,
+                      page: TableViewMenuPage.DeletedProps,
+                    })
+                  }
+                >
+                  <MenuItemSelect>{deletedCount}</MenuItemSelect>
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem
+                variant="secondary"
+                onClick={() =>
+                  window.open("https://www.notion.com/help/database-properties")
+                }
+                icon={<Icon.Help className="size-4" />}
+                label="Learn about properties"
+              />
+            </DropdownMenuGroup>
+          </>
+        );
+      }}
+    </table.Subscribe>
   );
 }
 

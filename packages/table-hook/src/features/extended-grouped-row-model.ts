@@ -1,5 +1,6 @@
 import type { Row, RowData, RowModel, Table } from "@tanstack/react-table";
 import { constructRow, flattenBy, tableMemo } from "@tanstack/react-table";
+import { aggregateColumnValue } from "@tanstack/react-table/static-functions";
 
 import type { AnyRowData, AnyTableFeatures } from "@/features/types";
 import { createGroupId } from "@/features/utils";
@@ -153,23 +154,25 @@ export function getExtendedGroupedRowModel<TData extends RowData>(): (
                   return row._valuesCache[columnId];
                 }
 
-                if (Object.hasOwn(row._groupingValuesCache, columnId)) {
-                  return row._groupingValuesCache[columnId] as unknown;
+                if (
+                  Object.hasOwn(row._aggregationValuesCache ?? {}, columnId)
+                ) {
+                  return row._aggregationValuesCache?.[columnId];
                 }
 
-                // Aggregate the values
                 const column = table.getColumn(columnId);
-                const aggregateFn = column?.getAggregationFn();
+                if (typeof column?.getAggregationFns !== "function") return;
 
-                if (aggregateFn) {
-                  row._groupingValuesCache[columnId] = aggregateFn(
-                    columnId,
-                    leafRows,
-                    groupedRows,
-                  ) as unknown;
+                const cache = (row._aggregationValuesCache ??= {});
+                cache[columnId] = aggregateColumnValue({
+                  subRows,
+                  column,
+                  groupingRow: row,
+                  rows: groupedRows,
+                  uniqueRows: true,
+                });
 
-                  return row._groupingValuesCache[columnId] as unknown;
-                }
+                return cache[columnId];
               },
             });
 

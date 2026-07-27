@@ -58,7 +58,7 @@ describe("useTableView - Extended Grouping", () => {
         data: mockData,
         properties: mockProperties,
       });
-      const groupingState = table.store.state.groupingState;
+      const groupingState = table.atoms.groupingState.get();
 
       expect(groupingState.groupOrder).toEqual([]);
       expect(groupingState.groupVisibility).toEqual({});
@@ -72,13 +72,13 @@ describe("useTableView - Extended Grouping", () => {
         data: mockData,
         properties: mockProperties,
       });
-      const initialGroupOrder = table.store.state.groupingState.groupOrder;
+      const initialGroupOrder = table.atoms.groupingState.get().groupOrder;
 
       act(() => {
         table.setGrouping(["col2"]);
       });
 
-      const groupingState = table.store.state.groupingState;
+      const groupingState = table.atoms.groupingState.get();
       expect(groupingState.groupOrder).not.toBe(initialGroupOrder);
       expect(initialGroupOrder).toEqual([]);
       expect(groupingState.groupOrder.length).toBeGreaterThan(0);
@@ -94,7 +94,7 @@ describe("useTableView - Extended Grouping", () => {
         table.setGrouping(["col2"]);
       });
 
-      const groupingState = table.store.state.groupingState;
+      const groupingState = table.atoms.groupingState.get();
       expect(Object.keys(groupingState.groupValues).length).toBeGreaterThan(0);
     });
 
@@ -108,7 +108,7 @@ describe("useTableView - Extended Grouping", () => {
         table.setGrouping(["col2"]);
       });
 
-      const groupingState = table.store.state.groupingState;
+      const groupingState = table.atoms.groupingState.get();
       const groupIds = groupingState.groupOrder;
 
       groupIds.forEach((groupId) => {
@@ -145,18 +145,18 @@ describe("useTableView - Extended Grouping", () => {
         table.setGrouping(["col2"]);
       });
 
-      const hiddenGroupId = table.store.state.groupingState.groupOrder[0]!;
+      const hiddenGroupId = table.atoms.groupingState.get().groupOrder[0]!;
 
       act(() => {
         table.toggleGroupVisible(hiddenGroupId);
         table.setGrouping(["col2"]);
       });
 
-      expect(table.store.state.groupingState.groupOrder).toContain(
+      expect(table.atoms.groupingState.get().groupOrder).toContain(
         hiddenGroupId,
       );
       expect(
-        table.store.state.groupingState.groupValues[hiddenGroupId],
+        table.atoms.groupingState.get().groupValues[hiddenGroupId],
       ).toBeDefined();
     });
   });
@@ -172,20 +172,20 @@ describe("useTableView - Extended Grouping", () => {
         table.setGrouping(["col2"]);
       });
 
-      const groupId = table.store.state.groupingState.groupOrder[0]!;
+      const groupId = table.atoms.groupingState.get().groupOrder[0]!;
 
       act(() => {
         table.toggleGroupVisible(groupId);
       });
 
-      const groupVisibility = table.store.state.groupingState.groupVisibility;
+      const groupVisibility = table.atoms.groupingState.get().groupVisibility;
       expect(groupVisibility[groupId]).toBe(false);
 
       act(() => {
         table.toggleGroupVisible(groupId);
       });
 
-      const updatedVisibility = table.store.state.groupingState.groupVisibility;
+      const updatedVisibility = table.atoms.groupingState.get().groupVisibility;
       expect(updatedVisibility[groupId]).toBe(true);
     });
 
@@ -203,7 +203,7 @@ describe("useTableView - Extended Grouping", () => {
       expect(table.getIsSomeGroupVisible()).toBe(true);
 
       // Hide all groups
-      const groupIds = table.store.state.groupingState.groupOrder;
+      const groupIds = table.atoms.groupingState.get().groupOrder;
       act(() => {
         groupIds.forEach((groupId) => {
           table.toggleGroupVisible(groupId);
@@ -223,14 +223,14 @@ describe("useTableView - Extended Grouping", () => {
         table.setGrouping(["col2"]);
       });
 
-      const groupIds = table.store.state.groupingState.groupOrder;
+      const groupIds = table.atoms.groupingState.get().groupOrder;
 
       // Hide all
       act(() => {
         table.toggleAllGroupsVisible();
       });
 
-      const hiddenVisibility = table.store.state.groupingState.groupVisibility;
+      const hiddenVisibility = table.atoms.groupingState.get().groupVisibility;
       groupIds.forEach((groupId) => {
         expect(hiddenVisibility[groupId]).toBe(false);
       });
@@ -240,7 +240,7 @@ describe("useTableView - Extended Grouping", () => {
         table.toggleAllGroupsVisible();
       });
 
-      const shownVisibility = table.store.state.groupingState.groupVisibility;
+      const shownVisibility = table.atoms.groupingState.get().groupVisibility;
       groupIds.forEach((groupId) => {
         expect(shownVisibility[groupId]).toBe(true);
       });
@@ -254,13 +254,13 @@ describe("useTableView - Extended Grouping", () => {
         properties: mockProperties,
       });
 
-      const initialState = table.store.state.groupingState.hideEmptyGroups;
+      const initialState = table.atoms.groupingState.get().hideEmptyGroups;
 
       act(() => {
         table.toggleHideEmptyGroups();
       });
 
-      const toggledState = table.store.state.groupingState.hideEmptyGroups;
+      const toggledState = table.atoms.groupingState.get().hideEmptyGroups;
       expect(toggledState).toBe(!initialState);
     });
 
@@ -269,7 +269,7 @@ describe("useTableView - Extended Grouping", () => {
         data: mockData,
         properties: mockProperties,
       });
-      expect(table.store.state.groupingState.hideEmptyGroups).toBe(true);
+      expect(table.atoms.groupingState.get().hideEmptyGroups).toBe(true);
     });
   });
 
@@ -352,7 +352,7 @@ describe("useTableView - Extended Grouping", () => {
         table.setGroupingColumn("col2");
       });
 
-      const grouping = table.store.state.grouping;
+      const grouping = table.atoms.grouping.get();
       expect(grouping).toEqual(["col2"]);
     });
 
@@ -366,13 +366,13 @@ describe("useTableView - Extended Grouping", () => {
         table.setGroupingColumn("col2");
       });
 
-      expect(table.store.state.grouping).toHaveLength(1);
+      expect(table.atoms.grouping.get()).toHaveLength(1);
 
       act(() => {
         table.setGroupingColumn(null);
       });
 
-      expect(table.store.state.grouping).toEqual([]);
+      expect(table.atoms.grouping.get()).toEqual([]);
     });
 
     it("should reset grouping state when changing grouping column", () => {
@@ -385,14 +385,14 @@ describe("useTableView - Extended Grouping", () => {
         table.setGroupingColumn("col2");
       });
 
-      const firstGroupOrder = table.store.state.groupingState.groupOrder;
+      const firstGroupOrder = table.atoms.groupingState.get().groupOrder;
       expect(firstGroupOrder.length).toBeGreaterThan(0);
 
       act(() => {
         table.setGroupingColumn(null);
       });
 
-      const clearedGroupOrder = table.store.state.groupingState.groupOrder;
+      const clearedGroupOrder = table.atoms.groupingState.get().groupOrder;
       expect(clearedGroupOrder).toEqual([]);
     });
 
@@ -406,7 +406,7 @@ describe("useTableView - Extended Grouping", () => {
         table.setGrouping(["col2"]);
       });
 
-      expect(table.store.state.groupingState.groupOrder.length).toBeGreaterThan(
+      expect(table.atoms.groupingState.get().groupOrder.length).toBeGreaterThan(
         0,
       );
 
@@ -414,18 +414,18 @@ describe("useTableView - Extended Grouping", () => {
         table.resetGrouping();
       });
 
-      expect(table.store.state.groupingState.groupOrder).toEqual([]);
-      expect(table.store.state.groupingState.groupValues).toEqual({});
+      expect(table.atoms.groupingState.get().groupOrder).toEqual([]);
+      expect(table.atoms.groupingState.get().groupValues).toEqual({});
 
       act(() => {
         table.setGrouping(["col2"]);
       });
 
-      expect(table.store.state.groupingState.groupOrder.length).toBeGreaterThan(
+      expect(table.atoms.groupingState.get().groupOrder.length).toBeGreaterThan(
         0,
       );
       expect(
-        Object.keys(table.store.state.groupingState.groupValues).length,
+        Object.keys(table.atoms.groupingState.get().groupValues).length,
       ).toBeGreaterThan(0);
     });
   });
@@ -441,7 +441,7 @@ describe("useTableView - Extended Grouping", () => {
         table.setGrouping(["col2"]);
       });
 
-      const initialGroupOrder = table.store.state.groupingState.groupOrder;
+      const initialGroupOrder = table.atoms.groupingState.get().groupOrder;
 
       // Ensure we have at least 2 groups to test drag
       expect(initialGroupOrder.length).toBeGreaterThanOrEqual(2);
@@ -460,7 +460,7 @@ describe("useTableView - Extended Grouping", () => {
         } as DragEndEvent);
       });
 
-      const newGroupOrder = table.store.state.groupingState.groupOrder;
+      const newGroupOrder = table.atoms.groupingState.get().groupOrder;
 
       expect(newGroupOrder).toEqual([
         secondGroupId,
@@ -483,7 +483,7 @@ describe("useTableView - Extended Grouping", () => {
           properties: mockProperties,
         });
         act(() => table.setGrouping(["col2"]));
-        const previous = table.store.state.groupingState.groupOrder;
+        const previous = table.atoms.groupingState.get().groupOrder;
         const onGroupingStateChange = vi.fn();
         table.setOptions((options) => ({
           ...options,
@@ -502,7 +502,7 @@ describe("useTableView - Extended Grouping", () => {
         });
 
         expect(onGroupingStateChange).not.toHaveBeenCalled();
-        expect(table.store.state.groupingState.groupOrder).toEqual(previous);
+        expect(table.atoms.groupingState.get().groupOrder).toEqual(previous);
       },
     );
   });
@@ -523,14 +523,14 @@ describe("useTableView - Extended Grouping", () => {
       expect(groupedRow?.getIsGrouped()).toBe(true);
       const groupId = groupedRow!.id;
       const initialVisibility =
-        table.store.state.groupingState.groupVisibility[groupId] ?? true;
+        table.atoms.groupingState.get().groupVisibility[groupId] ?? true;
 
       act(() => {
         groupedRow!.toggleGroupVisibility();
       });
 
       const newVisibility =
-        table.store.state.groupingState.groupVisibility[groupId];
+        table.atoms.groupingState.get().groupVisibility[groupId];
       expect(newVisibility).toBe(!initialVisibility);
     });
   });

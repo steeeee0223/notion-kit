@@ -11,11 +11,6 @@ import type {
   ViewResourceAction,
 } from "@/table-contexts/actions";
 
-export interface ResourceVersion {
-  id: string;
-  ts: number;
-}
-
 export interface TableState<TPlugins extends CellPlugin[]> {
   properties: ColumnDefs<TPlugins>;
   data: RowModel<TPlugins>[];

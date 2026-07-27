@@ -164,7 +164,7 @@ export const RowActionsFeature: TableFeature = {
     let kanbanDragSnapshot: Row[] | null = null;
 
     const scheduleGroupingStateSync = (rows: Row[]) => {
-      if (table.store.state.grouping.length > 0) {
+      if (table.atoms.grouping.get().length > 0) {
         queueMicrotask(() => {
           table._syncGroupingStateFromData(rows);
         });
@@ -184,7 +184,7 @@ export const RowActionsFeature: TableFeature = {
       return cell;
     };
     table.getTitleCell = (rowId) => {
-      const { columnOrder } = table.store.state;
+      const columnOrder = table.atoms.columnOrder.get();
       const cells = table.getRow(rowId).original.properties;
       for (const colId of columnOrder) {
         const plugin = table.getColumnPlugin(colId);
@@ -251,7 +251,7 @@ export const RowActionsFeature: TableFeature = {
             createdAt: now,
             lastEditedAt: now,
           };
-          table.store.state.columnOrder.forEach((colId) => {
+          table.atoms.columnOrder.get().forEach((colId) => {
             const plugin = table.getColumnPlugin(colId);
             row.properties[colId] = getDefaultCell(plugin);
           });
@@ -346,7 +346,8 @@ export const RowActionsFeature: TableFeature = {
     table.handleKanbanRowDragOver = (event) => {
       if ("canceled" in event && event.canceled) return;
 
-      const { grouping, groupingState } = table.store.state;
+      const grouping = table.atoms.grouping.get();
+      const groupingState = table.atoms.groupingState.get();
       const groupingColumnId = grouping[0];
       if (!groupingColumnId) return;
 
@@ -411,7 +412,8 @@ export const RowActionsFeature: TableFeature = {
       }
       kanbanDragSnapshot = null;
 
-      const { grouping, groupingState } = table.store.state;
+      const grouping = table.atoms.grouping.get();
+      const groupingState = table.atoms.groupingState.get();
       const groupingColumnId = grouping[0];
       const { source, target } = event.operation;
       const sourceGroupId = getKanbanColumnTargetId(source?.data);
@@ -467,9 +469,9 @@ export const RowActionsFeature: TableFeature = {
       );
     };
     table.updateRowIcon = (id, icon) => {
-      const colId = table.store.state.columnOrder.find(
-        (propId) => table.getColumnPlugin(propId).id === "title",
-      );
+      const colId = table.atoms.columnOrder
+        .get()
+        .find((propId) => table.getColumnPlugin(propId).id === "title");
       if (!colId) return;
       const actionId = v4();
       table.setTableData(
@@ -499,7 +501,9 @@ export const RowActionsFeature: TableFeature = {
     };
     // With Grouping API
     table.addRowToGroup = (groupId) => {
-      const { columnOrder, grouping, groupingState } = table.store.state;
+      const columnOrder = table.atoms.columnOrder.get();
+      const grouping = table.atoms.grouping.get();
+      const groupingState = table.atoms.groupingState.get();
       const rowId = v4();
       const actionId = v4();
       table.setTableData(

@@ -177,13 +177,13 @@ export const ExtendedGroupingFeature: TableFeature = {
     };
 
     table.getGroupedColumnInfo = () => {
-      const { grouping } = table.store.state;
+      const grouping = table.atoms.grouping.get();
       const groupedColumnId = grouping[0];
       if (!groupedColumnId) return null;
       return table.getColumnInfo(groupedColumnId);
     };
     table.getIsSomeGroupVisible = () => {
-      const { groupOrder, groupVisibility } = table.store.state.groupingState;
+      const { groupOrder, groupVisibility } = table.atoms.groupingState.get();
       return groupOrder.some((groupId) => groupVisibility[groupId] ?? true);
     };
     table._setGroupingState = (updater) => {
@@ -269,7 +269,7 @@ export const ExtendedGroupingFeature: TableFeature = {
     };
     table.getGroupingValueRenderer = (groupId) => {
       return function Renderer(props) {
-        const { groupValues } = table.store.state.groupingState;
+        const { groupValues } = table.atoms.groupingState.get();
         const info = table.getGroupedColumnInfo();
         if (!info) {
           console.error(
@@ -304,7 +304,7 @@ export const ExtendedGroupingFeature: TableFeature = {
     const table = _table as unknown as _TableInstance;
 
     prototype.getShouldShowGroupAggregates = function () {
-      return table.store.state.groupingState.showAggregates;
+      return table.atoms.groupingState.get().showAggregates;
     };
     prototype.toggleGroupAggregates = function () {
       table._setGroupingState((v) => ({

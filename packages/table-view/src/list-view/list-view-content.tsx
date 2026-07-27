@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
 
 import { Icon } from "@notion-kit/icons";
+import type { TableInstance } from "@notion-kit/table-hook";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
@@ -11,7 +12,6 @@ import { useTableViewCtx } from "@/table-contexts";
 import { ListRow } from "./list-row";
 
 export function ListViewContent() {
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [pendingDragEndEvent, setPendingDragEndEvent] =
     useState<DragEndEvent | null>(null);
   const { table } = useTableViewCtx();
@@ -33,8 +33,6 @@ export function ListViewContent() {
         <ListViewContentInner
           locked={locked ?? false}
           sorting={sorting}
-          dialogOpen={dialogOpen}
-          setDialogOpen={setDialogOpen}
           pendingDragEndEvent={pendingDragEndEvent}
           setPendingDragEndEvent={setPendingDragEndEvent}
         />
@@ -45,11 +43,7 @@ export function ListViewContent() {
 
 interface ListViewContentInnerProps {
   locked: boolean;
-  sorting: ReturnType<
-    typeof useTableViewCtx
-  >["table"]["store"]["state"]["sorting"];
-  dialogOpen: boolean;
-  setDialogOpen: (open: boolean) => void;
+  sorting: ReturnType<TableInstance["atoms"]["sorting"]["get"]>;
   pendingDragEndEvent: DragEndEvent | null;
   setPendingDragEndEvent: (event: DragEndEvent | null) => void;
 }
@@ -57,8 +51,6 @@ interface ListViewContentInnerProps {
 function ListViewContentInner({
   locked,
   sorting,
-  dialogOpen,
-  setDialogOpen,
   pendingDragEndEvent,
   setPendingDragEndEvent,
 }: ListViewContentInnerProps) {
@@ -71,18 +63,16 @@ function ListViewContentInner({
       const isSorted = sorting.length > 0;
       if (!isSorted) return table.handleRowDragEnd(e);
       setPendingDragEndEvent(e);
-      setDialogOpen(true);
     },
-    [setDialogOpen, setPendingDragEndEvent, sorting.length, table],
+    [setPendingDragEndEvent, sorting.length, table],
   );
 
   const handleConfirmRemoveSorting = () => {
     if (pendingDragEndEvent) {
       table.resetSorting();
       table.handleRowDragEnd(pendingDragEndEvent);
-      setPendingDragEndEvent(null);
     }
-    setDialogOpen(false);
+    setPendingDragEndEvent(null);
   };
 
   return (
@@ -114,7 +104,12 @@ function ListViewContentInner({
           </Button>
         )}
       </div>
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog
+        open={pendingDragEndEvent !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingDragEndEvent(null);
+        }}
+      >
         <AlertModal
           title="Would you like to remove sorting?"
           primary="Remove"

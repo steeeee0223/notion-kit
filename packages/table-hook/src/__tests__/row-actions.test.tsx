@@ -734,11 +734,13 @@ describe("useTableView - Row Custom APIs", () => {
         table.setGrouping(["col2"]);
       });
 
-      const todoGroupId = table.store.state.groupingState.groupOrder.find(
-        (groupId) =>
-          table.store.state.groupingState.groupValues[groupId]?.value ===
-          "TODO",
-      );
+      const todoGroupId = table.atoms.groupingState
+        .get()
+        .groupOrder.find(
+          (groupId) =>
+            table.atoms.groupingState.get().groupValues[groupId]?.value ===
+            "TODO",
+        );
       expect(todoGroupId).toBeDefined();
 
       act(() => {
@@ -764,7 +766,7 @@ describe("useTableView - Row Custom APIs", () => {
 
       await waitFor(() => {
         const groupValues = Object.values(
-          table.store.state.groupingState.groupValues,
+          table.atoms.groupingState.get().groupValues,
         ).map((group) => group.value);
         expect(groupValues).toEqual(["DONE"]);
       });

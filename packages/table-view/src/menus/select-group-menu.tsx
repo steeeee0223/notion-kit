@@ -18,24 +18,6 @@ import { useTableViewCtx } from "@/table-contexts";
 
 export function SelectGroupMenu() {
   const { table } = useTableViewCtx();
-  const { columnOrder, columnsInfo, grouping, tableGlobal } = table.store.state;
-  const groupingColId = grouping.at(0);
-
-  const options = columnOrder.reduce<(ColumnInfo & { kind: "column" })[]>(
-    (acc, colId) => {
-      const col = columnsInfo[colId]!;
-      if (col.hidden || col.isDeleted) return acc;
-      acc.push({ ...col, kind: "column" });
-      return acc;
-    },
-    [],
-  );
-  const groupOptions = [
-    ...(tableGlobal.layout !== "board"
-      ? [{ kind: "none" as const, id: null, name: "None" }]
-      : []),
-    ...options,
-  ];
 
   const selectGroup = (colId: string | null) => {
     table.setGroupingColumn(colId);
@@ -46,60 +28,91 @@ export function SelectGroupMenu() {
   };
 
   return (
-    <>
-      <MenuHeader
-        title="Group by"
-        onBack={() =>
-          table.setTableMenuState({
-            open: true,
-            page: grouping.length > 0 ? TableViewMenuPage.EditGroupBy : null,
-          })
-        }
-      />
-      <Autocomplete
-        items={groupOptions}
-        itemToStringValue={(option) => option.name}
-        open
-        autoHighlight="always"
-        openOnInputClick
-      >
-        <AutocompleteInput
-          placeholder="Search for a property"
-          onKeyDown={(e) => e.stopPropagation()}
-        />
-        <AutocompleteContent variant="inline">
-          <AutocompleteList>
-            <AutocompleteGroup className="h-40">
-              <AutocompleteCollection>
-                {(option: (typeof groupOptions)[number]) => (
-                  <AutocompleteItem
-                    key={option.id ?? "none"}
-                    value={option}
-                    label={option.name}
-                    icon={
-                      option.kind === "column" ? (
-                        option.icon ? (
-                          <IconBlock icon={option.icon} />
-                        ) : (
-                          <DefaultIcon type={option.type} />
-                        )
-                      ) : null
-                    }
-                    onClick={() => selectGroup(option.id)}
-                  >
-                    {groupingColId === (option.id ?? undefined) && (
-                      <MenuItemCheck />
-                    )}
-                  </AutocompleteItem>
-                )}
-              </AutocompleteCollection>
-            </AutocompleteGroup>
-          </AutocompleteList>
-          <AutocompleteEmpty className="px-3 text-start text-muted">
-            No results
-          </AutocompleteEmpty>
-        </AutocompleteContent>
-      </Autocomplete>
-    </>
+    <table.Subscribe
+      selector={(state) => ({
+        columnOrder: state.columnOrder,
+        columnsInfo: state.columnsInfo,
+        grouping: state.grouping,
+        tableGlobal: state.tableGlobal,
+      })}
+    >
+      {({ columnOrder, columnsInfo, grouping, tableGlobal }) => {
+        const groupingColId = grouping.at(0);
+        const options = columnOrder.reduce<(ColumnInfo & { kind: "column" })[]>(
+          (acc, colId) => {
+            const col = columnsInfo[colId]!;
+            if (col.hidden || col.isDeleted) return acc;
+            acc.push({ ...col, kind: "column" });
+            return acc;
+          },
+          [],
+        );
+        const groupOptions = [
+          ...(tableGlobal.layout !== "board"
+            ? [{ kind: "none" as const, id: null, name: "None" }]
+            : []),
+          ...options,
+        ];
+
+        return (
+          <>
+            <MenuHeader
+              title="Group by"
+              onBack={() =>
+                table.setTableMenuState({
+                  open: true,
+                  page:
+                    grouping.length > 0 ? TableViewMenuPage.EditGroupBy : null,
+                })
+              }
+            />
+            <Autocomplete
+              items={groupOptions}
+              itemToStringValue={(option) => option.name}
+              open
+              autoHighlight="always"
+              openOnInputClick
+            >
+              <AutocompleteInput
+                placeholder="Search for a property"
+                onKeyDown={(e) => e.stopPropagation()}
+              />
+              <AutocompleteContent variant="inline">
+                <AutocompleteList>
+                  <AutocompleteGroup className="h-40">
+                    <AutocompleteCollection>
+                      {(option: (typeof groupOptions)[number]) => (
+                        <AutocompleteItem
+                          key={option.id ?? "none"}
+                          value={option}
+                          label={option.name}
+                          icon={
+                            option.kind === "column" ? (
+                              option.icon ? (
+                                <IconBlock icon={option.icon} />
+                              ) : (
+                                <DefaultIcon type={option.type} />
+                              )
+                            ) : null
+                          }
+                          onClick={() => selectGroup(option.id)}
+                        >
+                          {groupingColId === (option.id ?? undefined) && (
+                            <MenuItemCheck />
+                          )}
+                        </AutocompleteItem>
+                      )}
+                    </AutocompleteCollection>
+                  </AutocompleteGroup>
+                </AutocompleteList>
+                <AutocompleteEmpty className="px-3 text-start text-muted">
+                  No results
+                </AutocompleteEmpty>
+              </AutocompleteContent>
+            </Autocomplete>
+          </>
+        );
+      }}
+    </table.Subscribe>
   );
 }

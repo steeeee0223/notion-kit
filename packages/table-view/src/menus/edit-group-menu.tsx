@@ -23,9 +23,6 @@ export function EditGroupMenu() {
   const isClient = useIsClient();
   const { table } = useTableViewCtx();
 
-  const { layout } = table.getTableGlobalState();
-  const { groupOrder, groupVisibility, hideEmptyGroups } =
-    table.store.state.groupingState;
   const col = table.getGroupedColumnInfo();
 
   return (
@@ -48,12 +45,18 @@ export function EditGroupMenu() {
           <MenuItemSelect>{col?.name ?? ""}</MenuItemSelect>
         </DropdownMenuItem>
         {/* TODO Sort group by */}
-        <DropdownMenuCheckboxItem
-          closeOnClick={false}
-          label="Hide empty groups"
-          checked={hideEmptyGroups}
-          onCheckedChange={table.toggleHideEmptyGroups}
-        />
+        <table.Subscribe
+          selector={(state) => state.groupingState.hideEmptyGroups}
+        >
+          {(hideEmptyGroups) => (
+            <DropdownMenuCheckboxItem
+              closeOnClick={false}
+              label="Hide empty groups"
+              checked={hideEmptyGroups}
+              onCheckedChange={table.toggleHideEmptyGroups}
+            />
+          )}
+        </table.Subscribe>
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
@@ -69,34 +72,49 @@ export function EditGroupMenu() {
             </Button>
           </div>
         </DropdownMenuLabel>
-        <Sortable.Root onDragEnd={table.handleGroupedRowDragEnd}>
-          <Sortable.List>
-            {groupOrder.map((groupId, index) => {
-              const renderer = table.getGroupingValueRenderer(groupId);
-              return (
-                <GroupItem
-                  key={groupId}
-                  id={groupId}
-                  index={index}
-                  visible={groupVisibility[groupId] ?? true}
-                  onVisibilityChange={() => table.toggleGroupVisible(groupId)}
-                >
-                  {flexRender(renderer, {})}
-                </GroupItem>
-              );
-            })}
-          </Sortable.List>
-        </Sortable.Root>
+        <table.Subscribe
+          selector={(state) => ({
+            groupOrder: state.groupingState.groupOrder,
+            groupVisibility: state.groupingState.groupVisibility,
+          })}
+        >
+          {({ groupOrder, groupVisibility }) => (
+            <Sortable.Root onDragEnd={table.handleGroupedRowDragEnd}>
+              <Sortable.List>
+                {groupOrder.map((groupId, index) => {
+                  const renderer = table.getGroupingValueRenderer(groupId);
+                  return (
+                    <GroupItem
+                      key={groupId}
+                      id={groupId}
+                      index={index}
+                      visible={groupVisibility[groupId] ?? true}
+                      onVisibilityChange={() =>
+                        table.toggleGroupVisible(groupId)
+                      }
+                    >
+                      {flexRender(renderer, {})}
+                    </GroupItem>
+                  );
+                })}
+              </Sortable.List>
+            </Sortable.Root>
+          )}
+        </table.Subscribe>
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
-        {layout !== "board" && (
-          <DropdownMenuItem
-            icon={<Icon.Trash />}
-            label="Remove grouping"
-            onClick={() => table.setGroupingColumn(null)}
-          />
-        )}
+        <table.Subscribe selector={(state) => state.tableGlobal.layout}>
+          {(layout) =>
+            layout !== "board" && (
+              <DropdownMenuItem
+                icon={<Icon.Trash />}
+                label="Remove grouping"
+                onClick={() => table.setGroupingColumn(null)}
+              />
+            )
+          }
+        </table.Subscribe>
         <DropdownMenuItem
           icon={<Icon.QuestionMarkCircled />}
           label="Learn about grouping"

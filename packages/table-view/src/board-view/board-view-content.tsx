@@ -1,5 +1,9 @@
 import { Icon } from "@notion-kit/icons";
-import { TableViewMenuPage, type RowInstance } from "@notion-kit/table-hook";
+import {
+  TableViewMenuPage,
+  type RowInstance,
+  type TableInstance,
+} from "@notion-kit/table-hook";
 import { Kanban } from "@notion-kit/ui/kanban";
 import { Button } from "@notion-kit/ui/primitives";
 
@@ -41,12 +45,8 @@ function BoardViewContentInner({
   groupingState,
 }: {
   locked: boolean;
-  grouping: ReturnType<
-    typeof useTableViewCtx
-  >["table"]["store"]["state"]["grouping"];
-  groupingState: ReturnType<
-    typeof useTableViewCtx
-  >["table"]["store"]["state"]["groupingState"];
+  grouping: ReturnType<TableInstance["atoms"]["grouping"]["get"]>;
+  groupingState: ReturnType<TableInstance["atoms"]["groupingState"]["get"]>;
 }) {
   const { table } = useTableViewCtx();
   const handlers = useBoardDnd();

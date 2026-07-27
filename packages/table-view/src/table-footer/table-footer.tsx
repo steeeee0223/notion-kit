@@ -2,7 +2,7 @@ import React from "react";
 import { flexRender } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
-import { CountMethod } from "@notion-kit/table-hook";
+import { CountMethod, type TableInstance } from "@notion-kit/table-hook";
 
 import { useTableViewCtx } from "@/table-contexts";
 
@@ -31,9 +31,7 @@ export function TableFooter() {
 function TableFooterContent({
   columnCounting,
 }: {
-  columnCounting: ReturnType<
-    typeof useTableViewCtx
-  >["table"]["store"]["state"]["columnCounting"];
+  columnCounting: ReturnType<TableInstance["atoms"]["columnCounting"]["get"]>;
 }) {
   const { table } = useTableViewCtx();
 

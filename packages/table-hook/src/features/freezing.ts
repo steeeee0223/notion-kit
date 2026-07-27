@@ -48,18 +48,19 @@ export const FreezingFeature: TableFeature = {
     };
     const normalizeFreezingState = (state: FreezingState): FreezingState => {
       if (!state) return null;
-      const index = instance.store.state.columnOrder.indexOf(state.colId);
+      const index = instance.atoms.columnOrder.get().indexOf(state.colId);
       return index < 0 ? null : { colId: state.colId, index };
     };
 
     instance.getFreezingState = () => {
       throwIfDisabled();
-      return normalizeFreezingState(instance.store.state.columnFreezing);
+      return normalizeFreezingState(instance.atoms.columnFreezing.get());
     };
     instance.getCanFreezeColumn = (colId) => {
       throwIfDisabled();
-      const index = instance.store.state.columnOrder.indexOf(colId);
-      return index >= 0 && index < instance.store.state.columnOrder.length - 1;
+      const columnOrder = instance.atoms.columnOrder.get();
+      const index = columnOrder.indexOf(colId);
+      return index >= 0 && index < columnOrder.length - 1;
     };
     instance.setColumnFreezing = (updater) => {
       const nextState = functionalUpdate(updater, instance.getFreezingState());
@@ -67,9 +68,9 @@ export const FreezingFeature: TableFeature = {
       instance.options.onColumnFreezingChange?.(normalizedState);
       instance.setColumnPinning({
         start: normalizedState
-          ? instance.store.state.columnOrder.slice(0, normalizedState.index + 1)
+          ? instance.atoms.columnOrder.get().slice(0, normalizedState.index + 1)
           : [],
-        end: instance.store.state.columnPinning.end,
+        end: instance.atoms.columnPinning.get().end,
       });
     };
     instance.toggleColumnFreezed = (colId) => {

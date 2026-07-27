@@ -4,7 +4,7 @@ import { flexRender } from "@tanstack/react-table";
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
-import { TableViewMenuPage } from "@notion-kit/table-hook";
+import { TableViewMenuPage, type TableInstance } from "@notion-kit/table-hook";
 import {
   Checkbox,
   DropdownMenu,
@@ -59,9 +59,7 @@ function TableHeaderRow() {
 function TableHeaderRowContent({
   tableGlobal,
 }: {
-  tableGlobal: ReturnType<
-    typeof useTableViewCtx
-  >["table"]["store"]["state"]["tableGlobal"];
+  tableGlobal: ReturnType<TableInstance["atoms"]["tableGlobal"]["get"]>;
 }) {
   const { table } = useTableViewCtx();
   const isMobile = useIsMobile();

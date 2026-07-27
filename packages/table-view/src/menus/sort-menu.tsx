@@ -35,27 +35,6 @@ import { useTableViewCtx } from "@/table-contexts";
 
 export function SortMenu() {
   const { table } = useTableViewCtx();
-
-  return (
-    <table.Subscribe
-      selector={(state) => ({
-        sorting: state.sorting,
-        columnsInfo: state.columnsInfo,
-      })}
-    >
-      {({ sorting }) => <SortMenuContent sorting={sorting} />}
-    </table.Subscribe>
-  );
-}
-
-function SortMenuContent({
-  sorting,
-}: {
-  sorting: ReturnType<
-    typeof useTableViewCtx
-  >["table"]["store"]["state"]["sorting"];
-}) {
-  const { table } = useTableViewCtx();
   const [addingSort, setAddingSort] = useState(false);
 
   const reorderRules = (e: DragEndEvent) => {
@@ -65,17 +44,23 @@ function SortMenuContent({
   return (
     <>
       <DropdownMenuGroup>
-        <Sortable.Root onDragEnd={reorderRules}>
-          <Sortable.List>
-            {sorting.map((prop, index) => (
-              <SortRule key={prop.id} {...prop} index={index} />
-            ))}
-          </Sortable.List>
-        </Sortable.Root>
+        <table.Subscribe selector={(state) => state.sorting}>
+          {(sorting) => (
+            <Sortable.Root onDragEnd={reorderRules}>
+              <Sortable.List>
+                {sorting.map((prop, index) => (
+                  <SortRule key={prop.id} {...prop} index={index} />
+                ))}
+              </Sortable.List>
+            </Sortable.Root>
+          )}
+        </table.Subscribe>
       </DropdownMenuGroup>
       <DropdownMenuGroup>
         <Popover open={addingSort} onOpenChange={setAddingSort}>
           <PopoverTrigger
+            nativeButton={false}
+            role="menuitem" // override the default role: button
             render={
               <DropdownMenuItem
                 closeOnClick={false}
@@ -111,116 +96,127 @@ interface SortRuleProps {
 function SortRule({ id: currentId, desc, index }: SortRuleProps) {
   const { table } = useTableViewCtx();
 
-  const current = table.getColumnInfo(currentId);
-  const properties = Object.values(table.store.state.columnsInfo);
-
   const updateRule = (columnSort: ColumnSort) =>
     table.setSorting((prev) =>
       prev.map((s) => (s.id === currentId ? columnSort : s)),
     );
   const removeRule = () => {
     table.setSorting((prev) => prev.filter((s) => s.id !== currentId));
-    const isLastRule = table.store.state.sorting.length === 1;
+    const isLastRule = table.atoms.sorting.get().length === 1;
     if (isLastRule) {
       // TODO close popover
     }
   };
 
   return (
-    <Sortable.Item
-      id={currentId}
-      index={index}
-      render={
-        <DropdownMenuItem
-          closeOnClick={false}
-          className="h-9"
-          icon={<Sortable.Handle aria-label={`Move ${current.name}`} />}
-          label={
-            <div className="grid h-8 w-full grid-cols-2 items-center gap-1.5">
-              <Select
-                value={currentId}
-                onValueChange={(id) => {
-                  if (id !== null) updateRule({ id, desc });
-                }}
-              >
-                <SelectTrigger
-                  aria-label={current.name}
-                  className="my-0 w-full max-w-45 border border-border"
-                >
-                  <SelectValue aria-label={current.name}>
-                    <div className="flex items-center gap-2 truncate">
-                      {current.icon ? (
-                        <IconBlock icon={current.icon} />
-                      ) : (
-                        <DefaultIcon type={current.type} />
-                      )}
-                      {current.name}
-                    </div>
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {properties.map(({ id, name, type, icon }) => (
-                      <SelectItem
-                        key={id}
-                        value={id}
-                        label={name}
-                        icon={
-                          icon ? (
-                            <IconBlock icon={icon} />
-                          ) : (
-                            <DefaultIcon type={type} />
-                          )
-                        }
-                      />
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <Select
-                value={desc ? "desc" : "asc"}
-                onValueChange={(value) =>
-                  updateRule({ id: currentId, desc: value === "desc" })
+    <table.Subscribe selector={(state) => state.columnsInfo}>
+      {(columnsInfo) => {
+        const current = columnsInfo[currentId]!;
+        const properties = Object.values(columnsInfo);
+
+        return (
+          <Sortable.Item
+            id={currentId}
+            index={index}
+            render={
+              <DropdownMenuItem
+                closeOnClick={false}
+                className="h-9"
+                icon={<Sortable.Handle aria-label={`Move ${current.name}`} />}
+                label={
+                  <div className="grid h-8 w-full grid-cols-2 items-center gap-1.5">
+                    <Select
+                      value={currentId}
+                      onValueChange={(id) => {
+                        if (id !== null) updateRule({ id, desc });
+                      }}
+                    >
+                      <SelectTrigger
+                        aria-label={current.name}
+                        className="my-0 w-full max-w-45 border border-border"
+                      >
+                        <SelectValue aria-label={current.name}>
+                          <div className="flex items-center gap-2 truncate">
+                            {current.icon ? (
+                              <IconBlock icon={current.icon} />
+                            ) : (
+                              <DefaultIcon type={current.type} />
+                            )}
+                            {current.name}
+                          </div>
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {properties.map(({ id, name, type, icon }) => (
+                            <SelectItem
+                              key={id}
+                              value={id}
+                              label={name}
+                              icon={
+                                icon ? (
+                                  <IconBlock icon={icon} />
+                                ) : (
+                                  <DefaultIcon type={type} />
+                                )
+                              }
+                            />
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    <Select
+                      value={desc ? "desc" : "asc"}
+                      onValueChange={(value) =>
+                        updateRule({ id: currentId, desc: value === "desc" })
+                      }
+                    >
+                      <SelectTrigger
+                        aria-label={desc ? "Descending" : "Ascending"}
+                        className="my-0 w-full max-w-45 border border-border"
+                      >
+                        <SelectValue aria-label={desc ? "desc" : "asc"}>
+                          <span className="truncate">
+                            {desc ? "Descending" : "Ascending"}
+                          </span>
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="asc" label="Ascending" />
+                          <SelectItem value="desc" label="Descending" />
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 }
+              />
+            }
+          >
+            <MenuItemAction className="flex items-center">
+              <Button
+                variant="hint"
+                className="size-5"
+                aria-label={`Remove ${current.name} sort`}
+                onClick={removeRule}
               >
-                <SelectTrigger
-                  aria-label={desc ? "Descending" : "Ascending"}
-                  className="my-0 w-full max-w-45 border border-border"
-                >
-                  <SelectValue aria-label={desc ? "desc" : "asc"}>
-                    <span className="truncate">
-                      {desc ? "Descending" : "Ascending"}
-                    </span>
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="asc" label="Ascending" />
-                    <SelectItem value="desc" label="Descending" />
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-          }
-        />
-      }
-    >
-      <MenuItemAction className="flex items-center">
-        <Button
-          variant="hint"
-          className="size-5"
-          aria-label={`Remove ${current.name} sort`}
-          onClick={removeRule}
-        >
-          <Icon.Close className="fill-current" />
-        </Button>
-      </MenuItemAction>
-    </Sortable.Item>
+                <Icon.Close className="fill-current" />
+              </Button>
+            </MenuItemAction>
+          </Sortable.Item>
+        );
+      }}
+    </table.Subscribe>
   );
 }
 
 function PropSelectMenu({ onSelect }: { onSelect: () => void }) {
   const { table } = useTableViewCtx();
+
+  const selectProp = (id: string) => {
+    table.setSorting((prev) => [...prev, { id, desc: false }]);
+    onSelect();
+  };
 
   return (
     <table.Subscribe
@@ -229,79 +225,54 @@ function PropSelectMenu({ onSelect }: { onSelect: () => void }) {
         sorting: state.sorting,
       })}
     >
-      {({ columnsInfo, sorting }) => (
-        <PropSelectMenuContent
-          columnsInfo={columnsInfo}
-          sorting={sorting}
-          onSelect={onSelect}
-        />
-      )}
+      {({ columnsInfo, sorting }) => {
+        const columns = Object.values(columnsInfo);
+        /** Select */
+        const sortedProps = new Set(sorting.map((s) => s.id));
+
+        return (
+          <Autocomplete
+            items={columns}
+            itemToStringValue={(column) => column.name}
+            open
+            autoHighlight="always"
+            openOnInputClick
+          >
+            <AutocompleteInput
+              clear
+              placeholder="Search for a property..."
+              onKeyDown={(event) => event.stopPropagation()}
+            />
+            <AutocompleteContent variant="inline">
+              <AutocompleteList>
+                <AutocompleteGroup className="h-40 overflow-y-auto">
+                  <AutocompleteCollection>
+                    {(column: (typeof columns)[number]) => (
+                      <AutocompleteItem
+                        key={column.id}
+                        value={column}
+                        onClick={() => selectProp(column.id)}
+                        disabled={sortedProps.has(column.id)}
+                        icon={
+                          column.icon ? (
+                            <IconBlock icon={column.icon} />
+                          ) : (
+                            <DefaultIcon type={column.type} />
+                          )
+                        }
+                        label={column.name}
+                      />
+                    )}
+                  </AutocompleteCollection>
+                </AutocompleteGroup>
+              </AutocompleteList>
+              <AutocompleteEmpty className="px-3 text-start text-muted">
+                No results
+              </AutocompleteEmpty>
+            </AutocompleteContent>
+          </Autocomplete>
+        );
+      }}
     </table.Subscribe>
-  );
-}
-
-function PropSelectMenuContent({
-  columnsInfo,
-  sorting,
-  onSelect,
-}: {
-  columnsInfo: ReturnType<
-    typeof useTableViewCtx
-  >["table"]["store"]["state"]["columnsInfo"];
-  sorting: ReturnType<
-    typeof useTableViewCtx
-  >["table"]["store"]["state"]["sorting"];
-  onSelect: () => void;
-}) {
-  const { table } = useTableViewCtx();
-  const columns = Object.values(columnsInfo);
-  /** Select */
-  const sortedProps = new Set(sorting.map((s) => s.id));
-  const selectProp = (id: string) => {
-    table.setSorting((prev) => [...prev, { id, desc: false }]);
-    onSelect();
-  };
-
-  return (
-    <Autocomplete
-      items={columns}
-      itemToStringValue={(column) => column.name}
-      open
-      autoHighlight="always"
-      openOnInputClick
-    >
-      <AutocompleteInput
-        clear
-        placeholder="Search for a property..."
-        onKeyDown={(event) => event.stopPropagation()}
-      />
-      <AutocompleteContent variant="inline">
-        <AutocompleteList>
-          <AutocompleteGroup className="h-40 overflow-y-auto">
-            <AutocompleteCollection>
-              {(column: (typeof columns)[number]) => (
-                <AutocompleteItem
-                  key={column.id}
-                  value={column}
-                  onClick={() => selectProp(column.id)}
-                  disabled={sortedProps.has(column.id)}
-                  icon={
-                    column.icon ? (
-                      <IconBlock icon={column.icon} />
-                    ) : (
-                      <DefaultIcon type={column.type} />
-                    )
-                  }
-                  label={column.name}
-                />
-              )}
-            </AutocompleteCollection>
-          </AutocompleteGroup>
-        </AutocompleteList>
-        <AutocompleteEmpty className="px-3 text-start text-muted">
-          No results
-        </AutocompleteEmpty>
-      </AutocompleteContent>
-    </Autocomplete>
   );
 }
