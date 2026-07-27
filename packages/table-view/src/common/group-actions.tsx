@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useStore } from "@tanstack/react-store";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
@@ -25,8 +24,18 @@ interface GroupActionsProps {
 
 export function GroupActions({ className, row }: GroupActionsProps) {
   const { table } = useTableViewCtx();
-  const { locked } = useStore(table.atoms.tableGlobal, (state) => state);
 
+  return (
+    <table.Subscribe selector={(state) => state.tableGlobal.locked}>
+      {(locked) =>
+        locked ? null : <GroupActionsContent className={className} row={row} />
+      }
+    </table.Subscribe>
+  );
+}
+
+function GroupActionsContent({ className, row }: GroupActionsProps) {
+  const { table } = useTableViewCtx();
   const addRow = () => table.addRowToGroup(row.id);
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -36,7 +45,6 @@ export function GroupActions({ className, row }: GroupActionsProps) {
     setShowDeleteConfirm(false);
   };
 
-  if (locked) return null;
   return (
     <div
       className={cn(

@@ -31,6 +31,7 @@ export function TimeFormatMenu({
     <DropdownMenu>
       <DropdownMenuTrigger
         nativeButton={false}
+        role="menuitem" // override the default role: button
         render={
           <MenuItem
             label="Time format"

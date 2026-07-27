@@ -34,6 +34,7 @@ export function DateFormatMenu({
     <DropdownMenu>
       <DropdownMenuTrigger
         nativeButton={false}
+        role="menuitem" // override the default role: button
         render={
           <MenuItem
             icon={showIcon ? <Icon.ViewCalendar /> : undefined}

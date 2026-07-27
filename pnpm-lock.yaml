@@ -1807,9 +1807,6 @@ importers:
       '@notion-kit/utils':
         specifier: workspace:*
         version: link:../utils
-      '@tanstack/react-store':
-        specifier: 0.11.0
-        version: 0.11.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@tanstack/react-table':
         specifier: v9.0.0-beta.58
         version: 9.0.0-beta.58(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
