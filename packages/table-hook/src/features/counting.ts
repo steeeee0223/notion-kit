@@ -61,7 +61,7 @@ export const CountingFeature: TableFeature = {
           `[TableView] Column counting is not enabled. To enable, pass \`enableColumnCounting: true\` to your table options.`,
         );
       }
-      const counting = instance.store.state.columnCounting;
+      const counting = instance.atoms.columnCounting.get();
       return counting[colId] ?? { method: CountMethod.NONE };
     };
     instance.getColumnCountResult = (colId) => {

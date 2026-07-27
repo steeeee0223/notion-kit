@@ -83,7 +83,7 @@ describe("useTableView - Freezing Feature", () => {
       });
 
       expect(table.getFreezingState()).toEqual({ colId: "col2", index: 1 });
-      expect(table.store.state.columnPinning.start).toEqual(["col1", "col2"]);
+      expect(table.atoms.columnPinning.get().start).toEqual(["col1", "col2"]);
     });
 
     it("should clear freezing when set to null", () => {
@@ -208,7 +208,7 @@ describe("useTableView - Freezing Feature", () => {
         table.setColumnFreezing({ colId: "col1", index: 0 });
       });
 
-      const columnPinning = table.store.state.columnPinning;
+      const columnPinning = table.atoms.columnPinning.get();
       expect(columnPinning.start).toEqual(["col1"]);
     });
 
@@ -222,7 +222,7 @@ describe("useTableView - Freezing Feature", () => {
         table.setColumnFreezing({ colId: "col2", index: 1 });
       });
 
-      const columnPinning = table.store.state.columnPinning;
+      const columnPinning = table.atoms.columnPinning.get();
       expect(columnPinning.start).toEqual(["col1", "col2"]);
     });
 
@@ -236,13 +236,13 @@ describe("useTableView - Freezing Feature", () => {
         table.setColumnFreezing({ colId: "col1", index: 0 });
       });
 
-      expect(table.store.state.columnPinning.start).toHaveLength(1);
+      expect(table.atoms.columnPinning.get().start).toHaveLength(1);
 
       act(() => {
         table.setColumnFreezing(null);
       });
 
-      const columnPinning = table.store.state.columnPinning;
+      const columnPinning = table.atoms.columnPinning.get();
       expect(columnPinning.start).toEqual([]);
     });
 
@@ -257,7 +257,7 @@ describe("useTableView - Freezing Feature", () => {
         table.setColumnFreezing({ colId: "col1", index: 0 });
       });
 
-      expect(table.store.state.columnPinning).toEqual({
+      expect(table.atoms.columnPinning.get()).toEqual({
         start: ["col1"],
         end: ["col3"],
       });
@@ -274,7 +274,7 @@ describe("useTableView - Freezing Feature", () => {
       });
 
       expect(table.getFreezingState()).toBeNull();
-      expect(table.store.state.columnPinning.start).toEqual([]);
+      expect(table.atoms.columnPinning.get().start).toEqual([]);
     });
   });
 

@@ -49,7 +49,7 @@ export function DndTableBody() {
 
 interface DndTableBodyContentProps {
   locked: boolean;
-  sorting: TableInstance["store"]["state"]["sorting"];
+  sorting: ReturnType<TableInstance["atoms"]["sorting"]["get"]>;
   isResizingColumn: boolean;
   dialogOpen: boolean;
   setDialogOpen: (open: boolean) => void;

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
+import { useStore } from "@tanstack/react-store";
 import type { ColumnSort } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
+import type { TableInstance } from "@notion-kit/table-hook";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Autocomplete,
@@ -51,9 +53,7 @@ export function SortMenu() {
 function SortMenuContent({
   sorting,
 }: {
-  sorting: ReturnType<
-    typeof useTableViewCtx
-  >["table"]["store"]["state"]["sorting"];
+  sorting: ReturnType<TableInstance["atoms"]["sorting"]["get"]>;
 }) {
   const { table } = useTableViewCtx();
   const [addingSort, setAddingSort] = useState(false);
@@ -112,7 +112,9 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
   const { table } = useTableViewCtx();
 
   const current = table.getColumnInfo(currentId);
-  const properties = Object.values(table.store.state.columnsInfo);
+  const properties = useStore(table.atoms.columnsInfo, (state) =>
+    Object.values(state),
+  );
 
   const updateRule = (columnSort: ColumnSort) =>
     table.setSorting((prev) =>
@@ -120,7 +122,7 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
     );
   const removeRule = () => {
     table.setSorting((prev) => prev.filter((s) => s.id !== currentId));
-    const isLastRule = table.store.state.sorting.length === 1;
+    const isLastRule = table.atoms.sorting.get().length === 1;
     if (isLastRule) {
       // TODO close popover
     }
@@ -245,12 +247,8 @@ function PropSelectMenuContent({
   sorting,
   onSelect,
 }: {
-  columnsInfo: ReturnType<
-    typeof useTableViewCtx
-  >["table"]["store"]["state"]["columnsInfo"];
-  sorting: ReturnType<
-    typeof useTableViewCtx
-  >["table"]["store"]["state"]["sorting"];
+  columnsInfo: ReturnType<TableInstance["atoms"]["columnsInfo"]["get"]>;
+  sorting: ReturnType<TableInstance["atoms"]["sorting"]["get"]>;
   onSelect: () => void;
 }) {
   const { table } = useTableViewCtx();

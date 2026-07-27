@@ -90,7 +90,7 @@ describe("useTableView - Sorting", () => {
       data: mockData,
       properties: mockProperties,
     });
-    const sorting = table.store.state.sorting;
+    const sorting = table.atoms.sorting.get();
 
     expect(sorting).toEqual([]);
   });
@@ -190,7 +190,7 @@ describe("useTableView - Sorting", () => {
       table.getColumn("col2")?.clearSorting();
     });
 
-    expect(table.store.state.sorting).toEqual([]);
+    expect(table.atoms.sorting.get()).toEqual([]);
   });
 
   it("should support multi-column sorting", () => {
@@ -225,13 +225,13 @@ describe("useTableView - Sorting", () => {
       table.setSorting([{ id: "col1", desc: false }]);
     });
 
-    expect(table.store.state.sorting).toHaveLength(1);
+    expect(table.atoms.sorting.get()).toHaveLength(1);
 
     act(() => {
       table.resetSorting();
     });
 
-    expect(table.store.state.sorting).toEqual([]);
+    expect(table.atoms.sorting.get()).toEqual([]);
   });
 });
 
@@ -241,7 +241,7 @@ describe("useTableView - Grouping", () => {
       data: mockData,
       properties: mockProperties,
     });
-    const grouping = table.store.state.grouping;
+    const grouping = table.atoms.grouping.get();
 
     expect(grouping).toEqual([]);
   });
@@ -260,7 +260,7 @@ describe("useTableView - Grouping", () => {
 
     // Should have group rows
     expect(groupedRows.length).toBeGreaterThan(0);
-    expect(table.store.state.grouping).toEqual(["col3"]);
+    expect(table.atoms.grouping.get()).toEqual(["col3"]);
   });
 
   it("should get grouped row values", () => {
@@ -293,12 +293,12 @@ describe("useTableView - Grouping", () => {
       table.setGrouping(["col3"]);
     });
 
-    expect(table.store.state.grouping).toEqual(["col3"]);
+    expect(table.atoms.grouping.get()).toEqual(["col3"]);
 
     act(() => {
       table.resetGrouping();
     });
 
-    expect(table.store.state.grouping).toEqual([]);
+    expect(table.atoms.grouping.get()).toEqual([]);
   });
 });

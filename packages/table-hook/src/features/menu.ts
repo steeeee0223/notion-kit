@@ -112,11 +112,11 @@ export const TableMenuFeature: TableFeature = {
 
     instance.getRowUrl = (rowId: string) =>
       instance.options.getRowUrl?.(rowId) ?? "";
-    instance.getTableMenuState = () => instance.store.state.menu;
+    instance.getTableMenuState = () => instance.atoms.menu.get();
     instance.setTableMenuState = (menu) => {
       instance.options.onTableMenuChange?.(menu);
     };
-    instance.getTableGlobalState = () => instance.store.state.tableGlobal;
+    instance.getTableGlobalState = () => instance.atoms.tableGlobal.get();
     instance.setTableGlobalState = (updater, action) => {
       instance.options.onTableGlobalChange?.(updater, action);
     };

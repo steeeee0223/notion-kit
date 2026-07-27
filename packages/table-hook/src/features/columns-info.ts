@@ -156,7 +156,8 @@ export const ColumnsInfoFeature: TableFeature = {
     const instance = table as unknown as _TableInstance;
 
     const getColumnVisibilityFromInfo = () => {
-      const { columnOrder, columnsInfo } = instance.store.state;
+      const columnOrder = instance.atoms.columnOrder.get();
+      const columnsInfo = instance.atoms.columnsInfo.get();
       return columnOrder.reduce<Record<string, boolean>>((acc, colId) => {
         const info = columnsInfo[colId];
         acc[colId] = !info?.hidden && !info?.isDeleted;
@@ -216,7 +217,7 @@ export const ColumnsInfoFeature: TableFeature = {
 
     /** Column Getters */
     instance.getColumnInfo = (colId) => {
-      const info = instance.store.state.columnsInfo[colId];
+      const info = instance.atoms.columnsInfo.get()[colId];
       if (!info) {
         throw new Error(`[TableView] Column info not found: "${colId}"`);
       }
@@ -224,14 +225,15 @@ export const ColumnsInfoFeature: TableFeature = {
     };
     instance.getColumnPlugin = (colId) => {
       const type = instance.getColumnInfo(colId).type;
-      const plugin = instance.store.state.cellPlugins[type];
+      const plugin = instance.atoms.cellPlugins.get()[type];
       if (!plugin) {
         throw new Error(`[TableView] Plugin not found: ${type}`);
       }
       return plugin;
     };
     instance.getDeletedColumns = () => {
-      const { columnOrder, columnsInfo } = instance.store.state;
+      const columnOrder = instance.atoms.columnOrder.get();
+      const columnsInfo = instance.atoms.columnsInfo.get();
       return columnOrder.reduce<ColumnInfo[]>((acc, colId) => {
         const info = columnsInfo[colId];
         if (!info?.isDeleted) return acc;
@@ -240,7 +242,7 @@ export const ColumnsInfoFeature: TableFeature = {
       }, []);
     };
     instance.countVisibleColumns = () => {
-      const { columnsInfo } = instance.store.state;
+      const columnsInfo = instance.atoms.columnsInfo.get();
       return Object.values(columnsInfo).reduce((acc, info) => {
         if (!info.hidden && !info.isDeleted) acc++;
         return acc;
@@ -420,7 +422,8 @@ export const ColumnsInfoFeature: TableFeature = {
     };
     instance.addColumnInfo = (payload) => {
       const actionId = v4();
-      const { cellPlugins, columnsInfo } = instance.store.state;
+      const cellPlugins = instance.atoms.cellPlugins.get();
+      const columnsInfo = instance.atoms.columnsInfo.get();
       const { id, name, type, at } = payload;
       if (columnsInfo[id]) {
         throw new Error(`[TableView] Column already exists: "${id}"`);
@@ -467,7 +470,7 @@ export const ColumnsInfoFeature: TableFeature = {
     };
     instance.duplicateColumnInfo = (colId) => {
       const actionId = v4();
-      const { cellPlugins } = instance.store.state;
+      const cellPlugins = instance.atoms.cellPlugins.get();
       const src = instance.getColumnInfo(colId);
       const newColId = v4();
       const idsUpdater = createIdsUpdater(newColId, {
@@ -564,7 +567,7 @@ export const ColumnsInfoFeature: TableFeature = {
       colId: string,
       type: PluginType<TPlugins>,
     ) => {
-      const destPlugin = instance.store.state.cellPlugins[type] as
+      const destPlugin = instance.atoms.cellPlugins.get()[type] as
         | InferPlugin<TPlugins>
         | undefined;
       if (!destPlugin) {
@@ -622,14 +625,14 @@ export const ColumnsInfoFeature: TableFeature = {
     };
     /** Column name */
     instance.checkIsUniqueColumnName = (name) => {
-      return Object.values(instance.store.state.columnsInfo).every(
+      return Object.values(instance.atoms.columnsInfo.get()).every(
         (info) => info.name !== name,
       );
     };
     instance.generateUniqueColumnName = (initial = "") => {
       return getUniqueName(
         initial,
-        Object.values(instance.store.state.columnsInfo).map(
+        Object.values(instance.atoms.columnsInfo.get()).map(
           (info) => info.name,
         ),
       );

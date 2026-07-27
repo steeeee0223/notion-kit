@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useStore } from "@tanstack/react-store";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
@@ -24,7 +25,7 @@ interface GroupActionsProps {
 
 export function GroupActions({ className, row }: GroupActionsProps) {
   const { table } = useTableViewCtx();
-  const { locked } = table.store.state.tableGlobal;
+  const { locked } = useStore(table.atoms.tableGlobal, (state) => state);
 
   const addRow = () => table.addRowToGroup(row.id);
 

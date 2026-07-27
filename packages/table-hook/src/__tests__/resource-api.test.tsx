@@ -388,14 +388,14 @@ describe("useTableView resource API", () => {
       "col2",
       "col3",
     ]);
-    expect(result.current.table.store.state.columnOrder).toEqual([
+    expect(result.current.table.atoms.columnOrder.get()).toEqual([
       "col1",
       "col2",
     ]);
 
     rerender({ properties: nextProperties! });
 
-    expect(result.current.table.store.state.columnOrder).toEqual([
+    expect(result.current.table.atoms.columnOrder.get()).toEqual([
       "col1",
       "col2",
       "col3",
@@ -545,7 +545,7 @@ describe("useTableView resource API", () => {
     expect(result.current.table.getRowModel().rows).toHaveLength(
       mockData.length + 1,
     );
-    expect(result.current.table.store.state.columnOrder).toEqual([
+    expect(result.current.table.atoms.columnOrder.get()).toEqual([
       "col1",
       "col2",
     ]);
@@ -582,7 +582,7 @@ describe("useTableView resource API", () => {
     expect(result.current.table.getRowModel().rows).toHaveLength(
       mockData.length,
     );
-    expect(result.current.table.store.state.columnOrder).toEqual([
+    expect(result.current.table.atoms.columnOrder.get()).toEqual([
       "col1",
       "col2",
       "col3",
@@ -755,7 +755,7 @@ describe("useTableView resource API", () => {
         type: "text",
       });
     });
-    expect(result.current.table.store.state.columnOrder).toEqual([
+    expect(result.current.table.atoms.columnOrder.get()).toEqual([
       "col1",
       "col2",
       "col3",
@@ -803,7 +803,7 @@ describe("useTableView resource API", () => {
     act(() => {
       result.current.table.removeColumnInfo("col3");
     });
-    expect(result.current.table.store.state.columnOrder).toEqual([
+    expect(result.current.table.atoms.columnOrder.get()).toEqual([
       "col1",
       "col2",
     ]);

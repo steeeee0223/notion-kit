@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
 
 import { Icon } from "@notion-kit/icons";
+import type { TableInstance } from "@notion-kit/table-hook";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
@@ -45,9 +46,7 @@ export function ListViewContent() {
 
 interface ListViewContentInnerProps {
   locked: boolean;
-  sorting: ReturnType<
-    typeof useTableViewCtx
-  >["table"]["store"]["state"]["sorting"];
+  sorting: ReturnType<TableInstance["atoms"]["sorting"]["get"]>;
   dialogOpen: boolean;
   setDialogOpen: (open: boolean) => void;
   pendingDragEndEvent: DragEndEvent | null;

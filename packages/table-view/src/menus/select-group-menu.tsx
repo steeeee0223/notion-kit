@@ -1,3 +1,5 @@
+import { useStore } from "@tanstack/react-store";
+
 import { TableViewMenuPage } from "@notion-kit/table-hook";
 import type { ColumnInfo } from "@notion-kit/table-hook";
 import { IconBlock } from "@notion-kit/ui/icon-block";
@@ -18,7 +20,10 @@ import { useTableViewCtx } from "@/table-contexts";
 
 export function SelectGroupMenu() {
   const { table } = useTableViewCtx();
-  const { columnOrder, columnsInfo, grouping, tableGlobal } = table.store.state;
+  const columnOrder = useStore(table.atoms.columnOrder, (state) => state);
+  const columnsInfo = useStore(table.atoms.columnsInfo, (state) => state);
+  const grouping = useStore(table.atoms.grouping, (state) => state);
+  const tableGlobal = useStore(table.atoms.tableGlobal, (state) => state);
   const groupingColId = grouping.at(0);
 
   const options = columnOrder.reduce<(ColumnInfo & { kind: "column" })[]>(

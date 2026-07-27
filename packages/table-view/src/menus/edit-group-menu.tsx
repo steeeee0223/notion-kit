@@ -1,4 +1,5 @@
 import React from "react";
+import { useStore } from "@tanstack/react-store";
 import { flexRender } from "@tanstack/react-table";
 
 import { useIsClient } from "@notion-kit/hooks";
@@ -23,9 +24,11 @@ export function EditGroupMenu() {
   const isClient = useIsClient();
   const { table } = useTableViewCtx();
 
-  const { layout } = table.getTableGlobalState();
-  const { groupOrder, groupVisibility, hideEmptyGroups } =
-    table.store.state.groupingState;
+  const { layout } = useStore(table.atoms.tableGlobal, (state) => state);
+  const { groupOrder, groupVisibility, hideEmptyGroups } = useStore(
+    table.atoms.groupingState,
+    (state) => state,
+  );
   const col = table.getGroupedColumnInfo();
 
   return (

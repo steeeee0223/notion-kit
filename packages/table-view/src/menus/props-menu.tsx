@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useStore } from "@tanstack/react-store";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
@@ -31,13 +32,19 @@ import { useTableViewCtx } from "@/table-contexts";
  */
 export function PropsMenu() {
   const { table } = useTableViewCtx();
-  const { columnOrder } = table.store.state;
-  const noShownProps = table.countVisibleColumns() === 1;
+  const columnOrder = useStore(table.atoms.columnOrder, (state) => state);
+  const columnsInfo = useStore(table.atoms.columnsInfo, (state) => state);
+  const columnVisibility = useStore(
+    table.atoms.columnVisibility,
+    (state) => state,
+  );
+  const noShownProps =
+    Object.values(columnVisibility).filter(Boolean).length === 1;
 
   const [search, setSearch] = useState("");
   const { props, deletedCount } = columnOrder.reduce(
     (acc, propId) => {
-      const info = table.getColumnInfo(propId);
+      const info = columnsInfo[propId]!;
       if (!info.isDeleted) {
         acc.props.push({ ...info, id: propId });
       } else {

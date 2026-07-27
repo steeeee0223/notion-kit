@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useStore } from "@tanstack/react-store";
 import { v4 } from "uuid";
 
 import { TableViewMenuPage } from "@notion-kit/table-hook";
@@ -47,7 +48,7 @@ interface TypesMenuProps {
 export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
   const { table } = useTableViewCtx();
 
-  const plugins = table.store.state.cellPlugins;
+  const plugins = useStore(table.atoms.cellPlugins, (state) => state);
   const pluginOptions = Object.values(plugins);
   const propType = propId ? table.getColumnInfo(propId).type : null;
   const [search, setSearch] = useState("");

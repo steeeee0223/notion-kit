@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import { Icon } from "@notion-kit/icons";
+import type { TableInstance } from "@notion-kit/table-hook";
 import { Button, Separator } from "@notion-kit/ui/primitives";
 
 import { DndTableBody } from "../table-body";
@@ -26,15 +27,9 @@ export function TableViewContent() {
 }
 
 interface TableViewContentInnerProps {
-  sorting: ReturnType<
-    typeof useTableViewCtx
-  >["table"]["store"]["state"]["sorting"];
-  columnResizing: ReturnType<
-    typeof useTableViewCtx
-  >["table"]["store"]["state"]["columnResizing"];
-  columnSizing: ReturnType<
-    typeof useTableViewCtx
-  >["table"]["store"]["state"]["columnSizing"];
+  sorting: ReturnType<TableInstance["atoms"]["sorting"]["get"]>;
+  columnResizing: ReturnType<TableInstance["atoms"]["columnResizing"]["get"]>;
+  columnSizing: ReturnType<TableInstance["atoms"]["columnSizing"]["get"]>;
 }
 
 function TableViewContentInner({

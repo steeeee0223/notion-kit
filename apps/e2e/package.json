@@ -37,8 +37,8 @@
     "react-dom": "catalog:react19"
   },
   "devDependencies": {
-    "@ampproject/remapping": "catalog:test",
-    "@jridgewell/trace-mapping": "catalog:test",
+    "@ampproject/remapping": "^2.3.0",
+    "@jridgewell/trace-mapping": "^0.3.31",
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
@@ -51,7 +51,7 @@
     "@vitejs/plugin-react": "catalog:test",
     "eslint": "catalog:",
     "jsdom": "catalog:rtl",
-    "monocart-coverage-reports": "catalog:test",
+    "monocart-coverage-reports": "^2.11.5",
     "prettier": "catalog:",
     "tailwindcss": "catalog:tailwind-v4",
     "typescript": "catalog:",

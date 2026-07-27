@@ -5,6 +5,7 @@ import {
   LAYOUT_OPTIONS,
   ROW_VIEW_OPTIONS,
   RowViewType,
+  type TableInstance,
 } from "@notion-kit/table-hook";
 import {
   Button,
@@ -33,8 +34,8 @@ function LayoutMenuContent({
   currentLayout,
 }: {
   currentLayout: ReturnType<
-    typeof useTableViewCtx
-  >["table"]["store"]["state"]["tableGlobal"]["layout"];
+    TableInstance["atoms"]["tableGlobal"]["get"]
+  >["layout"];
 }) {
   const { table } = useTableViewCtx();
 

@@ -8,6 +8,7 @@ import {
   columnVisibilityFeature,
   createExpandedRowModel,
   createSortedRowModel,
+  rowAggregationFeature,
   rowExpandingFeature,
   rowSortingFeature,
   tableFeatures,
@@ -139,6 +140,7 @@ export interface TableFeatures {
   columnSizingFeature: typeof columnSizingFeature;
   columnVisibilityFeature: typeof columnVisibilityFeature;
   rowExpandingFeature: typeof rowExpandingFeature;
+  rowAggregationFeature: typeof rowAggregationFeature;
   rowSortingFeature: typeof rowSortingFeature;
   sortedRowModel: ReturnType<typeof createSortedRowModel>;
   groupedRowModel: ReturnType<typeof getExtendedGroupedRowModel>;
@@ -159,6 +161,7 @@ export const DEFAULT_FEATURES = tableFeatures({
   columnSizingFeature,
   columnVisibilityFeature,
   rowExpandingFeature,
+  rowAggregationFeature,
   rowSortingFeature,
   sortedRowModel: createSortedRowModel(),
   groupedRowModel: getExtendedGroupedRowModel(),
