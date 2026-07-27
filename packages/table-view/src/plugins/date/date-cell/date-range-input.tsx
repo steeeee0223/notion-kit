@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import type { OnChangeFn } from "@tanstack/react-table";
 import * as z from "zod/v4/mini";
@@ -151,17 +149,9 @@ interface DateInputProps {
 
 function DateInput({ id, value: ts, onChange, tz }: DateInputProps) {
   const [error, setError] = useState(false);
-  const getValue = () => {
-    if (ts === undefined || ts < 0) return "";
-    return formatDate(ts, {
-      dateFormat: "_edit_mode",
-      timeFormat: "hidden",
-      tz,
-    });
-  };
-  const [value, setValue] = useState(getValue);
-  // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps -- Calendar selections must refresh the controlled editor draft.
-  useEffect(() => setValue(getValue()), [ts]);
+  const [value, setValue] = useState(getTimeValue(ts, tz));
+
+  // useEffect(() => setValue(getTimeValue(ts, tz)), [ts, tz]);
 
   const handleBlur = () => {
     const res = dateTimeSchema.safeParse({ date: value, time: "" });
@@ -182,4 +172,13 @@ function DateInput({ id, value: ts, onChange, tz }: DateInputProps) {
       onBlur={handleBlur}
     />
   );
+}
+
+function getTimeValue(ts?: number, tz?: string) {
+  if (ts === undefined || ts < 0) return "";
+  return formatDate(ts, {
+    dateFormat: "_edit_mode",
+    timeFormat: "hidden",
+    tz,
+  });
 }

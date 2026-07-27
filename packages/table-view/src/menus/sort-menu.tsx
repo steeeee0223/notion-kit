@@ -76,6 +76,7 @@ function SortMenuContent({
       <DropdownMenuGroup>
         <Popover open={addingSort} onOpenChange={setAddingSort}>
           <PopoverTrigger
+            nativeButton={false}
             render={
               <DropdownMenuItem
                 closeOnClick={false}

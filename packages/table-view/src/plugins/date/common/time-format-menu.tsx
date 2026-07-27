@@ -30,6 +30,7 @@ export function TimeFormatMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
+        nativeButton={false}
         render={
           <MenuItem
             label="Time format"

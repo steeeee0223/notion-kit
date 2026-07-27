@@ -12,6 +12,7 @@ import {
   rowExpandingFeature,
   rowSortingFeature,
   tableFeatures,
+  type TableFeatures as BaseTableFeatures,
   type RowData,
 } from "@tanstack/react-table";
 
@@ -132,19 +133,7 @@ export * from "@/features/row-actions";
 export * from "@/features/constants";
 export * from "@/features/types";
 
-export interface TableFeatures {
-  columnGroupingFeature: typeof columnGroupingFeature;
-  columnOrderingFeature: typeof columnOrderingFeature;
-  columnPinningFeature: typeof columnPinningFeature;
-  columnResizingFeature: typeof columnResizingFeature;
-  columnSizingFeature: typeof columnSizingFeature;
-  columnVisibilityFeature: typeof columnVisibilityFeature;
-  rowExpandingFeature: typeof rowExpandingFeature;
-  rowAggregationFeature: typeof rowAggregationFeature;
-  rowSortingFeature: typeof rowSortingFeature;
-  sortedRowModel: ReturnType<typeof createSortedRowModel>;
-  groupedRowModel: ReturnType<typeof getExtendedGroupedRowModel>;
-  expandedRowModel: ReturnType<typeof createExpandedRowModel>;
+export interface TableFeatures extends BaseTableFeatures {
   columnsInfoFeature: typeof ColumnsInfoFeature;
   countingFeature: typeof CountingFeature;
   freezingFeature: typeof FreezingFeature;

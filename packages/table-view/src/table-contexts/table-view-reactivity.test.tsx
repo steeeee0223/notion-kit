@@ -224,6 +224,32 @@ describe("TableViewReactivity", () => {
     expect(onProbeRender).toHaveBeenCalledOnce();
   });
 
+  it("TableViewReactivity_ResourceUpdate_BroadcastsLatestTableOnce", async () => {
+    const onProbeRender = vi.fn();
+
+    function ContextProbe() {
+      useTableViewCtx();
+      return null;
+    }
+
+    renderTableView({
+      children: (
+        <>
+          <DataUpdateControls />
+          <Profiler id="context-probe" onRender={onProbeRender}>
+            <ContextProbe />
+          </Profiler>
+        </>
+      ),
+    });
+    expect(onProbeRender).toHaveBeenCalledOnce();
+
+    fireEvent.click(screen.getByRole("button", { name: "Rename first row" }));
+
+    expect(await screen.findByText("Renamed task")).toBeVisible();
+    expect(onProbeRender).toHaveBeenCalledTimes(2);
+  });
+
   it("TableViewReactivity_RowOpenAndModeChange_RendersSelectedRowView", async () => {
     const tableView = renderTableView({
       properties: [

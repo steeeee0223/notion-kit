@@ -4,7 +4,6 @@ import {
   useTable,
   type ColumnDef,
 } from "@tanstack/react-table";
-import { v4 } from "uuid";
 
 import { DEFAULT_FEATURES, type TableFeatures } from "@/features";
 import type { TableViewState } from "@/features/menu";
@@ -21,11 +20,7 @@ import type {
   ViewResourceAction,
 } from "@/table-contexts/actions";
 import { defaultColumn } from "@/table-contexts/column";
-import type {
-  BaseTableProps,
-  ResourceVersion,
-  TableState,
-} from "@/table-contexts/types";
+import type { BaseTableProps, TableState } from "@/table-contexts/types";
 import {
   createInitialTable,
   getMinWidth,
@@ -277,17 +272,5 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     () => null,
   );
 
-  const resourceVersion = useMemo<ResourceVersion>(
-    () => ({ id: v4(), ts: Date.now() }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- This token must change whenever a controlled resource changes, even though the values are intentionally not exposed.
-    [dataEntity, propertiesResource, tableGlobalState],
-  );
-
-  return useMemo(
-    () => ({
-      table,
-      resourceVersion,
-    }),
-    [resourceVersion, table],
-  );
+  return useMemo(() => ({ table }), [table]);
 }

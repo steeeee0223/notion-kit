@@ -16,7 +16,6 @@ import {
   type DataResourceAction,
   type PropertiesResourceAction,
   type ResourceChange,
-  type ResourceVersion,
   type ViewResourceAction,
 } from "@/table-contexts";
 import { useTableView } from "@/table-contexts/use-table-view";
@@ -34,31 +33,6 @@ function getLastResourceChange<TResource, TAction>(mock: MockWithLastCall) {
 }
 
 describe("useTableView resource API", () => {
-  it("ResourceVersion_IdentifiesTimestampedResourceSnapshots", () => {
-    const { result } = renderHook(() =>
-      useTableView({
-        plugins,
-        defaultData: mockData,
-        defaultProperties: mockProperties,
-      }),
-    );
-    const initialVersion: ResourceVersion = result.current.resourceVersion;
-
-    expect(initialVersion.id).toMatch(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
-    );
-    expect(typeof initialVersion.ts).toBe("number");
-
-    act(() => {
-      result.current.table.addRow();
-    });
-
-    const nextVersion: ResourceVersion = result.current.resourceVersion;
-    expect(nextVersion.id).not.toBe(initialVersion.id);
-    expect(typeof nextVersion.ts).toBe("number");
-    expect(nextVersion.ts).toBeGreaterThanOrEqual(initialVersion.ts);
-  });
-
   it("ResourceActions_CallbacksReceiveCompleteReplacementEnvelope", () => {
     const onDataChange = vi.fn();
     const { result } = renderHook(() =>

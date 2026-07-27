@@ -33,6 +33,7 @@ export function DateFormatMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
+        nativeButton={false}
         render={
           <MenuItem
             icon={showIcon ? <Icon.ViewCalendar /> : undefined}
