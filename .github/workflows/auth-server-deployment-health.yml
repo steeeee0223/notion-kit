@@ -1,0 +1,43 @@
+name: Auth Server Deployment Health
+
+on:
+  repository_dispatch:
+    types: ["vercel.deployment.ready"]
+
+run-name: >-
+  Auth Server Health - ${{ github.event.client_payload.project.name }}
+  (${{ github.event.client_payload.environment }})
+
+jobs:
+  health:
+    if: >-
+      github.event.client_payload.project.name ==
+      vars.AUTH_SERVER_VERCEL_PROJECT_NAME
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    permissions:
+      actions: read
+      contents: read
+      statuses: write
+    steps:
+      - name: Report deployment health status
+        uses: vercel/repository-dispatch/actions/status@v1
+        with:
+          name: >-
+            Vercel - ${{ github.event.client_payload.project.name }}:
+            health (${{ github.event.client_payload.environment }})
+
+      - name: Check out deployment commit
+        uses: vercel/repository-dispatch/actions/checkout@v1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.11.1
+
+      - name: Check auth-server health
+        env:
+          DEPLOYMENT_URL: ${{ github.event.client_payload.url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: >-
+            ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: node .github/scripts/check-auth-server-health.mjs "$DEPLOYMENT_URL"
