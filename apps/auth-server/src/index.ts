@@ -2,7 +2,7 @@ import Fastify from "fastify";
 
 import { toNodeHandler } from "@notion-kit/auth";
 
-import { auth } from "./lib/auth";
+import { auth } from "./lib/auth.js";
 
 const server = Fastify({ logger: true });
 const authHandler = toNodeHandler(auth);
