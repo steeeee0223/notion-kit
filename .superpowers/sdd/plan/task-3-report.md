@@ -245,3 +245,74 @@ git diff --check: exit 0
   guarding the phase-ordering regression.
 - No E2E, table-hook, shared sortable, or row/list behavior changed in this
   round.
+
+## Review fix round 3
+
+### Finding
+
+Base UI 1.6 opens `Menu.Trigger` on `mousedown`. A header pointer drag therefore
+opened the property menu before DnD activation, even though the trigger later
+reported `aria-expanded="false"` after cleanup.
+
+The installed Base UI API identifies this transition with the
+`trigger-press` reason and permits its default state update to be canceled via
+`eventDetails.cancel()`.
+
+### RED
+
+The pointer regression first added post-drag assertions for both the trigger
+state and the Calculate menu item. On the pre-fix current code, cleanup,
+rendered/controlled order, the exact action, and `aria-expanded="false"` all
+passed, but the menu item stayed visible:
+
+```text
+HeaderPointerDnD_SameNotesTriggerOpensMenuAndMovesAfterScore
+expect(calculateMenuItem).toBeHidden()
+Timed out 5000ms: element remained visible
+1 failed
+```
+
+### GREEN
+
+The dropdown is now controlled. Base UI `trigger-press` transitions are
+canceled, while the trigger's real `click` toggles the controlled state.
+Outside press, item selection, and Escape continue through `onOpenChange`, and
+a drag ending on `BODY` emits no click, so it cannot open the menu.
+
+Focused pointer regression:
+
+```text
+1 passed
+```
+
+Combined header browser regressions, covering click open/close, post-drag
+hidden/collapsed state, resize, and locked headers:
+
+```text
+3 passed
+```
+
+Fresh package/static verification:
+
+```text
+@notion-kit/table-view full test: exit 0
+@notion-kit/table-view typecheck: exit 0
+@notion-kit/e2e typecheck: exit 0
+Changed-file ESLint: exit 0
+Changed-file Prettier check: exit 0
+git diff --check: exit 0
+```
+
+### Self-review
+
+- Pointer clicks still open and close the property menu on the same accessible
+  header locator; browser keyboard activation also produces the click used by
+  the controlled toggle.
+- Only Base UI's `trigger-press` state transition is canceled. Supported close
+  reasons remain owned by the primitive's `onOpenChange` contract.
+- Pointer drag cleanup and its exact move action remain unchanged, and the new
+  authority assertion proves the menu is not merely ARIA-collapsed while still
+  visible.
+- Locked triggers remain disabled and additionally guard the explicit toggle.
+- No coordinate or timer heuristic was introduced, and no untracked `tasks/`
+  content was changed.

@@ -169,6 +169,8 @@ test("HeaderPointerDnD_SameNotesTriggerOpensMenuAndMovesAfterScore", async ({
     type: "properties.move",
     payload: { propertyId: "notes", previousPosition: 1, nextPosition: 2 },
   });
+  await expect(notesHeader).toHaveAttribute("aria-expanded", "false");
+  await expect(calculateMenuItem).toBeHidden();
 });
 
 test("HeaderResize_NotesFortyPixelsWider_ReportsExactWidthChange", async ({

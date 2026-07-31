@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import type { HeaderInstance, TableInstance } from "@notion-kit/table-hook";
@@ -32,6 +34,7 @@ export function TableHeaderCell({ header, table }: TableHeaderCellProps) {
   const onResizeStart = header.getResizeHandler();
   const onResizeEnd = () => header.column.handleResizeEnd();
   const { locked } = table.getTableGlobalState();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const style: React.CSSProperties = {
     width: header.column.getWidth(),
@@ -48,7 +51,18 @@ export function TableHeaderCell({ header, table }: TableHeaderCellProps) {
         <div className="relative flex cursor-grab flex-row whitespace-nowrap" />
       }
     >
-      <DropdownMenu modal={false}>
+      <DropdownMenu
+        modal={false}
+        open={menuOpen}
+        onOpenChange={(open, eventDetails) => {
+          if (eventDetails.reason === "trigger-press") {
+            eventDetails.cancel();
+            return;
+          }
+
+          setMenuOpen(open);
+        }}
+      >
         <TooltipPreset
           description={
             info.description ? (
@@ -64,6 +78,9 @@ export function TableHeaderCell({ header, table }: TableHeaderCellProps) {
         >
           <DropdownMenuTrigger
             disabled={locked}
+            onClick={() => {
+              if (!locked) setMenuOpen((open) => !open);
+            }}
             render={
               <Sortable.Handle
                 variant="cell"
