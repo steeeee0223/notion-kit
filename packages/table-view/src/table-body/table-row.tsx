@@ -29,6 +29,7 @@ export function TableRow({ row }: TableRowProps) {
     <Sortable.Item
       id={row.id}
       index={row.index}
+      group={row.parentId}
       disabled={locked}
       data={{ type: "table-row", groupId: row.parentId }}
       render={

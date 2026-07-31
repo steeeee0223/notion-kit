@@ -49,6 +49,15 @@ export default function ControlledTableViewPage() {
     setProperties(next.properties);
   };
 
+  const openLockedAlphaRow = () => {
+    setView((current) => ({
+      ...current,
+      locked: true,
+      openedRowId: "row-alpha",
+      rowView: "side",
+    }));
+  };
+
   return (
     <main className="min-h-screen overflow-auto bg-main py-8">
       <header className="mb-6 px-24">
@@ -58,6 +67,9 @@ export default function ControlledTableViewPage() {
         </button>
         <button type="button" onClick={applyPluginConfigurationScenario}>
           Apply plugin configuration scenario
+        </button>
+        <button type="button" onClick={openLockedAlphaRow}>
+          Open locked Alpha row
         </button>
       </header>
       <TableView

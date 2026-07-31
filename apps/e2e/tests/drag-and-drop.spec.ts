@@ -35,6 +35,8 @@ async function dragWithPointer(
   await page.mouse.move(end.x, end.y, { steps: 12 });
   await page.mouse.up();
   await expect(page.locator("[data-dragging]")).toHaveCount(0);
+  await expect(page.locator('[data-dnd-dragging="true"]')).toHaveCount(0);
+  await expect(page.locator("[data-dnd-placeholder]")).toHaveCount(0);
 }
 
 test("RowDnD_AlphaAfterOmega_MovesRenderedAndControlledOrder", async ({
@@ -68,6 +70,55 @@ test("RowDnD_AlphaAfterOmega_MovesRenderedAndControlledOrder", async ({
   await expect(table.controlledState()).toContainText('"rowId":"row-alpha"');
   await expect(table.controlledState()).toContainText('"nextPosition":2');
 });
+
+for (const layout of ["table", "list"] as const) {
+  test(`GroupedRowDnD_${layout}_CrossGroupUpdatesRenderedMembershipAndControlledValue`, async ({
+    page,
+  }) => {
+    const table = await TableViewObject.open(page, "controlled");
+    if (layout === "list") await table.setLayout(layout);
+    await table.groupBy("Status");
+    await table.expandGroup("status:Active");
+    await table.expandGroup("status:Done");
+
+    const alpha = table.rowBlock("row-alpha");
+    const omega = table.rowBlock("row-omega");
+    await alpha.hover();
+    await dragWithPointer(
+      page,
+      alpha.getByRole("button", { name: "Row actions", exact: true }),
+      omega,
+    );
+
+    await expect(table.group("status:Active")).toHaveCount(0);
+    await expect(
+      table.group("status:Done").getByRole("button", { name: "2" }),
+    ).toBeVisible();
+    await expect
+      .poll(async () => {
+        const alphaBox = await alpha.boundingBox();
+        const doneBox = await table.group("status:Done").boundingBox();
+        return Boolean(alphaBox && doneBox && alphaBox.y > doneBox.y);
+      })
+      .toBe(true);
+
+    const snapshot = await table.controlledSnapshot();
+    expect(
+      snapshot.data.find((row: { id: string }) => row.id === "row-alpha")
+        ?.properties.status?.value,
+    ).toBe("Done");
+    expect(snapshot.dataCount).toBe(1);
+    expect(snapshot.lastDataAction).toEqual({
+      id: expect.any(String),
+      type: "data.row.move",
+      payload: {
+        rowId: "row-alpha",
+        previousPosition: 0,
+        nextPosition: 1,
+      },
+    });
+  });
+}
 
 test("HeaderPointerDnD_SameNotesTriggerOpensMenuAndMovesAfterScore", async ({
   page,

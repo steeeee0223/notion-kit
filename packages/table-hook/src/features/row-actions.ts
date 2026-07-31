@@ -95,6 +95,32 @@ function getGroupTargetId(data: unknown) {
   return typeof groupId === "string" ? groupId : null;
 }
 
+function getProjectedGroupTargetId(source: unknown, target: unknown) {
+  if (
+    typeof source !== "object" ||
+    source === null ||
+    typeof target !== "object" ||
+    target === null
+  ) {
+    return null;
+  }
+
+  const sortableSource = source as {
+    id?: unknown;
+    group?: unknown;
+    initialGroup?: unknown;
+  };
+  const sortableTarget = target as { id?: unknown };
+  if (
+    sortableSource.id !== sortableTarget.id ||
+    typeof sortableSource.group !== "string" ||
+    sortableSource.group === sortableSource.initialGroup
+  ) {
+    return null;
+  }
+  return sortableSource.group;
+}
+
 function createKanbanItemsFromRows(
   table: _TableInstance,
   rows: Row[],
@@ -426,7 +452,9 @@ export const RowActionsFeature: TableFeature = {
       const groupingColumnId = grouping[0];
       const { source, target } = event.operation;
       const sourceGroupId = getGroupTargetId(source?.data);
-      const targetGroupId = getGroupTargetId(target?.data);
+      const targetGroupId =
+        getProjectedGroupTargetId(source, target) ??
+        getGroupTargetId(target?.data);
       const shouldReorder = options.reorder ?? true;
 
       const sourceRowId = String(source?.id ?? "");

@@ -474,6 +474,40 @@ describe("useTableView - Row Custom APIs", () => {
       expect(table.getRow("row1").original.properties.col2?.value).toBe(30);
     });
 
+    it("updates a grouping cell from a projected sortable group", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      act(() => {
+        table.handleRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: {
+              id: "row1",
+              initialIndex: 0,
+              index: 1,
+              initialGroup: "col2:25",
+              group: "col2:30",
+              data: { type: "table-row", groupId: "col2:25" },
+            },
+            target: {
+              id: "row1",
+              data: { type: "table-row", groupId: "col2:25" },
+            },
+          },
+        } as unknown as DragEndEvent);
+      });
+
+      expect(table.getRow("row1").original.properties.col2?.value).toBe(30);
+    });
+
     it("updates a grouping cell when a list row moves to the null group", () => {
       const { table } = renderTableHook({
         data: [

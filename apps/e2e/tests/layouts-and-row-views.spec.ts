@@ -1,6 +1,95 @@
 import { TableViewObject } from "./component-objects/table-view";
 import { expect, test } from "./fixtures";
 
+for (const layout of ["table", "list", "board"] as const) {
+  test(`RowViewEntry_${layout}_PrimarySurfaceOpensConfiguredView`, async ({
+    page,
+  }) => {
+    const table = await TableViewObject.open(page, "controlled");
+    if (layout === "board") {
+      await table.groupBy("Status");
+      await table.setLayout(layout);
+    } else if (layout === "list") {
+      await table.setLayout(layout);
+    }
+
+    await table.openPrimaryRow(layout, { id: "row-alpha", name: "Alpha" });
+
+    await expect(page.getByRole("dialog", { name: "Alpha" })).toBeVisible();
+    const snapshot = await table.controlledSnapshot();
+    expect(snapshot.view.openedRowId).toBe("row-alpha");
+    expect(snapshot.lastViewAction).toEqual({
+      id: expect.any(String),
+      type: "view.opened_row.change",
+      payload: {
+        previousRowId: null,
+        nextRowId: "row-alpha",
+        previousRowView: "side",
+        nextRowView: "side",
+      },
+    });
+  });
+}
+
+test("LockedRowView_PropertyTriggersRemainClosedAndDataUnchanged", async ({
+  page,
+}) => {
+  const table = await TableViewObject.open(page, "controlled");
+  await page.getByRole("button", { name: "Open locked Alpha row" }).click();
+  let dialog = page.getByRole("dialog", { name: "Alpha" });
+  await expect(dialog).toBeVisible();
+
+  for (const propertyName of [
+    "Notes",
+    "Score",
+    "Status",
+    "Tags",
+    "Complete",
+    "Due",
+    "Email",
+    "Phone",
+    "Website",
+    "Created",
+    "Edited",
+  ]) {
+    await expect(
+      table.rowViewPropertyLabel(dialog, propertyName),
+    ).toBeDisabled();
+    const value = table.rowViewPropertyValue(dialog, propertyName);
+    await expect(value).toHaveAttribute("aria-disabled", "true");
+    await expect(value).toHaveAttribute("tabindex", "-1");
+  }
+
+  await table.rowViewPropertyLabel(dialog, "Notes").dispatchEvent("click");
+  await table.rowViewPropertyValue(dialog, "Notes").dispatchEvent("click");
+  await table.rowViewPropertyValue(dialog, "Status").dispatchEvent("click");
+  await table
+    .rowViewPropertyValue(dialog, "Complete")
+    .dispatchEvent("pointerdown");
+  await table.rowViewPropertyValue(dialog, "Due").dispatchEvent("click");
+
+  await expect(page.getByRole("menu")).toHaveCount(0);
+  await expect(page.getByRole("listbox")).toHaveCount(0);
+  await expect(dialog.getByRole("textbox")).toHaveCount(0);
+  let snapshot = await table.controlledSnapshot();
+  expect(snapshot.dataCount).toBe(0);
+  expect(snapshot.propertiesCount).toBe(0);
+  expect(snapshot.lastDataAction).toBeNull();
+  expect(snapshot.lastPropertiesAction).toBeNull();
+
+  await dialog.getByRole("button", { name: "Next row" }).click();
+  dialog = page.getByRole("dialog", { name: "Empty" });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole("button", { name: "Previous row" }).click();
+  dialog = page.getByRole("dialog", { name: "Alpha" });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole("button", { name: "Close row" }).click();
+  await expect(dialog).toHaveCount(0);
+  snapshot = await table.controlledSnapshot();
+  expect(snapshot.view.locked).toBe(true);
+  expect(snapshot.view.openedRowId).toBeNull();
+});
+
 test("Layouts_TableListBoard_PreserveEditedDataAcrossViewChanges", async ({
   page,
 }) => {
