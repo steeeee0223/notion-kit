@@ -22,7 +22,7 @@
     "lint:ws": "pnpm dlx sherif@latest",
     "postinstall": "pnpm lint:ws",
     "publish-packages": "changeset publish --no-private",
-    "test": "vitest run",
+    "test": "node --test .github/scripts/check-auth-server-health.test.mjs && vitest run",
     "test:ui": "vitest --ui",
     "typecheck": "turbo run typecheck",
     "typecheck:affected": "turbo run typecheck --affected",
