@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "fastify",
-  "buildCommand": "cd ../.. && pnpm exec turbo run build --filter=@notion-kit/auth-server",
+  "buildCommand": "cd ../.. && pnpm --filter=@notion-kit/auth build && pnpm --filter=@notion-kit/auth-server build",
   "devCommand": "cd ../.. && pnpm --filter @notion-kit/auth-server dev",
   "installCommand": "cd ../.. && pnpm install --frozen-lockfile"
 }
