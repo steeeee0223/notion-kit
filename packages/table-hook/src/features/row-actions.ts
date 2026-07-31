@@ -110,13 +110,17 @@ function getProjectedGroupTarget(source: unknown, target: unknown) {
     group?: unknown;
     index?: unknown;
     initialGroup?: unknown;
+    initialIndex?: unknown;
   };
   const sortableTarget = target as { id?: unknown };
   if (
     sortableSource.id !== sortableTarget.id ||
     typeof sortableSource.group !== "string" ||
     typeof sortableSource.index !== "number" ||
-    sortableSource.group === sortableSource.initialGroup
+    typeof sortableSource.initialGroup !== "string" ||
+    typeof sortableSource.initialIndex !== "number" ||
+    (sortableSource.group === sortableSource.initialGroup &&
+      sortableSource.index === sortableSource.initialIndex)
   ) {
     return null;
   }
@@ -517,6 +521,7 @@ export const RowActionsFeature: TableFeature = {
               : getSortableItemsAfterDrag(rows, event);
           if (
             !source ||
+            (projectedGroupTarget && !hasValidProjectedGroups) ||
             !targetGroupId ||
             targetGroupId === sourceGroupId ||
             !groupingColumnId ||

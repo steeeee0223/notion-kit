@@ -112,3 +112,41 @@ directly to the flat-row sortable helper placed Alpha before Omega and emitted a
 - `@notion-kit/table-view`: 35 files, 326 tests passed.
 - Focused grouped table/list E2E: 2 passed.
 - Full drag-and-drop and layouts/RowView specs: 12 passed.
+
+## Review fix round 2
+
+### Finding
+
+Projected self-target detection only recognized a group change. A reorder within
+the same group therefore sent the group-local projected index to the flat-row
+helper, which is incorrect when raw rows from other groups are interleaved. The
+projected trust boundary also allowed an unknown source group to update a cell
+when the target group itself was known.
+
+### RED evidence
+
+- With raw order `A(X), B(Y), C(X)`, dragging A after C produced `B, A, C`
+  instead of `B, C, A`.
+- A projected event with unknown source group and known target group emitted a
+  callback and changed A's grouping cell to the target value.
+
+### Fix
+
+- Recognize a projected self-target when either the sortable group or its local
+  index differs from the complete initial group/index metadata.
+- Route both cross-group and same-group projected events through the same
+  group-aware local-to-flat translation.
+- Apply the projected source/target group validity guard to both reorder and
+  grouping-cell update paths.
+
+### Verification
+
+- Focused projected unit cases: 4 passed, covering cross-group, same-group,
+  unknown target group, and unknown source group.
+- Same-group result: `B, C, A`, exact action `0 -> 2`, original grouping cell id
+  and value preserved.
+- Unknown source group: no callback, order and grouping cell unchanged.
+- `@notion-kit/table-hook`: 8 files, 159 tests passed.
+- Focused grouped table/list E2E: 2 passed.
+- Full drag-and-drop and layouts/RowView specs: 12 passed.
+- Table-hook typecheck, lint, format, and diff check passed.
