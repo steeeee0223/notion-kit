@@ -58,23 +58,83 @@ A drop that is canceled, lacks a valid target group, or remains inside the same 
 
 ## Testing
 
-Implementation follows red-green-refactor. Regression tests must fail against the current implementation before production code changes.
+Implementation follows red-green-refactor. Each regression test must fail for the intended missing behavior before production code changes. The suite is divided by the narrowest layer that can observe each contract, and it avoids duplicating behavior already covered by an existing test.
 
-Unit and component tests cover:
+### Table-hook unit suite
 
-- The header property trigger is the sortable handle and no separate `Move <property>` control is required.
-- Locked open-row property labels and values cannot open interactive surfaces or emit updates.
-- Table, list, and board row entry points open the configured row view without nested-trigger double activation.
-- The shared row action handler updates a grouping cell for generic table/list DnD, preserves same-group values, and retains Kanban behavior.
+File: `packages/table-hook/src/__tests__/row-actions.test.tsx`
 
-Playwright tests cover:
+These tests call the real `handleRowDragEnd` API with generic sortable row data. They verify data mutation independently from React rendering and pointer sensors.
 
-- Pointer dragging from the header property trigger reorders columns, and clicking the same trigger opens its menu.
-- Grouped table and grouped list rows can be moved to another group and controlled data contains the target grouping value.
-- Table, list, and board layouts can open their configured row view.
-- A locked open row does not allow property-name or property-value triggers to open.
+- `HandleRowDragEnd_GenericSortableCrossGroup_UpdatesGroupingCellAndMoveResource`
+  - Use table/list-shaped source and target data with different `groupId` values.
+  - Assert the moved row receives the target group's original value, its other cells remain unchanged, rendered group membership changes, and exactly one `data.row.move` action is emitted.
+  - Parameterize populated and null target groups because null is a valid group boundary, not a missing configuration.
+- `HandleRowDragEnd_GenericSortableSameGroup_PreservesGroupingCell`
+  - Assert an in-group reorder changes order without replacing the grouping cell id or value.
+- `HandleRowDragEnd_UnknownTargetGroup_PreservesGroupingCell`
+  - Supply a target `groupId` that is absent from `groupValues`.
+  - Assert the handler does not manufacture a grouping cell with `undefined` data.
 
-Keyboard header DnD may retain a test if the composed primitive supports it reliably, but it is not required for acceptance.
+Existing ungrouped reorder, canceled Kanban preview, empty Kanban column, and Kanban cross-group tests remain the authority for those paths. They must not be copied into a second generic-row suite.
+
+### Table-view integration suite
+
+Files: `packages/table-view/src/__tests__/layout-interactions.test.tsx` and a focused row-view test file if the existing file becomes difficult to navigate.
+
+- `ViewProps_LockedView_DisablesEveryPropertyTrigger`
+  - Render a real open row with `locked: true` and the complete plugin fixture.
+  - For property-name triggers, assert native disabled semantics and that no property menu opens.
+  - For property-value triggers, assert `aria-disabled="true"`, removal from the tab order, and that programmatic activation cannot open an editor or emit `data.cell.update`.
+  - Use table rows for the interactive plugin families rather than separate copy-pasted tests. Read-only display plugins need no activation test.
+- `ViewProps_UnlockedView_PropertyTriggerStillOpens`
+  - One representative property label and one representative value prove the locked guard was not accidentally made unconditional.
+
+Existing tests already prove `ListRow_Click_OpensConfiguredRowView`, `BoardCard_Click_OpensConfiguredRowView`, board keyboard activation, and nested board controls not opening a row. Those tests are retained rather than recreated. A new component-level layout matrix is not added unless a production change introduces a new shared row-entry component.
+
+Header composition is not tested by asserting that a `Move <property>` element is absent. That would be a structure-change detector. The observable click-versus-drag behavior is covered in Playwright instead.
+
+### Playwright browser suite
+
+File: `apps/e2e/tests/drag-and-drop.spec.ts`
+
+- `HeaderTrigger_ClickAndPointerDrag_OpensMenuThenReordersProperty`
+  - Click the `Notes` header and assert its real property menu opens.
+  - Close the menu, then begin a pointer drag from the same `Notes` locator and drop after `Score`.
+  - Assert rendered order, controlled property order, and the exact `properties.move` action.
+  - This replaces `HeaderKeyboardDnD_NotesAfterScore_MovesPropertyAndReportsAction` as the required regression. A keyboard sub-test may remain only if the composed trigger supports it without a second handle.
+- `GroupedRowDnD_<layout>CrossGroup_UpdatesRenderedMembershipAndControlledValue`
+  - Parameterize `table` and `list` layouts.
+  - Group by Status, drag `Alpha` from Active onto a row in Done, and assert it disappears from Active, appears in Done, and controlled data contains `status: "Done"`.
+  - Assert one `data.row.move` action so a UI-only regroup cannot satisfy the test.
+
+File: `apps/e2e/tests/layouts-and-row-views.spec.ts`
+
+- `RowViewEntry_<layout>PrimarySurface_OpensConfiguredView`
+  - Parameterize table, list, and board setup while keeping the assertion identical.
+  - Activate the layout's primary row/card surface and assert the side dialog plus `openedRowId` controlled state.
+  - The existing table-only open-row assertion in the controlled-resource test should be moved into this matrix, not duplicated.
+- `LockedRowView_PropertyTriggersRemainClosedAndDataUnchanged`
+  - Add a deterministic e2e fixture action that opens a row with `locked: true`; this avoids force-clicking through a modal or depending on hidden controls.
+  - Assert every property-name trigger is disabled and every property-value trigger is semantically disabled and outside the tab order.
+  - Attempt activation of representative label, text, select, checkbox, and date triggers. Assert no menu, textbox, combobox, or date picker appears and `dataCount` remains unchanged.
+  - Assert previous, next, and close navigation still work to protect the intentional locked-state exception.
+
+The existing side/center/full display-boundary and previous/next navigation tests remain in place. They test RowView modes and navigation, not layout entry points.
+
+### Mutation checks
+
+Before completion, mentally or temporarily apply these realistic regressions and confirm at least one named test fails:
+
+- Restore the separate header drag handle or remove sortable listeners from the header trigger.
+- Ignore generic `groupId` while retaining Kanban `columnId` support.
+- Replace a grouping value during a same-group reorder.
+- Accept an unknown target group and write `undefined` into the grouping cell.
+- Forget to disable the property-name trigger while leaving value cells disabled.
+- Leave one nested editor active in a locked RowView.
+- Remove `openRow` from either list or board while table continues to work.
+
+Concurrency and maximum-size cases are not added: these interactions commit one synchronous controlled-resource update and have no size-dependent branch. Dependency failure is represented by the unknown target-group test, the only missing-configuration path introduced by this change.
 
 ## Acceptance criteria
 
