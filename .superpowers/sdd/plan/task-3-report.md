@@ -201,3 +201,47 @@ Final Playwright command retained pointer cleanup, resize, and lock coverage:
 - The deferred callback cannot mutate a replacement table/handler after its
   owner has been cleaned up.
 - Row/list sortable timing and table-hook APIs remain unchanged.
+
+## Review fix round 2
+
+### Finding
+
+The pending timer cleanup used a passive `useEffect`. A zero-delay timer can
+run during the next commit's layout phase before passive cleanup processes an
+unmount or handler replacement.
+
+### RED
+
+The lifecycle tests now execute queued timers from a later layout effect,
+reproducing the real phase-ordering race rather than relying on RTL `act` to
+flush all effects:
+
+```text
+Test Files  1 failed (1)
+Tests       2 failed | 6 passed (8)
+```
+
+Both failures called the stale handler once: one during unmount and one during
+handler replacement.
+
+### GREEN
+
+Changed timer cleanup ownership from passive `useEffect` to
+commit-synchronous `useLayoutEffect`. The existing routing, stable snapshot,
+and timer behavior remain unchanged.
+
+```text
+Focused header hook: 1 file, 8 tests passed
+@notion-kit/table-view typecheck: exit 0
+Changed-file ESLint: exit 0
+Changed-file Prettier check: exit 0
+git diff --check: exit 0
+```
+
+### Self-review
+
+- The cleanup now runs before any later layout effect can flush the timer.
+- The tests fail under passive cleanup and pass under layout cleanup, directly
+  guarding the phase-ordering regression.
+- No E2E, table-hook, shared sortable, or row/list behavior changed in this
+  round.

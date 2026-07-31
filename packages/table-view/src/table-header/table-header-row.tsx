@@ -69,7 +69,7 @@ export function useColumnDragEnd(handler: ColumnDragEndHandler) {
     timeoutRef.current = null;
   }, []);
 
-  React.useEffect(() => cancelPending, [cancelPending, handler]);
+  React.useLayoutEffect(() => cancelPending, [cancelPending, handler]);
 
   return React.useCallback(
     (event: DragEndEvent) => {

@@ -1,3 +1,4 @@
+import React from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
 import { act, renderHook } from "@testing-library/react";
 import { expect, it, vi } from "vitest";
@@ -82,13 +83,19 @@ it("ColumnDragEnd_UnmountedBeforeDeferredCallback_CancelsHandler", () => {
   vi.useFakeTimers();
   try {
     const handler = vi.fn<(event: DragEndEvent) => void>();
-    const { result, unmount } = renderHook(() => useColumnDragEnd(handler));
+    const { result, unmount } = renderHook(() => {
+      const handleDragEnd = useColumnDragEnd(handler);
+      React.useLayoutEffect(
+        () => () => {
+          vi.runAllTimers();
+        },
+        [],
+      );
+      return handleDragEnd;
+    });
 
     act(() => result.current(dragEndEvent()));
     unmount();
-    act(() => {
-      vi.runAllTimers();
-    });
 
     expect(handler).not.toHaveBeenCalled();
   } finally {
@@ -102,14 +109,25 @@ it("ColumnDragEnd_HandlerReplacement_CancelsPendingCallback", () => {
     const firstHandler = vi.fn<(event: DragEndEvent) => void>();
     const secondHandler = vi.fn<(event: DragEndEvent) => void>();
     const { result, rerender } = renderHook(
-      ({ handler }) => useColumnDragEnd(handler),
-      { initialProps: { handler: firstHandler } },
+      ({ flushTimerInLayout, handler }) => {
+        const handleDragEnd = useColumnDragEnd(handler);
+        React.useLayoutEffect(() => {
+          if (flushTimerInLayout) vi.runAllTimers();
+        }, [flushTimerInLayout]);
+        return handleDragEnd;
+      },
+      {
+        initialProps: {
+          flushTimerInLayout: false,
+          handler: firstHandler,
+        },
+      },
     );
 
     act(() => result.current(dragEndEvent()));
-    rerender({ handler: secondHandler });
-    act(() => {
-      vi.runAllTimers();
+    rerender({
+      flushTimerInLayout: true,
+      handler: secondHandler,
     });
 
     expect(firstHandler).not.toHaveBeenCalled();
