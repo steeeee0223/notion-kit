@@ -24,14 +24,26 @@ import { TableHeaderActionCell } from "./table-header-action-cell";
 
 type ColumnDragEndHandler = (event: DragEndEvent) => void;
 
-export function deferColumnDragEnd(
-  event: DragEndEvent,
-  handler: ColumnDragEndHandler,
-) {
+function hasProjectedSelfTarget(event: DragEndEvent) {
+  const { source, target } = event.operation;
+  return (
+    !event.canceled &&
+    source?.id != null &&
+    target?.id != null &&
+    source.id === target.id &&
+    "initialIndex" in source &&
+    typeof source.initialIndex === "number" &&
+    "index" in source &&
+    typeof source.index === "number" &&
+    source.initialIndex !== source.index
+  );
+}
+
+function snapshotColumnDragEnd(event: DragEndEvent) {
   const { operation } = event;
   const source = operation.source;
   const target = operation.target;
-  const eventSnapshot = {
+  return {
     ...event,
     operation: {
       ...operation,
@@ -47,17 +59,39 @@ export function deferColumnDragEnd(
       transform: { ...operation.transform },
     },
   } as DragEndEvent;
+}
 
-  globalThis.setTimeout(() => handler(eventSnapshot), 0);
+export function useColumnDragEnd(handler: ColumnDragEndHandler) {
+  const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cancelPending = React.useCallback(() => {
+    if (timeoutRef.current === null) return;
+    globalThis.clearTimeout(timeoutRef.current);
+    timeoutRef.current = null;
+  }, []);
+
+  React.useEffect(() => cancelPending, [cancelPending, handler]);
+
+  return React.useCallback(
+    (event: DragEndEvent) => {
+      cancelPending();
+      if (!hasProjectedSelfTarget(event)) {
+        handler(event);
+        return;
+      }
+
+      const eventSnapshot = snapshotColumnDragEnd(event);
+      timeoutRef.current = globalThis.setTimeout(() => {
+        timeoutRef.current = null;
+        handler(eventSnapshot);
+      }, 0);
+    },
+    [cancelPending, handler],
+  );
 }
 
 export const DndTableHeader = React.memo(function DndTableHeader() {
   const { table } = useTableViewCtx();
-  const handleColumnDragEnd = React.useCallback(
-    (event: DragEndEvent) =>
-      deferColumnDragEnd(event, table.handleColumnDragEnd),
-    [table],
-  );
+  const handleColumnDragEnd = useColumnDragEnd(table.handleColumnDragEnd);
 
   return (
     <Sortable.Root orientation="horizontal" onDragEnd={handleColumnDragEnd}>

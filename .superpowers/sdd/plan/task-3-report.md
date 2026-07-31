@@ -134,3 +134,70 @@ git diff --check: exit 0
   `aria-expanded="false"`. The regression uses the trigger's supported toggle
   contract and waits for the item to become hidden before dragging; no menu
   workaround was added to production.
+
+## Review fix round 1
+
+### Findings
+
+- The pointer E2E asserted controlled property order but did not independently
+  prove the rendered column positions changed.
+- The initial cleanup fix deferred every header drag-end callback and left its
+  timer alive across component unmount or handler replacement. Only the
+  projected same-target event requires the DnD-cleanup ordering boundary.
+
+### RED
+
+The revised hook tests were run before the lifecycle-owned hook existed:
+
+```text
+Test Files  1 failed (1)
+Tests       8 failed (8)
+TypeError: useColumnDragEnd is not a function
+```
+
+The cases require canceled, missing-source, missing-target, different-target,
+and unchanged self-target events to invoke the table handler synchronously;
+only a non-canceled self-target with distinct numeric initial/projected indices
+may defer. Separate tests require pending deferred work to be canceled on
+unmount and handler replacement.
+
+### GREEN
+
+- Added a post-cleanup bounding-box assertion that polls until
+  `Score.x < Notes.x`, before checking controlled state and the exact action.
+- Replaced the unconditional helper with `useColumnDragEnd`, which:
+  - calls ordinary/canceled/malformed drag-end events synchronously;
+  - snapshots and defers only the projected self-target case;
+  - owns one pending timer and cancels it on replacement, unmount, or a newer
+    drag-end event.
+
+Focused unit verification:
+
+```text
+Test Files  1 passed (1)
+Tests       8 passed (8)
+```
+
+Fresh package/static verification:
+
+```text
+@notion-kit/table-view full: 35 files, 326 tests passed
+@notion-kit/table-view typecheck: exit 0
+Changed-file ESLint: exit 0
+Changed-file Prettier check: exit 0
+```
+
+Final Playwright command retained pointer cleanup, resize, and lock coverage:
+
+```text
+3 passed
+```
+
+### Self-review
+
+- The visual assertion observes real header geometry rather than the controlled
+  JSON mirror.
+- Synchronous paths preserve the pre-fix table-handler timing and event object.
+- The deferred callback cannot mutate a replacement table/handler after its
+  owner has been cleaned up.
+- Row/list sortable timing and table-hook APIs remain unchanged.

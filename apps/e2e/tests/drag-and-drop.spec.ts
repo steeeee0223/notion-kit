@@ -86,6 +86,13 @@ test("HeaderPointerDnD_SameNotesTriggerOpensMenuAndMovesAfterScore", async ({
 
   await expect
     .poll(async () => {
+      const scoreBox = await table.header("Score").boundingBox();
+      const notesBox = await table.header("Notes").boundingBox();
+      return Boolean(scoreBox && notesBox && scoreBox.x < notesBox.x);
+    })
+    .toBe(true);
+  await expect
+    .poll(async () => {
       const snapshot = await table.controlledSnapshot();
       return snapshot.properties
         .slice(0, 3)
