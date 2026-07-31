@@ -43,7 +43,13 @@ export function TableCell({ row, column, table, view }: TableCellProps) {
             description: info.description,
           }
         : undefined,
-    onChange: (updater) => column.updateCell(row.id, updater, row.parentId),
-    onConfigChange: (updater) => column.updateConfig(updater),
+    onChange: (updater) => {
+      if (table.getTableGlobalState().locked) return;
+      column.updateCell(row.id, updater, row.parentId);
+    },
+    onConfigChange: (updater) => {
+      if (table.getTableGlobalState().locked) return;
+      column.updateConfig(updater);
+    },
   });
 }

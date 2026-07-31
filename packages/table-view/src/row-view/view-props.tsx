@@ -32,7 +32,7 @@ export function ViewProps({ rowId }: ViewPropsProps) {
           if (info.type === "title") return null;
           return (
             <div
-              key={colId}
+              key={`${colId}:${locked}`}
               role="row"
               className="relative mb-1 flex w-full gap-1"
             >
