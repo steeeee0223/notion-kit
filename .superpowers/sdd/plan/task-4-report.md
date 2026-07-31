@@ -74,3 +74,41 @@ DONE
 
 - None blocking. The test server prints the existing `NO_COLOR`/`FORCE_COLOR`
   warning; it does not affect results.
+
+## Review fix round 1
+
+### Finding
+
+The projected sortable `source.index` is local to the target group. Passing it
+directly to the flat-row sortable helper placed Alpha before Omega and emitted a
+`0 -> 1` action even when the pointer dropped after Omega.
+
+### RED evidence
+
+- The projected-group unit with flat data `Alpha, Empty, Omega` received
+  `Empty, Alpha, Omega` instead of `Empty, Omega, Alpha`.
+- An unknown projected group also flat-reordered the data instead of preserving
+  it.
+- Both grouped browser cases failed the new `Omega.y < Alpha.y` assertion when
+  explicitly dropping after Omega.
+
+### Fix
+
+- Convert a valid projected target-group-local index into a flat insertion
+  position by locating the target group's rows after removing the source.
+- Keep normal and ungrouped drag events on `getSortableItemsAfterDrag`.
+- Reject unknown projected source/target groups before any flat reorder or cell
+  update.
+- Strengthen grouped browser assertions with exact controlled IDs
+  `row-empty,row-omega,row-alpha`, geometry, and action `0 -> 2`.
+- Assert the locked date activation does not expose the date picker's
+  `Go to the Next Month` control.
+- Activate the board RowView from its stable title text surface.
+
+### Verification
+
+- Focused projected group unit: 2 passed, including the unknown-group guard.
+- `@notion-kit/table-hook`: 8 files, 157 tests passed.
+- `@notion-kit/table-view`: 35 files, 326 tests passed.
+- Focused grouped table/list E2E: 2 passed.
+- Full drag-and-drop and layouts/RowView specs: 12 passed.

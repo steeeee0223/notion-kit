@@ -88,6 +88,7 @@ for (const layout of ["table", "list"] as const) {
       page,
       alpha.getByRole("button", { name: "Row actions", exact: true }),
       omega,
+      "after",
     );
 
     await expect(table.group("status:Active")).toHaveCount(0);
@@ -97,12 +98,24 @@ for (const layout of ["table", "list"] as const) {
     await expect
       .poll(async () => {
         const alphaBox = await alpha.boundingBox();
+        const omegaBox = await omega.boundingBox();
         const doneBox = await table.group("status:Done").boundingBox();
-        return Boolean(alphaBox && doneBox && alphaBox.y > doneBox.y);
+        return Boolean(
+          alphaBox &&
+            omegaBox &&
+            doneBox &&
+            alphaBox.y > doneBox.y &&
+            omegaBox.y < alphaBox.y,
+        );
       })
       .toBe(true);
 
     const snapshot = await table.controlledSnapshot();
+    expect(snapshot.data.map((row: { id: string }) => row.id)).toEqual([
+      "row-empty",
+      "row-omega",
+      "row-alpha",
+    ]);
     expect(
       snapshot.data.find((row: { id: string }) => row.id === "row-alpha")
         ?.properties.status?.value,
@@ -114,7 +127,7 @@ for (const layout of ["table", "list"] as const) {
       payload: {
         rowId: "row-alpha",
         previousPosition: 0,
-        nextPosition: 1,
+        nextPosition: 2,
       },
     });
   });

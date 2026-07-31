@@ -70,6 +70,9 @@ test("LockedRowView_PropertyTriggersRemainClosedAndDataUnchanged", async ({
 
   await expect(page.getByRole("menu")).toHaveCount(0);
   await expect(page.getByRole("listbox")).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Go to the Next Month" }),
+  ).toHaveCount(0);
   await expect(dialog.getByRole("textbox")).toHaveCount(0);
   let snapshot = await table.controlledSnapshot();
   expect(snapshot.dataCount).toBe(0);

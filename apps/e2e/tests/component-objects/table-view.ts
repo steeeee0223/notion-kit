@@ -129,7 +129,7 @@ export class TableViewObject {
       await this.rowBlock(row.id).getByText(row.name, { exact: true }).click();
       return;
     }
-    await this.rowBlock(row.id).click();
+    await this.rowBlock(row.id).getByText(row.name, { exact: true }).click();
   }
 
   rowViewProperty(dialog: Locator, propertyName: string) {

@@ -95,7 +95,7 @@ function getGroupTargetId(data: unknown) {
   return typeof groupId === "string" ? groupId : null;
 }
 
-function getProjectedGroupTargetId(source: unknown, target: unknown) {
+function getProjectedGroupTarget(source: unknown, target: unknown) {
   if (
     typeof source !== "object" ||
     source === null ||
@@ -108,17 +108,50 @@ function getProjectedGroupTargetId(source: unknown, target: unknown) {
   const sortableSource = source as {
     id?: unknown;
     group?: unknown;
+    index?: unknown;
     initialGroup?: unknown;
   };
   const sortableTarget = target as { id?: unknown };
   if (
     sortableSource.id !== sortableTarget.id ||
     typeof sortableSource.group !== "string" ||
+    typeof sortableSource.index !== "number" ||
     sortableSource.group === sortableSource.initialGroup
   ) {
     return null;
   }
-  return sortableSource.group;
+  return { groupId: sortableSource.group, index: sortableSource.index };
+}
+
+function reorderRowsForProjectedGroup(
+  table: _TableInstance,
+  rows: Row[],
+  sourceRowId: string,
+  targetGroupId: string,
+  targetGroupIndex: number,
+  groupingColumnId: string,
+) {
+  const sourceRow = rows.find((row) => row.id === sourceRowId);
+  if (!sourceRow) return rows;
+
+  const remainingRows = rows.filter((row) => row.id !== sourceRowId);
+  const targetRowIndices = remainingRows.flatMap((row, index) => {
+    const groupingValue = getRowGroupingValue(table, row, groupingColumnId);
+    return createGroupId(groupingColumnId, groupingValue) === targetGroupId
+      ? [index]
+      : [];
+  });
+  if (targetRowIndices.length === 0) return rows;
+
+  const localIndex = Math.min(
+    Math.max(targetGroupIndex, 0),
+    targetRowIndices.length,
+  );
+  const flatIndex =
+    localIndex < targetRowIndices.length
+      ? targetRowIndices[localIndex]!
+      : targetRowIndices.at(-1)! + 1;
+  return insertAt(remainingRows, sourceRow, flatIndex);
 }
 
 function createKanbanItemsFromRows(
@@ -452,18 +485,36 @@ export const RowActionsFeature: TableFeature = {
       const groupingColumnId = grouping[0];
       const { source, target } = event.operation;
       const sourceGroupId = getGroupTargetId(source?.data);
+      const projectedGroupTarget = getProjectedGroupTarget(source, target);
       const targetGroupId =
-        getProjectedGroupTargetId(source, target) ??
-        getGroupTargetId(target?.data);
+        projectedGroupTarget?.groupId ?? getGroupTargetId(target?.data);
       const shouldReorder = options.reorder ?? true;
 
       const sourceRowId = String(source?.id ?? "");
       const actionId = v4();
       table.setTableData(
         (rows) => {
-          const next = shouldReorder
-            ? getSortableItemsAfterDrag(rows, event)
-            : rows;
+          const hasValidProjectedGroups = Boolean(
+            projectedGroupTarget &&
+              sourceGroupId &&
+              groupingColumnId &&
+              groupingState.groupValues[sourceGroupId] &&
+              groupingState.groupValues[projectedGroupTarget.groupId],
+          );
+          const next = !shouldReorder
+            ? rows
+            : projectedGroupTarget
+              ? hasValidProjectedGroups
+                ? reorderRowsForProjectedGroup(
+                    table,
+                    rows,
+                    sourceRowId,
+                    projectedGroupTarget.groupId,
+                    projectedGroupTarget.index,
+                    groupingColumnId!,
+                  )
+                : rows
+              : getSortableItemsAfterDrag(rows, event);
           if (
             !source ||
             !targetGroupId ||
