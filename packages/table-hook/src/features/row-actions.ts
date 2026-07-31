@@ -86,6 +86,15 @@ function getRowGroupingValue(
   return (plugin.toGroupValue ?? plugin.toValue)(cell.value, row);
 }
 
+function getGroupTargetId(data: unknown) {
+  const kanbanGroupId = getKanbanColumnTargetId(data);
+  if (kanbanGroupId) return kanbanGroupId;
+
+  if (typeof data !== "object" || data === null) return null;
+  const groupId = (data as { groupId?: unknown }).groupId;
+  return typeof groupId === "string" ? groupId : null;
+}
+
 function createKanbanItemsFromRows(
   table: _TableInstance,
   rows: Row[],
@@ -416,8 +425,8 @@ export const RowActionsFeature: TableFeature = {
       const groupingState = table.atoms.groupingState.get();
       const groupingColumnId = grouping[0];
       const { source, target } = event.operation;
-      const sourceGroupId = getKanbanColumnTargetId(source?.data);
-      const targetGroupId = getKanbanColumnTargetId(target?.data);
+      const sourceGroupId = getGroupTargetId(source?.data);
+      const targetGroupId = getGroupTargetId(target?.data);
       const shouldReorder = options.reorder ?? true;
 
       const sourceRowId = String(source?.id ?? "");
@@ -431,7 +440,8 @@ export const RowActionsFeature: TableFeature = {
             !source ||
             !targetGroupId ||
             targetGroupId === sourceGroupId ||
-            !groupingColumnId
+            !groupingColumnId ||
+            !groupingState.groupValues[targetGroupId]
           ) {
             scheduleGroupingStateSync(next);
             return next;
