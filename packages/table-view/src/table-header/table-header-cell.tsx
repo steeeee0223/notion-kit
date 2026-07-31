@@ -42,6 +42,7 @@ export function TableHeaderCell({ header, table }: TableHeaderCellProps) {
       id={header.column.id}
       index={header.column.getIndex()}
       disabled={locked}
+      dropAnimation={null}
       style={style}
       render={
         <div className="relative flex cursor-grab flex-row whitespace-nowrap" />
@@ -64,8 +65,7 @@ export function TableHeaderCell({ header, table }: TableHeaderCellProps) {
           <DropdownMenuTrigger
             disabled={locked}
             render={
-              <Button
-                type="button"
+              <Sortable.Handle
                 variant="cell"
                 aria-label={info.name}
                 id="notion-table-view-header-cell"
@@ -84,7 +84,7 @@ export function TableHeaderCell({ header, table }: TableHeaderCellProps) {
                 )}
                 <div className="truncate">{info.name}</div>
                 {info.description && <Icon.Info className="size-3 fill-icon" />}
-              </Button>
+              </Sortable.Handle>
             }
           />
         </TooltipPreset>
@@ -92,10 +92,6 @@ export function TableHeaderCell({ header, table }: TableHeaderCellProps) {
           <PropMenu view="table" propId={header.column.id} />
         </DropdownMenuContent>
       </DropdownMenu>
-      <Sortable.Handle
-        aria-label={`Move ${info.name}`}
-        className="h-full w-4 shrink-0 px-0"
-      />
       {/* Resize handle */}
       <div className="absolute right-0 z-10 w-0 grow-0">
         <Button

@@ -102,4 +102,18 @@ describe("getSortableItemsAfterDrag", () => {
       ),
     ).toEqual(["title", "score", "notes"]);
   });
+
+  it("PointerDrag_CollapsedTarget_UsesProjectedIndex", () => {
+    expect(
+      getSortableItemsAfterDrag(
+        ["title", "notes", "score"],
+        dragEndEvent({
+          activatorEvent: new MouseEvent("pointerdown"),
+          source: { id: "notes", initialIndex: 1, index: 2 },
+          target: { id: "notes" },
+          transform: { x: 200, y: 0 },
+        }),
+      ),
+    ).toEqual(["title", "score", "notes"]);
+  });
 });

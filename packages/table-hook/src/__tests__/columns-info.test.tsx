@@ -398,6 +398,44 @@ describe("useTableView - Column Custom APIs", () => {
       expect(table.atoms.columnOrder.get()).toEqual(["col1", "col2"]);
     });
 
+    it("ColumnDrag_SelfTargetWithProjectedIndex_EmitsExactPropertyMove", () => {
+      const onPropertiesChange =
+        vi.fn<
+          ResourceChangeHandler<
+            ColumnDefs<CellPlugin[]>,
+            PropertiesResourceAction
+          >
+        >();
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+        onPropertiesChange,
+      });
+
+      act(() => {
+        table.handleColumnDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: "col1", initialIndex: 0, index: 1 },
+            target: { id: "col1" },
+          },
+        } as unknown as DragEndEvent);
+      });
+
+      const change = onPropertiesChange.mock.lastCall?.[0];
+      expect(table.atoms.columnOrder.get()).toEqual(["col2", "col1"]);
+      expect(change?.action).toEqual({
+        id: change?.action.id,
+        type: "properties.move",
+        payload: {
+          propertyId: "col1",
+          previousPosition: 0,
+          nextPosition: 1,
+        },
+      });
+    });
+
     it("ColumnDrag_DifferentTarget_EmitsExactPropertyMove", () => {
       const onPropertiesChange =
         vi.fn<

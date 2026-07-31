@@ -69,30 +69,20 @@ test("RowDnD_AlphaAfterOmega_MovesRenderedAndControlledOrder", async ({
   await expect(table.controlledState()).toContainText('"nextPosition":2');
 });
 
-test("HeaderKeyboardDnD_NotesAfterScore_MovesPropertyAndReportsAction", async ({
+test("HeaderPointerDnD_SameNotesTriggerOpensMenuAndMovesAfterScore", async ({
   page,
 }) => {
   const table = await TableViewObject.open(page, "controlled");
-  const notesHandle = page.getByRole("button", { name: "Move Notes" });
-  await notesHandle.focus();
-  await page.keyboard.press("Space");
-  const dragging = page.locator("[data-dragging]");
-  await expect.poll(() => dragging.count()).toBeGreaterThan(0);
-  await page.keyboard.press("ArrowRight");
-  await expect
-    .poll(async () => {
-      const scoreBox = await table.header("Score").boundingBox();
-      const notesBox = await table.header("Notes").boundingBox();
-      return Boolean(scoreBox && notesBox && scoreBox.x < notesBox.x);
-    })
-    .toBe(true);
-  await page.keyboard.press("Space");
-  try {
-    await expect(dragging).toHaveCount(0, { timeout: 1_000 });
-  } catch {
-    await page.keyboard.press("Enter");
-    await expect(dragging).toHaveCount(0);
-  }
+  const notesHeader = table.header("Notes");
+  const calculateMenuItem = page.getByRole("menuitem", { name: "Calculate" });
+
+  await notesHeader.click();
+  await expect(calculateMenuItem).toBeVisible();
+  await notesHeader.click();
+  await expect(notesHeader).toHaveAttribute("aria-expanded", "false");
+  await expect(calculateMenuItem).toBeHidden();
+
+  await dragWithPointer(page, notesHeader, table.header("Score"), "after");
 
   await expect
     .poll(async () => {
@@ -103,7 +93,8 @@ test("HeaderKeyboardDnD_NotesAfterScore_MovesPropertyAndReportsAction", async ({
     })
     .toEqual(["title", "score", "notes"]);
   const snapshot = await table.controlledSnapshot();
-  expect(snapshot.lastPropertiesAction).toMatchObject({
+  expect(snapshot.lastPropertiesAction).toEqual({
+    id: expect.any(String),
     type: "properties.move",
     payload: { propertyId: "notes", previousPosition: 1, nextPosition: 2 },
   });

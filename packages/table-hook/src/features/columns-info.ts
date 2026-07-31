@@ -363,14 +363,22 @@ export const ColumnsInfoFeature: TableFeature = {
       );
     };
     instance.handleColumnDragEnd = (e) => {
+      const { source, target } = e.operation;
+      const hasProjectedIndex =
+        source != null &&
+        "initialIndex" in source &&
+        typeof source.initialIndex === "number" &&
+        "index" in source &&
+        typeof source.index === "number" &&
+        source.index !== source.initialIndex;
       if (
         e.canceled ||
-        e.operation.source?.id == null ||
-        e.operation.target?.id == null ||
-        e.operation.source.id === e.operation.target.id
+        source?.id == null ||
+        target?.id == null ||
+        (source.id === target.id && !hasProjectedIndex)
       )
         return;
-      const propertyId = String(e.operation.source.id);
+      const propertyId = String(source.id);
       const actionId = v4();
       instance.options.onColumnInfoChange?.(
         (prev) => {

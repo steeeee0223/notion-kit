@@ -1,4 +1,5 @@
 import React from "react";
+import type { DragEndEvent } from "@dnd-kit/react";
 import { flexRender } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
@@ -21,14 +22,45 @@ import { useTableViewCtx } from "@/table-contexts";
 import { PropsMenu, TypesMenu } from "../menus";
 import { TableHeaderActionCell } from "./table-header-action-cell";
 
+type ColumnDragEndHandler = (event: DragEndEvent) => void;
+
+export function deferColumnDragEnd(
+  event: DragEndEvent,
+  handler: ColumnDragEndHandler,
+) {
+  const { operation } = event;
+  const source = operation.source;
+  const target = operation.target;
+  const eventSnapshot = {
+    ...event,
+    operation: {
+      ...operation,
+      source: source
+        ? {
+            id: source.id,
+            initialIndex:
+              "initialIndex" in source ? source.initialIndex : undefined,
+            index: "index" in source ? source.index : undefined,
+          }
+        : null,
+      target: target ? { id: target.id } : null,
+      transform: { ...operation.transform },
+    },
+  } as DragEndEvent;
+
+  globalThis.setTimeout(() => handler(eventSnapshot), 0);
+}
+
 export const DndTableHeader = React.memo(function DndTableHeader() {
   const { table } = useTableViewCtx();
+  const handleColumnDragEnd = React.useCallback(
+    (event: DragEndEvent) =>
+      deferColumnDragEnd(event, table.handleColumnDragEnd),
+    [table],
+  );
 
   return (
-    <Sortable.Root
-      orientation="horizontal"
-      onDragEnd={table.handleColumnDragEnd}
-    >
+    <Sortable.Root orientation="horizontal" onDragEnd={handleColumnDragEnd}>
       <div className="relative">
         <TableHeaderRow />
       </div>
