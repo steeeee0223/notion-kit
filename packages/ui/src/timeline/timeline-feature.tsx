@@ -13,6 +13,7 @@ import { getDateByMousePosition } from "./utils";
 
 interface TimelineAddFeatureHelperProps {
   top: number;
+  ariaLabel?: string;
   onAddItem?: (ts: number) => void;
   className?: string;
   style?: React.CSSProperties;
@@ -20,6 +21,7 @@ interface TimelineAddFeatureHelperProps {
 
 export function TimelineAddFeatureHelper({
   top,
+  ariaLabel,
   onAddItem,
   className,
   style,
@@ -50,6 +52,7 @@ export function TimelineAddFeatureHelper({
       }}
     >
       <button
+        aria-label={ariaLabel}
         className="flex size-full items-center justify-center rounded-md border border-dashed p-2"
         onClick={handleClick}
         type="button"

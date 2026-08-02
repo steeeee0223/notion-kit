@@ -44,6 +44,7 @@ const mocks = vi.hoisted(() => ({
   mouseElement: null as HTMLDivElement | null,
   windowScroll: { x: 0, y: 0 },
   draggable: false,
+  draggableInput: null as { disabled?: boolean; id: string } | null,
   setDragging: vi.fn(),
   pointerSensor: {
     configure: (value: unknown) => ({ configured: value }),
@@ -93,7 +94,14 @@ vi.mock("@dnd-kit/react", () => ({
       {children}
     </div>
   ),
-  useDraggable: () => ({ isDragging: mocks.draggable, ref: vi.fn() }),
+  useDraggable: (input: { disabled?: boolean; id: string }) => {
+    mocks.draggableInput = input;
+    return {
+      handleRef: vi.fn(),
+      isDragging: mocks.draggable,
+      ref: vi.fn(),
+    };
+  },
 }));
 
 vi.mock("@dnd-kit/dom", () => ({
@@ -195,6 +203,7 @@ describe("timeline components", () => {
     vi.clearAllMocks();
     mocks.dragging = false;
     mocks.draggable = false;
+    mocks.draggableInput = null;
     mocks.scrollX = 0;
     mocks.sidebarWidth = 0;
     mocks.containerWidth = 500;
@@ -243,6 +252,16 @@ describe("timeline components", () => {
       expect(result.current.scrollLeft).toBe(1000);
     },
   );
+
+  it("TimelineItem_MissingMoveCallback_DoesNotExposeHorizontalDrag", () => {
+    render(
+      <TimelineItem
+        item={{ id: "locked", name: "Locked", startAt: 100, endAt: 200 }}
+      />,
+    );
+
+    expect(mocks.draggableInput).toBeNull();
+  });
 
   it("TimelineContentWrappers_CustomProps_AreForwardedWithSlots", () => {
     render(
@@ -361,8 +380,16 @@ describe("timeline components", () => {
     setTimeline("daily", { onAddItem: providerOnAddItem, ref: null });
     mocks.mouse = { x: 100, y: 0 };
 
-    render(<TimelineAddFeatureHelper top={0} onAddItem={localOnAddItem} />);
-    await userEvent.click(screen.getByRole("button"));
+    render(
+      <TimelineAddFeatureHelper
+        top={0}
+        ariaLabel="Add date to Task"
+        onAddItem={localOnAddItem}
+      />,
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: "Add date to Task" }),
+    );
 
     expect(localOnAddItem).toHaveBeenCalledWith(new Date(2026, 0, 3).getTime());
     expect(providerOnAddItem).not.toHaveBeenCalled();
@@ -530,7 +557,7 @@ describe("timeline components", () => {
       </>,
     );
 
-    await userEvent.click(screen.getAllByRole("button")[0]!);
+    await userEvent.click(screen.getByRole("button", { name: "Show table" }));
     await userEvent.click(screen.getByRole("button", { name: "Hide table" }));
 
     expect(onOpen).toHaveBeenCalledOnce();

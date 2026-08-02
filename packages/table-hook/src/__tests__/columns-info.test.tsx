@@ -161,7 +161,8 @@ describe("useTableView - Column Custom APIs", () => {
       const cells = dataChange?.next.map((row) => row.properties["due-date"]);
       expect(cells?.map((cell) => cell?.id)).toHaveLength(3);
       expect(new Set(cells?.map((cell) => cell?.id)).size).toBe(3);
-      expect(cells?.map((cell) => cell?.value)).toEqual([
+      const values = cells?.map((cell) => cell?.value as DateData | undefined);
+      expect(values).toEqual([
         {
           start: mockData[0]?.createdAt,
           end: mockData[0]?.lastEditedAt,

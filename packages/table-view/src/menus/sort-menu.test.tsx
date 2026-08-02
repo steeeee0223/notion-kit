@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
@@ -15,7 +15,9 @@ describe("SortMenu", () => {
     await sort.search("Done");
     await tableView.user.click(sort.propertyOption("Done"));
 
-    expect(sort.querySearchInput()).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(sort.querySearchInput()).not.toBeInTheDocument();
+    });
     expect(sort.directionTrigger("Ascending")).toBeVisible();
     expect(sort.moveHandle("Done")).toBeVisible();
   });

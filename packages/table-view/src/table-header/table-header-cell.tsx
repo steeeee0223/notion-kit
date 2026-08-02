@@ -25,16 +25,15 @@ interface TableHeaderCellProps {
   table: TableGlobalReader;
 }
 
+interface TableHeaderCellTriggerProps extends TableHeaderCellProps {
+  render: React.ReactElement;
+}
+
 /**
  * Table Header Cell
  */
 export function TableHeaderCell({ header, table }: TableHeaderCellProps) {
-  const info = header.column.getInfo();
-  const isResizing = header.column.getIsResizing();
-  const onResizeStart = header.getResizeHandler();
-  const onResizeEnd = () => header.column.handleResizeEnd();
   const { locked } = table.getTableGlobalState();
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const style: React.CSSProperties = {
     width: header.column.getWidth(),
@@ -51,85 +50,112 @@ export function TableHeaderCell({ header, table }: TableHeaderCellProps) {
         <div className="relative flex cursor-grab flex-row whitespace-nowrap" />
       }
     >
-      <DropdownMenu
-        modal={false}
-        open={menuOpen}
-        onOpenChange={(open, eventDetails) => {
-          if (eventDetails.reason === "trigger-press") {
-            eventDetails.cancel();
-            return;
-          }
-
-          setMenuOpen(open);
-        }}
-      >
-        <TooltipPreset
-          description={
-            info.description ? (
-              <>
-                <TooltipDescription text={info.name} />
-                <TooltipDescription type="secondary" text={info.description} />
-              </>
-            ) : (
-              info.name
-            )
-          }
-          side="top"
-        >
-          <DropdownMenuTrigger
-            disabled={locked}
-            onClick={() => {
-              if (!locked) setMenuOpen((open) => !open);
-            }}
-            render={
-              <Sortable.Handle
-                variant="cell"
-                aria-label={info.name}
-                id="notion-table-view-header-cell"
-                className={cn(
-                  "flex h-full min-w-0 flex-1 items-center gap-1 overflow-hidden px-2 text-sm",
-                  isResizing && "bg-transparent",
-                )}
-              >
-                {info.icon ? (
-                  <IconBlock
-                    icon={info.icon}
-                    className="size-4 p-0 opacity-60 dark:opacity-45"
-                  />
-                ) : (
-                  <DefaultIcon type={info.type} className="fill-default/45" />
-                )}
-                <div className="truncate">{info.name}</div>
-                {info.description && <Icon.Info className="size-3 fill-icon" />}
-              </Sortable.Handle>
-            }
+      <TableHeaderCellTrigger
+        header={header}
+        table={table}
+        render={
+          <Sortable.Handle
+            variant="cell"
+            id="notion-table-view-header-cell"
+            className="flex h-full min-w-0 flex-1 items-center gap-1 overflow-hidden px-2 text-sm"
           />
-        </TooltipPreset>
-        <DropdownMenuContent align="start" sideOffset={0} className="w-55">
-          <PropMenu view="table" propId={header.column.id} />
-        </DropdownMenuContent>
-      </DropdownMenu>
-      {/* Resize handle */}
-      <div className="absolute right-0 z-10 w-0 grow-0">
-        <Button
-          render={<div />}
-          variant="hint"
-          role="separator"
-          aria-label={`Resize ${info.name}`}
-          aria-orientation="vertical"
-          tabIndex={-1}
-          className={cn(
-            "-mt-px ml-[-3px] h-[34px] w-[5px] animate-bg-out cursor-col-resize bg-transparent hover:bg-blue/80",
-            isResizing && "bg-blue/80",
-          )}
-          // Resize for desktop
-          onMouseDown={onResizeStart}
-          onMouseUp={onResizeEnd}
-          // Resize for mobile
-          onTouchStart={onResizeStart}
-          onTouchEnd={onResizeEnd}
-        />
-      </div>
+        }
+      />
+      <TableHeaderCellResizer header={header} table={table} />
     </Sortable.Item>
+  );
+}
+
+export function TableHeaderCellTrigger({
+  header,
+  table,
+  render,
+}: TableHeaderCellTriggerProps) {
+  const info = header.column.getInfo();
+  const isResizing = header.column.getIsResizing();
+  const { locked } = table.getTableGlobalState();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  return (
+    <DropdownMenu
+      modal={false}
+      open={menuOpen}
+      onOpenChange={(open, eventDetails) => {
+        if (eventDetails.reason === "trigger-press") {
+          eventDetails.cancel();
+          return;
+        }
+
+        setMenuOpen(open);
+      }}
+    >
+      <TooltipPreset
+        description={
+          info.description ? (
+            <>
+              <TooltipDescription text={info.name} />
+              <TooltipDescription type="secondary" text={info.description} />
+            </>
+          ) : (
+            info.name
+          )
+        }
+        side="top"
+      >
+        <DropdownMenuTrigger
+          disabled={locked}
+          aria-label={info.name}
+          data-table-header-slot="table-header-cell-trigger"
+          className={cn(isResizing && "bg-transparent")}
+          onClick={() => {
+            if (!locked) setMenuOpen((open) => !open);
+          }}
+          render={render}
+        >
+          {info.icon ? (
+            <IconBlock
+              icon={info.icon}
+              className="size-4 p-0 opacity-60 dark:opacity-45"
+            />
+          ) : (
+            <DefaultIcon type={info.type} className="fill-default/45" />
+          )}
+          <div className="truncate">{info.name}</div>
+          {info.description ? <Icon.Info className="size-3 fill-icon" /> : null}
+        </DropdownMenuTrigger>
+      </TooltipPreset>
+      <DropdownMenuContent align="start" sideOffset={0} className="w-55">
+        <PropMenu view="table" propId={header.column.id} />
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+export function TableHeaderCellResizer({ header }: TableHeaderCellProps) {
+  const info = header.column.getInfo();
+  const isResizing = header.column.getIsResizing();
+  const onResizeStart = header.getResizeHandler();
+  const onResizeEnd = () => header.column.handleResizeEnd();
+
+  return (
+    <div className="absolute right-0 z-10 w-0 grow-0">
+      <Button
+        render={<div />}
+        variant="hint"
+        role="separator"
+        aria-label={`Resize ${info.name}`}
+        aria-orientation="vertical"
+        data-table-header-slot="table-header-cell-resizer"
+        tabIndex={-1}
+        className={cn(
+          "-mt-px ml-[-3px] h-[34px] w-[5px] animate-bg-out cursor-col-resize bg-transparent hover:bg-blue/80",
+          isResizing && "bg-blue/80",
+        )}
+        onMouseDown={onResizeStart}
+        onMouseUp={onResizeEnd}
+        onTouchStart={onResizeStart}
+        onTouchEnd={onResizeEnd}
+      />
+    </div>
   );
 }

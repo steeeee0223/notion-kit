@@ -10,6 +10,9 @@ import { useMouse } from "@uidotdev/usehooks";
 import { addDays, differenceInCalendarDays, isSameDay } from "date-fns";
 
 import { cn } from "@notion-kit/cn";
+import { Icon } from "@notion-kit/icons";
+
+import { Button } from "@/primitives";
 
 import { useTimelineContext, useTimelineDragging } from "../timeline-provider";
 import type { TimelineContextProps, TimelineFeature } from "../types";
@@ -197,17 +200,23 @@ export function TimelineItem({
           />
         )}
         {/* Item card */}
-        <DragDropProvider
-          modifiers={[RestrictToHorizontalAxis]}
-          onDragStart={handleItemDragStart}
-          onDragMove={handleItemDragMove}
-          onDragEnd={handleDragEnd}
-          sensors={timelineItemSensors}
-        >
-          <TimelineItemCard id={item.id}>
+        {onMove ? (
+          <DragDropProvider
+            modifiers={[RestrictToHorizontalAxis]}
+            onDragStart={handleItemDragStart}
+            onDragMove={handleItemDragMove}
+            onDragEnd={handleDragEnd}
+            sensors={timelineItemSensors}
+          >
+            <TimelineItemCard id={item.id} name={item.name}>
+              {render ? render() : null}
+            </TimelineItemCard>
+          </DragDropProvider>
+        ) : (
+          <TimelineItemCardStatic>
             {render ? render() : null}
-          </TimelineItemCard>
-        </DragDropProvider>
+          </TimelineItemCardStatic>
+        )}
         {/* Right resizer */}
         {onMove && (
           <TimelineItemResizer
@@ -225,10 +234,11 @@ export function TimelineItem({
 
 interface TimelineItemCardProps extends React.PropsWithChildren {
   id: string;
+  name: string;
 }
 
-function TimelineItemCard({ id, children }: TimelineItemCardProps) {
-  const { isDragging, ref } = useDraggable({
+function TimelineItemCard({ id, name, children }: TimelineItemCardProps) {
+  const { handleRef, isDragging, ref } = useDraggable({
     id,
     type: "timeline-item",
   });
@@ -241,6 +251,27 @@ function TimelineItemCard({ id, children }: TimelineItemCardProps) {
         isDragging && "cursor-grabbing",
       )}
       ref={ref}
+    >
+      <Button
+        ref={handleRef}
+        variant="hint"
+        size="xs"
+        aria-label={`Move ${name}`}
+        data-slot="timeline-item-handle"
+        className="size-6 shrink-0 cursor-grab touch-none active:cursor-grabbing"
+      >
+        <Icon.DragHandle className="size-3 fill-icon" />
+      </Button>
+      {children}
+    </div>
+  );
+}
+
+function TimelineItemCardStatic({ children }: React.PropsWithChildren) {
+  return (
+    <div
+      data-slot="notion-timeline-item-properties"
+      className="absolute flex h-[34px] overflow-hidden ps-1.5"
     >
       {children}
     </div>
