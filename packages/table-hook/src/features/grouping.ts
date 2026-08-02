@@ -245,18 +245,13 @@ export const ExtendedGroupingFeature: TableFeature = {
       });
     };
     table.handleGroupedRowDragEnd = (e) => {
-      const { source, target } = e.operation;
-      if (
-        e.canceled ||
-        e.operation.canceled ||
-        source?.id == null ||
-        target?.id == null ||
-        source.id === target.id
-      )
-        return;
+      const currentOrder = table.atoms.groupingState.get().groupOrder;
+      const groupOrder = getSortableItemsAfterDrag(currentOrder, e);
+      if (groupOrder === currentOrder) return;
+
       table._setGroupingState((v) => ({
         ...v,
-        groupOrder: getSortableItemsAfterDrag(v.groupOrder, e),
+        groupOrder,
       }));
     };
     table._resetGroupingState = () => {

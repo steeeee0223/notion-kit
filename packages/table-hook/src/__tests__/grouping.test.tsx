@@ -431,6 +431,48 @@ describe("useTableView - Extended Grouping", () => {
   });
 
   describe("Group DnD", () => {
+    it("GroupDrag_ProjectedSelfTarget_ReordersStateAndRenderedGroupRows", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      const initialGroupOrder = table.atoms.groupingState.get().groupOrder;
+      const firstGroupId = initialGroupOrder[0]!;
+      const secondGroupId = initialGroupOrder[1]!;
+
+      expect(table.getRowModel().rows.map((row) => row.id)).toEqual(
+        initialGroupOrder,
+      );
+
+      act(() => {
+        table.handleGroupedRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: firstGroupId, initialIndex: 0, index: 1 },
+            target: { id: firstGroupId },
+          },
+        } as unknown as DragEndEvent);
+      });
+
+      const expectedGroupOrder = [
+        secondGroupId,
+        firstGroupId,
+        ...initialGroupOrder.slice(2),
+      ];
+      expect(table.atoms.groupingState.get().groupOrder).toEqual(
+        expectedGroupOrder,
+      );
+      expect(table.getRowModel().rows.map((row) => row.id)).toEqual(
+        expectedGroupOrder,
+      );
+    });
+
     it("GroupDrag_DifferentTarget_ReordersGroupsExactly", () => {
       const { table } = renderTableHook({
         data: mockData,

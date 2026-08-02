@@ -133,6 +133,42 @@ for (const layout of ["table", "list"] as const) {
   });
 }
 
+for (const layout of ["table", "list", "board"] as const) {
+  test(`GroupOrderDnD_${layout}_UpdatesRenderedGroupsImmediately`, async ({
+    page,
+  }) => {
+    const table = await TableViewObject.open(page, "controlled");
+    if (layout !== "table") await table.setLayout(layout);
+    await table.groupBy("Status");
+
+    const grouping = await (await table.openSettings()).openGrouping();
+    await dragWithPointer(
+      page,
+      grouping.moveHandle("status:Active"),
+      grouping.moveHandle("status:Done"),
+      "after",
+    );
+
+    await expect(table.internalState()).toContainText(
+      '"groupOrder":["status:null","status:Done","status:Active"]',
+    );
+    await expect
+      .poll(async () => {
+        const boxes = await Promise.all(
+          ["status:null", "status:Done", "status:Active"].map((groupId) =>
+            table.group(groupId).boundingBox(),
+          ),
+        );
+        if (boxes.some((box) => box === null)) return false;
+        const positions = boxes.map((box) =>
+          layout === "board" ? box!.x : box!.y,
+        );
+        return positions[0]! < positions[1]! && positions[1]! < positions[2]!;
+      })
+      .toBe(true);
+  });
+}
+
 test("HeaderPointerDnD_SameNotesTriggerOpensMenuAndMovesAfterScore", async ({
   page,
 }) => {
