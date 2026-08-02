@@ -355,6 +355,19 @@ describe("timeline components", () => {
     expect(onAddItem).toHaveBeenCalledWith(new Date(2026, 0, 3).getTime());
   });
 
+  it("TimelineAddFeatureHelper_LocalCallback_OverridesProviderCallback", async () => {
+    const providerOnAddItem = vi.fn();
+    const localOnAddItem = vi.fn();
+    setTimeline("daily", { onAddItem: providerOnAddItem, ref: null });
+    mocks.mouse = { x: 100, y: 0 };
+
+    render(<TimelineAddFeatureHelper top={0} onAddItem={localOnAddItem} />);
+    await userEvent.click(screen.getByRole("button"));
+
+    expect(localOnAddItem).toHaveBeenCalledWith(new Date(2026, 0, 3).getTime());
+    expect(providerOnAddItem).not.toHaveBeenCalled();
+  });
+
   it("GanttCreateMarkerTrigger_Click_ReportsDateAtMousePosition", async () => {
     const onCreateMarker = vi.fn();
     mocks.mouse = { x: 225, y: 0 };

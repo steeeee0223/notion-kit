@@ -13,12 +13,14 @@ import { getDateByMousePosition } from "./utils";
 
 interface TimelineAddFeatureHelperProps {
   top: number;
+  onAddItem?: (ts: number) => void;
   className?: string;
   style?: React.CSSProperties;
 }
 
 export function TimelineAddFeatureHelper({
   top,
+  onAddItem,
   className,
   style,
 }: TimelineAddFeatureHelperProps) {
@@ -33,7 +35,7 @@ export function TimelineAddFeatureHelper({
       mousePosition.x - (timelineRect?.left ?? 0) + scrollX - sidebarWidth;
     const currentDate = getDateByMousePosition(timeline, x);
 
-    timeline.onAddItem?.(currentDate.getTime());
+    (onAddItem ?? timeline.onAddItem)?.(currentDate.getTime());
   };
 
   return (

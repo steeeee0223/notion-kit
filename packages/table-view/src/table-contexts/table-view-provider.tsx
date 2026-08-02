@@ -15,6 +15,7 @@ import {
   type DefaultPlugins,
 } from "@/plugins";
 import { RowView } from "@/row-view";
+import { TimelineViewContent } from "@/timeline-view";
 import { Toolbar } from "@/tools/toolbar";
 
 import { defaultColumn } from "./default-column";
@@ -94,6 +95,8 @@ function Content() {
             return <ListViewContent />;
           case "board":
             return <BoardViewContent />;
+          case "timeline":
+            return <TimelineViewContent />;
           default:
             return <TableViewContent />;
         }
