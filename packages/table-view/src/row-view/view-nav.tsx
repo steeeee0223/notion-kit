@@ -6,9 +6,9 @@ import { ROW_VIEW_OPTIONS, RowViewType } from "@notion-kit/table-hook";
 import {
   Button,
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuGroup,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuTrigger,
   Separator,
   TooltipDescription,
@@ -106,37 +106,39 @@ export function ViewNav({ rowId }: ViewNavProps) {
             />
           </TooltipPreset>
           <DropdownMenuContent className="z-999 w-52">
-            <DropdownMenuGroup>
+            <DropdownMenuRadioGroup
+              value={rowView}
+              onValueChange={(view: RowViewType) => {
+                if (rowView === view) return;
+                const actionId = v4();
+                table.setTableGlobalState(
+                  (v) => ({
+                    ...v,
+                    rowView: view,
+                  }),
+                  (previous, next) => ({
+                    id: actionId,
+                    type: "view.row_display.change",
+                    payload: {
+                      previousRowView: previous.rowView,
+                      nextRowView: next.rowView,
+                    },
+                  }),
+                );
+              }}
+            >
               {Object.entries(ROW_VIEW_OPTIONS).map(([key, option]) => {
                 const view = key as RowViewType;
                 return (
-                  <DropdownMenuCheckboxItem
+                  <DropdownMenuRadioItem
                     key={view}
+                    value={view}
                     icon={<RowViewIcon rowView={view} />}
                     label={option.label}
-                    checked={rowView === view}
-                    onCheckedChange={(checked) => {
-                      if (!checked || rowView === view) return;
-                      const actionId = v4();
-                      table.setTableGlobalState(
-                        (v) => ({
-                          ...v,
-                          rowView: view,
-                        }),
-                        (previous, next) => ({
-                          id: actionId,
-                          type: "view.row_display.change",
-                          payload: {
-                            previousRowView: previous.rowView,
-                            nextRowView: next.rowView,
-                          },
-                        }),
-                      );
-                    }}
                   />
                 );
               })}
-            </DropdownMenuGroup>
+            </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

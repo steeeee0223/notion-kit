@@ -65,7 +65,7 @@ describe("FormatMenu", () => {
     );
     await menu.openSubmenu(/Number format/i);
 
-    menu.choose("Currency");
+    menu.chooseRadio("Currency");
     expect(onChange).toHaveBeenCalledOnce();
     expect(onChange).toHaveBeenCalledWith("currency");
     expect(menu.item(/Number format/i)).toBeInTheDocument();
@@ -80,7 +80,7 @@ describe("RoundingMenu", () => {
     );
     await menu.openSubmenu(/Decimal places/i);
 
-    menu.choose("2");
+    menu.chooseRadio("2");
     expect(onChange).toHaveBeenCalledOnce();
     expect(onChange).toHaveBeenCalledWith("2");
     expect(menu.item(/Decimal places/i)).toBeInTheDocument();

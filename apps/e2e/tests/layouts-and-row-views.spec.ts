@@ -143,7 +143,7 @@ test("RowViews_SideCenterAndFull_UseConfiguredDisplayBoundary", async ({
 
   let layout = await (await table.openSettings()).openLayout();
   await layout.item(/Open pages in/i).hover();
-  await page.getByRole("menuitemcheckbox", { name: "Center peek" }).click();
+  await page.getByRole("menuitemradio", { name: "Center peek" }).click();
   await layout.close();
   await (await table.openRowActions("Omega")).openRow();
   await expect(page.getByRole("dialog", { name: "Omega" })).toBeVisible();
@@ -152,7 +152,7 @@ test("RowViews_SideCenterAndFull_UseConfiguredDisplayBoundary", async ({
 
   layout = await (await table.openSettings()).openLayout();
   await layout.item(/Open pages in/i).hover();
-  await page.getByRole("menuitemcheckbox", { name: "Full page" }).click();
+  await page.getByRole("menuitemradio", { name: "Full page" }).click();
   await layout.close();
   await (await table.openRowActions("Empty")).openRow();
   await expect(page).toHaveURL(/\/table-view\/rows\/row-empty$/);

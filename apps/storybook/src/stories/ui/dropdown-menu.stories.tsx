@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
 import DropdownMenuDemo from "@notion-kit/registry/dropdown-menu";
 import DropdownMenuCheckboxes from "@notion-kit/registry/dropdown-menu-checkbox";
+import DropdownMenuRadio from "@notion-kit/registry/dropdown-menu-radio";
 
 import DropdownMenuInline from "./dropdown-menu-inline";
 
@@ -18,6 +19,9 @@ export const Example: Story = {
 };
 export const Checkboxes: Story = {
   render: () => <DropdownMenuCheckboxes />,
+};
+export const Radio: Story = {
+  render: () => <DropdownMenuRadio />,
 };
 export const InlineMenu: Story = {
   render: () => <DropdownMenuInline />,

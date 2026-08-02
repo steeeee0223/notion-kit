@@ -44,8 +44,12 @@ export class NumberConfigMenuObject {
     return screen.getByRole("menuitemcheckbox", { name });
   }
 
-  queryCheckbox(name: string) {
-    return screen.queryByRole("menuitemcheckbox", { name });
+  radio(name: string) {
+    return screen.getByRole("menuitemradio", { name });
+  }
+
+  queryRadio(name: string) {
+    return screen.queryByRole("menuitemradio", { name });
   }
 
   async openSubmenu(name: string | RegExp) {
@@ -59,5 +63,9 @@ export class NumberConfigMenuObject {
 
   choose(name: string) {
     fireEvent.click(this.checkbox(name));
+  }
+
+  chooseRadio(name: string) {
+    fireEvent.click(this.radio(name));
   }
 }

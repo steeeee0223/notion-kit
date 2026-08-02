@@ -105,8 +105,7 @@ export class SelectConfigMenuObject {
     await this.user.hover(this.sortTrigger());
     const root = await findOpenMenu("select option sort menu", (menu) => {
       return (
-        within(menu).queryByRole("menuitemcheckbox", { name: "Manual" }) !==
-        null
+        within(menu).queryByRole("menuitemradio", { name: "Manual" }) !== null
       );
     });
     return new SelectConfigSortMenuObject(this.user, root);
@@ -146,7 +145,7 @@ export class SelectConfigSortMenuObject {
   ) {}
 
   item(name: Matcher) {
-    return within(this.root).getByRole("menuitemcheckbox", { name });
+    return within(this.root).getByRole("menuitemradio", { name });
   }
 
   choose(name: Matcher) {
@@ -165,7 +164,7 @@ export class SelectOptionConfigMenuObject {
   }
 
   color(name: Matcher) {
-    return within(this.root).getByRole("menuitemcheckbox", { name });
+    return within(this.root).getByRole("menuitemradio", { name });
   }
 
   colorsLabel() {

@@ -4,10 +4,11 @@ import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   getSortableItemsAfterDrag,
@@ -102,16 +103,18 @@ export function SelectConfigMenuContent({
             className="w-[250px]"
             finalFocus={false}
           >
-            <DropdownMenuGroup>
+            <DropdownMenuRadioGroup
+              value={config.sort}
+              onValueChange={(value: SelectSort) => updateSort(value)}
+            >
               {sortOptions.map((option) => (
-                <DropdownMenuCheckboxItem
+                <DropdownMenuRadioItem
                   key={option.value}
+                  value={option.value}
                   label={option.label}
-                  checked={config.sort === option.value}
-                  onCheckedChange={() => updateSort(option.value)}
                 />
               ))}
-            </DropdownMenuGroup>
+            </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenuSub>
       </DropdownMenuGroup>

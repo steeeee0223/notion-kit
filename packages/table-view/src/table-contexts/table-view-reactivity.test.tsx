@@ -301,7 +301,7 @@ describe("TableViewReactivity", () => {
     expect(trigger).not.toBeNull();
     fireEvent.click(trigger!);
     fireEvent.click(
-      await screen.findByRole("menuitemcheckbox", { name: "Side peek" }),
+      await screen.findByRole("menuitemradio", { name: "Side peek" }),
     );
 
     expect(onViewChange).not.toHaveBeenCalled();
@@ -332,7 +332,7 @@ describe("TableViewReactivity", () => {
       dialog.querySelector<HTMLElement>('[aria-haspopup="menu"]')!,
     );
     fireEvent.click(
-      await screen.findByRole("menuitemcheckbox", { name: "Center peek" }),
+      await screen.findByRole("menuitemradio", { name: "Center peek" }),
     );
 
     await waitFor(() => expect(onViewChange).toHaveBeenCalledOnce());

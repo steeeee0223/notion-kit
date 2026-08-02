@@ -90,7 +90,7 @@ test("ControlledView_LayoutLockAndRowView_ParentStateStaysSynchronized", async (
   await expect(table.controlledState()).toContainText('"layout":"list"');
 
   await layout.item(/Open pages in/i).hover();
-  await page.getByRole("menuitemcheckbox", { name: "Center peek" }).click();
+  await page.getByRole("menuitemradio", { name: "Center peek" }).click();
   await expect(table.controlledState()).toContainText(
     '"type":"view.row_display.change"',
   );

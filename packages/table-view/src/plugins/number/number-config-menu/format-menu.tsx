@@ -1,7 +1,7 @@
 import {
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuGroup,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSub,
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
@@ -29,17 +29,19 @@ export function FormatMenu({ format, onUpdate }: FormatMenuProps) {
         </div>
       </DropdownMenuSubTrigger>
       <DropdownMenuContent sideOffset={-4} className="w-48">
-        <DropdownMenuGroup>
+        <DropdownMenuRadioGroup
+          value={format}
+          onValueChange={(value: NumberFormat) => onUpdate(value)}
+        >
           {options.map((option) => (
-            <DropdownMenuCheckboxItem
+            <DropdownMenuRadioItem
               key={option.value}
+              value={option.value}
               closeOnClick={false}
               label={option.label}
-              checked={format === option.value}
-              onCheckedChange={() => onUpdate(option.value)}
             />
           ))}
-        </DropdownMenuGroup>
+        </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenuSub>
   );

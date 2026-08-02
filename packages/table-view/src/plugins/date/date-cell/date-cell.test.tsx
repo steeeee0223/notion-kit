@@ -69,7 +69,7 @@ it("DatePicker_EndTimeFormatsAndClear_UpdateCanonicalState", async () => {
 
   await user.click(screen.getByRole("menuitem", { name: /Date format/i }));
   await user.click(
-    await screen.findByRole("menuitemcheckbox", { name: "Short date" }),
+    await screen.findByRole("menuitemradio", { name: "Short date" }),
   );
   expect(screen.getByTestId("date-config")).toHaveTextContent(
     '"dateFormat":"short"',
@@ -77,7 +77,7 @@ it("DatePicker_EndTimeFormatsAndClear_UpdateCanonicalState", async () => {
 
   await user.click(screen.getByRole("menuitem", { name: /Time format/i }));
   await user.click(
-    await screen.findByRole("menuitemcheckbox", { name: "12 hour" }),
+    await screen.findByRole("menuitemradio", { name: "12 hour" }),
   );
   expect(screen.getByTestId("date-config")).toHaveTextContent(
     '"timeFormat":"12-hour"',

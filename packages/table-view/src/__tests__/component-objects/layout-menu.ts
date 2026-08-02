@@ -24,11 +24,11 @@ export class LayoutMenuObject extends MenuSurfaceObject {
   }
 
   rowViewOption(name: RowView) {
-    return screen.getByRole("menuitemcheckbox", { name });
+    return screen.getByRole("menuitemradio", { name });
   }
 
   queryRowViewOption(name: RowView) {
-    return screen.queryByRole("menuitemcheckbox", { name });
+    return screen.queryByRole("menuitemradio", { name });
   }
 
   async selectLayout(name: Layout) {
@@ -37,7 +37,7 @@ export class LayoutMenuObject extends MenuSurfaceObject {
 
   async openRowViewOptions() {
     await this.user.hover(this.rowViewTrigger());
-    await screen.findByRole("menuitemcheckbox", { name: "Side peek" });
+    await screen.findByRole("menuitemradio", { name: "Side peek" });
   }
 
   async selectRowView(name: RowView) {

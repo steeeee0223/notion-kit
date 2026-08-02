@@ -44,7 +44,7 @@ function DropdownMenuSub({ ...props }: Menu.SubmenuRoot.Props) {
 
 type MenuItemVisualProps = Pick<
   React.ComponentProps<typeof MenuItem>,
-  "className" | "variant" | "desc"
+  "className" | "variant" | "icon" | "desc"
 >;
 
 interface DropdownMenuSubTriggerProps
@@ -53,7 +53,6 @@ interface DropdownMenuSubTriggerProps
       "children" | "className" | "label" | "render"
     >,
     MenuItemVisualProps {
-  icon?: React.ReactNode;
   label?: React.ReactNode;
   children?: React.ReactNode;
   chevron?: boolean;
@@ -136,9 +135,7 @@ function DropdownMenuContent({
 interface DropdownMenuItemProps
   extends Omit<Menu.Item.Props, "className" | "label" | "render">,
     MenuItemVisualProps {
-  icon?: React.ReactNode;
   label?: React.ReactNode;
-  children?: React.ReactNode;
 }
 
 function DropdownMenuItem({
@@ -171,15 +168,10 @@ function DropdownMenuItem({
 }
 
 interface DropdownMenuCheckboxItemProps
-  extends Omit<
-      Menu.CheckboxItem.Props,
-      "children" | "className" | "label" | "render"
-    >,
+  extends Omit<Menu.CheckboxItem.Props, "className" | "label" | "render">,
     MenuItemVisualProps {
-  icon?: React.ReactNode;
   label?: React.ReactNode;
   checkType?: "check" | "switch";
-  children?: React.ReactNode;
 }
 
 function DropdownMenuCheckboxItem({
@@ -233,31 +225,37 @@ function DropdownMenuRadioGroup({ ...props }: Menu.RadioGroup.Props) {
   );
 }
 
-/**
- * @todo this is currently unused, update the style
- */
+interface DropdownMenuRadioItemProps
+  extends Omit<Menu.RadioItem.Props, "className" | "render">,
+    MenuItemVisualProps {}
+
 function DropdownMenuRadioItem({
   className,
+  variant,
+  icon,
+  label,
+  desc,
   children,
   ...props
-}: Menu.RadioItem.Props) {
+}: DropdownMenuRadioItemProps) {
   return (
     <Menu.RadioItem
       data-slot="dropdown-menu-radio-item"
-      className={cn(
-        "relative flex cursor-default items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden transition-colors select-none data-disabled:pointer-events-none data-disabled:opacity-50",
-        className,
-      )}
+      label={label}
+      render={
+        <MenuItem
+          className={className}
+          variant={variant}
+          icon={icon}
+          label={label}
+          desc={desc}
+        >
+          {children}
+          <Menu.RadioItemIndicator render={<MenuItemCheck />} />
+        </MenuItem>
+      }
       {...props}
-    >
-      <span className="absolute left-2 flex size-3.5 items-center justify-center">
-        {/* FIXME */}
-        <Menu.RadioItemIndicator className="grid size-full place-items-center">
-          <span className="size-2 rounded-full bg-white" />
-        </Menu.RadioItemIndicator>
-      </span>
-      {children}
-    </Menu.RadioItem>
+    />
   );
 }
 
