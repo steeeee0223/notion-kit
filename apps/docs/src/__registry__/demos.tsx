@@ -135,6 +135,12 @@ export const Index: Record<
       () => import("@notion-kit/registry/dropdown-menu-checkbox"),
     ),
   },
+  "dropdown-menu-radio": {
+    files: ["registry/src/dropdown-menu-radio/dropdown-menu-radio.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/dropdown-menu-radio"),
+    ),
+  },
   "icon-block-emoji": {
     files: ["registry/src/icon-block-emoji/icon-block-emoji.tsx"],
     component: React.lazy(

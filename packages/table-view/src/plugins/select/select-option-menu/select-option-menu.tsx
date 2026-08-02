@@ -1,10 +1,11 @@
 import { Icon } from "@notion-kit/icons";
 import {
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
 } from "@notion-kit/ui/primitives";
 import { COLOR, type Color } from "@notion-kit/utils";
@@ -51,18 +52,20 @@ export function SelectOptionMenu({
         />
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
-      <DropdownMenuGroup>
+      <DropdownMenuRadioGroup
+        value={option.color}
+        onValueChange={(color: Color) => onUpdate({ color })}
+      >
         <DropdownMenuLabel title="Colors" />
         {Object.entries(COLOR).map(([key, color]) => (
-          <DropdownMenuCheckboxItem
+          <DropdownMenuRadioItem
             key={key}
+            value={key}
             icon={<ColorIcon color={color.rgba} />}
             label={color.name}
-            checked={option.color === key}
-            onCheckedChange={() => onUpdate({ color: key as Color })}
           />
         ))}
-      </DropdownMenuGroup>
+      </DropdownMenuRadioGroup>
     </DropdownMenuContent>
   );
 }

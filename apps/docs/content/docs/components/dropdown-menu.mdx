@@ -26,6 +26,11 @@ links:
       <DropdownMenuItem />
     </DropdownMenuGroup>
     <DropdownMenuSeparator />
+    <DropdownMenuRadioGroup>
+      <DropdownMenuRadioItem />
+      <DropdownMenuRadioItem />
+    </DropdownMenuRadioGroup>
+    <DropdownMenuSeparator />
     <DropdownMenuSub>
       <DropdownMenuSubTrigger />
       <DropdownMenuContent>
@@ -82,6 +87,25 @@ Use `DropdownMenuCheckboxItem` for toggling options on and off.
 </DropdownMenu>`}
 />
 
+### Radio Items
+
+Use `DropdownMenuRadioGroup` and `DropdownMenuRadioItem` for mutually exclusive options.
+
+<ComponentPreview
+  name="dropdown-menu-radio"
+  preview={`<DropdownMenu>
+  <DropdownMenuTrigger render={<Button>Open</Button>} />
+  <DropdownMenuContent>
+    <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
+      <DropdownMenuLabel title="Position" />
+      <DropdownMenuRadioItem value="top" label="Top" />
+      <DropdownMenuRadioItem value="bottom" label="Bottom" />
+      <DropdownMenuRadioItem value="right" label="Right" />
+    </DropdownMenuRadioGroup>
+  </DropdownMenuContent>
+</DropdownMenu>`}
+/>
+
 ## API Reference
 
 ### DropdownMenu
@@ -125,6 +149,31 @@ A menu item that can be toggled on and off. Extends `DropdownMenuItem` props.
 | ----------------- | ---------------------------- | ------- | ---------------------------------------------- |
 | `checked`         | `boolean`                    | -       | Whether the item is checked.                   |
 | `onCheckedChange` | `(checked: boolean) => void` | -       | Handler called when the checked state changes. |
+
+### DropdownMenuRadioGroup
+
+Groups related radio items and manages their mutually exclusive value.
+
+| Prop            | Type                                 | Default | Description                                      |
+| --------------- | ------------------------------------ | ------- | ------------------------------------------------ |
+| `value`         | `any`                                | -       | The controlled value of the selected radio item. |
+| `defaultValue`  | `any`                                | -       | The initially selected value when uncontrolled.  |
+| `onValueChange` | `(value: any, eventDetails) => void` | -       | Handler called when the selected value changes.  |
+| `disabled`      | `boolean`                            | `false` | Whether the group ignores user interaction.      |
+
+### DropdownMenuRadioItem
+
+A menu item representing one value in a `DropdownMenuRadioGroup`. Extends the shared `MenuItem` visual props.
+
+| Prop           | Type                                                            | Default     | Description                                    |
+| -------------- | --------------------------------------------------------------- | ----------- | ---------------------------------------------- |
+| `value`        | `any`                                                           | -           | The value selected when the item is activated. |
+| `label`        | `string`                                                        | -           | The label text of the item.                    |
+| `icon`         | `React.ReactNode`                                               | -           | An optional leading icon.                      |
+| `desc`         | `string`                                                        | -           | An optional description below the label.       |
+| `variant`      | `"default" \| "secondary" \| "sidebar" \| "warning" \| "error"` | `"default"` | The visual style of the item.                  |
+| `disabled`     | `boolean`                                                       | `false`     | Whether the item ignores user interaction.     |
+| `closeOnClick` | `boolean`                                                       | `false`     | Whether selecting the item closes the menu.    |
 
 ### DropdownMenuLabel
 

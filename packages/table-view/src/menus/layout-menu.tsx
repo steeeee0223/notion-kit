@@ -9,9 +9,10 @@ import {
 } from "@notion-kit/table-hook";
 import {
   Button,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   MenuItemAction,
@@ -89,36 +90,38 @@ function RowViewMenu() {
             </MenuItemAction>
           </DropdownMenuSubTrigger>
           <DropdownMenuContent sideOffset={-4} className="w-64">
-            <DropdownMenuGroup>
+            <DropdownMenuRadioGroup
+              value={current}
+              onValueChange={(rowView: RowViewType) => {
+                if (rowView === current) return;
+                const actionId = v4();
+                table.setTableGlobalState(
+                  (v) => ({ ...v, rowView }),
+                  (previous, next) => ({
+                    id: actionId,
+                    type: "view.row_display.change",
+                    payload: {
+                      previousRowView: previous.rowView,
+                      nextRowView: next.rowView,
+                    },
+                  }),
+                );
+              }}
+            >
               {Object.entries(ROW_VIEW_OPTIONS).map(([value, option]) => {
                 const rowView = value as RowViewType;
                 return (
-                  <DropdownMenuCheckboxItem
+                  <DropdownMenuRadioItem
                     key={rowView}
+                    value={rowView}
                     closeOnClick={false}
                     icon={<RowViewIcon rowView={rowView} />}
                     label={option.label}
                     desc={option.desc}
-                    checked={rowView === current}
-                    onCheckedChange={(checked) => {
-                      if (!checked || rowView === current) return;
-                      const actionId = v4();
-                      table.setTableGlobalState(
-                        (v) => ({ ...v, rowView }),
-                        (previous, next) => ({
-                          id: actionId,
-                          type: "view.row_display.change",
-                          payload: {
-                            previousRowView: previous.rowView,
-                            nextRowView: next.rowView,
-                          },
-                        }),
-                      );
-                    }}
                   />
                 );
               })}
-            </DropdownMenuGroup>
+            </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenuSub>
       )}
