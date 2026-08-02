@@ -42,6 +42,34 @@ const mockData: Row[] = [
   },
 ];
 
+const projectedGroupData: Row[] = [
+  mockData[0]!,
+  {
+    id: "row-empty",
+    createdAt: Date.now(),
+    lastEditedAt: Date.now(),
+    properties: {
+      col1: { id: "cell-empty-title", value: "Empty" },
+      col2: { id: "cell-empty-group", value: null },
+    },
+  },
+  mockData[1]!,
+];
+
+const interleavedProjectedGroupData: Row[] = [
+  mockData[0]!,
+  mockData[1]!,
+  {
+    id: "row3",
+    createdAt: Date.now(),
+    lastEditedAt: Date.now(),
+    properties: {
+      col1: { id: "cell5", value: "Alex" },
+      col2: { id: "cell6", value: 25 },
+    },
+  },
+];
+
 const groupedProperties: ColumnInfo[] = [
   { id: "col1", name: "Name", type: "text", width: "200", config: undefined },
   {
@@ -442,6 +470,344 @@ describe("useTableView - Row Custom APIs", () => {
       });
 
       expect(table.getRow("row1").original.properties.col2?.value).toBe(30);
+    });
+
+    it("updates a grouping cell when a table row moves to another populated group", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      act(() => {
+        table.handleRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: {
+              id: "row1",
+              data: { type: "table-row", groupId: "col2:25" },
+            },
+            target: {
+              id: "row2",
+              data: { type: "table-row", groupId: "col2:30" },
+            },
+          },
+        } as unknown as DragEndEvent);
+      });
+
+      expect(table.getRow("row1").original.properties.col2?.value).toBe(30);
+    });
+
+    it("reorders after the target group's last row from a projected sortable group", () => {
+      const onDataChange =
+        vi.fn<(change: ResourceChange<Row[], DataResourceAction>) => void>();
+      const { table } = renderTableHook({
+        data: projectedGroupData,
+        properties: mockProperties,
+        onDataChange,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      act(() => {
+        table.handleRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: {
+              id: "row1",
+              initialIndex: 0,
+              index: 1,
+              initialGroup: "col2:25",
+              group: "col2:30",
+              data: { type: "table-row", groupId: "col2:25" },
+            },
+            target: {
+              id: "row1",
+              data: { type: "table-row", groupId: "col2:25" },
+            },
+          },
+        } as unknown as DragEndEvent);
+      });
+
+      expect(onDataChange.mock.lastCall?.[0].next.map((row) => row.id)).toEqual(
+        ["row-empty", "row2", "row1"],
+      );
+      expect(
+        onDataChange.mock.lastCall?.[0].next[2]?.properties.col2?.value,
+      ).toBe(30);
+      expect(onDataChange.mock.lastCall?.[0].action).toEqual({
+        id: anyString,
+        type: "data.row.move",
+        payload: {
+          rowId: "row1",
+          previousPosition: 0,
+          nextPosition: 2,
+        },
+      });
+    });
+
+    it("does not reorder for an unknown projected sortable group", () => {
+      const onDataChange =
+        vi.fn<(change: ResourceChange<Row[], DataResourceAction>) => void>();
+      const { table } = renderTableHook({
+        data: projectedGroupData,
+        properties: mockProperties,
+        onDataChange,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      act(() => {
+        table.handleRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: {
+              id: "row1",
+              initialIndex: 0,
+              index: 1,
+              initialGroup: "col2:25",
+              group: "col2:missing",
+              data: { type: "list-row", groupId: "col2:25" },
+            },
+            target: {
+              id: "row1",
+              data: { type: "list-row", groupId: "col2:25" },
+            },
+          },
+        } as unknown as DragEndEvent);
+      });
+
+      expect(onDataChange).not.toHaveBeenCalled();
+      expect(table.getCellValues().map((row) => row.id)).toEqual([
+        "row1",
+        "row-empty",
+        "row2",
+      ]);
+      expect(table.getRow("row1").original.properties.col2?.value).toBe(25);
+    });
+
+    it("reorders within an interleaved projected sortable group", () => {
+      const onDataChange =
+        vi.fn<(change: ResourceChange<Row[], DataResourceAction>) => void>();
+      const { table } = renderTableHook({
+        data: interleavedProjectedGroupData,
+        properties: mockProperties,
+        onDataChange,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      act(() => {
+        table.handleRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: {
+              id: "row1",
+              initialIndex: 0,
+              index: 1,
+              initialGroup: "col2:25",
+              group: "col2:25",
+              data: { type: "table-row", groupId: "col2:25" },
+            },
+            target: {
+              id: "row1",
+              data: { type: "table-row", groupId: "col2:25" },
+            },
+          },
+        } as unknown as DragEndEvent);
+      });
+
+      expect(onDataChange.mock.lastCall?.[0].next.map((row) => row.id)).toEqual(
+        ["row2", "row3", "row1"],
+      );
+      expect(onDataChange.mock.lastCall?.[0].next[2]?.properties.col2).toEqual({
+        id: "cell2",
+        value: 25,
+      });
+      expect(onDataChange.mock.lastCall?.[0].action).toEqual({
+        id: anyString,
+        type: "data.row.move",
+        payload: {
+          rowId: "row1",
+          previousPosition: 0,
+          nextPosition: 2,
+        },
+      });
+    });
+
+    it("does not update for an unknown projected source group", () => {
+      const onDataChange =
+        vi.fn<(change: ResourceChange<Row[], DataResourceAction>) => void>();
+      const { table } = renderTableHook({
+        data: projectedGroupData,
+        properties: mockProperties,
+        onDataChange,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      act(() => {
+        table.handleRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: {
+              id: "row1",
+              initialIndex: 0,
+              index: 1,
+              initialGroup: "col2:missing",
+              group: "col2:30",
+              data: { type: "list-row", groupId: "col2:missing" },
+            },
+            target: {
+              id: "row1",
+              data: { type: "list-row", groupId: "col2:missing" },
+            },
+          },
+        } as unknown as DragEndEvent);
+      });
+
+      expect(onDataChange).not.toHaveBeenCalled();
+      expect(table.getCellValues().map((row) => row.id)).toEqual([
+        "row1",
+        "row-empty",
+        "row2",
+      ]);
+      expect(table.getRow("row1").original.properties.col2).toEqual({
+        id: "cell2",
+        value: 25,
+      });
+    });
+
+    it("updates a grouping cell when a list row moves to the null group", () => {
+      const { table } = renderTableHook({
+        data: [
+          ...mockData,
+          {
+            id: "row4",
+            createdAt: Date.now(),
+            lastEditedAt: Date.now(),
+            properties: {
+              col1: { id: "cell7", value: "Task 4" },
+              col2: { id: "cell8", value: null },
+            },
+          },
+        ],
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      const nullGroupId = table.atoms.groupingState
+        .get()
+        .groupOrder.find(
+          (groupId) =>
+            table.atoms.groupingState.get().groupValues[groupId]?.original ===
+            null,
+        );
+      expect(nullGroupId).toBeDefined();
+
+      act(() => {
+        table.handleRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: {
+              id: "row1",
+              data: { type: "list-row", groupId: "col2:25" },
+            },
+            target: {
+              id: "row4",
+              data: { type: "list-row", groupId: nullGroupId },
+            },
+          },
+        } as unknown as DragEndEvent);
+      });
+
+      expect(table.getRow("row1").original.properties.col2?.value).toBeNull();
+    });
+
+    it("preserves a grouping cell when a table row moves within its group", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      act(() => {
+        table.handleRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: {
+              id: "row1",
+              data: { type: "table-row", groupId: "col2:25" },
+            },
+            target: {
+              id: "row1",
+              data: { type: "table-row", groupId: "col2:25" },
+            },
+          },
+        } as unknown as DragEndEvent);
+      });
+
+      expect(table.getRow("row1").original.properties.col2).toEqual({
+        id: "cell2",
+        value: 25,
+      });
+    });
+
+    it("does not write an undefined grouping value for an unknown list group", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      act(() => {
+        table.handleRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: {
+              id: "row1",
+              data: { type: "list-row", groupId: "col2:25" },
+            },
+            target: {
+              id: "missing-row",
+              data: { type: "list-row", groupId: "col2:missing" },
+            },
+          },
+        } as unknown as DragEndEvent);
+      });
+
+      expect(table.getRow("row1").original.properties.col2).toEqual({
+        id: "cell2",
+        value: 25,
+      });
     });
 
     it("BoardCardDrag_GroupChangeWithoutPreview_EmitsExactStationaryMove", () => {

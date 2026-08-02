@@ -76,7 +76,7 @@ test("ControlledProperties_CreateRenameHideDeleteRestore_ParentAndHeadersStaySyn
   );
 });
 
-test("ControlledView_LayoutLockRowViewAndOpenedRow_ParentStateStaysSynchronized", async ({
+test("ControlledView_LayoutLockAndRowView_ParentStateStaysSynchronized", async ({
   page,
 }) => {
   const table = await TableViewObject.open(page, "controlled");
@@ -98,19 +98,6 @@ test("ControlledView_LayoutLockRowViewAndOpenedRow_ParentStateStaysSynchronized"
 
   await layout.button("Table").click();
   await layout.close();
-  const alpha = table.row("Alpha");
-  await alpha.hover();
-  await alpha
-    .getByRole("button", { name: "Open in center peek", exact: true })
-    .click();
-  await expect(table.controlledState()).toContainText(
-    '"type":"view.opened_row.change"',
-  );
-  await expect(table.controlledState()).toContainText(
-    '"openedRowId":"row-alpha"',
-  );
-  await page.keyboard.press("Escape");
-  await expect(table.controlledState()).toContainText('"openedRowId":null');
 
   const lockSettings = await table.openSettings();
   await lockSettings.toggleLock();

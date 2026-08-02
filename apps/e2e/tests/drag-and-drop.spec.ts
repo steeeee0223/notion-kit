@@ -35,6 +35,8 @@ async function dragWithPointer(
   await page.mouse.move(end.x, end.y, { steps: 12 });
   await page.mouse.up();
   await expect(page.locator("[data-dragging]")).toHaveCount(0);
+  await expect(page.locator('[data-dnd-dragging="true"]')).toHaveCount(0);
+  await expect(page.locator("[data-dnd-placeholder]")).toHaveCount(0);
 }
 
 test("RowDnD_AlphaAfterOmega_MovesRenderedAndControlledOrder", async ({
@@ -69,16 +71,119 @@ test("RowDnD_AlphaAfterOmega_MovesRenderedAndControlledOrder", async ({
   await expect(table.controlledState()).toContainText('"nextPosition":2');
 });
 
-test("HeaderKeyboardDnD_NotesAfterScore_MovesPropertyAndReportsAction", async ({
+for (const layout of ["table", "list"] as const) {
+  test(`GroupedRowDnD_${layout}_CrossGroupUpdatesRenderedMembershipAndControlledValue`, async ({
+    page,
+  }) => {
+    const table = await TableViewObject.open(page, "controlled");
+    if (layout === "list") await table.setLayout(layout);
+    await table.groupBy("Status");
+    await table.expandGroup("status:Active");
+    await table.expandGroup("status:Done");
+
+    const alpha = table.rowBlock("row-alpha");
+    const omega = table.rowBlock("row-omega");
+    await alpha.hover();
+    await dragWithPointer(
+      page,
+      alpha.getByRole("button", { name: "Row actions", exact: true }),
+      omega,
+      "after",
+    );
+
+    await expect(table.group("status:Active")).toHaveCount(0);
+    await expect(
+      table.group("status:Done").getByRole("button", { name: "2" }),
+    ).toBeVisible();
+    await expect
+      .poll(async () => {
+        const alphaBox = await alpha.boundingBox();
+        const omegaBox = await omega.boundingBox();
+        const doneBox = await table.group("status:Done").boundingBox();
+        return Boolean(
+          alphaBox &&
+            omegaBox &&
+            doneBox &&
+            alphaBox.y > doneBox.y &&
+            omegaBox.y < alphaBox.y,
+        );
+      })
+      .toBe(true);
+
+    const snapshot = await table.controlledSnapshot();
+    expect(snapshot.data.map((row: { id: string }) => row.id)).toEqual([
+      "row-empty",
+      "row-omega",
+      "row-alpha",
+    ]);
+    expect(
+      snapshot.data.find((row: { id: string }) => row.id === "row-alpha")
+        ?.properties.status?.value,
+    ).toBe("Done");
+    expect(snapshot.dataCount).toBe(1);
+    expect(snapshot.lastDataAction).toEqual({
+      id: expect.any(String),
+      type: "data.row.move",
+      payload: {
+        rowId: "row-alpha",
+        previousPosition: 0,
+        nextPosition: 2,
+      },
+    });
+  });
+}
+
+for (const layout of ["table", "list", "board"] as const) {
+  test(`GroupOrderDnD_${layout}_UpdatesRenderedGroupsImmediately`, async ({
+    page,
+  }) => {
+    const table = await TableViewObject.open(page, "controlled");
+    if (layout !== "table") await table.setLayout(layout);
+    await table.groupBy("Status");
+
+    const grouping = await (await table.openSettings()).openGrouping();
+    await dragWithPointer(
+      page,
+      grouping.moveHandle("status:Active"),
+      grouping.moveHandle("status:Done"),
+      "after",
+    );
+
+    await expect(table.internalState()).toContainText(
+      '"groupOrder":["status:null","status:Done","status:Active"]',
+    );
+    await expect
+      .poll(async () => {
+        const boxes = await Promise.all(
+          ["status:null", "status:Done", "status:Active"].map((groupId) =>
+            table.group(groupId).boundingBox(),
+          ),
+        );
+        if (boxes.some((box) => box === null)) return false;
+        const positions = boxes.map((box) =>
+          layout === "board" ? box!.x : box!.y,
+        );
+        return positions[0]! < positions[1]! && positions[1]! < positions[2]!;
+      })
+      .toBe(true);
+  });
+}
+
+test("HeaderPointerDnD_SameNotesTriggerOpensMenuAndMovesAfterScore", async ({
   page,
 }) => {
   const table = await TableViewObject.open(page, "controlled");
-  const notesHandle = page.getByRole("button", { name: "Move Notes" });
-  await notesHandle.focus();
-  await page.keyboard.press("Space");
-  const dragging = page.locator("[data-dragging]");
-  await expect.poll(() => dragging.count()).toBeGreaterThan(0);
-  await page.keyboard.press("ArrowRight");
+  const notesHeader = table.header("Notes");
+  const calculateMenuItem = page.getByRole("menuitem", { name: "Calculate" });
+
+  await notesHeader.click();
+  await expect(calculateMenuItem).toBeVisible();
+  await notesHeader.click();
+  await expect(notesHeader).toHaveAttribute("aria-expanded", "false");
+  await expect(calculateMenuItem).toBeHidden();
+
+  await dragWithPointer(page, notesHeader, table.header("Score"), "after");
+
   await expect
     .poll(async () => {
       const scoreBox = await table.header("Score").boundingBox();
@@ -86,14 +191,6 @@ test("HeaderKeyboardDnD_NotesAfterScore_MovesPropertyAndReportsAction", async ({
       return Boolean(scoreBox && notesBox && scoreBox.x < notesBox.x);
     })
     .toBe(true);
-  await page.keyboard.press("Space");
-  try {
-    await expect(dragging).toHaveCount(0, { timeout: 1_000 });
-  } catch {
-    await page.keyboard.press("Enter");
-    await expect(dragging).toHaveCount(0);
-  }
-
   await expect
     .poll(async () => {
       const snapshot = await table.controlledSnapshot();
@@ -103,10 +200,13 @@ test("HeaderKeyboardDnD_NotesAfterScore_MovesPropertyAndReportsAction", async ({
     })
     .toEqual(["title", "score", "notes"]);
   const snapshot = await table.controlledSnapshot();
-  expect(snapshot.lastPropertiesAction).toMatchObject({
+  expect(snapshot.lastPropertiesAction).toEqual({
+    id: expect.any(String),
     type: "properties.move",
     payload: { propertyId: "notes", previousPosition: 1, nextPosition: 2 },
   });
+  await expect(notesHeader).toHaveAttribute("aria-expanded", "false");
+  await expect(calculateMenuItem).toBeHidden();
 });
 
 test("HeaderResize_NotesFortyPixelsWider_ReportsExactWidthChange", async ({

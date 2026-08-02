@@ -18,6 +18,7 @@ interface ViewPropsProps {
 
 export function ViewProps({ rowId }: ViewPropsProps) {
   const { table } = useTableViewCtx();
+  const { locked } = table.getTableGlobalState();
   const row = table.getRow(rowId);
 
   return (
@@ -31,7 +32,7 @@ export function ViewProps({ rowId }: ViewPropsProps) {
           if (info.type === "title") return null;
           return (
             <div
-              key={colId}
+              key={`${colId}:${locked}`}
               role="row"
               className="relative mb-1 flex w-full gap-1"
             >
@@ -58,6 +59,7 @@ export function ViewProps({ rowId }: ViewPropsProps) {
                     }
                   >
                     <DropdownMenuTrigger
+                      disabled={locked}
                       render={
                         <Button
                           variant="cell"
@@ -91,6 +93,7 @@ export function ViewProps({ rowId }: ViewPropsProps) {
               <div
                 role="cell"
                 data-block-id={rowId}
+                inert={locked ? true : undefined}
                 className="flex h-full min-w-0 flex-[1_1_auto] flex-wrap"
               >
                 <TableCell

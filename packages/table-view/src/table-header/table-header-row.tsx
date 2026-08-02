@@ -1,4 +1,5 @@
 import React from "react";
+import type { DragEndEvent } from "@dnd-kit/react";
 import { flexRender } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
@@ -21,14 +22,79 @@ import { useTableViewCtx } from "@/table-contexts";
 import { PropsMenu, TypesMenu } from "../menus";
 import { TableHeaderActionCell } from "./table-header-action-cell";
 
+type ColumnDragEndHandler = (event: DragEndEvent) => void;
+
+function hasProjectedSelfTarget(event: DragEndEvent) {
+  const { source, target } = event.operation;
+  return (
+    !event.canceled &&
+    source?.id != null &&
+    target?.id != null &&
+    source.id === target.id &&
+    "initialIndex" in source &&
+    typeof source.initialIndex === "number" &&
+    "index" in source &&
+    typeof source.index === "number" &&
+    source.initialIndex !== source.index
+  );
+}
+
+function snapshotColumnDragEnd(event: DragEndEvent) {
+  const { operation } = event;
+  const source = operation.source;
+  const target = operation.target;
+  return {
+    ...event,
+    operation: {
+      ...operation,
+      source: source
+        ? {
+            id: source.id,
+            initialIndex:
+              "initialIndex" in source ? source.initialIndex : undefined,
+            index: "index" in source ? source.index : undefined,
+          }
+        : null,
+      target: target ? { id: target.id } : null,
+      transform: { ...operation.transform },
+    },
+  } as DragEndEvent;
+}
+
+export function useColumnDragEnd(handler: ColumnDragEndHandler) {
+  const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cancelPending = React.useCallback(() => {
+    if (timeoutRef.current === null) return;
+    globalThis.clearTimeout(timeoutRef.current);
+    timeoutRef.current = null;
+  }, []);
+
+  React.useLayoutEffect(() => cancelPending, [cancelPending, handler]);
+
+  return React.useCallback(
+    (event: DragEndEvent) => {
+      cancelPending();
+      if (!hasProjectedSelfTarget(event)) {
+        handler(event);
+        return;
+      }
+
+      const eventSnapshot = snapshotColumnDragEnd(event);
+      timeoutRef.current = globalThis.setTimeout(() => {
+        timeoutRef.current = null;
+        handler(eventSnapshot);
+      }, 0);
+    },
+    [cancelPending, handler],
+  );
+}
+
 export const DndTableHeader = React.memo(function DndTableHeader() {
   const { table } = useTableViewCtx();
+  const handleColumnDragEnd = useColumnDragEnd(table.handleColumnDragEnd);
 
   return (
-    <Sortable.Root
-      orientation="horizontal"
-      onDragEnd={table.handleColumnDragEnd}
-    >
+    <Sortable.Root orientation="horizontal" onDragEnd={handleColumnDragEnd}>
       <div className="relative">
         <TableHeaderRow />
       </div>

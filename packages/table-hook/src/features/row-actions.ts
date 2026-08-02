@@ -2,6 +2,7 @@ import type { DragEndEvent, DragOverEvent } from "@dnd-kit/react";
 import type { TableFeature, Updater } from "@tanstack/react-table";
 import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
+import { z } from "zod/mini";
 
 import type { IconData } from "@notion-kit/ui/icon-block";
 import {
@@ -84,6 +85,76 @@ function getRowGroupingValue(
 
   const plugin = table.getColumnPlugin(groupingColumnId);
   return (plugin.toGroupValue ?? plugin.toValue)(cell.value, row);
+}
+
+const groupTargetDataSchema = z.object({ groupId: z.string() });
+const projectedGroupTargetSchema = z
+  .object({
+    source: z.object({
+      id: z.unknown(),
+      group: z.string(),
+      index: z.number(),
+      initialGroup: z.string(),
+      initialIndex: z.number(),
+    }),
+    target: z.object({ id: z.unknown() }),
+  })
+  .check(
+    z.refine(
+      ({ source, target }) =>
+        source.id === target.id &&
+        (source.group !== source.initialGroup ||
+          source.index !== source.initialIndex),
+    ),
+  );
+
+function getGroupTargetId(data: unknown) {
+  const kanbanGroupId = getKanbanColumnTargetId(data);
+  if (kanbanGroupId) return kanbanGroupId;
+
+  const result = z.safeParse(groupTargetDataSchema, data);
+  return result.success ? result.data.groupId : null;
+}
+
+function getProjectedGroupTarget(source: unknown, target: unknown) {
+  const result = z.safeParse(projectedGroupTargetSchema, { source, target });
+  if (!result.success) return null;
+
+  return {
+    groupId: result.data.source.group,
+    index: result.data.source.index,
+  };
+}
+
+function reorderRowsForProjectedGroup(
+  table: _TableInstance,
+  rows: Row[],
+  sourceRowId: string,
+  targetGroupId: string,
+  targetGroupIndex: number,
+  groupingColumnId: string,
+) {
+  const sourceRow = rows.find((row) => row.id === sourceRowId);
+  if (!sourceRow) return rows;
+
+  const remainingRows = rows.filter((row) => row.id !== sourceRowId);
+  const targetRowIndices = remainingRows.flatMap((row, index) => {
+    const groupingValue = getRowGroupingValue(table, row, groupingColumnId);
+    return createGroupId(groupingColumnId, groupingValue) === targetGroupId
+      ? [index]
+      : [];
+  });
+  if (targetRowIndices.length === 0) return rows;
+
+  const localIndex = Math.min(
+    Math.max(targetGroupIndex, 0),
+    targetRowIndices.length,
+  );
+  const flatIndex =
+    localIndex < targetRowIndices.length
+      ? targetRowIndices[localIndex]!
+      : targetRowIndices.at(-1)! + 1;
+  return insertAt(remainingRows, sourceRow, flatIndex);
 }
 
 function createKanbanItemsFromRows(
@@ -416,22 +487,44 @@ export const RowActionsFeature: TableFeature = {
       const groupingState = table.atoms.groupingState.get();
       const groupingColumnId = grouping[0];
       const { source, target } = event.operation;
-      const sourceGroupId = getKanbanColumnTargetId(source?.data);
-      const targetGroupId = getKanbanColumnTargetId(target?.data);
+      const sourceGroupId = getGroupTargetId(source?.data);
+      const projectedGroupTarget = getProjectedGroupTarget(source, target);
+      const targetGroupId =
+        projectedGroupTarget?.groupId ?? getGroupTargetId(target?.data);
       const shouldReorder = options.reorder ?? true;
 
       const sourceRowId = String(source?.id ?? "");
       const actionId = v4();
       table.setTableData(
         (rows) => {
-          const next = shouldReorder
-            ? getSortableItemsAfterDrag(rows, event)
-            : rows;
+          const hasValidProjectedGroups = Boolean(
+            projectedGroupTarget &&
+              sourceGroupId &&
+              groupingColumnId &&
+              groupingState.groupValues[sourceGroupId] &&
+              groupingState.groupValues[projectedGroupTarget.groupId],
+          );
+          const next = !shouldReorder
+            ? rows
+            : projectedGroupTarget
+              ? hasValidProjectedGroups
+                ? reorderRowsForProjectedGroup(
+                    table,
+                    rows,
+                    sourceRowId,
+                    projectedGroupTarget.groupId,
+                    projectedGroupTarget.index,
+                    groupingColumnId!,
+                  )
+                : rows
+              : getSortableItemsAfterDrag(rows, event);
           if (
             !source ||
+            (projectedGroupTarget && !hasValidProjectedGroups) ||
             !targetGroupId ||
             targetGroupId === sourceGroupId ||
-            !groupingColumnId
+            !groupingColumnId ||
+            !groupingState.groupValues[targetGroupId]
           ) {
             scheduleGroupingStateSync(next);
             return next;

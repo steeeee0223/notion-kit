@@ -9,6 +9,11 @@ import { SortMenuObject } from "./sort-menu";
 import { ViewSettingsMenuObject } from "./view-settings-menu";
 
 type TableMode = "controlled" | "uncontrolled";
+export type TableLayout = "table" | "list" | "board";
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 
 interface ControlledPropertySnapshot {
   id: string;
@@ -24,6 +29,7 @@ interface ControlledPropertySnapshot {
 
 interface ControlledSnapshot {
   dataCount: number;
+  propertiesCount: number;
   data: {
     id: string;
     icon?: { type: string; src: string };
@@ -42,7 +48,12 @@ interface ControlledSnapshot {
     type: string;
     payload: Record<string, unknown>;
   } | null;
-  view: { layout: string; openedRowId: string | null; rowView: string };
+  view: {
+    layout: string;
+    locked: boolean;
+    openedRowId: string | null;
+    rowView: string;
+  };
 }
 
 export class TableViewObject {
@@ -74,6 +85,12 @@ export class TableViewObject {
     return this.rows().filter({ hasText: name });
   }
 
+  rowBlock(rowId: string) {
+    return this.page.locator(
+      `[data-block-id="${rowId}"]:not([data-dnd-placeholder])`,
+    );
+  }
+
   group(id: string) {
     return this.page.getByRole("group", { name: `Group ${id}`, exact: true });
   }
@@ -84,6 +101,56 @@ export class TableViewObject {
 
   async expandGroup(id: string) {
     await this.group(id).getByRole("button", { name: "Open" }).click();
+  }
+
+  async setLayout(layout: TableLayout) {
+    const menu = await (await this.openSettings()).openLayout();
+    const label = `${layout[0]?.toUpperCase()}${layout.slice(1)}`;
+    await menu.button(label).click();
+    await menu.close();
+  }
+
+  async groupBy(propertyName: string) {
+    const grouping = await (await this.openSettings()).openGrouping();
+    await grouping.choose(propertyName);
+    await this.page.keyboard.press("Escape");
+  }
+
+  async openPrimaryRow(layout: TableLayout, row: { id: string; name: string }) {
+    if (layout === "table") {
+      const tableRow = this.row(row.name);
+      await tableRow.hover();
+      await tableRow
+        .getByRole("button", { name: "Open in side peek", exact: true })
+        .click();
+      return;
+    }
+    if (layout === "list") {
+      await this.rowBlock(row.id).getByText(row.name, { exact: true }).click();
+      return;
+    }
+    await this.rowBlock(row.id).getByText(row.name, { exact: true }).click();
+  }
+
+  rowViewProperty(dialog: Locator, propertyName: string) {
+    return dialog.getByRole("row", {
+      name: new RegExp(`^${escapeRegExp(propertyName)}(?: |$)`),
+    });
+  }
+
+  rowViewPropertyLabel(dialog: Locator, propertyName: string) {
+    return this.rowViewProperty(dialog, propertyName).getByRole("button", {
+      name: propertyName,
+      exact: true,
+    });
+  }
+
+  rowViewPropertyValue(dialog: Locator, propertyName: string) {
+    return this.rowViewProperty(dialog, propertyName)
+      .getByRole("cell")
+      .nth(1)
+      .getByRole("button")
+      .first();
   }
 
   button(name: AccessibleName) {

@@ -6,7 +6,12 @@ import {
   RestrictToHorizontalAxis,
   RestrictToVerticalAxis,
 } from "@dnd-kit/abstract/modifiers";
-import { PointerActivationConstraints, PointerSensor } from "@dnd-kit/dom";
+import {
+  Feedback,
+  PointerActivationConstraints,
+  PointerSensor,
+  type DropAnimation,
+} from "@dnd-kit/dom";
 import { RestrictToElement } from "@dnd-kit/dom/modifiers";
 import { move } from "@dnd-kit/helpers";
 import {
@@ -201,6 +206,7 @@ type SortableItemProps = Omit<
   "id"
 > &
   SortableItemOptions & {
+    dropAnimation?: DropAnimation | null;
     id: UniqueIdentifier;
     index: number;
   };
@@ -212,6 +218,7 @@ function SortableItem({
   collisionDetector,
   collisionPriority,
   data,
+  dropAnimation,
   effects,
   group,
   id,
@@ -227,6 +234,16 @@ function SortableItem({
   const root = React.useContext(SortableRootContext);
   const disabled = props.disabled ?? root?.disabled;
   const modifiers = props.modifiers ?? root?.modifiers;
+  const sortablePlugins = React.useMemo(() => {
+    if (dropAnimation === undefined) return plugins;
+
+    return (defaults) => [
+      Feedback.configure({ dropAnimation }),
+      ...(typeof plugins === "function"
+        ? plugins(defaults)
+        : (plugins ?? defaults)),
+    ];
+  }, [dropAnimation, plugins]);
   const sortable = useSortable({
     accept,
     alignment,
@@ -239,7 +256,7 @@ function SortableItem({
     id,
     index,
     modifiers,
-    plugins,
+    plugins: sortablePlugins,
     register,
     sensors,
     transition,

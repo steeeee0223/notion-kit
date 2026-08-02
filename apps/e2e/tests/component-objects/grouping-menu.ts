@@ -42,6 +42,12 @@ export class GroupingMenuObject extends MenuSurfaceObject {
     });
   }
 
+  moveHandle(groupId: string) {
+    return this.root.getByRole("button", {
+      name: `Move ${groupId} group`,
+    });
+  }
+
   allVisibilityButton() {
     return this.root.getByRole("button", { name: /^(Hide|Show) all$/ });
   }

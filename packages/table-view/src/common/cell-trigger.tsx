@@ -60,8 +60,17 @@ export function CellTrigger({
   widthType,
   tooltip,
   stopPropagation = true,
+  tabIndex,
+  "aria-disabled": ariaDisabled,
+  onClick,
+  onKeyDown,
+  onKeyUp,
+  onMouseDown,
+  onPointerDown,
   ...props
 }: CellTriggerProps) {
+  const disabled = ariaDisabled === true || ariaDisabled === "true";
+
   return (
     <TooltipPreset
       side={layout === "board" ? "left" : "top"}
@@ -85,8 +94,9 @@ export function CellTrigger({
           })}
     >
       <div
-        tabIndex={0}
+        tabIndex={disabled ? -1 : (tabIndex ?? 0)}
         role="button"
+        aria-disabled={ariaDisabled}
         className={cn(
           buttonVariants({ variant: "cell" }),
           cellVariant({
@@ -98,12 +108,46 @@ export function CellTrigger({
         )}
         {...props}
         onClick={(e) => {
+          if (disabled) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+          }
           if (stopPropagation) e.stopPropagation();
-          props.onClick?.(e);
+          onClick?.(e);
         }}
         onKeyDown={(e) => {
+          if (disabled) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+          }
           if (stopPropagation) e.stopPropagation();
-          props.onKeyDown?.(e);
+          onKeyDown?.(e);
+        }}
+        onKeyUp={(e) => {
+          if (disabled) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+          }
+          onKeyUp?.(e);
+        }}
+        onMouseDown={(e) => {
+          if (disabled) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+          }
+          onMouseDown?.(e);
+        }}
+        onPointerDown={(e) => {
+          if (disabled) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+          }
+          onPointerDown?.(e);
         }}
       />
     </TooltipPreset>

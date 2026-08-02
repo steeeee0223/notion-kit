@@ -29,6 +29,7 @@ export function ListRow({ row }: ListRowProps) {
     <Sortable.Item
       id={row.id}
       index={row.index}
+      group={row.parentId}
       disabled={locked}
       data={{ type: "list-row", groupId: row.parentId }}
       render={<div data-block-id={row.id} className="group/row my-1" />}
