@@ -2,6 +2,7 @@ import type { DragEndEvent, DragOverEvent } from "@dnd-kit/react";
 import type { TableFeature, Updater } from "@tanstack/react-table";
 import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
+import { z } from "zod/mini";
 
 import type { IconData } from "@notion-kit/ui/icon-block";
 import {
@@ -86,45 +87,43 @@ function getRowGroupingValue(
   return (plugin.toGroupValue ?? plugin.toValue)(cell.value, row);
 }
 
+const groupTargetDataSchema = z.object({ groupId: z.string() });
+const projectedGroupTargetSchema = z
+  .object({
+    source: z.object({
+      id: z.unknown(),
+      group: z.string(),
+      index: z.number(),
+      initialGroup: z.string(),
+      initialIndex: z.number(),
+    }),
+    target: z.object({ id: z.unknown() }),
+  })
+  .check(
+    z.refine(
+      ({ source, target }) =>
+        source.id === target.id &&
+        (source.group !== source.initialGroup ||
+          source.index !== source.initialIndex),
+    ),
+  );
+
 function getGroupTargetId(data: unknown) {
   const kanbanGroupId = getKanbanColumnTargetId(data);
   if (kanbanGroupId) return kanbanGroupId;
 
-  if (typeof data !== "object" || data === null) return null;
-  const groupId = (data as { groupId?: unknown }).groupId;
-  return typeof groupId === "string" ? groupId : null;
+  const result = z.safeParse(groupTargetDataSchema, data);
+  return result.success ? result.data.groupId : null;
 }
 
 function getProjectedGroupTarget(source: unknown, target: unknown) {
-  if (
-    typeof source !== "object" ||
-    source === null ||
-    typeof target !== "object" ||
-    target === null
-  ) {
-    return null;
-  }
+  const result = z.safeParse(projectedGroupTargetSchema, { source, target });
+  if (!result.success) return null;
 
-  const sortableSource = source as {
-    id?: unknown;
-    group?: unknown;
-    index?: unknown;
-    initialGroup?: unknown;
-    initialIndex?: unknown;
+  return {
+    groupId: result.data.source.group,
+    index: result.data.source.index,
   };
-  const sortableTarget = target as { id?: unknown };
-  if (
-    sortableSource.id !== sortableTarget.id ||
-    typeof sortableSource.group !== "string" ||
-    typeof sortableSource.index !== "number" ||
-    typeof sortableSource.initialGroup !== "string" ||
-    typeof sortableSource.initialIndex !== "number" ||
-    (sortableSource.group === sortableSource.initialGroup &&
-      sortableSource.index === sortableSource.initialIndex)
-  ) {
-    return null;
-  }
-  return { groupId: sortableSource.group, index: sortableSource.index };
 }
 
 function reorderRowsForProjectedGroup(

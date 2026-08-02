@@ -234,7 +234,7 @@ function SortableItem({
   const root = React.useContext(SortableRootContext);
   const disabled = props.disabled ?? root?.disabled;
   const modifiers = props.modifiers ?? root?.modifiers;
-  const sortablePlugins = React.useMemo<UseSortableInput["plugins"]>(() => {
+  const sortablePlugins = React.useMemo(() => {
     if (dropAnimation === undefined) return plugins;
 
     return (defaults) => [
