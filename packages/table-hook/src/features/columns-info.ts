@@ -7,7 +7,7 @@ import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
 import type { _TableInstance } from "@/features/types";
 import { createIdsUpdater } from "@/features/utils";
-import type { ColumnInfo, PluginType } from "@/lib/types";
+import type { ColumnInfo, PluginType, Row } from "@/lib/types";
 import {
   arrayToEntity,
   getDefaultCell,
@@ -68,6 +68,8 @@ export interface ColumnsInfoTableApi {
     id: string;
     name: string;
     type: string;
+    operationId?: string;
+    getInitialValue?: (row: Row) => unknown;
     at?: {
       id: string;
       side: "left" | "right";
@@ -429,10 +431,10 @@ export const ColumnsInfoFeature: TableFeature = {
       );
     };
     instance.addColumnInfo = (payload) => {
-      const actionId = v4();
+      const actionId = payload.operationId ?? v4();
       const cellPlugins = instance.atoms.cellPlugins.get();
       const columnsInfo = instance.atoms.columnsInfo.get();
-      const { id, name, type, at } = payload;
+      const { id, name, type, at, getInitialValue } = payload;
       if (columnsInfo[id]) {
         throw new Error(`[TableView] Column already exists: "${id}"`);
       }
@@ -455,14 +457,18 @@ export const ColumnsInfoFeature: TableFeature = {
         },
       );
       // Update all rows
+      if (instance.getCellValues().length === 0) return;
       instance.setTableData(
         (prev) =>
           prev.map((row) => {
+            const cell = getDefaultCell(plugin);
             return {
               ...row,
               properties: {
                 ...row.properties,
-                [id]: getDefaultCell(plugin),
+                [id]: getInitialValue
+                  ? { ...cell, value: getInitialValue(row) }
+                  : cell,
               },
             };
           }),

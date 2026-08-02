@@ -37,6 +37,10 @@ const DEFAULT_VIEW_STATE = {
   layout: "table",
   rowView: "side",
   openedRowId: null,
+  timeline: {
+    range: "monthly",
+    datePropertyId: null,
+  },
 } satisfies TableViewState;
 
 function resolveViewState(view?: Partial<TableViewState>) {
@@ -133,14 +137,30 @@ export function useTableView<TPlugins extends CellPlugin[]>(
   const viewRowView = options.view?.rowView ?? DEFAULT_VIEW_STATE.rowView;
   const viewOpenedRowId =
     options.view?.openedRowId ?? DEFAULT_VIEW_STATE.openedRowId;
+  const viewTimelineRange =
+    options.view?.timeline?.range ?? DEFAULT_VIEW_STATE.timeline.range;
+  const viewTimelineDatePropertyId =
+    options.view?.timeline?.datePropertyId ??
+    DEFAULT_VIEW_STATE.timeline.datePropertyId;
   const controlledView = useMemo(
     () => ({
       locked: viewLocked,
       layout: viewLayout,
       rowView: viewRowView,
       openedRowId: viewOpenedRowId,
+      timeline: {
+        range: viewTimelineRange,
+        datePropertyId: viewTimelineDatePropertyId,
+      },
     }),
-    [viewLayout, viewLocked, viewOpenedRowId, viewRowView],
+    [
+      viewLayout,
+      viewLocked,
+      viewOpenedRowId,
+      viewRowView,
+      viewTimelineDatePropertyId,
+      viewTimelineRange,
+    ],
   );
 
   const [dataEntity, setDataResource] = useResourceState<
