@@ -350,6 +350,10 @@ it("TimelineEmptyTrack_AddDate_WritesExactOneCalendarDayCellResource", async () 
     />,
   );
 
+  const emptyTrack = document.querySelector<HTMLElement>(
+    '[data-slot="timeline-add-feature-track"]',
+  )!;
+  fireEvent.mouseMove(emptyTrack, { clientX: 75 });
   fireEvent.click(
     await screen.findByRole("button", { name: "Add date to Empty task" }),
   );

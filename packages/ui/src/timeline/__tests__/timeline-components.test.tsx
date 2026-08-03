@@ -10,7 +10,10 @@ import {
   TimelineList,
   TimelineListGroup,
 } from "../timeline-content";
-import { TimelineAddFeatureHelper } from "../timeline-feature";
+import {
+  TimelineAddFeatureHelper,
+  TimelineAddFeatureTrack,
+} from "../timeline-feature";
 import { TimelineRangeHeader } from "../timeline-range-header";
 import { TimelineItem } from "../timeline-row/timeline-item";
 import { TimelineItemResizer } from "../timeline-row/timeline-item-resizer";
@@ -393,6 +396,38 @@ describe("timeline components", () => {
 
     expect(localOnAddItem).toHaveBeenCalledWith(new Date(2026, 0, 3).getTime());
     expect(providerOnAddItem).not.toHaveBeenCalled();
+  });
+
+  it("TimelineAddFeatureTrack_HoveredVisibleColumn_PositionsAndAddsAtThatColumn", () => {
+    const onAddItem = vi.fn();
+    setTimeline("daily");
+    const { container } = render(
+      <TimelineAddFeatureTrack
+        ariaLabel="Add date to Task"
+        onAddItem={onAddItem}
+      />,
+    );
+    const track = container.querySelector<HTMLElement>(
+      '[data-slot="timeline-add-feature-track"]',
+    )!;
+    vi.spyOn(track, "getBoundingClientRect").mockReturnValue({
+      left: -185,
+    } as DOMRect);
+
+    fireEvent.mouseMove(track, { clientX: 115 });
+
+    const helper = container.querySelector<HTMLElement>(
+      '[data-slot="timeline-add-feature-helper"]',
+    );
+    expect(helper).toHaveStyle({ left: "300px", width: "50px" });
+
+    fireEvent.click(screen.getByRole("button", { name: "Add date to Task" }));
+    expect(onAddItem).toHaveBeenCalledWith(new Date(2026, 0, 7).getTime());
+
+    fireEvent.mouseLeave(track);
+    expect(
+      container.querySelector('[data-slot="timeline-add-feature-helper"]'),
+    ).not.toBeInTheDocument();
   });
 
   it("GanttCreateMarkerTrigger_Click_ReportsDateAtMousePosition", async () => {

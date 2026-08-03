@@ -1,6 +1,6 @@
 import type { RowInstance, TableInstance } from "@notion-kit/table-hook";
 import { Button } from "@notion-kit/ui/primitives";
-import { TimelineAddFeatureHelper, TimelineRow } from "@notion-kit/ui/timeline";
+import { TimelineAddFeatureTrack, TimelineRow } from "@notion-kit/ui/timeline";
 
 import {
   createEmptyTrackDate,
@@ -65,10 +65,8 @@ export function TimelineTrackRow({
           className="relative h-(--timeline-row-height)"
         >
           {locked ? null : (
-            <TimelineAddFeatureHelper
-              top={18}
+            <TimelineAddFeatureTrack
               ariaLabel={`Add date to ${title}`}
-              className="size-8"
               onAddItem={addDate}
             />
           )}

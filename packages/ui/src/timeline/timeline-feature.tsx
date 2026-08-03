@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useMouse } from "@uidotdev/usehooks";
 
 import { cn } from "@notion-kit/cn";
@@ -9,7 +10,7 @@ import {
   useTimelineScrollX,
   useTimelineSidebarWidth,
 } from "./timeline-provider";
-import { getDateByMousePosition } from "./utils";
+import { getDateByMousePosition, resolveColumnWidth } from "./utils";
 
 interface TimelineAddFeatureHelperProps {
   top: number;
@@ -59,6 +60,54 @@ export function TimelineAddFeatureHelper({
       >
         <Icon.Plus className="pointer-events-none size-3 fill-icon select-none" />
       </button>
+    </div>
+  );
+}
+
+interface TimelineAddFeatureTrackProps
+  extends Omit<React.ComponentProps<"div">, "onMouseMove"> {
+  ariaLabel?: string;
+  onAddItem: (ts: number) => void;
+}
+
+export function TimelineAddFeatureTrack({
+  ariaLabel,
+  onAddItem,
+  className,
+  ...props
+}: TimelineAddFeatureTrackProps) {
+  const timeline = useTimelineContext();
+  const [hoveredColumn, setHoveredColumn] = useState<number | null>(null);
+  const columnWidth = resolveColumnWidth(timeline.range, timeline.zoom);
+  const columnStart =
+    hoveredColumn === null ? null : hoveredColumn * columnWidth;
+
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    const x = event.clientX - event.currentTarget.getBoundingClientRect().left;
+    const nextColumn = Math.floor(x / columnWidth);
+    const lastColumn = timeline.timelineData.subRanges.length - 1;
+    setHoveredColumn(Math.min(Math.max(nextColumn, 0), lastColumn));
+  };
+
+  return (
+    <div
+      data-slot="timeline-add-feature-track"
+      className={cn("relative h-(--timeline-row-height)", className)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => setHoveredColumn(null)}
+      {...props}
+    >
+      {columnStart === null ? null : (
+        <TimelineAddFeatureHelper
+          top={ROW_HEIGHT / 2}
+          ariaLabel={ariaLabel}
+          style={{ left: columnStart, width: columnWidth }}
+          onAddItem={() => {
+            const date = getDateByMousePosition(timeline, columnStart);
+            onAddItem(date.getTime());
+          }}
+        />
+      )}
     </div>
   );
 }
