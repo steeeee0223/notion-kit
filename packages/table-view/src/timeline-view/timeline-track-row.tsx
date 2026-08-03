@@ -1,6 +1,12 @@
 import type { RowInstance, TableInstance } from "@notion-kit/table-hook";
-import { Button } from "@notion-kit/ui/primitives";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuTrigger,
+} from "@notion-kit/ui/primitives";
 import { TimelineAddFeatureTrack, TimelineRow } from "@notion-kit/ui/timeline";
+
+import { RowActionMenu } from "@/menus";
 
 import {
   createEmptyTrackDate,
@@ -49,16 +55,42 @@ export function TimelineTrackRow({
   return (
     <div data-slot="timeline-track-row" data-row-id={row.id}>
       {feature ? (
-        <TimelineRow
+        <TimelineRow.Root
           item={feature}
           onMove={locked ? undefined : updateRange}
-          render={() => (
-            <TimelineBarContent
-              title={title}
-              onOpen={() => table.openRow(row.id)}
-            />
-          )}
-        />
+        >
+          <TimelineRow.Jump />
+          <TimelineRow.Track>
+            {locked ? (
+              <TimelineRow.Item
+                aria-label={title}
+                onClick={() => table.openRow(row.id)}
+              >
+                <TimelineBarContent title={title} />
+              </TimelineRow.Item>
+            ) : (
+              <>
+                <TimelineRow.Resize direction="start" />
+                <ContextMenu>
+                  <ContextMenuTrigger
+                    render={
+                      <TimelineRow.Item
+                        aria-label={title}
+                        onClick={() => table.openRow(row.id)}
+                      />
+                    }
+                  >
+                    <TimelineBarContent title={title} />
+                  </ContextMenuTrigger>
+                  <ContextMenuContent className="w-[265px]">
+                    <RowActionMenu rowId={row.id} />
+                  </ContextMenuContent>
+                </ContextMenu>
+                <TimelineRow.Resize direction="end" />
+              </>
+            )}
+          </TimelineRow.Track>
+        </TimelineRow.Root>
       ) : (
         <div
           data-slot="timeline-empty-track"
@@ -76,21 +108,10 @@ export function TimelineTrackRow({
   );
 }
 
-function TimelineBarContent({
-  title,
-  onOpen,
-}: {
-  title: string;
-  onOpen: () => void;
-}) {
+function TimelineBarContent({ title }: { title: string }) {
   return (
-    <Button
-      variant="hint"
-      className="me-2.5 h-full min-w-0 justify-start overflow-hidden px-1.5 text-xs font-medium"
-      aria-label={title}
-      onClick={onOpen}
-    >
+    <span className="me-2.5 min-w-0 overflow-hidden text-xs font-medium">
       <span className="truncate">{title}</span>
-    </Button>
+    </span>
   );
 }

@@ -13,6 +13,8 @@ import type {
   DataResourceAction,
   ResourceChange,
   Row,
+  TableViewState,
+  ViewResourceAction,
 } from "@notion-kit/table-hook";
 
 import { TableView } from "@/table-contexts";
@@ -70,12 +72,13 @@ const rows: Row[] = [
 ];
 
 type DataChange = ResourceChange<Row[], DataResourceAction>;
+type ViewChange = ResourceChange<TableViewState, ViewResourceAction>;
 
 afterEach(() => vi.restoreAllMocks());
 
-it("TimelineBarHandle_CrossThresholdAndReturn_CommitsExactMoveWithoutOpening", async () => {
+it("TimelineCardSurface_CrossThresholdAndReturn_CommitsExactMoveWithoutOpening", async () => {
   const onDataChange = vi.fn<(change: DataChange) => void>();
-  const onViewChange = vi.fn();
+  const onViewChange = vi.fn<(change: ViewChange) => void>();
   renderTableView({
     data: rows,
     properties,
@@ -92,10 +95,10 @@ it("TimelineBarHandle_CrossThresholdAndReturn_CommitsExactMoveWithoutOpening", a
   const track = document.querySelector<HTMLElement>(
     '[data-slot="timeline-track-row"][data-row-id="valid"]',
   )!;
-  const handle = within(track).getByRole("button", {
-    name: "Move Valid task",
-  });
-  await dragPointer(handle, [0, 20, 30, 5]);
+  const card = track.querySelector<HTMLElement>(
+    '[data-slot="timeline-item-card"]',
+  )!;
+  await dragPointer(card, [0, 20, 30, 5]);
 
   await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
   const action = onDataChange.mock.lastCall?.[0].action;
@@ -117,8 +120,9 @@ it("TimelineBarHandle_CrossThresholdAndReturn_CommitsExactMoveWithoutOpening", a
   expect(onViewChange).not.toHaveBeenCalled();
 });
 
-it("TimelineBarHandle_RejectedControlledMove_RestoresAuthoritativeCoordinates", async () => {
+it("TimelineCardSurface_ActivatedDragThenReset_NextClickOpensExactRow", async () => {
   const onDataChange = vi.fn<(change: DataChange) => void>();
+  const onViewChange = vi.fn<(change: ViewChange) => void>();
   render(
     <TableView
       data={rows}
@@ -130,25 +134,145 @@ it("TimelineBarHandle_RejectedControlledMove_RestoresAuthoritativeCoordinates", 
         timeline: { range: "monthly", datePropertyId: "due" },
       }}
       onDataChange={onDataChange}
+      onViewChange={onViewChange}
+    />,
+  );
+
+  const card = getTimelineCard("valid");
+  await dragPointer(card, [0, 20, 30, 5]);
+
+  await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
+  expect(onViewChange).not.toHaveBeenCalled();
+
+  await waitForDragClickReset();
+  fireEvent.click(getTimelineCard("valid"));
+
+  await waitFor(() => expect(onViewChange).toHaveBeenCalledOnce());
+  expect(onViewChange.mock.lastCall?.[0].action).toMatchObject({
+    type: "view.opened_row.change",
+    payload: { previousRowId: null, nextRowId: "valid" },
+  });
+});
+
+it("TimelineCardSurface_PointerCancel_DoesNotCommitAndNextClickOpensExactRow", async () => {
+  const onDataChange = vi.fn<(change: DataChange) => void>();
+  const onViewChange = vi.fn<(change: ViewChange) => void>();
+  renderTableView({
+    data: rows,
+    properties,
+    view: {
+      layout: "timeline",
+      rowView: "side",
+      openedRowId: null,
+      timeline: { range: "monthly", datePropertyId: "due" },
+    },
+    onDataChange,
+    onViewChange,
+  });
+
+  const card = getTimelineCard("valid");
+  await cancelPointerDrag(card, [0, 20, 30]);
+
+  expect(onDataChange).not.toHaveBeenCalled();
+  expect(onViewChange).not.toHaveBeenCalled();
+
+  await waitForDragClickReset();
+  fireEvent.click(getTimelineCard("valid"));
+
+  await waitFor(() => expect(onViewChange).toHaveBeenCalledOnce());
+  expect(onViewChange.mock.lastCall?.[0].action).toMatchObject({
+    type: "view.opened_row.change",
+    payload: { previousRowId: null, nextRowId: "valid" },
+  });
+});
+
+it("TimelineCardSurface_RejectedControlledMove_NextDragUsesAuthoritativeRange", async () => {
+  const onDataChange = vi.fn<(change: DataChange) => void>();
+  const view = {
+    layout: "timeline" as const,
+    rowView: "side" as const,
+    openedRowId: null,
+    timeline: { range: "monthly" as const, datePropertyId: "due" },
+  };
+  const { rerender } = render(
+    <TableView
+      data={rows}
+      properties={properties}
+      view={view}
+      onDataChange={onDataChange}
     />,
   );
   const track = document.querySelector<HTMLElement>(
     '[data-slot="timeline-track-row"][data-row-id="valid"]',
   )!;
-  const bar = track.querySelector<HTMLElement>(
-    '[data-slot="notion-timeline-item"]',
+  const card = track.querySelector<HTMLElement>(
+    '[data-slot="timeline-item-card"]',
   )!;
-  const handle = within(track).getByRole("button", {
-    name: "Move Valid task",
-  });
 
-  await dragPointer(handle, [0, 20, 30, 5]);
+  await dragPointer(card, [0, 20, 30, 5]);
 
   await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
-  expect(bar).toHaveStyle({ insetInlineStart: "0px", width: "5px" });
+  rerender(
+    <TableView
+      data={[...rows]}
+      properties={properties}
+      view={view}
+      onDataChange={onDataChange}
+    />,
+  );
+  onDataChange.mockClear();
+
+  await dragPointer(getTimelineCard("valid"), [0, 20, 30, 5]);
+
+  await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
+  expect(onDataChange.mock.lastCall?.[0].action).toMatchObject({
+    type: "data.cell.update",
+    payload: {
+      rowId: "valid",
+      propertyId: "due",
+      previousValue: { start: 0, end: 86_400_000 },
+      nextValue: {
+        start: -259_200_000,
+        end: -172_800_000,
+        endDate: true,
+      },
+    },
+  });
 });
 
-it("TimelineBarHandle_EqualEpochRange_CommitsExactMove", async () => {
+it("TimelineLockedCard_PointerGestureDoesNotWriteAndNextClickOpensExactRow", async () => {
+  const onDataChange = vi.fn<(change: DataChange) => void>();
+  const onViewChange = vi.fn<(change: ViewChange) => void>();
+  renderTableView({
+    data: rows,
+    properties,
+    view: {
+      layout: "timeline",
+      rowView: "side",
+      openedRowId: null,
+      locked: true,
+      timeline: { range: "monthly", datePropertyId: "due" },
+    },
+    onDataChange,
+    onViewChange,
+  });
+
+  const lockedCard = getTimelineCard("valid");
+  await dragPointer(lockedCard, [0, 20, 30, 5]);
+
+  expect(onDataChange).not.toHaveBeenCalled();
+  expect(onViewChange).not.toHaveBeenCalled();
+
+  fireEvent.click(getTimelineCard("valid"));
+
+  await waitFor(() => expect(onViewChange).toHaveBeenCalledOnce());
+  expect(onViewChange.mock.lastCall?.[0].action).toMatchObject({
+    type: "view.opened_row.change",
+    payload: { previousRowId: null, nextRowId: "valid" },
+  });
+});
+
+it("TimelineCardSurface_EqualEpochRange_CommitsExactMove", async () => {
   const onDataChange = vi.fn<(change: DataChange) => void>();
   const equalEpochRows: Row[] = [
     {
@@ -171,11 +295,11 @@ it("TimelineBarHandle_EqualEpochRange_CommitsExactMove", async () => {
   const track = document.querySelector<HTMLElement>(
     '[data-slot="timeline-track-row"][data-row-id="valid"]',
   )!;
-  const handle = within(track).getByRole("button", {
-    name: "Move Valid task",
-  });
+  const card = track.querySelector<HTMLElement>(
+    '[data-slot="timeline-item-card"]',
+  )!;
 
-  await dragPointer(handle, [0, 20, 30, 5]);
+  await dragPointer(card, [0, 20, 30, 5]);
 
   await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
   expect(onDataChange.mock.lastCall?.[0].action).toMatchObject({
@@ -214,7 +338,7 @@ it("TimelineLeftResizer_EqualEpochRange_CommitsExactRange", async () => {
     onDataChange,
   });
   const leftResizer = document.querySelector<HTMLElement>(
-    '[data-slot="timeline-item-resizer"][data-direction="left"]',
+    '[data-slot="timeline-item-resizer"][data-direction="start"]',
   )!;
 
   await dragPointer(leftResizer, [25, 0]);
@@ -364,6 +488,55 @@ async function dragPointer(
     pointerType: "mouse",
   });
   await flushAnimationFrame();
+}
+
+async function cancelPointerDrag(handle: Element, positions: number[]) {
+  const [start, ...moves] = positions;
+  const coordinates = (position: number) => ({
+    clientX: position,
+    clientY: 18,
+  });
+
+  fireEvent.mouseMove(document, coordinates(start!));
+  fireEvent.pointerDown(handle, {
+    ...coordinates(start!),
+    button: 0,
+    buttons: 1,
+    isPrimary: true,
+    pointerId: 1,
+    pointerType: "mouse",
+  });
+  for (const position of moves) {
+    fireEvent.mouseMove(document, coordinates(position));
+    fireEvent.pointerMove(document, {
+      ...coordinates(position),
+      buttons: 1,
+      isPrimary: true,
+      pointerId: 1,
+      pointerType: "mouse",
+    });
+    await flushAnimationFrame();
+  }
+  const end = positions.at(-1)!;
+  fireEvent.pointerCancel(document, {
+    ...coordinates(end),
+    button: 0,
+    buttons: 0,
+    isPrimary: true,
+    pointerId: 1,
+    pointerType: "mouse",
+  });
+  await flushAnimationFrame();
+}
+
+function getTimelineCard(rowId: string) {
+  return document.querySelector<HTMLElement>(
+    `[data-slot="timeline-track-row"][data-row-id="${rowId}"] [data-slot="timeline-item-card"]`,
+  )!;
+}
+
+async function waitForDragClickReset() {
+  await act(() => new Promise<void>((resolve) => setTimeout(resolve, 0)));
 }
 
 async function flushAnimationFrame() {

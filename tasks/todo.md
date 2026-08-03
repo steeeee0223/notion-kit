@@ -8,9 +8,9 @@
 
 ## Phase 2: Compound row and gestures
 
-- [ ] Task 3: Introduce Root, Jump, Track, Item, and Resize composition.
-- [ ] Task 4: Compose card click, drag, context menu, and locked behavior.
-- [ ] Checkpoint: UI and Table View Timeline suites and typechecks pass.
+- [x] Task 3: Introduce Root, Jump, Track, Item, and Resize composition.
+- [x] Task 4: Compose card click, drag, context menu, and locked behavior.
+- [x] Checkpoint: UI and Table View Timeline suites and typechecks pass.
 
 ## Phase 3: Consumer and slot migration
 

@@ -101,7 +101,7 @@ it("TimelineFlatRows_ValidEmptyAndInvalidDates_KeepSidebarAndTrackProjectionAlig
   expect(sidebarIds).toEqual(["valid", "empty", "invalid"]);
   expect(trackIds).toEqual(sidebarIds);
   expect(
-    container.querySelectorAll('[data-slot="notion-timeline-item"]'),
+    container.querySelectorAll('[data-slot="timeline-item"]'),
   ).toHaveLength(1);
   expect(
     container.querySelectorAll('button[aria-label="Valid task"]'),
@@ -154,7 +154,7 @@ it("TimelineSidebar_TitleResize_UpdatesLiveWidthAndActiveStyle", async () => {
   fireEvent.mouseUp(document, { clientX: 260 });
 });
 
-it("TimelineTitleAndBar_Click_OpenTheConfiguredRow", async () => {
+it("TimelineSidebarTitleAndCardSurface_Click_OpenTheConfiguredRow", async () => {
   const onViewChange =
     vi.fn<
       (change: ResourceChange<TableViewState, ViewResourceAction>) => void
@@ -185,10 +185,54 @@ it("TimelineTitleAndBar_Click_OpenTheConfiguredRow", async () => {
   const track = container.querySelector<HTMLElement>(
     '[data-slot="timeline-track-row"][data-row-id="valid"]',
   )!;
-  fireEvent.click(within(track).getByRole("button", { name: "Valid task" }));
+  fireEvent.click(
+    track.querySelector<HTMLElement>('[data-slot="timeline-item-card"]')!,
+  );
   expect(onViewChange.mock.lastCall?.[0].action).toMatchObject({
     type: "view.opened_row.change",
     payload: { previousRowId: "valid", nextRowId: "valid" },
+  });
+});
+
+it("TimelineUnlockedCard_ContextMenuTargetsTheMatchingRow", async () => {
+  const onDataChange =
+    vi.fn<(change: ResourceChange<Row[], DataResourceAction>) => void>();
+  const actionableRows: Row[] = [
+    rows[0]!,
+    {
+      ...rows[0]!,
+      id: "second",
+      properties: {
+        title: { id: "title-second", value: "Second task" },
+        due: {
+          id: "due-second",
+          value: { start: 172_800_000, end: 259_200_000 },
+        },
+      },
+    },
+  ];
+  const { container } = render(
+    <TableView
+      data={actionableRows}
+      properties={properties}
+      view={timelineView()}
+      onDataChange={onDataChange}
+    />,
+  );
+  const secondCard = container.querySelector<HTMLElement>(
+    '[data-slot="timeline-track-row"][data-row-id="second"] [data-slot="timeline-item-card"]',
+  )!;
+
+  fireEvent.contextMenu(secondCard, { clientX: 40, clientY: 20 });
+  fireEvent.click(await screen.findByRole("option", { name: "Delete" }));
+
+  await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
+  expect(onDataChange.mock.lastCall?.[0].action).toMatchObject({
+    type: "data.row.delete",
+    payload: {
+      rowIds: ["second"],
+      previousPositions: [{ rowId: "second", index: 1 }],
+    },
   });
 });
 
@@ -280,7 +324,7 @@ it("TimelineDatePropertySwitch_TwoPopulatedProperties_UpdatesBarCoordinates", as
     properties: [...properties, laterProperty],
     view: timelineView(),
   });
-  const bar = document.querySelector('[data-slot="notion-timeline-item"]');
+  const bar = document.querySelector('[data-slot="timeline-item"]');
   expect(bar).toHaveStyle({ insetInlineStart: "100800px", width: "150px" });
 
   const settings = await tableView.openViewSettings();
@@ -325,7 +369,7 @@ it("TimelineControlledDateCellReplacement_UpdatesBarCoordinates", async () => {
   const { rerender } = render(
     <TableView data={firstRows} properties={properties} view={view} />,
   );
-  const bar = document.querySelector('[data-slot="notion-timeline-item"]');
+  const bar = document.querySelector('[data-slot="timeline-item"]');
   expect(bar).toHaveStyle({ insetInlineStart: "100800px", width: "150px" });
 
   rerender(<TableView data={secondRows} properties={properties} view={view} />);
@@ -409,18 +453,23 @@ it("TimelineLockedRows_RenderOpenableItemsWithoutWriteOrReorderControls", async 
     container.querySelector('[data-slot="timeline-item-resizer"]'),
   ).not.toBeInTheDocument();
   expect(
-    container.querySelector('[aria-roledescription="draggable"]'),
-  ).not.toBeInTheDocument();
-  expect(
     screen.queryByRole("separator", { name: "Resize Name" }),
   ).not.toBeInTheDocument();
   expect(onDataChange).not.toHaveBeenCalled();
 
-  fireEvent.click(screen.getAllByRole("button", { name: "Valid task" })[0]!);
+  const lockedCard = container.querySelector<HTMLElement>(
+    '[data-slot="timeline-track-row"][data-row-id="valid"] [data-slot="timeline-item-card"]',
+  )!;
+  fireEvent.click(lockedCard);
   expect(onViewChange.mock.lastCall?.[0].action).toMatchObject({
     type: "view.opened_row.change",
     payload: { previousRowId: null, nextRowId: "valid" },
   });
+
+  fireEvent.contextMenu(lockedCard, { clientX: 40, clientY: 20 });
+  expect(
+    screen.queryByRole("option", { name: "Delete" }),
+  ).not.toBeInTheDocument();
 });
 
 it("TimelineGrouping_ExpandCollapse_KeepsSidebarAndTrackProjectionAligned", async () => {

@@ -15,10 +15,7 @@ import {
   TimelineAddFeatureTrack,
 } from "../timeline-feature";
 import { TimelineRangeHeader } from "../timeline-range-header";
-import { TimelineItem } from "../timeline-row/timeline-item";
-import { TimelineItemResizer } from "../timeline-row/timeline-item-resizer";
-import { TimelineJumpToItem } from "../timeline-row/timeline-jump-to-item";
-import { TimelineRow } from "../timeline-row/timeline-row";
+import { TimelineRow } from "../timeline-row";
 import { TimelineJumpTo } from "../tools/timeline-jump-to";
 import { TimelineRangeSelect } from "../tools/timeline-range-select";
 import {
@@ -47,7 +44,6 @@ const mocks = vi.hoisted(() => ({
   mouseElement: null as HTMLDivElement | null,
   windowScroll: { x: 0, y: 0 },
   draggable: false,
-  draggableInput: null as { disabled?: boolean; id: string } | null,
   setDragging: vi.fn(),
   pointerSensor: {
     configure: (value: unknown) => ({ configured: value }),
@@ -76,35 +72,79 @@ vi.mock("@dnd-kit/react", () => ({
     onDragEnd,
     sensors,
   }: React.PropsWithChildren<{
-    onDragStart?: () => void;
-    onDragMove?: () => void;
-    onDragEnd?: (event: { canceled: boolean }) => void;
+    onDragStart?: (event: {
+      operation: { source: { data?: { direction?: string }; type: string } };
+    }) => void;
+    onDragMove?: (event: {
+      operation: { source: { data?: { direction?: string }; type: string } };
+    }) => void;
+    onDragEnd?: (event: {
+      canceled: boolean;
+      operation: { source: { data?: { direction?: string }; type: string } };
+    }) => void;
     sensors?: (defaults: unknown[]) => unknown[];
-  }>) => (
-    <div data-sensor-count={sensors?.(["default", mocks.pointerSensor]).length}>
-      <button type="button" onClick={onDragStart}>
-        drag-start
-      </button>
-      <button type="button" onClick={onDragMove}>
-        drag-move
-      </button>
-      <button type="button" onClick={() => onDragEnd?.({ canceled: false })}>
-        drag-end
-      </button>
-      <button type="button" onClick={() => onDragEnd?.({ canceled: true })}>
-        drag-cancel
-      </button>
-      {children}
-    </div>
-  ),
-  useDraggable: (input: { disabled?: boolean; id: string }) => {
-    mocks.draggableInput = input;
-    return {
-      handleRef: vi.fn(),
-      isDragging: mocks.draggable,
-      ref: vi.fn(),
-    };
+  }>) => {
+    const source = (type: string, direction?: string) => ({
+      operation: {
+        source: { type, data: direction ? { direction } : undefined },
+      },
+    });
+
+    return (
+      <div
+        data-sensor-count={sensors?.(["default", mocks.pointerSensor]).length}
+      >
+        {[
+          ["item", "timeline-item", undefined],
+          ["resize-start", "timeline-item-resizer", "start"],
+          ["resize-end", "timeline-item-resizer", "end"],
+        ].map(([label, type, direction]) => (
+          <React.Fragment key={label}>
+            <button
+              type="button"
+              onClick={() => onDragStart?.(source(type!, direction))}
+            >
+              drag-start-{label}
+            </button>
+            <button
+              type="button"
+              onClick={() => onDragMove?.(source(type!, direction))}
+            >
+              drag-move-{label}
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                onDragEnd?.({
+                  ...source(type!, direction),
+                  canceled: false,
+                })
+              }
+            >
+              drag-end-{label}
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                onDragEnd?.({
+                  ...source(type!, direction),
+                  canceled: true,
+                })
+              }
+            >
+              drag-cancel-{label}
+            </button>
+          </React.Fragment>
+        ))}
+        {children}
+      </div>
+    );
   },
+  useDraggable: () => ({
+    handleRef: vi.fn(),
+    isDragging: mocks.draggable,
+    ref: vi.fn(),
+  }),
 }));
 
 vi.mock("@dnd-kit/dom", () => ({
@@ -142,6 +182,14 @@ vi.mock("@/primitives", () => ({
       {children}
     </button>
   ),
+  composeRefs:
+    (...refs: React.Ref<unknown>[]) =>
+    (value: unknown) => {
+      for (const ref of refs) {
+        if (typeof ref === "function") ref(value);
+        else if (ref) ref.current = value;
+      }
+    },
   ContextMenu: ({ children }: React.PropsWithChildren) => <>{children}</>,
   ContextMenuContent: ({ children }: React.PropsWithChildren) => (
     <div>{children}</div>
@@ -206,7 +254,6 @@ describe("timeline components", () => {
     vi.clearAllMocks();
     mocks.dragging = false;
     mocks.draggable = false;
-    mocks.draggableInput = null;
     mocks.scrollX = 0;
     mocks.sidebarWidth = 0;
     mocks.containerWidth = 500;
@@ -255,16 +302,6 @@ describe("timeline components", () => {
       expect(result.current.scrollLeft).toBe(1000);
     },
   );
-
-  it("TimelineItem_MissingMoveCallback_DoesNotExposeHorizontalDrag", () => {
-    render(
-      <TimelineItem
-        item={{ id: "locked", name: "Locked", startAt: 100, endAt: 200 }}
-      />,
-    );
-
-    expect(mocks.draggableInput).toBeNull();
-  });
 
   it("TimelineContentWrappers_CustomProps_AreForwardedWithSlots", () => {
     render(
@@ -655,9 +692,15 @@ describe("timeline components", () => {
       startAt: new Date(2026, 0, 1).getTime(),
       endAt: new Date(2026, 0, 2).getTime(),
     };
-    const { rerender } = render(<TimelineJumpToItem item={leftItem} />);
+    const { container, rerender } = render(
+      <TimelineRow.Root item={leftItem}>
+        <TimelineRow.Jump />
+      </TimelineRow.Root>,
+    );
 
-    const buttons = screen.getAllByRole("button");
+    const buttons = container.querySelectorAll(
+      '[data-slot="timeline-jump-to-item"] button',
+    );
     expect(buttons[0]).toHaveClass("opacity-100");
     expect(buttons[1]).not.toHaveClass("opacity-100");
     await userEvent.click(buttons[0]!);
@@ -669,8 +712,16 @@ describe("timeline components", () => {
       startAt: new Date(2026, 11, 1).getTime(),
       endAt: new Date(2026, 11, 2).getTime(),
     };
-    rerender(<TimelineJumpToItem item={rightItem} />);
-    expect(screen.getAllByRole("button")[1]).toHaveClass("opacity-100");
+    rerender(
+      <TimelineRow.Root item={rightItem}>
+        <TimelineRow.Jump />
+      </TimelineRow.Root>,
+    );
+    expect(
+      container.querySelectorAll(
+        '[data-slot="timeline-jump-to-item"] button',
+      )[1],
+    ).toHaveClass("opacity-100");
   });
 
   it("TimelineToolbar_WithAndWithoutSidebarAction_AlignsToContainer", () => {
@@ -727,21 +778,26 @@ describe("timeline components", () => {
     "TimelineItem_%sDateSpan_ComputesExpectedWidth",
     (range, startAt, endAt, expectedWidth) => {
       setTimeline(range);
+      const item = {
+        id: "item",
+        name: "Item",
+        startAt: startAt.getTime(),
+        endAt: endAt?.getTime() ?? null,
+      };
       const { container } = render(
-        <TimelineItem
-          item={{
-            id: "item",
-            name: "Item",
-            startAt: startAt.getTime(),
-            endAt: endAt?.getTime() ?? null,
-          }}
-          render={() => <span>card</span>}
-        />,
+        <TimelineRow.Root item={item}>
+          <TimelineRow.Track>
+            <TimelineRow.Item>card</TimelineRow.Item>
+          </TimelineRow.Track>
+        </TimelineRow.Root>,
       );
 
       expect(
-        container.querySelector('[data-slot="notion-timeline-item"]'),
+        container.querySelector('[data-slot="timeline-item"]'),
       ).toHaveStyle({ width: `${expectedWidth}px` });
+      expect(
+        container.querySelector('[data-slot="timeline-item"]'),
+      ).toHaveAttribute("data-notion-slot", "notion-timeline-item");
       expect(screen.getByText("card")).toBeInTheDocument();
     },
   );
@@ -750,14 +806,18 @@ describe("timeline components", () => {
     setTimeline("daily");
 
     const { container } = render(
-      <TimelineItem
+      <TimelineRow.Root
         item={{ id: "epoch", name: "Epoch", startAt: 0, endAt: 0 }}
-      />,
+      >
+        <TimelineRow.Track>
+          <TimelineRow.Item />
+        </TimelineRow.Track>
+      </TimelineRow.Root>,
     );
 
-    expect(
-      container.querySelector('[data-slot="notion-timeline-item"]'),
-    ).toHaveStyle({ width: "50px" });
+    expect(container.querySelector('[data-slot="timeline-item"]')).toHaveStyle({
+      width: "50px",
+    });
   });
 
   it("TimelineItem_ControlledRangeReplacement_UsesLatestCoordinates", () => {
@@ -773,11 +833,23 @@ describe("timeline components", () => {
       startAt: new Date(2026, 0, 20).getTime(),
       endAt: new Date(2026, 0, 23).getTime(),
     };
-    const { container, rerender } = render(<TimelineItem item={first} />);
-    const item = container.querySelector('[data-slot="notion-timeline-item"]');
+    const { container, rerender } = render(
+      <TimelineRow.Root item={first}>
+        <TimelineRow.Track>
+          <TimelineRow.Item />
+        </TimelineRow.Track>
+      </TimelineRow.Root>,
+    );
+    const item = container.querySelector('[data-slot="timeline-item"]');
     expect(item).toHaveStyle({ insetInlineStart: "450px", width: "100px" });
 
-    rerender(<TimelineItem item={second} />);
+    rerender(
+      <TimelineRow.Root item={second}>
+        <TimelineRow.Track>
+          <TimelineRow.Item />
+        </TimelineRow.Track>
+      </TimelineRow.Root>,
+    );
 
     expect(item).toHaveStyle({ insetInlineStart: "950px", width: "150px" });
   });
@@ -788,29 +860,36 @@ describe("timeline components", () => {
     const endAt = new Date(2026, 0, 12).getTime();
     setTimeline("daily");
     mocks.mouse = { x: 100, y: 0 };
+    const item = { id: "item", name: "Item", startAt, endAt };
     const { rerender } = render(
-      <TimelineItem
-        item={{ id: "item", name: "Item", startAt, endAt }}
-        onMove={onMove}
-      />,
+      <TimelineRow.Root item={item} onMove={onMove}>
+        <TimelineRow.Track>
+          <TimelineRow.Resize direction="start" />
+          <TimelineRow.Item>card</TimelineRow.Item>
+          <TimelineRow.Resize direction="end" />
+        </TimelineRow.Track>
+      </TimelineRow.Root>,
     );
 
     await userEvent.click(
-      screen.getAllByRole("button", { name: "drag-start" })[1]!,
+      screen.getByRole("button", { name: "drag-start-item" }),
     );
     expect(mocks.setDragging).toHaveBeenCalledWith(true);
     mocks.mouse = { x: 200, y: 0 };
     rerender(
-      <TimelineItem
-        item={{ id: "item", name: "Item", startAt, endAt }}
-        onMove={onMove}
-      />,
+      <TimelineRow.Root item={item} onMove={onMove}>
+        <TimelineRow.Track>
+          <TimelineRow.Resize direction="start" />
+          <TimelineRow.Item>card</TimelineRow.Item>
+          <TimelineRow.Resize direction="end" />
+        </TimelineRow.Track>
+      </TimelineRow.Root>,
     );
     await userEvent.click(
-      screen.getAllByRole("button", { name: "drag-move" })[1]!,
+      screen.getByRole("button", { name: "drag-move-item" }),
     );
     await userEvent.click(
-      screen.getAllByRole("button", { name: "drag-end" })[1]!,
+      screen.getByRole("button", { name: "drag-end-item" }),
     );
 
     expect(mocks.setDragging).toHaveBeenCalledWith(false);
@@ -819,14 +898,68 @@ describe("timeline components", () => {
       new Date(2026, 0, 12).getTime(),
       new Date(2026, 0, 14).getTime(),
     );
+  });
 
-    await userEvent.click(
-      screen.getAllByRole("button", { name: "drag-start" })[1]!,
+  it("TimelineRow_ActivatedDrag_SuppressesCardClick", () => {
+    const onClick = vi.fn();
+    const item = {
+      id: "item",
+      name: "Item",
+      startAt: new Date(2026, 0, 10).getTime(),
+      endAt: new Date(2026, 0, 12).getTime(),
+    };
+    render(
+      <TimelineRow.Root item={item} onMove={vi.fn()}>
+        <TimelineRow.Track>
+          <TimelineRow.Item onClick={onClick}>card</TimelineRow.Item>
+        </TimelineRow.Track>
+      </TimelineRow.Root>,
     );
-    await userEvent.click(
-      screen.getAllByRole("button", { name: "drag-cancel" })[1]!,
+    const card = screen.getByRole("button", { name: "card" });
+
+    fireEvent.click(card);
+    expect(onClick).toHaveBeenCalledOnce();
+
+    fireEvent.click(screen.getByRole("button", { name: "drag-start-item" }));
+    fireEvent.click(screen.getByRole("button", { name: "drag-end-item" }));
+    fireEvent.click(card);
+
+    expect(onClick).toHaveBeenCalledOnce();
+  });
+
+  it("TimelineRow_CanceledDrag_RestoresAuthoritativeRangeWithoutCommit", () => {
+    const onMove = vi.fn();
+    const item = {
+      id: "item",
+      name: "Item",
+      startAt: new Date(2026, 0, 10).getTime(),
+      endAt: new Date(2026, 0, 12).getTime(),
+    };
+    setTimeline("daily");
+    mocks.mouse = { x: 100, y: 0 };
+    const { container, rerender } = render(
+      <TimelineRow.Root item={item} onMove={onMove}>
+        <TimelineRow.Track>
+          <TimelineRow.Item>card</TimelineRow.Item>
+        </TimelineRow.Track>
+      </TimelineRow.Root>,
     );
-    expect(onMove).toHaveBeenCalledTimes(1);
+    const frame = container.querySelector('[data-slot="timeline-item"]');
+
+    fireEvent.click(screen.getByRole("button", { name: "drag-start-item" }));
+    mocks.mouse = { x: 200, y: 0 };
+    rerender(
+      <TimelineRow.Root item={item} onMove={onMove}>
+        <TimelineRow.Track>
+          <TimelineRow.Item>card</TimelineRow.Item>
+        </TimelineRow.Track>
+      </TimelineRow.Root>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "drag-move-item" }));
+    fireEvent.click(screen.getByRole("button", { name: "drag-cancel-item" }));
+
+    expect(frame).toHaveStyle({ insetInlineStart: "450px", width: "100px" });
+    expect(onMove).not.toHaveBeenCalled();
   });
 
   it("TimelineItem_OpenEndedDrag_MovesStartWithoutCreatingEndDate", async () => {
@@ -835,31 +968,34 @@ describe("timeline components", () => {
     setTimeline("daily");
     mocks.mouse = { x: 100, y: 0 };
     mocks.draggable = true;
+    const item = { id: "open", name: "Open", startAt, endAt: null };
     const { container, rerender } = render(
-      <TimelineItem
-        item={{ id: "open", name: "Open", startAt, endAt: null }}
-        onMove={onMove}
-      />,
+      <TimelineRow.Root item={item} onMove={onMove}>
+        <TimelineRow.Track>
+          <TimelineRow.Item>card</TimelineRow.Item>
+        </TimelineRow.Track>
+      </TimelineRow.Root>,
     );
     expect(
-      container.querySelector('[data-slot="notion-timeline-item-properties"]'),
+      container.querySelector('[data-slot="timeline-item-card"]'),
     ).toHaveClass("cursor-grabbing");
 
     await userEvent.click(
-      screen.getAllByRole("button", { name: "drag-start" })[1]!,
+      screen.getByRole("button", { name: "drag-start-item" }),
     );
     mocks.mouse = { x: 150, y: 0 };
     rerender(
-      <TimelineItem
-        item={{ id: "open", name: "Open", startAt, endAt: null }}
-        onMove={onMove}
-      />,
+      <TimelineRow.Root item={item} onMove={onMove}>
+        <TimelineRow.Track>
+          <TimelineRow.Item>card</TimelineRow.Item>
+        </TimelineRow.Track>
+      </TimelineRow.Root>,
     );
     await userEvent.click(
-      screen.getAllByRole("button", { name: "drag-move" })[1]!,
+      screen.getByRole("button", { name: "drag-move-item" }),
     );
     await userEvent.click(
-      screen.getAllByRole("button", { name: "drag-end" })[1]!,
+      screen.getByRole("button", { name: "drag-end-item" }),
     );
 
     expect(onMove).toHaveBeenCalledWith(
@@ -869,9 +1005,8 @@ describe("timeline components", () => {
     );
   });
 
-  it("TimelineItemResizer_DragLifecycle_PreviewsRestoresAndCommitsDate", async () => {
-    const onDragMove = vi.fn();
-    const onDragEnd = vi.fn();
+  it("TimelineRow_ResizeCancel_RestoresAuthoritativeRangeWithoutCommit", () => {
+    const onMove = vi.fn();
     const timelineElement = document.createElement("div");
     vi.spyOn(timelineElement, "getBoundingClientRect").mockReturnValue({
       left: 20,
@@ -881,64 +1016,111 @@ describe("timeline components", () => {
     mocks.scrollX = 100;
     mocks.sidebarWidth = 25;
     mocks.draggable = true;
-    const initialDate = new Date(2026, 0, 10);
-    const { container, rerender } = render(
-      <TimelineItemResizer
-        id="item"
-        direction="left"
-        ts={initialDate.getTime()}
-        onDragMove={onDragMove}
-        onDragEnd={onDragEnd}
-      />,
+    const item = {
+      id: "item",
+      name: "Item",
+      startAt: new Date(2026, 0, 10).getTime(),
+      endAt: new Date(2026, 0, 20).getTime(),
+    };
+    const { container } = render(
+      <TimelineRow.Root item={item} onMove={onMove}>
+        <TimelineRow.Track>
+          <TimelineRow.Resize direction="start" />
+          <TimelineRow.Item>card</TimelineRow.Item>
+          <TimelineRow.Resize direction="end" />
+        </TimelineRow.Track>
+      </TimelineRow.Root>,
+    );
+    const frame = container.querySelector('[data-slot="timeline-item"]');
+    const initialStyle = frame?.getAttribute("style");
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "drag-start-resize-start" }),
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "drag-move-resize-start" }),
+    );
+    expect(screen.getByText("Mar 06, 2026")).toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole("button", { name: "drag-cancel-resize-start" }),
     );
 
-    const resizer = container.querySelector(
-      '[data-slot="timeline-item-resizer"]',
-    );
-    expect(resizer).toHaveClass("-inset-s-1.5", "opacity-100");
-    expect(screen.getByText("Jan 10, 2026")).toHaveClass("text-end");
-
-    await userEvent.click(screen.getByRole("button", { name: "drag-move" }));
-    expect(onDragMove).toHaveBeenLastCalledWith(new Date(2026, 2, 6));
-
-    await userEvent.click(screen.getByRole("button", { name: "drag-start" }));
-    expect(mocks.setDragging).toHaveBeenLastCalledWith(true);
-    await userEvent.click(screen.getByRole("button", { name: "drag-cancel" }));
-    expect(mocks.setDragging).toHaveBeenLastCalledWith(false);
-    expect(onDragMove).toHaveBeenLastCalledWith(initialDate);
-    expect(onDragEnd).not.toHaveBeenCalled();
-
-    await userEvent.click(screen.getByRole("button", { name: "drag-start" }));
-    await userEvent.click(screen.getByRole("button", { name: "drag-end" }));
-    expect(onDragEnd).toHaveBeenCalledOnce();
-
-    mocks.draggable = false;
-    rerender(<TimelineItemResizer id="item" direction="right" ts={null} />);
-    expect(
-      container.querySelector('[data-slot="timeline-item-resizer"]'),
-    ).toHaveClass("-inset-e-1.5");
-    expect(screen.queryByText("Jan 10, 2026")).not.toBeInTheDocument();
-    setTimeline("monthly", { ref: null });
-    await userEvent.click(screen.getByRole("button", { name: "drag-move" }));
-    await userEvent.click(screen.getByRole("button", { name: "drag-start" }));
-    await userEvent.click(screen.getByRole("button", { name: "drag-cancel" }));
-    await userEvent.click(screen.getByRole("button", { name: "drag-end" }));
+    expect(frame?.getAttribute("style")).toBe(initialStyle);
+    expect(onMove).not.toHaveBeenCalled();
   });
 
-  it("TimelineRow_WithItem_RendersJumpControlAndItem", () => {
+  it("TimelineRow_EndResize_CommitsDraftRangeOnce", () => {
+    const onMove = vi.fn();
+    const timelineElement = document.createElement("div");
+    vi.spyOn(timelineElement, "getBoundingClientRect").mockReturnValue({
+      left: 20,
+    } as DOMRect);
+    setTimeline("monthly", { ref: { current: timelineElement } });
+    mocks.mouse = { x: 245, y: 0 };
+    mocks.scrollX = 100;
+    mocks.sidebarWidth = 25;
+    const item = {
+      id: "item",
+      name: "Item",
+      startAt: new Date(2026, 0, 10).getTime(),
+      endAt: new Date(2026, 0, 20).getTime(),
+    };
+    render(
+      <TimelineRow.Root item={item} onMove={onMove}>
+        <TimelineRow.Track>
+          <TimelineRow.Item>card</TimelineRow.Item>
+          <TimelineRow.Resize direction="end" />
+        </TimelineRow.Track>
+      </TimelineRow.Root>,
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "drag-start-resize-end" }),
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "drag-move-resize-end" }),
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "drag-end-resize-end" }),
+    );
+
+    expect(onMove).toHaveBeenCalledOnce();
+    expect(onMove).toHaveBeenCalledWith(
+      "item",
+      item.startAt,
+      new Date(2026, 2, 6).getTime(),
+    );
+  });
+
+  it("TimelineRow_CompoundParts_ShareItemGeometryAndGestureState", () => {
     const item = {
       id: "row",
       name: "Row",
       startAt: new Date(2026, 0, 1).getTime(),
       endAt: new Date(2026, 0, 2).getTime(),
     };
-    const { container } = render(<TimelineRow item={item} />);
+    const { container } = render(
+      <TimelineRow.Root item={item} onMove={vi.fn()}>
+        <TimelineRow.Jump />
+        <TimelineRow.Track>
+          <TimelineRow.Resize direction="start" />
+          <TimelineRow.Item>row card</TimelineRow.Item>
+          <TimelineRow.Resize direction="end" />
+        </TimelineRow.Track>
+      </TimelineRow.Root>,
+    );
 
     expect(
       container.querySelector('[data-slot="timeline-jump-to-item"]'),
     ).toBeInTheDocument();
     expect(
-      container.querySelector('[data-slot="timeline-item"]'),
+      container.querySelector('[data-slot="timeline-item-track"]'),
     ).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-slot="timeline-item-card"]'),
+    ).toHaveAttribute("data-notion-slot", "notion-timeline-item-properties");
+    expect(
+      container.querySelectorAll('[data-slot="timeline-item-resizer"]'),
+    ).toHaveLength(2);
   });
 });
