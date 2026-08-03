@@ -2,9 +2,9 @@
 
 ## Phase 1: Independent regressions
 
-- [ ] Task 1: Restore selected-range feedback with one real-component test.
-- [ ] Task 2: Position jump targets after the sidebar with a provider test.
-- [ ] Checkpoint: focused UI tests pass.
+- [x] Task 1: Restore selected-range feedback with one real-component test.
+- [x] Task 2: Position jump targets after the sidebar with a provider test.
+- [x] Checkpoint: focused UI tests pass.
 
 ## Phase 2: Compound row and gestures
 

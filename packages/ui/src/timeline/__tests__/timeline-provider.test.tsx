@@ -35,7 +35,7 @@ const observerState = {
   scrollTo: vi.fn(),
 };
 
-function TimelineProbe() {
+function TimelineProbe({ featureStartAt }: { featureStartAt?: number }) {
   const timeline = useTimelineContext();
   const [dragging, setDragging] = useTimelineDragging();
   const [scrollX] = useTimelineScrollX();
@@ -62,7 +62,9 @@ function TimelineProbe() {
           timeline.scrollToFeature({
             id: "feature",
             name: "Feature",
-            startAt: timeline.timelineData.start.getTime() - 86_400_000,
+            startAt:
+              featureStartAt ??
+              timeline.timelineData.start.getTime() - 86_400_000,
             endAt: timeline.timelineData.start.getTime(),
           })
         }
@@ -215,6 +217,43 @@ describe("TimelineProvider", () => {
       resizeDisconnectsBeforeUnmount + 1,
     );
   });
+
+  it.each([
+    ["sidebar", 240, 260],
+    ["zero-width sidebar", 0, 500],
+    ["sidebar wider than the feature offset", 600, 0],
+  ])(
+    "TimelineProvider_ScrollToFeature_%s_AlignsAtTheSidebarInlineEnd",
+    async (_scenario, sidebarWidth, expectedScrollLeft) => {
+      const start = new Date(2026, 0, 1).getTime();
+      const featureStartAt = new Date(2026, 0, 11).getTime();
+
+      render(
+        <TimelineProvider
+          range="daily"
+          startDate={start}
+          endDate={new Date(2026, 1, 1).getTime()}
+          sidebarWidth={sidebarWidth}
+        >
+          <TimelineProbe featureStartAt={featureStartAt} />
+        </TimelineProvider>,
+      );
+
+      await waitFor(() =>
+        expect(screen.getByTestId("state")).toHaveTextContent(
+          new RegExp(`:${sidebarWidth}:`),
+        ),
+      );
+      fireEvent.click(
+        screen.getByRole("button", { name: "scroll to feature" }),
+      );
+
+      expect(observerState.scrollTo).toHaveBeenCalledWith({
+        left: expectedScrollLeft,
+        behavior: "smooth",
+      });
+    },
+  );
 
   it("TimelineProvider_RangeChanges_PreservesViewportCenter", async () => {
     const start = new Date(2025, 0, 1).getTime();

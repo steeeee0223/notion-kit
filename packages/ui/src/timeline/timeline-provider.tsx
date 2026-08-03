@@ -260,14 +260,14 @@ function TimelineProviderInner({
         timelineData,
       });
 
-      const targetScrollLeft = Math.max(0, offset);
+      const targetScrollLeft = Math.max(0, offset - sidebarWidth);
 
       scrollElement.scrollTo({
         left: targetScrollLeft,
         behavior: "smooth",
       });
     },
-    [range, timelineData, zoom],
+    [range, sidebarWidth, timelineData, zoom],
   );
 
   const ctx = useMemo(

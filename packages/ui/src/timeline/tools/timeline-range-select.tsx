@@ -48,7 +48,6 @@ export function TimelineRangeSelect({
               key={option.value}
               value={option.value}
               label={option.label}
-              hideCheck
             />
           ))}
         </SelectGroup>
