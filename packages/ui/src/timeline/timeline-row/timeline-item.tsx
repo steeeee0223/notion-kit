@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { RestrictToHorizontalAxis } from "@dnd-kit/abstract/modifiers";
 import { PointerActivationConstraints, PointerSensor } from "@dnd-kit/dom";
 import {
@@ -47,7 +47,7 @@ function getWidth(
 ) {
   const columnWidth = resolveColumnWidth(ctx.range, ctx.zoom);
 
-  if (!endAt) {
+  if (endAt === null) {
     return columnWidth * 2;
   }
 
@@ -113,10 +113,16 @@ export function TimelineItem({
   render,
 }: TimelineItemProps) {
   const timeline = useTimelineContext();
-  const [startAt, setStartAt] = useState<Date>(new Date(item.startAt));
-  const [endAt, setEndAt] = useState<Date | null>(
-    item.endAt ? new Date(item.endAt) : null,
+  const sourceStartAt = useMemo(() => new Date(item.startAt), [item.startAt]);
+  const sourceEndAt = useMemo(
+    () => (item.endAt === null ? null : new Date(item.endAt)),
+    [item.endAt],
   );
+  const [draftStartAt, setDraftStartAt] = useState(sourceStartAt);
+  const [draftEndAt, setDraftEndAt] = useState(sourceEndAt);
+  const [gestureActive, setGestureActive] = useState(false);
+  const startAt = gestureActive ? draftStartAt : sourceStartAt;
+  const endAt = gestureActive ? draftEndAt : sourceEndAt;
 
   const width = useMemo(
     () => getWidth(startAt, endAt, timeline),
@@ -132,45 +138,53 @@ export function TimelineItem({
 
   const [mousePosition] = useMouse<HTMLDivElement>();
 
-  const [previousMouseX, setPreviousMouseX] = useState(0);
-  const [previousStartAt, setPreviousStartAt] = useState(startAt);
-  const [previousEndAt, setPreviousEndAt] = useState(endAt);
+  const dragOriginRef = useRef<{
+    mouseX: number;
+    startAt: Date;
+    endAt: Date | null;
+  } | null>(null);
+
+  const beginGesture = () => {
+    setDraftStartAt(sourceStartAt);
+    setDraftEndAt(sourceEndAt);
+    setGestureActive(true);
+  };
 
   const handleItemDragStart = () => {
+    beginGesture();
     setDragging(true);
-    setPreviousMouseX(mousePosition.x);
-    setPreviousStartAt(startAt);
-    setPreviousEndAt(endAt);
+    dragOriginRef.current = {
+      mouseX: mousePosition.x,
+      startAt: sourceStartAt,
+      endAt: sourceEndAt,
+    };
   };
 
   const handleItemDragMove = useCallback(() => {
+    const origin = dragOriginRef.current;
+    if (!origin) return;
     const currentDate = getDateByMousePosition(timeline, mousePosition.x);
-    const originalDate = getDateByMousePosition(timeline, previousMouseX);
+    const originalDate = getDateByMousePosition(timeline, origin.mouseX);
     const delta =
       timeline.range === "daily"
         ? differenceInFn[timeline.range](currentDate, originalDate)
         : innerDifferenceInFn[timeline.range](currentDate, originalDate);
-    const newStartDate = addDays(previousStartAt, delta);
-    const newEndDate = previousEndAt ? addDays(previousEndAt, delta) : null;
+    const newStartDate = addDays(origin.startAt, delta);
+    const newEndDate =
+      origin.endAt === null ? null : addDays(origin.endAt, delta);
 
-    setStartAt(newStartDate);
-    setEndAt(newEndDate);
-  }, [
-    timeline,
-    mousePosition.x,
-    previousMouseX,
-    previousStartAt,
-    previousEndAt,
-  ]);
+    setDraftStartAt(newStartDate);
+    setDraftEndAt(newEndDate);
+  }, [timeline, mousePosition.x]);
 
   const handleDragEnd = (event?: DragEndEvent) => {
     setDragging(false);
+    dragOriginRef.current = null;
+    setGestureActive(false);
     if (event?.canceled) {
-      setStartAt(previousStartAt);
-      setEndAt(previousEndAt);
       return;
     }
-    onMove?.(item.id, startAt.getTime(), endAt?.getTime() ?? null);
+    onMove?.(item.id, draftStartAt.getTime(), draftEndAt?.getTime() ?? null);
   };
 
   return (
@@ -195,8 +209,10 @@ export function TimelineItem({
             direction="left"
             id={item.id}
             ts={startAt.getTime()}
-            onDragMove={setStartAt}
+            onDragStart={beginGesture}
+            onDragMove={setDraftStartAt}
             onDragEnd={handleDragEnd}
+            onDragCancel={() => setGestureActive(false)}
           />
         )}
         {/* Item card */}
@@ -223,8 +239,10 @@ export function TimelineItem({
             direction="right"
             id={item.id}
             ts={endAt?.getTime() ?? addRange(startAt, 2).getTime()}
-            onDragMove={setEndAt}
+            onDragStart={beginGesture}
+            onDragMove={setDraftEndAt}
             onDragEnd={handleDragEnd}
+            onDragCancel={() => setGestureActive(false)}
           />
         )}
       </div>

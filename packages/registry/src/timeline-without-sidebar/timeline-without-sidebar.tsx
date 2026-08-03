@@ -53,7 +53,7 @@ export default function WithoutSidebar() {
     startAt: number,
     endAt: number | null,
   ) => {
-    if (!endAt) {
+    if (endAt === null) {
       return;
     }
 

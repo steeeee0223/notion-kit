@@ -22,7 +22,7 @@ export interface TimelineFeature {
   id: string;
   name: string;
   startAt: number;
-  endAt: number;
+  endAt: number | null;
 }
 
 export interface TimelineContextProps {

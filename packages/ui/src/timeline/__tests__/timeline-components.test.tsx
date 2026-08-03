@@ -698,7 +698,7 @@ describe("timeline components", () => {
             id: "item",
             name: "Item",
             startAt: startAt.getTime(),
-            endAt: endAt?.getTime() ?? 0,
+            endAt: endAt?.getTime() ?? null,
           }}
           render={() => <span>card</span>}
         />,
@@ -710,6 +710,42 @@ describe("timeline components", () => {
       expect(screen.getByText("card")).toBeInTheDocument();
     },
   );
+
+  it("TimelineItem_EqualEpochRange_RendersEqualBoundaryWidth", () => {
+    setTimeline("daily");
+
+    const { container } = render(
+      <TimelineItem
+        item={{ id: "epoch", name: "Epoch", startAt: 0, endAt: 0 }}
+      />,
+    );
+
+    expect(
+      container.querySelector('[data-slot="notion-timeline-item"]'),
+    ).toHaveStyle({ width: "50px" });
+  });
+
+  it("TimelineItem_ControlledRangeReplacement_UsesLatestCoordinates", () => {
+    setTimeline("daily");
+    const first = {
+      id: "item",
+      name: "Item",
+      startAt: new Date(2026, 0, 10).getTime(),
+      endAt: new Date(2026, 0, 12).getTime(),
+    };
+    const second = {
+      ...first,
+      startAt: new Date(2026, 0, 20).getTime(),
+      endAt: new Date(2026, 0, 23).getTime(),
+    };
+    const { container, rerender } = render(<TimelineItem item={first} />);
+    const item = container.querySelector('[data-slot="notion-timeline-item"]');
+    expect(item).toHaveStyle({ insetInlineStart: "450px", width: "100px" });
+
+    rerender(<TimelineItem item={second} />);
+
+    expect(item).toHaveStyle({ insetInlineStart: "950px", width: "150px" });
+  });
 
   it("TimelineItem_DragLifecycle_MovesCommitsAndRestoresDates", async () => {
     const onMove = vi.fn();
@@ -766,7 +802,7 @@ describe("timeline components", () => {
     mocks.draggable = true;
     const { container, rerender } = render(
       <TimelineItem
-        item={{ id: "open", name: "Open", startAt, endAt: 0 }}
+        item={{ id: "open", name: "Open", startAt, endAt: null }}
         onMove={onMove}
       />,
     );
@@ -780,7 +816,7 @@ describe("timeline components", () => {
     mocks.mouse = { x: 150, y: 0 };
     rerender(
       <TimelineItem
-        item={{ id: "open", name: "Open", startAt, endAt: 0 }}
+        item={{ id: "open", name: "Open", startAt, endAt: null }}
         onMove={onMove}
       />,
     );
@@ -828,7 +864,7 @@ describe("timeline components", () => {
     expect(screen.getByText("Jan 10, 2026")).toHaveClass("text-end");
 
     await userEvent.click(screen.getByRole("button", { name: "drag-move" }));
-    expect(onDragMove).toHaveBeenLastCalledWith(new Date(2026, 2, 1));
+    expect(onDragMove).toHaveBeenLastCalledWith(new Date(2026, 2, 6));
 
     await userEvent.click(screen.getByRole("button", { name: "drag-start" }));
     expect(mocks.setDragging).toHaveBeenLastCalledWith(true);

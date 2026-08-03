@@ -21,7 +21,7 @@ description: An composable, editable data table.
 
 - Table: sorting, grouping
 
-- Table Views: Table, List, Board
+- Table Views: Table, List, Board, Timeline
 
 - Cells plugins
   - Required plugins: `title`, `text`
@@ -101,6 +101,72 @@ Uncontrolled resources use `defaultData`, `defaultProperties`, and
 `defaultView`. Defaults are read only on mount; reset an uncontrolled table by
 remounting it with a new React `key`.
 
+## Timeline layout
+
+Set `layout` to `"timeline"` and identify the Date property that places rows on
+the timeline. The public `timeline` field is optional. Internally, it defaults
+to a monthly range and no persisted Date-property selection:
+
+```tsx
+const view = {
+  layout: "timeline",
+  rowView: "side",
+  openedRowId: null,
+  locked: false,
+  timeline: {
+    range: "monthly",
+    datePropertyId: null,
+  },
+} satisfies TableViewState;
+```
+
+When `datePropertyId` is `null`, missing, hidden, deleted, or not a `date`
+property, Timeline resolves the first visible, non-deleted Date property. An
+unlocked table persists that resolution with
+`view.timeline_property.change`. If no usable Date property exists, Timeline
+appends a Date property with a unique name based on `Timeline` (for example,
+`Timeline` or `Timeline 1`) and selects it. When rows exist, Timeline also
+initializes one cell for every row. Each seeded cell has this value:
+
+```ts
+{
+  start: row.createdAt,
+  end: Math.max(row.createdAt, row.lastEditedAt),
+  endDate: true,
+}
+```
+
+With rows present, automatic initialization emits `properties.create`,
+`data.cell.update`, and `view.timeline_property.change`, in that order, with
+one shared action id. An empty table has no cells to seed, so it emits only
+`properties.create` and `view.timeline_property.change`, with the same shared
+id. Controlled owners must accept the property and view `next` resources to
+leave the pending state and render Timeline. When rows exist, they must also
+accept the data `next` resource to preserve the initialized row values.
+
+Existing empty Date cells are not seeded. They remain empty tracks. In an
+unlocked Timeline, selecting an empty track creates a one-calendar-day value;
+moving or resizing a bar also replaces the cell value. These writes emit
+`data.cell.update` with the row id, property id, previous value, and next
+`{ start, end, endDate: true }` value.
+
+Other Timeline interactions use the same controlled resource API:
+
+- changing the range emits `view.timeline_range.change`;
+
+- choosing a Date property emits `view.timeline_property.change`;
+
+- reordering a sidebar row emits `data.row.move`;
+
+- opening a row emits `view.opened_row.change`.
+
+Locked Timelines remain navigable, so existing bars and row titles can still
+open rows. They do not show empty-track add controls, bar resizers, row drag
+handles, or the title-column resizer, and range changes do not write view
+state. A locked table without a usable Date property renders an empty
+read-only Timeline and does not create a property, seed cells, or repair the
+selection.
+
 ## Reactive custom children
 
 `TableView` does not rerender custom children for every internal store update.
@@ -156,9 +222,10 @@ A `TableState` is a generic type `TableState<TPlugins>` that represents the stat
 
 ### `type` TableViewState
 
-| Prop          | Type                                                                               | Default   | Description                                                                                                                                |
-| ------------- | ---------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `layout`      | `"table" \| "list" \| "board" \| "timeline" \| "calendar" \| "gallery" \| "chart"` | `"table"` | The layout view. Only table, list, and board are currently implemented; the other typed values are reserved and render the table fallback. |
-| `locked`      | `boolean`                                                                          | `false`   | Whether the table is locked (non-editable).                                                                                                |
-| `rowView`     | `"center" \| "side" \| "full"`                                                     | `"side"`  | The view type of the opened row.                                                                                                           |
-| `openedRowId` | `string \| null`                                                                   | `null`    | The unique identifier of the opened row.                                                                                                   |
+| Prop          | Type                                                                               | Default                                      | Description                                                                                                                    |
+| ------------- | ---------------------------------------------------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `layout`      | `"table" \| "list" \| "board" \| "timeline" \| "calendar" \| "gallery" \| "chart"` | `"table"`                                    | The layout view. Table, List, Board, and Timeline are implemented; the other typed values currently render the table fallback. |
+| `locked`      | `boolean`                                                                          | `false`                                      | Whether the table is locked (non-editable).                                                                                    |
+| `rowView`     | `"center" \| "side" \| "full"`                                                     | `"side"`                                     | The view type of the opened row.                                                                                               |
+| `openedRowId` | `string \| null`                                                                   | `null`                                       | The unique identifier of the opened row.                                                                                       |
+| `timeline`    | `{ range: "daily" \| "monthly" \| "quarterly"; datePropertyId: string \| null }`   | `{ range: "monthly", datePropertyId: null }` | Optional Timeline range and persisted Date-property selection.                                                                 |

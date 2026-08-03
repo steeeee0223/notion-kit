@@ -15,7 +15,6 @@ import {
   useTimelineContext,
   useTimelineDragging,
   useTimelineScrollX,
-  useTimelineSidebarWidth,
 } from "../timeline-provider";
 import { getDateByMousePosition } from "../utils";
 
@@ -45,6 +44,7 @@ function Resizer({ direction, id, ts }: ResizerProps) {
   return (
     <div
       data-slot="timeline-item-resizer"
+      data-direction={direction}
       className={cn(
         "absolute top-0 z-10 h-full w-2 cursor-col-resize opacity-0 transition-opacity hover:opacity-100",
         direction === "left" ? "-inset-s-1.5" : "-inset-e-1.5",
@@ -58,7 +58,7 @@ function Resizer({ direction, id, ts }: ResizerProps) {
           direction === "left" ? "inset-s-1" : "inset-s-0",
         )}
       />
-      {ts && (
+      {ts !== null && (
         <span
           className={cn(
             "pointer-events-none absolute h-9 w-50 text-xs/9",
@@ -75,34 +75,37 @@ function Resizer({ direction, id, ts }: ResizerProps) {
 }
 
 interface TimelineItemResizerProps extends ResizerProps {
+  onDragStart?: () => void;
   onDragMove?: (ts: Date) => void;
   onDragEnd?: () => void;
+  onDragCancel?: () => void;
 }
 
 export function TimelineItemResizer({
+  onDragStart,
   onDragMove,
   onDragEnd,
+  onDragCancel,
   ...props
 }: TimelineItemResizerProps) {
   const timeline = useTimelineContext();
   const [scrollX] = useTimelineScrollX();
   const [, setDragging] = useTimelineDragging();
-  const [sidebarWidth] = useTimelineSidebarWidth();
   const initialValueRef = useRef<Date | null>(null);
 
   const [mousePosition] = useMouse<HTMLDivElement>();
 
   const handleDragMove = useCallback(() => {
     const timelineRect = timeline.ref?.current?.getBoundingClientRect();
-    const x =
-      mousePosition.x - (timelineRect?.left ?? 0) + scrollX - sidebarWidth;
+    const x = mousePosition.x - (timelineRect?.left ?? 0) + scrollX;
 
     onDragMove?.(getDateByMousePosition(timeline, x));
-  }, [mousePosition.x, onDragMove, scrollX, sidebarWidth, timeline]);
+  }, [mousePosition.x, onDragMove, scrollX, timeline]);
 
   const handleDragStart = () => {
     initialValueRef.current = props.ts !== null ? new Date(props.ts) : null;
     setDragging(true);
+    onDragStart?.();
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -110,6 +113,7 @@ export function TimelineItemResizer({
     if (event.canceled) {
       if (initialValueRef.current) onDragMove?.(initialValueRef.current);
       initialValueRef.current = null;
+      onDragCancel?.();
       return;
     }
     initialValueRef.current = null;

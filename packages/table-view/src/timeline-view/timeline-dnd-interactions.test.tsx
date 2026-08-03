@@ -1,6 +1,7 @@
 import {
   act,
   fireEvent,
+  render,
   screen,
   waitFor,
   within,
@@ -13,6 +14,8 @@ import type {
   ResourceChange,
   Row,
 } from "@notion-kit/table-hook";
+
+import { TableView } from "@/table-contexts";
 
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
 import { mockResizeObserver } from "../__tests__/mock";
@@ -114,6 +117,124 @@ it("TimelineBarHandle_CrossThresholdAndReturn_CommitsExactMoveWithoutOpening", a
   expect(onViewChange).not.toHaveBeenCalled();
 });
 
+it("TimelineBarHandle_RejectedControlledMove_RestoresAuthoritativeCoordinates", async () => {
+  const onDataChange = vi.fn<(change: DataChange) => void>();
+  render(
+    <TableView
+      data={rows}
+      properties={properties}
+      view={{
+        layout: "timeline",
+        rowView: "side",
+        openedRowId: null,
+        timeline: { range: "monthly", datePropertyId: "due" },
+      }}
+      onDataChange={onDataChange}
+    />,
+  );
+  const track = document.querySelector<HTMLElement>(
+    '[data-slot="timeline-track-row"][data-row-id="valid"]',
+  )!;
+  const bar = track.querySelector<HTMLElement>(
+    '[data-slot="notion-timeline-item"]',
+  )!;
+  const handle = within(track).getByRole("button", {
+    name: "Move Valid task",
+  });
+
+  await dragPointer(handle, [0, 20, 30, 5]);
+
+  await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
+  expect(bar).toHaveStyle({ insetInlineStart: "0px", width: "5px" });
+});
+
+it("TimelineBarHandle_EqualEpochRange_CommitsExactMove", async () => {
+  const onDataChange = vi.fn<(change: DataChange) => void>();
+  const equalEpochRows: Row[] = [
+    {
+      ...rows[0]!,
+      properties: {
+        ...rows[0]!.properties,
+        due: { id: "due-valid", value: { start: 0, end: 0 } },
+      },
+    },
+  ];
+  renderTableView({
+    data: equalEpochRows,
+    properties,
+    view: {
+      layout: "timeline",
+      timeline: { range: "monthly", datePropertyId: "due" },
+    },
+    onDataChange,
+  });
+  const track = document.querySelector<HTMLElement>(
+    '[data-slot="timeline-track-row"][data-row-id="valid"]',
+  )!;
+  const handle = within(track).getByRole("button", {
+    name: "Move Valid task",
+  });
+
+  await dragPointer(handle, [0, 20, 30, 5]);
+
+  await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
+  expect(onDataChange.mock.lastCall?.[0].action).toMatchObject({
+    type: "data.cell.update",
+    payload: {
+      rowId: "valid",
+      propertyId: "due",
+      previousValue: { start: 0, end: 0 },
+      nextValue: {
+        start: -259_200_000,
+        end: -259_200_000,
+        endDate: true,
+      },
+    },
+  });
+});
+
+it("TimelineLeftResizer_EqualEpochRange_CommitsExactRange", async () => {
+  const onDataChange = vi.fn<(change: DataChange) => void>();
+  const equalEpochRows: Row[] = [
+    {
+      ...rows[0]!,
+      properties: {
+        ...rows[0]!.properties,
+        due: { id: "due-valid", value: { start: 0, end: 0 } },
+      },
+    },
+  ];
+  renderTableView({
+    data: equalEpochRows,
+    properties,
+    view: {
+      layout: "timeline",
+      timeline: { range: "monthly", datePropertyId: "due" },
+    },
+    onDataChange,
+  });
+  const leftResizer = document.querySelector<HTMLElement>(
+    '[data-slot="timeline-item-resizer"][data-direction="left"]',
+  )!;
+
+  await dragPointer(leftResizer, [25, 0]);
+
+  await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
+  expect(onDataChange.mock.lastCall?.[0].action).toMatchObject({
+    type: "data.cell.update",
+    payload: {
+      rowId: "valid",
+      propertyId: "due",
+      previousValue: { start: 0, end: 0 },
+      nextValue: {
+        start: 0,
+        end: 0,
+        endDate: true,
+      },
+    },
+  });
+});
+
 it("TimelineRightResizer_PointerDrag_CommitsExactCellEnvelope", async () => {
   const onDataChange = vi.fn<(change: DataChange) => void>();
   renderTableView({
@@ -136,7 +257,7 @@ it("TimelineRightResizer_PointerDrag_CommitsExactCellEnvelope", async () => {
   );
   expect(resizers).toHaveLength(2);
 
-  await dragPointer(resizers[1]!, [225, 245, 250]);
+  await dragPointer(resizers[1]!, [25, 45, 50]);
 
   await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
   const januaryEleventhAtLocalMidnight = new Date(1970, 0, 11).getTime();

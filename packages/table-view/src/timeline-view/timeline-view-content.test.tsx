@@ -245,6 +245,99 @@ it("TimelineSingleDate_Render_DoesNotMutateSourceCell", async () => {
   expect(onDataChange).not.toHaveBeenCalled();
 });
 
+it("TimelineDatePropertySwitch_TwoPopulatedProperties_UpdatesBarCoordinates", async () => {
+  const laterProperty: ColumnInfo = {
+    id: "later",
+    name: "Later",
+    type: "date",
+    width: "160",
+    config: { dateFormat: "full", timeFormat: "24-hour", tz: "UTC" },
+  };
+  const populatedRows: Row[] = [
+    {
+      ...rows[0]!,
+      properties: {
+        ...rows[0]!.properties,
+        due: {
+          id: "due-valid",
+          value: {
+            start: new Date(2026, 0, 1).getTime(),
+            end: new Date(2026, 1, 1).getTime(),
+          },
+        },
+        later: {
+          id: "later-valid",
+          value: {
+            start: new Date(2026, 2, 1).getTime(),
+            end: new Date(2026, 3, 1).getTime(),
+          },
+        },
+      },
+    },
+  ];
+  const tableView = renderTableView({
+    data: populatedRows,
+    properties: [...properties, laterProperty],
+    view: timelineView(),
+  });
+  const bar = document.querySelector('[data-slot="notion-timeline-item"]');
+  expect(bar).toHaveStyle({ insetInlineStart: "100800px", width: "150px" });
+
+  const settings = await tableView.openViewSettings();
+  const layout = await settings.openLayout();
+  await layout.selectTimelineProperty("Later");
+
+  expect(bar).toHaveStyle({ insetInlineStart: "101100px", width: "150px" });
+});
+
+it("TimelineControlledDateCellReplacement_UpdatesBarCoordinates", async () => {
+  const firstRows: Row[] = [
+    {
+      ...rows[0]!,
+      properties: {
+        ...rows[0]!.properties,
+        due: {
+          id: "due-valid",
+          value: {
+            start: new Date(2026, 0, 1).getTime(),
+            end: new Date(2026, 1, 1).getTime(),
+          },
+        },
+      },
+    },
+  ];
+  const secondRows: Row[] = [
+    {
+      ...firstRows[0]!,
+      properties: {
+        ...firstRows[0]!.properties,
+        due: {
+          id: "due-valid-replacement",
+          value: {
+            start: new Date(2026, 4, 1).getTime(),
+            end: new Date(2026, 5, 1).getTime(),
+          },
+        },
+      },
+    },
+  ];
+  const view = timelineView();
+  const { rerender } = render(
+    <TableView data={firstRows} properties={properties} view={view} />,
+  );
+  const bar = document.querySelector('[data-slot="notion-timeline-item"]');
+  expect(bar).toHaveStyle({ insetInlineStart: "100800px", width: "150px" });
+
+  rerender(<TableView data={secondRows} properties={properties} view={view} />);
+
+  await waitFor(() =>
+    expect(bar).toHaveStyle({
+      insetInlineStart: "101400px",
+      width: "150px",
+    }),
+  );
+});
+
 it("TimelineEmptyTrack_AddDate_WritesExactOneCalendarDayCellResource", async () => {
   const onDataChange =
     vi.fn<(change: ResourceChange<Row[], DataResourceAction>) => void>();

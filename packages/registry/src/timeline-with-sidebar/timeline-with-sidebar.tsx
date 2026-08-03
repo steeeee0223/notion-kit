@@ -54,7 +54,7 @@ export default function WithSidebar() {
     startAt: number,
     endAt: number | null,
   ) => {
-    if (!endAt) return;
+    if (endAt === null) return;
 
     setFeatures((prev) =>
       prev.map((feature) =>
