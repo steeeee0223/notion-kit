@@ -30,10 +30,10 @@ export class HeaderMenuObject extends MenuSurfaceObject {
   }
 
   async chooseSubmenu(trigger: AccessibleName, option: AccessibleName) {
-    await this.item(trigger).dispatchEvent("click");
+    await this.item(trigger).hover();
     const optionItem = this.page.getByRole("menuitem", { name: option }).last();
     await optionItem.waitFor({ state: "visible" });
-    await optionItem.dispatchEvent("click");
+    await optionItem.click();
     await this.root.waitFor({ state: "hidden" });
   }
 
@@ -98,8 +98,7 @@ export class HeaderMenuObject extends MenuSurfaceObject {
         exact: typeof typeName === "string",
       })
       .last();
-    await option.click({ force: true });
-    await this.root.waitFor({ state: "hidden" });
+    await option.click();
   }
 
   async openPluginConfig(name: AccessibleName = "Edit property") {

@@ -9,7 +9,7 @@ import { SortMenuObject } from "./sort-menu";
 import { ViewSettingsMenuObject } from "./view-settings-menu";
 
 type TableMode = "controlled" | "uncontrolled";
-export type TableLayout = "table" | "list" | "board";
+export type TableLayout = "table" | "list" | "board" | "timeline";
 
 function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -18,7 +18,10 @@ function escapeRegExp(value: string) {
 interface ControlledPropertySnapshot {
   id: string;
   name: string;
+  type: string;
   width: string;
+  hidden?: boolean;
+  isDeleted?: boolean;
   config?: {
     options?: {
       names: string[];
@@ -30,21 +33,25 @@ interface ControlledPropertySnapshot {
 interface ControlledSnapshot {
   dataCount: number;
   propertiesCount: number;
+  viewCount: number;
   data: {
     id: string;
     icon?: { type: string; src: string };
     properties: Record<string, { value: unknown }>;
   }[];
   lastDataAction: {
+    id: string;
     type: string;
     payload: Record<string, unknown>;
   } | null;
   lastPropertiesAction: {
+    id: string;
     type: string;
     payload: Record<string, unknown>;
   } | null;
   properties: ControlledPropertySnapshot[];
   lastViewAction: {
+    id: string;
     type: string;
     payload: Record<string, unknown>;
   } | null;
@@ -53,7 +60,17 @@ interface ControlledSnapshot {
     locked: boolean;
     openedRowId: string | null;
     rowView: string;
+    timeline: {
+      range: "daily" | "monthly" | "quarterly";
+      datePropertyId: string | null;
+    };
   };
+}
+
+interface RenderedResourceSnapshot {
+  data: ControlledSnapshot["data"];
+  properties: ControlledPropertySnapshot[];
+  view: ControlledSnapshot["view"];
 }
 
 export class TableViewObject {
@@ -82,7 +99,12 @@ export class TableViewObject {
   }
 
   row(name: AccessibleName) {
-    return this.rows().filter({ hasText: name });
+    return this.rows().filter({
+      has: this.page.getByRole("button", {
+        name,
+        exact: typeof name === "string",
+      }),
+    });
   }
 
   rowBlock(rowId: string) {
@@ -129,7 +151,13 @@ export class TableViewObject {
       await this.rowBlock(row.id).getByText(row.name, { exact: true }).click();
       return;
     }
-    await this.rowBlock(row.id).getByText(row.name, { exact: true }).click();
+    if (layout === "board") {
+      await this.rowBlock(row.id).getByText(row.name, { exact: true }).click();
+      return;
+    }
+    await this.timelineSidebarRow(row.id)
+      .getByRole("button", { name: row.name, exact: true })
+      .click();
   }
 
   rowViewProperty(dialog: Locator, propertyName: string) {
@@ -203,10 +231,150 @@ export class TableViewObject {
     return this.page.getByTestId("controlled-state");
   }
 
+  renderedResourceState() {
+    return this.page.getByTestId("rendered-resource-state");
+  }
+
   async controlledSnapshot(): Promise<ControlledSnapshot> {
     return JSON.parse(
       (await this.controlledState().textContent()) ?? "{}",
     ) as ControlledSnapshot;
+  }
+
+  async renderedResourceSnapshot(): Promise<RenderedResourceSnapshot> {
+    return JSON.parse(
+      (await this.renderedResourceState().textContent()) ?? "{}",
+    ) as RenderedResourceSnapshot;
+  }
+
+  timeline() {
+    return this.page.locator('[data-slot="timeline-view"]');
+  }
+
+  timelineContent() {
+    return this.timeline().locator('[data-slot="timeline-view-content"]');
+  }
+
+  timelineSidebar() {
+    return this.page.getByRole("complementary", {
+      name: "Timeline table",
+      exact: true,
+    });
+  }
+
+  timelineSidebarRow(rowId: string) {
+    return this.timelineSidebar().locator(
+      `[data-slot="timeline-sidebar-row"][data-row-id="${rowId}"]`,
+    );
+  }
+
+  timelineTrackRow(rowId: string) {
+    return this.timelineContent().locator(
+      `[data-slot="timeline-track-row"][data-row-id="${rowId}"]`,
+    );
+  }
+
+  timelineSidebarGroup(rowId: string) {
+    return this.timelineSidebar().locator(
+      `[data-slot="timeline-sidebar-group"][data-row-id="${rowId}"]`,
+    );
+  }
+
+  timelineGroupTrack(rowId: string) {
+    return this.timelineContent().locator(
+      `[data-slot="timeline-group-spacer"][data-row-id="${rowId}"]`,
+    );
+  }
+
+  timelineItemCard(rowId: string) {
+    return this.timelineTrackRow(rowId).locator(
+      '[data-slot="timeline-item-card"]',
+    );
+  }
+
+  timelineResizer(rowId: string, direction: "start" | "end") {
+    return this.timelineTrackRow(rowId).locator(
+      `[data-slot="timeline-item-resizer"][data-direction="${direction}"]`,
+    );
+  }
+
+  async setTimelineRange(range: "Day" | "Month" | "Quarter") {
+    await this.timeline()
+      .locator(
+        '[data-slot="timeline-header-toolbar"] [data-slot="select-trigger"][role="combobox"]',
+      )
+      .click();
+    await this.page.getByRole("option", { name: range, exact: true }).click();
+    const columnWidth = range === "Day" ? "50px" : "150px";
+    await expect
+      .poll(() =>
+        this.timeline().evaluate((element) =>
+          getComputedStyle(element).getPropertyValue("--timeline-column-width"),
+        ),
+      )
+      .toBe(columnWidth);
+  }
+
+  async toggleTimelineGroup(rowId: string, currentlyExpanded: boolean) {
+    await this.timelineSidebarGroup(rowId)
+      .getByRole("button", {
+        name: currentlyExpanded ? "Close" : "Open",
+        exact: true,
+        expanded: currentlyExpanded,
+      })
+      .click();
+  }
+
+  async dragPointerBy(source: Locator, deltaX: number, deltaY = 0) {
+    await source.scrollIntoViewIfNeeded();
+    const box = await source.boundingBox();
+    if (!box) throw new Error("Drag source has no visible bounding box");
+    const start = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+    await this.page.mouse.move(start.x, start.y);
+    await this.page.mouse.down();
+    await this.page.mouse.move(start.x + deltaX, start.y + deltaY, {
+      steps: 12,
+    });
+    await this.page.mouse.up();
+  }
+
+  async resizeTimelineToNextDay(rowId: string) {
+    const source = this.timelineResizer(rowId, "end");
+    await source.scrollIntoViewIfNeeded();
+    await source.hover();
+    await expect(source).toHaveAttribute("aria-disabled", "false");
+    const sourceBox = await source.boundingBox();
+    if (!sourceBox) throw new Error("Timeline resizer has no bounding box");
+    const start = {
+      x: sourceBox.x + sourceBox.width / 2,
+      y: sourceBox.y + sourceBox.height / 2,
+    };
+    const initialLabel = await source.textContent();
+    const dayBoxes = await Promise.all(
+      (
+        await this.timelineContent()
+          .locator('[data-slot="timeline-sub-range"]')
+          .all()
+      ).map((day) => day.boundingBox()),
+    );
+    const nextDay = dayBoxes
+      .filter((box): box is NonNullable<typeof box> => box !== null)
+      .filter((box) => box.x > start.x)
+      .sort((a, b) => a.x - b.x)[0];
+    if (!nextDay) throw new Error("No rendered Timeline day follows resizer");
+    const targetX = nextDay.x + nextDay.width / 2;
+    const activeSource = this.timelineTrackRow(rowId).locator(
+      '[data-slot="timeline-item-resizer"][data-direction="end"][data-dnd-dragging="true"]',
+    );
+
+    await this.page.mouse.move(start.x, start.y);
+    await this.page.mouse.down();
+    await this.page.mouse.move(start.x + 12, start.y, { steps: 2 });
+    await expect(activeSource).toBeVisible();
+    await this.page.mouse.move(targetX, start.y, { steps: 12 });
+    await this.page.mouse.move(targetX + 1, start.y);
+    await expect.poll(() => activeSource.textContent()).not.toBe(initialLabel);
+    await this.page.mouse.up();
   }
 
   calculation(propertyName: string) {
@@ -219,37 +387,19 @@ export class TableViewObject {
   async setCalculation(propertyName: string, method: string) {
     const category = method.startsWith("Percent") ? "Percent" : "Count";
     const trigger = this.calculation(propertyName);
-
-    for (let attempt = 0; attempt < 3; attempt++) {
-      try {
-        await trigger.click();
-        await expect(trigger).toHaveAttribute("aria-expanded", "true");
-        const categoryItem = this.page
-          .getByRole("menuitem", { name: category, exact: true })
-          .last();
-        await categoryItem.waitFor({ state: "visible", timeout: 2_000 });
-        await categoryItem.dispatchEvent("click");
-        const option = this.page
-          .getByRole("menuitemcheckbox", { name: method, exact: true })
-          .last();
-        await option.waitFor({ state: "visible", timeout: 2_000 });
-        // Base UI nested submenus currently close during Playwright
-        // pointer/focus movement. Dispatch the same DOM activation while that
-        // upstream issue is tracked separately; assertions still verify the
-        // real menu handler and UI.
-        await option.dispatchEvent("click");
-        await trigger.dispatchEvent("click");
-        await expect(trigger).toHaveAttribute("aria-expanded", "false");
-        await option.waitFor({ state: "hidden", timeout: 2_000 });
-        return;
-      } catch (error) {
-        if ((await trigger.getAttribute("aria-expanded")) === "true") {
-          await trigger.dispatchEvent("click");
-        }
-        await expect(trigger).toHaveAttribute("aria-expanded", "false");
-        if (attempt === 2) throw error;
-      }
-    }
+    await trigger.click();
+    await expect(trigger).toHaveAttribute("aria-expanded", "true");
+    const categoryItem = this.page
+      .getByRole("menuitem", { name: category, exact: true })
+      .last();
+    await categoryItem.hover();
+    const option = this.page
+      .getByRole("menuitemcheckbox", { name: method, exact: true })
+      .last();
+    await option.click();
+    await trigger.click();
+    await expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await option.waitFor({ state: "hidden" });
   }
 
   async openSettings() {

@@ -33,6 +33,96 @@ function getLastResourceChange<TResource, TAction>(mock: MockWithLastCall) {
 }
 
 describe("useTableView resource API", () => {
+  it("ResourceActions_TimelineRange_NormalizesDefaultsAndEmitsPreviousAndNextRanges", () => {
+    const onViewChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        onViewChange,
+      }),
+    );
+
+    expect(result.current.table.getTableGlobalState().timeline).toEqual({
+      range: "monthly",
+      datePropertyId: null,
+    });
+
+    act(() => {
+      result.current.table.setTimelineRange("quarterly");
+    });
+
+    const change = getLastResourceChange<TableViewState, ViewResourceAction>(
+      onViewChange,
+    );
+    expect(change?.next.timeline).toEqual({
+      range: "quarterly",
+      datePropertyId: null,
+    });
+    expect(change?.action.type).toBe("view.timeline_range.change");
+    expect(change?.action.payload).toEqual({
+      previousRange: "monthly",
+      nextRange: "quarterly",
+    });
+    expect(typeof change?.action.id).toBe("string");
+  });
+
+  it("ResourceActions_SelectedTimelineRange_DoesNotEmitViewChange", () => {
+    const onViewChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        onViewChange,
+      }),
+    );
+
+    act(() => {
+      result.current.table.setTimelineRange("monthly");
+    });
+
+    expect(onViewChange).not.toHaveBeenCalled();
+  });
+
+  it("ResourceActions_ControlledTimelineProperty_ComposesPendingRangeAndUsesProvidedOperationId", () => {
+    const onViewChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        view: { layout: "timeline", rowView: "side", openedRowId: null },
+        onViewChange,
+      }),
+    );
+
+    act(() => {
+      result.current.table.setTimelineRange("daily");
+      result.current.table.setTimelineDateProperty(
+        "date-property",
+        "timeline-operation",
+      );
+    });
+
+    const change = getLastResourceChange<TableViewState, ViewResourceAction>(
+      onViewChange,
+    );
+    expect(change?.next.timeline).toEqual({
+      range: "daily",
+      datePropertyId: "date-property",
+    });
+    expect(change?.action).toEqual({
+      id: "timeline-operation",
+      type: "view.timeline_property.change",
+      payload: {
+        previousDatePropertyId: null,
+        nextDatePropertyId: "date-property",
+      },
+    });
+  });
+
   it("ResourceActions_CallbacksReceiveCompleteReplacementEnvelope", () => {
     const onDataChange = vi.fn();
     const { result } = renderHook(() =>

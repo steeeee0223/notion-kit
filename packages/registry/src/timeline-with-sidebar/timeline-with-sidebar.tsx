@@ -54,7 +54,7 @@ export default function WithSidebar() {
     startAt: number,
     endAt: number | null,
   ) => {
-    if (!endAt) return;
+    if (endAt === null) return;
 
     setFeatures((prev) =>
       prev.map((feature) =>
@@ -85,57 +85,58 @@ export default function WithSidebar() {
           {Object.entries(sortedGroupedFeatures).map(([group, features]) => (
             <React.Fragment key={group}>
               {features.map((feature) => (
-                <TimelineRow
+                <TimelineRow.Root
                   key={feature.id}
-                  onMove={handleMoveFeature}
                   item={feature}
-                  render={() => {
-                    return (
-                      <ContextMenu>
-                        <ContextMenuTrigger
-                          render={
-                            <div
-                              onPointerDown={() =>
-                                handleViewFeature(feature.id)
-                              }
-                              role="button"
-                              className="me-2.5 flex w-full items-center gap-1.5 text-sm font-medium"
-                            >
-                              <Avatar className="size-5">
-                                <AvatarImage src={feature.owner.image} />
-                                <AvatarFallback>
-                                  {feature.owner.name.slice(0, 2)}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="max-w-100 truncate text-xs">
-                                {feature.name}
-                              </div>
-                            </div>
-                          }
-                        />
-                        <ContextMenuContent>
-                          <ContextMenuGroup>
-                            <ContextMenuItem
-                              icon={<Icon.Eye />}
-                              label="View feature"
-                              onClick={() => handleViewFeature(feature.id)}
-                            />
-                            <ContextMenuItem
-                              icon={<Icon.Link />}
-                              label="Copy link"
-                              onClick={() => handleCopyLink(feature.id)}
-                            />
-                            <ContextMenuItem
-                              icon={<Icon.Trash />}
-                              label="Remove from roadmap"
-                              onClick={() => handleRemoveFeature(feature.id)}
-                            />
-                          </ContextMenuGroup>
-                        </ContextMenuContent>
-                      </ContextMenu>
-                    );
-                  }}
-                />
+                  onMove={handleMoveFeature}
+                >
+                  <TimelineRow.Jump />
+                  <TimelineRow.Track>
+                    <TimelineRow.Resize direction="start" />
+                    <ContextMenu>
+                      <ContextMenuTrigger
+                        render={
+                          <TimelineRow.Item
+                            aria-label={feature.name}
+                            onClick={() => handleViewFeature(feature.id)}
+                          />
+                        }
+                      >
+                        <div className="me-2.5 flex w-full items-center gap-1.5 text-sm font-medium">
+                          <Avatar className="size-5">
+                            <AvatarImage src={feature.owner.image} />
+                            <AvatarFallback>
+                              {feature.owner.name.slice(0, 2)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="max-w-100 truncate text-xs">
+                            {feature.name}
+                          </div>
+                        </div>
+                      </ContextMenuTrigger>
+                      <ContextMenuContent>
+                        <ContextMenuGroup>
+                          <ContextMenuItem
+                            icon={<Icon.Eye />}
+                            label="View feature"
+                            onClick={() => handleViewFeature(feature.id)}
+                          />
+                          <ContextMenuItem
+                            icon={<Icon.Link />}
+                            label="Copy link"
+                            onClick={() => handleCopyLink(feature.id)}
+                          />
+                          <ContextMenuItem
+                            icon={<Icon.Trash />}
+                            label="Remove from roadmap"
+                            onClick={() => handleRemoveFeature(feature.id)}
+                          />
+                        </ContextMenuGroup>
+                      </ContextMenuContent>
+                    </ContextMenu>
+                    <TimelineRow.Resize direction="end" />
+                  </TimelineRow.Track>
+                </TimelineRow.Root>
               ))}
             </React.Fragment>
           ))}

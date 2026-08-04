@@ -13,13 +13,45 @@ import {
   plugins,
   renderTableHook,
 } from "@/__tests__/mock";
-import type { ColumnDefs } from "@/lib/types";
+import type { ColumnDefs, Row } from "@/lib/types";
 import type { CellPlugin } from "@/plugins";
 import type {
+  DataResourceAction,
   PropertiesResourceAction,
+  ResourceChange,
   ResourceChangeHandler,
 } from "@/table-contexts/actions";
 import { useTableView } from "@/table-contexts/use-table-view";
+
+interface DateData {
+  start: number;
+  end: number;
+  endDate: boolean;
+}
+
+const datePlugin: CellPlugin<"date", DateData, undefined> = {
+  id: "date",
+  meta: { name: "Date", desc: "Date", icon: null },
+  default: {
+    name: "Date",
+    icon: null,
+    data: { start: 0, end: 0, endDate: false },
+    config: undefined,
+  },
+  fromValue: (value) => ({
+    start: typeof value === "number" ? value : 0,
+    end: typeof value === "number" ? value : 0,
+    endDate: false,
+  }),
+  toValue: (data) => data.start,
+  toTextValue: (data) => String(data.start),
+  renderCell: () => null,
+};
+
+const pluginsWithDate = {
+  ids: [...plugins.ids, datePlugin.id],
+  items: { ...plugins.items, [datePlugin.id]: datePlugin },
+};
 
 describe("useTableView - Column Custom APIs", () => {
   describe("Column Visibility Source", () => {
@@ -87,6 +119,93 @@ describe("useTableView - Column Custom APIs", () => {
   });
 
   describe("addColumnInfo", () => {
+    it("ColumnCreation_SeededValues_CreateDistinctCellsAndShareProvidedOperationId", () => {
+      const onDataChange = vi.fn();
+      const onPropertiesChange = vi.fn();
+      const { result } = renderHook(() =>
+        useTableView({
+          plugins: pluginsWithDate,
+          defaultData: mockData,
+          defaultProperties: mockProperties,
+          onDataChange,
+          onPropertiesChange,
+        }),
+      );
+
+      act(() => {
+        result.current.table.addColumnInfo({
+          id: "due-date",
+          name: "Due date",
+          type: "date",
+          operationId: "timeline-initialization",
+          getInitialValue: (row) => ({
+            start: row.createdAt,
+            end: row.lastEditedAt,
+            endDate: true,
+          }),
+        });
+      });
+
+      const propertyChange = onPropertiesChange.mock.lastCall?.[0] as
+        | ResourceChange<ColumnDefs, PropertiesResourceAction>
+        | undefined;
+      const dataChange = onDataChange.mock.lastCall?.[0] as
+        | ResourceChange<Row[], DataResourceAction>
+        | undefined;
+      expect(propertyChange?.action.id).toBe("timeline-initialization");
+      expect(dataChange?.action).toMatchObject({
+        id: "timeline-initialization",
+        type: "data.cell.update",
+        payload: { propertyId: "due-date", rowIds: ["row1", "row2", "row3"] },
+      });
+      const cells = dataChange?.next.map((row) => row.properties["due-date"]);
+      expect(cells?.map((cell) => cell?.id)).toHaveLength(3);
+      expect(new Set(cells?.map((cell) => cell?.id)).size).toBe(3);
+      const values = cells?.map((cell) => cell?.value as DateData | undefined);
+      expect(values).toEqual([
+        {
+          start: mockData[0]?.createdAt,
+          end: mockData[0]?.lastEditedAt,
+          endDate: true,
+        },
+        {
+          start: mockData[1]?.createdAt,
+          end: mockData[1]?.lastEditedAt,
+          endDate: true,
+        },
+        {
+          start: mockData[2]?.createdAt,
+          end: mockData[2]?.lastEditedAt,
+          endDate: true,
+        },
+      ]);
+    });
+
+    it("ColumnCreation_EmptyData_EmitsPropertyCreationWithoutBulkCellUpdate", () => {
+      const onDataChange = vi.fn();
+      const onPropertiesChange = vi.fn();
+      const { result } = renderHook(() =>
+        useTableView({
+          plugins,
+          defaultData: [],
+          defaultProperties: mockProperties,
+          onDataChange,
+          onPropertiesChange,
+        }),
+      );
+
+      act(() => {
+        result.current.table.addColumnInfo({
+          id: "empty-column",
+          name: "Empty column",
+          type: "text",
+        });
+      });
+
+      expect(onPropertiesChange).toHaveBeenCalledOnce();
+      expect(onDataChange).not.toHaveBeenCalled();
+    });
+
     it("should add a new column at the end by default", () => {
       const { table } = renderTableHook({
         data: mockData,

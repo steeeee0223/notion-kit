@@ -133,6 +133,20 @@ export type ViewResourceAction =
         previousRowView: TableViewState["rowView"];
         nextRowView: TableViewState["rowView"];
       }
+    >
+  | TableAction<
+      "view.timeline_range.change",
+      {
+        previousRange: NonNullable<TableViewState["timeline"]>["range"];
+        nextRange: NonNullable<TableViewState["timeline"]>["range"];
+      }
+    >
+  | TableAction<
+      "view.timeline_property.change",
+      {
+        previousDatePropertyId: string | null;
+        nextDatePropertyId: string | null;
+      }
     >;
 
 export function serializeResourceAction<TResource, TAction>(

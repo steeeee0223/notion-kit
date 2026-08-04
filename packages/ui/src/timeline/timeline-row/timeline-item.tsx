@@ -1,248 +1,65 @@
-import React, { useCallback, useMemo, useState } from "react";
-import { RestrictToHorizontalAxis } from "@dnd-kit/abstract/modifiers";
-import { PointerActivationConstraints, PointerSensor } from "@dnd-kit/dom";
-import {
-  DragDropProvider,
-  useDraggable,
-  type DragEndEvent,
-} from "@dnd-kit/react";
-import { useMouse } from "@uidotdev/usehooks";
-import { addDays, differenceInCalendarDays, isSameDay } from "date-fns";
+import { useCallback } from "react";
+import { useDraggable } from "@dnd-kit/react";
 
 import { cn } from "@notion-kit/cn";
 
-import { useTimelineContext, useTimelineDragging } from "../timeline-provider";
-import type { TimelineContextProps, TimelineFeature } from "../types";
-import {
-  addRangeFn,
-  daysInFn,
-  differenceInFn,
-  getDateByMousePosition,
-  getOffset,
-  innerDifferenceInFn,
-  resolveColumnWidth,
-  snapDays,
-  startOfFn,
-} from "../utils";
-import { TimelineItemResizer } from "./timeline-item-resizer";
+import { Button, type ButtonProps } from "@/primitives";
 
-const timelineItemSensors: React.ComponentProps<
-  typeof DragDropProvider
->["sensors"] = (defaults) => [
-  ...defaults.filter((sensor) => sensor !== PointerSensor),
-  PointerSensor.configure({
-    activationConstraints: [
-      new PointerActivationConstraints.Distance({ value: 10 }),
-    ],
-  }),
-];
+import { useTimelineRowContext } from "./timeline-row-context";
 
-function getWidth(
-  startAt: number | Date,
-  endAt: number | Date | null,
-  ctx: TimelineContextProps,
-) {
-  const columnWidth = resolveColumnWidth(ctx.range, ctx.zoom);
+export type TimelineRowItemProps = Omit<
+  ButtonProps,
+  "render" | "size" | "variant"
+>;
 
-  if (!endAt) {
-    return columnWidth * 2;
-  }
-
-  const differenceIn = differenceInFn[ctx.range];
-
-  if (ctx.range === "daily") {
-    const delta = differenceIn(endAt, startAt);
-
-    return columnWidth * (delta ? delta : 1);
-  }
-
-  const startOf = startOfFn[ctx.range];
-  const daysIn = daysInFn[ctx.range];
-
-  const daysInStartRange = daysIn(startAt);
-  const pixelsPerDayInStartRange = columnWidth / daysInStartRange;
-
-  if (isSameDay(startAt, endAt)) {
-    return pixelsPerDayInStartRange;
-  }
-
-  const innerDifferenceIn = innerDifferenceInFn[ctx.range];
-
-  if (isSameDay(startOf(startAt), startOf(endAt))) {
-    return (
-      snapDays(innerDifferenceIn(endAt, startAt), ctx.range) *
-      pixelsPerDayInStartRange
-    );
-  }
-
-  const startRangeStart = startOf(startAt);
-  const startRangeOffset = snapDays(
-    daysInStartRange - differenceInCalendarDays(startAt, startRangeStart),
-    ctx.range,
-  );
-  const endRangeStart = startOf(endAt);
-  const endRangeOffset = snapDays(
-    differenceInCalendarDays(endAt, endRangeStart),
-    ctx.range,
-  );
-  const fullRangeOffset = differenceIn(endRangeStart, startRangeStart);
-  const daysInEndRange = daysIn(endAt);
-  const pixelsPerDayInEndRange = columnWidth / daysInEndRange;
-
-  return (
-    (fullRangeOffset - 1) * columnWidth +
-    startRangeOffset * pixelsPerDayInStartRange +
-    endRangeOffset * pixelsPerDayInEndRange
-  );
-}
-
-export interface TimelineItemProps {
-  item: TimelineFeature;
-  className?: string;
-  onMove?: (id: string, start: number, end: number | null) => void;
-  render?: () => React.ReactNode;
-}
-
-export function TimelineItem({
-  item,
+export function TimelineRowItem({
+  ref,
   className,
-  onMove,
-  render,
-}: TimelineItemProps) {
-  const timeline = useTimelineContext();
-  const [startAt, setStartAt] = useState<Date>(new Date(item.startAt));
-  const [endAt, setEndAt] = useState<Date | null>(
-    item.endAt ? new Date(item.endAt) : null,
+  onClick,
+  children,
+  ...props
+}: TimelineRowItemProps) {
+  const { actions, meta } = useTimelineRowContext();
+  const {
+    handleRef,
+    isDragging,
+    ref: draggableRef,
+  } = useDraggable({
+    id: meta.item.id,
+    type: "timeline-item",
+    disabled: !meta.movable,
+    register: meta.movable,
+  });
+  const itemRef = useCallback(
+    (node: HTMLButtonElement | null) => {
+      if (meta.movable) {
+        draggableRef(node);
+        handleRef(node);
+      }
+      if (typeof ref === "function") ref(node);
+      else if (ref) ref.current = node;
+    },
+    [draggableRef, handleRef, meta.movable, ref],
   );
-
-  const width = useMemo(
-    () => getWidth(startAt, endAt, timeline),
-    [startAt, endAt, timeline],
-  );
-  const offset = useMemo(
-    () => getOffset(startAt, timeline),
-    [startAt, timeline],
-  );
-
-  const addRange = useMemo(() => addRangeFn[timeline.range], [timeline.range]);
-  const [, setDragging] = useTimelineDragging();
-
-  const [mousePosition] = useMouse<HTMLDivElement>();
-
-  const [previousMouseX, setPreviousMouseX] = useState(0);
-  const [previousStartAt, setPreviousStartAt] = useState(startAt);
-  const [previousEndAt, setPreviousEndAt] = useState(endAt);
-
-  const handleItemDragStart = () => {
-    setDragging(true);
-    setPreviousMouseX(mousePosition.x);
-    setPreviousStartAt(startAt);
-    setPreviousEndAt(endAt);
-  };
-
-  const handleItemDragMove = useCallback(() => {
-    const currentDate = getDateByMousePosition(timeline, mousePosition.x);
-    const originalDate = getDateByMousePosition(timeline, previousMouseX);
-    const delta =
-      timeline.range === "daily"
-        ? differenceInFn[timeline.range](currentDate, originalDate)
-        : innerDifferenceInFn[timeline.range](currentDate, originalDate);
-    const newStartDate = addDays(previousStartAt, delta);
-    const newEndDate = previousEndAt ? addDays(previousEndAt, delta) : null;
-
-    setStartAt(newStartDate);
-    setEndAt(newEndDate);
-  }, [
-    timeline,
-    mousePosition.x,
-    previousMouseX,
-    previousStartAt,
-    previousEndAt,
-  ]);
-
-  const handleDragEnd = (event?: DragEndEvent) => {
-    setDragging(false);
-    if (event?.canceled) {
-      setStartAt(previousStartAt);
-      setEndAt(previousEndAt);
-      return;
-    }
-    onMove?.(item.id, startAt.getTime(), endAt?.getTime() ?? null);
-  };
-
   return (
-    <div
-      data-slot="timeline-item"
+    <Button
+      {...props}
+      ref={itemRef}
+      type="button"
+      variant={null}
+      data-slot="timeline-item-card"
+      data-notion-slot="notion-timeline-item-properties"
       className={cn(
-        "isolation-auto flex h-(--timeline-row-height) w-full cursor-default",
+        "absolute inset-0 flex size-full min-w-0 justify-start overflow-hidden rounded-md px-1.5 text-start",
+        meta.movable && "cursor-grab touch-none active:cursor-grabbing",
+        isDragging && "cursor-grabbing",
         className,
       )}
-    >
-      <div
-        data-slot="notion-timeline-item"
-        className="absolute z-(--timeline-item-z) my-px flex h-[34px] rounded-md bg-popover shadow-out-md"
-        style={{
-          width: Math.round(width),
-          insetInlineStart: Math.round(offset),
-        }}
-      >
-        {/* Left resizer */}
-        {onMove && (
-          <TimelineItemResizer
-            direction="left"
-            id={item.id}
-            ts={startAt.getTime()}
-            onDragMove={setStartAt}
-            onDragEnd={handleDragEnd}
-          />
-        )}
-        {/* Item card */}
-        <DragDropProvider
-          modifiers={[RestrictToHorizontalAxis]}
-          onDragStart={handleItemDragStart}
-          onDragMove={handleItemDragMove}
-          onDragEnd={handleDragEnd}
-          sensors={timelineItemSensors}
-        >
-          <TimelineItemCard id={item.id}>
-            {render ? render() : null}
-          </TimelineItemCard>
-        </DragDropProvider>
-        {/* Right resizer */}
-        {onMove && (
-          <TimelineItemResizer
-            direction="right"
-            id={item.id}
-            ts={endAt?.getTime() ?? addRange(startAt, 2).getTime()}
-            onDragMove={setEndAt}
-            onDragEnd={handleDragEnd}
-          />
-        )}
-      </div>
-    </div>
-  );
-}
-
-interface TimelineItemCardProps extends React.PropsWithChildren {
-  id: string;
-}
-
-function TimelineItemCard({ id, children }: TimelineItemCardProps) {
-  const { isDragging, ref } = useDraggable({
-    id,
-    type: "timeline-item",
-  });
-
-  return (
-    <div
-      data-slot="notion-timeline-item-properties"
-      className={cn(
-        "absolute flex h-[34px] overflow-hidden ps-1.5",
-        isDragging && "cursor-grabbing",
-      )}
-      ref={ref}
+      onClick={(event) => {
+        if (!actions.consumeItemClick(event)) onClick?.(event);
+      }}
     >
       {children}
-    </div>
+    </Button>
   );
 }

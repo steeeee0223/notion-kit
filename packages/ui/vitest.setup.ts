@@ -37,3 +37,61 @@ if (typeof Element.prototype.getAnimations === "undefined") {
     return [];
   };
 }
+
+if (typeof Document.prototype.getAnimations === "undefined") {
+  Document.prototype.getAnimations = function () {
+    return [];
+  };
+}
+
+if (typeof window.matchMedia === "undefined") {
+  window.matchMedia = function (query: string) {
+    return {
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener() {
+        return;
+      },
+      removeListener() {
+        return;
+      },
+      addEventListener() {
+        return;
+      },
+      removeEventListener() {
+        return;
+      },
+      dispatchEvent: () => false,
+    };
+  };
+}
+
+if (typeof Element.prototype.setPointerCapture === "undefined") {
+  Element.prototype.setPointerCapture = function () {
+    return;
+  };
+  Element.prototype.releasePointerCapture = function () {
+    return;
+  };
+  Element.prototype.hasPointerCapture = function () {
+    return false;
+  };
+}
+
+if (typeof Document.prototype.elementFromPoint === "undefined") {
+  Document.prototype.elementFromPoint = function () {
+    return null;
+  };
+}
+
+if (typeof Element.prototype.animate === "undefined") {
+  Element.prototype.animate = function () {
+    return {
+      finished: Promise.resolve(),
+      cancel() {
+        return;
+      },
+    } as unknown as Animation;
+  };
+}

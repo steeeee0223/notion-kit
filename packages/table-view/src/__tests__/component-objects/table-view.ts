@@ -3,10 +3,13 @@ import type { UserEvent } from "@testing-library/user-event";
 
 import { RowActionsObject } from "./row-actions";
 import { SortMenuObject } from "./sort-menu";
+import { TimelineViewObject } from "./timeline-view";
 import { ViewSettingsMenuObject } from "./view-settings-menu";
 
 export class TableViewObject {
   constructor(readonly user: UserEvent) {}
+
+  readonly timeline = new TimelineViewObject();
 
   private nameMatcher(name: string | RegExp) {
     return typeof name === "string"

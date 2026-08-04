@@ -20,25 +20,43 @@ import {
 
 import { LayoutIcon, MenuHeader, RowViewIcon } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
+import { isUsableTimelineDateProperty } from "@/timeline-view";
 
 export function LayoutMenu() {
   const { table } = useTableViewCtx();
 
   return (
-    <table.Subscribe selector={(state) => state.tableGlobal.layout}>
-      {(layout) => <LayoutMenuContent currentLayout={layout} />}
+    <table.Subscribe
+      selector={(state) => ({
+        currentLayout: state.tableGlobal.layout,
+        datePropertyId: state.tableGlobal.timeline!.datePropertyId,
+        columnOrder: state.columnOrder,
+        columnsInfo: state.columnsInfo,
+      })}
+    >
+      {(state) => <LayoutMenuContent {...state} />}
     </table.Subscribe>
   );
 }
 
 function LayoutMenuContent({
   currentLayout,
+  datePropertyId,
+  columnOrder,
+  columnsInfo,
 }: {
   currentLayout: ReturnType<
     TableInstance["atoms"]["tableGlobal"]["get"]
   >["layout"];
+  datePropertyId: string | null;
+  columnOrder: string[];
+  columnsInfo: ReturnType<TableInstance["atoms"]["columnsInfo"]["get"]>;
 }) {
   const { table } = useTableViewCtx();
+  const dateProperties = columnOrder.flatMap((id) => {
+    const property = columnsInfo[id];
+    return property && isUsableTimelineDateProperty(property) ? [property] : [];
+  });
 
   return (
     <>
@@ -61,7 +79,8 @@ function LayoutMenuContent({
               disabled={
                 layout.value !== "table" &&
                 layout.value !== "list" &&
-                layout.value !== "board"
+                layout.value !== "board" &&
+                layout.value !== "timeline"
               }
             >
               <LayoutIcon layout={layout.value} />
@@ -71,9 +90,57 @@ function LayoutMenuContent({
         </div>
       </DropdownMenuGroup>
       <DropdownMenuGroup>
+        {currentLayout === "timeline" && dateProperties.length > 0 && (
+          <TimelineDatePropertyMenu
+            current={datePropertyId}
+            properties={dateProperties}
+          />
+        )}
         <RowViewMenu />
       </DropdownMenuGroup>
     </>
+  );
+}
+
+function TimelineDatePropertyMenu({
+  current,
+  properties,
+}: {
+  current: string | null;
+  properties: ReturnType<
+    TableInstance["atoms"]["columnsInfo"]["get"]
+  >[string][];
+}) {
+  const { table } = useTableViewCtx();
+  const currentProperty =
+    properties.find((property) => property.id === current) ?? properties[0]!;
+
+  return (
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger label="Timeline by">
+        <MenuItemAction className="flex items-center text-muted">
+          {currentProperty.name}
+        </MenuItemAction>
+      </DropdownMenuSubTrigger>
+      <DropdownMenuContent sideOffset={-4} className="w-64">
+        <DropdownMenuRadioGroup
+          value={currentProperty.id}
+          onValueChange={(propertyId: string) => {
+            if (propertyId === currentProperty.id) return;
+            table.setTimelineDateProperty(propertyId);
+          }}
+        >
+          {properties.map((property) => (
+            <DropdownMenuRadioItem
+              key={property.id}
+              value={property.id}
+              closeOnClick={false}
+              label={property.name}
+            />
+          ))}
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenuSub>
   );
 }
 

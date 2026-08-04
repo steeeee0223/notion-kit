@@ -33,9 +33,20 @@ export function TitleCell({ layout, ...props }: TitleCellProps) {
       return <TitleTableCell {...props} />;
     case "list":
       return <TitleListCell {...props} />;
+    case "timeline":
+      return <TitleTimelineCell {...props} />;
     default:
       return null;
   }
+}
+
+function TitleTimelineCell({ icon, data }: Omit<TitleCellProps, "layout">) {
+  return (
+    <>
+      {icon && <IconBlock icon={icon} className="contents" />}
+      <span className="truncate">{data || "New page"}</span>
+    </>
+  );
 }
 
 function TitleTableCell({

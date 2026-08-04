@@ -46,10 +46,10 @@ export function TimelineJumpToItem({ item }: TimelineJumpToItemProps) {
   const visibleWidth = containerWidth - sidebarWidth;
 
   const isLeftOutOfBounds = useMemo(() => {
-    const endOffset = getOffset(item.endAt, timeline);
+    const endOffset = getOffset(item.endAt ?? item.startAt, timeline);
     // If the item ends before the current viewport (excluding sidebar)
     return endOffset < scrollX;
-  }, [item.endAt, timeline, scrollX]);
+  }, [item.endAt, item.startAt, timeline, scrollX]);
 
   const isRightOutOfBounds = useMemo(() => {
     const startOffset = getOffset(item.startAt, timeline);

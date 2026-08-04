@@ -1,0 +1,501 @@
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
+import { expect, it, vi } from "vitest";
+
+import type {
+  ColumnInfo,
+  DataResourceAction,
+  ResourceChange,
+  Row,
+  TableViewState,
+  ViewResourceAction,
+} from "@notion-kit/table-hook";
+
+import { TableView } from "@/table-contexts";
+
+import { renderTableView } from "../__tests__/component-objects/render-table-view";
+import { TimelineViewObject } from "../__tests__/component-objects/timeline-view";
+import { mockResizeObserver } from "../__tests__/mock";
+
+mockResizeObserver();
+const timeline = new TimelineViewObject();
+
+const properties: ColumnInfo[] = [
+  {
+    id: "title",
+    name: "Name",
+    type: "title",
+    width: "220",
+    config: { showIcon: false },
+  },
+  {
+    id: "due",
+    name: "Due",
+    type: "date",
+    width: "160",
+    config: { dateFormat: "full", timeFormat: "24-hour", tz: "UTC" },
+  },
+];
+
+const rows: Row[] = [
+  {
+    id: "valid",
+    createdAt: 100,
+    lastEditedAt: 100,
+    properties: {
+      title: { id: "title-valid", value: "Valid task" },
+      due: { id: "due-valid", value: { start: 0, end: 86_400_000 } },
+    },
+  },
+  {
+    id: "empty",
+    createdAt: 200,
+    lastEditedAt: 200,
+    properties: {
+      title: { id: "title-empty", value: "Empty task" },
+      due: { id: "due-empty", value: null },
+    },
+  },
+  {
+    id: "invalid",
+    createdAt: 300,
+    lastEditedAt: 300,
+    properties: {
+      title: { id: "title-invalid", value: "Invalid task" },
+      due: { id: "due-invalid", value: { start: 20, end: 10 } },
+    },
+  },
+];
+
+function timelineView(overrides: Partial<TableViewState> = {}): TableViewState {
+  return {
+    layout: "timeline",
+    rowView: "side",
+    openedRowId: null,
+    locked: false,
+    timeline: { range: "monthly", datePropertyId: "due" },
+    ...overrides,
+  };
+}
+
+it("TimelineFlatRows_ValidEmptyAndInvalidDates_KeepSidebarAndTrackProjectionAligned", async () => {
+  render(
+    <TableView data={rows} properties={properties} view={timelineView()} />,
+  );
+
+  expect(
+    await screen.findByRole("complementary", { name: "Timeline table" }),
+  ).toBeVisible();
+  const sidebarIds = timeline.sidebarProjection();
+  const trackIds = timeline.trackProjection();
+
+  expect(sidebarIds).toEqual(["valid", "empty", "invalid"]);
+  expect(trackIds).toEqual(sidebarIds);
+  expect(timeline.items()).toHaveLength(1);
+  expect(timeline.titleButtons("Valid task")).toHaveLength(2);
+});
+
+it("TimelineSidebar_CollapseAndReopen_PreservesLocalVisibility", async () => {
+  const tableView = renderTableView({
+    data: rows,
+    properties,
+    view: timelineView(),
+  });
+
+  await tableView.user.click(
+    await screen.findByRole("button", { name: "Hide table" }),
+  );
+  expect(
+    screen.queryByRole("complementary", { name: "Timeline table" }),
+  ).not.toBeInTheDocument();
+
+  await tableView.user.click(
+    screen.getByRole("button", { name: "Show table" }),
+  );
+  expect(
+    await screen.findByRole("complementary", { name: "Timeline table" }),
+  ).toBeVisible();
+});
+
+it("TimelineSidebar_TitleResize_UpdatesLiveWidthAndActiveStyle", async () => {
+  render(
+    <TableView data={rows} properties={properties} view={timelineView()} />,
+  );
+  const timelineRoot = timeline.root();
+  const resizeHandle = screen.getByRole("separator", { name: "Resize Name" });
+  expect(timelineRoot.style.getPropertyValue("--timeline-sidebar-width")).toBe(
+    "200px",
+  );
+
+  fireEvent.mouseDown(resizeHandle, { clientX: 200 });
+  fireEvent.mouseMove(document, { clientX: 260 });
+
+  await waitFor(() => {
+    expect(
+      timelineRoot.style.getPropertyValue("--timeline-sidebar-width"),
+    ).toBe("260px");
+    expect(resizeHandle).toHaveClass("bg-blue/80");
+  });
+  fireEvent.mouseUp(document, { clientX: 260 });
+});
+
+it("TimelineSidebarTitleAndCardSurface_Click_OpenTheConfiguredRow", async () => {
+  const onViewChange =
+    vi.fn<
+      (change: ResourceChange<TableViewState, ViewResourceAction>) => void
+    >();
+  render(
+    <TableView
+      data={rows}
+      properties={properties}
+      view={timelineView()}
+      onViewChange={onViewChange}
+    />,
+  );
+  const sidebar = await screen.findByRole("complementary", {
+    name: "Timeline table",
+  });
+
+  fireEvent.click(
+    sidebar.querySelector<HTMLButtonElement>(
+      'button[aria-label="Valid task"]',
+    )!,
+  );
+  expect(onViewChange.mock.lastCall?.[0].action).toMatchObject({
+    type: "view.opened_row.change",
+    payload: { previousRowId: null, nextRowId: "valid" },
+  });
+
+  onViewChange.mockClear();
+  fireEvent.click(timeline.itemCard("valid"));
+  expect(onViewChange.mock.lastCall?.[0].action).toMatchObject({
+    type: "view.opened_row.change",
+    payload: { previousRowId: "valid", nextRowId: "valid" },
+  });
+});
+
+it("TimelineUnlockedCard_ContextMenuTargetsTheMatchingRow", async () => {
+  const onDataChange =
+    vi.fn<(change: ResourceChange<Row[], DataResourceAction>) => void>();
+  const actionableRows: Row[] = [
+    rows[0]!,
+    {
+      ...rows[0]!,
+      id: "second",
+      properties: {
+        title: { id: "title-second", value: "Second task" },
+        due: {
+          id: "due-second",
+          value: { start: 172_800_000, end: 259_200_000 },
+        },
+      },
+    },
+  ];
+  render(
+    <TableView
+      data={actionableRows}
+      properties={properties}
+      view={timelineView()}
+      onDataChange={onDataChange}
+    />,
+  );
+  const secondCard = timeline.itemCard("second");
+
+  fireEvent.contextMenu(secondCard, { clientX: 40, clientY: 20 });
+  fireEvent.click(await screen.findByRole("option", { name: "Delete" }));
+
+  await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
+  expect(onDataChange.mock.lastCall?.[0].action).toMatchObject({
+    type: "data.row.delete",
+    payload: {
+      rowIds: ["second"],
+      previousPositions: [{ rowId: "second", index: 1 }],
+    },
+  });
+});
+
+it("TimelineRangeSelect_Change_WritesExactViewResource", async () => {
+  const onViewChange =
+    vi.fn<
+      (change: ResourceChange<TableViewState, ViewResourceAction>) => void
+    >();
+  const tableView = renderTableView({
+    data: rows,
+    properties,
+    view: timelineView(),
+    onViewChange,
+  });
+
+  await tableView.user.click(await screen.findByRole("combobox"));
+  await tableView.user.click(
+    await screen.findByRole("option", { name: "Day" }),
+  );
+
+  expect(onViewChange.mock.lastCall?.[0].action).toMatchObject({
+    type: "view.timeline_range.change",
+    payload: { previousRange: "monthly", nextRange: "daily" },
+  });
+});
+
+it("TimelineSingleDate_Render_DoesNotMutateSourceCell", async () => {
+  const onDataChange =
+    vi.fn<(change: ResourceChange<Row[], DataResourceAction>) => void>();
+  const singleDateRows: Row[] = [
+    {
+      ...rows[0]!,
+      properties: {
+        ...rows[0]!.properties,
+        due: { id: "due-valid", value: { start: 0 } },
+      },
+    },
+  ];
+  render(
+    <TableView
+      data={singleDateRows}
+      properties={properties}
+      view={timelineView()}
+      onDataChange={onDataChange}
+    />,
+  );
+
+  expect(
+    await screen.findAllByRole("button", { name: "Valid task" }),
+  ).toHaveLength(2);
+  expect(timeline.resizers()).toHaveLength(2);
+  expect(onDataChange).not.toHaveBeenCalled();
+});
+
+it("TimelineDatePropertySwitch_TwoPopulatedProperties_UpdatesBarCoordinates", async () => {
+  const laterProperty: ColumnInfo = {
+    id: "later",
+    name: "Later",
+    type: "date",
+    width: "160",
+    config: { dateFormat: "full", timeFormat: "24-hour", tz: "UTC" },
+  };
+  const populatedRows: Row[] = [
+    {
+      ...rows[0]!,
+      properties: {
+        ...rows[0]!.properties,
+        due: {
+          id: "due-valid",
+          value: {
+            start: new Date(2026, 0, 1).getTime(),
+            end: new Date(2026, 1, 1).getTime(),
+          },
+        },
+        later: {
+          id: "later-valid",
+          value: {
+            start: new Date(2026, 2, 1).getTime(),
+            end: new Date(2026, 3, 1).getTime(),
+          },
+        },
+      },
+    },
+  ];
+  const tableView = renderTableView({
+    data: populatedRows,
+    properties: [...properties, laterProperty],
+    view: timelineView(),
+  });
+  const bar = timeline.item();
+  expect(bar).toHaveStyle({ insetInlineStart: "100800px", width: "150px" });
+
+  const settings = await tableView.openViewSettings();
+  const layout = await settings.openLayout();
+  await layout.selectTimelineProperty("Later");
+
+  expect(bar).toHaveStyle({ insetInlineStart: "101100px", width: "150px" });
+});
+
+it("TimelineControlledDateCellReplacement_UpdatesBarCoordinates", async () => {
+  const firstRows: Row[] = [
+    {
+      ...rows[0]!,
+      properties: {
+        ...rows[0]!.properties,
+        due: {
+          id: "due-valid",
+          value: {
+            start: new Date(2026, 0, 1).getTime(),
+            end: new Date(2026, 1, 1).getTime(),
+          },
+        },
+      },
+    },
+  ];
+  const secondRows: Row[] = [
+    {
+      ...firstRows[0]!,
+      properties: {
+        ...firstRows[0]!.properties,
+        due: {
+          id: "due-valid-replacement",
+          value: {
+            start: new Date(2026, 4, 1).getTime(),
+            end: new Date(2026, 5, 1).getTime(),
+          },
+        },
+      },
+    },
+  ];
+  const view = timelineView();
+  const { rerender } = render(
+    <TableView data={firstRows} properties={properties} view={view} />,
+  );
+  const bar = timeline.item();
+  expect(bar).toHaveStyle({ insetInlineStart: "100800px", width: "150px" });
+
+  rerender(<TableView data={secondRows} properties={properties} view={view} />);
+
+  await waitFor(() =>
+    expect(bar).toHaveStyle({
+      insetInlineStart: "101400px",
+      width: "150px",
+    }),
+  );
+});
+
+it("TimelineEmptyTrack_AddDate_WritesExactOneCalendarDayCellResource", async () => {
+  const onDataChange =
+    vi.fn<(change: ResourceChange<Row[], DataResourceAction>) => void>();
+  render(
+    <TableView
+      data={rows}
+      properties={properties}
+      view={timelineView()}
+      onDataChange={onDataChange}
+    />,
+  );
+
+  const emptyTrack = timeline.addTrack();
+  fireEvent.mouseMove(emptyTrack, { clientX: 75 });
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Add date to Empty task" }),
+  );
+
+  await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
+  const action = onDataChange.mock.lastCall![0].action;
+  expect(action.type).toBe("data.cell.update");
+  if (action.type !== "data.cell.update") {
+    throw new Error("Expected data.cell.update");
+  }
+  const nextValue = action.payload.nextValue as {
+    start: number;
+    end: number;
+    endDate: boolean;
+  };
+  const expectedEnd = new Date(nextValue.start);
+  expectedEnd.setDate(expectedEnd.getDate() + 1);
+  expect(action.payload).toEqual({
+    rowId: "empty",
+    propertyId: "due",
+    previousValue: null,
+    nextValue: {
+      start: nextValue.start,
+      end: expectedEnd.getTime(),
+      endDate: true,
+    },
+  });
+});
+
+it("TimelineLockedRows_RenderOpenableItemsWithoutWriteOrReorderControls", async () => {
+  const onDataChange = vi.fn();
+  const onViewChange =
+    vi.fn<
+      (change: ResourceChange<TableViewState, ViewResourceAction>) => void
+    >();
+  render(
+    <TableView
+      data={rows}
+      properties={properties}
+      view={timelineView({ locked: true })}
+      onDataChange={onDataChange}
+      onViewChange={onViewChange}
+    />,
+  );
+
+  expect(
+    await screen.findAllByRole("button", { name: "Valid task" }),
+  ).toHaveLength(2);
+  expect(screen.getByRole("combobox")).toBeDisabled();
+  expect(
+    screen.queryByRole("button", { name: "Add date to Empty task" }),
+  ).not.toBeInTheDocument();
+  expect(timeline.resizers()).toHaveLength(0);
+  expect(
+    screen.queryByRole("separator", { name: "Resize Name" }),
+  ).not.toBeInTheDocument();
+  expect(onDataChange).not.toHaveBeenCalled();
+
+  const lockedCard = timeline.itemCard("valid");
+  fireEvent.click(lockedCard);
+  expect(onViewChange.mock.lastCall?.[0].action).toMatchObject({
+    type: "view.opened_row.change",
+    payload: { previousRowId: null, nextRowId: "valid" },
+  });
+
+  fireEvent.contextMenu(lockedCard, { clientX: 40, clientY: 20 });
+  expect(
+    screen.queryByRole("option", { name: "Delete" }),
+  ).not.toBeInTheDocument();
+});
+
+it("TimelineGrouping_ExpandCollapse_KeepsSidebarAndTrackProjectionAligned", async () => {
+  const groupedProperties: ColumnInfo[] = [
+    ...properties,
+    {
+      id: "done",
+      name: "Done",
+      type: "checkbox",
+      width: "100",
+      config: undefined,
+    },
+  ];
+  const groupedRows = rows.map((row, index) => ({
+    ...row,
+    properties: {
+      ...row.properties,
+      done: { id: `done-${row.id}`, value: index !== 1 },
+    },
+  }));
+  const tableView = renderTableView({
+    data: groupedRows,
+    properties: groupedProperties,
+    view: timelineView(),
+  });
+  const settings = await tableView.openViewSettings();
+  const grouping = await settings.openSelectGrouping();
+  await grouping.select("Done");
+  await tableView.clickOutside();
+
+  const groups = await screen.findAllByRole("group", { name: /^Group / });
+  expect(groups).toHaveLength(2);
+  expect(timeline.groupSpacers()).toHaveLength(2);
+  expect(timeline.groupSpacers()[0]).toHaveStyle({ height: "44px" });
+
+  fireEvent.pointerDown(
+    within(groups[0]!).getByRole("button", { name: "Open" }),
+  );
+  await waitFor(() => {
+    const sidebarIds = timeline.sidebarProjection();
+    const trackIds = timeline.trackProjection();
+    expect(trackIds).toEqual(sidebarIds);
+    expect(sidebarIds.length).toBeGreaterThan(2);
+  });
+
+  fireEvent.pointerDown(
+    within(groups[0]!).getByRole("button", { name: "Close" }),
+  );
+  await waitFor(() => {
+    expect(timeline.sidebarRows()).toHaveLength(0);
+    expect(timeline.trackRows()).toHaveLength(0);
+  });
+});

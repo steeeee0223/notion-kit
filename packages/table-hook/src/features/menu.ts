@@ -52,11 +52,17 @@ export const LAYOUT_OPTIONS: {
 
 export type RowViewType = "center" | "side" | "full";
 
+export interface TimelineViewState {
+  range: "daily" | "monthly" | "quarterly";
+  datePropertyId: string | null;
+}
+
 export interface TableViewState {
   locked?: boolean;
   layout: LayoutType;
   rowView: RowViewType;
   openedRowId: string | null;
+  timeline?: TimelineViewState;
 }
 
 export type TableGlobalState = TableViewState;
@@ -80,6 +86,11 @@ export interface TableMenuTableApi {
   setTableGlobalState: ResourceChangeFn<TableViewState, ViewResourceAction>;
   toggleTableLocked: () => void;
   setTableLayout: (layout: LayoutType) => void;
+  setTimelineRange: (range: TimelineViewState["range"]) => void;
+  setTimelineDateProperty: (
+    datePropertyId: string | null,
+    operationId?: string,
+  ) => void;
   openRow: (id: string | null) => void;
   openRowInFullPage: (id: string) => void;
   openRowInTab: (id: string) => void;
@@ -94,6 +105,7 @@ export const TableMenuFeature: TableFeature = {
         layout: "table",
         rowView: "side",
         openedRowId: null,
+        timeline: { range: "monthly", datePropertyId: null },
       },
       ...state,
     };
@@ -144,6 +156,43 @@ export const TableMenuFeature: TableFeature = {
           payload: {
             previousLayout: previous.layout,
             nextLayout: next.layout,
+          },
+        }),
+      );
+    };
+    instance.setTimelineRange = (range) => {
+      const actionId = v4();
+      instance.setTableGlobalState(
+        (view) => {
+          if (view.timeline!.range === range) return view;
+          return {
+            ...view,
+            timeline: { ...view.timeline!, range },
+          };
+        },
+        (previous, next) => ({
+          id: actionId,
+          type: "view.timeline_range.change",
+          payload: {
+            previousRange: previous.timeline!.range,
+            nextRange: next.timeline!.range,
+          },
+        }),
+      );
+    };
+    instance.setTimelineDateProperty = (datePropertyId, operationId) => {
+      const actionId = operationId ?? v4();
+      instance.setTableGlobalState(
+        (view) => ({
+          ...view,
+          timeline: { ...view.timeline!, datePropertyId },
+        }),
+        (previous, next) => ({
+          id: actionId,
+          type: "view.timeline_property.change",
+          payload: {
+            previousDatePropertyId: previous.timeline!.datePropertyId,
+            nextDatePropertyId: next.timeline!.datePropertyId,
           },
         }),
       );
