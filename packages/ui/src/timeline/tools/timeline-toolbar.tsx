@@ -30,11 +30,13 @@ export function TimelineToolbar({
 export interface TimelineHeaderToolbarProps {
   onSidebarOpen?: () => void;
   onRangeChange: (range: TimelineRange) => void;
+  rangeDisabled?: boolean;
 }
 
 export function TimelineHeaderToolbar({
   onRangeChange,
   onSidebarOpen,
+  rangeDisabled,
 }: TimelineHeaderToolbarProps) {
   const timeline = useTimelineContext();
   const [containerWidth] = useTimelineContainerWidth();
@@ -65,7 +67,11 @@ export function TimelineHeaderToolbar({
             backgroundImage: `linear-gradient(calc(var(--direction) * -90deg), var(--c-bacPri) 20%, var(--ca-conBacTra) 100%)`,
           }}
         />
-        <TimelineRangeSelect value={timeline.range} onChange={onRangeChange} />
+        <TimelineRangeSelect
+          value={timeline.range}
+          onChange={onRangeChange}
+          disabled={rangeDisabled}
+        />
         <TimelineJumpTo />
       </TimelineToolbar>
     </div>

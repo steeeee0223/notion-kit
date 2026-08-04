@@ -203,11 +203,17 @@ function TimelineRowRoot({ item, onMove, children }: TimelineRowRootProps) {
     const x = mousePosition.x - (timelineRect?.left ?? 0) + scrollX;
     const nextDate = getDateByMousePosition(timeline, x);
     if (activeGesture === "resize-start") {
-      draftStartAtRef.current = nextDate;
-      setDraftStartAt(nextDate);
+      const boundedStart =
+        draftEndAtRef.current && nextDate > draftEndAtRef.current
+          ? draftEndAtRef.current
+          : nextDate;
+      draftStartAtRef.current = boundedStart;
+      setDraftStartAt(boundedStart);
     } else {
-      draftEndAtRef.current = nextDate;
-      setDraftEndAt(nextDate);
+      const boundedEnd =
+        nextDate < draftStartAtRef.current ? draftStartAtRef.current : nextDate;
+      draftEndAtRef.current = boundedEnd;
+      setDraftEndAt(boundedEnd);
     }
   }, [mousePosition.x, scrollX, timeline]);
 
@@ -230,8 +236,14 @@ function TimelineRowRoot({ item, onMove, children }: TimelineRowRootProps) {
     const nextStartAt = draftStartAtRef.current;
     const nextEndAt = draftEndAtRef.current;
     finish();
+    if (
+      nextStartAt.getTime() === authoritativeStartAt.getTime() &&
+      (nextEndAt?.getTime() ?? null) === (authoritativeEndAt?.getTime() ?? null)
+    ) {
+      return;
+    }
     onMove?.(item.id, nextStartAt.getTime(), nextEndAt?.getTime() ?? null);
-  }, [finish, item.id, onMove]);
+  }, [authoritativeEndAt, authoritativeStartAt, finish, item.id, onMove]);
 
   const consumeItemClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {

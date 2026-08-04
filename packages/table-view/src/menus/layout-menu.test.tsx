@@ -1,9 +1,15 @@
+import { render } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import type { ColumnInfo } from "@notion-kit/table-hook";
+import type { ColumnDefs } from "@notion-kit/table-hook";
+
+import type { DefaultPlugins } from "@/plugins";
 
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
+import { TableViewObject } from "../__tests__/component-objects/table-view";
 import { mockResizeObserver } from "../__tests__/mock";
+import { TableView } from "../table-contexts";
 
 mockResizeObserver();
 
@@ -71,6 +77,26 @@ describe("LayoutMenu", () => {
     expect(layout.queryTimelinePropertyOption("Name")).not.toBeInTheDocument();
   });
 
+  it("LayoutMenu_StaleTimelineDateProperty_ShowsAndSelectsFirstUsableDate", async () => {
+    const tableView = new TableViewObject(userEvent.setup());
+    render(
+      <TableView
+        data={[]}
+        properties={timelineProperties}
+        view={{
+          layout: "timeline",
+          timeline: { range: "monthly", datePropertyId: "hidden" },
+        }}
+        onViewChange={vi.fn()}
+      />,
+    );
+    const layout = await (await tableView.openViewSettings()).openLayout();
+
+    expect(layout.timelinePropertyTrigger()).toHaveTextContent("Due");
+    await layout.openTimelinePropertyOptions();
+    expect(layout.timelinePropertyOption("Due")).toBeChecked();
+  });
+
   it("LayoutMenu_TimelineDateSelection_PersistsChosenProperty", async () => {
     const onViewChange = vi.fn();
     const layout = await openTimelineLayoutMenu(onViewChange);
@@ -122,7 +148,7 @@ describe("LayoutMenu", () => {
   });
 });
 
-const timelineProperties: ColumnInfo[] = [
+const timelineProperties = [
   {
     id: "name",
     name: "Name",
@@ -155,15 +181,18 @@ const timelineProperties: ColumnInfo[] = [
     isDeleted: true,
     config: { dateFormat: "full", timeFormat: "24-hour", tz: "UTC" },
   },
-];
+] satisfies ColumnDefs<DefaultPlugins>;
 
-async function openTimelineLayoutMenu(onViewChange = vi.fn()) {
+async function openTimelineLayoutMenu(
+  onViewChange = vi.fn(),
+  datePropertyId = "due",
+) {
   const tableView = renderTableView({
     properties: timelineProperties,
     data: [],
     view: {
       layout: "timeline",
-      timeline: { range: "monthly", datePropertyId: "due" },
+      timeline: { range: "monthly", datePropertyId },
     },
     onViewChange,
   });

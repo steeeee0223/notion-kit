@@ -25,8 +25,6 @@ type TimelineViewRenderResources = Parameters<
   sorting: ReturnType<TableInstance["atoms"]["sorting"]["get"]>;
 };
 
-const noop = () => undefined;
-
 export function TimelineViewContent() {
   const { table } = useTableViewCtx();
 
@@ -153,7 +151,8 @@ function TimelineViewReady({
           </TimelineList>
           <TimelineToday />
           <TimelineHeaderToolbar
-            onRangeChange={resources.locked ? noop : table.setTimelineRange}
+            onRangeChange={table.setTimelineRange}
+            rangeDisabled={resources.locked}
             onSidebarOpen={sidebarOpen ? undefined : () => setSidebarOpen(true)}
           />
         </TimelineContent>

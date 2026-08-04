@@ -467,6 +467,59 @@ describe("timeline components", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("TimelineAddFeatureTrack_EmptyTimeline_DoesNotRenderAddHelper", () => {
+    setTimeline("daily", {
+      timelineData: {
+        start: new Date(2026, 0, 1),
+        end: new Date(2026, 0, 1),
+        ranges: [],
+        subRanges: [],
+      },
+    });
+    const onAddItem = vi.fn();
+    const { container } = render(
+      <TimelineAddFeatureTrack
+        ariaLabel="Add date to Task"
+        onAddItem={onAddItem}
+      />,
+    );
+    const track = container.querySelector<HTMLElement>(
+      '[data-slot="timeline-add-feature-track"]',
+    )!;
+
+    fireEvent.mouseMove(track, { clientX: 50 });
+
+    expect(
+      screen.queryByRole("button", { name: "Add date to Task" }),
+    ).not.toBeInTheDocument();
+    expect(onAddItem).not.toHaveBeenCalled();
+  });
+
+  it("TimelineAddFeatureTrack_MouseLeave_CleansUpAndCallsConsumer", () => {
+    const onMouseLeave = vi.fn();
+    const { container } = render(
+      <TimelineAddFeatureTrack
+        ariaLabel="Add date to Task"
+        onAddItem={vi.fn()}
+        onMouseLeave={onMouseLeave}
+      />,
+    );
+    const track = container.querySelector<HTMLElement>(
+      '[data-slot="timeline-add-feature-track"]',
+    )!;
+    fireEvent.mouseMove(track, { clientX: 50 });
+    expect(
+      screen.getByRole("button", { name: "Add date to Task" }),
+    ).toBeVisible();
+
+    fireEvent.mouseLeave(track);
+
+    expect(onMouseLeave).toHaveBeenCalledOnce();
+    expect(
+      screen.queryByRole("button", { name: "Add date to Task" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("GanttCreateMarkerTrigger_Click_ReportsDateAtMousePosition", async () => {
     const onCreateMarker = vi.fn();
     mocks.mouse = { x: 225, y: 0 };
@@ -1003,7 +1056,7 @@ describe("timeline components", () => {
     fireEvent.click(
       screen.getByRole("button", { name: "drag-move-resize-start" }),
     );
-    expect(screen.getByText("Mar 06, 2026")).toBeInTheDocument();
+    expect(screen.getAllByText("Jan 20, 2026")).toHaveLength(2);
     fireEvent.click(
       screen.getByRole("button", { name: "drag-cancel-resize-start" }),
     );
@@ -1054,5 +1107,70 @@ describe("timeline components", () => {
       item.startAt,
       new Date(2026, 2, 6).getTime(),
     );
+  });
+
+  it.each([
+    ["start", "resize-start", 1_200, new Date(2026, 0, 20).getTime()],
+    ["end", "resize-end", 0, new Date(2026, 0, 10).getTime()],
+  ] as const)(
+    "TimelineRow_%sResizeCrossesOppositeBoundary_ClampsToValidRange",
+    (_direction, gesture, mouseX, boundary) => {
+      const onMove = vi.fn();
+      const timelineElement = document.createElement("div");
+      vi.spyOn(timelineElement, "getBoundingClientRect").mockReturnValue({
+        left: 0,
+      } as DOMRect);
+      setTimeline("daily", { ref: { current: timelineElement } });
+      mocks.mouse = { x: mouseX, y: 0 };
+      const item = {
+        id: "item",
+        name: "Item",
+        startAt: new Date(2026, 0, 10).getTime(),
+        endAt: new Date(2026, 0, 20).getTime(),
+      };
+      render(
+        <TimelineRow.Root item={item} onMove={onMove}>
+          <TimelineRow.Track>
+            <TimelineRow.Resize direction="start" />
+            <TimelineRow.Item>card</TimelineRow.Item>
+            <TimelineRow.Resize direction="end" />
+          </TimelineRow.Track>
+        </TimelineRow.Root>,
+      );
+
+      fireEvent.click(
+        screen.getByRole("button", { name: `drag-start-${gesture}` }),
+      );
+      fireEvent.click(
+        screen.getByRole("button", { name: `drag-move-${gesture}` }),
+      );
+      fireEvent.click(
+        screen.getByRole("button", { name: `drag-end-${gesture}` }),
+      );
+
+      expect(onMove).toHaveBeenCalledWith("item", boundary, boundary);
+    },
+  );
+
+  it("TimelineRow_ActivatedGestureWithoutMovement_DoesNotCommit", () => {
+    const onMove = vi.fn();
+    const item = {
+      id: "item",
+      name: "Item",
+      startAt: new Date(2026, 0, 10).getTime(),
+      endAt: new Date(2026, 0, 20).getTime(),
+    };
+    render(
+      <TimelineRow.Root item={item} onMove={onMove}>
+        <TimelineRow.Track>
+          <TimelineRow.Item>card</TimelineRow.Item>
+        </TimelineRow.Track>
+      </TimelineRow.Root>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "drag-start-item" }));
+    fireEvent.click(screen.getByRole("button", { name: "drag-end-item" }));
+
+    expect(onMove).not.toHaveBeenCalled();
   });
 });

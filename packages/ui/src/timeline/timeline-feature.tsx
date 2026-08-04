@@ -74,6 +74,7 @@ export function TimelineAddFeatureTrack({
   ariaLabel,
   onAddItem,
   className,
+  onMouseLeave,
   ...props
 }: TimelineAddFeatureTrackProps) {
   const timeline = useTimelineContext();
@@ -83,6 +84,7 @@ export function TimelineAddFeatureTrack({
     hoveredColumn === null ? null : hoveredColumn * columnWidth;
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (timeline.timelineData.subRanges.length === 0) return;
     const x = event.clientX - event.currentTarget.getBoundingClientRect().left;
     const nextColumn = Math.floor(x / columnWidth);
     const lastColumn = timeline.timelineData.subRanges.length - 1;
@@ -91,11 +93,14 @@ export function TimelineAddFeatureTrack({
 
   return (
     <div
+      {...props}
       data-slot="timeline-add-feature-track"
       className={cn("relative h-(--timeline-row-height)", className)}
       onMouseMove={handleMouseMove}
-      onMouseLeave={() => setHoveredColumn(null)}
-      {...props}
+      onMouseLeave={(event) => {
+        setHoveredColumn(null);
+        onMouseLeave?.(event);
+      }}
     >
       {columnStart === null ? null : (
         <TimelineAddFeatureHelper

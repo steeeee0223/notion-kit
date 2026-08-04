@@ -163,10 +163,13 @@ export const TableMenuFeature: TableFeature = {
     instance.setTimelineRange = (range) => {
       const actionId = v4();
       instance.setTableGlobalState(
-        (view) => ({
-          ...view,
-          timeline: { ...view.timeline!, range },
-        }),
+        (view) => {
+          if (view.timeline!.range === range) return view;
+          return {
+            ...view,
+            timeline: { ...view.timeline!, range },
+          };
+        },
         (previous, next) => ({
           id: actionId,
           type: "view.timeline_range.change",

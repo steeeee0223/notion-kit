@@ -6,7 +6,7 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   TimelineProvider,
@@ -76,30 +76,41 @@ function TimelineProbe({ featureStartAt }: { featureStartAt?: number }) {
 }
 
 describe("TimelineProvider", () => {
+  afterAll(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     observerState.mutationCallbacks = [];
     observerState.resizeCallbacks = [];
 
-    globalThis.MutationObserver = class MutationObserver {
-      constructor(callback: MutationCallback) {
-        observerState.mutationCallbacks.push(callback);
-      }
+    vi.stubGlobal(
+      "MutationObserver",
+      class MutationObserver {
+        constructor(callback: MutationCallback) {
+          observerState.mutationCallbacks.push(callback);
+        }
 
-      observe = observerState.mutationObserve;
-      disconnect = observerState.mutationDisconnect;
-      takeRecords = () => [];
-    };
+        observe = observerState.mutationObserve;
+        disconnect = observerState.mutationDisconnect;
+        takeRecords = () => [];
+      },
+    );
 
-    globalThis.ResizeObserver = class ResizeObserver {
-      constructor(callback: ResizeObserverCallback) {
-        observerState.resizeCallbacks.push(callback);
-      }
+    vi.stubGlobal(
+      "ResizeObserver",
+      class ResizeObserver {
+        constructor(callback: ResizeObserverCallback) {
+          observerState.resizeCallbacks.push(callback);
+        }
 
-      observe = observerState.resizeObserve;
-      unobserve = vi.fn();
-      disconnect = observerState.resizeDisconnect;
-    };
+        observe = observerState.resizeObserve;
+        unobserve = vi.fn();
+        disconnect = observerState.resizeDisconnect;
+      },
+    );
 
     vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(600);
     vi.spyOn(Element.prototype, "scrollTo").mockImplementation(

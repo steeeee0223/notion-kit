@@ -116,7 +116,7 @@ describe("timeline adapter", () => {
     });
   });
 
-  it("CreateTimelineCellUpdater_MoveOrResize_ReturnsExactImmutableCellPayload", () => {
+  it("CreateTimelineCellUpdater_MoveOrResize_PreservesExistingDateMetadata", () => {
     const cell = {
       id: "cell-due",
       value: { start: 1, includeTime: true },
@@ -126,7 +126,7 @@ describe("timeline adapter", () => {
 
     expect(next).toEqual({
       id: "cell-due",
-      value: { start: 10, end: 20, endDate: true },
+      value: { start: 10, end: 20, endDate: true, includeTime: true },
     });
     expect(next).not.toBe(cell);
     expect(cell.value).toEqual({ start: 1, includeTime: true });

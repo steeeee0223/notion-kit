@@ -23,17 +23,20 @@ const OPTIONS = [
 interface TimelineRangeSelectProps {
   value: TimelineRange;
   onChange: (value: TimelineRange) => void;
+  disabled?: boolean;
 }
 
 export function TimelineRangeSelect({
   value,
   onChange,
+  disabled,
 }: TimelineRangeSelectProps) {
   return (
     <Select
       data-slot="timeline-range-select"
       items={OPTIONS}
       value={value}
+      disabled={disabled}
       onValueChange={(nextValue) => {
         if (nextValue !== null) onChange(nextValue);
       }}

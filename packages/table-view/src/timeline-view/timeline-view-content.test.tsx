@@ -19,9 +19,11 @@ import type {
 import { TableView } from "@/table-contexts";
 
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
+import { TimelineViewObject } from "../__tests__/component-objects/timeline-view";
 import { mockResizeObserver } from "../__tests__/mock";
 
 mockResizeObserver();
+const timeline = new TimelineViewObject();
 
 const properties: ColumnInfo[] = [
   {
@@ -82,30 +84,20 @@ function timelineView(overrides: Partial<TableViewState> = {}): TableViewState {
 }
 
 it("TimelineFlatRows_ValidEmptyAndInvalidDates_KeepSidebarAndTrackProjectionAligned", async () => {
-  const { container } = render(
+  render(
     <TableView data={rows} properties={properties} view={timelineView()} />,
   );
 
   expect(
     await screen.findByRole("complementary", { name: "Timeline table" }),
   ).toBeVisible();
-  const sidebarIds = Array.from(
-    container.querySelectorAll('[data-slot="timeline-sidebar-row"]'),
-    (element) => element.getAttribute("data-row-id"),
-  );
-  const trackIds = Array.from(
-    container.querySelectorAll('[data-slot="timeline-track-row"]'),
-    (element) => element.getAttribute("data-row-id"),
-  );
+  const sidebarIds = timeline.sidebarProjection();
+  const trackIds = timeline.trackProjection();
 
   expect(sidebarIds).toEqual(["valid", "empty", "invalid"]);
   expect(trackIds).toEqual(sidebarIds);
-  expect(
-    container.querySelectorAll('[data-slot="timeline-item"]'),
-  ).toHaveLength(1);
-  expect(
-    container.querySelectorAll('button[aria-label="Valid task"]'),
-  ).toHaveLength(2);
+  expect(timeline.items()).toHaveLength(1);
+  expect(timeline.titleButtons("Valid task")).toHaveLength(2);
 });
 
 it("TimelineSidebar_CollapseAndReopen_PreservesLocalVisibility", async () => {
@@ -131,14 +123,12 @@ it("TimelineSidebar_CollapseAndReopen_PreservesLocalVisibility", async () => {
 });
 
 it("TimelineSidebar_TitleResize_UpdatesLiveWidthAndActiveStyle", async () => {
-  const { container } = render(
+  render(
     <TableView data={rows} properties={properties} view={timelineView()} />,
   );
-  const timeline = container.querySelector<HTMLElement>(
-    '[data-slot="timeline-view"]',
-  )!;
+  const timelineRoot = timeline.root();
   const resizeHandle = screen.getByRole("separator", { name: "Resize Name" });
-  expect(timeline.style.getPropertyValue("--timeline-sidebar-width")).toBe(
+  expect(timelineRoot.style.getPropertyValue("--timeline-sidebar-width")).toBe(
     "200px",
   );
 
@@ -146,9 +136,9 @@ it("TimelineSidebar_TitleResize_UpdatesLiveWidthAndActiveStyle", async () => {
   fireEvent.mouseMove(document, { clientX: 260 });
 
   await waitFor(() => {
-    expect(timeline.style.getPropertyValue("--timeline-sidebar-width")).toBe(
-      "260px",
-    );
+    expect(
+      timelineRoot.style.getPropertyValue("--timeline-sidebar-width"),
+    ).toBe("260px");
     expect(resizeHandle).toHaveClass("bg-blue/80");
   });
   fireEvent.mouseUp(document, { clientX: 260 });
@@ -159,7 +149,7 @@ it("TimelineSidebarTitleAndCardSurface_Click_OpenTheConfiguredRow", async () => 
     vi.fn<
       (change: ResourceChange<TableViewState, ViewResourceAction>) => void
     >();
-  const { container } = render(
+  render(
     <TableView
       data={rows}
       properties={properties}
@@ -182,12 +172,7 @@ it("TimelineSidebarTitleAndCardSurface_Click_OpenTheConfiguredRow", async () => 
   });
 
   onViewChange.mockClear();
-  const track = container.querySelector<HTMLElement>(
-    '[data-slot="timeline-track-row"][data-row-id="valid"]',
-  )!;
-  fireEvent.click(
-    track.querySelector<HTMLElement>('[data-slot="timeline-item-card"]')!,
-  );
+  fireEvent.click(timeline.itemCard("valid"));
   expect(onViewChange.mock.lastCall?.[0].action).toMatchObject({
     type: "view.opened_row.change",
     payload: { previousRowId: "valid", nextRowId: "valid" },
@@ -211,7 +196,7 @@ it("TimelineUnlockedCard_ContextMenuTargetsTheMatchingRow", async () => {
       },
     },
   ];
-  const { container } = render(
+  render(
     <TableView
       data={actionableRows}
       properties={properties}
@@ -219,9 +204,7 @@ it("TimelineUnlockedCard_ContextMenuTargetsTheMatchingRow", async () => {
       onDataChange={onDataChange}
     />,
   );
-  const secondCard = container.querySelector<HTMLElement>(
-    '[data-slot="timeline-track-row"][data-row-id="second"] [data-slot="timeline-item-card"]',
-  )!;
+  const secondCard = timeline.itemCard("second");
 
   fireEvent.contextMenu(secondCard, { clientX: 40, clientY: 20 });
   fireEvent.click(await screen.findByRole("option", { name: "Delete" }));
@@ -271,7 +254,7 @@ it("TimelineSingleDate_Render_DoesNotMutateSourceCell", async () => {
       },
     },
   ];
-  const { container } = render(
+  render(
     <TableView
       data={singleDateRows}
       properties={properties}
@@ -282,10 +265,8 @@ it("TimelineSingleDate_Render_DoesNotMutateSourceCell", async () => {
 
   expect(
     await screen.findAllByRole("button", { name: "Valid task" }),
-  ).not.toHaveLength(0);
-  expect(
-    container.querySelectorAll('[data-slot="timeline-item-resizer"]'),
   ).toHaveLength(2);
+  expect(timeline.resizers()).toHaveLength(2);
   expect(onDataChange).not.toHaveBeenCalled();
 });
 
@@ -324,7 +305,7 @@ it("TimelineDatePropertySwitch_TwoPopulatedProperties_UpdatesBarCoordinates", as
     properties: [...properties, laterProperty],
     view: timelineView(),
   });
-  const bar = document.querySelector('[data-slot="timeline-item"]');
+  const bar = timeline.item();
   expect(bar).toHaveStyle({ insetInlineStart: "100800px", width: "150px" });
 
   const settings = await tableView.openViewSettings();
@@ -369,7 +350,7 @@ it("TimelineControlledDateCellReplacement_UpdatesBarCoordinates", async () => {
   const { rerender } = render(
     <TableView data={firstRows} properties={properties} view={view} />,
   );
-  const bar = document.querySelector('[data-slot="timeline-item"]');
+  const bar = timeline.item();
   expect(bar).toHaveStyle({ insetInlineStart: "100800px", width: "150px" });
 
   rerender(<TableView data={secondRows} properties={properties} view={view} />);
@@ -394,9 +375,7 @@ it("TimelineEmptyTrack_AddDate_WritesExactOneCalendarDayCellResource", async () 
     />,
   );
 
-  const emptyTrack = document.querySelector<HTMLElement>(
-    '[data-slot="timeline-add-feature-track"]',
-  )!;
+  const emptyTrack = timeline.addTrack();
   fireEvent.mouseMove(emptyTrack, { clientX: 75 });
   fireEvent.click(
     await screen.findByRole("button", { name: "Add date to Empty task" }),
@@ -433,7 +412,7 @@ it("TimelineLockedRows_RenderOpenableItemsWithoutWriteOrReorderControls", async 
     vi.fn<
       (change: ResourceChange<TableViewState, ViewResourceAction>) => void
     >();
-  const { container } = render(
+  render(
     <TableView
       data={rows}
       properties={properties}
@@ -445,21 +424,18 @@ it("TimelineLockedRows_RenderOpenableItemsWithoutWriteOrReorderControls", async 
 
   expect(
     await screen.findAllByRole("button", { name: "Valid task" }),
-  ).not.toHaveLength(0);
+  ).toHaveLength(2);
+  expect(screen.getByRole("combobox")).toBeDisabled();
   expect(
     screen.queryByRole("button", { name: "Add date to Empty task" }),
   ).not.toBeInTheDocument();
-  expect(
-    container.querySelector('[data-slot="timeline-item-resizer"]'),
-  ).not.toBeInTheDocument();
+  expect(timeline.resizers()).toHaveLength(0);
   expect(
     screen.queryByRole("separator", { name: "Resize Name" }),
   ).not.toBeInTheDocument();
   expect(onDataChange).not.toHaveBeenCalled();
 
-  const lockedCard = container.querySelector<HTMLElement>(
-    '[data-slot="timeline-track-row"][data-row-id="valid"] [data-slot="timeline-item-card"]',
-  )!;
+  const lockedCard = timeline.itemCard("valid");
   fireEvent.click(lockedCard);
   expect(onViewChange.mock.lastCall?.[0].action).toMatchObject({
     type: "view.opened_row.change",
@@ -502,29 +478,15 @@ it("TimelineGrouping_ExpandCollapse_KeepsSidebarAndTrackProjectionAligned", asyn
 
   const groups = await screen.findAllByRole("group", { name: /^Group / });
   expect(groups).toHaveLength(2);
-  expect(
-    document.querySelectorAll('[data-slot="timeline-group-spacer"]'),
-  ).toHaveLength(2);
-  expect(
-    document.querySelector('[data-slot="timeline-group-spacer"]'),
-  ).toHaveStyle({ height: "44px" });
+  expect(timeline.groupSpacers()).toHaveLength(2);
+  expect(timeline.groupSpacers()[0]).toHaveStyle({ height: "44px" });
 
   fireEvent.pointerDown(
     within(groups[0]!).getByRole("button", { name: "Open" }),
   );
   await waitFor(() => {
-    const sidebarIds = Array.from(
-      document.querySelectorAll(
-        '[data-slot="timeline-sidebar-group"], [data-slot="timeline-sidebar-row"]',
-      ),
-      (element) => element.getAttribute("data-row-id"),
-    );
-    const trackIds = Array.from(
-      document.querySelectorAll(
-        '[data-slot="timeline-group-spacer"], [data-slot="timeline-track-row"]',
-      ),
-      (element) => element.getAttribute("data-row-id"),
-    );
+    const sidebarIds = timeline.sidebarProjection();
+    const trackIds = timeline.trackProjection();
     expect(trackIds).toEqual(sidebarIds);
     expect(sidebarIds.length).toBeGreaterThan(2);
   });
@@ -533,11 +495,7 @@ it("TimelineGrouping_ExpandCollapse_KeepsSidebarAndTrackProjectionAligned", asyn
     within(groups[0]!).getByRole("button", { name: "Close" }),
   );
   await waitFor(() => {
-    expect(
-      document.querySelectorAll('[data-slot="timeline-sidebar-row"]'),
-    ).toHaveLength(0);
-    expect(
-      document.querySelectorAll('[data-slot="timeline-track-row"]'),
-    ).toHaveLength(0);
+    expect(timeline.sidebarRows()).toHaveLength(0);
+    expect(timeline.trackRows()).toHaveLength(0);
   });
 });

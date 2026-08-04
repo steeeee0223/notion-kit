@@ -61,6 +61,6 @@ export function createEmptyTrackDate(start: number): DateData {
 export function createTimelineCellUpdater(start: number, end: number) {
   return (cell: Cell<DatePlugin>): Cell<DatePlugin> => ({
     ...cell,
-    value: { start, end, endDate: true },
+    value: { ...cell.value, start, end, endDate: true },
   });
 }

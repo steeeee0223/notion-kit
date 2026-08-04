@@ -21,7 +21,6 @@ import {
   getDateByMousePosition,
   getOffset,
   innerDifferenceInFn,
-  noop,
   resolveColumnWidth,
   snapDays,
   startOfFn,
@@ -183,9 +182,5 @@ describe("timeline date utilities", () => {
     expect(innerDifferenceInFn.daily(addDays(value, 1), value)).toBe(24);
     expect(innerDifferenceInFn.monthly(addDays(value, 2), value)).toBe(2);
     expect(innerDifferenceInFn.quarterly(addDays(value, 2), value)).toBe(2);
-  });
-
-  it("Noop_Called_HasNoObservableEffect", () => {
-    expect(noop()).toBeUndefined();
   });
 });

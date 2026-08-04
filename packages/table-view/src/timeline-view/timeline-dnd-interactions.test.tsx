@@ -20,9 +20,11 @@ import type {
 import { TableView } from "@/table-contexts";
 
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
+import { TimelineViewObject } from "../__tests__/component-objects/timeline-view";
 import { mockResizeObserver } from "../__tests__/mock";
 
 mockResizeObserver();
+const timeline = new TimelineViewObject();
 
 const properties: ColumnInfo[] = [
   {
@@ -92,12 +94,7 @@ it("TimelineCardSurface_CrossThresholdAndReturn_CommitsExactMoveWithoutOpening",
     onViewChange,
   });
 
-  const track = document.querySelector<HTMLElement>(
-    '[data-slot="timeline-track-row"][data-row-id="valid"]',
-  )!;
-  const card = track.querySelector<HTMLElement>(
-    '[data-slot="timeline-item-card"]',
-  )!;
+  const card = timeline.itemCard("valid");
   await dragPointer(card, [0, 20, 30, 5]);
 
   await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
@@ -202,12 +199,7 @@ it("TimelineCardSurface_RejectedControlledMove_NextDragUsesAuthoritativeRange", 
       onDataChange={onDataChange}
     />,
   );
-  const track = document.querySelector<HTMLElement>(
-    '[data-slot="timeline-track-row"][data-row-id="valid"]',
-  )!;
-  const card = track.querySelector<HTMLElement>(
-    '[data-slot="timeline-item-card"]',
-  )!;
+  const card = timeline.itemCard("valid");
 
   await dragPointer(card, [0, 20, 30, 5]);
 
@@ -292,12 +284,7 @@ it("TimelineCardSurface_EqualEpochRange_CommitsExactMove", async () => {
     },
     onDataChange,
   });
-  const track = document.querySelector<HTMLElement>(
-    '[data-slot="timeline-track-row"][data-row-id="valid"]',
-  )!;
-  const card = track.querySelector<HTMLElement>(
-    '[data-slot="timeline-item-card"]',
-  )!;
+  const card = timeline.itemCard("valid");
 
   await dragPointer(card, [0, 20, 30, 5]);
 
@@ -317,7 +304,7 @@ it("TimelineCardSurface_EqualEpochRange_CommitsExactMove", async () => {
   });
 });
 
-it("TimelineLeftResizer_EqualEpochRange_CommitsExactRange", async () => {
+it("TimelineLeftResizer_EqualEpochRange_DoesNotCommitAnUnchangedRange", async () => {
   const onDataChange = vi.fn<(change: DataChange) => void>();
   const equalEpochRows: Row[] = [
     {
@@ -337,26 +324,11 @@ it("TimelineLeftResizer_EqualEpochRange_CommitsExactRange", async () => {
     },
     onDataChange,
   });
-  const leftResizer = document.querySelector<HTMLElement>(
-    '[data-slot="timeline-item-resizer"][data-direction="start"]',
-  )!;
+  const leftResizer = timeline.resizer("valid", "start");
 
   await dragPointer(leftResizer, [25, 0]);
 
-  await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
-  expect(onDataChange.mock.lastCall?.[0].action).toMatchObject({
-    type: "data.cell.update",
-    payload: {
-      rowId: "valid",
-      propertyId: "due",
-      previousValue: { start: 0, end: 0 },
-      nextValue: {
-        start: 0,
-        end: 0,
-        endDate: true,
-      },
-    },
-  });
+  await waitFor(() => expect(onDataChange).not.toHaveBeenCalled());
 });
 
 it("TimelineRightResizer_PointerDrag_CommitsExactCellEnvelope", async () => {
@@ -371,14 +343,10 @@ it("TimelineRightResizer_PointerDrag_CommitsExactCellEnvelope", async () => {
     onDataChange,
   });
 
-  const timeline = document.querySelector<HTMLElement>(
-    '[data-slot="timeline-view"]',
-  )!;
-  timeline.scrollLeft = 0;
-  fireEvent.scroll(timeline);
-  const resizers = document.querySelectorAll<HTMLElement>(
-    '[data-slot="timeline-item-resizer"]',
-  );
+  const timelineRoot = timeline.root();
+  timelineRoot.scrollLeft = 0;
+  fireEvent.scroll(timelineRoot);
+  const resizers = timeline.resizers("valid");
   expect(resizers).toHaveLength(2);
 
   await dragPointer(resizers[1]!, [25, 45, 50]);
@@ -419,9 +387,7 @@ it("TimelineSidebarHandle_SortedPointerDrag_ConfirmsThenCommitsExactMove", async
   await sort.addRule("Name");
   await tableView.clickOutside();
 
-  const sidebarRow = document.querySelector<HTMLElement>(
-    '[data-slot="timeline-sidebar-row"][data-row-id="empty"]',
-  )!;
+  const sidebarRow = timeline.sidebarRow("empty");
   const handle = within(sidebarRow).getByRole("button", {
     name: "Move Empty task",
   });
@@ -530,9 +496,7 @@ async function cancelPointerDrag(handle: Element, positions: number[]) {
 }
 
 function getTimelineCard(rowId: string) {
-  return document.querySelector<HTMLElement>(
-    `[data-slot="timeline-track-row"][data-row-id="${rowId}"] [data-slot="timeline-item-card"]`,
-  )!;
+  return timeline.itemCard(rowId);
 }
 
 async function waitForDragClickReset() {
@@ -564,9 +528,7 @@ function mockTimelineRowRects() {
           toJSON: () => ({}),
         };
       }
-      const row = this.closest<HTMLElement>(
-        '[data-slot="timeline-sidebar-row"]',
-      );
+      const row = timeline.closestSidebarRow(this);
       const positions: Record<string, number> = {
         empty: 0,
         invalid: 36,

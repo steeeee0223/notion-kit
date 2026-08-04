@@ -68,6 +68,24 @@ describe("useTableView resource API", () => {
     expect(typeof change?.action.id).toBe("string");
   });
 
+  it("ResourceActions_SelectedTimelineRange_DoesNotEmitViewChange", () => {
+    const onViewChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        onViewChange,
+      }),
+    );
+
+    act(() => {
+      result.current.table.setTimelineRange("monthly");
+    });
+
+    expect(onViewChange).not.toHaveBeenCalled();
+  });
+
   it("ResourceActions_ControlledTimelineProperty_ComposesPendingRangeAndUsesProvidedOperationId", () => {
     const onViewChange = vi.fn();
     const { result } = renderHook(() =>

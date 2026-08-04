@@ -8,6 +8,13 @@ test("ControlledData_CellEdits_ParentStateAndUIStaySynchronized", async ({
   await table.editTextCell("Alpha", "first note", "updated note");
 
   await expect(table.row("Alpha")).toContainText("updated note");
+  await expect
+    .poll(async () => {
+      const rendered = await table.renderedResourceSnapshot();
+      return rendered.data.find((row) => row.id === "row-alpha")?.properties
+        .notes?.value;
+    })
+    .toBe("updated note");
   await expect(table.controlledState()).toContainText(
     '"type":"data.cell.update"',
   );

@@ -112,22 +112,21 @@ function TimelineDatePropertyMenu({
   >[string][];
 }) {
   const { table } = useTableViewCtx();
-  const currentName = properties.find(
-    (property) => property.id === current,
-  )?.name;
+  const currentProperty =
+    properties.find((property) => property.id === current) ?? properties[0]!;
 
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger label="Timeline by">
         <MenuItemAction className="flex items-center text-muted">
-          {currentName}
+          {currentProperty.name}
         </MenuItemAction>
       </DropdownMenuSubTrigger>
       <DropdownMenuContent sideOffset={-4} className="w-64">
         <DropdownMenuRadioGroup
-          value={current ?? ""}
+          value={currentProperty.id}
           onValueChange={(propertyId: string) => {
-            if (propertyId === current) return;
+            if (propertyId === currentProperty.id) return;
             table.setTimelineDateProperty(propertyId);
           }}
         >
