@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
 
-import type { RowInstance, TableInstance } from "@notion-kit/table-hook";
+import type { TableInstance } from "@notion-kit/table-hook";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Dialog } from "@notion-kit/ui/primitives";
 import {
@@ -19,13 +19,61 @@ import { TimelineSidebar } from "./timeline-sidebar";
 import { TimelineTrackRow } from "./timeline-track-row";
 import { useTimelineViewState } from "./use-timeline-view-state";
 
-type TimelineViewRenderResources = Parameters<
+type TimelineViewResolutionResources = Parameters<
   typeof useTimelineViewState
->[1] & {
+>[0];
+
+interface TimelineViewReadyResources {
   sorting: ReturnType<TableInstance["atoms"]["sorting"]["get"]>;
-};
+  locked: boolean;
+  timeline: TimelineViewResolutionResources["timeline"];
+}
 
 export function TimelineViewContent() {
+  const { table } = useTableViewCtx();
+
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        columnOrder: state.columnOrder,
+        columnsInfo: state.columnsInfo,
+        locked: Boolean(state.tableGlobal.locked),
+        timeline: state.tableGlobal.timeline!,
+      })}
+    >
+      {(resources) => <TimelineViewContentInner resources={resources} />}
+    </table.Subscribe>
+  );
+}
+
+function TimelineViewContentInner({
+  resources,
+}: {
+  resources: TimelineViewResolutionResources;
+}) {
+  const resolution = useTimelineViewState(resources);
+
+  if (resolution.status === "pending") {
+    return (
+      <div
+        data-testid="timeline-view-pending"
+        data-slot="timeline-view-pending"
+      />
+    );
+  }
+  if (resolution.status === "locked-empty") {
+    return (
+      <div
+        data-testid="timeline-view-locked-empty"
+        data-slot="timeline-view-locked-empty"
+      />
+    );
+  }
+
+  return <TimelineViewReady propertyId={resolution.property.id} />;
+}
+
+function TimelineViewReady({ propertyId }: { propertyId: string }) {
   const { table } = useTableViewCtx();
 
   return (
@@ -45,56 +93,23 @@ export function TimelineViewContent() {
       })}
     >
       {(resources) => (
-        <TimelineViewContentInner table={table} resources={resources} />
+        <TimelineViewReadyContent
+          propertyId={propertyId}
+          resources={resources}
+        />
       )}
     </table.Subscribe>
   );
 }
 
-function TimelineViewContentInner({
-  table,
-  resources,
-}: {
-  table: TableInstance;
-  resources: TimelineViewRenderResources;
-}) {
-  const resolution = useTimelineViewState(table, resources);
-
-  if (resolution.status === "pending") {
-    return (
-      <div
-        data-testid="timeline-view-pending"
-        data-slot="timeline-view-pending"
-      />
-    );
-  }
-  if (resolution.status === "locked-empty") {
-    return (
-      <div
-        data-testid="timeline-view-locked-empty"
-        data-slot="timeline-view-locked-empty"
-      />
-    );
-  }
-
-  return (
-    <TimelineViewReady
-      table={table}
-      resources={resources}
-      propertyId={resolution.property.id}
-    />
-  );
-}
-
-function TimelineViewReady({
-  table,
-  resources,
+function TimelineViewReadyContent({
   propertyId,
+  resources,
 }: {
-  table: TableInstance;
-  resources: TimelineViewRenderResources;
   propertyId: string;
+  resources: TimelineViewReadyResources;
 }) {
+  const { table } = useTableViewCtx();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [pendingDragEndEvent, setPendingDragEndEvent] =
     useState<DragEndEvent | null>(null);
@@ -142,10 +157,8 @@ function TimelineViewReady({
             {rows.map((row) => (
               <TimelineTrackRow
                 key={row.id}
-                row={row as RowInstance}
+                row={row}
                 propertyId={propertyId}
-                locked={resources.locked}
-                table={table}
               />
             ))}
           </TimelineList>
@@ -156,15 +169,12 @@ function TimelineViewReady({
             onSidebarOpen={sidebarOpen ? undefined : () => setSidebarOpen(true)}
           />
         </TimelineContent>
-        {sidebarOpen ? (
+        {sidebarOpen && (
           <TimelineSidebar
-            rows={rows as RowInstance[]}
-            table={table}
-            titleHeader={titleHeader}
             onClose={() => setSidebarOpen(false)}
             onRowDragEnd={handleRowDragEnd}
           />
-        ) : null}
+        )}
       </TimelineProvider>
       <Dialog
         open={pendingDragEndEvent !== null}

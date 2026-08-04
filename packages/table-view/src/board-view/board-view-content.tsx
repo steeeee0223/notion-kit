@@ -1,9 +1,6 @@
 import { Icon } from "@notion-kit/icons";
-import {
-  TableViewMenuPage,
-  type RowInstance,
-  type TableInstance,
-} from "@notion-kit/table-hook";
+import type { RowInstance } from "@notion-kit/table-hook";
+import { TableViewMenuPage } from "@notion-kit/table-hook";
 import { Kanban } from "@notion-kit/ui/kanban";
 import { Button } from "@notion-kit/ui/primitives";
 
@@ -14,86 +11,63 @@ import { useBoardDnd } from "./use-board-dnd";
 
 export function BoardViewContent() {
   const { table } = useTableViewCtx();
-
-  return (
-    <table.Subscribe
-      selector={(state) => ({
-        locked: state.tableGlobal.locked,
-        grouping: state.grouping,
-        groupingState: state.groupingState,
-        sorting: state.sorting,
-        expanded: state.expanded,
-        columnOrder: state.columnOrder,
-        columnVisibility: state.columnVisibility,
-        columnsInfo: state.columnsInfo,
-      })}
-    >
-      {({ locked, grouping, groupingState }) => (
-        <BoardViewContentInner
-          locked={locked ?? false}
-          grouping={grouping}
-          groupingState={groupingState}
-        />
-      )}
-    </table.Subscribe>
-  );
-}
-
-function BoardViewContentInner({
-  locked,
-  grouping,
-  groupingState,
-}: {
-  locked: boolean;
-  grouping: ReturnType<TableInstance["atoms"]["grouping"]["get"]>;
-  groupingState: ReturnType<TableInstance["atoms"]["groupingState"]["get"]>;
-}) {
-  const { table } = useTableViewCtx();
   const handlers = useBoardDnd();
-  const groupedRowsById = table.getRowModel().rowsById;
-  const { groupOrder, groupVisibility } = groupingState;
 
   return (
     <div data-slot="notion-board-view" className="relative float-start px-24">
       <div className="contain-layout">
-        <div
-          data-block-id="1fe35e0f-492c-80fd-8d7c-f7e953641770"
-          className="relative flex min-w-full grow py-2"
+        <table.Subscribe
+          selector={(state) => ({
+            grouping: state.grouping,
+            groupingState: state.groupingState,
+            sorting: state.sorting,
+            expanded: state.expanded,
+            columnOrder: state.columnOrder,
+            columnVisibility: state.columnVisibility,
+            columnsInfo: state.columnsInfo,
+          })}
         >
-          {grouping.length === 0 && (
-            <div className="flex justify-center">
-              <Button
-                size="sm"
-                className="text-secondary"
-                onClick={() =>
-                  table.setTableMenuState({
-                    open: true,
-                    page: TableViewMenuPage.SelectGroupBy,
-                  })
-                }
+          {({ grouping, groupingState }) => {
+            const { groupOrder, groupVisibility } = groupingState;
+            const groupedRowsById = table.getRowModel().rowsById;
+
+            return (
+              <div
+                data-block-id="1fe35e0f-492c-80fd-8d7c-f7e953641770"
+                className="relative flex min-w-full grow py-2"
               >
-                <Icon.SquareGridBelowLines />
-                Select a grouping property
-              </Button>
-            </div>
-          )}
-          <Kanban.Root {...handlers}>
-            {groupOrder
-              .filter((groupId) => groupVisibility[groupId] ?? true)
-              .map((groupId, index) => {
-                const row = (groupedRowsById[groupId] ??
-                  table.getPlaceholderGroupedRow(groupId)) as RowInstance;
-                return (
-                  <BoardGroup
-                    key={groupId}
-                    row={row}
-                    index={index}
-                    locked={locked}
-                  />
-                );
-              })}
-          </Kanban.Root>
-        </div>
+                {grouping.length === 0 && (
+                  <div className="flex justify-center">
+                    <Button
+                      size="sm"
+                      className="text-secondary"
+                      onClick={() =>
+                        table.setTableMenuState({
+                          open: true,
+                          page: TableViewMenuPage.SelectGroupBy,
+                        })
+                      }
+                    >
+                      <Icon.SquareGridBelowLines />
+                      Select a grouping property
+                    </Button>
+                  </div>
+                )}
+                <Kanban.Root {...handlers}>
+                  {groupOrder
+                    .filter((groupId) => groupVisibility[groupId] ?? true)
+                    .map((groupId, index) => {
+                      const row = (groupedRowsById[groupId] ??
+                        table.getPlaceholderGroupedRow(groupId)) as RowInstance;
+                      return (
+                        <BoardGroup key={groupId} row={row} index={index} />
+                      );
+                    })}
+                </Kanban.Root>
+              </div>
+            );
+          }}
+        </table.Subscribe>
       </div>
     </div>
   );

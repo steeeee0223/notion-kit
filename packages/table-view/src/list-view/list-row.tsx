@@ -10,14 +10,13 @@ import { RowActions } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface ListRowProps {
-  row: RowInstance;
+  rowId: string;
 }
 
-export function ListRow({ row }: ListRowProps) {
+export function ListRow({ rowId }: ListRowProps) {
   const isMobile = useIsMobile();
-  /** Add row */
   const { table } = useTableViewCtx();
-  const { locked } = table.getTableGlobalState();
+  const row = table.getRow(rowId) as RowInstance;
   const addNextRow = (e: React.MouseEvent) => {
     if (e.altKey) {
       table.addRow({ id: row.id, at: "prev" });
@@ -25,44 +24,49 @@ export function ListRow({ row }: ListRowProps) {
     }
     table.addRow({ id: row.id, at: "next" });
   };
+
   return (
-    <Sortable.Item
-      id={row.id}
-      index={row.index}
-      group={row.parentId}
-      disabled={locked}
-      data={{ type: "list-row", groupId: row.parentId }}
-      render={<div data-block-id={row.id} className="group/row my-1" />}
-    >
-      <div className="relative flex items-center">
-        {!locked && (
-          <RowActions
-            className="absolute -left-12"
-            rowId={row.id}
-            isMobile={isMobile}
-            onAddNext={addNextRow}
-          />
-        )}
-        <div
-          role="button"
-          tabIndex={0}
-          className={cn(
-            buttonVariants({ variant: "cell" }),
-            "relative h-7.5 grow overflow-hidden rounded-md px-1 text-inherit opacity-100",
-          )}
-          onClick={() => table.openRow(row.id)}
-          onKeyDown={() => {
-            // noop
-          }}
+    <table.Subscribe selector={(state) => state.tableGlobal.locked}>
+      {(locked) => (
+        <Sortable.Item
+          id={row.id}
+          index={row.index}
+          group={row.parentId}
+          disabled={locked}
+          data={{ type: "list-row", groupId: row.parentId }}
+          render={<div data-block-id={row.id} className="group/row my-1" />}
         >
-          {row.getVisibleCells().map((cell) => (
-            <React.Fragment key={cell.id}>
-              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-            </React.Fragment>
-          ))}
-        </div>
-        <div className="absolute -inset-e-7 top-1/2 h-full w-7 -translate-y-1/2 cursor-pointer" />
-      </div>
-    </Sortable.Item>
+          <div className="relative flex items-center">
+            {!locked && (
+              <RowActions
+                className="absolute -left-12"
+                rowId={row.id}
+                isMobile={isMobile}
+                onAddNext={addNextRow}
+              />
+            )}
+            <div
+              role="button"
+              tabIndex={0}
+              className={cn(
+                buttonVariants({ variant: "cell" }),
+                "relative h-7.5 grow overflow-hidden rounded-md px-1 text-inherit opacity-100",
+              )}
+              onClick={() => table.openRow(row.id)}
+              onKeyDown={() => {
+                // noop
+              }}
+            >
+              {row.getVisibleCells().map((cell) => (
+                <React.Fragment key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </React.Fragment>
+              ))}
+            </div>
+            <div className="absolute -inset-e-7 top-1/2 h-full w-7 -translate-y-1/2 cursor-pointer" />
+          </div>
+        </Sortable.Item>
+      )}
+    </table.Subscribe>
   );
 }

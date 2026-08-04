@@ -1,11 +1,9 @@
 import { useEffect, useRef } from "react";
 import { v4 } from "uuid";
 
-import type {
-  ColumnInfo,
-  TableInstance,
-  TableViewState,
-} from "@notion-kit/table-hook";
+import type { ColumnInfo, TableViewState } from "@notion-kit/table-hook";
+
+import { useTableViewCtx } from "@/table-contexts";
 
 import {
   createInitialTimelineDate,
@@ -25,9 +23,9 @@ export type TimelineViewResolution =
   | { status: "locked-empty"; property: null };
 
 export function useTimelineViewState(
-  table: TableInstance,
   resources: TimelineViewResources,
 ): TimelineViewResolution {
+  const { table } = useTableViewCtx();
   const pendingRef = useRef(false);
   const properties = resources.columnOrder.flatMap((id) => {
     const property = resources.columnsInfo[id];

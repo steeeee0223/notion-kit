@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
+import type { SortingState } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
-import type { TableInstance } from "@notion-kit/table-hook";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
@@ -19,7 +19,6 @@ export function ListViewContent() {
   return (
     <table.Subscribe
       selector={(state) => ({
-        locked: state.tableGlobal.locked,
         sorting: state.sorting,
         grouping: state.grouping,
         groupingState: state.groupingState,
@@ -29,9 +28,8 @@ export function ListViewContent() {
         columnsInfo: state.columnsInfo,
       })}
     >
-      {({ locked, sorting }) => (
+      {({ sorting }) => (
         <ListViewContentInner
-          locked={locked ?? false}
           sorting={sorting}
           pendingDragEndEvent={pendingDragEndEvent}
           setPendingDragEndEvent={setPendingDragEndEvent}
@@ -42,14 +40,12 @@ export function ListViewContent() {
 }
 
 interface ListViewContentInnerProps {
-  locked: boolean;
-  sorting: ReturnType<TableInstance["atoms"]["sorting"]["get"]>;
+  sorting: SortingState;
   pendingDragEndEvent: DragEndEvent | null;
   setPendingDragEndEvent: (event: DragEndEvent | null) => void;
 }
 
 function ListViewContentInner({
-  locked,
   sorting,
   pendingDragEndEvent,
   setPendingDragEndEvent,
@@ -77,33 +73,37 @@ function ListViewContentInner({
 
   return (
     <div key="notion-list-view" className="min-w-177 px-24 pb-0">
-      <div
-        data-block-id="1fe35e0f-492c-80fd-8d7c-f7e953641770"
-        className="flex flex-col py-1"
-      >
-        <Sortable.Root disabled={locked} onDragEnd={handleRowDragEnd}>
-          <Sortable.List>
-            {rows.map((row) =>
-              row.getIsGrouped() ? (
-                <TableGroupedRow key={row.id} row={row} />
-              ) : (
-                <ListRow key={row.id} row={row} />
-              ),
-            )}
-          </Sortable.List>
-        </Sortable.Root>
-        {!locked && (
-          <Button
-            tabIndex={0}
-            variant="cell"
-            className="h-7.5 rounded-md px-2 text-muted"
-            onClick={() => table.addRow()}
+      <table.Subscribe selector={(state) => state.tableGlobal.locked}>
+        {(locked) => (
+          <div
+            data-block-id="1fe35e0f-492c-80fd-8d7c-f7e953641770"
+            className="flex flex-col py-1"
           >
-            <Icon.Plus className="size-3.5 fill-current" />
-            New page
-          </Button>
+            <Sortable.Root disabled={locked} onDragEnd={handleRowDragEnd}>
+              <Sortable.List>
+                {rows.map((row) =>
+                  row.getIsGrouped() ? (
+                    <TableGroupedRow key={row.id} row={row} />
+                  ) : (
+                    <ListRow key={row.id} rowId={row.id} />
+                  ),
+                )}
+              </Sortable.List>
+            </Sortable.Root>
+            {!locked && (
+              <Button
+                tabIndex={0}
+                variant="cell"
+                className="h-7.5 rounded-md px-2 text-muted"
+                onClick={() => table.addRow()}
+              >
+                <Icon.Plus className="size-3.5 fill-current" />
+                New page
+              </Button>
+            )}
+          </div>
         )}
-      </div>
+      </table.Subscribe>
       <Dialog
         open={pendingDragEndEvent !== null}
         onOpenChange={(open) => {
