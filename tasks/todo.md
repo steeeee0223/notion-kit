@@ -14,6 +14,6 @@
 
 ## Phase 3: Consumer and slot migration
 
-- [ ] Task 5: Migrate registry/docs/E2E consumers and Timeline slots.
-- [ ] Task 6: Run package and relevant browser verification.
-- [ ] Checkpoint: acceptance criteria and mutation check pass.
+- [x] Task 5: Migrate registry/docs/E2E consumers and Timeline slots.
+- [x] Task 6: Run package and relevant browser verification.
+- [x] Checkpoint: acceptance criteria and mutation check pass.

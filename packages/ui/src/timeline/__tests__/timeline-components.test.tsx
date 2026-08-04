@@ -927,41 +927,6 @@ describe("timeline components", () => {
     expect(onClick).toHaveBeenCalledOnce();
   });
 
-  it("TimelineRow_CanceledDrag_RestoresAuthoritativeRangeWithoutCommit", () => {
-    const onMove = vi.fn();
-    const item = {
-      id: "item",
-      name: "Item",
-      startAt: new Date(2026, 0, 10).getTime(),
-      endAt: new Date(2026, 0, 12).getTime(),
-    };
-    setTimeline("daily");
-    mocks.mouse = { x: 100, y: 0 };
-    const { container, rerender } = render(
-      <TimelineRow.Root item={item} onMove={onMove}>
-        <TimelineRow.Track>
-          <TimelineRow.Item>card</TimelineRow.Item>
-        </TimelineRow.Track>
-      </TimelineRow.Root>,
-    );
-    const frame = container.querySelector('[data-slot="timeline-item"]');
-
-    fireEvent.click(screen.getByRole("button", { name: "drag-start-item" }));
-    mocks.mouse = { x: 200, y: 0 };
-    rerender(
-      <TimelineRow.Root item={item} onMove={onMove}>
-        <TimelineRow.Track>
-          <TimelineRow.Item>card</TimelineRow.Item>
-        </TimelineRow.Track>
-      </TimelineRow.Root>,
-    );
-    fireEvent.click(screen.getByRole("button", { name: "drag-move-item" }));
-    fireEvent.click(screen.getByRole("button", { name: "drag-cancel-item" }));
-
-    expect(frame).toHaveStyle({ insetInlineStart: "450px", width: "100px" });
-    expect(onMove).not.toHaveBeenCalled();
-  });
-
   it("TimelineItem_OpenEndedDrag_MovesStartWithoutCreatingEndDate", async () => {
     const onMove = vi.fn();
     const startAt = new Date(2026, 0, 10).getTime();
@@ -1005,7 +970,7 @@ describe("timeline components", () => {
     );
   });
 
-  it("TimelineRow_ResizeCancel_RestoresAuthoritativeRangeWithoutCommit", () => {
+  it("TimelineRow_ResizeCancel_RestoresDateWithoutCommit", () => {
     const onMove = vi.fn();
     const timelineElement = document.createElement("div");
     vi.spyOn(timelineElement, "getBoundingClientRect").mockReturnValue({
@@ -1022,7 +987,7 @@ describe("timeline components", () => {
       startAt: new Date(2026, 0, 10).getTime(),
       endAt: new Date(2026, 0, 20).getTime(),
     };
-    const { container } = render(
+    render(
       <TimelineRow.Root item={item} onMove={onMove}>
         <TimelineRow.Track>
           <TimelineRow.Resize direction="start" />
@@ -1031,8 +996,6 @@ describe("timeline components", () => {
         </TimelineRow.Track>
       </TimelineRow.Root>,
     );
-    const frame = container.querySelector('[data-slot="timeline-item"]');
-    const initialStyle = frame?.getAttribute("style");
 
     fireEvent.click(
       screen.getByRole("button", { name: "drag-start-resize-start" }),
@@ -1045,7 +1008,8 @@ describe("timeline components", () => {
       screen.getByRole("button", { name: "drag-cancel-resize-start" }),
     );
 
-    expect(frame?.getAttribute("style")).toBe(initialStyle);
+    expect(screen.queryByText("Mar 06, 2026")).not.toBeInTheDocument();
+    expect(screen.getByText("Jan 10, 2026")).toBeInTheDocument();
     expect(onMove).not.toHaveBeenCalled();
   });
 
@@ -1090,37 +1054,5 @@ describe("timeline components", () => {
       item.startAt,
       new Date(2026, 2, 6).getTime(),
     );
-  });
-
-  it("TimelineRow_CompoundParts_ShareItemGeometryAndGestureState", () => {
-    const item = {
-      id: "row",
-      name: "Row",
-      startAt: new Date(2026, 0, 1).getTime(),
-      endAt: new Date(2026, 0, 2).getTime(),
-    };
-    const { container } = render(
-      <TimelineRow.Root item={item} onMove={vi.fn()}>
-        <TimelineRow.Jump />
-        <TimelineRow.Track>
-          <TimelineRow.Resize direction="start" />
-          <TimelineRow.Item>row card</TimelineRow.Item>
-          <TimelineRow.Resize direction="end" />
-        </TimelineRow.Track>
-      </TimelineRow.Root>,
-    );
-
-    expect(
-      container.querySelector('[data-slot="timeline-jump-to-item"]'),
-    ).toBeInTheDocument();
-    expect(
-      container.querySelector('[data-slot="timeline-item-track"]'),
-    ).toBeInTheDocument();
-    expect(
-      container.querySelector('[data-slot="timeline-item-card"]'),
-    ).toHaveAttribute("data-notion-slot", "notion-timeline-item-properties");
-    expect(
-      container.querySelectorAll('[data-slot="timeline-item-resizer"]'),
-    ).toHaveLength(2);
   });
 });

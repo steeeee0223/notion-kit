@@ -281,14 +281,13 @@ export class TableViewObject {
     );
   }
 
-  timelineMoveHandle(rowId: string, title: string) {
-    return this.timelineTrackRow(rowId).getByRole("button", {
-      name: `Move ${title}`,
-      exact: true,
-    });
+  timelineItemCard(rowId: string) {
+    return this.timelineTrackRow(rowId).locator(
+      '[data-slot="timeline-item-card"]',
+    );
   }
 
-  timelineResizer(rowId: string, direction: "left" | "right") {
+  timelineResizer(rowId: string, direction: "start" | "end") {
     return this.timelineTrackRow(rowId).locator(
       `[data-slot="timeline-item-resizer"][data-direction="${direction}"]`,
     );
@@ -335,7 +334,7 @@ export class TableViewObject {
   }
 
   async resizeTimelineToNextDay(rowId: string) {
-    const source = this.timelineResizer(rowId, "right");
+    const source = this.timelineResizer(rowId, "end");
     await source.scrollIntoViewIfNeeded();
     const sourceBox = await source.boundingBox();
     if (!sourceBox) throw new Error("Timeline resizer has no bounding box");

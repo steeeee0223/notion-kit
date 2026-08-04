@@ -25,7 +25,10 @@ description: A composable timeline view with draggable items, range headers, sid
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="timeline-layout" />
+<Installation
+  packages="@notion-kit/ui"
+  registryName="timeline-without-sidebar"
+/>
 
 ## Anatomy
 
@@ -34,9 +37,14 @@ description: A composable timeline view with draggable items, range headers, sid
   <TimelineContent>
     <TimelineRangeHeader />
     <TimelineList>
-      <TimelineRow />
-      <TimelineRow />
-      <TimelineRow />
+      <TimelineRow.Root item={feature} onMove={handleMoveFeature}>
+        <TimelineRow.Jump />
+        <TimelineRow.Track>
+          <TimelineRow.Resize direction="start" />
+          <TimelineRow.Item>{feature.name}</TimelineRow.Item>
+          <TimelineRow.Resize direction="end" />
+        </TimelineRow.Track>
+      </TimelineRow.Root>
     </TimelineList>
     <TimelineToolbar>
       <TimelineRangeSelect />
@@ -88,7 +96,22 @@ A full timeline with draggable items, context menus, range selection, and a mark
   <TimelineContent>
     <TimelineRangeHeader />
     <TimelineList>
-      {rows.map((row) => <TimelineRow key={row.id} item={row} />)}
+      {features.map((feature) => (
+        <TimelineRow.Root
+          key={feature.id}
+          item={feature}
+          onMove={handleMoveFeature}
+        >
+          <TimelineRow.Jump />
+          <TimelineRow.Track>
+            <TimelineRow.Resize direction="start" />
+            <TimelineRow.Item onClick={() => openFeature(feature.id)}>
+              {feature.name}
+            </TimelineRow.Item>
+            <TimelineRow.Resize direction="end" />
+          </TimelineRow.Track>
+        </TimelineRow.Root>
+      ))}
     </TimelineList>
     <TimelineToolbar>
       <TimelineRangeSelect value={range} onChange={setRange} />
@@ -109,7 +132,20 @@ A timeline with an attached sidebar panel listing all items, plus a header toolb
   <TimelineContent>
     <TimelineRangeHeader />
     <TimelineList>
-      {rows.map((row) => <TimelineRow key={row.id} item={row} />)}
+      {features.map((feature) => (
+        <TimelineRow.Root
+          key={feature.id}
+          item={feature}
+          onMove={handleMoveFeature}
+        >
+          <TimelineRow.Jump />
+          <TimelineRow.Track>
+            <TimelineRow.Resize direction="start" />
+            <TimelineRow.Item>{feature.name}</TimelineRow.Item>
+            <TimelineRow.Resize direction="end" />
+          </TimelineRow.Track>
+        </TimelineRow.Root>
+      ))}
     </TimelineList>
     <TimelineToday />
     <TimelineHeaderToolbar />
@@ -119,7 +155,9 @@ A timeline with an attached sidebar panel listing all items, plus a header toolb
       <TimelineSidebarClose />
     </TimelineSidebarHeader>
     <TimelineSidebarBody>
-      {rows.map((row) => <div key={row.id}>{row.name}</div>)}
+      {features.map((feature) => (
+        <div key={feature.id}>{feature.name}</div>
+      ))}
     </TimelineSidebarBody>
   </TimelineSidebar>
 </TimelineProvider>`}
@@ -153,15 +191,40 @@ The absolutely-positioned list container for timeline rows, placed below the ran
 Renders the two-row header showing range labels (years/quarters) and sub-range labels (months/weeks/days).
 No additional props.
 
-### TimelineRow
+### TimelineRow.Root
 
-A single timeline item row. Renders both the draggable bar and a jump-to anchor.
+Owns one row's drag state and provides it to the compound parts. Omit `onMove`
+and the resize parts for a click-only row.
 
-| Prop     | Type                                                       | Default | Description                                         |
-| -------- | ---------------------------------------------------------- | ------- | --------------------------------------------------- |
-| `item`\* | [`TimelineFeature`](#type-timelinefeature)                 | -       | The feature data for this row.                      |
-| `onMove` | `(id: string, start: number, end: number \| null) => void` | -       | Handler called when the item is dragged or resized. |
-| `render` | `() => React.ReactNode`                                    | -       | Custom render function for the item card content.   |
+| Prop       | Type                                                       | Default | Description                                                         |
+| ---------- | ---------------------------------------------------------- | ------- | ------------------------------------------------------------------- |
+| `item`\*   | [`TimelineFeature`](#type-timelinefeature)                 | -       | The feature data used for row geometry and drag identity.           |
+| `onMove`   | `(id: string, start: number, end: number \| null) => void` | -       | Enables moving/resizing and receives the committed timestamp range. |
+| `children` | `React.ReactNode`                                          | -       | Composed `Jump`, `Track`, `Item`, and optional `Resize` parts.      |
+
+### TimelineRow.Jump
+
+Renders the off-screen navigation target used by Timeline jump controls. It
+reads the feature from `TimelineRow.Root` and takes no props.
+
+### TimelineRow.Track
+
+Positions the item bar within one timeline row. Accepts standard `<div>` props.
+
+### TimelineRow.Item
+
+Renders the full clickable card button and becomes the drag source when its
+root has `onMove`. Accepts standard button props, including `onClick` and
+`children`.
+
+### TimelineRow.Resize
+
+Renders one draggable range edge. It is omitted automatically when the root has
+no `onMove`.
+
+| Prop          | Type               | Default | Description                     |
+| ------------- | ------------------ | ------- | ------------------------------- |
+| `direction`\* | `"start" \| "end"` | -       | Selects the range edge to edit. |
 
 ### TimelineToolbar
 
@@ -239,9 +302,9 @@ type TimelineRange = "daily" | "monthly" | "quarterly";
 
 ### `type` TimelineFeature
 
-| Prop        | Type     | Description                        |
-| ----------- | -------- | ---------------------------------- |
-| `id`\*      | `string` | Unique identifier for the feature. |
-| `name`\*    | `string` | Display name of the feature.       |
-| `startAt`\* | `number` | Start timestamp in milliseconds.   |
-| `endAt`\*   | `number` | End timestamp in milliseconds.     |
+| Prop        | Type             | Description                                                      |
+| ----------- | ---------------- | ---------------------------------------------------------------- |
+| `id`\*      | `string`         | Unique identifier for the feature.                               |
+| `name`\*    | `string`         | Display name of the feature.                                     |
+| `startAt`\* | `number`         | Start timestamp in milliseconds.                                 |
+| `endAt`\*   | `number \| null` | End timestamp in milliseconds, or `null` for an open-ended item. |

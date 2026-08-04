@@ -97,10 +97,7 @@ test("TimelineDragResize_ControlledResource_PersistsExactDateCellChanges", async
   await table.setTimelineRange("Day");
 
   const originalStart = 1_735_689_600_000;
-  await table.dragPointerBy(
-    table.timelineMoveHandle("row-alpha", "Alpha"),
-    100,
-  );
+  await table.dragPointerBy(table.timelineItemCard("row-alpha"), 100);
   await expect
     .poll(async () => (await table.controlledSnapshot()).dataCount)
     .toBe(1);
