@@ -1,19 +1,34 @@
 import { Icon } from "@notion-kit/icons";
 import type { RowInstance } from "@notion-kit/table-hook";
-import { Button } from "@notion-kit/ui/primitives";
+import { Button, Checkbox } from "@notion-kit/ui/primitives";
 
 import { GroupActions } from "@/common";
+import { useTableViewCtx } from "@/table-contexts";
 
 interface TableGroupedRowProps {
   row: RowInstance;
 }
 
 export function TableGroupedRow({ row }: TableGroupedRowProps) {
+  const { table } = useTableViewCtx();
+
+  return (
+    <table.Subscribe selector={(state) => state.rowSelection}>
+      {() => <TableGroupedRowContent row={row} />}
+    </table.Subscribe>
+  );
+}
+
+function TableGroupedRowContent({ row }: TableGroupedRowProps) {
+  const { table } = useTableViewCtx();
   const groupId = row.groupingColumnId;
   if (!groupId) {
     console.error(`No grouping column id found for the grouped row ${row.id}`);
     return null;
   }
+
+  const { layout, locked } = table.getTableGlobalState();
+  const groupSelectionState = row.getGroupSelectionState();
 
   return (
     <div
@@ -36,6 +51,17 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
             side={row.getIsExpanded() ? "down" : "right"}
           />
         </Button>
+        {layout === "table" && !locked && (
+          <Checkbox
+            id={`group-select-${row.id}`}
+            size="sm"
+            checked={groupSelectionState === "checked"}
+            indeterminate={groupSelectionState === "indeterminate"}
+            aria-label={`Select group ${row.id}`}
+            className="mx-1 cursor-pointer rounded-xs accent-blue"
+            onCheckedChange={() => row.toggleGroupSelection()}
+          />
+        )}
         {/* Grouped value */}
         <div className="flex max-w-100 items-center overflow-hidden px-2 text-sm/6 font-medium whitespace-nowrap">
           {row.renderGroupingValue({})}

@@ -14,6 +14,16 @@ interface TableRowProps {
 }
 
 export function TableRow({ row }: TableRowProps) {
+  const { table } = useTableViewCtx();
+
+  return (
+    <table.Subscribe selector={(state) => state.rowSelection}>
+      {() => <TableRowContent row={row} />}
+    </table.Subscribe>
+  );
+}
+
+function TableRowContent({ row }: TableRowProps) {
   const isMobile = useIsMobile();
   /** Add row */
   const { table } = useTableViewCtx();
@@ -64,16 +74,20 @@ export function TableRow({ row }: TableRowProps) {
                   className="absolute -left-8 *:has-data-[state=checked]:opacity-100"
                   isMobile={isMobile}
                 >
-                  <label
-                    htmlFor="row-select"
-                    className="z-10 flex size-8 cursor-pointer items-center justify-center"
-                  >
-                    <Checkbox
-                      id="row-select"
-                      size="sm"
-                      className="cursor-pointer rounded-xs accent-blue"
-                    />
-                  </label>
+                  <Checkbox
+                    id={`row-select-${row.id}`}
+                    size="sm"
+                    checked={row.getIsSelected()}
+                    className="cursor-pointer rounded-xs accent-blue"
+                    aria-label={`Select row ${row.id}`}
+                    onClick={(event) => {
+                      row.getToggleSelectedHandler()({
+                        target: { checked: !row.getIsSelected() },
+                        shiftKey: event.shiftKey,
+                        nativeEvent: event,
+                      });
+                    }}
+                  />
                 </TableRowActionGroup>
               </>
             )}

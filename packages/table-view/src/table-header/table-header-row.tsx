@@ -115,6 +115,7 @@ function TableHeaderRow() {
         columnSizing: state.columnSizing,
         columnResizing: state.columnResizing,
         columnsInfo: state.columnsInfo,
+        rowSelection: state.rowSelection,
       })}
     >
       {({ tableGlobal }) => <TableHeaderRowContent tableGlobal={tableGlobal} />}
@@ -133,6 +134,8 @@ function TableHeaderRowContent({
   const headers = table.getCenterLeafHeaders();
   const startPinnedHeaders = table.getStartLeafHeaders();
   const isStartPinned = startPinnedHeaders.length > 0;
+  const isAllRowsSelected = table.getIsAllRowsSelected();
+  const isSomeRowsSelected = table.getIsSomeRowsSelected();
 
   return (
     <div
@@ -144,20 +147,22 @@ function TableHeaderRowContent({
         {/* Hovered actions */}
         <div className="absolute -left-8">
           <div className="flex h-full justify-end border-b-border-cell bg-main">
-            <label
-              htmlFor="row-select"
-              aria-label="row-select"
-              className={cn(
-                "z-10 flex size-8 cursor-pointer items-center justify-center opacity-0 hover:opacity-100 has-data-[state=checked]:opacity-100",
-                isMobile && "opacity-100",
-              )}
-            >
+            {!tableGlobal.locked && (
               <Checkbox
-                id="row-select"
+                id="select-all-rows"
                 size="sm"
-                className="cursor-pointer rounded-xs accent-blue"
+                checked={isAllRowsSelected}
+                indeterminate={isSomeRowsSelected && !isAllRowsSelected}
+                aria-label="Select all rows"
+                className={cn(
+                  "cursor-pointer rounded-xs accent-blue opacity-0 hover:opacity-100 data-checked:opacity-100 data-indeterminate:opacity-100",
+                  isMobile && "opacity-100",
+                )}
+                onCheckedChange={(checked) =>
+                  table.toggleAllRowsSelected(checked)
+                }
               />
-            </label>
+            )}
           </div>
         </div>
       </div>

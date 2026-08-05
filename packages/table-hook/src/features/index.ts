@@ -10,6 +10,7 @@ import {
   createSortedRowModel,
   rowAggregationFeature,
   rowExpandingFeature,
+  rowSelectionFeature,
   rowSortingFeature,
   tableFeatures,
   type TableFeatures as BaseTableFeatures,
@@ -140,6 +141,7 @@ export interface TableFeatures extends BaseTableFeatures {
   tableMenuFeature: typeof TableMenuFeature;
   rowActionsFeature: typeof RowActionsFeature;
   extendedGroupingFeature: typeof ExtendedGroupingFeature;
+  rowSelectionFeature: typeof rowSelectionFeature;
 }
 
 export const DEFAULT_FEATURES = tableFeatures({
@@ -150,6 +152,7 @@ export const DEFAULT_FEATURES = tableFeatures({
   columnSizingFeature,
   columnVisibilityFeature,
   rowExpandingFeature,
+  rowSelectionFeature,
   rowAggregationFeature,
   rowSortingFeature,
   sortedRowModel: createSortedRowModel(),

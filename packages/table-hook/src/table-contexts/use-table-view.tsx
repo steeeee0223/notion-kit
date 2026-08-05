@@ -3,6 +3,8 @@ import {
   functionalUpdate,
   useTable,
   type ColumnDef,
+  type OnChangeFn,
+  type RowSelectionState,
 } from "@tanstack/react-table";
 
 import { DEFAULT_FEATURES, type TableFeatures } from "@/features";
@@ -115,6 +117,19 @@ function useResourceState<TResource, TAction>({
   return [resource, setResource] as const;
 }
 
+function pruneRowSelection<TPlugins extends CellPlugin[]>(
+  selection: RowSelectionState,
+  data: Row<TPlugins>[],
+) {
+  const rowIds = new Set(data.map((row) => row.id));
+  const next = Object.fromEntries(
+    Object.entries(selection).filter(([rowId]) => rowIds.has(rowId)),
+  ) as RowSelectionState;
+  return Object.keys(next).length === Object.keys(selection).length
+    ? selection
+    : next;
+}
+
 export function useTableView<TPlugins extends CellPlugin[]>(
   options: UseTableViewOptions<TPlugins>,
 ) {
@@ -195,6 +210,36 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     defaultValue: resolveViewState(options.defaultView),
     onChange: onViewChange,
   });
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const handleRowSelectionChange = useCallback<OnChangeFn<RowSelectionState>>(
+    (updater) => {
+      setRowSelection((previous) =>
+        pruneRowSelection(functionalUpdate(updater, previous), dataEntity),
+      );
+    },
+    [dataEntity],
+  );
+  const handleTableDataChange = useCallback(
+    (updater: Parameters<typeof setDataResource>[0], action: Parameters<typeof setDataResource>[1]) => {
+      setDataResource(
+        (previous) => {
+          const next = functionalUpdate(updater, previous);
+          setRowSelection((selection) => pruneRowSelection(selection, next));
+          return next;
+        },
+        action,
+      );
+    },
+    [setDataResource],
+  );
+
+  useEffect(() => {
+    setRowSelection((selection) => pruneRowSelection(selection, dataEntity));
+  }, [dataEntity]);
+
+  useEffect(() => {
+    if (tableGlobalState.locked) setRowSelection({});
+  }, [tableGlobalState.locked]);
 
   /** columns states */
   const columnEntity = useMemo(
@@ -268,8 +313,15 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       ),
       cellPlugins: plugins.items,
       tableGlobal: tableGlobalState,
+      rowSelection,
     }),
-    [columnEntity.ids, columnEntity.items, plugins.items, tableGlobalState],
+    [
+      columnEntity.ids,
+      columnEntity.items,
+      plugins.items,
+      rowSelection,
+      tableGlobalState,
+    ],
   );
 
   /** table instance */
@@ -284,8 +336,9 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       autoResetExpanded: false,
       getRowId: (row) => row.id,
       state: tableState,
+      onRowSelectionChange: handleRowSelectionChange,
       onColumnInfoChange: handleColumnChange,
-      onTableDataChange: setDataResource,
+      onTableDataChange: handleTableDataChange,
       onTableGlobalChange: setViewResource,
       getRowUrl,
     },
