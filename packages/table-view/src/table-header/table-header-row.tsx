@@ -118,23 +118,16 @@ function TableHeaderRow() {
         rowSelection: state.rowSelection,
       })}
     >
-      {({ rowSelection, tableGlobal }) => (
+      {({ rowSelection }) => (
         <TableHeaderRowContent
           hasSelection={Object.keys(rowSelection).length > 0}
-          tableGlobal={tableGlobal}
         />
       )}
     </table.Subscribe>
   );
 }
 
-function TableHeaderRowContent({
-  hasSelection,
-  tableGlobal,
-}: {
-  hasSelection: boolean;
-  tableGlobal: ReturnType<TableInstance["atoms"]["tableGlobal"]["get"]>;
-}) {
+function TableHeaderRowContent({ hasSelection }: { hasSelection: boolean }) {
   const { table } = useTableViewCtx();
   const isMobile = useIsMobile();
 
@@ -154,23 +147,27 @@ function TableHeaderRowContent({
         {/* Hovered actions */}
         <div className="absolute -left-8">
           <div className="flex h-full justify-end border-b-border-cell bg-main">
-            {!tableGlobal.locked && (
-              <Checkbox
-                id="select-all-rows"
-                size="sm"
-                checked={isAllRowsSelected}
-                indeterminate={isSomeRowsSelected && !isAllRowsSelected}
-                aria-label="Select all rows"
-                className={cn(
-                  "cursor-pointer rounded-xs accent-blue opacity-0 group-hover/header:opacity-100 hover:opacity-100 data-checked:opacity-100 data-indeterminate:opacity-100",
-                  hasSelection && "opacity-100",
-                  isMobile && "opacity-100",
-                )}
-                onCheckedChange={(checked) =>
-                  table.toggleAllRowsSelected(checked)
-                }
-              />
-            )}
+            <table.Subscribe selector={(state) => state.tableGlobal.locked}>
+              {(locked) =>
+                !locked && (
+                  <Checkbox
+                    id="select-all-rows"
+                    size="sm"
+                    checked={isAllRowsSelected}
+                    indeterminate={isSomeRowsSelected && !isAllRowsSelected}
+                    aria-label="Select all rows"
+                    className={cn(
+                      "cursor-pointer rounded-xs accent-blue opacity-0 group-hover/header:opacity-100 hover:opacity-100 data-checked:opacity-100 data-indeterminate:opacity-100",
+                      hasSelection && "opacity-100",
+                      isMobile && "opacity-100",
+                    )}
+                    onCheckedChange={(checked) =>
+                      table.toggleAllRowsSelected(checked)
+                    }
+                  />
+                )
+              }
+            </table.Subscribe>
           </div>
         </div>
       </div>
@@ -203,16 +200,20 @@ function TableHeaderRowContent({
           ))}
         </div>
       </Sortable.List>
-      {!tableGlobal.locked && (
-        <Popover>
-          <PopoverTrigger
-            render={<TableHeaderActionCell icon={<Icon.Plus />} />}
-          />
-          <PopoverContent sideOffset={0} collisionPadding={12}>
-            <TypesMenu menu={TableViewMenuPage.CreateProp} />
-          </PopoverContent>
-        </Popover>
-      )}
+      <table.Subscribe selector={(state) => state.tableGlobal.locked}>
+        {(locked) =>
+          !locked && (
+            <Popover>
+              <PopoverTrigger
+                render={<TableHeaderActionCell icon={<Icon.Plus />} />}
+              />
+              <PopoverContent sideOffset={0} collisionPadding={12}>
+                <TypesMenu menu={TableViewMenuPage.CreateProp} />
+              </PopoverContent>
+            </Popover>
+          )
+        }
+      </table.Subscribe>
       <DropdownMenu>
         <DropdownMenuTrigger
           render={<TableHeaderActionCell icon={<Icon.Dots />} />}

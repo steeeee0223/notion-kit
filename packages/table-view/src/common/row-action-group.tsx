@@ -15,7 +15,6 @@ import {
 import { RowActionMenu } from "../menus";
 
 interface RowActionGroupProps extends React.ComponentProps<"div"> {
-  hasSelection: boolean;
   isMobile?: boolean;
   row: RowInstance;
   onAddNext: (e: React.MouseEvent) => void;
@@ -23,7 +22,6 @@ interface RowActionGroupProps extends React.ComponentProps<"div"> {
 
 export function RowActionGroup({
   className,
-  hasSelection,
   isMobile,
   row,
   onAddNext,
@@ -34,11 +32,12 @@ export function RowActionGroup({
       <div
         data-slot="row-action-group"
         className={cn(
-          "flex h-full items-center gap-1 opacity-0 transition-opacity delay-0 duration-200",
+          "flex h-full items-center opacity-0 transition-opacity delay-0 duration-200",
           "group-hover/row:opacity-100",
           "group-data-dragging/row:opacity-100",
           "has-[button[aria-expanded='true']]:opacity-100",
-          (hasSelection || isMobile) && "opacity-100",
+          isMobile && "opacity-100",
+          row.getIsSelected() && "opacity-100",
         )}
       >
         <TooltipPreset
@@ -89,15 +88,16 @@ export function RowActionGroup({
           id={`row-select-${row.id}`}
           size="sm"
           checked={row.getIsSelected()}
-          className="cursor-pointer rounded-xs accent-blue"
+          className="ml-1.5 cursor-pointer rounded-xs accent-blue"
           aria-label={`Select row ${row.id}`}
-          onClick={(event) => {
-            row.getToggleSelectedHandler()({
-              target: { checked: !row.getIsSelected() },
-              shiftKey: event.shiftKey,
-              nativeEvent: event,
-            });
-          }}
+          onCheckedChange={(checked) => row.toggleSelected(checked)}
+          // onClick={(event) => {
+          //   row.getToggleSelectedHandler()({
+          //     target: { checked: !row.getIsSelected() },
+          //     shiftKey: event.shiftKey,
+          //     nativeEvent: event,
+          //   });
+          // }}
         />
       </div>
     </div>

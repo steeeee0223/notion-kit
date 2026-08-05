@@ -1,7 +1,6 @@
 import React from "react";
 
 import { cn } from "@notion-kit/cn";
-import type { TableInstance } from "@notion-kit/table-hook";
 import { Dialog, DialogContent, DialogTitle } from "@notion-kit/ui/primitives";
 
 import { useTableViewCtx } from "@/table-contexts";
@@ -14,64 +13,49 @@ export function DialogView({ children }: React.PropsWithChildren) {
   const { table } = useTableViewCtx();
 
   return (
-    <table.Subscribe
-      selector={(state) => ({
-        tableGlobal: state.tableGlobal,
-        columnOrder: state.columnOrder,
-        columnsInfo: state.columnsInfo,
-      })}
-    >
-      {({ tableGlobal }) => (
-        <DialogViewContent tableGlobal={tableGlobal}>
-          {children}
-        </DialogViewContent>
-      )}
+    <table.Subscribe selector={(state) => state.tableGlobal}>
+      {({ openedRowId, rowView }) => {
+        const visibleRowId =
+          openedRowId && table.getCoreRowModel().rowsById[openedRowId]
+            ? openedRowId
+            : null;
+        const titleCell = visibleRowId
+          ? table.getTitleCell(visibleRowId)
+          : null;
+
+        return (
+          <Dialog
+            open={!!visibleRowId && rowView === "center"}
+            onOpenChange={() => table.openRow(null)}
+          >
+            <DialogContent
+              hideClose
+              id={visibleRowId ?? undefined}
+              className="m-auto flex h-[calc(100%-144px)] max-w-[calc(100%-144px)] flex-col overflow-hidden rounded-xl p-0"
+            >
+              {visibleRowId && (
+                <>
+                  <ViewNav rowId={visibleRowId} />
+                  <div
+                    className={cn(rowViewContentVariants({ mode: "center" }))}
+                  >
+                    <DialogTitle
+                      typography="h1"
+                      className="col-start-2 mb-2 text-left"
+                    >
+                      {titleCell?.cell.value}
+                    </DialogTitle>
+                    <div className="col-start-2 mb-3 min-w-0">
+                      <ViewProps rowId={visibleRowId} />
+                    </div>
+                    <div className="col-start-2">{children}</div>
+                  </div>
+                </>
+              )}
+            </DialogContent>
+          </Dialog>
+        );
+      }}
     </table.Subscribe>
-  );
-}
-
-function DialogViewContent({
-  children,
-  tableGlobal,
-}: React.PropsWithChildren<{
-  tableGlobal: ReturnType<TableInstance["atoms"]["tableGlobal"]["get"]>;
-}>) {
-  const { table } = useTableViewCtx();
-  const { rowView, openedRowId } = tableGlobal;
-  const visibleRowId =
-    openedRowId && table.getCoreRowModel().rowsById[openedRowId]
-      ? openedRowId
-      : null;
-  const titleCell = visibleRowId ? table.getTitleCell(visibleRowId) : null;
-
-  return (
-    <Dialog
-      open={!!visibleRowId && rowView === "center"}
-      onOpenChange={() => table.openRow(null)}
-    >
-      <DialogContent
-        hideClose
-        id={visibleRowId ?? undefined}
-        className="m-auto flex h-[calc(100%-144px)] max-w-[calc(100%-144px)] flex-col overflow-hidden rounded-xl p-0"
-      >
-        {visibleRowId && (
-          <>
-            <ViewNav rowId={visibleRowId} />
-            <div className={cn(rowViewContentVariants({ mode: "center" }))}>
-              <DialogTitle
-                typography="h1"
-                className="col-start-2 mb-2 text-left"
-              >
-                {titleCell?.cell.value}
-              </DialogTitle>
-              <div className="col-start-2 mb-3 min-w-0">
-                <ViewProps rowId={visibleRowId} />
-              </div>
-              <div className="col-start-2">{children}</div>
-            </div>
-          </>
-        )}
-      </DialogContent>
-    </Dialog>
   );
 }

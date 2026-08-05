@@ -8,11 +8,10 @@ import { GroupActions } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface TableGroupedRowProps {
-  hasSelection: boolean;
   row: RowInstance;
 }
 
-export function TableGroupedRow({ hasSelection, row }: TableGroupedRowProps) {
+export function TableGroupedRow({ row }: TableGroupedRowProps) {
   const { table } = useTableViewCtx();
   const isMobile = useIsMobile();
   const groupId = row.groupingColumnId;
@@ -45,6 +44,7 @@ export function TableGroupedRow({ hasSelection, row }: TableGroupedRowProps) {
             side={row.getIsExpanded() ? "down" : "right"}
           />
         </Button>
+        {/* TODO update this design */}
         {layout === "table" && !locked && (
           <Checkbox
             id={`group-select-${row.id}`}
@@ -54,7 +54,7 @@ export function TableGroupedRow({ hasSelection, row }: TableGroupedRowProps) {
             aria-label={`Select group ${row.id}`}
             className={cn(
               "mx-1 cursor-pointer rounded-xs accent-blue opacity-0 group-hover/grouped-row:opacity-100",
-              (hasSelection || isMobile) && "opacity-100",
+              isMobile && "opacity-100",
             )}
             onCheckedChange={() => row.toggleGroupSelection()}
           />

@@ -79,7 +79,7 @@ function ListViewContentInner({
           rowSelection: state.rowSelection,
         })}
       >
-        {({ locked, rowSelection }) => (
+        {({ locked }) => (
           <div
             data-block-id="1fe35e0f-492c-80fd-8d7c-f7e953641770"
             className="flex flex-col py-1"
@@ -88,17 +88,9 @@ function ListViewContentInner({
               <Sortable.List>
                 {rows.map((row) =>
                   row.getIsGrouped() ? (
-                    <TableGroupedRow
-                      hasSelection={Object.keys(rowSelection).length > 0}
-                      key={row.id}
-                      row={row}
-                    />
+                    <TableGroupedRow key={row.id} row={row} />
                   ) : (
-                    <ListRow
-                      hasSelection={Object.keys(rowSelection).length > 0}
-                      key={row.id}
-                      rowId={row.id}
-                    />
+                    <ListRow key={row.id} rowId={row.id} />
                   ),
                 )}
               </Sortable.List>

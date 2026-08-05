@@ -4,7 +4,9 @@ import { cn } from "@notion-kit/cn";
 import {
   LAYOUT_OPTIONS,
   ROW_VIEW_OPTIONS,
-  RowViewType,
+  type ColumnInfo,
+  type LayoutType,
+  type RowViewType,
   type TableInstance,
 } from "@notion-kit/table-hook";
 import {
@@ -45,9 +47,7 @@ function LayoutMenuContent({
   columnOrder,
   columnsInfo,
 }: {
-  currentLayout: ReturnType<
-    TableInstance["atoms"]["tableGlobal"]["get"]
-  >["layout"];
+  currentLayout: LayoutType;
   datePropertyId: string | null;
   columnOrder: string[];
   columnsInfo: ReturnType<TableInstance["atoms"]["columnsInfo"]["get"]>;
@@ -107,9 +107,7 @@ function TimelineDatePropertyMenu({
   properties,
 }: {
   current: string | null;
-  properties: ReturnType<
-    TableInstance["atoms"]["columnsInfo"]["get"]
-  >[string][];
+  properties: ColumnInfo[];
 }) {
   const { table } = useTableViewCtx();
   const currentProperty =

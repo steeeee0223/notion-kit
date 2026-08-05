@@ -10,11 +10,10 @@ import { RowActionGroup } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface ListRowProps {
-  hasSelection: boolean;
   rowId: string;
 }
 
-export function ListRow({ hasSelection, rowId }: ListRowProps) {
+export function ListRow({ rowId }: ListRowProps) {
   const isMobile = useIsMobile();
   const { table } = useTableViewCtx();
   const row = table.getRow(rowId) as RowInstance;
@@ -41,7 +40,6 @@ export function ListRow({ hasSelection, rowId }: ListRowProps) {
             {!locked && (
               <RowActionGroup
                 className="absolute -left-16"
-                hasSelection={hasSelection}
                 isMobile={isMobile}
                 row={row}
                 onAddNext={addNextRow}

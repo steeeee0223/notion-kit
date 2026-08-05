@@ -2,7 +2,6 @@ import type { MouseEvent } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
 
 import { useIsMobile } from "@notion-kit/hooks";
-import type { RowInstance } from "@notion-kit/table-hook";
 import { Button, Sortable } from "@notion-kit/ui/primitives";
 import {
   TimelineSidebarBody,
@@ -39,25 +38,19 @@ export function TimelineSidebar({
         groupingState: state.groupingState,
         expanded: state.expanded,
         columnVisibility: state.columnVisibility,
-        hasSelection: Object.keys(state.rowSelection).length > 0,
       })}
     >
-      {({ hasSelection }) => (
-        <TimelineSidebarContent
-          hasSelection={hasSelection}
-          onClose={onClose}
-          onRowDragEnd={onRowDragEnd}
-        />
+      {() => (
+        <TimelineSidebarContent onClose={onClose} onRowDragEnd={onRowDragEnd} />
       )}
     </table.Subscribe>
   );
 }
 
 function TimelineSidebarContent({
-  hasSelection,
   onClose,
   onRowDragEnd,
-}: TimelineSidebarProps & { hasSelection: boolean }) {
+}: TimelineSidebarProps) {
   const { table } = useTableViewCtx();
   const titleHeader = table
     .getFlatHeaders()
@@ -91,11 +84,11 @@ function TimelineSidebarContent({
         <table.Subscribe selector={(state) => state.tableGlobal.locked}>
           {(locked) =>
             locked ? (
-              <TimelineSidebarRows hasSelection={hasSelection} />
+              <TimelineSidebarRows />
             ) : (
               <Sortable.Root orientation="vertical" onDragEnd={onRowDragEnd}>
                 <Sortable.List>
-                  <TimelineSidebarRows hasSelection={hasSelection} sortable />
+                  <TimelineSidebarRows sortable />
                 </Sortable.List>
               </Sortable.Root>
             )
@@ -106,16 +99,10 @@ function TimelineSidebarContent({
   );
 }
 
-function TimelineSidebarRows({
-  hasSelection,
-  sortable = false,
-}: {
-  hasSelection: boolean;
-  sortable?: boolean;
-}) {
+function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
   const { table } = useTableViewCtx();
   const isMobile = useIsMobile();
-  const rows = table.getRowModel().rows as RowInstance[];
+  const rows = table.getRowModel().rows;
   const nextIndexByGroup = new Map<string | undefined, number>();
 
   return rows.map((row) => {
@@ -126,7 +113,7 @@ function TimelineSidebarRows({
           data-slot="timeline-sidebar-group"
           data-row-id={row.id}
         >
-          <TableGroupedRow hasSelection={false} row={row} />
+          <TableGroupedRow row={row} />
         </div>
       );
     }
@@ -190,7 +177,6 @@ function TimelineSidebarRows({
       >
         <RowActionGroup
           className="ms-1"
-          hasSelection={hasSelection}
           isMobile={isMobile}
           row={row}
           onAddNext={addNextRow}
