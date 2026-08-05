@@ -1,5 +1,7 @@
+import type { MouseEvent } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
 
+import { useIsMobile } from "@notion-kit/hooks";
 import type { RowInstance } from "@notion-kit/table-hook";
 import { Button, Sortable } from "@notion-kit/ui/primitives";
 import {
@@ -9,7 +11,7 @@ import {
   TimelineSidebar as TimelineSidebarPrimitive,
 } from "@notion-kit/ui/timeline";
 
-import { TableCell } from "@/common";
+import { RowActionGroup, TableCell } from "@/common";
 import { TableGroupedRow } from "@/table-body";
 import { useTableViewCtx } from "@/table-contexts";
 import { TableHeaderCellResizer, TableHeaderCellTrigger } from "@/table-header";
@@ -37,19 +39,25 @@ export function TimelineSidebar({
         groupingState: state.groupingState,
         expanded: state.expanded,
         columnVisibility: state.columnVisibility,
+        hasSelection: Object.keys(state.rowSelection).length > 0,
       })}
     >
-      {() => (
-        <TimelineSidebarContent onClose={onClose} onRowDragEnd={onRowDragEnd} />
+      {({ hasSelection }) => (
+        <TimelineSidebarContent
+          hasSelection={hasSelection}
+          onClose={onClose}
+          onRowDragEnd={onRowDragEnd}
+        />
       )}
     </table.Subscribe>
   );
 }
 
 function TimelineSidebarContent({
+  hasSelection,
   onClose,
   onRowDragEnd,
-}: TimelineSidebarProps) {
+}: TimelineSidebarProps & { hasSelection: boolean }) {
   const { table } = useTableViewCtx();
   const titleHeader = table
     .getFlatHeaders()
@@ -83,11 +91,11 @@ function TimelineSidebarContent({
         <table.Subscribe selector={(state) => state.tableGlobal.locked}>
           {(locked) =>
             locked ? (
-              <TimelineSidebarRows />
+              <TimelineSidebarRows hasSelection={hasSelection} />
             ) : (
               <Sortable.Root orientation="vertical" onDragEnd={onRowDragEnd}>
                 <Sortable.List>
-                  <TimelineSidebarRows sortable />
+                  <TimelineSidebarRows hasSelection={hasSelection} sortable />
                 </Sortable.List>
               </Sortable.Root>
             )
@@ -98,8 +106,15 @@ function TimelineSidebarContent({
   );
 }
 
-function TimelineSidebarRows({ sortable = false }: { sortable?: boolean }) {
+function TimelineSidebarRows({
+  hasSelection,
+  sortable = false,
+}: {
+  hasSelection: boolean;
+  sortable?: boolean;
+}) {
   const { table } = useTableViewCtx();
+  const isMobile = useIsMobile();
   const rows = table.getRowModel().rows as RowInstance[];
   const nextIndexByGroup = new Map<string | undefined, number>();
 
@@ -151,6 +166,13 @@ function TimelineSidebarRows({ sortable = false }: { sortable?: boolean }) {
       );
     }
 
+    const addNextRow = (event: MouseEvent) => {
+      table.addRow({
+        id: row.id,
+        at: event.altKey ? "prev" : "next",
+      });
+    };
+
     return (
       <Sortable.Item
         key={row.id}
@@ -162,11 +184,17 @@ function TimelineSidebarRows({ sortable = false }: { sortable?: boolean }) {
           <div
             data-slot="timeline-sidebar-row"
             data-row-id={row.id}
-            className="flex h-(--timeline-row-height) items-center border-b border-border"
+            className="group/row flex h-(--timeline-row-height) items-center border-b border-border"
           />
         }
       >
-        <Sortable.Handle aria-label={`Move ${title}`} className="ms-1 size-6" />
+        <RowActionGroup
+          className="ms-1"
+          hasSelection={hasSelection}
+          isMobile={isMobile}
+          row={row}
+          onAddNext={addNextRow}
+        />
         {content}
       </Sortable.Item>
     );

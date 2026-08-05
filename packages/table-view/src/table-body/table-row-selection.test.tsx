@@ -140,9 +140,7 @@ function ControlledDataDeletionTable() {
 
 function actionGroups() {
   return Array.from(
-    document.querySelectorAll<HTMLElement>(
-      '[data-slot="table-row-action-group"]',
-    ),
+    document.querySelectorAll<HTMLElement>('[data-slot="row-action-group"]'),
   );
 }
 
@@ -183,7 +181,7 @@ it("TableRowSelection_ShiftClick_SelectsInclusiveDisplayedRange", async () => {
 it("TableRowSelection_OneSelectedRow_RevealsEveryRowActionGroup", async () => {
   const tableView = renderTableView({ properties: titleProperties });
 
-  expect(actionGroups()).toHaveLength(6);
+  expect(actionGroups()).toHaveLength(3);
   expectActionGroupsToHaveClass("opacity-0");
 
   await tableView.user.click(rowCheckbox("row1"));

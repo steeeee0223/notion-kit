@@ -4,9 +4,9 @@ import { flexRender } from "@tanstack/react-table";
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
 import type { CellInstance, RowInstance } from "@notion-kit/table-hook";
-import { Checkbox, Sortable } from "@notion-kit/ui/primitives";
+import { Sortable } from "@notion-kit/ui/primitives";
 
-import { RowActions, TableRowActionGroup } from "@/common";
+import { RowActionGroup } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface TableRowProps {
@@ -51,38 +51,15 @@ export function TableRow({ hasSelection, row }: TableRowProps) {
       >
         <div className="flex">
           <div className="sticky left-8 z-(--z-row) flex items-center bg-main">
+            {/* Row actions */}
             {!locked && (
-              <>
-                {/* Row actions */}
-                <RowActions
-                  className="absolute -left-20"
-                  hasSelection={hasSelection}
-                  rowId={row.id}
-                  isMobile={isMobile}
-                  onAddNext={addNextRow}
-                />
-                {/* Row selection */}
-                <TableRowActionGroup
-                  className="absolute -left-8 *:has-data-[state=checked]:opacity-100"
-                  hasSelection={hasSelection}
-                  isMobile={isMobile}
-                >
-                  <Checkbox
-                    id={`row-select-${row.id}`}
-                    size="sm"
-                    checked={row.getIsSelected()}
-                    className="cursor-pointer rounded-xs accent-blue"
-                    aria-label={`Select row ${row.id}`}
-                    onClick={(event) => {
-                      row.getToggleSelectedHandler()({
-                        target: { checked: !row.getIsSelected() },
-                        shiftKey: event.shiftKey,
-                        nativeEvent: event,
-                      });
-                    }}
-                  />
-                </TableRowActionGroup>
-              </>
+              <RowActionGroup
+                className="absolute -left-20"
+                hasSelection={hasSelection}
+                isMobile={isMobile}
+                row={row}
+                onAddNext={addNextRow}
+              />
             )}
             {/* Start pinned columns */}
             <TableCells cells={row.getStartVisibleCells()} />

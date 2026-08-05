@@ -10,6 +10,6 @@ export { GroupActions } from "./group-actions";
 export * from "./menu";
 export { OptionTag } from "./option-tag";
 export { PropMeta } from "./prop-meta";
-export * from "./table-row-action-group";
+export { RowActionGroup } from "./row-action-group";
 export { TextInputPopover } from "./text-input-popover";
 export { TableCell } from "./table-cell";

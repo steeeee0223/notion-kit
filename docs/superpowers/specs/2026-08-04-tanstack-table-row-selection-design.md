@@ -2,7 +2,7 @@
 
 ## Goal
 
-Integrate TanStack Table's row-selection feature into `@notion-kit/table-hook` and connect it to the table-view row, group, and header checkboxes. This establishes the internal selection state required by a future bulk-edit feature without adding bulk-edit UI or a public selection-state API in this change.
+Integrate TanStack Table's row-selection feature into `@notion-kit/table-hook` and connect it to the shared Table, List, and Timeline leaf-row action group as well as the Table group and header checkboxes. This establishes the internal selection state required by a future bulk-edit feature without adding bulk-edit UI or a public selection-state API in this change.
 
 ## Scope
 
@@ -11,8 +11,10 @@ This design covers:
 - Registering TanStack's `rowSelectionFeature` in the table-hook feature set.
 - Keeping row-selection state internal and uncontrolled for the lifetime of a mounted `TableView`.
 - Connecting leaf-row, grouped-row, and table-header checkboxes to that state.
+- Defining one shared leaf `RowActionGroup` as the add-row button, drag handle, and row-selection checkbox, in that order.
+- Using the shared leaf `RowActionGroup` in Table, List, and the Timeline sidebar.
 - Rendering checked, unchecked, and indeterminate checkbox states.
-- Keeping all `TableRowActionGroup` instances visible while any row is selected.
+- Keeping all `RowActionGroup` instances visible while any row is selected.
 - Removing selection IDs when their source rows are deleted.
 - Clearing and hiding selection when the table is locked.
 - Preserving selection across layout changes within the same mounted table instance.
@@ -25,9 +27,9 @@ This change does not:
 - Add bulk-edit controls or bulk-edit operations.
 - Add controlled, default, or callback props for row selection.
 - Persist selection outside the mounted table instance.
-- Add row-selection UI to List, Board, or Timeline layouts.
+- Add row-selection UI to Board layouts.
 - Change filtering or pagination behavior.
-- Redesign existing row, group, or header actions beyond their selection-driven visibility.
+- Redesign grouped-row or header controls, or change row-action-menu contents.
 
 ## State Ownership
 
@@ -51,13 +53,19 @@ Cleanup must avoid an update when the selected ID map is already valid and must 
 
 ### Leaf Rows
 
-Each real data row renders a controlled checkbox:
+Each real data row in Table, List, and Timeline renders the same shared `RowActionGroup`, containing:
+
+1. The add-row button.
+2. The drag handle and row-action-menu trigger.
+3. A controlled row-selection checkbox.
+
+The checkbox behavior is identical in every supported layout:
 
 - `checked` reflects `row.getIsSelected()`.
 - Clicking uses TanStack's row toggle handler so ordinary multi-selection and inclusive Shift-range selection retain TanStack behavior.
 - Sorting changes display order but does not change selected IDs.
 
-Each checkbox has a unique accessible name associated with its row. The current repeated `id="row-select"` value is removed or replaced with unique IDs so labels never target the wrong control.
+Each checkbox has a unique accessible name associated with its row. The current repeated `id="row-select"` value is removed or replaced with unique IDs so labels never target the wrong control. Timeline renders the group once in its sidebar row; its corresponding timeline track does not render a duplicate group.
 
 ### Table Header
 
@@ -94,10 +102,11 @@ Group interactions update leaf IDs directly rather than storing the group's synt
 
 ### Desktop
 
-- Every `TableRowActionGroup` starts at `opacity-0`.
+- Every `RowActionGroup` starts at `opacity-0`.
 - Existing reveal conditions remain: row hover, row dragging, or an open action popover.
-- Once any row is selected, every `TableRowActionGroup` becomes `opacity-100`.
-- This applies to both selection-checkbox groups and add/drag row-action groups.
+- Once any row is selected, every `RowActionGroup` becomes `opacity-100`.
+- The add-row button, drag handle, and selection checkbox form one visibility unit.
+- Table, List, and Timeline use the same reveal behavior and control ordering.
 - Header and group selection controls start at `opacity-0`, appear on their respective hover surface, and remain `opacity-100` while any row is selected.
 
 ### Mobile
@@ -106,12 +115,13 @@ Mobile keeps the current touch-friendly exception: row action groups and all sel
 
 ## Component and Reactivity Boundaries
 
-`TableRowActionGroup` receives an explicit selection-driven visibility prop. It remains a presentational component and does not subscribe to table state itself. This avoids creating multiple table subscriptions per row and keeps state ownership visible to callers.
+`RowActionGroup` receives an explicit selection-driven visibility prop and the row interaction inputs it needs. It remains a presentational component and does not subscribe to table state itself. This avoids creating multiple table subscriptions per row and keeps state ownership visible to callers.
 
 The existing body and header subscriptions add only the row-selection slice they require:
 
 - The header derives its own checked, indeterminate, and visible values.
 - The table body derives `hasSelection` and supplies the selection slice needed for row and group rendering.
+- The List body and Timeline sidebar derive `hasSelection` from the same row-selection state and pass it to their leaf groups.
 - Leaf and group checkbox state is calculated from their row instances against the current selection slice.
 
 The column-resize `MemoizedTableBody` must include selection in its render contract. Its comparison cannot continue to depend only on `table.options.data`, because that would leave checkbox state and action visibility stale during column resizing.
@@ -160,6 +170,8 @@ Add real component interaction tests for:
 - `TableRowSelection_ColumnResizeActive_UpdatesSelectionUI`.
 - `TableRowSelection_MobileView_KeepsSelectionAndActionControlsVisible`.
 
+Existing layout coverage also verifies that Table, List, and Timeline render the shared leaf group without changing their row-opening, add-row, drag, or row-menu interactions. No new tests are required for the shared-component extraction.
+
 Where checked, unchecked, and indeterminate cases share the same setup, use a table-driven test or focused sub-tests instead of duplicating entire fixtures. Styling assertions should target the actual visibility contract on rendered action groups; they should not snapshot unrelated Tailwind classes.
 
 ### Adversarial Cases
@@ -179,7 +191,9 @@ The tests explicitly exercise the most likely failure paths:
 - TanStack row selection is registered and internally owned with no new public selection props.
 - Leaf, group, and header checkboxes accurately expose checked, unchecked, and indeterminate states.
 - Header and group toggles operate on all relevant leaf rows, including collapsed descendants.
-- Any active selection makes all `TableRowActionGroup` instances and selection controls fully visible on desktop.
+- Any active selection makes all `RowActionGroup` instances and selection controls fully visible on desktop.
+- Table, List, and Timeline render the same leaf `RowActionGroup` in add, drag, selection order.
+- Timeline renders the shared group in the sidebar only.
 - Mobile controls remain fully visible regardless of selection.
 - Deleted row IDs are removed from selection, layout changes preserve selection, and locking clears selection.
 - Checkbox labels are unique and accessible.
@@ -193,4 +207,5 @@ The tests explicitly exercise the most likely failure paths:
 3. Connect leaf and header checkboxes and global action visibility.
 4. Add recursive grouped-row tri-state selection.
 5. Protect memoized rendering and mobile/desktop visibility behavior.
-6. Run focused tests and affected workspace quality checks.
+6. Extract the Table leaf controls into a shared `RowActionGroup` and use it in Table, List, and Timeline.
+7. Run existing focused tests and affected workspace quality checks.

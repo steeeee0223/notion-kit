@@ -389,7 +389,7 @@ it("TimelineSidebarHandle_SortedPointerDrag_ConfirmsThenCommitsExactMove", async
 
   const sidebarRow = timeline.sidebarRow("empty");
   const handle = within(sidebarRow).getByRole("button", {
-    name: "Move Empty task",
+    name: "Row actions",
   });
   await dragPointer(handle, [18, 30, 60, 90], "vertical");
 
