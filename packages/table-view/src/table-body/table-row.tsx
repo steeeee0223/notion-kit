@@ -10,20 +10,11 @@ import { RowActions, TableRowActionGroup } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface TableRowProps {
+  hasSelection: boolean;
   row: RowInstance;
 }
 
-export function TableRow({ row }: TableRowProps) {
-  const { table } = useTableViewCtx();
-
-  return (
-    <table.Subscribe selector={(state) => state.rowSelection}>
-      {() => <TableRowContent row={row} />}
-    </table.Subscribe>
-  );
-}
-
-function TableRowContent({ row }: TableRowProps) {
+export function TableRow({ hasSelection, row }: TableRowProps) {
   const isMobile = useIsMobile();
   /** Add row */
   const { table } = useTableViewCtx();
@@ -65,6 +56,7 @@ function TableRowContent({ row }: TableRowProps) {
                 {/* Row actions */}
                 <RowActions
                   className="absolute -left-20"
+                  hasSelection={hasSelection}
                   rowId={row.id}
                   isMobile={isMobile}
                   onAddNext={addNextRow}
@@ -72,6 +64,7 @@ function TableRowContent({ row }: TableRowProps) {
                 {/* Row selection */}
                 <TableRowActionGroup
                   className="absolute -left-8 *:has-data-[state=checked]:opacity-100"
+                  hasSelection={hasSelection}
                   isMobile={isMobile}
                 >
                   <Checkbox

@@ -1,8 +1,23 @@
+import { useLayoutEffect } from "react";
 import { act, renderHook } from "@testing-library/react";
 import { expect, it } from "vitest";
 
 import { mockData, mockProperties, plugins } from "@/__tests__/mock";
 import { useTableView } from "@/table-contexts/use-table-view";
+
+function useSelectionCommitProbe(
+  options: Parameters<typeof useTableView>[0],
+  onCommit: (selectedRowIds: string[]) => void,
+) {
+  const tableView = useTableView(options);
+  const selectedRowIds = tableView.table.getSelectedRowIds();
+
+  useLayoutEffect(() => {
+    onCommit(selectedRowIds);
+  });
+
+  return tableView;
+}
 
 it("UseTableView_RowSelectionWithoutPublicProps_OwnsInternalSelectionState", () => {
   const { result } = renderHook(() =>
@@ -39,6 +54,27 @@ it("UseTableView_SelectedRowRemoved_PrunesStaleSelectionId", () => {
   expect(result.current.table.getSelectedRowIds()).toEqual([]);
 });
 
+it("UseTableView_ControlledDataRemovalCommit_NeverPublishesDeletedSelection", () => {
+  const selectionCommits: string[][] = [];
+  const { result, rerender } = renderHook(
+    ({ data }) =>
+      useSelectionCommitProbe(
+        { plugins, data, defaultProperties: mockProperties },
+        (selectedRowIds) => selectionCommits.push(selectedRowIds),
+      ),
+    { initialProps: { data: mockData } },
+  );
+
+  act(() => {
+    result.current.table.getRow("row1").toggleSelected(true);
+  });
+  const removalCommitIndex = selectionCommits.length;
+
+  rerender({ data: mockData.filter((row) => row.id !== "row1") });
+
+  expect(selectionCommits[removalCommitIndex]).toEqual([]);
+});
+
 it("UseTableView_ReusedDeletedRowId_DoesNotRestoreSelection", () => {
   const { result } = renderHook(() =>
     useTableView({
@@ -51,14 +87,14 @@ it("UseTableView_ReusedDeletedRowId_DoesNotRestoreSelection", () => {
   act(() => {
     result.current.table.getRow("row1").toggleSelected(true);
     result.current.table.deleteRows(["row1"]);
-    result.current.table.setTableData((rows) => [
-      ...rows,
-      { ...mockData[0]!, createdAt: 1, lastEditedAt: 1 },
-    ], {
-      id: "reuse-row1",
-      type: "data.row.create",
-      payload: { rowId: "row1", nextPosition: 2 },
-    });
+    result.current.table.setTableData(
+      (rows) => [...rows, { ...mockData[0]!, createdAt: 1, lastEditedAt: 1 }],
+      {
+        id: "reuse-row1",
+        type: "data.row.create",
+        payload: { rowId: "row1", nextPosition: 2 },
+      },
+    );
   });
 
   expect(result.current.table.getRow("row1").getIsSelected()).toBe(false);
@@ -81,6 +117,55 @@ it("UseTableView_ViewBecomesLocked_ClearsSelectionState", () => {
   expect(result.current.table.getSelectedRowIds()).toEqual([]);
 });
 
+it("UseTableView_ControlledLockCommit_NeverPublishesSelectedIds", () => {
+  const selectionCommits: string[][] = [];
+  const { result, rerender } = renderHook(
+    ({ locked }) =>
+      useSelectionCommitProbe(
+        {
+          plugins,
+          defaultData: mockData,
+          defaultProperties: mockProperties,
+          view: { locked },
+        },
+        (selectedRowIds) => selectionCommits.push(selectedRowIds),
+      ),
+    { initialProps: { locked: false } },
+  );
+
+  act(() => {
+    result.current.table.getRow("row1").toggleSelected(true);
+  });
+  const lockingCommitIndex = selectionCommits.length;
+
+  rerender({ locked: true });
+
+  expect(selectionCommits[lockingCommitIndex]).toEqual([]);
+});
+
+it("UseTableView_LockedSelectionApiThenUnlock_KeepsSelectionEmpty", () => {
+  const { result, rerender } = renderHook(
+    ({ locked }) =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        view: { locked },
+      }),
+    { initialProps: { locked: true } },
+  );
+
+  act(() => {
+    result.current.table.getRow("row1").toggleSelected(true);
+  });
+
+  expect(result.current.table.getSelectedRowIds()).toEqual([]);
+
+  rerender({ locked: false });
+
+  expect(result.current.table.getSelectedRowIds()).toEqual([]);
+});
+
 it("UseTableView_LayoutChanges_PreservesSelectionState", () => {
   const { result } = renderHook(() =>
     useTableView({
@@ -92,10 +177,15 @@ it("UseTableView_LayoutChanges_PreservesSelectionState", () => {
 
   act(() => {
     result.current.table.getRow("row1").toggleSelected(true);
+  });
+  const selectedState = result.current.table.atoms.rowSelection.get();
+
+  act(() => {
     result.current.table.setTableLayout("list");
   });
 
   expect(result.current.table.getSelectedRowIds()).toEqual(["row1"]);
+  expect(result.current.table.atoms.rowSelection.get()).toBe(selectedState);
 });
 
 it("UseTableView_GroupToggle_SelectsOnlyDescendantLeafIds", () => {

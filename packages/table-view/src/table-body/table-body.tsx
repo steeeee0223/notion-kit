@@ -29,11 +29,14 @@ export function DndTableBody() {
         columnPinning: state.columnPinning,
         columnResizing: state.columnResizing,
         columnsInfo: state.columnsInfo,
+        rowSelection: state.rowSelection,
       })}
     >
-      {({ locked, sorting, columnResizing }) => (
+      {({ locked, sorting, columnResizing, rowSelection }) => (
         <DndTableBodyContent
+          hasSelection={Object.keys(rowSelection).length > 0}
           locked={locked ?? false}
+          rowSelection={rowSelection}
           sorting={sorting}
           isResizingColumn={Boolean(columnResizing.isResizingColumn)}
           pendingDragEndEvent={pendingDragEndEvent}
@@ -45,7 +48,9 @@ export function DndTableBody() {
 }
 
 interface DndTableBodyContentProps {
+  hasSelection: boolean;
   locked: boolean;
+  rowSelection: ReturnType<TableInstance["atoms"]["rowSelection"]["get"]>;
   sorting: ReturnType<TableInstance["atoms"]["sorting"]["get"]>;
   isResizingColumn: boolean;
   pendingDragEndEvent: DragEndEvent | null;
@@ -53,7 +58,9 @@ interface DndTableBodyContentProps {
 }
 
 function DndTableBodyContent({
+  hasSelection,
   locked,
+  rowSelection,
   sorting,
   isResizingColumn,
   pendingDragEndEvent,
@@ -107,9 +114,19 @@ function DndTableBodyContent({
         {/* Rows */}
         <div className="relative">
           {isResizingColumn ? (
-            <MemoizedTableBody table={table} onRowDragEnd={handleRowDragEnd} />
+            <MemoizedTableBody
+              hasSelection={hasSelection}
+              rowSelection={rowSelection}
+              table={table}
+              onRowDragEnd={handleRowDragEnd}
+            />
           ) : (
-            <TableBody table={table} onRowDragEnd={handleRowDragEnd} />
+            <TableBody
+              hasSelection={hasSelection}
+              rowSelection={rowSelection}
+              table={table}
+              onRowDragEnd={handleRowDragEnd}
+            />
           )}
         </div>
       </div>
@@ -146,6 +163,8 @@ function DndTableBodyContent({
 }
 
 interface TableBodyProps {
+  hasSelection: boolean;
+  rowSelection: ReturnType<TableInstance["atoms"]["rowSelection"]["get"]>;
   table: TableInstance;
   onRowDragEnd: (e: DragEndEvent) => void;
 }
@@ -153,7 +172,12 @@ interface TableBodyProps {
 /**
  * un-memoized normal table body component - see memoized version below
  */
-function TableBody({ table, onRowDragEnd }: TableBodyProps) {
+function TableBody({
+  hasSelection,
+  rowSelection: _rowSelection,
+  table,
+  onRowDragEnd,
+}: TableBodyProps) {
   const rows = table.getRowModel().rows;
 
   return (
@@ -161,9 +185,13 @@ function TableBody({ table, onRowDragEnd }: TableBodyProps) {
       <Sortable.List>
         {rows.map((row) =>
           row.getIsGrouped() ? (
-            <TableGroupedRow key={row.id} row={row} />
+            <TableGroupedRow
+              hasSelection={hasSelection}
+              key={row.id}
+              row={row}
+            />
           ) : (
-            <TableRow key={row.id} row={row} />
+            <TableRow hasSelection={hasSelection} key={row.id} row={row} />
           ),
         )}
       </Sortable.List>
@@ -176,5 +204,8 @@ function TableBody({ table, onRowDragEnd }: TableBodyProps) {
  */
 export const MemoizedTableBody = React.memo<TableBodyProps>(
   TableBody,
-  (prev, next) => prev.table.options.data === next.table.options.data,
+  (prev, next) =>
+    prev.hasSelection === next.hasSelection &&
+    prev.rowSelection === next.rowSelection &&
+    prev.table.options.data === next.table.options.data,
 );

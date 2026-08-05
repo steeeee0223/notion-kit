@@ -73,8 +73,13 @@ function ListViewContentInner({
 
   return (
     <div key="notion-list-view" className="min-w-177 px-24 pb-0">
-      <table.Subscribe selector={(state) => state.tableGlobal.locked}>
-        {(locked) => (
+      <table.Subscribe
+        selector={(state) => ({
+          locked: state.tableGlobal.locked,
+          rowSelection: state.rowSelection,
+        })}
+      >
+        {({ locked, rowSelection }) => (
           <div
             data-block-id="1fe35e0f-492c-80fd-8d7c-f7e953641770"
             className="flex flex-col py-1"
@@ -83,9 +88,17 @@ function ListViewContentInner({
               <Sortable.List>
                 {rows.map((row) =>
                   row.getIsGrouped() ? (
-                    <TableGroupedRow key={row.id} row={row} />
+                    <TableGroupedRow
+                      hasSelection={Object.keys(rowSelection).length > 0}
+                      key={row.id}
+                      row={row}
+                    />
                   ) : (
-                    <ListRow key={row.id} rowId={row.id} />
+                    <ListRow
+                      hasSelection={Object.keys(rowSelection).length > 0}
+                      key={row.id}
+                      rowId={row.id}
+                    />
                   ),
                 )}
               </Sortable.List>

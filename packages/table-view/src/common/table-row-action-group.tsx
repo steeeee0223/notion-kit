@@ -13,11 +13,13 @@ import {
 import { RowActionMenu } from "../menus";
 
 interface TableRowActionGroupProps extends React.ComponentProps<"div"> {
+  hasSelection: boolean;
   isMobile?: boolean;
 }
 
 export function TableRowActionGroup({
   className,
+  hasSelection,
   isMobile,
   ...props
 }: TableRowActionGroupProps) {
@@ -30,6 +32,7 @@ export function TableRowActionGroup({
           "group-hover/row:opacity-100",
           "group-data-dragging/row:opacity-100",
           "has-[button[aria-expanded='true']]:opacity-100",
+          hasSelection && "opacity-100",
           isMobile && "opacity-100",
         )}
         {...props}
@@ -40,6 +43,7 @@ export function TableRowActionGroup({
 
 interface RowActionsProps {
   className?: string;
+  hasSelection: boolean;
   rowId: string;
   isMobile: boolean;
   onAddNext: (e: React.MouseEvent) => void;
@@ -47,12 +51,17 @@ interface RowActionsProps {
 
 export function RowActions({
   className,
+  hasSelection,
   rowId,
   isMobile,
   onAddNext,
 }: RowActionsProps) {
   return (
-    <TableRowActionGroup className={className} isMobile={isMobile}>
+    <TableRowActionGroup
+      className={className}
+      hasSelection={hasSelection}
+      isMobile={isMobile}
+    >
       <TooltipPreset
         description={
           <>

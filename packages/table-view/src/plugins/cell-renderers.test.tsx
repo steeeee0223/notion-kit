@@ -424,7 +424,11 @@ describe("TextAndCheckboxCells", () => {
     });
     const checkbox = within(table.row("Empty"))
       .getAllByRole("checkbox")
-      .find((element) => !element.hasAttribute("aria-labelledby"));
+      .find(
+        (element) =>
+          !element.hasAttribute("aria-label") &&
+          !element.hasAttribute("aria-labelledby"),
+      );
     expect(checkbox).toBeDefined();
 
     // Act

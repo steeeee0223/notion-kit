@@ -1,10 +1,17 @@
-import { useEffect } from "react";
-import { screen, within } from "@testing-library/react";
+import { useEffect, useState } from "react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { expect, it } from "vitest";
 
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
 import { mockData, mockProperties, mockResizeObserver } from "@/__tests__/mock";
-import { useTableViewCtx } from "@/table-contexts";
+import { TableView, useTableViewCtx } from "@/table-contexts";
 
 mockResizeObserver();
 
@@ -42,6 +49,109 @@ function renderGroupedTable(nested = false) {
   });
 }
 
+function TableSelectionControls() {
+  const { table } = useTableViewCtx();
+
+  return (
+    <>
+      <button type="button" onClick={table.toggleTableLocked}>
+        Toggle lock
+      </button>
+      <button type="button" onClick={() => table.setTableLayout("list")}>
+        Switch to list
+      </button>
+      <button type="button" onClick={() => table.setTableLayout("table")}>
+        Switch to table
+      </button>
+    </>
+  );
+}
+
+function SelectFirstRowWhenResizeStarts() {
+  const { table } = useTableViewCtx();
+
+  return (
+    <table.Subscribe selector={(state) => state.columnResizing}>
+      {(columnResizing) =>
+        columnResizing.isResizingColumn ? (
+          <SelectFirstRowOnMount table={table} />
+        ) : null
+      }
+    </table.Subscribe>
+  );
+}
+
+function SelectFirstRowOnMount({
+  table,
+}: {
+  table: ReturnType<typeof useTableViewCtx>["table"];
+}) {
+  useEffect(() => {
+    table.getRow("row1").toggleSelected(true);
+  }, [table]);
+
+  return null;
+}
+
+function SelectSecondRowWhenResizeStarts() {
+  const { table } = useTableViewCtx();
+
+  return (
+    <table.Subscribe selector={(state) => state.columnResizing}>
+      {(columnResizing) =>
+        columnResizing.isResizingColumn ? (
+          <SelectSecondRowOnMount table={table} />
+        ) : null
+      }
+    </table.Subscribe>
+  );
+}
+
+function SelectSecondRowOnMount({
+  table,
+}: {
+  table: ReturnType<typeof useTableViewCtx>["table"];
+}) {
+  useEffect(() => {
+    table.getRow("row1").toggleSelected(false);
+    table.getRow("row2").toggleSelected(true);
+  }, [table]);
+
+  return null;
+}
+
+function ControlledDataDeletionTable() {
+  const [data, setData] = useState(mockData);
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() =>
+          setData((rows) => rows.filter((row) => row.id !== "row1"))
+        }
+      >
+        Remove controlled row
+      </button>
+      <TableView data={data} properties={titleProperties} view={{}} />
+    </>
+  );
+}
+
+function actionGroups() {
+  return Array.from(
+    document.querySelectorAll<HTMLElement>(
+      '[data-slot="table-row-action-group"]',
+    ),
+  );
+}
+
+function expectActionGroupsToHaveClass(className: string) {
+  for (const group of actionGroups()) {
+    expect(group).toHaveClass(className);
+  }
+}
+
 async function groupCheckbox(groupId: string) {
   return screen.findByRole("checkbox", { name: `Select group ${groupId}` });
 }
@@ -68,6 +178,67 @@ it("TableRowSelection_ShiftClick_SelectsInclusiveDisplayedRange", async () => {
   expect(rowCheckbox("row1")).toHaveAttribute("aria-checked", "true");
   expect(rowCheckbox("row2")).toHaveAttribute("aria-checked", "true");
   expect(rowCheckbox("row3")).toHaveAttribute("aria-checked", "true");
+});
+
+it("TableRowSelection_OneSelectedRow_RevealsEveryRowActionGroup", async () => {
+  const tableView = renderTableView({ properties: titleProperties });
+
+  expect(actionGroups()).toHaveLength(6);
+  expectActionGroupsToHaveClass("opacity-0");
+
+  await tableView.user.click(rowCheckbox("row1"));
+
+  expectActionGroupsToHaveClass("opacity-100");
+  expect(headerCheckbox()).toHaveClass("opacity-100");
+});
+
+it("TableRowSelection_ColumnResizeActive_UpdatesSelectionUI", async () => {
+  renderTableView({
+    properties: titleProperties,
+    children: <SelectFirstRowWhenResizeStarts />,
+  });
+
+  fireEvent.mouseDown(screen.getByRole("separator", { name: "Resize Name" }));
+
+  await waitFor(() => {
+    expect(rowCheckbox("row1")).toHaveAttribute("aria-checked", "true");
+    expectActionGroupsToHaveClass("opacity-100");
+  });
+});
+
+it("TableRowSelection_ColumnResizeActive_ReplacesSelectedRowUI", async () => {
+  const tableView = renderTableView({
+    properties: titleProperties,
+    children: <SelectSecondRowWhenResizeStarts />,
+  });
+
+  await tableView.user.click(rowCheckbox("row1"));
+  fireEvent.mouseDown(screen.getByRole("separator", { name: "Resize Name" }));
+
+  await waitFor(() => {
+    expect(rowCheckbox("row1")).toHaveAttribute("aria-checked", "false");
+    expect(rowCheckbox("row2")).toHaveAttribute("aria-checked", "true");
+  });
+});
+
+it("TableRowSelection_MobileView_KeepsSelectionAndActionControlsVisible", () => {
+  const originalInnerWidth = window.innerWidth;
+  Object.defineProperty(window, "innerWidth", {
+    configurable: true,
+    value: 767,
+  });
+
+  try {
+    renderTableView({ properties: titleProperties });
+
+    expectActionGroupsToHaveClass("opacity-100");
+    expect(headerCheckbox()).toHaveClass("opacity-100");
+  } finally {
+    Object.defineProperty(window, "innerWidth", {
+      configurable: true,
+      value: originalInnerWidth,
+    });
+  }
 });
 
 it("TableHeaderSelection_NoRowsSelected_RendersUnchecked", () => {
@@ -106,17 +277,78 @@ it("TableHeaderSelection_Toggle_SelectsAndClearsAllRows", async () => {
   expect(rowCheckbox("row3")).toHaveAttribute("aria-checked", "false");
 });
 
+it("TableRowSelection_SelectedRowDeleted_RemovesSelectionAndUpdatesTriState", async () => {
+  const user = userEvent.setup();
+  render(<ControlledDataDeletionTable />);
+
+  await user.click(rowCheckbox("row1"));
+  expect(headerCheckbox()).toHaveAttribute("aria-checked", "mixed");
+
+  await user.click(
+    screen.getByRole("button", { name: "Remove controlled row" }),
+  );
+
+  await waitFor(() => {
+    expect(headerCheckbox()).toHaveAttribute("aria-checked", "false");
+    expect(
+      screen.queryByRole("checkbox", { name: "Select row row1" }),
+    ).toBeNull();
+  });
+});
+
+it("TableRowSelection_LockedView_HidesControlsAndClearsSelection", async () => {
+  const tableView = renderTableView({
+    properties: titleProperties,
+    children: <TableSelectionControls />,
+  });
+
+  await tableView.user.click(rowCheckbox("row1"));
+  await tableView.clickButton("Toggle lock");
+
+  expect(
+    screen.queryByRole("checkbox", { name: "Select all rows" }),
+  ).toBeNull();
+  expect(
+    screen.queryByRole("checkbox", { name: "Select row row1" }),
+  ).toBeNull();
+
+  await tableView.clickButton("Toggle lock");
+
+  expect(headerCheckbox()).toHaveAttribute("aria-checked", "false");
+  expect(rowCheckbox("row1")).toHaveAttribute("aria-checked", "false");
+});
+
+it("TableRowSelection_LayoutRoundTrip_RestoresSelectedTableUI", async () => {
+  const tableView = renderTableView({
+    properties: titleProperties,
+    children: <TableSelectionControls />,
+  });
+
+  await tableView.user.click(rowCheckbox("row1"));
+  await tableView.clickButton("Switch to list");
+  expect(screen.queryByRole("table")).toBeNull();
+  expectActionGroupsToHaveClass("opacity-100");
+
+  await tableView.clickButton("Switch to table");
+
+  expect(rowCheckbox("row1")).toHaveAttribute("aria-checked", "true");
+  expectActionGroupsToHaveClass("opacity-100");
+});
+
 it("TableGroupSelection_SomeDescendantsSelected_RendersIndeterminate", async () => {
   const tableView = renderGroupedTable();
   const group = await screen.findByRole("group", { name: "Group col2:true" });
 
-  await tableView.user.click(within(group).getByRole("button", { name: "Open" }));
+  await tableView.user.click(
+    within(group).getByRole("button", { name: "Open" }),
+  );
   await tableView.user.click(rowCheckbox("row1"));
 
   expect(await groupCheckbox("col2:true")).toHaveAttribute(
     "aria-checked",
     "mixed",
   );
+  expect(await groupCheckbox("col2:true")).toHaveClass("opacity-100");
 });
 
 it("TableGroupSelection_CollapsedGroupToggle_SelectsAllDescendantLeaves", async () => {
@@ -124,7 +356,9 @@ it("TableGroupSelection_CollapsedGroupToggle_SelectsAllDescendantLeaves", async 
   const group = await screen.findByRole("group", { name: "Group col2:true" });
 
   await tableView.user.click(await groupCheckbox("col2:true"));
-  await tableView.user.click(within(group).getByRole("button", { name: "Open" }));
+  await tableView.user.click(
+    within(group).getByRole("button", { name: "Open" }),
+  );
 
   expect(rowCheckbox("row1")).toHaveAttribute("aria-checked", "true");
   expect(rowCheckbox("row3")).toHaveAttribute("aria-checked", "true");

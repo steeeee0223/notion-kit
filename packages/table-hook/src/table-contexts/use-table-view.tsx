@@ -45,6 +45,8 @@ const DEFAULT_VIEW_STATE = {
   },
 } satisfies TableViewState;
 
+const EMPTY_ROW_SELECTION: RowSelectionState = {};
+
 function resolveViewState(view?: Partial<TableViewState>) {
   return { ...DEFAULT_VIEW_STATE, ...view };
 }
@@ -211,24 +213,30 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     onChange: onViewChange,
   });
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const effectiveRowSelection = tableGlobalState.locked
+    ? Object.keys(rowSelection).length === 0
+      ? rowSelection
+      : EMPTY_ROW_SELECTION
+    : pruneRowSelection(rowSelection, dataEntity);
   const handleRowSelectionChange = useCallback<OnChangeFn<RowSelectionState>>(
     (updater) => {
+      if (tableGlobalState.locked) return;
       setRowSelection((previous) =>
         pruneRowSelection(functionalUpdate(updater, previous), dataEntity),
       );
     },
-    [dataEntity],
+    [dataEntity, tableGlobalState.locked],
   );
   const handleTableDataChange = useCallback(
-    (updater: Parameters<typeof setDataResource>[0], action: Parameters<typeof setDataResource>[1]) => {
-      setDataResource(
-        (previous) => {
-          const next = functionalUpdate(updater, previous);
-          setRowSelection((selection) => pruneRowSelection(selection, next));
-          return next;
-        },
-        action,
-      );
+    (
+      updater: Parameters<typeof setDataResource>[0],
+      action: Parameters<typeof setDataResource>[1],
+    ) => {
+      setDataResource((previous) => {
+        const next = functionalUpdate(updater, previous);
+        setRowSelection((selection) => pruneRowSelection(selection, next));
+        return next;
+      }, action);
     },
     [setDataResource],
   );
@@ -238,7 +246,11 @@ export function useTableView<TPlugins extends CellPlugin[]>(
   }, [dataEntity]);
 
   useEffect(() => {
-    if (tableGlobalState.locked) setRowSelection({});
+    if (tableGlobalState.locked) {
+      setRowSelection((selection) =>
+        Object.keys(selection).length === 0 ? selection : {},
+      );
+    }
   }, [tableGlobalState.locked]);
 
   /** columns states */
@@ -313,13 +325,13 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       ),
       cellPlugins: plugins.items,
       tableGlobal: tableGlobalState,
-      rowSelection,
+      rowSelection: effectiveRowSelection,
     }),
     [
       columnEntity.ids,
       columnEntity.items,
+      effectiveRowSelection,
       plugins.items,
-      rowSelection,
       tableGlobalState,
     ],
   );

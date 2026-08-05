@@ -111,7 +111,7 @@ function TimelineSidebarRows({ sortable = false }: { sortable?: boolean }) {
           data-slot="timeline-sidebar-group"
           data-row-id={row.id}
         >
-          <TableGroupedRow row={row} />
+          <TableGroupedRow hasSelection={false} row={row} />
         </div>
       );
     }

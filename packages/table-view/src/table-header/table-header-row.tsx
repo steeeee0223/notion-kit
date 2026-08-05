@@ -118,14 +118,21 @@ function TableHeaderRow() {
         rowSelection: state.rowSelection,
       })}
     >
-      {({ tableGlobal }) => <TableHeaderRowContent tableGlobal={tableGlobal} />}
+      {({ rowSelection, tableGlobal }) => (
+        <TableHeaderRowContent
+          hasSelection={Object.keys(rowSelection).length > 0}
+          tableGlobal={tableGlobal}
+        />
+      )}
     </table.Subscribe>
   );
 }
 
 function TableHeaderRowContent({
+  hasSelection,
   tableGlobal,
 }: {
+  hasSelection: boolean;
   tableGlobal: ReturnType<TableInstance["atoms"]["tableGlobal"]["get"]>;
 }) {
   const { table } = useTableViewCtx();
@@ -141,7 +148,7 @@ function TableHeaderRowContent({
     <div
       id="notion-table-view-header-row"
       dir="ltr"
-      className="relative inset-x-0 box-border flex h-[34px] min-w-[708px] bg-main text-default/65 shadow-header-row"
+      className="group/header relative inset-x-0 box-border flex h-[34px] min-w-[708px] bg-main text-default/65 shadow-header-row"
     >
       <div className="sticky left-8 z-(--z-col) flex">
         {/* Hovered actions */}
@@ -155,7 +162,8 @@ function TableHeaderRowContent({
                 indeterminate={isSomeRowsSelected && !isAllRowsSelected}
                 aria-label="Select all rows"
                 className={cn(
-                  "cursor-pointer rounded-xs accent-blue opacity-0 hover:opacity-100 data-checked:opacity-100 data-indeterminate:opacity-100",
+                  "cursor-pointer rounded-xs accent-blue opacity-0 group-hover/header:opacity-100 hover:opacity-100 data-checked:opacity-100 data-indeterminate:opacity-100",
+                  hasSelection && "opacity-100",
                   isMobile && "opacity-100",
                 )}
                 onCheckedChange={(checked) =>
