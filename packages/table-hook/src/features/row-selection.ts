@@ -40,22 +40,4 @@ export const InternalRowSelectionFeature: typeof rowSelectionFeature = {
       },
     };
   },
-  constructTableAPIs: (_table) => {
-    rowSelectionFeature.constructTableAPIs?.(_table);
-
-    const table = _table as unknown as _TableInstance;
-    const setOptions = table.setOptions.bind(table);
-    table.setOptions = (updater) => {
-      table._reactivity.batch(() => {
-        setOptions(updater);
-        table.baseAtoms.rowSelection.set((selection) =>
-          table.atoms.tableGlobal.get().locked
-            ? Object.keys(selection).length === 0
-              ? selection
-              : {}
-            : pruneRowSelection(selection, table.options.data),
-        );
-      });
-    };
-  },
 };

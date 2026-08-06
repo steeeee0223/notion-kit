@@ -7,6 +7,7 @@ import {
 
 import { DEFAULT_FEATURES, type TableFeatures } from "@/features";
 import type { TableViewState } from "@/features/menu";
+import { pruneRowSelection } from "@/features/row-selection";
 import type { ColumnDefs, ColumnInfo, Row } from "@/lib/types";
 import { type Entity } from "@/lib/utils";
 import { resolveGroupingMethod, resolveSortingMethod } from "@/methods";
@@ -289,6 +290,14 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       getRowUrl,
     },
     () => null,
+  );
+
+  table.baseAtoms.rowSelection.set((selection) =>
+    tableGlobalState.locked
+      ? Object.keys(selection).length === 0
+        ? selection
+        : {}
+      : pruneRowSelection(selection, dataEntity),
   );
 
   return useMemo(() => ({ table }), [table]);
