@@ -39,7 +39,7 @@ export function ListRow({ rowId }: ListRowProps) {
           <div className="relative flex items-center">
             {!locked && (
               <RowActionGroup
-                className="absolute -left-16"
+                className="absolute -left-20"
                 isMobile={isMobile}
                 row={row}
                 onAddNext={addNextRow}

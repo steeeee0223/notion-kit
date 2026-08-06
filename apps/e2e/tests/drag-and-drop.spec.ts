@@ -9,6 +9,7 @@ async function dragWithPointer(
   target: Locator,
   targetEdge: "center" | "after" = "center",
 ) {
+  await source.scrollIntoViewIfNeeded();
   const sourceBox = await source.boundingBox();
   const targetBox = await target.boundingBox();
   expect(sourceBox).not.toBeNull();
