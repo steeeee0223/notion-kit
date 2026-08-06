@@ -58,6 +58,7 @@ import {
   type RowActionsRowApi,
   type RowActionsTableApi,
 } from "./row-actions";
+import { InternalRowSelectionFeature } from "./row-selection";
 
 declare module "@tanstack/table-core" {
   // merge our new feature's state with the existing table state
@@ -140,6 +141,7 @@ export interface TableFeatures extends BaseTableFeatures {
   tableMenuFeature: typeof TableMenuFeature;
   rowActionsFeature: typeof RowActionsFeature;
   extendedGroupingFeature: typeof ExtendedGroupingFeature;
+  rowSelectionFeature: typeof InternalRowSelectionFeature;
 }
 
 export const DEFAULT_FEATURES = tableFeatures({
@@ -150,6 +152,7 @@ export const DEFAULT_FEATURES = tableFeatures({
   columnSizingFeature,
   columnVisibilityFeature,
   rowExpandingFeature,
+  rowSelectionFeature: InternalRowSelectionFeature,
   rowAggregationFeature,
   rowSortingFeature,
   sortedRowModel: createSortedRowModel(),

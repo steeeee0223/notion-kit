@@ -10,7 +10,7 @@ import {
   resolveTimelineDateProperty,
 } from "./timeline-adapter";
 
-interface TimelineViewResources {
+export interface TimelineViewResources {
   columnOrder: string[];
   columnsInfo: Record<string, ColumnInfo>;
   locked: boolean;

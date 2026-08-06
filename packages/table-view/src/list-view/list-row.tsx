@@ -6,7 +6,7 @@ import { useIsMobile } from "@notion-kit/hooks";
 import type { RowInstance } from "@notion-kit/table-hook";
 import { buttonVariants, Sortable } from "@notion-kit/ui/primitives";
 
-import { RowActions } from "@/common";
+import { RowActionGroup } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface ListRowProps {
@@ -38,10 +38,10 @@ export function ListRow({ rowId }: ListRowProps) {
         >
           <div className="relative flex items-center">
             {!locked && (
-              <RowActions
-                className="absolute -left-12"
-                rowId={row.id}
+              <RowActionGroup
+                className="absolute -left-16"
                 isMobile={isMobile}
+                row={row}
                 onAddNext={addNextRow}
               />
             )}

@@ -195,7 +195,6 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     defaultValue: resolveViewState(options.defaultView),
     onChange: onViewChange,
   });
-
   /** columns states */
   const columnEntity = useMemo(
     () => toPropertyEntity(plugins.items, propertiesResource),

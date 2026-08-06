@@ -4,9 +4,9 @@ import { flexRender } from "@tanstack/react-table";
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
 import type { CellInstance, RowInstance } from "@notion-kit/table-hook";
-import { Checkbox, Sortable } from "@notion-kit/ui/primitives";
+import { Sortable } from "@notion-kit/ui/primitives";
 
-import { RowActions, TableRowActionGroup } from "@/common";
+import { RowActionGroup } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface TableRowProps {
@@ -50,32 +50,14 @@ export function TableRow({ row }: TableRowProps) {
       >
         <div className="flex">
           <div className="sticky left-8 z-(--z-row) flex items-center bg-main">
+            {/* Row actions */}
             {!locked && (
-              <>
-                {/* Row actions */}
-                <RowActions
-                  className="absolute -left-20"
-                  rowId={row.id}
-                  isMobile={isMobile}
-                  onAddNext={addNextRow}
-                />
-                {/* Row selection */}
-                <TableRowActionGroup
-                  className="absolute -left-8 *:has-data-[state=checked]:opacity-100"
-                  isMobile={isMobile}
-                >
-                  <label
-                    htmlFor="row-select"
-                    className="z-10 flex size-8 cursor-pointer items-center justify-center"
-                  >
-                    <Checkbox
-                      id="row-select"
-                      size="sm"
-                      className="cursor-pointer rounded-xs accent-blue"
-                    />
-                  </label>
-                </TableRowActionGroup>
-              </>
+              <RowActionGroup
+                className="absolute -left-20"
+                isMobile={isMobile}
+                row={row}
+                onAddNext={addNextRow}
+              />
             )}
             {/* Start pinned columns */}
             <TableCells cells={row.getStartVisibleCells()} />

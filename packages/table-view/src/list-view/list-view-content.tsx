@@ -73,8 +73,13 @@ function ListViewContentInner({
 
   return (
     <div key="notion-list-view" className="min-w-177 px-24 pb-0">
-      <table.Subscribe selector={(state) => state.tableGlobal.locked}>
-        {(locked) => (
+      <table.Subscribe
+        selector={(state) => ({
+          locked: state.tableGlobal.locked,
+          rowSelection: state.rowSelection,
+        })}
+      >
+        {({ locked }) => (
           <div
             data-block-id="1fe35e0f-492c-80fd-8d7c-f7e953641770"
             className="flex flex-col py-1"

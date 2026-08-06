@@ -1,7 +1,9 @@
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
+import type { RowInstance } from "@notion-kit/table-hook";
 import {
   Button,
+  Checkbox,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -10,49 +12,34 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { RowActionMenu } from "../menus";
+import { RowActionMenu } from "@/menus";
 
-interface TableRowActionGroupProps extends React.ComponentProps<"div"> {
-  isMobile?: boolean;
-}
-
-export function TableRowActionGroup({
-  className,
-  isMobile,
-  ...props
-}: TableRowActionGroupProps) {
-  return (
-    <div className={cn("bg-main", className)}>
-      <div
-        data-slot="table-row-action-group"
-        className={cn(
-          "flex h-full items-center opacity-0 transition-opacity delay-0 duration-200",
-          "group-hover/row:opacity-100",
-          "group-data-dragging/row:opacity-100",
-          "has-[button[aria-expanded='true']]:opacity-100",
-          isMobile && "opacity-100",
-        )}
-        {...props}
-      />
-    </div>
-  );
-}
-
-interface RowActionsProps {
+interface RowActionGroupProps {
   className?: string;
-  rowId: string;
-  isMobile: boolean;
+  isMobile?: boolean;
+  row: RowInstance;
   onAddNext: (e: React.MouseEvent) => void;
 }
 
-export function RowActions({
+export function RowActionGroup({
   className,
-  rowId,
   isMobile,
+  row,
   onAddNext,
-}: RowActionsProps) {
+}: RowActionGroupProps) {
   return (
-    <TableRowActionGroup className={className} isMobile={isMobile}>
+    <div
+      data-slot="row-action-group"
+      className={cn(
+        "flex h-9 items-center bg-main opacity-0 transition-opacity delay-0 duration-200",
+        "group-hover/row:opacity-100",
+        "group-data-dragging/row:opacity-100",
+        "has-[button[aria-expanded='true']]:opacity-100",
+        isMobile && "opacity-100",
+        row.getIsSelected() && "opacity-100",
+        className,
+      )}
+    >
       <TooltipPreset
         description={
           <>
@@ -91,9 +78,17 @@ export function RowActions({
           />
         </TooltipPreset>
         <PopoverContent className="w-[265px]" side="right" align="start">
-          <RowActionMenu rowId={rowId} />
+          <RowActionMenu rowId={row.id} />
         </PopoverContent>
       </Popover>
-    </TableRowActionGroup>
+      <Checkbox
+        id={`row-select-${row.id}`}
+        size="sm"
+        checked={row.getIsSelected()}
+        className="mx-1.5 cursor-pointer rounded-xs accent-blue"
+        aria-label={`Select row ${row.id}`}
+        onCheckedChange={(checked) => row.toggleSelected(checked)}
+      />
+    </div>
   );
 }

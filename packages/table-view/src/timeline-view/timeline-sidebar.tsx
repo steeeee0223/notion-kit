@@ -1,6 +1,7 @@
+import type { MouseEvent } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
 
-import type { RowInstance } from "@notion-kit/table-hook";
+import { useIsMobile } from "@notion-kit/hooks";
 import { Button, Sortable } from "@notion-kit/ui/primitives";
 import {
   TimelineSidebarBody,
@@ -9,7 +10,7 @@ import {
   TimelineSidebar as TimelineSidebarPrimitive,
 } from "@notion-kit/ui/timeline";
 
-import { TableCell } from "@/common";
+import { RowActionGroup, TableCell } from "@/common";
 import { TableGroupedRow } from "@/table-body";
 import { useTableViewCtx } from "@/table-contexts";
 import { TableHeaderCellResizer, TableHeaderCellTrigger } from "@/table-header";
@@ -98,9 +99,10 @@ function TimelineSidebarContent({
   );
 }
 
-function TimelineSidebarRows({ sortable = false }: { sortable?: boolean }) {
+function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
   const { table } = useTableViewCtx();
-  const rows = table.getRowModel().rows as RowInstance[];
+  const isMobile = useIsMobile();
+  const rows = table.getRowModel().rows;
   const nextIndexByGroup = new Map<string | undefined, number>();
 
   return rows.map((row) => {
@@ -151,6 +153,13 @@ function TimelineSidebarRows({ sortable = false }: { sortable?: boolean }) {
       );
     }
 
+    const addNextRow = (event: MouseEvent) => {
+      table.addRow({
+        id: row.id,
+        at: event.altKey ? "prev" : "next",
+      });
+    };
+
     return (
       <Sortable.Item
         key={row.id}
@@ -162,11 +171,16 @@ function TimelineSidebarRows({ sortable = false }: { sortable?: boolean }) {
           <div
             data-slot="timeline-sidebar-row"
             data-row-id={row.id}
-            className="flex h-(--timeline-row-height) items-center border-b border-border"
+            className="group/row flex h-(--timeline-row-height) items-center border-b border-border"
           />
         }
       >
-        <Sortable.Handle aria-label={`Move ${title}`} className="ms-1 size-6" />
+        <RowActionGroup
+          className="ms-1"
+          isMobile={isMobile}
+          row={row}
+          onAddNext={addNextRow}
+        />
         {content}
       </Sortable.Item>
     );

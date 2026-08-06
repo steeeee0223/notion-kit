@@ -12,6 +12,7 @@ import {
 } from "@notion-kit/ui/kanban";
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
+import { pruneRowSelection } from "@/features/row-selection";
 import type { _TableInstance } from "@/features/types";
 import { createGroupId } from "@/features/utils";
 import type { Cell, Row } from "@/lib/types";
@@ -243,7 +244,13 @@ export const RowActionsFeature: TableFeature = {
     };
 
     table.setTableData = (updater, action) =>
-      table.options.onTableDataChange?.(updater, action);
+      table.options.onTableDataChange?.((previous) => {
+        const next = functionalUpdate(updater, previous);
+        table.baseAtoms.rowSelection.set((selection) =>
+          pruneRowSelection(selection, next),
+        );
+        return next;
+      }, action);
     /** Cell API */
     table.getCellValues = () =>
       table.getCoreRowModel().rows.map((row) => row.original);

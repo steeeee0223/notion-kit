@@ -5,7 +5,7 @@ import { flexRender } from "@tanstack/react-table";
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
-import { TableViewMenuPage, type TableInstance } from "@notion-kit/table-hook";
+import { TableViewMenuPage } from "@notion-kit/table-hook";
 import {
   Checkbox,
   DropdownMenu,
@@ -17,9 +17,9 @@ import {
   Sortable,
 } from "@notion-kit/ui/primitives";
 
+import { PropsMenu, TypesMenu } from "@/menus";
 import { useTableViewCtx } from "@/table-contexts";
 
-import { PropsMenu, TypesMenu } from "../menus";
 import { TableHeaderActionCell } from "./table-header-action-cell";
 
 type ColumnDragEndHandler = (event: DragEndEvent) => void;
@@ -62,7 +62,7 @@ function snapshotColumnDragEnd(event: DragEndEvent) {
 }
 
 export function useColumnDragEnd(handler: ColumnDragEndHandler) {
-  const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
   const cancelPending = React.useCallback(() => {
     if (timeoutRef.current === null) return;
     globalThis.clearTimeout(timeoutRef.current);
@@ -115,50 +115,53 @@ function TableHeaderRow() {
         columnSizing: state.columnSizing,
         columnResizing: state.columnResizing,
         columnsInfo: state.columnsInfo,
+        rowSelection: state.rowSelection,
       })}
     >
-      {({ tableGlobal }) => <TableHeaderRowContent tableGlobal={tableGlobal} />}
+      {() => <TableHeaderRowContent />}
     </table.Subscribe>
   );
 }
 
-function TableHeaderRowContent({
-  tableGlobal,
-}: {
-  tableGlobal: ReturnType<TableInstance["atoms"]["tableGlobal"]["get"]>;
-}) {
+function TableHeaderRowContent() {
   const { table } = useTableViewCtx();
   const isMobile = useIsMobile();
 
   const headers = table.getCenterLeafHeaders();
   const startPinnedHeaders = table.getStartLeafHeaders();
   const isStartPinned = startPinnedHeaders.length > 0;
+  const isAllRowsSelected = table.getIsAllRowsSelected();
+  const isSomeRowsSelected = table.getIsSomeRowsSelected();
 
   return (
     <div
       id="notion-table-view-header-row"
       dir="ltr"
-      className="relative inset-x-0 box-border flex h-[34px] min-w-[708px] bg-main text-default/65 shadow-header-row"
+      className="group/header relative inset-x-0 box-border flex h-[34px] min-w-[708px] bg-main text-default/65 shadow-header-row"
     >
       <div className="sticky left-8 z-(--z-col) flex">
         {/* Hovered actions */}
-        <div className="absolute -left-8">
-          <div className="flex h-full justify-end border-b-border-cell bg-main">
-            <label
-              htmlFor="row-select"
-              aria-label="row-select"
-              className={cn(
-                "z-10 flex size-8 cursor-pointer items-center justify-center opacity-0 hover:opacity-100 has-data-[state=checked]:opacity-100",
-                isMobile && "opacity-100",
-              )}
-            >
-              <Checkbox
-                id="row-select"
-                size="sm"
-                className="cursor-pointer rounded-xs accent-blue"
-              />
-            </label>
-          </div>
+        <div className="absolute -left-8 flex h-full items-center justify-end border-b-border-cell bg-main">
+          <table.Subscribe selector={(state) => state.tableGlobal.locked}>
+            {(locked) =>
+              !locked && (
+                <Checkbox
+                  id="select-all-rows"
+                  size="sm"
+                  checked={isAllRowsSelected}
+                  indeterminate={isSomeRowsSelected && !isAllRowsSelected}
+                  aria-label="Select all rows"
+                  className={cn(
+                    "cursor-pointer rounded-xs accent-blue opacity-0 group-hover/header:opacity-100 hover:opacity-100 data-checked:opacity-100 data-indeterminate:opacity-100",
+                    (isSomeRowsSelected || isMobile) && "opacity-100",
+                  )}
+                  onCheckedChange={(checked) =>
+                    table.toggleAllRowsSelected(checked)
+                  }
+                />
+              )
+            }
+          </table.Subscribe>
         </div>
       </div>
       <Sortable.List
@@ -190,16 +193,20 @@ function TableHeaderRowContent({
           ))}
         </div>
       </Sortable.List>
-      {!tableGlobal.locked && (
-        <Popover>
-          <PopoverTrigger
-            render={<TableHeaderActionCell icon={<Icon.Plus />} />}
-          />
-          <PopoverContent sideOffset={0} collisionPadding={12}>
-            <TypesMenu menu={TableViewMenuPage.CreateProp} />
-          </PopoverContent>
-        </Popover>
-      )}
+      <table.Subscribe selector={(state) => state.tableGlobal.locked}>
+        {(locked) =>
+          !locked && (
+            <Popover>
+              <PopoverTrigger
+                render={<TableHeaderActionCell icon={<Icon.Plus />} />}
+              />
+              <PopoverContent sideOffset={0} collisionPadding={12}>
+                <TypesMenu menu={TableViewMenuPage.CreateProp} />
+              </PopoverContent>
+            </Popover>
+          )
+        }
+      </table.Subscribe>
       <DropdownMenu>
         <DropdownMenuTrigger
           render={<TableHeaderActionCell icon={<Icon.Dots />} />}

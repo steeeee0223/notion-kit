@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
+import type { SortingState } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
 import type { TableInstance } from "@notion-kit/table-hook";
@@ -29,6 +30,7 @@ export function DndTableBody() {
         columnPinning: state.columnPinning,
         columnResizing: state.columnResizing,
         columnsInfo: state.columnsInfo,
+        rowSelection: state.rowSelection,
       })}
     >
       {({ locked, sorting, columnResizing }) => (
@@ -46,7 +48,7 @@ export function DndTableBody() {
 
 interface DndTableBodyContentProps {
   locked: boolean;
-  sorting: ReturnType<TableInstance["atoms"]["sorting"]["get"]>;
+  sorting: SortingState;
   isResizingColumn: boolean;
   pendingDragEndEvent: DragEndEvent | null;
   setPendingDragEndEvent: (event: DragEndEvent | null) => void;

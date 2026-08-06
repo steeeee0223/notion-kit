@@ -76,7 +76,14 @@ export interface ExtendedGroupingRowApi {
   getShouldShowGroupAggregates: () => boolean;
   toggleGroupAggregates: () => void;
   toggleGroupVisibility: () => void;
+  getGroupSelectionState: () => "checked" | "indeterminate" | "unchecked";
+  toggleGroupSelection: () => void;
   renderGroupingValue: (props: { className?: string }) => React.ReactNode;
+}
+
+interface GroupSelectionRow {
+  id: string;
+  subRows: GroupSelectionRow[];
 }
 
 export const ExtendedGroupingFeature: TableFeature = {
@@ -315,6 +322,38 @@ export const ExtendedGroupingFeature: TableFeature = {
       if (!this.groupingColumnId || !this.getIsGrouped()) return;
       table.toggleGroupVisible(this.id);
     };
+    prototype.getGroupSelectionState = function (this: {
+      id: string;
+      getIsGrouped: () => boolean;
+      subRows: GroupSelectionRow[];
+    }) {
+      if (!this.getIsGrouped()) return "unchecked";
+      return getLeafSelectionState(table, getDescendantLeafIds(this));
+    };
+    prototype.toggleGroupSelection = function (this: {
+      id: string;
+      getIsGrouped: () => boolean;
+      subRows: GroupSelectionRow[];
+    }) {
+      if (!this.getIsGrouped()) return;
+      const leafIds = getDescendantLeafIds(this);
+      const select = getLeafSelectionState(table, leafIds) !== "checked";
+      table.setRowSelection((previous) => {
+        const next = { ...previous };
+        let changed = false;
+        for (const rowId of leafIds) {
+          if (select && !next[rowId]) {
+            next[rowId] = true;
+            changed = true;
+          }
+          if (!select && next[rowId]) {
+            delete next[rowId];
+            changed = true;
+          }
+        }
+        return changed ? next : previous;
+      });
+    };
     prototype.renderGroupingValue = function (
       this: { id: string },
       props: { className?: string },
@@ -323,3 +362,22 @@ export const ExtendedGroupingFeature: TableFeature = {
     };
   },
 };
+
+function getDescendantLeafIds(row: GroupSelectionRow): string[] {
+  return row.subRows.flatMap((subRow) =>
+    subRow.subRows.length > 0 ? getDescendantLeafIds(subRow) : [subRow.id],
+  );
+}
+
+function getLeafSelectionState(
+  table: _TableInstance,
+  leafIds: string[],
+): "checked" | "indeterminate" | "unchecked" {
+  if (leafIds.length === 0) return "unchecked";
+  const selectedRowIds = new Set(table.getSelectedRowIds());
+  const selectedLeafCount = leafIds.filter((rowId) =>
+    selectedRowIds.has(rowId),
+  ).length;
+  if (selectedLeafCount === leafIds.length) return "checked";
+  return selectedLeafCount > 0 ? "indeterminate" : "unchecked";
+}
