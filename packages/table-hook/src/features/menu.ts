@@ -134,6 +134,7 @@ export const TableMenuFeature: TableFeature = {
     };
     instance.toggleTableLocked = () => {
       const actionId = v4();
+      instance.baseAtoms.rowSelection.set({});
       instance.setTableGlobalState(
         (v) => ({ ...v, locked: !v.locked }),
         (previous, next) => ({

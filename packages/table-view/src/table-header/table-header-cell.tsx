@@ -15,8 +15,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { DefaultIcon } from "@/common";
-
-import { PropMenu } from "../menus";
+import { PropMenu } from "@/menus";
 
 type TableGlobalReader = Pick<TableInstance, "getTableGlobalState">;
 

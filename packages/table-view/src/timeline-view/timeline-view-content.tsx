@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
+import type { SortingState } from "@tanstack/react-table";
 
-import type { TableInstance } from "@notion-kit/table-hook";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Dialog } from "@notion-kit/ui/primitives";
 import {
@@ -24,7 +24,7 @@ type TimelineViewResolutionResources = Parameters<
 >[0];
 
 interface TimelineViewReadyResources {
-  sorting: ReturnType<TableInstance["atoms"]["sorting"]["get"]>;
+  sorting: SortingState;
   locked: boolean;
   timeline: TimelineViewResolutionResources["timeline"];
 }
