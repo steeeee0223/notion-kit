@@ -349,6 +349,39 @@ it("TableGroupSelection_SomeDescendantsSelected_RendersIndeterminate", async () 
   expect(await groupCheckbox("col2:true")).toHaveClass("opacity-100");
 });
 
+it("TableGroupSelection_Checkbox_UsesStickyRowActionBehavior", async () => {
+  renderGroupedTable();
+
+  const checkbox = await groupCheckbox("col2:true");
+  const action = checkbox.closest('[data-slot="group-row-action"]');
+  const group = screen.getByRole("group", { name: "Group col2:true" });
+  const content = group.querySelector('[data-slot="grouped-row-content"]');
+
+  expect(action).toHaveClass("sticky", "left-8", "z-(--z-row)");
+  expect(checkbox).toHaveClass(
+    "opacity-0",
+    "transition-opacity",
+    "delay-0",
+    "duration-200",
+  );
+  expect(content).toContainElement(
+    within(group).getByRole("button", { name: "Open" }),
+  );
+  expect(content).toContainElement(
+    within(group).getByRole("button", { name: "Group options" }),
+  );
+});
+
+it("TableGroupSelection_ListLayout_ShowsCheckbox", async () => {
+  renderTableView({
+    properties: titleProperties,
+    view: { layout: "list" },
+    children: <GroupingSetup />,
+  });
+
+  expect(await groupCheckbox("col2:true")).toBeVisible();
+});
+
 it("TableGroupSelection_CollapsedGroupToggle_SelectsAllDescendantLeaves", async () => {
   const tableView = renderGroupedTable();
   const group = await screen.findByRole("group", { name: "Group col2:true" });
