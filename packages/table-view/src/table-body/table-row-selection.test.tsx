@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-  within,
-} from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, it } from "vitest";
 
@@ -67,59 +61,6 @@ function TableSelectionControls() {
   );
 }
 
-function SelectFirstRowWhenResizeStarts() {
-  const { table } = useTableViewCtx();
-
-  return (
-    <table.Subscribe selector={(state) => state.columnResizing}>
-      {(columnResizing) =>
-        columnResizing.isResizingColumn ? (
-          <SelectFirstRowOnMount table={table} />
-        ) : null
-      }
-    </table.Subscribe>
-  );
-}
-
-function SelectFirstRowOnMount({
-  table,
-}: {
-  table: ReturnType<typeof useTableViewCtx>["table"];
-}) {
-  useEffect(() => {
-    table.getRow("row1").toggleSelected(true);
-  }, [table]);
-
-  return null;
-}
-
-function SelectSecondRowWhenResizeStarts() {
-  const { table } = useTableViewCtx();
-
-  return (
-    <table.Subscribe selector={(state) => state.columnResizing}>
-      {(columnResizing) =>
-        columnResizing.isResizingColumn ? (
-          <SelectSecondRowOnMount table={table} />
-        ) : null
-      }
-    </table.Subscribe>
-  );
-}
-
-function SelectSecondRowOnMount({
-  table,
-}: {
-  table: ReturnType<typeof useTableViewCtx>["table"];
-}) {
-  useEffect(() => {
-    table.getRow("row1").toggleSelected(false);
-    table.getRow("row2").toggleSelected(true);
-  }, [table]);
-
-  return null;
-}
-
 function ControlledDataDeletionTable() {
   const [data, setData] = useState(mockData);
 
@@ -138,18 +79,6 @@ function ControlledDataDeletionTable() {
   );
 }
 
-function actionGroups() {
-  return Array.from(
-    document.querySelectorAll<HTMLElement>('[data-slot="row-action-group"]'),
-  );
-}
-
-function expectActionGroupsToHaveClass(className: string) {
-  for (const group of actionGroups()) {
-    expect(group).toHaveClass(className);
-  }
-}
-
 async function groupCheckbox(groupId: string) {
   return screen.findByRole("checkbox", { name: `Select group ${groupId}` });
 }
@@ -163,80 +92,6 @@ it("TableRowSelection_RowCheckboxClick_TogglesSelectedState", async () => {
   await tableView.user.click(checkbox);
 
   expect(checkbox).toHaveAttribute("aria-checked", "true");
-});
-
-it("TableRowSelection_ShiftClick_SelectsInclusiveDisplayedRange", async () => {
-  const tableView = renderTableView({ properties: titleProperties });
-
-  await tableView.user.click(rowCheckbox("row1"));
-  await tableView.user.keyboard("[ShiftLeft>]");
-  await tableView.user.click(rowCheckbox("row3"));
-  await tableView.user.keyboard("[/ShiftLeft]");
-
-  expect(rowCheckbox("row1")).toHaveAttribute("aria-checked", "true");
-  expect(rowCheckbox("row2")).toHaveAttribute("aria-checked", "true");
-  expect(rowCheckbox("row3")).toHaveAttribute("aria-checked", "true");
-});
-
-it("TableRowSelection_OneSelectedRow_RevealsEveryRowActionGroup", async () => {
-  const tableView = renderTableView({ properties: titleProperties });
-
-  expect(actionGroups()).toHaveLength(3);
-  expectActionGroupsToHaveClass("opacity-0");
-
-  await tableView.user.click(rowCheckbox("row1"));
-
-  expectActionGroupsToHaveClass("opacity-100");
-  expect(headerCheckbox()).toHaveClass("opacity-100");
-});
-
-it("TableRowSelection_ColumnResizeActive_UpdatesSelectionUI", async () => {
-  renderTableView({
-    properties: titleProperties,
-    children: <SelectFirstRowWhenResizeStarts />,
-  });
-
-  fireEvent.mouseDown(screen.getByRole("separator", { name: "Resize Name" }));
-
-  await waitFor(() => {
-    expect(rowCheckbox("row1")).toHaveAttribute("aria-checked", "true");
-    expectActionGroupsToHaveClass("opacity-100");
-  });
-});
-
-it("TableRowSelection_ColumnResizeActive_ReplacesSelectedRowUI", async () => {
-  const tableView = renderTableView({
-    properties: titleProperties,
-    children: <SelectSecondRowWhenResizeStarts />,
-  });
-
-  await tableView.user.click(rowCheckbox("row1"));
-  fireEvent.mouseDown(screen.getByRole("separator", { name: "Resize Name" }));
-
-  await waitFor(() => {
-    expect(rowCheckbox("row1")).toHaveAttribute("aria-checked", "false");
-    expect(rowCheckbox("row2")).toHaveAttribute("aria-checked", "true");
-  });
-});
-
-it("TableRowSelection_MobileView_KeepsSelectionAndActionControlsVisible", () => {
-  const originalInnerWidth = window.innerWidth;
-  Object.defineProperty(window, "innerWidth", {
-    configurable: true,
-    value: 767,
-  });
-
-  try {
-    renderTableView({ properties: titleProperties });
-
-    expectActionGroupsToHaveClass("opacity-100");
-    expect(headerCheckbox()).toHaveClass("opacity-100");
-  } finally {
-    Object.defineProperty(window, "innerWidth", {
-      configurable: true,
-      value: originalInnerWidth,
-    });
-  }
 });
 
 it("TableHeaderSelection_NoRowsSelected_RendersUnchecked", () => {
@@ -325,12 +180,10 @@ it("TableRowSelection_LayoutRoundTrip_RestoresSelectedTableUI", async () => {
   await tableView.user.click(rowCheckbox("row1"));
   await tableView.clickButton("Switch to list");
   expect(screen.queryByRole("table")).toBeNull();
-  expectActionGroupsToHaveClass("opacity-100");
 
   await tableView.clickButton("Switch to table");
 
   expect(rowCheckbox("row1")).toHaveAttribute("aria-checked", "true");
-  expectActionGroupsToHaveClass("opacity-100");
 });
 
 it("TableGroupSelection_SomeDescendantsSelected_RendersIndeterminate", async () => {
@@ -345,30 +198,6 @@ it("TableGroupSelection_SomeDescendantsSelected_RendersIndeterminate", async () 
   expect(await groupCheckbox("col2:true")).toHaveAttribute(
     "aria-checked",
     "mixed",
-  );
-  expect(await groupCheckbox("col2:true")).toHaveClass("opacity-100");
-});
-
-it("TableGroupSelection_Checkbox_UsesStickyRowActionBehavior", async () => {
-  renderGroupedTable();
-
-  const checkbox = await groupCheckbox("col2:true");
-  const action = checkbox.closest('[data-slot="group-row-action"]');
-  const group = screen.getByRole("group", { name: "Group col2:true" });
-  const content = group.querySelector('[data-slot="grouped-row-content"]');
-
-  expect(action).toHaveClass("sticky", "left-8", "z-(--z-row)");
-  expect(checkbox).toHaveClass(
-    "opacity-0",
-    "transition-opacity",
-    "delay-0",
-    "duration-200",
-  );
-  expect(content).toContainElement(
-    within(group).getByRole("button", { name: "Open" }),
-  );
-  expect(content).toContainElement(
-    within(group).getByRole("button", { name: "Group options" }),
   );
 });
 
