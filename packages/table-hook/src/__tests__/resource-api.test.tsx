@@ -32,7 +32,95 @@ function getLastResourceChange<TResource, TAction>(mock: MockWithLastCall) {
     | undefined;
 }
 
+const methodPlugin = {
+  id: "method-text",
+  meta: { name: "Method text", desc: "Method text", icon: null },
+  default: { name: "Method text", icon: null, config: undefined, data: "" },
+  fromValue: (value) => value?.toString() ?? "",
+  toValue: (data) => data,
+  toTextValue: (data) => data,
+  sorting: {
+    defaultMethod: "text",
+    methods: [
+      { id: "text", name: "Text", function: () => 0 },
+      { id: "alternate", name: "Alternate", function: () => 0 },
+    ],
+  },
+  grouping: {
+    defaultMethod: "value",
+    methods: [
+      { id: "value", name: "Value", function: (data) => data },
+      { id: "text", name: "Text", function: (data) => String(data) },
+    ],
+  },
+  compare: () => 0,
+  renderCell: () => null,
+} satisfies CellPlugin<"method-text", string, undefined>;
+
+const methodPlugins = arrayToEntity([methodPlugin]);
+const methodProperties: ColumnInfo[] = [
+  { ...mockProperties[0]!, type: "method-text", config: undefined },
+];
+
+function createWeekContextPlugin(receivedWeekStartsOn: number[]) {
+  return {
+    ...methodPlugin,
+    id: "week-context",
+    sorting: {
+      defaultMethod: "week-context",
+      methods: [
+        {
+          id: "week-context",
+          name: "Week context",
+          ascendingLabel: "Ascending",
+          descendingLabel: "Descending",
+          toComparable: (
+            data: string,
+            _row: Row,
+            context: { weekStartsOn: number },
+          ) => {
+            receivedWeekStartsOn.push(context.weekStartsOn);
+            return data;
+          },
+          compare: (left, right) => String(left).localeCompare(String(right)),
+        },
+      ],
+    },
+  } satisfies CellPlugin<"week-context", string, undefined>;
+}
+
 describe("useTableView resource API", () => {
+  it.each([
+    { weekStartsOn: undefined, expectedWeekStartsOn: 1 },
+    { weekStartsOn: 0, expectedWeekStartsOn: 0 },
+    { weekStartsOn: 1, expectedWeekStartsOn: 1 },
+  ] as const)(
+    "ResourceApi_WeekStartsOn_PassesRuntimeValueToSortingMethods ($expectedWeekStartsOn)",
+    ({ weekStartsOn, expectedWeekStartsOn }) => {
+      const receivedWeekStartsOn: number[] = [];
+      const weekContextPlugin = createWeekContextPlugin(receivedWeekStartsOn);
+      const { result } = renderHook(() =>
+        useTableView({
+          plugins: arrayToEntity([weekContextPlugin]),
+          defaultData: mockData,
+          defaultProperties: [
+            { ...mockProperties[0]!, type: "week-context", config: undefined },
+          ],
+          weekStartsOn,
+        }),
+      );
+
+      act(() => {
+        result.current.table.setSorting([{ id: "col1", desc: false }]);
+      });
+      result.current.table.getSortedRowModel();
+
+      expect(receivedWeekStartsOn).toEqual(
+        expect.arrayContaining([expectedWeekStartsOn]),
+      );
+    },
+  );
+
   it("ResourceActions_TimelineRange_NormalizesDefaultsAndEmitsPreviousAndNextRanges", () => {
     const onViewChange = vi.fn();
     const { result } = renderHook(() =>
@@ -507,7 +595,7 @@ describe("useTableView resource API", () => {
     expect(result.current.table.getTableGlobalState().layout).toBe("list");
   });
 
-  it("ResourceApi_ControlledViewPendingUpdate_SurvivesParentRerender", () => {
+  it("ResourceApi_ControlledViewRejectedUpdate_RebasesBeforeDifferentMethod", () => {
     const onViewChange = vi.fn();
     const view = {
       layout: "table",
@@ -540,9 +628,286 @@ describe("useTableView resource API", () => {
       getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
         ?.next,
     ).toMatchObject({
+      layout: "table",
+      openedRowId: "row1",
+    });
+  });
+
+  it("ResourceApi_ControlledViewSameRenderUpdates_ComposeBeforeCommit", () => {
+    const onViewChange = vi.fn();
+    const view = {
+      layout: "table",
+      rowView: "side",
+      openedRowId: null,
+    } as const;
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        view,
+        onViewChange,
+      }),
+    );
+
+    act(() => {
+      result.current.table.setTableLayout("list");
+      result.current.table.openRow("row1");
+    });
+
+    expect(
+      getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
+        ?.next,
+    ).toMatchObject({
       layout: "list",
       openedRowId: "row1",
     });
+  });
+
+  it("ResourceApi_PluginMethods_ControlledAcceptsSelectionsWithSerializableActions", () => {
+    const onViewChange = vi.fn();
+    const initialView = {
+      layout: "table",
+      rowView: "side",
+      openedRowId: null,
+      pluginMethods: {
+        sortingMethodByColumn: { col1: "text" },
+        groupingMethodByColumn: { col1: "value" },
+        groupSort: { mode: "manual" as const },
+      },
+    } as const satisfies Partial<TableViewState>;
+    const initialProps: { view: Partial<TableViewState> } = {
+      view: initialView,
+    };
+    const { result, rerender } = renderHook(
+      ({ view }: { view: Partial<TableViewState> }) =>
+        useTableView({
+          plugins: methodPlugins,
+          defaultData: mockData,
+          defaultProperties: methodProperties,
+          view,
+          onViewChange,
+        }),
+      { initialProps },
+    );
+
+    act(() => {
+      result.current.table.setColumnSortingMethod("col1", "alternate");
+    });
+
+    const sortingChange = getLastResourceChange<
+      TableViewState,
+      ViewResourceAction
+    >(onViewChange)!;
+    expect(sortingChange).toEqual({
+      next: {
+        ...initialView,
+        locked: false,
+        timeline: { range: "monthly", datePropertyId: null },
+        pluginMethods: {
+          ...initialView.pluginMethods,
+          sortingMethodByColumn: { col1: "alternate" },
+        },
+      },
+      action: {
+        id: expect.any(String),
+        type: "view.plugin_sorting_method.change",
+        payload: {
+          propertyId: "col1",
+          previousMethodId: "text",
+          nextMethodId: "alternate",
+        },
+      },
+    });
+    expect(result.current.table.getSelectedSortingMethod("col1")?.id).toBe(
+      "text",
+    );
+
+    rerender({ view: sortingChange.next });
+
+    expect(result.current.table.getSelectedSortingMethod("col1")?.id).toBe(
+      "alternate",
+    );
+
+    act(() => {
+      result.current.table.setColumnGroupingMethod("col1", "text");
+    });
+
+    expect(
+      getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
+        ?.action,
+    ).toEqual({
+      id: expect.any(String),
+      type: "view.plugin_grouping_method.change",
+      payload: {
+        propertyId: "col1",
+        previousMethodId: "value",
+        nextMethodId: "text",
+      },
+    });
+
+    act(() => {
+      result.current.table.setGroupSort({
+        mode: "automatic",
+        method: "text",
+        desc: false,
+      });
+    });
+
+    expect(
+      getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
+        ?.action,
+    ).toEqual({
+      id: expect.any(String),
+      type: "view.group_sort.change",
+      payload: { previousMode: "manual", nextMode: "automatic" },
+    });
+  });
+
+  it("ResourceApi_PluginMethods_UnknownSelectionsFallBackWithoutWriting", () => {
+    const onViewChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins: methodPlugins,
+        defaultData: mockData,
+        defaultProperties: methodProperties,
+        view: {
+          layout: "table",
+          rowView: "side",
+          openedRowId: null,
+          pluginMethods: { sortingMethodByColumn: { col1: "missing" } },
+        },
+        onViewChange,
+      }),
+    );
+
+    expect(result.current.table.getSelectedSortingMethod("col1")?.id).toBe(
+      "text",
+    );
+    expect(onViewChange).not.toHaveBeenCalled();
+  });
+
+  it("ResourceApi_PluginMethods_ControlledRejectsSelectionUntilParentAcceptsIt", () => {
+    const onViewChange = vi.fn();
+    const view = {
+      layout: "table" as const,
+      rowView: "side" as const,
+      openedRowId: null,
+      pluginMethods: { sortingMethodByColumn: { col1: "text" } },
+    };
+    const { result, rerender } = renderHook(
+      ({ renderCount }: { renderCount: number }) => {
+        void renderCount;
+        return useTableView({
+          plugins: methodPlugins,
+          defaultData: mockData,
+          defaultProperties: methodProperties,
+          view,
+          onViewChange,
+        });
+      },
+      { initialProps: { renderCount: 0 } },
+    );
+
+    act(() => {
+      result.current.table.setColumnSortingMethod("col1", "alternate");
+    });
+    rerender({ renderCount: 1 });
+
+    expect(result.current.table.getSelectedSortingMethod("col1")?.id).toBe(
+      "text",
+    );
+    expect(
+      getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
+        ?.next.pluginMethods?.sortingMethodByColumn,
+    ).toEqual({ col1: "alternate" });
+  });
+
+  it("ResourceApi_PluginMethods_UncontrolledSelectionsSurviveRerenders", () => {
+    const { result, rerender } = renderHook(
+      ({ renderCount }: { renderCount: number }) => {
+        void renderCount;
+        return useTableView({
+          plugins: methodPlugins,
+          defaultData: mockData,
+          defaultProperties: methodProperties,
+          defaultView: {
+            pluginMethods: {
+              sortingMethodByColumn: { col1: "text" },
+              groupingMethodByColumn: { col1: "value" },
+            },
+          },
+        });
+      },
+      { initialProps: { renderCount: 0 } },
+    );
+
+    act(() => {
+      result.current.table.setColumnSortingMethod("col1", "alternate");
+      result.current.table.setColumnGroupingMethod("col1", "text");
+      result.current.table.setGroupSort({
+        mode: "automatic",
+        method: "text",
+        desc: true,
+      });
+    });
+    rerender({ renderCount: 1 });
+
+    expect(result.current.table.getSelectedSortingMethod("col1")?.id).toBe(
+      "alternate",
+    );
+    expect(result.current.table.getSelectedGroupingMethod("col1")?.id).toBe(
+      "text",
+    );
+    expect(result.current.table.getGroupSort()).toEqual({
+      mode: "automatic",
+      method: "text",
+      desc: true,
+    });
+  });
+
+  it("ResourceApi_PartialNestedViews_KeepTimelineAndPluginMethodDefaults", () => {
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins: methodPlugins,
+        defaultData: mockData,
+        defaultProperties: methodProperties,
+        defaultView: {
+          timeline: { datePropertyId: "date-property" },
+          pluginMethods: { sortingMethodByColumn: { col1: "text" } },
+        },
+      }),
+    );
+
+    expect(result.current.table.getTableGlobalState()).toMatchObject({
+      timeline: { range: "monthly", datePropertyId: "date-property" },
+      pluginMethods: {
+        sortingMethodByColumn: { col1: "text" },
+        groupingMethodByColumn: {},
+        groupSort: { mode: "manual" },
+      },
+    });
+  });
+
+  it("ResourceApi_OldViewsWithoutPluginMethods_DoNotEmitFallbackWrites", () => {
+    const onViewChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins: methodPlugins,
+        defaultData: mockData,
+        defaultProperties: methodProperties,
+        view: { layout: "table", rowView: "side", openedRowId: null },
+        onViewChange,
+      }),
+    );
+
+    expect(result.current.table.getSelectedSortingMethod("col1")?.id).toBe(
+      "text",
+    );
+    expect(result.current.table.getSelectedGroupingMethod("col1")?.id).toBe(
+      "value",
+    );
+    expect(onViewChange).not.toHaveBeenCalled();
   });
 
   it("ResourceApi_UncontrolledDefaults_InitializeCommitAndIgnoreLaterDefaultChanges", () => {

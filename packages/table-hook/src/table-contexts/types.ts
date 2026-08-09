@@ -17,6 +17,14 @@ export interface TableState<TPlugins extends CellPlugin[]> {
   data: RowModel<TPlugins>[];
 }
 
+export type PartialTableViewState = Omit<
+  Partial<TableViewState>,
+  "timeline" | "pluginMethods"
+> & {
+  timeline?: Partial<NonNullable<TableViewState["timeline"]>>;
+  pluginMethods?: Partial<NonNullable<TableViewState["pluginMethods"]>>;
+};
+
 type DataResourceProps<TPlugins extends CellPlugin[]> =
   | {
       data: RowModel<TPlugins>[];
@@ -55,13 +63,13 @@ type PropertiesResourceProps<TPlugins extends CellPlugin[]> =
 
 type ViewResourceProps =
   | {
-      view: Partial<TableViewState>;
+      view: PartialTableViewState;
       defaultView?: never;
       onViewChange?: ResourceChangeHandler<TableViewState, ViewResourceAction>;
     }
   | {
       view?: never;
-      defaultView?: Partial<TableViewState>;
+      defaultView?: PartialTableViewState;
       onViewChange?: ResourceChangeHandler<TableViewState, ViewResourceAction>;
     };
 

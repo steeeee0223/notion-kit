@@ -1,4 +1,5 @@
 import type { TableViewState } from "@/features/menu";
+import type { PluginMethodState } from "@/features/plugin-methods";
 import type { ColumnInfo, Row } from "@/lib/types";
 
 export interface TableAction<TType extends string, TPayload> {
@@ -146,6 +147,29 @@ export type ViewResourceAction =
       {
         previousDatePropertyId: string | null;
         nextDatePropertyId: string | null;
+      }
+    >
+  | TableAction<
+      "view.plugin_sorting_method.change",
+      {
+        propertyId: string;
+        previousMethodId?: string;
+        nextMethodId?: string;
+      }
+    >
+  | TableAction<
+      "view.plugin_grouping_method.change",
+      {
+        propertyId: string;
+        previousMethodId?: string;
+        nextMethodId?: string;
+      }
+    >
+  | TableAction<
+      "view.group_sort.change",
+      {
+        previousMode: PluginMethodState["groupSort"]["mode"];
+        nextMode: PluginMethodState["groupSort"]["mode"];
       }
     >;
 
