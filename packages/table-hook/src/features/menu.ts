@@ -11,9 +11,7 @@ import {
   resolveGroupingMethod,
   resolveSortingMethod,
   type GroupingMethod,
-  type PluginMethodContext,
   type SortingMethodDescriptor,
-  type Weekday,
 } from "@/methods";
 import type { ResourceChangeFn, ViewResourceAction } from "@/table-contexts";
 
@@ -84,7 +82,6 @@ export interface TableMenuTableState {
 
 export interface TableMenuOptions {
   getRowUrl?: (rowId: string) => string;
-  weekStartsOn?: Weekday;
   onTableMenuChange?: (updater: Updater<TableMenuState>) => void;
   onTableGlobalChange?: ResourceChangeFn<TableViewState, ViewResourceAction>;
 }
@@ -95,7 +92,6 @@ export interface TableMenuTableApi {
   setTableMenuState: (state: TableMenuState) => void;
   getTableGlobalState: () => TableViewState;
   setTableGlobalState: ResourceChangeFn<TableViewState, ViewResourceAction>;
-  getPluginMethodContext: (colId: string) => PluginMethodContext<unknown>;
   getColumnSortingMethods: (colId: string) => SortingMethodDescriptor[];
   getSelectedSortingMethod: (
     colId: string,
@@ -155,16 +151,6 @@ export const TableMenuFeature: TableFeature = {
     instance.getTableGlobalState = () => instance.atoms.tableGlobal.get();
     instance.setTableGlobalState = (updater, action) => {
       instance.options.onTableGlobalChange?.(updater, action);
-    };
-    instance.getPluginMethodContext = (colId) => {
-      const info = instance.getColumnInfo(colId);
-      const config: unknown = info.config;
-      return {
-        table: instance,
-        colId,
-        config,
-        weekStartsOn: instance.options.weekStartsOn ?? 1,
-      };
     };
     instance.getColumnSortingMethods = (colId) =>
       instance.getColumnPlugin(colId).sorting?.methods ?? [];

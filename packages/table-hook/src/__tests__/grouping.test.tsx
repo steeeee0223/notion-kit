@@ -4,11 +4,17 @@
  */
 
 import type { DragEndEvent } from "@dnd-kit/react";
-import { act } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { renderTableHook } from "@/__tests__/mock";
+import type { TableViewState } from "@/features/menu";
+import { createGroupId } from "@/features/utils";
 import type { ColumnInfo, Row } from "@/lib/types";
+import { arrayToEntity } from "@/lib/utils";
+import { compareNumbers } from "@/methods";
+import type { CellPlugin } from "@/plugins";
+import { useTableView } from "@/table-contexts/use-table-view";
 
 const mockProperties: ColumnInfo[] = [
   { id: "col1", name: "Name", type: "text", width: "200", config: undefined },
@@ -51,7 +57,599 @@ const mockData: Row[] = [
   },
 ];
 
+const groupingMethodPlugin: CellPlugin<"grouping-method", string, undefined> = {
+  id: "grouping-method",
+  meta: { name: "Grouping method", desc: "Grouping method", icon: null },
+  default: {
+    name: "Grouping method",
+    icon: null,
+    config: undefined,
+    data: "",
+  },
+  fromValue: (value) => value?.toString() ?? "",
+  toValue: (value) => value,
+  toTextValue: (value) => value,
+  sorting: {
+    defaultMethod: "numeric",
+    methods: [
+      {
+        id: "numeric",
+        name: "Numeric",
+        ascendingLabel: "Ascending",
+        descendingLabel: "Descending",
+        toComparable: (value) => Number(value),
+        compare: compareNumbers,
+      },
+    ],
+  },
+  grouping: {
+    defaultMethod: "first-letter",
+    methods: [
+      {
+        id: "first-letter",
+        name: "First letter",
+        function: (value) => value.slice(0, 1),
+        toSortValue: (value) => (value === "b" ? 1 : 2),
+      },
+      {
+        id: "preserve-a",
+        name: "Preserve A",
+        function: (value) => (value.startsWith("a") ? "a" : "other"),
+        toSortValue: (value) => (value === "other" ? 1 : 2),
+      },
+    ],
+  },
+  renderCell: () => null,
+};
+
+const groupingMethodProperties: ColumnInfo[] = [
+  {
+    id: "method",
+    name: "Method",
+    type: "grouping-method",
+    width: "200",
+    config: undefined,
+  },
+];
+
+const groupingMethodData: Row[] = [
+  {
+    id: "method-row-1",
+    createdAt: 0,
+    lastEditedAt: 0,
+    properties: { method: { id: "method-cell-1", value: "alpha" } },
+  },
+  {
+    id: "method-row-2",
+    createdAt: 0,
+    lastEditedAt: 0,
+    properties: { method: { id: "method-cell-2", value: "beta" } },
+  },
+  {
+    id: "method-row-3",
+    createdAt: 0,
+    lastEditedAt: 0,
+    properties: { method: { id: "method-cell-3", value: "bravo" } },
+  },
+];
+
+const weekContextPlugin: CellPlugin<"week-context", number, undefined> = {
+  id: "week-context",
+  meta: { name: "Week context", desc: "Week context", icon: null },
+  default: {
+    name: "Week context",
+    icon: null,
+    config: undefined,
+    data: 0,
+  },
+  fromValue: (value) => Number(value),
+  toValue: (value) => value,
+  toTextValue: (value) => value.toString(),
+  sorting: {
+    defaultMethod: "numeric",
+    methods: [
+      {
+        id: "numeric",
+        name: "Numeric",
+        ascendingLabel: "Ascending",
+        descendingLabel: "Descending",
+        toComparable: (value) => value,
+        compare: compareNumbers,
+      },
+    ],
+  },
+  grouping: {
+    defaultMethod: "week",
+    methods: [
+      {
+        id: "week",
+        name: "Week",
+        function: (day, _row, _colId, context) =>
+          day - ((day - context.weekStartsOn + 7) % 7),
+        toSortValue: (weekStart, context) =>
+          Number(weekStart) + context.weekStartsOn / 10,
+      },
+    ],
+  },
+  renderCell: () => null,
+};
+
+const weekContextProperties: ColumnInfo[] = [
+  {
+    id: "week",
+    name: "Week",
+    type: "week-context",
+    width: "200",
+    config: undefined,
+  },
+];
+
+const weekContextData: Row[] = [
+  {
+    id: "day-7",
+    createdAt: 0,
+    lastEditedAt: 0,
+    properties: { week: { id: "day-7-cell", value: 7 } },
+  },
+  {
+    id: "day-0",
+    createdAt: 0,
+    lastEditedAt: 0,
+    properties: { week: { id: "day-0-cell", value: 0 } },
+  },
+  {
+    id: "day-1",
+    createdAt: 0,
+    lastEditedAt: 0,
+    properties: { week: { id: "day-1-cell", value: 1 } },
+  },
+];
+
+function renderGroupingMethodTable(onViewChange?: () => void) {
+  const plugins = arrayToEntity([groupingMethodPlugin]);
+  const { result } = renderHook(() =>
+    useTableView({
+      defaultData: groupingMethodData,
+      defaultProperties: groupingMethodProperties,
+      onViewChange,
+      plugins,
+    }),
+  );
+  return result.current.table;
+}
+
 describe("useTableView - Extended Grouping", () => {
+  describe("Plugin grouping methods", () => {
+    it("stores derived grouping sort values without functions", () => {
+      const table = renderGroupingMethodTable();
+
+      act(() => {
+        table.setGrouping(["method"]);
+      });
+
+      const groupValues = table.atoms.groupingState.get().groupValues;
+      expect(
+        Object.values(groupValues).map(({ value, sortValue }) => ({
+          value,
+          sortValue,
+        })),
+      ).toEqual([
+        { value: "a", sortValue: 2 },
+        { value: "b", sortValue: 1 },
+      ]);
+      expect(
+        Object.values(groupValues).flatMap((entry) => Object.values(entry)),
+      ).not.toContainEqual(expect.any(Function));
+    });
+
+    it("uses Sunday and Monday runtime context for group IDs, sort values, and automatic order", () => {
+      const initialProps = { weekStartsOn: 0 as 0 | 1 };
+      const { result, rerender } = renderHook(
+        ({ weekStartsOn }: { weekStartsOn: 0 | 1 }) =>
+          useTableView({
+            defaultData: weekContextData,
+            defaultProperties: weekContextProperties,
+            plugins: arrayToEntity([weekContextPlugin]),
+            weekStartsOn,
+          }),
+        { initialProps },
+      );
+
+      act(() => {
+        result.current.table.setGrouping(["week"]);
+        result.current.table.setGroupSort({
+          mode: "automatic",
+          method: "numeric",
+          desc: false,
+        });
+      });
+
+      expect(result.current.table.atoms.groupingState.get()).toMatchObject({
+        groupOrder: [createGroupId("week", 0), createGroupId("week", 7)],
+        groupValues: {
+          [createGroupId("week", 0)]: { value: 0, sortValue: 0 },
+          [createGroupId("week", 7)]: { value: 7, sortValue: 7 },
+        },
+      });
+
+      rerender({ weekStartsOn: 1 });
+
+      expect(result.current.table.atoms.groupingState.get()).toMatchObject({
+        groupOrder: [createGroupId("week", -6), createGroupId("week", 1)],
+        groupValues: {
+          [createGroupId("week", -6)]: { value: -6, sortValue: -5.9 },
+          [createGroupId("week", 1)]: { value: 1, sortValue: 1.1 },
+        },
+      });
+    });
+
+    it("preserves data order when automatic group sorting is disabled", () => {
+      const plugin: typeof groupingMethodPlugin = {
+        ...groupingMethodPlugin,
+        sorting: {
+          ...groupingMethodPlugin.sorting!,
+          enableGroupSort: false,
+        },
+      };
+      const { result } = renderHook(() =>
+        useTableView({
+          defaultData: groupingMethodData,
+          defaultProperties: groupingMethodProperties,
+          plugins: arrayToEntity([plugin]),
+          defaultView: {
+            pluginMethods: {
+              groupSort: {
+                mode: "automatic",
+                method: "numeric",
+                desc: false,
+              },
+            },
+          },
+        }),
+      );
+
+      act(() => {
+        result.current.table.setGrouping(["method"]);
+      });
+
+      expect(result.current.table.atoms.groupingState.get().groupOrder).toEqual(
+        [createGroupId("method", "a"), createGroupId("method", "b")],
+      );
+    });
+
+    it("rebuilds groups and prunes only stale visibility after changing methods", async () => {
+      const table = renderGroupingMethodTable();
+
+      act(() => {
+        table.setGrouping(["method"]);
+      });
+
+      const firstGroupIds = table.atoms.groupingState.get().groupOrder;
+      const survivingGroupId = firstGroupIds[0]!;
+      const staleGroupId = firstGroupIds[1]!;
+
+      await act(async () => {
+        table.toggleGroupVisible(survivingGroupId);
+        table.setColumnGroupingMethod("method", "preserve-a");
+        await Promise.resolve();
+      });
+
+      const groupingState = table.atoms.groupingState.get();
+      expect(groupingState.groupOrder).toContain(survivingGroupId);
+      expect(groupingState.groupOrder).not.toContain(staleGroupId);
+      expect(groupingState.groupVisibility).toEqual({
+        [survivingGroupId]: false,
+      });
+      expect(
+        Object.values(groupingState.groupValues).map(({ value }) => value),
+      ).toEqual(["a", "other"]);
+    });
+
+    it("falls back from an unknown grouping method without stale group IDs", () => {
+      const table = renderGroupingMethodTable();
+
+      act(() => {
+        table.setGrouping(["method"]);
+        table.setColumnGroupingMethod("method", "unknown");
+      });
+
+      const groupingState = table.atoms.groupingState.get();
+      expect(groupingState.groupOrder).toEqual(
+        table.getGroupedRowModel().rows.map((row) => row.id),
+      );
+      expect(
+        Object.values(groupingState.groupValues).map(
+          ({ value, sortValue }) => ({
+            value,
+            sortValue,
+          }),
+        ),
+      ).toEqual([
+        { value: "a", sortValue: 2 },
+        { value: "b", sortValue: 1 },
+      ]);
+    });
+
+    it("waits for a controlled grouping method selection before rebuilding groups", async () => {
+      const plugins = arrayToEntity([groupingMethodPlugin]);
+      const { result } = renderHook(() =>
+        useTableView({
+          defaultData: groupingMethodData,
+          defaultProperties: groupingMethodProperties,
+          plugins,
+          view: {
+            layout: "table",
+            rowView: "side",
+            openedRowId: null,
+            pluginMethods: {
+              groupingMethodByColumn: { method: "first-letter" },
+            },
+          },
+        }),
+      );
+      const table = result.current.table;
+
+      act(() => {
+        table.setGrouping(["method"]);
+      });
+      const previous = table.atoms.groupingState.get();
+
+      await act(async () => {
+        table.setColumnGroupingMethod("method", "preserve-a");
+        await Promise.resolve();
+      });
+
+      expect(table.atoms.groupingState.get()).toEqual(previous);
+    });
+
+    it("does not reorder groups when a controlled drag's manual mode is rejected", async () => {
+      const plugins = arrayToEntity([groupingMethodPlugin]);
+      const { result } = renderHook(() =>
+        useTableView({
+          defaultData: groupingMethodData,
+          defaultProperties: groupingMethodProperties,
+          plugins,
+          view: {
+            layout: "table",
+            rowView: "side",
+            openedRowId: null,
+            pluginMethods: {
+              groupSort: {
+                mode: "automatic",
+                method: "numeric",
+                desc: false,
+              },
+            },
+          },
+        }),
+      );
+      const table = result.current.table;
+
+      act(() => {
+        table.setGrouping(["method"]);
+      });
+      const [bGroupId, aGroupId] = table.atoms.groupingState.get().groupOrder;
+      act(() => {
+        table.toggleGroupVisible(aGroupId!);
+      });
+      const previous = table.atoms.groupingState.get();
+
+      await act(async () => {
+        table.handleGroupedRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: bGroupId },
+            target: { id: aGroupId },
+          },
+        } as DragEndEvent);
+        await Promise.resolve();
+      });
+
+      expect(table.getGroupSort()).toEqual({
+        mode: "automatic",
+        method: "numeric",
+        desc: false,
+      });
+      expect(table.atoms.groupingState.get()).toEqual(previous);
+    });
+
+    it("discards a rejected drag before an unrelated controlled manual mode change", async () => {
+      const plugins = arrayToEntity([groupingMethodPlugin]);
+      const automaticView = {
+        layout: "table",
+        rowView: "side",
+        openedRowId: null,
+        pluginMethods: {
+          groupSort: { mode: "automatic", method: "numeric", desc: false },
+        },
+      } as const satisfies Partial<TableViewState>;
+      const manualView = {
+        ...automaticView,
+        pluginMethods: { groupSort: { mode: "manual" } },
+      } as const satisfies Partial<TableViewState>;
+      const initialProps: { view: Partial<TableViewState> } = {
+        view: automaticView,
+      };
+      const { result, rerender } = renderHook(
+        ({ view }: { view: Partial<TableViewState> }) =>
+          useTableView({
+            defaultData: groupingMethodData,
+            defaultProperties: groupingMethodProperties,
+            plugins,
+            view,
+          }),
+        { initialProps },
+      );
+      const table = result.current.table;
+
+      act(() => {
+        table.setGrouping(["method"]);
+      });
+      const [bGroupId, aGroupId] = table.atoms.groupingState.get().groupOrder;
+      act(() => {
+        table.toggleGroupVisible(aGroupId!);
+      });
+      const previous = table.atoms.groupingState.get();
+
+      act(() => {
+        table.handleGroupedRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: bGroupId },
+            target: { id: aGroupId },
+          },
+        } as DragEndEvent);
+        rerender({ view: automaticView });
+      });
+
+      await act(async () => {
+        rerender({ view: manualView });
+        await Promise.resolve();
+      });
+
+      expect(result.current.table.getGroupSort()).toEqual({ mode: "manual" });
+      expect(result.current.table.atoms.groupingState.get()).toEqual(previous);
+    });
+
+    it("applies a controlled drag when manual mode is accepted after later microtasks", async () => {
+      const onViewChange = vi.fn();
+      const plugins = arrayToEntity([groupingMethodPlugin]);
+      const automaticView = {
+        layout: "table",
+        rowView: "side",
+        openedRowId: null,
+        pluginMethods: {
+          groupSort: { mode: "automatic", method: "numeric", desc: false },
+        },
+      } as const satisfies Partial<TableViewState>;
+      const initialProps: { view: Partial<TableViewState> } = {
+        view: automaticView,
+      };
+      const { result, rerender } = renderHook(
+        ({ view }: { view: Partial<TableViewState> }) =>
+          useTableView({
+            defaultData: groupingMethodData,
+            defaultProperties: groupingMethodProperties,
+            onViewChange,
+            plugins,
+            view,
+          }),
+        { initialProps },
+      );
+
+      act(() => {
+        result.current.table.setGrouping(["method"]);
+      });
+      const [bGroupId, aGroupId] =
+        result.current.table.atoms.groupingState.get().groupOrder;
+      act(() => {
+        result.current.table.toggleGroupVisible(aGroupId!);
+        result.current.table.handleGroupedRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: bGroupId },
+            target: { id: aGroupId },
+          },
+        } as DragEndEvent);
+      });
+
+      await Promise.resolve();
+      await Promise.resolve();
+      const manualProposal = onViewChange.mock.lastCall?.[0] as {
+        next: Partial<TableViewState>;
+      };
+      rerender({ view: manualProposal.next });
+
+      expect(result.current.table.getGroupSort()).toEqual({ mode: "manual" });
+      expect(result.current.table.atoms.groupingState.get()).toMatchObject({
+        groupOrder: [aGroupId, bGroupId],
+        groupVisibility: { [aGroupId!]: false },
+      });
+      expect(onViewChange).toHaveBeenCalledOnce();
+    });
+
+    it("orders groups automatically with the selected comparator and preserves visibility", async () => {
+      const table = renderGroupingMethodTable();
+
+      act(() => {
+        table.setGrouping(["method"]);
+      });
+
+      const [aGroupId, bGroupId] = table.atoms.groupingState.get().groupOrder;
+      await act(async () => {
+        table.toggleGroupVisible(aGroupId!);
+        table.setGroupSort({
+          mode: "automatic",
+          method: "numeric",
+          desc: false,
+        });
+        await Promise.resolve();
+      });
+
+      expect(table.atoms.groupingState.get().groupOrder).toEqual([
+        bGroupId,
+        aGroupId,
+      ]);
+      expect(table.atoms.groupingState.get().groupVisibility).toEqual({
+        [aGroupId!]: false,
+      });
+
+      await act(async () => {
+        table.setGroupSort({
+          mode: "automatic",
+          method: "numeric",
+          desc: true,
+        });
+        await Promise.resolve();
+      });
+
+      expect(table.atoms.groupingState.get().groupOrder).toEqual([
+        aGroupId,
+        bGroupId,
+      ]);
+      expect(table.atoms.groupingState.get().groupVisibility).toEqual({
+        [aGroupId!]: false,
+      });
+    });
+
+    it("switches automatic group ordering to manual once after a drag", () => {
+      const onViewChange = vi.fn();
+      const table = renderGroupingMethodTable(onViewChange);
+
+      act(() => {
+        table.setGrouping(["method"]);
+        table.setGroupSort({
+          mode: "automatic",
+          method: "numeric",
+          desc: false,
+        });
+      });
+
+      const [bGroupId, aGroupId] = table.atoms.groupingState.get().groupOrder;
+      onViewChange.mockClear();
+      act(() => {
+        table.handleGroupedRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: { id: bGroupId },
+            target: { id: aGroupId },
+          },
+        } as DragEndEvent);
+      });
+
+      expect(table.getGroupSort()).toEqual({ mode: "manual" });
+      expect(table.atoms.groupingState.get().groupOrder).toEqual([
+        aGroupId,
+        bGroupId,
+      ]);
+      expect(onViewChange).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("Grouping State", () => {
     it("should initialize with empty grouping state", () => {
       const { table } = renderTableHook({

@@ -22,11 +22,7 @@ import { pruneRowSelection } from "@/features/row-selection";
 import type { _TableInstance } from "@/features/types";
 import type { ColumnDefs, ColumnInfo, Row } from "@/lib/types";
 import { type Entity } from "@/lib/utils";
-import {
-  createPluginMethodContext,
-  resolveGroupingMethod,
-  resolveSortingMethod,
-} from "@/methods";
+import { resolveGroupingMethod, resolveSortingMethod } from "@/methods";
 import type { CellPlugin } from "@/plugins";
 import type {
   DataResourceAction,
@@ -37,6 +33,7 @@ import type {
   ViewResourceAction,
 } from "@/table-contexts/actions";
 import { defaultColumn } from "@/table-contexts/column";
+import { createRuntimePluginMethodContext } from "@/table-contexts/plugin-method-context";
 import type {
   BaseTableProps,
   PartialTableViewState,
@@ -255,12 +252,12 @@ export function useTableView<TPlugins extends CellPlugin[]>(
             resolveSortingMethod(
               plugin,
               tableGlobalState.pluginMethods?.sortingMethodByColumn?.[colId],
-              tableRef.current?.getPluginMethodContext(colId) ??
-                createPluginMethodContext(plugin, colId, {
-                  table: {} as _TableInstance,
-                  config: property.config,
-                  weekStartsOn,
-                }),
+              createRuntimePluginMethodContext(
+                tableRef.current,
+                colId,
+                property.config,
+                weekStartsOn,
+              ),
             )?.function(rowA.original, rowB.original, colId) ?? 0,
           getGroupingValue: (row) => {
             const groupingMethod = resolveGroupingMethod(
@@ -271,12 +268,12 @@ export function useTableView<TPlugins extends CellPlugin[]>(
               row.properties[colId]?.value,
               row,
               colId,
-              tableRef.current?.getPluginMethodContext(colId) ??
-                createPluginMethodContext(plugin, colId, {
-                  table: {} as _TableInstance,
-                  config: property.config,
-                  weekStartsOn,
-                }),
+              createRuntimePluginMethodContext(
+                tableRef.current,
+                colId,
+                property.config,
+                weekStartsOn,
+              ),
             );
           },
         };
