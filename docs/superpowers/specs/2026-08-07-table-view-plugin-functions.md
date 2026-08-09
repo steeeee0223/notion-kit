@@ -1,21 +1,31 @@
 # Spec: Table View Plugin Functions
 
-Status: Approved on 2026-08-07
+Status: Hybrid architecture revised on 2026-08-09; detailed implementation plan awaiting review
 
 ## Assumptions
 
 1. `packages/table-view/docs/plugins.md` and its two matrix images are the product requirements for this branch.
 2. "Existing plugins" means the 12 plugins currently exported through `DEFAULT_PLUGINS`: title, text, number, checkbox, select, multi-select, email, phone, URL, date, created time, and last edited time.
-3. The extensibility contracts already defined by `@notion-kit/table-hook` (`sorting`, `grouping`, and `counting`) remain the canonical plugin API. The work should extend or refine those contracts only where the documented behavior cannot be represented today.
+3. The extensibility contracts already defined by `@notion-kit/table-hook` (`sorting`, `grouping`, and `counting`) remain the canonical capability and presentation API. Standard execution should use TanStack's native `sortFns`/`sortFn`, `aggregationFns`/`aggregationFn`, and `getGroupingValue` seams where possible, with inline and legacy fallbacks for config-aware or runtime plugins.
 4. Existing persisted table resources and public plugin factories must remain backward compatible. A plugin that only implements the legacy `compare`, `toValue`, or `toGroupValue` fields must continue to work through the current resolver fallbacks.
 5. Person, created-by, last-edited-by, ID, and status are reference behavior in the matrix, not new plugins to implement in this branch, because they do not currently exist in `packages/table-view/src/plugins`.
 6. This branch covers the complete matrix, including plugin registration, selectable menu options, persisted selection state, and execution. Registering only one default function is not sufficient.
 
 ## Objective
 
-Replace table-view's property-type-specific, fixed calculation, sorting, and grouping behavior with capabilities registered by each cell plugin.
+Replace table-view's property-type-specific, fixed calculation, sorting, and grouping behavior with capabilities declared by each cell plugin and executed through TanStack-native seams coordinated by table-hook.
 
 Plugin authors should be able to define the operations meaningful for their data type. Table-view menus should derive their available operations and labels from the selected column's plugin, and table-hook should execute the selected registered operation. Built-in plugins should expose the behavior described by `packages/table-view/docs/plugins.md` without duplicating type checks in menu components.
+
+## Hybrid Architecture Revision
+
+- `CellPlugin` owns capability availability, stable IDs, defaults, labels, hints, presentation formatting, and inline/legacy fallbacks.
+- TanStack owns the standard row-model pipeline and the recognized `sortFns`, `aggregationFns`, `sortFn`, `aggregationFn`, and `getGroupingValue` execution boundaries.
+- `table-hook` resolves capability selections, composes column definitions, selects calculation row scope, persists serializable state, and implements Notion-specific grouping lifecycle.
+- `table-view` renders controls and results; it does not choose execution functions by built-in plugin type.
+- No `calcFns` or `groupByFns` field is added to `TableFeatures`. TanStack v9 already provides `aggregationFns`, while grouping keys use `getGroupingValue` rather than a grouping registry.
+- Built-in/common functions may use native registry references. Config-aware methods and runtime external plugins may use inline functions so static `DEFAULT_FEATURES` is not a prerequisite for extension.
+- New calculations separate aggregation from presentation formatting where practical. Existing formatted counting functions remain supported through a compatibility adapter.
 
 The primary users are:
 
@@ -74,6 +84,8 @@ The approved grouping and output semantics are:
 - Changing unrelated table layouts or drag-and-drop behavior.
 - Removing legacy plugin fields or compatibility fallbacks in the same change.
 - Reproducing Notion behavior that is not explicitly defined by the source matrix or the decisions recorded in this spec.
+- Implementing table filtering, including filter UI, filter state/AST, predicates, `filterFns` registrations, server filtering, or filtered row-model behavior. The plan only preserves the native future boundary and ensures calculation row scope can compose after filtering.
+- Forking TanStack core or adding pseudo-native `calcFns`/`groupByFns` registry slots.
 
 ## Tech Stack
 
@@ -115,13 +127,13 @@ packages/table-hook/src/plugins/types.ts
   Public cell-plugin capability contracts.
 
 packages/table-hook/src/methods.ts
-  Shared method types, reusable implementations, and resolver fallbacks.
+  Capability method types, reusable implementations, native/inline references, and resolver fallbacks.
 
 packages/table-hook/src/features/
-  Persisted/runtime state and execution for calculation and grouping.
+  Persisted/runtime state and Notion-specific calculation/grouping orchestration.
 
 packages/table-hook/src/table-contexts/use-table-view.tsx
-  TanStack row sorting and grouping integration, including table-level method configuration.
+  TanStack sorting, aggregation, and grouping integration, including table-level method configuration.
 
 packages/table-hook/src/__tests__/
   Plugin method resolution and table behavior tests.
@@ -146,7 +158,7 @@ Tests should remain colocated according to existing package conventions. Shared 
 
 ## Code Style
 
-Use typed method descriptors with stable IDs and pure functions. Prefer shared descriptors where multiple plugins have identical semantics, while keeping plugin registration explicit.
+Use typed capability descriptors with stable IDs and pure execution functions. Prefer shared native/common implementations where multiple plugins have identical semantics, while keeping plugin capability registration explicit. Runtime/config-aware plugins may provide inline implementations.
 
 ```ts
 const alphabeticalSorting: SortingMethod = {
@@ -186,7 +198,9 @@ Conventions:
 - Missing or unknown persisted method IDs must fall back deterministically to the plugin's `defaultMethod`, then its first method, then the existing legacy behavior where applicable.
 - Existing resources that only store sort direction (`desc`) or a grouped column ID must continue to produce the same effective default ordering after migration.
 - `compare`, `toValue`, and `toGroupValue` remain supported for external/legacy plugins during this change.
-- Plugin-provided method arrays are the source of available menu options; unsupported operations should be absent rather than disabled placeholders.
+- Plugin-provided method arrays are the source of available menu options; unsupported operations should be absent rather than disabled placeholders. Execution may resolve to a native registry reference, an inline function, or a legacy fallback.
+- Persist no registry/function objects. The selected stable method ID remains independent of its execution form.
+- Footer calculations derive rows from TanStack's pre-grouped boundary rather than being permanently tied to `getCoreRowModel()`, so a separately planned filtering feature can compose earlier in the pipeline.
 
 The implementation plan must identify the smallest backward-compatible resource additions required to persist row-sort, group-sort, grouping-key, and calculation method IDs.
 
@@ -266,6 +280,8 @@ The implementation plan must identify the smallest backward-compatible resource 
 - Number calculation results preserve number-format units and rounding.
 - Date range uses the shared duration policy defined above to balance readable UX with a pure, reusable plugin API.
 - Existing empty-last ordering remains unchanged.
+- The four landed commits `623251a0`, `61a299f2`, `d55a1058`, and `e1f60b4d` are retained as the migration baseline; hybrid execution changes are additive follow-up work.
+- Filtering implementation remains outside this feature even though the architecture reserves TanStack's native filtering boundary.
 
 ## Open Questions
 
@@ -273,4 +289,4 @@ None. Any change to the decisions above reopens the Specify gate and must update
 
 ## Approval Gate
 
-Implementation planning begins only after the assumptions, scope, decisions, and success criteria above are reviewed and approved. After approval, Phase 2 will create `tasks/plan.md`; Phase 3 will create `tasks/todo.md`. No production code should be changed before those gates are approved.
+The product matrix and hybrid responsibility split are reflected in `tasks/plan.md`, `tasks/todo.md`, and `tasks/test-plan.md`. T01–T04 remain the landed baseline. Remaining T05–T13 production work begins after the revised implementation details are reviewed.

@@ -37,9 +37,9 @@ export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 source "$NVM_DIR/nvm.sh"
 nvm use 24.11.1 --silent
 
-$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store \
+pnpm \
   -F @notion-kit/table-view test
-$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store \
+pnpm \
   -F @notion-kit/table-view coverage
 ```
 
@@ -276,19 +276,19 @@ Located under `src/plugins/select/`, these tests cover the Select/Multi-Select c
 
 ```bash
 # From package directory
-$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store \
+pnpm \
   -F @notion-kit/table-view test
 
 # Watch mode
-$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store \
+pnpm \
   -F @notion-kit/table-view test:watch
 
 # With UI
-$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store \
+pnpm \
   -F @notion-kit/table-view test:ui
 
 # With coverage
-$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store \
+pnpm \
   -F @notion-kit/table-view coverage
 ```
 

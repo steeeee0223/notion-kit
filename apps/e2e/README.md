@@ -30,13 +30,13 @@ nvm use 24.11.1 --silent
 All pnpm commands below use the shared store:
 
 ```bash
-$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store <command>
+pnpm <command>
 ```
 
 ### Visual Test (Dev Server)
 
 ```bash
-$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/e2e dev
+pnpm -F @notion-kit/e2e dev
 ```
 
 Then open [http://localhost:3001](http://localhost:3001) to see all components rendered.
@@ -45,10 +45,10 @@ Then open [http://localhost:3001](http://localhost:3001) to see all components r
 
 ```bash
 # Run tests once
-$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/e2e test
+pnpm -F @notion-kit/e2e test
 
 # Watch mode
-$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/e2e test:watch
+pnpm -F @notion-kit/e2e test:watch
 ```
 
 ### Browser Tests (Playwright)
@@ -56,13 +56,13 @@ $NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @not
 Install the pinned Chromium browser once:
 
 ```bash
-$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/e2e exec playwright install chromium
+pnpm -F @notion-kit/e2e exec playwright install chromium
 ```
 
 Run the full Chromium suite:
 
 ```bash
-$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/e2e test:e2e
+pnpm -F @notion-kit/e2e test:e2e
 ```
 
 `pretest:e2e` builds `@notion-kit/table-view` and the production Next.js
@@ -78,7 +78,7 @@ The Playwright HTML report is written to
 Generate the full table-view browser coverage report:
 
 ```bash
-$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/e2e test:e2e:coverage
+pnpm -F @notion-kit/e2e test:e2e:coverage
 ```
 
 This command has the same built-package precondition and writes:
@@ -94,7 +94,7 @@ a percentage threshold.
 ### Build Verification
 
 ```bash
-$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/e2e build
+pnpm -F @notion-kit/e2e build
 ```
 
 If the build succeeds, it confirms that all packages work correctly in production.
@@ -125,6 +125,6 @@ If the build succeeds, it confirms that all packages work correctly in productio
 
 If you encounter `Cannot resolve 'react/compiler-runtime'` errors:
 
-1. Ensure packages are built: `$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store build:packages`
+1. Ensure packages are built: `pnpm build:packages`
 2. Verify `react-compiler-runtime` is in `dependencies` (not `devDependencies`)
-3. Run `$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store install` to sync workspace dependencies
+3. Run `pnpm install` to sync workspace dependencies

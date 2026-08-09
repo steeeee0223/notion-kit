@@ -1,6 +1,6 @@
-# Table View Plugin Functions Todo
+# Table View Plugin Functions Todo — Hybrid Revision
 
-Status: Review requested — implementation has not started
+Status: T01–T04 landed; revised T05–T13 awaiting review
 
 Sources of truth:
 
@@ -11,332 +11,176 @@ Sources of truth:
 
 ## Working Rules
 
-- Execute tasks in dependency order unless a task explicitly lists parallel-safe peers.
-- Begin every implementation task with the listed failing tests.
-- Keep stable IDs, display labels, and resource values distinct.
-- Do not remove legacy `compare`, `toValue`, or `toGroupValue` fallbacks.
+- Keep commits `623251a0`, `61a299f2`, `d55a1058`, and `e1f60b4d`; do not reset or rewrite them for this architecture revision.
+- Use plugin descriptors for applicability and UI metadata, TanStack seams for standard execution, and table-hook for adapters/state/Notion behavior.
+- Never add `calcFns` or `groupByFns` to `TableFeatures`.
+- Preserve legacy `compare`, `toValue`, `toGroupValue`, inline row-sort, and formatted counting fallbacks.
+- Filtering implementation is out of scope: no filter UI, state/AST, predicates, registry entries, or filtered row-model task.
 - Do not add dependencies, change CI/workspace configuration, or implement absent plugin types.
-- Do not run table-hook and table-view coverage concurrently; they share a `coverage/.tmp` path.
-- After each task, run its focused command before checking it off.
-- Update the spec and obtain approval before changing an approved semantic.
+- Start each remaining task with failing tests and run its focused verification before checking it off.
+- Invoke pnpm through Node 24.11.1 as `$NVM_BIN/pnpm` with the configured global store.
 
 ## Dependency Map
 
 ```text
-T01 Contracts
- ├─ T02 State/resource config
- │   └─ T03 Group execution
- ├─ T04 Calculation discovery
- ├─ T05 Text-like registrations ─┐
- ├─ T06 Checkbox/select          ├─ T10 Sort/prop menus
- ├─ T07 Number formatter         │
- │   └─ T08 Number methods       ├─ T11 Group menu
- └─ T09 Date methods ────────────┘
-                                  └─ T12 Compatibility workflows
-                                      └─ T13 Full verification
+[x] T01 Contracts
+  └─ [x] T02 State/resource
+       └─ [x] T03 Group execution
+[x] T04 Calculation discovery
+              │
+              ▼
+[ ] T05 Hybrid bridge
+  ├─ [ ] T06 Aggregation execution
+  ├─ [ ] T07 Text/select/checkbox registrations
+  ├─ [ ] T08 Number methods
+  └─ [ ] T09 Date methods
+          ├─ [ ] T10 Sort/property menus
+          └─ [ ] T11 Group menu/order
+                    ▼
+              [ ] T12 Compatibility audit
+                    ▼
+              [ ] T13 Full verification
 ```
 
-T05, T06, T07, and the pure utility portion of T09 are parallel-safe after T01. T10 and T11 begin only after the registrations and T03 are complete.
+T07, T08, and pure utilities in T09 are parallel-safe after T05. T10/T11 require the relevant built-in registrations. T12/T13 are sequential.
 
-## Tasks
+## Landed Baseline
 
-- [ ] **T01 — Define plugin method contracts and resolver fallbacks**
-  - Dependencies: none.
-  - Files:
+- [x] **T01 — Define plugin method contracts and resolver fallbacks** (`623251a0`)
+  - Keep stable IDs, selected → default → first → legacy resolution, value comparison, and compatibility tests.
+  - Follow-up contract refinement belongs to T05; do not revert T01.
+
+- [x] **T02 — Persist plugin method state and runtime week start** (`61a299f2`)
+  - Keep optional serializable resource state, controlled/uncontrolled ownership, actions, and round-trip tests.
+
+- [x] **T03 — Execute selected grouping methods and group ordering** (`d55a1058`)
+  - Keep the `getGroupingValue` seam and Notion-specific group lifecycle.
+  - Do not replace it with `groupByFns`.
+
+- [x] **T04 — Discover plugin calculations in table-view** (`e1f60b4d`)
+  - Keep capability-driven menu/footer discovery and custom-ID-safe metadata.
+  - Calculation execution migration belongs to T06.
+
+## Remaining Tasks
+
+- [ ] **T05 — Define hybrid execution refs and TanStack bridge**
+  - Dependencies: T01–T04.
+  - Likely files:
     - `packages/table-hook/src/methods.ts`
     - `packages/table-hook/src/plugins/types.ts`
-    - `packages/table-hook/src/features/plugin-methods.ts` (new)
     - `packages/table-hook/src/features/index.ts`
-    - `packages/table-hook/src/index.ts`
+    - `packages/table-hook/src/table-contexts/use-table-view.tsx`
     - `packages/table-hook/src/__tests__/plugin-methods.test.tsx`
   - TDD start:
-    - Add selected → default → first → legacy resolver precedence cases.
-    - Add missing-cell normalization and row-only legacy sort eligibility cases.
-    - Add value-comparator row ascending/descending cases.
+    - native/common sort and aggregation reference resolution;
+    - inline/config-aware runtime plugin execution;
+    - legacy fallback and unknown-ID precedence;
+    - assertion that no `calcFns`/`groupByFns` slot is exposed.
   - Acceptance:
-    - `PluginMethodContext`, typed sorting/grouping descriptors, stable method state, and resolver APIs compile publicly.
-    - Built-in-capable sorting descriptors expose `toComparable` and `compare` for row/group reuse.
-    - Legacy row `function`, plugin `compare`, `toGroupValue`, and `toValue` remain executable.
-    - Unknown IDs resolve deterministically without mutating state.
-    - Automatic group sorting eligibility is discoverable without plugin-ID checks.
+    - capability metadata is separate from execution references;
+    - only valid TanStack `sortFns`/`aggregationFns` slots are registered;
+    - selected methods enter TanStack through `sortFn`, `aggregationFn`, or `getGroupingValue`;
+    - runtime external plugins do not need to mutate static `DEFAULT_FEATURES`.
   - Verify:
-    - `pnpm --filter @notion-kit/table-hook test src/__tests__/plugin-methods.test.tsx`
-    - `pnpm --filter @notion-kit/table-hook typecheck`
+    - `$NVM_BIN/pnpm --filter @notion-kit/table-hook test src/__tests__/plugin-methods.test.tsx`
+    - `$NVM_BIN/pnpm --filter @notion-kit/table-hook typecheck`
 
-- [ ] **T02 — Add method selection resource state and week-start runtime config**
-  - Dependencies: T01.
-  - Files:
-    - `packages/table-hook/src/features/menu.ts`
-    - `packages/table-hook/src/table-contexts/types.ts`
-    - `packages/table-hook/src/table-contexts/use-table-view.tsx`
-    - `packages/table-hook/src/table-contexts/actions.ts`
-    - `packages/table-hook/src/__tests__/resource-api.test.tsx`
-  - TDD start:
-    - Add controlled accept/reject and uncontrolled rerender cases for sorting/grouping method IDs and group-sort mode.
-    - Add old/partial view deep-merge cases that retain timeline state.
-    - Add `weekStartsOn` default `1` and explicit `0`/`1` method-context cases.
-  - Acceptance:
-    - `TableViewState.pluginMethods` is optional and serializable.
-    - Sorting/grouping method IDs and group-sort mode round-trip through `onViewChange` with exact action payloads.
-    - Old resources omit the field and retain current behavior.
-    - Resolver fallbacks emit no unsolicited resource writes.
-    - `weekStartsOn` accepts `0`–`6`, defaults to `1`, and is not persisted per column.
-  - Verify:
-    - `pnpm --filter @notion-kit/table-hook test src/__tests__/resource-api.test.tsx src/__tests__/plugin-methods.test.tsx`
-    - `pnpm --filter @notion-kit/table-hook typecheck`
-
-- [ ] **T03 — Execute selected grouping methods and manual/automatic group order**
-  - Dependencies: T01, T02.
-  - Files:
-    - `packages/table-hook/src/features/plugin-methods.ts`
-    - `packages/table-hook/src/features/grouping.ts`
-    - `packages/table-hook/src/features/extended-grouped-row-model.ts`
-    - `packages/table-hook/src/__tests__/grouping.test.tsx`
-  - TDD start:
-    - Add regrouping cases that prune stale visibility and preserve surviving visibility.
-    - Add automatic asc/desc order and Manual-after-drag transitions.
-    - Add grouping `toSortValue` cases for derived keys.
-  - Acceptance:
-    - Selected grouping method creates the effective group IDs and values.
-    - Each group entry retains a comparable sort value without persisting functions.
-    - Automatic order reuses the selected plugin sorting comparator.
-    - Manual dragging changes mode exactly once and keeps visibility.
-    - Switching back to automatic recomputes deterministic order.
-    - Unknown method IDs fall back without crashes or stale IDs.
-  - Verify:
-    - `pnpm --filter @notion-kit/table-hook test src/__tests__/grouping.test.tsx src/__tests__/plugin-methods.test.tsx`
-    - `pnpm --filter @notion-kit/table-hook typecheck`
-
-- [ ] **T04 — Make calculation discovery and footer presentation plugin-driven**
-  - Dependencies: T01.
-  - Files:
+- [ ] **T06 — Move calculation execution to aggregation semantics**
+  - Dependencies: T05.
+  - Likely files:
+    - `packages/table-hook/src/methods.ts`
     - `packages/table-hook/src/features/counting.ts`
     - `packages/table-hook/src/lib/utils.ts`
-    - `packages/table-view/src/menus/calc-menu.tsx`
-    - `packages/table-view/src/table-footer/table-footer-cell.tsx`
-    - `packages/table-view/src/menus/constants.ts`
+    - `packages/table-hook/src/table-contexts/use-table-view.tsx`
     - `packages/table-hook/src/__tests__/counting.test.tsx`
-    - `packages/table-view/src/menus/calc-menu.test.tsx`
   - TDD start:
-    - Add a custom calculation group with no built-in type knowledge.
-    - Add unknown method and label fallback cases.
-    - Preserve generic, checkbox, None, capped-count, and zero-row cases.
+    - semantic aggregation result and presentation formatting are separable;
+    - legacy formatted count methods produce unchanged output;
+    - calculation row scope comes from the pre-grouped TanStack boundary, not directly from core rows.
   - Acceptance:
-    - `calc-menu` renders `plugin.counting` groups and methods directly.
-    - Unsupported operations are absent.
-    - Footer supports arbitrary string method IDs safely.
-    - Rich hints are optional; accessible name and calculation execution work without a hint.
-    - Existing specialized checkbox and generic counting results remain unchanged.
+    - calculation execution can use `aggregationFns`/`aggregationFn` or inline aggregation;
+    - existing capped/default/checkbox counts remain compatible;
+    - future filtering can affect calculation row scope without rewriting plugin calculations;
+    - no filtering implementation is added.
   - Verify:
-    - `pnpm --filter @notion-kit/table-hook test src/__tests__/counting.test.tsx`
-    - `pnpm --filter @notion-kit/table-view test src/menus/calc-menu.test.tsx`
-    - `pnpm --filter @notion-kit/table-hook typecheck`
-    - `pnpm --filter @notion-kit/table-view typecheck`
+    - `$NVM_BIN/pnpm --filter @notion-kit/table-hook test src/__tests__/counting.test.tsx src/__tests__/plugin-methods.test.tsx`
+    - `$NVM_BIN/pnpm --filter @notion-kit/table-hook typecheck`
 
-- [ ] **T05 — Register text, title, and link sorting/grouping capabilities**
-  - Dependencies: T01. Parallel-safe with T06, T07, and T09 utilities.
-  - Files:
-    - `packages/table-view/src/plugins/sorting.ts` (new)
-    - `packages/table-view/src/plugins/text/grouping.ts` (new)
-    - `packages/table-view/src/plugins/text/plugin.tsx`
-    - `packages/table-view/src/plugins/title/plugin.tsx`
-    - `packages/table-view/src/plugins/link/plugin.tsx`
-    - `packages/table-view/src/plugins/plugins.test.tsx`
-  - TDD start:
-    - Add exact registration-set tests for title/text/email/phone/URL.
-    - Add A→Z/Z→A comparator cases and Alphabetical grouping case-folding/boundary cases.
+- [ ] **T07 — Register text-like, checkbox, and select capabilities**
+  - Dependencies: T05.
+  - Scope: title/text/email/phone/URL comparisons and Exact/Alphabetical grouping; checkbox sorting/counts; select/multi-select first-option sorting and grouping.
   - Acceptance:
-    - All five text-like plugins register A→Z/Z→A sorting.
-    - Exact groups by complete value.
-    - Alphabetical trims, groups case-insensitive first displayed character, returns empty for whitespace, and preserves digit/symbol bucket labels.
-    - Descriptor arrays are not shared mutably between plugin instances.
-    - Existing public factories and cell behavior remain compatible.
+    - exact stable IDs/labels match the matrix;
+    - empty-last, case folding, symbol/digit buckets, and first-option behavior are directly tested;
+    - shared functions are UI-free and menu discovery has no plugin-ID branch.
   - Verify:
-    - `pnpm --filter @notion-kit/table-view test src/plugins/plugins.test.tsx`
-    - `pnpm --filter @notion-kit/table-view typecheck`
+    - `$NVM_BIN/pnpm --filter @notion-kit/table-view test src/plugins/plugins.test.tsx`
+    - `$NVM_BIN/pnpm --filter @notion-kit/table-view typecheck`
 
-- [ ] **T06 — Register checkbox, select, and multi-select capabilities**
-  - Dependencies: T01. Parallel-safe with T05, T07, and T09 utilities.
-  - Files:
-    - `packages/table-view/src/plugins/checkbox/plugin.tsx`
-    - `packages/table-view/src/plugins/select/plugin.tsx`
-    - `packages/table-view/src/plugins/utils.tsx`
-    - `packages/table-view/src/plugins/plugins.test.tsx`
-  - TDD start:
-    - Add checkbox exact IDs/labels/counting groups and group-sort-disabled cases.
-    - Add select/multi-select first-option sorting and empty-last cases.
+- [ ] **T08 — Implement number formatter, aggregations, and interval grouping**
+  - Dependencies: T05; T06 for final calculation wiring.
+  - Scope: shared formatter; sum/average/median/min/max/range; fixed intervals 1/10/100/1000; currency/percent/rounding parity.
   - Acceptance:
-    - Checkbox exposes Checked→unchecked/Unchecked→checked and specialized calculations.
-    - Checkbox explicitly disables automatic group sorting without menu type checks.
-    - Select/multi-select use only the first option for sorting and grouping.
-    - Select/multi-select retain generic calculation policy.
-    - Empty select values remain last ascending.
+    - aggregations are pure and presentation formatting is explicit;
+    - invalid/empty/negative/decimal/exact-boundary cases pass;
+    - median does not mutate source values.
   - Verify:
-    - `pnpm --filter @notion-kit/table-view test src/plugins/plugins.test.tsx`
-    - `pnpm --filter @notion-kit/table-view typecheck`
+    - `$NVM_BIN/pnpm --filter @notion-kit/table-view test src/plugins/number/format.test.ts src/plugins/number/methods.test.ts src/plugins/plugins.test.tsx`
 
-- [ ] **T07 — Extract and lock the shared number formatter**
-  - Dependencies: T01. Parallel-safe with T05, T06, and T09 utilities.
-  - Files:
-    - `packages/table-view/src/plugins/number/format.ts` (new)
-    - `packages/table-view/src/plugins/number/format.test.ts` (new)
-    - `packages/table-view/src/plugins/number/number-cell.tsx`
-    - `packages/table-view/src/plugins/cell-renderers.test.tsx`
-  - TDD start:
-    - Add exact strings for number, commas, percent, and currency with default/0/2/5 rounding where meaningful.
-    - Add zero, negative, large, and fractional values.
+- [ ] **T09 — Implement date aggregations and timezone grouping**
+  - Dependencies: T05; T06 for final calculation wiring.
+  - Scope: earliest/latest/range; Relative/Day/Week/Month/Year; `DateConfig.tz`; `weekStartsOn`; date ranges group by start.
   - Acceptance:
-    - `formatNumber(value, config)` is pure and shared-ready.
-    - Number cell uses it without changing existing rendered strings.
-    - Percent/currency units and configured rounding remain visible.
-    - No locale-dependent assertion relies on an implicit non-test locale beyond the repository's established behavior.
+    - grouping and aggregation helpers are pure and deterministic under frozen time;
+    - Taipei and a DST timezone cover midnight/week/month/year boundaries;
+    - created/edited time extractors share execution without losing plugin-specific data access.
   - Verify:
-    - `pnpm --filter @notion-kit/table-view test src/plugins/number/format.test.ts src/plugins/cell-renderers.test.tsx`
-    - `pnpm --filter @notion-kit/table-view typecheck`
+    - `$NVM_BIN/pnpm --filter @notion-kit/table-view test src/plugins/date/methods.test.ts src/plugins/date/utils.test.ts src/plugins/plugins.test.tsx`
 
-- [ ] **T08 — Implement number calculations and fixed-interval grouping**
-  - Dependencies: T01, T04, T07.
-  - Files:
-    - `packages/table-view/src/plugins/number/methods.ts` (new)
-    - `packages/table-view/src/plugins/number/methods.test.ts` (new)
-    - `packages/table-view/src/plugins/number/plugin.tsx`
-    - `packages/table-view/src/plugins/number/number-grouping-value.tsx` (new if rendering cannot remain generic)
-    - `packages/table-view/src/plugins/plugins.test.tsx`
-  - TDD start:
-    - Add Sum/Average/Median/Min/Max/Range matrices including empty, invalid, zero, negative, decimal, duplicates, even/odd median, and source immutability.
-    - Add 1/10/100/1000 interval exact/epsilon/negative boundaries.
+- [ ] **T10 — Complete sorting and property menus**
+  - Dependencies: T07–T09 as applicable.
   - Acceptance:
-    - Calculation IDs and grouping IDs exactly match the approved matrix.
-    - Invalid/non-finite inputs are ignored; no valid input returns an empty result.
-    - Range is max minus min.
-    - All results and group endpoints use shared number format/rounding.
-    - Intervals use `Math.floor(value / size) * size` and half-open `[start, end)` semantics.
-    - Ascending empty-last behavior remains unchanged.
+    - labels and optional method selector come from capabilities;
+    - direction remains in TanStack sorting state while method ID remains serializable plugin state;
+    - a custom runtime plugin executes through an inline fallback without table-view changes.
   - Verify:
-    - `pnpm --filter @notion-kit/table-view test src/plugins/number/format.test.ts src/plugins/number/methods.test.ts src/plugins/plugins.test.tsx`
-    - `pnpm --filter @notion-kit/table-view typecheck`
+    - `$NVM_BIN/pnpm --filter @notion-kit/table-view test src/menus/sort-menu.test.tsx src/menus/prop-menu.test.tsx`
 
-- [ ] **T09 — Implement timezone-aware date calculations and grouping methods**
-  - Dependencies: T01, T02, T04. Pure utilities are parallel-safe after T01.
-  - Files:
-    - `packages/table-view/src/plugins/date/methods.ts` (new)
-    - `packages/table-view/src/plugins/date/methods.test.ts` (new)
-    - `packages/table-view/src/plugins/date/utils.ts`
-    - `packages/table-view/src/plugins/date/plugin.tsx`
-    - `packages/table-view/src/plugins/date/date-grouping-value.tsx`
-    - `packages/table-view/src/plugins/date/utils.test.ts`
-  - TDD start:
-    - Add earliest/latest/date-range cases for Date, Created time, and Last edited time.
-    - Add Taipei and New York timezone/DST cases.
-    - Add Relative bucket precedence and Sunday/Monday week-start matrices.
+- [ ] **T11 — Complete grouping menu and automatic group ordering**
+  - Dependencies: T03, T07–T09.
   - Acceptance:
-    - Date calculation IDs and Relative/Day/Week/Month/Year grouping IDs match the matrix.
-    - Date ranges group by start.
-    - Date-only duration is zoned calendar-day based; time-aware duration is elapsed and emits at most two non-zero units.
-    - Relative buckets are stable, non-overlapping, and chronologically sortable through `toSortValue`.
-    - All date boundaries use `DateConfig.tz` and Week uses runtime `weekStartsOn`.
-    - Empty ascending behavior remains last.
+    - grouping-key choices and group-sort choices are capability-driven;
+    - manual drag, automatic order, visibility, and grouping-method transitions retain landed behavior;
+    - checkbox exposes no automatic group sort without a plugin-ID check.
   - Verify:
-    - `pnpm --filter @notion-kit/table-view test src/plugins/date/methods.test.ts src/plugins/date/utils.test.ts src/plugins/plugins.test.tsx`
-    - `pnpm --filter @notion-kit/table-view typecheck`
+    - `$NVM_BIN/pnpm --filter @notion-kit/table-view test src/menus/edit-group-menu.test.tsx`
+    - `$NVM_BIN/pnpm --filter @notion-kit/table-hook test src/__tests__/grouping.test.tsx`
 
-- [ ] **T10 — Make Sort and Property menus capability-driven**
-  - Dependencies: T03, T05, T06, T08, T09.
-  - Files:
-    - `packages/table-view/src/menus/sort-menu.tsx`
-    - `packages/table-view/src/menus/prop-menu.tsx`
-    - `packages/table-view/src/__tests__/component-objects/sort-menu.ts`
-    - `packages/table-view/src/menus/sort-menu.test.tsx`
-    - `packages/table-view/src/menus/prop-menu.test.tsx`
-  - TDD start:
-    - Add text/number/checkbox/date direction-label cases.
-    - Add multi-method custom plugin selector and row-order effect.
-    - Add property-change default reset and Property-menu parity.
+- [ ] **T12 — Run compatibility workflows and filtering-boundary audit**
+  - Dependencies: T06–T11.
   - Acceptance:
-    - Direction labels come from the selected plugin method.
-    - One-method built-ins retain compact layout.
-    - Multi-method custom plugins expose method selection by stable ID.
-    - Changing property resets incompatible method selection safely.
-    - Quick-sort actions use the same default method and labels.
-    - Existing remove/delete/reorder behavior remains intact.
+    - old resources and all legacy plugin fallbacks work;
+    - unknown IDs fall back without unsolicited writes;
+    - custom plugin methods need no menu type switch or global default mutation;
+    - no `calcFns`, `groupByFns`, filter state, filter UI, or filter predicate implementation was introduced;
+    - calculation row scope is not permanently tied to `getCoreRowModel()`.
   - Verify:
-    - `pnpm --filter @notion-kit/table-view test src/menus/sort-menu.test.tsx src/menus/prop-menu.test.tsx`
-    - `pnpm --filter @notion-kit/table-view typecheck`
+    - focused table-hook resource/group/count suites;
+    - focused table-view calculation/sort/group menu suites;
+    - `rg -n "calcFns|groupByFns" packages/table-hook packages/table-view` has no production API match.
 
-- [ ] **T11 — Add grouping-method and group-sort controls**
-  - Dependencies: T03, T05, T06, T08, T09, T10 sorting APIs.
-  - Files:
-    - `packages/table-view/src/menus/edit-group-menu.tsx`
-    - `packages/table-view/src/__tests__/component-objects/grouping-menu.ts`
-    - `packages/table-view/src/menus/edit-group-menu.test.tsx`
-    - `packages/table-view/src/menus/select-group-menu.test.tsx`
-  - TDD start:
-    - Add Group using visibility/selection cases.
-    - Add Manual/automatic asc/desc and drag-to-Manual cases.
-    - Add checkbox automatic-sort omission and accessibility states.
+- [ ] **T13 — Full verification**
+  - Dependencies: T12.
   - Acceptance:
-    - Group using appears only when meaningful alternatives exist.
-    - Number exposes exactly intervals 1/10/100/1000; date exposes exactly Relative/Day/Week/Month/Year.
-    - Sort groups exposes Manual plus eligible plugin sort methods.
-    - Checkbox exposes no automatic group-sort option.
-    - Visibility and selected state survive order changes/rerenders.
-    - Controls have stable roles, accessible names, and checked states.
+    - table-hook and table-view tests, typechecks, lint, and builds pass;
+    - affected repository checks pass or unrelated pre-existing failures are recorded exactly;
+    - docs and task status match implemented behavior.
   - Verify:
-    - `pnpm --filter @notion-kit/table-view test src/menus/edit-group-menu.test.tsx src/menus/select-group-menu.test.tsx`
-    - `pnpm --filter @notion-kit/table-hook test src/__tests__/grouping.test.tsx`
-    - `pnpm --filter @notion-kit/table-view typecheck`
+    - commands listed in `tasks/plan.md` section 9.
 
-- [ ] **T12 — Add compatibility and custom-plugin workflow suites**
-  - Dependencies: T04–T11.
-  - Files:
-    - `packages/table-hook/src/__tests__/plugin-methods.test.tsx`
-    - `packages/table-hook/src/__tests__/resource-api.test.tsx`
-    - `packages/table-view/src/menus/calc-menu.test.tsx`
-    - `packages/table-view/src/menus/sort-menu.test.tsx`
-    - `packages/table-view/src/menus/edit-group-menu.test.tsx`
-  - TDD start:
-    - Add custom-plugin calculate → sort → group workflow.
-    - Add old-resource and unknown-ID workflows.
-  - Acceptance:
-    - A custom plugin is fully discoverable without generic menu changes.
-    - Old resources behave as before until a new selection adds minimal optional state.
-    - Unknown IDs render/execute through fallback and can be replaced with a valid serialized ID.
-    - Workflow tests remain small and do not duplicate pure number/date matrices.
-  - Verify:
-    - `pnpm --filter @notion-kit/table-hook test src/__tests__/plugin-methods.test.tsx src/__tests__/resource-api.test.tsx`
-    - `pnpm --filter @notion-kit/table-view test src/menus/calc-menu.test.tsx src/menus/sort-menu.test.tsx src/menus/edit-group-menu.test.tsx`
+## Checkpoints
 
-- [ ] **T13 — Run coverage, static checks, builds, and matrix audit**
-  - Dependencies: T01–T12.
-  - Files:
-    - `packages/table-view/docs/plugins.md` only if implemented stable IDs/names require an approved documentation correction.
-    - No production changes are expected in this task.
-  - Acceptance:
-    - Every built-in plugin has an exact registration assertion.
-    - Every stable ID has a semantic test and selection/resolver path.
-    - Pure utility, resolver/state, grouping, and menu changed-file coverage targets from `tasks/test-plan.md` are met.
-    - Table-view retains its configured 90% statements/branches thresholds.
-    - Table-hook package coverage does not fall below the measured baseline.
-    - No plugin capability type switch remains in generic calc/sort/group menus.
-    - No unknown-ID-unsafe hint lookup remains.
-    - All focused/package/static/build commands pass or any unrelated pre-existing failure is recorded exactly without unrelated edits.
-  - Verify sequentially:
-    - `rg -n 'type === "(checkbox|number|date|select|text)"' packages/table-view/src/menus`
-    - `rg -n 'countMethodHint\[method\]' packages/table-view/src`
-    - `pnpm --filter @notion-kit/table-hook test`
-    - `pnpm --filter @notion-kit/table-view test`
-    - `pnpm --filter @notion-kit/table-hook typecheck`
-    - `pnpm --filter @notion-kit/table-view typecheck`
-    - `pnpm --filter @notion-kit/table-hook lint`
-    - `pnpm --filter @notion-kit/table-view lint`
-    - `pnpm --filter @notion-kit/table-hook build`
-    - `pnpm --filter @notion-kit/table-view build`
-    - `pnpm --filter @notion-kit/table-hook coverage -- --reporter=dot`
-    - `pnpm --filter @notion-kit/table-view coverage -- --reporter=dot`
-    - `pnpm test`
-    - `pnpm typecheck:affected`
-    - `pnpm lint:affected`
-
-## Implementation Approval Gate
-
-Production implementation begins only after this todo is reviewed and approved. On approval, execute one task at a time using TDD and update each checkbox only after its focused verification passes.
+- [ ] After T05–T06: hybrid bridge, calculation compatibility, and row-scope tests pass.
+- [ ] After T07–T09: all 12 built-ins register the approved matrix.
+- [ ] After T10–T11: all menus are capability-driven and custom-plugin integration passes.
+- [ ] After T12–T13: compatibility and full package verification pass; filtering remains out of scope.

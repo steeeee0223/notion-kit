@@ -1,6 +1,6 @@
 # Table View Plugin Functions Test Strategy
 
-Status: Approved for Phase 3 on 2026-08-07
+Status: Revised for hybrid architecture review on 2026-08-09; baseline suites T01–T04 have landed
 
 Related documents:
 
@@ -10,7 +10,7 @@ Related documents:
 
 ## Objective
 
-Build high-value test suites that prove the plugin capability matrix works end to end without coupling tests to implementation details. The suites prioritize method semantics, fallback order, state/resource integrity, timezone and numeric boundaries, custom-plugin extensibility, accessibility-facing menu behavior, and backward compatibility.
+Build high-value test suites that prove the plugin capability matrix works end to end through the hybrid boundary: plugin capability metadata, TanStack-native execution seams, and table-hook's state/Notion orchestration. The suites prioritize method semantics, fallback order, state/resource integrity, native-reference/inline parity, aggregation row scope, timezone and numeric boundaries, custom-plugin extensibility, accessibility-facing menu behavior, and backward compatibility.
 
 Coverage percentage is a guardrail, not the goal. Every test must kill a plausible regression: wrong method selection, incorrect bucket boundary, lost resource state, incorrect unit formatting, unstable timezone behavior, unsupported option leakage, or a generic menu that silently reintroduces a built-in type switch.
 
@@ -114,6 +114,9 @@ The suite must fail if any of these mutations are introduced:
 - retain stale group visibility after grouping keys change;
 - expose checkbox automatic group sorting;
 - index presentation hints with an unknown method ID.
+- add `calcFns` or `groupByFns` as top-level `TableFeatures` registries;
+- execute all footer calculations permanently against `getCoreRowModel()`;
+- require a runtime custom plugin to mutate static `DEFAULT_FEATURES` before its functions can execute.
 
 ## Suite 1 — Table-hook Method Contracts
 
@@ -133,6 +136,9 @@ The suite must fail if any of these mutations are introduced:
 8. Custom sorting/grouping/counting IDs remain strings and are never inferred from labels.
 9. `weekStartsOn` defaults to `1` and passes each value `0` through `6` into method context.
 10. Invalid runtime weekday values are rejected by TypeScript; runtime normalization is tested only if the public API accepts untyped input.
+11. A native/common function reference and an equivalent inline function produce the same row ordering or aggregation result.
+12. Only TanStack-recognized `sortFns` and `aggregationFns` registry slots are exposed; grouping continues through `getGroupingValue`.
+13. A runtime custom plugin executes through an inline fallback without changing global defaults.
 
 Example parameterized resolver test:
 
@@ -191,7 +197,7 @@ expect(onViewChange).toHaveBeenLastCalledWith({
 });
 ```
 
-## Suite 3 — Generic Calculation Discovery
+## Suite 3 — Calculation Aggregation and Generic Discovery
 
 **Files:**
 
@@ -213,6 +219,10 @@ expect(onViewChange).toHaveBeenLastCalledWith({
 8. Unknown selected method renders a safe None/empty footer state.
 9. Method label fallback is `label` → `name` → no label.
 10. Optional hints render when supplied; custom methods without hints remain accessible.
+11. A new aggregation method returns a semantic result that the plugin formatter turns into the footer string.
+12. A legacy formatted counting method executes through the compatibility adapter with unchanged output.
+13. The calculation row provider uses the pre-grouped TanStack boundary instead of directly hard-coding core rows.
+14. The row-scope test uses a seam/stub only; it does not add or exercise a filtering feature.
 
 Assertions should use roles and accessible names:
 
@@ -419,6 +429,13 @@ Keep this suite small. Cover three workflows:
 1. **Custom plugin workflow:** register custom calculation/sorting/grouping methods, select each through UI, and observe calculation, row order, and group keys.
 2. **Old resource workflow:** load a view without `pluginMethods`, sort/group/calculate as before, then select one new method and verify a minimal optional resource addition.
 3. **Unknown ID workflow:** load unknown method IDs, render safely through fallbacks, change to a valid method, and emit a valid serializable resource.
+4. **Hybrid runtime plugin workflow:** use native/common refs for one method and inline functions for another without mutating `DEFAULT_FEATURES`.
+
+Add a static architecture audit, not a filtering behavior workflow:
+
+- production code exposes no `calcFns` or `groupByFns` API;
+- no filter UI, filter state/AST, filter predicate, or filter registry entry is introduced;
+- calculation row scope is obtained from the pre-grouped boundary so a future filtered model can compose before it.
 
 These tests prove composition; they should not repeat every numeric/date edge case from pure suites.
 
@@ -431,6 +448,7 @@ These tests prove composition; they should not repeat every numeric/date edge ca
 - Private helper call counts when output/state proves the contract.
 - All pairwise combinations of plugin × calculation × layout; the registration matrix plus representative integration cases provides higher value.
 - Browser E2E for logic fully observable through component integration.
+- Filtering behavior, filter operator semantics, nested AND/OR filters, filter UI, or filtered row-model integration; filtering is outside this plan.
 
 ## Test Data and Fixture Policy
 
@@ -495,10 +513,13 @@ pnpm lint:affected
 - Date timezone, DST, Sunday/Monday week starts, range start, and every Relative bucket are covered.
 - Controlled/uncontrolled resource ownership and no-op behavior are covered.
 - A custom plugin proves calculation, sorting, grouping, and menu discovery without generic type switches.
+- Native/common execution refs and inline/config-aware fallbacks both work through the same capability resolver.
+- Calculations use the pre-grouped row boundary and no filtering implementation was added.
+- No production `calcFns` or `groupByFns` slot exists.
 - Changed-file coverage targets are met and table-view retains its package thresholds.
 - Both package test/typecheck/lint/build commands pass.
 - No flaky timers, locale-dependent expected strings, broad snapshots, or parallel shared-directory coverage runs remain.
 
 ## Phase Gate
 
-After this strategy and `tasks/plan.md` are approved, Phase 3 will turn each suite into dependency-ordered tasks in `tasks/todo.md`. Production code and test implementation begin only after that task list is approved.
+Remaining T05–T13 implementation begins after the revised strategy, `tasks/plan.md`, and `tasks/todo.md` are approved. Landed T01–T04 commits remain the baseline and are not rewritten solely for this revision.

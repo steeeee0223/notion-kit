@@ -1,488 +1,342 @@
-# Table View Plugin Functions Implementation Plan
+# Table View Plugin Functions — Hybrid Implementation Plan
 
-Status: Approved for Phase 3 on 2026-08-07
+Status: Revised for review on 2026-08-09; T01–T04 already landed
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use `subagent-driven-development` (recommended) or `executing-plans` to implement this plan task-by-task. Phase 3 must first convert this plan into checkbox tasks in `tasks/todo.md`.
+> Implementation workers must use `subagent-driven-development` or `executing-plans`, follow the dependency order in `tasks/todo.md`, and use test-driven development for each remaining slice.
 
-**Goal:** Make every existing table-view plugin support the approved calculation, row-sorting, group-sorting, and grouping-key matrix through registered plugin capabilities.
+## 1. Goal
 
-**Architecture:** Extend table-hook's existing plugin method descriptors with value-based sorting, runtime method context, and backward-compatible selection state. Persist only stable method IDs and serializable configuration in optional view-resource fields. Implement reusable method families beside the built-in table-view plugins, then make calculation, sorting, and grouping menus render those descriptors without property-type switches.
+Implement the calculation, row-sorting, group-sorting, and grouping-key matrix for the 12 existing table-view plugins while keeping the public architecture close to TanStack Table and preserving Notion-style product behavior.
 
-**Tech Stack:** TypeScript, React 19, TanStack React Table 9, Vitest, Testing Library, pnpm 11, Turborepo.
+The revised approach is hybrid:
 
-**Approved spec:** `docs/superpowers/specs/2026-08-07-table-view-plugin-functions.md`
+- `CellPlugin` declares supported capabilities, stable IDs, defaults, and UI metadata.
+- TanStack Table owns its standard execution pipeline and native extension points.
+- `table-hook` resolves selected plugin capabilities, adapts them to TanStack, and owns serializable view state plus Notion-specific grouping behavior.
+- `table-view` renders menus and results from the resolved capability model without plugin-type switches.
 
-**Test strategy:** `tasks/test-plan.md`
+This plan does **not** add `calcFns` or `groupByFns` to `TableFeatures`. TanStack v9 already provides `aggregationFns` for aggregation and uses `getGroupingValue` for grouping keys.
 
-## Global Constraints
+## 2. Scope
 
-- Cover the 12 plugins currently exported through `DEFAULT_PLUGINS`; do not add person, created-by, last-edited-by, ID, or status plugins.
-- Add no runtime dependency and make no CI/workspace configuration change.
-- Persist stable IDs and serializable values only; never persist functions, React nodes, or display labels.
-- Preserve legacy `compare`, `toValue`, and `toGroupValue` fallbacks.
-- Preserve existing ascending empty-last behavior for number, select, multi-select, and date plugins.
-- Number calculations and numeric group labels must reuse `NumberConfig.format` and `NumberConfig.round`, including currency and percent units.
-- Date grouping and calculations must use `DateConfig.tz`; date ranges group by `start`.
-- `weekStartsOn` accepts `0 | 1 | 2 | 3 | 4 | 5 | 6`, defaults to `1`, and is runtime table configuration rather than per-column persisted configuration.
-- Follow test-driven development for each implementation slice and run focused verification before moving to a dependent slice.
-- Do not modify or discard unrelated working-tree changes, including the source images under `packages/table-view/docs/`.
+### In scope
 
----
+- Complete the documented function matrix for title, text, number, checkbox, select, multi-select, email, phone, URL, date, created time, and last edited time.
+- Keep stable method IDs and backward-compatible resolver fallbacks.
+- Use TanStack-native boundaries where they exist:
+  - sorting: `sortFns` / `ColumnDef.sortFn`;
+  - calculations: `aggregationFns` / `ColumnDef.aggregationFn` / column aggregation APIs;
+  - grouping keys: `ColumnDef.getGroupingValue`;
+  - row-model order: core → filtered → grouped → sorted → expanded.
+- Allow an inline function fallback for config-aware methods, runtime external plugins, and legacy plugin contracts.
+- Keep Notion-specific group visibility, manual order, automatic group order, grouping-key selection, and resource round trips in `table-hook`.
+- Keep calculation/sort/group menus capability-driven.
 
-## 1. Scope Decomposition
+### Explicitly out of scope
 
-The feature spans two packages but should remain one plan because each vertical slice requires a table-hook contract and a table-view consumer. The dependency order is:
+- Implementing table filtering: no filter UI, filter state/AST, predicates, `filterFns` registrations, server filtering, or filtered-row-model behavior is added in this change.
+- Adding `calcFns` or `groupByFns` as pseudo-native TanStack slots.
+- Forking or patching `@tanstack/table-core`.
+- Adding absent plugin types, new dependencies, or unrelated UI changes.
+- Removing legacy `compare`, `toValue`, `toGroupValue`, row-sort functions, or formatted counting functions.
+
+### Filtering compatibility boundary
+
+Although filtering is out of scope, this change must not block it:
+
+- reserve TanStack's native `filterFns` and `ColumnDef.filterFn` names for future filtering;
+- do not invent a competing plugin-level execution registry;
+- calculations must derive their row scope from the pre-grouped/filtered TanStack boundary rather than permanently from `getCoreRowModel()`;
+- keep capability metadata extensible so a future plugin can describe valid filter operators and operand editors separately from predicate execution;
+- do not add filtering fields to persisted `TableViewState` in this plan.
+
+## 3. Architecture Decisions
+
+### AD1 — Capability descriptors remain the product source of truth
+
+`CellPlugin` answers:
+
+- which operations are valid for this property type;
+- stable method IDs and defaults;
+- menu labels, descriptions, hints, and grouping of choices;
+- property-specific formatters/renderers;
+- whether a sorting method may also order groups;
+- inline/config-aware/legacy fallbacks when a native registry reference is insufficient.
+
+The descriptor is not a second row-model engine. It references or supplies execution functions consumed by `table-hook`.
+
+### AD2 — TanStack owns standard execution
+
+Use official TanStack seams instead of custom top-level registry slots:
+
+| Concern          | TanStack boundary                                                   | notion-kit extension                                             |
+| ---------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Row sorting      | `sortFns`, `ColumnDef.sortFn`, sorted row model                     | selected method ID, labels, config-aware adapter                 |
+| Calculation      | `aggregationFns`, `ColumnDef.aggregationFn`, column aggregation API | calculation menu metadata, formatting, legacy counting adapter   |
+| Grouping key     | `ColumnDef.getGroupingValue`                                        | registered grouping choices, timezone/week config                |
+| Group lifecycle  | grouped row model                                                   | visibility, manual order, automatic group sort, Notion rendering |
+| Future filtering | `filterFns`, `ColumnDef.filterFn`, filtered row model               | explicitly deferred                                              |
+
+`sortFns`, `aggregationFns`, and later `filterFns` are the only TanStack-style registries. Unknown fields must not be added to `TableFeatures`, because TanStack treats unknown keys as feature objects rather than row-model function registries.
+
+### AD3 — Shared functions are pure and UI-free
+
+Reusable comparison, aggregation, grouping-key, number-format, and date-bucket helpers live outside React components. Built-in/common functions may be pre-registered in `DEFAULT_FEATURES`. A plugin may instead provide an inline function when it depends on column configuration or is registered at runtime.
+
+Execution resolution is deterministic:
+
+1. selected stable method ID;
+2. plugin default method ID;
+3. first registered method;
+4. native/common function reference or inline implementation;
+5. legacy plugin fallback.
+
+### AD4 — Calculation returns data; presentation formats it
+
+New calculation methods should expose an aggregation implementation and a presentation formatter. Numeric/date aggregation remains pure and returns a semantic result where practical; the footer formats it with plugin configuration.
+
+During migration, legacy `CountingMethod.function(context) => string` remains supported through an adapter. It is not the preferred contract for new methods.
+
+The selected calculation must use TanStack's pre-grouped row scope so future filtering naturally affects footer calculations. The current `getCoreRowModel()` counting path is compatibility-only and must not remain the sole execution path.
+
+### AD5 — Grouping remains a native seam plus a Notion extension
+
+Grouping methods supply grouping-key behavior and UI metadata. `table-hook` adapts the selected method to `ColumnDef.getGroupingValue`. It does not create `groupByFns`.
+
+TanStack builds grouped rows and aggregated values. `table-hook` continues to own stable group IDs, visibility, manual drag order, automatic group ordering, and group-label rendering.
+
+### AD6 — State stores references, never executable values
+
+`TableViewState.pluginMethods` stores only selected IDs and group-sort mode. Column configuration and `weekStartsOn` follow their existing ownership. Functions, labels, React nodes, computed group values, and registry objects are never persisted.
+
+## 4. Responsibility Split
+
+### TanStack Table
+
+- standard row-model pipeline;
+- native sorting and aggregation registries;
+- `sortFn`, `aggregationFn`, and `getGroupingValue` execution boundaries;
+- future `filterFns`/`filterFn` boundary, outside this implementation.
+
+### Shared function modules
+
+- pure value comparison and empty ordering;
+- numeric/date aggregation implementations;
+- grouping-key/bucket helpers;
+- reusable number/date formatting;
+- no menu labels, resource mutation, React, or plugin-ID branching.
+
+### `CellPlugin`
+
+- capability availability and stable IDs;
+- defaults, labels, groups, hints, and presentation formatters;
+- mapping to a native function reference or inline implementation;
+- compatibility fallback declarations;
+- future filter-operator metadata only when filtering is separately planned.
+
+### `table-hook`
+
+- resolve selected/default/fallback methods;
+- compose `ColumnDef` execution hooks and available TanStack registries;
+- own method-selection/resource state and action payloads;
+- supply property config, timezone, and `weekStartsOn` context;
+- own Notion group lifecycle and manual/automatic group order;
+- choose the correct row scope for calculations;
+- never render menu-specific UI.
+
+### `table-view`
+
+- render calculation, sorting, and grouping controls from plugin capabilities;
+- render formatted calculation/group values;
+- dispatch table APIs with stable IDs;
+- contain no built-in property-type execution switches.
+
+## 5. Existing Commit Disposition
+
+Do **not** revert the four existing commits. Preserve their tests and public behavior, then migrate the execution internals incrementally.
+
+| Commit                           | Decision | Hybrid follow-up                                                                                                         |
+| -------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `623251a0` method contracts      | Keep     | refine descriptors so native refs/inline fallbacks are execution details; retain resolver and legacy compatibility tests |
+| `61a299f2` method state          | Keep     | no architectural rewrite; stable serializable IDs are still required                                                     |
+| `d55a1058` grouping execution    | Keep     | retain `getGroupingValue` integration and group lifecycle; explicitly avoid `groupByFns`                                 |
+| `e1f60b4d` calculation discovery | Keep     | retain capability-driven menu/footer discovery; migrate calculation execution and row scope behind the same APIs         |
+
+Reverting would discard valid resource compatibility, UI discovery, and grouping lifecycle work, then require recreating it. The safer path is additive migration with regression tests.
+
+## 6. Dependency Graph
 
 ```text
-Method contracts and state ownership
-  ├── Generic menu discovery
-  ├── Text/select/checkbox registrations
-  ├── Number calculation/grouping methods
-  └── Date calculation/grouping methods
-          ↓
-Row sort + group sort execution
-          ↓
-Resource compatibility and full regression verification
+Landed baseline: T01 contracts → T02 resource state → T03 grouping → T04 calc discovery
+                                      │
+                                      ▼
+T05 hybrid execution contract and TanStack bridge
+  ├── T06 calculation aggregation bridge and row scope
+  ├── T07 text/select/checkbox registrations
+  ├── T08 number calculations/grouping
+  └── T09 date calculations/grouping
+          │
+          ├── T10 sorting/property menus
+          └── T11 grouping menu and automatic group order
+                  │
+                  ▼
+          T12 compatibility workflows
+                  │
+                  ▼
+          T13 full verification
 ```
 
-Parallel work is safe only after the method contracts land:
+T07, T08, and the pure utility portion of T09 may proceed in parallel after T05. T10 and T11 require the relevant registrations. T12 and T13 are sequential integration checkpoints.
 
-- Text/select/checkbox registrations can proceed independently of number methods.
-- Number method implementation can proceed independently of date methods.
-- Calculation-menu work can proceed independently of group-menu work once resolver APIs are stable.
-- Final resource round-trip tests and regression verification are sequential because they exercise all prior slices together.
+## 7. Implementation Slices
 
-## 2. File Responsibility Map
+### T01–T04 — Landed baseline audit
 
-### Table-hook contracts and execution
+Treat the four existing commits as the starting baseline. Update stale task status and add focused regression coverage only when a remaining task changes their contracts. Do not amend or rewrite their history solely to make the commit boundaries match this revised plan.
+
+Acceptance:
+
+- existing stable-ID/resource behavior is preserved;
+- calculation menus remain plugin-discovered;
+- grouping continues through `getGroupingValue`;
+- no `calcFns`/`groupByFns` field is introduced.
+
+### T05 — Define the hybrid execution contract and bridge
+
+Likely files:
 
 - `packages/table-hook/src/methods.ts`
-  - Own method descriptors, stable IDs, shared resolver order, and legacy fallbacks.
-  - Add a value comparator usable by both row sorting and group sorting.
 - `packages/table-hook/src/plugins/types.ts`
-  - Type plugin `sorting`, `grouping`, and `counting` capabilities with their plugin data/config.
-- `packages/table-hook/src/features/plugin-methods.ts` (new)
-  - Own serializable selected grouping method and automatic group-sort state plus table APIs.
-  - Keep method-selection mechanics out of domain plugin implementations.
 - `packages/table-hook/src/features/index.ts`
-  - Register and type the new feature.
-- `packages/table-hook/src/features/grouping.ts`
-  - Build grouping entries with the selected grouping method and order them manually or with the selected sorting method.
-- `packages/table-hook/src/features/counting.ts`
-  - Resolve arbitrary plugin calculation IDs without narrowing to `CountMethod`.
-- `packages/table-hook/src/lib/utils.ts`
-  - Execute the selected counting method and provide its registered descriptor for presentation.
-- `packages/table-hook/src/table-contexts/types.ts`
-  - Add `weekStartsOn` to shared table runtime options.
 - `packages/table-hook/src/table-contexts/use-table-view.tsx`
-  - Pass runtime config into method context and wire optional serialized method state into table state.
-- `packages/table-hook/src/features/menu.ts`
-  - Extend `TableViewState` only with optional, serializable plugin-method state needed for controlled view-resource round trips.
-- `packages/table-hook/src/table-contexts/actions.ts`
-  - Add precise view actions for persisted method selection changes.
-- `packages/table-hook/src/index.ts`
-  - Export the new public types and helpers.
-
-### Table-view built-in plugin methods
-
-- `packages/table-view/src/plugins/sorting.ts` (new)
-  - Reusable text, number, checkbox, select-first-option, and date comparator descriptors and labels.
-- `packages/table-view/src/plugins/text/grouping.ts` (new)
-  - Exact and case-insensitive first-character grouping.
-- `packages/table-view/src/plugins/number/format.ts` (new)
-  - Pure number formatter extracted from `number-cell.tsx`.
-- `packages/table-view/src/plugins/number/methods.ts` (new)
-  - Numeric calculations and interval grouping methods.
-- `packages/table-view/src/plugins/date/methods.ts` (new)
-  - Date calculations, timezone bucket helpers, and grouping methods.
-- `packages/table-view/src/plugins/date/utils.ts`
-  - Reuse date presentation utilities and expose pure date-duration formatting where appropriate.
-- Existing `plugin.tsx` files under `text`, `title`, `link`, `checkbox`, `select`, `number`, and `date`
-  - Register capability descriptors; keep rendering code unchanged.
-- `packages/table-view/src/plugins/utils.tsx`
-  - Retain shared counting groups but remove duplicated comparator implementations after registrations migrate.
-- `packages/table-view/src/plugins/index.ts`
-  - Compose fully registered defaults; existing public factories remain callable and typed.
-
-### Table-view consumers
-
-- `packages/table-view/src/menus/calc-menu.tsx`
-  - Render `plugin.counting` groups directly, with existing rich hints as optional presentation metadata.
-- `packages/table-view/src/table-footer/table-footer-cell.tsx`
-  - Resolve arbitrary selected method descriptors safely instead of indexing `countMethodHint` by a closed enum.
-- `packages/table-view/src/menus/sort-menu.tsx`
-  - Display plugin-specific ascending/descending labels and selected method controls when a plugin registers more than one comparator.
-- `packages/table-view/src/menus/prop-menu.tsx`
-  - Use the same resolved sorting labels/default method for header quick-sort actions.
-- `packages/table-view/src/menus/edit-group-menu.tsx`
-  - Expose grouping-key selection and Manual/plugin-sort group ordering.
-- `packages/table-view/src/__tests__/component-objects/number-config-menu.ts`
-  - Extend the existing calculation submenu helpers for arbitrary plugin groups.
-- `packages/table-view/src/__tests__/component-objects/sort-menu.ts`
-  - Add stable operations for plugin method and direction controls.
-- `packages/table-view/src/__tests__/component-objects/grouping-menu.ts`
-  - Add stable operations for grouping-method and group-order controls.
-
-### Tests
-
 - `packages/table-hook/src/__tests__/plugin-methods.test.tsx`
-- `packages/table-hook/src/__tests__/grouping.test.tsx`
-- `packages/table-hook/src/__tests__/resource-api.test.tsx`
-- `packages/table-view/src/plugins/plugins.test.tsx`
-- `packages/table-view/src/plugins/number/methods.test.ts` (new)
-- `packages/table-view/src/plugins/number/format.test.ts` (new)
-- `packages/table-view/src/plugins/date/methods.test.ts` (new)
-- `packages/table-view/src/menus/calc-menu.test.tsx`
-- `packages/table-view/src/menus/sort-menu.test.tsx`
-- `packages/table-view/src/menus/edit-group-menu.test.tsx`
-- `packages/table-view/src/menus/prop-menu.test.tsx`
 
-## 3. Public Interfaces
+Work:
 
-The implementation should converge on these interfaces. Exact import placement may follow existing barrel conventions, but names and responsibilities should remain stable across slices.
+- distinguish capability metadata from execution references;
+- support native/common function references plus inline/config-aware functions;
+- register only valid TanStack slots (`sortFns`, `aggregationFns`);
+- keep legacy fallback execution;
+- document deterministic collision/override behavior for built-in and runtime plugin functions;
+- ensure custom runtime plugins can use inline functions without rebuilding global defaults.
 
-```ts
-export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+Acceptance:
 
-export interface PluginMethodContext<Config = unknown> {
-  table: _TableInstance;
-  colId: string;
-  config: Config;
-  weekStartsOn: Weekday;
-}
+- selected methods execute through `ColumnDef.sortFn`, `ColumnDef.aggregationFn`, or `ColumnDef.getGroupingValue` as appropriate;
+- `TableFeatures` contains no `calcFns` or `groupByFns`;
+- external plugins are not required to mutate static `DEFAULT_FEATURES`;
+- native references and inline fallbacks have direct tests.
 
-export interface SortingMethod<Data = unknown, Config = unknown> {
-  id: string;
-  name: string;
-  ascendingLabel: string;
-  descendingLabel: string;
-  toComparable?: (
-    data: Data,
-    row: Row,
-    context: PluginMethodContext<Config>,
-  ) => ComparableValue;
-  compare: CompareFn<ComparableValue>;
-  function?: (rowA: Row, rowB: Row, colId: string) => number;
-}
+### T06 — Migrate calculation execution to aggregation semantics
 
-export interface GroupingMethod<Data = unknown, Config = unknown> {
-  id: string;
-  name: string;
-  function: (
-    data: Data,
-    row: Row,
-    colId: string,
-    context: PluginMethodContext<Config>,
-  ) => ComparableValue;
-  toSortValue?: (
-    groupValue: ComparableValue,
-    context: PluginMethodContext<Config>,
-  ) => ComparableValue;
-}
+Likely files:
 
-export interface CountingMethod {
-  id: string;
-  name: string;
-  label?: string;
-  hint?: { description: string; imageSrc?: string };
-  function: (context: CountingMethodContext) => string;
-}
-```
+- `packages/table-hook/src/methods.ts`
+- `packages/table-hook/src/features/counting.ts`
+- `packages/table-hook/src/lib/utils.ts`
+- `packages/table-hook/src/table-contexts/use-table-view.tsx`
+- `packages/table-hook/src/__tests__/counting.test.tsx`
 
-Compatibility rule for `SortingMethod`: registered built-ins use `toComparable` plus `compare`; the resolver continues accepting legacy descriptors that only provide `function`. Only methods with a value comparator can be offered for automatic group sorting.
+Work:
 
-`CellPlugin.sorting` also gains `enableGroupSort?: boolean`, defaulting to `true` when a registered value comparator exists. Checkbox sets it to `false` to match the matrix. Automatic group sorting compares each grouping method's `toSortValue(groupValue)` (identity by default) with the selected sorting method's `compare`; this reuses the row-sort comparator while allowing Relative date bucket IDs to expose chronological sort keys.
+- add the aggregation-based calculation contract and formatter boundary;
+- adapt legacy formatted counting methods without removing them;
+- assign/resolve the selected aggregation implementation through the column boundary;
+- use the table's pre-grouped row scope rather than hard-coding core rows;
+- preserve current capped count and empty behavior.
 
-Serializable selection state:
+Acceptance:
 
-```ts
-export interface PluginMethodState {
-  sortingMethodByColumn: Record<string, string | undefined>;
-  groupingMethodByColumn: Record<string, string | undefined>;
-  groupSort:
-    | { mode: "manual" }
-    | { mode: "automatic"; method?: string; desc: boolean };
-}
+- existing count results remain unchanged without filters;
+- raw/semantic aggregation and footer formatting are independently testable;
+- a future filtered row model would affect calculations without changing plugin functions;
+- no filtering feature is implemented or tested end-to-end here.
 
-export interface TableViewState {
-  // Existing fields remain unchanged.
-  pluginMethods?: Partial<PluginMethodState>;
-}
-```
+### T07 — Register text-like, checkbox, and select capabilities
 
-The existing TanStack `sorting` rule retains `id` and `desc`; the matrix's two row-sort options are directions of one plugin comparator. A custom plugin's selected method ID lives in `pluginMethods.sortingMethodByColumn`. This avoids changing TanStack's `ColumnSort` shape.
+Register the approved sorting, grouping, and calculation choices for text/title/link-like, checkbox, select, and multi-select plugins. Shared pure comparators may use native/common refs; plugin-specific behavior may stay inline. Preserve empty-last and first-option semantics.
 
-Table APIs:
+### T08 — Implement number formatter, aggregations, and interval grouping
 
-```ts
-getColumnSortingMethods(colId: string): SortingMethod[];
-getSelectedSortingMethod(colId: string): SortingMethod | undefined;
-setColumnSortingMethod(colId: string, methodId: string): void;
+Extract the number formatter, implement sum/average/median/min/max/range as pure aggregations, and implement interval grouping for 1/10/100/1000. Formatting remains plugin presentation; aggregation remains UI-free.
 
-getColumnGroupingMethods(colId: string): GroupingMethod[];
-getSelectedGroupingMethod(colId: string): GroupingMethod;
-setColumnGroupingMethod(colId: string, methodId: string): void;
+### T09 — Implement date aggregations and timezone grouping
 
-getGroupSort(): PluginMethodState["groupSort"];
-setGroupSort(value: PluginMethodState["groupSort"]): void;
+Implement earliest/latest/range plus Relative/Day/Week/Month/Year grouping with `DateConfig.tz`, range-start grouping, frozen evaluation time, and runtime `weekStartsOn`.
 
-getColumnCountingMethod(colId: string): CountingMethod | undefined;
-```
+### T10 — Complete sorting and property-menu consumers
 
-`useTableView` and the public table component accept:
+Render plugin labels/method choices, persist stable method IDs, and keep direction in TanStack sorting state. Prove a custom runtime plugin works through inline execution without table-view type switches.
 
-```ts
-weekStartsOn?: Weekday; // default: 1
-```
+### T11 — Complete grouping menu and automatic group ordering
 
-## 4. Implementation Slices
+Render grouping-key choices and Manual/automatic group order from plugin capabilities. Reuse value-comparator semantics for automatic group order; keep manual drag and visibility state in `table-hook`.
 
-### Slice A — Table-hook method contracts and compatibility
+### T12 — Compatibility and filtering-boundary audit
 
-**Files:** `packages/table-hook/src/methods.ts`, `packages/table-hook/src/plugins/types.ts`, `packages/table-hook/src/features/plugin-methods.ts`, `packages/table-hook/src/features/index.ts`, `packages/table-hook/src/index.ts`, and `packages/table-hook/src/__tests__/plugin-methods.test.tsx`.
+Verify old resources, legacy plugins, custom runtime plugins, unknown IDs, and existing menu behavior. Audit only the filtering boundary: no competing names/state and calculation row scope is not fixed to core rows. Do not implement filtering behavior.
 
-Start with failing tests that prove:
+### T13 — Full verification
 
-- selected ID wins over default ID;
-- unknown selected ID falls back to default, then first method;
-- legacy `compare` and legacy grouping conversion still execute;
-- registered `toComparable` handles missing cells without passing `undefined` into built-in comparators;
-- a method without a value comparator is not eligible for automatic group sorting;
-- `weekStartsOn` defaults to `1` and accepts `0` through `6`.
+Run focused package tests after each task, then package test/typecheck/lint/build and affected repository checks. Record unrelated pre-existing failures without changing unrelated code.
 
-Implement the interfaces above, centralize resolver order in `methods.ts`, and keep legacy signatures executable. Do not implement table-view domain semantics in table-hook.
+## 8. Test Strategy
 
-**Focused verification:**
+Detailed cases live in `tasks/test-plan.md`. The revised priorities are:
+
+1. resolver compatibility and native-ref/inline execution parity;
+2. resource round trips and grouping lifecycle regression;
+3. aggregation result versus formatting separation;
+4. calculation row-scope selection at the pre-grouped boundary;
+5. built-in capability matrices and custom runtime plugin discovery;
+6. number/date boundary tests;
+7. menu integration and full compatibility workflows.
+
+Filtering tests are limited to static/contract assertions required to avoid architectural conflict. No filter behavior suite belongs to this plan.
+
+## 9. Verification Commands
+
+Before package-manager commands:
 
 ```sh
-pnpm --filter @notion-kit/table-hook test src/__tests__/plugin-methods.test.tsx
-pnpm --filter @notion-kit/table-hook typecheck
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+source "$NVM_DIR/nvm.sh"
+nvm use 24.11.1 --silent
 ```
 
-Expected result: both commands exit 0; compatibility tests demonstrate legacy and registered paths.
-
-### Slice B — Method state, group execution, and resource round trips
-
-**Files:** `packages/table-hook/src/features/plugin-methods.ts`, `packages/table-hook/src/features/grouping.ts`, `packages/table-hook/src/features/extended-grouped-row-model.ts`, `packages/table-hook/src/features/menu.ts`, `packages/table-hook/src/table-contexts/types.ts`, `packages/table-hook/src/table-contexts/use-table-view.tsx`, `packages/table-hook/src/table-contexts/actions.ts`, `packages/table-hook/src/__tests__/grouping.test.tsx`, and `packages/table-hook/src/__tests__/resource-api.test.tsx`.
-
-Add optional `pluginMethods` to `TableViewState`. `resolveViewState` must merge nested defaults rather than overwrite them, so old partial view objects remain valid. Wire changes through `onViewChange` with explicit action types:
-
-```ts
-"view.plugin_sorting_method.change"
-"view.plugin_grouping_method.change"
-"view.group_sort.change"
-```
-
-Changing a grouping method must rebuild group values/order and prune visibility entries for removed group IDs. Each grouping entry records its display/group value plus the grouping method's derived sort value. Changing automatic group sort must reorder current group IDs through the selected row-sort comparator without changing group visibility. Dragging a group switches the mode to Manual before applying the dragged order. Switching back to automatic mode recomputes deterministic order from group sort values.
-
-Test controlled and uncontrolled ownership, unknown IDs, old views without `pluginMethods`, Sunday/Monday runtime config, and no-op updates. Resource action payloads include previous/next stable IDs or modes but no derived group values.
-
-**Focused verification:**
+Focused examples:
 
 ```sh
-pnpm --filter @notion-kit/table-hook test src/__tests__/grouping.test.tsx src/__tests__/resource-api.test.tsx
-pnpm --filter @notion-kit/table-hook typecheck
+$NVM_BIN/pnpm  --filter @notion-kit/table-hook test src/__tests__/plugin-methods.test.tsx
+$NVM_BIN/pnpm  --filter @notion-kit/table-hook test src/__tests__/counting.test.tsx
+$NVM_BIN/pnpm  --filter @notion-kit/table-view test src/plugins/plugins.test.tsx
 ```
 
-Expected result: both commands exit 0; controlled resources round-trip method selections and old fixtures retain existing behavior.
-
-### Slice C — Generic calculation discovery and footer presentation
-
-**Files:** `packages/table-hook/src/features/counting.ts`, `packages/table-hook/src/lib/utils.ts`, `packages/table-view/src/menus/calc-menu.tsx`, `packages/table-view/src/table-footer/table-footer-cell.tsx`, `packages/table-view/src/menus/constants.ts`, `packages/table-view/src/menus/calc-menu.test.tsx`, and `packages/table-view/src/__tests__/component-objects/number-config-menu.ts`.
-
-Replace the type switch in `CalcMenu` with `table.getColumnPlugin(id).counting`. Preserve the `None` item and capped-count toggle. Registered method metadata supplies names and optional hints; existing `countMethodHint` content becomes metadata on built-in shared counting methods or a presentation fallback keyed safely by ID.
-
-The footer resolves the selected descriptor through `getColumnCountingMethod`. Its short label falls back in this order: `method.label`, `method.name`, then no label. Unknown selected IDs render a stable empty/None state rather than indexing an undefined hint.
-
-Tests use a custom plugin with a custom calculation group to prove discovery needs no menu type branch, then retain existing checkbox and generic count behavior.
-
-**Focused verification:**
+Completion:
 
 ```sh
-pnpm --filter @notion-kit/table-view test src/menus/calc-menu.test.tsx
-pnpm --filter @notion-kit/table-hook test src/__tests__/counting.test.tsx
+$NVM_BIN/pnpm  --filter @notion-kit/table-hook test
+$NVM_BIN/pnpm  --filter @notion-kit/table-view test
+$NVM_BIN/pnpm  --filter @notion-kit/table-hook typecheck
+$NVM_BIN/pnpm  --filter @notion-kit/table-view typecheck
+$NVM_BIN/pnpm  --filter @notion-kit/table-hook lint
+$NVM_BIN/pnpm  --filter @notion-kit/table-view lint
+$NVM_BIN/pnpm  --filter @notion-kit/table-hook build
+$NVM_BIN/pnpm  --filter @notion-kit/table-view build
 ```
 
-Expected result: both commands exit 0; custom, generic, and checkbox calculation choices render and execute.
-
-### Slice D — Text-like, checkbox, and select capability registrations
-
-**Files:** `packages/table-view/src/plugins/sorting.ts`, `packages/table-view/src/plugins/text/grouping.ts`, `packages/table-view/src/plugins/title/plugin.tsx`, `packages/table-view/src/plugins/text/plugin.tsx`, `packages/table-view/src/plugins/link/plugin.tsx`, `packages/table-view/src/plugins/checkbox/plugin.tsx`, `packages/table-view/src/plugins/select/plugin.tsx`, `packages/table-view/src/plugins/utils.tsx`, and `packages/table-view/src/plugins/plugins.test.tsx`.
-
-Register:
-
-- title/text/email/phone/URL: locale text comparator, A→Z/Z→A labels, Exact and Alphabetical grouping;
-- checkbox: boolean comparator with Checked→unchecked/Unchecked→checked labels and existing specialized counts;
-- select/multi-select: first-option comparator with Ascending/Descending labels, existing generic counts, and existing first-option grouping behavior.
-
-Alphabetical grouping trims displayed text, returns `null` for empty, and uppercases the first displayed character with locale-aware casing. Digits and symbols return that character unchanged. Select empty arrays/null remain last when ascending.
-
-Tests assert the exact registered IDs, labels, first-option semantics, case folding, symbol/digit buckets, empty handling, and legacy public factory return types.
-
-**Focused verification:**
-
-```sh
-pnpm --filter @notion-kit/table-view test src/plugins/plugins.test.tsx
-pnpm --filter @notion-kit/table-view typecheck
-```
-
-Expected result: both commands exit 0 and registrations match the approved matrix.
-
-### Slice E — Number formatting, calculations, and interval grouping
-
-**Files:** `packages/table-view/src/plugins/number/format.ts`, `packages/table-view/src/plugins/number/format.test.ts`, `packages/table-view/src/plugins/number/methods.ts`, `packages/table-view/src/plugins/number/methods.test.ts`, `packages/table-view/src/plugins/number/number-cell.tsx`, `packages/table-view/src/plugins/number/plugin.tsx`, and `packages/table-view/src/plugins/plugins.test.tsx`.
-
-Extract the existing formatter without changing cell output:
-
-```ts
-formatNumber(value: number, config: NumberConfig): string
-```
-
-Implement stable calculation IDs `sum`, `average`, `median`, `min`, `max`, and `range`. Ignore null, missing, and non-finite values. Return an empty string when no valid numeric value exists. Define range as `max - min`. Apply the shared formatter to every numeric result so currency, percent, grouping separators, and rounding remain consistent.
-
-Implement grouping IDs `interval-1`, `interval-10`, `interval-100`, and `interval-1000`. For interval `size`, compute `start = Math.floor(value / size) * size` and return `start` as the comparable group value. Render the group as `formatNumber(start) – formatNumber(start + size)`; this makes the upper bound exclusive and handles negative values deterministically.
-
-Tests cover zero, decimals, negatives, exact boundaries, missing/invalid values, even/odd median, and all number formats. Snapshot-style broad assertions are avoided; assert exact strings.
-
-**Focused verification:**
-
-```sh
-pnpm --filter @notion-kit/table-view test src/plugins/number/format.test.ts src/plugins/number/methods.test.ts src/plugins/cell-renderers.test.tsx
-pnpm --filter @notion-kit/table-view typecheck
-```
-
-Expected result: commands exit 0 and existing number-cell strings remain unchanged.
-
-### Slice F — Date calculations and timezone grouping
-
-**Files:** `packages/table-view/src/plugins/date/methods.ts`, `packages/table-view/src/plugins/date/methods.test.ts`, `packages/table-view/src/plugins/date/utils.ts`, `packages/table-view/src/plugins/date/utils.test.ts`, `packages/table-view/src/plugins/date/plugin.tsx`, `packages/table-view/src/plugins/date/date-grouping-value.tsx`, and `packages/table-view/src/plugins/plugins.test.tsx`.
-
-Provide one extractor per date plugin family so Date uses cell `{ start, end, includeTime }`, Created time uses `row.createdAt`, and Last edited time uses `row.lastEditedAt`.
-
-Register calculation IDs `earliest-date`, `latest-date`, and `date-range`. Earliest compares valid starts. Latest compares valid ends with start fallback. Date range spans earliest start to latest end/start fallback. Date-only duration uses calendar-day boundaries in `DateConfig.tz`; time-aware duration uses elapsed milliseconds and emits at most two non-zero units among days, hours, and minutes. Empty input returns `""`.
-
-Register grouping IDs `relative`, `day`, `week`, `month`, and `year`. All buckets derive local calendar parts using `DateConfig.tz`; Week uses `context.weekStartsOn`. Relative precedence is Today, Yesterday, Tomorrow, This week, Last week, Next week, Earlier, Later. Relative group values use stable bucket IDs and `toSortValue` maps them to chronological anchors for the shared date comparator. Day/week/month/year group values expose their zoned bucket-start timestamp as the sort value. Date ranges always inspect start. `DateGroupingValue` renders labels according to the selected grouping method instead of assuming every group value is a raw date timestamp.
-
-Tests freeze the current time and cover Taipei and one DST-observing timezone, timezone midnight, Sunday/Monday week starts, month/year transitions, range-start behavior, and created/edited timestamps.
-
-**Focused verification:**
-
-```sh
-pnpm --filter @notion-kit/table-view test src/plugins/date/methods.test.ts src/plugins/date/utils.test.ts src/plugins/plugins.test.tsx
-pnpm --filter @notion-kit/table-view typecheck
-```
-
-Expected result: commands exit 0 and date outputs are deterministic under frozen time.
-
-### Slice G — Sorting and grouping menus
-
-**Files:** `packages/table-view/src/menus/sort-menu.tsx`, `packages/table-view/src/menus/prop-menu.tsx`, `packages/table-view/src/menus/edit-group-menu.tsx`, `packages/table-view/src/menus/sort-menu.test.tsx`, `packages/table-view/src/menus/prop-menu.test.tsx`, `packages/table-view/src/menus/edit-group-menu.test.tsx`, `packages/table-view/src/__tests__/component-objects/sort-menu.ts`, and `packages/table-view/src/__tests__/component-objects/grouping-menu.ts`.
-
-Row sort direction labels come from the resolved sorting method. Changing a sort rule's property resets its selected method to that plugin's default and preserves direction only when valid. If a custom plugin has multiple methods, render a method selector before direction; built-ins with one method keep the current compact two-column layout.
-
-The group menu adds:
-
-- `Group by` property selection (existing);
-- `Group using` when more than one grouping method exists;
-- `Sort groups` with Manual plus eligible registered sorting methods and direction labels;
-- existing hide-empty and visibility controls.
-
-Manual group drag remains enabled only in Manual mode. Automatic mode shows deterministic order and switching modes retains visibility. Checkbox exposes no automatic group-sort item because its registration sets `sorting.enableGroupSort` to `false`; the menu contains no plugin type check.
-
-Tests prove custom plugin method discovery, built-in labels, method selection effects, Manual switching after drag, checkbox omission, and property-menu parity.
-
-**Focused verification:**
-
-```sh
-pnpm --filter @notion-kit/table-view test src/menus/sort-menu.test.tsx src/menus/prop-menu.test.tsx src/menus/edit-group-menu.test.tsx
-pnpm --filter @notion-kit/table-hook test src/__tests__/plugin-methods.test.tsx src/__tests__/grouping.test.tsx
-```
-
-Expected result: commands exit 0; all three consumers are capability-driven.
-
-### Slice H — Full compatibility and completion verification
-
-**Files:** all tests touched above plus `packages/table-view/docs/plugins.md` only if implementation names differ from the approved documented stable IDs.
-
-Run a self-audit before broad commands:
-
-```sh
-rg -n 'type === "(checkbox|number|date|select|text)"' packages/table-view/src/menus
-rg -n 'countMethodHint\[method\]' packages/table-view/src
-rg -n 'sorting\?\.methods|grouping\?\.methods|counting' packages/table-view/src/plugins
-```
-
-Expected results:
-
-- no property-type capability branches remain in calculation/sorting/grouping menus;
-- no unsafe arbitrary-ID lookup remains;
-- every built-in plugin has explicit or helper-composed registrations.
-
-Then run:
-
-```sh
-pnpm --filter @notion-kit/table-hook test
-pnpm --filter @notion-kit/table-view test
-pnpm --filter @notion-kit/table-hook typecheck
-pnpm --filter @notion-kit/table-view typecheck
-pnpm --filter @notion-kit/table-hook lint
-pnpm --filter @notion-kit/table-view lint
-pnpm --filter @notion-kit/table-hook build
-pnpm --filter @notion-kit/table-view build
-pnpm test
-pnpm typecheck:affected
-pnpm lint:affected
-```
-
-Expected result: every command exits 0. If a broad repository command exposes an unrelated pre-existing failure, record the exact command and failure without changing unrelated code; focused package checks must still pass.
-
-## 5. Verification Checkpoints
-
-1. **Contract checkpoint after Slice A:** public types compile, resolver fallback tests pass, and no table-view code has changed yet.
-2. **State checkpoint after Slice B:** old resources work, controlled selections round-trip stable IDs, and group-order mode transitions are deterministic.
-3. **Calculation checkpoint after Slices C/E/F:** generic menu discovery works and numeric/date outputs meet approved formatting semantics.
-4. **Registration checkpoint after Slices D/E/F:** all 12 built-ins expose the exact matrix and no absent plugin type was introduced.
-5. **UI checkpoint after Slice G:** calc/sort/prop/group menus are capability-driven and custom plugin tests pass.
-6. **Completion checkpoint after Slice H:** focused and broad verification pass with no dependency or unrelated behavior changes.
-
-## 6. Risks and Mitigations
-
-### Controlled view-resource expansion
-
-Risk: wiring optional plugin-method state into `TableViewState` can accidentally drop existing nested timeline fields or convert formerly uncontrolled TanStack state into stale controlled state.
-
-Mitigation: keep selection fields nested and optional, deep-merge their defaults, test controlled/uncontrolled ownership, and emit no resource change for resolver-only fallbacks.
-
-### Row comparator versus group comparator
-
-Risk: legacy sorting functions accept rows and cannot sort derived group values.
-
-Mitigation: built-ins use `toComparable + compare`; retain row-function fallback for legacy sorting only, and offer automatic group sort only for methods exposing the value comparator.
-
-### Group identifiers changing with grouping method
-
-Risk: switching Exact to Alphabetical changes group IDs, leaving stale visibility/order state.
-
-Mitigation: rebuild entries atomically, preserve visibility only for surviving IDs, and reset automatic/manual order according to the selected mode.
-
-### Timezone and current-time instability
-
-Risk: Relative buckets can change at midnight and DST boundaries, making tests and displayed groups nondeterministic.
-
-Mitigation: method context provides a single evaluation timestamp per regroup operation, tests use fake timers, and all calendar boundaries use the configured timezone.
-
-### Formatting drift
-
-Risk: cells, calculations, and number group labels could disagree after formatter extraction.
-
-Mitigation: one pure formatter, existing cell-renderer regression tests, and exact-string tests for every format/round combination used by calculations.
-
-### Menu complexity
-
-Risk: adding method controls can overcrowd the existing sort and group menus.
-
-Mitigation: hide method selectors when only one method exists, reuse current Select/Menu primitives, and keep rich calculation hints optional rather than mandatory for plugin authors.
-
-## 7. Plan Approval Gate
-
-After human approval of this plan and `tasks/test-plan.md`, Phase 3 creates `tasks/todo.md` with dependency-ordered tasks. Each task will name no more than approximately five production files, include acceptance criteria and an exact verification command, and use failing-test → minimal implementation → focused verification steps. Production implementation begins only after that task list is separately approved.
+## 10. Risks and Mitigations
+
+| Risk                                                                  | Impact | Mitigation                                                                                             |
+| --------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------ |
+| capability descriptor and native registry become two sources of truth | high   | plugin owns applicability/metadata; native/inline function owns execution; table-hook has one resolver |
+| static defaults cannot include runtime plugin functions               | high   | permit inline functions and per-column adapters; do not require mutation of `DEFAULT_FEATURES`         |
+| calculation migration changes displayed strings                       | high   | retain legacy adapter, separate raw-result and formatting tests, reuse existing formatters             |
+| calculations ignore future filters                                    | high   | move row scope from core rows to TanStack pre-grouped/filtered boundary in T06                         |
+| grouping registry masquerades as native API                           | medium | use only `getGroupingValue`; ban `groupByFns` in the plan                                              |
+| controlled resource regressions                                       | high   | retain landed T02 tests and optional stable-ID state                                                   |
+| commit rewrite loses validated work                                   | medium | keep all four commits and migrate additively                                                           |
+
+## 11. Approval Gate
+
+This revision supersedes the descriptor-only execution assumptions in the previous plan. Remaining production implementation begins after review of this plan, `tasks/todo.md`, and the matching test-plan adjustments.
