@@ -35,8 +35,10 @@ export {
   countUnique,
   countValues,
   createSortingMethod,
+  getGroupSortableSortingMethods,
   groupByTextValue,
   groupByValue,
+  isValueSortingMethod,
   percentageChecked,
   percentageEmpty,
   percentageNonEmpty,
@@ -53,8 +55,14 @@ export type {
   CountingMethodContext,
   CountingMethodGroup,
   GroupingMethod,
+  PluginMethodContext,
+  ResolvedGroupingMethod,
+  ResolvedSortingMethod,
   SortingMethod,
+  SortingMethodDescriptor,
+  Weekday,
 } from "@/methods";
+export type { PluginMethodState } from "@/features";
 export { ROW_VIEW_OPTIONS } from "@/features";
 export { LAYOUT_OPTIONS } from "@/features/menu";
 export type {

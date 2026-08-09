@@ -131,6 +131,7 @@ export * from "@/features/freezing";
 export * from "@/features/grouping";
 export * from "@/features/menu";
 export * from "@/features/row-actions";
+export * from "@/features/plugin-methods";
 export * from "@/features/constants";
 export * from "@/features/types";
 

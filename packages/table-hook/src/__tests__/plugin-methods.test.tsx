@@ -1,9 +1,15 @@
 import { act, render, renderHook, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import type { ColumnInfo, Row } from "@/lib/types";
 import { arrayToEntity } from "@/lib/utils";
-import { compareNumbers } from "@/methods";
+import {
+  compareNumbers,
+  getGroupSortableSortingMethods,
+  isValueSortingMethod,
+  resolveGroupingMethod,
+  resolveSortingMethod,
+} from "@/methods";
 import {
   DefaultGroupingValue,
   type CellPlugin,
@@ -38,6 +44,15 @@ const reverseTextPlugin: CellPlugin<"reverse-text", string, undefined> = {
           const a = rowA.properties[colId]?.value as string;
           const b = rowB.properties[colId]?.value as string;
           return b.localeCompare(a);
+        },
+      },
+      {
+        id: "natural",
+        name: "Alphabetical",
+        function: (rowA, rowB, colId) => {
+          const a = rowA.properties[colId]?.value as string;
+          const b = rowB.properties[colId]?.value as string;
+          return a.localeCompare(b);
         },
       },
     ],
@@ -113,6 +128,238 @@ function renderCustomPluginTable() {
 }
 
 describe("cell plugin registered methods", () => {
+  it("contextually types sorting and grouping callbacks with plugin data and config", () => {
+    interface TypedData {
+      score: number;
+    }
+    interface TypedConfig {
+      multiplier: number;
+    }
+
+    const plugin: CellPlugin<"typed", TypedData, TypedConfig> = {
+      id: "typed",
+      meta: { name: "Typed", desc: "Typed", icon: null },
+      default: {
+        name: "Typed",
+        icon: null,
+        data: { score: 0 },
+        config: { multiplier: 1 },
+      },
+      fromValue: (value) => ({ score: Number(value) }),
+      toValue: (value) => value.score,
+      toTextValue: (value) => value.score.toString(),
+      sorting: {
+        methods: [
+          {
+            id: "score",
+            name: "Score",
+            ascendingLabel: "Ascending",
+            descendingLabel: "Descending",
+            toComparable: (value, _row, context) => {
+              expectTypeOf(value).toEqualTypeOf<TypedData>();
+              expectTypeOf(context.config).toEqualTypeOf<TypedConfig>();
+              return value.score * context.config.multiplier;
+            },
+            compare: compareNumbers,
+          },
+        ],
+      },
+      grouping: {
+        methods: [
+          {
+            id: "score",
+            name: "Score",
+            function: (value, _row, _colId, context) => {
+              expectTypeOf(value).toEqualTypeOf<TypedData>();
+              expectTypeOf(context.config).toEqualTypeOf<TypedConfig>();
+              return value.score * context.config.multiplier;
+            },
+          },
+        ],
+      },
+      renderCell: () => null,
+    };
+
+    expect(plugin.sorting?.methods[0]?.id).toBe("score");
+    expect(plugin.grouping?.methods[0]?.id).toBe("score");
+  });
+
+  it("resolves the selected sorting method before the plugin default", () => {
+    expect(resolveSortingMethod(reverseTextPlugin, "natural")?.id).toBe(
+      "natural",
+    );
+  });
+
+  it("falls back from an unknown selected sorting method to the default then first registration", () => {
+    expect(resolveSortingMethod(reverseTextPlugin, "missing")?.id).toBe(
+      "reverse-alpha",
+    );
+
+    const pluginWithoutRegisteredDefault: CellPlugin = {
+      ...reverseTextPlugin,
+      sorting: {
+        defaultMethod: "missing",
+        methods: reverseTextPlugin.sorting?.methods ?? [],
+      },
+    };
+
+    expect(
+      resolveSortingMethod(pluginWithoutRegisteredDefault, "missing")?.id,
+    ).toBe("reverse-alpha");
+  });
+
+  it("resolves the selected grouping method before the plugin default", () => {
+    const plugin: CellPlugin = {
+      ...reverseTextPlugin,
+      grouping: {
+        defaultMethod: "first-letter",
+        methods: [
+          ...(reverseTextPlugin.grouping?.methods ?? []),
+          {
+            id: "all",
+            name: "All",
+            function: () => "All",
+          },
+        ],
+      },
+    };
+
+    expect(resolveGroupingMethod(plugin, "all").id).toBe("all");
+  });
+
+  it("falls back from an unknown selected grouping method to the default then first registration", () => {
+    expect(resolveGroupingMethod(reverseTextPlugin, "missing").id).toBe(
+      "first-letter",
+    );
+
+    const pluginWithoutRegisteredDefault: CellPlugin = {
+      ...reverseTextPlugin,
+      grouping: {
+        defaultMethod: "missing",
+        methods: reverseTextPlugin.grouping?.methods ?? [],
+      },
+    };
+
+    expect(
+      resolveGroupingMethod(pluginWithoutRegisteredDefault, "missing").id,
+    ).toBe("first-letter");
+  });
+
+  it("keeps legacy row sorting and grouping conversions executable", () => {
+    const plugin: CellPlugin = {
+      ...reverseTextPlugin,
+      sorting: undefined,
+      grouping: undefined,
+      compare: () => 7,
+      toGroupValue: () => "legacy group",
+    };
+    const row = data[0]!;
+
+    expect(resolveSortingMethod(plugin)?.function?.(row, row, "col1")).toBe(7);
+    expect(
+      resolveGroupingMethod(plugin).function("unused", row, "col1", {
+        table: {} as never,
+        colId: "col1",
+        config: undefined,
+        weekStartsOn: 1,
+      }),
+    ).toBe("legacy group");
+  });
+
+  it("uses registered value comparators for ascending and descending rows while normalizing missing cells", () => {
+    const contexts: number[] = [];
+    const plugin = {
+      ...reverseTextPlugin,
+      sorting: {
+        defaultMethod: "numeric",
+        methods: [
+          {
+            id: "numeric",
+            name: "Numeric",
+            ascendingLabel: "Ascending",
+            descendingLabel: "Descending",
+            toComparable: (
+              value: unknown,
+              _row: Row,
+              context: { weekStartsOn: number },
+            ) => {
+              contexts.push(context.weekStartsOn);
+              return typeof value === "number" ? value : null;
+            },
+            compare: (a: number, b: number) => a - b,
+          },
+        ],
+      },
+    } as CellPlugin;
+    const method = resolveSortingMethod(plugin);
+    const rowWithMissingCell = { ...data[0], properties: {} } as Row;
+    const rowWithTwo = {
+      ...data[0],
+      properties: { col1: { id: "cell-2", value: 2 } },
+    } as Row;
+    const rowWithTen = {
+      ...data[0],
+      properties: { col1: { id: "cell-10", value: 10 } },
+    } as Row;
+
+    expect(method?.function).toEqual(expect.any(Function));
+    expect(
+      method?.function?.(rowWithMissingCell, rowWithTwo, "col1"),
+    ).toBeLessThan(0);
+    expect(method?.function?.(rowWithTwo, rowWithTen, "col1")).toBeLessThan(0);
+    expect(method?.function?.(rowWithTen, rowWithTwo, "col1")).toBeGreaterThan(
+      0,
+    );
+    expect(contexts).toEqual([1, 1, 1, 1, 1, 1]);
+  });
+
+  it("marks only value-comparator sorting methods as automatically group-sortable", () => {
+    const legacyMethod = resolveSortingMethod(reverseTextPlugin);
+    expect(legacyMethod && isValueSortingMethod(legacyMethod)).toBe(false);
+    expect(getGroupSortableSortingMethods(reverseTextPlugin)).toEqual([]);
+  });
+
+  it.each([0, 1, 2, 3, 4, 5, 6] as const)(
+    "passes weekStartsOn %i to registered comparators",
+    (weekStartsOn) => {
+      let receivedWeekStartsOn: number | undefined;
+      const plugin = {
+        ...reverseTextPlugin,
+        sorting: {
+          defaultMethod: "context",
+          methods: [
+            {
+              id: "context",
+              name: "Context",
+              ascendingLabel: "Ascending",
+              descendingLabel: "Descending",
+              toComparable: (
+                value: unknown,
+                _row: Row,
+                context: { weekStartsOn: number },
+              ) => {
+                receivedWeekStartsOn = context.weekStartsOn;
+                return value === "value" ? 1 : 0;
+              },
+              compare: (a: number, b: number) => a - b,
+            },
+          ],
+        },
+      } as CellPlugin;
+      const row = {
+        ...data[0],
+        properties: { col1: { id: "cell", value: "value" } },
+      } as Row;
+
+      resolveSortingMethod(plugin, undefined, {
+        config: undefined,
+        weekStartsOn,
+      })?.function(row, row, "col1");
+
+      expect(receivedWeekStartsOn).toBe(weekStartsOn);
+    },
+  );
+
   it("uses plugin default sorting, grouping, and counting methods", () => {
     const table = renderCustomPluginTable();
 

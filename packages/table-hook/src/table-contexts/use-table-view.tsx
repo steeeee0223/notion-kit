@@ -8,6 +8,7 @@ import {
 import { DEFAULT_FEATURES, type TableFeatures } from "@/features";
 import type { TableViewState } from "@/features/menu";
 import { pruneRowSelection } from "@/features/row-selection";
+import type { _TableInstance } from "@/features/types";
 import type { ColumnDefs, ColumnInfo, Row } from "@/lib/types";
 import { type Entity } from "@/lib/utils";
 import { resolveGroupingMethod, resolveSortingMethod } from "@/methods";
@@ -119,6 +120,8 @@ function useResourceState<TResource, TAction>({
 export function useTableView<TPlugins extends CellPlugin[]>(
   options: UseTableViewOptions<TPlugins>,
 ) {
+  const weekStartsOn = options.weekStartsOn ?? 1;
+  const tableRef = useRef<_TableInstance | null>(null);
   const {
     plugins,
     getRowUrl,
@@ -215,22 +218,28 @@ export function useTableView<TPlugins extends CellPlugin[]>(
           minSize: getMinWidth(property.type),
           sortUndefined: "last",
           sortFn: (rowA, rowB, colId) =>
-            resolveSortingMethod(plugin)?.function(
-              rowA.original,
-              rowB.original,
-              colId,
-            ) ?? 0,
+            resolveSortingMethod(plugin, undefined, {
+              table: tableRef.current ?? ({} as _TableInstance),
+              config: property.config,
+              weekStartsOn,
+            })?.function(rowA.original, rowB.original, colId) ?? 0,
           getGroupingValue: (row) => {
             const groupingMethod = resolveGroupingMethod(plugin);
             return groupingMethod.function(
               row.properties[colId]?.value,
               row,
               colId,
+              {
+                table: tableRef.current ?? ({} as _TableInstance),
+                colId,
+                config: property.config,
+                weekStartsOn,
+              },
             );
           },
         };
       }),
-    [columnEntity, plugins.items],
+    [columnEntity, plugins.items, weekStartsOn],
   );
   const handleColumnChange = useCallback<
     ResourceChangeFn<Entity<ColumnInfo>, PropertiesResourceAction>
@@ -291,6 +300,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     },
     () => null,
   );
+  tableRef.current = table as _TableInstance;
 
   table.baseAtoms.rowSelection.set((selection) =>
     tableGlobalState.locked

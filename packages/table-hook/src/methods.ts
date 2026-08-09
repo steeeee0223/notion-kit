@@ -2,6 +2,15 @@ import type { _RowInstance, _TableInstance } from "@/features/types";
 import type { Row } from "@/lib/types";
 import type { CellPlugin, ComparableValue, CompareFn } from "@/plugins/types";
 
+export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+
+export interface PluginMethodContext<Config = unknown> {
+  table: _TableInstance;
+  colId: string;
+  config: Config;
+  weekStartsOn: Weekday;
+}
+
 export enum CountMethod {
   NONE = "none",
   ALL = "all",
@@ -17,16 +26,44 @@ export enum CountMethod {
   PERCENTAGE_NONEMPTY = "percentage-nonempty",
 }
 
-export interface SortingMethod {
+export interface SortingMethod<Data = unknown, Config = unknown> {
   id: string;
   name: string;
+  ascendingLabel: string;
+  descendingLabel: string;
+  toComparable?: (
+    data: Data,
+    row: Row,
+    context: PluginMethodContext<Config>,
+  ) => ComparableValue;
+  compare: CompareFn<ComparableValue>;
+  function?: (rowA: Row, rowB: Row, colId: string) => number;
+}
+
+export interface LegacySortingMethod {
+  id: string;
+  name: string;
+  /** @deprecated Prefer `toComparable` plus `compare` for reusable sorting. */
   function: (rowA: Row, rowB: Row, colId: string) => number;
 }
 
-export interface GroupingMethod<Data = unknown> {
+export type SortingMethodDescriptor<Data = unknown, Config = unknown> =
+  | SortingMethod<Data, Config>
+  | LegacySortingMethod;
+
+export interface GroupingMethod<Data = unknown, Config = unknown> {
   id: string;
   name: string;
-  function: (data: Data, row: Row, colId: string) => ComparableValue;
+  function: (
+    data: Data,
+    row: Row,
+    colId: string,
+    context: PluginMethodContext<Config>,
+  ) => ComparableValue;
+  toSortValue?: (
+    groupValue: ComparableValue,
+    context: PluginMethodContext<Config>,
+  ) => ComparableValue;
 }
 
 export interface CountingMethodContext {
@@ -40,12 +77,39 @@ export interface CountingMethodContext {
 export interface CountingMethod {
   id: string;
   name: string;
+  label?: string;
+  hint?: { description: string; imageSrc?: string };
   function: (context: CountingMethodContext) => string;
 }
 
 export interface CountingMethodGroup {
   group: string;
   functions: CountingMethod[];
+}
+
+export type ResolvedSortingMethod<
+  Data = unknown,
+  Config = unknown,
+> = SortingMethodDescriptor<Data, Config> & {
+  function: (rowA: Row, rowB: Row, colId: string) => number;
+};
+
+export type ResolvedGroupingMethod<
+  Data = unknown,
+  Config = unknown,
+> = GroupingMethod<Data, Config>;
+
+export function isValueSortingMethod<Data = unknown, Config = unknown>(
+  method: SortingMethodDescriptor<Data, Config>,
+): method is SortingMethod<Data, Config> & {
+  toComparable: NonNullable<SortingMethod<Data, Config>["toComparable"]>;
+} {
+  return (
+    "toComparable" in method &&
+    typeof method.toComparable === "function" &&
+    "compare" in method &&
+    typeof method.compare === "function"
+  );
 }
 
 function capValue(num: number, capped?: boolean) {
@@ -84,28 +148,34 @@ function createNullableCompareFn<T extends ComparableValue>(
   };
 }
 
-export const compareStrings: CompareFn<string> = (a, b) => a.localeCompare(b);
+export const compareStrings: CompareFn<ComparableValue> = (a, b) =>
+  String(a).localeCompare(String(b));
 
-export const compareNumbers: CompareFn<number> = (a, b) => a - b;
+export const compareNumbers: CompareFn<ComparableValue> = (a, b) =>
+  Number(a) - Number(b);
 
-export const compareBooleans: CompareFn<boolean> = (a, b) =>
+export const compareBooleans: CompareFn<ComparableValue> = (a, b) =>
   Number(a) - Number(b);
 
 export function createSortingMethod<Data extends ComparableValue>(
   id: string,
   name: string,
-  compare: CompareFn<Data>,
-): SortingMethod {
+  compare: CompareFn<ComparableValue>,
+): SortingMethod<Data> {
   const compareValues = createNullableCompareFn(compare);
 
   return {
     id,
     name,
-    function: (rowA, rowB, colId) =>
-      compareValues(
-        getCellData(rowA, colId) as Data,
-        getCellData(rowB, colId) as Data,
-      ),
+    ascendingLabel: "Ascending",
+    descendingLabel: "Descending",
+    toComparable: (data) => data,
+    compare,
+    function: (rowA, rowB, colId) => {
+      const dataA = getCellData(rowA, colId);
+      const dataB = getCellData(rowB, colId);
+      return compareValues(dataA as Data, dataB as Data);
+    },
   };
 }
 
@@ -254,13 +324,72 @@ export const percentageNonEmpty: CountingMethod = {
   function: percentageChecked.function,
 };
 
-export function resolveSortingMethod(plugin: CellPlugin) {
-  const methods = plugin.sorting?.methods ?? [];
-  const method =
-    methods.find((item) => item.id === plugin.sorting?.defaultMethod) ??
-    methods[0];
+function resolveRegisteredMethod<T extends { id: string }>(
+  methods: T[],
+  selectedMethodId: string | undefined,
+  defaultMethodId: string | undefined,
+) {
+  return (
+    methods.find((method) => method.id === selectedMethodId) ??
+    methods.find((method) => method.id === defaultMethodId) ??
+    methods[0]
+  );
+}
 
-  if (method) return method;
+function createPluginMethodContext<Key extends string, Data, Config>(
+  plugin: CellPlugin<Key, Data, Config>,
+  colId: string,
+  context?: Partial<Omit<PluginMethodContext<Config>, "colId">>,
+): PluginMethodContext<Config> {
+  return {
+    table: context?.table ?? ({} as _TableInstance),
+    colId,
+    config: context?.config ?? plugin.default.config,
+    weekStartsOn: context?.weekStartsOn ?? 1,
+  };
+}
+
+function createValueComparatorRowFunction<Key extends string, Data, Config>(
+  plugin: CellPlugin<Key, Data, Config>,
+  method: SortingMethod<Data, Config> & {
+    toComparable: NonNullable<SortingMethod<Data, Config>["toComparable"]>;
+  },
+  context?: Partial<Omit<PluginMethodContext<Config>, "colId">>,
+) {
+  const compareValues = createNullableCompareFn(method.compare);
+
+  return (rowA: Row, rowB: Row, colId: string) => {
+    const methodContext = createPluginMethodContext(plugin, colId, context);
+    const dataA: unknown = rowA.properties[colId]?.value ?? null;
+    const dataB: unknown = rowB.properties[colId]?.value ?? null;
+    const valueA = method.toComparable(dataA as Data, rowA, methodContext);
+    const valueB = method.toComparable(dataB as Data, rowB, methodContext);
+    return compareValues(valueA, valueB);
+  };
+}
+
+export function resolveSortingMethod<Key extends string, Data, Config>(
+  plugin: CellPlugin<Key, Data, Config>,
+  selectedMethodId?: string,
+  context?: Partial<Omit<PluginMethodContext<Config>, "colId">>,
+): ResolvedSortingMethod<Data, Config> | undefined {
+  const methods = plugin.sorting?.methods ?? [];
+  const method = resolveRegisteredMethod(
+    methods,
+    selectedMethodId,
+    plugin.sorting?.defaultMethod,
+  );
+
+  if (method) {
+    return {
+      ...method,
+      function:
+        method.function ??
+        (isValueSortingMethod(method)
+          ? createValueComparatorRowFunction(plugin, method, context)
+          : () => 0),
+    };
+  }
   if (!plugin.compare) return undefined;
 
   return {
@@ -270,11 +399,35 @@ export function resolveSortingMethod(plugin: CellPlugin) {
   };
 }
 
-export function resolveGroupingMethod(plugin: CellPlugin) {
+export function getGroupSortableSortingMethods<
+  Key extends string,
+  Data,
+  Config,
+>(plugin: CellPlugin<Key, Data, Config>) {
+  if (plugin.sorting?.enableGroupSort === false) return [];
+  return (plugin.sorting?.methods ?? []).filter(isValueSortingMethod);
+}
+
+export function resolveGroupSortingMethod<Key extends string, Data, Config>(
+  plugin: CellPlugin<Key, Data, Config>,
+  selectedMethodId?: string,
+  context?: Partial<Omit<PluginMethodContext<Config>, "colId">>,
+) {
+  if (plugin.sorting?.enableGroupSort === false) return undefined;
+  const method = resolveSortingMethod(plugin, selectedMethodId, context);
+  return method && isValueSortingMethod(method) ? method : undefined;
+}
+
+export function resolveGroupingMethod<Key extends string, Data, Config>(
+  plugin: CellPlugin<Key, Data, Config>,
+  selectedMethodId?: string,
+): ResolvedGroupingMethod<Data, Config> {
   const methods = plugin.grouping?.methods ?? [];
-  const method =
-    methods.find((method) => method.id === plugin.grouping?.defaultMethod) ??
-    methods[0];
+  const method = resolveRegisteredMethod(
+    methods,
+    selectedMethodId,
+    plugin.grouping?.defaultMethod,
+  );
 
   if (method) return method;
 
@@ -282,7 +435,7 @@ export function resolveGroupingMethod(plugin: CellPlugin) {
     id: "legacy",
     name: "Legacy",
     function: (data: unknown, row: Row) =>
-      (plugin.toGroupValue ?? plugin.toValue)(data, row),
+      (plugin.toGroupValue ?? plugin.toValue)(data as Data, row),
   };
 }
 

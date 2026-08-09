@@ -173,7 +173,12 @@ export const ExtendedGroupingFeature: TableFeature = {
 
       rows.forEach((row) => {
         const original: unknown = row.properties[info.id]?.value;
-        const value = groupingMethod.function(original, row, info.id);
+        const value = groupingMethod.function(original, row, info.id, {
+          table,
+          colId: info.id,
+          config: info.config,
+          weekStartsOn: 1,
+        });
         const id = createGroupId(info.id, value);
         if (!entries.has(id)) {
           entries.set(id, { id, value, original });
