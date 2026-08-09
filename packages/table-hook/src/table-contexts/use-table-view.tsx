@@ -168,10 +168,10 @@ function useResourceState<TResource, TAction>({
 export function useTableView<TPlugins extends CellPlugin[]>(
   options: UseTableViewOptions<TPlugins>,
 ) {
-  const weekStartsOn = options.weekStartsOn ?? 1;
   const tableRef = useRef<_TableInstance | null>(null);
   const {
     plugins,
+    weekStartsOn = 1,
     getRowUrl,
     onDataChange,
     onPropertiesChange,

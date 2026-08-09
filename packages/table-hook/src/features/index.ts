@@ -165,4 +165,4 @@ export const DEFAULT_FEATURES = tableFeatures({
   tableMenuFeature: TableMenuFeature,
   rowActionsFeature: RowActionsFeature,
   extendedGroupingFeature: ExtendedGroupingFeature,
-} satisfies TableFeatures);
+});

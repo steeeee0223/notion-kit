@@ -143,7 +143,7 @@ export function PropMenu({ propId, view }: PropMenuProps) {
                 className="w-50"
                 collisionPadding={12}
               >
-                <CalcMenu id={propId} type={info.type} />
+                <CalcMenu id={propId} />
               </DropdownMenuContent>
             </DropdownMenuSub>
             <DropdownMenuItem
