@@ -1,7 +1,12 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { expect, it, vi } from "vitest";
 
-import type { ColumnInfo, Row } from "@notion-kit/table-hook";
+import type {
+  CellPlugin,
+  ColumnInfo,
+  Row,
+  TableViewState,
+} from "@notion-kit/table-hook";
 
 import {
   findMenuByHeading,
@@ -10,6 +15,7 @@ import {
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
 import type { TableViewObject } from "@/__tests__/component-objects/table-view";
 import { mockData, mockProperties, mockResizeObserver } from "@/__tests__/mock";
+import { DEFAULT_PLUGINS } from "@/plugins";
 
 mockResizeObserver();
 
@@ -172,6 +178,91 @@ it("PropMenu_Group_TogglesGroupedRowsAndHeaderAction", async () => {
     expect(screen.queryAllByRole("group", { name: /^Group / })).toHaveLength(0),
   );
 });
+
+it("PropMenu_QuickSortUsesPluginLabelsDefaultMethodAndInlineRuntime", async () => {
+  const onViewChange = vi.fn();
+  const plugin: CellPlugin<"rank-code", string, undefined> = {
+    id: "rank-code",
+    meta: { name: "Rank code", desc: "Rank code", icon: null },
+    default: { name: "Rank code", icon: null, config: undefined, data: "" },
+    fromValue: (value) => String(value ?? ""),
+    toValue: (value) => value,
+    toTextValue: (value) => value,
+    sorting: {
+      defaultMethod: "length",
+      methods: [
+        {
+          id: "alphabetical",
+          name: "Alphabetical",
+          ascendingLabel: "A first",
+          descendingLabel: "Z first",
+          function: () => 0,
+        },
+        {
+          id: "length",
+          name: "Length",
+          ascendingLabel: "Short first",
+          descendingLabel: "Long first",
+          function: (rowA, rowB, colId) =>
+            String(rowA.properties[colId]?.value ?? "").length -
+            String(rowB.properties[colId]?.value ?? "").length,
+        },
+      ],
+    },
+    renderCell: ({ data }) => <span>{data}</span>,
+  };
+  const tableView = renderTableView({
+    plugins: [...DEFAULT_PLUGINS, plugin],
+    properties: [
+      { id: "name", name: "Name", type: "title", config: { showIcon: true } },
+      { id: "rank", name: "Rank", type: "rank-code" },
+    ],
+    data: [
+      customRow("one", "One", "bbb"),
+      customRow("two", "Two", "a"),
+      customRow("three", "Three", "cc"),
+    ],
+    onViewChange,
+  });
+  const menu = await openHeader(tableView, "Rank");
+  await tableView.user.hover(
+    within(menu).getByRole("menuitem", { name: "Sort" }),
+  );
+
+  expect(
+    await screen.findByRole("menuitem", { name: "Short first" }),
+  ).toBeVisible();
+  expect(screen.getByRole("menuitem", { name: "Long first" })).toBeVisible();
+  await tableView.user.click(
+    screen.getByRole("menuitem", { name: "Short first" }),
+  );
+
+  await waitFor(() =>
+    expect(tableView.rowOrder(["One", "Two", "Three"])).toEqual([
+      "Two",
+      "Three",
+      "One",
+    ]),
+  );
+  const viewChange = onViewChange.mock.lastCall?.[0] as
+    | { next: TableViewState }
+    | undefined;
+  expect(viewChange?.next.pluginMethods).toMatchObject({
+    sortingMethodByColumn: { rank: "length" },
+  });
+});
+
+function customRow(id: string, name: string, rank: string): Row {
+  return {
+    id,
+    createdAt: 0,
+    lastEditedAt: 0,
+    properties: {
+      name: { id: `${id}-name`, value: name },
+      rank: { id: `${id}-rank`, value: rank },
+    },
+  };
+}
 
 it("PropMenu_Duplicate_ReportsExactPropertyAction", async () => {
   // Arrange

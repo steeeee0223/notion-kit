@@ -33,6 +33,11 @@ import {
 import { DefaultIcon } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
+import {
+  getDefaultSortingMethod,
+  getSortingDirectionLabels,
+} from "./sorting-options";
+
 export function SortMenu() {
   const { table } = useTableViewCtx();
   const [addingSort, setAddingSort] = useState(false);
@@ -109,10 +114,27 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
   };
 
   return (
-    <table.Subscribe selector={(state) => state.columnsInfo}>
-      {(columnsInfo) => {
+    <table.Subscribe
+      selector={(state) => ({
+        columnsInfo: state.columnsInfo,
+        pluginMethods: state.tableGlobal.pluginMethods,
+      })}
+    >
+      {({ columnsInfo }) => {
         const current = columnsInfo[currentId]!;
         const properties = Object.values(columnsInfo);
+        const methods = table.getColumnSortingMethods(currentId);
+        const selectedMethod = table.getSelectedSortingMethod(currentId);
+        const labels = getSortingDirectionLabels(selectedMethod);
+        const directionLabel = desc ? labels.descending : labels.ascending;
+
+        const replaceProperty = (id: string) => {
+          const defaultMethod = getDefaultSortingMethod(
+            table.getColumnPlugin(id),
+          );
+          if (defaultMethod) table.setColumnSortingMethod(id, defaultMethod.id);
+          updateRule({ id, desc });
+        };
 
         return (
           <Sortable.Item
@@ -124,11 +146,15 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
                 className="h-9"
                 icon={<Sortable.Handle aria-label={`Move ${current.name}`} />}
                 label={
-                  <div className="grid h-8 w-full grid-cols-2 items-center gap-1.5">
+                  <div
+                    className={`grid h-8 w-full items-center gap-1.5 ${
+                      methods.length > 1 ? "grid-cols-3" : "grid-cols-2"
+                    }`}
+                  >
                     <Select
                       value={currentId}
                       onValueChange={(id) => {
-                        if (id !== null) updateRule({ id, desc });
+                        if (id !== null) replaceProperty(id);
                       }}
                     >
                       <SelectTrigger
@@ -165,6 +191,39 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
+                    {methods.length > 1 && selectedMethod && (
+                      <Select
+                        value={selectedMethod.id}
+                        onValueChange={(methodId) => {
+                          if (methodId !== null) {
+                            table.setColumnSortingMethod(currentId, methodId);
+                            table.setSorting((sorting) => [...sorting]);
+                          }
+                        }}
+                      >
+                        <SelectTrigger
+                          aria-label="Sort method"
+                          className="my-0 w-full max-w-45 border border-border"
+                        >
+                          <SelectValue aria-label="Sort method">
+                            <span className="truncate">
+                              {selectedMethod.name}
+                            </span>
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            {methods.map((method) => (
+                              <SelectItem
+                                key={method.id}
+                                value={method.id}
+                                label={method.name}
+                              />
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
                     <Select
                       value={desc ? "desc" : "asc"}
                       onValueChange={(value) =>
@@ -172,19 +231,17 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
                       }
                     >
                       <SelectTrigger
-                        aria-label={desc ? "Descending" : "Ascending"}
+                        aria-label={directionLabel}
                         className="my-0 w-full max-w-45 border border-border"
                       >
-                        <SelectValue aria-label={desc ? "desc" : "asc"}>
-                          <span className="truncate">
-                            {desc ? "Descending" : "Ascending"}
-                          </span>
+                        <SelectValue aria-label={directionLabel}>
+                          <span className="truncate">{directionLabel}</span>
                         </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectItem value="asc" label="Ascending" />
-                          <SelectItem value="desc" label="Descending" />
+                          <SelectItem value="asc" label={labels.ascending} />
+                          <SelectItem value="desc" label={labels.descending} />
                         </SelectGroup>
                       </SelectContent>
                     </Select>
@@ -214,6 +271,8 @@ function PropSelectMenu({ onSelect }: { onSelect: () => void }) {
   const { table } = useTableViewCtx();
 
   const selectProp = (id: string) => {
+    const defaultMethod = getDefaultSortingMethod(table.getColumnPlugin(id));
+    if (defaultMethod) table.setColumnSortingMethod(id, defaultMethod.id);
     table.setSorting((prev) => [...prev, { id, desc: false }]);
     onSelect();
   };

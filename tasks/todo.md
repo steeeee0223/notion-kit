@@ -1,6 +1,6 @@
 # Table View Plugin Functions Todo — Hybrid Revision
 
-Status: T01–T09 complete; revised T10–T13 approved on 2026-08-10
+Status: T01–T11 complete; revised T12–T13 approved on 2026-08-10
 
 Sources of truth:
 
@@ -36,8 +36,8 @@ Sources of truth:
   ├─ [x] T07 Text/select/checkbox registrations
   ├─ [x] T08 Number methods
   └─ [x] T09 Date methods
-          ├─ [ ] T10 Sort/property menus
-          └─ [ ] T11 Group menu/order
+          ├─ [x] T10 Sort/property menus
+          └─ [x] T11 Group menu/order
                     ▼
               [ ] T12 Compatibility audit
                     ▼
@@ -163,7 +163,7 @@ T07, T08, and pure utilities in T09 are parallel-safe after T05. T10/T11 require
     - `$NVM_BIN/pnpm --filter @notion-kit/table-hook test src/fns/__tests__/calculating.test.ts src/fns/__tests__/grouping.test.ts`
     - `$NVM_BIN/pnpm --filter @notion-kit/table-view test src/plugins/date/utils.test.ts src/plugins/plugins.test.tsx`
 
-- [ ] **T10 — Complete sorting and property menus**
+- [x] **T10 — Complete sorting and property menus**
   - Dependencies: T07–T09 as applicable.
   - Acceptance:
     - labels and optional method selector come from capabilities;
@@ -172,7 +172,7 @@ T07, T08, and pure utilities in T09 are parallel-safe after T05. T10/T11 require
   - Verify:
     - `$NVM_BIN/pnpm --filter @notion-kit/table-view test src/menus/sort-menu.test.tsx src/menus/prop-menu.test.tsx`
 
-- [ ] **T11 — Complete grouping menu and automatic group ordering**
+- [x] **T11 — Complete grouping menu and automatic group ordering**
   - Dependencies: T03, T07–T09.
   - Acceptance:
     - grouping-key choices and group-sort choices are capability-driven;
@@ -211,5 +211,5 @@ T07, T08, and pure utilities in T09 are parallel-safe after T05. T10/T11 require
 
 - [x] After T05–T06: `/fns` package boundary, hybrid bridge, calculation compatibility, and row-scope tests pass.
 - [x] After T07–T09: all 12 built-ins register the approved matrix.
-- [ ] After T10–T11: all menus are capability-driven and custom-plugin integration passes.
+- [x] After T10–T11: all menus are capability-driven and custom-plugin integration passes.
 - [ ] After T12–T13: compatibility and full package verification pass; filtering remains out of scope.

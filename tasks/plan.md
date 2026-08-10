@@ -194,7 +194,7 @@ T05 hybrid execution contract and TanStack bridge
           T13 full verification
 ```
 
-T07–T09 are complete. T10 and T11 require these registrations. T12 and T13 are sequential integration checkpoints.
+T07–T11 are complete. T12 and T13 are sequential integration checkpoints.
 
 ## 7. Implementation Slices
 
@@ -296,9 +296,13 @@ Implement earliest/latest/range plus Relative/Day/Week/Month/Year grouping as pu
 
 ### T10 — Complete sorting and property-menu consumers
 
+Status: Complete.
+
 Render plugin labels/method choices, persist stable method IDs, and keep direction in TanStack sorting state. Prove a custom runtime plugin works through inline execution without table-view type switches.
 
 ### T11 — Complete grouping menu and automatic group ordering
+
+Status: Complete.
 
 Render grouping-key choices and Manual/automatic group order from plugin capabilities. Reuse value-comparator semantics for automatic group order; keep manual drag and visibility state in `table-hook`.
 

@@ -1,8 +1,17 @@
-import { screen, waitFor } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { screen, waitFor, within } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+
+import type {
+  CellPlugin,
+  ColumnInfo,
+  Row,
+  TableViewState,
+} from "@notion-kit/table-hook";
+
+import { DEFAULT_PLUGINS } from "@/plugins";
 
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
-import { mockResizeObserver } from "../__tests__/mock";
+import { createFullPluginFixture, mockResizeObserver } from "../__tests__/mock";
 
 mockResizeObserver();
 
@@ -18,7 +27,7 @@ describe("SortMenu", () => {
     await waitFor(() => {
       expect(sort.querySearchInput()).not.toBeInTheDocument();
     });
-    expect(sort.directionTrigger("Ascending")).toBeVisible();
+    expect(sort.directionTrigger("Checked → unchecked")).toBeVisible();
     expect(sort.moveHandle("Done")).toBeVisible();
   });
 
@@ -29,7 +38,7 @@ describe("SortMenu", () => {
 
     await sort.deleteAll();
 
-    expect(sort.queryDirection("Ascending")).not.toBeInTheDocument();
+    expect(sort.queryDirection("A → Z")).not.toBeInTheDocument();
   });
 
   it("SortMenu_TypedSearch_RemainsInAddPanel", async () => {
@@ -48,9 +57,9 @@ describe("SortMenu", () => {
     const sort = await tableView.openSortMenu();
     await sort.addRule("Name");
 
-    await sort.openDirection("Ascending");
+    await sort.openDirection("A → Z");
 
-    expect(sort.directionOption("Descending")).toBeVisible();
+    expect(sort.directionOption("Z → A")).toBeVisible();
   });
 
   it("SortMenu_DirectionSelection_ChangesExistingRule", async () => {
@@ -58,10 +67,10 @@ describe("SortMenu", () => {
     const sort = await tableView.openSortMenu();
     await sort.addRule("Name");
 
-    await sort.openDirection("Ascending");
-    await tableView.user.click(sort.directionOption("Descending"));
+    await sort.openDirection("A → Z");
+    await tableView.user.click(sort.directionOption("Z → A"));
 
-    expect(sort.directionTrigger("Descending")).toBeVisible();
+    expect(sort.directionTrigger("Z → A")).toBeVisible();
   });
 
   it("SortMenu_PropertySelection_ReplacesRuleProperty", async () => {
@@ -79,6 +88,7 @@ describe("SortMenu", () => {
     );
 
     expect(sort.moveHandle("Done")).toBeVisible();
+    expect(sort.directionTrigger("Checked → unchecked")).toBeVisible();
   });
 
   it("SortMenu_AddPanel_DisablesAlreadySortedProperties", async () => {
@@ -110,6 +120,139 @@ describe("SortMenu", () => {
 
     await sort.remove("Name");
 
-    expect(sort.queryDirection("Ascending")).not.toBeInTheDocument();
+    expect(sort.queryDirection("A → Z")).not.toBeInTheDocument();
+  });
+
+  it("SortMenu_UsesPluginDirectionLabelsAndKeepsOneMethodCompact", async () => {
+    const tableView = renderTableView();
+    const sort = await tableView.openSortMenu();
+
+    await sort.addRule("Name");
+
+    expect(
+      within(sort.root).getByRole("combobox", { name: "A → Z" }),
+    ).toBeVisible();
+    expect(
+      within(sort.root).queryByRole("combobox", { name: "Sort method" }),
+    ).not.toBeInTheDocument();
+    await tableView.user.click(
+      within(sort.root).getByRole("combobox", { name: "A → Z" }),
+    );
+    expect(screen.getByRole("option", { name: "Z → A" })).toBeVisible();
+  });
+
+  it("SortMenu_UsesNumberCheckboxAndDateDirectionLabels", async () => {
+    const tableView = renderTableView(createFullPluginFixture());
+    const sort = await tableView.openSortMenu();
+
+    await sort.addRule("Score");
+    expect(sort.directionTrigger("Low → high")).toBeVisible();
+    await sort.addRule("Complete");
+    expect(sort.directionTrigger("Checked → unchecked")).toBeVisible();
+    await sort.addRule("Due");
+    expect(sort.directionTrigger("Old → new")).toBeVisible();
+  });
+
+  it("SortMenu_CustomRuntimePlugin_SelectsMethodAndExecutesInline", async () => {
+    const onViewChange = vi.fn();
+    const customPlugin: CellPlugin<"priority-code", string, undefined> = {
+      id: "priority-code",
+      meta: { name: "Priority code", desc: "Priority code", icon: null },
+      default: {
+        name: "Priority code",
+        icon: null,
+        config: undefined,
+        data: "",
+      },
+      fromValue: (value) => String(value ?? ""),
+      toValue: (value) => value,
+      toTextValue: (value) => value,
+      sorting: {
+        defaultMethod: "alphabetical",
+        methods: [
+          {
+            id: "alphabetical",
+            name: "Alphabetical",
+            ascendingLabel: "A first",
+            descendingLabel: "Z first",
+            function: (rowA, rowB, colId) =>
+              String(rowA.properties[colId]?.value ?? "").localeCompare(
+                String(rowB.properties[colId]?.value ?? ""),
+              ),
+          },
+          {
+            id: "length",
+            name: "Code length",
+            ascendingLabel: "Short first",
+            descendingLabel: "Long first",
+            function: (rowA, rowB, colId) =>
+              String(rowA.properties[colId]?.value ?? "").length -
+              String(rowB.properties[colId]?.value ?? "").length,
+          },
+        ],
+      },
+      renderCell: ({ data }) => <span>{data}</span>,
+    };
+    const properties: ColumnInfo[] = [
+      { id: "name", name: "Name", type: "title", config: { showIcon: true } },
+      {
+        id: "code",
+        name: "Code",
+        type: "priority-code",
+        config: undefined,
+      },
+    ];
+    const data: Row[] = [
+      row("one", "One", "bbb"),
+      row("two", "Two", "a"),
+      row("three", "Three", "cc"),
+    ];
+    const tableView = renderTableView({
+      plugins: [...DEFAULT_PLUGINS, customPlugin],
+      properties,
+      data,
+      onViewChange,
+    });
+    const sort = await tableView.openSortMenu();
+
+    await sort.addRule("Code");
+    const method = within(sort.root).getByRole("combobox", {
+      name: "Sort method",
+    });
+    expect(method).toHaveTextContent("Alphabetical");
+    await tableView.user.click(method);
+    await tableView.user.click(
+      screen.getByRole("option", { name: "Code length" }),
+    );
+
+    await waitFor(() =>
+      expect(tableView.rowOrder(["One", "Two", "Three"])).toEqual([
+        "Two",
+        "Three",
+        "One",
+      ]),
+    );
+    expect(
+      within(sort.root).getByRole("combobox", { name: "Short first" }),
+    ).toBeVisible();
+    const viewChange = onViewChange.mock.lastCall?.[0] as
+      | { next: TableViewState }
+      | undefined;
+    expect(viewChange?.next.pluginMethods).toMatchObject({
+      sortingMethodByColumn: { code: "length" },
+    });
+    expect(viewChange?.next).not.toHaveProperty("sorting");
   });
 });
+
+function row(id: string, name: string, code: string): Row {
+  return {
+    id,
+    createdAt: 0,
+    lastEditedAt: 0,
+    properties: {
+      name: { id: `${id}-name`, value: name },
+      code: { id: `${id}-code`, value: code },
+    },
+  };
+}

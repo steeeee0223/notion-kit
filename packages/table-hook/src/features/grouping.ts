@@ -12,7 +12,11 @@ import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 import type { _RowInstance, _TableInstance } from "@/features/types";
 import { createGroupId } from "@/features/utils";
 import type { ColumnInfo, Row as RowModel } from "@/lib/types";
-import { resolveGroupSortingMethod, type Weekday } from "@/methods";
+import {
+  getGroupSortableSortingMethods,
+  resolveGroupSortingMethod,
+  type Weekday,
+} from "@/methods";
 import type { ComparableValue } from "@/plugins";
 import { DefaultGroupingValue } from "@/plugins";
 import { createRuntimePluginMethodContext } from "@/table-contexts/plugin-method-context";
@@ -316,10 +320,29 @@ export const ExtendedGroupingFeature: TableFeature = {
       table._syncGroupingState({ resetOrder: true });
     };
     table.setGroupingColumn = (updater) => {
-      table.setGrouping((v) => {
-        const colId = functionalUpdate(updater, v.length > 0 ? v[0]! : null);
-        return colId ? [colId] : [];
-      });
+      const grouping = table.atoms.grouping.get();
+      const colId = functionalUpdate(
+        updater,
+        grouping.length > 0 ? grouping[0]! : null,
+      );
+      table.setGrouping(colId ? [colId] : []);
+      const groupSort = table.getGroupSort();
+      if (groupSort.mode !== "automatic") return;
+      if (!colId) {
+        table.setGroupSort({ mode: "manual" });
+        return;
+      }
+      const plugin = table.getColumnPlugin(colId);
+      const methods = getGroupSortableSortingMethods(plugin);
+      if (methods.some((method) => method.id === groupSort.method)) return;
+      const defaultMethod =
+        methods.find((method) => method.id === plugin.sorting?.defaultMethod) ??
+        methods[0];
+      table.setGroupSort(
+        defaultMethod
+          ? { ...groupSort, method: defaultMethod.id }
+          : { mode: "manual" },
+      );
     };
     table.toggleHideEmptyGroups = () => {
       table._setGroupingState((v) => ({

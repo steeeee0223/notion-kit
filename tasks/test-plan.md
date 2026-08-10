@@ -1,6 +1,6 @@
 # Table View Plugin Functions Test Strategy
 
-Status: Approved on 2026-08-10; suites T01–T09 have landed; T10–T11 remain
+Status: Approved on 2026-08-10; suites T01–T11 have landed; T12–T13 remain
 
 Related documents:
 

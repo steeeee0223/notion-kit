@@ -317,6 +317,128 @@ describe("useTableView - Extended Grouping", () => {
       );
     });
 
+    it("resets automatic group sorting when the grouping column does not support it", () => {
+      const manualOnlyPlugin: CellPlugin<
+        "manual-grouping-method",
+        string,
+        undefined
+      > = {
+        ...groupingMethodPlugin,
+        id: "manual-grouping-method",
+        sorting: {
+          ...groupingMethodPlugin.sorting!,
+          enableGroupSort: false,
+        },
+      };
+      const properties: ColumnInfo[] = [
+        ...groupingMethodProperties,
+        {
+          id: "manual-method",
+          name: "Manual method",
+          type: "manual-grouping-method",
+          width: "200",
+          config: undefined,
+        },
+      ];
+      const data = groupingMethodData.map((row) => ({
+        ...row,
+        properties: {
+          ...row.properties,
+          "manual-method": {
+            id: `${row.id}-manual-method`,
+            value: String(row.properties.method?.value ?? ""),
+          },
+        },
+      }));
+      const { result } = renderHook(() =>
+        useTableView({
+          defaultData: data,
+          defaultProperties: properties,
+          plugins: arrayToEntity([groupingMethodPlugin, manualOnlyPlugin]),
+        }),
+      );
+
+      act(() => {
+        result.current.table.setGroupingColumn("method");
+        result.current.table.setGroupSort({
+          mode: "automatic",
+          method: "numeric",
+          desc: false,
+        });
+      });
+      act(() => {
+        result.current.table.setGroupingColumn("manual-method");
+      });
+
+      expect(result.current.table.getGroupSort()).toEqual({ mode: "manual" });
+    });
+
+    it("selects the new default when the automatic group sorting method is incompatible", () => {
+      const lexicalPlugin: CellPlugin<
+        "lexical-grouping-method",
+        string,
+        undefined
+      > = {
+        ...groupingMethodPlugin,
+        id: "lexical-grouping-method",
+        sorting: {
+          defaultMethod: "lexical",
+          methods: [
+            {
+              ...groupingMethodPlugin.sorting!.methods[0]!,
+              id: "lexical",
+              name: "Lexical",
+            },
+          ],
+        },
+      };
+      const properties: ColumnInfo[] = [
+        ...groupingMethodProperties,
+        {
+          id: "lexical-method",
+          name: "Lexical method",
+          type: "lexical-grouping-method",
+          width: "200",
+          config: undefined,
+        },
+      ];
+      const data = groupingMethodData.map((row) => ({
+        ...row,
+        properties: {
+          ...row.properties,
+          "lexical-method": {
+            id: `${row.id}-lexical-method`,
+            value: String(row.properties.method?.value ?? ""),
+          },
+        },
+      }));
+      const { result } = renderHook(() =>
+        useTableView({
+          defaultData: data,
+          defaultProperties: properties,
+          plugins: arrayToEntity([groupingMethodPlugin, lexicalPlugin]),
+        }),
+      );
+
+      act(() => {
+        result.current.table.setGroupingColumn("method");
+        result.current.table.setGroupSort({
+          mode: "automatic",
+          method: "numeric",
+          desc: true,
+        });
+      });
+      act(() => {
+        result.current.table.setGroupingColumn("lexical-method");
+      });
+
+      expect(result.current.table.getGroupSort()).toEqual({
+        mode: "automatic",
+        method: "lexical",
+        desc: true,
+      });
+    });
+
     it("rebuilds groups and prunes only stale visibility after changing methods", async () => {
       const table = renderGroupingMethodTable();
 
