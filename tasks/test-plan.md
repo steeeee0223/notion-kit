@@ -1,6 +1,6 @@
 # Table View Plugin Functions Test Strategy
 
-Status: Revised for hybrid architecture review on 2026-08-09; baseline suites T01–T04 have landed
+Status: Approved on 2026-08-10; baseline suites T01–T04 have landed
 
 Related documents:
 
@@ -10,7 +10,7 @@ Related documents:
 
 ## Objective
 
-Build high-value test suites that prove the plugin capability matrix works end to end through the hybrid boundary: plugin capability metadata, TanStack-native execution seams, and table-hook's state/Notion orchestration. The suites prioritize method semantics, fallback order, state/resource integrity, native-reference/inline parity, aggregation row scope, timezone and numeric boundaries, custom-plugin extensibility, accessibility-facing menu behavior, and backward compatibility.
+Build high-value test suites that prove the plugin capability matrix works end to end through the hybrid boundary: the UI-free `@notion-kit/table-hook/fns` public function entrypoint, plugin capability metadata, TanStack-native execution seams, and table-hook's state/Notion orchestration. The suites prioritize the package export boundary, method semantics, fallback order, state/resource integrity, native-reference/inline parity, aggregation row scope, timezone and numeric boundaries, custom-plugin extensibility, accessibility-facing menu behavior, and backward compatibility.
 
 Coverage percentage is a guardrail, not the goal. Every test must kill a plausible regression: wrong method selection, incorrect bucket boundary, lost resource state, incorrect unit formatting, unstable timezone behavior, unsupported option leakage, or a generic menu that silently reintroduces a built-in type switch.
 
@@ -66,6 +66,7 @@ Do not run these two coverage commands concurrently unless each is configured wi
 - Date tests do not cover Relative buckets, configurable week starts, DST, or range duration.
 - Unknown persisted method IDs and legacy plugins are not tested across UI and resource boundaries.
 - Current UI tests cover roles and interactions but not the accessibility names introduced by plugin-specific labels.
+- `@notion-kit/table-hook` currently has only a root build/export entry, and common method values are re-exported from that root; no test protects an independent, UI-free `/fns` entrypoint.
 
 ## Testing Pyramid
 
@@ -117,8 +118,36 @@ The suite must fail if any of these mutations are introduced:
 - add `calcFns` or `groupByFns` as top-level `TableFeatures` registries;
 - execute all footer calculations permanently against `getCoreRowModel()`;
 - require a runtime custom plugin to mutate static `DEFAULT_FEATURES` before its functions can execute.
+- remove or mis-map the `@notion-kit/table-hook/fns` package export or its declaration entry;
+- re-export a common `/fns` function value from `@notion-kit/table-hook`;
+- make the emitted `dist/fns.mjs` import the root bundle, React, table contexts, `@notion-kit/ui`, or `@dnd-kit/*`.
 
-## Suite 1 — Table-hook Method Contracts
+## Suite 1 — Public Function Entrypoint and Pure Contracts
+
+**Files:**
+
+- `packages/table-hook/src/fns/__tests__/sorting.test.ts`
+- `packages/table-hook/src/fns/__tests__/grouping.test.ts`
+- `packages/table-hook/src/fns/__tests__/calculating.test.ts`
+- `packages/table-hook/src/__tests__/fns-exports.test.ts`
+- `packages/table-hook/package.json`
+- `packages/table-hook/tsdown.config.ts`
+
+**Type:** Pure unit, public API contract, and post-build artifact smoke tests.
+
+**High-value cases:**
+
+1. The `/fns` barrel exposes the exact reusable built-in sorting, grouping-key, and calculation function manifest plus only the execution types/options those functions require.
+2. The root barrel does not expose any common function value owned by `/fns`; descriptor and resolver APIs remain available from the root.
+3. `package.json` maps `./fns` to `dist/fns.mjs` and `dist/fns.d.mts`, and `tsdown` declares independent `index` and `fns` entries.
+4. After build, a package self-reference import of `@notion-kit/table-hook/fns` succeeds and every expected function is callable.
+5. The emitted `dist/fns.mjs` neither imports `dist/index.mjs` nor contains/imports React, table contexts, plugin descriptor modules, `@notion-kit/ui`, or `@dnd-kit/*`.
+6. Common functions accept neutral values and explicit option objects; tests do not construct React elements, table instances, or `CellPlugin` descriptors.
+7. `table-view` built-in descriptors consume common functions through `@notion-kit/table-hook/fns`, never a private `table-hook/src` path.
+
+Run pure tests before build, then run the package build and package-self-reference smoke check. Treat the artifact dependency assertion as an entrypoint-isolation check; semantic edge cases remain in the domain suites below.
+
+## Suite 2 — Table-hook Method Contracts
 
 **File:** `packages/table-hook/src/__tests__/plugin-methods.test.tsx`
 
@@ -154,7 +183,7 @@ it.each([
 
 Avoid asserting internal atom layout here; assert public resolver/table behavior.
 
-## Suite 2 — Selection State and Resource Integrity
+## Suite 3 — Selection State and Resource Integrity
 
 **Files:**
 
@@ -197,7 +226,7 @@ expect(onViewChange).toHaveBeenLastCalledWith({
 });
 ```
 
-## Suite 3 — Calculation Aggregation and Generic Discovery
+## Suite 4 — Calculation Aggregation and Generic Discovery
 
 **Files:**
 
@@ -232,7 +261,7 @@ expect(screen.getByRole("button", { name: "Name calculation" }))
   .toHaveTextContent("2");
 ```
 
-## Suite 4 — Built-in Registration Matrix
+## Suite 5 — Built-in Registration Matrix
 
 **File:** `packages/table-view/src/plugins/plugins.test.tsx`
 
@@ -269,12 +298,13 @@ Additional semantic cases:
 - multi-select empty arrays remain last ascending;
 - link/title/text share semantics without sharing mutable descriptor arrays.
 
-## Suite 5 — Number Methods and Formatting
+## Suite 6 — Number Methods and Formatting
 
 **Files:**
 
+- `packages/table-hook/src/fns/__tests__/calculating.test.ts`
+- `packages/table-hook/src/fns/__tests__/grouping.test.ts`
 - `packages/table-view/src/plugins/number/format.test.ts`
-- `packages/table-view/src/plugins/number/methods.test.ts`
 - `packages/table-view/src/plugins/cell-renderers.test.tsx`
 
 **Type:** Pure unit tests and one renderer regression suite.
@@ -323,11 +353,12 @@ Use `it.each` across sizes 1, 10, 100, and 1000. For every size test:
 
 Do not snapshot bucket labels; assert exact lower/upper formatted endpoints.
 
-## Suite 6 — Date Methods and Timezone Boundaries
+## Suite 7 — Date Methods and Timezone Boundaries
 
 **Files:**
 
-- `packages/table-view/src/plugins/date/methods.test.ts`
+- `packages/table-hook/src/fns/__tests__/calculating.test.ts`
+- `packages/table-hook/src/fns/__tests__/grouping.test.ts`
 - `packages/table-view/src/plugins/date/utils.test.ts`
 - `packages/table-view/src/plugins/plugins.test.tsx`
 
@@ -367,7 +398,7 @@ For Relative, cover every bucket and precedence:
 - date range uses start even when end is in another bucket;
 - stable bucket IDs map to chronological `toSortValue` anchors.
 
-## Suite 7 — Sorting and Grouping Menu Integration
+## Suite 8 — Sorting and Grouping Menu Integration
 
 **Files:**
 
@@ -412,7 +443,7 @@ For Relative, cover every bucket and precedence:
 
 Prefer visible behavior over internal atom assertions. Internal state is asserted only in table-hook suites.
 
-## Suite 8 — Compatibility and Workflow Smoke Tests
+## Suite 9 — Compatibility and Workflow Smoke Tests
 
 **Files:**
 
@@ -433,6 +464,8 @@ Keep this suite small. Cover three workflows:
 
 Add a static architecture audit, not a filtering behavior workflow:
 
+- built-in plugin descriptors import common execution functions from `@notion-kit/table-hook/fns`;
+- the root package does not re-export `/fns` function values;
 - production code exposes no `calcFns` or `groupByFns` API;
 - no filter UI, filter state/AST, filter predicate, or filter registry entry is introduced;
 - calculation row scope is obtained from the pre-grouped boundary so a future filtered model can compose before it.
@@ -456,6 +489,7 @@ These tests prove composition; they should not repeat every numeric/date edge ca
 - Builders must require the value relevant to the test and provide deterministic IDs/timestamps.
 - Keep domain matrices adjacent to the domain test file.
 - Custom plugin fixtures belong in test utilities, never production exports.
+- Public common built-ins belong in `/fns`; fixtures and plugin-specific adapters must not be added to that barrel.
 - Do not share mutable plugin descriptor arrays between cases.
 - Use `it.each` for value boundaries and registration matrices; use named individual tests for state transitions and workflows.
 - Test names follow the repository's `Subject_Scenario_ExpectedResult` convention.
@@ -468,8 +502,7 @@ Run the smallest suite associated with the current implementation slice:
 
 ```sh
 pnpm --filter @notion-kit/table-hook test src/__tests__/plugin-methods.test.tsx
-pnpm --filter @notion-kit/table-view test src/plugins/number/methods.test.ts
-pnpm --filter @notion-kit/table-view test src/plugins/date/methods.test.ts
+pnpm --filter @notion-kit/table-hook test src/fns/__tests__/sorting.test.ts src/fns/__tests__/grouping.test.ts src/fns/__tests__/calculating.test.ts src/__tests__/fns-exports.test.ts
 pnpm --filter @notion-kit/table-view test src/menus/calc-menu.test.tsx
 pnpm --filter @notion-kit/table-view test src/menus/sort-menu.test.tsx src/menus/edit-group-menu.test.tsx
 ```
@@ -499,6 +532,7 @@ pnpm --filter @notion-kit/table-hook lint
 pnpm --filter @notion-kit/table-view lint
 pnpm --filter @notion-kit/table-hook build
 pnpm --filter @notion-kit/table-view build
+node --input-type=module -e "const fns = await import('@notion-kit/table-hook/fns'); if (!Object.keys(fns).length) process.exit(1)"
 pnpm test
 pnpm typecheck:affected
 pnpm lint:affected
@@ -507,6 +541,7 @@ pnpm lint:affected
 ## Exit Criteria
 
 - Every matrix capability has an exact registration assertion.
+- The exact `/fns` export manifest, package export map, declaration target, root non-export, and built artifact isolation are verified.
 - Every new stable method ID has a semantic unit test and at least one resolver or UI selection path.
 - Every resolver fallback and unknown-ID branch is covered.
 - Numeric exact/negative boundaries and all four intervals are covered.
@@ -522,4 +557,4 @@ pnpm lint:affected
 
 ## Phase Gate
 
-Remaining T05–T13 implementation begins after the revised strategy, `tasks/plan.md`, and `tasks/todo.md` are approved. Landed T01–T04 commits remain the baseline and are not rewritten solely for this revision.
+The revised strategy, `tasks/plan.md`, and `tasks/todo.md` were approved on 2026-08-10. T05–T13 implementation may begin; landed T01–T04 commits remain the baseline and are not rewritten solely for this revision.

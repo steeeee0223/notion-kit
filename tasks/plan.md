@@ -1,6 +1,6 @@
 # Table View Plugin Functions — Hybrid Implementation Plan
 
-Status: Revised for review on 2026-08-09; T01–T04 already landed
+Status: Approved on 2026-08-10; T01–T04 already landed
 
 > Implementation workers must use `subagent-driven-development` or `executing-plans`, follow the dependency order in `tasks/todo.md`, and use test-driven development for each remaining slice.
 
@@ -22,6 +22,7 @@ This plan does **not** add `calcFns` or `groupByFns` to `TableFeatures`. TanStac
 ### In scope
 
 - Complete the documented function matrix for title, text, number, checkbox, select, multi-select, email, phone, URL, date, created time, and last edited time.
+- Publish reusable built-in sorting, grouping-key, and calculation functions from the dedicated `@notion-kit/table-hook/fns` subpath.
 - Keep stable method IDs and backward-compatible resolver fallbacks.
 - Use TanStack-native boundaries where they exist:
   - sorting: `sortFns` / `ColumnDef.sortFn`;
@@ -38,6 +39,7 @@ This plan does **not** add `calcFns` or `groupByFns` to `TableFeatures`. TanStac
 - Adding `calcFns` or `groupByFns` as pseudo-native TanStack slots.
 - Forking or patching `@tanstack/table-core`.
 - Adding absent plugin types, new dependencies, or unrelated UI changes.
+- Re-exporting common function implementations from the `@notion-kit/table-hook` root entrypoint.
 - Removing legacy `compare`, `toValue`, `toGroupValue`, row-sort functions, or formatted counting functions.
 
 ### Filtering compatibility boundary
@@ -81,7 +83,11 @@ Use official TanStack seams instead of custom top-level registry slots:
 
 ### AD3 — Shared functions are pure and UI-free
 
-Reusable comparison, aggregation, grouping-key, number-format, and date-bucket helpers live outside React components. Built-in/common functions may be pre-registered in `DEFAULT_FEATURES`. A plugin may instead provide an inline function when it depends on column configuration or is registered at runtime.
+Reusable comparison, aggregation, and grouping-key/date-bucket implementations live in `packages/table-hook/src/fns/`. They are published through the dedicated `@notion-kit/table-hook/fns` package subpath and are not re-exported from `@notion-kit/table-hook`. The subpath is the sole supported public import path for these built-in/common function values and their execution-only types.
+
+The `/fns` entrypoint must remain UI-free and side-effect-free: it must not import the package root, React, table contexts, plugin descriptors, `@notion-kit/ui`, or `@dnd-kit/*`. Its functions operate on neutral values plus explicit option objects such as timezone, week start, or interval size. `table-view` plugin descriptors import these functions from `/fns` and add labels, property extraction, configuration adapters, and result formatting. A plugin may instead provide an inline function when it is plugin-specific, depends on runtime context that cannot be expressed by the common function options, or is registered externally.
+
+`packages/table-hook/tsdown.config.ts` builds `src/index.ts` and `src/fns/index.ts` as independent entries, and `packages/table-hook/package.json` maps `./fns` to `dist/fns.mjs` and `dist/fns.d.mts`. The root entrypoint must stop exporting common function values currently exposed from `src/methods.ts`; descriptor/resolver APIs remain at the root.
 
 Execution resolution is deterministic:
 
@@ -123,8 +129,9 @@ TanStack builds grouped rows and aggregated values. `table-hook` continues to ow
 - pure value comparison and empty ordering;
 - numeric/date aggregation implementations;
 - grouping-key/bucket helpers;
-- reusable number/date formatting;
+- execution-only types and explicit option objects required by those functions;
 - no menu labels, resource mutation, React, or plugin-ID branching.
+- one public barrel at `packages/table-hook/src/fns/index.ts`, exposed only as `@notion-kit/table-hook/fns`.
 
 ### `CellPlugin`
 
@@ -136,6 +143,7 @@ TanStack builds grouped rows and aggregated values. `table-hook` continues to ow
 
 ### `table-hook`
 
+- publish the UI-free common function library through `/fns` without re-exporting it from the root;
 - resolve selected/default/fallback methods;
 - compose `ColumnDef` execution hooks and available TanStack registries;
 - own method-selection/resource state and action payloads;
@@ -205,6 +213,14 @@ Acceptance:
 
 Likely files:
 
+- `packages/table-hook/package.json`
+- `packages/table-hook/tsdown.config.ts`
+- `packages/table-hook/src/index.ts`
+- `packages/table-hook/src/fns/index.ts`
+- `packages/table-hook/src/fns/types.ts`
+- `packages/table-hook/src/fns/sorting.ts`
+- `packages/table-hook/src/fns/grouping.ts`
+- `packages/table-hook/src/fns/calculating.ts`
 - `packages/table-hook/src/methods.ts`
 - `packages/table-hook/src/plugins/types.ts`
 - `packages/table-hook/src/features/index.ts`
@@ -213,6 +229,9 @@ Likely files:
 
 Work:
 
+- create the UI-free `fns` module boundary and move existing reusable common function values out of the root barrel;
+- add independent `index` and `fns` build entries plus the explicit `./fns` package export;
+- keep descriptor/resolver APIs at the root while making `@notion-kit/table-hook/fns` the only public path for common implementations;
 - distinguish capability metadata from execution references;
 - support native/common function references plus inline/config-aware functions;
 - register only valid TanStack slots (`sortFns`, `aggregationFns`);
@@ -222,6 +241,9 @@ Work:
 
 Acceptance:
 
+- `import { ... } from "@notion-kit/table-hook/fns"` resolves to the built `dist/fns.mjs`/`dist/fns.d.mts` entry;
+- the root entrypoint does not re-export common sorting, grouping, or calculation function values;
+- the `/fns` source and built artifact do not depend on React, table contexts, plugin descriptor modules, `@notion-kit/ui`, `@dnd-kit/*`, or the root bundle;
 - selected methods execute through `ColumnDef.sortFn`, `ColumnDef.aggregationFn`, or `ColumnDef.getGroupingValue` as appropriate;
 - `TableFeatures` contains no `calcFns` or `groupByFns`;
 - external plugins are not required to mutate static `DEFAULT_FEATURES`;
@@ -231,6 +253,7 @@ Acceptance:
 
 Likely files:
 
+- `packages/table-hook/src/fns/calculating.ts`
 - `packages/table-hook/src/methods.ts`
 - `packages/table-hook/src/features/counting.ts`
 - `packages/table-hook/src/lib/utils.ts`
@@ -239,6 +262,7 @@ Likely files:
 
 Work:
 
+- place reusable default count and aggregation implementations in `/fns`; keep table/plugin row extraction and footer formatting in adapters outside that entrypoint;
 - add the aggregation-based calculation contract and formatter boundary;
 - adapt legacy formatted counting methods without removing them;
 - assign/resolve the selected aggregation implementation through the column boundary;
@@ -254,15 +278,15 @@ Acceptance:
 
 ### T07 — Register text-like, checkbox, and select capabilities
 
-Register the approved sorting, grouping, and calculation choices for text/title/link-like, checkbox, select, and multi-select plugins. Shared pure comparators may use native/common refs; plugin-specific behavior may stay inline. Preserve empty-last and first-option semantics.
+Implement the reusable text/boolean/select comparison and grouping-key behavior in `table-hook/src/fns/sorting.ts` and `table-hook/src/fns/grouping.ts`, export it from `/fns`, and register the approved choices in the `table-view` descriptors for text/title/link-like, checkbox, select, and multi-select plugins. Plugin-specific property extraction may stay in adapters or inline. Preserve empty-last and first-option semantics.
 
 ### T08 — Implement number formatter, aggregations, and interval grouping
 
-Extract the number formatter, implement sum/average/median/min/max/range as pure aggregations, and implement interval grouping for 1/10/100/1000. Formatting remains plugin presentation; aggregation remains UI-free.
+Implement sum/average/median/min/max/range and interval grouping for 1/10/100/1000 as pure functions in `table-hook/src/fns/`, and export them from `/fns`. Keep number configuration extraction and presentation formatting in `table-view`; it consumes the shared functions through the public subpath. Formatting remains plugin presentation and aggregation remains UI-free.
 
 ### T09 — Implement date aggregations and timezone grouping
 
-Implement earliest/latest/range plus Relative/Day/Week/Month/Year grouping with `DateConfig.tz`, range-start grouping, frozen evaluation time, and runtime `weekStartsOn`.
+Implement earliest/latest/range plus Relative/Day/Week/Month/Year grouping as pure functions in `table-hook/src/fns/`, and export them from `/fns`. Accept timezone, evaluation time, and `weekStartsOn` through explicit UI-free options. `table-view` adapts `DateConfig.tz`, date property extraction, and presentation formatting; date ranges group by start.
 
 ### T10 — Complete sorting and property-menu consumers
 
@@ -288,9 +312,10 @@ Detailed cases live in `tasks/test-plan.md`. The revised priorities are:
 2. resource round trips and grouping lifecycle regression;
 3. aggregation result versus formatting separation;
 4. calculation row-scope selection at the pre-grouped boundary;
-5. built-in capability matrices and custom runtime plugin discovery;
-6. number/date boundary tests;
-7. menu integration and full compatibility workflows.
+5. the dedicated `/fns` package export, root non-export, and UI-free artifact boundary;
+6. built-in capability matrices and custom runtime plugin discovery;
+7. number/date boundary tests;
+8. menu integration and full compatibility workflows.
 
 Filtering tests are limited to static/contract assertions required to avoid architectural conflict. No filter behavior suite belongs to this plan.
 
@@ -333,10 +358,12 @@ $NVM_BIN/pnpm  --filter @notion-kit/table-view build
 | static defaults cannot include runtime plugin functions               | high   | permit inline functions and per-column adapters; do not require mutation of `DEFAULT_FEATURES`         |
 | calculation migration changes displayed strings                       | high   | retain legacy adapter, separate raw-result and formatting tests, reuse existing formatters             |
 | calculations ignore future filters                                    | high   | move row scope from core rows to TanStack pre-grouped/filtered boundary in T06                         |
+| `/fns` accidentally pulls the React/root bundle                        | high   | use an independent build entry and assert the emitted artifact has no root, React, UI, or DnD imports  |
+| common helpers leak back through the root API                           | medium | make root non-export an explicit API test and keep `/fns` as the sole supported public helper path     |
 | grouping registry masquerades as native API                           | medium | use only `getGroupingValue`; ban `groupByFns` in the plan                                              |
 | controlled resource regressions                                       | high   | retain landed T02 tests and optional stable-ID state                                                   |
 | commit rewrite loses validated work                                   | medium | keep all four commits and migrate additively                                                           |
 
 ## 11. Approval Gate
 
-This revision supersedes the descriptor-only execution assumptions in the previous plan. Remaining production implementation begins after review of this plan, `tasks/todo.md`, and the matching test-plan adjustments.
+Approved on 2026-08-10. This revision supersedes the descriptor-only execution assumptions in the previous plan and makes `@notion-kit/table-hook/fns` the sole public common-function entrypoint. Remaining production implementation may proceed from T05.
