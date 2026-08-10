@@ -22,7 +22,11 @@ import { pruneRowSelection } from "@/features/row-selection";
 import type { _TableInstance } from "@/features/types";
 import type { ColumnDefs, ColumnInfo, Row } from "@/lib/types";
 import { type Entity } from "@/lib/utils";
-import { resolveGroupingMethod, resolveSortingMethod } from "@/methods";
+import {
+  createCountingAggregation,
+  resolveGroupingMethod,
+  resolveSortingFn,
+} from "@/methods";
 import type { CellPlugin } from "@/plugins";
 import type {
   DataResourceAction,
@@ -248,17 +252,17 @@ export function useTableView<TPlugins extends CellPlugin[]>(
           },
           minSize: getMinWidth(property.type),
           sortUndefined: "last",
-          sortFn: (rowA, rowB, colId) =>
-            resolveSortingMethod(
-              plugin,
-              tableGlobalState.pluginMethods?.sortingMethodByColumn?.[colId],
-              createRuntimePluginMethodContext(
-                tableRef.current,
-                colId,
-                property.config,
-                weekStartsOn,
-              ),
-            )?.function(rowA.original, rowB.original, colId) ?? 0,
+          sortFn: resolveSortingFn(
+            plugin,
+            tableGlobalState.pluginMethods?.sortingMethodByColumn?.[colId],
+            createRuntimePluginMethodContext(
+              tableRef.current,
+              colId,
+              property.config,
+              weekStartsOn,
+            ),
+          ),
+          aggregationFn: createCountingAggregation(plugin),
           getGroupingValue: (row) => {
             const groupingMethod = resolveGroupingMethod(
               plugin,

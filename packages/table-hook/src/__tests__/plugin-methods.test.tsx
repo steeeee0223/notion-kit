@@ -1,6 +1,9 @@
 import { act, render, renderHook, screen } from "@testing-library/react";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
+import { DEFAULT_FEATURES } from "@/features";
+import type { _RowInstance } from "@/features/types";
+import { sortBooleans, sortNumbers, sortStrings } from "@/fns";
 import type { ColumnInfo, Row } from "@/lib/types";
 import { arrayToEntity } from "@/lib/utils";
 import {
@@ -387,6 +390,89 @@ describe("cell plugin registered methods", () => {
     });
 
     expect(table.getColumnCountResult("col1")).toBe("3");
+  });
+
+  it("executes a selected named TanStack sort function through ColumnDef.sortFn", () => {
+    const plugin: CellPlugin = {
+      ...reverseTextPlugin,
+      sorting: {
+        defaultMethod: "native-text",
+        methods: [
+          {
+            id: "native-text",
+            name: "Native text",
+            ascendingLabel: "Ascending",
+            descendingLabel: "Descending",
+            sortFn: "text",
+          },
+        ],
+      },
+    };
+    const plugins = arrayToEntity([plugin]);
+    const { result } = renderHook(() =>
+      useTableView({ data, properties, plugins }),
+    );
+
+    act(() => {
+      result.current.table.setSorting([{ id: "col1", desc: false }]);
+    });
+
+    expect(
+      result.current.table.getSortedRowModel().rows.map((row) => {
+        const value: unknown = row.original.properties.col1?.value;
+        return value;
+      }),
+    ).toEqual(["Alpha", "Beta", "Bravo"]);
+    expect(result.current.table.getColumn("col1")?.columnDef.sortFn).toBe(
+      "text",
+    );
+  });
+
+  it("keeps colliding runtime inline functions local without mutating built-in registries", () => {
+    const inlineSort = (
+      rowA: _RowInstance,
+      rowB: _RowInstance,
+      colId: string,
+    ) =>
+      rowB.getValue<string>(colId).localeCompare(rowA.getValue<string>(colId));
+    const plugin: CellPlugin = {
+      ...reverseTextPlugin,
+      sorting: {
+        defaultMethod: "text",
+        methods: [
+          {
+            id: "text",
+            name: "Inline",
+            ascendingLabel: "Ascending",
+            descendingLabel: "Descending",
+            sortFn: inlineSort,
+          },
+        ],
+      },
+    };
+    const plugins = arrayToEntity([plugin]);
+    const { result } = renderHook(() =>
+      useTableView({ data, properties, plugins }),
+    );
+
+    act(() => {
+      result.current.table.setSorting([{ id: "col1", desc: false }]);
+    });
+
+    expect(
+      result.current.table.getSortedRowModel().rows.map((row) => {
+        const value: unknown = row.original.properties.col1?.value;
+        return value;
+      }),
+    ).toEqual(["Bravo", "Beta", "Alpha"]);
+    expect(result.current.table.getColumn("col1")?.columnDef.sortFn).toBe(
+      inlineSort,
+    );
+    expect(DEFAULT_FEATURES.sortFns).toEqual({
+      checkbox: sortBooleans,
+      number: sortNumbers,
+      text: sortStrings,
+    });
   });
 });
 

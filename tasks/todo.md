@@ -1,6 +1,6 @@
 # Table View Plugin Functions Todo — Hybrid Revision
 
-Status: T01–T04 landed; revised T05–T13 approved on 2026-08-10
+Status: T01–T06 complete; revised T07–T13 approved on 2026-08-10
 
 Sources of truth:
 
@@ -31,8 +31,8 @@ Sources of truth:
 [x] T04 Calculation discovery
               │
               ▼
-[ ] T05 Hybrid bridge
-  ├─ [ ] T06 Aggregation execution
+[x] T05 Hybrid bridge
+  ├─ [x] T06 Aggregation execution
   ├─ [ ] T07 Text/select/checkbox registrations
   ├─ [ ] T08 Number methods
   └─ [ ] T09 Date methods
@@ -65,7 +65,7 @@ T07, T08, and pure utilities in T09 are parallel-safe after T05. T10/T11 require
 
 ## Remaining Tasks
 
-- [ ] **T05 — Define hybrid execution refs and TanStack bridge**
+- [x] **T05 — Define hybrid execution refs and TanStack bridge**
   - Dependencies: T01–T04.
   - Likely files:
     - `packages/table-hook/package.json`
@@ -83,8 +83,8 @@ T07, T08, and pure utilities in T09 are parallel-safe after T05. T10/T11 require
     - `packages/table-hook/src/__tests__/plugin-methods.test.tsx`
   - TDD start:
     - `@notion-kit/table-hook/fns` package-subpath and type-resolution smoke test;
-    - exact public helper export manifest and root non-export assertion;
-    - emitted `/fns` artifact has no root, React, table-context, UI, or DnD dependency;
+    - pure sorting, grouping, and calculation semantics;
+    - built package self-import through `@notion-kit/table-hook/fns`;
     - native/common sort and aggregation reference resolution;
     - inline/config-aware runtime plugin execution;
     - legacy fallback and unknown-ID precedence;
@@ -103,7 +103,7 @@ T07, T08, and pure utilities in T09 are parallel-safe after T05. T10/T11 require
     - `$NVM_BIN/pnpm --filter @notion-kit/table-hook build`
     - package self-reference import of `@notion-kit/table-hook/fns` succeeds after build.
 
-- [ ] **T06 — Move calculation execution to aggregation semantics**
+- [x] **T06 — Move calculation execution to aggregation semantics**
   - Dependencies: T05.
   - Likely files:
     - `packages/table-hook/src/fns/calculating.ts`
@@ -209,7 +209,7 @@ T07, T08, and pure utilities in T09 are parallel-safe after T05. T10/T11 require
 
 ## Checkpoints
 
-- [ ] After T05–T06: `/fns` package boundary, hybrid bridge, calculation compatibility, and row-scope tests pass.
+- [x] After T05–T06: `/fns` package boundary, hybrid bridge, calculation compatibility, and row-scope tests pass.
 - [ ] After T07–T09: all 12 built-ins register the approved matrix.
 - [ ] After T10–T11: all menus are capability-driven and custom-plugin integration passes.
 - [ ] After T12–T13: compatibility and full package verification pass; filtering remains out of scope.

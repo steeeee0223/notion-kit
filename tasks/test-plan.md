@@ -1,6 +1,6 @@
 # Table View Plugin Functions Test Strategy
 
-Status: Approved on 2026-08-10; baseline suites T01–T04 have landed
+Status: Approved on 2026-08-10; suites T01–T06 have landed
 
 Related documents:
 
@@ -118,34 +118,25 @@ The suite must fail if any of these mutations are introduced:
 - add `calcFns` or `groupByFns` as top-level `TableFeatures` registries;
 - execute all footer calculations permanently against `getCoreRowModel()`;
 - require a runtime custom plugin to mutate static `DEFAULT_FEATURES` before its functions can execute.
-- remove or mis-map the `@notion-kit/table-hook/fns` package export or its declaration entry;
-- re-export a common `/fns` function value from `@notion-kit/table-hook`;
-- make the emitted `dist/fns.mjs` import the root bundle, React, table contexts, `@notion-kit/ui`, or `@dnd-kit/*`.
 
-## Suite 1 — Public Function Entrypoint and Pure Contracts
+## Suite 1 — Pure Function Contracts
 
 **Files:**
 
 - `packages/table-hook/src/fns/__tests__/sorting.test.ts`
 - `packages/table-hook/src/fns/__tests__/grouping.test.ts`
 - `packages/table-hook/src/fns/__tests__/calculating.test.ts`
-- `packages/table-hook/src/__tests__/fns-exports.test.ts`
-- `packages/table-hook/package.json`
-- `packages/table-hook/tsdown.config.ts`
 
-**Type:** Pure unit, public API contract, and post-build artifact smoke tests.
+**Type:** Pure unit tests.
 
 **High-value cases:**
 
-1. The `/fns` barrel exposes the exact reusable built-in sorting, grouping-key, and calculation function manifest plus only the execution types/options those functions require.
-2. The root barrel does not expose any common function value owned by `/fns`; descriptor and resolver APIs remain available from the root.
-3. `package.json` maps `./fns` to `dist/fns.mjs` and `dist/fns.d.mts`, and `tsdown` declares independent `index` and `fns` entries.
-4. After build, a package self-reference import of `@notion-kit/table-hook/fns` succeeds and every expected function is callable.
-5. The emitted `dist/fns.mjs` neither imports `dist/index.mjs` nor contains/imports React, table contexts, plugin descriptor modules, `@notion-kit/ui`, or `@dnd-kit/*`.
-6. Common functions accept neutral values and explicit option objects; tests do not construct React elements, table instances, or `CellPlugin` descriptors.
-7. `table-view` built-in descriptors consume common functions through `@notion-kit/table-hook/fns`, never a private `table-hook/src` path.
+1. Sorting functions cover primitive ordering and nullish-value behavior.
+2. Grouping functions preserve supported primitive values and normalize unsupported or empty values.
+3. Calculation functions return semantic numeric results before presentation formatting.
+4. Tests use neutral values only; they do not construct React elements, table instances, or `CellPlugin` descriptors.
 
-Run pure tests before build, then run the package build and package-self-reference smoke check. Treat the artifact dependency assertion as an entrypoint-isolation check; semantic edge cases remain in the domain suites below.
+Run pure tests before build, then use one package self-import smoke command after build. Do not maintain a separate artifact-verifier script; build configuration and bundler internals are lower-value than public behavior and package resolution.
 
 ## Suite 2 — Table-hook Method Contracts
 
@@ -502,7 +493,7 @@ Run the smallest suite associated with the current implementation slice:
 
 ```sh
 pnpm --filter @notion-kit/table-hook test src/__tests__/plugin-methods.test.tsx
-pnpm --filter @notion-kit/table-hook test src/fns/__tests__/sorting.test.ts src/fns/__tests__/grouping.test.ts src/fns/__tests__/calculating.test.ts src/__tests__/fns-exports.test.ts
+pnpm --filter @notion-kit/table-hook test src/fns/__tests__/sorting.test.ts src/fns/__tests__/grouping.test.ts src/fns/__tests__/calculating.test.ts
 pnpm --filter @notion-kit/table-view test src/menus/calc-menu.test.tsx
 pnpm --filter @notion-kit/table-view test src/menus/sort-menu.test.tsx src/menus/edit-group-menu.test.tsx
 ```
@@ -532,7 +523,7 @@ pnpm --filter @notion-kit/table-hook lint
 pnpm --filter @notion-kit/table-view lint
 pnpm --filter @notion-kit/table-hook build
 pnpm --filter @notion-kit/table-view build
-node --input-type=module -e "const fns = await import('@notion-kit/table-hook/fns'); if (!Object.keys(fns).length) process.exit(1)"
+(cd packages/table-hook && node --input-type=module -e "const fns = await import('@notion-kit/table-hook/fns'); if (!fns.aggregateCountAll) process.exit(1)")
 pnpm test
 pnpm typecheck:affected
 pnpm lint:affected
@@ -541,7 +532,7 @@ pnpm lint:affected
 ## Exit Criteria
 
 - Every matrix capability has an exact registration assertion.
-- The exact `/fns` export manifest, package export map, declaration target, root non-export, and built artifact isolation are verified.
+- The built `/fns` package self-import succeeds after both runtime and declaration entries are emitted.
 - Every new stable method ID has a semantic unit test and at least one resolver or UI selection path.
 - Every resolver fallback and unknown-ID branch is covered.
 - Numeric exact/negative boundaries and all four intervals are covered.

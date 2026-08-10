@@ -16,6 +16,8 @@ import {
   type RowData,
 } from "@tanstack/react-table";
 
+import { sortBooleans, sortNumbers, sortStrings } from "@/fns";
+import { COMMON_AGGREGATION_FNS } from "@/methods";
 import type { ComparableValue } from "@/plugins";
 
 import {
@@ -143,7 +145,15 @@ export interface TableFeatures extends BaseTableFeatures {
   rowActionsFeature: typeof RowActionsFeature;
   extendedGroupingFeature: typeof ExtendedGroupingFeature;
   rowSelectionFeature: typeof InternalRowSelectionFeature;
+  aggregationFns: typeof COMMON_AGGREGATION_FNS;
+  sortFns: typeof COMMON_SORT_FNS;
 }
+
+const COMMON_SORT_FNS = {
+  checkbox: sortBooleans,
+  number: sortNumbers,
+  text: sortStrings,
+} as const;
 
 export const DEFAULT_FEATURES = tableFeatures({
   columnGroupingFeature,
@@ -155,7 +165,9 @@ export const DEFAULT_FEATURES = tableFeatures({
   rowExpandingFeature,
   rowSelectionFeature: InternalRowSelectionFeature,
   rowAggregationFeature,
+  aggregationFns: COMMON_AGGREGATION_FNS,
   rowSortingFeature,
+  sortFns: COMMON_SORT_FNS,
   sortedRowModel: createSortedRowModel(),
   groupedRowModel: getExtendedGroupedRowModel(),
   expandedRowModel: createExpandedRowModel(),

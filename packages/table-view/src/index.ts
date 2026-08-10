@@ -7,6 +7,6 @@ export {
   compareBooleans,
   compareNumbers,
   compareStrings,
-} from "@notion-kit/table-hook";
+} from "@notion-kit/table-hook/fns";
 export { DEFAULT_PLUGINS, text, title } from "./plugins";
 export type { DefaultPlugins } from "./plugins";

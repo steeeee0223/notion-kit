@@ -1,6 +1,6 @@
 # Table View Plugin Functions — Hybrid Implementation Plan
 
-Status: Approved on 2026-08-10; T01–T04 already landed
+Status: Approved on 2026-08-10; T01–T06 complete
 
 > Implementation workers must use `subagent-driven-development` or `executing-plans`, follow the dependency order in `tasks/todo.md`, and use test-driven development for each remaining slice.
 
@@ -347,6 +347,7 @@ $NVM_BIN/pnpm  --filter @notion-kit/table-view typecheck
 $NVM_BIN/pnpm  --filter @notion-kit/table-hook lint
 $NVM_BIN/pnpm  --filter @notion-kit/table-view lint
 $NVM_BIN/pnpm  --filter @notion-kit/table-hook build
+(cd packages/table-hook && node --input-type=module -e "const fns = await import('@notion-kit/table-hook/fns'); if (!fns.aggregateCountAll) process.exit(1)")
 $NVM_BIN/pnpm  --filter @notion-kit/table-view build
 ```
 
@@ -358,7 +359,7 @@ $NVM_BIN/pnpm  --filter @notion-kit/table-view build
 | static defaults cannot include runtime plugin functions               | high   | permit inline functions and per-column adapters; do not require mutation of `DEFAULT_FEATURES`         |
 | calculation migration changes displayed strings                       | high   | retain legacy adapter, separate raw-result and formatting tests, reuse existing formatters             |
 | calculations ignore future filters                                    | high   | move row scope from core rows to TanStack pre-grouped/filtered boundary in T06                         |
-| `/fns` accidentally pulls the React/root bundle                        | high   | use an independent build entry and assert the emitted artifact has no root, React, UI, or DnD imports  |
+| `/fns` accidentally pulls the React/root bundle                        | high   | use an independent build entry; inspect its output when build configuration changes                    |
 | common helpers leak back through the root API                           | medium | make root non-export an explicit API test and keep `/fns` as the sole supported public helper path     |
 | grouping registry masquerades as native API                           | medium | use only `getGroupingValue`; ban `groupByFns` in the plan                                              |
 | controlled resource regressions                                       | high   | retain landed T02 tests and optional stable-ID state                                                   |

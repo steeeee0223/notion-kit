@@ -1,9 +1,19 @@
 import { defineConfig } from "tsdown";
 
-import { withReactCompiler } from "@notion-kit/config/tsdown";
+import { baseConfig, withReactCompiler } from "@notion-kit/config/tsdown";
 
-export default defineConfig((opts) => ({
-  ...opts,
-  ...withReactCompiler(opts),
-  external: [/^@dnd-kit\//],
-}));
+export default defineConfig((opts) => [
+  {
+    ...opts,
+    ...withReactCompiler(opts),
+    entry: { index: "./src/index.ts" },
+    clean: true,
+    external: [/^@dnd-kit\//],
+  },
+  {
+    ...opts,
+    ...baseConfig(opts),
+    entry: { fns: "./src/fns/index.ts" },
+    clean: false,
+  },
+]);
