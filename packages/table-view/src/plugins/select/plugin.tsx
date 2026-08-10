@@ -2,6 +2,11 @@ import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import type { Cell, ColumnInfo, Row } from "@notion-kit/table-hook";
+import {
+  compareEmptyLastStrings,
+  getFirstOption,
+  groupByValue,
+} from "@notion-kit/table-hook/fns";
 import { getRandomColor } from "@notion-kit/utils";
 
 import { DefaultIcon } from "@/common";
@@ -100,6 +105,30 @@ export function select(): SelectPlugin {
       if (b === null) return -1;
       return compareStrings(a, b);
     }),
+    sorting: {
+      defaultMethod: "select",
+      enableGroupSort: true,
+      methods: [
+        {
+          id: "select",
+          name: "Select",
+          ascendingLabel: "Ascending",
+          descendingLabel: "Descending",
+          toComparable: (data) => getFirstOption(data) ?? "",
+          compare: (a, b) => compareEmptyLastStrings(String(a), String(b)),
+        },
+      ],
+    },
+    grouping: {
+      defaultMethod: "value",
+      methods: [
+        {
+          id: "value",
+          name: "Value",
+          function: (data) => groupByValue(getFirstOption(data)),
+        },
+      ],
+    },
     renderCell: ({ data, onChange, ...props }) => (
       <SelectCell
         data={data ? [data] : []}
@@ -142,6 +171,30 @@ export function multiSelect(): MultiSelectPlugin {
       if (b.length === 0) return -1;
       return compareStrings(a[0]!, b[0]!);
     }),
+    sorting: {
+      defaultMethod: "select",
+      enableGroupSort: true,
+      methods: [
+        {
+          id: "select",
+          name: "Select",
+          ascendingLabel: "Ascending",
+          descendingLabel: "Descending",
+          toComparable: (data) => getFirstOption(data) ?? "",
+          compare: (a, b) => compareEmptyLastStrings(String(a), String(b)),
+        },
+      ],
+    },
+    grouping: {
+      defaultMethod: "value",
+      methods: [
+        {
+          id: "value",
+          name: "Value",
+          function: (data) => groupByValue(getFirstOption(data)),
+        },
+      ],
+    },
     transferConfig: toSelectConfig,
     renderCell: (props) => <SelectCell multi {...props} />,
     renderConfigMenu: (props) => <SelectConfigMenu multi {...props} />,

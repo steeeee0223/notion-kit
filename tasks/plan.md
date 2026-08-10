@@ -1,6 +1,6 @@
 # Table View Plugin Functions — Hybrid Implementation Plan
 
-Status: Approved on 2026-08-10; T01–T06 complete
+Status: Approved on 2026-08-10; T01–T09 complete
 
 > Implementation workers must use `subagent-driven-development` or `executing-plans`, follow the dependency order in `tasks/todo.md`, and use test-driven development for each remaining slice.
 
@@ -194,7 +194,7 @@ T05 hybrid execution contract and TanStack bridge
           T13 full verification
 ```
 
-T07, T08, and the pure utility portion of T09 may proceed in parallel after T05. T10 and T11 require the relevant registrations. T12 and T13 are sequential integration checkpoints.
+T07–T09 are complete. T10 and T11 require these registrations. T12 and T13 are sequential integration checkpoints.
 
 ## 7. Implementation Slices
 
@@ -278,13 +278,19 @@ Acceptance:
 
 ### T07 — Register text-like, checkbox, and select capabilities
 
+Status: Complete.
+
 Implement the reusable text/boolean/select comparison and grouping-key behavior in `table-hook/src/fns/sorting.ts` and `table-hook/src/fns/grouping.ts`, export it from `/fns`, and register the approved choices in the `table-view` descriptors for text/title/link-like, checkbox, select, and multi-select plugins. Plugin-specific property extraction may stay in adapters or inline. Preserve empty-last and first-option semantics.
 
 ### T08 — Implement number formatter, aggregations, and interval grouping
 
+Status: Complete.
+
 Implement sum/average/median/min/max/range and interval grouping for 1/10/100/1000 as pure functions in `table-hook/src/fns/`, and export them from `/fns`. Keep number configuration extraction and presentation formatting in `table-view`; it consumes the shared functions through the public subpath. Formatting remains plugin presentation and aggregation remains UI-free.
 
 ### T09 — Implement date aggregations and timezone grouping
+
+Status: Complete.
 
 Implement earliest/latest/range plus Relative/Day/Week/Month/Year grouping as pure functions in `table-hook/src/fns/`, and export them from `/fns`. Accept timezone, evaluation time, and `weekStartsOn` through explicit UI-free options. `table-view` adapts `DateConfig.tz`, date property extraction, and presentation formatting; date ranges group by start.
 
@@ -359,8 +365,8 @@ $NVM_BIN/pnpm  --filter @notion-kit/table-view build
 | static defaults cannot include runtime plugin functions               | high   | permit inline functions and per-column adapters; do not require mutation of `DEFAULT_FEATURES`         |
 | calculation migration changes displayed strings                       | high   | retain legacy adapter, separate raw-result and formatting tests, reuse existing formatters             |
 | calculations ignore future filters                                    | high   | move row scope from core rows to TanStack pre-grouped/filtered boundary in T06                         |
-| `/fns` accidentally pulls the React/root bundle                        | high   | use an independent build entry; inspect its output when build configuration changes                    |
-| common helpers leak back through the root API                           | medium | make root non-export an explicit API test and keep `/fns` as the sole supported public helper path     |
+| `/fns` accidentally pulls the React/root bundle                       | high   | use an independent build entry; inspect its output when build configuration changes                    |
+| common helpers leak back through the root API                         | medium | make root non-export an explicit API test and keep `/fns` as the sole supported public helper path     |
 | grouping registry masquerades as native API                           | medium | use only `getGroupingValue`; ban `groupByFns` in the plan                                              |
 | controlled resource regressions                                       | high   | retain landed T02 tests and optional stable-ID state                                                   |
 | commit rewrite loses validated work                                   | medium | keep all four commits and migrate additively                                                           |

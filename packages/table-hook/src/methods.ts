@@ -107,6 +107,8 @@ export interface CountingMethod {
   aggregationFn?:
     | string
     | AggregationFnDef<AnyTableFeatures, Row, unknown, unknown>;
+  /** Plugin-owned extraction used before a reusable aggregation executes. */
+  toAggregationValue?: (data: unknown, row: Row) => unknown;
   /** Formats a semantic aggregation result for the footer. */
   formatResult?: (result: unknown, context: CountingMethodContext) => string;
   /** Legacy formatted calculation callback. */
@@ -400,6 +402,29 @@ export function resolveSortingFn<Key extends string, Data, Config>(
     resolved.function(rowA.original, rowB.original, colId);
 }
 
+export function resolveSortingAccessorValue<Key extends string, Data, Config>(
+  plugin: CellPlugin<Key, Data, Config>,
+  data: Data,
+  row: Row,
+  colId: string,
+  selectedMethodId?: string,
+  context?: Partial<Omit<PluginMethodContext<Config>, "colId">>,
+) {
+  const method = resolveRegisteredMethod(
+    plugin.sorting?.methods ?? [],
+    selectedMethodId,
+    plugin.sorting?.defaultMethod,
+  );
+  if (method && isValueSortingMethod(method)) {
+    return method.toComparable(
+      data,
+      row,
+      createPluginMethodContext(plugin, colId, context),
+    );
+  }
+  return plugin.toValue(data, row);
+}
+
 export function getGroupSortableSortingMethods<
   Key extends string,
   Data,
@@ -479,7 +504,9 @@ export function createCountingAggregation(
         getValue: (row: _RowInstance) => {
           const value: unknown =
             row.original.properties[context.columnId]?.value;
-          return plugin.toValue(value, row.original);
+          return method?.toAggregationValue
+            ? method.toAggregationValue(value, row.original)
+            : plugin.toValue(value, row.original);
         },
       });
       return result;

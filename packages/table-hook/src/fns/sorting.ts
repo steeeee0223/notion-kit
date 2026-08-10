@@ -12,6 +12,29 @@ export function compareBooleans(a: boolean, b: boolean) {
   return Number(a) - Number(b);
 }
 
+export function getFirstOption(value: unknown): string | null {
+  if (typeof value === "string" && value !== "") return value;
+  if (Array.isArray(value)) {
+    const first: unknown = value[0];
+    return typeof first === "string" && first !== "" ? first : null;
+  }
+  return null;
+}
+
+export function compareFirstOptions(a: unknown, b: unknown) {
+  const firstA = getFirstOption(a);
+  const firstB = getFirstOption(b);
+  if (firstA === null) return firstB === null ? 0 : 1;
+  if (firstB === null) return -1;
+  return compareStrings(firstA, firstB);
+}
+
+export function compareEmptyLastStrings(a: string, b: string) {
+  if (a === "") return b === "" ? 0 : 1;
+  if (b === "") return -1;
+  return compareStrings(a, b);
+}
+
 function compareNullable<T>(
   a: T | null | undefined,
   b: T | null | undefined,

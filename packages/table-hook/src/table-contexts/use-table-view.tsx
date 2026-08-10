@@ -25,6 +25,7 @@ import { type Entity } from "@/lib/utils";
 import {
   createCountingAggregation,
   resolveGroupingMethod,
+  resolveSortingAccessorValue,
   resolveSortingFn,
 } from "@/methods";
 import type { CellPlugin } from "@/plugins";
@@ -248,7 +249,20 @@ export function useTableView<TPlugins extends CellPlugin[]>(
           id: property.id,
           accessorFn: (row) => {
             const value: unknown = row.properties[colId]?.value;
-            return value === null ? undefined : value;
+            const comparable = resolveSortingAccessorValue(
+              plugin,
+              value,
+              row,
+              colId,
+              tableGlobalState.pluginMethods?.sortingMethodByColumn?.[colId],
+              createRuntimePluginMethodContext(
+                tableRef.current,
+                colId,
+                property.config,
+                weekStartsOn,
+              ),
+            );
+            return comparable ?? undefined;
           },
           minSize: getMinWidth(property.type),
           sortUndefined: "last",

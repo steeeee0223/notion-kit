@@ -6,9 +6,20 @@ import {
 import { formatDate } from "@notion-kit/utils";
 
 import type { DatePlugin } from "./types";
+import { formatDateGroupingLabel } from "./utils";
 
 export function DateGroupingValue({ value, table }: GroupingValueProps) {
   const column = table.getGroupedColumnInfo() as ColumnInfo<DatePlugin>;
+
+  if (typeof value === "string") {
+    const method = table.getSelectedGroupingMethod(column.id);
+    return (
+      <DefaultGroupingValue
+        value={formatDateGroupingLabel(value, method.id, column.config)}
+        table={table}
+      />
+    );
+  }
 
   const date = formatDate(value as number, {
     dateFormat: column.config.dateFormat,

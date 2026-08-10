@@ -1,5 +1,6 @@
 import {
   CountMethod,
+  type ComparableValue,
   type CountingMethod,
   type Row,
 } from "@notion-kit/table-hook";
@@ -12,6 +13,8 @@ import {
   compareBooleans,
   compareNumbers,
   compareStrings,
+  groupByTextAlphabetical,
+  groupByTextExact,
 } from "@notion-kit/table-hook/fns";
 
 import type { CellPlugin, CompareFn, InferData } from "./types";
@@ -122,6 +125,42 @@ export function withCheckboxCounting<TPlugin extends CellPlugin>(
   plugin: TPlugin,
 ): TPlugin {
   return { ...plugin, counting: plugin.counting ?? checkboxCounting };
+}
+
+export function textMethodCapabilities<Data = string>() {
+  return {
+    sorting: {
+      defaultMethod: "text",
+      enableGroupSort: true,
+      methods: [
+        {
+          id: "text",
+          name: "Text",
+          ascendingLabel: "A → Z",
+          descendingLabel: "Z → A",
+          toComparable: (data: Data) => String(data ?? ""),
+          compare: (a: ComparableValue, b: ComparableValue) =>
+            compareStrings(String(a), String(b)),
+          sortFn: "text" as const,
+        },
+      ],
+    },
+    grouping: {
+      defaultMethod: "exact",
+      methods: [
+        {
+          id: "exact",
+          name: "Exact",
+          function: (data: Data) => groupByTextExact(data),
+        },
+        {
+          id: "alphabetical",
+          name: "Alphabetical",
+          function: (data: Data) => groupByTextAlphabetical(data),
+        },
+      ],
+    },
+  };
 }
 
 /**

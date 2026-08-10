@@ -1,6 +1,10 @@
 import { DefaultIcon } from "@/common";
 
-import { compareStrings, createCompareFn } from "../utils";
+import {
+  compareStrings,
+  createCompareFn,
+  textMethodCapabilities,
+} from "../utils";
 import { TitleCell } from "./title-cell";
 import { TitleConfig } from "./title-config";
 import type { TitlePlugin } from "./types";
@@ -23,6 +27,7 @@ export function title(): TitlePlugin {
     toValue: (data) => data,
     toTextValue: (data) => data,
     compare: createCompareFn(compareStrings),
+    ...textMethodCapabilities<string>(),
     renderCell: ({ row, config, ...props }) => (
       <TitleCell
         icon={config.showIcon ? row.icon : undefined}

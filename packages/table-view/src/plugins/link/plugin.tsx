@@ -2,7 +2,11 @@ import type { CellPlugin } from "@notion-kit/table-hook";
 
 import { DefaultIcon } from "@/common";
 
-import { compareStrings, createCompareFn } from "../utils";
+import {
+  compareStrings,
+  createCompareFn,
+  textMethodCapabilities,
+} from "../utils";
 import { LinkCell } from "./link-cell";
 import type { EmailPlugin, PhonePlugin, UrlPlugin } from "./types";
 
@@ -23,6 +27,7 @@ function createLinkPlugin<T extends "email" | "phone" | "url">(
       config: undefined,
     },
     compare: createCompareFn(compareStrings),
+    ...textMethodCapabilities<string>(),
     fromValue: (value) => (typeof value === "string" ? value : ""),
     toValue: (data) => data,
     toTextValue: (data) => data,

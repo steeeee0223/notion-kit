@@ -1,11 +1,20 @@
+import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import type { CellPlugin, ColumnInfo, Row } from "@notion-kit/table-hook";
+import {
+  arrayToEntity,
+  resolveCountingMethod,
+  useTableView,
+  type CellPlugin,
+  type ColumnInfo,
+  type Row,
+} from "@notion-kit/table-hook";
 
 import {
   checkbox,
   createdTime,
   date,
+  DEFAULT_PLUGINS,
   email,
   lastEditedTime,
   multiSelect,
@@ -16,6 +25,232 @@ import {
   title,
   url,
 } from "@/plugins";
+
+const methodMatrix = {
+  title: {
+    sorting: ["text"],
+    directions: ["A → Z", "Z → A"],
+    grouping: ["exact", "alphabetical"],
+    counting: [
+      "all",
+      "values",
+      "unique",
+      "empty",
+      "nonempty",
+      "percentage-empty",
+      "percentage-nonempty",
+    ],
+    groupSort: true,
+  },
+  text: {
+    sorting: ["text"],
+    directions: ["A → Z", "Z → A"],
+    grouping: ["exact", "alphabetical"],
+    counting: [
+      "all",
+      "values",
+      "unique",
+      "empty",
+      "nonempty",
+      "percentage-empty",
+      "percentage-nonempty",
+    ],
+    groupSort: true,
+  },
+  email: {
+    sorting: ["text"],
+    directions: ["A → Z", "Z → A"],
+    grouping: ["exact", "alphabetical"],
+    counting: [
+      "all",
+      "values",
+      "unique",
+      "empty",
+      "nonempty",
+      "percentage-empty",
+      "percentage-nonempty",
+    ],
+    groupSort: true,
+  },
+  phone: {
+    sorting: ["text"],
+    directions: ["A → Z", "Z → A"],
+    grouping: ["exact", "alphabetical"],
+    counting: [
+      "all",
+      "values",
+      "unique",
+      "empty",
+      "nonempty",
+      "percentage-empty",
+      "percentage-nonempty",
+    ],
+    groupSort: true,
+  },
+  url: {
+    sorting: ["text"],
+    directions: ["A → Z", "Z → A"],
+    grouping: ["exact", "alphabetical"],
+    counting: [
+      "all",
+      "values",
+      "unique",
+      "empty",
+      "nonempty",
+      "percentage-empty",
+      "percentage-nonempty",
+    ],
+    groupSort: true,
+  },
+  select: {
+    sorting: ["select"],
+    directions: ["Ascending", "Descending"],
+    grouping: ["value"],
+    counting: [
+      "all",
+      "values",
+      "unique",
+      "empty",
+      "nonempty",
+      "percentage-empty",
+      "percentage-nonempty",
+    ],
+    groupSort: true,
+  },
+  "multi-select": {
+    sorting: ["select"],
+    directions: ["Ascending", "Descending"],
+    grouping: ["value"],
+    counting: [
+      "all",
+      "values",
+      "unique",
+      "empty",
+      "nonempty",
+      "percentage-empty",
+      "percentage-nonempty",
+    ],
+    groupSort: true,
+  },
+  checkbox: {
+    sorting: ["checkbox"],
+    directions: ["Checked → unchecked", "Unchecked → checked"],
+    grouping: ["value"],
+    counting: [
+      "all",
+      "checked",
+      "unchecked",
+      "percentage-checked",
+      "percentage-unchecked",
+    ],
+    groupSort: false,
+  },
+  number: {
+    sorting: ["number"],
+    directions: ["Low → high", "High → low"],
+    grouping: ["interval-1", "interval-10", "interval-100", "interval-1000"],
+    counting: [
+      "all",
+      "values",
+      "unique",
+      "empty",
+      "nonempty",
+      "percentage-empty",
+      "percentage-nonempty",
+      "sum",
+      "average",
+      "median",
+      "minimum",
+      "maximum",
+      "range",
+    ],
+    groupSort: true,
+  },
+  date: {
+    sorting: ["date"],
+    directions: ["Old → new", "New → old"],
+    grouping: ["relative", "day", "week", "month", "year"],
+    counting: [
+      "all",
+      "values",
+      "unique",
+      "empty",
+      "nonempty",
+      "percentage-empty",
+      "percentage-nonempty",
+      "earliest-date",
+      "latest-date",
+      "date-range",
+    ],
+    groupSort: true,
+  },
+  "created-time": {
+    sorting: ["date"],
+    directions: ["Old → new", "New → old"],
+    grouping: ["relative", "day", "week", "month", "year"],
+    counting: [
+      "all",
+      "values",
+      "unique",
+      "empty",
+      "nonempty",
+      "percentage-empty",
+      "percentage-nonempty",
+      "earliest-date",
+      "latest-date",
+      "date-range",
+    ],
+    groupSort: true,
+  },
+  "last-edited-time": {
+    sorting: ["date"],
+    directions: ["Old → new", "New → old"],
+    grouping: ["relative", "day", "week", "month", "year"],
+    counting: [
+      "all",
+      "values",
+      "unique",
+      "empty",
+      "nonempty",
+      "percentage-empty",
+      "percentage-nonempty",
+      "earliest-date",
+      "latest-date",
+      "date-range",
+    ],
+    groupSort: true,
+  },
+} as const;
+
+describe("Built-in method registration matrix", () => {
+  it("registers exactly the approved capabilities and direction labels", () => {
+    expect(
+      Object.fromEntries(
+        DEFAULT_PLUGINS.map((plugin) => {
+          const sorting = plugin.sorting?.methods ?? [];
+          return [
+            plugin.id,
+            {
+              sorting: sorting.map((method) => method.id),
+              directions: sorting.flatMap((method) =>
+                "ascendingLabel" in method
+                  ? [method.ascendingLabel, method.descendingLabel]
+                  : [],
+              ),
+              grouping:
+                plugin.grouping?.methods.map((method) => method.id) ?? [],
+              counting:
+                plugin.counting?.flatMap((group) =>
+                  group.functions.map((method) => method.id),
+                ) ?? [],
+              groupSort: plugin.sorting?.enableGroupSort !== false,
+            },
+          ];
+        }),
+      ),
+    ).toEqual(methodMatrix);
+  });
+});
 
 const baseRow: Row = {
   id: "row",
@@ -87,6 +322,97 @@ describe("Plugin sorting boundaries", () => {
       );
     },
   );
+
+  it("keeps empty dates last in ascending and descending table execution", () => {
+    const plugin = date();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins: arrayToEntity([plugin]),
+        defaultProperties: [
+          {
+            id: "value",
+            name: "Due",
+            type: "date",
+            width: "100",
+            config: { ...plugin.default.config, tz: "UTC" },
+          },
+        ],
+        defaultData: [
+          row({}, { id: "empty" }),
+          row({ start: 1 }, { id: "early" }),
+          row({ start: 2 }, { id: "late" }),
+        ],
+      }),
+    );
+
+    act(() => result.current.table.setSorting([{ id: "value", desc: false }]));
+    expect(
+      result.current.table.getSortedRowModel().rows.map(({ id }) => id),
+    ).toEqual(["early", "late", "empty"]);
+    act(() => result.current.table.setSorting([{ id: "value", desc: true }]));
+    expect(
+      result.current.table.getSortedRowModel().rows.map(({ id }) => id),
+    ).toEqual(["late", "early", "empty"]);
+  });
+
+  it("keeps missing, invalid, and non-finite numbers last both directions", () => {
+    const plugin = number();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins: arrayToEntity([plugin]),
+        defaultProperties: [
+          {
+            id: "value",
+            name: "Amount",
+            type: "number",
+            width: "100",
+            config: plugin.default.config,
+          },
+        ],
+        defaultData: [
+          row("invalid", { id: "invalid" }),
+          row("2", { id: "two" }),
+          row(null, { id: "missing", properties: {} }),
+          row("1", { id: "one" }),
+          row("Infinity", { id: "infinite" }),
+        ],
+      }),
+    );
+
+    act(() => result.current.table.setSorting([{ id: "value", desc: false }]));
+    expect(
+      result.current.table.getSortedRowModel().rows.map(({ id }) => id),
+    ).toEqual(["one", "two", "invalid", "missing", "infinite"]);
+    act(() => result.current.table.setSorting([{ id: "value", desc: true }]));
+    expect(
+      result.current.table.getSortedRowModel().rows.map(({ id }) => id),
+    ).toEqual(["two", "one", "invalid", "missing", "infinite"]);
+  });
+});
+
+describe("Date calculation descriptor formatting", () => {
+  const config = {
+    dateFormat: "full" as const,
+    timeFormat: "24-hour" as const,
+    tz: "UTC",
+  };
+  const timestamp = Date.UTC(2025, 0, 15, 13, 45);
+  const context = {
+    table: { getColumnInfo: () => ({ config }) },
+    colId: "value",
+  } as never;
+
+  it.each([
+    ["date", "January 15, 2025 13:45"],
+    ["created-time", "January 15, 2025 13:45"],
+    ["last-edited-time", "January 15, 2025 13:45"],
+  ])("formats timed %s boundary results with time", (pluginId, expected) => {
+    const plugin = DEFAULT_PLUGINS.find(({ id }) => id === pluginId)!;
+    const method = resolveCountingMethod(plugin, "earliest-date")!;
+    expect(
+      method.formatResult?.({ value: timestamp, includeTime: true }, context),
+    ).toBe(expected);
+  });
 });
 
 describe("Select conversion and grouping contracts", () => {

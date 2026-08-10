@@ -1,6 +1,6 @@
 # Table View Plugin Functions Test Strategy
 
-Status: Approved on 2026-08-10; suites T01–T06 have landed
+Status: Approved on 2026-08-10; suites T01–T09 have landed; T10–T11 remain
 
 Related documents:
 
@@ -85,13 +85,13 @@ Browser E2E is not required for this library-level change. The meaningful bounda
 
 ### Changed-file targets
 
-| Area | Statements | Branches | Functions | Lines |
-| --- | ---: | ---: | ---: | ---: |
-| Pure number/date/grouping utilities | 100% | ≥95% | 100% | 100% |
-| Method resolvers and plugin-method state | ≥95% | ≥90% | ≥95% | ≥95% |
-| Group execution and resource wiring | ≥95% | ≥90% | ≥95% | ≥95% |
-| Calculation/sort/group menus | ≥90% | ≥90% | ≥90% | ≥90% |
-| Built-in plugin registrations | 100% of registered IDs/labels | Every fallback branch | Every factory | Every registration line |
+| Area                                     |                    Statements |              Branches |     Functions |                   Lines |
+| ---------------------------------------- | ----------------------------: | --------------------: | ------------: | ----------------------: |
+| Pure number/date/grouping utilities      |                          100% |                  ≥95% |          100% |                    100% |
+| Method resolvers and plugin-method state |                          ≥95% |                  ≥90% |          ≥95% |                    ≥95% |
+| Group execution and resource wiring      |                          ≥95% |                  ≥90% |          ≥95% |                    ≥95% |
+| Calculation/sort/group menus             |                          ≥90% |                  ≥90% |          ≥90% |                    ≥90% |
+| Built-in plugin registrations            | 100% of registered IDs/labels | Every fallback branch | Every factory | Every registration line |
 
 ### Package gates
 
@@ -167,9 +167,12 @@ it.each([
   ["selected", "secondary", "secondary"],
   ["unknown selected", "missing", "default"],
   ["no selected", undefined, "default"],
-])("ResolveSortingMethod_%s_UsesExpectedMethod", (_case, selected, expected) => {
-  expect(resolveSortingMethod(plugin, selected)?.id).toBe(expected);
-});
+])(
+  "ResolveSortingMethod_%s_UsesExpectedMethod",
+  (_case, selected, expected) => {
+    expect(resolveSortingMethod(plugin, selected)?.id).toBe(expected);
+  },
+);
 ```
 
 Avoid asserting internal atom layout here; assert public resolver/table behavior.
@@ -248,8 +251,9 @@ Assertions should use roles and accessible names:
 
 ```ts
 expect(menu.item("Filled with A")).toBeVisible();
-expect(screen.getByRole("button", { name: "Name calculation" }))
-  .toHaveTextContent("2");
+expect(
+  screen.getByRole("button", { name: "Name calculation" }),
+).toHaveTextContent("2");
 ```
 
 ## Suite 5 — Built-in Registration Matrix
@@ -357,11 +361,11 @@ Do not snapshot bucket labels; assert exact lower/upper formatted endpoints.
 
 ### Test controls
 
-- Freeze `Date.now()` once per case.
+- Pass an explicit evaluation timestamp for relative-date cases.
 - Always pass an explicit timezone.
 - Use Asia/Taipei for non-DST boundaries.
 - Use America/New_York for spring-forward and fall-back cases.
-- Restore real timers and mocks after every case.
+- Prefer direct pure-function inputs over global timer mocks.
 
 ### Calculation cases
 
