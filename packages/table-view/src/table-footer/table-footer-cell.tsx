@@ -68,7 +68,7 @@ function CountDisplay({ id, type }: CountDisplayProps) {
         );
         const label = countingMethod?.label ?? countingMethod?.name;
 
-        return method === CountMethod.NONE || !countingMethod ? (
+        return method === (CountMethod.NONE as string) || !countingMethod ? (
           <div className="flex items-center opacity-100 transition-opacity duration-200">
             <div className="flex items-center">
               <span className="text-muted">

@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type {
@@ -13,9 +13,17 @@ import { DEFAULT_PLUGINS } from "@/plugins";
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
 import { createFullPluginFixture, mockResizeObserver } from "../__tests__/mock";
 
+const clientState = vi.hoisted(() => ({ value: true }));
+
+vi.mock("@notion-kit/hooks", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@notion-kit/hooks")>()),
+  useIsClient: () => clientState.value,
+}));
+
 mockResizeObserver();
 
 afterEach(() => {
+  clientState.value = true;
   vi.restoreAllMocks();
 });
 
@@ -85,6 +93,16 @@ describe("EditGroupMenu", () => {
     );
   });
 
+  it("EditGroupingMenu_HelpAction_DoesNothingBeforeClientHydration", async () => {
+    clientState.value = false;
+    const open = vi.spyOn(window, "open").mockImplementation(() => null);
+    const { tableView, grouping } = await openEditGroupingMenu();
+
+    await tableView.user.click(grouping.helpItem());
+
+    expect(open).not.toHaveBeenCalled();
+  });
+
   it("EditGroupingMenu_ChangeGrouping_OpensSelection", async () => {
     const { grouping } = await openEditGroupingMenu();
 
@@ -113,7 +131,7 @@ describe("EditGroupMenu", () => {
       name: "Alphabetical",
     });
     expect(alphabetical).toHaveAttribute("aria-checked", "false");
-    await tableView.user.click(alphabetical);
+    fireEvent.click(alphabetical);
 
     await waitFor(() => expect(groupUsing).toHaveTextContent("Alphabetical"));
 
@@ -174,9 +192,7 @@ describe("EditGroupMenu", () => {
       screen.getByRole("menuitemradio", { name: "Z → A" }),
     ).toHaveAttribute("aria-checked", "false");
 
-    await tableView.user.click(
-      screen.getByRole("menuitemradio", { name: "Z → A" }),
-    );
+    fireEvent.click(screen.getByRole("menuitemradio", { name: "Z → A" }));
     await waitFor(() =>
       expect(
         screen
@@ -185,6 +201,9 @@ describe("EditGroupMenu", () => {
       ).toEqual(["Group col1:Task 3", "Group col1:Task 1", "Group col1:"]),
     );
     expect(sortGroups).toHaveTextContent("Z → A");
+
+    fireEvent.click(screen.getByRole("menuitemradio", { name: "Manual" }));
+    await waitFor(() => expect(sortGroups).toHaveTextContent("Manual"));
   });
 
   it("EditGroupingMenu_CheckboxCapabilityOmitsAutomaticGroupSort", async () => {
@@ -201,6 +220,33 @@ describe("EditGroupMenu", () => {
     ).toEqual(["Manual"]);
   });
 
+  it.each([
+    [undefined, "A → Z"],
+    ["missing", "A → Z"],
+  ])(
+    "EditGroupingMenu_AutomaticSortFallback_%s",
+    async (method, expectedLabel) => {
+      const tableView = renderTableView({
+        view: {
+          pluginMethods: {
+            groupSort: {
+              mode: "automatic",
+              ...(method === undefined ? {} : { method }),
+              desc: false,
+            },
+          },
+        },
+      });
+      const settings = await tableView.openViewSettings();
+      const selectGrouping = await settings.openSelectGrouping();
+      const grouping = await selectGrouping.select("Name");
+
+      expect(
+        within(grouping.root).getByRole("menuitem", { name: /Sort groups/ }),
+      ).toHaveTextContent(expectedLabel);
+    },
+  );
+
   it("EditGroupingMenu_ChangingToNonSortablePropertyResetsGroupSortToManual", async () => {
     const onViewChange = vi.fn();
     const tableView = renderTableView({ onViewChange });
@@ -211,7 +257,7 @@ describe("EditGroupMenu", () => {
       name: /Sort groups/,
     });
     await tableView.user.hover(sortGroups);
-    await tableView.user.click(
+    fireEvent.click(
       await screen.findByRole("menuitemradio", { name: "Z → A" }),
     );
 
@@ -259,8 +305,7 @@ describe("EditGroupMenu", () => {
             ascendingLabel: "Alphabetical first",
             descendingLabel: "Reverse alphabetical",
             toComparable: (value) => value,
-            compare: (left, right) =>
-              String(left).localeCompare(String(right)),
+            compare: (left, right) => String(left).localeCompare(String(right)),
           },
           {
             id: "locale:casefold",
@@ -297,7 +342,7 @@ describe("EditGroupMenu", () => {
       name: /Sort groups/,
     });
     await tableView.user.hover(sortGroups);
-    await tableView.user.click(
+    fireEvent.click(
       await screen.findByRole("menuitemradio", { name: "Shortest first" }),
     );
 

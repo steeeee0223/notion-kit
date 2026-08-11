@@ -243,6 +243,30 @@ describe("useTableView - Counting Feature", () => {
   });
 
   describe("Aggregation Bridge", () => {
+    it("returns empty output for unknown and metadata-only counting methods", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+      const plugin = table.getColumnPlugin("col1");
+      const previousCounting = plugin.counting;
+      plugin.counting = [
+        {
+          group: "Metadata",
+          functions: [{ id: "metadata-only", name: "Metadata only" }],
+        },
+      ];
+
+      try {
+        act(() => table.setColumnCountMethod("col1", "missing"));
+        expect(table.getColumnCountResult("col1")).toBe("");
+        act(() => table.setColumnCountMethod("col1", "metadata-only"));
+        expect(table.getColumnCountResult("col1")).toBe("");
+      } finally {
+        plugin.counting = previousCounting;
+      }
+    });
+
     it("preserves capped count output at 99+", () => {
       const rows = Array.from(
         { length: 100 },
@@ -303,6 +327,38 @@ describe("useTableView - Counting Feature", () => {
             "aggregate" in aggregationFn &&
             typeof aggregationFn.aggregate === "function",
         ).toBe(true);
+      } finally {
+        plugin.counting = previousCounting;
+      }
+    });
+
+    it("stringifies primitive unformatted aggregation results only", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+      const plugin = table.getColumnPlugin("col1");
+      const previousCounting = plugin.counting;
+      plugin.counting = [
+        {
+          group: "Raw",
+          functions: [
+            ...(["text", 7, true, { value: 1 }] as const).map(
+              (result, index) => ({
+                id: `raw-${index}`,
+                name: `Raw ${index}`,
+                aggregationFn: { aggregate: () => result },
+              }),
+            ),
+          ],
+        },
+      ];
+
+      try {
+        for (const [index, expected] of ["text", "7", "true", ""].entries()) {
+          act(() => table.setColumnCountMethod("col1", `raw-${index}`));
+          expect(table.getColumnCountResult("col1")).toBe(expected);
+        }
       } finally {
         plugin.counting = previousCounting;
       }

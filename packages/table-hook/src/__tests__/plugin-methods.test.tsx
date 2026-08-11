@@ -258,7 +258,7 @@ describe("cell plugin registered methods", () => {
     };
     const row = data[0]!;
 
-    expect(resolveSortingMethod(plugin)?.function?.(row, row, "col1")).toBe(7);
+    expect(resolveSortingMethod(plugin)?.function(row, row, "col1")).toBe(7);
     expect(
       resolveGroupingMethod(plugin).function("unused", row, "col1", {
         table: {} as never,
@@ -307,12 +307,10 @@ describe("cell plugin registered methods", () => {
 
     expect(method?.function).toEqual(expect.any(Function));
     expect(
-      method?.function?.(rowWithMissingCell, rowWithTwo, "col1"),
+      method?.function(rowWithMissingCell, rowWithTwo, "col1"),
     ).toBeLessThan(0);
-    expect(method?.function?.(rowWithTwo, rowWithTen, "col1")).toBeLessThan(0);
-    expect(method?.function?.(rowWithTen, rowWithTwo, "col1")).toBeGreaterThan(
-      0,
-    );
+    expect(method?.function(rowWithTwo, rowWithTen, "col1")).toBeLessThan(0);
+    expect(method?.function(rowWithTen, rowWithTwo, "col1")).toBeGreaterThan(0);
     expect(contexts).toEqual([1, 1, 1, 1, 1, 1]);
   });
 
@@ -320,6 +318,32 @@ describe("cell plugin registered methods", () => {
     const legacyMethod = resolveSortingMethod(reverseTextPlugin);
     expect(legacyMethod && isValueSortingMethod(legacyMethod)).toBe(false);
     expect(getGroupSortableSortingMethods(reverseTextPlugin)).toEqual([]);
+    expect(
+      getGroupSortableSortingMethods({
+        ...reverseTextPlugin,
+        sorting: undefined,
+      }),
+    ).toEqual([]);
+  });
+
+  it("keeps an incomplete registered sorting descriptor inert", () => {
+    const plugin: CellPlugin = {
+      ...reverseTextPlugin,
+      sorting: {
+        methods: [
+          {
+            id: "metadata-only",
+            name: "Metadata only",
+            ascendingLabel: "First",
+            descendingLabel: "Last",
+          },
+        ],
+      },
+    };
+
+    expect(
+      resolveSortingMethod(plugin)?.function(data[0]!, data[1]!, "col1"),
+    ).toBe(0);
   });
 
   it.each([0, 1, 2, 3, 4, 5, 6] as const)(

@@ -31,7 +31,9 @@ export function CalcMenu({ id }: CalcMenuProps) {
     <DropdownMenuGroup>
       <DropdownMenuCheckboxItem
         label="None"
-        checked={currentMethod === CountMethod.NONE || !selectedMethod}
+        checked={
+          currentMethod === (CountMethod.NONE as string) || !selectedMethod
+        }
         onCheckedChange={() => table.setColumnCountMethod(id, CountMethod.NONE)}
       />
       {plugin.counting?.map((group, index) => (
@@ -84,7 +86,10 @@ interface CalculationItemProps {
 }
 
 function CalculationItem({ method, ...props }: CalculationItemProps) {
-  const legacyHint = countMethodHint[method.id as CountMethod];
+  const legacyHints: Partial<
+    Record<string, { desc: string; imgSrc?: string }>
+  > = countMethodHint;
+  const legacyHint = legacyHints[method.id];
   const description = method.hint?.description ?? legacyHint?.desc;
   const imageSrc = method.hint?.imageSrc ?? legacyHint?.imgSrc;
 

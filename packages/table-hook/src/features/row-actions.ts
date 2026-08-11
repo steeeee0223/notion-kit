@@ -58,6 +58,7 @@ export interface RowActionsTableApi {
   updateRowIcon: (id: string, icon: IconData | null) => void;
   // With Grouping API
   addRowToGroup: (groupId: string) => void;
+  _isKanbanDragActive: () => boolean;
 }
 
 export interface RowActionsColumnApi {
@@ -234,6 +235,7 @@ export const RowActionsFeature: TableFeature = {
   constructTableAPIs: (_table) => {
     const table = _table as unknown as _TableInstance;
     let kanbanDragSnapshot: Row[] | null = null;
+    table._isKanbanDragActive = () => kanbanDragSnapshot !== null;
 
     const scheduleGroupingStateSync = (rows: Row[]) => {
       if (table.atoms.grouping.get().length > 0) {

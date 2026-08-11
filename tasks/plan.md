@@ -1,6 +1,6 @@
 # Table View Plugin Functions — Hybrid Implementation Plan
 
-Status: Approved on 2026-08-10; T01–T09 complete
+Status: Complete on 2026-08-11; T01–T13 complete
 
 > Implementation workers must use `subagent-driven-development` or `executing-plans`, follow the dependency order in `tasks/todo.md`, and use test-driven development for each remaining slice.
 
@@ -308,9 +308,13 @@ Render grouping-key choices and Manual/automatic group order from plugin capabil
 
 ### T12 — Compatibility and filtering-boundary audit
 
+Status: Complete (2026-08-11).
+
 Verify old resources, legacy plugins, custom runtime plugins, unknown IDs, and existing menu behavior. Audit only the filtering boundary: no competing names/state and calculation row scope is not fixed to core rows. Do not implement filtering behavior.
 
 ### T13 — Full verification
+
+Status: Complete (2026-08-11).
 
 Run focused package tests after each task, then package test/typecheck/lint/build and affected repository checks. Record unrelated pre-existing failures without changing unrelated code.
 

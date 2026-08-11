@@ -7,7 +7,7 @@ import {
   plugins,
   renderTableHook,
 } from "@/__tests__/mock";
-import type { TableViewState } from "@/features/menu";
+import { TableViewMenuPage, type TableViewState } from "@/features/menu";
 import type { ColumnInfo, Row } from "@/lib/types";
 import { arrayToEntity } from "@/lib/utils";
 import type { CellPlugin } from "@/plugins";
@@ -61,6 +61,12 @@ const methodPlugins = arrayToEntity([methodPlugin]);
 const methodProperties: ColumnInfo[] = [
   { ...mockProperties[0]!, type: "method-text", config: undefined },
 ];
+const noMethodsPlugin = {
+  ...methodPlugin,
+  id: "no-methods",
+  sorting: undefined,
+  grouping: undefined,
+} satisfies CellPlugin<"no-methods", string, undefined>;
 
 function createWeekContextPlugin(receivedWeekStartsOn: number[]) {
   return {
@@ -208,6 +214,28 @@ describe("useTableView resource API", () => {
         previousDatePropertyId: null,
         nextDatePropertyId: "date-property",
       },
+    });
+  });
+
+  it("ResourceActions_TimelineProperty_GeneratesAnOperationIdWhenOmitted", () => {
+    const onViewChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        onViewChange,
+      }),
+    );
+
+    act(() => result.current.table.setTimelineDateProperty("date-property"));
+
+    expect(
+      getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
+        ?.action,
+    ).toMatchObject({
+      id: expect.any(String) as unknown as string,
+      type: "view.timeline_property.change",
     });
   });
 
@@ -441,6 +469,7 @@ describe("useTableView resource API", () => {
       vi.stubGlobal("window", undefined);
 
       act(() => result.current.table.openRowInFullPage("row1"));
+      expect(() => result.current.table.openRowInTab("row1")).not.toThrow();
 
       expect(
         getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
@@ -449,6 +478,31 @@ describe("useTableView resource API", () => {
     } finally {
       vi.stubGlobal("window", browserWindow);
     }
+  });
+
+  it("ResourceActions_RowUrls_OpenFullPageAndNewTabWithBrowserTargets", () => {
+    const open = vi.spyOn(window, "open").mockImplementation(() => null);
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        getRowUrl: (rowId) => `/rows/${rowId}`,
+      }),
+    );
+
+    act(() => {
+      result.current.table.openRowInFullPage("row1");
+      result.current.table.openRowInTab("row2");
+    });
+
+    expect(open).toHaveBeenNthCalledWith(1, "/rows/row1", "_self");
+    expect(open).toHaveBeenNthCalledWith(
+      2,
+      "/rows/row2",
+      "_blank",
+      "noopener,noreferrer",
+    );
   });
 
   it("ResourceActions_SerializationExcludesCompleteNextResource", () => {
@@ -710,7 +764,7 @@ describe("useTableView resource API", () => {
         },
       },
       action: {
-        id: expect.any(String),
+        id: expect.any(String) as unknown as string,
         type: "view.plugin_sorting_method.change",
         payload: {
           propertyId: "col1",
@@ -737,7 +791,7 @@ describe("useTableView resource API", () => {
       getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
         ?.action,
     ).toEqual({
-      id: expect.any(String),
+      id: expect.any(String) as unknown as string,
       type: "view.plugin_grouping_method.change",
       payload: {
         propertyId: "col1",
@@ -758,9 +812,85 @@ describe("useTableView resource API", () => {
       getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
         ?.action,
     ).toEqual({
-      id: expect.any(String),
+      id: expect.any(String) as unknown as string,
       type: "view.group_sort.change",
       payload: { previousMode: "manual", nextMode: "automatic" },
+    });
+  });
+
+  it("ResourceApi_PluginMethods_DiscoversCapabilitiesAndSkipsSelectedMethods", () => {
+    const onViewChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins: methodPlugins,
+        defaultData: mockData,
+        defaultProperties: methodProperties,
+        defaultView: {
+          pluginMethods: {
+            sortingMethodByColumn: { col1: "text" },
+            groupingMethodByColumn: { col1: "value" },
+          },
+        },
+        onViewChange,
+      }),
+    );
+
+    expect(
+      result.current.table
+        .getColumnSortingMethods("col1")
+        .map((method) => method.id),
+    ).toEqual(["text", "alternate"]);
+    expect(
+      result.current.table
+        .getColumnGroupingMethods("col1")
+        .map((method) => method.id),
+    ).toEqual(["value", "text"]);
+
+    act(() => {
+      result.current.table.setColumnSortingMethod("col1", "text");
+      result.current.table.setColumnGroupingMethod("col1", "value");
+    });
+
+    expect(onViewChange).not.toHaveBeenCalled();
+  });
+
+  it("ResourceApi_PluginMethods_ReportsNoCapabilitiesForPlainPlugins", () => {
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins: arrayToEntity([noMethodsPlugin]),
+        defaultData: mockData,
+        defaultProperties: [
+          { ...mockProperties[0]!, type: "no-methods", config: undefined },
+        ],
+      }),
+    );
+
+    expect(result.current.table.getColumnSortingMethods("col1")).toEqual([]);
+    expect(result.current.table.getColumnGroupingMethods("col1")).toEqual([]);
+  });
+
+  it("ResourceApi_TableMenuState_UsesTheDefaultFeatureUpdater", () => {
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+      }),
+    );
+
+    expect(result.current.table.getTableMenuState()).toEqual({
+      open: false,
+      page: null,
+    });
+    act(() =>
+      result.current.table.setTableMenuState({
+        open: true,
+        page: TableViewMenuPage.Sort,
+      }),
+    );
+    expect(result.current.table.getTableMenuState()).toEqual({
+      open: true,
+      page: TableViewMenuPage.Sort,
     });
   });
 
@@ -856,7 +986,7 @@ describe("useTableView resource API", () => {
     expect(result.current.table.getSelectedSortingMethod("col1")?.id).toBe(
       "alternate",
     );
-    expect(result.current.table.getSelectedGroupingMethod("col1")?.id).toBe(
+    expect(result.current.table.getSelectedGroupingMethod("col1").id).toBe(
       "text",
     );
     expect(result.current.table.getGroupSort()).toEqual({
@@ -904,9 +1034,10 @@ describe("useTableView resource API", () => {
     expect(result.current.table.getSelectedSortingMethod("col1")?.id).toBe(
       "text",
     );
-    expect(result.current.table.getSelectedGroupingMethod("col1")?.id).toBe(
+    expect(result.current.table.getSelectedGroupingMethod("col1").id).toBe(
       "value",
     );
+    act(() => result.current.table.setGroupSort({ mode: "manual" }));
     expect(onViewChange).not.toHaveBeenCalled();
   });
 

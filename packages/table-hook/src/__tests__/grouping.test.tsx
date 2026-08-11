@@ -4,7 +4,7 @@
  */
 
 import type { DragEndEvent } from "@dnd-kit/react";
-import { act, renderHook } from "@testing-library/react";
+import { act, render, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { renderTableHook } from "@/__tests__/mock";
@@ -373,6 +373,30 @@ describe("useTableView - Extended Grouping", () => {
       expect(result.current.table.getGroupSort()).toEqual({ mode: "manual" });
     });
 
+    it("retains manual mode and a compatible automatic method across grouping selection", () => {
+      const table = renderGroupingMethodTable();
+
+      act(() => table.setGroupingColumn("method"));
+      expect(table.getGroupSort()).toEqual({ mode: "manual" });
+
+      act(() =>
+        table.setGroupSort({
+          mode: "automatic",
+          method: "numeric",
+          desc: false,
+        }),
+      );
+      act(() => table.setGroupingColumn("method"));
+      expect(table.getGroupSort()).toEqual({
+        mode: "automatic",
+        method: "numeric",
+        desc: false,
+      });
+
+      act(() => table.setGroupingColumn(null));
+      expect(table.getGroupSort()).toEqual({ mode: "manual" });
+    });
+
     it("selects the new default when the automatic group sorting method is incompatible", () => {
       const lexicalPlugin: CellPlugin<
         "lexical-grouping-method",
@@ -735,6 +759,125 @@ describe("useTableView - Extended Grouping", () => {
       expect(table.atoms.groupingState.get().groupVisibility).toEqual({
         [aGroupId!]: false,
       });
+    });
+
+    it("does not reorder groups when a controlled automatic proposal is rejected", () => {
+      const onViewChange = vi.fn();
+      const { result } = renderHook(() =>
+        useTableView({
+          defaultData: groupingMethodData,
+          defaultProperties: groupingMethodProperties,
+          plugins: arrayToEntity([groupingMethodPlugin]),
+          view: {
+            pluginMethods: { groupSort: { mode: "manual" } },
+          },
+          onViewChange,
+        }),
+      );
+      const table = result.current.table;
+      act(() => table.setGrouping(["method"]));
+      const previousOrder = table.atoms.groupingState.get().groupOrder;
+
+      act(() =>
+        table.setGroupSort({
+          mode: "automatic",
+          method: "numeric",
+          desc: false,
+        }),
+      );
+
+      expect(onViewChange).toHaveBeenCalledOnce();
+      expect(table.getGroupSort()).toEqual({ mode: "manual" });
+      expect(table.atoms.groupingState.get().groupOrder).toEqual(previousOrder);
+    });
+
+    it("orders null and tied automatic group keys deterministically", () => {
+      const plugin: typeof groupingMethodPlugin = {
+        ...groupingMethodPlugin,
+        grouping: {
+          defaultMethod: "edge",
+          methods: [
+            {
+              id: "edge",
+              name: "Edge",
+              function: (value) =>
+                String(value).startsWith("empty") ? null : value,
+              toSortValue: (value) =>
+                value === null
+                  ? null
+                  : String(value).startsWith("tie")
+                    ? 1
+                    : Number(value),
+            },
+          ],
+        },
+      };
+      const data = ["empty-b", "tie-b", "2", "empty-a", "tie-a"].map(
+        (value, index): Row => ({
+          id: `edge-${index}`,
+          createdAt: 0,
+          lastEditedAt: 0,
+          properties: { method: { id: `cell-${index}`, value } },
+        }),
+      );
+      const { result } = renderHook(() =>
+        useTableView({
+          defaultData: data,
+          defaultProperties: groupingMethodProperties,
+          plugins: arrayToEntity([plugin]),
+        }),
+      );
+      act(() => result.current.table.setGrouping(["method"]));
+      expect(
+        result.current.table.atoms.groupingState.get().groupValues[
+          createGroupId("method", null)
+        ]?.sortValue,
+      ).toBeNull();
+      expect(
+        result.current.table.atoms.groupingState.get().groupValues[
+          createGroupId("method", "tie-b")
+        ]?.sortValue,
+      ).toBe(1);
+      act(() => {
+        result.current.table._syncGroupingState({
+          groupSort: {
+            mode: "automatic",
+            method: "numeric",
+            desc: false,
+          },
+        });
+      });
+
+      expect(result.current.table.atoms.groupingState.get().groupOrder).toEqual([
+        createGroupId("method", "tie-a"),
+        createGroupId("method", "tie-b"),
+        createGroupId("method", "2"),
+        createGroupId("method", null),
+      ]);
+    });
+
+    it("keeps an automatic sync empty when there is no grouped column", () => {
+      const { result } = renderHook(() =>
+        useTableView({
+          defaultData: groupingMethodData,
+          defaultProperties: groupingMethodProperties,
+          plugins: arrayToEntity([groupingMethodPlugin]),
+          defaultView: {
+            pluginMethods: {
+              groupSort: {
+                mode: "automatic",
+                method: "numeric",
+                desc: false,
+              },
+            },
+          },
+        }),
+      );
+
+      act(() => result.current.table._syncGroupingStateFromData([]));
+      expect(result.current.table.atoms.groupingState.get().groupOrder).toEqual(
+        [],
+      );
     });
 
     it("switches automatic group ordering to manual once after a drag", () => {
@@ -1294,6 +1437,96 @@ describe("useTableView - Extended Grouping", () => {
       const newVisibility =
         table.atoms.groupingState.get().groupVisibility[groupId];
       expect(newVisibility).toBe(!initialVisibility);
+    });
+
+    it("reports and toggles grouped descendant selection states", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+      act(() => table.setGrouping(["col2"]));
+      const groupedRow = table.getGroupedRowModel().rows[0]!;
+      const leafRow = groupedRow.subRows[0]!;
+
+      expect(groupedRow.getGroupSelectionState()).toBe("unchecked");
+      expect(leafRow.getGroupSelectionState()).toBe("unchecked");
+      act(() => groupedRow.toggleGroupSelection());
+      expect(groupedRow.getGroupSelectionState()).toBe("checked");
+      act(() => groupedRow.toggleGroupSelection());
+      expect(groupedRow.getGroupSelectionState()).toBe("unchecked");
+
+      act(() => table.setRowSelection({ [leafRow.id]: true }));
+      expect(groupedRow.getGroupSelectionState()).toBe(
+        groupedRow.subRows.length === 1 ? "checked" : "indeterminate",
+      );
+      act(() => leafRow.toggleGroupSelection());
+      expect(table.getSelectedRowIds()).toContain(leafRow.id);
+    });
+
+    it("resets grouping metadata and constructs placeholder rows", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+      act(() => table.setGrouping(["col2"]));
+      const groupId = table.atoms.groupingState.get().groupOrder[0]!;
+      const placeholder = table.getPlaceholderGroupedRow(groupId);
+      expect(placeholder.id).toBe(groupId);
+      expect(placeholder.original.properties).toEqual({});
+
+      act(() => {
+        table.toggleGroupVisible(groupId);
+        table._resetGroupingState();
+      });
+      expect(table.atoms.groupingState.get()).toMatchObject({
+        groupOrder: [],
+        groupVisibility: {},
+        groupValues: {},
+      });
+    });
+
+    it("renders custom and fallback grouping values and handles a stale renderer", () => {
+      const plugin: typeof groupingMethodPlugin = {
+        ...groupingMethodPlugin,
+        renderGroupingValue: ({ value }) => <span>Custom {String(value)}</span>,
+      };
+      const { result } = renderHook(() =>
+        useTableView({
+          defaultData: groupingMethodData,
+          defaultProperties: groupingMethodProperties,
+          plugins: arrayToEntity([plugin]),
+        }),
+      );
+      const custom = result.current.table;
+      act(() => custom.setGrouping(["method"]));
+      const customId = custom.atoms.groupingState.get().groupOrder[0]!;
+      const CustomRenderer = custom.getGroupingValueRenderer(customId);
+      const customView = render(CustomRenderer({ className: "group-label" }));
+      expect(customView.container).toHaveTextContent("Custom a");
+      const groupedRow = custom.getGroupedRowModel().rows[0]!;
+      expect(render(groupedRow.renderGroupingValue({})).container).toHaveTextContent(
+        "Custom a",
+      );
+
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+      act(() => table.setGrouping(["col2"]));
+      const groupId = table.atoms.groupingState.get().groupOrder[0]!;
+      const Renderer = table.getGroupingValueRenderer(groupId);
+      const view = render(Renderer({}));
+      expect(view.container.textContent).not.toBe("");
+
+      const error = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => undefined);
+      act(() => table.setGrouping([]));
+      expect(render(Renderer({})).container).toBeEmptyDOMElement();
+      expect(error).toHaveBeenCalledWith(
+        `No grouping column id found for the grouped row ${groupId}`,
+      );
+      error.mockRestore();
     });
   });
 });

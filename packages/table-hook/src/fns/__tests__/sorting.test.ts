@@ -2,10 +2,13 @@ import { describe, expect, it } from "vitest";
 
 import {
   compareBooleans,
+  compareEmptyLastStrings,
   compareFirstOptions,
   compareNumbers,
   compareStrings,
+  sortBooleans,
   sortNumbers,
+  sortStrings,
 } from "@/fns";
 
 function row(value: unknown) {
@@ -30,5 +33,14 @@ describe("common sorting functions", () => {
     expect(compareFirstOptions("Alpha", null)).toBeLessThan(0);
     expect(compareFirstOptions([], ["Alpha"])).toBeGreaterThan(0);
     expect(compareFirstOptions([], null)).toBe(0);
+  });
+
+  it("orders empty strings last and executes all TanStack adapters", () => {
+    expect(compareEmptyLastStrings("", "")).toBe(0);
+    expect(compareEmptyLastStrings("", "Alpha")).toBeGreaterThan(0);
+    expect(compareEmptyLastStrings("Alpha", "")).toBeLessThan(0);
+    expect(compareEmptyLastStrings("Alpha", "Beta")).toBeLessThan(0);
+    expect(sortStrings(row("Alpha"), row("Beta"), "value")).toBeLessThan(0);
+    expect(sortBooleans(row(false), row(true), "value")).toBeLessThan(0);
   });
 });

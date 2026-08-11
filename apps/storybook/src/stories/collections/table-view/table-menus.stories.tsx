@@ -140,9 +140,7 @@ export const CalcMenu: Story = {
             <div className="grid grid-cols-2 justify-between gap-4 p-20">
               <PluginsToolbar
                 contentClassName="w-50"
-                renderContent={(info) => (
-                  <Menu.CalcMenu id={info.id} type={info.type} />
-                )}
+                renderContent={(info) => <Menu.CalcMenu id={info.id} />}
               />
               <div className="flex w-full flex-col gap-3">
                 <Code title="Counting" codeObject={columnCounting} />

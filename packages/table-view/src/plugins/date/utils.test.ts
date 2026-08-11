@@ -109,6 +109,16 @@ describe("date calculation and grouping presentation", () => {
       ),
     ).toBe("2 hours 30 minutes");
     expect(formatDateRangeDuration({}, newYork)).toBe("");
+    expect(
+      formatDateRangeDuration(
+        {
+          start: Date.parse("2025-11-02T04:30:00Z"),
+          end: Date.parse("2025-11-02T04:30:30Z"),
+          includeTime: true,
+        },
+        newYork,
+      ),
+    ).toBe("0 minutes");
   });
 
   it("formats non-relative grouping keys through the selected method", () => {
@@ -123,5 +133,8 @@ describe("date calculation and grouping presentation", () => {
     );
     expect(formatDateGroupingLabel("2025", "year", newYork)).toBe("2025");
     expect(formatDateGroupingLabel("today", "relative", newYork)).toBe("Today");
+    expect(formatDateGroupingLabel("custom", "relative", newYork)).toBe(
+      "custom",
+    );
   });
 });

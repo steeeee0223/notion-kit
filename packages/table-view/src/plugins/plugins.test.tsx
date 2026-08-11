@@ -22,9 +22,15 @@ import {
   phone,
   select,
   text,
+  textMethodCapabilities,
   title,
   url,
+  withGenericCounting,
 } from "@/plugins";
+import {
+  extractDateValue,
+  withDateCalculations,
+} from "@/plugins/date/plugin";
 
 const methodMatrix = {
   title: {
@@ -249,6 +255,63 @@ describe("Built-in method registration matrix", () => {
         }),
       ),
     ).toEqual(methodMatrix);
+  });
+});
+
+describe("Built-in descriptor fallback branches", () => {
+  it("formats capped and zero-total generic counts", () => {
+    const plugin = withGenericCounting(text());
+    const countAll = resolveCountingMethod(plugin, "all")!;
+    const percentageEmpty = resolveCountingMethod(plugin, "percentage-empty")!;
+
+    expect(countAll.formatResult?.(120, { isCapped: true } as never)).toBe(
+      "99+",
+    );
+    expect(
+      percentageEmpty.formatResult?.(0, { rows: [] } as never),
+    ).toBe("0.0%");
+  });
+
+  it("normalizes null text sorting values", () => {
+    const method = textMethodCapabilities<unknown>().sorting.methods[0]!;
+    expect(method.toComparable(null)).toBe("");
+  });
+
+  it("covers empty and timezone-aware date descriptor paths", () => {
+    expect(extractDateValue(undefined, baseRow)).toEqual({});
+
+    const plugin = date();
+    const grouping = plugin.grouping!.methods[0]!;
+    const context = {
+      config: { ...plugin.default.config, tz: "Asia/Taipei" },
+      weekStartsOn: 1 as const,
+    };
+    const value = grouping.function(
+      { start: Date.UTC(2025, 0, 1) },
+      baseRow,
+      "value",
+      context as never,
+    );
+    expect(grouping.toSortValue?.(value, context as never)).not.toBeNull();
+
+    const calculations = withDateCalculations([], extractDateValue)[0]!
+      .functions;
+    const range = calculations.find(({ id }) => id === "date-range")!;
+    const earliest = calculations.find(({ id }) => id === "earliest-date")!;
+    const formatContext = {
+      table: { getColumnInfo: () => ({ config: plugin.default.config }) },
+      colId: "value",
+    } as never;
+    expect(range.formatResult?.("", formatContext)).toBe("");
+    expect(
+      range.formatResult?.(
+        { start: Date.UTC(2025, 0, 1), end: Date.UTC(2025, 0, 2) },
+        formatContext,
+      ),
+    ).toBeTruthy();
+    expect(
+      earliest.formatResult?.({ value: Date.UTC(2025, 0, 1) }, formatContext),
+    ).toBeTruthy();
   });
 });
 

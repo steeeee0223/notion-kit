@@ -1,6 +1,6 @@
 # Table View Plugin Functions Todo — Hybrid Revision
 
-Status: T01–T11 complete; revised T12–T13 approved on 2026-08-10
+Status: T01–T13 complete
 
 Sources of truth:
 
@@ -39,9 +39,9 @@ Sources of truth:
           ├─ [x] T10 Sort/property menus
           └─ [x] T11 Group menu/order
                     ▼
-              [ ] T12 Compatibility audit
+              [x] T12 Compatibility audit
                     ▼
-              [ ] T13 Full verification
+              [x] T13 Full verification
 ```
 
 T07, T08, and pure utilities in T09 are parallel-safe after T05. T10/T11 require the relevant built-in registrations. T12/T13 are sequential.
@@ -182,7 +182,7 @@ T07, T08, and pure utilities in T09 are parallel-safe after T05. T10/T11 require
     - `$NVM_BIN/pnpm --filter @notion-kit/table-view test src/menus/edit-group-menu.test.tsx`
     - `$NVM_BIN/pnpm --filter @notion-kit/table-hook test src/__tests__/grouping.test.tsx`
 
-- [ ] **T12 — Run compatibility workflows and filtering-boundary audit**
+- [x] **T12 — Run compatibility workflows and filtering-boundary audit**
   - Dependencies: T06–T11.
   - Acceptance:
     - old resources and all legacy plugin fallbacks work;
@@ -197,7 +197,7 @@ T07, T08, and pure utilities in T09 are parallel-safe after T05. T10/T11 require
     - focused table-view calculation/sort/group menu suites;
     - `rg -n "calcFns|groupByFns" packages/table-hook packages/table-view` has no production API match.
 
-- [ ] **T13 — Full verification**
+- [x] **T13 — Full verification**
   - Dependencies: T12.
   - Acceptance:
     - table-hook and table-view tests, typechecks, lint, and builds pass;
@@ -206,10 +206,15 @@ T07, T08, and pure utilities in T09 are parallel-safe after T05. T10/T11 require
     - docs and task status match implemented behavior.
   - Verify:
     - commands listed in `tasks/plan.md` section 9.
+  - 2026-08-11 result: all package test, typecheck, lint, build, coverage,
+    repository test, affected typecheck, and built `/fns` resolution commands
+    pass. The all-packages fallback used by `lint:affected` reaches an unchanged
+    pre-T12 Storybook toolbar lint failure; see the exact record in
+    `tasks/test-plan.md`.
 
 ## Checkpoints
 
 - [x] After T05–T06: `/fns` package boundary, hybrid bridge, calculation compatibility, and row-scope tests pass.
 - [x] After T07–T09: all 12 built-ins register the approved matrix.
 - [x] After T10–T11: all menus are capability-driven and custom-plugin integration passes.
-- [ ] After T12–T13: compatibility and full package verification pass; filtering remains out of scope.
+- [x] After T12–T13: compatibility and full package verification pass; filtering remains out of scope.

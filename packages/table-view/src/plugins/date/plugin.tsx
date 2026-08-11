@@ -96,7 +96,7 @@ function dateCapabilities<Data>(extract: DateExtractor<Data>) {
       ],
     },
     grouping: {
-      defaultMethod: "relative",
+      defaultMethod: "day",
       methods: [
         {
           id: "relative",

@@ -1,6 +1,6 @@
 # Table View Plugin Functions Test Strategy
 
-Status: Approved on 2026-08-10; suites T01–T11 have landed; T12–T13 remain
+Status: Complete on 2026-08-11
 
 Related documents:
 
@@ -553,3 +553,52 @@ pnpm lint:affected
 ## Phase Gate
 
 The revised strategy, `tasks/plan.md`, and `tasks/todo.md` were approved on 2026-08-10. T05–T13 implementation may begin; landed T01–T04 commits remain the baseline and are not rewritten solely for this revision.
+
+## T12–T13 Verification Record (2026-08-11)
+
+The final package tests passed 255/255 table-hook tests and 425/425 table-view
+tests; the final repository test run passed 953/953 tests. Affected typecheck
+passed 28/28 tasks. Both package builds and the built
+`@notion-kit/table-hook/fns` self-import passed. The table-view lint gate retained
+one existing Tailwind warning in `src/row-view/full-view.tsx`.
+
+`pnpm lint:affected` did not pass: Turbo could not resolve a base branch, treated
+all packages as affected, and reported 23 successful tasks out of 25 before
+`@notion-kit/storybook#lint` failed. The unchanged
+`apps/storybook/src/stories/collections/table-view/plugins-toolbar.tsx` reported
+eight `@typescript-eslint/no-unsafe-*` errors at lines 32, 35, 36, 41, and 44;
+`apps/storybook/src/components/code.tsx` also retained one Tailwind warning at
+line 15. The failing toolbar is unchanged from the clean pre-T12 dispatch and
+the errors are its existing unsafe accesses on the `any`-typed
+`DEFAULT_PLUGINS` declaration. The affected table-hook and table-view lint tasks
+passed.
+
+Sequential coverage passed its configured package gates:
+
+| Package    | Statements | Branches | Functions |  Lines |
+| ---------- | ---------: | -------: | --------: | -----: |
+| table-hook |     89.72% |   83.33% |    90.17% | 90.56% |
+| table-view |     93.59% |   91.04% |    89.87% | 95.27% |
+
+The in-scope changed-file targets are met. Values below are
+statements/branches/functions/lines:
+
+- pure `/fns` execution modules aggregate to 100/97.90/100/100; date utilities
+  are 100/100/100/100;
+- method resolvers are 97.50/90/97.56/100;
+- calculation and sorting menus meet their per-file targets. Sort menu is
+  96.82/92.59/94.11/98.11 and edit-group is 100/90.62/100/100;
+- full-file group execution and resource wiring targets pass:
+  `features/grouping.ts` is 98.04/90.74/98.36/99.44 and `features/menu.ts` is
+  99.10/90.24/97.72/99.04;
+- built-in registration coverage is semantic, as the target defines it: the
+  matrix suite asserts every registered ID and label, factory construction, and
+  fallback branch. It intentionally does not require blanket coverage of
+  unrelated cell-renderer/UI branches in the same plugin files.
+
+`row-actions.ts` remains excluded as the strategy explicitly directs; its new
+drag-active seam is nevertheless covered by the row-action/grouping regression.
+The compatibility/filtering audit itself passed: no production `calcFns` or
+`groupByFns`, no filtering implementation, calculations use the pre-grouped
+row boundary, common consumers use the public `/fns` entry, and the root entry
+does not re-export those function values.

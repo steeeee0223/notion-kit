@@ -265,6 +265,14 @@ export const ExtendedGroupingFeature: TableFeature = {
         }
       });
 
+      if (table._isKanbanDragActive()) {
+        const previous = table.atoms.groupingState.get();
+        previous.groupOrder.forEach((id) => {
+          const entry = previous.groupValues[id];
+          if (entry && !entries.has(id)) entries.set(id, { id, ...entry });
+        });
+      }
+
       return Array.from(entries.values());
     };
 

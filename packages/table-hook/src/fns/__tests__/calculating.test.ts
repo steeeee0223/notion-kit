@@ -37,6 +37,7 @@ describe("common calculation functions", () => {
     expect(aggregate(aggregateCountUnique, values)).toBe(2);
     expect(aggregate(aggregateCountEmpty, values)).toBe(3);
     expect(aggregate(aggregateCountNonEmpty, values)).toBe(2);
+    expect(aggregate(aggregateCountEmpty, [{}])).toBe(1);
   });
 
   it("calculates semantic number results while ignoring invalid values", () => {
@@ -49,6 +50,7 @@ describe("common calculation functions", () => {
     expect(aggregate(aggregateNumberMaximum, values)).toBe(20.5);
     expect(aggregate(aggregateNumberRange, values)).toBe(30.5);
     expect(aggregate(aggregateNumberSum, [null, "invalid"])).toBe("");
+    expect(aggregate(aggregateNumberSum, ["   ", {}, Number.NaN])).toBe("");
   });
 
   it("does not mutate input while finding an even or odd median", () => {
@@ -88,6 +90,13 @@ describe("common calculation functions", () => {
       ]),
     ).toEqual({ start: 100, end: 300, includeTime: false });
     expect(aggregate(aggregateDateRange, [{}, null])).toBe("");
+    expect(aggregate(aggregateDateEarliest, [])).toBe("");
+    expect(aggregate(aggregateDateLatest, [])).toBe("");
+    expect(aggregate(aggregateDateEarliest, [100])).toEqual({
+      value: 100,
+      includeTime: false,
+    });
+    expect(aggregate(aggregateDateLatest, [Number.POSITIVE_INFINITY])).toBe("");
   });
 
   it("merges time metadata across tied winning date boundaries regardless of row order", () => {

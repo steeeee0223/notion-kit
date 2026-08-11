@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import type {
@@ -123,6 +123,64 @@ describe("SortMenu", () => {
     expect(sort.queryDirection("A → Z")).not.toBeInTheDocument();
   });
 
+  it("SortMenu_RemoveRuleFromMultipleRulesKeepsTheRemainingRule", async () => {
+    const properties = createFullPluginFixture().properties.map((property) => ({
+      ...property,
+      icon: { type: "emoji" as const, src: "🔎" },
+    }));
+    const tableView = renderTableView({
+      ...createFullPluginFixture(),
+      properties,
+    });
+    const sort = await tableView.openSortMenu();
+    await sort.addRule("Name");
+    await sort.addRule("Complete");
+
+    await sort.openDirection("Checked → unchecked", "Unchecked → checked");
+    await tableView.user.click(sort.directionOption("Unchecked → checked"));
+
+    await sort.remove("Name");
+    expect(sort.moveHandle("Complete")).toBeVisible();
+
+    await sort.startAdding();
+    expect(sort.propertyOption("Score")).toBeVisible();
+  });
+
+  it("SortMenu_AddsALegacyPluginWithoutRegisteredSortingMetadata", async () => {
+    const legacyPlugin: CellPlugin<"legacy", string, undefined> = {
+      id: "legacy",
+      meta: { name: "Legacy", desc: "Legacy", icon: null },
+      default: { name: "Legacy", icon: null, config: undefined, data: "" },
+      fromValue: (value) => String(value ?? ""),
+      toValue: (value) => value,
+      toTextValue: (value) => value,
+      compare: () => 0,
+      renderCell: ({ data }) => <span>{data}</span>,
+    };
+    const tableView = renderTableView({
+      plugins: [...DEFAULT_PLUGINS, legacyPlugin],
+      properties: [
+        { id: "name", name: "Name", type: "title", config: { showIcon: true } },
+        { id: "legacy", name: "Legacy", type: "legacy", config: undefined },
+      ],
+      data: [row("one", "One", "value")],
+    });
+    const sort = await tableView.openSortMenu();
+
+    await sort.addRule("Name");
+    await tableView.user.click(
+      sort.root.querySelector<HTMLElement>(
+        '[role="combobox"][aria-label="Name"]',
+      )!,
+    );
+    await tableView.user.click(
+      await screen.findByRole("option", { name: "Legacy" }),
+    );
+    await sort.remove("Legacy");
+    await sort.addRule("Legacy");
+    expect(sort.directionTrigger("Ascending")).toBeVisible();
+  });
+
   it("SortMenu_UsesPluginDirectionLabelsAndKeepsOneMethodCompact", async () => {
     const tableView = renderTableView();
     const sort = await tableView.openSortMenu();
@@ -138,7 +196,7 @@ describe("SortMenu", () => {
     await tableView.user.click(
       within(sort.root).getByRole("combobox", { name: "A → Z" }),
     );
-    expect(screen.getByRole("option", { name: "Z → A" })).toBeVisible();
+    expect(await screen.findByRole("option", { name: "Z → A" })).toBeVisible();
   });
 
   it("SortMenu_UsesNumberCheckboxAndDateDirectionLabels", async () => {
@@ -220,9 +278,9 @@ describe("SortMenu", () => {
       name: "Sort method",
     });
     expect(method).toHaveTextContent("Alphabetical");
-    await tableView.user.click(method);
+    fireEvent.click(method);
     await tableView.user.click(
-      screen.getByRole("option", { name: "Code length" }),
+      await screen.findByRole("option", { name: "Code length" }),
     );
 
     await waitFor(() =>

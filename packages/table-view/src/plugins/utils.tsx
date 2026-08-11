@@ -33,30 +33,35 @@ function percentage(result: unknown, total: number) {
 const countAll: CountingMethod = {
   id: CountMethod.ALL,
   name: "All",
+  label: "count",
   aggregationFn: aggregateCountAll,
   formatResult: (result, { isCapped }) => capCount(result, isCapped),
 };
 const countValues: CountingMethod = {
   id: CountMethod.VALUES,
   name: "Values",
+  label: "values",
   aggregationFn: aggregateCountValues,
   formatResult: (result, { isCapped }) => capCount(result, isCapped),
 };
 const countUnique: CountingMethod = {
   id: CountMethod.UNIQUE,
   name: "Unique",
+  label: "unique",
   aggregationFn: aggregateCountUnique,
   formatResult: (result, { isCapped }) => capCount(result, isCapped),
 };
 const countEmpty: CountingMethod = {
   id: CountMethod.EMPTY,
   name: "Empty",
+  label: "empty",
   aggregationFn: aggregateCountEmpty,
   formatResult: (result, { isCapped }) => capCount(result, isCapped),
 };
 const countNonEmpty: CountingMethod = {
   id: CountMethod.NONEMPTY,
   name: "Not empty",
+  label: "not empty",
   aggregationFn: aggregateCountNonEmpty,
   formatResult: (result, { isCapped }) => capCount(result, isCapped),
 };
@@ -64,21 +69,25 @@ const countChecked: CountingMethod = {
   ...countNonEmpty,
   id: CountMethod.CHECKED,
   name: "Checked",
+  label: "checked",
 };
 const countUnchecked: CountingMethod = {
   ...countEmpty,
   id: CountMethod.UNCHECKED,
   name: "Unchecked",
+  label: "unchecked",
 };
 const percentageChecked: CountingMethod = {
   id: CountMethod.PERCENTAGE_CHECKED,
   name: "Checked",
+  label: "checked",
   aggregationFn: aggregateCountNonEmpty,
   formatResult: (result, { rows }) => percentage(result, rows.length),
 };
 const percentageUnchecked: CountingMethod = {
   id: CountMethod.PERCENTAGE_UNCHECKED,
   name: "Unchecked",
+  label: "unchecked",
   aggregationFn: aggregateCountEmpty,
   formatResult: (result, { rows }) => percentage(result, rows.length),
 };
@@ -86,11 +95,13 @@ const percentageEmpty: CountingMethod = {
   ...percentageUnchecked,
   id: CountMethod.PERCENTAGE_EMPTY,
   name: "Empty",
+  label: "empty",
 };
 const percentageNonEmpty: CountingMethod = {
   ...percentageChecked,
   id: CountMethod.PERCENTAGE_NONEMPTY,
   name: "Not empty",
+  label: "not empty",
 };
 
 const genericCounting = [

@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { expect, it, vi } from "vitest";
 
 import type {
@@ -233,9 +233,7 @@ it("PropMenu_QuickSortUsesPluginLabelsDefaultMethodAndInlineRuntime", async () =
     await screen.findByRole("menuitem", { name: "Short first" }),
   ).toBeVisible();
   expect(screen.getByRole("menuitem", { name: "Long first" })).toBeVisible();
-  await tableView.user.click(
-    screen.getByRole("menuitem", { name: "Short first" }),
-  );
+  fireEvent.click(screen.getByRole("menuitem", { name: "Short first" }));
 
   await waitFor(() =>
     expect(tableView.rowOrder(["One", "Two", "Three"])).toEqual([
