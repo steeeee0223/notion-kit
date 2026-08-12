@@ -1,5 +1,5 @@
 import { act, render, renderHook, screen } from "@testing-library/react";
-import { describe, expect, expectTypeOf, it } from "vitest";
+import { describe, expect, expectTypeOf, it, vi } from "vitest";
 
 import { DEFAULT_FEATURES } from "@/features";
 import type { _RowInstance } from "@/features/types";
@@ -8,9 +8,12 @@ import type { ColumnInfo, Row } from "@/lib/types";
 import { arrayToEntity } from "@/lib/utils";
 import {
   compareNumbers,
+  compareStrings,
+  createSortingMethod,
   getGroupSortableSortingMethods,
   isValueSortingMethod,
   resolveGroupingMethod,
+  resolveGroupSortingMethod,
   resolveSortingMethod,
 } from "@/methods";
 import {
@@ -19,6 +22,7 @@ import {
   type GroupingValueProps,
 } from "@/plugins";
 import { createCompareFn } from "@/plugins/utils";
+import type { PartialTableViewState } from "@/table-contexts/types";
 import { useTableView } from "@/table-contexts/use-table-view";
 
 const reverseTextPlugin: CellPlugin<"reverse-text", string, undefined> = {
@@ -271,6 +275,7 @@ describe("cell plugin registered methods", () => {
 
   it("uses registered value comparators for ascending and descending rows while normalizing missing cells", () => {
     const contexts: number[] = [];
+    const values: unknown[] = [];
     const plugin = {
       ...reverseTextPlugin,
       sorting: {
@@ -287,6 +292,7 @@ describe("cell plugin registered methods", () => {
               context: { weekStartsOn: number },
             ) => {
               contexts.push(context.weekStartsOn);
+              values.push(value);
               return typeof value === "number" ? value : null;
             },
             compare: (a: number, b: number) => a - b,
@@ -312,6 +318,7 @@ describe("cell plugin registered methods", () => {
     expect(method?.function(rowWithTwo, rowWithTen, "col1")).toBeLessThan(0);
     expect(method?.function(rowWithTen, rowWithTwo, "col1")).toBeGreaterThan(0);
     expect(contexts).toEqual([1, 1, 1, 1, 1, 1]);
+    expect(values[0]).toBeNull();
   });
 
   it("marks only value-comparator sorting methods as automatically group-sortable", () => {
@@ -324,6 +331,26 @@ describe("cell plugin registered methods", () => {
         sorting: undefined,
       }),
     ).toEqual([]);
+  });
+
+  it("falls back to an eligible value comparator for group sorting", () => {
+    const valueMethod = createSortingMethod("value", "Value", compareStrings);
+    const plugin: CellPlugin = {
+      ...reverseTextPlugin,
+      sorting: {
+        defaultMethod: "value",
+        methods: [
+          {
+            id: "legacy",
+            name: "Legacy",
+            function: () => 0,
+          },
+          valueMethod,
+        ],
+      },
+    };
+
+    expect(resolveGroupSortingMethod(plugin, "legacy")?.id).toBe("value");
   });
 
   it("keeps an incomplete registered sorting descriptor inert", () => {
@@ -414,6 +441,81 @@ describe("cell plugin registered methods", () => {
     });
 
     expect(table.getColumnCountResult("col1")).toBe("3");
+  });
+
+  it("recomputes sorted rows after a controlled method change is accepted", () => {
+    const plugins = arrayToEntity([reverseTextPlugin]);
+    const onViewChange = vi.fn();
+    const { result, rerender } = renderHook(
+      ({ view }: { view: PartialTableViewState }) =>
+        useTableView({
+          defaultData: data,
+          defaultProperties: properties,
+          onViewChange,
+          plugins,
+          view,
+        }),
+      { initialProps: { view: {} } },
+    );
+
+    act(() => {
+      result.current.table.setSorting([{ id: "col1", desc: false }]);
+    });
+    expect(
+      result.current.table.getSortedRowModel().rows.map(({ id }) => id),
+    ).toEqual(["row3", "row2", "row1"]);
+
+    act(() => {
+      result.current.table.setColumnSortingMethod("col1", "natural");
+    });
+    const proposal = onViewChange.mock.lastCall?.[0] as
+      | { next: PartialTableViewState }
+      | undefined;
+    expect(proposal).toBeDefined();
+
+    rerender({ view: proposal!.next });
+    expect(
+      result.current.table.getSortedRowModel().rows.map(({ id }) => id),
+    ).toEqual(["row1", "row2", "row3"]);
+  });
+
+  it("provides the live table instance to sorting methods", () => {
+    const receivedTables: unknown[] = [];
+    const plugin: CellPlugin = {
+      ...reverseTextPlugin,
+      sorting: {
+        methods: [
+          {
+            id: "context",
+            name: "Context",
+            ascendingLabel: "Ascending",
+            descendingLabel: "Descending",
+            toComparable: (value, _row, context) => {
+              receivedTables.push(context.table);
+              return String(value);
+            },
+            compare: compareStrings,
+          },
+        ],
+      },
+    };
+    const { result } = renderHook(() =>
+      useTableView({
+        defaultData: data,
+        defaultProperties: properties,
+        plugins: arrayToEntity([plugin]),
+      }),
+    );
+
+    act(() => {
+      result.current.table.setSorting([{ id: "col1", desc: false }]);
+    });
+    result.current.table.getSortedRowModel();
+
+    expect(receivedTables.length).toBeGreaterThan(0);
+    expect(
+      receivedTables.every((table) => table === result.current.table),
+    ).toBe(true);
   });
 
   it("executes a selected named TanStack sort function through ColumnDef.sortFn", () => {

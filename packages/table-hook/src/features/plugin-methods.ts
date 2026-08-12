@@ -3,7 +3,7 @@ export interface PluginMethodState {
   groupingMethodByColumn: Record<string, string | undefined>;
   groupSort:
     | { mode: "manual" }
-    | { mode: "automatic"; method?: string; desc: boolean };
+    | { mode: "ascending" | "descending"; method: string };
 }
 
 export function createPluginMethodState(): PluginMethodState {

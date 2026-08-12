@@ -802,9 +802,8 @@ describe("useTableView resource API", () => {
 
     act(() => {
       result.current.table.setGroupSort({
-        mode: "automatic",
+        mode: "ascending",
         method: "text",
-        desc: false,
       });
     });
 
@@ -814,7 +813,10 @@ describe("useTableView resource API", () => {
     ).toEqual({
       id: expect.any(String) as unknown as string,
       type: "view.group_sort.change",
-      payload: { previousMode: "manual", nextMode: "automatic" },
+      payload: {
+        previousGroupSort: { mode: "manual" },
+        nextGroupSort: { mode: "ascending", method: "text" },
+      },
     });
   });
 
@@ -976,9 +978,8 @@ describe("useTableView resource API", () => {
       result.current.table.setColumnSortingMethod("col1", "alternate");
       result.current.table.setColumnGroupingMethod("col1", "text");
       result.current.table.setGroupSort({
-        mode: "automatic",
+        mode: "descending",
         method: "text",
-        desc: true,
       });
     });
     rerender({ renderCount: 1 });
@@ -990,9 +991,8 @@ describe("useTableView resource API", () => {
       "text",
     );
     expect(result.current.table.getGroupSort()).toEqual({
-      mode: "automatic",
+      mode: "descending",
       method: "text",
-      desc: true,
     });
   });
 

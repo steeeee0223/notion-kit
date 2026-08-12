@@ -74,6 +74,11 @@ it("CalcMenu_CustomPlugin_DiscoversUnhintedMethodsAndUsesDescriptorLabels", asyn
   });
   expect(screen.queryByRole("menuitem", { name: "Count" })).toBeNull();
   await menu.openSubmenu("Metrics");
+  expect(
+    screen.queryByRole("menuitemcheckbox", {
+      name: "Show large counts as 99+",
+    }),
+  ).toBeNull();
 
   menu.choose("Double total");
 

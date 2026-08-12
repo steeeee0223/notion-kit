@@ -255,8 +255,10 @@ export const TableMenuFeature: TableFeature = {
           id: actionId,
           type: "view.group_sort.change",
           payload: {
-            previousMode: previous.pluginMethods?.groupSort?.mode ?? "manual",
-            nextMode: next.pluginMethods?.groupSort?.mode ?? "manual",
+            previousGroupSort: previous.pluginMethods?.groupSort ?? {
+              mode: "manual",
+            },
+            nextGroupSort: next.pluginMethods?.groupSort ?? { mode: "manual" },
           },
         }),
       );
@@ -386,9 +388,5 @@ function isSameGroupSort(
 ) {
   if (left.mode !== right.mode) return false;
   if (left.mode === "manual") return true;
-  return (
-    right.mode === "automatic" &&
-    left.method === right.method &&
-    left.desc === right.desc
-  );
+  return right.mode !== "manual" && left.method === right.method;
 }

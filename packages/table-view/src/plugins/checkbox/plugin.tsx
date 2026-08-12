@@ -8,6 +8,9 @@ import { CheckboxGroupingValue } from "./checkbox-grouping-value";
 import type { CheckboxPlugin } from "./types";
 
 export function checkbox(): CheckboxPlugin {
+  const compareCheckedFirst = (a: unknown, b: unknown) =>
+    -compareBooleans(Boolean(a), Boolean(b));
+
   return {
     id: "checkbox",
     meta: {
@@ -24,7 +27,7 @@ export function checkbox(): CheckboxPlugin {
     fromValue: () => false,
     toValue: (data) => data,
     toTextValue: (data) => (data ? "✅" : ""),
-    compare: createCompareFn(compareBooleans),
+    compare: createCompareFn(compareCheckedFirst),
     sorting: {
       defaultMethod: "checkbox",
       enableGroupSort: false,
@@ -35,8 +38,7 @@ export function checkbox(): CheckboxPlugin {
           ascendingLabel: "Checked → unchecked",
           descendingLabel: "Unchecked → checked",
           toComparable: (data) => data,
-          compare: (a, b) => compareBooleans(Boolean(a), Boolean(b)),
-          sortFn: "checkbox",
+          compare: compareCheckedFirst,
         },
       ],
     },

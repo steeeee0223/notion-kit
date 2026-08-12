@@ -117,6 +117,7 @@ export interface CountingMethod {
 
 export interface CountingMethodGroup {
   group: string;
+  supportsCapping?: boolean;
   functions: CountingMethod[];
 }
 
@@ -417,7 +418,7 @@ export function resolveSortingAccessorValue<Key extends string, Data, Config>(
   );
   if (method && isValueSortingMethod(method)) {
     return method.toComparable(
-      data,
+      (data ?? null) as Data,
       row,
       createPluginMethodContext(plugin, colId, context),
     );
@@ -437,11 +438,16 @@ export function getGroupSortableSortingMethods<
 export function resolveGroupSortingMethod<Key extends string, Data, Config>(
   plugin: CellPlugin<Key, Data, Config>,
   selectedMethodId?: string,
-  context?: Partial<Omit<PluginMethodContext<Config>, "colId">>,
+  _context?: Partial<Omit<PluginMethodContext<Config>, "colId">>,
 ) {
   if (plugin.sorting?.enableGroupSort === false) return undefined;
-  const method = resolveSortingMethod(plugin, selectedMethodId, context);
-  return method && isValueSortingMethod(method) ? method : undefined;
+  const methods = getGroupSortableSortingMethods(plugin);
+  const method = resolveRegisteredMethod(
+    methods,
+    selectedMethodId,
+    plugin.sorting?.defaultMethod,
+  );
+  return method;
 }
 
 export function resolveGroupingMethod<Key extends string, Data, Config>(

@@ -369,7 +369,7 @@ describe("Plugin sorting boundaries", () => {
     ["number less", number(), "10", "90", -1],
     ["number null last", number(), null, "10", 1],
     ["number null equal", number(), null, null, 0],
-    ["checkbox false first", checkbox(), false, true, -1],
+    ["checkbox checked first", checkbox(), false, true, 1],
     ["email greater", email(), "z@example.com", "a@example.com", 1],
     ["date earlier", date(), { start: 1 }, { start: 2 }, -1],
     ["date empty last", date(), {}, { start: 2 }, 1],
@@ -382,6 +382,41 @@ describe("Plugin sorting boundaries", () => {
       );
     },
   );
+
+  it("orders checkbox rows in the direction named by its sorting labels", () => {
+    const plugin = checkbox();
+    const method = plugin.sorting!.methods[0]!;
+    if (!("ascendingLabel" in method)) throw new Error("Expected value method");
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins: arrayToEntity([plugin]),
+        defaultProperties: [
+          {
+            id: "value",
+            name: "Done",
+            type: "checkbox",
+            width: "100",
+            config: undefined,
+          },
+        ],
+        defaultData: [
+          row(false, { id: "unchecked" }),
+          row(true, { id: "checked" }),
+        ],
+      }),
+    );
+
+    expect(method.ascendingLabel).toBe("Checked → unchecked");
+    act(() => result.current.table.setSorting([{ id: "value", desc: false }]));
+    expect(
+      result.current.table.getSortedRowModel().rows.map(({ id }) => id),
+    ).toEqual(["checked", "unchecked"]);
+    expect(method.descendingLabel).toBe("Unchecked → checked");
+    act(() => result.current.table.setSorting([{ id: "value", desc: true }]));
+    expect(
+      result.current.table.getSortedRowModel().rows.map(({ id }) => id),
+    ).toEqual(["unchecked", "checked"]);
+  });
 
   it("keeps empty dates last in ascending and descending table execution", () => {
     const plugin = date();

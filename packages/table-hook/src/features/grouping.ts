@@ -194,7 +194,7 @@ export const ExtendedGroupingFeature: TableFeature = {
       entries: GroupingEntry[],
       groupSort: PluginMethodState["groupSort"],
     ) => {
-      if (groupSort.mode !== "automatic") return undefined;
+      if (groupSort.mode === "manual") return undefined;
 
       const info = table.getGroupedColumnInfo();
       if (!info) return entries.map((entry) => entry.id);
@@ -231,7 +231,7 @@ export const ExtendedGroupingFeature: TableFeature = {
           );
           return comparison === 0
             ? left.id.localeCompare(right.id)
-            : groupSort.desc
+            : groupSort.mode === "descending"
               ? -comparison
               : comparison;
         })
@@ -290,16 +290,18 @@ export const ExtendedGroupingFeature: TableFeature = {
       table.options.onGroupingStateChange?.(updater);
     };
     table._syncGroupingState = (options) => {
+      const syncOptions = options ?? {};
       const entries = getGroupingEntriesFromData(
         table.getPreGroupedRowModel().rows.map((row) => row.original),
       );
       const draggedGroupOrder = pendingDraggedGroupOrder;
       if (draggedGroupOrder) {
-        pendingDraggedGroupOrder = undefined;
-        if (table.getGroupSort().mode !== "manual") {
-          applyGroupingEntries(entries, options);
+        const groupSort = syncOptions.groupSort ?? table.getGroupSort();
+        if (groupSort.mode !== "manual") {
+          applyGroupingEntries(entries, syncOptions);
           return;
         }
+        pendingDraggedGroupOrder = undefined;
         const nextIdSet = new Set(entries.map((entry) => entry.id));
         const groupOrder = [
           ...draggedGroupOrder.filter((groupId) => nextIdSet.has(groupId)),
@@ -307,16 +309,19 @@ export const ExtendedGroupingFeature: TableFeature = {
             .map((entry) => entry.id)
             .filter((groupId) => !draggedGroupOrder.includes(groupId)),
         ];
-        applyGroupingEntries(entries, { ...options, groupOrder });
+        applyGroupingEntries(entries, { ...syncOptions, groupOrder });
         return;
       }
-      applyGroupingEntries(entries, options);
+      applyGroupingEntries(entries, syncOptions);
     };
     table._syncGroupingStateFromData = (rows, options) => {
       applyGroupingEntries(getGroupingEntriesFromData(rows), options);
     };
     table._settlePendingGroupedRowDrag = (groupSort) => {
       if (!pendingDraggedGroupOrder) return;
+      if (groupSort.mode !== "manual") {
+        pendingDraggedGroupOrder = undefined;
+      }
       table._syncGroupingState({ groupSort });
     };
     table.setGrouping = (updater) => {
@@ -335,7 +340,7 @@ export const ExtendedGroupingFeature: TableFeature = {
       );
       table.setGrouping(colId ? [colId] : []);
       const groupSort = table.getGroupSort();
-      if (groupSort.mode !== "automatic") return;
+      if (groupSort.mode === "manual") return;
       if (!colId) {
         table.setGroupSort({ mode: "manual" });
         return;

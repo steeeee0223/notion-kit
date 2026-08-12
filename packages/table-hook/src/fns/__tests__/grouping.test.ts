@@ -195,6 +195,7 @@ describe("common grouping functions", () => {
     ).toBeNull();
     expect(groupByDateMonth({ start: Number.NaN }, options)).toBeNull();
     expect(groupByDateYear(Number.NEGATIVE_INFINITY, options)).toBeNull();
+    expect(groupByDateDay({ start: -1 }, options)).toBeNull();
     expect(dateGroupSortValue("2025-02-30", options)).toBeNull();
   });
 });

@@ -19,6 +19,7 @@ const emptyIcon = null;
 const genericCounting = [
   {
     group: "Count",
+    supportsCapping: true,
     functions: [countAll, countValues, countUnique, countEmpty, countNonEmpty],
   },
   {

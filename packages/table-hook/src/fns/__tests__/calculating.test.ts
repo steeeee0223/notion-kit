@@ -30,7 +30,7 @@ function aggregate(
 
 describe("common calculation functions", () => {
   it("returns semantic numeric count results before presentation formatting", () => {
-    const values = ["Alpha, Beta", "", "Alpha", false, null];
+    const values = ["Alpha, Beta", "", " Alpha ", false, null];
 
     expect(aggregate(aggregateCountAll, values)).toBe(5);
     expect(aggregate(aggregateCountValues, values)).toBe(3);

@@ -1,6 +1,6 @@
 import { TZDate } from "@date-fns/tz";
 import {
-  differenceInDays,
+  differenceInCalendarDays,
   format,
   formatDistance,
   parse,
@@ -71,17 +71,18 @@ export function formatDate(ts: number, options: FormatOptions): string {
     return format(date, formatStr);
   }
 
-  const now = new Date();
+  const now = new TZDate(Date.now(), options.tz);
+  const targetDate = new TZDate(ts, options.tz);
   if (timeStr) {
-    return formatDistance(ts, now, {
+    return formatDistance(targetDate, now, {
       addSuffix: true,
       includeSeconds: false,
     });
   }
 
   const today = startOfDay(now);
-  const target = startOfDay(ts);
-  const diffDays = differenceInDays(today, target);
+  const target = startOfDay(targetDate);
+  const diffDays = differenceInCalendarDays(today, target);
 
   if (diffDays === 0) return "Today";
   if (diffDays === 1) return "Yesterday";

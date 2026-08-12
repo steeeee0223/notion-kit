@@ -13,23 +13,23 @@ Source: `docs/superpowers/specs/2026-08-13-table-method-review-fixes-design.md`
 
 ## Current review-fix tasks
 
-- [ ] **R01 — Direct three-state group sorting**
-  - [ ] Replace `automatic + desc` with `manual | ascending | descending`.
-  - [ ] Preserve controlled state, group ordering, and drag settlement.
-  - [ ] Emit complete group-sort action deltas.
-- [ ] **R02 — Central row-sort invalidation and checkbox execution**
-  - [ ] Add a failing API-level invalidation regression test.
-  - [ ] Invalidate only after authoritative method changes.
-  - [ ] Remove the sort-menu cache-busting call.
-  - [ ] Verify checkbox labels against actual row order.
-- [ ] **R03 — Material PR #167 edge cases**
-  - [ ] Reject negative date sentinels and preserve configured timezone labels.
-  - [ ] Normalize sparse comparator input and runtime context.
-  - [ ] Trim unique-count values and scope the count-cap switch.
-  - [ ] Deduplicate select method capabilities if the helper remains simpler.
+- [x] **R01 — Direct three-state group sorting**
+  - [x] Replace `automatic + desc` with `manual | ascending | descending`.
+  - [x] Preserve controlled state, group ordering, and drag settlement.
+  - [x] Emit complete group-sort action deltas.
+- [x] **R02 — Central row-sort invalidation and checkbox execution**
+  - [x] Add a failing API-level invalidation regression test.
+  - [x] Invalidate only after authoritative method changes.
+  - [x] Remove the sort-menu cache-busting call.
+  - [x] Verify checkbox labels against actual row order.
+- [x] **R03 — Material PR #167 edge cases**
+  - [x] Reject negative date sentinels and preserve configured timezone labels.
+  - [x] Normalize sparse comparator input and runtime context.
+  - [x] Trim unique-count values and scope the count-cap switch.
+  - [x] Review select method duplication; keep explicit descriptors because extraction would add indirection without changing behavior.
 - [ ] **R04 — Test-value audit and verification**
-  - [ ] Remove temporary, duplicate, and implementation-only tests.
-  - [ ] Run package tests, typechecks, lint, format, and builds.
+  - [x] Remove temporary, duplicate, and implementation-only tests.
+  - [x] Run package tests, typechecks, lint, format, and builds.
   - [ ] Reply to every unresolved PR thread with Fixed or Not changing.
 
 ## Dependency Map
@@ -75,7 +75,7 @@ Source: `docs/superpowers/specs/2026-08-13-table-method-review-fixes-design.md`
 - [x] **T04 — Simplify group-sort radio state**
   - [x] Replace method-prefixed values with `manual`, `ascending`, and `descending`.
   - [x] Add `TestGroupSortControl_ResolvedMethod_OffersOnlyModeAndDirections`.
-  - [x] Adapt the colon-ID regression into `TestGroupSortControl_ColonMethodDirectionChange_PreservesMethodAndUpdatesDesc`.
+  - [x] Adapt the colon-ID regression into `TestGroupSortControl_ColonMethodDirectionChange_PreservesMethodAndUpdatesDirection`.
   - [x] Keep manual-only and invalid-method fallback tests green.
   - [x] Run focused menu tests and typecheck.
 

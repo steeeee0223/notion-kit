@@ -168,8 +168,8 @@ export type ViewResourceAction =
   | TableAction<
       "view.group_sort.change",
       {
-        previousMode: PluginMethodState["groupSort"]["mode"];
-        nextMode: PluginMethodState["groupSort"]["mode"];
+        previousGroupSort: PluginMethodState["groupSort"];
+        nextGroupSort: PluginMethodState["groupSort"];
       }
     >;
 

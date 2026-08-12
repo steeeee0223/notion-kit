@@ -197,7 +197,6 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
                         onValueChange={(methodId) => {
                           if (methodId !== null) {
                             table.setColumnSortingMethod(currentId, methodId);
-                            table.setSorting((sorting) => [...sorting]);
                           }
                         }}
                       >

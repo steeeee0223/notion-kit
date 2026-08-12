@@ -258,9 +258,8 @@ describe("useTableView - Extended Grouping", () => {
       act(() => {
         result.current.table.setGrouping(["week"]);
         result.current.table.setGroupSort({
-          mode: "automatic",
+          mode: "ascending",
           method: "numeric",
-          desc: false,
         });
       });
 
@@ -299,9 +298,8 @@ describe("useTableView - Extended Grouping", () => {
           defaultView: {
             pluginMethods: {
               groupSort: {
-                mode: "automatic",
+                mode: "ascending",
                 method: "numeric",
-                desc: false,
               },
             },
           },
@@ -361,9 +359,8 @@ describe("useTableView - Extended Grouping", () => {
       act(() => {
         result.current.table.setGroupingColumn("method");
         result.current.table.setGroupSort({
-          mode: "automatic",
+          mode: "ascending",
           method: "numeric",
-          desc: false,
         });
       });
       act(() => {
@@ -381,16 +378,14 @@ describe("useTableView - Extended Grouping", () => {
 
       act(() =>
         table.setGroupSort({
-          mode: "automatic",
+          mode: "ascending",
           method: "numeric",
-          desc: false,
         }),
       );
       act(() => table.setGroupingColumn("method"));
       expect(table.getGroupSort()).toEqual({
-        mode: "automatic",
+        mode: "ascending",
         method: "numeric",
-        desc: false,
       });
 
       act(() => table.setGroupingColumn(null));
@@ -447,9 +442,8 @@ describe("useTableView - Extended Grouping", () => {
       act(() => {
         result.current.table.setGroupingColumn("method");
         result.current.table.setGroupSort({
-          mode: "automatic",
+          mode: "descending",
           method: "numeric",
-          desc: true,
         });
       });
       act(() => {
@@ -457,9 +451,8 @@ describe("useTableView - Extended Grouping", () => {
       });
 
       expect(result.current.table.getGroupSort()).toEqual({
-        mode: "automatic",
+        mode: "descending",
         method: "lexical",
-        desc: true,
       });
     });
 
@@ -590,9 +583,8 @@ describe("useTableView - Extended Grouping", () => {
             openedRowId: null,
             pluginMethods: {
               groupSort: {
-                mode: "automatic",
+                mode: "ascending",
                 method: "numeric",
-                desc: false,
               },
             },
           },
@@ -622,9 +614,8 @@ describe("useTableView - Extended Grouping", () => {
       });
 
       expect(table.getGroupSort()).toEqual({
-        mode: "automatic",
+        mode: "ascending",
         method: "numeric",
-        desc: false,
       });
       expect(table.atoms.groupingState.get()).toEqual(previous);
     });
@@ -636,7 +627,7 @@ describe("useTableView - Extended Grouping", () => {
         rowView: "side",
         openedRowId: null,
         pluginMethods: {
-          groupSort: { mode: "automatic", method: "numeric", desc: false },
+          groupSort: { mode: "ascending", method: "numeric" },
         },
       } as const satisfies Partial<TableViewState>;
       const manualView = {
@@ -696,7 +687,7 @@ describe("useTableView - Extended Grouping", () => {
         rowView: "side",
         openedRowId: null,
         pluginMethods: {
-          groupSort: { mode: "automatic", method: "numeric", desc: false },
+          groupSort: { mode: "ascending", method: "numeric" },
         },
       } as const satisfies Partial<TableViewState>;
       const initialProps: { view: Partial<TableViewState> } = {
@@ -757,9 +748,8 @@ describe("useTableView - Extended Grouping", () => {
       await act(async () => {
         table.toggleGroupVisible(aGroupId!);
         table.setGroupSort({
-          mode: "automatic",
+          mode: "ascending",
           method: "numeric",
-          desc: false,
         });
         await Promise.resolve();
       });
@@ -774,9 +764,8 @@ describe("useTableView - Extended Grouping", () => {
 
       await act(async () => {
         table.setGroupSort({
-          mode: "automatic",
+          mode: "descending",
           method: "numeric",
-          desc: true,
         });
         await Promise.resolve();
       });
@@ -809,9 +798,8 @@ describe("useTableView - Extended Grouping", () => {
 
       act(() =>
         table.setGroupSort({
-          mode: "automatic",
+          mode: "ascending",
           method: "numeric",
-          desc: false,
         }),
       );
 
@@ -870,9 +858,8 @@ describe("useTableView - Extended Grouping", () => {
       act(() => {
         result.current.table._syncGroupingState({
           groupSort: {
-            mode: "automatic",
+            mode: "ascending",
             method: "numeric",
-            desc: false,
           },
         });
       });
@@ -896,9 +883,8 @@ describe("useTableView - Extended Grouping", () => {
           defaultView: {
             pluginMethods: {
               groupSort: {
-                mode: "automatic",
+                mode: "ascending",
                 method: "numeric",
-                desc: false,
               },
             },
           },
@@ -918,9 +904,8 @@ describe("useTableView - Extended Grouping", () => {
       act(() => {
         table.setGrouping(["method"]);
         table.setGroupSort({
-          mode: "automatic",
+          mode: "ascending",
           method: "numeric",
-          desc: false,
         });
       });
 

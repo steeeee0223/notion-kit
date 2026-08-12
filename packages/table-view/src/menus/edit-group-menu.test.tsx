@@ -326,32 +326,25 @@ describe("EditGroupMenu", () => {
     ).toEqual(["Manual"]);
   });
 
-  it.each([
-    [undefined, "A → Z"],
-    ["missing", "A → Z"],
-  ])(
-    "EditGroupingMenu_AutomaticSortFallback_%s",
-    async (method, expectedLabel) => {
-      const tableView = renderTableView({
-        view: {
-          pluginMethods: {
-            groupSort: {
-              mode: "automatic",
-              ...(method === undefined ? {} : { method }),
-              desc: false,
-            },
+  it("EditGroupingMenu_UnknownAscendingMethod_UsesDefaultMethod", async () => {
+    const tableView = renderTableView({
+      view: {
+        pluginMethods: {
+          groupSort: {
+            mode: "ascending",
+            method: "missing",
           },
         },
-      });
-      const settings = await tableView.openViewSettings();
-      const selectGrouping = await settings.openSelectGrouping();
-      const grouping = await selectGrouping.select("Name");
+      },
+    });
+    const settings = await tableView.openViewSettings();
+    const selectGrouping = await settings.openSelectGrouping();
+    const grouping = await selectGrouping.select("Name");
 
-      expect(
-        within(grouping.root).getByRole("menuitem", { name: /Sort groups/ }),
-      ).toHaveTextContent(expectedLabel);
-    },
-  );
+    expect(
+      within(grouping.root).getByRole("menuitem", { name: /Sort groups/ }),
+    ).toHaveTextContent("A → Z");
+  });
 
   it("EditGroupingMenu_ChangingToNonSortablePropertyResetsGroupSortToManual", async () => {
     const onViewChange = vi.fn();
@@ -388,7 +381,7 @@ describe("EditGroupMenu", () => {
     );
   });
 
-  it("TestGroupSortControl_ColonMethodDirectionChange_PreservesMethodAndUpdatesDesc", async () => {
+  it("TestGroupSortControl_ColonMethodDirectionChange_PreservesMethodAndUpdatesDirection", async () => {
     const onViewChange = vi.fn();
     const plugin: CellPlugin<"colon-sort", string, undefined> = {
       id: "colon-sort",
@@ -443,9 +436,8 @@ describe("EditGroupMenu", () => {
       view: {
         pluginMethods: {
           groupSort: {
-            mode: "automatic",
+            mode: "ascending",
             method: "locale:casefold",
-            desc: false,
           },
         },
       },
@@ -479,9 +471,8 @@ describe("EditGroupMenu", () => {
       | { next: TableViewState }
       | undefined;
     expect(viewChange?.next.pluginMethods?.groupSort).toEqual({
-      mode: "automatic",
+      mode: "descending",
       method: "locale:casefold",
-      desc: true,
     });
   });
 });

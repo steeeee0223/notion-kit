@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { formatDate } from "@notion-kit/utils";
 
@@ -82,6 +82,8 @@ describe("toDateString", () => {
 });
 
 describe("date calculation and grouping presentation", () => {
+  afterEach(() => vi.useRealTimers());
+
   const newYork = {
     dateFormat: "full" as const,
     timeFormat: "24-hour" as const,
@@ -136,5 +138,18 @@ describe("date calculation and grouping presentation", () => {
     expect(formatDateGroupingLabel("custom", "relative", newYork)).toBe(
       "custom",
     );
+  });
+
+  it("uses the configured timezone for relative grouping labels", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2025-01-01T01:00:00Z"));
+
+    expect(
+      formatDateGroupingLabel("2025-01-01", "day", {
+        ...newYork,
+        dateFormat: "relative",
+        tz: "America/Los_Angeles",
+      }),
+    ).toBe("Tomorrow");
   });
 });

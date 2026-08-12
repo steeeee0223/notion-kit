@@ -36,11 +36,11 @@ export function CalcMenu({ id }: CalcMenuProps) {
         }
         onCheckedChange={() => table.setColumnCountMethod(id, CountMethod.NONE)}
       />
-      {plugin.counting?.map((group, index) => (
+      {plugin.counting?.map((group) => (
         <DropdownMenuSub key={group.group}>
           <DropdownMenuSubTrigger label={group.group} />
           <DropdownMenuContent sideOffset={-4} className="w-[250px]">
-            {index === 0 && (
+            {group.supportsCapping && (
               <>
                 <DropdownMenuGroup>
                   <DropdownMenuCheckboxItem

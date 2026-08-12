@@ -37,7 +37,8 @@ export const aggregateCountUnique: CommonAggregationFn = {
       toTextValue(getValue(row))
         .split(",")
         .forEach((value) => {
-          if (value.trim()) values.add(value);
+          const normalized = value.trim();
+          if (normalized) values.add(normalized);
         });
     });
     return values.size;

@@ -192,7 +192,7 @@ function GroupSortControl({ colId }: { colId: string }) {
       {() => {
         const groupSort = table.getGroupSort();
         const selectedMethodId =
-          groupSort.mode === "automatic" ? groupSort.method : undefined;
+          groupSort.mode === "manual" ? undefined : groupSort.method;
         const method =
           methods.find((method) => method.id === selectedMethodId) ??
           methods.find(
@@ -200,11 +200,7 @@ function GroupSortControl({ colId }: { colId: string }) {
           ) ??
           methods[0];
         const value =
-          groupSort.mode === "manual" || !method
-            ? "manual"
-            : groupSort.desc
-              ? "descending"
-              : "ascending";
+          groupSort.mode === "manual" || !method ? "manual" : groupSort.mode;
         const labels = method && getSortingDirectionLabels(method);
         const selectedLabel =
           value === "manual"
@@ -228,11 +224,13 @@ function GroupSortControl({ colId }: { colId: string }) {
                     table.setGroupSort({ mode: "manual" });
                     return;
                   }
+                  if (nextValue !== "ascending" && nextValue !== "descending") {
+                    return;
+                  }
                   if (!method) return;
                   table.setGroupSort({
-                    mode: "automatic",
+                    mode: nextValue,
                     method: method.id,
-                    desc: nextValue === "descending",
                   });
                 }}
               >

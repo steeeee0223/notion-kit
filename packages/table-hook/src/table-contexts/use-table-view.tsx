@@ -91,6 +91,18 @@ function getResourceMode(isControlled: boolean) {
   return isControlled ? "controlled" : "uncontrolled";
 }
 
+function isSameMethodSelection(
+  left: Record<string, string | undefined> | undefined,
+  right: Record<string, string | undefined> | undefined,
+) {
+  const leftEntries = Object.entries(left ?? {});
+  const rightEntries = Object.entries(right ?? {});
+  return (
+    leftEntries.length === rightEntries.length &&
+    leftEntries.every(([colId, methodId]) => right?.[colId] === methodId)
+  );
+}
+
 function useOwnershipSwitchWarning(name: string, isControlled: boolean) {
   const initialMode = useRef(getResourceMode(isControlled));
   const mode = getResourceMode(isControlled);
@@ -256,7 +268,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
               colId,
               tableGlobalState.pluginMethods?.sortingMethodByColumn?.[colId],
               createRuntimePluginMethodContext(
-                tableRef.current,
+                () => tableRef.current,
                 colId,
                 property.config,
                 weekStartsOn,
@@ -270,7 +282,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
             plugin,
             tableGlobalState.pluginMethods?.sortingMethodByColumn?.[colId],
             createRuntimePluginMethodContext(
-              tableRef.current,
+              () => tableRef.current,
               colId,
               property.config,
               weekStartsOn,
@@ -287,7 +299,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
               row,
               colId,
               createRuntimePluginMethodContext(
-                tableRef.current,
+                () => tableRef.current,
                 colId,
                 property.config,
                 weekStartsOn,
@@ -359,6 +371,18 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     () => null,
   );
   tableRef.current = table as _TableInstance;
+
+  const sortingMethods = tableGlobalState.pluginMethods?.sortingMethodByColumn;
+  const previousSortingMethods = useRef(sortingMethods);
+  useEffect(() => {
+    if (isSameMethodSelection(previousSortingMethods.current, sortingMethods)) {
+      return;
+    }
+    previousSortingMethods.current = sortingMethods;
+    table.setSorting((sorting) =>
+      sorting.length === 0 ? sorting : [...sorting],
+    );
+  }, [sortingMethods, table]);
 
   useEffect(() => {
     table._syncGroupingState();
