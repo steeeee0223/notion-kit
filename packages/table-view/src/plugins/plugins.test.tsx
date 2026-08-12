@@ -27,10 +27,7 @@ import {
   url,
   withGenericCounting,
 } from "@/plugins";
-import {
-  extractDateValue,
-  withDateCalculations,
-} from "@/plugins/date/plugin";
+import { extractDateValue, withDateCalculations } from "@/plugins/date/plugin";
 
 const methodMatrix = {
   title: {
@@ -267,9 +264,9 @@ describe("Built-in descriptor fallback branches", () => {
     expect(countAll.formatResult?.(120, { isCapped: true } as never)).toBe(
       "99+",
     );
-    expect(
-      percentageEmpty.formatResult?.(0, { rows: [] } as never),
-    ).toBe("0.0%");
+    expect(percentageEmpty.formatResult?.(0, { rows: [] } as never)).toBe(
+      "0.0%",
+    );
   });
 
   it("normalizes null text sorting values", () => {
