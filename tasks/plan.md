@@ -1,12 +1,16 @@
-# Implementation Plan: Table Grouping Consistency
+# Implementation Plan: Table Method Review Fixes
 
 ## Overview
 
-Fix grouping-method transitions so the menu and rendered table immediately use the same newly calculated groups, render empty date groups safely, replace hand-written date operations in `packages/table-hook/src/fns` with date-fns, and reduce group-sort radio state to manual/ascending/descending. Each behavioral change follows a focused red-green-refactor cycle.
+Replace the temporary automatic/desc group-sort representation with direct manual/ascending/descending state, centralize row-sort invalidation, correct the two confirmed P1 findings, and address only reproducible spec-related PR #167 feedback. Each behavioral change follows a focused red-green-refactor cycle.
 
-Source of truth: `docs/superpowers/specs/2026-08-12-table-grouping-consistency-design.md`.
+Source of truth: `docs/superpowers/specs/2026-08-13-table-method-review-fixes-design.md`.
 
 ## Architecture Decisions
+
+- Group sort is persisted directly as `manual | ascending | descending`; non-manual states carry the selected method ID.
+- Sorting-method cache invalidation occurs at the authoritative table-hook state boundary, not inside a menu component.
+- Only reproducible, spec-related PR feedback is implemented; low-value cleanup remains out of scope.
 
 - The extended grouped row model calls the active column definition's `getGroupingValue` instead of consuming TanStack's stale per-row grouping cache.
 - Group IDs continue through `createGroupId`; no private TanStack cache is read or cleared.

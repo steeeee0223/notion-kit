@@ -1,6 +1,6 @@
-# Table Grouping Consistency Todo
+# Table Method Review Fixes Todo
 
-Source: `docs/superpowers/specs/2026-08-12-table-grouping-consistency-design.md`
+Source: `docs/superpowers/specs/2026-08-13-table-method-review-fixes-design.md`
 
 ## Working Rules
 
@@ -10,6 +10,27 @@ Source: `docs/superpowers/specs/2026-08-12-table-grouping-consistency-design.md`
 - Derive expected group values and IDs as hand-checked literals.
 - Preserve the existing uncommitted `MenuItemAction` styling changes in `edit-group-menu.tsx`.
 - Use nvm Node `24.11.1`, `$NVM_BIN/pnpm`, and `/Users/awen/Documents/Codex/.pnpm-store`.
+
+## Current review-fix tasks
+
+- [ ] **R01 — Direct three-state group sorting**
+  - [ ] Replace `automatic + desc` with `manual | ascending | descending`.
+  - [ ] Preserve controlled state, group ordering, and drag settlement.
+  - [ ] Emit complete group-sort action deltas.
+- [ ] **R02 — Central row-sort invalidation and checkbox execution**
+  - [ ] Add a failing API-level invalidation regression test.
+  - [ ] Invalidate only after authoritative method changes.
+  - [ ] Remove the sort-menu cache-busting call.
+  - [ ] Verify checkbox labels against actual row order.
+- [ ] **R03 — Material PR #167 edge cases**
+  - [ ] Reject negative date sentinels and preserve configured timezone labels.
+  - [ ] Normalize sparse comparator input and runtime context.
+  - [ ] Trim unique-count values and scope the count-cap switch.
+  - [ ] Deduplicate select method capabilities if the helper remains simpler.
+- [ ] **R04 — Test-value audit and verification**
+  - [ ] Remove temporary, duplicate, and implementation-only tests.
+  - [ ] Run package tests, typechecks, lint, format, and builds.
+  - [ ] Reply to every unresolved PR thread with Fixed or Not changing.
 
 ## Dependency Map
 
