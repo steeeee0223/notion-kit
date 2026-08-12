@@ -11,6 +11,10 @@ import { formatDateGroupingLabel } from "./utils";
 export function DateGroupingValue({ value, table }: GroupingValueProps) {
   const column = table.getGroupedColumnInfo() as ColumnInfo<DatePlugin>;
 
+  if (value === null) {
+    return <DefaultGroupingValue value={null} table={table} />;
+  }
+
   if (typeof value === "string") {
     const method = table.getSelectedGroupingMethod(column.id);
     return (
@@ -21,7 +25,11 @@ export function DateGroupingValue({ value, table }: GroupingValueProps) {
     );
   }
 
-  const date = formatDate(value as number, {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return <DefaultGroupingValue value={null} table={table} />;
+  }
+
+  const date = formatDate(value, {
     dateFormat: column.config.dateFormat,
     timeFormat: column.config.timeFormat,
     tz: column.config.tz,

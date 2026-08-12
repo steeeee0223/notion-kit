@@ -48,6 +48,12 @@ async function openFixtureGroupingMenu(propertyName: string) {
   return { tableView, grouping: await selectGrouping.select(propertyName) };
 }
 
+function renderedGroupIds() {
+  return screen
+    .getAllByRole("group", { name: /^Group / })
+    .map((group) => group.getAttribute("aria-label")!.replace(/^Group /, ""));
+}
+
 describe("EditGroupMenu", () => {
   it("EditGroupingMenu_HideEmptyGroupsToggle_StaysOpen", async () => {
     const { grouping } = await openEditGroupingMenu();
@@ -145,6 +151,106 @@ describe("EditGroupMenu", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("TestEditGroupMenu_TextMethodChanges_ReplacesExactTableGroupsWithAlphabeticalGroups", async () => {
+    const fixture = createFullPluginFixture();
+    const values = ["1 item", "Delta", "Queen", "Whiskey"];
+    fixture.data = values.map((value, index) => {
+      const source = fixture.data[index % fixture.data.length]!;
+      return {
+        ...source,
+        id: `text-row-${index}`,
+        properties: {
+          ...source.properties,
+          title: { id: `text-cell-${index}`, value },
+        },
+      };
+    });
+    const tableView = renderTableView(fixture);
+    const settings = await tableView.openViewSettings();
+    const selectGrouping = await settings.openSelectGrouping();
+    const grouping = await selectGrouping.select("Name");
+    const groupUsing = within(grouping.root).getByRole("menuitem", {
+      name: /Group using/,
+    });
+
+    expect(renderedGroupIds()).toEqual([
+      "title:1 item",
+      "title:Delta",
+      "title:Queen",
+      "title:Whiskey",
+    ]);
+    await tableView.user.hover(groupUsing);
+    fireEvent.click(
+      await screen.findByRole("menuitemradio", { name: "Alphabetical" }),
+    );
+
+    await waitFor(() =>
+      expect(renderedGroupIds()).toEqual([
+        "title:1",
+        "title:D",
+        "title:Q",
+        "title:W",
+      ]),
+    );
+  });
+
+  it("TestEditGroupMenu_NumberMethodChanges_ReplacesUnitTableGroupsWithIntervalGroups", async () => {
+    const fixture = createFullPluginFixture();
+    const values = ["1", "9", "10"];
+    fixture.data = fixture.data.map((row, index) => ({
+      ...row,
+      properties: {
+        ...row.properties,
+        score: { id: `score-cell-${index}`, value: values[index]! },
+      },
+    }));
+    const tableView = renderTableView(fixture);
+    const settings = await tableView.openViewSettings();
+    const selectGrouping = await settings.openSelectGrouping();
+    const grouping = await selectGrouping.select("Score");
+    const groupUsing = within(grouping.root).getByRole("menuitem", {
+      name: /Group using/,
+    });
+
+    expect(renderedGroupIds()).toEqual(["score:1", "score:9", "score:10"]);
+    await tableView.user.hover(groupUsing);
+    fireEvent.click(
+      await screen.findByRole("menuitemradio", { name: "Every 10" }),
+    );
+
+    await waitFor(() =>
+      expect(renderedGroupIds().sort()).toEqual(["score:0", "score:10"]),
+    );
+  });
+
+  it("TestEditGroupMenu_DateMethodsWithEmptyCell_KeepSingleEmptyGroupWithoutThrowing", async () => {
+    const { tableView, grouping } = await openFixtureGroupingMenu("Due");
+    const groupUsing = within(grouping.root).getByRole("menuitem", {
+      name: /Group using/,
+    });
+
+    expect(
+      screen.getAllByRole("group", { name: "Group due:null" }),
+    ).toHaveLength(1);
+    expect(
+      within(grouping.root).getByRole("menuitem", { name: "(Empty)" }),
+    ).toBeVisible();
+
+    await tableView.user.hover(groupUsing);
+    for (const method of ["Relative", "Week", "Month", "Year", "Day"]) {
+      fireEvent.click(
+        await screen.findByRole("menuitemradio", { name: method }),
+      );
+      await waitFor(() => expect(groupUsing).toHaveTextContent(method));
+      expect(
+        screen.getAllByRole("group", { name: "Group due:null" }),
+      ).toHaveLength(1);
+      expect(
+        within(grouping.root).getByRole("menuitem", { name: "(Empty)" }),
+      ).toBeVisible();
+    }
+  });
+
   it("EditGroupingMenu_OneGroupingMethodOmitsGroupUsing", async () => {
     const { grouping } = await openEditGroupingMenu();
 
@@ -174,7 +280,7 @@ describe("EditGroupMenu", () => {
     },
   );
 
-  it("EditGroupingMenu_SortGroupsUsesEligibleCapabilitiesAndCheckedState", async () => {
+  it("TestGroupSortControl_ResolvedMethod_OffersOnlyModeAndDirections", async () => {
     const { tableView, grouping } = await openTextGroupingMenu();
 
     const sortGroups = within(grouping.root).getByRole("menuitem", {
@@ -282,7 +388,7 @@ describe("EditGroupMenu", () => {
     );
   });
 
-  it("EditGroupingMenu_PreservesColonInSelectedGroupSortMethodId", async () => {
+  it("TestGroupSortControl_ColonMethodDirectionChange_PreservesMethodAndUpdatesDesc", async () => {
     const onViewChange = vi.fn();
     const plugin: CellPlugin<"colon-sort", string, undefined> = {
       id: "colon-sort",
@@ -334,6 +440,15 @@ describe("EditGroupMenu", () => {
       properties,
       data,
       onViewChange,
+      view: {
+        pluginMethods: {
+          groupSort: {
+            mode: "automatic",
+            method: "locale:casefold",
+            desc: false,
+          },
+        },
+      },
     });
     const settings = await tableView.openViewSettings();
     const selectGrouping = await settings.openSelectGrouping();
@@ -342,8 +457,15 @@ describe("EditGroupMenu", () => {
       name: /Sort groups/,
     });
     await tableView.user.hover(sortGroups);
+    const ascending = await screen.findByRole("menuitemradio", {
+      name: "Shortest first",
+    });
+    expect(
+      screen.getAllByRole("menuitemradio").map((item) => item.textContent),
+    ).toEqual(["Manual", "Shortest first", "Longest first"]);
+    expect(ascending).toHaveAttribute("aria-checked", "true");
     fireEvent.click(
-      await screen.findByRole("menuitemradio", { name: "Shortest first" }),
+      screen.getByRole("menuitemradio", { name: "Longest first" }),
     );
 
     await waitFor(() =>
@@ -351,7 +473,7 @@ describe("EditGroupMenu", () => {
         screen
           .getAllByRole("group", { name: /^Group / })
           .map((group) => group.getAttribute("aria-label")),
-      ).toEqual(["Group code:a", "Group code:cc", "Group code:bbb"]),
+      ).toEqual(["Group code:bbb", "Group code:cc", "Group code:a"]),
     );
     const viewChange = onViewChange.mock.lastCall?.[0] as
       | { next: TableViewState }
@@ -359,7 +481,7 @@ describe("EditGroupMenu", () => {
     expect(viewChange?.next.pluginMethods?.groupSort).toEqual({
       mode: "automatic",
       method: "locale:casefold",
-      desc: false,
+      desc: true,
     });
   });
 });

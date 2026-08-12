@@ -154,7 +154,9 @@ function GroupingMethodControl({ colId }: { colId: string }) {
         return (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger label="Group using">
-              <MenuItemSelect>{selected.name}</MenuItemSelect>
+              <MenuItemAction className="text-muted">
+                {selected.name}
+              </MenuItemAction>
             </DropdownMenuSubTrigger>
             <DropdownMenuContent sideOffset={-4} className="w-50">
               <DropdownMenuRadioGroup
@@ -182,34 +184,41 @@ function GroupingMethodControl({ colId }: { colId: string }) {
 
 function GroupSortControl({ colId }: { colId: string }) {
   const { table } = useTableViewCtx();
-  const methods = getGroupSortableSortingMethods(table.getColumnPlugin(colId));
+  const plugin = table.getColumnPlugin(colId);
+  const methods = getGroupSortableSortingMethods(plugin);
 
   return (
     <table.Subscribe selector={(state) => state.tableGlobal.pluginMethods}>
       {() => {
         const groupSort = table.getGroupSort();
+        const selectedMethodId =
+          groupSort.mode === "automatic" ? groupSort.method : undefined;
+        const method =
+          methods.find((method) => method.id === selectedMethodId) ??
+          methods.find(
+            (method) => method.id === plugin.sorting?.defaultMethod,
+          ) ??
+          methods[0];
         const value =
-          groupSort.mode === "manual"
+          groupSort.mode === "manual" || !method
             ? "manual"
-            : `${groupSort.method ?? methods[0]?.id}:${groupSort.desc ? "desc" : "asc"}`;
+            : groupSort.desc
+              ? "descending"
+              : "ascending";
+        const labels = method && getSortingDirectionLabels(method);
         const selectedLabel =
           value === "manual"
             ? "Manual"
-            : (methods
-                .flatMap((method) => {
-                  const labels = getSortingDirectionLabels(method);
-                  return [
-                    [`${method.id}:asc`, labels.ascending],
-                    [`${method.id}:desc`, labels.descending],
-                  ] as const;
-                })
-                .find(([optionValue]) => optionValue === value)?.[1] ??
-              "Manual");
+            : value === "ascending"
+              ? labels?.ascending
+              : labels?.descending;
 
         return (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger label="Sort groups">
-              <MenuItemSelect>{selectedLabel}</MenuItemSelect>
+              <MenuItemAction className="text-muted">
+                {selectedLabel}
+              </MenuItemAction>
             </DropdownMenuSubTrigger>
             <DropdownMenuContent sideOffset={-4} className="w-50">
               <DropdownMenuRadioGroup
@@ -219,15 +228,11 @@ function GroupSortControl({ colId }: { colId: string }) {
                     table.setGroupSort({ mode: "manual" });
                     return;
                   }
-                  const desc = nextValue.endsWith(":desc");
-                  const method = nextValue.slice(
-                    0,
-                    -(desc ? ":desc".length : ":asc".length),
-                  );
+                  if (!method) return;
                   table.setGroupSort({
                     mode: "automatic",
-                    method,
-                    desc,
+                    method: method.id,
+                    desc: nextValue === "descending",
                   });
                 }}
               >
@@ -236,23 +241,20 @@ function GroupSortControl({ colId }: { colId: string }) {
                   closeOnClick={false}
                   label="Manual"
                 />
-                {methods.flatMap((method) => {
-                  const labels = getSortingDirectionLabels(method);
-                  return [
+                {labels && (
+                  <>
                     <DropdownMenuRadioItem
-                      key={`${method.id}:asc`}
-                      value={`${method.id}:asc`}
+                      value="ascending"
                       closeOnClick={false}
                       label={labels.ascending}
-                    />,
+                    />
                     <DropdownMenuRadioItem
-                      key={`${method.id}:desc`}
-                      value={`${method.id}:desc`}
+                      value="descending"
                       closeOnClick={false}
                       label={labels.descending}
-                    />,
-                  ];
-                })}
+                    />
+                  </>
+                )}
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenuSub>

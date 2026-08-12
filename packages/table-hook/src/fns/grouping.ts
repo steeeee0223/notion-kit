@@ -1,3 +1,17 @@
+import { TZDate } from "@date-fns/tz";
+import {
+  addDays,
+  differenceInCalendarDays,
+  differenceInCalendarWeeks,
+  format,
+  isValid,
+  parse,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+  startOfYear,
+} from "date-fns";
+
 export function groupByValue(value: unknown) {
   if (
     typeof value === "string" ||
@@ -75,75 +89,60 @@ function getDateStart(value: unknown) {
     : null;
 }
 
-function zonedDateKey(value: unknown, timeZone: string) {
+function toZonedDate(value: unknown, timeZone: string) {
   const timestamp = getDateStart(value);
   if (timestamp === null) return null;
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(timestamp);
-  const get = (type: Intl.DateTimeFormatPartTypes) =>
-    parts.find((part) => part.type === type)?.value;
-  const year = get("year");
-  const month = get("month");
-  const day = get("day");
-  return year && month && day ? `${year}-${month}-${day}` : null;
+  const date = new TZDate(timestamp, timeZone);
+  return isValid(date) ? date : null;
 }
 
-function dateKeyToUtc(key: string) {
-  return Date.parse(`${key}T00:00:00.000Z`);
-}
-
-function utcToDateKey(timestamp: number) {
-  return new Date(timestamp).toISOString().slice(0, 10);
-}
-
-function startOfWeekKey(
-  key: string,
-  weekStartsOn: NonNullable<DateGroupingOptions["weekStartsOn"]>,
+function formatZonedDate(
+  value: unknown,
+  options: DateGroupingOptions,
+  pattern: string,
 ) {
-  const timestamp = dateKeyToUtc(key);
-  const weekday = new Date(timestamp).getUTCDay();
-  const distance = (weekday - weekStartsOn + 7) % 7;
-  return utcToDateKey(timestamp - distance * 86_400_000);
+  const date = toZonedDate(value, options.timeZone);
+  return date === null ? null : format(date, pattern);
 }
 
 export function groupByDateDay(value: unknown, options: DateGroupingOptions) {
-  return zonedDateKey(value, options.timeZone);
+  return formatZonedDate(value, options, "yyyy-MM-dd");
 }
 
 export function groupByDateWeek(value: unknown, options: DateGroupingOptions) {
-  const key = zonedDateKey(value, options.timeZone);
-  return key === null ? null : startOfWeekKey(key, options.weekStartsOn ?? 1);
+  const date = toZonedDate(value, options.timeZone);
+  if (date === null) return null;
+  return format(
+    startOfWeek(date, { weekStartsOn: options.weekStartsOn ?? 1 }),
+    "yyyy-MM-dd",
+  );
 }
 
 export function groupByDateMonth(value: unknown, options: DateGroupingOptions) {
-  return zonedDateKey(value, options.timeZone)?.slice(0, 7) ?? null;
+  return formatZonedDate(value, options, "yyyy-MM");
 }
 
 export function groupByDateYear(value: unknown, options: DateGroupingOptions) {
-  return zonedDateKey(value, options.timeZone)?.slice(0, 4) ?? null;
+  return formatZonedDate(value, options, "yyyy");
 }
 
 export function groupByDateRelative(
   value: unknown,
   options: DateGroupingOptions,
 ): RelativeDateGroup | null {
-  const key = zonedDateKey(value, options.timeZone);
-  const today = zonedDateKey(options.now ?? Date.now(), options.timeZone);
-  if (key === null || today === null) return null;
+  const date = toZonedDate(value, options.timeZone);
+  const today = toZonedDate(options.now ?? Date.now(), options.timeZone);
+  if (date === null || today === null) return null;
 
-  const dayDifference = (dateKeyToUtc(key) - dateKeyToUtc(today)) / 86_400_000;
+  const dayDifference = differenceInCalendarDays(date, today);
   if (dayDifference === 0) return "today";
   if (dayDifference === -1) return "yesterday";
   if (dayDifference === 1) return "tomorrow";
 
   const weekStartsOn = options.weekStartsOn ?? 1;
-  const week = dateKeyToUtc(startOfWeekKey(key, weekStartsOn));
-  const thisWeek = dateKeyToUtc(startOfWeekKey(today, weekStartsOn));
-  const weekDifference = (week - thisWeek) / (7 * 86_400_000);
+  const weekDifference = differenceInCalendarWeeks(date, today, {
+    weekStartsOn,
+  });
   if (weekDifference === 0) return "this-week";
   if (weekDifference === -1) return "last-week";
   if (weekDifference === 1) return "next-week";
@@ -155,9 +154,10 @@ export function dateGroupSortValue(
   options: DateGroupingOptions,
 ) {
   if (typeof value !== "string") return null;
-  const today = zonedDateKey(options.now ?? Date.now(), options.timeZone);
+  const zonedToday = toZonedDate(options.now ?? Date.now(), options.timeZone);
+  if (zonedToday === null) return null;
+  const today = parseDateGroupKey(format(zonedToday, "yyyy-MM-dd"));
   if (today === null) return null;
-  const todayTimestamp = dateKeyToUtc(today);
   const relativeOffsets: Partial<Record<RelativeDateGroup, number>> = {
     "last-week": -7,
     yesterday: -1,
@@ -169,11 +169,23 @@ export function dateGroupSortValue(
   if (value === "earlier") return -Number.MAX_SAFE_INTEGER;
   if (value === "later") return Number.MAX_SAFE_INTEGER;
   const offset = relativeOffsets[value as RelativeDateGroup];
-  if (offset !== undefined) return todayTimestamp + offset * 86_400_000;
-  if (/^\d{4}$/.test(value)) return Date.parse(`${value}-01-01T00:00:00Z`);
-  if (/^\d{4}-\d{2}$/.test(value)) {
-    return Date.parse(`${value}-01T00:00:00Z`);
-  }
-  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return dateKeyToUtc(value);
-  return null;
+  if (offset !== undefined) return addDays(today, offset).getTime();
+  return parseDateGroupKey(value)?.getTime() ?? null;
+}
+
+function parseDateGroupKey(value: string) {
+  const pattern = /^\d{4}$/.test(value)
+    ? "yyyy"
+    : /^\d{4}-\d{2}$/.test(value)
+      ? "yyyy-MM"
+      : /^\d{4}-\d{2}-\d{2}$/.test(value)
+        ? "yyyy-MM-dd"
+        : null;
+  if (pattern === null) return null;
+
+  const parsed = parse(value, pattern, new TZDate(0, "UTC"));
+  if (!isValid(parsed) || format(parsed, pattern) !== value) return null;
+  if (pattern === "yyyy") return startOfYear(parsed);
+  if (pattern === "yyyy-MM") return startOfMonth(parsed);
+  return startOfDay(parsed);
 }

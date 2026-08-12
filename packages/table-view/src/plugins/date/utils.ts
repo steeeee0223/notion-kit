@@ -63,12 +63,15 @@ export function formatDateGroupingLabel(
   methodId: string,
   config: DateConfig,
 ) {
-  if (methodId === "relative") return relativeGroupLabels[value] ?? value;
-  if (methodId === "year") return value;
+  const relativeLabel = relativeGroupLabels[value];
+  if (relativeLabel) return relativeLabel;
+  if (/^\d{4}$/.test(value)) return value;
+  if (!/^\d{4}-\d{2}(?:-\d{2})?$/.test(value)) return value;
 
-  const date = methodId === "month" ? `${value}-01` : value;
+  const isMonth = /^\d{4}-\d{2}$/.test(value);
+  const date = isMonth ? `${value}-01` : value;
   const timestamp = isoToTs({ date, time: "00:00:00" }, config.tz);
-  if (methodId === "month") {
+  if (isMonth) {
     return new Intl.DateTimeFormat("en-US", {
       month: "long",
       year: "numeric",

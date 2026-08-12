@@ -491,6 +491,35 @@ describe("useTableView - Extended Grouping", () => {
       ).toEqual(["a", "other"]);
     });
 
+    it("TestGroupedRowModel_GroupingMethodChanges_RecomputesRowsWithCurrentMethod", async () => {
+      const table = renderGroupingMethodTable();
+
+      act(() => table.setGrouping(["method"]));
+      expect(
+        table.getGroupedRowModel().rows.map((row) => row.groupingValue),
+      ).toEqual(["a", "b"]);
+
+      await act(async () => {
+        table.setColumnGroupingMethod("method", "preserve-a");
+        await Promise.resolve();
+      });
+
+      const groupingState = table.atoms.groupingState.get();
+      expect(groupingState.groupOrder).toEqual([
+        createGroupId("method", "a"),
+        createGroupId("method", "other"),
+      ]);
+      expect(
+        table.getGroupedRowModel().rows.map((row) => ({
+          id: row.id,
+          value: row.groupingValue,
+        })),
+      ).toEqual([
+        { id: createGroupId("method", "a"), value: "a" },
+        { id: createGroupId("method", "other"), value: "other" },
+      ]);
+    });
+
     it("falls back from an unknown grouping method without stale group IDs", () => {
       const table = renderGroupingMethodTable();
 
@@ -848,12 +877,14 @@ describe("useTableView - Extended Grouping", () => {
         });
       });
 
-      expect(result.current.table.atoms.groupingState.get().groupOrder).toEqual([
-        createGroupId("method", "tie-a"),
-        createGroupId("method", "tie-b"),
-        createGroupId("method", "2"),
-        createGroupId("method", null),
-      ]);
+      expect(result.current.table.atoms.groupingState.get().groupOrder).toEqual(
+        [
+          createGroupId("method", "tie-a"),
+          createGroupId("method", "tie-b"),
+          createGroupId("method", "2"),
+          createGroupId("method", null),
+        ],
+      );
     });
 
     it("keeps an automatic sync empty when there is no grouped column", () => {
@@ -1504,9 +1535,9 @@ describe("useTableView - Extended Grouping", () => {
       const customView = render(CustomRenderer({ className: "group-label" }));
       expect(customView.container).toHaveTextContent("Custom a");
       const groupedRow = custom.getGroupedRowModel().rows[0]!;
-      expect(render(groupedRow.renderGroupingValue({})).container).toHaveTextContent(
-        "Custom a",
-      );
+      expect(
+        render(groupedRow.renderGroupingValue({})).container,
+      ).toHaveTextContent("Custom a");
 
       const { table } = renderTableHook({
         data: mockData,

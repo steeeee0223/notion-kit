@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import {
   dateGroupSortValue,
@@ -187,12 +187,14 @@ describe("common grouping functions", () => {
     expect(groupByDateRelative(Date.now(), { timeZone: "UTC" })).toBe("today");
   });
 
-  it("returns null when the platform cannot produce a complete zoned date", () => {
-    const spy = vi
-      .spyOn(Intl.DateTimeFormat.prototype, "formatToParts")
-      .mockReturnValue([]);
-    expect(groupByDateDay(Date.now(), { timeZone: "UTC" })).toBeNull();
-    expect(dateGroupSortValue("today", { timeZone: "UTC" })).toBeNull();
-    spy.mockRestore();
+  it("TestDateGrouping_InvalidDates_ReturnNull", () => {
+    const options = { timeZone: "UTC", now: Date.UTC(2025, 0, 15) };
+    expect(groupByDateDay(Number.NaN, options)).toBeNull();
+    expect(
+      groupByDateWeek({ start: Number.POSITIVE_INFINITY }, options),
+    ).toBeNull();
+    expect(groupByDateMonth({ start: Number.NaN }, options)).toBeNull();
+    expect(groupByDateYear(Number.NEGATIVE_INFINITY, options)).toBeNull();
+    expect(dateGroupSortValue("2025-02-30", options)).toBeNull();
   });
 });

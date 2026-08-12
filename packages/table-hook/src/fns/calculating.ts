@@ -1,3 +1,5 @@
+import { isValid, max, min, toDate } from "date-fns";
+
 import type { CommonAggregationFn } from "./types";
 
 function toTextValue(value: unknown) {
@@ -118,7 +120,7 @@ export interface DateRangeValue {
 
 function toDateRangeValue(value: unknown): DateRangeValue | null {
   if (typeof value === "number") {
-    return Number.isFinite(value) ? { start: value } : null;
+    return isValid(toDate(value)) ? { start: value } : null;
   }
   if (!value || typeof value !== "object") return null;
   const { start, end, includeTime } = value as {
@@ -127,9 +129,9 @@ function toDateRangeValue(value: unknown): DateRangeValue | null {
     includeTime?: unknown;
   };
   const validStart =
-    typeof start === "number" && Number.isFinite(start) ? start : undefined;
+    typeof start === "number" && isValid(toDate(start)) ? start : undefined;
   const validEnd =
-    typeof end === "number" && Number.isFinite(end) ? end : undefined;
+    typeof end === "number" && isValid(toDate(end)) ? end : undefined;
   return validStart === undefined
     ? null
     : {
@@ -150,8 +152,10 @@ function dateValues<TRow>(context: {
 }
 
 function getDateBoundaries(values: DateRangeValue[]) {
-  const start = Math.min(...values.map((value) => value.start!));
-  const end = Math.max(...values.map((value) => value.end ?? value.start!));
+  const start = min(values.map((value) => toDate(value.start!))).getTime();
+  const end = max(
+    values.map((value) => toDate(value.end ?? value.start!)),
+  ).getTime();
   return {
     start,
     end,
