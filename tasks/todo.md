@@ -27,10 +27,10 @@ Source: `docs/superpowers/specs/2026-08-13-table-method-review-fixes-design.md`
   - [x] Normalize sparse comparator input and runtime context.
   - [x] Trim unique-count values and scope the count-cap switch.
   - [x] Review select method duplication; keep explicit descriptors because extraction would add indirection without changing behavior.
-- [ ] **R04 — Test-value audit and verification**
+- [x] **R04 — Test-value audit and verification**
   - [x] Remove temporary, duplicate, and implementation-only tests.
   - [x] Run package tests, typechecks, lint, format, and builds.
-  - [ ] Reply to every unresolved PR thread with Fixed or Not changing.
+  - [x] Reply to every unresolved PR thread with Fixed or Not changing.
 
 ## Dependency Map
 
