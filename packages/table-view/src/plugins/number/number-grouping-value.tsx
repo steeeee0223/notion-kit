@@ -1,0 +1,22 @@
+import {
+  DefaultGroupingValue,
+  type ColumnInfo,
+  type GroupingValueProps,
+} from "@notion-kit/table-hook";
+
+import { formatNumber } from "./format";
+import type { NumberPlugin } from "./types";
+
+export function NumberGroupingValue({ value, table }: GroupingValueProps) {
+  if (typeof value !== "number") {
+    return <DefaultGroupingValue value="" table={table} />;
+  }
+  const column = table.getGroupedColumnInfo() as ColumnInfo<NumberPlugin>;
+  const method = table.getSelectedGroupingMethod(column.id);
+  const interval = Number(method.id.replace("interval-", ""));
+  const label = `${formatNumber(value, column.config)} – ${formatNumber(
+    value + interval,
+    column.config,
+  )}`;
+  return <DefaultGroupingValue value={label} table={table} />;
+}

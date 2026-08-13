@@ -4,9 +4,10 @@ import { expect, test } from "./fixtures";
 async function setCalculation(
   table: TableViewObject,
   property: string,
+  category: "Count" | "Percentage",
   method: string,
 ) {
-  await table.setCalculation(property, method);
+  await table.setCalculation(property, category, method);
 }
 
 async function expectCalculation(
@@ -25,25 +26,25 @@ test("Calculating_TextAndCheckboxMethods_RenderExactResults", async ({
   const table = await TableViewObject.open(page, "controlled");
 
   const textMethods = [
-    ["Count all", "count", "3"],
-    ["Count values", "values", "2"],
-    ["Count unique values", "unique", "2"],
-    ["Count empty", "empty", "1"],
-    ["Count not empty", "not empty", "2"],
+    ["All", "count", "3"],
+    ["Values", "values", "2"],
+    ["Unique", "unique", "2"],
+    ["Empty", "empty", "1"],
+    ["Not empty", "not empty", "2"],
   ] as const;
   for (const [method, label, value] of textMethods) {
-    await setCalculation(table, "Notes", method);
+    await setCalculation(table, "Notes", "Count", method);
     await expectCalculation(table, "Notes", label, value);
   }
 
   const checkboxMethods = [
-    ["Count all", "count", "3"],
-    ["Checked", "checked", "1"],
-    ["Unchecked", "unchecked", "2"],
-    ["Percent checked", "checked", "33.3%"],
+    ["Count", "All", "count", "3"],
+    ["Count", "Checked", "checked", "1"],
+    ["Count", "Unchecked", "unchecked", "2"],
+    ["Percentage", "Checked", "checked", "33.3%"],
   ] as const;
-  for (const [method, label, value] of checkboxMethods) {
-    await setCalculation(table, "Complete", method);
+  for (const [category, method, label, value] of checkboxMethods) {
+    await setCalculation(table, "Complete", category, method);
     await expectCalculation(table, "Complete", label, value);
   }
 
@@ -56,12 +57,12 @@ test("Calculating_TextAndCheckboxMethods_RenderExactResults", async ({
 test("Calculating_EditAddAndDelete_RecomputesImmediately", async ({ page }) => {
   const table = await TableViewObject.open(page, "controlled");
 
-  await setCalculation(table, "Notes", "Count values");
+  await setCalculation(table, "Notes", "Count", "Values");
   await expectCalculation(table, "Notes", "values", "2");
   await table.cellEditor("Alpha", "first note").fill("");
   await expectCalculation(table, "Notes", "values", "1");
 
-  await setCalculation(table, "Notes", "Count all");
+  await setCalculation(table, "Notes", "Count", "All");
   await table.table().getByRole("button", { name: "New page" }).click();
   await expect(table.rows()).toHaveCount(4);
   await expectCalculation(table, "Notes", "count", "4");

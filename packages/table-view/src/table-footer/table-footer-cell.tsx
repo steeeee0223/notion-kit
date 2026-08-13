@@ -1,5 +1,9 @@
 import { Icon } from "@notion-kit/icons";
-import { CountMethod, type HeaderInstance } from "@notion-kit/table-hook";
+import {
+  CountMethod,
+  resolveCountingMethod,
+  type HeaderInstance,
+} from "@notion-kit/table-hook";
 import {
   Button,
   DropdownMenu,
@@ -7,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@notion-kit/ui/primitives";
 
-import { CalcMenu, countMethodHint } from "@/menus";
+import { CalcMenu } from "@/menus";
 import type { CellPlugin, InferKey } from "@/plugins";
 import { useTableViewCtx } from "@/table-contexts";
 
@@ -40,7 +44,7 @@ export function TableFooterCell({ column }: TableFooterCellProps) {
         />
 
         <DropdownMenuContent className="w-50" align="start" alignOffset={-4}>
-          <CalcMenu {...props} />
+          <CalcMenu id={column.id} />
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
@@ -57,9 +61,14 @@ function CountDisplay({ id, type }: CountDisplayProps) {
   return (
     <table.Subscribe selector={(state) => state.columnCounting[id]}>
       {(counting) => {
-        const method = (counting?.method ?? CountMethod.NONE) as CountMethod;
+        const method = counting?.method ?? CountMethod.NONE;
+        const countingMethod = resolveCountingMethod(
+          table.getColumnPlugin(id),
+          method,
+        );
+        const label = countingMethod?.label ?? countingMethod?.name;
 
-        return method === CountMethod.NONE ? (
+        return method === (CountMethod.NONE as string) || !countingMethod ? (
           <div className="flex items-center opacity-100 transition-opacity duration-200">
             <div className="flex items-center">
               <span className="text-muted">
@@ -73,9 +82,11 @@ function CountDisplay({ id, type }: CountDisplayProps) {
           </div>
         ) : (
           <div className="flex items-center justify-center gap-1">
-            <span className="mt-0.5 text-[10px] tracking-[1px] text-muted uppercase select-none">
-              {countMethodHint[method].label}
-            </span>
+            {label && (
+              <span className="mt-0.5 text-[10px] tracking-[1px] text-muted uppercase select-none">
+                {label}
+              </span>
+            )}
             <span className="flex h-full items-center">
               {table.getColumnCountResult(id)}
             </span>

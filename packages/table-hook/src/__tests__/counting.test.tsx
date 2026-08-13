@@ -4,11 +4,13 @@
  */
 
 import { act } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { mockData, mockProperties, renderTableHook } from "@/__tests__/mock";
 import { CountMethod } from "@/features";
 import type { Row } from "@/lib/types";
+import { getCalculationRows } from "@/lib/utils";
+import { resolveCountingMethod } from "@/methods";
 
 describe("useTableView - Counting Feature", () => {
   describe("Column Counting State", () => {
@@ -237,6 +239,157 @@ describe("useTableView - Counting Feature", () => {
 
       const countResult = table.getColumnCountResult("col1");
       expect(countResult).toBe("");
+    });
+  });
+
+  describe("Aggregation Bridge", () => {
+    it("returns empty output for unknown and metadata-only counting methods", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+      const plugin = table.getColumnPlugin("col1");
+      const previousCounting = plugin.counting;
+      plugin.counting = [
+        {
+          group: "Metadata",
+          functions: [{ id: "metadata-only", name: "Metadata only" }],
+        },
+      ];
+
+      try {
+        act(() => table.setColumnCountMethod("col1", "missing"));
+        expect(table.getColumnCountResult("col1")).toBe("");
+        act(() => table.setColumnCountMethod("col1", "metadata-only"));
+        expect(table.getColumnCountResult("col1")).toBe("");
+      } finally {
+        plugin.counting = previousCounting;
+      }
+    });
+
+    it("preserves capped count output at 99+", () => {
+      const rows = Array.from(
+        { length: 100 },
+        (_, index): Row => ({
+          id: `row-${index}`,
+          createdAt: 0,
+          lastEditedAt: 0,
+          properties: {
+            col1: { id: `cell-${index}`, value: `Value ${index}` },
+          },
+        }),
+      );
+      const { table } = renderTableHook({
+        data: rows,
+        properties: mockProperties,
+      });
+
+      act(() => {
+        table.setColumnCountMethod("col1", CountMethod.ALL);
+        table.setColumnCountCapped("col1", true);
+      });
+
+      expect(table.getColumnCountResult("col1")).toBe("99+");
+    });
+
+    it("formats a semantic inline aggregation result at the presentation boundary", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+      const plugin = table.getColumnPlugin("col1");
+      const previousCounting = plugin.counting;
+      plugin.counting = [
+        {
+          group: "Custom",
+          functions: [
+            {
+              id: "double-count",
+              name: "Double count",
+              aggregationFn: {
+                aggregate: ({ rows }) => rows.length * 2,
+              },
+              formatResult: (result) => `${String(result)} rows`,
+            },
+          ],
+        },
+      ];
+
+      try {
+        act(() => {
+          table.setColumnCountMethod("col1", "double-count");
+        });
+
+        expect(table.getColumnCountResult("col1")).toBe("6 rows");
+        const aggregationFn = table.getColumn("col1")?.columnDef.aggregationFn;
+        expect(
+          typeof aggregationFn === "object" &&
+            "aggregate" in aggregationFn &&
+            typeof aggregationFn.aggregate === "function",
+        ).toBe(true);
+      } finally {
+        plugin.counting = previousCounting;
+      }
+    });
+
+    it("stringifies primitive unformatted aggregation results only", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+      const plugin = table.getColumnPlugin("col1");
+      const previousCounting = plugin.counting;
+      plugin.counting = [
+        {
+          group: "Raw",
+          functions: [
+            ...(["text", 7, true, { value: 1 }] as const).map(
+              (result, index) => ({
+                id: `raw-${index}`,
+                name: `Raw ${index}`,
+                aggregationFn: { aggregate: () => result },
+              }),
+            ),
+          ],
+        },
+      ];
+
+      try {
+        for (const [index, expected] of ["text", "7", "true", ""].entries()) {
+          act(() => table.setColumnCountMethod("col1", `raw-${index}`));
+          expect(table.getColumnCountResult("col1")).toBe(expected);
+        }
+      } finally {
+        plugin.counting = previousCounting;
+      }
+    });
+
+    it("uses the pre-grouped row boundary for calculations", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+      const preGrouped = table.getPreGroupedRowModel();
+      const scopedRows = preGrouped.rows.slice(0, 1);
+      const getPreGroupedRowModel = vi.fn(() => ({
+        ...preGrouped,
+        rows: scopedRows,
+      }));
+      const getCoreRowModel = vi.fn(() => preGrouped);
+
+      expect(
+        getCalculationRows({
+          getPreGroupedRowModel,
+          getCoreRowModel,
+        } as never),
+      ).toBe(scopedRows);
+      expect(getPreGroupedRowModel).toHaveBeenCalledOnce();
+      expect(getCoreRowModel).not.toHaveBeenCalled();
+      const aggregationFn = resolveCountingMethod(
+        table.getColumnPlugin("col1"),
+        CountMethod.ALL,
+      )?.aggregationFn;
+      expect(aggregationFn).toBe("countAll");
     });
   });
 });

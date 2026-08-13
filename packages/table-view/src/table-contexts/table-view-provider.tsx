@@ -27,7 +27,7 @@ type TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> = ReturnType<
 
 const TableViewContext = createContext<TableViewCtx | null>(null);
 
-export function useTableViewCtx() {
+export function useTableViewCtx(): TableViewCtx {
   const ctx = use(TableViewContext);
   if (!ctx)
     throw new Error("`useTableViewCtx` must be used within `TableView`");

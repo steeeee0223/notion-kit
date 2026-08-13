@@ -172,7 +172,7 @@ test("HeaderMenu_SortGroupAndChangeType_ApplyResultBearingActions", async ({
 
   let header = await table.openHeader("Notes");
   await expect(header.item("Calculate")).toBeVisible();
-  await header.sort("ascending");
+  await header.sort("A → Z");
   await expectRowOrder(table, ["Empty", "Alpha", "Omega"]);
   await (await table.openSort()).deleteAll();
   await page.keyboard.press("Escape");

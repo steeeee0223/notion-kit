@@ -90,7 +90,7 @@ export function getExtendedGroupedRowModel<TData extends RowData>(): (
           const columnId = existingGrouping[depth]!;
 
           // Group the rows together for this level
-          const rowGroupsMap = groupBy(rows, columnId);
+          const rowGroupsMap = groupBy(rows, columnId, table);
 
           // Perform aggregations for each group
           const aggregatedGroupedRows: Row<AnyTableFeatures, TData>[] = [];
@@ -225,11 +225,18 @@ function collectFlatRows<TData extends RowData>(
 function groupBy<TData extends RowData>(
   rows: Row<AnyTableFeatures, TData>[],
   columnId: string,
+  table: Table<AnyTableFeatures, TData>,
 ) {
   const groupMap = new Map<ComparableValue, Row<AnyTableFeatures, TData>[]>();
+  const getGroupingValue =
+    table.getColumn(columnId)?.columnDef.getGroupingValue;
 
   return rows.reduce((map, row) => {
-    const resKey = row.getGroupingValue(columnId) as ComparableValue;
+    const resKey = (
+      getGroupingValue
+        ? getGroupingValue(row.original, row.index, row)
+        : row.getValue(columnId)
+    ) as ComparableValue;
     const previous = map.get(resKey);
     if (!previous) {
       map.set(resKey, [row]);

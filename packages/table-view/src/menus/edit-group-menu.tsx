@@ -3,14 +3,22 @@ import { flexRender } from "@tanstack/react-table";
 
 import { useIsClient } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
-import { TableViewMenuPage } from "@notion-kit/table-hook";
+import {
+  getGroupSortableSortingMethods,
+  TableViewMenuPage,
+} from "@notion-kit/table-hook";
 import {
   Button,
   DropdownMenuCheckboxItem,
+  DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
   MenuItemAction,
   MenuItemSelect,
   Sortable,
@@ -18,6 +26,8 @@ import {
 
 import { MenuHeader } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
+
+import { getSortingDirectionLabels } from "./sorting-options";
 
 export function EditGroupMenu() {
   const isClient = useIsClient();
@@ -44,7 +54,8 @@ export function EditGroupMenu() {
         >
           <MenuItemSelect>{col?.name ?? ""}</MenuItemSelect>
         </DropdownMenuItem>
-        {/* TODO Sort group by */}
+        {col && <GroupingMethodControl colId={col.id} />}
+        {col && <GroupSortControl colId={col.id} />}
         <table.Subscribe
           selector={(state) => state.groupingState.hideEmptyGroups}
         >
@@ -128,6 +139,126 @@ export function EditGroupMenu() {
         />
       </DropdownMenuGroup>
     </>
+  );
+}
+
+function GroupingMethodControl({ colId }: { colId: string }) {
+  const { table } = useTableViewCtx();
+  const methods = table.getColumnGroupingMethods(colId);
+  if (methods.length <= 1) return null;
+
+  return (
+    <table.Subscribe selector={(state) => state.tableGlobal.pluginMethods}>
+      {() => {
+        const selected = table.getSelectedGroupingMethod(colId);
+        return (
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger label="Group using">
+              <MenuItemAction className="text-muted">
+                {selected.name}
+              </MenuItemAction>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuContent sideOffset={-4} className="w-50">
+              <DropdownMenuRadioGroup
+                value={selected.id}
+                onValueChange={(methodId: string) =>
+                  table.setColumnGroupingMethod(colId, methodId)
+                }
+              >
+                {methods.map((method) => (
+                  <DropdownMenuRadioItem
+                    key={method.id}
+                    value={method.id}
+                    closeOnClick={false}
+                    label={method.name}
+                  />
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenuSub>
+        );
+      }}
+    </table.Subscribe>
+  );
+}
+
+function GroupSortControl({ colId }: { colId: string }) {
+  const { table } = useTableViewCtx();
+  const plugin = table.getColumnPlugin(colId);
+  const methods = getGroupSortableSortingMethods(plugin);
+
+  return (
+    <table.Subscribe selector={(state) => state.tableGlobal.pluginMethods}>
+      {() => {
+        const groupSort = table.getGroupSort();
+        const selectedMethodId =
+          groupSort.mode === "manual" ? undefined : groupSort.method;
+        const method =
+          methods.find((method) => method.id === selectedMethodId) ??
+          methods.find(
+            (method) => method.id === plugin.sorting?.defaultMethod,
+          ) ??
+          methods[0];
+        const value =
+          groupSort.mode === "manual" || !method ? "manual" : groupSort.mode;
+        const labels = method && getSortingDirectionLabels(method);
+        const selectedLabel =
+          value === "manual"
+            ? "Manual"
+            : value === "ascending"
+              ? labels?.ascending
+              : labels?.descending;
+
+        return (
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger label="Sort groups">
+              <MenuItemAction className="text-muted">
+                {selectedLabel}
+              </MenuItemAction>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuContent sideOffset={-4} className="w-50">
+              <DropdownMenuRadioGroup
+                value={value}
+                onValueChange={(nextValue: string) => {
+                  if (nextValue === "manual") {
+                    table.setGroupSort({ mode: "manual" });
+                    return;
+                  }
+                  if (nextValue !== "ascending" && nextValue !== "descending") {
+                    return;
+                  }
+                  if (!method) return;
+                  table.setGroupSort({
+                    mode: nextValue,
+                    method: method.id,
+                  });
+                }}
+              >
+                <DropdownMenuRadioItem
+                  value="manual"
+                  closeOnClick={false}
+                  label="Manual"
+                />
+                {labels && (
+                  <>
+                    <DropdownMenuRadioItem
+                      value="ascending"
+                      closeOnClick={false}
+                      label={labels.ascending}
+                    />
+                    <DropdownMenuRadioItem
+                      value="descending"
+                      closeOnClick={false}
+                      label={labels.descending}
+                    />
+                  </>
+                )}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenuSub>
+        );
+      }}
+    </table.Subscribe>
   );
 }
 

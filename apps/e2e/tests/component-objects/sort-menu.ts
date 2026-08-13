@@ -1,6 +1,6 @@
 import type { Locator, Page } from "@playwright/test";
 
-import { MenuSurfaceObject } from "./menu-surface";
+import { MenuSurfaceObject, type AccessibleName } from "./menu-surface";
 
 export class SortMenuObject extends MenuSurfaceObject {
   constructor(page: Page, root: Locator) {
@@ -19,7 +19,7 @@ export class SortMenuObject extends MenuSurfaceObject {
     return this.page.getByPlaceholder("Search for a property...");
   }
 
-  direction(name: "Ascending" | "Descending") {
+  direction(name: AccessibleName) {
     return this.root.getByRole("combobox", { name });
   }
 
@@ -35,10 +35,7 @@ export class SortMenuObject extends MenuSurfaceObject {
     await this.page.getByRole("option", { name: propertyName }).click();
   }
 
-  async setDirection(
-    current: "Ascending" | "Descending",
-    next: "Ascending" | "Descending",
-  ) {
+  async setDirection(current: AccessibleName, next: AccessibleName) {
     await this.direction(current).click();
     await this.page.getByRole("option", { name: next }).click();
   }

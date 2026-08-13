@@ -3,6 +3,7 @@ import type { Cell, Header, Row, Table } from "@tanstack/table-core";
 
 import type { TableFeatures, TableViewState } from "@/features";
 import type { ColumnDefs, Row as RowModel } from "@/lib/types";
+import type { Weekday } from "@/methods";
 import type { CellPlugin } from "@/plugins";
 import type {
   DataResourceAction,
@@ -15,6 +16,14 @@ export interface TableState<TPlugins extends CellPlugin[]> {
   properties: ColumnDefs<TPlugins>;
   data: RowModel<TPlugins>[];
 }
+
+export type PartialTableViewState = Omit<
+  Partial<TableViewState>,
+  "timeline" | "pluginMethods"
+> & {
+  timeline?: Partial<NonNullable<TableViewState["timeline"]>>;
+  pluginMethods?: Partial<NonNullable<TableViewState["pluginMethods"]>>;
+};
 
 type DataResourceProps<TPlugins extends CellPlugin[]> =
   | {
@@ -54,19 +63,20 @@ type PropertiesResourceProps<TPlugins extends CellPlugin[]> =
 
 type ViewResourceProps =
   | {
-      view: Partial<TableViewState>;
+      view: PartialTableViewState;
       defaultView?: never;
       onViewChange?: ResourceChangeHandler<TableViewState, ViewResourceAction>;
     }
   | {
       view?: never;
-      defaultView?: Partial<TableViewState>;
+      defaultView?: PartialTableViewState;
       onViewChange?: ResourceChangeHandler<TableViewState, ViewResourceAction>;
     };
 
 interface SharedTableProps<TPlugins extends CellPlugin[]> {
   defaultColumn?: Partial<ColumnDef<TableFeatures, RowModel<TPlugins>>>;
   getRowUrl?: (rowId: string) => string;
+  weekStartsOn?: Weekday;
 }
 
 export type BaseTableProps<TPlugins extends CellPlugin[]> =

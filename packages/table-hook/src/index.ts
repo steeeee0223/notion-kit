@@ -24,37 +24,26 @@ export type {
 } from "@/features";
 export {
   CountMethod,
-  compareBooleans,
-  compareNumbers,
-  compareStrings,
-  countAll,
-  countChecked,
-  countEmpty,
-  countNonEmpty,
-  countUnchecked,
-  countUnique,
-  countValues,
   createSortingMethod,
-  groupByTextValue,
-  groupByValue,
-  percentageChecked,
-  percentageEmpty,
-  percentageNonEmpty,
-  percentageUnchecked,
+  getGroupSortableSortingMethods,
+  isValueSortingMethod,
   resolveCountingMethod,
   resolveGroupingMethod,
   resolveSortingMethod,
-  sortByCheckbox,
-  sortByNumber,
-  sortByText,
 } from "@/methods";
 export type {
   CountingMethod,
   CountingMethodContext,
   CountingMethodGroup,
   GroupingMethod,
+  PluginMethodContext,
+  ResolvedGroupingMethod,
+  ResolvedSortingMethod,
   SortingMethod,
+  SortingMethodDescriptor,
+  Weekday,
 } from "@/methods";
+export type { PluginMethodState } from "@/features";
 export { ROW_VIEW_OPTIONS } from "@/features";
 export { LAYOUT_OPTIONS } from "@/features/menu";
 export type {

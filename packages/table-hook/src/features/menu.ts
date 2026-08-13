@@ -5,7 +5,13 @@ import {
 } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
+import type { PluginMethodState } from "@/features/plugin-methods";
 import type { _TableInstance } from "@/features/types";
+import {
+  resolveGroupingMethod,
+  resolveSortingMethod,
+  type GroupingMethod,
+} from "@/methods";
 import type { ResourceChangeFn, ViewResourceAction } from "@/table-contexts";
 
 export enum TableViewMenuPage {
@@ -63,6 +69,7 @@ export interface TableViewState {
   rowView: RowViewType;
   openedRowId: string | null;
   timeline?: TimelineViewState;
+  pluginMethods?: Partial<PluginMethodState>;
 }
 
 export type TableGlobalState = TableViewState;
@@ -84,6 +91,17 @@ export interface TableMenuTableApi {
   setTableMenuState: (state: TableMenuState) => void;
   getTableGlobalState: () => TableViewState;
   setTableGlobalState: ResourceChangeFn<TableViewState, ViewResourceAction>;
+  getSelectedSortingMethod: (
+    colId: string,
+  ) => ReturnType<typeof resolveSortingMethod>;
+  setColumnSortingMethod: (colId: string, methodId: string) => void;
+  getColumnGroupingMethods: (colId: string) => GroupingMethod[];
+  getSelectedGroupingMethod: (
+    colId: string,
+  ) => ReturnType<typeof resolveGroupingMethod>;
+  setColumnGroupingMethod: (colId: string, methodId: string) => void;
+  getGroupSort: () => PluginMethodState["groupSort"];
+  setGroupSort: (groupSort: PluginMethodState["groupSort"]) => void;
   toggleTableLocked: () => void;
   setTableLayout: (layout: LayoutType) => void;
   setTimelineRange: (range: TimelineViewState["range"]) => void;
@@ -131,6 +149,115 @@ export const TableMenuFeature: TableFeature = {
     instance.getTableGlobalState = () => instance.atoms.tableGlobal.get();
     instance.setTableGlobalState = (updater, action) => {
       instance.options.onTableGlobalChange?.(updater, action);
+    };
+    instance.getSelectedSortingMethod = (colId) => {
+      const pluginMethods = instance.getTableGlobalState().pluginMethods;
+      return resolveSortingMethod(
+        instance.getColumnPlugin(colId),
+        pluginMethods?.sortingMethodByColumn?.[colId],
+      );
+    };
+    instance.setColumnSortingMethod = (colId, methodId) => {
+      const actionId = v4();
+      instance.setTableGlobalState(
+        (view) => {
+          if (view.pluginMethods?.sortingMethodByColumn?.[colId] === methodId) {
+            return view;
+          }
+          return {
+            ...view,
+            pluginMethods: {
+              ...view.pluginMethods,
+              sortingMethodByColumn: {
+                ...view.pluginMethods?.sortingMethodByColumn,
+                [colId]: methodId,
+              },
+            },
+          };
+        },
+        (previous, next) => ({
+          id: actionId,
+          type: "view.plugin_sorting_method.change",
+          payload: {
+            propertyId: colId,
+            previousMethodId:
+              previous.pluginMethods?.sortingMethodByColumn?.[colId],
+            nextMethodId: next.pluginMethods?.sortingMethodByColumn?.[colId],
+          },
+        }),
+      );
+    };
+    instance.getColumnGroupingMethods = (colId) =>
+      instance.getColumnPlugin(colId).grouping?.methods ?? [];
+    instance.getSelectedGroupingMethod = (colId) => {
+      const pluginMethods = instance.getTableGlobalState().pluginMethods;
+      return resolveGroupingMethod(
+        instance.getColumnPlugin(colId),
+        pluginMethods?.groupingMethodByColumn?.[colId],
+      );
+    };
+    instance.setColumnGroupingMethod = (colId, methodId) => {
+      const actionId = v4();
+      instance.setTableGlobalState(
+        (view) => {
+          if (
+            view.pluginMethods?.groupingMethodByColumn?.[colId] === methodId
+          ) {
+            return view;
+          }
+          return {
+            ...view,
+            pluginMethods: {
+              ...view.pluginMethods,
+              groupingMethodByColumn: {
+                ...view.pluginMethods?.groupingMethodByColumn,
+                [colId]: methodId,
+              },
+            },
+          };
+        },
+        (previous, next) => ({
+          id: actionId,
+          type: "view.plugin_grouping_method.change",
+          payload: {
+            propertyId: colId,
+            previousMethodId:
+              previous.pluginMethods?.groupingMethodByColumn?.[colId],
+            nextMethodId: next.pluginMethods?.groupingMethodByColumn?.[colId],
+          },
+        }),
+      );
+    };
+    instance.getGroupSort = () =>
+      instance.getTableGlobalState().pluginMethods?.groupSort ?? {
+        mode: "manual",
+      };
+    instance.setGroupSort = (groupSort) => {
+      const actionId = v4();
+      instance.setTableGlobalState(
+        (view) => {
+          const previousGroupSort = view.pluginMethods?.groupSort ?? {
+            mode: "manual" as const,
+          };
+          if (isSameGroupSort(previousGroupSort, groupSort)) {
+            return view;
+          }
+          return {
+            ...view,
+            pluginMethods: { ...view.pluginMethods, groupSort },
+          };
+        },
+        (previous, next) => ({
+          id: actionId,
+          type: "view.group_sort.change",
+          payload: {
+            previousGroupSort: previous.pluginMethods?.groupSort ?? {
+              mode: "manual",
+            },
+            nextGroupSort: next.pluginMethods?.groupSort ?? { mode: "manual" },
+          },
+        }),
+      );
     };
     instance.toggleTableLocked = () => {
       const actionId = v4();
@@ -250,3 +377,12 @@ export const TableMenuFeature: TableFeature = {
     };
   },
 };
+
+function isSameGroupSort(
+  left: PluginMethodState["groupSort"],
+  right: PluginMethodState["groupSort"],
+) {
+  if (left.mode !== right.mode) return false;
+  if (left.mode === "manual") return true;
+  return right.mode !== "manual" && left.method === right.method;
+}

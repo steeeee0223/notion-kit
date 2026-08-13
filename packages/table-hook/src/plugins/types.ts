@@ -7,7 +7,7 @@ import type { ColumnInfo, Row } from "@/lib/types";
 import type {
   CountingMethodGroup,
   GroupingMethod,
-  SortingMethod,
+  SortingMethodDescriptor,
 } from "@/methods";
 
 export interface CellProps<Data, Config = undefined> {
@@ -110,11 +110,12 @@ export interface CellPlugin<
   toTextValue: (data: Data, row: Row) => string;
   sorting?: {
     defaultMethod?: string;
-    methods: SortingMethod[];
+    enableGroupSort?: boolean;
+    methods: SortingMethodDescriptor<Data, Config>[];
   };
   grouping?: {
     defaultMethod?: string;
-    methods: GroupingMethod<Data>[];
+    methods: GroupingMethod<Data, Config>[];
   };
   counting?: CountingMethodGroup[];
   compare?: (rowA: Row, rowB: Row, colId: string) => number;

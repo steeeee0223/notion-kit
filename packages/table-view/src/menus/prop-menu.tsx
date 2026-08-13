@@ -16,6 +16,10 @@ import { ConfigMenuProps } from "@/plugins";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { CalcMenu } from "./calc-menu";
+import {
+  getDefaultSortingMethod,
+  getSortingDirectionLabels,
+} from "./sorting-options";
 import { TypesMenu } from "./types-menu";
 
 const INSERT_SIDES = ["left", "right"] as const;
@@ -51,8 +55,14 @@ export function PropMenu({ propId, view }: PropMenuProps) {
   const plugin = table.getColumnPlugin(propId);
 
   // 3. Sorting
-  const sortColumn = (desc: boolean) =>
+  const defaultSortingMethod = getDefaultSortingMethod(plugin);
+  const sortingLabels = getSortingDirectionLabels(defaultSortingMethod);
+  const sortColumn = (desc: boolean) => {
+    if (defaultSortingMethod) {
+      table.setColumnSortingMethod(propId, defaultSortingMethod.id);
+    }
     table.setSorting([{ id: propId, desc }]);
+  };
   // 6. Pin columns
   const canFreeze = table.getCanFreezeColumn(propId);
   const canUnfreeze = table.getFreezingState()?.colId === propId;
@@ -112,12 +122,12 @@ export function PropMenu({ propId, view }: PropMenuProps) {
                 <DropdownMenuGroup>
                   <DropdownMenuItem
                     icon={<Icon.ArrowUp className="size-4" />}
-                    label="Sort ascending"
+                    label={sortingLabels.ascending}
                     onClick={() => sortColumn(false)}
                   />
                   <DropdownMenuItem
                     icon={<Icon.ArrowDown className="size-4" />}
-                    label="Sort descending"
+                    label={sortingLabels.descending}
                     onClick={() => sortColumn(true)}
                   />
                 </DropdownMenuGroup>
@@ -143,7 +153,7 @@ export function PropMenu({ propId, view }: PropMenuProps) {
                 className="w-50"
                 collisionPadding={12}
               >
-                <CalcMenu id={propId} type={info.type} />
+                <CalcMenu id={propId} />
               </DropdownMenuContent>
             </DropdownMenuSub>
             <DropdownMenuItem

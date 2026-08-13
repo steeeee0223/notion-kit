@@ -12,9 +12,16 @@ import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 import type { _RowInstance, _TableInstance } from "@/features/types";
 import { createGroupId } from "@/features/utils";
 import type { ColumnInfo, Row as RowModel } from "@/lib/types";
-import { resolveGroupingMethod } from "@/methods";
+import {
+  getGroupSortableSortingMethods,
+  resolveGroupSortingMethod,
+  type Weekday,
+} from "@/methods";
 import type { ComparableValue } from "@/plugins";
 import { DefaultGroupingValue } from "@/plugins";
+import { createRuntimePluginMethodContext } from "@/table-contexts/plugin-method-context";
+
+import type { PluginMethodState } from "./plugin-methods";
 
 interface ExtendedGroupingState {
   groupOrder: string[];
@@ -33,11 +40,17 @@ interface ExtendedGroupingState {
     string,
     {
       value: ComparableValue;
+      sortValue: ComparableValue;
       original: unknown;
     }
   >;
   showAggregates: boolean;
   hideEmptyGroups: boolean;
+}
+
+interface SyncGroupingStateOptions {
+  resetOrder?: boolean;
+  groupSort?: PluginMethodState["groupSort"];
 }
 
 export interface ExtendedGroupingTableState {
@@ -46,6 +59,7 @@ export interface ExtendedGroupingTableState {
 
 export interface ExtendedGroupingOptions {
   onGroupingStateChange?: OnChangeFn<ExtendedGroupingState>;
+  weekStartsOn?: Weekday;
 }
 
 export interface ExtendedGroupingTableApi {
@@ -58,10 +72,13 @@ export interface ExtendedGroupingTableApi {
   toggleAllGroupsVisible: () => void;
   handleGroupedRowDragEnd: (e: DragEndEvent) => void;
   _resetGroupingState: () => void;
-  _syncGroupingState: (options?: { resetOrder?: boolean }) => void;
+  _syncGroupingState: (options?: SyncGroupingStateOptions) => void;
   _syncGroupingStateFromData: (
     rows: RowModel[],
     options?: { resetOrder?: boolean },
+  ) => void;
+  _settlePendingGroupedRowDrag: (
+    groupSort: PluginMethodState["groupSort"],
   ) => void;
   getGroupingValueRenderer: (
     groupId: string,
@@ -110,14 +127,22 @@ export const ExtendedGroupingFeature: TableFeature = {
     const table = _table as unknown as _TableInstance;
     const setGrouping = table.setGrouping.bind(table);
     const resetGrouping = table.resetGrouping.bind(table);
+    let pendingDraggedGroupOrder: string[] | undefined;
+
+    interface GroupingEntry {
+      id: string;
+      value: ComparableValue;
+      sortValue: ComparableValue;
+      original: unknown;
+    }
 
     const applyGroupingEntries = (
-      entries: {
-        id: string;
-        value: ComparableValue;
-        original: unknown;
-      }[],
-      options: { resetOrder?: boolean } = {},
+      entries: GroupingEntry[],
+      options: {
+        resetOrder?: boolean;
+        groupSort?: PluginMethodState["groupSort"];
+        groupOrder?: string[];
+      } = {},
     ) => {
       const nextIds = entries.map((entry) => entry.id);
       const nextIdSet = new Set(nextIds);
@@ -125,19 +150,28 @@ export const ExtendedGroupingFeature: TableFeature = {
         Object.fromEntries(
           entries.map((entry) => [
             entry.id,
-            { value: entry.value, original: entry.original },
+            {
+              value: entry.value,
+              sortValue: entry.sortValue,
+              original: entry.original,
+            },
           ]),
         );
+      const groupSort = options.groupSort ?? table.getGroupSort();
+      const automaticGroupOrder = getAutomaticGroupOrder(entries, groupSort);
 
       table._setGroupingState((prev) => {
-        const groupOrder = options.resetOrder
-          ? nextIds
-          : [
-              ...prev.groupOrder.filter((groupId) => nextIdSet.has(groupId)),
-              ...nextIds.filter(
-                (groupId) => !prev.groupOrder.includes(groupId),
-              ),
-            ];
+        const groupOrder =
+          options.groupOrder ??
+          automaticGroupOrder ??
+          (options.resetOrder
+            ? nextIds
+            : [
+                ...prev.groupOrder.filter((groupId) => nextIdSet.has(groupId)),
+                ...nextIds.filter(
+                  (groupId) => !prev.groupOrder.includes(groupId),
+                ),
+              ]);
 
         const groupVisibility = options.resetOrder
           ? {}
@@ -156,29 +190,88 @@ export const ExtendedGroupingFeature: TableFeature = {
       });
     };
 
+    const getAutomaticGroupOrder = (
+      entries: GroupingEntry[],
+      groupSort: PluginMethodState["groupSort"],
+    ) => {
+      if (groupSort.mode === "manual") return undefined;
+
+      const info = table.getGroupedColumnInfo();
+      if (!info) return entries.map((entry) => entry.id);
+      const context = createRuntimePluginMethodContext(
+        table,
+        info.id,
+        info.config,
+        table.options.weekStartsOn ?? 1,
+      );
+
+      const sortingMethod = resolveGroupSortingMethod(
+        table.getColumnPlugin(info.id),
+        groupSort.method,
+        context,
+      );
+      if (!sortingMethod) {
+        return entries.map((entry) => entry.id);
+      }
+
+      return entries
+        .slice()
+        .sort((left, right) => {
+          const leftIsEmpty = left.sortValue === null;
+          const rightIsEmpty = right.sortValue === null;
+          if (leftIsEmpty || rightIsEmpty) {
+            if (leftIsEmpty && rightIsEmpty)
+              return left.id.localeCompare(right.id);
+            return leftIsEmpty ? 1 : -1;
+          }
+
+          const comparison = sortingMethod.compare(
+            left.sortValue,
+            right.sortValue,
+          );
+          return comparison === 0
+            ? left.id.localeCompare(right.id)
+            : groupSort.mode === "descending"
+              ? -comparison
+              : comparison;
+        })
+        .map((entry) => entry.id);
+    };
+
     const getGroupingEntriesFromData = (rows: RowModel[]) => {
       const info = table.getGroupedColumnInfo();
       if (!info) return [];
 
-      const plugin = table.getColumnPlugin(info.id);
-      const groupingMethod = resolveGroupingMethod(plugin);
-      const entries = new Map<
-        string,
-        {
-          id: string;
-          value: ComparableValue;
-          original: unknown;
-        }
-      >();
+      const groupingMethod = table.getSelectedGroupingMethod(info.id);
+      const context = createRuntimePluginMethodContext(
+        table,
+        info.id,
+        info.config,
+        table.options.weekStartsOn ?? 1,
+      );
+      const entries = new Map<string, GroupingEntry>();
 
       rows.forEach((row) => {
         const original: unknown = row.properties[info.id]?.value;
-        const value = groupingMethod.function(original, row, info.id);
+        const value = groupingMethod.function(original, row, info.id, context);
         const id = createGroupId(info.id, value);
         if (!entries.has(id)) {
-          entries.set(id, { id, value, original });
+          entries.set(id, {
+            id,
+            value,
+            sortValue: groupingMethod.toSortValue?.(value, context) ?? value,
+            original,
+          });
         }
       });
+
+      if (table._isKanbanDragActive()) {
+        const previous = table.atoms.groupingState.get();
+        previous.groupOrder.forEach((id) => {
+          const entry = previous.groupValues[id];
+          if (entry && !entries.has(id)) entries.set(id, { id, ...entry });
+        });
+      }
 
       return Array.from(entries.values());
     };
@@ -197,15 +290,39 @@ export const ExtendedGroupingFeature: TableFeature = {
       table.options.onGroupingStateChange?.(updater);
     };
     table._syncGroupingState = (options) => {
-      applyGroupingEntries(
-        getGroupingEntriesFromData(
-          table.getPreGroupedRowModel().rows.map((row) => row.original),
-        ),
-        options,
+      const syncOptions = options ?? {};
+      const entries = getGroupingEntriesFromData(
+        table.getPreGroupedRowModel().rows.map((row) => row.original),
       );
+      const draggedGroupOrder = pendingDraggedGroupOrder;
+      if (draggedGroupOrder) {
+        const groupSort = syncOptions.groupSort ?? table.getGroupSort();
+        if (groupSort.mode !== "manual") {
+          applyGroupingEntries(entries, syncOptions);
+          return;
+        }
+        pendingDraggedGroupOrder = undefined;
+        const nextIdSet = new Set(entries.map((entry) => entry.id));
+        const groupOrder = [
+          ...draggedGroupOrder.filter((groupId) => nextIdSet.has(groupId)),
+          ...entries
+            .map((entry) => entry.id)
+            .filter((groupId) => !draggedGroupOrder.includes(groupId)),
+        ];
+        applyGroupingEntries(entries, { ...syncOptions, groupOrder });
+        return;
+      }
+      applyGroupingEntries(entries, syncOptions);
     };
     table._syncGroupingStateFromData = (rows, options) => {
       applyGroupingEntries(getGroupingEntriesFromData(rows), options);
+    };
+    table._settlePendingGroupedRowDrag = (groupSort) => {
+      if (!pendingDraggedGroupOrder) return;
+      if (groupSort.mode !== "manual") {
+        pendingDraggedGroupOrder = undefined;
+      }
+      table._syncGroupingState({ groupSort });
     };
     table.setGrouping = (updater) => {
       setGrouping(updater);
@@ -216,10 +333,29 @@ export const ExtendedGroupingFeature: TableFeature = {
       table._syncGroupingState({ resetOrder: true });
     };
     table.setGroupingColumn = (updater) => {
-      table.setGrouping((v) => {
-        const colId = functionalUpdate(updater, v.length > 0 ? v[0]! : null);
-        return colId ? [colId] : [];
-      });
+      const grouping = table.atoms.grouping.get();
+      const colId = functionalUpdate(
+        updater,
+        grouping.length > 0 ? grouping[0]! : null,
+      );
+      table.setGrouping(colId ? [colId] : []);
+      const groupSort = table.getGroupSort();
+      if (groupSort.mode === "manual") return;
+      if (!colId) {
+        table.setGroupSort({ mode: "manual" });
+        return;
+      }
+      const plugin = table.getColumnPlugin(colId);
+      const methods = getGroupSortableSortingMethods(plugin);
+      if (methods.some((method) => method.id === groupSort.method)) return;
+      const defaultMethod =
+        methods.find((method) => method.id === plugin.sorting?.defaultMethod) ??
+        methods[0];
+      table.setGroupSort(
+        defaultMethod
+          ? { ...groupSort, method: defaultMethod.id }
+          : { mode: "manual" },
+      );
     };
     table.toggleHideEmptyGroups = () => {
       table._setGroupingState((v) => ({
@@ -256,10 +392,12 @@ export const ExtendedGroupingFeature: TableFeature = {
       const groupOrder = getSortableItemsAfterDrag(currentOrder, e);
       if (groupOrder === currentOrder) return;
 
-      table._setGroupingState((v) => ({
-        ...v,
-        groupOrder,
-      }));
+      pendingDraggedGroupOrder = groupOrder;
+      if (table.getGroupSort().mode === "manual") {
+        table._syncGroupingState();
+        return;
+      }
+      table.setGroupSort({ mode: "manual" });
     };
     table._resetGroupingState = () => {
       table._setGroupingState((v) => ({

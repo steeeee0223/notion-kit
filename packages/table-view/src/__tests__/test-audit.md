@@ -7,8 +7,8 @@ This audit inventories every current `it`/`test` declaration under `packages/tab
 Reproduce the baseline with Node 24.11.1:
 
 ```bash
-$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/table-view test
-$NVM_BIN/pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/table-view coverage
+pnpm -F @notion-kit/table-view test
+pnpm -F @notion-kit/table-view coverage
 ```
 
 Current natural result: **40 test files, 369 passed tests**. The last recorded V8 coverage baseline, before the Timeline additions, was statements **93.59%** (1286/1374), branches **90.74%** (735/810), functions 89.58% (568/634), and lines 95.06% (1174/1235). Statements and branches had a stable margin above the planned 90% gate; functions and lines remain diagnostic only.

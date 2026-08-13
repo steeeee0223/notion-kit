@@ -1,16 +1,33 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   functionalUpdate,
   useTable,
   type ColumnDef,
 } from "@tanstack/react-table";
 
-import { DEFAULT_FEATURES, type TableFeatures } from "@/features";
+import {
+  createPluginMethodState,
+  DEFAULT_FEATURES,
+  type TableFeatures,
+} from "@/features";
 import type { TableViewState } from "@/features/menu";
 import { pruneRowSelection } from "@/features/row-selection";
+import type { _TableInstance } from "@/features/types";
 import type { ColumnDefs, ColumnInfo, Row } from "@/lib/types";
 import { type Entity } from "@/lib/utils";
-import { resolveGroupingMethod, resolveSortingMethod } from "@/methods";
+import {
+  createCountingAggregation,
+  resolveGroupingMethod,
+  resolveSortingAccessorValue,
+  resolveSortingFn,
+} from "@/methods";
 import type { CellPlugin } from "@/plugins";
 import type {
   DataResourceAction,
@@ -21,7 +38,12 @@ import type {
   ViewResourceAction,
 } from "@/table-contexts/actions";
 import { defaultColumn } from "@/table-contexts/column";
-import type { BaseTableProps, TableState } from "@/table-contexts/types";
+import { createRuntimePluginMethodContext } from "@/table-contexts/plugin-method-context";
+import type {
+  BaseTableProps,
+  PartialTableViewState,
+  TableState,
+} from "@/table-contexts/types";
 import {
   createInitialTable,
   getMinWidth,
@@ -44,12 +66,41 @@ const DEFAULT_VIEW_STATE = {
   },
 } satisfies TableViewState;
 
-function resolveViewState(view?: Partial<TableViewState>) {
-  return { ...DEFAULT_VIEW_STATE, ...view };
+function resolveViewState(view?: PartialTableViewState): TableViewState {
+  const pluginMethods = createPluginMethodState();
+  return {
+    ...DEFAULT_VIEW_STATE,
+    ...view,
+    timeline: { ...DEFAULT_VIEW_STATE.timeline, ...view?.timeline },
+    pluginMethods: {
+      ...pluginMethods,
+      ...view?.pluginMethods,
+      sortingMethodByColumn: {
+        ...pluginMethods.sortingMethodByColumn,
+        ...view?.pluginMethods?.sortingMethodByColumn,
+      },
+      groupingMethodByColumn: {
+        ...pluginMethods.groupingMethodByColumn,
+        ...view?.pluginMethods?.groupingMethodByColumn,
+      },
+    },
+  };
 }
 
 function getResourceMode(isControlled: boolean) {
   return isControlled ? "controlled" : "uncontrolled";
+}
+
+function isSameMethodSelection(
+  left: Record<string, string | undefined> | undefined,
+  right: Record<string, string | undefined> | undefined,
+) {
+  const leftEntries = Object.entries(left ?? {});
+  const rightEntries = Object.entries(right ?? {});
+  return (
+    leftEntries.length === rightEntries.length &&
+    leftEntries.every(([colId, methodId]) => right?.[colId] === methodId)
+  );
 }
 
 function useOwnershipSwitchWarning(name: string, isControlled: boolean) {
@@ -72,45 +123,60 @@ function useResourceState<TResource, TAction>({
   value,
   defaultValue,
   onChange,
+  onProposalSettled,
 }: {
   name: string;
   controlled: boolean;
   value: TResource;
   defaultValue: TResource;
   onChange: ResourceChangeHandler<TResource, TAction> | undefined;
+  onProposalSettled?: (settlement: {
+    authoritative: TResource;
+    proposals: { next: TResource; action: TAction }[];
+  }) => void;
 }) {
   useOwnershipSwitchWarning(name, controlled);
 
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
   const resource = controlled ? value : uncontrolledValue;
-  const lastResourceRef = useRef(resource);
   const pendingResourceRef = useRef(resource);
+  const pendingProposalsRef = useRef<{ next: TResource; action: TAction }[]>(
+    [],
+  );
+
+  useLayoutEffect(() => {
+    // A committed render is the controlled owner's acceptance/rejection
+    // boundary. Same-render calls compose until this authoritative rebase.
+    pendingResourceRef.current = resource;
+    const proposals = pendingProposalsRef.current;
+    if (proposals.length === 0) return;
+    pendingProposalsRef.current = [];
+    onProposalSettled?.({ authoritative: resource, proposals });
+  });
 
   const setResource = useCallback<ResourceChangeFn<TResource, TAction>>(
     (updater, action) => {
-      if (lastResourceRef.current !== resource) {
-        lastResourceRef.current = resource;
-        pendingResourceRef.current = resource;
-      }
       const previous = pendingResourceRef.current;
       const next = functionalUpdate(updater, previous);
       if (Object.is(previous, next)) return;
       pendingResourceRef.current = next;
+      const resolvedAction =
+        typeof action === "function"
+          ? (action as ResourceActionFactory<TResource, TAction>)(
+              previous,
+              next,
+            )
+          : action;
+      pendingProposalsRef.current.push({ next, action: resolvedAction });
       if (!controlled) {
         setUncontrolledValue(next);
       }
       onChange?.({
         next,
-        action:
-          typeof action === "function"
-            ? (action as ResourceActionFactory<TResource, TAction>)(
-                previous,
-                next,
-              )
-            : action,
+        action: resolvedAction,
       });
     },
-    [controlled, onChange, resource],
+    [controlled, onChange],
   );
 
   return [resource, setResource] as const;
@@ -119,8 +185,10 @@ function useResourceState<TResource, TAction>({
 export function useTableView<TPlugins extends CellPlugin[]>(
   options: UseTableViewOptions<TPlugins>,
 ) {
+  const tableRef = useRef<_TableInstance | null>(null);
   const {
     plugins,
+    weekStartsOn = 1,
     getRowUrl,
     onDataChange,
     onPropertiesChange,
@@ -133,35 +201,9 @@ export function useTableView<TPlugins extends CellPlugin[]>(
   const isDataControlled = options.data !== undefined;
   const isPropertiesControlled = options.properties !== undefined;
   const isViewControlled = options.view !== undefined;
-  const viewLocked = options.view?.locked ?? DEFAULT_VIEW_STATE.locked;
-  const viewLayout = options.view?.layout ?? DEFAULT_VIEW_STATE.layout;
-  const viewRowView = options.view?.rowView ?? DEFAULT_VIEW_STATE.rowView;
-  const viewOpenedRowId =
-    options.view?.openedRowId ?? DEFAULT_VIEW_STATE.openedRowId;
-  const viewTimelineRange =
-    options.view?.timeline?.range ?? DEFAULT_VIEW_STATE.timeline.range;
-  const viewTimelineDatePropertyId =
-    options.view?.timeline?.datePropertyId ??
-    DEFAULT_VIEW_STATE.timeline.datePropertyId;
   const controlledView = useMemo(
-    () => ({
-      locked: viewLocked,
-      layout: viewLayout,
-      rowView: viewRowView,
-      openedRowId: viewOpenedRowId,
-      timeline: {
-        range: viewTimelineRange,
-        datePropertyId: viewTimelineDatePropertyId,
-      },
-    }),
-    [
-      viewLayout,
-      viewLocked,
-      viewOpenedRowId,
-      viewRowView,
-      viewTimelineDatePropertyId,
-      viewTimelineRange,
-    ],
+    () => resolveViewState(options.view),
+    [options.view],
   );
 
   const [dataEntity, setDataResource] = useResourceState<
@@ -195,6 +237,15 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     value: controlledView,
     defaultValue: resolveViewState(options.defaultView),
     onChange: onViewChange,
+    onProposalSettled: ({ authoritative, proposals }) => {
+      if (
+        proposals.some(({ action }) => action.type === "view.group_sort.change")
+      ) {
+        tableRef.current?._settlePendingGroupedRowDrag(
+          authoritative.pluginMethods?.groupSort ?? { mode: "manual" },
+        );
+      }
+    },
   });
   /** columns states */
   const columnEntity = useMemo(
@@ -210,27 +261,54 @@ export function useTableView<TPlugins extends CellPlugin[]>(
           id: property.id,
           accessorFn: (row) => {
             const value: unknown = row.properties[colId]?.value;
-            return value === null ? undefined : value;
+            const comparable = resolveSortingAccessorValue(
+              plugin,
+              value,
+              row,
+              colId,
+              tableGlobalState.pluginMethods?.sortingMethodByColumn?.[colId],
+              createRuntimePluginMethodContext(
+                () => tableRef.current,
+                colId,
+                property.config,
+                weekStartsOn,
+              ),
+            );
+            return comparable ?? undefined;
           },
           minSize: getMinWidth(property.type),
           sortUndefined: "last",
-          sortFn: (rowA, rowB, colId) =>
-            resolveSortingMethod(plugin)?.function(
-              rowA.original,
-              rowB.original,
+          sortFn: resolveSortingFn(
+            plugin,
+            tableGlobalState.pluginMethods?.sortingMethodByColumn?.[colId],
+            createRuntimePluginMethodContext(
+              () => tableRef.current,
               colId,
-            ) ?? 0,
+              property.config,
+              weekStartsOn,
+            ),
+          ),
+          aggregationFn: createCountingAggregation(plugin),
           getGroupingValue: (row) => {
-            const groupingMethod = resolveGroupingMethod(plugin);
+            const groupingMethod = resolveGroupingMethod(
+              plugin,
+              tableGlobalState.pluginMethods?.groupingMethodByColumn?.[colId],
+            );
             return groupingMethod.function(
               row.properties[colId]?.value,
               row,
               colId,
+              createRuntimePluginMethodContext(
+                () => tableRef.current,
+                colId,
+                property.config,
+                weekStartsOn,
+              ),
             );
           },
         };
       }),
-    [columnEntity, plugins.items],
+    [columnEntity, plugins.items, tableGlobalState.pluginMethods, weekStartsOn],
   );
   const handleColumnChange = useCallback<
     ResourceChangeFn<Entity<ColumnInfo>, PropertiesResourceAction>
@@ -287,11 +365,33 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       onColumnInfoChange: handleColumnChange,
       onTableDataChange: setDataResource,
       onTableGlobalChange: setViewResource,
+      weekStartsOn,
       getRowUrl,
     },
     () => null,
   );
+  tableRef.current = table as _TableInstance;
 
+  const sortingMethods = tableGlobalState.pluginMethods?.sortingMethodByColumn;
+  const previousSortingMethods = useRef(sortingMethods);
+  useEffect(() => {
+    if (isSameMethodSelection(previousSortingMethods.current, sortingMethods)) {
+      return;
+    }
+    previousSortingMethods.current = sortingMethods;
+    table.setSorting((sorting) =>
+      sorting.length === 0 ? sorting : [...sorting],
+    );
+  }, [sortingMethods, table]);
+
+  useEffect(() => {
+    table._syncGroupingState();
+  }, [
+    table,
+    tableGlobalState.pluginMethods?.groupingMethodByColumn,
+    tableGlobalState.pluginMethods?.groupSort,
+    weekStartsOn,
+  ]);
   table.baseAtoms.rowSelection.set((selection) =>
     tableGlobalState.locked
       ? Object.keys(selection).length === 0

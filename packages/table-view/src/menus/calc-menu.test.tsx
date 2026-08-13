@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { expect, it } from "vitest";
 
@@ -9,8 +10,49 @@ import {
   type TableViewProps,
 } from "@/__tests__/component-objects/render-table-view";
 import { mockData, mockResizeObserver } from "@/__tests__/mock";
+import { DEFAULT_PLUGINS, text } from "@/plugins";
+import { useTableViewCtx } from "@/table-contexts";
 
 mockResizeObserver();
+
+const customCountingTextPlugin: ReturnType<typeof text> = {
+  ...text(),
+  counting: [
+    {
+      group: "Metrics",
+      functions: [
+        {
+          id: "double-total",
+          name: "Double total",
+          label: "doubled",
+          function: ({ rows }) => String(rows.length * 2),
+        },
+        {
+          id: "row-total",
+          name: "Rows as text",
+          function: ({ rows }) => String(rows.length),
+        },
+      ],
+    },
+  ],
+};
+
+const customCountingPlugins = [
+  ...DEFAULT_PLUGINS.filter((plugin) => plugin.id !== "text"),
+  customCountingTextPlugin,
+];
+
+function SetColumnCountMethod({ id, method }: { id: string; method: string }) {
+  const { table } = useTableViewCtx();
+
+  useEffect(() => {
+    if (table.getColumnCounting(id).method !== method) {
+      table.setColumnCountMethod(id, method);
+    }
+  }, [id, method, table]);
+
+  return null;
+}
 
 async function openCalculation(
   propertyName: string,
@@ -23,6 +65,50 @@ async function openCalculation(
     menu: await NumberConfigMenuObject.fromOpenMenu(tableView.user),
   };
 }
+
+it("CalcMenu_CustomCountingGroup_ShowsCappingAndDescriptorMethods", async () => {
+  // This fails if the menu infers methods from a built-in property type rather
+  // than the plugin descriptor, or if an optional hint is treated as required.
+  const { tableView, menu } = await openCalculation("Name", {
+    plugins: customCountingPlugins,
+  });
+  expect(screen.queryByRole("menuitem", { name: "Count" })).toBeNull();
+  await menu.openSubmenu("Metrics");
+  expect(
+    screen.getByRole("menuitemcheckbox", {
+      name: "Show large counts as 99+",
+    }),
+  ).toHaveAttribute("aria-checked", "false");
+
+  menu.choose("Double total");
+
+  await waitFor(() =>
+    expect(tableView.footerResult("Name")).toHaveTextContent("doubled6"),
+  );
+});
+
+it("CalcMenu_CustomPlugin_UsesMethodNameWhenLabelIsAbsent", async () => {
+  const { tableView, menu } = await openCalculation("Name", {
+    plugins: customCountingPlugins,
+  });
+  await menu.openSubmenu("Metrics");
+  menu.choose("Rows as text");
+
+  await waitFor(() =>
+    expect(tableView.footerResult("Name")).toHaveTextContent("Rows as text3"),
+  );
+});
+
+it("CalcMenu_UnknownSelectedMethod_RendersTheNoneState", async () => {
+  // This fails if the footer indexes hint metadata for an unregistered ID.
+  const tableView = renderTableView({
+    children: <SetColumnCountMethod id="col1" method="removed-method" />,
+  });
+
+  await waitFor(() =>
+    expect(tableView.footerResult("Name")).toHaveTextContent("Calculate"),
+  );
+});
 
 it("CalcMenu_CheckedCount_DisplaysComputedFooterResult", async () => {
   // Arrange
@@ -43,10 +129,10 @@ it("CalcMenu_CheckedCount_DisplaysComputedFooterResult", async () => {
 it("CalcMenu_UncheckedPercent_DisplaysComputedFooterResult", async () => {
   // Arrange
   const { menu } = await openCalculation("Done");
-  await menu.openSubmenu("Percent");
+  await menu.openSubmenu("Percentage");
 
   // Act
-  menu.choose("Percent unchecked");
+  menu.choose("Unchecked");
 
   // Assert
   await waitFor(() =>
@@ -81,11 +167,11 @@ const duplicateTextData = mockData.map<Row>((row, index) => ({
 }));
 
 it.each([
-  ["All", "Count all", "3"],
-  ["Values", "Count values", "2"],
-  ["Unique", "Count unique values", "1"],
-  ["Empty", "Count empty", "1"],
-  ["NotEmpty", "Count not empty", "2"],
+  ["All", "All", "3"],
+  ["Values", "Values", "2"],
+  ["Unique", "Unique", "1"],
+  ["Empty", "Empty", "1"],
+  ["NotEmpty", "Not empty", "2"],
 ] as const)(
   "CalcMenu_Text%s_DisplaysExpectedFooterResult",
   async (_caseName, method, expected) => {
@@ -106,14 +192,14 @@ it.each([
 );
 
 it.each([
-  ["Empty", "Percent empty", "33.3%"],
-  ["NotEmpty", "Percent not empty", "66.7%"],
+  ["Empty", "Empty", "33.3%"],
+  ["NotEmpty", "Not empty", "66.7%"],
 ] as const)(
   "CalcMenu_TextPercent%s_DisplaysExpectedFooterResult",
   async (_caseName, method, expected) => {
     // Arrange
     const { tableView, menu } = await openCalculation("Name");
-    await menu.openSubmenu("Percent");
+    await menu.openSubmenu("Percentage");
 
     // Act
     menu.choose(method);
@@ -127,7 +213,7 @@ it.each([
 
 it.each([
   ["Unchecked", "Count", "Unchecked", "1"],
-  ["CheckedPercent", "Percent", "Percent checked", "66.7%"],
+  ["CheckedPercent", "Percentage", "Checked", "66.7%"],
 ] as const)(
   "CalcMenu_Checkbox%s_DisplaysExpectedFooterResult",
   async (_caseName, submenu, method, expected) => {
@@ -146,8 +232,8 @@ it.each([
 );
 
 it.each([
-  ["All", "Count", "Count all", "0"],
-  ["Percent", "Percent", "Percent empty", "0.0%"],
+  ["All", "Count", "All", "0"],
+  ["Percent", "Percentage", "Empty", "0.0%"],
 ] as const)(
   "CalcMenu_ZeroRows%s_ReturnsStableZeroResult",
   async (_caseName, submenu, method, expected) => {
@@ -169,7 +255,7 @@ it("CalcMenu_CellEdit_RecomputesFooterResult", async () => {
   // Arrange
   const { tableView, menu } = await openCalculation("Name");
   await menu.openSubmenu("Count");
-  menu.choose("Count values");
+  menu.choose("Values");
   await waitFor(() =>
     expect(tableView.footerResult("Name")).toHaveTextContent("2"),
   );
@@ -190,7 +276,7 @@ it("CalcMenu_RowAdd_RecomputesFooterResult", async () => {
   // Arrange
   const { tableView, menu } = await openCalculation("Name");
   await menu.openSubmenu("Count");
-  menu.choose("Count all");
+  menu.choose("All");
   await waitFor(() =>
     expect(tableView.footerResult("Name")).toHaveTextContent("3"),
   );
@@ -208,7 +294,7 @@ it("CalcMenu_RowDelete_RecomputesFooterResult", async () => {
   // Arrange
   const { tableView, menu } = await openCalculation("Name");
   await menu.openSubmenu("Count");
-  menu.choose("Count all");
+  menu.choose("All");
   await waitFor(() =>
     expect(tableView.footerResult("Name")).toHaveTextContent("3"),
   );

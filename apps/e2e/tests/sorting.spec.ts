@@ -9,7 +9,7 @@ async function expectRowOrder(table: TableViewObject, names: string[]) {
   }
 }
 
-test("Sorting_RulesEditsAndRemoval_UpdateRowsWithoutParentViewWriteback", async ({
+test("Sorting_RulesEditsAndRemoval_UpdateRowsAndControlledMethodState", async ({
   page,
 }) => {
   const table = await TableViewObject.open(page, "controlled");
@@ -20,10 +20,15 @@ test("Sorting_RulesEditsAndRemoval_UpdateRowsWithoutParentViewWriteback", async 
   await expect(table.internalState()).toContainText(
     '"sorting":[{"id":"score","desc":false}]',
   );
-  await expect(table.controlledState()).toContainText('"viewCount":0');
-  await expect(table.controlledState()).toContainText('"lastViewAction":null');
+  await expect(table.controlledState()).toContainText('"viewCount":1');
+  await expect(table.controlledState()).toContainText(
+    '"type":"view.plugin_sorting_method.change"',
+  );
+  await expect(table.controlledState()).toContainText(
+    '"propertyId":"score","nextMethodId":"number"',
+  );
 
-  await sort.setDirection("Ascending", "Descending");
+  await sort.setDirection("Low → high", "High → low");
   await expectRowOrder(table, ["Omega", "Alpha", "Empty"]);
 
   await sort.add("Name");
@@ -36,7 +41,7 @@ test("Sorting_RulesEditsAndRemoval_UpdateRowsWithoutParentViewWriteback", async 
   await expectRowOrder(table, ["Alpha", "Empty", "Omega"]);
 
   await sort.add("Score");
-  await sort.setDirection("Ascending", "Descending");
+  await sort.setDirection("Low → high", "High → low");
   await page.keyboard.press("Escape");
   await table.cellEditor("Alpha", "10").fill("100");
   await expectRowOrder(table, ["Alpha", "Omega", "Empty"]);

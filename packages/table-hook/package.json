@@ -15,6 +15,10 @@
     ".": {
       "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
+    },
+    "./fns": {
+      "types": "./dist/fns.d.mts",
+      "default": "./dist/fns.mjs"
     }
   },
   "main": "./dist/index.mjs",
@@ -37,11 +41,13 @@
   },
   "prettier": "@notion-kit/prettier-config",
   "dependencies": {
+    "@date-fns/tz": "catalog:fns",
     "@dnd-kit/react": "catalog:ui",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/ui": "workspace:*",
     "@tanstack/react-table": "9.0.0",
     "@tanstack/table-core": "9.0.0",
+    "date-fns": "catalog:fns",
     "uuid": "catalog:uuid",
     "zod": "catalog:"
   },

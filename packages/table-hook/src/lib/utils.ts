@@ -53,18 +53,30 @@ export function getCount(table: _TableInstance, colId: string): string {
   if (method === "none") return "";
 
   const plugin = table.getColumnPlugin(colId);
-  const rows = table.getCoreRowModel().rows;
+  const rows = getCalculationRows(table);
   const countingMethod = resolveCountingMethod(plugin, method);
+  if (!countingMethod) return "";
 
-  return (
-    countingMethod?.function({
-      table,
-      rows,
-      colId,
-      plugin,
-      isCapped,
-    }) ?? ""
-  );
+  const context = { table, rows, colId, plugin, isCapped };
+  if (countingMethod.aggregationFn) {
+    const result = table
+      .getColumn(colId)
+      ?.getAggregationValue({ rows, maxDepth: 0 });
+    if (countingMethod.formatResult) {
+      return countingMethod.formatResult(result, context);
+    }
+    return typeof result === "string" ||
+      typeof result === "number" ||
+      typeof result === "boolean"
+      ? String(result)
+      : "";
+  }
+
+  return countingMethod.function?.(context) ?? "";
+}
+
+export function getCalculationRows(table: _TableInstance) {
+  return table.getPreGroupedRowModel().rows;
 }
 
 export function wrappedClassName(wrapped?: boolean) {

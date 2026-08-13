@@ -37,20 +37,19 @@ export class HeaderMenuObject extends MenuSurfaceObject {
     await this.root.waitFor({ state: "hidden" });
   }
 
-  async sort(direction: "ascending" | "descending") {
-    await this.chooseSubmenu("Sort", `Sort ${direction}`);
+  async sort(option: AccessibleName) {
+    await this.chooseSubmenu("Sort", option);
   }
 
   async group() {
     await this.item(/^(Group|Ungroup)$/).click();
   }
 
-  async calculate(method: AccessibleName) {
+  async calculate(category: "Count" | "Percentage", method: AccessibleName) {
     if (typeof method !== "string") {
       throw new Error("Calculation methods must use an exact accessible name");
     }
     await this.item("Calculate").hover();
-    const category = method.startsWith("Percent") ? "Percent" : "Count";
     const categoryItem = this.page
       .getByRole("menuitem", { name: category, exact: true })
       .last();
