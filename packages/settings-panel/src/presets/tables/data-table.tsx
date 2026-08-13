@@ -22,15 +22,11 @@ import {
   TableRow,
 } from "@notion-kit/ui/primitives";
 
-import {
-  settingsTableFeatures,
-  type SettingsColumnDef,
-  type SettingsRow,
-} from "./table-features";
+import { tableFeatures, type ColumnDef, type Row } from "./table-features";
 
 export interface DataTableProps<TData extends RowData> {
   className?: string;
-  columns: SettingsColumnDef<TData>[];
+  columns: ColumnDef<TData>[];
   data: TData[];
   emptyResult?: string;
   /** External column filters state (controlled) */
@@ -42,7 +38,7 @@ export interface DataTableProps<TData extends RowData> {
   /** Search configuration - applies filter to a specific column */
   search?: ColumnFilter;
   /** Row click handler */
-  onRowClick?: (row: SettingsRow<TData>) => void;
+  onRowClick?: (row: Row<TData>) => void;
   /** Custom header className function based on column id */
   getHeaderClassName?: (columnId: string) => string;
 }
@@ -85,7 +81,7 @@ export function DataTable<TData extends RowData>({
     onColumnFiltersChange ?? setInternalColumnFilters;
 
   const table = useTable({
-    features: settingsTableFeatures,
+    features: tableFeatures,
     data,
     columns,
     initialState: tableInitialState,

@@ -1,6 +1,6 @@
 import { Plan } from "@notion-kit/schemas";
 
-import type { PlansColumnDef } from "../../table-features";
+import type { ColumnDef } from "../../table-features";
 import { ContentCell, type ContentCellProps } from "../cells";
 
 export interface ContentPlanRow
@@ -8,7 +8,7 @@ export interface ContentPlanRow
   title: string;
 }
 
-export const contentColumns: PlansColumnDef<ContentPlanRow>[] = [
+export const contentColumns: ColumnDef<ContentPlanRow>[] = [
   {
     accessorKey: "title",
     header: () => null,
@@ -18,7 +18,7 @@ export const contentColumns: PlansColumnDef<ContentPlanRow>[] = [
   },
   ...Object.values(Plan)
     .filter((plan) => plan !== Plan.EDUCATION)
-    .map<PlansColumnDef<ContentPlanRow>>((plan) => ({
+    .map<ColumnDef<ContentPlanRow>>((plan) => ({
       accessorKey: plan,
       header: () => null,
       cell: ({ row }) => <ContentCell {...row.original[plan]} />,

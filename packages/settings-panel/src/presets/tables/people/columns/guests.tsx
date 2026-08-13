@@ -10,7 +10,7 @@ import {
 } from "@/presets/tables/common-cells";
 import { userFilterFn } from "@/presets/tables/utils";
 
-import type { SettingsColumnDef, SettingsRow } from "../../table-features";
+import type { ColumnDef, Row } from "../../table-features";
 import { AccessCell, GuestActionCell } from "../cells";
 
 interface CreateGuestColumnsOptions {
@@ -23,7 +23,7 @@ export function createGuestColumns({
   scopes,
   onUpdate,
   onDelete,
-}: CreateGuestColumnsOptions): SettingsColumnDef<GuestRow>[] {
+}: CreateGuestColumnsOptions): ColumnDef<GuestRow>[] {
   return [
     {
       id: "user",
@@ -75,13 +75,13 @@ export function createGuestColumns({
                 className="pl-2"
               />
             ),
-            cell: ({ row }: { row: SettingsRow<GuestRow> }) => (
+            cell: ({ row }: { row: Row<GuestRow> }) => (
               <AccessCell access={row.original.access} />
             ),
           },
           {
             id: "actions",
-            cell: ({ row }: { row: SettingsRow<GuestRow> }) => (
+            cell: ({ row }: { row: Row<GuestRow> }) => (
               <div className="flex items-center justify-end">
                 <GuestActionCell
                   name={row.original.user.name}

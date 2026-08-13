@@ -4,16 +4,16 @@ import {
   columnSizingFeature,
   createFilteredRowModel,
   createSortedRowModel,
+  tableFeatures as createTableFeatures,
   rowSelectionFeature,
   rowSortingFeature,
-  tableFeatures,
   type CellData,
-  type ColumnDef,
-  type Row,
   type RowData,
+  type ColumnDef as TanStackColumnDef,
+  type Row as TanStackRow,
 } from "@tanstack/react-table";
 
-export const settingsTableFeatures = tableFeatures({
+export const tableFeatures = createTableFeatures({
   columnFilteringFeature,
   columnPinningFeature,
   columnSizingFeature,
@@ -23,19 +23,12 @@ export const settingsTableFeatures = tableFeatures({
   sortedRowModel: createSortedRowModel(),
 });
 
-export const plansTableFeatures = tableFeatures({});
-
-export type SettingsColumnDef<
+export type ColumnDef<
   TData extends RowData,
   TValue extends CellData = CellData,
-> = ColumnDef<typeof settingsTableFeatures, TData, TValue>;
+> = TanStackColumnDef<typeof tableFeatures, TData, TValue>;
 
-export type SettingsRow<TData extends RowData> = Row<
-  typeof settingsTableFeatures,
+export type Row<TData extends RowData> = TanStackRow<
+  typeof tableFeatures,
   TData
 >;
-
-export type PlansColumnDef<
-  TData extends RowData,
-  TValue extends CellData = CellData,
-> = ColumnDef<typeof plansTableFeatures, TData, TValue>;

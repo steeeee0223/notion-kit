@@ -6,7 +6,7 @@ import type { SessionRow } from "@/lib/types";
 import { LogoutConfirm } from "@/presets/modals";
 import { SortingToggle, TextCell } from "@/presets/tables/common-cells";
 
-import type { SettingsColumnDef, SettingsRow } from "../table-features";
+import type { ColumnDef, Row } from "../table-features";
 import { DeviceCell } from "./cells";
 
 interface CreateSessionColumnsOptions {
@@ -17,7 +17,7 @@ interface CreateSessionColumnsOptions {
 export function createSessionColumns({
   currentSessionId,
   onLogout,
-}: CreateSessionColumnsOptions): SettingsColumnDef<SessionRow>[] {
+}: CreateSessionColumnsOptions): ColumnDef<SessionRow>[] {
   return [
     {
       accessorKey: "device",
@@ -94,7 +94,7 @@ const LogoutCell = ({
   row,
   onLogout,
 }: {
-  row: SettingsRow<SessionRow>;
+  row: Row<SessionRow>;
   onLogout?: (token: string) => void;
 }) => {
   const { t } = useTranslation("settings");

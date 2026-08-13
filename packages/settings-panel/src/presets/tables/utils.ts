@@ -1,9 +1,9 @@
 import type { User } from "@notion-kit/schemas";
 
-import type { SettingsRow } from "./table-features";
+import type { Row } from "./table-features";
 
 export function userFilterFn<T extends { user: User }>(
-  row: SettingsRow<T>,
+  row: Row<T>,
   _columnId: string,
   filterValue: unknown,
 ) {

@@ -15,7 +15,7 @@ import {
 } from "@/presets/tables/common-cells";
 import { userFilterFn } from "@/presets/tables/utils";
 
-import type { SettingsColumnDef } from "../table-features";
+import type { ColumnDef } from "../table-features";
 import {
   AccessSelectCell,
   OwnersCell,
@@ -44,7 +44,7 @@ export function createTeamspaceColumns({
   onLeave,
   onUpdate,
   onArchive,
-}: CreateTeamspaceColumnsOptions): SettingsColumnDef<TeamspaceRow>[] {
+}: CreateTeamspaceColumnsOptions): ColumnDef<TeamspaceRow>[] {
   return [
     {
       accessorKey: "name",
@@ -156,7 +156,7 @@ interface CreateTeamMembersColumnsOptions {
 export function createTeamMembersColumns({
   onUpdate,
   onRemove,
-}: CreateTeamMembersColumnsOptions): SettingsColumnDef<TeamMemberRow>[] {
+}: CreateTeamMembersColumnsOptions): ColumnDef<TeamMemberRow>[] {
   return [
     {
       accessorKey: "user",

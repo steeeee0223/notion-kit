@@ -3,9 +3,9 @@ import { Trans } from "@notion-kit/i18n";
 import type { GroupOption } from "@/lib/types";
 import { TextCell } from "@/presets/tables/common-cells";
 
-import type { SettingsColumnDef } from "../../table-features";
+import type { ColumnDef } from "../../table-features";
 
-export const createGroupColumns = (): SettingsColumnDef<GroupOption>[] => [
+export const createGroupColumns = (): ColumnDef<GroupOption>[] => [
   {
     id: "group",
     accessorKey: "group",

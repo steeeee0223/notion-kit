@@ -3,7 +3,7 @@ import { Trans } from "@notion-kit/i18n";
 import type { Connection } from "@/lib/types";
 
 import { TextCell } from "../common-cells";
-import type { SettingsColumnDef } from "../table-features";
+import type { ColumnDef } from "../table-features";
 import { ActionCell, ConnectionCell } from "./cells";
 
 export interface CreateConnectionColumnsOptions {
@@ -14,7 +14,7 @@ export interface CreateConnectionColumnsOptions {
 export function createConnectionColumns({
   onCreateConnection,
   onDisconnect,
-}: CreateConnectionColumnsOptions): SettingsColumnDef<Connection>[] {
+}: CreateConnectionColumnsOptions): ColumnDef<Connection>[] {
   return [
     {
       accessorKey: "connection",

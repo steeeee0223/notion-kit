@@ -5,7 +5,7 @@ import {
   TooltipProvider,
 } from "@notion-kit/ui/primitives";
 
-import type { PlansColumnDef } from "../../table-features";
+import type { ColumnDef } from "../../table-features";
 import { ListCell, PlanHeader } from "../cells";
 
 export interface HighlightPlanRow
@@ -16,7 +16,7 @@ export interface HighlightPlanRow
 export const getHighlightColumns = (
   canUpgrade?: boolean,
   onUpgrade?: (plan: Plan) => void,
-): PlansColumnDef<HighlightPlanRow>[] => [
+): ColumnDef<HighlightPlanRow>[] => [
   {
     accessorKey: "title",
     header: () => <div className="w-[118px]" />,

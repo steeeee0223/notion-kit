@@ -18,10 +18,10 @@ import type { EmojiRow } from "@/lib/types";
 import { EmojiForm } from "@/presets/modals";
 
 import { SortingToggle, TextCell } from "../common-cells";
-import type { SettingsColumnDef, SettingsRow } from "../table-features";
+import type { ColumnDef, Row } from "../table-features";
 
 function emojiFilterFn(
-  row: SettingsRow<EmojiRow>,
+  row: Row<EmojiRow>,
   _columnId: string,
   filterValue: unknown,
 ) {
@@ -39,7 +39,7 @@ interface CreateEmojiColumnsOptions {
 export function createEmojiColumns({
   onEdit,
   onDelete,
-}: CreateEmojiColumnsOptions): SettingsColumnDef<EmojiRow>[] {
+}: CreateEmojiColumnsOptions): ColumnDef<EmojiRow>[] {
   return [
     {
       id: "image",

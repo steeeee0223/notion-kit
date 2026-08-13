@@ -12,11 +12,11 @@ import {
   TableRow,
 } from "@notion-kit/ui/primitives";
 
-import { plansTableFeatures, type PlansColumnDef } from "../table-features";
+import { tableFeatures, type ColumnDef } from "../table-features";
 
 export interface DataTableProps<TData extends RowData> {
   type: "highlight" | "content";
-  columns: PlansColumnDef<TData>[];
+  columns: ColumnDef<TData>[];
   data: TData[];
 }
 
@@ -31,7 +31,7 @@ export function DataTable<TData extends RowData>({
   data,
 }: DataTableProps<TData>) {
   const table = useTable({
-    features: plansTableFeatures,
+    features: tableFeatures,
     data,
     columns,
   });
