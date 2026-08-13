@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   flexRender,
   useTable,
@@ -62,9 +62,25 @@ export function DataTable<TData extends RowData>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [internalColumnFilters, setInternalColumnFilters] =
     useState<ColumnFiltersState>([]);
+  const [tableInitialState] = useState(() => ({
+    columnPinning: { start: initialColumnPinning ?? [], end: [] },
+  }));
 
-  // Use external columnFilters if provided, otherwise use internal state
-  const columnFilters = externalColumnFilters ?? internalColumnFilters;
+  // Use external columnFilters if provided, otherwise use internal state.
+  const baseColumnFilters = externalColumnFilters ?? internalColumnFilters;
+  const searchId = search?.id;
+  const searchValue = search?.value;
+  const columnFilters = useMemo(() => {
+    if (searchId === undefined) return baseColumnFilters;
+
+    const filters = baseColumnFilters.filter(
+      (filter) => filter.id !== searchId,
+    );
+
+    return searchValue !== undefined && searchValue !== ""
+      ? [...filters, { id: searchId, value: searchValue }]
+      : filters;
+  }, [baseColumnFilters, searchId, searchValue]);
   const handleColumnFiltersChange =
     onColumnFiltersChange ?? setInternalColumnFilters;
 
@@ -72,21 +88,14 @@ export function DataTable<TData extends RowData>({
     features: settingsTableFeatures,
     data,
     columns,
+    initialState: tableInitialState,
     state: {
       sorting,
       columnFilters,
-      columnPinning: { start: initialColumnPinning ?? [], end: [] },
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: handleColumnFiltersChange,
   });
-
-  // Handle search prop
-  useEffect(() => {
-    if (!search) return;
-
-    table.getColumn(search.id)?.setFilterValue(search.value);
-  }, [search, table]);
 
   return (
     <Table className={className}>
