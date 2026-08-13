@@ -384,8 +384,11 @@ export class TableViewObject {
     });
   }
 
-  async setCalculation(propertyName: string, method: string) {
-    const category = method.startsWith("Percent") ? "Percent" : "Count";
+  async setCalculation(
+    propertyName: string,
+    category: "Count" | "Percentage",
+    method: string,
+  ) {
     const trigger = this.calculation(propertyName);
     await trigger.click();
     await expect(trigger).toHaveAttribute("aria-expanded", "true");

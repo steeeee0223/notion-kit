@@ -151,7 +151,7 @@ describe("EditGroupMenu", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("TestEditGroupMenu_TextMethodChanges_ReplacesExactTableGroupsWithAlphabeticalGroups", async () => {
+  it("EditGroupMenu_TextMethodChanges_ReplacesExactTableGroupsWithAlphabeticalGroups", async () => {
     const fixture = createFullPluginFixture();
     const values = ["1 item", "Delta", "Queen", "Whiskey"];
     fixture.data = values.map((value, index) => {
@@ -194,7 +194,7 @@ describe("EditGroupMenu", () => {
     );
   });
 
-  it("TestEditGroupMenu_NumberMethodChanges_ReplacesUnitTableGroupsWithIntervalGroups", async () => {
+  it("EditGroupMenu_NumberMethodChanges_ReplacesUnitTableGroupsWithIntervalGroups", async () => {
     const fixture = createFullPluginFixture();
     const values = ["1", "9", "10"];
     fixture.data = fixture.data.map((row, index) => ({
@@ -223,7 +223,7 @@ describe("EditGroupMenu", () => {
     );
   });
 
-  it("TestEditGroupMenu_DateMethodsWithEmptyCell_KeepSingleEmptyGroupWithoutThrowing", async () => {
+  it("EditGroupMenu_DateMethodsWithEmptyCell_KeepsSingleEmptyGroupWithoutThrowing", async () => {
     const { tableView, grouping } = await openFixtureGroupingMenu("Due");
     const groupUsing = within(grouping.root).getByRole("menuitem", {
       name: /Group using/,
@@ -280,7 +280,7 @@ describe("EditGroupMenu", () => {
     },
   );
 
-  it("TestGroupSortControl_ResolvedMethod_OffersOnlyModeAndDirections", async () => {
+  it("GroupSortControl_ResolvedMethod_OffersOnlyModeAndDirections", async () => {
     const { tableView, grouping } = await openTextGroupingMenu();
 
     const sortGroups = within(grouping.root).getByRole("menuitem", {
@@ -381,7 +381,7 @@ describe("EditGroupMenu", () => {
     );
   });
 
-  it("TestGroupSortControl_ColonMethodDirectionChange_PreservesMethodAndUpdatesDirection", async () => {
+  it("GroupSortControl_ColonMethodDirectionChange_PreservesMethodAndUpdatesDirection", async () => {
     const onViewChange = vi.fn();
     const plugin: CellPlugin<"colon-sort", string, undefined> = {
       id: "colon-sort",

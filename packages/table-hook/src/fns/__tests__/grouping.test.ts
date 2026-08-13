@@ -187,7 +187,7 @@ describe("common grouping functions", () => {
     expect(groupByDateRelative(Date.now(), { timeZone: "UTC" })).toBe("today");
   });
 
-  it("TestDateGrouping_InvalidDates_ReturnNull", () => {
+  it("DateGrouping_InvalidDates_ReturnsNull", () => {
     const options = { timeZone: "UTC", now: Date.UTC(2025, 0, 15) };
     expect(groupByDateDay(Number.NaN, options)).toBeNull();
     expect(

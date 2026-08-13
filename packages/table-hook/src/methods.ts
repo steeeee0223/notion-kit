@@ -117,7 +117,6 @@ export interface CountingMethod {
 
 export interface CountingMethodGroup {
   group: string;
-  supportsCapping?: boolean;
   functions: CountingMethod[];
 }
 

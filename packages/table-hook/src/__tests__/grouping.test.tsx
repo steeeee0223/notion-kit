@@ -484,7 +484,7 @@ describe("useTableView - Extended Grouping", () => {
       ).toEqual(["a", "other"]);
     });
 
-    it("TestGroupedRowModel_GroupingMethodChanges_RecomputesRowsWithCurrentMethod", async () => {
+    it("GroupedRowModel_GroupingMethodChanges_RecomputesRowsWithCurrentMethod", async () => {
       const table = renderGroupingMethodTable();
 
       act(() => table.setGrouping(["method"]));

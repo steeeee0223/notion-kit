@@ -66,7 +66,7 @@ async function openCalculation(
   };
 }
 
-it("CalcMenu_CustomPlugin_DiscoversUnhintedMethodsAndUsesDescriptorLabels", async () => {
+it("CalcMenu_CustomCountingGroup_ShowsCappingAndDescriptorMethods", async () => {
   // This fails if the menu infers methods from a built-in property type rather
   // than the plugin descriptor, or if an optional hint is treated as required.
   const { tableView, menu } = await openCalculation("Name", {
@@ -75,10 +75,10 @@ it("CalcMenu_CustomPlugin_DiscoversUnhintedMethodsAndUsesDescriptorLabels", asyn
   expect(screen.queryByRole("menuitem", { name: "Count" })).toBeNull();
   await menu.openSubmenu("Metrics");
   expect(
-    screen.queryByRole("menuitemcheckbox", {
+    screen.getByRole("menuitemcheckbox", {
       name: "Show large counts as 99+",
     }),
-  ).toBeNull();
+  ).toHaveAttribute("aria-checked", "false");
 
   menu.choose("Double total");
 

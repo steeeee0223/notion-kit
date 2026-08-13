@@ -107,7 +107,6 @@ const percentageNonEmpty: CountingMethod = {
 const genericCounting = [
   {
     group: "Count",
-    supportsCapping: true,
     functions: [countAll, countValues, countUnique, countEmpty, countNonEmpty],
   },
   {
@@ -119,7 +118,6 @@ const genericCounting = [
 const checkboxCounting = [
   {
     group: "Count",
-    supportsCapping: true,
     functions: [countAll, countChecked, countUnchecked],
   },
   {

@@ -40,22 +40,18 @@ export function CalcMenu({ id }: CalcMenuProps) {
         <DropdownMenuSub key={group.group}>
           <DropdownMenuSubTrigger label={group.group} />
           <DropdownMenuContent sideOffset={-4} className="w-[250px]">
-            {group.supportsCapping && (
-              <>
-                <DropdownMenuGroup>
-                  <DropdownMenuCheckboxItem
-                    checkType="switch"
-                    label="Show large counts as 99+"
-                    desc="This improves performance for large databases."
-                    checked={counting.isCapped}
-                    onCheckedChange={() =>
-                      table.setColumnCountCapped(id, (v) => !v)
-                    }
-                  />
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-              </>
-            )}
+            <DropdownMenuGroup>
+              <DropdownMenuCheckboxItem
+                checkType="switch"
+                label="Show large counts as 99+"
+                desc="This improves performance for large databases."
+                checked={counting.isCapped}
+                onCheckedChange={() =>
+                  table.setColumnCountCapped(id, (v) => !v)
+                }
+              />
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
             <DropdownMenuGroup>
               {group.functions.map((method) => (
                 <CalculationItem
