@@ -1,5 +1,18 @@
 # Plugins
 
+This is the durable capability reference for the headless plugin layer. The
+package responsibility boundary is summarized in [`README.md`](./README.md);
+the executable contract audit is indexed in
+[`testing/README.md`](./testing/README.md).
+
+## Ownership
+
+Plugin factories in `@notion-kit/table-hook/plugins` own data semantics and
+capability descriptors. `@notion-kit/table-view` supplies only icons and React
+renderers through configured wrappers. If a change affects conversion,
+comparison, grouping, counting, sorting, method resolution, or persisted method
+IDs, update this document and the relevant [headless audit page](./testing/README.md).
+
 ### Calculating, sorting and grouping
 
 #### Used-in
