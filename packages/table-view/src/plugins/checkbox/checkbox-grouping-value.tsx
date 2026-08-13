@@ -1,7 +1,6 @@
 import { cn } from "@notion-kit/cn";
+import type { GroupingValueProps } from "@notion-kit/table-hook/plugins";
 import { Checkbox } from "@notion-kit/ui/primitives";
-
-import type { GroupingValueProps } from "../types";
 
 export function CheckboxGroupingValue({
   className,

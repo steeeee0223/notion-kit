@@ -1,3 +1,4 @@
+import type { OptionConfig } from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
@@ -7,7 +8,6 @@ import type { Color } from "@notion-kit/utils";
 
 import { OptionTag } from "../../../common";
 import { SelectOptionMenu } from "../select-option-menu";
-import type { OptionConfig } from "../types";
 
 interface OptionItemProps {
   index: number;
@@ -42,7 +42,7 @@ export function OptionItem({
                 onPointerDown={(e) => e.stopPropagation()}
               />
             }
-            label={<OptionTag {...option} />}
+            label={<OptionTag name={option.name} color={option.color} />}
             chevron={false}
             openOnHover={false}
           />

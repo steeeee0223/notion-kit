@@ -5,15 +5,13 @@ import { Icon } from "@notion-kit/icons";
 
 import { Button, ScrollArea, TooltipPreset } from "@/primitives";
 
-export interface TimelineSidebarProps extends React.PropsWithChildren {
-  className?: string;
-  style?: React.CSSProperties;
-}
+export type TimelineSidebarProps = React.ComponentProps<"div">;
 
 export function TimelineSidebar({
   className,
   style,
   children,
+  ...props
 }: TimelineSidebarProps) {
   return (
     <div
@@ -23,6 +21,7 @@ export function TimelineSidebar({
         className,
       )}
       style={style}
+      {...props}
     >
       <div
         dir="ltr"
@@ -76,7 +75,12 @@ export function TimelineSidebarTrigger({
 }: TimelineSidebarTriggerProps) {
   return (
     <TooltipPreset side="top" description={description}>
-      <Button variant="hint" size="xs" onClick={onClick}>
+      <Button
+        variant="hint"
+        size="xs"
+        aria-label={description}
+        onClick={onClick}
+      >
         <Icon.ArrowChevronDoubleSmall side="right" className="fill-icon" />
       </Button>
     </TooltipPreset>

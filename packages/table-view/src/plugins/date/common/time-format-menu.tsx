@@ -1,9 +1,9 @@
 import { Icon } from "@notion-kit/icons";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuGroup,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuTrigger,
   MenuItem,
   MenuItemSelect,
@@ -30,6 +30,8 @@ export function TimeFormatMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
+        nativeButton={false}
+        role="menuitem" // override the default role: button
         render={
           <MenuItem
             label="Time format"
@@ -42,16 +44,18 @@ export function TimeFormatMenu({
         }
       />
       <DropdownMenuContent align="end" className="w-[180px]">
-        <DropdownMenuGroup>
+        <DropdownMenuRadioGroup
+          value={format}
+          onValueChange={(value: TimeFormat) => onChange(value)}
+        >
           {options.map((option) => (
-            <DropdownMenuCheckboxItem
+            <DropdownMenuRadioItem
               key={option.value}
+              value={option.value}
               label={option.label}
-              checked={format === option.value}
-              onCheckedChange={() => onChange(option.value)}
             />
           ))}
-        </DropdownMenuGroup>
+        </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

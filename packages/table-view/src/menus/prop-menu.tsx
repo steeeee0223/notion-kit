@@ -1,6 +1,8 @@
 import { flexRender, functionalUpdate } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
+import { TableViewMenuPage } from "@notion-kit/table-hook";
+import type { ConfigMenuProps } from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -11,11 +13,13 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { PropMeta } from "@/common";
-import { TableViewMenuPage } from "@/features";
-import { ConfigMenuProps } from "@/plugins";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { CalcMenu } from "./calc-menu";
+import {
+  getDefaultSortingMethod,
+  getSortingDirectionLabels,
+} from "./sorting-options";
 import { TypesMenu } from "./types-menu";
 
 const INSERT_SIDES = ["left", "right"] as const;
@@ -46,13 +50,19 @@ interface PropMenuProps {
 export function PropMenu({ propId, view }: PropMenuProps) {
   const { table } = useTableViewCtx();
 
-  const column = table.getColumn(propId)!;
+  const _column = table.getColumn(propId)!;
   const info = table.getColumnInfo(propId);
   const plugin = table.getColumnPlugin(propId);
 
   // 3. Sorting
-  const sortColumn = (desc: boolean) =>
+  const defaultSortingMethod = getDefaultSortingMethod(plugin);
+  const sortingLabels = getSortingDirectionLabels(defaultSortingMethod);
+  const sortColumn = (desc: boolean) => {
+    if (defaultSortingMethod) {
+      table.setColumnSortingMethod(propId, defaultSortingMethod.id);
+    }
     table.setSorting([{ id: propId, desc }]);
+  };
   // 6. Pin columns
   const canFreeze = table.getCanFreezeColumn(propId);
   const canUnfreeze = table.getFreezingState()?.colId === propId;
@@ -112,24 +122,30 @@ export function PropMenu({ propId, view }: PropMenuProps) {
                 <DropdownMenuGroup>
                   <DropdownMenuItem
                     icon={<Icon.ArrowUp className="size-4" />}
-                    label="Sort ascending"
+                    label={sortingLabels.ascending}
                     onClick={() => sortColumn(false)}
                   />
                   <DropdownMenuItem
                     icon={<Icon.ArrowDown className="size-4" />}
-                    label="Sort descending"
+                    label={sortingLabels.descending}
                     onClick={() => sortColumn(true)}
                   />
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenuSub>
-            <DropdownMenuItem
-              icon={<Icon.SquareGridBelowLines />}
-              label={column.getIsGrouped() ? "Ungroup" : "Group"}
-              onClick={() =>
-                table.setGroupingColumn((v) => (v === propId ? null : propId))
-              }
-            />
+            <table.Subscribe selector={(state) => state.grouping}>
+              {(grouping) => (
+                <DropdownMenuItem
+                  icon={<Icon.SquareGridBelowLines />}
+                  label={grouping.includes(propId) ? "Ungroup" : "Group"}
+                  onClick={() =>
+                    table.setGroupingColumn((v) =>
+                      v === propId ? null : propId,
+                    )
+                  }
+                />
+              )}
+            </table.Subscribe>
             <DropdownMenuSub>
               <DropdownMenuSubTrigger icon={<Icon.Sum />} label="Calculate" />
               <DropdownMenuContent
@@ -137,7 +153,7 @@ export function PropMenu({ propId, view }: PropMenuProps) {
                 className="w-50"
                 collisionPadding={12}
               >
-                <CalcMenu id={propId} type={info.type} />
+                <CalcMenu id={propId} />
               </DropdownMenuContent>
             </DropdownMenuSub>
             <DropdownMenuItem

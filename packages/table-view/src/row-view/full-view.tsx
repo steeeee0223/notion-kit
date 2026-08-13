@@ -11,32 +11,43 @@ import { ViewProps } from "./view-props";
 
 export function FullView({ children }: React.PropsWithChildren) {
   const { table } = useTableViewCtx();
-  const { rowView, openedRowId } = table.getTableGlobalState();
 
-  if (!openedRowId || rowView !== "full") return null;
-
-  const titleCell = table.getTitleCell(openedRowId);
-  const rowUrl = table.getRowUrl(openedRowId);
-
-  if (rowUrl) return null;
   return (
-    <section id={openedRowId} className="fixed inset-0 overflow-y-auto bg-main">
-      <div className="sticky top-0 bg-main shadow-md">
-        <ViewNav rowId={openedRowId} />
-      </div>
-      <div
-        className={cn(
-          rowViewContentVariants({ mode: "full", className: "mt-4" }),
-        )}
-      >
-        <div className={cn(typography("h1"), "col-start-2 mb-2 text-left")}>
-          {titleCell.cell.value}
-        </div>
-        <div className="col-start-2 mb-3 min-w-0">
-          <ViewProps rowId={openedRowId} />
-        </div>
-        <div className="col-start-2">{children}</div>
-      </div>
-    </section>
+    <table.Subscribe selector={(state) => state.tableGlobal}>
+      {({ openedRowId, rowView }) => {
+        if (!openedRowId || rowView !== "full") return null;
+        if (!table.getCoreRowModel().rowsById[openedRowId]) return null;
+
+        const titleCell = table.getTitleCell(openedRowId);
+        const rowUrl = table.getRowUrl(openedRowId);
+
+        if (rowUrl) return null;
+        return (
+          <section
+            id={openedRowId}
+            className="fixed inset-0 overflow-y-auto bg-main"
+          >
+            <div className="sticky top-0 bg-main shadow-md">
+              <ViewNav rowId={openedRowId} />
+            </div>
+            <div
+              className={cn(
+                rowViewContentVariants({ mode: "full", className: "mt-4" }),
+              )}
+            >
+              <div
+                className={cn(typography("h1"), "col-start-2 mb-2 text-left")}
+              >
+                {titleCell.cell.value}
+              </div>
+              <div className="col-start-2 mb-3 min-w-0">
+                <ViewProps rowId={openedRowId} />
+              </div>
+              <div className="col-start-2">{children}</div>
+            </div>
+          </section>
+        );
+      }}
+    </table.Subscribe>
   );
 }

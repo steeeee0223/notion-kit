@@ -1,41 +1,83 @@
 import React, { useCallback, useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
-import type { Table } from "@tanstack/react-table";
+import type { SortingState } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
+import type { TableInstance } from "@notion-kit/table-hook";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
-import type { Row } from "@/lib/types";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { TableGroupedRow } from "./table-grouped-row";
 import { TableRow } from "./table-row";
 
 export function DndTableBody() {
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [pendingDragEndEvent, setPendingDragEndEvent] =
     useState<DragEndEvent | null>(null);
   const { table } = useTableViewCtx();
-  const { locked } = table.getTableGlobalState();
+
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        locked: state.tableGlobal.locked,
+        sorting: state.sorting,
+        grouping: state.grouping,
+        groupingState: state.groupingState,
+        expanded: state.expanded,
+        columnOrder: state.columnOrder,
+        columnVisibility: state.columnVisibility,
+        columnPinning: state.columnPinning,
+        columnResizing: state.columnResizing,
+        columnsInfo: state.columnsInfo,
+        rowSelection: state.rowSelection,
+      })}
+    >
+      {({ locked, sorting, columnResizing }) => (
+        <DndTableBodyContent
+          locked={locked ?? false}
+          sorting={sorting}
+          isResizingColumn={Boolean(columnResizing.isResizingColumn)}
+          pendingDragEndEvent={pendingDragEndEvent}
+          setPendingDragEndEvent={setPendingDragEndEvent}
+        />
+      )}
+    </table.Subscribe>
+  );
+}
+
+interface DndTableBodyContentProps {
+  locked: boolean;
+  sorting: SortingState;
+  isResizingColumn: boolean;
+  pendingDragEndEvent: DragEndEvent | null;
+  setPendingDragEndEvent: (event: DragEndEvent | null) => void;
+}
+
+function DndTableBodyContent({
+  locked,
+  sorting,
+  isResizingColumn,
+  pendingDragEndEvent,
+  setPendingDragEndEvent,
+}: DndTableBodyContentProps) {
+  const { table } = useTableViewCtx();
 
   const handleRowDragEnd = useCallback(
     (e: DragEndEvent) => {
-      const isSorted = table.getState().sorting.length > 0;
+      const isSorted = sorting.length > 0;
       if (!isSorted) return table.handleRowDragEnd(e);
       setPendingDragEndEvent(e);
-      setDialogOpen(true);
     },
-    [table],
+    [setPendingDragEndEvent, sorting.length, table],
   );
 
   const handleConfirmRemoveSorting = () => {
     if (pendingDragEndEvent) {
       table.resetSorting();
       table.handleRowDragEnd(pendingDragEndEvent);
-      setPendingDragEndEvent(null);
     }
-    setDialogOpen(false);
+    setPendingDragEndEvent(null);
   };
 
   return (
@@ -66,7 +108,7 @@ export function DndTableBody() {
         </div>
         {/* Rows */}
         <div className="relative">
-          {table.getState().columnSizingInfo.isResizingColumn ? (
+          {isResizingColumn ? (
             <MemoizedTableBody table={table} onRowDragEnd={handleRowDragEnd} />
           ) : (
             <TableBody table={table} onRowDragEnd={handleRowDragEnd} />
@@ -88,7 +130,12 @@ export function DndTableBody() {
           </span>
         </Button>
       )}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog
+        open={pendingDragEndEvent !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingDragEndEvent(null);
+        }}
+      >
         <AlertModal
           title="Would you like to remove sorting?"
           primary="Remove"
@@ -101,7 +148,7 @@ export function DndTableBody() {
 }
 
 interface TableBodyProps {
-  table: Table<Row>;
+  table: TableInstance;
   onRowDragEnd: (e: DragEndEvent) => void;
 }
 

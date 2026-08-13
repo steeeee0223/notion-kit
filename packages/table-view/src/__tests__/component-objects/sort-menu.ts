@@ -40,15 +40,15 @@ export class SortMenuObject extends MenuSurfaceObject {
     });
   }
 
-  directionTrigger(name: "Ascending" | "Descending") {
+  directionTrigger(name: string) {
     return within(this.root).getByRole("combobox", { name });
   }
 
-  directionOption(name: "Ascending" | "Descending") {
+  directionOption(name: string) {
     return screen.getByRole("option", { name });
   }
 
-  queryDirection(name: "Ascending" | "Descending") {
+  queryDirection(name: string) {
     return within(this.root).queryByText(name);
   }
 
@@ -79,8 +79,8 @@ export class SortMenuObject extends MenuSurfaceObject {
     await this.user.click(this.removeButton(name));
   }
 
-  async openDirection(name: "Ascending" | "Descending") {
+  async openDirection(name: string, option = "Z → A") {
     await this.user.click(this.directionTrigger(name));
-    await screen.findByRole("option", { name: "Descending" });
+    await screen.findByRole("option", { name: option });
   }
 }

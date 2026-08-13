@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import type { OnChangeFn } from "@tanstack/react-table";
 
+import type { SelectConfig } from "@notion-kit/table-hook/plugins";
 import { idToColorKey, type Color } from "@notion-kit/utils";
 
 import { useTableViewCtx } from "@/table-contexts";
@@ -10,7 +11,6 @@ import {
   selectConfigReducer,
   type SelectConfigActionPayload,
 } from "../select-config-reducer";
-import type { SelectConfig } from "../types";
 
 interface UseSelectMenuOptions {
   multi?: boolean;

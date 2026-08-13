@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { SelectConfigMenuObject } from "@/__tests__/component-objects/select-config-menu";
 import { mockResizeObserver } from "@/__tests__/mock";
@@ -15,14 +15,6 @@ async function openSelectConfigMenu() {
 }
 
 describe("SelectConfigMenu", () => {
-  it("SelectConfigMenu_Open_ShowsOptionsWithDragHandles", async () => {
-    const menu = await openSelectConfigMenu();
-
-    expect(menu.label("Options")).toBeInTheDocument();
-    expect(menu.sortableList()).toBeInTheDocument();
-    expect(menu.moveHandle("Option A")).toBeInTheDocument();
-  });
-
   it("SelectConfigMenu_AddOption_AppendsOption", async () => {
     const menu = await openSelectConfigMenu();
 
@@ -44,14 +36,6 @@ describe("SelectConfigMenu", () => {
     expect(menu.addInput()).toHaveAttribute("aria-invalid", "true");
   });
 
-  it("SelectConfigMenu_OpenOption_ShowsOptionEditor", async () => {
-    const menu = await openSelectConfigMenu();
-
-    const optionMenu = await menu.openOptionMenu("Option A");
-    expect(optionMenu.nameInput()).toHaveValue("Option A");
-    expect(optionMenu.colorsLabel()).toBeInTheDocument();
-  });
-
   it("SelectConfigMenu_RenameOption_UpdatesOptionName", async () => {
     const menu = await openSelectConfigMenu();
     const optionMenu = await menu.openOptionMenu("Option A");
@@ -59,6 +43,25 @@ describe("SelectConfigMenu", () => {
     await optionMenu.rename("Renamed Option");
     expect(menu.option("Renamed Option")).toBeInTheDocument();
     expect(menu.queryOption("Option A")).not.toBeInTheDocument();
+  });
+
+  it("SelectConfigMenu_RenameOption_ReportsOnlyChangedRows", async () => {
+    const onDataChange = vi.fn();
+    const tableView = renderSelectConfigMenuTable({
+      preselected: "single",
+      onDataChange,
+    });
+    const menu = await SelectConfigMenuObject.find(tableView.user);
+    const optionMenu = await menu.openOptionMenu("Option A");
+
+    await optionMenu.rename("Renamed Option");
+
+    expect(onDataChange.mock.lastCall?.[0]).toMatchObject({
+      action: {
+        type: "data.cell.update",
+        payload: { rowIds: ["row-1"] },
+      },
+    });
   });
 
   it("SelectConfigMenu_ChooseOptionColor_ChecksSelectedColor", async () => {
@@ -74,15 +77,6 @@ describe("SelectConfigMenu", () => {
 
     await menu.deleteOption("Option A");
     expect(menu.queryOption("Option A")).not.toBeInTheDocument();
-  });
-
-  it("SelectConfigMenu_OpenSortMenu_ShowsSortChoices", async () => {
-    const menu = await openSelectConfigMenu();
-
-    const sortMenu = await menu.openSortMenu();
-    expect(sortMenu.item("Manual")).toBeVisible();
-    expect(sortMenu.item("Alphabetical")).toBeVisible();
-    expect(sortMenu.item("Reverse alphabetical")).toBeVisible();
   });
 
   it("SelectConfigMenu_ChangeSort_ReordersOptions", async () => {

@@ -3,14 +3,13 @@ import { useEffect, useState } from "react";
 import { cn } from "@notion-kit/cn";
 import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
+import type { OptionConfig } from "@notion-kit/table-hook/plugins";
 import {
   Button,
   Input,
   TooltipPreset,
   typography,
 } from "@notion-kit/ui/primitives";
-
-import type { OptionConfig } from "../types";
 
 interface OptionMetaProps {
   option: OptionConfig;
@@ -23,6 +22,7 @@ export function OptionMeta({
   validateName,
   onUpdate,
 }: OptionMetaProps) {
+  const bodyTypographyClassName = typography("body");
   const [showDesc, setShowDesc] = useState(false);
   const toggleDesc = () => setShowDesc((v) => !v);
 
@@ -74,7 +74,7 @@ export function OptionMeta({
       {showDesc && (
         <div className="flex min-h-7 w-full min-w-0 flex-auto items-center px-3 py-1 leading-tight select-none">
           <Input
-            className={cn(typography("body"))}
+            className={cn(bodyTypographyClassName)}
             placeholder="Add a description..."
             {...descField.props}
           />

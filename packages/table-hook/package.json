@@ -1,0 +1,83 @@
+{
+  "name": "@notion-kit/table-hook",
+  "version": "1.0.0",
+  "bugs": {
+    "url": "https://github.com/steeeee0223/notion-kit/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/steeeee0223/notion-kit.git",
+    "directory": "packages/table-hook"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "./fns": {
+      "types": "./dist/fns.d.mts",
+      "default": "./dist/fns.mjs"
+    },
+    "./plugins": {
+      "types": "./dist/plugins.d.mts",
+      "default": "./dist/plugins.mjs"
+    }
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "coverage": "vitest run --coverage",
+    "dev": "tsdown --watch",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "prettier": "@notion-kit/prettier-config",
+  "dependencies": {
+    "@date-fns/tz": "catalog:fns",
+    "@dnd-kit/react": "catalog:ui",
+    "@notion-kit/cn": "workspace:*",
+    "@notion-kit/ui": "workspace:*",
+    "@notion-kit/utils": "workspace:*",
+    "@tanstack/react-table": "9.0.0",
+    "@tanstack/table-core": "9.0.0",
+    "date-fns": "catalog:fns",
+    "uuid": "catalog:uuid",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@notion-kit/config": "workspace:*",
+    "@notion-kit/eslint-config": "workspace:*",
+    "@notion-kit/prettier-config": "workspace:*",
+    "@notion-kit/tsconfig": "workspace:*",
+    "@testing-library/react": "catalog:rtl",
+    "@testing-library/user-event": "catalog:rtl",
+    "@types/react": "catalog:react19",
+    "@vitejs/plugin-react": "catalog:test",
+    "@vitest/coverage-v8": "catalog:test",
+    "@vitest/ui": "catalog:test",
+    "babel-plugin-react-compiler": "catalog:react-compiler",
+    "eslint": "catalog:",
+    "jsdom": "catalog:rtl",
+    "prettier": "catalog:",
+    "react-compiler-runtime": "catalog:react-compiler",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:test"
+  },
+  "peerDependencies": {
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19"
+  }
+}

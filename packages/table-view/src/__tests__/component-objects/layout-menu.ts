@@ -3,7 +3,7 @@ import type { UserEvent } from "@testing-library/user-event";
 
 import { findMenuByHeading, MenuSurfaceObject } from "./menu-surface";
 
-type Layout = "Table" | "Board" | "List";
+type Layout = "Table" | "Board" | "Timeline" | "List";
 type RowView = "Side peek" | "Center peek" | "Full page";
 
 export class LayoutMenuObject extends MenuSurfaceObject {
@@ -24,11 +24,23 @@ export class LayoutMenuObject extends MenuSurfaceObject {
   }
 
   rowViewOption(name: RowView) {
-    return screen.getByRole("menuitemcheckbox", { name });
+    return screen.getByRole("menuitemradio", { name });
   }
 
   queryRowViewOption(name: RowView) {
-    return screen.queryByRole("menuitemcheckbox", { name });
+    return screen.queryByRole("menuitemradio", { name });
+  }
+
+  timelinePropertyTrigger() {
+    return within(this.root).getByRole("menuitem", { name: /Timeline by/i });
+  }
+
+  timelinePropertyOption(name: string) {
+    return screen.getByRole("menuitemradio", { name });
+  }
+
+  queryTimelinePropertyOption(name: string) {
+    return screen.queryByRole("menuitemradio", { name });
   }
 
   async selectLayout(name: Layout) {
@@ -37,7 +49,17 @@ export class LayoutMenuObject extends MenuSurfaceObject {
 
   async openRowViewOptions() {
     await this.user.hover(this.rowViewTrigger());
-    await screen.findByRole("menuitemcheckbox", { name: "Side peek" });
+    await screen.findByRole("menuitemradio", { name: "Side peek" });
+  }
+
+  async openTimelinePropertyOptions() {
+    await this.user.hover(this.timelinePropertyTrigger());
+    await screen.findByRole("menuitemradio", { name: "Due" });
+  }
+
+  async selectTimelineProperty(name: string) {
+    await this.openTimelinePropertyOptions();
+    fireEvent.click(this.timelinePropertyOption(name));
   }
 
   async selectRowView(name: RowView) {

@@ -1,6 +1,6 @@
 import { TZDate } from "@date-fns/tz";
 import {
-  differenceInDays,
+  differenceInCalendarDays,
   format,
   formatDistance,
   parse,
@@ -71,17 +71,18 @@ export function formatDate(ts: number, options: FormatOptions): string {
     return format(date, formatStr);
   }
 
-  const now = new Date();
+  const now = new TZDate(Date.now(), options.tz);
+  const targetDate = new TZDate(ts, options.tz);
   if (timeStr) {
-    return formatDistance(ts, now, {
+    return formatDistance(targetDate, now, {
       addSuffix: true,
       includeSeconds: false,
     });
   }
 
   const today = startOfDay(now);
-  const target = startOfDay(ts);
-  const diffDays = differenceInDays(today, target);
+  const target = startOfDay(targetDate);
+  const diffDays = differenceInCalendarDays(today, target);
 
   if (diffDays === 0) return "Today";
   if (diffDays === 1) return "Yesterday";
@@ -93,9 +94,27 @@ export function formatDate(ts: number, options: FormatOptions): string {
   });
 }
 
-export function isoToTs(iso: { date: string; time: string }): number {
+export function isoToTs(
+  iso: { date: string; time: string },
+  tz?: string,
+): number {
   if (!iso.date) return -1;
   const dateStr = `${iso.date} ${iso.time || "00:00:00"}`;
+  if (tz) {
+    const [year, month, date] = iso.date.split("-").map(Number);
+    const [hours, minutes, seconds] = (iso.time || "00:00:00")
+      .split(":")
+      .map(Number);
+    return new TZDate(
+      year!,
+      month! - 1,
+      date!,
+      hours!,
+      minutes!,
+      seconds!,
+      tz,
+    ).getTime();
+  }
   const date = parse(dateStr, "yyyy-MM-dd HH:mm:ss", new Date());
   return date.getTime();
 }

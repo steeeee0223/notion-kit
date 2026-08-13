@@ -1,21 +1,62 @@
+import { v4 } from "uuid";
+
 import { cn } from "@notion-kit/cn";
 import {
+  LAYOUT_OPTIONS,
+  ROW_VIEW_OPTIONS,
+  type ColumnInfo,
+  type LayoutType,
+  type RowViewType,
+  type TableInstance,
+} from "@notion-kit/table-hook";
+import {
   Button,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   MenuItemAction,
 } from "@notion-kit/ui/primitives";
 
 import { LayoutIcon, MenuHeader, RowViewIcon } from "@/common";
-import { LAYOUT_OPTIONS, ROW_VIEW_OPTIONS, RowViewType } from "@/features";
 import { useTableViewCtx } from "@/table-contexts";
+import { isUsableTimelineDateProperty } from "@/timeline-view";
 
 export function LayoutMenu() {
   const { table } = useTableViewCtx();
-  const { layout: currentLayout } = table.getTableGlobalState();
+
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        currentLayout: state.tableGlobal.layout,
+        datePropertyId: state.tableGlobal.timeline!.datePropertyId,
+        columnOrder: state.columnOrder,
+        columnsInfo: state.columnsInfo,
+      })}
+    >
+      {(state) => <LayoutMenuContent {...state} />}
+    </table.Subscribe>
+  );
+}
+
+function LayoutMenuContent({
+  currentLayout,
+  datePropertyId,
+  columnOrder,
+  columnsInfo,
+}: {
+  currentLayout: LayoutType;
+  datePropertyId: string | null;
+  columnOrder: string[];
+  columnsInfo: ReturnType<TableInstance["atoms"]["columnsInfo"]["get"]>;
+}) {
+  const { table } = useTableViewCtx();
+  const dateProperties = columnOrder.flatMap((id) => {
+    const property = columnsInfo[id];
+    return property && isUsableTimelineDateProperty(property) ? [property] : [];
+  });
 
   return (
     <>
@@ -38,7 +79,8 @@ export function LayoutMenu() {
               disabled={
                 layout.value !== "table" &&
                 layout.value !== "list" &&
-                layout.value !== "board"
+                layout.value !== "board" &&
+                layout.value !== "timeline"
               }
             >
               <LayoutIcon layout={layout.value} />
@@ -48,43 +90,106 @@ export function LayoutMenu() {
         </div>
       </DropdownMenuGroup>
       <DropdownMenuGroup>
+        {currentLayout === "timeline" && dateProperties.length > 0 && (
+          <TimelineDatePropertyMenu
+            current={datePropertyId}
+            properties={dateProperties}
+          />
+        )}
         <RowViewMenu />
       </DropdownMenuGroup>
     </>
   );
 }
 
-function RowViewMenu() {
+function TimelineDatePropertyMenu({
+  current,
+  properties,
+}: {
+  current: string | null;
+  properties: ColumnInfo[];
+}) {
   const { table } = useTableViewCtx();
-  const { rowView: current } = table.getTableGlobalState();
+  const currentProperty =
+    properties.find((property) => property.id === current) ?? properties[0]!;
 
   return (
     <DropdownMenuSub>
-      <DropdownMenuSubTrigger label="Open pages in">
+      <DropdownMenuSubTrigger label="Timeline by">
         <MenuItemAction className="flex items-center text-muted">
-          {ROW_VIEW_OPTIONS[current].label}
+          {currentProperty.name}
         </MenuItemAction>
       </DropdownMenuSubTrigger>
       <DropdownMenuContent sideOffset={-4} className="w-64">
-        <DropdownMenuGroup>
-          {Object.entries(ROW_VIEW_OPTIONS).map(([value, option]) => {
-            const rowView = value as RowViewType;
-            return (
-              <DropdownMenuCheckboxItem
-                key={rowView}
-                closeOnClick={false}
-                icon={<RowViewIcon rowView={rowView} />}
-                label={option.label}
-                desc={option.desc}
-                checked={rowView === current}
-                onCheckedChange={() =>
-                  table.setTableGlobalState((v) => ({ ...v, rowView }))
-                }
-              />
-            );
-          })}
-        </DropdownMenuGroup>
+        <DropdownMenuRadioGroup
+          value={currentProperty.id}
+          onValueChange={(propertyId: string) => {
+            if (propertyId === currentProperty.id) return;
+            table.setTimelineDateProperty(propertyId);
+          }}
+        >
+          {properties.map((property) => (
+            <DropdownMenuRadioItem
+              key={property.id}
+              value={property.id}
+              closeOnClick={false}
+              label={property.name}
+            />
+          ))}
+        </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenuSub>
+  );
+}
+
+function RowViewMenu() {
+  const { table } = useTableViewCtx();
+
+  return (
+    <table.Subscribe selector={(state) => state.tableGlobal.rowView}>
+      {(current) => (
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger label="Open pages in">
+            <MenuItemAction className="flex items-center text-muted">
+              {ROW_VIEW_OPTIONS[current].label}
+            </MenuItemAction>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuContent sideOffset={-4} className="w-64">
+            <DropdownMenuRadioGroup
+              value={current}
+              onValueChange={(rowView: RowViewType) => {
+                if (rowView === current) return;
+                const actionId = v4();
+                table.setTableGlobalState(
+                  (v) => ({ ...v, rowView }),
+                  (previous, next) => ({
+                    id: actionId,
+                    type: "view.row_display.change",
+                    payload: {
+                      previousRowView: previous.rowView,
+                      nextRowView: next.rowView,
+                    },
+                  }),
+                );
+              }}
+            >
+              {Object.entries(ROW_VIEW_OPTIONS).map(([value, option]) => {
+                const rowView = value as RowViewType;
+                return (
+                  <DropdownMenuRadioItem
+                    key={rowView}
+                    value={rowView}
+                    closeOnClick={false}
+                    icon={<RowViewIcon rowView={rowView} />}
+                    label={option.label}
+                    desc={option.desc}
+                  />
+                );
+              })}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenuSub>
+      )}
+    </table.Subscribe>
   );
 }

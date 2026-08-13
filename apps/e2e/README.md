@@ -18,6 +18,21 @@ The primary goal is to ensure:
 
 ## Running Tests
 
+Run commands from the repository root with the repository Node and pnpm
+versions:
+
+```bash
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+source "$NVM_DIR/nvm.sh"
+nvm use 24.11.1 --silent
+```
+
+All pnpm commands below use the shared store:
+
+```bash
+pnpm <command>
+```
+
 ### Visual Test (Dev Server)
 
 ```bash
@@ -35,6 +50,46 @@ pnpm -F @notion-kit/e2e test
 # Watch mode
 pnpm -F @notion-kit/e2e test:watch
 ```
+
+### Browser Tests (Playwright)
+
+Install the pinned Chromium browser once:
+
+```bash
+pnpm -F @notion-kit/e2e exec playwright install chromium
+```
+
+Run the full Chromium suite:
+
+```bash
+pnpm -F @notion-kit/e2e test:e2e
+```
+
+`pretest:e2e` builds `@notion-kit/table-view` and the production Next.js
+fixture before Playwright starts. This is required because the fixture consumes
+the package's built `dist/` output. Playwright serves that optimized build with
+`next start`; do not run the suite against stale package output.
+
+The Playwright HTML report is written to
+`apps/e2e/playwright-report/index.html`.
+
+### Browser Coverage
+
+Generate the full table-view browser coverage report:
+
+```bash
+pnpm -F @notion-kit/e2e test:e2e:coverage
+```
+
+This command has the same built-package precondition and writes:
+
+- `apps/e2e/coverage/e2e/coverage.txt`
+- `apps/e2e/coverage/e2e/coverage.json`
+- `apps/e2e/coverage/e2e/index.html`
+
+Browser coverage is informational and separate from unit-test coverage. It
+tracks exercised files under `packages/table-view/src`, but it does not enforce
+a percentage threshold.
 
 ### Build Verification
 
@@ -70,6 +125,6 @@ If the build succeeds, it confirms that all packages work correctly in productio
 
 If you encounter `Cannot resolve 'react/compiler-runtime'` errors:
 
-1. Ensure packages are built: `pnpm build --filter=./packages/*`
+1. Ensure packages are built: `pnpm build:packages`
 2. Verify `react-compiler-runtime` is in `dependencies` (not `devDependencies`)
 3. Run `pnpm install` to sync workspace dependencies

@@ -8,6 +8,7 @@ export default defineConfig({
     name: "table-view",
     environment: "jsdom",
     globals: true,
+    testTimeout: 10_000,
     setupFiles: ["./vitest.setup.ts"],
     alias: {
       "@": path.resolve(__dirname, "src"),
@@ -17,6 +18,10 @@ export default defineConfig({
       reporter: ["text", "json", ["html", { subdir: "coverage" }]],
       include: ["src/**/*.{ts,tsx}"],
       exclude: ["src/__tests__/**"],
+      thresholds: {
+        statements: 90,
+        branches: 90,
+      },
     },
   },
 });

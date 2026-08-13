@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
+import type { SortingState } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
@@ -11,60 +12,109 @@ import { useTableViewCtx } from "@/table-contexts";
 import { ListRow } from "./list-row";
 
 export function ListViewContent() {
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [pendingDragEndEvent, setPendingDragEndEvent] =
     useState<DragEndEvent | null>(null);
+  const { table } = useTableViewCtx();
+
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        sorting: state.sorting,
+        grouping: state.grouping,
+        groupingState: state.groupingState,
+        expanded: state.expanded,
+        columnOrder: state.columnOrder,
+        columnVisibility: state.columnVisibility,
+        columnsInfo: state.columnsInfo,
+      })}
+    >
+      {({ sorting }) => (
+        <ListViewContentInner
+          sorting={sorting}
+          pendingDragEndEvent={pendingDragEndEvent}
+          setPendingDragEndEvent={setPendingDragEndEvent}
+        />
+      )}
+    </table.Subscribe>
+  );
+}
+
+interface ListViewContentInnerProps {
+  sorting: SortingState;
+  pendingDragEndEvent: DragEndEvent | null;
+  setPendingDragEndEvent: (event: DragEndEvent | null) => void;
+}
+
+function ListViewContentInner({
+  sorting,
+  pendingDragEndEvent,
+  setPendingDragEndEvent,
+}: ListViewContentInnerProps) {
   const { table } = useTableViewCtx();
 
   const rows = table.getRowModel().rows;
 
   const handleRowDragEnd = useCallback(
     (e: DragEndEvent) => {
-      const isSorted = table.getState().sorting.length > 0;
+      const isSorted = sorting.length > 0;
       if (!isSorted) return table.handleRowDragEnd(e);
       setPendingDragEndEvent(e);
-      setDialogOpen(true);
     },
-    [table],
+    [setPendingDragEndEvent, sorting.length, table],
   );
 
   const handleConfirmRemoveSorting = () => {
     if (pendingDragEndEvent) {
       table.resetSorting();
       table.handleRowDragEnd(pendingDragEndEvent);
-      setPendingDragEndEvent(null);
     }
-    setDialogOpen(false);
+    setPendingDragEndEvent(null);
   };
 
   return (
     <div key="notion-list-view" className="min-w-177 px-24 pb-0">
-      <div
-        data-block-id="1fe35e0f-492c-80fd-8d7c-f7e953641770"
-        className="flex flex-col py-1"
+      <table.Subscribe
+        selector={(state) => ({
+          locked: state.tableGlobal.locked,
+          rowSelection: state.rowSelection,
+        })}
       >
-        <Sortable.Root onDragEnd={handleRowDragEnd}>
-          <Sortable.List>
-            {rows.map((row) =>
-              row.getIsGrouped() ? (
-                <TableGroupedRow key={row.id} row={row} />
-              ) : (
-                <ListRow key={row.id} row={row} />
-              ),
+        {({ locked }) => (
+          <div
+            data-block-id="1fe35e0f-492c-80fd-8d7c-f7e953641770"
+            className="flex flex-col py-1"
+          >
+            <Sortable.Root disabled={locked} onDragEnd={handleRowDragEnd}>
+              <Sortable.List>
+                {rows.map((row) =>
+                  row.getIsGrouped() ? (
+                    <TableGroupedRow key={row.id} row={row} />
+                  ) : (
+                    <ListRow key={row.id} rowId={row.id} />
+                  ),
+                )}
+              </Sortable.List>
+            </Sortable.Root>
+            {!locked && (
+              <Button
+                tabIndex={0}
+                variant="cell"
+                className="h-7.5 rounded-md px-2 text-muted"
+                onClick={() => table.addRow()}
+              >
+                <Icon.Plus className="size-3.5 fill-current" />
+                New page
+              </Button>
             )}
-          </Sortable.List>
-        </Sortable.Root>
-        <Button
-          tabIndex={0}
-          variant="cell"
-          className="h-7.5 rounded-md px-2 text-muted"
-          onClick={() => table.addRow()}
-        >
-          <Icon.Plus className="size-3.5 fill-current" />
-          New page
-        </Button>
-      </div>
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          </div>
+        )}
+      </table.Subscribe>
+      <Dialog
+        open={pendingDragEndEvent !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingDragEndEvent(null);
+        }}
+      >
         <AlertModal
           title="Would you like to remove sorting?"
           primary="Remove"

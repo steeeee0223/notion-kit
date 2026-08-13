@@ -6,6 +6,7 @@ export default defineConfig({
   test: {
     name: "e2e",
     environment: "jsdom",
+    include: ["src/**/*.test.{ts,tsx}"],
     setupFiles: ["./vitest.setup.ts"],
     globals: true,
     testTimeout: 20_000,

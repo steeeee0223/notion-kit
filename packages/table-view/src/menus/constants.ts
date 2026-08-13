@@ -1,4 +1,4 @@
-import { CountMethod } from "../features/counting";
+import { CountMethod } from "@notion-kit/table-hook";
 
 export const countMethodHint: Record<
   CountMethod,

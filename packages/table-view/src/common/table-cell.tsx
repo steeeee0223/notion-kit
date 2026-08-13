@@ -1,36 +1,42 @@
-import type { CellContext } from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
 
-import type { LayoutType } from "@/features";
-import type { ColumnInfo, Row } from "@/lib/types";
-import type { CellPlugin, InferCellProps } from "@/plugins";
+import type {
+  CellInstance,
+  ColumnInfo,
+  LayoutType,
+  TableInstance,
+} from "@notion-kit/table-hook";
+import type {
+  CellPlugin,
+  InferCellProps,
+} from "@notion-kit/table-hook/plugins";
 
-interface TableCellProps<TPlugin extends CellPlugin>
-  extends Pick<
-    CellContext<Row<TPlugin[]>, unknown>,
-    "row" | "column" | "table"
-  > {
+type TableGlobalReader = Pick<TableInstance, "getTableGlobalState">;
+type UnknownCellPlugin = CellPlugin<string, unknown, unknown>;
+
+interface TableCellProps {
+  row: CellInstance["row"];
+  column: CellInstance["column"];
+  table: TableGlobalReader;
   view: LayoutType | "row-view";
 }
 
-export function TableCell<TPlugin extends CellPlugin>({
-  row,
-  column,
-  table,
-  view,
-}: TableCellProps<TPlugin>) {
+export function TableCell({ row, column, table, view }: TableCellProps) {
   const { locked } = table.getTableGlobalState();
   const data = row.original.properties[column.id];
-  const plugin = column.getPlugin() as TPlugin;
-  const info = column.getInfo() as ColumnInfo<TPlugin>;
+  const plugin = column.getPlugin() as UnknownCellPlugin;
+  const info = column.getInfo() as ColumnInfo<UnknownCellPlugin>;
 
   if (!data) return null;
-  return flexRender<InferCellProps<TPlugin>>(plugin.renderCell, {
+  const cellData: unknown = data.value;
+  const cellConfig: unknown = info.config;
+
+  return flexRender<InferCellProps<UnknownCellPlugin>>(plugin.renderCell, {
     layout: view,
     propId: column.id,
     row: row.original,
-    data: data.value,
-    config: info.config,
+    data: cellData,
+    config: cellConfig,
     disabled: locked,
     tooltip:
       view === "board" || view === "list"
@@ -39,7 +45,13 @@ export function TableCell<TPlugin extends CellPlugin>({
             description: info.description,
           }
         : undefined,
-    onChange: (updater) => column.updateCell(row.id, updater, row.parentId),
-    onConfigChange: column.updateConfig,
+    onChange: (updater) => {
+      if (table.getTableGlobalState().locked) return;
+      column.updateCell(row.id, updater, row.parentId);
+    },
+    onConfigChange: (updater) => {
+      if (table.getTableGlobalState().locked) return;
+      column.updateConfig(updater);
+    },
   });
 }

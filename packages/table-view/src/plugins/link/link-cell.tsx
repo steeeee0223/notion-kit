@@ -1,10 +1,8 @@
-"use client";
-
 import { cn } from "@notion-kit/cn";
+import { wrappedClassName } from "@notion-kit/table-hook";
+import type { CellProps } from "@notion-kit/table-hook/plugins";
 
-import { CellTrigger, CopyButton, TextInputPopover } from "../../common";
-import { wrappedClassName } from "../../lib/utils";
-import type { CellProps } from "../types";
+import { CellTrigger, CopyButton, TextInputPopover } from "@/common";
 
 interface LinkCellProps extends CellProps<string> {
   type: "email" | "phone" | "url";

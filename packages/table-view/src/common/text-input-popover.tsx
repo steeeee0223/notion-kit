@@ -37,6 +37,7 @@ export function TextInputPopover({
       >
         <TextInputContent
           {...props}
+          onCancel={() => setOpen(false)}
           onUpdate={(v) => {
             onUpdate(v);
             setOpen(false);
@@ -51,15 +52,17 @@ interface TextInputContentProps {
   className?: string;
   value: string;
   onUpdate: (value: string) => void;
+  onCancel?: () => void;
 }
 
 function TextInputContent({
   className,
   value,
   onUpdate,
+  onCancel,
 }: TextInputContentProps) {
   const id = useId();
-  const { props } = useInputField({ id, initialValue: value, onUpdate });
+  const { props, reset } = useInputField({ id, initialValue: value, onUpdate });
 
   return (
     <Input
@@ -70,6 +73,15 @@ function TextInputContent({
         className,
       )}
       {...props}
+      onKeyDown={(event) => {
+        if (event.key === "Escape") {
+          event.stopPropagation();
+          reset();
+          onCancel?.();
+          return;
+        }
+        props.onKeyDown?.(event);
+      }}
     />
   );
 }

@@ -6,7 +6,12 @@ import {
   RestrictToHorizontalAxis,
   RestrictToVerticalAxis,
 } from "@dnd-kit/abstract/modifiers";
-import { PointerActivationConstraints, PointerSensor } from "@dnd-kit/dom";
+import {
+  Feedback,
+  PointerActivationConstraints,
+  PointerSensor,
+  type DropAnimation,
+} from "@dnd-kit/dom";
 import { RestrictToElement } from "@dnd-kit/dom/modifiers";
 import { move } from "@dnd-kit/helpers";
 import {
@@ -87,6 +92,45 @@ function getSortableItemsAfterDrag<
   T extends UniqueIdentifier[] | { id: UniqueIdentifier }[],
 >(items: T, event: DragEndEvent) {
   if (event.canceled) return items;
+
+  const { activatorEvent, source, target, transform } = event.operation;
+  const hasProjectedIndex =
+    source != null &&
+    "initialIndex" in source &&
+    typeof source.initialIndex === "number" &&
+    "index" in source &&
+    typeof source.index === "number" &&
+    source.index !== source.initialIndex;
+  if (
+    source?.id != null &&
+    target?.id === source.id &&
+    !hasProjectedIndex &&
+    typeof KeyboardEvent !== "undefined" &&
+    activatorEvent instanceof KeyboardEvent &&
+    (transform.x !== 0 || transform.y !== 0)
+  ) {
+    const sourceIndex = items.findIndex((item) =>
+      typeof item === "object" ? item.id === source.id : item === source.id,
+    );
+    const direction =
+      Math.abs(transform.x) >= Math.abs(transform.y)
+        ? Math.sign(transform.x)
+        : Math.sign(transform.y);
+    const targetIndex = Math.min(
+      Math.max(sourceIndex + direction, 0),
+      items.length - 1,
+    );
+    if (sourceIndex >= 0 && targetIndex !== sourceIndex) {
+      const next = [...items] as (
+        | UniqueIdentifier
+        | { id: UniqueIdentifier }
+      )[];
+      const [item] = next.splice(sourceIndex, 1);
+      next.splice(targetIndex, 0, item!);
+      return next as T;
+    }
+  }
+
   return move(items, event);
 }
 
@@ -162,6 +206,7 @@ type SortableItemProps = Omit<
   "id"
 > &
   SortableItemOptions & {
+    dropAnimation?: DropAnimation | null;
     id: UniqueIdentifier;
     index: number;
   };
@@ -173,6 +218,7 @@ function SortableItem({
   collisionDetector,
   collisionPriority,
   data,
+  dropAnimation,
   effects,
   group,
   id,
@@ -188,6 +234,16 @@ function SortableItem({
   const root = React.useContext(SortableRootContext);
   const disabled = props.disabled ?? root?.disabled;
   const modifiers = props.modifiers ?? root?.modifiers;
+  const sortablePlugins = React.useMemo(() => {
+    if (dropAnimation === undefined) return plugins;
+
+    return (defaults) => [
+      Feedback.configure({ dropAnimation }),
+      ...(typeof plugins === "function"
+        ? plugins(defaults)
+        : (plugins ?? defaults)),
+    ];
+  }, [dropAnimation, plugins]);
   const sortable = useSortable({
     accept,
     alignment,
@@ -200,7 +256,7 @@ function SortableItem({
     id,
     index,
     modifiers,
-    plugins,
+    plugins: sortablePlugins,
     register,
     sensors,
     transition,

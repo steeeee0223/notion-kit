@@ -1,17 +1,16 @@
-"use client";
-
 import { useId } from "react";
 
 import { Icon } from "@notion-kit/icons";
+import type {
+  ConfigMenuProps,
+  TitleConfig,
+} from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenuItem,
   Label,
   MenuItemAction,
   Switch,
 } from "@notion-kit/ui/primitives";
-
-import type { ConfigMenuProps } from "../types";
-import type { TitleConfig } from "./types";
 
 export function TitleConfig({
   config,

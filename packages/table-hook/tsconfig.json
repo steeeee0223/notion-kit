@@ -1,0 +1,18 @@
+{
+  "extends": "@notion-kit/tsconfig/internal-package.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    "jsx": "react-jsx",
+    "rootDir": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@notion-kit/table-hook/plugins": ["./src/plugins/index.ts"]
+    }
+  },
+  "include": ["src", "vitest.*.ts"],
+  "exclude": [
+    "node_modules",
+    "src/table-contexts/table-view-content.tsx",
+    "src/table-contexts/table-view-provider.tsx"
+  ]
+}

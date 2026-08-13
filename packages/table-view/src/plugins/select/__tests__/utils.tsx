@@ -5,6 +5,13 @@ import userEvent, {
   PointerEventsCheckLevel,
 } from "@testing-library/user-event";
 
+import type {
+  ColumnDefs,
+  DataResourceAction,
+  ResourceChange,
+  Row,
+} from "@notion-kit/table-hook";
+import type { SelectConfig } from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,11 +19,9 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { TableViewObject } from "@/__tests__/component-objects/table-view";
-import type { ColumnDefs, Row } from "@/lib/types";
 import { TableView } from "@/table-contexts";
 
 import { SelectConfigMenuContent } from "../select-config-menu";
-import type { SelectConfig } from "../types";
 
 export const selectConfig: SelectConfig = {
   options: {
@@ -94,6 +99,7 @@ function createMockData(options?: {
 }
 
 interface RenderSelectTableOptions {
+  onDataChange?: (change: ResourceChange<Row[], DataResourceAction>) => void;
   preselected?: "single" | "multi" | "both";
 }
 
@@ -110,12 +116,11 @@ export function renderSelectTable(options?: RenderSelectTableOptions) {
       <TableView
         properties={properties}
         data={data}
-        onDataChange={(updater) =>
-          setData((prev) => functionalUpdate(updater, prev))
-        }
-        onPropertiesChange={(updater) =>
-          setProperties((prev) => functionalUpdate(updater, prev))
-        }
+        onDataChange={(change) => {
+          setData(change.next);
+          options?.onDataChange?.(change);
+        }}
+        onPropertiesChange={({ next }) => setProperties(next)}
       />
     );
   }
@@ -141,12 +146,11 @@ export function renderSelectConfigMenuTable(
       <TableView
         properties={properties}
         data={data}
-        onDataChange={(updater) =>
-          setData((prev) => functionalUpdate(updater, prev))
-        }
-        onPropertiesChange={(updater) =>
-          setProperties((prev) => functionalUpdate(updater, prev))
-        }
+        onDataChange={(change) => {
+          setData(change.next);
+          options?.onDataChange?.(change);
+        }}
+        onPropertiesChange={({ next }) => setProperties(next)}
       >
         <DropdownMenu defaultOpen modal={false}>
           <DropdownMenuTrigger

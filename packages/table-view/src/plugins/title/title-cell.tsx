@@ -1,10 +1,10 @@
-"use client";
-
 import { useId, useState } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
+import { ROW_VIEW_OPTIONS, wrappedClassName } from "@notion-kit/table-hook";
+import type { CellProps, TitleConfig } from "@notion-kit/table-hook/plugins";
 import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import {
   Button,
@@ -15,12 +15,8 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { CellTrigger, RowViewIcon, TextInputPopover } from "../../common";
-import { ROW_VIEW_OPTIONS } from "../../features";
-import { wrappedClassName } from "../../lib/utils";
-import { useTableViewCtx } from "../../table-contexts";
-import type { CellProps } from "../types";
-import type { TitleConfig } from "./types";
+import { CellTrigger, RowViewIcon, TextInputPopover } from "@/common";
+import { useTableViewCtx } from "@/table-contexts";
 
 interface TitleCellProps extends CellProps<string, TitleConfig> {
   icon?: IconData;
@@ -32,9 +28,20 @@ export function TitleCell({ layout, ...props }: TitleCellProps) {
       return <TitleTableCell {...props} />;
     case "list":
       return <TitleListCell {...props} />;
+    case "timeline":
+      return <TitleTimelineCell {...props} />;
     default:
       return null;
   }
+}
+
+function TitleTimelineCell({ icon, data }: Omit<TitleCellProps, "layout">) {
+  return (
+    <>
+      {icon && <IconBlock icon={icon} className="contents" />}
+      <span className="truncate">{data || "New page"}</span>
+    </>
+  );
 }
 
 function TitleTableCell({
@@ -53,7 +60,12 @@ function TitleTableCell({
       value={data}
       onUpdate={onChange}
       renderTrigger={({ width }) => (
-        <CellTrigger wrapped={wrapped} layout="table" aria-disabled={disabled}>
+        <CellTrigger
+          wrapped={wrapped}
+          layout="table"
+          aria-disabled={disabled}
+          aria-label={data}
+        >
           <div className="pointer-events-none absolute inset-x-0 top-1.5 z-20 mx-1 my-0 hidden justify-end group-hover/row:flex">
             <div
               id="quick-action-container"
@@ -104,7 +116,7 @@ function TitleListCell({
 }: Omit<TitleCellProps, "layout">) {
   const [open, setOpen] = useState(false);
   const id = useId();
-  const { props } = useInputField({
+  const { props, reset } = useInputField({
     id: `title-list-cell-${id}`,
     initialValue: data,
     onUpdate: (v) => {
@@ -150,6 +162,15 @@ function TitleListCell({
                 className="max-h-[771px] min-h-9 border-none bg-transparent wrap-break-word whitespace-pre-wrap caret-primary"
                 variant="flat"
                 {...props}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") {
+                    event.stopPropagation();
+                    reset();
+                    setOpen(false);
+                    return;
+                  }
+                  props.onKeyDown?.(event);
+                }}
               />
             </PopoverContent>
           </Popover>

@@ -1,5 +1,6 @@
-import { z } from "zod/v4";
+import * as z from "zod/v4/mini";
 
+import type { NumberOptions } from "@notion-kit/table-hook/plugins";
 import {
   Input,
   Select,
@@ -11,8 +12,6 @@ import {
   Switch,
 } from "@notion-kit/ui/primitives";
 import { COLOR_OPTIONS } from "@notion-kit/utils";
-
-import type { NumberOptions } from "../types";
 
 const colorOptions = Object.entries(COLOR_OPTIONS).map(([value, label]) => ({
   value,

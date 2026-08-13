@@ -1,14 +1,14 @@
-"use client";
-
 import { useHotkeys } from "react-hotkeys-hook";
+import { v4 } from "uuid";
 
 import { Icon } from "@notion-kit/icons";
+import { ROW_VIEW_OPTIONS, RowViewType } from "@notion-kit/table-hook";
 import {
   Button,
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuGroup,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuTrigger,
   Separator,
   TooltipDescription,
@@ -17,7 +17,6 @@ import {
 import { KEYBOARD } from "@notion-kit/utils";
 
 import { RowViewIcon } from "@/common";
-import { ROW_VIEW_OPTIONS, RowViewType } from "@/features";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface ViewNavProps {
@@ -27,6 +26,15 @@ interface ViewNavProps {
 export function ViewNav({ rowId }: ViewNavProps) {
   const { table } = useTableViewCtx();
   const { rowView } = table.getTableGlobalState();
+  const rows = table
+    .getRowModel()
+    .flatRows.filter((row) => !row.getIsGrouped());
+  const rowIndex = rows.findIndex((row) => row.id === rowId);
+  const previousRowId = rowIndex > 0 ? rows[rowIndex - 1]?.id : undefined;
+  const nextRowId =
+    rowIndex >= 0 && rowIndex < rows.length - 1
+      ? rows[rowIndex + 1]?.id
+      : undefined;
 
   /** Keyboard shortcut */
   useHotkeys("esc", () => table.openRow(null), { preventDefault: true });
@@ -53,6 +61,7 @@ export function ViewNav({ rowId }: ViewNavProps) {
             <Button
               variant="hint"
               className="size-6"
+              aria-label="Close row"
               onClick={() => table.openRow(null)}
             >
               <Icon.ArrowChevronDoubleBackward className="size-5 rotate-180 fill-icon" />
@@ -75,6 +84,7 @@ export function ViewNav({ rowId }: ViewNavProps) {
             <Button
               variant="hint"
               className="size-6"
+              aria-label="Open in full page"
               onClick={() => table.openRowInFullPage(rowId)}
             >
               <Icon.ArrowExpandDiagonalSmall className="size-5 fill-icon" />
@@ -96,29 +106,61 @@ export function ViewNav({ rowId }: ViewNavProps) {
             />
           </TooltipPreset>
           <DropdownMenuContent className="z-999 w-52">
-            <DropdownMenuGroup>
+            <DropdownMenuRadioGroup
+              value={rowView}
+              onValueChange={(view: RowViewType) => {
+                if (rowView === view) return;
+                const actionId = v4();
+                table.setTableGlobalState(
+                  (v) => ({
+                    ...v,
+                    rowView: view,
+                  }),
+                  (previous, next) => ({
+                    id: actionId,
+                    type: "view.row_display.change",
+                    payload: {
+                      previousRowView: previous.rowView,
+                      nextRowView: next.rowView,
+                    },
+                  }),
+                );
+              }}
+            >
               {Object.entries(ROW_VIEW_OPTIONS).map(([key, option]) => {
                 const view = key as RowViewType;
                 return (
-                  <DropdownMenuCheckboxItem
+                  <DropdownMenuRadioItem
                     key={view}
+                    value={view}
                     icon={<RowViewIcon rowView={view} />}
                     label={option.label}
-                    checked={rowView === view}
-                    onCheckedChange={() =>
-                      table.setTableGlobalState((v) => ({
-                        ...v,
-                        rowView: view,
-                      }))
-                    }
                   />
                 );
               })}
-            </DropdownMenuGroup>
+            </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="z-10 flex shrink-0 grow-0 items-center justify-end pl-3">
+      <div className="z-10 flex shrink-0 grow-0 items-center justify-end gap-0.5 pl-3">
+        <Button
+          variant="hint"
+          className="size-6"
+          aria-label="Previous row"
+          disabled={!previousRowId}
+          onClick={() => previousRowId && table.openRow(previousRowId)}
+        >
+          <Icon.Chevron side="left" className="fill-icon" />
+        </Button>
+        <Button
+          variant="hint"
+          className="size-6"
+          aria-label="Next row"
+          disabled={!nextRowId}
+          onClick={() => nextRowId && table.openRow(nextRowId)}
+        >
+          <Icon.Chevron className="fill-icon" />
+        </Button>
         <Button variant="hint" className="size-6">
           <Icon.Dots className="fill-icon" />
         </Button>

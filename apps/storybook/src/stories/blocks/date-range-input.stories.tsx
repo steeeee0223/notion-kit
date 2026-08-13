@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
-import { DateRangeInput, type DateData } from "@notion-kit/table-view";
+import type { DateData } from "@notion-kit/table-hook/plugins";
+import { DateRangeInput } from "@notion-kit/table-view";
 import { Label, Switch } from "@notion-kit/ui/primitives";
 
 const meta = {

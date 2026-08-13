@@ -1,8 +1,8 @@
 import { useState } from "react";
-import type { Row } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
+import type { RowInstance } from "@notion-kit/table-hook";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import {
   Button,
@@ -15,18 +15,27 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import type { Row as RowModel } from "@/lib/types";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface GroupActionsProps {
   className?: string;
-  row: Row<RowModel>;
+  row: RowInstance;
 }
 
 export function GroupActions({ className, row }: GroupActionsProps) {
   const { table } = useTableViewCtx();
-  const { locked } = table.getState().tableGlobal;
 
+  return (
+    <table.Subscribe selector={(state) => state.tableGlobal.locked}>
+      {(locked) =>
+        locked ? null : <GroupActionsContent className={className} row={row} />
+      }
+    </table.Subscribe>
+  );
+}
+
+function GroupActionsContent({ className, row }: GroupActionsProps) {
+  const { table } = useTableViewCtx();
   const addRow = () => table.addRowToGroup(row.id);
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -36,7 +45,6 @@ export function GroupActions({ className, row }: GroupActionsProps) {
     setShowDeleteConfirm(false);
   };
 
-  if (locked) return null;
   return (
     <div
       className={cn(
@@ -70,12 +78,12 @@ export function GroupActions({ className, row }: GroupActionsProps) {
                     icon: <Icon.Eye />,
                     label: "Show aggregation",
                   })}
-              onClick={row.toggleGroupAggregates}
+              onClick={() => row.toggleGroupAggregates()}
             />
             <DropdownMenuItem
               icon={<Icon.EyeHideInversePadded className="size-6" />}
               label="Hide group"
-              onClick={row.toggleGroupVisibility}
+              onClick={() => row.toggleGroupVisibility()}
             />
             <DropdownMenuItem
               icon={<Icon.Trash />}

@@ -1,28 +1,30 @@
-import { createContext, use } from "react";
-import type { Table } from "@tanstack/react-table";
+import { createContext, use, useMemo, useRef } from "react";
 
+import {
+  arrayToEntity,
+  useTableView,
+  type TableProps,
+} from "@notion-kit/table-hook";
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 import { TooltipProvider } from "@notion-kit/ui/primitives";
 
 import { BoardViewContent } from "@/board-view";
-import type { Row } from "@/lib/types";
-import { arrayToEntity } from "@/lib/utils";
 import { ListViewContent } from "@/list-view";
-import { DEFAULT_PLUGINS, DefaultPlugins, type CellPlugin } from "@/plugins";
+import { DEFAULT_PLUGINS, type DefaultPlugins } from "@/plugins";
 import { RowView } from "@/row-view";
+import { TimelineViewContent } from "@/timeline-view";
 import { Toolbar } from "@/tools/toolbar";
 
+import { defaultColumn } from "./default-column";
 import { TableViewContent } from "./table-view-content";
-import type { TableProps } from "./types";
-import { useTableView } from "./use-table-view";
 
-interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
-  table: Table<Row<TPlugins>>;
-  __synced: number;
-}
+type TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> = ReturnType<
+  typeof useTableView<TPlugins>
+>;
 
 const TableViewContext = createContext<TableViewCtx | null>(null);
 
-export function useTableViewCtx() {
+export function useTableViewCtx(): TableViewCtx {
   const ctx = use(TableViewContext);
   if (!ctx)
     throw new Error("`useTableViewCtx` must be used within `TableView`");
@@ -36,13 +38,26 @@ export function TableViewWrapper<
   children,
   ...props
 }: TableProps<TPlugins>) {
-  const ctx = useTableView({
-    plugins: arrayToEntity(plugins),
+  const pluginEntity = useMemo(() => arrayToEntity(plugins), [plugins]);
+  const ctx = useTableView<TPlugins>({
+    plugins: pluginEntity,
+    defaultColumn: defaultColumn as TableProps<TPlugins>["defaultColumn"],
     ...props,
   });
+  const latestCtxRef = useRef(ctx);
+  latestCtxRef.current = ctx;
+  const contextValue = useMemo(
+    () => ({
+      get table() {
+        return latestCtxRef.current.table;
+      },
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [ctx.table.options.columns, ctx.table.options.data],
+  );
 
   return (
-    <TableViewContext value={ctx}>
+    <TableViewContext value={contextValue}>
       <TooltipProvider>{children}</TooltipProvider>
     </TableViewContext>
   );
@@ -68,14 +83,21 @@ export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
 
 function Content() {
   const { table } = useTableViewCtx();
-  const { layout } = table.getTableGlobalState();
 
-  switch (layout) {
-    case "list":
-      return <ListViewContent />;
-    case "board":
-      return <BoardViewContent />;
-    default:
-      return <TableViewContent />;
-  }
+  return (
+    <table.Subscribe selector={(state) => state.tableGlobal.layout}>
+      {(layout) => {
+        switch (layout) {
+          case "list":
+            return <ListViewContent />;
+          case "board":
+            return <BoardViewContent />;
+          case "timeline":
+            return <TimelineViewContent />;
+          default:
+            return <TableViewContent />;
+        }
+      }}
+    </table.Subscribe>
+  );
 }

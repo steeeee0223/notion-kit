@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { v4 } from "uuid";
 
+import { TableViewMenuPage } from "@notion-kit/table-hook";
+import type { PluginType } from "@notion-kit/table-hook";
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 import {
   Autocomplete,
   AutocompleteCollection,
@@ -15,9 +18,6 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { DefaultIcon, MenuHeader } from "@/common";
-import { TableViewMenuPage } from "@/features";
-import type { PluginType } from "@/lib/types";
-import type { CellPlugin } from "@/plugins";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface TypesMenuProps {
@@ -46,9 +46,6 @@ interface TypesMenuProps {
 
 export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
   const { table } = useTableViewCtx();
-
-  const plugins = table.getState().cellPlugins;
-  const pluginOptions = Object.values(plugins);
   const propType = propId ? table.getColumnInfo(propId).type : null;
   const [search, setSearch] = useState("");
 
@@ -92,61 +89,69 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
           }
         />
       )}
-      <Autocomplete
-        items={pluginOptions}
-        itemToStringValue={(plugin) => plugin.default.name}
-        value={search}
-        onValueChange={setSearch}
-        open
-        autoHighlight="always"
-        openOnInputClick
-      >
-        <AutocompleteInput
-          placeholder={
-            propId ? "Search for property type" : "Search or add new property"
-          }
-          onKeyDown={(e) => e.stopPropagation()}
-        />
-        <AutocompleteContent variant="inline">
-          <AutocompleteList>
-            <AutocompleteGroup>
-              <AutocompleteLabel title="Type" />
-              <AutocompleteCollection>
-                {(plugin: CellPlugin) => (
-                  <TooltipPreset
-                    key={plugin.id}
-                    side="left"
-                    sideOffset={6}
-                    description={plugin.meta.desc}
-                    className="max-w-[282px] text-xs/[1.4]"
-                  >
+      <table.Subscribe selector={(state) => state.cellPlugins}>
+        {(plugins) => (
+          <Autocomplete
+            items={Object.values(plugins)}
+            itemToStringValue={(plugin) => plugin.default.name}
+            value={search}
+            onValueChange={setSearch}
+            open
+            autoHighlight="always"
+            openOnInputClick
+          >
+            <AutocompleteInput
+              placeholder={
+                propId
+                  ? "Search for property type"
+                  : "Search or add new property"
+              }
+              onKeyDown={(e) => e.stopPropagation()}
+            />
+            <AutocompleteContent variant="inline">
+              <AutocompleteList>
+                <AutocompleteGroup>
+                  <AutocompleteLabel title="Type" />
+                  <AutocompleteCollection>
+                    {(plugin: CellPlugin) => (
+                      <TooltipPreset
+                        key={plugin.id}
+                        side="left"
+                        sideOffset={6}
+                        description={plugin.meta.desc}
+                        className="max-w-[282px] text-xs/[1.4]"
+                      >
+                        <AutocompleteItem
+                          value={plugin}
+                          disabled={plugin.id === "title"}
+                          icon={plugin.meta.icon}
+                          label={plugin.meta.name}
+                          onClick={() => select(plugin.id, plugin.meta.name)}
+                        >
+                          {propType === plugin.id && <MenuItemCheck />}
+                        </AutocompleteItem>
+                      </TooltipPreset>
+                    )}
+                  </AutocompleteCollection>
+                </AutocompleteGroup>
+                {!propId && search.length > 0 && (
+                  <AutocompleteGroup>
+                    <AutocompleteLabel title="Select to add" />
                     <AutocompleteItem
-                      value={plugin}
-                      disabled={plugin.id === "title"}
-                      icon={plugin.meta.icon}
-                      label={plugin.meta.name}
-                      onClick={() => select(plugin.id, plugin.meta.name)}
-                    >
-                      {propType === plugin.id && <MenuItemCheck />}
-                    </AutocompleteItem>
-                  </TooltipPreset>
+                      value={`search-${search}`}
+                      icon={
+                        <DefaultIcon type="text" className="fill-menu-icon" />
+                      }
+                      label={search}
+                      onClick={() => select("text", search)}
+                    />
+                  </AutocompleteGroup>
                 )}
-              </AutocompleteCollection>
-            </AutocompleteGroup>
-            {!propId && search.length > 0 && (
-              <AutocompleteGroup>
-                <AutocompleteLabel title="Select to add" />
-                <AutocompleteItem
-                  value={`search-${search}`}
-                  icon={<DefaultIcon type="text" className="fill-menu-icon" />}
-                  label={search}
-                  onClick={() => select("text", search)}
-                />
-              </AutocompleteGroup>
-            )}
-          </AutocompleteList>
-        </AutocompleteContent>
-      </Autocomplete>
+              </AutocompleteList>
+            </AutocompleteContent>
+          </Autocomplete>
+        )}
+      </table.Subscribe>
     </>
   );
 }

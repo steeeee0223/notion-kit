@@ -1,0 +1,243 @@
+import type { Locator, Page } from "@playwright/test";
+
+import { TableViewObject } from "./component-objects/table-view";
+import { expect, test } from "./fixtures";
+
+async function dragWithPointer(
+  page: Page,
+  source: Locator,
+  target: Locator,
+  targetEdge: "center" | "after" = "center",
+) {
+  await source.scrollIntoViewIfNeeded();
+  const sourceBox = await source.boundingBox();
+  const targetBox = await target.boundingBox();
+  expect(sourceBox).not.toBeNull();
+  expect(targetBox).not.toBeNull();
+  const start = {
+    x: sourceBox!.x + sourceBox!.width / 2,
+    y: sourceBox!.y + sourceBox!.height / 2,
+  };
+  const end = {
+    x:
+      targetBox!.x +
+      (targetEdge === "after" ? targetBox!.width - 4 : targetBox!.width / 2),
+    y:
+      targetBox!.y +
+      (targetEdge === "after" ? targetBox!.height - 4 : targetBox!.height / 2),
+  };
+
+  await page.mouse.move(start.x, start.y);
+  await page.mouse.down();
+  await page.mouse.move(start.x + 10, start.y + 6, { steps: 4 });
+  await expect
+    .poll(() => page.locator("[data-dragging]").count())
+    .toBeGreaterThan(0);
+  await page.mouse.move(end.x, end.y, { steps: 12 });
+  await page.mouse.up();
+  await expect(page.locator("[data-dragging]")).toHaveCount(0);
+  await expect(page.locator('[data-dnd-dragging="true"]')).toHaveCount(0);
+  await expect(page.locator("[data-dnd-placeholder]")).toHaveCount(0);
+}
+
+test("RowDnD_AlphaAfterOmega_MovesRenderedAndControlledOrder", async ({
+  page,
+}) => {
+  const table = await TableViewObject.open(page, "controlled");
+  const alpha = table.row("Alpha");
+  await alpha.hover();
+  await dragWithPointer(
+    page,
+    alpha.getByRole("button", { name: "Row actions" }),
+    table.row("Omega"),
+    "after",
+  );
+
+  const rowBoxes = await Promise.all(
+    [table.row("Empty"), table.row("Omega"), table.row("Alpha")].map((row) =>
+      row.boundingBox(),
+    ),
+  );
+  expect(rowBoxes.every(Boolean)).toBe(true);
+  expect(rowBoxes[0]!.y).toBeLessThan(rowBoxes[1]!.y);
+  expect(rowBoxes[1]!.y).toBeLessThan(rowBoxes[2]!.y);
+  const snapshot = await table.controlledSnapshot();
+  expect(snapshot.data.map((row: { id: string }) => row.id)).toEqual([
+    "row-empty",
+    "row-omega",
+    "row-alpha",
+  ]);
+  await expect(table.controlledState()).toContainText('"type":"data.row.move"');
+  await expect(table.controlledState()).toContainText('"rowId":"row-alpha"');
+  await expect(table.controlledState()).toContainText('"nextPosition":2');
+});
+
+for (const layout of ["table", "list"] as const) {
+  test(`GroupedRowDnD_${layout}_CrossGroupUpdatesRenderedMembershipAndControlledValue`, async ({
+    page,
+  }) => {
+    const table = await TableViewObject.open(page, "controlled");
+    if (layout === "list") await table.setLayout(layout);
+    await table.groupBy("Status");
+    await table.expandGroup("status:Active");
+    await table.expandGroup("status:Done");
+
+    const alpha = table.rowBlock("row-alpha");
+    const omega = table.rowBlock("row-omega");
+    await alpha.hover();
+    await dragWithPointer(
+      page,
+      alpha.getByRole("button", { name: "Row actions", exact: true }),
+      omega,
+      "after",
+    );
+
+    await expect(table.group("status:Active")).toHaveCount(0);
+    await expect(
+      table.group("status:Done").getByRole("button", { name: "2" }),
+    ).toBeVisible();
+    await expect
+      .poll(async () => {
+        const alphaBox = await alpha.boundingBox();
+        const omegaBox = await omega.boundingBox();
+        const doneBox = await table.group("status:Done").boundingBox();
+        return Boolean(
+          alphaBox &&
+            omegaBox &&
+            doneBox &&
+            alphaBox.y > doneBox.y &&
+            omegaBox.y < alphaBox.y,
+        );
+      })
+      .toBe(true);
+
+    const snapshot = await table.controlledSnapshot();
+    expect(snapshot.data.map((row: { id: string }) => row.id)).toEqual([
+      "row-empty",
+      "row-omega",
+      "row-alpha",
+    ]);
+    expect(
+      snapshot.data.find((row: { id: string }) => row.id === "row-alpha")
+        ?.properties.status?.value,
+    ).toBe("Done");
+    expect(snapshot.dataCount).toBe(1);
+    expect(snapshot.lastDataAction).toEqual({
+      id: expect.any(String),
+      type: "data.row.move",
+      payload: {
+        rowId: "row-alpha",
+        previousPosition: 0,
+        nextPosition: 2,
+      },
+    });
+  });
+}
+
+for (const layout of ["table", "list", "board"] as const) {
+  test(`GroupOrderDnD_${layout}_UpdatesRenderedGroupsImmediately`, async ({
+    page,
+  }) => {
+    const table = await TableViewObject.open(page, "controlled");
+    if (layout !== "table") await table.setLayout(layout);
+    await table.groupBy("Status");
+
+    const grouping = await (await table.openSettings()).openGrouping();
+    await dragWithPointer(
+      page,
+      grouping.moveHandle("status:Active"),
+      grouping.moveHandle("status:Done"),
+      "after",
+    );
+
+    await expect(table.internalState()).toContainText(
+      '"groupOrder":["status:null","status:Done","status:Active"]',
+    );
+    await expect
+      .poll(async () => {
+        const boxes = await Promise.all(
+          ["status:null", "status:Done", "status:Active"].map((groupId) =>
+            table.group(groupId).boundingBox(),
+          ),
+        );
+        if (boxes.some((box) => box === null)) return false;
+        const positions = boxes.map((box) =>
+          layout === "board" ? box!.x : box!.y,
+        );
+        return positions[0]! < positions[1]! && positions[1]! < positions[2]!;
+      })
+      .toBe(true);
+  });
+}
+
+test("HeaderPointerDnD_SameNotesTriggerOpensMenuAndMovesAfterScore", async ({
+  page,
+}) => {
+  const table = await TableViewObject.open(page, "controlled");
+  const notesHeader = table.header("Notes");
+  const calculateMenuItem = page.getByRole("menuitem", { name: "Calculate" });
+
+  await notesHeader.click();
+  await expect(calculateMenuItem).toBeVisible();
+  await notesHeader.click();
+  await expect(notesHeader).toHaveAttribute("aria-expanded", "false");
+  await expect(calculateMenuItem).toBeHidden();
+
+  await dragWithPointer(page, notesHeader, table.header("Score"), "after");
+
+  await expect
+    .poll(async () => {
+      const scoreBox = await table.header("Score").boundingBox();
+      const notesBox = await table.header("Notes").boundingBox();
+      return Boolean(scoreBox && notesBox && scoreBox.x < notesBox.x);
+    })
+    .toBe(true);
+  await expect
+    .poll(async () => {
+      const snapshot = await table.controlledSnapshot();
+      return snapshot.properties
+        .slice(0, 3)
+        .map((property: { id: string }) => property.id);
+    })
+    .toEqual(["title", "score", "notes"]);
+  const snapshot = await table.controlledSnapshot();
+  expect(snapshot.lastPropertiesAction).toEqual({
+    id: expect.any(String),
+    type: "properties.move",
+    payload: { propertyId: "notes", previousPosition: 1, nextPosition: 2 },
+  });
+  await expect(notesHeader).toHaveAttribute("aria-expanded", "false");
+  await expect(calculateMenuItem).toBeHidden();
+});
+
+test("HeaderResize_NotesFortyPixelsWider_ReportsExactWidthChange", async ({
+  page,
+}) => {
+  const table = await TableViewObject.open(page, "controlled");
+  const handle = page.getByRole("separator", { name: "Resize Notes" });
+  const box = await handle.boundingBox();
+  expect(box).not.toBeNull();
+
+  await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(
+    box!.x + box!.width / 2 + 40,
+    box!.y + box!.height / 2,
+    {
+      steps: 8,
+    },
+  );
+  await page.mouse.up();
+
+  const snapshot = await table.controlledSnapshot();
+  const notes = snapshot.properties.find(
+    (property: { id: string }) => property.id === "notes",
+  );
+  expect(notes).toBeDefined();
+  if (!notes) throw new Error("Notes property is missing");
+  expect(Number.parseFloat(notes.width)).toBeGreaterThanOrEqual(219);
+  expect(snapshot.lastPropertiesAction).toMatchObject({
+    type: "properties.resize",
+    payload: { propertyId: "notes" },
+  });
+});

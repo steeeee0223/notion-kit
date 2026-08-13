@@ -3,6 +3,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 
 import { useCopyToClipboard } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
+import { ROW_VIEW_OPTIONS } from "@notion-kit/table-hook";
 import type { IconData } from "@notion-kit/ui/icon-block";
 import { IconMenu } from "@notion-kit/ui/icon-menu";
 import {
@@ -19,7 +20,6 @@ import {
 } from "@notion-kit/ui/primitives";
 import { KEYBOARD } from "@notion-kit/utils";
 
-import { ROW_VIEW_OPTIONS } from "@/features";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface Action {
@@ -144,9 +144,13 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
   ];
 
   /** Keyboard shortcut */
-  useHotkeys("meta+shift+enter", openInNewTab, { preventDefault: true });
-  useHotkeys("meta+d", duplicateRow, { preventDefault: true });
-  useHotkeys("backspace", deleteRow);
+  const hotkeyOptions = {
+    enableOnFormTags: ["INPUT"] as const,
+    preventDefault: true,
+  };
+  useHotkeys("meta+shift+enter", openInNewTab, hotkeyOptions);
+  useHotkeys("meta+d", duplicateRow, hotkeyOptions);
+  useHotkeys("backspace", deleteRow, hotkeyOptions);
 
   return (
     <Autocomplete<Action>
@@ -173,6 +177,7 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
                       if (group.value === "Page") {
                         return (
                           <IconMenu
+                            key={action.value}
                             className="w-full border-none text-start hover:bg-transparent"
                             onSelect={selectIcon}
                             onRemove={removeIcon}

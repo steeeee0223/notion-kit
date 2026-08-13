@@ -1,12 +1,15 @@
 import { cn } from "@notion-kit/cn";
+import { wrappedClassName } from "@notion-kit/table-hook";
+import {
+  formatNumber,
+  type InferCellProps,
+  type NumberConfig,
+  type NumberPlugin,
+} from "@notion-kit/table-hook/plugins";
 import { MeterBar, MeterRing, TooltipPreset } from "@notion-kit/ui/primitives";
 import { COLOR } from "@notion-kit/utils";
 
 import { CellTrigger, CopyButton, TextInputPopover } from "@/common";
-import { wrappedClassName } from "@/lib/utils";
-
-import type { InferCellProps } from "../types";
-import type { NumberConfig, NumberPlugin } from "./types";
 
 export function NumberCell({
   data,
@@ -167,42 +170,5 @@ function getNumberValue(
   // Capped value for bar, ring display
   const cappedValue = Math.min(config.options.divideBy, Math.max(0, num));
 
-  // Handle formatting
-  const formatNumber = () => {
-    // Handle rounding
-    const roundDigits =
-      config.round === "default" ? undefined : Number(config.round);
-
-    switch (config.format) {
-      case "number_with_commas":
-        return num.toLocaleString(undefined, {
-          minimumFractionDigits: roundDigits,
-          maximumFractionDigits: roundDigits,
-        });
-
-      case "percent":
-        return (num / 100).toLocaleString(undefined, {
-          style: "percent",
-          minimumFractionDigits: roundDigits,
-          maximumFractionDigits: roundDigits,
-        });
-
-      case "currency":
-        return num.toLocaleString(undefined, {
-          style: "currency",
-          currency: "USD", // or make this configurable later
-          minimumFractionDigits: roundDigits,
-          maximumFractionDigits: roundDigits,
-        });
-
-      default:
-        return num.toLocaleString(undefined, {
-          useGrouping: false,
-          minimumFractionDigits: roundDigits,
-          maximumFractionDigits: roundDigits,
-        });
-    }
-  };
-
-  return [formatNumber(), cappedValue];
+  return [formatNumber(num, config), cappedValue];
 }

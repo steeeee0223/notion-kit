@@ -1,7 +1,15 @@
-import { describe, expect, it } from "vitest";
+import { render } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
+
+import type { ColumnDefs } from "@notion-kit/table-hook";
+
+import type { DefaultPlugins } from "@/plugins";
 
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
+import { TableViewObject } from "../__tests__/component-objects/table-view";
 import { mockResizeObserver } from "../__tests__/mock";
+import { TableView } from "../table-contexts";
 
 mockResizeObserver();
 
@@ -12,13 +20,6 @@ async function openLayoutMenu() {
 }
 
 describe("LayoutMenu", () => {
-  it("LayoutMenu_Open_ShowsLayoutOptions", async () => {
-    const layout = await openLayoutMenu();
-    expect(layout.layoutButton("Table")).toBeVisible();
-    expect(layout.layoutButton("Board")).toBeVisible();
-    expect(layout.layoutButton("List")).toBeVisible();
-  });
-
   it("LayoutMenu_DefaultLayout_SelectsTable", async () => {
     const layout = await openLayoutMenu();
     expect(layout.layoutButton("Table")).toHaveAttribute(
@@ -49,6 +50,71 @@ describe("LayoutMenu", () => {
     );
   });
 
+  it("LayoutMenu_TimelineSelection_EnablesAndSelectsTimeline", async () => {
+    const layout = await openLayoutMenu();
+
+    expect(layout.layoutButton("Timeline")).toBeEnabled();
+    await layout.selectLayout("Timeline");
+    expect(layout.layoutButton("Timeline")).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+  });
+
+  it("LayoutMenu_TimelineDateSelector_ListsOnlyUsableDateProperties", async () => {
+    const layout = await openTimelineLayoutMenu();
+
+    await layout.openTimelinePropertyOptions();
+
+    expect(layout.timelinePropertyOption("Due")).toBeChecked();
+    expect(layout.timelinePropertyOption("Later")).not.toBeChecked();
+    expect(
+      layout.queryTimelinePropertyOption("Hidden date"),
+    ).not.toBeInTheDocument();
+    expect(
+      layout.queryTimelinePropertyOption("Deleted date"),
+    ).not.toBeInTheDocument();
+    expect(layout.queryTimelinePropertyOption("Name")).not.toBeInTheDocument();
+  });
+
+  it("LayoutMenu_StaleTimelineDateProperty_ShowsAndSelectsFirstUsableDate", async () => {
+    const tableView = new TableViewObject(userEvent.setup());
+    render(
+      <TableView
+        data={[]}
+        properties={timelineProperties}
+        view={{
+          layout: "timeline",
+          timeline: { range: "monthly", datePropertyId: "hidden" },
+        }}
+        onViewChange={vi.fn()}
+      />,
+    );
+    const layout = await (await tableView.openViewSettings()).openLayout();
+
+    expect(layout.timelinePropertyTrigger()).toHaveTextContent("Due");
+    await layout.openTimelinePropertyOptions();
+    expect(layout.timelinePropertyOption("Due")).toBeChecked();
+  });
+
+  it("LayoutMenu_TimelineDateSelection_PersistsChosenProperty", async () => {
+    const onViewChange = vi.fn();
+    const layout = await openTimelineLayoutMenu(onViewChange);
+
+    await layout.selectTimelineProperty("Later");
+
+    expect(onViewChange).toHaveBeenCalledTimes(1);
+    expect(onViewChange.mock.calls[0]?.[0]).toMatchObject({
+      action: {
+        type: "view.timeline_property.change",
+        payload: {
+          previousDatePropertyId: "due",
+          nextDatePropertyId: "later",
+        },
+      },
+    });
+  });
+
   it("LayoutMenu_RowViewHover_OpensCheckedSidePeek", async () => {
     const layout = await openLayoutMenu();
     expect(layout.rowViewTrigger()).toHaveTextContent("Side peek");
@@ -64,9 +130,72 @@ describe("LayoutMenu", () => {
     expect(layout.rowViewTrigger()).toHaveTextContent("Center peek");
   });
 
+  it("LayoutMenu_SelectedRowView_DoesNotEmitChange", async () => {
+    const onViewChange = vi.fn();
+    const tableView = renderTableView({ onViewChange });
+    const settings = await tableView.openViewSettings();
+    const layout = await settings.openLayout();
+
+    await layout.selectRowView("Side peek");
+
+    expect(onViewChange).not.toHaveBeenCalled();
+  });
+
   it("LayoutMenu_BackNavigation_ReturnsToViewSettings", async () => {
     const layout = await openLayoutMenu();
     const settings = await layout.backToViewSettings();
     expect(settings.heading("View Settings")).toBeVisible();
   });
 });
+
+const timelineProperties = [
+  {
+    id: "name",
+    name: "Name",
+    type: "text",
+    config: undefined,
+  },
+  {
+    id: "due",
+    name: "Due",
+    type: "date",
+    config: { dateFormat: "full", timeFormat: "24-hour", tz: "UTC" },
+  },
+  {
+    id: "later",
+    name: "Later",
+    type: "date",
+    config: { dateFormat: "full", timeFormat: "24-hour", tz: "UTC" },
+  },
+  {
+    id: "hidden",
+    name: "Hidden date",
+    type: "date",
+    hidden: true,
+    config: { dateFormat: "full", timeFormat: "24-hour", tz: "UTC" },
+  },
+  {
+    id: "deleted",
+    name: "Deleted date",
+    type: "date",
+    isDeleted: true,
+    config: { dateFormat: "full", timeFormat: "24-hour", tz: "UTC" },
+  },
+] satisfies ColumnDefs<DefaultPlugins>;
+
+async function openTimelineLayoutMenu(
+  onViewChange = vi.fn(),
+  datePropertyId = "due",
+) {
+  const tableView = renderTableView({
+    properties: timelineProperties,
+    data: [],
+    view: {
+      layout: "timeline",
+      timeline: { range: "monthly", datePropertyId },
+    },
+    onViewChange,
+  });
+  const settings = await tableView.openViewSettings();
+  return settings.openLayout();
+}

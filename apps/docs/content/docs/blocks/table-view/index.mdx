@@ -21,7 +21,7 @@ description: An composable, editable data table.
 
 - Table: sorting, grouping
 
-- Table Views: Table, List, Board
+- Table Views: Table, List, Board, Timeline
 
 - Cells plugins
   - Required plugins: `title`, `text`
@@ -57,8 +57,8 @@ description: An composable, editable data table.
 <ComponentPreview
   name="table-view-uncontrolled"
   preview={`<TableView
-    properties={properties}
-    data={data}
+    defaultProperties={properties}
+    defaultData={data}
   />
   `}
 />
@@ -70,11 +70,126 @@ description: An composable, editable data table.
   preview={`<TableView
     properties={properties}
     data={data}
-    onDataChange={setData}
-    onPropertiesChange={setProperties}
+    onDataChange={({ next }) => setData(next)}
+    onPropertiesChange={({ next }) => setProperties(next)}
+    view={view}
+    onViewChange={({ next }) => setView(next)}
   />
   `}
 />
+
+Controlled resources are authoritative. `TableView` calls each replacement
+callback with a `{ next, action }` envelope, and the rendered table updates
+after the owner commits `next` through props. React state handlers should
+destructure `next`. Backend mutation functions can accept the complete
+resource-change envelope directly.
+
+```tsx
+const replaceData = useMutation({ mutationFn: api.replaceData });
+
+<TableView data={data} onDataChange={replaceData.mutate} />;
+```
+
+`action` is a typed audit payload with a generated id. When one operation
+changes more than one resource, such as creating a property and initializing
+cells for every row, the emitted resource changes share the same action id.
+Use `serializeResourceAction(change)` when creating an activity-log record so
+the log stores the compact action payload and not the complete replacement
+resource.
+
+Uncontrolled resources use `defaultData`, `defaultProperties`, and
+`defaultView`. Defaults are read only on mount; reset an uncontrolled table by
+remounting it with a new React `key`.
+
+## Timeline layout
+
+Set `layout` to `"timeline"` and identify the Date property that places rows on
+the timeline. The public `timeline` field is optional. Internally, it defaults
+to a monthly range and no persisted Date-property selection:
+
+```tsx
+const view = {
+  layout: "timeline",
+  rowView: "side",
+  openedRowId: null,
+  locked: false,
+  timeline: {
+    range: "monthly",
+    datePropertyId: null,
+  },
+} satisfies TableViewState;
+```
+
+When `datePropertyId` is `null`, missing, hidden, deleted, or not a `date`
+property, Timeline resolves the first visible, non-deleted Date property. An
+unlocked table persists that resolution with
+`view.timeline_property.change`. If no usable Date property exists, Timeline
+appends a Date property with a unique name based on `Timeline` (for example,
+`Timeline` or `Timeline 1`) and selects it. When rows exist, Timeline also
+initializes one cell for every row. Each seeded cell has this value:
+
+```ts
+{
+  start: row.createdAt,
+  end: Math.max(row.createdAt, row.lastEditedAt),
+  endDate: true,
+}
+```
+
+With rows present, automatic initialization emits `properties.create`,
+`data.cell.update`, and `view.timeline_property.change`, in that order, with
+one shared action id. An empty table has no cells to seed, so it emits only
+`properties.create` and `view.timeline_property.change`, with the same shared
+id. Controlled owners must accept the property and view `next` resources to
+leave the pending state and render Timeline. When rows exist, they must also
+accept the data `next` resource to preserve the initialized row values.
+
+Existing empty Date cells are not seeded. They remain empty tracks. In an
+unlocked Timeline, selecting an empty track creates a one-calendar-day value;
+moving or resizing a bar also replaces the cell value. These writes emit
+`data.cell.update` with the row id, property id, previous value, and next
+`{ start, end, endDate: true }` value.
+
+Other Timeline interactions use the same controlled resource API:
+
+- changing the range emits `view.timeline_range.change`;
+
+- choosing a Date property emits `view.timeline_property.change`;
+
+- reordering a sidebar row emits `data.row.move`;
+
+- opening a row emits `view.opened_row.change`.
+
+Locked Timelines remain navigable, so existing bars and row titles can still
+open rows. They do not show empty-track add controls, bar resizers, row drag
+handles, or the title-column resizer, and range changes do not write view
+state. A locked table without a usable Date property renders an empty
+read-only Timeline and does not create a property, seed cells, or repair the
+selection.
+
+## Reactive custom children
+
+`TableView` does not rerender custom children for every internal store update.
+Read store-backed values through `table.Subscribe` and select only the state
+used by the child:
+
+```tsx
+import { useTableViewCtx } from "@notion-kit/table-view";
+
+function CurrentLayout() {
+  const { table } = useTableViewCtx();
+
+  return (
+    <table.Subscribe selector={(state) => state.tableGlobal.layout}>
+      {(layout) => <span>Current layout: {layout}</span>}
+    </table.Subscribe>
+  );
+}
+```
+
+Values read directly from `table.store.state` or snapshot helpers such as
+`table.getTableGlobalState()` are not reactive by themselves. A custom child
+that only reads a snapshot can become stale after internal store updates.
 
 ## API Reference
 
@@ -83,15 +198,18 @@ description: An composable, editable data table.
 A `TableView` is a generic component `TableView<TPlugins>` where `TPlugins` extends `CellPlugin[]`.
 It provides a table view with editable cells and supports various plugins for cell types.
 
-| Prop                 | Type                                                                   | Description                                                                                          |
-| -------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `plugins`            | `TPlugins`                                                             | The plugins to use for the table. Each table should contain at least `title()` and `text()` plugins. |
-| `properties`\*       | [`ColumnDefs<TPlugins>`](/docs/objects/database-properties#columndefs) | The column definitions of the table.                                                                 |
-| `data`\*             | [`Row<TPlugins>[]`](/docs/objects/database-properties#row)             | The rows of the table.                                                                               |
-| `table`              | [`Partial<TableGlobalState>`](#type-tableglobalstate)                  | The global state of the table.                                                                       |
-| `onDataChange`       | `OnChangeFn<Row<TPlugins>[]>`                                          | Callback function that is called when the table data changes.                                        |
-| `onPropertiesChange` | `OnChangeFn<ColumnDefs<TPlugins>>`                                     | Callback function that is called when the table properties change.                                   |
-| `onTableChange`      | `OnChangeFn<TableGlobalState>`                                         | Callback function that is called when the table global state changes.                                |
+| Prop                 | Type                                                                                  | Description                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `plugins`            | `TPlugins`                                                                            | The plugins to use for the table. Each table should contain at least `title()` and `text()` plugins. |
+| `data`               | [`Row<TPlugins>[]`](/docs/objects/database-properties#row)                            | Controlled rows resource. Do not combine with `defaultData`.                                         |
+| `defaultData`        | [`Row<TPlugins>[]`](/docs/objects/database-properties#row)                            | Mount-only uncontrolled rows default. Do not combine with `data`.                                    |
+| `properties`         | [`ColumnDefs<TPlugins>`](/docs/objects/database-properties#columndefs)                | Controlled column definitions resource. Do not combine with `defaultProperties`.                     |
+| `defaultProperties`  | [`ColumnDefs<TPlugins>`](/docs/objects/database-properties#columndefs)                | Mount-only uncontrolled column definitions default. Do not combine with `properties`.                |
+| `view`               | [`Partial<TableViewState>`](#type-tableviewstate)                                     | Controlled view presentation resource. Do not combine with `defaultView`.                            |
+| `defaultView`        | [`Partial<TableViewState>`](#type-tableviewstate)                                     | Mount-only uncontrolled view default. Do not combine with `view`.                                    |
+| `onDataChange`       | `(change: ResourceChange<Row<TPlugins>[], DataResourceAction>) => unknown`            | Complete rows replacement envelope with an audit action.                                             |
+| `onPropertiesChange` | `(change: ResourceChange<ColumnDefs<TPlugins>, PropertiesResourceAction>) => unknown` | Complete column definitions replacement envelope with an audit action.                               |
+| `onViewChange`       | `(change: ResourceChange<TableViewState, ViewResourceAction>) => unknown`             | Complete view replacement envelope with an audit action.                                             |
 
 ### `type` TableState
 
@@ -102,11 +220,12 @@ A `TableState` is a generic type `TableState<TPlugins>` that represents the stat
 | `properties`\* | [`ColumnDefs<TPlugins>`](/docs/objects/database-properties#columndefs) | -       | The column definitions of the table. |
 | `data`\*       | [`Row<TPlugins>[]`](/docs/objects/database-properties#row)             | -       | The rows of the table.               |
 
-### `type` TableGlobalState
+### `type` TableViewState
 
-| Prop          | Type                           | Default   | Description                                 |
-| ------------- | ------------------------------ | --------- | ------------------------------------------- |
-| `layout`      | `"table" \| "list" \| "board"` | `"table"` | The layout view of the table.               |
-| `locked`      | `boolean`                      | `false`   | Whether the table is locked (non-editable). |
-| `rowView`     | `"center" \| "side" \| "full"` | `"side"`  | The view type of the opened row.            |
-| `openedRowId` | `string \| null`               | `null`    | The unique identifier of the opened row.    |
+| Prop          | Type                                                                               | Default                                      | Description                                                                                                                    |
+| ------------- | ---------------------------------------------------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `layout`      | `"table" \| "list" \| "board" \| "timeline" \| "calendar" \| "gallery" \| "chart"` | `"table"`                                    | The layout view. Table, List, Board, and Timeline are implemented; the other typed values currently render the table fallback. |
+| `locked`      | `boolean`                                                                          | `false`                                      | Whether the table is locked (non-editable).                                                                                    |
+| `rowView`     | `"center" \| "side" \| "full"`                                                     | `"side"`                                     | The view type of the opened row.                                                                                               |
+| `openedRowId` | `string \| null`                                                                   | `null`                                       | The unique identifier of the opened row.                                                                                       |
+| `timeline`    | `{ range: "daily" \| "monthly" \| "quarterly"; datePropertyId: string \| null }`   | `{ range: "monthly", datePropertyId: null }` | Optional Timeline range and persisted Date-property selection.                                                                 |

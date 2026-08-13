@@ -41,17 +41,17 @@
   },
   "prettier": "@notion-kit/prettier-config",
   "dependencies": {
-    "@dnd-kit/abstract": "catalog:ui",
-    "@dnd-kit/helpers": "catalog:ui",
     "@dnd-kit/react": "catalog:ui",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/hooks": "workspace:*",
     "@notion-kit/icons": "workspace:*",
+    "@notion-kit/table-hook": "workspace:*",
     "@notion-kit/ui": "workspace:*",
     "@notion-kit/utils": "workspace:*",
-    "@tanstack/react-table": "catalog:ui",
+    "@tanstack/react-table": "9.0.0",
     "react-hotkeys-hook": "catalog:ui",
-    "uuid": "catalog:uuid"
+    "uuid": "catalog:uuid",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@notion-kit/config": "workspace:*",

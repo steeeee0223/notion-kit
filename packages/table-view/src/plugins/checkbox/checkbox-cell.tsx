@@ -1,10 +1,8 @@
-"use client";
-
 import { cn } from "@notion-kit/cn";
+import type { CellProps } from "@notion-kit/table-hook/plugins";
 import { Checkbox } from "@notion-kit/ui/primitives";
 
-import { CellTrigger } from "../../common";
-import type { CellProps } from "../types";
+import { CellTrigger } from "@/common";
 
 export function CheckboxCell({
   data,

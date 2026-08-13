@@ -1,12 +1,11 @@
+import type { NumberRound } from "@notion-kit/table-hook/plugins";
 import {
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuGroup,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSub,
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
-
-import type { NumberRound } from "../types";
 
 const options: { label: string; value: NumberRound }[] = [
   { label: "Default", value: "default" },
@@ -32,17 +31,19 @@ export function RoundingMenu({ round, onUpdate }: RoundingMenuProps) {
         </div>
       </DropdownMenuSubTrigger>
       <DropdownMenuContent sideOffset={-4}>
-        <DropdownMenuGroup>
+        <DropdownMenuRadioGroup
+          value={round}
+          onValueChange={(value: NumberRound) => onUpdate(value)}
+        >
           {options.map((option) => (
-            <DropdownMenuCheckboxItem
+            <DropdownMenuRadioItem
               key={option.value}
+              value={option.value}
               closeOnClick={false}
               label={option.label}
-              checked={round === option.value}
-              onCheckedChange={() => onUpdate(option.value)}
             />
           ))}
-        </DropdownMenuGroup>
+        </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenuSub>
   );

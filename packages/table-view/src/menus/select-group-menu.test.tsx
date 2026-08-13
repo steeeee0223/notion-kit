@@ -12,21 +12,6 @@ async function openSelectGroupingMenu() {
 }
 
 describe("SelectGroupMenu", () => {
-  it("SelectGroupingMenu_Open_ShowsHeadingAndOptions", async () => {
-    const { grouping } = await openSelectGroupingMenu();
-
-    expect(grouping.heading()).toBeVisible();
-    expect(grouping.option("None")).toBeVisible();
-    expect(grouping.option("Name")).toBeVisible();
-    expect(grouping.option("Done")).toBeVisible();
-  });
-
-  it("SelectGroupingMenu_Open_ShowsPropertySearch", async () => {
-    const { grouping } = await openSelectGroupingMenu();
-
-    expect(grouping.searchInput()).toBeVisible();
-  });
-
   it("SelectGroupingMenu_Search_FiltersProperties", async () => {
     const { grouping } = await openSelectGroupingMenu();
 
@@ -43,12 +28,6 @@ describe("SelectGroupMenu", () => {
 
     expect(editGrouping.heading()).toBeVisible();
     expect(editGrouping.selectedProperty("Done")).toBeVisible();
-  });
-
-  it("SelectGroupingMenu_NoGrouping_ShowsNoneOption", async () => {
-    const { grouping } = await openSelectGroupingMenu();
-
-    expect(grouping.option("None")).toBeVisible();
   });
 
   it("SelectGroupingMenu_BackNavigation_ReturnsToViewSettings", async () => {

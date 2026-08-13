@@ -1,4 +1,8 @@
 import { Icon } from "@notion-kit/icons";
+import type {
+  ConfigMenuProps,
+  DateConfig,
+} from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -6,9 +10,7 @@ import {
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
 
-import type { ConfigMenuProps } from "../types";
 import { DateFormatMenu, TimeFormatMenu } from "./common";
-import type { DateConfig } from "./types";
 
 export function DateConfigMenu({
   config,

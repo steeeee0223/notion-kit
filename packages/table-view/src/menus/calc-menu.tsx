@@ -1,5 +1,4 @@
-import { useMemo } from "react";
-
+import { CountMethod } from "@notion-kit/table-hook";
 import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -11,114 +10,101 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { CountMethod } from "@/features";
-import { type PluginType } from "@/lib/types";
-import type { CellPlugin } from "@/plugins";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { countMethodHint } from "./constants";
 
 interface CalcMenuProps {
   id: string; // column id
-  type: PluginType<CellPlugin[]>;
 }
 
-export function CalcMenu({ id, type }: CalcMenuProps) {
+export function CalcMenu({ id }: CalcMenuProps) {
   const { table } = useTableViewCtx();
   const counting = table.getColumnCounting(id);
-
-  const { countMethods, percentMethods } = useMemo(() => {
-    const countMethods = [
-      CountMethod.ALL,
-      ...(type === "checkbox"
-        ? [CountMethod.CHECKED, CountMethod.UNCHECKED]
-        : [
-            CountMethod.VALUES,
-            CountMethod.UNIQUE,
-            CountMethod.EMPTY,
-            CountMethod.NONEMPTY,
-          ]),
-    ];
-
-    const percentMethods =
-      type === "checkbox"
-        ? [CountMethod.PERCENTAGE_CHECKED, CountMethod.PERCENTAGE_UNCHECKED]
-        : [CountMethod.PERCENTAGE_EMPTY, CountMethod.PERCENTAGE_NONEMPTY];
-    return { countMethods, percentMethods };
-  }, [type]);
+  const plugin = table.getColumnPlugin(id);
+  const currentMethod = counting.method;
+  const selectedMethod = plugin.counting
+    ?.flatMap((group) => group.functions)
+    .find((method) => method.id === currentMethod);
 
   return (
     <DropdownMenuGroup>
       <DropdownMenuCheckboxItem
         label="None"
-        checked={counting.method === CountMethod.NONE}
+        checked={
+          currentMethod === (CountMethod.NONE as string) || !selectedMethod
+        }
         onCheckedChange={() => table.setColumnCountMethod(id, CountMethod.NONE)}
       />
-      <DropdownMenuSub>
-        <DropdownMenuSubTrigger label="Count" />
-        <DropdownMenuContent sideOffset={-4} className="w-[250px]">
-          <DropdownMenuGroup>
-            <DropdownMenuCheckboxItem
-              checkType="switch"
-              label="Show large counts as 99+"
-              desc="This improves performance for large databases."
-              checked={counting.isCapped}
-              onCheckedChange={() => table.setColumnCountCapped(id, (v) => !v)}
-            />
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            {countMethods.map((method) => (
-              <HintItem
-                key={method}
-                {...countMethodHint[method]}
-                checked={counting.method === method}
-                onCheckedChange={() => table.setColumnCountMethod(id, method)}
+      {plugin.counting?.map((group) => (
+        <DropdownMenuSub key={group.group}>
+          <DropdownMenuSubTrigger label={group.group} />
+          <DropdownMenuContent sideOffset={-4} className="w-[250px]">
+            <DropdownMenuGroup>
+              <DropdownMenuCheckboxItem
+                checkType="switch"
+                label="Show large counts as 99+"
+                desc="This improves performance for large databases."
+                checked={counting.isCapped}
+                onCheckedChange={() =>
+                  table.setColumnCountCapped(id, (v) => !v)
+                }
               />
-            ))}
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenuSub>
-      <DropdownMenuSub>
-        <DropdownMenuSubTrigger label="Percent" />
-        <DropdownMenuContent sideOffset={-4} className="w-[250px]">
-          <DropdownMenuGroup>
-            {percentMethods.map((method) => (
-              <HintItem
-                key={method}
-                {...countMethodHint[method]}
-                checked={counting.method === method}
-                onCheckedChange={() => table.setColumnCountMethod(id, method)}
-              />
-            ))}
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenuSub>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              {group.functions.map((method) => (
+                <CalculationItem
+                  key={method.id}
+                  method={method}
+                  checked={currentMethod === method.id}
+                  onCheckedChange={() =>
+                    table.setColumnCountMethod(id, method.id)
+                  }
+                />
+              ))}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenuSub>
+      ))}
     </DropdownMenuGroup>
   );
 }
 
-interface HintItemProps {
-  title: string;
-  desc: string;
-  imgSrc: string;
+interface CalculationItemProps {
+  method: {
+    id: string;
+    name: string;
+    hint?: { description: string; imageSrc?: string };
+  };
   checked: boolean;
   onCheckedChange: () => void;
 }
 
-function HintItem({ title, desc, imgSrc, ...props }: HintItemProps) {
+function CalculationItem({ method, ...props }: CalculationItemProps) {
+  const legacyHints: Partial<
+    Record<string, { desc: string; imgSrc?: string }>
+  > = countMethodHint;
+  const legacyHint = legacyHints[method.id];
+  const description = method.hint?.description ?? legacyHint?.desc;
+  const imageSrc = method.hint?.imageSrc ?? legacyHint?.imgSrc;
+
+  if (!description) {
+    return <DropdownMenuCheckboxItem {...props} label={method.name} />;
+  }
+
   return (
     <TooltipPreset
       className="w-[156px]"
       side="right"
       description={
         <>
-          <TooltipDescription type="image" text={imgSrc} />
-          <TooltipDescription text={desc} />
+          {imageSrc && <TooltipDescription type="image" text={imageSrc} />}
+          <TooltipDescription text={description} />
         </>
       }
     >
-      <DropdownMenuCheckboxItem {...props} label={title} />
+      <DropdownMenuCheckboxItem {...props} label={method.name} />
     </TooltipPreset>
   );
 }

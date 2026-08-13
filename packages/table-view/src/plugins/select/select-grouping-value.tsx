@@ -1,11 +1,15 @@
 import { cn } from "@notion-kit/cn";
+import type { ColumnInfo } from "@notion-kit/table-hook";
+import type {
+  GroupingValueProps,
+  MultiSelectPlugin,
+  SelectPlugin,
+} from "@notion-kit/table-hook/plugins";
 import { TooltipDescription, TooltipPreset } from "@notion-kit/ui/primitives";
 
-import { OptionTag } from "../../common";
-import { ColumnInfo } from "../../lib/types";
-import type { GroupingValueProps } from "../types";
+import { OptionTag } from "@/common";
+
 import { DefaultGroupingValue } from "../utils";
-import { MultiSelectPlugin, SelectPlugin } from "./types";
 
 export function SelectGroupingValue({
   value,
@@ -49,7 +53,7 @@ export function SelectGroupingValue({
         }
         side="top"
       >
-        <OptionTag {...tag} />
+        <OptionTag name={tag.name} color={tag.color} />
       </TooltipPreset>
     </div>
   );

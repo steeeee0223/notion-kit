@@ -25,6 +25,7 @@ export const registryIndex = [
   "cover-picker",
   "dropdown-menu",
   "dropdown-menu-checkbox",
+  "dropdown-menu-radio",
   "icon-block-emoji",
   "icon-block-lucide",
   "icon-block-sizes",

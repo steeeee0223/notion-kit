@@ -1,6 +1,5 @@
 import type React from "react";
 import { useState } from "react";
-import { functionalUpdate } from "@tanstack/react-table";
 import { render } from "@testing-library/react";
 import userEvent, {
   PointerEventsCheckLevel,
@@ -11,7 +10,7 @@ import { TableView } from "@/table-contexts";
 import { mockData, mockProperties } from "../mock";
 import { TableViewObject } from "./table-view";
 
-type TableViewProps = React.ComponentProps<typeof TableView>;
+export type TableViewProps = React.ComponentProps<typeof TableView>;
 
 export function renderTableView(props: Partial<TableViewProps> = {}) {
   const user = userEvent.setup({
@@ -19,29 +18,41 @@ export function renderTableView(props: Partial<TableViewProps> = {}) {
   });
 
   function StatefulTableView() {
-    const [data, setData] = useState(props.data ?? mockData);
+    const {
+      data: propData,
+      defaultData,
+      properties: propProperties,
+      defaultProperties,
+      view: propView,
+      defaultView,
+      onDataChange,
+      onPropertiesChange,
+      onViewChange,
+      ...rest
+    } = props;
+    const [data, setData] = useState(propData ?? defaultData ?? mockData);
     const [properties, setProperties] = useState(
-      props.properties ?? mockProperties,
+      propProperties ?? defaultProperties ?? mockProperties,
     );
+    const [view, setView] = useState(propView ?? defaultView ?? {});
 
     return (
       <TableView
-        {...props}
+        {...rest}
         data={data}
         properties={properties}
-        onDataChange={(updater) => {
-          setData((prev) => {
-            const next = functionalUpdate(updater, prev);
-            props.onDataChange?.(next);
-            return next;
-          });
+        view={view}
+        onDataChange={(change) => {
+          setData(change.next);
+          onDataChange?.(change);
         }}
-        onPropertiesChange={(updater) => {
-          setProperties((prev) => {
-            const next = functionalUpdate(updater, prev);
-            props.onPropertiesChange?.(next);
-            return next;
-          });
+        onPropertiesChange={(change) => {
+          setProperties(change.next);
+          onPropertiesChange?.(change);
+        }}
+        onViewChange={(change) => {
+          setView(change.next);
+          onViewChange?.(change);
         }}
       />
     );

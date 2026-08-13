@@ -1,6 +1,10 @@
-import type { HeaderContext } from "@tanstack/react-table";
-
 import { Icon } from "@notion-kit/icons";
+import {
+  CountMethod,
+  resolveCountingMethod,
+  type HeaderInstance,
+} from "@notion-kit/table-hook";
+import type { CellPlugin, InferKey } from "@notion-kit/table-hook/plugins";
 import {
   Button,
   DropdownMenu,
@@ -8,16 +12,18 @@ import {
   DropdownMenuTrigger,
 } from "@notion-kit/ui/primitives";
 
-import { CountMethod } from "@/features";
-import { Row } from "@/lib/types";
-import { CalcMenu, countMethodHint } from "@/menus";
-import type { CellPlugin, InferKey } from "@/plugins";
+import { CalcMenu } from "@/menus";
 import { useTableViewCtx } from "@/table-contexts";
 
-export function TableFooterCell({ column }: HeaderContext<Row, unknown>) {
+interface TableFooterCellProps {
+  column: HeaderInstance["column"];
+}
+
+export function TableFooterCell({ column }: TableFooterCellProps) {
+  const info = column.getInfo();
   const props = {
     id: column.id,
-    type: column.getInfo().type,
+    type: info.type,
     width: column.getWidth(),
   };
 
@@ -27,6 +33,7 @@ export function TableFooterCell({ column }: HeaderContext<Row, unknown>) {
         <DropdownMenuTrigger
           render={
             <Button
+              aria-label={`${info.name} calculation`}
               tabIndex={0}
               variant="cell"
               className="h-8 w-full justify-end overflow-hidden pr-2 select-auto"
@@ -37,7 +44,7 @@ export function TableFooterCell({ column }: HeaderContext<Row, unknown>) {
         />
 
         <DropdownMenuContent className="w-50" align="start" alignOffset={-4}>
-          <CalcMenu {...props} />
+          <CalcMenu id={column.id} />
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
@@ -51,28 +58,41 @@ interface CountDisplayProps {
 
 function CountDisplay({ id, type }: CountDisplayProps) {
   const { table } = useTableViewCtx();
-  const { method } = table.getColumnCounting(id);
+  return (
+    <table.Subscribe selector={(state) => state.columnCounting[id]}>
+      {(counting) => {
+        const method = counting?.method ?? CountMethod.NONE;
+        const countingMethod = resolveCountingMethod(
+          table.getColumnPlugin(id),
+          method,
+        );
+        const label = countingMethod?.label ?? countingMethod?.name;
 
-  return method === CountMethod.NONE ? (
-    <div className="flex items-center opacity-100 transition-opacity duration-200">
-      <div className="flex items-center">
-        <span className="text-muted">
-          {type === "checkbox" ? "∑" : "Calculate"}
-        </span>
-        <Icon.Chevron
-          side="down"
-          className="mt-px ml-1 block size-2.5 shrink-0 fill-muted"
-        />
-      </div>
-    </div>
-  ) : (
-    <div className="flex items-center justify-center gap-1">
-      <span className="mt-0.5 text-[10px] tracking-[1px] text-muted uppercase select-none">
-        {countMethodHint[method].label}
-      </span>
-      <span className="flex h-full items-center">
-        {table.getColumnCountResult(id)}
-      </span>
-    </div>
+        return method === (CountMethod.NONE as string) || !countingMethod ? (
+          <div className="flex items-center opacity-100 transition-opacity duration-200">
+            <div className="flex items-center">
+              <span className="text-muted">
+                {type === "checkbox" ? "∑" : "Calculate"}
+              </span>
+              <Icon.Chevron
+                side="down"
+                className="mt-px ml-1 block size-2.5 shrink-0 fill-muted"
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center gap-1">
+            {label && (
+              <span className="mt-0.5 text-[10px] tracking-[1px] text-muted uppercase select-none">
+                {label}
+              </span>
+            )}
+            <span className="flex h-full items-center">
+              {table.getColumnCountResult(id)}
+            </span>
+          </div>
+        );
+      }}
+    </table.Subscribe>
   );
 }

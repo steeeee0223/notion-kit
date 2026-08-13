@@ -3,10 +3,13 @@ import type { UserEvent } from "@testing-library/user-event";
 
 import { RowActionsObject } from "./row-actions";
 import { SortMenuObject } from "./sort-menu";
+import { TimelineViewObject } from "./timeline-view";
 import { ViewSettingsMenuObject } from "./view-settings-menu";
 
 export class TableViewObject {
   constructor(readonly user: UserEvent) {}
+
+  readonly timeline = new TimelineViewObject();
 
   private nameMatcher(name: string | RegExp) {
     return typeof name === "string"
@@ -19,13 +22,44 @@ export class TableViewObject {
   }
 
   row(name: string | RegExp) {
-    return screen.getByRole("row", { name: this.nameMatcher(name) });
+    const matcher = this.nameMatcher(name);
+    const row = screen
+      .getAllByRole("row")
+      .find((row) => matcher.test(row.textContent));
+    if (!row) throw new Error(`Unable to find row matching ${matcher}`);
+    return row;
   }
 
   rows(name?: string | RegExp) {
-    return name
-      ? screen.getAllByRole("row", { name: this.nameMatcher(name) })
-      : screen.getAllByRole("row");
+    const rows = screen.getAllByRole("row");
+    if (!name) return rows;
+    const matcher = this.nameMatcher(name);
+    return rows.filter((row) => matcher.test(row.textContent));
+  }
+
+  rowOrder(names: readonly string[]) {
+    return this.rows().map((row) => {
+      const name = names.find((name) =>
+        within(row).queryByRole("button", { name }),
+      );
+      if (!name) throw new Error("Unable to identify row by its title button");
+      return name;
+    });
+  }
+
+  group(name: string) {
+    return screen.getByRole("group", { name: `Group ${name}` });
+  }
+
+  async expandGroup(name: string) {
+    const group = this.group(name);
+    await this.user.click(within(group).getByRole("button", { name: "Open" }));
+  }
+
+  footerResult(propertyName: string) {
+    return screen.getByRole("button", {
+      name: `${propertyName} calculation`,
+    });
   }
 
   cellButton(rowName: string | RegExp, cellName: string | RegExp) {

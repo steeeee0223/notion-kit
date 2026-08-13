@@ -17,6 +17,8 @@ This guide walks you through the process of creating a custom `CellPlugin` to ex
 ```ts
 // tag-plugin.tsx
 
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
+
 export type TagData = string[];
 export interface TagConfig {
   options: string[];
@@ -30,7 +32,9 @@ export type TagPlugin = CellPlugin<"tag", TagData, TagConfig>;
 
 ```tsx
 // tag-plugin.tsx
-import { createCompareFn } from "@notion-kit/table-view";
+
+import type { CellProps } from "@notion-kit/table-hook/plugins";
+import { createCompareFn } from "@notion-kit/table-hook/plugins";
 
 export const tagPlugin: TagPlugin = {
   id: "tag",
@@ -62,6 +66,8 @@ export const tagPlugin: TagPlugin = {
 
 ```tsx
 // tag-plugin.tsx
+
+import type { ConfigMenuProps } from "@notion-kit/table-hook/plugins";
 
 function TagCell({
   data: tags,
@@ -128,13 +134,39 @@ function TagConfigMenu({
 Finally, register your plugin in the table view:
 
 ```tsx
+import { DEFAULT_PLUGINS, TableView } from "@notion-kit/table-view";
+
 import { tagPlugin } from "./tag-plugin";
+
+const properties = [
+  { id: "name", name: "Name", type: "title" as const },
+  {
+    id: "tags",
+    name: "Tags",
+    type: "tag" as const,
+    config: { options: ["Bug", "Feature"] },
+  },
+];
+
+const now = Date.now();
+const data = [
+  {
+    id: "task-1",
+    createdAt: now,
+    lastEditedAt: now,
+    properties: {
+      name: { id: "task-1-name", value: "Ship table view" },
+      tags: { id: "task-1-tags", value: ["Feature"] },
+    },
+  },
+];
 
 function DatabaseView() {
   return (
     <TableView
       plugins={[...DEFAULT_PLUGINS, tagPlugin]} // Register your custom plugin here // [!code highlight]
-      // other props...
+      defaultProperties={properties}
+      defaultData={data}
     />
   );
 }

@@ -1,4 +1,5 @@
 import { Icon } from "@notion-kit/icons";
+import { LAYOUT_OPTIONS, TableViewMenuPage } from "@notion-kit/table-hook";
 import {
   DropdownMenuGroup,
   DropdownMenuItem,
@@ -8,7 +9,6 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { LayoutIcon, MenuHeader } from "@/common";
-import { LAYOUT_OPTIONS, TableViewMenuPage } from "@/features";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { DeletedPropsMenu } from "./deleted-props-menu";
@@ -22,9 +22,28 @@ import { TypesMenu } from "./types-menu";
 
 export function TableViewMenu() {
   const { table } = useTableViewCtx();
-  const menu = table.getTableMenuState();
 
-  switch (menu.page) {
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        menu: state.menu,
+        tableGlobal: state.tableGlobal,
+        grouping: state.grouping,
+        groupingState: state.groupingState,
+        columnsInfo: state.columnsInfo,
+      })}
+    >
+      {() => <TableViewMenuContent />}
+    </table.Subscribe>
+  );
+}
+
+function TableViewMenuContent() {
+  const { table } = useTableViewCtx();
+  const menu = table.getTableMenuState();
+  const page = menu.page as TableViewMenuPage | null;
+
+  switch (page) {
     case TableViewMenuPage.Layout:
       return <LayoutMenu />;
     case TableViewMenuPage.Sort:
@@ -48,7 +67,7 @@ export function TableViewMenu() {
       return (
         <TypesMenu
           propId={menu.id}
-          menu={menu.page}
+          menu={page}
           back
           at={
             menu.data?.at as { id: string; side: "left" | "right" } | undefined

@@ -1,16 +1,16 @@
 import React from "react";
-import { Cell, flexRender, Row } from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
-import { Checkbox, Sortable } from "@notion-kit/ui/primitives";
+import type { CellInstance, RowInstance } from "@notion-kit/table-hook";
+import { Sortable } from "@notion-kit/ui/primitives";
 
-import { RowActions, TableRowActionGroup } from "@/common";
-import type { Row as RowModel } from "@/lib/types";
+import { RowActionGroup } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface TableRowProps {
-  row: Row<RowModel>;
+  row: RowInstance;
 }
 
 export function TableRow({ row }: TableRowProps) {
@@ -29,6 +29,7 @@ export function TableRow({ row }: TableRowProps) {
     <Sortable.Item
       id={row.id}
       index={row.index}
+      group={row.parentId}
       disabled={locked}
       data={{ type: "table-row", groupId: row.parentId }}
       render={
@@ -49,35 +50,17 @@ export function TableRow({ row }: TableRowProps) {
       >
         <div className="flex">
           <div className="sticky left-8 z-(--z-row) flex items-center bg-main">
+            {/* Row actions */}
             {!locked && (
-              <>
-                {/* Row actions */}
-                <RowActions
-                  className="absolute -left-20"
-                  rowId={row.id}
-                  isMobile={isMobile}
-                  onAddNext={addNextRow}
-                />
-                {/* Row selection */}
-                <TableRowActionGroup
-                  className="absolute -left-8 *:has-data-[state=checked]:opacity-100"
-                  isMobile={isMobile}
-                >
-                  <label
-                    htmlFor="row-select"
-                    className="z-10 flex size-8 cursor-pointer items-center justify-center"
-                  >
-                    <Checkbox
-                      id="row-select"
-                      size="sm"
-                      className="cursor-pointer rounded-xs accent-blue"
-                    />
-                  </label>
-                </TableRowActionGroup>
-              </>
+              <RowActionGroup
+                className="absolute -left-20"
+                isMobile={isMobile}
+                row={row}
+                onAddNext={addNextRow}
+              />
             )}
-            {/* Left pinned columns */}
-            <TableCells cells={row.getLeftVisibleCells()} />
+            {/* Start pinned columns */}
+            <TableCells cells={row.getStartVisibleCells()} />
           </div>
           {/* Center unpinned columns */}
           <TableCells cells={row.getCenterVisibleCells()} />
@@ -90,7 +73,7 @@ export function TableRow({ row }: TableRowProps) {
 }
 
 interface TableCellsProps {
-  cells: Cell<RowModel, unknown>[];
+  cells: CellInstance[];
 }
 
 function TableCells({ cells }: TableCellsProps) {

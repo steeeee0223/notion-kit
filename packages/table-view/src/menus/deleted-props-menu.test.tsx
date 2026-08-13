@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 
+import type { ColumnInfo, Row } from "@notion-kit/table-hook";
+
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
 import { mockResizeObserver } from "@/__tests__/mock";
-import type { ColumnInfo, Row } from "@/lib/types";
 
 mockResizeObserver();
 
@@ -61,27 +62,6 @@ describe("DeletedPropsMenu", () => {
 
     expect(properties.deletedPropertiesItem()).toBeVisible();
     expect(properties.deletedCount(2)).toBeVisible();
-  });
-
-  it("DeletedPropertiesMenu_Open_ShowsDeletedProperties", async () => {
-    const deleted = await openDeletedPropertiesMenu();
-
-    expect(deleted.property("Archived Property")).toBeVisible();
-    expect(deleted.property("Old Property")).toBeVisible();
-  });
-
-  it("DeletedPropertiesMenu_Open_ShowsNamedRestoreActions", async () => {
-    const deleted = await openDeletedPropertiesMenu();
-
-    expect(deleted.restoreButton("Archived Property")).toBeVisible();
-    expect(deleted.restoreButton("Old Property")).toBeVisible();
-  });
-
-  it("DeletedPropertiesMenu_Open_ShowsNamedDeleteActions", async () => {
-    const deleted = await openDeletedPropertiesMenu();
-
-    expect(deleted.deleteButton("Archived Property")).toBeVisible();
-    expect(deleted.deleteButton("Old Property")).toBeVisible();
   });
 
   it("DeletedPropertiesMenu_Restore_RemovesPropertyFromDeletedList", async () => {

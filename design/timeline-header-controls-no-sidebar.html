@@ -1,0 +1,160 @@
+<!-- timeline-header-controls-no-sidebar.html -->
+<!-- Header controls variant for when sidebar is CLOSED. -->
+<!-- Has sidebar open trigger (arrowChevronDoubleForwardSmall) + reduced padding. -->
+
+<div class="h-0">
+  <div class="w-full" style="overflow-x: initial">
+    <div style="width: initial">
+      <div>
+        <div class="relative">
+          <!-- sticky header -->
+          <div class="sticky start-0 z-[2] h-0 w-[1035px]">
+            <div
+              class="absolute top-px flex h-9 items-center bg-[var(--c-bacPri)] ps-24 pt-1.5 text-sm font-medium"
+              style="
+                inset-inline-start: calc(
+                  -1 * var(--sticky-horizontal-offset, 0px)
+                );
+              "
+            >
+              <div data-popup-origin="true" class="contents">
+                <div
+                  role="button"
+                  tabindex="0"
+                  class="ms-0.5 me-1 mt-px inline-flex h-5.5 min-w-0 shrink-0 cursor-pointer items-center rounded-md fill-[var(--c-icoTer)] px-1 text-sm leading-tight font-normal whitespace-nowrap text-[var(--c-texPri)] transition-colors select-none"
+                  style="justify-content: unset"
+                >
+                  <!-- Icon.ArrowChevronDoubleForward, className: fill-icon-secondary, size-4, directional, [NEEDS UPSERT] -->
+                  <svg
+                    aria-hidden="true"
+                    role="graphics-symbol"
+                    viewBox="0 0 16 16"
+                    class="arrowChevronDoubleForwardSmall directional-icon block h-4 w-4 shrink-0 fill-[var(--c-icoSec)] text-[var(--c-icoSec)]"
+                  >
+                    <path
+                      d="M4.482 3.238a.625.625 0 1 0-.884.884L7.476 8l-3.878 3.878a.625.625 0 0 0 .884.884l4.32-4.32a.625.625 0 0 0 0-.884z"
+                    ></path>
+                    <path
+                      d="M8.882 3.238a.625.625 0 0 0-.884.884L11.876 8l-3.878 3.878a.625.625 0 0 0 .884.884l4.32-4.32a.625.625 0 0 0 0-.884z"
+                    ></path>
+                  </svg>
+                </div>
+              </div>
+              <span class="ps-0">February 2026</span>
+              <div
+                class="me-[-30px] h-full w-7.5"
+                style="
+                  background-image: linear-gradient(
+                    calc(var(--direction) * 90deg),
+                    var(--c-bacPri) 20%,
+                    var(--ca-conBacTra) 100%
+                  );
+                "
+              ></div>
+            </div>
+            <div
+              class="absolute top-px flex h-9 items-center bg-[var(--c-bacPri)] pe-24 pt-1.75"
+              style="inset-inline-end: var(--sticky-horizontal-offset, 0px)"
+            >
+              <div
+                class="ms-[-30px] h-full w-7.5"
+                style="
+                  background-image: linear-gradient(
+                    calc(var(--direction) * -90deg),
+                    var(--c-bacPri) 20%,
+                    var(--ca-conBacTra) 100%
+                  );
+                "
+              ></div>
+              <div class="x78zum5 gap-2">
+                <div
+                  role="button"
+                  tabindex="0"
+                  class="border-[1px solid var(--ca-borPriTra)] inline-flex h-6 cursor-pointer items-center justify-center gap-1.5 rounded-md px-1.5 text-sm leading-tight font-medium whitespace-nowrap text-[var(--c-texPri)] transition-colors select-none"
+                >
+                  <!-- Icon.CalendarDate15, className: size-0, [NEEDS UPSERT] -->
+                  <svg
+                    aria-hidden="true"
+                    role="graphics-symbol"
+                    viewBox="0 0 20 20"
+                    class="calendarDate15 block h-4 w-auto shrink-0 fill-inherit text-inherit"
+                  >
+                    <path
+                      d="M5.61218 4.0799C4.73322 4.18671 4.02924 4.93207 3.97064 5.81104L3.96588 5.9032L3.96729 15.342L3.10266 15.3953H3.06824C2.85229 15.3841 2.65259 15.2995 2.49689 15.1501C2.32245 14.9828 2.22455 14.7541 2.21741 14.5035C2.21741 14.4936 2.21606 14.4837 2.21606 14.4731V4.13733C2.21606 3.25684 2.90002 2.52771 3.77881 2.47156L13.9657 1.82074C13.9833 1.81946 14.0008 1.81873 14.0183 1.81873C14.2174 1.81873 14.4028 1.89215 14.5449 2.02765C14.6442 2.12225 14.7142 2.24054 14.7517 2.37207C14.7679 2.42828 14.7777 2.48712 14.7816 2.5473L14.7817 3.49023L5.64923 4.07343L5.61218 4.0799ZM17.784 16.7507C17.784 16.7665 17.7827 16.7824 17.7814 16.7983C17.7587 17.1375 17.4935 17.4362 17.1673 17.4976C17.1608 17.4976 17.1543 17.4996 17.1478 17.4996L6.10248 18.1812H6.06805C5.85211 18.17 5.6524 18.0854 5.49677 17.936C5.32233 17.7687 5.22437 17.54 5.21722 17.2894C5.21722 17.2795 5.21588 17.2696 5.21588 17.259V6.07227C5.21588 6.05646 5.21588 6.0412 5.21722 6.02533C5.24121 5.66638 5.53564 5.35303 5.88715 5.31604C5.89624 5.31604 5.90533 5.31335 5.91443 5.31268L16.9655 4.60663C16.9831 4.60535 17.0006 4.60468 17.0181 4.60468C17.2172 4.60468 17.4026 4.67804 17.5447 4.8136C17.644 4.90814 17.714 5.02643 17.7516 5.15802C17.7678 5.21417 17.7775 5.27301 17.7814 5.33319L17.784 16.7507ZM16.5358 8.02374C16.5358 7.7887 16.3475 7.61896 16.1176 7.63098L6.90546 8.19415C6.67493 8.20618 6.46613 8.37146 6.46613 8.62994V16.1628C6.45618 16.6468 6.77686 16.7722 7.1391 16.7462L16.0001 16.2205L16.002 16.2199C16.468 16.2015 16.5358 15.8461 16.5358 15.57V8.02374ZM8.61841 10.4206C7.77614 10.664 7.59045 10.2936 7.6827 9.90676C8.18783 9.78861 9.5015 9.39466 9.99832 9.21687L10.0043 14.4082L10.9228 14.5417C10.9228 14.8795 10.73 15.091 10.3846 15.1128C10.0983 15.1306 9.43289 15.1548 9.1129 15.1748C8.61607 15.2056 7.70637 15.28 7.70637 15.28C7.68092 15.2121 7.67264 15.1436 7.67264 15.0827C7.67264 14.9179 7.73948 14.749 7.95835 14.6752L8.62376 14.4602L8.61841 10.4206ZM12.9451 15.0913C11.884 15.1678 11.1423 14.7611 11.1411 14.0492C11.1411 13.6128 11.4771 13.262 11.9573 13.2845C12.0425 14.0006 12.4973 14.2653 12.9693 14.2349C13.4159 14.2064 13.7608 13.8902 13.7602 13.4453C13.7596 12.6435 13.0178 12.3085 11.5693 12.5701L11.5658 9.23078L13.4272 9.11181C13.8737 9.08331 14.286 9.02987 14.6905 8.92426C14.7662 9.05295 14.8171 9.22774 14.8171 9.41466C14.8171 9.94027 14.4309 10.4459 13.6472 10.4956C13.1249 10.529 12.6701 10.4956 12.2909 10.458L12.2921 11.3751C14.17 10.952 15.2152 11.5353 15.217 12.8979C15.227 14.2422 14.3771 15.0002 12.9451 15.0913Z"
+                    ></path></svg
+                  >Manage in Calendar
+                </div>
+                <div data-popup-origin="true" class="contents">
+                  <div
+                    role="button"
+                    tabindex="0"
+                    aria-expanded="false"
+                    aria-haspopup="dialog"
+                    class="inline-flex h-6 min-w-0 shrink-0 cursor-pointer items-center gap-1.5 rounded-md px-1.5 text-sm leading-tight font-normal whitespace-nowrap text-[var(--c-graTexAccPri)] transition-colors select-none"
+                    style="justify-content: unset"
+                  >
+                    <!-- Icon.ChevronDown -->
+                    Month<svg
+                      aria-hidden="true"
+                      role="graphics-symbol"
+                      viewBox="3.06 0 9.88 16"
+                      class="arrowChevronSingleDownSmall block h-4 w-auto shrink-0 fill-inherit text-inherit"
+                    >
+                      <path
+                        d="m12.76 6.52-4.32 4.32a.62.62 0 0 1-.44.18.62.62 0 0 1-.44-.18L3.24 6.52a.63.63 0 0 1 0-.88c.24-.24.64-.24.88 0L8 9.52l3.88-3.88c.24-.24.64-.24.88 0s.24.64 0 .88"
+                      ></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div
+                role="button"
+                tabindex="0"
+                class="ms-1 inline-flex h-6 min-w-0 shrink-0 cursor-pointer items-center rounded-md px-1 text-sm leading-tight font-normal whitespace-nowrap text-[var(--c-graTexAccPri)] transition-colors select-none"
+                style="justify-content: unset"
+              >
+                <!-- Icon.ChevronLeft, className: fill-icon-secondary, size-4, directional, [NEEDS UPSERT] -->
+                <svg
+                  aria-hidden="true"
+                  role="graphics-symbol"
+                  viewBox="0 0 16 16"
+                  class="arrowChevronSingleLeftSmall directional-icon block h-4 w-4 shrink-0 fill-[var(--c-icoSec)] text-[var(--c-icoSec)]"
+                >
+                  <path
+                    d="M10.162 3.238a.625.625 0 0 0-.884 0l-4.32 4.32a.625.625 0 0 0 0 .884l4.32 4.32a.625.625 0 1 0 .884-.884L6.284 8l3.878-3.878a.625.625 0 0 0 0-.884"
+                  ></path>
+                </svg>
+              </div>
+              <div
+                role="button"
+                tabindex="0"
+                class="inline-flex h-6 min-w-0 shrink-0 cursor-pointer items-center rounded-md px-1.5 text-sm leading-tight font-normal whitespace-nowrap text-[var(--c-texPri)] transition-colors select-none"
+                style="justify-content: unset"
+              >
+                Today
+              </div>
+              <div
+                role="button"
+                tabindex="0"
+                class="inline-flex h-6 min-w-0 shrink-0 cursor-pointer items-center rounded-md px-1 text-sm leading-tight font-normal whitespace-nowrap text-[var(--c-graTexAccPri)] transition-colors select-none"
+                style="justify-content: unset"
+              >
+                <!-- Icon.ChevronRight, className: fill-icon-secondary, size-4, directional -->
+                <svg
+                  aria-hidden="true"
+                  role="graphics-symbol"
+                  viewBox="0 0 16 16"
+                  class="arrowChevronSingleRightSmall directional-icon block h-4 w-4 shrink-0 fill-[var(--c-icoSec)] text-[var(--c-icoSec)]"
+                >
+                  <path
+                    d="M6.722 3.238a.625.625 0 1 0-.884.884L9.716 8l-3.878 3.878a.625.625 0 0 0 .884.884l4.32-4.32a.625.625 0 0 0 0-.884z"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

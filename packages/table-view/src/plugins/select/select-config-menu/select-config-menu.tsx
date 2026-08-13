@@ -2,12 +2,18 @@ import { useEffect, useState } from "react";
 
 import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
+import type {
+  ConfigMenuProps,
+  SelectConfig,
+  SelectSort,
+} from "@notion-kit/table-hook/plugins";
 import {
   Button,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   getSortableItemsAfterDrag,
@@ -16,8 +22,6 @@ import {
   Sortable,
 } from "@notion-kit/ui/primitives";
 
-import type { ConfigMenuProps } from "../../types";
-import type { SelectConfig, SelectSort } from "../types";
 import { OptionItem } from "./option-item";
 import { useSelectConfigMenu } from "./use-select-config-menu";
 
@@ -102,16 +106,18 @@ export function SelectConfigMenuContent({
             className="w-[250px]"
             finalFocus={false}
           >
-            <DropdownMenuGroup>
+            <DropdownMenuRadioGroup
+              value={config.sort}
+              onValueChange={(value: SelectSort) => updateSort(value)}
+            >
               {sortOptions.map((option) => (
-                <DropdownMenuCheckboxItem
+                <DropdownMenuRadioItem
                   key={option.value}
+                  value={option.value}
                   label={option.label}
-                  checked={config.sort === option.value}
-                  onCheckedChange={() => updateSort(option.value)}
                 />
               ))}
-            </DropdownMenuGroup>
+            </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenuSub>
       </DropdownMenuGroup>

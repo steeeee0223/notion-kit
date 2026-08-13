@@ -57,13 +57,13 @@ export class SelectMenuObject {
     await this.tableView.user.type(this.combobox(), value);
   }
 
-  async choose(name: string) {
-    await this.tableView.user.click(this.option(name));
+  choose(name: string) {
+    fireEvent.click(this.option(name));
   }
 
   async create(name: string) {
     await this.search(name);
-    await this.tableView.user.click(this.createOption(name));
+    fireEvent.click(this.createOption(name));
   }
 
   async close() {
@@ -90,7 +90,11 @@ export class SelectMenuObject {
   async openOptionActions(name: string) {
     const option = this.option(name);
     await this.tableView.user.hover(option);
-    fireEvent.click(within(option).getByRole("button", { name: /more/i }));
+    const item = option.closest('[data-slot="sortable-item"]');
+    if (!item) throw new Error(`Expected sortable item for ${name}`);
+    await this.tableView.user.click(
+      within(item as HTMLElement).getByRole("button", { name: /more/i }),
+    );
     await screen.findByRole("menuitem", { name: /delete/i });
   }
 
