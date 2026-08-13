@@ -6,8 +6,10 @@ import type {
   LayoutType,
   TableInstance,
 } from "@notion-kit/table-hook";
-
-import type { CellPlugin, InferCellProps } from "@/plugins";
+import type {
+  CellPlugin,
+  InferCellProps,
+} from "@notion-kit/table-hook/plugins";
 
 type TableGlobalReader = Pick<TableInstance, "getTableGlobalState">;
 type UnknownCellPlugin = CellPlugin<string, unknown, unknown>;

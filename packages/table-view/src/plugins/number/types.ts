@@ -1,36 +1,8 @@
-import type { CellPlugin } from "@notion-kit/table-hook";
-import type { Color } from "@notion-kit/utils";
-
-export type NumberFormat =
-  | "number"
-  | "number_with_commas"
-  | "percent"
-  | "currency";
-export type NumberRound = "default" | "0" | "1" | "2" | "3" | "4" | "5";
-export type NumberDisplayType = "number" | "bar" | "ring";
-export interface NumberOptions {
-  color: Color;
-  divideBy: number;
-  showNumber?: boolean;
-}
-
-export interface NumberConfig {
-  /**
-   * @default format: "number"
-   */
-  format: NumberFormat;
-  /**
-   * @default round: "default"
-   */
-  round: NumberRound;
-  /**
-   * @default showAs: "number"
-   */
-  showAs: NumberDisplayType;
-  /**
-   * @default options: { color: "green", divideBy: 100, showNumber: true }
-   */
-  options: NumberOptions;
-}
-
-export type NumberPlugin = CellPlugin<"number", string | null, NumberConfig>;
+export type {
+  NumberConfig,
+  NumberDisplayType,
+  NumberFormat,
+  NumberOptions,
+  NumberPlugin,
+  NumberRound,
+} from "@notion-kit/table-hook/plugins";

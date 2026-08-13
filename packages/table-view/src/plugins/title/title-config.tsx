@@ -1,7 +1,7 @@
 import { useId } from "react";
 
 import { Icon } from "@notion-kit/icons";
-import type { ConfigMenuProps } from "@notion-kit/table-hook";
+import type { ConfigMenuProps } from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenuItem,
   Label,

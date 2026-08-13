@@ -1,11 +1,8 @@
-/**
- * @todo
- */
 export type {
   CellPlugin,
+  CellProps,
   ComparableValue,
   CompareFn,
-  CellProps,
   ConfigMenuProps,
   GroupingValueProps,
   InferCellProps,
@@ -14,4 +11,4 @@ export type {
   InferKey,
   InferPlugin,
   TableDataAtom,
-} from "@notion-kit/table-hook";
+} from "@notion-kit/table-hook/plugins";

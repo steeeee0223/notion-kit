@@ -4,12 +4,14 @@
     "lib": ["ES2022", "dom", "dom.iterable"],
     "jsx": "react-jsx",
     "rootDir": ".",
-    "paths": { "@/*": ["./src/*"] }
+    "paths": {
+      "@/*": ["./src/*"],
+      "@notion-kit/table-hook/plugins": ["./src/plugins/index.ts"]
+    }
   },
   "include": ["src", "vitest.*.ts"],
   "exclude": [
     "node_modules",
-    "src/plugins/*/**",
     "src/table-contexts/table-view-content.tsx",
     "src/table-contexts/table-view-provider.tsx"
   ]

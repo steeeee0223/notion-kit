@@ -720,6 +720,9 @@ importers:
       '@notion-kit/settings-panel':
         specifier: workspace:*
         version: link:../../packages/settings-panel
+      '@notion-kit/table-hook':
+        specifier: workspace:*
+        version: link:../../packages/table-hook
       '@notion-kit/table-view':
         specifier: workspace:*
         version: link:../../packages/table-view
@@ -1719,6 +1722,9 @@ importers:
       '@notion-kit/ui':
         specifier: workspace:*
         version: link:../ui
+      '@notion-kit/utils':
+        specifier: workspace:*
+        version: link:../utils
       '@tanstack/react-table':
         specifier: 9.0.0
         version: 9.0.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)

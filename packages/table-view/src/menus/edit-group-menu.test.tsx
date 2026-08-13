@@ -2,11 +2,11 @@ import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type {
-  CellPlugin,
   ColumnInfo,
   Row,
   TableViewState,
 } from "@notion-kit/table-hook";
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 
 import { DEFAULT_PLUGINS } from "@/plugins";
 

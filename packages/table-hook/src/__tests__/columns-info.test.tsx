@@ -7,6 +7,8 @@ import type { DragEndEvent } from "@dnd-kit/react";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
+
 import {
   mockData,
   mockProperties,
@@ -14,7 +16,6 @@ import {
   renderTableHook,
 } from "@/__tests__/mock";
 import type { ColumnDefs, Row } from "@/lib/types";
-import type { CellPlugin } from "@/plugins";
 import type {
   DataResourceAction,
   PropertiesResourceAction,

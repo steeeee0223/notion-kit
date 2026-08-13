@@ -1,8 +1,9 @@
 import { v4 } from "uuid";
 
+import type { CellPlugin, TitlePlugin } from "@notion-kit/table-hook/plugins";
+
 import type { ColumnDefs, ColumnInfo, PluginType, Row } from "@/lib/types";
 import { Entity } from "@/lib/utils";
-import type { CellPlugin, TitlePlugin } from "@/plugins";
 import type { TableState } from "@/table-contexts/types";
 
 export function getMinWidth(type: PluginType<CellPlugin[]>) {

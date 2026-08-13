@@ -1,12 +1,11 @@
-import type { IconData } from "@notion-kit/ui/icon-block";
-
 import type {
   CellPlugin,
   InferConfig,
   InferData,
   InferKey,
   InferPlugin,
-} from "@/plugins";
+} from "@notion-kit/table-hook/plugins";
+import type { IconData } from "@notion-kit/ui/icon-block";
 
 interface PropertyBase {
   id: string;

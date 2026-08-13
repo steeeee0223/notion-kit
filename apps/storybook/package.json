@@ -32,6 +32,7 @@
     "@notion-kit/registry": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/settings-panel": "workspace:*",
+    "@notion-kit/table-hook": "workspace:*",
     "@notion-kit/table-view": "workspace:*",
     "@notion-kit/ui": "workspace:*",
     "@notion-kit/utils": "workspace:*",

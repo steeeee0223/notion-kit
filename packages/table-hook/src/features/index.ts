@@ -16,9 +16,10 @@ import {
   type RowData,
 } from "@tanstack/react-table";
 
+import type { ComparableValue } from "@notion-kit/table-hook/plugins";
+
 import { sortBooleans, sortNumbers, sortStrings } from "@/fns";
 import { COMMON_AGGREGATION_FNS } from "@/methods";
-import type { ComparableValue } from "@/plugins";
 
 import {
   ColumnsInfoFeature,

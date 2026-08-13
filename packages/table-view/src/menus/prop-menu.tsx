@@ -2,6 +2,7 @@ import { flexRender, functionalUpdate } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
 import { TableViewMenuPage } from "@notion-kit/table-hook";
+import type { ConfigMenuProps } from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -12,7 +13,6 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { PropMeta } from "@/common";
-import { ConfigMenuProps } from "@/plugins";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { CalcMenu } from "./calc-menu";

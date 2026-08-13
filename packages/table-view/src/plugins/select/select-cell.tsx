@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { useRect } from "@notion-kit/hooks";
-import { CellProps } from "@notion-kit/table-hook";
+import { CellProps } from "@notion-kit/table-hook/plugins";
 import {
   Popover,
   PopoverContent,

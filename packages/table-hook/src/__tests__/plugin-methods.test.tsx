@@ -1,6 +1,12 @@
 import { act, render, renderHook, screen } from "@testing-library/react";
 import { describe, expect, expectTypeOf, it, vi } from "vitest";
 
+import {
+  DefaultGroupingValue,
+  type CellPlugin,
+  type GroupingValueProps,
+} from "@notion-kit/table-hook/plugins";
+
 import { DEFAULT_FEATURES } from "@/features";
 import type { _RowInstance } from "@/features/types";
 import { sortBooleans, sortNumbers, sortStrings } from "@/fns";
@@ -16,11 +22,6 @@ import {
   resolveGroupSortingMethod,
   resolveSortingMethod,
 } from "@/methods";
-import {
-  DefaultGroupingValue,
-  type CellPlugin,
-  type GroupingValueProps,
-} from "@/plugins";
 import { createCompareFn } from "@/plugins/utils";
 import type { PartialTableViewState } from "@/table-contexts/types";
 import { useTableView } from "@/table-contexts/use-table-view";

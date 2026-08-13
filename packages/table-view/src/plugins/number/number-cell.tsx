@@ -1,6 +1,6 @@
 import { cn } from "@notion-kit/cn";
 import { wrappedClassName } from "@notion-kit/table-hook";
-import type { InferCellProps } from "@notion-kit/table-hook";
+import type { InferCellProps } from "@notion-kit/table-hook/plugins";
 import { MeterBar, MeterRing, TooltipPreset } from "@notion-kit/ui/primitives";
 import { COLOR } from "@notion-kit/utils";
 

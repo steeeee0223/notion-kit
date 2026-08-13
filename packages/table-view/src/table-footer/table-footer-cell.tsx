@@ -4,6 +4,7 @@ import {
   resolveCountingMethod,
   type HeaderInstance,
 } from "@notion-kit/table-hook";
+import type { CellPlugin, InferKey } from "@notion-kit/table-hook/plugins";
 import {
   Button,
   DropdownMenu,
@@ -12,7 +13,6 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { CalcMenu } from "@/menus";
-import type { CellPlugin, InferKey } from "@/plugins";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface TableFooterCellProps {

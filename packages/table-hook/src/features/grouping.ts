@@ -7,6 +7,8 @@ import {
   makeStateUpdater,
 } from "@tanstack/react-table";
 
+import type { ComparableValue } from "@notion-kit/table-hook/plugins";
+import { DefaultGroupingValue } from "@notion-kit/table-hook/plugins";
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
 import type { _RowInstance, _TableInstance } from "@/features/types";
@@ -17,8 +19,6 @@ import {
   resolveGroupSortingMethod,
   type Weekday,
 } from "@/methods";
-import type { ComparableValue } from "@/plugins";
-import { DefaultGroupingValue } from "@/plugins";
 import { createRuntimePluginMethodContext } from "@/table-contexts/plugin-method-context";
 
 import type { PluginMethodState } from "./plugin-methods";

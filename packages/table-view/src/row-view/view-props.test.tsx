@@ -10,11 +10,11 @@ import {
 import { expect, it, vi } from "vitest";
 
 import type {
-  CellPlugin,
   ColumnInfo,
   DataResourceAction,
   Row,
 } from "@notion-kit/table-hook";
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
 import {

@@ -7,13 +7,14 @@ import type { DragEndEvent } from "@dnd-kit/react";
 import { act, render, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
+
 import { renderTableHook } from "@/__tests__/mock";
 import type { TableViewState } from "@/features/menu";
 import { createGroupId } from "@/features/utils";
 import type { ColumnInfo, Row } from "@/lib/types";
 import { arrayToEntity } from "@/lib/utils";
 import { compareNumbers } from "@/methods";
-import type { CellPlugin } from "@/plugins";
 import { useTableView } from "@/table-contexts/use-table-view";
 
 const mockProperties: ColumnInfo[] = [

@@ -1,6 +1,8 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
+
 import {
   mockData,
   mockProperties,
@@ -10,7 +12,6 @@ import {
 import { TableViewMenuPage, type TableViewState } from "@/features/menu";
 import type { ColumnInfo, Row } from "@/lib/types";
 import { arrayToEntity } from "@/lib/utils";
-import type { CellPlugin } from "@/plugins";
 import {
   serializeResourceAction,
   type DataResourceAction,

@@ -5,15 +5,12 @@ import {
   useTableView,
   type TableProps,
 } from "@notion-kit/table-hook";
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 import { TooltipProvider } from "@notion-kit/ui/primitives";
 
 import { BoardViewContent } from "@/board-view";
 import { ListViewContent } from "@/list-view";
-import {
-  DEFAULT_PLUGINS,
-  type CellPlugin,
-  type DefaultPlugins,
-} from "@/plugins";
+import { DEFAULT_PLUGINS, type DefaultPlugins } from "@/plugins";
 import { RowView } from "@/row-view";
 import { TimelineViewContent } from "@/timeline-view";
 import { Toolbar } from "@/tools/toolbar";
