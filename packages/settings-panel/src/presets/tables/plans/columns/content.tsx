@@ -1,6 +1,7 @@
 import { Plan } from "@notion-kit/schemas";
 
-import type { ColumnDef } from "../../table-features";
+import type { ColumnDef } from "@/presets/tables/table-features";
+
 import { ContentCell, type ContentCellProps } from "../cells";
 
 export interface ContentPlanRow

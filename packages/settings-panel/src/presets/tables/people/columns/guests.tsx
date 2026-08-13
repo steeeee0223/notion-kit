@@ -8,9 +8,9 @@ import {
   TextCell,
   UserCell,
 } from "@/presets/tables/common-cells";
+import type { ColumnDef, Row } from "@/presets/tables/table-features";
 import { userFilterFn } from "@/presets/tables/utils";
 
-import type { ColumnDef, Row } from "../../table-features";
 import { AccessCell, GuestActionCell } from "../cells";
 
 interface CreateGuestColumnsOptions {

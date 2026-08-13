@@ -5,7 +5,8 @@ import {
   TooltipProvider,
 } from "@notion-kit/ui/primitives";
 
-import type { ColumnDef } from "../../table-features";
+import type { ColumnDef } from "@/presets/tables/table-features";
+
 import { ListCell, PlanHeader } from "../cells";
 
 export interface HighlightPlanRow

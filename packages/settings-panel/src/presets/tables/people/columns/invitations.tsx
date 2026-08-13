@@ -3,8 +3,8 @@ import { Badge } from "@notion-kit/ui/primitives";
 
 import { Scope, type InvitationRow } from "@/lib/types";
 import { SortingToggle, UserCell } from "@/presets/tables/common-cells";
+import type { ColumnDef, Row } from "@/presets/tables/table-features";
 
-import type { ColumnDef, Row } from "../../table-features";
 import { InvitationActionCell, RoleCell } from "../cells";
 
 interface CreateInvitationColumnsOptions {
