@@ -224,8 +224,8 @@ catalogs:
       specifier: ^5.81.5
       version: 5.81.5
     '@tanstack/react-table':
-      specifier: ^8.21.3
-      version: 8.21.3
+      specifier: ^9.0.0
+      version: 9.0.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
     '@tanstack/react-virtual':
       specifier: ^3.13.23
       version: 3.13.24
@@ -1657,7 +1657,7 @@ importers:
         version: 5.81.5(react@19.2.3)
       '@tanstack/react-table':
         specifier: catalog:ui
-        version: 8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 9.0.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       file-saver:
         specifier: ^2.0.5
         version: 2.0.5

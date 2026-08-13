@@ -1,5 +1,3 @@
-import type { ColumnDef } from "@tanstack/react-table";
-
 import { Plan } from "@notion-kit/schemas";
 import {
   Button,
@@ -7,6 +5,7 @@ import {
   TooltipProvider,
 } from "@notion-kit/ui/primitives";
 
+import type { PlansColumnDef } from "../../table-features";
 import { ListCell, PlanHeader } from "../cells";
 
 export interface HighlightPlanRow
@@ -17,7 +16,7 @@ export interface HighlightPlanRow
 export const getHighlightColumns = (
   canUpgrade?: boolean,
   onUpgrade?: (plan: Plan) => void,
-): ColumnDef<HighlightPlanRow>[] => [
+): PlansColumnDef<HighlightPlanRow>[] => [
   {
     accessorKey: "title",
     header: () => <div className="w-[118px]" />,

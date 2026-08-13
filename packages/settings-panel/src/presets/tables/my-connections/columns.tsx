@@ -1,10 +1,9 @@
-import type { ColumnDef } from "@tanstack/react-table";
-
 import { Trans } from "@notion-kit/i18n";
 
 import type { Connection } from "@/lib/types";
 
 import { TextCell } from "../common-cells";
+import type { SettingsColumnDef } from "../table-features";
 import { ActionCell, ConnectionCell } from "./cells";
 
 export interface CreateConnectionColumnsOptions {
@@ -15,7 +14,7 @@ export interface CreateConnectionColumnsOptions {
 export function createConnectionColumns({
   onCreateConnection,
   onDisconnect,
-}: CreateConnectionColumnsOptions): ColumnDef<Connection>[] {
+}: CreateConnectionColumnsOptions): SettingsColumnDef<Connection>[] {
   return [
     {
       accessorKey: "connection",

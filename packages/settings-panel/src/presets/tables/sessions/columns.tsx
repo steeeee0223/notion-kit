@@ -1,5 +1,3 @@
-import type { ColumnDef, Row } from "@tanstack/react-table";
-
 import { Trans, useTranslation } from "@notion-kit/i18n";
 import { Button, Dialog, DialogTrigger } from "@notion-kit/ui/primitives";
 import { toDateString } from "@notion-kit/utils";
@@ -8,6 +6,7 @@ import type { SessionRow } from "@/lib/types";
 import { LogoutConfirm } from "@/presets/modals";
 import { SortingToggle, TextCell } from "@/presets/tables/common-cells";
 
+import type { SettingsColumnDef, SettingsRow } from "../table-features";
 import { DeviceCell } from "./cells";
 
 interface CreateSessionColumnsOptions {
@@ -18,7 +17,7 @@ interface CreateSessionColumnsOptions {
 export function createSessionColumns({
   currentSessionId,
   onLogout,
-}: CreateSessionColumnsOptions): ColumnDef<SessionRow>[] {
+}: CreateSessionColumnsOptions): SettingsColumnDef<SessionRow>[] {
   return [
     {
       accessorKey: "device",
@@ -95,7 +94,7 @@ const LogoutCell = ({
   row,
   onLogout,
 }: {
-  row: Row<SessionRow>;
+  row: SettingsRow<SessionRow>;
   onLogout?: (token: string) => void;
 }) => {
   const { t } = useTranslation("settings");

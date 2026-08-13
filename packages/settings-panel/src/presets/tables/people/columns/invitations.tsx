@@ -1,11 +1,10 @@
-import type { ColumnDef, Row } from "@tanstack/react-table";
-
 import { Trans, useTranslation } from "@notion-kit/i18n";
 import { Badge } from "@notion-kit/ui/primitives";
 
 import { Scope, type InvitationRow } from "@/lib/types";
 import { SortingToggle, UserCell } from "@/presets/tables/common-cells";
 
+import type { SettingsColumnDef, SettingsRow } from "../../table-features";
 import { InvitationActionCell, RoleCell } from "../cells";
 
 interface CreateInvitationColumnsOptions {
@@ -27,7 +26,7 @@ function StatusCell({ status }: { status: InvitationRow["status"] }) {
 export function createInvitationColumns({
   scopes,
   onCancel,
-}: CreateInvitationColumnsOptions): ColumnDef<InvitationRow>[] {
+}: CreateInvitationColumnsOptions): SettingsColumnDef<InvitationRow>[] {
   return [
     {
       accessorKey: "email",
@@ -95,7 +94,7 @@ export function createInvitationColumns({
       ? [
           {
             id: "actions",
-            cell: ({ row }: { row: Row<InvitationRow> }) =>
+            cell: ({ row }: { row: SettingsRow<InvitationRow> }) =>
               row.original.status === "pending" && (
                 <div className="flex items-center justify-end">
                   <InvitationActionCell

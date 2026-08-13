@@ -1,5 +1,3 @@
-import type { ColumnDef, Row } from "@tanstack/react-table";
-
 import { Trans } from "@notion-kit/i18n";
 import { Role } from "@notion-kit/schemas";
 
@@ -11,6 +9,7 @@ import {
 } from "@/presets/tables/common-cells";
 import { userFilterFn } from "@/presets/tables/utils";
 
+import type { SettingsColumnDef, SettingsRow } from "../../table-features";
 import { MemberActionCell, RoleSelectCell, TeamspacesCell } from "../cells";
 
 interface CreateMemberColumnsOptions {
@@ -27,7 +26,7 @@ export function createMemberColumns({
   onUpdate,
   onDelete,
   onTeamspaceSelect,
-}: CreateMemberColumnsOptions): ColumnDef<MemberRow>[] {
+}: CreateMemberColumnsOptions): SettingsColumnDef<MemberRow>[] {
   return [
     {
       accessorKey: "user",
@@ -100,7 +99,7 @@ export function createMemberColumns({
       ? [
           {
             id: "actions",
-            cell: ({ row }: { row: Row<MemberRow> }) => {
+            cell: ({ row }: { row: SettingsRow<MemberRow> }) => {
               const id = row.original.user.id;
               return (
                 <div className="flex items-center justify-end">

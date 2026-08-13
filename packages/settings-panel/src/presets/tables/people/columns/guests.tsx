@@ -1,5 +1,3 @@
-import type { ColumnDef, Row } from "@tanstack/react-table";
-
 import { Trans } from "@notion-kit/i18n";
 import { Role } from "@notion-kit/schemas";
 import { Checkbox } from "@notion-kit/ui/primitives";
@@ -12,6 +10,7 @@ import {
 } from "@/presets/tables/common-cells";
 import { userFilterFn } from "@/presets/tables/utils";
 
+import type { SettingsColumnDef, SettingsRow } from "../../table-features";
 import { AccessCell, GuestActionCell } from "../cells";
 
 interface CreateGuestColumnsOptions {
@@ -24,7 +23,7 @@ export function createGuestColumns({
   scopes,
   onUpdate,
   onDelete,
-}: CreateGuestColumnsOptions): ColumnDef<GuestRow>[] {
+}: CreateGuestColumnsOptions): SettingsColumnDef<GuestRow>[] {
   return [
     {
       id: "user",
@@ -36,7 +35,10 @@ export function createGuestColumns({
             <Checkbox
               size="sm"
               checked={table.getIsAllPageRowsSelected()}
-              indeterminate={table.getIsSomePageRowsSelected()}
+              indeterminate={
+                table.getIsSomePageRowsSelected() &&
+                !table.getIsAllPageRowsSelected()
+              }
               onCheckedChange={(value) =>
                 table.toggleAllPageRowsSelected(!!value)
               }
@@ -62,7 +64,6 @@ export function createGuestColumns({
         </div>
       ),
       filterFn: userFilterFn,
-      enableHiding: false,
     },
     ...(scopes.has(Scope.MemberUpdate)
       ? [
@@ -74,13 +75,13 @@ export function createGuestColumns({
                 className="pl-2"
               />
             ),
-            cell: ({ row }: { row: Row<GuestRow> }) => (
+            cell: ({ row }: { row: SettingsRow<GuestRow> }) => (
               <AccessCell access={row.original.access} />
             ),
           },
           {
             id: "actions",
-            cell: ({ row }: { row: Row<GuestRow> }) => (
+            cell: ({ row }: { row: SettingsRow<GuestRow> }) => (
               <div className="flex items-center justify-end">
                 <GuestActionCell
                   name={row.original.user.name}

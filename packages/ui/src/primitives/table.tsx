@@ -92,7 +92,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
     <th
       className={cn(
         "sticky top-0 h-8 bg-transparent text-start text-xs font-normal text-secondary",
-        "data-[pinned=left]:left-0 data-[pinned=left]:z-40 data-[pinned=left]:bg-modal data-[pinned=left]:shadow-l-pinned",
+        "data-[pinned=start]:inset-inline-start-0 data-[pinned=start]:z-40 data-[pinned=start]:bg-modal data-[pinned=start]:shadow-l-pinned",
         className,
       )}
       {...props}
@@ -105,7 +105,7 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
     <td
       className={cn(
         "h-[42px] bg-transparent pr-3",
-        "data-[pinned=left]:sticky data-[pinned=left]:left-0 data-[pinned=left]:z-20 data-[pinned=left]:bg-modal data-[pinned=left]:shadow-l-pinned",
+        "data-[pinned=start]:inset-inline-start-0 data-[pinned=start]:sticky data-[pinned=start]:z-20 data-[pinned=start]:bg-modal data-[pinned=start]:shadow-l-pinned",
         className,
       )}
       {...props}

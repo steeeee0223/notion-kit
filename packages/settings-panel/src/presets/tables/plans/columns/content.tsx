@@ -1,7 +1,6 @@
-import type { ColumnDef } from "@tanstack/react-table";
-
 import { Plan } from "@notion-kit/schemas";
 
+import type { PlansColumnDef } from "../../table-features";
 import { ContentCell, type ContentCellProps } from "../cells";
 
 export interface ContentPlanRow
@@ -9,7 +8,7 @@ export interface ContentPlanRow
   title: string;
 }
 
-export const contentColumns: ColumnDef<ContentPlanRow>[] = [
+export const contentColumns: PlansColumnDef<ContentPlanRow>[] = [
   {
     accessorKey: "title",
     header: () => null,
@@ -19,7 +18,7 @@ export const contentColumns: ColumnDef<ContentPlanRow>[] = [
   },
   ...Object.values(Plan)
     .filter((plan) => plan !== Plan.EDUCATION)
-    .map<ColumnDef<ContentPlanRow>>((plan) => ({
+    .map<PlansColumnDef<ContentPlanRow>>((plan) => ({
       accessorKey: plan,
       header: () => null,
       cell: ({ row }) => <ContentCell {...row.original[plan]} />,

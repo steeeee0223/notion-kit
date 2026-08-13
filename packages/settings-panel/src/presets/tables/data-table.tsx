@@ -3,15 +3,11 @@
 import { useEffect, useState } from "react";
 import {
   flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
+  useTable,
   type ColumnFilter,
   type ColumnFiltersState,
   type OnChangeFn,
-  type Row,
+  type RowData,
   type SortingState,
 } from "@tanstack/react-table";
 
@@ -26,9 +22,15 @@ import {
   TableRow,
 } from "@notion-kit/ui/primitives";
 
-export interface DataTableProps<TData, TValue> {
+import {
+  settingsTableFeatures,
+  type SettingsColumnDef,
+  type SettingsRow,
+} from "./table-features";
+
+export interface DataTableProps<TData extends RowData> {
   className?: string;
-  columns: ColumnDef<TData, TValue>[];
+  columns: SettingsColumnDef<TData>[];
   data: TData[];
   emptyResult?: string;
   /** External column filters state (controlled) */
@@ -40,12 +42,12 @@ export interface DataTableProps<TData, TValue> {
   /** Search configuration - applies filter to a specific column */
   search?: ColumnFilter;
   /** Row click handler */
-  onRowClick?: (row: Row<TData>) => void;
+  onRowClick?: (row: SettingsRow<TData>) => void;
   /** Custom header className function based on column id */
   getHeaderClassName?: (columnId: string) => string;
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends RowData>({
   className,
   columns,
   data,
@@ -56,7 +58,7 @@ export function DataTable<TData, TValue>({
   search,
   onRowClick,
   getHeaderClassName,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [internalColumnFilters, setInternalColumnFilters] =
     useState<ColumnFiltersState>([]);
@@ -66,20 +68,17 @@ export function DataTable<TData, TValue>({
   const handleColumnFiltersChange =
     onColumnFiltersChange ?? setInternalColumnFilters;
 
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const table = useReactTable({
+  const table = useTable({
+    features: settingsTableFeatures,
     data,
     columns,
     state: {
       sorting,
       columnFilters,
-      columnPinning: { left: initialColumnPinning },
+      columnPinning: { start: initialColumnPinning ?? [], end: [] },
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: handleColumnFiltersChange,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
   });
 
   // Handle search prop
@@ -97,7 +96,7 @@ export function DataTable<TData, TValue>({
             {headerGroup.headers.map((header) => {
               const isPinned = header.column.getIsPinned();
               const pinnedStyles = isPinned
-                ? { left: `${header.column.getStart("left")}px` }
+                ? { insetInlineStart: `${header.column.getStart("start")}px` }
                 : {};
 
               return (
@@ -128,10 +127,14 @@ export function DataTable<TData, TValue>({
               onClick={() => onRowClick?.(row)}
               className={cn(onRowClick && "cursor-pointer hover:bg-default/5")}
             >
-              {row.getVisibleCells().map((cell) => {
+              {[
+                ...row.getStartVisibleCells(),
+                ...row.getCenterVisibleCells(),
+                ...row.getEndVisibleCells(),
+              ].map((cell) => {
                 const isPinned = cell.column.getIsPinned();
                 const pinnedStyles = isPinned
-                  ? { left: `${cell.column.getStart("left")}px` }
+                  ? { insetInlineStart: `${cell.column.getStart("start")}px` }
                   : {};
 
                 return (

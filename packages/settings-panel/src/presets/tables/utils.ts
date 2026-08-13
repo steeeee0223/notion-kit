@@ -1,9 +1,9 @@
-import type { Row } from "@tanstack/react-table";
-
 import type { User } from "@notion-kit/schemas";
 
+import type { SettingsRow } from "./table-features";
+
 export function userFilterFn<T extends { user: User }>(
-  row: Row<T>,
+  row: SettingsRow<T>,
   _columnId: string,
   filterValue: unknown,
 ) {

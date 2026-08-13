@@ -1,11 +1,11 @@
-import type { ColumnDef } from "@tanstack/react-table";
-
 import { Trans } from "@notion-kit/i18n";
 
 import type { GroupOption } from "@/lib/types";
 import { TextCell } from "@/presets/tables/common-cells";
 
-export const createGroupColumns = (): ColumnDef<GroupOption>[] => [
+import type { SettingsColumnDef } from "../../table-features";
+
+export const createGroupColumns = (): SettingsColumnDef<GroupOption>[] => [
   {
     id: "group",
     accessorKey: "group",
