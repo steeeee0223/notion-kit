@@ -820,7 +820,7 @@ describe("useTableView resource API", () => {
     });
   });
 
-  it("ResourceApi_PluginMethods_DiscoversCapabilitiesAndSkipsSelectedMethods", () => {
+  it("ResourceApi_PluginMethods_DiscoversGroupingCapabilitiesAndSkipsSelectedMethods", () => {
     const onViewChange = vi.fn();
     const { result } = renderHook(() =>
       useTableView({
@@ -839,11 +839,6 @@ describe("useTableView resource API", () => {
 
     expect(
       result.current.table
-        .getColumnSortingMethods("col1")
-        .map((method) => method.id),
-    ).toEqual(["text", "alternate"]);
-    expect(
-      result.current.table
         .getColumnGroupingMethods("col1")
         .map((method) => method.id),
     ).toEqual(["value", "text"]);
@@ -856,7 +851,7 @@ describe("useTableView resource API", () => {
     expect(onViewChange).not.toHaveBeenCalled();
   });
 
-  it("ResourceApi_PluginMethods_ReportsNoCapabilitiesForPlainPlugins", () => {
+  it("ResourceApi_PluginMethods_ReportsNoGroupingCapabilitiesForPlainPlugins", () => {
     const { result } = renderHook(() =>
       useTableView({
         plugins: arrayToEntity([noMethodsPlugin]),
@@ -867,7 +862,6 @@ describe("useTableView resource API", () => {
       }),
     );
 
-    expect(result.current.table.getColumnSortingMethods("col1")).toEqual([]);
     expect(result.current.table.getColumnGroupingMethods("col1")).toEqual([]);
   });
 

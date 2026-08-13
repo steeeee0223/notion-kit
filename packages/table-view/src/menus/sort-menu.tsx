@@ -123,7 +123,6 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
       {({ columnsInfo }) => {
         const current = columnsInfo[currentId]!;
         const properties = Object.values(columnsInfo);
-        const methods = table.getColumnSortingMethods(currentId);
         const selectedMethod = table.getSelectedSortingMethod(currentId);
         const labels = getSortingDirectionLabels(selectedMethod);
         const directionLabel = desc ? labels.descending : labels.ascending;
@@ -146,11 +145,7 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
                 className="h-9"
                 icon={<Sortable.Handle aria-label={`Move ${current.name}`} />}
                 label={
-                  <div
-                    className={`grid h-8 w-full items-center gap-1.5 ${
-                      methods.length > 1 ? "grid-cols-3" : "grid-cols-2"
-                    }`}
-                  >
+                  <div className="grid h-8 w-full grid-cols-2 items-center gap-1.5">
                     <Select
                       value={currentId}
                       onValueChange={(id) => {
@@ -191,38 +186,6 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-                    {methods.length > 1 && selectedMethod && (
-                      <Select
-                        value={selectedMethod.id}
-                        onValueChange={(methodId) => {
-                          if (methodId !== null) {
-                            table.setColumnSortingMethod(currentId, methodId);
-                          }
-                        }}
-                      >
-                        <SelectTrigger
-                          aria-label="Sort method"
-                          className="my-0 w-full max-w-45 border border-border"
-                        >
-                          <SelectValue aria-label="Sort method">
-                            <span className="truncate">
-                              {selectedMethod.name}
-                            </span>
-                          </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            {methods.map((method) => (
-                              <SelectItem
-                                key={method.id}
-                                value={method.id}
-                                label={method.name}
-                              />
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
                     <Select
                       value={desc ? "desc" : "asc"}
                       onValueChange={(value) =>

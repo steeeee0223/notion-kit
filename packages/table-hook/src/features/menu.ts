@@ -11,7 +11,6 @@ import {
   resolveGroupingMethod,
   resolveSortingMethod,
   type GroupingMethod,
-  type SortingMethodDescriptor,
 } from "@/methods";
 import type { ResourceChangeFn, ViewResourceAction } from "@/table-contexts";
 
@@ -92,7 +91,6 @@ export interface TableMenuTableApi {
   setTableMenuState: (state: TableMenuState) => void;
   getTableGlobalState: () => TableViewState;
   setTableGlobalState: ResourceChangeFn<TableViewState, ViewResourceAction>;
-  getColumnSortingMethods: (colId: string) => SortingMethodDescriptor[];
   getSelectedSortingMethod: (
     colId: string,
   ) => ReturnType<typeof resolveSortingMethod>;
@@ -152,8 +150,6 @@ export const TableMenuFeature: TableFeature = {
     instance.setTableGlobalState = (updater, action) => {
       instance.options.onTableGlobalChange?.(updater, action);
     };
-    instance.getColumnSortingMethods = (colId) =>
-      instance.getColumnPlugin(colId).sorting?.methods ?? [];
     instance.getSelectedSortingMethod = (colId) => {
       const pluginMethods = instance.getTableGlobalState().pluginMethods;
       return resolveSortingMethod(

@@ -1,12 +1,7 @@
-import { fireEvent, screen, waitFor, within } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { screen, waitFor, within } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 
-import type {
-  CellPlugin,
-  ColumnInfo,
-  Row,
-  TableViewState,
-} from "@notion-kit/table-hook";
+import type { CellPlugin, ColumnInfo, Row } from "@notion-kit/table-hook";
 
 import { DEFAULT_PLUGINS } from "@/plugins";
 
@@ -211,8 +206,7 @@ describe("SortMenu", () => {
     expect(sort.directionTrigger("Old → new")).toBeVisible();
   });
 
-  it("SortMenu_CustomRuntimePlugin_SelectsMethodAndExecutesInline", async () => {
-    const onViewChange = vi.fn();
+  it("SortMenu_CustomRuntimePlugin_UsesDefaultSortingMethod", async () => {
     const customPlugin: CellPlugin<"priority-code", string, undefined> = {
       id: "priority-code",
       meta: { name: "Priority code", desc: "Priority code", icon: null },
@@ -269,37 +263,22 @@ describe("SortMenu", () => {
       plugins: [...DEFAULT_PLUGINS, customPlugin],
       properties,
       data,
-      onViewChange,
     });
     const sort = await tableView.openSortMenu();
 
     await sort.addRule("Code");
-    const method = within(sort.root).getByRole("combobox", {
-      name: "Sort method",
-    });
-    expect(method).toHaveTextContent("Alphabetical");
-    fireEvent.click(method);
-    await tableView.user.click(
-      await screen.findByRole("option", { name: "Code length" }),
-    );
 
     await waitFor(() =>
       expect(tableView.rowOrder(["One", "Two", "Three"])).toEqual([
         "Two",
-        "Three",
         "One",
+        "Three",
       ]),
     );
     expect(
-      within(sort.root).getByRole("combobox", { name: "Short first" }),
+      within(sort.root).getByRole("combobox", { name: "A first" }),
     ).toBeVisible();
-    const viewChange = onViewChange.mock.lastCall?.[0] as
-      | { next: TableViewState }
-      | undefined;
-    expect(viewChange?.next.pluginMethods).toMatchObject({
-      sortingMethodByColumn: { code: "length" },
-    });
-    expect(viewChange?.next).not.toHaveProperty("sorting");
+    expect(within(sort.root).getAllByRole("combobox")).toHaveLength(2);
   });
 });
 
