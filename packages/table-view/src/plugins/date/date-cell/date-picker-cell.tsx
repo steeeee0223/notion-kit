@@ -1,8 +1,9 @@
 import { cn } from "@notion-kit/cn";
 import { wrappedClassName } from "@notion-kit/table-hook";
-import type {
-  DatePlugin,
-  InferCellProps,
+import {
+  toDateString,
+  type DatePlugin,
+  type InferCellProps,
 } from "@notion-kit/table-hook/plugins";
 import {
   Popover,
@@ -12,7 +13,6 @@ import {
 
 import { CellTrigger, CopyButton } from "@/common";
 
-import { toDateString } from "../utils";
 import { DateTimePicker } from "./date-time-picker";
 
 export function DatePickerCell({

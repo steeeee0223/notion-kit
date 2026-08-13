@@ -1,11 +1,11 @@
 import type { ColumnInfo } from "@notion-kit/table-hook";
-import type {
-  GroupingValueProps,
-  NumberPlugin,
+import {
+  formatNumber,
+  type GroupingValueProps,
+  type NumberPlugin,
 } from "@notion-kit/table-hook/plugins";
 
 import { DefaultGroupingValue } from "../utils";
-import { formatNumber } from "./format";
 
 export function NumberGroupingValue({ value, table }: GroupingValueProps) {
   if (typeof value !== "number") {
