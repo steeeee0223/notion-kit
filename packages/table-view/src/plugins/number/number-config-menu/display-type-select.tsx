@@ -1,8 +1,7 @@
 import { cn } from "@notion-kit/cn";
+import type { NumberDisplayType } from "@notion-kit/table-hook/plugins";
 import { Button, MeterBar, MeterRing } from "@notion-kit/ui/primitives";
 import { COLOR } from "@notion-kit/utils";
-
-import type { NumberDisplayType } from "../types";
 
 interface DisplayTypeSelectProps {
   type: NumberDisplayType;

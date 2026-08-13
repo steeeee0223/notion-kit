@@ -7,11 +7,17 @@ export default defineConfig((opts) => [
     ...withReactCompiler(opts),
     entry: { index: "./src/index.ts" },
     clean: true,
-    external: [/^@dnd-kit\//],
+    external: [/^@dnd-kit\//, "@notion-kit/table-hook/plugins"],
   },
   {
     ...baseConfig(opts),
     entry: { fns: "./src/fns/index.ts" },
     clean: false,
+  },
+  {
+    ...baseConfig(opts),
+    entry: { plugins: "./src/plugins/index.ts" },
+    clean: false,
+    external: [/^@dnd-kit\//],
   },
 ]);

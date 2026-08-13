@@ -1,10 +1,11 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import type { Cell, Header, Row, Table } from "@tanstack/table-core";
 
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
+
 import type { TableFeatures, TableViewState } from "@/features";
 import type { ColumnDefs, Row as RowModel } from "@/lib/types";
 import type { Weekday } from "@/methods";
-import type { CellPlugin } from "@/plugins";
 import type {
   DataResourceAction,
   PropertiesResourceAction,

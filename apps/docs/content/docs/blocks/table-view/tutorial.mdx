@@ -17,6 +17,8 @@ This guide walks you through the process of creating a custom `CellPlugin` to ex
 ```ts
 // tag-plugin.tsx
 
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
+
 export type TagData = string[];
 export interface TagConfig {
   options: string[];
@@ -30,7 +32,9 @@ export type TagPlugin = CellPlugin<"tag", TagData, TagConfig>;
 
 ```tsx
 // tag-plugin.tsx
-import { createCompareFn } from "@notion-kit/table-view";
+
+import type { CellProps } from "@notion-kit/table-hook/plugins";
+import { createCompareFn } from "@notion-kit/table-hook/plugins";
 
 export const tagPlugin: TagPlugin = {
   id: "tag",
@@ -62,6 +66,8 @@ export const tagPlugin: TagPlugin = {
 
 ```tsx
 // tag-plugin.tsx
+
+import type { ConfigMenuProps } from "@notion-kit/table-hook/plugins";
 
 function TagCell({
   data: tags,

@@ -1,6 +1,8 @@
 import { renderHook } from "@testing-library/react";
 import { beforeEach, vi } from "vitest";
 
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
+
 import type { ColumnInfo, Row } from "@/lib/types";
 import { arrayToEntity } from "@/lib/utils";
 import {
@@ -21,7 +23,6 @@ import {
   sortByNumber,
   sortByText,
 } from "@/methods";
-import { DEFAULT_PLUGINS, type CellPlugin } from "@/plugins";
 import type { BaseTableProps } from "@/table-contexts";
 import { useTableView } from "@/table-contexts/use-table-view";
 
@@ -148,15 +149,48 @@ const selectPlugin: TestSelectPlugin = {
   renderCell: () => null,
 };
 
+const textPlugin: CellPlugin<"text", string, undefined> = {
+  id: "text",
+  meta: { name: "Text", desc: "Text", icon: null },
+  default: { name: "Text", icon: null, data: "", config: undefined },
+  fromValue: (value) => value?.toString() ?? "",
+  toValue: (data) => data,
+  toTextValue: (data) => data,
+  sorting: { defaultMethod: sortByText.id, methods: [sortByText] },
+  grouping: {
+    defaultMethod: groupByTextValue.id,
+    methods: [groupByTextValue],
+  },
+  counting: genericCounting,
+  renderCell: () => null,
+};
+
+const titlePlugin: CellPlugin<"title", string, { showIcon: boolean }> = {
+  id: "title",
+  meta: { name: "Title", desc: "Title", icon: null },
+  default: {
+    name: "Title",
+    icon: null,
+    data: "",
+    config: { showIcon: true },
+  },
+  fromValue: (value) => value?.toString() ?? "",
+  toValue: (data) => data,
+  toTextValue: (data) => data,
+  counting: genericCounting,
+  renderCell: () => null,
+};
+
 export const plugins = arrayToEntity([
-  ...DEFAULT_PLUGINS,
+  titlePlugin,
+  textPlugin,
   checkboxPlugin,
   numberPlugin,
   selectPlugin,
 ]);
 
 // Get actual configs from plugins
-const textPlugin = plugins.items.text!;
+const configuredTextPlugin = plugins.items.text!;
 
 export const mockProperties: ColumnInfo[] = [
   {
@@ -164,7 +198,7 @@ export const mockProperties: ColumnInfo[] = [
     name: "Name",
     type: "text",
     width: "200",
-    config: textPlugin.default.config,
+    config: configuredTextPlugin.default.config,
   },
   {
     id: "col2",

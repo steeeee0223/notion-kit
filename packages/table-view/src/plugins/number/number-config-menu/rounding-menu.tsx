@@ -1,3 +1,4 @@
+import type { NumberRound } from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenuContent,
   DropdownMenuRadioGroup,
@@ -5,8 +6,6 @@ import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
-
-import type { NumberRound } from "../types";
 
 const options: { label: string; value: NumberRound }[] = [
   { label: "Default", value: "default" },

@@ -4,7 +4,8 @@ import userEvent, {
 } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import type { NumberOptions } from "../types";
+import type { NumberOptions } from "@notion-kit/table-hook/plugins";
+
 import { DisplayTypeSelect } from "./display-type-select";
 import { OptionSettings } from "./option-settings";
 

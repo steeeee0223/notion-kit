@@ -1,4 +1,8 @@
 import { Icon } from "@notion-kit/icons";
+import type {
+  ConfigMenuProps,
+  NumberConfig,
+} from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -8,8 +12,6 @@ import {
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
 
-import type { ConfigMenuProps } from "../../types";
-import type { NumberConfig } from "../types";
 import { DisplayTypeSelect } from "./display-type-select";
 import { FormatMenu } from "./format-menu";
 import { OptionSettings } from "./option-settings";

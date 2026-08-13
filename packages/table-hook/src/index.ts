@@ -2,7 +2,6 @@ export { useTableView } from "@/table-contexts/use-table-view";
 export * from "@/table-contexts";
 export * from "@/lib/types";
 export * from "@/lib/utils";
-export * from "@/plugins";
 export {
   ColumnsInfoFeature,
   CountingFeature,

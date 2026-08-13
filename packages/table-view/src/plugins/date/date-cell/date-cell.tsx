@@ -1,11 +1,13 @@
 import { cn } from "@notion-kit/cn";
 import type { LayoutType } from "@notion-kit/table-hook";
 import { wrappedClassName } from "@notion-kit/table-hook";
+import {
+  toDateString,
+  type DateConfig,
+  type DateData,
+} from "@notion-kit/table-hook/plugins";
 
 import { CellTrigger, CopyButton } from "@/common";
-
-import type { DateConfig, DateData } from "../types";
-import { toDateString } from "../utils";
 
 interface DateCellProps {
   data: DateData;

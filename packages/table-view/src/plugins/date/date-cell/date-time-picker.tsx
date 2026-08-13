@@ -1,4 +1,9 @@
 import {
+  calendarDateToTs,
+  type DatePlugin,
+  type InferCellProps,
+} from "@notion-kit/table-hook/plugins";
+import {
   Calendar,
   MenuGroup,
   MenuItem,
@@ -8,11 +13,7 @@ import {
 } from "@notion-kit/ui/primitives";
 import { TimezoneMenu } from "@notion-kit/ui/timezone-menu";
 
-import type { InferCellProps } from "@/plugins/types";
-
 import { DateFormatMenu, TimeFormatMenu } from "../common";
-import type { DatePlugin } from "../types";
-import { calendarDateToTs } from "../utils";
 import { DateRangeInput } from "./date-range-input";
 
 type DateTimePickerProps = Pick<

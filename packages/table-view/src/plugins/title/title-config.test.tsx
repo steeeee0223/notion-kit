@@ -1,10 +1,11 @@
 import { fireEvent, screen } from "@testing-library/react";
 import { expect, it, vi } from "vitest";
 
+import type { TitleConfig as TitleConfigValue } from "@notion-kit/table-hook/plugins";
+
 import { NumberConfigMenuObject } from "@/__tests__/component-objects/number-config-menu";
 
 import { TitleConfig } from "./title-config";
-import type { TitleConfig as TitleConfigValue } from "./types";
 
 it("TitleConfig_IconToggle_ReportsUpdatedConfig", async () => {
   const config: TitleConfigValue = { showIcon: true };

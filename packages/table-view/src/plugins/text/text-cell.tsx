@@ -1,5 +1,6 @@
 import { cn } from "@notion-kit/cn";
-import { wrappedClassName, type CellProps } from "@notion-kit/table-hook";
+import { wrappedClassName } from "@notion-kit/table-hook";
+import type { CellProps } from "@notion-kit/table-hook/plugins";
 
 import { CellTrigger, CopyButton, TextInputPopover } from "@/common";
 

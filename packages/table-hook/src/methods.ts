@@ -5,6 +5,12 @@ import type {
 } from "@tanstack/table-core";
 
 import type {
+  CellPlugin,
+  ComparableValue,
+  CompareFn,
+} from "@notion-kit/table-hook/plugins";
+
+import type {
   _RowInstance,
   _TableInstance,
   AnyTableFeatures,
@@ -22,7 +28,6 @@ import {
   groupByTextValue as toTextGroupingValue,
 } from "@/fns";
 import type { Row } from "@/lib/types";
-import type { CellPlugin, ComparableValue, CompareFn } from "@/plugins/types";
 
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 export type NativeSortFnName = "checkbox" | "number" | "text";

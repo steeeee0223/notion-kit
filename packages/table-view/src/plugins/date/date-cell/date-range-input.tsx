@@ -3,10 +3,9 @@ import type { OnChangeFn } from "@tanstack/react-table";
 import * as z from "zod/v4/mini";
 
 import { cn } from "@notion-kit/cn";
+import type { DateData } from "@notion-kit/table-hook/plugins";
 import { Input, Separator } from "@notion-kit/ui/primitives";
 import { formatDate, isoToTs } from "@notion-kit/utils";
-
-import type { DateData } from "../types";
 
 const dateTimeSchema = z.object({
   date: z.union([z.iso.date(), z.literal("")]),

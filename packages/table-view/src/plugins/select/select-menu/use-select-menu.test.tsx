@@ -3,11 +3,11 @@ import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import type { ColumnInfo, Row } from "@notion-kit/table-hook";
+import type { SelectConfig } from "@notion-kit/table-hook/plugins";
 
 import { TableViewWrapper } from "@/table-contexts";
 
 import { selectConfig } from "../__tests__/utils";
-import type { SelectConfig } from "../types";
 import { useSelectMenu } from "./use-select-menu";
 
 const properties: ColumnInfo[] = [

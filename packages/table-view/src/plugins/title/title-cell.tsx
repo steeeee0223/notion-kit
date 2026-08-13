@@ -3,11 +3,8 @@ import { useId, useState } from "react";
 import { cn } from "@notion-kit/cn";
 import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
-import {
-  ROW_VIEW_OPTIONS,
-  wrappedClassName,
-  type CellProps,
-} from "@notion-kit/table-hook";
+import { ROW_VIEW_OPTIONS, wrappedClassName } from "@notion-kit/table-hook";
+import type { CellProps, TitleConfig } from "@notion-kit/table-hook/plugins";
 import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import {
   Button,
@@ -20,8 +17,6 @@ import {
 
 import { CellTrigger, RowViewIcon, TextInputPopover } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
-
-import type { TitleConfig } from "./types";
 
 interface TitleCellProps extends CellProps<string, TitleConfig> {
   icon?: IconData;

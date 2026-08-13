@@ -3,6 +3,7 @@ import { v4 } from "uuid";
 
 import { TableViewMenuPage } from "@notion-kit/table-hook";
 import type { PluginType } from "@notion-kit/table-hook";
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 import {
   Autocomplete,
   AutocompleteCollection,
@@ -17,7 +18,6 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { DefaultIcon, MenuHeader } from "@/common";
-import type { CellPlugin } from "@/plugins";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface TypesMenuProps {

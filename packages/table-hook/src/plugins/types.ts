@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import type { OnChangeFn } from "@tanstack/react-table";
 
 import type { LayoutType } from "@/features/menu";
@@ -119,23 +119,27 @@ export interface CellPlugin<
   };
   counting?: CountingMethodGroup[];
   compare?: (rowA: Row, rowB: Row, colId: string) => number;
-  transferConfig?: <TPlugin extends CellPlugin>(
-    column: ColumnInfo<TPlugin>,
-    data: Row<TPlugin[]>[],
-  ) => Config;
+  transferConfig?: (column: ColumnInfo, data: Row[]) => Config;
   renderCell: (props: CellProps<Data, Config>) => React.ReactNode;
   renderConfigMenu?: (props: ConfigMenuProps<Config>) => React.ReactNode;
   renderGroupingValue?: (props: GroupingValueProps) => React.ReactNode;
 }
 
-export type InferKey<TPlugin> =
-  TPlugin extends CellPlugin<infer Key, infer _D, infer _C> ? Key : never;
+export type InferKey<TPlugin> = TPlugin extends { id: infer Key extends string }
+  ? Key
+  : never;
 
-export type InferData<TPlugin> =
-  TPlugin extends CellPlugin<infer _K, infer Data, infer _C> ? Data : never;
+export type InferData<TPlugin> = TPlugin extends {
+  default: { data: infer Data };
+}
+  ? Data
+  : never;
 
-export type InferConfig<TPlugin> =
-  TPlugin extends CellPlugin<infer _K, infer _D, infer Config> ? Config : never;
+export type InferConfig<TPlugin> = TPlugin extends {
+  default: { config: infer Config };
+}
+  ? Config
+  : never;
 
 export type InferPlugin<TPlugins extends CellPlugin[]> = CellPlugin<
   InferKey<TPlugins[number]>,
@@ -147,3 +151,12 @@ export type InferCellProps<TPlugin> = CellProps<
   InferData<TPlugin>,
   InferConfig<TPlugin>
 >;
+
+/** UI configuration injected when constructing a built-in plugin. */
+export interface PluginFactoryConfig<TPlugin extends CellPlugin> {
+  icon: React.ReactNode;
+  defaultIcon?: React.ReactNode;
+  renderCell: TPlugin["renderCell"];
+  renderConfigMenu?: TPlugin["renderConfigMenu"];
+  renderGroupingValue?: TPlugin["renderGroupingValue"];
+}

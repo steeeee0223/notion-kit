@@ -1,7 +1,6 @@
 import type { Cell, ColumnInfo, Row } from "@notion-kit/table-hook";
+import type { DateData, DatePlugin } from "@notion-kit/table-hook/plugins";
 import type { TimelineFeature } from "@notion-kit/ui/timeline";
-
-import type { DateData, DatePlugin } from "@/plugins";
 
 export function isUsableTimelineDateProperty(property: ColumnInfo) {
   return property.type === "date" && !property.hidden && !property.isDeleted;

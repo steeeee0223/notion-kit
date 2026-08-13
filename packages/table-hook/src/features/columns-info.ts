@@ -3,19 +3,17 @@ import type { TableFeature, Updater } from "@tanstack/react-table";
 import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
+import type {
+  CellPlugin,
+  InferConfig,
+  InferPlugin,
+} from "@notion-kit/table-hook/plugins";
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
 import type { _TableInstance } from "@/features/types";
 import { createIdsUpdater } from "@/features/utils";
 import type { ColumnInfo, PluginType, Row } from "@/lib/types";
-import {
-  arrayToEntity,
-  getDefaultCell,
-  getUniqueName,
-  type Entity,
-} from "@/lib/utils";
-import type { CellPlugin, InferConfig, InferPlugin } from "@/plugins";
-import { DEFAULT_PLUGINS } from "@/plugins";
+import { getDefaultCell, getUniqueName, type Entity } from "@/lib/utils";
 import type {
   DataResourceAction,
   PropertiesResourceAction,
@@ -148,7 +146,7 @@ function createPropertyUpdateAction(
 export const ColumnsInfoFeature: TableFeature = {
   getInitialState: (state): ColumnsInfoTableState => {
     return {
-      cellPlugins: arrayToEntity(DEFAULT_PLUGINS).items,
+      cellPlugins: {},
       columnsInfo: {},
       ...state,
     };

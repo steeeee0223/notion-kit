@@ -4,6 +4,12 @@ import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 import { z } from "zod/mini";
 
+import type {
+  CellPlugin,
+  ComparableValue,
+  InferData,
+  TitlePlugin,
+} from "@notion-kit/table-hook/plugins";
 import type { IconData } from "@notion-kit/ui/icon-block";
 import {
   getKanbanColumnTargetId,
@@ -17,12 +23,6 @@ import type { _TableInstance } from "@/features/types";
 import { createGroupId } from "@/features/utils";
 import type { Cell, Row } from "@/lib/types";
 import { getDefaultCell, insertAt } from "@/lib/utils";
-import type {
-  CellPlugin,
-  ComparableValue,
-  InferData,
-  TitlePlugin,
-} from "@/plugins";
 import type { DataResourceAction, ResourceChangeFn } from "@/table-contexts";
 
 export interface RowActionsOptions {

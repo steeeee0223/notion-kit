@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { CellPlugin } from "@notion-kit/table-hook";
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 
 import { text } from "@/plugins";
 

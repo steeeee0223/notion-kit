@@ -1,5 +1,6 @@
-import type { CellPlugin } from "@notion-kit/table-hook";
 import type { FormatOptions } from "@notion-kit/utils";
+
+import type { CellPlugin } from "@/plugins";
 
 export interface DateData {
   /**

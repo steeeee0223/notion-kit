@@ -1,4 +1,5 @@
 import { Icon } from "@notion-kit/icons";
+import type { OptionConfig } from "@notion-kit/table-hook/plugins";
 import {
   Button,
   ComboboxItem,
@@ -14,7 +15,6 @@ import type { Color } from "@notion-kit/utils";
 import { OptionTag } from "@/common";
 
 import { SelectOptionMenu } from "../select-option-menu";
-import type { OptionConfig } from "../types";
 
 interface OptionItemProps {
   index: number;

@@ -19,6 +19,10 @@
     "./fns": {
       "types": "./dist/fns.d.mts",
       "default": "./dist/fns.mjs"
+    },
+    "./plugins": {
+      "types": "./dist/plugins.d.mts",
+      "default": "./dist/plugins.mjs"
     }
   },
   "main": "./dist/index.mjs",
@@ -45,6 +49,7 @@
     "@dnd-kit/react": "catalog:ui",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/ui": "workspace:*",
+    "@notion-kit/utils": "workspace:*",
     "@tanstack/react-table": "9.0.0",
     "@tanstack/table-core": "9.0.0",
     "date-fns": "catalog:fns",

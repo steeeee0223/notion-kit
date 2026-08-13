@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import type { Row, TableInstance } from "@notion-kit/table-hook";
+import type { SelectConfig } from "@notion-kit/table-hook/plugins";
 
 import {
   propagateSelectEvent,
   selectConfigReducer,
 } from "./select-config-reducer";
-import type { SelectConfig } from "./types";
 
 const config: SelectConfig = {
   sort: "manual",

@@ -1,5 +1,7 @@
-import type { Cell, CellPlugin } from "@notion-kit/table-hook";
 import type { Color } from "@notion-kit/utils";
+
+import type { Cell } from "@/lib/types";
+import type { CellPlugin } from "@/plugins";
 
 export type SelectSort = "manual" | "alphabetical" | "reverse-alphabetical";
 

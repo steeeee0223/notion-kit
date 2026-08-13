@@ -1,7 +1,8 @@
 import type { Updater } from "@tanstack/react-table";
 
+import type { ComparableValue } from "@notion-kit/table-hook/plugins";
+
 import { insertAt } from "@/lib/utils";
-import type { ComparableValue } from "@/plugins";
 
 export function createIdsUpdater(
   targetId: string,

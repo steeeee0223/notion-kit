@@ -2,9 +2,10 @@ import type { Row, RowData, RowModel, Table } from "@tanstack/react-table";
 import { constructRow, flattenBy, tableMemo } from "@tanstack/react-table";
 import { aggregateColumnValue } from "@tanstack/react-table/static-functions";
 
+import type { ComparableValue } from "@notion-kit/table-hook/plugins";
+
 import type { AnyRowData, AnyTableFeatures } from "@/features/types";
 import { createGroupId } from "@/features/utils";
-import type { ComparableValue } from "@/plugins";
 
 export function getExtendedGroupedRowModel<TData extends RowData>(): (
   table: Table<AnyTableFeatures, TData>,

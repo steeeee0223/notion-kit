@@ -1,11 +1,11 @@
 import { v4 } from "uuid";
 
 import { cn } from "@notion-kit/cn";
+import type { CellPlugin, InferData } from "@notion-kit/table-hook/plugins";
 
 import type { _TableInstance } from "@/features/types";
 import type { Cell } from "@/lib/types";
 import { resolveCountingMethod } from "@/methods";
-import type { CellPlugin, InferData } from "@/plugins";
 
 export interface Entity<T extends { id: string }> {
   ids: string[];

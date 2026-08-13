@@ -27,7 +27,7 @@
 
 ### Goal
 
-The built-in table-view plugins must completely support the function matrix above. Plugin capabilities are the source of truth: generic table-view menus discover registered functions from the current column plugin instead of maintaining property-type switches.
+The built-in `@notion-kit/table-hook/plugins` factories completely support the function matrix above. Plugin capabilities are the source of truth: generic table-view menus discover registered functions from the current column plugin instead of maintaining property-type switches.
 
 This branch includes the complete path for each matrix option:
 
@@ -37,9 +37,9 @@ This branch includes the complete path for each matrix option:
 4. resolve and execute the selected function;
 5. fall back safely for old resources and legacy plugins.
 
-### Existing architecture
+### Architecture
 
-`@notion-kit/table-hook` already defines these plugin capabilities:
+`@notion-kit/table-hook/plugins` defines plugin contracts, built-in data semantics, and these capabilities:
 
 - `sorting.methods` and `sorting.defaultMethod`
 - `grouping.methods` and `grouping.defaultMethod`
@@ -51,13 +51,24 @@ It also provides resolver fallbacks:
 - grouping falls back from the registered default/first method to legacy `toGroupValue` or `toValue`;
 - counting resolves a method ID from the plugin's registered groups.
 
-The current table-view implementation is only partially data-driven:
+`@notion-kit/table-view` owns the existing UI components and exposes no-argument wrappers that inject them into the headless factories. Its `DEFAULT_PLUGINS` is the configured default list:
 
-- `DEFAULT_PLUGINS` attaches generic or checkbox counting groups;
-- `calc-menu` still derives options from the property type;
-- sorting state stores a column and direction but not a plugin method ID;
-- grouping executes a default plugin method but does not persist a selected grouping method;
-- `edit-group-menu` supports manual group order but does not expose automatic group sorting or grouping-key choices.
+```tsx
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
+import { title as createTitle } from "@notion-kit/table-hook/plugins";
+import { title as createTableViewTitle } from "@notion-kit/table-view";
+
+const customTitle = createTitle({
+  icon: <CustomTitleIcon />,
+  renderCell: (props) => <CustomTitleCell {...props} />,
+});
+const tableViewTitle = createTableViewTitle();
+
+const customPlugin: CellPlugin<"custom", string, undefined> = {
+  // Developers may still implement the structural contract directly.
+  // ...
+};
+```
 
 ### Capability policy
 
@@ -65,7 +76,7 @@ The current table-view implementation is only partially data-driven:
 - A missing or unknown method ID falls back to the plugin default, then the first registered method, then the existing legacy field where applicable.
 - Existing `compare`, `toValue`, and `toGroupValue` support remains during this migration.
 - Unsupported options are omitted from menus rather than rendered as disabled placeholders.
-- Shared mechanics live in table-hook. Built-in data semantics and registrations live beside each table-view plugin.
+- Shared mechanics, built-in data semantics, registrations, and renderer prop adaptation live in table-hook. Table-view plugin wrappers only inject components and icons.
 - Generic menu components must not branch on built-in plugin IDs when a capability descriptor can provide the option.
 
 Table-hook also owns cross-plugin method configuration. `useTableView` exposes `weekStartsOn`, using `0` for Sunday through `6` for Saturday and defaulting to `1` (Monday). This is runtime table configuration, not duplicated in each date column and not stored as a plugin method ID. Grouping method context must expose it to date plugins.

@@ -5,12 +5,12 @@ import {
   arrayToEntity,
   useTableView,
   type BaseTableProps,
-  type CellPlugin,
   type ColumnInfo,
   type ResourceChange,
   type Row,
   type TableViewState,
 } from "@notion-kit/table-hook";
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 
 import { DEFAULT_PLUGINS } from "@/plugins";
 

@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
 
 import type { DataResourceAction, Row } from "@notion-kit/table-hook";
+import type { DateConfig, DateData } from "@notion-kit/table-hook/plugins";
 
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
 import {
@@ -12,7 +13,6 @@ import {
   mockResizeObserver,
 } from "@/__tests__/mock";
 
-import type { DateConfig, DateData } from "../types";
 import { DatePickerCell } from "./date-picker-cell";
 import { DateRangeInput } from "./date-range-input";
 

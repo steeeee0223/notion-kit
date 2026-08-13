@@ -1,8 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { Cell, ColumnInfo, Row } from "@notion-kit/table-hook";
-
-import type { DatePlugin } from "@/plugins";
+import type { DatePlugin } from "@notion-kit/table-hook/plugins";
 
 import {
   createEmptyTrackDate,

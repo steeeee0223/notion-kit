@@ -12,6 +12,8 @@ import {
   type ColumnDef,
 } from "@tanstack/react-table";
 
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
+
 import {
   createPluginMethodState,
   DEFAULT_FEATURES,
@@ -28,7 +30,6 @@ import {
   resolveSortingAccessorValue,
   resolveSortingFn,
 } from "@/methods";
-import type { CellPlugin } from "@/plugins";
 import type {
   DataResourceAction,
   PropertiesResourceAction,

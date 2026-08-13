@@ -1,10 +1,9 @@
 import type {
-  ColumnDefs,
   DateConfig,
   NumberConfig,
-  Row,
   SelectConfig,
-} from "@notion-kit/table-view";
+} from "@notion-kit/table-hook/plugins";
+import type { ColumnDefs, Row } from "@notion-kit/table-view";
 
 export const mockDateConfig: DateConfig = {
   dateFormat: "MM/dd/yyyy",

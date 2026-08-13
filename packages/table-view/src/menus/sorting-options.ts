@@ -1,8 +1,8 @@
 import type {
-  CellPlugin,
   ResolvedSortingMethod,
   SortingMethodDescriptor,
 } from "@notion-kit/table-hook";
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 
 export function getSortingDirectionLabels(
   method: SortingMethodDescriptor | ResolvedSortingMethod | undefined,

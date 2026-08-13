@@ -1,7 +1,8 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import type { CellPlugin, ColumnInfo, Row } from "@notion-kit/table-hook";
+import type { ColumnInfo, Row } from "@notion-kit/table-hook";
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 
 import { DEFAULT_PLUGINS } from "@/plugins";
 

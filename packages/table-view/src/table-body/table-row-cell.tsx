@@ -7,9 +7,11 @@ import type {
   ColumnInfo,
   TableInstance,
 } from "@notion-kit/table-hook";
+import type {
+  CellPlugin,
+  InferCellProps,
+} from "@notion-kit/table-hook/plugins";
 import { Button } from "@notion-kit/ui/primitives";
-
-import type { CellPlugin, InferCellProps } from "@/plugins";
 
 enum CellMode {
   Normal = "normal",
