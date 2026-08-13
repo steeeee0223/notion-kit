@@ -1,14 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   flexRender,
   useTable,
   type ColumnFilter,
-  type ColumnFiltersState,
-  type OnChangeFn,
   type RowData,
-  type SortingState,
 } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
@@ -29,10 +26,6 @@ export interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<TData>[];
   data: TData[];
   emptyResult?: string;
-  /** External column filters state (controlled) */
-  columnFilters?: ColumnFiltersState;
-  /** Callback when column filters change */
-  onColumnFiltersChange?: OnChangeFn<ColumnFiltersState>;
   /** Initial column pinning state (set once on mount, not controlled) */
   initialColumnPinning?: string[];
   /** Search configuration - applies filter to a specific column */
@@ -48,49 +41,35 @@ export function DataTable<TData extends RowData>({
   columns,
   data,
   emptyResult = "No results.",
-  columnFilters: externalColumnFilters,
-  onColumnFiltersChange,
   initialColumnPinning,
   search,
   onRowClick,
   getHeaderClassName,
 }: DataTableProps<TData>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [internalColumnFilters, setInternalColumnFilters] =
-    useState<ColumnFiltersState>([]);
-  const [tableInitialState] = useState(() => ({
-    columnPinning: { start: initialColumnPinning ?? [], end: [] },
-  }));
-
-  // Use external columnFilters if provided, otherwise use internal state.
-  const baseColumnFilters = externalColumnFilters ?? internalColumnFilters;
   const searchId = search?.id;
   const searchValue = search?.value;
   const columnFilters = useMemo(() => {
-    if (searchId === undefined) return baseColumnFilters;
+    if (
+      searchId === undefined ||
+      searchValue === undefined ||
+      searchValue === ""
+    ) {
+      return [];
+    }
 
-    const filters = baseColumnFilters.filter(
-      (filter) => filter.id !== searchId,
-    );
-
-    return searchValue !== undefined && searchValue !== ""
-      ? [...filters, { id: searchId, value: searchValue }]
-      : filters;
-  }, [baseColumnFilters, searchId, searchValue]);
-  const handleColumnFiltersChange =
-    onColumnFiltersChange ?? setInternalColumnFilters;
+    return [{ id: searchId, value: searchValue }];
+  }, [searchId, searchValue]);
 
   const table = useTable({
     features: tableFeatures,
     data,
     columns,
-    initialState: tableInitialState,
+    initialState: {
+      columnPinning: { start: initialColumnPinning ?? [], end: [] },
+    },
     state: {
-      sorting,
       columnFilters,
     },
-    onSortingChange: setSorting,
-    onColumnFiltersChange: handleColumnFiltersChange,
   });
 
   return (

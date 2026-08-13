@@ -76,7 +76,6 @@ interface TeamMembersTableProps {
     role: TeamspaceRole;
   }) => void | Promise<void>;
   onRemove?: (userId: string) => void | Promise<void>;
-  onSearchChange?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export function TeamMembersTable({
@@ -84,7 +83,6 @@ export function TeamMembersTable({
   search = "",
   onUpdate,
   onRemove,
-  onSearchChange,
 }: TeamMembersTableProps) {
   const columns = useMemo(
     () => createTeamMembersColumns({ onUpdate, onRemove }),
@@ -94,16 +92,7 @@ export function TeamMembersTable({
     <DataTable
       columns={columns}
       data={data}
-      columnFilters={[{ id: "user", value: search }]}
-      onColumnFiltersChange={(filters) => {
-        onSearchChange?.((prev) => {
-          const filter =
-            typeof filters === "function"
-              ? filters([{ id: "user", value: prev }])
-              : filters;
-          return filter.at(0)?.value as string;
-        });
-      }}
+      search={{ id: "user", value: search }}
       getHeaderClassName={(headerId) =>
         cn(headerId === "user" && "w-3/4", headerId === "role" && "w-1/4")
       }

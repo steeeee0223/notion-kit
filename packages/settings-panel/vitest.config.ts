@@ -6,6 +6,6 @@ export default defineConfig({
   test: {
     name: "settings-panel",
     environment: "jsdom",
-    setupFiles: ["./vitest.setup.ts"],
+    setupFiles: ["./src/vitest.setup.ts"],
   },
 });
