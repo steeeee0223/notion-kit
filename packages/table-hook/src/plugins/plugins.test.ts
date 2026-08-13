@@ -56,7 +56,7 @@ describe("configured plugin factories", () => {
   it("wires icons and renderer callbacks with the documented fallback", () => {
     const renderCell = vi.fn(() => null);
     const renderConfigMenu = vi.fn(() => null);
-    const icon = <span>icon</span>;
+    const icon = "icon";
     const plugin = createTitle({ icon, renderCell, renderConfigMenu });
 
     expect(plugin.meta.icon).toBe(icon);
@@ -78,8 +78,8 @@ describe("configured plugin factories", () => {
 
   it("uses a distinct default icon when supplied", () => {
     const plugin = createText({
-      icon: <span>menu</span>,
-      defaultIcon: <span>property</span>,
+      icon: "menu",
+      defaultIcon: "property",
       renderCell: () => null,
     });
     expect(plugin.meta.icon).not.toBe(plugin.default.icon);

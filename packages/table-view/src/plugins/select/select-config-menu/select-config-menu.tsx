@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 
 import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
+import type {
+  ConfigMenuProps,
+  SelectConfig,
+  SelectSort,
+} from "@notion-kit/table-hook/plugins";
 import {
   Button,
   DropdownMenuContent,
@@ -17,8 +22,6 @@ import {
   Sortable,
 } from "@notion-kit/ui/primitives";
 
-import type { ConfigMenuProps } from "../../types";
-import type { SelectConfig, SelectSort } from "../types";
 import { OptionItem } from "./option-item";
 import { useSelectConfigMenu } from "./use-select-config-menu";
 

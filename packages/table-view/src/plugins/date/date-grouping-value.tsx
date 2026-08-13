@@ -1,11 +1,11 @@
 import type { ColumnInfo } from "@notion-kit/table-hook";
-import {
-  DefaultGroupingValue,
-  type GroupingValueProps,
+import type {
+  DatePlugin,
+  GroupingValueProps,
 } from "@notion-kit/table-hook/plugins";
 import { formatDate } from "@notion-kit/utils";
 
-import type { DatePlugin } from "./types";
+import { DefaultGroupingValue } from "../utils";
 import { formatDateGroupingLabel } from "./utils";
 
 export function DateGroupingValue({ value, table }: GroupingValueProps) {

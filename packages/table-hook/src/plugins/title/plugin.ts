@@ -51,7 +51,8 @@ export function title(config: TitlePluginConfig): TitlePlugin {
         row,
         config: pluginConfig,
         ...props,
-      }),
+    }),
     renderConfigMenu: config.renderConfigMenu,
+    renderGroupingValue: config.renderGroupingValue,
   };
 }

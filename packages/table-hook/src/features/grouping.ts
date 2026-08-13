@@ -7,8 +7,10 @@ import {
   makeStateUpdater,
 } from "@tanstack/react-table";
 
-import type { ComparableValue } from "@notion-kit/table-hook/plugins";
-import { DefaultGroupingValue } from "@notion-kit/table-hook/plugins";
+import {
+  getDefaultGroupingValue,
+  type ComparableValue,
+} from "@notion-kit/table-hook/plugins";
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
 import type { _RowInstance, _TableInstance } from "@/features/types";
@@ -426,7 +428,7 @@ export const ExtendedGroupingFeature: TableFeature = {
         if (plugin.renderGroupingValue) {
           return flexRender(plugin.renderGroupingValue, resolvedProps);
         }
-        return flexRender(DefaultGroupingValue, resolvedProps);
+        return getDefaultGroupingValue(resolvedProps.value);
       };
     };
     table.getPlaceholderGroupedRow = (groupId) => {

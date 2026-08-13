@@ -6,6 +6,7 @@ import {
 
 import { DefaultIcon } from "@/common";
 
+import { DefaultGroupingValue } from "../utils";
 import { LinkCell } from "./link-cell";
 
 export function email() {
@@ -13,6 +14,7 @@ export function email() {
     icon: <DefaultIcon type="email" className="fill-menu-icon" />,
     defaultIcon: <DefaultIcon type="email" />,
     renderCell: (props) => <LinkCell type="email" {...props} />,
+    renderGroupingValue: (props) => <DefaultGroupingValue {...props} />,
   });
 }
 
@@ -21,6 +23,7 @@ export function phone() {
     icon: <DefaultIcon type="phone" className="fill-menu-icon" />,
     defaultIcon: <DefaultIcon type="phone" />,
     renderCell: (props) => <LinkCell type="phone" {...props} />,
+    renderGroupingValue: (props) => <DefaultGroupingValue {...props} />,
   });
 }
 
@@ -29,5 +32,6 @@ export function url() {
     icon: <DefaultIcon type="url" className="fill-menu-icon" />,
     defaultIcon: <DefaultIcon type="url" />,
     renderCell: (props) => <LinkCell type="url" {...props} />,
+    renderGroupingValue: (props) => <DefaultGroupingValue {...props} />,
   });
 }

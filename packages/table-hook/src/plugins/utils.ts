@@ -16,17 +16,14 @@ import type {
   CellPlugin,
   ComparableValue,
   CompareFn,
-  GroupingValueProps,
   InferData,
 } from "@/plugins";
 
-export function DefaultGroupingValue({ value }: GroupingValueProps) {
-  if (typeof value === "string")
-    return <span className="truncate">{value || "(Empty)"}</span>;
-  if (typeof value === "boolean")
-    return <span className="truncate">{value ? "True" : "False"}</span>;
-  if (value === null) return <span className="truncate">(Empty)</span>;
-  return <span className="truncate">{value}</span>;
+export function getDefaultGroupingValue(value: ComparableValue) {
+  if (typeof value === "string") return value || "(Empty)";
+  if (typeof value === "boolean") return value ? "True" : "False";
+  if (value === null) return "(Empty)";
+  return value;
 }
 
 function capCount(result: unknown, isCapped?: boolean) {

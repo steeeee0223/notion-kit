@@ -1,10 +1,9 @@
-import { act, render, renderHook, screen } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { describe, expect, expectTypeOf, it, vi } from "vitest";
 
 import {
-  DefaultGroupingValue,
+  getDefaultGroupingValue,
   type CellPlugin,
-  type GroupingValueProps,
 } from "@notion-kit/table-hook/plugins";
 
 import { DEFAULT_FEATURES } from "@/features";
@@ -604,15 +603,9 @@ describe("cell plugin registered methods", () => {
 });
 
 describe("built-in plugin helpers", () => {
-  it("renders boolean and empty grouping labels visibly", () => {
-    const table = {} as GroupingValueProps["table"];
-    const { rerender } = render(
-      <DefaultGroupingValue table={table} value={false} />,
-    );
-    expect(screen.getByText("False")).toBeTruthy();
-
-    rerender(<DefaultGroupingValue table={table} value={null} />);
-    expect(screen.getByText("(Empty)")).toBeTruthy();
+  it("formats boolean and empty grouping labels", () => {
+    expect(getDefaultGroupingValue(false)).toBe("False");
+    expect(getDefaultGroupingValue(null)).toBe("(Empty)");
   });
 
   it("sorts rows with missing cells without passing undefined to comparators", () => {

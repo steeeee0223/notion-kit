@@ -37,9 +37,7 @@ export {
   createdTime,
   lastEditedTime,
 };
-export type * from "./date/types";
-export type * from "./number/types";
-export type * from "./select/types";
+export { DefaultGroupingValue } from "./utils";
 
 // TMP export for storybook
 export * from "./date/date-cell";

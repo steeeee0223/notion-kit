@@ -15,7 +15,7 @@ export default defineConfig((opts) => [
     clean: false,
   },
   {
-    ...withReactCompiler(opts),
+    ...baseConfig(opts),
     entry: { plugins: "./src/plugins/index.ts" },
     clean: false,
     external: [/^@dnd-kit\//],

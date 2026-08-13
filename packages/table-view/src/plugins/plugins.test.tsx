@@ -1,12 +1,17 @@
+import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import type { CellPlugin } from "@notion-kit/table-hook/plugins";
+import type {
+  CellPlugin,
+  GroupingValueProps,
+} from "@notion-kit/table-hook/plugins";
 
 import {
   checkbox,
   createdTime,
   date,
   DEFAULT_PLUGINS,
+  DefaultGroupingValue,
   email,
   lastEditedTime,
   multiSelect,
@@ -54,6 +59,18 @@ describe("table-view plugin wrappers", () => {
     expect(plugin.meta.icon).not.toBeNull();
     expect(plugin.default.icon).not.toBeNull();
     expect(plugin.renderCell).toEqual(expect.any(Function));
+    expect(plugin.renderGroupingValue).toEqual(expect.any(Function));
+  });
+
+  it("renders the headless default grouping label with table-view UI", () => {
+    render(
+      <DefaultGroupingValue
+        table={{} as GroupingValueProps["table"]}
+        value={false}
+      />,
+    );
+
+    expect(screen.getByText("False")).toHaveClass("truncate");
   });
 
   it("keeps direct custom plugins compatible with configured defaults", () => {

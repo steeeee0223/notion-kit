@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import type { OnChangeFn } from "@tanstack/react-table";
 
 import type { LayoutType } from "@/features/menu";

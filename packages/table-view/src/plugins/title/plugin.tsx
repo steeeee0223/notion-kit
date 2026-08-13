@@ -2,6 +2,7 @@ import { title as createTitle } from "@notion-kit/table-hook/plugins";
 
 import { DefaultIcon } from "@/common";
 
+import { DefaultGroupingValue } from "../utils";
 import { TitleCell } from "./title-cell";
 import { TitleConfig } from "./title-config";
 
@@ -11,5 +12,6 @@ export function title() {
     defaultIcon: <DefaultIcon type="title" />,
     renderCell: (props) => <TitleCell {...props} />,
     renderConfigMenu: (props) => <TitleConfig {...props} />,
+    renderGroupingValue: (props) => <DefaultGroupingValue {...props} />,
   });
 }

@@ -1,10 +1,16 @@
 import { functionalUpdate, type Updater } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
-import type { Row, TableInstance } from "@notion-kit/table-hook";
+import type { Cell, Row, TableInstance } from "@notion-kit/table-hook";
+import type {
+  MultiSelectPlugin,
+  SelectConfig,
+  SelectPlugin,
+  SelectSort,
+} from "@notion-kit/table-hook/plugins";
 import type { Color } from "@notion-kit/utils";
 
-import type { SelectCell, SelectConfig, SelectSort } from "./types";
+type SelectCell = Cell<SelectPlugin> | Cell<MultiSelectPlugin>;
 
 export type SelectConfigActionPayload =
   | { action: "add:option"; payload: { name: string; color: Color } }

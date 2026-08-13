@@ -1,9 +1,10 @@
 import { fireEvent, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+import type { NumberConfig } from "@notion-kit/table-hook/plugins";
+
 import { NumberConfigMenuObject } from "@/__tests__/component-objects/number-config-menu";
 
-import type { NumberConfig } from "../types";
 import { FormatMenu } from "./format-menu";
 import { NumberConfigMenu } from "./number-config-menu";
 import { RoundingMenu } from "./rounding-menu";

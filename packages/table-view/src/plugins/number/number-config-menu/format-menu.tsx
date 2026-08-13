@@ -1,3 +1,4 @@
+import type { NumberFormat } from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenuContent,
   DropdownMenuRadioGroup,
@@ -5,8 +6,6 @@ import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
-
-import type { NumberFormat } from "../types";
 
 const options: { label: string; value: NumberFormat }[] = [
   { label: "Number", value: "number" },

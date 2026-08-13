@@ -7,6 +7,10 @@ import type {
   DataResourceAction,
   Row,
 } from "@notion-kit/table-hook";
+import type {
+  MultiSelectPlugin,
+  NumberConfig,
+} from "@notion-kit/table-hook/plugins";
 
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
 import {
@@ -18,8 +22,6 @@ import {
 import { CheckboxCell } from "./checkbox/checkbox-cell";
 import { LinkCell } from "./link/link-cell";
 import { NumberCell } from "./number/number-cell";
-import type { NumberConfig } from "./number/types";
-import type { MultiSelectPlugin } from "./select/types";
 import { TextCell } from "./text/text-cell";
 
 mockResizeObserver();

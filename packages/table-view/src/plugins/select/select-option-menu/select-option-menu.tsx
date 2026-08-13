@@ -1,4 +1,5 @@
 import { Icon } from "@notion-kit/icons";
+import type { OptionConfig } from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -11,7 +12,6 @@ import {
 import { COLOR, type Color } from "@notion-kit/utils";
 
 import { ColorIcon } from "../../../common";
-import type { OptionConfig } from "../types";
 import { OptionMeta } from "./option-meta";
 
 interface SelectOptionMenuProps {

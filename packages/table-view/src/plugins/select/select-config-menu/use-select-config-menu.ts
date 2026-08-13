@@ -2,16 +2,19 @@
 
 import { useCallback } from "react";
 
+import type {
+  ConfigMenuProps,
+  SelectConfig,
+  SelectSort,
+} from "@notion-kit/table-hook/plugins";
 import { getRandomColor, type Color } from "@notion-kit/utils";
 
 import { useTableViewCtx } from "../../../table-contexts";
-import type { ConfigMenuProps } from "../../types";
 import {
   propagateSelectEvent,
   selectConfigReducer,
   type SelectConfigActionPayload,
 } from "../select-config-reducer";
-import type { SelectConfig, SelectSort } from "../types";
 
 interface UseSelectConfigMenuOptions extends ConfigMenuProps<SelectConfig> {
   multi?: boolean;

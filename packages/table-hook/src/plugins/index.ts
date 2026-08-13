@@ -18,13 +18,13 @@ export { title } from "./title";
 export type { TitleConfig, TitlePlugin, TitlePluginConfig } from "./title";
 export type * from "./types";
 export {
-  DefaultGroupingValue,
   checkboxCounting,
   compareBooleans,
   compareNumbers,
   compareStrings,
   createCompareFn,
   genericCounting,
+  getDefaultGroupingValue,
   textMethodCapabilities,
 } from "./utils";
 export type {

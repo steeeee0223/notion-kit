@@ -11,6 +11,7 @@ import type {
   ResourceChange,
   Row,
 } from "@notion-kit/table-hook";
+import type { SelectConfig } from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,7 +22,6 @@ import { TableViewObject } from "@/__tests__/component-objects/table-view";
 import { TableView } from "@/table-contexts";
 
 import { SelectConfigMenuContent } from "../select-config-menu";
-import type { SelectConfig } from "../types";
 
 export const selectConfig: SelectConfig = {
   options: {
