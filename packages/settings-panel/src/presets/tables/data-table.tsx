@@ -111,11 +111,7 @@ export function DataTable<TData extends RowData>({
               onClick={() => onRowClick?.(row)}
               className={cn(onRowClick && "cursor-pointer hover:bg-default/5")}
             >
-              {[
-                ...row.getStartVisibleCells(),
-                ...row.getCenterVisibleCells(),
-                ...row.getEndVisibleCells(),
-              ].map((cell) => {
+              {row.getAllCells().map((cell) => {
                 const isPinned = cell.column.getIsPinned();
                 const pinnedStyles = isPinned
                   ? { insetInlineStart: `${cell.column.getStart("start")}px` }
