@@ -1,6 +1,6 @@
-import type { Row } from "@tanstack/react-table";
-
 import type { User } from "@notion-kit/schemas";
+
+import type { Row } from "./table-features";
 
 export function userFilterFn<T extends { user: User }>(
   row: Row<T>,

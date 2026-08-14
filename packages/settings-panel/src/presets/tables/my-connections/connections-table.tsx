@@ -14,10 +14,14 @@ interface ConnectionsTableProps extends CreateConnectionColumnsOptions {
   data: Connection[];
 }
 
-export function ConnectionsTable({ data, ...actions }: ConnectionsTableProps) {
+export function ConnectionsTable({
+  data,
+  onCreateConnection,
+  onDisconnect,
+}: ConnectionsTableProps) {
   const columns = useMemo(
-    () => createConnectionColumns({ ...actions }),
-    [actions],
+    () => createConnectionColumns({ onCreateConnection, onDisconnect }),
+    [onCreateConnection, onDisconnect],
   );
   return (
     <DataTable

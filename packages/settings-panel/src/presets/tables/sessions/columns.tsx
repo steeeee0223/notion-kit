@@ -1,5 +1,3 @@
-import type { ColumnDef, Row } from "@tanstack/react-table";
-
 import { Trans, useTranslation } from "@notion-kit/i18n";
 import { Button, Dialog, DialogTrigger } from "@notion-kit/ui/primitives";
 import { toDateString } from "@notion-kit/utils";
@@ -8,6 +6,7 @@ import type { SessionRow } from "@/lib/types";
 import { LogoutConfirm } from "@/presets/modals";
 import { SortingToggle, TextCell } from "@/presets/tables/common-cells";
 
+import type { ColumnDef, Row } from "../table-features";
 import { DeviceCell } from "./cells";
 
 interface CreateSessionColumnsOptions {

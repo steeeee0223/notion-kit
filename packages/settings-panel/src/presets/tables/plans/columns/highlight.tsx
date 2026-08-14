@@ -1,11 +1,11 @@
-import type { ColumnDef } from "@tanstack/react-table";
-
 import { Plan } from "@notion-kit/schemas";
 import {
   Button,
   TooltipPreset,
   TooltipProvider,
 } from "@notion-kit/ui/primitives";
+
+import type { ColumnDef } from "@/presets/tables/table-features";
 
 import { ListCell, PlanHeader } from "../cells";
 

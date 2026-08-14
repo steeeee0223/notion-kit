@@ -144,7 +144,6 @@ export function MembersContent({
             search={search}
             onUpdate={onUpdateMember}
             onRemove={onRemoveMember}
-            onSearchChange={setSearch}
           />
         </div>
       </section>

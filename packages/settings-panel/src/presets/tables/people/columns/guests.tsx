@@ -1,5 +1,3 @@
-import type { ColumnDef, Row } from "@tanstack/react-table";
-
 import { Trans } from "@notion-kit/i18n";
 import { Role } from "@notion-kit/schemas";
 import { Checkbox } from "@notion-kit/ui/primitives";
@@ -10,6 +8,7 @@ import {
   TextCell,
   UserCell,
 } from "@/presets/tables/common-cells";
+import type { ColumnDef, Row } from "@/presets/tables/table-features";
 import { userFilterFn } from "@/presets/tables/utils";
 
 import { AccessCell, GuestActionCell } from "../cells";
@@ -36,7 +35,10 @@ export function createGuestColumns({
             <Checkbox
               size="sm"
               checked={table.getIsAllPageRowsSelected()}
-              indeterminate={table.getIsSomePageRowsSelected()}
+              indeterminate={
+                table.getIsSomePageRowsSelected() &&
+                !table.getIsAllPageRowsSelected()
+              }
               onCheckedChange={(value) =>
                 table.toggleAllPageRowsSelected(!!value)
               }
@@ -62,7 +64,6 @@ export function createGuestColumns({
         </div>
       ),
       filterFn: userFilterFn,
-      enableHiding: false,
     },
     ...(scopes.has(Scope.MemberUpdate)
       ? [

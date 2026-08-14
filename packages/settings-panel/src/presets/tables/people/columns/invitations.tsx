@@ -1,10 +1,9 @@
-import type { ColumnDef, Row } from "@tanstack/react-table";
-
 import { Trans, useTranslation } from "@notion-kit/i18n";
 import { Badge } from "@notion-kit/ui/primitives";
 
 import { Scope, type InvitationRow } from "@/lib/types";
 import { SortingToggle, UserCell } from "@/presets/tables/common-cells";
+import type { ColumnDef, Row } from "@/presets/tables/table-features";
 
 import { InvitationActionCell, RoleCell } from "../cells";
 

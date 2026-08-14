@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  type ColumnDef,
-} from "@tanstack/react-table";
+import { flexRender, useTable, type RowData } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import {
@@ -17,9 +12,11 @@ import {
   TableRow,
 } from "@notion-kit/ui/primitives";
 
-export interface DataTableProps<TData, TValue> {
+import { tableFeatures, type ColumnDef } from "../table-features";
+
+export interface DataTableProps<TData extends RowData> {
   type: "highlight" | "content";
-  columns: ColumnDef<TData, TValue>[];
+  columns: ColumnDef<TData>[];
   data: TData[];
 }
 
@@ -28,16 +25,15 @@ export interface DataTableProps<TData, TValue> {
  * This table has a specific design requirement with highlight/content types,
  * so it maintains its own implementation rather than using the base DataTable.
  */
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends RowData>({
   type,
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const table = useReactTable({
+}: DataTableProps<TData>) {
+  const table = useTable({
+    features: tableFeatures,
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
   });
   const tableRows = table.getRowModel().rows;
 
@@ -73,12 +69,8 @@ export function DataTable<TData, TValue>({
       </TableHeader>
       <TableBody>
         {tableRows.map((row) => (
-          <TableRow
-            key={row.id}
-            data-state={row.getIsSelected() && "selected"}
-            className="flex"
-          >
-            {row.getVisibleCells().map((cell) => (
+          <TableRow key={row.id} className="flex">
+            {row.getAllCells().map((cell) => (
               <TableCell
                 key={cell.id}
                 className={cn(

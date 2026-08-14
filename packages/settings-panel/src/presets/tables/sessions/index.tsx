@@ -15,8 +15,11 @@ interface SessionsTableProps {
 }
 
 export const SessionsTable = memo<SessionsTableProps>(
-  ({ className, data, ...props }) => {
-    const columns = useMemo(() => createSessionColumns({ ...props }), [props]);
+  ({ className, data, currentSessionId, onLogout }) => {
+    const columns = useMemo(
+      () => createSessionColumns({ currentSessionId, onLogout }),
+      [currentSessionId, onLogout],
+    );
     return (
       <DataTable
         className={className}

@@ -1,5 +1,3 @@
-import type { ColumnDef, Row } from "@tanstack/react-table";
-
 import { Trans } from "@notion-kit/i18n";
 import { Role } from "@notion-kit/schemas";
 
@@ -9,6 +7,7 @@ import {
   TextCell,
   UserCell,
 } from "@/presets/tables/common-cells";
+import type { ColumnDef, Row } from "@/presets/tables/table-features";
 import { userFilterFn } from "@/presets/tables/utils";
 
 import { MemberActionCell, RoleSelectCell, TeamspacesCell } from "../cells";

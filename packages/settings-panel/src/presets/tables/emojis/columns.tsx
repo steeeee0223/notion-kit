@@ -1,5 +1,4 @@
 import { useState } from "react";
-import type { ColumnDef, Row } from "@tanstack/react-table";
 
 import { Trans, useTranslation } from "@notion-kit/i18n";
 import { Icon } from "@notion-kit/icons";
@@ -19,6 +18,7 @@ import type { EmojiRow } from "@/lib/types";
 import { EmojiForm } from "@/presets/modals";
 
 import { SortingToggle, TextCell } from "../common-cells";
+import type { ColumnDef, Row } from "../table-features";
 
 function emojiFilterFn(
   row: Row<EmojiRow>,

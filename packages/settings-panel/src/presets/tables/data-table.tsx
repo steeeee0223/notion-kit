@@ -1,18 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import {
   flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
+  useTable,
   type ColumnFilter,
-  type ColumnFiltersState,
-  type OnChangeFn,
-  type Row,
-  type SortingState,
+  type RowData,
 } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
@@ -26,15 +19,13 @@ import {
   TableRow,
 } from "@notion-kit/ui/primitives";
 
-export interface DataTableProps<TData, TValue> {
+import { tableFeatures, type ColumnDef, type Row } from "./table-features";
+
+export interface DataTableProps<TData extends RowData> {
   className?: string;
-  columns: ColumnDef<TData, TValue>[];
+  columns: ColumnDef<TData>[];
   data: TData[];
   emptyResult?: string;
-  /** External column filters state (controlled) */
-  columnFilters?: ColumnFiltersState;
-  /** Callback when column filters change */
-  onColumnFiltersChange?: OnChangeFn<ColumnFiltersState>;
   /** Initial column pinning state (set once on mount, not controlled) */
   initialColumnPinning?: string[];
   /** Search configuration - applies filter to a specific column */
@@ -45,49 +36,41 @@ export interface DataTableProps<TData, TValue> {
   getHeaderClassName?: (columnId: string) => string;
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends RowData>({
   className,
   columns,
   data,
   emptyResult = "No results.",
-  columnFilters: externalColumnFilters,
-  onColumnFiltersChange,
   initialColumnPinning,
   search,
   onRowClick,
   getHeaderClassName,
-}: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [internalColumnFilters, setInternalColumnFilters] =
-    useState<ColumnFiltersState>([]);
+}: DataTableProps<TData>) {
+  const searchId = search?.id;
+  const searchValue = search?.value;
+  const columnFilters = useMemo(() => {
+    if (
+      searchId === undefined ||
+      searchValue === undefined ||
+      searchValue === ""
+    ) {
+      return [];
+    }
 
-  // Use external columnFilters if provided, otherwise use internal state
-  const columnFilters = externalColumnFilters ?? internalColumnFilters;
-  const handleColumnFiltersChange =
-    onColumnFiltersChange ?? setInternalColumnFilters;
+    return [{ id: searchId, value: searchValue }];
+  }, [searchId, searchValue]);
 
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const table = useReactTable({
+  const table = useTable({
+    features: tableFeatures,
     data,
     columns,
-    state: {
-      sorting,
-      columnFilters,
-      columnPinning: { left: initialColumnPinning },
+    initialState: {
+      columnPinning: { start: initialColumnPinning ?? [], end: [] },
     },
-    onSortingChange: setSorting,
-    onColumnFiltersChange: handleColumnFiltersChange,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      columnFilters,
+    },
   });
-
-  // Handle search prop
-  useEffect(() => {
-    if (!search) return;
-
-    table.getColumn(search.id)?.setFilterValue(search.value);
-  }, [search, table]);
 
   return (
     <Table className={className}>
@@ -97,7 +80,7 @@ export function DataTable<TData, TValue>({
             {headerGroup.headers.map((header) => {
               const isPinned = header.column.getIsPinned();
               const pinnedStyles = isPinned
-                ? { left: `${header.column.getStart("left")}px` }
+                ? { insetInlineStart: `${header.column.getStart("start")}px` }
                 : {};
 
               return (
@@ -128,10 +111,10 @@ export function DataTable<TData, TValue>({
               onClick={() => onRowClick?.(row)}
               className={cn(onRowClick && "cursor-pointer hover:bg-default/5")}
             >
-              {row.getVisibleCells().map((cell) => {
+              {row.getAllCells().map((cell) => {
                 const isPinned = cell.column.getIsPinned();
                 const pinnedStyles = isPinned
-                  ? { left: `${cell.column.getStart("left")}px` }
+                  ? { insetInlineStart: `${cell.column.getStart("start")}px` }
                   : {};
 
                 return (

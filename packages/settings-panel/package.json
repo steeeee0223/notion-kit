@@ -29,6 +29,7 @@
     "dev": "tsdown --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "babel": {
@@ -58,13 +59,17 @@
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "@testing-library/react": "catalog:rtl",
     "@types/file-saver": "^2.0.7",
+    "@vitejs/plugin-react": "catalog:test",
     "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",
+    "jsdom": "catalog:rtl",
     "prettier": "catalog:",
     "react-compiler-runtime": "catalog:react-compiler",
     "tsdown": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:test"
   },
   "peerDependencies": {
     "@notion-kit/ui": "workspace:*",

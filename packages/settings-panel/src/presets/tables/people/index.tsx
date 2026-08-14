@@ -146,12 +146,16 @@ interface InvitationsTableProps {
 export function InvitationsTable({
   data,
   search,
-  ...props
+  scopes,
+  onCancel,
 }: InvitationsTableProps) {
   const { t } = useTranslation("settings");
   const trans = t("tables.people", { returnObjects: true });
 
-  const columns = useMemo(() => createInvitationColumns({ ...props }), [props]);
+  const columns = useMemo(
+    () => createInvitationColumns({ scopes, onCancel }),
+    [scopes, onCancel],
+  );
   return (
     <DataTable
       columns={columns}
