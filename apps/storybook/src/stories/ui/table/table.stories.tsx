@@ -83,7 +83,7 @@ export const Pinned: Story = {
     return (
       <Table>
         <TableHeader>
-          <TableHead data-pinned="left" className="w-9">
+          <TableHead data-pinned="start" className="w-9">
             #
           </TableHead>
           <TableHead className="min-w-20">Name</TableHead>
@@ -93,7 +93,7 @@ export const Pinned: Story = {
         <TableBody>
           {(data as Todo[]).map((todo) => (
             <TableRow key={todo.id}>
-              <TableCell data-pinned="left">{todo.id}</TableCell>
+              <TableCell data-pinned="start">{todo.id}</TableCell>
               <TableCell>{todo.title}</TableCell>
               <TableCell>
                 {todo.completed ? "Completed" : "Not Completed"}
