@@ -6,6 +6,7 @@ import { Icon } from "@notion-kit/icons";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
+import { BulkEditBar } from "@/common/bulk-edit/bulk-edit-bar";
 import { TableGroupedRow } from "@/table-body";
 import { useTableViewCtx } from "@/table-contexts";
 
@@ -73,6 +74,7 @@ function ListViewContentInner({
 
   return (
     <div key="notion-list-view" className="min-w-177 px-24 pb-0">
+      <BulkEditBar />
       <table.Subscribe
         selector={(state) => ({
           locked: state.tableGlobal.locked,

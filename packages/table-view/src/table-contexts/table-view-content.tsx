@@ -1,6 +1,7 @@
 import { Icon } from "@notion-kit/icons";
 import { Button, Separator } from "@notion-kit/ui/primitives";
 
+import { BulkEditBar } from "@/common/bulk-edit/bulk-edit-bar";
 import { DndTableBody } from "@/table-body";
 import { TableFooter } from "@/table-footer";
 import { TableHeader } from "@/table-header";
@@ -46,6 +47,7 @@ export function TableViewContent() {
             className="relative float-left min-w-full px-24 pb-0 lining-nums tabular-nums select-none"
           >
             <div className="absolute z-9990 w-full" />
+            <BulkEditBar />
             <div className="pointer-events-none mt-0 h-0" />
             {isSorted && (
               <div className="flex pt-1">

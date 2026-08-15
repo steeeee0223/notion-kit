@@ -1,6 +1,12 @@
 import { screen, waitFor } from "@testing-library/react";
 import { expect, it, vi } from "vitest";
 
+import type {
+  DataResourceAction,
+  ResourceChange,
+  Row,
+} from "@notion-kit/table-hook";
+
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
 import { mockResizeObserver } from "@/__tests__/mock";
 
@@ -8,7 +14,10 @@ import { BulkActionMenu } from "./bulk-action-menu";
 
 mockResizeObserver();
 
-function renderBulkActions(onDataChange = vi.fn()) {
+type DataChange = ResourceChange<Row[], DataResourceAction>;
+
+function renderBulkActions() {
+  const onDataChange = vi.fn<(change: DataChange) => void>();
   const table = renderTableView({
     onDataChange,
     children: <BulkActionMenu rowIds={["row1", "row2"]} />,
