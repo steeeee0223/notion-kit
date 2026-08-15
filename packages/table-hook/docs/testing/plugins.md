@@ -10,6 +10,8 @@ interaction are audited in [`table-view`](../../../table-view/docs/testing/menus
 
 - Built-in factories expose complete behavioral descriptors through
   `@notion-kit/table-hook/plugins`.
+- Bulk-edit eligibility is opt-out: only built-in read-only properties and
+  custom plugins that explicitly set `disableBulkEdit` are excluded.
 - Stable method IDs and resolver fallbacks remain compatible with old resources
   and legacy `compare`, `toValue`, and `toGroupValue` implementations.
 - Plugin conversion and comparison handle empty, invalid, and boundary values

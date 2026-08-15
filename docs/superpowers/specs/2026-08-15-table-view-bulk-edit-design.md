@@ -202,6 +202,20 @@ Testing Library's accessible role/name assertions.
   stale selection.
 - Locked views cannot produce a visible bulk bar because selection is empty.
 
+### Browser E2E
+
+- In the built-package fixture, select rows through the rendered selection
+  controls and verify a multi-select bulk edit overwrites rather than merges
+  every target value, while emitting one `data.cell.update` resource action.
+- Verify the bar remains visible after switching to timeline with selection
+  preserved, and that title and derived-time columns remain absent.
+- Verify duplicate emits one batch action and both delete entry points require
+  confirmation before removing only the selected rows.
+
+Do not duplicate these browser journeys with unit tests that only call a
+thin editor wrapper's direct callback. Keep unit tests for value-resolution and
+resource contracts; use E2E for the integrated user path.
+
 Run the focused commands above before committing implementation. Include a
 manual browser pass for sticky placement and horizontal overflow in all three
 supported layouts.

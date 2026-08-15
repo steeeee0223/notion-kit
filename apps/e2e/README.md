@@ -91,6 +91,16 @@ Browser coverage is informational and separate from unit-test coverage. It
 tracks exercised files under `packages/table-view/src`, but it does not enforce
 a percentage threshold.
 
+### Table-view browser contracts
+
+The Playwright suite protects cross-package user journeys that need a real
+browser and the built `table-view` output. This includes bulk editing selected
+rows, the multi-select overwrite contract, batch resource actions, confirmation
+before deletion, and preserving the bulk-edit surface after changing layouts.
+Keep value conversion and resource-payload edge cases in the focused package
+unit tests; add browser coverage only when a rendered interaction, detached
+popover, or layout boundary is part of the risk.
+
 ### Build Verification
 
 ```bash

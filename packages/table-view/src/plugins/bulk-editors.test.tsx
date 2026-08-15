@@ -8,7 +8,6 @@ import type { DateConfig, DateData } from "@notion-kit/table-hook/plugins";
 import { mockResizeObserver } from "@/__tests__/mock";
 import { TableViewWrapper } from "@/table-contexts";
 
-import { BulkCheckboxEditor } from "./checkbox";
 import { BulkDateEditor } from "./date";
 import { BulkSelectEditor } from "./select";
 import { selectConfig } from "./select/__tests__/utils";
@@ -79,16 +78,4 @@ it("BulkDateEditor_Clear_ResolvesOneCompleteSharedDateValue", async () => {
     start: undefined,
     end: undefined,
   });
-});
-
-it("BulkCheckboxEditor_ExplicitChoices_ResolvesCheckedAndUncheckedValues", async () => {
-  const user = userEvent.setup();
-  const onUpdate = vi.fn();
-  render(<BulkCheckboxEditor onUpdate={onUpdate} />);
-
-  await user.click(screen.getByRole("menuitem", { name: "Checked" }));
-  await user.click(screen.getByRole("menuitem", { name: "Unchecked" }));
-
-  expect(onUpdate).toHaveBeenNthCalledWith(1, true);
-  expect(onUpdate).toHaveBeenNthCalledWith(2, false);
 });

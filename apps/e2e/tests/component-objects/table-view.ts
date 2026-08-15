@@ -215,6 +215,17 @@ export class TableViewObject {
       .filter({ has: this.page.getByRole("checkbox") });
   }
 
+  rowCheckbox(rowId: string) {
+    return this.page.getByRole("checkbox", {
+      name: `Select row ${rowId}`,
+      exact: true,
+    });
+  }
+
+  bulkEditBar() {
+    return this.page.getByTestId("bulk-edit-bar");
+  }
+
   async editTextCell(
     rowName: AccessibleName,
     currentValue: AccessibleName,

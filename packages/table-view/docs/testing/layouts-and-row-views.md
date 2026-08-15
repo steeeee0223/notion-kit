@@ -20,6 +20,7 @@ navigation, and locked-state behavior.
 - Timeline behavior: [`src/timeline-view/`](../../src/timeline-view/)
 - Row views: [`view-props.test.tsx`](../../src/row-view/view-props.test.tsx)
 - Row selection surface: [`table-row-selection.test.tsx`](../../src/table-body/table-row-selection.test.tsx)
+- Bulk edit bar: [`bulk-edit-bar.test.tsx`](../../src/common/bulk-edit/bulk-edit-bar.test.tsx)
 - Sorted row drag: [`sorted-row-drag.test.tsx`](../../src/__tests__/sorted-row-drag.test.tsx)
 
 ## Update this audit when

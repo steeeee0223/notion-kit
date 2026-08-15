@@ -23,6 +23,8 @@ headless data semantics.
 - Number configuration: [`number-config-menu.test.tsx`](../../src/plugins/number/number-config-menu/number-config-menu.test.tsx)
 - Date editing: [`date-cell.test.tsx`](../../src/plugins/date/date-cell/date-cell.test.tsx)
 - Table-view plugin wrappers: [`src/plugins/plugins.test.tsx`](../../src/plugins/plugins.test.tsx)
+- Bulk editor value resolution: [`bulk-editors.test.tsx`](../../src/plugins/bulk-editors.test.tsx)
+- Bulk edit controls and destructive actions: [`src/common/bulk-edit/`](../../src/common/bulk-edit/)
 
 ## Update this audit when
 
