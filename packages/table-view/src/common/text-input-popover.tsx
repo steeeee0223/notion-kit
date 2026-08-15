@@ -11,7 +11,7 @@ import {
   PopoverTrigger,
 } from "@notion-kit/ui/primitives";
 
-interface TextInputPopoverProps extends TextInputContentProps {
+interface TextInputPopoverProps extends TextInputPopoverContentProps {
   renderTrigger: ({ width }: { width: number }) => React.ReactElement;
 }
 
@@ -35,7 +35,7 @@ export function TextInputPopover({
         align="start"
         className="max-h-[773px] min-h-[38px] w-60 overflow-visible backdrop-filter-none"
       >
-        <TextInputContent
+        <TextInputPopoverContent
           {...props}
           onCancel={() => setOpen(false)}
           onUpdate={(v) => {
@@ -48,19 +48,19 @@ export function TextInputPopover({
   );
 }
 
-interface TextInputContentProps {
+export interface TextInputPopoverContentProps {
   className?: string;
   value: string;
   onUpdate: (value: string) => void;
   onCancel?: () => void;
 }
 
-function TextInputContent({
+export function TextInputPopoverContent({
   className,
   value,
   onUpdate,
   onCancel,
-}: TextInputContentProps) {
+}: TextInputPopoverContentProps) {
   const id = useId();
   const { props, reset } = useInputField({ id, initialValue: value, onUpdate });
 
