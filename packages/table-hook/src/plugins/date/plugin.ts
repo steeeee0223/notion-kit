@@ -268,6 +268,7 @@ export function createdTime(
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return {
     id,
+    disableBulkEdit: true,
     meta: {
       name,
       icon: config.icon,
@@ -309,6 +310,7 @@ export function lastEditedTime(
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return {
     id,
+    disableBulkEdit: true,
     meta: {
       name,
       icon: config.icon,

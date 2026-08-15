@@ -32,6 +32,7 @@ export interface TitlePluginConfig
 export function title(config: TitlePluginConfig): TitlePlugin {
   return {
     id: "title",
+    disableBulkEdit: true,
     meta: { name: "Title", icon: config.icon, desc: "" },
     default: {
       name: "Title",

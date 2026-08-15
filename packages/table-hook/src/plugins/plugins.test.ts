@@ -84,6 +84,27 @@ describe("configured plugin factories", () => {
     });
     expect(plugin.meta.icon).not.toBe(plugin.default.icon);
   });
+
+  it("BulkEditEligibility_BuiltInPlugins_OptOutOnlyForReadOnlyProperties", () => {
+    expect(
+      Object.fromEntries(
+        DEFAULT_PLUGINS.map((plugin) => [plugin.id, plugin.disableBulkEdit]),
+      ),
+    ).toEqual({
+      title: true,
+      text: undefined,
+      number: undefined,
+      checkbox: undefined,
+      select: undefined,
+      "multi-select": undefined,
+      email: undefined,
+      phone: undefined,
+      url: undefined,
+      date: undefined,
+      "created-time": true,
+      "last-edited-time": true,
+    });
+  });
 });
 
 const methodMatrix = {

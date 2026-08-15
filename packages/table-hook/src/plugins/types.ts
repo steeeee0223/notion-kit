@@ -56,6 +56,10 @@ export interface CellPlugin<
 > {
   id: Key;
   /**
+   * @prop Prevent this property type from appearing in bulk edit controls.
+   */
+  disableBulkEdit?: boolean;
+  /**
    * @prop Metadata about the plugin. Displayed in <TypesMenu />.
    */
   meta: {
