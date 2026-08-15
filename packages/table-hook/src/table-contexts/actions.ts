@@ -60,6 +60,16 @@ export type DataResourceAction =
       { sourceRowId: string; rowId: string; nextPosition: number }
     >
   | TableAction<
+      "data.rows.duplicate",
+      {
+        duplicates: {
+          sourceRowId: string;
+          rowId: string;
+          nextPosition: number;
+        }[];
+      }
+    >
+  | TableAction<
       "data.row.move",
       { rowId: string; previousPosition: number; nextPosition: number }
     >;
