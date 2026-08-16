@@ -38,7 +38,7 @@ export function BulkActionMenu({ rowIds }: BulkActionMenuProps) {
         className="size-7 shrink-0"
         onClick={() => setShowDeleteConfirm(true)}
       >
-        <Icon.Trash className="size-4" />
+        <Icon.Trash className="fill-red" />
       </Button>
       <DropdownMenu>
         <DropdownMenuTrigger
@@ -48,7 +48,7 @@ export function BulkActionMenu({ rowIds }: BulkActionMenuProps) {
               variant="hint"
               className="size-7 shrink-0"
             >
-              <Icon.Dots className="size-4 fill-current" />
+              <Icon.Dots className="size-4 fill-menu-icon" />
             </Button>
           }
         />

@@ -4,9 +4,10 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { DefaultIcon, TextInputPopoverContent } from "@/common";
+import { TextInputPopoverContent } from "@/common";
 import { BulkCheckboxEditor } from "@/plugins/checkbox";
 import { BulkDateEditor } from "@/plugins/date";
 import { BulkSelectEditor } from "@/plugins/select";
@@ -26,10 +27,8 @@ export function BulkEditBar() {
         columnsInfo: state.columnsInfo,
       })}
     >
-      {({ rowSelection }) => {
-        const selectedRowIds = Object.keys(rowSelection).filter(
-          (rowId) => rowSelection[rowId],
-        );
+      {() => {
+        const selectedRowIds = table.getSelectedRowIds();
         if (selectedRowIds.length === 0) return null;
 
         const columns = table
@@ -41,13 +40,13 @@ export function BulkEditBar() {
         return (
           <div
             data-testid="bulk-edit-bar"
-            className="sticky top-0 left-0 z-(--z-row) flex max-w-full items-center gap-1 overflow-x-auto rounded-md border border-border bg-main px-2 py-1 whitespace-nowrap shadow-sm"
+            className="sticky inset-s-0 top-0 z-(--z-row) flex w-fit max-w-full items-center gap-1 overflow-x-auto rounded-md border border-border bg-main px-2 py-1 whitespace-nowrap shadow-sm"
           >
-            <span className="px-1 text-sm text-secondary">
+            <span className="px-1 text-sm text-blue">
               {selectedRowIds.length} row
               {selectedRowIds.length === 1 ? "" : "s"} selected
             </span>
-            <div className="flex min-w-max items-center gap-1">
+            <div className="flex w-fit items-center gap-1">
               {columns.map((column) => (
                 <BulkEditColumn
                   key={column.id}
@@ -79,32 +78,32 @@ function BulkEditColumn({
   const plugin = table.getColumnPlugin(columnId);
   const update = (value: unknown) =>
     table.updateCells(selectedRowIds, columnId, value);
-  const updateConfig = column.updateConfig;
 
   return (
     <Popover>
-      <PopoverTrigger
-        render={
-          <Button
-            variant="cell"
-            aria-label={info.name}
-            className="h-7 gap-1 rounded-sm px-1.5 text-sm"
-          >
-            {info.icon ? (
-              <IconBlock icon={info.icon} className="size-4 p-0" />
-            ) : (
-              <DefaultIcon type={info.type} className="fill-default/45" />
-            )}
-            <span className="max-w-36 truncate">{info.name}</span>
-          </Button>
-        }
-      />
+      <TooltipPreset description={info.name} side="top">
+        <PopoverTrigger
+          render={
+            <Button
+              variant="cell"
+              aria-label={info.name}
+              className="h-7 gap-1 rounded-sm px-1.5 text-sm"
+            >
+              {info.icon ? (
+                <IconBlock icon={info.icon} className="size-4 p-0" />
+              ) : (
+                plugin.default.icon
+              )}
+            </Button>
+          }
+        />
+      </TooltipPreset>
       <PopoverContent align="start" side="bottom" className="w-62">
         <BulkEditor
           type={plugin.id}
           config={info.config as unknown}
           onUpdate={update}
-          onConfigChange={updateConfig}
+          onConfigChange={column.updateConfig}
           propId={columnId}
         />
       </PopoverContent>
