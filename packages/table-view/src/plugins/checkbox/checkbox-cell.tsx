@@ -1,17 +1,35 @@
 import { cn } from "@notion-kit/cn";
-import type { CellProps } from "@notion-kit/table-hook/plugins";
+import type {
+  CellEditorProps,
+  CellValueProps,
+} from "@notion-kit/table-hook/plugins";
 import { Checkbox } from "@notion-kit/ui/primitives";
 
 import { CellTrigger } from "@/common";
 
-export function CheckboxCell({
+export function CheckboxCellValue({ data }: CellValueProps<boolean>) {
+  return (
+    <div className="h-4 max-w-full">
+      <Checkbox className="rounded-[3px]" checked={data} />
+    </div>
+  );
+}
+
+export function CheckboxCellEditor({
   data,
   wrapped,
   disabled,
   layout,
   tooltip,
   onChange,
-}: CellProps<boolean>) {
+  scope,
+}: CellEditorProps<boolean>) {
+  const selectedValues =
+    scope.kind === "bulk" ? scope.selectedValues : [data];
+  const allChecked = selectedValues.every(Boolean);
+  const allUnchecked = selectedValues.every((value) => !value);
+  const checked = allChecked ? true : allUnchecked ? false : "indeterminate";
+
   return (
     <CellTrigger
       className={cn(layout === "table" && "py-2.5")}
@@ -19,10 +37,10 @@ export function CheckboxCell({
       layout={layout}
       aria-disabled={disabled}
       tooltip={tooltip}
-      onPointerDown={() => onChange((v) => !v)}
+      onPointerDown={() => onChange(!allChecked)}
     >
       <div className="h-4 max-w-full">
-        <Checkbox className="rounded-[3px]" checked={data} />
+        <Checkbox className="rounded-[3px]" checked={checked} />
       </div>
     </CellTrigger>
   );

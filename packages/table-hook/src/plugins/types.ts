@@ -28,8 +28,13 @@ export interface CellEditorProps<Data, Config = undefined> {
   propId: string;
   data: Data;
   config: Config;
+  wrapped?: boolean;
   disabled?: boolean;
   layout?: LayoutType | "row-view";
+  tooltip?: {
+    title: string;
+    description?: string;
+  };
   onChange: OnChangeFn<Data>;
   onConfigChange?: OnChangeFn<Config>;
   scope:
@@ -42,7 +47,7 @@ export interface CellEditorPopoverOptions {
   align?: "start" | "center" | "end";
   alignOffset?: number;
   side?: "top" | "right" | "bottom" | "left";
-  sideOffset?: number;
+  sideOffset?: number | ((triggerRect: { height: number }) => number);
 }
 
 export type CellEditorResult =

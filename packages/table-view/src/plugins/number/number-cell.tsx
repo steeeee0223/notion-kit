@@ -2,73 +2,79 @@ import { cn } from "@notion-kit/cn";
 import { wrappedClassName } from "@notion-kit/table-hook";
 import {
   formatNumber,
-  type InferCellProps,
+  type CellEditorProps,
+  type CellValueProps,
   type NumberConfig,
-  type NumberPlugin,
 } from "@notion-kit/table-hook/plugins";
 import { MeterBar, MeterRing, TooltipPreset } from "@notion-kit/ui/primitives";
 import { COLOR } from "@notion-kit/utils";
 
-import { CellTrigger, CopyButton, TextInputPopover } from "@/common";
+import { CellTrigger, CopyButton, TextInputPopoverContent } from "@/common";
 
-export function NumberCell({
+export function NumberCellValue({
   data,
   config,
   wrapped,
   disabled,
   layout,
   tooltip,
-  onChange,
-}: InferCellProps<NumberPlugin>) {
+}: CellValueProps<string | null, NumberConfig>) {
   const value = data ?? "";
-  const handleUpdate = (newValue: string) => {
-    if (newValue === "") return onChange(null);
-    const num = Number(newValue);
-    onChange(isNaN(num) ? null : String(num));
-  };
 
   if (layout !== "table" && layout !== "row-view" && data === null) return null;
   return (
-    <TextInputPopover
-      className="text-end"
-      value={value}
-      onUpdate={handleUpdate}
-      renderTrigger={() => (
-        <CellTrigger
-          className={cn("group/number-cell", layout === "table" && "h-9")}
-          wrapped={wrapped}
-          aria-disabled={disabled}
-          layout={layout}
-          widthType="number"
-          tooltip={tooltip}
-        >
-          {layout === "table" && (
-            <CopyButton
-              className="hidden justify-start group-hover/number-cell:flex"
-              value={value}
-            />
-          )}
-          <div
-            className={cn(
-              "flex justify-end gap-x-2 gap-y-1.5",
-              wrapped ? "flex-wrap" : "flex-nowrap",
-            )}
-          >
-            <NumberDisplay
-              view={layout}
-              value={data}
-              config={config}
-              wrapped={wrapped}
-            />
-          </div>
-        </CellTrigger>
+    <CellTrigger
+      className={cn("group/number-cell", layout === "table" && "h-9")}
+      wrapped={wrapped}
+      aria-disabled={disabled}
+      layout={layout}
+      widthType="number"
+      tooltip={tooltip}
+    >
+      {layout === "table" && (
+        <CopyButton
+          className="hidden justify-start group-hover/number-cell:flex"
+          value={value}
+        />
       )}
+      <div
+        className={cn(
+          "flex justify-end gap-x-2 gap-y-1.5",
+          wrapped ? "flex-wrap" : "flex-nowrap",
+        )}
+      >
+        <NumberDisplay
+          view={layout}
+          value={data}
+          config={config}
+          wrapped={wrapped}
+        />
+      </div>
+    </CellTrigger>
+  );
+}
+
+export function NumberCellEditor({
+  data,
+  onChange,
+}: CellEditorProps<string | null, NumberConfig>) {
+  const handleUpdate = (newValue: string) => {
+    if (newValue === "") return onChange(null);
+    const number = Number(newValue);
+    onChange(Number.isNaN(number) ? null : String(number));
+  };
+
+  return (
+    <TextInputPopoverContent
+      className="text-end"
+      value={data ?? ""}
+      onUpdate={handleUpdate}
     />
   );
 }
 
 interface NumberDisplayProps {
-  view: InferCellProps<NumberPlugin>["layout"];
+  view: CellValueProps<string | null, NumberConfig>["layout"];
   value: string | null;
   config: NumberConfig;
   wrapped?: boolean;

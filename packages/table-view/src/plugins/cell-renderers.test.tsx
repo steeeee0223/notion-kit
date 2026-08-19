@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -19,10 +20,11 @@ import {
   mockResizeObserver,
 } from "@/__tests__/mock";
 
-import { CheckboxCell } from "./checkbox/checkbox-cell";
-import { LinkCell } from "./link/link-cell";
-import { NumberCell } from "./number/number-cell";
-import { TextCell } from "./text/text-cell";
+import { CheckboxCellEditor } from "./checkbox/checkbox-cell";
+import { checkbox as createCheckbox } from "./checkbox/plugin";
+import { LinkCellValue } from "./link/link-cell";
+import { NumberCellValue } from "./number/number-cell";
+import { TextCellValue } from "./text/text-cell";
 
 mockResizeObserver();
 
@@ -43,13 +45,13 @@ const baseNumberConfig: NumberConfig = {
 function renderNumber(
   data: string | null,
   config: NumberConfig,
-  overrides: Partial<React.ComponentProps<typeof NumberCell>> = {},
+  overrides: Partial<React.ComponentProps<typeof NumberCellValue>> = {},
 ) {
   const onChange = vi.fn();
   const renderCell = (
-    nextOverrides: Partial<React.ComponentProps<typeof NumberCell>> = {},
+    nextOverrides: Partial<React.ComponentProps<typeof NumberCellValue>> = {},
   ) => (
-    <NumberCell
+    <NumberCellValue
       propId="amount"
       row={row}
       data={data}
@@ -286,7 +288,7 @@ describe("LinkCell", () => {
     ["url", "  JAVASCRIPT:alert(1)", ""],
   ] as const)("LinkCell_%s_UsesSafeExpectedHref", (type, data, href) => {
     render(
-      <LinkCell
+      <LinkCellValue
         type={type}
         propId="link"
         row={row}
@@ -304,7 +306,7 @@ describe("LinkCell", () => {
 
   it("LinkCell_EmptyRowAndBoard_ExposeOnlyMeaningfulContent", () => {
     const { rerender } = render(
-      <LinkCell
+      <LinkCellValue
         type="url"
         propId="link"
         row={row}
@@ -317,7 +319,7 @@ describe("LinkCell", () => {
     expect(screen.getByText("Empty")).toBeVisible();
 
     rerender(
-      <LinkCell
+      <LinkCellValue
         type="url"
         propId="link"
         row={row}
@@ -332,6 +334,34 @@ describe("LinkCell", () => {
 });
 
 describe("TextAndCheckboxCells", () => {
+  it("CheckboxRegistryEditor_CellScope_RendersAnInlineToggleThatPersistsItsNewValue", async () => {
+    const user = userEvent.setup();
+
+    function CheckboxEditorHarness() {
+      const [value, setValue] = useState(false);
+      const plugin = createCheckbox();
+      const editor = plugin.renderCellEditor?.({
+        propId: "done",
+        data: value,
+        config: undefined,
+        layout: "table",
+        onChange: setValue,
+        scope: { kind: "cell", row },
+      });
+
+      return <>{editor?.content}</>;
+    }
+
+    render(<CheckboxEditorHarness />);
+
+    const checkbox = screen.getByRole("checkbox");
+    expect(checkbox).not.toBeChecked();
+
+    await user.click(checkbox);
+
+    expect(screen.getByRole("checkbox")).toBeChecked();
+  });
+
   it("TextCell_RowViewEmptyAndBoardEmpty_DistinguishEditableBoundary", () => {
     const common = {
       propId: "text",
@@ -340,9 +370,9 @@ describe("TextAndCheckboxCells", () => {
       config: undefined,
       onChange: vi.fn(),
     };
-    const { rerender } = render(<TextCell {...common} layout="row-view" />);
+    const { rerender } = render(<TextCellValue {...common} layout="row-view" />);
     expect(screen.getByText("Empty")).toBeVisible();
-    rerender(<TextCell {...common} layout="board" />);
+    rerender(<TextCellValue {...common} layout="board" />);
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 
@@ -350,13 +380,14 @@ describe("TextAndCheckboxCells", () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(
-      <CheckboxCell
+      <CheckboxCellEditor
         propId="done"
         row={row}
         data={false}
         config={undefined}
         layout="table"
         onChange={onChange}
+        scope={{ kind: "cell", row }}
       />,
     );
 
