@@ -110,10 +110,12 @@ function getPropertySurfaces(container: HTMLElement, propertyName: string) {
   const valueTrigger = valueCell.querySelector<HTMLElement>(
     '[role="button"][aria-disabled]',
   );
-  if (!valueTrigger)
-    throw new Error(`Expected ${propertyName} to have a value trigger`);
+  const valueCheckbox = within(valueCell).queryByRole("checkbox");
+  const valueControl = valueTrigger ?? valueCheckbox;
+  if (!valueControl)
+    throw new Error(`Expected ${propertyName} to have an editable control`);
 
-  return { nameTrigger, valueCell, valueTrigger };
+  return { nameTrigger, valueCell, valueControl };
 }
 
 interface LockViewControlProps {
@@ -135,28 +137,34 @@ it("ViewProps_LockedView_DisablesEveryPropertyTrigger", async () => {
 
   // Act + Assert
   for (const propertyName of propertyNames) {
-    const { nameTrigger, valueCell, valueTrigger } = getPropertySurfaces(
+    const { nameTrigger, valueCell, valueControl } = getPropertySurfaces(
       rowView,
       propertyName,
     );
 
     expect(nameTrigger).toBeDisabled();
     expect(valueCell).toHaveAttribute("inert");
-    expect(valueTrigger).toHaveAttribute("aria-disabled", "true");
-    expect(valueTrigger).toHaveAttribute("tabindex", "-1");
+    if (propertyName === "Complete") {
+      expect(valueControl).toHaveRole("checkbox");
+      expect(valueControl).toHaveAttribute("aria-disabled", "true");
+      expect(valueControl).toHaveAttribute("tabindex", "-1");
+    } else {
+      expect(valueControl).toHaveAttribute("aria-disabled", "true");
+      expect(valueControl).toHaveAttribute("tabindex", "-1");
+    }
 
     fireEvent.mouseDown(nameTrigger);
     fireEvent.click(nameTrigger);
   }
 
   for (const propertyName of interactivePropertyNames) {
-    const { valueTrigger } = getPropertySurfaces(rowView, propertyName);
+    const { valueControl } = getPropertySurfaces(rowView, propertyName);
 
-    fireEvent.pointerDown(valueTrigger);
-    fireEvent.mouseDown(valueTrigger);
-    fireEvent.click(valueTrigger);
-    fireEvent.keyDown(valueTrigger, { key: "Enter" });
-    fireEvent.keyDown(valueTrigger, { key: " " });
+    fireEvent.pointerDown(valueControl);
+    fireEvent.mouseDown(valueControl);
+    fireEvent.click(valueControl);
+    fireEvent.keyDown(valueControl, { key: "Enter" });
+    fireEvent.keyDown(valueControl, { key: " " });
   }
 
   expect(screen.queryByRole("menu")).not.toBeInTheDocument();
@@ -184,7 +192,7 @@ it("ViewProps_UnlockedView_PropertyTriggerStillOpens", async () => {
 
   // Act
   await table.user.keyboard("{Escape}");
-  await table.user.click(notes.valueTrigger);
+  await table.user.click(notes.valueControl);
 
   // Assert
   expect(await screen.findByRole("textbox")).toHaveValue("first note");
@@ -209,7 +217,7 @@ it("ViewProps_LockTransition_ClosesOpenEditorWithoutDataChange", async () => {
   });
   const rowView = await screen.findByRole("dialog", { name: "Alpha" });
   const notes = getPropertySurfaces(rowView, "Notes");
-  await table.user.click(notes.valueTrigger);
+  await table.user.click(notes.valueControl);
   const editor = await screen.findByRole("textbox");
   fireEvent.change(editor, { target: { value: "blocked update" } });
 
