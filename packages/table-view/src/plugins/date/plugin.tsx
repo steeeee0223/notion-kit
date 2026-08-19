@@ -26,8 +26,14 @@ export function date() {
     renderCellValue: (props) => <DatePickerCellValue {...props} />,
     renderCellEditor: (props) => ({
       presentation: "popover",
+      closeOnChange: false,
       content: <DatePickerCellEditor {...props} />,
-      popover: { align: "start", side: "bottom", sideOffset: 0, className: "w-62" },
+      popover: {
+        align: "start",
+        side: "bottom",
+        sideOffset: 0,
+        className: "w-62",
+      },
     }),
     ...dateRenderers,
   });

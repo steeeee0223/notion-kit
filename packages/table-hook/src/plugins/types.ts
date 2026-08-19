@@ -53,11 +53,16 @@ export interface CellEditorPopoverOptions {
 }
 
 export type CellEditorResult =
-  | { presentation: "inline"; content: React.ReactNode }
+  | {
+      presentation: "inline";
+      content: React.ReactNode;
+      closeOnChange?: boolean;
+    }
   | {
       presentation: "popover";
       content: React.ReactNode;
       popover?: CellEditorPopoverOptions;
+      closeOnChange?: boolean;
     };
 
 export interface ConfigMenuProps<Config = unknown> {
@@ -159,9 +164,7 @@ export interface CellPlugin<
   compare?: (rowA: Row, rowB: Row, colId: string) => number;
   transferConfig?: (column: ColumnInfo, data: Row[]) => Config;
   renderCellValue: (props: CellValueProps<Data, Config>) => React.ReactNode;
-  renderCellEditor?: (
-    props: CellEditorProps<Data, Config>,
-  ) => CellEditorResult;
+  renderCellEditor?: (props: CellEditorProps<Data, Config>) => CellEditorResult;
   renderConfigMenu?: (props: ConfigMenuProps<Config>) => React.ReactNode;
   renderGroupingValue?: (props: GroupingValueProps) => React.ReactNode;
 }

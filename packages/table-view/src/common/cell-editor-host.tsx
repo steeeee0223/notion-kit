@@ -8,21 +8,23 @@ import type {
   CellPlugin,
   CellValueProps,
 } from "@notion-kit/table-hook/plugins";
-import { Popover, PopoverContent, PopoverTrigger } from "@notion-kit/ui/primitives";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@notion-kit/ui/primitives";
 
-type UnknownCellPlugin = CellPlugin<string, unknown, unknown>;
-
-interface CellEditorHostProps {
-  plugin: UnknownCellPlugin;
-  valueProps: CellValueProps<unknown, unknown>;
-  editorProps: CellEditorProps<unknown, unknown>;
+interface CellEditorHostProps<Data, Config> {
+  plugin: CellPlugin<string, Data, Config>;
+  valueProps: CellValueProps<Data, Config>;
+  editorProps: CellEditorProps<Data, Config>;
 }
 
-export function CellEditorHost({
+export function CellEditorHost<Data, Config>({
   plugin,
   valueProps,
   editorProps,
-}: CellEditorHostProps) {
+}: CellEditorHostProps<Data, Config>) {
   const [open, setOpen] = useState(false);
   const { ref, rect } = useRect<HTMLElement>();
   const value = flexRender(plugin.renderCellValue, {
@@ -35,7 +37,7 @@ export function CellEditorHost({
     ...editorProps,
     onChange: (updater) => {
       editorProps.onChange(functionalUpdate(updater, editorProps.data));
-      setOpen(false);
+      if (result?.closeOnChange !== false) setOpen(false);
     },
     onCancel: () => setOpen(false),
   });
