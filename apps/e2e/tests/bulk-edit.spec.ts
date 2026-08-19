@@ -20,6 +20,24 @@ test("BulkEdit_SelectedRows_OverwritesValuesAndPersistsAcrossTimeline", async ({
   await expect(bar.getByRole("button", { name: "Created" })).toHaveCount(0);
   await expect(bar.getByRole("button", { name: "Edited" })).toHaveCount(0);
 
+  const complete = bar.getByRole("checkbox");
+  await expect(complete).toHaveAttribute("aria-checked", "mixed");
+  await complete.click();
+
+  const completionSnapshot = await table.controlledSnapshot();
+  expect(completionSnapshot.lastDataAction).toMatchObject({
+    type: "data.cell.update",
+    payload: { rowIds: ["row-alpha", "row-empty"], propertyId: "complete" },
+  });
+  expect(
+    completionSnapshot.data.find((row) => row.id === "row-alpha")?.properties
+      .complete?.value,
+  ).toBe(true);
+  expect(
+    completionSnapshot.data.find((row) => row.id === "row-empty")?.properties
+      .complete?.value,
+  ).toBe(true);
+
   await bar.getByRole("button", { name: "Tags" }).click();
   await page.getByRole("option", { name: "Backend", exact: true }).click();
 
