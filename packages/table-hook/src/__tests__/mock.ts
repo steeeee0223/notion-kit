@@ -77,7 +77,7 @@ const checkboxPlugin: TestCheckboxPlugin = {
     methods: [groupByValue],
   },
   counting: checkboxCounting,
-  renderCell: () => null,
+  renderCellValue: () => null,
 };
 
 const numberPlugin: TestNumberPlugin = {
@@ -104,7 +104,7 @@ const numberPlugin: TestNumberPlugin = {
     methods: [groupByValue],
   },
   counting: genericCounting,
-  renderCell: () => null,
+  renderCellValue: () => null,
 };
 
 const selectPlugin: TestSelectPlugin = {
@@ -146,7 +146,7 @@ const selectPlugin: TestSelectPlugin = {
     ],
   },
   counting: genericCounting,
-  renderCell: () => null,
+  renderCellValue: () => null,
 };
 
 const textPlugin: CellPlugin<"text", string, undefined> = {
@@ -162,7 +162,7 @@ const textPlugin: CellPlugin<"text", string, undefined> = {
     methods: [groupByTextValue],
   },
   counting: genericCounting,
-  renderCell: () => null,
+  renderCellValue: () => null,
 };
 
 const titlePlugin: CellPlugin<"title", string, { showIcon: boolean }> = {
@@ -178,7 +178,7 @@ const titlePlugin: CellPlugin<"title", string, { showIcon: boolean }> = {
   toValue: (data) => data,
   toTextValue: (data) => data,
   counting: genericCounting,
-  renderCell: () => null,
+  renderCellValue: () => null,
 };
 
 export const plugins = arrayToEntity([

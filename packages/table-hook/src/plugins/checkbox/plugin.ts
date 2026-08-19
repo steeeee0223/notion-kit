@@ -49,7 +49,8 @@ export function checkbox(config: CheckboxPluginConfig): CheckboxPlugin {
       methods: [{ id: "value", name: "Value", function: groupByValue }],
     },
     counting: checkboxCounting,
-    renderCell: config.renderCell,
+    renderCellValue: config.renderCellValue,
+    renderCellEditor: config.renderCellEditor,
     renderConfigMenu: config.renderConfigMenu,
     renderGroupingValue: config.renderGroupingValue,
   };

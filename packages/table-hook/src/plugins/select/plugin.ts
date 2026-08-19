@@ -7,8 +7,10 @@ import { compareEmptyLastStrings, getFirstOption, groupByValue } from "@/fns";
 import type { Cell, ColumnInfo, Row } from "@/lib/types";
 
 import type {
+  CellEditorProps,
+  CellEditorResult,
   CellPlugin,
-  CellProps,
+  CellValueProps,
   ComparableValue,
   ConfigMenuProps,
   GroupingValueProps,
@@ -19,9 +21,12 @@ import type { MultiSelectPlugin, SelectConfig, SelectPlugin } from "./types";
 interface SelectRendererConfig {
   icon: React.ReactNode;
   defaultIcon?: React.ReactNode;
-  renderCell: (
-    props: CellProps<string[], SelectConfig> & { multi?: boolean },
+  renderCellValue: (
+    props: CellValueProps<string[], SelectConfig> & { multi?: boolean },
   ) => React.ReactNode;
+  renderCellEditor?: (
+    props: CellEditorProps<string[], SelectConfig> & { multi?: boolean },
+  ) => CellEditorResult;
   renderConfigMenu?: (
     props: ConfigMenuProps<SelectConfig> & { multi?: boolean },
   ) => React.ReactNode;
@@ -88,6 +93,7 @@ function fromValue(
 }
 
 export function select(config: SelectPluginConfig): SelectPlugin {
+  const renderCellEditor = config.renderCellEditor;
   return {
     id: "select",
     meta: {
@@ -140,16 +146,32 @@ export function select(config: SelectPluginConfig): SelectPlugin {
       ],
     },
     counting: genericCounting,
-    renderCell: ({ data, onChange, ...props }) =>
-      config.renderCell({
+    renderCellValue: ({ data, ...props }) =>
+      config.renderCellValue({
         data: data ? [data] : [],
-        onChange: (updater) =>
-          onChange((prev) => {
-            const res = functionalUpdate(updater, prev ? [prev] : []);
-            return res.at(0) ?? null;
-          }),
         ...props,
       }),
+    renderCellEditor: renderCellEditor
+      ? ({ data, onChange, ...props }) =>
+          renderCellEditor({
+            data: data ? [data] : [],
+            onChange: (updater) =>
+              onChange((prev) => {
+                const res = functionalUpdate(updater, prev ? [prev] : []);
+                return res.at(0) ?? null;
+              }),
+            ...props,
+            scope:
+              props.scope.kind === "cell"
+                ? props.scope
+                : {
+                    ...props.scope,
+                    selectedValues: props.scope.selectedValues.map((value) =>
+                      value ? [value] : [],
+                    ),
+                  },
+          })
+      : undefined,
     renderConfigMenu: config.renderConfigMenu,
     renderGroupingValue: config.renderGroupingValue,
   };
@@ -158,6 +180,7 @@ export function select(config: SelectPluginConfig): SelectPlugin {
 export function multiSelect(
   config: MultiSelectPluginConfig,
 ): MultiSelectPlugin {
+  const renderCellEditor = config.renderCellEditor;
   return {
     id: "multi-select",
     meta: {
@@ -208,7 +231,11 @@ export function multiSelect(
     },
     transferConfig: toSelectConfig,
     counting: genericCounting,
-    renderCell: (props) => config.renderCell({ multi: true, ...props }),
+    renderCellValue: (props) =>
+      config.renderCellValue({ multi: true, ...props }),
+    renderCellEditor: renderCellEditor
+      ? (props) => renderCellEditor({ multi: true, ...props })
+      : undefined,
     renderConfigMenu: config.renderConfigMenu
       ? (props) => config.renderConfigMenu?.({ multi: true, ...props })
       : undefined,

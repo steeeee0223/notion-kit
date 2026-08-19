@@ -9,14 +9,14 @@ fixtures, and contract documentation without a legacy fallback.
 
 **Acceptance criteria:**
 
-- [ ] `CellPlugin` and `PluginFactoryConfig` expose the new renderer contract.
-- [ ] All built-in factory implementations and test fixtures compile without `renderCell`.
-- [ ] Plugin documentation describes the value/editor split and bulk eligibility rule.
+- [x] `CellPlugin` and `PluginFactoryConfig` expose the new renderer contract.
+- [x] All built-in factory implementations and test fixtures compile without `renderCell`.
+- [x] Plugin documentation describes the value/editor split and bulk eligibility rule.
 
 **Verification:**
 
-- [ ] `CI=true pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/table-hook typecheck`
-- [ ] `CI=true pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/table-hook test`
+- [x] `CI=true pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/table-hook typecheck`
+- [x] `CI=true pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/table-hook test`
 
 **Dependencies:** None
 

@@ -24,7 +24,11 @@ import {
 } from "@/plugins";
 import { useTableView } from "@/table-contexts/use-table-view";
 
-const baseConfig = { icon: null, renderCell: () => null };
+const baseConfig = {
+  icon: null,
+  renderCellValue: () => null,
+  renderCellEditor: () => ({ presentation: "inline" as const, content: null }),
+};
 const title = () => createTitle(baseConfig);
 const text = () => createText(baseConfig);
 const number = () => createNumber(baseConfig);
@@ -53,25 +57,33 @@ const DEFAULT_PLUGINS = [
 ];
 
 describe("configured plugin factories", () => {
+  it("exposes separate value and editor capabilities to registry consumers", () => {
+    const plugin = createText(baseConfig);
+
+    expect(plugin).toMatchObject({
+      renderCellValue: expect.any(Function),
+      renderCellEditor: expect.any(Function),
+    });
+  });
+
   it("wires icons and renderer callbacks with the documented fallback", () => {
-    const renderCell = vi.fn(() => null);
+    const renderCellValue = vi.fn(() => null);
     const renderConfigMenu = vi.fn(() => null);
     const icon = "icon";
-    const plugin = createTitle({ icon, renderCell, renderConfigMenu });
+    const plugin = createTitle({ icon, renderCellValue, renderConfigMenu });
 
     expect(plugin.meta.icon).toBe(icon);
     expect(plugin.default.icon).toBe(icon);
     expect(plugin.renderConfigMenu).toBe(renderConfigMenu);
 
     const row = { ...baseRow, icon: { type: "emoji", src: "📌" } } as Row;
-    void plugin.renderCell({
+    void plugin.renderCellValue({
       propId: "title",
       row,
       data: "Task",
       config: { showIcon: true },
-      onChange: vi.fn(),
     });
-    expect(renderCell).toHaveBeenCalledWith(
+    expect(renderCellValue).toHaveBeenCalledWith(
       expect.objectContaining({ icon: row.icon, data: "Task" }),
     );
   });
@@ -80,7 +92,7 @@ describe("configured plugin factories", () => {
     const plugin = createText({
       icon: "menu",
       defaultIcon: "property",
-      renderCell: () => null,
+      renderCellValue: () => null,
     });
     expect(plugin.meta.icon).not.toBe(plugin.default.icon);
   });

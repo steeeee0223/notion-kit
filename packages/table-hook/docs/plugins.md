@@ -73,7 +73,11 @@ import { title as createTableViewTitle } from "@notion-kit/table-view";
 
 const customTitle = createTitle({
   icon: <CustomTitleIcon />,
-  renderCell: (props) => <CustomTitleCell {...props} />,
+  renderCellValue: (props) => <CustomTitleValue {...props} />,
+  renderCellEditor: (props) => ({
+    presentation: "popover",
+    content: <CustomTitleEditor {...props} />,
+  }),
 });
 const tableViewTitle = createTableViewTitle();
 
@@ -82,6 +86,23 @@ const customPlugin: CellPlugin<"custom", string, undefined> = {
   // ...
 };
 ```
+
+### Cell value and editing capabilities
+
+Every plugin must provide `renderCellValue`, a read-only renderer for the
+current value. A plugin can additionally provide `renderCellEditor`, which
+returns either an inline control or a popover editor. The table view composes
+these capabilities for both ordinary cells and bulk editing; renderers do not
+need to inspect a built-in plugin ID.
+
+The editor receives a `scope` discriminator. In a normal cell it contains the
+row; in bulk it contains the selected row IDs and selected values. Bulk editors
+start from `plugin.default.data`, so a functional updater never inherits an
+arbitrary selected row's value.
+
+A property is eligible for bulk edit only when it has `renderCellEditor` and
+does not set `disableBulkEdit`. `disableBulkEdit` does not make a normal cell
+read-only.
 
 ### Capability policy
 

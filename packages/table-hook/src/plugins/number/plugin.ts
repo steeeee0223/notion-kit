@@ -121,7 +121,8 @@ export function number(config: NumberPluginConfig): NumberPlugin {
       })),
     },
     counting: withNumberCalculations(genericCounting),
-    renderCell: config.renderCell,
+    renderCellValue: config.renderCellValue,
+    renderCellEditor: config.renderCellEditor,
     renderConfigMenu: config.renderConfigMenu,
     renderGroupingValue: config.renderGroupingValue,
   };
