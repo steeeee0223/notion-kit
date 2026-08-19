@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import type React from "react";
 import { functionalUpdate } from "@tanstack/react-table";
 
+import type { ColumnInfo } from "@notion-kit/table-hook";
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Button,
@@ -18,6 +20,8 @@ import { BulkActionMenu } from "./bulk-action-menu";
 interface BulkPopoverPayload {
   content: React.ReactNode;
 }
+
+type UnknownCellPlugin = CellPlugin<string, unknown, unknown>;
 
 export function BulkEditBar({ disabled }: { disabled?: boolean }) {
   const { table } = useTableViewCtx();
@@ -109,10 +113,12 @@ function BulkEditColumn({
   const { table } = useTableViewCtx();
   const column = table.getColumn(columnId);
   if (!column) return null;
-  const info = column.getInfo();
-  const plugin = table.getColumnPlugin(columnId);
+  const info = column.getInfo() as ColumnInfo<UnknownCellPlugin>;
+  const plugin = table.getColumnPlugin(columnId) as UnknownCellPlugin;
   const selectedValues = rowIds.flatMap((rowId) => {
-    const cell = table.getRow(rowId).original.properties[columnId];
+    const cell = table.getRow(rowId).original.properties[columnId] as
+      | { value: unknown }
+      | undefined;
     return cell ? [cell.value] : [];
   });
   const editor = plugin.renderCellEditor?.({

@@ -60,10 +60,8 @@ describe("configured plugin factories", () => {
   it("exposes separate value and editor capabilities to registry consumers", () => {
     const plugin = createText(baseConfig);
 
-    expect(plugin).toMatchObject({
-      renderCellValue: expect.any(Function),
-      renderCellEditor: expect.any(Function),
-    });
+    expect(typeof plugin.renderCellValue).toBe("function");
+    expect(typeof plugin.renderCellEditor).toBe("function");
   });
 
   it("wires icons and renderer callbacks with the documented fallback", () => {

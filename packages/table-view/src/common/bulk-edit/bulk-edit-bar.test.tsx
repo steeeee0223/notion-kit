@@ -21,6 +21,22 @@ mockResizeObserver();
 
 type DataChange = ResourceChange<Row[], DataResourceAction>;
 
+function isPropertiesChange(value: unknown): value is {
+  action: { type: string; payload: { propertyId: string } };
+  next: { id: string; config?: unknown }[];
+} {
+  if (!value || typeof value !== "object") return false;
+  const change = value as {
+    action?: { type?: unknown; payload?: { propertyId?: unknown } };
+    next?: unknown;
+  };
+  return (
+    typeof change.action?.type === "string" &&
+    typeof change.action.payload?.propertyId === "string" &&
+    Array.isArray(change.next)
+  );
+}
+
 function SelectFirstRow() {
   const { table } = useTableViewCtx();
 
@@ -124,7 +140,7 @@ it.each(["table", "list", "timeline"] as const)(
 
 it("BulkEditBar_BoardLayout_SelectedRow_DoesNotRender", () => {
   const fixture = createFullPluginFixture();
-  const table = renderTableView({
+  renderTableView({
     data: fixture.data,
     properties: fixture.properties,
     view: { ...fixture.view, layout: "board" },
@@ -317,11 +333,11 @@ it("BulkEditBar_CustomEditor_ForwardsConfigUpdatesThroughTheColumnResource", asy
       value: "configured value",
     };
   }
-  const onPropertiesChange = vi.fn();
+  const propertyChanges: unknown[] = [];
   const table = renderTableView({
     ...fixture,
     plugins: [...DEFAULT_PLUGINS, configurable],
-    onPropertiesChange,
+    onPropertiesChange: (change) => propertyChanges.push(change),
     children: <SelectFirstRow />,
   });
 
@@ -333,8 +349,10 @@ it("BulkEditBar_CustomEditor_ForwardsConfigUpdatesThroughTheColumnResource", asy
     await screen.findByRole("button", { name: "Change config" }),
   );
 
-  await waitFor(() => expect(onPropertiesChange).toHaveBeenCalledOnce());
-  const change = onPropertiesChange.mock.calls[0]![0];
+  await waitFor(() => expect(propertyChanges).toHaveLength(1));
+  const change = propertyChanges[0];
+  if (!isPropertiesChange(change))
+    throw new Error("Expected properties change");
   expect(change.action).toMatchObject({
     type: "properties.update",
     payload: { propertyId: "configurable" },
