@@ -4,11 +4,11 @@ import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
 
 import type {
-  CellPlugin,
   DataResourceAction,
   ResourceChange,
   Row,
 } from "@notion-kit/table-hook";
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 
 import { createFullPluginFixture, mockResizeObserver } from "@/__tests__/mock";
 import { DEFAULT_PLUGINS } from "@/plugins";
