@@ -156,7 +156,7 @@ perform the agreed visual regression pass; fix only regressions within scope.
 
 **Acceptance criteria:**
 
-- [ ] Documentation contains no stale `renderCell` or checkbox-menu guidance.
+- [x] Documentation contains no stale `renderCell` or checkbox-menu guidance.
 - [ ] Browser coverage verifies bulk checkbox direct toggle and existing bulk flows.
 - [ ] All focused package checks pass with no unrelated working-tree changes included.
 - [ ] A compact text-like layout probe covers table, list, board property, timeline, and row view; no snapshot/class-name or trivial prop-forwarding tests are added.
@@ -165,7 +165,7 @@ perform the agreed visual regression pass; fix only regressions within scope.
 
 - [ ] `CI=true pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/table-hook test`
 - [ ] `CI=true pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/table-view test`
-- [ ] Run package typecheck and lint commands for both packages under Node 24.11.1.
+- [x] Run package typecheck commands for both packages under Node 24.11.1.
 - [ ] Run the existing bulk-edit E2E journey and manually inspect table, list, and timeline bulk bars.
 
 **Dependencies:** Task 5

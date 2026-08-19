@@ -37,6 +37,7 @@ export interface CellEditorProps<Data, Config = undefined> {
     description?: string;
   };
   onChange: OnChangeFn<Data>;
+  onCancel?: () => void;
   onConfigChange?: OnChangeFn<Config>;
   scope:
     | { kind: "cell"; row: Row }

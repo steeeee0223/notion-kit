@@ -59,6 +59,7 @@ export function NumberCellValue({
 export function NumberCellEditor({
   data,
   onChange,
+  onCancel,
 }: CellEditorProps<string | null, NumberConfig>) {
   const handleUpdate = (newValue: string) => {
     if (newValue === "") return onChange(null);
@@ -71,6 +72,7 @@ export function NumberCellEditor({
       className="text-end"
       value={data ?? ""}
       onUpdate={handleUpdate}
+      onCancel={onCancel}
     />
   );
 }

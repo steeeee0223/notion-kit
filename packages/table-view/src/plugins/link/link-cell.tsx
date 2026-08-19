@@ -52,8 +52,12 @@ export function LinkCellValue({
   );
 }
 
-export function LinkCellEditor({ data, onChange }: CellEditorProps<string>) {
-  return <TextInputPopoverContent value={data} onUpdate={onChange} />;
+export function LinkCellEditor({
+  data,
+  onChange,
+  onCancel,
+}: CellEditorProps<string>) {
+  return <TextInputPopoverContent value={data} onUpdate={onChange} onCancel={onCancel} />;
 }
 
 function getHref(type: LinkCellValueProps["type"], value: string) {

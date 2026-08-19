@@ -9,7 +9,8 @@ documents only the UI boundary.
 Each exported factory is a no-argument configured wrapper around the matching
 headless factory. The wrapper supplies the current icon and React callbacks:
 
-- `renderCell` for the visible cell;
+- `renderCellValue` for the visible cell;
+- `renderCellEditor` for an optional inline or popover editor;
 - `renderConfigMenu` for property configuration, when supported;
 - `renderGroupingValue` for grouped labels, when supported;
 - the default and property icons used by the existing property UI.
@@ -17,6 +18,12 @@ headless factory. The wrapper supplies the current icon and React callbacks:
 The wrapper must not reimplement conversion, sorting, grouping, counting,
 method IDs, or compatibility fallbacks. It may adapt component props and wire
 UI-only callbacks before invoking the headless descriptor.
+
+Bulk edit discovers the same optional `renderCellEditor`; a plugin is eligible
+only when it supplies that capability and does not set `disableBulkEdit`.
+Popover editors use the bulk bar's shared detached popover, while inline
+editors render directly in the bar. Checkbox therefore uses the same direct
+toggle in a cell and in bulk (including its mixed selected-value state).
 
 ## UI ownership by source area
 

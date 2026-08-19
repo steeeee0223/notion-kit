@@ -40,6 +40,10 @@ export function TextCellValue({
   );
 }
 
-export function TextCellEditor({ data, onChange }: CellEditorProps<string>) {
-  return <TextInputPopoverContent value={data} onUpdate={onChange} />;
+export function TextCellEditor({
+  data,
+  onChange,
+  onCancel,
+}: CellEditorProps<string>) {
+  return <TextInputPopoverContent value={data} onUpdate={onChange} onCancel={onCancel} />;
 }

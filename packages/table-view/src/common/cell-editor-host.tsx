@@ -37,6 +37,7 @@ export function CellEditorHost({
       editorProps.onChange(functionalUpdate(updater, editorProps.data));
       setOpen(false);
     },
+    onCancel: () => setOpen(false),
   });
 
   if (!result) return value;
