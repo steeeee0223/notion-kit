@@ -39,7 +39,7 @@ test("BulkEdit_SelectedRows_OverwritesValuesAndPersistsAcrossTimeline", async ({
   ).toBe(true);
 
   await bar.getByRole("button", { name: "Tags" }).click();
-  await page.getByRole("option", { name: "Backend", exact: true }).click();
+  await page.getByRole("option", { name: /Backend$/ }).click();
 
   await expect(table.row("Alpha")).toContainText("Backend");
   await expect(table.row("Alpha")).not.toContainText("Frontend");
