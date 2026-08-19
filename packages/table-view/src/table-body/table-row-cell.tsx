@@ -1,17 +1,14 @@
 import { useState } from "react";
-import { flexRender } from "@tanstack/react-table";
-
 import { Icon } from "@notion-kit/icons";
 import type {
   CellInstance,
   ColumnInfo,
   TableInstance,
 } from "@notion-kit/table-hook";
-import type {
-  CellPlugin,
-  InferCellProps,
-} from "@notion-kit/table-hook/plugins";
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 import { Button } from "@notion-kit/ui/primitives";
+
+import { CellEditorHost } from "@/common/cell-editor-host";
 
 enum CellMode {
   Normal = "normal",
@@ -68,18 +65,30 @@ export function TableRowCell({ column, row, table }: TableRowCellProps) {
         </div>
       )}
       <div className="flex h-full overflow-x-clip" style={{ width }}>
-        {flexRender<InferCellProps<UnknownCellPlugin>>(plugin.renderCell, {
-          propId: column.id,
-          row: row.original,
-          data: cellData,
-          config: cellConfig,
-          wrapped: info.wrapped,
-          disabled: locked,
-          layout: "table",
-          onChange: (updater) =>
-            column.updateCell(row.id, updater, row.parentId),
-          onConfigChange: (updater) => column.updateConfig(updater),
-        })}
+        <CellEditorHost
+          plugin={plugin}
+          valueProps={{
+            propId: column.id,
+            row: row.original,
+            data: cellData,
+            config: cellConfig,
+            wrapped: info.wrapped,
+            disabled: locked,
+            layout: "table",
+          }}
+          editorProps={{
+            propId: column.id,
+            data: cellData,
+            config: cellConfig,
+            wrapped: info.wrapped,
+            disabled: locked,
+            layout: "table",
+            scope: { kind: "cell", row: row.original },
+            onChange: (updater) =>
+              column.updateCell(row.id, updater, row.parentId),
+            onConfigChange: (updater) => column.updateConfig(updater),
+          }}
+        />
       </div>
       {mode === CellMode.Select && (
         <div className="pointer-events-none absolute top-0 left-0 z-(--z-col) size-full rounded-sm bg-blue/5 shadow-cell-focus" />

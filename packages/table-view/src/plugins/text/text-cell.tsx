@@ -13,6 +13,7 @@ export function TextCellValue({
   disabled,
   layout,
   tooltip,
+  onClick,
 }: CellValueProps<string>) {
   if (layout !== "table" && layout !== "row-view" && !data) return null;
   return (
@@ -23,6 +24,7 @@ export function TextCellValue({
       widthType="text"
       aria-disabled={disabled}
       tooltip={tooltip}
+      onClick={onClick}
     >
       {(layout === "table" || layout === "row-view") && (
         <CopyButton className="hidden group-hover/text-cell:flex" value={data} />

@@ -18,6 +18,7 @@ export function NumberCellValue({
   disabled,
   layout,
   tooltip,
+  onClick,
 }: CellValueProps<string | null, NumberConfig>) {
   const value = data ?? "";
 
@@ -30,6 +31,7 @@ export function NumberCellValue({
       layout={layout}
       widthType="number"
       tooltip={tooltip}
+      onClick={onClick}
     >
       {layout === "table" && (
         <CopyButton

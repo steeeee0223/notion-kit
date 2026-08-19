@@ -1,15 +1,12 @@
-import { flexRender } from "@tanstack/react-table";
-
 import type {
   CellInstance,
   ColumnInfo,
   LayoutType,
   TableInstance,
 } from "@notion-kit/table-hook";
-import type {
-  CellPlugin,
-  InferCellProps,
-} from "@notion-kit/table-hook/plugins";
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
+
+import { CellEditorHost } from "./cell-editor-host";
 
 type TableGlobalReader = Pick<TableInstance, "getTableGlobalState">;
 type UnknownCellPlugin = CellPlugin<string, unknown, unknown>;
@@ -31,27 +28,40 @@ export function TableCell({ row, column, table, view }: TableCellProps) {
   const cellData: unknown = data.value;
   const cellConfig: unknown = info.config;
 
-  return flexRender<InferCellProps<UnknownCellPlugin>>(plugin.renderCell, {
-    layout: view,
-    propId: column.id,
-    row: row.original,
-    data: cellData,
-    config: cellConfig,
-    disabled: locked,
-    tooltip:
-      view === "board" || view === "list"
-        ? {
-            title: info.name,
-            description: info.description,
-          }
-        : undefined,
-    onChange: (updater) => {
-      if (table.getTableGlobalState().locked) return;
-      column.updateCell(row.id, updater, row.parentId);
-    },
-    onConfigChange: (updater) => {
-      if (table.getTableGlobalState().locked) return;
-      column.updateConfig(updater);
-    },
-  });
+  const tooltip =
+    view === "board" || view === "list"
+      ? { title: info.name, description: info.description }
+      : undefined;
+
+  return (
+    <CellEditorHost
+      plugin={plugin}
+      valueProps={{
+        layout: view,
+        propId: column.id,
+        row: row.original,
+        data: cellData,
+        config: cellConfig,
+        disabled: locked,
+        tooltip,
+      }}
+      editorProps={{
+        layout: view,
+        propId: column.id,
+        data: cellData,
+        config: cellConfig,
+        disabled: locked,
+        tooltip,
+        scope: { kind: "cell", row: row.original },
+        onChange: (updater) => {
+          if (table.getTableGlobalState().locked) return;
+          column.updateCell(row.id, updater, row.parentId);
+        },
+        onConfigChange: (updater) => {
+          if (table.getTableGlobalState().locked) return;
+          column.updateConfig(updater);
+        },
+      }}
+    />
+  );
 }

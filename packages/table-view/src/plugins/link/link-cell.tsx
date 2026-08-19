@@ -18,6 +18,7 @@ export function LinkCellValue({
   disabled,
   layout,
   tooltip,
+  onClick,
 }: LinkCellValueProps) {
   if (layout !== "table" && layout !== "row-view" && !data) return null;
   return (
@@ -28,6 +29,7 @@ export function LinkCellValue({
       layout={layout}
       widthType="link"
       tooltip={tooltip}
+      onClick={onClick}
     >
       {(layout === "table" || layout === "row-view") && (
         <CopyButton className="hidden group-hover/link-cell:flex" value={data} />

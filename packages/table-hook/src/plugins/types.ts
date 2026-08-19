@@ -22,6 +22,7 @@ export interface CellValueProps<Data, Config = undefined> {
     title: string;
     description?: string;
   };
+  onClick?: () => void;
 }
 
 export interface CellEditorProps<Data, Config = undefined> {

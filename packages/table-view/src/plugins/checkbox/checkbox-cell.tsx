@@ -28,7 +28,7 @@ export function CheckboxCellEditor({
     scope.kind === "bulk" ? scope.selectedValues : [data];
   const allChecked = selectedValues.every(Boolean);
   const allUnchecked = selectedValues.every((value) => !value);
-  const checked = allChecked ? true : allUnchecked ? false : "indeterminate";
+  const indeterminate = !allChecked && !allUnchecked;
 
   return (
     <CellTrigger
@@ -40,7 +40,11 @@ export function CheckboxCellEditor({
       onPointerDown={() => onChange(!allChecked)}
     >
       <div className="h-4 max-w-full">
-        <Checkbox className="rounded-[3px]" checked={checked} />
+        <Checkbox
+          className="rounded-[3px]"
+          checked={allChecked}
+          indeterminate={indeterminate}
+        />
       </div>
     </CellTrigger>
   );

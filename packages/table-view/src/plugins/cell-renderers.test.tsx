@@ -57,7 +57,6 @@ function renderNumber(
       data={data}
       config={config}
       layout="table"
-      onChange={onChange}
       {...overrides}
       {...nextOverrides}
     />
@@ -295,7 +294,6 @@ describe("LinkCell", () => {
         data={data}
         config={undefined}
         layout="table"
-        onChange={vi.fn()}
       />,
     );
     expect(screen.getByText(data.trim()).closest("a")).toHaveAttribute(
@@ -313,7 +311,6 @@ describe("LinkCell", () => {
         data=""
         config={undefined}
         layout="row-view"
-        onChange={vi.fn()}
       />,
     );
     expect(screen.getByText("Empty")).toBeVisible();
@@ -326,7 +323,6 @@ describe("LinkCell", () => {
         data=""
         config={undefined}
         layout="board"
-        onChange={vi.fn()}
       />,
     );
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
@@ -382,7 +378,6 @@ describe("TextAndCheckboxCells", () => {
     render(
       <CheckboxCellEditor
         propId="done"
-        row={row}
         data={false}
         config={undefined}
         layout="table"
@@ -393,9 +388,7 @@ describe("TextAndCheckboxCells", () => {
 
     await user.click(screen.getByRole("button"));
     expect(onChange).toHaveBeenCalledOnce();
-    const updater = onChange.mock.calls[0]![0] as (value: boolean) => boolean;
-    expect(updater(false)).toBe(true);
-    expect(updater(true)).toBe(false);
+    expect(onChange).toHaveBeenCalledWith(true);
   });
 
   it("TextCell_EscapeAfterEditing_CancelsWithoutResourceChange", async () => {
