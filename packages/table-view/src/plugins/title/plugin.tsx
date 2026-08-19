@@ -10,7 +10,7 @@ export function title() {
   return createTitle({
     icon: <DefaultIcon type="title" className="fill-menu-icon" />,
     defaultIcon: <DefaultIcon type="title" />,
-    renderCell: (props) => <TitleCell {...props} />,
+    renderCellValue: (props) => <TitleCell {...props} onChange={() => {}} />,
     renderConfigMenu: (props) => <TitleConfig {...props} />,
     renderGroupingValue: (props) => <DefaultGroupingValue {...props} />,
   });

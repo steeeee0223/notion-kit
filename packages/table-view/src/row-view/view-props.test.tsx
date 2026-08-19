@@ -65,7 +65,10 @@ const directUpdatePlugin: CellPlugin<"direct-update", string, string> = {
   fromValue: (value) => value?.toString() ?? "",
   toValue: (data) => data,
   toTextValue: (data) => data,
-  renderCell: ({ onChange, onConfigChange }) => (
+  renderCellValue: () => null,
+  renderCellEditor: ({ onChange, onConfigChange }) => ({
+    presentation: "inline",
+    content: (
     <button
       type="button"
       onClick={() => {
@@ -75,7 +78,8 @@ const directUpdatePlugin: CellPlugin<"direct-update", string, string> = {
     >
       Force mutation
     </button>
-  ),
+    ),
+  }),
 };
 
 function renderOpenRow(locked: boolean) {

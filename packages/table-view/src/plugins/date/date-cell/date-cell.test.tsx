@@ -41,8 +41,6 @@ function DateCellHarness({ initial }: { initial: DateData }) {
         data={data}
         config={currentConfig}
         layout="table"
-        onChange={setData}
-        onConfigChange={setConfig}
       />
       <output data-testid="date-state">{JSON.stringify(data)}</output>
       <output data-testid="date-config">{JSON.stringify(currentConfig)}</output>
@@ -271,7 +269,6 @@ it("DatePicker_EmptyBoardAndRowView_RespectDisplayBoundary", () => {
       data={{}}
       config={config}
       layout="board"
-      onChange={() => undefined}
     />,
   );
   expect(container).toBeEmptyDOMElement();
@@ -283,7 +280,6 @@ it("DatePicker_EmptyBoardAndRowView_RespectDisplayBoundary", () => {
       data={{}}
       config={config}
       layout="row-view"
-      onChange={() => undefined}
     />,
   );
   expect(screen.getByText("Empty")).toBeVisible();
