@@ -78,7 +78,7 @@ it.each(["table", "list", "timeline"] as const)(
 
 it("BulkEditBar_BoardLayout_SelectedRow_DoesNotRender", () => {
   const fixture = createFullPluginFixture();
-  renderTableView({
+  const table = renderTableView({
     data: fixture.data,
     properties: fixture.properties,
     view: { ...fixture.view, layout: "board" },
@@ -108,5 +108,33 @@ it("BulkEditBar_TextEditor_AppliesTheResolvedValueToEverySelectedRow", async () 
   expect(onDataChange.mock.calls[0]![0].action).toMatchObject({
     type: "data.cell.update",
     payload: { rowIds: ["row-alpha", "row-empty"], propertyId: "notes" },
+  });
+});
+
+it("BulkEditBar_CheckboxMixedSelection_UsesOneInlineToggleToSetEverySelectedRowChecked", async () => {
+  const fixture = createFullPluginFixture();
+  const onDataChange = vi.fn<(change: DataChange) => void>();
+  const table = renderTableView({
+    data: fixture.data,
+    properties: fixture.properties,
+    view: fixture.view,
+    onDataChange,
+    children: <SelectRows rowIds={["row-alpha", "row-empty"]} />,
+  });
+
+  const bar = await screen.findByTestId("bulk-edit-bar");
+  const checkbox = within(bar).getByRole("checkbox");
+  expect(checkbox).toHaveAttribute("data-indeterminate", "");
+
+  await table.user.click(checkbox);
+
+  await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
+  expect(checkbox).toBeChecked();
+  expect(onDataChange.mock.calls[0]![0].action).toMatchObject({
+    type: "data.cell.update",
+    payload: {
+      rowIds: ["row-alpha", "row-empty"],
+      propertyId: "complete",
+    },
   });
 });
