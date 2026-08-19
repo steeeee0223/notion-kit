@@ -195,7 +195,84 @@ renderer that returns nothing.
   than throwing; selection changes cannot cause a stale payload to update a
   different column.
 
-## Verification
+## High-Value Unit-Test Strategy
+
+### Test the public behavior at the three risky seams
+
+Use real `TableView`/table-hook fixtures for host integration tests. The tests
+must observe a rendered control and the emitted resource/property change, not
+call a renderer callback directly. This catches errors in registration, scope
+creation, updater resolution, and mutation dispatch together.
+
+| Risk seam | One high-value test | Required assertion |
+| --- | --- | --- |
+| Registry discovery and bulk draft resolution | Register one custom popover editor whose functional updater appends to `data`; select rows with distinct stored values. | The bulk control appears without a generic type switch and one `data.cell.update` writes a value resolved from `plugin.default.data`, not either selected value. |
+| Bulk eligibility | Register value-only, editor-plus-`disableBulkEdit`, and editable custom plugins in the same fixture. | Only the editable plugin appears in the bar. |
+| Detached payload routing | Register two labeled popover editors on different columns; activate them in sequence. | The visible content and resulting mutation always belong to the most recently activated column. |
+| Config mutation forwarding | Use a custom editor whose one control calls `onConfigChange`. | The column configuration resource change is emitted through the same generic props in cell and bulk scopes. |
+
+The first test is the highest-priority red test. It proves the central design
+without baking in a component tree: custom plugin registration, default draft
+selection, functional updater support, and atomic bulk mutation all fail
+together if the host regresses.
+
+### Checkbox behavior matrix
+
+Exercise checkbox through the real inline control in a selected table, not a
+mocked menu/editor. Parameterize the bulk cases so they share one readable
+test body:
+
+| Initial selected values | Expected accessible state before click | Expected shared value after click |
+| --- | --- | --- |
+| `[false, false]` | unchecked | `true` |
+| `[true, true]` | checked | `false` |
+| `[true, false]` | mixed/indeterminate | `true` |
+
+Also retain one single-cell click test. It proves that the same registry editor
+still performs the ordinary boolean toggle. The assertions must check both the
+control's accessible state and the resulting resource payload/data, so a
+visually correct but non-persisting checkbox cannot pass.
+
+### Layout contract tests
+
+Do not multiply the whole plugin matrix across every layout. Instead, choose
+the smallest probe that protects each generic-host boundary:
+
+- A popover-capable text-like plugin verifies table, list, board property,
+  timeline, and row-view entry points all open the editor and commit a value.
+- Its empty-value cases verify board/list remain hidden while row view retains
+  its explicit `Empty` display.
+- Existing select/date tests remain the focused protection for their special
+  popup geometry and configuration controls; add only the integration check
+  that proves their editor receives the shared host props.
+- Keep the existing BoardCard-title test unchanged as the intentional
+  non-plugin-renderer boundary.
+
+### Test order for TDD
+
+1. Add the custom-plugin bulk draft/functional-updater integration test and
+   make it fail against the current type-switch implementation.
+2. Add eligibility and detached-payload routing tests; implement the registry
+   host only until they pass.
+3. Add the checkbox matrix and single-cell toggle test; implement inline
+   presentation and bulk scope aggregation.
+4. Add the layout probe and config-forwarding tests before migrating each
+   affected renderer family.
+5. Update the existing browser journey with one direct bulk-checkbox toggle.
+   Keep E2E to that complete user path; do not duplicate every unit scenario.
+
+### Tests deliberately excluded
+
+Do not add tests that only increase the count:
+
+- no shallow/direct-callback tests for factory prop forwarding;
+- no one-test-per-plugin assertion that `renderCellValue` merely exists—strict
+  TypeScript compilation is the enforcement mechanism;
+- no snapshots of class names, popover internals, or detached-handle objects;
+- no duplicate happy-path editor tests where the shared custom-plugin test
+  already exercises the host contract;
+- no test that the checkbox calls a boolean callback without also checking its
+  accessible state and persisted result.
 
 ### Contract and regression coverage
 

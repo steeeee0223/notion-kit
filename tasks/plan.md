@@ -74,6 +74,23 @@ Regression, package, and browser verification
 | Checkbox loses mixed state | Medium | Give bulk scope all selected values and test all-true, all-false, and mixed. |
 | Breaking public types leaves examples/fixtures stale | Medium | Typecheck the entire workspace and search for `renderCell` before completion. |
 
+## TDD Test Design
+
+Write behavior-first tests in this order:
+
+1. a custom plugin's bulk functional updater resolves from `plugin.default.data`
+   and dispatches one atomic change across selected rows;
+2. custom-plugin eligibility and detached-popover payload routing;
+3. the all-false/all-true/mixed checkbox matrix plus one normal cell toggle;
+4. a compact layout probe and configuration-update forwarding;
+5. one browser journey for direct bulk checkbox toggling.
+
+The first four are unit/integration tests with the real table fixture. They
+must assert rendered accessibility plus the resulting table resource/data
+change. Do not use snapshots, test private handle payloads, or write per-plugin
+prop-forwarding tests; typechecking and focused existing editor tests cover
+those lower-value concerns.
+
 ## Approval Gate
 
 Do not start implementation until the user approves this plan and

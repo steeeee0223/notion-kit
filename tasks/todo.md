@@ -128,10 +128,13 @@ for popover results and direct inline rendering for checkbox.
 - [ ] `BulkEditColumn` has no built-in type switch or plugin-specific editor import.
 - [ ] Popover editors retain the current header icon trigger and `w-62` bulk content surface.
 - [ ] Bulk checkbox is checked/unchecked/indeterminate from selected values and toggles to the approved final value.
+- [ ] A custom popover editor proves registration discovery, default-draft functional-updater resolution, and one atomic bulk update in one behavior test.
+- [ ] Custom value-only/disabled/editable plugins prove the exact eligibility rule, and two popover editors prove detached payload routing to the active column.
 
 **Verification:**
 
 - [ ] Bulk bar tests cover a custom plugin, missing/disabled editors, detached popup behavior, and checkbox all-true/all-false/mixed cases.
+- [ ] Checkbox assertions include both accessible checked/mixed state and persisted resource/data result; retain one normal single-cell toggle test.
 - [ ] `CI=true pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/table-view test -- bulk-edit`
 
 **Dependencies:** Task 4
@@ -156,6 +159,7 @@ perform the agreed visual regression pass; fix only regressions within scope.
 - [ ] Documentation contains no stale `renderCell` or checkbox-menu guidance.
 - [ ] Browser coverage verifies bulk checkbox direct toggle and existing bulk flows.
 - [ ] All focused package checks pass with no unrelated working-tree changes included.
+- [ ] A compact text-like layout probe covers table, list, board property, timeline, and row view; no snapshot/class-name or trivial prop-forwarding tests are added.
 
 **Verification:**
 
