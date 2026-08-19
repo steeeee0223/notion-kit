@@ -9,7 +9,8 @@ coordinates serializable table resources with TanStack Table.
 `table-hook` owns:
 
 - `CellPlugin` contracts and the public `@notion-kit/table-hook/plugins`
-  factories;
+  factories, including required `renderCellValue` and optional
+  `renderCellEditor` capabilities;
 - property defaults, conversion, transfer, comparison, grouping, counting,
   and sorting semantics;
 - capability descriptors, stable method IDs, resolver fallbacks, and legacy

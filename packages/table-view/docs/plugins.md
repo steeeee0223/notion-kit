@@ -15,6 +15,12 @@ headless factory. The wrapper supplies the current icon and React callbacks:
 - `renderGroupingValue` for grouped labels, when supported;
 - the default and property icons used by the existing property UI.
 
+`renderCellValue` is required. `renderCellEditor` is deliberately optional;
+there is no legacy `renderCell` fallback. The shared `CellEditorHost` renders a
+value first and invokes the editor capability with the normal-cell scope when
+the user starts editing. A value-only plugin therefore stays readable without
+accidentally becoming editable.
+
 The wrapper must not reimplement conversion, sorting, grouping, counting,
 method IDs, or compatibility fallbacks. It may adapt component props and wire
 UI-only callbacks before invoking the headless descriptor.
@@ -23,7 +29,15 @@ Bulk edit discovers the same optional `renderCellEditor`; a plugin is eligible
 only when it supplies that capability and does not set `disableBulkEdit`.
 Popover editors use the bulk bar's shared detached popover, while inline
 editors render directly in the bar. Checkbox therefore uses the same direct
-toggle in a cell and in bulk (including its mixed selected-value state).
+toggle in a cell and in bulk. It is a real checkbox control: mouse click and
+keyboard activation both commit `!allSelected`, and
+the bulk control reports false, true, or mixed selected-value state. The host
+forwards locked/disabled state to either presentation so a disabled editor
+cannot mutate rows.
+
+Bulk commits begin with `plugin.default.data`. A functional `onChange` updater
+is resolved once and persisted with one atomic update across the selected rows;
+the editor does not receive an arbitrary selected row as its starting value.
 
 ## UI ownership by source area
 
@@ -41,6 +55,11 @@ A custom plugin can be placed in the same `plugins` array as built-in wrappers.
 If it registers a capability in `table-hook`, the generic menus should discover
 it without a new table-view type switch. New UI is needed only when the custom
 plugin requires a renderer or configuration surface.
+
+For an editor-capable custom plugin, the bulk bar discovers
+`plugin.renderCellEditor` directly. The plugin selects inline or popover
+presentation; it does not require a `plugin.type === "…"` branch in
+`BulkEditColumn`.
 
 ## Related audits
 

@@ -13,6 +13,8 @@ navigation, and locked-state behavior.
 - Board and timeline projections stay aligned with their source rows and dates.
 - Timeline initialization repairs only when the owner permits it and never
   mutates source cells merely to render.
+- The shared cell-editor host must preserve normal-cell edit and commit behavior
+  in table, list, board, timeline, and row-view layouts.
 
 ## Source and tests
 
@@ -21,6 +23,7 @@ navigation, and locked-state behavior.
 - Row views: [`view-props.test.tsx`](../../src/row-view/view-props.test.tsx)
 - Row selection surface: [`table-row-selection.test.tsx`](../../src/table-body/table-row-selection.test.tsx)
 - Bulk edit bar: [`bulk-edit-bar.test.tsx`](../../src/common/bulk-edit/bulk-edit-bar.test.tsx)
+- Five-layout shared editor-host probe: [`cell-renderers.test.tsx`](../../src/plugins/cell-renderers.test.tsx)
 - Sorted row drag: [`sorted-row-drag.test.tsx`](../../src/__tests__/sorted-row-drag.test.tsx)
 
 ## Update this audit when
