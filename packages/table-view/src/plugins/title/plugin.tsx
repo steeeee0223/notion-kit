@@ -10,7 +10,14 @@ export function title() {
   return createTitle({
     icon: <DefaultIcon type="title" className="fill-menu-icon" />,
     defaultIcon: <DefaultIcon type="title" />,
-    renderCellValue: (props) => <TitleCell {...props} onChange={() => {}} />,
+    renderCellValue: () => null,
+    renderCellEditor: (props) =>
+      props.scope.kind === "cell"
+        ? {
+            presentation: "inline",
+            content: <TitleCell {...props} row={props.scope.row} />,
+          }
+        : { presentation: "inline", content: null },
     renderConfigMenu: (props) => <TitleConfig {...props} />,
     renderGroupingValue: (props) => <DefaultGroupingValue {...props} />,
   });

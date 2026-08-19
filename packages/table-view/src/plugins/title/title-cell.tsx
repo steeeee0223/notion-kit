@@ -5,10 +5,10 @@ import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { ROW_VIEW_OPTIONS, wrappedClassName } from "@notion-kit/table-hook";
 import type {
-  CellValueProps,
+  CellEditorProps,
   TitleConfig,
 } from "@notion-kit/table-hook/plugins";
-import type { OnChangeFn } from "@tanstack/react-table";
+import type { Row } from "@notion-kit/table-hook";
 import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import {
   Button,
@@ -22,8 +22,8 @@ import {
 import { CellTrigger, RowViewIcon, TextInputPopover } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
-interface TitleCellProps extends CellValueProps<string, TitleConfig> {
-  onChange: OnChangeFn<string>;
+interface TitleCellProps extends CellEditorProps<string, TitleConfig> {
+  row: Row;
   icon?: IconData;
 }
 
