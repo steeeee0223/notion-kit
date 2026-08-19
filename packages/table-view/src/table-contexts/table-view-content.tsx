@@ -18,9 +18,10 @@ export function TableViewContent() {
         sorting: state.sorting,
         columnResizing: state.columnResizing,
         columnSizing: state.columnSizing,
+        locked: state.tableGlobal.locked,
       })}
     >
-      {({ sorting }) => {
+      {({ sorting, locked }) => {
         const isSorted = sorting.length > 0;
 
         /**
@@ -47,7 +48,7 @@ export function TableViewContent() {
             className="relative float-left min-w-full px-24 pb-0 lining-nums tabular-nums select-none"
           >
             <div className="absolute z-9990 w-full" />
-            <BulkEditBar />
+            <BulkEditBar disabled={locked} />
             <div className="pointer-events-none mt-0 h-0" />
             {isSorted && (
               <div className="flex pt-1">

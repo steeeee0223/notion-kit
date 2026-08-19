@@ -153,7 +153,7 @@ function TimelineViewReadyContent({
           data-property-id={propertyId}
           data-range={resources.timeline.range}
         >
-          <BulkEditBar />
+          <BulkEditBar disabled={resources.locked} />
           <TimelineRangeHeader />
           <TimelineList>
             {rows.map((row) => (

@@ -27,11 +27,13 @@ export function ListViewContent() {
         columnOrder: state.columnOrder,
         columnVisibility: state.columnVisibility,
         columnsInfo: state.columnsInfo,
+        locked: state.tableGlobal.locked,
       })}
     >
-      {({ sorting }) => (
+      {({ sorting, locked }) => (
         <ListViewContentInner
           sorting={sorting}
+          locked={locked}
           pendingDragEndEvent={pendingDragEndEvent}
           setPendingDragEndEvent={setPendingDragEndEvent}
         />
@@ -42,12 +44,14 @@ export function ListViewContent() {
 
 interface ListViewContentInnerProps {
   sorting: SortingState;
+  locked?: boolean;
   pendingDragEndEvent: DragEndEvent | null;
   setPendingDragEndEvent: (event: DragEndEvent | null) => void;
 }
 
 function ListViewContentInner({
   sorting,
+  locked,
   pendingDragEndEvent,
   setPendingDragEndEvent,
 }: ListViewContentInnerProps) {
@@ -74,7 +78,7 @@ function ListViewContentInner({
 
   return (
     <div key="notion-list-view" className="min-w-177 px-24 pb-0">
-      <BulkEditBar />
+      <BulkEditBar disabled={locked} />
       <table.Subscribe
         selector={(state) => ({
           locked: state.tableGlobal.locked,

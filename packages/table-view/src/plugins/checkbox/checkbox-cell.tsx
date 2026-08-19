@@ -24,8 +24,7 @@ export function CheckboxCellEditor({
   onChange,
   scope,
 }: CellEditorProps<boolean>) {
-  const selectedValues =
-    scope.kind === "bulk" ? scope.selectedValues : [data];
+  const selectedValues = scope.kind === "bulk" ? scope.selectedValues : [data];
   const allChecked = selectedValues.every(Boolean);
   const allUnchecked = selectedValues.every((value) => !value);
   const indeterminate = !allChecked && !allUnchecked;
@@ -35,15 +34,18 @@ export function CheckboxCellEditor({
       className={cn(layout === "table" && "py-2.5")}
       wrapped={wrapped}
       layout={layout}
+      role={undefined}
+      tabIndex={-1}
       aria-disabled={disabled}
       tooltip={tooltip}
-      onPointerDown={() => onChange(!allChecked)}
     >
       <div className="h-4 max-w-full">
         <Checkbox
           className="rounded-[3px]"
           checked={allChecked}
           indeterminate={indeterminate}
+          disabled={disabled}
+          onCheckedChange={() => onChange(!allChecked)}
         />
       </div>
     </CellTrigger>

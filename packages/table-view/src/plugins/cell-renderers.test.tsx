@@ -358,6 +358,53 @@ describe("TextAndCheckboxCells", () => {
     expect(screen.getByRole("checkbox")).toBeChecked();
   });
 
+  it("CheckboxRegistryEditor_KeyboardActivation_PersistsItsNewValue", async () => {
+    const user = userEvent.setup();
+
+    function CheckboxEditorHarness() {
+      const [value, setValue] = useState(false);
+      const plugin = createCheckbox();
+      const editor = plugin.renderCellEditor?.({
+        propId: "done",
+        data: value,
+        config: undefined,
+        layout: "table",
+        onChange: setValue,
+        scope: { kind: "cell", row },
+      });
+
+      return <>{editor?.content}</>;
+    }
+
+    render(<CheckboxEditorHarness />);
+    const checkbox = screen.getByRole("checkbox");
+    checkbox.focus();
+
+    await user.keyboard(" ");
+
+    expect(screen.getByRole("checkbox")).toBeChecked();
+  });
+
+  it("CheckboxRegistryEditor_Disabled_DoesNotExposeAnInteractiveToggle", () => {
+    const plugin = createCheckbox();
+    const editor = plugin.renderCellEditor?.({
+      propId: "done",
+      data: false,
+      config: undefined,
+      disabled: true,
+      layout: "table",
+      onChange: vi.fn(),
+      scope: { kind: "cell", row },
+    });
+
+    render(<>{editor?.content}</>);
+
+    expect(screen.getByRole("checkbox")).toHaveAttribute(
+      "aria-disabled",
+      "true",
+    );
+  });
+
   it("TextCell_RowViewEmptyAndBoardEmpty_DistinguishEditableBoundary", () => {
     const common = {
       propId: "text",
@@ -366,7 +413,9 @@ describe("TextAndCheckboxCells", () => {
       config: undefined,
       onChange: vi.fn(),
     };
-    const { rerender } = render(<TextCellValue {...common} layout="row-view" />);
+    const { rerender } = render(
+      <TextCellValue {...common} layout="row-view" />,
+    );
     expect(screen.getByText("Empty")).toBeVisible();
     rerender(<TextCellValue {...common} layout="board" />);
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
