@@ -126,7 +126,7 @@ function BulkEditColumn({
         columnId,
         functionalUpdate(updater, plugin.default.data),
       ),
-    onConfigChange: column.updateConfig,
+    onConfigChange: (updater) => column.updateConfig(updater),
     scope: { kind: "bulk", rowIds, selectedValues },
   });
   if (!editor) return null;

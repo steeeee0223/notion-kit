@@ -4,12 +4,14 @@ import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
 
 import type {
+  CellPlugin,
   DataResourceAction,
   ResourceChange,
   Row,
 } from "@notion-kit/table-hook";
 
 import { createFullPluginFixture, mockResizeObserver } from "@/__tests__/mock";
+import { DEFAULT_PLUGINS } from "@/plugins";
 import { TableViewWrapper, useTableViewCtx } from "@/table-contexts";
 
 import { renderTableView } from "../../__tests__/component-objects/render-table-view";
@@ -39,6 +41,48 @@ function SelectRows({ rowIds }: { rowIds: string[] }) {
   }, [rowIds, table]);
 
   return null;
+}
+
+function createTextLikePopoverPlugin(
+  id: string,
+  name: string,
+  onCommit: (
+    onChange: (value: string | ((previous: string) => string)) => void,
+  ) => void,
+): CellPlugin<string, string, undefined> {
+  return {
+    id,
+    meta: { name, desc: "", icon: null },
+    default: { name, icon: null, data: "draft", config: undefined },
+    fromValue: (value) => value?.toString() ?? "",
+    toValue: (data) => data,
+    toTextValue: (data) => data,
+    renderCellValue: ({ data, onClick }) => (
+      <button type="button" onClick={onClick}>
+        {data}
+      </button>
+    ),
+    renderCellEditor: ({ onChange }) => ({
+      presentation: "popover",
+      content: (
+        <button type="button" onClick={() => onCommit(onChange)}>
+          Commit {name}
+        </button>
+      ),
+    }),
+  };
+}
+
+function addTextLikeColumn(
+  fixture: ReturnType<typeof createFullPluginFixture>,
+  id: string,
+  name: string,
+  values: Record<string, string>,
+) {
+  fixture.properties.push({ id, name, type: id, config: undefined } as never);
+  for (const row of fixture.data) {
+    row.properties[id] = { id: `${row.id}-${id}`, value: values[row.id] ?? "" };
+  }
 }
 
 it.each(["table", "list", "timeline"] as const)(
@@ -111,6 +155,195 @@ it("BulkEditBar_TextEditor_AppliesTheResolvedValueToEverySelectedRow", async () 
     type: "data.cell.update",
     payload: { rowIds: ["row-alpha", "row-empty"], propertyId: "notes" },
   });
+});
+
+it("BulkEditBar_CustomPopoverEditor_IsDiscoveredAndResolvesItsFunctionalDraftInOneAtomicUpdate", async () => {
+  const fixture = createFullPluginFixture();
+  const custom = createTextLikePopoverPlugin("custom", "Custom", (onChange) =>
+    onChange((draft) => `${draft}!`),
+  );
+  addTextLikeColumn(fixture, "custom", "Custom", {
+    "row-alpha": "stored alpha",
+    "row-empty": "stored empty",
+  });
+  const onDataChange = vi.fn<(change: DataChange) => void>();
+  const table = renderTableView({
+    ...fixture,
+    plugins: [...DEFAULT_PLUGINS, custom],
+    onDataChange,
+    children: <SelectRows rowIds={["row-alpha", "row-empty"]} />,
+  });
+
+  const bar = await screen.findByTestId("bulk-edit-bar");
+  await table.user.click(within(bar).getByRole("button", { name: "Custom" }));
+  await table.user.click(
+    await screen.findByRole("button", { name: "Commit Custom" }),
+  );
+
+  await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
+  const change = onDataChange.mock.calls[0]![0];
+  expect(change.action).toMatchObject({
+    type: "data.cell.update",
+    payload: { rowIds: ["row-alpha", "row-empty"], propertyId: "custom" },
+  });
+  expect(
+    change.next.find((row) => row.id === "row-alpha")?.properties.custom?.value,
+  ).toBe("draft!");
+  expect(
+    change.next.find((row) => row.id === "row-empty")?.properties.custom?.value,
+  ).toBe("draft!");
+});
+
+it("BulkEditBar_OnlyShowsCustomPluginsWithAnEnabledEditor", async () => {
+  const fixture = createFullPluginFixture();
+  const valueOnly: CellPlugin<string, string, undefined> = {
+    ...createTextLikePopoverPlugin("value-only", "Value only", () => undefined),
+    renderCellEditor: undefined,
+  };
+  const disabledEditor: CellPlugin<string, string, undefined> = {
+    ...createTextLikePopoverPlugin(
+      "disabled-editor",
+      "Disabled editor",
+      () => undefined,
+    ),
+    disableBulkEdit: true,
+  };
+  const editable = createTextLikePopoverPlugin(
+    "editable",
+    "Editable",
+    () => undefined,
+  );
+  addTextLikeColumn(fixture, "value-only", "Value only", {});
+  addTextLikeColumn(fixture, "disabled-editor", "Disabled editor", {});
+  addTextLikeColumn(fixture, "editable", "Editable", {});
+  renderTableView({
+    ...fixture,
+    plugins: [...DEFAULT_PLUGINS, valueOnly, disabledEditor, editable],
+    children: <SelectFirstRow />,
+  });
+
+  const bar = await screen.findByTestId("bulk-edit-bar");
+  expect(within(bar).getByRole("button", { name: "Editable" })).toBeVisible();
+  expect(
+    within(bar).queryByRole("button", { name: "Value only" }),
+  ).not.toBeInTheDocument();
+  expect(
+    within(bar).queryByRole("button", { name: "Disabled editor" }),
+  ).not.toBeInTheDocument();
+});
+
+it("BulkEditBar_TwoPopoverColumns_RouteTheVisiblePayloadAndMutationToTheLatestColumn", async () => {
+  const fixture = createFullPluginFixture();
+  const first = createTextLikePopoverPlugin("first", "First", (onChange) =>
+    onChange("first value"),
+  );
+  const second = createTextLikePopoverPlugin("second", "Second", (onChange) =>
+    onChange("second value"),
+  );
+  addTextLikeColumn(fixture, "first", "First", {});
+  addTextLikeColumn(fixture, "second", "Second", {});
+  const onDataChange = vi.fn<(change: DataChange) => void>();
+  const table = renderTableView({
+    ...fixture,
+    plugins: [...DEFAULT_PLUGINS, first, second],
+    onDataChange,
+    children: <SelectRows rowIds={["row-alpha", "row-empty"]} />,
+  });
+
+  const bar = await screen.findByTestId("bulk-edit-bar");
+  await table.user.click(within(bar).getByRole("button", { name: "First" }));
+  expect(
+    await screen.findByRole("button", { name: "Commit First" }),
+  ).toBeVisible();
+  await table.user.click(within(bar).getByRole("button", { name: "Second" }));
+  expect(
+    await screen.findByRole("button", { name: "Commit Second" }),
+  ).toBeVisible();
+  expect(
+    screen.queryByRole("button", { name: "Commit First" }),
+  ).not.toBeInTheDocument();
+
+  await table.user.click(screen.getByRole("button", { name: "Commit Second" }));
+
+  await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
+  expect(onDataChange.mock.calls[0]![0].action).toMatchObject({
+    type: "data.cell.update",
+    payload: { propertyId: "second", rowIds: ["row-alpha", "row-empty"] },
+  });
+});
+
+it("BulkEditBar_CustomEditor_ForwardsConfigUpdatesThroughTheColumnResource", async () => {
+  const fixture = createFullPluginFixture();
+  const configurable: CellPlugin<"configurable", string, { mode: string }> = {
+    id: "configurable",
+    meta: { name: "Configurable", desc: "", icon: null },
+    default: {
+      name: "Configurable",
+      icon: null,
+      data: "",
+      config: { mode: "default" },
+    },
+    fromValue: (value) => value?.toString() ?? "",
+    toValue: (data) => data,
+    toTextValue: (data) => data,
+    renderCellValue: ({ data, onClick }) => (
+      <button type="button" onClick={onClick}>
+        {data}
+      </button>
+    ),
+    renderCellEditor: ({ onConfigChange }) => ({
+      presentation: "popover",
+      content: (
+        <button
+          type="button"
+          onClick={() =>
+            onConfigChange?.((config) => ({ mode: `${config.mode}!` }))
+          }
+        >
+          Change config
+        </button>
+      ),
+    }),
+  };
+  fixture.properties.push({
+    id: "configurable",
+    name: "Configurable",
+    type: "configurable",
+    config: { mode: "configured" },
+  } as never);
+  for (const row of fixture.data) {
+    row.properties.configurable = {
+      id: `${row.id}-configurable`,
+      value: "configured value",
+    };
+  }
+  const onPropertiesChange = vi.fn();
+  const table = renderTableView({
+    ...fixture,
+    plugins: [...DEFAULT_PLUGINS, configurable],
+    onPropertiesChange,
+    children: <SelectFirstRow />,
+  });
+
+  const bar = await screen.findByTestId("bulk-edit-bar");
+  await table.user.click(
+    within(bar).getByRole("button", { name: "Configurable" }),
+  );
+  await table.user.click(
+    await screen.findByRole("button", { name: "Change config" }),
+  );
+
+  await waitFor(() => expect(onPropertiesChange).toHaveBeenCalledOnce());
+  const change = onPropertiesChange.mock.calls[0]![0];
+  expect(change.action).toMatchObject({
+    type: "properties.update",
+    payload: { propertyId: "configurable" },
+  });
+  expect(
+    change.next.find(
+      (property: { id: string }) => property.id === "configurable",
+    )?.config,
+  ).toEqual({ mode: "configured!" });
 });
 
 it.each([
