@@ -86,3 +86,4 @@ function PopoverContent({
 }
 
 export { Popover, PopoverTrigger, PopoverClose, PopoverContent };
+export type PopoverHandle<Payload = unknown> = PopoverPrimitive.Handle<Payload>;

@@ -169,6 +169,8 @@ export interface CellPlugin<
   renderGroupingValue?: (props: GroupingValueProps) => React.ReactNode;
 }
 
+export type UnknownCellPlugin = CellPlugin<string, unknown, unknown>;
+
 export type InferKey<TPlugin> = TPlugin extends { id: infer Key extends string }
   ? Key
   : never;

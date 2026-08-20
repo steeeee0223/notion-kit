@@ -1,15 +1,12 @@
 import type {
   CellInstance,
-  ColumnInfo,
   LayoutType,
   TableInstance,
 } from "@notion-kit/table-hook";
-import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 
 import { CellEditorHost } from "./cell-editor-host";
 
 type TableGlobalReader = Pick<TableInstance, "getTableGlobalState">;
-type UnknownCellPlugin = CellPlugin<string, unknown, unknown>;
 
 interface TableCellProps {
   row: CellInstance["row"];
@@ -21,8 +18,8 @@ interface TableCellProps {
 export function TableCell({ row, column, table, view }: TableCellProps) {
   const { locked } = table.getTableGlobalState();
   const data = row.original.properties[column.id];
-  const plugin = column.getPlugin() as UnknownCellPlugin;
-  const info = column.getInfo() as ColumnInfo<UnknownCellPlugin>;
+  const plugin = column.getPlugin();
+  const info = column.getInfo();
 
   if (!data) return null;
   const cellData: unknown = data.value;

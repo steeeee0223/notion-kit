@@ -3,17 +3,18 @@ import type { TableFeature, Updater } from "@tanstack/react-table";
 import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
-import type {
-  CellPlugin,
-  InferConfig,
-  InferPlugin,
-} from "@notion-kit/table-hook/plugins";
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
 import type { _TableInstance } from "@/features/types";
 import { createIdsUpdater } from "@/features/utils";
 import type { ColumnInfo, PluginType, Row } from "@/lib/types";
 import { getDefaultCell, getUniqueName, type Entity } from "@/lib/utils";
+import type {
+  CellPlugin,
+  InferConfig,
+  InferPlugin,
+  UnknownCellPlugin,
+} from "@/plugins";
 import type {
   DataResourceAction,
   PropertiesResourceAction,
@@ -41,8 +42,8 @@ export interface ColumnsInfoOptions {
 
 export interface ColumnsInfoTableApi {
   // Column Getters
-  getColumnInfo: (colId: string) => ColumnInfo;
-  getColumnPlugin: (colId: string) => CellPlugin;
+  getColumnInfo: (colId: string) => ColumnInfo<UnknownCellPlugin>;
+  getColumnPlugin: (colId: string) => UnknownCellPlugin;
   getDeletedColumns: () => ColumnInfo[];
   countVisibleColumns: () => number;
   // Column Setters
@@ -86,9 +87,9 @@ export interface ColumnsInfoTableApi {
 }
 
 export interface ColumnInfoColumnApi {
-  getInfo: () => ColumnInfo;
+  getInfo: () => ColumnInfo<UnknownCellPlugin>;
   getWidth: () => string;
-  getPlugin: () => CellPlugin;
+  getPlugin: () => UnknownCellPlugin;
   handleResizeEnd: () => void;
   updateConfig: <TPlugin extends CellPlugin>(
     updater: Updater<InferConfig<TPlugin>>,
