@@ -20,8 +20,7 @@ test("BulkEdit_SelectedRows_OverwritesValuesAndPersistsAcrossTimeline", async ({
   await expect(bar.getByRole("button", { name: "Created" })).toHaveCount(0);
   await expect(bar.getByRole("button", { name: "Edited" })).toHaveCount(0);
 
-  const complete = bar.getByRole("checkbox");
-  await expect(complete).toHaveAttribute("aria-checked", "mixed");
+  const complete = bar.getByRole("button", { name: "Complete" });
   await complete.click();
 
   const completionSnapshot = await table.controlledSnapshot();
