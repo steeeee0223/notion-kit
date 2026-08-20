@@ -12,6 +12,8 @@ function Popover<Payload = unknown>({
   return <PopoverPrimitive.Root data-slot="popover" modal={modal} {...props} />;
 }
 
+Popover.createHandle = PopoverPrimitive.createHandle;
+
 function PopoverTrigger<Payload = unknown>({
   ...props
 }: PopoverPrimitive.Trigger.Props<Payload>) {
