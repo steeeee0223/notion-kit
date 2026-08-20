@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type React from "react";
 import { functionalUpdate, type OnChangeFn } from "@tanstack/react-table";
 
@@ -30,11 +30,7 @@ function BulkEditPopoverContent<Data>({
   renderEditor,
 }: BulkEditPopoverContentProps<Data>) {
   const [data, setData] = useState(initialData);
-  const onChange = useCallback<OnChangeFn<Data>>((updater) => {
-    setData((previous) => functionalUpdate(updater, previous));
-  }, []);
-
-  return renderEditor(data, onChange);
+  return renderEditor(data, setData);
 }
 
 export function BulkEditBar({ disabled }: { disabled?: boolean }) {
@@ -63,22 +59,20 @@ export function BulkEditBar({ disabled }: { disabled?: boolean }) {
         return (
           <div
             data-testid="bulk-edit-bar"
-            className="sticky inset-s-0 top-0 z-(--z-row) flex w-fit max-w-full items-center gap-1 overflow-x-auto rounded-md border border-border bg-main px-2 py-1 whitespace-nowrap shadow-sm"
+            className="sticky inset-s-0 top-0 z-(--z-row) flex h-8 w-fit max-w-full items-center overflow-x-auto rounded-md border border-border bg-main whitespace-nowrap shadow-sm"
           >
-            <span className="px-1 text-sm text-blue">
+            <span className="inline-flex h-full items-center border-r px-2.5 text-sm text-blue">
               {rowIds.length} row{rowIds.length === 1 ? "" : "s"} selected
             </span>
-            <div className="flex w-fit items-center gap-1">
-              {columnIds.map((columnId) => (
-                <BulkEditColumn
-                  key={columnId}
-                  columnId={columnId}
-                  rowIds={rowIds}
-                  disabled={disabled}
-                  handle={handle}
-                />
-              ))}
-            </div>
+            {columnIds.map((columnId) => (
+              <BulkEditColumn
+                key={columnId}
+                columnId={columnId}
+                rowIds={rowIds}
+                disabled={disabled}
+                handle={handle}
+              />
+            ))}
             <BulkActionMenu rowIds={rowIds} />
             <Popover handle={handle}>
               {({ payload }) =>
@@ -147,7 +141,7 @@ function BulkEditColumn({
           variant="cell"
           aria-label={info.name}
           disabled={disabled}
-          className="h-7 gap-1 rounded-sm px-1.5 text-sm"
+          className="h-full shrink-0 rounded-none border-r px-2"
           onClick={(e) => {
             e.stopPropagation();
             table.updateCells(rowIds, columnId, !selectedValues.every(Boolean));
@@ -185,7 +179,7 @@ function BulkEditColumn({
             variant="cell"
             aria-label={info.name}
             disabled={disabled}
-            className="h-7 gap-1 rounded-sm px-1.5 text-sm"
+            className="h-full shrink-0 rounded-none border-r px-2"
           >
             {info.icon ? (
               <IconBlock icon={info.icon} className="size-4 p-0" />

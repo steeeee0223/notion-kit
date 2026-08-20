@@ -35,7 +35,7 @@ export function BulkActionMenu({ rowIds }: BulkActionMenuProps) {
       <Button
         aria-label={`Delete ${rowLabel}`}
         variant="hint"
-        className="size-7 shrink-0"
+        className="h-full shrink-0 rounded-none border-r px-2"
         onClick={() => setShowDeleteConfirm(true)}
       >
         <Icon.Trash className="fill-red" />
@@ -46,7 +46,7 @@ export function BulkActionMenu({ rowIds }: BulkActionMenuProps) {
             <Button
               aria-label="More bulk actions"
               variant="hint"
-              className="size-7 shrink-0"
+              className="h-full shrink-0 rounded-none px-2"
             >
               <Icon.Dots className="size-4 fill-menu-icon" />
             </Button>

@@ -6,11 +6,7 @@ import {
 
 import { DefaultIcon } from "@/common";
 
-import {
-  DateCell,
-  DatePickerCellEditor,
-  DatePickerCellValue,
-} from "./date-cell";
+import { DateCell, DatePickerCellValue, DateTimePicker } from "./date-cell";
 import { DateConfigMenu } from "./date-config-menu";
 import { DateGroupingValue } from "./date-grouping-value";
 
@@ -27,7 +23,14 @@ export function date() {
     renderCellEditor: (props) => ({
       presentation: "popover",
       closeOnChange: false,
-      content: <DatePickerCellEditor {...props} />,
+      content: (
+        <DateTimePicker
+          data={props.data}
+          config={props.config}
+          onChange={props.onChange}
+          onConfigChange={props.onConfigChange}
+        />
+      ),
       popover: {
         align: "start",
         side: "bottom",
