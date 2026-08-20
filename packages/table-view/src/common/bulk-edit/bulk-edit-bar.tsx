@@ -1,6 +1,6 @@
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type React from "react";
-import { functionalUpdate } from "@tanstack/react-table";
+import { functionalUpdate, type OnChangeFn } from "@tanstack/react-table";
 
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
@@ -18,6 +18,23 @@ import { BulkActionMenu } from "./bulk-action-menu";
 
 interface BulkPopoverPayload {
   content: React.ReactNode;
+}
+
+interface BulkEditPopoverContentProps<Data> {
+  initialData: Data;
+  renderEditor: (data: Data, onChange: OnChangeFn<Data>) => React.ReactNode;
+}
+
+function BulkEditPopoverContent<Data>({
+  initialData,
+  renderEditor,
+}: BulkEditPopoverContentProps<Data>) {
+  const [data, setData] = useState(initialData);
+  const onChange = useCallback<OnChangeFn<Data>>((updater) => {
+    setData((previous) => functionalUpdate(updater, previous));
+  }, []);
+
+  return renderEditor(data, onChange);
 }
 
 export function BulkEditBar({ disabled }: { disabled?: boolean }) {
@@ -104,20 +121,23 @@ function BulkEditColumn({
       | undefined;
     return cell ? [cell.value] : [];
   });
-  const editor = plugin.renderCellEditor?.({
-    propId: columnId,
-    data: plugin.default.data,
-    config: info.config,
-    disabled,
-    onChange: (updater) =>
-      table.updateCells(
-        rowIds,
-        columnId,
-        functionalUpdate(updater, plugin.default.data),
-      ),
-    onConfigChange: column.updateConfig,
-    scope: { kind: "bulk", rowIds, selectedValues },
-  });
+  const renderEditor = (data: unknown, onChange: OnChangeFn<unknown>) =>
+    plugin.renderCellEditor?.({
+      propId: columnId,
+      data,
+      config: info.config,
+      disabled,
+      onChange,
+      onConfigChange: (updater) => column.updateConfig(updater),
+      scope: { kind: "bulk", rowIds, selectedValues },
+    });
+  const editor = renderEditor(plugin.default.data, (updater) =>
+    table.updateCells(
+      rowIds,
+      columnId,
+      functionalUpdate(updater, plugin.default.data),
+    ),
+  );
 
   if (!editor) return null;
   if (editor.presentation === "inline") {
@@ -128,8 +148,9 @@ function BulkEditColumn({
           aria-label={info.name}
           disabled={disabled}
           className="h-7 gap-1 rounded-sm px-1.5 text-sm"
-          onClick={() => {
-            // TODO
+          onClick={(e) => {
+            e.stopPropagation();
+            table.updateCells(rowIds, columnId, !selectedValues.every(Boolean));
           }}
         >
           {info.icon ? (
@@ -145,7 +166,20 @@ function BulkEditColumn({
     <TooltipPreset description={info.name} side="top">
       <PopoverTrigger
         handle={handle}
-        payload={{ content: editor.content }}
+        payload={{
+          content: (
+            <BulkEditPopoverContent
+              initialData={plugin.default.data}
+              renderEditor={(data, onChange) =>
+                renderEditor(data, (updater) => {
+                  const next = functionalUpdate(updater, data);
+                  onChange(next);
+                  table.updateCells(rowIds, columnId, next);
+                })?.content
+              }
+            />
+          ),
+        }}
         render={
           <Button
             variant="cell"

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useId, useState } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { useInputField, useRect } from "@notion-kit/hooks";
@@ -53,6 +53,7 @@ export interface TextInputPopoverContentProps {
   value: string;
   onUpdate: (value: string) => void;
   onCancel?: () => void;
+  commitOnUnchanged?: boolean;
 }
 
 export function TextInputPopoverContent({
@@ -60,9 +61,19 @@ export function TextInputPopoverContent({
   value,
   onUpdate,
   onCancel,
+  commitOnUnchanged,
 }: TextInputPopoverContentProps) {
   const id = useId();
-  const { props, reset } = useInputField({ id, initialValue: value, onUpdate });
+  const currentValue = useRef(value);
+  const { props, reset } = useInputField({
+    id,
+    initialValue: value,
+    onUpdate,
+  });
+
+  useEffect(() => {
+    currentValue.current = value;
+  }, [value]);
 
   return (
     <Input
@@ -73,11 +84,27 @@ export function TextInputPopoverContent({
         className,
       )}
       {...props}
+      onChange={(event) => {
+        currentValue.current = event.target.value;
+        props.onChange?.(event);
+      }}
+      onBlur={(event) => {
+        if (commitOnUnchanged) {
+          onUpdate(currentValue.current);
+          return;
+        }
+        props.onBlur?.(event);
+      }}
       onKeyDown={(event) => {
         if (event.key === "Escape") {
           event.stopPropagation();
           reset();
           onCancel?.();
+          return;
+        }
+        if (commitOnUnchanged && event.key === "Enter") {
+          event.stopPropagation();
+          onUpdate(currentValue.current);
           return;
         }
         props.onKeyDown?.(event);

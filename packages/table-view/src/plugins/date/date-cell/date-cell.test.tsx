@@ -114,6 +114,32 @@ function DateRangeHarness({ initial }: { initial: DateData }) {
   );
 }
 
+function ControlledDateRangeHarness() {
+  const [value, setValue] = useState<DateData>({});
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setValue({ start: Date.UTC(2025, 0, 15) })}
+      >
+        Set date
+      </button>
+      <DateRangeInput value={value} onChange={setValue} tz="UTC" />
+    </>
+  );
+}
+
+it("DateRangeInput_ControlledDateChange_UpdatesTheVisibleDateInput", async () => {
+  const user = userEvent.setup();
+  render(<ControlledDateRangeHarness />);
+  const input = screen.getByRole("textbox");
+  expect(input).toHaveValue("");
+
+  await user.click(screen.getByRole("button", { name: "Set date" }));
+
+  expect(input).toHaveValue("2025-01-15");
+});
+
 it("DateTimePicker_RangeSelection_UpdatesBothDateBoundaries", async () => {
   // Arrange
   const user = userEvent.setup();

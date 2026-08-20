@@ -4,10 +4,7 @@ import type {
   CellValueProps,
   SelectConfig,
 } from "@notion-kit/table-hook/plugins";
-import {
-  TooltipDescription,
-  TooltipPreset,
-} from "@notion-kit/ui/primitives";
+import { TooltipDescription, TooltipPreset } from "@notion-kit/ui/primitives";
 
 import { CellTrigger, OptionTag } from "@/common";
 
@@ -50,36 +47,36 @@ export function SelectCellValue({
             wrapped && "flex-wrap",
           )}
         >
-          {options.length > 0
-            ? options.map((name) => {
-                const option = config.options.items[name];
-                if (!option) return;
-                return (
-                  <TooltipPreset
-                    key={option.id}
-                    disabled={layout !== "table"}
-                    description={
-                      option.description ? (
-                        <>
-                          <TooltipDescription text={option.name} />
-                          <TooltipDescription
-                            type="secondary"
-                            text={option.description}
-                          />
-                        </>
-                      ) : (
-                        option.name
-                      )
-                    }
-                    side="top"
-                  >
-                    <OptionTag name={option.name} color={option.color} />
-                  </TooltipPreset>
-                );
-              })
-            : layout === "row-view"
-              ? <span className="text-muted">Empty</span>
-              : null}
+          {options.length > 0 ? (
+            options.map((name) => {
+              const option = config.options.items[name];
+              if (!option) return;
+              return (
+                <TooltipPreset
+                  key={option.id}
+                  disabled={layout !== "table"}
+                  description={
+                    option.description ? (
+                      <>
+                        <TooltipDescription text={option.name} />
+                        <TooltipDescription
+                          type="secondary"
+                          text={option.description}
+                        />
+                      </>
+                    ) : (
+                      option.name
+                    )
+                  }
+                  side="top"
+                >
+                  <OptionTag name={option.name} color={option.color} />
+                </TooltipPreset>
+              );
+            })
+          ) : layout === "row-view" ? (
+            <span className="text-muted">Empty</span>
+          ) : null}
         </div>
       </div>
     </CellTrigger>
@@ -94,11 +91,12 @@ export function SelectCellEditor({
   onChange,
   onConfigChange,
 }: SelectCellEditorProps) {
+  const selectedOptions = Array.isArray(options) ? options : [];
   const menu = useSelectMenu({
     multi,
     propId,
     config,
-    options,
+    options: selectedOptions,
     onChange,
     onConfigChange,
   });

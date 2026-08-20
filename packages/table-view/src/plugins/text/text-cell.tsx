@@ -27,7 +27,10 @@ export function TextCellValue({
       onClick={onClick}
     >
       {(layout === "table" || layout === "row-view") && (
-        <CopyButton className="hidden group-hover/text-cell:flex" value={data} />
+        <CopyButton
+          className="hidden group-hover/text-cell:flex"
+          value={data}
+        />
       )}
       <div className={cn("leading-normal", wrappedClassName(wrapped))}>
         {data ? (
@@ -44,6 +47,14 @@ export function TextCellEditor({
   data,
   onChange,
   onCancel,
+  scope,
 }: CellEditorProps<string>) {
-  return <TextInputPopoverContent value={data} onUpdate={onChange} onCancel={onCancel} />;
+  return (
+    <TextInputPopoverContent
+      value={data}
+      onUpdate={onChange}
+      onCancel={onCancel}
+      commitOnUnchanged={scope.kind === "bulk"}
+    />
+  );
 }

@@ -173,6 +173,67 @@ it("BulkEditBar_TextEditor_AppliesTheResolvedValueToEverySelectedRow", async () 
   });
 });
 
+it("BulkEditBar_TextEditor_ClearingADraftCommitsAnEmptyValueToEverySelectedRow", async () => {
+  const fixture = createFullPluginFixture();
+  const onDataChange = vi.fn<(change: DataChange) => void>();
+  const table = renderTableView({
+    data: fixture.data,
+    properties: fixture.properties,
+    view: fixture.view,
+    onDataChange,
+    children: <SelectRows rowIds={["row-alpha", "row-empty"]} />,
+  });
+
+  const bar = await screen.findByTestId("bulk-edit-bar");
+  await table.user.click(within(bar).getByRole("button", { name: "Notes" }));
+  const input = await screen.findByRole("textbox");
+  await table.user.type(input, "{Enter}");
+
+  await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
+  const change = onDataChange.mock.calls[0]![0];
+  expect(
+    change.next.find((row) => row.id === "row-alpha")?.properties.notes?.value,
+  ).toBe("");
+  expect(
+    change.next.find((row) => row.id === "row-empty")?.properties.notes?.value,
+  ).toBe("");
+});
+
+it("BulkEditBar_SelectEditor_KeepItsCurrentDraftVisibleAfterAnUpdate", async () => {
+  const fixture = createFullPluginFixture();
+  const table = renderTableView({
+    data: fixture.data,
+    properties: fixture.properties,
+    view: fixture.view,
+    children: <SelectRows rowIds={["row-alpha", "row-empty"]} />,
+  });
+
+  const bar = await screen.findByTestId("bulk-edit-bar");
+  await table.user.click(within(bar).getByRole("button", { name: "Status" }));
+  const statusInput = await screen.findByRole("combobox");
+  expect(statusInput).toHaveValue("");
+  await table.user.click(screen.getByRole("option", { name: "Active" }));
+  expect(statusInput.parentElement).toHaveTextContent("Active");
+});
+
+it("BulkEditBar_MultiSelectEditor_OpensWithAnEmptyArrayDraft", async () => {
+  const fixture = createFullPluginFixture();
+  const table = renderTableView({
+    data: fixture.data,
+    properties: fixture.properties,
+    view: fixture.view,
+    children: <SelectRows rowIds={["row-alpha", "row-empty"]} />,
+  });
+
+  const bar = await screen.findByTestId("bulk-edit-bar");
+  await table.user.click(within(bar).getByRole("button", { name: "Tags" }));
+
+  const input = await screen.findByRole("combobox");
+  expect(input).toHaveValue("");
+  await table.user.click(screen.getByRole("option", { name: "Frontend" }));
+  expect(input.parentElement).toHaveTextContent("Frontend");
+});
+
 it("BulkEditBar_CustomPopoverEditor_IsDiscoveredAndResolvesItsFunctionalDraftInOneAtomicUpdate", async () => {
   const fixture = createFullPluginFixture();
   const custom = createTextLikePopoverPlugin("custom", "Custom", (onChange) =>
@@ -365,17 +426,12 @@ it("BulkEditBar_CustomEditor_ForwardsConfigUpdatesThroughTheColumnResource", asy
 });
 
 it.each([
-  {
-    name: "all false",
-    values: [false, false],
-    initial: "false",
-    final: "true",
-  },
-  { name: "all true", values: [true, true], initial: "true", final: "false" },
-  { name: "mixed", values: [true, false], initial: "mixed", final: "true" },
-])(
-  "BulkEditBar_CheckboxSelection_$name_ExposesItsAccessibleStateAndPersistsOneFinalValue",
-  async ({ values, initial, final }) => {
+  ["all false", [false, false], true],
+  ["all true", [true, true], false],
+  ["mixed", [true, false], true],
+] as const)(
+  "BulkEditBar_CheckboxColumn_%s_AppliesOneFinalValueToEverySelectedRow",
+  async (_name, values, final) => {
     const fixture = createFullPluginFixture();
     const alpha = fixture.data.find((row) => row.id === "row-alpha");
     const empty = fixture.data.find((row) => row.id === "row-empty");
@@ -393,20 +449,27 @@ it.each([
     });
 
     const bar = await screen.findByTestId("bulk-edit-bar");
-    const checkbox = within(bar).getByRole("checkbox");
-    expect(checkbox).toHaveAttribute("aria-checked", initial);
+    const button = within(bar).getByRole("button", { name: "Complete" });
 
-    await table.user.click(checkbox);
+    await table.user.click(button);
 
     await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
-    expect(checkbox).toHaveAttribute("aria-checked", final);
-    expect(onDataChange.mock.calls[0]![0].action).toMatchObject({
+    const change = onDataChange.mock.calls[0]![0];
+    expect(change.action).toMatchObject({
       type: "data.cell.update",
       payload: {
         rowIds: ["row-alpha", "row-empty"],
         propertyId: "complete",
       },
     });
+    expect(
+      change.next.find((row) => row.id === "row-alpha")?.properties.complete
+        ?.value,
+    ).toBe(final);
+    expect(
+      change.next.find((row) => row.id === "row-empty")?.properties.complete
+        ?.value,
+    ).toBe(final);
   },
 );
 
@@ -427,10 +490,10 @@ it("BulkEditBar_DisabledHost_ForwardsDisabledStateToTheSharedCheckboxEditor", as
   );
 
   const bar = await screen.findByTestId("bulk-edit-bar");
-  const checkbox = within(bar).getByRole("checkbox");
-  expect(checkbox).toHaveAttribute("aria-disabled", "true");
+  const button = within(bar).getByRole("button", { name: "Complete" });
+  expect(button).toBeDisabled();
 
-  await user.click(checkbox);
+  await user.click(button);
 
   expect(onDataChange).not.toHaveBeenCalled();
 });

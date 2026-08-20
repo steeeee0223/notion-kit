@@ -13,8 +13,10 @@ import { TextInputPopoverContent } from "./text-input-popover";
 
 function HeaderTriggerHarness({
   onUpdate,
+  commitOnUnchanged,
 }: {
   onUpdate: (value: string) => void;
+  commitOnUnchanged?: boolean;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -24,6 +26,7 @@ function HeaderTriggerHarness({
       <PopoverContent>
         <TextInputPopoverContent
           value=""
+          commitOnUnchanged={commitOnUnchanged}
           onCancel={() => setOpen(false)}
           onUpdate={(value) => {
             onUpdate(value);
@@ -46,6 +49,30 @@ it("TextInputPopoverContent_HeaderTrigger_CommitsOneResolvedFinalValue", async (
 
   expect(onUpdate).toHaveBeenCalledExactlyOnceWith("Shared value");
   await waitFor(() => expect(input).not.toBeInTheDocument());
+});
+
+it("TextInputPopoverContent_EmptyDraftWithCommitOnUnchanged_CommitsAnEmptyValue", async () => {
+  const user = userEvent.setup();
+  const onUpdate = vi.fn();
+  render(<HeaderTriggerHarness onUpdate={onUpdate} commitOnUnchanged />);
+
+  await user.click(screen.getByRole("button", { name: "Notes" }));
+  const input = await screen.findByRole("textbox");
+  await user.type(input, "{Enter}");
+
+  expect(onUpdate).toHaveBeenCalledExactlyOnceWith("");
+});
+
+it("TextInputPopoverContent_EmptyDraftWithCommitOnUnchanged_UpdatesOnBlur", async () => {
+  const user = userEvent.setup();
+  const onUpdate = vi.fn();
+  render(<HeaderTriggerHarness onUpdate={onUpdate} commitOnUnchanged />);
+
+  await user.click(screen.getByRole("button", { name: "Notes" }));
+  await screen.findByRole("textbox");
+  await user.tab();
+
+  expect(onUpdate).toHaveBeenCalledExactlyOnceWith("");
 });
 
 it("TextInputPopoverContent_HeaderTrigger_EscapeCancelsWithoutResolvingValue", async () => {

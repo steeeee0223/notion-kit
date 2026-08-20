@@ -32,7 +32,10 @@ export function LinkCellValue({
       onClick={onClick}
     >
       {(layout === "table" || layout === "row-view") && (
-        <CopyButton className="hidden group-hover/link-cell:flex" value={data} />
+        <CopyButton
+          className="hidden group-hover/link-cell:flex"
+          value={data}
+        />
       )}
       <div className={cn("leading-normal", wrappedClassName(wrapped))}>
         {data ? (
@@ -56,8 +59,16 @@ export function LinkCellEditor({
   data,
   onChange,
   onCancel,
+  scope,
 }: CellEditorProps<string>) {
-  return <TextInputPopoverContent value={data} onUpdate={onChange} onCancel={onCancel} />;
+  return (
+    <TextInputPopoverContent
+      value={data}
+      onUpdate={onChange}
+      onCancel={onCancel}
+      commitOnUnchanged={scope.kind === "bulk"}
+    />
+  );
 }
 
 function getHref(type: LinkCellValueProps["type"], value: string) {

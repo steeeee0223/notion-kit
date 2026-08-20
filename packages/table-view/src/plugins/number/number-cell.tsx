@@ -60,6 +60,7 @@ export function NumberCellEditor({
   data,
   onChange,
   onCancel,
+  scope,
 }: CellEditorProps<string | null, NumberConfig>) {
   const handleUpdate = (newValue: string) => {
     if (newValue === "") return onChange(null);
@@ -73,6 +74,7 @@ export function NumberCellEditor({
       value={data ?? ""}
       onUpdate={handleUpdate}
       onCancel={onCancel}
+      commitOnUnchanged={scope.kind === "bulk"}
     />
   );
 }
