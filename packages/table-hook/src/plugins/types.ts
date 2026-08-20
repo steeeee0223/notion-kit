@@ -10,7 +10,7 @@ import type {
   SortingMethodDescriptor,
 } from "@/methods";
 
-export interface CellProps<Data, Config = undefined> {
+export interface CellValueProps<Data, Config = undefined> {
   propId: string;
   row: Row;
   data: Data;
@@ -22,9 +22,48 @@ export interface CellProps<Data, Config = undefined> {
     title: string;
     description?: string;
   };
-  onChange: OnChangeFn<Data>;
-  onConfigChange?: OnChangeFn<Config>;
+  onClick?: () => void;
 }
+
+export interface CellEditorProps<Data, Config = undefined> {
+  propId: string;
+  data: Data;
+  config: Config;
+  wrapped?: boolean;
+  disabled?: boolean;
+  layout?: LayoutType | "row-view";
+  tooltip?: {
+    title: string;
+    description?: string;
+  };
+  onChange: OnChangeFn<Data>;
+  onCancel?: () => void;
+  onConfigChange?: OnChangeFn<Config>;
+  scope:
+    | { kind: "cell"; row: Row }
+    | { kind: "bulk"; rowIds: string[]; selectedValues: Data[] };
+}
+
+export interface CellEditorPopoverOptions {
+  className?: string;
+  align?: "start" | "center" | "end";
+  alignOffset?: number;
+  side?: "top" | "right" | "bottom" | "left";
+  sideOffset?: number | ((triggerRect: { height: number }) => number);
+}
+
+export type CellEditorResult =
+  | {
+      presentation: "inline";
+      content: React.ReactNode;
+      closeOnChange?: boolean;
+    }
+  | {
+      presentation: "popover";
+      content: React.ReactNode;
+      popover?: CellEditorPopoverOptions;
+      closeOnChange?: boolean;
+    };
 
 export interface ConfigMenuProps<Config = unknown> {
   propId: string;
@@ -55,6 +94,10 @@ export interface CellPlugin<
   Config = any,
 > {
   id: Key;
+  /**
+   * @prop Prevent this property type from appearing in bulk edit controls.
+   */
+  disableBulkEdit?: boolean;
   /**
    * @prop Metadata about the plugin. Displayed in <TypesMenu />.
    */
@@ -120,10 +163,13 @@ export interface CellPlugin<
   counting?: CountingMethodGroup[];
   compare?: (rowA: Row, rowB: Row, colId: string) => number;
   transferConfig?: (column: ColumnInfo, data: Row[]) => Config;
-  renderCell: (props: CellProps<Data, Config>) => React.ReactNode;
+  renderCellValue: (props: CellValueProps<Data, Config>) => React.ReactNode;
+  renderCellEditor?: (props: CellEditorProps<Data, Config>) => CellEditorResult;
   renderConfigMenu?: (props: ConfigMenuProps<Config>) => React.ReactNode;
   renderGroupingValue?: (props: GroupingValueProps) => React.ReactNode;
 }
+
+export type UnknownCellPlugin = CellPlugin<string, unknown, unknown>;
 
 export type InferKey<TPlugin> = TPlugin extends { id: infer Key extends string }
   ? Key
@@ -147,7 +193,12 @@ export type InferPlugin<TPlugins extends CellPlugin[]> = CellPlugin<
   InferConfig<TPlugins[number]>
 >;
 
-export type InferCellProps<TPlugin> = CellProps<
+export type InferCellValueProps<TPlugin> = CellValueProps<
+  InferData<TPlugin>,
+  InferConfig<TPlugin>
+>;
+
+export type InferCellEditorProps<TPlugin> = CellEditorProps<
   InferData<TPlugin>,
   InferConfig<TPlugin>
 >;
@@ -156,7 +207,8 @@ export type InferCellProps<TPlugin> = CellProps<
 export interface PluginFactoryConfig<TPlugin extends CellPlugin> {
   icon: React.ReactNode;
   defaultIcon?: React.ReactNode;
-  renderCell: TPlugin["renderCell"];
+  renderCellValue: TPlugin["renderCellValue"];
+  renderCellEditor?: TPlugin["renderCellEditor"];
   renderConfigMenu?: TPlugin["renderConfigMenu"];
   renderGroupingValue?: TPlugin["renderGroupingValue"];
 }

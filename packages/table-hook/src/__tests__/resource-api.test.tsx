@@ -55,7 +55,7 @@ const methodPlugin = {
     ],
   },
   compare: () => 0,
-  renderCell: () => null,
+  renderCellValue: () => null,
 } satisfies CellPlugin<"method-text", string, undefined>;
 
 const methodPlugins = arrayToEntity([methodPlugin]);

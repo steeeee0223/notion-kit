@@ -7,13 +7,24 @@ import {
 import { DefaultIcon } from "@/common";
 
 import { DefaultGroupingValue } from "../utils";
-import { LinkCell } from "./link-cell";
+import { LinkCellEditor, LinkCellValue } from "./link-cell";
 
 export function email() {
   return createEmail({
     icon: <DefaultIcon type="email" className="fill-menu-icon" />,
     defaultIcon: <DefaultIcon type="email" />,
-    renderCell: (props) => <LinkCell type="email" {...props} />,
+    renderCellValue: (props) => <LinkCellValue type="email" {...props} />,
+    renderCellEditor: (props) => ({
+      presentation: "popover",
+      content: <LinkCellEditor {...props} />,
+      popover: {
+        align: "start",
+        side: "bottom",
+        sideOffset: (rect) => -rect.height,
+        className:
+          "max-h-[773px] min-h-[38px] w-60 overflow-visible backdrop-filter-none",
+      },
+    }),
     renderGroupingValue: (props) => <DefaultGroupingValue {...props} />,
   });
 }
@@ -22,7 +33,18 @@ export function phone() {
   return createPhone({
     icon: <DefaultIcon type="phone" className="fill-menu-icon" />,
     defaultIcon: <DefaultIcon type="phone" />,
-    renderCell: (props) => <LinkCell type="phone" {...props} />,
+    renderCellValue: (props) => <LinkCellValue type="phone" {...props} />,
+    renderCellEditor: (props) => ({
+      presentation: "popover",
+      content: <LinkCellEditor {...props} />,
+      popover: {
+        align: "start",
+        side: "bottom",
+        sideOffset: (rect) => -rect.height,
+        className:
+          "max-h-[773px] min-h-[38px] w-60 overflow-visible backdrop-filter-none",
+      },
+    }),
     renderGroupingValue: (props) => <DefaultGroupingValue {...props} />,
   });
 }
@@ -31,7 +53,18 @@ export function url() {
   return createUrl({
     icon: <DefaultIcon type="url" className="fill-menu-icon" />,
     defaultIcon: <DefaultIcon type="url" />,
-    renderCell: (props) => <LinkCell type="url" {...props} />,
+    renderCellValue: (props) => <LinkCellValue type="url" {...props} />,
+    renderCellEditor: (props) => ({
+      presentation: "popover",
+      content: <LinkCellEditor {...props} />,
+      popover: {
+        align: "start",
+        side: "bottom",
+        sideOffset: (rect) => -rect.height,
+        className:
+          "max-h-[773px] min-h-[38px] w-60 overflow-visible backdrop-filter-none",
+      },
+    }),
     renderGroupingValue: (props) => <DefaultGroupingValue {...props} />,
   });
 }

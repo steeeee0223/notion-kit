@@ -150,7 +150,8 @@ function DateInput({ id, value: ts, onChange, tz }: DateInputProps) {
   const [error, setError] = useState(false);
   const [value, setValue] = useState(getTimeValue(ts, tz));
 
-  // useEffect(() => setValue(getTimeValue(ts, tz)), [ts, tz]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- Calendar selections must refresh the controlled editor draft.
+  useEffect(() => setValue(getTimeValue(ts, tz)), [ts, tz]);
 
   const handleBlur = () => {
     const res = dateTimeSchema.safeParse({ date: value, time: "" });

@@ -14,6 +14,15 @@ headless data semantics.
 - Plugin renderers, config menus, grouping values, and editors preserve their
   user-visible behavior.
 - Locked views block mutation while leaving permitted navigation available.
+- Bulk editing is discovered through `renderCellEditor`, not built-in plugin
+  IDs. A property is eligible only with that capability and without
+  `disableBulkEdit`.
+- A custom popover editor receives the correct detached-popover routing and
+  config callbacks; its default-data functional update commits once across the
+  selected rows.
+- Inline checkbox editors are directly clickable and keyboard-operable. Bulk
+  state is accessible as false, true, or mixed, and locked/disabled state
+  prevents mutation.
 
 ## Source and tests
 
@@ -23,6 +32,9 @@ headless data semantics.
 - Number configuration: [`number-config-menu.test.tsx`](../../src/plugins/number/number-config-menu/number-config-menu.test.tsx)
 - Date editing: [`date-cell.test.tsx`](../../src/plugins/date/date-cell/date-cell.test.tsx)
 - Table-view plugin wrappers: [`src/plugins/plugins.test.tsx`](../../src/plugins/plugins.test.tsx)
+- Bulk editor value resolution: [`bulk-editors.test.tsx`](../../src/plugins/bulk-editors.test.tsx)
+- Bulk edit controls and destructive actions: [`src/common/bulk-edit/`](../../src/common/bulk-edit/)
+- Cross-layout shared editor host probe: [`cell-renderers.test.tsx`](../../src/plugins/cell-renderers.test.tsx)
 
 ## Update this audit when
 

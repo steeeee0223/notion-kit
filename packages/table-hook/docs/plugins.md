@@ -73,7 +73,11 @@ import { title as createTableViewTitle } from "@notion-kit/table-view";
 
 const customTitle = createTitle({
   icon: <CustomTitleIcon />,
-  renderCell: (props) => <CustomTitleCell {...props} />,
+  renderCellValue: (props) => <CustomTitleValue {...props} />,
+  renderCellEditor: (props) => ({
+    presentation: "popover",
+    content: <CustomTitleEditor {...props} />,
+  }),
 });
 const tableViewTitle = createTableViewTitle();
 
@@ -82,6 +86,33 @@ const customPlugin: CellPlugin<"custom", string, undefined> = {
   // ...
 };
 ```
+
+### Cell value and editing capabilities
+
+Every plugin must provide `renderCellValue`, a read-only renderer for the
+current value. A plugin can additionally provide `renderCellEditor`, which
+returns either an inline control or a popover editor. The table view composes
+these capabilities for both ordinary cells and bulk editing; renderers do not
+need to inspect a built-in plugin ID.
+
+`renderCell` is not a supported compatibility entry point. A value-only plugin
+is visible but has no editing affordance. An editor-capable plugin is editable
+in a normal cell, subject to its view-level lock state and the host's supplied
+callbacks.
+
+The editor receives a `scope` discriminator. In a normal cell it contains the
+row; in bulk it contains the selected row IDs and selected values. Bulk editors
+start from `plugin.default.data`, so a functional updater never inherits an
+arbitrary selected row's value.
+
+A property is eligible for bulk edit only when it has `renderCellEditor` and
+does not set `disableBulkEdit`. `disableBulkEdit` does not make a normal cell
+read-only.
+
+The bulk host supplies the same editor capability with a bulk scope and a
+shared disabled state. Its initial draft is `plugin.default.data`; when an
+editor uses the functional form of `onChange`, the host resolves that updater
+once against that draft and commits one atomic update for all selected rows.
 
 ### Capability policy
 
@@ -143,6 +174,11 @@ Old resources without these fields must resolve to the same effective defaults t
 ### Verification policy
 
 - Test every built-in plugin's registered method IDs and groups.
+- Test the split renderer contract: value-only plugins remain visible but are
+  not editable, while `renderCellEditor` is discoverable without a plugin-ID
+  branch and receives its cell or bulk scope.
+- Test bulk eligibility for missing editors and `disableBulkEdit`, including
+  default-data functional updates and one atomic selected-row commit.
 - Test custom plugin discovery through calculation, sorting, and grouping menus without editing generic menu code.
 - Test numeric calculations with empty, negative, decimal, and invalid values and verify configured units/rounding.
 - Test numeric interval grouping for 1, 10, 100, and 1000, including exact and negative boundaries.
@@ -151,4 +187,6 @@ Old resources without these fields must resolve to the same effective defaults t
 - Test selected/default/first/legacy/unknown resolver fallbacks and old resource compatibility.
 - Run focused tests, typecheck, lint, and builds for both `@notion-kit/table-hook` and `@notion-kit/table-view`.
 
-Custom arbitrary numeric ranges, new plugin types, dependency additions, and removal of legacy plugin fields are outside this branch.
+Custom arbitrary numeric ranges, new plugin types, dependency additions, and
+removal of legacy method fields are outside this branch. The removed
+`renderCell` renderer entry point is not a legacy method fallback.

@@ -46,7 +46,7 @@ const datePlugin: CellPlugin<"date", DateData, undefined> = {
   }),
   toValue: (data) => data.start,
   toTextValue: (data) => String(data.start),
-  renderCell: () => null,
+  renderCellValue: () => null,
 };
 
 const pluginsWithDate = {

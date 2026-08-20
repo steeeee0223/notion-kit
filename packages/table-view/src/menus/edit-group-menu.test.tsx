@@ -413,7 +413,7 @@ describe("EditGroupMenu", () => {
           },
         ],
       },
-      renderCell: ({ data }) => <span>{data}</span>,
+      renderCellValue: ({ data }) => <span>{data}</span>,
     };
     const properties: ColumnInfo[] = [
       { id: "name", name: "Name", type: "title", config: { showIcon: true } },

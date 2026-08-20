@@ -15,7 +15,11 @@ import {
 import type { Row } from "@/lib/types";
 import type { CountingMethod, CountingMethodGroup } from "@/methods";
 
-import type { CellProps, ComparableValue, PluginFactoryConfig } from "../types";
+import type {
+  CellValueProps,
+  ComparableValue,
+  PluginFactoryConfig,
+} from "../types";
 import { createCompareFn, genericCounting } from "../utils";
 import type {
   CreatedTimePlugin,
@@ -31,10 +35,8 @@ export type DatePluginConfig = PluginFactoryConfig<DatePlugin>;
 interface DerivedTimePluginConfig {
   icon: React.ReactNode;
   defaultIcon?: React.ReactNode;
-  renderCell: (
-    props: Omit<CellProps<DateData, DateConfig>, "onChange"> & {
-      onChange: CellProps<null, DateConfig>["onChange"];
-    },
+  renderCellValue: (
+    props: CellValueProps<DateData, DateConfig>,
   ) => React.ReactNode;
   renderConfigMenu?: DatePlugin["renderConfigMenu"];
   renderGroupingValue?: DatePlugin["renderGroupingValue"];
@@ -254,7 +256,8 @@ export function date(config: DatePluginConfig): DatePlugin {
     }),
     ...dateCapabilities(extractDateValue),
     counting: withDateCalculations(genericCounting, extractDateValue),
-    renderCell: config.renderCell,
+    renderCellValue: config.renderCellValue,
+    renderCellEditor: config.renderCellEditor,
     renderConfigMenu: config.renderConfigMenu,
     renderGroupingValue: config.renderGroupingValue,
   };
@@ -268,6 +271,7 @@ export function createdTime(
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return {
     id,
+    disableBulkEdit: true,
     meta: {
       name,
       icon: config.icon,
@@ -290,8 +294,8 @@ export function createdTime(
     compare: (rowA, rowB) => compareNumbers(rowA.createdAt, rowB.createdAt),
     ...dateCapabilities(extractCreatedTime),
     counting: withDateCalculations(genericCounting, extractCreatedTime, true),
-    renderCell: ({ row, data: _data, ...props }) =>
-      config.renderCell({
+    renderCellValue: ({ row, data: _data, ...props }) =>
+      config.renderCellValue({
         data: { start: row.createdAt, includeTime: true },
         row,
         ...props,
@@ -309,6 +313,7 @@ export function lastEditedTime(
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return {
     id,
+    disableBulkEdit: true,
     meta: {
       name,
       icon: config.icon,
@@ -336,8 +341,8 @@ export function lastEditedTime(
       extractLastEditedTime,
       true,
     ),
-    renderCell: ({ row, data: _data, ...props }) =>
-      config.renderCell({
+    renderCellValue: ({ row, data: _data, ...props }) =>
+      config.renderCellValue({
         data: { start: row.lastEditedAt, includeTime: true },
         row,
         ...props,

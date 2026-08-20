@@ -19,7 +19,7 @@ test("CellEditors_ExistingValues_RoundTripEveryEditablePlugin", async ({
 
   const complete = table.checkboxCell("Alpha renamed");
   await complete.click();
-  await expect(complete.getByRole("checkbox").first()).not.toBeChecked();
+  await expect(complete).not.toBeChecked();
 
   await table
     .cellEditor("Alpha renamed", "January 1, 2025")
@@ -119,9 +119,9 @@ test("CellEditors_EmptyValues_RoundTripThroughNamedRowViewProperties", async ({
   await page.keyboard.press("Escape");
   await expect(valueButton("Tags")).toContainText("Backend");
 
-  const complete = valueButton("Complete");
+  const complete = table.rowViewPropertyCheckbox(rowView, "Complete");
   await complete.click();
-  await expect(complete.getByRole("checkbox").first()).toBeChecked();
+  await expect(complete).toBeChecked();
 
   await valueButton("Due").press("Enter");
   const dateInput = page.getByRole("textbox").last();
@@ -134,7 +134,7 @@ test("SelectEditor_DuplicateOption_ShowsValidationWithoutMutation", async ({
   page,
 }) => {
   const table = await TableViewObject.open(page, "controlled");
-  await table.cell("Alpha", "Active").press("Enter");
+  await table.cellEditor("Alpha", "Active").open();
   const active = page.getByRole("option", { name: "Active" });
   await active.hover();
   await active

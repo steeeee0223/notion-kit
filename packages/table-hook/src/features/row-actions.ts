@@ -48,9 +48,15 @@ export interface RowActionsTableApi {
     updater: Updater<Cell<TPlugin>>,
     originalGroupId?: string,
   ) => void;
+  updateCells: <TPlugin extends CellPlugin>(
+    rowIds: string[],
+    colId: string,
+    value: InferData<TPlugin>,
+  ) => void;
   // Row API
   addRow: (payload?: { id: string; at?: "prev" | "next" }) => void;
   duplicateRow: (id: string) => void;
+  duplicateRows: (ids: string[]) => void;
   deleteRow: (id: string) => void;
   deleteRows: (ids: string[]) => void;
   handleKanbanRowDragOver: (e: DragOverEvent) => void;
@@ -318,6 +324,51 @@ export const RowActionsFeature: TableFeature = {
         }),
       );
     };
+    table.updateCells = <TPlugin extends CellPlugin>(
+      rowIds: string[],
+      colId: string,
+      value: InferData<TPlugin>,
+    ) => {
+      const rowIdSet = new Set(rowIds);
+      const actionId = v4();
+      table.setTableData(
+        (previous) => {
+          const targetRows = previous.filter(
+            (row) => rowIdSet.has(row.id) && row.properties[colId],
+          );
+          if (targetRows.length === 0) return previous;
+
+          const now = Date.now();
+          const next = previous.map((row) => {
+            const currentCell = row.properties[colId];
+            if (!rowIdSet.has(row.id) || !currentCell) return row;
+
+            return {
+              ...row,
+              properties: {
+                ...row.properties,
+                [colId]: { ...currentCell, value },
+              },
+              lastEditedAt: now,
+            };
+          });
+
+          scheduleGroupingStateSync(next);
+
+          return next;
+        },
+        (previous) => ({
+          id: actionId,
+          type: "data.cell.update",
+          payload: {
+            rowIds: previous.flatMap((row) =>
+              rowIdSet.has(row.id) && row.properties[colId] ? [row.id] : [],
+            ),
+            propertyId: colId,
+          },
+        }),
+      );
+    };
     /** Row API */
     table.addRow = (payload) => {
       const rowId = v4();
@@ -394,6 +445,61 @@ export const RowActionsFeature: TableFeature = {
             sourceRowId: id,
             rowId,
             nextPosition: getRowPosition(next, rowId),
+          },
+        }),
+      );
+    };
+    table.duplicateRows = (ids) => {
+      const idSet = new Set(ids);
+      const actionId = v4();
+      table.setTableData(
+        (previous) => {
+          const sourceRows = previous.filter((row) => idSet.has(row.id));
+          if (sourceRows.length === 0) return previous;
+
+          const now = Date.now();
+          const next = previous.flatMap((row) => {
+            if (!idSet.has(row.id)) return [row];
+
+            const properties = Object.fromEntries(
+              Object.entries(row.properties).map(([colId, cell]) => [
+                colId,
+                { ...cell, id: v4() },
+              ]),
+            );
+            return [
+              row,
+              {
+                ...row,
+                id: v4(),
+                properties,
+                createdAt: now,
+                lastEditedAt: now,
+              },
+            ];
+          });
+
+          scheduleGroupingStateSync(next);
+
+          return next;
+        },
+        (previous, next) => ({
+          id: actionId,
+          type: "data.rows.duplicate",
+          payload: {
+            duplicates: previous.flatMap((sourceRow) => {
+              if (!idSet.has(sourceRow.id)) return [];
+              const sourcePosition = getRowPosition(next, sourceRow.id);
+              const duplicateRow = next[sourcePosition + 1];
+              if (!duplicateRow) return [];
+              return [
+                {
+                  sourceRowId: sourceRow.id,
+                  rowId: duplicateRow.id,
+                  nextPosition: sourcePosition + 1,
+                },
+              ];
+            }),
           },
         }),
       );

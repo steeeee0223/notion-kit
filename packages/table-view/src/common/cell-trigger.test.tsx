@@ -14,7 +14,7 @@ function EventDelegationHarness({
   return <div {...delegatedEventProps}>{children}</div>;
 }
 
-it("CellTrigger_ClickAndKeyboard_StopParentPropagationByDefault", () => {
+it("CellTrigger_ClickAndKeyboardActivation_StopParentPropagationByDefault", () => {
   const parentClick = vi.fn();
   const parentKeyDown = vi.fn();
   const onClick = vi.fn();
@@ -31,7 +31,7 @@ it("CellTrigger_ClickAndKeyboard_StopParentPropagationByDefault", () => {
   fireEvent.click(trigger);
   fireEvent.keyDown(trigger, { key: "Enter" });
 
-  expect(onClick).toHaveBeenCalledOnce();
+  expect(onClick).toHaveBeenCalledTimes(2);
   expect(onKeyDown).toHaveBeenCalledOnce();
   expect(parentClick).not.toHaveBeenCalled();
   expect(parentKeyDown).not.toHaveBeenCalled();
@@ -50,7 +50,7 @@ it("CellTrigger_PropagationOptOut_AllowsParentInteractions", () => {
   fireEvent.click(trigger);
   fireEvent.keyDown(trigger, { key: "Enter" });
 
-  expect(parentClick).toHaveBeenCalledOnce();
+  expect(parentClick).toHaveBeenCalledTimes(2);
   expect(parentKeyDown).toHaveBeenCalledOnce();
 });
 

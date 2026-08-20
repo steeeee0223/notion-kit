@@ -29,7 +29,8 @@ export function text(config: TextPluginConfig): TextPlugin {
     compare: createCompareFn(compareStrings),
     ...textMethodCapabilities<string>(),
     counting: genericCounting,
-    renderCell: config.renderCell,
+    renderCellValue: config.renderCellValue,
+    renderCellEditor: config.renderCellEditor,
     renderConfigMenu: config.renderConfigMenu,
     renderGroupingValue: config.renderGroupingValue,
   };

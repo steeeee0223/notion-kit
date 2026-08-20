@@ -1,63 +1,77 @@
 import { cn } from "@notion-kit/cn";
 import { wrappedClassName } from "@notion-kit/table-hook";
-import type { CellProps } from "@notion-kit/table-hook/plugins";
+import type {
+  CellEditorProps,
+  CellValueProps,
+} from "@notion-kit/table-hook/plugins";
 
-import { CellTrigger, CopyButton, TextInputPopover } from "@/common";
+import { CellTrigger, CopyButton, TextInputPopoverContent } from "@/common";
 
-interface LinkCellProps extends CellProps<string> {
+interface LinkCellValueProps extends CellValueProps<string> {
   type: "email" | "phone" | "url";
 }
 
-export function LinkCell({
+export function LinkCellValue({
   type,
   data,
   wrapped,
   disabled,
   layout,
   tooltip,
-  onChange,
-}: LinkCellProps) {
+  onClick,
+}: LinkCellValueProps) {
   if (layout !== "table" && layout !== "row-view" && !data) return null;
   return (
-    <TextInputPopover
+    <CellTrigger
+      className="group/link-cell"
+      wrapped={wrapped}
+      aria-disabled={disabled}
+      layout={layout}
+      widthType="link"
+      tooltip={tooltip}
+      onClick={onClick}
+    >
+      {(layout === "table" || layout === "row-view") && (
+        <CopyButton
+          className="hidden group-hover/link-cell:flex"
+          value={data}
+        />
+      )}
+      <div className={cn("leading-normal", wrappedClassName(wrapped))}>
+        {data ? (
+          <a
+            href={getHref(type, data)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline animate-bg-in cursor-pointer text-inherit underline decoration-muted underline-offset-2 select-none"
+          >
+            {data}
+          </a>
+        ) : layout === "row-view" ? (
+          <span className="text-muted">Empty</span>
+        ) : null}
+      </div>
+    </CellTrigger>
+  );
+}
+
+export function LinkCellEditor({
+  data,
+  onChange,
+  onCancel,
+  scope,
+}: CellEditorProps<string>) {
+  return (
+    <TextInputPopoverContent
       value={data}
       onUpdate={onChange}
-      renderTrigger={() => (
-        <CellTrigger
-          className="group/link-cell"
-          wrapped={wrapped}
-          aria-disabled={disabled}
-          layout={layout}
-          widthType="link"
-          tooltip={tooltip}
-        >
-          {(layout === "table" || layout === "row-view") && (
-            <CopyButton
-              className="hidden group-hover/link-cell:flex"
-              value={data}
-            />
-          )}
-          <div className={cn("leading-normal", wrappedClassName(wrapped))}>
-            {data ? (
-              <a
-                href={getHref(type, data)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline animate-bg-in cursor-pointer text-inherit underline decoration-muted underline-offset-2 select-none"
-              >
-                {data}
-              </a>
-            ) : layout === "row-view" ? (
-              <span className="text-muted">Empty</span>
-            ) : null}
-          </div>
-        </CellTrigger>
-      )}
+      onCancel={onCancel}
+      commitOnUnchanged={scope.kind === "bulk"}
     />
   );
 }
 
-function getHref(type: LinkCellProps["type"], value: string) {
+function getHref(type: LinkCellValueProps["type"], value: string) {
   switch (type) {
     case "email":
       return `mailto:${value}`;

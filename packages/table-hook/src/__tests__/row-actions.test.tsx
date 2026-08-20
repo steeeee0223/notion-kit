@@ -361,6 +361,61 @@ describe("useTableView - Row Custom APIs", () => {
         beforeDuplicate,
       );
     });
+
+    it("DuplicateRows_MixedTargetIds_DuplicatesSourcesInDataOrderWithOneBatchAction", () => {
+      const onDataChange =
+        vi.fn<(change: ResourceChange<Row[], DataResourceAction>) => void>();
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+        onDataChange,
+      });
+      const beforeDuplicate = Date.now();
+
+      act(() => {
+        table.duplicateRows(["row2", "missing", "row1"]);
+      });
+
+      const rows = table.getRowModel().rows;
+      const firstDuplicate = rows[1]!;
+      const secondDuplicate = rows[3]!;
+
+      expect(rows.map((row) => row.id)).toEqual([
+        "row1",
+        firstDuplicate.id,
+        "row2",
+        secondDuplicate.id,
+      ]);
+      expect(firstDuplicate.original.properties.col1?.value).toBe("John");
+      expect(secondDuplicate.original.properties.col1?.value).toBe("Jane");
+      expect(firstDuplicate.original.properties.col1?.id).not.toBe("cell1");
+      expect(secondDuplicate.original.properties.col1?.id).not.toBe("cell3");
+      expect(firstDuplicate.original.createdAt).toBeGreaterThanOrEqual(
+        beforeDuplicate,
+      );
+      expect(secondDuplicate.original.lastEditedAt).toBeGreaterThanOrEqual(
+        beforeDuplicate,
+      );
+      expect(onDataChange).toHaveBeenCalledOnce();
+      expect(onDataChange.mock.lastCall?.[0].action).toEqual({
+        id: anyString,
+        type: "data.rows.duplicate",
+        payload: {
+          duplicates: [
+            {
+              sourceRowId: "row1",
+              rowId: firstDuplicate.id,
+              nextPosition: 1,
+            },
+            {
+              sourceRowId: "row2",
+              rowId: secondDuplicate.id,
+              nextPosition: 3,
+            },
+          ],
+        },
+      });
+    });
   });
 
   describe("handleRowDragEnd", () => {
@@ -1046,6 +1101,44 @@ describe("useTableView - Row Custom APIs", () => {
       });
     });
 
+    it("UpdateCells_MixedTargetIds_UpdatesExistingRowsInOneBatch", async () => {
+      const onDataChange =
+        vi.fn<(change: ResourceChange<Row[], DataResourceAction>) => void>();
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+        onDataChange,
+      });
+      const beforeUpdate = Date.now();
+
+      act(() => {
+        table.updateCells(["row2", "missing", "row1"], "col1", "Updated");
+      });
+
+      await waitFor(() => {
+        expect(table.getCell("col1", "row1").value).toBe("Updated");
+        expect(table.getCell("col1", "row2").value).toBe("Updated");
+      });
+
+      expect(table.getCell("col2", "row1").value).toBe(25);
+      expect(table.getCell("col2", "row2").value).toBe(30);
+      expect(table.getRow("row1").original.lastEditedAt).toBeGreaterThanOrEqual(
+        beforeUpdate,
+      );
+      expect(table.getRow("row2").original.lastEditedAt).toBeGreaterThanOrEqual(
+        beforeUpdate,
+      );
+      expect(onDataChange).toHaveBeenCalledOnce();
+      expect(onDataChange.mock.lastCall?.[0].action).toEqual({
+        id: anyString,
+        type: "data.cell.update",
+        payload: {
+          rowIds: ["row1", "row2"],
+          propertyId: "col1",
+        },
+      });
+    });
+
     it("should ignore updates for missing cells", () => {
       const { table } = renderTableHook({
         data: [
@@ -1128,6 +1221,28 @@ describe("useTableView - Row Custom APIs", () => {
           }),
           todoGroupId,
         );
+      });
+
+      await waitFor(() => {
+        const groupValues = Object.values(
+          table.atoms.groupingState.get().groupValues,
+        ).map((group) => group.value);
+        expect(groupValues).toEqual(["DONE"]);
+      });
+    });
+
+    it("UpdateCells_GroupedColumn_RefreshesGroupsAfterOneBatch", async () => {
+      const { table } = renderTableHook({
+        data: groupedData,
+        properties: groupedProperties,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      act(() => {
+        table.updateCells(["row1", "row2"], "col2", { name: "DONE" });
       });
 
       await waitFor(() => {

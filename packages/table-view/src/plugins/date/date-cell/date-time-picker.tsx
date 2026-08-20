@@ -1,7 +1,8 @@
 import {
   calendarDateToTs,
-  type DatePlugin,
-  type InferCellProps,
+  type CellEditorProps,
+  type DateConfig,
+  type DateData,
 } from "@notion-kit/table-hook/plugins";
 import {
   Calendar,
@@ -17,7 +18,7 @@ import { DateFormatMenu, TimeFormatMenu } from "../common";
 import { DateRangeInput } from "./date-range-input";
 
 type DateTimePickerProps = Pick<
-  InferCellProps<DatePlugin>,
+  CellEditorProps<DateData, DateConfig>,
   "data" | "config" | "onChange" | "onConfigChange"
 >;
 

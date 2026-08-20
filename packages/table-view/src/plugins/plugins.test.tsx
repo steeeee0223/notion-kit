@@ -58,7 +58,7 @@ describe("table-view plugin wrappers", () => {
     const plugin = factory();
     expect(plugin.meta.icon).not.toBeNull();
     expect(plugin.default.icon).not.toBeNull();
-    expect(plugin.renderCell).toEqual(expect.any(Function));
+    expect(plugin.renderCellValue).toEqual(expect.any(Function));
     expect(plugin.renderGroupingValue).toEqual(expect.any(Function));
   });
 
@@ -81,7 +81,7 @@ describe("table-view plugin wrappers", () => {
       fromValue: (value) => value?.toString() ?? "",
       toValue: (data) => data,
       toTextValue: (data) => data,
-      renderCell: () => null,
+      renderCellValue: () => null,
     };
 
     expect([...DEFAULT_PLUGINS, custom].at(-1)?.id).toBe("custom");

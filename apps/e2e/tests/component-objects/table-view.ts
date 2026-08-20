@@ -181,6 +181,13 @@ export class TableViewObject {
       .first();
   }
 
+  rowViewPropertyCheckbox(dialog: Locator, propertyName: string) {
+    return this.rowViewProperty(dialog, propertyName)
+      .getByRole("cell")
+      .nth(1)
+      .locator('[data-slot="checkbox"]');
+  }
+
   button(name: AccessibleName) {
     return this.page.getByRole("button", { name });
   }
@@ -209,10 +216,21 @@ export class TableViewObject {
   }
 
   checkboxCell(rowName: AccessibleName) {
-    const row = this.row(rowName);
-    return row
-      .getByRole("button")
-      .filter({ has: this.page.getByRole("checkbox") });
+    return this.row(rowName).getByRole("checkbox", {
+      name: "",
+      exact: true,
+    });
+  }
+
+  rowCheckbox(rowId: string) {
+    return this.page.getByRole("checkbox", {
+      name: `Select row ${rowId}`,
+      exact: true,
+    });
+  }
+
+  bulkEditBar() {
+    return this.page.getByTestId("bulk-edit-bar");
   }
 
   async editTextCell(

@@ -205,7 +205,7 @@ it("PropMenu_QuickSortUsesPluginLabelsDefaultMethodAndInlineRuntime", async () =
         },
       ],
     },
-    renderCell: ({ data }) => <span>{data}</span>,
+    renderCellValue: ({ data }) => <span>{data}</span>,
   };
   const tableView = renderTableView({
     plugins: [...DEFAULT_PLUGINS, plugin],

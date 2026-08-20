@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { functionalUpdate } from "@tanstack/react-table";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
@@ -12,8 +13,10 @@ import {
   createResourceProbe,
   mockResizeObserver,
 } from "@/__tests__/mock";
+import { CellEditorHost } from "@/common/cell-editor-host";
 
-import { DatePickerCell } from "./date-picker-cell";
+import { date as createDate } from "../plugin";
+import { DatePickerCellValue } from "./date-picker-cell";
 import { DateRangeInput } from "./date-range-input";
 
 mockResizeObserver();
@@ -33,16 +36,29 @@ const config: DateConfig = {
 function DateCellHarness({ initial }: { initial: DateData }) {
   const [data, setData] = useState(initial);
   const [currentConfig, setConfig] = useState(config);
+  const plugin = createDate();
   return (
     <>
-      <DatePickerCell
-        propId="due"
-        row={row}
-        data={data}
-        config={currentConfig}
-        layout="table"
-        onChange={setData}
-        onConfigChange={setConfig}
+      <CellEditorHost
+        plugin={plugin}
+        valueProps={{
+          propId: "due",
+          row,
+          data,
+          config: currentConfig,
+          layout: "table",
+        }}
+        editorProps={{
+          propId: "due",
+          data,
+          config: currentConfig,
+          layout: "table",
+          scope: { kind: "cell", row },
+          onChange: (updater) =>
+            setData((previous) => functionalUpdate(updater, previous)),
+          onConfigChange: (updater) =>
+            setConfig((previous) => functionalUpdate(updater, previous)),
+        }}
       />
       <output data-testid="date-state">{JSON.stringify(data)}</output>
       <output data-testid="date-config">{JSON.stringify(currentConfig)}</output>
@@ -97,6 +113,32 @@ function DateRangeHarness({ initial }: { initial: DateData }) {
     </>
   );
 }
+
+function ControlledDateRangeHarness() {
+  const [value, setValue] = useState<DateData>({});
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setValue({ start: Date.UTC(2025, 0, 15) })}
+      >
+        Set date
+      </button>
+      <DateRangeInput value={value} onChange={setValue} tz="UTC" />
+    </>
+  );
+}
+
+it("DateRangeInput_ControlledDateChange_UpdatesTheVisibleDateInput", async () => {
+  const user = userEvent.setup();
+  render(<ControlledDateRangeHarness />);
+  const input = screen.getByRole("textbox");
+  expect(input).toHaveValue("");
+
+  await user.click(screen.getByRole("button", { name: "Set date" }));
+
+  expect(input).toHaveValue("2025-01-15");
+});
 
 it("DateTimePicker_RangeSelection_UpdatesBothDateBoundaries", async () => {
   // Arrange
@@ -265,25 +307,23 @@ it("DateRangeInput_UntouchedEmptyThenInvalidBlur_SuppressesOnlyEmptyMutation", a
 
 it("DatePicker_EmptyBoardAndRowView_RespectDisplayBoundary", () => {
   const { container, rerender } = render(
-    <DatePickerCell
+    <DatePickerCellValue
       propId="due"
       row={row}
       data={{}}
       config={config}
       layout="board"
-      onChange={() => undefined}
     />,
   );
   expect(container).toBeEmptyDOMElement();
 
   rerender(
-    <DatePickerCell
+    <DatePickerCellValue
       propId="due"
       row={row}
       data={{}}
       config={config}
       layout="row-view"
-      onChange={() => undefined}
     />,
   );
   expect(screen.getByText("Empty")).toBeVisible();

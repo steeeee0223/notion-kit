@@ -124,6 +124,10 @@ export function CellTrigger({
           }
           if (stopPropagation) e.stopPropagation();
           onKeyDown?.(e);
+          if ((e.key === "Enter" || e.key === " ") && !e.defaultPrevented) {
+            e.preventDefault();
+            e.currentTarget.click();
+          }
         }}
         onKeyUp={(e) => {
           if (disabled) {
