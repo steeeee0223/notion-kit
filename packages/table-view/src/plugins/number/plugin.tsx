@@ -17,7 +17,7 @@ export function number() {
       popover: {
         align: "start",
         side: "bottom",
-        sideOffset: (triggerRect) => -triggerRect.height,
+        sideOffset: (rect) => -rect.height,
         className:
           "max-h-[773px] min-h-[38px] w-60 overflow-visible backdrop-filter-none",
       },

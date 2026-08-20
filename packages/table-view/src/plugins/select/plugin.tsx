@@ -20,7 +20,7 @@ export function select() {
       popover: {
         align: "start",
         side: "bottom",
-        sideOffset: (triggerRect) => -triggerRect.height,
+        sideOffset: (rect) => -rect.height,
         className:
           "max-h-[773px] min-h-[34px] w-75 overflow-visible backdrop-filter-none",
       },
@@ -41,7 +41,7 @@ export function multiSelect() {
       popover: {
         align: "start",
         side: "bottom",
-        sideOffset: (triggerRect) => -triggerRect.height,
+        sideOffset: (rect) => -rect.height,
         className:
           "max-h-[773px] min-h-[34px] w-75 overflow-visible backdrop-filter-none",
       },
