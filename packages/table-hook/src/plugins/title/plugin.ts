@@ -1,8 +1,8 @@
 import type { Row } from "@/lib/types";
 import type {
-  CellPlugin,
   CellEditorProps,
   CellEditorResult,
+  CellPlugin,
   CellValueProps,
   ConfigMenuProps,
   PluginFactoryConfig,

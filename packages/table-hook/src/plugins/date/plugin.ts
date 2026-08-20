@@ -35,7 +35,9 @@ export type DatePluginConfig = PluginFactoryConfig<DatePlugin>;
 interface DerivedTimePluginConfig {
   icon: React.ReactNode;
   defaultIcon?: React.ReactNode;
-  renderCellValue: (props: CellValueProps<DateData, DateConfig>) => React.ReactNode;
+  renderCellValue: (
+    props: CellValueProps<DateData, DateConfig>,
+  ) => React.ReactNode;
   renderConfigMenu?: DatePlugin["renderConfigMenu"];
   renderGroupingValue?: DatePlugin["renderGroupingValue"];
 }

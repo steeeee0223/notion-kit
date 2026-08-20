@@ -69,15 +69,15 @@ const directUpdatePlugin: CellPlugin<"direct-update", string, string> = {
   renderCellEditor: ({ onChange, onConfigChange }) => ({
     presentation: "inline",
     content: (
-    <button
-      type="button"
-      onClick={() => {
-        onChange("blocked update");
-        onConfigChange?.("blocked config");
-      }}
-    >
-      Force mutation
-    </button>
+      <button
+        type="button"
+        onClick={() => {
+          onChange("blocked update");
+          onConfigChange?.("blocked config");
+        }}
+      >
+        Force mutation
+      </button>
     ),
   }),
 };
