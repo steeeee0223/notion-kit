@@ -4,7 +4,11 @@ import { cn } from "@notion-kit/cn";
 import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { ROW_VIEW_OPTIONS, wrappedClassName } from "@notion-kit/table-hook";
-import type { CellProps, TitleConfig } from "@notion-kit/table-hook/plugins";
+import type { Row } from "@notion-kit/table-hook";
+import type {
+  CellEditorProps,
+  TitleConfig,
+} from "@notion-kit/table-hook/plugins";
 import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import {
   Button,
@@ -18,7 +22,8 @@ import {
 import { CellTrigger, RowViewIcon, TextInputPopover } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
-interface TitleCellProps extends CellProps<string, TitleConfig> {
+interface TitleCellProps extends CellEditorProps<string, TitleConfig> {
+  row: Row;
   icon?: IconData;
 }
 

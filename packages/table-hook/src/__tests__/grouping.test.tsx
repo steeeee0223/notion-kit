@@ -100,7 +100,7 @@ const groupingMethodPlugin: CellPlugin<"grouping-method", string, undefined> = {
       },
     ],
   },
-  renderCell: () => null,
+  renderCellValue: () => null,
 };
 
 const groupingMethodProperties: ColumnInfo[] = [
@@ -172,7 +172,7 @@ const weekContextPlugin: CellPlugin<"week-context", number, undefined> = {
       },
     ],
   },
-  renderCell: () => null,
+  renderCellValue: () => null,
 };
 
 const weekContextProperties: ColumnInfo[] = [

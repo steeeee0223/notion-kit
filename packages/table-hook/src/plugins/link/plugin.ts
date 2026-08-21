@@ -32,7 +32,8 @@ function createLinkPlugin<T extends "email" | "phone" | "url">(
     fromValue: (value) => (typeof value === "string" ? value : ""),
     toValue: (data) => data,
     toTextValue: (data) => data,
-    renderCell: config.renderCell,
+    renderCellValue: config.renderCellValue,
+    renderCellEditor: config.renderCellEditor,
     renderConfigMenu: config.renderConfigMenu,
     renderGroupingValue: config.renderGroupingValue,
   };

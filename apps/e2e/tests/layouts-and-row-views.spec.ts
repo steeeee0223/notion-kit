@@ -55,6 +55,12 @@ test("LockedRowView_PropertyTriggersRemainClosedAndDataUnchanged", async ({
     await expect(
       table.rowViewPropertyLabel(dialog, propertyName),
     ).toBeDisabled();
+    if (propertyName === "Complete") {
+      await expect(
+        table.rowViewPropertyCheckbox(dialog, propertyName),
+      ).toBeDisabled();
+      continue;
+    }
     const value = table.rowViewPropertyValue(dialog, propertyName);
     await expect(value).toHaveAttribute("aria-disabled", "true");
     await expect(value).toHaveAttribute("tabindex", "-1");
@@ -64,8 +70,8 @@ test("LockedRowView_PropertyTriggersRemainClosedAndDataUnchanged", async ({
   await table.rowViewPropertyValue(dialog, "Notes").dispatchEvent("click");
   await table.rowViewPropertyValue(dialog, "Status").dispatchEvent("click");
   await table
-    .rowViewPropertyValue(dialog, "Complete")
-    .dispatchEvent("pointerdown");
+    .rowViewPropertyCheckbox(dialog, "Complete")
+    .dispatchEvent("click");
   await table.rowViewPropertyValue(dialog, "Due").dispatchEvent("click");
 
   await expect(page.getByRole("menu")).toHaveCount(0);

@@ -1,2 +1,2 @@
 export { checkbox } from "./plugin";
-export { CheckboxCell } from "./checkbox-cell";
+export { CheckboxCellEditor, CheckboxCellValue } from "./checkbox-cell";

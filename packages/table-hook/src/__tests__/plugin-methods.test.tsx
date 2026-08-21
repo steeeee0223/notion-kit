@@ -92,7 +92,7 @@ const reverseTextPlugin: CellPlugin<"reverse-text", string, undefined> = {
     },
   ],
   compare: () => 0,
-  renderCell: () => null,
+  renderCellValue: () => null,
 };
 
 const properties: ColumnInfo[] = [
@@ -184,7 +184,7 @@ describe("cell plugin registered methods", () => {
           },
         ],
       },
-      renderCell: () => null,
+      renderCellValue: () => null,
     };
 
     expect(plugin.sorting?.methods[0]?.id).toBe("score");

@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { functionalUpdate } from "@tanstack/react-table";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -8,6 +10,7 @@ import type {
   Row,
 } from "@notion-kit/table-hook";
 import type {
+  CellPlugin,
   MultiSelectPlugin,
   NumberConfig,
 } from "@notion-kit/table-hook/plugins";
@@ -18,11 +21,12 @@ import {
   createResourceProbe,
   mockResizeObserver,
 } from "@/__tests__/mock";
+import { CellEditorHost } from "@/common/cell-editor-host";
 
-import { CheckboxCell } from "./checkbox/checkbox-cell";
-import { LinkCell } from "./link/link-cell";
-import { NumberCell } from "./number/number-cell";
-import { TextCell } from "./text/text-cell";
+import { LinkCellValue } from "./link/link-cell";
+import { NumberCellValue } from "./number/number-cell";
+import { number as createNumber } from "./number/plugin";
+import { TextCellValue } from "./text/text-cell";
 
 mockResizeObserver();
 
@@ -43,21 +47,54 @@ const baseNumberConfig: NumberConfig = {
 function renderNumber(
   data: string | null,
   config: NumberConfig,
-  overrides: Partial<React.ComponentProps<typeof NumberCell>> = {},
+  overrides: Partial<React.ComponentProps<typeof NumberCellValue>> = {},
 ) {
   const onChange = vi.fn();
+  function NumberEditorHarness({
+    nextData,
+    nextConfig,
+    nextOverrides,
+  }: {
+    nextData: string | null;
+    nextConfig: NumberConfig;
+    nextOverrides: Partial<React.ComponentProps<typeof NumberCellValue>>;
+  }) {
+    const [value, setValue] = useState(nextData);
+    const plugin = createNumber();
+
+    return (
+      <CellEditorHost
+        plugin={plugin}
+        valueProps={{
+          propId: "amount",
+          row,
+          data: value,
+          config: nextConfig,
+          layout: "table",
+          ...nextOverrides,
+        }}
+        editorProps={{
+          propId: "amount",
+          data: value,
+          config: nextConfig,
+          layout: "table",
+          scope: { kind: "cell", row },
+          onChange: (updater) => {
+            const next = functionalUpdate(updater, value);
+            setValue(next);
+            onChange(next);
+          },
+        }}
+      />
+    );
+  }
   const renderCell = (
-    nextOverrides: Partial<React.ComponentProps<typeof NumberCell>> = {},
+    nextOverrides: Partial<React.ComponentProps<typeof NumberCellValue>> = {},
   ) => (
-    <NumberCell
-      propId="amount"
-      row={row}
-      data={data}
-      config={config}
-      layout="table"
-      onChange={onChange}
-      {...overrides}
-      {...nextOverrides}
+    <NumberEditorHarness
+      nextData={data}
+      nextConfig={config}
+      nextOverrides={{ ...overrides, ...nextOverrides }}
     />
   );
   const view = render(renderCell());
@@ -141,7 +178,7 @@ describe("NumberCell", () => {
     // Act
     const trigger = screen
       .getAllByRole("button")
-      .find((button) => button.getAttribute("aria-haspopup") === "dialog");
+      .find((button) => !button.getAttribute("aria-label"));
 
     // Assert
     expect(trigger).toBeDefined();
@@ -170,12 +207,12 @@ describe("NumberCell", () => {
     await user.type(input, "-2.5{Enter}");
     expect(onChange).toHaveBeenLastCalledWith("-2.5");
 
-    await user.click(screen.getByRole("button", { name: "12" }));
+    await user.click(screen.getByRole("button", { name: "-2.5" }));
     await user.clear(await screen.findByRole("textbox"));
     await user.type(screen.getByRole("textbox"), "invalid{Enter}");
     expect(onChange).toHaveBeenLastCalledWith(null);
 
-    await user.click(screen.getByRole("button", { name: "12" }));
+    await user.click(screen.getByRole("button", { name: "" }));
     await user.clear(await screen.findByRole("textbox"));
     await user.keyboard("{Enter}");
     expect(onChange).toHaveBeenLastCalledWith(null);
@@ -286,14 +323,13 @@ describe("LinkCell", () => {
     ["url", "  JAVASCRIPT:alert(1)", ""],
   ] as const)("LinkCell_%s_UsesSafeExpectedHref", (type, data, href) => {
     render(
-      <LinkCell
+      <LinkCellValue
         type={type}
         propId="link"
         row={row}
         data={data}
         config={undefined}
         layout="table"
-        onChange={vi.fn()}
       />,
     );
     expect(screen.getByText(data.trim()).closest("a")).toHaveAttribute(
@@ -304,27 +340,25 @@ describe("LinkCell", () => {
 
   it("LinkCell_EmptyRowAndBoard_ExposeOnlyMeaningfulContent", () => {
     const { rerender } = render(
-      <LinkCell
+      <LinkCellValue
         type="url"
         propId="link"
         row={row}
         data=""
         config={undefined}
         layout="row-view"
-        onChange={vi.fn()}
       />,
     );
     expect(screen.getByText("Empty")).toBeVisible();
 
     rerender(
-      <LinkCell
+      <LinkCellValue
         type="url"
         propId="link"
         row={row}
         data=""
         config={undefined}
         layout="board"
-        onChange={vi.fn()}
       />,
     );
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
@@ -332,6 +366,62 @@ describe("LinkCell", () => {
 });
 
 describe("TextAndCheckboxCells", () => {
+  it.each(["table", "list", "board", "timeline", "row-view"] as const)(
+    "CellEditorHost_TextLikePlugin_%sLayout_OpensAndCommitsThroughTheSharedHost",
+    async (layout) => {
+      const user = userEvent.setup();
+      const onChange = vi.fn();
+      const plugin: CellPlugin<"probe", string, undefined> = {
+        id: "probe",
+        meta: { name: "Probe", desc: "", icon: null },
+        default: { name: "Probe", icon: null, data: "", config: undefined },
+        fromValue: (value) => value?.toString() ?? "",
+        toValue: (data) => data,
+        toTextValue: (data) => data,
+        renderCellValue: ({ data, onClick }) => (
+          <button type="button" onClick={onClick}>
+            {data}
+          </button>
+        ),
+        renderCellEditor: ({ onChange: commit }) => ({
+          presentation: "popover",
+          content: (
+            <button type="button" onClick={() => commit("committed")}>
+              Commit probe
+            </button>
+          ),
+        }),
+      };
+      render(
+        <CellEditorHost
+          plugin={plugin}
+          valueProps={{
+            propId: "probe",
+            row,
+            data: "initial",
+            config: undefined,
+            layout,
+          }}
+          editorProps={{
+            propId: "probe",
+            data: "initial",
+            config: undefined,
+            layout,
+            scope: { kind: "cell", row },
+            onChange,
+          }}
+        />,
+      );
+
+      await user.click(screen.getByRole("button", { name: "initial" }));
+      await user.click(
+        await screen.findByRole("button", { name: "Commit probe" }),
+      );
+
+      expect(onChange).toHaveBeenCalledWith("committed");
+    },
+  );
+
   it("TextCell_RowViewEmptyAndBoardEmpty_DistinguishEditableBoundary", () => {
     const common = {
       propId: "text",
@@ -340,31 +430,12 @@ describe("TextAndCheckboxCells", () => {
       config: undefined,
       onChange: vi.fn(),
     };
-    const { rerender } = render(<TextCell {...common} layout="row-view" />);
-    expect(screen.getByText("Empty")).toBeVisible();
-    rerender(<TextCell {...common} layout="board" />);
-    expect(screen.queryByRole("button")).not.toBeInTheDocument();
-  });
-
-  it("CheckboxCell_PointerActivation_TogglesFromPreviousValue", async () => {
-    const user = userEvent.setup();
-    const onChange = vi.fn();
-    render(
-      <CheckboxCell
-        propId="done"
-        row={row}
-        data={false}
-        config={undefined}
-        layout="table"
-        onChange={onChange}
-      />,
+    const { rerender } = render(
+      <TextCellValue {...common} layout="row-view" />,
     );
-
-    await user.click(screen.getByRole("button"));
-    expect(onChange).toHaveBeenCalledOnce();
-    const updater = onChange.mock.calls[0]![0] as (value: boolean) => boolean;
-    expect(updater(false)).toBe(true);
-    expect(updater(true)).toBe(false);
+    expect(screen.getByText("Empty")).toBeVisible();
+    rerender(<TextCellValue {...common} layout="board" />);
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 
   it("TextCell_EscapeAfterEditing_CancelsWithoutResourceChange", async () => {
@@ -417,33 +488,44 @@ describe("TextAndCheckboxCells", () => {
     });
   });
 
-  it("CheckboxCell_UncheckedPointerActivation_EmitsExactCellResourcePayload", async () => {
-    // Arrange
-    const dataProbe = createResourceProbe<Row[], DataResourceAction>();
-    const table = renderTableView({
-      ...createFullPluginFixture(),
-      onDataChange: dataProbe.onChange,
-    });
-    const checkbox = within(table.row("Empty"))
-      .getAllByRole("checkbox")
-      .find(
-        (element) =>
-          !element.hasAttribute("aria-label") &&
-          !element.hasAttribute("aria-labelledby"),
-      );
-    expect(checkbox).toBeDefined();
+  it.each(["pointer", "keyboard"] as const)(
+    "CheckboxCell_Unchecked%sActivation_ExposesStateAndEmitsExactCellResourcePayload",
+    async (activation) => {
+      // Arrange
+      const dataProbe = createResourceProbe<Row[], DataResourceAction>();
+      const table = renderTableView({
+        ...createFullPluginFixture(),
+        onDataChange: dataProbe.onChange,
+      });
+      const checkbox = within(table.row("Empty"))
+        .getAllByRole("checkbox")
+        .find(
+          (element) =>
+            !element.hasAttribute("aria-label") &&
+            !element.hasAttribute("aria-labelledby"),
+        );
+      expect(checkbox).toBeDefined();
 
-    // Act
-    await table.user.click(checkbox!);
+      expect(checkbox).toHaveAttribute("aria-checked", "false");
 
-    // Assert
-    await waitFor(() => expect(dataProbe.onChange).toHaveBeenCalledOnce());
-    expect(dataProbe.lastChange().action.type).toBe("data.cell.update");
-    expect(dataProbe.lastChange().action.payload).toEqual({
-      rowId: "row-empty",
-      propertyId: "complete",
-      previousValue: false,
-      nextValue: true,
-    });
-  });
+      // Act
+      if (activation === "pointer") {
+        await table.user.click(checkbox!);
+      } else {
+        checkbox!.focus();
+        await table.user.keyboard(" ");
+      }
+
+      // Assert
+      await waitFor(() => expect(dataProbe.onChange).toHaveBeenCalledOnce());
+      expect(checkbox).toHaveAttribute("aria-checked", "true");
+      expect(dataProbe.lastChange().action.type).toBe("data.cell.update");
+      expect(dataProbe.lastChange().action.payload).toEqual({
+        rowId: "row-empty",
+        propertyId: "complete",
+        previousValue: false,
+        nextValue: true,
+      });
+    },
+  );
 });

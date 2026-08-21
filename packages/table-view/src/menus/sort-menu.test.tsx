@@ -151,7 +151,7 @@ describe("SortMenu", () => {
       toValue: (value) => value,
       toTextValue: (value) => value,
       compare: () => 0,
-      renderCell: ({ data }) => <span>{data}</span>,
+      renderCellValue: ({ data }) => <span>{data}</span>,
     };
     const tableView = renderTableView({
       plugins: [...DEFAULT_PLUGINS, legacyPlugin],
@@ -244,7 +244,7 @@ describe("SortMenu", () => {
           },
         ],
       },
-      renderCell: ({ data }) => <span>{data}</span>,
+      renderCellValue: ({ data }) => <span>{data}</span>,
     };
     const properties: ColumnInfo[] = [
       { id: "name", name: "Name", type: "title", config: { showIcon: true } },

@@ -19,6 +19,7 @@ interface DateCellProps {
     title: string;
     description?: string;
   };
+  onClick?: () => void;
 }
 
 export function DateCell({
@@ -28,6 +29,7 @@ export function DateCell({
   disabled,
   layout,
   tooltip,
+  onClick,
 }: DateCellProps) {
   const dateStr = toDateString(data, config);
 
@@ -39,6 +41,7 @@ export function DateCell({
       wrapped={wrapped}
       aria-disabled={disabled}
       tooltip={tooltip}
+      onClick={onClick}
     >
       {layout === "table" && (
         <CopyButton

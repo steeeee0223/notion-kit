@@ -1,7 +1,9 @@
 import type { Row } from "@/lib/types";
 import type {
+  CellEditorProps,
+  CellEditorResult,
   CellPlugin,
-  CellProps,
+  CellValueProps,
   ConfigMenuProps,
   PluginFactoryConfig,
 } from "@/plugins";
@@ -21,17 +23,22 @@ export type TitlePlugin = CellPlugin<"title", string, TitleConfig>;
 export interface TitlePluginConfig
   extends Omit<
     PluginFactoryConfig<TitlePlugin>,
-    "renderCell" | "renderConfigMenu"
+    "renderCellValue" | "renderCellEditor" | "renderConfigMenu"
   > {
-  renderCell: (
-    props: CellProps<string, TitleConfig> & { icon?: Row["icon"] },
+  renderCellValue: (
+    props: CellValueProps<string, TitleConfig> & { icon?: Row["icon"] },
   ) => React.ReactNode;
+  renderCellEditor?: (
+    props: CellEditorProps<string, TitleConfig> & { icon?: Row["icon"] },
+  ) => CellEditorResult;
   renderConfigMenu?: (props: ConfigMenuProps<TitleConfig>) => React.ReactNode;
 }
 
 export function title(config: TitlePluginConfig): TitlePlugin {
+  const renderCellEditor = config.renderCellEditor;
   return {
     id: "title",
+    disableBulkEdit: true,
     meta: { name: "Title", icon: config.icon, desc: "" },
     default: {
       name: "Title",
@@ -45,13 +52,25 @@ export function title(config: TitlePluginConfig): TitlePlugin {
     compare: createCompareFn(compareStrings),
     ...textMethodCapabilities<string>(),
     counting: genericCounting,
-    renderCell: ({ row, config: pluginConfig, ...props }) =>
-      config.renderCell({
+    renderCellValue: ({ row, config: pluginConfig, ...props }) =>
+      config.renderCellValue({
         icon: pluginConfig.showIcon ? row.icon : undefined,
         row,
         config: pluginConfig,
         ...props,
       }),
+    renderCellEditor: renderCellEditor
+      ? ({ scope, config: pluginConfig, ...props }) =>
+          renderCellEditor({
+            icon:
+              scope.kind === "cell" && pluginConfig.showIcon
+                ? scope.row.icon
+                : undefined,
+            config: pluginConfig,
+            scope,
+            ...props,
+          })
+      : undefined,
     renderConfigMenu: config.renderConfigMenu,
     renderGroupingValue: config.renderGroupingValue,
   };

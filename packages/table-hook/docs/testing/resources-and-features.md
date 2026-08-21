@@ -12,7 +12,8 @@ group visibility/order state.
 - Controlled owners remain authoritative; rejected proposals do not become
   hidden local state.
 - Row and column mutations preserve positions, IDs, timestamps, and cloning
-  rules.
+  rules. Batch cell updates and row duplication emit one resource proposal and
+  ignore stale row IDs without affecting valid targets.
 - Feature state updates remain serializable and compose with table resources.
 
 ## Source and tests

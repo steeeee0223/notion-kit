@@ -12,6 +12,8 @@ function Popover<Payload = unknown>({
   return <PopoverPrimitive.Root data-slot="popover" modal={modal} {...props} />;
 }
 
+Popover.createHandle = PopoverPrimitive.createHandle;
+
 function PopoverTrigger<Payload = unknown>({
   ...props
 }: PopoverPrimitive.Trigger.Props<Payload>) {
@@ -84,3 +86,4 @@ function PopoverContent({
 }
 
 export { Popover, PopoverTrigger, PopoverClose, PopoverContent };
+export type PopoverHandle<Payload = unknown> = PopoverPrimitive.Handle<Payload>;
