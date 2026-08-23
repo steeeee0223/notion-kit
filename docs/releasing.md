@@ -50,8 +50,9 @@ package` workflow rather than a local publish command.
 2. Merge the package version to `main`.
 3. Create a temporary, narrowly scoped npm token and add it as the
    `NPM_BOOTSTRAP_TOKEN` repository secret.
-4. In GitHub Actions, run `Bootstrap npm package` on `main` and provide the
-   exact package name, for example `@notion-kit/example`.
+4. In GitHub Actions, run `Bootstrap npm package` on `main`, provide the exact
+   package name (for example `@notion-kit/example`), and provide its npm
+   dist-tag. Use `beta` for a prerelease and `latest` only for a stable release.
 5. Confirm the package exists on npm, then configure its trusted publisher with
    the normal-release values above.
 6. Delete `NPM_BOOTSTRAP_TOKEN` and revoke the temporary npm token.
@@ -61,5 +62,5 @@ The bootstrap workflow rejects private packages, names outside the
 the package explicitly selected in the workflow input.
 
 `@notion-kit/i18n` and `@notion-kit/validators` are public runtime packages
-but are new to npm. Bootstrap each at its current version before releasing a
-tag that depends on either package.
+but are new to npm. Bootstrap each from the prerelease version commit with the
+`beta` dist-tag before releasing a tag that depends on either package.

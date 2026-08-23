@@ -47,6 +47,7 @@ workflow for a future package's first release.
 
 - [x] Task 3: Add a manually dispatched bootstrap workflow.
   - Require an explicit `@notion-kit/*` package input.
+  - Require an explicit npm dist-tag for the initial publication.
   - Reject private packages and packages that already exist on npm.
   - Build and publish only the selected package with
     `NPM_BOOTSTRAP_TOKEN` and public access.

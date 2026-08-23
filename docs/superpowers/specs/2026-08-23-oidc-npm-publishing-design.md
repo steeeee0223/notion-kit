@@ -109,8 +109,9 @@ tag-triggered and is only for first publication. It must:
    package not yet present on npm.
 2. Build and pack only the selected package and its required workspace build
    dependencies.
-3. Publish the initial version to npm with `--access public`, authenticated by
-   a narrowly scoped temporary bootstrap token.
+3. Require an explicit npm dist-tag and publish the initial version with
+   `--access public --tag <dist-tag>`, authenticated by a narrowly scoped
+   temporary bootstrap token.
 4. Stop before publishing any other workspace packages.
 
 After that first release, a maintainer configures the package's npm trusted
@@ -124,6 +125,8 @@ never fall back to this token.
   configuration; it must not use a token fallback.
 - The bootstrap workflow rejects private packages, package names outside the
   `@notion-kit/` scope, and packages already present on npm.
+- The bootstrap workflow requires an explicit dist-tag, so prerelease packages
+  cannot accidentally become the `latest` installation target.
 - The bootstrap token is stored only as a GitHub Actions secret while needed;
   it is deleted after trusted publishing is verified.
 - Tag protection restricts who can create `v*` tags, because a trusted

@@ -7,6 +7,10 @@ on:
         description: Public @notion-kit package to publish for the first time
         required: true
         type: string
+      dist-tag:
+        description: npm dist-tag for the initial release (for example beta or latest)
+        required: true
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ inputs.package-name }}
@@ -35,14 +39,19 @@ jobs:
         id: package
         env:
           PACKAGE_NAME: ${{ inputs.package-name }}
+          NPM_DIST_TAG: ${{ inputs.dist-tag }}
         run: |
           node <<'NODE'
           const fs = require('node:fs');
           const path = require('node:path');
 
           const packageName = process.env.PACKAGE_NAME;
+          const distTag = process.env.NPM_DIST_TAG;
           if (!/^@notion-kit\/[a-z0-9][a-z0-9-]*$/.test(packageName)) {
             throw new Error('package-name must be a @notion-kit package name');
+          }
+          if (!/^[a-z][a-z0-9._-]*$/i.test(distTag)) {
+            throw new Error('dist-tag must be a valid npm dist-tag name');
           }
 
           const packageDirectory = path.join(
@@ -68,7 +77,7 @@ jobs:
 
           fs.appendFileSync(
             process.env.GITHUB_OUTPUT,
-            `name=${packageName}\nversion=${manifest.version}\n`,
+            `name=${packageName}\nversion=${manifest.version}\ndist_tag=${distTag}\n`,
           );
           NODE
 
@@ -117,10 +126,11 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_BOOTSTRAP_TOKEN }}
           TARBALL: ${{ steps.pack.outputs.tarball }}
+          NPM_DIST_TAG: ${{ steps.package.outputs.dist_tag }}
         run: |
           if [[ -z "$NODE_AUTH_TOKEN" ]]; then
             echo 'NPM_BOOTSTRAP_TOKEN is required only for a package bootstrap release.'
             exit 1
           fi
 
-          npm publish "$TARBALL" --access public
+          npm publish "$TARBALL" --access public --tag "$NPM_DIST_TAG"
