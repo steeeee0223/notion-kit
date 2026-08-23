@@ -103,7 +103,7 @@ jobs:
       - name: Build package and workspace dependencies
         env:
           PACKAGE_NAME: ${{ steps.package.outputs.name }}
-        run: pnpm exec turbo run build --filter="...${PACKAGE_NAME}"
+        run: pnpm build --filter=${PACKAGE_NAME}
 
       - name: Pack package
         id: pack
