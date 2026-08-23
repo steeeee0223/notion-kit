@@ -133,4 +133,5 @@ jobs:
             exit 1
           fi
 
+          npm config set '//registry.npmjs.org/:_authToken' "$NODE_AUTH_TOKEN"
           npm publish "$TARBALL" --access public --tag "$NPM_DIST_TAG"
