@@ -1,170 +1,142 @@
 ---
 title: Creating a Cell Plugin
-description: A step-by-step tutorial for building a custom cell plugin in the Notion database.
+description: Build a custom property type for Table View.
 ---
 
-## Introduction
+A cell plugin defines the data model for one property type. It must render a
+cell value; add an editor when users should be able to change that value.
 
-This guide walks you through the process of creating a custom `CellPlugin` to extend the database system with new property types. A cell plugin controls how values are stored, rendered, and interacted with.
+## Create a Tag plugin
 
-## Step-by-Step: Create a "Tag" Plugin
-
-<Steps>
-<Step>
-
-### Define the Types
-
-```ts
-// tag-plugin.tsx
-
-import type { CellPlugin } from "@notion-kit/table-hook/plugins";
-
-export type TagData = string[];
-export interface TagConfig {
-  options: string[];
-}
-export type TagPlugin = CellPlugin<"tag", TagData, TagConfig>;
-```
-
-</Step>
-<Step>
-### Implement the Plugin
+### Define the plugin
 
 ```tsx
-// tag-plugin.tsx
-
-import type { CellProps } from "@notion-kit/table-hook/plugins";
+import type {
+  CellEditorProps,
+  CellPlugin,
+  CellValueProps,
+} from "@notion-kit/table-hook/plugins";
 import { createCompareFn } from "@notion-kit/table-hook/plugins";
+
+type TagData = string[];
+type TagConfig = { options: string[] };
+type TagPlugin = CellPlugin<"tag", TagData, TagConfig>;
+
+const TagIcon = <span aria-hidden>🏷️</span>;
+
+function TagValue({ data }: Pick<CellValueProps<TagData, TagConfig>, "data">) {
+  return <span>{data.join(", ") || "—"}</span>;
+}
+
+function TagEditor({
+  data,
+  config,
+  onChange,
+}: Pick<CellEditorProps<TagData, TagConfig>, "data" | "config" | "onChange">) {
+  return (
+    <div>
+      {config.options.map((tag) => {
+        const selected = data.includes(tag);
+
+        return (
+          <button
+            key={tag}
+            type="button"
+            aria-pressed={selected}
+            onClick={() =>
+              onChange(
+                selected
+                  ? data.filter((value) => value !== tag)
+                  : [...data, tag],
+              )
+            }
+          >
+            {tag}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 export const tagPlugin: TagPlugin = {
   id: "tag",
-  default: {
-    name: "Tags",
-    icon: <TagIcon />, // Your own icon component
-    config: { options: [] },
-    data: [],
-  },
   meta: {
     name: "Tag",
     desc: "A multi-select tag property",
-    icon: <TagIcon />, // Your own icon component
+    icon: TagIcon,
   },
-  fromValue: (value, config) => value.split(",").map((tag) => tag.trim()),
+  default: {
+    name: "Tags",
+    icon: TagIcon,
+    config: { options: [] },
+    data: [],
+  },
+  fromValue: (value) =>
+    typeof value === "string"
+      ? value
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean)
+      : [],
   toValue: (data) => data.join(", "),
   toTextValue: (data) => data.join(", "),
   compare: createCompareFn<TagPlugin>((a, b) =>
-    (a[0] ?? "").localeCompare(b[0] ?? ""),
+    a.join(", ").localeCompare(b.join(", ")),
   ),
-  renderCell: (props) => <TagCell {...props} />,
-  renderConfigMenu: (props) => <TagConfigMenu {...props} />,
+  renderCellValue: (props) => <TagValue {...props} />,
+  renderCellEditor: (props) => ({
+    presentation: "popover",
+    content: <TagEditor {...props} />,
+  }),
 };
 ```
 
-</Step>
-<Step>
-### Render the Cell Component
+`renderCellEditor` receives a `scope`. It is `{ kind: "cell" }` for a single
+cell and `{ kind: "bulk" }` when the bulk-edit bar invokes the same editor for
+selected rows. The example does not need to branch on the scope, so it supports
+both paths automatically.
 
-```tsx
-// tag-plugin.tsx
+### Register the plugin
 
-import type { ConfigMenuProps } from "@notion-kit/table-hook/plugins";
-
-function TagCell({
-  data: tags,
-  config,
-  onChange,
-}: CellProps<TagData, TagConfig>) {
-  const options = config?.options ?? [];
-  return (
-    <div>
-      {options.map((tag) => (
-        <Badge
-          key={tag}
-          onClick={() => {
-            if (!onChange) return;
-            const next = tags.includes(tag)
-              ? tags.filter((t) => t !== tag)
-              : [...tags, tag];
-            onChange(next);
-          }}
-        >
-          {tag} {tags.includes(tag) ? "✅" : ""}
-        </Badge>
-      ))}
-    </div>
-  );
-}
-```
-
-</Step>
-<Step>
-### `Optional` Configuration Menu
-
-```tsx
-// tag-plugin.tsx
-
-function TagConfigMenu({
-  config,
-  propId,
-  onChange,
-}: ConfigMenuProps<TagConfig>) {
-  return (
-    <div>
-      <label htmlFor={`${propId}-options`}>
-        Tag Options (comma separated):
-      </label>
-      <input
-        id={`${propId}-options`}
-        defaultValue={config?.options?.join(", ") ?? ""}
-        onBlur={(e) => {
-          const options = e.target.value.split(",").map((o) => o.trim());
-          // persist config change using your system
-          onChange({ options });
-        }}
-      />
-    </div>
-  );
-}
-```
-
-</Step>
-<Step>
-### Register the Plugin
-
-Finally, register your plugin in the table view:
+Add the plugin to the list passed to `TableView`, then include a matching
+property in the table data.
 
 ```tsx
 import { DEFAULT_PLUGINS, TableView } from "@notion-kit/table-view";
+import type { ColumnDefs, Row } from "@notion-kit/table-view";
 
 import { tagPlugin } from "./tag-plugin";
 
-const properties = [
-  { id: "name", name: "Name", type: "title" as const },
+const plugins = [...DEFAULT_PLUGINS, tagPlugin];
+
+const properties: ColumnDefs<typeof plugins> = [
+  { id: "name", name: "Name", type: "title" },
   {
     id: "tags",
     name: "Tags",
-    type: "tag" as const,
+    type: "tag",
     config: { options: ["Bug", "Feature"] },
   },
 ];
 
 const now = Date.now();
-const data = [
+const data: Row<typeof plugins>[] = [
   {
     id: "task-1",
     createdAt: now,
     lastEditedAt: now,
     properties: {
-      name: { id: "task-1-name", value: "Ship table view" },
+      name: { id: "task-1-name", value: "Ship Table View" },
       tags: { id: "task-1-tags", value: ["Feature"] },
     },
   },
 ];
 
-function DatabaseView() {
+export function DatabaseView() {
   return (
     <TableView
-      plugins={[...DEFAULT_PLUGINS, tagPlugin]} // Register your custom plugin here // [!code highlight]
+      plugins={plugins}
       defaultProperties={properties}
       defaultData={data}
     />
@@ -172,9 +144,6 @@ function DatabaseView() {
 }
 ```
 
-</Step>
-</Steps>
-
----
-
-This plugin system makes your table highly extensible while maintaining strong typing. You can now build more plugins like number pickers, multi-selects, color swatches, or even embedded widgets.
+Add `renderConfigMenu` when users need to edit the property configuration, and
+add sorting, grouping, or counting methods only when the property needs those
+capabilities.
