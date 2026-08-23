@@ -3,6 +3,44 @@ title: Changelog
 description: Latest updates and improvements to Notion UI.
 ---
 
+<ChangelogBlock version="v1.1.0">
+
+### 🧮 NK-34 & NK-45: A more capable Table View
+
+Table View is now powered by TanStack Table v9 and includes bulk editing for selected rows.
+
+**What's new:**
+
+- **Bulk Editing:** Select multiple rows and update compatible properties together, including text, number, select, checkbox, and date fields.
+- **Extensible Editors:** Custom plugins can opt into bulk editing by providing a cell editor, without special-case integration in Table View.
+- **Stronger Table Foundation:** `@notion-kit/table-hook`, `@notion-kit/table-view`, and Settings Panel tables have been migrated to TanStack Table v9 for more reliable sorting, grouping, row actions, and controlled state.
+
+### 🗿 NK-51 & NK-54: Base UI primitives
+
+Notion Kit's UI primitives have been migrated to Base UI, improving their underlying accessibility and interaction behavior while preserving the familiar Notion Kit look and feel.
+
+**What's new:**
+
+- **Expanded primitives:** Added `Autocomplete`, `Combobox`, `Meter`, and `Sortable` alongside refreshed menu, select, dialog, tooltip, tabs, and form primitives.
+- **New blocks:** Added a Kanban block to `@notion-kit/ui`.
+- **Updated component APIs:** Several primitives now use the Base UI composition model; review the updated component documentation when upgrading.
+
+### 🕶️ NK-52: Cool Blocks
+
+Added `@notion-kit/cool-blocks`, a collection of expressive, interactive React blocks for playful product moments.
+
+**What's included:**
+
+- **Eject:** Animate content out of view, with disappear, respawn, and ghost modes.
+- **Falling Blocks:** A physics-driven, draggable falling-blocks interaction.
+- **Sling Shot:** A draggable slingshot-style interaction component.
+
+### 🗺️ NK-49 & NK-50: Transit map data and visualization
+
+Expanded the map platform with Transitland-backed transit data, real-time vehicle updates, routes, stops, trip details, and a dedicated interactive globe application.
+
+</ChangelogBlock>
+
 <ChangelogBlock version="v1.0.0">
 
 ### 🚀 NK-40: Single UI Package

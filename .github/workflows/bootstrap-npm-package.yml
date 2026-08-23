@@ -103,7 +103,7 @@ jobs:
       - name: Build package and workspace dependencies
         env:
           PACKAGE_NAME: ${{ steps.package.outputs.name }}
-        run: pnpm exec turbo run build --filter="...${PACKAGE_NAME}"
+        run: pnpm build --filter=${PACKAGE_NAME}
 
       - name: Pack package
         id: pack
@@ -133,4 +133,5 @@ jobs:
             exit 1
           fi
 
+          npm config set '//registry.npmjs.org/:_authToken' "$NODE_AUTH_TOKEN"
           npm publish "$TARBALL" --access public --tag "$NPM_DIST_TAG"

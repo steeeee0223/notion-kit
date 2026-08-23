@@ -1,6 +1,6 @@
 {
   "name": "notion-kit",
-  "version": "0.16.0",
+  "version": "1.1.0",
   "private": true,
   "engines": {
     "node": ">=24.11.0",
