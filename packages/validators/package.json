@@ -1,8 +1,12 @@
 {
   "name": "@notion-kit/validators",
   "version": "1.0.0",
-  "private": true,
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/steeeee0223/notion-kit.git",
+    "directory": "packages/validators"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",

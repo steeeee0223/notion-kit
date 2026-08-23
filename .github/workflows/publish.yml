@@ -19,8 +19,8 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Required for creating releases
-      id-token: write # Required for npm provenance
+      contents: read
+      id-token: write # Required for npm trusted publishing
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -29,13 +29,6 @@ jobs:
 
       - name: Setup
         uses: ./tooling/github/setup
-
-      - name: Setup npm authentication
-        run: |
-          npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
-          echo "✅ npm authentication configured"
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Build packages
         run: pnpm build:packages

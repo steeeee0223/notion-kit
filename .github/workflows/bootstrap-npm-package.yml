@@ -1,0 +1,126 @@
+name: Bootstrap npm package
+
+on:
+  workflow_dispatch:
+    inputs:
+      package-name:
+        description: Public @notion-kit package to publish for the first time
+        required: true
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.package-name }}
+  cancel-in-progress: false
+
+env:
+  FORCE_COLOR: 3
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup
+        uses: ./tooling/github/setup
+
+      - name: Validate package input
+        id: package
+        env:
+          PACKAGE_NAME: ${{ inputs.package-name }}
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+
+          const packageName = process.env.PACKAGE_NAME;
+          if (!/^@notion-kit\/[a-z0-9][a-z0-9-]*$/.test(packageName)) {
+            throw new Error('package-name must be a @notion-kit package name');
+          }
+
+          const packageDirectory = path.join(
+            process.cwd(),
+            'packages',
+            packageName.slice('@notion-kit/'.length),
+          );
+          const manifestPath = path.join(packageDirectory, 'package.json');
+          if (!fs.existsSync(manifestPath)) {
+            throw new Error(`Package manifest not found: ${manifestPath}`);
+          }
+
+          const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+          if (manifest.name !== packageName) {
+            throw new Error('package-name must match the package manifest name');
+          }
+          if (manifest.private === true) {
+            throw new Error('Bootstrap publishing is only allowed for public packages');
+          }
+          if (typeof manifest.version !== 'string' || manifest.version.length === 0) {
+            throw new Error('Package version is required');
+          }
+
+          fs.appendFileSync(
+            process.env.GITHUB_OUTPUT,
+            `name=${packageName}\nversion=${manifest.version}\n`,
+          );
+          NODE
+
+      - name: Confirm package has not been published
+        env:
+          PACKAGE_NAME: ${{ steps.package.outputs.name }}
+        run: |
+          set +e
+          output="$(npm view "${PACKAGE_NAME}" version --registry=https://registry.npmjs.org 2>&1)"
+          status=$?
+          set -e
+
+          if [[ "$status" -eq 0 ]]; then
+            echo "${PACKAGE_NAME} already exists on npm and must use trusted publishing."
+            exit 1
+          fi
+
+          if ! grep -Eq 'E404|404 Not Found' <<<"$output"; then
+            echo "$output"
+            exit "$status"
+          fi
+
+      - name: Build package and workspace dependencies
+        env:
+          PACKAGE_NAME: ${{ steps.package.outputs.name }}
+        run: pnpm exec turbo run build --filter="...${PACKAGE_NAME}"
+
+      - name: Pack package
+        id: pack
+        env:
+          PACKAGE_NAME: ${{ steps.package.outputs.name }}
+        run: |
+          pack_directory="$RUNNER_TEMP/npm-bootstrap-package"
+          mkdir -p "$pack_directory"
+          pnpm --filter "$PACKAGE_NAME" pack --pack-destination "$pack_directory"
+
+          mapfile -t tarballs < <(find "$pack_directory" -maxdepth 1 -type f -name '*.tgz' -print)
+          if [[ "${#tarballs[@]}" -ne 1 ]]; then
+            echo "Expected exactly one package tarball, found ${#tarballs[@]}."
+            exit 1
+          fi
+
+          echo "tarball=${tarballs[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Publish initial public version
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_BOOTSTRAP_TOKEN }}
+          TARBALL: ${{ steps.pack.outputs.tarball }}
+        run: |
+          if [[ -z "$NODE_AUTH_TOKEN" ]]; then
+            echo 'NPM_BOOTSTRAP_TOKEN is required only for a package bootstrap release.'
+            exit 1
+          fi
+
+          npm publish "$TARBALL" --access public
