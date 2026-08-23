@@ -65,6 +65,7 @@ function DndTableBodyContent({
 
   const handleRowDragEnd = useCallback(
     (e: DragEndEvent) => {
+      if (e.canceled) return;
       const isSorted = sorting.length > 0;
       if (!isSorted) return table.handleRowDragEnd(e);
       setPendingDragEndEvent(e);
@@ -157,9 +158,18 @@ interface TableBodyProps {
  */
 function TableBody({ table, onRowDragEnd }: TableBodyProps) {
   const rows = table.getRowModel().rows;
+  const visibleRowIdSet = new Set(
+    rows.filter((row) => !row.getIsGrouped()).map((row) => row.id),
+  );
+  const visibleSelectedIds = table
+    .getSelectedRowIds()
+    .filter((id) => visibleRowIdSet.has(id));
 
   return (
-    <Sortable.Root onDragEnd={onRowDragEnd}>
+    <Sortable.Root
+      multiDrag={{ selectedIds: visibleSelectedIds }}
+      onDragEnd={onRowDragEnd}
+    >
       <Sortable.List>
         {rows.map((row) =>
           row.getIsGrouped() ? (

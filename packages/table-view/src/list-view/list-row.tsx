@@ -34,7 +34,12 @@ export function ListRow({ rowId }: ListRowProps) {
           group={row.parentId}
           disabled={locked}
           data={{ type: "list-row", groupId: row.parentId }}
-          render={<div data-block-id={row.id} className="group/row my-1" />}
+          render={
+            <div
+              data-block-id={row.id}
+              className="group/row my-1 data-group-dragging:opacity-0"
+            />
+          }
         >
           <div className="relative flex items-center">
             {!locked && (

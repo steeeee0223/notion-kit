@@ -61,6 +61,7 @@ function ListViewContentInner({
 
   const handleRowDragEnd = useCallback(
     (e: DragEndEvent) => {
+      if (e.canceled) return;
       const isSorted = sorting.length > 0;
       if (!isSorted) return table.handleRowDragEnd(e);
       setPendingDragEndEvent(e);
@@ -85,35 +86,48 @@ function ListViewContentInner({
           rowSelection: state.rowSelection,
         })}
       >
-        {({ locked }) => (
-          <div
-            data-block-id="1fe35e0f-492c-80fd-8d7c-f7e953641770"
-            className="flex flex-col py-1"
-          >
-            <Sortable.Root disabled={locked} onDragEnd={handleRowDragEnd}>
-              <Sortable.List>
-                {rows.map((row) =>
-                  row.getIsGrouped() ? (
-                    <TableGroupedRow key={row.id} row={row} />
-                  ) : (
-                    <ListRow key={row.id} rowId={row.id} />
-                  ),
-                )}
-              </Sortable.List>
-            </Sortable.Root>
-            {!locked && (
-              <Button
-                tabIndex={0}
-                variant="cell"
-                className="h-7.5 rounded-md px-2 text-muted"
-                onClick={() => table.addRow()}
+        {({ locked }) => {
+          const visibleRowIdSet = new Set(
+            rows.filter((row) => !row.getIsGrouped()).map((row) => row.id),
+          );
+          const visibleSelectedIds = table
+            .getSelectedRowIds()
+            .filter((id) => visibleRowIdSet.has(id));
+
+          return (
+            <div
+              data-block-id="1fe35e0f-492c-80fd-8d7c-f7e953641770"
+              className="flex flex-col py-1"
+            >
+              <Sortable.Root
+                multiDrag={{ selectedIds: visibleSelectedIds }}
+                disabled={locked}
+                onDragEnd={handleRowDragEnd}
               >
-                <Icon.Plus className="size-3.5 fill-current" />
-                New page
-              </Button>
-            )}
-          </div>
-        )}
+                <Sortable.List>
+                  {rows.map((row) =>
+                    row.getIsGrouped() ? (
+                      <TableGroupedRow key={row.id} row={row} />
+                    ) : (
+                      <ListRow key={row.id} rowId={row.id} />
+                    ),
+                  )}
+                </Sortable.List>
+              </Sortable.Root>
+              {!locked && (
+                <Button
+                  tabIndex={0}
+                  variant="cell"
+                  className="h-7.5 rounded-md px-2 text-muted"
+                  onClick={() => table.addRow()}
+                >
+                  <Icon.Plus className="size-3.5 fill-current" />
+                  New page
+                </Button>
+              )}
+            </div>
+          );
+        }}
       </table.Subscribe>
       <Dialog
         open={pendingDragEndEvent !== null}

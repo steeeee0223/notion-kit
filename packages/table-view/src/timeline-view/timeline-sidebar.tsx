@@ -38,6 +38,7 @@ export function TimelineSidebar({
         groupingState: state.groupingState,
         expanded: state.expanded,
         columnVisibility: state.columnVisibility,
+        rowSelection: state.rowSelection,
       })}
     >
       {() => (
@@ -57,6 +58,15 @@ function TimelineSidebarContent({
     .find((header) => header.column.getInfo().type === "title");
 
   if (!titleHeader) return null;
+  const visibleRowIdSet = new Set(
+    table
+      .getRowModel()
+      .rows.filter((row) => !row.getIsGrouped())
+      .map((row) => row.id),
+  );
+  const visibleSelectedIds = table
+    .getSelectedRowIds()
+    .filter((id) => visibleRowIdSet.has(id));
 
   return (
     <TimelineSidebarPrimitive role="complementary" aria-label="Timeline table">
@@ -86,7 +96,11 @@ function TimelineSidebarContent({
             locked ? (
               <TimelineSidebarRows />
             ) : (
-              <Sortable.Root orientation="vertical" onDragEnd={onRowDragEnd}>
+              <Sortable.Root
+                multiDrag={{ selectedIds: visibleSelectedIds }}
+                orientation="vertical"
+                onDragEnd={onRowDragEnd}
+              >
                 <Sortable.List>
                   <TimelineSidebarRows sortable />
                 </Sortable.List>
@@ -171,7 +185,7 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
           <div
             data-slot="timeline-sidebar-row"
             data-row-id={row.id}
-            className="group/row flex h-(--timeline-row-height) items-center border-b border-border"
+            className="group/row flex h-(--timeline-row-height) items-center border-b border-border data-group-dragging:opacity-0"
           />
         }
       >

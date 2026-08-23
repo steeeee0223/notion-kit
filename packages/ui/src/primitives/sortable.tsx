@@ -32,7 +32,9 @@ type Orientation = "horizontal" | "vertical";
 
 interface SortableRootContextValue {
   disabled: boolean;
+  draggedIds: ReadonlySet<UniqueIdentifier>;
   modifiers: UseSortableInput["modifiers"];
+  multiDrag?: { selectedIds: UniqueIdentifier[] };
   orientation: Orientation;
 }
 
@@ -44,6 +46,7 @@ interface SortableItemState extends Record<string, unknown> {
   dropping: boolean;
   dragSource: boolean;
   dropTarget: boolean;
+  groupDragging: boolean;
 }
 
 interface SortableItemContextValue extends SortableItemState {
@@ -86,6 +89,71 @@ interface SortableRootProps
   extends React.ComponentProps<typeof DragDropProvider> {
   orientation?: Orientation;
   disabled?: boolean;
+  multiDrag?: { selectedIds: UniqueIdentifier[] };
+}
+
+function getSortableItemId(item: UniqueIdentifier | { id: UniqueIdentifier }) {
+  return typeof item === "object" ? item.id : item;
+}
+
+function getMultiDragSelectedIds(data: unknown) {
+  if (!data || typeof data !== "object") return undefined;
+  const dataRecord = data as Record<string, unknown>;
+  if (!("notionKitSortable" in dataRecord)) return undefined;
+
+  const metadata = dataRecord.notionKitSortable;
+  if (!metadata || typeof metadata !== "object") return undefined;
+
+  const selectedIds = (metadata as Record<string, unknown>).selectedIds;
+  if (
+    !Array.isArray(selectedIds) ||
+    selectedIds.some((id) => typeof id !== "string" && typeof id !== "number")
+  ) {
+    return undefined;
+  }
+  return selectedIds as UniqueIdentifier[];
+}
+
+function getItemsAfterMultiDrag<
+  T extends UniqueIdentifier[] | { id: UniqueIdentifier }[],
+>(items: T, source: NonNullable<DragEndEvent["operation"]["source"]>) {
+  const selectedIds = getMultiDragSelectedIds(source.data);
+  if (!selectedIds || selectedIds.length === 0) return null;
+
+  const selectedIdSet = new Set(selectedIds);
+  const selectedItems = items.filter((item) =>
+    selectedIdSet.has(getSortableItemId(item)),
+  );
+  if (
+    selectedItems.length <= 1 ||
+    selectedItems.length !== selectedIdSet.size ||
+    !selectedIdSet.has(source.id)
+  )
+    return null;
+
+  const sourceIndex = "index" in source ? source.index : undefined;
+  const initialIndex =
+    "initialIndex" in source ? source.initialIndex : undefined;
+  if (typeof sourceIndex !== "number" || typeof initialIndex !== "number")
+    return null;
+  if (sourceIndex === initialIndex) return items;
+
+  const selectedBeforeTarget = items
+    .slice(0, sourceIndex)
+    .filter((item) => selectedIdSet.has(getSortableItemId(item))).length;
+  const remainingItems = items.filter(
+    (item) => !selectedIdSet.has(getSortableItemId(item)),
+  );
+  const targetIndex = Math.min(
+    Math.max(sourceIndex - selectedBeforeTarget, 0),
+    remainingItems.length,
+  );
+
+  return [
+    ...remainingItems.slice(0, targetIndex),
+    ...selectedItems,
+    ...remainingItems.slice(targetIndex),
+  ] as T;
 }
 
 function getSortableItemsAfterDrag<
@@ -94,6 +162,10 @@ function getSortableItemsAfterDrag<
   if (event.canceled) return items;
 
   const { activatorEvent, source, target, transform } = event.operation;
+  if (source) {
+    const multiDragItems = getItemsAfterMultiDrag(items, source);
+    if (multiDragItems) return multiDragItems;
+  }
   const hasProjectedIndex =
     source != null &&
     "initialIndex" in source &&
@@ -137,22 +209,58 @@ function getSortableItemsAfterDrag<
 function SortableRoot({
   children,
   disabled = false,
+  multiDrag,
+  onDragEnd,
+  onDragStart,
   orientation = "vertical",
   sensors,
   ...props
 }: SortableRootProps) {
+  const [draggedIds, setDraggedIds] = React.useState<UniqueIdentifier[]>([]);
+  const handleDragStart = React.useCallback<
+    NonNullable<SortableRootProps["onDragStart"]>
+  >(
+    (event, manager) => {
+      const sourceId = event.operation.source?.id;
+      if (sourceId != null) {
+        setDraggedIds(
+          multiDrag?.selectedIds.includes(sourceId)
+            ? multiDrag.selectedIds
+            : [sourceId],
+        );
+      }
+      onDragStart?.(event, manager);
+    },
+    [multiDrag?.selectedIds, onDragStart],
+  );
+  const handleDragEnd = React.useCallback<
+    NonNullable<SortableRootProps["onDragEnd"]>
+  >(
+    (event, manager) => {
+      onDragEnd?.(event, manager);
+      setDraggedIds([]);
+    },
+    [onDragEnd],
+  );
   const context = React.useMemo<SortableRootContextValue>(
     () => ({
       disabled,
+      draggedIds: new Set(draggedIds),
       modifiers: getSortableModifiers(orientation),
+      multiDrag,
       orientation,
     }),
-    [disabled, orientation],
+    [disabled, draggedIds, multiDrag, orientation],
   );
 
   return (
     <SortableRootContext value={context}>
-      <DragDropProvider sensors={sensors ?? sortableSensors} {...props}>
+      <DragDropProvider
+        sensors={sensors ?? sortableSensors}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        {...props}
+      >
         {children}
       </DragDropProvider>
     </SortableRootContext>
@@ -234,6 +342,21 @@ function SortableItem({
   const root = React.useContext(SortableRootContext);
   const disabled = props.disabled ?? root?.disabled;
   const modifiers = props.modifiers ?? root?.modifiers;
+  const sortableData = React.useMemo(() => {
+    if (!root?.multiDrag) return data;
+
+    const selectedIds = root.multiDrag.selectedIds.includes(id)
+      ? root.multiDrag.selectedIds
+      : [id];
+    const userMetadata =
+      data?.notionKitSortable && typeof data.notionKitSortable === "object"
+        ? data.notionKitSortable
+        : {};
+    return {
+      ...data,
+      notionKitSortable: { ...userMetadata, selectedIds },
+    };
+  }, [data, id, root?.multiDrag]);
   const sortablePlugins = React.useMemo(() => {
     if (dropAnimation === undefined) return plugins;
 
@@ -249,7 +372,7 @@ function SortableItem({
     alignment,
     collisionDetector,
     collisionPriority,
-    data,
+    data: sortableData,
     disabled,
     effects,
     group,
@@ -268,12 +391,15 @@ function SortableItem({
       dropping: sortable.isDropping,
       dragSource: sortable.isDragSource,
       dropTarget: sortable.isDropTarget,
+      groupDragging: root?.draggedIds.has(id) ?? false,
     }),
     [
       sortable.isDragging,
       sortable.isDropping,
       sortable.isDragSource,
       sortable.isDropTarget,
+      root?.draggedIds,
+      id,
     ],
   );
   const context = React.useMemo<SortableItemContextValue>(
@@ -288,6 +414,7 @@ function SortableItem({
     props: mergeProps(
       {
         "data-slot": "sortable-item",
+        "data-group-dragging": state.groupDragging || undefined,
         className: cn(
           "relative cursor-grab data-dragging:z-50 data-dragging:cursor-grabbing data-dragging:opacity-80",
           className,

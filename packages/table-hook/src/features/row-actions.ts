@@ -137,15 +137,16 @@ function getProjectedGroupTarget(source: unknown, target: unknown) {
 function reorderRowsForProjectedGroup(
   table: _TableInstance,
   rows: Row[],
-  sourceRowId: string,
+  sourceRowIds: string[],
   targetGroupId: string,
   targetGroupIndex: number,
   groupingColumnId: string,
 ) {
-  const sourceRow = rows.find((row) => row.id === sourceRowId);
-  if (!sourceRow) return rows;
+  const sourceRowIdSet = new Set(sourceRowIds);
+  const sourceRows = rows.filter((row) => sourceRowIdSet.has(row.id));
+  if (sourceRows.length === 0) return rows;
 
-  const remainingRows = rows.filter((row) => row.id !== sourceRowId);
+  const remainingRows = rows.filter((row) => !sourceRowIdSet.has(row.id));
   const targetRowIndices = remainingRows.flatMap((row, index) => {
     const groupingValue = getRowGroupingValue(table, row, groupingColumnId);
     return createGroupId(groupingColumnId, groupingValue) === targetGroupId
@@ -162,7 +163,11 @@ function reorderRowsForProjectedGroup(
     localIndex < targetRowIndices.length
       ? targetRowIndices[localIndex]!
       : targetRowIndices.at(-1)! + 1;
-  return insertAt(remainingRows, sourceRow, flatIndex);
+  return [
+    ...remainingRows.slice(0, flatIndex),
+    ...sourceRows,
+    ...remainingRows.slice(flatIndex),
+  ];
 }
 
 function createKanbanItemsFromRows(
@@ -232,6 +237,32 @@ function applyKanbanItemsToRows(
 
 function getRowPosition(rows: Row[], rowId: string) {
   return rows.findIndex((row) => row.id === rowId);
+}
+
+function getMultiDragRowIds(source: unknown, availableRowIds: Set<string>) {
+  if (!source || typeof source !== "object") return null;
+  const sourceRecord = source as Record<string, unknown>;
+  const data = sourceRecord.data;
+  if (!data || typeof data !== "object") return null;
+  const metadata = (data as Record<string, unknown>).notionKitSortable;
+  if (!metadata || typeof metadata !== "object") return null;
+  const selectedIds = (metadata as Record<string, unknown>).selectedIds;
+  if (
+    !Array.isArray(selectedIds) ||
+    selectedIds.some((id) => typeof id !== "string")
+  ) {
+    return null;
+  }
+
+  const sourceId = sourceRecord.id;
+  if (
+    typeof sourceId !== "string" ||
+    !selectedIds.includes(sourceId) ||
+    selectedIds.some((id) => !availableRowIds.has(id))
+  ) {
+    return null;
+  }
+  return [...new Set(selectedIds)];
 }
 
 export const RowActionsFeature: TableFeature = {
@@ -609,6 +640,15 @@ export const RowActionsFeature: TableFeature = {
       const shouldReorder = options.reorder ?? true;
 
       const sourceRowId = String(source?.id ?? "");
+      const multiDragRowIds = getMultiDragRowIds(
+        source,
+        new Set(table.getCellValues().map((row) => row.id)),
+      );
+      const isMultiRowDrag = Boolean(
+        multiDragRowIds && multiDragRowIds.length > 1,
+      );
+      const draggedRowIds = isMultiRowDrag ? multiDragRowIds! : [sourceRowId];
+      const draggedRowIdSet = new Set(draggedRowIds);
       const actionId = v4();
       table.setTableData(
         (rows) => {
@@ -626,7 +666,7 @@ export const RowActionsFeature: TableFeature = {
                 ? reorderRowsForProjectedGroup(
                     table,
                     rows,
-                    sourceRowId,
+                    draggedRowIds,
                     projectedGroupTarget.groupId,
                     projectedGroupTarget.index,
                     groupingColumnId!,
@@ -647,7 +687,7 @@ export const RowActionsFeature: TableFeature = {
 
           const now = Date.now();
           const updated = next.map((row) => {
-            if (row.id !== String(source.id)) return row;
+            if (!draggedRowIdSet.has(row.id)) return row;
             return {
               ...row,
               properties: {
@@ -665,15 +705,35 @@ export const RowActionsFeature: TableFeature = {
           scheduleGroupingStateSync(updated);
           return updated;
         },
-        (previous, next) => ({
-          id: actionId,
-          type: "data.row.move",
-          payload: {
-            rowId: sourceRowId,
-            previousPosition: getRowPosition(previous, sourceRowId),
-            nextPosition: getRowPosition(next, sourceRowId),
-          },
-        }),
+        (previous, next) =>
+          isMultiRowDrag
+            ? {
+                id: actionId,
+                type: "data.rows.move",
+                payload: {
+                  moves: multiDragRowIds!.flatMap((rowId) =>
+                    previous.some((row) => row.id === rowId) &&
+                    next.some((row) => row.id === rowId)
+                      ? [
+                          {
+                            rowId,
+                            previousPosition: getRowPosition(previous, rowId),
+                            nextPosition: getRowPosition(next, rowId),
+                          },
+                        ]
+                      : [],
+                  ),
+                },
+              }
+            : {
+                id: actionId,
+                type: "data.row.move",
+                payload: {
+                  rowId: sourceRowId,
+                  previousPosition: getRowPosition(previous, sourceRowId),
+                  nextPosition: getRowPosition(next, sourceRowId),
+                },
+              },
       );
     };
     table.updateRowIcon = (id, icon) => {

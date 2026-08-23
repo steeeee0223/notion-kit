@@ -35,7 +35,7 @@ export function TableRow({ row }: TableRowProps) {
       render={
         <div
           data-block-id={row.id}
-          className="group/row flex h-[calc(100%+2px)]"
+          className="group/row flex h-[calc(100%+2px)] data-group-dragging:opacity-0"
         />
       }
     >

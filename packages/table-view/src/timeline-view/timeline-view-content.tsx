@@ -121,6 +121,7 @@ function TimelineViewReadyContent({
 
   const handleRowDragEnd = useCallback(
     (event: DragEndEvent) => {
+      if (event.canceled) return;
       if (resources.sorting.length === 0) {
         table.handleRowDragEnd(event);
         return;

@@ -419,6 +419,106 @@ describe("useTableView - Row Custom APIs", () => {
   });
 
   describe("handleRowDragEnd", () => {
+    it("MultiRowDrag_ReordersSelectedRowsWithOneBatchMoveResource", () => {
+      const onDataChange =
+        vi.fn<(change: ResourceChange<Row[], DataResourceAction>) => void>();
+      const { table } = renderTableHook({
+        data: interleavedProjectedGroupData,
+        properties: mockProperties,
+        onDataChange,
+      });
+
+      act(() => {
+        table.handleRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: {
+              id: "row1",
+              initialIndex: 0,
+              index: 2,
+              data: {
+                notionKitSortable: { selectedIds: ["row1", "row3"] },
+              },
+            },
+            target: { id: "row3" },
+          },
+        } as unknown as DragEndEvent);
+      });
+
+      expect(onDataChange.mock.lastCall?.[0].next.map((row) => row.id)).toEqual(
+        ["row2", "row1", "row3"],
+      );
+      expect(onDataChange.mock.lastCall?.[0].action).toEqual({
+        id: anyString,
+        type: "data.rows.move",
+        payload: {
+          moves: [
+            { rowId: "row1", previousPosition: 0, nextPosition: 1 },
+            { rowId: "row3", previousPosition: 2, nextPosition: 2 },
+          ],
+        },
+      });
+    });
+
+    it("MultiRowDrag_CrossGroupMoveUpdatesEverySelectedGroupingCell", () => {
+      const onDataChange =
+        vi.fn<(change: ResourceChange<Row[], DataResourceAction>) => void>();
+      const { table } = renderTableHook({
+        data: interleavedProjectedGroupData,
+        properties: mockProperties,
+        onDataChange,
+      });
+
+      act(() => {
+        table.setGrouping(["col2"]);
+      });
+
+      act(() => {
+        table.handleRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: {
+              id: "row1",
+              initialIndex: 0,
+              index: 1,
+              initialGroup: "col2:25",
+              group: "col2:30",
+              data: {
+                type: "table-row",
+                groupId: "col2:25",
+                notionKitSortable: { selectedIds: ["row1", "row3"] },
+              },
+            },
+            target: { id: "row1", data: { groupId: "col2:25" } },
+          },
+        } as unknown as DragEndEvent);
+      });
+
+      const change = onDataChange.mock.lastCall?.[0];
+      expect(change?.next.map((row) => row.id)).toEqual([
+        "row2",
+        "row1",
+        "row3",
+      ]);
+      expect(
+        change?.next.find((row) => row.id === "row1")?.properties.col2?.value,
+      ).toBe(30);
+      expect(
+        change?.next.find((row) => row.id === "row3")?.properties.col2?.value,
+      ).toBe(30);
+      expect(change?.action).toMatchObject({
+        type: "data.rows.move",
+        payload: {
+          moves: [
+            { rowId: "row1", previousPosition: 0, nextPosition: 1 },
+            { rowId: "row3", previousPosition: 2, nextPosition: 2 },
+          ],
+        },
+      });
+    });
+
     it("RowDrag_DifferentTarget_EmitsExactMoveResource", () => {
       const onDataChange =
         vi.fn<(change: ResourceChange<Row[], DataResourceAction>) => void>();
@@ -445,6 +545,44 @@ describe("useTableView - Row Custom APIs", () => {
       const row2Index = rows.findIndex((r) => r.id === "row2");
 
       expect(row1Index).toBeGreaterThan(row2Index);
+      expect(onDataChange.mock.lastCall?.[0].action).toEqual({
+        id: anyString,
+        type: "data.row.move",
+        payload: {
+          rowId: "row1",
+          previousPosition: 0,
+          nextPosition: 1,
+        },
+      });
+    });
+
+    it("MultiRowDrag_StaleSelectionMetadata_FallsBackToSingleMove", () => {
+      const onDataChange =
+        vi.fn<(change: ResourceChange<Row[], DataResourceAction>) => void>();
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+        onDataChange,
+      });
+
+      act(() => {
+        table.handleRowDragEnd({
+          canceled: false,
+          operation: {
+            canceled: false,
+            source: {
+              id: "row1",
+              data: {
+                notionKitSortable: {
+                  selectedIds: ["row1", "missing-row"],
+                },
+              },
+            },
+            target: { id: "row2" },
+          },
+        } as unknown as DragEndEvent);
+      });
+
       expect(onDataChange.mock.lastCall?.[0].action).toEqual({
         id: anyString,
         type: "data.row.move",

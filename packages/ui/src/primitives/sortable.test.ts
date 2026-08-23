@@ -116,4 +116,60 @@ describe("getSortableItemsAfterDrag", () => {
       ),
     ).toEqual(["title", "score", "notes"]);
   });
+
+  it("MultiDrag_NonContiguousSelection_MovesRowsAsAStableBlock", () => {
+    expect(
+      getSortableItemsAfterDrag(
+        ["title", "notes", "score", "status", "tags"],
+        dragEndEvent({
+          activatorEvent: new MouseEvent("pointerdown"),
+          source: {
+            id: "notes",
+            initialIndex: 1,
+            index: 3,
+            data: { notionKitSortable: { selectedIds: ["notes", "status"] } },
+          },
+          target: { id: "status" },
+        }),
+      ),
+    ).toEqual(["title", "score", "notes", "status", "tags"]);
+  });
+
+  it("MultiDrag_MalformedSelection_FallsBackToSingleItemMove", () => {
+    expect(
+      getSortableItemsAfterDrag(
+        ["title", "notes", "score"],
+        dragEndEvent({
+          activatorEvent: new MouseEvent("pointerdown"),
+          source: {
+            id: "notes",
+            initialIndex: 1,
+            index: 2,
+            data: { notionKitSortable: { selectedIds: ["notes", null] } },
+          },
+          target: { id: "score" },
+        }),
+      ),
+    ).toEqual(["title", "score", "notes"]);
+  });
+
+  it("MultiDrag_UnchangedProjection_KeepsNonContiguousSelectionInPlace", () => {
+    const items = ["title", "notes", "score", "status", "tags"];
+
+    expect(
+      getSortableItemsAfterDrag(
+        items,
+        dragEndEvent({
+          activatorEvent: new MouseEvent("pointerdown"),
+          source: {
+            id: "notes",
+            initialIndex: 1,
+            index: 1,
+            data: { notionKitSortable: { selectedIds: ["notes", "status"] } },
+          },
+          target: { id: "notes" },
+        }),
+      ),
+    ).toBe(items);
+  });
 });
