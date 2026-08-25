@@ -9,6 +9,7 @@ import {
   plugins,
   renderTableHook,
 } from "@/__tests__/mock";
+import type { TableFilterState } from "@/features/filtering";
 import { TableViewMenuPage, type TableViewState } from "@/features/menu";
 import type { ColumnInfo, Row } from "@/lib/types";
 import { arrayToEntity } from "@/lib/utils";
@@ -1438,5 +1439,235 @@ describe("useTableView resource API", () => {
     }).toThrow(
       '[TableView] Plugin not found for property "col1" type: missing',
     );
+  });
+});
+
+describe("useTableView filter resource API", () => {
+  const initialFilters = {
+    kind: "group",
+    id: "initial",
+    logic: "and",
+    children: [
+      {
+        kind: "rule",
+        id: "initial-rule",
+        propertyId: "col1",
+        operator: "contains",
+        value: "Task",
+      },
+    ],
+  } as const satisfies TableFilterState;
+  const nextFilters = {
+    kind: "group",
+    id: "next",
+    logic: "or",
+    children: [
+      {
+        kind: "rule",
+        id: "next-rule",
+        propertyId: "col2",
+        operator: "is-checked",
+      },
+    ],
+  } as const satisfies TableFilterState;
+
+  it("FilterResource_Uncontrolled_ReplacesAndClearsThroughViewActions", () => {
+    const onViewChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        defaultView: { filters: initialFilters },
+        onViewChange,
+      }),
+    );
+
+    expect(result.current.table.getFilters()).toBe(initialFilters);
+
+    act(() => result.current.table.setFilters(nextFilters));
+
+    expect(result.current.table.getFilters()).toBe(nextFilters);
+    expect(result.current.table.atoms.columnFilters.get()).toEqual([]);
+    const change = getLastResourceChange<TableViewState, ViewResourceAction>(
+      onViewChange,
+    );
+    expect(change?.next.filters).toBe(nextFilters);
+    expect(change?.action).toEqual({
+      id: expect.any(String) as unknown as string,
+      type: "view.filters.change",
+      payload: {
+        previousFilters: initialFilters,
+        nextFilters,
+      },
+    });
+
+    act(() => result.current.table.clearFilters());
+
+    expect(result.current.table.getFilters()).toBeNull();
+    expect(
+      getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
+        ?.action,
+    ).toMatchObject({
+      type: "view.filters.change",
+      payload: { previousFilters: nextFilters, nextFilters: null },
+    });
+  });
+
+  it("FilterResource_Controlled_RemainsOwnerAuthoritativeUntilRerender", () => {
+    const onViewChange = vi.fn();
+    const { result, rerender } = renderHook(
+      ({ filters }: { filters: TableFilterState }) =>
+        useTableView({
+          plugins,
+          defaultData: mockData,
+          defaultProperties: mockProperties,
+          view: { filters },
+          onViewChange,
+        }),
+      { initialProps: { filters: initialFilters as TableFilterState } },
+    );
+
+    act(() => result.current.table.setFilters(nextFilters));
+
+    expect(result.current.table.getFilters()).toBe(initialFilters);
+    expect(
+      getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange),
+    ).toMatchObject({
+      next: { filters: nextFilters },
+      action: {
+        type: "view.filters.change",
+        payload: { previousFilters: initialFilters, nextFilters },
+      },
+    });
+
+    rerender({ filters: initialFilters });
+    expect(result.current.table.getFilters()).toBe(initialFilters);
+    expect(result.current.table.atoms.columnFilters.get()).toEqual([]);
+
+    act(() => result.current.table.setFilters(nextFilters));
+    expect(result.current.table.getFilters()).toBe(initialFilters);
+
+    rerender({ filters: nextFilters });
+    expect(result.current.table.getFilters()).toBe(nextFilters);
+  });
+
+  it("FilterResource_Controlled_ComposesSameRenderProposalActions", () => {
+    const onViewChange = vi.fn();
+    const proposalTwo = {
+      ...initialFilters,
+      id: "proposal-two",
+    } satisfies TableFilterState;
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        view: {},
+        onViewChange,
+      }),
+    );
+
+    act(() => {
+      result.current.table.setFilters(nextFilters);
+      result.current.table.setFilters(proposalTwo);
+    });
+
+    expect(result.current.table.getFilters()).toBeUndefined();
+    expect(onViewChange).toHaveBeenCalledTimes(2);
+    expect(
+      getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
+        ?.action,
+    ).toMatchObject({
+      type: "view.filters.change",
+      payload: {
+        previousFilters: nextFilters,
+        nextFilters: proposalTwo,
+      },
+    });
+  });
+
+  it("FilterResource_ClearFromUndefinedWritesNullThenClearingNullIsANoOp", () => {
+    const onViewChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        onViewChange,
+      }),
+    );
+
+    act(() => result.current.table.clearFilters());
+
+    expect(result.current.table.getFilters()).toBeNull();
+    expect(onViewChange).toHaveBeenCalledTimes(1);
+    expect(
+      getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
+        ?.action,
+    ).toMatchObject({
+      type: "view.filters.change",
+      payload: { previousFilters: undefined, nextFilters: null },
+    });
+
+    act(() => result.current.table.clearFilters());
+
+    expect(result.current.table.getFilters()).toBeNull();
+    expect(onViewChange).toHaveBeenCalledTimes(1);
+  });
+
+  it("FilterResource_ExposesValidationWithoutMutatingView", () => {
+    const onViewChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        onViewChange,
+      }),
+    );
+
+    expect(result.current.table.validateFilters(nextFilters)).toBe(true);
+    expect(
+      result.current.table.validateFilters({ ...nextFilters, logic: "xor" }),
+    ).toBe(false);
+    expect(result.current.table.getFilters()).toBeUndefined();
+    expect(onViewChange).not.toHaveBeenCalled();
+  });
+
+  it("FilterResource_IgnoresInvalidRuntimeSetterValues", () => {
+    const onViewChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultData: mockData,
+        defaultProperties: mockProperties,
+        onViewChange,
+      }),
+    );
+    const cyclic = {
+      kind: "group",
+      id: "cyclic",
+      logic: "and",
+      children: [] as unknown[],
+    };
+    cyclic.children.push(cyclic);
+    const nonJson = {
+      ...nextFilters,
+      children: [
+        {
+          ...nextFilters.children[0],
+          value: () => true,
+        },
+      ],
+    };
+
+    act(() => {
+      result.current.table.setFilters(cyclic as never);
+      result.current.table.setFilters(nonJson as never);
+    });
+
+    expect(result.current.table.getFilters()).toBeUndefined();
+    expect(onViewChange).not.toHaveBeenCalled();
   });
 });

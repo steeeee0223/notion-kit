@@ -5,6 +5,7 @@ import {
 } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
+import type { TableFilterState } from "@/features/filtering";
 import type { PluginMethodState } from "@/features/plugin-methods";
 import type { _TableInstance } from "@/features/types";
 import {
@@ -70,6 +71,7 @@ export interface TableViewState {
   openedRowId: string | null;
   timeline?: TimelineViewState;
   pluginMethods?: Partial<PluginMethodState>;
+  filters?: TableFilterState;
 }
 
 export type TableGlobalState = TableViewState;

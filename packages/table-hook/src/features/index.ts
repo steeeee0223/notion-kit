@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
+  columnFilteringFeature,
   columnGroupingFeature,
   columnOrderingFeature,
   columnPinningFeature,
@@ -8,6 +9,7 @@ import {
   columnVisibilityFeature,
   createExpandedRowModel,
   createSortedRowModel,
+  globalFilteringFeature,
   rowAggregationFeature,
   rowExpandingFeature,
   rowSortingFeature,
@@ -35,6 +37,12 @@ import {
   type CountingTableState,
 } from "./counting";
 import { getExtendedGroupedRowModel } from "./extended-grouped-row-model";
+import {
+  AdvancedFilteringFeature,
+  getAdvancedFilteredRowModel,
+  pluginTextIncludes,
+  type AdvancedFilteringTableApi,
+} from "./filtering";
 import {
   FreezingFeature,
   type FreezingOptions,
@@ -80,6 +88,7 @@ declare module "@tanstack/table-core" {
     tableMenuFeature: TableMenuTableState;
     rowActionsFeature: Record<never, never>;
     extendedGroupingFeature: ExtendedGroupingTableState;
+    advancedFilteringFeature: Record<never, never>;
   }
 
   interface TableState_All
@@ -111,6 +120,7 @@ declare module "@tanstack/table-core" {
     tableMenuFeature: TableMenuTableApi;
     rowActionsFeature: RowActionsTableApi;
     extendedGroupingFeature: ExtendedGroupingTableApi;
+    advancedFilteringFeature: AdvancedFilteringTableApi;
   }
 
   interface Column_FeatureMap<TFeatures, TData extends RowData> {
@@ -132,6 +142,7 @@ declare module "@tanstack/table-core" {
     tableMenuFeature: typeof TableMenuFeature;
     rowActionsFeature: typeof RowActionsFeature;
     extendedGroupingFeature: typeof ExtendedGroupingFeature;
+    advancedFilteringFeature: typeof AdvancedFilteringFeature;
   }
 }
 
@@ -153,8 +164,10 @@ export interface TableFeatures extends BaseTableFeatures {
   tableMenuFeature: typeof TableMenuFeature;
   rowActionsFeature: typeof RowActionsFeature;
   extendedGroupingFeature: typeof ExtendedGroupingFeature;
+  advancedFilteringFeature: typeof AdvancedFilteringFeature;
   rowSelectionFeature: typeof InternalRowSelectionFeature;
   aggregationFns: typeof COMMON_AGGREGATION_FNS;
+  filterFns: { pluginTextIncludes: typeof pluginTextIncludes };
   sortFns: typeof COMMON_SORT_FNS;
 }
 
@@ -165,6 +178,8 @@ const COMMON_SORT_FNS = {
 } as const;
 
 export const DEFAULT_FEATURES = tableFeatures({
+  columnFilteringFeature,
+  globalFilteringFeature,
   columnGroupingFeature,
   columnOrderingFeature,
   columnPinningFeature,
@@ -177,13 +192,16 @@ export const DEFAULT_FEATURES = tableFeatures({
   aggregationFns: COMMON_AGGREGATION_FNS,
   rowSortingFeature,
   sortFns: COMMON_SORT_FNS,
+  filterFns: { pluginTextIncludes },
   sortedRowModel: createSortedRowModel(),
+  filteredRowModel: getAdvancedFilteredRowModel(),
   groupedRowModel: getExtendedGroupedRowModel(),
   expandedRowModel: createExpandedRowModel(),
   columnsInfoFeature: ColumnsInfoFeature,
   countingFeature: CountingFeature,
   freezingFeature: FreezingFeature,
   tableMenuFeature: TableMenuFeature,
+  advancedFilteringFeature: AdvancedFilteringFeature,
   rowActionsFeature: RowActionsFeature,
   extendedGroupingFeature: ExtendedGroupingFeature,
 });

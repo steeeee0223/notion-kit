@@ -1,3 +1,23 @@
+import {
+  constructRow,
+  makeObjectMap,
+  skipFirstRun,
+  tableMemo,
+  type FilterFn,
+  type RowData,
+  type RowModel,
+  type Table,
+  type TableFeature,
+  type Row as TableRow,
+} from "@tanstack/react-table";
+import { table_autoResetPageIndex } from "@tanstack/react-table/static-functions";
+import { v4 } from "uuid";
+
+import type {
+  _TableInstance,
+  AnyRowData,
+  AnyTableFeatures,
+} from "@/features/types";
 import type { ColumnInfo, Row } from "@/lib/types";
 import type {
   CellPlugin,
@@ -23,6 +43,13 @@ export interface FilterGroup {
 }
 
 export type TableFilterState = FilterGroup | null;
+
+export interface AdvancedFilteringTableApi {
+  getFilters: () => TableFilterState | undefined;
+  setFilters: (filters: TableFilterState) => void;
+  clearFilters: () => void;
+  validateFilters: (value: unknown) => value is TableFilterState;
+}
 
 function isPlainRecord(value: object) {
   const prototype = Reflect.getPrototypeOf(value);
@@ -219,3 +246,314 @@ export function evaluateTableFilter(
     evaluateValidatedTableFilter(state, row, properties, plugins, context)
   );
 }
+
+export const pluginTextIncludes: FilterFn<AnyTableFeatures, Row> =
+  Object.assign(
+    (
+      row: TableRow<AnyTableFeatures, Row>,
+      propertyId: string,
+      query: unknown,
+    ) => {
+      const table = row.table as unknown as _TableInstance;
+      const property = table.atoms.columnsInfo.get()[propertyId];
+      if (!property || property.isDeleted) return false;
+      const plugin = table.atoms.cellPlugins.get()[property.type];
+      if (!plugin) return false;
+      return plugin
+        .toTextValue(row.original.properties[propertyId]?.value, row.original)
+        .toLowerCase()
+        .includes(String(query));
+    },
+    {
+      resolveFilterValue: (value: unknown) => String(value).toLowerCase(),
+      autoRemove: (value: unknown) =>
+        value === undefined || value === null || value === "",
+    },
+  );
+
+function copyFilterMetadata<TData extends RowData>(
+  source: TableRow<AnyTableFeatures, TData>,
+  target: TableRow<AnyTableFeatures, TData>,
+) {
+  target.columnFilters = source.columnFilters;
+  target.columnFiltersMeta = source.columnFiltersMeta;
+}
+
+function addSubRowsToFlatModel<TData extends RowData>(
+  rows: TableRow<AnyTableFeatures, TData>[],
+  flatRows: TableRow<AnyTableFeatures, TData>[],
+  rowsById: Record<string, TableRow<AnyTableFeatures, TData>>,
+) {
+  for (const row of rows) {
+    flatRows.push(row);
+    rowsById[row.id] = row;
+    if (row.subRows.length > 0) {
+      addSubRowsToFlatModel(row.subRows, flatRows, rowsById);
+    }
+  }
+}
+
+function filterRowsFromRoot<TData extends RowData>(
+  rows: TableRow<AnyTableFeatures, TData>[],
+  table: Table<AnyTableFeatures, TData>,
+  matches: (row: TableRow<AnyTableFeatures, TData>) => boolean,
+): RowModel<AnyTableFeatures, TData> {
+  const flatRows: TableRow<AnyTableFeatures, TData>[] = [];
+  const rowsById = makeObjectMap<TableRow<AnyTableFeatures, TData>>();
+  const maxDepth = table.options.maxLeafRowFilterDepth ?? 100;
+
+  const filterRows = (
+    rowsToFilter: TableRow<AnyTableFeatures, TData>[],
+    depth = 0,
+  ): TableRow<AnyTableFeatures, TData>[] => {
+    const filteredRows: TableRow<AnyTableFeatures, TData>[] = [];
+    for (const originalRow of rowsToFilter) {
+      if (!matches(originalRow)) continue;
+      let row = originalRow;
+      if (row.subRows.length > 0 && depth < maxDepth) {
+        row = constructRow(
+          table,
+          row.id,
+          row.original,
+          row.index,
+          row.depth,
+          undefined,
+          row.parentId,
+        );
+        copyFilterMetadata(originalRow, row);
+        row.subRows = filterRows(originalRow.subRows, depth + 1);
+      }
+      filteredRows.push(row);
+      flatRows.push(row);
+      rowsById[row.id] = row;
+      if (row.subRows.length > 0 && depth >= maxDepth) {
+        addSubRowsToFlatModel(row.subRows, flatRows, rowsById);
+      }
+    }
+    return filteredRows;
+  };
+
+  return { rows: filterRows(rows), flatRows, rowsById };
+}
+
+function filterRowsFromLeafs<TData extends RowData>(
+  rows: TableRow<AnyTableFeatures, TData>[],
+  table: Table<AnyTableFeatures, TData>,
+  matches: (row: TableRow<AnyTableFeatures, TData>) => boolean,
+): RowModel<AnyTableFeatures, TData> {
+  const flatRows: TableRow<AnyTableFeatures, TData>[] = [];
+  const rowsById = makeObjectMap<TableRow<AnyTableFeatures, TData>>();
+  const maxDepth = table.options.maxLeafRowFilterDepth ?? 100;
+
+  const filterRows = (
+    rowsToFilter: TableRow<AnyTableFeatures, TData>[],
+    depth = 0,
+  ): TableRow<AnyTableFeatures, TData>[] => {
+    const filteredRows: TableRow<AnyTableFeatures, TData>[] = [];
+    for (const originalRow of rowsToFilter) {
+      const row = constructRow(
+        table,
+        originalRow.id,
+        originalRow.original,
+        originalRow.index,
+        originalRow.depth,
+        undefined,
+        originalRow.parentId,
+      );
+      copyFilterMetadata(originalRow, row);
+      if (originalRow.subRows.length > 0 && depth < maxDepth) {
+        row.subRows = filterRows(originalRow.subRows, depth + 1);
+        if (!matches(row) && row.subRows.length === 0) continue;
+      } else if (!matches(row)) {
+        continue;
+      }
+      filteredRows.push(row);
+      rowsById[row.id] = row;
+      flatRows.push(row);
+    }
+    return filteredRows;
+  };
+
+  return { rows: filterRows(rows), flatRows, rowsById };
+}
+
+function filterRowsByTableOptions<TData extends RowData>(
+  rows: TableRow<AnyTableFeatures, TData>[],
+  table: Table<AnyTableFeatures, TData>,
+  matches: (row: TableRow<AnyTableFeatures, TData>) => boolean,
+) {
+  return table.options.filterFromLeafRows
+    ? filterRowsFromLeafs(rows, table, matches)
+    : filterRowsFromRoot(rows, table, matches);
+}
+
+// Mirrors TanStack v9's createFilteredRowModel/filterRowsUtils stages. Keeping
+// this computation in the outer memo lets property/plugin changes invalidate
+// global search without mutating the independently owned globalFilter atom.
+function prepareNativeFiltering<TData extends RowData>(
+  table: Table<AnyTableFeatures, TData>,
+  rowModel: RowModel<AnyTableFeatures, TData>,
+  columnFilters: { id: string; value: unknown }[] | undefined,
+  globalFilter: unknown,
+): ((row: TableRow<AnyTableFeatures, TData>) => boolean) | null {
+  const hasGlobalFilter =
+    globalFilter !== undefined && globalFilter !== null && globalFilter !== "";
+  if (!rowModel.rows.length || (!columnFilters?.length && !hasGlobalFilter)) {
+    for (const row of rowModel.flatRows) {
+      row.columnFilters = makeObjectMap<boolean>();
+      row.columnFiltersMeta = makeObjectMap();
+    }
+    return null;
+  }
+
+  const resolvedColumnFilters: {
+    id: string;
+    filterFn: FilterFn<AnyTableFeatures, TData>;
+    resolvedValue: unknown;
+  }[] = [];
+  const resolvedGlobalFilters: typeof resolvedColumnFilters = [];
+  for (const columnFilter of columnFilters ?? []) {
+    const column = table.getColumn(columnFilter.id);
+    if (!column) continue;
+    const filterFn = column.getFilterFn() as
+      | FilterFn<AnyTableFeatures, TData>
+      | undefined;
+    if (!filterFn) continue;
+    resolvedColumnFilters.push({
+      id: columnFilter.id,
+      filterFn,
+      resolvedValue:
+        filterFn.resolveFilterValue?.(columnFilter.value) ?? columnFilter.value,
+    });
+  }
+
+  const filterableIds = (columnFilters ?? []).map(({ id }) => id);
+  const globalFilterFn = table.getGlobalFilterFn();
+  const globalColumns = table
+    .getAllLeafColumns()
+    .filter((column) => column.getCanGlobalFilter());
+  if (hasGlobalFilter && globalFilterFn && globalColumns.length > 0) {
+    filterableIds.push("__global__");
+    for (const column of globalColumns) {
+      resolvedGlobalFilters.push({
+        id: column.id,
+        filterFn: globalFilterFn,
+        resolvedValue:
+          globalFilterFn.resolveFilterValue?.(globalFilter) ?? globalFilter,
+      });
+    }
+  }
+
+  for (const row of rowModel.flatRows) {
+    row.columnFilters = makeObjectMap<boolean>();
+    row.columnFiltersMeta = makeObjectMap();
+    for (const filter of resolvedColumnFilters) {
+      row.columnFilters[filter.id] = filter.filterFn(
+        row,
+        filter.id,
+        filter.resolvedValue,
+        (meta) => {
+          row.columnFiltersMeta[filter.id] = meta;
+        },
+      );
+    }
+    if (resolvedGlobalFilters.length > 0) {
+      row.columnFilters.__global__ = resolvedGlobalFilters.some((filter) =>
+        filter.filterFn(row, filter.id, filter.resolvedValue, (meta) => {
+          row.columnFiltersMeta[filter.id] = meta;
+        }),
+      );
+    }
+  }
+
+  return (row) => filterableIds.every((id) => row.columnFilters[id] !== false);
+}
+
+export function getAdvancedFilteredRowModel<TData extends RowData>(): (
+  table: Table<AnyTableFeatures, TData>,
+) => () => RowModel<AnyTableFeatures, TData> {
+  return (table) => {
+    const instance = table as unknown as _TableInstance;
+    const memoTable = table as unknown as Table<AnyTableFeatures, AnyRowData>;
+    return tableMemo({
+      feature: "advancedFilteringFeature",
+      table: memoTable,
+      fnName: "table.getFilteredRowModel",
+      memoDeps: () => [
+        table.getPreFilteredRowModel(),
+        table.atoms.columnFilters.get(),
+        table.atoms.globalFilter.get(),
+        instance.getTableGlobalState().filters,
+        instance.atoms.columnsInfo.get(),
+        instance.atoms.cellPlugins.get(),
+        table.getAllLeafColumns(),
+      ],
+      fn: (preFilteredRowModel, columnFilters, globalFilter, filters) => {
+        const nativeMatches = prepareNativeFiltering(
+          table,
+          preFilteredRowModel,
+          columnFilters,
+          globalFilter,
+        );
+        const validFilters = validateTableFilterState(filters)
+          ? filters
+          : undefined;
+        const advancedMatches =
+          filters === undefined ||
+          (validFilters !== undefined &&
+            (validFilters === null || validFilters.children.length === 0))
+            ? null
+            : validFilters === undefined
+              ? () => false
+              : (() => {
+                  const context: FilterEvaluationContext = { now: Date.now() };
+                  const properties = instance.atoms.columnsInfo.get();
+                  const plugins = instance.atoms.cellPlugins.get();
+                  return (row: TableRow<AnyTableFeatures, TData>) =>
+                    evaluateValidatedTableFilter(
+                      validFilters,
+                      row.original as unknown as Row,
+                      properties,
+                      plugins,
+                      context,
+                    );
+                })();
+        if (nativeMatches === null && advancedMatches === null) {
+          return preFilteredRowModel;
+        }
+        return filterRowsByTableOptions(
+          preFilteredRowModel.rows,
+          table,
+          (row) =>
+            (nativeMatches?.(row) ?? true) && (advancedMatches?.(row) ?? true),
+        );
+      },
+      onAfterUpdate: skipFirstRun(() => table_autoResetPageIndex(table)),
+    });
+  };
+}
+
+export const AdvancedFilteringFeature: TableFeature = {
+  constructTableAPIs: (table) => {
+    const instance = table as unknown as _TableInstance;
+    instance.getFilters = () => instance.getTableGlobalState().filters;
+    instance.setFilters = (filters) => {
+      if (!validateTableFilterState(filters)) return;
+      const actionId = v4();
+      instance.setTableGlobalState(
+        (view) =>
+          Object.is(view.filters, filters) ? view : { ...view, filters },
+        (previous, next) => ({
+          id: actionId,
+          type: "view.filters.change",
+          payload: {
+            previousFilters: previous.filters,
+            nextFilters: next.filters,
+          },
+        }),
+      );
+    };
+    instance.clearFilters = () => instance.setFilters(null);
+    instance.validateFilters = validateTableFilterState;
+  },
+};

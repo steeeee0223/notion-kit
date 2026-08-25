@@ -260,6 +260,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
         const plugin = plugins.items[property.type]!;
         return {
           id: property.id,
+          enableGlobalFilter: !property.isDeleted,
           accessorFn: (row) => {
             const value: unknown = row.properties[colId]?.value;
             const comparable = resolveSortingAccessorValue(
@@ -366,6 +367,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       onColumnInfoChange: handleColumnChange,
       onTableDataChange: setDataResource,
       onTableGlobalChange: setViewResource,
+      globalFilterFn: "pluginTextIncludes",
       weekStartsOn,
       getRowUrl,
     },
