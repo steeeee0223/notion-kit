@@ -71,9 +71,17 @@ import {
 } from "./row-actions";
 import { InternalRowSelectionFeature } from "./row-selection";
 
-export { evaluateTableFilter, validateTableFilterState } from "./filtering";
+export {
+  AdvancedFilteringFeature,
+  evaluateTableFilter,
+  getAdvancedFilteredRowModel,
+  pluginTextIncludes,
+  validateTableFilterState,
+} from "./filtering";
 export type {
+  AdvancedFilteringTableApi,
   FilterGroup,
+  FilterLogic,
   FilterRule,
   FilterValue,
   TableFilterState,

@@ -38,7 +38,8 @@
     "dev": "tsdown --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "test": "vitest run",
+    "test": "pnpm run test:package-exports && vitest run",
+    "test:package-exports": "pnpm run build && pnpm run typecheck && node --test scripts/package-exports.test.mjs",
     "test:ui": "vitest --ui",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"

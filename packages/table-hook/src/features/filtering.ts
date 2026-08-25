@@ -27,6 +27,8 @@ import type {
 
 export type { FilterValue } from "@/plugins";
 
+export type FilterLogic = "and" | "or";
+
 export interface FilterRule {
   kind: "rule";
   id: string;
@@ -38,7 +40,7 @@ export interface FilterRule {
 export interface FilterGroup {
   kind: "group";
   id: string;
-  logic: "and" | "or";
+  logic: FilterLogic;
   children: (FilterRule | FilterGroup)[];
 }
 
