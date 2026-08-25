@@ -26,6 +26,7 @@ export {
   genericCounting,
   getDefaultGroupingValue,
   textMethodCapabilities,
+  textFilteringCapabilities,
 } from "./utils";
 export type {
   GroupingMethod,

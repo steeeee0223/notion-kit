@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { ColumnInfo, Row } from "@/lib/types";
 import { arrayToEntity } from "@/lib/utils";
 import { resolveCountingMethod } from "@/methods";
-import type { CellPlugin } from "@/plugins";
+import type { CellPlugin, FilterValue } from "@/plugins";
 import {
   checkbox as createCheckbox,
   createdTime as createCreatedTime,
@@ -55,6 +55,565 @@ const DEFAULT_PLUGINS = [
   createdTime(),
   lastEditedTime(),
 ];
+
+function matches(
+  plugin: CellPlugin,
+  operatorId: string,
+  data: unknown,
+  operand?: FilterValue,
+  currentRow: Row = baseRow,
+  pluginConfig: unknown = plugin.default.config,
+  context = { now: Date.UTC(2025, 0, 15, 12) },
+) {
+  const operator = plugin.filtering?.operators.find(
+    ({ id }) => id === operatorId,
+  );
+  if (!operator) throw new Error(`Missing ${plugin.id}.${operatorId}`);
+  return operator.matches(data, currentRow, pluginConfig, operand, context);
+}
+
+describe("Built-in filtering capability matrix", () => {
+  it("registers stable ordered operators and UI-neutral operand metadata", () => {
+    const matrix = Object.fromEntries(
+      DEFAULT_PLUGINS.map((plugin) => [
+        plugin.id,
+        plugin.filtering?.operators.map(({ id, operand }) => [id, operand]),
+      ]),
+    );
+
+    const textOperators = [
+      ["equals", { kind: "text" }],
+      ["does-not-equal", { kind: "text" }],
+      ["contains", { kind: "text" }],
+      ["does-not-contain", { kind: "text" }],
+      ["starts-with", { kind: "text" }],
+      ["ends-with", { kind: "text" }],
+      ["is-empty", { kind: "none" }],
+      ["is-not-empty", { kind: "none" }],
+    ];
+    for (const id of ["title", "text", "email", "phone", "url"]) {
+      expect(matrix[id]).toEqual(textOperators);
+    }
+    for (const id of ["select", "multi-select"]) {
+      expect(matrix[id]).toEqual([
+        ["contains", { kind: "option" }],
+        ["does-not-contain", { kind: "option" }],
+        ["is-empty", { kind: "none" }],
+        ["is-not-empty", { kind: "none" }],
+      ]);
+    }
+    expect(matrix.checkbox).toEqual([
+      ["is-checked", { kind: "none" }],
+      ["is-unchecked", { kind: "none" }],
+    ]);
+    expect(matrix.number).toEqual([
+      ["equals", { kind: "number" }],
+      ["does-not-equal", { kind: "number" }],
+      ["greater-than", { kind: "number" }],
+      ["less-than", { kind: "number" }],
+      ["greater-than-or-equal", { kind: "number" }],
+      ["less-than-or-equal", { kind: "number" }],
+      ["is-empty", { kind: "none" }],
+      ["is-not-empty", { kind: "none" }],
+    ]);
+    for (const id of ["date", "created-time", "last-edited-time"]) {
+      expect(matrix[id]).toEqual([
+        ["equals", { kind: "date" }],
+        ["before", { kind: "date" }],
+        ["after", { kind: "date" }],
+        ["on-or-before", { kind: "date" }],
+        ["on-or-after", { kind: "date" }],
+        ["between", { kind: "date-range" }],
+        ["is-empty", { kind: "none" }],
+        ["is-not-empty", { kind: "none" }],
+        ["relative-to-today", { kind: "relative-date" }],
+      ]);
+    }
+  });
+});
+
+describe("Text-like filter operators", () => {
+  it.each([title(), text(), email(), phone(), url()])(
+    "$id normalizes case and matches every text operator against canonical data",
+    (plugin) => {
+      expect(matches(plugin, "equals", "Alpha Beta", "alpha beta")).toBe(true);
+      expect(matches(plugin, "does-not-equal", "Alpha", "beta")).toBe(true);
+      expect(matches(plugin, "contains", "Alpha Beta", "HA b")).toBe(true);
+      expect(matches(plugin, "does-not-contain", "Alpha", "beta")).toBe(true);
+      expect(matches(plugin, "starts-with", "Alpha Beta", "ALP")).toBe(true);
+      expect(matches(plugin, "ends-with", "Alpha Beta", "BETA")).toBe(true);
+      expect(matches(plugin, "is-empty", "")).toBe(true);
+      expect(matches(plugin, "is-empty", undefined)).toBe(true);
+      expect(matches(plugin, "is-not-empty", "x")).toBe(true);
+      expect(matches(plugin, "equals", "Alpha", 1)).toBe(false);
+    },
+  );
+});
+
+describe("Choice, checkbox, and number filter operators", () => {
+  it("matches select and multi-select membership without treating null as a value", () => {
+    expect(matches(select(), "contains", "Done", "Done")).toBe(true);
+    expect(matches(select(), "does-not-contain", "Done", "Other")).toBe(true);
+    expect(matches(select(), "is-empty", null)).toBe(true);
+    expect(matches(multiSelect(), "contains", ["Todo", "Done"], "Done")).toBe(
+      true,
+    );
+    expect(matches(multiSelect(), "does-not-contain", ["Todo"], "Done")).toBe(
+      true,
+    );
+    expect(matches(multiSelect(), "is-empty", [])).toBe(true);
+    expect(matches(multiSelect(), "is-not-empty", ["Todo"])).toBe(true);
+  });
+
+  it("matches checked and unchecked canonical booleans", () => {
+    expect(matches(checkbox(), "is-checked", true)).toBe(true);
+    expect(matches(checkbox(), "is-checked", false)).toBe(false);
+    expect(matches(checkbox(), "is-unchecked", false)).toBe(true);
+    expect(matches(checkbox(), "is-unchecked", undefined)).toBe(false);
+  });
+
+  it("matches numeric boundaries and rejects invalid data or operands", () => {
+    const plugin = number();
+    expect(matches(plugin, "equals", "10", 10)).toBe(true);
+    expect(matches(plugin, "does-not-equal", "10", 11)).toBe(true);
+    expect(matches(plugin, "greater-than", "10", 9)).toBe(true);
+    expect(matches(plugin, "less-than", "10", 11)).toBe(true);
+    expect(matches(plugin, "greater-than-or-equal", "10", 10)).toBe(true);
+    expect(matches(plugin, "less-than-or-equal", "10", 10)).toBe(true);
+    expect(matches(plugin, "is-empty", null)).toBe(true);
+    expect(matches(plugin, "is-empty", "   ")).toBe(true);
+    expect(matches(plugin, "is-not-empty", "0")).toBe(true);
+    expect(matches(plugin, "is-not-empty", "   ")).toBe(false);
+    for (const operand of [
+      "10",
+      null,
+      Number.NaN,
+    ] as unknown as FilterValue[]) {
+      expect(matches(plugin, "equals", "10", operand)).toBe(false);
+    }
+    expect(matches(plugin, "equals", "invalid", 0)).toBe(false);
+    expect(matches(plugin, "does-not-equal", "invalid", 0)).toBe(false);
+  });
+});
+
+describe("Date filter operators", () => {
+  const config = {
+    dateFormat: "full" as const,
+    timeFormat: "24-hour" as const,
+    tz: "America/Los_Angeles",
+  };
+  const jan15 = Date.UTC(2025, 0, 15, 12);
+  const jan15Later = Date.UTC(2025, 0, 15, 20);
+  const jan16 = Date.UTC(2025, 0, 16, 20);
+
+  it("uses calendar days for untimed values and exact boundaries for timed values", () => {
+    const plugin = date();
+    expect(
+      matches(
+        plugin,
+        "equals",
+        { start: jan15, includeTime: false },
+        { timestamp: jan15Later },
+        baseRow,
+        config,
+      ),
+    ).toBe(true);
+    expect(
+      matches(
+        plugin,
+        "equals",
+        { start: jan15, includeTime: true },
+        { timestamp: jan15Later },
+        baseRow,
+        config,
+      ),
+    ).toBe(false);
+    expect(
+      matches(
+        plugin,
+        "before",
+        { start: jan15, includeTime: true },
+        { timestamp: jan15Later },
+        baseRow,
+        config,
+      ),
+    ).toBe(true);
+    expect(
+      matches(
+        plugin,
+        "after",
+        { start: jan15Later, includeTime: true },
+        { timestamp: jan15 },
+        baseRow,
+        config,
+      ),
+    ).toBe(true);
+    expect(
+      matches(
+        plugin,
+        "on-or-before",
+        { start: jan15 },
+        { timestamp: jan15 },
+        baseRow,
+        config,
+      ),
+    ).toBe(true);
+    expect(
+      matches(
+        plugin,
+        "on-or-after",
+        { start: jan15 },
+        { timestamp: jan15 },
+        baseRow,
+        config,
+      ),
+    ).toBe(true);
+  });
+
+  it("supports inclusive ranges, emptiness, and rejects malformed operands", () => {
+    const plugin = date();
+    expect(
+      matches(
+        plugin,
+        "between",
+        { start: jan15Later, includeTime: true },
+        { start: jan15, end: jan16 },
+        baseRow,
+        config,
+      ),
+    ).toBe(true);
+    expect(
+      matches(
+        plugin,
+        "between",
+        { start: jan16, includeTime: true },
+        { start: jan15, end: jan16 },
+        baseRow,
+        config,
+      ),
+    ).toBe(true);
+    expect(matches(plugin, "is-empty", {})).toBe(true);
+    expect(matches(plugin, "is-not-empty", { start: jan15 })).toBe(true);
+    expect(
+      matches(
+        plugin,
+        "equals",
+        { start: jan15 },
+        { timestamp: "bad" },
+        baseRow,
+        config,
+      ),
+    ).toBe(false);
+    expect(
+      matches(
+        plugin,
+        "between",
+        { start: jan15 },
+        { start: jan16, end: jan15 },
+        baseRow,
+        config,
+      ),
+    ).toBe(false);
+  });
+
+  it("uses row timestamps for derived date matching without cell data", () => {
+    expect(
+      matches(
+        createdTime(),
+        "equals",
+        undefined,
+        { timestamp: baseRow.createdAt },
+        baseRow,
+        { ...config, tz: "UTC" },
+      ),
+    ).toBe(true);
+    expect(
+      matches(
+        lastEditedTime(),
+        "equals",
+        undefined,
+        { timestamp: baseRow.lastEditedAt },
+        baseRow,
+        { ...config, tz: "UTC" },
+      ),
+    ).toBe(true);
+    expect(
+      matches(createdTime(), "is-empty", undefined, undefined, baseRow, config),
+    ).toBe(false);
+  });
+
+  it("matches a JSON-safe day offset relative to today", () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(Date.UTC(2030, 0, 1));
+      expect(
+        matches(
+          date(),
+          "relative-to-today",
+          { start: jan15, includeTime: false },
+          { offsetDays: 0 },
+          baseRow,
+          { ...config, tz: "UTC" },
+        ),
+      ).toBe(true);
+      vi.setSystemTime(Date.UTC(2040, 0, 1));
+      expect(
+        matches(
+          date(),
+          "relative-to-today",
+          { start: jan15, includeTime: false },
+          { offsetDays: 0 },
+          baseRow,
+          { ...config, tz: "UTC" },
+          { now: Date.UTC(2025, 0, 15, 12) },
+        ),
+      ).toBe(true);
+      expect(
+        matches(
+          date(),
+          "relative-to-today",
+          { start: jan16, includeTime: false },
+          { offsetDays: 1 },
+          baseRow,
+          { ...config, tz: "UTC" },
+        ),
+      ).toBe(true);
+      expect(
+        matches(
+          date(),
+          "relative-to-today",
+          { start: jan16 },
+          { offsetDays: 1.5 },
+          baseRow,
+          config,
+        ),
+      ).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("fails closed for invalid ECMAScript date operands without throwing", () => {
+    const plugin = date();
+    const cases: [string, unknown, FilterValue][] = [
+      ["equals", { start: jan15, includeTime: true }, { timestamp: 1e308 }],
+      ["equals", { start: 1e308, includeTime: false }, { timestamp: jan15 }],
+      ["on-or-before", { start: jan15 }, { timestamp: 1e308 }],
+      ["between", { start: jan15 }, { start: -1e308, end: 1e308 }],
+      ["relative-to-today", { start: jan15 }, { offsetDays: 1e308 }],
+    ];
+    for (const [operator, data, operand] of cases) {
+      expect(() =>
+        matches(plugin, operator, data, operand, baseRow, config),
+      ).not.toThrow();
+      expect(matches(plugin, operator, data, operand, baseRow, config)).toBe(
+        false,
+      );
+    }
+  });
+
+  it("does not match relative dates when either calendar conversion fails", () => {
+    const plugin = date();
+    const cases: [unknown, FilterValue, typeof config][] = [
+      [
+        { start: 1e308, includeTime: false },
+        { offsetDays: Number.MAX_SAFE_INTEGER },
+        config,
+      ],
+      [
+        { start: jan15, includeTime: false },
+        { offsetDays: 0 },
+        { ...config, tz: "Invalid/Time_Zone" },
+      ],
+    ];
+
+    for (const [data, operand, dateConfig] of cases) {
+      expect(() =>
+        matches(
+          plugin,
+          "relative-to-today",
+          data,
+          operand,
+          baseRow,
+          dateConfig,
+        ),
+      ).not.toThrow();
+      expect(
+        matches(
+          plugin,
+          "relative-to-today",
+          data,
+          operand,
+          baseRow,
+          dateConfig,
+        ),
+      ).toBe(false);
+    }
+  });
+
+  it("compares distinct pre-epoch calendar days without collapsing them", () => {
+    const plugin = date();
+    const dec30 = Date.UTC(1969, 11, 30, 12);
+    const dec31 = Date.UTC(1969, 11, 31, 12);
+
+    expect(
+      matches(plugin, "equals", { start: dec30 }, { timestamp: dec31 }),
+    ).toBe(false);
+    expect(
+      matches(plugin, "before", { start: dec30 }, { timestamp: dec31 }),
+    ).toBe(true);
+    expect(
+      matches(plugin, "after", { start: dec31 }, { timestamp: dec30 }),
+    ).toBe(true);
+    expect(
+      matches(plugin, "on-or-before", { start: dec30 }, { timestamp: dec30 }),
+    ).toBe(true);
+    expect(
+      matches(plugin, "on-or-after", { start: dec31 }, { timestamp: dec31 }),
+    ).toBe(true);
+  });
+
+  it("uses numeric instants for timed pre-epoch comparisons and ranges", () => {
+    const plugin = date();
+    const dec30 = Date.UTC(1969, 11, 30, 12);
+    const dec31 = Date.UTC(1969, 11, 31, 12);
+
+    expect(
+      matches(
+        plugin,
+        "equals",
+        { start: -1, includeTime: true },
+        { timestamp: -1 },
+      ),
+    ).toBe(true);
+    expect(
+      matches(
+        plugin,
+        "before",
+        { start: -2, includeTime: true },
+        { timestamp: -1 },
+      ),
+    ).toBe(true);
+    expect(
+      matches(plugin, "between", { start: dec31 }, { start: dec30, end: 0 }),
+    ).toBe(true);
+  });
+
+  it("compares pre-epoch calendar days in the configured timezone", () => {
+    const plugin = date();
+    const losAngeles = { ...config, tz: "America/Los_Angeles" };
+    const lateDec30Local = Date.parse("1969-12-31T07:30:00Z");
+    const noonDec30Local = Date.parse("1969-12-30T20:00:00Z");
+
+    expect(
+      matches(
+        plugin,
+        "equals",
+        { start: lateDec30Local },
+        { timestamp: noonDec30Local },
+        baseRow,
+        losAngeles,
+      ),
+    ).toBe(true);
+  });
+
+  it("uses pre-epoch row timestamps for derived date matching", () => {
+    const preEpochRow = {
+      ...baseRow,
+      createdAt: Date.UTC(1969, 11, 30, 12),
+      lastEditedAt: Date.UTC(1969, 11, 31, 12),
+    };
+
+    expect(
+      matches(
+        createdTime(),
+        "before",
+        undefined,
+        { timestamp: preEpochRow.lastEditedAt },
+        preEpochRow,
+        config,
+      ),
+    ).toBe(true);
+    expect(
+      matches(
+        lastEditedTime(),
+        "after",
+        undefined,
+        { timestamp: preEpochRow.createdAt },
+        preEpochRow,
+        config,
+      ),
+    ).toBe(true);
+  });
+
+  it("fails closed outside the negative and positive TimeClip boundaries", () => {
+    const plugin = date();
+    const outside = [-8_640_000_000_000_001, 8_640_000_000_000_001, Number.NaN];
+
+    for (const timestamp of outside) {
+      expect(() =>
+        matches(
+          plugin,
+          "equals",
+          { start: timestamp, includeTime: true },
+          { timestamp: 0 },
+        ),
+      ).not.toThrow();
+      expect(
+        matches(
+          plugin,
+          "equals",
+          { start: timestamp, includeTime: true },
+          { timestamp: 0 },
+        ),
+      ).toBe(false);
+    }
+  });
+
+  it.each([
+    ["America/Los_Angeles", false],
+    ["UTC", true],
+  ] as const)(
+    "handles exact TimeClip boundary day keys safely in %s",
+    (tz, expectedBefore) => {
+      const plugin = date();
+      const minimum = -8_640_000_000_000_000;
+      const maximum = 8_640_000_000_000_000;
+      const boundaryConfig = { ...config, tz };
+
+      expect(() =>
+        matches(
+          plugin,
+          "equals",
+          { start: minimum },
+          { timestamp: maximum },
+          baseRow,
+          boundaryConfig,
+        ),
+      ).not.toThrow();
+      expect(
+        matches(
+          plugin,
+          "equals",
+          { start: minimum },
+          { timestamp: maximum },
+          baseRow,
+          boundaryConfig,
+        ),
+      ).toBe(false);
+      expect(
+        matches(
+          plugin,
+          "before",
+          { start: minimum },
+          { timestamp: maximum },
+          baseRow,
+          boundaryConfig,
+        ),
+      ).toBe(expectedBefore);
+    },
+  );
+});
 
 describe("configured plugin factories", () => {
   it("exposes separate value and editor capabilities to registry consumers", () => {

@@ -1,6 +1,72 @@
+import { TZDate } from "@date-fns/tz";
+import { addDays, format, isValid } from "date-fns";
+
 import { formatDate, isoToTs } from "@notion-kit/utils";
 
 import { DateConfig, DateData } from "./types";
+
+export function isValidDateTimestamp(timestamp: unknown): timestamp is number {
+  return (
+    typeof timestamp === "number" &&
+    Number.isFinite(timestamp) &&
+    Math.abs(timestamp) <= 8_640_000_000_000_000
+  );
+}
+
+function isCalendarDayKey(value: string) {
+  const match = /^(\d{4,})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return false;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  if (!Number.isSafeInteger(year) || year < 1 || month < 1 || month > 12) {
+    return false;
+  }
+  const leapYear = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const daysInMonth = [
+    31,
+    leapYear ? 29 : 28,
+    31,
+    30,
+    31,
+    30,
+    31,
+    31,
+    30,
+    31,
+    30,
+    31,
+  ];
+  return day >= 1 && day <= daysInMonth[month - 1]!;
+}
+
+export function dateDayKey(timestamp: number, timeZone: string) {
+  if (!isValidDateTimestamp(timestamp)) return null;
+  try {
+    const zonedDate = new TZDate(timestamp, timeZone);
+    if (!isValid(zonedDate)) return null;
+    const dayKey = format(zonedDate, "yyyy-MM-dd");
+    return isCalendarDayKey(dayKey) ? dayKey : null;
+  } catch (error) {
+    if (error instanceof RangeError) return null;
+    throw error;
+  }
+}
+
+export function relativeDateDayKey(
+  now: number,
+  offsetDays: number,
+  timeZone: string,
+) {
+  if (!isValidDateTimestamp(now) || !Number.isSafeInteger(offsetDays)) {
+    return null;
+  }
+  const today = dateDayKey(now, timeZone);
+  if (today === null) return null;
+  const localNoon = isoToTs({ date: today, time: "12:00:00" }, timeZone);
+  const relative = addDays(localNoon, offsetDays).getTime();
+  return isValidDateTimestamp(relative) ? dateDayKey(relative, timeZone) : null;
+}
 
 export function toDateString(data: DateData, config: DateConfig) {
   if (data.start === undefined) return "";

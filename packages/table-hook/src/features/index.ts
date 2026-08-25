@@ -63,6 +63,14 @@ import {
 } from "./row-actions";
 import { InternalRowSelectionFeature } from "./row-selection";
 
+export { evaluateTableFilter, validateTableFilterState } from "./filtering";
+export type {
+  FilterGroup,
+  FilterRule,
+  FilterValue,
+  TableFilterState,
+} from "./filtering";
+
 declare module "@tanstack/table-core" {
   // merge our new feature's state with the existing table state
   interface TableState_FeatureMap {

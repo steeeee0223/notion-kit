@@ -59,6 +59,36 @@ export function withNumberCalculations(groups: CountingMethodGroup[] = []) {
 }
 
 export function number(config: NumberPluginConfig): NumberPlugin {
+  const parseData = (data: string | null | undefined) => {
+    if (typeof data !== "string" || data.trim() === "") return null;
+    const value = Number(data);
+    return Number.isFinite(value) ? value : null;
+  };
+  const isEmptyData = (data: string | null | undefined) =>
+    data === null || data === undefined || data.trim() === "";
+  const comparisonOperator = (
+    id: string,
+    name: string,
+    predicate: (data: number, operand: number) => boolean,
+  ) => ({
+    id,
+    name,
+    operand: { kind: "number" as const },
+    matches: (
+      data: string | null | undefined,
+      _row: unknown,
+      _config: unknown,
+      operand?: unknown,
+    ) => {
+      const value = parseData(data);
+      return (
+        value !== null &&
+        typeof operand === "number" &&
+        Number.isFinite(operand) &&
+        predicate(value, operand)
+      );
+    },
+  });
   return {
     id: "number",
     meta: {
@@ -121,6 +151,52 @@ export function number(config: NumberPluginConfig): NumberPlugin {
       })),
     },
     counting: withNumberCalculations(genericCounting),
+    filtering: {
+      operators: [
+        comparisonOperator(
+          "equals",
+          "Equals",
+          (data, operand) => data === operand,
+        ),
+        comparisonOperator(
+          "does-not-equal",
+          "Does not equal",
+          (data, operand) => data !== operand,
+        ),
+        comparisonOperator(
+          "greater-than",
+          "Greater than",
+          (data, operand) => data > operand,
+        ),
+        comparisonOperator(
+          "less-than",
+          "Less than",
+          (data, operand) => data < operand,
+        ),
+        comparisonOperator(
+          "greater-than-or-equal",
+          "Greater than or equal",
+          (data, operand) => data >= operand,
+        ),
+        comparisonOperator(
+          "less-than-or-equal",
+          "Less than or equal",
+          (data, operand) => data <= operand,
+        ),
+        {
+          id: "is-empty",
+          name: "Is empty",
+          operand: { kind: "none" },
+          matches: (data) => isEmptyData(data),
+        },
+        {
+          id: "is-not-empty",
+          name: "Is not empty",
+          operand: { kind: "none" },
+          matches: (data) => !isEmptyData(data) && parseData(data) !== null,
+        },
+      ],
+    },
     renderCellValue: config.renderCellValue,
     renderCellEditor: config.renderCellEditor,
     renderConfigMenu: config.renderConfigMenu,

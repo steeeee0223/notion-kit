@@ -75,6 +75,42 @@ export interface ConfigMenuProps<Config = unknown> {
 export type CompareFn<T> = (a: T, b: T) => number;
 export type ComparableValue = string | number | boolean | null;
 
+export type FilterValue =
+  | null
+  | boolean
+  | number
+  | string
+  | FilterValue[]
+  | { [key: string]: FilterValue };
+
+export type FilterOperandMetadata =
+  | { kind: "none" }
+  | { kind: "text" }
+  | { kind: "number" }
+  | { kind: "option"; multiple?: boolean }
+  | { kind: "date" }
+  | { kind: "date-range" }
+  | { kind: "relative-date" };
+
+export interface FilterEvaluationContext {
+  /** Clock captured once for the complete filter evaluation pass. */
+  now: number;
+}
+
+export interface FilterOperatorDescriptor<Data = unknown, Config = unknown> {
+  /** Stable identifier stored in a persisted filter rule. */
+  id: string;
+  name: string;
+  operand: FilterOperandMetadata;
+  matches: (
+    data: Data | undefined,
+    row: Row,
+    config: Config,
+    operand: FilterValue | undefined,
+    context: FilterEvaluationContext,
+  ) => boolean;
+}
+
 export interface GroupingValueProps {
   className?: string;
   value: ComparableValue;
@@ -161,6 +197,10 @@ export interface CellPlugin<
     methods: GroupingMethod<Data, Config>[];
   };
   counting?: CountingMethodGroup[];
+  /** Pure, UI-neutral filtering capabilities. Omit when filtering is unsupported. */
+  filtering?: {
+    operators: FilterOperatorDescriptor<Data, Config>[];
+  };
   compare?: (rowA: Row, rowB: Row, colId: string) => number;
   transferConfig?: (column: ColumnInfo, data: Row[]) => Config;
   renderCellValue: (props: CellValueProps<Data, Config>) => React.ReactNode;

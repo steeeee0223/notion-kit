@@ -3,6 +3,7 @@ import {
   compareStrings,
   createCompareFn,
   genericCounting,
+  textFilteringCapabilities,
   textMethodCapabilities,
 } from "@/plugins/utils";
 
@@ -28,6 +29,7 @@ export function text(config: TextPluginConfig): TextPlugin {
     toTextValue: (data) => data,
     compare: createCompareFn(compareStrings),
     ...textMethodCapabilities<string>(),
+    ...textFilteringCapabilities(),
     counting: genericCounting,
     renderCellValue: config.renderCellValue,
     renderCellEditor: config.renderCellEditor,
