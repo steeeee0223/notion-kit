@@ -18,7 +18,10 @@ pnpm -F @notion-kit/table-hook build
 
 Every test should either catch a production regression, document a non-obvious
 headless contract, or verify a real resource/state transition. Avoid adding
-tests that only assert implementation shape.
+tests that only assert implementation shape. Prefer one representative test per
+contract over permutations already guaranteed by TypeScript, TanStack, or a
+lower-level test. Package exports are verified by typecheck and build rather
+than a second consumer-shaped test suite.
 
 ## Audit directory
 

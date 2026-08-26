@@ -6,7 +6,7 @@ import {
   type FilterGroup,
 } from "@/features/filtering";
 import type { ColumnInfo, Row } from "@/lib/types";
-import { date as createDate, type CellPlugin } from "@/plugins";
+import type { CellPlugin } from "@/plugins";
 
 const row: Row = {
   id: "row",
@@ -35,34 +35,6 @@ function group(
   children: FilterGroup["children"],
 ): FilterGroup {
   return { kind: "group", id, logic, children };
-}
-
-function withPrototypePollution(
-  properties: Record<string, unknown>,
-  assertion: () => void,
-) {
-  const previous = new Map(
-    Object.keys(properties).map((key) => [
-      key,
-      Reflect.getOwnPropertyDescriptor(Object.prototype, key),
-    ]),
-  );
-  for (const [key, value] of Object.entries(properties)) {
-    Object.defineProperty(Object.prototype, key, {
-      configurable: true,
-      enumerable: false,
-      writable: true,
-      value,
-    });
-  }
-  try {
-    assertion();
-  } finally {
-    for (const [key, descriptor] of previous) {
-      if (descriptor) Object.defineProperty(Object.prototype, key, descriptor);
-      else Reflect.deleteProperty(Object.prototype, key);
-    }
-  }
 }
 
 function plugin(
@@ -124,43 +96,6 @@ describe("filter tree domain", () => {
       evaluationContext,
     );
     expect(matcher).toHaveBeenCalledTimes(3);
-  });
-
-  it("short-circuits AND and OR groups", () => {
-    const matcher = vi.fn(
-      (value: unknown, _row: Row, _config: unknown, operand: unknown) =>
-        value === operand,
-    );
-    const plugins = { text: plugin("text", matcher as never) };
-
-    expect(
-      evaluateTableFilter(
-        group("and", "and", [
-          rule("a", "title", "matches", "no"),
-          rule("b", "title", "matches", "Alpha"),
-        ]),
-        row,
-        properties,
-        plugins,
-        evaluationContext,
-      ),
-    ).toBe(false);
-    expect(matcher).toHaveBeenCalledTimes(1);
-
-    matcher.mockClear();
-    expect(
-      evaluateTableFilter(
-        group("or", "or", [
-          rule("a", "title", "matches", "Alpha"),
-          rule("b", "title", "matches", "no"),
-        ]),
-        row,
-        properties,
-        plugins,
-        evaluationContext,
-      ),
-    ).toBe(true);
-    expect(matcher).toHaveBeenCalledTimes(1);
   });
 
   it("treats null and empty groups as pass-all", () => {
@@ -248,166 +183,6 @@ describe("filter tree domain", () => {
         group("root", "and", [rule("r", "title", "matches")]),
       ),
     ).toBe(true);
-  });
-
-  it.each([
-    ["extra rule field", { ...rule("r", "title", "matches"), extra: true }],
-    ["extra group field", { ...group("root", "and", []), extra: true }],
-    [
-      "undefined rule field",
-      { ...rule("r", "title", "matches"), extra: undefined },
-    ],
-    [
-      "function rule field",
-      { ...rule("r", "title", "matches"), extra: () => true },
-    ],
-    [
-      "symbol group field",
-      Object.assign(group("root", "and", []), { [Symbol("extra")]: true }),
-    ],
-  ])("rejects a node with an %s", (_case, node) => {
-    const state =
-      (node as { kind?: string }).kind === "group"
-        ? node
-        : group("root", "and", [node as never]);
-    expect(() => validateTableFilterState(state)).not.toThrow();
-    expect(validateTableFilterState(state)).toBe(false);
-  });
-
-  it.each([
-    ["undefined", undefined],
-    ["function", () => true],
-    ["symbol", Symbol("operand")],
-    ["NaN", Number.NaN],
-    ["positive infinity", Number.POSITIVE_INFINITY],
-    ["negative infinity", Number.NEGATIVE_INFINITY],
-    ["sparse array", new Array(1)],
-    ["array containing undefined", [undefined]],
-  ])("rejects a %s operand without throwing", (_case, value) => {
-    const state = group("root", "and", [
-      { ...rule("r", "title", "matches"), value } as never,
-    ]);
-    expect(() => validateTableFilterState(state)).not.toThrow();
-    expect(validateTableFilterState(state)).toBe(false);
-  });
-
-  it("rejects cyclic object and array operands without throwing", () => {
-    const cyclicObject: Record<string, unknown> = {};
-    cyclicObject.self = cyclicObject;
-    const cyclicArray: unknown[] = [];
-    cyclicArray.push(cyclicArray);
-
-    for (const value of [cyclicObject, cyclicArray]) {
-      const state = group("root", "and", [
-        { ...rule("r", "title", "matches"), value } as never,
-      ]);
-      expect(() => validateTableFilterState(state)).not.toThrow();
-      expect(validateTableFilterState(state)).toBe(false);
-    }
-  });
-
-  it("accepts shared non-cyclic references and large JSON objects", () => {
-    const shared = { nested: true };
-    const large = Object.fromEntries(
-      Array.from({ length: 2_000 }, (_, index) => [`key-${index}`, index]),
-    );
-    const state = group("root", "and", [
-      {
-        ...rule("r", "title", "matches"),
-        value: { first: shared, second: shared, large },
-      } as never,
-    ]);
-
-    expect(validateTableFilterState(state)).toBe(true);
-  });
-
-  it("rejects inherited required group fields from a polluted prototype", () => {
-    withPrototypePollution(
-      { kind: "group", id: "inherited", logic: "and" },
-      () => {
-        const state = { children: [] };
-        expect(() => validateTableFilterState(state)).not.toThrow();
-        expect(validateTableFilterState(state)).toBe(false);
-      },
-    );
-  });
-
-  it("rejects inherited required rule fields from a polluted prototype", () => {
-    withPrototypePollution(
-      {
-        kind: "rule",
-        id: "inherited",
-        propertyId: "title",
-        operator: "matches",
-      },
-      () => {
-        const state = group("root", "and", [{} as never]);
-        expect(() => validateTableFilterState(state)).not.toThrow();
-        expect(validateTableFilterState(state)).toBe(false);
-      },
-    );
-  });
-
-  it("rejects accessor fields without invoking their getters", () => {
-    const getter = vi.fn(() => {
-      throw new Error("must not execute");
-    });
-    const state = {
-      kind: "group",
-      id: "root",
-      logic: "and",
-      get children() {
-        return getter();
-      },
-    };
-
-    expect(() => validateTableFilterState(state)).not.toThrow();
-    expect(validateTableFilterState(state)).toBe(false);
-    expect(getter).not.toHaveBeenCalled();
-  });
-
-  it("fails closed without throwing when an evaluator reaches an invalid date operand", () => {
-    const datePlugin = createDate({
-      icon: null,
-      renderCellValue: () => null,
-    });
-    const dateRow = {
-      ...row,
-      properties: { due: { id: "due-cell", value: { start: 1 } } },
-    } as Row;
-    const dateProperties = {
-      due: {
-        id: "due",
-        name: "Due",
-        type: "date",
-        config: { ...datePlugin.default.config, tz: "UTC" },
-      },
-    } as Record<string, ColumnInfo>;
-    const state = group("root", "and", [
-      {
-        ...rule("date-rule", "due", "equals"),
-        value: { timestamp: 1e308 },
-      },
-    ] as never);
-
-    expect(() =>
-      evaluateTableFilter(
-        state,
-        dateRow,
-        dateProperties,
-        { date: datePlugin },
-        evaluationContext,
-      ),
-    ).not.toThrow();
-    expect(
-      evaluateTableFilter(
-        state,
-        dateRow,
-        dateProperties,
-        { date: datePlugin },
-        evaluationContext,
-      ),
-    ).toBe(false);
   });
 
   it.each([

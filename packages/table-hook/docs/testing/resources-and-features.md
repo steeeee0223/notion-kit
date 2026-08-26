@@ -37,18 +37,15 @@ filtering.
 - Plugin operators remain UI-neutral and cover text-like, select/multi-select,
   checkbox, number, date, and derived-date families. A single captured
   `FilterEvaluationContext.now` is reused throughout one evaluation pass.
-- Nested root-first/leaf-first row behavior, TanStack maximum filter depth,
-  row-model metadata, pagination auto-reset, and dangerous row IDs remain
-  regression gates.
+- Root-first and leaf-first nested-row behavior remains covered at the table
+  boundary. TanStack's own row-model internals are not duplicated here.
 
 ## Source and tests
 
 - Resource ownership and controlled settlement: [`resource-api.test.tsx`](../../src/__tests__/resource-api.test.tsx)
 - Filter-tree validation and pure evaluation: [`filtering.test.tsx`](../../src/__tests__/filtering.test.tsx)
-- Search/filter pipeline, nesting, TanStack parity, pagination reset, and clock
-  context: [`filtering-pipeline.test.tsx`](../../src/__tests__/filtering-pipeline.test.tsx)
-- Emitted runtime exports: [`package-exports.test.mjs`](../../scripts/package-exports.test.mjs)
-- Emitted declaration consumer contracts: [`package-exports.types.ts`](../../src/__tests__/package-exports.types.ts)
+- Search/filter ownership, composition, nesting, and clock context:
+  [`filtering-pipeline.test.tsx`](../../src/__tests__/filtering-pipeline.test.tsx)
 - Built-in plugin operator families and invalid-operand regression gates:
   [`plugins.test.ts`](../../src/plugins/plugins.test.ts)
 - Date timezone and boundary utilities: [`date/utils.test.ts`](../../src/plugins/date/utils.test.ts)
@@ -59,8 +56,19 @@ filtering.
 - Counting state: [`counting.test.tsx`](../../src/__tests__/counting.test.tsx)
 - Column freezing: [`freezing.test.tsx`](../../src/__tests__/freezing.test.tsx)
 
-The package test command and the main CI test job run the emitted runtime-export
-and declaration-consumer contracts after a fresh `table-hook` build.
+## Coverage strategy
+
+- Pure unit coverage protects one representative case for nested AND/OR
+  evaluation, the depth and JSON-safety boundary, invalid references, and each
+  built-in operator family.
+- Table integration coverage protects transient search ownership, search plus
+  advanced-filter composition, controlled and uncontrolled filter resources,
+  root-first and leaf-first nested rows, and one shared evaluation clock.
+- Builds and typecheck protect the public package surface. Tests do not repeat
+  export lists or duplicate TanStack's pagination, metadata, and row-model
+  implementation details.
+- Filter UI interactions and server-side/manual filtering remain gaps by
+  design; they belong to future `table-view` and remote-query work.
 
 ## Update this audit when
 

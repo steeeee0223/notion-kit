@@ -13,11 +13,7 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "src"),
     },
-    exclude: [
-      "**/node_modules/**",
-      "**/dist/**",
-      "scripts/package-exports.test.mjs",
-    ],
+    exclude: ["**/node_modules/**", "**/dist/**"],
     coverage: {
       provider: "v8",
       reporter: ["text", "json", ["html", { subdir: "coverage" }]],

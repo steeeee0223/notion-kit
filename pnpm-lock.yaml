@@ -1527,6 +1527,9 @@ importers:
       '@notion-kit/settings-panel':
         specifier: workspace:*
         version: link:../settings-panel
+      '@notion-kit/table-hook':
+        specifier: workspace:*
+        version: link:../table-hook
       '@notion-kit/table-view':
         specifier: workspace:*
         version: link:../table-view

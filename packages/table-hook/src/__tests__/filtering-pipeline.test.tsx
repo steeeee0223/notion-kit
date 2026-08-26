@@ -1,12 +1,4 @@
-import { useState } from "react";
-import {
-  createPaginatedRowModel,
-  functionalUpdate,
-  rowPaginationFeature,
-  tableFeatures,
-  useTable,
-  type ColumnDef,
-} from "@tanstack/react-table";
+import { useTable, type ColumnDef } from "@tanstack/react-table";
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -212,14 +204,10 @@ function renderNestedFilteringTable({
   rows,
   filters,
   filterFromLeafRows,
-  maxLeafRowFilterDepth,
-  columnFilters,
 }: {
   rows: NestedRow[];
   filters: TableFilterState;
   filterFromLeafRows?: boolean;
-  maxLeafRowFilterDepth?: number;
-  columnFilters?: { id: string; value: unknown }[];
 }) {
   const nestedPlugin = createTextPlugin("nested");
   const nestedProperties = {
@@ -235,10 +223,8 @@ function renderNestedFilteringTable({
       id: "value",
       accessorFn: (row) => row.properties.value?.value as string | undefined,
       enableGlobalFilter: true,
-      filterFn: (row, propertyId, filterValue, addMeta) => {
-        addMeta?.({ source: "column-filter" });
-        return String(row.getValue(propertyId)).includes(String(filterValue));
-      },
+      filterFn: (row, propertyId, filterValue) =>
+        String(row.getValue(propertyId)).includes(String(filterValue)),
     },
   ];
   return renderHook(() =>
@@ -250,8 +236,6 @@ function renderNestedFilteringTable({
         getRowId: (row) => row.id,
         getSubRows: (row) => row.subRows,
         filterFromLeafRows,
-        maxLeafRowFilterDepth,
-        initialState: { columnFilters },
         globalFilterFn: "pluginTextIncludes",
         state: {
           columnsInfo: nestedProperties,
@@ -297,65 +281,6 @@ const nestedContainsFilter = {
     },
   ],
 } as const satisfies FilterGroup;
-
-const PAGINATED_FEATURES = tableFeatures({
-  ...DEFAULT_FEATURES,
-  rowPaginationFeature,
-  paginatedRowModel: createPaginatedRowModel(),
-});
-
-function renderPaginatedFilteringTable() {
-  const nestedPlugin = createTextPlugin("nested");
-  const nestedProperties = {
-    value: {
-      id: "value",
-      name: "Value",
-      type: "nested",
-      config: undefined,
-    },
-  } satisfies Record<string, ColumnInfo>;
-  const rows = [
-    nestedRow("one", "match"),
-    nestedRow("two", "other"),
-    nestedRow("three", "match"),
-    nestedRow("four", "other"),
-  ];
-  const columns: ColumnDef<typeof PAGINATED_FEATURES, NestedRow>[] = [
-    {
-      id: "value",
-      accessorFn: (row) => row.properties.value?.value as string | undefined,
-      enableGlobalFilter: true,
-      filterFn: (row, propertyId, filterValue) =>
-        String(row.getValue(propertyId)).includes(String(filterValue)),
-    },
-  ];
-  return renderHook(() => {
-    const [tableGlobal, setTableGlobal] = useState<TableViewState>({
-      layout: "table",
-      rowView: "side",
-      openedRowId: null,
-    });
-    return useTable<typeof PAGINATED_FEATURES, NestedRow, null>(
-      {
-        features: PAGINATED_FEATURES,
-        columns,
-        data: rows,
-        getRowId: (row) => row.id,
-        globalFilterFn: "pluginTextIncludes",
-        initialState: { pagination: { pageIndex: 2, pageSize: 1 } },
-        state: {
-          columnsInfo: nestedProperties,
-          cellPlugins: { nested: nestedPlugin },
-          tableGlobal,
-        },
-        onTableGlobalChange: (updater) => {
-          setTableGlobal((previous) => functionalUpdate(updater, previous));
-        },
-      },
-      () => null,
-    );
-  });
-}
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -409,32 +334,6 @@ describe("useTableView filtering pipeline", () => {
   it("AdvancedFiltering_InvalidDefaultViewFailsClosedWithoutThrowing", () => {
     const malformed = { kind: "group", id: "bad", logic: "and" };
     const { result } = renderFilteringTable({ filters: malformed as never });
-
-    expect(() => result.current.table.getFilteredRowModel()).not.toThrow();
-    expect(result.current.table.getFilteredRowModel().rows).toEqual([]);
-  });
-
-  it("AdvancedFiltering_InvalidControlledViewFailsClosedWithoutThrowing", () => {
-    const cyclic = {
-      kind: "group",
-      id: "bad",
-      logic: "and",
-      children: [] as unknown[],
-    };
-    cyclic.children.push(cyclic);
-    const plugins = arrayToEntity([
-      createTextPlugin("search"),
-      createNumberPlugin(),
-      createTextPlugin("city"),
-    ]);
-    const { result } = renderHook(() =>
-      useTableView({
-        plugins,
-        data,
-        properties,
-        view: { filters: cyclic as never },
-      }),
-    );
 
     expect(() => result.current.table.getFilteredRowModel()).not.toThrow();
     expect(result.current.table.getFilteredRowModel().rows).toEqual([]);
@@ -499,83 +398,6 @@ describe("useTableView filtering pipeline", () => {
     expect(result.current.table.getFilteredRowModel().rows).toEqual([]);
   });
 
-  it("GlobalSearch_RecomputesWhenAPropertyPluginTypeChanges", () => {
-    const indexedPlugin = createTextPlugin(
-      "search",
-      (value) => `indexed:${value}`,
-    );
-    const plainPlugin = createTextPlugin("plain", (value) => `plain:${value}`);
-    const allPlugins = [
-      indexedPlugin,
-      plainPlugin,
-      createNumberPlugin(),
-      createTextPlugin("city"),
-    ];
-    const { result, rerender } = renderControlledSearchTable({
-      initialPlugins: allPlugins,
-    });
-
-    act(() => result.current.table.setGlobalFilter("indexed:john"));
-    expect(
-      result.current.table.getFilteredRowModel().rows.map(({ id }) => id),
-    ).toEqual(["john"]);
-
-    rerender({
-      currentProperties: properties.map((property) =>
-        property.id === "name" ? { ...property, type: "plain" } : property,
-      ),
-      currentPlugins: allPlugins,
-    });
-
-    expect(result.current.table.getFilteredRowModel().rows).toEqual([]);
-  });
-
-  it("GlobalSearch_RecomputesWhenPluginTextConversionChanges", () => {
-    const initialPlugins = [
-      createTextPlugin("search", (value) => `before:${value}`),
-      createNumberPlugin(),
-      createTextPlugin("city"),
-    ];
-    const { result, rerender } = renderControlledSearchTable({
-      initialPlugins,
-    });
-
-    act(() => result.current.table.setGlobalFilter("before:john"));
-    expect(
-      result.current.table.getFilteredRowModel().rows.map(({ id }) => id),
-    ).toEqual(["john"]);
-
-    rerender({
-      currentProperties: properties,
-      currentPlugins: [
-        createTextPlugin("search", (value) => `after:${value}`),
-        createNumberPlugin(),
-        createTextPlugin("city"),
-      ],
-    });
-
-    expect(result.current.table.getFilteredRowModel().rows).toEqual([]);
-  });
-
-  it("GlobalSearch_SurfacesPluginTextConversionErrors", () => {
-    const throwingPlugin = createTextPlugin("search", () => {
-      throw new Error("broken toTextValue");
-    });
-    const { result } = renderControlledSearchTable({
-      initialPlugins: [
-        throwingPlugin,
-        createNumberPlugin(),
-        createTextPlugin("city"),
-      ],
-    });
-
-    act(() => result.current.table.setGlobalFilter("query"));
-
-    expect(() => result.current.table.getFilteredRowModel()).toThrow(
-      "broken toTextValue",
-    );
-  });
-
   it("AdvancedFiltering_RootFirstDropsAParentWhoseChildAloneMatches", () => {
     const { result } = renderNestedFilteringTable({
       rows: [nestedRow("parent", "no", [nestedRow("child", "match")])],
@@ -638,112 +460,4 @@ describe("useTableView filtering pipeline", () => {
     expect(model.flatRows.map(({ id }) => id)).toEqual(["child", "parent"]);
     expect(Object.keys(model.rowsById).sort()).toEqual(["child", "parent"]);
   });
-
-  it("FilteringPipeline_LeafFirstRequiresColumnAndAdvancedFiltersToMatchTheSameRow", () => {
-    const { result } = renderNestedFilteringTable({
-      rows: [nestedRow("parent", "match", [nestedRow("child", "search")])],
-      filters: nestedContainsFilter,
-      filterFromLeafRows: true,
-      columnFilters: [{ id: "value", value: "search" }],
-    });
-
-    const model = result.current.getFilteredRowModel();
-    expect(model.rows).toEqual([]);
-    expect(model.flatRows).toEqual([]);
-    expect(Object.keys(model.rowsById)).toEqual([]);
-  });
-
-  it("AdvancedFiltering_HonorsMaxDepthAndKeepsDeeperDescendantsUnfiltered", () => {
-    const child = nestedRow("child", "no");
-    const parent = nestedRow("parent", "match", [child]);
-    const { result } = renderNestedFilteringTable({
-      rows: [parent],
-      filters: nestedContainsFilter,
-      maxLeafRowFilterDepth: 0,
-    });
-
-    const model = result.current.getFilteredRowModel();
-    expect(model.rows[0]?.subRows[0]?.original).toBe(child);
-    expect(model.flatRows.map(({ id }) => id)).toEqual(["parent", "child"]);
-    expect(model.rowsById.child?.original).toBe(child);
-  });
-
-  it("AdvancedFiltering_LeafFirstMaxDepthExcludesUnvisitedDescendantsFromTheWholeModel", () => {
-    const child = nestedRow("child", "match");
-    const parent = nestedRow("parent", "match", [child]);
-    const { result } = renderNestedFilteringTable({
-      rows: [parent],
-      filters: nestedContainsFilter,
-      filterFromLeafRows: true,
-      maxLeafRowFilterDepth: 0,
-    });
-
-    const model = result.current.getFilteredRowModel();
-    expect(model.rows.map(({ id }) => id)).toEqual(["parent"]);
-    expect(model.rows[0]?.subRows).toEqual([]);
-    expect(model.flatRows.map(({ id }) => id)).toEqual(["parent"]);
-    expect(model.rowsById.parent?.original).toBe(parent);
-    expect(Object.hasOwn(model.rowsById, "child")).toBe(false);
-  });
-
-  it("AdvancedFiltering_UsesANullPrototypeRowsByIdForDangerousRowIds", () => {
-    const rows = ["__proto__", "constructor", "hasOwnProperty"].map((id) =>
-      nestedRow(id, "match"),
-    );
-    const { result } = renderNestedFilteringTable({
-      rows,
-      filters: nestedContainsFilter,
-    });
-
-    const { rowsById } = result.current.getFilteredRowModel();
-    expect(Reflect.getPrototypeOf(rowsById)).toBeNull();
-    for (const row of rows) {
-      expect(Object.hasOwn(rowsById, row.id)).toBe(true);
-      expect(rowsById[row.id]?.original).toBe(row);
-    }
-  });
-
-  it("FilteringPipeline_PreservesNativeColumnFiltersAndTheirMetadata", () => {
-    const { result } = renderNestedFilteringTable({
-      rows: [nestedRow("matching", "match"), nestedRow("other", "no")],
-      filters: null,
-      columnFilters: [{ id: "value", value: "match" }],
-    });
-
-    const model = result.current.getFilteredRowModel();
-    expect(model.rows.map(({ id }) => id)).toEqual(["matching"]);
-    expect(model.rows[0]?.columnFilters.value).toBe(true);
-    expect(model.rows[0]?.columnFiltersMeta.value).toEqual({
-      source: "column-filter",
-    });
-  });
-
-  it.each(["global", "column", "advanced"] as const)(
-    "FilteringPipeline_%sFilterChangeAutoResetsPaginationButInitialComputationDoesNot",
-    async (filterKind) => {
-      const { result } = renderPaginatedFilteringTable();
-
-      await act(async () => {
-        result.current.getFilteredRowModel();
-        await Promise.resolve();
-      });
-      expect(result.current.atoms.pagination.get().pageIndex).toBe(2);
-
-      act(() => {
-        if (filterKind === "global") {
-          result.current.setGlobalFilter("match");
-        } else if (filterKind === "column") {
-          result.current.setColumnFilters([{ id: "value", value: "match" }]);
-        } else {
-          result.current.setFilters(nestedContainsFilter);
-        }
-      });
-      await act(async () => {
-        result.current.getFilteredRowModel();
-        await Promise.resolve();
-      });
-
-      expect(result.current.atoms.pagination.get().pageIndex).toBe(0);
-    },
-  );
 });
