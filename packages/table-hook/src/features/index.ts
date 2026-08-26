@@ -42,6 +42,7 @@ import {
   getAdvancedFilteredRowModel,
   pluginTextIncludes,
   type AdvancedFilteringTableApi,
+  type AdvancedFilteringTableState,
 } from "./filtering";
 import {
   FreezingFeature,
@@ -73,13 +74,20 @@ import { InternalRowSelectionFeature } from "./row-selection";
 
 export {
   AdvancedFilteringFeature,
+  appendFilterNode,
+  countFilterRules,
+  createFilterGroup,
+  createFilterRule,
   evaluateTableFilter,
   getAdvancedFilteredRowModel,
   pluginTextIncludes,
+  removeFilterNode,
+  updateFilterNode,
   validateTableFilterState,
 } from "./filtering";
 export type {
   AdvancedFilteringTableApi,
+  AdvancedFilteringTableState,
   FilterGroup,
   FilterLogic,
   FilterRule,
@@ -96,7 +104,7 @@ declare module "@tanstack/table-core" {
     tableMenuFeature: TableMenuTableState;
     rowActionsFeature: Record<never, never>;
     extendedGroupingFeature: ExtendedGroupingTableState;
-    advancedFilteringFeature: Record<never, never>;
+    advancedFilteringFeature: AdvancedFilteringTableState;
   }
 
   interface TableState_All
@@ -105,7 +113,8 @@ declare module "@tanstack/table-core" {
         CountingTableState &
         FreezingTableState &
         TableMenuTableState &
-        ExtendedGroupingTableState
+        ExtendedGroupingTableState &
+        AdvancedFilteringTableState
     > {
     __tableHookStateBrand?: never;
   }

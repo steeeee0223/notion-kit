@@ -30,7 +30,7 @@ import {
   Sortable,
 } from "@notion-kit/ui/primitives";
 
-import { DefaultIcon } from "@/common";
+import { DefaultIcon, PropertySelect } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
 import {
@@ -114,18 +114,14 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
   };
 
   return (
-    <table.Subscribe
-      selector={(state) => ({
-        columnsInfo: state.columnsInfo,
-        pluginMethods: state.tableGlobal.pluginMethods,
-      })}
-    >
-      {({ columnsInfo }) => {
-        const current = columnsInfo[currentId]!;
-        const properties = Object.values(columnsInfo);
+    <table.Subscribe selector={(state) => state.tableGlobal.pluginMethods}>
+      {() => {
         const selectedMethod = table.getSelectedSortingMethod(currentId);
         const labels = getSortingDirectionLabels(selectedMethod);
-        const directionLabel = desc ? labels.descending : labels.ascending;
+        const directionItems = [
+          { value: "asc", label: labels.ascending },
+          { value: "desc", label: labels.descending },
+        ];
 
         const replaceProperty = (id: string) => {
           const defaultMethod = getDefaultSortingMethod(
@@ -139,66 +135,30 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
           <Sortable.Item
             id={currentId}
             index={index}
+            data-testid={`sort-rule-${currentId}`}
             render={
               <DropdownMenuItem
                 closeOnClick={false}
                 className="h-9"
-                icon={<Sortable.Handle aria-label={`Move ${current.name}`} />}
+                icon={<Sortable.Handle aria-label="Move sort" />}
                 label={
                   <div className="grid h-8 w-full grid-cols-2 items-center gap-1.5">
-                    <Select
+                    <PropertySelect
                       value={currentId}
-                      onValueChange={(id) => {
-                        if (id !== null) replaceProperty(id);
-                      }}
-                    >
-                      <SelectTrigger
-                        aria-label={current.name}
-                        className="my-0 w-full max-w-45 border border-border"
-                      >
-                        <SelectValue aria-label={current.name}>
-                          <div className="flex items-center gap-2 truncate">
-                            {current.icon ? (
-                              <IconBlock icon={current.icon} />
-                            ) : (
-                              <DefaultIcon type={current.type} />
-                            )}
-                            {current.name}
-                          </div>
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {properties.map(({ id, name, type, icon }) => (
-                            <SelectItem
-                              key={id}
-                              value={id}
-                              label={name}
-                              icon={
-                                icon ? (
-                                  <IconBlock icon={icon} />
-                                ) : (
-                                  <DefaultIcon type={type} />
-                                )
-                              }
-                            />
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
+                      onValueChange={replaceProperty}
+                    />
                     <Select
+                      items={directionItems}
                       value={desc ? "desc" : "asc"}
                       onValueChange={(value) =>
                         updateRule({ id: currentId, desc: value === "desc" })
                       }
                     >
                       <SelectTrigger
-                        aria-label={directionLabel}
+                        aria-label="Sort direction select"
                         className="my-0 w-full max-w-45 border border-border"
                       >
-                        <SelectValue aria-label={directionLabel}>
-                          <span className="truncate">{directionLabel}</span>
-                        </SelectValue>
+                        <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -216,7 +176,7 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
               <Button
                 variant="hint"
                 className="size-5"
-                aria-label={`Remove ${current.name} sort`}
+                aria-label="Remove sort"
                 onClick={removeRule}
               >
                 <Icon.Close className="fill-current" />

@@ -1,3 +1,5 @@
+import { useId, useRef, useState } from "react";
+
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import {
@@ -5,7 +7,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  Input,
+  PopoverTrigger,
   TooltipPreset,
+  type PopoverHandle,
 } from "@notion-kit/ui/primitives";
 
 import { SortMenu, TableViewMenu } from "@/menus";
@@ -13,25 +18,41 @@ import { useTableViewCtx } from "@/table-contexts";
 
 interface ToolbarProps {
   className?: string;
+  filterHandle: PopoverHandle;
 }
 
-export function Toolbar({ className }: ToolbarProps) {
+export function Toolbar({ className, filterHandle }: ToolbarProps) {
   const { table } = useTableViewCtx();
 
   return (
     <table.Subscribe selector={(state) => state.menu}>
-      {() => <ToolbarContent className={className} />}
+      {() => (
+        <ToolbarContent className={className} filterHandle={filterHandle} />
+      )}
     </table.Subscribe>
   );
 }
 
-function ToolbarContent({ className }: ToolbarProps) {
+function ToolbarContent({ className, filterHandle }: ToolbarProps) {
   const { table } = useTableViewCtx();
   const tableMenu = table.getTableMenuState();
 
   return (
     <div className={cn("flex items-center justify-end gap-0.5", className)}>
-      <ToolbarItem icon={<Icon.FilterSmall />} label="Filter" />
+      <TooltipPreset description="Filter" side="top">
+        <PopoverTrigger
+          handle={filterHandle}
+          render={
+            <Button
+              variant="nav-icon"
+              aria-label="Filter"
+              className="[&_svg]:fill-current"
+            >
+              <Icon.FilterSmall />
+            </Button>
+          }
+        />
+      </TooltipPreset>
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
@@ -52,7 +73,7 @@ function ToolbarContent({ className }: ToolbarProps) {
         icon={<Icon.LightningSmall />}
         label="Create and view automations"
       />
-      <ToolbarItem icon={<Icon.MagnifyingGlassSmall />} label="Search" />
+      <ToolbarSearch />
       <ToolbarItem
         icon={<Icon.ArrowExpandDiagonalSmall className="rotate-90" />}
         label="Open as full page"
@@ -85,6 +106,58 @@ function ToolbarContent({ className }: ToolbarProps) {
         New
         <Icon.Chevron side="down" className="size-3 fill-current" />
       </Button>
+    </div>
+  );
+}
+
+function ToolbarSearch() {
+  const { table } = useTableViewCtx();
+  const searchInputId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  return (
+    <div className="flex items-center">
+      <TooltipPreset description="Search" side="top">
+        <Button
+          variant="nav-icon"
+          aria-label="Search"
+          aria-controls={searchInputId}
+          aria-expanded={searchOpen}
+          className="[&_svg]:fill-current"
+          onClick={() => {
+            setSearchOpen(!searchOpen);
+            if (!searchOpen) inputRef.current?.focus();
+          }}
+        >
+          <Icon.MagnifyingGlassSmall />
+        </Button>
+      </TooltipPreset>
+      <table.Subscribe
+        selector={(state) => state.globalFilter as string | undefined}
+      >
+        {(globalFilter) => (
+          <Input
+            ref={inputRef}
+            id={searchInputId}
+            clear={searchOpen}
+            variant="flat"
+            className={cn(
+              "transition-[width,opacity] duration-200 ease-in-out",
+              searchOpen ? "w-[150px] opacity-100" : "w-0 p-0 opacity-0",
+            )}
+            aria-label="Search table"
+            aria-hidden={!searchOpen}
+            tabIndex={searchOpen ? undefined : -1}
+            placeholder="Search"
+            value={String(globalFilter ?? "")}
+            onChange={(event) => table.setGlobalFilter(event.target.value)}
+            onCancel={() => {
+              table.resetGlobalFilter();
+            }}
+          />
+        )}
+      </table.Subscribe>
     </div>
   );
 }

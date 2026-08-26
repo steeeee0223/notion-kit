@@ -42,7 +42,7 @@ export function OptionSettings({ options, onUpdate }: OptionSettingsProps) {
                 if (color !== null) onUpdate({ color });
               }}
             >
-              <SelectTrigger>
+              <SelectTrigger aria-label="Color select">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

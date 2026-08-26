@@ -23,8 +23,10 @@ describe("SortMenu", () => {
     await waitFor(() => {
       expect(sort.querySearchInput()).not.toBeInTheDocument();
     });
-    expect(sort.directionTrigger("Checked → unchecked")).toBeVisible();
-    expect(sort.moveHandle("Done")).toBeVisible();
+    expect(sort.directionTrigger("col2")).toHaveTextContent(
+      "Checked → unchecked",
+    );
+    expect(sort.moveHandle("col2")).toBeVisible();
   });
 
   it("SortMenu_DeleteAll_RemovesEveryRule", async () => {
@@ -53,7 +55,7 @@ describe("SortMenu", () => {
     const sort = await tableView.openSortMenu();
     await sort.addRule("Name");
 
-    await sort.openDirection("A → Z");
+    await sort.openDirection("col1");
 
     expect(sort.directionOption("Z → A")).toBeVisible();
   });
@@ -63,10 +65,10 @@ describe("SortMenu", () => {
     const sort = await tableView.openSortMenu();
     await sort.addRule("Name");
 
-    await sort.openDirection("A → Z");
+    await sort.openDirection("col1");
     await tableView.user.click(sort.directionOption("Z → A"));
 
-    expect(sort.directionTrigger("Z → A")).toBeVisible();
+    expect(sort.directionTrigger("col1")).toHaveTextContent("Z → A");
   });
 
   it("SortMenu_PropertySelection_ReplacesRuleProperty", async () => {
@@ -74,17 +76,15 @@ describe("SortMenu", () => {
     const sort = await tableView.openSortMenu();
     await sort.addRule("Name");
 
-    await tableView.user.click(
-      sort.root.querySelector<HTMLElement>(
-        '[role="combobox"][aria-label="Name"]',
-      )!,
-    );
+    await tableView.user.click(sort.propertyTrigger("col1"));
     await tableView.user.click(
       await screen.findByRole("option", { name: "Done" }),
     );
 
-    expect(sort.moveHandle("Done")).toBeVisible();
-    expect(sort.directionTrigger("Checked → unchecked")).toBeVisible();
+    expect(sort.moveHandle("col2")).toBeVisible();
+    expect(sort.directionTrigger("col2")).toHaveTextContent(
+      "Checked → unchecked",
+    );
   });
 
   it("SortMenu_AddPanel_DisablesAlreadySortedProperties", async () => {
@@ -114,7 +114,7 @@ describe("SortMenu", () => {
     const sort = await tableView.openSortMenu();
     await sort.addRule("Name");
 
-    await sort.remove("Name");
+    await sort.remove("col1");
 
     expect(sort.queryDirection("A → Z")).not.toBeInTheDocument();
   });
@@ -132,11 +132,11 @@ describe("SortMenu", () => {
     await sort.addRule("Name");
     await sort.addRule("Complete");
 
-    await sort.openDirection("Checked → unchecked", "Unchecked → checked");
+    await sort.openDirection("complete", "Unchecked → checked");
     await tableView.user.click(sort.directionOption("Unchecked → checked"));
 
-    await sort.remove("Name");
-    expect(sort.moveHandle("Complete")).toBeVisible();
+    await sort.remove("title");
+    expect(sort.moveHandle("complete")).toBeVisible();
 
     await sort.startAdding();
     expect(sort.propertyOption("Score")).toBeVisible();
@@ -164,17 +164,13 @@ describe("SortMenu", () => {
     const sort = await tableView.openSortMenu();
 
     await sort.addRule("Name");
-    await tableView.user.click(
-      sort.root.querySelector<HTMLElement>(
-        '[role="combobox"][aria-label="Name"]',
-      )!,
-    );
+    await tableView.user.click(sort.propertyTrigger("name"));
     await tableView.user.click(
       await screen.findByRole("option", { name: "Legacy" }),
     );
-    await sort.remove("Legacy");
+    await sort.remove("legacy");
     await sort.addRule("Legacy");
-    expect(sort.directionTrigger("Ascending")).toBeVisible();
+    expect(sort.directionTrigger("legacy")).toHaveTextContent("Ascending");
   });
 
   it("SortMenu_UsesPluginDirectionLabelsAndKeepsOneMethodCompact", async () => {
@@ -183,15 +179,11 @@ describe("SortMenu", () => {
 
     await sort.addRule("Name");
 
-    expect(
-      within(sort.root).getByRole("combobox", { name: "A → Z" }),
-    ).toBeVisible();
+    expect(sort.directionTrigger("col1")).toHaveTextContent("A → Z");
     expect(
       within(sort.root).queryByRole("combobox", { name: "Sort method" }),
     ).not.toBeInTheDocument();
-    await tableView.user.click(
-      within(sort.root).getByRole("combobox", { name: "A → Z" }),
-    );
+    await tableView.user.click(sort.directionTrigger("col1"));
     expect(await screen.findByRole("option", { name: "Z → A" })).toBeVisible();
   });
 
@@ -200,11 +192,13 @@ describe("SortMenu", () => {
     const sort = await tableView.openSortMenu();
 
     await sort.addRule("Score");
-    expect(sort.directionTrigger("Low → high")).toBeVisible();
+    expect(sort.directionTrigger("score")).toHaveTextContent("Low → high");
     await sort.addRule("Complete");
-    expect(sort.directionTrigger("Checked → unchecked")).toBeVisible();
+    expect(sort.directionTrigger("complete")).toHaveTextContent(
+      "Checked → unchecked",
+    );
     await sort.addRule("Due");
-    expect(sort.directionTrigger("Old → new")).toBeVisible();
+    expect(sort.directionTrigger("due")).toHaveTextContent("Old → new");
   });
 
   it("SortMenu_CustomRuntimePlugin_UsesDefaultSortingMethod", async () => {
@@ -276,9 +270,7 @@ describe("SortMenu", () => {
         "Three",
       ]),
     );
-    expect(
-      within(sort.root).getByRole("combobox", { name: "A first" }),
-    ).toBeVisible();
+    expect(sort.directionTrigger("code")).toHaveTextContent("A first");
     expect(within(sort.root).getAllByRole("combobox")).toHaveLength(2);
   });
 });

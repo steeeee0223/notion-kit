@@ -5,6 +5,7 @@ import { v4 } from "uuid";
 
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
+import type { FilterRule } from "@/features/filtering";
 import type { _TableInstance } from "@/features/types";
 import { createIdsUpdater } from "@/features/utils";
 import type { ColumnInfo, PluginType, Row } from "@/lib/types";
@@ -46,6 +47,10 @@ export interface ColumnsInfoTableApi {
   getColumnPlugin: (colId: string) => UnknownCellPlugin;
   getDeletedColumns: () => ColumnInfo[];
   countVisibleColumns: () => number;
+  getFilterProperties: () => ColumnInfo[];
+  getTitleFilterRule: () =>
+    | Pick<FilterRule, "propertyId" | "operator">
+    | undefined;
   // Column Setters
   _setColumnInfo: (
     colId: string,
@@ -248,6 +253,27 @@ export const ColumnsInfoFeature: TableFeature = {
         if (!info.hidden && !info.isDeleted) acc++;
         return acc;
       }, 0);
+    };
+    instance.getFilterProperties = () => {
+      const columnsInfo = instance.atoms.columnsInfo.get();
+      const plugins = instance.atoms.cellPlugins.get();
+      return Object.values(columnsInfo).filter(
+        (property) =>
+          !property.isDeleted &&
+          Boolean(plugins[property.type]?.filtering?.operators.length),
+      );
+    };
+    instance.getTitleFilterRule = () => {
+      const titleProperty = instance
+        .getFilterProperties()
+        .find(({ type }) => type === "title");
+      if (!titleProperty) return undefined;
+      const operator =
+        instance.atoms.cellPlugins.get()[titleProperty.type]?.filtering
+          ?.operators[0];
+      return operator
+        ? { propertyId: titleProperty.id, operator: operator.id }
+        : undefined;
     };
     /** Overrides */
     instance.toggleAllColumnsVisible = () => {

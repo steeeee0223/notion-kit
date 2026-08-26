@@ -53,6 +53,98 @@ export interface AdvancedFilteringTableApi {
   validateFilters: (value: unknown) => value is TableFilterState;
 }
 
+export interface AdvancedFilteringTableState {
+  filterEvaluationTick: number;
+}
+
+type FilterNode = FilterGroup | FilterRule;
+type FilterNodeUpdater = (node: FilterNode) => FilterNode | null;
+
+function mapFilterNode(
+  node: FilterNode,
+  nodeId: string,
+  update: FilterNodeUpdater,
+): FilterNode | null {
+  if (node.id === nodeId) return update(node);
+  if (node.kind === "rule") return node;
+
+  let changed = false;
+  const children: FilterNode[] = [];
+
+  for (const child of node.children) {
+    const mappedChild = mapFilterNode(child, nodeId, update);
+    if (mappedChild !== child) changed = true;
+    if (mappedChild) children.push(mappedChild);
+  }
+
+  return changed ? { ...node, children } : node;
+}
+
+export function countFilterRules(state: unknown): number {
+  if (!validateTableFilterState(state) || state === null) return 0;
+
+  const count = (group: FilterGroup): number =>
+    group.children.reduce(
+      (total, child) => total + (child.kind === "rule" ? 1 : count(child)),
+      0,
+    );
+
+  return count(state);
+}
+
+export function createFilterRule(
+  propertyId: string,
+  operator: string,
+): FilterRule {
+  return { kind: "rule", id: v4(), propertyId, operator };
+}
+
+export function createFilterGroup(): FilterGroup {
+  return { kind: "group", id: v4(), logic: "and", children: [] };
+}
+
+export function appendFilterNode(
+  state: TableFilterState | undefined,
+  groupId: string,
+  node: FilterNode,
+): TableFilterState {
+  if (!state) {
+    return {
+      kind: "group",
+      id: v4(),
+      logic: "and",
+      children: [node],
+    };
+  }
+
+  const updated = mapFilterNode(state, groupId, (current) =>
+    current.kind === "group"
+      ? { ...current, children: [...current.children, node] }
+      : current,
+  );
+  return updated?.kind === "group" ? updated : null;
+}
+
+export function updateFilterNode(
+  state: TableFilterState | undefined,
+  nodeId: string,
+  update: (node: FilterNode) => FilterNode,
+): TableFilterState {
+  if (!state) return null;
+  const updated = mapFilterNode(state, nodeId, update);
+  return updated?.kind === "group" ? updated : null;
+}
+
+export function removeFilterNode(
+  state: TableFilterState | undefined,
+  nodeId: string,
+): TableFilterState {
+  if (!state) return null;
+  const updated = mapFilterNode(state, nodeId, () => null);
+  if (updated?.kind !== "group" || updated.children.length === 0) return null;
+  return updated;
+}
+
 function isPlainRecord(value: object) {
   const prototype = Reflect.getPrototypeOf(value);
   return prototype === Object.prototype || prototype === null;
@@ -489,6 +581,7 @@ export function getAdvancedFilteredRowModel<TData extends RowData>(): (
         instance.atoms.columnsInfo.get(),
         instance.atoms.cellPlugins.get(),
         table.getAllLeafColumns(),
+        instance.atoms.filterEvaluationTick.get(),
       ],
       fn: (preFilteredRowModel, columnFilters, globalFilter, filters) => {
         const nativeMatches = prepareNativeFiltering(
@@ -536,6 +629,10 @@ export function getAdvancedFilteredRowModel<TData extends RowData>(): (
 }
 
 export const AdvancedFilteringFeature: TableFeature = {
+  getInitialState: (state): AdvancedFilteringTableState => ({
+    filterEvaluationTick: 0,
+    ...state,
+  }),
   constructTableAPIs: (table) => {
     const instance = table as unknown as _TableInstance;
     instance.getFilters = () => instance.getTableGlobalState().filters;

@@ -68,6 +68,33 @@ function createNumberPlugin(
   };
 }
 
+function createRelativeClockPlugin(
+  receivedContexts: FilterEvaluationContext[],
+): CellPlugin<string, number, undefined> {
+  return {
+    id: "score",
+    meta: { name: "Score", desc: "Score", icon: null },
+    default: { name: "Score", icon: null, data: 0, config: undefined },
+    fromValue: (value) => Number(value),
+    toValue: (value) => value,
+    toTextValue: (value) => String(value),
+    filtering: {
+      operators: [
+        {
+          id: "relative-to-today",
+          name: "Relative to today",
+          operand: { kind: "relative-date" },
+          matches: (_value, _row, _config, _operand, context) => {
+            receivedContexts.push(context);
+            return context.now >= Date.UTC(2025, 0, 16);
+          },
+        },
+      ],
+    },
+    renderCellValue: () => null,
+  };
+}
+
 const properties: ColumnInfo[] = [
   { id: "name", name: "Name", type: "search", config: undefined },
   { id: "score", name: "Score", type: "score", config: undefined },
@@ -152,16 +179,36 @@ function scoreFilter(value: number): TableFilterState {
   };
 }
 
+function relativeScoreFilter(): TableFilterState {
+  return {
+    kind: "group",
+    id: "root",
+    logic: "and",
+    children: [
+      {
+        kind: "rule",
+        id: "relative-score-rule",
+        propertyId: "score",
+        operator: "relative-to-today",
+        value: { offsetDays: 0 },
+      },
+    ],
+  };
+}
+
 function renderFilteringTable(options?: {
   filters?: TableFilterState;
   onViewChange?: ResourceChangeHandler<TableViewState, ViewResourceAction>;
   receivedContexts?: FilterEvaluationContext[];
+  plugins?: CellPlugin[];
 }) {
-  const plugins = arrayToEntity([
-    createTextPlugin("search", (value) => `indexed:${value}`),
-    createNumberPlugin(options?.receivedContexts),
-    createTextPlugin("city", (value) => `indexed:${value}`),
-  ]);
+  const plugins = arrayToEntity(
+    options?.plugins ?? [
+      createTextPlugin("search", (value) => `indexed:${value}`),
+      createNumberPlugin(options?.receivedContexts),
+      createTextPlugin("city", (value) => `indexed:${value}`),
+    ],
+  );
   return renderHook(() =>
     useTableView({
       plugins,
@@ -364,6 +411,35 @@ describe("useTableView filtering pipeline", () => {
     expect(receivedContexts.map(({ now }) => now)).toEqual([
       100, 100, 100, 100,
     ]);
+  });
+
+  it("AdvancedFiltering_RelativeRulesRefreshAtTheNextMinuteBoundary", async () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(Date.UTC(2025, 0, 15, 23, 59, 59));
+      const receivedContexts: FilterEvaluationContext[] = [];
+      const { result } = renderFilteringTable({
+        filters: relativeScoreFilter(),
+        plugins: [
+          createTextPlugin("search"),
+          createRelativeClockPlugin(receivedContexts),
+          createTextPlugin("city"),
+        ],
+      });
+
+      expect(result.current.table.getFilteredRowModel().rows).toEqual([]);
+
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(1_000);
+      });
+
+      expect(result.current.table.getFilteredRowModel().rows).toHaveLength(4);
+      expect(receivedContexts.map(({ now }) => now)).toContain(
+        Date.UTC(2025, 0, 16),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("GlobalSearch_RecomputesWhenAnActivePropertyBecomesDeleted", () => {

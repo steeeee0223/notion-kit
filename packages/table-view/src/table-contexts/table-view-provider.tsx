@@ -13,7 +13,7 @@ import { ListViewContent } from "@/list-view";
 import { DEFAULT_PLUGINS, type DefaultPlugins } from "@/plugins";
 import { RowView } from "@/row-view";
 import { TimelineViewContent } from "@/timeline-view";
-import { Toolbar } from "@/tools/toolbar";
+import { ViewControls } from "@/tools";
 
 import { defaultColumn } from "./default-column";
 import { TableViewContent } from "./table-view-content";
@@ -71,7 +71,7 @@ export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
     <TableViewWrapper {...props}>
       <div className="relative flex flex-col gap-4">
         <div className="sticky top-0 z-(--z-row) bg-main px-24 pb-2">
-          <Toolbar />
+          <ViewControls />
         </div>
         <Content />
       </div>
@@ -85,8 +85,14 @@ function Content() {
   const { table } = useTableViewCtx();
 
   return (
-    <table.Subscribe selector={(state) => state.tableGlobal.layout}>
-      {(layout) => {
+    <table.Subscribe
+      selector={(state) => ({
+        layout: state.tableGlobal.layout,
+        globalFilter: state.globalFilter as unknown,
+        filters: state.tableGlobal.filters as unknown,
+      })}
+    >
+      {({ layout }) => {
         switch (layout) {
           case "list":
             return <ListViewContent />;

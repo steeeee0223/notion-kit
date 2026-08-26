@@ -4,6 +4,10 @@ export * from "@/lib/types";
 export * from "@/lib/utils";
 export {
   AdvancedFilteringFeature,
+  appendFilterNode,
+  countFilterRules,
+  createFilterGroup,
+  createFilterRule,
   ColumnsInfoFeature,
   CountingFeature,
   DEFAULT_FEATURES,
@@ -16,6 +20,8 @@ export {
   getAdvancedFilteredRowModel,
   getExtendedGroupedRowModel,
   pluginTextIncludes,
+  removeFilterNode,
+  updateFilterNode,
   validateTableFilterState,
 } from "@/features";
 export type {
