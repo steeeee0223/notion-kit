@@ -4,9 +4,7 @@ import {
   appendFilterNode,
   createFilterGroup,
   createFilterRule,
-  type TableFilterState,
 } from "@notion-kit/table-hook";
-import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 import {
   Button,
   DropdownMenu,
@@ -22,7 +20,6 @@ import {
   FilterGroupEditor,
   PendingPropertyPicker,
 } from "./filter-group-editor";
-import type { DefaultFilterRule, FilterProperty } from "./types";
 
 export function FilterMenu() {
   const { table } = useTableViewCtx();
@@ -35,86 +32,44 @@ export function FilterMenu() {
         cellPlugins: state.cellPlugins,
       })}
     >
-      {({ filters, cellPlugins }) => (
-        <FilterMenuContent filters={filters} plugins={cellPlugins} />
-      )}
+      {({ filters }) => {
+        const validFilters = table.validateFilters(filters) ? filters : null;
+
+        return (
+          <section
+            aria-label="Filters"
+            className="flex w-full min-w-0 flex-col gap-2 p-2"
+          >
+            {validFilters ? (
+              <FilterGroupEditor
+                group={validFilters}
+                root={validFilters}
+                depth={1}
+              />
+            ) : (
+              <EmptyFilterMenu />
+            )}
+          </section>
+        );
+      }}
     </table.Subscribe>
   );
 }
 
-function FilterMenuContent({
-  filters,
-  plugins,
-}: {
-  filters: unknown;
-  plugins: Record<string, CellPlugin>;
-}) {
+function EmptyFilterMenu() {
   const { table } = useTableViewCtx();
-  const validFilters = table.validateFilters(filters) ? filters : null;
+  const [addingRule, setAddingRule] = useState(false);
   const properties = table.getFilterProperties();
   const defaultRule = table.getTitleFilterRule();
-  const commit = (next: TableFilterState) => {
-    if (next === null) table.clearFilters();
-    else table.setFilters(next);
-  };
-
-  return (
-    <section
-      aria-label="Filters"
-      className="flex w-full min-w-0 flex-col gap-2 p-2"
-    >
-      {validFilters ? (
-        <FilterGroupEditor
-          group={validFilters}
-          root={validFilters}
-          depth={1}
-          properties={properties}
-          plugins={plugins}
-          onChange={commit}
-          defaultRule={defaultRule}
-        />
-      ) : (
-        <EmptyFilterMenu
-          properties={properties}
-          plugins={plugins}
-          defaultRule={defaultRule}
-          onAddRule={(propertyId, operator) =>
-            table.setFilters(
-              appendFilterNode(
-                undefined,
-                "",
-                createFilterRule(propertyId, operator),
-              ),
-            )
-          }
-          onAddGroup={() =>
-            table.setFilters(
-              appendFilterNode(undefined, "", createFilterGroup()),
-            )
-          }
-        />
-      )}
-    </section>
-  );
-}
-
-function EmptyFilterMenu({
-  properties,
-  plugins,
-  defaultRule,
-  onAddRule,
-  onAddGroup,
-}: {
-  properties: FilterProperty[];
-  plugins: Record<string, CellPlugin>;
-  defaultRule?: DefaultFilterRule;
-  onAddRule: (propertyId: string, operator: string) => void;
-  onAddGroup: () => void;
-}) {
-  const [addingRule, setAddingRule] = useState(false);
   const addRule = () => {
     if (defaultRule) {
-      onAddRule(defaultRule.propertyId, defaultRule.operator);
+      table.setFilters(
+        appendFilterNode(
+          undefined,
+          "",
+          createFilterRule(defaultRule.propertyId, defaultRule.operator),
+        ),
+      );
       return;
     }
     setAddingRule(true);
@@ -123,12 +78,7 @@ function EmptyFilterMenu({
   return (
     <>
       {addingRule && (
-        <PendingPropertyPicker
-          properties={properties}
-          plugins={plugins}
-          onCancel={() => setAddingRule(false)}
-          onSelect={(propertyId, operator) => onAddRule(propertyId, operator)}
-        />
+        <PendingPropertyPicker onCancel={() => setAddingRule(false)} />
       )}
       <DropdownMenu>
         <DropdownMenuTrigger
@@ -143,7 +93,14 @@ function EmptyFilterMenu({
             {properties.length > 0 && (
               <DropdownMenuItem label="Add rule" onClick={addRule} />
             )}
-            <DropdownMenuItem label="Add nested group" onClick={onAddGroup} />
+            <DropdownMenuItem
+              label="Add nested group"
+              onClick={() =>
+                table.setFilters(
+                  appendFilterNode(undefined, "", createFilterGroup()),
+                )
+              }
+            />
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>

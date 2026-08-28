@@ -8,12 +8,7 @@ import {
   removeFilterNode,
   updateFilterNode,
 } from "@notion-kit/table-hook";
-import type {
-  FilterGroup,
-  FilterRule,
-  TableFilterState,
-} from "@notion-kit/table-hook";
-import type { CellPlugin } from "@notion-kit/table-hook/plugins";
+import type { FilterGroup, FilterRule } from "@notion-kit/table-hook";
 import {
   Button,
   DropdownMenu,
@@ -33,12 +28,9 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { PropertySelect } from "@/common";
+import { useTableViewCtx } from "@/table-contexts";
 
-import { OperandControl, operandDraftKey } from "./operand-control";
-import type { DefaultFilterRule, FilterProperty } from "./types";
-import { omitRuleValue } from "./utils";
-
-type FilterNode = FilterGroup | FilterRule;
+import { OperandControl } from "./operand-control";
 
 const LOGIC_ITEMS = [
   { value: "and", label: "And" },
@@ -49,36 +41,25 @@ interface FilterGroupEditorProps {
   group: FilterGroup;
   root: FilterGroup;
   depth: number;
-  properties: FilterProperty[];
-  plugins: Record<string, CellPlugin>;
-  onChange: (next: TableFilterState) => void;
-  defaultRule?: DefaultFilterRule;
 }
 
 export function FilterGroupEditor({
   group,
   root,
   depth,
-  properties,
-  plugins,
-  onChange,
-  defaultRule,
 }: FilterGroupEditorProps) {
+  const { table } = useTableViewCtx();
   const [addingRule, setAddingRule] = useState(false);
-  const updateNode = (
-    nodeId: string,
-    update: (node: FilterNode) => FilterNode,
-  ) => onChange(updateFilterNode(root, nodeId, update));
-  const removeNode = (nodeId: string) =>
-    onChange(removeFilterNode(root, nodeId));
+  const properties = table.getFilterProperties();
+  const defaultRule = table.getTitleFilterRule();
   const addGroup = () =>
-    onChange(appendFilterNode(root, group.id, createFilterGroup()));
+    table.setFilters(appendFilterNode(root, group.id, createFilterGroup()));
   const addRule = () => {
     if (!defaultRule) {
       setAddingRule(true);
       return;
     }
-    onChange(
+    table.setFilters(
       appendFilterNode(
         root,
         group.id,
@@ -98,7 +79,7 @@ export function FilterGroupEditor({
     >
       {depth > 1 && (
         <div className="flex justify-end">
-          <NodeActions id={group.id} onDelete={removeNode} />
+          <NodeActions id={group.id} root={root} />
         </div>
       )}
 
@@ -107,32 +88,14 @@ export function FilterGroupEditor({
           <FilterLogicLabel
             nodeId={child.id}
             index={index}
-            logic={group.logic}
-            onChange={(logic) =>
-              updateNode(group.id, (node) =>
-                node.kind === "group" ? { ...node, logic } : node,
-              )
-            }
+            group={group}
+            root={root}
           />
           <div className="min-w-0 flex-1">
             {child.kind === "group" ? (
-              <FilterGroupEditor
-                group={child}
-                root={root}
-                depth={depth + 1}
-                properties={properties}
-                plugins={plugins}
-                onChange={onChange}
-                defaultRule={defaultRule}
-              />
+              <FilterGroupEditor group={child} root={root} depth={depth + 1} />
             ) : (
-              <FilterRuleEditor
-                rule={child}
-                root={root}
-                properties={properties}
-                plugins={plugins}
-                onChange={onChange}
-              />
+              <FilterRuleEditor rule={child} root={root} />
             )}
           </div>
         </div>
@@ -140,19 +103,9 @@ export function FilterGroupEditor({
 
       {addingRule && (
         <PendingPropertyPicker
-          properties={properties}
-          plugins={plugins}
+          root={root}
+          parentId={group.id}
           onCancel={() => setAddingRule(false)}
-          onSelect={(propertyId, operator) => {
-            onChange(
-              appendFilterNode(
-                root,
-                group.id,
-                createFilterRule(propertyId, operator),
-              ),
-            );
-            setAddingRule(false);
-          }}
         />
       )}
       <DropdownMenu>
@@ -196,7 +149,7 @@ export function FilterGroupEditor({
               icon={<Icon.Trash className="size-4" />}
               label="Delete filter"
               variant="warning"
-              onClick={() => onChange(null)}
+              onClick={() => table.clearFilters()}
             />
           </MenuGroup>
         </>
@@ -208,14 +161,16 @@ export function FilterGroupEditor({
 function FilterLogicLabel({
   nodeId,
   index,
-  logic,
-  onChange,
+  group,
+  root,
 }: {
   nodeId: string;
   index: number;
-  logic: "and" | "or";
-  onChange: (logic: "and" | "or") => void;
+  group: FilterGroup;
+  root: FilterGroup;
 }) {
+  const { table } = useTableViewCtx();
+  const { logic } = group;
   if (index === 0) {
     return (
       <span
@@ -242,7 +197,12 @@ function FilterLogicLabel({
         items={LOGIC_ITEMS}
         value={logic}
         onValueChange={(value) => {
-          if (value === "and" || value === "or") onChange(value);
+          if (value !== "and" && value !== "or") return;
+          table.setFilters(
+            updateFilterNode(root, group.id, (node) =>
+              node.kind === "group" ? { ...node, logic: value } : node,
+            ),
+          );
         }}
       >
         <SelectTrigger aria-label="Filter logic select" className="px-1">
@@ -262,19 +222,15 @@ function FilterLogicLabel({
 function FilterRuleEditor({
   rule,
   root,
-  properties,
-  plugins,
-  onChange,
 }: {
   rule: FilterRule;
   root: FilterGroup;
-  properties: FilterProperty[];
-  plugins: Record<string, CellPlugin>;
-  onChange: (next: TableFilterState) => void;
 }) {
+  const { table } = useTableViewCtx();
+  const properties = table.getFilterProperties();
   const property = properties.find(({ id }) => id === rule.propertyId);
   const operators = property
-    ? (plugins[property.type]?.filtering?.operators ?? [])
+    ? (table.getColumnPlugin(property.id).filtering?.operators ?? [])
     : [];
   const operator = operators.find(({ id }) => id === rule.operator);
   const operatorItems = [
@@ -284,7 +240,7 @@ function FilterRuleEditor({
     ...operators.map(({ id, name }) => ({ value: id, label: name })),
   ];
   const updateRule = (update: (current: FilterRule) => FilterRule) =>
-    onChange(
+    table.setFilters(
       updateFilterNode(root, rule.id, (node) =>
         node.kind === "rule" ? update(node) : node,
       ),
@@ -300,7 +256,7 @@ function FilterRuleEditor({
         onValueChange={(propertyId) => {
           const nextProperty = properties.find(({ id }) => id === propertyId);
           const firstOperator = nextProperty
-            ? plugins[nextProperty.type]?.filtering?.operators[0]
+            ? table.getColumnPlugin(nextProperty.id).filtering?.operators[0]
             : undefined;
           if (!firstOperator) return;
           updateRule((current) => ({
@@ -351,40 +307,15 @@ function FilterRuleEditor({
         </SelectContent>
       </Select>
 
-      {operator && property && (
-        <OperandControl
-          key={`${rule.id}:${rule.operator}:${operandDraftKey(
-            rule.value,
-            operator.operand,
-            property.config,
-          )}`}
-          rule={rule}
-          metadata={operator.operand}
-          property={property}
-          onChange={(value) =>
-            updateRule((current) =>
-              value === undefined
-                ? omitRuleValue(current)
-                : { ...current, value },
-            )
-          }
-        />
-      )}
-      <NodeActions
-        id={rule.id}
-        onDelete={(id) => onChange(removeFilterNode(root, id))}
-      />
+      {operator && property && <OperandControl rule={rule} root={root} />}
+      <NodeActions id={rule.id} root={root} />
     </div>
   );
 }
 
-function NodeActions({
-  id,
-  onDelete,
-}: {
-  id: string;
-  onDelete: (id: string) => void;
-}) {
+function NodeActions({ id, root }: { id: string; root: FilterGroup }) {
+  const { table } = useTableViewCtx();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -400,7 +331,7 @@ function NodeActions({
             variant="warning"
             icon={<Icon.Trash />}
             label="Delete"
-            onClick={() => onDelete(id)}
+            onClick={() => table.setFilters(removeFilterNode(root, id))}
           />
         </DropdownMenuGroup>
       </DropdownMenuContent>
@@ -409,16 +340,16 @@ function NodeActions({
 }
 
 export function PendingPropertyPicker({
-  properties,
-  plugins,
-  onSelect,
+  root,
+  parentId = "",
   onCancel,
 }: {
-  properties: FilterProperty[];
-  plugins: Record<string, CellPlugin>;
-  onSelect: (propertyId: string, operator: string) => void;
+  root?: FilterGroup;
+  parentId?: string;
   onCancel?: () => void;
 }) {
+  const { table } = useTableViewCtx();
+  const properties = table.getFilterProperties();
   const items = properties.map(({ id, name }) => ({ value: id, label: name }));
 
   return (
@@ -433,9 +364,17 @@ export function PendingPropertyPicker({
         if (propertyId === null) return;
         const property = properties.find(({ id }) => id === propertyId);
         const operator = property
-          ? plugins[property.type]?.filtering?.operators[0]
+          ? table.getColumnPlugin(property.id).filtering?.operators[0]
           : undefined;
-        if (operator) onSelect(propertyId, operator.id);
+        if (!operator) return;
+        table.setFilters(
+          appendFilterNode(
+            root,
+            parentId,
+            createFilterRule(propertyId, operator.id),
+          ),
+        );
+        onCancel?.();
       }}
     >
       <SelectTrigger aria-label="Add property select">

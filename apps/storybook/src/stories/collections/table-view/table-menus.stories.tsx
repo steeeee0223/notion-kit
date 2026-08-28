@@ -115,6 +115,43 @@ export const SortMenu: Story = {
   },
 };
 
+export const FilterMenu: Story = {
+  render: () => {
+    const { table } = useTableViewCtx();
+
+    return (
+      <table.Subscribe selector={(state) => state.tableGlobal.filters}>
+        {(filters) => (
+          <div className="grid grid-cols-2 justify-between gap-4 p-20">
+            <Popover>
+              <PopoverTrigger
+                render={
+                  <Button
+                    variant="nav-icon"
+                    aria-label="Filter"
+                    className="[&_svg]:fill-current"
+                  >
+                    <Icon.FilterSmall />
+                  </Button>
+                }
+              />
+              <PopoverContent
+                align="start"
+                side="bottom"
+                collisionPadding={12}
+                className="w-140"
+              >
+                <Menu.FilterMenu />
+              </PopoverContent>
+            </Popover>
+            <Code title="Filters" codeObject={filters} />
+          </div>
+        )}
+      </table.Subscribe>
+    );
+  },
+};
+
 export const CalcMenu: Story = {
   render: () => {
     const { table } = useTableViewCtx();

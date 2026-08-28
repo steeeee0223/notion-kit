@@ -1,7 +1,12 @@
 import { useState } from "react";
 
 import { Icon } from "@notion-kit/icons";
-import type { FilterRule, FilterValue } from "@notion-kit/table-hook";
+import { updateFilterNode } from "@notion-kit/table-hook";
+import type {
+  FilterGroup,
+  FilterRule,
+  FilterValue,
+} from "@notion-kit/table-hook";
 import type { FilterOperandMetadata } from "@notion-kit/table-hook/plugins";
 import {
   Button,
@@ -18,7 +23,8 @@ import {
   SelectValue,
 } from "@notion-kit/ui/primitives";
 
-import type { FilterProperty } from "./types";
+import { useTableViewCtx } from "@/table-contexts";
+
 import {
   calendarDateKey,
   dateKeyToCalendarDate,
@@ -26,80 +32,67 @@ import {
   getOptionNames,
   getRecordNumber,
   getTimeZone,
+  omitRuleValue,
   parseDate,
 } from "./utils";
 
 export function OperandControl({
   rule,
-  metadata,
-  property,
-  onChange,
+  root,
 }: {
   rule: FilterRule;
+  root: FilterGroup;
+}) {
+  const { table } = useTableViewCtx();
+  const property = table
+    .getFilterProperties()
+    .find(({ id }) => id === rule.propertyId);
+  const operator = property
+    ? table
+        .getColumnPlugin(property.id)
+        .filtering?.operators.find(({ id }) => id === rule.operator)
+    : undefined;
+
+  if (!property || !operator) return null;
+
+  return (
+    <OperandControlContent
+      key={`${rule.id}:${rule.operator}:${operandDraftKey(
+        rule.value,
+        operator.operand,
+        property.config,
+      )}`}
+      rule={rule}
+      root={root}
+      metadata={operator.operand}
+    />
+  );
+}
+
+function OperandControlContent({
+  rule,
+  root,
+  metadata,
+}: {
+  rule: FilterRule;
+  root: FilterGroup;
   metadata: FilterOperandMetadata;
-  property: FilterProperty;
-  onChange: (value: FilterValue | undefined) => void;
 }) {
   switch (metadata.kind) {
     case "none":
       return null;
-    case "option": {
-      const options = getOptionNames(property.config);
-      const items = options.map((name) => ({ value: name, label: name }));
-      const current = typeof rule.value === "string" ? rule.value : null;
-      return (
-        <Select
-          items={items}
-          value={current}
-          onValueChange={(value) => value !== null && onChange(value)}
-        >
-          <SelectTrigger
-            aria-label="Value select"
-            className="min-w-24 flex-1 border border-border"
-          >
-            <SelectValue placeholder="Choose option" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {options.map((name) => (
-                <SelectItem key={name} value={name} label={name} />
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      );
-    }
+    case "option":
+      return <OptionOperand rule={rule} root={root} />;
     case "date-range":
-      return (
-        <DateRangeOperand
-          rule={rule}
-          timeZone={getTimeZone(property.config)}
-          onChange={onChange}
-        />
-      );
+      return <DateRangeOperand rule={rule} root={root} />;
     case "date":
-      return (
-        <DateOperand
-          rule={rule}
-          timeZone={getTimeZone(property.config)}
-          onChange={onChange}
-        />
-      );
+      return <DateOperand rule={rule} root={root} />;
     case "number":
-      return (
-        <NumericOperand rule={rule} relative={false} onChange={onChange} />
-      );
+      return <NumericOperand rule={rule} root={root} relative={false} />;
     case "relative-date":
-      return <NumericOperand rule={rule} relative onChange={onChange} />;
+      return <NumericOperand rule={rule} root={root} relative />;
     case "text":
-      return (
-        <Input
-          aria-label="Value"
-          value={typeof rule.value === "string" ? rule.value : ""}
-          onChange={(event) => onChange(event.currentTarget.value)}
-          className="min-w-24 flex-1"
-        />
-      );
+      return <TextOperand rule={rule} root={root} />;
   }
 }
 
@@ -120,13 +113,14 @@ export function operandDraftKey(
 
 function NumericOperand({
   rule,
+  root,
   relative,
-  onChange,
 }: {
   rule: FilterRule;
+  root: FilterGroup;
   relative: boolean;
-  onChange: (value: FilterValue | undefined) => void;
 }) {
+  const updateRule = useFilterRuleUpdate(root, rule.id);
   const persisted = relative
     ? getRecordNumber(rule.value, "offsetDays")
     : typeof rule.value === "number"
@@ -156,15 +150,67 @@ function NumericOperand({
         const next = event.currentTarget.value;
         setDraft({ value: next, base: authoritative });
         if (!next.trim()) {
-          onChange(undefined);
+          updateRule(undefined);
           return;
         }
         const number = parseNumericDraft(next, relative);
         if (number !== undefined) {
-          onChange(relative ? { offsetDays: number } : number);
+          updateRule(relative ? { offsetDays: number } : number);
         }
       }}
       onBlur={() => setDraft(null)}
+      className="min-w-24 flex-1"
+    />
+  );
+}
+
+function OptionOperand({
+  rule,
+  root,
+}: {
+  rule: FilterRule;
+  root: FilterGroup;
+}) {
+  const { table } = useTableViewCtx();
+  const updateRule = useFilterRuleUpdate(root, rule.id);
+  const property = table
+    .getFilterProperties()
+    .find(({ id }) => id === rule.propertyId);
+  const options = getOptionNames(property?.config);
+  const items = options.map((name) => ({ value: name, label: name }));
+  const current = typeof rule.value === "string" ? rule.value : null;
+
+  return (
+    <Select
+      items={items}
+      value={current}
+      onValueChange={(value) => value !== null && updateRule(value)}
+    >
+      <SelectTrigger
+        aria-label="Value select"
+        className="min-w-24 flex-1 border border-border"
+      >
+        <SelectValue placeholder="Choose option" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          {options.map((name) => (
+            <SelectItem key={name} value={name} label={name} />
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+}
+
+function TextOperand({ rule, root }: { rule: FilterRule; root: FilterGroup }) {
+  const updateRule = useFilterRuleUpdate(root, rule.id);
+
+  return (
+    <Input
+      aria-label="Value"
+      value={typeof rule.value === "string" ? rule.value : ""}
+      onChange={(event) => updateRule(event.currentTarget.value)}
       className="min-w-24 flex-1"
     />
   );
@@ -181,15 +227,13 @@ function parseNumericDraft(value: string, relative: boolean) {
   return number;
 }
 
-function DateOperand({
-  rule,
-  timeZone,
-  onChange,
-}: {
-  rule: FilterRule;
-  timeZone: string;
-  onChange: (value: FilterValue | undefined) => void;
-}) {
+function DateOperand({ rule, root }: { rule: FilterRule; root: FilterGroup }) {
+  const { table } = useTableViewCtx();
+  const updateRule = useFilterRuleUpdate(root, rule.id);
+  const property = table
+    .getFilterProperties()
+    .find(({ id }) => id === rule.propertyId);
+  const timeZone = getTimeZone(property?.config);
   const timestamp = getRecordNumber(rule.value, "timestamp");
   const authoritative = formatDateValue(timestamp, timeZone);
   const [draft, setDraft] = useState(authoritative);
@@ -197,7 +241,7 @@ function DateOperand({
     if (!date) return;
     const next = calendarDateKey(date);
     const nextTimestamp = parseDate(next, timeZone);
-    if (nextTimestamp !== undefined) onChange({ timestamp: nextTimestamp });
+    if (nextTimestamp !== undefined) updateRule({ timestamp: nextTimestamp });
   };
   return (
     <div className="flex min-w-24 flex-1 gap-1">
@@ -209,12 +253,12 @@ function DateOperand({
           const next = event.currentTarget.value;
           setDraft(next);
           if (!next) {
-            onChange(undefined);
+            updateRule(undefined);
             return;
           }
           const nextTimestamp = parseDate(next, timeZone);
           if (nextTimestamp !== undefined) {
-            onChange({ timestamp: nextTimestamp });
+            updateRule({ timestamp: nextTimestamp });
             setDraft(authoritative);
           }
         }}
@@ -244,13 +288,17 @@ function DateOperand({
 
 function DateRangeOperand({
   rule,
-  timeZone,
-  onChange,
+  root,
 }: {
   rule: FilterRule;
-  timeZone: string;
-  onChange: (value: FilterValue | undefined) => void;
+  root: FilterGroup;
 }) {
+  const { table } = useTableViewCtx();
+  const updateRule = useFilterRuleUpdate(root, rule.id);
+  const property = table
+    .getFilterProperties()
+    .find(({ id }) => id === rule.propertyId);
+  const timeZone = getTimeZone(property?.config);
   const authoritativeStart = formatDateValue(
     getRecordNumber(rule.value, "start"),
     timeZone,
@@ -263,7 +311,7 @@ function DateRangeOperand({
   const [end, setEnd] = useState(authoritativeEnd);
   const commit = (nextStart: string, nextEnd: string) => {
     if ((!nextStart || !nextEnd) && authoritativeStart && authoritativeEnd) {
-      onChange(undefined);
+      updateRule(undefined);
       return;
     }
     const startTimestamp = parseDate(nextStart, timeZone);
@@ -273,7 +321,7 @@ function DateRangeOperand({
       endTimestamp !== undefined &&
       startTimestamp <= endTimestamp
     ) {
-      onChange({ start: startTimestamp, end: endTimestamp });
+      updateRule({ start: startTimestamp, end: endTimestamp });
       setStart(authoritativeStart);
       setEnd(authoritativeEnd);
     }
@@ -330,6 +378,18 @@ function DateRangeOperand({
       />
     </div>
   );
+}
+
+function useFilterRuleUpdate(root: FilterGroup, ruleId: string) {
+  const { table } = useTableViewCtx();
+
+  return (value: FilterValue | undefined) =>
+    table.setFilters(
+      updateFilterNode(root, ruleId, (node) => {
+        if (node.kind !== "rule") return node;
+        return value === undefined ? omitRuleValue(node) : { ...node, value };
+      }),
+    );
 }
 
 function CalendarButton({
