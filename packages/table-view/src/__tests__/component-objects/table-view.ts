@@ -142,25 +142,7 @@ export class FilterMenuObject {
   }
 
   logic(id: string) {
-    return this.select(this.rowLabel(id), "Filter logic select");
-  }
-
-  addProperty() {
-    return this.select(this.menu(), "Add property select");
-  }
-
-  addPropertyTo(groupId: string) {
-    return this.select(this.group(groupId), "Add property select");
-  }
-
-  async selectPendingProperty(groupId: string, name: string) {
-    const picker = this.addPropertyTo(groupId);
-    if (picker.getAttribute("aria-expanded") !== "true") {
-      await this.user.click(picker);
-    }
-    await this.user.click(
-      await screen.findByRole("option", { name }, { timeout: 5_000 }),
-    );
+    return this.ownedControl(this.node(id), "combobox", "Filter logic select");
   }
 
   async openAddMenu(groupId: string) {
@@ -173,7 +155,7 @@ export class FilterMenuObject {
 
   emptyAddRule() {
     return within(this.menu()).getByRole("button", {
-      name: "+ Add filter rule",
+      name: "Add filter rule",
     });
   }
 
@@ -187,12 +169,8 @@ export class FilterMenuObject {
     );
   }
 
-  async addMenuItem(name: "Add rule" | "Add nested group") {
+  async addMenuItem(name: "Add filter rule" | "Add filter group") {
     return screen.findByRole("menuitem", { name }, { timeout: 5_000 });
-  }
-
-  rowLabel(nodeId: string) {
-    return screen.getByTestId(`filter-label-${nodeId}`);
   }
 
   async chooseProperty(id: string, name: string) {
@@ -209,7 +187,7 @@ export class FilterMenuObject {
     );
   }
 
-  async chooseLogic(id: string, name: "AND" | "OR") {
+  async chooseLogic(id: string, name: "And" | "Or") {
     await this.user.click(this.logic(id));
     await this.user.click(
       await screen.findByRole("option", { name }, { timeout: 5_000 }),
@@ -235,11 +213,19 @@ export class FilterMenuObject {
   }
 
   private ownedButton(owner: HTMLElement, name: string) {
-    const button = within(owner)
-      .getAllByRole("button", { name })
+    return this.ownedControl(owner, "button", name);
+  }
+
+  private ownedControl(
+    owner: HTMLElement,
+    role: "button" | "combobox",
+    name: string,
+  ) {
+    const control = within(owner)
+      .getAllByRole(role, { name })
       .find((candidate) => this.owner(candidate) === owner);
-    if (!button) throw new Error(`Unable to find ${name}`);
-    return button;
+    if (!control) throw new Error(`Unable to find ${name}`);
+    return control;
   }
 
   private owner(element: HTMLElement) {

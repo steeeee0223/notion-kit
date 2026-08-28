@@ -69,7 +69,7 @@ describe("ViewControls active filters", () => {
     await tableView.clickButton("Filter");
 
     expect(
-      await screen.findByRole("button", { name: "+ Add filter rule" }),
+      await screen.findByRole("button", { name: "Add filter rule" }),
     ).toBeVisible();
   });
 

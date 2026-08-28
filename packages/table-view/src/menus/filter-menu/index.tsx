@@ -1,25 +1,10 @@
-import { useState } from "react";
-
-import {
-  appendFilterNode,
-  createFilterGroup,
-  createFilterRule,
-} from "@notion-kit/table-hook";
-import {
-  Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@notion-kit/ui/primitives";
+import { Icon } from "@notion-kit/icons";
+import { MenuGroup, MenuItem, Separator } from "@notion-kit/ui/primitives";
 
 import { useTableViewCtx } from "@/table-contexts";
 
-import {
-  FilterGroupEditor,
-  PendingPropertyPicker,
-} from "./filter-group-editor";
+import { AddFilterMenu } from "./add-filter-menu";
+import { FilterGroupEditor } from "./filter-group-editor";
 
 export function FilterMenu() {
   const { table } = useTableViewCtx();
@@ -36,74 +21,34 @@ export function FilterMenu() {
         const validFilters = table.validateFilters(filters) ? filters : null;
 
         return (
-          <section
-            aria-label="Filters"
-            className="flex w-full min-w-0 flex-col gap-2 p-2"
-          >
+          <section aria-label="Filters">
             {validFilters ? (
-              <FilterGroupEditor
-                group={validFilters}
-                root={validFilters}
-                depth={1}
-              />
+              <>
+                <FilterGroupEditor
+                  group={validFilters}
+                  root={validFilters}
+                  depth={1}
+                  testId={`filter-group-${validFilters.id}`}
+                />
+                <Separator />
+                <MenuGroup>
+                  {/* Delete action */}
+                  <MenuItem
+                    icon={<Icon.Trash />}
+                    label="Delete filter"
+                    variant="warning"
+                    onClick={() => table.clearFilters()}
+                  />
+                </MenuGroup>
+              </>
             ) : (
-              <EmptyFilterMenu />
+              <MenuGroup>
+                <AddFilterMenu />
+              </MenuGroup>
             )}
           </section>
         );
       }}
     </table.Subscribe>
-  );
-}
-
-function EmptyFilterMenu() {
-  const { table } = useTableViewCtx();
-  const [addingRule, setAddingRule] = useState(false);
-  const properties = table.getFilterProperties();
-  const defaultRule = table.getTitleFilterRule();
-  const addRule = () => {
-    if (defaultRule) {
-      table.setFilters(
-        appendFilterNode(
-          undefined,
-          "",
-          createFilterRule(defaultRule.propertyId, defaultRule.operator),
-        ),
-      );
-      return;
-    }
-    setAddingRule(true);
-  };
-
-  return (
-    <>
-      {addingRule && (
-        <PendingPropertyPicker onCancel={() => setAddingRule(false)} />
-      )}
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          render={
-            <Button size="xs" variant="hint">
-              + Add filter rule
-            </Button>
-          }
-        />
-        <DropdownMenuContent>
-          <DropdownMenuGroup>
-            {properties.length > 0 && (
-              <DropdownMenuItem label="Add rule" onClick={addRule} />
-            )}
-            <DropdownMenuItem
-              label="Add nested group"
-              onClick={() =>
-                table.setFilters(
-                  appendFilterNode(undefined, "", createFilterGroup()),
-                )
-              }
-            />
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
   );
 }

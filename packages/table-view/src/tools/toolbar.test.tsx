@@ -91,7 +91,9 @@ describe("Toolbar", () => {
     const dialog = screen.getByRole("dialog", { name: "Filters" });
     expect(dialog).toBeVisible();
     expect(screen.getAllByRole("region", { name: "Filters" })).toHaveLength(1);
-    expect(await screen.findByRole("option", { name: "Name" })).toBeVisible();
+    expect(
+      await screen.findByRole("button", { name: "Add filter rule" }),
+    ).toBeVisible();
     expect(onViewChange).not.toHaveBeenCalled();
 
     await tableView.user.keyboard("{Escape}");
@@ -131,7 +133,9 @@ describe("Toolbar", () => {
     await tableView.clickButton("Filter");
 
     expect(screen.getByTestId("filter-group-nested-empty")).toBeVisible();
-    expect(await screen.findByRole("option", { name: "Name" })).toBeVisible();
+    expect(
+      await screen.findAllByRole("button", { name: "Add filter rule" }),
+    ).toHaveLength(2);
     expect(onViewChange).not.toHaveBeenCalled();
 
     await tableView.user.keyboard("{Escape}");

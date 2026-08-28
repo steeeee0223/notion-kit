@@ -14,11 +14,16 @@ import { useTableViewCtx } from "@/table-contexts";
 import { DefaultIcon } from "./default-icon";
 
 interface PropertySelectProps {
+  className?: string;
   value: string;
   onValueChange: (propertyId: string) => void;
 }
 
-export function PropertySelect({ value, onValueChange }: PropertySelectProps) {
+export function PropertySelect({
+  className,
+  value,
+  onValueChange,
+}: PropertySelectProps) {
   const { table } = useTableViewCtx();
 
   return (
@@ -56,7 +61,10 @@ export function PropertySelect({ value, onValueChange }: PropertySelectProps) {
           >
             <SelectTrigger
               aria-label="Property select"
-              className={cn("my-0 w-full max-w-45 border border-border")}
+              className={cn(
+                "my-0 w-full max-w-45 border border-border",
+                className,
+              )}
             >
               <SelectValue />
             </SelectTrigger>

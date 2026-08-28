@@ -112,14 +112,9 @@ describe("FilterMenu", () => {
     const tableView = renderFilterMenu({ filters });
     const filter = tableView.filterMenu();
 
-    await filter.chooseLogic("level-2", "OR");
+    await filter.chooseLogic("level-2", "Or");
     expect(filter.logic("level-2")).toHaveTextContent("Or");
-    await filter.openAddMenu("level-3");
-    expect(await filter.addMenuItem("Add rule")).toBeVisible();
-    expect(
-      screen.queryByRole("menuitem", { name: "Add nested group" }),
-    ).not.toBeInTheDocument();
-    await tableView.user.keyboard("{Escape}");
+    expect(filter.addRule("level-3")).toHaveAttribute("aria-disabled", "true");
 
     await filter.deleteNode("nested-rule");
     expect(
@@ -207,7 +202,7 @@ describe("FilterMenu", () => {
     expect(screen.queryByRole("option", { name: "Unsupported" })).toBeNull();
   });
 
-  it("creates the default title rule only after Add rule is selected", async () => {
+  it("creates the default title rule only after Add filter rule is selected", async () => {
     const onViewChange =
       vi.fn<(change: ResourceChange<TableViewState, unknown>) => void>();
     const tableView = renderFilterMenu({
@@ -220,15 +215,12 @@ describe("FilterMenu", () => {
     expect(screen.queryByTestId("filter-group-root")).not.toBeInTheDocument();
     await tableView.filterMenu().openEmptyAddMenu();
     await tableView.user.click(
-      await tableView.filterMenu().addMenuItem("Add rule"),
+      await tableView.filterMenu().addMenuItem("Add filter rule"),
     );
     await waitFor(() => expect(onViewChange).toHaveBeenCalledOnce());
     expect(onViewChange.mock.lastCall![0].next.filters).toMatchObject({
       children: [{ propertyId: "title", operator: "equals" }],
     });
-    expect(
-      screen.queryByRole("combobox", { name: "Add property select" }),
-    ).toBeNull();
   });
 
   it("keeps an authoritative empty root unchanged", () => {
@@ -325,7 +317,7 @@ describe("FilterMenu", () => {
     const filter = tableView.filterMenu();
 
     await filter.openAddMenu("root");
-    await tableView.user.click(await filter.addMenuItem("Add rule"));
+    await tableView.user.click(await filter.addMenuItem("Add filter rule"));
     await waitFor(() => expect(onViewChange).toHaveBeenCalledOnce());
     expect(onViewChange.mock.lastCall![0].next.filters!.children).toHaveLength(
       2,
@@ -348,7 +340,7 @@ describe("FilterMenu", () => {
     const filter = tableView.filterMenu();
 
     await filter.openAddMenu("root");
-    await tableView.user.click(await filter.addMenuItem("Add nested group"));
+    await tableView.user.click(await filter.addMenuItem("Add filter group"));
 
     const filters = onViewChange.mock.lastCall![0].next.filters!;
     expect(filters.children[1]).toMatchObject({
@@ -376,7 +368,7 @@ describe("FilterMenu", () => {
     const filter = tableView.filterMenu();
 
     await filter.openAddMenu("root");
-    await tableView.user.click(await filter.addMenuItem("Add rule"));
+    await tableView.user.click(await filter.addMenuItem("Add filter rule"));
 
     const filters = onViewChange.mock.lastCall![0].next.filters!;
     expect(filters.children[1]).toEqual(nestedEmpty);
@@ -400,9 +392,9 @@ describe("FilterMenu", () => {
     expect(filter.addRule("root")).toBeEnabled();
     await filter.openAddMenu("root");
     expect(
-      screen.queryByRole("menuitem", { name: "Add rule" }),
+      screen.queryByRole("menuitem", { name: "Add filter rule" }),
     ).not.toBeInTheDocument();
-    await tableView.user.click(await filter.addMenuItem("Add nested group"));
+    await tableView.user.click(await filter.addMenuItem("Add filter group"));
 
     expect(
       onViewChange.mock.lastCall![0].next.filters!.children[1],
@@ -429,26 +421,34 @@ describe("FilterMenu", () => {
     });
     const filter = tableView.filterMenu();
 
-    expect(filter.rowLabel("first")).toHaveTextContent("Where");
-    expect(filter.rowLabel("second")).toHaveTextContent("And");
-    expect(filter.rowLabel("third")).toHaveTextContent("And");
-    expect(filter.rowLabel("nested-first")).toHaveTextContent("Where");
-    expect(filter.rowLabel("nested-second")).toHaveTextContent("And");
-    expect(filter.rowLabel("nested-third")).toHaveTextContent("And");
+    expect(within(filter.rule("first")).getByText("Where")).toBeVisible();
+    expect(within(filter.rule("second")).getByText("And")).toBeVisible();
+    expect(within(filter.rule("third")).getByText("And")).toBeVisible();
+    expect(
+      within(filter.rule("nested-first")).getByText("Where"),
+    ).toBeVisible();
+    expect(within(filter.rule("nested-second")).getByText("And")).toBeVisible();
+    expect(within(filter.rule("nested-third")).getByText("And")).toBeVisible();
 
     expect(filter.logic("second")).toBeVisible();
     expect(filter.logic("nested-second")).toBeVisible();
-    expect(within(filter.rowLabel("third")).queryByRole("combobox")).toBeNull();
     expect(
-      within(filter.rowLabel("nested-third")).queryByRole("combobox"),
+      within(filter.rule("third")).queryByRole("combobox", {
+        name: "Filter logic select",
+      }),
+    ).toBeNull();
+    expect(
+      within(filter.rule("nested-third")).queryByRole("combobox", {
+        name: "Filter logic select",
+      }),
     ).toBeNull();
 
     await tableView.user.click(filter.logic("second"));
     await tableView.user.click(
-      await screen.findByRole("option", { name: "OR" }),
+      await screen.findByRole("option", { name: "Or" }),
     );
-    expect(filter.rowLabel("second")).toHaveTextContent("Or");
-    expect(filter.rowLabel("third")).toHaveTextContent("Or");
+    expect(filter.logic("second")).toHaveTextContent("Or");
+    expect(within(filter.rule("third")).getByText("Or")).toBeVisible();
   });
 
   it("shows only Delete in rule and nested-group action menus", async () => {
@@ -834,7 +834,7 @@ describe("FilterMenu operand metadata", () => {
     expect(relative.filter.operand("operand-rule")).toHaveValue("-4");
   });
 
-  it("excludes deleted and unsupported properties from pending rules", async () => {
+  it("does not offer a rule when the table has no title property", async () => {
     const supported = metadataPlugin("text", "text-op");
     const unsupported: CellPlugin<"unsupported", string, undefined> = {
       id: "unsupported",
@@ -861,16 +861,11 @@ describe("FilterMenu operand metadata", () => {
     });
 
     await tableView.filterMenu().openEmptyAddMenu();
-    await tableView.user.click(
-      await tableView.filterMenu().addMenuItem("Add rule"),
-    );
-
-    expect(await screen.findByRole("option", { name: "Live" })).toBeVisible();
     expect(
-      screen.queryByRole("option", { name: "Deleted" }),
-    ).not.toBeInTheDocument();
+      await screen.findByRole("menuitem", { name: "Add filter group" }),
+    ).toBeVisible();
     expect(
-      screen.queryByRole("option", { name: "Unsupported" }),
+      screen.queryByRole("menuitem", { name: "Add filter rule" }),
     ).not.toBeInTheDocument();
   });
 });
