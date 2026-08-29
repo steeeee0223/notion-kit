@@ -1,6 +1,7 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 
 import { CellEditorsObject } from "./cell-editors";
+import { FilterMenuObject } from "./filter-menu";
 import { GroupActionsObject } from "./group-actions";
 import { HeaderMenuObject } from "./header-menu";
 import type { AccessibleName } from "./menu-surface";
@@ -56,6 +57,7 @@ interface ControlledSnapshot {
     payload: Record<string, unknown>;
   } | null;
   view: {
+    filters?: unknown;
     layout: string;
     locked: boolean;
     openedRowId: string | null;
@@ -198,6 +200,21 @@ export class TableViewObject {
 
   sortButton() {
     return this.page.getByRole("button", { name: "Sort", exact: true });
+  }
+
+  filterButton() {
+    return this.page.getByRole("button", { name: "Filter", exact: true });
+  }
+
+  searchButton() {
+    return this.page.getByRole("button", { name: "Search", exact: true });
+  }
+
+  searchInput() {
+    return this.page.getByRole("textbox", {
+      name: "Search table",
+      exact: true,
+    });
   }
 
   header(name: string) {
@@ -431,6 +448,17 @@ export class TableViewObject {
   async openSort() {
     await this.sortButton().click();
     return SortMenuObject.open(this.page);
+  }
+
+  async openFilter() {
+    await this.filterButton().click();
+    return FilterMenuObject.open(this.page);
+  }
+
+  async openSearch() {
+    await this.searchButton().click();
+    await expect(this.searchInput()).toBeVisible();
+    return this.searchInput();
   }
 
   async openHeader(name: string) {
