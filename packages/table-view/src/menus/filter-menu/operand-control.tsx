@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { addDays, addMonths, addWeeks } from "date-fns";
 
-import { Icon } from "@notion-kit/icons";
 import { updateFilterNode } from "@notion-kit/table-hook";
 import type {
   FilterGroup,
@@ -9,12 +9,22 @@ import type {
 } from "@notion-kit/table-hook";
 import type { FilterOperandMetadata } from "@notion-kit/table-hook/plugins";
 import {
-  Button,
+  Badge,
   Calendar,
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxClear,
+  ComboboxCollection,
+  ComboboxContent,
+  ComboboxGroup,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxTrigger,
+  ComboboxValue,
   Input,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Select,
   SelectContent,
   SelectGroup,
@@ -82,15 +92,17 @@ function OperandControlContent({
     case "none":
       return null;
     case "option":
-      return <OptionOperand rule={rule} root={root} />;
+      return (
+        <OptionOperand rule={rule} root={root} multiple={metadata.multiple} />
+      );
     case "date-range":
       return <DateRangeOperand rule={rule} root={root} />;
     case "date":
       return <DateOperand rule={rule} root={root} />;
     case "number":
-      return <NumericOperand rule={rule} root={root} relative={false} />;
+      return <NumericOperand rule={rule} root={root} />;
     case "relative-date":
-      return <NumericOperand rule={rule} root={root} relative />;
+      return <RelativeDateOperand rule={rule} root={root} />;
     case "text":
       return <TextOperand rule={rule} root={root} />;
   }
@@ -101,7 +113,10 @@ export function operandDraftKey(
   metadata: FilterOperandMetadata,
   propertyConfig: unknown,
 ) {
-  if (metadata.kind === "date" || metadata.kind === "date-range") {
+  if (metadata.kind === "date") {
+    return getTimeZone(propertyConfig);
+  }
+  if (metadata.kind === "date-range") {
     return `${JSON.stringify(value)}:${getTimeZone(propertyConfig)}`;
   }
   return metadata.kind === "text" ||
@@ -114,26 +129,18 @@ export function operandDraftKey(
 function NumericOperand({
   rule,
   root,
-  relative,
 }: {
   rule: FilterRule;
   root: FilterGroup;
-  relative: boolean;
 }) {
   const updateRule = useFilterRuleUpdate(root, rule.id);
-  const persisted = relative
-    ? getRecordNumber(rule.value, "offsetDays")
-    : typeof rule.value === "number"
-      ? rule.value
-      : undefined;
+  const persisted = typeof rule.value === "number" ? rule.value : undefined;
   const authoritative = persisted?.toString() ?? "";
   const [draft, setDraft] = useState<{
     value: string;
     base: string;
   } | null>(null);
-  const parsedDraft = draft
-    ? parseNumericDraft(draft.value, relative)
-    : undefined;
+  const parsedDraft = draft ? parseNumericDraft(draft.value, false) : undefined;
   const draftIsEmpty = draft?.value.trim() === "";
   const preservePartialDraft =
     draft !== null &&
@@ -144,7 +151,7 @@ function NumericOperand({
   return (
     <Input
       aria-label="Value"
-      inputMode={relative ? "numeric" : "decimal"}
+      inputMode="decimal"
       value={displayValue}
       onChange={(event) => {
         const next = event.currentTarget.value;
@@ -153,9 +160,9 @@ function NumericOperand({
           updateRule(undefined);
           return;
         }
-        const number = parseNumericDraft(next, relative);
+        const number = parseNumericDraft(next, false);
         if (number !== undefined) {
-          updateRule(relative ? { offsetDays: number } : number);
+          updateRule(number);
         }
       }}
       onBlur={() => setDraft(null)}
@@ -164,12 +171,102 @@ function NumericOperand({
   );
 }
 
-function OptionOperand({
+function RelativeDateOperand({
   rule,
   root,
 }: {
   rule: FilterRule;
   root: FilterGroup;
+}) {
+  const updateRule = useFilterRuleUpdate(root, rule.id);
+  const amount = getRecordNumber(rule.value, "amount");
+  const unit = getRelativeDateUnit(rule.value);
+  const [draft, setDraft] = useState<{
+    value: string;
+    base: string;
+  } | null>(null);
+  const authoritative = amount?.toString() ?? "";
+  const parsedDraft = draft ? parseNumericDraft(draft.value, true) : undefined;
+  const preservePartialDraft =
+    draft !== null &&
+    draft.value.trim() !== "" &&
+    parsedDraft === undefined &&
+    draft.base === authoritative;
+  const displayValue = preservePartialDraft ? draft.value : authoritative;
+
+  return (
+    <div className="flex min-w-32 flex-1 gap-1">
+      <Input
+        aria-label="Relative date amount"
+        inputMode="numeric"
+        value={displayValue}
+        onChange={(event) => {
+          const next = event.currentTarget.value;
+          setDraft({ value: next, base: authoritative });
+          if (!next.trim()) {
+            updateRule(undefined);
+            return;
+          }
+          const nextAmount = parseNumericDraft(next, true);
+          if (nextAmount !== undefined)
+            updateRule({ amount: nextAmount, unit });
+        }}
+        onBlur={() => setDraft(null)}
+        className="min-w-16 flex-1"
+      />
+      <Select
+        items={RELATIVE_DATE_UNITS}
+        value={unit}
+        onValueChange={(nextUnit) => {
+          if (nextUnit === null || amount === undefined) return;
+          updateRule({ amount, unit: nextUnit });
+        }}
+      >
+        <SelectTrigger
+          aria-label="Relative date unit"
+          className="w-24 border border-border"
+        >
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {RELATIVE_DATE_UNITS.map(({ value, label }) => (
+              <SelectItem key={value} value={value} label={label} />
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+const RELATIVE_DATE_UNITS = [
+  { value: "day", label: "Day" },
+  { value: "week", label: "Week" },
+  { value: "month", label: "Month" },
+  { value: "year", label: "Year" },
+] as const;
+
+function getRelativeDateUnit(
+  value: FilterValue | undefined,
+): (typeof RELATIVE_DATE_UNITS)[number]["value"] {
+  if (typeof value !== "object" || value === null || Array.isArray(value))
+    return "day";
+  const unit = value.unit;
+  return typeof unit === "string" &&
+    RELATIVE_DATE_UNITS.some(({ value }) => value === unit)
+    ? (unit as (typeof RELATIVE_DATE_UNITS)[number]["value"])
+    : "day";
+}
+
+function OptionOperand({
+  rule,
+  root,
+  multiple = false,
+}: {
+  rule: FilterRule;
+  root: FilterGroup;
+  multiple?: boolean;
 }) {
   const { table } = useTableViewCtx();
   const updateRule = useFilterRuleUpdate(root, rule.id);
@@ -177,30 +274,141 @@ function OptionOperand({
     .getFilterProperties()
     .find(({ id }) => id === rule.propertyId);
   const options = getOptionNames(property?.config);
-  const items = options.map((name) => ({ value: name, label: name }));
-  const current = typeof rule.value === "string" ? rule.value : null;
+  const multipleValue =
+    Array.isArray(rule.value) &&
+    rule.value.every((value) => typeof value === "string")
+      ? rule.value
+      : [];
+  const singleValue = typeof rule.value === "string" ? rule.value : null;
+
+  if (multiple) {
+    return (
+      <MultipleOptionOperand
+        options={options}
+        value={multipleValue}
+        onValueChange={(value) => updateRule(value.length ? value : undefined)}
+      />
+    );
+  }
 
   return (
-    <Select
-      items={items}
-      value={current}
-      onValueChange={(value) => value !== null && updateRule(value)}
+    <Combobox
+      items={optionGroups(options)}
+      value={singleValue}
+      onValueChange={(value) => {
+        if (value !== null) updateRule(value);
+      }}
     >
-      <SelectTrigger
+      <ComboboxInput
         aria-label="Value select"
-        className="min-w-24 flex-1 border border-border"
-      >
-        <SelectValue placeholder="Choose option" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          {options.map((name) => (
-            <SelectItem key={name} value={name} label={name} />
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+        placeholder="Choose option"
+        className="min-w-24 flex-1 rounded-md border border-border px-2 py-1.5"
+      />
+      <OptionComboboxContent />
+    </Combobox>
   );
+}
+
+function MultipleOptionOperand({
+  options,
+  value,
+  onValueChange,
+}: {
+  options: string[];
+  value: string[];
+  onValueChange: (value: string[]) => void;
+}) {
+  const [inputValue, setInputValue] = useState("");
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  return (
+    <Combobox<string, true>
+      multiple
+      items={optionGroups(options)}
+      value={value}
+      inputValue={inputValue}
+      onInputValueChange={setInputValue}
+      onValueChange={(nextValue) => {
+        onValueChange(nextValue);
+        setInputValue("");
+      }}
+    >
+      <ComboboxTrigger
+        ref={triggerRef}
+        aria-label="Value select"
+        className="min-w-24 flex-1 justify-start rounded-md border border-border bg-input px-2 py-1.5 text-primary"
+      >
+        <ComboboxValue>
+          {(selected: string[]) =>
+            selected.length ? (
+              <>
+                <Badge variant="tag">{selected[0]}</Badge>
+                {selected.length > 1 && (
+                  <Badge variant="tag">+{selected.length - 1}</Badge>
+                )}
+              </>
+            ) : (
+              "Choose options"
+            )
+          }
+        </ComboboxValue>
+      </ComboboxTrigger>
+      <ComboboxContent anchor={triggerRef} className="w-72 p-2">
+        <div className="relative">
+          <ComboboxChips hideClearButton className="pr-9">
+            <ComboboxValue>
+              {(selected: string[]) => (
+                <>
+                  {selected.map((name) => (
+                    <ComboboxChip key={name}>{name}</ComboboxChip>
+                  ))}
+                  <ComboboxChipsInput
+                    aria-label="Search options"
+                    placeholder="Search options"
+                  />
+                </>
+              )}
+            </ComboboxValue>
+          </ComboboxChips>
+          <ComboboxClear
+            aria-label="Clear selected options"
+            className="absolute top-1/2 right-1 -translate-y-1/2"
+          />
+        </div>
+        <OptionComboboxList />
+      </ComboboxContent>
+    </Combobox>
+  );
+}
+
+function OptionComboboxContent() {
+  return (
+    <ComboboxContent className="p-1">
+      <OptionComboboxList />
+    </ComboboxContent>
+  );
+}
+
+function OptionComboboxList() {
+  return (
+    <ComboboxList>
+      {(group: OptionGroup) => (
+        <ComboboxGroup key={group.label} items={group.items}>
+          <ComboboxCollection>
+            {(name: string) => <ComboboxItem key={name} value={name} />}
+          </ComboboxCollection>
+        </ComboboxGroup>
+      )}
+    </ComboboxList>
+  );
+}
+
+interface OptionGroup {
+  label: string;
+  items: string[];
+}
+
+function optionGroups(options: string[]): OptionGroup[] {
+  return [{ label: "Options", items: options }];
 }
 
 function TextOperand({ rule, root }: { rule: FilterRule; root: FilterGroup }) {
@@ -234,54 +442,159 @@ function DateOperand({ rule, root }: { rule: FilterRule; root: FilterGroup }) {
     .getFilterProperties()
     .find(({ id }) => id === rule.propertyId);
   const timeZone = getTimeZone(property?.config);
-  const timestamp = getRecordNumber(rule.value, "timestamp");
-  const authoritative = formatDateValue(timestamp, timeZone);
-  const [draft, setDraft] = useState(authoritative);
-  const selectDate = (date: Date | undefined) => {
-    if (!date) return;
-    const next = calendarDateKey(date);
-    const nextTimestamp = parseDate(next, timeZone);
-    if (nextTimestamp !== undefined) updateRule({ timestamp: nextTimestamp });
-  };
+  const [preset, setPreset] = useState<DatePreset | null>(
+    getDatePreset(rule.value),
+  );
+
   return (
     <div className="flex min-w-24 flex-1 gap-1">
-      <Input
-        aria-label="Value"
-        placeholder="YYYY-MM-DD"
-        value={draft}
-        onChange={(event) => {
-          const next = event.currentTarget.value;
-          setDraft(next);
-          if (!next) {
-            updateRule(undefined);
-            return;
-          }
-          const nextTimestamp = parseDate(next, timeZone);
-          if (nextTimestamp !== undefined) {
-            updateRule({ timestamp: nextTimestamp });
-            setDraft(authoritative);
+      <Select
+        items={DATE_PRESETS}
+        value={preset}
+        onValueChange={(nextPreset) => {
+          if (nextPreset === null) return;
+          setPreset(nextPreset);
+          if (nextPreset === "custom") return;
+          const timestamp = getPresetTimestamp(nextPreset, timeZone);
+          if (timestamp !== undefined) {
+            updateRule({ timestamp, preset: nextPreset });
           }
         }}
-        onBlur={() => {
-          if (parseDate(draft, timeZone) === undefined) setDraft(authoritative);
-        }}
-      />
-      <Popover>
-        <PopoverTrigger
-          render={
-            <Button variant="hint" size="circle" aria-label="Open calendar">
-              <Icon.ViewCalendar className="size-4" />
-            </Button>
+      >
+        <SelectTrigger
+          aria-label="Date preset select"
+          className="w-32 border border-border"
+        >
+          <SelectValue placeholder="Select date" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {DATE_PRESETS.map(({ value, label }) => (
+              <SelectItem key={value} value={value} label={label} />
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+      {preset === "custom" && (
+        <CustomDateOperand
+          value={getRecordNumber(rule.value, "timestamp")}
+          timeZone={timeZone}
+          onValueChange={(timestamp) =>
+            updateRule(timestamp === undefined ? undefined : { timestamp })
           }
         />
-        <PopoverContent className="w-auto p-0">
+      )}
+    </div>
+  );
+}
+
+const DATE_PRESETS = [
+  { value: "today", label: "Today" },
+  { value: "tomorrow", label: "Tomorrow" },
+  { value: "yesterday", label: "Yesterday" },
+  { value: "one-week-ago", label: "One week ago" },
+  { value: "one-week-from-now", label: "One week from now" },
+  { value: "one-month-ago", label: "One month ago" },
+  { value: "one-month-from-now", label: "One month from now" },
+  { value: "custom", label: "Custom date" },
+] as const;
+
+type DatePreset = (typeof DATE_PRESETS)[number]["value"];
+
+function getDatePreset(value: FilterValue | undefined): DatePreset | null {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return null;
+  }
+  const preset = value.preset;
+  return typeof preset === "string" &&
+    DATE_PRESETS.some(({ value }) => value === preset)
+    ? (preset as DatePreset)
+    : getRecordNumber(value, "timestamp") === undefined
+      ? null
+      : "custom";
+}
+
+function getPresetTimestamp(
+  preset: Exclude<DatePreset, "custom">,
+  timeZone: string,
+) {
+  const today = dateKeyToCalendarDate(formatDateValue(Date.now(), timeZone));
+  if (!today) return undefined;
+  const date =
+    preset === "tomorrow"
+      ? addDays(today, 1)
+      : preset === "yesterday"
+        ? addDays(today, -1)
+        : preset === "one-week-ago"
+          ? addWeeks(today, -1)
+          : preset === "one-week-from-now"
+            ? addWeeks(today, 1)
+            : preset === "one-month-ago"
+              ? addMonths(today, -1)
+              : preset === "one-month-from-now"
+                ? addMonths(today, 1)
+                : today;
+  return parseDate(calendarDateKey(date), timeZone);
+}
+
+function CustomDateOperand({
+  value,
+  timeZone,
+  onValueChange,
+}: {
+  value: number | undefined;
+  timeZone: string;
+  onValueChange: (value: number | undefined) => void;
+}) {
+  const authoritative = formatDateValue(value, timeZone);
+  const [inputValue, setInputValue] = useState(authoritative);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setInputValue(authoritative);
+  }, [authoritative]);
+
+  return (
+    <div className="relative min-w-32 flex-1">
+      <Input
+        aria-label="Custom date select"
+        placeholder="YYYY-MM-DD"
+        value={inputValue}
+        onClick={() => setOpen(true)}
+        onChange={(event) => {
+          const nextValue = event.currentTarget.value;
+          setInputValue(nextValue);
+          if (!nextValue) {
+            onValueChange(undefined);
+            return;
+          }
+          const timestamp = parseDate(nextValue, timeZone);
+          if (timestamp !== undefined) onValueChange(timestamp);
+        }}
+        className="min-w-32 flex-1 rounded-md border border-border px-2 py-1.5"
+        onBlur={() => {
+          if (parseDate(inputValue, timeZone) === undefined) {
+            setInputValue(authoritative);
+          }
+        }}
+      />
+      {open && (
+        <div className="absolute left-0 z-50 mt-2 w-fit rounded-md border border-border bg-popover shadow-md">
           <Calendar
             mode="single"
             selected={dateKeyToCalendarDate(authoritative)}
-            onSelect={selectDate}
+            onSelect={(date) => {
+              if (!date) return;
+              const nextValue = calendarDateKey(date);
+              const timestamp = parseDate(nextValue, timeZone);
+              if (timestamp === undefined) return;
+              setInputValue(nextValue);
+              onValueChange(timestamp);
+              setOpen(false);
+            }}
           />
-        </PopoverContent>
-      </Popover>
+        </div>
+      )}
     </div>
   );
 }
@@ -309,6 +622,8 @@ function DateRangeOperand({
   );
   const [start, setStart] = useState(authoritativeStart);
   const [end, setEnd] = useState(authoritativeEnd);
+  const [open, setOpen] = useState(false);
+  const [selectingEnd, setSelectingEnd] = useState(false);
   const commit = (nextStart: string, nextEnd: string) => {
     if ((!nextStart || !nextEnd) && authoritativeStart && authoritativeEnd) {
       updateRule(undefined);
@@ -322,60 +637,74 @@ function DateRangeOperand({
       startTimestamp <= endTimestamp
     ) {
       updateRule({ start: startTimestamp, end: endTimestamp });
-      setStart(authoritativeStart);
-      setEnd(authoritativeEnd);
     }
   };
   return (
-    <div className="flex min-w-32 flex-1 gap-1">
+    <div className="relative min-w-40 flex-1">
       <Input
-        aria-label="Start"
-        placeholder="YYYY-MM-DD"
-        value={start}
-        onChange={(event) => {
-          const next = event.currentTarget.value;
-          setStart(next);
-          commit(next, end);
-        }}
-        onBlur={() => {
-          if (start && parseDate(start, timeZone) === undefined) {
-            setStart(authoritativeStart);
-          }
-        }}
+        aria-label="Date range select"
+        placeholder="Select a range"
+        value={start && end ? `${start} → ${end}` : ""}
+        readOnly
+        onClick={() => setOpen(true)}
+        className="min-w-40 rounded-md border border-border px-2 py-1.5"
       />
-      <CalendarButton
-        label="Open start calendar"
-        selected={start}
-        onSelect={(date) => {
-          const next = calendarDateKey(date);
-          setStart(next);
-          commit(next, end);
-        }}
-      />
-      <Input
-        aria-label="End"
-        placeholder="YYYY-MM-DD"
-        value={end}
-        onChange={(event) => {
-          const next = event.currentTarget.value;
-          setEnd(next);
-          commit(start, next);
-        }}
-        onBlur={() => {
-          if (end && parseDate(end, timeZone) === undefined) {
-            setEnd(authoritativeEnd);
-          }
-        }}
-      />
-      <CalendarButton
-        label="Open end calendar"
-        selected={end}
-        onSelect={(date) => {
-          const next = calendarDateKey(date);
-          setEnd(next);
-          commit(start, next);
-        }}
-      />
+      {open && (
+        <div className="absolute left-0 z-50 mt-2 w-fit rounded-md border border-border bg-popover p-2 shadow-md">
+          <div className="flex flex-col gap-2">
+            <Input
+              aria-label="Starting"
+              placeholder="Starting"
+              value={start}
+              onChange={(event) => {
+                const next = event.currentTarget.value;
+                setStart(next);
+                setSelectingEnd(false);
+                commit(next, end);
+              }}
+            />
+            <Input
+              aria-label="Ending"
+              placeholder="Ending"
+              value={end}
+              onChange={(event) => {
+                const next = event.currentTarget.value;
+                setEnd(next);
+                setSelectingEnd(false);
+                commit(start, next);
+              }}
+            />
+          </div>
+          <Calendar
+            mode="range"
+            selected={{
+              from: dateKeyToCalendarDate(start),
+              to: dateKeyToCalendarDate(end),
+            }}
+            onSelect={(range) => {
+              const nextStart = range?.from ? calendarDateKey(range.from) : "";
+              const nextEnd = range?.to ? calendarDateKey(range.to) : "";
+              if (!nextStart) {
+                setStart("");
+                setEnd("");
+                setSelectingEnd(false);
+                commit("", "");
+                return;
+              }
+              if (!selectingEnd) {
+                setStart(nextStart);
+                setEnd("");
+                setSelectingEnd(true);
+                return;
+              }
+              setStart(nextStart);
+              setEnd(nextEnd);
+              setSelectingEnd(false);
+              if (nextEnd) commit(nextStart, nextEnd);
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -390,35 +719,4 @@ function useFilterRuleUpdate(root: FilterGroup, ruleId: string) {
         return value === undefined ? omitRuleValue(node) : { ...node, value };
       }),
     );
-}
-
-function CalendarButton({
-  label,
-  selected,
-  onSelect,
-}: {
-  label: string;
-  selected: string;
-  onSelect: (date: Date) => void;
-}) {
-  return (
-    <Popover>
-      <PopoverTrigger
-        render={
-          <Button variant="hint" size="circle" aria-label={label}>
-            <Icon.ViewCalendar className="size-4" />
-          </Button>
-        }
-      />
-      <PopoverContent className="w-auto p-0">
-        <Calendar
-          mode="single"
-          selected={dateKeyToCalendarDate(selected)}
-          onSelect={(date) => {
-            if (date) onSelect(date);
-          }}
-        />
-      </PopoverContent>
-    </Popover>
-  );
 }

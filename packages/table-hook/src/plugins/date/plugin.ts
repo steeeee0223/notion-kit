@@ -35,6 +35,7 @@ import {
   isValidDateTimestamp,
   relativeDateDayKey,
   toDateString,
+  type RelativeDateOperand,
 } from "./utils";
 
 export type DatePluginConfig = PluginFactoryConfig<DatePlugin>;
@@ -298,20 +299,26 @@ function dateCapabilities<Data>(extract: DateExtractor<Data>) {
             context: FilterEvaluationContext,
           ) => {
             if (typeof operand !== "object" || operand === null) return false;
-            const offsetDays = (operand as { offsetDays?: unknown }).offsetDays;
+            const amount = (operand as { amount?: unknown }).amount;
+            const unit = (operand as { unit?: unknown }).unit;
             if (
-              typeof offsetDays !== "number" ||
-              !Number.isSafeInteger(offsetDays) ||
+              typeof amount !== "number" ||
+              !Number.isSafeInteger(amount) ||
+              (unit !== "day" &&
+                unit !== "week" &&
+                unit !== "month" &&
+                unit !== "year") ||
               !isValidDateTimestamp(context.now)
             )
               return false;
+            const relativeOperand: RelativeDateOperand = { amount, unit };
             const value = extract(data, row);
             if (value.start === undefined) return false;
             const timeZone = config.tz ?? "UTC";
             const valueKey = dateDayKey(value.start, timeZone);
             const relativeKey = relativeDateDayKey(
               context.now,
-              offsetDays,
+              relativeOperand,
               timeZone,
             );
             return (

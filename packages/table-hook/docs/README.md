@@ -72,6 +72,16 @@ persisted advanced filters compose as an AND condition. The runtime pipeline is
 global search, advanced filtering, extended grouping, then sorting and
 expansion.
 
+Built-in filter descriptors keep their stable persisted operator IDs while
+providing UI-neutral operand metadata. Choice filters distinguish a single
+option operand from a multiple-option operand: select uses exact membership,
+while multi-select requires every selected positive option and excludes every
+selected negative option. Date filters support exact calendar dates, complete
+date ranges, and a dynamic `relative-to-today` operand expressed as a signed
+amount and calendar unit (`day`, `week`, `month`, or `year`). Relative operands
+are evaluated against the pass-wide clock in the property's timezone, so they
+continue to match as time passes.
+
 ## Documentation map
 
 - [Plugin contracts and capability policy](./plugins.md)

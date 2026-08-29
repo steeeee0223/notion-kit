@@ -43,29 +43,48 @@ function getDefaultConfig(): SelectConfig {
   };
 }
 
-function selectFiltering() {
+function optionValues(operand: unknown, multiple: boolean) {
+  if (!multiple) return typeof operand === "string" ? [operand] : undefined;
+  return Array.isArray(operand) &&
+    operand.every((value) => typeof value === "string")
+    ? operand
+    : undefined;
+}
+
+function selectFiltering(multiple = false) {
   const values = (data: string | string[] | null | undefined) =>
     Array.isArray(data) ? data : typeof data === "string" ? [data] : [];
   const membershipOperator = (id: string, name: string, invert: boolean) => ({
     id,
     name,
-    operand: { kind: "option" as const },
+    operand: { kind: "option" as const, ...(multiple && { multiple: true }) },
     matches: (
       data: string | string[] | null | undefined,
       _row: Row,
       _config: SelectConfig,
       operand?: unknown,
     ) => {
-      if (typeof operand !== "string") return false;
-      const contains = values(data).includes(operand);
-      return invert ? !contains : contains;
+      const selected = optionValues(operand, multiple);
+      if (!selected?.length) return false;
+      const available = values(data);
+      return multiple
+        ? invert
+          ? selected.every((value) => !available.includes(value))
+          : selected.every((value) => available.includes(value))
+        : invert
+          ? !available.includes(selected[0]!)
+          : available.includes(selected[0]!);
     },
   });
   return {
     filtering: {
       operators: [
-        membershipOperator("contains", "Contains", false),
-        membershipOperator("does-not-contain", "Does not contain", true),
+        membershipOperator("contains", multiple ? "Contains" : "Is", false),
+        membershipOperator(
+          "does-not-contain",
+          multiple ? "Does not contain" : "Is not",
+          true,
+        ),
         {
           id: "is-empty",
           name: "Is empty",
@@ -274,7 +293,7 @@ export function multiSelect(
     },
     transferConfig: toSelectConfig,
     counting: genericCounting,
-    ...selectFiltering(),
+    ...selectFiltering(true),
     renderCellValue: (props) =>
       config.renderCellValue({ multi: true, ...props }),
     renderCellEditor: renderCellEditor

@@ -1,5 +1,12 @@
 import { TZDate } from "@date-fns/tz";
-import { addDays, format, isValid } from "date-fns";
+import {
+  addDays,
+  addMonths,
+  addWeeks,
+  addYears,
+  format,
+  isValid,
+} from "date-fns";
 
 import { formatDate, isoToTs } from "@notion-kit/utils";
 
@@ -53,19 +60,39 @@ export function dateDayKey(timestamp: number, timeZone: string) {
   }
 }
 
+export type RelativeDateUnit = "day" | "week" | "month" | "year";
+
+export interface RelativeDateOperand {
+  amount: number;
+  unit: RelativeDateUnit;
+}
+
 export function relativeDateDayKey(
   now: number,
-  offsetDays: number,
+  operand: RelativeDateOperand,
   timeZone: string,
 ) {
-  if (!isValidDateTimestamp(now) || !Number.isSafeInteger(offsetDays)) {
+  const amount = operand.amount;
+  if (!isValidDateTimestamp(now) || !Number.isSafeInteger(amount)) {
     return null;
   }
   const today = dateDayKey(now, timeZone);
   if (today === null) return null;
-  const localNoon = isoToTs({ date: today, time: "12:00:00" }, timeZone);
-  const relative = addDays(localNoon, offsetDays).getTime();
-  return isValidDateTimestamp(relative) ? dateDayKey(relative, timeZone) : null;
+  const localNoon = new TZDate(
+    isoToTs({ date: today, time: "12:00:00" }, timeZone),
+    timeZone,
+  );
+  const relative =
+    operand.unit === "day"
+      ? addDays(localNoon, amount)
+      : operand.unit === "week"
+        ? addWeeks(localNoon, amount)
+        : operand.unit === "month"
+          ? addMonths(localNoon, amount)
+          : addYears(localNoon, amount);
+  return isValidDateTimestamp(relative.getTime())
+    ? dateDayKey(relative.getTime(), timeZone)
+    : null;
 }
 
 export function toDateString(data: DateData, config: DateConfig) {

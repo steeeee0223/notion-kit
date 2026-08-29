@@ -482,7 +482,6 @@ describe("FilterMenu", () => {
 const operandKinds = [
   ["text", "text-op", "hello", "hello"],
   ["number", "number-op", "42.5", 42.5],
-  ["relative-date", "relative-op", "-3", { offsetDays: -3 }],
 ] as const;
 
 describe("FilterMenu operand metadata", () => {
@@ -512,29 +511,92 @@ describe("FilterMenu operand metadata", () => {
     expect(lastValue(onViewChange)).toBe("Beta");
   });
 
-  it("persists valid dates and only complete ordered ranges", async () => {
-    const date = renderMetadataMenu("date", "date-op");
-    await date.tableView.user.type(
-      date.tableView.filterMenu().operand("operand-rule"),
-      "2026-08-26",
+  it("persists every selected multi-option operand", async () => {
+    const { tableView, onViewChange } = renderMetadataMenu(
+      { kind: "option", multiple: true },
+      "option-op",
     );
-    expect(
-      dateValue(
-        (lastValue(date.onViewChange) as { timestamp: number }).timestamp,
-      ),
-    ).toBe("2026-08-26");
+    const filter = tableView.filterMenu();
 
-    cleanup();
+    await tableView.user.click(filter.selectOperand("operand-rule"));
+    await tableView.user.click(
+      await screen.findByRole("option", { name: "Alpha" }),
+    );
+    await tableView.user.click(filter.selectOperand("operand-rule"));
+    await tableView.user.click(
+      await screen.findByRole("option", { name: "Beta" }),
+    );
+
+    expect(lastValue(onViewChange)).toEqual(["Alpha", "Beta"]);
+  });
+
+  it("shows a compact multi-option trigger and exposes chips only in its popup", async () => {
+    const { tableView } = renderMetadataMenu(
+      { kind: "option", multiple: true },
+      "option-op",
+      { value: ["Alpha", "Beta"] },
+    );
+    const filter = tableView.filterMenu();
+
+    expect(filter.selectOperand("operand-rule")).toHaveTextContent("Alpha");
+    expect(filter.selectOperand("operand-rule")).toHaveTextContent("+1");
+    expect(
+      screen.queryByRole("combobox", { name: "Search options" }),
+    ).not.toBeInTheDocument();
+
+    await tableView.user.click(filter.selectOperand("operand-rule"));
+
+    expect(
+      await screen.findByRole("combobox", { name: "Search options" }),
+    ).toBeVisible();
+    expect(screen.getAllByRole("button", { name: "Remove" })).toHaveLength(2);
+  });
+
+  it("reveals the custom date picker only after selecting Custom date", async () => {
+    const { tableView, onViewChange } = renderMetadataMenu("date", "date-op");
+    const filter = tableView.filterMenu();
+
+    expect(filter.rule("operand-rule")).not.toHaveTextContent("YYYY-MM-DD");
+    await tableView.user.click(filter.datePreset("operand-rule"));
+    await tableView.user.click(
+      await screen.findByRole("option", { name: "Custom date" }),
+    );
+    await tableView.user.click(filter.customDate("operand-rule"));
+    await tableView.user.click(
+      await screen.findByRole("button", { name: /August 26th, 2026/ }),
+    );
+
+    expect(lastValue(onViewChange)).toEqual({
+      timestamp: Date.UTC(2026, 7, 26),
+    });
+  });
+
+  it("persists signed relative date amounts with their calendar unit", async () => {
+    const { tableView, onViewChange } = renderMetadataMenu(
+      "relative-date",
+      "relative-op",
+    );
+    const filter = tableView.filterMenu();
+
+    await tableView.user.type(filter.relativeDateAmount("operand-rule"), "-2");
+    await tableView.user.click(filter.relativeDateUnit("operand-rule"));
+    await tableView.user.click(
+      await screen.findByRole("option", { name: "Week" }),
+    );
+
+    expect(lastValue(onViewChange)).toEqual({ amount: -2, unit: "week" });
+  });
+
+  it("persists a typed range only when both dates are complete and ordered", async () => {
     const range = renderMetadataMenu("date-range", "range-op");
-    await range.tableView.user.type(
-      range.tableView.filterMenu().operand("operand-rule", "Start"),
-      "2026-08-26",
-    );
+    const filter = range.tableView.filterMenu();
+
+    await range.tableView.user.click(filter.dateRange("operand-rule"));
+    const start = await screen.findByRole("textbox", { name: "Starting" });
+    const end = screen.getByRole("textbox", { name: "Ending" });
+    await range.tableView.user.type(start, "2026-08-26");
     expect(range.onViewChange).not.toHaveBeenCalled();
-    await range.tableView.user.type(
-      range.tableView.filterMenu().operand("operand-rule", "End"),
-      "2026-08-27",
-    );
+    await range.tableView.user.type(end, "2026-08-27");
     const value = lastValue(range.onViewChange) as {
       start: number;
       end: number;
@@ -570,43 +632,33 @@ describe("FilterMenu operand metadata", () => {
     cleanup();
     const relative = renderMetadataMenu("relative-date", "relative-op");
     await relative.tableView.user.type(
-      relative.tableView.filterMenu().operand("operand-rule"),
+      relative.tableView.filterMenu().relativeDateAmount("operand-rule"),
       "1",
     );
-    expect(lastValue(relative.onViewChange)).toEqual({ offsetDays: 1 });
+    expect(lastValue(relative.onViewChange)).toEqual({
+      amount: 1,
+      unit: "day",
+    });
     relative.onViewChange.mockClear();
     await relative.tableView.user.type(
-      relative.tableView.filterMenu().operand("operand-rule"),
+      relative.tableView.filterMenu().relativeDateAmount("operand-rule"),
       ".5",
     );
     expect(relative.onViewChange).not.toHaveBeenCalled();
   });
 
-  it.each([
-    ["number", "number-op", 12],
-    ["relative-date", "relative-op", { offsetDays: 2 }],
-    ["date", "date-op", { timestamp: Date.UTC(2026, 7, 26) }],
-    [
-      "date-range",
-      "range-op",
-      { start: Date.UTC(2026, 7, 26), end: Date.UTC(2026, 7, 27) },
-    ],
-  ] as const)(
-    "omits an existing %s operand when it becomes incomplete",
-    async (kind, operator, existingValue) => {
-      const operand = renderMetadataMenu(kind, operator, {
-        value: existingValue,
-      });
-      await operand.tableView.user.clear(
-        operand.tableView
-          .filterMenu()
-          .operand("operand-rule", kind === "date-range" ? "Start" : "Value"),
-      );
-      await operand.tableView.user.tab();
+  it("omits a relative-date operand when its amount is cleared", async () => {
+    const relative = renderMetadataMenu("relative-date", "relative-op", {
+      value: { amount: 2, unit: "day" },
+    });
+    const amount = relative.tableView
+      .filterMenu()
+      .relativeDateAmount("operand-rule");
 
-      expect(lastRule(operand.onViewChange)).not.toHaveProperty("value");
-    },
-  );
+    await relative.tableView.user.clear(amount);
+
+    expect(lastRule(relative.onViewChange)).not.toHaveProperty("value");
+  });
 
   it("selects a point date from Calendar in the configured timezone", async () => {
     const selected = isoToTs(
@@ -622,9 +674,7 @@ describe("FilterMenu operand metadata", () => {
       },
     );
     await date.tableView.user.click(
-      date.tableView
-        .filterMenu()
-        .calendarButton("operand-rule", "Open calendar"),
+      date.tableView.filterMenu().customDate("operand-rule"),
     );
     await date.tableView.user.click(
       await screen.findByRole("button", {
@@ -640,39 +690,22 @@ describe("FilterMenu operand metadata", () => {
     });
   });
 
-  it("selects both date-range endpoints from Calendar", async () => {
-    const timeZone = "America/Los_Angeles";
-    const range = renderMetadataMenu(
-      "date-range",
-      "range-op",
-      {
-        value: {
-          start: isoToTs({ date: "2026-08-25", time: "00:00:00" }, timeZone),
-          end: isoToTs({ date: "2026-08-30", time: "00:00:00" }, timeZone),
-        },
-      },
-      { tz: timeZone },
-    );
-    await range.tableView.user.click(
-      range.tableView
-        .filterMenu()
-        .calendarButton("operand-rule", "Open start calendar"),
-    );
+  it("selects a complete date range from one range picker", async () => {
+    const range = renderMetadataMenu("date-range", "range-op");
+    const filter = range.tableView.filterMenu();
+
+    await range.tableView.user.click(filter.dateRange("operand-rule"));
     await range.tableView.user.click(
       await screen.findByRole("button", { name: /August 26th, 2026/ }),
     );
-    await range.tableView.user.click(
-      range.tableView
-        .filterMenu()
-        .calendarButton("operand-rule", "Open end calendar"),
-    );
+    expect(range.onViewChange).not.toHaveBeenCalled();
     await range.tableView.user.click(
       await screen.findByRole("button", { name: /August 27th, 2026/ }),
     );
 
     expect(lastValue(range.onViewChange)).toEqual({
-      start: isoToTs({ date: "2026-08-26", time: "00:00:00" }, timeZone),
-      end: isoToTs({ date: "2026-08-27", time: "00:00:00" }, timeZone),
+      start: Date.UTC(2026, 7, 26),
+      end: Date.UTC(2026, 7, 27),
     });
   });
 
@@ -693,12 +726,12 @@ describe("FilterMenu operand metadata", () => {
         tz: timeZone,
       },
     );
-    const operand = date.tableView.filterMenu().operand("operand-rule");
+    const operand = date.tableView.filterMenu().customDate("operand-rule");
     expect(operand).toHaveValue("1960-01-01");
 
     await date.tableView.user.clear(operand);
     await date.tableView.user.type(
-      date.tableView.filterMenu().operand("operand-rule"),
+      date.tableView.filterMenu().customDate("operand-rule"),
       "1960-01-02",
     );
 
@@ -711,8 +744,14 @@ describe("FilterMenu operand metadata", () => {
     const date = renderMetadataMenu("date", "date-op", undefined, {
       tz: "America/Los_Angeles",
     });
+    await date.tableView.user.click(
+      date.tableView.filterMenu().datePreset("operand-rule"),
+    );
+    await date.tableView.user.click(
+      await screen.findByRole("option", { name: "Custom date" }),
+    );
     await date.tableView.user.type(
-      date.tableView.filterMenu().operand("operand-rule"),
+      date.tableView.filterMenu().customDate("operand-rule"),
       "2026-08-26",
     );
     await date.tableView.user.tab();
@@ -733,12 +772,10 @@ describe("FilterMenu operand metadata", () => {
       { timestamp },
       { tz: "UTC" },
     );
-    expect(date.filter.operand("operand-rule")).toHaveValue("2026-08-26");
+    expect(date.filter.customDate("operand-rule")).toHaveValue("2026-08-26");
     date.rerenderTimeZone("America/Los_Angeles");
-    expect(date.filter.operand("operand-rule")).toHaveValue("2026-08-25");
-    await date.user.click(
-      date.filter.calendarButton("operand-rule", "Open calendar"),
-    );
+    expect(date.filter.customDate("operand-rule")).toHaveValue("2026-08-25");
+    await date.user.click(date.filter.customDate("operand-rule"));
     expect(
       await screen.findByRole("button", {
         name: /August 25th, 2026, selected/,
@@ -753,14 +790,12 @@ describe("FilterMenu operand metadata", () => {
       { tz: "UTC" },
     );
     range.rerenderTimeZone("America/Los_Angeles");
-    expect(range.filter.operand("operand-rule", "Start")).toHaveValue(
-      "2026-08-25",
-    );
-    expect(range.filter.operand("operand-rule", "End")).toHaveValue(
+    await range.user.click(range.filter.dateRange("operand-rule"));
+    expect(
+      await screen.findByRole("textbox", { name: "Starting" }),
+    ).toHaveValue("2026-08-25");
+    expect(screen.getByRole("textbox", { name: "Ending" })).toHaveValue(
       "2026-08-26",
-    );
-    await range.user.click(
-      range.filter.calendarButton("operand-rule", "Open start calendar"),
     );
     expect(
       await screen.findByRole("button", {
@@ -772,23 +807,17 @@ describe("FilterMenu operand metadata", () => {
   it("rejects invalid, incomplete, and reversed date ranges", async () => {
     const range = renderMetadataMenu("date-range", "range-op");
     const filter = range.tableView.filterMenu();
-    await range.tableView.user.type(
-      filter.operand("operand-rule", "Start"),
-      "2026-08-27",
-    );
+    await range.tableView.user.click(filter.dateRange("operand-rule"));
+    const start = await screen.findByRole("textbox", { name: "Starting" });
+    const end = screen.getByRole("textbox", { name: "Ending" });
+    await range.tableView.user.type(start, "2026-08-27");
     await range.tableView.user.tab();
-    await range.tableView.user.type(
-      filter.operand("operand-rule", "End"),
-      "invalid",
-    );
+    await range.tableView.user.type(end, "invalid");
     await range.tableView.user.tab();
     expect(range.onViewChange).not.toHaveBeenCalled();
 
-    await range.tableView.user.clear(filter.operand("operand-rule", "End"));
-    await range.tableView.user.type(
-      filter.operand("operand-rule", "End"),
-      "2026-08-26",
-    );
+    await range.tableView.user.clear(end);
+    await range.tableView.user.type(end, "2026-08-26");
     await range.tableView.user.tab();
     expect(range.onViewChange).not.toHaveBeenCalled();
   });
@@ -821,17 +850,23 @@ describe("FilterMenu operand metadata", () => {
       { timestamp: first },
       { tz: "America/Los_Angeles" },
     );
-    expect(date.filter.operand("operand-rule")).toHaveValue("2026-08-26");
+    expect(date.filter.customDate("operand-rule")).toHaveValue("2026-08-26");
     date.rerenderValue({ timestamp: second });
-    expect(date.filter.operand("operand-rule")).toHaveValue("2026-08-27");
+    expect(date.filter.customDate("operand-rule")).toHaveValue("2026-08-27");
 
     cleanup();
     const relative = renderControlledMetadata("relative-date", "relative-op", {
-      offsetDays: 2,
+      amount: 2,
+      unit: "day",
     });
-    expect(relative.filter.operand("operand-rule")).toHaveValue("2");
-    relative.rerenderValue({ offsetDays: -4 });
-    expect(relative.filter.operand("operand-rule")).toHaveValue("-4");
+    expect(relative.filter.relativeDateAmount("operand-rule")).toHaveValue("2");
+    relative.rerenderValue({ amount: -4, unit: "week" });
+    expect(relative.filter.relativeDateAmount("operand-rule")).toHaveValue(
+      "-4",
+    );
+    expect(relative.filter.relativeDateUnit("operand-rule")).toHaveTextContent(
+      "Week",
+    );
   });
 
   it("does not offer a rule when the table has no title property", async () => {
@@ -871,7 +906,7 @@ describe("FilterMenu operand metadata", () => {
 });
 
 function renderMetadataMenu(
-  kind: FilterOperandMetadata["kind"],
+  metadata: FilterOperandMetadata["kind"] | FilterOperandMetadata,
   operator: string,
   existing?: { value: import("@notion-kit/table-hook").FilterValue },
   configOverrides?: { tz?: string },
@@ -883,7 +918,7 @@ function renderMetadataMenu(
       { ...rule("operand-rule", "metadata", operator), ...existing },
     ]),
     onViewChange,
-    plugins: [metadataPlugin(kind, operator)],
+    plugins: [metadataPlugin(metadata, operator)],
     properties: [metadataProperty("metadata", "Metadata", configOverrides)],
   });
   return { tableView, onViewChange };
@@ -896,9 +931,10 @@ interface MetadataConfig {
 type MetadataPlugin = CellPlugin<"metadata", string, MetadataConfig>;
 
 function metadataPlugin(
-  kind: FilterOperandMetadata["kind"],
+  metadata: FilterOperandMetadata["kind"] | FilterOperandMetadata,
   operator: string,
 ): MetadataPlugin {
+  const operand = typeof metadata === "string" ? { kind: metadata } : metadata;
   return {
     id: "metadata",
     meta: { name: "Metadata", desc: "Metadata", icon: null },
@@ -916,10 +952,10 @@ function metadataPlugin(
         {
           id: operator,
           name: operator,
-          operand: { kind } as FilterOperandMetadata,
+          operand,
           matches: () => false,
         },
-        ...(kind === "none"
+        ...(operand.kind === "none"
           ? []
           : [
               {
