@@ -82,5 +82,7 @@ storybook-static/
 !.agents/skills/using-primitives-for-components/SKILL.md
 !.agents/skills/writing-component-docs/
 !.agents/skills/writing-component-docs/SKILL.md
+!.agents/guidelines/
+!.agents/guidelines/coding.md
 .superpowers/
 skills-lock.json
