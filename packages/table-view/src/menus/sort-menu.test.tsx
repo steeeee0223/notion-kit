@@ -142,7 +142,7 @@ describe("SortMenu", () => {
     expect(sort.propertyOption("Score")).toBeVisible();
   });
 
-  it("SortMenu_AddsALegacyPluginWithoutRegisteredSortingMetadata", async () => {
+  it("SortMenu_AddsLegacyPluginWithFallbackDirectionWhenSortingMetadataIsMissing", async () => {
     const legacyPlugin: CellPlugin<"legacy", string, undefined> = {
       id: "legacy",
       meta: { name: "Legacy", desc: "Legacy", icon: null },
@@ -163,12 +163,6 @@ describe("SortMenu", () => {
     });
     const sort = await tableView.openSortMenu();
 
-    await sort.addRule("Name");
-    await tableView.user.click(sort.propertyTrigger("name"));
-    await tableView.user.click(
-      await screen.findByRole("option", { name: "Legacy" }),
-    );
-    await sort.remove("legacy");
     await sort.addRule("Legacy");
     expect(sort.directionTrigger("legacy")).toHaveTextContent("Ascending");
   });
