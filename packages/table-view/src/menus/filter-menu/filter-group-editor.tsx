@@ -86,7 +86,7 @@ export function FilterGroupEditor({
         root={root}
         parentId={group.id}
         depth={depth}
-        className="col-start-2 justify-self-start"
+        className="col-span-3"
       />
     </MenuGroup>
   );
@@ -211,7 +211,7 @@ function FilterRuleEditor({
       >
         <SelectTrigger
           aria-label="Operator select"
-          className="w-32 border border-border"
+          className="w-fit border border-border"
         >
           <SelectValue />
         </SelectTrigger>

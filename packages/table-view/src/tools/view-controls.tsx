@@ -21,11 +21,7 @@ export function ViewControls() {
             align="start"
             side="bottom"
             collisionPadding={12}
-            className="overflow-auto"
-            style={{
-              width: "560px",
-              maxHeight: "min(70vh, 720px)",
-            }}
+            className="max-h-[min(70vh,720px)] w-[750px] overflow-auto"
           >
             <FilterMenu />
           </PopoverContent>

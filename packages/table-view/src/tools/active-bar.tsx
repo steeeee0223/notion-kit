@@ -1,9 +1,5 @@
 import { countFilterRules } from "@notion-kit/table-hook";
-import {
-  Button,
-  PopoverTrigger,
-  type PopoverHandle,
-} from "@notion-kit/ui/primitives";
+import { type PopoverHandle } from "@notion-kit/ui/primitives";
 
 import { useTableViewCtx } from "@/table-contexts";
 
@@ -37,14 +33,6 @@ export function ActiveBar({ filterHandle }: ActiveBarProps) {
                   <FilterSelector filterHandle={filterHandle} />
                 )}
                 {sortingCount > 0 && <SortSelector />}
-                <PopoverTrigger
-                  handle={filterHandle}
-                  render={
-                    <Button variant="hint" size="xs">
-                      + Filter
-                    </Button>
-                  }
-                />
               </div>
             </div>
           </div>
