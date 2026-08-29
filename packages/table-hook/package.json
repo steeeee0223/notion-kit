@@ -23,6 +23,10 @@
     "./plugins": {
       "types": "./dist/plugins.d.mts",
       "default": "./dist/plugins.mjs"
+    },
+    "./mock": {
+      "types": "./dist/mock.d.mts",
+      "default": "./dist/mock.mjs"
     }
   },
   "main": "./dist/index.mjs",

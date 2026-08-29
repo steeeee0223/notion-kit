@@ -16,6 +16,7 @@ import type {
   CellPlugin,
   ComparableValue,
   CompareFn,
+  FilterValue,
   InferData,
 } from "@/plugins";
 
@@ -163,6 +164,72 @@ export function textMethodCapabilities<Data = string>() {
           id: "alphabetical",
           name: "Alphabetical",
           function: (data: Data) => groupByTextAlphabetical(data),
+        },
+      ],
+    },
+  };
+}
+
+export function textFilteringCapabilities<Config = undefined>() {
+  const normalizeOperand = (operand: unknown) =>
+    typeof operand === "string" ? operand.toLowerCase() : null;
+  const normalizeData = (data: string | undefined) =>
+    typeof data === "string" ? data.toLowerCase() : "";
+  const textOperator = (
+    id: string,
+    name: string,
+    predicate: (data: string, operand: string) => boolean,
+  ) => ({
+    id,
+    name,
+    operand: { kind: "text" as const },
+    matches: (
+      data: string | undefined,
+      _row: Row,
+      _config: Config,
+      operand?: FilterValue,
+    ) => {
+      const normalizedOperand = normalizeOperand(operand);
+      return (
+        normalizedOperand !== null &&
+        predicate(normalizeData(data), normalizedOperand)
+      );
+    },
+  });
+  return {
+    filtering: {
+      operators: [
+        textOperator("equals", "Equals", (data, operand) => data === operand),
+        textOperator(
+          "does-not-equal",
+          "Does not equal",
+          (data, operand) => data !== operand,
+        ),
+        textOperator("contains", "Contains", (data, operand) =>
+          data.includes(operand),
+        ),
+        textOperator(
+          "does-not-contain",
+          "Does not contain",
+          (data, operand) => !data.includes(operand),
+        ),
+        textOperator("starts-with", "Starts with", (data, operand) =>
+          data.startsWith(operand),
+        ),
+        textOperator("ends-with", "Ends with", (data, operand) =>
+          data.endsWith(operand),
+        ),
+        {
+          id: "is-empty",
+          name: "Is empty",
+          operand: { kind: "none" as const },
+          matches: (data: string | undefined) => !data,
+        },
+        {
+          id: "is-not-empty",
+          name: "Is not empty",
+          operand: { kind: "none" as const },
+          matches: (data: string | undefined) => Boolean(data),
         },
       ],
     },

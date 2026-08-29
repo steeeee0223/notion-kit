@@ -49,6 +49,22 @@ export function checkbox(config: CheckboxPluginConfig): CheckboxPlugin {
       methods: [{ id: "value", name: "Value", function: groupByValue }],
     },
     counting: checkboxCounting,
+    filtering: {
+      operators: [
+        {
+          id: "is-checked",
+          name: "Is checked",
+          operand: { kind: "none" },
+          matches: (data) => data === true,
+        },
+        {
+          id: "is-unchecked",
+          name: "Is unchecked",
+          operand: { kind: "none" },
+          matches: (data) => data === false,
+        },
+      ],
+    },
     renderCellValue: config.renderCellValue,
     renderCellEditor: config.renderCellEditor,
     renderConfigMenu: config.renderConfigMenu,

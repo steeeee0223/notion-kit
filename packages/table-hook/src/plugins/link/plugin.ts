@@ -3,6 +3,7 @@ import {
   compareStrings,
   createCompareFn,
   genericCounting,
+  textFilteringCapabilities,
   textMethodCapabilities,
 } from "@/plugins/utils";
 
@@ -28,6 +29,7 @@ function createLinkPlugin<T extends "email" | "phone" | "url">(
     },
     compare: createCompareFn(compareStrings),
     ...textMethodCapabilities<string>(),
+    ...textFilteringCapabilities(),
     counting: genericCounting,
     fromValue: (value) => (typeof value === "string" ? value : ""),
     toValue: (data) => data,

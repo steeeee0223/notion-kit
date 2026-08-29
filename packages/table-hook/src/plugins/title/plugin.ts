@@ -11,6 +11,7 @@ import {
   compareStrings,
   createCompareFn,
   genericCounting,
+  textFilteringCapabilities,
   textMethodCapabilities,
 } from "@/plugins/utils";
 
@@ -51,6 +52,7 @@ export function title(config: TitlePluginConfig): TitlePlugin {
     toTextValue: (data) => data,
     compare: createCompareFn(compareStrings),
     ...textMethodCapabilities<string>(),
+    ...textFilteringCapabilities<TitleConfig>(),
     counting: genericCounting,
     renderCellValue: ({ row, config: pluginConfig, ...props }) =>
       config.renderCellValue({

@@ -43,6 +43,48 @@ function getDefaultConfig(): SelectConfig {
   };
 }
 
+function selectFiltering() {
+  const values = (data: string | string[] | null | undefined) =>
+    Array.isArray(data) ? data : typeof data === "string" ? [data] : [];
+  const membershipOperator = (id: string, name: string, invert: boolean) => ({
+    id,
+    name,
+    operand: { kind: "option" as const },
+    matches: (
+      data: string | string[] | null | undefined,
+      _row: Row,
+      _config: SelectConfig,
+      operand?: unknown,
+    ) => {
+      if (typeof operand !== "string") return false;
+      const contains = values(data).includes(operand);
+      return invert ? !contains : contains;
+    },
+  });
+  return {
+    filtering: {
+      operators: [
+        membershipOperator("contains", "Contains", false),
+        membershipOperator("does-not-contain", "Does not contain", true),
+        {
+          id: "is-empty",
+          name: "Is empty",
+          operand: { kind: "none" as const },
+          matches: (data: string | string[] | null | undefined) =>
+            values(data).length === 0,
+        },
+        {
+          id: "is-not-empty",
+          name: "Is not empty",
+          operand: { kind: "none" as const },
+          matches: (data: string | string[] | null | undefined) =>
+            values(data).length > 0,
+        },
+      ],
+    },
+  };
+}
+
 /**
  * Transfers the property configuration to "select" or "multi-select"
  */
@@ -146,6 +188,7 @@ export function select(config: SelectPluginConfig): SelectPlugin {
       ],
     },
     counting: genericCounting,
+    ...selectFiltering(),
     renderCellValue: ({ data, ...props }) =>
       config.renderCellValue({
         data: data ? [data] : [],
@@ -231,6 +274,7 @@ export function multiSelect(
     },
     transferConfig: toSelectConfig,
     counting: genericCounting,
+    ...selectFiltering(),
     renderCellValue: (props) =>
       config.renderCellValue({ multi: true, ...props }),
     renderCellEditor: renderCellEditor

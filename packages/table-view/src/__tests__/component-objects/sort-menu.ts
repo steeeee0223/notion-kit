@@ -30,18 +30,28 @@ export class SortMenuObject extends MenuSurfaceObject {
     return screen.getByRole("option", { name });
   }
 
-  moveHandle(name: string) {
-    return within(this.root).getByRole("button", { name: `Move ${name}` });
+  rule(id: string) {
+    return within(this.root).getByTestId(`sort-rule-${id}`);
   }
 
-  removeButton(name: string) {
-    return within(this.root).getByRole("button", {
-      name: `Remove ${name} sort`,
+  propertyTrigger(id: string) {
+    return within(this.rule(id)).getByRole("combobox", {
+      name: "Property select",
     });
   }
 
-  directionTrigger(name: string) {
-    return within(this.root).getByRole("combobox", { name });
+  moveHandle(id: string) {
+    return within(this.rule(id)).getByRole("button", { name: "Move sort" });
+  }
+
+  removeButton(id: string) {
+    return within(this.rule(id)).getByRole("button", { name: "Remove sort" });
+  }
+
+  directionTrigger(id: string) {
+    return within(this.rule(id)).getByRole("combobox", {
+      name: "Sort direction select",
+    });
   }
 
   directionOption(name: string) {
@@ -75,12 +85,12 @@ export class SortMenuObject extends MenuSurfaceObject {
     await this.user.click(this.deleteSortItem());
   }
 
-  async remove(name: string) {
-    await this.user.click(this.removeButton(name));
+  async remove(id: string) {
+    await this.user.click(this.removeButton(id));
   }
 
-  async openDirection(name: string, option = "Z → A") {
-    await this.user.click(this.directionTrigger(name));
+  async openDirection(id: string, option = "Z → A") {
+    await this.user.click(this.directionTrigger(id));
     await screen.findByRole("option", { name: option });
   }
 }

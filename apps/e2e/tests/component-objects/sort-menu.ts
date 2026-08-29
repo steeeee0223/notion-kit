@@ -19,14 +19,18 @@ export class SortMenuObject extends MenuSurfaceObject {
     return this.page.getByPlaceholder("Search for a property...");
   }
 
-  direction(name: AccessibleName) {
-    return this.root.getByRole("combobox", { name });
+  rule(propertyId: string) {
+    return this.root.getByTestId(`sort-rule-${propertyId}`);
   }
 
-  removeButton(propertyName: string) {
-    return this.root.getByRole("button", {
-      name: `Remove ${propertyName} sort`,
+  direction(propertyId: string) {
+    return this.rule(propertyId).getByRole("combobox", {
+      name: "Sort direction select",
     });
+  }
+
+  removeButton(propertyId: string) {
+    return this.rule(propertyId).getByRole("button", { name: "Remove sort" });
   }
 
   async add(propertyName: string) {
@@ -35,8 +39,8 @@ export class SortMenuObject extends MenuSurfaceObject {
     await this.page.getByRole("option", { name: propertyName }).click();
   }
 
-  async setDirection(current: AccessibleName, next: AccessibleName) {
-    await this.direction(current).click();
+  async setDirection(propertyId: string, next: AccessibleName) {
+    await this.direction(propertyId).click();
     await this.page.getByRole("option", { name: next }).click();
   }
 
@@ -44,7 +48,7 @@ export class SortMenuObject extends MenuSurfaceObject {
     await this.item("Delete sort").click();
   }
 
-  async remove(propertyName: string) {
-    await this.removeButton(propertyName).click();
+  async remove(propertyId: string) {
+    await this.removeButton(propertyId).click();
   }
 }

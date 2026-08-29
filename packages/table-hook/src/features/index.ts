@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
+  columnFilteringFeature,
   columnGroupingFeature,
   columnOrderingFeature,
   columnPinningFeature,
@@ -8,6 +9,7 @@ import {
   columnVisibilityFeature,
   createExpandedRowModel,
   createSortedRowModel,
+  globalFilteringFeature,
   rowAggregationFeature,
   rowExpandingFeature,
   rowSortingFeature,
@@ -36,6 +38,13 @@ import {
 } from "./counting";
 import { getExtendedGroupedRowModel } from "./extended-grouped-row-model";
 import {
+  AdvancedFilteringFeature,
+  getAdvancedFilteredRowModel,
+  pluginTextIncludes,
+  type AdvancedFilteringTableApi,
+  type AdvancedFilteringTableState,
+} from "./filtering";
+import {
   FreezingFeature,
   type FreezingOptions,
   type FreezingTableApi,
@@ -63,6 +72,29 @@ import {
 } from "./row-actions";
 import { InternalRowSelectionFeature } from "./row-selection";
 
+export {
+  AdvancedFilteringFeature,
+  appendFilterNode,
+  countFilterRules,
+  createFilterGroup,
+  createFilterRule,
+  evaluateTableFilter,
+  getAdvancedFilteredRowModel,
+  pluginTextIncludes,
+  removeFilterNode,
+  updateFilterNode,
+  validateTableFilterState,
+} from "./filtering";
+export type {
+  AdvancedFilteringTableApi,
+  AdvancedFilteringTableState,
+  FilterGroup,
+  FilterLogic,
+  FilterRule,
+  FilterValue,
+  TableFilterState,
+} from "./filtering";
+
 declare module "@tanstack/table-core" {
   // merge our new feature's state with the existing table state
   interface TableState_FeatureMap {
@@ -72,6 +104,7 @@ declare module "@tanstack/table-core" {
     tableMenuFeature: TableMenuTableState;
     rowActionsFeature: Record<never, never>;
     extendedGroupingFeature: ExtendedGroupingTableState;
+    advancedFilteringFeature: AdvancedFilteringTableState;
   }
 
   interface TableState_All
@@ -80,7 +113,8 @@ declare module "@tanstack/table-core" {
         CountingTableState &
         FreezingTableState &
         TableMenuTableState &
-        ExtendedGroupingTableState
+        ExtendedGroupingTableState &
+        AdvancedFilteringTableState
     > {
     __tableHookStateBrand?: never;
   }
@@ -103,6 +137,7 @@ declare module "@tanstack/table-core" {
     tableMenuFeature: TableMenuTableApi;
     rowActionsFeature: RowActionsTableApi;
     extendedGroupingFeature: ExtendedGroupingTableApi;
+    advancedFilteringFeature: AdvancedFilteringTableApi;
   }
 
   interface Column_FeatureMap<TFeatures, TData extends RowData> {
@@ -124,6 +159,7 @@ declare module "@tanstack/table-core" {
     tableMenuFeature: typeof TableMenuFeature;
     rowActionsFeature: typeof RowActionsFeature;
     extendedGroupingFeature: typeof ExtendedGroupingFeature;
+    advancedFilteringFeature: typeof AdvancedFilteringFeature;
   }
 }
 
@@ -145,8 +181,10 @@ export interface TableFeatures extends BaseTableFeatures {
   tableMenuFeature: typeof TableMenuFeature;
   rowActionsFeature: typeof RowActionsFeature;
   extendedGroupingFeature: typeof ExtendedGroupingFeature;
+  advancedFilteringFeature: typeof AdvancedFilteringFeature;
   rowSelectionFeature: typeof InternalRowSelectionFeature;
   aggregationFns: typeof COMMON_AGGREGATION_FNS;
+  filterFns: { pluginTextIncludes: typeof pluginTextIncludes };
   sortFns: typeof COMMON_SORT_FNS;
 }
 
@@ -157,6 +195,8 @@ const COMMON_SORT_FNS = {
 } as const;
 
 export const DEFAULT_FEATURES = tableFeatures({
+  columnFilteringFeature,
+  globalFilteringFeature,
   columnGroupingFeature,
   columnOrderingFeature,
   columnPinningFeature,
@@ -169,13 +209,16 @@ export const DEFAULT_FEATURES = tableFeatures({
   aggregationFns: COMMON_AGGREGATION_FNS,
   rowSortingFeature,
   sortFns: COMMON_SORT_FNS,
+  filterFns: { pluginTextIncludes },
   sortedRowModel: createSortedRowModel(),
+  filteredRowModel: getAdvancedFilteredRowModel(),
   groupedRowModel: getExtendedGroupedRowModel(),
   expandedRowModel: createExpandedRowModel(),
   columnsInfoFeature: ColumnsInfoFeature,
   countingFeature: CountingFeature,
   freezingFeature: FreezingFeature,
   tableMenuFeature: TableMenuFeature,
+  advancedFilteringFeature: AdvancedFilteringFeature,
   rowActionsFeature: RowActionsFeature,
   extendedGroupingFeature: ExtendedGroupingFeature,
 });

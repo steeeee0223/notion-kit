@@ -25,8 +25,14 @@ function SelectGroup({ ...props }: SelectPrimitive.Group.Props) {
   );
 }
 
-function SelectValue({ ...props }: SelectPrimitive.Value.Props) {
-  return <SelectPrimitive.Value data-slot="select-value" {...props} />;
+function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
+  return (
+    <SelectPrimitive.Value
+      data-slot="select-value"
+      className={cn("min-w-0 flex-1 text-left", className)}
+      {...props}
+    />
+  );
 }
 
 function SelectIcon({ ...props }: SelectPrimitive.Icon.Props) {
@@ -43,7 +49,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       className={cn(
         buttonVariants({ variant: null }),
-        "relative flex h-7 w-full min-w-0 shrink-0 justify-normal p-2 text-primary",
+        "relative flex h-7 w-full min-w-0 shrink-0 items-center justify-normal p-2 text-primary",
         "focus-within:shadow-notion disabled:opacity-30",
         "placeholder:text-secondary data-placeholder:text-secondary",
         "[&>span]:line-clamp-1",
@@ -52,9 +58,9 @@ function SelectTrigger({
       {...props}
     >
       {children}
-      <SelectPrimitive.Icon>
-        <Icon.Chevron side="down" className="ml-auto fill-icon" />
-      </SelectPrimitive.Icon>
+      <SelectIcon className="ml-auto shrink-0">
+        <Icon.Chevron side="down" className="fill-icon" />
+      </SelectIcon>
     </SelectPrimitive.Trigger>
   );
 }
@@ -108,7 +114,7 @@ function SelectContent({
   align,
   alignOffset,
   collisionPadding,
-  side,
+  side = "bottom",
   sideOffset = 4,
   ...props
 }: SelectContentProps) {
