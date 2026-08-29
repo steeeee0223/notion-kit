@@ -14,6 +14,9 @@ interface UseInputFieldOptions {
   validate?: (value: string) => boolean;
   onUpdate?: (value: string) => void;
   onKeyDownUpdate?: () => void;
+  autoFocus?: boolean;
+  restoreInvalidValueOnBlur?: boolean;
+  reconcileCommittedValue?: boolean;
 }
 
 interface UseInputFieldResults {
@@ -33,20 +36,52 @@ interface UseInputFieldResults {
   reset: () => void;
 }
 
+interface InputFieldState {
+  initialValue: string;
+  value: string;
+  error: boolean;
+  pendingCommit: boolean;
+}
+
 export function useInputField({
   id,
   initialValue,
   validate = () => true,
   onUpdate,
   onKeyDownUpdate,
+  autoFocus = true,
+  restoreInvalidValueOnBlur = false,
+  reconcileCommittedValue = false,
 }: UseInputFieldOptions): UseInputFieldResults {
   const ref = useRef<HTMLInputElement>(null);
-  const [value, setValue] = useState(initialValue);
-  const [error, setError] = useState(false);
+  const [field, setField] = useState<InputFieldState>(() => ({
+    initialValue,
+    value: initialValue,
+    error: false,
+    pendingCommit: false,
+  }));
 
-  useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
+  if (
+    field.initialValue !== initialValue ||
+    (reconcileCommittedValue && field.pendingCommit)
+  ) {
+    setField({
+      initialValue,
+      value: initialValue,
+      error: false,
+      pendingCommit: false,
+    });
+  }
+
+  const { value, error } = field;
+
+  const commit = useCallback(() => {
+    if (error || value === initialValue) return;
+    onUpdate?.(value);
+    if (reconcileCommittedValue) {
+      setField((current) => ({ ...current, pendingCommit: true }));
+    }
+  }, [error, initialValue, onUpdate, reconcileCommittedValue, value]);
 
   const props = useMemo<UseInputFieldResults["props"]>(
     () => ({
@@ -56,32 +91,57 @@ export function useInputField({
       "aria-invalid": error,
       onChange: (e) => {
         e.preventDefault();
-        setValue(e.target.value);
-        const isValid = validate(e.target.value);
-        setError(!isValid);
+        const nextValue = e.target.value;
+        setField((current) => ({
+          ...current,
+          value: nextValue,
+          error: !validate(nextValue),
+        }));
       },
       onBlur: () => {
-        if (error || value === initialValue) return;
-        onUpdate?.(value);
+        if (error) {
+          if (restoreInvalidValueOnBlur) {
+            setField((current) => ({
+              ...current,
+              value: initialValue,
+              error: false,
+            }));
+          }
+          return;
+        }
+        commit();
       },
       onKeyDown: (e) => {
         e.stopPropagation();
         if (e.key !== "Enter" || value === initialValue) return;
-        if (!error) onUpdate?.(value);
+        commit();
         onKeyDownUpdate?.();
       },
     }),
-    [error, id, initialValue, onKeyDownUpdate, onUpdate, validate, value],
+    [
+      commit,
+      error,
+      id,
+      initialValue,
+      onKeyDownUpdate,
+      restoreInvalidValueOnBlur,
+      validate,
+      value,
+    ],
   );
 
   const reset = useCallback(() => {
-    setValue(initialValue);
-    setError(false);
+    setField((current) => ({
+      ...current,
+      value: initialValue,
+      error: false,
+      pendingCommit: false,
+    }));
   }, [initialValue]);
 
   useEffect(() => {
-    ref.current?.focus();
-  }, []);
+    if (autoFocus) ref.current?.focus();
+  }, [autoFocus]);
 
   return { error, ref, props, reset };
 }

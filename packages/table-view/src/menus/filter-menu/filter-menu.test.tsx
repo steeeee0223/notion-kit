@@ -62,7 +62,7 @@ function renderFilterMenu(options: {
 }
 
 describe("FilterMenu", () => {
-  it("selects a property, operator, and text operand and persists each edit", async () => {
+  it("selects a property, operator, and commits a text operand on blur", async () => {
     const onViewChange =
       vi.fn<(change: ResourceChange<TableViewState, unknown>) => void>();
     const tableView = renderFilterMenu({
@@ -83,6 +83,8 @@ describe("FilterMenu", () => {
     await filter.chooseOperator("rule-1", "Contains");
     expect(lastRule(onViewChange)).not.toHaveProperty("value");
     await tableView.user.type(filter.operand("rule-1"), "alpha");
+    expect(onViewChange).toHaveBeenCalledTimes(1);
+    await tableView.user.tab();
 
     expect(lastRule(onViewChange)).toMatchObject({
       propertyId: "col1",
@@ -493,6 +495,8 @@ describe("FilterMenu operand metadata", () => {
         tableView.filterMenu().operand("operand-rule"),
         input,
       );
+      expect(onViewChange).not.toHaveBeenCalled();
+      await tableView.user.tab();
       expect(lastValue(onViewChange)).toEqual(expected);
     },
   );
@@ -597,6 +601,8 @@ describe("FilterMenu operand metadata", () => {
     await range.tableView.user.type(start, "2026-08-26");
     expect(range.onViewChange).not.toHaveBeenCalled();
     await range.tableView.user.type(end, "2026-08-27");
+    expect(range.onViewChange).not.toHaveBeenCalled();
+    await range.tableView.user.tab();
     const value = lastValue(range.onViewChange) as {
       start: number;
       end: number;
@@ -621,12 +627,15 @@ describe("FilterMenu operand metadata", () => {
       number.tableView.filterMenu().operand("operand-rule"),
       "1",
     );
+    expect(number.onViewChange).not.toHaveBeenCalled();
+    await number.tableView.user.tab();
     expect(lastValue(number.onViewChange)).toBe(1);
     number.onViewChange.mockClear();
     await number.tableView.user.type(
       number.tableView.filterMenu().operand("operand-rule"),
       "e",
     );
+    await number.tableView.user.tab();
     expect(number.onViewChange).not.toHaveBeenCalled();
 
     cleanup();
@@ -635,6 +644,8 @@ describe("FilterMenu operand metadata", () => {
       relative.tableView.filterMenu().relativeDateAmount("operand-rule"),
       "1",
     );
+    expect(relative.onViewChange).not.toHaveBeenCalled();
+    await relative.tableView.user.tab();
     expect(lastValue(relative.onViewChange)).toEqual({
       amount: 1,
       unit: "day",
@@ -644,6 +655,7 @@ describe("FilterMenu operand metadata", () => {
       relative.tableView.filterMenu().relativeDateAmount("operand-rule"),
       ".5",
     );
+    await relative.tableView.user.tab();
     expect(relative.onViewChange).not.toHaveBeenCalled();
   });
 
@@ -656,6 +668,7 @@ describe("FilterMenu operand metadata", () => {
       .relativeDateAmount("operand-rule");
 
     await relative.tableView.user.clear(amount);
+    await relative.tableView.user.tab();
 
     expect(lastRule(relative.onViewChange)).not.toHaveProperty("value");
   });
@@ -734,6 +747,7 @@ describe("FilterMenu operand metadata", () => {
       date.tableView.filterMenu().customDate("operand-rule"),
       "1960-01-02",
     );
+    await date.tableView.user.tab();
 
     expect(lastValue(date.onViewChange)).toEqual({
       timestamp: isoToTs({ date: "1960-01-02", time: "00:00:00" }, timeZone),
@@ -830,6 +844,7 @@ describe("FilterMenu operand metadata", () => {
       initialSelectionStart: 0,
       initialSelectionEnd: 1,
     });
+    await controlled.user.tab();
 
     expect(lastValue(controlled.onViewChange)).toBe(9);
     expect(operand).toHaveValue("7");

@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState, type FocusEvent, type KeyboardEvent } from "react";
 import { addDays, addMonths, addWeeks } from "date-fns";
 
+import { useInputField } from "@notion-kit/hooks";
 import { updateFilterNode } from "@notion-kit/table-hook";
 import type {
   FilterGroup,
@@ -136,36 +137,28 @@ function NumericOperand({
   const updateRule = useFilterRuleUpdate(root, rule.id);
   const persisted = typeof rule.value === "number" ? rule.value : undefined;
   const authoritative = persisted?.toString() ?? "";
-  const [draft, setDraft] = useState<{
-    value: string;
-    base: string;
-  } | null>(null);
-  const parsedDraft = draft ? parseNumericDraft(draft.value, false) : undefined;
-  const draftIsEmpty = draft?.value.trim() === "";
-  const preservePartialDraft =
-    draft !== null &&
-    !draftIsEmpty &&
-    parsedDraft === undefined &&
-    draft.base === authoritative;
-  const displayValue = preservePartialDraft ? draft.value : authoritative;
+  const { props } = useInputField({
+    id: `filter-number-${rule.id}`,
+    initialValue: authoritative,
+    validate: (value) =>
+      !value.trim() || parseNumericDraft(value, false) !== undefined,
+    onUpdate: (value) => {
+      if (!value.trim()) {
+        updateRule(undefined);
+        return;
+      }
+      const number = parseNumericDraft(value, false);
+      if (number !== undefined) updateRule(number);
+    },
+    autoFocus: false,
+    restoreInvalidValueOnBlur: true,
+    reconcileCommittedValue: true,
+  });
   return (
     <Input
+      {...props}
       aria-label="Value"
       inputMode="decimal"
-      value={displayValue}
-      onChange={(event) => {
-        const next = event.currentTarget.value;
-        setDraft({ value: next, base: authoritative });
-        if (!next.trim()) {
-          updateRule(undefined);
-          return;
-        }
-        const number = parseNumericDraft(next, false);
-        if (number !== undefined) {
-          updateRule(number);
-        }
-      }}
-      onBlur={() => setDraft(null)}
       className="min-w-24 flex-1"
     />
   );
@@ -181,37 +174,31 @@ function RelativeDateOperand({
   const updateRule = useFilterRuleUpdate(root, rule.id);
   const amount = getRecordNumber(rule.value, "amount");
   const unit = getRelativeDateUnit(rule.value);
-  const [draft, setDraft] = useState<{
-    value: string;
-    base: string;
-  } | null>(null);
   const authoritative = amount?.toString() ?? "";
-  const parsedDraft = draft ? parseNumericDraft(draft.value, true) : undefined;
-  const preservePartialDraft =
-    draft !== null &&
-    draft.value.trim() !== "" &&
-    parsedDraft === undefined &&
-    draft.base === authoritative;
-  const displayValue = preservePartialDraft ? draft.value : authoritative;
+  const { props } = useInputField({
+    id: `filter-relative-date-${rule.id}`,
+    initialValue: authoritative,
+    validate: (value) =>
+      !value.trim() || parseNumericDraft(value, true) !== undefined,
+    onUpdate: (value) => {
+      if (!value.trim()) {
+        updateRule(undefined);
+        return;
+      }
+      const nextAmount = parseNumericDraft(value, true);
+      if (nextAmount !== undefined) updateRule({ amount: nextAmount, unit });
+    },
+    autoFocus: false,
+    restoreInvalidValueOnBlur: true,
+    reconcileCommittedValue: true,
+  });
 
   return (
     <div className="flex min-w-32 flex-1 gap-1">
       <Input
+        {...props}
         aria-label="Relative date amount"
         inputMode="numeric"
-        value={displayValue}
-        onChange={(event) => {
-          const next = event.currentTarget.value;
-          setDraft({ value: next, base: authoritative });
-          if (!next.trim()) {
-            updateRule(undefined);
-            return;
-          }
-          const nextAmount = parseNumericDraft(next, true);
-          if (nextAmount !== undefined)
-            updateRule({ amount: nextAmount, unit });
-        }}
-        onBlur={() => setDraft(null)}
         className="min-w-16 flex-1"
       />
       <Select
@@ -413,15 +400,15 @@ function optionGroups(options: string[]): OptionGroup[] {
 
 function TextOperand({ rule, root }: { rule: FilterRule; root: FilterGroup }) {
   const updateRule = useFilterRuleUpdate(root, rule.id);
+  const { props } = useInputField({
+    id: `filter-text-${rule.id}`,
+    initialValue: typeof rule.value === "string" ? rule.value : "",
+    onUpdate: (value) => updateRule(value),
+    autoFocus: false,
+    reconcileCommittedValue: true,
+  });
 
-  return (
-    <Input
-      aria-label="Value"
-      value={typeof rule.value === "string" ? rule.value : ""}
-      onChange={(event) => updateRule(event.currentTarget.value)}
-      className="min-w-24 flex-1"
-    />
-  );
+  return <Input {...props} aria-label="Value" className="min-w-24 flex-1" />;
 }
 
 function parseNumericDraft(value: string, relative: boolean) {
@@ -547,36 +534,32 @@ function CustomDateOperand({
   onValueChange: (value: number | undefined) => void;
 }) {
   const authoritative = formatDateValue(value, timeZone);
-  const [inputValue, setInputValue] = useState(authoritative);
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    setInputValue(authoritative);
-  }, [authoritative]);
+  const { props } = useInputField({
+    id: "filter-custom-date",
+    initialValue: authoritative,
+    validate: (value) => !value || parseDate(value, timeZone) !== undefined,
+    onUpdate: (value) => {
+      if (!value) {
+        onValueChange(undefined);
+        return;
+      }
+      const timestamp = parseDate(value, timeZone);
+      if (timestamp !== undefined) onValueChange(timestamp);
+    },
+    autoFocus: false,
+    restoreInvalidValueOnBlur: true,
+    reconcileCommittedValue: true,
+  });
 
   return (
     <div className="relative min-w-32 flex-1">
       <Input
+        {...props}
         aria-label="Custom date select"
         placeholder="YYYY-MM-DD"
-        value={inputValue}
         onClick={() => setOpen(true)}
-        onChange={(event) => {
-          const nextValue = event.currentTarget.value;
-          setInputValue(nextValue);
-          if (!nextValue) {
-            onValueChange(undefined);
-            return;
-          }
-          const timestamp = parseDate(nextValue, timeZone);
-          if (timestamp !== undefined) onValueChange(timestamp);
-        }}
         className="min-w-32 flex-1 rounded-md border border-border px-2 py-1.5"
-        onBlur={() => {
-          if (parseDate(inputValue, timeZone) === undefined) {
-            setInputValue(authoritative);
-          }
-        }}
       />
       {open && (
         <div className="absolute left-0 z-50 mt-2 w-fit rounded-md border border-border bg-popover shadow-md">
@@ -588,7 +571,6 @@ function CustomDateOperand({
               const nextValue = calendarDateKey(date);
               const timestamp = parseDate(nextValue, timeZone);
               if (timestamp === undefined) return;
-              setInputValue(nextValue);
               onValueChange(timestamp);
               setOpen(false);
             }}
@@ -624,20 +606,48 @@ function DateRangeOperand({
   const [end, setEnd] = useState(authoritativeEnd);
   const [open, setOpen] = useState(false);
   const [selectingEnd, setSelectingEnd] = useState(false);
+  const startRef = useRef<HTMLInputElement>(null);
+  const endRef = useRef<HTMLInputElement>(null);
+  const restore = () => {
+    setStart(authoritativeStart);
+    setEnd(authoritativeEnd);
+    setSelectingEnd(false);
+  };
   const commit = (nextStart: string, nextEnd: string) => {
-    if ((!nextStart || !nextEnd) && authoritativeStart && authoritativeEnd) {
-      updateRule(undefined);
+    if (nextStart === authoritativeStart && nextEnd === authoritativeEnd) {
+      return;
+    }
+    if (!nextStart && !nextEnd) {
+      if (authoritativeStart || authoritativeEnd) updateRule(undefined);
+      restore();
       return;
     }
     const startTimestamp = parseDate(nextStart, timeZone);
     const endTimestamp = parseDate(nextEnd, timeZone);
     if (
-      startTimestamp !== undefined &&
-      endTimestamp !== undefined &&
-      startTimestamp <= endTimestamp
+      startTimestamp === undefined ||
+      endTimestamp === undefined ||
+      startTimestamp > endTimestamp
     ) {
-      updateRule({ start: startTimestamp, end: endTimestamp });
+      restore();
+      return;
     }
+    updateRule({ start: startTimestamp, end: endTimestamp });
+    restore();
+  };
+  const commitDraft = () => commit(start, end);
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    event.stopPropagation();
+    if (event.key === "Enter") commitDraft();
+  };
+  const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
+    if (
+      event.relatedTarget === startRef.current ||
+      event.relatedTarget === endRef.current
+    ) {
+      return;
+    }
+    commitDraft();
   };
   return (
     <div className="relative min-w-40 flex-1">
@@ -653,6 +663,7 @@ function DateRangeOperand({
         <div className="absolute left-0 z-50 mt-2 w-fit rounded-md border border-border bg-popover p-2 shadow-md">
           <div className="flex flex-col gap-2">
             <Input
+              ref={startRef}
               aria-label="Starting"
               placeholder="Starting"
               value={start}
@@ -660,10 +671,12 @@ function DateRangeOperand({
                 const next = event.currentTarget.value;
                 setStart(next);
                 setSelectingEnd(false);
-                commit(next, end);
               }}
+              onBlur={handleBlur}
+              onKeyDown={handleKeyDown}
             />
             <Input
+              ref={endRef}
               aria-label="Ending"
               placeholder="Ending"
               value={end}
@@ -671,8 +684,9 @@ function DateRangeOperand({
                 const next = event.currentTarget.value;
                 setEnd(next);
                 setSelectingEnd(false);
-                commit(start, next);
               }}
+              onBlur={handleBlur}
+              onKeyDown={handleKeyDown}
             />
           </div>
           <Calendar
@@ -688,7 +702,7 @@ function DateRangeOperand({
                 setStart("");
                 setEnd("");
                 setSelectingEnd(false);
-                commit("", "");
+                updateRule(undefined);
                 return;
               }
               if (!selectingEnd) {
