@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { handleError, useAuth, useSettingsAdapters } from "@notion-kit/auth-ui";
 import type { TabType } from "@notion-kit/settings-panel";
 
+import { routes } from "@/lib/routes";
+
 export function useSettings() {
   const { auth } = useAuth();
   const router = useRouter();
@@ -16,7 +18,7 @@ export function useSettings() {
   const signOut = useCallback(async () => {
     await auth.signOut({
       fetchOptions: {
-        onSuccess: () => router.push("/"),
+        onSuccess: () => router.push(routes.home),
         onError: (e) => handleError(e, "Sign out error"),
       },
     });
