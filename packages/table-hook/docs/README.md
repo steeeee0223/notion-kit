@@ -1,92 +1,111 @@
-# `@notion-kit/table-hook` documentation
+# `@notion-kit/table-hook`
 
-`table-hook` is the headless table engine. It defines the data and plugin
-contracts consumed by a table implementation, executes table behavior, and
-coordinates serializable table resources with TanStack Table.
+`table-hook` is the headless domain and state engine behind notion-kit tables.
+It turns serializable table resources and property plugins into a TanStack Table
+instance. A rendering package, such as `table-view`, uses that instance to
+provide cells, menus, editors, and layouts.
 
-## Responsibility
+## Package boundary
 
-`table-hook` owns:
+`table-hook` owns table meaning and state transitions:
 
-- `CellPlugin` contracts and the public `@notion-kit/table-hook/plugins`
-  factories, including required `renderCellValue` and optional
-  `renderCellEditor` capabilities;
-- property defaults, conversion, transfer, comparison, grouping, counting,
-  and sorting semantics;
-- capability descriptors, stable method IDs, resolver fallbacks, and legacy
-  compatibility;
-- pure date/number/grouping/calculation utilities;
-- table features and resource/state transitions, including controlled and
-  uncontrolled updates;
-- transient plugin-aware search and persisted, nested advanced filtering;
-- the table-level `weekStartsOn` configuration used by date grouping.
+- table data, properties, and view resources;
+- property-plugin contracts for values, text, sorting, grouping, counting, and
+  filtering;
+- table features, row-model composition, and plugin-method resolution;
+- pure utilities for dates, numbers, grouping, and calculations.
 
-`table-hook` does not own React cell components, menus, icons, picker controls,
-or layout-specific interaction behavior. Those belong to `table-view` and may
-be injected into the headless plugin factories.
+It does not own presentation. Cell components, icons, menus, picker controls,
+and layout-specific interactions belong to a consumer such as `table-view`.
+Plugin factories can accept renderer callbacks from that consumer without
+making the headless package depend on its UI implementation.
 
-## Dependency direction
+The dependency direction is one-way:
 
-The dependency direction is one-way: `table-view` may import
-`@notion-kit/table-hook` and `@notion-kit/table-hook/plugins`; the headless
-package must not import UI implementations from `table-view`.
-
-## Search and advanced filtering
-
-Search and advanced filtering have deliberately different owners:
-
-- Search is transient TanStack state in the internal `globalFilter` atom.
-  Consumers use TanStack's native `table.setGlobalFilter` and
-  `table.resetGlobalFilter` methods. For every non-deleted property, search
-  uses that property's plugin `toTextValue` result as its canonical text.
-  Search is not persisted in the table view resource and does not invoke
-  view-resource callbacks.
-- Advanced filtering is persisted only as `view.filters`. The table instance
-  exposes `getFilters`, `setFilters`, `clearFilters`, and `validateFilters`;
-  updates use the existing controlled/uncontrolled view-resource protocol and
-  emit `view.filters.change` actions.
-
-The package entry point exports the complete UI-neutral filtering contract:
-
-```ts
-import {
-  AdvancedFilteringFeature,
-  evaluateTableFilter,
-  getAdvancedFilteredRowModel,
-  pluginTextIncludes,
-  validateTableFilterState,
-  type AdvancedFilteringTableApi,
-  type FilterEvaluationContext,
-  type FilterGroup,
-  type FilterLogic,
-  type FilterOperandMetadata,
-  type FilterOperatorDescriptor,
-  type FilterRule,
-  type FilterValue,
-  type TableFilterState,
-} from "@notion-kit/table-hook";
+```text
+application resources + plugin registry
+                  │
+                  ▼
+            @notion-kit/table-hook
+                  │  TanStack Table API and headless contracts
+                  ▼
+           @notion-kit/table-view (or another UI)
 ```
 
-`FilterValue` is the recursive JSON-safe operand type. Global search and
-persisted advanced filters compose as an AND condition. The runtime pipeline is
-global search, advanced filtering, extended grouping, then sorting and
-expansion.
+## Core architecture
 
-Built-in filter descriptors keep their stable persisted operator IDs while
-providing UI-neutral operand metadata. Choice filters distinguish a single
-option operand from a multiple-option operand: select uses exact membership,
-while multi-select requires every selected positive option and excludes every
-selected negative option. Date filters support exact calendar dates, complete
-date ranges, and a dynamic `relative-to-today` operand expressed as a signed
-amount and calendar unit (`day`, `week`, `month`, or `year`). Relative operands
-are evaluated against the pass-wide clock in the property's timezone, so they
-continue to match as time passes.
+`useTableView` is the composition root. It resolves the three table resources,
+normalizes view defaults, builds a property entity and TanStack column
+definitions, then applies the default feature set to create the table
+instance.
+
+```text
+Data + Properties + View
+          │
+          ▼
+  resource ownership and normalization
+          │
+          ├── property plugins → column definitions and value semantics
+          ├── plugin methods   → sorting, grouping, and counting behavior
+          └── table features   → TanStack state and row-model pipeline
+                                      │
+                                      ▼
+                             table instance for the UI
+```
+
+The default row-model pipeline combines global search, persisted advanced
+filters, grouping, sorting, and expansion. Features extend the TanStack table
+with table-specific capabilities such as property metadata, row actions,
+freezing, counting, menus, advanced filtering, and extended grouping.
+
+## Resources and ownership
+
+The table is modelled as three independently owned, serializable resources:
+
+| Resource   | Represents                                                              |
+| ---------- | ----------------------------------------------------------------------- |
+| Data       | rows and cell values                                                    |
+| Properties | property definitions, ordering, visibility, and configuration           |
+| View       | layout, filters, grouping, sorting, lock state, and other view settings |
+
+Each resource can be controlled by the application or initialized internally
+with a default value. On a user action, `table-hook` derives both the next
+resource value and a structured action. For controlled resources it calls the
+corresponding change callback; the application commits the new value by
+rendering it back. For uncontrolled resources it commits the value internally.
+
+This protocol keeps persistence outside the package while giving consumers a
+serializable action stream for undo, analytics, collaboration, or storage.
+A committed controlled value also rebases any pending proposal, so the table
+always reflects the application's authoritative state.
+
+## Property plugins
+
+A `CellPlugin` defines how one property type participates in the table domain.
+Its stable ID and metadata make the type persistable; its conversion functions
+translate stored values into usable values and canonical text; optional
+capabilities define how the property sorts, groups, counts, and filters.
+
+Plugins may expose renderer contracts, but the renderers are supplied by the
+consumer. This lets the same value and filtering semantics serve different UI
+packages while keeping the dependency direction intact.
+
+Methods and filter operators likewise use stable IDs and UI-neutral metadata.
+The engine resolves configured IDs through the plugin registry and falls back
+to supported defaults when necessary. Persisted resources therefore carry
+configuration, while executable behavior remains in the registered plugins.
+
+## Public entry points
+
+- `@notion-kit/table-hook` provides `useTableView`, table contexts, resource
+  types, features, filtering utilities, and method resolvers.
+- `@notion-kit/table-hook/plugins` provides property-plugin factories and
+  plugin contracts.
+- `@notion-kit/table-hook/fns` provides pure utility functions.
+- `@notion-kit/table-hook/mock` provides test-oriented fixtures and helpers.
 
 ## Documentation map
 
 - [Plugin contracts and capability policy](./plugins.md)
 - [Testing audit index](./testing/README.md)
 - [Resource and feature-state audit](./testing/resources-and-features.md)
-
-When changing behavior, update the responsibility document and the linked audit
-page for the affected source area in the same change.
