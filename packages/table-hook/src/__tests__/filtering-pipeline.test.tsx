@@ -190,7 +190,7 @@ function relativeScoreFilter(): TableFilterState {
         id: "relative-score-rule",
         propertyId: "score",
         operator: "relative-to-today",
-        value: { offsetDays: 0 },
+        value: { amount: 0, unit: "day" },
       },
     ],
   };

@@ -1,7 +1,11 @@
 import { flexRender, functionalUpdate } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
-import { TableViewMenuPage } from "@notion-kit/table-hook";
+import {
+  appendFilterNode,
+  createFilterRule,
+  TableViewMenuPage,
+} from "@notion-kit/table-hook";
 import type { ConfigMenuProps } from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenuContent,
@@ -13,7 +17,11 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { PropMeta } from "@/common";
-import { useTableViewCtx } from "@/table-contexts";
+import {
+  FILTER_MENU_TOOLBAR_TRIGGER_ID,
+  useMenuCoordinator,
+  useTableViewCtx,
+} from "@/table-contexts";
 
 import { CalcMenu } from "./calc-menu";
 import {
@@ -48,9 +56,9 @@ interface PropMenuProps {
  * 11. ✅ Delete property
  */
 export function PropMenu({ propId, view }: PropMenuProps) {
+  const { filterMenu } = useMenuCoordinator();
   const { table } = useTableViewCtx();
 
-  const _column = table.getColumn(propId)!;
   const info = table.getColumnInfo(propId);
   const plugin = table.getColumnPlugin(propId);
 
@@ -62,6 +70,20 @@ export function PropMenu({ propId, view }: PropMenuProps) {
       table.setColumnSortingMethod(propId, defaultSortingMethod.id);
     }
     table.setSorting([{ id: propId, desc }]);
+  };
+  // 2. Filter
+  const addFilter = () => {
+    const operator = plugin.filtering?.operators[0];
+    if (!operator) return;
+    const filters = table.getFilters();
+    table.setFilters(
+      appendFilterNode(
+        filters,
+        filters?.id ?? "",
+        createFilterRule(propId, operator.id),
+      ),
+    );
+    filterMenu.handle.open(FILTER_MENU_TOOLBAR_TRIGGER_ID);
   };
   // 6. Pin columns
   const canFreeze = table.getCanFreezeColumn(propId);
@@ -113,6 +135,11 @@ export function PropMenu({ propId, view }: PropMenuProps) {
         <>
           <Separator />
           <DropdownMenuGroup>
+            <DropdownMenuItem
+              icon={<Icon.FilterSmall />}
+              label="Filter"
+              onClick={addFilter}
+            />
             <DropdownMenuSub>
               <DropdownMenuSubTrigger
                 icon={<Icon.ArrowUpDown />}

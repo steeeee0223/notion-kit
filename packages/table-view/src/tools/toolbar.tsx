@@ -10,38 +10,41 @@ import {
   Input,
   PopoverTrigger,
   TooltipPreset,
-  type PopoverHandle,
 } from "@notion-kit/ui/primitives";
 
-import { SortMenu, TableViewMenu } from "@/menus";
-import { useTableViewCtx } from "@/table-contexts";
+import { TableViewMenu } from "@/menus";
+import {
+  FILTER_MENU_TOOLBAR_TRIGGER_ID,
+  SORT_MENU_TOOLBAR_TRIGGER_ID,
+  useMenuCoordinator,
+  useTableViewCtx,
+} from "@/table-contexts";
 
 interface ToolbarProps {
   className?: string;
-  filterHandle: PopoverHandle;
 }
 
-export function Toolbar({ className, filterHandle }: ToolbarProps) {
+export function Toolbar({ className }: ToolbarProps) {
   const { table } = useTableViewCtx();
 
   return (
     <table.Subscribe selector={(state) => state.menu}>
-      {() => (
-        <ToolbarContent className={className} filterHandle={filterHandle} />
-      )}
+      {() => <ToolbarContent className={className} />}
     </table.Subscribe>
   );
 }
 
-function ToolbarContent({ className, filterHandle }: ToolbarProps) {
+function ToolbarContent({ className }: ToolbarProps) {
   const { table } = useTableViewCtx();
+  const { filterMenu, sortMenu } = useMenuCoordinator();
   const tableMenu = table.getTableMenuState();
 
   return (
     <div className={cn("flex items-center justify-end gap-0.5", className)}>
       <TooltipPreset description="Filter" side="top">
         <PopoverTrigger
-          handle={filterHandle}
+          id={FILTER_MENU_TOOLBAR_TRIGGER_ID}
+          handle={filterMenu.handle}
           render={
             <Button
               variant="nav-icon"
@@ -53,22 +56,19 @@ function ToolbarContent({ className, filterHandle }: ToolbarProps) {
           }
         />
       </TooltipPreset>
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          render={
-            <Button
-              variant="nav-icon"
-              aria-label="Sort"
-              className="[&_svg]:fill-current"
-            >
-              <Icon.ArrowUpDownSmall />
-            </Button>
-          }
-        />
-        <DropdownMenuContent collisionPadding={12} className="w-72">
-          <SortMenu />
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <DropdownMenuTrigger
+        id={SORT_MENU_TOOLBAR_TRIGGER_ID}
+        handle={sortMenu.handle}
+        render={
+          <Button
+            variant="nav-icon"
+            aria-label="Sort"
+            className="[&_svg]:fill-current"
+          >
+            <Icon.ArrowUpDownSmall />
+          </Button>
+        }
+      />
       <ToolbarItem
         icon={<Icon.LightningSmall />}
         label="Create and view automations"
@@ -133,9 +133,7 @@ function ToolbarSearch() {
           <Icon.MagnifyingGlassSmall />
         </Button>
       </TooltipPreset>
-      <table.Subscribe
-        selector={(state) => state.globalFilter as string | undefined}
-      >
+      <table.Subscribe selector={(state) => String(state.globalFilter ?? "")}>
         {(globalFilter) => (
           <Input
             ref={inputRef}
@@ -150,11 +148,9 @@ function ToolbarSearch() {
             aria-hidden={!searchOpen}
             tabIndex={searchOpen ? undefined : -1}
             placeholder="Search"
-            value={String(globalFilter ?? "")}
-            onChange={(event) => table.setGlobalFilter(event.target.value)}
-            onCancel={() => {
-              table.resetGlobalFilter();
-            }}
+            value={globalFilter}
+            onChange={(e) => table.setGlobalFilter(e.target.value)}
+            onCancel={table.resetGlobalFilter}
           />
         )}
       </table.Subscribe>

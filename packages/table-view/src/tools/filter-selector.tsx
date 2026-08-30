@@ -1,19 +1,12 @@
 import { Icon } from "@notion-kit/icons";
 import { countFilterRules } from "@notion-kit/table-hook";
-import {
-  Button,
-  PopoverTrigger,
-  type PopoverHandle,
-} from "@notion-kit/ui/primitives";
+import { Button, PopoverTrigger } from "@notion-kit/ui/primitives";
 
-import { useTableViewCtx } from "@/table-contexts";
+import { useMenuCoordinator, useTableViewCtx } from "@/table-contexts";
 
-interface FilterSelectorProps {
-  filterHandle: PopoverHandle;
-}
-
-export function FilterSelector({ filterHandle }: FilterSelectorProps) {
+export function FilterSelector() {
   const { table } = useTableViewCtx();
+  const { filterMenu } = useMenuCoordinator();
 
   return (
     <table.Subscribe selector={(state) => state.tableGlobal.filters}>
@@ -22,7 +15,7 @@ export function FilterSelector({ filterHandle }: FilterSelectorProps) {
 
         return (
           <PopoverTrigger
-            handle={filterHandle}
+            handle={filterMenu.handle}
             render={
               <Button
                 variant="soft-blue"

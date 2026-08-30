@@ -20,6 +20,8 @@ function DropdownMenu({ ...props }: Menu.Root.Props) {
   return <Menu.Root data-slot="dropdown-menu" {...props} />;
 }
 
+DropdownMenu.createHandle = Menu.createHandle;
+
 function DropdownMenuPortal({ ...props }: Menu.Portal.Props) {
   return <Menu.Portal data-slot="dropdown-menu-portal" {...props} />;
 }
@@ -305,3 +307,4 @@ export {
   DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
 };
+export type DropdownMenuHandle<Payload = unknown> = Menu.Handle<Payload>;

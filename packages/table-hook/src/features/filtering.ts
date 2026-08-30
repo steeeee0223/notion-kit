@@ -12,6 +12,7 @@ import {
 } from "@tanstack/react-table";
 import { table_autoResetPageIndex } from "@tanstack/react-table/static-functions";
 import { v4 } from "uuid";
+import { z } from "zod/mini";
 
 import type {
   _TableInstance,
@@ -19,32 +20,61 @@ import type {
   AnyTableFeatures,
 } from "@/features/types";
 import type { ColumnInfo, Row } from "@/lib/types";
-import type {
-  CellPlugin,
-  FilterEvaluationContext,
-  FilterValue,
-} from "@/plugins";
+import type { CellPlugin, FilterEvaluationContext } from "@/plugins";
 
 export type { FilterValue } from "@/plugins";
 
-export type FilterLogic = "and" | "or";
+const filterLogicSchema = z.enum(["and", "or"]);
+const filterValueSchema = z.json();
 
-export interface FilterRule {
-  kind: "rule";
-  id: string;
-  propertyId: string;
-  operator: string;
-  value?: FilterValue;
+const filterRuleSchema = z
+  .strictObject({
+    kind: z.literal("rule"),
+    id: z.string(),
+    propertyId: z.string(),
+    operator: z.string(),
+    value: z.optional(filterValueSchema),
+  })
+  .check(
+    z.refine(
+      (rule) => !Object.hasOwn(rule, "value") || rule.value !== undefined,
+    ),
+  );
+
+type FilterNodeSchema = z.ZodMiniUnion<
+  readonly [typeof filterRuleSchema, typeof filterGroupSchema]
+>;
+
+const filterGroupSchema = z.strictObject({
+  kind: z.literal("group"),
+  id: z.string(),
+  logic: filterLogicSchema,
+  get children(): z.ZodMiniArray<FilterNodeSchema> {
+    return z.array(
+      z.discriminatedUnion("kind", [filterRuleSchema, filterGroupSchema]),
+    );
+  },
+});
+
+function getFilterGroupDepth(group: FilterGroup): number {
+  return Math.max(
+    1,
+    ...group.children
+      .filter((child): child is FilterGroup => child.kind === "group")
+      .map((child) => getFilterGroupDepth(child) + 1),
+  );
 }
 
-export interface FilterGroup {
-  kind: "group";
-  id: string;
-  logic: FilterLogic;
-  children: (FilterRule | FilterGroup)[];
-}
+const tableFilterStateSchema = z
+  .nullable(filterGroupSchema)
+  .check(
+    z.refine((state) => state === null || getFilterGroupDepth(state) <= 3),
+  );
 
-export type TableFilterState = FilterGroup | null;
+export type FilterLogic = z.infer<typeof filterLogicSchema>;
+export type FilterRule = z.infer<typeof filterRuleSchema>;
+export type FilterGroup = z.infer<typeof filterGroupSchema>;
+export type TableFilterState = z.infer<typeof tableFilterStateSchema>;
 
 export interface AdvancedFilteringTableApi {
   getFilters: () => TableFilterState | undefined;
@@ -145,150 +175,19 @@ export function removeFilterNode(
   return updated;
 }
 
-function isPlainRecord(value: object) {
-  const prototype = Reflect.getPrototypeOf(value);
-  return prototype === Object.prototype || prototype === null;
-}
-
-function hasOwnDataShape(
-  value: object,
-  requiredKeys: readonly string[],
-  optionalKeys: readonly string[] = [],
-) {
-  const allowedKeys = new Set([...requiredKeys, ...optionalKeys]);
-  const ownKeys = Reflect.ownKeys(value);
-  const ownStringKeys = new Set<string>();
-  for (const key of ownKeys) {
-    if (typeof key !== "string" || !allowedKeys.has(key)) return false;
-    const descriptor = Reflect.getOwnPropertyDescriptor(value, key);
-    if (descriptor?.enumerable !== true || !("value" in descriptor)) {
-      return false;
-    }
-    ownStringKeys.add(key);
-  }
-  return requiredKeys.every((key) => ownStringKeys.has(key));
-}
-
-function isDensePlainArray(value: unknown): value is unknown[] {
-  if (
-    !Array.isArray(value) ||
-    Reflect.getPrototypeOf(value) !== Array.prototype
-  ) {
-    return false;
-  }
-  const keys = Reflect.ownKeys(value);
-  if (keys.length !== value.length + 1 || !keys.includes("length"))
-    return false;
-  for (let index = 0; index < value.length; index += 1) {
-    const key = String(index);
-    const descriptor = Reflect.getOwnPropertyDescriptor(value, key);
-    if (descriptor?.enumerable !== true || !("value" in descriptor)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-function isJsonFilterValue(
-  value: unknown,
-  ancestors = new WeakSet<object>(),
-): value is FilterValue {
-  if (
-    value === null ||
-    typeof value === "string" ||
-    typeof value === "boolean"
-  ) {
-    return true;
-  }
-  if (typeof value === "number") return Number.isFinite(value);
-  if (typeof value !== "object") return false;
-  if (ancestors.has(value)) return false;
-  ancestors.add(value);
+function parseTableFilterState(value: unknown): TableFilterState | undefined {
   try {
-    if (Array.isArray(value)) {
-      return (
-        isDensePlainArray(value) &&
-        value.every((item) => isJsonFilterValue(item, ancestors))
-      );
-    }
-    if (!isPlainRecord(value)) return false;
-    const keys = Reflect.ownKeys(value);
-    const stringKeys = keys.filter(
-      (key): key is string => typeof key === "string",
-    );
-    if (
-      stringKeys.length !== keys.length ||
-      !hasOwnDataShape(value, stringKeys)
-    ) {
-      return false;
-    }
-    return keys.every((key) => {
-      if (typeof key !== "string") return false;
-      const descriptor = Reflect.getOwnPropertyDescriptor(value, key);
-      return isJsonFilterValue(descriptor?.value, ancestors);
-    });
-  } finally {
-    ancestors.delete(value);
-  }
-}
-
-function isRule(value: unknown): value is FilterRule {
-  if (
-    typeof value !== "object" ||
-    value === null ||
-    !isPlainRecord(value) ||
-    !hasOwnDataShape(value, ["kind", "id", "propertyId", "operator"], ["value"])
-  )
-    return false;
-  const candidate = value as Partial<FilterRule>;
-  return (
-    candidate.kind === "rule" &&
-    typeof candidate.id === "string" &&
-    typeof candidate.propertyId === "string" &&
-    typeof candidate.operator === "string" &&
-    (!Object.hasOwn(candidate, "value") || isJsonFilterValue(candidate.value))
-  );
-}
-
-function isGroup(
-  value: unknown,
-  depth: number,
-  ancestors = new WeakSet<object>(),
-): value is FilterGroup {
-  if (
-    depth > 3 ||
-    typeof value !== "object" ||
-    value === null ||
-    !isPlainRecord(value) ||
-    !hasOwnDataShape(value, ["kind", "id", "logic", "children"]) ||
-    ancestors.has(value)
-  )
-    return false;
-  ancestors.add(value);
-  try {
-    const candidate = value as Partial<FilterGroup>;
-    return (
-      candidate.kind === "group" &&
-      typeof candidate.id === "string" &&
-      (candidate.logic === "and" || candidate.logic === "or") &&
-      isDensePlainArray(candidate.children) &&
-      candidate.children.every(
-        (child) => isRule(child) || isGroup(child, depth + 1, ancestors),
-      )
-    );
-  } finally {
-    ancestors.delete(value);
+    const result = z.safeParse(tableFilterStateSchema, value);
+    return result.success ? result.data : undefined;
+  } catch {
+    return undefined;
   }
 }
 
 export function validateTableFilterState(
   value: unknown,
 ): value is TableFilterState {
-  try {
-    return value === null || isGroup(value, 1);
-  } catch {
-    return false;
-  }
+  return parseTableFilterState(value) !== undefined;
 }
 
 function evaluateValidatedTableFilter(
@@ -335,9 +234,10 @@ export function evaluateTableFilter(
   plugins: Record<string, CellPlugin>,
   context: FilterEvaluationContext,
 ): boolean {
+  const parsedState = parseTableFilterState(state);
   return (
-    validateTableFilterState(state) &&
-    evaluateValidatedTableFilter(state, row, properties, plugins, context)
+    parsedState !== undefined &&
+    evaluateValidatedTableFilter(parsedState, row, properties, plugins, context)
   );
 }
 

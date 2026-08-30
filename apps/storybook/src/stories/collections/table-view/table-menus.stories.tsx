@@ -139,7 +139,7 @@ export const FilterMenu: Story = {
                 align="start"
                 side="bottom"
                 collisionPadding={12}
-                className="w-140"
+                className="w-[750px]"
               >
                 <Menu.FilterMenu />
               </PopoverContent>

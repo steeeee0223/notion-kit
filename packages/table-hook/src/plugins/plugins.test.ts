@@ -94,14 +94,18 @@ describe("Built-in filtering capability matrix", () => {
     for (const id of ["title", "text", "email", "phone", "url"]) {
       expect(matrix[id]).toEqual(textOperators);
     }
-    for (const id of ["select", "multi-select"]) {
-      expect(matrix[id]).toEqual([
-        ["contains", { kind: "option" }],
-        ["does-not-contain", { kind: "option" }],
-        ["is-empty", { kind: "none" }],
-        ["is-not-empty", { kind: "none" }],
-      ]);
-    }
+    expect(matrix.select).toEqual([
+      ["contains", { kind: "option" }],
+      ["does-not-contain", { kind: "option" }],
+      ["is-empty", { kind: "none" }],
+      ["is-not-empty", { kind: "none" }],
+    ]);
+    expect(matrix["multi-select"]).toEqual([
+      ["contains", { kind: "option", multiple: true }],
+      ["does-not-contain", { kind: "option", multiple: true }],
+      ["is-empty", { kind: "none" }],
+      ["is-not-empty", { kind: "none" }],
+    ]);
     expect(matrix.checkbox).toEqual([
       ["is-checked", { kind: "none" }],
       ["is-unchecked", { kind: "none" }],
@@ -151,16 +155,28 @@ describe("Text-like filter operators", () => {
 });
 
 describe("Choice, checkbox, and number filter operators", () => {
-  it("matches select and multi-select membership without treating null as a value", () => {
+  it("matches exact select values and complete multi-select operands without treating null as a value", () => {
     expect(matches(select(), "contains", "Done", "Done")).toBe(true);
     expect(matches(select(), "does-not-contain", "Done", "Other")).toBe(true);
     expect(matches(select(), "is-empty", null)).toBe(true);
-    expect(matches(multiSelect(), "contains", ["Todo", "Done"], "Done")).toBe(
-      true,
+    expect(
+      matches(multiSelect(), "contains", ["Todo", "Done"], ["Todo", "Done"]),
+    ).toBe(true);
+    expect(matches(multiSelect(), "contains", ["Todo"], ["Todo", "Done"])).toBe(
+      false,
     );
-    expect(matches(multiSelect(), "does-not-contain", ["Todo"], "Done")).toBe(
-      true,
-    );
+    expect(
+      matches(multiSelect(), "does-not-contain", ["Todo"], ["Done", "Later"]),
+    ).toBe(true);
+    expect(
+      matches(
+        multiSelect(),
+        "does-not-contain",
+        ["Todo", "Done"],
+        ["Todo", "Later"],
+      ),
+    ).toBe(false);
+    expect(matches(multiSelect(), "contains", ["Done"], "Done")).toBe(false);
     expect(matches(multiSelect(), "is-empty", [])).toBe(true);
     expect(matches(multiSelect(), "is-not-empty", ["Todo"])).toBe(true);
   });
@@ -342,7 +358,7 @@ describe("Date filter operators", () => {
     ).toBe(false);
   });
 
-  it("matches a JSON-safe day offset relative to today", () => {
+  it("matches signed relative day amounts", () => {
     vi.useFakeTimers();
     try {
       vi.setSystemTime(Date.UTC(2030, 0, 1));
@@ -351,7 +367,7 @@ describe("Date filter operators", () => {
           date(),
           "relative-to-today",
           { start: jan15, includeTime: false },
-          { offsetDays: 0 },
+          { amount: 0, unit: "day" },
           baseRow,
           { ...config, tz: "UTC" },
         ),
@@ -362,7 +378,7 @@ describe("Date filter operators", () => {
           date(),
           "relative-to-today",
           { start: jan15, includeTime: false },
-          { offsetDays: 0 },
+          { amount: 0, unit: "day" },
           baseRow,
           { ...config, tz: "UTC" },
           { now: Date.UTC(2025, 0, 15, 12) },
@@ -373,7 +389,7 @@ describe("Date filter operators", () => {
           date(),
           "relative-to-today",
           { start: jan16, includeTime: false },
-          { offsetDays: 1 },
+          { amount: 1, unit: "day" },
           baseRow,
           { ...config, tz: "UTC" },
         ),
@@ -383,14 +399,60 @@ describe("Date filter operators", () => {
           date(),
           "relative-to-today",
           { start: jan16 },
-          { offsetDays: 1.5 },
+          { amount: 1.5, unit: "day" },
           baseRow,
           config,
+        ),
+      ).toBe(false);
+      expect(
+        matches(
+          date(),
+          "relative-to-today",
+          { start: jan16, includeTime: false },
+          { offsetDays: 1 },
+          baseRow,
+          { ...config, tz: "UTC" },
+          { now: Date.UTC(2025, 0, 15, 12) },
         ),
       ).toBe(false);
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("matches signed relative calendar units in the property timezone", () => {
+    expect(
+      matches(
+        date(),
+        "relative-to-today",
+        { start: Date.UTC(2025, 1, 28, 12), includeTime: false },
+        { amount: 1, unit: "month" },
+        baseRow,
+        { ...config, tz: "UTC" },
+        { now: Date.UTC(2025, 0, 31, 12) },
+      ),
+    ).toBe(true);
+    expect(
+      matches(
+        date(),
+        "relative-to-today",
+        { start: Date.UTC(2024, 0, 31, 12), includeTime: false },
+        { amount: -1, unit: "year" },
+        baseRow,
+        { ...config, tz: "UTC" },
+        { now: Date.UTC(2025, 0, 31, 12) },
+      ),
+    ).toBe(true);
+    expect(
+      matches(
+        date(),
+        "relative-to-today",
+        { start: jan16, includeTime: false },
+        { amount: 1, unit: "hour" },
+        baseRow,
+        config,
+      ),
+    ).toBe(false);
   });
 
   it("fails closed for invalid ECMAScript date operands without throwing", () => {

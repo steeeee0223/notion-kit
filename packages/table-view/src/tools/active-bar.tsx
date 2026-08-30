@@ -1,20 +1,11 @@
 import { countFilterRules } from "@notion-kit/table-hook";
-import {
-  Button,
-  PopoverTrigger,
-  type PopoverHandle,
-} from "@notion-kit/ui/primitives";
 
 import { useTableViewCtx } from "@/table-contexts";
 
 import { FilterSelector } from "./filter-selector";
 import { SortSelector } from "./sort-selector";
 
-interface ActiveBarProps {
-  filterHandle: PopoverHandle;
-}
-
-export function ActiveBar({ filterHandle }: ActiveBarProps) {
+export function ActiveBar() {
   const { table } = useTableViewCtx();
 
   return (
@@ -33,18 +24,8 @@ export function ActiveBar({ filterHandle }: ActiveBarProps) {
           <div className="flex pt-1" data-testid="table-view-active-bar">
             <div className="relative grow-0 overflow-hidden">
               <div className="z-10 flex h-10 items-center gap-1 overflow-x-hidden overflow-y-auto py-2">
-                {filterCount > 0 && (
-                  <FilterSelector filterHandle={filterHandle} />
-                )}
+                {filterCount > 0 && <FilterSelector />}
                 {sortingCount > 0 && <SortSelector />}
-                <PopoverTrigger
-                  handle={filterHandle}
-                  render={
-                    <Button variant="hint" size="xs">
-                      + Filter
-                    </Button>
-                  }
-                />
               </div>
             </div>
           </div>

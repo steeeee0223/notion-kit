@@ -35,7 +35,9 @@ filtering.
   missing/deleted properties fail closed, and invalid built-in operands do not
   match.
 - Plugin operators remain UI-neutral and cover text-like, select/multi-select,
-  checkbox, number, date, and derived-date families. A single captured
+  checkbox, number, date, and derived-date families. Choice operands validate
+  their single/multiple cardinality; relative-date operands validate their
+  signed calendar amount and unit. A single captured
   `FilterEvaluationContext.now` is reused throughout one evaluation pass.
 - Root-first and leaf-first nested-row behavior remains covered at the table
   boundary. TanStack's own row-model internals are not duplicated here.

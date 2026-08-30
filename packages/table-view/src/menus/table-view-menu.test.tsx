@@ -1,3 +1,4 @@
+import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
@@ -30,6 +31,45 @@ describe("TableViewMenu", () => {
 
     expect(layout.text("Table")).toBeVisible();
     expect(layout.root).toBeInTheDocument();
+  });
+
+  it("TableViewMenu_Filter_ClosesSettingsAndOpensTheFilterEditor", async () => {
+    const tableView = renderTableView({
+      view: {
+        filters: {
+          kind: "group",
+          id: "root-filter",
+          logic: "and",
+          children: [
+            {
+              kind: "rule",
+              id: "name-filter",
+              propertyId: "col1",
+              operator: "equals",
+            },
+          ],
+        },
+      },
+    });
+    const settings = await tableView.openViewSettings();
+
+    expect(settings.item("Filter")).toHaveTextContent("1");
+
+    await tableView.user.click(settings.item("Filter"));
+
+    await settings.waitUntilClosed();
+    expect(screen.getByRole("dialog", { name: "Filters" })).toBeVisible();
+    expect(screen.getByTestId("filter-rule-name-filter")).toBeVisible();
+  });
+
+  it("TableViewMenu_Sort_ShowsTheActiveRuleCount", async () => {
+    const tableView = renderTableView();
+    const sort = await tableView.openSortMenu();
+    await sort.addRule("Name");
+
+    const settings = await tableView.openViewSettings();
+
+    expect(settings.item("Sort")).toHaveTextContent("1");
   });
 
   it("TableViewMenu_EditPropertiesNavigation_ShowsProperties", async () => {

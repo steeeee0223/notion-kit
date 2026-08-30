@@ -125,20 +125,36 @@ export class FilterMenuObject {
   }
 
   operand(id: string, label = "Value") {
-    return within(this.rule(id)).getByRole("textbox", {
-      name: label,
-    });
-  }
-
-  calendarButton(
-    id: string,
-    name: "Open calendar" | "Open start calendar" | "Open end calendar",
-  ) {
-    return within(this.rule(id)).getByRole("button", { name });
+    const owner = within(this.rule(id));
+    return owner.getByRole("textbox", { name: label });
   }
 
   selectOperand(id: string) {
     return this.select(this.rule(id), "Value select");
+  }
+
+  datePreset(id: string) {
+    return this.select(this.rule(id), "Date preset select");
+  }
+
+  customDate(id: string) {
+    return within(this.rule(id)).getByRole("button", {
+      name: "Custom date select",
+    });
+  }
+
+  dateRange(id: string) {
+    return within(this.rule(id)).getByRole("button", {
+      name: "Date range select",
+    });
+  }
+
+  relativeDateAmount(id: string) {
+    return this.operand(id, "Relative date amount");
+  }
+
+  relativeDateUnit(id: string) {
+    return this.select(this.rule(id), "Relative date unit");
   }
 
   logic(id: string) {
