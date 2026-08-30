@@ -20,16 +20,15 @@ import type {
   CellPlugin,
   FilterOperandMetadata,
 } from "@notion-kit/table-hook/plugins";
+import type { Color } from "@notion-kit/utils";
 import { isoToTs } from "@notion-kit/utils";
 
+import { renderTableView } from "@/__tests__/component-objects/render-table-view";
+import { FilterMenuObject } from "@/__tests__/component-objects/table-view";
+import { createFullPluginFixture, mockResizeObserver } from "@/__tests__/mock";
+import { TableViewWrapper } from "@/table-contexts";
+
 import { FilterMenu } from ".";
-import { renderTableView } from "../../__tests__/component-objects/render-table-view";
-import { FilterMenuObject } from "../../__tests__/component-objects/table-view";
-import {
-  createFullPluginFixture,
-  mockResizeObserver,
-} from "../../__tests__/mock";
-import { TableViewWrapper } from "../../table-contexts";
 
 mockResizeObserver();
 
@@ -526,12 +525,19 @@ describe("FilterMenu operand metadata", () => {
     await tableView.user.click(
       await screen.findByRole("option", { name: "Alpha" }),
     );
-    await tableView.user.click(filter.selectOperand("operand-rule"));
+    expect(
+      screen.getByRole("combobox", { name: "Search options" }),
+    ).toBeVisible();
     await tableView.user.click(
       await screen.findByRole("option", { name: "Beta" }),
     );
 
     expect(lastValue(onViewChange)).toEqual(["Alpha", "Beta"]);
+    await tableView.user.click(filter.rule("operand-rule"));
+    expect(filter.selectOperand("operand-rule")).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
   });
 
   it("shows a compact multi-option trigger and exposes chips only in its popup", async () => {
@@ -740,13 +746,14 @@ describe("FilterMenu operand metadata", () => {
       },
     );
     const operand = date.tableView.filterMenu().customDate("operand-rule");
-    expect(operand).toHaveValue("1960-01-01");
+    expect(operand).toHaveTextContent("1960-01-01");
 
-    await date.tableView.user.clear(operand);
-    await date.tableView.user.type(
-      date.tableView.filterMenu().customDate("operand-rule"),
-      "1960-01-02",
-    );
+    await date.tableView.user.click(operand);
+    const input = await screen.findByRole("textbox", {
+      name: "Custom date input",
+    });
+    await date.tableView.user.clear(input);
+    await date.tableView.user.type(input, "1960-01-02");
     await date.tableView.user.tab();
 
     expect(lastValue(date.onViewChange)).toEqual({
@@ -764,8 +771,11 @@ describe("FilterMenu operand metadata", () => {
     await date.tableView.user.click(
       await screen.findByRole("option", { name: "Custom date" }),
     );
-    await date.tableView.user.type(
+    await date.tableView.user.click(
       date.tableView.filterMenu().customDate("operand-rule"),
+    );
+    await date.tableView.user.type(
+      await screen.findByRole("textbox", { name: "Custom date input" }),
       "2026-08-26",
     );
     await date.tableView.user.tab();
@@ -786,9 +796,13 @@ describe("FilterMenu operand metadata", () => {
       { timestamp },
       { tz: "UTC" },
     );
-    expect(date.filter.customDate("operand-rule")).toHaveValue("2026-08-26");
+    expect(date.filter.customDate("operand-rule")).toHaveTextContent(
+      "2026-08-26",
+    );
     date.rerenderTimeZone("America/Los_Angeles");
-    expect(date.filter.customDate("operand-rule")).toHaveValue("2026-08-25");
+    expect(date.filter.customDate("operand-rule")).toHaveTextContent(
+      "2026-08-25",
+    );
     await date.user.click(date.filter.customDate("operand-rule"));
     expect(
       await screen.findByRole("button", {
@@ -865,9 +879,13 @@ describe("FilterMenu operand metadata", () => {
       { timestamp: first },
       { tz: "America/Los_Angeles" },
     );
-    expect(date.filter.customDate("operand-rule")).toHaveValue("2026-08-26");
+    expect(date.filter.customDate("operand-rule")).toHaveTextContent(
+      "2026-08-26",
+    );
     date.rerenderValue({ timestamp: second });
-    expect(date.filter.customDate("operand-rule")).toHaveValue("2026-08-27");
+    expect(date.filter.customDate("operand-rule")).toHaveTextContent(
+      "2026-08-27",
+    );
 
     cleanup();
     const relative = renderControlledMetadata("relative-date", "relative-op", {
@@ -940,7 +958,10 @@ function renderMetadataMenu(
 }
 
 interface MetadataConfig {
-  options: { names: string[]; items: Record<string, { name: string }> };
+  options: {
+    names: string[];
+    items: Record<string, { name: string; color: Color }>;
+  };
   tz?: string;
 }
 type MetadataPlugin = CellPlugin<"metadata", string, MetadataConfig>;
@@ -998,7 +1019,10 @@ function metadataProperty(
     config: {
       options: {
         names: ["Alpha", "Beta"],
-        items: { Alpha: { name: "Alpha" }, Beta: { name: "Beta" } },
+        items: {
+          Alpha: { name: "Alpha", color: "blue" },
+          Beta: { name: "Beta", color: "green" },
+        },
       },
       ...overrides,
     },

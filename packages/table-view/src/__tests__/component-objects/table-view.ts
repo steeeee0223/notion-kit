@@ -138,11 +138,15 @@ export class FilterMenuObject {
   }
 
   customDate(id: string) {
-    return this.operand(id, "Custom date select");
+    return within(this.rule(id)).getByRole("button", {
+      name: "Custom date select",
+    });
   }
 
   dateRange(id: string) {
-    return this.operand(id, "Date range select");
+    return within(this.rule(id)).getByRole("button", {
+      name: "Date range select",
+    });
   }
 
   relativeDateAmount(id: string) {

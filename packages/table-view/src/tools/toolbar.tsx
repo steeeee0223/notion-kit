@@ -133,9 +133,7 @@ function ToolbarSearch() {
           <Icon.MagnifyingGlassSmall />
         </Button>
       </TooltipPreset>
-      <table.Subscribe
-        selector={(state) => state.globalFilter as string | undefined}
-      >
+      <table.Subscribe selector={(state) => String(state.globalFilter ?? "")}>
         {(globalFilter) => (
           <Input
             ref={inputRef}
@@ -150,11 +148,9 @@ function ToolbarSearch() {
             aria-hidden={!searchOpen}
             tabIndex={searchOpen ? undefined : -1}
             placeholder="Search"
-            value={String(globalFilter ?? "")}
-            onChange={(event) => table.setGlobalFilter(event.target.value)}
-            onCancel={() => {
-              table.resetGlobalFilter();
-            }}
+            value={globalFilter}
+            onChange={(e) => table.setGlobalFilter(e.target.value)}
+            onCancel={table.resetGlobalFilter}
           />
         )}
       </table.Subscribe>

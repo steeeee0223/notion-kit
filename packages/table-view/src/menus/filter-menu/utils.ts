@@ -1,14 +1,15 @@
 import type { FilterRule, FilterValue } from "@notion-kit/table-hook";
+import type {
+  DateConfig,
+  OptionConfig,
+  SelectConfig,
+} from "@notion-kit/table-hook/plugins";
 import { isoToTs } from "@notion-kit/utils";
 
-export function getOptionNames(config: unknown): string[] {
-  if (typeof config !== "object" || config === null) return [];
-  const options = (config as { options?: unknown }).options;
-  if (typeof options !== "object" || options === null) return [];
-  const names = (options as { names?: unknown }).names;
-  return Array.isArray(names) && names.every((name) => typeof name === "string")
-    ? names
-    : [];
+export type FilterOption = Pick<OptionConfig, "name" | "color">;
+
+export function getFilterOptions(config: SelectConfig): FilterOption[] {
+  return config.options.names.map((name) => config.options.items[name]!);
 }
 
 export function getRecordNumber(value: FilterValue | undefined, key: string) {
@@ -25,10 +26,8 @@ export function omitRuleValue(rule: FilterRule): FilterRule {
   return withoutValue;
 }
 
-export function getTimeZone(config: unknown) {
-  if (typeof config !== "object" || config === null) return "UTC";
-  const timeZone = (config as { tz?: unknown }).tz;
-  return typeof timeZone === "string" ? timeZone : "UTC";
+export function getTimeZone(config: DateConfig) {
+  return config.tz ?? "UTC";
 }
 
 export function parseDate(value: string, timeZone: string) {

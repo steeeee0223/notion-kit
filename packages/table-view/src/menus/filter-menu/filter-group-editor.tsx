@@ -215,7 +215,18 @@ function FilterRuleEditor({
         >
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent
+          className={
+            operators.some(
+              ({ operand }) =>
+                operand.kind === "date" ||
+                operand.kind === "date-range" ||
+                operand.kind === "relative-date",
+            )
+              ? "min-w-48"
+              : undefined
+          }
+        >
           <SelectGroup>
             {!operator && (
               <SelectItem

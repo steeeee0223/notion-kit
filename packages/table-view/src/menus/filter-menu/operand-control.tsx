@@ -8,9 +8,13 @@ import type {
   FilterRule,
   FilterValue,
 } from "@notion-kit/table-hook";
-import type { FilterOperandMetadata } from "@notion-kit/table-hook/plugins";
+import type {
+  DateConfig,
+  FilterOperandMetadata,
+  SelectConfig,
+} from "@notion-kit/table-hook/plugins";
 import {
-  Badge,
+  Button,
   Calendar,
   Combobox,
   ComboboxChip,
@@ -26,6 +30,9 @@ import {
   ComboboxTrigger,
   ComboboxValue,
   Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Select,
   SelectContent,
   SelectGroup,
@@ -34,18 +41,20 @@ import {
   SelectValue,
 } from "@notion-kit/ui/primitives";
 
+import { OptionTag } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
 import {
   calendarDateKey,
   dateKeyToCalendarDate,
   formatDateValue,
-  getOptionNames,
+  getFilterOptions,
   getRecordNumber,
   getTimeZone,
   omitRuleValue,
   parseDate,
 } from "./utils";
+import type { FilterOption } from "./utils";
 
 export function OperandControl({
   rule,
@@ -55,23 +64,19 @@ export function OperandControl({
   root: FilterGroup;
 }) {
   const { table } = useTableViewCtx();
-  const property = table
-    .getFilterProperties()
-    .find(({ id }) => id === rule.propertyId);
-  const operator = property
-    ? table
-        .getColumnPlugin(property.id)
-        .filtering?.operators.find(({ id }) => id === rule.operator)
-    : undefined;
+  const property = table.getColumnInfo(rule.propertyId);
+  const operator = table
+    .getColumnPlugin(rule.propertyId)
+    .filtering?.operators.find(({ id }) => id === rule.operator);
 
-  if (!property || !operator) return null;
+  if (!operator) return null;
 
   return (
     <OperandControlContent
       key={`${rule.id}:${rule.operator}:${operandDraftKey(
         rule.value,
         operator.operand,
-        property.config,
+        property.config as DateConfig,
       )}`}
       rule={rule}
       root={root}
@@ -109,10 +114,10 @@ function OperandControlContent({
   }
 }
 
-export function operandDraftKey(
+function operandDraftKey(
   value: FilterValue | undefined,
   metadata: FilterOperandMetadata,
-  propertyConfig: unknown,
+  propertyConfig: DateConfig,
 ) {
   if (metadata.kind === "date") {
     return getTimeZone(propertyConfig);
@@ -122,7 +127,8 @@ export function operandDraftKey(
   }
   return metadata.kind === "text" ||
     metadata.kind === "number" ||
-    metadata.kind === "relative-date"
+    metadata.kind === "relative-date" ||
+    metadata.kind === "option"
     ? "controlled"
     : JSON.stringify(value);
 }
@@ -257,10 +263,9 @@ function OptionOperand({
 }) {
   const { table } = useTableViewCtx();
   const updateRule = useFilterRuleUpdate(root, rule.id);
-  const property = table
-    .getFilterProperties()
-    .find(({ id }) => id === rule.propertyId);
-  const options = getOptionNames(property?.config);
+  const property = table.getColumnInfo(rule.propertyId);
+  const options = getFilterOptions(property.config as SelectConfig);
+  const optionsByName = new Map(options.map((option) => [option.name, option]));
   const multipleValue =
     Array.isArray(rule.value) &&
     rule.value.every((value) => typeof value === "string")
@@ -272,6 +277,7 @@ function OptionOperand({
     return (
       <MultipleOptionOperand
         options={options}
+        optionsByName={optionsByName}
         value={multipleValue}
         onValueChange={(value) => updateRule(value.length ? value : undefined)}
       />
@@ -286,22 +292,54 @@ function OptionOperand({
         if (value !== null) updateRule(value);
       }}
     >
-      <ComboboxInput
-        aria-label="Value select"
-        placeholder="Choose option"
-        className="min-w-24 flex-1 rounded-md border border-border px-2 py-1.5"
-      />
-      <OptionComboboxContent />
+      <SingleOptionTrigger optionsByName={optionsByName} />
     </Combobox>
+  );
+}
+
+function SingleOptionTrigger({
+  optionsByName,
+}: {
+  optionsByName: Map<string, FilterOption>;
+}) {
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  return (
+    <>
+      <ComboboxTrigger
+        ref={triggerRef}
+        aria-label="Value select"
+        className="h-7 min-w-24 flex-1 justify-start rounded-md border border-border bg-input px-2 text-primary"
+      >
+        <ComboboxValue>
+          {(selected: string | null) =>
+            selected ? (
+              <OptionTag {...optionsByName.get(selected)!} />
+            ) : (
+              <span className="text-sm text-secondary">Choose option</span>
+            )
+          }
+        </ComboboxValue>
+      </ComboboxTrigger>
+      <ComboboxContent anchor={triggerRef} className="w-72 p-2">
+        <ComboboxInput
+          aria-label="Search options"
+          placeholder="Search options"
+          className="h-7 w-full rounded-md border border-border px-2"
+        />
+        <OptionComboboxList optionsByName={optionsByName} />
+      </ComboboxContent>
+    </>
   );
 }
 
 function MultipleOptionOperand({
   options,
+  optionsByName,
   value,
   onValueChange,
 }: {
-  options: string[];
+  options: FilterOption[];
+  optionsByName: Map<string, FilterOption>;
   value: string[];
   onValueChange: (value: string[]) => void;
 }) {
@@ -322,19 +360,21 @@ function MultipleOptionOperand({
       <ComboboxTrigger
         ref={triggerRef}
         aria-label="Value select"
-        className="min-w-24 flex-1 justify-start rounded-md border border-border bg-input px-2 py-1.5 text-primary"
+        className="h-7 min-w-24 flex-1 justify-start rounded-md border border-border bg-input px-2 text-primary"
       >
         <ComboboxValue>
           {(selected: string[]) =>
             selected.length ? (
               <>
-                <Badge variant="tag">{selected[0]}</Badge>
+                <OptionTag {...optionsByName.get(selected[0]!)!} />
                 {selected.length > 1 && (
-                  <Badge variant="tag">+{selected.length - 1}</Badge>
+                  <span className="ml-1 text-secondary">
+                    +{selected.length - 1}
+                  </span>
                 )}
               </>
             ) : (
-              "Choose options"
+              <span className="text-sm text-secondary">Choose options</span>
             )
           }
         </ComboboxValue>
@@ -361,27 +401,29 @@ function MultipleOptionOperand({
             className="absolute top-1/2 right-1 -translate-y-1/2"
           />
         </div>
-        <OptionComboboxList />
+        <OptionComboboxList optionsByName={optionsByName} />
       </ComboboxContent>
     </Combobox>
   );
 }
 
-function OptionComboboxContent() {
-  return (
-    <ComboboxContent className="p-1">
-      <OptionComboboxList />
-    </ComboboxContent>
-  );
-}
-
-function OptionComboboxList() {
+function OptionComboboxList({
+  optionsByName,
+}: {
+  optionsByName: Map<string, FilterOption>;
+}) {
   return (
     <ComboboxList>
       {(group: OptionGroup) => (
         <ComboboxGroup key={group.label} items={group.items}>
           <ComboboxCollection>
-            {(name: string) => <ComboboxItem key={name} value={name} />}
+            {(name: string) => (
+              <ComboboxItem
+                key={name}
+                value={name}
+                label={<OptionTag {...optionsByName.get(name)!} />}
+              />
+            )}
           </ComboboxCollection>
         </ComboboxGroup>
       )}
@@ -394,8 +436,8 @@ interface OptionGroup {
   items: string[];
 }
 
-function optionGroups(options: string[]): OptionGroup[] {
-  return [{ label: "Options", items: options }];
+function optionGroups(options: FilterOption[]): OptionGroup[] {
+  return [{ label: "Options", items: options.map(({ name }) => name) }];
 }
 
 function TextOperand({ rule, root }: { rule: FilterRule; root: FilterGroup }) {
@@ -403,7 +445,7 @@ function TextOperand({ rule, root }: { rule: FilterRule; root: FilterGroup }) {
   const { props } = useInputField({
     id: `filter-text-${rule.id}`,
     initialValue: typeof rule.value === "string" ? rule.value : "",
-    onUpdate: (value) => updateRule(value),
+    onUpdate: updateRule,
     autoFocus: false,
     reconcileCommittedValue: true,
   });
@@ -425,10 +467,8 @@ function parseNumericDraft(value: string, relative: boolean) {
 function DateOperand({ rule, root }: { rule: FilterRule; root: FilterGroup }) {
   const { table } = useTableViewCtx();
   const updateRule = useFilterRuleUpdate(root, rule.id);
-  const property = table
-    .getFilterProperties()
-    .find(({ id }) => id === rule.propertyId);
-  const timeZone = getTimeZone(property?.config);
+  const property = table.getColumnInfo(rule.propertyId);
+  const timeZone = getTimeZone(property.config as DateConfig);
   const [preset, setPreset] = useState<DatePreset | null>(
     getDatePreset(rule.value),
   );
@@ -553,31 +593,40 @@ function CustomDateOperand({
   });
 
   return (
-    <div className="relative min-w-32 flex-1">
-      <Input
-        {...props}
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger
         aria-label="Custom date select"
-        placeholder="YYYY-MM-DD"
-        onClick={() => setOpen(true)}
-        className="min-w-32 flex-1 rounded-md border border-border px-2 py-1.5"
+        render={
+          <Button
+            type="button"
+            className="h-7 min-w-32 flex-1 justify-start px-2 font-normal"
+          >
+            {authoritative || "Select date"}
+          </Button>
+        }
       />
-      {open && (
-        <div className="absolute left-0 z-50 mt-2 w-fit rounded-md border border-border bg-popover shadow-md">
-          <Calendar
-            mode="single"
-            selected={dateKeyToCalendarDate(authoritative)}
-            onSelect={(date) => {
-              if (!date) return;
-              const nextValue = calendarDateKey(date);
-              const timestamp = parseDate(nextValue, timeZone);
-              if (timestamp === undefined) return;
-              onValueChange(timestamp);
-              setOpen(false);
-            }}
+      <PopoverContent align="start" className="w-fit p-0">
+        <div className="p-2">
+          <Input
+            {...props}
+            aria-label="Custom date input"
+            placeholder="YYYY-MM-DD"
           />
         </div>
-      )}
-    </div>
+        <Calendar
+          mode="single"
+          selected={dateKeyToCalendarDate(authoritative)}
+          onSelect={(date) => {
+            if (!date) return;
+            const nextValue = calendarDateKey(date);
+            const timestamp = parseDate(nextValue, timeZone);
+            if (timestamp === undefined) return;
+            onValueChange(timestamp);
+            setOpen(false);
+          }}
+        />
+      </PopoverContent>
+    </Popover>
   );
 }
 
@@ -590,10 +639,8 @@ function DateRangeOperand({
 }) {
   const { table } = useTableViewCtx();
   const updateRule = useFilterRuleUpdate(root, rule.id);
-  const property = table
-    .getFilterProperties()
-    .find(({ id }) => id === rule.propertyId);
-  const timeZone = getTimeZone(property?.config);
+  const property = table.getColumnInfo(rule.propertyId);
+  const timeZone = getTimeZone(property.config as DateConfig);
   const authoritativeStart = formatDateValue(
     getRecordNumber(rule.value, "start"),
     timeZone,
@@ -635,10 +682,9 @@ function DateRangeOperand({
     updateRule({ start: startTimestamp, end: endTimestamp });
     restore();
   };
-  const commitDraft = () => commit(start, end);
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     event.stopPropagation();
-    if (event.key === "Enter") commitDraft();
+    if (event.key === "Enter") commit(start, end);
   };
   const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
     if (
@@ -647,79 +693,80 @@ function DateRangeOperand({
     ) {
       return;
     }
-    commitDraft();
+    commit(start, end);
   };
   return (
-    <div className="relative min-w-40 flex-1">
-      <Input
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger
         aria-label="Date range select"
-        placeholder="Select a range"
-        value={start && end ? `${start} → ${end}` : ""}
-        readOnly
-        onClick={() => setOpen(true)}
-        className="min-w-40 rounded-md border border-border px-2 py-1.5"
+        render={
+          <Button
+            type="button"
+            className="h-7 min-w-40 flex-1 justify-start px-2 font-normal"
+          >
+            {start && end ? `${start} → ${end}` : "Select a range"}
+          </Button>
+        }
       />
-      {open && (
-        <div className="absolute left-0 z-50 mt-2 w-fit rounded-md border border-border bg-popover p-2 shadow-md">
-          <div className="flex flex-col gap-2">
-            <Input
-              ref={startRef}
-              aria-label="Starting"
-              placeholder="Starting"
-              value={start}
-              onChange={(event) => {
-                const next = event.currentTarget.value;
-                setStart(next);
-                setSelectingEnd(false);
-              }}
-              onBlur={handleBlur}
-              onKeyDown={handleKeyDown}
-            />
-            <Input
-              ref={endRef}
-              aria-label="Ending"
-              placeholder="Ending"
-              value={end}
-              onChange={(event) => {
-                const next = event.currentTarget.value;
-                setEnd(next);
-                setSelectingEnd(false);
-              }}
-              onBlur={handleBlur}
-              onKeyDown={handleKeyDown}
-            />
-          </div>
-          <Calendar
-            mode="range"
-            selected={{
-              from: dateKeyToCalendarDate(start),
-              to: dateKeyToCalendarDate(end),
-            }}
-            onSelect={(range) => {
-              const nextStart = range?.from ? calendarDateKey(range.from) : "";
-              const nextEnd = range?.to ? calendarDateKey(range.to) : "";
-              if (!nextStart) {
-                setStart("");
-                setEnd("");
-                setSelectingEnd(false);
-                updateRule(undefined);
-                return;
-              }
-              if (!selectingEnd) {
-                setStart(nextStart);
-                setEnd("");
-                setSelectingEnd(true);
-                return;
-              }
-              setStart(nextStart);
-              setEnd(nextEnd);
+      <PopoverContent align="start" className="w-fit p-2">
+        <div className="flex flex-col gap-2">
+          <Input
+            ref={startRef}
+            aria-label="Starting"
+            placeholder="Starting"
+            value={start}
+            onChange={(event) => {
+              const next = event.currentTarget.value;
+              setStart(next);
               setSelectingEnd(false);
-              if (nextEnd) commit(nextStart, nextEnd);
             }}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+          />
+          <Input
+            ref={endRef}
+            aria-label="Ending"
+            placeholder="Ending"
+            value={end}
+            onChange={(event) => {
+              const next = event.currentTarget.value;
+              setEnd(next);
+              setSelectingEnd(false);
+            }}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
           />
         </div>
-      )}
-    </div>
+        <Calendar
+          mode="range"
+          selected={{
+            from: dateKeyToCalendarDate(start),
+            to: dateKeyToCalendarDate(end),
+          }}
+          onSelect={(range) => {
+            const nextStart = range?.from ? calendarDateKey(range.from) : "";
+            const nextEnd = range?.to ? calendarDateKey(range.to) : "";
+            if (!nextStart) {
+              setStart("");
+              setEnd("");
+              setSelectingEnd(false);
+              updateRule(undefined);
+              return;
+            }
+            if (!selectingEnd) {
+              setStart(nextStart);
+              setEnd("");
+              setSelectingEnd(true);
+              return;
+            }
+            setStart(nextStart);
+            setEnd(nextEnd);
+            setSelectingEnd(false);
+            if (nextEnd) commit(nextStart, nextEnd);
+          }}
+        />
+      </PopoverContent>
+    </Popover>
   );
 }
 
