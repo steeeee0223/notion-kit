@@ -183,11 +183,24 @@ export class TableViewObject {
       .first();
   }
 
-  rowViewPropertyCheckbox(dialog: Locator, propertyName: string) {
-    return this.rowViewProperty(dialog, propertyName)
-      .getByRole("cell")
-      .nth(1)
-      .locator('[data-slot="checkbox"]');
+  private checkboxDisplay(owner: Locator) {
+    return owner.locator('[data-slot="checkbox"][aria-hidden="true"]');
+  }
+
+  private checkboxTrigger(owner: Locator) {
+    return owner.getByRole("button");
+  }
+
+  rowViewPropertyCheckboxDisplay(dialog: Locator, propertyName: string) {
+    return this.checkboxDisplay(
+      this.rowViewProperty(dialog, propertyName).getByRole("cell").nth(1),
+    );
+  }
+
+  rowViewPropertyCheckboxTrigger(dialog: Locator, propertyName: string) {
+    return this.checkboxTrigger(
+      this.rowViewProperty(dialog, propertyName).getByRole("cell").nth(1),
+    );
   }
 
   button(name: AccessibleName) {
@@ -232,11 +245,16 @@ export class TableViewObject {
     return new CellEditorsObject(this.page, this.cell(rowName, accessibleName));
   }
 
-  checkboxCell(rowName: AccessibleName) {
-    return this.row(rowName).getByRole("checkbox", {
-      name: "",
-      exact: true,
-    });
+  propertyCell(rowName: AccessibleName, propertyId: string) {
+    return this.row(rowName).locator(`[data-property-id="${propertyId}"]`);
+  }
+
+  checkboxCellDisplay(rowName: AccessibleName) {
+    return this.checkboxDisplay(this.propertyCell(rowName, "complete"));
+  }
+
+  checkboxCellTrigger(rowName: AccessibleName) {
+    return this.checkboxTrigger(this.propertyCell(rowName, "complete"));
   }
 
   rowCheckbox(rowId: string) {

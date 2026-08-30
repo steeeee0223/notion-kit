@@ -70,6 +70,30 @@ export class TableViewObject {
     return within(this.row(rowName)).getByRole("button", { name: cellName });
   }
 
+  propertyCell(rowName: string | RegExp, propertyId: string) {
+    const cell = this.row(rowName).querySelector<HTMLElement>(
+      `[data-property-id="${propertyId}"]`,
+    );
+    if (!cell) throw new Error(`Unable to find property ${propertyId}`);
+    return cell;
+  }
+
+  checkboxCellDisplay(rowName: string | RegExp) {
+    const checkbox = within(this.propertyCell(rowName, "complete"))
+      .getAllByRole("checkbox", { hidden: true })
+      .find(
+        (element) =>
+          element.dataset.slot === "checkbox" &&
+          element.getAttribute("aria-hidden") === "true",
+      );
+    if (!checkbox) throw new Error("Unable to find checkbox cell display");
+    return checkbox;
+  }
+
+  checkboxCellTrigger(rowName: string | RegExp) {
+    return within(this.propertyCell(rowName, "complete")).getByRole("button");
+  }
+
   async openViewSettings() {
     await this.user.click(this.button("Settings"));
     return ViewSettingsMenuObject.find(this.user);

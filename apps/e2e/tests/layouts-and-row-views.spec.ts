@@ -57,8 +57,8 @@ test("LockedRowView_PropertyTriggersRemainClosedAndDataUnchanged", async ({
     ).toBeDisabled();
     if (propertyName === "Complete") {
       await expect(
-        table.rowViewPropertyCheckbox(dialog, propertyName),
-      ).toBeDisabled();
+        table.rowViewPropertyCheckboxTrigger(dialog, propertyName),
+      ).toHaveAttribute("aria-disabled", "true");
       continue;
     }
     const value = table.rowViewPropertyValue(dialog, propertyName);
@@ -70,7 +70,7 @@ test("LockedRowView_PropertyTriggersRemainClosedAndDataUnchanged", async ({
   await table.rowViewPropertyValue(dialog, "Notes").dispatchEvent("click");
   await table.rowViewPropertyValue(dialog, "Status").dispatchEvent("click");
   await table
-    .rowViewPropertyCheckbox(dialog, "Complete")
+    .rowViewPropertyCheckboxTrigger(dialog, "Complete")
     .dispatchEvent("click");
   await table.rowViewPropertyValue(dialog, "Due").dispatchEvent("click");
 

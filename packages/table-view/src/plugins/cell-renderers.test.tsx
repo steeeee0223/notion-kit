@@ -489,7 +489,7 @@ describe("TextAndCheckboxCells", () => {
   });
 
   it.each(["pointer", "keyboard"] as const)(
-    "CheckboxCell_Unchecked%sActivation_ExposesStateAndEmitsExactCellResourcePayload",
+    "CheckboxCellTrigger_Unchecked%sActivation_ExposesStateAndEmitsExactCellResourcePayload",
     async (activation) => {
       // Arrange
       const dataProbe = createResourceProbe<Row[], DataResourceAction>();
@@ -497,22 +497,16 @@ describe("TextAndCheckboxCells", () => {
         ...createFullPluginFixture(),
         onDataChange: dataProbe.onChange,
       });
-      const checkbox = within(table.row("Empty"))
-        .getAllByRole("checkbox")
-        .find(
-          (element) =>
-            !element.hasAttribute("aria-label") &&
-            !element.hasAttribute("aria-labelledby"),
-        );
-      expect(checkbox).toBeDefined();
+      const cellTrigger = table.checkboxCellTrigger("Empty");
+      const checkbox = table.checkboxCellDisplay("Empty");
 
       expect(checkbox).toHaveAttribute("aria-checked", "false");
 
       // Act
       if (activation === "pointer") {
-        await table.user.click(checkbox!);
+        await table.user.click(cellTrigger);
       } else {
-        checkbox!.focus();
+        cellTrigger.focus();
         await table.user.keyboard(" ");
       }
 

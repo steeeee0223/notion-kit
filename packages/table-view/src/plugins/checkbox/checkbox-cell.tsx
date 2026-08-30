@@ -34,18 +34,19 @@ export function CheckboxCellEditor({
       className={cn(layout === "table" && "py-2.5")}
       wrapped={wrapped}
       layout={layout}
-      role={undefined}
-      tabIndex={-1}
       aria-disabled={disabled}
       tooltip={tooltip}
+      onClick={() => onChange(!allChecked)}
     >
       <div className="h-4 max-w-full">
         <Checkbox
-          className="rounded-[3px]"
+          aria-hidden
+          className="pointer-events-none rounded-[3px]"
           checked={allChecked}
           indeterminate={indeterminate}
           disabled={disabled}
-          onCheckedChange={() => onChange(!allChecked)}
+          readOnly
+          tabIndex={-1}
         />
       </div>
     </CellTrigger>
