@@ -16,6 +16,7 @@ import { TimelineViewContent } from "@/timeline-view";
 import { ViewControls } from "@/tools";
 
 import { defaultColumn } from "./default-column";
+import { MenuCoordinatorProvider } from "./menu-coordinator-provider";
 import { TableViewContent } from "./table-view-content";
 
 type TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> = ReturnType<
@@ -69,14 +70,16 @@ export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
 }: TableProps<TPlugins>) {
   return (
     <TableViewWrapper {...props}>
-      <div className="relative flex flex-col gap-4">
-        <div className="sticky top-0 z-(--z-row) bg-main px-24 pb-2">
-          <ViewControls />
+      <MenuCoordinatorProvider>
+        <div className="relative flex flex-col gap-4">
+          <div className="sticky top-0 z-(--z-row) bg-main px-24 pb-2">
+            <ViewControls />
+          </div>
+          <Content />
         </div>
-        <Content />
-      </div>
-      <RowView />
-      {children}
+        <RowView />
+        {children}
+      </MenuCoordinatorProvider>
     </TableViewWrapper>
   );
 }

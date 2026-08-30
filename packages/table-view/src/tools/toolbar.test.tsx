@@ -150,7 +150,7 @@ describe("Toolbar", () => {
     expect(screen.queryByTestId("table-view-active-bar")).toBeNull();
   });
 
-  it("Toolbar_SortTrigger_ExposesMenuSemantics", () => {
+  it("Toolbar_SortTrigger_ExposesSharedDropdownMenuSemantics", () => {
     const tableView = renderTableView();
 
     expect(tableView.button("Sort")).toHaveAttribute("aria-haspopup", "menu");

@@ -46,6 +46,56 @@ async function reopenHeader(tableView: TableViewObject, name: string) {
   return openHeader(tableView, name);
 }
 
+it("PropMenu_Filter_AppendsARootRuleAndOpensTheSharedFilterEditor", async () => {
+  const onViewChange = vi.fn();
+  const tableView = renderTableView({
+    onViewChange,
+    view: {
+      filters: {
+        kind: "group",
+        id: "root-filter",
+        logic: "and",
+        children: [
+          {
+            kind: "rule",
+            id: "done-filter",
+            propertyId: "col2",
+            operator: "equals",
+          },
+        ],
+      },
+    },
+  });
+  const menu = await openHeader(tableView, "Name");
+
+  await tableView.user.click(
+    within(menu).getByRole("menuitem", { name: "Filter" }),
+  );
+
+  await waitFor(() => expect(menu).not.toBeInTheDocument());
+  expect(screen.getByRole("dialog", { name: "Filters" })).toBeVisible();
+  expect(
+    lastResourceChange<TableViewState>(onViewChange)?.next.filters,
+  ).toMatchObject({
+    kind: "group",
+    id: "root-filter",
+    logic: "and",
+    children: [
+      {
+        kind: "rule",
+        id: "done-filter",
+        propertyId: "col2",
+        operator: "equals",
+      },
+      {
+        kind: "rule",
+        propertyId: "col1",
+        operator: "equals",
+      },
+    ],
+  });
+});
+
 it("PropMenu_Wrap_TogglesObservableHeaderState", async () => {
   // Arrange
   const onPropertiesChange = vi.fn();
