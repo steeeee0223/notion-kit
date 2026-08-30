@@ -107,11 +107,9 @@ function getPropertySurfaces(container: HTMLElement, propertyName: string) {
   const cells = within(row).getAllByRole("cell");
   const valueCell = cells[1];
   if (!valueCell) throw new Error(`Expected ${propertyName} to have a value`);
-  const valueTrigger = valueCell.querySelector<HTMLElement>(
-    '[role="button"][aria-disabled]',
-  );
-  const valueCheckbox = within(valueCell).queryByRole("checkbox");
-  const valueControl = valueTrigger ?? valueCheckbox;
+  const valueControl = within(valueCell)
+    .getAllByRole("button")
+    .find((element) => element.hasAttribute("aria-disabled"));
   if (!valueControl)
     throw new Error(`Expected ${propertyName} to have an editable control`);
 
@@ -144,14 +142,8 @@ it("ViewProps_LockedView_DisablesEveryPropertyTrigger", async () => {
 
     expect(nameTrigger).toBeDisabled();
     expect(valueCell).toHaveAttribute("inert");
-    if (propertyName === "Complete") {
-      expect(valueControl).toHaveRole("checkbox");
-      expect(valueControl).toHaveAttribute("aria-disabled", "true");
-      expect(valueControl).toHaveAttribute("tabindex", "-1");
-    } else {
-      expect(valueControl).toHaveAttribute("aria-disabled", "true");
-      expect(valueControl).toHaveAttribute("tabindex", "-1");
-    }
+    expect(valueControl).toHaveAttribute("aria-disabled", "true");
+    expect(valueControl).toHaveAttribute("tabindex", "-1");
 
     fireEvent.mouseDown(nameTrigger);
     fireEvent.click(nameTrigger);

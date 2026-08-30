@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
 import { TableView } from "@notion-kit/table-view";
+import type { ColumnDefs, DefaultPlugins, Row } from "@notion-kit/table-view";
 
 import { Database, mockData, mockProps } from "./database";
 
@@ -25,8 +26,9 @@ export const DatabaseView: Story = {
 export const Controlled: Story = {
   decorators: [
     () => {
-      const [data, setData] = useState(mockData);
-      const [properties, setProperties] = useState(mockProps);
+      const [data, setData] = useState<Row<DefaultPlugins>[]>(mockData);
+      const [properties, setProperties] =
+        useState<ColumnDefs<DefaultPlugins>>(mockProps);
 
       return (
         <div className="p-24">

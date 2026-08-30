@@ -1,11 +1,7 @@
-import { Icon } from "@notion-kit/icons";
-import { Button, Separator } from "@notion-kit/ui/primitives";
-
 import { BulkEditBar } from "@/common/bulk-edit/bulk-edit-bar";
 import { DndTableBody } from "@/table-body";
 import { TableFooter } from "@/table-footer";
 import { TableHeader } from "@/table-header";
-import { SortSelector } from "@/tools";
 
 import { useTableViewCtx } from "./table-view-provider";
 
@@ -15,15 +11,12 @@ export function TableViewContent() {
   return (
     <table.Subscribe
       selector={(state) => ({
-        sorting: state.sorting,
         columnResizing: state.columnResizing,
         columnSizing: state.columnSizing,
         locked: state.tableGlobal.locked,
       })}
     >
-      {({ sorting, locked }) => {
-        const isSorted = sorting.length > 0;
-
+      {({ locked }) => {
         /**
          * Instead of calling `column.getSize()` on every render for every header
          * and especially every data cell (very expensive),
@@ -50,26 +43,6 @@ export function TableViewContent() {
             <div className="absolute z-9990 w-full" />
             <BulkEditBar disabled={locked} />
             <div className="pointer-events-none mt-0 h-0" />
-            {isSorted && (
-              <div className="flex pt-1">
-                <div className="relative grow-0 overflow-hidden">
-                  <div className="z-10 flex h-10 items-center overflow-x-hidden overflow-y-auto py-2">
-                    <SortSelector />
-                    <Separator orientation="vertical" className="mx-3" />
-                    {/* Filter button */}
-                    <Button
-                      tabIndex={0}
-                      variant="hint"
-                      size="xs"
-                      className="mr-3 gap-1 rounded-full px-2 text-sm"
-                    >
-                      <Icon.Plus className="size-3.5 fill-current" />
-                      Filter
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
             <div
               data-block-id="15f35e0f-492c-8003-9976-f8ae747a6aeb"
               className="relative"

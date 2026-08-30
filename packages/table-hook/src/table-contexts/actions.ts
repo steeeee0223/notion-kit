@@ -1,3 +1,4 @@
+import type { TableFilterState } from "@/features/filtering";
 import type { TableViewState } from "@/features/menu";
 import type { PluginMethodState } from "@/features/plugin-methods";
 import type { ColumnInfo, Row } from "@/lib/types";
@@ -118,6 +119,13 @@ export type PropertiesResourceAction =
     >;
 
 export type ViewResourceAction =
+  | TableAction<
+      "view.filters.change",
+      {
+        previousFilters: TableFilterState | undefined;
+        nextFilters: TableFilterState | undefined;
+      }
+    >
   | TableAction<
       "view.layout.change",
       {

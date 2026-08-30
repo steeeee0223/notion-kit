@@ -1,5 +1,9 @@
 import { Icon } from "@notion-kit/icons";
-import { LAYOUT_OPTIONS, TableViewMenuPage } from "@notion-kit/table-hook";
+import {
+  countFilterRules,
+  LAYOUT_OPTIONS,
+  TableViewMenuPage,
+} from "@notion-kit/table-hook";
 import {
   DropdownMenuGroup,
   DropdownMenuItem,
@@ -9,7 +13,11 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { LayoutIcon, MenuHeader } from "@/common";
-import { useTableViewCtx } from "@/table-contexts";
+import {
+  FILTER_MENU_TOOLBAR_TRIGGER_ID,
+  useMenuCoordinator,
+  useTableViewCtx,
+} from "@/table-contexts";
 
 import { DeletedPropsMenu } from "./deleted-props-menu";
 import { EditGroupMenu } from "./edit-group-menu";
@@ -27,6 +35,7 @@ export function TableViewMenu() {
     <table.Subscribe
       selector={(state) => ({
         menu: state.menu,
+        sorting: state.sorting,
         tableGlobal: state.tableGlobal,
         grouping: state.grouping,
         groupingState: state.groupingState,
@@ -86,9 +95,13 @@ function TableViewMenuContent() {
 }
 
 function TableMenu() {
+  const { filterMenu } = useMenuCoordinator();
+
   const { table } = useTableViewCtx();
   const { locked, layout } = table.getTableGlobalState();
   const groupedColumn = table.getGroupedColumnInfo();
+  const filterCount = countFilterRules(table.getFilters());
+  const sortingCount = table.atoms.sorting.get().length;
   const openMenu = (page: TableViewMenuPage) =>
     table.setTableMenuState({ open: true, page });
 
@@ -107,12 +120,19 @@ function TableMenu() {
           </MenuItemSelect>
         </DropdownMenuItem>
         <DropdownMenuItem
+          icon={<Icon.FilterSmall />}
+          label="Filter"
+          onClick={() => filterMenu.handle.open(FILTER_MENU_TOOLBAR_TRIGGER_ID)}
+        >
+          <MenuItemSelect>{filterCount || ""}</MenuItemSelect>
+        </DropdownMenuItem>
+        <DropdownMenuItem
           closeOnClick={false}
           icon={<Icon.ArrowUpDown />}
           label="Sort"
           onClick={() => openMenu(TableViewMenuPage.Sort)}
         >
-          <MenuItemSelect />
+          <MenuItemSelect>{sortingCount || ""}</MenuItemSelect>
         </DropdownMenuItem>
         <DropdownMenuItem
           closeOnClick={false}

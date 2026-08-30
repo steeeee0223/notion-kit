@@ -13,9 +13,10 @@ import { ListViewContent } from "@/list-view";
 import { DEFAULT_PLUGINS, type DefaultPlugins } from "@/plugins";
 import { RowView } from "@/row-view";
 import { TimelineViewContent } from "@/timeline-view";
-import { Toolbar } from "@/tools/toolbar";
+import { ViewControls } from "@/tools";
 
 import { defaultColumn } from "./default-column";
+import { MenuCoordinatorProvider } from "./menu-coordinator-provider";
 import { TableViewContent } from "./table-view-content";
 
 type TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> = ReturnType<
@@ -69,14 +70,16 @@ export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
 }: TableProps<TPlugins>) {
   return (
     <TableViewWrapper {...props}>
-      <div className="relative flex flex-col gap-4">
-        <div className="sticky top-0 z-(--z-row) bg-main px-24 pb-2">
-          <Toolbar />
+      <MenuCoordinatorProvider>
+        <div className="relative flex flex-col gap-4">
+          <div className="sticky top-0 z-(--z-row) bg-main px-24 pb-2">
+            <ViewControls />
+          </div>
+          <Content />
         </div>
-        <Content />
-      </div>
-      <RowView />
-      {children}
+        <RowView />
+        {children}
+      </MenuCoordinatorProvider>
     </TableViewWrapper>
   );
 }
@@ -85,8 +88,14 @@ function Content() {
   const { table } = useTableViewCtx();
 
   return (
-    <table.Subscribe selector={(state) => state.tableGlobal.layout}>
-      {(layout) => {
+    <table.Subscribe
+      selector={(state) => ({
+        layout: state.tableGlobal.layout,
+        globalFilter: state.globalFilter as unknown,
+        filters: state.tableGlobal.filters as unknown,
+      })}
+    >
+      {({ layout }) => {
         switch (layout) {
           case "list":
             return <ListViewContent />;

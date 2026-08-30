@@ -94,7 +94,7 @@ describe("OptionSettings", () => {
     const onUpdate = vi.fn();
     render(<OptionSettings options={options} onUpdate={onUpdate} />);
 
-    await user.click(screen.getByRole("combobox"));
+    await user.click(screen.getByRole("combobox", { name: "Color select" }));
     await user.click(await screen.findByRole("option", { name: "Blue" }));
 
     expect(onUpdate).toHaveBeenCalledWith({ color: "blue" });

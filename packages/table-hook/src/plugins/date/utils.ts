@@ -1,6 +1,99 @@
+import { TZDate } from "@date-fns/tz";
+import {
+  addDays,
+  addMonths,
+  addWeeks,
+  addYears,
+  format,
+  isValid,
+} from "date-fns";
+
 import { formatDate, isoToTs } from "@notion-kit/utils";
 
 import { DateConfig, DateData } from "./types";
+
+export function isValidDateTimestamp(timestamp: unknown): timestamp is number {
+  return (
+    typeof timestamp === "number" &&
+    Number.isFinite(timestamp) &&
+    Math.abs(timestamp) <= 8_640_000_000_000_000
+  );
+}
+
+function isCalendarDayKey(value: string) {
+  const match = /^(\d{4,})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return false;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  if (!Number.isSafeInteger(year) || year < 1 || month < 1 || month > 12) {
+    return false;
+  }
+  const leapYear = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const daysInMonth = [
+    31,
+    leapYear ? 29 : 28,
+    31,
+    30,
+    31,
+    30,
+    31,
+    31,
+    30,
+    31,
+    30,
+    31,
+  ];
+  return day >= 1 && day <= daysInMonth[month - 1]!;
+}
+
+export function dateDayKey(timestamp: number, timeZone: string) {
+  if (!isValidDateTimestamp(timestamp)) return null;
+  try {
+    const zonedDate = new TZDate(timestamp, timeZone);
+    if (!isValid(zonedDate)) return null;
+    const dayKey = format(zonedDate, "yyyy-MM-dd");
+    return isCalendarDayKey(dayKey) ? dayKey : null;
+  } catch (error) {
+    if (error instanceof RangeError) return null;
+    throw error;
+  }
+}
+
+export type RelativeDateUnit = "day" | "week" | "month" | "year";
+
+export interface RelativeDateOperand {
+  amount: number;
+  unit: RelativeDateUnit;
+}
+
+export function relativeDateDayKey(
+  now: number,
+  operand: RelativeDateOperand,
+  timeZone: string,
+) {
+  const amount = operand.amount;
+  if (!isValidDateTimestamp(now) || !Number.isSafeInteger(amount)) {
+    return null;
+  }
+  const today = dateDayKey(now, timeZone);
+  if (today === null) return null;
+  const localNoon = new TZDate(
+    isoToTs({ date: today, time: "12:00:00" }, timeZone),
+    timeZone,
+  );
+  const relative =
+    operand.unit === "day"
+      ? addDays(localNoon, amount)
+      : operand.unit === "week"
+        ? addWeeks(localNoon, amount)
+        : operand.unit === "month"
+          ? addMonths(localNoon, amount)
+          : addYears(localNoon, amount);
+  return isValidDateTimestamp(relative.getTime())
+    ? dateDayKey(relative.getTime(), timeZone)
+    : null;
+}
 
 export function toDateString(data: DateData, config: DateConfig) {
   if (data.start === undefined) return "";

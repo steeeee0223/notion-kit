@@ -17,9 +17,8 @@ test("CellEditors_ExistingValues_RoundTripEveryEditablePlugin", async ({
   await expect(table.row("Alpha renamed")).toContainText("Frontend");
   await expect(table.row("Alpha renamed")).toContainText("Backend");
 
-  const complete = table.checkboxCell("Alpha renamed");
-  await complete.click();
-  await expect(complete).not.toBeChecked();
+  await table.checkboxCellTrigger("Alpha renamed").click();
+  await expect(table.checkboxCellDisplay("Alpha renamed")).not.toBeChecked();
 
   await table
     .cellEditor("Alpha renamed", "January 1, 2025")
@@ -119,9 +118,10 @@ test("CellEditors_EmptyValues_RoundTripThroughNamedRowViewProperties", async ({
   await page.keyboard.press("Escape");
   await expect(valueButton("Tags")).toContainText("Backend");
 
-  const complete = table.rowViewPropertyCheckbox(rowView, "Complete");
-  await complete.click();
-  await expect(complete).toBeChecked();
+  await table.rowViewPropertyCheckboxTrigger(rowView, "Complete").click();
+  await expect(
+    table.rowViewPropertyCheckboxDisplay(rowView, "Complete"),
+  ).toBeChecked();
 
   await valueButton("Due").press("Enter");
   const dateInput = page.getByRole("textbox").last();

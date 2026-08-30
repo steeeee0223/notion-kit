@@ -211,7 +211,11 @@ function TableHeaderRowContent() {
         <DropdownMenuTrigger
           render={<TableHeaderActionCell icon={<Icon.Dots />} />}
         />
-        <DropdownMenuContent sideOffset={0} collisionPadding={12}>
+        <DropdownMenuContent
+          className="w-65"
+          sideOffset={0}
+          collisionPadding={12}
+        >
           <PropsMenu />
         </DropdownMenuContent>
       </DropdownMenu>

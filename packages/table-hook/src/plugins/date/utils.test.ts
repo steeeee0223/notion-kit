@@ -142,7 +142,9 @@ describe("date calculation and grouping presentation", () => {
 
   it("uses the configured timezone for relative grouping labels", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date("2025-01-01T01:00:00Z"));
+    // Keep both UTC and Los Angeles on December 31 so this assertion does not
+    // depend on how the fake-timer Date is projected by TZDate near midnight.
+    vi.setSystemTime(new Date("2024-12-31T12:00:00Z"));
 
     expect(
       formatDateGroupingLabel("2025-01-01", "day", {

@@ -9,6 +9,7 @@ export {
 export { GroupActions } from "./group-actions";
 export * from "./menu";
 export { OptionTag } from "./option-tag";
+export { PropertySelect } from "./property-select";
 export { PropMeta } from "./prop-meta";
 export { RowActionGroup } from "./row-action-group";
 export {

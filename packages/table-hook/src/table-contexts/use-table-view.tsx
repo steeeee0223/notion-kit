@@ -17,6 +17,8 @@ import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 import {
   createPluginMethodState,
   DEFAULT_FEATURES,
+  validateTableFilterState,
+  type FilterGroup,
   type TableFeatures,
 } from "@/features";
 import type { TableViewState } from "@/features/menu";
@@ -102,6 +104,28 @@ function isSameMethodSelection(
     leftEntries.length === rightEntries.length &&
     leftEntries.every(([colId, methodId]) => right?.[colId] === methodId)
   );
+}
+
+function hasRelativeDateFilter(
+  filters: TableViewState["filters"],
+  properties: Record<string, ColumnInfo>,
+  plugins: Record<string, CellPlugin>,
+) {
+  if (!validateTableFilterState(filters) || filters === null) return false;
+
+  const hasRelativeRule = (group: FilterGroup): boolean =>
+    group.children.some((child) => {
+      if (child.kind === "group") return hasRelativeRule(child);
+      const property = properties[child.propertyId];
+      const operator = property
+        ? plugins[property.type]?.filtering?.operators.find(
+            ({ id }) => id === child.operator,
+          )
+        : undefined;
+      return operator?.operand.kind === "relative-date";
+    });
+
+  return hasRelativeRule(filters);
 }
 
 function useOwnershipSwitchWarning(name: string, isControlled: boolean) {
@@ -248,6 +272,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       }
     },
   });
+  const [relativeFilterRefresh, setRelativeFilterRefresh] = useState(0);
   /** columns states */
   const columnEntity = useMemo(
     () => toPropertyEntity(plugins.items, propertiesResource),
@@ -260,6 +285,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
         const plugin = plugins.items[property.type]!;
         return {
           id: property.id,
+          enableGlobalFilter: !property.isDeleted,
           accessorFn: (row) => {
             const value: unknown = row.properties[colId]?.value;
             const comparable = resolveSortingAccessorValue(
@@ -311,6 +337,21 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       }),
     [columnEntity, plugins.items, tableGlobalState.pluginMethods, weekStartsOn],
   );
+  const refreshRelativeFilters = hasRelativeDateFilter(
+    tableGlobalState.filters,
+    columnEntity.items,
+    plugins.items,
+  );
+
+  useEffect(() => {
+    if (!refreshRelativeFilters) return;
+    const delay = 60_000 - (Date.now() % 60_000);
+    const timeout = globalThis.setTimeout(
+      () => setRelativeFilterRefresh((refresh) => refresh + 1),
+      delay,
+    );
+    return () => globalThis.clearTimeout(timeout);
+  }, [refreshRelativeFilters, relativeFilterRefresh]);
   const handleColumnChange = useCallback<
     ResourceChangeFn<Entity<ColumnInfo>, PropertiesResourceAction>
   >(
@@ -347,8 +388,15 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       ),
       cellPlugins: plugins.items,
       tableGlobal: tableGlobalState,
+      filterEvaluationTick: relativeFilterRefresh,
     }),
-    [columnEntity.ids, columnEntity.items, plugins.items, tableGlobalState],
+    [
+      columnEntity.ids,
+      columnEntity.items,
+      plugins.items,
+      relativeFilterRefresh,
+      tableGlobalState,
+    ],
   );
 
   /** table instance */
@@ -366,6 +414,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       onColumnInfoChange: handleColumnChange,
       onTableDataChange: setDataResource,
       onTableGlobalChange: setViewResource,
+      globalFilterFn: "pluginTextIncludes",
       weekStartsOn,
       getRowUrl,
     },

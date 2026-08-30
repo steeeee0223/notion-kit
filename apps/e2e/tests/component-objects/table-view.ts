@@ -1,6 +1,7 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 
 import { CellEditorsObject } from "./cell-editors";
+import { FilterMenuObject } from "./filter-menu";
 import { GroupActionsObject } from "./group-actions";
 import { HeaderMenuObject } from "./header-menu";
 import type { AccessibleName } from "./menu-surface";
@@ -56,6 +57,7 @@ interface ControlledSnapshot {
     payload: Record<string, unknown>;
   } | null;
   view: {
+    filters?: unknown;
     layout: string;
     locked: boolean;
     openedRowId: string | null;
@@ -181,11 +183,24 @@ export class TableViewObject {
       .first();
   }
 
-  rowViewPropertyCheckbox(dialog: Locator, propertyName: string) {
-    return this.rowViewProperty(dialog, propertyName)
-      .getByRole("cell")
-      .nth(1)
-      .locator('[data-slot="checkbox"]');
+  private checkboxDisplay(owner: Locator) {
+    return owner.locator('[data-slot="checkbox"][aria-hidden="true"]');
+  }
+
+  private checkboxTrigger(owner: Locator) {
+    return owner.getByRole("button");
+  }
+
+  rowViewPropertyCheckboxDisplay(dialog: Locator, propertyName: string) {
+    return this.checkboxDisplay(
+      this.rowViewProperty(dialog, propertyName).getByRole("cell").nth(1),
+    );
+  }
+
+  rowViewPropertyCheckboxTrigger(dialog: Locator, propertyName: string) {
+    return this.checkboxTrigger(
+      this.rowViewProperty(dialog, propertyName).getByRole("cell").nth(1),
+    );
   }
 
   button(name: AccessibleName) {
@@ -198,6 +213,21 @@ export class TableViewObject {
 
   sortButton() {
     return this.page.getByRole("button", { name: "Sort", exact: true });
+  }
+
+  filterButton() {
+    return this.page.getByRole("button", { name: "Filter", exact: true });
+  }
+
+  searchButton() {
+    return this.page.getByRole("button", { name: "Search", exact: true });
+  }
+
+  searchInput() {
+    return this.page.getByRole("textbox", {
+      name: "Search table",
+      exact: true,
+    });
   }
 
   header(name: string) {
@@ -215,11 +245,16 @@ export class TableViewObject {
     return new CellEditorsObject(this.page, this.cell(rowName, accessibleName));
   }
 
-  checkboxCell(rowName: AccessibleName) {
-    return this.row(rowName).getByRole("checkbox", {
-      name: "",
-      exact: true,
-    });
+  propertyCell(rowName: AccessibleName, propertyId: string) {
+    return this.row(rowName).locator(`[data-property-id="${propertyId}"]`);
+  }
+
+  checkboxCellDisplay(rowName: AccessibleName) {
+    return this.checkboxDisplay(this.propertyCell(rowName, "complete"));
+  }
+
+  checkboxCellTrigger(rowName: AccessibleName) {
+    return this.checkboxTrigger(this.propertyCell(rowName, "complete"));
   }
 
   rowCheckbox(rowId: string) {
@@ -431,6 +466,17 @@ export class TableViewObject {
   async openSort() {
     await this.sortButton().click();
     return SortMenuObject.open(this.page);
+  }
+
+  async openFilter() {
+    await this.filterButton().click();
+    return FilterMenuObject.open(this.page);
+  }
+
+  async openSearch() {
+    await this.searchButton().click();
+    await expect(this.searchInput()).toBeVisible();
+    return this.searchInput();
   }
 
   async openHeader(name: string) {

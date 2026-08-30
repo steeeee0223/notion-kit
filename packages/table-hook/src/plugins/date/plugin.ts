@@ -18,6 +18,7 @@ import type { CountingMethod, CountingMethodGroup } from "@/methods";
 import type {
   CellValueProps,
   ComparableValue,
+  FilterEvaluationContext,
   PluginFactoryConfig,
 } from "../types";
 import { createCompareFn, genericCounting } from "../utils";
@@ -28,7 +29,14 @@ import type {
   DatePlugin,
   LastEditedTimePlugin,
 } from "./types";
-import { formatDateRangeDuration, toDateString } from "./utils";
+import {
+  dateDayKey,
+  formatDateRangeDuration,
+  isValidDateTimestamp,
+  relativeDateDayKey,
+  toDateString,
+  type RelativeDateOperand,
+} from "./utils";
 
 export type DatePluginConfig = PluginFactoryConfig<DatePlugin>;
 
@@ -90,6 +98,53 @@ function dateCapabilities<Data>(extract: DateExtractor<Data>) {
       weekStartsOn: context.weekStartsOn,
       now: Date.now(),
     });
+  const pointOperand = (operand: unknown) => {
+    if (typeof operand !== "object" || operand === null) return null;
+    const timestamp = (operand as { timestamp?: unknown }).timestamp;
+    return isValidDateTimestamp(timestamp) ? timestamp : null;
+  };
+  const comparisonValue = (
+    timestamp: number,
+    includeTime: boolean | undefined,
+    config: DateConfig,
+  ) => {
+    if (!isValidDateTimestamp(timestamp)) return null;
+    return includeTime ? timestamp : dateDayKey(timestamp, config.tz ?? "UTC");
+  };
+  const comparisonOperator = (
+    id: string,
+    name: string,
+    predicate: (value: number | string, operand: number | string) => boolean,
+  ) => ({
+    id,
+    name,
+    operand: { kind: "date" as const },
+    matches: (
+      data: Data | undefined,
+      row: Row,
+      config: DateConfig,
+      operand?: unknown,
+    ) => {
+      const value = extract(data, row);
+      const timestamp = pointOperand(operand);
+      if (value.start === undefined || timestamp === null) return false;
+      const comparableValue = comparisonValue(
+        value.start,
+        value.includeTime,
+        config,
+      );
+      const comparableOperand = comparisonValue(
+        timestamp,
+        value.includeTime,
+        config,
+      );
+      return (
+        comparableValue !== null &&
+        comparableOperand !== null &&
+        predicate(comparableValue, comparableOperand)
+      );
+    },
+  });
   return {
     sorting: {
       defaultMethod: "date",
@@ -139,6 +194,139 @@ function dateCapabilities<Data>(extract: DateExtractor<Data>) {
           name: "Year",
           function: grouping(groupByDateYear),
           toSortValue,
+        },
+      ],
+    },
+    filtering: {
+      operators: [
+        comparisonOperator(
+          "equals",
+          "Equals",
+          (value, operand) => value === operand,
+        ),
+        comparisonOperator(
+          "before",
+          "Before",
+          (value, operand) => value < operand,
+        ),
+        comparisonOperator(
+          "after",
+          "After",
+          (value, operand) => value > operand,
+        ),
+        comparisonOperator(
+          "on-or-before",
+          "On or before",
+          (value, operand) => value <= operand,
+        ),
+        comparisonOperator(
+          "on-or-after",
+          "On or after",
+          (value, operand) => value >= operand,
+        ),
+        {
+          id: "between",
+          name: "Between",
+          operand: { kind: "date-range" as const },
+          matches: (
+            data: Data | undefined,
+            row: Row,
+            config: DateConfig,
+            operand?: unknown,
+          ) => {
+            if (typeof operand !== "object" || operand === null) return false;
+            const { start, end } = operand as {
+              start?: unknown;
+              end?: unknown;
+            };
+            if (
+              typeof start !== "number" ||
+              !isValidDateTimestamp(start) ||
+              typeof end !== "number" ||
+              !isValidDateTimestamp(end) ||
+              start > end
+            )
+              return false;
+            const value = extract(data, row);
+            if (value.start === undefined) return false;
+            const comparable = comparisonValue(
+              value.start,
+              value.includeTime,
+              config,
+            );
+            const comparableStart = comparisonValue(
+              start,
+              value.includeTime,
+              config,
+            );
+            const comparableEnd = comparisonValue(
+              end,
+              value.includeTime,
+              config,
+            );
+            return (
+              comparable !== null &&
+              comparableStart !== null &&
+              comparableEnd !== null &&
+              comparable >= comparableStart &&
+              comparable <= comparableEnd
+            );
+          },
+        },
+        {
+          id: "is-empty",
+          name: "Is empty",
+          operand: { kind: "none" as const },
+          matches: (data: Data | undefined, row: Row) =>
+            extract(data, row).start === undefined,
+        },
+        {
+          id: "is-not-empty",
+          name: "Is not empty",
+          operand: { kind: "none" as const },
+          matches: (data: Data | undefined, row: Row) =>
+            extract(data, row).start !== undefined,
+        },
+        {
+          id: "relative-to-today",
+          name: "Relative to today",
+          operand: { kind: "relative-date" as const },
+          matches: (
+            data: Data | undefined,
+            row: Row,
+            config: DateConfig,
+            operand: unknown,
+            context: FilterEvaluationContext,
+          ) => {
+            if (typeof operand !== "object" || operand === null) return false;
+            const amount = (operand as { amount?: unknown }).amount;
+            const unit = (operand as { unit?: unknown }).unit;
+            if (
+              typeof amount !== "number" ||
+              !Number.isSafeInteger(amount) ||
+              (unit !== "day" &&
+                unit !== "week" &&
+                unit !== "month" &&
+                unit !== "year") ||
+              !isValidDateTimestamp(context.now)
+            )
+              return false;
+            const relativeOperand: RelativeDateOperand = { amount, unit };
+            const value = extract(data, row);
+            if (value.start === undefined) return false;
+            const timeZone = config.tz ?? "UTC";
+            const valueKey = dateDayKey(value.start, timeZone);
+            const relativeKey = relativeDateDayKey(
+              context.now,
+              relativeOperand,
+              timeZone,
+            );
+            return (
+              valueKey !== null &&
+              relativeKey !== null &&
+              valueKey === relativeKey
+            );
+          },
         },
       ],
     },

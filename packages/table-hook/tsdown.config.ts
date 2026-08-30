@@ -20,4 +20,9 @@ export default defineConfig((opts) => [
     clean: false,
     external: [/^@dnd-kit\//],
   },
+  {
+    ...baseConfig(opts),
+    entry: { mock: "./src/mock.ts" },
+    clean: false,
+  },
 ]);

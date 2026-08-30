@@ -39,6 +39,7 @@ export function TableRowCell({ column, row, table }: TableRowCellProps) {
       id="notion-table-view-cell"
       data-row-index={`${row.depth}:${row.index}`}
       data-col-index={column.getIndex()}
+      data-property-id={column.id}
       className="relative flex h-full border-r border-r-border-cell"
       style={{ width }}
     >

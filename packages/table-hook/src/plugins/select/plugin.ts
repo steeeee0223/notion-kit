@@ -43,6 +43,67 @@ function getDefaultConfig(): SelectConfig {
   };
 }
 
+function optionValues(operand: unknown, multiple: boolean) {
+  if (!multiple) return typeof operand === "string" ? [operand] : undefined;
+  return Array.isArray(operand) &&
+    operand.every((value) => typeof value === "string")
+    ? operand
+    : undefined;
+}
+
+function selectFiltering(multiple = false) {
+  const values = (data: string | string[] | null | undefined) =>
+    Array.isArray(data) ? data : typeof data === "string" ? [data] : [];
+  const membershipOperator = (id: string, name: string, invert: boolean) => ({
+    id,
+    name,
+    operand: { kind: "option" as const, ...(multiple && { multiple: true }) },
+    matches: (
+      data: string | string[] | null | undefined,
+      _row: Row,
+      _config: SelectConfig,
+      operand?: unknown,
+    ) => {
+      const selected = optionValues(operand, multiple);
+      if (!selected?.length) return false;
+      const available = values(data);
+      return multiple
+        ? invert
+          ? selected.every((value) => !available.includes(value))
+          : selected.every((value) => available.includes(value))
+        : invert
+          ? !available.includes(selected[0]!)
+          : available.includes(selected[0]!);
+    },
+  });
+  return {
+    filtering: {
+      operators: [
+        membershipOperator("contains", multiple ? "Contains" : "Is", false),
+        membershipOperator(
+          "does-not-contain",
+          multiple ? "Does not contain" : "Is not",
+          true,
+        ),
+        {
+          id: "is-empty",
+          name: "Is empty",
+          operand: { kind: "none" as const },
+          matches: (data: string | string[] | null | undefined) =>
+            values(data).length === 0,
+        },
+        {
+          id: "is-not-empty",
+          name: "Is not empty",
+          operand: { kind: "none" as const },
+          matches: (data: string | string[] | null | undefined) =>
+            values(data).length > 0,
+        },
+      ],
+    },
+  };
+}
+
 /**
  * Transfers the property configuration to "select" or "multi-select"
  */
@@ -146,6 +207,7 @@ export function select(config: SelectPluginConfig): SelectPlugin {
       ],
     },
     counting: genericCounting,
+    ...selectFiltering(),
     renderCellValue: ({ data, ...props }) =>
       config.renderCellValue({
         data: data ? [data] : [],
@@ -231,6 +293,7 @@ export function multiSelect(
     },
     transferConfig: toSelectConfig,
     counting: genericCounting,
+    ...selectFiltering(true),
     renderCellValue: (props) =>
       config.renderCellValue({ multi: true, ...props }),
     renderCellEditor: renderCellEditor
