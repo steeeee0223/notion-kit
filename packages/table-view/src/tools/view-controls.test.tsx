@@ -104,7 +104,7 @@ describe("ViewControls active filters", () => {
     expect(screen.getByTestId("table-view-active-bar")).toBeVisible();
   });
 
-  it("shows the recursive rule count and detached filter actions in design order", () => {
+  it("shows the recursive rule count without an add-filter action", () => {
     renderTableView({
       view: {
         layout: "table",
@@ -143,16 +143,11 @@ describe("ViewControls active filters", () => {
     const filterPill = within(activeBar).getByRole("button", {
       name: "2 rules",
     });
-    const addFilter = within(activeBar).getByRole("button", {
-      name: "+ Filter",
-    });
-
     expect(filterPill).toHaveAttribute("aria-haspopup", "dialog");
     expect(filterPill).toHaveAttribute("aria-expanded", "false");
-    expect(addFilter).toHaveAttribute("aria-haspopup", "dialog");
-    expect(filterPill.compareDocumentPosition(addFilter)).toBe(
-      Node.DOCUMENT_POSITION_FOLLOWING,
-    );
+    expect(
+      within(activeBar).queryByRole("button", { name: "+ Filter" }),
+    ).toBeNull();
   });
 
   it("keeps the empty filter menu open when clearing its final rule", async () => {

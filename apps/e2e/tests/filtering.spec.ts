@@ -18,6 +18,7 @@ test("Filtering_NumericRuleLifecycle_RendersMatchesAndPersistsView", async ({
   await filter.chooseProperty("Score");
   await filter.chooseOperator("Greater than");
   await filter.value().fill("50");
+  await filter.value().press("Tab");
 
   await expectRows(table, ["Omega"]);
   await expect(
