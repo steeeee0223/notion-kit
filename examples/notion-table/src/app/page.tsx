@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { BookTextIcon, Github } from "lucide-react";
 
 import { TableView } from "@notion-kit/table-view";
@@ -13,6 +14,9 @@ import {
 import { mockData, mockProps } from "@/lib/data";
 
 export default function Page() {
+  const [data, setData] = useState(mockData);
+  const [properties, setProperties] = useState(mockProps);
+
   const openLink = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer");
   };
@@ -46,7 +50,12 @@ export default function Page() {
         <div className="text-3xl text-primary">Notion Clone - Table View</div>
         <div className="relative flex max-h-150 w-screen grow flex-col justify-center">
           <div className="h-full shrink-0 overflow-auto">
-            <TableView properties={mockProps} data={mockData} />
+            <TableView
+              properties={properties}
+              data={data}
+              onDataChange={({ next }) => setData(next)}
+              onPropertiesChange={({ next }) => setProperties(next)}
+            />
           </div>
         </div>
       </main>
