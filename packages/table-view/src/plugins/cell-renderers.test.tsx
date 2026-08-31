@@ -490,52 +490,6 @@ describe("TextAndCheckboxCells", () => {
     });
   });
 
-  it("TableCell_ArrowKeyAfterEditorClose_MovesFocusedSelection", async () => {
-    const table = renderTableView(createFullPluginFixture());
-    const notes = table.cellButton("Alpha", "first note");
-    const notesCell = notes.closest<HTMLElement>("[data-cell-selection]");
-    const scoreCell = table
-      .cellButton("Alpha", "10")
-      .closest<HTMLElement>("[data-cell-selection]");
-
-    await table.user.click(notes);
-    await table.user.keyboard("{Escape}");
-    notesCell?.focus();
-    await table.user.keyboard("{ArrowRight}");
-
-    await waitFor(() => {
-      expect(
-        notesCell?.querySelector("[data-cell-selection-overlay]"),
-      ).not.toBeInTheDocument();
-      expect(
-        scoreCell?.querySelector("[data-cell-selection-overlay]"),
-      ).toHaveClass("border-blue");
-    });
-  });
-
-  it("TableCell_ShiftArrow_ExtendsTheSelectionRange", async () => {
-    const table = renderTableView(createFullPluginFixture());
-    const notes = table.cellButton("Alpha", "first note");
-    const notesCell = notes.closest<HTMLElement>("[data-cell-selection]");
-    const scoreCell = table
-      .cellButton("Alpha", "10")
-      .closest<HTMLElement>("[data-cell-selection]");
-
-    await table.user.click(notes);
-    await table.user.keyboard("{Escape}");
-    notesCell?.focus();
-    await table.user.keyboard("{Shift>}{ArrowRight}{/Shift}");
-
-    await waitFor(() => {
-      expect(
-        notesCell?.querySelector("[data-cell-selection-overlay]"),
-      ).toHaveClass("border-l-2");
-      expect(
-        scoreCell?.querySelector("[data-cell-selection-overlay]"),
-      ).toHaveClass("border-r-2");
-    });
-  });
-
   it("TableCell_DragRange_DoesNotOpenAnEditorOnRelease", () => {
     const table = renderTableView(createFullPluginFixture());
     const notes = table.cellButton("Alpha", "first note");

@@ -144,13 +144,7 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
         onMouseDown={(event) => event.stopPropagation()}
         onPointerDown={(event) => event.stopPropagation()}
       >
-        <TableCell
-          row={row}
-          column={titleColumn}
-          table={table}
-          view="table"
-          showRowQuickAction={false}
-        />
+        <TableCell row={row} column={titleColumn} table={table} view="table" />
       </CellSelectionCell>
     );
 

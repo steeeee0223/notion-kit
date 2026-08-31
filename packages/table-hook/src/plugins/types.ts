@@ -22,7 +22,6 @@ export interface CellValueProps<Data, Config = undefined> {
     title: string;
     description?: string;
   };
-  showRowQuickAction?: boolean;
   onClick?: () => void;
 }
 
@@ -37,7 +36,6 @@ export interface CellEditorProps<Data, Config = undefined> {
     title: string;
     description?: string;
   };
-  showRowQuickAction?: boolean;
   onChange: OnChangeFn<Data>;
   onCancel?: () => void;
   onConfigChange?: OnChangeFn<Config>;

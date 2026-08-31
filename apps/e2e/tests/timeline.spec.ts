@@ -189,31 +189,6 @@ test("TimelineGrouping_ExpandCollapse_KeepsSidebarAndTracksVerticallyAligned", a
   );
 });
 
-test("TimelineSidebarTitle_EditCloseSelectsCellWhileCardOpensRow", async ({
-  page,
-}) => {
-  const table = await TableViewObject.open(page, "controlled");
-  await table.setLayout("timeline");
-  const sidebarRow = table.timelineSidebarRow("row-alpha");
-  const selection = sidebarRow.locator("[data-cell-selection]");
-  const title = selection.getByText("Alpha", { exact: true });
-
-  await title.click();
-  await expect(page.getByRole("textbox")).toBeVisible();
-  expect((await table.controlledSnapshot()).view.openedRowId).toBeNull();
-
-  await page.keyboard.press("Escape");
-  await expect(
-    selection.locator("[data-cell-selection-overlay]"),
-  ).toBeVisible();
-  expect((await table.controlledSnapshot()).view.openedRowId).toBeNull();
-
-  await table.timelineItemCard("row-alpha").dispatchEvent("click");
-  await expect
-    .poll(async () => (await table.controlledSnapshot()).view.openedRowId)
-    .toBe("row-alpha");
-});
-
 function usableDateProperties<
   T extends { type: string; hidden?: boolean; isDeleted?: boolean },
 >(properties: T[]) {
