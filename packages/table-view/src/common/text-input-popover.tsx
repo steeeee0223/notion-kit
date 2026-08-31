@@ -13,17 +13,23 @@ import {
 
 interface TextInputPopoverProps extends TextInputPopoverContentProps {
   renderTrigger: ({ width }: { width: number }) => React.ReactElement;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function TextInputPopover({
   renderTrigger,
   onUpdate,
+  onOpenChange,
   ...props
 }: TextInputPopoverProps) {
   const { ref, rect } = useRect<HTMLButtonElement>();
   const [open, setOpen] = useState(false);
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    onOpenChange?.(nextOpen);
+  };
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger
         ref={ref}
         nativeButton={false}
@@ -37,10 +43,10 @@ export function TextInputPopover({
       >
         <TextInputPopoverContent
           {...props}
-          onCancel={() => setOpen(false)}
+          onCancel={() => handleOpenChange(false)}
           onUpdate={(v) => {
             onUpdate(v);
-            setOpen(false);
+            handleOpenChange(false);
           }}
         />
       </PopoverContent>

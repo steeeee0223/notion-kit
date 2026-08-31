@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { functionalUpdate } from "@tanstack/react-table";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -461,6 +467,78 @@ describe("TextAndCheckboxCells", () => {
     await table.user.click(table.cellButton("Alpha", "first note"));
     expect(await screen.findByRole("textbox")).toHaveValue("first note");
     expect(dataProbe.onChange).not.toHaveBeenCalled();
+  });
+
+  it("TableCell_EditClose_RevealsFocusedCellSelection", async () => {
+    const table = renderTableView(createFullPluginFixture());
+    const trigger = table.cellButton("Alpha", "first note");
+    const cell = trigger.closest<HTMLElement>("[data-cell-selection]");
+    expect(cell).not.toBeNull();
+
+    await table.user.click(trigger);
+    expect(await screen.findByRole("textbox")).toBeVisible();
+    expect(cell).not.toHaveClass("bg-blue/5");
+
+    await table.user.keyboard("{Escape}");
+
+    await waitFor(() => {
+      expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+      expect(cell?.querySelector("[data-cell-selection-overlay]")).toHaveClass(
+        "bg-blue/5",
+        "border-blue",
+      );
+    });
+  });
+
+  it("TableCell_DragRange_DoesNotOpenAnEditorOnRelease", () => {
+    const table = renderTableView(createFullPluginFixture());
+    const notes = table.cellButton("Alpha", "first note");
+    const score = table.cellButton("Alpha", "10");
+    const notesCell = notes.closest<HTMLElement>("[data-cell-selection]");
+    const scoreCell = score.closest<HTMLElement>("[data-cell-selection]");
+
+    fireEvent.mouseDown(notes, { button: 0 });
+    fireEvent.mouseEnter(scoreCell!);
+    fireEvent.mouseUp(score);
+
+    expect(
+      scoreCell?.querySelector("[data-cell-selection-overlay]"),
+    ).toBeInTheDocument();
+
+    fireEvent.click(score);
+
+    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+    expect(
+      notesCell?.querySelector("[data-cell-selection-overlay]"),
+    ).toBeInTheDocument();
+    expect(
+      scoreCell?.querySelector("[data-cell-selection-overlay]"),
+    ).toBeInTheDocument();
+  });
+
+  it("TableCell_SelectAllThenEscape_SelectsAndClearsDataCells", async () => {
+    const table = renderTableView(createFullPluginFixture());
+    const notes = table.cellButton("Alpha", "first note");
+    const omegaScoreCell = table
+      .cellButton("Omega", "90")
+      .closest<HTMLElement>("[data-cell-selection]");
+
+    await table.user.click(notes);
+    await table.user.keyboard("{Escape}");
+    notes.closest<HTMLElement>("[data-cell-selection]")?.focus();
+    await table.user.keyboard("{Control>}a{/Control}");
+
+    await waitFor(() => {
+      expect(
+        omegaScoreCell?.querySelector("[data-cell-selection-overlay]"),
+      ).toBeInTheDocument();
+    });
+
+    await table.user.keyboard("{Escape}");
+
+    expect(
+      omegaScoreCell?.querySelector("[data-cell-selection-overlay]"),
+    ).not.toBeInTheDocument();
   });
 
   it("TextCell_ClearAndCommit_EmitsExactCellResourcePayload", async () => {

@@ -10,7 +10,12 @@ import {
   TimelineSidebar as TimelineSidebarPrimitive,
 } from "@notion-kit/ui/timeline";
 
-import { RowActionGroup, TableCell } from "@/common";
+import {
+  CellSelectionCell,
+  CellSelectionProvider,
+  RowActionGroup,
+  TableCell,
+} from "@/common";
 import { TableGroupedRow } from "@/table-body";
 import { useTableViewCtx } from "@/table-contexts";
 import { TableHeaderCellResizer, TableHeaderCellTrigger } from "@/table-header";
@@ -59,43 +64,48 @@ function TimelineSidebarContent({
   if (!titleHeader) return null;
 
   return (
-    <TimelineSidebarPrimitive role="complementary" aria-label="Timeline table">
-      <TimelineSidebarHeader className="relative flex h-17 text-secondary shadow-[inset_0_-1px_0_var(--color-border),inset_0_1px_0_var(--color-border)]">
-        <TableHeaderCellTrigger
-          header={titleHeader}
-          table={table}
-          render={
-            <Button
-              variant="cell"
-              className="flex min-w-0 flex-1 items-end gap-1 overflow-hidden px-2 pb-2 text-sm"
-            />
-          }
-        />
-        <table.Subscribe selector={(state) => state.tableGlobal.locked}>
-          {(locked) =>
-            locked ? null : (
-              <TableHeaderCellResizer header={titleHeader} table={table} />
-            )
-          }
-        </table.Subscribe>
-        <TimelineSidebarClose onClick={onClose} />
-      </TimelineSidebarHeader>
-      <TimelineSidebarBody>
-        <table.Subscribe selector={(state) => state.tableGlobal.locked}>
-          {(locked) =>
-            locked ? (
-              <TimelineSidebarRows />
-            ) : (
-              <Sortable.Root orientation="vertical" onDragEnd={onRowDragEnd}>
-                <Sortable.List>
-                  <TimelineSidebarRows sortable />
-                </Sortable.List>
-              </Sortable.Root>
-            )
-          }
-        </table.Subscribe>
-      </TimelineSidebarBody>
-    </TimelineSidebarPrimitive>
+    <CellSelectionProvider>
+      <TimelineSidebarPrimitive
+        role="complementary"
+        aria-label="Timeline table"
+      >
+        <TimelineSidebarHeader className="relative flex h-17 text-secondary shadow-[inset_0_-1px_0_var(--color-border),inset_0_1px_0_var(--color-border)]">
+          <TableHeaderCellTrigger
+            header={titleHeader}
+            table={table}
+            render={
+              <Button
+                variant="cell"
+                className="flex min-w-0 flex-1 items-end gap-1 overflow-hidden px-2 pb-2 text-sm"
+              />
+            }
+          />
+          <table.Subscribe selector={(state) => state.tableGlobal.locked}>
+            {(locked) =>
+              locked ? null : (
+                <TableHeaderCellResizer header={titleHeader} table={table} />
+              )
+            }
+          </table.Subscribe>
+          <TimelineSidebarClose onClick={onClose} />
+        </TimelineSidebarHeader>
+        <TimelineSidebarBody>
+          <table.Subscribe selector={(state) => state.tableGlobal.locked}>
+            {(locked) =>
+              locked ? (
+                <TimelineSidebarRows />
+              ) : (
+                <Sortable.Root orientation="vertical" onDragEnd={onRowDragEnd}>
+                  <Sortable.List>
+                    <TimelineSidebarRows sortable />
+                  </Sortable.List>
+                </Sortable.Root>
+              )
+            }
+          </table.Subscribe>
+        </TimelineSidebarBody>
+      </TimelineSidebarPrimitive>
+    </CellSelectionProvider>
   );
 }
 
@@ -117,27 +127,25 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
         </div>
       );
     }
-    const { colId: titleColumnId, cell } = row.getTitleCell();
+    const { colId: titleColumnId } = row.getTitleCell();
     const titleColumn = table.getColumn(titleColumnId);
-    if (!titleColumn) return null;
+    const titleTableCell = row
+      .getAllCells()
+      .find((candidate) => candidate.column.id === titleColumnId);
+    if (!titleColumn || !titleTableCell) return null;
 
-    const title = String(cell.value || "New page");
     const index = nextIndexByGroup.get(row.parentId) ?? 0;
     nextIndexByGroup.set(row.parentId, index + 1);
     const content = (
-      <Button
-        variant="cell"
+      <CellSelectionCell
+        cell={titleTableCell}
         className="h-full min-w-0 flex-1 justify-start overflow-hidden px-2 text-sm"
-        aria-label={title}
-        onClick={() => table.openRow(row.id)}
+        onClick={(event) => event.stopPropagation()}
+        onMouseDown={(event) => event.stopPropagation()}
+        onPointerDown={(event) => event.stopPropagation()}
       >
-        <TableCell
-          row={row}
-          column={titleColumn}
-          table={table}
-          view="timeline"
-        />
-      </Button>
+        <TableCell row={row} column={titleColumn} table={table} view="table" />
+      </CellSelectionCell>
     );
 
     if (!sortable) {

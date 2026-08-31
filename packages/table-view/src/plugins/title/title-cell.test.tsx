@@ -13,6 +13,28 @@ import {
 
 mockResizeObserver();
 
+it("TitleTableCell_EditLifecycle_HidesThenRestoresCellSelection", async () => {
+  const table = renderTableView(createFullPluginFixture());
+  const trigger = table.cellButton("Alpha", "Alpha");
+  const cell = trigger.closest<HTMLElement>("[data-cell-selection]");
+  expect(cell).not.toBeNull();
+
+  await table.user.click(trigger);
+  expect(await screen.findByRole("textbox")).toBeVisible();
+  expect(
+    cell?.querySelector("[data-cell-selection-overlay]"),
+  ).not.toBeInTheDocument();
+
+  await table.user.keyboard("{Escape}");
+
+  await waitFor(() => {
+    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+    expect(cell?.querySelector("[data-cell-selection-overlay]")).toHaveClass(
+      "border-blue",
+    );
+  });
+});
+
 it("TitleCell_QuickActionAppears_AccessibleNameRemainsStable", async () => {
   const table = renderTableView({
     properties: [

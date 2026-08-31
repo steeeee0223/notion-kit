@@ -19,7 +19,12 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { CellTrigger, RowViewIcon, TextInputPopover } from "@/common";
+import {
+  CellTrigger,
+  RowViewIcon,
+  TextInputPopover,
+  useCellSelectionEditor,
+} from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface TitleCellProps extends CellEditorProps<string, TitleConfig> {
@@ -58,12 +63,14 @@ function TitleTableCell({
   onChange,
 }: Omit<TitleCellProps, "layout">) {
   const { table } = useTableViewCtx();
+  const cellSelectionEditor = useCellSelectionEditor();
   const { rowView } = table.getTableGlobalState();
 
   return (
     <TextInputPopover
       value={data}
       onUpdate={onChange}
+      onOpenChange={cellSelectionEditor?.onEditorOpenChange}
       renderTrigger={({ width }) => (
         <CellTrigger
           wrapped={wrapped}
