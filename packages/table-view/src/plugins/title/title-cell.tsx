@@ -60,6 +60,7 @@ function TitleTableCell({
   row,
   wrapped,
   disabled,
+  showRowQuickAction,
   onChange,
 }: Omit<TitleCellProps, "layout">) {
   const { table } = useTableViewCtx();
@@ -78,31 +79,33 @@ function TitleTableCell({
           aria-disabled={disabled}
           aria-label={data}
         >
-          <div className="pointer-events-none absolute inset-x-0 top-1.5 z-20 mx-1 my-0 hidden justify-end group-hover/row:flex">
-            <div
-              id="quick-action-container"
-              className="pointer-events-auto sticky right-1 flex bg-transparent"
-            >
-              <TooltipPreset
-                description={ROW_VIEW_OPTIONS[rowView].tooltip}
-                side="top"
+          {showRowQuickAction !== false && (
+            <div className="pointer-events-none absolute inset-x-0 top-1.5 z-20 mx-1 my-0 hidden justify-end group-hover/row:flex">
+              <div
+                id="quick-action-container"
+                className="pointer-events-auto sticky right-1 flex bg-transparent"
               >
-                <Button
-                  tabIndex={0}
-                  aria-label={ROW_VIEW_OPTIONS[rowView].tooltip}
-                  size="xs"
-                  className="rounded-md bg-main fill-secondary leading-tight font-medium tracking-[0.5px] text-secondary uppercase shadow-sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    table.openRow(row.id);
-                  }}
+                <TooltipPreset
+                  description={ROW_VIEW_OPTIONS[rowView].tooltip}
+                  side="top"
                 >
-                  <RowViewIcon rowView={rowView} />
-                  {width > 110 && <>Open</>}
-                </Button>
-              </TooltipPreset>
+                  <Button
+                    tabIndex={0}
+                    aria-label={ROW_VIEW_OPTIONS[rowView].tooltip}
+                    size="xs"
+                    className="rounded-md bg-main fill-secondary leading-tight font-medium tracking-[0.5px] text-secondary uppercase shadow-sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      table.openRow(row.id);
+                    }}
+                  >
+                    <RowViewIcon rowView={rowView} />
+                    {width > 110 && <>Open</>}
+                  </Button>
+                </TooltipPreset>
+              </div>
             </div>
-          </div>
+          )}
           <div className="contents h-5 items-center">
             {icon && <IconBlock icon={icon} className="contents" />}
             <span

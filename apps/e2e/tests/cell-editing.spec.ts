@@ -75,6 +75,43 @@ test("GeneratedTimeCells_FixedTimestamps_RenderReadOnlyValues", async ({
   await expect(table.controlledState()).toContainText('"dataCount":0');
 });
 
+test("CellSelection_EditCloseKeyboardAndRowCheckbox_KeepIndependentState", async ({
+  page,
+}) => {
+  const table = await TableViewObject.open(page, "controlled");
+  const notes = table.cell("Alpha", "first note");
+  const alphaRow = table.row("Alpha");
+  const notesSelection = alphaRow.locator(
+    '[data-cell-selection][data-col-index="1"]',
+  );
+  const scoreSelection = alphaRow.locator(
+    '[data-cell-selection][data-col-index="2"]',
+  );
+
+  await notes.click();
+  await expect(page.getByRole("textbox")).toBeVisible();
+  await page.keyboard.press("Escape");
+
+  await expect(
+    notesSelection.locator("[data-cell-selection-overlay]"),
+  ).toBeVisible();
+  await table.rowCheckbox("row-alpha").click();
+  await expect(table.rowCheckbox("row-alpha")).toBeChecked();
+  await expect(table.bulkEditBar()).toContainText("1 row selected");
+  await expect(
+    notesSelection.locator("[data-cell-selection-overlay]"),
+  ).toBeVisible();
+
+  await notesSelection.focus();
+  await notesSelection.press("ArrowRight");
+  await expect(
+    notesSelection.locator("[data-cell-selection-overlay]"),
+  ).toHaveCount(0);
+  await expect(
+    scoreSelection.locator("[data-cell-selection-overlay]"),
+  ).toBeVisible();
+});
+
 test("CellEditors_EmptyValues_RoundTripThroughNamedRowViewProperties", async ({
   page,
 }) => {

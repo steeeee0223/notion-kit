@@ -13,9 +13,16 @@ interface TableCellProps {
   column: CellInstance["column"];
   table: TableGlobalReader;
   view: LayoutType | "row-view";
+  showRowQuickAction?: boolean;
 }
 
-export function TableCell({ row, column, table, view }: TableCellProps) {
+export function TableCell({
+  row,
+  column,
+  table,
+  view,
+  showRowQuickAction,
+}: TableCellProps) {
   const { locked } = table.getTableGlobalState();
   const data = row.original.properties[column.id];
   const plugin = column.getPlugin();
@@ -40,6 +47,7 @@ export function TableCell({ row, column, table, view }: TableCellProps) {
         data: cellData,
         config: cellConfig,
         disabled: locked,
+        showRowQuickAction,
         tooltip,
       }}
       editorProps={{
@@ -48,6 +56,7 @@ export function TableCell({ row, column, table, view }: TableCellProps) {
         data: cellData,
         config: cellConfig,
         disabled: locked,
+        showRowQuickAction,
         tooltip,
         scope: { kind: "cell", row: row.original },
         onChange: (updater) => {
