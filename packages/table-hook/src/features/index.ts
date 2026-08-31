@@ -7,6 +7,7 @@ import {
   columnResizingFeature,
   columnSizingFeature,
   columnVisibilityFeature,
+  cellSelectionFeature,
   createExpandedRowModel,
   createSortedRowModel,
   globalFilteringFeature,
@@ -175,6 +176,7 @@ export * from "@/features/constants";
 export * from "@/features/types";
 
 export interface TableFeatures extends BaseTableFeatures {
+  cellSelectionFeature: typeof cellSelectionFeature;
   columnsInfoFeature: typeof ColumnsInfoFeature;
   countingFeature: typeof CountingFeature;
   freezingFeature: typeof FreezingFeature;
@@ -197,6 +199,7 @@ const COMMON_SORT_FNS = {
 export const DEFAULT_FEATURES = tableFeatures({
   columnFilteringFeature,
   globalFilteringFeature,
+  cellSelectionFeature,
   columnGroupingFeature,
   columnOrderingFeature,
   columnPinningFeature,
