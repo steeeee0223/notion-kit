@@ -14,6 +14,8 @@ import {
   PopoverTrigger,
 } from "@notion-kit/ui/primitives";
 
+import { useCellSelectionEditor } from "./cell-selection";
+
 interface CellEditorHostProps<Data, Config> {
   plugin: CellPlugin<string, Data, Config>;
   valueProps: CellValueProps<Data, Config>;
@@ -26,20 +28,30 @@ export function CellEditorHost<Data, Config>({
   editorProps,
 }: CellEditorHostProps<Data, Config>) {
   const [open, setOpen] = useState(false);
+  const cellSelectionEditor = useCellSelectionEditor();
   const { ref, rect } = useRect<HTMLElement>();
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    cellSelectionEditor?.onEditorOpenChange(nextOpen);
+  };
   const value = flexRender(plugin.renderCellValue, {
     ...valueProps,
     onClick: () => {
-      if (!editorProps.disabled) setOpen(true);
+      if (
+        !editorProps.disabled &&
+        cellSelectionEditor?.canOpenEditor() !== false
+      ) {
+        handleOpenChange(true);
+      }
     },
   });
   const result = plugin.renderCellEditor?.({
     ...editorProps,
     onChange: (updater) => {
       editorProps.onChange(functionalUpdate(updater, editorProps.data));
-      if (result?.closeOnChange !== false) setOpen(false);
+      if (result?.closeOnChange !== false) handleOpenChange(false);
     },
-    onCancel: () => setOpen(false),
+    onCancel: () => handleOpenChange(false),
   });
 
   if (!result) return value;
@@ -48,7 +60,7 @@ export function CellEditorHost<Data, Config>({
 
   const { popover } = result;
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger
         ref={ref}
         nativeButton={false}

@@ -1,28 +1,20 @@
-import { useState } from "react";
-
 import { Icon } from "@notion-kit/icons";
 import type { CellInstance, TableInstance } from "@notion-kit/table-hook";
 import { Button } from "@notion-kit/ui/primitives";
 
 import { CellEditorHost } from "@/common/cell-editor-host";
-
-enum CellMode {
-  Normal = "normal",
-  Edit = "edit",
-  Select = "select",
-}
+import { CellSelectionCell } from "@/common/cell-selection";
 
 type TableGlobalReader = Pick<TableInstance, "getTableGlobalState">;
 
 interface TableRowCellProps {
+  cell: CellInstance;
   column: CellInstance["column"];
   row: CellInstance["row"];
   table: TableGlobalReader;
 }
 
-export function TableRowCell({ column, row, table }: TableRowCellProps) {
-  const [mode] = useState<CellMode>(CellMode.Normal);
-
+export function TableRowCell({ cell, column, row, table }: TableRowCellProps) {
   const { locked } = table.getTableGlobalState();
   const data = row.original.properties[column.id];
 
@@ -35,7 +27,8 @@ export function TableRowCell({ column, row, table }: TableRowCellProps) {
   const cellConfig: unknown = info.config;
 
   return (
-    <div
+    <CellSelectionCell
+      cell={cell}
       id="notion-table-view-cell"
       data-row-index={`${row.depth}:${row.index}`}
       data-col-index={column.getIndex()}
@@ -86,9 +79,6 @@ export function TableRowCell({ column, row, table }: TableRowCellProps) {
           }}
         />
       </div>
-      {mode === CellMode.Select && (
-        <div className="pointer-events-none absolute top-0 left-0 z-(--z-col) size-full rounded-sm bg-blue/5 shadow-cell-focus" />
-      )}
-    </div>
+    </CellSelectionCell>
   );
 }

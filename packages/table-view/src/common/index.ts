@@ -1,4 +1,9 @@
 export { CellTrigger } from "./cell-trigger";
+export {
+  CellSelectionCell,
+  CellSelectionProvider,
+  useCellSelectionEditor,
+} from "./cell-selection";
 export { CopyButton } from "./copy-button";
 export {
   DefaultIcon,
