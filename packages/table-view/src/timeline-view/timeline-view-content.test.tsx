@@ -5,6 +5,7 @@ import {
   waitFor,
   within,
 } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
 
 import type {
@@ -144,7 +145,8 @@ it("TimelineSidebar_TitleResize_UpdatesLiveWidthAndActiveStyle", async () => {
   fireEvent.mouseUp(document, { clientX: 260 });
 });
 
-it("TimelineSidebarTitleAndCardSurface_Click_OpenTheConfiguredRow", async () => {
+it("TimelineSidebarTitle_EditCloseSelectsCellWhileCardClickOpensRow", async () => {
+  const user = userEvent.setup();
   const onViewChange =
     vi.fn<
       (change: ResourceChange<TableViewState, ViewResourceAction>) => void
@@ -161,21 +163,27 @@ it("TimelineSidebarTitleAndCardSurface_Click_OpenTheConfiguredRow", async () => 
     name: "Timeline table",
   });
 
-  fireEvent.click(
-    sidebar.querySelector<HTMLButtonElement>(
-      'button[aria-label="Valid task"]',
-    )!,
-  );
-  expect(onViewChange.mock.lastCall?.[0].action).toMatchObject({
-    type: "view.opened_row.change",
-    payload: { previousRowId: null, nextRowId: "valid" },
+  const trigger = within(sidebar).getByRole("button", {
+    name: "Valid task",
+  });
+  const cell = trigger.closest<HTMLElement>("[data-cell-selection]");
+  await user.click(trigger);
+
+  const input = await screen.findByRole("textbox");
+  expect(onViewChange).not.toHaveBeenCalled();
+  await user.keyboard("{Escape}");
+
+  await waitFor(() => {
+    expect(input).not.toBeInTheDocument();
+    expect(cell?.querySelector("[data-cell-selection-overlay]")).toHaveClass(
+      "border-blue",
+    );
   });
 
-  onViewChange.mockClear();
   fireEvent.click(timeline.itemCard("valid"));
   expect(onViewChange.mock.lastCall?.[0].action).toMatchObject({
     type: "view.opened_row.change",
-    payload: { previousRowId: "valid", nextRowId: "valid" },
+    payload: { previousRowId: null, nextRowId: "valid" },
   });
 });
 
